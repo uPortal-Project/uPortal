@@ -55,10 +55,9 @@ public interface IGroupsManagerCommand {
 
    /**
     * Execute the command
-    * @param runtimeData
-    * @param staticData
+    * @param sessionData
     */
-   public void execute (org.jasig.portal.ChannelRuntimeData runtimeData, ChannelStaticData staticData);
+   public void execute (CGroupsManagerSessionData sessionData);
 }
 
 

@@ -46,8 +46,8 @@ package  org.jasig.portal.channels.groupsmanager;
 import  java.util.*;
 import  java.io.*;
 import  org.w3c.dom.Element;
-import  org.apache.xerces.dom.DocumentImpl;
-import  org.jasig.portal.groups.IGroupMember;
+import  org.w3c.dom.Document;
+import  org.jasig.portal.groups.*;
 
 /**
  * Defines the interface for a wrapper object to be used by CGroupssManager
@@ -63,7 +63,7 @@ public interface IGroupsManagerWrapper {
     * @param aDoc
     * @return Element
     */
-   public Element getXml (String aKey, String aType, Element anElem, DocumentImpl aDoc);
+   public Element getXml (String aKey, String aType, Element anElem, Document aDoc);
 
    /**
     * Return an element for an IGroupMember holding an IEntity
@@ -72,12 +72,7 @@ public interface IGroupsManagerWrapper {
     * @param aDoc
     * @return Element
     */
-   public Element getXml (IGroupMember gm, Element anElem, DocumentImpl aDoc);
-   /**
-    * Removes an element from the SmartCache
-    * @param aKey
-    */
-   public void removeCachedElement (Object aKey);
+   public Element getXml (IGroupMember gm, Element anElem, Document aDoc);
 }
 
 

@@ -49,7 +49,6 @@ import  org.jasig.portal.services.*;
 import  java.sql.*;
 import  org.jasig.portal.groups.*;
 
-
 /**
  * An RDBM implementation of IInitialGroupContextStore.
  */

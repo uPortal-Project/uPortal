@@ -64,13 +64,20 @@ import  org.jasig.portal.utils.*;
  *
  */
 
- public class CGroupsManagerServant extends CGroupsManager
+public class CGroupsManagerServant extends MultithreadedCacheableChannelAdapter
       implements IServant {
+   final IMultithreadedChannel channel;
+   final String uid;
 
    /**
     * put your documentation comment here
+    * @param channel (IMultithreadedChannel)
+    * @param uid (String)
     */
-   public CGroupsManagerServant () {
+   public CGroupsManagerServant (IMultithreadedChannel channel, String uid) {
+      super(channel,uid);
+      this.channel = channel;
+      this.uid = uid;
    }
 
    /**
@@ -78,6 +85,8 @@ import  org.jasig.portal.utils.*;
     * @return boolean
     */
    public boolean isFinished () {
+      CGroupsManagerSessionData sessionData = ((CGroupsManager) channel).getSessionData(uid);
+      ChannelStaticData staticData = sessionData.staticData;
       boolean isFinished = false;
       if (staticData.containsKey("groupManagerFinished") && staticData.getParameter("groupManagerFinished").equals("true")) {
          isFinished = true;
@@ -87,11 +96,19 @@ import  org.jasig.portal.utils.*;
 
    /**
     * Sets the staticData.
-    * @param sd
+    * @param sd (ChannelStaticData)
     */
    public void setStaticData (ChannelStaticData sd) {
-      super.setStaticData(sd);
-      sd.setParameter("grpServantMode", "true");
+      try {
+         channel.setStaticData(sd, uid);
+         sd.setParameter("grpServantMode", "true");
+      }
+      catch (PortalException pex) {
+         Utility.logMessage("ERROR", this.getClass().getName()
+            + ".setStaticData() : Unable to set static data for servant. "
+            + "staticData parm = " + sd
+            + "uid parm = " + uid);
+      }
    }
 
    /**
@@ -100,11 +117,12 @@ import  org.jasig.portal.utils.*;
     * @return Object[]
     */
    public Object[] getResults () {
+      CGroupsManagerSessionData sessionData = ((CGroupsManager) channel).getSessionData(uid);
+      ChannelStaticData staticData = sessionData.staticData;
+      ChannelRuntimeData runtimeData = sessionData.runtimeData;
       Object[] results = null;
-
       IGroupsManagerCommand cmd = GroupsManagerCommandFactory.instance().get("Done");
-      cmd.execute(runtimeData,staticData);
-
+      cmd.execute(sessionData);
       results = (Object[])staticData.get("princResults");
       Utility.logMessage("DEBUG", "CGroupsManagerservant.getResults()");
       return  results;

@@ -45,17 +45,14 @@ package  org.jasig.portal.channels.groupsmanager.commands;
  * @version 2.0
  */
 import  java.util.*;
-import  org.jasig.portal.ChannelStaticData;
+import  org.jasig.portal.*;
 import  org.jasig.portal.channels.groupsmanager.*;
-import  org.jasig.portal.groups.IEntityGroup;
-import  org.jasig.portal.groups.IGroupMember;
-import  org.jasig.portal.groups.GroupsException;
-import  org.jasig.portal.services.GroupService;
+import  org.jasig.portal.groups.*;
+import  org.jasig.portal.services.*;
 import  org.w3c.dom.Element;
 import  org.w3c.dom.Node;
 import  org.w3c.dom.NodeList;
-import  org.apache.xerces.dom.DocumentImpl;
-
+import  org.w3c.dom.Document;
 
 /**
  * put your documentation comment here
@@ -71,18 +68,21 @@ public class UpdateGroup extends GroupsManagerCommand {
 
    /**
     * put your documentation comment here
-    * @param runtimeData
-    * @param staticData
+    * @param sessionData
     */
-   public void execute (org.jasig.portal.ChannelRuntimeData runtimeData, ChannelStaticData staticData) {
+   public void execute (CGroupsManagerSessionData sessionData) {
+      ChannelStaticData staticData = sessionData.staticData;
+      ChannelRuntimeData runtimeData= sessionData.runtimeData;
+
       Utility.logMessage("DEBUG", "UpdateGroup::execute(): Start");
-      DocumentImpl xmlDoc = (DocumentImpl)staticData.get("xmlDoc");
+      //Document xmlDoc = (Document)staticData.get("xmlDoc");sessionData.model
+      Document xmlDoc = (Document)sessionData.model;
       String theCommand = runtimeData.getParameter("grpCommand");
       String newGrpName = runtimeData.getParameter("grpName");                  //?
       String updId = getCommandIds(runtimeData);
       Node updNode;
       Node titleNode;
-      Element updElem = Utility.getElementByTagNameAndId(xmlDoc, GROUP_TAGNAME, updId);
+      Element updElem = GroupsManagerXML.getElementByTagNameAndId(xmlDoc, GROUP_TAGNAME, updId);
       String updKey = updElem.getAttribute("key");
       String curGrpName = "unknown";
       String retMsg;
@@ -114,7 +114,7 @@ public class UpdateGroup extends GroupsManagerCommand {
          Utility.logMessage("DEBUG", "UpdateGroup::execute(): About to update xml nodes for group: "
                + curGrpName);
          // update all xml nodes for this group
-         Iterator updatedNodes = Utility.getNodesByTagNameAndKey(xmlDoc, GROUP_TAGNAME,
+         Iterator updatedNodes = GroupsManagerXML.getNodesByTagNameAndKey(xmlDoc, GROUP_TAGNAME,
                updKey);
          Utility.logMessage("DEBUG", "UpdateGroup::execute(): About to gather all elements for key: "
                + updKey);

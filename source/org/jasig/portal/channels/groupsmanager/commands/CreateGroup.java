@@ -45,20 +45,16 @@ package  org.jasig.portal.channels.groupsmanager.commands;
  * @version 2.0
  */
 import  java.util.*;
-import  org.jasig.portal.ChannelStaticData;
-import  org.jasig.portal.IPermissible;
+import  org.jasig.portal.*;
 import  org.jasig.portal.channels.groupsmanager.*;
-import  org.jasig.portal.groups.IEntityGroup;
-import  org.jasig.portal.groups.IGroupMember;
-import  org.jasig.portal.groups.GroupsException;
-import  org.jasig.portal.services.AuthorizationService;
-import  org.jasig.portal.services.GroupService;
+import  org.jasig.portal.groups.*;
+import  org.jasig.portal.services.*;
 import  org.jasig.portal.security.*;
 import  org.w3c.dom.Element;
 import  org.w3c.dom.Node;
 import  org.w3c.dom.NodeList;
-import  org.apache.xerces.dom.DocumentImpl;
-
+import  org.w3c.dom.Document;
+import  javax.xml.parsers.*;
 
 /**
  * We will only be creating groups. We do not create entities. Once we create
@@ -79,12 +75,15 @@ public class CreateGroup extends org.jasig.portal.channels.groupsmanager.command
 
    /**
     * The execute() method is the main method for the CreateMember command.
-    * @param runtimeData
-    * @param staticData
+    * @param sessionData
     */
-   public void execute (org.jasig.portal.ChannelRuntimeData runtimeData, ChannelStaticData staticData) {
+   public void execute (CGroupsManagerSessionData sessionData) {
+      ChannelStaticData staticData = sessionData.staticData;
+      ChannelRuntimeData runtimeData= sessionData.runtimeData;
+
       Utility.logMessage("DEBUG", "CreateGroup::execute(): Start");
-      DocumentImpl xmlDoc = (DocumentImpl)staticData.get("xmlDoc");
+      //Document xmlDoc = (Document)staticData.get("xmlDoc");
+      Document xmlDoc = (Document)sessionData.model;
       String theCommand = runtimeData.getParameter("grpCommand");
       String parentID = getCommandIds(runtimeData);
       boolean parentIsInitialGroupContext = parentIsInitialGroupContext(parentID);
@@ -93,7 +92,7 @@ public class CreateGroup extends org.jasig.portal.channels.groupsmanager.command
             " will be added to parent element = " + parentID);
       IEntityGroup parentGroup = null;
       Class parentEntityType;
-      Element parentElem = Utility.getElementByTagNameAndId(xmlDoc, GROUP_TAGNAME, parentID);
+      Element parentElem = GroupsManagerXML.getElementByTagNameAndId(xmlDoc, GROUP_TAGNAME, parentID);
       String parentKey = parentElem.getAttribute("key");
       String retMsg;
       Iterator parentNodes;
@@ -144,7 +143,7 @@ public class CreateGroup extends org.jasig.portal.channels.groupsmanager.command
          else {
             parentGroup.addMember((IGroupMember)childEntGrp);
             parentGroup.updateMembers();
-            parentNodes = Utility.getNodesByTagNameAndKey(xmlDoc, GROUP_TAGNAME, parentKey);
+            parentNodes = GroupsManagerXML.getNodesByTagNameAndKey(xmlDoc, GROUP_TAGNAME, parentKey);
             // add new group to all parent group xml nodes
             while (parentNodes.hasNext()) {
                Element parentNode = (Element)parentNodes.next();

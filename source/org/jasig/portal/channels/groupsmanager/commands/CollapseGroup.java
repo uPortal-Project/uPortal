@@ -45,9 +45,9 @@ package  org.jasig.portal.channels.groupsmanager.commands;
  */
 import  java.util.*;
 import  org.jasig.portal.channels.groupsmanager.*;
-import  org.jasig.portal.ChannelStaticData;
+import  org.jasig.portal.*;
 import  org.w3c.dom.Element;
-import  org.apache.xerces.dom.DocumentImpl;
+import  org.w3c.dom.Document;
 
 
 /**
@@ -62,13 +62,15 @@ public class CollapseGroup extends org.jasig.portal.channels.groupsmanager.comma
 
    /**
     * put your documentation comment here
-    * @param runtimeData
-    * @param staticData
+    * @param sessionData
     */
-   public void execute (org.jasig.portal.ChannelRuntimeData runtimeData, ChannelStaticData staticData) {
+   public void execute (CGroupsManagerSessionData sessionData) {
+      ChannelStaticData staticData = sessionData.staticData;
+      ChannelRuntimeData runtimeData= sessionData.runtimeData;
+
       Utility.logMessage("DEBUG", "CollapseGroup::execute(): Start");
-      DocumentImpl xmlDoc = getXmlDoc(staticData);
-      Element collapseElem = Utility.getElementByTagNameAndId(xmlDoc, GROUP_TAGNAME,
+      Document xmlDoc = getXmlDoc(sessionData);
+      Element collapseElem = GroupsManagerXML.getElementByTagNameAndId(xmlDoc, GROUP_TAGNAME,
             getCommandIds(runtimeData));
       Utility.logMessage("DEBUG", "CollapseGroup::execute(): collapseElem was found: "
             + collapseElem);
@@ -80,6 +82,3 @@ public class CollapseGroup extends org.jasig.portal.channels.groupsmanager.comma
       return;
    }
 }
-
-
-

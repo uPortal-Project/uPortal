@@ -45,13 +45,10 @@ package  org.jasig.portal.channels.groupsmanager.commands;
  * @version 2.0
  */
 import  java.util.*;
-import  org.jasig.portal.ChannelStaticData;
-import  org.jasig.portal.ChannelRuntimeData;
+import  org.jasig.portal.*;
 import  org.jasig.portal.channels.groupsmanager.*;
-import  org.jasig.portal.groups.IEntityGroup;
-import  org.jasig.portal.groups.IGroupMember;
-import  org.jasig.portal.groups.GroupsException;
-import  org.apache.xerces.dom.DocumentImpl;
+import  org.jasig.portal.groups.*;
+import  org.w3c.dom.Document;
 import  org.w3c.dom.Node;
 import  org.w3c.dom.NodeList;
 import  org.w3c.dom.Element;
@@ -73,10 +70,9 @@ public abstract class GroupsManagerCommand
 
    /**
     * put your documentation comment here
-    * @param runtimeData
-    * @param staticData
+    * @param sessionData
     */
-   public void execute (org.jasig.portal.ChannelRuntimeData runtimeData, ChannelStaticData staticData) {}
+   public void execute (CGroupsManagerSessionData sessionData) {}
 
    /**
     * Returns the grpCommand parameter from runtimeData
@@ -110,10 +106,11 @@ public abstract class GroupsManagerCommand
    /**
     * Returns the cached xml document from staticData
     * @param staticData
-    * @return DocumentImpl
+    * @return Document
     */
-   public DocumentImpl getXmlDoc (ChannelStaticData staticData) {
-      return  (DocumentImpl)staticData.get("xmlDoc");
+   public Document getXmlDoc (CGroupsManagerSessionData sessionData) {
+      //return  (Document)staticData.get("xmlDoc");sessionData.model
+      return  (Document)sessionData.model;
    }
 
    /**
@@ -162,8 +159,9 @@ public abstract class GroupsManagerCommand
     * clear out the selection list
     * @param staticData
     */
-   public void clearSelected (ChannelStaticData staticData) {
-      Element rootElem = getXmlDoc(staticData).getDocumentElement();
+   public void clearSelected (CGroupsManagerSessionData sessionData) {
+      ChannelStaticData staticData = sessionData.staticData;
+      Element rootElem = getXmlDoc(sessionData).getDocumentElement();
       NodeList nGroupList = rootElem.getElementsByTagName(GROUP_TAGNAME);
       NodeList nPersonList = rootElem.getElementsByTagName(ENTITY_TAGNAME);
       NodeList nList = nGroupList;

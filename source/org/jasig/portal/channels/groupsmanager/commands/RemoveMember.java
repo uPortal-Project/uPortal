@@ -45,16 +45,13 @@ package  org.jasig.portal.channels.groupsmanager.commands;
  * @version 2.0
  */
 import  java.util.*;
-import  org.jasig.portal.ChannelStaticData;
+import  org.jasig.portal.*;
 import  org.jasig.portal.channels.groupsmanager.*;
-import  org.jasig.portal.groups.IEntityGroup;
-import  org.jasig.portal.groups.IGroupMember;
-import  org.jasig.portal.groups.GroupsException;
+import  org.jasig.portal.groups.*;
 import  org.w3c.dom.Element;
 import  org.w3c.dom.Node;
 import  org.w3c.dom.NodeList;
-import  org.apache.xerces.dom.DocumentImpl;
-
+import  org.w3c.dom.Document;
 
 /**
  * This command removes the association of a member element to either an
@@ -71,12 +68,14 @@ public class RemoveMember extends org.jasig.portal.channels.groupsmanager.comman
 
    /**
     * The execute() method is the main method for the RemoveMember command.
-    * @param runtimeData
-    * @param staticData
+    * @param sessionData
     */
-   public void execute (org.jasig.portal.ChannelRuntimeData runtimeData, ChannelStaticData staticData) {
-      Utility.logMessage("DEBUG", "RemoveMember::execute(): Start");
-      DocumentImpl xmlDoc = getXmlDoc(staticData);
+   public void execute (CGroupsManagerSessionData sessionData) {
+      ChannelStaticData staticData = sessionData.staticData;
+      ChannelRuntimeData runtimeData= sessionData.runtimeData;
+
+     Utility.logMessage("DEBUG", "RemoveMember::execute(): Start");
+      Document xmlDoc = getXmlDoc(sessionData);
       String theCommand = getCommand(runtimeData);
       String cmdIds = getCommandIds(runtimeData);
       Object parentGroup = null;
@@ -89,7 +88,7 @@ public class RemoveMember extends org.jasig.portal.channels.groupsmanager.comman
       Utility.logMessage("DEBUG", "RemoveMember::execute(): Uid of parent element = "
             + parentID + " child element = " + childID);
       try {
-         Element parentElem = Utility.getElementByTagNameAndId(xmlDoc, GROUP_TAGNAME,
+         Element parentElem = GroupsManagerXML.getElementByTagNameAndId(xmlDoc, GROUP_TAGNAME,
                parentID);
          if (parentElem == null) {
             Utility.logMessage("ERROR", "RemoveMember::execute(): Unable to retrieve parent element!");
@@ -97,13 +96,13 @@ public class RemoveMember extends org.jasig.portal.channels.groupsmanager.comman
          }
          Utility.logMessage("DEBUG", "RemoveMember::execute(): About to get child element = "
                + childID);
-         Element childElem = Utility.getElementById(xmlDoc, childID);
+         Element childElem = GroupsManagerXML.getElementById(xmlDoc, childID);
          if (childElem == null) {
             Utility.logMessage("ERROR", "RemoveMember::execute(): Unable to retrieve Child element!");
             return;
          }
          // The child will always be an IGroupMember
-         childGm = Utility.retrieveGroupMemberForElementId(xmlDoc, childID);
+         childGm = GroupsManagerXML.retrieveGroupMemberForElementId(xmlDoc, childID);
          // The parent could be an IGroupMember or an IInitialGroupContext.
          if (parentIsInitialGroupContext(parentID)) {
             // Put method in GroupsManagerXML and change render method to use it
@@ -114,13 +113,13 @@ public class RemoveMember extends org.jasig.portal.channels.groupsmanager.comman
          }
          else {
             // check for null
-            parentGroup = (Object)Utility.retrieveGroupMemberForElementId(xmlDoc, parentID);
+            parentGroup = (Object)GroupsManagerXML.retrieveGroupMemberForElementId(xmlDoc, parentID);
             removeChildFromGroup(parentGroup, childGm);
             hasMbrs = String.valueOf(((IEntityGroup)parentGroup).hasMembers());
             Utility.logMessage("DEBUG", "RemoveMember::execute(): Got the parent group ");
          }
          Utility.logMessage("DEBUG", "RemoveMember::execute(): about to remove child elements");
-         Iterator parentNodes = Utility.getNodesByTagNameAndKey(xmlDoc, GROUP_TAGNAME,
+         Iterator parentNodes = GroupsManagerXML.getNodesByTagNameAndKey(xmlDoc, GROUP_TAGNAME,
                parentElem.getAttribute("key"));
          Node parentNode;
          NodeList childNodes;

@@ -44,9 +44,8 @@ package  org.jasig.portal.channels.groupsmanager.commands;
  * @author Don Fracapane
  * @version 2.0
  */
-import  org.jasig.portal.ChannelRuntimeData;
-import  org.jasig.portal.ChannelStaticData;
-import  org.jasig.portal.channels.groupsmanager.Utility;
+import  org.jasig.portal.*;
+import  org.jasig.portal.channels.groupsmanager.*;
 
 
 /** A select cycle could be started in Servant mode or it could be started by
@@ -69,14 +68,15 @@ public class CancelSelection extends GroupsManagerCommand {
 
    /**
     * put your documentation comment here
-    * @param runtimeData
-    * @param staticData
+    * @param sessionData
     */
-   public void execute (ChannelRuntimeData runtimeData, ChannelStaticData staticData) {
+   public void execute (CGroupsManagerSessionData sessionData) {
+      ChannelStaticData staticData = sessionData.staticData;
+      ChannelRuntimeData runtimeData= sessionData.runtimeData;
 
       /** @todo move to GroupManagerCommand.cleanUp */
       Utility.logMessage("DEBUG", "CancelSelection::execute(): Start");
-      clearSelected(staticData);
+      clearSelected(sessionData);
       if (getParentId(staticData) != null) {
          // came from the edit screen, so go back
          runtimeData.setParameter("grpMode", "browse");

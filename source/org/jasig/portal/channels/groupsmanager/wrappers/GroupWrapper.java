@@ -46,11 +46,9 @@ package  org.jasig.portal.channels.groupsmanager.wrappers;
  */
 import  org.jasig.portal.channels.groupsmanager.*;
 import  org.jasig.portal.groups.*;
-import  org.jasig.portal.utils.SmartCache;
 import  org.w3c.dom.Element;
 import  org.w3c.dom.NodeList;
-import  org.apache.xerces.dom.DocumentImpl;
-
+import  org.w3c.dom.Document;
 
 /**
  * Returns an xml element for a given IEntityGroup or IEntityGroup key.
@@ -69,10 +67,10 @@ public class GroupWrapper extends GroupMemberWrapper {
     * @param aDoc
     * @return Element
     */
-   public Element getXml (IGroupMember gm, Element anElem, DocumentImpl aDoc) {
+   public Element getXml (IGroupMember gm, Element anElem, Document aDoc) {
       String nextID;
       IEntityGroup entGrp = (IEntityGroup)gm;
-      Element rootElem = (anElem != null ? anElem : getNewElement (gm.getKey(), aDoc));
+      Element rootElem = (anElem != null ? anElem : GroupsManagerXML.createElement(ELEMENT_TAGNAME, aDoc, false));
       Utility.logMessage("DEBUG", "GroupWrapper::getXml(): START, Element Expanded: " + rootElem.getAttribute("expanded"));
       try {
          Utility.logMessage("DEBUG", "GroupWrapper::getXml(): IEntityGroup: " + gm);
@@ -105,10 +103,6 @@ public class GroupWrapper extends GroupMemberWrapper {
             Utility.logMessage("DEBUG", "GroupWrapper::getXml(): APPENDING rdf element TO GRPROOT");
             rootElem.appendChild(rdf);
          }
-         // check if element is in the cache
-         if (getCachedElement(gm.getKey()) == null) {
-            putCachedElement(gm.getKey(), rootElem);
-         }
          if (isGroupExpanded) {
             expandElement(gm, rootElem, aDoc);
          }
@@ -131,28 +125,13 @@ public class GroupWrapper extends GroupMemberWrapper {
    }
 
     /**
-    * Answers if the group member has to be retrieved.
-    * @param anElem
-    * @return boolean
-    */
-   protected boolean isRetrievalRequired (Element anElem) {
-      // Retrieve the EntityGroup only if some attributes are missing or the group
-      // has been expanded.
-      String aKey = anElem.getAttribute("key");
-      boolean isElemComplete = isElementFullyFormed(anElem);
-      boolean isElemExpanded = (Boolean.valueOf(anElem.getAttribute("expanded")).booleanValue());
-      Utility.logMessage("DEBUG", "GroupWrapper::getXml(" + aKey + "): EXPANDED: " + anElem.getAttribute("expanded"));
-      return (!isElemComplete || isElemExpanded);
-   }
-
-    /**
     * Returns the xml element for a given IEntityGroup, populated with child elements.
     * @param gm
     * @param anElem
     * @param aDoc
     * @return Element
     */
-   private Element expandElement (IGroupMember gm, Element anElem, DocumentImpl aDoc) {
+   private Element expandElement (IGroupMember gm, Element anElem, Document aDoc) {
       Utility.logMessage("DEBUG", "GroupWrapper::expandElement(): START");
       java.util.Iterator gmItr = null;
       IGroupMember aChildGm = null;
@@ -174,11 +153,11 @@ public class GroupWrapper extends GroupMemberWrapper {
                Utility.logMessage("DEBUG", "GroupWrapper::expandElement():  " + aChildGm);
                boolean isPresent = false;
                if (aChildGm.isGroup()){
-                isPresent = Utility.getNodesByTagNameAndKey(anElem, GROUP_TAGNAME,
+                isPresent = GroupsManagerXML.getNodesByTagNameAndKey(anElem, GROUP_TAGNAME,
                      childKey).hasNext();
                }
                else {
-                  isPresent = Utility.getNodesByTagNameAndKey(anElem, ENTITY_TAGNAME,
+                  isPresent = GroupsManagerXML.getNodesByTagNameAndKey(anElem, ENTITY_TAGNAME,
                      childKey).hasNext();
                }
                if (!isPresent) {
@@ -225,7 +204,6 @@ public class GroupWrapper extends GroupMemberWrapper {
       Utility.logMessage("DEBUG", "GroupWrapper::isElementFullyFormed(): RETVAL: " + isGood);
       return  isGood;
    }
-
 }
 
 

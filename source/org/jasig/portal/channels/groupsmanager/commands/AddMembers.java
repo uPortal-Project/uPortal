@@ -45,16 +45,12 @@ package  org.jasig.portal.channels.groupsmanager.commands;
  * @version 2.0
  */
 import  java.util.*;
-import  org.jasig.portal.ChannelStaticData;
+import  org.jasig.portal.*;
 import  org.jasig.portal.channels.groupsmanager.*;
-import  org.jasig.portal.groups.IEntityGroup;
-import  org.jasig.portal.groups.IGroupMember;
-import  org.jasig.portal.groups.GroupsException;
-import org.jasig.portal.services.LogService;
-import org.jasig.portal.services.GroupService;
+import  org.jasig.portal.groups.*;
+import  org.jasig.portal.services.*;
 import  org.w3c.dom.Element;
-import  org.apache.xerces.dom.DocumentImpl;
-
+import  org.w3c.dom.Document;
 
 /** This command sets the id of the parent group (ie. the group to which child
  *  members will be added). Control is then passed to a selection view where
@@ -74,15 +70,17 @@ public class AddMembers extends org.jasig.portal.channels.groupsmanager.commands
 
    /**
     * put your documentation comment here
-    * @param runtimeData
-    * @param staticData
+    * @param sessionData
     */
-   public void execute (org.jasig.portal.ChannelRuntimeData runtimeData, ChannelStaticData staticData) {
+   public void execute (CGroupsManagerSessionData sessionData) {
+      ChannelStaticData staticData = sessionData.staticData;
+      ChannelRuntimeData runtimeData= sessionData.runtimeData;
+
       Utility.logMessage("DEBUG", "AddMembers::execute(): Start");
       String parentAddElemId = getCommandIds(runtimeData);
       // if not IPerson group, then set view root to root for requested type
       try{
-        IGroupMember pg = Utility.retrieveGroupMemberForElementId(this.getXmlDoc(staticData),parentAddElemId);
+        IGroupMember pg = GroupsManagerXML.retrieveGroupMemberForElementId(this.getXmlDoc(sessionData),parentAddElemId);
         if (!(pg.getLeafType().getName().equals(GroupService.EVERYONE))){
           runtimeData.setParameter("grpViewKey",GroupService.getRootGroup(pg.getLeafType()).getKey());
         }

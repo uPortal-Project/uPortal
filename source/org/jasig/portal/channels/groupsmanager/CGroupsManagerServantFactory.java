@@ -40,6 +40,7 @@ import org.jasig.portal.IServant;
 import org.jasig.portal.*;
 import java.util.HashMap;
 import java.util.*;
+import java.lang.reflect.Constructor;
 
 /**
  * CGroupsManagerServantFactory
@@ -53,6 +54,7 @@ import java.util.*;
 
 public class CGroupsManagerServantFactory {
     private static CGroupsManagerServantFactory _instance;
+    private static int UID = 0;
     private HashMap servantClasses = new HashMap();
     /** Creates new CGroupsManagerServantFactory */
     protected CGroupsManagerServantFactory() {
@@ -102,14 +104,15 @@ public class CGroupsManagerServantFactory {
         if (members!=null && members.length>0){
            slaveSD.put("grpPreSelectedMembers",members);
         }
+        Utility.logMessage("DEBUG", "CGroupsManagerFactory::getGroupsServantforSelection: slaveSD before setting servant static data: " + slaveSD);
         ((IChannel)servant).setStaticData(slaveSD);
       }
       catch (Exception e){
           throw(new PortalException("CGroupsManagerServantFactory - unable to initialize servant"));
       }
       long time2 = Calendar.getInstance().getTime().getTime();
-                LogService.instance().log(LogService.INFO, "CGroupsManagerFactory took  "
-                        + String.valueOf((time2 - time1)) + " ms to instantiate selection servant");
+      Utility.logMessage("INFO", "CGroupsManagerFactory took  "
+         + String.valueOf((time2 - time1)) + " ms to instantiate selection servant");
       return servant;
     }
 
@@ -172,7 +175,7 @@ public class CGroupsManagerServantFactory {
           throw(new PortalException("CGroupsManagerServantFactory - unable to initialize servant"));
       }
         long time2 = Calendar.getInstance().getTime().getTime();
-                LogService.instance().log(LogService.INFO, "CGroupsManagerFactory took  "
+                Utility.logMessage("INFO", "CGroupsManagerFactory took  "
                         + String.valueOf((time2 - time1)) + " ms to instantiate add/remove servant");
         return servant;
     }
@@ -187,25 +190,41 @@ public class CGroupsManagerServantFactory {
     }
 
     protected IServant getServant(String name){
-        IServant rs = null;
-        if (servantClasses.get(name)==null){
-            try{
-                Class cserv = Class.forName("org.jasig.portal.channels.groupsmanager."+name);
-                servantClasses.put(name,cserv);
-            }
-            catch(Exception e){
-                LogService.instance().log(LogService.ERROR,e);
-            }
-        }
-        if (servantClasses.get(name)!=null){
-            try {
-                rs = (IServant) ((Class) servantClasses.get(name)).newInstance();
-            }
-            catch(Exception e){
-                LogService.instance().log(LogService.ERROR,e);
-            }
-        }
-        return rs;
+       Utility.logMessage("DEBUG", "[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[");
+       Utility.logMessage("DEBUG", "CGroupsManagerServantFactory::getServant(): A GROUPS SERVANT IS BEING CREATED");
+       Utility.logMessage("DEBUG", "[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[");
+       IServant rs = null;
+       /*
+       Until we need a cache of different type of servant classes, this code will be
+       commented out. The problem is the instantiation of a class with newInstance()
+       when parameters are involved for some servants (eg IMultithreadedChannels) and
+       not for other (IChannel).
+       Class cserv = null;
+       try{
+          if (servantClasses.get(name)==null){
+             cserv = Class.forName("org.jasig.portal.channels.groupsmanager."+name);
+             servantClasses.put(name,cserv);
+           }
+           else {
+             cserv = (Class) servantClasses.get(name);
+           }
+       }
+       catch(Exception e){
+          LogService.instance().log(LogService.ERROR,e);
+       }
+       */
+       try{
+          //rs = (IServant) ((Class) servantClasses.get(name)).newInstance();
+          CGroupsManagerServant cgms = new CGroupsManagerServant(new CGroupsManager(), getNextUid());
+          rs = (IServant) cgms;
+          Utility.logMessage("DEBUG", "]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]");
+          Utility.logMessage("DEBUG", "CGroupsManagerServantFactory::getServant(): GROUPS SERVANT RETURNED " + cgms.channel);
+          Utility.logMessage("DEBUG", "]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]");
+       }
+       catch(Exception e){
+          LogService.instance().log(LogService.ERROR,e);
+       }
+       return rs;
     }
 
     protected static synchronized CGroupsManagerServantFactory instance(){
@@ -215,4 +234,20 @@ public class CGroupsManagerServantFactory {
         return _instance;
     }
 
+   /**
+    * Returns the next sequential identifier which is used to uniquely
+    * identify an element. This identifier is held in the Element "id" attribute.
+    * "0" is reserved for the Group containing the Initial Contexts for the user.
+    * @return String
+    */
+   public static synchronized String getNextUid () {
+      // max size of int = (2 to the 32 minus 1) = 2147483647
+      Utility.logMessage("DEBUG", "GroupsManagerXML::getNextUid(): Start");
+      if (UID > 2147483600) {
+         // the value 0 is reserved for the group holding the initial group contexts
+         UID = 0;
+      }
+      String newUid = Calendar.getInstance().getTime().getTime() + "grpsservant" + ++UID;
+      return  newUid;
+   }
 }

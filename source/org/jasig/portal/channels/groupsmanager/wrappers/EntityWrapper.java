@@ -46,10 +46,8 @@ package  org.jasig.portal.channels.groupsmanager.wrappers;
 import  org.jasig.portal.channels.groupsmanager.*;
 import  org.jasig.portal.groups.*;
 import  org.w3c.dom.Element;
-import  org.apache.xerces.dom.DocumentImpl;
-import  org.jasig.portal.groups.IGroupMember;
-import  org.jasig.portal.groups.IEntity;
-
+import  org.w3c.dom.Document;
+import  org.jasig.portal.groups.*;
 
 /**
  * Returns an xml element for a given IEntity or IEntity key.
@@ -68,7 +66,7 @@ public class EntityWrapper extends GroupMemberWrapper {
     * @param aDoc
     * @return Element
     */
-   public Element getXml (IGroupMember gm, Element anElem, DocumentImpl aDoc) {
+   public Element getXml (IGroupMember gm, Element anElem, Document aDoc) {
       Element rootElem = (anElem != null ? anElem : GroupsManagerXML.createElement(ELEMENT_TAGNAME,
             aDoc, false));
       Utility.logMessage("DEBUG", "EntityWrapper.getXml(): START, Element: " + rootElem);
@@ -79,7 +77,6 @@ public class EntityWrapper extends GroupMemberWrapper {
          rootElem.setAttribute("type", gm.getLeafType().getName());
          rootElem.setAttribute("displayName", GroupsManagerXML.getEntityName(ent.getLeafType(),
                ent.getKey()));
-
          rootElem.setAttribute("selected", "false");
       } catch (Exception e) {
          Utility.logMessage("ERROR", "EntityWrapper.getXml(): ERROR retrieving entity "
@@ -98,16 +95,6 @@ public class EntityWrapper extends GroupMemberWrapper {
    }
 
     /**
-    * Answers if the GroupMember has to be retrieved.
-    * @param anElem
-    * @return boolean
-    */
-   protected boolean isRetrievalRequired (Element anElem) {
-      // Retrieve the Entity only if some attributes are missing
-      return (isElementFullyFormed(anElem));
-   }
-
-    /**
     * Answers whether the group element has all required attributes set. This will
     * be used to determine if the Entity will have to be retrieved in order to
     * populate the element with all required attributes. This test will fail if we are
@@ -118,6 +105,5 @@ public class EntityWrapper extends GroupMemberWrapper {
    protected boolean isElementFullyFormed (Element anElem) {
       return (anElem.hasAttribute("id") && anElem.hasAttribute("key") && anElem.hasAttribute("type") && anElem.hasAttribute("displayName"));
    }
-
 }
 

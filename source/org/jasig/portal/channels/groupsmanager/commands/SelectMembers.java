@@ -46,11 +46,9 @@ package  org.jasig.portal.channels.groupsmanager.commands;
  */
 import  java.util.*;
 import  org.jasig.portal.channels.groupsmanager.*;
-import  org.jasig.portal.ChannelStaticData;
+import  org.jasig.portal.*;
 import  org.w3c.dom.Element;
-import  org.apache.xerces.dom.DocumentImpl;
-
-
+import  org.w3c.dom.Document;
 /**
  * put your documentation comment here
  */
@@ -65,12 +63,14 @@ public class SelectMembers extends org.jasig.portal.channels.groupsmanager.comma
 
    /**
     * put your documentation comment here
-    * @param runtimeData
-    * @param staticData
+    * @param sessionData
     */
-   public void execute (org.jasig.portal.ChannelRuntimeData runtimeData, ChannelStaticData staticData) {
+   public void execute (CGroupsManagerSessionData sessionData) {
+      ChannelStaticData staticData = sessionData.staticData;
+      ChannelRuntimeData runtimeData= sessionData.runtimeData;
+
       Utility.logMessage("DEBUG", "SelectMembers::execute(): Start");
-      DocumentImpl xmlDoc = getXmlDoc(staticData);
+      Document xmlDoc = getXmlDoc(sessionData);
       String theCommand = getCommand(runtimeData);
       Utility.logMessage("DEBUG", "SelectMembers::execute(): action = " + theCommand);
       Iterator itr = runtimeData.keySet().iterator();
@@ -86,7 +86,7 @@ public class SelectMembers extends org.jasig.portal.channels.groupsmanager.comma
                String princeKey = thisPerm.substring(0, thisPerm.lastIndexOf("|"));
                String princeType = thisPerm.substring(thisPerm.lastIndexOf("|") + 1);
                //String principal = princeType + "." + princeKey;
-               theElement = Utility.getElementByTagNameAndId(xmlDoc, princeType, princeKey);
+               theElement = GroupsManagerXML.getElementByTagNameAndId(xmlDoc, princeType, princeKey);
                // test first
                if (theElement != null) {
                   theElement.setAttribute("selected", String.valueOf(theCommand.equals("Select")));

@@ -44,18 +44,15 @@ package  org.jasig.portal.channels.groupsmanager.commands;
  * @version 2.0
  */
 import  java.util.*;
-import  org.jasig.portal.ChannelStaticData;
+import  org.jasig.portal.*;
 import  org.jasig.portal.channels.groupsmanager.*;
-import  org.jasig.portal.groups.IEntityGroup;
-import  org.jasig.portal.groups.IGroupMember;
-import  org.jasig.portal.groups.GroupsException;
+import  org.jasig.portal.groups.*;
 import  org.jasig.portal.services.*;
 import  org.jasig.portal.security.*;
 import  org.w3c.dom.Element;
 import  org.w3c.dom.Node;
 import  org.w3c.dom.NodeList;
-import  org.apache.xerces.dom.DocumentImpl;
-
+import  org.w3c.dom.Document;
 
 /**
  * This command deletes an IEntityGroup and removes all of it's associations to
@@ -75,16 +72,19 @@ public class DeleteGroup extends GroupsManagerCommand {
 
    /**
     * put your documentation comment here
-    * @param runtimeData
-    * @param staticData
+    * @param sessionData
     */
-   public void execute (org.jasig.portal.ChannelRuntimeData runtimeData, ChannelStaticData staticData) {
+   public void execute (CGroupsManagerSessionData sessionData) {
+      ChannelStaticData staticData = sessionData.staticData;
+      ChannelRuntimeData runtimeData= sessionData.runtimeData;
+
       Utility.logMessage("DEBUG", "DeleteGroup::execute(): Start");
-      DocumentImpl xmlDoc = (DocumentImpl)staticData.get("xmlDoc");
+      //Document xmlDoc = (Document)staticData.get("xmlDoc");
+      Document xmlDoc = (Document)sessionData.model;
       String userID = runtimeData.getParameter("username");
       String theCommand = runtimeData.getParameter("grpCommand");
       String delId = getCommandIds(runtimeData);
-      Element delElem = Utility.getElementByTagNameAndId(xmlDoc, GROUP_TAGNAME, delId);
+      Element delElem = GroupsManagerXML.getElementByTagNameAndId(xmlDoc, GROUP_TAGNAME, delId);
       String delKey = delElem.getAttribute("key");
       String elemName = delElem.getAttribute("name");
       String retMsg;
@@ -110,7 +110,7 @@ public class DeleteGroup extends GroupsManagerCommand {
          Utility.logMessage("DEBUG", "DeleteGroup::execute(): About to delete xml nodes for group: "
                + elemName);
          // remove all xml nodes for this group
-         Iterator deletedNodes = Utility.getNodesByTagNameAndKey(xmlDoc, GROUP_TAGNAME,
+         Iterator deletedNodes = GroupsManagerXML.getNodesByTagNameAndKey(xmlDoc, GROUP_TAGNAME,
                delKey);
          IEntityGroup parentEntGrp = null;
          String hasMbrs = "duh";
@@ -132,8 +132,6 @@ public class DeleteGroup extends GroupsManagerCommand {
             }
             parentNode.removeChild(deletedNode);
             ((Element)parentNode).setAttribute("hasMembers", hasMbrs);
-            // remove element from SmartCache
-            rap.removeCachedElement(delKey);
          }
 
          /** Remove the permission elements in the xmlDoc */
@@ -199,7 +197,7 @@ public class DeleteGroup extends GroupsManagerCommand {
          upm.removePermissions(allPerms);
       }
       catch (Exception e) {
-         String errMsg = "Utility::deletePermissions(): Error removing permissions for " + grpMbr;
+         String errMsg = "DeleteGropu::deletePermissions(): Error removing permissions for " + grpMbr;
          Utility.logMessage("ERROR", errMsg);
          throw new ChainedException(errMsg, e);
       }

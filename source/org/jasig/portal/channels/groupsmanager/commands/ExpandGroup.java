@@ -45,12 +45,11 @@ package  org.jasig.portal.channels.groupsmanager.commands;
  * @version 2.0
  */
 import  java.util.*;
-import  org.jasig.portal.ChannelStaticData;
+import  org.jasig.portal.*;
 import  org.jasig.portal.channels.groupsmanager.*;
-import  org.jasig.portal.groups.IEntityGroup;
-import  org.jasig.portal.groups.IGroupMember;
+import  org.jasig.portal.groups.*;
 import  org.w3c.dom.Element;
-import  org.apache.xerces.dom.DocumentImpl;
+import  org.w3c.dom.Document;
 
 /**
  * If the children xml elements have not already been created, this command will
@@ -67,17 +66,19 @@ public class ExpandGroup extends org.jasig.portal.channels.groupsmanager.command
 
    /**
     * put your documentation comment here
-    * @param runtimeData
-    * @param staticData
+    * @param sessionData
     */
-   public void execute (org.jasig.portal.ChannelRuntimeData runtimeData, ChannelStaticData staticData) {
+   public void execute (CGroupsManagerSessionData sessionData) {
+      ChannelStaticData staticData = sessionData.staticData;
+      ChannelRuntimeData runtimeData= sessionData.runtimeData;
+
       Utility.logMessage("DEBUG", "ExpandGroup::execute(): Start");
-      DocumentImpl xmlDoc = getXmlDoc(staticData);
+      Document xmlDoc = getXmlDoc(sessionData);
       // Due to the networked relationship of groups, the next method has to return a list of elements.
       String elemUid = getCommandIds(runtimeData);
       Utility.logMessage("DEBUG", "ExpandGroup::execute(): Uid of expanded element = "
             + elemUid);
-      Element expandedElem = Utility.getElementByTagNameAndId(xmlDoc, GROUP_TAGNAME, elemUid);
+      Element expandedElem = GroupsManagerXML.getElementByTagNameAndId(xmlDoc, GROUP_TAGNAME, elemUid);
       String rootOwner;
       if (expandedElem != null) {
          //Utility.printElement(expandElem,"Group to be expanded was found (not null): \n" );

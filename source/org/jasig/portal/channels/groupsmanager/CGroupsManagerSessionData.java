@@ -37,6 +37,7 @@
 package  org.jasig.portal.channels.groupsmanager;
 
 import  org.jasig.portal.*;
+import  org.jasig.portal.groups.*;
 import  org.jasig.portal.security.IPerson;
 import  org.w3c.dom.Document;
 
@@ -55,8 +56,9 @@ public class CGroupsManagerSessionData {
    public ChannelRuntimeData runtimeData;
    public ChannelStaticData staticData;
    public IServant servantChannel = null;
-   public Document viewDoc;
+   public Document model;
    public String uid;
    public IPerson user;
    public long startRD;
+   public ILockableEntityGroup lockedGroup;
 }

@@ -53,7 +53,7 @@ import  java.util.Set;
  */
 public class GroupsManagerCommandFactory
       implements GroupsManagerConstants {
-   protected static HashMap bindings = new java.util.HashMap(11);
+   protected static HashMap bindings = new java.util.HashMap(12);
    protected static GroupsManagerCommandFactory _instance = null;
 
    /**
@@ -69,6 +69,7 @@ public class GroupsManagerCommandFactory
          bindings.put("Deselect", Class.forName(COMMANDS_PACKAGE + ".SelectMembers").newInstance());
          bindings.put("Done", Class.forName(COMMANDS_PACKAGE + ".DoneWithSelection").newInstance());
          bindings.put("Expand", Class.forName(COMMANDS_PACKAGE + ".ExpandGroup").newInstance());
+         //bindings.put("Find", Class.forName(COMMANDS_PACKAGE + ".FindEntities").newInstance());
          bindings.put("Remove", Class.forName(COMMANDS_PACKAGE + ".RemoveMember").newInstance());
          bindings.put("Select", Class.forName(COMMANDS_PACKAGE + ".SelectMembers").newInstance());
          bindings.put("Update", Class.forName(COMMANDS_PACKAGE + ".UpdateGroup").newInstance());

@@ -44,17 +44,12 @@ package  org.jasig.portal.channels.groupsmanager.commands;
  * @version 2.0
  */
 import  java.util.*;
-import  org.jasig.portal.ChannelStaticData;
-import  org.jasig.portal.ChannelRuntimeData;
+import  org.jasig.portal.*;
 import  org.jasig.portal.channels.groupsmanager.*;
-import  org.jasig.portal.groups.IEntityGroup;
-import  org.jasig.portal.groups.IGroupMember;
-import  org.jasig.portal.groups.GroupsException;
+import  org.jasig.portal.groups.*;
 import  org.jasig.portal.security.IAuthorizationPrincipal;
-import  org.jasig.portal.services.AuthorizationService;
-import  org.jasig.portal.services.GroupService;
-import  org.jasig.portal.services.EntityNameFinderService;
-import  org.apache.xerces.dom.DocumentImpl;
+import  org.jasig.portal.services.*;
+import  org.w3c.dom.Document;
 import  org.w3c.dom.Node;
 import  org.w3c.dom.NodeList;
 import  org.w3c.dom.Element;
@@ -84,10 +79,12 @@ public class DoneWithSelection extends org.jasig.portal.channels.groupsmanager.c
 
    /**
     * put your documentation comment here
-    * @param runtimeData
-    * @param staticData
+    * @param sessionData
     */
-   public void execute (ChannelRuntimeData runtimeData, ChannelStaticData staticData) {
+   public void execute (CGroupsManagerSessionData sessionData) {
+      ChannelStaticData staticData = sessionData.staticData;
+      ChannelRuntimeData runtimeData= sessionData.runtimeData;
+
       Utility.logMessage("DEBUG", "DoneWithSelection::execute(): Start");
       String oldCommand = runtimeData.getParameter("grpCommand");
       // First: gather the selected items
@@ -96,7 +93,7 @@ public class DoneWithSelection extends org.jasig.portal.channels.groupsmanager.c
       runtimeData.setParameter("grpCommand", theCommand);
       IGroupsManagerCommand c = cf.get(theCommand);
       if (c != null) {
-         c.execute(runtimeData, staticData);
+         c.execute(sessionData);
       }
       runtimeData.setParameter("grpCommand", oldCommand);
       String parentId = null;
@@ -105,7 +102,7 @@ public class DoneWithSelection extends org.jasig.portal.channels.groupsmanager.c
          Utility.logMessage("DEBUG", "DoneWithSelection::execute(): Parent ID is set: "
                + hasParentId);
          IGroupMember[] princResults = null;
-         DocumentImpl xmlDoc = getXmlDoc(staticData);
+         Document xmlDoc = getXmlDoc(sessionData);
          Element rootElem = xmlDoc.getDocumentElement();
          NodeList nGroupList = rootElem.getElementsByTagName(GROUP_TAGNAME);
          NodeList nEntityList = rootElem.getElementsByTagName(ENTITY_TAGNAME);
@@ -115,7 +112,7 @@ public class DoneWithSelection extends org.jasig.portal.channels.groupsmanager.c
          try {
             Utility.logMessage("DEBUG", "DoneWithSelection::execute(): Starting group process");
             addGroupMemberToCollection(gmCollection, nGroupList);
-            Utility.logMessage("DEBUG", "DoneWithSelection::execute(): Starting person process");
+            Utility.logMessage("DEBUG", "DoneWithSelection::execute(): Starting entity process");
             addGroupMemberToCollection(gmCollection, nEntityList);
             // null pointer exception
          } catch (org.jasig.portal.AuthorizationException ae) {
@@ -125,8 +122,6 @@ public class DoneWithSelection extends org.jasig.portal.channels.groupsmanager.c
             Utility.logMessage("ERROR", "DoneWithSelection::execute():ClassNotFoundException /n "
                   + cnfe);
          }
-         Utility.logMessage("DEBUG", "DoneWithSelection::execute(): Parent ID is set: "
-               + hasParentId);
          // check if selections were made
          if (gmCollection.size() <1) {
             cmdResponse = runtimeData.getParameter("commandResponse") + "\n No groups or people were selected! ";
@@ -142,7 +137,7 @@ public class DoneWithSelection extends org.jasig.portal.channels.groupsmanager.c
             parentId = getParentId(staticData);
             Utility.logMessage("DEBUG", "DoneWithSelection::execute(): Parent ID is set to: "
                   + parentId);
-            parentElem = Utility.getElementByTagNameAndId(xmlDoc, GROUP_TAGNAME, parentId);
+            parentElem = GroupsManagerXML.getElementByTagNameAndId(xmlDoc, GROUP_TAGNAME, parentId);
             if (parentElem == null) {
                Utility.logMessage("ERROR", "DoneWithSelection::execute: Error parent element not found");
                return;
@@ -154,7 +149,7 @@ public class DoneWithSelection extends org.jasig.portal.channels.groupsmanager.c
             else {
                addChildrenToGroup(gmCollection, runtimeData, parentElem, xmlDoc);
             }
-            clearSelected(staticData);
+            clearSelected(sessionData);
             runtimeData.setParameter("grpMode", "browse");
             runtimeData.setParameter("grpView", "edit");
             runtimeData.setParameter("grpViewId", parentId);
@@ -192,7 +187,8 @@ public class DoneWithSelection extends org.jasig.portal.channels.groupsmanager.c
             Iterator gmItr = gmCollection.iterator();
             while (gmItr.hasNext()) {
                IGroupMember ggmm = (IGroupMember)gmItr.next();
-               if ((ggmm.getKey().equals(elem.getAttribute("key"))) && (ggmm.getType().equals(elem.getAttribute("type")))){
+               if ((ggmm.getKey().equals(elem.getAttribute("key")))
+                        && (ggmm.getType().equals(elem.getAttribute("type")))){
                        addit = false;
                        break;
                }
@@ -200,8 +196,8 @@ public class DoneWithSelection extends org.jasig.portal.channels.groupsmanager.c
             if (addit) {
                IGroupMember gm = Utility.retrieveGroupMemberForKeyAndType(elem.getAttribute("key"),elem.getAttribute("type"));
                gmCollection.add(gm);
-               Utility.logMessage("DoneWithSelection::addGroupMemberToCollection(): DEBUG",
-                     "-got group " + elem.getAttribute("key"));
+               Utility.logMessage("DEBUG", "DoneWithSelection::addGroupMemberToCollection(): " +
+                     "- adding group member" + elem.getAttribute("key"));
             }
          }
       }
@@ -215,7 +211,7 @@ public class DoneWithSelection extends org.jasig.portal.channels.groupsmanager.c
     * @param xmlDoc
     */
    public void addChildrenToGroup (Vector gmCollection, ChannelRuntimeData runtimeData,
-      Element parentElem, DocumentImpl xmlDoc) {
+      Element parentElem, Document xmlDoc) {
       Element parent;
       IEntityGroup parentGroup = null;
       IGroupMember childGm = null;
@@ -240,7 +236,7 @@ public class DoneWithSelection extends org.jasig.portal.channels.groupsmanager.c
             // update parent group
             parentGroup.updateMembers();
             // get parent element(s) and add element for child group member
-            Iterator parentNodes = Utility.getNodesByTagNameAndKey(xmlDoc, GROUP_TAGNAME,
+            Iterator parentNodes = GroupsManagerXML.getNodesByTagNameAndKey(xmlDoc, GROUP_TAGNAME,
                   parentElem.getAttribute("key"));
             while (parentNodes.hasNext()) {
                parent = (Element)parentNodes.next();
@@ -267,7 +263,7 @@ public class DoneWithSelection extends org.jasig.portal.channels.groupsmanager.c
     * @param xmlDoc
     */
    public void addChildrenToContext (Vector gmCollection, ChannelRuntimeData runtimeData,
-         Element parentElem, DocumentImpl xmlDoc) {
+         Element parentElem, Document xmlDoc) {
       // Considerations:
       // The parent element is myGroups and there is only one.
       String childName = "";

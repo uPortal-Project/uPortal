@@ -46,7 +46,8 @@ package  org.jasig.portal.channels.groupsmanager;
  */
 import  java.util.*;
 import  java.io.*;
-import  org.jasig.portal.EntityTypes;
+import  org.jasig.portal.EntityTypes;  /** @todo remove when groups/EntityTypes is removed */
+import  org.jasig.portal.*;
 import  org.jasig.portal.groups.IEntity;
 import  org.jasig.portal.groups.IEntityGroup;
 import  org.jasig.portal.groups.IGroupMember;
@@ -54,16 +55,9 @@ import  org.jasig.portal.services.*;
 import  org.jasig.portal.ChannelRuntimeData;
 import  org.jasig.portal.security.*;
 import  org.jasig.portal.ChannelStaticData;
-import  java.sql.Timestamp;
-import  org.apache.xml.serialize.XMLSerializer;
-import  org.apache.xml.serialize.OutputFormat;
-import  org.w3c.dom.Node;
-import  org.w3c.dom.NodeList;
 import  org.w3c.dom.Element;
-import  org.w3c.dom.Text;
-import  org.apache.xerces.parsers.DOMParser;
-import  org.apache.xerces.parsers.SAXParser;
-import  org.apache.xerces.dom.DocumentImpl;
+import  org.w3c.dom.Document;
+import  javax.xml.parsers.*;
 
 
 /**
@@ -75,7 +69,8 @@ import  org.apache.xerces.dom.DocumentImpl;
  * entry in portal.properties. At this point the RDBMInitialGroupContextStore is
  * hardcoded in InitialGroupsContextImpl.getFactory().
  */
-/**
+
+ /**
  * Contains a groups of static methods used to centralize the generation and
  * retrieval of xml elements for groups and entities.
  */
@@ -84,18 +79,18 @@ public class GroupsManagerXML
    private static int UID = 0;
 
    /**
-    * Returns a DocumentImpl for all InitialContexts for which the user has
+    * Returns a Document for all InitialContexts for which the user has
     * permissions. This method is called when CGroupsManager is instantiated.
     * @param rd
     * @param sd
-    * @return DocumentImpl
+    * @return Document
     */
-   public static DocumentImpl getGroupsManagerXml (ChannelRuntimeData rd, ChannelStaticData sd) {
+   public static Document getGroupsManagerXml (ChannelRuntimeData rd, ChannelStaticData sd) {
       String rkey = null;
       IEntityGroup entGrp = null;
       IGroupMember aGroupMember = null;
       Element igcElement;
-      DocumentImpl viewDoc = new DocumentImpl();
+      Document viewDoc = getNewDocument();
       Element viewRoot = viewDoc.createElement("CGroupsManager");
       viewDoc.appendChild(viewRoot);
       Element apRoot = getAuthorizationXml(sd, null, viewDoc);
@@ -147,152 +142,14 @@ public class GroupsManagerXML
    }
 
    /**
-    * Returns an Element for an IGroupMember. If an element is passed in,
-    * it is acted upon (eg. expand the group), otherwise a new one is created.
-    * @param gm
-    * @param isContextExpanded
-    * @param anElem
-    * @param aDoc
-    * @return Element
-    */
-   public static Element getGroupMemberXml (IGroupMember gm, boolean isContextExpanded,
-         Element anElem, DocumentImpl aDoc) {
-      Element rootElem = null;
-      GroupsManagerWrapperFactory wf = GroupsManagerWrapperFactory.instance();
-      if (gm.isEntity()) {
-         //Element rootElem = (anElem != null ? anElem : GroupsManagerXML.createElement(ENTITY_TAGNAME, aDoc)) ;
-         Utility.logMessage("DEBUG", "GroupsManagerXML::getGroupMemberXml(): About to get entity wrapper");
-         IGroupsManagerWrapper rap = (IGroupsManagerWrapper)wf.get(ENTITY_TAGNAME);
-         Utility.logMessage("DEBUG", "GroupsManagerXML::getGroupMemberXml(): Got entity wrapper");
-         if (rap != null) {
-            //Utility.logMessage("DEBUG", "GroupsManagerXML::retrieveEntityXml: setup parms and about to get entity xml");
-            rootElem = rap.getXml(gm, anElem, aDoc);
-         }
-      }
-      else {
-         Utility.logMessage("DEBUG", "GroupsManagerXML::getGroupMemberXml(): element parm is null = "
-               + (anElem == null));
-         rootElem = (anElem != null ? anElem : GroupsManagerXML.createElement(GROUP_TAGNAME,
-               aDoc, false));
-         rootElem.setAttribute("expanded", String.valueOf(isContextExpanded));
-         Utility.logMessage("DEBUG", "GroupsManagerXML::getGroupMemberXml(): About to get group wrapper");
-         IGroupsManagerWrapper rap = (IGroupsManagerWrapper)wf.get(GROUP_TAGNAME);
-         Utility.logMessage("DEBUG", "GroupsManagerXML::getGroupMemberXml(): Got group wrapper");
-         if (rap != null) {
-            //Utility.logMessage("DEBUG", "GroupsManagerXML::getGroupMemberXml(): setup parms and about to get entity xml");
-            rootElem = rap.getXml(gm, rootElem, aDoc);
-         }
-      }
-      return  rootElem;
-   }
-
-   /**
-    * Returns an IEntity for the key.
-    * @param aKey
-    * @param aType
-    * @return IEntity
-    */
-   public static IEntity retrieveEntity (String aKey, String aType) {
-      IEntity ent = null;
-      try {
-         Class iEntityClass = Class.forName(aType);
-         ent = GroupService.getEntity(aKey, iEntityClass);
-      } catch (Exception e) {
-         Utility.logMessage("ERROR", "EntityWrapper.retrieveEntity(): ERROR retrieving entity "
-               + e.toString());
-      }
-      return  ent;
-   }
-
-   /**
-    * Returns a name from the EntityNameFinderService, for a key and classname
-    * @param className
-    * @param aKey
-    * @return String
-    */
-   public static String getEntityName (String className, String aKey) {
-      String entName = "";
-      try {
-         entName = getEntityName(Class.forName(className), aKey);
-      } catch (Exception e) {
-         Utility.logMessage("ERROR", "GroupsManagerXML.getEntityName(): ERROR retrieving entity "
-               + e.toString());
-      }
-      return  entName;
-   }
-
-   /**
-    * Returns a name from the EntityNameFinderService, for a key and class
-    * @param typClass
-    * @param aKey
-    * @return String
-    */
-   public static String getEntityName (Class typClass, String aKey) {
-      String entName = "";
-      String msg;
-      long time1 = Calendar.getInstance().getTime().getTime();
-      long time2 = 0;
-      try {
-         entName = EntityNameFinderService.instance().getNameFinder(typClass).getName(aKey);
-      } catch (Exception e) {
-         Utility.logMessage("ERROR", "GroupsManagerXML.getEntityName(): ERROR retrieving entity "
-               + e.toString());
-      }
-      time2 = Calendar.getInstance().getTime().getTime();
-      msg = "GroupsManagerXML.getEntityName() timer: " + String.valueOf(time2 - time1)
-            + " ms total";
-      Utility.logMessage("DEBUG", msg);
-      Utility.logMessage("DEBUG", "GroupsManagerXML.getEntityName(): typClass/aKey/entName = " + typClass + "/" + aKey + "/" + entName);
-      return  entName;
-   }
-
-   /**
-    * Returns an IEntityGroup for the key.
-    * @param aKey
-    * @return IEntityGroup
-    */
-   public static IEntityGroup retrieveGroup (String aKey) {
-      Utility.logMessage("DEBUG", "GroupsManagerXML::retrieveGroup(): About to search for Group: "
-            + aKey);
-      //      EntityGroupStoreRDBM groupHome = null;
-      //      IGroupMember printGroupMember = null;
-      IEntityGroup grp = null;
-      try {
-         grp = GroupService.findGroup(aKey);
-         //printGroupMember = (IGroupMember) grp;
-         //Utility.logMessage("DEBUG", "GroupsManagerXML::retrieveGroup(): Inner Print =>\n  " + printGroupMember);
-      } catch (Throwable th) {
-         Utility.logMessage("ERROR", "GroupsManagerXML::retrieveGroup(): Could not retrieve Group Member ("
-               + aKey + "): \n" + th);
-      }
-      return  grp;
-   }
-
-   /**
-    * Returns the next sequential identifier which is used to uniquely
-    * identify an element. This identifier is held in the Element "id" attribute.
-    * "0" is reserved for the Group containing the Initial Contexts for the user.
-    * @return String
-    */
-   public static synchronized String getNextUid () {
-      // max size of int = (2 to the 32 minus 1) = 2147483647
-      Utility.logMessage("DEBUG", "GroupsManagerXML::getNextUid(): Start");
-      if (UID > 2147483600) {
-         // the value 0 is reserved for the group holding the initial group contexts
-         UID = 1;
-      }
-      return  String.valueOf(++UID);
-   }
-
-   /**
-    * Creates an element for the provided DocumentImpl. Alternatively, can
+    * Creates an element for the provided Document. Alternatively, can
     * set default values.
     * @param name
     * @param xmlDoc
     * @param setGrpDefault
     * @return Element
     */
-   public static Element createElement (String name, DocumentImpl xmlDoc, boolean setGrpDefault) {
+   public static Element createElement (String name, Document xmlDoc, boolean setGrpDefault) {
       //* Maybe I should have all parms in a java.util.HashMap
       Element grpRoot = xmlDoc.createElement(name);
       grpRoot.setAttribute("selected", "false");
@@ -312,7 +169,7 @@ public class GroupsManagerXML
    }
 
    /**
-    * Returns an RDF element for the provided DocumentImpl
+    * Returns an RDF element for the provided Document
     * @param title
     * @param description
     * @param creator
@@ -320,7 +177,7 @@ public class GroupsManagerXML
     * @return Element
     */
    public static Element createRdfElement (String title, String description, String creator,
-         DocumentImpl xmlDoc) {
+         Document xmlDoc) {
       //* Maybe I should have all parms in a java.util.HashMap
       Element rdfElem = (Element)xmlDoc.createElement("rdf:RDF");
       rdfElem.setAttribute("xmlns:dc", "http://purl.org/dc/elements/1.1/");
@@ -354,7 +211,7 @@ public class GroupsManagerXML
     * @param xmlDoc
     * @return Element
     */
-   public static Element getAuthorizationXml (ChannelStaticData sd, Element apRoot, DocumentImpl xmlDoc) {
+   public static Element getAuthorizationXml (ChannelStaticData sd, Element apRoot, Document xmlDoc) {
       IAuthorizationPrincipal ap = sd.getAuthorizationPrincipal();
       String princTagName = "principal";
       if (ap != null && apRoot == null) {
@@ -385,22 +242,113 @@ public class GroupsManagerXML
    }
 
    /**
-    * Returns an element for a permission.
-    * @param xmlDoc
-    * @param prmPrincipal
-    * @param prmActivity
-    * @param prmType
-    * @param prmTarget
+    * Returns an element from an xml document for a unique id. An error is
+    * displayed if more than one element is found.
+    * @param aDoc
+    * @param id
     * @return Element
     */
-   public static Element getPermissionXml (DocumentImpl xmlDoc, String prmPrincipal,
-         String prmActivity, String prmType, String prmTarget) {
-      Element prm = xmlDoc.createElement("permission");
-      prm.setAttribute("principal", prmPrincipal);
-      prm.setAttribute("activity", prmActivity);
-      prm.setAttribute("type", prmType);
-      prm.setAttribute("target", prmTarget);
-      return  prm;
+   public static Element getElementById (Document aDoc, String id) {
+      int i;
+      Collection elems = new java.util.ArrayList();
+      Element elem = null;
+      Element retElem = null;
+      org.w3c.dom.NodeList nList;
+      String tagName = ENTITY_TAGNAME;
+      boolean isDone = false;
+      while (!isDone) {
+         nList = aDoc.getElementsByTagName(tagName);
+         for (i = 0; i < nList.getLength(); i++) {
+            elem = (Element)nList.item(i);
+            if (elem.getAttribute("id").equals(id)) {
+               elems.add(elem);
+            }
+         }
+         if (tagName.equals(ENTITY_TAGNAME)) {
+            tagName = GROUP_TAGNAME;
+         }
+         else {
+            isDone = true;
+         }
+         if (elems.size() != 1) {
+            if (elems.size() > 1) {
+               LogService.log(LogService.ERROR, "GroupsManagerXML::getElementById:  More than one element found for Id: "
+                     + id);
+            }
+         }
+         else {
+            retElem = (Element)elems.iterator().next();
+         }
+      }
+      return  retElem;
+   }
+
+   /**
+    * Returns an Element from a Document for a tagname and element id
+    * @param aDoc
+    * @param tagname
+    * @param id
+    * @return Element
+    */
+   public static Element getElementByTagNameAndId (Document aDoc, String tagname,
+         String id) {
+      int i;
+      Element elem = null;
+      Element selElem = null;
+      org.w3c.dom.NodeList nList = aDoc.getElementsByTagName(tagname);
+      for (i = 0; i < nList.getLength(); i++) {
+         elem = (Element)nList.item(i);
+         if (elem.getAttribute("id").equals(id)) {
+            selElem = elem;
+            break;
+         }
+      }
+      return  selElem;
+   }
+
+   /**
+    * Returns a name from the EntityNameFinderService, for a key and class
+    * @param typClass
+    * @param aKey
+    * @return String
+    */
+   public static String getEntityName (Class typClass, String aKey) {
+      //if (aKey != null){ return "BOGUS_ENTITY_NAME";}
+      String entName = "";
+      String msg;
+      long time1 = Calendar.getInstance().getTime().getTime();
+      long time2 = 0;
+      Utility.logMessage("DEBUG", "GroupsManagerXML.getEntityName(Class,String): Retrieving entity for entityType: " + typClass.getName() + " key: " + aKey);
+      try {
+         entName = EntityNameFinderService.instance().getNameFinder(typClass).getName(aKey);
+      } catch (Exception e) {
+         Utility.logMessage("ERROR", "GroupsManagerXML.getEntityName(Class,String): ERROR retrieving entity "
+               + e.toString());
+      }
+      time2 = Calendar.getInstance().getTime().getTime();
+      msg = "GroupsManagerXML.getEntityName(Class,String) timer: " + String.valueOf(time2 - time1)
+            + " ms total";
+      Utility.logMessage("DEBUG", msg);
+      Utility.logMessage("DEBUG", "GroupsManagerXML.getEntityName(Class,String): typClass/aKey/entName = " + typClass + "/" + aKey + "/" + entName);
+      return  entName;
+   }
+
+   /**
+    * Returns a name from the EntityNameFinderService, for a key and classname
+    * @param className
+    * @param aKey
+    * @return String
+    */
+   public static String getEntityName (String className, String aKey) {
+      String entName = "";
+      Utility.logMessage("DEBUG", "GroupsManagerXML.getEntityName(String,String): Retrieving entity for entityType: " + className + " key: " + aKey);
+      try {
+         entName = getEntityName(Class.forName(className), aKey);
+      } catch (Exception e) {
+         Utility.logMessage("ERROR", "GroupsManagerXML.getEntityName(String,String): ERROR retrieving entity "
+               + e.toString());
+      }
+      return  entName;
    }
 
    /**
@@ -443,7 +391,7 @@ public class GroupsManagerXML
     * @param xmlDoc
     * @return Element
     */
-   public static Element getEntityTypesXml (DocumentImpl xmlDoc) {
+   public static Element getEntityTypesXml (Document xmlDoc) {
       Element etRoot = xmlDoc.createElement("entityTypes");
       HashMap entTypes = getEntityTypes();
       Iterator entTypeKeys = entTypes.keySet().iterator();
@@ -456,6 +404,252 @@ public class GroupsManagerXML
          etRoot.appendChild(etElem);
       }
       return  etRoot;
+   }
+
+   /**
+    * Returns an Element with the expanded attribute set to true from a
+    * Document for a tagname and IGroupMember key. This could be used for
+    * cloning elements that have already be expanded thereby avoiding the extra
+    * time required to retrieve and create an element.
+    * @param aDoc
+    * @param tagname
+    * @param key
+    * @return Element
+    */
+   public static Element getExpandedElementForTagNameAndKey (Document aDoc, String tagname,
+         String key) {
+      java.util.Iterator nodeItr = getNodesByTagNameAndKey(aDoc, tagname, key);
+      Element curElem = null;
+      Element expElem = null;
+      while (nodeItr.hasNext()) {
+         curElem = (Element)nodeItr.next();
+         if (curElem.getAttribute("expanded").equals("true")) {
+            expElem = curElem;
+            break;
+         }
+      }
+      return  expElem;
+   }
+
+   /**
+    * Returns an Element for an IGroupMember. If an element is passed in,
+    * it is acted upon (eg. expand the group), otherwise a new one is created.
+    * @param gm
+    * @param isContextExpanded
+    * @param anElem
+    * @param aDoc
+    * @return Element
+    */
+   public static Element getGroupMemberXml (IGroupMember gm, boolean isContextExpanded,
+         Element anElem, Document aDoc) {
+      Element rootElem = null;
+      GroupsManagerWrapperFactory wf = GroupsManagerWrapperFactory.instance();
+      if (gm.isEntity()) {
+         Utility.logMessage("DEBUG", "GroupsManagerXML::getGroupMemberXml(): About to get entity wrapper");
+         IGroupsManagerWrapper rap = (IGroupsManagerWrapper)wf.get(ENTITY_TAGNAME);
+         Utility.logMessage("DEBUG", "GroupsManagerXML::getGroupMemberXml(): Got entity wrapper");
+         if (rap != null) {
+            rootElem = rap.getXml(gm, anElem, aDoc);
+         }
+      }
+      else {
+         Utility.logMessage("DEBUG", "GroupsManagerXML::getGroupMemberXml(): element parm is null = "
+               + (anElem == null));
+         rootElem = (anElem != null ? anElem : GroupsManagerXML.createElement(GROUP_TAGNAME,
+               aDoc, false));
+         rootElem.setAttribute("expanded", String.valueOf(isContextExpanded));
+         Utility.logMessage("DEBUG", "GroupsManagerXML::getGroupMemberXml(): About to get group wrapper");
+         IGroupsManagerWrapper rap = (IGroupsManagerWrapper)wf.get(GROUP_TAGNAME);
+         Utility.logMessage("DEBUG", "GroupsManagerXML::getGroupMemberXml(): Got group wrapper");
+         if (rap != null) {
+            rootElem = rap.getXml(gm, rootElem, aDoc);
+         }
+      }
+      return  rootElem;
+   }
+
+   /**
+    * Returns a new Document
+    * @return Document
+    */
+   public static Document getNewDocument () {
+      Document aDoc = null;
+      Utility.logMessage("DEBUG", "GroupsManagerXML::getNewDocument(): About to get new Document");
+      try{
+         aDoc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+      }
+      catch(ParserConfigurationException pce){
+         Utility.logMessage("ERROR", "GroupsManagerXML::getNewDocument(): Unable to get new Document\n"
+               + pce);
+      }
+      return aDoc;
+   }
+
+   /**
+    * Returns the next sequential identifier which is used to uniquely
+    * identify an element. This identifier is held in the Element "id" attribute.
+    * "0" is reserved for the Group containing the Initial Contexts for the user.
+    * @return String
+    */
+   public static synchronized String getNextUid () {
+      // max size of int = (2 to the 32 minus 1) = 2147483647
+      Utility.logMessage("DEBUG", "GroupsManagerXML::getNextUid(): Start");
+      if (UID > 2147483600) {
+         // the value 0 is reserved for the group holding the initial group contexts
+         UID = 0;
+      }
+      return  String.valueOf(++UID);
+   }
+
+   /**
+    * Even though we know we will find a single element, we sometimes want
+    * it returned in an iterator in order to streamline processing.
+    * @param aDoc
+    * @param id
+    * @return iterator
+    */
+   public static java.util.Iterator getNodesById (Document aDoc, String id) {
+      int i;
+      Collection nodes = new java.util.ArrayList();
+      Element elem = (Element)getElementById(aDoc, id);
+      nodes.add(elem);
+      return  nodes.iterator();
+   }
+
+   /**
+    * Returns an iterator of Nodes for a Document for a tagname and IGroupMember key
+    * @param aDoc
+    * @param tagname
+    * @param key
+    * @return Iterator
+    */
+   public static java.util.Iterator getNodesByTagNameAndKey (Document aDoc, String tagname,
+         String key) {
+      int i;
+      Collection nodes = new java.util.ArrayList();
+      Element elem = null;
+      org.w3c.dom.NodeList nList = aDoc.getElementsByTagName(tagname);
+
+      for (i = 0; i < nList.getLength(); i++) {
+         elem = (Element)nList.item(i);
+         if (elem.getAttribute("key").equals(key)) {
+            nodes.add(nList.item(i));
+         }
+      }
+      Utility.logMessage("DEBUG", "GroupsManagerXML::getNodesByTagNameAndKey: Number of nodes found for tagname " + tagname + " and Key: "
+            + key + " is: " + nodes.size());
+      return  nodes.iterator();
+   }
+
+   /**
+    * Returns an iterator of Nodes for an Element for a tagname and IGroupMember key
+    * @param anElem
+    * @param tagname
+    * @param key
+    * @return Iterator
+    */
+   public static java.util.Iterator getNodesByTagNameAndKey (Element anElem, String tagname,
+         String key) {
+      int i;
+      Collection nodes = new java.util.ArrayList();
+      Element elem = null;
+      org.w3c.dom.NodeList nList = anElem.getElementsByTagName(tagname);
+
+      for (i = 0; i < nList.getLength(); i++) {
+         elem = (Element)nList.item(i);
+         if (elem.getAttribute("key").equals(key)) {
+            nodes.add(nList.item(i));
+         }
+      }
+      Utility.logMessage("DEBUG", "GroupsManagerXML::getNodesByTagNameAndKey: Number of nodes found for tagname " + tagname + " and Key: "
+            + key + " is: " + nodes.size());
+      return  nodes.iterator();
+   }
+
+   /**
+    * Returns an element for a permission.
+    * @param xmlDoc
+    * @param prmPrincipal
+    * @param prmActivity
+    * @param prmType
+    * @param prmTarget
+    * @return Element
+    */
+   public static Element getPermissionXml (Document xmlDoc, String prmPrincipal,
+         String prmActivity, String prmType, String prmTarget) {
+      Element prm = xmlDoc.createElement("permission");
+      prm.setAttribute("principal", prmPrincipal);
+      prm.setAttribute("activity", prmActivity);
+      prm.setAttribute("type", prmType);
+      prm.setAttribute("target", prmTarget);
+      return  prm;
+   }
+
+   /**
+    * Returns an IEntity for the key.
+    * @param aKey
+    * @param aType
+    * @return IEntity
+    */
+   public static IEntity retrieveEntity (String aKey, String aType) {
+      IEntity ent = null;
+      try {
+         Class iEntityClass = Class.forName(aType);
+         ent = GroupService.getEntity(aKey, iEntityClass);
+      } catch (Exception e) {
+         Utility.logMessage("ERROR", "EntityWrapper.retrieveEntity(): ERROR retrieving entity "
+               + e.toString());
+      }
+      return  ent;
+   }
+
+   /**
+    * Returns an IEntityGroup for the key.
+    * @param aKey
+    * @return IEntityGroup
+    */
+   public static IEntityGroup retrieveGroup (String aKey) {
+      Utility.logMessage("DEBUG", "GroupsManagerXML::retrieveGroup(): About to search for Group: "
+            + aKey);
+      IEntityGroup grp = null;
+      try {
+         grp = GroupService.findGroup(aKey);
+      } catch (Throwable th) {
+         Utility.logMessage("ERROR", "GroupsManagerXML::retrieveGroup(): Could not retrieve Group Member ("
+               + aKey + "): \n" + th);
+      }
+      return  grp;
+   }
+
+   /**
+    * Returns the IGroupMember represented by an Element
+    * @param aDoc
+    * @param id
+    * @return IGroupMember
+    */
+   public static IGroupMember retrieveGroupMemberForElementId (Document aDoc, String id) {
+
+      Element gmElem = getElementById(aDoc, id);
+      IGroupMember gm;
+      if (gmElem == null) {
+         Utility.logMessage("ERROR", "GroupsManagerXML::retrieveGroupMemberForElementId(): Unable to retrieve the element with id = "
+               + id);
+         return  null;
+      }
+      else {
+         Utility.logMessage("DEBUG", "GroupsManagerXML::retrieveGroupMemberForElementId(): The child type = "
+               + gmElem.getTagName());
+      }
+      String gmKey = gmElem.getAttribute("key");
+      Utility.logMessage("DEBUG", "GroupsManagerXML::retrieveGroupMemberForElementId(): About to retrieve group member ("
+            + gmElem.getTagName() + " for key: " + gmKey);
+      if (gmElem.getTagName().equals(GROUP_TAGNAME)) {
+         gm = (IGroupMember)GroupsManagerXML.retrieveGroup(gmKey);
+      }
+      else {
+         gm = (IGroupMember)GroupsManagerXML.retrieveEntity(gmKey,gmElem.getAttribute("type"));
+      }
+      return  gm;
    }
 }
 

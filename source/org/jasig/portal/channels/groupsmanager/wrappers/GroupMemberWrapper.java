@@ -46,19 +46,15 @@ package  org.jasig.portal.channels.groupsmanager.wrappers;
  */
 import  org.jasig.portal.channels.groupsmanager.*;
 import  org.jasig.portal.groups.*;
-import  org.jasig.portal.utils.SmartCache;
 import  org.w3c.dom.Element;
 import  org.w3c.dom.NodeList;
-import  org.apache.xerces.dom.DocumentImpl;
-
+import  org.w3c.dom.Document;
 
 /**
  * Returns an xml element for an IGroupMember.
  */
 public abstract class GroupMemberWrapper
       implements IGroupsManagerWrapper, GroupsManagerConstants {
-   //SmartCache will hold group elements with a timeout of 5 minutes
-   private static final SmartCache XML_ELEMENT_CACHE = new SmartCache(300);
    protected String ELEMENT_TAGNAME ;
 
    /** Creates new GroupMemberWrapper */
@@ -76,15 +72,13 @@ public abstract class GroupMemberWrapper
     * @param aDoc
     * @return Element
     */
-   public Element getXml (String aKey, String aType, Element anElem, DocumentImpl aDoc) {
+   public Element getXml (String aKey, String aType, Element anElem, Document aDoc) {
       Utility.logMessage("DEBUG", "GroupMemberWrapper::getXml(" + aKey + "): START");
-      Element rootElem = (anElem != null ? anElem : getNewElement (aKey, aDoc));
+      Element rootElem = (anElem != null ? anElem : GroupsManagerXML.createElement(ELEMENT_TAGNAME, aDoc, false));
       Utility.logMessage("DEBUG", "GroupMemberWrapper::getXml(" + aKey + "): rootElem: " + rootElem);
-      if (isRetrievalRequired(rootElem)) {
-         IGroupMember gm = retrieveGroupMember(aKey, aType);
-         Utility.logMessage("DEBUG", "GroupMemberWrapper::getXml(" + aKey + "): grp: " + gm);
-         getXml(gm, rootElem, aDoc);
-      }
+      IGroupMember gm = retrieveGroupMember(aKey, aType);
+      Utility.logMessage("DEBUG", "GroupMemberWrapper::getXml(" + aKey + "): grp: " + gm);
+      getXml(gm, rootElem, aDoc);
       return  rootElem;
    }
 
@@ -95,81 +89,13 @@ public abstract class GroupMemberWrapper
     * @param aDoc
     * @return Element
     */
-   public abstract Element getXml (IGroupMember gm, Element anElem, DocumentImpl aDoc) ;
+   public abstract Element getXml (IGroupMember gm, Element anElem, Document aDoc) ;
 
     /**
     * Returns a GroupMember for a key.
     * @param aKey
+    * @param aType
     * @return IGroupMember
     */
    protected abstract IGroupMember retrieveGroupMember (String aKey, String aType) ;
-
-    /**
-    * Answers if the group member has to be retrieved.
-    * @param anElem
-    * @return boolean
-    */
-   protected abstract boolean isRetrievalRequired (Element anElem) ;
-
-   /**
-    * Returns the xml element cached for a given IGroupMember key.
-    * @param aKey
-    * @return Element
-    */
-   protected Element getCachedElement (String aKey) {
-      Utility.logMessage("DEBUG", "GroupMemberWrapper::getCachedElement(): START, get KEY: " + aKey);
-      Element cachedElem = (Element)XML_ELEMENT_CACHE.get(aKey);
-      return  (cachedElem == null ? cachedElem : (Element) cachedElem.cloneNode(false));
-   }
-
-   /**
-    * Puts an element into the xml element cached.
-    * @param aKey
-    * @param anElem
-    */
-   protected void putCachedElement (String aKey, Element anElem) {
-      Utility.logMessage("DEBUG", "GroupMemberWrapper::putCachedElement(): START, put KEY: " + aKey + " ELEM: " + anElem);
-      // has to be a deep copy because the group has an RDF element. This means the
-      // element has to be cached before it is expanded with child elements.
-      Element cachedElem = (Element) anElem.cloneNode(false);
-      XML_ELEMENT_CACHE.put(aKey, cachedElem);
-      return;
-   }
-
-   /**
-    * Returns either the cached element for a given IGroupMember key or creates a
-    * new element for the key.
-    * @param aKey
-    * @param aDoc
-    * @return Element
-    */
-   protected Element getNewElement (String aKey, DocumentImpl aDoc) {
-      Utility.logMessage("DEBUG", "GroupMemberWrapper::getNewElement(): START, KEY: " + aKey);
-      Element retElem = (Element) getCachedElement(aKey);
-      if (retElem != null) {
-         Utility.logMessage("DEBUG", "GroupMemberWrapper::getNewElement(): Cached Elem found");
-         retElem.setAttribute("id", GroupsManagerXML.getNextUid());
-         aDoc.adoptNode(retElem);
-         Utility.logMessage("DEBUG", "GroupMemberWrapper::getNewElement(): cachedElem adopted");
-      }
-      else {
-         Utility.logMessage("DEBUG", "GroupMemberWrapper::getNewElement(): cachedElem NOT found");
-         retElem = GroupsManagerXML.createElement(ELEMENT_TAGNAME, aDoc, false);
-      }
-      return  retElem;
-   }
-
-   /**
-    * Removes an element from the cache.
-    * @param aKey
-    */
-   public void removeCachedElement (Object aKey) {
-      Utility.logMessage("DEBUG", "GroupMemberWrapper::removeCachedElement(): START, remove KEY: ");
-      XML_ELEMENT_CACHE.remove(aKey);
-      return;
-   }
-
 }
-
-
-
