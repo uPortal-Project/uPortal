@@ -27,7 +27,7 @@
   </xsl:template>
 
   <xsl:template name="buttons">
-   <table border="0"><tr><form action="index.jsp">
+   <table border="0"><tr><form>
     <input type="hidden" name="channelTarget"><xsl:attribute name="value"><xsl:value-of select="$channelID"/></xsl:attribute></input>
     <td>
       <input type="submit" name="action" value="Add"/>

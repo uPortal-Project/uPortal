@@ -26,21 +26,33 @@
      <xsl:value-of select="@comments"/>
     </td>
     <td>
-     [<a><xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>action=edit&amp;bookmark=<xsl:number count="bookmark"/></xsl:attribute>edit</a>]
+     [<a><xsl:attribute name="href"><xsl:value-of select="$baseActionURL"/>action=edit&amp;bookmark=<xsl:number count="bookmark"/></xsl:attribute>edit</a>]
      [<a><xsl:attribute name="href"><xsl:value-of select="$baseActionURL"/>action=delete&amp;bookmark=<xsl:number count="bookmark"/></xsl:attribute>delete</a>]
     </td>
    </tr>
   </xsl:template>
 
   <xsl:template name="buttons">
-   <table border="0"><tr><form>                                                                                
-   <td><input type="button" name="add" value="Add Bookmark">
-   <xsl:attribute name="onClick">location=<xsl:text>'</xsl:text><xsl:value-of select="$baseActionURL"/>action=new<xsl:text>'</xsl:text></xsl:attribute></input>
-   </td>
-   <td><input type="button" name="finished" value="Finished">
-      <xsl:attribute name="onClick">location='<xsl:value-of select="$baseActionURL"/>action=doneEditing'</xsl:attribute></input>
-   </td>
-   </form></tr></table>
+    <table border="0">
+      <tr>
+        <form method="post">                                                                                
+          <td>
+            <input type="button" name="add" value="Add Bookmark">
+              <xsl:attribute name="onClick">
+                location=<xsl:text>'</xsl:text><xsl:value-of select="$baseActionURL"/>action=new<xsl:text>'</xsl:text>
+              </xsl:attribute>
+            </input>
+          </td>
+          <td>
+            <input type="button" name="finished" value="Finished">
+              <xsl:attribute name="onClick">
+                location=<xsl:text>'</xsl:text><xsl:value-of select="$baseActionURL"/>action=doneEditing&amp;userLayoutRoot=root<xsl:text>'</xsl:text>
+              </xsl:attribute>
+            </input>
+          </td>
+        </form>
+      </tr>
+    </table>
   </xsl:template>
 
 </xsl:stylesheet>
