@@ -126,12 +126,13 @@ Version $Revision$
 
       <description>
         These are the parameters needed for the applet itself.  There may
-        be zero or more parameters.  Currently, applets are unable to be 
-        published with their own parameters.  If you need to add applet
-        parameters, do it manually in the database :(  Make sure the 
-        parameter names start with &quot;APPLET.&quot;
+        be zero or more parameters.
       </description>
-
+      
+      <arbitrary-parameters>
+        <paramName-prefix>APPLET.</paramName-prefix>
+      </arbitrary-parameters>
+      
     </step>     
        
   </params>
