@@ -116,11 +116,20 @@ public class CBookmarks extends BaseChannel {
       int userid = staticData.getPerson().getID();
       // Attempt to retrieve the user's bookmark's
       String query = "SELECT BOOKMARK_XML, PORTAL_USER_ID FROM UPC_BOOKMARKS WHERE PORTAL_USER_ID=" + userid;
-      // Get the result set
-      ResultSet rs = connection.createStatement().executeQuery(query);
-      if (rs.next()) {
-        // If a result came back then use that for the XML...
-        inputXML = rs.getString("BOOKMARK_XML");
+      Statement stmt = connection.createStatement();
+      try {
+        // Get the result set
+        ResultSet rs = stmt.executeQuery(query);
+        try {
+          if (rs.next()) {
+            // If a result came back then use that for the XML...
+            inputXML = rs.getString("BOOKMARK_XML");
+          }
+        } finally {
+          rs.close();
+        }
+      } finally {
+        stmt.close();
       }
       if (inputXML == null || inputXML.length() == 0) {
         // ...or else use the bookmarks from the default user
@@ -157,24 +166,33 @@ public class CBookmarks extends BaseChannel {
       connection = getConnection();
       // Get the bookmarks for the 'default' user
       String query = "SELECT BOOKMARK_XML, PORTAL_USER_ID FROM UPC_BOOKMARKS WHERE PORTAL_USER_ID = 0";
-      // Try to get the 'default' bookmarks from the database
-      ResultSet rs = connection.createStatement().executeQuery(query);
-      if (rs.next()) {
-        // Use the 'default' user's bookmarks...
-        inputXML = rs.getString("BOOKMARK_XML");
+      Statement stmt = connection.createStatement();
+      try {
+        // Try to get the 'default' bookmarks from the database
+        ResultSet rs = stmt.executeQuery(query);
+        try {
+          if (rs.next()) {
+            // Use the 'default' user's bookmarks...
+          inputXML = rs.getString("BOOKMARK_XML");
+          }
+          else {
+            // Generate the XML here as a last resort
+            inputXML = "<?xml version=\"1.0\"?>" + "<!DOCTYPE xbel PUBLIC \"+//IDN python.org//DTD XML Bookmark Exchange Language 1.0//EN//XML\" \"http://www.python.org/topics/xml/dtds/xbel-1.0.dtd\">"
+                + "<xbel>" + "  <title>Default Bookmarks</title>" + "  <info>" + "    <metadata owner=\'" + staticData.getPerson().getID()
+                + "\'/>" + "  </info>" + "</xbel>";
+            LogService.instance().log(LogService.WARN, "CBookmarks.getDefaultBookmarks(): Could not find bookmarks for 'default' user");
+          }
+        } finally {
+          rs.close();
+        }
+        // Now add a row to the database for the user
+        String insert = "INSERT INTO UPC_BOOKMARKS (PORTAL_USER_ID, BOOKMARK_XML) VALUES (" + staticData.getPerson().getID()
+            + ",'" + inputXML + "')";
+        //LogService.instance().log(LogService.DEBUG, insert);
+        stmt.executeUpdate(insert);
+      } finally {
+        stmt.close();
       }
-      else {
-        // Generate the XML here as a last resort
-        inputXML = "<?xml version=\"1.0\"?>" + "<!DOCTYPE xbel PUBLIC \"+//IDN python.org//DTD XML Bookmark Exchange Language 1.0//EN//XML\" \"http://www.python.org/topics/xml/dtds/xbel-1.0.dtd\">"
-            + "<xbel>" + "  <title>Default Bookmarks</title>" + "  <info>" + "    <metadata owner=\'" + staticData.getPerson().getID()
-            + "\'/>" + "  </info>" + "</xbel>";
-        LogService.instance().log(LogService.WARN, "CBookmarks.getDefaultBookmarks(): Could not find bookmarks for 'default' user");
-      }
-      // Now add a row to the database for the user
-      String insert = "INSERT INTO UPC_BOOKMARKS (PORTAL_USER_ID, BOOKMARK_XML) VALUES (" + staticData.getPerson().getID()
-          + ",'" + inputXML + "')";
-      //LogService.instance().log(LogService.DEBUG, insert);
-      connection.createStatement().executeUpdate(insert);
     } catch (Exception e) {
       LogService.instance().log(LogService.ERROR, e);
     } finally {
@@ -194,20 +212,24 @@ public class CBookmarks extends BaseChannel {
    * put your documentation comment here
    */
   protected void saveXML () {
-    Connection connection = null;
     if (m_bookmarksXML == null) {
       return;
     }
+    Connection connection = getConnection();
     try {
       StringWriter stringWriter = new StringWriter();
       // Serialize the DOM tree to a string
       XMLSerializer xmlSerializer = new XMLSerializer(stringWriter, new OutputFormat(m_bookmarksXML));
       xmlSerializer.serialize(m_bookmarksXML);
       // Get a connection to the database
-      connection = getConnection();
       String update = "UPDATE UPC_BOOKMARKS SET BOOKMARK_XML = '" + stringWriter.toString() + "' WHERE PORTAL_USER_ID = "
           + staticData.getPerson().getID();
-      connection.createStatement().executeUpdate(update);
+      Statement stmt = connection.createStatement();
+      try {
+        stmt.executeUpdate(update);
+      } finally {
+        stmt.close();
+      }
     } catch (Exception e) {
       LogService.instance().log(LogService.ERROR, e);
     } finally {
