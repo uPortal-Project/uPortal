@@ -152,7 +152,7 @@ public class DescriptorHandler
         }
         catch( ZipException ze )
         {
-            log.debug(
+            log.error(
                             "The zip entry " +
                             CarResources.DEPLOYMENT_DESCRIPTOR +
                             " in " + jarFile.getName() +
@@ -160,7 +160,7 @@ public class DescriptorHandler
         }
         catch( IOException ioe )
         {
-            log.debug(
+            log.error(
                             "Unable to read entry " +
                             CarResources.DEPLOYMENT_DESCRIPTOR +
                             " in " + jarFile.getName() +
@@ -168,7 +168,7 @@ public class DescriptorHandler
         }
         catch( SecurityException se )
         {
-            log.debug(
+            log.error(
                             "Unable to read entry " +
                             CarResources.DEPLOYMENT_DESCRIPTOR +
                             " in " + jarFile.getName() +
@@ -177,7 +177,7 @@ public class DescriptorHandler
         }
         catch( FactoryConfigurationError fce )
         {
-            log.debug(
+            log.error(
                             "Unable to read entry " +
                             CarResources.DEPLOYMENT_DESCRIPTOR +
                             " in " + jarFile.getName() +
@@ -186,7 +186,7 @@ public class DescriptorHandler
         }
         catch( ParserConfigurationException pce )
         {
-            log.debug(
+            log.error(
                             "Unable to read entry " +
                             CarResources.DEPLOYMENT_DESCRIPTOR +
                             " in " + jarFile.getName() +
@@ -195,7 +195,7 @@ public class DescriptorHandler
         }
         catch( SAXException sxe )
         {
-            log.debug(
+            log.error(
                             "Unable to read entry " +
                             CarResources.DEPLOYMENT_DESCRIPTOR +
                             " in " + jarFile.getName() +
@@ -210,7 +210,7 @@ public class DescriptorHandler
         }
         catch( RuntimeException re )
         {
-            log.debug(
+            log.error(
                             "Unable to completely parse entry " +
                             CarResources.DEPLOYMENT_DESCRIPTOR +
                             " in " + jarFile.getName() +
@@ -219,7 +219,7 @@ public class DescriptorHandler
         }
         catch( IOException ioe )
         {
-            log.debug(
+            log.error(
                             "Unable to completely parse entry " +
                             CarResources.DEPLOYMENT_DESCRIPTOR +
                             " in " + jarFile.getName() +
@@ -227,7 +227,7 @@ public class DescriptorHandler
         }
         catch( SAXException sxe )
         {
-            log.debug(
+            log.error(
                             "Unable to completely parse entry " +
                             CarResources.DEPLOYMENT_DESCRIPTOR +
                             " in " + jarFile.getName() +
@@ -242,7 +242,7 @@ public class DescriptorHandler
 			} 
 			catch (IOException ioe) {
 				log.error(
-						"::Unable to close inputStream " + ioe);
+						"Unable to close inputStream " + ioe);
 			}
 		}
     }
