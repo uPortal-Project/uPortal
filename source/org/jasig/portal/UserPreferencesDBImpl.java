@@ -205,7 +205,27 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
                 this.populateUserParameterChannelAttributes(upXML,fsup);
                 this.populateUserParameterFolderAttributes(upXML,fsup);
             } else {
-                Logger.log(Logger.DEBUG,"UserPreferencesDBInpl::getStructureStylesheetUserPreferences() : Couldn't find stylesheet preferences for userId=\""+userId+"\", profileId=\""+profileId+"\" and stylesheetName=\""+stylesheetName+"\".");
+		// construct user preference object with the default values
+		// CoreStylesheetDescriptionDB object should not be instantiated here. 
+		// This will go away once everything is merged under one DB interface.
+		ICoreStylesheetDescriptionDB sddb=new CoreStylesheetDescriptionDBImpl();
+		StructureStylesheetDescription ssd=sddb.getStructureStylesheetDescription(stylesheetName);
+		// set the default values for parameters
+		for(Enumeration e=ssd.getStylesheetParameterNames(); e.hasMoreElements();) {
+		    String name=(String) e.nextElement();
+		    fsup.putParameterValue(name,ssd.getStylesheetParameterDefaultValue(name));
+		}
+		// set folder attributes
+		for(Enumeration e=ssd.getFolderAttributeNames(); e.hasMoreElements(); ) {
+		    String name=(String) e.nextElement();
+		    fsup.addFolderAttribute(name,ssd.getFolderAttributeDefaultValue(name));
+		}
+		// set channel attributes
+		for(Enumeration e=ssd.getChannelAttributeNames(); e.hasMoreElements(); ) {
+		    String name=(String) e.nextElement();
+		    fsup.addChannelAttribute(name,ssd.getChannelAttributeDefaultValue(name));
+		}
+		//                Logger.log(Logger.DEBUG,"UserPreferencesDBInpl::getStructureStylesheetUserPreferences() : Couldn't find stylesheet preferences for userId=\""+userId+"\", profileId=\""+profileId+"\" and stylesheetName=\""+stylesheetName+"\".");
             }
         } catch (Exception e) {
             Logger.log(Logger.ERROR,e);
@@ -222,7 +242,22 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
                 this.populateUserParameterPreferences(upXML,ssup);
                 this.populateUserParameterChannelAttributes(upXML,ssup);
             } else {
-                Logger.log(Logger.DEBUG,"UserPreferencesDBInpl::getThemeStylesheetUserPreferences() : Couldn't find stylesheet preferences for userId=\""+userId+"\", profileId=\""+profileId+"\" and stylesheetName=\""+stylesheetName+"\".");
+		// construct user preference object with the default values
+		// CoreStylesheetDescriptionDB object should not be instantiated here. 
+		// This will go away once everything is merged under one DB interface.
+		ICoreStylesheetDescriptionDB sddb=new CoreStylesheetDescriptionDBImpl();
+		ThemeStylesheetDescription ssd=sddb.getThemeStylesheetDescription(stylesheetName);
+		// set the default values for parameters
+		for(Enumeration e=ssd.getStylesheetParameterNames(); e.hasMoreElements();) {
+		    String name=(String) e.nextElement();
+		    ssup.putParameterValue(name,ssd.getStylesheetParameterDefaultValue(name));
+		}
+		// set channel attributes
+		for(Enumeration e=ssd.getChannelAttributeNames(); e.hasMoreElements(); ) {
+		    String name=(String) e.nextElement();
+		    ssup.addChannelAttribute(name,ssd.getChannelAttributeDefaultValue(name));
+		}
+		//                Logger.log(Logger.DEBUG,"UserPreferencesDBInpl::getThemeStylesheetUserPreferences() : Couldn't find stylesheet preferences for userId=\""+userId+"\", profileId=\""+profileId+"\" and stylesheetName=\""+stylesheetName+"\".");
             }
         } catch (Exception e) {
             Logger.log(Logger.ERROR,e);

@@ -173,7 +173,7 @@ public interface IUserPreferencesDB {
      * @param userId user id
      * @param profileId profile id
      * @param stylesheetName structure stylesheet name
-     * @return structure stylesheet user pferences
+     * @return structure stylesheet user preferences. null is returned only if userId, profileId or stylesheet with an appropriate name do not exist. If all of the parameters are valid, but the user does not have any user preference settings associated with this stylesheet, return contains stylesheet preference object filled in with the defaults defined in stylesheet description.
      */
     public StructureStylesheetUserPreferences getStructureStylesheetUserPreferences(int userId,int profileId,String stylesheetName);
     /** Obtain theme styelsheet user preferences
@@ -181,7 +181,7 @@ public interface IUserPreferencesDB {
      * @param userId user id
      * @param profileId profile id
      * @param stylesheetName theme stylesheet name
-     * @return theme stylesheet user preferences
+     * @return theme stylesheet user preferences. null is returned only if userId, profileId or stylesheet with an appropriate name do not exist. If all of the parameters are valid, but the user does not have any user preference settings associated with this stylesheet, return contains stylesheet preference object filled in with the defaults defined in stylesheet description.
      */
     public ThemeStylesheetUserPreferences getThemeStylesheetUserPreferences(int userId,int profileId,String stylesheetName);
 
