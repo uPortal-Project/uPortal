@@ -460,11 +460,11 @@ public class DBImpl implements IDBImpl
         }
 
         String selectString = "USER_ID=" + userId + " AND LAYOUT_ID=" + layoutId;
-        String sQuery = "DELETE UP_STRUCT_PARAM WHERE " + selectString;
+        String sQuery = "DELETE FROM UP_STRUCT_PARAM WHERE " + selectString;
         Logger.log (Logger.DEBUG, "DBImpl::setUserLayout()" + sQuery);
         stmt.executeUpdate(sQuery);
 
-        sQuery = "DELETE UP_LAYOUT_STRUCT WHERE " + selectString;
+        sQuery = "DELETE FROM UP_LAYOUT_STRUCT WHERE " + selectString;
         Logger.log (Logger.DEBUG, "DBImpl::setUserLayout()" + sQuery);
         stmt.executeUpdate(sQuery);
         if (DEBUG > 0) {
@@ -528,18 +528,18 @@ public class DBImpl implements IDBImpl
       Element structure = (Element) node;
       Element system = findSystemNode(node);
 
-      String chanId;
+      String chanId = "NULL";
+      String structName = "NULL";
       if (node.getNodeName().equals("channel")) {
-        chanId = system.getAttribute("chanID");
+        chanId = "'" + system.getAttribute("chanID") + "'";
       } else {
-        chanId = "";
+        structName = "'" + sqlEscape(structure.getAttribute("name")) + "'";
       }
-
       sQuery = "INSERT INTO UP_LAYOUT_STRUCT " +
       "(USER_ID, LAYOUT_ID, STRUCT_ID, NEXT_STRUCT_ID, CHLD_STRUCT_ID,EXTERNAL_ID,CHAN_ID,ID_TAG,NAME,TYPE,HIDDEN,IMMUTABLE,UNREMOVABLE) VALUES (" +
         userId + "," + layoutId + "," + saveStructId + "," + nextStructId + "," + childStructId + "," +
-        "'" + structure.getAttribute("external_id") + "','" + chanId + "','" + structure.getAttribute("ID") + "'," +
-        "'" + structure.getAttribute("name") + "','" + structure.getAttribute("type") + "'," +
+        "'" + structure.getAttribute("external_id") + "'," + chanId + ",'" + structure.getAttribute("ID") + "'," +
+        structName + ",'" + structure.getAttribute("type") + "'," +
         "'" + dbBool(structure.getAttribute("hidden")) + "','" + dbBool(structure.getAttribute("immutable")) + "'," +
         "'" + dbBool(structure.getAttribute("unremovable")) + "')";
       Logger.log(Logger.DEBUG, "DBImpl::saveStructure()" + sQuery);
@@ -648,6 +648,27 @@ public class DBImpl implements IDBImpl
     }
   }
 
+  protected static final String sqlEscape(String sql) {
+    if (sql == null) {
+      return "";
+    } else {
+      int primePos = sql.indexOf("'");
+      if (primePos == -1) {
+        return sql;
+      } else {
+        StringBuffer sb = new StringBuffer(sql.length() + 4);
+        int startPos = 0;
+        while (primePos != -1) {
+          sb.append(sql.substring(startPos, primePos+1));
+          sb.append("'");
+          startPos = primePos + 1;
+          primePos = sql.indexOf("'", startPos);
+        }
+        return sb.toString();
+      }
+    }
+  }
+
   protected void addChannel (int id, String title, Document doc, Connection con)  throws Exception {
       Element channel = (Element)doc.getFirstChild();
 
@@ -655,17 +676,21 @@ public class DBImpl implements IDBImpl
       setAutoCommit(con, false);
       Statement stmt = con.createStatement();
       try {
+        String sysdate = "{ts'" + (new java.sql.Timestamp(System.currentTimeMillis())).toString() +
+          "'}";
+        String sqlTitle = sqlEscape(title);
+        String sqlName = sqlEscape(channel.getAttribute("name"));
         String sInsert = "INSERT INTO UP_CHANNEL (CHAN_ID, CHAN_TITLE, CHAN_DESC, CHAN_CLASS, " +
           "CHAN_PUBL_ID, CHAN_PUBL_DT, CHAN_APVL_ID, CHAN_APVL_DT, CHAN_PRIORITY, CHAN_TIMEOUT, " +
           "CHAN_MINIMIZABLE, CHAN_EDITABLE, CHAN_HAS_HELP, CHAN_HAS_ABOUT, CHAN_UNREMOVABLE, CHAN_DETACHABLE, CHAN_NAME) ";
-        sInsert += "VALUES (" + id + ",'" + title + "','" + title + " Channel','" + channel.getAttribute("class") + "'," +
-          "0,SYSDATE,0,SYSDATE" +
+         sInsert += "VALUES (" + id + ",'" + sqlTitle + "','" + sqlTitle + " Channel','" + channel.getAttribute("class") + "'," +
+          "0," + sysdate + ",0," + sysdate  +
           ",'" + channel.getAttribute("priority") + "'" +
           ",'" + channel.getAttribute("timeout") + "'," + "'" + dbBool(channel.getAttribute("minimizable")) + "'" +
           ",'" + dbBool(channel.getAttribute("editable")) + "'" +
           ",'" + dbBool(channel.getAttribute("hasHelp")) + "'," + "'" + dbBool(channel.getAttribute("hasAbout")) + "'" +
           ",'" + dbBool(channel.getAttribute("unremovable")) + "'," +"'" + dbBool(channel.getAttribute("detachable")) + "'" +
-          ",'" + channel.getAttribute("name") + "')";
+          ",'" + sqlName + "')";
         Logger.log(Logger.DEBUG, "DBImpl::addChannel(): " + sInsert);
         stmt.executeUpdate(sInsert);
 
@@ -1997,12 +2022,12 @@ public class DBImpl implements IDBImpl
         Logger.log(Logger.DEBUG, "DBImpl::getStructureStylesheetList() : " + sQuery);
         ResultSet rs = stmt.executeQuery(sQuery);
         try {
-	    while (rs.next()) {
-		String[] descr=new String[2];
-		descr[0]=rs.getString("STYLESHEET_DESCRIPTION_TEXT");
-		descr[1]=rs.getString("MIME_TYPE");
-		list.put(rs.getString("STYLESHEET_NAME"), descr);
-	    }
+            while (rs.next()) {
+                String[] descr=new String[2];
+                descr[0]=rs.getString("STYLESHEET_DESCRIPTION_TEXT");
+                descr[1]=rs.getString("MIME_TYPE");
+                list.put(rs.getString("STYLESHEET_NAME"), descr);
+            }
         } finally {
           rs.close();
         }
