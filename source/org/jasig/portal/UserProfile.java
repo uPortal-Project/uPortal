@@ -50,6 +50,7 @@ public class UserProfile {
     protected int theme_ss_id;
     protected boolean system=false;
 
+    public UserProfile() {};
     public UserProfile(int id, String name, String desc, int layout_id, int  struct_ss,int theme_ss) {
         this.id=id;
         pName=name;
