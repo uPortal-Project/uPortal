@@ -43,12 +43,10 @@
 
 
 <%
-  // this is how you MUST get the layout, otherwise, all guests will recieve their own layout, which WILL CRASH YOUR SERVER!
-  org.jasig.portal.ILayoutBean layoutBean = org.jasig.portal.LayoutBean.findLayoutInstance(application, session);
-%> 
+org.jasig.portal.GenericPortalBean.initialize(application);
+org.jasig.portal.ILayoutBean layoutBean = org.jasig.portal.LayoutBean.findLayoutInstance(application, session);
+layoutBean.protectLayoutXml();
 
-
-<%
 String sAction = request.getParameter ("action");
 
 if (sAction != null)
@@ -56,9 +54,18 @@ if (sAction != null)
   // Tabs
   if (sAction.equals ("addTab"))
     layoutBean.addTab (request);
-  else if (sAction.equals ("renameTab"))
-    layoutBean.renameTab (request);
-  else if (sAction.equals ("setDefaultTab"))
+  else if (sAction.equals ("renameTab"))  {
+	    String sTabNameEntered = request.getParameter ("tabName");
+            String sTabName = UtilitiesBean.removeSpecialChars(sTabNameEntered);
+            if ( sTabName == null || !sTabNameEntered.equals(sTabName) ) {
+%>
+<SCRIPT LANGUAGE="JavaScript">    alert("Tab names may contain alphanumeric characters only. Special characters will be removed !"); </SCRIPT>
+
+<%
+ 	    }
+    	layoutBean.renameTab (request);
+
+  } else if (sAction.equals ("setDefaultTab"))
     layoutBean.setDefaultTab (request);
 
   // Columns
@@ -91,6 +98,9 @@ if (sAction != null)
   else if (sAction.equals ("revertToDefaultLayoutXml"))
   {
     IXml layoutXml = layoutBean.getDefaultLayoutXml (request);
+    layoutBean.setLayoutXml (layoutBean.getUserName (request), layoutXml);
+    layoutBean.releaseLayoutXml();  // let the GC collect it
+    response.sendRedirect ("layout.jsp");
   }
 
   // Save the layout xml
@@ -98,14 +108,15 @@ if (sAction != null)
   {
     IXml layoutXml = layoutBean.getLayoutXml (request, layoutBean.getUserName (request));
     layoutBean.setLayoutXml (layoutBean.getUserName (request), layoutXml);
-    session.removeAttribute ("layoutXml");
+    layoutBean.releaseLayoutXml (); 
     response.sendRedirect ("layout.jsp");
   }
 
   // Ignore changes and return to the layout
   else if (sAction.equals ("cancel"))
   {
-    session.removeAttribute ("layoutXml");
+    layoutBean.reloadLayoutXml();
+    layoutBean.releaseLayoutXml();
     response.sendRedirect ("layout.jsp");
   }
 }

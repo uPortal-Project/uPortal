@@ -38,14 +38,14 @@
 <%@ page import="java.util.*" %>
 <%@ page import="org.jasig.portal.UtilitiesBean" %>
 <%@ page import="org.jasig.portal.security.IPerson" %>
+<%@ page isThreadSafe="true" %>
+<%@ page buffer="20k" autoFlush="true" %>
 
-<%-- If the portal base directory hasn't been set, forward back to
-  -- index.jsp, which retrives it from the ServletContext.  The portal
-  -- base directory is an application-wide parameter set in web.xml.
-  --%>
-<% if (org.jasig.portal.GenericPortalBean.getPortalBaseDir() == null) { %>
-  <jsp:forward page="index.jsp"/>
-<% } %>
+<%
+    org.jasig.portal.GenericPortalBean.initialize(application);
+	org.jasig.portal.ILayoutBean layoutBean = org.jasig.portal.LayoutBean.findLayoutInstance(application, session);
+%>
+
 
 <%
   // This will check to see if the channel wants to go
@@ -68,11 +68,6 @@
     return;
   }
 %>
-
-<%
-  // this is how you MUST get the layout, otherwise, all guests will recieve their own layout, which WILL CRASH YOUR SERVER!
-  org.jasig.portal.ILayoutBean layoutBean = org.jasig.portal.LayoutBean.findLayoutInstance(application, session);
-%> 
 
 <%
   response.setContentType("text/html");

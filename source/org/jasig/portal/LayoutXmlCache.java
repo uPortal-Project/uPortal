@@ -1,43 +1,27 @@
 /**
- * $Author$
- * $Date$
- * $Id$
- * $Name$
- * $Revision$
- *
- * Copyright (c) 2000 The JA-SIG Collaborative.  All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
- *
- * 3. Redistributions of any form whatsoever must retain the following
- *    acknowledgment:
- *    "This product includes software developed by the JA-SIG Collaborative
- *    (http://www.jasig.org/)."
- *
- * THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
- * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE JA-SIG COLLABORATIVE OR
- * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE.
+ *  $Author$ $Date$ $Id: LayoutXmlCache.java,v 1.8
+ *  2001/05/30 23:54:16 zshaw Exp $ $Name$ $Revision$ Copyright (c) 2000
+ *  The JA-SIG Collaborative. All rights reserved. Redistribution and use in
+ *  source and binary forms, with or without modification, are permitted
+ *  provided that the following conditions are met: 1. Redistributions of source
+ *  code must retain the above copyright notice, this list of conditions and the
+ *  following disclaimer. 2. Redistributions in binary form must reproduce the
+ *  above copyright notice, this list of conditions and the following disclaimer
+ *  in the documentation and/or other materials provided with the distribution.
+ *  3. Redistributions of any form whatsoever must retain the following
+ *  acknowledgment: "This product includes software developed by the JA-SIG
+ *  Collaborative (http://www.jasig.org/)." THIS SOFTWARE IS PROVIDED BY THE
+ *  JA-SIG COLLABORATIVE "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES,
+ *  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ *  FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ *  JA-SIG COLLABORATIVE OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ *  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ *  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA,
+ *  OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ *  LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ *  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+ *  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 
 package org.jasig.portal;
 
@@ -57,131 +41,148 @@ import com.objectspace.xml.*;
 
 import org.jasig.portal.layout.*;
 
-
-
-
 /**
- * Class to control the caching of the users XML document.  It is configurable to 
- * either allow the garbage collector to collect the XML document if it needs 
- * to (using SoftReferences) or not.  It also handles getting the XML document 
- * from the database as needed.
+ *  Class to control the caching of the users XML document. It is configurable
+ *  to either allow the garbage collector to collect the XML document if it
+ *  needs to (using SoftReferences) or not. It also handles getting the XML
+ *  document from the database as needed. The session.properties file controls
+ *  this class, specifically the session.memory.layoutxml_dynamic_loading
+ *  option.
  *
- * The session.properties file controls this class, specifically the 
- * session.memory.layoutxml_dynamic_loading option.
- *
- * @author $Author$
+ *@author     $Author$
+ *@created    June 7, 2001
  */
 
-public class LayoutXmlCache {
+public final class LayoutXmlCache {
 
-    private SoftReference layoutXmlRef = null;      // this is used to maintain the soft reference to the layout
-    private boolean useSoftReference = true;       // determines if we should allow the GC to collect the layout or not
-    private IXml layoutXmlHolder = null;            // this is used to keep the layout from being collected
-    private String sUserName = null;                 // this is the user we are caching a layout for
-    private String sLayoutCacheDir = null;   // stores the location of the cache directory
-    private static RdbmServices sDbServices = null;   // must initialize at least one of these
-    
+    private SoftReference layoutXmlRef = null;
+    // this is used to maintain the soft reference to the layout
+    private boolean useSoftReference = true;
+    // determines if we should allow the GC to collect the layout or not
+    private IXml layoutXmlHolder = null;
+    // this is used to keep the layout from being collected
+    private String sUserName = null;
+    // this is the user we are caching a layout for
+    private String sLayoutCacheDir = null;
+    // stores the location of the cache directory
+    private static RdbmServices sDbServices = null;
 
-    /** Constructor used to create the cache.  You must indicate
-     * the username so the cache can get the layout when it needs to do so.
+
+    // must initialize at least one of these
+
+    /**
+     *  Constructor used to create the cache. You must indicate the username so
+     *  the cache can get the layout when it needs to do so.
      *
-     * @author $Author$
+     *@param  uName  Description of Parameter
+     *@author        $Author$
      */
     public LayoutXmlCache(String uName) {
 
-	if(sDbServices == null) {
-	    // need to load a RdbmServices object so it initializes
-	    // this is only done once though
-	    sDbServices = new RdbmServices();
-	}
+        if (sDbServices == null) {
+            // need to load a RdbmServices object so it initializes
+            // this is only done once though
+            sDbServices = new RdbmServices();
+        }
 
         // ask the SessionManager how to handle our layouts
-        if("no".equals(SessionManager.getConfiguration("session.memory.layoutxml_dynamic_loading"))) {
+        if ("no".equals(SessionManager.getConfiguration("session.memory.layoutxml_dynamic_loading"))) {
             useSoftReference = false;
             Logger.log(Logger.DEBUG, "LayoutXmlCache: NOT dynamically loading the users' XML documents.");
-        } else {
+        }
+        else {
             Logger.log(Logger.DEBUG, "LayoutXmlCache: using dynamic loading of user XML documents.");
             useSoftReference = true;
         }
 
-
         sLayoutCacheDir = SessionManager.getConfiguration("session.memory.layoutxml_cache_directory");
 
-        if(sLayoutCacheDir == null) {
+        if (sLayoutCacheDir == null) {
             Logger.log(Logger.DEBUG, "LayoutXmlCache:  session.memory.layoutxml_cache_directory not set.  DISK CACHING DISABLED");
-        } else {
+        }
+        else {
             // check that the directory is good
             File cacheDir = new File(sLayoutCacheDir);
-            if(!cacheDir.exists()) {
+            if (!cacheDir.exists()) {
                 Logger.log(Logger.DEBUG, "LayoutXmlCache: layout cache directory " + cacheDir + " does not exist! DISK CACHING DISABLED.");
                 sLayoutCacheDir = null;
-            } else if(!cacheDir.isDirectory()) {
+            }
+            else if (!cacheDir.isDirectory()) {
                 Logger.log(Logger.DEBUG, "LayoutXmlCache: layout cache path " + cacheDir + " is NOT a directory! DISK CACHING DISABLED.");
                 sLayoutCacheDir = null;
-            } else {
+            }
+            else {
                 Logger.log(Logger.DEBUG, "LayoutXmlCache: caching user layouts in " + cacheDir);
             }
         }
 
-
         // default to "guest" if null is given
-        if(uName == null)
+        if (uName == null) {
             sUserName = "guest";
-        else
+        }
+        else {
             sUserName = uName;
+        }
     }
 
 
 
-
-    /** Sets the layout for the user to the given one.  This basically just writes the new layout to
-     * the database, and then updates our internal representation to match the layoutXml parameter. 
+    /**
+     *  Sets the layout for the user to the given one. This basically just
+     *  writes the new layout to the database, and then updates our internal
+     *  representation to match the layoutXml parameter.
      *
-     * @author $Author$
+     *@param  sPathToLayoutDtd  The new LayoutXml value
+     *@param  sLayoutDtd        The new LayoutXml value
+     *@param  layoutXml         The new LayoutXml value
+     *@author                   $Author$
      */
-    public void setLayoutXml(String sPathToLayoutDtd, String sLayoutDtd, IXml layoutXml) {
+    public final void setLayoutXml(String sPathToLayoutDtd, String sLayoutDtd, IXml layoutXml) {
         Connection con = null;
 
         // update it in the database first
         try {
-            con = sDbServices.getConnection ();
+            con = sDbServices.getConnection();
             Statement stmt = con.createStatement();
 
-            StringWriter sw = new StringWriter ();
+            StringWriter sw = new StringWriter();
             layoutXml.saveDocument(sw);
             String sLayoutXml = sw.toString();
 
             // Remove path to layout dtd before saving
-            int iRemoveFrom = sLayoutXml.indexOf (sPathToLayoutDtd);
-            int iRemoveTo = sLayoutXml.indexOf (sLayoutDtd);
-            sLayoutXml = sLayoutXml.substring (0, iRemoveFrom) + sLayoutXml.substring (iRemoveTo);
+            int iRemoveFrom = sLayoutXml.indexOf(sPathToLayoutDtd);
+            int iRemoveTo = sLayoutXml.indexOf(sLayoutDtd);
+            sLayoutXml = sLayoutXml.substring(0, iRemoveFrom) + sLayoutXml.substring(iRemoveTo);
 
             try {
                 String sUpdate = "UPDATE PORTAL_USERS SET LAYOUT_XML='" +
-                                 sLayoutXml + "' WHERE USER_NAME='" + sUserName + "'";
-                int iUpdated = stmt.executeUpdate (sUpdate);
-                Logger.log (Logger.DEBUG, "Saving layout xml for " + sUserName +
-                            ". Updated " + iUpdated + " rows.");
-                stmt.close ();
-            } catch (SQLException e) {
+                        sLayoutXml + "' WHERE USER_NAME='" + sUserName + "'";
+                int iUpdated = stmt.executeUpdate(sUpdate);
+                Logger.log(Logger.DEBUG, "Saving layout xml for " + sUserName +
+                        ". Updated " + iUpdated + " rows.");
+                stmt.close();
+            }
+            catch (SQLException e) {
                 // oracle fails if you try to process a string literal of more than 4k (sLayoutXml), so do this:
                 PreparedStatement pstmt = con.prepareStatement("UPDATE PORTAL_USERS SET LAYOUT_XML=? WHERE USER_NAME=?");
-                pstmt.clearParameters ();
-                pstmt.setCharacterStream (1, new StringReader (sLayoutXml), sLayoutXml.length ());
-                pstmt.setString (2, sUserName);
-                int iUpdated = pstmt.executeUpdate ();
-                Logger.log (Logger.DEBUG, "Saving layout xml for " + sUserName + ". Updated " + iUpdated + " rows.");
-                pstmt.close ();
+                pstmt.clearParameters();
+                pstmt.setCharacterStream(1, new StringReader(sLayoutXml), sLayoutXml.length());
+                pstmt.setString(2, sUserName);
+                int iUpdated = pstmt.executeUpdate();
+                Logger.log(Logger.DEBUG, "Saving layout xml for " + sUserName + ". Updated " + iUpdated + " rows.");
+                pstmt.close();
 
             }
 
             // update the disk cache copy also
             writeToDisk(sUserName, sLayoutXml);
 
-        } catch (Exception e) {
-            Logger.log (Logger.ERROR, e);
-        } finally {
-            sDbServices.releaseConnection (con);
+        }
+        catch (Exception e) {
+            Logger.log(Logger.ERROR, e);
+        }
+        finally {
+            sDbServices.releaseConnection(con);
         }
 
         // now that it's in the DB and the disk cache, we can cache it in memory
@@ -190,111 +191,22 @@ public class LayoutXmlCache {
 
 
 
-
-    /** Retrieves the user's layout, either from the database (if it hasn't been yet) or from memory.
-     * If the cache is set to claimable, it is possible that the layout has been garbage collected, and
-     * thus needs to be retrieved from the database again.
-     *
-     * @author $Author$
-     */
-    public IXml getLayoutXml(String sPathToLayoutDtd, String sLayoutDtd) {
-        Connection con = null;
-
-        IXml layoutXml = getCachedLayoutXml();  // attempt to get it from the cached object
-
-        try {
-            if (layoutXml != null)
-                return layoutXml;
-
-
-            String sLayoutXml = readFromDisk(sUserName);
-            if(sLayoutXml != null) {
-                // prep it for use
-                // Tack on the full path to layout.dtd
-                int iInsertBefore = sLayoutXml.indexOf (sLayoutDtd);
-                sLayoutXml = sLayoutXml.substring (0, iInsertBefore) + sPathToLayoutDtd + sLayoutXml.substring (iInsertBefore);
-
-                String xmlFilePackage = "org.jasig.portal.layout";
-                layoutXml = Xml.openDocument(xmlFilePackage, new StringReader (sLayoutXml));
-                // we had to reload the layoutXml from the database, so we need to re-cache it
-                cacheLayoutXml(layoutXml);
-
-                // return the completed layout object
-                return layoutXml;
-            }
-
-
-            // looks like it isn't in memory or on disk, load it from the db and update all caches
-
-            con = sDbServices.getConnection ();
-            Statement stmt = con.createStatement();
-
-            String sQuery = "SELECT LAYOUT_XML FROM PORTAL_USERS WHERE USER_NAME='" + sUserName + "'";
-            Logger.log (Logger.DEBUG, sQuery);
-            ResultSet rs = stmt.executeQuery (sQuery);
-
-            if (rs.next ()) {
-                sLayoutXml = rs.getString ("LAYOUT_XML");
-
-                // If user has no layout xml, get it from the default user
-                if (sLayoutXml == null || sLayoutXml.length () <= 0) {
-
-                    sQuery = "SELECT LAYOUT_XML FROM PORTAL_USERS WHERE USER_NAME='default'";
-                    Logger.log (Logger.DEBUG, sQuery);
-                    rs = stmt.executeQuery (sQuery);
-
-                    if (rs.next ()) {
-                        sLayoutXml = rs.getString ("LAYOUT_XML");
-                    }
-                }
-
-                // write out our fresh XML document to the disk cache for later
-                writeToDisk(sUserName, sLayoutXml);
-
-                // Tack on the full path to layout.dtd
-                int iInsertBefore = sLayoutXml.indexOf (sLayoutDtd);
-                sLayoutXml = sLayoutXml.substring (0, iInsertBefore) + sPathToLayoutDtd + sLayoutXml.substring (iInsertBefore);
-
-                String xmlFilePackage = "org.jasig.portal.layout";
-                layoutXml = Xml.openDocument(xmlFilePackage, new StringReader (sLayoutXml));
-            }
-            stmt.close ();
-
-            // we had to reload the layoutXml from the database, so we need to re-cache it
-            cacheLayoutXml(layoutXml);
-
-
-            // notice that we still have a strong reference to it, so it won't get collected from the cache before we are through
-            return layoutXml;
-        } catch (Exception e) {
-            Logger.log (Logger.ERROR, e);
-        } finally  {
-            sDbServices.releaseConnection (con);
-        }
-
-        // we default to retuning null if we didn't get anything
-        return null;
-    }
-
-
-
-
     /**
-     * Lets you control the caching during runtime.  You can set this to false
-     * when you are doing something that requires frequent use of the 
-     * layout, and then back to true when you don't care if it get reclaimed.
+     *  Lets you control the caching during runtime. You can set this to false
+     *  when you are doing something that requires frequent use of the layout,
+     *  and then back to true when you don't care if it get reclaimed.
      *
-     * @author $Author$
+     *@param  claimable  The new Claimable value
+     *@author            $Author$
      */
-    public void setClaimable(boolean claimable) {
+    public final void setClaimable(boolean claimable) {
 
-	
-        if("no".equals(SessionManager.getConfiguration("session.memory.layoutxml_dynamic_loading"))) {
-	    // don't bother since the session.properties file is set to not do dynamic_loading
-	    return;
+        if ("no".equals(SessionManager.getConfiguration("session.memory.layoutxml_dynamic_loading"))) {
+            // don't bother since the session.properties file is set to not do dynamic_loading
+            return;
         }
 
-        if(claimable) {
+        if (claimable) {
             // break the layoutXmlHolder's hold on the IXml object so that the soft reference is all that is left
             layoutXmlHolder = null;
         }
@@ -305,25 +217,133 @@ public class LayoutXmlCache {
 
 
     /**
-     * Indicates the cache's current claimable state.
+     *  Retrieves the user's layout, either from the database (if it hasn't been
+     *  yet) or from memory. If the cache is set to claimable, it is possible
+     *  that the layout has been garbage collected, and thus needs to be
+     *  retrieved from the database again.
      *
-     * @author $Author$
+     *@param  sPathToLayoutDtd  Description of Parameter
+     *@param  sLayoutDtd        Description of Parameter
+     *@return                   The LayoutXml value
+     *@author                   $Author$
      */
-    public boolean isClaimable() {
-        return useSoftReference;
+    public final IXml getLayoutXml(String sPathToLayoutDtd, String sLayoutDtd) {
+        Connection con = null;
+
+        IXml layoutXml = getCachedLayoutXml();
+        // attempt to get it from the cached object
+
+        try {
+            if (layoutXml != null) {
+                return layoutXml;
+            }
+
+            String sLayoutXml = readFromDisk(sUserName);
+            if (sLayoutXml != null) {
+                // prep it for use
+                // Tack on the full path to layout.dtd
+                int iInsertBefore = sLayoutXml.indexOf(sLayoutDtd);
+                sLayoutXml = sLayoutXml.substring(0, iInsertBefore) + sPathToLayoutDtd + sLayoutXml.substring(iInsertBefore);
+
+                String xmlFilePackage = "org.jasig.portal.layout";
+                layoutXml = Xml.openDocument(xmlFilePackage, new StringReader(sLayoutXml));
+                // we had to reload the layoutXml from the database, so we need to re-cache it
+                cacheLayoutXml(layoutXml);
+
+                // return the completed layout object
+                return layoutXml;
+            }
+
+            // looks like it isn't in memory or on disk, load it from the db and update all caches
+
+            con = sDbServices.getConnection();
+            Statement stmt = con.createStatement();
+
+            String sQuery = "SELECT LAYOUT_XML FROM PORTAL_USERS WHERE USER_NAME='" + sUserName + "'";
+            Logger.log(Logger.DEBUG, sQuery);
+            ResultSet rs = stmt.executeQuery(sQuery);
+
+            if (rs.next()) {
+                sLayoutXml = rs.getString("LAYOUT_XML");
+
+                // If user has no layout xml, get it from the default user
+                if (sLayoutXml == null || sLayoutXml.length() <= 0) {
+
+                    sQuery = "SELECT LAYOUT_XML FROM PORTAL_USERS WHERE USER_NAME='default'";
+                    Logger.log(Logger.DEBUG, sQuery);
+                    rs = stmt.executeQuery(sQuery);
+
+                    if (rs.next()) {
+                        sLayoutXml = rs.getString("LAYOUT_XML");
+                    }
+                }
+
+                // write out our fresh XML document to the disk cache for later
+                writeToDisk(sUserName, sLayoutXml);
+
+                // Tack on the full path to layout.dtd
+                int iInsertBefore = sLayoutXml.indexOf(sLayoutDtd);
+                sLayoutXml = sLayoutXml.substring(0, iInsertBefore) + sPathToLayoutDtd + sLayoutXml.substring(iInsertBefore);
+
+                String xmlFilePackage = "org.jasig.portal.layout";
+                layoutXml = Xml.openDocument(xmlFilePackage, new StringReader(sLayoutXml));
+            }
+            stmt.close();
+
+            // we had to reload the layoutXml from the database, so we need to re-cache it
+            cacheLayoutXml(layoutXml);
+
+            // notice that we still have a strong reference to it, so it won't get collected from the cache before we are through
+            return layoutXml;
+        }
+        catch (Exception e) {
+            Logger.log(Logger.ERROR, e);
+        }
+        finally {
+            sDbServices.releaseConnection(con);
+        }
+
+        // we default to retuning null if we didn't get anything
+        return null;
     }
 
 
 
-
-
-    /** Checks the cache for the layout, and if it is there returns it.  If not,
-     * returns null.  This is used to simplify the locking/unlocking needed when
-     * using SoftReferences (or not).
+    /**
+     *  Indicates the cache's current claimable state.
      *
-     * @author $Author$
+     *@return    The Claimable value
+     *@author    $Author$
      */
-    private IXml getCachedLayoutXml()  {
+    public final boolean isClaimable() {
+        return useSoftReference;
+    }
+
+
+    /**
+     *  This method is used to reset the layout after a series of in-memory
+     *  modifications. This is needed in the personalizeTabs.jsp,
+     *  personalizeLayout.jsp, subscribe.jsp, and SubscriberBean since they use
+     *  the in memory copy of the Layout to do their modifications.
+     *
+     *@author    Zed A. Shaw
+     */
+    public final void reloadLayoutXml() {
+        layoutXmlHolder = null;
+        layoutXmlRef = null;
+    }
+
+
+
+    /**
+     *  Checks the cache for the layout, and if it is there returns it. If not,
+     *  returns null. This is used to simplify the locking/unlocking needed when
+     *  using SoftReferences (or not).
+     *
+     *@return    The CachedLayoutXml value
+     *@author    $Author$
+     */
+    private final IXml getCachedLayoutXml() {
         IXml layoutXml = null;
 
         // we need to do a little juggling to keep the SoftReference around
@@ -332,20 +352,20 @@ public class LayoutXmlCache {
         // condition between the test of the if and the time we actually obtain the referent.
 
         try {
-            layoutXml = (IXml)layoutXmlRef.get();
-        } catch (NullPointerException e) {
+            layoutXml = (IXml) layoutXmlRef.get();
+        }
+        catch (NullPointerException e) {
             return null;
         }
 
-
-        if(useSoftReference) {
+        if (useSoftReference) {
             // make sure that we are not holding our layout
             layoutXmlHolder = null;
-        } else {
+        }
+        else {
             // make sure that layoutXmlHolder has a grip on the layout
             layoutXmlHolder = layoutXml;
         }
-
 
         return layoutXml;
     }
@@ -353,36 +373,43 @@ public class LayoutXmlCache {
 
 
     /**
-     * Resets the internal references (either Soft or not depending on settings) to
-     * a new IXml object.
+     *  Resets the internal references (either Soft or not depending on
+     *  settings) to a new IXml object.
      *
-     * @author $Author$
+     *@param  layoutXml  Description of Parameter
+     *@author            $Author$
      */
-    private void cacheLayoutXml(IXml layoutXml) {
+    private final void cacheLayoutXml(IXml layoutXml) {
         // we prevent the soft reference from working by pointing the layoutXmlHolder at it
-        if(useSoftReference) {
+        if (useSoftReference) {
             layoutXmlHolder = null;
-        } else {
+        }
+        else {
             layoutXmlHolder = layoutXml;
         }
 
         // no matter what, the our soft reference must be set
-        layoutXmlRef = new SoftReference(layoutXml);  // using a soft reference lets the GC recover it
+        layoutXmlRef = new SoftReference(layoutXml);
+        // using a soft reference lets the GC recover it
 
     }
 
 
 
     /**
-     * This writes the layout to the disk cache, but only if the disk cache is enabled.
+     *  This writes the layout to the disk cache, but only if the disk cache is
+     *  enabled.
+     *
+     *@param  sUserName        Description of Parameter
+     *@param  sLayoutDocument  Description of Parameter
      */
-    private void writeToDisk(String sUserName, String sLayoutDocument) {
+    private final void writeToDisk(String sUserName, String sLayoutDocument) {
 
-        if(sLayoutCacheDir == null)
+        if (sLayoutCacheDir == null) {
             return;
+        }
 
         File cacheFile = new File(sLayoutCacheDir, sUserName);
-
 
         try {
 
@@ -394,7 +421,8 @@ public class LayoutXmlCache {
 
             Logger.log(Logger.DEBUG, "LayoutXmlCache: wrote layout document to " + cacheFile);
 
-        } catch (IOException ioe) {
+        }
+        catch (IOException ioe) {
             Logger.log(Logger.ERROR, "LayoutXmlCache:  could not write layout cache file " + cacheFile + ".  Exception: " + ioe);
             return;
         }
@@ -403,32 +431,25 @@ public class LayoutXmlCache {
 
 
     /**
-     * This method is used to reset the layout after a series of in-memory modifications.  This is needed
-     * in the personalizeTabs.jsp, personalizeLayout.jsp, subscribe.jsp, and SubscriberBean since they use
-     * the in memory copy of the Layout to do their modifications.
+     *  This reads the layout from the disk cache, but only if the disk cache is
+     *  enabled. It returns null if the layout for the user is not currently
+     *  cached on disk.
      *
-     * @author Zed A. Shaw
+     *@param  sUserName  Description of Parameter
+     *@return            Description of the Returned Value
      */
-    public void reloadLayoutXml() {
-	layoutXmlHolder = null;
-	layoutXmlRef = null;
-    }
+    private final String readFromDisk(String sUserName) {
 
-
-    /**
-     * This reads the layout from the disk cache, but only if the disk cache is enabled.
-     *
-     * It returns null if the layout for the user is not currently cached on disk.
-     */
-    private String readFromDisk(String sUserName) {
-
-        if(sLayoutCacheDir == null)
+        if (sLayoutCacheDir == null) {
             return null;
+        }
 
         File cacheFile = new File(sLayoutCacheDir, sUserName);
 
         // don't bother doing anything if the file doesn't exist yet
-        if(!cacheFile.exists()) return null;
+        if (!cacheFile.exists()) {
+            return null;
+        }
 
         try {
 
@@ -439,15 +460,16 @@ public class LayoutXmlCache {
             String line = null;
 
             // keep reading lines till we run out
-            while ( (line = cacheReader.readLine()) != null)
+            while ((line = cacheReader.readLine()) != null) {
                 lineBuffer.append(line);
+            }
 
             cacheReader.close();
 
             Logger.log(Logger.DEBUG, "LayoutXmlCache: Read " + cacheFile + " from disk cache");
             return lineBuffer.toString();
-
-        } catch (IOException ioe) {
+        }
+        catch (IOException ioe) {
             Logger.log(Logger.ERROR, "LayoutXmlCache:  could not read layout cache file " + cacheFile + ".  Exception: " + ioe);
             return null;
         }
@@ -455,7 +477,5 @@ public class LayoutXmlCache {
     }
 
 }
-
-
 
 

@@ -44,8 +44,9 @@
 <%@ include file="checkGuest.jsp" %>
 
 <%
-  // this is how you MUST get the layout, otherwise, all guests will recieve their own layout, which WILL CRASH YOUR SERVER!
+  org.jasig.portal.GenericPortalBean.initialize(application);
   org.jasig.portal.ILayoutBean layoutBean = org.jasig.portal.LayoutBean.findLayoutInstance(application, session);
+  layoutBean.protectLayoutXml();
 %> 
 
 <jsp:useBean id="rdbmService" class="org.jasig.portal.RdbmServices" scope="session" />
@@ -54,8 +55,11 @@
 String sAction = request.getParameter ("action");
 
 if (sAction != null) {
-  if (sAction.equals ("saveColors")) layoutBean.setColors (request, response, out);
-  response.sendRedirect ("layout.jsp");
+  if (sAction.equals ("saveColors")) {
+    layoutBean.setColors (request, response, out);
+	layoutBean.releaseLayoutXml(); 
+  	response.sendRedirect ("layout.jsp");
+  }  
 }
 %>
 
@@ -307,36 +311,36 @@ if (sAction != null) {
               String color_scheme_name = null;
 
               try {
-              connection = rdbmService.getConnection();
-              Statement statement = connection.createStatement();
+                connection = rdbmService.getConnection();
+                Statement statement = connection.createStatement();
               try
               {
-              String SQLString = "SELECT DISTINCT COLOR_SCHEME_NAME FROM PORTAL_COLORS";
-              Logger.log (Logger.DEBUG, SQLString);
-              ResultSet rs = statement.executeQuery(SQLString);
-              while(rs.next()) {
-              color_scheme_name = rs.getString(1);
-              SchemeDrop = SchemeDrop + "<option ";
-              if (fColorScheme.equals(color_scheme_name)) SchemeDrop = SchemeDrop + "selected ";
-              SchemeDrop = SchemeDrop + "value=\"personalizeColors.jsp?ColorScheme=" + color_scheme_name + "\">" + color_scheme_name + "</option>";
-              }
-              }
+                String SQLString = "SELECT DISTINCT COLOR_SCHEME_NAME FROM PORTAL_COLORS";
+                Logger.log (Logger.DEBUG, SQLString);
+                ResultSet rs = statement.executeQuery(SQLString);
+                while(rs.next()) {
+                    color_scheme_name = rs.getString(1);
+                    SchemeDrop = SchemeDrop + "<option ";
+                    if (fColorScheme.equals(color_scheme_name)) SchemeDrop = SchemeDrop + "selected ";
+                    SchemeDrop = SchemeDrop + "value=\"personalizeColors.jsp?ColorScheme=" + color_scheme_name.replace(' ','+') + "\">" + color_scheme_name + "</option>";
+                    }
+                }
               catch (SQLException e)
               {
-              // Logger.log (Logger.ERROR, e + " SQL: " + SQLString);
+                // Logger.log (Logger.ERROR, e + " SQL: " + SQLString);
               }
               finally
               {
-              statement.close();
+                statement.close();
               }
               }
               catch (Exception e)
               {
-              // Logger.log (Logger.ERROR, e);
+                // Logger.log (Logger.ERROR, e);
               }
               finally
               {
-              rdbmService.releaseConnection(connection);
+                rdbmService.releaseConnection(connection);
               }
               %>
               <%=SchemeDrop%>

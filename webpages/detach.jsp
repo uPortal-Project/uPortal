@@ -38,10 +38,12 @@
 <%@ page import="org.jasig.portal.UtilitiesBean" %>
 <%@ include file="checkinit.jsp" %>
 
+
 <%
-  // this is how you MUST get the layout, otherwise, all guests will recieve their own layout, which WILL CRASH YOUR SERVER!
+  org.jasig.portal.GenericPortalBean.initialize(application);
   org.jasig.portal.ILayoutBean layoutBean = org.jasig.portal.LayoutBean.findLayoutInstance(application, session);
 %> 
+
 
 <%
 int iTab = Integer.parseInt (request.getParameter ("tab"));

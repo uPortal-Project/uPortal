@@ -33,12 +33,15 @@
  *
 --%>
 
+<%@ page import="org.jasig.portal.*" %>
 <%@ page errorPage="error.jsp" %>
 
 <%
-if (session != null)
-  session.invalidate();
-        
-response.sendRedirect("layout.jsp");
+if (session != null) {
+    SessionManager.logout(session,"PORTAL");
+    session.invalidate();
+}
+
+response.sendRedirect("/");
 %>
 

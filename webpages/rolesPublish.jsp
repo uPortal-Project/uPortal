@@ -43,9 +43,8 @@
 <%@ include file="checkinit.jsp" %>
 <%@ include file="checkGuest.jsp" %>
 
-
 <%
-  // this is how you MUST get the layout, otherwise, all guests will recieve their own layout, which WILL CRASH YOUR SERVER!
+  org.jasig.portal.GenericPortalBean.initialize(application);
   org.jasig.portal.ILayoutBean layoutBean = org.jasig.portal.LayoutBean.findLayoutInstance(application, session);
 %>
 

@@ -60,8 +60,7 @@ public class UtilitiesBean extends GenericPortalBean
     try
     {
       res.setHeader("pragma", "no-cache");
-      res.setHeader( "Cache-Control","no-cache" );
-      res.setHeader( "Cache-Control","no-store" );
+      res.setHeader( "Cache-Control","no-cache, max-age=0, must-revalidate" ); // Need this for I.E. 5.0
       res.setDateHeader( "Expires", 0 );
     }
     catch (Exception e)

@@ -33,41 +33,22 @@
  *
 --%>
 
-<%@ page errorPage="error.jsp" %>
+<%-- This is now just a holder for the layout.jsp file, which does all the real work.
+    The application is now organized so that all jsp files are able to initialize the
+    system by calling GenericPortalBean.initialize(application).  This localized configuration
+    of the portal to one location and makes it easier to change the init sequence later.
+    
+    The additional advantage is that accidentally going to a JSP which isn't written 
+    correctly will not kill the portal (there are several situations where this can happen).
+    
+    Finally, it is necessary to do this in order to stop the useless redirecting and erroneous
+    forwarding to the layout.jsp just to do simple initializations of the portal.  This adds
+    quite a lot of overhead, and when a forward is used, it causes the portal to display the
+    index.jsp page's contents, but in the wrong location.
+    
+    Zed A. Shaw
+    
+    --%>
 
-<%-- We need a way to configure the top level portal directory
-     Here it is read in from web.xml and stored in GenericPortalBean. --%>
-<%
-String sPortalBaseDir = (String) application.getInitParameter ("portalBaseDir");
+<%@ include file="layout.jsp" %>
 
-// Check if portal base directory has been set
-if (sPortalBaseDir == null)
-{
-  String sErrorMsg = "ERROR: No value has been set for application-context parameter \"portalBaseDir\".";
-  System.err.println (sErrorMsg);
-  throw new Exception (sErrorMsg);
-}
-else
-{
-  java.io.File portalBaseDir = new java.io.File (sPortalBaseDir);
-  
-  // Make sure the portal base directory exists
-  if (portalBaseDir.exists ())
-    org.jasig.portal.GenericPortalBean.setPortalBaseDir (sPortalBaseDir);
-  else
-  {
-    String sErrorMsg = "ERROR: The portal base directory specified does not exist: " + sPortalBaseDir;
-    System.err.println (sErrorMsg);
-    throw new Exception (sErrorMsg);
-  }
-}
-%>
-
-<%
-  if(sPortalBaseDir != null)
-  {
-%>
-<jsp:forward page="layout.jsp" />
-<%
-  }
-%>

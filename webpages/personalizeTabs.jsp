@@ -44,9 +44,13 @@
 
 
 <%
-  // this is how you MUST get the layout, otherwise, all guests will recieve their own layout, which WILL CRASH YOUR SERVER!
-  org.jasig.portal.ILayoutBean layoutBean = org.jasig.portal.LayoutBean.findLayoutInstance(application, session);
+org.jasig.portal.GenericPortalBean.initialize(application);
+org.jasig.portal.ILayoutBean layoutBean = org.jasig.portal.LayoutBean.findLayoutInstance(application, session);
+// protect the layout from being collected while we do stuff
+// the layout MUST be released after either Finished or Cancel is pressed
+layoutBean.protectLayoutXml();
 %> 
+
 
 <%
 String sAction = request.getParameter ("action");
@@ -67,11 +71,15 @@ if (sAction != null)
   else if (sAction.equals ("revertToDefaultLayoutXml"))
   {
     IXml layoutXml = layoutBean.getDefaultLayoutXml (request);
+    layoutBean.setLayoutXml (layoutBean.getUserName (request), layoutXml);
+    layoutBean.releaseLayoutXml();  // let the GC collect it
+    response.sendRedirect ("layout.jsp");
   }
   else if (sAction.equals ("changeLayout"))
   {
     IXml layoutXml = layoutBean.getLayoutXml (request, layoutBean.getUserName (request));
     layoutBean.setLayoutXml (layoutBean.getUserName (request), layoutXml);
+    layoutBean.releaseLayoutXml();  // let the GC collect it
     response.sendRedirect ("personalizeLayout.jsp?tab=" + request.getParameter ("tab"));
   }
 
@@ -80,14 +88,15 @@ if (sAction != null)
   {
     IXml layoutXml = layoutBean.getLayoutXml (request, layoutBean.getUserName (request));
     layoutBean.setLayoutXml (layoutBean.getUserName (request), layoutXml);
-    session.removeAttribute ("layoutXml");
+     layoutBean.releaseLayoutXml();  // let the GC collect it
     response.sendRedirect ("layout.jsp");
   }
 
   // Ignore changes and return to the layout
   else if (sAction.equals ("cancel"))
   {
-    session.removeAttribute ("layoutXml");
+    layoutBean.reloadLayoutXml();
+    layoutBean.releaseLayoutXml();
     response.sendRedirect ("layout.jsp");
   }
 }
