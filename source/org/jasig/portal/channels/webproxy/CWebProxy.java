@@ -36,6 +36,7 @@
 package org.jasig.portal.channels.webproxy;
 
 import java.io.ByteArrayOutputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -93,7 +94,7 @@ import org.xml.sax.ContentHandler;
  *    Runtime parameters.  Caching parameters can also be changed temporarily.
  *    Cache defaults and IPerson restrictions are loaded first from properties,
  *    and overridden by static data if there.
- * </p>    
+ * </p>
  * <ol>
  *  <li>"cw_xml" - a URI for the source XML document
  *  <li>"cw_ssl" - a URI for the corresponding .ssl (stylesheet list) file
@@ -155,14 +156,14 @@ import org.xml.sax.ContentHandler;
  *		   to its last value before changed by button events.  The
  *		   value "reset" returns all variables to the static data
  *		   values.</i>
- *  <li>"cw_download" - use download worker for this link or form 
- *                 <i>any link or form that contains this parameter will be 
- *                 handled by the download worker, if the pass-through mode 
+ *  <li>"cw_download" - use download worker for this link or form
+ *                 <i>any link or form that contains this parameter will be
+ *                 handled by the download worker, if the pass-through mode
  *                 is set to rewrite the link or form.  This allows downloads
- *                 from the proxied site to be delivered via the portal, 
- *                 primarily useful if the download requires verification 
+ *                 from the proxied site to be delivered via the portal,
+ *                 primarily useful if the download requires verification
  *                 of a session referenced by a proxied cookie</i>
- *  
+ *
  * </ol>
  * <p>This channel can be used for all XML formats with appropriate stylesheets.
  *    All static data parameters as well as additional runtime data parameters
@@ -375,7 +376,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
        String person = state.runtimeData.getParameter("cw_person");
        if (person == null)
           person = state.person;
-   
+
        String tidy = state.runtimeData.getParameter("cw_tidy");
        if (tidy != null)
           state.tidy = tidy;
@@ -423,7 +424,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
 
        if ( state.buttonxmlUri != null )  // shouldn't happen here, but...
            state.fullxmlUri = state.buttonxmlUri;
-       else 
+       else
        {
          //LogService.log(LogService.DEBUG, "CWebProxy: xmlUri is " + state.xmlUri);
 
@@ -432,7 +433,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
          String appendchar = "";
 
          // here add in attributes according to cw_person
-         if (state.person != null && state.personAllow_set != null) 
+         if (state.person != null && state.personAllow_set != null)
          {
            StringTokenizer st = new StringTokenizer(state.person,",");
            if (st != null)
@@ -454,7 +455,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
                    String pVal = (String)state.iperson.getAttribute(pName);
                    if (pVal != null)
                      newXML.append(URLEncoder.encode(pVal));
-                 } 
+                 }
                  else {
                    LogService.log(LogService.INFO,
                    "CWebProxy: request to pass " + pName + " denied.");
@@ -480,7 +481,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
 	     if (appendchar.equals("&"))
 	       newXML.append("&keywords=" + keywords);
 	     else
-	       newXML.append(keywords);   
+	       newXML.append(keywords);
 	   }
 	   else
 	   {
@@ -492,11 +493,11 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
                {
                  String pName = (String) e.nextElement ();
                  if ( !pName.startsWith("cw_") && !pName.startsWith("upc_")
-                                               && !pName.trim().equals("")) 
+                                               && !pName.trim().equals(""))
                  {
                    String[] value_array = rd.getParameterValues(pName);
                    int i = 0;
-                   while ( i < value_array.length ) 
+                   while ( i < value_array.length )
                    {
                      newXML.append(appendchar);
                      appendchar = "&";
@@ -512,7 +513,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
 
          state.reqParameters = newXML.toString();
          state.fullxmlUri = state.xmlUri;
-         if (!state.runtimeData.getHttpRequestMethod().equals("POST")) 
+         if (!state.runtimeData.getHttpRequestMethod().equals("POST"))
          {
            if ((state.reqParameters!=null) && (!state.reqParameters.trim().equals("")))
            {
@@ -607,9 +608,13 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
     else
       {
       Document xml = null;
+      String tidiedXml = null;
       try
       {
-	xml = getXml(state.fullxmlUri, state);
+        if (state.tidy != null && state.tidy.equals("on"))
+          tidiedXml = getTidiedXml(state.fullxmlUri, state);
+        else
+	  xml = getXml(state.fullxmlUri, state);
       }
       catch (Exception e)
       {
@@ -647,7 +652,9 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
         state.runtimeData.put("cw_personAllow", state.personAllow);
 
       XSLT xslt = new XSLT(this);
-      if (xml != null)
+      if (tidiedXml != null)
+        xslt.setXML(tidiedXml);
+      else
         xslt.setXML(xml);
       if (state.xslUri != null && (!state.xslUri.trim().equals("")))
         xslt.setXSL(state.xslUri);
@@ -658,7 +665,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
       MediaManager mm = new MediaManager();
       String media = mm.getMedia(state.runtimeData.getBrowserInfo());
       String mimeType = mm.getReturnMimeType(media);
-   
+
       CWebProxyURLFilter filter2 = CWebProxyURLFilter.newCWebProxyURLFilter(mimeType, state.runtimeData, out);
       AbsoluteURLFilter filter1 = AbsoluteURLFilter.newAbsoluteURLFilter(mimeType, state.xmlUri, filter2);
 
@@ -680,6 +687,24 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
   {
     URLConnection urlConnect = getConnection(uri, state);
 
+    DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+    docBuilderFactory.setNamespaceAware(false);
+    DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+    DTDResolver dtdResolver = new DTDResolver();
+    docBuilder.setEntityResolver(dtdResolver);
+    return  docBuilder.parse(urlConnect.getInputStream());
+  }
+
+  /**   
+    * Get the contents of a URI as a String but send it through tidy first.   
+    * Also includes support for cookies.   
+    * @param uri the URI   
+    * @return the data pointed to by a URI as a String   
+    */   
+  private String getTidiedXml(String uri, ChannelState state) throws Exception
+  {
+    URLConnection urlConnect = getConnection(uri, state);
+
     // get character encoding from Content-Type header
     String encoding = null;
     String ct = urlConnect.getContentType();
@@ -692,57 +717,47 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
       if (encoding.indexOf("\"")!=-1)
         encoding = encoding.substring(1,encoding.length()+1);
     }
-  
-    if ( (state.tidy != null) && (state.tidy.equalsIgnoreCase("on")) )
+
+    Tidy tidy = new Tidy ();
+    tidy.setXHTML (true);
+    tidy.setDocType ("omit");
+    tidy.setQuiet(true);
+    tidy.setShowWarnings(false);
+    tidy.setNumEntities(true);
+    tidy.setWord2000(true);
+
+    // If charset is specified in header, set JTidy's
+    // character encoding  to either UTF-8, ISO-8859-1
+    // or ISO-2022 accordingly (NOTE that these are
+    // the only character encoding sets that are supported in
+    // JTidy).  If character encoding is not specified,
+    // UTF-8 is the default.
+    if (encoding != null)
     {
-      Tidy tidy = new Tidy ();
-      tidy.setXHTML (true);
-      tidy.setDocType ("omit");
-      tidy.setQuiet(true);
-      tidy.setShowWarnings(false);
-      tidy.setNumEntities(true);
-      tidy.setWord2000(true);
-
-      // If charset is specified in header, set JTidy's
-      // character encoding  to either UTF-8, ISO-8859-1
-      // or ISO-2022 accordingly (NOTE that these are
-      // the only character encoding sets that are supported in
-      // JTidy).  If character encoding is not specified,
-      // UTF-8 is the default.
-      if (encoding != null)
-      {
-        if (encoding.toLowerCase().equals("iso-8859-1"))
-          tidy.setCharEncoding(org.w3c.tidy.Configuration.LATIN1);
-        else if (encoding.toLowerCase().equals("iso-2022-jp"))
-          tidy.setCharEncoding(org.w3c.tidy.Configuration.ISO2022);
-        else 
-          tidy.setCharEncoding(org.w3c.tidy.Configuration.UTF8);
-      }
+      if (encoding.toLowerCase().equals("iso-8859-1"))
+        tidy.setCharEncoding(org.w3c.tidy.Configuration.LATIN1);
+      else if (encoding.toLowerCase().equals("iso-2022-jp"))
+        tidy.setCharEncoding(org.w3c.tidy.Configuration.ISO2022);
       else
-      {
         tidy.setCharEncoding(org.w3c.tidy.Configuration.UTF8);
-      }
-
-      if ( System.getProperty("os.name").indexOf("Windows") != -1 )
-         tidy.setErrout( new PrintWriter ( new FileOutputStream (new File ("nul") ) ) );
-      else
-         tidy.setErrout( new PrintWriter ( new FileOutputStream (new File ("/dev/null") ) ) );
-      ByteArrayOutputStream stream = new ByteArrayOutputStream (1024);
-
-      Document doc = tidy.parseDOM (urlConnect.getInputStream(), null);
-      if ( tidy.getParseErrors() > 0 )
-        throw new GeneralRenderingException("Unable to convert input document to XHTML");
-      return doc;
     }
     else
     {
-      DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
-      docBuilderFactory.setNamespaceAware(false);
-      DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
-      DTDResolver dtdResolver = new DTDResolver();
-      docBuilder.setEntityResolver(dtdResolver);
-      return  docBuilder.parse(urlConnect.getInputStream());
+      tidy.setCharEncoding(org.w3c.tidy.Configuration.UTF8);
     }
+
+    if ( System.getProperty("os.name").indexOf("Windows") != -1 )
+      tidy.setErrout( new PrintWriter ( new FileOutputStream (new File ("nul") ) ) );
+    else
+      tidy.setErrout( new PrintWriter ( new FileOutputStream (new File ("/dev/null") ) ) );
+    ByteArrayOutputStream stream = new ByteArrayOutputStream (1024);
+
+    tidy.parse (urlConnect.getInputStream(), new BufferedOutputStream (stream));
+
+    if ( tidy.getParseErrors() > 0 )
+      throw new GeneralRenderingException("Unable to convert input document to XHTML");
+
+    return stream.toString();
   }
 
   private URLConnection getConnection(String uri, ChannelState state) throws Exception
@@ -786,7 +801,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
       //get connection
       URLConnection urlConnect = url.openConnection();
       String protocol = url.getProtocol();
-  
+
       if (protocol.equals("http") || protocol.equals("https"))
       {
         if (domain != null && path != null)
@@ -804,11 +819,11 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
             {
               httpUrlConnect.setRequestMethod("POST");
               httpUrlConnect.setAllowUserInteraction(false);
-              httpUrlConnect.setDoOutput(true);  
+              httpUrlConnect.setDoOutput(true);
             }
           }
 
-          //send local data, if required 
+          //send local data, if required
           //can call getOutputStream in sendLocalData (ie. to send post params)
           //(getOutputStream can be called twice on an HttpURLConnection)
           if (state.localConnContext != null)
@@ -870,12 +885,12 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
             case HttpURLConnection.HTTP_SEE_OTHER:
               httpUrlConnect.disconnect();
               httpUrlConnect = (HttpURLConnection) getConnection(location,state);
-              break; 
+              break;
             /*
              * Note: this cases apply to http status code 301
              * it will handle the automatic redirection of GET requests.
              * The spec calls for a POST redirect to be verified manually by the user
-             * Rather than bypass this security restriction, we will throw an exception 
+             * Rather than bypass this security restriction, we will throw an exception
              */
             case HttpURLConnection.HTTP_MOVED_PERM:
               if (state.runtimeData.getHttpRequestMethod().equals("GET")){
@@ -891,7 +906,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
             default:
               break;
           }
-          
+
           return (URLConnection) httpUrlConnect;
         }
       }
@@ -965,28 +980,28 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
     else
     return (System.currentTimeMillis() - ((Long)validity).longValue() < state.cacheTimeout*1000);
   }
-  
+
   public String getContentType(String uid) {
     ChannelState state = (ChannelState)stateTable.get(uid);
     return state.connHolder.getContentType();
   }
-  
+
   public InputStream getInputStream(String uid) throws IOException {
     ChannelState state = (ChannelState)stateTable.get(uid);
     InputStream rs = state.connHolder.getInputStream();
     state.connHolder = null;
     return rs;
   }
-  
+
   public void downloadData(OutputStream out,String uid) throws IOException {
     throw(new IOException("CWebProxy: donloadData method not supported - use getInputStream only"));
   }
-  
+
   public String getName(String uid) {
     ChannelState state = (ChannelState)stateTable.get(uid);
     return "proxyDL";
   }
-  
+
   public Map getHeaders(String uid) {
     ChannelState state = (ChannelState)stateTable.get(uid);
     try {
@@ -1003,5 +1018,5 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
     }
     return rhdrs;
   }
-  
+
 }
