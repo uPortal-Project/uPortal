@@ -302,6 +302,7 @@ public class ExceptionHelper {
      */
 	public static void generateErrorPage(HttpServletResponse resp, Exception e) {
 		resp.setContentType("text/html");
+		resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		try {
 			PrintWriter out = resp.getWriter();
 			out.println("<h1>Cannot start uPortal</h1>");
