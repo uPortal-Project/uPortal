@@ -57,8 +57,14 @@ import  java.net.URL;
 class ManageProfilesState extends BaseState {
   protected Hashtable userProfileList;
   protected Hashtable systemProfileList;
+  protected Hashtable userExpandStates;
+  protected Hashtable systemExpandStates;
   protected ChannelRuntimeData runtimeData;
   IUserLayoutStore ulsdb;
+
+  static final boolean ALLOW_USER_PROFILES=PropertiesManager.getPropertyAsBoolean("org.jasig.portal.channels.UserPreferences.ManageProfilesState.allowUserProfiles");
+  static final boolean ALLOW_SYSTEM_BROWSER_MAPPING=PropertiesManager.getPropertyAsBoolean("org.jasig.portal.channels.UserPreferences.ManageProfilesState.allowSystemProfileBrowserMaping");
+  static final boolean ALLOW_NEW_PROFILE_BUTTON=PropertiesManager.getPropertyAsBoolean("org.jasig.portal.channels.UserPreferences.ManageProfilesState.allowNewProfileCreation");
 
   /**
    * put your documentation comment here
@@ -66,6 +72,8 @@ class ManageProfilesState extends BaseState {
    */
   public ManageProfilesState (CUserPreferences context) {
     super(context);
+    userExpandStates=new Hashtable();
+    systemExpandStates=new Hashtable();
   }
 
   /**
@@ -141,15 +149,13 @@ class ManageProfilesState extends BaseState {
                         // reset user profile listing
                         userProfileList=null;
                     }
-                }
-                else if (action.equals("delete")) {
+                } else if (action.equals("delete")) {
                     // delete a profile
                     if (systemProfile) {
                         // need to check permissions here
                         //			context.getUserPreferencesStore().deleteSystemProfile(Integer.parseInt(profileId));
                         //			systemProfileList=null;
-                    }
-                    else {
+                    } else {
                       try {
                         this.getUserLayoutStore().deleteUserProfile(context.getUserLayoutManager().getPerson(), Integer.parseInt(profileId));
                       } catch (Exception e) {
@@ -158,14 +164,22 @@ class ManageProfilesState extends BaseState {
 
                         userProfileList = null;
                     }
-                }
-                else if (action.equals("map")) {
+                } else if (action.equals("map")) {
                   try {
                     this.getUserLayoutStore().setUserBrowserMapping(context.getUserLayoutManager().getPerson(), this.runtimeData.getBrowserInfo().getUserAgent(), Integer.parseInt(profileId));
                   } catch (Exception e) {
                     throw new PortalException(e.getMessage(), e);
                   }
                   // let userLayoutManager know that the current profile has changed : everything must be reloaded
+                } else if (action.equals("changeView")) {
+                    String view=runtimeData.getParameter("view");
+                    boolean expand=false;
+                    if(view.equals("expanded")) expand=true;
+                    if(systemProfile) {
+                        systemExpandStates.put(profileId,new Boolean(expand));
+                    } else {
+                        userExpandStates.put(profileId,new Boolean(expand));
+                    }
                 }
             }
             if(action.equals("newProfile")) {
@@ -182,6 +196,34 @@ class ManageProfilesState extends BaseState {
 
                     // reset user profile listing
                     userProfileList=null;
+                }
+            } else if(action.equals("condenseAll")) {
+                String profileType = runtimeData.getParameter("profileType");
+                if (profileType != null && profileType.equals("system")) {
+                    // system profiles
+                    systemExpandStates.clear();
+                } else {
+                    // user profiles
+                    userExpandStates.clear();
+                }
+            } else if(action.equals("expandAll")) {
+                String profileType = runtimeData.getParameter("profileType");
+                if (profileType != null && profileType.equals("system")) {
+                    // system profiles
+                    systemExpandStates.clear();
+                    Boolean expState=new Boolean(true);
+                    for (Enumeration upe = this.getSystemProfileList().elements(); upe.hasMoreElements();) {
+                        UserProfile p = (UserProfile)upe.nextElement();
+                        systemExpandStates.put(Integer.toString(p.getProfileId()),expState);
+                    }
+                } else {
+                    // user profiles
+                    userExpandStates.clear();
+                    Boolean expState=new Boolean(true);
+                    for (Enumeration upe = this.getUserProfileList().elements(); upe.hasMoreElements();) {
+                        UserProfile p = (UserProfile)upe.nextElement();
+                        userExpandStates.put(Integer.toString(p.getProfileId()),expState);
+                    }
                 }
             }
         }
@@ -236,24 +278,41 @@ class ManageProfilesState extends BaseState {
       Document doc = new org.apache.xerces.dom.DocumentImpl();
       Element edEl = doc.createElement("profiles");
       doc.appendChild(edEl);
-      // fill out user-defined profiles
-      Element uEl = doc.createElement("user");
-      for (Enumeration upe = this.getUserProfileList().elements(); upe.hasMoreElements();) {
-        UserProfile p = (UserProfile)upe.nextElement();
-        Element pEl = doc.createElement("profile");
-        pEl.setAttribute("id", Integer.toString(p.getProfileId()));
-        pEl.setAttribute("name", p.getProfileName());
-        Element dEl = doc.createElement("description");
-        dEl.appendChild(doc.createTextNode(p.getProfileDescription()));
-        pEl.appendChild(dEl);
-        uEl.appendChild(pEl);
+      if(ALLOW_USER_PROFILES) {
+          // fill out user-defined profiles
+          Element uEl = doc.createElement("user");
+          Hashtable upList=this.getUserProfileList();
+
+          for (Enumeration upe = this.getUserProfileList().elements(); upe.hasMoreElements();) {
+              UserProfile p = (UserProfile)upe.nextElement();
+              Element pEl = doc.createElement("profile");
+              Boolean expState=(Boolean) userExpandStates.get(Integer.toString(p.getProfileId()));
+              if(expState!=null && expState.booleanValue()) {
+                  pEl.setAttribute("view","expanded");
+              } else {
+                  pEl.setAttribute("view","condensed");
+              }
+              pEl.setAttribute("id", Integer.toString(p.getProfileId()));
+              pEl.setAttribute("name", p.getProfileName());
+              Element dEl = doc.createElement("description");
+              dEl.appendChild(doc.createTextNode(p.getProfileDescription()));
+              pEl.appendChild(dEl);
+              uEl.appendChild(pEl);
+          }
+          edEl.appendChild(uEl);
       }
-      edEl.appendChild(uEl);
       // fill out system-defined profiles
       Element sEl = doc.createElement("system");
       for (Enumeration spe = this.getSystemProfileList().elements(); spe.hasMoreElements();) {
         UserProfile p = (UserProfile)spe.nextElement();
         Element pEl = doc.createElement("profile");
+
+        Boolean expState=(Boolean)systemExpandStates.get(Integer.toString(p.getProfileId()));
+        if(expState!=null && expState.booleanValue()) {
+            pEl.setAttribute("view","expanded");
+        } else {
+            pEl.setAttribute("view","condensed");
+        }
         pEl.setAttribute("id", Integer.toString(p.getProfileId()));
         pEl.setAttribute("name", p.getProfileName());
         Element dEl = doc.createElement("description");
@@ -268,6 +327,20 @@ class ManageProfilesState extends BaseState {
        LogService.instance().log(LogService.ERROR,e);
        }
        */
+      // debug printout of the document sent to the XSLT
+      /*
+      StringWriter dbwr1 = new StringWriter();
+      org.apache.xml.serialize.OutputFormat outputFormat = new org.apache.xml.serialize.OutputFormat();
+      outputFormat.setIndenting(true);
+      org.apache.xml.serialize.XMLSerializer dbser1 = new org.apache.xml.serialize.XMLSerializer(dbwr1, outputFormat);
+      try { 
+          dbser1.serialize(doc);
+      LogService.instance().log(LogService.DEBUG, "ManageProfilesState::renderXML() : XML incoming to the XSLT :\n\n" + dbwr1.toString() + "\n\n");
+      } catch (Exception e) {
+          LogService.instance().log(LogService.DEBUG, "ManageProfilesState::renderXML() : problems serializing incoming XML");
+      }
+      */
+
       // find the stylesheet and transform
       StylesheetSet set = context.getStylesheetSet();
       if (set == null)
@@ -275,6 +348,11 @@ class ManageProfilesState extends BaseState {
       String xslURI = set.getStylesheetURI("profileList", runtimeData.getBrowserInfo());
       UserProfile currentProfile = context.getCurrentUserPreferences().getProfile();
       Hashtable params = new Hashtable();
+
+      params.put("allowNewProfile",new Boolean(ALLOW_NEW_PROFILE_BUTTON));
+      params.put("allowSystemProfileMapping",new Boolean(ALLOW_SYSTEM_BROWSER_MAPPING));
+
+
       params.put("baseActionURL", runtimeData.getBaseActionURL());
       params.put("profileId", Integer.toString(currentProfile.getProfileId()));
       if (currentProfile.isSystemProfile())
