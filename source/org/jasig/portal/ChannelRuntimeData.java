@@ -31,16 +31,18 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
+ *
+ * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
-package org.jasig.portal;
 
-import javax.servlet.http.*;
+package  org.jasig.portal;
 
-import java.util.Hashtable;
-import java.util.Map;
+import  javax.servlet.http.*;
+import  java.util.Hashtable;
+import  java.util.Map;
+import  org.jasig.portal.security.IPerson;
 
-import org.jasig.portal.security.IPerson;
 
 /**
  * A set of runtime data acessable by a channel.
@@ -53,58 +55,126 @@ import org.jasig.portal.security.IPerson;
  * @author Peter Kharchenko
  * @version $Revision$
  */
+public class ChannelRuntimeData extends Hashtable {
+  private HttpServletRequest request;
+  private String baseActionURL;
+  private IPerson m_person;
+  private BrowserInfo m_browserInfo = null;
 
-public class ChannelRuntimeData extends Hashtable
-{
-    private HttpServletRequest request;
-    private String baseActionURL;
+  /**
+   * put your documentation comment here
+   */
+  public ChannelRuntimeData () {
+    super();
+    // set the default values for the parameters here
+    request = null;
+    baseActionURL = null;
+  }
+  ;
+  // the set methods ...
+  public void setPerson (IPerson person) {
+    m_person = person;
+  }
 
-    private IPerson m_person;
+  /**
+   * put your documentation comment here
+   * @param baURL
+   */
+  public void setBaseActionURL (String baURL) {
+    baseActionURL = baURL;
+  }
 
-    public ChannelRuntimeData()
-    {
-	super();
+  /**
+   * put your documentation comment here
+   * @param req
+   */
+  public void setHttpRequest (HttpServletRequest req) {
+    request = req;
+  }
 
-	// set the default values for the parameters here
-	request=null;
-	baseActionURL=null;
-    };
+  /**
+   * put your documentation comment here
+   * @param params
+   */
+  public void setParameters (Map params) {
+    // copy a Map
+    this.putAll(params);
+  }
 
+  /**
+   * put your documentation comment here
+   * @param pName
+   * @param pValue
+   */
+  public void setParameter (String pName, String pValue) {
+    this.put(pName, pValue);
+  }
 
-    // the set methods ...
-    public void setPerson(IPerson person)
-    {
-      m_person = person;
-    }
+  // the get methods ...
+  public IPerson getPerson () {
+    return  (m_person);
+  }
 
-    public void setBaseActionURL(String baURL) { baseActionURL=baURL; }
-    public void setHttpRequest(HttpServletRequest req) { request=req; }
+  /**
+   * put your documentation comment here
+   * @return 
+   */
+  public String getBaseActionURL () {
+    return  baseActionURL;
+  }
 
-    public void setParameters(Map params)
-    {
-	// copy a Map
-	this.putAll(params);
-    }
+  /**
+   * put your documentation comment here
+   * @return 
+   */
+  public HttpServletRequest getHttpRequest () {
+    return  request;
+  }
 
-    public void setParameter(String pName,String pValue)
-    {
-	this.put(pName,pValue);
-    }
+  // Parameters are strings !
+  public synchronized String setParameter (Object key, String value) {
+    return  (String)super.put(key, value);
+  }
 
-    // the get methods ...
-    public IPerson getPerson()
-    {
-      return(m_person);
-    }
+  /**
+   * put your documentation comment here
+   * @param key
+   * @return 
+   */
+  public synchronized String getParameter (Object key) {
+    return  (String)super.get(key);
+  }
 
-    public String getBaseActionURL() { return baseActionURL; }
-    public HttpServletRequest getHttpRequest() { return request; }
+  // if you need to pass objects, use this
+  public synchronized Object put (Object key, Object value) {
+    return  super.put(key, value);
+  }
 
-    // Parameters are strings !
-    public synchronized String setParameter (Object key, String value) {return (String) super.put (key, value);}
-    public synchronized String getParameter (Object key) {return (String) super.get (key);}
+  /**
+   * put your documentation comment here
+   * @param key
+   * @return 
+   */
+  public synchronized Object get (Object key) {
+    return  super.get(key);
+  }
 
-    // if you need to pass objects, use this
-    public synchronized Object put (Object key, Object value) {return super.put (key, value);}
-    public synchronized Object get (Object key) {return super.get (key);}
+  /**
+   * put your documentation comment here
+   * @param bi
+   */
+  public void setBrowserInfo (BrowserInfo bi) {
+    m_browserInfo = bi;
+  }
+
+  /**
+   * put your documentation comment here
+   * @return 
+   */
+  public BrowserInfo getBrowserInfo () {
+    return  m_browserInfo;
+  }
 }
+
+
+
