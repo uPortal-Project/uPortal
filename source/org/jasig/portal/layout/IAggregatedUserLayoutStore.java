@@ -99,7 +99,7 @@ public interface IAggregatedUserLayoutStore extends IUserLayoutStore {
      * @exception PortalException if an error occurs
      */
 
-    public IAggregatedLayout getAggregatedLayout (IPerson person, UserProfile profile) throws Exception;
+    public IAggregatedLayout getAggregatedLayout (IPerson person, UserProfile profile) throws PortalException;
 
     /**
      * Persists user layout document.
@@ -108,7 +108,7 @@ public interface IAggregatedUserLayoutStore extends IUserLayoutStore {
      * @param layout a <code>IAggregatedLayout</code> containing an aggregated user layout
      * @exception Exception if an error occurs
      */
-    public void setAggregatedLayout (IPerson person, UserProfile  profile, IAggregatedLayout layout) throws Exception;
+    public void setAggregatedLayout (IPerson person, UserProfile  profile, IAggregatedLayout layout) throws PortalException;
 
 
     /** 
@@ -117,7 +117,7 @@ public interface IAggregatedUserLayoutStore extends IUserLayoutStore {
      * @param layoutImpl a <code>ILayoutFragment</code> object containing a fragment
      * @exception Exception if an error occurs
      */
-    public void setFragment (IPerson person, ILayoutFragment layoutImpl ) throws Exception;
+    public void setFragment (IPerson person, ILayoutFragment layoutImpl ) throws PortalException;
 
     /**
      * Returns the layout fragment as a user layout.
@@ -126,7 +126,7 @@ public interface IAggregatedUserLayoutStore extends IUserLayoutStore {
      * @return a <code>ILayoutFragment</code> object containing the internal representation of the user fragment
      * @exception PortalException if an error occurs
      */
-    public ILayoutFragment getFragment (IPerson person, String fragmentId) throws Exception;
+    public ILayoutFragment getFragment (IPerson person, String fragmentId) throws PortalException;
     
 	/**
 		 * Deletes the fragment that has been loaded as a layout.
@@ -134,7 +134,7 @@ public interface IAggregatedUserLayoutStore extends IUserLayoutStore {
 		 * @param fragmentId a fragment ID
 		 * @exception PortalException if an error occurs
 		 */
-	public void deleteFragment (IPerson person, String fragmentId) throws Exception;
+	public void deleteFragment (IPerson person, String fragmentId) throws PortalException;
 
      /**
      * Returns the fragment IDs/names which the user is an owner of
@@ -142,7 +142,7 @@ public interface IAggregatedUserLayoutStore extends IUserLayoutStore {
      * @return a <code>Map</code> object containing the fragment IDs
      * @exception PortalException if an error occurs
      */
-    public Map getFragments (IPerson person) throws Exception;
+    public Map getFragments (IPerson person) throws PortalException;
 
     /**
      * Returns the next fragment ID

@@ -135,6 +135,5 @@ public class ALFragment extends AggregatedLayout implements ILayoutFragment {
     public void setDescription( String description ) {
       this.description = description;	
     }
-
    
 }

@@ -52,7 +52,7 @@ import org.xml.sax.ContentHandler;
 
 /**
  * A channel for selecting skins.
- * @author Michael Ivanov
+ * @author Michael Ivanov, mvi@immagic.com
  * @version $Revision$
  */
   public class CSkinSelector extends BaseChannel implements IPrivileged {

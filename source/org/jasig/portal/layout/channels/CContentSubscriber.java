@@ -49,7 +49,7 @@ import org.xml.sax.ContentHandler;
 
   /**
    * A channel for adding new content to a layout.
-   * @author Michael Ivanov
+   * @author Michael Ivanov, mvi@immagic.com
    * @version $Revision$
    */
   public class CContentSubscriber extends BaseChannel implements IPrivileged {

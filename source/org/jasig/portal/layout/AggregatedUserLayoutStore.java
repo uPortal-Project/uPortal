@@ -1361,9 +1361,9 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
      * @param person an <code>IPerson</code> object specifying the user
      * @param profile a user profile for which the layout is being stored
      * @param layoutImpl a <code>IAggregatedLayout</code> containing an aggregated user layout
-     * @exception Exception if an error occurs
+     * @exception PortalException if an error occurs
      */
- public void setAggregatedLayout (IPerson person, UserProfile profile, IAggregatedLayout layoutImpl ) throws Exception {
+ public void setAggregatedLayout (IPerson person, UserProfile profile, IAggregatedLayout layoutImpl ) throws PortalException {
 
     if ( !(layoutImpl instanceof AggregatedLayout) )
        throw new PortalException("The user layout object should have \"AggregatedLayout\" type");
@@ -1375,9 +1375,9 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
     Connection con = RDBMServices.getConnection();
 
-    RDBMServices.setAutoCommit(con, false);       // May speed things up, can't hurt
-
-    try {
+	try {
+ 
+       RDBMServices.setAutoCommit(con, false);       // May speed things up, can't hurt
 
        Statement stmt = con.createStatement();
 
@@ -1563,10 +1563,10 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
  /**   Gets the fragment IDs/fragment descriptions for a given user
      * @param person an <code>IPerson</code> object specifying the user
      * @return a <code>Map</code> object containing the IDs of the fragments the user owns
-     * @exception Exception if an error occurs
+     * @exception PortalException if an error occurs
      */
- public Map getFragments (IPerson person) throws Exception {
-
+ public Map getFragments (IPerson person) throws PortalException {
+  try {
     Connection con = RDBMServices.getConnection();
 
     Map fragments = new Hashtable();
@@ -1580,6 +1580,9 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
     if ( con != null ) con.close();
 
     return fragments;
+  } catch ( Exception e ) {
+  	  throw new PortalException(e);  
+  }
  }
 
 
@@ -1588,7 +1591,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
      * @param fragment a <code>ILayoutFragment</code> containing a fragment
      * @exception Exception if an error occurs
      */
- public void setFragment (IPerson person, ILayoutFragment fragment ) throws Exception {
+ public void setFragment (IPerson person, ILayoutFragment fragment ) throws PortalException {
 
     int userId = person.getID();
     String fragmentId = fragment.getId();
@@ -1599,9 +1602,10 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
     ALFragment layout = (ALFragment) fragment;
   
-    RDBMServices.setAutoCommit(con, false);       // May speed things up, can't hurt
+   try {
+  
+       RDBMServices.setAutoCommit(con, false);       // May speed things up, can't hurt
 
-    try {
 
        Statement stmt = con.createStatement();
        
@@ -1720,14 +1724,14 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 	 * @param fragmentId a fragment ID
 	 * @exception PortalException if an error occurs
 	 */
-   public void deleteFragment (IPerson person, String fragmentId) throws Exception {
+   public void deleteFragment (IPerson person, String fragmentId) throws PortalException {
    	
 	   int userId = person.getID();
 	   Connection con = RDBMServices.getConnection();
   
-	   RDBMServices.setAutoCommit(con, false);       // May speed things up, can't hurt
-
-	  try {
+	try {
+		
+	    RDBMServices.setAutoCommit(con, false);       // May speed things up, can't hurt
 
 		Statement stmt = con.createStatement();
 		boolean isOwner = false;
