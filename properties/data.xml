@@ -48,7 +48,6 @@
         <column><name>USER_NAME</name><value>guest</value></column>
         <column><name>USER_DFLT_USR_ID</name><value>NULL</value></column>
         <column><name>USER_DFLT_LAY_ID</name><value>NULL</value></column>
-        <column><name>CURR_LAY_ID</name><value>1</value></column>
         <column><name>NEXT_STRUCT_ID</name><value>30</value></column>
       </row>
       <row>
@@ -56,7 +55,6 @@
         <column><name>USER_NAME</name><value>demo</value></column>
         <column><name>USER_DFLT_USR_ID</name><value>1</value></column>
         <column><name>USER_DFLT_LAY_ID</name><value>1</value></column>
-        <column><name>CURR_LAY_ID</name><value>1</value></column>
         <column><name>NEXT_STRUCT_ID</name><value>32</value></column>
       </row>
       <!-- We need default layouts for student, faculty, staff, developer and admin and then
@@ -66,7 +64,6 @@
         <column><name>USER_NAME</name><value>student</value></column>
         <column><name>USER_DFLT_USR_ID</name><value>1</value></column>
         <column><name>USER_DFLT_LAY_ID</name><value>1</value></column>
-        <column><name>CURR_LAY_ID</name><value>1</value></column>
         <column><name>NEXT_STRUCT_ID</name><value>32</value></column>
       </row>
       <row>
@@ -74,7 +71,6 @@
         <column><name>USER_NAME</name><value>faculty</value></column>
         <column><name>USER_DFLT_USR_ID</name><value>1</value></column>
         <column><name>USER_DFLT_LAY_ID</name><value>1</value></column>
-        <column><name>CURR_LAY_ID</name><value>1</value></column>
         <column><name>NEXT_STRUCT_ID</name><value>32</value></column>
       </row>
       <row>
@@ -82,7 +78,6 @@
         <column><name>USER_NAME</name><value>staff</value></column>
         <column><name>USER_DFLT_USR_ID</name><value>1</value></column>
         <column><name>USER_DFLT_LAY_ID</name><value>1</value></column>
-        <column><name>CURR_LAY_ID</name><value>1</value></column>
         <column><name>NEXT_STRUCT_ID</name><value>32</value></column>
       </row>
       <row>
@@ -90,7 +85,6 @@
         <column><name>USER_NAME</name><value>developer</value></column>
         <column><name>USER_DFLT_USR_ID</name><value>1</value></column>
         <column><name>USER_DFLT_LAY_ID</name><value>1</value></column>
-        <column><name>CURR_LAY_ID</name><value>1</value></column>
         <column><name>NEXT_STRUCT_ID</name><value>32</value></column>
       </row>
       <row>
@@ -98,7 +92,6 @@
         <column><name>USER_NAME</name><value>admin</value></column>
         <column><name>USER_DFLT_USR_ID</name><value>1</value></column>
         <column><name>USER_DFLT_LAY_ID</name><value>1</value></column>
-        <column><name>CURR_LAY_ID</name><value>1</value></column>
         <column><name>NEXT_STRUCT_ID</name><value>32</value></column>
       </row>
       -->

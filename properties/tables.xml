@@ -19,9 +19,6 @@
       <column> <name>USER_DFLT_LAY_ID</name> <type>INTEGER</type>
         <desc>Portal uses the layout from this layout ID to revert back to, and the initial layout for a user.</desc>
       </column>
-      <column> <name>CURR_LAY_ID</name>      <type>INTEGER</type>
-        <desc>Portal uses this layout ID to display this user's content - maps to layout_id in up_layout_struct</desc>
-      </column>
       <column> <name>NEXT_STRUCT_ID</name>   <type>INTEGER</type>
         <desc>NEXT_STRUCT_ID used by the user in layout - found in up_layout_struct based on user. Each user has a seperate, unique, sequence of struct_ids</desc>
       </column>
