@@ -135,7 +135,7 @@ public class ChannelManager {
 			while (en.hasMoreElements ()) {
 			    String pName= (String) en.nextElement ();
 			    if (!pName.equals ("channelTarget"))
-				targetParams.put (pName, req.getParameter (pName));
+				targetParams.put (pName, req.getParameterValues(pName));
 			}
 		    }
 		    // check if the channel is an IPrivilegedChannel, and if it is,

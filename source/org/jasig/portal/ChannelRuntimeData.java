@@ -106,12 +106,18 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable
     this.putAll (params);
   }
 
-  public void setParameter (String pName, String pValue)
-  {
-    this.put (pName,pValue);
-  }
+    public synchronized String[]  setParameterValues(String pName, String[] values) {
+	return (String[]) super.put(pName,values);
+    }
 
-  // the get methods ...
+    public synchronized void setParameter (String key, String value)
+    {
+	String[] valueArray=new String[1];
+	valueArray[0]=value;
+	super.put(key,valueArray);
+    } 
+
+      // the get methods ...
 
   public String getBaseActionURL ()
   {
@@ -146,15 +152,12 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable
     response.sendRedirect(redirectHost + redirectURL);
   }
 
-  // Parameters are strings !
-  public synchronized String setParameter (Object key, String value)
-  {
-    return (String) super.put (key, value);
-  }
 
-  public synchronized String getParameter (Object key)
+  public synchronized String getParameter (String key)
   {
-    return (String) super.get (key);
+      String[] value_array=this.getParameterValues(key);
+      if((value_array!=null) && (value_array.length>0)) return value_array[0];
+      else return null;
   }
 
   /**
