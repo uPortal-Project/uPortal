@@ -148,10 +148,6 @@ public class EntityPropertyRegistry {
          EntityCachingService.instance().remove(propsType, getPropKey(entityID));
       } catch (CachingException e) {
          log.error("Error clearing cache for entity ID [" + entityID + "]", e);
-         Exception ee = e.getRecordedException();
-         if (ee != null) {
-            log.error(ee, ee);
-         }
       }
    }
 
@@ -160,10 +156,6 @@ public class EntityPropertyRegistry {
          EntityCachingService.instance().add(ep);
       } catch (CachingException e) {
          log.error("Error adding entity properties [" + ep + "] to the cache", e);
-         Exception ee = e.getRecordedException();
-         if (ee != null) {
-            log.error(ee, ee);
-         }
       }
    }
 
@@ -174,10 +166,6 @@ public class EntityPropertyRegistry {
                                                                      entityID.getKey());
       } catch (CachingException e) {
          log.error("Error getting cached properties for entity [" + entityID + "]", e);
-         Exception ee = e.getRecordedException();
-         if (ee != null) {
-            log.error(ee, ee);
-         }
       }
       return ep;
    }
