@@ -51,7 +51,7 @@ import javax.servlet.*;
 import javax.servlet.jsp.*;
 import javax.servlet.http.*;
 
-import org.apache.xml.serialize.*;
+import org.jasig.portal.serialize.*;
 
 public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl
 {

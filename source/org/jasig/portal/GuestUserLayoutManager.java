@@ -43,8 +43,6 @@ import org.jasig.portal.services.LogService;
 import  java.sql.*;
 import  org.w3c.dom.*;
 
-import  org.apache.xml.serialize.*;
-import  org.w3c.dom.*;
 import  javax.servlet.*;
 import  javax.servlet.jsp.*;
 import  javax.servlet.http.*;

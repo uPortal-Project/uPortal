@@ -54,7 +54,7 @@ import  org.jasig.portal.security.IPerson;
 import  org.jasig.portal.utils.XSLT;
 import  org.xml.sax.*;
 
-import  org.apache.xml.serialize.*;
+import  org.jasig.portal.serialize.*;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.Source;

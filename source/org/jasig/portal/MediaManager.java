@@ -47,11 +47,12 @@ import java.util.Vector;
 import java.util.StringTokenizer;
 import java.net.URL;
 import java.net.MalformedURLException;
-import org.apache.xml.serialize.BaseMarkupSerializer;
-import org.apache.xml.serialize.XMLSerializer;
-import org.apache.xml.serialize.CachingXHTMLSerializer;
-import org.apache.xml.serialize.HTMLSerializer;
-import org.apache.xml.serialize.OutputFormat;
+import org.jasig.portal.serialize.BaseMarkupSerializer;
+import org.jasig.portal.serialize.XMLSerializer;
+import org.jasig.portal.serialize.CachingXHTMLSerializer;
+import org.jasig.portal.serialize.HTMLSerializer;
+import org.jasig.portal.serialize.CachingHTMLSerializer;
+import org.jasig.portal.serialize.OutputFormat;
 
 
 /**
@@ -306,7 +307,7 @@ public class MediaManager {
       OutputFormat frmt = new OutputFormat("XHTML", "UTF-8", true);
       frmt.setPreserveSpace(true);
       frmt.setIndenting(outputIndenting);
-      frmt.setOmitDocumentType(true); // Portal looks like crap on Netscape when the XHTML doctype is included!
+      //      frmt.setOmitDocumentType(true); // Portal looks like crap on Netscape when the XHTML doctype is included!
       return  new CachingXHTMLSerializer(out, frmt);
     }
     else {
@@ -314,7 +315,7 @@ public class MediaManager {
       OutputFormat frmt = new OutputFormat("HTML", "UTF-8", true);
       frmt.setPreserveSpace(true);
       frmt.setIndenting(outputIndenting);
-      return  new HTMLSerializer(out, frmt);
+      return  new CachingHTMLSerializer(out, frmt);
     }
   }
 
