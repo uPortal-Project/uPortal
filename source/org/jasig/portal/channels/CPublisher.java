@@ -36,13 +36,15 @@
 package org.jasig.portal.channels;
 
 import org.jasig.portal.*;
-import org.jasig.portal.utils.XSLT;
+import org.jasig.portal.utils.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import org.w3c.dom.*;
 import org.apache.xalan.xslt.*;
+import  org.apache.xerces.dom.*;
 import org.xml.sax.DocumentHandler;
 import java.io.*;
+import java.util.*;
 
 /**
  * Provides methods associated with subscribing to a channel.
@@ -74,11 +76,14 @@ public class CPublisher implements ISpecialChannel
   private Document channelTypes = null;
   private Document channelDecl = null;
   private String action = null;
-  private String currentStep;
+  private String currentStep = "1";
+  private int numSteps;
   private String declURI;
   private String catID;
   private String[] catIDs = null; // contains the IDs of channels categories
   private boolean modified = false; // modification flag
+  public static Vector vReservedParams = getReservedParams();
+  private Hashtable hParams = null;
   
   /** Construct a CPublisher.
    */
@@ -91,6 +96,18 @@ public class CPublisher implements ISpecialChannel
     this.chanReg = new ChannelRegistryImpl ();
   }
 
+  /**
+   * Loads the reserved parameter names.
+   */
+    private static Vector getReservedParams()
+    {
+        Vector v = new Vector();
+        v.addElement("action");
+        v.addElement("currentStep");
+        v.addElement("numSteps");
+        v.addElement("ssl");
+        return v;
+    }
 
   /** Returns static channel properties to the portal
    * @return handle to publish properties
@@ -134,7 +151,7 @@ public class CPublisher implements ISpecialChannel
   public void setRuntimeData(final org.jasig.portal.ChannelRuntimeData rd) throws org.jasig.portal.PortalException
   {
     this.runtimeData = rd;    
-    currentStep = "1";
+    
     //catID = runtimeData.getParameter("catID");
     String role = "student"; //need to get from current user
     chanReg = new ChannelRegistryImpl();
@@ -144,7 +161,7 @@ public class CPublisher implements ISpecialChannel
     if (channelTypes==null) channelTypes = chanReg.getTypesXML(role);
     
     action = runtimeData.getParameter ("action");
-    
+    System.out.println("action: "+ action);
     if (action != null)
     {
       if (action.equals ("choose"))
@@ -155,6 +172,8 @@ public class CPublisher implements ISpecialChannel
         preparePublishTo ();
       else if (action.equals ("saveChanges"))
         prepareSaveChanges ();
+      else if (action.equals("cancel"))
+          mode = NONE;
     }
         
   }
@@ -173,7 +192,7 @@ public class CPublisher implements ISpecialChannel
           processXML ("main", out);
           break;
         case PUBLISH:
-          processXML ("publish", out);
+          processXML ("main", out);
           break;
         default:
           processXML ("main", out);
@@ -237,9 +256,67 @@ public class CPublisher implements ISpecialChannel
   private void preparePublish ()
   {
     mode = PUBLISH;
+    if (hParams==null) hParams = new Hashtable();
+    currentStep = runtimeData.getParameter("currentStep");
+    numSteps = Integer.parseInt(runtimeData.getParameter("numSteps"));
     HttpServletRequest req = runtimeData.getHttpRequest ();
-    catIDs = req.getParameterValues ("cat");    
+    Enumeration e = req.getParameterNames();
+    
+    if(!currentStep.equals("end")) {
+        int i = Integer.parseInt(currentStep);
+        if(i < numSteps){ 
+            currentStep = Integer.toString(i+1);
+        }
+        else {
+            publishChannel();
+            currentStep = "end";
+    }
+    
+    System.out.println("numSteps: "+ numSteps);
+    System.out.println("currentStep: "+ currentStep);
+    
+    while(e.hasMoreElements()) {
+        String s = (String)e.nextElement();
+        
+        if(!vReservedParams.contains(s)){
+            if (runtimeData.getParameter(s)!=null) {
+                System.out.println("adding param: "+ s);
+                System.out.println("adding param value: "+ runtimeData.getParameter(s));
+            hParams.put(s, runtimeData.getParameter(s));
+            }
+        }    
+    }
   }
+  }
+    
+    private void publishChannel () {
+        
+        String nextID = chanReg.getNextId();
+        Document doc = new DocumentImpl();
+        Element chan = doc.createElement("channel");
+        chan.setAttribute("timeout", "5000");
+        chan.setAttribute("priority", "1");
+        chan.setAttribute("minimized", "false");
+        chan.setAttribute("editable", "false");
+        chan.setAttribute("hasHelp", "false");
+        chan.setAttribute("removable", "true");
+        chan.setAttribute("detachable", "true");
+        chan.setAttribute("class", (String)hParams.get("class"));
+        if (nextID!=null) chan.setAttribute("ID", "chan"+nextID);
+        
+        Enumeration e = hParams.keys();
+        while (e.hasMoreElements()) {
+            String name = (String)e.nextElement();
+            String value = (String) hParams.get(name);
+            Element el = doc.createElement("parameter");
+            el.setAttribute(XMLEscaper.escape(name), XMLEscaper.escape(value));
+            chan.appendChild(el);
+        }
+        doc.appendChild(chan);
+        
+        chanReg.addChannel(nextID, "new channel", doc);
+    }
+        
    
   private void preparePublishTo ()
   {
