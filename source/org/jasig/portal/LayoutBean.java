@@ -977,7 +977,7 @@ public class LayoutBean extends GenericPortalBean
   }    
   
   /**
-   * Generate a unique identifier for the channel instance.
+   * Get a unique identifier for the channel instance.
    * @param channel object from layout XML
    * @return a unique identifier for the channel instance
    */
@@ -985,22 +985,12 @@ public class LayoutBean extends GenericPortalBean
   {    
     try 
     {
-      String sClass = channel.getAttribute ("class");
+      String sChannelInstanceID = channel.getInstanceIDAttribute ();
       
-      // Build a string from channel class and parameter values to be used
-      // as a key for looking up channel instances
-      StringBuffer sbKey = new StringBuffer (sClass);      
-      org.jasig.portal.layout.IParameter[] parameters = channel.getParameters ();
-            
-      if (parameters != null)
-      {
-        for (int iParam = 0; iParam < parameters.length; iParam++)
-        {
-          String sParamValue = parameters[iParam].getAttribute ("value");
-          sbKey.append (sParamValue);
-        }
-      }
-      return sbKey.toString ();
+      if (sChannelInstanceID == null)
+        throw new Exception ("Channel instance ID not found in layout xml.");
+        
+      return sChannelInstanceID;
     }
     catch (Exception e)
     {
