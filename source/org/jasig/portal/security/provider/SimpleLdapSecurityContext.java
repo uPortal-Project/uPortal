@@ -152,8 +152,8 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext
             LogService.log(LogService.DEBUG,
                            "SimpleLdapSecurityContext: Looking in " +
                            dnBuffer.toString() + " for " + attrSearch);
-            conn.search(dnBuffer.toString(), "(uid=x)", searchCtls);
-            
+            conn.search(dnBuffer.toString(), attrSearch, searchCtls);
+ 
             this.isauth = true;
             this.myPrincipal.FullName = first_name + " " + last_name;
             LogService.log(LogService.DEBUG,
