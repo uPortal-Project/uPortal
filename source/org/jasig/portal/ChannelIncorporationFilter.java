@@ -53,7 +53,10 @@ public class ChannelIncorporationFilter extends SAXFilterImpl
   ChannelManager cm;
 
   // information about the current channel
+  private Hashtable params;
+  private String channelClassName;
   private String channelID;
+  private long timeOut;
 
   // public functions
 
@@ -65,32 +68,35 @@ public class ChannelIncorporationFilter extends SAXFilterImpl
 
   public void startElement (java.lang.String name, org.xml.sax.AttributeList atts) throws SAXException
   {
-    if (!insideChannelElement)
-    {
+    if (!insideChannelElement) {
       // recognizing "channel"
-      if (name.equals ("channel"))
-      {
+      if (name.equals ("channel")) {
         insideChannelElement = true;
+
+        // get class attribute
+        channelClassName = atts.getValue ("class");
         channelID = atts.getValue ("ID");
+        timeOut = java.lang.Long.parseLong (atts.getValue ("timeout"));
+        params = new Hashtable ();
+      } else {
+        super.startElement (name,atts);
       }
-      else
-        super.startElement (name, atts);
+    } else if (name.equals ("parameter")) {
+      params.put (atts.getValue ("name"), atts.getValue ("value"));
     }
   }
 
   public void endElement (java.lang.String name) throws SAXException
   {
-    if (insideChannelElement)
-    {
-      if (name.equals ("channel"))
-      {
-        if (super.outDocumentHandler != null)
-        {
-          cm.outputChannel (channelID, this.getDocumentHandler ());
-          insideChannelElement = false;
+    if (insideChannelElement) {
+      if (name.equals ("channel")) {
+        if (super.outDocumentHandler != null) {
+            cm.outputChannel (channelID, this.getDocumentHandler (),this.channelClassName,this.timeOut,this.params);
+            insideChannelElement = false;
         }
       }
+    } else { 
+        super.endElement (name);
     }
-    else super.endElement (name);
   }
 }
