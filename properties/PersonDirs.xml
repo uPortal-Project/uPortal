@@ -242,12 +242,6 @@
         <alias>userSMIMECertificate</alias>
       </attribute>
 
-      <!-- givenName is not actually part of the eduPerson standard -->
-      <attribute>
-        <name>FIRST_NAME</name>
-        <alias>givenName</alias>
-      </attribute>
-
     </attributes>
 
   </PersonDirInfo>
