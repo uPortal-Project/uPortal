@@ -297,15 +297,16 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
       catch (Exception e)
       {
         throw new GeneralRenderingException("Problem parsing " + state.xmlUri + ": " + e);
-      }finally {
-		try {
-			if(inputStream != null)
-			inputStream.close();
-		} catch (IOException ioe) {
-			throw new PortalException("CGenericXSLT:renderXML():: could not close InputStream");
-		}
-		urlConnect.disconnect();
-	}
+      } finally {
+				try {
+					if (inputStream != null)
+						inputStream.close();
+				} catch (IOException ioe) {
+					throw new PortalException(
+							"CGenericXSLT:renderXML():: could not close InputStream");
+				}
+				urlConnect.disconnect();
+			}
 
       state.runtimeData.put("baseActionURL", state.runtimeData.getBaseActionURL());
       state.runtimeData.put("isRenderingAsRoot", String.valueOf(state.runtimeData.isRenderingAsRoot()));
