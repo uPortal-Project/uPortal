@@ -42,6 +42,25 @@ public class PortalSessionManager extends HttpServlet {
 
     private static final Log log = LogFactory.getLog(PortalSessionManager.class);
     
+    /** 
+     * Default value for ALLOW_REPEATED_REQUESTS.
+     * This value will be used when the corresponding property cannot be loaded.
+     */
+    private static final boolean DEFAULT_ALLOW_REPEATED_REQUESTS = false;
+    
+    /**
+     * Default value for whether to cache URLs.
+     * This value will be used when the corresponding property cannot be loaded.
+     */
+    private static final boolean DEFAULT_URL_CACHING = true;
+    
+    /**
+     * Default SAX driver name.
+     * This will be used when the System property is not set and
+     * the corresponding portal.properties property is not set.
+     */
+    private static final String DEFAULT_SAX_DRIVER = "org.apache.xerces.parsers.SAXParser";
+    
   public static final String INTERNAL_TAG_VALUE=Long.toHexString((new Random()).nextLong());
   public static final String IDEMPOTENT_URL_TAG="idempotent";
 
@@ -65,19 +84,11 @@ public class PortalSessionManager extends HttpServlet {
   // repeated requests from going through. This is useful
   // when debugging and typing things in on a command line.
   // Otherwise, the flag should be set to false.
-  private static final boolean ALLOW_REPEATED_REQUESTS = getAllowRepeatedRequestsValue();
+  private static final boolean ALLOW_REPEATED_REQUESTS = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.PortalSessionManager.allow_repeated_requests", DEFAULT_ALLOW_REPEATED_REQUESTS);
 
   // random number generator
   private static final Random randomGenerator = new Random();
   
-  private static boolean getAllowRepeatedRequestsValue() {
-  	try {
-  	    return 	PropertiesManager.getPropertyAsBoolean("org.jasig.portal.PortalSessionManager.allow_repeated_requests");
-  	} catch ( RuntimeException re ) {
-  		return false;
-  	}
-  }
-
   static {
     log.info( "uPortal started");
   }
@@ -109,7 +120,7 @@ public class PortalSessionManager extends HttpServlet {
       }
       
       // Turn off URL caching if it has been requested
-      if (!PropertiesManager.getPropertyAsBoolean("org.jasig.portal.PortalSessionManager.url_caching")) {
+      if (!PropertiesManager.getPropertyAsBoolean("org.jasig.portal.PortalSessionManager.url_caching", DEFAULT_URL_CACHING)) {
          // strangely, we have to instantiate a URLConnection to turn off caching, so we'll get something we know is there
          try {
             URL url = ResourceLoader.getResourceAsURL(PortalSessionManager.class, "/properties/portal.properties");
@@ -135,7 +146,7 @@ public class PortalSessionManager extends HttpServlet {
 
       // Get the SAX implementation
       if (System.getProperty("org.xml.sax.driver") == null) {
-          System.setProperty("org.xml.sax.driver", PropertiesManager.getProperty("org.xml.sax.driver"));
+          System.setProperty("org.xml.sax.driver", PropertiesManager.getProperty("org.xml.sax.driver", DEFAULT_SAX_DRIVER));
       }
     }
   }

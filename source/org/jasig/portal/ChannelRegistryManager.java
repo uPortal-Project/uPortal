@@ -49,13 +49,56 @@ public class ChannelRegistryManager {
     
   protected static final IChannelRegistryStore crs = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl();
 
-  // Cache timeout properties
-  protected static final int registryCacheTimeout = PropertiesManager.getPropertyAsInt("org.jasig.portal.ChannelRegistryManager.channel_registry_cache_timeout");
-  protected static final int chanTypesCacheTimeout = PropertiesManager.getPropertyAsInt("org.jasig.portal.ChannelRegistryManager.channel_types_cache_timeout");
-  protected static final int cpdCacheTimeout = PropertiesManager.getPropertyAsInt("org.jasig.portal.ChannelRegistryManager.cpd_cache_timeout");
-  // I18n propertiy
-  protected static final boolean localeAware = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.i18n.LocaleManager.locale_aware");
+  /**
+     * Default value for registryCacheTimeout.
+     * This value will be used when the corresponding property cannot be loaded.
+     */
+    private static final int DEFAULT_REGISTRY_CACHE_TIMEOUT = 900;
+    
+    /**
+     * Default value for chanTypesCacheTimeout.
+     * This value will be used when the corresponding property cannot be loaded.
+     */
+    private static final int DEFAULT_CHAN_TYPES_CACHE_TIMEOUT = 900;
+    
+    /**
+     * Default value for cpdCacheTimeout.
+     * This value will be used when the corresponding property cannot be loaded.
+     */
+    private static final int DEFAULT_CPD_CACHE_TIMEOUT = 900;
+    
+    /**
+     * Default value for localeAware.
+     * This value will be used when the corresponding property cannot be loaded.
+     */
+    private static final boolean DEFAULT_LOCALE_AWARE = false;
 
+  // Cache timeout properties
+  /**
+   * Timeout, in seconds, of the cache of the registry of channels.
+   */
+  protected static final int registryCacheTimeout = PropertiesManager.getPropertyAsInt("org.jasig.portal.ChannelRegistryManager.channel_registry_cache_timeout", DEFAULT_REGISTRY_CACHE_TIMEOUT);
+
+  /**
+   * Timeout, in seconds, of the cache of channel types.
+   */
+  protected static final int chanTypesCacheTimeout = PropertiesManager.getPropertyAsInt("org.jasig.portal.ChannelRegistryManager.channel_types_cache_timeout", DEFAULT_CHAN_TYPES_CACHE_TIMEOUT);
+
+  /**
+   * Timeout, in seconds, of the cache of channel publishing documents.
+   */
+  protected static final int cpdCacheTimeout = PropertiesManager.getPropertyAsInt("org.jasig.portal.ChannelRegistryManager.cpd_cache_timeout", DEFAULT_CPD_CACHE_TIMEOUT);
+
+  // i18n properties
+  
+  /**
+   * Boolean indicating whether internationalization will be used.
+   */
+  protected static final boolean localeAware = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.i18n.LocaleManager.locale_aware", DEFAULT_LOCALE_AWARE);
+
+  
+  
+ 
   // Caches
   protected static final SmartCache channelRegistryCache = new SmartCache(registryCacheTimeout);
   protected static final SmartCache channelTypesCache = new SmartCache(chanTypesCacheTimeout);
