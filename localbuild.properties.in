@@ -36,7 +36,7 @@ dbtype=hypersonic
 
 # sql properties for running scripts and populating the database
 # comment the dbdriver to suppress sql target
-dbdriver=org.hsql.jdbcDriver
-dburl=jdbc:HypersonicSQL:F:/hypersonicsql/demo/portal
-dblogin=sa
-dbpass=
+#dbdriver=org.hsql.jdbcDriver
+#dburl=jdbc:HypersonicSQL:F:/hypersonicsql/demo/portal
+#dblogin=sa
+#dbpass=
