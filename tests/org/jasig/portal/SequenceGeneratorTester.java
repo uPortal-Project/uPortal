@@ -34,11 +34,9 @@ public class SequenceGeneratorTester extends TestCase {
                 {
                     try { ctrValue = generator.getNext(testCounterNames[0]); }
                     catch (Exception e) 
-                        { print("Caught Exception: " + e.getMessage()); }
+                        { print("SequenceGeneratorTester$Tester: Caught Exception: " + e.getMessage()); }
                 }
-	                counterValues[i] = (ctrValue != null) 
-                        ? ctrValue 
-                        : System.currentTimeMillis() + "";
+	            counterValues[i] = ctrValue;
             }
         }
     } 
@@ -191,9 +189,9 @@ public void testConcurrentAccess() throws Exception
     thread1.start();
     thread2.start();
 
-    
-    print("Now sleeping for 10 seconds");
-    Thread.sleep(10000);
+    long millis = numTests * 200;    
+    print("Now sleeping for " + millis + " milliseconds.");
+    Thread.sleep(millis);
     
     msg = "Checking counter values for uniqueness.";
     print(msg);
@@ -203,6 +201,7 @@ public void testConcurrentAccess() throws Exception
     for (int idx1=0; idx1<numTests; idx1++)
     {
         tester1Value = tester1.counterValues[idx1];
+        assertNotNull( msg, tester1Value );
         for (int idx2=0; idx2<numTests; idx2++)
         {
 	        tester2Value = tester2.counterValues[idx2];
