@@ -3,7 +3,7 @@
   <xsl:output method="html" indent="yes"/>
   <xsl:param name="baseActionURL">baseActionURL_false</xsl:param>
   <xsl:param name="profileType">profileType_false</xsl:param>
-  <xsl:param name="profileName">profileName_false</xsl:param>
+  <xsl:param name="profileId">profileId_false</xsl:param>
   <xsl:variable name="baseMediaURL">media/org/jasig/portal/channels/CUserPreferences/</xsl:variable>
   <!--add to baseMediaURL select 'media/org/jasig/portal/channels/CUserPreferences/'-->
   <xsl:template match="profiles">
@@ -88,7 +88,7 @@
   </xsl:template>
   <xsl:template match="profile" mode="user">
     <xsl:choose>
-      <xsl:when test="$profileName=@name and $profileType='user'">
+      <xsl:when test="$profileId=@id and $profileType='user'">
         <xsl:call-template name="selected_userProfile"/>
       </xsl:when>
       <xsl:otherwise>
@@ -96,7 +96,7 @@
           <td/>
           <td class="uportal-text" valign="top">
             <a>
-              <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?userPreferencesAction=managePreferences&amp;profileName=<xsl:value-of select="@name"/>&amp;profileType=user</xsl:attribute>
+              <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?userPreferencesAction=managePreferences&amp;profileId=<xsl:value-of select="@id"/>&amp;profileType=user</xsl:attribute>
               <img border="0" width="16" height="16" alt="Edit Layout and preferences">
                 <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>profile_user_pref.gif</xsl:attribute>
               </img>
@@ -104,7 +104,7 @@
           </td>
           <td class="uportal-text" valign="top">
             <a>
-              <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?action=edit&amp;profileName=<xsl:value-of select="@name"/>&amp;profileType=user</xsl:attribute>
+              <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?action=edit&amp;profileId=<xsl:value-of select="@id"/>&amp;profileType=user</xsl:attribute>
               <img border="0" width="16" height="16" alt="Edit profile">
                 <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>profile_edit.gif</xsl:attribute>
               </img>
@@ -112,7 +112,7 @@
           </td>
           <td class="uportal-text" valign="top">
             <a>
-              <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?action=copyUserProfile&amp;profileName=<xsl:value-of select="@name"/>&amp;profileType=user</xsl:attribute>
+              <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?action=copyUserProfile&amp;profileId=<xsl:value-of select="@id"/>&amp;profileType=user</xsl:attribute>
               <img border="0" width="16" height="16" alt="Copy personal profile">
                 <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>profile_duplicate.gif</xsl:attribute>
               </img>
@@ -120,7 +120,7 @@
           </td>
           <td class="uportal-text" valign="top">
             <a>
-              <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?action=delete&amp;profileName=<xsl:value-of select="@name"/>&amp;profileType=user</xsl:attribute>
+              <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?action=delete&amp;profileId=<xsl:value-of select="@id"/>&amp;profileType=user</xsl:attribute>
               <img border="0" width="16" height="16" alt="Delete profile">
                 <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>profile_delete.gif</xsl:attribute>
               </img>
@@ -128,7 +128,7 @@
           </td>
           <td class="uportal-text" valign="top">
             <a>
-              <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?action=map&amp;profileName=<xsl:value-of select="@name"/>&amp;profileType=user</xsl:attribute>
+              <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?action=map&amp;profileId=<xsl:value-of select="@id"/>&amp;profileType=user</xsl:attribute>
               <img border="0" width="16" height="16" alt="Map current browser to this profile">
                 <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>profile_map.gif</xsl:attribute>
               </img>
@@ -136,7 +136,7 @@
           </td>
           <td class="uportal-text" valign="top">
             <a>
-              <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?action=map_adv&amp;profileName=<xsl:value-of select="@name"/>&amp;profileType=user</xsl:attribute>
+              <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?action=map_adv&amp;profileId=<xsl:value-of select="@id"/>&amp;profileType=user</xsl:attribute>
               <img border="0" width="16" height="16" alt="Advanced mapping properties">
                 <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>profile_map_adv.gif</xsl:attribute>
               </img>
@@ -190,7 +190,7 @@
   </xsl:template>
   <xsl:template match="profile" mode="system">
     <xsl:choose>
-      <xsl:when test="$profileName=@name and $profileType='system'">
+      <xsl:when test="$profileId=@id and $profileType='system'">
         <xsl:call-template name="selected_systemProfile"/>
       </xsl:when>
       <xsl:otherwise>
@@ -198,7 +198,7 @@
           <td class="uportal-text"/>
           <td class="uportal-text" valign="top">
             <a>
-              <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?userPreferencesAction=managePreferences&amp;profileName=<xsl:value-of select="@name"/>&amp;profileType=system</xsl:attribute>
+              <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?userPreferencesAction=managePreferences&amp;profileId=<xsl:value-of select="@id"/>&amp;profileType=system</xsl:attribute>
               <img border="0" width="16" height="16" alt="Edit Layout and preferences">
                 <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>profile_user_pref.gif</xsl:attribute>
               </img>
@@ -207,7 +207,7 @@
           <td class="uportal-text" valign="top" align="center"/>
           <td class="uportal-text" valign="top" align="center">
             <a>
-              <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?action=copy&amp;profileName=<xsl:value-of select="@name"/>&amp;profileType=system</xsl:attribute>
+              <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?action=copy&amp;profileId=<xsl:value-of select="@id"/>&amp;profileType=system</xsl:attribute>
           <img border="0" width="16" height="16" alt="Copy system profile to my profiles">
                 <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>profile_duplicate.gif</xsl:attribute>
               </img>
@@ -216,7 +216,7 @@
           <td class="uportal-text" valign="top" align="center"/>
           <td class="uportal-text" valign="top">
             <a>
-              <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?action=map&amp;profileName=<xsl:value-of select="@name"/>&amp;profileType=system</xsl:attribute>
+              <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?action=map&amp;profileId=<xsl:value-of select="@id"/>&amp;profileType=system</xsl:attribute>
               <img border="0" width="16" height="16" alt="Map current browser to this profile">
                 <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>profile_map.gif</xsl:attribute>
               </img>
@@ -244,7 +244,7 @@
       </td>
       <td class="uportal-text" valign="top">
         <a>
-          <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?userPreferencesAction=managePreferences&amp;profileName=<xsl:value-of select="@name"/>&amp;profileType=user</xsl:attribute>
+          <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?userPreferencesAction=managePreferences&amp;profileId=<xsl:value-of select="@id"/>&amp;profileType=user</xsl:attribute>
               <img border="0" width="16" height="16" alt="Edit Layout and preferences">
             <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>profile_user_pref.gif</xsl:attribute>
           </img>
@@ -252,7 +252,7 @@
       </td>
       <td class="uportal-text" valign="top">
         <a>
-          <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?action=edit&amp;profileName=<xsl:value-of select="@name"/>&amp;profileType=user</xsl:attribute>
+          <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?action=edit&amp;profileId=<xsl:value-of select="@id"/>&amp;profileType=user</xsl:attribute>
               <img border="0" width="16" height="16" alt="Edit profile">
             <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>profile_edit.gif</xsl:attribute>
           </img>
@@ -260,7 +260,7 @@
       </td>
       <td class="uportal-text" valign="top">
         <a>
-          <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?action=copyUserProfile&amp;profileName=<xsl:value-of select="@name"/>&amp;profileType=user</xsl:attribute>
+          <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?action=copyUserProfile&amp;profileId=<xsl:value-of select="@id"/>&amp;profileType=user</xsl:attribute>
               <img border="0" width="16" height="16" alt="Copy personal profile">
             <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>profile_duplicate.gif</xsl:attribute>
           </img>
@@ -268,7 +268,7 @@
       </td>
       <td class="uportal-text" valign="top">
         <a>
-          <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?action=delete&amp;profileName=<xsl:value-of select="@name"/>&amp;profileType=user</xsl:attribute>
+          <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?action=delete&amp;profileId=<xsl:value-of select="@id"/>&amp;profileType=user</xsl:attribute>
               <img border="0" width="16" height="16" alt="Delete profile">
             <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>profile_delete.gif</xsl:attribute>
           </img>
@@ -276,7 +276,7 @@
       </td>
       <td class="uportal-text" valign="top">
         <a>
-          <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?action=map&amp;profileName=<xsl:value-of select="@name"/>&amp;profileType=user</xsl:attribute>
+          <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?action=map&amp;profileId=<xsl:value-of select="@id"/>&amp;profileType=user</xsl:attribute>
               <img border="0" width="16" height="16" alt="Map current browser to this profile">
             <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>profile_map.gif</xsl:attribute>
           </img>
@@ -284,7 +284,7 @@
       </td>
       <td class="uportal-text" valign="top">
         <a>
-          <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?action=map_adv&amp;profileName=<xsl:value-of select="@name"/>&amp;profileType=user</xsl:attribute>
+          <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?action=map_adv&amp;profileId=<xsl:value-of select="@id"/>&amp;profileType=user</xsl:attribute>
               <img border="0" width="16" height="16" alt="Advanced mapping properties">
             <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>profile_map_adv.gif</xsl:attribute>
           </img>
@@ -309,7 +309,7 @@
       </td>
       <td class="uportal-text" valign="top">
         <a>
-          <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?userPreferencesAction=managePreferences&amp;profileName=<xsl:value-of select="@name"/>&amp;profileType=system</xsl:attribute>
+          <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?userPreferencesAction=managePreferences&amp;profileId=<xsl:value-of select="@id"/>&amp;profileType=system</xsl:attribute>
               <img border="0" width="16" height="16" alt="Edit Layout and preferences">
             <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>profile_user_pref.gif</xsl:attribute>
           </img>
@@ -318,7 +318,7 @@
       <td class="uportal-text" valign="top" align="center"/>
       <td class="uportal-text" valign="top" align="center">
         <a>
-          <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?action=copy&amp;profileName=<xsl:value-of select="@name"/>&amp;profileType=system</xsl:attribute>
+          <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>?action=copy&amp;profileId=<xsl:value-of select="@id"/>&amp;profileType=system</xsl:attribute>
           <img border="0" width="16" height="16" alt="Copy system profile to my profiles">
             <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>profile_duplicate.gif</xsl:attribute>
           </img>
@@ -327,7 +327,7 @@
       <td class="uportal-text" valign="top" align="center"/>
       <td class="uportal-text" valign="top">
         <a>
-          <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>action=map&amp;profileName=<xsl:value-of select="@name"/>&amp;profileType=system</xsl:attribute>
+          <xsl:attribute name="href"><xsl:value-of select="string($baseActionURL)"/>action=map&amp;profileId=<xsl:value-of select="@id"/>&amp;profileType=system</xsl:attribute>
               <img border="0" width="16" height="16" alt="Map current browser to this profile">
             <xsl:attribute name="src"><xsl:value-of select="string($baseMediaURL)"/>profile_map.gif</xsl:attribute>
           </img>
