@@ -89,7 +89,7 @@ import java.net.MalformedURLException;
 public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCacheable
 {
     // state table
-    static final Map stateTable=Collections.synchronizedMap(new HashMap());
+    Map stateTable;
     static final String systemCacheId="org.jasig.portal.channels.CGenericXSLT"; // to prepend to the system-wide cache key
 
     // state class
@@ -103,6 +103,10 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
 	    xmlUri=sslUri=xslTitle=xslUri=null;
 	    runtimeData=null;
 	}
+    }
+
+    public CGenericXSLT() {
+	stateTable=Collections.synchronizedMap(new HashMap());
     }
 
     static MediaManager mm=new MediaManager();
