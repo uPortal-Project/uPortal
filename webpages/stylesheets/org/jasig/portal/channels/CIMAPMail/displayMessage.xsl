@@ -45,7 +45,7 @@
  <td width="99%" align="left">
   <xsl:choose>
    <xsl:when test="personal">
-    <xsl:attribute name="title"><xsl:value-of select="concat(' ',email, ' ')"/></xsl:attribute><xsl:value-of select="personal"/>
+    <xsl:attribute name="title"><xsl:value-of select="concat('&lt;', email, '>')"/></xsl:attribute><xsl:value-of select="personal"/>
    </xsl:when>
    <xsl:otherwise><xsl:value-of select="email"/></xsl:otherwise>
   </xsl:choose>

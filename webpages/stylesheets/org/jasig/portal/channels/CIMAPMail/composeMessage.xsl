@@ -78,7 +78,7 @@ All Group<br/>
  <xsl:for-each select="address">
   <xsl:choose>
    <xsl:when test="personal">
-    "<xsl:value-of select="personal"/>" <xsl:value-of select="concat(' ',email, ' ')"/>
+    "<xsl:value-of select="personal"/>" <xsl:value-of select="concat('&lt;',email, '>')"/>
    </xsl:when>
    <xsl:otherwise><xsl:value-of select="email"/></xsl:otherwise>
   </xsl:choose>

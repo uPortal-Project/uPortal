@@ -198,7 +198,7 @@
  <td>
  <xsl:choose>
   <xsl:when test="address/personal">
-   <xsl:attribute name="title"><xsl:value-of select="concat(' ',address/email, ' ')"/></xsl:attribute>
+   <xsl:attribute name="title"><xsl:value-of select="concat('&lt;',address/email, '>')"/></xsl:attribute>
 <xsl:value-of select="address/personal"/>
 
   </xsl:when>
