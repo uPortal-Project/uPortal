@@ -518,7 +518,7 @@ public class PersonDirectory {
       try {
         person.setID(UserIdentityStoreFactory.getUserIdentityStoreImpl().getPortalUID(person));
       } catch (Exception e) {
-          // Do nothing
+        LogService.log(LogService.ERROR, e);
       }
       instance().getUserDirectoryInformation(uid, person);
     }
