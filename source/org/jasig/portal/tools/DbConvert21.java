@@ -51,7 +51,7 @@ public class DbConvert21 {
    public static void main(String[] args) {
 
 	Statement stmt = null;
-	Statement stmtTest = null;
+	RDBMServices.PreparedStatement  stmtTest = null;
 	Statement modifyStmt = null;
 	ResultSet rset = null;
 	ResultSet rsetTest = null;
@@ -65,7 +65,7 @@ public class DbConvert21 {
 	"where uls.user_id=uul.user_id and uls.layout_id=uul.layout_id "+
 	"group by uls.user_id, uls.layout_id, init_struct_id";
 		
-	String testQuery = "select count(*) ct from up_layout_struct where type='root' and user_id=";
+	String testQuery = "select count(*) ct from up_layout_struct where type='root' and user_id= ? and layout_id=?";
 	
       try {
          con = RDBMServices.getConnection ();
@@ -79,7 +79,6 @@ public class DbConvert21 {
 
 		// Create the JDBC statement
 		stmt = con.createStatement();
-		stmtTest = con.createStatement();
 		// Retrieve the USER_ID that is mapped to their portal UID
 		try {
 		// Execute the query
@@ -88,6 +87,7 @@ public class DbConvert21 {
 			// Create a separate statement for inserts so it doesn't
 			// interfere with ResultSets
 			modifyStmt = con.createStatement();
+			stmtTest = new RDBMServices.PreparedStatement(con, testQuery);
 			
 			// Check to see if we've got a result
 			while (rset.next())
@@ -96,10 +96,14 @@ public class DbConvert21 {
 				int layout_id = rset.getInt("LAYOUT_ID");
 				int new_struct_id = rset.getInt("new_struct_id");
 				int new_child_id = rset.getInt("new_child_id");
-				String tq = testQuery + user_id;
-				rsetTest = stmtTest.executeQuery(tq);
+				
+				stmtTest.clearParameters();
+				stmtTest.setInt(1,user_id);
+				stmtTest.setInt(2,layout_id);
+				rsetTest = stmtTest.executeQuery();
 				if (rsetTest.next() && rsetTest.getInt("ct")>0) {
-					System.err.println("DbConvert: root folder already exists.  USER_ID " + user_id + " ignored");
+					System.err.println("DbConvert: root folder already exists.  USER_ID " + 
+					user_id + ", LAYOUT_ID " + layout_id + " ignored");
 				}
 				else {
 				String insertString = "INSERT INTO UP_LAYOUT_STRUCT ( USER_ID, LAYOUT_ID, STRUCT_ID, "+
