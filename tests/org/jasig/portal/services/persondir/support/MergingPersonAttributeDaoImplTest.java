@@ -198,8 +198,6 @@ public class MergingPersonAttributeDaoImplTest extends TestCase {
     /**
      * A mock, test implementation of ThrowingPersonAttributeDao which always
      * throws a RuntimeException.
-     * @author andrew.petro@yale.edu
-     * @version $Revision$ $Date$
      */
     private class ThrowingPersonAttributeDao implements IPersonAttributeDao {
 
@@ -219,8 +217,6 @@ public class MergingPersonAttributeDaoImplTest extends TestCase {
     /**
      * A mock, test implementation of ThrowingPersonAttributeDao which always
      * throws a RuntimeException.
-     * @author andrew.petro@yale.edu
-     * @version $Revision$ $Date$
      */
     private class NullAttribNamesPersonAttributeDao implements IPersonAttributeDao {
 
