@@ -40,8 +40,6 @@ import org.xml.sax.helpers.*;
 import java.io.*;
 import java.util.Hashtable;
 import java.util.Enumeration;
-import javax.servlet.jsp.*;
-import javax.servlet.http.*;
 import org.jasig.portal.*;
 import org.w3c.dom.*;
 import org.apache.xalan.xslt.*;

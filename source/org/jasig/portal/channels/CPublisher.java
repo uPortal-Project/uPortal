@@ -37,8 +37,6 @@ package org.jasig.portal.channels;
 
 import org.jasig.portal.*;
 import org.jasig.portal.utils.*;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import org.w3c.dom.*;
 import org.apache.xalan.xslt.*;
 import  org.apache.xerces.dom.*;
@@ -221,7 +219,7 @@ public class CPublisher implements IPrivilegedChannel
           break;
       }
 
-    XSLTInputSource xslSource = set.getStylesheet(stylesheetName, runtimeData.getHttpRequest());
+    XSLTInputSource xslSource = runtimeData.getStylesheet(stylesheetName, set);
     XSLTResultTarget xmlResult = new XSLTResultTarget(out);
 
     if (xslSource != null)
@@ -259,8 +257,7 @@ public class CPublisher implements IPrivilegedChannel
     if (hParams==null) hParams = new Hashtable();
     currentStep = runtimeData.getParameter("currentStep");
     numSteps = Integer.parseInt(runtimeData.getParameter("numSteps"));
-    HttpServletRequest req = runtimeData.getHttpRequest ();
-    Enumeration e = req.getParameterNames();
+    Enumeration e = runtimeData.getParameterNames();
 
     if(!currentStep.equals("end")) {
         int i = Integer.parseInt(currentStep);

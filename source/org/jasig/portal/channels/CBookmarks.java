@@ -37,9 +37,6 @@ package org.jasig.portal.channels;
 
 import org.jasig.portal.*;
 
-import javax.servlet.jsp.*;
-import javax.servlet.http.*;
-
 import org.apache.xalan.xslt.*;
 import org.apache.xerces.dom.*;
 import org.apache.xerces.parsers.*;
@@ -156,7 +153,7 @@ public class CBookmarks implements IChannel
       try
       {
         con = this.rdbmService.getConnection ();
-        String userid = GetUserID (rd.getHttpRequest ());
+        String userid = GetUserID (rd);
         ResultSet statem = con.createStatement ().executeQuery ("SELECT BOOKMARK_XML FROM UPC_BOOKMARKS WHERE PORTAL_USER_ID=" + userid);
 
         DOMParser domP = new DOMParser ();
@@ -204,7 +201,7 @@ public class CBookmarks implements IChannel
         xsl.serialize (bookmarksXML);
         this.con = this.rdbmService.getConnection ();
         Statement statem = con.createStatement ();
-        statem.executeUpdate ("UPDATE UPC_BOOKMARKS SET BOOKMARK_XML = '" + outString.toString () + "' WHERE PORTAL_USER_ID = " + GetUserID (rd.getHttpRequest ()));
+        statem.executeUpdate ("UPDATE UPC_BOOKMARKS SET BOOKMARK_XML = '" + outString.toString () + "' WHERE PORTAL_USER_ID = " + GetUserID (rd));
       }
       catch (Exception e)
       {
@@ -334,7 +331,7 @@ public class CBookmarks implements IChannel
     //  - use the StylesheetSet to get an appropriate stylesheet
     //  - instansiation an XSLT processor
     //  - fire up the transformation
-    XSLTInputSource stylesheet=set.getStylesheet ("view",runtimeData.getHttpRequest ());
+    XSLTInputSource stylesheet=runtimeData.getStylesheet ("view",set);
 
     if (stylesheet!=null)
     {
@@ -347,7 +344,7 @@ public class CBookmarks implements IChannel
 
   private void renderEditXML (DocumentHandler out) throws org.xml.sax.SAXException
   {
-    XSLTInputSource stylesheet=set.getStylesheet ("edit",runtimeData.getHttpRequest ());
+    XSLTInputSource stylesheet=runtimeData.getStylesheet ("edit",set);
 
     if (stylesheet!=null)
     {
@@ -362,7 +359,7 @@ public class CBookmarks implements IChannel
   private void renderEditBookmarkXML (DocumentHandler out,int bookmarkNumber) throws org.xml.sax.SAXException
   {
     Node bookmark= ((getBookmarkXML ()).getElementsByTagName ("bookmark")).item (bookmarkNumber-1);
-    XSLTInputSource stylesheet=set.getStylesheet ("editbookmark",runtimeData.getHttpRequest ());
+    XSLTInputSource stylesheet=runtimeData.getStylesheet ("editbookmark",set);
 
     if (stylesheet!=null)
     {
@@ -387,7 +384,7 @@ public class CBookmarks implements IChannel
     bookmark.setAttribute ("url","");
     bookmark.setAttribute ("comments","");
 
-    XSLTInputSource stylesheet=set.getStylesheet ("editbookmark",runtimeData.getHttpRequest ());
+    XSLTInputSource stylesheet=runtimeData.getStylesheet ("editbookmark",set);
 
     if (stylesheet!=null)
     {
@@ -416,14 +413,13 @@ public class CBookmarks implements IChannel
 
   protected String userID=null;
 
-  protected String GetUserID (HttpServletRequest req)
+  protected String GetUserID (ChannelRuntimeData rd)
   {
     //goes to the DB and gets the user ID unless is has already been collected.
     if (userID == null)
     {
-      HttpSession session = req.getSession (false);
       Connection con = null;
-      String username = (String)session.getAttribute ("userName");
+      String username = (String)rd.getSessionAttribute ("userName");
 
       if (username ==null)
       {

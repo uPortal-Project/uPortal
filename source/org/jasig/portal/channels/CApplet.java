@@ -60,7 +60,7 @@ public class CApplet implements IChannel
   private static final String fs = File.separator;
   private static final String portalBaseDir = GenericPortalBean.getPortalBaseDir ();
   String stylesheetDir = portalBaseDir + fs + "webpages" + fs + "stylesheets" + fs + "org" + fs + "jasig" + fs + "portal" + fs + "channels" + fs + "CApplet";
-  
+
   /** Constructs a CApplet.
    */
   public CApplet ()
@@ -77,7 +77,7 @@ public class CApplet implements IChannel
   public ChannelSubscriptionProperties getSubscriptionProperties ()
   {
     ChannelSubscriptionProperties csb = new ChannelSubscriptionProperties ();
-    
+
     // Properties which are not specifically set here will assume default
     // values as determined by ChannelSubscriptionProperties
     csb.setName ("Applet Channel");
@@ -105,12 +105,12 @@ public class CApplet implements IChannel
    * @param sd static channel data
    */
   public void setStaticData (ChannelStaticData sd)
-  { 
+  {
     this.staticData = sd;
   }
 
-  /** Receives channel runtime data from the portal and processes actions 
-   * passed to it.  The names of these parameters are entirely up to the channel. 
+  /** Receives channel runtime data from the portal and processes actions
+   * passed to it.  The names of these parameters are entirely up to the channel.
    * @param rd handle to channel runtime data
    */
   public void setRuntimeData (ChannelRuntimeData rd)
@@ -136,47 +136,47 @@ public class CApplet implements IChannel
         w.write ("        align=\"top\"\n");
         w.write ("        border=\"0\"\n");
         w.write ("        archive=\"" + staticData.getParameter ("archive") + "\">\n");
-	
+
         // Take all parameters whose names start with "APPLET." and pass them
         // to the applet (after stripping "APPLET.")
         java.util.Enumeration allKeys = staticData.keys ();
 
-        while (allKeys.hasMoreElements ()) 
+        while (allKeys.hasMoreElements ())
         {
           String p = (String) allKeys.nextElement();
 
-          if (p.startsWith ("APPLET.")) 
+          if (p.startsWith ("APPLET."))
           {
             String name = p.substring (7); // skip "APPLET."
             String value = (String) staticData.getParameter (p);
             w.write ("  <param name=\"" + name + "\" value=\"" + value + "\"/>\n");
           }
         }
-	
-	      w.write ("</applet>\n");      
-        
+
+              w.write ("</applet>\n");
+
         processXML (w.toString (), out);
       }
-    } 
+    }
     catch (Exception e)
     {
-      Logger.log (Logger.ERROR, e); 
+      Logger.log (Logger.ERROR, e);
     }
   }
-  
+
   private void processXML (String sXml, DocumentHandler out) throws org.xml.sax.SAXException
   {
     XSLTInputSource xmlSource = new XSLTInputSource (new StringReader(sXml));
-    XSLTInputSource xslSource = set.getStylesheet("main", runtimeData.getHttpRequest());
+    XSLTInputSource xslSource = runtimeData.getStylesheet("main", set);
     XSLTResultTarget xmlResult = new XSLTResultTarget(out);
 
     if (xslSource != null)
     {
       XSLTProcessor processor = XSLTProcessorFactory.getProcessor ();
-      processor.setStylesheetParam("baseActionURL", processor.createXString(runtimeData.getBaseActionURL()));        
+      processor.setStylesheetParam("baseActionURL", processor.createXString(runtimeData.getBaseActionURL()));
       processor.process (xmlSource, xslSource, xmlResult);
     }
-    else 
+    else
       Logger.log(Logger.ERROR, "org.jasig.portal.channels.CApplet: unable to find a stylesheet for rendering");
   }
 }

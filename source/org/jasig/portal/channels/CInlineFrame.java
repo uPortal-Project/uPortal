@@ -88,7 +88,7 @@ public void setRuntimeData (ChannelRuntimeData rd)
     // This code can then be replaced with runtimeData.getMedia()
     MediaManager mm = new MediaManager();
     mm.setMediaProps(portalBaseDir + "properties" + fs + "media.properties");
-    media = mm.getMedia(runtimeData.getHttpRequest());
+    media = runtimeData.getMedia();
 
   }
 

@@ -36,8 +36,6 @@
 package org.jasig.portal.channels;
 
 import org.jasig.portal.*;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import org.w3c.dom.*;
 import org.apache.xalan.xslt.*;
 import org.xml.sax.DocumentHandler;
@@ -216,7 +214,7 @@ public class CSubscriber implements IPrivilegedChannel
           break;
       }
 
-    XSLTInputSource xslSource = set.getStylesheet(stylesheetName, runtimeData.getHttpRequest());
+    XSLTInputSource xslSource = runtimeData.getStylesheet(stylesheetName, set);
     XSLTResultTarget xmlResult = new XSLTResultTarget(out);
 
     if (xslSource != null)
@@ -243,8 +241,7 @@ public class CSubscriber implements IPrivilegedChannel
   private void prepareSubscribe ()
   {
     mode = SUBSCRIBE;
-    HttpServletRequest req = runtimeData.getHttpRequest ();
-    subIDs = req.getParameterValues ("sub");
+    subIDs = runtimeData.getParameterValues ("sub");
   }
 
   private void prepareSubscribeTo ()
@@ -271,6 +268,7 @@ public class CSubscriber implements IPrivilegedChannel
                 // user wants to add an entire category to layout
                 if(subIDs[i].startsWith("cat")) {
                    // Node channel = channelRegistry.getElementById (subIDs[i]);
+                  System.err.println(subIDs[i] + ", " + channel);
                     NodeList channels = channel.getChildNodes();
 
                     for (int j=0; j<channels.getLength(); j++) {
@@ -281,6 +279,7 @@ public class CSubscriber implements IPrivilegedChannel
                 else {
 
                     //Node channel = channelRegistry.getElementById (subIDs[i]);
+                      System.err.println(userLayoutXML + ", " + channel + ", " + destination);
                     destination.insertBefore (userLayoutXML.importNode(channel, false), null);
                 }
             }

@@ -37,8 +37,6 @@ package org.jasig.portal.channels.UserPreferences;
 
 import org.jasig.portal.*;
 import org.jasig.portal.security.*;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import org.w3c.dom.*;
 import org.apache.xalan.xslt.*;
 import org.xml.sax.DocumentHandler;
@@ -404,7 +402,7 @@ class GPreferencesState extends BaseState {
             if(set==null)
                 throw new GeneralRenderingException("Unable to determine the stylesheet list");
             String xslURI=null;
-            xslURI=set.getStylesheetURI("editItem", runtimeData.getHttpRequest());
+            xslURI=runtimeData.getStylesheetURI("editItem", set);
 
             Hashtable params=new Hashtable();
             params.put("baseActionURL", runtimeData.getBaseActionURL());
@@ -530,7 +528,7 @@ class GPreferencesState extends BaseState {
             if(set==null)
                 throw new GeneralRenderingException("Unable to determine the stylesheet list");
             String xslURI=null;
-            xslURI=set.getStylesheetURI("editGPrefs", runtimeData.getHttpRequest());
+            xslURI=runtimeData.getStylesheetURI("editGPrefs", set);
 
             Hashtable params=new Hashtable();
             params.put("baseActionURL", runtimeData.getBaseActionURL());
@@ -620,7 +618,7 @@ class GPreferencesState extends BaseState {
             if(set==null)
                 throw new GeneralRenderingException("Unable to determine the stylesheet list");
             String xslURI=null;
-            xslURI=set.getStylesheetURI("browse", runtimeData.getHttpRequest());
+            xslURI=runtimeData.getStylesheetURI("browse", set);
 
             Hashtable params=new Hashtable();
             params.put("folderID",context.getFolderID());
@@ -715,7 +713,7 @@ class GPreferencesState extends BaseState {
             if(set==null)
                 throw new GeneralRenderingException("Unable to determine the stylesheet list");
             String xslURI=null;
-            xslURI=set.getStylesheetURI("moveTo", runtimeData.getHttpRequest());
+            xslURI=runtimeData.getStylesheetURI("moveTo", set);
 
             Hashtable params=new Hashtable();
             params.put("baseActionURL", runtimeData.getBaseActionURL());
@@ -735,8 +733,7 @@ class GPreferencesState extends BaseState {
         private void prepareMove () {
             // getParameterValues() should be a method in ChannelRuntimeData.
             // For now, I'll use the request object -- ask Peter about this!
-            HttpServletRequest req = runtimeData.getHttpRequest ();
-            moveIDs = req.getParameterValues ("move");
+            moveIDs = runtimeData.getParameterValues ("move");
         }
 
         private void prepareMoveTo () throws PortalException {

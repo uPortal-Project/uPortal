@@ -36,8 +36,6 @@
 package org.jasig.portal.channels;
 
 import java.util.*;
-import javax.servlet.jsp.*;
-import javax.servlet.http.*;
 import org.xml.sax.DocumentHandler;
 import org.jasig.portal.*;
 import org.w3c.dom.*;
@@ -126,9 +124,8 @@ public class CError extends BaseChannel implements IPrivilegedChannel
                 if(chFate.equals("retry")) {
                     Logger.log(Logger.DEBUG,"CError:setRuntimeData() : going for retry");
                     // clean things up for the channel
-                    ChannelRuntimeData crd = new ChannelRuntimeData ();
-                    crd.setHttpRequest (runtimeData.getHttpRequest());
-                    crd.setBaseActionURL (runtimeData.getBaseActionURL());
+                    ChannelRuntimeData crd = (ChannelRuntimeData) runtimeData.clone();
+                    crd.clear(); // Remove parameters et al.
                     try {
                         if(the_channel instanceof IPrivilegedChannel)
                             ((IPrivilegedChannel)the_channel).setPortalControlStructures(portcs);
@@ -144,9 +141,8 @@ public class CError extends BaseChannel implements IPrivilegedChannel
 
                     ChannelManager cm=portcs.getChannelManager();
 
-                    ChannelRuntimeData crd = new ChannelRuntimeData ();
-                    crd.setHttpRequest (runtimeData.getHttpRequest());
-                    crd.setBaseActionURL (runtimeData.getBaseActionURL());
+                    ChannelRuntimeData crd = (ChannelRuntimeData) runtimeData.clone();
+                    crd.clear();
                     try {
                         if((the_channel=cm.instantiateChannel(str_channelID))==null) {
                             resetCError(this.GENERAL_ERROR,null,this.str_channelID,null,"Channel failed to reinstantiate!");

@@ -1,8 +1,6 @@
 package org.jasig.portal.channels;
 
 import java.util.*;
-import javax.servlet.jsp.*;
-import javax.servlet.http.*; 
 import org.xml.sax.DocumentHandler;
 import org.jasig.portal.*;
 
@@ -15,7 +13,7 @@ import org.jasig.portal.*;
 
 
 
-public class BaseChannel implements IChannel 
+public class BaseChannel implements IChannel
 {
     protected ChannelStaticData staticData;
     protected ChannelRuntimeData runtimeData;
@@ -23,39 +21,39 @@ public class BaseChannel implements IChannel
 
 
     public BaseChannel() {
-	channelName="BaseChannel";
+        channelName="BaseChannel";
     }
 
     public ChannelSubscriptionProperties getSubscriptionProperties () {
-	    ChannelSubscriptionProperties csb = new ChannelSubscriptionProperties ();
-	    csb.setName (this.channelName);
-	    return csb;
+            ChannelSubscriptionProperties csb = new ChannelSubscriptionProperties ();
+            csb.setName (this.channelName);
+            return csb;
     }
 
-    public ChannelRuntimeProperties getRuntimeProperties () 
+    public ChannelRuntimeProperties getRuntimeProperties ()
     {
-	return new ChannelRuntimeProperties ();
+        return new ChannelRuntimeProperties ();
     }
 
     public void receiveEvent (LayoutEvent ev)
     {
-	
+
     }
-    
-    public void setStaticData (ChannelStaticData sd) throws PortalException 
+
+    public void setStaticData (ChannelStaticData sd) throws PortalException
     {
-	this.staticData=sd;
+        this.staticData=sd;
     }
 
 
     public void setRuntimeData (ChannelRuntimeData rd) throws PortalException
     {
-	this.runtimeData=rd;
+        this.runtimeData=rd;
     }
 
     public void renderXML (DocumentHandler out) throws PortalException
     {
-	
+
     }
 
 }
