@@ -3,10 +3,9 @@
  * available online at http://www.uportal.org/license.html
  */
 
-package org.jasig.portal.layout.al;
+package org.jasig.portal.layout.al.common;
 
 import org.jasig.portal.PortalException;
-import org.jasig.portal.layout.al.common.ILayout;
 
 /**
  * An interface defining an objective representation of a 
