@@ -296,7 +296,7 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
       }
 
       state.runtimeData.put("baseActionURL", state.runtimeData.getBaseActionURL());
-      state.runtimeData.put("isRenderingAsRoot", Boolean.toString(state.runtimeData.isRenderingAsRoot()));
+      state.runtimeData.put("isRenderingAsRoot", String.valueOf(state.runtimeData.isRenderingAsRoot()));
       
       // OK, pass everything we got cached in params...
       if (state.params != null)
