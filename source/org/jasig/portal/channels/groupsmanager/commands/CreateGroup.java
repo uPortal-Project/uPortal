@@ -8,7 +8,6 @@ package  org.jasig.portal.channels.groupsmanager.commands;
 import java.util.Iterator;
 
 import org.jasig.portal.ChannelRuntimeData;
-import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.channels.groupsmanager.CGroupsManagerSessionData;
 import org.jasig.portal.channels.groupsmanager.GroupsManagerXML;
 import org.jasig.portal.channels.groupsmanager.Utility;
@@ -41,12 +40,10 @@ import org.w3c.dom.Element;
     * @throws Exception
     */
    public void execute (CGroupsManagerSessionData sessionData) throws Exception{
-      ChannelStaticData staticData = sessionData.staticData;
       ChannelRuntimeData runtimeData= sessionData.runtimeData;
 
       Utility.logMessage("DEBUG", "CreateGroup::execute(): Start");
       Document model = getXmlDoc(sessionData);
-      String theCommand = runtimeData.getParameter("grpCommand");
       String parentID = getCommandArg(runtimeData);
       String newGrpName = runtimeData.getParameter("grpNewName");
       Utility.logMessage("DEBUG", "CreateGroup::execute(): New grp: " + newGrpName +
