@@ -737,6 +737,11 @@ private void primAdd(IEntityGroup group, Connection conn) throws SQLException, G
             ps.setString(4, group.getName());
             ps.setString(5, group.getDescription());
 
+            LogService.log(LogService.DEBUG, "RDBMEntityGroupStore.primAdd(): " +
+              ps + "(" + group.getKey() + ", " + group.getCreatorID() + ", " +
+              typeID + ", " + group.getName() + ", " +
+              group.getDescription() + ")" );
+
             int rc = ps.executeUpdate();
 
             if ( rc != 1 )
@@ -774,9 +779,15 @@ private void primDelete(IEntityGroup group) throws SQLException
         conn = RDBMServices.getConnection();
         Statement stmnt = conn.createStatement();
         setAutoCommit(conn, false);
+
         try
         {
+                LogService.log(LogService.DEBUG,
+                  "RDBMEntityGroupStore.primDelete(): " + deleteMembershipSql);
                 stmnt.executeUpdate(deleteMembershipSql);
+
+                LogService.log(LogService.DEBUG,
+                  "RDBMEntityGroupStore.primDelete(): " + deleteGroupSql);
                 stmnt.executeUpdate(deleteGroupSql);
             }
         finally
@@ -815,6 +826,11 @@ private void primUpdate(IEntityGroup group, Connection conn) throws SQLException
             ps.setString(3, group.getName());
             ps.setString(4, group.getDescription());
             ps.setString(5, group.getKey());
+
+            LogService.log(LogService.DEBUG,
+              "RDBMEntityGroupStore.primUpdate(): " + ps + "(" +
+              group.getCreatorID() + ", " + typeID + ", " + group.getName() +
+              ", " + group.getDescription() + ", " + group.getKey() +  ")" );
 
             int rc = ps.executeUpdate();
 
@@ -862,6 +878,11 @@ private void primUpdateMembers(EntityGroupImpl egi, Connection conn) throws java
                     psDelete.setString(1, groupKey);
                     psDelete.setString(2, memberKey);
                     psDelete.setString(3, isGroup);
+
+                    LogService.log(LogService.DEBUG,
+                      "RDBMEntityGroupStore.primUpdateMembers(): " + psDelete +
+                      "(" + groupKey + ", " + memberKey + ", " + isGroup + ")" );
+
                     psDelete.executeUpdate();
                 }
             }
@@ -885,6 +906,11 @@ private void primUpdateMembers(EntityGroupImpl egi, Connection conn) throws java
                     psAdd.setString(1, groupKey);
                     psAdd.setString(2, memberKey);
                     psAdd.setString(3, isGroup);
+
+                    LogService.log(LogService.DEBUG,
+                      "RDBMEntityGroupStore.primUpdateMembers(): " + psAdd +
+                      "(" + groupKey + ", " + memberKey + ", " + isGroup + ")" );
+
                     psAdd.executeUpdate();
                 }
             }
