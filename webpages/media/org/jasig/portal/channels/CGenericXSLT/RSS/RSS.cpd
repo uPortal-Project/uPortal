@@ -86,6 +86,7 @@ Version $Revision$
         <label>RSS Version</label>
         <type base="string" input="single-choice" display="drop-down">
           <restriction type="enumeration">
+            <value display="0.9">CGenericXSLT/RSS/RSS-0_9.ssl</value>
             <value display="0.9x" default="true" >CGenericXSLT/RSS/RSS-0_9x.ssl</value>
             <value display="1.0x">CGenericXSLT/RSS/RSS-1_0x.ssl</value>
           </restriction>
