@@ -20,13 +20,11 @@ import org.apache.pluto.services.information.PortletURLProvider;
  */
 public class PortletURLProviderImpl implements PortletURLProvider {
 
-    private DynamicInformationProviderImpl provider;
     private PortletWindow portletWindow;
     private boolean secure;
     private PortletStateManager portletStateManager;
 
-    public PortletURLProviderImpl(DynamicInformationProviderImpl provider, PortletWindow portletWindow ) {
-        this.provider = provider;
+    public PortletURLProviderImpl(PortletWindow portletWindow ) {
         this.portletWindow = portletWindow;
         portletStateManager = new PortletStateManager(portletWindow);
     }

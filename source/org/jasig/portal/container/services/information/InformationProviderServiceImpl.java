@@ -63,7 +63,7 @@ public class InformationProviderServiceImpl implements PortletContainerService, 
       	if ( hashCodes.size() >= MAX_HASH_CODE_NUMBER )
       	  hashCodes.removeAllElements();	
       	hashCodes.add(hashCode);
-        provider = new DynamicInformationProviderImpl(request,servletConfig);
+        provider = new DynamicInformationProviderImpl(request);
       }  
         return provider;
     }

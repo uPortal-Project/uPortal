@@ -13,7 +13,6 @@ import java.util.Collection;
 import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.ServletConfig;
 
 import org.apache.pluto.om.window.PortletWindow;
 import org.apache.pluto.services.information.DynamicInformationProvider;
@@ -31,27 +30,24 @@ import org.apache.pluto.services.information.ResourceURLProvider;
  */
 public class DynamicInformationProviderImpl implements DynamicInformationProvider {
 	
-    private static StaticInformationProvider staticInfoProvider = null;
-    private HttpServletRequest request = null;
-    private String responseContentType = null;
-    private static final int KNOWN_MIME_TYPES = 15;
+    private static StaticInformationProvider staticInfoProvider;
+    private HttpServletRequest request;
     
-    public DynamicInformationProviderImpl(HttpServletRequest request, ServletConfig servletConfig ) {
+    public DynamicInformationProviderImpl(HttpServletRequest request) {
         this.request = request;	
-        if ( servletConfig != null && staticInfoProvider == null )
-		staticInfoProvider = InformationProviderAccess.getStaticProvider();
-        responseContentType = "text/html";
+        if ( staticInfoProvider == null )
+		 staticInfoProvider = InformationProviderAccess.getStaticProvider();
     }
 
     // DynamicInformationProvider methods
       
     public String getResponseContentType() {
-        return responseContentType;
+        return  "text/html";
     }
 
     public Iterator getResponseContentTypes() {
-        Set responseMimeTypes = new HashSet(KNOWN_MIME_TYPES); // number of known mime types
-        responseMimeTypes.add(responseContentType);
+        Set responseMimeTypes = new HashSet(1); // number of known mime types
+        responseMimeTypes.add(getResponseContentType());
         return responseMimeTypes.iterator();
     }
 
@@ -61,11 +57,11 @@ public class DynamicInformationProviderImpl implements DynamicInformationProvide
 	}
 
     public PortletURLProvider getPortletURLProvider(PortletWindow portletWindow) {
-        return new PortletURLProviderImpl(this, portletWindow);
+        return new PortletURLProviderImpl(portletWindow);
     }
 
     public ResourceURLProvider getResourceURLProvider(PortletWindow portletWindow) {
-        return new ResourceURLProviderImpl(this, portletWindow);
+        return new ResourceURLProviderImpl(portletWindow);
     }
 
     public PortletActionProvider getPortletActionProvider(PortletWindow portletWindow) {

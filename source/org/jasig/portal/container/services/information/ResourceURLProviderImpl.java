@@ -25,7 +25,7 @@ public class ResourceURLProviderImpl implements ResourceURLProvider {
     private String stringUrl = "";
     private String base = "";
 
-    public ResourceURLProviderImpl(DynamicInformationProviderImpl provider, PortletWindow portletWindow) {
+    public ResourceURLProviderImpl(PortletWindow portletWindow) {
         this.portletWindow = portletWindow;
         this.base = getBaseUrl(((PortletWindowImpl)portletWindow).getHttpServletRequest());
     }
