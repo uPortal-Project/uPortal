@@ -86,7 +86,7 @@ public class RDBMServices {
       Connection con = getConnection();
       if (con == null) {
         System.err.println("Unable to connect to database");
-        System.exit(1);
+        throw new SQLException("Unable to connect to database ");
       }
       try {
         String sql;
