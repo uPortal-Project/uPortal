@@ -307,13 +307,16 @@
             <xsl:apply-templates select="channel"/>
           </td>
           <td>
-            <img alt="interface image" src="{$mediaPath}/{$skin}/skin/transparent.gif" width="10" height="20"/>
+            <img alt="interface image" src="{$mediaPath}/{$skin}/skin/transparent.gif" width="1" height="20"/>
           </td>
-          <td class="uportal-background-dark">
+<!--          <td class="uportal-background-dark">
             <img alt="interface image" src="{$mediaPath}/{$skin}/skin/transparent.gif" width="1" height="1"/>
-          </td>
+          </td>-->
+                    <td style="background-image:url({$mediaPath}/{$skin}/skin/v_rule.gif); background-repeat:repeat-y;" >
+
+          <img alt="interface image" src="{$mediaPath}/{$skin}/skin/transparent.gif" width="21" height="1"/></td>
           <td>
-            <img alt="interface image" src="{$mediaPath}/{$skin}/skin/transparent.gif" width="10" height="20"/>
+            <img alt="interface image" src="{$mediaPath}/{$skin}/skin/transparent.gif" width="1" height="20"/>
           </td>
         </xsl:when>
       </xsl:choose>
@@ -473,6 +476,7 @@
   </xsl:template>
   
 </xsl:stylesheet>
+
 
 
 
