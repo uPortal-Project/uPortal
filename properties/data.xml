@@ -2236,7 +2236,7 @@
          <column><name>SS_ID</name><value>1</value></column>
          <column><name>PARAM_NAME</name><value>activeTab</value></column>
          <column><name>PARAM_DEFAULT_VAL</name><value>1</value></column>
-         <column><name>PARAM_DESCRIPT</name><value>The number of teh tab that is initially active</value></column>
+         <column><name>PARAM_DESCRIPT</name><value>The number of the tab that is initially active</value></column>
          <column><name>TYPE</name><value>1</value></column>
         </row>
        <row>
