@@ -1,0 +1,13 @@
+GUESS_SUGGEST=Rate {0}!
+HIGHER=higher
+I_AM_THINKING_OF_A_NUMBER_BETWEEN_X_AND_Y=Ich denke an eine Nummer zwischen {0} und {1}.
+LOWER=lower
+PLEASE_PLAY_AGAIN=Bitte spielen Sie noch einmal...
+SUBMIT=Submit
+THE_ANSWER_WAS_X=Die Antwort war {0}!
+THIS_IS_A_NUMBER_GUESSING_GAME=Dies ist ein Nummer-Erraten-Spiel.
+TRY_AGAIN=Versuchen Sie es noch einmal
+WHATS_YOUR_GUESS=Was ist Ihre Entscheidung?
+YOUR_GUESS_OF_GUESS_WAS_INCORRECT=Ihre Entscheidung {0} war falsch.
+YOU_GOT_IT_AFTER_X_TRIES=Sie haben es nach {0} Versuchen geschafft!
+YOU_HAVE_MADE_X_GUESSES=Sie haben {0} Versuche gemacht.
