@@ -9,7 +9,7 @@
       <channel minimized="false" class="org.jasig.portal.channels.CApplet">
         <parameter value="Clock" name="name"/>
         <parameter value="Clock3D.class" name="code"/>
-        <parameter value="./" name="codeBase"/>
+        <parameter value="applets/" name="codeBase"/>
         <parameter value="" name="archive"/>
         <parameter value="200" name="width"/>
         <parameter value="200" name="height"/>
