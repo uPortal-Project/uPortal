@@ -43,6 +43,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.ServletConfig;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.pluto.PortletContainer;
@@ -65,6 +66,7 @@ import org.jasig.portal.container.services.PortletContainerEnvironmentImpl;
 import org.jasig.portal.container.services.information.InformationProviderServiceImpl;
 import org.jasig.portal.container.services.information.StaticInformationProviderImpl;
 import org.jasig.portal.container.services.log.LogServiceImpl;
+import org.jasig.portal.container.servlet.ServletRequestImpl;
 import org.jasig.portal.container.servlet.StoredServletResponseImpl;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.SAXHelper;
@@ -302,6 +304,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
      */
     private String getMarkup(String uid) {
         ChannelState channelState = (ChannelState)channelStateMap.get(uid);
+        ChannelRuntimeData rd = channelState.getRuntimeData();
         ChannelStaticData sd = channelState.getStaticData();
         ChannelData cd = channelState.getChannelData();
         PortalControlStructures pcs = channelState.getPortalControlStructures();
@@ -311,10 +314,10 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
         try {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
+            HttpServletRequest wrappedRequest = new ServletRequestImpl(pcs.getHttpServletRequest(), rd);
             //HttpServletResponse wrappedResponse = ServletObjectAccess.getStoredServletResponse(pcs.getHttpServletResponse(), pw);
             HttpServletResponse wrappedResponse = new StoredServletResponseImpl(pcs.getHttpServletResponse(), pw);
-            
-            portletContainer.renderPortlet(cd.getPortletWindow(), pcs.getHttpServletRequest(), wrappedResponse);
+            portletContainer.renderPortlet(cd.getPortletWindow(), wrappedRequest, wrappedResponse);
             markup = sw.toString();
             
         } catch (PortletContainerException e) {
