@@ -128,8 +128,7 @@ public class UtilitiesBean
    * 2) An absolute file system path optionally beginning with file://
    *    e.g. C:\WinNT\whatever.xsl or /usr/local/whatever.xsl
    *    or file://C:\WinNT\whatever.xsl or file:///usr/local/whatever.xsl
-   * 3) A path relative to the portal base dir as determined from
-   *    GenericPortalBean.getPortalBaseDir()
+   * 3) A path relative to the portal base dir
    */
   public static String fixURI (String str)
   {
