@@ -38,25 +38,14 @@ $Revision$
   <xsl:output method="html" indent="no"/>
   <xsl:param name="baseActionURL">render.uP</xsl:param>
   <xsl:param name="activeTab">1</xsl:param>
-  <xsl:param name="action">
-  </xsl:param>
-  <xsl:param name="position">before</xsl:param>
-  <xsl:param name="elementID">chan00</xsl:param>
-  <xsl:param name="catID">cat201</xsl:param>
-  <xsl:param name="errorMessage">no parameter passed</xsl:param>
-  <!--  <xsl:param name="action">no parameter passed</xsl:param>
+  <xsl:param name="action">no parameter passed</xsl:param>
   <xsl:param name="position">no parameter passed</xsl:param>
   <xsl:param name="elementID">no parameter passed</xsl:param>
   <xsl:param name="catID">no parameter passed</xsl:param>
-  <xsl:param name="errorMessage">no parameter passed</xsl:param>-->
+  <xsl:param name="errorMessage">no parameter passed</xsl:param>
   <xsl:variable name="activeTabID" select="/layout/folder[not(@type='header' or @type='footer') and @hidden='false'][position() = $activeTab]/@ID"/>
-  <xsl:variable name="mediaPath">C:/LaJolla/uPortal/webpages/media/org/jasig/portal/channels/CUserPreferences/tab-column</xsl:variable>
+  <xsl:variable name="mediaPath">media/org/jasig/portal/channels/CUserPreferences/tab-column</xsl:variable>
   <xsl:template match="layout">
-    <html>
-      <head>
-        <title>Default uP Screen</title>
-        <link type="text/css" rel="stylesheet" href="C:\LaJolla\uPortal\webpages\media\org\jasig\portal\layout\tab-column\nested-tables\imm\imm.css"/>
-      </head>
       <body>
         <!--    $activeTab:<xsl:value-of select="$activeTab"/><br/>
     $action:<xsl:value-of select="$action"/><br/>
@@ -86,35 +75,7 @@ $Revision$
           </tr>
         </table>
         <!--End Layout Table -->
-      </body>
-    </html>
-    <!-- Uncomment for debug values
-      $activeTab: <xsl:value-of select="$activeTab"/><br/>
-      $action: <xsl:value-of select="$action"/><br/>
-      $position: <xsl:value-of select="$position"/><br/>
-      $elementID: <xsl:value-of select="$elementID"/><br/>
-      -->
-    <!--    <xsl:call-template name="optionMenu"/>
-    <br/>
-    <table width="100%" border="0" cellspacing="20" cellpadding="0" class="uportal-background-dark">
-      <tr align="center" valign="top">
-        <td>
-          <table summary="add summary" width="100%" border="0" cellspacing="0" cellpadding="0">
-            <tr>
-              <td>
-                <xsl:call-template name="tabRow"/>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <xsl:call-template name="contentRow"/>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>-->
-  </xsl:template>
+</xsl:template>
   <xsl:template name="tabRow">
     <!--Begin Tab Table -->
     <table summary="add summary" border="0" cellspacing="0" cellpadding="0" width="100%">
