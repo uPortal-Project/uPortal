@@ -1010,7 +1010,7 @@ public class DBImpl implements IDBImpl
    */
   public String[] getUserAccountInformation (String username) throws Exception {
     String[] acct = new String[] {
-      null, null, null, null
+      null, null, null, null, null
     };
     String query = "SELECT UP_USER.USER_ID, ENCRPTD_PSWD, FIRST_NAME, LAST_NAME, EMAIL FROM UP_USER, UP_PERSON_DIR WHERE UP_USER.USER_ID = UP_PERSON_DIR.USER_ID AND "
         + "UP_USER.USER_NAME = '" + username + "'";
