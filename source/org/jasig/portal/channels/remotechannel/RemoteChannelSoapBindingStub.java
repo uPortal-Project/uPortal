@@ -90,7 +90,7 @@ public class RemoteChannelSoapBindingStub extends Stub implements RemoteChannel 
       Class enumdf = org.apache.axis.encoding.ser.EnumDeserializerFactory.class;
       Class arraysf = org.apache.axis.encoding.ser.ArraySerializerFactory.class;
       Class arraydf = org.apache.axis.encoding.ser.ArrayDeserializerFactory.class;
-      Class simplesf = org.apache.axis.encoding.ser.SimpleNonPrimitiveSerializerFactory.class;
+      Class simplesf = org.apache.axis.encoding.ser.SimpleSerializerFactory.class;
       Class simpledf = org.apache.axis.encoding.ser.SimpleDeserializerFactory.class;
       qName = new javax.xml.namespace.QName("http://http.servlet.javax", "Cookie");
       cachedSerQNames.add(qName);
