@@ -42,6 +42,7 @@ import org.jasig.portal.IBasicEntity;
 import org.jasig.portal.concurrency.CachingException;
 import org.jasig.portal.concurrency.IEntityCache;
 import org.jasig.portal.services.LogService;
+
 /**
  * Reference implementation of IEntityCache.  Each cache holds entities of
  * a single type in an LRUCache, a kind of HashMap.  Synchronization for
@@ -58,6 +59,7 @@ public class ReferenceEntityCache implements IEntityCache
     protected Map cache;
     protected Class entityType;
     protected String simpleTypeName;
+    protected static int threadID = 0;
 
     // The interval between cache updates; defaults to 60 seconds.
     protected int sweepIntervalMillis = 60 * 1000;
@@ -78,6 +80,7 @@ public class ReferenceEntityCache implements IEntityCache
             }
         }
     }
+
 /**
  * ReferenceEntityCache constructor comment.
  */
@@ -89,9 +92,11 @@ throws CachingException
     entityType = type;
     sweepIntervalMillis = sweepInterval;
     setCache(new LRUCache(maxSize, maxUnusedTime));
-    cleanupThread = new Thread(new CacheSweeper());
+    String threadName = "uPortal ReferenceEntityCache sweeper thread #" + ++threadID;
+    cleanupThread = new Thread(new CacheSweeper(), threadName);
     cleanupThread.start();
 }
+
 /**
  * Checks that <code>entity</code> is the same type as, i.e., could be cast
  * to, the cache type.
@@ -105,6 +110,7 @@ public void add(IBasicEntity entity) throws CachingException
 
     getCache().put(entity.getEntityIdentifier().getKey(), entity);
 }
+
 /**
  *
  */
@@ -116,6 +122,7 @@ private void initializeEntityType(Class type) throws CachingException
         { throw new CachingException("Problem adding entity type " + type +
           " : " + ex.getMessage()); }
 }
+
 /**
  * Remove stale entries from the cache.
  */
@@ -127,6 +134,7 @@ public void cleanupCache()
     debug("LEAVING ReferenceEntityCache.cleanupCache() for " + getSimpleTypeName() + " : removed " +
         (before - size()) + " cache entries.");
 }
+
 /**
  * Remove all entries from the cache.
  */
@@ -134,6 +142,7 @@ public void clearCache()
 {
     getCache().clear();
 }
+
 /**
  */
 void debug(String msg)
@@ -141,6 +150,7 @@ void debug(String msg)
     java.sql.Timestamp ts = new java.sql.Timestamp(System.currentTimeMillis());
     LogService.log(LogService.DEBUG, ts + " : " + msg);
 }
+
 /**
  * @param key the key of the entity.
  * @return org.jasig.portal.concurrency.IBasicEntity
@@ -148,18 +158,21 @@ void debug(String msg)
 public IBasicEntity get(String key) {
     return (IBasicEntity) getCache().get(key);
 }
+
 /**
  * @return java.util.Map
  */
 protected java.util.Map getCache() {
     return cache;
 }
+
 /**
  * @return java.lang.Class
  */
 public final java.lang.Class getEntityType() {
     return entityType;
 }
+
 /**
  * @param key the key of the entity to be un-cached.
  */
@@ -167,18 +180,21 @@ public void remove(String key) throws CachingException
 {
     cache.remove(key);
 }
+
 /**
  * @param newCache java.util.Map
  */
 protected void setCache(java.util.Map newCache) {
     cache = newCache;
 }
+
 /**
  * @return int
  */
 public int size() {
     return getCache().size();
 }
+
 /**
  * Returns a String that represents the value of this object.
  * @return a string representation of the receiver
@@ -186,6 +202,7 @@ public int size() {
 public String toString() {
     return "ReferenceEntityCache for " + getSimpleTypeName();
 }
+
 private String getSimpleTypeName() 
 {
     if ( simpleTypeName == null )
@@ -205,4 +222,5 @@ public void update(IBasicEntity entity) throws CachingException
 {
     add(entity);
 }
+
 }
