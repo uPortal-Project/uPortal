@@ -1,5 +1,5 @@
 /**
- * Copyright © 2003 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2004 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,7 +45,6 @@ import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.layout.IAggregatedLayout;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
-//import org.w3c.dom.Node;
 import org.apache.xpath.XPathAPI;
 import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
@@ -62,10 +61,10 @@ import java.util.Collection;
    */
 public class CContentSubscriber extends FragmentManager {
 
-    private static final String sslLocation = "/org/jasig/portal/channels/CContentSubscriber/CContentSubscriber.ssl";
-    private static Document channelRegistry;
+	private static final String sslLocation = "/org/jasig/portal/channels/CContentSubscriber/CContentSubscriber.ssl";
+	private static Document channelRegistry;
 	private Document registry;
-    private Vector expandedItems;
+	private Vector expandedItems;
 	private Vector condensedItems;
 	
 	private final static String CHANNEL = "channel";
@@ -117,7 +116,7 @@ public class CContentSubscriber extends FragmentManager {
 	protected void analyzeParameters( XSLT xslt ) throws PortalException {
 		
 	  try {
-		    //Document channelRegistry = (Document) CContentSubscriber.channelRegistry.cloneNode(true);
+		  
 		
 			String fragmentId = CommonUtils.nvl(runtimeData.getParameter("uPcCS_fragmentID"));
 		    String channelId = CommonUtils.nvl(runtimeData.getParameter("uPcCS_channelID"));
@@ -130,7 +129,7 @@ public class CContentSubscriber extends FragmentManager {
 	  	     
 	  	     Vector tagNames = new Vector();         
 		           
-			 if ( expand || condense ) {
+		if ( expand || condense ) {
 			 		 	
 				if ( fragmentId.equals("all") ) {
 				   all = true;
@@ -148,7 +147,7 @@ public class CContentSubscriber extends FragmentManager {
 				}   
 				   	 
 				   
-				if ( !all  ) {
+			if ( !all  ) {
 				  String itemName = CHANNEL;
 				  String itemId = channelId;
 				  if ( fragmentId.length() > 0 ) {
@@ -168,20 +167,20 @@ public class CContentSubscriber extends FragmentManager {
 				    condensedItems.add(item);  
 				    expandedItems.remove(item);
 				  }           
-				}
+			}
 				 
 			
-			 } else if ( action.equals("init") ) {
+		} else if ( action.equals("init") ) {
 			 	//if ( alm.isFragmentLoaded() )
 			 	alm.loadUserLayout();	
 			 	refreshFragmentMap(); 
 			 	initRegistry();
-			 }
+		}
 			 
+		Vector removedItems = new Vector(); 
 						 
-			if ( !all ) {   
+		if ( !all ) {   
 				
-		     Vector removedItems = new Vector();
 		     Vector items = expandedItems;		
 		     for ( int k = 0; k < 2; items = condensedItems, k++ ) {		 
 			  for ( int i = 0; i < items.size(); i++ ) {	 
@@ -202,9 +201,8 @@ public class CContentSubscriber extends FragmentManager {
 			    items.removeAll(removedItems);
 		     }	           
 			  
-			} else { 
+		} else { 
 		    
-		      Vector removedItems = new Vector(); 
 		      for ( int i = 0; i < tagNames.size(); i++ ) {
 		        String tagName = (String) tagNames.get(i);	
 			    for ( Iterator iter = expandedItems.iterator(); iter.hasNext(); ) {
@@ -222,11 +220,11 @@ public class CContentSubscriber extends FragmentManager {
 			    NodeList nodeList = registry.getElementsByTagName(tagName);
 			    for ( int k = 0; k < nodeList.getLength(); k++ ) {
 				 Element node = (Element) nodeList.item(k);
-				 node.setAttribute("view",(action.equals("expand"))?"expanded":"condensed");
+				 node.setAttribute("view",(expand)?"expanded":"condensed");
 			   } 
 		      }
 		     
-			}  
+		 }  
 		     
 		    
 		     passAllParameters(xslt);
