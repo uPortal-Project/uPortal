@@ -282,7 +282,7 @@
                     <img alt="" src="{$baseMediaURL}/transparent.gif" width="8" height="8" border="0"/>Advanced profile mapping</a>
                   <br/>
                 </xsl:if>
-                <a href="{$baseActionURL}?action=delete&amp;profileId={@id}&amp;profileType=user">
+                <a href="{$baseActionURL}?action=delete&amp;profileId={@id}&amp;profileType=user" onClick="return confirm('Are you sure you want to remove this profile?')>
                   <img alt="Delete this profile" src="{$baseMediaURL}/profile_delete.gif" width="16" height="16" border="0"/>
                   <img alt="" src="{$baseMediaURL}/transparent.gif" width="8" height="8" border="0"/>Delete this profile</a>
               </p>
@@ -341,4 +341,5 @@
     </table>
     <!--End New Personal Profile Table -->
   </xsl:template>
-</xsl:stylesheet><!-- Stylesheet edited using Stylus Studio - (c)1998-2001 eXcelon Corp. -->
+</xsl:stylesheet>
+<!-- Stylesheet edited using Stylus Studio - (c)1998-2001 eXcelon Corp. -->
