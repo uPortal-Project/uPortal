@@ -2056,11 +2056,13 @@ public final class CIMAPMail implements IChannel, HttpSessionBindingListener
 
       ArrayList attachments = new ArrayList(MAX_ATTACHMENTS);
       org.jasig.portal.MultipartDataSource[] fileParts = (org.jasig.portal.MultipartDataSource[]) runtimeData.getObjectParameterValues("attachment");
-     for (int i = 0; i < fileParts.length; i++) {
-        if (DEBUG) System.err.println("attachment=" + fileParts[i]);
-        if (fileParts[i] != null) {
-          if (DEBUG) System.err.println("found filepart " + fileParts[i].getName());
-          attachments.add(fileParts[i]);
+      if (fileParts != null) {
+        for (int i = 0; i < fileParts.length; i++) {
+          if (DEBUG) System.err.println("attachment=" + fileParts[i]);
+          if (fileParts[i] != null) {
+            if (DEBUG) System.err.println("found filepart " + fileParts[i].getName());
+            attachments.add(fileParts[i]);
+          }
         }
       }
 
