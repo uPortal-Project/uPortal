@@ -1,9 +1,0 @@
-<?xml version="1.0"?>
-<?xml-stylesheet title="browse" href="/org/jasig/portal/channels/CUserPreferences/browse_full.xsl" type="text/xsl" media="netscape"?>
-<?xml-stylesheet title="moveTo" href="/org/jasig/portal/channels/CUserPreferences/moveTo_full.xsl" type="text/xsl" media="netscape"?>
-<?xml-stylesheet title="editItem" href="/org/jasig/portal/channels/CUserPreferences/editElement_full.xsl" type="text/xsl" media="netscape"?>
-<?xml-stylesheet title="firstScreen" href="/org/jasig/portal/channels/CUserPreferences/firstScreen_full.xsl" type="text/xsl" media="netscape"?>
-<?xml-stylesheet title="editGPrefs" href="/org/jasig/portal/channels/CUserPreferences/editGPref_full.xsl" type="text/xsl" media="netscape"?>
-<?xml-stylesheet title="profileList" href="/org/jasig/portal/channels/CUserPreferences/profileList.xsl" type="text/xsl" media="netscape"?>
-<?xml-stylesheet title="editProfile" href="/org/jasig/portal/channels/CUserPreferences/editProfile.xsl" type="text/xsl" media="netscape"?>
-<document/>

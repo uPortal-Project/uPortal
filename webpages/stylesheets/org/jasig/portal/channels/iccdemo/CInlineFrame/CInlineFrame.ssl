@@ -1,9 +1,0 @@
-<?xml version="1.0"?>
-
-<?xml-stylesheet title="IFrameSupport" href="CInlineFrame/Iframe.xsl" type="text/xsl" media="explorer"?>
-<?xml-stylesheet title="IFrameSupport" href="CInlineFrame/Iframe.xsl" type="text/xsl" media="netscape"?>
-<?xml-stylesheet title="noIFrameSupport" href="CInlineFrame/noIframe.xsl" type="text/xsl" media="explorer"?>
-<?xml-stylesheet title="noIFrameSupport" href="CInlineFrame/noIframe.xsl" type="text/xsl" media="netscape"?>
-
-<document>
-</document>

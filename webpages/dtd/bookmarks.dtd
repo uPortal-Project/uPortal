@@ -1,8 +1,0 @@
-<?xml encoding="US-ASCII"?>
-<!ELEMENT bookmarks (bookmark+)>
-
-<!ELEMENT bookmark EMPTY>
-<!ATTLIST bookmark
-  name CDATA #REQUIRED
-  url CDATA #REQUIRED
-  comments CDATA #REQUIRED>
