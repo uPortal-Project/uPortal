@@ -31,14 +31,18 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
+ *
+ * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
-package org.jasig.portal.security;
 
-import org.jasig.portal.Logger;
-import org.jasig.portal.GenericPortalBean;
-import java.util.*;
-import java.io.*;
+package  org.jasig.portal.security;
+
+import  org.jasig.portal.Logger;
+import  org.jasig.portal.GenericPortalBean;
+import  java.util.*;
+import  java.io.*;
+
 
 /**
  * This concrete class is responsible for returning a security context that
@@ -61,144 +65,181 @@ import java.io.*;
  * @author Andrew Newman
  * @version $Revision$
  */
-
-public class InitialSecurityContext implements SecurityContext {
-
+public class InitialSecurityContext
+    implements SecurityContext {
   private SecurityContext ictx;
   private Hashtable subcontext;
+  // Cache instances of the security context factories to avoid forName() calls
+  private static Hashtable m_factoryCache = new Hashtable(1);
 
-  public InitialSecurityContext(String ctx) {
+  /**
+   * put your documentation comment here
+   * @param   String ctx
+   */
+  public InitialSecurityContext (String ctx) {
     Properties pr;
     Enumeration ctxnames;
     String factoryname;
     SecurityContextFactory factory;
     File secprops;
-
     // Initial contexts must have names that are not compound
-
     if (ctx.indexOf('.') != -1) {
-      Logger.log(Logger.ERROR,
-          new PortalSecurityException("Initial Context can't be compound"));
+      Logger.log(Logger.ERROR, new PortalSecurityException("Initial Context can't be compound"));
       return;
     }
-
     // Find our properties file and open it
-
-    secprops = new File (GenericPortalBean.getPortalBaseDir() + "properties" +
-        File.separator + "security.properties");
+    secprops = new File(GenericPortalBean.getPortalBaseDir() + "properties" + File.separator + "security.properties");
     pr = new Properties();
     try {
       pr.load(new FileInputStream(secprops));
-    }
-    catch (IOException e) {
-      Logger.log(Logger.ERROR,
-          new PortalSecurityException(e.getMessage()));
+    } catch (IOException e) {
+      Logger.log(Logger.ERROR, new PortalSecurityException(e.getMessage()));
       return;
     }
-
     // Look for our security context factory and instantiate an instance
     // of it or die trying.
-
     if ((factoryname = pr.getProperty(ctx)) == null) {
-      Logger.log(Logger.ERROR,
-          new PortalSecurityException("No such security context " + ctx));
+      Logger.log(Logger.ERROR, new PortalSecurityException("No such security context " + ctx));
       return;
     }
-    try {
-      factory = (SecurityContextFactory)
-          Class.forName(factoryname).newInstance();
+    // Try to get the factory from the cache
+    factory = (SecurityContextFactory)m_factoryCache.get(factoryname);
+    if (factory == null) {
+      try {
+        // Create an instance of the security context factory
+        factory = (SecurityContextFactory)Class.forName(factoryname).newInstance();
+        // Cache the security context factory
+        m_factoryCache.put(factoryname, factory);
+      } catch (Exception e) {
+        Logger.log(Logger.ERROR, new PortalSecurityException("Failed to instantiate " + factoryname));
+        return;
+      }
     }
-    catch (Exception e) {
-      Logger.log(Logger.ERROR,
-          new PortalSecurityException("Failed to instantiate " + factoryname));
-      return;
-    }
-
     // From our factory get an actual security context instance
-
     ictx = factory.getSecurityContext();
-
     // Iterate through all of the other property keys looking for ones
     // rooted in this initial context
-
     ctxnames = pr.propertyNames();
     while (ctxnames.hasMoreElements()) {
       String secname, sfactoryname;
       String candidate = (String)ctxnames.nextElement();
       SecurityContextFactory sfactory;
-
-      if (candidate.startsWith(ctx+".")) {
-        secname = candidate.substring(ctx.length()+1);
+      if (candidate.startsWith(ctx + ".")) {
+        secname = candidate.substring(ctx.length() + 1);
         sfactoryname = pr.getProperty(candidate);
-
-        try {
-          sfactory = (SecurityContextFactory)
-              Class.forName(sfactoryname).newInstance();
-          ictx.addSubContext(secname, sfactory.getSecurityContext());
+        // Attempt to get the factory from the cache
+        sfactory = (SecurityContextFactory)m_factoryCache.get(sfactoryname);
+        if (sfactory == null) {
+          try {
+            sfactory = (SecurityContextFactory)Class.forName(sfactoryname).newInstance();
+            m_factoryCache.put(sfactoryname, sfactory);
+          } catch (Exception e) {
+            Logger.log(Logger.ERROR, new PortalSecurityException("(Subcontext)Failed to instantiate " + sfactoryname));
+          }
         }
-        catch (Exception e) {
-          Logger.log(Logger.ERROR, new
-              PortalSecurityException("(Subcontext)Failed to instantiate " +
-              sfactoryname));
-        }
+        ictx.addSubContext(secname, sfactory.getSecurityContext());
       }
     }
   }
 
   // Wrapper methods so we can legitimately claim to implement the
   // SecurityContext interface.
-
-  public int getAuthType() {
-    return (ictx == null ? 0 : ictx.getAuthType());
+  public int getAuthType () {
+    return  (ictx == null ? 0 : ictx.getAuthType());
   }
 
-  public Principal getPrincipalInstance() {
-    return (ictx == null ? null: ictx.getPrincipalInstance());
+  /**
+   * put your documentation comment here
+   * @return 
+   */
+  public Principal getPrincipalInstance () {
+    return  (ictx == null ? null : ictx.getPrincipalInstance());
   }
 
-  public OpaqueCredentials getOpaqueCredentialsInstance() {
-    return (ictx == null ? null : ictx.getOpaqueCredentialsInstance());
+  /**
+   * put your documentation comment here
+   * @return 
+   */
+  public OpaqueCredentials getOpaqueCredentialsInstance () {
+    return  (ictx == null ? null : ictx.getOpaqueCredentialsInstance());
   }
 
-  public void authenticate() {
+  /**
+   * put your documentation comment here
+   */
+  public void authenticate () {
     if (ictx != null)
       ictx.authenticate();
     return;
   }
 
-  public Principal getPrincipal() {
-    return (ictx == null ? null : ictx.getPrincipal());
+  /**
+   * put your documentation comment here
+   * @return 
+   */
+  public Principal getPrincipal () {
+    return  (ictx == null ? null : ictx.getPrincipal());
   }
 
-  public OpaqueCredentials getOpaqueCredentials() {
-    return (ictx == null ? null : ictx.getOpaqueCredentials());
+  /**
+   * put your documentation comment here
+   * @return 
+   */
+  public OpaqueCredentials getOpaqueCredentials () {
+    return  (ictx == null ? null : ictx.getOpaqueCredentials());
   }
 
-  public AdditionalDescriptor getAdditionalDescriptor() {
-    return (ictx == null ? null : ictx.getAdditionalDescriptor());
+  /**
+   * put your documentation comment here
+   * @return 
+   */
+  public AdditionalDescriptor getAdditionalDescriptor () {
+    return  (ictx == null ? null : ictx.getAdditionalDescriptor());
   }
 
-  public boolean isAuthenticated() {
-    return (ictx == null ? false : ictx.isAuthenticated());
+  /**
+   * put your documentation comment here
+   * @return 
+   */
+  public boolean isAuthenticated () {
+    return  (ictx == null ? false : ictx.isAuthenticated());
   }
 
-  public SecurityContext getSubContext(String ctx) {
-    return (ictx == null ? null : ictx.getSubContext(ctx));
+  /**
+   * put your documentation comment here
+   * @param ctx
+   * @return 
+   */
+  public SecurityContext getSubContext (String ctx) {
+    return  (ictx == null ? null : ictx.getSubContext(ctx));
   }
 
-  public Enumeration getSubContexts() {
-    return (ictx == null ? null : ictx.getSubContexts());
+  /**
+   * put your documentation comment here
+   * @return 
+   */
+  public Enumeration getSubContexts () {
+    return  (ictx == null ? null : ictx.getSubContexts());
   }
 
-  public void addSubContext(String name, SecurityContext ctx) {
+  /**
+   * put your documentation comment here
+   * @param name
+   * @param ctx
+   */
+  public void addSubContext (String name, SecurityContext ctx) {
     if (ictx != null)
       ictx.addSubContext(name, ctx);
     return;
   }
 
-    public String getAuthenticationFailure() {
-	return (ictx == null ? "" : ictx.getAuthenticationFailure());
-    }
+  /**
+   * put your documentation comment here
+   * @return 
+   */
+  public String getAuthenticationFailure () {
+    return  (ictx == null ? "" : ictx.getAuthenticationFailure());
+  }
 }
 
 
