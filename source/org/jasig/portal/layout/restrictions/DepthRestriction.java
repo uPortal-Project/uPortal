@@ -44,12 +44,12 @@ import org.jasig.portal.PortalException;
 import org.jasig.portal.utils.CommonUtils;
 
 /**
- * <p>Title: DepthRestriction class</p>
- * <p>Description: This class checks the priority restriction for a given UserLayoutNode object</p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: Instructional Media & Magic </p>
+ * DepthRestriction checks the priority restriction for a given UserLayoutNode object
+ * <p>
+ * Company: Instructional Media &amp; Magic
+ * 
  * @author <a href="mailto:mvi@immagic.com">Michael Ivanov</a>
- * @version 1.1
+ * @version $Revision$
  */
 
 public class DepthRestriction extends UserLayoutRestriction {

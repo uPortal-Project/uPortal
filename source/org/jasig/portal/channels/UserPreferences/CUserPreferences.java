@@ -56,7 +56,9 @@ import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.services.LogService;
 import org.xml.sax.ContentHandler;
 
-/** <p>Manages User Layout, user preferences and profiles </p>
+/** 
+ * CUserPreferences manages User Layout, user preferences and profiles.
+ * 
  * @author Peter Kharchenko, peterk@interactivebusiness.com
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$

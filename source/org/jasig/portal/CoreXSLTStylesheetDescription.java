@@ -39,7 +39,9 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 
 /**
- * Description of core XSLT stylesheets (i.e. structure and theme transformations)
+ * CoreXSLTStyleSheetDescription contains properties of core XSLT stylesheets.
+ * This includes structure and theme transformations.
+ * 
  * @author Peter Kharchenko
  * @version $Revision$
  */

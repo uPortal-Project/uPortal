@@ -52,10 +52,11 @@ import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
 
 
-/** <p>Initial profile selection</p>
- * <p> CSelectSystemProfile channel allows to establish mapping from user-Agent to a system profile.
- * This channel is meant to be used by a guest user only. Logged in users are expected to use
- * CUserPreferences profile management screens to achieve the establish user-Agent mappings. </p>
+/**
+ * CSelectSystemProfile channel allows to establish mapping from user-Agent to a system profile.
+ * This channel is meant to be used by a guest user only.  Logged in users are expected to use
+ * CUserPreferences profile management screens to achieve the establish user-Agent mappings.
+ * 
  * @author Peter Kharchenko, peterk@interactivebusiness.com
  * @version $Revision$
  */

@@ -39,8 +39,9 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 
 /**
- * Description of properties common for all core stylesheets
- * (i.e. structure, theme and style transformation stylesheets)
+ * CoreStyleSheetDescription contains properties common to all core stylesheets.
+ * This includes structure, theme and style transformation stylesheets.
+ * 
  * @author Peter Kharchenko
  * @version $Revision$
  */
