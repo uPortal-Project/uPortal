@@ -4,7 +4,7 @@ BODY {
 A {
 	text-decoration : none;
 	font-family : System, Verdana, Geneva, Arial, Helvetica, sans-serif;
-	color : #666699;
+	color : #dddddd;
 }
 A:VISITED {
 	color : #9999CC;
@@ -19,7 +19,7 @@ A.navigation:visited {
 	color : Black;
 }
 A.navigation:hover {
-	color : #666699;
+	color : #000000;
 }
 .uportal-text{
 	color : Black;
