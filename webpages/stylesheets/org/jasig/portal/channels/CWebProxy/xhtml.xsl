@@ -216,7 +216,14 @@
                </xsl:choose>
              </xsl:when>
              <xsl:otherwise>
-               <xsl:value-of select="concat($baseActionURL, '?cw_xml=', $href-uri)"/>
+               <xsl:choose>
+                 <xsl:when test="contains($href-uri, '?')">
+                   <xsl:value-of select="concat($baseActionURL, '?', substring-after($href-uri, '?'), '&amp;cw_xml=', substring-before($href-uri, '?'))"/>
+		 </xsl:when>
+                 <xsl:otherwise>
+                   <xsl:value-of select="concat($baseActionURL, '?cw_xml=', $href-uri)"/>
+                 </xsl:otherwise>
+               </xsl:choose>
              </xsl:otherwise>
            </xsl:choose>
          </xsl:attribute>
