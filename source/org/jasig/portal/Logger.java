@@ -42,6 +42,8 @@ import java.io.FileWriter;
 import java.io.PrintStream;
 import java.io.StringWriter;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 
 import java.util.Date;
 import java.util.Properties;
@@ -62,6 +64,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NamedNodeMap;
 
 import org.xml.sax.InputSource;
+
+import org.jasig.portal.PortalFileAppender;
 
 /**
  * The Logger class is used to output messages to a log file.
@@ -94,12 +98,15 @@ public class Logger extends GenericPortalBean
   private static final String sIllArgExMessage = "Log level must be NONE, SEVERE, ERROR, WARN, INFO, or DEBUG";
   private static final String fs = File.separator;
   private static final String sLogRelativePath = "logs" + fs + "portal.log";
-  private static int iMaxLogFiles = 5;
+
   private static boolean bInitialized = false;
 
   private static Category     m_catFramework = null;
 
-  private static FileAppender m_logFile = null;
+  private static PortalFileAppender m_logFile = null;
+
+  private static int m_maxBackupIndex = 10;   // Maximum number of log files (Default is 10)
+  private static int m_maxFileSize = 500000;  // Maximum size of each log file (Default is 500k)
 
   /**
    * Sets the current log level.  Use one of the static integer members
@@ -112,7 +119,9 @@ public class Logger extends GenericPortalBean
   public static void setLogLevel (int iLogLevel)
   {
     if (!bInitialized)
+    {
       initialize ();
+    }
 
     if (iLogLevel <= DEBUG)
     {
@@ -137,22 +146,28 @@ public class Logger extends GenericPortalBean
    * Sets the amount of backup log files to create
    * @param the amount of backup log files to create
    */
+  /*
   public static void setMaxBackupLogFiles (int iMaxBackupLogFiles)
   {
     if (!bInitialized)
+    {
       initialize ();
+    }
 
     iMaxLogFiles = iMaxBackupLogFiles;
   }
+  */
 
   /**
    * Gets the amount of backup log files to create
    * @return the amount of backup log files to create
    */
+  /*
   public static int getMaxBackupLogFiles ()
   {
     return iMaxLogFiles;
   }
+  */
 
   /**
    * Increments the old logs and creates a new log with the
@@ -185,11 +200,20 @@ public class Logger extends GenericPortalBean
 
         if(portalProperties.getProperty("logger.maxLogFiles") != null)
         {
-          iMaxLogFiles = Integer.parseInt(portalProperties.getProperty("logger.maxLogFiles"));
+          m_maxBackupIndex = Integer.parseInt(portalProperties.getProperty("logger.maxLogFiles"));
         }
         else
         {
-          System.out.println("Defaulting to " + iMaxLogFiles + " for maximum number of portal log files.");
+          System.out.println("Defaulting to " + m_maxBackupIndex + " for maximum number of portal log files.");
+        }
+        
+        if(portalProperties.getProperty("logger.maxFileSize") != null)
+        {
+          m_maxFileSize = Integer.parseInt(portalProperties.getProperty("logger.maxFileSize"));
+        }
+        else
+        {
+          System.out.println("Defaulting to " + m_maxFileSize + " for maximum log file size.");
         }
       }
       else
@@ -207,9 +231,17 @@ public class Logger extends GenericPortalBean
       if(sPortalBaseDir != null && new File(sPortalBaseDir).exists())
       {
         // Advance logs
-        advanceLogs();
+        //advanceLogs();
 
-        m_logFile = new FileAppender(new PatternLayout("%-5p %-23d{ISO8601} %m%n"), sPortalBaseDir + sLogRelativePath);
+        //BufferedWriter fileWriter = new BufferedWriter(new FileWriter(sPortalBaseDir + sLogRelativePath), m_writeBufferSize);
+        
+        m_logFile = new PortalFileAppender(new PatternLayout("%-5p %-23d{ISO8601} %m%n"), sPortalBaseDir + sLogRelativePath);
+
+        // Make sure to roll the logs to start fresh
+        m_logFile.rollOver();
+
+        m_logFile.setMaxBackupIndex(m_maxBackupIndex);
+        m_logFile.setMaxFileSize(m_maxFileSize);
 
         m_catFramework = Category.getRoot();
         m_catFramework.addAppender(m_logFile);
@@ -217,11 +249,11 @@ public class Logger extends GenericPortalBean
         m_catFramework.setPriority(Priority.toPriority(sLogLevelSetting));
 
         // Print a header to the log containing the current time and log level
-        String sDate = getLogTimeStamp ();
-        PrintWriter out = new PrintWriter (new BufferedWriter (new FileWriter (sPortalBaseDir + sLogRelativePath, true)));
-        out.println("Portal log service initiating on " + sDate + "  Log level: " + getLogLevel (iLogLevelSetting));
-        out.println();
-        out.close();
+        //String sDate = getLogTimeStamp ();
+        //PrintWriter out = new PrintWriter (new BufferedWriter (new FileWriter (sPortalBaseDir + sLogRelativePath, true)));
+        //out.println("Portal log service initiating on " + sDate + "  Log level: " + getLogLevel (iLogLevelSetting));
+        //out.println();
+        //out.close();
 
         // Insures that initialization is only done once
         bInitialized = true;
@@ -464,6 +496,7 @@ public class Logger extends GenericPortalBean
   /**
    * This method advances the log files, throwing away the oldest
    */
+  /*
   private static void advanceLogs ()
   {
     String sLogFile, sLogBase, sOldPath, sNewPath;
@@ -503,4 +536,5 @@ public class Logger extends GenericPortalBean
     oldFile = new File (sLogFile);
     oldFile.renameTo (newFile);
   }
+  */
 }
