@@ -25,10 +25,7 @@ public abstract class AbstractCommand implements ILayoutCommand {
     public AbstractCommand(INodeId nodeId) {
         this.nodeId = nodeId;
     }
-    /* (non-Javadoc)
-     * @see org.jasig.portal.layout.al.ILayoutCommand#execute(org.jasig.portal.layout.al.ILayoutManager)
-     */
-    public abstract boolean execute(ILayoutManager manager);
+
     /**
      * @return Returns the nodeId.
      */
