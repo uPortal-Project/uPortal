@@ -282,7 +282,8 @@ public class StylesheetSet extends SAX2FilterImpl {
       if (media_table == null) {
         return  null;
       }
-      log.debug("media=\"" + media + "\"");
+      if (log.isDebugEnabled())
+          log.debug("media=\"" + media + "\"");
       StylesheetDescription sd = (StylesheetDescription)media_table.get(media);
       if (sd == null) {
         Enumeration sls = media_table.elements();
