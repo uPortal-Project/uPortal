@@ -21,7 +21,7 @@ public class ChannelStaticData extends Hashtable {
   private long m_timeout = java.lang.Long.MAX_VALUE;
   // Cache a reference to the portal's JNDI context
   private Context m_portalContext = null;
-  // This is the ID that globally identifies the channel as 
+  // This is the ID that globally identifies the channel as
   // it's defined during the publish time.
   private String m_channelPublishId = null;
   // This is the ID that locally identifies the channel in the user's layout
@@ -29,8 +29,7 @@ public class ChannelStaticData extends Hashtable {
   private String m_channelSubscribeId = null;
   // Cache the IPerson
   private IPerson m_person = null;
-  // Cache the security context
-  private ISecurityContext m_securityContext = null;
+
   // Cache the PermissionManager for this channel
   //  private PermissionManager m_permissionManager = null;
 
@@ -98,9 +97,9 @@ public class ChannelStaticData extends Hashtable {
 
   /**
    * Maximum time the channel will be allowed to spend in the rendering cycle.
-   * @return timeout (in milliseconds) after which the channel thread will be killed. 
-   * Ideally, channels should monitor for this timeout and abort internal execution 
-   * if the rendering cycle takes too long. 
+   * @return timeout (in milliseconds) after which the channel thread will be killed.
+   * Ideally, channels should monitor for this timeout and abort internal execution
+   * if the rendering cycle takes too long.
    */
   public long getTimeout() {
     return  (m_timeout);
@@ -131,7 +130,7 @@ public class ChannelStaticData extends Hashtable {
     public void setJNDIContext(Context c) {
         m_portalContext=c;
     }
-    
+
     /**
      * Set information contained in a channel <param> element
      * Parameters are strings!
