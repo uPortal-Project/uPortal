@@ -35,33 +35,16 @@
 
 package  org.jasig.portal.channels.groupsmanager;
 
-/**
- * <p>Title: uPortal</p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: Columbia University</p>
- * @author Don Fracapane
- * @version 2.0
- */
-
 import  org.jasig.portal.*;
 import  org.jasig.portal.services.*;
 import  org.jasig.portal.utils.*;
+import  org.jasig.portal.groups.IGroupMember;
 
 /**
  * CGroupsManagerServant is an IServant subclass of CGroupsManager
  * This will allow other channels to delegate to CGroupsManager at runtime
- *
- * Master channels should instantiate this channel with the following
- * staticData parameter preset:
- *
- * prmOwners = IPermissible[] owners
- *
- * where owners is an array with a single element being an instance of the
- * master's representative IPermissible class.
- *
- * see org.jasig.portal.IPermissible for more information
- *
+ * @author Alex Vigdor, av317@columbia.edu
+ * @version $Revision$
  */
 
 public class CGroupsManagerServant extends MultithreadedCacheableChannelAdapter
@@ -146,7 +129,7 @@ public class CGroupsManagerServant extends MultithreadedCacheableChannelAdapter
       }
       Object[] results = (Object[])staticData.get("princResults");
       if (results == null){
-        results = new Object[0];
+        results = new IGroupMember[0];
       }
       Utility.logMessage("DEBUG", "CGroupsManagerservant.getResults()");
       return  results;
