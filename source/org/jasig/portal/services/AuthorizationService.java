@@ -40,6 +40,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
+import org.jasig.portal.groups.*;
 import org.jasig.portal.PortalSessionManager;
 import org.jasig.portal.security.*;
 import org.jasig.portal.AuthorizationException;
@@ -87,7 +88,16 @@ public class AuthorizationService
       // From our factory get an actual authorization instance
       m_authorization = m_Factory.getAuthorization();
   }
-
+ /**
+   * @return org.jasig.portal.groups.IGroupMember
+   * @param principal IAuthorizationPrincipal
+   * @exception org.jasig.portal.groups.GroupsException
+   */
+  public IGroupMember getGroupMember(IAuthorizationPrincipal principal)
+         throws GroupsException
+   {
+       return m_authorization.getGroupMember(principal);
+   }
   /**
    * @return Authorization
    */
@@ -120,7 +130,16 @@ public class AuthorizationService
   {
        return m_authorization.newPrincipal(key, type);
   }
-
+  /**
+   * @return org.jasig.portal.security.IAuthorizationPrincipal
+   * @param org.jasig.portal.groups.IGroupMember groupMember
+   * @exception org.jasig.portal.groups.GroupsException
+   */
+   public IAuthorizationPrincipal newPrincipal(IGroupMember groupMember)
+          throws GroupsException
+   {
+       return m_authorization.newPrincipal(groupMember);
+   }
   /**
    * @return org.jasig.portal.security.IAuthorizationPrincipal
    * @param IPermission

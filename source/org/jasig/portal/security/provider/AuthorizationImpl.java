@@ -265,6 +265,15 @@ throws AuthorizationException
  * @return org.jasig.portal.groups.IGroupMember
  * @param user org.jasig.portal.security.IAuthorizationPrincipal
  */
+public IGroupMember getGroupMember(IAuthorizationPrincipal principal)
+throws GroupsException
+{
+    return getGroupMemberForPrincipal(principal);
+}
+/**
+ * @return org.jasig.portal.groups.IGroupMember
+ * @param user org.jasig.portal.security.IAuthorizationPrincipal
+ */
 private IGroupMember getGroupMemberForPrincipal(IAuthorizationPrincipal principal)
 throws GroupsException
 {
@@ -496,6 +505,20 @@ public IPermission newPermission(String owner, IAuthorizationPrincipal principal
 public IPermissionManager newPermissionManager(String owner)
 {
     return new PermissionManagerImpl(owner, this);
+}
+/**
+ * Converts an <code>IGroupMember</code> into an <code>IAuthorizationPrincipal</code>.
+ * @return org.jasig.portal.security.IAuthorizationPrincipal
+ * @param groupMember org.jasig.portal.groups.IGroupMember
+ */
+public IAuthorizationPrincipal newPrincipal(IGroupMember groupMember)
+throws GroupsException
+{
+    String key = groupMember.getKey();
+    Class type = ( groupMember.isGroup() )
+        ? EntityTypes.GROUP_ENTITY_TYPE
+        : groupMember.getEntityType();
+    return newPrincipal(key, type);
 }
 /**
  * Factory method for IAuthorizationPrincipal.
