@@ -343,8 +343,8 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
   public ChannelDefinition getChannelDefinition(int channelPublishId) throws SQLException {
     ChannelDefinition channelDef = null;
     Connection con = null;
-    RDBMPreparedStatement pstmtChannel = null;
-    RDBMPreparedStatement pstmtChannelParam = null;
+    RDBMServices.PreparedStatement pstmtChannel = null;
+    RDBMServices.PreparedStatement pstmtChannelParam = null;
     ResultSet rs = null;
 
     try {
@@ -890,7 +890,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
   }
 
 
-  protected static final RDBMPreparedStatement getChannelPstmt(Connection con) throws SQLException {
+  protected static final RDBMServices.PreparedStatement getChannelPstmt(Connection con) throws SQLException {
     String sql = "SELECT UC.CHAN_TITLE, UC.CHAN_DESC, UC.CHAN_CLASS, UC.CHAN_TYPE_ID, " +
                  "UC.CHAN_PUBL_ID, UC.CHAN_APVL_ID, UC.CHAN_PUBL_DT, UC.CHAN_APVL_DT, " +
                  "UC.CHAN_TIMEOUT, UC.CHAN_EDITABLE, UC.CHAN_HAS_HELP, UC.CHAN_HAS_ABOUT, " +
@@ -904,14 +904,14 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
 
     sql += " UC.CHAN_ID=?";
 
-    return new RDBMPreparedStatement(con, sql);
+    return new RDBMServices.PreparedStatement(con, sql);
   }
 
-  protected static final RDBMPreparedStatement getChannelParamPstmt(Connection con) throws SQLException {
+  protected static final RDBMServices.PreparedStatement getChannelParamPstmt(Connection con) throws SQLException {
     if (RDBMServices.supportsOuterJoins) {
       return null;
     } else {
-      return new RDBMPreparedStatement(con, "SELECT CHAN_PARM_NM, CHAN_PARM_VAL,CHAN_PARM_OVRD,CHAN_PARM_DESC FROM UP_CHANNEL_PARAM WHERE CHAN_ID=?");
+      return new RDBMServices.PreparedStatement(con, "SELECT CHAN_PARM_NM, CHAN_PARM_VAL,CHAN_PARM_OVRD,CHAN_PARM_DESC FROM UP_CHANNEL_PARAM WHERE CHAN_ID=?");
     }
   }
 }

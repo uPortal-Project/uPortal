@@ -42,7 +42,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import org.jasig.portal.RDBMServices;
-import org.jasig.portal.RDBMPreparedStatement;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.services.SequenceGenerator;
 import org.jasig.portal.utils.SqlTransaction;
@@ -142,7 +141,7 @@ public IEntityGroup find(String groupID) throws GroupsException
     {
             conn = RDBMServices.getConnection();
             String sql = getFindGroupSql();
-            RDBMPreparedStatement ps = new RDBMPreparedStatement(conn, sql);
+            RDBMServices.PreparedStatement ps = new RDBMServices.PreparedStatement(conn, sql);
             try
             {
                     ps.setString(1, groupID);
@@ -186,7 +185,7 @@ throws GroupsException
     {
             conn = RDBMServices.getConnection();
             String sql = getFindContainingGroupsSql();
-            RDBMPreparedStatement ps = new RDBMPreparedStatement(conn, sql);
+            RDBMServices.PreparedStatement ps = new RDBMServices.PreparedStatement(conn, sql);
             try
             {
                     ps.setString(1, memberKey);
@@ -246,7 +245,7 @@ public java.util.Iterator findGroupsByCreator(String creatorID) throws GroupsExc
     {
             conn = RDBMServices.getConnection();
             String sql = getFindGroupsByCreatorSql();
-            RDBMPreparedStatement ps = new RDBMPreparedStatement(conn, sql);
+            RDBMServices.PreparedStatement ps = new RDBMServices.PreparedStatement(conn, sql);
         try
         {
                 ps.setString(1, creatorID);
@@ -292,7 +291,7 @@ public Iterator findMemberGroups(IEntityGroup group) throws GroupsException
     {
             conn = RDBMServices.getConnection();
             String sql = getFindMemberGroupsSql();
-            RDBMPreparedStatement ps = new RDBMPreparedStatement(conn, sql);
+            RDBMServices.PreparedStatement ps = new RDBMServices.PreparedStatement(conn, sql);
             try
             {
                     ps.setString(1, group.getKey());
@@ -727,8 +726,8 @@ private void primAdd(IEntityGroup group, Connection conn) throws SQLException, G
 {
     try
     {
-        RDBMPreparedStatement ps =
-            new RDBMPreparedStatement(conn, getInsertGroupSql());
+        RDBMServices.PreparedStatement ps =
+            new RDBMServices.PreparedStatement(conn, getInsertGroupSql());
        try
         {
             Integer typeID = EntityTypes.getEntityTypeID(group.getEntityType());
@@ -815,8 +814,8 @@ private void primUpdate(IEntityGroup group, Connection conn) throws SQLException
 {
     try
     {
-        RDBMPreparedStatement ps =
-            new RDBMPreparedStatement(conn, getUpdateGroupSql());
+        RDBMServices.PreparedStatement ps =
+            new RDBMServices.PreparedStatement(conn, getUpdateGroupSql());
 
         try
         {
@@ -865,8 +864,8 @@ private void primUpdateMembers(EntityGroupImpl egi, Connection conn) throws java
     {
         if ( egi.hasDeletes() )
         {
-            RDBMPreparedStatement psDelete =
-                new RDBMPreparedStatement(conn, getDeleteMemberSql());
+            RDBMServices.PreparedStatement psDelete =
+                new RDBMServices.PreparedStatement(conn, getDeleteMemberSql());
 
             try
             {
@@ -893,8 +892,8 @@ private void primUpdateMembers(EntityGroupImpl egi, Connection conn) throws java
 
         if ( egi.hasAdds() )
         {
-            RDBMPreparedStatement psAdd =
-                new RDBMPreparedStatement(conn, getInsertMemberSql());
+            RDBMServices.PreparedStatement psAdd =
+                new RDBMServices.PreparedStatement(conn, getInsertMemberSql());
 
             try
             {

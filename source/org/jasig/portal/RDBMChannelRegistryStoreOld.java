@@ -442,7 +442,7 @@ public class RDBMChannelRegistryStoreOld implements IChannelRegistryStoreOld {
   /**
    * Get a channel from the cache or the store
    */
-  public ChannelDefinition getChannel(int chanId, boolean cacheChannel, RDBMPreparedStatement pstmtChannel, RDBMPreparedStatement pstmtChannelParm) throws java.sql.SQLException {
+  public ChannelDefinition getChannel(int chanId, boolean cacheChannel, RDBMServices.PreparedStatement pstmtChannel, RDBMServices.PreparedStatement pstmtChannelParm) throws java.sql.SQLException {
     Integer chanID = new Integer(chanId);
     boolean inCache = true;
     ChannelDefinition channel = (ChannelDefinition)channelCache.get(chanID);
@@ -473,7 +473,7 @@ public class RDBMChannelRegistryStoreOld implements IChannelRegistryStoreOld {
   /**
    * Read a channel definition from the data store
    */
-  protected ChannelDefinition getChannelDefinition (int chanId, RDBMPreparedStatement pstmtChannel, RDBMPreparedStatement pstmtChannelParm) throws java.sql.SQLException {
+  protected ChannelDefinition getChannelDefinition (int chanId, RDBMServices.PreparedStatement pstmtChannel, RDBMServices.PreparedStatement pstmtChannelParm) throws java.sql.SQLException {
     try {
       return crs.getChannelDefinition(chanId);
     } catch (Exception e) {
@@ -482,11 +482,11 @@ public class RDBMChannelRegistryStoreOld implements IChannelRegistryStoreOld {
     }
   }
 
-  public final RDBMPreparedStatement getChannelParmPstmt(Connection con) throws SQLException {
+  public final RDBMServices.PreparedStatement getChannelParmPstmt(Connection con) throws SQLException {
     return RDBMChannelRegistryStore.getChannelParamPstmt(con);
   }
 
-  public final RDBMPreparedStatement getChannelPstmt(Connection con) throws SQLException {
+  public final RDBMServices.PreparedStatement getChannelPstmt(Connection con) throws SQLException {
     return RDBMChannelRegistryStore.getChannelPstmt(con);
   }
 }
