@@ -62,6 +62,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.jasig.portal.channels.portlet.CPortletAdapter;
 import org.jasig.portal.jndi.JNDIManager;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.SubstitutionServletOutputStream;
@@ -126,6 +127,10 @@ public class PortalSessionManager extends HttpServlet {
       if (sc == null) {
         throw new ServletException("PortalSessionManager.init(): ServletConfig object was returned as null");
       }
+      
+      // Supply PortletContainer with ServletConfig
+      CPortletAdapter.setServletConfig(sc);
+      
       servletContext = sc.getServletContext();
 
       try {
