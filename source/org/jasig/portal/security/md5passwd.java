@@ -89,7 +89,7 @@ public class md5passwd {
 
     // Check to see if the user exists
 
-    conn = rdbm.getConnection();
+    conn = RDBMServices.getConnection();
     stmt = conn.prepareStatement(SELECTSTMT);
     stmt.setString(1, user);
     rset = stmt.executeQuery();
