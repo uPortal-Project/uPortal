@@ -35,6 +35,9 @@
 
 package org.jasig.portal;
 
+import java.io.PrintWriter;
+import java.io.PrintStream;
+
 
 /**
  * Base portal exception class.
