@@ -44,7 +44,7 @@ $Revision$
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
       <xsl:choose>
         <xsl:when test="$unauthenticated='true'">
-          <form action="Authentication" method="post">
+          <form action="Login" method="post">
             <input type="hidden" name="action" value="login"/>
             <xsl:call-template name="buildTable"/>
           </form>

@@ -84,7 +84,7 @@ public class LogoutServlet extends HttpServlet {
             // We retrieve the redirect strings for each context
             // from the security properties file.
             String key;
-            Properties props = ResourceLoader.getResourceAsProperties(AuthenticationServlet.class,
+            Properties props = ResourceLoader.getResourceAsProperties(LogoutServlet.class,
                   "/properties/security.properties");
             Enumeration propNames = props.propertyNames();
             while (propNames.hasMoreElements()) {
@@ -104,7 +104,7 @@ public class LogoutServlet extends HttpServlet {
             LogService.log(LogService.ERROR, "LogoutServlet::static " + pe);
             LogService.log(LogService.ERROR, pe);
          } catch (IOException ioe) {
-            LogService.log(LogService.ERROR, "AuthenticationServlet::static " + ioe);
+            LogService.log(LogService.ERROR, "LogoutServlet::static " + ioe);
             LogService.log(LogService.ERROR, ioe);
          }
          REDIRECT_MAP = rdHash;

@@ -55,9 +55,9 @@ import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
 
 /**
- * <p>Allows a user to logon to the portal.  Logon info is posted to
- * <code>AuthenticationServlet</code>.  If user enters incorrect username and
- * password, he/she is instructed to log in again with a different
+ * <p>Allows a user to login to the portal.  Login info is posted to
+ * <code>LoginServlet</code>.  If user enters incorrect username and
+ * password, he/she is instructed to login again with a different
  * password (the username of the previous attempt is preserved).</p>
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$

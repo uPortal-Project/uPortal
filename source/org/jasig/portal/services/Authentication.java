@@ -79,7 +79,7 @@ public class Authentication {
       // Retrieve the security context for the user
       ISecurityContext securityContext = person.getSecurityContext();
       Enumeration subCtxNames = securityContext.getSubContextNames();
-      // NOTE: The AuthenticationServlet looks in the security.properties file to
+      // NOTE: The LoginServlet looks in the security.properties file to
       // determine what tokens to look for that represent the principals and
       // credentials for each context. It then retrieves the values from the request
       // and stores the values in the principals and credentials HashMaps that are

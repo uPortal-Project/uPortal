@@ -63,7 +63,7 @@ import org.jasig.portal.utils.ResourceLoader;
  * Added properties in the security properties file that hold the tokens used to
  * represent the principal and credential for each security context.
  */
-public class AuthenticationServlet extends HttpServlet {
+public class LoginServlet extends HttpServlet {
   private static final String redirectString;
   private static HashMap credentialTokens;
   private static HashMap principalTokens;
@@ -78,13 +78,11 @@ public class AuthenticationServlet extends HttpServlet {
          String key;
          // We retrieve the tokens representing the credential and principal
          // parameters from the security properties file.
-         Properties props =
-            ResourceLoader.getResourceAsProperties(AuthenticationServlet.class, "/properties/security.properties");
+         Properties props = ResourceLoader.getResourceAsProperties(LoginServlet.class, "/properties/security.properties");
          Enumeration propNames = props.propertyNames();
          while (propNames.hasMoreElements()) {
             String propName = (String)propNames.nextElement();
             String propValue = props.getProperty(propName);
-            //LogService.log(LogService.DEBUG, "AuthenticationServlet::initializer() propValue/propName = " + propValue + "/" + propName);
             if (propName.startsWith("credentialToken.")) {
                key = propName.substring(16);
                cHash.put(key, propValue);
@@ -95,9 +93,9 @@ public class AuthenticationServlet extends HttpServlet {
             }
          }
       } catch(PortalException pe) {
-          LogService.log(LogService.ERROR,"AuthenticationServlet::static "+pe);
+          LogService.log(LogService.ERROR,"LoginServlet::static "+pe);
       } catch(IOException ioe) {
-          LogService.log(LogService.ERROR,"AuthenticationServlet::static "+ioe);
+          LogService.log(LogService.ERROR,"LoginServlet::static "+ioe);
       }
       redirectString=upFile;
       credentialTokens=cHash;
@@ -188,7 +186,6 @@ public class AuthenticationServlet extends HttpServlet {
     Iterator tokenItr = tokens.keySet().iterator();
     while (tokenItr.hasNext()) {
       String ctxName = (String)tokenItr.next();
-      //LogService.log(LogService.DEBUG, "AuthenticationServlet::getPropertyFromRequest() ctxName = " + ctxName);
       String parmName = (String)tokens.get(ctxName);
       String parmValue = request.getParameter(parmName);
       // null value causes exception in context.authentication
@@ -200,7 +197,6 @@ public class AuthenticationServlet extends HttpServlet {
       // as example, the contexts ["root", "root.simple", "root.cas"] are represented
       // as ["root", "simple", "cas"].
       String key = (ctxName.startsWith("root.") ? ctxName.substring(5) : ctxName);
-      //LogService.log(LogService.DEBUG, "AuthenticationServlet::getPropertyFromRequest() key = " + key);
       retHash.put(key, parmValue);
     }
     return (retHash);
