@@ -133,7 +133,7 @@ public class ChannelRenderer
      * @param channel an <code>IChannel</code>
      */
     public void setChannel(IChannel channel) {
-        LogService.instance().log(LogService.ERROR,"ChannelRenderer::setChannel() : channel is being reset!");        
+        LogService.instance().log(LogService.DEBUG,"ChannelRenderer::setChannel() : channel is being reset!");        
         this.channel=channel;
         if(worker!=null) {
             worker.setChannel(channel);
