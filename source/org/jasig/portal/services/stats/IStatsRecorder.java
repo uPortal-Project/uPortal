@@ -36,6 +36,7 @@
 package org.jasig.portal.services.stats;
 
 import org.jasig.portal.layout.UserLayoutChannelDescription;
+import org.jasig.portal.layout.UserLayoutFolderDescription;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.ChannelDefinition;
@@ -111,10 +112,58 @@ public interface IStatsRecorder {
   public void recordChannelAddedToLayout(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc);
   
   /**
+   * Called when a channel is being updated in a user layout
+   * @param person, the person updating the channel
+   * @param profile, the profile of the layout in which the channel is updated
+   * @param channelDesc, the channel being updated
+   */
+  public void recordChannelUpdatedInLayout(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc);
+    
+  /**
+   * Called when a channel is being moved in a user layout
+   * @param person, the person moving the channel
+   * @param profile, the profile of the layout in which the channel is moved
+   * @param channelDesc, the channel being moved
+   */
+  public void recordChannelMovedInLayout(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc);
+        
+  /**
    * Called when a channel is being removed from a user layout
    * @param person, the person removing the channel
    * @param profile, the profile of the layout to which the channel is removed   
    * @param channelDesc, the channel being removed from a user layout
    */
   public void recordChannelRemovedFromLayout(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc);      
+
+  /**
+   * Called when a folder is being added to a user layout
+   * @param person, the person adding the folder
+   * @param profile, the profile of the layout to which the folder is added
+   * @param folderDesc, the folder being subscribed to
+   */
+  public void recordFolderAddedToLayout(IPerson person, UserProfile profile, UserLayoutFolderDescription folderDesc);
+  
+  /**
+   * Called when a folder is being updated in a user layout
+   * @param person, the person updating the folder
+   * @param profile, the profile of the layout in which the folder is updated
+   * @param folderDesc, the folder being updated
+   */
+  public void recordFolderUpdatedInLayout(IPerson person, UserProfile profile, UserLayoutFolderDescription folderDesc);
+    
+  /**
+   * Called when a folder is being moved in a user layout
+   * @param person, the person moving the folder
+   * @param profile, the profile of the layout in which the folder is moved
+   * @param folderDesc, the folder being moved
+   */
+  public void recordFolderMovedInLayout(IPerson person, UserProfile profile, UserLayoutFolderDescription folderDesc);
+        
+  /**
+   * Called when a folder is being removed from a user layout
+   * @param person, the person removing the folder
+   * @param profile, the profile of the layout to which the folder is removed   
+   * @param folderDesc, the folder being removed from a user layout
+   */
+  public void recordFolderRemovedFromLayout(IPerson person, UserProfile profile, UserLayoutFolderDescription folderDesc);      
 }

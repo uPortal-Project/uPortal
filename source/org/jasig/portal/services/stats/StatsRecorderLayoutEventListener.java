@@ -40,6 +40,7 @@ import org.jasig.portal.layout.LayoutEventListener;
 import org.jasig.portal.layout.LayoutEvent;
 import org.jasig.portal.layout.LayoutMoveEvent;
 import org.jasig.portal.layout.UserLayoutChannelDescription;
+import org.jasig.portal.layout.UserLayoutFolderDescription;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.security.IPerson;
 
@@ -72,9 +73,13 @@ public class StatsRecorderLayoutEventListener implements LayoutEventListener {
   }
   
   public void channelUpdated(LayoutEvent ev) {
+    UserLayoutChannelDescription channelDesc = (UserLayoutChannelDescription)ev.getNodeDescription();
+    StatsRecorder.recordChannelUpdatedInLayout(person, profile, channelDesc);
   }
   
   public void channelMoved(LayoutMoveEvent ev) {
+    UserLayoutChannelDescription channelDesc = (UserLayoutChannelDescription)ev.getNodeDescription();
+    StatsRecorder.recordChannelMovedInLayout(person, profile, channelDesc);
   }
   
   public void channelDeleted(LayoutMoveEvent ev) {
@@ -84,15 +89,23 @@ public class StatsRecorderLayoutEventListener implements LayoutEventListener {
 
   // Folders...
   public void folderAdded(LayoutEvent ev) {
+    UserLayoutFolderDescription folderDesc = (UserLayoutFolderDescription)ev.getNodeDescription();
+    StatsRecorder.recordFolderAddedToLayout(person, profile, folderDesc);    
   }
   
   public void folderUpdated(LayoutEvent ev) {
+    UserLayoutFolderDescription folderDesc = (UserLayoutFolderDescription)ev.getNodeDescription();
+    StatsRecorder.recordFolderUpdatedInLayout(person, profile, folderDesc);    
   }
   
   public void folderMoved(LayoutMoveEvent ev) {
+    UserLayoutFolderDescription folderDesc = (UserLayoutFolderDescription)ev.getNodeDescription();
+    StatsRecorder.recordFolderMovedInLayout(person, profile, folderDesc);    
   }
   
   public void folderDeleted(LayoutMoveEvent ev) {
+    UserLayoutFolderDescription folderDesc = (UserLayoutFolderDescription)ev.getNodeDescription();
+    StatsRecorder.recordFolderRemovedFromLayout(person, profile, folderDesc);    
   }
 
   // Layout...

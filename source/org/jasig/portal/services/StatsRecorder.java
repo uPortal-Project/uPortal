@@ -47,11 +47,18 @@ import org.jasig.portal.services.stats.RecordChannelDefinitionPublishedWorkerTas
 import org.jasig.portal.services.stats.RecordChannelDefinitionModifiedWorkerTask;
 import org.jasig.portal.services.stats.RecordChannelDefinitionRemovedWorkerTask;
 import org.jasig.portal.services.stats.RecordChannelAddedToLayoutWorkerTask;
+import org.jasig.portal.services.stats.RecordChannelUpdatedInLayoutWorkerTask;
+import org.jasig.portal.services.stats.RecordChannelMovedInLayoutWorkerTask;
 import org.jasig.portal.services.stats.RecordChannelRemovedFromLayoutWorkerTask;
+import org.jasig.portal.services.stats.RecordFolderAddedToLayoutWorkerTask;
+import org.jasig.portal.services.stats.RecordFolderUpdatedInLayoutWorkerTask;
+import org.jasig.portal.services.stats.RecordFolderMovedInLayoutWorkerTask;
+import org.jasig.portal.services.stats.RecordFolderRemovedFromLayoutWorkerTask;
 import org.jasig.portal.utils.threading.ThreadPool;
 import org.jasig.portal.utils.threading.BoundedThreadPool;
 import org.jasig.portal.utils.threading.WorkTracker;
 import org.jasig.portal.layout.UserLayoutChannelDescription;
+import org.jasig.portal.layout.UserLayoutFolderDescription;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.ChannelDefinition;
@@ -200,6 +207,30 @@ public class StatsRecorder {
   }    
   
   /**
+   * Record that a channel is being updated in a user layout
+   * @param person, the person updating the channel
+   * @param profile, the profile of the layout in which the channel is being updated
+   * @param channelDesc, the channel being updated
+   */
+  public static void recordChannelUpdatedInLayout(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc) {
+    StatsRecorderWorkerTask task = new RecordChannelUpdatedInLayoutWorkerTask(person, profile, channelDesc);
+    task.setStatsRecorder(instance().statsRecorder);
+    WorkTracker workTracker = instance().threadPool.execute(task);
+  }  
+
+  /**
+   * Record that a channel is being moved in a user layout
+   * @param person, the person moving the channel
+   * @param profile, the profile of the layout in which the channel is being moved
+   * @param channelDesc, the channel being moved
+   */
+  public static void recordChannelMovedInLayout(IPerson person, UserProfile profile, UserLayoutChannelDescription channelDesc) {
+    StatsRecorderWorkerTask task = new RecordChannelMovedInLayoutWorkerTask(person, profile, channelDesc);
+    task.setStatsRecorder(instance().statsRecorder);
+    WorkTracker workTracker = instance().threadPool.execute(task);
+  }
+  
+  /**
    * Record that a channel is being removed from a user layout
    * @param person, the person removing the channel
    * @param profile, the profile of the layout to which the channel is being added
@@ -210,4 +241,52 @@ public class StatsRecorder {
     task.setStatsRecorder(instance().statsRecorder);
     WorkTracker workTracker = instance().threadPool.execute(task);
   }
+  
+  /**
+   * Record that a folder is being added to a user layout
+   * @param person, the person adding the folder
+   * @param profile, the profile of the layout to which the folder is being added
+   * @param folderDesc, the folder being subscribed to
+   */
+  public static void recordFolderAddedToLayout(IPerson person, UserProfile profile, UserLayoutFolderDescription folderDesc) {
+    StatsRecorderWorkerTask task = new RecordFolderAddedToLayoutWorkerTask(person, profile, folderDesc);
+    task.setStatsRecorder(instance().statsRecorder);
+    WorkTracker workTracker = instance().threadPool.execute(task);
+  }    
+  
+  /**
+   * Record that a folder is being updated in a user layout
+   * @param person, the person updating the folder
+   * @param profile, the profile of the layout in which the folder is being updated
+   * @param folderDesc, the folder being updated
+   */
+  public static void recordFolderUpdatedInLayout(IPerson person, UserProfile profile, UserLayoutFolderDescription folderDesc) {
+    StatsRecorderWorkerTask task = new RecordFolderUpdatedInLayoutWorkerTask(person, profile, folderDesc);
+    task.setStatsRecorder(instance().statsRecorder);
+    WorkTracker workTracker = instance().threadPool.execute(task);
+  }  
+
+  /**
+   * Record that a folder is being moved in a user layout
+   * @param person, the person moving the folder
+   * @param profile, the profile of the layout in which the folder is being moved
+   * @param folderDesc, the folder being moved
+   */
+  public static void recordFolderMovedInLayout(IPerson person, UserProfile profile, UserLayoutFolderDescription folderDesc) {
+    StatsRecorderWorkerTask task = new RecordFolderMovedInLayoutWorkerTask(person, profile, folderDesc);
+    task.setStatsRecorder(instance().statsRecorder);
+    WorkTracker workTracker = instance().threadPool.execute(task);
+  }
+  
+  /**
+   * Record that a folder is being removed from a user layout
+   * @param person, the person removing the folder
+   * @param profile, the profile of the layout to which the folder is being added
+   * @param folderDesc, the folder being removed from a user layout
+   */
+  public static void recordFolderRemovedFromLayout(IPerson person, UserProfile profile, UserLayoutFolderDescription folderDesc) {
+    StatsRecorderWorkerTask task = new RecordFolderRemovedFromLayoutWorkerTask(person, profile, folderDesc);
+    task.setStatsRecorder(instance().statsRecorder);
+    WorkTracker workTracker = instance().threadPool.execute(task);
+  }  
 }
