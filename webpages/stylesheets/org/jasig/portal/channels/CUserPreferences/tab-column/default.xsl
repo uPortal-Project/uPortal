@@ -41,7 +41,6 @@ $Revision$
   <xsl:param name="action">no parameter passed</xsl:param>
   <xsl:param name="position">no parameter passed</xsl:param>
   <xsl:param name="elementID">no parameter passed</xsl:param>
-  <xsl:param name="catID">top</xsl:param>
   <xsl:param name="errorMessage">no parameter passed</xsl:param>
   <xsl:variable name="activeTabID" select="/layout/folder[not(@type='header' or @type='footer') and @hidden='false'][position() = $activeTab]/@ID"/>
   <xsl:variable name="mediaPath">media/org/jasig/portal/channels/CUserPreferences/tab-column</xsl:variable>
@@ -264,9 +263,6 @@ $Revision$
             </xsl:when>
             <xsl:when test="$action='newColumn'">
               <xsl:call-template name="optionMenuNewColumn"/>
-            </xsl:when>
-            <xsl:when test="$action='newChannel'">
-              <xsl:call-template name="optionMenuNewChannel"/>
             </xsl:when>
             <xsl:when test="$action='moveColumn'">
               <xsl:call-template name="optionMenuMoveColumn"/>
@@ -522,16 +518,16 @@ $Revision$
         <td valign="top">
           <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
         </td>
-        <td class="uportal-channel-text" width="100%">
-          <a href="{$baseActionURL}?userPreferencesAction=manageProfiles">Manage profiles</a>
+        <td class="uportal-channel-text">
+          <a href="{$baseActionURL}?action=manageSkins">Choose a skin</a>
         </td>
       </tr>
       <tr>
         <td valign="top">
           <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0"/>
         </td>
-        <td class="uportal-channel-text">
-          <a href="{$baseActionURL}?action=manageSkins">Change the design skin</a>
+        <td class="uportal-channel-text" width="100%">
+          <a href="{$baseActionURL}?userPreferencesAction=manageProfiles">Manage profiles [advanced]</a>
         </td>
       </tr>
     </table>
@@ -1022,251 +1018,6 @@ $Revision$
         </tr>
       </table>
     </form>
-  </xsl:template>
-  <xsl:template name="optionMenuNewChannel">
-    <!--Begin top table -->
-    <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-content">
-      <tr class="uportal-background-light">
-        <td class="uportal-channel-text">
-          <p>
-            <span class="uportal-channel-subtitle-reversed">Steps for adding a new channel:</span>
-          </p>
-          <!--Begin Steps table -->
-          <table width="100%" border="0" class="uportal-channel-text">
-            <xsl:choose>
-              <xsl:when test="//registry">
-                <tr>
-                  <td align="left" valign="top">
-                    <table width="100%" border="0" class="uportal-channel-text">
-                      <tr valign="top">
-                        <td>
-                          <strong>1.</strong>
-                        </td>
-                        <td width="100%">Select a category to browse:</td>
-                      </tr>
-                    </table>
-                    <!--Category Selection Table -->
-                    <xsl:choose>
-                      <xsl:when test="$catID = 'top' or $catID = 'all'">
-                        <table width="100%" border="0">
-                          <form name="formSelectCategory" method="post" action="{$baseActionURL}">
-                            <input type="hidden" name="action" value="newChannel"/>
-                            <tr>
-                              <td nowrap="nowrap" align="left" valign="top">
-                                <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
-                                <img alt="interface image" src="{$mediaPath}/arrow_right.gif" width="16" height="16"/>
-                                <select name="selectedCategory" class="uportal-input-text">
-                                  <xsl:for-each select="/layout/registry/category">
-                                    <xsl:sort select="@name"/>
-                                    <option value="{@ID}">
-                                      <xsl:value-of select="@name"/>
-                                      <!--[subcategories:<xsl:value-of select="count(descendant::category)"/>, total channels:<xsl:value-of select="count(descendant::channel)"/>-->
-                                    </option>
-                                  </xsl:for-each>
-                                  <option value="">__________</option>
-                                  <xsl:choose>
-                                    <xsl:when test="$catID = 'all'">
-                                      <option value="all" selected="selected">Select All</option>
-                                    </xsl:when>
-                                    <xsl:otherwise>
-                                      <option value="all">Select All</option>
-                                      <option value="" selected="selected"/>
-                                    </xsl:otherwise>
-                                  </xsl:choose>
-                                </select>
-                                <input type="submit" name="selectCategory" value="go" class="uportal-button"/>
-                              </td>
-                            </tr>
-                          </form>
-                        </table>
-                      </xsl:when>
-                      <xsl:otherwise>
-                        <xsl:for-each select="/layout/registry//category[@ID=$catID]">
-                          <xsl:for-each select="ancestor-or-self::category">
-                            <table width="100%" border="0">
-                              <form name="formSelectCategory" method="post" action="{$baseActionURL}">
-                                <input type="hidden" name="action" value="newChannel"/>
-                                <tr>
-                                  <td nowrap="nowrap" align="left" valign="top">
-                                    <img alt="interface image" src="{$mediaPath}/transparent.gif" height="16">
-                                      <xsl:attribute name="width">
-                                        <xsl:value-of select="(count(ancestor::category)+1)*16"/>
-                                      </xsl:attribute>
-                                    </img>
-                                    <xsl:choose>
-                                      <xsl:when test="position() = last()">
-                                        <img alt="interface image" src="{$mediaPath}/arrow_right.gif" width="16" height="16"/>
-                                      </xsl:when>
-                                      <xsl:otherwise>
-                                        <img alt="interface image" src="{$mediaPath}/arrow_down.gif" width="16" height="16"/>
-                                      </xsl:otherwise>
-                                    </xsl:choose>
-                                    <select name="selectedCategory" class="uportal-input-text">
-                                      <xsl:for-each select="ancestor::*[1]/category">
-                                        <xsl:sort select="@name"/>
-                                        <option value="{@ID}">
-                                          <xsl:if test="@ID=$catID or descendant::category[@ID=$catID]">
-                                            <xsl:attribute name="selected">selected</xsl:attribute>
-                                          </xsl:if>
-                                          <xsl:value-of select="@name"/>
-                                          <!--[subcategories:<xsl:value-of select="count(descendant::category)"/>, total channels:<xsl:value-of select="count(descendant::channel)"/>-->
-                                        </option>
-                                      </xsl:for-each>
-                                      <xsl:if test="position() = 1">
-                                        <option value="">_____________</option>
-                                        <option value="all">Select All</option>
-                                      </xsl:if>
-                                    </select>
-                                    <input type="submit" name="selectCategory" value="go" class="uportal-button"/>
-                                  </td>
-                                </tr>
-                              </form>
-                            </table>
-                          </xsl:for-each>
-                          <xsl:if test="child::category">
-                            <table width="100%" border="0" class="uportal-channel-text">
-                              <tr>
-                                <td colspan="2">
-                                  <hr/>
-                                </td>
-                              </tr>
-                              <tr valign="top">
-                                <td>
-                                  <strong>1a.</strong>
-                                </td>
-                                <td width="100%">Select a subcategory of "<xsl:value-of select="//category[@ID=$catID]/@name"/>" or select a channel from step 2:</td>
-                              </tr>
-                            </table>
-                            <table width="100%" border="0">
-                              <form name="formSelectCategory" method="post" action="{$baseActionURL}">
-                                <input type="hidden" name="action" value="newChannel"/>
-                                <tr>
-                                  <td nowrap="nowrap" align="left" valign="top">
-                                    <img alt="interface image" src="{$mediaPath}/transparent.gif" height="16" width="16"/>
-                                    <select name="selectedCategory" class="uportal-input-text">
-                                      <xsl:for-each select="category">
-                                        <xsl:sort select="@name"/>
-                                        <option value="{@ID}">
-                                          <xsl:value-of select="@name"/>
-                                          <!--[subcategories:<xsl:value-of select="count(descendant::category)"/>, total channels:<xsl:value-of select="count(descendant::channel)"/>-->
-                                        </option>
-                                      </xsl:for-each>
-                                      <option value="">____________________</option>
-                                      <option value="" selected="selected">Select a subcategory</option>
-                                    </select>
-                                    <input type="submit" name="selectCategory" value="go" class="uportal-button"/>
-                                  </td>
-                                </tr>
-                              </form>
-                            </table>
-                          </xsl:if>
-                        </xsl:for-each>
-                      </xsl:otherwise>
-                    </xsl:choose>
-                    <!--End Category Selection Table -->
-                  </td>
-                  <td>
-                    <img alt="interface image" src="{$mediaPath}/transparent.gif" width="32" height="16"/>
-                  </td>
-                  <td width="100%">
-                    <xsl:if test="$catID != 'top'">
-                      <table width="100%" border="0" class="uportal-channel-text">
-                        <form name="formSelectChannel" method="post" action="{$baseActionURL}">
-                          <input type="hidden" name="action" value="newChannel"/>
-                          <tr valign="top">
-                            <td>
-                              <strong>2.</strong>
-                            </td>
-                            <td width="100%">Select a channel<xsl:choose>
-                                <xsl:when test="$catID = 'all'">from "All catagories"</xsl:when>
-                                <xsl:otherwise> from the "<xsl:value-of select="//category[@ID=$catID]/@name"/>" category
-                                <br/><span class="uportal-text-small">Description: <xsl:value-of select="//category[@ID=$catID]/@description"/></span>
-                                </xsl:otherwise></xsl:choose>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>
-                              <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
-                            </td>
-                            <!--Begin Channel Listing -->
-                            <td width="100%">
-                              <select name="selectedChannel" size="5" class="uportal-input-text">
-                                <xsl:choose>
-                                  <xsl:when test="$catID = 'all'">
-                                    <xsl:for-each select="/layout/registry//channel[not(@ID=following::channel/@ID)]">
-                                      <xsl:sort select="@name"/>
-                                      <option value="{@ID}">
-                                        <xsl:value-of select="@name"/>
-                                      </option>
-                                    </xsl:for-each>
-                                    <option>
-                                      <xsl:if test="not(/layout/registry//channel[not(@ID=following::channel/@ID)])">--This category contains no channels--</xsl:if>
-                                    </option>
-                                  </xsl:when>
-                                  <xsl:otherwise>
-                                    <xsl:for-each select="/layout/registry//category[@ID=$catID]/channel">
-                                      <xsl:sort select="@name"/>
-                                      <option value="{@ID}">
-                                        <xsl:value-of select="@name"/>
-                                      </option>
-                                    </xsl:for-each>
-                                    <option>
-                                      <xsl:if test="not(/layout/registry//category[@ID=$catID]/channel)">--This category contains no channels--</xsl:if>
-                                    </option>
-                                  </xsl:otherwise>
-                                </xsl:choose>
-                              </select>
-                            </td>
-                            <!--End Channel Listing -->
-                          </tr>
-                          <tr valign="top">
-                            <td>
-                              <strong>3.</strong>
-                            </td>
-                            <td>Get more informaton about the selected channel:<input type="submit" name="channelMoreInfo" value="?" class="uportal-button"/> [optional]</td>
-                          </tr>
-                          <tr valign="top">
-                            <td>
-                              <strong>4.</strong>
-                            </td>
-                            <td>Add the selected channel:<input type="submit" name="addChannel" value="Add" class="uportal-button"/></td>
-                          </tr>
-                        </form>
-                      </table>
-                    </xsl:if>
-                  </td>
-                </tr>
-              </xsl:when>
-              <xsl:otherwise>
-                <tr>
-                  <td colspan="3">
-                    <hr/>
-                  </td>
-                </tr>
-                <tr>
-                  <td colspan="3" class="uportal-channel-warning">
-                    <b>No Channel registry data is available at this time...</b>
-                  </td>
-                </tr>
-              </xsl:otherwise>
-            </xsl:choose>
-            <tr>
-              <td colspan="3">
-                <hr/>
-              </td>
-            </tr>
-            <tr>
-              <td colspan="3">
-                <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16"/>
-                <a href="{$baseActionURL}?action=cancel">Cancel and return</a>
-              </td>
-            </tr>
-          </table>
-          <!--End Steps Table -->
-        </td>
-      </tr>
-    </table>
-    <!--End top Table -->
   </xsl:template>
   <xsl:template name="optionMenuMoveColumn">
     <table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-content">
