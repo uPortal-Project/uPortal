@@ -1,0 +1,1090 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html>
+  <head>
+    <title>JA-SIG uPortal Performance HOWTO</title>
+  </head>
+
+  <body bgcolor="#FFFFFF">
+    <div style="text-align: center">
+      <h1>JA-SIG uPortal Performance HOWTO</h1>
+      By Zed A. Shaw
+    </div>
+
+    <h2>Overview</h2>
+
+    <p>This document gives instructions for performance tuning
+    the uPortal, based on the steps we took at the University of
+    British Columbia. These instructions might not work for every
+    installation, but it will give you a general idea of what is
+    needed. The steps break down into the following general
+    things:</p>
+
+    <ul>
+      <li>Setup Apache to server static content, and proxy JSP
+      pages to the portal.</li>
+
+      <li>Setup static versions of some JSP pages.</li>
+
+      <li>Keep all XML/XSLT documents, and anything they depend
+      on, on the local drive.</li>
+
+      <li>Configure the portal's session.properties file for
+      maximum performance.</li>
+
+      <li>Configure the Logger.properties file for maximum
+      performance.</li>
+
+      <li>Use <a href="http://www.codestudio.com/">PoolMan</a>
+      (or similar JDBC pooling method) to cache and pool JDBC
+      connections.</li>
+    </ul>
+
+    <p>We are also experimenting with the following additional
+    configurations:</p>
+
+    <ul>
+      <li>Setup a cluster of machines to run instances of the
+      portal, and have a fast Apache server round-robin proxy to
+      them.</li>
+
+      <li>Getting DXML to stop validating XML.</li>
+
+      <li>Writing a script to completely strip out all DEBUG log
+      messages from the code.</li>
+    </ul>
+
+    <p>Please <a href="mailto:zed.shaw@ubc.ca">contact me</a> if
+    you have additional suggestions. Keep in mind that the
+    performance tuning must also avoid using up other resources
+    like memory and disk space. I can make the portal run fast as
+    hell by simply having everything in memory, but then you
+    wouldn't be able to load more than 100 people on it. The
+    current state of the portal is such that it finds a nice
+    balance between performance and resource consumption.</p>
+
+    <h2>Required Tools</h2>
+
+    <p>You will need the following before continuing:</p>
+
+    <ul>
+      <li>The latest Apache with mod_rewrite and mod_proxy. Just
+      use the <a href="http://www.apachetoolbox.com/">Apache
+      Toolbox</a> to create an installation.</li>
+
+      <li>A performance testing tool that does session based
+      performance testing. I use <a href=
+      "http://www.hpl.hp.com/personal/David_Mosberger/httperf.html">
+      httperf</a> since it does all this, but is also small
+      enough to fit on a Linux boot floppy. This lets me load up
+      a lab full of computers with httperf and test my server
+      setup against a huge number of connections.</li>
+
+      <li>uPortal version 1.6 (rel-1-0-patches) completely
+      installed and running. You can't do anything until this is
+      done.</li>
+
+      <li>Either <a href=
+      "http://www.gnu.org/software/wget/wget.html">wget</a> or <a
+      href="http://curl.haxx.se/">curl</a>.</li>
+
+      <li>Python 1.5.2 (I think 2.x will work also) if you want
+      to use my stylesheet rewriting script called grabber.py
+      (contact me if you want the script).</li>
+
+      <li>The <a href="http://muffin.doit.org/">Muffin</a> proxy
+      server so you can snoop on the interactions for the
+      browsers.</li>
+
+      <li>A Java Application Server. I use <a href=
+      "http://jetty.mortbay.com/">Jetty</a> because it is open
+      source, faster than Tomcat, small (in both disk and memory
+      footprint), easy to configure (if you can get through the
+      lack of docs), well supported, and works on just about
+      everything. It doesn't really matter what you use, since we
+      are not going to interface with in any special way.</li>
+
+      <li>Jikes Java compiler <a href=
+      "http://oss.software.ibm.com/developerworks/opensource/jikes/">
+      from IBM</a>.</li>
+    </ul>
+
+    <h2>Quick Start</h2>
+
+    <p>This Quick Start assumes that you <strong>really</strong>
+    know what you are doing and that you can handle differences
+    in configurations. Because every Java server is a little
+    different, you'll need to know yours intimately. I'll be
+    talking in the abstract during the quick start when I talk
+    about the Java Application Server you use. I use examples
+    from Jetty in the detailed instructions.</p>
+
+    <ol>
+      <li>Install the portal on port 8080. Make sure it
+      works.</li>
+
+      <li>Use the fastest JVM you can get. This basically means
+      not anything from Sun before version 1.2, and that it must
+      have a JIT compiler. I use IBM's 1.3 JVM on Linux and
+      Windows NT, but use Sun's 1.3 JVM (which comes with
+      HotSpot) on Solaris.</li>
+
+      <li>Install Apache so you have mod_rewrite and mod_proxy.
+      Configure it for port 80. Best way to do this is to use the
+      <a href="http://www.apachetoolbox.com/">Apache
+      Toolbox</a>.</li>
+
+      <li>Configure Apache for the best performance you can. Make
+      sure it can handle twice the user load you require for your
+      site.</li>
+
+      <li>Get a raw baseline for Apache's performance.</li>
+
+      <li>Get a baseline for uPortal's performance.</li>
+
+      <li>Configure Apache to turn on the mod_rewrite and
+      mod_proxy modules.</li>
+
+      <li>
+        Put the following mod_rewrite rules into your httpd.conf
+        configuration: 
+<pre>
+        RewriteEngine on
+        RewriteLog logs/rewrite_log
+        RewriteLogLevel 9
+        RewriteRule ^/(.*jsp)$  http://localhost:8080/$1 [P]
+   
+</pre>
+      </li>
+
+      <li>Set Apache's document root to be the same as the
+      portal's document root. This is essential for this to work
+      properly.</li>
+
+      <li>Look at the logs/rewrite_log file and go to your
+      index.jsp page on port 80 (i.e.,
+      http://localhost/index.jsp). Verify that the mod_rewrite
+      (in the rewrite_log) is only getting JSP pages.</li>
+
+      <li>Comment out the two RewriteLog lines and restart apache
+      so that mod_rewrite doesn't log anymore.</li>
+
+      <li>Get new performance metrics to verify that you have
+      increased performance. Remember that the performance of a
+      single JSP page is not going to increase (and may decrease
+      slightly), but the performance of downloading the JSP, all
+      the graphics, and the stylesheets will improve
+      dramatically.</li>
+
+      <li>Make a static version of the guest page and set it as
+      the index.html in document root. This is easily done with
+      <a href=
+      "http://www.gnu.org/software/wget/wget.html">wget</a> or <a
+      href="http://curl.haxx.se/">curl</a>. Simply have wget/curl
+      grab a copy of the index.jsp and write it to your
+      index.html file.</li>
+
+      <li>Test that you can do the following: Go to
+      http://localhost/ (which should load the index.html file
+      you just made), log in using your log in form, browse
+      around, log out (which should now send you back to
+      index.html).</li>
+
+      <li>Verify that creating an index.html improves the
+      performance of the above sequence. You will have to specify
+      /index.jsp when comparing it to the /index.html
+      performance. This technique will take additional load off
+      the server, and guarantees that only people using the
+      portal take up resources.</li>
+
+      <li>Setup a cron job that runs wget/curl periodically to
+      recreate the index.html page.</li>
+
+      <li>Edit the properties/Logger.properties file so that you
+      only log ERROR messages.</li>
+
+      <li>Recompile the uPortal with the -O option, and
+      preferably, a different compiler than the standard JDK one.
+      I use Jikes, which does pretty good. <span style=
+      "color: red">WARNING:</span> This will make your portal
+      take up more memory. If you don't have the space, then
+      don't do this.</li>
+
+      <li>Make sure that all XML/XSLT files and anything they
+      reference is stored locally. I have written a small python
+      script called grabber.py which will go through all the
+      files you tell it, find any XML PI's that reference stuff
+      on remote servers, and then store them locally for you.
+      Please <a href="mailto:zed.shaw@ubc.ca">contact me if you
+      want this</a>.</li>
+
+      <li>Move "expensive" channels off the default layout's main
+      tab. For example: We put the CIMAPMail channel in its own
+      tab called "E-Mail". This makes it so that only people
+      using e-mail will connect to the IMAP server, and thus
+      speeds up the loading of all the other Tabs.</li>
+
+      <li>Install <a href=
+      "http://www.codestudio.com/">PoolMan</a> as a wrapper
+      around your normal JDBC driver (espcially if your driver is
+      not JDBC 2.0 or not very capable). The 1.6 version of the
+      uPotal has sample configuration files for PoolMan. You can
+      also get sample versions <a href=
+      "poolman_configs.zip">here.</a></li>
+    </ol>
+
+    <h2>Detailed Instructions</h2>
+
+    <p>Keep in mind that you must follow a methodology when
+    tuning your server, and that you must verify that your
+    methods are correct. Don't just follow these instructions and
+    hope your server runs faster. You might accidentally do
+    something wrong along the way which actually make the server
+    slower. Therefore, you should test that each change either
+    improves performance, or at least doesn't reduce performance
+    dramatically.</p>
+
+    <h2>Pre-Configuration</h2>
+
+    <p>These set of steps tell you how to get all the stuff you
+    need and set it up. This is before you do any configuration
+    of the Java Application Server.</p>
+
+    <h3>Pre-Configuration: Get The Required Tools</h3>
+
+    <p>See the <strong>Required Tools</strong> section for a list
+    of stuff you'll need to have downloaded and installed to do
+    this. These instructions assume that you are using Unix of
+    some sort and that most of these tools work. You can probably
+    still use these instructions if you have another OS, but
+    you'll have to find replacements for the above listed tools
+    (if you can't get them to compile on your machine). If you
+    simply want to run Unix tools on Windows NT, you can use <a
+    href="http://sources.redhat.com/cygwin/">Cygwin</a>.</p>
+
+    <h3>Pre-Configuration: Install the Portal</h3>
+
+    <p>This document doesn't cover how to setup a working portal,
+    so you should have this done before you start. <strong>Make
+    sure that your portal runs on a different port than 80 (like
+    8080).</strong> You should probably also look into having it
+    bind to only localhost for added security. These instructions
+    assume that the portal is on port 8080.</p>
+
+    <h3>Apache Setup</h3>
+
+    <p>You should probably use the Apache Toolbox (listed in the
+    required tools) to do this. Apache Toolbox is this great
+    script that will automatically download Apache, any modules
+    you want for it, configure everything, compile it, and
+    install it. It supports just about every module ever invented
+    and works on many different platforms.</p>
+
+    <h4>Apache Setup: Required Modules</h4>
+
+    <p>You'll need the following modules for the proxying
+    work:</p>
+
+    <ul>
+      <li>mod_rewrite -- This is used to proxy JSP pages from the
+      Application Server.</li>
+
+      <li>mod_proxy -- This does the actual proxying.</li>
+    </ul>
+
+    <p>What we use Apache for is to serve everything but the JSP
+    pages. To do this, we use mod_rewrite to intercept requests
+    ending in jsp and proxy them back to the application server.
+    This works really well, and there's even a way to have
+    mod_rewrite proxy to a cluster of machines without these
+    machines running any special software.</p>
+
+    <p>To install these two modules, you'll need the following
+    lines in your httpd.conf:</p>
+<pre>
+       LoadModule rewrite_module     libexec/mod_rewrite.so
+       LoadModule proxy_module       libexec/mod_proxy.so
+       AddModule mod_proxy.c
+       AddModule mod_rewrite.c
+   
+</pre>
+
+    <p>This turns the modules on and adds them to the module
+    list. We'll cover configuring them in a little while.</p>
+
+    <h4>Apache Setup: Document Root</h4>
+
+    <p>You must make sure that your document root is the same as
+    the document root for your application server. If you don't,
+    then the proxying will not work.</p>
+
+    <h4>Gather Baseline Metrics</h4>
+
+    <p>First, get a raw Apache baseline for performance. Use your
+    performance testing tool to figure out just how fast your
+    machine can go. There's no use in trying to get an
+    Application Server to handle 20,000 users if Apache can't
+    serve a single .html page that fast.</p>
+
+    <p>Your Apache server should really be able to go twice as
+    fast as you need. Whatever you can get for performance from
+    Apache will be your upward limit, and since Apache will be
+    proxying the JSP pages, it needs to do two things for every
+    one connection. Usually, this is not a problem since JSP
+    pages are incredibly slow compared to raw Apache.</p>
+
+    <p>Also remember that the computer you use to do the testing
+    has an upward limit, so if you must prove that Apache can
+    handle tons of connections, then you should probably use a
+    bunch of client computers running your performance tester in
+    parallel against Apache.</p>
+
+    <p>What I do is use a tool like <a href=
+    "http://www.gnu.org/software/wget/wget.html">wget</a> or <a
+    href="http://curl.haxx.se/">curl</a> to grab a copy of the
+    guest user page and all the graphics it uses. I then put that
+    in Apache's document root as index.html and the images in the
+    images directory (or wherever they go). Once you have this
+    image of what the portal looks like in your Apache document
+    root, and you can view it with a web browser, then you can
+    run your performance tool to see just how fast Apache can
+    serve the guest page raw. This will also save you some time
+    in later steps in this document.</p>
+
+    <p>If your Apache setup can't handle the number of users you
+    want, and you've configured it to be as fast you possibly
+    can, then you'll never get your application server to handle
+    that many people. Actually, you'll never get your application
+    server to handle more than 1/100 of that many in most
+    instances. You'll need to deal with before you even attempt
+    to get your application server to perform to your standards.
+    Most likely, your standards are just too high and you'll have
+    to accept reality: you can't do what you want until quantum
+    computing is common place.</p>
+
+    <p>Next, get a baseline for your uPortal setup, but
+    <strong>make sure you test the index.jsp and not the
+    index.html file might have</strong>. This is done so that you
+    can know whether you're improving performance or not during
+    your tuning. Simply run your performance test against the
+    portal's guest page (i.e. http://localhost:8080/index.jsp)
+    and see how fast it goes.</p>
+
+    <p><strong>Make sure you use a good JVM!</strong> When you do
+    your raw tests, you'll want the fastest JVM you can get your
+    hands on. The best way to figure this out is just download
+    all the JVMs available for your system and run your
+    performance tests against each one. You'll want to run the
+    test a bunch of times to get the JIT compiler fully working
+    and then look at the last score.</p>
+
+    <p>Keep the uPortal and the Apache baseline handy (probably
+    in a spread sheet) so that you can track whether you are
+    improving or hurting performance later..</p>
+
+    <h3>Apache Proxying</h3>
+
+    <p>The greatest performance boost you can give your site is
+    to have your Application Server serve <strong>only</strong>
+    JSPs and Servlets. Having it serve graphics and static
+    content eats up resources that could be used to send content
+    to users. Also, no Application Server can beat a good Apache
+    configuration.</p>
+
+    <p>These instructions tell you how to do this in the simplest
+    way, but you could probably come up with other methods. For
+    example: Tomcat uses a special (buggy, complicated, and slow)
+    module where Apache only asks it for JSP and Servlet content.
+    These instructions will get a good installation setup, and
+    then you can play with different stuff from there.</p>
+
+    <h4>Apache Proxying: Configure mod_rewrite</h4>
+
+    <p>This is actually <strong>really</strong> easy with
+    mod_rewrite. I tried for a couple of days to get this to work
+    using mod_alias and mod_proxy, but with mod_rewrite, I did it
+    in about 5 minutes. Best of all, you can turn on logging to
+    make sure that your application is only serving JSP pages
+    using mod_rewrite.</p>
+
+    <p>To configure mod_rewrite, put the following lines in your
+    httpd.conf:</p>
+<pre>
+        # turn on the rewriting
+        RewriteEngine on
+        RewriteLog logs/rewrite_log
+        RewriteLogLevel 9
+
+        # redirect all requests for the root page to jetty using proxy
+        RewriteRule ^/(.*jsp)$  http://localhost:8080/$1 [P]
+</pre>
+
+    <p>The quick explanation of this is that it tells mod_rewrite
+    to catch all requests ending in .jsp and proxy those requests
+    to http://localhost:8080/$1 (where $1 is the request that was
+    asked for by the client). The [P] tells mod_rewrite to proxy
+    the request, so it actually does the connection to the
+    backend Application Server for the request, then sends that
+    response to the client as the response.</p>
+
+    <p>The two RewriteLog lines tell mod_rewrite to log
+    everything it can to the logs/rewrite_log file. This lets you
+    snoop in on how it works and debug it to verify that it is
+    actually working correctly. Don't just assume that it is only
+    proxying the jsp pages because you could get the line wrong
+    and not know it.</p>
+
+    <h4>Apache Proxying: Document Root</h4>
+
+    <p>This can't be stressed enough: Make sure that Apache and
+    the Application server share their document roots. The only
+    exception to this is if the two servers are on different
+    machines (like with a cluster). For this, you'll need to
+    either use some method of syncing all the documents across
+    all machines or setup something like a Coda network file
+    system to share the files. I recommend Coda for this since it
+    does a nice bit of caching which reduces network overhead,
+    and it it fault tolerant. This makes it so that, if a node
+    dies off, all the other nodes can keep on working. Other
+    options are NFS, GFS, and Samba/SMB depending on what you
+    run.</p>
+
+    <h4>Apache Proxying: Verification</h4>
+
+    <p>Once you've verified that Apache is proxying the JSPs to
+    the Application Server, and serving everything else directly,
+    you can comment out the RewriteLog lines and re-run your
+    performance test for the uPortal (but against the Apache
+    server, not directly against the application server). Compare
+    this to your uPortal baseline and verify that you actually
+    did improve performance.</p>
+
+    <p>If your test is simply against a single JSP page, then
+    your performance will most likely drop slightly. This is
+    because you are connecting to Apache, which is connecting to
+    the application server, and then responding to you. This
+    takes a little more time than directly connecting to the
+    application server. So why would you want to do this? Because
+    your application server doesn't have to server static content
+    any more. It serves only JSP stuff. This is such a huge
+    performance boost that it outweighs the slight performance
+    degradation you get from proxying.</p>
+
+    <p>If you want a more realistic test of how this improves
+    performance, try using your tool to simulate what a web
+    browser does: go the the index.jsp, then simultaneously grab
+    all the graphics and stylesheets the page needs. If you use
+    httperf, this is done with the session options (read the man
+    page). When you do this, you'll see that your average session
+    time (the time it takes to load the page <strong>and</strong>
+    the graphics) decreases considerably, and also does better
+    against higher loads.</p>
+
+    <h3>Static Index Page</h3>
+
+    <p>One of your goals when performance tuning the portal is to
+    get the number of people using resources on the application
+    server to be the same as the number of people that
+    <strong>must</strong> use the application server. For
+    example, if you see 500 users on the portal, but only 50 of
+    them are actually logged in, then you are wasting 90% of your
+    resources. What you need to do is figure out what the other
+    450 people are doing and push them off somewhere else.</p>
+
+    <p>One common example of this is the guest user's index.jsp
+    page. This page doesn't really need to change that often and
+    it's contents are the same for all users. Think about, how
+    can the index.jsp page be customized for a guest user if they
+    haven't logged in yet? By creating a static version of this
+    (and any other similar pages) you can cut down on the number
+    of people using the application server when they don't really
+    need to.</p>
+
+    <p>To do this, simply use a tool like wget or curl (mentioned
+    in the Required Tools section) to grab a copy of the
+    index.jsp page every hour and write it to index.html in the
+    document root. You'll have to make sure that Apache serves
+    the index.html pages before the index.jsp (or, just have
+    Apache stop serving the index.jsp as an index).</p>
+
+    <p>Now, when people hit the web site, they'll go to the
+    static version of the first page, which loads infinitely
+    faster than the dynamic version. People will be fooled into
+    thinking the site runs faster than it actually does. Their
+    initial impression will be that the site is fast, so
+    subsequent interactions with the site will be colored by this
+    positive impression.</p>
+
+    <p>The real benefit though comes from casual users not taking
+    up resources on the application server. Casual users are
+    people that just load the portal's main page
+    (index.jsp/index.html) and then go do something else with
+    their browser. A perfect example is someone who sets their
+    home page to be the portal. These people typically just load
+    up their browser to do something else. They might look at
+    some news that is on the page, but then the take off
+    somewhere else more interesting at the moment. There's no
+    reason for them to take up resources for such a small
+    transaction.</p>
+
+    <p>Creating static versions of these kinds of pages is the
+    second largest speed improvement you can do. Our tests showed
+    that (since most of the labs point at the UBC portal) we had
+    tons of users that didn't do anything but look at the first
+    page. This took them off the application server and was easy
+    to do.</p>
+
+    <h4>Static Page: Verification</h4>
+
+    <p>Verifying that the static page is faster than the dynamic
+    JSP page is really not necessary. You know it is faster, but
+    you should test it anyway just to make sure you are serving
+    the right page. If you test http://localhost/ and you get the
+    same performance as http://localhost:8080/index.jsp, then you
+    are still serving the index.jsp through http://localhost/.
+    The performance of the index.html page at http://localhost/
+    should be orders of magnitude faster.</p>
+
+    <p>The real verification you should do is a session length
+    test. You can do this by simply having your test tool go to
+    the index.html, get all the graphics, then go to the
+    index.jsp (to simulate loading the user's layout, even though
+    it isn't). This will give you a relatively good comparison
+    against the normal transaction of going to index.jsp, then
+    getting all the graphics.</p>
+
+    <p>Check out the tricks section for a way to test the
+    performance of different layouts without logging in. It's
+    called the "Fun With Layout Cache Trick".</p>
+
+    <h3>Properties Files</h3>
+
+    <p>The properties files for the portal can also give you some
+    performance boost. The two properties files that help the
+    most are the Logger.properties and the session.properties
+    file.</p>
+
+    <h4>Properties Files: Logger.properties</h4>
+
+    <p>The Logger.properties file is a standard file that
+    configures the <a href=
+    "http://jakarta.apache.org/log4j/docs/index.html">Log4J</a>
+    system used by the uPortal. It is extremely flexible, letting
+    you log to remote NT logs, syslog daemons, files, raw TCP/IP
+    ports, and all kinds of other stuff. You should really read
+    the documentation on the Log4J site (hint: Read the JavaDoc
+    for PropertyConfigurator and Category).</p>
+
+    <p>The best thing to do for performance with Logging is to
+    turn off debugging. This is done by replacing the following
+    line:</p>
+<pre>
+    log4j.rootCategory=debug, R
+</pre>
+
+    <p>With this line:</p>
+<pre>
+    log4j.rootCategory=error, R
+</pre>
+
+    <p>This changes the logging level from DEBUG to ERROR
+    messages only. You can also use INFO and WARN as levels if
+    you want to get those messages. The hierarchy goes (from
+    lowest to highest priority): DEBUG, INFO, WARN, and ERROR.
+    So, setting the above line to info gets you INFO, WARN, and
+    ERROR.</p>
+
+    <p>This will speed things up because all the debug messages
+    will just get dropped. Log4J is really quick at doing this,
+    but I'd still like to find a way to strip out these calls
+    completely for production installations (working on
+    that).</p>
+
+    <h4>Properties Files: session.properties</h4>
+
+    <p>The session.properties file has comments in it which
+    describe its usage. The best configuration for this file is
+    the following:</p>
+<pre>
+    session.login.allow_multiple=no
+    session.login.single_guest_layout=yes
+    session.login.starvation_denies_login=yes
+    session.login.starvation_limit=1
+    session.memory.constrained_channel_caching=yes
+    session.memory.cached_channels=org.jasig.portal.channels.CIMAPMail
+    session.memory.layoutxml_dynamic_loading=yes
+    session.memory.layoutxml_cache_directory=/change/me/to/point/at/your/base/cache
+</pre>
+
+    <p>This configures the portal to use the smallest amount of
+    resources without hurting performance too much. You may have
+    to fiddle with the <em>session.memory.cached_channels</em>
+    option to get all your stateful channels correct, and you
+    need to set <em>session.memory.layoutxml_cache_directory</em>
+    to point at a real directory.</p>
+
+    <p>The most important option for performance is the
+    <em>session.memory.layoutxml_cache_directory</em> option.
+    This tells the portal to keep a copy of each user's layout in
+    the directory you specify. Whenever the users changes their
+    layout, it updates this copy, but otherwise it will just load
+    the layout from the disk rather than the database. This make
+    things run very fast in comparison.</p>
+
+    <p>There are two warnings with this cache directory: 1) Don't
+    let it get too big. 2) Make sure it has the right
+    permissions.</p>
+
+    <h3>Optimized Compilation</h3>
+
+    <p>When I do development, I compile with debugging turned on.
+    This lets me view the stack traces accurately when they get
+    printed to the logs. The base installation of uPortal even
+    does this with its build.xml file.</p>
+
+    <p>But, when you want to run in production, you should
+    optimize the code. The latest version of uPortal (1.6 or
+    rel-1-0-patches) has a few key classes set to be final. These
+    classes are never extended and take up the majority of the
+    execution time of the portal. When you recompile with
+    optimization, these final classes have a chance to be inlined
+    into your code. This makes the code larger (thus, eating more
+    memory) but also makes it run faster.</p>
+
+    <p>To do this, edit the build.xml file and add the option
+    <em>optimize="on"</em> to the &lt;javac&gt; element, then run
+    a clean and re-build with ant. Ant should recompile using
+    optimizations.</p>
+
+    <p>Now, the sad thing is that this might not do anything
+    since most Java compilers (especially Sun's) don't do very
+    much optimization. We found that Jikes works pretty well for
+    this, although, it didn't improve things much more beyond the
+    vanilla javac we were using. To turn on Jikes as your
+    compiler, just edit the build.xml and put the following line
+    in it:</p>
+<pre>
+       &lt;property name="build.compiler" value="jikes"/&gt;
+</pre>
+
+    <p>Under your the "classes" target. You should probably keep
+    using Jikes even still as it is also lightning fast, so it
+    make development a lot easier.</p>
+
+    <h3>XML/XSLT Dependencies</h3>
+
+    <p>The most complicated thing is your dependencies in the
+    XML/XSLT files. We found that many people like to reference
+    their style sheets like so:</p>
+<pre>
+    &lt;?xml-stylesheet href="http://data.my.ubc.ca/devl/globe_and_mail.xsl"  type="text/xsl" media="netscape"?&gt;
+</pre>
+
+    <p>This is convenient because all the content writers can put
+    their stuff on the data.my.ubc.ca machine, and then every
+    instance that needs the glob_and_mail.xsl file will simply
+    grab it from there. So, this is a great time saver fro
+    development.</p>
+
+    <p>But, it is slow as dirt to render channels that use this
+    kind of referencing. Each channel that has one of these kinds
+    of XML documents will create a connection to the referenced
+    server. This will be very slow even if this server is the
+    same as the production host.</p>
+
+    <p>An example might help explain this a little better. Let's
+    say you have your guest page with four GenericXSLT channels
+    and the IMAP channel, and each one has one reference to XSL
+    files like the one above. This is how your connections will
+    look:</p>
+
+    <p><img alt="Diagram of Poor Configuration" src=
+    "bad_xsl.png"></p>
+
+    <p>Now, see the series of circular lines to the right of the
+    Web Server? These are four connections back to the web server
+    to get the documents listed to the far right. Each connection
+    by a user will generate four of these connects to get these
+    documents.</p>
+
+    <p>This means that every user connecting to the portal is
+    creating 6 more connections: 4 stylesheets, one database, one
+    IMAP server (since we put the e-mail channel on it). Add to
+    this the problem that, if you have your application server
+    serving these static files that you have now just increased
+    the load six times over. Can you imagine an average layout
+    with 10 channels on the primary tab all doing this? You'd
+    have one user creating 12 connections, 100 users will do 1200
+    connections, 200 users 2400, etc. You can see how this would
+    reduce performance very quickly.</p>
+
+    <p>Having Apache serve these static documents will reduce the
+    load on the application server, but it still isn't the
+    fastest way to process these files. What needs to happen is
+    you need your stylesheets to reference only documents on the
+    local server. So, our original xml-stylesheet PI would now
+    be:</p>
+<pre>
+    &lt;?xml-stylesheet href="webpages/stylesheets/globe_and_mail.xsl"  type="text/xsl"media="netscape"?&gt;
+</pre>
+
+    <p>When you do this, you have to reference the stylesheets
+    from the portal base directory. We put ours in the document
+    root so that we can serve them remotely with Apache if we
+    have to. You have to do this because there is currently a bug
+    in the StylesheetSet object where it incorrectly re-writes
+    file:// URLs with http:// references and really messes things
+    up.</p>
+
+    <p>Once this is done to all of your XML documents, you will
+    have everything pulled off the local drive and not through
+    the web server. It also adds robustness in the event that the
+    remote server is down.</p>
+
+    <p>Now, the problem is re-writing all these stylesheets by
+    hand is impossible for very large sites. I've created a
+    simple python script to solve this problem by going through
+    all your stylesheets, finds the references to xml-stylesheet,
+    downloads the referenced document, and re-write the URL to
+    point at the newly downloaded document on disk. I'm still
+    working out the kinks in this program, so if you want a
+    pre-alpha release of it, <a href="mailto:zed.shaw">contact
+    me</a> and ask for it.</p>
+
+    <p>Otherwise, just write your stylesheets correctly to begin
+    with.</p>
+
+    <h3>JDBC Connection Pooling/Caching</h3>
+
+    <p>Use <a href="http://www.codestudio.com/">PoolMan</a> to
+    pool JDBC connections and cache frequent queries. If you have
+    a decent application server that you paid for, you can
+    probably just use that server's connection pooling. The
+    advantage of PoolMan is that it also does caching, and that
+    it will work as a drop in replacement for any JDBC driver. It
+    is also configured with XML, so it fits the project well (we
+    could get rid of rdbm.properties and the RdbmServices object
+    and replace it with PoolMan if we wanted). Also, UBC plans to
+    move away from our currently very expensive server and use
+    more open source servers in a cluster. PoolMan will be a nice
+    addition to this combination.</p>
+
+    <p>Using PoolMan is pretty simple. You simply do the
+    following:</p>
+
+    <ol>
+      <li>Download the latest PoolMan from <a href=
+      "http://www.codestudio.com/">www.codestudio.com</a>.</li>
+
+      <li>Put the poolman.jar, jdbc2_0-stdext.jar, and jta.jar
+      packages in your classpath. It also requires xerces.jar,
+      but uPortal already has that.</li>
+
+      <li>Edit the poolman.xml file with your JDBC driver
+      specifications. You can usually just drop in the
+      configuration you already have for your JDBC driver in
+      rdbm.properties.</li>
+
+      <li>Make sure that the poolman.xml file also specifies your
+      poolman.log file correctly.</li>
+
+      <li>Make a backup of your current rdbm.properties file and
+      replace it with the rdbm.properties.poolman file. Edit this
+      new rdbm.properties file to reflect the poolman.xml file.
+      If you only changed your JDBC driver specification in
+      poolman.xml, then you shouldn't have to change your
+      rdbm.properties file.</li>
+
+      <li>Restart your server and look at the stderr, stdout,
+      poolman.log and portal.log files for any error messages. If
+      there are any, read the documentation on the PoolMan site
+      and try to fix it.</li>
+    </ol>
+
+    <p>That's all really. You might want to fiddle with the
+    object pool size and the caching levels. We found that the
+    caching works very well for the uportal because of the way it
+    uses the database. When your first developing the channels
+    and layouts, you might want to turn caching off to avoid any
+    strange update problems. Afterwards, you can turn it on and
+    everything should work fine.</p>
+
+    <p>The only thing that might happen with the portal when you
+    turn caching on is that changes you make to the channels
+    might not show up for a couple of minutes. If this is
+    critical for you, then you can either set the cache timeout
+    really low, or you can simply turn it off.</p>
+
+    <p>Now the performance gain with PoolMan's caching is
+    tremendous for the uPortal. The portal tends to make the same
+    queries for data that rarely changes in the database. When
+    you turn caching on, the portal stops talking to the database
+    for many things, and the speed improves tremendously. In our
+    tests at UBC, we found a 3 to 100 times increase in the speed
+    of the portal (we are doing more formal tests at the
+    moment).</p>
+
+    <p>Another interesting thing with PoolMan is that you can use
+    the JMX web interface to do some nice debugging of your JDBC
+    driver and PoolMan. By uncommenting the &lt;admin-agent&gt;
+    section and changing the &lt;management-mode&gt; from local
+    to JMX, you get a nifty little web interface on port 8082 of
+    the localhost. This lets you see what the configuration
+    changes are and what the state of PoolMan is at the time.
+    Make sure you turn this off in production, as it displays
+    passwords.</p>
+
+    <h3>Default Layout Setup</h3>
+
+    <p>One of the things we did at UBC was to move our most
+    expensive channel from the primary tab to a secondary tab for
+    the default layout. For us, this meant creating a second tab
+    called "E-Mail" that contains the CIMAPMail channel. This has
+    the advantage that only users actually using e-mail will
+    create the CIMAPMail channel and connect to our IMAP server.
+    You should have a similar strategy for other expensive
+    channels. Basically, if you need to specify the channel as
+    cached in the session.properties, then it should go on its
+    own tab to save memory (and other resources). Also, if the
+    channel is really slow, then it should go on a secondary tab.
+    One way to test this is to create a guest user page with this
+    channel on it and run your performance tests. Remove the
+    channel, and test again to compare how fast the page loads
+    without it. If you see a major difference in performance,
+    then you'll want to put that channel on a secondary tab.</p>
+
+    <h2>Debugging Client Interactions</h2>
+
+    <p>One of the problems with setting up a high performance
+    installation is the complexity of where everything is and how
+    it is configured. Sometimes you need to make sure that the
+    client is actually doing what you think it is, and that the
+    server is responding appropriately. In this section I
+    describe three scenarios I encountered while working on the
+    uPortal, and how I solved them. They are examples of some
+    things you can do to debug problems with the portal.</p>
+
+    <h3>Degugging: Too Many Open Files</h3>
+
+    <p>At first the portal couldn't handle that many users. It
+    would run out of memory after about 300, so I targeted memory
+    resources as my first enhancement. After doing everything I
+    could think of to reduce the memory without hurting
+    performance, I encountered this problem. I would load a bunch
+    of users onto my server and then get a "too many open files"
+    error. This was weird and hard to track down.</p>
+
+    <p>What I did was go get lsof (list of open files, search on
+    google for it) and I ran it in a series of samples while I
+    pounded the server with a bunch of users. What I found is
+    that lsof was reporting the number of files increasing
+    exponentially, which meant there was a file leak. I reported
+    this to Peter Kharchenko and he quickly fixed it. The problem
+    the he simply forgot to close a stream in the StylesheetSet
+    class. A one-line fix later and everything was good.</p>
+
+    <p>In the process though, I ran into the next problem.</p>
+
+    <h3>Debugging: Connections Back To localhost</h3>
+
+    <p>While I was using lsof to check the number of files, I
+    noticed that most of them were connections back to localhost.
+    I couldn't figure out why the portal would keep talking to
+    itself on every user load.</p>
+
+    <p>I decided to find out what was getting passed back and
+    forth. I went and got a copy of <a href=
+    "http://www.ethereal.com/">ethereal</a> and told it to packet
+    sniff on localhost, port 80. What it showed me was that the
+    portal kept asking for the .xsl files whenever the document
+    was rendered. A quick search for these files showed me that
+    they were getting referenced out of the .ssl documents we
+    had. Simply re-writing the .ssl files changed everything and
+    increased the performance considerably.</p>
+
+    <h3>Debugging: Client Keeps Caching JSP Pages</h3>
+
+    <p>This was driving us mad. Internet Explorer was caching
+    things served from one server, but not from another.
+    Everything was the same on both machines, except that the
+    problem server (verf) was running the new code.</p>
+
+    <p>At first we thought it was a Microsoft problem. They
+    apparently thought that a good feature would be to use a new
+    caching mechanism called "Automatic" mode. This mode caches
+    things if (get this) only the <strong>images</strong> change.
+    I never heard of a site that changed its images as often as
+    content. You can find this in their knowledge base.</p>
+
+    <p>Anyway, turning off this stupid feature fixed the problem,
+    but we couldn't rely on that. Our next step was to figure out
+    what the difference was between the two servers. To do this,
+    I setup a little <a href="http://muffin.doit.org/">Muffin</a>
+    proxy and installed the Snoop filter. Muffin is a small Java
+    proxy that has lots of neat filters, snoop being one of them.
+    Snoop will print out headers it sees to it's "Preferences"
+    window so you can see what each participant in the
+    communication is saying.</p>
+
+    <p>With Muffin acting as a proxy for our IE client, we went
+    to each server, and found that the problem 1.6 server was
+    sending the header:</p>
+<pre>
+     Cache-Control: no-store
+</pre>
+
+    <p>And the working 1.0 server was sending:</p>
+<pre>
+    Cache-Control: no-cache, max-age=0, must-revalidate
+</pre>
+
+    <p>After searching around the code, we found that the
+    UtilitiesBean.preventCaching method was responsible for this,
+    and that the 1.6 version mysteriously reverted to sending the
+    wrong Cache-Control: line. Once we changed this, everything
+    worked fine.</p>
+
+    <h2>Future Directions</h2>
+
+    <p>The performance of the uPortal 1.6 (rel-1-0-patches) code
+    base is about as good as it can possibly get. We are looking
+    at some things, but there are so many pieces that would need
+    to be replaced to implement them that we are not devoting the
+    effort. We believe that all future code enhancements should
+    be devoted to the 2.x version of uPortal, since it is much
+    more clearly implemented.</p>
+
+    <p>We do however, have a few more things we are attempting at
+    the moment:</p>
+
+    <h3>Clustered Application Servers</h3>
+
+    <p>Clustering the application server and use Apache as a
+    round-robin proxy for them all. This would actually be really
+    easy to setup using mod_rewrite and simple program to route
+    people to a server based on their cookies. By using a simple,
+    decoupled setup like this, we are able to easily expand our
+    capacity at a very low cost. My idea is to have a setup
+    similar to the following:</p>
+
+    <p><img alt="Diagram of Possible Cluster Solution" src=
+    "cluster_setup.png"></p>
+
+    <p>The key to this setup is that the Apache Server machine is
+    the fastest machine you can get your hands on. It should be
+    able to handle double the load that all the backend
+    application servers can handle. Then, your backend servers
+    are just a bunch of really cheap Linux or FreeBSD Intel boxes
+    running something Like Jetty or Tomcat. A user is routed to a
+    backend either randomly or based on whether it has a certain
+    cookie (cookies would be mapped to different servers with
+    some kind of map file or algorithm).</p>
+
+    <p>The beauty of this setup is its simplicity. All you have
+    to configure is mod_rewrite and a little program to do the
+    selection logic (which is easy in mod_rewrite). There's no
+    weird modules, no coupling between servers, and no dependence
+    on operating systems. All the Apache server cares about is
+    that it is connecting to another web server, so you could
+    have heterogeneous backend servers.</p>
+
+    <p>The down side to this setup is that it isn't the fastest
+    thing to setup. It is pretty damn close, but there are some
+    professional packages out there that will smoke this setup.
+    It's been my experience though that these are highly
+    expensive and tend to be difficult to administer.</p>
+
+    <h3>Turning Off XML Validation</h3>
+
+    <p>One of the most annoying things about the uPortal 1.x
+    project is its dependence on the DXML package from
+    ObjectSpace. The 2.x version of uPortal does not depend on
+    this. In 1.x though, you have to put up with DXML having the
+    following problems (all mentioned in their mailing
+    lists):</p>
+
+    <ul>
+      <li>Slow as hell. There are numerous mailing list posts
+      about this.</li>
+
+      <li>Memory hog. Again, check the list for proof.</li>
+
+      <li>Can't turn off XML validation.</li>
+    </ul>
+
+    <p>The first two are intractable at the moment since
+    ObjectSpace does not support DXML anymore. The last might
+    have a solution, but I don't have the time to figure it
+    out.</p>
+
+    <h3>Stripping Out All Debug Log Statements</h3>
+
+    <p>The uPortal spits out lots of debug messages. While Log4J
+    is really fast at deciding whether to print or not, it is
+    still slower than just not sending out debug messages to
+    begin with. I'm interested in writing a python script that
+    will go through all the source and comment out or comment in
+    the debug log messages. This would let you have them on
+    during development, but completely remove them during
+    production.</p>
+
+    <h2>Tips and Tricks</h2>
+
+    <p>There are some neat things we figured out how to do while
+    working on this. Here's just some snippets:</p>
+
+    <ol>
+      <li>Do you need to test a different layout? Want to debug
+      someone's layout? Want to change a layout by hand and then
+      reload it? Well, just use the layout cache directory. If
+      you configure the session.properties file to store layouts
+      in a layout cache directory, then you can actually go in
+      and edit the layouts like they are files. Simply modify the
+      layout on disk, then reload it with your web browser on the
+      portal to see if it works. Once you're happy, you just need
+      to do something (like add a tab) that sets the layout back
+      to the database.</li>
+
+      <li>Another nice thing about this layout cache trick is
+      that you can view broken layouts to see what's wrong. Just
+      load them in your editor and work with them. I use <a href=
+      "http://www.jedit.org/">jEdit</a> for this since it has a
+      really nice XML plug-in that lets you see a tree view of
+      the XML document and jump around to the elements you
+      want.</li>
+
+      <li>What do you do if you want to test the performance of
+      different layouts (say, small, medium, and large) but you
+      can't get your performance tool to log in properly? Well,
+      just go into the layout cache directory and copy the layout
+      you want to the guest user's layout. Once you do this, you
+      can just go to the /index.jsp or /layout.jsp page to see
+      how this layout works and how it performs. When you are
+      done, just delete the guest layout and it will get reloaded
+      from the database.</li>
+
+      <li>If you change the layouts in the database, you should
+      remove all of them from the layout cache. This is how you
+      reset the layout cache also. The portal is smart enough to
+      see that the layout is gone from the disk cache and
+      recreate it from the database, so you don't have to restart
+      the portal.</li>
+
+      <li>You can modify the Logger.properties file and it will
+      be re-read by the portal. This lets you temporarily turn on
+      debugging if there's a problem without taking down the
+      portal. Simply make your changes, then wait a few minutes,
+      and the Log4J system will reconfigure itself.</li>
+
+      <li>Please send more tips to me.</li>
+    </ol>
+
+    <h3>Tuning Conclusion</h3>
+
+    <p>There are probably many other things that can be done to
+    increase the performance of the uPortal as it stands. If you
+    have any suggestions, feel free to contact me.</p>
+  </body>
+</html>
+
+

@@ -1,0 +1,862 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html>
+  <head>
+    <title>uPortal 1.6 Properties Files Tour</title>
+<style type="text/css">
+    
+</style>
+  </head>
+
+  <body bgcolor="#FFFFFF">
+    <div style="text-align: center">
+      <h1>uPortal 1.6 Properties Files Tour</h1>
+      By Zed A. Shaw
+    </div>
+
+    <h2>Introduction</h2>
+
+    <p>This document describes the different configuration files
+    that are used by the uPortal during operation. It describes
+    what each property file does, then describes each property
+    the file can contain. Comments can be sent to <a href=
+    "mailto:zed.shaw@ubc.ca">Zed A. Shaw</a>.</p>
+
+    <h2>Quick Reference</h2>
+
+    <p>The following files are all used by the uPortal version
+    1.6. This is table is handy if you get stuck trying to figure
+    out where something is configured.</p>
+
+    <table summary="uPortal 1.6 Properties Files" border="1"
+    cellpadding="2" cellspacing="0">
+      <tr>
+        <th valign="top" align="left">Property File</th>
+
+        <th valign="top" align="left">Description</th>
+      </tr>
+
+      <tr>
+        <td valign="top" align="left">layout.properties</td>
+
+        <td valign="top" align="left">Indicates where the portal
+        find the different files it needs to render the content.
+        Go here if the portal can't find any of the DTDs.</td>
+      </tr>
+
+      <tr>
+        <td valign="top" align="left">Logger.properties</td>
+
+        <td valign="top" align="left">Configures the logging
+        system. This uses the Log4J logging system. Go here if
+        the portal complains about not being able to log because
+        Log4J isn't initialized properly. <strong>NOTE:</strong>
+        You can change this without restarting the server (the
+        server will re-read it when it's changed).</td>
+      </tr>
+
+      <tr>
+        <td valign="top" align="left">session.properties</td>
+
+        <td valign="top" align="left">Configures miscelaneous
+        features related to session management and scalability.
+        Go here is the portal complains that the layout cache
+        directory isn't working, or if you have a channel that
+        doesn't render properly.</td>
+      </tr>
+
+      <tr>
+        <td valign="top" align="left">rdbm.properties</td>
+
+        <td valign="top" align="left">Configures the database
+        drivers. This is where you go if the database isn't
+        working.</td>
+      </tr>
+
+      <tr>
+        <td valign="top" align="left">media.properties</td>
+
+        <td valign="top" align="left">Used to associate specific
+        layouts with specific use agents. Go here if you want
+        specific browsers to receive different content.</td>
+      </tr>
+
+      <tr>
+        <td valign="top" align="left">security.properties</td>
+
+        <td valign="top" align="left">Configures the
+        authentication system for your authentication mechanism.
+        This is where you would specify different authentication
+        mechanisms.</td>
+      </tr>
+    </table>
+
+    <h2>Detailed Descriptions</h2>
+
+    <h3>General Format</h3>
+
+    <p>Each property file follows the general Java format. Pound
+    characters (#) are used for comments (everything after it up
+    to a newline is ignored). All properties are specified by a
+    series of key=value pairs. The left side of the '=' is the
+    key that the property is referenced by. The right hand side
+    of the '=' is the value you want to set the property. For
+    example, in the session.properties file:</p>
+<pre>
+        session.memory.constrained_channel_caching=yes
+</pre>
+
+    <p>Sets the
+    <em>session.memory.constrained_channel_caching</em> option to
+    "yes" which turns it on.</p>
+
+    <p>Other configuration files have different formats for their
+    options, and some of the files can get pretty complex (like
+    Logger.properties).</p>
+
+    <p>One thing to watch out for is the use of '/' (file
+    separators) and whether you can use a file:// URL in place of
+    a http:// URL is inconsistent. Each property that has these
+    types of options indicates how it should be written.</p>
+
+    <h3>layout.properties</h3>
+
+    <table summary="Description of the layout.properties file"
+    border="1" cellpadding="2" cellspacing="0">
+      <tr>
+        <th valign="top" align="left">Description</th>
+
+        <td valign="top" align="left" valign="top" align="left">
+        Indicates where the portal find the different files it
+        needs to render the content. Go here if the portal can't
+        find any of the DTDs.</td>
+      </tr>
+
+      <tr>
+        <th valign="top" align="left">Properties</th>
+
+        <td valign="top" align="left">
+          <table summary="Properties" border="1" cellpadding="1"
+          cellspacing="0">
+            <tr>
+              <td valign="top" align="left">pathToLayoutDtd</td>
+
+              <td valign="top" align="left">An http or file URL
+              that points at the place where you store your DTDs.
+              Must end in a '/' character (as a proper URL must
+              always do).</td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <tr>
+        <th valign="top" align="left">Possible Problems</th>
+
+        <td valign="top" align="left">
+          <ul>
+            <li>Make sure you can access this URL and each of the
+            files in it with a web browser.</li>
+
+            <li>Verify that the user the portal's process runs as
+            can access the files.</li>
+
+            <li>Use a file:// URL for speed. An http:// URL will
+            do a network access on every layout parsing.</li>
+          </ul>
+        </td>
+      </tr>
+    </table>
+
+    <h3>Logger.properties</h3>
+
+    <table summary="Description of the Logger.properties file"
+    border="1" cellpadding="2" cellspacing="0">
+      <tr>
+        <th valign="top" align="left">Description</th>
+
+        <td valign="top" align="left">
+          Configures the logging system. This uses the Log4J
+          logging system. Go here if the portal complains about
+          not being able to log because Log4J isn't initialized
+          properly. NOTE: You can change this without restarting
+          the server (the server will re-read it when it's
+          changed). 
+
+          <p>For detailed information on how to configure Log4J
+          with this file, go to <a href=
+          "http://jakarta.apache.org/log4j/docs/">their
+          documentation</a> and read the introductory manual and
+          the JavaDoc for PropertyConfigurator.</p>
+
+          <p>You can do some pretty amazing things with Log4J, so
+          read the manual before writing your own java classes.
+          Log4J can send log messages to remote syslogd, files,
+          remote NT event logs, JMS servers, stream to ports, and
+          even send e-mail. You can completely configure the
+          format and you can even have it log different types of
+          messages to different files. All of this has also
+          already been tested by the Log4J crew, so don't
+          reinvent the wheel.</p>
+        </td>
+      </tr>
+
+      <tr>
+        <th valign="top" align="left">Properties</th>
+
+        <td valign="top" align="left">
+          <p>This table only lists a few of the most important
+          ones. Please refer to the documentation for more
+          detailed descriptions (specifically the javadoc for the
+          PropertyConfigurator class).</p>
+
+          <table summary="Properties" border="1" cellpadding="1"
+          cellspacing="0" width="100%">
+            <tr>
+              <td valign="top" align="left">
+              <em>log4j.rootCategory</em></td>
+
+              <td valign="top" align="left">
+              [fatal|error|warn|info|debug], R</td>
+            </tr>
+
+            <tr>
+              <td valign="top" align="left" colspan="2">Indicates
+              what your root category is called (in this case, R)
+              and what the minimum log level should be (fatal or
+              error or warn...). Anything below this log level
+              gets ignored.</td>
+            </tr>
+
+            <tr>
+              <td valign="top" align="left">
+              <em>log4j.appender.R</em></td>
+
+              <td valign="top" align="left">
+              org.apache.log4j.RollingFileAppender</td>
+            </tr>
+
+            <tr>
+              <td valign="top" align="left" colspan="2">Indicates
+              which type of appender you want to use. In this
+              case, we are using the RollingFileAppender, which
+              write log messages to a log file, then "rolls" them
+              when they get too big (makes copies and starts a
+              new log). There are many different appenders
+              available, and each has its own config options.
+              Check the JavaDoc for the appender you want to
+              use.</td>
+            </tr>
+
+            <tr>
+              <td valign="top" align="left">
+              <em>log4j.appender.R.File</em></td>
+
+              <td valign="top" align="left">
+              /home/zedshaw/MyPortalInstance/logs/portal.log</td>
+            </tr>
+
+            <tr>
+              <td valign="top" align="left" colspan="2">Since we
+              set our R appender to be a RollingFileAppender
+              type, we need to configure where it will place its
+              files. This option does that.</td>
+            </tr>
+
+            <tr>
+              <td valign="top" align="left">
+              <em>log4j.appender.R.MaxFileSize</em></td>
+
+              <td valign="top" align="left">3000KB</td>
+            </tr>
+
+            <tr>
+              <td valign="top" align="left" colspan="2">Tells our
+              RollingFileAppender that it should let each file
+              get to 3000KB and then roll it into a backup
+              file.</td>
+            </tr>
+
+            <tr>
+              <td valign="top" align="left">
+              <em>log4j.appender.R.MaxBackupIndex</em></td>
+
+              <td valign="top" align="left">10</td>
+            </tr>
+
+            <tr>
+              <td valign="top" align="left" colspan="2">This is
+              how many backups our RollingFileAppender should
+              keep.</td>
+            </tr>
+
+            <tr>
+              <td valign="top" align="left">
+              <em>log4j.appender.R.layout</em></td>
+
+              <td valign="top" align="left">
+              org.apache.log4j.PatternLayout</td>
+            </tr>
+
+            <tr>
+              <td valign="top" align="left" colspan="2">This
+              attaches a PatternLayout to the
+              RollingFileAppender. There are tons of different
+              layouts possible. Read the JavaDoc of this class
+              for more information.</td>
+            </tr>
+
+            <tr>
+              <td valign="top" align="left">
+              <em>log4j.appender.R.layout.ConversionPattern</em></td>
+
+              <td valign="top" align="left">%5p [%t] %c{2}.[%x]
+              %d{MMM/dd HH:mm:ss} - %m%n</td>
+            </tr>
+
+            <tr>
+              <td valign="top" align="left" colspan="2">This is
+              an option specific to the PatternLayout that
+              indicates how the messages should be written. Each
+              part that begins with a % is a part of the log
+              message you want to print. For example %{MMM/dd
+              HH:mm:ss} says that the PatternLayout should print
+              the date like <em>Jan/23 13:23:01</em> when it logs
+              it. There are tons of formatting codes that you can
+              use, just read the javadoc.</td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <tr>
+        <th valign="top" align="left">Possible Problems</th>
+
+        <td valign="top" align="left">
+          <ul>
+            <li>"Log4J: Please properly configure the logging
+            system." This generally means that you didn't setup
+            the Logger.properties file correctly. If you used the
+            stock Logger.properties file that came with the
+            uportal, then you probably didn't set the
+            <em>log4j.appender.R.File</em> property
+            correctly.</li>
+
+            <li>Logger.properties is not automatically re-read
+            after it is changed. This takes a little while (about
+            5 minutes) because the Log4J system sets up a thread
+            that polls the files to see if their modification
+            time changes. Wait a while, and if it still doesn't
+            change, then you have to restart. This happens
+            rarely, and usually means that you are either not
+            looking at the right file (the do roll over you know)
+            or you have something else configured wrong.</li>
+          </ul>
+        </td>
+      </tr>
+    </table>
+
+    <h3>session.properties</h3>
+
+    <table summary="Description of the session.properties file"
+    border="1" cellpadding="2" cellspacing="0">
+      <tr>
+        <th valign="top" align="left">Description</th>
+
+        <td valign="top" align="left">The session.properties file
+        controls how the portal handles users and the resources
+        they consume. It is primarily used to configure which
+        channels are cached, where to store cached layouts, how
+        to keep the user's layout in memory, and whether to keep
+        users from logging in when memory gets low.</td>
+      </tr>
+
+      <tr>
+        <th valign="top" align="left">Properties</th>
+
+        <td valign="top" align="left">
+          <table summary="Properties" border="1" cellpadding="1"
+          cellspacing="0">
+            <tr>
+              <td valign="top" align="left">
+              session.login.allow_multiple</td>
+
+              <td valign="top" align="left">yes|no</td>
+            </tr>
+
+            <tr>
+              <td valign="top" align="left" colspan="2">
+              Determines whether you allow users to log in more
+              than once. Setting this to <em>yes</em> allows
+              someone to write a little script that repeatedly
+              logs in their account until you run out of memory
+              and <strong>your portal dies!</strong>. Set it to
+              <em>no</em> unless you are a developer and need to
+              login from multiple browsers at the same time.</td>
+            </tr>
+
+            <tr>
+              <td valign="top" align="left">
+              session.login.single_guest_layout</td>
+
+              <td valign="top" align="left">yes|no</td>
+            </tr>
+
+            <tr>
+              <td valign="top" align="left" colspan="2">
+              Determines whether guest users use one global
+              layout or if they each get their own. You should
+              set this to <em>yes</em> to keep the portal from
+              crashing when there are too many hits to your guest
+              page. If you seem to have to set this to
+              <em>no</em> because some channel won't render
+              properly, then you need to rethink your guest page
+              strategy.</td>
+            </tr>
+
+            <tr>
+              <td valign="top" align="left">
+              session.login.starvation_denies_login</td>
+
+              <td valign="top" align="left">yes|no</td>
+            </tr>
+
+            <tr>
+              <td valign="top" align="left" colspan="2">Tells the
+              portal whether to refuse logins when the memory
+              gets too tight.</td>
+            </tr>
+
+            <tr>
+              <td valign="top" align="left">
+              session.login.starvation_limit</td>
+
+              <td valign="top" align="left">Any number</td>
+            </tr>
+
+            <tr>
+              <td valign="top" align="left" colspan="2">This
+              tells the portal how low you want the free memory
+              to get before you deny logins. Setting this to
+              anything higher than your available memory is
+              pointless. The portal will try one forced garbage
+              collection before declaring that memory is too low.
+              Usually, if the portal says you can't login because
+              of too many users, it means it (see the exception
+              below).</td>
+            </tr>
+
+            <tr>
+              <td valign="top" align="left">
+              session.memory.constrained_channel_caching</td>
+
+              <td valign="top" align="left">yes|no</td>
+            </tr>
+
+            <tr>
+              <td valign="top" align="left" colspan="2">Tells the
+              portal whether to cache all channels (<em>no</em>
+              or to cache only certain ones. If you cache all the
+              channels, then they may render faster, but you'll
+              get about 20% of the users on at any one time. I
+              found that the performance difference between
+              caching every channel and caching only certain
+              channels was small, and that constrained caching
+              kept the portal from crashing under heavy
+              loads.</td>
+            </tr>
+
+            <tr>
+              <td valign="top" align="left">
+              session.memory.cached_channels</td>
+
+              <td valign="top" align="left">Class name of channel
+              to cache.</td>
+            </tr>
+
+            <tr>
+              <td valign="top" align="left" colspan="2">
+                This is the list of classes that must be cached.
+                A channel needs to be cached if it maintains any
+                state for the user across invocations. Most of
+                the channels do not need to be cached, but some
+                (like the CIMAPMail channel) do. Best thing to do
+                is set
+                <em>session.memory.constrained_channel_caching=yes</em>
+                and leave this blank. Then, see which channels
+                don't work properly. The ones that don't work are
+                the ones that need to be cached (but make sure
+                they work before you mess with this option). 
+
+                <p>Any channels that need to be cached should
+                also <strong>never</strong> go on the guest page.
+                Think about it: how can you maintain state for a
+                user who isn't logged in? Why would you want to
+                do that. Rewrite your channel if this is the
+                case.</p>
+              </td>
+            </tr>
+
+            <tr>
+              <td valign="top" align="left">
+              session.memory.layoutxml_dynamic_loading</td>
+
+              <td valign="top" align="left">yes|no</td>
+            </tr>
+
+            <tr>
+              <td valign="top" align="left" colspan="2">Tells the
+              portal to make the loading of layouts dynamic. With
+              this option set to <em>yes</em>, the portal will
+              keep layouts in memory so that they can be given up
+              when memory gets tight. This lowers performance
+              slightly during heavy loads, but allows more users
+              to get on. Typically, only users who did not log
+              out properly get their layouts collected.</td>
+            </tr>
+
+            <tr>
+              <td valign="top" align="left">
+              session.memory.layoutxml_cache_directory</td>
+
+              <td valign="top" align="left">File location, no
+              trailing /.</td>
+            </tr>
+
+            <tr>
+              <td valign="top" align="left" colspan="2">
+                This feature is designed to speed up the way the
+                layouts are retrieved from the database. The
+                portal will first check to see if there is a file
+                in the directory you specify in this option named
+                after the user. If there is, it loads it in as
+                the layout for the user. If it isn't, then it
+                will retrieve it from the database and write the
+                layout to the directory, named after the user.
+                Basically, it caches what's in the database in
+                this directory. 
+
+                <p>There are some pretty neat things you can do
+                with the layout cache directory. You can edit
+                layouts directly with a simple file editor, then
+                use the portal to reload them. Once the layout is
+                to your liking, you can simply do something that
+                changes it in the portal (like adding a tab) and
+                the portal will set it in the database.</p>
+
+                <p>You can also test different layouts by simply
+                copying them to the file named "guest" and
+                hitting the index.jsp page. Simply delete the
+                guest file when you are done testing and it will
+                get reloaded.</p>
+
+                <p>Simply delete files from the directory to
+                clear the cache. You do not need to restart the
+                server for this to happen, but users currently
+                logged in will not be reloaded.</p>
+
+                <p><span style="color: red">WARNING:</span> Make
+                sure that the permissions on this directory are
+                <strong>very</strong> strict. It is easy for
+                someone malicious to get into this directory and
+                make very nasty changes to the layouts there.</p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <tr>
+        <th valign="top" align="left">Possible Problems</th>
+
+        <td valign="top" align="left">
+          <ul>
+            <li><strong>Channels keep failing or seem to "forget"
+            what you tell them.</strong> You need to tell the
+            portal to cache this channel. You can do this with
+            the <em>session.memory.cached_channels</em> property.
+            Alternatively, you can just set
+            <em>session.memory.constrained_channel_caching=no</em>
+            (which is the default).</li>
+
+            <li><strong>I can't login from more than one
+            browser.</strong> You have
+            <em>session.login.allow_multiple=no</em>. If you set
+            it to yes, you'll be able to log in more than once.
+            Don't do this in production as it is a potential
+            Denial of Service attack.</li>
+
+            <li><strong>Our special channel on the guest page is
+            supposed to be different for each user, but it is the
+            same for all of them.</strong> This because you have
+            <em>session.login.single_guest_layout=yes</em>. You
+            should not set this to no unless you absolutely must.
+            Setting this to <em>no</em> will give you the same
+            denial of service described for
+            <em>session.login.allow_multiple</em>, but the user's
+            don't have to log in. A better solution is to rewrite
+            your channel to handle being in a single layout, or
+            just don't put that channel on the guest page.</li>
+
+            <li><strong>I keep seeing the message</strong> "<span
+            style="color: red">There are currently too many
+            users. Logins are disabled. Please try again
+            later.</span> " You either have your
+            <em>session.login.starvation_limit</em> set too high,
+            or your JVM doesn't report memory properly. The first
+            one is easily fixed by setting the value to 1 (which
+            is the lowest at the moment). If the problem still
+            persists, try hitting a bunch of the jsp pages real
+            quick. That should increase your memory free a bit.
+            If that doesn't work, then try telling your JVM to
+            pre-allocate memory using the -Xms and -Xmx options.
+            If that still doesn't work, then you should set
+            <em>session.login.starvation_denies_login=no</em> and
+            pray that you don't get too many users.</li>
+
+            <li><strong>I get tons of log messages warning me
+            about...</strong> The session management system has
+            the policy of "annoy the administrator" when you do
+            something considered dangerous (read: dumb). If you
+            see an error message repeatedly telling you that
+            guest users get their own layout, or that users can
+            log in multiple times, or that a class listed in the
+            list of channels to cache isn't there, then you
+            should fix these things. All three of these are
+            problems that will crash your server. If you do them,
+            then you have to put up with the warnings. But, they
+            are DEBUG level warnings, so you can just turn them
+            off in the Logger.properties file.</li>
+
+            <li><strong>I keep seeing log messages telling me
+            that the ChannelCache can't find a class I've
+            specified, but it is there!</strong> No, it isn't.
+            Make absolutely sure that it is in your classpath and
+            that you don't have the class in some other jar file
+            which is ahead of where you think it should be. A
+            good technique for tracking down where classes are
+            loaded from is to turn on your JVM's verbosity so it
+            prints them out.</li>
+
+            <li><strong>User's layouts get requested from the
+            database a whole lot.</strong> This is caused by you
+            turning off the
+            <em>session.memory.layoutxml_cache_directory</em>,
+            setting
+            <em>session.memory.layoutxml_dynamic_loading=yes</em>,
+            and having a high user load. What is happening is
+            that your layouts are getting claimed to make room
+            for more users, and since you don't have a cache
+            directory, the portal must get the layout from the
+            database. You'll run into this problem if you run
+            certain JVMs (like Sun's) that don't properly collect
+            SoftReferences. The solution is to make sure the
+            <em>session.memory.layoutxml_cache_directory</em> is
+            set and works, or set
+            <em>session.memory.layoutxml_dynamic_loading=no</em>.
+            It is preferred to use the former as the latter will
+            use up too much memory and crash the portal.</li>
+
+            <li><strong>I keep getting a log message saying that
+            the layout cache directory doesn't exist, but it
+            does!</strong> No, it doesn't. If you can't access it
+            manually, then the portal can't. Make sure that the
+            user the portal runs as has the right permissions to
+            read/write files in the directory and make sure you
+            have specified it using an absolute path.</li>
+          </ul>
+        </td>
+      </tr>
+    </table>
+
+    <h3>rdbm.properties</h3>
+
+    <table summary="Description of the rdbm.properties file"
+    border="1" cellpadding="2" cellspacing="0">
+      <tr>
+        <th valign="top" align="left">Description</th>
+
+        <td valign="top" align="left">Configures the database
+        drivers so the uPortal can talk to your database. This is
+        pretty standard JDBC configuration stuff. Please read
+        documentation for your database on how to configure a
+        JDBC driver.</td>
+      </tr>
+
+      <tr>
+        <th valign="top" align="left">Properties</th>
+
+        <td valign="top" align="left">
+          <table summary="Properties" border="1" cellpadding="1"
+          cellspacing="0">
+            <tr>
+              <td valign="top" align="left">jdbcDriver</td>
+
+              <td valign="top" align="left">Class Name for the
+              driver.</td>
+            </tr>
+
+            <tr>
+              <td valign="top" align="left">jdbcUrl</td>
+
+              <td valign="top" align="left">JDBC connection
+              URL.</td>
+            </tr>
+
+            <tr>
+              <td valign="top" align="left">jdbcUser</td>
+
+              <td valign="top" align="left">User to use when
+              connecting.</td>
+            </tr>
+
+            <tr>
+              <td valign="top" align="left">jdbcPassword</td>
+
+              <td valign="top" align="left">Password to use when
+              connecting.</td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <tr>
+        <th valign="top" align="left">Possible Problems</th>
+
+        <td valign="top" align="left">
+          <ul>
+            <li><strong>When I run the portal, I get just the
+            header and footer.</strong> This usually happens
+            becuase your JDBC driver isn't configured properly in
+            the rdbm.properties file. Check the portal.log or
+            poolman.log (if you use PoolMan) to see what errors
+            are being reported.</li>
+
+            <li><strong>When I run PoolMan, the portal will start
+            up, but then die right after I access the first
+            page.</strong> This happens because you don't have
+            your poolman.xml and poolman.policy files accessible
+            from the CLASSPATH. You can fix this if you add the
+            portal's properties directory to your CLASSPATH.</li>
+
+            <li><strong>Where do I get PoolMan?</strong> You can
+            get the latest version from <a href=
+            "http://www.codestudio.com">www.codestudio.com</a>.
+            Read the documentation for PoolMan and the <a href=
+            "http://www.interchange.ubc.ca/zshaw/performance.html">
+            Performance HOWTO</a> for instructions on how to use
+            it. It will make things go really fast.</li>
+          </ul>
+        </td>
+      </tr>
+    </table>
+
+    <h3>media.properties</h3>
+
+    <table summary="Description of the media.properties file"
+    border="1" cellpadding="2" cellspacing="0">
+      <tr>
+        <th valign="top" align="left">Description</th>
+
+        <td valign="top" align="left">Used to indicate different
+        layouts for different types of browsers.</td>
+      </tr>
+
+      <tr>
+        <th valign="top" align="left">Properties</th>
+
+        <td valign="top" align="left">
+          <table summary="Properties" border="1" cellpadding="1"
+          cellspacing="0">
+            <tr>
+              <td valign="top" align="left">
+                Each property in this file is a pair of like so: 
+<pre>
+              MSIE=explorer
+             
+</pre>
+                The left hand side indicates some unique string
+                in the headers for this particular browser. The
+                right hand side indicates the special string to
+                use when selecting the particular layout for that
+                browser.
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <tr>
+        <th valign="top" align="left">Possible Problems</th>
+
+        <td valign="top" align="left">
+        </td>
+      </tr>
+    </table>
+
+    <h3>security.properties</h3>
+
+    <table summary="Description of the security.properties file"
+    border="1" cellpadding="2" cellspacing="0">
+      <tr>
+        <th valign="top" align="left">Description</th>
+
+        <td valign="top" align="left">Configures the
+        authentication system for the portal. Generally you don't
+        have to touch this unless you use the LDAP authentication
+        or roll your own.</td>
+      </tr>
+
+      <tr>
+        <th valign="top" align="left">Properties</th>
+
+        <td valign="top" align="left">
+          <table summary="Properties" border="1" cellpadding="1"
+          cellspacing="0">
+            <tr>
+              <td valign="top" align="left">root</td>
+
+              <td valign="top" align="left">This is the factory
+              that supplies the concrete authentication
+              class</td>
+            </tr>
+
+            <tr>
+              <td valign="top" align="left">
+              authorizationProvider</td>
+
+              <td valign="top" align="left">This is the factory
+              that supplies the concrete authorization
+              class.</td>
+            </tr>
+
+            <tr>
+              <td valign="top" align="left">
+              channelPublisherRole</td>
+
+              <td valign="top" align="left">Each role is then
+              listed in the file to indicate what classes support
+              what roles. In this example, we associate the
+              channelPublisherRole with a class.</td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <tr>
+        <th valign="top" align="left">Possible Problems</th>
+
+        <td valign="top" align="left">
+        </td>
+      </tr>
+    </table>
+
+    <h2>Conclusion</h2>
+
+    <p>This document is still in development. Please contact <a
+    href="mailto:zed.shaw@ubc.ca">Zed A. Shaw</a> if you have any
+    comments or questions.</p>
+  </body>
+</html>
+
+
