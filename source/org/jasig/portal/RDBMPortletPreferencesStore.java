@@ -101,7 +101,7 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
                         insertPrefPstmt.setString(4, READ_ONLY_FALSE);
                     }
                     
-                    for (final Iterator valueItr = pref.getValues(); prefItr.hasNext();) {
+                    for (final Iterator valueItr = pref.getValues(); valueItr.hasNext();) {
                         String value = (String)valueItr.next();
                         
                         insertPrefPstmt.setString(3, value);
@@ -239,7 +239,7 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
                     insertPrefPstmt.setInt(3, structId);
                     insertPrefPstmt.setString(4, pref.getName());
                     
-                    for (final Iterator valueItr = pref.getValues(); prefItr.hasNext();) {
+                    for (final Iterator valueItr = pref.getValues(); valueItr.hasNext();) {
                         final String value = (String)valueItr.next();
                         
                         insertPrefPstmt.setString(5, value);
