@@ -51,13 +51,13 @@ Version $Revision$
     <xsl:variable name="mediaPathMainBorder" select="concat($mediaPath,'/',$skin,'/mainBorder')"/>
     <xsl:variable name="mediaPathColumnBorder" select="concat($mediaPath,'/',$skin,'/columnBorder')"/>
     <xsl:variable name="mediaPathIcons" select="concat($mediaPath,'/',$skin,'/icons')"/>
-    <!-- <xsl:param name="errorMessage" select="'no errorMessage passed'"/> -->
-    <xsl:param name="errorMessage"> There are <xsl:value-of select="count(/layout/actions/fragments/fragment)"/> fragments in the current layout XML. </xsl:param>
+    <xsl:param name="errorMessage" select="'no errorMessage passed'"/>
+    <!-- <xsl:param name="errorMessage"> There are <xsl:value-of select="count(/layout/actions/fragments/fragment)"/> fragments in the current layout XML. </xsl:param> -->
     <xsl:param name="authenticated" select="'true'"/>
     <xsl:param name="channelManager" select="'false'"/>
     <xsl:param name="userName" select="'Guest'"/>
     <!--These variables and parameters are used in fragment mode-->
-    <xsl:param name="currentFragmentID" select="'default_layout'"/>
+    <xsl:param name="currentFragmentID" select="'default_#layout'"/>
     <xsl:param name="fragmentAuthor" select="'true'"/>
     <!--These variables and parameters are used in preferences mode-->
     <xsl:param name="moveID" select="/layout/@selectedID"/>
@@ -1571,12 +1571,13 @@ Version $Revision$
 						<a href="javascript:alert('[Profiles] function is under construction')">Profiles</a>
 						-->
                         <xsl:if test="fragments">
-                            <span> |<xsl:text>&#160;</xsl:text>
-                            </span>Manage:<form name="selectFragments" method="post" action="{$baseActionURL}">
-                                <select name="uP_fragment_ID" class="uportal-input-text uportal-background-content">
+                            <br/>
+                            <!--  <span> |<xsl:text>&#160;</xsl:text> </span>-->
+                            <form name="selectFragments" method="post" action="{$baseActionURL}"> Manage:<select name="uP_fragment_ID" class="uportal-input-text uportal-background-content">
                                     <!-- This test wil need to be modified when multiple layouts are allowed -->
                                     <xsl:if test="not($currentFragmentID = fragments/fragment/@ID) and not($currentFragmentID = 'default_layout')">
-                                    <option selected="selected">Unsaved New Fragment [ID:<xsl:value-of select="$currentFragmentID"/>]</option>
+                                        <!-- <xsl:variable name="newFragment">true</xsl:variable> -->
+                                        <option selected="selected">Unsaved New Fragment [ID:<xsl:value-of select="$currentFragmentID"/>]</option>
                                     </xsl:if>
                                     <option value="default_layout">
                                         <xsl:if test="$currentFragmentID='default_layout'">
@@ -1592,14 +1593,36 @@ Version $Revision$
                                     </xsl:for-each>
                                 </select>
                                 <input type="hidden" name="uP_fragment_action" value="edit"/>
+                                <input type="hidden" name="uP_sparam" value="mode"/>
+                                <input type="hidden" name="mode" value="{$mode}"/>
+                                <input type="hidden" name="uP_sparam" value="targetAction"/>
+                                <input type="hidden" name="targetAction" value="no targetAction parameter"/>
+                                <input type="hidden" name="uP_sparam" value="targetRestriction"/>
+                                <input type="hidden" name="targetRestriction" value="no targetRestriction parameter"/>
+                                <input type="hidden" name="uP_cancel_targets" value="true"/>
                                 <!--<option><xsl:value-of select="New fragment"/></option>-->
                                 <input name="manageLayout" type="image" src="{$mediaPathIcons}/submit.gif" width="22" height="18" border="0" alt="Load selected fragment" title="Load selected fragment"/>
                                 <!-- <span>&#160;|<xsl:text> </xsl:text></span><a href="javascript:alert('[Layout Publish] function is under construction')">Copy Tab to Fragment</a> -->
                                 <xsl:if test="$fragmentAuthor='true'">
                                     <span> |<xsl:text>&#160;</xsl:text>
                                     </span>
-                                    <a href="{$baseActionURL}?uP_fragment_action=new">New Tab Fragment</a>
+                                    <!-- <a href="{$baseActionURL}?uP_fname=contentsubscriber&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=''&amp;uP_cancel_targets=true"> -->
+                                    <a href="{$baseActionURL}?uP_fragment_action=new&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=New Fragment&amp;uP_sparam=selectedID&amp;selectedID=''&amp;uP_cancel_targets=true">New Tab Fragment</a>
                                 </xsl:if>
+                            </form>
+                        </xsl:if>
+                        <xsl:if test="not($currentFragmentID = fragments/fragment/@ID) and not($currentFragmentID = 'default_layout')">
+                            <form name="addFragNameDesc" method="post" action="{$baseActionURL}"> New Fragment Name:<input name="uP_fragment_name" type="text" class="uportal-input-text" maxlength="30"/> New Fragment Description:<input name="uP_fragment_desc" type="text" class="uportal-input-text"/>
+                                <input type="submit" name="uPCM_submit" value="Submit" class="uportal-button"/>
+                                <!-- <input name="submitFragNameDesc" type="image" src="{$mediaPathIcons}/submit.gif" width="22" height="18" border="0" alt="Submit the Fragment Name & Description" title="Submit the Fragment Name & Description"/> -->
+                                <input type="hidden" name="uP_fragment_action" value="edit"/>
+                                <input type="hidden" name="uP_sparam" value="mode"/>
+                                <input type="hidden" name="mode" value="{$mode}"/>
+                                <input type="hidden" name="uP_sparam" value="targetAction"/>
+                                <input type="hidden" name="targetAction" value="no targetAction parameter"/>
+                                <input type="hidden" name="uP_sparam" value="targetRestriction"/>
+                                <input type="hidden" name="targetRestriction" value="no targetRestriction parameter"/>
+                                <input type="hidden" name="uP_cancel_targets" value="true"/>
                             </form>
                         </xsl:if>
                     </span>
