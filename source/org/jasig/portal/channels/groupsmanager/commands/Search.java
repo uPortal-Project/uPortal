@@ -126,7 +126,8 @@ public class Search extends org.jasig.portal.channels.groupsmanager.commands.Gro
          searchElem.setAttribute("expanded", String.valueOf(results.length > 0));
          searchElem.setAttribute("searchCriteria", searchCriteria);
          searchElem.setAttribute("canEdit", "false");
-         model.appendChild(searchElem);
+         Element myGroups = GroupsManagerXML.getElementById (model, "0");
+         myGroups.appendChild(searchElem);
 
          for (int sub=0 ; sub < results.length ; sub++) {
             EntityIdentifier entID = results[sub];
