@@ -289,15 +289,15 @@ public class CLayoutManager implements ISpecialChannel
     if (direction.equals ("up"))
     {
       Node prev;
-      // Goto the previous channel or category element
-      for (prev = element.getPreviousSibling (); prev != null && prev.getNodeType () != Node.ELEMENT_NODE && (!prev.getNodeName ().equals ("channel") || !prev.getNodeName ().equals ("category")); prev = prev.getPreviousSibling ());
+      // Goto the previous channel or folder element
+      for (prev = element.getPreviousSibling (); prev != null && prev.getNodeType () != Node.ELEMENT_NODE && (!prev.getNodeName ().equals ("channel") || !prev.getNodeName ().equals ("folder")); prev = prev.getPreviousSibling ());
       parent.insertBefore (element, prev);
     }
     else if (direction.equals ("down"))
     {
       Node next;
-      // Goto the next channel or category element
-      for (next = element.getNextSibling (); next != null && next.getNodeType () != Node.ELEMENT_NODE && (!next.getNodeName ().equals ("channel") || !next.getNodeName ().equals ("category")); next = next.getNextSibling ());
+      // Goto the next channel or folder element
+      for (next = element.getNextSibling (); next != null && next.getNodeType () != Node.ELEMENT_NODE && (!next.getNodeName ().equals ("channel") || !next.getNodeName ().equals ("folder")); next = next.getNextSibling ());
       parent.insertBefore (next, element);    
     }
     
