@@ -79,13 +79,6 @@ public ReferenceIndividualGroupService() throws GroupsException
         serviceDescriptor = svcDescriptor;
         initialize();
     }
-/**
- *
- */
-protected void addGroupToCache(IEntityGroup group) throws CachingException
-{
-    EntityCachingService.instance().add(group);
-}
     /**
      * Answers if <code>IGroupMembers</code> are being cached.
      */
@@ -100,14 +93,10 @@ protected void addGroupToCache(IEntityGroup group) throws CachingException
 public void deleteGroup(IEntityGroup group) throws GroupsException
 {
     throwExceptionIfNotInternallyManaged();
-    if ( cacheInUse() )
-    {
-        try
-            { removeGroupFromCache(group); }
-        catch (CachingException ce)
-            { throw new GroupsException("Problem deleting group " + group.getKey() + " : " + ce.getMessage()); }
-    }
     getGroupStore().delete(group);
+    if ( cacheInUse() )
+        { cacheRemove(group); }
+
 }
 /**
  * Removes the <code>ILockableEntityGroup</code> from the cache and the store.
@@ -159,7 +148,7 @@ public Iterator findContainingGroups(IGroupMember gm) throws GroupsException
             try
             {
                 if ( getGroupFromCache(group.getEntityIdentifier().getKey()) == null )
-                    { addGroupToCache(group); }
+                    { cacheAdd(group); }
             }
             catch (CachingException ce)
                 { throw new GroupsException("Problem finding containing groups: " + ce.getMessage()); }
@@ -206,7 +195,7 @@ protected IEntityGroup findGroupWithCache(CompositeEntityIdentifier ent) throws 
         {
             group = primFindGroup(ent.getLocalKey());
             if (group != null)
-                { addGroupToCache(group); }
+                { cacheAdd(group); }
         }
     return group;
     }
@@ -274,7 +263,7 @@ protected Iterator findLocalMemberGroups(IEntityGroup eg) throws GroupsException
             try
             {
                 if ( getGroupFromCache(group.getEntityIdentifier().getKey()) == null )
-                    { addGroupToCache(group); }
+                    { cacheAdd(group); }
             }
             catch (CachingException ce)
                 { throw new GroupsException("Problem finding member groups: " + ce.getMessage()); }
@@ -335,14 +324,30 @@ public Iterator findMembers(IEntityGroup eg) throws GroupsException
 
     return members.iterator();
 }
-    /**
-     * Returns an <code>IEntity</code> representing a portal entity.  This does
-     * not guarantee that the entity actually exists.
-     */
-    public IEntity getEntity(String key, Class type) throws GroupsException
+/**
+ * Returns an <code>IEntity</code> representing a portal entity.  This does
+ * not guarantee that the underlying entity actually exists.
+ */
+public IEntity getEntity(String key, Class type) throws GroupsException
+{
+    IEntity ent = primGetEntity(key, type);
+    
+    if ( cacheInUse() )
     {
-      return entityFactory.newInstance(key, type);
+        try
+        {
+            IEntity cachedEnt = getEntityFromCache(ent.getEntityIdentifier().getKey());
+            if ( cachedEnt == null )
+                { cacheAdd(ent); }
+            else
+                { ent = cachedEnt; }
+        }
+        catch (CachingException ce)
+            { throw new GroupsException("Problem retrieving group member " + type + "(" + key + ") : " + ce.getMessage());}
     }
+    return ent;
+}
+
 /**
  * Returns an <code>IEntity</code> representing a portal entity.  This does
  * not guarantee that the entity actually exists.
@@ -503,18 +508,11 @@ public boolean isLeafService() {
 public IEntityGroup newGroup(Class type) throws GroupsException
 {
     throwExceptionIfNotInternallyManaged();
-    try
-    {
-        IEntityGroup group = groupFactory. newInstance(type);
-        group.setLocalGroupService(this);
-        if ( cacheInUse() )
-            { addGroupToCache(group); }
-        return group;
-    }
-    catch (Exception e)
-    {
-        throw new GroupsException("ReferenceGroupService.newGroup(): " + e.getMessage());
-    }
+    IEntityGroup group = groupFactory.newInstance(type);
+    group.setLocalGroupService(this);
+    if ( cacheInUse() )
+        { cacheAdd(group); }
+    return group;
 }
 /**
  * Returns a pre-existing <code>IEntityGroup</code> or null if it
@@ -536,13 +534,6 @@ protected IEntityGroup primFindGroup(String localKey) throws GroupsException
     }
     return (EntityIdentifier[]) ar.toArray(new EntityIdentifier[0]);
   }
-/**
- *
- */
-protected void removeGroupFromCache(IEntityGroup group) throws CachingException
-{
-    EntityCachingService.instance().remove(group.getEntityIdentifier());
-}
   public EntityIdentifier[] searchForEntities(String query, int method, Class type) throws GroupsException {
     return removeDuplicates(entitySearcher.searchForEntities(query,method,type));
   }
@@ -566,21 +557,14 @@ throws GroupsException
 
 }
 /**
- * Updates the cache and the store with the new <code>IEntityGroup</code>.
+ * Update the store and the updated members.
  * @param group IEntityGroup
  */
 public void updateGroup(IEntityGroup group) throws GroupsException
 {
     throwExceptionIfNotInternallyManaged();
-
-    if ( cacheInUse() )
-    {
-        try
-            { updateGroupInCache(group); }
-        catch (CachingException ce)
-            { throw new GroupsException("Problem updating group " + group.getKey() + " : " + ce.getMessage()); }
-    }
     getGroupStore().update(group);
+    synchronizeGroupMembersOnUpdate(group);
 }
 /**
  * Updates the <code>ILockableEntityGroup</code> in the cache and the store.
@@ -606,49 +590,33 @@ throws GroupsException
            { throw new GroupsException("Could not update group " + group.getKey() +
                 " has invalid lock."); }
 
+        updateGroup((IEntityGroup)group);
+
         if ( ! renewLock )
         {
-            updateGroup((IEntityGroup)group);
+            if ( cacheInUse())
+                { cacheUpdate(group); }
             group.getLock().release();
         }
         else
         {
-            getGroupStore().update(group);
             if ( cacheInUse())
-                { removeGroupFromCache(group); }
+                { cacheRemove(group); }
             group.getLock().renew();
         }
     }
     catch (LockingException le)
         { throw new GroupsException("Problem updating group " + group.getKey() +
                 " : " + le.getMessage()); }
-    catch (CachingException ce)
-        { throw new GroupsException("Problem updating group " + group.getKey() +
-                " : " + ce.getMessage()); }
 }
 /**
- *
- */
-protected void updateGroupInCache(IEntityGroup group) throws CachingException
-{
-    EntityCachingService.instance().update(group);
-}
-/**
- * Updates the cache and the store with the updated <code>IEntityGroup</code>.
+ * Update the store and the updated members.
  * @param group IEntityGroup
  */
-public void updateGroupMembers(IEntityGroup group) throws GroupsException
-{
+public void updateGroupMembers(IEntityGroup group) throws GroupsException {
     throwExceptionIfNotInternallyManaged();
-
-    if ( cacheInUse() )
-    {
-        try
-            { EntityCachingService.instance().update(group); }
-        catch (CachingException ce)
-            { throw new GroupsException("Problem updating members for group " + group.getKey() + " : " + ce.getMessage()); }
-    }
     getGroupStore().updateMembers(group);
+    synchronizeGroupMembersOnUpdate(group);
 }
 /**
  * Updates the <code>ILockableEntityGroup</code> in the cache and the store.
@@ -674,24 +642,61 @@ throws GroupsException
            { throw new GroupsException("Could not update group " + group.getKey() +
                 " has invalid lock."); }
 
+        updateGroupMembers((IEntityGroup)group);
+
         if ( ! renewLock )
         {
-            updateGroupMembers((IEntityGroup)group);
+            if ( cacheInUse() )
+                { cacheUpdate(group); }
             group.getLock().release();
         }
         else
         {
-            getGroupStore().updateMembers(group);
             if ( cacheInUse())
-                { removeGroupFromCache(group); }
+                { cacheRemove(group); }
             group.getLock().renew();
         }
     }
     catch (LockingException le)
         { throw new GroupsException("Problem updating group " + group.getKey() +
                 " : " + le.getMessage()); }
-    catch (CachingException ce)
-        { throw new GroupsException("Problem updating group " + group.getKey() +
-                " : " + ce.getMessage()); }
+}
+
+/**
+ * Returns an <code>IEntity</code> representing a portal entity.  This does
+ * not guarantee that the underlying entity actually exists.
+ */
+protected IEntity primGetEntity(String key, Class type) throws GroupsException
+{
+    return entityFactory.newInstance(key, type);
+}
+
+/**
+ * Adjust the back pointers of the updated group members to either add or remove
+ * the parent group.  Then update the cache to invalidate copies on peer servers.
+ *
+ * @param group ILockableEntityGroup
+ */
+protected void synchronizeGroupMembersOnUpdate(IEntityGroup group)
+throws GroupsException
+{
+    EntityGroupImpl egi = (EntityGroupImpl) group;
+    GroupMemberImpl gmi = null;
+
+    for (Iterator it=egi.getAddedMembers().values().iterator(); it.hasNext();)
+    {
+        gmi = (GroupMemberImpl) it.next();
+        gmi.addGroup(egi);
+        if ( cacheInUse() )
+           { cacheUpdate(gmi); }
+    }
+	
+    for (Iterator it=egi.getRemovedMembers().values().iterator(); it.hasNext();)
+    {
+        gmi = (GroupMemberImpl) it.next();
+        gmi.removeGroup(egi);
+        if ( cacheInUse() )
+           { cacheUpdate(gmi); }
+    }
 }
 }
