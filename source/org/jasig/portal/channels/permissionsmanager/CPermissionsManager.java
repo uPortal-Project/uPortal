@@ -48,6 +48,7 @@ import  org.jasig.portal.security.*;
 import  org.jasig.portal.security.provider.*;
 import  org.jasig.portal.channels.groupsmanager.CGroupsManagerServantFactory;
 import  org.w3c.dom.Document;
+import org.w3c.dom.*;
 
 
 /**
@@ -148,10 +149,10 @@ public class CPermissionsManager
                   // build an array of groupmembers for pre-selection
                   LogService.instance().log(LogService.DEBUG, "PermissionsManager - creating new pre-selecting Servant");
                   ArrayList gmembers = new ArrayList();
-                  String[] owners = PermissionsXML.getSelectedOwners(session);
+                  Element[] owners = PermissionsXML.getSelectedOwners(session);
                   for (int j= 0; j < owners.length ; j++){
-                    LogService.instance().log(LogService.DEBUG, "analyzing owner "+owners[j]);
-                    String ownerKey = PermissionsXML.getOwner(session,owners[j]).getAttribute("token");
+                    LogService.instance().log(LogService.DEBUG, "analyzing owner "+owners[j].getAttribute("name"));
+                    String ownerKey = owners[j].getAttribute("token");
                     IPermissionManager pm = AuthorizationService.instance().newPermissionManager(ownerKey);
                     String[] acts = null;
                     if (session.gotActivities){
