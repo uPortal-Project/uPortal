@@ -35,8 +35,8 @@
 
 package org.jasig.portal.channels.webproxy;
 
-import java.io.ByteArrayOutputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -71,6 +71,7 @@ import org.jasig.portal.PortalEvent;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.ResourceMissingException;
+import org.jasig.portal.i18n.LocaleAwareXSLT;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.LocalConnectionContext;
 import org.jasig.portal.services.LogService;
@@ -82,8 +83,6 @@ import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Document;
 import org.w3c.tidy.Tidy;
 import org.xml.sax.ContentHandler;
-
-import org.jasig.portal.i18n.LocaleAwareXSLT;
 
 /**
  * <p>A channel which transforms and interacts with dynamic XML or HTML.

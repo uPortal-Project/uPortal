@@ -57,7 +57,6 @@ import org.jasig.portal.i18n.LocaleAwareXSLT;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.EntityNameFinderService;
 import org.jasig.portal.services.GroupService;
-
 import org.w3c.dom.Document;
 import org.xml.sax.ContentHandler;
 

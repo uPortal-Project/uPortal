@@ -45,10 +45,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
 
+import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.services.StatsRecorder;
-import org.jasig.portal.i18n.LocaleManager;
 
 /**
  * A multithreaded version of a UserInstance.

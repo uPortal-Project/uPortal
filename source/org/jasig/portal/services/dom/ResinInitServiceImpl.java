@@ -34,15 +34,15 @@
  */
 package org.jasig.portal.services.dom;
 
-import org.jasig.portal.PortalException;
-import org.jasig.portal.ResourceMissingException;
-import org.jasig.portal.utils.ResourceLoader;
-
-import java.lang.reflect.Method;
-import java.lang.reflect.InvocationTargetException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
+import org.jasig.portal.PortalException;
+import org.jasig.portal.ResourceMissingException;
+import org.jasig.portal.utils.ResourceLoader;
 
 /**
  * This provides a DOM initialization service interface. It uses reflection

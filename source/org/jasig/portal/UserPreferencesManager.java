@@ -36,22 +36,22 @@
 
 package  org.jasig.portal;
 
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSessionBindingEvent;
 
+import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.jndi.JNDIManager;
-import org.jasig.portal.layout.TransientUserLayoutManagerWrapper;
 import org.jasig.portal.layout.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.IUserLayoutManager;
+import org.jasig.portal.layout.TransientUserLayoutManagerWrapper;
 import org.jasig.portal.layout.UserLayoutManagerFactory;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.PropsMatcher;
-import org.jasig.portal.i18n.LocaleManager;
 
 
 /**

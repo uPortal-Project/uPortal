@@ -37,23 +37,25 @@ package org.jasig.portal.car;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.jar.JarFile;
-import java.util.zip.ZipException;
-import java.util.zip.ZipEntry;
 import java.util.Enumeration;
+import java.util.Properties;
 import java.util.Vector;
-import javax.xml.parsers.SAXParserFactory;
-import javax.xml.parsers.SAXParser;
+import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
+
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.utils.SAX2BufferImpl;
+import org.xml.sax.Attributes;
+import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
-import java.util.Properties;
-import org.jasig.portal.utils.SAX2BufferImpl;
-import org.jasig.portal.services.LogService;
 
 /**
  * Class to parse the component deployment descriptor and provide access to

@@ -36,6 +36,7 @@
 package org.jasig.portal;
 
 import java.lang.reflect.Constructor;
+
 import org.jasig.portal.services.LogService;
 
 /**

@@ -45,14 +45,13 @@ import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.GeneralRenderingException;
 import org.jasig.portal.IMultithreadedCacheable;
 import org.jasig.portal.PortalException;
+import org.jasig.portal.i18n.LocaleAwareXSLT;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
-
-import org.jasig.portal.i18n.LocaleAwareXSLT;
 
 /**
  * This channel renders content identified by a URL within an inline browser

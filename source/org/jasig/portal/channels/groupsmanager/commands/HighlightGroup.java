@@ -38,7 +38,6 @@ package org.jasig.portal.channels.groupsmanager.commands;
 import org.jasig.portal.channels.groupsmanager.CGroupsManagerSessionData;
 import org.jasig.portal.channels.groupsmanager.GroupsManagerCommandFactory;
 import org.jasig.portal.channels.groupsmanager.GroupsManagerXML;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

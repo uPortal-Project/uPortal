@@ -47,7 +47,6 @@ import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.groups.ILockableEntityGroup;
 import org.jasig.portal.services.GroupService;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

@@ -44,13 +44,11 @@ import org.jasig.portal.IPrivilegedChannel;
 import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalEvent;
 import org.jasig.portal.PortalException;
+import org.jasig.portal.i18n.LocaleAwareXSLT;
 import org.jasig.portal.utils.DocumentFactory;
-import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
-
-import org.jasig.portal.i18n.LocaleAwareXSLT;
 
 /**
  * <p>A channel which displays HTTP request and HTML header info.

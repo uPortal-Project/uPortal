@@ -47,12 +47,12 @@ import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.sax.TransformerHandler;
 
 import org.jasig.portal.channels.BaseChannel;
+import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.serialize.BaseMarkupSerializer;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.utils.XSLT;
-import org.jasig.portal.i18n.LocaleManager;
 
 /**
  * StandaloneChannelRenderer is meant to be used as a base class for channels

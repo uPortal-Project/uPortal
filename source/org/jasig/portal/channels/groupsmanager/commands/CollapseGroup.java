@@ -40,7 +40,6 @@ import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.channels.groupsmanager.CGroupsManagerSessionData;
 import org.jasig.portal.channels.groupsmanager.GroupsManagerXML;
 import org.jasig.portal.channels.groupsmanager.Utility;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

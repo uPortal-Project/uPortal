@@ -36,9 +36,9 @@
 
 package  org.jasig.portal.channels.groupsmanager.permissions;
 
+import org.jasig.portal.channels.groupsmanager.IGroupsManagerPermissions;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.security.IAuthorizationPrincipal;
-import org.jasig.portal.channels.groupsmanager.IGroupsManagerPermissions;
 
 
 /**

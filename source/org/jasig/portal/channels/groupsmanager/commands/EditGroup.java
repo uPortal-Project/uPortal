@@ -42,7 +42,6 @@ import org.jasig.portal.channels.groupsmanager.GroupsManagerXML;
 import org.jasig.portal.channels.groupsmanager.Utility;
 import org.jasig.portal.groups.ILockableEntityGroup;
 import org.jasig.portal.services.GroupService;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

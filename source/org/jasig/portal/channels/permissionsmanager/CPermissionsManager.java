@@ -50,6 +50,7 @@ import org.jasig.portal.IChannel;
 import org.jasig.portal.channels.groupsmanager.CGroupsManagerServantFactory;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.i18n.LocaleAwareXSLT;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPermissionManager;
 import org.jasig.portal.services.AuthorizationService;
@@ -57,8 +58,6 @@ import org.jasig.portal.services.GroupService;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Element;
-
-import org.jasig.portal.i18n.LocaleAwareXSLT;
 
 /**
  * CPermissionsManager allows graphical administration of permissions for all owners

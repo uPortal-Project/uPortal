@@ -47,19 +47,18 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXResult;
-import org.apache.xpath.XPathAPI;
 
+import org.apache.xpath.XPathAPI;
 import org.jasig.portal.IUserLayoutStore;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.IPortalDocument;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.ContentHandler;
-
-import org.jasig.portal.services.LogService;
 
 /**
  * An implementation of a user layout manager that uses 2.0-release store implementations.

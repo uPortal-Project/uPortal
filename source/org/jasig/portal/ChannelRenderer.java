@@ -35,9 +35,9 @@
 
 package org.jasig.portal;
 
-import java.util.Map;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Map;
 
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.SAX2BufferImpl;

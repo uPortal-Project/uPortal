@@ -39,7 +39,6 @@ import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.channels.groupsmanager.CGroupsManagerSessionData;
 import org.jasig.portal.channels.groupsmanager.GroupsManagerXML;
 import org.jasig.portal.services.EntityPropertyRegistry;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

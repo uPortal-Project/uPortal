@@ -35,9 +35,9 @@
 
 package org.jasig.portal.webservices.ser;
 
-import org.w3c.dom.Element;
-import org.apache.axis.wsdl.fromJava.Types;
 import org.apache.axis.encoding.Serializer;
+import org.apache.axis.wsdl.fromJava.Types;
+import org.w3c.dom.Element;
 
 /**
  * Base class for all serializers.

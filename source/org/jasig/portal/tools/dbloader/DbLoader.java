@@ -59,6 +59,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.apache.oro.text.perl.Perl5Util;
 import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.utils.XSLT;
@@ -74,8 +75,6 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
-
-import org.apache.oro.text.perl.Perl5Util;
 
 /**
  * <p>A tool to set up a uPortal database. This tool was created so that uPortal

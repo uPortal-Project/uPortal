@@ -42,7 +42,6 @@ import org.jasig.portal.channels.groupsmanager.Utility;
 import org.jasig.portal.groups.IEntity;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.security.IAuthorizationPrincipal;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

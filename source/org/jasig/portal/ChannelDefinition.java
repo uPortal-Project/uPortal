@@ -35,15 +35,14 @@
 
 package org.jasig.portal;
 
-import org.jasig.portal.services.LogService;
-import org.jasig.portal.utils.IPortalDocument;
-
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Hashtable;
 
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.utils.IPortalDocument;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

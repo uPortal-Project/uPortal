@@ -35,8 +35,8 @@
 package org.jasig.portal.groups.filesystem;
 
 import org.jasig.portal.groups.GroupsException;
-import org.jasig.portal.groups.IEntitySearcherFactory;
 import org.jasig.portal.groups.IEntitySearcher;
+import org.jasig.portal.groups.IEntitySearcherFactory;
 import org.jasig.portal.services.LogService;
 
 /**

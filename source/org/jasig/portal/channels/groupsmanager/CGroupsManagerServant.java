@@ -35,7 +35,13 @@
 
 package  org.jasig.portal.channels.groupsmanager;
 
-import org.jasig.portal.*;
+import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.ChannelStaticData;
+import org.jasig.portal.IMultithreadedChannel;
+import org.jasig.portal.IServant;
+import org.jasig.portal.MultithreadedCacheableChannelAdapter;
+import org.jasig.portal.PortalEvent;
+import org.jasig.portal.PortalException;
 import org.jasig.portal.groups.IGroupMember;
 
 /**

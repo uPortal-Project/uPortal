@@ -36,9 +36,10 @@
 package org.jasig.portal;
 
 import java.util.Map;
-import org.xml.sax.ContentHandler;
+
 import org.jasig.portal.utils.SAX2BufferImpl;
 import org.jasig.portal.utils.SetCheckInSemaphore;
+import org.xml.sax.ContentHandler;
 
 
 /**

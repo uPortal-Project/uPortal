@@ -36,6 +36,7 @@
 package org.jasig.portal;
 
 import java.util.Map;
+
 import org.jasig.portal.car.CarResources;
 import org.jasig.portal.layout.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.IUserLayoutManager;

@@ -1,15 +1,15 @@
 package org.jasig.portal.i18n;
 
 import java.util.Locale;
-import java.lang.String;
-import org.jasig.portal.utils.XSLT;
-import org.jasig.portal.utils.ResourceLoader;
+
+import org.apache.oro.text.perl.Perl5Util;
 import org.jasig.portal.BrowserInfo;
 import org.jasig.portal.PortalException;
+import org.jasig.portal.ResourceMissingException;
 import org.jasig.portal.StylesheetSet;
 import org.jasig.portal.services.LogService;
-import org.jasig.portal.ResourceMissingException;
-import org.apache.oro.text.perl.Perl5Util;
+import org.jasig.portal.utils.ResourceLoader;
+import org.jasig.portal.utils.XSLT;
 
 public class LocaleAwareXSLT extends XSLT {
 
