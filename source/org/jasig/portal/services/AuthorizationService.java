@@ -55,7 +55,6 @@ public class AuthorizationService
   protected IAuthorizationService m_authorization = null;
   protected static String s_factoryName = null;
   protected static IAuthorizationServiceFactory m_Factory = null;
-  protected static String m_everyoneKey = null;
 
   static {
     // Get the security properties file
@@ -64,10 +63,6 @@ public class AuthorizationService
     Properties pr = new Properties();
     try {
       pr.load(secprops);
-      // Look for the key to an IEntityGroup representing all portal users.
-      if ((m_everyoneKey = pr.getProperty("everyoneKey")) == null) {
-        LogService.instance().log(LogService.ERROR, new PortalSecurityException("Key for IEntityGroup representing everyone is not specified or incorrect in security.properties"));
-      }
       // Look for our authorization factory and instantiate an instance of it or die trying.
       if ((s_factoryName = pr.getProperty("authorizationProvider")) == null) {
         LogService.instance().log(LogService.ERROR, new PortalSecurityException("AuthorizationProvider not specified or incorrect in security.properties"));
@@ -92,15 +87,7 @@ public class AuthorizationService
       // From our factory get an actual authorization instance
       m_authorization = m_Factory.getAuthorization();
   }
-  /**
-   * Returns a key to the IEntityGroup representing all portal users
-   * as specified in security.properties.
-   * @return a key to the IEntityGroup representing all portal users
-   */
-  public static String getEveryoneKey()
-  {
-       return m_everyoneKey;
-  }
+
   /**
    * @return Authorization
    */
@@ -110,6 +97,7 @@ public class AuthorizationService
                   { m_instance = new AuthorizationService(); }
           return m_instance;
   }
+
   /**
    * @return org.jasig.portal.security.IPermissionManager
    * @param owner java.lang.String
@@ -120,6 +108,7 @@ public class AuthorizationService
   {
        return m_authorization.newPermissionManager(owner);
   }
+
   /**
    * @return org.jasig.portal.security.IAuthorizationPrincipal
    * @param key java.lang.String
@@ -131,6 +120,7 @@ public class AuthorizationService
   {
        return m_authorization.newPrincipal(key, type);
   }
+
   /**
    * @return org.jasig.portal.security.IAuthorizationPrincipal
    * @param IPermission
@@ -141,6 +131,7 @@ public class AuthorizationService
   {
        return m_authorization.getPrincipal(permission);
   }
+
   /**
    * @return org.jasig.portal.security.IUpdatingPermissionManager
    * @param owner java.lang.String
