@@ -75,10 +75,10 @@ public class EditGroup extends GroupsManagerCommand {
       ChannelRuntimeData runtimeData= sessionData.runtimeData;
 
       Utility.logMessage("DEBUG", "EditGroup::execute(): Start");
-      String parentElemId = getCommandIds(runtimeData);
+      String parentElemId = getCommandArg(runtimeData);
       // if not IPerson group, then set view root to root for requested type
       try{
-         String userID = runtimeData.getParameter("username");
+         String userID = getUserID(sessionData);
          String userName = GroupsManagerXML.getEntityName(ENTITY_CLASSNAME, userID);
          String lockKey = userID + "::" + userName;
          Element parentElem = GroupsManagerXML.getElementById(this.getXmlDoc(sessionData),parentElemId);
@@ -89,6 +89,7 @@ public class EditGroup extends GroupsManagerCommand {
             //    where does this method go...xml,utility,wrapper AND pull out elem caching
             // store in sessionData
             sessionData.lockedGroup=lockedGroup;
+            sessionData.mode = EDIT_MODE;
             staticData.setParameter("groupParentId", parentElemId);
          }
          else{
