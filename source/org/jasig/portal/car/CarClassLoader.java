@@ -36,17 +36,23 @@
 
 package org.jasig.portal.car;
 
+import java.security.SecureClassLoader;
+import java.security.AccessController;
+import java.security.PrivilegedExceptionAction;
+import java.security.PrivilegedActionException;
 import java.io.InputStream;
 import java.net.URL;
-import java.security.AccessController;
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
-import java.security.SecureClassLoader;
+import java.util.Hashtable;
+import java.util.StringTokenizer;
+import org.jasig.portal.PortalSessionManager;
 
 /**
    Loads classes and resources from installed CARs via the CarResources class.
    If classes are visible via the parent class loader then they will be used
-   in place of those in the CARs.
+   in place of those in the CARs. This is a singleton so that we have a single
+   unified class namespace for all car resources preventing linkage errors and
+   class cast exceptions.
+   
    @author Mark Boyd <mark.boyd@engineer.com>
  */
 public class CarClassLoader
@@ -55,17 +61,20 @@ public class CarClassLoader
     public final static String RCS_ID = "@(#) $Header$";
 
     /**
-       Create a CarClassLoader.
+       Create a CarClassLoader. This method has package scope so that
+       CarResources can instantiate it and hold the single instance to be
+       aquired via its getClassLoader() method.
      */
-    public CarClassLoader()
+    CarClassLoader()
     {
         super();
     }
 
     /**
-       Create a CarClassloader with the indicated parent class loader.
+       Create a CarClassloader with the indicated parent class loader. See
+       comment for zero parameter constructor for description of package scoping.
      */
-    public CarClassLoader( ClassLoader cl )
+    CarClassLoader( ClassLoader cl )
     {
         super( cl );
     }
@@ -85,6 +94,7 @@ public class CarClassLoader
                     throws ClassNotFoundException
                 {
                     byte[] buf = null;
+                    String pkgName = getPackageName(name);
                     try
                     {
                         String file = name.replace( '.', '/' ) + ".class";
@@ -115,6 +125,11 @@ public class CarClassLoader
                         throw new ClassNotFoundException( name,
                                                           e );
                     }
+
+                    // package must be defined prior to defined
+                    // the class.
+                    createPackage( pkgName );
+                    
                     return defineTheClass( name, buf, 0, buf.length);
                 }
             }; 
@@ -140,6 +155,67 @@ public class CarClassLoader
         return super.defineClass( n, b, offset, len );
     }
 
+
+    /**
+     * Creates the package name for the calling class, which is null
+     * by default based on the JavaDoc for ClassLoader.  The package
+     * must be created prior to defining the Class.
+     *
+     * @param pkgName the package to create.
+     **/
+    private void createPackage(String pkgName)
+    {
+        // package must be defined before the class
+        // according to the API docs.
+        try
+        {
+            if ( null != pkgName && null == getPackage(pkgName))
+                definePackage( pkgName, "", "", "", "", "", "", null );
+        }
+        catch( IllegalArgumentException iae )
+        {
+            // do nothing, assume a synchronization issue
+            // where one thread had set it prior to another
+            // doing so..  small window, but could happen.
+        }
+    }
+    
+
+    /**
+     * Returns a package name from a package/classname path.  If the
+     * package is not available (default package), then null is
+     * returned.
+     *
+     * @param name the package/class name.
+     * @return the package name (dot notation) or null if not found
+     */
+    private String getPackageName( String name )
+    {
+        if ( name.indexOf(".") != -1 )
+        {
+            StringBuffer sb = new StringBuffer();
+            StringTokenizer st = new StringTokenizer(name,".");
+            int tokens = st.countTokens();                            
+            int count = 1;
+            while(st.hasMoreTokens())
+            {
+                if ( count < tokens )
+                {
+                    sb.append(st.nextToken());
+                    if ( count != (tokens-1) )  
+                        sb.append(".");
+                }
+                else
+                    break;
+                count++;
+            }
+            return sb.toString();
+        }
+        else
+            return null;        
+    }
+
+    
     /**
        Returns a URL pointing to a car resource if a suitable resource is
        found in the loaded set of CAR files or null if one is not found.

@@ -45,8 +45,10 @@ import java.io.StringWriter;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Map;
+import java.util.Properties;
 import java.util.Vector;
+import java.util.Map;
+import java.util.StringTokenizer;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
@@ -57,6 +59,8 @@ import org.jasig.portal.PortalException;
 import org.jasig.portal.PortalSessionManager;
 import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.services.LogService;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
 
 /**
    Provides access to resources stored in channel archive files or CARs for
@@ -66,8 +70,11 @@ import org.jasig.portal.services.LogService;
 public class CarResources {
 
     private static CarResources instance = new CarResources();
+    private static CarClassLoader loader = new CarClassLoader( PortalSessionManager.class.getClassLoader() );
+
     public final static String RCS_ID = "@(#) $Header$";
     
+    static final String DEPLOYMENT_DESCRIPTOR = "META-INF/comp.xml";
     private static final String WELL_KNOWN_DIR = "/WEB-INF/cars";
     private static final String CAR_DIR_PROP_NAME = "org.jasig.portal.car.CarResources.directory";
 
@@ -76,6 +83,9 @@ public class CarResources {
     private Hashtable carContents = new Hashtable();
     private Hashtable carsByPath = new Hashtable();
     
+    // package scope so DescriptorHandler can process extensions
+    Vector jarsWithDescriptors = new Vector();
+
     private String carDirPath = null;
     private boolean carDirExists = false;
     
@@ -132,12 +142,19 @@ public class CarResources {
     }
 
     /**
-       Return the single instance of CarResources or create if it doesn't
-       exist.
+       Return the single instance of CarResources.
      */
     public static CarResources getInstance()
     {
         return instance;
+    }
+
+    /**
+       Return the single instance of CarClassLoader.
+     */
+    public ClassLoader getClassLoader()
+    {
+        return loader;
     }
 
     /**
@@ -147,6 +164,9 @@ public class CarResources {
     private File getWellKnownDir()
     {
         Servlet servlet = PortalSessionManager.getInstance();
+        
+        if ( servlet == null ) return null;
+        
         ServletContext ctx = servlet.getServletConfig().getServletContext();
         String carDirRealPath = ctx.getRealPath( WELL_KNOWN_DIR );
 
@@ -200,7 +220,7 @@ public class CarResources {
         }
         catch( RuntimeException re )
         {
-            LogService.log( LogService.ERROR,
+            LogService.instance().log( LogService.INFO,
                                        "CAR directory property '" +
 				       CAR_DIR_PROP_NAME +
 				       "' not specified. Defaulting to " +
@@ -290,6 +310,8 @@ public class CarResources {
         }
         Vector entryList = new Vector();
         carsByJars.put( jar, car );
+        carsByPath.put( getCarPath( car ), car );
+        
         Enumeration entries = jar.entries();
 
         while( entries.hasMoreElements() )
@@ -299,12 +321,59 @@ public class CarResources {
             if ( ! entry.isDirectory() )
             {
                 String name = entry.getName();
+
+                if ( name.equals( DEPLOYMENT_DESCRIPTOR ) )
+                {
+                    jarsWithDescriptors.add( jar );
+                }
+                else
+                    // add to map of which jar holds this resource
                 resourceJars.put( name, jar );
+
+                // add to list of contents for this car
                 entryList.add( name );
             }
         }
         carContents.put( car, entryList );
-        carsByPath.put( getCarPath( car ), car );
+    }
+
+    /**
+       Push into the passed in properties object workers defined 
+       in any component archive's deployment descriptor.
+     */
+    public void getWorkers( Properties workers )
+    {
+        for( Enumeration jars = jarsWithDescriptors.elements();
+             jars.hasMoreElements(); )
+        {
+            JarFile j = (JarFile) jars.nextElement();
+            DescriptorHandler handler = new DescriptorHandler( j );
+            handler.getWorkers( workers );
+        }
+    }
+
+    /**
+       Returns true if any archive included a deployment descriptor.
+     */
+    public boolean hasDescriptors()
+    {
+        return jarsWithDescriptors.size() > 0;
+    }
+
+    /**
+       Push into the passed in content handler events for any services declared
+       in any component archive's deployment descriptor.
+     */
+    public void getServices( ContentHandler contentHandler )
+        throws SAXException
+    {
+        for( Enumeration jars = jarsWithDescriptors.elements();
+             jars.hasMoreElements(); )
+        {
+            JarFile j = (JarFile) jars.nextElement();
+            DescriptorHandler handler = new DescriptorHandler( j );
+            handler.getServices( contentHandler );
+        }
     }
 
     /**
@@ -363,6 +432,11 @@ public class CarResources {
     {
         if ( entry == null )
             return null;
+
+        // resolve entries that refer to a parent directory
+        // using a regular expression.
+        entry = resolveRegExpr(entry);
+
         JarFile jar = (JarFile) resourceJars.get( entry );
         if ( jar == null )
             return null;
@@ -460,5 +534,149 @@ public class CarResources {
     public String[] listAllResources()
     {
         return (String[]) resourceJars.keySet().toArray( STRING_ARRAY );
+    }
+
+    /**
+     * Home-grown version of the String replace method.  This one replaces
+     * the supplied String (generally a regular expression '../') with the
+     * supplied replacement.  It returns the original String as is if no
+     * matches were found or a modified version of it if matches were found.
+     *
+     * @param entry  the String to search for the regExpr.
+     * @param regExpr the regular expression to find and replace
+     * @param replacement the String to replace the regExpr with
+     * @return A modified String of match(es) were found, otherwise the
+     *         original String unmodified.
+     **/
+    private String replace( String entry, String regExpr, String replacement )
+    {
+        String copy = entry;
+        int beginIdx = 0;
+        int endIdx = copy.indexOf(regExpr);
+        StringBuffer buff = new StringBuffer();
+
+        while( endIdx != -1 )
+        {
+            // grab portion of the copied string up to the
+            // reg expr.
+            String newStr = copy.substring( beginIdx, endIdx );
+
+            // replace original version of copy(ed) string with
+            // only a substring from the reg expr (+3 for reg expr
+            // length) to the end of the string
+            copy = copy.substring( endIdx+3, copy.length() );
+
+            // append the string taken up to the reg expr to the
+            // buffer and add a replacement character to replace
+            // the reg expr.
+            buff.append( newStr ).append(replacement);
+
+            // see if another reg expr exists in the remaining
+            // copy(ed) string.
+            endIdx = copy.indexOf(regExpr);
+
+            // if there are no more reg expr in the copy(ed) string,
+            // append the copy and call it good.
+            if ( endIdx == -1 )
+                buff.append(copy);
+        }
+
+        // if there was a reg expr in the original entry, then the
+        // buffer wouldn't be 0 length.
+        if ( buff.toString().length() > 0 )
+            entry = buff.toString();
+
+        LogService.log( LogService.DEBUG,
+                        "CarResources replace() - returned entry is: " +
+                                   entry );
+        return entry;
+    }
+
+
+    /**
+     * Resolves the String entry and removes any regular expression
+     * patterns that would indicate a directory move (i.e. '../').
+     * The returned String is the supplied 'entry' String minus the
+     * '../' pattern and the directory directly preceding it if any.
+     *
+     * @param entry the String entry to resolve
+     * @return the modified String minus the reg expr.
+     **/
+    private String resolveRegExpr( String entry )
+    {
+        // first it's necessary to replace any reg expr '../'
+        // with a different character, in this case a '~'.
+        // this allows the StringTokenizer to parse the
+        // entry into the appropriate tokens.
+        String replacement = "~";
+        entry = replace(entry,"../",replacement);
+
+        // now the real fun starts.  If the entry had been modified,
+        // (i.e. had a reg expr), then it will now be tokenized so
+        // that a new String can be constructed.
+        if ( entry.indexOf(replacement) != -1 )
+        {
+            String delim = "/";
+            StringBuffer sb = new StringBuffer();
+
+            LogService.instance().log( LogService.DEBUG,
+                                       "CarResources resolveRegExpr() - " +
+                                       " Parsing resource name: " + entry );
+
+            StringTokenizer st = new StringTokenizer(entry,replacement);
+            int tokens = st.countTokens();
+            int count = 1;
+
+            while(st.hasMoreTokens())
+            {
+                // parse each token separately to correctly climb back
+                // up a directory
+                String token = st.nextToken();
+
+                LogService.instance().log( LogService.DEBUG,
+                                           "CarResources resolveRegExpr() - " +
+                                           "Token is now: " + token );
+
+                StringTokenizer st1 = new StringTokenizer(token,delim);
+                int childTokens = st1.countTokens();
+                int childCount = 1;
+
+                while( st1.hasMoreTokens() )
+                {
+                    String childToken = st1.nextToken();
+
+                    LogService.instance().log( LogService.DEBUG,
+                                               "CarResources resolveRegExpr() - " +
+                                               "Child token is: " + childToken );
+
+                    // if there are more child tokens, then add the most
+                    // recent one to the buffer along with the delimiter
+                    if ( childCount < childTokens )
+                    {
+                        sb.append(childToken);
+                        sb.append(delim);
+                    }
+                    else if ( count == tokens )
+                    {
+                        // if the original entry began with '../', like
+                        // ( ../somedir ),
+                        // then this would basically remove the ../ and
+                        // return the rest of the string unchanged.
+                        sb.append(childToken);
+                    }
+                    else
+                        // ignore last token
+                        break;
+                    childCount++;
+                }
+                count++;
+            }
+            entry = sb.toString();
+        }
+
+        LogService.instance().log( LogService.DEBUG,
+                                   "CarResources resolveRegExpr() - " +
+                                   "resolved entry is: " + entry );
+        return entry;
     }
 }

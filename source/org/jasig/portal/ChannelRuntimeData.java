@@ -40,7 +40,6 @@ import java.util.Hashtable;
 import java.util.Locale;
 import java.util.Map;
 
-import org.jasig.portal.car.CarClassLoader;
 import org.jasig.portal.car.CarResources;
 import org.jasig.portal.services.LogService;
 
@@ -321,7 +320,8 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
     public String getBaseMediaURL( Class aChannelClass )
     throws PortalException
     {
-        if ( aChannelClass.getClassLoader() instanceof CarClassLoader )
+        if ( aChannelClass.getClassLoader() ==
+             CarResources.getInstance().getClassLoader() )
             return createBaseCarMediaURL();
         return TRADITIONAL_MEDIA_BASE;
     }

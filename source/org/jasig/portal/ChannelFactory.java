@@ -36,7 +36,7 @@
 package org.jasig.portal;
 
 import java.util.Map;
-import org.jasig.portal.car.CarClassLoader;
+import org.jasig.portal.car.CarResources;
 import org.jasig.portal.layout.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.services.LogService;
@@ -56,7 +56,8 @@ public class ChannelFactory {
     // Note that the current class loader is passed as the parent and is
     // searched before CARs are. So if a class exists in the VM classpath
     // _and_ in a CAR the one on the classpath will be found first.
-    public static ClassLoader classLoader = new CarClassLoader(ChannelFactory.class.getClassLoader());
+    private static ClassLoader classLoader = CarResources.getInstance()
+        .getClassLoader();
     
 
     /**

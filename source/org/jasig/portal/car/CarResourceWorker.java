@@ -39,11 +39,11 @@ package org.jasig.portal.car;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URLDecoder;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.net.URLDecoder;
 import java.util.Enumeration;
-
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -131,10 +131,12 @@ public class CarResourceWorker implements IWorkerRequestProcessor {
     }
 
     /**
-       Set the content type for the resource being served back. This should
-       be rewritten to use a file for declaring the defaults supported and
-       also allow channels to provide their own override file of types that
-       they wish to support beyond the defaults.
+       Set the content type for the resource being served back. The
+       ServletContext is used to obtain the proper mime-types.
+       New/unknown types are defined in the deployment descriptor of
+       the web application.  In the future, channels could provide
+       their own override file of types that they wish to support
+       beyond the defaults.
      */
     private void setContentType( HttpServletResponse res,
                                  String resourceName )
@@ -142,20 +144,17 @@ public class CarResourceWorker implements IWorkerRequestProcessor {
     {
         resourceName = resourceName.toLowerCase();
         
-        if ( resourceName.endsWith( ".gif" ) )
-            res.setContentType( "image/gif" );
+        ServletContext sc = PortalSessionManager.getInstance().
+            getServletConfig().getServletContext();
         
-        else if (  resourceName.endsWith( ".jpg" ) ||
-                   resourceName.endsWith( ".jpeg" ) ||
-                   resourceName.endsWith( ".jpe" ) )
-            res.setContentType( "image/jpeg" );
+        String mimeType = MimeTypeCache.getMimeType( sc, resourceName );
 
+        if ( null != mimeType )
+            res.setContentType(mimeType);
         else 
             throw new PortalException( "Unsupported resource type" +
                                        " '" + resourceName + "'" );
     }
-
-
 
 
     /**
@@ -166,7 +165,7 @@ public class CarResourceWorker implements IWorkerRequestProcessor {
     {
         // check if the resource name has been passed via the
         // query string parm 'car_rsrc'
-        String resourceName = req.getParameter( CarResources.CAR_RESOURCE_PARM );
+        String resourceName = req.getParameter( resources.CAR_RESOURCE_PARM );
 
         if ( resourceName == null )
         {

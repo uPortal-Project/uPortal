@@ -112,12 +112,7 @@ public class JNDIManager {
 
       // Create a subcontext for portal-wide services, initialize services 
       // Start any portal services configured in services.xml
-      try {
-          ExternalServices.startServices(context.createSubcontext("services"));
-      } catch (Exception ex) {
-        LogService.log(LogService.ERROR, ex);
-        throw new PortalException ("Failed to start external portal services.",ex);
-      }
+      ExternalServices.startServices(context.createSubcontext("services"));
 
       /*
       // Note: this should be moved into a common service init

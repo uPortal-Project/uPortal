@@ -53,7 +53,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.sax.TransformerHandler;
-
+import org.jasig.portal.car.CarResources;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.IUserLayoutNodeDescription;
 import org.jasig.portal.layout.IALFolderDescription;
@@ -867,6 +867,9 @@ public class UserInstance implements HttpSessionBindingListener {
                             } catch (IOException ioe) {
                                 LogService.log(LogService.ERROR, "UserInstance::processWorkerDispatch() : Unable to load worker.properties file. "+ioe);
                             }
+                            // now add in component archive declared workers
+                            CarResources cRes = CarResources.getInstance();
+                            cRes.getWorkers( UserInstance.workerProperties );
                         }
 
                         String dispatchClassName=UserInstance.workerProperties.getProperty(workerName);
@@ -875,7 +878,10 @@ public class UserInstance implements HttpSessionBindingListener {
                         } else {
                             // try to instantiate a worker class
                             try {
-                                Object obj=Class.forName(dispatchClassName).newInstance();
+                                Object obj = CarResources.getInstance()
+                                    .getClassLoader()
+                                    .loadClass( dispatchClassName )
+                                    .newInstance();
                                 IWorkerRequestProcessor wrp=(IWorkerRequestProcessor) obj;
                                 // invoke processor
                                 try {

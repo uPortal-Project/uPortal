@@ -36,6 +36,9 @@
 
 package  org.jasig.portal.services;
 
+import org.jasig.portal.utils.ResourceLoader;
+import org.jasig.portal.car.CarResources;
+import org.jasig.portal.PortalException;
 import java.io.InputStream;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
@@ -46,6 +49,7 @@ import java.util.List;
 import javax.naming.Context;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+import org.xml.sax.ContentHandler;
 
 import org.jasig.portal.utils.ResourceLoader;
 import org.xml.sax.Attributes;
@@ -71,14 +75,51 @@ public class ExternalServices {
     svcHandler = new ServiceHandler();
   }
 
-  public static void startServices(Context servicesContext) throws Exception {
+    public static void startServices(Context servicesContext)
+      throws PortalException
+    {
 
-    InputStream svcDesciptor = ResourceLoader.getResourceAsStream(ExternalServices.class, "/properties/services.xml");
+    InputStream svcDescriptor = null;
 
-    if (svcDesciptor != null) {
+    try
+    {
+        svcDescriptor = ResourceLoader
+            .getResourceAsStream( ExternalServices.class,
+                                  "/properties/services.xml" );
+    }
+    catch (Exception ex)
+    {
+        throw new PortalException ("Failed to load services.xml. External " +
+                                   "portal services will not be started", ex);
+    }
+
+    CarResources cRes = CarResources.getInstance();
+
+    if ( svcDescriptor != null ||
+         cRes.hasDescriptors() )
+    {
       ExternalServices svcMgr = new ExternalServices(servicesContext);
+
+      if ( cRes.hasDescriptors() )
+      {
+          try {
+              cRes.getServices( (ContentHandler) svcMgr.svcHandler );
+          } catch (Exception ex) {
+              throw new PortalException ("Failed to start external portal " +
+                                         "services in CAR descriptors.", ex);
+          }
+      }
+      if ( svcDescriptor != null )
+      {
+          try {
       SAXParser parser = svcMgr.createParser();
-      parser.parse(svcDesciptor, svcMgr.svcHandler);
+              parser.parse(svcDescriptor, svcMgr.svcHandler);
+          } catch (Exception ex) {
+              throw new PortalException ("Failed to start external portal " +
+                                         "services defined in services.xml.",
+                                         ex);
+          }
+      }
     }
   }
 
@@ -122,7 +163,7 @@ public class ExternalServices {
         return Double.TYPE;
       }
     } else {
-     return Class.forName(className);
+     return CarResources.getInstance().getClassLoader().loadClass(className);
     }
     return null;
   }
@@ -284,7 +325,8 @@ public class ExternalServices {
         Class svcClass = null;
 
         try {
-          svcClass   = Class.forName(javaClass);
+          svcClass   = CarResources.getInstance()
+              .getClassLoader().loadClass(javaClass);
           args       = svcItem.getArguments();
           classNames = svcItem.getArgumentClasses();
         } catch (java.lang.ClassNotFoundException cnfe) {

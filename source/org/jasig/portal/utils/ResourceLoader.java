@@ -47,6 +47,7 @@ import java.util.Properties;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.jasig.portal.car.CarResources;
 import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.ResourceMissingException;
 import org.jasig.portal.services.LogService;
@@ -105,6 +106,14 @@ public class ResourceLoader {
     } catch (MalformedURLException murle) {
       // URL is invalid, now try to load from classpath
       resourceURL = requestingClass.getResource(resource);
+
+      if ( resourceURL == null )
+      {
+          // try in a car file
+          resourceURL = CarResources.getInstance()
+              .getClassLoader().getResource( resource );
+      }
+
       if (resourceURL == null) {
         String resourceRelativeToClasspath = null;
         if (resource.startsWith("/"))
