@@ -92,8 +92,9 @@
              the World-Wide Web?</para>
           </question>
           <answer>
-             <para>On the JA-SIG website, located at <ulink
-             url="http://www.mis2.udel.edu/ja-sig/portal.html">http://www.ja-sig.org/</ulink>
+             <para>You can find the FAQ on the JA-SIG website, located
+             at <ulink url="http://www.mis2.udel.edu/ja-sig/portal.html">
+             http://www.ja-sig.org/</ulink>
              You can always find the latest version in the
              <filename>docs/</filename> directory of the
              <productname>uPortal</productname> source code
@@ -157,22 +158,26 @@
              campus?</para>
           </question>
           <answer>
-             <para>In general, over and above basic familiarity with
-             the standard Java Development Kit (JDK) tools, and a
-             fundamental understanding of distributed and
-             client/server computing, you'll need to be familiar with
+
+             <para>In general, over and above a working knowledge of
+             and substantial experience with
+             your chosen application server, the standard Java
+             Development Kit (JDK) tools, and modern client/server
+             computing, you must be familiar with
              a few of the <ulink
              url="http://www.javasoft.com/j2ee/overview.html">J2EE</ulink>
              technologies for enterprise applications. At a
              <emphasis>minimum</emphasis>, you'll have to be
              conversant with:
+
              <itemizedlist mark="bullet">
+
                 <listitem>
-                   <para>XML. XML and XSLT are used extensively in the
-                   <productname>uPortal</productname> framework to
-                   ensure the platform independance of data and to
-                   separate that data from it's presentation. To
-                   deploy <productname>uPortal</productname>, you may
+                   <para>XML. The <productname>uPortal</productname>
+                   framework uses XML and XSLT extensively to ensure
+                   the platform independance of data and to separate 
+                   that data from it's presentation. To deploy 
+                   <productname>uPortal</productname>, you may
                    have to edit XML files, so you'll have to be aware
                    of how to write a valid XML file. </para>
                 </listitem>
@@ -182,7 +187,7 @@
                    applications, because you have to deploy the
                    framework for use in the application server you're
                    using on your campus. If you have experience
-                   configuring and deploying servlets, you'll know
+                   configuring and deploying servlets, you know
                    enough to deploy
                    <productname>uPortal</productname>. </para>
                 </listitem>
@@ -229,14 +234,25 @@
              solutions?</para>
           </question>
           <answer>
-             <para><productname>uPortal</productname> is focused on
-             the requirements of higher education, whereas other
+             <para>The primary differentiator is that
+             <productname>uPortal</productname> is focused on
+             the requirements of higher education institutions, whereas other
              products are mostly focused on the requirements of large
              corporations, even if the resulting product is marketed
              to higher education
-             institutions. <productname>uPortal</productname> is free
-             to Universities, most commercial portal "solutions" cost
-             upwards of $50,000 per year for a typical campus'
+             institutions. <productname>uPortal</productname> is a
+             100% pure Java framework that
+             provides the Java programmers on your staff with the
+             classes, interfaces, XML data files and XSL stylesheets
+             they need to develp a customized portal for your campus. Some portal
+             "solutions" are actually third party packages that a vendor of a
+             non-portal product acquired in order to enter the portal market
+             without doing any R &#38; D. Still other portal
+             "solutions" are services that are free to your campus, but require
+             your campus to accept advertising in exchange for the use of the
+             service. <productname>uPortal</productname> is also
+             available free to universities, most commercial portal
+             "solutions" cost upwards of $50,000 per year for a typical campus'
              license.</para>
           </answer>
        </qandaentry>
@@ -249,11 +265,12 @@
           <answer>
              <para>Yes. The <productname>uPortal</productname>
              framework has an authentication system that explicitly
-             supports the notion of single sign-on, but as yet there
-             aren't a lot of channels that ship with uPortal that take
-             advantage of it. Of course, any campus that wants to
-             write their own channels that will defer to the portal
-             for authentication are certainly able to do so.</para>
+             supports the notion of single sign-on, but as of this
+             writing there are few channels that ship with the framework 
+             that take advantage of it. Of course, any campus that wants to
+             write their own channels that will use the
+             <productname>uPortal</productname> single sign-on capabilities are
+             certainly able to do so.</para>
           </answer>
        </qandaentry>
 
