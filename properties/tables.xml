@@ -30,6 +30,17 @@
     </columns>
     <primary-key>ID</primary-key>    
   </table>
+  
+  <table>
+    <name>UP_CHAN_TYPES</name>
+    <columns>
+      <column><name>NAME</name><type>VARCHAR</type><param>70</param></column>
+      <column><name>CHAN_TYPE</name><type>VARCHAR</type><param>50</param></column>
+      <column><name>DESCR</name><type>LONGVARCHAR</type></column>
+      <column><name>DEF</name><type>LONGVARCHAR</type></column>
+    </columns>
+    <primary-key>NAME</primary-key>    
+  </table>
 
   <table>
     <name>UP_USER_PREFS</name>
