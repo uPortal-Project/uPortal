@@ -10,8 +10,8 @@
     <td>
      <table align="center">
       <tr>
-       <td align="center"><a><xsl:attribute name="href"><xsl:value-of select="$baseActionURL"/>?action=listMessages&amp;page=last</xsl:attribute>Read</a></td>
-       <td align="center"><a><xsl:attribute name="href"><xsl:value-of select="$baseActionURL"/>?action=composeMessage</xsl:attribute>Compose</a></td>
+       <td align="center"><a><xsl:attribute name="href"><xsl:value-of select="$baseActionURL"/>?uP_root=me&amp;action=listMessages&amp;page=last</xsl:attribute>Read</a></td>
+       <td align="center"><a><xsl:attribute name="href"><xsl:value-of select="$baseActionURL"/>?uP_root=me&amp;action=composeMessage</xsl:attribute>Compose</a></td>
        <td align="center"><a><xsl:attribute name="href"><xsl:value-of select="$baseActionURL"/>?action=mailStatus</xsl:attribute>Check</a></td>
       </tr>
      </table>
