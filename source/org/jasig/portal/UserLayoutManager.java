@@ -315,6 +315,11 @@ public class UserLayoutManager {
     return argumentedUserLayoutXML.getElementById (elementID);
   }
 
+  public Node getCleanNode (String elementID)
+  {
+    return uLayoutXML.getElementById (elementID);
+  }
+
   public Node getRoot ()
   {
     return argumentedUserLayoutXML;
@@ -335,6 +340,16 @@ public class UserLayoutManager {
     else
       Logger.log (Logger.ERROR, "UserLayoutManager::minimizeChannel() : unable to find a channel with ID=" + str_ID);
   }
+
+    // helper function that allows to determine the name of a channel or
+    // folder in the current user layout given their ID.
+    public String getNodeName(String nodeID) {
+	Element node=argumentedUserLayoutXML.getElementById(nodeID);
+	if(node!=null) {
+	    return node.getAttribute("name");
+	} else return null;
+    }
+	
 
   public void removeChannel (String str_ID)
   {
