@@ -42,8 +42,8 @@ Version $Revision$
     <xsl:param name="baseActionURL" select="'render.userLayoutRootNode.uP'"/>
     <!--modes: view (default), preferences, fragment-->
     <xsl:variable name="mode" select="/layout/@mode"/>
-    <xsl:variable name="mediaPath">/home/immdca13/workspace/portal/webpages/media/org/jasig/portal/layout/AL_TabColumn/integratedModes</xsl:variable>
-    <!--<xsl:variable name="mediaPath">media/org/jasig/portal/layout/AL_TabColumn/integratedModes</xsl:variable>-->
+    <!-- <xsl:variable name="mediaPath">/home/immdca13/workspace/portal/webpages/media/org/jasig/portal/layout/AL_TabColumn/integratedModes</xsl:variable> -->
+    <xsl:param name="mediaPath">media/org/jasig/portal/layout/AL_TabColumn/integratedModes</xsl:param>
     <xsl:param name="skin" select="'immII'"/>
     <xsl:variable name="mediaPathSkin" select="concat($mediaPath,'/',$skin,'/skin')"/>
     <!--<xsl:variable name="mediaPathBorder" select="concat($mediaPath,'/',$skin)"/>-->
@@ -51,7 +51,10 @@ Version $Revision$
     <xsl:variable name="mediaPathMainBorder" select="concat($mediaPath,'/',$skin,'/mainBorder')"/>
     <xsl:variable name="mediaPathColumnBorder" select="concat($mediaPath,'/',$skin,'/columnBorder')"/>
     <xsl:variable name="mediaPathIcons" select="concat($mediaPath,'/',$skin,'/icons')"/>
-    <xsl:param name="errorMessage" select="'no errorMessage passed'"/>
+    <!-- <xsl:param name="errorMessage" select="'no errorMessage passed'"/> -->
+    <xsl:param name="errorMessage">
+   There are <xsl:value-of select="count(/layout/actions/fragments/fragment)"/> fragments in the current layout XML.
+    </xsl:param>
     <xsl:param name="authenticated" select="'true'"/>
     <xsl:param name="channelManager" select="'false'"/>
     <xsl:param name="userName" select="'Guest'"/>
