@@ -501,8 +501,8 @@ public class StylesheetSet extends SAXFilterImpl
       }
       return "unknown";
     }
-  };
-};
+  }
+}
 
 
 

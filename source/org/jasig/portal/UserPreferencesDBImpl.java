@@ -57,8 +57,7 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
     public UserPreferencesDBImpl() {
         rdbmService = new RdbmServices();
         con=null;
-    };
-
+    }
 
     public UserPreferences getUserPreferences(String userName, String media) {
         UserPreferences up=null;
@@ -110,7 +109,7 @@ public class UserPreferencesDBImpl implements IUserPreferencesDB {
                 stylesheetNames[0]=rs.getString("STRUCTURE_STYLESHEET_NAME");
                 stylesheetNames[1]=rs.getString("THEME_STYLESHEET_NAME");
                 stylesheetNames[2]=rs.getString("CSS_STYLESHEET_NAME");
-            } else { return null; }
+        } else { return null; }
         } catch (Exception e) {
             Logger.log(Logger.ERROR,e);
         } finally {

@@ -30,6 +30,7 @@ public class CoreStylesheetDescription {
     public Enumeration getStylesheetParameterNames() {
 	return parameterTable.keys();
     }
+    
     public String getStylesheetParameterWordDescription(String parameterName) {
 	DescriptionDefaultValuePair pair=(DescriptionDefaultValuePair) parameterTable.get(parameterName);
 	if(pair!=null) return pair.wordDescription;
@@ -54,8 +55,8 @@ public class CoreStylesheetDescription {
     protected class DescriptionDefaultValuePair {
 	public String defaultValue;
 	public String wordDescription;
-    };
-};
+    }
+}
 
 
 

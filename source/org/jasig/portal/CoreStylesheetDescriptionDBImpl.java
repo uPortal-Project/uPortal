@@ -57,7 +57,7 @@ public class CoreStylesheetDescriptionDBImpl implements ICoreStylesheetDescripti
     public CoreStylesheetDescriptionDBImpl() {
         rdbmService = new RdbmServices();
         con=null;
-    };
+    }
 
 
     // functions that allow one to browse available core stylesheets in various ways
@@ -485,7 +485,7 @@ public class CoreStylesheetDescriptionDBImpl implements ICoreStylesheetDescripti
             else name=null;
         }
         if(name!=null) {
-            return this.getTextChildNodeValue(name);;
+            return this.getTextChildNodeValue(name);
         } else { Logger.log(Logger.DEBUG,"CoreStylesheetDescriptionDBImpl::getName() : no \"name\" element was found udner the \"stylesheetdescription\" node!"); return null; }
     }
 
@@ -631,4 +631,4 @@ public class CoreStylesheetDescriptionDBImpl implements ICoreStylesheetDescripti
         return null;
     }
 
-};
+}

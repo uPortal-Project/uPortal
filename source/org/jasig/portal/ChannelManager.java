@@ -90,7 +90,9 @@ public class ChannelManager {
 	pcs.setChannelManager(this);
     }
     
-    public void setUserLayoutManager(UserLayoutManager m) { ulm=m; };
+    public void setUserLayoutManager(UserLayoutManager m) { 
+        ulm=m; 
+    }
     
     public void setReqNRes (HttpServletRequest request, HttpServletResponse response) {
 	this.req = request; 

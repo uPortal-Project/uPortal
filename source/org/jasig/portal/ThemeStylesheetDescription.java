@@ -16,4 +16,4 @@ public class ThemeStylesheetDescription extends CoreXSLTStylesheetDescription {
     public void setStructureStylesheetList(Vector list) {
 	structureStylesheets=list;
     }
-};
+}

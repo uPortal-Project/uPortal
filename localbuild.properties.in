@@ -11,20 +11,20 @@
 #docdest=F:/resin/html/portal-2/docs
 
 # directory for classes that are used by the jsp's
-#dest=F:/resin/classes
+dest=./source
 #dest=F:/resin/html/portal-2/WEB-INF/classes
 
 # Location for properties, stylesheets, etc.
-#upbasedir=F:/resin/data/portal-2
+upbasedir=./properties
 
 
 # points to a place where jsp,html,gif,WEB-INF etc. are copied
-#htmldest=./webpages/
+htmldest=./webpages/
 
 
 # and of course the classpath, comment-out to use your environment CLASSPATH
 #classpath=/usr/local/java/jars/xalan.jar;/usr/local/java/jars/xerces.jar;/usr/local/java/jars/dxml.jar;/usr/local/java/jars/servlet.jar"
-#classpath=%CLASSPATH%:F:/resin/classes
+classpath=%CLASSPATH%:./source
 
 # jspdest used for realclean
 # this is a directory that will simply be deleted when realclean is called
@@ -32,11 +32,11 @@
 #jspdest=F:/resin/work/_jsp/_portal-2
 
 #set database type here eg. hypersonic, oracle, etc.
-#dbtype=hypersonic
+dbtype=hypersonic
 
 # sql properties for running scripts and populating the database
 # comment the dbdriver to suppress sql target
-#dbdriver=org.hsql.jdbcDriver
-#dburl=jdbc:HypersonicSQL:F:/hypersonicsql/demo/portal
-#dblogin=sa
-#dbpass=
+dbdriver=org.hsql.jdbcDriver
+dburl=jdbc:HypersonicSQL:F:/hypersonicsql/demo/portal
+dblogin=sa
+dbpass=

@@ -29,4 +29,4 @@ public interface ICoreStylesheetDescriptionDB {
     public void addThemeStylesheetDescription(String stylesheetDescriptionURI,String stylesheetURI);
     public void addCSSStylesheetDescription(String stylesheetDescriptionURI,String stylesheetURI);
 
-};
+}

@@ -47,5 +47,5 @@ public class StructureStylesheetDescription extends CoreXSLTStylesheetDescriptio
     public void setStylesheetMediaList(Vector list) {
 	mediaList=list;
     }
-
-};
+    
+}

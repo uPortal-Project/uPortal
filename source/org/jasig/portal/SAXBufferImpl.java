@@ -482,7 +482,7 @@ public class SAXBufferImpl implements DocumentHandler, LexicalHandler
 	this.s_systemId=systemId;
     }
 
-    public String getName () { return s_name;; }
+    public String getName () { return s_name; }
     public String getPublicId () { return s_publicId; }
     public String getSystemId () { return s_systemId; }
   }
