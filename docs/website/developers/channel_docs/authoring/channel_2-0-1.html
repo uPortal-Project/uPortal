@@ -13,8 +13,9 @@
            alt="uPortal logo" /></a>
   </p>
   <p class="thetitle">Writing a channel for uPortal 2.0.1</p>
-  <p class="author">by Owen Gunden</p>
-  <p>(updated 6-11-02)</p>
+  <p class="author">Owen Gunden</p>
+  <p class="author">University of Virginia</p>
+  <p>(updated 8-06-02)</p>
   <hr />
   <h1>Index</h1>
   <ul>
@@ -37,6 +38,7 @@
    </li>
    <li><a href="#writejava">Writing the Java class</a>
     <ul>
+     <li><a href="#writejava.import">Import statements</a></li>
      <li><a href="#writejava.class">The class declaration</a></li>
      <li><a href="#writejava.fields">Necessary fields</a></li>
      <li><a href="#writejava.constructor">The constructor</a></li>
@@ -78,7 +80,7 @@
     <span class="example">this color</span>.
    </p>
    <p>
-    I wrote it all by hand, using vim.
+    I wrote it all by hand, using <a href="http://vim.sourceforge.net">vim</a>.
    </p>
    <p>
     Help is always appreciated!  If you find something wrong with this
@@ -137,7 +139,9 @@
     <td>
      This is one way to incorporate an already-written web application.  If you
      are creating a new channel (that you need to be dynamic), however, it is
-     recommended that you write a custom channel.
+     recommended that you write a custom channel.  There is more information
+     about using the web proxy channel type
+     <a href="http://www.mun.ca/cc/portal/cw/">here</a>.
     </td>
     <td> url of the web application </td>
    </tr>
@@ -174,11 +178,13 @@
     with an XSL stylesheet.  You will have to write one or more XSL
     stylesheets, so an understanding of XML and XSLT is absolutely necessary.
     For more information on XML and XSL, I suggest
+       <a href="http://www.amazon.com/exec/obidos/ASIN/1861005946/qid=1024323640/sr=8-2/ref=sr_8_2/103-5801365-5002234">Beginning XSLT</a>
+        by Jeni Tennison (published by WROX Press, 2002), 
        <a href="http://www.oreilly.com/catalog/javaxml2/">Java and XML</a>
-        by Brett McLaughlin,
+        by Brett McLaughlin (O'Reilly &amp; Associates),
     or <a href="http://www.oreilly.com/catalog/xmlnut/">XML in a Nutshell</a>
-        by Elliotte Rusty Harold &amp; W. Scott Means
-    (both published by O'Reilly &amp; Associates).  
+        or by Elliotte Rusty Harold &amp; W. Scott Means
+        (O'Reilly &amp; Associates).
     There is also some good, free information available in Michael Oltz's
     document,
     <a href="http://mis105.mis.udel.edu/ja-sig/uportal/channel_docs/authoring/authoring.html">
@@ -268,6 +274,13 @@
   </p>
      <pre>&lt;uportal-home&gt;/source/&lt;package&gt;/ </pre>
   <p>
+   Note that with the quick-start distribution,
+   <code>&lt;uportal-home&gt;</code> refers to the
+   <code>uPortal_2-0-1-quick-start/uPortal_rel-2-0-1 directory</code>,
+   and with the uPortal-only distribution it refers to the
+   <code>uPortal_rel-2-0-1</code> directory.
+  </p>
+  <p>
    Your stylesheet list is usually named the same as your Java source, except
    instead of having a .java extension it has a .ssl extension.  It goes in:
   </p>
@@ -286,15 +299,37 @@
      <br />
        <pre>
 &lt;uportal-home&gt;/source/edu/virginia/uportal/channels/helloworld/CHelloWorld.java
-&lt;uportal-home&gt;/webpages/stylesheets/edu/virginia/uportal/channels/CHelloWorld.ssl
-&lt;uportal-home&gt;/webpages/stylesheets/edu/virginia/uportal/channels/normal_explorer.xsl
-&lt;uportal-home&gt;/webpages/stylesheets/edu/virginia/uportal/channels/normal_netscape.xsl
-&lt;uportal-home&gt;/webpages/stylesheets/edu/virginia/uportal/channels/about.xsl</pre>
+&lt;uportal-home&gt;/webpages/stylesheets/edu/virginia/uportal/channels/helloworld/CHelloWorld.ssl
+&lt;uportal-home&gt;/webpages/stylesheets/edu/virginia/uportal/channels/helloworld/normal_explorer.xsl
+&lt;uportal-home&gt;/webpages/stylesheets/edu/virginia/uportal/channels/helloworld/normal_netscape.xsl
+&lt;uportal-home&gt;/webpages/stylesheets/edu/virginia/uportal/channels/helloworld/about.xsl</pre>
     </td>
    </tr>
   </table>
 
   <h1><a name="writejava">Writing the Java class</a></h1>
+  <h2><a name="writejava.import">Import statements</a></h2>
+   <p>There are some classes that are used by every channel for the uPortal.
+    You'll need import statements for at least these classes.</p>
+   <table>
+    <tr>
+     <td class="example">
+      <pre>
+// A channel needs these eight classes no matter what:
+import org.jasig.portal.IChannel;
+import org.jasig.portal.ChannelStaticData;
+import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.ChannelRuntimeProperties;
+import org.jasig.portal.PortalEvent;
+import org.jasig.portal.PortalException;
+import org.jasig.portal.utils.XSLT;
+import org.xml.sax.ContentHandler;
+
+// This is only useful if you will be using the LogService (which you should!!):
+import org.jasig.portal.services.LogService;</pre>
+     </td>
+    </tr>
+   </table>
   <h2><a name="writejava.class">The class declaration</a></h2>
    <p>Your class must implement the <code>IChannel</code> interface, so this
     must be in the class declaration.</p>
@@ -313,8 +348,8 @@
     <tr>
      <td class="example">
       <pre>
-ChannelStaticData staticData;
-ChannelRuntimeData runtimeData;</pre>
+private ChannelStaticData staticData;
+private ChannelRuntimeData runtimeData;</pre>
      </td>
     </tr>
    </table>
@@ -337,8 +372,9 @@ private int mode; // whether we're in NORMAL_MODE or ABOUT_MODE</pre>
     <tr>
      <td class="example">
       <pre>
-String name; // the name to say hello to
-String name_prev; // the name that was previously submitted </pre>
+private String name; // the name to say hello to
+private String name_prev; // the name that was previously submitted, to go
+                          // in the text box by default.</pre>
      </td>
     </tr>
    </table>
@@ -451,8 +487,7 @@ String name_prev; // the name that was previously submitted </pre>
       <tr>
        <td class="example">
         In CHelloWorld, we will be responding to ABOUT_BUTTON_EVENT by
-        switching to ABOUT_MODE.  If we receive any other events, we log
-        an unknown event.
+        switching to ABOUT_MODE.  
         <pre>
   /** 
    *  Process layout-level events coming from the portal.
@@ -461,13 +496,8 @@ String name_prev; // the name that was previously submitted </pre>
    *  @param PortalEvent ev a portal layout event
    */
   public void receiveEvent(PortalEvent ev) {
-      switch (ev.getEventNumber()) {
-          case PortalEvent.ABOUT_BUTTON_EVENT:
-              mode = ABOUT_MODE;
-          default:
-              LogService.instance().log(
-                      LogService.WARN,
-                      "Unknown event: " + ev.getEventName());
+      if (ev.getEventNumber() == PortalEvent.ABOUT_BUTTON_EVENT) {
+          mode = ABOUT_MODE;
       }
   }</pre>
        </td>
@@ -667,6 +697,7 @@ String name_prev; // the name that was previously submitted </pre>
    <p>See the section <a href="#overview.need">What you need to know</a> for
     information on where to learn more about XML/XSLT.</p>
    <table>
+    <tr> <td><pre>about.xsl</pre></td> </tr>
     <tr>
      <td class="example">
       <pre>
@@ -689,6 +720,7 @@ String name_prev; // the name that was previously submitted </pre>
 &lt;/xsl:stylesheet&gt;</pre>
      </td>
     </tr>
+    <tr> <td><pre>normal_explorer.xsl</pre></td> </tr>
     <tr>
      <td class="example">
       <pre>
@@ -722,6 +754,7 @@ String name_prev; // the name that was previously submitted </pre>
 &lt;/xsl:stylesheet&gt;</pre>
      </td>
     </tr>
+    <tr> <td><pre>normal_netscape.xsl</pre></td> </tr>
     <tr>
      <td class="example">
       <pre>
@@ -791,7 +824,7 @@ INSERT INTO up_group_membership VALUES (14, 501, 'F')</pre>
        <li>Fill out all the General Settings.  Under <b>Channel Class</b>
         answer "edu.virginia.uportal.channels.helloworld.CHelloWorld"</li>
        <li>When asked to <b>Add Parameters</b>, simply click "Next &gt;"</li>
-       <li>Under <b>Channel Controls</b>, check the box next to <b>Has Help</b>
+       <li>Under <b>Channel Controls</b>, check the box next to <b>Has About</b>
         </li>
        <li>Add the channel to at least one category</li>
        <li>Add the channel to the "Everyone" group</li>
