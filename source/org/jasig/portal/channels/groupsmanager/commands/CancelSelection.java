@@ -36,14 +36,6 @@
 
 package  org.jasig.portal.channels.groupsmanager.commands;
 
-/**
- * <p>Title: uPortal</p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: Columbia University</p>
- * @author Don Fracapane
- * @version 2.0
- */
 import  org.jasig.portal.*;
 import  org.jasig.portal.channels.groupsmanager.*;
 import  org.w3c.dom.Element;
@@ -58,17 +50,16 @@ import  org.w3c.dom.Document;
  *  group members are actually processed. Alternatively, the CancelSelection
  *  command is invoked to cancel the selection process and reset the mode and
  *  view control parameters.
+ * @author Don Fracapane
+ * @version $Revision$
  */
 public class CancelSelection extends GroupsManagerCommand {
 
-   /**
-    * put your documentation comment here
-    */
    public CancelSelection () {
    }
 
    /**
-    * put your documentation comment here
+    * This is the public method
     * @throws Exception
     * @param sessionData
     */
@@ -96,6 +87,3 @@ public class CancelSelection extends GroupsManagerCommand {
       }
    }
 }
-
-
-

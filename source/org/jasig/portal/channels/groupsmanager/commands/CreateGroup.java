@@ -36,14 +36,6 @@
 
 package  org.jasig.portal.channels.groupsmanager.commands;
 
-/**
- * <p>Title: uPortal</p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: Columbia University</p>
- * @author Don Fracapane
- * @version 2.0
- */
 import  java.util.*;
 import  org.jasig.portal.*;
 import  org.jasig.portal.channels.groupsmanager.*;
@@ -59,22 +51,20 @@ import  javax.xml.parsers.*;
 /**
  * We will only be creating groups. We do not create entities. Once we create
  * the new group, it will be added to a parent and default permissions will
- * be assigned. The parent can be either an IEntityGroup or the collection of
- * IInitialGroupContext depending upon the value of the parent element id (0
- * indicates the new group is being set as an Initial Group Context.
- * If the parent is an IEntityGroup, all of the xml  nodes for the parent group
+ * be assigned.
+ * All of the xml  nodes for the parent group
  * will be found and if the node is expanded, the new child node will be added.
- * If the new group is an IInitialGroupContext, a new reference to the new
- * IGroupMember will be written to the IInitialGroupContextStore.
+ * @author Don Fracapane
+ * @version $Revision$
  */
-public class CreateGroup extends GroupsManagerCommand {
+ public class CreateGroup extends GroupsManagerCommand {
 
    /** Creates new CreateGroup */
    public CreateGroup () {
    }
 
    /**
-    * The execute() method is the main method for the CreateMember command.
+    * This is the public method
     * @throws Exception
     * @param sessionData
     */
@@ -86,7 +76,6 @@ public class CreateGroup extends GroupsManagerCommand {
       Document model = getXmlDoc(sessionData);
       String theCommand = runtimeData.getParameter("grpCommand");
       String parentID = getCommandArg(runtimeData);
-      boolean parentIsInitialGroupContext = parentIsInitialGroupContext(parentID);
       String newGrpName = runtimeData.getParameter("grpNewName");
       Utility.logMessage("DEBUG", "CreateGroup::execute(): New grp: " + newGrpName +
             " will be added to parent element = " + parentID);
@@ -104,53 +93,34 @@ public class CreateGroup extends GroupsManagerCommand {
       }
       Utility.logMessage("DEBUG", "CreateGroup::execute(): Parent element was found!");
 
-      // The parent could be an IGroupMember or an IInitialGroupContext.
-      if (!parentIsInitialGroupContext) {
-         parentGroup = GroupsManagerXML.retrieveGroup(parentKey);
-         if (parentGroup == null) {
-            retMsg = "Unable to retrieve Parent Entity Group!";
-            sessionData.feedback = retMsg;
-            return;
-         }
-         else {
-            parentEntityType = parentGroup.getLeafType();
-         }
+      parentGroup = GroupsManagerXML.retrieveGroup(parentKey);
+      if (parentGroup == null) {
+         retMsg = "Unable to retrieve Parent Entity Group!";
+         sessionData.feedback = retMsg;
+         return;
       }
       else {
-         /** @todo A list will be presented to the user who will select the type
-          *  of group to create */
-         parentEntityType = Class.forName((String) GroupsManagerXML.getEntityTypes().get("IPerson"));
+         parentEntityType = parentGroup.getLeafType();
       }
+      parentEntityType = (Class) GroupsManagerXML.getEntityTypes().get("Person");
       Utility.logMessage("DEBUG", "CreateGroup::execute(): About to create new group: "
-            + newGrpName);
-      // Next line creates a group that will hold iEntities
+            + newGrpName + " Type: " + parentEntityType.getName());
       String userID = getUserID(sessionData);
       IEntityGroup childEntGrp = GroupService.newGroup(parentEntityType);
       childEntGrp.setName(newGrpName);
       childEntGrp.setCreatorID(userID);
       childEntGrp.update();
       Utility.logMessage("DEBUG", "CreateGroup::execute(): About to add new group: "
-            + newGrpName);
-      if (parentIsInitialGroupContext) {
-         IInitialGroupContext igc = Utility.createInitialGroupContext(userID, "p",
-               childEntGrp.getKey(), 1, false, null);
-         igc.update();
-         Node parentNode = (Node)parentElem;
-         Element childElem = GroupsManagerXML.getGroupMemberXml((IGroupMember)childEntGrp,
-               false, null, model);
-         parentNode.appendChild((Node)childElem);
-      }
-      else {
-         parentGroup.addMember((IGroupMember)childEntGrp);
-         parentGroup.updateMembers();
-         parentNodes = GroupsManagerXML.getNodesByTagNameAndKey(model, GROUP_TAGNAME, parentKey);
-         // add new group to all parent group xml nodes
-         while (parentNodes.hasNext()) {
-            Element parentNode = (Element)parentNodes.next();
-            GroupsManagerXML.getGroupMemberXml((IGroupMember)parentGroup, true, parentNode,
-                  model);
-            ((Element)parentNode).setAttribute("hasMembers", "true");
-         }
+         + newGrpName);
+      parentGroup.addMember((IGroupMember)childEntGrp);
+      parentGroup.updateMembers();
+      parentNodes = GroupsManagerXML.getNodesByTagNameAndKey(model, GROUP_TAGNAME, parentKey);
+      // add new group to all parent group xml nodes
+      while (parentNodes.hasNext()) {
+         Element parentNode = (Element)parentNodes.next();
+         GroupsManagerXML.getGroupMemberXml((IGroupMember)parentGroup, true, parentNode,
+               model);
+         ((Element)parentNode).setAttribute("hasMembers", "true");
       }
 
       /** Grant all permissions for the new group to the creator */

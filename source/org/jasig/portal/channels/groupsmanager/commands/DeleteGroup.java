@@ -35,43 +35,29 @@
 
 package  org.jasig.portal.channels.groupsmanager.commands;
 
-/**
- * <p>Title: uPortal</p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: Columbia University</p>
- * @author Don Fracapane
- * @version 2.0
- */
 import  java.util.*;
 import  org.jasig.portal.*;
 import  org.jasig.portal.channels.groupsmanager.*;
 import  org.jasig.portal.groups.*;
-import  org.jasig.portal.services.*;
-import  org.jasig.portal.security.*;
 import  org.w3c.dom.Element;
 import  org.w3c.dom.Node;
 import  org.w3c.dom.NodeList;
 import  org.w3c.dom.Document;
 
 /**
- * This command deletes an IEntityGroup and removes all of it's associations to
- * IEntityGroups and IInitialGroupContexts. It then gathers all of the xml
+ * This command deletes an IEntityGroup and removes all of it's associations.
+ * It then gathers all of the xml
  * nodes for the parent group and removes the child node of the removed member.
- * Removing an IGroupMember from an IInitialGroupContext means deleting
- * the reference to the IGroupMember in the IInitialGroupContextStore.
-
+ * @author Don Fracapane
+ * @version $Revision$
  */
 public class DeleteGroup extends GroupsManagerCommand {
 
-   /**
-    * put your documentation comment here
-    */
    public DeleteGroup () {
    }
 
    /**
-    * put your documentation comment here
+    * This is the public method
     * @throws Exception
     * @param sessionData
     */
@@ -122,18 +108,10 @@ public class DeleteGroup extends GroupsManagerCommand {
          while (deletedNodes.hasNext()) {
             deletedNode = (Node)deletedNodes.next();
             parentNode = deletedNode.getParentNode();
-            boolean parentIsInitialGroupContext = parentIsInitialGroupContext(((Element)parentNode).getAttribute("id"));
-            if (parentIsInitialGroupContext) {
-               IInitialGroupContext igc = RDBMInitialGroupContextStore.singleton().find(userID, delKey);
-               RDBMInitialGroupContextStore.singleton().delete(igc);
-               hasMbrs = "true";
-            }
-            else {
-               String nodeKey = ((Element)parentNode).getAttribute("key");
-               if (parentEntGrp == null || !parentEntGrp.getKey().equals(nodeKey)) {
-                  parentEntGrp = GroupsManagerXML.retrieveGroup(nodeKey);
-                  hasMbrs = String.valueOf(parentEntGrp.hasMembers());
-               }
+            String nodeKey = ((Element)parentNode).getAttribute("key");
+            if (parentEntGrp == null || !parentEntGrp.getKey().equals(nodeKey)) {
+               parentEntGrp = GroupsManagerXML.retrieveGroup(nodeKey);
+               hasMbrs = String.valueOf(parentEntGrp.hasMembers());
             }
             parentNode.removeChild(deletedNode);
             ((Element)parentNode).setAttribute("hasMembers", hasMbrs);
@@ -159,41 +137,4 @@ public class DeleteGroup extends GroupsManagerCommand {
       }
       Utility.logMessage("DEBUG", "DeleteGroup::execute(): Finished");
    }
-
-   /**
-    * Removes all of the permissions for a GroupMember. We need to get permissions
-    * for the group as a principal and as a target. I am merging the 2 arrays into a
-    * single array in order to use the transaction management in the RDBMPermissionsImpl.
-    * If an exception is generated, I do not delete the group or anything else.
-    * Possible Exceptions: AuthorizationException and GroupsException
-    * @param grpMbr
-    * @throws ChainedException
-    */
-   public static void deletePermissions (IGroupMember grpMbr) throws ChainedException{
-      try {
-         String grpKey = grpMbr.getKey();
-         // first we retrieve all permissions for which the group is the principal
-         IAuthorizationPrincipal iap = AuthorizationService.instance().newPrincipal(grpMbr);
-         IPermission[] perms1 = iap.getPermissions();
-
-         // next we retrieve all permissions for which the group is the target
-         IUpdatingPermissionManager upm = AuthorizationService.instance().newUpdatingPermissionManager(OWNER);
-         IPermission[] perms2 = upm.getPermissions(null, grpKey);
-
-         // merge the permissions
-         IPermission[] allPerms = new IPermission[perms1.length + perms2.length];
-         System.arraycopy(perms1,0,allPerms,0,perms1.length);
-         System.arraycopy(perms2,0,allPerms,perms1.length,perms2.length);
-
-         upm.removePermissions(allPerms);
-      }
-      catch (Exception e) {
-         String errMsg = "DeleteGroup::deletePermissions(): Error removing permissions for " + grpMbr;
-         Utility.logMessage("ERROR", errMsg);
-         throw new ChainedException(errMsg, e);
-      }
-   }
 }
-
-
-

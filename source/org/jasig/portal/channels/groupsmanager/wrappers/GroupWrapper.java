@@ -33,17 +33,8 @@
  *
  */
 
-
 package  org.jasig.portal.channels.groupsmanager.wrappers;
 
-/**
- * <p>Title: uPortal</p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: Columbia University</p>
- * @author Don Fracapane
- * @version 2.0
- */
 import  org.jasig.portal.channels.groupsmanager.*;
 import  org.jasig.portal.groups.*;
 import  org.w3c.dom.Element;
@@ -53,6 +44,8 @@ import  org.w3c.dom.Document;
 
 /**
  * Returns an xml element for a given IEntityGroup or IEntityGroup key.
+ * @author Don Fracapane
+ * @version $Revision$
  */
 public class GroupWrapper extends GroupMemberWrapper {
 
@@ -76,13 +69,18 @@ public class GroupWrapper extends GroupMemberWrapper {
       try {
          Utility.logMessage("DEBUG", "GroupWrapper::getXml(): IEntityGroup: " + gm);
          String uid = rootElem.getAttribute("id");
-         if (uid == null || uid.equals("")) {
+         if (Utility.areEqual(uid, "")) {
             nextID = GroupsManagerXML.getNextUid();
             rootElem.setAttribute("id", nextID);
          }
          rootElem.setAttribute("key", gm.getKey());
          rootElem.setAttribute("entityType",gm.getLeafType().getName());
          rootElem.setAttribute("type", gm.getType().getName());
+         /** @todo uncomment next line when IEntityGroup answers isEditable()
+          *  Have to make sure that the root groups are always set to "false".
+          *  The default value is true (i.e. if attibute is not set.*/
+         //rootElem.setAttribute("editable", String.valueOf(gm.isEditable()));
+         //rootElem.setAttribute("editable", "true");
          boolean hasMems = gm.hasMembers();
          Utility.logMessage("DEBUG", "GroupWrapper::getXml(): gm.hasMembers(): " + hasMems);
          if (!hasMems) {
@@ -196,35 +194,4 @@ public class GroupWrapper extends GroupMemberWrapper {
       }
       return  anElem;
    }
-
-   /**
-    * Answers whether the group element has all required attributes set. This will
-    * be used to determine if the EntityGroup will have to be retrieved in order to
-    * populate the element with all required attributes. The only attribute that has
-    * to be set from the EntityGroup is hasMembers. The others are can have default
-    * values or values assigned without respect to the EntityGroup (eg. "id"). This
-    * test will fail if we are using a cached element because the id attribute is
-    * not set in the cached element.
-    * @param anElem
-    * @return boolean
-    */
-   protected boolean isElementFullyFormed (Element anElem) {
-      Utility.logMessage("DEBUG", "GroupWrapper::isElementFullyFormed(): START, ELEM: " + anElem);
-      //check if element is null
-      boolean isGood = (anElem != null);
-      //check for required attributes
-      if (isGood) {
-         isGood = (anElem.hasAttribute("hasMembers") && anElem.hasAttribute("id") && anElem.hasAttribute("key") && anElem.hasAttribute("expanded") && anElem.hasAttribute("selected"));
-      }
-      //check for presence of rdf element
-      if (isGood) {
-         NodeList nList = anElem.getElementsByTagName("rdf:RDF");
-         isGood = (nList.getLength() != 0);
-      }
-      Utility.logMessage("DEBUG", "GroupWrapper::isElementFullyFormed(): RETVAL: " + isGood);
-      return  isGood;
-   }
 }
-
-
-

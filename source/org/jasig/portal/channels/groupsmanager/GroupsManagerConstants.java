@@ -35,20 +35,14 @@
 
 package  org.jasig.portal.channels.groupsmanager;
 
-/**
- * <p>Title: uPortal</p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: Columbia University</p>
- * @author Don Fracapane
- * @version 2.0
- */
 import  java.util.*;
 import  java.lang.*;
 
 /**
  * An interface that holds global variables uses to externalize settings from
  * the classes that use them.
+ * @author Don Fracapane
+ * @version $Revision$
  */
 public interface GroupsManagerConstants {
    // some of these constants might be in the properties files
@@ -65,13 +59,10 @@ public interface GroupsManagerConstants {
 
    // ROOT_GROUP_TITLE is the name of the root element holding the initial group
    // contexts in the groups management channel
-   String ROOT_GROUP_TITLE = "My Groups";
-   String ROOT_GROUP_DESCRIPTION = "Set of Initial Group Contexts for this user";
+   String ROOT_GROUP_TITLE = "Root Groups";
+   String ROOT_GROUP_DESCRIPTION = "Set of Entity Types that have a root group.";
 
    String BROWSE_MODE = "browse";
    String EDIT_MODE = "edit";
    String SELECT_MODE = "select";
 }
-
-
-

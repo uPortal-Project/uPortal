@@ -33,17 +33,8 @@
  *
  */
 
-
 package  org.jasig.portal.channels.groupsmanager.commands;
 
-/**
- * <p>Title: uPortal</p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: Columbia University</p>
- * @author Don Fracapane
- * @version 2.0
- */
 import  java.util.*;
 import  org.jasig.portal.*;
 import  org.jasig.portal.channels.groupsmanager.*;
@@ -56,6 +47,8 @@ import  org.w3c.dom.Document;
  * retrieve the group members and created the elements. This command then sets
  * the expanded attribute for an element to "true" and lets the transformation
  * handle the tree expansion display.
+ * @author Don Fracapane
+ * @version $Revision$
  */
 
 public class ExpandGroup extends org.jasig.portal.channels.groupsmanager.commands.GroupsManagerCommand {
@@ -65,7 +58,7 @@ public class ExpandGroup extends org.jasig.portal.channels.groupsmanager.command
    }
 
    /**
-    * put your documentation comment here
+    * This is the public method
     * @throws Exception
     * @param sessionData
     */
@@ -93,6 +86,3 @@ public class ExpandGroup extends org.jasig.portal.channels.groupsmanager.command
       }
    }
 }
-
-
-

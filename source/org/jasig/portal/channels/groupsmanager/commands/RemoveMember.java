@@ -35,14 +35,6 @@
 
 package  org.jasig.portal.channels.groupsmanager.commands;
 
-/**
- * <p>Title: uPortal</p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: Columbia University</p>
- * @author Don Fracapane
- * @version 2.0
- */
 import  java.util.*;
 import  org.jasig.portal.*;
 import  org.jasig.portal.channels.groupsmanager.*;
@@ -52,13 +44,12 @@ import  org.w3c.dom.Node;
 import  org.w3c.dom.NodeList;
 import  org.w3c.dom.Document;
 
-
 /**
- * This command removes the association of a member element to either an
- * IEntityGroup or an IInitialGroupContext. It then gathers all of the xml
- * nodes for the parent group and removes the child node of the removed member.
- * Removing an IGroupMember from an IInitialGroupContext means deleting
- * the reference to the IGroupMember in the IInitialGroupContextStore.
+ * This command removes the association of a member element to an IEntityGroup
+ * It then gathers all of the xml nodes for the parent group and removes the child
+ * node of the removed member.
+ * @author Don Fracapane
+ * @version $Revision$
  */
 public class RemoveMember extends GroupsManagerCommand {
 
@@ -67,7 +58,7 @@ public class RemoveMember extends GroupsManagerCommand {
    }
 
    /**
-    * The execute() method is the main method for the RemoveMember command.
+    * This is the public method
     * @throws Exception
     * @param sessionData
     */
@@ -102,22 +93,11 @@ public class RemoveMember extends GroupsManagerCommand {
       }
       // The child will always be an IGroupMember
       childGm = GroupsManagerXML.retrieveGroupMemberForElementId(model, childID);
-      // The parent could be an IGroupMember or an IInitialGroupContext.
-      if (parentIsInitialGroupContext(parentID)) {
-         // Put method in GroupsManagerXML and change render method to use it
-         IInitialGroupContext igc = RDBMInitialGroupContextStore.singleton().find(userID,
-               childElem.getAttribute("key"));
-         RDBMInitialGroupContextStore.singleton().delete(igc);
-         hasMbrs = "true";
-      }
-      else {
-         // check for null
-         parentGroup = (Object)GroupsManagerXML.retrieveGroupMemberForElementId(model,
-               parentID);
-         removeChildFromGroup(parentGroup, childGm);
-         hasMbrs = String.valueOf(((IEntityGroup)parentGroup).hasMembers());
-         Utility.logMessage("DEBUG", "RemoveMember::execute(): Got the parent group ");
-      }
+      parentGroup = (Object)GroupsManagerXML.retrieveGroupMemberForElementId(model,
+            parentID);
+      removeChildFromGroup(parentGroup, childGm);
+      hasMbrs = String.valueOf(((IEntityGroup)parentGroup).hasMembers());
+      Utility.logMessage("DEBUG", "RemoveMember::execute(): Got the parent group ");
       Utility.logMessage("DEBUG", "RemoveMember::execute(): about to remove child elements");
       Iterator parentNodes = GroupsManagerXML.getNodesByTagNameAndKey(model, GROUP_TAGNAME,
             parentElem.getAttribute("key"));
@@ -144,11 +124,9 @@ public class RemoveMember extends GroupsManagerCommand {
     * @param childGm
     * @exception ChainedException
     */
-   public void removeChildFromGroup (Object parentGroup, IGroupMember childGm) throws ChainedException {
+   private void removeChildFromGroup (Object parentGroup, IGroupMember childGm) throws ChainedException {
       Utility.logMessage("DEBUG", "RemoveMember::removeChildrenFromGroup(): about to remove child");
       if (parentGroup != null && childGm != null) {
-         // parentEntGrp can be an EntityGroup or an InitialGroupContext
-         // SHOULD WRAPPER HANDLE THIS
          try {
             ((IEntityGroup)parentGroup).removeMember(childGm);
             ((IEntityGroup)parentGroup).updateMembers();
@@ -164,4 +142,3 @@ public class RemoveMember extends GroupsManagerCommand {
       }
    }
 }
-

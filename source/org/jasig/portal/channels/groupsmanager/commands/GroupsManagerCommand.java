@@ -33,30 +33,24 @@
  *
  */
 
-
 package  org.jasig.portal.channels.groupsmanager.commands;
 
-/**
- * <p>Title: uPortal</p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: Columbia University</p>
- * @author Don Fracapane
- * @version 2.0
- */
 import  java.util.*;
 import  org.jasig.portal.*;
 import  org.jasig.portal.channels.groupsmanager.*;
 import  org.jasig.portal.groups.*;
+import  org.jasig.portal.security.*;
+import  org.jasig.portal.services.*;
 import  org.w3c.dom.Document;
 import  org.w3c.dom.Node;
 import  org.w3c.dom.NodeList;
 import  org.w3c.dom.Element;
 import  org.w3c.dom.Text;
 
-
 /**
- * put your documentation comment here
+ * This class is the parent class of all other command classes.
+ * @author Don Fracapane
+ * @version $Revision$
  */
 public abstract class GroupsManagerCommand
       implements IGroupsManagerCommand, GroupsManagerConstants {
@@ -69,117 +63,17 @@ public abstract class GroupsManagerCommand
    }
 
    /**
-    * put your documentation comment here
+    * This is the public method
     * @param sessionData
+    * @throws Exception
     */
    public void execute (CGroupsManagerSessionData sessionData) throws Exception{}
 
    /**
-    * Returns the grpCommand parameter from runtimeData
-    * @param runtimeData
-    * @return String
-    */
-   public String getCommand (org.jasig.portal.ChannelRuntimeData runtimeData) {
-      return  (String)runtimeData.getParameter("grpCommand");
-   }
-
-   /**
-    * Returns the userID from the user object
-    * @param runtimeData
-    * @return String
-    */
-   public String getUserID (CGroupsManagerSessionData sessionData) {
-      return  String.valueOf(sessionData.user.getID());
-   }
-
-
-   /**
-    * Returns the grpCommandIds parameter from runtimeData. The string usually
-    * hold one element ID but could contain a string of delimited ids. (See
-    * RemoveMember command).
-    * @param runtimeData
-    * @return String
-    */
-   public String getCommandArg (org.jasig.portal.ChannelRuntimeData runtimeData) {
-      return  (String)runtimeData.getParameter("grpCommandArg");
-   }
-
-   /**
-    * Set the CommandArg value, useful for commands which would like to chain
-    * other commands
-    * @param runtimeData
-    * @return String
-    */
-   public void setCommandArg (org.jasig.portal.ChannelRuntimeData runtimeData, String arg) {
-      runtimeData.setParameter("grpCommandArg",arg);
-   }
-
-   /**
-    * Returns the groupParentId parameter from staticData
-    * @param staticData
-    * @return String
-    */
-   public String getParentId (ChannelStaticData staticData) {
-      return  staticData.getParameter("groupParentId");
-   }
-
-   /**
-    * Returns the cached xml document from staticData
-    * @param staticData
-    * @return Document
-    */
-   public Document getXmlDoc (CGroupsManagerSessionData sessionData) {
-      //return  (Document)staticData.get("xmlDoc");sessionData.model
-      return  sessionData.model;
-   }
-
-   /**
-    * Answers if the parentGroupId has been set. If it has not been set, this
-    * would indicate that Groups Manager is in Servant mode.
-    * @param staticData
-    * @return boolean
-    */
-   public boolean hasParentId (ChannelStaticData staticData) {
-      String pk = getParentId(staticData);
-      if (pk == null) {
-         return  false;
-      }
-      if (pk.equals("")) {
-         return  false;
-      }
-      Utility.logMessage("Debug", "GroupsManagerCommand::hasParentId: Value is set to default: "
-            + pk);
-      return  true;
-   }
-
-   /**
-    * The method answers if the parent is an InitialGroupContext.
-    * Some functions operate on a colletion of selected item. In this case,
-    * the command that starts the function sets the parent element at the
-    * start. After selection is completed, the function operates on the
-    * collection on behalf of the parent. This is best illustrated by looking
-    * at the AddMembers command and the DoneWithSelection command.
-    * @param staticData
-    * @return boolean
-    */
-   public boolean parentIsInitialGroupContext (ChannelStaticData staticData) {
-      return  ((hasParentId(staticData) && getParentId(staticData).equals("0")));
-   }
-
-   /**
-    * The method answers if the parent is an InitialGroupContext.
-    * @param parentID
-    * @return boolean
-    */
-   public boolean parentIsInitialGroupContext (String parentID) {
-      return  (Utility.areEqual(parentID, "0"));
-   }
-
-   /**
     * clear out the selection list
-    * @param staticData
+    * @param sessionData
     */
-   public void clearSelected (CGroupsManagerSessionData sessionData) {
+   protected void clearSelected (CGroupsManagerSessionData sessionData) {
       ChannelStaticData staticData = sessionData.staticData;
       Element rootElem = getXmlDoc(sessionData).getDocumentElement();
       NodeList nGroupList = rootElem.getElementsByTagName(GROUP_TAGNAME);
@@ -196,4 +90,116 @@ public abstract class GroupsManagerCommand
       }
       return;
    }
+
+   /**
+    * Removes all of the permissions for a GroupMember. We need to get permissions
+    * for the group as a principal and as a target. I am merging the 2 arrays into a
+    * single array in order to use the transaction management in the RDBMPermissionsImpl.
+    * If an exception is generated, I do not delete the group or anything else.
+    * Possible Exceptions: AuthorizationException and GroupsException
+    * @param grpMbr
+    * @throws ChainedException
+    */
+   protected void deletePermissions (IGroupMember grpMbr) throws ChainedException{
+      try {
+         String grpKey = grpMbr.getKey();
+         // first we retrieve all permissions for which the group is the principal
+         IAuthorizationPrincipal iap = AuthorizationService.instance().newPrincipal(grpMbr);
+         IPermission[] perms1 = iap.getPermissions();
+
+         // next we retrieve all permissions for which the group is the target
+         IUpdatingPermissionManager upm = AuthorizationService.instance().newUpdatingPermissionManager(OWNER);
+         IPermission[] perms2 = upm.getPermissions(null, grpKey);
+
+         // merge the permissions
+         IPermission[] allPerms = new IPermission[perms1.length + perms2.length];
+         System.arraycopy(perms1,0,allPerms,0,perms1.length);
+         System.arraycopy(perms2,0,allPerms,perms1.length,perms2.length);
+
+         upm.removePermissions(allPerms);
+      }
+      catch (Exception e) {
+         String errMsg = "DeleteGroup::deletePermissions(): Error removing permissions for " + grpMbr;
+         Utility.logMessage("ERROR", errMsg);
+         throw new ChainedException(errMsg, e);
+      }
+   }
+
+   /**
+    * Answers if the parentGroupId has been set. If it has not been set, this
+    * would indicate that Groups Manager is in Servant mode.
+    * @param staticData
+    * @return boolean
+    */
+   protected boolean hasParentId (ChannelStaticData staticData) {
+      String pk = getParentId(staticData);
+      if (pk == null) {
+         return  false;
+      }
+      if (pk.equals("")) {
+         return  false;
+      }
+      Utility.logMessage("Debug", "GroupsManagerCommand::hasParentId: Value is set to default: "
+            + pk);
+      return  true;
+   }
+
+   /**
+    * Returns the grpCommand parameter from runtimeData
+    * @param runtimeData
+    * @return String
+    */
+   protected String getCommand (org.jasig.portal.ChannelRuntimeData runtimeData) {
+      return  (String)runtimeData.getParameter("grpCommand");
+   }
+
+   /**
+    * Returns the grpCommandIds parameter from runtimeData. The string usually
+    * hold one element ID but could contain a string of delimited ids. (See
+    * RemoveMember command).
+    * @param runtimeData
+    * @return String
+    */
+   protected String getCommandArg (org.jasig.portal.ChannelRuntimeData runtimeData) {
+      return  (String)runtimeData.getParameter("grpCommandArg");
+   }
+
+   /**
+    * Returns the groupParentId parameter from staticData
+    * @param staticData
+    * @return String
+    */
+   protected String getParentId (ChannelStaticData staticData) {
+      return  staticData.getParameter("groupParentId");
+   }
+
+   /**
+    * Returns the userID from the user object
+    * @param sessionData
+    * @return String
+    */
+   protected String getUserID (CGroupsManagerSessionData sessionData) {
+      return  String.valueOf(sessionData.user.getID());
+   }
+
+   /**
+    * Returns the cached xml document from staticData
+    * @param sessionData
+    * @return Document
+    */
+   protected Document getXmlDoc (CGroupsManagerSessionData sessionData) {
+      //return  (Document)staticData.get("xmlDoc");sessionData.model
+      return  sessionData.model;
+   }
+
+   /**
+    * Set the CommandArg value, useful for commands which would like to chain
+    * other commands
+    * @param runtimeData
+    * @param arg String
+    */
+   protected void setCommandArg (org.jasig.portal.ChannelRuntimeData runtimeData, String arg) {
+      runtimeData.setParameter("grpCommandArg",arg);
+   }
+
 }

@@ -35,22 +35,16 @@
 
 package  org.jasig.portal.channels.groupsmanager;
 
-
 /**
- * <p>Title: uPortal</p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: Columbia University</p>
+ * Allows a new exception to be generated which could have a more human
+ * readable message, without losing the original exception or its stack trace.
+ * This class will be replaced by Exception in JDK 1.4 which will be a
+ * chained exception.
  * @author Don Fracapane
- * @version 2.0
+ * @version $Revision$
  */
+
 public class ChainedException extends Exception {
-   /**
-    * Allows a new exception to be generated which could have a more human
-    * readable message, without losing the original exception or its stack trace.
-    * This class will be replaced by Exception in JDK 1.4 which will be a
-    * chained exception.
-    */
    private Throwable cause = null;
 
    /**

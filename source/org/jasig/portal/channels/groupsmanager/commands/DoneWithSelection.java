@@ -35,14 +35,6 @@
 
 package  org.jasig.portal.channels.groupsmanager.commands;
 
-/**
- * <p>Title: uPortal</p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: Columbia University</p>
- * @author Don Fracapane
- * @version 2.0
- */
 import  java.util.*;
 import  org.jasig.portal.*;
 import  org.jasig.portal.channels.groupsmanager.*;
@@ -55,7 +47,6 @@ import  org.w3c.dom.NodeList;
 import  org.w3c.dom.Element;
 import  org.w3c.dom.Text;
 
-
 /** A select cycle could be started in Servant mode or it could be started by
  *  the AddMembers command. The AddMembers command sets the id of the parent
  *  group (ie. the group to which child  members will be added). Control is then
@@ -67,9 +58,8 @@ import  org.w3c.dom.Text;
  *  If in Servant mode, the collection is simply returned to the master channel.
  *  Alternatively, the CancelSelection command have been invoked by the user to
  *  cancel the selection process and reset the mode and view control parameters.
- */
-/** @todo LOOK FOR COMMON FUNCTIONALITY AGAIN AND SPLIT OUT
- *  IE ID => ELEMENT => GROUPMEMBER (EITHER ENTITY OR GROUP)
+ * @author Don Fracapane
+ * @version $Revision$
  */
 public class DoneWithSelection extends GroupsManagerCommand {
 
@@ -78,7 +68,7 @@ public class DoneWithSelection extends GroupsManagerCommand {
    }
 
    /**
-    * put your documentation comment here
+    * This is the public method
     * @throws Exception
     * @param sessionData
     */
@@ -121,13 +111,7 @@ public class DoneWithSelection extends GroupsManagerCommand {
             Utility.logMessage("ERROR", "DoneWithSelection::execute: Error parent element not found");
             return;
          }
-         /** @todo refactor: */
-         if (parentIsInitialGroupContext(staticData)) {
-            addChildrenToContext(gmCollection, sessionData, parentElem, model);
-         }
-         else {
-            addChildrenToGroup(gmCollection, sessionData, parentElem, model);
-         }
+         addChildrenToGroup(gmCollection, sessionData, parentElem, model);
          clearSelected(sessionData);
          sessionData.mode=EDIT_MODE;
          sessionData.highlightedGroupID = parentId;
@@ -151,38 +135,32 @@ public class DoneWithSelection extends GroupsManagerCommand {
     * member and passes the collection back.
     * @param gmCollection
     * @param nList
-    * @throws ChainedException
+    * @throws Exception
     */
-   public void addGroupMemberToCollection (Vector gmCollection, NodeList nList)
+   private void addGroupMemberToCollection (Vector gmCollection, NodeList nList)
          throws Exception {
-//      try{
-         boolean addit;
-         for (int i = 0; i < nList.getLength(); i++) {
-            Element elem = (org.w3c.dom.Element)nList.item(i);
-            if (Utility.areEqual(elem.getAttribute("selected"), "true")) {
-               addit = true;
-               Iterator gmItr = gmCollection.iterator();
-               while (gmItr.hasNext()) {
-                  IGroupMember ggmm = (IGroupMember)gmItr.next();
-                  if ((ggmm.getKey().equals(elem.getAttribute("key")))
-                           && (ggmm.getType().equals(elem.getAttribute("type")))){
-                          addit = false;
-                          break;
-                  }
-               }
-               if (addit) {
-                  IGroupMember gm = Utility.retrieveGroupMemberForKeyAndType(elem.getAttribute("key"),elem.getAttribute("type"));
-                  gmCollection.add(gm);
-                  Utility.logMessage("DEBUG", "DoneWithSelection::addGroupMemberToCollection(): " +
-                        "- adding group member" + elem.getAttribute("key"));
+      boolean addit;
+      for (int i = 0; i < nList.getLength(); i++) {
+         Element elem = (org.w3c.dom.Element)nList.item(i);
+         if (Utility.areEqual(elem.getAttribute("selected"), "true")) {
+            addit = true;
+            Iterator gmItr = gmCollection.iterator();
+            while (gmItr.hasNext()) {
+               IGroupMember ggmm = (IGroupMember)gmItr.next();
+               if ((ggmm.getKey().equals(elem.getAttribute("key")))
+                        && (ggmm.getType().equals(elem.getAttribute("type")))){
+                       addit = false;
+                       break;
                }
             }
+            if (addit) {
+               IGroupMember gm = Utility.retrieveGroupMemberForKeyAndType(elem.getAttribute("key"),elem.getAttribute("type"));
+               gmCollection.add(gm);
+               Utility.logMessage("DEBUG", "DoneWithSelection::addGroupMemberToCollection(): " +
+                     "- adding group member" + elem.getAttribute("key"));
+            }
          }
-//      } catch (Exception e) {
-//         String errMsg = "DoneWithSelection::addGroupMemberToCollection(): ";
-//         Utility.logMessage("ERROR", errMsg);
-//         throw new ChainedException(errMsg, e);
-//      }
+      }
    }
 
    /**
@@ -192,8 +170,9 @@ public class DoneWithSelection extends GroupsManagerCommand {
     * @param sessionData
     * @param parentElem
     * @param model
+    * @throws Exception
     */
-   public void addChildrenToGroup (Vector gmCollection, CGroupsManagerSessionData sessionData,
+   private void addChildrenToGroup (Vector gmCollection, CGroupsManagerSessionData sessionData,
       Element parentElem, Document model) throws Exception {
       ChannelRuntimeData runtimeData = sessionData.runtimeData;
       Element parent;
@@ -202,91 +181,27 @@ public class DoneWithSelection extends GroupsManagerCommand {
       Element childElem;
       String parentName = parentElem.getAttribute("key");
       String childName = "";
-//      try{
-         parentGroup = GroupsManagerXML.retrieveGroup(parentElem.getAttribute("key"));
-         Iterator gmItr = gmCollection.iterator();
-         while (gmItr.hasNext()) {
-            childGm = (IGroupMember) gmItr.next();
-            childName = GroupsManagerXML.getEntityName(childGm.getType(), childGm.getKey());
-            parentName = parentGroup.getName();
-            Utility.logMessage("DEBUG", "DoneWithSelection::execute: About to add child");
-            // add to parent group
-            parentGroup.addMember(childGm);
-            // update parent group
-            parentGroup.updateMembers();
-            // get parent element(s) and add element for child group member
-            Iterator parentNodes = GroupsManagerXML.getNodesByTagNameAndKey(model, GROUP_TAGNAME,
-                  parentElem.getAttribute("key"));
-            while (parentNodes.hasNext()) {
-               parent = (Element)parentNodes.next();
+      parentGroup = GroupsManagerXML.retrieveGroup(parentElem.getAttribute("key"));
+      Iterator gmItr = gmCollection.iterator();
+      while (gmItr.hasNext()) {
+         childGm = (IGroupMember) gmItr.next();
+         childName = GroupsManagerXML.getEntityName(childGm.getType(), childGm.getKey());
+         parentName = parentGroup.getName();
+         Utility.logMessage("DEBUG", "DoneWithSelection::execute: About to add child");
+         // add to parent group
+         parentGroup.addMember(childGm);
+         // update parent group
+         parentGroup.updateMembers();
+         // get parent element(s) and add element for child group member
+         Iterator parentNodes = GroupsManagerXML.getNodesByTagNameAndKey(model, GROUP_TAGNAME,
+               parentElem.getAttribute("key"));
+         while (parentNodes.hasNext()) {
+            parent = (Element)parentNodes.next();
 
-               childElem = GroupsManagerXML.getGroupMemberXml(childGm, false, null, model);
-               parent.appendChild((Node)childElem);
-               parent.setAttribute("hasMembers", "true");
-            }
+            childElem = GroupsManagerXML.getGroupMemberXml(childGm, false, null, model);
+            parent.appendChild((Node)childElem);
+            parent.setAttribute("hasMembers", "true");
          }
-//      } catch (Exception e) {
-//         String errMsg = "DoneWithSelection::addChildrenToGroup(): Unable to add : " + childName + " to: " + parentName;
-//         Utility.logMessage("ERROR", errMsg);
-//         throw new ChainedException(errMsg, e);
-//      }
-   }
-
-   /**
-    * This section adds the selected members to an IInitialContextGroup.
-    * @throws ChainedException
-    * @param gmCollection
-    * @param sessionData
-    * @param parentElem
-    * @param model
-    */
-   public void addChildrenToContext (Vector gmCollection, CGroupsManagerSessionData sessionData,
-         Element parentElem, Document model) throws Exception {
-          ChannelRuntimeData runtimeData = sessionData.runtimeData;
-      // Considerations:
-      // The parent element is myGroups and there is only one.
-      String childName = "";
-      IGroupMember childGm = null;
-      String userID = getUserID(sessionData);
-      String ownerType = "p";
-      int ordinal = 1;
-      boolean expanded = false;
-//      try{
-         /** @todo should put this in the RDBM add method */
-         java.sql.Timestamp dateCreated = new java.sql.Timestamp(System.currentTimeMillis());
-         Element childElem;
-         Iterator gmItr = gmCollection.iterator();
-         while (gmItr.hasNext()) {
-            childGm = (IGroupMember) gmItr.next();
-            String type = "";
-            childName = GroupsManagerXML.getEntityName(childGm.getType(), childGm.getKey());
-            type = childGm.getType().getName();
-            String groupID = childGm.getKey();
-
-            // can only add groups as initial group contexts
-            if (type.equals(GROUP_CLASSNAME)) {
-               Utility.logMessage("DEBUG", "DoneWithSelection::addChildrenToContext: About to add child");
-               // add to users initial contexts
-               IInitialGroupContext igc = Utility.createInitialGroupContext(userID, ownerType,
-                     groupID, ordinal, expanded, dateCreated);
-               // save to persistent source
-               igc.update();
-
-               // add child to user's igc node
-               IEntityGroup entGrp = GroupsManagerXML.retrieveGroup(groupID);
-               childElem = GroupsManagerXML.getGroupMemberXml((IGroupMember)entGrp, false,
-                     null, model);
-               parentElem.appendChild((Node)childElem);
-               parentElem.setAttribute("hasMembers", "true");
-            }
-         }
-//      } catch (Exception e) {
-//         String errMsg = "DoneWithSelection::addChildrenToContext(): Unable to add child to context";
-//         Utility.logMessage("ERROR", errMsg);
-//         throw new ChainedException(errMsg, e);
-//      }
+      }
    }
 }
-
-
-

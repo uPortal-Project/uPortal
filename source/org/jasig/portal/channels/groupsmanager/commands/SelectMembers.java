@@ -33,36 +33,27 @@
  *
  */
 
-
 package  org.jasig.portal.channels.groupsmanager.commands;
 
-/**
- * <p>Title: uPortal</p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: Columbia University</p>
- * @author Don Fracapane
- * @version 2.0
- */
 import  java.util.*;
 import  org.jasig.portal.channels.groupsmanager.*;
 import  org.jasig.portal.*;
 import  org.w3c.dom.Element;
 import  org.w3c.dom.Document;
+
 /**
- * put your documentation comment here
+ * SelectMembers sets the "selected" attribute for each elements that was
+ * selected by the user.
+ * @author Don Fracapane
+ * @version $Revision$
  */
 public class SelectMembers extends GroupsManagerCommand {
 
-   /**
-    * SelectMembers sets the "selected" attribute for each elements that was
-    * selected by the user.
-    * */
    public SelectMembers () {
    }
 
    /**
-    * put your documentation comment here
+    * This is the public method
     * @throws Exception
     * @param sessionData
     */
@@ -100,6 +91,3 @@ public class SelectMembers extends GroupsManagerCommand {
       }
    }
 }
-
-
-

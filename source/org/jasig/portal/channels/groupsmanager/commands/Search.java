@@ -33,17 +33,8 @@
  *
  */
 
-
 package  org.jasig.portal.channels.groupsmanager.commands;
 
-/**
- * <p>Title: uPortal</p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: Columbia University</p>
- * @author Don Fracapane
- * @version 2.0
- */
 import  java.util.*;
 import  java.io.*;
 import  org.jasig.portal.*;
@@ -56,6 +47,8 @@ import  org.w3c.dom.Document;
 
 /** This command delegates to the GroupsService to find entities requested
  *  by the user.
+ * @author Don Fracapane
+ * @version $Revision$
  */
 public class Search extends GroupsManagerCommand {
    private static String grpPrefix = "IEntityGroup::";
@@ -75,7 +68,7 @@ public class Search extends GroupsManagerCommand {
    }
 
    /**
-    * put your documentation comment here
+    * This is the public method
     * @throws Exception
     * @param sessionData
     */

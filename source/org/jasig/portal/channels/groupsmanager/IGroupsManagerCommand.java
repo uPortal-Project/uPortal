@@ -35,20 +35,14 @@
 
 package  org.jasig.portal.channels.groupsmanager;
 
-/**
- * <p>Title: uPortal</p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: Columbia University</p>
- * @author Don Fracapane
- * @version 2.0
- */
 import  java.util.*;
 import  java.io.*;
 import  org.jasig.portal.ChannelStaticData;
 
 /**
  * Defines the interface for a command object to be used by CGroupssManager
+ * @author Don Fracapane
+ * @version $Revision$
  */
 
 public interface IGroupsManagerCommand {

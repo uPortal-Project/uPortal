@@ -33,17 +33,8 @@
  *
  */
 
-
 package  org.jasig.portal.channels.groupsmanager.wrappers;
 
-/**
- * <p>Title: uPortal</p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: Columbia University</p>
- * @author Don Fracapane
- * @version 2.0
- */
 import  org.jasig.portal.channels.groupsmanager.*;
 import  org.jasig.portal.groups.*;
 import  org.w3c.dom.Element;
@@ -52,6 +43,8 @@ import  org.w3c.dom.Document;
 
 /**
  * Returns an xml element for an IGroupMember.
+ * @author Don Fracapane
+ * @version $Revision$
  */
 public abstract class GroupMemberWrapper
       implements IGroupsManagerWrapper, GroupsManagerConstants {
@@ -64,8 +57,8 @@ public abstract class GroupMemberWrapper
    /**
     * Returns an xml element for a given IGroupMember key. The element that is returned
     * could be the same one that is passed in (usually with the expanded attribute
-    * set to "true", a cached element (no further work is required), or a new element
-    * (all attributes have to be set after the GroupMember is retrieved).
+    * set to "true" or a new element (all attributes have to be set after the
+    * GroupMember is retrieved).
     * @param aKey
     * @param aType
     * @param anElem

@@ -35,14 +35,6 @@
 
 package  org.jasig.portal.channels.groupsmanager;
 
-/**
- * <p>Title: uPortal</p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: Columbia University</p>
- * @author Don Fracapane
- * @version 2.0
- */
 import  org.apache.log4j.Priority;
 import  org.jasig.portal.services.*;
 import  org.jasig.portal.groups.*;
@@ -59,6 +51,8 @@ import  javax.xml.parsers.*;
 
 /**
  * A class holding utility functions used by the Groups Manager channel.
+ * @author Don Fracapane
+ * @version $Revision$
  */
 public class Utility
       implements GroupsManagerConstants {
@@ -89,22 +83,6 @@ public class Utility
       String testString = (aString==null ? "" : aString).trim();
       return !testString.equals("");
    }
-   /**
-    *
-    * @param ownerID The user/group ID that created this IInitialGroupContext
-    * @param ownerType The entity that created this IInitialGroupContext could be either a person (p) or a group (g).
-    * @param groupID The Group ID referenced by this IInitialGroupContext.
-    * @param ordinal Determined the order that the IInitialGroupContexts will be displayed.
-    * @param expanded Determines whether the IInitialGroupContext will be expanded when first presented to the user.
-    * @param dateCreated
-    * @return IInitialGroupContext
-    * @throws org.jasig.portal.channels.groupsmanager.ChainedException
-    */
-   public static IInitialGroupContext createInitialGroupContext (String ownerID, String ownerType,
-         String groupID, int ordinal, boolean expanded, Timestamp dateCreated) throws ChainedException {
-      return  RDBMInitialGroupContextStore.singleton().newInstance(ownerID, ownerType,
-            groupID, ordinal, expanded, dateCreated);
-   }
 
    /**
     * An attempt to extract all calls to logger to expedite assumed future
@@ -117,15 +95,15 @@ public class Utility
       // prevent overlapping messages during debugging
 
       /** @todo next 4 lines are for running test */
-//      if (msg != null){
-//         if (!msgTypeStr.equals("DEBUG")){
-//            System.out.println(msgTypeStr+"::"+msg);
-//            return;
-//         }
-//         else{
-//            return;
-//         }
-//      }
+      //if (msg != null){
+      //   if (!msgTypeStr.equals("DEBUG")){
+      //      System.out.println(msgTypeStr+"::"+msg);
+      //      return;
+      //   }
+      //   else{
+      //      return;
+      //   }
+      //}
 
       boolean delay = false;
       Priority msgType;

@@ -33,7 +33,6 @@
  *
  */
 
-
 package  org.jasig.portal.channels.groupsmanager;
 
 import  org.jasig.portal.*;
@@ -41,16 +40,10 @@ import  org.jasig.portal.groups.*;
 import  org.jasig.portal.security.IPerson;
 import  org.w3c.dom.Document;
 
-
 /**
- * <p>Title: uPortal</p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: Columbia University</p>
- * @author Don Fracapane
- * @version 2.0
- *
  * Session data for a cached thread stored in a Map in CGroupsManager
+ * @author Don Fracapane
+ * @version $Revision$
  */
 public class CGroupsManagerSessionData implements GroupsManagerConstants {
    public ChannelRuntimeData runtimeData;

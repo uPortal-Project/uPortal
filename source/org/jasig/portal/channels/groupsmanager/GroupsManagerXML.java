@@ -33,17 +33,8 @@
  *
  */
 
-
 package  org.jasig.portal.channels.groupsmanager;
 
-/**
- * <p>Title: uPortal</p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: Columbia University</p>
- * @author Don Fracapane
- * @version 2.0
- */
 import  java.util.*;
 import  java.io.*;
 import  org.jasig.portal.EntityTypes;  /** @todo remove when groups/EntityTypes is removed */
@@ -59,28 +50,18 @@ import  org.w3c.dom.Element;
 import  org.w3c.dom.Document;
 import  javax.xml.parsers.*;
 
-
-/**
- * @todo
- * refactor: reexamine common functions in GroupsManagerXML, Utility,
- * GroupsManagerCommand, and wrapper classes to come up consistent approach
- *
- * IInitialGroupsContextStore will be used to make the stores swappable through an
- * entry in portal.properties. At this point the RDBMInitialGroupContextStore is
- * hardcoded in InitialGroupsContextImpl.getFactory().
- */
-
  /**
  * Contains a groups of static methods used to centralize the generation and
  * retrieval of xml elements for groups and entities.
+ * @author Don Fracapane
+ * @version $Revision$
  */
 public class GroupsManagerXML
       implements GroupsManagerConstants {
    private static int UID = 0;
 
    /**
-    * Returns a Document for all InitialContexts for which the user has
-    * permissions. This method is called when CGroupsManager is instantiated.
+    * Returns a Document with an element for each IEntityType that has a root group.
     * @param sd
     * @return Document
     */
@@ -88,7 +69,7 @@ public class GroupsManagerXML
       String rkey = null;
       IEntityGroup entGrp = null;
       IGroupMember aGroupMember = null;
-      Element igcElement;
+      Element rootGroupElement;
       Document viewDoc = getNewDocument();
       Element viewRoot = viewDoc.createElement("CGroupsManager");
       viewDoc.appendChild(viewRoot);
@@ -96,40 +77,29 @@ public class GroupsManagerXML
       viewRoot.appendChild(apRoot);
       Element etRoot = getEntityTypesXml(viewDoc);
       viewRoot.appendChild(etRoot);
-      Element igcRoot = GroupsManagerXML.createElement(GROUP_TAGNAME, viewDoc, true);
-      igcRoot.setAttribute("expanded", "true");
+      Element rootGroupsElem = GroupsManagerXML.createElement(GROUP_TAGNAME, viewDoc, true);
+      //id=0 distinguishes the root groups element
+      rootGroupsElem.setAttribute("id", "0");
+      rootGroupsElem.setAttribute("expanded", "true");
+      /** @todo next 2 lines were from original igc code, I don't think they are needed */
+      //rootGroupsElem.setAttribute("expanded", "false");
+      //rootGroupsElem.setAttribute("hasMembers", "false");
       Element rdfElem = createRdfElement(null, viewDoc);
-      igcRoot.appendChild(rdfElem);
-      //* Cut this section into a new method to create group xml without a groupmember object
-      viewRoot.appendChild(igcRoot);
+      rootGroupsElem.appendChild(rdfElem);
+      viewRoot.appendChild(rootGroupsElem);
       try {
-         RDBMInitialGroupContextStore igcHome = RDBMInitialGroupContextStore.singleton();
-         // have to get userID from runtimedata
-         Utility.logMessage("DEBUG", "GroupsManagerXML::getGroupsManagerXML(): JUST BEFORE USER IS SET ");
-         Utility.logMessage("DEBUG", "GroupsManagerXML::getGroupsManagerXML(): USER SET TO "
-               + sd.getAuthorizationPrincipal().getKey());
-         java.util.Iterator igcItr = igcHome.findInitialGroupContextsForOwner(AuthorizationService.instance().getGroupMember(sd.getAuthorizationPrincipal()));
-         IInitialGroupContext igc = null;
-         Utility.logMessage("DEBUG", "GroupsManagerXML::getGroupsManagerXML(): igc contains: ");
-         // Now that we know if there are any initial group contexts, we can set the attributes.
-         if (igcItr.hasNext()) {
-            Utility.logMessage("DEBUG", "GroupsManagerXML::getGroupsManagerXML(): Initial group contexts found for this user:");
-         }
-         else {
-            igcRoot.setAttribute("expanded", "false");
-            igcRoot.setAttribute("hasMembers", "false");
-            Utility.logMessage("DEBUG", "GroupsManagerXML::getGroupsManagerXML(): No initial group contexts for this user.");
-         }
-         while (igcItr.hasNext()) {
-            igc = (IInitialGroupContext)igcItr.next();
-            Utility.logMessage("DEBUG", "GroupsManagerXML::getGroupsManagerXML(): igc = /n"
-                  + igc);
-            rkey = igc.getGroupID();
-            entGrp = retrieveGroup(rkey);
-            //aGroupMember = (IGroupMember) entGrp;
-            igcElement = getGroupMemberXml(entGrp, igc.isExpanded(), null, viewDoc);
-            igcElement.setAttribute("ownerType", igc.getOwnerType());
-            igcRoot.appendChild(igcElement);
+         // name and class for entity types with root group
+         HashMap entTypes = getEntityTypes();
+         Iterator entTypeKeys = entTypes.keySet().iterator();
+         while (entTypeKeys.hasNext()) {
+            Object key = entTypeKeys.next();
+            Class entType = (Class)entTypes.get(key);
+            IEntityGroup rootGrp = GroupService.getRootGroup(entType);
+            rootGroupElement = getGroupMemberXml(rootGrp, true, null, viewDoc);
+            /** @todo IEntityGroup.isEditable() will return the value we want */
+            //rootGroupElement.setAttribute("editable", String.valueOf(rootGrp.isEditable()));
+            rootGroupElement.setAttribute("editable", "false");
+            rootGroupsElem.appendChild(rootGroupElement);
          }
       } catch (Exception e) {
          Utility.logMessage("ERROR", "GroupsManagerXML::getGroupsManagerXML(): ERROR"
@@ -147,21 +117,22 @@ public class GroupsManagerXML
     * @return Element
     */
    public static Element createElement (String name, Document xmlDoc, boolean setGrpDefault) {
-      //* Maybe I should have all parms in a java.util.HashMap
+      //List of common attributes
+      //grpRoot.setAttribute("editable", "false");
+      //grpRoot.setAttribute("entityType", "org.jasig.portal.security.IPerson");
+      //grpRoot.setAttribute("expanded", "false");
+      //grpRoot.setAttribute("hasMembers", "false");
+      //grpRoot.setAttribute("id", "0");
+      //grpRoot.setAttribute("key", "");
+      //grpRoot.setAttribute("selected", "false");
+      //grpRoot.setAttribute("type", "org.jasig.portal.groups.IEntityGroup");
       Element grpRoot = xmlDoc.createElement(name);
       grpRoot.setAttribute("selected", "false");
       // set default values
       if (setGrpDefault) {
-         grpRoot.setAttribute("id", "0");
-         //grpRoot.setAttribute("key", "");
+         grpRoot.setAttribute("id", "");
          grpRoot.setAttribute("expanded", "false");
-         // hasMembers is used to determine if the GroupMember has been retrieved
-         // (ie. the element has been fully setup)
-         //grpRoot.setAttribute("hasMembers", "false");
       }
-      // ?? Element rdf = createRdfElement(xmlDoc, title, description, creator);
-      // ?? grpRoot.appendChild(rdf);
-      //* Cut this section into a new method to create group xml without a groupmember object
       return  grpRoot;
    }
 
@@ -185,7 +156,7 @@ public class GroupsManagerXML
          // get values from IEntityGroup
          entName = entGrp.getName();
          entDesc = entGrp.getDescription();
-         entCreator = GroupsManagerXML.getEntityName(entGrp.getLeafType(), entGrp.getCreatorID());
+         entCreator = GroupsManagerXML.getEntityName(ENTITY_CLASSNAME, entGrp.getCreatorID());
       }
       //* Maybe I should have all parms in a java.util.HashMap
       Element rdfElem = (Element)xmlDoc.createElement("rdf:RDF");
@@ -445,7 +416,8 @@ public class GroupsManagerXML
          entName = EntityTypes.singleton().getDescriptiveNameForType(entType);
          try {
             if (GroupService.getRootGroup(entType) != null) {
-               entTypes.put(entName, entClassName);
+               //entTypes.put(entName, entClassName);
+               entTypes.put(entName, entType);
                Utility.logMessage("DEBUG", "GroupsManagerXML::getEntityTypes Added : "
                      + entName + " -- " + entClassName);
             }
@@ -473,7 +445,8 @@ public class GroupsManagerXML
       Iterator entTypeKeys = entTypes.keySet().iterator();
       while (entTypeKeys.hasNext()) {
          Object key = entTypeKeys.next();
-         String entType = (String)entTypes.get(key);
+         //String entType = (String)entTypes.get(key);
+         String entType = ((Class)entTypes.get(key)).getName();
          Element etElem = xmlDoc.createElement("entityType");
          etElem.setAttribute("name", (String)key);
          etElem.setAttribute("type", entType);
@@ -566,14 +539,13 @@ public class GroupsManagerXML
    /**
     * Returns the next sequential identifier which is used to uniquely
     * identify an element. This identifier is held in the Element "id" attribute.
-    * "0" is reserved for the Group containing the Initial Contexts for the user.
+    * "0" is reserved for the Element holding the root group element.
     * @return String
     */
    public static synchronized String getNextUid () {
       // max size of int = (2 to the 32 minus 1) = 2147483647
       Utility.logMessage("DEBUG", "GroupsManagerXML::getNextUid(): Start");
       if (UID > 2147483600) {
-         // the value 0 is reserved for the group holding the initial group contexts
          UID = 0;
       }
       return  String.valueOf(++UID);
@@ -915,6 +887,4 @@ public class GroupsManagerXML
       return  gm;
    }
 }
-
-
 

@@ -33,17 +33,8 @@
  *
  */
 
-
 package  org.jasig.portal.channels.groupsmanager.commands;
 
-/**
- * <p>Title: uPortal</p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: Columbia University</p>
- * @author Don Fracapane
- * @version 2.0
- */
 import  java.util.*;
 import  org.jasig.portal.*;
 import  org.jasig.portal.channels.groupsmanager.*;
@@ -54,21 +45,19 @@ import  org.w3c.dom.Node;
 import  org.w3c.dom.NodeList;
 import  org.w3c.dom.Document;
 
-
 /**
- * put your documentation comment here
+ * This class update the group with a new name. It then updates
+ * all of the xml elements with the new name.
+ * @author Don Fracapane
+ * @version $Revision$
  */
 public class UpdateGroup extends GroupsManagerCommand {
 
-   /**
-    * This class update the group with a new name. It then updates
-    * all of the xml elements with the new name.
-    */
    public UpdateGroup () {
    }
 
    /**
-    * put your documentation comment here
+    * This is the public method
     * @throws Exception
     * @param sessionData
     */
@@ -129,4 +118,3 @@ public class UpdateGroup extends GroupsManagerCommand {
       Utility.logMessage("DEBUG", "UpdateGroup::execute(): Finished");
    }
 }
-

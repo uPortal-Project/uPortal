@@ -35,22 +35,14 @@
 
 package  org.jasig.portal.channels.groupsmanager;
 
-/**
- * <p>Title: uPortal</p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: Columbia University</p>
- * @author Don Fracapane
- * @version 2.0
- */
 import  java.util.HashMap;
 import  java.util.Set;
-
 
 /**
  * A class designed to decouple a request for the creation of xml for an object
  * from the class requestor class.
-
+ * @author Don Fracapane
+ * @version $Revision$
  */
 public class GroupsManagerWrapperFactory
       implements GroupsManagerConstants {

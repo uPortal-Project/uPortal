@@ -35,14 +35,6 @@
 
 package  org.jasig.portal.channels.groupsmanager.wrappers;
 
-/**
- * <p>Title: uPortal</p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: Columbia University</p>
- * @author Don Fracapane
- * @version 2.0
- */
 import  org.jasig.portal.channels.groupsmanager.*;
 import  org.jasig.portal.groups.*;
 import  org.w3c.dom.Element;
@@ -51,6 +43,8 @@ import  org.jasig.portal.groups.*;
 
 /**
  * Returns an xml element for a given IEntity or IEntity key.
+ * @author Don Fracapane
+ * @version $Revision$
  */
 public class EntityWrapper extends GroupMemberWrapper {
 
@@ -87,23 +81,12 @@ public class EntityWrapper extends GroupMemberWrapper {
 
     /**
     * Returns a GroupMember for a key.
-    * @param aKey
+    * @param aKey String
+    * @param aType String
     * @return IGroupMember
     */
    protected IGroupMember retrieveGroupMember (String aKey, String aType) {
       return (IGroupMember)GroupsManagerXML.retrieveEntity(aKey, aType);
-   }
-
-    /**
-    * Answers whether the group element has all required attributes set. This will
-    * be used to determine if the Entity will have to be retrieved in order to
-    * populate the element with all required attributes. This test will fail if we are
-    * using a cached element because the id attribute is not set in the cached element.
-    * @param anElem
-    * @return boolean
-    */
-   protected boolean isElementFullyFormed (Element anElem) {
-      return (anElem.hasAttribute("id") && anElem.hasAttribute("key") && anElem.hasAttribute("type") && anElem.hasAttribute("displayName"));
    }
 }
 
