@@ -62,6 +62,10 @@ import org.jasig.portal.security.IPerson;
 public final class OracleUserLayoutStore extends RDBMUserLayoutStore
     implements IUserLayoutStore {
 
+  public OracleUserLayoutStore() throws Exception {
+    super();
+  }
+
   /* DBCounter */
   /*
    * get&increment method.
