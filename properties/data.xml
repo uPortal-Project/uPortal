@@ -421,6 +421,25 @@
       </row>
 
       <row>
+        <column><name>CHAN_ID</name><value>20</value></column>
+        <column><name>CHAN_TITLE</name><value>uPortal Development Books</value></column>
+        <column><name>CHAN_NAME</name><value>uPortal Development Books</value></column>
+        <column><name>CHAN_DESC</name><value>A list of books useful to uPortal developers</value></column>
+        <column><name>CHAN_PUBL_ID</name><value>0</value></column>
+        <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_APVL_ID</name><value>0</value></column>
+        <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_TYPE_ID</name><value>1</value></column>          
+        <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CGenericXSLT</value></column>
+        <column><name>CHAN_TIMEOUT</name><value>20000</value></column>
+        <column><name>CHAN_MINIMIZABLE</name><value>N</value></column>
+        <column><name>CHAN_EDITABLE</name><value>N</value></column>
+        <column><name>CHAN_HAS_HELP</name><value>N</value></column>
+        <column><name>CHAN_UNREMOVABLE</name><value>Y</value></column>
+        <column><name>CHAN_DETACHABLE</name><value>N</value></column>
+      </row>
+
+      <row>
         <column><name>CHAN_ID</name><value>89</value></column>
         <column><name>CHAN_TITLE</name><value>WebMail</value></column>
         <column><name>CHAN_NAME</name><value>WebMail (beta)</value></column>
@@ -917,6 +936,22 @@
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
 
+      <!-- uPortal Developer Recommended Reading -->
+      <row>
+        <column><name>CHAN_ID</name><value>20</value></column>
+        <column><name>CHAN_PARM_NM</name><value>xmlUri</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>http://www.interactivebusiness.com/publish/uPortalDevBooks/uPortalDevBooks.xml</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>CHAN_ID</name><value>20</value></column>
+        <column><name>CHAN_PARM_NM</name><value>sslUri</value></column>
+        <column><name>CHAN_PARM_DESC</name><value></value></column>
+        <column><name>CHAN_PARM_VAL</name><value>webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/uPortalDevBooks/uPortalDevBooks.ssl</value></column>
+        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
+      </row>
+      
       <!-- WebMail -->
       <row>
         <column><name>CHAN_ID</name><value>89</value></column>
@@ -1525,8 +1560,15 @@
           <column><name>STRUCT_ID</name><value>13</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
           <column><name>NAME</name><value>Column 2</value></column>
           <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
-          <column><name>CHLD_STRUCT_ID</name><value>14</value></column>
+          <column><name>CHLD_STRUCT_ID</name><value>15</value></column>
         </row>
+          <!-- uPortal Developer Recommended Reading -->
+          <row>
+            <column><name>STRUCT_ID</name><value>15</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_STRUCT_ID</name><value>14</value></column>
+            <column><name>CHLD_STRUCT_ID</name><value>NULL</value></column>
+            <column><name>CHAN_ID</name><value>20</value></column>
+          </row>        
           <!-- uPortal Developers Reference -->
           <row>
             <column><name>STRUCT_ID</name><value>14</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
@@ -1831,6 +1873,10 @@
         <column><name>CHAN_ID</name><value>16</value></column>
       </row>
       <row>
+        <column><name>CAT_ID</name><value>1</value></column>
+        <column><name>CHAN_ID</name><value>20</value></column>
+      </row>      
+      <row>
         <column><name>CAT_ID</name><value>2</value></column>
         <column><name>CHAN_ID</name><value>15</value></column>
       </row>
@@ -1862,6 +1908,10 @@
         <column><name>CAT_ID</name><value>6</value></column>
         <column><name>CHAN_ID</name><value>15</value></column>
       </row>
+      <row>
+        <column><name>CAT_ID</name><value>6</value></column>
+        <column><name>CHAN_ID</name><value>20</value></column>
+      </row>      
       <row>
         <column><name>CAT_ID</name><value>7</value></column>
         <column><name>CHAN_ID</name><value>5</value></column>
