@@ -106,7 +106,7 @@ public class Utility
       if (msgTypeStr == null | msgTypeStr.equals(""))
          msgType = LogService.DEBUG;
       else
-         msgType = Priority.toPriority("LogService." + msgTypeStr.toUpperCase());
+         msgType = Priority.toPriority(msgTypeStr.toUpperCase());
 
       if (delay && msgTypeStr.toUpperCase().equals("DEBUG")) {
          long ts1 = Calendar.getInstance().getTime().getTime();
@@ -219,6 +219,36 @@ public class Utility
          Utility.logMessage("ERROR", "Utility::asString(): " + e.toString());
       }
       return  sw.toString();
+   }
+   
+   /**
+    * given a group key, return an xml group id that matches it in the provided document
+    * 
+    * @param grpKey
+    * @param model
+    * @return String
+    */
+   public static String translateKeytoID(String grpKey, Document model){
+      Document viewDoc = model;
+      String id = null;
+      Element grpViewKeyElem;
+      Iterator grpItr = GroupsManagerXML.getNodesByTagNameAndKey(viewDoc, GROUP_TAGNAME,
+            grpKey);
+      IEntityGroup gm = GroupsManagerXML.retrieveGroup(grpKey);
+      if (gm != null) {
+         if (!grpItr.hasNext()) {
+            grpViewKeyElem = GroupsManagerXML.getGroupMemberXml(gm, true, null,
+                  viewDoc);
+            Element rootElem = viewDoc.getDocumentElement();
+            rootElem.appendChild(grpViewKeyElem);
+         }
+         else {
+            grpViewKeyElem = (Element)grpItr.next();
+            GroupsManagerXML.getGroupMemberXml(gm, true, grpViewKeyElem, viewDoc);
+         }
+         id = grpViewKeyElem.getAttribute("id");
+      }
+      return id;
    }
 }
 
