@@ -78,15 +78,16 @@
         2) Specify the name of a container-managed JDBC DataSource.  For example,
 
         <res-ref-name>PersonDb</res-ref-name>
+        
+        3) Specify the use of the configured default uPortal database. For example,
+        
+        <res-ref-name>DEFAULT_DATABASE</res-ref-name>
 
     -->
     <PersonDirInfo>
 
-        <driver>org.hsqldb.jdbcDriver</driver>
-        <url>jdbc:hsqldb:hsql://localhost:8887</url>
-        <logonid>sa</logonid>
-        <logonpassword></logonpassword>
-
+        <res-ref-name>DEFAULT_DATABASE</res-ref-name>
+        
         <uidquery>SELECT FIRST_NAME||' '||LAST_NAME AS FIRST_LAST, FIRST_NAME, LAST_NAME, EMAIL FROM UP_PERSON_DIR WHERE USER_NAME=?</uidquery>
     
         <attributes>
@@ -215,12 +216,16 @@
         2) Specify the name of an LDAP server as set up in uPortal's ldap.xml.  For example,
         
         <ldap-ref-name>Main</ldap-ref-name>
+        
+        3) Specify the use of the configured default uPortal ldap server. For example,
+        
+        <ldap-ref-name>DEFAULT_LDAP_SERVER</ldap-ref-name>
 
     -->
     <!--
     <PersonDirInfo>
 
-        <ldap-ref-name>Main</ldap-ref-name>
+        <ldap-ref-name>DEFAULT_LDAP_SERVER</ldap-ref-name>
 
         <uidquery>(cn={0})</uidquery>
         <usercontext>cn=Users</usercontext>
