@@ -137,7 +137,7 @@
 
   xalan.jar            Xalan is an XSLT processor for transforming XML documents
                        into HTML, text, or other XML document types.
-                       Version: 2.2 D11
+                       Version: 2.2 D13
                        URL: http://xml.apache.org/xalan-j/
 
   xerces.jar           Xerces2 is the next generation of high performance,
