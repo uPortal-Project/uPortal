@@ -37,6 +37,7 @@ package  org.jasig.portal;
 
 import org.jasig.portal.utils.DTDResolver;
 import org.jasig.portal.utils.DocumentFactory;
+import org.jasig.portal.utils.CounterStoreFactory;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.security.IPerson;
 import java.io.StringWriter;
@@ -484,7 +485,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
   public int getNextId () throws PortalException {
     int nextID;
     try {
-      nextID = UserLayoutStoreFactory.getUserLayoutStoreImpl().getIncrementIntegerId("UP_CHANNEL");
+      nextID = CounterStoreFactory.getCounterStoreImpl().getIncrementIntegerId("UP_CHANNEL");
     } catch (Exception e) {
       LogService.instance().log(LogService.ERROR, e);
       throw  new GeneralRenderingException("Unable to allocate new channel ID");
