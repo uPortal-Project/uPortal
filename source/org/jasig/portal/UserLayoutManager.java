@@ -425,7 +425,11 @@ public class UserLayoutManager {
       // NOTE: this shouldn't be done every time a channel is removed. A separate portal event should initiate save
       // (or, alternatively, an incremental update should be done on the UserLayoutStore())
       try {
-    GenericPortalBean.getUserLayoutStore().setUserLayout(m_person.getID(), complete_up.getProfile().getProfileId(), uLayoutXML);
+	  /*
+	    The following patch has been kindly contributed by Sir Neil Blake <nd_blake@NICKEL.LAURENTIAN.CA>.
+	  */
+	  GenericPortalBean.getUserLayoutStore().setUserLayout(m_person.getID(), complete_up.getProfile().getProfileId(), uLayoutXML);
+	  /* end of patch */
       } catch (Exception e) {
     Logger.log(Logger.ERROR,"UserLayoutManager::removeChannle() : database operation resulted in an exception "+e);
     throw new GeneralRenderingException("Unable to save layout changes.");
