@@ -48,8 +48,6 @@ import  org.jasig.portal.security.*;
 import  org.jasig.portal.security.provider.*;
 import  org.jasig.portal.channels.groupsmanager.CGroupsManagerServantFactory;
 import  org.w3c.dom.Document;
-import  org.apache.xml.serialize.XMLSerializer;
-import  org.apache.xml.serialize.OutputFormat;
 
 
 /**
@@ -78,7 +76,7 @@ public class CPermissionsManager
     public void setRuntimeData (org.jasig.portal.ChannelRuntimeData rD) {
         session.startRD = Calendar.getInstance().getTime().getTime();
         session.runtimeData = rD;
-        LogService.instance().log(LogService.DEBUG, "PermissionsManager - settting runtime data");
+        LogService.instance().log(LogService.DEBUG, "PermissionsManager - setting runtime data");
         // test if servant exists and has finished
         if (session.servant != null){
           try {
@@ -95,7 +93,13 @@ public class CPermissionsManager
         if (session.runtimeData.getParameter("prmCommand") != null) {
             IPermissionCommand pc = CommandFactory.get(session.runtimeData.getParameter("prmCommand"));
             if (pc != null) {
+              try{
                 pc.execute(session);
+              }
+              catch(Exception e){
+                LogService.instance().log(LogService.ERROR,e);
+                session.runtimeData.setParameter("commandResponse","Error executing command "+session.runtimeData.getParameter("prmCommand")+": "+e.getMessage());
+              }
             }
         }
 
@@ -287,12 +291,6 @@ public class CPermissionsManager
             }
             if (!session.view.equals("Select Principals")
                     || !session.isAuthorized) {
-                /*
-                 StringWriter sw = new java.io.StringWriter();
-                 XMLSerializer serial = new XMLSerializer(sw, new OutputFormat(PermissionsXML.getViewDoc(session),"UTF-8",true));
-                 serial.serialize(PermissionsXML.getViewDoc(session));
-                 LogService.instance().log(LogService.DEBUG,"CPermissionsManager view XML:\n"+sw.toString());
-                */
                 long time2 = Calendar.getInstance().getTime().getTime();
                 XSLT xslt = new XSLT(this);
                 xslt.setXML(PermissionsXML.getViewDoc(session));
