@@ -56,6 +56,7 @@ public class ChannelRuntimeDataSerializer implements Serializer {
   public static final String KEYWORDS_ELEMENT_NAME = "keywords";
   public static final String RENDERING_AS_ROOT_ELEMENT_NAME = "rendering-as-root";
   public static final String BROWSER_INFO_ELEMENT_NAME = "browser-info";
+  public static final String LOCALES_ELEMENT_NAME = "locales";
   public static final String UP_FILE_SPEC_ELEMENT_NAME = "up-file-spec";
   public static final String BASE_ACTION_URL_ELEMENT_NAME = "base-action-url";
   public static final String HTTP_REQUEST_METHOD_ELEMENT_NAME = "http-request-method";
@@ -80,6 +81,7 @@ public class ChannelRuntimeDataSerializer implements Serializer {
     context.serialize(new QName("", KEYWORDS_ELEMENT_NAME), null, runtimeData.getKeywords()); // a String
     context.serialize(new QName("", RENDERING_AS_ROOT_ELEMENT_NAME), null, new Boolean(runtimeData.isRenderingAsRoot())); // a Boolean 
     context.serialize(new QName("", BROWSER_INFO_ELEMENT_NAME), null, runtimeData.getBrowserInfo()); // a BrowserInfo
+    context.serialize(new QName("", LOCALES_ELEMENT_NAME), null, runtimeData.getLocales()); // an array of Locale
     context.serialize(new QName("", UP_FILE_SPEC_ELEMENT_NAME), null, runtimeData.getUPFile()); // a UPFileSpec
     context.serialize(new QName("", BASE_ACTION_URL_ELEMENT_NAME), null, runtimeData.getBaseActionURL()); // a String
     context.serialize(new QName("", HTTP_REQUEST_METHOD_ELEMENT_NAME), null, runtimeData.getHttpRequestMethod());  // a String

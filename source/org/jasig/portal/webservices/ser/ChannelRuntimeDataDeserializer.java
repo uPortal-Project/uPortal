@@ -47,6 +47,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Locale;
 import javax.xml.namespace.QName;
 
 /**
@@ -58,13 +59,14 @@ import javax.xml.namespace.QName;
 public class ChannelRuntimeDataDeserializer extends DeserializerImpl {
 
   // Storage for ChannelRuntimeData fields.
-  private Map channelRuntimeDataInfo = new HashMap(5);
+  private Map channelRuntimeDataInfo = new HashMap(8);
   
   // Hints...
   private static final Object REQUEST_PARAMS_HINT = new Object();
   private static final Object KEYWORDS_HINT = new Object();
   private static final Object RENDERING_AS_ROOT_HINT = new Object();
   private static final Object BROWSER_INFO_HINT = new Object();
+  private static final Object LOCALES_HINT = new Object();
   private static final Object UP_FILE_SPEC_HINT = new Object();
   private static final Object BASE_ACTION_URL_HINT = new Object();
   private static final Object HTTP_REQUEST_METHOD_HINT = new Object();
@@ -101,12 +103,13 @@ public class ChannelRuntimeDataDeserializer extends DeserializerImpl {
     }
     
     // Construct the ChannelRuntimeData object only after all the values are known.
-    if (channelRuntimeDataInfo.size() == 6) {
+    if (channelRuntimeDataInfo.size() == 8) {
       // Gather ChannelRuntimeData values stored in channelRuntimeDataInfo
       Map params = (Map)channelRuntimeDataInfo.get(REQUEST_PARAMS_HINT);
       String keywords = (String)channelRuntimeDataInfo.get(KEYWORDS_HINT);
       boolean isRenderingAsRoot = ((Boolean)channelRuntimeDataInfo.get(RENDERING_AS_ROOT_HINT)).booleanValue();
       BrowserInfo browserInfo = (BrowserInfo)channelRuntimeDataInfo.get(BROWSER_INFO_HINT);
+      Locale[] locales = (Locale[])channelRuntimeDataInfo.get(LOCALES_HINT);
       UPFileSpec upfs = (UPFileSpec)channelRuntimeDataInfo.get(UP_FILE_SPEC_HINT);
       String baseActionURL = (String)channelRuntimeDataInfo.get(BASE_ACTION_URL_HINT);
       String httpRequestMethod = (String)channelRuntimeDataInfo.get(HTTP_REQUEST_METHOD_HINT);
@@ -117,6 +120,7 @@ public class ChannelRuntimeDataDeserializer extends DeserializerImpl {
       runtimeData.setKeywords(keywords);
       runtimeData.setRenderingAsRoot(isRenderingAsRoot);
       runtimeData.setBrowserInfo(browserInfo);
+      runtimeData.setLocales(locales);
       runtimeData.setUPFile(upfs);
       runtimeData.setBaseActionURL(baseActionURL);
       runtimeData.setHttpRequestMethod(httpRequestMethod);
@@ -182,6 +186,8 @@ public class ChannelRuntimeDataDeserializer extends DeserializerImpl {
         dt = new DeserializerTarget(this, RENDERING_AS_ROOT_HINT);
       } else if (localName.equals(ChannelRuntimeDataSerializer.BROWSER_INFO_ELEMENT_NAME)) {
         dt = new DeserializerTarget(this, BROWSER_INFO_HINT);  
+      } else if (localName.equals(ChannelRuntimeDataSerializer.LOCALES_ELEMENT_NAME)) {
+        dt = new DeserializerTarget(this, LOCALES_HINT);  
       } else if (localName.equals(ChannelRuntimeDataSerializer.UP_FILE_SPEC_ELEMENT_NAME)) {
         dt = new DeserializerTarget(this, UP_FILE_SPEC_HINT);   
       } else if (localName.equals(ChannelRuntimeDataSerializer.BASE_ACTION_URL_ELEMENT_NAME)) {
