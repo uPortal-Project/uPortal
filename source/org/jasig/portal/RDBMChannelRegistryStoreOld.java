@@ -35,19 +35,17 @@
 
 package  org.jasig.portal;
 
-import org.jasig.portal.utils.DTDResolver;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.CounterStoreFactory;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.security.IPerson;
 import java.io.StringWriter;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
 import org.w3c.dom.Document;
@@ -55,6 +53,11 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.jasig.portal.services.GroupService;
+import org.jasig.portal.groups.IEntityGroup;
+import org.jasig.portal.groups.IEntity;
+import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.groups.GroupsException;
 
 /**
  * Reference implementation of IChannelRegistryStoreOld.  This class is currently
@@ -66,7 +69,6 @@ import org.w3c.dom.NodeList;
  */
 public class RDBMChannelRegistryStoreOld implements IChannelRegistryStoreOld {
   private static final int DEBUG = 0;
-  private static final String sRegDtd = "channelRegistry.dtd";
 
   private static final Object channelLock = new Object();
   private static final HashMap channelCache = new HashMap();
@@ -96,104 +98,44 @@ public class RDBMChannelRegistryStoreOld implements IChannelRegistryStoreOld {
    * @return a string of XML
    * @throws java.lang.Exception
    */
-  public Document getChannelRegistryXML () throws SQLException {
+  public Document getChannelRegistryXML () throws Exception {
     Document doc = DocumentFactory.getNewDocument();
     Element registry = doc.createElement("registry");
     doc.appendChild(registry);
-    Connection con = RDBMServices.getConnection();
-    try {
-      RDBMServices.PreparedStatement chanStmt = new RDBMServices.PreparedStatement(con, "SELECT CHAN_ID FROM UP_CAT_CHAN WHERE CAT_ID=?");
-      try {
-        Statement stmt = con.createStatement();
-        try {
-          try {
-            String query = "SELECT CAT_ID, CAT_TITLE, CAT_DESC FROM UP_CATEGORY WHERE PARENT_CAT_ID IS NULL ORDER BY CAT_TITLE";
-            LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.getChannelRegistryXML(): " + query);
-            ResultSet rs = stmt.executeQuery(query);
-            try {
-              while (rs.next()) {
-                int catId = rs.getInt(1);
-                String catTitle = rs.getString(2);
-                String catDesc = rs.getString(3);
 
-                // Top level <category>
-                Element category = doc.createElement("category");
-                category.setAttribute("ID", "cat" + catId);
-                category.setAttribute("name", catTitle);
-                category.setAttribute("description", catDesc);
-                ((org.apache.xerces.dom.DocumentImpl)doc).putIdentifier(category.getAttribute("ID"), category);
-                registry.appendChild(category);
+    IEntityGroup channelCategoriesGroup = GroupService.getChannelCategoriesGroup();
+    processGroupsRecursively(channelCategoriesGroup, registry);
+    System.out.println(org.jasig.portal.utils.XML.serializeNode(doc));
 
-                // Add child categories and channels
-                appendChildCategoriesAndChannels(con, chanStmt, category, catId);
-              }
-            } finally {
-              rs.close();
-            }
-          } finally {
-            // ap.close();
-          }
-        } finally {
-          stmt.close();
-        }
-      } finally {
-        chanStmt.close();
-      }
-    } finally {
-      RDBMServices.releaseConnection(con);
-    }
     return doc;
   }
 
-  protected void appendChildCategoriesAndChannels (Connection con, RDBMServices.PreparedStatement chanStmt, Element category, int catId) throws SQLException {
-    Document doc = category.getOwnerDocument();
-    Statement stmt = null;
-    ResultSet rs = null;
+  private void processGroupsRecursively(IEntityGroup group, Element parentGroup) throws Exception {
+    Document registryDoc = parentGroup.getOwnerDocument();
+    Iterator iter = group.getMembers();
+    while (iter.hasNext()) {
+      IGroupMember member = (IGroupMember)iter.next();
+      if (member.isGroup()) {
+        IEntityGroup memberGroup = (IEntityGroup)member;
+        String key = memberGroup.getKey();
+        String name = memberGroup.getName();
+        String description = memberGroup.getDescription();
 
-    try {
-      stmt = con.createStatement();
-      String query = "SELECT CAT_ID, CAT_TITLE, CAT_DESC FROM UP_CATEGORY WHERE PARENT_CAT_ID=" + catId;
-      LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.appendChildCategoriesAndChannels(): " + query);
-      rs = stmt.executeQuery(query);
-      while (rs.next()) {
-        int childCatId = rs.getInt(1);
-        String childCatTitle = rs.getString(2);
-        String childCatDesc = rs.getString(3);
-
-        // Child <category>
-        Element childCategory = doc.createElement("category");
-        childCategory.setAttribute("ID", "cat" + childCatId);
-        childCategory.setAttribute("name", childCatTitle);
-        childCategory.setAttribute("description", childCatDesc);
-        ((org.apache.xerces.dom.DocumentImpl)doc).putIdentifier(childCategory.getAttribute("ID"), childCategory);
-        category.appendChild(childCategory);
-
-        // Append child categories and channels recursively
-        appendChildCategoriesAndChannels(con, chanStmt, childCategory, childCatId);
+        // Create category element and append it to its parent
+        Element categoryE = registryDoc.createElement("category");
+        categoryE.setAttribute("ID", "cat" + key);
+        categoryE.setAttribute("name", name);
+        categoryE.setAttribute("description", description);
+        parentGroup.appendChild(categoryE);
+        processGroupsRecursively(memberGroup, categoryE);
+      } else {
+        IEntity channelDefMember = (IEntity)member;
+        int channelPublishId = Integer.parseInt(channelDefMember.getKey());
+        ChannelDefinition channelDef = crs.getChannelDefinition(channelPublishId);
+        Element channelDefE = channelDef.getDocument(registryDoc, "chan" + channelPublishId);
+        channelDefE = (Element)registryDoc.importNode(channelDefE, true);
+        parentGroup.appendChild(channelDefE);
       }
-
-      // Append children channels
-      chanStmt.clearParameters();
-      chanStmt.setInt(1, catId);
-      LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.appendChildCategoriesAndChannels(): " + chanStmt);
-      rs = chanStmt.executeQuery();
-
-      try {
-        while (rs.next()) {
-          int chanId = rs.getInt(1);
-          Element channel = getChannelNode (chanId, con, doc, "chan" + chanId);
-          if (channel == null) {
-            LogService.instance().log(LogService.WARN, "RDBMChannelRegistryStore.appendChildCategoriesAndChannels(): channel " + chanId +
-              " in category " + catId + " does not exist in the store");
-          } else {
-            category.appendChild(channel);
-          }
-        }
-      } finally {
-        rs.close();
-      }
-    } finally {
-      stmt.close();
     }
   }
 
@@ -265,8 +207,6 @@ public class RDBMChannelRegistryStoreOld implements IChannelRegistryStoreOld {
     return doc;
   }
 
-
-
   /** A method for adding a channel to the channel registry.
    * This would be called by a publish channel.
    * @param id the identifier for the channel
@@ -276,172 +216,75 @@ public class RDBMChannelRegistryStoreOld implements IChannelRegistryStoreOld {
    * @throws java.lang.Exception
    */
   public void addChannel (int id, IPerson publisher, Document chanXML, String catID[]) throws Exception {
-    Connection con = RDBMServices.getConnection();
-    try {
-      addChannel(id, publisher, chanXML, con);
-      // Set autocommit false for the connection
-      RDBMServices.setAutoCommit(con, false);
-      Statement stmt = con.createStatement();
-      try {
-        // First delete existing categories for this channel
-        String sDelete = "DELETE FROM UP_CAT_CHAN WHERE CHAN_ID=" + id;
-        LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.addChannel(): " + sDelete);
-        int recordsDeleted = stmt.executeUpdate(sDelete);
+    Element channel = (Element)chanXML.getFirstChild();
 
-        for (int i = 0; i < catID.length; i++) {
-          // Take out "cat" prefix if its there
-          String categoryID = catID[i].startsWith("cat") ? catID[i].substring(3) : catID[i];
-
-          String sInsert = "INSERT INTO UP_CAT_CHAN (CHAN_ID, CAT_ID) VALUES (" + id + "," + categoryID + ")";
-          LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.addChannel(): " + sInsert);
-          stmt.executeUpdate(sInsert);
-
-        }
-        // Commit the transaction
-        RDBMServices.commit(con);
-      } catch (SQLException sqle) {
-        // Roll back the transaction
-        RDBMServices.rollback(con);
-        throw sqle;
-      } finally {
-        if (stmt != null)
-          stmt.close();
-      }
-    } finally {
-      RDBMServices.releaseConnection(con);
+    String chanTitle = channel.getAttribute("title");
+    String chanDesc = channel.getAttribute("description");
+    String chanClass = channel.getAttribute("class");
+    int chanTypeId = Integer.parseInt(channel.getAttribute("typeID"));
+    int chanPupblUsrId = publisher.getID();
+    int chanApvlId = -1;
+    String timeout = channel.getAttribute("timeout");
+    int chanTimeout = 0;
+    if (timeout != null && timeout.trim().length() != 0) {
+      chanTimeout  = Integer.parseInt(timeout);
     }
-  }
+    String chanEditable = channel.getAttribute("editable");
+    String chanHasHelp = channel.getAttribute("hasHelp");
+    String chanHasAbout = channel.getAttribute("hasAbout");
+    String chanName = channel.getAttribute("name");
+    String chanFName = channel.getAttribute("fname");
 
-  /** A method for adding a channel to the channel registry.
-   * This would be called by a publish channel.
-   * @param id the identifier for the channel
-   * @param publisher the user who is publishing this channel
-   * @param chanXML XML that describes the channel
-   */
-  public void addChannel (int id, IPerson publisher, Document chanXML) throws Exception {
-    Connection con = RDBMServices.getConnection();
-    try {
-      addChannel(id, publisher, chanXML, con);
-    } finally {
-      RDBMServices.releaseConnection(con);
-    }
-  }
+    ChannelDefinition channelDef = new ChannelDefinition(id, chanTitle, chanDesc,
+      chanClass, chanTypeId, chanPupblUsrId, chanApvlId,
+      null, null, chanTimeout, chanEditable, chanHasHelp,
+      chanHasAbout, chanName, chanFName);
 
-  /**
-   * Publishes a channel.
-   * @param id
-   * @param publisherId
-   * @param doc
-   * @param con
-   * @exception Exception
-   */
-  private void addChannel (int id, IPerson publisher, Document doc, Connection con) throws SQLException {
-    Element channel = (Element)doc.getFirstChild();
-    // Set autocommit false for the connection
-    RDBMServices.setAutoCommit(con, false);
-    Statement stmt = con.createStatement();
-    try {
-      String sqlTitle = RDBMServices.sqlEscape(channel.getAttribute("title"));
-      String sqlDescription = RDBMServices.sqlEscape(channel.getAttribute("description"));
-      String sqlClass = channel.getAttribute("class");
-      String sqlTypeID = channel.getAttribute("typeID");
-      String sysdate = RDBMServices.sqlTimeStamp();
-      String sqlTimeout = channel.getAttribute("timeout");
-      String timeout = "0";
-      if (sqlTimeout != null && sqlTimeout.trim().length() != 0) {
-        timeout  = sqlTimeout;
-      }
-      String sqlEditable = RDBMServices.dbFlag(xmlBool(channel.getAttribute("editable")));
-      String sqlHasHelp = RDBMServices.dbFlag(xmlBool(channel.getAttribute("hasHelp")));
-      String sqlHasAbout = RDBMServices.dbFlag(xmlBool(channel.getAttribute("hasAbout")));
-      String sqlName = RDBMServices.sqlEscape(channel.getAttribute("name"));
-      String sqlFName = RDBMServices.sqlEscape(channel.getAttribute("fname"));
+    NodeList parameters = channel.getChildNodes();
+    if (parameters != null) {
+      for (int i = 0; i < parameters.getLength(); i++) {
+        if (parameters.item(i).getNodeName().equals("parameter")) {
+          Element parmElement = (Element)parameters.item(i);
+          NamedNodeMap nm = parmElement.getAttributes();
+          String paramName = null;
+          String paramValue = null;
+          String paramOverride = "NULL";
 
-      String sQuery = "SELECT CHAN_ID FROM UP_CHANNEL WHERE CHAN_ID=" + id;
-      LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.addChannel(): " + sQuery);
-      ResultSet rs = stmt.executeQuery(sQuery);
+          for (int j = 0; j < nm.getLength(); j++) {
+            Node param = nm.item(j);
+            String nodeName = param.getNodeName();
+            String nodeValue = param.getNodeValue();
 
-      // If channel is already there, do an update, otherwise do an insert
-      if (rs.next()) {
-        String sUpdate = "UPDATE UP_CHANNEL SET " +
-        "CHAN_TITLE='" + sqlTitle + "', " +
-        "CHAN_DESC='" + sqlDescription + "', " +
-        "CHAN_CLASS='" + sqlClass + "', " +
-        "CHAN_TYPE_ID=" + sqlTypeID + ", " +
-        "CHAN_PUBL_ID=" + publisher.getID() + ", " +
-        "CHAN_PUBL_DT=" + sysdate + ", " +
-        "CHAN_APVL_ID=NULL, " +
-        "CHAN_APVL_DT=NULL, " +
-        "CHAN_TIMEOUT=" + timeout + ", " +
-        "CHAN_EDITABLE='" + sqlEditable + "', " +
-        "CHAN_HAS_HELP='" + sqlHasHelp + "', " +
-        "CHAN_HAS_ABOUT='" + sqlHasAbout + "', " +
-        "CHAN_NAME='" + sqlName + "', " +
-        "CHAN_FNAME='" + sqlFName + "' " +
-        "WHERE CHAN_ID=" + id;
-        LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.addChannel(): " + sUpdate);
-        stmt.executeUpdate(sUpdate);
-      } else {
-        String sInsert = "INSERT INTO UP_CHANNEL (CHAN_ID, CHAN_TITLE, CHAN_DESC, CHAN_CLASS, CHAN_TYPE_ID, CHAN_PUBL_ID, CHAN_PUBL_DT,  CHAN_TIMEOUT, "
-            + "CHAN_EDITABLE, CHAN_HAS_HELP, CHAN_HAS_ABOUT, CHAN_NAME, CHAN_FNAME) ";
-        sInsert += "VALUES (" + id + ", '" + sqlTitle + "', '" + sqlDescription + "', '" + sqlClass + "', " + sqlTypeID + ", "
-            + publisher.getID() + ", " + sysdate + ", " + timeout
-            + ", '" + sqlEditable + "', '" + sqlHasHelp + "', '" + sqlHasAbout
-            + "', '" + sqlName + "', '" + sqlFName + "')";
-        LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.addChannel(): " + sInsert);
-        stmt.executeUpdate(sInsert);
-      }
-
-      // First delete existing parameters for this channel
-      String sDelete = "DELETE FROM UP_CHANNEL_PARAM WHERE CHAN_ID=" + id;
-      LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.addChannel(): " + sDelete);
-      int recordsDeleted = stmt.executeUpdate(sDelete);
-
-      NodeList parameters = channel.getChildNodes();
-      if (parameters != null) {
-        for (int i = 0; i < parameters.getLength(); i++) {
-          if (parameters.item(i).getNodeName().equals("parameter")) {
-            Element parmElement = (Element)parameters.item(i);
-            NamedNodeMap nm = parmElement.getAttributes();
-            String paramName = null;
-            String paramValue = null;
-            String paramOverride = "NULL";
-
-            for (int j = 0; j < nm.getLength(); j++) {
-              Node param = nm.item(j);
-              String nodeName = param.getNodeName();
-              String nodeValue = param.getNodeValue();
-
-              if (nodeName.equals("name")) {
-                paramName = nodeValue;
-              } else if (nodeName.equals("value")) {
-                paramValue = nodeValue;
-              } else if (nodeName.equals("override") && nodeValue.equals("yes")) {
-                paramOverride = "'Y'";
-              }
+            if (nodeName.equals("name")) {
+              paramName = nodeValue;
+            } else if (nodeName.equals("value")) {
+              paramValue = nodeValue;
+            } else if (nodeName.equals("override") && nodeValue.equals("yes")) {
+              paramOverride = "'Y'";
             }
-
-            if (paramName == null && paramValue == null) {
-              throw new RuntimeException("Invalid parameter node");
-            }
-
-            String sInsert = "INSERT INTO UP_CHANNEL_PARAM (CHAN_ID, CHAN_PARM_NM, CHAN_PARM_VAL, CHAN_PARM_OVRD) VALUES (" + id +
-                ",'" + paramName + "','" + paramValue + "'," + paramOverride + ")";
-            LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.addChannel(): " + sInsert);
-            stmt.executeUpdate(sInsert);
           }
+
+          if (paramName == null && paramValue == null) {
+            throw new RuntimeException("Invalid parameter node");
+          }
+
+          channelDef.addParameter(paramName, paramValue, paramOverride);
         }
       }
-
-      // Commit the transaction
-      RDBMServices.commit(con);
-      flushChannelEntry(id);
-    } catch (SQLException sqle) {
-      RDBMServices.rollback(con);
-      throw  sqle;
-    } finally {
-      stmt.close();
     }
+
+    // Create array of category objects based on String array of catIDs
+    ChannelCategory[] categories = new ChannelCategory[catID.length];
+    for (int i = 0; i < catID.length; i++) {
+      String name = null;
+      String descr = null;
+      catID[i] = catID[i].startsWith("cat") ? catID[i].substring(3) : catID[i];
+      int iCatID = Integer.parseInt(catID[i]);
+      categories[i] = new ChannelCategory(iCatID);
+    }
+
+    crs.addChannelDefinition(channelDef, categories);
+    flushChannelEntry(id);
   }
 
   /** A method for approving a channel so that users are allowed to subscribe to it.
@@ -451,21 +294,7 @@ public class RDBMChannelRegistryStoreOld implements IChannelRegistryStoreOld {
    *  @param approveDate When should the channel appear
    */
   public void approveChannel(int chanId, IPerson approver, Date approveDate) throws Exception {
-    Connection con = RDBMServices.getConnection();
-    try {
-      Statement stmt = con.createStatement();
-      try {
-        String sUpdate = "UPDATE UP_CHANNEL SET CHAN_APVL_ID = " + approver.getID() +
-        ", CHAN_APVL_DT = " + RDBMServices.sqlTimeStamp(approveDate) +
-        " WHERE CHAN_ID = " + chanId;
-        LogService.instance().log(LogService.DEBUG, "RDBMChannelRegistryStore.approveChannel(): " + sUpdate);
-        stmt.executeUpdate(sUpdate);
-      } finally {
-        stmt.close();
-      }
-    } finally {
-      RDBMServices.releaseConnection(con);
-    }
+    crs.approveChannelDefinition(chanId, approver, approveDate);
   }
 
   /** A method for getting the next available channel ID.
@@ -635,6 +464,7 @@ public class RDBMChannelRegistryStoreOld implements IChannelRegistryStoreOld {
    * @return the channel node as an XML Element
    * @exception java.sql.SQLException
    */
+   /*
   public Element getChannelNode (int chanId, Connection con, Document doc, String idTag) throws java.sql.SQLException {
     RDBMServices.PreparedStatement pstmtChannel = getChannelPstmt(con);
     try {
@@ -655,6 +485,7 @@ public class RDBMChannelRegistryStoreOld implements IChannelRegistryStoreOld {
       pstmtChannel.close();
     }
   }
+  */
 
   public final RDBMServices.PreparedStatement getChannelParmPstmt(Connection con) throws SQLException {
     return RDBMChannelRegistryStore.getChannelParamPstmt();
