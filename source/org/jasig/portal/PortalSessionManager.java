@@ -402,6 +402,35 @@ public class PortalSessionManager extends HttpServlet {
 
     // pass through methods
 
+    // This method is new in Servlet 2.3.
+    // java.lang.reflect methods are used here in an effort
+    // to be compatible with older servlet APIs.
+    public StringBuffer getRequestURL () throws NoSuchMethodException,
+      IllegalAccessException, java.lang.reflect.InvocationTargetException {
+      java.lang.reflect.Method m = req.getClass().getMethod("getRequestURL", null);
+      return (StringBuffer)m.invoke(req, null);
+    }
+
+    // This method is new in Servlet 2.3.
+    // java.lang.reflect methods are used here in an effort
+    // to be compatible with older servlet APIs.
+    public Map getParameterMap() throws NoSuchMethodException,
+      IllegalAccessException, java.lang.reflect.InvocationTargetException {
+      java.lang.reflect.Method m = req.getClass().getMethod("getParameterMap", null);
+      return (Map)m.invoke(req, null);
+    }
+
+    // This method is new in Servlet 2.3.
+    // java.lang.reflect methods are used here in an effort
+    // to be compatible with older servlet APIs.
+    public void setCharacterEncoding(String env) throws java.io.UnsupportedEncodingException,
+      NoSuchMethodException, IllegalAccessException, java.lang.reflect.InvocationTargetException {
+      Class[] paramTypes = new Class[] { new String().getClass() };
+      java.lang.reflect.Method m = req.getClass().getMethod("setCharacterEncoding", paramTypes);
+      Object[] args = new Object[] { env };
+      m.invoke(req, args);
+    }
+
     public String getAuthType () {
       return  req.getAuthType();
     }
