@@ -38,6 +38,7 @@ package  org.jasig.portal;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.services.GroupService;
+import org.jasig.portal.services.StatsRecorder;
 import org.jasig.portal.utils.SmartCache;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.ResourceLoader;
@@ -497,20 +498,31 @@ public class ChannelRegistryManager {
     crs.approveChannelDefinition(channelDef, publisher, new Date(System.currentTimeMillis()));
 
     LogService.instance().log(LogService.INFO, "Channel " + ID + " has been " + (newChannel ? "published" : "modified") + ".");
+    
+    // Record that a channel has been published or modified
+    if (newChannel)
+      StatsRecorder.recordChannelDefinitionPublished(publisher, channelDef);
+    else
+      StatsRecorder.recordChannelDefinitionModified(publisher, channelDef);
   }
 
   /**
    * Removes a channel from the channel registry.
    * @param channel ID, the channel ID
+   * @param person, the person removing the channel
    * @throws java.lang.Exception
    */
-  public static void removeChannel (String channelID) throws Exception {
+  public static void removeChannel (String channelID, IPerson person) throws Exception {
     // Reset the channel registry cache
     channelRegistryCache.remove(CHANNEL_REGISTRY_CACHE_KEY);
     // Remove the channel
     String sChannelPublishId = channelID.startsWith("chan") ? channelID.substring(4) : channelID;
     int channelPublishId = Integer.parseInt(sChannelPublishId);
-    crs.disapproveChannelDefinition(crs.getChannelDefinition(channelPublishId));
+    ChannelDefinition channelDef = crs.getChannelDefinition(channelPublishId);
+    crs.disapproveChannelDefinition(channelDef);
+    
+    // Record that a channel has been deleted
+    StatsRecorder.recordChannelDefinitionRemoved(person, channelDef);
   }
 
   /**
