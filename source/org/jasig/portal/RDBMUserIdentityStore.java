@@ -39,8 +39,11 @@ package  org.jasig.portal;
 
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.LogService;
+import org.jasig.portal.services.GroupService;
 import  java.sql.*;
-
+import org.jasig.portal.groups.IEntityGroup;
+import org.jasig.portal.groups.EntityImpl;
+import org.jasig.portal.groups.IGroupMember;
 /**
  * SQL implementation for managing creation and removal of User Portal Data
  * @author Susan Bramhall, Yale University
@@ -253,6 +256,16 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
           throw new AuthorizationException("RDBMUserIdentityStore error, see error log.");
         }
 
+        /* put new user in group "everyone" */
+        try{
+          IEntityGroup everyone = GroupService.getEveryoneGroup();
+          IGroupMember me = new EntityImpl(String.valueOf(newUID), Class.forName("org.jasig.portal.security.IPerson"));
+          everyone.addMember(me);
+          everyone.updateMembers();
+        }
+        catch (Exception e) {
+          LogService.log(LogService.ERROR, "RDBMUserIdentityStore::getPortalUID(): error adding new user to everyone group: ", e);
+        }
         try
         {
           // Turn off autocommit if the database supports it
