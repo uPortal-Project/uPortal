@@ -1,3 +1,3 @@
 CREATE TABLE PORTAL_BOOKMARKS ( ID INTEGER IDENTITY PRIMARY KEY, PORTAL_USER_ID INTEGER, BOOKMARK_XML LONGVARCHAR)
 
-INSERT INTO PORTAL_BOOKMARKS (ID, PORTAL_USER_ID, BOOKMARK_XML) VALUES (0, 0, '<?xml version="1.0"?><!DOCTYPE bookmarks SYSTEM "http://localhost:8080/uPortal2/dtd/bookmarks.dtd"><bookmarks><bookmark url="http://x.com" name="X.com" comments="Bank"/>')
+INSERT INTO PORTAL_BOOKMARKS (ID, PORTAL_USER_ID, BOOKMARK_XML) VALUES (0, 0, '<?xml version="1.0"?><!DOCTYPE bookmarks SYSTEM "http://localhost:8080/uPortal2/dtd/bookmarks.dtd"><bookmarks><bookmark url="http://x.com" name="X.com" comments="Bank"/></bookmarks>')
