@@ -178,14 +178,14 @@ A.uportal-navigation-channel:hover{
   text-align: left;
 }
 .uportal-channel-table-row-even{
-	color : black;
-	font-size: 10px;
-	font-family: Monaco, Andale Mono, monospace
+	color : Black;
+	font-size: 11px;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
 }
 .uportal-channel-table-row-odd{
-	color : #CCCC99;
-	font-size: 10px;
-	font-family: Monaco, Andale Mono, monospace
+	color : #666666;
+	font-size: 11px;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
 }
 .uportal-background{
 	background : #FFFFFF;

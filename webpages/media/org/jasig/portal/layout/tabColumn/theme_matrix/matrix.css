@@ -126,7 +126,7 @@ A.uportal-navigation-channel:hover{
 	font-weight : bold;
 }
 .uportal-channel-subtitle-reversed{
-	color : #333333;
+	color : Lime;
 	font-family : Georgia, "MS Sans Serif", Geneva, sans-serif;
 	font-size : 12px;
 	font-weight : bold;
@@ -142,7 +142,7 @@ A.uportal-navigation-channel:hover{
 	font-family : Georgia, "Times New Roman", Times, serif;
 }
 .uportal-channel-code{
-	color : Black;
+	color : Olive;
 	font-size: 12px;
 	font-family: Monaco, Andale Mono, monospace;
 }
@@ -158,7 +158,7 @@ A.uportal-navigation-channel:hover{
 	color : #993333;
 }
 .uportal-channel-error{
-	color : Black;
+	color : Olive;
 	font-size: 11px;
 	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
 }
@@ -177,14 +177,14 @@ A.uportal-navigation-channel:hover{
   text-align: left;
 }
 .uportal-channel-table-row-even{
-	color : black;
-	font-size: 10px;
-	font-family: Monaco, Andale Mono, monospace
+	color : Olive;
+	font-size: 11px;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
 }
 .uportal-channel-table-row-odd{
-	color : #CCCC99;
-	font-size: 10px;
-	font-family: Monaco, Andale Mono, monospace
+	color : Green;
+	font-size: 11px;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
 }
 .uportal-background{
 	background : #555555;
