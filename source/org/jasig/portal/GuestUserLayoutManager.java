@@ -193,7 +193,7 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
 		}
 		
 		// Initialize the JNDI context for this user
-		JNDIManager.initializeUserContext(newState.uLayoutXML, req.getSession(), m_person);
+		//JNDIManager.initializeUserContext(newState.uLayoutXML, req.getSession(), m_person);
 	    } else {
 		// there is no user-defined mapping for this particular browser.
 		// user should be redirected to a browser-registration page.
