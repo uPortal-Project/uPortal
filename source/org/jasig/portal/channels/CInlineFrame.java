@@ -18,6 +18,8 @@ import java.net.*;
  * For Browsers without support for Inline Frames the channel just presents
  * a link to open in a separate window.
  * 
+ * @author Susan Bramhall
+ * @version $Revision$
  */
 public class CInlineFrame implements org.jasig.portal.IChannel                            
 { 
