@@ -812,7 +812,26 @@ $Revision$
 
   </xsl:template>
 
-  <xsl:template name="optionMenuDefault">Navigate to a tab, or select an element on the current tab by clicking one of the grey buttons below. For example, click one of the 
+  <xsl:template name="optionMenuDefault">
+   <table>
+      <tr>
+        <td valign="top">
+          <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0" />
+        </td>
+        <td>
+          <a href="{$baseActionURL}?userPreferencesAction=manageProfiles">Manage profiles</a>
+        </td>
+      </tr>
+      <tr>
+        <td valign="top">
+          <img alt="interface image" src="{$mediaPath}/bullet.gif" width="16" height="16" border="0" />
+        </td>
+        <td>
+          <a href="{$baseActionURL}?action=manageSkins">Change the design skin</a>
+        </td>
+      </tr>
+   </table>
+Navigate to a tab, or select an element on the current tab by clicking one of the grey buttons below. For example, click one of the 
     <img alt="interface image" src="{$mediaPath}/newchannel.gif" width="79" height="20" />
     buttons to add a new channel in that location.
   </xsl:template>

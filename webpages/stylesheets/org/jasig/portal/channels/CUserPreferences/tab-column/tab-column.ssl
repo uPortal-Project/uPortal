@@ -1,6 +1,8 @@
 <?xml version="1.0"?>
 
-<?xml-stylesheet href="webpages/stylesheets/org/jasig/portal/channels/CUserPreferences/tab-column/default.xsl" type="text/xsl" media="netscape"?>
-<?xml-stylesheet href="webpages/stylesheets/org/jasig/portal/channels/CUserPreferences/tab-column/default.xsl" type="text/xsl" media="explorer"?>
+<?xml-stylesheet title="default" href="webpages/stylesheets/org/jasig/portal/channels/CUserPreferences/tab-column/default.xsl" type="text/xsl" media="netscape"?>
+
+<?xml-stylesheet title="skinList" href="webpages/stylesheets/org/jasig/portal/channels/CUserPreferences/tab-column/skinList.xsl" type="text/xsl" media="netscape"?>
+
 
 <document/>
