@@ -38,7 +38,8 @@ public class SelectOwners implements IPermissionCommand {
             ArrayList ownerkeys = new ArrayList();
             while (formkeys.hasMoreElements()) {
                 String key = (String)formkeys.nextElement();
-                log.info("checking key " + key);
+                if (log.isInfoEnabled())
+                    log.info("checking key " + key);
                 if (key.indexOf("owner//") == 0) {
                     String owner = key.substring(7);
                     ownerkeys.add(owner);
