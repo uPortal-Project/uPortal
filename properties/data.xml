@@ -1621,20 +1621,130 @@
     <rows>
       <row>
         <column><name>CAT_ID</name><value>0</value></column>
-        <column><name>CAT_TITLE</name><value>News</value></column>
-      </row>
-      <row>
-        <column><name>CAT_ID</name><value>1</value></column>
-        <column><name>CAT_TITLE</name><value>Development</value></column>
-      </row>
-      <row>
-        <column><name>CAT_ID</name><value>2</value></column>
         <column><name>CAT_TITLE</name><value>Applications</value></column>
+        <column><name>CAT_DESC</name><value>Applications</value></column>
+        <column><name>PARENT_CAT_ID</name><value>NULL</value></column>
+        <column><name>NEXT_CAT_ID</name><value>1</value></column>
+        <column><name>PRIOR_CAT_ID</name><value>NULL</value></column>
+        <column><name>FST_CHLD_CAT_ID</name><value>NULL</value></column>
       </row>
+        <row>
+          <column><name>CAT_ID</name><value>1</value></column>
+          <column><name>CAT_TITLE</name><value>Development</value></column>
+          <column><name>CAT_DESC</name><value>Development</value></column>
+          <column><name>PARENT_CAT_ID</name><value>NULL</value></column>
+          <column><name>NEXT_CAT_ID</name><value>10</value></column>
+          <column><name>PRIOR_CAT_ID</name><value>0</value></column>
+          <column><name>FST_CHLD_CAT_ID</name><value>2</value></column>
+        </row>
+        <row>
+          <column><name>CAT_ID</name><value>2</value></column>
+          <column><name>CAT_TITLE</name><value>uPortal</value></column>
+          <column><name>CAT_DESC</name><value>uPortal-related</value></column>
+          <column><name>PARENT_CAT_ID</name><value>1</value></column>
+          <column><name>NEXT_CAT_ID</name><value>NULL</value></column>
+          <column><name>PRIOR_CAT_ID</name><value>NULL</value></column>
+          <column><name>FST_CHLD_CAT_ID</name><value>3</value></column>
+        </row>        
       <row>
         <column><name>CAT_ID</name><value>3</value></column>
-        <column><name>CAT_TITLE</name><value>Games</value></column>
+        <column><name>CAT_TITLE</name><value>Channel Types</value></column>
+        <column><name>CAT_DESC</name><value>Java classes implementing the IChannel interface</value></column>
+        <column><name>PARENT_CAT_ID</name><value>2</value></column>
+        <column><name>NEXT_CAT_ID</name><value>NULL</value></column>
+        <column><name>PRIOR_CAT_ID</name><value>NULL</value></column>
+        <column><name>FST_CHLD_CAT_ID</name><value>4</value></column>
       </row>
+      <row>
+        <column><name>CAT_ID</name><value>4</value></column>
+        <column><name>CAT_TITLE</name><value>CWebProxy</value></column>
+        <column><name>CAT_DESC</name><value>Serves as HTTP Proxy to HTML or XHTML web pages</value></column>
+        <column><name>PARENT_CAT_ID</name><value>3</value></column>
+        <column><name>NEXT_CAT_ID</name><value>5</value></column>
+        <column><name>PRIOR_CAT_ID</name><value>NULL</value></column>
+        <column><name>FST_CHLD_CAT_ID</name><value>NULL</value></column>
+      </row>
+      <row>
+        <column><name>CAT_ID</name><value>5</value></column>
+        <column><name>CAT_TITLE</name><value>CApplet</value></column>
+        <column><name>CAT_DESC</name><value>Renders a java applet</value></column>
+        <column><name>PARENT_CAT_ID</name><value>3</value></column>
+        <column><name>NEXT_CAT_ID</name><value>6</value></column>
+        <column><name>PRIOR_CAT_ID</name><value>4</value></column>
+        <column><name>FST_CHLD_CAT_ID</name><value>NULL</value></column>
+      </row>
+      <row>
+        <column><name>CAT_ID</name><value>6</value></column>
+        <column><name>CAT_TITLE</name><value>CGenericXSLT</value></column>
+        <column><name>CAT_DESC</name><value>Performs XSLT transformations</value></column>
+        <column><name>PARENT_CAT_ID</name><value>3</value></column>
+        <column><name>NEXT_CAT_ID</name><value>8</value></column>
+        <column><name>PRIOR_CAT_ID</name><value>5</value></column>
+        <column><name>FST_CHLD_CAT_ID</name><value>7</value></column>
+      </row>
+      <row>
+        <column><name>CAT_ID</name><value>7</value></column>
+        <column><name>CAT_TITLE</name><value>RSS</value></column>
+        <column><name>CAT_DESC</name><value>Rich Site Summary, an XML standard for content feeds</value></column>
+        <column><name>PARENT_CAT_ID</name><value>6</value></column>
+        <column><name>NEXT_CAT_ID</name><value>NULL</value></column>
+        <column><name>PRIOR_CAT_ID</name><value>NULL</value></column>
+        <column><name>FST_CHLD_CAT_ID</name><value>NULL</value></column>
+      </row>
+      <row>
+        <column><name>CAT_ID</name><value>8</value></column>
+        <column><name>CAT_TITLE</name><value>CImage</value></column>
+        <column><name>CAT_DESC</name><value>Renders an image with an optional cation and subcaption.</value></column>
+        <column><name>PARENT_CAT_ID</name><value>3</value></column>
+        <column><name>NEXT_CAT_ID</name><value>9</value></column>
+        <column><name>PRIOR_CAT_ID</name><value>6</value></column>
+        <column><name>FST_CHLD_CAT_ID</name><value>NULL</value></column>
+      </row>
+      <row>
+        <column><name>CAT_ID</name><value>9</value></column>
+        <column><name>CAT_TITLE</name><value>CInlineFrame</value></column>
+        <column><name>CAT_DESC</name><value>Renders a web page inside an inline frame.  Only use for IE 5 and Netscape 6 and higher.</value></column>
+        <column><name>PARENT_CAT_ID</name><value>3</value></column>
+        <column><name>NEXT_CAT_ID</name><value>NULL</value></column>
+        <column><name>PRIOR_CAT_ID</name><value>8</value></column>
+        <column><name>FST_CHLD_CAT_ID</name><value>NULL</value></column>
+      </row>
+      <row>
+        <column><name>CAT_ID</name><value>10</value></column>
+        <column><name>CAT_TITLE</name><value>News</value></column>
+        <column><name>CAT_DESC</name><value>News</value></column>
+        <column><name>PARENT_CAT_ID</name><value>NULL</value></column>
+        <column><name>NEXT_CAT_ID</name><value>12</value></column>
+        <column><name>PRIOR_CAT_ID</name><value>NULL</value></column>
+        <column><name>FST_CHLD_CAT_ID</name><value>11</value></column>
+      </row>
+      <row>
+        <column><name>CAT_ID</name><value>11</value></column>
+        <column><name>CAT_TITLE</name><value>Business</value></column>
+        <column><name>CAT_DESC</name><value>Business or company news</value></column>
+        <column><name>PARENT_CAT_ID</name><value>10</value></column>
+        <column><name>NEXT_CAT_ID</name><value>NULL</value></column>
+        <column><name>PRIOR_CAT_ID</name><value>NULL</value></column>
+        <column><name>FST_CHLD_CAT_ID</name><value>NULL</value></column>
+      </row>
+      <row>
+        <column><name>CAT_ID</name><value>12</value></column>
+        <column><name>CAT_TITLE</name><value>Entertainment</value></column>
+        <column><name>CAT_DESC</name><value>Entertainment</value></column>
+        <column><name>PARENT_CAT_ID</name><value>NULL</value></column>
+        <column><name>NEXT_CAT_ID</name><value>NULL</value></column>
+        <column><name>PRIOR_CAT_ID</name><value>10</value></column>
+        <column><name>FST_CHLD_CAT_ID</name><value>13</value></column>
+      </row>
+      <row>
+        <column><name>CAT_ID</name><value>13</value></column>
+        <column><name>CAT_TITLE</name><value>Games</value></column>
+        <column><name>CAT_DESC</name><value>Games</value></column>
+        <column><name>PARENT_CAT_ID</name><value>12</value></column>
+        <column><name>NEXT_CAT_ID</name><value>NULL</value></column>
+        <column><name>PRIOR_CAT_ID</name><value>NULL</value></column>
+        <column><name>FST_CHLD_CAT_ID</name><value>NULL</value></column>
+      </row>       
     </rows>
   </table>
 
@@ -1643,52 +1753,108 @@
     <rows>
       <row>
         <column><name>CAT_ID</name><value>0</value></column>
-        <column><name>CHAN_ID</name><value>1</value></column>
-      </row>
-      <row>
-        <column><name>CAT_ID</name><value>0</value></column>
-        <column><name>CHAN_ID</name><value>2</value></column>
-      </row>
-      <row>
-        <column><name>CAT_ID</name><value>2</value></column>
         <column><name>CHAN_ID</name><value>3</value></column>
       </row>
       <row>
-        <column><name>CAT_ID</name><value>1</value></column>
-        <column><name>CHAN_ID</name><value>4</value></column>
-      </row>
-      <row>
-        <column><name>CAT_ID</name><value>1</value></column>
-        <column><name>CHAN_ID</name><value>5</value></column>
-      </row>
-      <row>
         <column><name>CAT_ID</name><value>0</value></column>
-        <column><name>CHAN_ID</name><value>6</value></column>
+        <column><name>CHAN_ID</name><value>89</value></column>
       </row>
       <row>
         <column><name>CAT_ID</name><value>1</value></column>
+        <column><name>CHAN_ID</name><value>16</value></column>
+      </row>
+      <row>
+        <column><name>CAT_ID</name><value>2</value></column>
+        <column><name>CHAN_ID</name><value>15</value></column>
+      </row>
+      <row>
+        <column><name>CAT_ID</name><value>2</value></column>
         <column><name>CHAN_ID</name><value>7</value></column>
       </row>
       <row>
-        <column><name>CAT_ID</name><value>1</value></column>
+        <column><name>CAT_ID</name><value>2</value></column>
         <column><name>CHAN_ID</name><value>8</value></column>
       </row>
       <row>
-        <column><name>CAT_ID</name><value>3</value></column>
-        <column><name>CHAN_ID</name><value>9</value></column>
+        <column><name>CAT_ID</name><value>2</value></column>
+        <column><name>CHAN_ID</name><value>5</value></column>
       </row>
       <row>
-        <column><name>CAT_ID</name><value>2</value></column>
+        <column><name>CAT_ID</name><value>4</value></column>
         <column><name>CHAN_ID</name><value>17</value></column>
       </row>
       <row>
-        <column><name>CAT_ID</name><value>2</value></column>
+        <column><name>CAT_ID</name><value>4</value></column>
         <column><name>CHAN_ID</name><value>18</value></column>
       </row>
       <row>
-        <column><name>CAT_ID</name><value>2</value></column>
-        <column><name>CHAN_ID</name><value>89</value></column>
+        <column><name>CAT_ID</name><value>5</value></column>
+        <column><name>CHAN_ID</name><value>9</value></column>
       </row>
+      <row>
+        <column><name>CAT_ID</name><value>6</value></column>
+        <column><name>CHAN_ID</name><value>15</value></column>
+      </row>
+      <row>
+        <column><name>CAT_ID</name><value>7</value></column>
+        <column><name>CHAN_ID</name><value>5</value></column>
+      </row>
+      <row>
+        <column><name>CAT_ID</name><value>7</value></column>
+        <column><name>CHAN_ID</name><value>6</value></column>
+      </row>
+      <row>
+        <column><name>CAT_ID</name><value>7</value></column>
+        <column><name>CHAN_ID</name><value>7</value></column>
+      </row>
+      <row>
+        <column><name>CAT_ID</name><value>7</value></column>
+        <column><name>CHAN_ID</name><value>11</value></column>
+      </row>
+      <row>
+        <column><name>CAT_ID</name><value>7</value></column>
+        <column><name>CHAN_ID</name><value>12</value></column>
+      </row>
+      <row>
+        <column><name>CAT_ID</name><value>7</value></column>
+        <column><name>CHAN_ID</name><value>13</value></column>
+      </row>
+      <row>
+        <column><name>CAT_ID</name><value>8</value></column>
+        <column><name>CHAN_ID</name><value>1</value></column>
+      </row>
+      <row>
+        <column><name>CAT_ID</name><value>9</value></column>
+        <column><name>CHAN_ID</name><value>8</value></column>
+      </row>
+      <row>
+        <column><name>CAT_ID</name><value>10</value></column>
+        <column><name>CHAN_ID</name><value>12</value></column>
+      </row>
+      <row>
+        <column><name>CAT_ID</name><value>11</value></column>
+        <column><name>CHAN_ID</name><value>6</value></column>
+      </row>
+      <row>
+        <column><name>CAT_ID</name><value>11</value></column>
+        <column><name>CHAN_ID</name><value>13</value></column>
+      </row>
+      <row>
+        <column><name>CAT_ID</name><value>12</value></column>
+        <column><name>CHAN_ID</name><value>1</value></column>
+      </row>
+      <row>
+        <column><name>CAT_ID</name><value>12</value></column>
+        <column><name>CHAN_ID</name><value>11</value></column>
+      </row>
+      <row>
+        <column><name>CAT_ID</name><value>13</value></column>
+        <column><name>CHAN_ID</name><value>9</value></column>
+      </row>
+      <row>
+        <column><name>CAT_ID</name><value>13</value></column>
+        <column><name>CHAN_ID</name><value>14</value></column>
+      </row>        
     </rows>
   </table>
 
