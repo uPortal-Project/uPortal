@@ -2,3 +2,7 @@ build
 dist
 .project
 .classpath
+uPortalDb.lck
+uPortalDb.log
+uPortalDb.properties
+uPortalDb.script
