@@ -34,7 +34,7 @@
 --%>
 
 <%@ page isErrorPage="true" %>
-<%@ page import="org.jasig.portal.Logger" %>
+<%@ page import="org.jasig.portal.services.LogService" %>
 <html>
 <head>
 <title>Portal: An error has occured</title>
@@ -45,8 +45,8 @@
 
 <%
 if (exception != null)
-{ 
-  Logger.log (Logger.ERROR, exception);
+{
+  LogService.log (LogService.ERROR, exception);
 %>
 
 <%-- Error message that user will see when an exception is thrown --%>
@@ -59,7 +59,7 @@ else
 %>
 
 <%-- Display text when page is loaded without an exception --%>
-<p>You are looking at <code>error.jsp</code>.  If an exception had been thrown 
+<p>You are looking at <code>error.jsp</code>.  If an exception had been thrown
 in one of the <code>.jsp</code> files, this page will be loaded and the stack trace
 will be logged.
 
