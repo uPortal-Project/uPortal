@@ -356,7 +356,7 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
       return (System.currentTimeMillis() - ((Long)validity).longValue() < state.cacheTimeout*1000);
   }
 
-  private static String getKey(CState state)
+  private String getKey(CState state)
   {
     // Maybe not the best way to generate a key, but it seems to work.
     // If you know a better way, please change it!
