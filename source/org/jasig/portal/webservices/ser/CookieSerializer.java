@@ -59,9 +59,7 @@ public class CookieSerializer implements Serializer {
    * @param context the serialization context
    */
   public void serialize(QName name, Attributes attributes, Object value, SerializationContext context) throws IOException {
- 
-    System.out.println("serializing Cookie...");
-    // Make sure this object is actually a javax.servlet.http.Cookie
+     // Make sure this object is actually a javax.servlet.http.Cookie
     if (!(value instanceof Cookie)) {
       throw new IOException("Can't serialize a " + value.getClass().getName() + " with a CookieSerializer.");
     }
