@@ -31,36 +31,35 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- *
- * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
 
-package  org.jasig.portal.channels;
+package org.jasig.portal.channels;
 
-import  java.net.URL;
-import  java.util.Hashtable;
-import  java.util.HashMap;
-import  javax.naming.InitialContext;
-import  javax.naming.Context;
-import  javax.naming.NamingException;
-import  javax.naming.NotContextException;
-import  org.jasig.portal.security.Permission;
-import  org.jasig.portal.security.PermissionManager;
-import  org.jasig.portal.ChannelRuntimeData;
-import  org.jasig.portal.ICacheable;
-import  org.jasig.portal.ChannelCacheKey;
-import  org.jasig.portal.MediaManager;
-import  org.jasig.portal.UtilitiesBean;
-import  org.jasig.portal.PortalException;
-import  org.jasig.portal.GeneralRenderingException;
-import  org.jasig.portal.services.LogService;
-import  org.jasig.portal.utils.XSLT;
-import  org.jasig.portal.utils.SmartCache;
-import  org.jasig.portal.utils.DocumentFactory;
-import  org.xml.sax.ContentHandler;
-import  org.w3c.dom.Document;
-import  org.w3c.dom.Element;
+import java.net.URL;
+import java.util.Hashtable;
+import java.util.HashMap;
+import javax.naming.InitialContext;
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.naming.NotContextException;
+import org.jasig.portal.security.Permission;
+import org.jasig.portal.security.PermissionManager;
+import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.ICacheable;
+import org.jasig.portal.ChannelCacheKey;
+import org.jasig.portal.MediaManager;
+import org.jasig.portal.UtilitiesBean;
+import org.jasig.portal.PortalException;
+import org.jasig.portal.GeneralRenderingException;
+import org.jasig.portal.services.LogService;
+import org.jasig.portal.utils.XSLT;
+import org.jasig.portal.utils.ResourceLoader;
+import org.jasig.portal.utils.SmartCache;
+import org.jasig.portal.utils.DocumentFactory;
+import org.xml.sax.ContentHandler;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 
 /**
@@ -219,7 +218,8 @@ public class CHeader extends BaseChannel
     sbKey.append("baseActionURL:").append(runtimeData.getBaseActionURL());
     sbKey.append("stylesheetURI:");
     try {
-      sbKey.append(XSLT.getStylesheetURI(sslLocation, runtimeData.getBrowserInfo()));
+      String sslUri = ResourceLoader.getResourceAsURLString(this.getClass(), sslLocation);
+      sbKey.append(XSLT.getStylesheetURI(sslUri, runtimeData.getBrowserInfo()));
     } catch (Exception e) {
       sbKey.append("not defined");
     }
