@@ -43,7 +43,7 @@
          </td>
 
          <td nowrap="nowrap" class="uportal-channel-subtitle-reversed">
-            <xsl:value-of select="@name" /><xsl:value-of select="position()" />
+            <xsl:value-of select="@name" /><!--xsl:value-of select="position()" /-->
          </td>
 
          <td nowrap="nowrap" class="uportal-channel-table-row-even">
