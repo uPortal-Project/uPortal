@@ -771,8 +771,6 @@
         <pathelement path="${build.home}/WEB-INF/classes"/>
         <path refid="compile.classpath"/>
       </classpath>
-        <jvmarg value="-Xdebug"/>    
-	<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=10000"/>
 
       <arg value="${usetable}"/>
       <arg value="${tablefile}"/>
