@@ -1912,7 +1912,6 @@ public class RDBMUserLayoutStore
    */
   public UserProfile getUserProfileById (IPerson person, int profileId) throws Exception {
     int userId = person.getID();
-    UserProfile upl = null;
     Connection con = RdbmServices.getConnection();
     try {
       Statement stmt = con.createStatement();
@@ -1935,11 +1934,11 @@ public class RDBMUserLayoutStore
             if (rs.wasNull()) {
               themeSsId = 0;
             }
-            upl = new UserProfile(profileId, rs.getString(3), rs.getString(4), layoutId,
+            return new UserProfile(profileId, rs.getString(3), rs.getString(4), layoutId,
                 structSsId, themeSsId);
           }
           else {
-            return  null;
+            throw new Exception("Unable to find User Profile for user " + userId + " and profile " + profileId);;
           }
         } finally {
           rs.close();
@@ -1950,7 +1949,6 @@ public class RDBMUserLayoutStore
     } finally {
       RdbmServices.releaseConnection(con);
     }
-    return  upl;
   }
   /**
    * put your documentation comment here
