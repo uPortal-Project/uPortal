@@ -35,12 +35,14 @@
 
 package org.jasig.portal.groups;
 
+import org.jasig.portal.EntityIdentifier;
+
 /**
  * Interface for finding and maintaining <code>IEntityGroups</code>.
  * @author Dan Ellentuck
  * @version 1.0, 11/29/01
  */
-public interface IEntityGroupStore
+public interface IEntityGroupStore extends IGroupConstants
 {
 /**
  * Delete this <code>IEntityGroup</code> from the data store.
@@ -90,4 +92,10 @@ public void updateMembers(IEntityGroup group) throws GroupsException;
  * @param key java.lang.String
  */
 public ILockableEntityGroup findLockable(String key) throws GroupsException;
+
+/**
+ * Find EntityIdentifiers for groups whose name matches the query string 
+ * according to the specified method and matches the provided leaf type 
+ */
+public EntityIdentifier[] searchForGroups(String query, int method, Class leaftype) throws GroupsException;
 }
