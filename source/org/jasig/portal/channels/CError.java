@@ -315,33 +315,17 @@ public class CError extends BaseChannel implements IPrivilegedChannel
         // end of debug block
 
         try {
-            Hashtable stylesheetParams = new Hashtable(4);
-            stylesheetParams.put("baseActionURL", runtimeData.getBaseActionURL());
-            stylesheetParams.put("showStackTrace", new Boolean(showStackTrace).toString());
-            stylesheetParams.put("allowRefresh", allowRef);
-            stylesheetParams.put("allowReinstantiation", allowRel);
-            XSLT.transform(doc, new URL(sslLocation), out, stylesheetParams, runtimeData.getBrowserInfo());
-            
-/*            XSLTInputSource xmlSource = new XSLTInputSource (doc);
-            XSLTInputSource xslSource = set.getStylesheet(portcs.getHttpServletRequest());
-            if(xslSource==null) {
-                // some meaningful error-tolerant output should be generated here.
-                LogService.instance().log(LogService.ERROR,"CError::renderXML() : unable to locate a stylesheet");
-            } else {
-                XSLTResultTarget xmlResult = new XSLTResultTarget(out);
-                XSLTProcessor processor = XSLTProcessorFactory.getProcessor (new org.apache.xalan.xpath.xdom.XercesLiaison ());
-                if(runtimeData!=null) {
-                    processor.setStylesheetParam("baseActionURL", processor.createXString (runtimeData.getBaseActionURL()));
-                    processor.setStylesheetParam("showStackTrace", processor.createXString ((new Boolean(showStackTrace)).toString()));
-                    processor.setStylesheetParam("allowRefresh", processor.createXString (allowRef));
-                    processor.setStylesheetParam("allowReinstantiation", processor.createXString (allowRel));
-                }
-
-                processor.process (xmlSource, xslSource, xmlResult);
-            }
- */
+            XSLT xslt = new XSLT();
+            xslt.setXML(doc);
+            xslt.setSSL(sslLocation, runtimeData.getBrowserInfo());
+            xslt.setTarget(out);
+            xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
+            xslt.setStylesheetParameter("showStackTrace", String.valueOf(showStackTrace));
+            xslt.setStylesheetParameter("allowRefresh", allowRef);
+            xslt.setStylesheetParameter("allowReinstantiation", allowRel);
+            xslt.transform();
         } catch (Exception e) { 
-            LogService.instance().log(LogService.ERROR,"CError::renderXML() : things are bad. Error channel threw: "+e); 
+            LogService.instance().log(LogService.ERROR, "CError::renderXML() : Things are bad. Error channel threw: " + e); 
         }
     }
 }
