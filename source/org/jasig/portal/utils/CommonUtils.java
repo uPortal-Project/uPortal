@@ -327,13 +327,18 @@ public class CommonUtils {
 
   /**
   * This method returns the boolean value for the given String representation ("true"-"false").
-  * @param bool - a value of boolean type
+  * @param bool a <code>String</code> value
   * @return true if bool is "true", false - otherwise
   **/
   public static boolean strToBool ( String bool ) {
     return ("true".equalsIgnoreCase(bool))?true:false;
   }
 
+  /**
+  * This method returns the boolean value for the given String representation ("yes"-"no").
+  * @param str a <code>String</code> value
+  * @return true if str is "yes", false - otherwise
+  **/
   public static boolean parseBoolean(String str) {
     return parseBoolean(str,false);
   }
