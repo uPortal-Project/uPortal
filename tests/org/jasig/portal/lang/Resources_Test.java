@@ -3,11 +3,13 @@
 *  available online at http://www.uportal.org/license.html
 */
 package org.jasig.portal.lang;
+
 import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.Properties;
 import junit.framework.ComparisonFailure;
 import junit.framework.TestCase;
+
 /**
  * The <code>TypeConverter_Test</code> class tests <code>TypeConverter</code> class.
  *
