@@ -78,6 +78,12 @@
   server.home          The root directory of the application server
                        or servlet container such as Tomcat.
 
+  webapp.docBase       The name of the context within the webcontainer
+
+  webapp.path          URL path to the context
+
+  webapp.contextFile   The name of the prototype context file
+
   deploy.home          The name of the directory into which the
                        deployment hierarchy will be created, and into
                        which the build directory will be copied.
@@ -96,7 +102,9 @@
   <property name="deploy.home"   value="(set this in build.properties!)"/>
   <property name="dist.home"     value="dist"/>
 
-
+  <property name="webapp.DocBase" value="(set this in build.properties!)"/>
+  <property name="webapp.Path"   value="(set this in build.properties!)"/>
+  <property name="webapp.contextFile" value="(set this in build.properties!)"/>
 
 <!--  ==================== Compilation Control Options ==================== -->
 
@@ -261,7 +269,7 @@
                        Version: 3.8.1
                        URL: http://www.junit.org/
 
-  commons-collection.jar 
+  commons-collection.jar
                        Collection components from the Apache Commons project - needed
                        for database pooling.
                        Version: 3.1
@@ -281,7 +289,7 @@
                        by your servlet container.
                        Version: 2.2, 2.3, or 2.4
                        URL: http://jakarta.apache.org/tomcat/
-  
+
   spring.jar           Spring, a java/j2ee application framework that facilitates
                        the use of the Inversion of Control (IoC) design pattern.
                        Version 1.1.1
@@ -311,8 +319,6 @@
   <property name="servlet.jar" value="(set this in build.properties!)"/>
   <property name="spring.jar" value="(set this in build.properties!)"/>
   <property name="commons-collection.jar" value="(set this in build.properties!)"/>
-
-
 
 <!-- ==================== Compilation Classpath =========================== -->
 
@@ -350,7 +356,7 @@
     <pathelement location="${commons-dbcp.jar}"/>
     <pathelement location="${commons-pool.jar}"/>
     <pathelement location="${servlet.jar}"/>
-  	<pathelement location="${spring.jar}"/>
+    <pathelement location="${spring.jar}"/>
 
   </path>
 
@@ -372,25 +378,25 @@
 
 
 <!-- ==================== Help target ===================================== -->
-<!--	
-	
-	The "help" target prints a help message describing the available targets.
-	This target is the default target so that deployers who blindly execute the Ant task receive help.
+<!--
 
--->	
-	
-	<target name="help" description="Prints information about using this ant build file.">
-		
-		<loadfile property="helpMessage"
-		      srcFile="docs/antHelp.txt"/>
-		
-		<echo message="uPortal build.xml help task:"/>
-		<echo message="Prints the file docs/antHelp.txt:"/>
-		<echo message="---"/>
-		<echo message="${helpMessage}"/>
-	</target>
-	
-	
+  The "help" target prints a help message describing the available targets.
+  This target is the default target so that deployers who blindly execute the Ant task receive help.
+
+-->
+
+  <target name="help" description="Prints information about using this ant build file.">
+
+    <loadfile property="helpMessage"
+          srcFile="docs/antHelp.txt"/>
+
+    <echo message="uPortal build.xml help task:"/>
+    <echo message="Prints the file docs/antHelp.txt:"/>
+    <echo message="---"/>
+    <echo message="${helpMessage}"/>
+  </target>
+
+
 <!-- ==================== All Target ====================================== -->
 
 <!--
@@ -446,7 +452,7 @@
          optimize="${compile.optimize}">
       <classpath refid="compile.classpath"/>
     </javac>
-      
+
     <!-- Copy non-java resources -->
     <copy  todir="${build.home}/WEB-INF/classes">
       <fileset dir="source" excludes="CVS,**/*.java"/>
@@ -518,7 +524,7 @@
     <copy todir="${deploy.home}/WEB-INF/lib" file="${commons-dbcp.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${commons-pool.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${jdbcDriver.jar}"/>
-  	<copy todir="${deploy.home}/WEB-INF/lib" file="${spring.jar}"/>
+    <copy todir="${deploy.home}/WEB-INF/lib" file="${spring.jar}"/>
 
     <!-- These are Tomcat-specific!  We need to think about a new property
          that lets us specify the appropriate directory for other servers
@@ -531,9 +537,10 @@
          We need to find out the best way to ensure cross-context
          behavior in all servlet containers.
     -->
-    <delete file="${server.home}/conf/Catalina/localhost/uPortal.xml"/>
-    <copy todir="${server.home}/conf/Catalina/localhost" file="properties/uPortal.xml">
+    <copy tofile="${server.home}/conf/Catalina/localhost/${webapp.docBase}.xml" file="properties/${webapp.contextFile}">
         <filterset>
+            <filter token="webappDocBase" value="${webapp.docBase}"/>
+            <filter token="webappPath" value="${webapp.path}"/>
             <filtersfile file="properties/rdbm.properties" />
         </filterset>
     </copy>
@@ -1177,14 +1184,14 @@
         <path location="${build.home}/WEB-INF/classes"/>
       </classpath>
       <batchtest>
-	    <fileset dir="${build.home}/WEB-INF/classes">
-	      <include name="**/*Test.class"/>
-	      <exclude name="**/Abstract*Test.class"/>
-          <exclude name="**/*AbstractTest.class"/>   
-          <exclude name="**/DbTest.class"/>   
-	    </fileset>
-	  </batchtest>
-	</junit>
+      <fileset dir="${build.home}/WEB-INF/classes">
+        <include name="**/*Test.class"/>
+        <exclude name="**/Abstract*Test.class"/>
+          <exclude name="**/*AbstractTest.class"/>
+          <exclude name="**/DbTest.class"/>
+      </fileset>
+    </batchtest>
+  </junit>
   </target>
 
 
@@ -1313,9 +1320,9 @@
       <arg value="${portletApp}"/>
     </java>
   </target>
-    
-    
-    
+
+
+
   <!-- ===================== JAXP-Install Target ========================= -->
 
   <!--
@@ -1325,10 +1332,10 @@
     The copying for the server.home is assuming Tomcat as the container.
 
   -->
-    
+
     <target name="JAXP-Install"
       description="Installs JAXP into the JVM and container">
-      
+
       <!--
        Ensure we are installing to a 1.4 JDK
       -->
@@ -1336,7 +1343,7 @@
         <condition>
           <not>
             <contains string="JDK${java.version}" substring="JDK1.4"/>
-          </not>   
+          </not>
         </condition>
       </fail>
 

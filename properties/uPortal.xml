@@ -1,4 +1,4 @@
-<Context path="/uPortal" docBase="uPortal" crossContext="true">
+<Context path="@webappPath@" docBase="@webappDocBase@" crossContext="true">
 
   <Resource name="jdbc/PortalDb" auth="Container" type="javax.sql.DataSource"/>
   <Resource name="jdbc/PersonDb" auth="Container" type="javax.sql.DataSource"/>
@@ -18,12 +18,12 @@
     <parameter><name>url</name><value>@jdbcUrl@</value></parameter>
     <parameter><name>username</name><value>@jdbcUser@</value></parameter>
     <parameter><name>password</name><value>@jdbcPassword@</value></parameter>
-    
+
   </ResourceParams>
 
-  
+
   <ResourceParams name="jdbc/PersonDb">
-  
+
     <parameter><name>factory</name><value>org.apache.commons.dbcp.BasicDataSourceFactory</value></parameter>
 
     <!-- Maximum number of dB connections in pool. Set to 0 for no limit.-->
