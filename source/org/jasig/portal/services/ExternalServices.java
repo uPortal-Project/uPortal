@@ -216,7 +216,7 @@ public class ExternalServices {
           outputMessage("Cannot convert " + value + " to declared datatype class " + className);
         }
       } else {
-        return Class.forName(className);
+        return value;
       }
       return null;
     }
@@ -259,7 +259,7 @@ public class ExternalServices {
           outputMessage("Class not found - " + cnfe.getMessage());
           return;
         } catch (Exception e) {
-          outputMessage(svcItem.getName() + " service FAILED TO START.");
+          outputMessage("The service \"" + svcItem.getName() + "\" FAILED TO START.");
           return;
         }
 
@@ -267,7 +267,7 @@ public class ExternalServices {
           Method startMethod = svcClass.getMethod(svcItem.getStartMethod(), classNames);
           Object obj = svcClass.newInstance();
           startMethod.invoke(obj, args);
-          outputMessage(svcItem.getName() + " service started.");
+          outputMessage("The service \"" + svcItem.getName() + "\" service started.");
           return;
         } catch (java.lang.NoSuchMethodException nsme) {
           outputMessage("Method not found - " + nsme.getMessage());
@@ -275,7 +275,7 @@ public class ExternalServices {
           outputMessage("General Exception - " + ex.getMessage());
           ex.printStackTrace();
         }
-        outputMessage(svcItem.getName() + " service FAILED TO START.");
+        outputMessage("The service \"" + svcItem.getName() + "\" FAILED TO START.");
 
       } else if (qName.equals("arguments")) {
         argProcessing = false;
