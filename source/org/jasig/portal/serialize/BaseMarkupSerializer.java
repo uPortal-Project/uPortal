@@ -240,7 +240,24 @@ public abstract class BaseMarkupSerializer
      */
     protected boolean       _indenting;
 
+        /**
+         * True if allow rewriting certail elements for proxying.
+         */
+        protected boolean       _proxying;
+        protected String 		_rewritePrefix;
 
+    /**
+         * The list of elemnets which src attribute is rewritten with proxy.
+         */
+	protected static final String[] _proxiableElements = {"img","applet","input","iframe"};
+	/** 
+	 * The following line would add script to the prociable elements.  This would allow script 
+	 * from a non-ssl source onto the page with the ability to manipulate objects from secure 
+	 * sources. This presents a security exposure which should be understood before deciding to
+	 * allow proxied script.  
+	 * 
+	 * protected static final String[] _proxiableElements = {"img","applet","script","input"};
+	 */
     /**
      * The underlying writer.
      */
@@ -326,7 +343,13 @@ public abstract class BaseMarkupSerializer
         reset();
     }
 
+    public void setProxying(boolean proxy, String rewritePrefix)
+    {
+    	
+        _proxying = proxy;
+        if (proxy) _rewritePrefix = rewritePrefix;
 
+    }
     public boolean reset()
     {
         if ( _elementStateCount > 1 )

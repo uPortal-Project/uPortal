@@ -115,6 +115,8 @@ public class UserInstance implements HttpSessionBindingListener {
     private static final int SYSTEM_XSLT_CACHE_MIN_SIZE=PropertiesManager.getPropertyAsInt("org.jasig.portal.UserInstance.system_xslt_cache_min_size");
     private static final int SYSTEM_CHARACTER_BLOCK_CACHE_MIN_SIZE=PropertiesManager.getPropertyAsInt("org.jasig.portal.UserInstance.system_character_block_cache_min_size");
     public static final boolean CHARACTER_CACHE_ENABLED=PropertiesManager.getPropertyAsBoolean("org.jasig.portal.UserInstance.character_cache_enabled");
+	public static final boolean PROXY_ENABLED=PropertiesManager.getPropertyAsBoolean("org.jasig.portal.UserInstance.resource_proxy_enabled");
+	public static final String PROXY_REWRITE_PREFIX=PropertiesManager.getProperty("org.jasig.portal.UserInstance.resource_proxy_rewrite_prefix");
 
     // a string that will be used to designate user layout root node in .uP files
     public static final String USER_LAYOUT_ROOT_NODE=IALFolderDescription.ROOT_FOLDER_ID;
@@ -365,6 +367,8 @@ public class UserInstance implements HttpSessionBindingListener {
                     BaseMarkupSerializer markupSerializer = mediaM.getSerializerByName(tsd.getSerializerName(), out);
                     // set up the serializer
                     markupSerializer.asContentHandler();
+                    // set up the proxy rewrite flag for rewriting certain elemnts in serializer 
+                    markupSerializer.setProxying(PROXY_ENABLED,PROXY_REWRITE_PREFIX);
                     // see if we can use character caching
                     boolean ccaching=(CHARACTER_CACHE_ENABLED && (markupSerializer instanceof CachingSerializer));
                     channelManager.setCharacterCaching(ccaching);
