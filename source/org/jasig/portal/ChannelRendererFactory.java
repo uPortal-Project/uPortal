@@ -60,9 +60,10 @@ public final class ChannelRendererFactory
                 keyBase + ".ChannelRendererFactory.className"
                 );
 
-            log.debug(
-                "ChannelRendererFactory::newInstance(" + keyBase + ") : about to construct channel renderer factory: " + factoryClassName
-                );
+            if (log.isDebugEnabled())
+                log.debug("ChannelRendererFactory::newInstance(" + keyBase + 
+                        ") : about to construct channel renderer factory: " + 
+                        factoryClassName);
 
             // Get the string argument constructor for the class.
             Constructor ctor = Class.forName(
@@ -74,10 +75,9 @@ public final class ChannelRendererFactory
                 new Object[]{ keyBase }
                 );
 
-            // Log the success.
-            log.debug(
-                "ChannelRendererFactory::newInstance(" + keyBase + ") : constructed channel renderer factory: " + factoryClassName
-                );
+            if (log.isDebugEnabled())
+                log.debug("ChannelRendererFactory::newInstance(" + keyBase + 
+                        ") : constructed channel renderer factory: " + factoryClassName);
         }
         catch( Exception x )
         {

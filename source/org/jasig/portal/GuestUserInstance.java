@@ -92,7 +92,9 @@ public class GuestUserInstance extends UserInstance implements HttpSessionBindin
      */
     public void valueUnbound (HttpSessionBindingEvent bindingEvent) {
         this.unbindSession(bindingEvent.getSession().getId());
-        log.debug("GuestUserInstance::valueUnbound() : unbinding session \""+bindingEvent.getSession().getId()+"\"");
+        if (log.isDebugEnabled())
+            log.debug("GuestUserInstance::valueUnbound() : " +
+                    "unbinding session \""+bindingEvent.getSession().getId()+"\"");
 
         // Record the destruction of the session
         StatsRecorder.recordSessionDestroyed(person);
@@ -104,7 +106,10 @@ public class GuestUserInstance extends UserInstance implements HttpSessionBindin
      * @param bindingEvent a <code>HttpSessionBindingEvent</code> value
      */
     public void valueBound (HttpSessionBindingEvent bindingEvent) {
-        log.debug("GuestUserInstance::valueBound() : instance bound to a new session \""+bindingEvent.getSession().getId()+"\"");
+        if (log.isDebugEnabled())
+            log.debug("GuestUserInstance::valueBound() : " +
+                    "instance bound to a new session \"" +
+                    bindingEvent.getSession().getId() + "\"");
 
         // Record the creation of the session
         StatsRecorder.recordSessionCreated(person);
