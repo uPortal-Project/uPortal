@@ -44,7 +44,7 @@ import java.util.*;
  */
 
 public class ThemeStylesheetUserPreferences extends StylesheetUserPreferences {
-    protected Hashtable channelAttributeNumbers;;
+    protected Hashtable channelAttributeNumbers;
     protected Hashtable channelAttributeValues;
     protected ArrayList defaultChannelAttributeValues;
 
@@ -191,5 +191,21 @@ public class ThemeStylesheetUserPreferences extends StylesheetUserPreferences {
         ArrayList l=new ArrayList(defaultChannelAttributeValues.size());
         channelAttributeValues.put(channelID,l);
         return l;
+    }
+
+    public String getCacheKey() {
+        StringBuffer sbKey = new StringBuffer();
+        for(Enumeration e=channelAttributeValues.keys();e.hasMoreElements();) {
+            String channelId=(String)e.nextElement();
+            sbKey.append("(channel:").append(channelId).append(':');
+            List l=(List)channelAttributeValues.get(channelId);
+            for(int i=0;i<l.size();i++) {
+                String value=(String)l.get(i);
+                if(value==null) value=(String)defaultChannelAttributeValues.get(i);
+                sbKey.append(value).append(",");
+            }
+            sbKey.append(")");
+        }
+        return super.getCacheKey().concat(sbKey.toString());
     }
 }

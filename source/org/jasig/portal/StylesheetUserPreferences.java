@@ -81,4 +81,13 @@ public class StylesheetUserPreferences {
         this.parameters=parameterTable;
     }
 
+    public String getCacheKey() {
+        StringBuffer sbKey = new StringBuffer();
+        for(Enumeration e=parameters.keys();e.hasMoreElements();) {
+            String pName=(String)e.nextElement();
+            sbKey.append(pName).append("=").append((String)parameters.get(pName));
+        }
+        return sbKey.toString();
+    }
+
 }

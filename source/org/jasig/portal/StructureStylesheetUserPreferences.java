@@ -200,4 +200,20 @@ public class StructureStylesheetUserPreferences extends ThemeStylesheetUserPrefe
         return folderAttributeNumbers;
     }
 
+    public String getCacheKey() {
+        StringBuffer sbKey = new StringBuffer();
+        for(Enumeration e=folderAttributeValues.keys();e.hasMoreElements();) {
+            String folderId=(String)e.nextElement();
+            sbKey.append("(folder:").append(folderId).append(':');
+            List l=(List)folderAttributeValues.get(folderId);
+            for(int i=0;i<l.size();i++) {
+                String value=(String)l.get(i);
+                if(value==null) value=(String)defaultFolderAttributeValues.get(i);
+                sbKey.append(value).append(",");
+            }
+            sbKey.append(")");
+        }
+        return super.getCacheKey().concat(sbKey.toString());
+    }
+
 }

@@ -62,7 +62,6 @@ public class UserPreferences {
         profile=up.getProfile();
     }
 
-
     public void setProfile(UserProfile p) { profile=p; }
     public UserProfile getProfile() { return profile; }
 
@@ -144,6 +143,24 @@ public class UserPreferences {
                 //		Logger.log(Logger.DEBUG,"UserLayoutManager::synchUserPreferencesWithLayout() : ThemeStylesheetUserPreferences had a non-existent channel="+chID);
             }
         }
+
+    }
+
+    /**
+     * Generates a unique state key
+     *
+     * @return a <code>String</code> key
+     */
+    public String getCacheKey() {
+        String key=null;
+        if(profile.isSystemProfile()) {
+            key="system "+Integer.toString(profile.getProfileId());
+        } else {
+            key=Integer.toString(profile.getProfileId());
+        }
+        key=key.concat(fsup.getCacheKey());
+        key=key.concat(ssup.getCacheKey());
+        return key;
 
     }
 
