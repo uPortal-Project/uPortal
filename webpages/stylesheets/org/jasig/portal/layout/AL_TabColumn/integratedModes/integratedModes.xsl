@@ -69,7 +69,9 @@ Version $Revision$
 	<xsl:variable name="unauthenticated" select="/layout/@unauthenticated"/>
 	-->
     <xsl:variable name="userLayoutRoot" select="/layout/@userLayoutRoot"/>
-    <xsl:param name="contentPublishID"/>
+    <xsl:param name="channelPublishID"  select="'no channelPublishID passed'"/>
+    <!-- <xsl:param name="uP_fragmentPublishID" select="'no fragmentPublishID passed'"/> -->
+   <!--  <xsl:param name="uP_fragmentRootID" select="'no fragmentRootID passed'"/> -->
     <!--  Used for detached content  -->
     <xsl:template match="layout_fragment">
         <html>
@@ -2150,7 +2152,7 @@ Version $Revision$
         <!-- </a> -->
         <!-- Check if the node is unremovable before allowing delete -->
         <xsl:choose>
-            <xsl:when test="/layout/@immutable='false' or @unremovable='false'">
+            <xsl:when test="/layout/@immutable='false' and @unremovable='false'">
                 <a href="{$baseActionURL}?uP_remove_target={@ID}&amp;uP_sparam=mode&amp;mode={$mode}" onClick="return confirm('Are you sure you want to remove this tab?')">
                     <img alt="Remove this tab" title="Remove this tab" src="{$mediaPathIcons}/canicon.gif" width="22" height="18" border="0"/>
                 </a>
