@@ -338,6 +338,7 @@ protected IEntityGroup igetDistinguishedGroup(String name) throws GroupsExceptio
      */
     private void initialize() throws GroupsException
     {
+      composite = false;
       String eMsg = null;
       String factoryName =
         PropertiesManager.getProperty("org.jasig.portal.groups.GroupServiceFactory");
@@ -367,6 +368,7 @@ protected IEntityGroup igetDistinguishedGroup(String name) throws GroupsExceptio
  */
 private void initializeCompositeService() throws GroupsException
 {
+    composite = true;
     String eMsg = null;
     try
     {
