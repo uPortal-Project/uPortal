@@ -37,52 +37,79 @@ package org.jasig.portal.utils.threading;
 
 /**
  * A thread pool with a maxium number of possible worker threads
- * 
- * @author <a href="mailto:clajoie@vt.edu>Chad La Joie</a>
+ *
+ * @author <a href="mailto:mvi@immagic.com>Mike Ivanov</a>
  * @version $Revision$
  */
 
 public class BoundedThreadPool extends AbstractPool{
-	private int maxWorkers;
-	
+
 	/**
 	 * BoundedThreadPool Construcutor
-	 * 
+	 *
 	 * @param initialThreads the initial number of worker threads to place in the pool
 	 * @param maxThreads the max number of worker threads that can be in this pool
 	 * @param threadPriority the priority these worker threads should have
 	 */
-	public BoundedThreadPool(int initialThreads, int maxThreads, int threadPriority){
-		workQueue = new UnboundedQueue();
-		maxWorkers = maxThreads;
-		priority = threadPriority;
-		
-		initWorkers(initialThreads);
+	public BoundedThreadPool(int minThreads, int maxThreads, int threadPriority) {
+                super(minThreads,maxThreads,threadPriority);
 	}
+
+
+        /**
+	 * Creates a new thread
+	 */
+	protected Thread createNewThread() throws Exception {
+			Worker worker = new Worker(this,workQueue);
+			worker.setDaemon(true);
+			worker.setPriority(priority);
+                        return worker;
+	}
+
+
+        /**
+	 * Destroyed a pooled thread
+	 */
+	public void destroyThread( Thread thread ) {
+		if (isDestroyed) {
+			return;
+		}
+
+		Worker worker = (Worker) thread;
+                worker.stopWorker();
+		worker = null;
+	}
+
 
 	/**
 	* Queues up a task to be executed.  The queue use FIFO ordering.
-	* 
+	*
 	* @param task the task to be executed
-	* 
+	*
 	* @return the WorkerTracker for used to track and interact with this task
-	* 
+	*
 	* @exception IllegalStateException - thrown if the pool has been destroyed
 	*/
 	public WorkTracker execute(WorkerTask task) throws IllegalStateException {
-		if(isDestroyed){
+               if(isDestroyed){
 			throw new IllegalStateException ("This thread pool has been destroyed, no additional tasks may be executed.");
-		}
-		if(totalThreads() < maxWorkers && idleThreads() == 0){
-			initWorkers(1);
-		}
-		
+               }
+
+              try {
+
+                adjustThreadPool();
+
 		WorkTracker tracker = new WorkTracker(task);
 		task.setWorkTracker(tracker);
-		try{
-			workQueue.put(task);
-		}catch(InterruptedException ie){}
-		
-		return tracker;
+
+                workQueue.put(task);
+
+                return tracker;
+
+              } catch ( Exception e ) {
+                  throw new IllegalStateException(e.getMessage());
+                }
+
+
 	}
 }

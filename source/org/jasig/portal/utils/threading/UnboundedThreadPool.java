@@ -37,50 +37,23 @@ package org.jasig.portal.utils.threading;
 
 /**
  * A thread pool without a maximum number of possible worker threads
- * 
- * @author <a href="mailto:clajoie@vt.edu>Chad La Joie</a>
+ *
+ * @author <a href="mailto:mvi@immagic.com>Mike Ivanov</a>
  * @version $Revision$
  */
 
 
-public class UnboundedThreadPool extends AbstractPool {
+public class UnboundedThreadPool extends BoundedThreadPool {
 
-	/**
-	 * Constructor
-	 * 
-	 * @param numberOfThreads the initial number of worker threads in this pool
-	 * @param priority the priority of the worker threads in this pool
+       /**
+	 * UnoundedThreadPool Construcutor
+	 *
+	 * @param minThreads the initial number of worker threads to place in the pool
+	 * @param threadPriority the priority these worker threads should have
 	 */
-	public UnboundedThreadPool(int numberOfThreads, int priority){
-		workQueue = new UnboundedQueue();
-		
-		this.priority = priority;
-		initWorkers(numberOfThreads);
+	public UnboundedThreadPool(int minThreads, int threadPriority) {
+                super(minThreads,minThreads*2,threadPriority);
 	}
-	
-	/**
-	 * Queues up a task to be executed.  The queue use FIFO ordering.
-	 * 
-	 * @param task the task to be executed
-	 * 
-	 * @return the WorkerTracker for used to track and interact with this task
-	 * 
-	 * @exception IllegalStateException - thrown if the pool has been destroyed
-	 */
-	public WorkTracker execute(WorkerTask task) throws IllegalStateException{
-		if(isDestroyed){
-			throw new IllegalStateException ("This thread pool has been destroyed, no additional tasks may be executed.");
-		}
-		if(idleThreads() == 0){
-			initWorkers(1);
-		}
-		
-		WorkTracker tracker = new WorkTracker(task);
-		task.setWorkTracker(tracker);
-		try{
-			workQueue.put(task);
-		}catch(InterruptedException ie){}
-		
-		return tracker;
-	}
+
+
 }

@@ -34,9 +34,11 @@
  */
 package org.jasig.portal.utils.threading;
 
+import org.jasig.portal.services.LogService;
+
 /**
  * A ThreadPool worker thread.
- * 
+ *
  * @author <a href="mailto:clajoie@vt.edu>Chad La Joie</a>
  * @version $Revision$
  */
@@ -51,15 +53,16 @@ public final class Worker extends Thread {
 
 	/**
 	 * Worker Constructor
-	 * 
+	 *
 	 * @param pool the ThreadPool that this worker belongs to
 	 * @param workQueue the queue of work for this thread
 	 */
-	public Worker(ThreadPool pool, Queue workQueue) {
+	public Worker(ThreadPool pool, Queue work) {
 		this.pool = pool;
-		work = workQueue;
-		continueWorking = true;
+                this.work = work;
+                continueWorking = true;
 	}
+
 
 	/**
 	 * The work of a worker thread
@@ -67,11 +70,12 @@ public final class Worker extends Thread {
 	public void run() {
 		while (continueWorking) {
 			try {
-				
 				task = (WorkerTask) work.take();
+                                // Lock this thread
+                                pool.lockThread(this);
+
 				tracker = task.getWorkTracker();
-				pool.signalThreadWorking();
-				
+
 				//check to make sure this job hasn't been killed before we got it
 				if (tracker.getState() != WorkTracker.KILLED) {
 					//indicate that task is now running
@@ -90,8 +94,10 @@ public final class Worker extends Thread {
 				}
 
 				cleanState();
+                                // Release this thread
+                                pool.releaseThread(this);
 
-			} catch (InterruptedException ie) {
+			} catch (Exception ie) {
 				//check to make sure we weren't interrupted while idle
 				if (tracker != null) {
 					//indicate that the task was killed
@@ -100,8 +106,9 @@ public final class Worker extends Thread {
 				}
 				//clear this threads interrupted status
 				this.interrupted();
-			}finally{
-				pool.signalThreadIdle();
+
+			} finally {
+                            Thread.yield();
 			}
 		}
 	}
@@ -109,11 +116,12 @@ public final class Worker extends Thread {
 	/**
 	 * Stops a worker
 	 */
-	public void stopWorker(){
+	public void stopWorker() {
 		continueWorking = false;
 		Thread.currentThread().interrupt();
+                pool.destroyThread(this);
 	}
-	
+
 	private void cleanState() {
 		if (tracker != null) {
 			tracker.deregisterWork();
