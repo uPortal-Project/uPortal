@@ -87,12 +87,14 @@ public class DbUnload {
         for (int i = 0; i < rsmd.getColumnCount(); i++) {
           String value = "";
           if (columnType[i] == java.sql.Types.VARCHAR ||
-            columnType[i] == java.sql.Types.LONGVARCHAR) {
+            columnType[i] == java.sql.Types.LONGVARCHAR||
+            columnType[i] == java.sql.Types.CHAR) {
             value = rs.getString(i+1);
             if (value != null && value.startsWith("<?xml ")) {
               value = "<![CDATA[\n" + value + "\n]]>";
             }
-          } else if (columnType[i] == java.sql.Types.NUMERIC) {
+          } else if (columnType[i] == java.sql.Types.NUMERIC ||
+            columnType[i] == java.sql.Types.INTEGER) {
             value = rs.getInt(i+1) + "";
           } else if (columnType[i] == java.sql.Types.TIMESTAMP) {
             java.sql.Timestamp ts = rs.getTimestamp(i+1);
