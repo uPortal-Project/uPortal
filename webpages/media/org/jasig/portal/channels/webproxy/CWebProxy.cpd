@@ -202,13 +202,24 @@ Version $Revision$
 
       <parameter modify="publish-only">
         <name>cw_person</name>
-	<label>IPerson Attributes To Pass</label>
+	<label>Default IPerson Attributes to Pass</label>
 	<type base="string" input="text" display="text">
 	  <length>40</length>
 	  <maxlength>500</maxlength>
 	</type>
 	<defaultValue></defaultValue>
-	<example>eduPersonNickName,cn,eduPersonPrimaryAffiliation</example>
+	<example>uid,eduPersonPrimaryAffiliation</example>
+      </parameter>
+
+      <parameter modify="publish-only">
+        <name>cw_person_allow</name>
+	<label>Restrict IPerson Attributes Passing to These</label>
+	<type base="string" input="text" display="text">
+	  <length>40</length>
+	  <maxlength>500</maxlength>
+	</type>
+	<defaultValue></defaultValue>
+	<example>uid,eduPersonNickName,cn,eduPersonPrimaryAffiliation</example>
       </parameter>
 
       <parameter modify="publish-only">
