@@ -13,6 +13,7 @@ import org.jasig.portal.utils.CommonUtils;
 import org.jasig.portal.utils.XSLT;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.layout.IAggregatedLayout;
+import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
@@ -21,6 +22,7 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Element;
@@ -30,8 +32,6 @@ import java.util.Set;
 import java.util.Iterator;
 import java.util.Enumeration;
 import java.util.Collection;
-
-import javax.xml.transform.TransformerException;
 
   /**
    * A channel for adding new content to a layout.
@@ -284,9 +284,11 @@ public class CContentSubscriber extends FragmentManager {
 		     xslt.setStylesheetParameter("search-category", searchCategory);
 		     xslt.setStylesheetParameter("search-query", CommonUtils.nvl(searchQuery));
 		     
-	  } catch ( Exception e ) {
+	  } catch ( DOMException e ) {
+	  	  throw new PortalException(e);     
+	  } catch (XPathExpressionException e) {
 	  	  throw new PortalException(e);	     
-	  }
+      }
 			 
 	}		 	
 
