@@ -2636,7 +2636,7 @@ Printable<br/>
 <xsl:template name="selectGroups">
     <xsl:variable name="groupID">
       <xsl:value-of select="//browsingGroup[1]"/>
-    </xsl:variable><xsl:value-of select="$groupID"/>
+    </xsl:variable>
 
     <xsl:call-template name="workflow"/>
 
@@ -2975,3 +2975,4 @@ Printable<br/>
 
 </xsl:template>
 </xsl:stylesheet>
+<!-- Stylesheet edited using Stylus Studio - (c)1998-2001 eXcelon Corp. -->
