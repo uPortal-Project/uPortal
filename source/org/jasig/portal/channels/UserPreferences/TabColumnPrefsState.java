@@ -264,6 +264,7 @@ final class TabColumnPrefsState extends BaseState
           } else {
               tab.setName(tabName);
           }
+          ulm.updateNode(tab);
       } else {
           throw new PortalException("Attempt to rename immutable tab " + tabId + "has failed");
       }
