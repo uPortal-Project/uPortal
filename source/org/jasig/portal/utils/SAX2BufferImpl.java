@@ -186,9 +186,16 @@ public class SAX2BufferImpl extends SAX2FilterImpl
         return eventTypes.isEmpty();
     }
 
-    public synchronized void outputBuffer() throws SAXException {
-        // unqueue all of the buffered events
 
+    /**
+     * Outputs buffer's content to a current set of handlers.
+     * Please note that this method is not thread-safe if
+     * handlers are being reset by different threads.
+     * Use the other outputBuffer(ContentHandler) method in such cases.
+     *
+     * @exception SAXException if an error occurs
+     */
+    public void outputBuffer() throws SAXException {
         // for speed purposes, we don't allow contentHandler to be null
         if(contentHandler!=null) {
             Enumeration args = eventArguments.elements ();
@@ -309,6 +316,165 @@ public class SAX2BufferImpl extends SAX2FilterImpl
                     if(lexicalHandler!=null) {
                         CharBlock ccd = (CharBlock) args.nextElement ();
                         lexicalHandler.comment (ccd.getCh(), ccd.getStart(), ccd.getLength());
+                    } 
+                    break;
+                }
+            }
+        } else {
+            // Logger.log (Logger.ERROR, "SAX2BufferImpl:stopBuffering() : trying to ouput buffer to a null ContentHandler.");
+        }
+    }
+
+
+    /**
+     * Outputs buffer's content to a specified content handler.
+     * Please note that the contant handler can also represent
+     * lexical handler, dtd handler and error handler.
+     * This method is thread-safe.
+     *
+     * @param ch a <code>ContenteHandler</code> value
+     * @exception SAXException if an error occurs
+     */
+    public void outputBuffer(ContentHandler ch) throws SAXException {
+        // unqueue all of the buffered events
+
+        // for speed purposes, we don't allow contentHandler to be null
+        if(contentHandler!=null) {
+            // determine what a given content handler represents
+            DTDHandler dtdh=null;
+            if(ch instanceof DTDHandler) {
+                dtdh=(DTDHandler) ch;
+            }
+            
+            ErrorHandler erh=null;
+            if(ch instanceof ErrorHandler) {
+                erh=(ErrorHandler)ch;
+            }
+            
+            LexicalHandler lh=null;
+            if(ch instanceof LexicalHandler) {
+                lh=(LexicalHandler)ch;
+            }
+        
+
+            Enumeration args = eventArguments.elements ();
+            ThreeString ths;
+            CharBlock cd;
+            TwoString ts;
+            FourString fs;
+            SAXParseException e;
+        
+            for (Enumeration types = eventTypes.elements (); types.hasMoreElements ();) {
+                int type = ((Integer)types.nextElement ()).intValue ();
+
+                switch (type) {
+                    // ContentHandler events
+                case STARTDOCUMENT:
+                    ch.startDocument ();
+                    break;
+                case ENDDOCUMENT:
+                    ch.endDocument ();
+                    break;
+                case STARTPREFIXMAPPING:
+                    ts=(TwoString) args.nextElement();
+                    ch.startPrefixMapping(ts.first,ts.second);
+                    break;
+                case ENDPREFIXMAPPING:
+                    ch.endPrefixMapping((String)args.nextElement());
+                    break;
+                case STARTELEMENT:
+                    StartElementData sed = (StartElementData) args.nextElement ();
+                    ch.startElement (sed.getURI(), sed.getLocalName(), sed.getQName(),sed.getAtts());
+                    break;
+                case ENDELEMENT:
+                    ths = (ThreeString) args.nextElement ();
+                    ch.endElement (ths.first,ths.second,ths.third);
+                    break;
+                case CHARACTERS:
+                    cd = (CharBlock) args.nextElement ();
+                    ch.characters (cd.getCh(), cd.getStart(), cd.getLength());
+                    break;
+                case IGNORABLEWHITESPACE:
+                    cd = (CharBlock) args.nextElement ();
+                    ch.ignorableWhitespace (cd.getCh(), cd.getStart(), cd.getLength());
+                    break;
+                case PROCESSINGINSTRUCTION:
+                    ts=(TwoString) args.nextElement();
+                    ch.processingInstruction (ts.first,ts.second);
+                    break;
+                    
+                    // DTDHandler events
+                case NOTATIONDECL:
+                    if(dtdh!=null) {
+                        ths=(ThreeString) args.nextElement();
+                        dtdh.notationDecl(ths.first,ths.second,ths.third);
+                    }
+                    break;
+                case UNPARSEDENTITYDECL:
+                    if(dtdh!=null) {
+                        fs=(FourString) args.nextElement();
+                        dtdh.unparsedEntityDecl(fs.first,fs.second,fs.third,fs.fourth);
+                    }
+                    break;
+
+                    // ErrorHandler events
+                case WARNING:
+                    if(erh!=null) {
+                        e=(SAXParseException) args.nextElement();
+                        erh.warning(e);
+                    }
+                    break;
+                case ERROR:
+                    if(erh!=null) {
+                        e=(SAXParseException) args.nextElement();
+                        erh.error(e);
+                    }
+                    break;
+                case FATALERROR:
+                    if(erh!=null) {
+                        e=(SAXParseException) args.nextElement();
+                        erh.fatalError(e);
+                    }
+                    break;
+                    
+                    // LexicalHandler events
+                case STARTDTD:
+                    if(lh!=null) {
+                        ths=(ThreeString) args.nextElement();
+                        lh.startDTD(ths.first,ths.second,ths.third);
+                    }
+                    break;
+                case ENDDTD:
+                    if(lh!=null) {
+                        lh.endDTD();
+                    }
+                    break;
+                case STARTENTITY:
+                    if(lh!=null) {
+                        String n=(String) args.nextElement();
+                        lh.startEntity(n);
+                    } 
+                    break;
+                case ENDENTITY:
+                    if(lh!=null) {
+                        String n=(String) args.nextElement();
+                        lh.endEntity(n);
+                    } 
+                    break;
+                case STARTCDATA:
+                    if(lh!=null) {
+                        lh.startCDATA();
+                    } 
+                    break;
+                case ENDCDATA:
+                    if(lh!=null) {
+                        lh.endCDATA();
+                    } 
+                    break;
+                case COMMENT:
+                    if(lh!=null) {
+                        CharBlock ccd = (CharBlock) args.nextElement ();
+                        lh.comment (ccd.getCh(), ccd.getStart(), ccd.getLength());
                     } 
                     break;
                 }
