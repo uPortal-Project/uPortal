@@ -47,12 +47,14 @@ import org.jasig.portal.PortalException;
 import org.jasig.portal.GeneralRenderingException;
 import org.jasig.portal.UtilitiesBean;
 import org.jasig.portal.utils.XSLT;
+import org.jasig.portal.utils.SAX2BufferImpl;
 import org.jasig.portal.ChannelRegistryManager;
 import org.jasig.portal.utils.SmartCache;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.IUserLayoutStore;
 import org.jasig.portal.IUserPreferencesStore;
 import org.jasig.portal.RdbmServices;
+import org.jasig.portal.GenericPortalBean;
 import org.jasig.portal.StylesheetSet;
 import org.jasig.portal.factories.DocumentFactory;
 import org.w3c.dom.Document;
@@ -60,6 +62,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
+import java.io.File;
 import java.util.Hashtable;
 import java.util.HashMap;
 import java.util.Enumeration;
@@ -92,7 +95,8 @@ final class TabColumnPrefsState extends BaseState
   private static IUserLayoutStore ulStore = RdbmServices.getUserLayoutStoreImpl();
   private static IUserPreferencesStore upStore = RdbmServices.getUserPreferencesStoreImpl();
   private StylesheetSet set;
-  private static Document SkinsInfoDocument = null;
+
+  private SAX2BufferImpl skinsSAX2ChannelBuffer;
 
   private String action = "none";
   private String activeTab = "none";
@@ -904,76 +908,59 @@ final class TabColumnPrefsState extends BaseState
    */
   protected class SelectSkinsState extends BaseState
   {
-      protected TabColumnPrefsState context;
+    protected TabColumnPrefsState context;
 
-      public SelectSkinsState(TabColumnPrefsState context) {
-          this.context = context;
-      }
+    public SelectSkinsState(TabColumnPrefsState context) {
+        this.context = context;
+    }
 
-      public void setRuntimeData (ChannelRuntimeData rd) throws PortalException {
-          runtimeData = rd;
-          String action = runtimeData.getParameter("action");
-          if (action != null) {
-              if (runtimeData.getParameter("submitSave")!=null) {
-                  // save
-                  String skinName = runtimeData.getParameter("skinName");
-                  userPrefs.getThemeStylesheetUserPreferences().putParameterValue("skin",skinName);
-                  // save user preferences ?
-                  saveUserPreferences();
-                  // reset state
-                  BaseState df=new DefaultState(context);
-                  df.setStaticData(staticData);
-                  context.setState(df);
-              } else if (runtimeData.getParameter("submitCancel")!=null) {
-                  // return to the default state
-                  BaseState df=new DefaultState(context);
-                  df.setStaticData(staticData);
-                  context.setState(df);
-              }
-          }
-      }
-
-      public void renderXML (ContentHandler out) throws PortalException
-      {
-        String currentSkin = userPrefs.getThemeStylesheetUserPreferences().getParameterValue("skin");
-        if (SkinsInfoDocument == null)
-          SkinsInfoDocument = getSkins();
-
-        XSLT xslt = new XSLT ();
-        xslt.setXML(SkinsInfoDocument);
-        xslt.setXSL(sslLocation,"skinList", runtimeData.getBrowserInfo());
-        xslt.setTarget(out);
-        xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
-        if(currentSkin!=null)
-          xslt.setStylesheetParameter("currentSkin", currentSkin);
-
-        try
-        {
-          xslt.transform();
+    public void setRuntimeData (ChannelRuntimeData rd) throws PortalException {
+        runtimeData = rd;
+        String action = runtimeData.getParameter("action");
+        if (action != null) {
+            if (runtimeData.getParameter("submitSave")!=null) {
+                // save
+                String skinName = runtimeData.getParameter("skinName");
+                userPrefs.getThemeStylesheetUserPreferences().putParameterValue("skin",skinName);
+                // save user preferences ?
+                saveUserPreferences();
+                // reset state
+                BaseState df=new DefaultState(context);
+                df.setStaticData(staticData);
+                context.setState(df);
+            } else if (runtimeData.getParameter("submitCancel")!=null) {
+                // return to the default state
+                BaseState df=new DefaultState(context);
+                df.setStaticData(staticData);
+                context.setState(df);
+            }
         }
-        catch (Exception e)
-        {
-            throw new GeneralRenderingException(e.getMessage());
-        }
-      }
+    }
 
-    Document getSkins()
+    public void renderXML (ContentHandler out) throws PortalException
     {
-      Document doc = null;
-      try
-      {
-        doc = upStore.getSkins();
+      File xmlFile = null;
+
+      String XMLUri = GenericPortalBean.getPortalBaseDir() + "webpages/media/org/jasig/portal/layout/tab-column/nested-tables/skinList.xml";
+      String currentSkin = userPrefs.getThemeStylesheetUserPreferences().getParameterValue("skin");
+      try {
+        xmlFile = new File (XMLUri);
       }
-      catch (Exception e)
-      {
-        doc = null;
-        LogService.instance().log(LogService.ERROR, "TabColumnPrefsState.getSkins(): Couldn't get Skins");
-        LogService.instance().log(LogService.ERROR, e);
+      catch (NullPointerException e) {
+        throw new GeneralRenderingException ("Can't find XML file in TabColumnPrefsState:SelectSkinsState.renderXML");
       }
-      return doc;
+
+      XSLT xslt = new XSLT ();
+      xslt.setXML(xmlFile);
+      xslt.setXSL(sslLocation,"skinList", runtimeData.getBrowserInfo());
+      xslt.setTarget(out);
+      xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
+      if(currentSkin!=null)
+        xslt.setStylesheetParameter("currentSkin", currentSkin);
+
+      xslt.transform();
     }
   }
-
 
   /**
    * A sub-state of TabColumnPrefsState for choosing a new channel (formerly subscribe)
