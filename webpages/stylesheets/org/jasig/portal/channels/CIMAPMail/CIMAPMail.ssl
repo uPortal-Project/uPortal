@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet title="authenticate" href="webpages/stylesheets/org/jasig/portal/channels/CIMAPMail/authenticate.xsl"  type="text/xsl"?>
+<?xml-stylesheet title="mailstatus" href="webpages/stylesheets/org/jasig/portal/channels/CIMAPMail/mailstatus.xsl"  type="text/xsl"?>
+<?xml-stylesheet title="listMessages" href="webpages/stylesheets/org/jasig/portal/channels/CIMAPMail/listMessages.xsl"  type="text/xsl"?>
+<?xml-stylesheet title="displayMessage" href="webpages/stylesheets/org/jasig/portal/channels/CIMAPMail/displayMessage.xsl"  type="text/xsl"?>
+<?xml-stylesheet title="listFolders" href="webpages/stylesheets/org/jasig/portal/channels/CIMAPMail/listFolders.xsl"  type="text/xsl"?>
+<?xml-stylesheet title="composeMessage" href="webpages/stylesheets/org/jasig/portal/channels/CIMAPMail/composeMessage.xsl"  type="text/xsl"?>
+<?xml-stylesheet title="setup" href="webpages/stylesheets/org/jasig/portal/channels/CIMAPMail/setup.xsl"  type="text/xsl"?>
+
+<document>
+</document>
