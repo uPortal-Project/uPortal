@@ -63,7 +63,7 @@ public abstract class BooleanRestriction extends UserLayoutRestriction {
          }
 
          private boolean strToBool ( String boolStr ) {
-           return ("Y".equals(boolStr))?true:false;
+           return ("Y".equalsIgnoreCase(boolStr))?true:false;
          }
 
           /**
