@@ -38,10 +38,9 @@
 
 package  org.jasig.portal;
 
-import  javax.servlet.*;
-import  javax.servlet.http.*;
-import  java.util.Hashtable;
-import  java.util.Enumeration;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.Cookie;
+import java.util.Enumeration;
 
 
 /*
@@ -49,21 +48,14 @@ import  java.util.Enumeration;
  * It stores all of the headers and cookies
  */
 public class BrowserInfo {
-  protected Cookie[] cookies;
-  protected Hashtable headers;
+  protected HttpServletRequest m_request = null;
 
   /**
    * put your documentation comment here
-   * @param   HttpServletRequest req
+   * @param request
    */
-  public BrowserInfo (HttpServletRequest req) {
-    headers = new Hashtable();
-    for (Enumeration e = req.getHeaderNames(); e.hasMoreElements();) {
-      String hName = (String)e.nextElement();
-      // Request header names are case insensitive, so BrowserInfo must be too!!
-      headers.put(hName.toLowerCase(), req.getHeader(hName));
-    }
-    cookies = req.getCookies();
+  public void setRequest (HttpServletRequest request) {
+    m_request = request;
   }
 
   /**
@@ -71,7 +63,7 @@ public class BrowserInfo {
    * @return 
    */
   public Cookie[] getCookies () {
-    return  cookies;
+    return  (m_request.getCookies());
   }
 
   /**
@@ -79,8 +71,8 @@ public class BrowserInfo {
    * @param hName
    * @return 
    */
-  public String getHeader (String hName) {
-    return  (String)headers.get(hName.toLowerCase());
+  public String getHeader (String headerName) {
+    return  (m_request.getHeader(headerName));
   }
 
   /**
@@ -88,7 +80,7 @@ public class BrowserInfo {
    * @return 
    */
   public Enumeration getHeaderNames () {
-    return  headers.keys();
+    return  (m_request.getHeaderNames());
   }
 
   /**
@@ -96,7 +88,7 @@ public class BrowserInfo {
    * @return 
    */
   public String getUserAgent () {
-    return  (String)headers.get("user-agent");
+    return  (m_request.getHeader("user-agent"));
   }
 }
 
