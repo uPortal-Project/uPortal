@@ -16,7 +16,7 @@
         </xsl:for-each>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:for-each select="//category[@ID=$folderID]">
+        <xsl:for-each select="//folder[@ID=$folderID]">
           <xsl:call-template name="crumbTrail"/>
         </xsl:for-each>
       </xsl:otherwise>
@@ -41,7 +41,7 @@
           </xsl:for-each>
         </xsl:when>
         <xsl:otherwise>
-          <xsl:for-each select="//category[@ID=$folderID]">
+          <xsl:for-each select="//folder[@ID=$folderID]">
             <xsl:call-template name="folderRoot"/>
           </xsl:for-each>
         </xsl:otherwise>
@@ -59,7 +59,7 @@
 </xsl:template>
 
 <xsl:template name="folderRoot">
-  <xsl:apply-templates select="category|channel"/>
+  <xsl:apply-templates select="folder|channel"/>
 </xsl:template>
 
 <xsl:template name="crumbTrail">Folder: 
@@ -81,7 +81,7 @@
   <xsl:value-of select="@name"/>
 </xsl:template>
 
-<xsl:template match="category">
+<xsl:template match="folder">
   <tr>
     <!-- Move checkbox -->
     <td align="right"><input type="checkbox" name="move" value="{@ID}"/></td>

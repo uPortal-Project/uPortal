@@ -25,10 +25,10 @@
 </xsl:template>
 
 <!-- process categories
-   The category that is the first child of the layout
+   The folder that is the first child of the layout
    becomes "tab", and the rest become "comulns"
   -->
-<xsl:template match="category">
+<xsl:template match="folder">
  <xsl:choose>
   <xsl:when test="name(parent::node())='layout'">
    <tab>

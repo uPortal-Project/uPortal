@@ -1,7 +1,7 @@
-<!ELEMENT layout (category|channel)*>
+<!ELEMENT layout (folder|channel)*>
 
-<!ELEMENT category (category|channel)*>
-<!ATTLIST category
+<!ELEMENT folder (folder|channel)*>
+<!ATTLIST folder
   ID ID #REQUIRED
   priority CDATA #REQUIRED
   name CDATA #IMPLIED>

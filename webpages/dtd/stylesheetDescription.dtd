@@ -1,9 +1,9 @@
-<!ELEMENT stylesheetdescription (name|description|media+|parameters?|categoryattributes?|channelattributes?)>
+<!ELEMENT stylesheetdescription (name|description|media+|parameters?|folderattributes?|channelattributes?)>
 
 <!ELEMENT parameters (parameter)*>
 
 
-<!ELEMENT categoryattributes (attribute)*>
+<!ELEMENT folderattributes (attribute)*>
 <!ELEMENT channelattributes (attribute)*>
 
 <!ELEMENT parameter (defaultvalue|description)>

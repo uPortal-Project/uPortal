@@ -21,12 +21,14 @@ CREATE TABLE USER_PREFERENCES_TABLE (
 INSERT into USER_STYLESHEET_PREFERENCES_TABLE (USER_NAME,STYLESHEET_NAME,USER_PREFERENCES_XML) values ('guest','Tab and Column layout','<structurestylesheetuserpreferences>
 <parameters>
 </parameters>
-<categoryattributes>
+<folderattributes>
 <attribute name="width">
-<category categoryid="col01" value="70%"/>
-<category categoryid="col02" value="30%"/>
+<folder folderid="col01" value="70%"/>
+<folder folderid="col02" value="30%"/>
+<folder folderid="col03" value="30%"/>
+<folder folderid="col04" value="70%"/>
 </attribute>
-</categoryattributes>
+</folderattributes>
 <channelattributes>
 </channelattributes>
 </structurestylesheetuserpreferences>');
@@ -36,8 +38,8 @@ INSERT into USER_STYLESHEET_PREFERENCES_TABLE (USER_NAME,STYLESHEET_NAME,USER_PR
 <parameter name="activeTab">2</parameter>
 <parameter name="borderWidth">2</parameter>
 </parameters>
-<categoryattributes>
-</categoryattributes>
+<folderattributes>
+</folderattributes>
 <channelattributes>
 <attribute name="minimizable">
 <channel channelid="chan01" value="false"/>
