@@ -6,6 +6,7 @@ import org.xml.sax.ContentHandler;
 import java.util.List;
 
 import  org.apache.xerces.dom.DocumentImpl;
+import org.w3c.dom.Document;
 
 
 /**
@@ -20,8 +21,8 @@ public class ImmutableUserLayoutManagerWrapper implements IUserLayoutManager {
 
     public ImmutableUserLayoutManagerWrapper(IUserLayoutManager manager) throws PortalException {
         this.man=manager;
-        if(man==null) { 
-            throw new PortalException("Can not wrap a null IUserLayoutManager !"); 
+        if(man==null) {
+            throw new PortalException("Can not wrap a null IUserLayoutManager !");
         }
     }
 
@@ -46,7 +47,7 @@ public class ImmutableUserLayoutManagerWrapper implements IUserLayoutManager {
     }
 
     public void saveUserLayout() throws PortalException {}
-    
+
     public UserLayoutNodeDescription getNode(String nodeId) throws PortalException {
         return man.getNode(nodeId);
     }
@@ -118,7 +119,7 @@ public class ImmutableUserLayoutManagerWrapper implements IUserLayoutManager {
     public void setUserLayoutDOM(DocumentImpl doc) {}
 
     // This method should be removed whenever it becomes possible
-    public DocumentImpl getUserLayoutDOM() {
+    public Document getUserLayoutDOM() throws PortalException {
         return man.getUserLayoutDOM();
     }
 

@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Vector;
 
 import  org.apache.xerces.dom.DocumentImpl;
+import org.w3c.dom.Document;
 import java.util.Random;
 
 /**
@@ -34,11 +35,11 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
     protected IUserLayoutStore store=null;
 
     protected DocumentImpl userLayoutDocument=null;
-    
+
     protected static Random rnd=new Random();
     protected String cacheKey="initialKey";
 
-    
+
     public SimpleUserLayoutManager(IPerson owner, UserProfile profile, IUserLayoutStore store) throws PortalException {
         if(owner==null) {
             throw new PortalException("A non-null owner needs to be specified.");
@@ -56,12 +57,12 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
 
 
     // This method should be removed whenever it becomes possible
-    private void setUserLayoutDOM(DocumentImpl doc) {
-        this.userLayoutDocument= doc;
+    private void setUserLayoutDOM(Document doc) {
+        this.userLayoutDocument= (DocumentImpl) doc;
         this.updateCacheKey();
     }
     // This method should be removed whenever it becomes possible
-    public DocumentImpl getUserLayoutDOM() {
+    public Document getUserLayoutDOM() {
         return this.userLayoutDocument;
     }
 
@@ -88,7 +89,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
             }
         }
     }
-    
+
     protected void getUserLayout(Node n,ContentHandler ch) throws PortalException {
         // do a DOM2SAX transformation
         try {
@@ -127,7 +128,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
             }
         }
     }
-        
+
     public void saveUserLayout() throws PortalException{
         Document ulm=this.getUserLayoutDOM();
         if(ulm==null) {
@@ -175,7 +176,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
                         node.setId(this.getLayoutStore().generateNewChannelSubscribeId(owner));
                     } else {
                         node.setId(this.getLayoutStore().generateNewFolderId(owner));
-                    }         
+                    }
                 } catch (PortalException pe) {
                     throw pe;
                 } catch (Exception e) {
@@ -183,7 +184,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
                 }
             }
 
-            DocumentImpl ulm=this.getUserLayoutDOM();
+            DocumentImpl ulm=this.userLayoutDocument;
             Element childElement=node.getXML(this.getUserLayoutDOM());
             Element parentElement=(Element)ulm.getElementById(parentId);
             if(nextSiblingId==null) {
@@ -244,21 +245,21 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
             // but we'll just make sure that the node type has not
             // changed and then regenerate the node Element from scratch,
             // and attach any children it might have had to it.
-            
+
             String nodeId=node.getId();
             String nextSiblingId=getNextSiblingId(nodeId);
             Element nextSibling=null;
             if(nextSiblingId!=null) {
-                DocumentImpl ulm=this.getUserLayoutDOM();
+                DocumentImpl ulm=this.userLayoutDocument;
                 nextSibling=ulm.getElementById(nextSiblingId);
             }
 
             UserLayoutNodeDescription oldNode=getNode(nodeId);
-            
+
             if(oldNode instanceof UserLayoutChannelDescription) {
                 UserLayoutChannelDescription oldChannel=(UserLayoutChannelDescription) oldNode;
                 if(node instanceof UserLayoutChannelDescription) {
-                    DocumentImpl ulm=this.getUserLayoutDOM();
+                    DocumentImpl ulm=this.userLayoutDocument;
                     // generate new XML Element
                     Element newChannelElement=node.getXML(ulm);
                     Element oldChannelElement=(Element)ulm.getElementById(nodeId);
@@ -276,7 +277,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
                 // must be a folder
                 UserLayoutFolderDescription oldFolder=(UserLayoutFolderDescription) oldNode;
                 if(node instanceof UserLayoutFolderDescription) {
-                    DocumentImpl ulm=this.getUserLayoutDOM();                    
+                    DocumentImpl ulm=this.userLayoutDocument;
                     // generate new XML Element
                     Element newFolderElement=node.getXML(ulm);
                     Element oldFolderElement=(Element)ulm.getElementById(nodeId);
@@ -352,14 +353,14 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
     }
 
     protected boolean canUpdateNode(UserLayoutNodeDescription node) {
-        return !(node==null || node.isImmutable());        
+        return !(node==null || node.isImmutable());
     }
 
     public void markAddTargets(UserLayoutNodeDescription node) {
         // get all folders
         this.updateCacheKey();
     }
-    
+
 
     public void markMoveTargets(String nodeId) throws PortalException {
         UserLayoutNodeDescription node=getNode(nodeId);
@@ -451,8 +452,8 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
     /**
      * This is outright cheating ! We're supposed to analyze the user layout tree
      * and return a key that corresponds uniqly to the composition and the sturcture of the tree.
-     * Here we just return a different key wheneever anything changes. So if one was to move a 
-     * node back and forth, the key would always never (almost) come back to the original value, 
+     * Here we just return a different key wheneever anything changes. So if one was to move a
+     * node back and forth, the key would always never (almost) come back to the original value,
      * even though the changes to the user layout are cyclic.
      *
      */

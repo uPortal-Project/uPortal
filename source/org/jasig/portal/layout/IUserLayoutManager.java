@@ -5,7 +5,8 @@ import org.jasig.portal.PortalException;
 import org.xml.sax.ContentHandler;
 import java.util.List;
 
-import  org.apache.xerces.dom.DocumentImpl;
+//import  org.apache.xerces.dom.DocumentImpl;
+import org.w3c.dom.Document;
 
 /**
  * An interface for abstracting operations performed on the user layout.
@@ -46,14 +47,14 @@ public interface IUserLayoutManager {
      * @exception PortalException if an error occurs
      */
     public void loadUserLayout() throws PortalException;
-    
+
     /**
      * Signal manager to persist user layout to a database
      *
      * @exception PortalException if an error occurs
      */
     public void saveUserLayout() throws PortalException;
-    
+
 
     /**
      * Obtain a description of a node (channel or a folder) in a given user layout.
@@ -212,7 +213,7 @@ public interface IUserLayoutManager {
 
 
     // This method should be removed whenever it becomes possible
-    public DocumentImpl getUserLayoutDOM();
+    public Document getUserLayoutDOM() throws PortalException;
 
     /**
      * Returns a layout Id associated with this manager/
@@ -220,5 +221,5 @@ public interface IUserLayoutManager {
      * @return an <code>int</code> layout Id value;
      */
     public int getLayoutId();
-    
+
 }
