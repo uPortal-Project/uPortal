@@ -1120,6 +1120,11 @@
         <column><name>ROLE_ID</name><value>0</value></column>
         <column><name>PRIM_ROLE_IND</name><value>Y</value></column>
       </row>
+      <row>
+        <column><name>USER_ID</name><value>2</value></column>
+        <column><name>ROLE_ID</name><value>1</value></column>
+        <column><name>PRIM_ROLE_IND</name><value>Y</value></column>
+      </row>
     </rows>
   </table>
 
@@ -1147,6 +1152,27 @@
         <column><name>RELEASE_DT</name><value>SYSDATE</value></column>
         <column><name>APPROVAL_FLG</name><value>Y</value></column>
       </row>
+
+      <!-- Developer channels -->
+      <row>   <!-- Person Attributes -->
+        <column><name>ROLE_ID</name><value>1</value></column>
+        <column><name>CHAN_ID</name><value>4</value></column>
+        <column><name>RELEASE_DT</name><value>SYSDATE</value></column>
+        <column><name>APPROVAL_FLG</name><value>Y</value></column>
+      </row>
+      <row>   <!-- Snooper -->
+        <column><name>ROLE_ID</name><value>1</value></column>
+        <column><name>CHAN_ID</name><value>16</value></column>
+        <column><name>RELEASE_DT</name><value>SYSDATE</value></column>
+        <column><name>APPROVAL_FLG</name><value>Y</value></column>
+      </row>
+      <row>   <!-- uPortal Development Books -->
+        <column><name>ROLE_ID</name><value>1</value></column>
+        <column><name>CHAN_ID</name><value>20</value></column>
+        <column><name>RELEASE_DT</name><value>SYSDATE</value></column>
+        <column><name>APPROVAL_FLG</name><value>Y</value></column>
+      </row>
+
     </rows>
   </table>
 
@@ -1164,20 +1190,6 @@
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>LAYOUT_TITLE</name><value>Demo layout</value></column>
         <column><name>INIT_STRUCT_ID</name><value>1</value></column>
-      </row>
-    </rows>
-  </table>
-
-  <table>
-    <name>UP_ROLE_CHAN</name>
-    <rows>
-      <row>
-        <column><name>ROLE_ID</name><value>1</value></column>
-        <column><name>CHAN_ID</name><value>2</value></column>
-      </row>
-      <row>
-        <column><name>ROLE_ID</name><value>1</value></column>
-        <column><name>CHAN_ID</name><value>2</value></column>
       </row>
     </rows>
   </table>
