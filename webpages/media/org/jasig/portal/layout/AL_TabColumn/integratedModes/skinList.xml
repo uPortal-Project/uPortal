@@ -13,4 +13,16 @@
 		<skin-name>Hulk</skin-name>
 		<skin-description>A Green Skin based on a big, hypothetical monster.</skin-description>
 	</skin>
+
+	<skin>
+		<skin>cartoon</skin>
+		<skin-name>cartoon</skin-name>
+        <skin-description>Skin characterized by curves and bright colors</skin-description>
+	</skin>
+
+	<skin>
+		<skin>unicon</skin>
+		<skin-name>Unicon Style</skin-name>
+        <skin-description>Clean and bright style derived from the Unicon corporate identity</skin-description>
+	</skin>
 </skins>
