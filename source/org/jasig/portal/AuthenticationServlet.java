@@ -115,8 +115,7 @@ public class AuthenticationServlet extends HttpServlet {
     // Check to see if the person has been authenticated
     if (person != null && person.getSecurityContext().isAuthenticated()) {
       // Send the now authenticated user back to the PortalSessionManager servlet
-      response.sendRedirect("http://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath()
-          + "/" + redirectString);
+      response.sendRedirect(request.getContextPath() + '/' + redirectString);
     }
     else {
       // Store the fact that this user has attempted authentication in the session
