@@ -279,7 +279,7 @@
     ======================================================================= 
 -->
 
-   <target name="all" depends="classes,javadoc,db"/>
+   <target name="all" depends="classes,db"/>
    <!-- these targets will be used once a directory structure is decided on -->
    <!-- <target name="all" depends="classes,html,support,javadoc,db"/> -->
 
