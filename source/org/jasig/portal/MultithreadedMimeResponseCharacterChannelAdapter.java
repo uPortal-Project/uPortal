@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2003 The JA-SIG Collaborative.  All rights reserved.
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  * 1. Redistributions of source code must retain the above copyright
@@ -25,7 +25,7 @@ import  java.util.Map;
 import  java.io.IOException;
 /**
  * Internal adapter for a multithreaded character channel that also implements IMimeResponse (capable of using DonwloadWorker)
- * @author Alex Vigdor
+ * @author <a href="mailto:nbolton@unicon.net">Nick Bolton</a>
  * @version $Revision$
  * @see MultithreadedChannelAdapter
  */
