@@ -2844,9 +2844,10 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
                  for ( int j = 0; j < channelParams.length; j++ ) {
                   String paramName = channelParams[j].getName();
-                  if ( channelDesc.getParameterValue(paramName) == null ) {
+                  String paramValue = channelParams[j].getValue();
+                  if ( paramName != null && paramValue != null && channelDesc.getParameterValue(paramName) == null ) {
                    channelDesc.setParameterOverride(paramName,channelParams[j].getOverride());
-                   channelDesc.setParameterValue(paramName,channelParams[j].getValue());
+                   channelDesc.setParameterValue(paramName,paramValue);
                   }
                  }
                  channelDesc.setTimeout(channelDef.getTimeout());
