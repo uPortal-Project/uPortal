@@ -131,7 +131,7 @@ private String getRandomString(java.util.Random r, int length) {
 /**
  * @return RDBMCachedEntityInvalidationStore
  */
-private RDBMCachedEntityInvalidationStore getStore()
+private RDBMCachedEntityInvalidationStore getStore() throws CachingException
 {
     return RDBMCachedEntityInvalidationStore.singleton();
 }

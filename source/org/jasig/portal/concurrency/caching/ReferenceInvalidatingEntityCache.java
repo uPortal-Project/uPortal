@@ -147,6 +147,7 @@ public IBasicEntity get(String key) {
  * @return org.jasig.portal.concurrency.caching.RDBMCachedEntityInvalidationStore
  */
 private static synchronized RDBMCachedEntityInvalidationStore getInvalidationStore()
+throws CachingException
 {
     if ( invalidationStore == null )
         { invalidationStore = new RDBMCachedEntityInvalidationStore(); }
