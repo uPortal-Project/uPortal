@@ -60,12 +60,11 @@ public interface IChannelRegistryStore {
 
 
   /**
-   * put your documentation comment here
-   * @param catID
-   * @param role
-   * @return
+   * Gets the channel registry as an XML document
+   * @return the channel registry XML
+   * @throws java.lang.Exception
    */
-  public Document getChannelRegistryXML () throws java.sql.SQLException;
+  public Document getChannelRegistryXML () throws Exception;
 
 
 
