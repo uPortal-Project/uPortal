@@ -55,6 +55,7 @@ import org.apache.pluto.om.servlet.ServletDefinition;
 import org.jasig.portal.ChannelDefinition;
 import org.jasig.portal.IPortletPreferencesStore;
 import org.jasig.portal.PortletPreferencesStoreFactory;
+import org.jasig.portal.container.om.common.LanguageSetImpl;
 import org.jasig.portal.container.om.common.ObjectIDImpl;
 import org.jasig.portal.container.om.common.PreferenceSetImpl;
 import org.jasig.portal.container.om.common.SecurityRoleRefSetImpl;
@@ -107,6 +108,7 @@ public class PortletDefinitionImpl implements PortletDefinition, PortletDefiniti
     }
 
     public LanguageSet getLanguageSet() {
+        ((LanguageSetImpl)languages).setClassLoader(getPortletClassLoader());
         return languages;
     }
 
