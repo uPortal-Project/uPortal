@@ -220,16 +220,10 @@ public class UserInstance implements HttpSessionBindingListener {
                 //
 
                 try {
-                    // Disable page caching
-                    res.setHeader("pragma", "no-cache");
-                    res.setHeader("Cache-Control", "no-cache, max-age=0, must-revalidate");
-                    res.setDateHeader("Expires", 0);   
-                  
                     // call layout manager to process all user-preferences-related request parameters
                     // this will update UserPreference object contained by UserLayoutManager, so that
                     // appropriate attribute incorporation filters and parameter tables can be constructed.
                     ulm.processUserPreferencesParameters(req);
-                    PrintWriter out=res.getWriter();
 
                     // determine uPElement (optimistic prediction) --begin
                     // We need uPElement for ChannelManager.setReqNRes() call. That call will distribute uPElement
@@ -300,7 +294,6 @@ public class UserInstance implements HttpSessionBindingListener {
                             // peterk: should we worry about forwarding parameters here ? or those passed with detach always get sacked ?
                             uPElement.setMethodNodeId(newRootNodeId);
                             res.sendRedirect(uPElement.getUPFile());
-                            // res.sendRedirect(UPFileSpec.buildUPFile(PortalSessionManager.INTERNAL_TAG_VALUE,UPFileSpec.RENDER_METHOD,newRootNodeId,null,null));
                             return;
                         }
                     }
@@ -322,10 +315,14 @@ public class UserInstance implements HttpSessionBindingListener {
                     channelManager.setUPElement(uPElement);
                     // verify upElement and determine rendering root --begin
 
-
-
+                    // Disable page caching
+                    res.setHeader("pragma", "no-cache");
+                    res.setHeader("Cache-Control", "no-cache, max-age=0, must-revalidate");
+                    res.setDateHeader("Expires", 0);   
                     // set the response mime type
-                    res.setContentType(tsd.getMimeType());
+                    res.setContentType(tsd.getMimeType() + "; charset=UTF-8");
+                    // obtain the writer - res.getWriter() must occur after res.setContentType()
+                    PrintWriter out = res.getWriter();                    
                     // get a serializer appropriate for the target media
                     BaseMarkupSerializer markupSerializer = mediaM.getSerializerByName(tsd.getSerializerName(), out);
                     // set up the serializer
