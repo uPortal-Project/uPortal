@@ -613,9 +613,18 @@ public class CChannelManager extends BaseChannel {
   protected static Document getGroups() throws GroupsException {
     Document groupsDoc = DocumentFactory.getNewDocument();
     Element groupsE = groupsDoc.createElement("groups");
-    String everyoneKey = "12";
+
+    String everyoneKey = org.jasig.portal.services.AuthorizationService.getEveryoneKey();
     IEntityGroup everyoneGroup = GroupService.find(everyoneKey);
-    processGroupsRecursively(everyoneGroup, groupsE);
+
+    // Create a top-level group representing everyone
+    Element everyoneGroupE = groupsDoc.createElement("group");
+    everyoneGroupE.setAttribute("ID", "g" + everyoneGroup.getKey());
+    everyoneGroupE.setAttribute("name", everyoneGroup.getName());
+    everyoneGroupE.setAttribute("description", everyoneGroup.getDescription());
+    groupsE.appendChild(everyoneGroupE);
+
+    processGroupsRecursively(everyoneGroup, everyoneGroupE);
     groupsDoc.appendChild(groupsE);
     return groupsDoc;
   }
