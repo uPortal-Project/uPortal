@@ -1,269 +1,316 @@
-INSERT INTO UP_USERS (ID, USER_NAME, FIRST_NAME, LAST_NAME) values (0, 'guest', 'Guest', 'Guest');
+INSERT INTO PORTAL_CHANNELS ( CHAN_ID, TITLE, CHANNEL_XML ) VALUES
+(0, 'Salon.com',
+'<channel minimized="false" class="org.jasig.portal.channels.CRSSChannel">
+  <parameter value="http://www.salon.com/feed/RDF/salon_use.rdf" name="url"/>
+</channel>');
 
-INSERT INTO UP_USERS (ID, USER_NAME, FIRST_NAME, LAST_NAME) VALUES (1, 'demo', 'Demo', 'User');
-INSERT INTO UP_SHADOW (USER_NAME, PASSWORD) VALUES ('demo', '{MD5}IAnYXaWGdqTkifNNwo0bfIIphj2NPvSG');
+INSERT INTO PORTAL_CHANNELS ( CHAN_ID, TITLE, CHANNEL_XML ) VALUES
+(1, 'ABC News',
+'<channel minimized="false" class="org.jasig.portal.channels.CApplet">
+  <parameter value="ABC News" name="name"/>
+  <parameter value="starwave.news.affiliate.Megaticker.class" name="code"/>
+  <parameter value="http://webapp.abcnews.com/java/" name="codeBase"/>
+  <parameter value="MegaTicker.jar" name="archive"/>
+  <parameter value="141" name="width"/>
+  <parameter value="409" name="height"/>
+  <parameter name="APPLET.cabbase" value="MegaTicker.cab"/>
+  <parameter name="APPLET.station" value="KABC"/>
+</channel>');
 
-UPDATE UP_USERS SET USER_LAYOUT_XML=
+INSERT INTO PORTAL_CHANNELS ( CHAN_ID, TITLE, CHANNEL_XML ) VALUES
+(2, 'Search',
+'<channel minimized="false" class="org.jasig.portal.channels.CSearch">
+</channel>');
+
+INSERT INTO PORTAL_CHANNELS ( CHAN_ID, TITLE, CHANNEL_XML ) VALUES
+(3, 'DE Weather',
+'<channel minimized="false" class="org.jasig.portal.channels.CWeather">
+  <parameter value="DE" name="state"/>
+  <parameter value="Newark" name="city"/>
+</channel>');
+
+INSERT INTO PORTAL_CHANNELS ( CHAN_ID, TITLE, CHANNEL_XML ) VALUES
+(4, 'JA-SIG uPortal Demos',
+'<channel minimized="false" class="org.jasig.portal.channels.CRSSChannel">
+  <parameter value="http://www.interactivebusiness.com/publish/jasigPortalDemos.rss" name="url"/>
+</channel>');
+
+INSERT INTO PORTAL_CHANNELS ( CHAN_ID, TITLE, CHANNEL_XML ) VALUES
+(5, 'My Bookmarks',
+'<channel minimized="false" class="org.jasig.portal.xmlchannels.CBookmarks">
+</channel>');
+
+INSERT INTO PORTAL_CHANNELS ( CHAN_ID, TITLE, CHANNEL_XML ) VALUES
+(6, 'ESPN Scoreboard',
+'<channel minimized="false" class="org.jasig.portal.channels.CApplet">
+  <parameter value="ESPN Scoreboard" name="name"/>
+  <parameter value="starwave.sportszone.scorepost.ScorePost.class" name="code"/>
+  <parameter value="http://scores-espn.sportszone.com/java" name="codeBase"/>
+  <parameter value="ScorePost.zip" name="archive"/>
+  <parameter value="128" name="width"/>
+  <parameter value="182" name="height"/>
+  <parameter name="APPLET.cabbase" value="ScorePost.cab"/>
+  <parameter name="APPLET.bgcolor" value="#336699"/>
+  <parameter name="APPLET.text" value="#FFFFFF"/>
+  <parameter name="APPLET.data" value="/cgi/scoretracker/databuffer.dll?/scoretracker/scorepost/data/all.dat"/>
+  <parameter name="APPLET.ad data" value="/ad/scorepost/nhl.txt"/>
+  <parameter name="APPLET.target" value="_top"/>
+  <parameter name="APPLET.delay" value="3500"/>
+  <parameter name="APPLET.data time" value="30000"/>
+  <parameter name="APPLET.inactive data time" value="300000"/>
+</channel>');
+
+INSERT INTO PORTAL_CHANNELS ( CHAN_ID, TITLE, CHANNEL_XML ) VALUES
+(7, 'Funky Clock',
+'<channel minimized="false" class="org.jasig.portal.channels.CApplet">
+  <parameter value="Clock" name="name"/>
+  <parameter value="Clock3D.class" name="code"/>
+  <parameter value="applets/" name="codeBase"/>
+  <parameter value="" name="archive"/>
+  <parameter value="200" name="width"/>
+  <parameter value="200" name="height"/>
+  <parameter name="APPLET.fps" value="18"/>
+  <parameter name="APPLET.a1" value="12500"/>
+  <parameter name="APPLET.pixd" value="29"/>
+  <parameter name="APPLET.pixangle" value="5"/>
+  <parameter name="APPLET.radius" value="26"/>
+  <parameter name="APPLET.roty" value="4"/>
+  <parameter name="APPLET.rotx" value="0"/>
+  <parameter name="APPLET.rotz" value="0.401"/>
+  <parameter name="APPLET.irotx" value="0"/>
+  <parameter name="APPLET.iroty" value="0"/>
+  <parameter name="APPLET.irotz" value="0"/>
+  <parameter name="APPLET.style" value="1"/>   
+  <parameter name="APPLET.color" value="#00FF66"/>
+  <parameter name="APPLET.bgcolor" value="#000000"/>
+  <parameter name="APPLET.12hour" value="0"/>
+</channel>');
+
+INSERT INTO PORTAL_CHANNELS ( CHAN_ID, TITLE, CHANNEL_XML ) VALUES
+(8, 'UD Homepage',
+'<channel minimized="false" class="org.jasig.portal.channels.CPageRenderer">
+    <parameter value="UDel" name="name"/>
+    <parameter value="http://www.udel.edu" name="url"/>
+</channel>');
+
+INSERT INTO PORTAL_CHANNELS ( CHAN_ID, TITLE, CHANNEL_XML ) VALUES
+(9, 'Number Guessing Game',
+'<channel class="org.jasig.portal.xmlchannels.CNumberGuess" instanceID="">
+  <parameter value="1" name="minNum"/>
+  <parameter value="100" name="maxNum"/>
+</channel>');
+
+INSERT INTO PORTAL_CHANNELS ( CHAN_ID, TITLE, CHANNEL_XML ) VALUES
+(10, 'Worcester Weather',
+'<channel minimized="false" class="org.jasig.portal.channels.CWeather">
+  <parameter value="MA" name="state"/>
+  <parameter value="Worcester" name="city"/>
+</channel>');
+
+INSERT INTO PORTAL_CHAN_CLASS VALUES(0, 0);
+INSERT INTO PORTAL_CHAN_CLASS VALUES(0, 1);
+INSERT INTO PORTAL_CHAN_CLASS VALUES(7, 2);
+INSERT INTO PORTAL_CHAN_CLASS VALUES(2, 3);
+INSERT INTO PORTAL_CHAN_CLASS VALUES(4, 4);
+INSERT INTO PORTAL_CHAN_CLASS VALUES(7, 5);
+INSERT INTO PORTAL_CHAN_CLASS VALUES(1, 6);
+INSERT INTO PORTAL_CHAN_CLASS VALUES(6, 7);
+INSERT INTO PORTAL_CHAN_CLASS VALUES(5, 8);
+INSERT INTO PORTAL_CHAN_CLASS VALUES(7, 9);
+INSERT INTO PORTAL_CHAN_CLASS VALUES(2, 10);
+
+INSERT INTO PORTAL_CHAN_TYPES (TYPE_ID, TYPE, NAME, DESCR) VALUES (0, 'CRSSChannel', 'RSS Channel', 'RSS or Rich Site Summary, the most common channel format, is a channel which has its content defined through an XML document. Anyone may publish an RSS channel as long as the specification is adhered to and the file is stored on a publicly accessible web server. You will need to provide a URL for the RSS file.'); 
+INSERT INTO PORTAL_CHAN_TYPES (TYPE_ID, TYPE, NAME, DESCR) VALUES (1, 'CPageRenderer', 'HTML Channel', 'HTML is a quick and easy way to create a channel. Anyone may publish a HTML channel as long as the HTML is valid and stored on a publicly accessible web server. You will need to provide a URL for the HTML file.'); 
+INSERT INTO PORTAL_CHAN_TYPES (TYPE_ID, TYPE, NAME, DESCR) VALUES (2, 'CInlineFrame', 'Inline Frame Channel', 'This channel uses HTML and presents it in an Inline Frame. Please note that only newer browsers support this.'); 
+INSERT INTO PORTAL_CHAN_TYPES (TYPE_ID, TYPE, NAME, DESCR) VALUES (3, 'CApplet', 'Applet Channel', 'This channel uses program code located on a server which is then executed within the portal. This channel requires a number of parameters to be set and is for more experienced users.');
+
+INSERT INTO PORTAL_CLASS ( CLASS_ID, NAME ) VALUES (0, 'News'); 
+INSERT INTO PORTAL_CLASS ( CLASS_ID, NAME ) VALUES (1, 'Sports'); 
+INSERT INTO PORTAL_CLASS ( CLASS_ID, NAME ) VALUES (2, 'Weather'); 
+INSERT INTO PORTAL_CLASS ( CLASS_ID, NAME ) VALUES (3, 'Financial'); 
+INSERT INTO PORTAL_CLASS ( CLASS_ID, NAME ) VALUES (4, 'Development'); 
+INSERT INTO PORTAL_CLASS ( CLASS_ID, NAME ) VALUES (5, 'Other'); 
+INSERT INTO PORTAL_CLASS ( CLASS_ID, NAME ) VALUES (6, 'Just4Fun'); 
+INSERT INTO PORTAL_CLASS ( CLASS_ID, NAME ) VALUES (7, 'Applications'); 
+INSERT INTO PORTAL_CLASS ( CLASS_ID, NAME ) VALUES (8, 'Entertainment'); 
+
+INSERT INTO PORTAL_COLORS (SEQ_ID, COLOR_SCHEME_NAME, BGCOLOR, TEXT, LINK, VLINK, ALINK) VALUES (0, 'Red', 'FFCCCC', '660033', 'FF0066', 'CC9999', 'FF0000'); 
+INSERT INTO PORTAL_COLORS (SEQ_ID, COLOR_SCHEME_NAME, BGCOLOR, TEXT, LINK, VLINK, ALINK) VALUES (1, 'Red', 'FFCCCC', '663300', 'FF0000', '996666', 'FF9900'); 
+INSERT INTO PORTAL_COLORS (SEQ_ID, COLOR_SCHEME_NAME, BGCOLOR, TEXT, LINK, VLINK, ALINK) VALUES (2, 'Red', 'FFCC99', '663300', 'FF0000', '996666', 'FF9900'); 
+INSERT INTO PORTAL_COLORS (SEQ_ID, COLOR_SCHEME_NAME, BGCOLOR, TEXT, LINK, VLINK, ALINK) VALUES (3, 'University', 'FFFFFF', '000000', 'FF9900', 'CC6633', 'FFCC33');
+INSERT INTO PORTAL_COLORS (SEQ_ID, COLOR_SCHEME_NAME, BGCOLOR, TEXT, LINK, VLINK, ALINK) VALUES (4, 'University', '000000', 'FFFFFF', 'FF9900', 'CC6633', 'FFCC33'); 
+INSERT INTO PORTAL_COLORS (SEQ_ID, COLOR_SCHEME_NAME, BGCOLOR, TEXT, LINK, VLINK, ALINK) VALUES (5, 'University', 'CC6633', '000000', 'FF9900', 'FFFFFF', 'FFCC33'); 
+INSERT INTO PORTAL_COLORS (SEQ_ID, COLOR_SCHEME_NAME, BGCOLOR, TEXT, LINK, VLINK, ALINK) VALUES (6, 'University', 'FFFFFF', '000000', '83A368', '99CCFF', '83A368'); 
+INSERT INTO PORTAL_COLORS (SEQ_ID, COLOR_SCHEME_NAME, BGCOLOR, TEXT, LINK, VLINK, ALINK) VALUES (7, 'University', 'FFFFFF', '000000', '83A368', '336699', '83A368'); 
+INSERT INTO PORTAL_COLORS (SEQ_ID, COLOR_SCHEME_NAME, BGCOLOR, TEXT, LINK, VLINK, ALINK) VALUES (8, 'University', 'EEEEEE', '000000', '83A368', '336699', '83A368'); 
+INSERT INTO PORTAL_COLORS (SEQ_ID, COLOR_SCHEME_NAME, BGCOLOR, TEXT, LINK, VLINK, ALINK) VALUES (9, 'University', '0044AA', 'FFFFFF', 'FFDD00', 'FF6600', 'FFDD00'); 
+
+INSERT INTO PORTAL_ROLES (ROLE_TITLE, DESCR) VALUES ('channelPublisher', 'This user is able to publish new channels.');
+INSERT INTO PORTAL_ROLES (ROLE_TITLE, DESCR) VALUES ('channelDeveloper', 'This user is a uPortal channel developer.');
+INSERT INTO PORTAL_ROLES (ROLE_TITLE, DESCR) VALUES ('student', 'This user is a student of the college.');
+INSERT INTO PORTAL_ROLES (ROLE_TITLE, DESCR) VALUES ('portalAdmin', 'This user is an authorized uPortal administrator.');
+
+INSERT INTO PORTAL_USERS ( ID, USER_NAME, FIRST_NAME, LAST_NAME, LAYOUT_XML ) VALUES ( 
+0, 'guest', 'Guest', 'Guest',
 '<?xml version="1.0"?>
-<!DOCTYPE layout SYSTEM "file:/userLayout.dtd">
-<layout>
-  <folder ID="t01" priority="1" name="Main">
-    <folder ID="col01" priority="0" width="40%" name="Column 1">
-      <channel ID="chan00" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="true" removable="true" detachable="false" class="org.jasig.portal.channels.CLogin" name="Login">
+<!DOCTYPE layout SYSTEM "layout.dtd">
+<layout activeTab="0" channelHeadingColor="#83a3b8" activeTabColor="#83a3b8" tabColor="#a0c8b4" fgcolor="#000000" bgcolor="#ffffff">
+  <tab name="Main">
+    <column width="20%">
+      <channel instanceID="c0" minimized="false" class="org.jasig.portal.channels.CAuthorization">
       </channel>
-      <channel ID="chan01" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="MozillaZine">
-        <parameter value="webpages/rss/netscape.rss" name="xml"/>
-        <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
-      </channel>      
-      <channel ID="chan02" priority="1" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="StockCharts.com">
-        <parameter value="webpages/rss/stockcharts.rss" name="xml"/>
-        <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
-      </channel> 
-    </folder>
-    <folder ID="col02" priority="0" width="60%" name="Column 2">
-      <channel ID="chan03" priority="0" timeout="5000" minimized="false" editable="true"  hasHelp="true" removable="true" detachable="true" class="org.jasig.portal.channels.CBookmarks" name="Bookmarks">
+      <channel instanceID="c1" minimized="false" class="org.jasig.portal.channels.CApplet">
+        <parameter value="Clock" name="name"/>
+        <parameter value="Clock3D.class" name="code"/>
+        <parameter value="applets/" name="codeBase"/>
+        <parameter value="" name="archive"/>
+        <parameter value="200" name="width"/>
+        <parameter value="200" name="height"/>
+        <parameter name="APPLET.fps" value="18"/>
+        <parameter name="APPLET.a1" value="12500"/>
+        <parameter name="APPLET.pixd" value="29"/>
+        <parameter name="APPLET.pixangle" value="5"/>
+        <parameter name="APPLET.radius" value="26"/>
+        <parameter name="APPLET.roty" value="4"/>
+        <parameter name="APPLET.rotx" value="0"/>
+        <parameter name="APPLET.rotz" value="0.401"/>
+        <parameter name="APPLET.irotx" value="0"/>
+        <parameter name="APPLET.iroty" value="0"/>
+        <parameter name="APPLET.irotz" value="0"/>
+        <parameter name="APPLET.style" value="1"/>
+        <parameter name="APPLET.color" value="#00FF66"/>
+        <parameter name="APPLET.bgcolor" value="#000000"/>
+        <parameter name="APPLET.12hour" value="0"/>
       </channel>
-      <channel ID="chan04" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="XML.com">
-        <parameter value="webpages/rss/news.rss" name="xml"/>
-        <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
-      </channel>      
-    </folder>
-  </folder>
-  <folder ID="t02" priority="0" name="uPortal Tools">
-    <channel ID="chan90" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="false" detachable="false" class="org.jasig.portal.channels.CSubscriber" name="Subscribe">
+      <channel instanceID="c4" minimized="false" class="org.jasig.portal.channels.CSearch">
       </channel>
-    <channel ID="chan92" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="false" detachable="false" class="org.jasig.portal.channels.CPublisher" name="Publish">
+      <channel instanceID="c5" minimized="false" class="org.jasig.portal.channels.CWeather">
+        <parameter value="CA" name="state"/>
+        <parameter value="El Segundo" name="city"/>
       </channel>
-    <channel ID="chan91" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="false" detachable="false" class="org.jasig.portal.channels.CUserPreferences" name="User Preferences">
+    </column>
+    <column width="80%">
+      <channel instanceID="c2" minimized="false" class="org.jasig.portal.channels.CRSSChannel">
+        <parameter value="http://interactivebusiness.com/publish/jasigPortalDemos.rss" name="url"/>
       </channel>
-  </folder>
-  <folder ID="t03" priority="0" name="More">
-    <folder ID="col03" priority="0" width="50%" name="Column 1">
-      <channel ID="chan06" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="uPortal-Powered Sites">
-        <parameter value="http://interactivebusiness.com/publish/jasigPortalDemos.rss" name="xml"/>
-        <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
+      <channel instanceID="c3" minimized="false" class="org.jasig.portal.channels.CRSSChannel">
+        <parameter value="http://interactivebusiness.com/publish/ibs.rss" name="url"/>
       </channel>
-      <channel ID="chan07" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="IBS News">
-        <parameter value="http://interactivebusiness.com/publish/ibs.rss" name="xml"/>
-        <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
+    </column>
+  </tab>
+  <tab name="Misc">
+    <column width="30%">
+      <channel class="org.jasig.portal.xmlchannels.CNumberGuess" instanceID="c6" minimized="false">
+        <parameter value="1" name="minNum"/>
+        <parameter value="100" name="maxNum"/>
       </channel>
-    </folder>
-    <folder ID="col04" priority="0" width="50%" name="Column 2">
-      <channel ID="chan08" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="uPortal Developers Reference">
-        <parameter value="http://asigdev.princeton.edu:82/portal/rss/jasigdev.rss" name="xml"/>
-        <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
+    </column>
+    <column width="70%">
+      <channel instanceID="c7" minimized="false" class="org.jasig.portal.channels.CRSSChannel">
+        <parameter value="http://www.salon.com/feed/RDF/salon_use.rdf" name="url"/>
       </channel>
-      <channel ID="chan09" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="Salon.com">
-        <parameter value="http://www.salon.com/feed/RDF/salon_use.rdf" name="xml"/>
-        <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
-      </channel>
-    </folder>
-  </folder>
-</layout>' WHERE USER_NAME='guest';
-
-UPDATE UP_USERS SET USER_LAYOUT_XML=
+    </column>
+  </tab>
+</layout>');
+ 
+INSERT INTO PORTAL_USERS ( ID, USER_NAME, FIRST_NAME, LAST_NAME, LAYOUT_XML ) VALUES ( 
+1, 'default', 'Default', 'Default',
 '<?xml version="1.0"?>
-<!DOCTYPE layout SYSTEM "file:/userLayout.dtd">
-<layout>
-  <folder ID="t01" priority="1" name="Main">
-    <folder ID="col01" priority="0" width="40%" name="Column 1">
-      <channel ID="chan00" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CNumberGuess" name="Number Guessing Game">
+<!DOCTYPE layout SYSTEM "layout.dtd">  
+<layout activeTab="0" channelHeadingColor="#83a3b8" activeTabColor="#83a3b8" tabColor="#a0c8b4" fgcolor="#000000" bgcolor="#ffffff">  
+  <tab name="Main">  
+    <column width="20%">
+      <channel instanceID="c0" minimized="false" class="org.jasig.portal.channels.CApplet">  
+        <parameter value="Clock" name="name"/>  
+        <parameter value="Clock3D.class" name="code"/>  
+        <parameter value="applets/" name="codeBase"/>  
+        <parameter value="" name="archive"/>  
+        <parameter value="200" name="width"/>  
+        <parameter value="200" name="height"/>  
+        <parameter name="APPLET.fps" value="18"/>  
+        <parameter name="APPLET.a1" value="12500"/>  
+        <parameter name="APPLET.pixd" value="29"/>  
+        <parameter name="APPLET.pixangle" value="5"/>  
+        <parameter name="APPLET.radius" value="26"/>  
+        <parameter name="APPLET.roty" value="4"/>  
+        <parameter name="APPLET.rotx" value="0"/>  
+        <parameter name="APPLET.rotz" value="0.401"/>  
+        <parameter name="APPLET.irotx" value="0"/>  
+        <parameter name="APPLET.iroty" value="0"/>  
+        <parameter name="APPLET.irotz" value="0"/>  
+        <parameter name="APPLET.style" value="1"/>  
+        <parameter name="APPLET.color" value="#00FF66"/>  
+        <parameter name="APPLET.bgcolor" value="#000000"/>  
+        <parameter name="APPLET.12hour" value="0"/>  
+      </channel>  
+    </column>  
+    <column width="50%">  
+      <channel instanceID="c1" minimized="false" class="org.jasig.portal.channels.CRSSChannel">  
+        <parameter value="http://interactivebusiness.com/publish/jasigPortalDemos.rss" name="url"/>  
+      </channel>  
+      <channel instanceID="c2" minimized="false" class="org.jasig.portal.channels.CRSSChannel">  
+        <parameter value="http://interactivebusiness.com/publish/ibs.rss" name="url"/>  
+      </channel>  
+    </column>  
+    <column width="30%">  
+      <channel instanceID="c3" minimized="false" class="org.jasig.portal.channels.CSearch">  
+      </channel>  
+      <channel instanceID="c4" minimized="false" class="org.jasig.portal.channels.CWeather">  
+        <parameter value="CA" name="state"/>  
+        <parameter value="El Segundo" name="city"/>  
+      </channel>  
+    </column>  
+  </tab>  
+  <tab name="Misc">  
+    <column width="30%">  
+      <channel class="org.jasig.portal.xmlchannels.CNumberGuess" instanceID="c5" minimized="false">  
         <parameter value="1" name="minNum"/>  
-        <parameter value="100" name="maxNum"/> 
-      </channel>      
-      <channel ID="chan01" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="MozillaZine">
-        <parameter value="webpages/rss/netscape.rss" name="xml"/>
-        <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
-      </channel>      
-      <channel ID="chan02" priority="1" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="StockCharts.com">
-        <parameter value="webpages/rss/stockcharts.rss" name="xml"/>
-        <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
+        <parameter value="100" name="maxNum"/>  
+      </channel>  
+    </column>  
+    <column width="70%">  
+      <channel instanceID="c6" minimized="false" class="org.jasig.portal.xmlchannels.CBookmarks">  
+      </channel>
+      <channel instanceID="c7" minimized="false" class="org.jasig.portal.channels.CRSSChannel">  
+        <parameter value="http://www.salon.com/feed/RDF/salon_use.rdf" name="url"/>  
       </channel> 
-    </folder>
-  </folder>
-  <folder ID="t02" priority="0" name="uPortal Tools">
-    <channel ID="chan90" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="false" detachable="false" class="org.jasig.portal.channels.CSubscriber" name="Subscribe">
-      </channel>
-    <channel ID="chan91" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="false" detachable="false" class="org.jasig.portal.channels.CUserPreferences" name="User Preferences">
-      </channel>
-  </folder>
-</layout>' WHERE USER_NAME='demo';
+    </column>  
+  </tab>  
+</layout>');
 
-INSERT INTO UP_CHANNELS (CHAN_ID, TITLE, PUB_EMAIL, APPROVED, CHANNEL_XML) VALUES (1, 'Mozillazine', NULL, 0,
-'<channel ID="chan01" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="MozillaZine">
-     <parameter value="webpages/rss/netscape.rss" name="xml"/>
-     <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
-   </channel>')
+INSERT INTO PORTAL_USERS ( ID, USER_NAME, FIRST_NAME, LAST_NAME ) VALUES (2, 'demo', 'Demo', 'User');
+INSERT INTO PORTAL_SHADOW ( USER_NAME, PASSWORD ) VALUES ('demo', '{MD5}IAnYXaWGdqTkifNNwo0bfIIphj2NPvSG');
 
-INSERT INTO UP_CHANNELS (CHAN_ID, TITLE, PUB_EMAIL, APPROVED, CHANNEL_XML) VALUES (2, 'Stockcharts', NULL, 0,
-'<channel ID="chan02" priority="1" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="StockCharts.com">
-     <parameter value="webpages/rss/stockcharts.rss" name="xml"/>
-     <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
-   </channel>')
+INSERT INTO PORTAL_USERS ( ID, USER_NAME, FIRST_NAME, LAST_NAME ) VALUES (3, 'publisher', 'Channel', 'Publisher');
+INSERT INTO PORTAL_SHADOW ( USER_NAME, PASSWORD ) VALUES ('publisher', '{MD5}IAnYXaWGdqTkifNNwo0bfIIphj2NPvSG');
+INSERT INTO PORTAL_USER_ROLES (USER_NAME, ROLE_TITLE) VALUES ('publisher', 'channelPublisher');
+INSERT INTO PORTAL_CHAN_ROLES (CHAN_ID, ROLE_TITLE) VALUES (0, 'channelPublisher');
 
-INSERT INTO UP_CHANNELS (CHAN_ID, TITLE, PUB_EMAIL, APPROVED, CHANNEL_XML) VALUES (3, 'Bookmarks', NULL, 0,
-'<channel ID="chan03" priority="0" timeout="5000" minimized="false" editable="true"  hasHelp="true" removable="true" detachable="true" class="org.jasig.portal.channels.CBookmarks" name="Bookmarks">
-   </channel>')
+INSERT INTO PORTAL_USERS ( ID, USER_NAME, FIRST_NAME, LAST_NAME ) VALUES (4, 'student', 'University', 'Student');
+INSERT INTO PORTAL_SHADOW ( USER_NAME, PASSWORD ) VALUES ('student', '{MD5}IAnYXaWGdqTkifNNwo0bfIIphj2NPvSG');
+INSERT INTO PORTAL_USER_ROLES (USER_NAME, ROLE_TITLE) VALUES ('student', 'student');
 
-INSERT INTO UP_CHANNELS (CHAN_ID, TITLE, PUB_EMAIL, APPROVED, CHANNEL_XML) VALUES (4, 'XML.com', NULL, 0,
-'<channel ID="chan04" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="XML.com">
-     <parameter value="webpages/rss/news.rss" name="xml"/>
-     <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
-   </channel>')
+INSERT INTO PORTAL_USERS ( ID, USER_NAME, FIRST_NAME, LAST_NAME ) VALUES (5, 'admin', 'uPortal', 'Administrator');
+INSERT INTO PORTAL_SHADOW ( USER_NAME, PASSWORD ) VALUES ('admin', '{MD5}IAnYXaWGdqTkifNNwo0bfIIphj2NPvSG');
+INSERT INTO PORTAL_USER_ROLES (USER_NAME, ROLE_TITLE) VALUES ('admin', 'portalAdmin');
+INSERT INTO PORTAL_CHAN_ROLES (CHAN_ID, ROLE_TITLE) VALUES (0, 'portalAdmin');
 
-INSERT INTO UP_CHANNELS (CHAN_ID, TITLE, PUB_EMAIL, APPROVED, CHANNEL_XML) VALUES (5, 'uPortal Demos', NULL, 0,
-'<channel ID="chan05" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="uPortal-Powered Sites">
-      <parameter value="http://interactivebusiness.com/publish/jasigPortalDemos.rss" name="xml"/>
-      <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
-    </channel>')
-
-INSERT INTO UP_CHANNELS (CHAN_ID, TITLE, PUB_EMAIL, APPROVED, CHANNEL_XML) VALUES (6, 'IBS News', NULL, 0,
-'<channel ID="chan06" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="IBS News">
-      <parameter value="http://interactivebusiness.com/publish/ibs.rss" name="xml"/>
-      <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
-    </channel>')
-
-INSERT INTO UP_CHANNELS (CHAN_ID, TITLE, PUB_EMAIL, APPROVED, CHANNEL_XML) VALUES (7, 'uPortal Developers Reference', NULL, 0,
-'<channel ID="chan07" priority="0" timeout="5000" minimized="false" editable="false"  hasHelp="false" removable="true" detachable="true" class="org.jasig.portal.channels.CGenericXSLT" name="uPortal Developers Reference">
-      <parameter value="http://asigdev.princeton.edu:82/portal/rss/jasigdev.rss" name="xml"/>
-      <parameter value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS.ssl" name="ssl"/>
-    </channel>')
-
-INSERT INTO UP_CHAN_TYPES (NAME, TYPE, DESCR, DEF_URI)
-VALUES ('RSS Channel', 'org.jasig.portal.channels.CGenericXSLT', 
-'RSS or Rich Site Summary, the most common channel format, is a channel which has its content defined through an XML document. Anyone may publish an RSS channel as long as the specification is adhered to and the file is stored on a publicly accessible web server. You will need to provide a URL for the RSS file.',
-'properties/channel_defs/RSS.xml');
-
-INSERT INTO UP_CHAN_TYPES (NAME, TYPE, DESCR, DEF_URI)
-VALUES ('XSL Channel', 'org.jasig.portal.channels.CGenericXSLT', 
-'XSL renders XML to a particular style, is a channel which has its content defined through an XML document. Anyone may publish an XSL channel as long as the specification is adhered to and the file is stored on a publicly accessible web server. You will need to provide a URL or Path for the XML and XSL file.',
-'properties/channel_defs/XSL.xml');
-
-INSERT INTO UP_CLASS ( CLASS_ID, NAME ) VALUES (0, 'News');  
-INSERT INTO UP_CLASS ( CLASS_ID, NAME ) VALUES (1, 'Development'); 
-INSERT INTO UP_CLASS ( CLASS_ID, NAME ) VALUES (2, 'Applications'); 
-
-INSERT INTO UP_CHAN_CLASS ( CLASS_ID, CHAN_ID ) VALUES(0, 1);
-INSERT INTO UP_CHAN_CLASS  ( CLASS_ID, CHAN_ID ) VALUES(0, 2);
-INSERT INTO UP_CHAN_CLASS  ( CLASS_ID, CHAN_ID ) VALUES(0, 6);
-INSERT INTO UP_CHAN_CLASS  ( CLASS_ID, CHAN_ID ) VALUES(1, 4);
-INSERT INTO UP_CHAN_CLASS  ( CLASS_ID, CHAN_ID ) VALUES(1, 5);
-INSERT INTO UP_CHAN_CLASS  ( CLASS_ID, CHAN_ID ) VALUES(1, 7);
-INSERT INTO UP_CHAN_CLASS  ( CLASS_ID, CHAN_ID ) VALUES(2, 3);
-
-INSERT INTO UP_USER_PREFS (USER_NAME, MEDIA, STRUCTURE_STYLESHEET_NAME, THEME_STYLESHEET_NAME, CSS_STYLESHEET_NAME)
-VALUES ('guest', 'netscape', 'Tab and Column layout', 'Nested tables', 'general CSS');
-
-INSERT INTO UP_USER_PREFS (USER_NAME, MEDIA, STRUCTURE_STYLESHEET_NAME, THEME_STYLESHEET_NAME, CSS_STYLESHEET_NAME)
-VALUES ('guest', 'explorer', 'Tab and Column layout', 'Nested tables', 'general CSS');
-
-INSERT INTO UP_USER_PREFS (USER_NAME, MEDIA, STRUCTURE_STYLESHEET_NAME, THEME_STYLESHEET_NAME, CSS_STYLESHEET_NAME)
-VALUES ('demo', 'netscape', 'Tab and Column layout', 'Nested tables', 'general CSS');
-
-INSERT INTO UP_USER_PREFS (USER_NAME, MEDIA, STRUCTURE_STYLESHEET_NAME, THEME_STYLESHEET_NAME, CSS_STYLESHEET_NAME)
-VALUES ('demo', 'explorer', 'Tab and Column layout', 'Nested tables', 'general CSS');
-
-INSERT INTO UP_USER_SS_PREFS (USER_NAME, STYLESHEET_NAME, USER_PREFERENCES_XML) VALUES ('guest', 'Tab and Column layout', '
-<structurestylesheetuserpreferences>
-  <parameters>
-  </parameters>
-  <folderattributes>
-    <attribute name="width">
-      <folder folderid="col01" value="70%"/>
-      <folder folderid="col02" value="30%"/>
-      <folder folderid="col03" value="30%"/>
-      <folder folderid="col04" value="70%"/>
-    </attribute>
-  </folderattributes>
-  <channelattributes>
-  </channelattributes>
-</structurestylesheetuserpreferences>
-');
-
-INSERT INTO UP_USER_SS_PREFS (USER_NAME, STYLESHEET_NAME, USER_PREFERENCES_XML) VALUES ('guest', 'Nested tables', '
-<themestylesheetuserpreferences>
-  <parameters>
-    <parameter name="activeTab">2</parameter>
-    <parameter name="borderWidth">2</parameter>
-  </parameters>
-  <folderattributes>
-  </folderattributes>
-  <channelattributes>
-    <attribute name="minimizable">
-      <channel channelid="chan01" value="false"/>
-      <channel channelid="chan02" value="false"/>
-    </attribute>
-  </channelattributes>
-</themestylesheetuserpreferences>
-');
-
-INSERT INTO UP_USER_SS_PREFS (USER_NAME, STYLESHEET_NAME, USER_PREFERENCES_XML) VALUES ('demo', 'Tab and Column layout', '
-<structurestylesheetuserpreferences>
-  <parameters>
-  </parameters>
-  <folderattributes>
-    <attribute name="width">
-      <folder folderid="col01" value="70%"/>
-      <folder folderid="col02" value="30%"/>
-      <folder folderid="col03" value="30%"/>
-      <folder folderid="col04" value="70%"/>
-    </attribute>
-  </folderattributes>
-  <channelattributes>
-  </channelattributes>
-</structurestylesheetuserpreferences>
-');
-
-INSERT INTO UP_USER_SS_PREFS (USER_NAME, STYLESHEET_NAME, USER_PREFERENCES_XML) VALUES ('demo', 'Nested tables', '
-<themestylesheetuserpreferences>
-  <parameters>
-    <parameter name="activeTab">1</parameter>
-    <parameter name="borderWidth">1</parameter>
-  </parameters>
-  <folderattributes>
-  </folderattributes>
-  <channelattributes>
-    <attribute name="minimizable">
-      <channel channelid="chan01" value="false"/>
-      <channel channelid="chan02" value="false"/>
-    </attribute>
-  </channelattributes>
-</themestylesheetuserpreferences>
-');
-
-INSERT INTO UP_STRUCT_SS (STYLESHEET_NAME, STYLESHEET_URI, STYLESHEET_DESCRIPTION_URI, STYLESHEET_DESCRIPTION_TEXT) 
-VALUES ('Tab and Column layout', 'webpages/stylesheets/org/jasig/portal/LayoutBean/uLayout2sLayout.xsl', 'webpages/stylesheets/org/jasig/portal/LayoutBean/uLayout2sLayout.sdf', 'Presents the layout in terms of tabs and columns.');
-
-INSERT INTO UP_THEME_SS (STYLESHEET_NAME, STYLESHEET_URI, STYLESHEET_DESCRIPTION_URI, STYLESHEET_DESCRIPTION_TEXT) 
-VALUES ('Nested tables', 'webpages/stylesheets/org/jasig/portal/LayoutBean/sLayout2html_full.xsl', 'webpages/stylesheets/org/jasig/portal/LayoutBean/sLayout2html_full.sdf', 'Renders tabs and columns as nested tables');
-
-INSERT INTO UP_CSS_SS (STYLESHEET_NAME, STYLESHEET_URI, STYLESHEET_DESCRIPTION_URI, STYLESHEET_DESCRIPTION_TEXT) 
-VALUES ('general CSS', 'webpages/media/org/jasig/portal/layout/tabColumn/general.css', 'webpages/media/org/jasig/portal/layout/tabColumn/general.sdf', 'Body, channel tabs and link coloring and fonts');
-
-INSERT INTO UP_CSS_SS_MAP (CSS_STYLESHEET_NAME, THEME_STYLESHEET_NAME) VALUES ('general CSS', 'Nested tables');
-
-INSERT INTO UP_THEME_SS_MAP (THEME_STYLESHEET_NAME, STRUCTURE_STYLESHEET_NAME) VALUES ('Nested tables', 'Tab and Column layout');
-
-INSERT INTO UP_STRUCT_SS_MAP (MEDIA, STRUCTURE_STYLESHEET_NAME) VALUES ('netscape', 'Tab and Column layout');
-
-INSERT INTO UP_STRUCT_SS_MAP (MEDIA, STRUCTURE_STYLESHEET_NAME) VALUES ('explorer', 'Tab and Column layout');
-
-INSERT INTO UPC_BOOKMARKS (ID, PORTAL_USER_ID, BOOKMARK_XML) VALUES (0, 0, 
-'<?xml version="1.0"?>
-<bookmarks>
-  <bookmark url="http://www.jasig.org" name="JA-SIG" comments="Java in Administration Special Interest Group"/>
-  <bookmark url="http://www.interactivebusiness.com" name="IBS" comments="provides uPortal Services"/>
-  <bookmark url="http://www.paypal.com" name="PayPal" comments="Send and receive money online!"/>
-  <bookmark url="http://google.com" name="Google" comments="great search engine"/>
-</bookmarks>
-');
-
-INSERT INTO UPC_BOOKMARKS (ID, PORTAL_USER_ID, BOOKMARK_XML) VALUES (1, 1, 
-'<?xml version="1.0"?>
-<bookmarks>
-  <bookmark url="http://www.jasig.org" name="JA-SIG" comments="Java in Administration Special Interest Group"/>
-  <bookmark url="http://www.interactivebusiness.com" name="IBS" comments="provides uPortal Services"/>
-  <bookmark url="http://www.paypal.com" name="PayPal" comments="Send and receive money online!"/>
-  <bookmark url="http://google.com" name="Google" comments="great search engine"/>
-</bookmarks>
-');
+INSERT INTO PORTAL_BOOKMARKS (ID, PORTAL_USER_ID, BOOKMARK_XML) VALUES (1, 1,
+'<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xbel PUBLIC "+//IDN python.org//DTD XML Bookmark Exchange Language 1.0//EN//XML" "file:/xbel-1.0.dtd">
+<xbel>             
+  <title>Default Bookmarks</title>             
+  <info><metadata owner="Default User"/></info>                                     
+  <bookmark href="http://www.ja-sig.org" id="n993160244705">
+    <title>JA-SIG</title>
+    <desc>Java in Administration Special Interest Group</desc>
+  </bookmark>
+  <bookmark href="http://www.udel.edu/uPortal" id="n993160316688">
+    <title>uPortal Home Page</title>
+    <desc>Open source university portal initiative</desc>
+  </bookmark>
+  <bookmark href="http://www.interactivebusiness.com" id="n993160316688">
+    <title>IBS</title>
+    <desc>Interactive Business Solutions: uPortal services</desc>
+  </bookmark>
+</xbel>');
