@@ -284,4 +284,13 @@ public interface IUserLayoutManager {
      */
     public String getRootFolderId();
 
+    /**
+     * A factory method to create an empty <code>IUserLayoutNodeDescription</code> instance
+     *
+     * @param nodeType a node type constant from <code>IUserLayoutNodeDescription</code> interface
+     * @return an <code>IUserLayoutNodeDescription</code> instance
+     * @exception PortalException if the error occurs.
+     */
+    public IUserLayoutNodeDescription createNodeDescription( int nodeType ) throws PortalException;
+
 }

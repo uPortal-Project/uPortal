@@ -245,7 +245,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
             // register element id
             ulm.putIdentifier(node.getId(),childElement);
             this.updateCacheKey();
-            
+
             // inform the listeners
             LayoutEvent ev=new LayoutEvent(this,node);
             for(Iterator i=listeners.iterator();i.hasNext();) {
@@ -587,5 +587,23 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
     }
     public boolean removeLayoutEventListener(LayoutEventListener l) {
         return listeners.remove(l);
+    }
+
+    /**
+     * A factory method to create an empty <code>IUserLayoutNodeDescription</code> instance
+     *
+     * @param nodeType a node type value
+     * @return an <code>IUserLayoutNodeDescription</code> instance
+     * @exception PortalException if the error occurs.
+     */
+    public IUserLayoutNodeDescription createNodeDescription( int nodeType ) throws PortalException {
+            switch ( nodeType ) {
+              case IUserLayoutNodeDescription.FOLDER:
+                return new UserLayoutFolderDescription();
+              case IUserLayoutNodeDescription.CHANNEL:
+                return new UserLayoutChannelDescription();
+              default:
+                return null;
+            }
     }
 }

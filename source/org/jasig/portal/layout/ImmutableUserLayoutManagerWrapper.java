@@ -166,10 +166,21 @@ public class ImmutableUserLayoutManagerWrapper implements IUserLayoutManager {
         return man.getRootFolderId();
     }
 
-    public boolean addLayoutEventListener(LayoutEventListener l){
+    /**
+     * A factory method to create an empty <code>IUserLayoutNodeDescription</code> instance
+     *
+     * @param nodeType a node type value
+     * @return an <code>IUserLayoutNodeDescription</code> instance
+     * @exception PortalException if the error occurs.
+     */
+    public IUserLayoutNodeDescription createNodeDescription( int nodeType ) throws PortalException {
+         return man.createNodeDescription(nodeType);
+    }
+
+    public boolean addLayoutEventListener(LayoutEventListener l) {
         return false;
     }
-    public boolean removeLayoutEventListener(LayoutEventListener l){
+    public boolean removeLayoutEventListener(LayoutEventListener l) {
         return false;
-    };
+    }
 }

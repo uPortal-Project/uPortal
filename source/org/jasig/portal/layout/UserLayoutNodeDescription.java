@@ -140,11 +140,11 @@ public abstract class UserLayoutNodeDescription implements IUserLayoutNodeDescri
     }
 
     /**
-     * A factory method to create a <code>UserLayoutNode</code> instance,
+     * A factory method to create a <code>UserLayoutNodeDescription</code> instance,
      * based on the information provided in the user layout <code>Element</code>.
      *
      * @param xmlNode a user layout DTD folder/channel <code>Element</code> value
-     * @return an <code>UserLayoutNode</code> value
+     * @return an <code>UserLayoutNodeDescription</code> value
      * @exception PortalException if the xml passed is somehow invalid.
      */
     public static UserLayoutNodeDescription createUserLayoutNodeDescription(Element xmlNode) throws PortalException {

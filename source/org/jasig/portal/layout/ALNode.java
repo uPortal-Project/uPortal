@@ -49,12 +49,12 @@ import org.w3c.dom.Element;
  * IALNode summary sentence goes here.
  * <p>
  * Company: Instructional Media &amp; Magic
- * 
+ *
  * @author <a href="mailto:mvi@immagic.com">Michael Ivanov</a>
  * @version $Revision$
  */
 
-public abstract class ALNode implements ALNodeTypes {
+public abstract class ALNode {
 
      protected String parentNodeId;
      protected String nextNodeId;

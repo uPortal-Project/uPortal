@@ -42,7 +42,7 @@ package org.jasig.portal.layout;
  * UserLayoutFolder summary sentence goes here.
  * <p>
  * Company: Instructional Media &amp; Magic
- * 
+ *
  * @author Michael Ivanov mailto:mvi@immagic.com
  * @version $Revision$
  */
@@ -63,6 +63,6 @@ public class ALChannel extends ALNode {
      * @return a node type
      */
     public int getNodeType() {
-        return CHANNEL;
+        return IUserLayoutNodeDescription.CHANNEL;
     }
 }

@@ -42,7 +42,7 @@ package org.jasig.portal.layout;
  * UserLayoutFolder summary sentence goes here.
  * <p>
  * Company: Instructional Media &amp; Magic
- * 
+ *
  * @author Michael Ivanov mailto:mvi@immagic.com
  * @version $Revision$
  */
@@ -79,7 +79,7 @@ public class ALFolder extends ALNode {
 	 * @see org.jasig.portal.layout.ALNode#getNodeType()
 	 */
     public int getNodeType() {
-        return FOLDER;
+        return IUserLayoutNodeDescription.FOLDER;
     }
 
     public static ALFolder createLostFolder() {
