@@ -66,12 +66,15 @@ public class ChannelRuntimeData extends Hashtable {
    */
   public ChannelRuntimeData () {
     super();
-    // set the default values for the parameters here
+    // Set the default values for the parameters here
     request = null;
     baseActionURL = null;
   }
-  ;
-  // the set methods ...
+
+  /**
+   * put your documentation comment here
+   * @param person
+   */
   public void setPerson (IPerson person) {
     m_person = person;
   }
@@ -87,6 +90,7 @@ public class ChannelRuntimeData extends Hashtable {
   /**
    * put your documentation comment here
    * @param req
+   * @deprecated
    */
   public void setHttpRequest (HttpServletRequest req) {
     request = req;
@@ -110,7 +114,10 @@ public class ChannelRuntimeData extends Hashtable {
     this.put(pName, pValue);
   }
 
-  // the get methods ...
+  /**
+   * put your documentation comment here
+   * @return 
+   */
   public IPerson getPerson () {
     return  (m_person);
   }
@@ -125,13 +132,19 @@ public class ChannelRuntimeData extends Hashtable {
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
+   * @deprecated 
    */
   public HttpServletRequest getHttpRequest () {
     return  request;
   }
 
-  // Parameters are strings !
+  /**
+   * Parameters are strings!!
+   * @param key
+   * @param value
+   * @return 
+   */
   public synchronized String setParameter (Object key, String value) {
     return  (String)super.put(key, value);
   }
@@ -145,7 +158,12 @@ public class ChannelRuntimeData extends Hashtable {
     return  (String)super.get(key);
   }
 
-  // if you need to pass objects, use this
+  /**
+   * If you need to pass objects, use this
+   * @param key
+   * @param value
+   * @return 
+   */
   public synchronized Object put (Object key, Object value) {
     return  super.put(key, value);
   }
