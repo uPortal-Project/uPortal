@@ -254,50 +254,6 @@ public class ChannelManager {
 	}
     }
 
-    /**
-     * Output channel content.
-     * @param channel ID (unique)
-     * @param name of the channel class
-     * @param a table of parameters
-     * @param an output DocumentHandler target
-     */
-  public void processChannel (String chanID, String className, Hashtable params, DocumentHandler dh) {
-      try {
-	  // see if the channel is cached
-	  IChannel ch;
-	  
-	  if ((ch = (IChannel) channelTable.get (chanID)) == null) {
-	      ch = (org.jasig.portal.IChannel) Class.forName (className).newInstance ();
-	      
-	      // construct a ChannelStaticData object
-	      ChannelStaticData sd = new ChannelStaticData ();
-	      sd.setChannelID (chanID);
-	      sd.setParameters ( params);
-	      ch.setStaticData (sd);
-	      channelTable.put (chanID, ch);
-	  }
-	  
-	  ChannelSAXStreamFilter custodian = new ChannelSAXStreamFilter (dh);
-	  
-	  // set up RuntimeData for the channel
-	  Hashtable chParams = new Hashtable ();
-	  
-	  if (chanID.equals (channelTarget)) 
-	      chParams = targetParams;
-	  
-	  ChannelRuntimeData rd = new ChannelRuntimeData ();
-	  rd.setParameters (chParams);
-	  rd.setHttpRequest (req);
-	  String reqURI = req.getRequestURI ();
-	  reqURI = reqURI.substring (reqURI.lastIndexOf ("/") + 1, reqURI.length ());
-	  rd.setBaseActionURL (reqURI + "?channelTarget=" + chanID + "&");
-	  ch.setRuntimeData (rd);
-	  ch.renderXML (custodian);
-      } 
-      catch (Exception e) { 
-	  Logger.log (Logger.ERROR,e); 
-      }
-  }
     
     /**
      * passes Layout-level event to a channel

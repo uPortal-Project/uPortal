@@ -496,7 +496,7 @@ public class CoreStylesheetDescriptionDBImpl implements ICoreStylesheetDescripti
 			    }
 			}
 		    }
-		    Logger.log(Logger.DEBUG,"CoreStylesheetDescriptionDBImpl::populateParameterTabel() : adding a stylesheet parameter : (\""+name+"\",\""+defaultvalue+"\",\""+description+"\")");
+		    Logger.log(Logger.DEBUG,"CoreStylesheetDescriptionDBImpl::populateParameterTable() : adding a stylesheet parameter : (\""+name+"\",\""+defaultvalue+"\",\""+description+"\")");
 		    csd.addStylesheetParameter(name,defaultvalue,description);
 		} 
 	    }
