@@ -32,7 +32,7 @@
 
 -->
 
-  <target name="all" depends="unload,transform,reload"
+  <target name="all" depends="unload,transform,reload,drop_group_entity"
    description="unload tables, do xslt and reload database"/>
 
 <!-- ==================== unload Target ====================================== -->
@@ -269,7 +269,7 @@
 
 	</target>
 
-<!-- ==================== transform Target ====================================== -->
+<!-- ==================== reload Target ====================================== -->
 <!--
 
   The "reload" target calls the main ant script using db with new data file
@@ -280,11 +280,24 @@
 	<target name="reload">
 	<copy file="${build.home}/RunXSLT/data21.xml" todir="properties"/>
 	<ant dir="." target="db" >
-	<property name="usedata" value="-d"/>
-	<property name="datafile" value="/properties/data21.xml"/>
+		<property name="usedata" value="-d"/>
+		<property name="datafile" value="/properties/data21.xml"/>
 	</ant>
-
-
 	</target>
+<!-- ==================== drop_group_entity Target ====================================== -->
+<!--
+
+  The "drop_group_entity" target calls the main ant script using db to drop unneeded tables.
+
+-->
+	<target name="drop_group_entity">
+	<ant dir="." target="db" >
+		<property name="createtables" value="-nC" />
+		<property name="populatetables" value="-nP" />
+		<property name="usetable" value="-t" />
+		<property name="tablefile" value="/properties/drop_group_entity.xml" />
+	</ant>
+	</target>
+
 	</project>
 
