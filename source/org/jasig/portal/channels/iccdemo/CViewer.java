@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,9 +33,9 @@
  *
  */
 
-
 package org.jasig.portal.channels.iccdemo;
 
+import org.jasig.portal.channels.BaseChannel;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.GeneralRenderingException;
 import org.jasig.portal.ChannelCacheKey;
@@ -45,18 +45,14 @@ import org.jasig.portal.ICCRegistry;
 import org.jasig.portal.IMultithreadedCacheable;
 import org.jasig.portal.utils.XSLT;
 import org.jasig.portal.utils.ResourceLoader;
+import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.services.LogService;
 import org.xml.sax.ContentHandler;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.naming.NotContextException;
-import org.jasig.portal.channels.*;
-
 
 /*
  * This is a modified version of the CInlineFrame channel that uses inter-channel communications.
@@ -69,13 +65,13 @@ public class CViewer extends BaseChannel {
     private static final String sslLocation = "CInlineFrame/CInlineFrame.ssl";
     private static final String historyFname="/portal/iccdemo/history";
 
-    private String currentURL;
+    private String currentURL = "";
 
     public void setStaticData(ChannelStaticData sd) throws PortalException {
         super.setStaticData(sd);
 
         // bind viewer url object to the jndi context
-        // other channels will access this object to switch url
+        // other channels will access this object to switch the url
 
         // find chan-obj context
         Context globalObjContext = null;
@@ -146,13 +142,7 @@ public class CViewer extends BaseChannel {
         // get url from the jndi context (that object can be updated by both URL selector and history channels)
         String frameHeight = "600";
 
-        Document doc = null;
-        try {
-            doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
-        } catch (ParserConfigurationException pce) {
-            LogService.log(LogService.ERROR, pce);
-            throw new GeneralRenderingException(pce.getMessage());
-        }
+        Document doc = DocumentFactory.getNewDocument();
 
         // Create XML doc
         Element iframeE = doc.createElement("iframe");
@@ -167,7 +157,7 @@ public class CViewer extends BaseChannel {
             Object bo=getBoundObject(historyId);
             if(bo==null) {
                 Element warningEl=doc.createElement("warning");
-                warningEl.appendChild(doc.createTextNode("History channel found, but no object was found bound in history's jndi context. Perhaps history should be moved ot the same tab."));
+                warningEl.appendChild(doc.createTextNode("History channel found, but no object was found bound in history's jndi context. Perhaps history should be moved to the same tab."));
                 iframeE.appendChild(warningEl);
             }
         }
@@ -179,7 +169,7 @@ public class CViewer extends BaseChannel {
         heightE.appendChild(doc.createTextNode(frameHeight));
         iframeE.appendChild(heightE);
         doc.appendChild(iframeE);
-
+        
         XSLT xslt = new XSLT(this);
         xslt.setXML(doc);
         xslt.setXSL(sslLocation, getStylesheetTitle(runtimeData.getBrowserInfo().getUserAgent()), runtimeData.getBrowserInfo());
