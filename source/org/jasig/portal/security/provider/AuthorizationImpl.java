@@ -52,9 +52,10 @@ import org.jasig.portal.services.LogService;
  * @version $Revision$
  */
 public class AuthorizationImpl implements IAuthorizationService {
-	
-    private IPermissionStore permissionStore;	    
+
+    private IPermissionStore permissionStore;
     // Clear the caches every 5 minutes
+    protected SmartCache groupMembersCache = new SmartCache(300);
     protected SmartCache permissionsCache = new SmartCache(300);
     protected Object permissionsCacheLock = new Object();
     protected String CHANNEL_PUBLISHER_ACTIVITY = "PUBLISH";
@@ -67,38 +68,38 @@ public class AuthorizationImpl implements IAuthorizationService {
    *
    */
 public AuthorizationImpl () throws AuthorizationException
-{  
-	  super();
-	  initialize();
+{
+          super();
+          initialize();
 }
 /**
  * Adds <code>IPermissions</code> to the back end store.
  * @param permissions IPermission[]
- * @exception AuthorizationException  
+ * @exception AuthorizationException
  */
 public void addPermissions(IPermission[] permissions)
 throws AuthorizationException
 {
     if (permissions.length > 0)
-    { 
+    {
         removeFromPermissionsCache(permissions);
-        getPermissionStore().add(permissions); 
+        getPermissionStore().add(permissions);
     }
 }
 /**
  * Adds <code>IPermissions</code> for the <code>IAuthorizationPrincipal</code> to the store
  * and clears out the cache.
  * @param permissions IPermission[]
- * @param principal IAuthorizationPrincipal 
- * @exception AuthorizationException  
+ * @param principal IAuthorizationPrincipal
+ * @exception AuthorizationException
  */
 public void addPermissions(IPermission[] permissions, IAuthorizationPrincipal principal)
 throws AuthorizationException
 {
     if (permissions.length > 0)
-    { 
+    {
         removeFromPermissionsCache(new IAuthorizationPrincipal[] {principal});
-        getPermissionStore().add(permissions); 
+        getPermissionStore().add(permissions);
     }
 }
 /**
@@ -125,11 +126,11 @@ public boolean canPrincipalPublish (IAuthorizationPrincipal principal) throws Au
 /**
  * Answers if the principal has permission to RENDER this Channel.
  * @return boolean
- * @param principal IAuthorizationPrincipal 
- * @param channelID int 
+ * @param principal IAuthorizationPrincipal
+ * @param channelID int
  * @exception AuthorizationException indicates authorization information could not be retrieved.
  */
-public boolean canPrincipalRender(IAuthorizationPrincipal principal, int channelID) 
+public boolean canPrincipalRender(IAuthorizationPrincipal principal, int channelID)
 throws AuthorizationException
 {
     return canPrincipalSubscribe(principal, channelID);
@@ -137,11 +138,11 @@ throws AuthorizationException
 /**
  * Answers if the principal has permission to SUBSCRIBE to this Channel.
  * @return boolean
- * @param principal IAuthorizationPrincipal 
- * @param channelID int 
+ * @param principal IAuthorizationPrincipal
+ * @param channelID int
  * @exception AuthorizationException indicates authorization information could not be retrieved.
  */
-public boolean canPrincipalSubscribe(IAuthorizationPrincipal principal, int channelID) 
+public boolean canPrincipalSubscribe(IAuthorizationPrincipal principal, int channelID)
 throws AuthorizationException
 {
     String owner = PORTAL_FRAMEWORK;
@@ -150,7 +151,7 @@ throws AuthorizationException
 }
 /**
  * @param group - org.jasig.portal.groups.IEntityGroup - the Permission principal
- * @param owner - String 
+ * @param owner - String
  * @param activity - String - the Permission activity
  * @param target - String
  * @return boolean
@@ -162,30 +163,30 @@ throws AuthorizationException
     return primDoesPrincipalHavePermission(principal, owner, activity, target);
 }
 /**
- * Answers if the owner has given the principal permission to perform the activity on 
- * the target.  Params <code>owner</code> and <code>activity</code> must be non-null.  
- * If <code>target</code> is null, then target is not checked.  
- * 
+ * Answers if the owner has given the principal permission to perform the activity on
+ * the target.  Params <code>owner</code> and <code>activity</code> must be non-null.
+ * If <code>target</code> is null, then target is not checked.
+ *
  * @return boolean
  * @param principal IAuthorizationPrincipal
  * @param owner java.lang.String
  * @param activity java.lang.String
  * @param target java.lang.String
- * @exception AuthorizationException indicates authorization information could not 
+ * @exception AuthorizationException indicates authorization information could not
  * be retrieved.
  */
 public boolean doesPrincipalHavePermission(
-    IAuthorizationPrincipal principal, 
+    IAuthorizationPrincipal principal,
     String owner,
     String activity,
-    String target) 
+    String target)
 throws AuthorizationException
 {
     boolean hasPermission = primDoesPrincipalHavePermission(principal, owner, activity, target);
     if ( ! hasPermission )
     {
         try
-        { 
+        {
             Iterator i = getGroupsForPrincipal(principal);
             while ( i.hasNext() && ! hasPermission )
             {
@@ -200,27 +201,27 @@ throws AuthorizationException
     return hasPermission;
 }
 /**
- * Returns the <code>IPermissions</code> owner has granted this <code>Principal</code> for 
- * the specified activity and target.  Null parameters will be ignored, that is, all 
- * <code>IPermissions</code> matching the non-null parameters are retrieved.  So, 
- * <code>getPermissions(principal,null, null, null)</code> should retrieve all <code>IPermissions</code> 
+ * Returns the <code>IPermissions</code> owner has granted this <code>Principal</code> for
+ * the specified activity and target.  Null parameters will be ignored, that is, all
+ * <code>IPermissions</code> matching the non-null parameters are retrieved.  So,
+ * <code>getPermissions(principal,null, null, null)</code> should retrieve all <code>IPermissions</code>
  * for a <code>Principal</code>.  Note that this includes <code>IPermissions</code> inherited
  * from groups the <code>Principal</code> belongs to.
- * 
+ *
  * @return org.jasig.portal.security.IPermission[]
  * @param principal IAuthorizationPrincipal
  * @param owner java.lang.String
  * @param activity java.lang.String
  * @param target java.lang.String
- * @exception AuthorizationException indicates authorization information could not 
+ * @exception AuthorizationException indicates authorization information could not
  * be retrieved.
  */
 public IPermission[] getAllPermissionsForPrincipal
-    (IAuthorizationPrincipal principal, 
-    String owner, 
-    String activity, 
+    (IAuthorizationPrincipal principal,
+    String owner,
+    String activity,
     String target)
-throws AuthorizationException 
+throws AuthorizationException
 {
     IPermission[] perms = getPermissionsForPrincipal(principal, owner, activity, target);
     ArrayList al = new ArrayList(Arrays.asList(perms));
@@ -235,11 +236,11 @@ throws AuthorizationException
 }
 /**
  * Does this mean all channels the principal could conceivably subscribe
- * to or all channels principal is specifically authorized to subscribe to, 
+ * to or all channels principal is specifically authorized to subscribe to,
  * or what? (Dan).
  * @param principal IAuthorizationPrincipal
  * @return Vector (of channels?)
- * @exception AuthorizationException indicates authorization information could not 
+ * @exception AuthorizationException indicates authorization information could not
  */
 public Vector getAuthorizedChannels(IAuthorizationPrincipal principal)
 throws AuthorizationException
@@ -248,14 +249,14 @@ throws AuthorizationException
 }
 /**
  * Returns <code>IAuthorizationPrincipals</code> that have <code>IPermissions</code> for
- * the given owner, activity and target.  
+ * the given owner, activity and target.
  *
  * @return IAuthorizationPrincipal[]
  * @param String owner
  * @param String activity
  * @param String target
  */
-public IAuthorizationPrincipal[] getAuthorizedPrincipals(String owner, String activity, String target) 
+public IAuthorizationPrincipal[] getAuthorizedPrincipals(String owner, String activity, String target)
 throws AuthorizationException
 {
     IPermission[] permissions = getPermissionsForOwner(owner, activity, target);
@@ -265,15 +266,21 @@ throws AuthorizationException
  * @return org.jasig.portal.groups.IGroupMember
  * @param user org.jasig.portal.security.IAuthorizationPrincipal
  */
-private IGroupMember getGroupMemberForPrincipal(IAuthorizationPrincipal principal) 
+private IGroupMember getGroupMemberForPrincipal(IAuthorizationPrincipal principal)
 throws GroupsException
 {
-    String key = principal.getKey();
-    Class type = principal.getType();
-    return EntityStoreRDBM.singleton().newInstance(key, type);
+    IGroupMember gm = (IGroupMember)groupMembersCache.get(principal);
+    if ( gm == null )
+    {
+        String key = principal.getKey();
+        Class type = principal.getType();
+        gm = EntityStoreRDBM.singleton().newInstance(key, type);
+        groupMembersCache.put(principal, gm);
+    }
+    return gm;
 }
 /**
- * Hook into the Groups system by converting the <code>IAuthorizationPrincipal</code> to 
+ * Hook into the Groups system by converting the <code>IAuthorizationPrincipal</code> to
  * an <code>IEntity</code>.  Returns ALL the groups the <code>IEntity</code> (recursively)
  * belongs to.
  * @param user - org.jasig.portal.security.IAuthorizationPrincipal
@@ -315,69 +322,69 @@ throws AuthorizationException
  * @param group org.jasig.portal.groups.IEntityGroup
  */
 private IPermission[] getPermissionsForGroup(IEntityGroup group)
-throws AuthorizationException 
+throws AuthorizationException
 {
     IAuthorizationPrincipal principal = getPrincipalForGroup(group);
     return primGetPermissionsForPrincipal(principal);
 }
 /**
- * Returns the <code>IPermissions</code> owner has granted for the specified activity 
- * and target.  Null parameters will be ignored, that is, all <code>IPermissions</code> 
- * matching the non-null parameters are retrieved.   
- * 
+ * Returns the <code>IPermissions</code> owner has granted for the specified activity
+ * and target.  Null parameters will be ignored, that is, all <code>IPermissions</code>
+ * matching the non-null parameters are retrieved.
+ *
  * @return org.jasig.portal.security.IPermission[]
  * @param owner java.lang.String
  * @param activity java.lang.String
  * @param target java.lang.String
- * @exception AuthorizationException indicates authorization information could not 
+ * @exception AuthorizationException indicates authorization information could not
  * be retrieved.
  */
 public IPermission[] getPermissionsForOwner(String owner, String activity, String target)
-throws AuthorizationException 
+throws AuthorizationException
 {
     return primRetrievePermissions(owner, null, activity, target);
 }
 /**
- * Returns the <code>IPermissions</code> owner has granted this <code>Principal</code> for 
- * the specified activity and target.  Null parameters will be ignored, that is, all 
- * <code>IPermissions</code> matching the non-null parameters are retrieved.  So, 
- * <code>getPermissions(principal,null, null, null)</code> should retrieve all <code>IPermissions</code> 
- * for a <code>Principal</code>.  
- * 
+ * Returns the <code>IPermissions</code> owner has granted this <code>Principal</code> for
+ * the specified activity and target.  Null parameters will be ignored, that is, all
+ * <code>IPermissions</code> matching the non-null parameters are retrieved.  So,
+ * <code>getPermissions(principal,null, null, null)</code> should retrieve all <code>IPermissions</code>
+ * for a <code>Principal</code>.
+ *
  * @return org.jasig.portal.security.IPermission[]
  * @param principal IAuthorizationPrincipal
  * @param owner java.lang.String
  * @param activity java.lang.String
  * @param target java.lang.String
- * @exception AuthorizationException indicates authorization information could not 
+ * @exception AuthorizationException indicates authorization information could not
  * be retrieved.
  */
 public IPermission[] getPermissionsForPrincipal
-    (IAuthorizationPrincipal principal, 
-    String owner, 
-    String activity, 
+    (IAuthorizationPrincipal principal,
+    String owner,
+    String activity,
     String target)
-throws AuthorizationException 
+throws AuthorizationException
 {
     return primGetPermissionsForPrincipal(principal, owner, activity, target);
 }
 /**
  * @return org.jasig.portal.security.IPermissionStore
  */
-private IPermissionStore getPermissionStore() 
+private IPermissionStore getPermissionStore()
 {
     return permissionStore;
 }
 /**
- * Returns <code>IAuthorizationPrincipal</code> associated with the <code>IPermission</code>.  
+ * Returns <code>IAuthorizationPrincipal</code> associated with the <code>IPermission</code>.
  *
  * @return IAuthorizationPrincipal
  * @param permission IPermission
  */
-public IAuthorizationPrincipal getPrincipal(IPermission permission) 
+public IAuthorizationPrincipal getPrincipal(IPermission permission)
 throws AuthorizationException
 {
-    String principalString = permission.getPrincipal();    
+    String principalString = permission.getPrincipal();
     int idx = principalString.indexOf(PERIOD_STRING);
     Integer typeId = new Integer(principalString.substring(0, idx));
     Class type = EntityTypes.getEntityType(typeId);
@@ -388,19 +395,19 @@ throws AuthorizationException
  * @param org.jasig.portal.groups.IEntityGroup
  * @return user org.jasig.portal.security.IAuthorizationPrincipal
  */
-private IAuthorizationPrincipal getPrincipalForGroup(IEntityGroup group) 
+private IAuthorizationPrincipal getPrincipalForGroup(IEntityGroup group)
 {
     String key = group.getKey();
     Class type = IEntityGroup.class;    //group.getEntityType();
     return newPrincipal(key, type);
 }
 /**
- * Returns <code>IAuthorizationPrincipals</code> associated with the <code>IPermission[]</code>.  
+ * Returns <code>IAuthorizationPrincipals</code> associated with the <code>IPermission[]</code>.
  *
  * @return IAuthorizationPrincipal[]
  * @param permissions IPermission[]
  */
-private IAuthorizationPrincipal[] getPrincipalsFromPermissions(IPermission[] permissions) 
+private IAuthorizationPrincipal[] getPrincipalsFromPermissions(IPermission[] permissions)
 throws AuthorizationException
 {
     Set principals = new HashSet();
@@ -416,32 +423,32 @@ throws AuthorizationException
  * <code>IAuthorizationPrincipal</code>.
  * @param principal org.jasig.portal.security.IAuthorizationPrincipal
  */
-public String getPrincipalString(IAuthorizationPrincipal principal) 
+public String getPrincipalString(IAuthorizationPrincipal principal)
 {
     Integer type = EntityTypes.getEntityTypeID(principal.getType());
     return type + PERIOD_STRING + principal.getKey();
 }
 /**
- * Returns the <code>IPermissions</code> owner has granted this <code>Principal</code> for 
- * the specified activity and target.  Null parameters will be ignored, that is, all 
- * <code>IPermissions</code> matching the non-null parameters are retrieved.  So, 
- * <code>getPermissions(principal,null, null, null)</code> should retrieve all <code>IPermissions</code> 
+ * Returns the <code>IPermissions</code> owner has granted this <code>Principal</code> for
+ * the specified activity and target.  Null parameters will be ignored, that is, all
+ * <code>IPermissions</code> matching the non-null parameters are retrieved.  So,
+ * <code>getPermissions(principal,null, null, null)</code> should retrieve all <code>IPermissions</code>
  * for a <code>Principal</code>.  Ignore any cached <code>IPermissions</code>.
- * 
+ *
  * @return org.jasig.portal.security.IPermission[]
  * @param principal IAuthorizationPrincipal
  * @param owner java.lang.String
  * @param activity java.lang.String
  * @param target java.lang.String
- * @exception AuthorizationException indicates authorization information could not 
+ * @exception AuthorizationException indicates authorization information could not
  * be retrieved.
  */
 public IPermission[] getUncachedPermissionsForPrincipal
-	(IAuthorizationPrincipal principal, 
-	String owner, 
-	String activity, 
-	String target)
-throws AuthorizationException 
+        (IAuthorizationPrincipal principal,
+        String owner,
+        String activity,
+        String target)
+throws AuthorizationException
 {
     String pString = getPrincipalString(principal);
     return primRetrievePermissions(owner, pString, activity, target);
@@ -451,7 +458,7 @@ throws AuthorizationException
  */
 private void initialize() throws AuthorizationException
 {
-	setPermissionStore(new PermissionImplRDBM()); 
+        setPermissionStore(new PermissionImplRDBM());
 }
 /**
  * Factory method for an <code>IPermission</code>.
@@ -483,7 +490,7 @@ public IPermission newPermission(String owner, IAuthorizationPrincipal principal
  * @return org.jasig.portal.security.IPermissionManager
  * @param owner java.lang.String
  */
-public IPermissionManager newPermissionManager(String owner) 
+public IPermissionManager newPermissionManager(String owner)
 {
     return new PermissionManagerImpl(owner, this);
 }
@@ -493,7 +500,7 @@ public IPermissionManager newPermissionManager(String owner)
  * @param key java.lang.String
  * @param type java.lang.Class
  */
-public IAuthorizationPrincipal newPrincipal(String key, Class type) 
+public IAuthorizationPrincipal newPrincipal(String key, Class type)
 {
     return new AuthorizationPrincipalImpl(key, type, this);
 }
@@ -502,7 +509,7 @@ public IAuthorizationPrincipal newPrincipal(String key, Class type)
  * @return org.jasig.portal.security.IUpdatingPermissionManager
  * @param owner java.lang.String
  */
-public IUpdatingPermissionManager newUpdatingPermissionManager(String owner) 
+public IUpdatingPermissionManager newUpdatingPermissionManager(String owner)
 {
     return new UpdatingPermissionManagerImpl(owner, this);
 }
@@ -512,29 +519,29 @@ public IUpdatingPermissionManager newUpdatingPermissionManager(String owner)
  * @param owner java.lang.String
  * @param activity java.lang.String
  * @param target java.lang.String
- * @exception AuthorizationException indicates authorization information could not 
+ * @exception AuthorizationException indicates authorization information could not
  * be retrieved.
  */
 private boolean primDoesPrincipalHavePermission(
-    IAuthorizationPrincipal principal, 
+    IAuthorizationPrincipal principal,
     String owner,
     String activity,
-    String target) 
+    String target)
 throws AuthorizationException
 {
     boolean hasPermission = false;
     IPermission[] perms = primGetPermissionsForPrincipal(principal);
-	
+
     if ( perms.length > 0 )
     {
         for ( int i=0; i<perms.length && ! hasPermission; i++ )
-        { 
+        {
 
             hasPermission = (
                 ( owner.equals(perms[i].getOwner()) ) 		&&
                 ( activity.equals(perms[i].getActivity()) )	&&
                 ( (target == null) || target.equals(perms[i].getTarget()) ) &&
-                ( ! perms[i].getType().equals("DENY") )	
+                ( ! perms[i].getType().equals("DENY") )
             );
         }
     }
@@ -545,7 +552,7 @@ throws AuthorizationException
  * @param principal org.jasig.portal.security.IAuthorizationPrincipal
  */
 private IPermission[] primGetPermissionsForPrincipal(IAuthorizationPrincipal principal)
-throws AuthorizationException 
+throws AuthorizationException
 {
     // Check the smart cache for the Permissions first
     IPermission[] permissions = (IPermission[])permissionsCache.get(principal);
@@ -561,14 +568,14 @@ throws AuthorizationException
  * @param principal org.jasig.portal.security.IAuthorizationPrincipal
  * @param owner String
  * @param activity String
- * @param target String  
+ * @param target String
  */
 private IPermission[] primGetPermissionsForPrincipal
-    (IAuthorizationPrincipal principal, 
-    String owner, 
-    String activity, 
+    (IAuthorizationPrincipal principal,
+    String owner,
+    String activity,
     String target)
-throws AuthorizationException 
+throws AuthorizationException
 {
     IPermission[] perms = primGetPermissionsForPrincipal(principal);
     if ( owner == null && activity == null && target == null )
@@ -576,7 +583,7 @@ throws AuthorizationException
     ArrayList al = new ArrayList(perms.length);
     for ( int i=0; i<perms.length; i++ )
     {
-        if ( 
+        if (
             (owner == null || owner.equals(perms[i].getOwner())) &&
             (activity == null || activity.equals(perms[i].getActivity())) &&
             (target == null || target.equals(perms[i].getTarget()))
@@ -592,10 +599,10 @@ throws AuthorizationException
  * @param owner String
  * @param principal String
  * @param activity String
- * @param target String 
+ * @param target String
  */
 private IPermission[] primRetrievePermissions(String owner, String principal, String activity, String target)
-throws AuthorizationException 
+throws AuthorizationException
 {
     return getPermissionStore().select(owner, principal, activity, target, null);
 }
@@ -624,31 +631,31 @@ private void removeFromPermissionsCache(IPermission[] permissions) throws Author
 /**
  * Removes <code>IPermissions</code> from the back end store.
  * @param permissions IPermission[]
- * @exception AuthorizationException  
+ * @exception AuthorizationException
  */
 public void removePermissions(IPermission[] permissions)
 throws AuthorizationException
 {
     if (permissions.length > 0)
-    { 
+    {
         removeFromPermissionsCache(permissions);
-        getPermissionStore().delete(permissions); 
+        getPermissionStore().delete(permissions);
     }
 }
 /**
  * Removes <code>IPermissions</code> for the <code>IAuthorizationPrincipal</code> in the store
  * and clears out the cache.
  * @param permissions IPermission[]
- * @param principal IAuthorizationPrincipal 
- * @exception AuthorizationException  
+ * @param principal IAuthorizationPrincipal
+ * @exception AuthorizationException
  */
 public void removePermissions(IPermission[] permissions, IAuthorizationPrincipal principal)
 throws AuthorizationException
 {
     if (permissions.length > 0)
-    { 
+    {
         removeFromPermissionsCache(new IAuthorizationPrincipal[] {principal});
-        getPermissionStore().delete(permissions); 
+        getPermissionStore().delete(permissions);
     }
 }
 /**
@@ -663,38 +670,38 @@ private void setPermissionStore(IPermissionStore newPermissionStore) {
 public static synchronized AuthorizationImpl singleton()
 throws AuthorizationException
 {
-	if ( singleton == null )
-		{ singleton = new AuthorizationImpl(); }
-	return singleton;
+        if ( singleton == null )
+                { singleton = new AuthorizationImpl(); }
+        return singleton;
 }
 /**
  * Updates <code>IPermissions</code> in the back end store.
  * @param permissions IPermission[]
- * @exception AuthorizationException  
+ * @exception AuthorizationException
  */
 public void updatePermissions(IPermission[] permissions)
 throws AuthorizationException
 {
     if (permissions.length > 0)
-    { 
+    {
         removeFromPermissionsCache(permissions);
-        getPermissionStore().update(permissions); 
+        getPermissionStore().update(permissions);
     }
 }
 /**
  * Updates <code>IPermissions</code> for the <code>IAuthorizationPrincipal</code>, in the
  * store and clears out the cache.
  * @param permissions IPermission[]
- * @param principal IAuthorizationPrincipal 
- * @exception AuthorizationException  
+ * @param principal IAuthorizationPrincipal
+ * @exception AuthorizationException
  */
 public void updatePermissions(IPermission[] permissions, IAuthorizationPrincipal principal)
 throws AuthorizationException
 {
     if (permissions.length > 0)
-    { 
+    {
         removeFromPermissionsCache(new IAuthorizationPrincipal[] {principal});
-        getPermissionStore().update(permissions); 
+        getPermissionStore().update(permissions);
     }
 }
 }
