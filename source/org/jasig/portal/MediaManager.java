@@ -194,7 +194,7 @@ public class MediaManager {
    * @return mime type string
    */
   public String getReturnMimeType (HttpServletRequest req) {
-    return  this.getReturnMimeType(this.getMedia(req));
+    return  (getReturnMimeType(getMedia(req)));
   }
 
   /**
@@ -246,7 +246,7 @@ public class MediaManager {
     //      markup rules inside a particular mime type.
     //      (i.e. netscape vs. AvantGo)
     //
-    // please imporve on this if you can.
+    // please improve on this if you can.
     String serializerName = null;
     if (serializerProps == null) {
       this.setSerializerProps((String)null);
@@ -445,16 +445,17 @@ public class MediaManager {
     String id = systemId;
     // check for bad parameters id
     if (id == null || id.length() == 0) {
-      return  null;
+      return  (null);
     }
     // if id already expanded, return
     try {
       URL url = new URL(id);
       if (url != null) {
-        return  url;
+        return  (url);
       }
     } catch (MalformedURLException e) {
-    // continue on...
+      // continue on...
+      Logger.log(Logger.WARN, "MediaManager.expandSystemId(): Threw exception! These ain't cheap!");
     }
     // normalize id
     id = fixURI(id);
@@ -475,7 +476,8 @@ public class MediaManager {
       // expand id
       url = new URL(base, id);
     } catch (Exception e) {
-    // let it go through
+      // let it go through
+      Logger.log(Logger.WARN, "MediaManager.expandSystemId(): Threw exception! These ain't cheap!");
     }
     return  url;
   }
@@ -549,14 +551,14 @@ public class MediaManager {
      * @return Value for key found in string, otherwise "unknown"
      */
     String getValue (String s) {
-      int i, j = attVec.size();
-      for (i = 0; i < j; i++) {
+      int j = attVec.size();
+      for (int i = 0; i < j; i++) {
         String temp[] = (String[])attVec.elementAt(i);
         if (s.indexOf(temp[0]) > -1) {
-          return  temp[1];
+          return  (temp[1]);
         }
       }
-      return  "unknown";
+      return  ("unknown");
     }
 
     /**
