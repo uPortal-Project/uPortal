@@ -2,6 +2,950 @@
 <!-- $Revision$ -->
 
 <data>
+
+  <table>
+    <name>UP_RESTRICTIONS</name>
+    <rows>
+      <row>
+        <column><name>RESTRICTION_TYPE</name><value>1</value></column>
+        <column><name>RESTRICTION_NAME</name><value>priority</value></column>
+        <column><name>CLASS_NAME</name><value>org.jasig.portal.layout.restrictions.PriorityRestriction</value></column>
+        <column><name>ACTIVE</name><value>Y</value></column>
+      </row>
+      <row>
+        <column><name>RESTRICTION_TYPE</name><value>2</value></column>
+        <column><name>RESTRICTION_NAME</name><value>depth</value></column>
+        <column><name>CLASS_NAME</name><value>org.jasig.portal.layout.restrictions.DepthRestriction</value></column>
+        <column><name>ACTIVE</name><value>Y</value></column>
+      </row>
+      <row>
+        <column><name>RESTRICTION_TYPE</name><value>4</value></column>
+        <column><name>RESTRICTION_NAME</name><value>group</value></column>
+        <column><name>CLASS_NAME</name><value>org.jasig.portal.layout.restrictions.GroupRestriction</value></column>
+        <column><name>ACTIVE</name><value>Y</value></column>
+      </row>
+      <row>
+        <column><name>RESTRICTION_TYPE</name><value>32</value></column>
+        <column><name>RESTRICTION_NAME</name><value>hidden</value></column>
+        <column><name>CLASS_NAME</name><value>org.jasig.portal.layout.restrictions.HiddenRestriction</value></column>
+        <column><name>ACTIVE</name><value>Y</value></column>
+      </row>
+      <row>
+        <column><name>RESTRICTION_TYPE</name><value>8</value></column>
+        <column><name>RESTRICTION_NAME</name><value>immutable</value></column>
+        <column><name>CLASS_NAME</name><value>org.jasig.portal.layout.restrictions.ImmutableRestriction</value></column>
+        <column><name>ACTIVE</name><value>Y</value></column>
+      </row>
+      <row>
+        <column><name>RESTRICTION_TYPE</name><value>16</value></column>
+        <column><name>RESTRICTION_NAME</name><value>unremovable</value></column>
+        <column><name>CLASS_NAME</name><value>org.jasig.portal.layout.restrictions.UnremovableRestriction</value></column>
+        <column><name>ACTIVE</name><value>Y</value></column>
+      </row>
+    </rows>
+  </table>
+
+  <table>
+    <name>UP_OWNER_FRAGMENT</name>
+    <rows>
+      <row>
+        <column><name>FRAGMENT_ID</name><value>1</value></column>
+        <column><name>OWNER_ID</name><value>2</value></column>
+        <column><name>FRAGMENT_ROOT_ID</name><value>1001</value></column>
+        <column><name>FRAGMENT_NAME</name><value>The first</value></column>
+        <column><name>FRAGMENT_DESCRIPTION</name><value>The common tab with a few special channels</value></column>
+        <column><name>PUSHED_FRAGMENT</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>FRAGMENT_ID</name><value>2</value></column>
+        <column><name>OWNER_ID</name><value>2</value></column>
+        <column><name>FRAGMENT_ROOT_ID</name><value>1010</value></column>
+        <column><name>FRAGMENT_NAME</name><value>The second</value></column>
+        <column><name>FRAGMENT_DESCRIPTION</name><value>The second column with a few channels</value></column>
+        <column><name>PUSHED_FRAGMENT</name><value>Y</value></column>
+      </row>
+    </rows>
+  </table>
+
+
+  <table>
+    <name>UP_LAYOUT_STRUCT_AGGR</name>
+    <rows>
+      <!-- Guest layout -->
+            <!-- Header -->
+      <row>
+        <column><name>NODE_ID</name><value>1</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>NAME</name><value>Header folder</value></column>
+        <column><name>TYPE</name><value>header</value></column>
+        <column><name>NEXT_NODE_ID</name><value>4</value></column>
+        <column><name>PREV_NODE_ID</name><value>NULL</value></column>
+        <column><name>CHLD_NODE_ID</name><value>2</value></column>
+        <column><name>PRNT_NODE_ID</name><value>NULL</value></column>
+        <column><name>UNREMOVABLE</name><value>Y</value></column>
+        <column><name>IMMUTABLE</name><value>Y</value></column>
+        <column><name>PRIORITY</name><value>0</value></column>
+      </row>
+          <!-- Header -->
+          <row>
+            <column><name>NODE_ID</name><value>2</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_NODE_ID</name><value>3</value></column>
+            <column><name>PREV_NODE_ID</name><value>NULL</value></column>
+            <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
+            <column><name>PRNT_NODE_ID</name><value>1</value></column>
+            <column><name>CHAN_ID</name><value>10</value></column>
+            <column><name>PRIORITY</name><value>0</value></column>
+          </row>
+          <!-- Login -->
+          <row>
+            <column><name>NODE_ID</name><value>3</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_NODE_ID</name><value>NULL</value></column>
+            <column><name>PREV_NODE_ID</name><value>2</value></column>
+            <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
+            <column><name>PRNT_NODE_ID</name><value>1</value></column>
+            <column><name>CHAN_ID</name><value>99</value></column>
+            <column><name>PRIORITY</name><value>0</value></column>
+          </row>
+      <!-- Main -->
+      <row>
+        <column><name>NODE_ID</name><value>4</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>NAME</name><value>Main</value></column>
+        <column><name>NEXT_NODE_ID</name><value>10</value></column>
+        <column><name>PREV_NODE_ID</name><value>1</value></column>
+        <column><name>CHLD_NODE_ID</name><value>5</value></column>
+        <column><name>PRNT_NODE_ID</name><value>NULL</value></column>
+        <column><name>PRIORITY</name><value>0</value></column>
+      </row>
+        <row>
+          <column><name>NODE_ID</name><value>5</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+          <column><name>NAME</name><value>Column 1</value></column>
+          <column><name>NEXT_NODE_ID</name><value>8</value></column>
+          <column><name>PREV_NODE_ID</name><value>NULL</value></column>
+          <column><name>CHLD_NODE_ID</name><value>6</value></column>
+          <column><name>PRNT_NODE_ID</name><value>4</value></column>
+          <column><name>PRIORITY</name><value>0</value></column>
+        </row>
+          <!-- Word of the Day -->
+          <row>
+            <column><name>NODE_ID</name><value>6</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_NODE_ID</name><value>7</value></column>
+            <column><name>PREV_NODE_ID</name><value>NULL</value></column>
+            <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
+            <column><name>PRNT_NODE_ID</name><value>5</value></column>
+            <column><name>CHAN_ID</name><value>11</value></column>
+            <column><name>PRIORITY</name><value>0</value></column>
+          </row>
+          <!-- Number Guessing Game -->
+          <row>
+            <column><name>NODE_ID</name><value>7</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_NODE_ID</name><value>NULL</value></column>
+            <column><name>PREV_NODE_ID</name><value>6</value></column>
+            <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
+            <column><name>PRNT_NODE_ID</name><value>5</value></column>
+            <column><name>CHAN_ID</name><value>14</value></column>
+            <column><name>PRIORITY</name><value>0</value></column>
+          </row>
+        <row>
+          <column><name>NODE_ID</name><value>8</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+          <column><name>NAME</name><value>Column 2</value></column>
+          <column><name>NEXT_NODE_ID</name><value>NULL</value></column>
+          <column><name>PREV_NODE_ID</name><value>5</value></column>
+          <column><name>CHLD_NODE_ID</name><value>29</value></column>
+          <column><name>PRNT_NODE_ID</name><value>4</value></column>
+          <column><name>PRIORITY</name><value>0</value></column>
+        </row>
+          <!-- Daily Business Cartoon -->
+          <row>
+            <column><name>NODE_ID</name><value>29</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_NODE_ID</name><value>NULL</value></column>
+            <column><name>PREV_NODE_ID</name><value>NULL</value></column>
+            <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
+            <column><name>PRNT_NODE_ID</name><value>8</value></column>
+            <column><name>CHAN_ID</name><value>1</value></column>
+            <column><name>PRIORITY</name><value>0</value></column>
+          </row>
+      <!-- Development -->
+      <row>
+        <column><name>NODE_ID</name><value>10</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>NAME</name><value>Development</value></column>
+        <column><name>NEXT_NODE_ID</name><value>17</value></column>
+        <column><name>PREV_NODE_ID</name><value>4</value></column>
+        <column><name>CHLD_NODE_ID</name><value>11</value></column>
+        <column><name>PRNT_NODE_ID</name><value>NULL</value></column>
+        <column><name>PRIORITY</name><value>0</value></column>
+      </row>
+        <row>
+          <column><name>NODE_ID</name><value>11</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+          <column><name>NAME</name><value>Column 1</value></column>
+          <column><name>NEXT_NODE_ID</name><value>13</value></column>
+          <column><name>PREV_NODE_ID</name><value>NULL</value></column>
+          <column><name>CHLD_NODE_ID</name><value>12</value></column>
+          <column><name>PRNT_NODE_ID</name><value>10</value></column>
+          <column><name>PRIORITY</name><value>0</value></column>
+        </row>
+          <!-- Person Attributes -->
+          <row>
+            <column><name>NODE_ID</name><value>12</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_NODE_ID</name><value>18</value></column>
+            <column><name>PREV_NODE_ID</name><value>NULL</value></column>
+            <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
+            <column><name>PRNT_NODE_ID</name><value>11</value></column>
+            <column><name>CHAN_ID</name><value>4</value></column>
+            <column><name>PRIORITY</name><value>0</value></column>
+          </row>
+          <!-- CSS Viewer -->
+          <row>
+            <column><name>NODE_ID</name><value>18</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_NODE_ID</name><value>NULL</value></column>
+            <column><name>PREV_NODE_ID</name><value>12</value></column>
+            <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
+            <column><name>PRNT_NODE_ID</name><value>11</value></column>
+            <column><name>CHAN_ID</name><value>15</value></column>
+            <column><name>PRIORITY</name><value>0</value></column>
+          </row>
+        <row>
+          <column><name>NODE_ID</name><value>13</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+          <column><name>NAME</name><value>Column 2</value></column>
+          <column><name>NEXT_NODE_ID</name><value>NULL</value></column>
+          <column><name>PREV_NODE_ID</name><value>11</value></column>
+          <column><name>CHLD_NODE_ID</name><value>15</value></column>
+          <column><name>PRNT_NODE_ID</name><value>10</value></column>
+          <column><name>PRIORITY</name><value>0</value></column>
+        </row>
+          <!-- uPortal Developer Recommended Reading -->
+          <row>
+            <column><name>NODE_ID</name><value>15</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_NODE_ID</name><value>14</value></column>
+            <column><name>PREV_NODE_ID</name><value>NULL</value></column>
+            <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
+            <column><name>PRNT_NODE_ID</name><value>13</value></column>
+            <column><name>CHAN_ID</name><value>20</value></column>
+            <column><name>PRIORITY</name><value>0</value></column>
+          </row>
+          <!-- uPortal Developers Reference -->
+          <row>
+            <column><name>NODE_ID</name><value>14</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_NODE_ID</name><value>16</value></column>
+            <column><name>PREV_NODE_ID</name><value>15</value></column>
+            <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
+            <column><name>PRNT_NODE_ID</name><value>13</value></column>
+            <column><name>CHAN_ID</name><value>7</value></column>
+            <column><name>PRIORITY</name><value>0</value></column>
+          </row>
+          <!-- Snooper -->
+          <row>
+            <column><name>NODE_ID</name><value>16</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_NODE_ID</name><value>37</value></column>
+            <column><name>PREV_NODE_ID</name><value>14</value></column>
+            <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
+            <column><name>PRNT_NODE_ID</name><value>13</value></column>
+            <column><name>CHAN_ID</name><value>16</value></column>
+            <column><name>PRIORITY</name><value>0</value></column>
+          </row>
+
+          <!-- uPortal Data Dictionary -->
+          <row>
+            <column><name>NODE_ID</name><value>37</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_NODE_ID</name><value>NULL</value></column>
+            <column><name>PREV_NODE_ID</name><value>16</value></column>
+            <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
+            <column><name>PRNT_NODE_ID</name><value>13</value></column>
+            <column><name>CHAN_ID</name><value>22</value></column>
+            <column><name>PRIORITY</name><value>0</value></column>
+          </row>
+
+      <!-- User Preferences -->
+      <row>
+        <column><name>NODE_ID</name><value>17</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>NAME</name><value>User Preferences</value></column>
+        <column><name>NEXT_NODE_ID</name><value>21</value></column>
+        <column><name>PREV_NODE_ID</name><value>10</value></column>
+        <column><name>CHLD_NODE_ID</name><value>19</value></column>
+        <column><name>PRNT_NODE_ID</name><value>NULL</value></column>
+        <column><name>HIDDEN</name><value>Y</value></column>
+        <column><name>UNREMOVABLE</name><value>Y</value></column>
+        <column><name>IMMUTABLE</name><value>Y</value></column>
+        <column><name>PRIORITY</name><value>0</value></column>
+      </row>
+          <!-- Channel manager -->
+          <row>
+            <column><name>NODE_ID</name><value>19</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_NODE_ID</name><value>20</value></column>
+            <column><name>PREV_NODE_ID</name><value>NULL</value></column>
+            <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
+            <column><name>PRNT_NODE_ID</name><value>17</value></column>
+            <column><name>CHAN_ID</name><value>90</value></column>
+            <column><name>UNREMOVABLE</name><value>Y</value></column>
+            <column><name>PRIORITY</name><value>0</value></column>
+          </row>
+          <!-- User Preferences -->
+          <row>
+            <column><name>NODE_ID</name><value>20</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_NODE_ID</name><value>NULL</value></column>
+            <column><name>PREV_NODE_ID</name><value>19</value></column>
+            <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
+            <column><name>PRNT_NODE_ID</name><value>17</value></column>
+            <column><name>CHAN_ID</name><value>92</value></column>
+            <column><name>UNREMOVABLE</name><value>Y</value></column>
+            <column><name>PRIORITY</name><value>0</value></column>
+          </row>
+       <!-- CWebProxy Examples -->
+       <row>
+        <column><name>NODE_ID</name><value>21</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>NAME</name><value>CWebProxy Examples</value></column>
+        <column><name>NEXT_NODE_ID</name><value>27</value></column>
+        <column><name>PREV_NODE_ID</name><value>17</value></column>
+        <column><name>CHLD_NODE_ID</name><value>22</value></column>
+        <column><name>PRNT_NODE_ID</name><value>NULL</value></column>
+        <column><name>PRIORITY</name><value>0</value></column>
+      </row>
+        <row>
+          <column><name>NODE_ID</name><value>22</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+          <column><name>NAME</name><value>Column 1</value></column>
+          <column><name>NEXT_NODE_ID</name><value>25</value></column>
+          <column><name>PREV_NODE_ID</name><value>NULL</value></column>
+          <column><name>CHLD_NODE_ID</name><value>23</value></column>
+          <column><name>PRNT_NODE_ID</name><value>21</value></column>
+          <column><name>PRIORITY</name><value>0</value></column>
+        </row>
+          <!-- Tomcat's NumGuess -->
+          <row>
+            <column><name>NODE_ID</name><value>23</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_NODE_ID</name><value>24</value></column>
+            <column><name>PREV_NODE_ID</name><value>NULL</value></column>
+            <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
+            <column><name>PRNT_NODE_ID</name><value>22</value></column>
+            <column><name>CHAN_ID</name><value>17</value></column>
+            <column><name>PRIORITY</name><value>0</value></column>
+          </row>
+          <!-- Tomcat's NumGuess (another) -->
+          <row>
+            <column><name>NODE_ID</name><value>24</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_NODE_ID</name><value>NULL</value></column>
+            <column><name>PREV_NODE_ID</name><value>23</value></column>
+            <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
+            <column><name>PRNT_NODE_ID</name><value>22</value></column>
+            <column><name>CHAN_ID</name><value>17</value></column>
+            <column><name>PRIORITY</name><value>0</value></column>
+          </row>
+        <row>
+          <column><name>NODE_ID</name><value>25</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+          <column><name>NAME</name><value>Column 2</value></column>
+          <column><name>NEXT_NODE_ID</name><value>NULL</value></column>
+          <column><name>PREV_NODE_ID</name><value>22</value></column>
+          <column><name>CHLD_NODE_ID</name><value>26</value></column>
+          <column><name>PRNT_NODE_ID</name><value>21</value></column>
+          <column><name>PRIORITY</name><value>0</value></column>
+        </row>
+          <!-- Tomcat's Servlet Examples -->
+          <row>
+            <column><name>NODE_ID</name><value>26</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_NODE_ID</name><value>NULL</value></column>
+            <column><name>PREV_NODE_ID</name><value>NULL</value></column>
+            <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
+            <column><name>PRNT_NODE_ID</name><value>25</value></column>
+            <column><name>CHAN_ID</name><value>17</value></column>
+            <column><name>PRIORITY</name><value>0</value></column>
+          </row>
+      <!-- Footer -->
+      <row>
+        <column><name>NODE_ID</name><value>27</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>NAME</name><value>Footer folder</value></column>
+        <column><name>TYPE</name><value>footer</value></column>
+        <column><name>NEXT_NODE_ID</name><value>NULL</value></column>
+        <column><name>PREV_NODE_ID</name><value>21</value></column>
+        <column><name>CHLD_NODE_ID</name><value>28</value></column>
+        <column><name>PRNT_NODE_ID</name><value>NULL</value></column>
+        <column><name>PRIORITY</name><value>0</value></column>
+      </row>
+          <!-- Footer -->
+          <row>
+            <column><name>NODE_ID</name><value>28</value></column><column><name>USER_ID</name><value>1</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_NODE_ID</name><value>NULL</value></column>
+            <column><name>PREV_NODE_ID</name><value>NULL</value></column>
+            <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
+            <column><name>PRNT_NODE_ID</name><value>27</value></column>
+            <column><name>CHAN_ID</name><value>19</value></column>
+            <column><name>PRIORITY</name><value>0</value></column>
+          </row>
+
+      <!-- Demo Layout -->
+      <!-- Header -->
+      <row>
+        <column><name>NODE_ID</name><value>1</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>NAME</name><value>Header folder</value></column>
+        <column><name>TYPE</name><value>header</value></column>
+        <column><name>NEXT_NODE_ID</name><value>4</value></column>
+        <column><name>PREV_NODE_ID</name><value>NULL</value></column>
+        <column><name>CHLD_NODE_ID</name><value>2</value></column>
+        <column><name>PRNT_NODE_ID</name><value>NULL</value></column>
+        <column><name>UNREMOVABLE</name><value>Y</value></column>
+        <column><name>IMMUTABLE</name><value>Y</value></column>
+        <column><name>PRIORITY</name><value>0</value></column>
+      </row>
+          <!-- Header -->
+          <row>
+            <column><name>NODE_ID</name><value>2</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_NODE_ID</name><value>NULL</value></column>
+            <column><name>PREV_NODE_ID</name><value>NULL</value></column>
+            <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
+            <column><name>PRNT_NODE_ID</name><value>1</value></column>
+            <column><name>CHAN_ID</name><value>10</value></column>
+            <column><name>PRIORITY</name><value>0</value></column>
+          </row>
+          <!-- Login -->
+          <!--<row>
+            <column><name>NODE_ID</name><value>3</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_NODE_ID</name><value>NULL</value></column>
+            <column><name>PREV_NODE_ID</name><value>2</value></column>
+            <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
+            <column><name>PRNT_NODE_ID</name><value>1</value></column>
+            <column><name>CHAN_ID</name><value>99</value></column>
+            <column><name>PRIORITY</name><value>0</value></column>
+          </row>-->
+      <!-- Main -->
+      <row>
+        <column><name>NODE_ID</name><value>4</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>NAME</name><value>Main</value></column>
+        <column><name>NEXT_NODE_ID</name><value>10</value></column>
+        <column><name>PREV_NODE_ID</name><value>1</value></column>
+        <column><name>CHLD_NODE_ID</name><value>5</value></column>
+        <column><name>PRNT_NODE_ID</name><value>NULL</value></column>
+        <column><name>PRIORITY</name><value>0</value></column>
+      </row>
+        <row>
+          <column><name>NODE_ID</name><value>5</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+          <column><name>NAME</name><value>Column 1</value></column>
+          <column><name>NEXT_NODE_ID</name><value>8</value></column>
+          <column><name>PREV_NODE_ID</name><value>NULL</value></column>
+          <column><name>CHLD_NODE_ID</name><value>6</value></column>
+          <column><name>PRNT_NODE_ID</name><value>4</value></column>
+          <column><name>PRIORITY</name><value>0</value></column>
+        </row>
+          <!-- Word of the Day -->
+          <row>
+            <column><name>NODE_ID</name><value>6</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_NODE_ID</name><value>7</value></column>
+            <column><name>PREV_NODE_ID</name><value>NULL</value></column>
+            <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
+            <column><name>PRNT_NODE_ID</name><value>5</value></column>
+            <column><name>CHAN_ID</name><value>80</value></column>
+            <column><name>PRIORITY</name><value>0</value></column>
+          </row>
+          <!-- Number Guessing Game -->
+          <row>
+            <column><name>NODE_ID</name><value>7</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_NODE_ID</name><value>NULL</value></column>
+            <column><name>PREV_NODE_ID</name><value>6</value></column>
+            <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
+            <column><name>PRNT_NODE_ID</name><value>5</value></column>
+            <column><name>CHAN_ID</name><value>81</value></column>
+            <column><name>PRIORITY</name><value>0</value></column>
+          </row>
+        <row>
+          <column><name>NODE_ID</name><value>8</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+          <column><name>NAME</name><value>Column 2</value></column>
+          <column><name>NEXT_NODE_ID</name><value>NULL</value></column>
+          <column><name>PREV_NODE_ID</name><value>5</value></column>
+          <column><name>CHLD_NODE_ID</name><value>29</value></column>
+          <column><name>PRNT_NODE_ID</name><value>4</value></column>
+          <column><name>PRIORITY</name><value>0</value></column>
+        </row>
+          <!-- Daily Business Cartoon -->
+          <row>
+            <column><name>NODE_ID</name><value>29</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_NODE_ID</name><value>NULL</value></column>
+            <column><name>PREV_NODE_ID</name><value>NULL</value></column>
+            <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
+            <column><name>PRNT_NODE_ID</name><value>8</value></column>
+            <column><name>CHAN_ID</name><value>1</value></column>
+            <column><name>PRIORITY</name><value>0</value></column>
+          </row>
+      <!-- Development -->
+      <row>
+        <column><name>NODE_ID</name><value>10</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>NAME</name><value>Development</value></column>
+        <column><name>NEXT_NODE_ID</name><value>17</value></column>
+        <column><name>PREV_NODE_ID</name><value>4</value></column>
+        <column><name>CHLD_NODE_ID</name><value>11</value></column>
+        <column><name>PRNT_NODE_ID</name><value>NULL</value></column>
+        <column><name>PRIORITY</name><value>0</value></column>
+      </row>
+        <row>
+          <column><name>NODE_ID</name><value>11</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+          <column><name>NAME</name><value>Column 1</value></column>
+          <column><name>NEXT_NODE_ID</name><value>13</value></column>
+          <column><name>PREV_NODE_ID</name><value>NULL</value></column>
+          <column><name>CHLD_NODE_ID</name><value>12</value></column>
+          <column><name>PRNT_NODE_ID</name><value>10</value></column>
+          <column><name>PRIORITY</name><value>0</value></column>
+        </row>
+          <!-- Person Attributes -->
+          <row>
+            <column><name>NODE_ID</name><value>12</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_NODE_ID</name><value>18</value></column>
+            <column><name>PREV_NODE_ID</name><value>NULL</value></column>
+            <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
+            <column><name>PRNT_NODE_ID</name><value>11</value></column>
+            <column><name>CHAN_ID</name><value>4</value></column>
+            <column><name>PRIORITY</name><value>0</value></column>
+          </row>
+          <!-- CSS Viewer -->
+          <row>
+            <column><name>NODE_ID</name><value>18</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_NODE_ID</name><value>NULL</value></column>
+            <column><name>PREV_NODE_ID</name><value>12</value></column>
+            <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
+            <column><name>PRNT_NODE_ID</name><value>11</value></column>
+            <column><name>CHAN_ID</name><value>79</value></column>
+            <column><name>PRIORITY</name><value>0</value></column>
+          </row>
+        <row>
+          <column><name>NODE_ID</name><value>13</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+          <column><name>NAME</name><value>Column 2</value></column>
+          <column><name>NEXT_NODE_ID</name><value>NULL</value></column>
+          <column><name>PREV_NODE_ID</name><value>11</value></column>
+          <column><name>CHLD_NODE_ID</name><value>15</value></column>
+          <column><name>PRNT_NODE_ID</name><value>10</value></column>
+          <column><name>PRIORITY</name><value>0</value></column>
+        </row>
+          <!-- uPortal Developer Recommended Reading -->
+          <row>
+            <column><name>NODE_ID</name><value>15</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_NODE_ID</name><value>14</value></column>
+            <column><name>PREV_NODE_ID</name><value>NULL</value></column>
+            <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
+            <column><name>PRNT_NODE_ID</name><value>13</value></column>
+            <column><name>CHAN_ID</name><value>20</value></column>
+            <column><name>PRIORITY</name><value>0</value></column>
+          </row>
+          <!-- uPortal Developers Reference -->
+          <row>
+            <column><name>NODE_ID</name><value>14</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_NODE_ID</name><value>16</value></column>
+            <column><name>PREV_NODE_ID</name><value>15</value></column>
+            <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
+            <column><name>PRNT_NODE_ID</name><value>13</value></column>
+            <column><name>CHAN_ID</name><value>7</value></column>
+            <column><name>PRIORITY</name><value>0</value></column>
+          </row>
+          <!-- Snooper -->
+          <row>
+            <column><name>NODE_ID</name><value>16</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_NODE_ID</name><value>37</value></column>
+            <column><name>PREV_NODE_ID</name><value>14</value></column>
+            <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
+            <column><name>PRNT_NODE_ID</name><value>13</value></column>
+            <column><name>CHAN_ID</name><value>16</value></column>
+            <column><name>PRIORITY</name><value>0</value></column>
+          </row>
+
+          <!-- uPortal Data Dictionary -->
+          <row>
+            <column><name>NODE_ID</name><value>37</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_NODE_ID</name><value>NULL</value></column>
+            <column><name>PREV_NODE_ID</name><value>16</value></column>
+            <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
+            <column><name>PRNT_NODE_ID</name><value>13</value></column>
+            <column><name>CHAN_ID</name><value>22</value></column>
+            <column><name>PRIORITY</name><value>0</value></column>
+          </row>
+
+      <!-- User Preferences -->
+      <row>
+        <column><name>NODE_ID</name><value>17</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>NAME</name><value>User Preferences</value></column>
+        <column><name>NEXT_NODE_ID</name><value>21</value></column>
+        <column><name>PREV_NODE_ID</name><value>10</value></column>
+        <column><name>CHLD_NODE_ID</name><value>19</value></column>
+        <column><name>PRNT_NODE_ID</name><value>NULL</value></column>
+        <column><name>HIDDEN</name><value>Y</value></column>
+        <column><name>UNREMOVABLE</name><value>Y</value></column>
+        <column><name>IMMUTABLE</name><value>Y</value></column>
+        <column><name>PRIORITY</name><value>0</value></column>
+      </row>
+          <!-- Channel manager -->
+          <row>
+            <column><name>NODE_ID</name><value>19</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_NODE_ID</name><value>20</value></column>
+            <column><name>PREV_NODE_ID</name><value>NULL</value></column>
+            <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
+            <column><name>PRNT_NODE_ID</name><value>17</value></column>
+            <column><name>CHAN_ID</name><value>90</value></column>
+            <column><name>UNREMOVABLE</name><value>Y</value></column>
+            <column><name>PRIORITY</name><value>0</value></column>
+          </row>
+          <!-- User Preferences -->
+          <row>
+            <column><name>NODE_ID</name><value>20</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_NODE_ID</name><value>NULL</value></column>
+            <column><name>PREV_NODE_ID</name><value>19</value></column>
+            <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
+            <column><name>PRNT_NODE_ID</name><value>17</value></column>
+            <column><name>CHAN_ID</name><value>92</value></column>
+            <column><name>UNREMOVABLE</name><value>Y</value></column>
+            <column><name>PRIORITY</name><value>0</value></column>
+          </row>
+       <!-- CWebProxy Examples -->
+       <row>
+        <column><name>NODE_ID</name><value>21</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>NAME</name><value>CWebProxy Examples</value></column>
+        <column><name>NEXT_NODE_ID</name><value>38</value></column>
+        <column><name>PREV_NODE_ID</name><value>17</value></column>
+        <column><name>CHLD_NODE_ID</name><value>22</value></column>
+        <column><name>PRNT_NODE_ID</name><value>NULL</value></column>
+        <column><name>PRIORITY</name><value>0</value></column>
+      </row>
+        <row>
+          <column><name>NODE_ID</name><value>22</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+          <column><name>NAME</name><value>Column 1</value></column>
+          <column><name>NEXT_NODE_ID</name><value>25</value></column>
+          <column><name>PREV_NODE_ID</name><value>NULL</value></column>
+          <column><name>CHLD_NODE_ID</name><value>23</value></column>
+          <column><name>PRNT_NODE_ID</name><value>21</value></column>
+          <column><name>PRIORITY</name><value>0</value></column>
+        </row>
+          <!-- Tomcat's NumGuess -->
+          <row>
+            <column><name>NODE_ID</name><value>23</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_NODE_ID</name><value>24</value></column>
+            <column><name>PREV_NODE_ID</name><value>NULL</value></column>
+            <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
+            <column><name>PRNT_NODE_ID</name><value>22</value></column>
+            <column><name>CHAN_ID</name><value>77</value></column>
+            <column><name>PRIORITY</name><value>0</value></column>
+          </row>
+          <!-- Tomcat's NumGuess (another) -->
+          <row>
+            <column><name>NODE_ID</name><value>24</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_NODE_ID</name><value>NULL</value></column>
+            <column><name>PREV_NODE_ID</name><value>23</value></column>
+            <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
+            <column><name>PRNT_NODE_ID</name><value>22</value></column>
+            <column><name>CHAN_ID</name><value>78</value></column>
+            <column><name>PRIORITY</name><value>0</value></column>
+          </row>
+        <row>
+          <column><name>NODE_ID</name><value>25</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+          <column><name>NAME</name><value>Column 2</value></column>
+          <column><name>NEXT_NODE_ID</name><value>NULL</value></column>
+          <column><name>PREV_NODE_ID</name><value>22</value></column>
+          <column><name>CHLD_NODE_ID</name><value>26</value></column>
+          <column><name>PRNT_NODE_ID</name><value>21</value></column>
+          <column><name>PRIORITY</name><value>0</value></column>
+        </row>
+          <!-- Tomcat's Servlet Examples -->
+          <row>
+            <column><name>NODE_ID</name><value>26</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_NODE_ID</name><value>NULL</value></column>
+            <column><name>PREV_NODE_ID</name><value>NULL</value></column>
+            <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
+            <column><name>PRNT_NODE_ID</name><value>25</value></column>
+            <column><name>CHAN_ID</name><value>18</value></column>
+            <column><name>PRIORITY</name><value>0</value></column>
+          </row>
+      <!-- Footer -->
+      <row>
+        <column><name>NODE_ID</name><value>27</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>NAME</name><value>Footer folder</value></column>
+        <column><name>TYPE</name><value>footer</value></column>
+        <column><name>NEXT_NODE_ID</name><value>NULL</value></column>
+        <column><name>PREV_NODE_ID</name><value>38</value></column>
+        <column><name>CHLD_NODE_ID</name><value>28</value></column>
+        <column><name>PRNT_NODE_ID</name><value>NULL</value></column>
+        <column><name>PRIORITY</name><value>0</value></column>
+      </row>
+          <!-- Footer -->
+          <row>
+            <column><name>NODE_ID</name><value>28</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_NODE_ID</name><value>NULL</value></column>
+            <column><name>PREV_NODE_ID</name><value>NULL</value></column>
+            <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
+            <column><name>PRNT_NODE_ID</name><value>27</value></column>
+            <column><name>CHAN_ID</name><value>19</value></column>
+            <column><name>PRIORITY</name><value>0</value></column>
+          </row>
+          <row>
+            <column><name>NODE_ID</name><value>38</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_NODE_ID</name><value>27</value></column>
+            <column><name>PREV_NODE_ID</name><value>21</value></column>
+            <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
+            <column><name>PRNT_NODE_ID</name><value>NULL</value></column>
+            <column><name>FRAGMENT_ID</name><value>2</value></column>
+            <column><name>FRAGMENT_NODE_ID</name><value>1010</value></column>
+          </row>
+          <!-- <row>
+            <column><name>NODE_ID</name><value>39</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+            <column><name>NEXT_NODE_ID</name><value>NULL</value></column>
+            <column><name>PREV_NODE_ID</name><value>38</value></column>
+            <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
+            <column><name>PRNT_NODE_ID</name><value>NULL</value></column>
+            <column><name>FRAGMENT_ID</name><value>2</value></column>
+            <column><name>FRAGMENT_NODE_ID</name><value>1010</value></column>
+          </row> -->
+      </rows>
+   </table>
+
+
+
+  <table>
+    <name>UP_FRAGMENTS</name>
+    <rows>
+      <!-- Fragment examples -->
+
+      <!-- The fragment 1 -->
+      <row>
+        <column><name>NODE_ID</name><value>1001</value></column>
+        <column><name>FRAGMENT_ID</name><value>1</value></column>
+        <column><name>NAME</name><value>Root fragment node</value></column>
+        <column><name>TYPE</name><value>tab</value></column>
+        <column><name>NEXT_NODE_ID</name><value>NULL</value></column>
+        <column><name>PREV_NODE_ID</name><value>NULL</value></column>
+        <column><name>CHLD_NODE_ID</name><value>1002</value></column>
+        <column><name>PRNT_NODE_ID</name><value>NULL</value></column>
+        <column><name>UNREMOVABLE</name><value>Y</value></column>
+        <column><name>IMMUTABLE</name><value>Y</value></column>
+        <column><name>PRIORITY</name><value>0</value></column>
+      </row>
+
+      <row>
+        <column><name>NODE_ID</name><value>1002</value></column>
+        <column><name>FRAGMENT_ID</name><value>1</value></column>
+        <column><name>NAME</name><value>The first column</value></column>
+        <column><name>TYPE</name><value>the column</value></column>
+        <column><name>NEXT_NODE_ID</name><value>1003</value></column>
+        <column><name>PREV_NODE_ID</name><value>NULL</value></column>
+        <column><name>CHLD_NODE_ID</name><value>1004</value></column>
+        <column><name>PRNT_NODE_ID</name><value>1001</value></column>
+        <column><name>UNREMOVABLE</name><value>Y</value></column>
+        <column><name>IMMUTABLE</name><value>Y</value></column>
+        <column><name>PRIORITY</name><value>0</value></column>
+      </row>
+
+      <row>
+        <column><name>NODE_ID</name><value>1003</value></column>
+        <column><name>FRAGMENT_ID</name><value>1</value></column>
+        <column><name>NAME</name><value>The second column</value></column>
+        <column><name>TYPE</name><value>column</value></column>
+        <column><name>NEXT_NODE_ID</name><value>NULL</value></column>
+        <column><name>PREV_NODE_ID</name><value>1002</value></column>
+        <column><name>CHLD_NODE_ID</name><value>1006</value></column>
+        <column><name>PRNT_NODE_ID</name><value>1001</value></column>
+        <column><name>UNREMOVABLE</name><value>Y</value></column>
+        <column><name>IMMUTABLE</name><value>Y</value></column>
+        <column><name>PRIORITY</name><value>0</value></column>
+      </row>
+
+      <row>
+        <column><name>NODE_ID</name><value>1004</value></column>
+        <column><name>FRAGMENT_ID</name><value>1</value></column>
+        <column><name>NAME</name><value>The channel</value></column>
+        <column><name>TYPE</name><value>channel</value></column>
+        <column><name>NEXT_NODE_ID</name><value>1005</value></column>
+        <column><name>PREV_NODE_ID</name><value>NULL</value></column>
+        <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
+        <column><name>PRNT_NODE_ID</name><value>1002</value></column>
+        <column><name>UNREMOVABLE</name><value>Y</value></column>
+        <column><name>IMMUTABLE</name><value>Y</value></column>
+        <column><name>PRIORITY</name><value>0</value></column>
+      </row>
+
+      <row>
+        <column><name>NODE_ID</name><value>1005</value></column>
+        <column><name>FRAGMENT_ID</name><value>1</value></column>
+        <column><name>NAME</name><value>The channel</value></column>
+        <column><name>TYPE</name><value>channel</value></column>
+        <column><name>NEXT_NODE_ID</name><value>NULL</value></column>
+        <column><name>PREV_NODE_ID</name><value>1004</value></column>
+        <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
+        <column><name>PRNT_NODE_ID</name><value>1002</value></column>
+        <column><name>UNREMOVABLE</name><value>Y</value></column>
+        <column><name>IMMUTABLE</name><value>Y</value></column>
+        <column><name>PRIORITY</name><value>0</value></column>
+      </row>
+
+      <row>
+        <column><name>NODE_ID</name><value>1006</value></column>
+        <column><name>FRAGMENT_ID</name><value>1</value></column>
+        <column><name>NAME</name><value>The channel</value></column>
+        <column><name>TYPE</name><value>channel</value></column>
+        <column><name>NEXT_NODE_ID</name><value>NULL</value></column>
+        <column><name>PREV_NODE_ID</name><value>NULL</value></column>
+        <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
+        <column><name>PRNT_NODE_ID</name><value>1003</value></column>
+        <column><name>UNREMOVABLE</name><value>Y</value></column>
+        <column><name>IMMUTABLE</name><value>Y</value></column>
+        <column><name>PRIORITY</name><value>0</value></column>
+      </row>
+
+      <!-- The fragment 2 -->
+      <row>
+        <column><name>NODE_ID</name><value>1010</value></column>
+        <column><name>FRAGMENT_ID</name><value>2</value></column>
+        <column><name>NAME</name><value>The fragment-tab</value></column>
+        <column><name>TYPE</name><value>column</value></column>
+        <column><name>NEXT_NODE_ID</name><value>NULL</value></column>
+        <column><name>PREV_NODE_ID</name><value>NULL</value></column>
+        <column><name>CHLD_NODE_ID</name><value>1011</value></column>
+        <column><name>PRNT_NODE_ID</name><value>NULL</value></column>
+        <column><name>UNREMOVABLE</name><value>Y</value></column>
+        <column><name>IMMUTABLE</name><value>Y</value></column>
+        <column><name>PRIORITY</name><value>0</value></column>
+      </row>
+
+      <row>
+        <column><name>NODE_ID</name><value>1011</value></column>
+        <column><name>FRAGMENT_ID</name><value>2</value></column>
+        <column><name>NAME</name><value>The column #1</value></column>
+        <column><name>TYPE</name><value>column</value></column>
+        <column><name>NEXT_NODE_ID</name><value>1012</value></column>
+        <column><name>PREV_NODE_ID</name><value>NULL</value></column>
+        <column><name>CHLD_NODE_ID</name><value>1013</value></column>
+        <column><name>PRNT_NODE_ID</name><value>1010</value></column>
+        <column><name>UNREMOVABLE</name><value>Y</value></column>
+        <column><name>IMMUTABLE</name><value>Y</value></column>
+        <column><name>PRIORITY</name><value>0</value></column>
+      </row>
+
+      <row>
+        <column><name>NODE_ID</name><value>1013</value></column>
+        <column><name>FRAGMENT_ID</name><value>2</value></column>
+        <column><name>NAME</name><value>The channel #1</value></column>
+        <column><name>TYPE</name><value>channel</value></column>
+        <column><name>CHAN_ID</name><value>77</value></column>
+        <column><name>NEXT_NODE_ID</name><value>NULL</value></column>
+        <column><name>PREV_NODE_ID</name><value>NULL</value></column>
+        <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
+        <column><name>PRNT_NODE_ID</name><value>1011</value></column>
+        <column><name>UNREMOVABLE</name><value>Y</value></column>
+        <column><name>IMMUTABLE</name><value>Y</value></column>
+        <column><name>PRIORITY</name><value>0</value></column>
+      </row>
+
+      <row>
+        <column><name>NODE_ID</name><value>1012</value></column>
+        <column><name>FRAGMENT_ID</name><value>2</value></column>
+        <column><name>NAME</name><value>The column #2</value></column>
+        <column><name>TYPE</name><value>channel</value></column>
+        <column><name>NEXT_NODE_ID</name><value>NULL</value></column>
+        <column><name>PREV_NODE_ID</name><value>1011</value></column>
+        <column><name>CHLD_NODE_ID</name><value>1014</value></column>
+        <column><name>PRNT_NODE_ID</name><value>1010</value></column>
+        <column><name>UNREMOVABLE</name><value>Y</value></column>
+        <column><name>IMMUTABLE</name><value>Y</value></column>
+        <column><name>PRIORITY</name><value>0</value></column>
+      </row>
+
+      <row>
+        <column><name>NODE_ID</name><value>1014</value></column>
+        <column><name>FRAGMENT_ID</name><value>2</value></column>
+        <column><name>NAME</name><value>The channel #2</value></column>
+        <column><name>TYPE</name><value>channel</value></column>
+        <column><name>CHAN_ID</name><value>78</value></column>
+        <column><name>NEXT_NODE_ID</name><value>NULL</value></column>
+        <column><name>PREV_NODE_ID</name><value>NULL</value></column>
+        <column><name>CHLD_NODE_ID</name><value>NULL</value></column>
+        <column><name>PRNT_NODE_ID</name><value>1012</value></column>
+        <column><name>UNREMOVABLE</name><value>Y</value></column>
+        <column><name>IMMUTABLE</name><value>Y</value></column>
+        <column><name>PRIORITY</name><value>0</value></column>
+      </row>
+
+      </rows>
+   </table>
+
+
+   <table>
+    <name>UP_FRAGMENT_PARAM</name>
+    <rows>
+      <!-- An example of fragment parameters -->
+      <row>
+        <column><name>FRAGMENT_ID</name><value>1</value></column>
+        <column><name>NODE_ID</name><value>1001</value></column>
+        <column><name>PARAM_NAME</name><value>param1</value></column>
+        <column><name>PARAM_VALUE</name><value>value1</value></column>
+      </row>
+      <row>
+        <column><name>FRAGMENT_ID</name><value>1</value></column>
+        <column><name>NODE_ID</name><value>1003</value></column>
+        <column><name>PARAM_NAME</name><value>param3</value></column>
+        <column><name>PARAM_VALUE</name><value>value3</value></column>
+      </row>
+    </rows>
+  </table>
+
+  <table>
+    <name>UP_GROUP_FRAGMENT</name>
+    <rows>
+      <!-- An example of fragment parameters -->
+      <row>
+        <column><name>FRAGMENT_ID</name><value>1</value></column>
+        <column><name>GROUP_KEY</name><value>local.1</value></column>
+      </row>
+      <row>
+        <column><name>FRAGMENT_ID</name><value>2</value></column>
+        <column><name>GROUP_KEY</name><value>local.1</value></column>
+      </row>
+    </rows>
+  </table>
+
+
+   <table>
+    <name>UP_FRAGMENT_RESTRICTIONS</name>
+    <rows>
+      <row>
+        <column><name>RESTRICTION_TYPE</name><value>1</value></column>
+        <column><name>RESTRICTION_VALUE</name><value>2003</value></column>
+        <column><name>RESTRICTION_TREE_PATH</name><value>local</value></column>
+        <column><name>FRAGMENT_ID</name><value>1</value></column>
+        <column><name>NODE_ID</name><value>1002</value></column>
+      </row>
+      <row>
+        <column><name>RESTRICTION_TYPE</name><value>2</value></column>
+        <column><name>RESTRICTION_VALUE</name><value>1,2,3,4</value></column>
+        <column><name>RESTRICTION_TREE_PATH</name><value>children</value></column>
+        <column><name>FRAGMENT_ID</name><value>1</value></column>
+        <column><name>NODE_ID</name><value>1001</value></column>
+      </row>
+      <row>
+        <column><name>RESTRICTION_TYPE</name><value>6</value></column>
+        <column><name>RESTRICTION_VALUE</name><value>Y</value></column>
+        <column><name>RESTRICTION_TREE_PATH</name><value>local</value></column>
+        <column><name>FRAGMENT_ID</name><value>1</value></column>
+        <column><name>NODE_ID</name><value>1006</value></column>
+      </row>
+    </rows>
+  </table>
+
+  <table>
+    <name>UP_LAYOUT_RESTRICTIONS</name>
+    <rows>
+      <row>
+        <column><name>RESTRICTION_TYPE</name><value>1</value></column>
+        <column><name>RESTRICTION_VALUE</name><value>1500-4000</value></column>
+        <column><name>RESTRICTION_TREE_PATH</name><value>local</value></column>
+        <column><name>USER_ID</name><value>2</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>NODE_ID</name><value>10</value></column>
+      </row>
+      <row>
+        <column><name>RESTRICTION_TYPE</name><value>8</value></column>
+        <column><name>RESTRICTION_VALUE</name><value>Y</value></column>
+        <column><name>RESTRICTION_TREE_PATH</name><value>local</value></column>
+        <column><name>USER_ID</name><value>2</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>NODE_ID</name><value>17</value></column>
+      </row>
+      <row>
+        <column><name>RESTRICTION_TYPE</name><value>1</value></column>
+        <column><name>RESTRICTION_VALUE</name><value>1000-2000</value></column>
+        <column><name>RESTRICTION_TREE_PATH</name><value>local</value></column>
+        <column><name>USER_ID</name><value>2</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>NODE_ID</name><value>11</value></column>
+      </row>
+    </rows>
+  </table>
+
   <table>
     <name>UP_SEQUENCE</name>
     <rows>
@@ -108,7 +1052,7 @@
         <!-- YOU SHOULD CHANGE THE PASSWORD BEFORE INSERTING THE ROW BELOW! If you don't anyone can log  -->
         <!-- into your demo as 'guest' and change the guest layout that everyone will see.               -->
         <!-- Without this row inserted the guest user will not be able to log on.                        -->
-        <!--          
+        <!--
         <row>
           <column><name>USER_NAME</name><value>guest</value></column>
           <column><name>ENCRPTD_PSWD</name><value>(MD5)IAnYXaWGdqTkifNNwo0bfIIphj2NPvSG</value></column>
@@ -2478,7 +3422,7 @@
         <column><name>STRUCTURE_SS_ID</name><value>1</value></column>
         <column><name>THEME_SS_ID</name><value>2</value></column>
       </row>
-      
+
       <row>
         <column><name>USER_ID</name><value>7</value></column>
         <column><name>PROFILE_ID</name><value>1</value></column>
@@ -2488,7 +3432,7 @@
         <column><name>STRUCTURE_SS_ID</name><value>1</value></column>
         <column><name>THEME_SS_ID</name><value>1</value></column>
       </row>
-      
+
       <row>
         <column><name>USER_ID</name><value>11</value></column>
         <column><name>PROFILE_ID</name><value>1</value></column>
@@ -2498,7 +3442,7 @@
         <column><name>STRUCTURE_SS_ID</name><value>1</value></column>
         <column><name>THEME_SS_ID</name><value>1</value></column>
       </row>
-      
+
       <row>
         <column><name>USER_ID</name><value>12</value></column>
         <column><name>PROFILE_ID</name><value>1</value></column>
@@ -2508,7 +3452,7 @@
         <column><name>STRUCTURE_SS_ID</name><value>1</value></column>
         <column><name>THEME_SS_ID</name><value>1</value></column>
       </row>
-      
+
       <row>
         <column><name>USER_ID</name><value>13</value></column>
         <column><name>PROFILE_ID</name><value>1</value></column>
@@ -2809,7 +3753,7 @@
         <column><name>PARAM_NAME</name><value>width</value></column>
         <column><name>PARAM_TYPE</name><value>2</value></column>
         <column><name>PARAM_VAL</name><value>50%</value></column>
-      </row>      
+      </row>
       <row>
         <column><name>USER_ID</name><value>7</value></column>
         <column><name>PROFILE_ID</name><value>1</value></column>
@@ -2819,7 +3763,7 @@
         <column><name>PARAM_NAME</name><value>width</value></column>
         <column><name>PARAM_TYPE</name><value>2</value></column>
         <column><name>PARAM_VAL</name><value>50%</value></column>
-      </row>      
+      </row>
       <row>
         <column><name>USER_ID</name><value>7</value></column>
         <column><name>PROFILE_ID</name><value>1</value></column>
@@ -2839,7 +3783,7 @@
         <column><name>PARAM_NAME</name><value>width</value></column>
         <column><name>PARAM_TYPE</name><value>2</value></column>
         <column><name>PARAM_VAL</name><value>50%</value></column>
-      </row>      
+      </row>
       <row>
         <column><name>USER_ID</name><value>11</value></column>
         <column><name>PROFILE_ID</name><value>1</value></column>
