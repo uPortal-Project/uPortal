@@ -51,8 +51,8 @@ import org.apache.pluto.services.information.InformationProviderAccess;
  */
 public class PortletActionProviderImpl implements PortletActionProvider {
     
-    private HttpServletRequest request = null;
-    private PortletWindow portletWindow = null;
+    private HttpServletRequest request;
+    private PortletWindow portletWindow;
 
     public PortletActionProviderImpl(HttpServletRequest request, PortletWindow portletWindow) {
         this.request = request;

@@ -61,34 +61,34 @@ public class PortletURLProviderImpl implements PortletURLProvider {
     private boolean secure;
     private boolean clearParameters;
     private Map parameters;
-    private PortalControlParameter controlParameter;
+    private PortalControlParameter controlURL;
 
-    public PortletURLProviderImpl(DynamicInformationProviderImpl provider, PortletWindow portletWindow, PortalControlParameter controlParameter ) {
+    public PortletURLProviderImpl(DynamicInformationProviderImpl provider, PortletWindow portletWindow, PortalControlParameter controlURL ) {
         this.provider = provider;
         this.portletWindow = portletWindow;
-        this.controlParameter = controlParameter;
-		this.controlParameter.setPortletId(portletWindow);
+        this.controlURL = controlURL;
+		this.controlURL.setPortletId(portletWindow);
     }
     
     // PortletURLProvider methods
 
     public void setPortletMode(PortletMode mode) {
-	  if ( mode != null && !controlParameter.getMode(portletWindow).equals(mode) ) {	
+	  if ( mode != null && !controlURL.getMode(portletWindow).equals(mode) ) {	
 		 this.portletMode = mode;
-		 controlParameter.setMode(portletWindow, portletMode);
+		 controlURL.setMode(portletWindow, portletMode);
 	  }		 
     }
 
     public void setWindowState(WindowState state) {
-      if ( state != null && !controlParameter.getState(portletWindow).equals(state) ) {	
+      if ( state != null && !controlURL.getState(portletWindow).equals(state) ) {	
          this.windowState = state;
-		 controlParameter.setState(portletWindow, windowState);
+		 controlURL.setState(portletWindow, windowState);
       }		 
     }
 
     public void setAction() {
     	action = true;
-		controlParameter.setAction(portletWindow);
+		controlURL.setAction(portletWindow);
     }
 
     public void setSecure() {
@@ -97,15 +97,15 @@ public class PortletURLProviderImpl implements PortletURLProvider {
 
     public void clearParameters() {
         clearParameters = true;
-		controlParameter.clearRenderParameters(portletWindow);
+		controlURL.clearRenderParameters(portletWindow);
     }
 
     public void setParameters(Map parameters) {
         this.parameters = parameters;
-        controlParameter = new PortalControlParameter(parameters);
     }
 
     public String toString() {
+    	
         ChannelRuntimeData runtimeData = ((PortletWindowImpl)portletWindow).getChannelRuntimeData();
         String baseActionURL = runtimeData.getBaseActionURL();
 		StringBuffer url = new StringBuffer(baseActionURL);
@@ -114,15 +114,16 @@ public class PortletURLProviderImpl implements PortletURLProvider {
          Iterator names = parameters.keySet().iterator();
          boolean firstValue = true;
          while (names.hasNext()) {
-         	if ( firstValue ) {
-			   url.append("?");
-			   firstValue = false;	
-         	} else
-         	   url.append("&");
+         	
             String name = (String)names.next();
             Object value = parameters.get(name);
-            url.append(name).append("=").append(value.toString());
+			String[] values = ( value instanceof String ) ? new String[] {(String)value} : (String[])value;
+			if (action)
+				controlURL.setRequestParam(name,values);
+            else
+				controlURL.setRenderParam(portletWindow, name, values );
          }
+          url.append("?"+controlURL.toString());
         } 
         return url.toString();
     }
