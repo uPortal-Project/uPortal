@@ -1,5 +1,9 @@
-/* This pseudo-channel provides header XML document fragment
-   to be used in compilation of the structuredLayoutXML */
+/** 
+ * This pseudo-channel provides header XML document fragment
+ * to be used in compilation of the structuredLayoutXML 
+ * @author Peter Kharchenko
+ * @version $Revision 1.1$
+ */
 
 package org.jasig.portal.xmlchannels;
 

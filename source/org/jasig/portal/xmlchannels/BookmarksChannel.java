@@ -20,7 +20,7 @@ import org.w3c.dom.*;
  * Bookmarks channel applies different stylesheets to different locations of the DOM structure produced by reading the bookmarks.xml file. </p>
  * <p> Note the use of a helper StylesheetSet class </p>
  * @author Peter Kharchenko
- * @version $Revision 0.2 $
+ * @version $Revision$
  */
 
 

@@ -11,6 +11,14 @@ import javax.servlet.http.*;
 import org.jasig.portal.*;
 
 
+/**
+ * A sample XMLChannel that views an XML document 
+ * that has a default stylesheet binding in it.
+ * @author Peter Kharchenko
+ * @version $Revision$
+ */
+
+
 // This is a quick&dirty example of how to render
 // XML files with default (W3C recommended) XSL stylesheet
 // attachment. Note that in the current version document is

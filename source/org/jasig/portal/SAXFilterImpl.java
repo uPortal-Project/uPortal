@@ -1,6 +1,9 @@
-/* This is intended as a temporary replacement for the XMLFilterImpl
-   defined in SAX2 API. Current filter implementation allows to build
-   filters on top of the SAX1 DocumentHandler interface. 
+/**
+* This is intended as a temporary replacement for the XMLFilterImpl
+* defined in SAX2 API. Current filter implementation allows to build
+* filters on top of the SAX1 DocumentHandler interface. 
+* @author Peter Kharchenko
+* @version $Reivision: 1.1$
 */
 
 package org.jasig.portal;

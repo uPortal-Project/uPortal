@@ -2,6 +2,12 @@ package org.jasig.portal;
 import org.w3c.dom.*;
 import java.util.*;
 
+/**
+ * Combines all of the information required to describe 
+ * an XSLT stylesheet.
+ * @author Peter Kharchenko
+ * @version $Revision$
+ */
 
 public class StylesheetDescription {
     public String s_href;

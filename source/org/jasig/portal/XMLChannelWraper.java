@@ -11,17 +11,17 @@ import org.apache.xml.serialize.*;
 /**
  * Wraps an IXMLChannel into an IChannel interface,
  * serving as a middleman in all further interactions.
- * @version 0.1
+ * @version $Revision$ 
  * @author Peter Kharchenko
  */
 
 
-public class XMLChannelWarper implements IChannel
+public class XMLChannelWraper implements IChannel
 {
     IXMLChannel ch;
     String chanID;
     
-    public XMLChannelWarper(IXMLChannel xmlChannel) { ch=xmlChannel; }
+    public XMLChannelWraper(IXMLChannel xmlChannel) { ch=xmlChannel; }
     
     public void init (ChannelConfig chConfig) {
 	ChannelStaticData sd=new ChannelStaticData();
@@ -120,7 +120,7 @@ public class XMLChannelWarper implements IChannel
 	    }
 	}
 	else jspfile+='?';
-	Logger.log(Logger.DEBUG,"XMLChannelWarper::getJSP() : jspfile=\""+jspfile+"\"");
+	Logger.log(Logger.DEBUG,"XMLChannelWraper::getJSP() : jspfile=\""+jspfile+"\"");
 	return jspfile;
     }
 }

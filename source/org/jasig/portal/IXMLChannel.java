@@ -9,7 +9,7 @@ import org.xml.sax.DocumentHandler;
 /** 
  * An interface presented by a channel to a portal.
  * @author Peter Kharchenko
- * @version 0.1
+ * @version $Revision$
  */
 
 public interface IXMLChannel

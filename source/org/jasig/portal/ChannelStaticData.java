@@ -5,7 +5,7 @@ import java.util.Map;
 /**
  * Used to store channel configuration items and parameters.
  * @author Ken Weiner, Peter Kharchenko
- * @version 0.2
+ * @version $Revision$
  * @author Peter Kharchenko
  */
 

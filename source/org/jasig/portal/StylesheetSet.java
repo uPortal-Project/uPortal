@@ -12,7 +12,14 @@ import org.apache.xalan.xslt.*;
 import java.net.*;
 import org.xml.sax.helpers.*;
 
-
+/**
+ * A tool for managing a collection of stylesheets.
+ * StylesheetSet allows you to instansiate a list
+ * of stylesheets in memory and select one according
+ * to the request/title/media parameters.
+ * @author Peter Kharchenko
+ * @version $Revision 1.1$
+ */
 
 public class StylesheetSet extends SAXFilterImpl 
 {

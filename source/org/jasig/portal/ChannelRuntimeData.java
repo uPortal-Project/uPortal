@@ -14,7 +14,7 @@ import java.util.Map;
  *  <li>A hashtable of parameters passed to the current channel</li>
  * 
  * @author Peter Kharchenko
- * @version 0.2
+ * @version $Revision$
  */
 
 
