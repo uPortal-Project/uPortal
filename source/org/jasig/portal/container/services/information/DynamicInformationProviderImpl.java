@@ -65,12 +65,11 @@ public class DynamicInformationProviderImpl implements DynamicInformationProvide
     private HttpServletRequest request = null;
     private String responseContentType = null;
     private static final int KNOWN_MIME_TYPES = 15;
-    private static PortletURLManager urlManager;
+    private PortletURLManager urlManager;
     
     public DynamicInformationProviderImpl(HttpServletRequest request, ServletConfig servletConfig ) {
-        this.request = request;
-		if ( urlManager == null )
-			urlManager = new PortletURLManagerImpl();
+        this.request = request;	
+		urlManager = new PortletURLManagerImpl();
         if ( servletConfig != null && staticInfoProvider == null )
 		staticInfoProvider = InformationProviderAccess.getStaticProvider();
         responseContentType = "text/html";
@@ -87,6 +86,13 @@ public class DynamicInformationProviderImpl implements DynamicInformationProvide
         responseMimeTypes.add(responseContentType);
         return responseMimeTypes.iterator();
     }
+
+
+	public PortletURLManager getPortletURLManager(PortletWindow portletWindow) {
+		PortletURLManager urlManager = new PortletURLManagerImpl();
+		urlManager.setWindowOfAction(portletWindow);
+		return urlManager;
+	}
 
     public PortletURLProvider getPortletURLProvider(PortletWindow portletWindow) {
         return new PortletURLProviderImpl(this, portletWindow, urlManager );

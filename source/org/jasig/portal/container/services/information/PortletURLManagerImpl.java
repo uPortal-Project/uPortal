@@ -76,7 +76,7 @@ public class PortletURLManagerImpl implements PortletURLManager {
 	
 	private static HashMap windowStates = new HashMap();
 	private static HashMap portletModes = new HashMap();
-	private static HashMap params = new HashMap();
+	private HashMap params;
 	
 	private PortletWindow windowOfAction;
 	private ChannelRuntimeData runtimeData;
@@ -97,7 +97,7 @@ public class PortletURLManagerImpl implements PortletURLManager {
 	}
 	
 	private void analizeRequestInformation() {
-		params.clear();
+		params = new HashMap();
 		for (Enumeration names = runtimeData.getParameterNames(); names.hasMoreElements();) {
 		  String paramName = (String) names.nextElement();
 		  String[] values = runtimeData.getParameterValues(paramName);
@@ -171,11 +171,11 @@ public class PortletURLManagerImpl implements PortletURLManager {
 		if ( i == 1 )
 		 map = portletModes;
 	  }	
-	  //params.clear();
+	     //if ( params != null ) params.clear();
 	}
 	
 	public void clearParameters() {
-	  params.clear();	  
+	  if ( params != null ) params.clear();	  
 	}
 
 	public PortletMode getMode(PortletWindow window) {
