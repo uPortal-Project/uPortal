@@ -3101,13 +3101,14 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
      * Returns the list of pushed fragment node IDs that must be removed from the user layout.
      * @param person an <code>IPerson</code> object specifying the user
      * @param profile a user profile for which the layout is being stored
-     * @return a <code>Enumeration</code> list containing the fragment node IDs to be deleted from the user layout
+     * @return a <code>Set</code> list containing the fragment node IDs to be deleted from the user layout
      * @exception PortalException if an error occurs
      */
- public Enumeration getIncorrectPushedFragmentNodes (IPerson person, UserProfile profile) throws PortalException {
+ public Set getIncorrectPushedFragmentNodes (IPerson person, UserProfile profile) throws PortalException {
   int userId = person.getID();
   int layoutId = profile.getLayoutId();
-  Vector incorrectIds = new Vector();
+  Set incorrectIds = new HashSet();
+  Set correctIds = new HashSet();
   Connection con = RDBMServices.getConnection();
   try {
     IGroupMember groupPerson = null;
@@ -3123,17 +3124,23 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
       groupPerson = GroupService.getGroupMember(personIdentifier);
      }
       int fragmentId = rs.getInt(1);
-      int nodeId = rs.getInt(2);
+      String nodeId = rs.getInt(2)+"";
       String groupKey = rs.getString(3);
-      if ( groupKeys.contains(groupKey) )
-         incorrectIds.add(nodeId+"");
-      else {
+      if ( !correctIds.contains(nodeId) ) {
+       boolean isGroupKey = groupKeys.contains(groupKey);	
+       if( !isGroupKey ) {
         IEntityGroup group = GroupService.findGroup(groupKey);
         if ( group == null || !groupPerson.isDeepMemberOf(group) ) {
-         incorrectIds.add(nodeId+"");
+         if ( !incorrectIds.contains(nodeId) ) 
+           incorrectIds.add(nodeId);
          groupKeys.add(groupKey);
-        }
-      }
+        } else {
+           correctIds.add(nodeId);
+           incorrectIds.remove(nodeId);
+        } 
+       } else if ( isGroupKey && !incorrectIds.contains(nodeId) )
+           incorrectIds.add(nodeId);
+      }     
     }
 	  if ( rs != null ) rs.close();
       if ( stmt != null ) stmt.close();
@@ -3142,7 +3149,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
     } finally {
        RDBMServices.releaseConnection(con);
       }
-    return incorrectIds.elements();
+    return incorrectIds;
  }
  
  

@@ -39,6 +39,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Collection;
 import java.util.Vector;
+import java.util.Iterator;
 
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.IUserLayoutStore;
@@ -269,9 +270,9 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
   }
 
  private void moveWrongFragmentsToLostFolder() throws PortalException {
-  Enumeration nodes = layoutStore.getIncorrectPushedFragmentNodes(person,userProfile);
-  while ( nodes.hasMoreElements() ) {
-    String nodeId = (String) nodes.nextElement();
+  Collection nodes = layoutStore.getIncorrectPushedFragmentNodes(person,userProfile);
+  for ( Iterator i = nodes.iterator(); i.hasNext(); ) {
+    String nodeId = (String) i.next();
     ALNode node = getLayoutNode(nodeId);
     if ( node != null && nodeId != null ) {
      if ( !moveNodeToLostFolder(nodeId) )
