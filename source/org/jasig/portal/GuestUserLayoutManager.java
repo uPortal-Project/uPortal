@@ -39,6 +39,7 @@ package  org.jasig.portal;
 import  org.jasig.portal.security.IPerson;
 import  org.jasig.portal.jndi.JNDIManager;
 import org.jasig.portal.utils.BooleanLock;
+import org.jasig.portal.services.LogService;
 import  java.sql.*;
 import  org.w3c.dom.*;
 
@@ -104,8 +105,8 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
         ts_descripts=new Hashtable();
         ss_descripts=new Hashtable();
         m_person = person;
-        updb = RdbmServices.getUserPreferencesStoreImpl();
-        csddb = RdbmServices.getCoreStylesheetDescriptionImpl();
+        updb = UserPreferencesStoreFactory.getUserPreferencesStoreImpl();
+        csddb = CoreStylesheetDescriptionStoreFactory.getCoreStylesheetDescriptionStoreImpl();
         layout_write_lock.setValue(true);
     }
 
@@ -152,7 +153,7 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
                 }
                 if(newState.uLayoutXML==null) {
                     // read uLayoutXML
-                    newState.uLayoutXML = GenericPortalBean.getUserLayoutStore().getUserLayout(m_person, upl.getProfileId());
+                    newState.uLayoutXML = UserLayoutStoreFactory.getUserLayoutStoreImpl().getUserLayout(m_person, upl.getProfileId());
                     if(newState.uLayoutXML!=null) {
                         if(upl.isSystemProfile()) {
                             sp_layouts.put(new Integer(upl.getProfileId()),newState.uLayoutXML);
@@ -163,7 +164,7 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
                 }
 
                 if (newState.uLayoutXML == null) {
-                    Logger.log(Logger.ERROR, "UserLayoutManager::UserLayoutManager() : unable to retreive userLayout for user=\"" +
+                    LogService.instance().log(LogService.ERROR, "UserLayoutManager::UserLayoutManager() : unable to retreive userLayout for user=\"" +
                                m_person.getID() + "\", profile=\"" + upl.getProfileName() + "\".");
                 }
 
@@ -188,7 +189,7 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
                 if(cleanUP!=null) {
                     newState.complete_up=new UserPreferences(cleanUP);
                 } else {
-                    Logger.log(Logger.ERROR,"GuestUserLayoutManager::registerSession() : unable to find UP for a profile \""+upl.getProfileName()+"\"");
+                    LogService.instance().log(LogService.ERROR,"GuestUserLayoutManager::registerSession() : unable to find UP for a profile \""+upl.getProfileName()+"\"");
                 }
 
                 // Initialize the JNDI context for this user
@@ -197,11 +198,11 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
                 // there is no user-defined mapping for this particular browser.
                 // user should be redirected to a browser-registration page.
                 newState.unmapped_user_agent = true;
-                Logger.log(Logger.DEBUG, "GuestUserLayoutManager::registerSession() : unable to find a profile for user \"" + m_person.getID()
+                LogService.instance().log(LogService.DEBUG, "GuestUserLayoutManager::registerSession() : unable to find a profile for user \"" + m_person.getID()
                            + "\" and userAgent=\"" + userAgent + "\".");
             }
         } catch (Exception e) {
-            Logger.log(Logger.ERROR, e);
+            LogService.instance().log(LogService.ERROR, e);
         }
 
         stateTable.put(req.getSession(false).getId(),newState);
@@ -216,7 +217,7 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
     public void processUserPreferencesParameters (HttpServletRequest req) {
         MState state=(MState)stateTable.get(req.getSession(false).getId());
         if(state==null) {
-            Logger.log(Logger.ERROR,"GuestUserLayoutManager::processUserPreferencesParameters() : trying to envoke a method on a non-registered sessionId=\""+req.getSession(false).getId()+"\".");
+            LogService.instance().log(LogService.ERROR,"GuestUserLayoutManager::processUserPreferencesParameters() : trying to envoke a method on a non-registered sessionId=\""+req.getSession(false).getId()+"\".");
             return;
         }
         // layout root setting
@@ -242,7 +243,7 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
             for (int i = 0; i < sparams.length; i++) {
                 String pValue = req.getParameter(sparams[i]);
                 state.complete_up.getStructureStylesheetUserPreferences().putParameterValue(sparams[i], pValue);
-                Logger.log(Logger.DEBUG, "GuestUserLayoutManager::processUserPreferencesParameters() : setting sparam \"" + sparams[i]
+                LogService.instance().log(LogService.DEBUG, "GuestUserLayoutManager::processUserPreferencesParameters() : setting sparam \"" + sparams[i]
                            + "\"=\"" + pValue + "\".");
             }
         }
@@ -251,7 +252,7 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
             for (int i = 0; i < tparams.length; i++) {
                 String pValue = req.getParameter(tparams[i]);
                 state.complete_up.getThemeStylesheetUserPreferences().putParameterValue(tparams[i], pValue);
-                Logger.log(Logger.DEBUG, "GuestUserLayoutManager::processUserPreferencesParameters() : setting tparam \"" + tparams[i]
+                LogService.instance().log(LogService.DEBUG, "GuestUserLayoutManager::processUserPreferencesParameters() : setting tparam \"" + tparams[i]
                            + "\"=\"" + pValue + "\".");
             }
         }
@@ -266,7 +267,7 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
                     for (int j = 0; j < aNode.length; j++) {
                         String aValue = req.getParameter(aName + "_" + aNode[j] + "_value");
                         state.complete_up.getStructureStylesheetUserPreferences().setFolderAttributeValue(aNode[j], aName, aValue);
-                        Logger.log(Logger.DEBUG, "GuestUserLayoutManager::processUserPreferencesParameters() : setting sfattr \"" + aName
+                        LogService.instance().log(LogService.DEBUG, "GuestUserLayoutManager::processUserPreferencesParameters() : setting sfattr \"" + aName
                                    + "\" of \"" + aNode[j] + "\" to \"" + aValue + "\".");
                     }
                 }
@@ -281,7 +282,7 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
                     for (int j = 0; j < aNode.length; j++) {
                         String aValue = req.getParameter(aName + "_" + aNode[j] + "_value");
                         state.complete_up.getStructureStylesheetUserPreferences().setChannelAttributeValue(aNode[j], aName, aValue);
-                        Logger.log(Logger.DEBUG, "GuestUserLayoutManager::processUserPreferencesParameters() : setting scattr \"" + aName
+                        LogService.instance().log(LogService.DEBUG, "GuestUserLayoutManager::processUserPreferencesParameters() : setting scattr \"" + aName
                                    + "\" of \"" + aNode[j] + "\" to \"" + aValue + "\".");
                     }
                 }
@@ -297,7 +298,7 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
                     for (int j = 0; j < aNode.length; j++) {
                         String aValue = req.getParameter(aName + "_" + aNode[j] + "_value");
                         state.complete_up.getThemeStylesheetUserPreferences().setChannelAttributeValue(aNode[j], aName, aValue);
-                        Logger.log(Logger.DEBUG, "GuestUserLayoutManager::processUserPreferencesParameters() : setting tcattr \"" + aName
+                        LogService.instance().log(LogService.DEBUG, "GuestUserLayoutManager::processUserPreferencesParameters() : setting tcattr \"" + aName
                                    + "\" of \"" + aNode[j] + "\" to \"" + aValue + "\".");
                     }
                 }
@@ -328,7 +329,7 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
     public boolean isUserAgentUnmapped (String sessionId) {
         MState state=(MState)stateTable.get(sessionId);
         if(state==null) {
-            Logger.log(Logger.ERROR,"GuestUserLayoutManager::userAgentUnmapped() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
+            LogService.instance().log(LogService.ERROR,"GuestUserLayoutManager::userAgentUnmapped() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
             return false;
         }
         return  state.unmapped_user_agent;
@@ -341,7 +342,7 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
     public UserPreferences getUserPreferences (String sessionId) {
         MState state=(MState)stateTable.get(sessionId);
         if(state==null) {
-            Logger.log(Logger.ERROR,"GuestUserLayoutManager::getUserPreferences() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
+            LogService.instance().log(LogService.ERROR,"GuestUserLayoutManager::getUserPreferences() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
             return null;
         }
         return  state.complete_up;
@@ -358,7 +359,7 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
     public void setNewUserLayoutAndUserPreferences (Document newLayout, UserPreferences newPreferences,String sessionId) throws PortalException {
         MState state=(MState)stateTable.get(sessionId);
         if(state==null) {
-            Logger.log(Logger.ERROR,"GuestUserLayoutManager::setCurrentUserPreferences() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
+            LogService.instance().log(LogService.ERROR,"GuestUserLayoutManager::setCurrentUserPreferences() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
             return;
         }
         if (newPreferences != null) {
@@ -371,9 +372,9 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
                 // one lock for all - not very efficient, but ok for the Guest layout - it should rarely change
                 layout_write_lock.setValue(true);
                 try {
-                    GenericPortalBean.getUserLayoutStore().setUserLayout(m_person, state.complete_up.getProfile().getProfileId(),newLayout);
+                    UserLayoutStoreFactory.getUserLayoutStoreImpl().setUserLayout(m_person, state.complete_up.getProfile().getProfileId(),newLayout);
                 } catch (Exception e) {
-                    Logger.log(Logger.ERROR, e);
+                    LogService.instance().log(LogService.ERROR, e);
                     throw  new GeneralRenderingException(e.getMessage());
                 }
             }
@@ -392,7 +393,7 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
     public Document getUserLayoutCopy (String sessionId) {
         MState state=(MState)stateTable.get(sessionId);
         if(state==null) {
-            Logger.log(Logger.ERROR,"GuestUserLayoutManager::getUserLayoutCopy() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
+            LogService.instance().log(LogService.ERROR,"GuestUserLayoutManager::getUserLayoutCopy() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
             return null;
         }
         return  UtilitiesBean.cloneDocument((org.apache.xerces.dom.DocumentImpl)state.uLayoutXML);
@@ -425,7 +426,7 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
     public ThemeStylesheetDescription getThemeStylesheetDescription (String sessionId) {
         MState state=(MState)stateTable.get(sessionId);
         if(state==null) {
-            Logger.log(Logger.ERROR,"GuestUserLayoutManager::getThemeStylesheetDescription() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
+            LogService.instance().log(LogService.ERROR,"GuestUserLayoutManager::getThemeStylesheetDescription() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
             return null;
         }
         if (state.tsd == null) {
@@ -446,7 +447,7 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
     public StructureStylesheetDescription getStructureStylesheetDescription (String sessionId) {
         MState state=(MState)stateTable.get(sessionId);
         if(state==null) {
-            Logger.log(Logger.ERROR,"GuestUserLayoutManager::getThemeStylesheetDescription() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
+            LogService.instance().log(LogService.ERROR,"GuestUserLayoutManager::getThemeStylesheetDescription() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
             return null;
         }
         if (state.ssd == null) {
@@ -484,7 +485,7 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
     public Document getUserLayout (String sessionId) {
         MState state=(MState)stateTable.get(sessionId);
         if(state==null) {
-            Logger.log(Logger.ERROR,"GuestUserLayoutManager::getUserLayout() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
+            LogService.instance().log(LogService.ERROR,"GuestUserLayoutManager::getUserLayout() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
             return null;
         }
         return  state.uLayoutXML;
@@ -538,7 +539,7 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
     public boolean removeChannel (String channelId,String sessionId) throws PortalException {
         MState state=(MState)stateTable.get(sessionId);
         if(state==null) {
-            Logger.log(Logger.ERROR,"GuestUserLayoutManager::removeChannel() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
+            LogService.instance().log(LogService.ERROR,"GuestUserLayoutManager::removeChannel() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
             return false;
         }
         Element channel = state.uLayoutXML.getElementById(channelId);
@@ -547,7 +548,7 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
             synchronized(layout_write_lock) {
                 if(!this.deleteNode(channel)) {
                     // unable to remove channel due to unremovable/immutable restrictionsn
-                    Logger.log(Logger.INFO,"GuestUserLayoutManager::removeChannlel() : unable to remove a channel \""+channelId+"\"");
+                    LogService.instance().log(LogService.INFO,"GuestUserLayoutManager::removeChannlel() : unable to remove a channel \""+channelId+"\"");
                     rval=false;
                 } else {
                     layout_write_lock.setValue(true);
@@ -558,17 +559,17 @@ public class GuestUserLayoutManager extends UserLayoutManager  {
                         /*
                           The following patch has been kindly contributed by Neil Blake <nd_blake@NICKEL.LAURENTIAN.CA>.
                         */
-                        GenericPortalBean.getUserLayoutStore().setUserLayout(m_person, state.complete_up.getProfile().getProfileId(), state.uLayoutXML);
+                        UserLayoutStoreFactory.getUserLayoutStoreImpl().setUserLayout(m_person, state.complete_up.getProfile().getProfileId(), state.uLayoutXML);
                         /* end of patch */
                     } catch (Exception e) {
-                        Logger.log(Logger.ERROR,"GuestUserLayoutManager::removeChannle() : database operation resulted in an exception "+e);
+                        LogService.instance().log(LogService.ERROR,"GuestUserLayoutManager::removeChannle() : database operation resulted in an exception "+e);
                         throw new GeneralRenderingException("Unable to save layout changes.");
                     }
                 }
             }
             return rval;
         } else {
-            Logger.log(Logger.ERROR, "GuestUserLayoutManager::removeChannel() : unable to find a channel with Id=" + channelId);
+            LogService.instance().log(LogService.ERROR, "GuestUserLayoutManager::removeChannel() : unable to find a channel with Id=" + channelId);
             return false;
         }
     }
