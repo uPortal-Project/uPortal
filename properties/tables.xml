@@ -371,7 +371,7 @@
         <desc>Internal sequence id of a user's portal information - unique user identifier - primary key, see UP_SEQUENCE</desc>
         <key>PK</key>
       </column>
-      <column> <name>LOCALE</name>          <type>VARCHAR</type>   <param>7</param>
+      <column> <name>LOCALE</name>          <type>VARCHAR</type>   <param>64</param>
         <desc>User's locale preference</desc>
         <key>PK</key>
       </column>
@@ -530,7 +530,7 @@
         <desc>Identifies a node in a user's layout</desc>
         <key>PK</key>
       </column>
-      <column> <name>LOCALE</name>          <type>VARCHAR</type>   <param>7</param>
+      <column> <name>LOCALE</name>          <type>VARCHAR</type>   <param>64</param>
         <desc>User's locale preference</desc>
         <key>PK</key>
       </column>
@@ -783,7 +783,7 @@
         <desc>Internal sequence id of a user's profile</desc>
         <key>PK</key>
       </column>
-      <column> <name>LOCALE</name>          <type>VARCHAR</type>   <param>7</param>
+      <column> <name>LOCALE</name>          <type>VARCHAR</type>   <param>64</param>
         <desc>User's locale preference</desc>
         <key>PK</key>
       </column>
