@@ -127,20 +127,14 @@ public class UtilitiesBean extends GenericPortalBean
 
   public static String escapeString(String source)
   {
-    String escapedString = null;
+    StringBuffer sb = new StringBuffer ();
 
-    if (source != null)
+    for (int i = 0 ; i < source.length() ; i++)
     {
-      StringBuffer sb = new StringBuffer ();
-
-      for (int i = 0 ; i < source.length() ; i++)
-      {
-        sb.append(escapeChar(source.charAt (i)));
-      }
-      escapedString = sb.toString();
+      sb.append(escapeChar(source.charAt (i)));
     }
 
-    return escapedString;
+    return sb.toString ();
   }
 
   private static String escapeChar(char ch)
@@ -196,4 +190,42 @@ public class UtilitiesBean extends GenericPortalBean
     }
     return null;
   }
+
+  /**
+   * Removes any XML unfriendly characters from a string
+   */
+  public static String removeSpecialChars(String source)
+  {
+    StringBuffer sb = new StringBuffer ();
+    char ch;
+
+    for (int i = 0 ; i < source.length() ; i++)
+    {
+      ch = source.charAt (i);
+
+      if (!SpecialChar (ch))
+        sb.append (ch);
+    }
+
+    return sb.toString ();
+  }
+
+  private static boolean SpecialChar (char ch)
+  {
+    switch( ch )
+    {
+      case '<':
+        return true;
+      case '>':
+        return true;
+      case '"':
+        return true;
+      case '\'':
+        return true;
+      case '&':
+        return true;
+    }
+    return false;
+  }
+
 }
