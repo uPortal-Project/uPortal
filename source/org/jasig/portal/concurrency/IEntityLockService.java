@@ -35,6 +35,8 @@
 
 package org.jasig.portal.concurrency;
 
+import org.jasig.portal.IBasicEntity;
+
 /**
   * Defines an api for acquiring lock objects, <code>IEntityLocks</code>, that
   * can be used to control concurrent access to portal entities.  A lock is

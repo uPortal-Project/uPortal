@@ -36,7 +36,6 @@
 
 package  org.jasig.portal.services.entityproperties;
 
-import  org.jasig.portal.concurrency.IBasicEntity;
 import  org.jasig.portal.*;
 import  org.jasig.portal.services.*;
 import  java.util.*;
@@ -45,9 +44,9 @@ import  java.sql.*;
 
 
 /**
- * A finder implementation to provide IPerson properties derived from the 
+ * A finder implementation to provide IPerson properties derived from the
  * PersonDirectory
- * 
+ *
  * @author Alex Vigdor av317@columbia.edu
  * @version $Revision$
  */

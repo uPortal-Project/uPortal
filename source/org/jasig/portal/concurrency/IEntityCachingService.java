@@ -35,6 +35,8 @@
 
 package org.jasig.portal.concurrency;
 
+import org.jasig.portal.IBasicEntity;
+
 /**
   * Defines an api for a caching service that caches and retrieves
   * <code>IBasicEntities</code>.  Cached entities of a given type are
@@ -55,7 +57,7 @@ package org.jasig.portal.concurrency;
   * @author Dan Ellentuck
   * @version $Revision$
   *
-  * @see org.jasig.portal.concurrency.IBasicEntity
+  * @see org.jasig.portal.IBasicEntity
   * @see org.jasig.portal.concurrency.IEntityCache
   *
 */

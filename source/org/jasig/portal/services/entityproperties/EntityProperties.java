@@ -36,7 +36,6 @@
 
 package  org.jasig.portal.services.entityproperties;
 
-import  org.jasig.portal.concurrency.*;
 import  org.jasig.portal.*;
 import  java.util.*;
 
@@ -44,7 +43,7 @@ import  java.util.*;
 /**
  * A BasicEntity implementation used interally by the EntityPropertyRegistry
  * to cache property lookup results
- * 
+ *
  * @author Alex Vigdor av317@columbia.edu
  * @version $Revision$
  */

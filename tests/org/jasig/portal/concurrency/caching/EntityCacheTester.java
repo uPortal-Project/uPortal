@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.Statement;
 import java.util.Date;
 import junit.framework.*;
+import org.jasig.portal.IBasicEntity;
 import org.jasig.portal.concurrency.*;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.EntityCachingService;

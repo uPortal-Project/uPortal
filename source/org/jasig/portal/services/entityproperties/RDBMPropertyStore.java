@@ -36,7 +36,6 @@
 
 package  org.jasig.portal.services.entityproperties;
 
-import  org.jasig.portal.concurrency.IBasicEntity;
 import  org.jasig.portal.*;
 import  java.sql.*;
 import  org.jasig.portal.groups.*;

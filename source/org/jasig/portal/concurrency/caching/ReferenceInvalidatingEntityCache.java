@@ -36,6 +36,7 @@
 package org.jasig.portal.concurrency.caching;
 
 import java.util.Date;
+import org.jasig.portal.IBasicEntity;
 import org.jasig.portal.concurrency.*;
 import org.jasig.portal.services.LogService;
 /**
@@ -132,7 +133,7 @@ protected void finalize() throws Throwable
 /**
  * Unwraps and returns the cached entity.
  * @param String key - the key of the entity.
- * @return org.jasig.portal.concurrency.IBasicEntity
+ * @return org.jasig.portal.IBasicEntity
  */
 public IBasicEntity get(String key) {
     CacheEntry entry = (CacheEntry)primGet(key);
@@ -148,7 +149,7 @@ private static synchronized RDBMCachedEntityInvalidationStore getInvalidationSto
     return invalidationStore;
 }
 /**
- * @param entity org.jasig.portal.concurrency.IBasicEntity
+ * @param entity org.jasig.portal.IBasicEntity
  */
 public void invalidate(IBasicEntity entity) throws CachingException
 {
@@ -157,7 +158,7 @@ public void invalidate(IBasicEntity entity) throws CachingException
 /**
  * Returns the WRAPPED cached entity.
  * @param String key - the key of the entity.
- * @return org.jasig.portal.concurrency.IBasicEntity
+ * @return org.jasig.portal.IBasicEntity
  */
 private IBasicEntity primGet(String key) {
     return super.get(key);

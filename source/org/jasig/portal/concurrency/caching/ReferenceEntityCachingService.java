@@ -36,9 +36,10 @@
 package org.jasig.portal.concurrency.caching;
 
 import java.util.*;
-import org.jasig.portal.concurrency.*;
 import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.EntityTypes;
+import org.jasig.portal.IBasicEntity;
+import org.jasig.portal.concurrency.*;
 import org.jasig.portal.services.LogService;
 /**
  * Caching service reference implementation.
@@ -78,7 +79,7 @@ public ReferenceEntityCachingService() throws CachingException
 }
 /**
  * Adds the entity to the cache.
- * @param ent org.jasig.portal.concurrency.IBasicEntity
+ * @param ent org.jasig.portal.IBasicEntity
  * @exception org.jasig.portal.concurrency.CachingException
  */
 public void add(IBasicEntity ent) throws CachingException
@@ -251,7 +252,7 @@ public static synchronized IEntityCachingService singleton() throws CachingExcep
 }
 /**
  * Updates the entity in the cache and notifies peer caches.
- * @param ent org.jasig.portal.concurrency.IBasicEntity
+ * @param ent org.jasig.portal.IBasicEntity
  * @exception org.jasig.portal.concurrency.CachingException
  */
 public void update(IBasicEntity ent) throws CachingException

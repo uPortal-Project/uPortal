@@ -36,15 +36,13 @@
 
 package  org.jasig.portal.services;
 
-import  org.jasig.portal.concurrency.IBasicEntity;
 import  org.jasig.portal.*;
-import  org.jasig.portal.services.entityproperties.IEntityPropertyStore;
+import  org.jasig.portal.concurrency.CachingException;
+import  org.jasig.portal.services.entityproperties.*;
 import  org.jasig.portal.utils.*;
 import  org.w3c.dom.*;
 import  java.util.*;
 import  org.jasig.portal.groups.*;
-import  org.jasig.portal.services.entityproperties.*;
-import  org.jasig.portal.concurrency.*;
 import  org.apache.xpath.*;
 
 

@@ -5,7 +5,7 @@ import java.sql.Statement;
 import java.util.*;
 import junit.framework.*;
 import org.jasig.portal.EntityTypes;
-import org.jasig.portal.concurrency.IBasicEntity;
+import org.jasig.portal.IBasicEntity;
 import org.jasig.portal.services.GroupService;
 import org.jasig.portal.security.IPerson;
 

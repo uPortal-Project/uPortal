@@ -36,19 +36,17 @@
 
 package  org.jasig.portal.services.entityproperties;
 
-import  org.jasig.portal.concurrency.*;
 import  org.jasig.portal.*;
-
 
 /**
  * The interface for an entity property store; the EntityChannelRegistry
  * must be configured with exactly one store, but can have multiple finders.
- * 
+ *
  * @author Alex Vigdor av317@columbia.edu
  * @version $Revision$
  */
 public interface IEntityPropertyStore extends IEntityPropertyFinder{
-  
+
     // will add property to store without affecting finder results
     void storeProperty(IBasicEntity entity, String name, String value);
 

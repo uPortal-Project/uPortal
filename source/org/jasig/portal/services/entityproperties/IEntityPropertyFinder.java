@@ -36,14 +36,12 @@
 
 package  org.jasig.portal.services.entityproperties;
 
-import  org.jasig.portal.concurrency.*;
 import  org.jasig.portal.*;
 
-
 /**
- * An interface describing entity property finders that can be 
+ * An interface describing entity property finders that can be
  * added to the EntityPropertyRegistry
- * 
+ *
  * @author Alex Vigdor av317@columbia.edu
  * @version $Revision$
  */

@@ -33,7 +33,7 @@
  *
  */
 
-package org.jasig.portal.concurrency;
+package org.jasig.portal;
 
 /**
   * Minimal interface describes an entity that can be cached, locked

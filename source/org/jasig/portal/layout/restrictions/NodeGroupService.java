@@ -38,6 +38,7 @@ package org.jasig.portal.layout.restrictions;
 import java.io.*;
 import java.util.Properties;
 import org.jasig.portal.PropertiesManager;
+import org.jasig.portal.EntityTypes;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.groups.IGroupService;
 import org.jasig.portal.groups.GroupsException;
@@ -46,7 +47,6 @@ import org.jasig.portal.groups.IEntityGroupStore;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IEntity;
 import org.jasig.portal.groups.IGroupMember;
-import org.jasig.portal.groups.EntityTypes;
 import org.jasig.portal.groups.RDBMEntityStore;
 
 /**

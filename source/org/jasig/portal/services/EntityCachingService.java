@@ -87,8 +87,8 @@ public class EntityCachingService
     }
 /**
  * Adds the entity to the cache.
- * @param ent org.jasig.portal.concurrency.IBasicEntity
- * @exception org.jasig.portal.concurrency..CachingException
+ * @param ent org.jasig.portal.IBasicEntity
+ * @exception org.jasig.portal.concurrency.CachingException
  */
 public void add(IBasicEntity ent) throws CachingException
 {

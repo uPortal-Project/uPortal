@@ -35,6 +35,8 @@
 
 package org.jasig.portal.concurrency;
 
+import org.jasig.portal.IBasicEntity;
+
 /**
   * Defines the api for a cache that caches <code>IBasicEntities</code>
   * of a single type.

@@ -36,6 +36,7 @@
 package org.jasig.portal.concurrency.locking;
 
 import java.util.Date;
+import org.jasig.portal.IBasicEntity;
 import org.jasig.portal.concurrency.*;
 import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.services.LogService;
@@ -134,7 +135,7 @@ public boolean existsInStore(IEntityLock lock) throws LockingException
  * @return int
  */
 private int getDefaultLockPeriod() {
-	return defaultLockPeriod;
+    return defaultLockPeriod;
 }
 /**
  * @return org.jasig.portal.concurrency.locking.IEntityLockStore
@@ -182,7 +183,7 @@ private void initialize() throws LockingException
         int lockDuration = PropertiesManager.getPropertyAsInt
             ("org.jasig.portal.concurrency.IEntityLockService.defaultLockDuration");
         setDefaultLockPeriod(lockDuration);
-	}
+    }
     catch ( Exception ex ) { /* defaults to 5 minutes. */ }
 
     if ( multiServer ) {
@@ -191,7 +192,7 @@ private void initialize() throws LockingException
             int lockTolerance = PropertiesManager.getPropertyAsInt
                 ("org.jasig.portal.concurrency.IEntityLockService.lockTolerance");
             setLockToleranceMillis(lockTolerance * 1000);
-	    }
+        }
         catch ( Exception ex ) { /* defaults to 0. */ }
     }
 }
@@ -304,7 +305,7 @@ throws LockingException
 /**
  * Returns a lock for the entity, lock type and owner if no conflicting locks exist.
  * @return org.jasig.portal.groups.IEntityLock
- * @param entity org.jasig.portal.concurrency.IBasicEntity
+ * @param entity org.jasig.portal.IBasicEntity
  * @param lockType int
  * @param owner String
  * @exception org.jasig.portal.concurrency.locking.LockingException
@@ -317,7 +318,7 @@ throws LockingException
 /**
  * Returns a lock for the entity, lock type and owner if no conflicting locks exist.
  * @return org.jasig.portal.groups.IEntityLock
- * @param entity org.jasig.portal.concurrency.IBasicEntity
+ * @param entity org.jasig.portal.IBasicEntity
  * @param lockType int
  * @param owner String
  * @param durationSecs int

@@ -41,7 +41,7 @@ import java.sql.Statement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.*;
-import org.jasig.portal.concurrency.IBasicEntity;
+import org.jasig.portal.IBasicEntity;
 import org.jasig.portal.concurrency.CachingException;
 import org.jasig.portal.EntityTypes;
 import org.jasig.portal.RDBMServices;
