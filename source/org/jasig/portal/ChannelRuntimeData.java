@@ -44,7 +44,8 @@ import  java.util.Map;
 import  java.io.File;
 import  java.util.Enumeration;
 import  org.apache.xalan.xslt.XSLTInputSource;
-
+import  javax.servlet.ServletOutputStream;
+import  java.io.IOException;
 
 /**
  * A set of runtime data acessable by a channel.
@@ -105,7 +106,7 @@ public class ChannelRuntimeData extends Hashtable
 
   /**
    * put your documentation comment here
-   * @return 
+   * @return
    */
   public BrowserInfo getBrowserInfo () {
     return  binfo;
@@ -140,7 +141,7 @@ public class ChannelRuntimeData extends Hashtable
    * put your documentation comment here
    * @param pName
    * @param values
-   * @return 
+   * @return
    */
   public synchronized String[] setParameterValues (String pName, String[] values) {
     return  (String[])super.put(pName, values);
@@ -161,7 +162,7 @@ public class ChannelRuntimeData extends Hashtable
    * put your documentation comment here
    * @param pName
    * @param values
-   * @return 
+   * @return
    */
   public synchronized com.oreilly.servlet.multipart.Part[] setParameterValues (String pName, com.oreilly.servlet.multipart.Part[] values) {
     return  (com.oreilly.servlet.multipart.Part[])super.put(pName, values);
@@ -192,23 +193,6 @@ public class ChannelRuntimeData extends Hashtable
   }
 
   /**
-   * Do a HTTP redirect
-   * @parameter URL string to append to baseActionURL
-   */
-  public void redirect (String redirectURL) throws Exception {
-    redirect(getBaseActionURL(), redirectURL);
-  }
-
-  /**
-   * Do a HTTP redirect
-   * @parameter host to redirect to
-   * @parameter URL string to include
-   */
-  public void redirect (String redirectHost, String redirectURL) throws Exception {
-    response.sendRedirect(redirectHost + redirectURL);
-  }
-
-  /**
    * Return the String corresponding to the key
    * @param object name
    * @return null if Object, String otherwise
@@ -216,8 +200,8 @@ public class ChannelRuntimeData extends Hashtable
   public synchronized String getParameter (String key) {
     String[] value_array = this.getParameterValues(key);
     if ((value_array != null) && (value_array.length > 0))
-      return  value_array[0]; 
-    else 
+      return  value_array[0];
+    else
       return  null;
   }
 
@@ -229,8 +213,8 @@ public class ChannelRuntimeData extends Hashtable
   public synchronized Object getObjectParameter (String key) {
     Object[] value_array = this.getParameterValues(key);
     if ((value_array != null) && (value_array.length > 0))
-      return  value_array[0]; 
-    else 
+      return  value_array[0];
+    else
       return  null;
   }
 
@@ -243,7 +227,7 @@ public class ChannelRuntimeData extends Hashtable
     Object[] pars = (Object[])super.get(parameter);
     if (pars instanceof String[]) {
       return  (String[])pars;
-    } 
+    }
     else {
       return  null;
     }
@@ -313,6 +297,25 @@ public class ChannelRuntimeData extends Hashtable
     return  mm.getMedia(request);
   }
 
+  /**
+   * @depricated
+   */
+  public void setContentType(String mimeType) {
+    response.setContentType(mimeType);
+  }
+
+  /**
+   * @depricated
+   */
+  public void addHeader(String name, String value) {
+    response.addHeader(name, value);
+  }
+  /**
+   * @depricated
+   */
+  public ServletOutputStream getOutputStream() throws IOException {
+    return response.getOutputStream();
+  }
   // if you need to pass objects, use this
   public synchronized Object put (Object key, Object value) {
     return  super.put(key, value);
@@ -321,7 +324,7 @@ public class ChannelRuntimeData extends Hashtable
   /**
    * put your documentation comment here
    * @param key
-   * @return 
+   * @return
    */
   public synchronized Object get (Object key) {
     return  super.get(key);
