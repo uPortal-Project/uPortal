@@ -33,7 +33,7 @@
  *
  */
 
-package org.jasig.portal.tools;
+package org.jasig.portal.tools.dbloader;
 
 import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.RDBMServices;

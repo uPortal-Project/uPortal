@@ -33,7 +33,8 @@
  *
  */
 
-package org.jasig.portal.tools;
+package org.jasig.portal.tools.dbloader;
+
 import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.RDBMServices;
 
@@ -50,14 +51,13 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+
 /**
  * Title:        DbUnload
  * Description:  Dump database table(s) into a xml format
- * Company:
  * @author George Lindholm
  * @version $Revision$
  */
-
 public class DbUnload {
   static void dumpTable(PrintWriter xmlOut, Statement stmt, String tableName) throws Exception {
     String sql = "SELECT * FROM " + tableName;
