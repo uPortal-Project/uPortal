@@ -207,7 +207,9 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
 
       try
       {
-        DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+        docBuilderFactory.setNamespaceAware(true);
+        DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
         DTDResolver dtdResolver = new DTDResolver();
         docBuilder.setEntityResolver(dtdResolver);
         InputStream xmlStream = ResourceLoader.getResourceAsStream(this.getClass(), state.xmlUri);

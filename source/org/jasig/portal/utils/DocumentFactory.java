@@ -55,7 +55,9 @@ public class DocumentFactory {
   public static Document getNewDocument() {
     Document doc = null;
     try {
-      doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+      DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+      docBuilderFactory.setNamespaceAware(true);
+      doc = docBuilderFactory.newDocumentBuilder().newDocument();
     } catch (ParserConfigurationException pce) {
       LogService.log(LogService.ERROR, pce);
       throw new RuntimeException("org.jasig.portal.utils.DocumentFactory could not create new Document: " + pce.getMessage());
