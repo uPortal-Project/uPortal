@@ -35,6 +35,7 @@
 
 package  org.jasig.portal.channels.groupsmanager.wrappers;
 
+import org.jasig.portal.PropertiesManager;
 import org.jasig.portal.channels.groupsmanager.CGroupsManagerUnrestrictedSessionData;
 import org.jasig.portal.channels.groupsmanager.GroupsManagerXML;
 import org.jasig.portal.channels.groupsmanager.IGroupsManagerPermissions;
@@ -53,10 +54,14 @@ import org.w3c.dom.NodeList;
  * @version $Revision$
  */
 public class GroupWrapper extends GroupMemberWrapper {
-
+   private boolean limitRetrievals;
+   private int retrievalLimit;
+   
    /** Creates new GroupWrapper */
    public GroupWrapper () {
       ELEMENT_TAGNAME = GROUP_TAGNAME;
+      limitRetrievals = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.channels.groupsmanager.wrappers.GroupWrapper.limitRetrievals");
+      retrievalLimit = PropertiesManager.getPropertyAsInt("org.jasig.portal.channels.groupsmanager.wrappers.GroupWrapper.retrievalLimit");
    }
 
    /**
@@ -148,20 +153,25 @@ public class GroupWrapper extends GroupMemberWrapper {
          gmItr = gm.getMembers();
          String aKey = gm.getKey();
          // add new elements for new group members
+         int gmCount = 0;
          while (gmItr.hasNext()) {
             aChildGm = (IGroupMember)gmItr.next();
-            String childKey = aChildGm.getKey();
-            Utility.logMessage("DEBUG", "GroupWrapper::expandElement():  " + aChildGm);
-            boolean memberElementFound = false;
-            String tagname = (aChildGm.isGroup() ? GROUP_TAGNAME : ENTITY_TAGNAME);
-            memberElementFound = GroupsManagerXML.getNodesByTagNameAndKey(anElem, tagname,
-                  childKey).hasNext();
-            if (!memberElementFound) {
-               tempElem = GroupsManagerXML.getGroupMemberXml(aChildGm,false, null, sessionData);
-               Utility.logMessage("DEBUG", "GroupWrapper::expandElement():  APPENDING "
-                     + tempElem.getNodeName());
-               anElem.appendChild(tempElem);
-               Utility.logMessage("DEBUG", "GroupWrapper::expandElement():  APPENDING ACCOMPLISHED");
+            // if the limit has been exceeded, and this is not a group, skip it
+            if (!limitRetrievals || aChildGm.isGroup() || gmCount < retrievalLimit) {
+               String childKey = aChildGm.getKey();
+               Utility.logMessage("DEBUG", "GroupWrapper::expandElement():  " + aChildGm);
+               boolean memberElementFound = false;
+               String tagname = (aChildGm.isGroup() ? GROUP_TAGNAME : ENTITY_TAGNAME);
+               memberElementFound = GroupsManagerXML.getNodesByTagNameAndKey(anElem, tagname,
+                     childKey).hasNext();
+               if (!memberElementFound) {
+                  tempElem = GroupsManagerXML.getGroupMemberXml(aChildGm,false, null, sessionData);
+                  Utility.logMessage("DEBUG", "GroupWrapper::expandElement():  APPENDING "
+                        + tempElem.getNodeName());
+                  anElem.appendChild(tempElem);
+                  Utility.logMessage("DEBUG", "GroupWrapper::expandElement():  APPENDING ACCOMPLISHED");
+               }
+               gmCount++;
             }
          }
 
