@@ -37,6 +37,7 @@
 package org.jasig.portal.layout;
 
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
@@ -55,6 +56,7 @@ import org.jasig.portal.UserProfile;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.LogService;
 import org.jasig.portal.utils.IPortalDocument;
+import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -73,12 +75,24 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
     protected Set listeners=new HashSet();
 
     protected Document userLayoutDocument=null;
+    protected Document markedUserLayout=null;
 
     protected static Random rnd=new Random();
     protected String cacheKey="initialKey";
     protected String rootNodeId;
 
     private boolean dirtyState=false;
+
+    // marking mode variables
+    private String markingMode=null; // null means markings are turned off
+    private String markingNode;
+
+    // The names for marking nodes
+    private static final String ADD_COMMAND = "add";
+    private static final String MOVE_COMMAND = "move";
+
+    // marking stylesheet
+    private static final String MARKING_XSLT_URI="/org/jasig/portal/layout/MarkUserLayout.xsl";
 
 
     public SimpleUserLayoutManager(IPerson owner, UserProfile profile, IUserLayoutStore store) throws PortalException {
@@ -95,12 +109,13 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
         this.rootNodeId = null;
         this.setLayoutStore(store);
         this.loadUserLayout();
+        this.markingMode=null;
+        this.markingNode=null;
     }
-
-
 
     private void setUserLayoutDOM(Document doc) {
         this.userLayoutDocument=doc;
+        this.markedUserLayout=null;
         this.updateCacheKey();
     }
 
@@ -134,10 +149,23 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
     }
 
     protected void getUserLayout(Node n,ContentHandler ch) throws PortalException {
-        // do a DOM2SAX transformation
+        // do a DOM2SAX transformation, invoking marking transformation if necessary
         try {
-            Transformer emptyt=TransformerFactory.newInstance().newTransformer();
-            emptyt.transform(new DOMSource(n), new SAXResult(ch));
+            if(markingMode!=null) {
+                Hashtable stylesheetParams=new Hashtable(1);
+                stylesheetParams.put("operation",markingMode);
+                if(markingNode!=null) {
+                    stylesheetParams.put("targetId",markingNode);
+                }
+                XSLT xslt=new XSLT(this);
+                xslt.setXML(n); xslt.setTarget(ch); 
+                xslt.setStylesheetParameters(stylesheetParams);
+                xslt.setXSL(MARKING_XSLT_URI);
+                xslt.transform();
+            } else {
+                Transformer emptyt=TransformerFactory.newInstance().newTransformer();
+                emptyt.transform(new DOMSource(n), new SAXResult(ch));
+            }
         } catch (Exception e) {
             throw new PortalException("Encountered an exception trying to output user layout",e);
         }
@@ -243,8 +271,8 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
                 }
             }
 
-            Document ulm=this.userLayoutDocument;
-            Element childElement=node.getXML(this.getUserLayoutDOM());
+            Document ulm=this.getUserLayoutDOM();
+            Element childElement=node.getXML(ulm);
             Element parentElement=(Element)ulm.getElementById(parentId);
             if(nextSiblingId==null) {
                 parentElement.appendChild(childElement);
@@ -266,6 +294,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
             }
 
             this.updateCacheKey();
+            this.clearMarkings();
 
             // inform the listeners
             LayoutEvent ev=new LayoutEvent(this,node);
@@ -282,6 +311,11 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
         return null;
     }
 
+    public void clearMarkings() {
+        markingMode=null;
+        markingNode=null;
+    }
+    
     public boolean moveNode(String nodeId, String parentId, String nextSiblingId) throws PortalException  {
 
         IUserLayoutNodeDescription parent=this.getNode(parentId);
@@ -299,7 +333,8 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
                 parentElement.insertBefore(childElement,nextSibling);
             }
             markLayoutDirty();
-            this.updateCacheKey();
+            clearMarkings();
+            updateCacheKey();
 
             // inform the listeners
             boolean isChannel=false;
@@ -335,6 +370,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
                 throw new PortalException("Node \""+nodeId+"\" has a NULL parent !");
             }
             markLayoutDirty();
+            // clearMarkings(); // this one is questionable
             this.updateCacheKey();
 
             // inform the listeners
@@ -382,7 +418,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
             String nextSiblingId=getNextSiblingId(nodeId);
             Element nextSibling=null;
             if(nextSiblingId!=null) {
-                Document ulm=this.userLayoutDocument;
+                Document ulm=this.getUserLayoutDOM();
                 nextSibling=ulm.getElementById(nextSiblingId);
             }
 
@@ -392,7 +428,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
                 IUserLayoutChannelDescription oldChannel=(IUserLayoutChannelDescription) oldNode;
                 if(node instanceof IUserLayoutChannelDescription) {
                     isChannel=true;
-                    Document ulm=this.userLayoutDocument;
+                    Document ulm=this.getUserLayoutDOM();
                     // generate new XML Element
                     Element newChannelElement=node.getXML(ulm);
                     Element oldChannelElement=(Element)ulm.getElementById(nodeId);
@@ -425,7 +461,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
                  // must be a folder
                 IUserLayoutFolderDescription oldFolder=(IUserLayoutFolderDescription) oldNode;
                 if(node instanceof IUserLayoutFolderDescription) {
-                    Document ulm=this.userLayoutDocument;
+                    Document ulm=this.getUserLayoutDOM();
                     // generate new XML Element
                     Element newFolderElement=node.getXML(ulm);
                     Element oldFolderElement=(Element)ulm.getElementById(nodeId);
@@ -524,14 +560,20 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
     }
 
     public void markAddTargets(IUserLayoutNodeDescription node) throws PortalException {
-        // get all folders
-        //this.updateCacheKey();
+        if(node!=null) {
+            this.markingMode=ADD_COMMAND;
+        } else {
+            clearMarkings();
+        }
     }
 
-
     public void markMoveTargets(String nodeId) throws PortalException {
-        //IUserLayoutNodeDescription node=getNode(nodeId);
-        //this.updateCacheKey();
+        if(nodeId!=null) {
+            this.markingMode=MOVE_COMMAND;
+            this.markingNode=nodeId;
+        } else {
+            clearMarkings();
+        }
     }
 
     public String getParentId(String nodeId) throws PortalException {
@@ -613,7 +655,15 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
     }
 
     public String getCacheKey() {
-        return this.cacheKey;
+        if(markingMode==null) {
+            return this.cacheKey;
+        } else {
+            if(markingNode!=null) {
+                return this.cacheKey+this.markingMode+this.markingNode;
+            } else {
+                return this.cacheKey+this.markingMode;
+            }
+        }
     }
 
     /**
@@ -639,7 +689,18 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
      * @return a <code>String</code> subscription id.
      */
     public String getSubscribeId(String fname){
-        return "";
+        try {
+            Element fnameNode = (Element) XPathAPI.selectSingleNode(this.getUserLayoutDOM(),"//channel[@fname=\'"+fname+"\']");
+            if(fnameNode!=null) {
+                return fnameNode.getAttribute("ID");
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            LogService.log(LogService.ERROR, "SimpleUserLayoutManager::getSubcribeId() : encountered the following exception, while trying to identify subscribe channel id for the fname=\""+fname+"\" : "+e);
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public boolean addLayoutEventListener(LayoutEventListener l) {
