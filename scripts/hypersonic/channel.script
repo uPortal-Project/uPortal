@@ -36,7 +36,7 @@ VALUES ('Salon.com', '<channel minimized="false" class="org.jasig.portal.channel
       </channel>') ;
 
 INSERT INTO PORTAL_CHANNELS (title, channel_xml)
-VALUES ('ABC News Applet', '<channel minimized="false" class="org.jasig.portal.channels.CApplet">
+VALUES ('ABC News', '<channel minimized="false" class="org.jasig.portal.channels.CApplet">
         <parameter value="ABC News" name="name"/>
         <parameter value="starwave.news.affiliate.Megaticker.class" name="code"/>
         <parameter value="http://webapp.abcnews.com/java/" name="codeBase"/>
@@ -58,12 +58,12 @@ VALUES ('DE Weather', '<channel minimized="false" class="org.jasig.portal.channe
       </channel>');
 
 INSERT INTO PORTAL_CHANNELS (title, channel_xml)
-VALUES ('JA-SIG Portal Demos', '<channel minimized="false" class="org.jasig.portal.channels.CRSSChannel">
+VALUES ('JA-SIG uPortal Demos', '<channel minimized="false" class="org.jasig.portal.channels.CRSSChannel">
         <parameter value="http://interactivebusiness.com/publish/jasigPortalDemos.rss" name="url"/>
       </channel>');
 
 INSERT INTO PORTAL_CHANNELS (title, channel_xml)
-VALUES ('Our Bookmarks ;-)', '<channel minimized="false" class="org.jasig.portal.channels.CBookmarks">
+VALUES ('My Bookmarks', '<channel minimized="false" class="org.jasig.portal.channels.CBookmarks">
       </channel>');
 
 INSERT INTO PORTAL_CHANNELS (title, channel_xml)
@@ -89,7 +89,7 @@ INSERT INTO PORTAL_CHANNELS (title, channel_xml)
 VALUES ('Funky Clock', '<channel minimized="false" class="org.jasig.portal.channels.CApplet">
         <parameter value="Clock" name="name"/>
         <parameter value="Clock3D.class" name="code"/>
-        <parameter value="./" name="codeBase"/>
+        <parameter value="applets/" name="codeBase"/>
         <parameter value="" name="archive"/>
         <parameter value="200" name="width"/>
         <parameter value="200" name="height"/>
