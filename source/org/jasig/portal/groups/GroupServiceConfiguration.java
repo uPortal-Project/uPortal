@@ -54,7 +54,7 @@ import org.xml.sax.InputSource;
 public class GroupServiceConfiguration
 {
     // The file containing the configuration:
-    private static String SERVICES_XML = "/properties/compositeGroupServices.xml";
+    private static String SERVICES_XML = "/properties/groups/compositeGroupServices.xml";
 
     // Singleton instance.
     private static GroupServiceConfiguration configuration;
