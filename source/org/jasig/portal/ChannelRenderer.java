@@ -269,8 +269,6 @@ public class ChannelRenderer
         public void run () {
             successful = false;
             done = false;
-	    String complete_key=null;
-
 
             try {
                 if(rd!=null)
@@ -282,22 +280,18 @@ public class ChannelRenderer
 			ChannelCacheKey key=((ICacheable)channel).generateKey();
 			if(key!=null) {
 			    if(key.getKeyScope()==ChannelCacheKey.SYSTEM_KEY_SCOPE) {
-				// system-level keys are prepended with the class name
-				// If you trust your channels to construct a unique system key, and
-				// you need cross-class caching functionality, remove the prepend operation.
-				complete_key=channel.getClass().getName() + key.getKey();
-				ChannelCacheEntry entry=(ChannelCacheEntry)systemCache.get(complete_key);
+				ChannelCacheEntry entry=(ChannelCacheEntry)systemCache.get(key.getKey());
 				if(entry!=null) {
 				    // found cached page
 				    // check page validity
 				    if(((ICacheable)channel).isCacheValid(entry.validity) && (entry.buffer!=null)) {
 					// use it
 					buffer=entry.buffer;
-					Logger.log(Logger.DEBUG,"ChannelRenderer.Worker::run() : retrieved system-wide cached content based on a key \""+complete_key+"\"");
+					Logger.log(Logger.DEBUG,"ChannelRenderer.Worker::run() : retrieved system-wide cached content based on a key \""+key.getKey()+"\"");
 				    } else {
 					// remove it
-					systemCache.remove(complete_key);
-					Logger.log(Logger.DEBUG,"ChannelRenderer.Worker::run() : removed system-wide unvalidated cache based on a key \""+complete_key+"\"");
+					systemCache.remove(key.getKey());
+					Logger.log(Logger.DEBUG,"ChannelRenderer.Worker::run() : removed system-wide unvalidated cache based on a key \""+key.getKey()+"\"");
 				    }
 				}
 			    } else {
@@ -328,8 +322,8 @@ public class ChannelRenderer
 			    // save cache
 			    if(key!=null) {
 				if(key.getKeyScope()==ChannelCacheKey.SYSTEM_KEY_SCOPE) {
-				    systemCache.put(complete_key,new ChannelCacheEntry(buffer,key.getKeyValidity()));
-				    Logger.log(Logger.DEBUG,"ChannelRenderer.Worker::run() : recorded system cache based on a key \""+complete_key+"\"");
+				    systemCache.put(key.getKey(),new ChannelCacheEntry(buffer,key.getKeyValidity()));
+				    Logger.log(Logger.DEBUG,"ChannelRenderer.Worker::run() : recorded system cache based on a key \""+key.getKey()+"\"");
 				} else {
 				    channelCache.put(key.getKey(),new ChannelCacheEntry(buffer,key.getKeyValidity()));
 				    Logger.log(Logger.DEBUG,"ChannelRenderer.Worker::run() : recorded instance cache based on a key \""+key.getKey()+"\"");

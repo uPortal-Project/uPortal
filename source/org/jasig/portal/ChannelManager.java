@@ -83,6 +83,9 @@ public class ChannelManager {
     public static final int SYSTEM_CHANNEL_CACHE_MIN_SIZE=50; // this should be in a file somewhere
     public static final SoftHashMap systemCache=new SoftHashMap(SYSTEM_CHANNEL_CACHE_MIN_SIZE);
 
+    // table of multithreaded channels
+    public static final Hashtable staticChannels=new Hashtable();
+
     public static final String channelAddressingPathElement="channel";
     public String uPElement;
 
@@ -253,7 +256,44 @@ public class ChannelManager {
     }
     private IChannel instantiateChannel(String chanID, String className, long timeOut, Hashtable params) throws Exception {
         IChannel ch=null;
-        ch = (org.jasig.portal.IChannel) Class.forName (className).newInstance ();
+	
+	boolean exists=false;
+	// this is somewhat of a cheating ... I am trying to avoid instantiating a multithreaded
+	// channel more then once, but it's difficult to implement "instanceof" operation on
+	// the java.lang.Class. So, I just look into the staticChannels table.
+	Object cobj=staticChannels.get(className);
+	if(cobj!=null) {
+	    exists=true;
+	} else {
+	    cobj =  Class.forName (className).newInstance ();
+	}
+
+	// determine what kind of a channel it is.
+	// (perhaps, later this all could be moved to JNDI factories, so everything would be transparent)
+	if(cobj instanceof IMultithreadedChannel) {
+	    String uid=this.req.getSession(false).getId()+"/"+chanID;
+	    if(cobj instanceof IMultithreadedCacheable) {
+		if(cobj instanceof IPrivileged) {
+		    // both cacheable and privileged
+		    ch=new MultithreadedPrivilegedCacheableChannelAdapter((IMultithreadedChannel)cobj,uid);
+		} else {
+		    // just cacheable
+		    ch=new MultithreadedCacheableChannelAdapter((IMultithreadedChannel)cobj,uid);
+		}
+	    } else if(cobj instanceof IPrivileged) {
+		ch=new MultithreadedPrivilegedChannelAdapter((IMultithreadedChannel)cobj,uid);
+	    } else {
+		// plain multithreaded
+		ch=new MultithreadedChannelAdapter((IMultithreadedChannel)cobj,uid);
+	    }
+	    // see if we need to add the instance to the staticChannels
+	    if(!exists) {
+		staticChannels.put(className,cobj);
+	    }
+	} else {
+	    // vanilla IChannel
+	    ch=(IChannel)cobj;
+	}
 
         // construct a ChannelStaticData object
         ChannelStaticData sd = new ChannelStaticData ();

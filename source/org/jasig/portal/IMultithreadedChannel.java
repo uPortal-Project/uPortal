@@ -35,29 +35,33 @@
 
 package org.jasig.portal;
 
+import org.xml.sax.DocumentHandler;
+
 /**
- * Channels implementing this interface are considered "privileged" because
- * they will have access to internal portal control structures such as the
- * HttpServletRequest, HttpServletReponse, and UserLayoutManager.  IPrivilegedChannel
- * is intended for channels that are integral to the framework such as those that
- * manage user preferences, channel publishing, and channel subscription.
- * IPrivilegedChannel is NOT intended for "normal" channels.  Channels
- * should normally implement {@link IChannel}.
- *
- * Portal administrators should only allow publishing/subscibing of channels
- * implementing IPrivilegedChannel if the following are true:
- *
- * <ul>
- * <li>The channel is an integral part of the uPortal framework, e.g. {@link org.jasig.portal.channels.CLogin}.</li>
- * <li>The channel is well-understood and will not cause harm.  An understanding of the
- * portal architecture is necessary to determine if this is true.</li>
- * <li>There is no way to implement the channel as an IChannel because access to
- * internal structures is absolutely necessary.</li>
- * </ul>
- * @author Peter Kharchenko, pkharchenko@interactivebusiness.com
+ * An interface for multithreaded channels.
+ * Multithreaded channels are trusted to keep their own state/session/user 
+ * separation (instead of relying on the servlet engine to do so).
+ * The methods are exact analogs of those in {@link IChannel} interface, 
+ * but means to identify the channel instance are passed along 
+ * with each method.
+ * Please refer to {@link IChannel} interface for method descriptions.
+ * @author Peter Kharchenko <a href="mailto:">pkharchenko@interactivebusiness.com</a>
  * @version $Revision$
  * @see IChannel
- * @see PortalControlStructures
+ * @see IMultithreadedCacheable
  */
-public interface IPrivilegedChannel extends IChannel, IPrivileged {}
 
+public interface IMultithreadedChannel {
+
+    /**
+     * @param uid a string uniqly identifying a channel "instance" in the system.
+     * For example, a combination of session id and channel instance id would fit the bill.
+     */
+    public void setStaticData (ChannelStaticData sd, String uid) throws PortalException;
+    public void setRuntimeData (ChannelRuntimeData rd, String uid) throws PortalException;
+
+    public void receiveEvent (PortalEvent ev,String uid);
+
+    public ChannelRuntimeProperties getRuntimeProperties (String uid);
+    public void renderXML (DocumentHandler out,String uid) throws PortalException;
+}

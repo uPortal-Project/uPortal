@@ -43,7 +43,9 @@ import org.xml.sax.DocumentHandler;
 import org.xml.sax.SAXException;
 
 import org.w3c.dom.Document;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.io.File;
 import java.io.BufferedReader;
@@ -81,139 +83,175 @@ import java.net.MalformedURLException;
  * can be used and is included with CGenericXSLT.  Just set the xml parameter</p>
  * @author Steve Toth, stoth@interactivebusiness.com
  * @author Ken Weiner, kweiner@interactivebusiness.com
+ * @author Peter Kharchenko <a href="mailto:">pkharchenko@interactivebusiness.com</a> (multithreading,caching)
  * @version $Revision$
  */
-public class CGenericXSLT implements IChannel, ICacheable
+public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCacheable
 {
-  protected String xmlUri;
-  protected String sslUri;
-  protected String xslTitle;
-  protected String xslUri;
-  protected ChannelRuntimeData runtimeData;
-  protected String media;
-  protected MediaManager mm;
+    // state table
+    static final Map stateTable=Collections.synchronizedMap(new HashMap());
+    static final String systemCacheId="org.jasig.portal.channels.CGenericXSLT"; // to prepend to the system-wide cache key
 
-  // Get channel parameters.
-  public void setStaticData (ChannelStaticData sd)
-  {
-    this.xmlUri = sd.getParameter("xmlUri");
-    this.sslUri = sd.getParameter("sslUri");
-    if (sslUri != null)
-      this.sslUri = UtilitiesBean.fixURI(sslUri);
-
-    this.xslTitle = sd.getParameter("xslTitle");
-    this.xslUri = sd.getParameter("xslUri");
-    mm=new MediaManager();
-  }
-
-  public void setRuntimeData (ChannelRuntimeData rd)
-  {
-    runtimeData = rd;
-
-    String xmlUri = runtimeData.getParameter("xmlUri");
-
-    if (xmlUri != null)
-      this.xmlUri = xmlUri;
-
-    String sslUri = runtimeData.getParameter("sslUri");
-
-    if (sslUri != null)
-      this.sslUri = UtilitiesBean.fixURI(sslUri);
-
-    String xslTitle = runtimeData.getParameter("xslTitle");
-
-    if (xslTitle != null)
-      this.xslTitle = xslTitle;
-
-    String xslUri = runtimeData.getParameter("xslUri");
-
-    if (xslUri != null)
-      this.xslUri = xslUri;
-
-    media = mm.getMedia(runtimeData.getBrowserInfo());
-  }
-
-  public void receiveEvent (PortalEvent ev)
-  {
-    // No events to process here
-  }
-
-  // Access channel runtime properties.
-  public ChannelRuntimeProperties getRuntimeProperties ()
-  {
-    return new ChannelRuntimeProperties ();
-  }
-
-  public void renderXML(DocumentHandler out) throws PortalException
-  {
-    String xml;
-    Document xmlDoc;
-
-    try	{
-	org.apache.xerces.parsers.DOMParser domParser = new org.apache.xerces.parsers.DOMParser();
-        org.jasig.portal.utils.DTDResolver dtdResolver = new org.jasig.portal.utils.DTDResolver();
-        domParser.setEntityResolver(dtdResolver);
-        domParser.parse(UtilitiesBean.fixURI(xmlUri));
-        xmlDoc = domParser.getDocument();
-    }
-    catch (IOException e) {
-	throw new ResourceMissingException (xmlUri, "", e.getMessage());
-    }
-    catch (SAXException se) {
-        throw new GeneralRenderingException("Problem parsing " + xmlUri + ": " + se);
-    }
-
-    runtimeData.put("baseActionURL", runtimeData.getBaseActionURL());
-    
-    try {
-        if (xslUri != null)
-	    XSLT.transform(xmlDoc, new URL(xslUri), out, runtimeData);
-        else {
-	    if (xslTitle != null)
-		XSLT.transform(xmlDoc, new URL(sslUri), out, runtimeData, xslTitle, media);
-	    else
-		XSLT.transform(xmlDoc, new URL(sslUri), out, runtimeData, media);
-        }
-    }
-    catch (SAXException se) {
-	throw new GeneralRenderingException("Problem performing the transformation:" + se.toString());
-    }
-    catch (IOException ioe) {
-        StringWriter sw = new StringWriter();
-        ioe.printStackTrace(new PrintWriter(sw));
-        sw.flush();
-        throw new GeneralRenderingException(sw.toString());
-    }
-  }
-
-    // ICacheable-related methods
-    public ChannelCacheKey generateKey() {
-	ChannelCacheKey k=new ChannelCacheKey();
-	k.setKey(this.getKey());
-	k.setKeyScope(ChannelCacheKey.SYSTEM_KEY_SCOPE);
-	k.setKeyValidity(new Long(System.currentTimeMillis()));
-	return k;
-    }
-
-    public boolean isCacheValid(Object validity) {
-	if(validity instanceof Long) {
-	    // set timeout to 15 minutes
-	    return (System.currentTimeMillis()-((Long)validity).longValue()<15*60*1000);
-	} else {
-	    return false;
+    // state class
+    private class CState {
+	private String xmlUri;
+	private String sslUri;
+	private String xslTitle;
+	private String xslUri;
+	private ChannelRuntimeData runtimeData;
+	public CState() {
+	    xmlUri=sslUri=xslTitle=xslUri=null;
+	    runtimeData=null;
 	}
     }
 
-  private String getKey()
-  {
-    // Maybe not the best way to generate a key, but it seems to work.
-    // If you know a better way, please change it!
-    StringBuffer sbKey = new StringBuffer(1024);
-    sbKey.append("xmluri:").append(xmlUri).append(", ");
-    sbKey.append("sslUri:").append(sslUri).append(", ");
-    sbKey.append("xslUri:").append(xslUri).append(", ");
-    sbKey.append("params:").append(runtimeData.toString()).append(", ");
-    sbKey.append("media:").append(media);
-    return sbKey.toString();
-  }
+    static MediaManager mm=new MediaManager();
+
+    public void setStaticData (ChannelStaticData sd, String uid) {
+	CState state=new CState();
+	state.xmlUri = sd.getParameter("xmlUri");
+	state.sslUri = sd.getParameter("sslUri");
+	if (state.sslUri != null)
+	    state.sslUri = UtilitiesBean.fixURI(state.sslUri);
+	state.xslTitle = sd.getParameter("xslTitle");
+	state.xslUri = sd.getParameter("xslUri");
+	stateTable.put(uid,state);
+    }
+    
+    public void setRuntimeData (ChannelRuntimeData rd, String uid) {
+	CState state=(CState)stateTable.get(uid);
+	if(state==null) {
+	    Logger.log(Logger.ERROR,"CGenericXSLT:setRuntimeData() : attempting to access a non-established channel! setStaticData() has never been called on the uid=\""+uid+"\"");
+	} else {
+	    // because of the portal rendering model, there is no reason to synchronize on state
+	    state.runtimeData=rd;
+	    String xmlUri = rd.getParameter("xmlUri");
+	    
+	    if (xmlUri != null) {
+		state.xmlUri = xmlUri;
+	    }
+	    
+	    String sslUri = rd.getParameter("sslUri");
+	    
+	    if (sslUri != null) {
+		state.sslUri = UtilitiesBean.fixURI(sslUri);
+	    }
+	    
+	    String xslTitle = rd.getParameter("xslTitle");
+	    
+	    if (xslTitle != null) { 
+		state.xslTitle = xslTitle;
+	    }
+	    
+	    String xslUri = rd.getParameter("xslUri");
+	    
+	    if (xslUri != null) { 
+		state.xslUri = xslUri;
+	    }
+	}
+    }
+
+    public void receiveEvent (PortalEvent ev, String uid) {
+	if(ev.getEventNumber()==PortalEvent.SESSION_DONE || ev.getEventNumber()==PortalEvent.UNSUBSCRIBE) {
+	    // clean up
+	    stateTable.remove(uid);
+	}
+    }
+    
+    public ChannelRuntimeProperties getRuntimeProperties (String uid)  {
+	ChannelRuntimeProperties rp=new ChannelRuntimeProperties();
+	// determine if such channel is registered
+	if(stateTable.get(uid)==null) {
+	    rp.setWillRender(false);
+	    Logger.log(Logger.ERROR,"CGenericXSLT:getRuntimeProperties() : attempting to access a non-established channel! setStaticData() has never been called on the uid=\""+uid+"\"");
+	}
+	return rp;
+    }
+
+    public void renderXML(DocumentHandler out,String uid) throws PortalException  {
+	CState state=(CState)stateTable.get(uid);
+	if(state==null) {
+	    Logger.log(Logger.ERROR,"CGenericXSLT:renderXML() : attempting to access a non-established channel! setStaticData() has never been called on the uid=\""+uid+"\"");
+	} else {
+	    String xml;
+	    Document xmlDoc;
+	    String media = mm.getMedia(state.runtimeData.getBrowserInfo());
+
+	    try {
+		org.apache.xerces.parsers.DOMParser domParser = new org.apache.xerces.parsers.DOMParser();
+		org.jasig.portal.utils.DTDResolver dtdResolver = new org.jasig.portal.utils.DTDResolver();
+		domParser.setEntityResolver(dtdResolver);
+		domParser.parse(UtilitiesBean.fixURI(state.xmlUri));
+		xmlDoc = domParser.getDocument();
+	    }
+	    catch (IOException e) {
+		throw new ResourceMissingException (state.xmlUri, "", e.getMessage());
+	    }
+	    catch (SAXException se) {
+		throw new GeneralRenderingException("Problem parsing " + state.xmlUri + ": " + se);
+	    }
+	    
+	    state.runtimeData.put("baseActionURL", state.runtimeData.getBaseActionURL());
+	    
+	    try {
+		if (state.xslUri != null)
+		    XSLT.transform(xmlDoc, new URL(state.xslUri), out, state.runtimeData);
+		else {
+		    if (state.xslTitle != null)
+			XSLT.transform(xmlDoc, new URL(state.sslUri), out, state.runtimeData, state.xslTitle, media);
+		    else
+			XSLT.transform(xmlDoc, new URL(state.sslUri), out, state.runtimeData, media);
+		}
+	    }
+	    catch (SAXException se) {
+		throw new GeneralRenderingException("Problem performing the transformation:" + se.toString());
+	    }
+	    catch (IOException ioe) {
+		StringWriter sw = new StringWriter();
+		ioe.printStackTrace(new PrintWriter(sw));
+		sw.flush();
+		throw new GeneralRenderingException(sw.toString());
+	    }
+	}
+    }
+
+    public ChannelCacheKey generateKey(String uid) {
+	CState state=(CState)stateTable.get(uid);
+	if(state==null) {
+	    Logger.log(Logger.ERROR,"CGenericXSLT:generateKey() : attempting to access a non-established channel! setStaticData() has never been called on the uid=\""+uid+"\"");
+	    return null;
+	} else {
+	    ChannelCacheKey k=new ChannelCacheKey();
+	    k.setKey(this.getKey(state));
+	    k.setKeyScope(ChannelCacheKey.SYSTEM_KEY_SCOPE);
+	    k.setKeyValidity(new Long(System.currentTimeMillis()));
+	    return k;
+	}
+
+    }
+
+    public boolean isCacheValid(Object validity,String uid) {
+	if(!(validity instanceof Long)) return false;
+	CState state=(CState)stateTable.get(uid);
+	if(state==null) {
+	    Logger.log(Logger.ERROR,"CGenericXSLT:isCacheValid() : attempting to access a non-established channel! setStaticData() has never been called on the uid=\""+uid+"\"");
+	    return false;
+	} else {
+	    return (System.currentTimeMillis()-((Long)validity).longValue()<15*60*1000);
+	}
+    }
+
+    private static String getKey(CState state)  {
+	// Maybe not the best way to generate a key, but it seems to work.
+	// If you know a better way, please change it!
+	
+	StringBuffer sbKey = new StringBuffer(1024);
+	sbKey.append(systemCacheId).append(": ");
+	sbKey.append("xmluri:").append(state.xmlUri).append(", ");
+	sbKey.append("sslUri:").append(state.sslUri).append(", ");
+	sbKey.append("xslUri:").append(state.xslUri).append(", ");
+	sbKey.append("params:").append(state.runtimeData.toString()).append(", ");
+	sbKey.append("media:").append(mm.getMedia(state.runtimeData.getBrowserInfo()));
+	return sbKey.toString();
+    }
 }

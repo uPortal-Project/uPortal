@@ -36,28 +36,17 @@
 package org.jasig.portal;
 
 /**
- * Channels implementing this interface are considered "privileged" because
- * they will have access to internal portal control structures such as the
- * HttpServletRequest, HttpServletReponse, and UserLayoutManager.  IPrivilegedChannel
- * is intended for channels that are integral to the framework such as those that
- * manage user preferences, channel publishing, and channel subscription.
- * IPrivilegedChannel is NOT intended for "normal" channels.  Channels
- * should normally implement {@link IChannel}.
- *
- * Portal administrators should only allow publishing/subscibing of channels
- * implementing IPrivilegedChannel if the following are true:
- *
- * <ul>
- * <li>The channel is an integral part of the uPortal framework, e.g. {@link org.jasig.portal.channels.CLogin}.</li>
- * <li>The channel is well-understood and will not cause harm.  An understanding of the
- * portal architecture is necessary to determine if this is true.</li>
- * <li>There is no way to implement the channel as an IChannel because access to
- * internal structures is absolutely necessary.</li>
- * </ul>
- * @author Peter Kharchenko, pkharchenko@interactivebusiness.com
+ * This is an ancestor of the {@link IPrivilegedChannel} interface, allows for more general
+ * handling of both regular and multithreaded ({@link IMultithreadedChannel}) privileged channels in the framework.
+ * @author Peter Kharchenko <a href="mailto:">pkharchenko@interactivebusiness.com</a>
  * @version $Revision$
- * @see IChannel
- * @see PortalControlStructures
+ * @see IPrivilegedChannel
  */
-public interface IPrivilegedChannel extends IChannel, IPrivileged {}
-
+public interface IPrivileged
+{
+    /**
+     * Passes portal control structure to the channel.
+     * @see PortalControlStructures
+     */
+    public void setPortalControlStructures(PortalControlStructures pcs) throws PortalException;
+}
