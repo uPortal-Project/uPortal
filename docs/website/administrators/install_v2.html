@@ -1,0 +1,920 @@
+<!DOCTYPE HTML PUBLIC "-//SoftQuad Software//DTD HoTMetaL PRO 6.0::19990601::extensions to HTML 4.0//EN" "hmpro6.dtd">
+<HTML>
+<HEAD>
+<TITLE>uPortal Getting Started Guide </TITLE>
+<LINK HREF="../uportal.css" REL="stylesheet">
+<!-- Use the following script to do rollovers in the left column of the
+page.  If you don't want to do rollovers, you can delete these script lines
+from this html.  If you do use this .js file to do the rollovers, be sure
+to name your images using the format filename-on.gif and filename-off.gif.  -->
+<SCRIPT LANGUAGE="Javascript" SRC="SwapImage.js">
+</SCRIPT>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<TABLE CELLSPACING="0" CELLPADDING="0" WIDTH="100%">
+         <TR>
+            <TD ALIGN="LEFT" VALIGN="BOTTOM" COLSPAN="3">
+               <IMG SRC="../images/uportal-head.gif" ALT="uPortal by JA-SIG" BORDER="0" HEIGHT="87" WIDTH="592">
+            </TD>
+         </TR>
+         <TR>
+            <TD COLSPAN="3" BGCOLOR="#FF6600">
+               <IMG SRC="../images/spacer.gif" ALT="" BORDER="0" HEIGHT="2" WIDTH="1">
+            </TD>
+         </TR>
+         <TR VALIGN="TOP">
+            <TD ALIGN="LEFT" WIDTH="150">
+               <TABLE CELLSPACING="0" CELLPADDING="0" WIDTH="100%" BORDER="0">
+                  <TBODY>
+                     <TR>
+                        <TD>
+                           <A HREF="http://www.ja-sig.org/" ONMOUSEOVER="swapImage('jahome','on')" ONMOUSEOUT="swapImage('jahome','off')">
+                               
+                              <IMG NAME="jahome" SRC="../images/jahome-off.gif" ALT="" BORDER="0" WIDTH="145" HEIGHT="32">
+                           </A>
+                        </TD>
+                     </TR>
+                     <TR>
+                        <TD>
+                           <A HREF="../index.html" ONMOUSEOVER="swapImage('about','on')" ONMOUSEOUT="swapImage('about','off')">
+                               
+                              <IMG NAME="about" SRC="../images/about-off.gif" ALT="" BORDER="0" WIDTH="145" HEIGHT="32">
+                           </A>
+                        </TD>
+                     </TR>
+                     <TR>
+                        <TD>
+                           <A HREF="../faq.html" ONMOUSEOVER="swapImage('faq','on')" ONMOUSEOUT="swapImage('faq','off')">
+                               
+                              <IMG NAME="faq" SRC="../images/faq-off.gif" ALT="" BORDER="0" WIDTH="145" HEIGHT="32">
+                           </A>
+                        </TD>
+                     </TR>
+                     <TR>
+                        <TD>
+                           <A HREF="../download.html" ONMOUSEOVER="swapImage('downld','on')" ONMOUSEOUT="swapImage('downld','off')">
+                               
+                              <IMG NAME="downld" SRC="../images/downld-off.gif" ALT="" BORDER="0" WIDTH="145" HEIGHT="32">
+                           </A>
+                        </TD>
+                     </TR>
+                     <TR>
+                        <TD>
+                           <A HREF="../docs.html" ONMOUSEOVER="swapImage('docs','on')" ONMOUSEOUT="swapImage('docs','off')">
+                               
+                              <IMG NAME="docs" SRC="../images/docs-off.gif" ALT="" BORDER="0" WIDTH="145" HEIGHT="32">
+                           </A>
+                        </TD>
+                     </TR>
+                     <TR>
+                        <TD>
+                           <A HREF="../getinv.html" ONMOUSEOVER="swapImage('getinv','on')" ONMOUSEOUT="swapImage('getinv','off')">
+                               
+                              <IMG NAME="getinv" SRC="../images/getinv-off.gif" ALT="" BORDER="0" WIDTH="145" HEIGHT="32">
+                           </A>
+                        </TD>
+                     </TR>
+                     <TR>
+                        <TD>
+                           <A HREF="../cvs.html" ONMOUSEOVER="swapImage('coderep','on')" ONMOUSEOUT="swapImage('coderep','off')">
+                               
+                              <IMG NAME="coderep" SRC="../images/coderep-off.gif" ALT="" BORDER="0" WIDTH="145" HEIGHT="32">
+                           </A>
+                        </TD>
+                     </TR>
+                     <TR>
+                        <TD>
+                           <A HREF="../bugs.html" ONMOUSEOVER="swapImage('bug','on')" ONMOUSEOUT="swapImage('bug','off')">
+                               
+                              <IMG NAME="bug" SRC="../images/bug-off.gif" ALT="" BORDER="0" WIDTH="145" HEIGHT="32">
+                           </A>
+                        </TD>
+                     </TR>
+                     <TR>
+                        <TD>
+                           <A HREF="../license.html" ONMOUSEOVER="swapImage('license','on')" ONMOUSEOUT="swapImage('license','off')">
+                               
+                              <IMG NAME="license" SRC="../images/license-off.gif" ALT="" BORDER="0" WIDTH="145" HEIGHT="32">
+                           </A>
+                        </TD>
+                     </TR>
+                  </TBODY>
+               </TABLE>
+               <BR>
+               <BR>
+               <!--nested table for mellon logo -->
+               <IMG SRC="../images/mellon.gif" ALT="" BORDER="0" WIDTH="145" HEIGHT="93">
+            </TD>
+            <TD WIDTH="10">&nbsp;         
+            </TD>
+            
+            <!-- main body goes in this table cell -->
+            <TD>
+               <h2>
+                  uPortal 2.0.1: Getting Started
+               </h2>
+               
+               
+                  <h3>Table of Contents</h3>
+                  <dl>
+                     <dt>
+                     <a href="#Overview">
+                         Overview 
+                     </a>
+                     </dt>
+                     <dt>
+                     <a href="#choose">
+                        Quick Start or uPortal Only?
+                     </a>
+                     </dt>
+                     <dd>
+                     <dl>
+                        <dt>
+                        <a href="#quick-why">
+                           Why choose the Quick Start distribution?
+                        </a>
+                        </dt>
+                        <dt>
+                        <a href="#uportal-why">
+                           Why choose the uPortal-only  distribution?
+                        </a>
+                        </dt>
+                     </dl>
+                     </dd>
+                     <dt>
+                     <a href="#quickstart">
+                         Quick Start Distribution 
+                     </a>
+                     </dt>
+                     <dd>
+                     <dl>
+                        <dt>
+                        <a href="#quick-include">
+                           What is included.
+                        </a>
+                        </dt>
+                        <dt>
+                        <a href="#quick-know">
+                           What do you need to know?
+                        </a>
+                        </dt>
+                        <dt>
+                        <a href="#quick-require">
+                           Requirements
+                        </a>
+                        </dt>
+                        <dt>
+                        <a href="#quick-starting">
+                           Starting uPortal
+                        </a>
+                        </dt>
+                        <dt>
+                        <a href="#quick-customize">
+                           Customization
+                        </a>
+                        </dt>
+                     </dl>
+                     </dd>
+                     <dt>
+                     <a href="#uportalonly">
+                         uPortal Only Distribution 
+                     </a>
+                     </dt>
+                     <dd>
+                     <dl>
+                        <dt>
+                        <a href="#uportal-include">
+                           What is included.
+                        </a>
+                        </dt>
+                        <dt>
+                        <a href="#uportal-know">
+                           What do you need to know?
+                        </a>
+                        </dt>
+                        <dt>
+                        <a href="#uportal-require">
+                           Requirements
+                        </a>
+                        </dt>
+                        <dt>
+                        <a href="#uportal-webapp">
+                           Setting up a Web Application Environment
+                        </a>
+                        </dt>
+                        <dt>
+                        <a href="#uportal-database">
+                           Setting up a Database
+                        </a>
+                        </dt>
+                     </dl>
+                     </dd>
+                  </dl>
+               
+               <hr noshade height=2>
+        
+            
+               
+                  <h3 class="title" style="clear: both">   <a name="Overview"></a> Overview </h3>
+               
+            
+            <p> This document provides installation and configuration information necessary for getting started 
+               using uPortal. It will describe the &#8220;quick start&#8221; and 
+               &#8220;uPortal only&#8221; distributions. </p>
+         
+         
+            
+            <h3 class="title" style="clear: both">
+            <a name="choose"></a>
+            Quick Start or uPortal Only?
+            </h3>
+            <p>
+            UPortal is available either as a &#8220;Quick Start&#8221; release or as a
+            &#8220;uPortal-only&#8221; distribution.  Both releases are available from
+            the 
+            <a href="http://mis105.mis.udel.edu" target="_top"> <i> JA-SIG uPortal website</i> </a>
+            in the 
+            <a href="http://mis105.mis.udel.edu/ja-sig/uportal/download.html" target="_top"> <i> download</i> </a>
+             section.
+            </p>
+            
+            <h4 class="title">
+            <a name="quick-why"></a>
+            Why choose the Quick Start distribution?
+            </h4>
+            <p>
+            The quick-start release distribution is provided for those who want to get
+            familiar with uPortal  quickly and easily, without having to compile and deploy
+            code, and without having to set up a database or servlet engine. 
+            </p>
+            <p>
+            For those that only require an installation of uPortal for demonstration or
+            evaluation purposes, or if one wants to do some simple channel developement,
+            the quick-start distribution is the best choice.  The quick-start distribution
+            contains a copy of the uPortal only distribution which has been configured to
+            run in the quick-start environment.
+            </p>
+            
+            
+            <h4 class="title">
+            <a name="uportal-why"></a>
+            Why choose the uPortal-only  distribution?
+            </h4>
+            <p>
+            This distribution is targeted towards people who would like to
+            install uPortal in a development or production  environment.  It contains
+            uPortal source code and properties files, but not a servlet container,
+            directory, or relational database,  which are required.
+            </p>
+            <p>
+            For those that want to create a production version of uPortal,
+            develop uPortal channels, or have other web applications which will run on the
+            same server the uPortal only distribution may be the best choice.
+            </p>
+            
+         
+         
+         <h3 class="title" style="clear: both">
+            <a name="quickstart"></a>
+            Quick Start Distribution
+            </h3>
+            <h4 class="title"> <a name="quick-what"></a> What is included?</h4>
+            <p>
+            The quick start distribution is downloaded as a 
+            <i>
+               zip
+            </i>
+             file which extracts to directory called 
+            <tt>
+               uPortal_2_0_1-quick-start
+            </tt>
+            .  The directory contains the following...
+            </p>
+        
+            <ul type="disc">
+               <li>
+               <p>
+               uPortal 2.0.1 - directory (
+               <tt>
+                  uPortal_rel-2.0.1
+               </tt>
+               ) containing
+               the uPortal source code, stylesheets, and other required files (essentially,
+               the uPortal-only distibution).
+               </p>
+               </li>
+               <li>
+               <p>
+               Tomcat 4.0.3 - a directory (
+               <tt>
+                  Tomcat_4-0-3
+               </tt>
+               ) containing
+               the Tomcat servlet container with the uPortal context preloaded.
+               </p>
+               </li>
+               <li>
+               <p>
+                Ant 1.4.1 - a directory (
+               <tt>
+                  Ant_1-4-1
+               </tt>
+               ) containing
+               a distribution of the Jakart-Ant build tool.
+               </p>
+               </li>
+               <li>
+               <p>
+                HypersonicSQL 1.4.3 - a directory (
+               <tt>
+                  HypersonicSQL-1-4-3
+               </tt>
+               ) containing
+               a distribution of the HypersonicSQL database engine. The databaes is preloaded
+               with the data and tables required by uPortal.
+               </p>
+               </li>
+            </ul>
+         
+            <p>
+            ...and the following files
+            </p>
+           
+            <ul type="disc">
+               <li>
+               <p>
+               <tt>
+               build.xml
+               </tt>
+               - build file for use by Ant.
+               </p>
+               </li>
+               <li>
+               <p>
+               <tt>
+               fix-unix-modes.sh
+               </tt>
+               - a unix script for setting file permissions.
+               </p>
+               </li>
+               <li>
+               <p>
+               <tt>
+               ant.sh, ant.bat, ant
+               </tt>
+               - scripts and windows batch file for invoking the Ant built tool.
+               </p>
+               </li>
+            </ul>
+               
+            
+            <h4 class="title">
+            <a name="quick-what"></a>
+            What do you need to know?
+            </h4>
+            <p>
+            Installation of the quick-start release requires basic knowledge
+            of the operation system upon which it will be installed.  If any customization
+            or configuration is desired, knowledge of the Jakarta-Ant build tool, Tomcat
+            servlet container environment, and basic SQL database skills are useful.
+            </p>
+            
+     
+            <h4 class="title">
+            <a name="quick-require"></a>
+            Requirements
+            </h4>
+        
+         
+            <ul type="disc">
+               <li>
+               <p>
+               The Java Development Kit (JDK) version 1.3 or higher must be installed.
+               </p>
+               </li>
+               <li>
+               <p>
+               JAVA_HOME environment variable must be set.
+               </p>
+               </li>
+               <li>
+               <p>
+               Nothing else should be running on port 8080 and 8887.
+               </p>
+               </li>
+            </ul>
+         
+        
+            <h4 class="title">
+               <a name="quick-starting"></a>
+               Starting uPortal
+               </h4>
+               <p>
+               The quick-start release is started using the 
+               <span class="emphasis">
+                  <em>
+                     Ant
+                  </em>
+               </span>
+                build tool and a filed called 
+               <tt>
+                  build.xml
+               </tt>
+                which contains a set of &#8220;targets&#8221; to start the SQL database and 
+               <span class="emphasis">
+                  <em>
+                     Tomcat
+                  </em>
+               </span>
+                servlet container.  The release contains a script and batch file for running 
+               <span class="emphasis">
+                  <em>
+                     Ant
+                  </em>
+               </span>
+                in either a Windows (ant.bat) or Unix (ant.sh) environment.
+               </p>
+           
+               <ul type="disc">
+                  <li>
+                  <p>
+                  Windows:
+<pre class="programlisting">./ant <span class="emphasis"><em>target</em></span>
+</pre>
+                  <p></p>
+                  </li>
+                  <li>
+                  <p>
+                  Unix:
+<pre class="programlisting">./ant.sh <span class="emphasis"><em>target</em></span>
+</pre>
+                  <p></p>
+                  </li>
+               </ul>
+            
+            
+               <h4 class="title">
+               <a name="quick-database"></a>
+               Starting the Database
+               </h4>
+               <p>
+               The HypersonicSQL database is preloaded with the tables required for uPortal
+               and must be started using 
+               <span class="emphasis">
+                  <em>
+                     Ant
+                  </em>
+               </span>
+               .  The 
+               <span class="emphasis">
+                  <em>
+                     sql
+                  </em>
+               </span>
+                target starts the database server which loads the files located in the 
+               <tt>
+                  HypersonicSQ-1-4-3/demo
+               </tt>
+                directory.  To start up the database use one of the following:
+               </p>
+            
+               <ul type="disc">
+                  <li>
+                  <p>
+                  Windows:
+<pre class="programlisting">
+./ant sql
+</pre>
+                  <p></p>
+                  </li>
+                  <li>
+                  <p>
+                  Unix:
+<pre class="programlisting">
+./ant.sh sql
+</pre>
+                  <p></p>
+                  </li>
+               </ul>
+            
+               
+          
+               <h4 class="title">
+               <a name="quick-tomcat"></a>
+               Starting Tomcat
+               </h4>
+               <p>
+               The quick-start release includes the 
+               <span class="emphasis">
+                  <em>
+                     Tomcat 
+                  </em>
+               </span>
+                servlet container with  uPortal context  preloaded. Tomcat must be started
+               using 
+               <span class="emphasis">
+                  <em>
+                     Ant
+                  </em>
+               </span>
+               .  The 
+               <span class="emphasis">
+                  <em>
+                     tomcatstart
+                  </em>
+               </span>
+                target starts Tomcat using one of the following:
+               </p>
+           
+               <ul type="disc">
+                  <li>
+                  <p>
+                  Windows:
+<pre class="programlisting">
+./ant tomcatstart
+</pre>
+                  
+                  
+                  <h3 class="title"> Note: </h3>
+                  <p>
+                  Starting Tomcat in windows opens up a separate window to display the output of
+                  the Tomcat application.
+                  </p>
+                  
+                  <p></p>
+                  </li>
+                  <li>
+                  <p>
+                  Unix:
+<pre class="programlisting">
+./ant.sh tomcatstart
+</pre>
+                  <p></p>
+                  </li>
+               </ul>
+            
+           
+          
+              
+             
+              <h4 class="title">
+              <a name="quick-running"></a>
+              Running uPortal
+              </h4>
+           
+              <p>
+              Once the HypersonicSQL database and Tomcat are started you can access uPortal
+              with your browser by entering the following URL: 
+              <a href="http://localhost:8080/uPortal2" target="_top">http://localhost:8080/uPortal2</a>
+              </p>
+              <p>
+              You can login to uPortal using one of the following username/password
+              combinations:
+              </p>
+<pre class="programlisting">
+                        demo/demo
+                        student/student
+                        staff/staff
+                        faculty/faculty
+                        developer/developer
+</pre>
+           
+
+
+
+               <h4 class="title">
+                  <a name="quick-stopping"></a>
+                  Stopping Tomcat
+               </h4>
+
+
+            <p>
+            The  
+            <span class="emphasis">
+               <em>
+                  Tomcat 
+               </em>
+            </span>
+             servlet engine can be shutdown using 
+            <span class="emphasis">
+               <em>
+                  Ant
+               </em>
+            </span>
+            .  The 
+            <span class="emphasis">
+               <em>
+                  tomcatstop
+               </em>
+            </span>
+             target stopsTomcat using one of the following:
+            </p>
+   
+               <ul type="disc">
+                  <li>
+                  <p>
+                  Windows:
+   <pre class="programlisting">
+   ./ant tomcatstop
+   </pre>
+                  <p></p>
+                  </li>
+                  <li>
+                  <p>
+                  Unix:
+   <pre class="programlisting">
+   ./ant.sh tomcatstop
+   </pre>
+                  <p></p>
+                  </li>
+               </ul>
+   
+
+               <h4 class="title"><a name="quick-custom"></a>Customization</h4>
+
+
+               <p>
+               Customization of uPortal is described in the uPortal-only section below.
+               </p>
+
+                <h3>
+                     <a name="uportalonly"></a>
+                     uPortal Only Distribution
+                  </h3>
+               
+            <h4 class="title"> <a name="uportal-include"></a> What is included?</h4>
+                  
+               <p>
+               The uPortal-only distribution is downloaded as a 
+               <i>
+                  zip
+               </i>
+                file which extracts to directory called 
+               <tt>
+                  uPortal_rel-2-0-1.zip
+               </tt>
+               .  The directory contains the following...
+               
+               </p>
+               
+                  <ul type="disc">
+                     <li>
+                     <p>
+                     <tt>
+                        docs
+                     </tt>
+                      - directory containing
+                     documentation about uPortal.
+                     </p>
+                     </li>
+                     <li>
+                     <p>
+                     <tt>
+                        src
+                     </tt>
+                      - directory hierarchy  containing the source code for 
+                     <span class="emphasis">
+                        <em>
+                           uPortal
+                        </em>
+                     </span>
+                     .
+                     </p>
+                     </li>
+                     <li>
+                     <p>
+                     <tt>
+                        lib
+                     </tt>
+                      - directory containing necessary 
+                     <span class="emphasis">
+                        <em>
+                           jar
+                        </em>
+                     </span>
+                     files for the Java API's used by uPortal.
+                     </p>
+                     </li>
+                     <li>
+                     <p>
+                     <tt>
+                        webpages
+                     </tt>
+                      - hierarchy
+                     which contains stylesheets, image files, java servlet pages, and other
+                     necessary files for uPortal.
+                     </p>
+                     </li>
+                     <li>
+                     <p>
+                     <tt>
+                        properties
+                     </tt>
+                      - directory which
+                     contains properties and configuration files used by uPortal.
+                     </p>
+                     </li>
+                  </ul>
+               
+               <p>
+               ...and the following files
+               </p>
+               
+                  <ul type="disc">
+                     <li>
+                     <p>
+                     <tt>
+                        build.xml
+                     </tt>
+                      - build file for use by Ant.
+                     </p>
+                     </li>
+                     <li>
+                     <p>
+                     <tt>
+                        build.properies
+                     </tt>
+                      - properties file for use by Ant.
+                     </p>
+                     </li>
+                  </ul>
+               
+            
+            
+               
+               <h4 class="title"> <a name="uportal-know"></a> What do you need to know? </h4>
+                  
+               <p>
+                Use of this distribution requires knowledge of J2EE
+               environments and the Ant tool from the Apache Jakarta project.
+               </p>
+            
+            
+               <h4 class="title"> <a name="uportal-require"></a> Requirements </h4>
+                  
+               <ul type="disc">
+                     <li>
+                     <p>
+                     The Java Development Kit (JDK) version 1.3 or higher must be installed.
+                     </p>
+                     </li>
+                     <li>
+                     <p>
+                     JAVA_HOME environment variable must be set.
+                     </p>
+                     </li>
+                     <li>
+                     <p>
+                     The Jakarta-Ant build tool (version 1.4.1 or later).
+                     </p>
+                     </li>
+                     <li>
+                     <p>
+                     A web application environment such as 
+                     <span class="emphasis">
+                        <em>
+                           Tomcat
+                        </em>
+                     </span>
+                      or 
+                     <span class="emphasis">
+                        <em>
+                           IBM Websphere
+                        </em>
+                     </span>
+                     </p>
+                     </li>
+                     <li>
+                     <p>
+                     An SQL database such as 
+                     <span class="emphasis">
+                        <em>
+                           HypersonicSQL
+                        </em>
+                     </span>
+                     ,
+                     <span class="emphasis">
+                        <em>
+                           Oracle
+                        </em>
+                     </span>
+                     , or 
+                     <span class="emphasis">
+                        <em>
+                           PostgreSQL
+                        </em>
+                     </span>
+                     </p>
+                     </li>
+                  </ul>
+               
+            
+            <h4 class="title"> <a name="uportal-webapp"></a> Setting up a Web Application 
+                        Environment </h4>
+                  
+               <p> The uPortal web application requires a web application enviroment 
+                  such as <span class="emphasis"> <em> Tomcat </em> </span> or 
+                  <span class="emphasis"> <em> IBM Webshere </em> </span> . If 
+                  you already have a web application environment installed on 
+                  a server, the uPortal context can just be deployed to that environment, 
+                  otherwise you will have to install one. The build files for 
+                  uPortal have been set up such that it can be easily deployed 
+                  into Tomcat. The Jakarta-Tomcat servlet container can be downloaded 
+                  from: <a href="http://jakarta.apache.org/tomcat/index.html" target="_top">http://jakarta.apache.org/tomcat/index.html</a> 
+                  . Version 4.0.4 is recommended. </p>
+               
+               
+                   <h4 class="title">
+                    <a name="uportal-tomcat"></a>
+                    Setting up Tomcat
+                    </h4>
+                   <p>
+                  Choose a directory location for tomcat and download the binaries zipfile. 
+                  Unzip the file to create the TOMCAT_HOME (for example: 
+                  <tt>
+                     /usr/loca/jakarta-tomcat-4_0_3
+                  </tt>
+                   on unix or 
+                  <tt>
+                     C:/Tomcat
+                  </tt>
+                  on windows.
+                  </p>
+               
+               <h4 class="title"> <a name="uportal-database"></a> Setting up A Database</h4>
+                  
+         <p> The uPortal system can be deployed such that a database from several 
+            different vendors may be used.  Installation and configuration information
+				about databases can be found in the:</p>
+			<p><a href="database.html">Database Installation and Configuration Document</a></p>
+				
+                  </TD>
+         </TR>
+      </TABLE>
+      
+      <!-- page footer -->
+      <TABLE CELLSPACING="0" CELLPADDING="0" WIDTH="100%">
+         <TBODY>
+            <TR>
+               <TD ALIGN="CENTER">&nbsp;
+                  
+               </TD>
+            </TR>
+            <TR>
+               <TD BGCOLOR="#ff6600" ALIGN="CENTER">
+                  <IMG HEIGHT="2"
+                  SRC="../images/spacer.gif" WIDTH="1" BORDER="0" ALT=".">
+               </TD>
+            </TR>
+            <TR>
+               <TD ALIGN="CENTER">
+                  <IMG HEIGHT="3" SRC="../images/spacer.gif" WIDTH="1"
+                  BORDER="0" ALT=".">
+                  <BR>
+                  <FONT FACE="Verdana, Arial, sans-serif"
+                     SIZE="1">
+                     <A HREF="http://www.ja-sig.org/">
+                        JA-SIG Home
+                     </A>
+                     <IMG HEIGHT="13" ALT="*" SRC="../images/diamond-lo.gif" WIDTH="8" BORDER="0">
+                     <A HREF="../index.html">
+                         About uPortal
+                     </A>
+                     <IMG HEIGHT="13" ALT="*" SRC="../images/diamond-lo.gif" WIDTH="8" BORDER="0">
+                     <A HREF="../faq.html">
+                        FAQ
+                     </A>
+                     <IMG HEIGHT="13" ALT="*" SRC="../images/diamond-lo.gif" WIDTH="8" BORDER="0">
+                     <A HREF="../download.html">
+                        Download
+                     </A>
+                     <IMG HEIGHT="13" ALT="*" SRC="../images/diamond-lo.gif" WIDTH="8" BORDER="0">
+                     <A HREF="../docs.html">
+                        Documentation
+                     </A>
+                     <IMG HEIGHT="13" ALT="*" SRC="../images/diamond-lo.gif" WIDTH="8" BORDER="0">
+                     <A HREF="../getinv.html">
+                        Getting Involved
+                     </A>
+                     <IMG HEIGHT="13" ALT="*" SRC="../images/diamond-lo.gif" WIDTH="8" BORDER="0">
+                     <BR>
+                     <A HREF="../cvs.html">
+                        Code Repository
+                     </A>
+                     <IMG HEIGHT="13" ALT="*" SRC="../images/diamond-lo.gif" WIDTH="8" BORDER="0">
+                     <A HREF="../bugs.html">
+                        Reporting Bugs
+                     </A>
+                     <IMG HEIGHT="13" ALT="*" SRC="../images/diamond-lo.gif" WIDTH="8" BORDER="0">
+                     <A HREF="../license.html">
+                        License
+                     </A>
+                     <IMG HEIGHT="13" ALT="*" SRC="../images/diamond-lo.gif" WIDTH="8" BORDER="0">
+                  </FONT>
+               </TD>
+            </TR>
+         </TBODY>
+      </TABLE>
+      <!-- end page footer -->
+   </BODY>
+</HTML>
