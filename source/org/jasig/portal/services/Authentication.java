@@ -69,21 +69,31 @@ public class Authentication
     ic.authenticate();
     me=ic.getPrincipal(); /* get the principal which may have changed */
 
+    // Check to see if the user is authenticated
     boolean bAuthenticated = ic.isAuthenticated ();
 
     if(bAuthenticated)
     {
+      // Get the AdditionalDescriptor from the security context
+      // This is created by the SecurityContext and should be an
+      // IPerson object
       IAdditionalDescriptor addInfo = ic.getAdditionalDescriptor();
 
+      // Create a new IPerson if the descriptor is missing or is not an IPerson
       if (addInfo == null || !(addInfo instanceof PersonImpl))
       {
-        m_Person = new PersonImpl ();
+        // Create a new IPerson
+        m_Person = new PersonImpl();
+        
+        // Make sure the user's global ID is set
         m_Person.setID(me.getGlobalUID());
+        
+        // Set the user's full name
         m_Person.setFullName(me.getFullName());
-        m_Person.setAttribute("globalUID", Integer.toString(me.getGlobalUID()));
       }
       else
       {
+        // Set the IPerson to be the AdditionalDescriptor object
         m_Person = (IPerson)addInfo;
       }
     }
