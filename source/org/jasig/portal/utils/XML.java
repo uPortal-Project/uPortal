@@ -98,13 +98,23 @@ public class XML {
    * @return a nicely formatted String suitable for printing
    */
   public static String serializeNode(Node node) {
-    String returnString = null;
-    StringWriter outString = new StringWriter();
     OutputFormat format = new OutputFormat();
     format.setOmitXMLDeclaration(true);
     format.setIndenting(true);
-    XMLSerializer xsl = new XMLSerializer(outString, format);
+    return serializeNode(node,format);
+  }
 
+  /**
+   * Gets the contents of an XML Document or Element as a nicely formatted string.
+   * This method is useful for debugging.
+   * @param node the Node to print; must be of type Document or Element
+   * @param indent a boolean value, true if the output document should be indented to visually indicate its structure.
+   * @return a nicely formatted String suitable for printing
+   */
+  public static String serializeNode(Node node, OutputFormat format ) {
+    String returnString = null;
+    StringWriter outString = new StringWriter();
+    XMLSerializer xsl = new XMLSerializer(outString, format);
     try {
       if (node.getNodeType() == Node.DOCUMENT_NODE) {
         xsl.serialize((Document)node);
