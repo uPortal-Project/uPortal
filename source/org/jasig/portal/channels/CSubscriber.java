@@ -146,7 +146,7 @@ public class CSubscriber implements IPrivilegedChannel
 
     if(userLayoutXML==null)userLayoutXML=ulm.getUserLayoutCopy();
 
-    if(channelRegistry==null) channelRegistry = chanReg.getRegistryXML(catID, role);
+    channelRegistry = chanReg.getRegistryXML(catID, role);
 
 
     action = runtimeData.getParameter ("action");
@@ -263,14 +263,14 @@ public class CSubscriber implements IPrivilegedChannel
 
                     for (int j=0; j<channels.getLength(); j++) {
                         channel = channels.item(j);
-                        destination.insertBefore (userLayoutXML.importNode(channel, false), null);
+                        destination.insertBefore (userLayoutXML.importNode(channel, true), null);
                     }
                 }
                 else {
 
                     //Node channel = channelRegistry.getElementById (subIDs[i]);
                       //System.out.println(userLayoutXML + ", " + channel + ", " + destination);
-                    destination.insertBefore (userLayoutXML.importNode(channel, false), null);
+                    destination.insertBefore (userLayoutXML.importNode(channel, true), null);
                 }
             }
             modified = true;
