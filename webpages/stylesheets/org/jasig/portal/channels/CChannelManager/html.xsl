@@ -1248,43 +1248,6 @@
               </tr>
               <tr class="uportal-channel-text">
                 <td align="center" valign="top">
-                  <input type="checkbox" name="minimizable" value="true">
-                  <xsl:if test="/manageChannels/selectControls/params/step/channel/@minimizable='true'">
-                  <xsl:attribute name="checked">checked</xsl:attribute></xsl:if>
-                  </input>
-                  </td>
-                <td>
-                  <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
-                </td>
-                <td>
-                  <strong>Minimizable</strong>
-                </td>
-                <td>
-                  <img alt="interface image" src="{$mediaPath}/transparent.gif" width="16" height="8"/>
-                </td>
-                <td align="center">
-                  <strong>
-                    <img alt="interface image" src="{$mediaPath}/min.gif" width="16" height="16"/>
-                  </strong>
-                </td>
-                <td>
-                  <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
-                </td>
-                <td>when selected, channel controls remain but channel content does not render</td>
-              </tr>
-              <tr class="uportal-channel-text">
-                <td align="center" valign="top" colspan="7">
-                  <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
-                    <tr>
-                      <td>
-                        <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
-                      </td>
-                    </tr>
-                  </table>
-                </td>
-              </tr>
-              <tr class="uportal-channel-text">
-                <td align="center" valign="top">
                   <input type="checkbox" name="editable" value="true">
                   <xsl:if test="/manageChannels/selectControls/params/step/channel/@editable='true'">
                   <xsl:attribute name="checked">checked</xsl:attribute></xsl:if>
@@ -1412,41 +1375,6 @@
                   <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
                 </td>
                 <td>when selected, passes print events</td>
-              </tr>
-              <tr>
-                <td align="center" valign="top" colspan="7">
-                  <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
-                    <tr>
-                      <td>
-                        <img alt="interface image" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
-                      </td>
-                    </tr>
-                  </table>
-                </td>
-              </tr>
-              <tr class="uportal-channel-text">
-                <td align="center" valign="top">
-                  <input type="checkbox" name="detachable" value="true">
-                  <xsl:if test="/manageChannels/selectControls/params/step/channel/@detachable='true'">
-                  <xsl:attribute name="checked">checked</xsl:attribute></xsl:if>
-                  </input>
-                   </td>
-                <td>
-                  <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
-                </td>
-                <td>
-                  <strong>Detachable</strong>
-                </td>
-                <td>
-                  <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
-                </td>
-                <td align="center">
-                  <img alt="interface image" src="{$mediaPath}/detach.gif" width="16" height="16"/>
-                </td>
-                <td>
-                  <img alt="interface image" src="{$mediaPath}/transparent.gif"/>
-                </td>
-                <td>when selected, renders the channel in a separate window</td>
               </tr>
             </table>
           </td>
@@ -2351,11 +2279,6 @@
 
 
         <td><a href="{$baseActionURL}?uPCM_action=selectControls&amp;uPCM_capture=reviewChannel">
-        <xsl:choose>
-        <xsl:when test="//reviewChannel//channel[@minimizable='true']">
-<img alt="true" src="{$mediaPath}/checked.gif" width="16" height="16" border="0"/><img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:when>
-<xsl:otherwise><img alt="false" src="{$mediaPath}/check.gif" width="16" height="16" border="0"/><img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:otherwise></xsl:choose>
-Minimizable<br/>
 
         <xsl:choose>
         <xsl:when test="//reviewChannel//channel[@editable='true']">
@@ -2373,11 +2296,7 @@ Has About<br/>        <xsl:choose>
         <xsl:when test="//reviewChannel//channel[@printable='true']">
 <img alt="true" src="{$mediaPath}/checked.gif" width="16" height="16" border="0"/><img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:when>
 <xsl:otherwise><img alt="false" src="{$mediaPath}/check.gif" width="16" height="16" border="0"/><img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:otherwise></xsl:choose>
-Printable<br/>        <xsl:choose>
-        <xsl:when test="//reviewChannel//channel[@detachable='true']">
-<img alt="true" src="{$mediaPath}/checked.gif" width="16" height="16" border="0"/><img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:when>
-<xsl:otherwise><img alt="false" src="{$mediaPath}/check.gif" width="16" height="16" border="0"/><img alt="interface image" src="{$mediaPath}/transparent.gif" width="4" height="4" border="0"/></xsl:otherwise></xsl:choose>
-Detachable<br/>
+Printable<br/>
 
 
 

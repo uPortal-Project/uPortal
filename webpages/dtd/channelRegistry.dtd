@@ -48,16 +48,14 @@ $Revision$
   name CDATA #REQUIRED 
   description CDATA #REQUIRED
   title CDATA #REQUIRED 
+  class CDATA #REQUIRED
+  typeID CDATA #REQUIRED
   timeout CDATA "10000"
-  minimizable (true|false) "false"
-  detachable (true|false) "false"
+  fname CDATA #IMPLIED
   editable (true|false) "false"
   hasHelp (true|false) "false"
   hasAbout (true|false) "false"
-  printable (true| false) "false"
-  class CDATA #REQUIRED
-  typeID CDATA #REQUIRED
-  fname CDATA #IMPLIED>
+  printable (true| false) "false">
 
 
 <!ELEMENT parameter EMPTY>

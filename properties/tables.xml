@@ -116,11 +116,9 @@
       <column> <name>CHAN_APVL_ID</name>     <type>INTEGER</type>                      </column>
       <column> <name>CHAN_APVL_DT</name>     <type>TIMESTAMP</type>                    </column>
       <column> <name>CHAN_TIMEOUT</name>     <type>INTEGER</type>                      </column>
-      <column> <name>CHAN_MINIMIZABLE</name> <type>VARCHAR</type>   <param>1</param>   </column>
       <column> <name>CHAN_EDITABLE</name>    <type>VARCHAR</type>   <param>1</param>   </column>
       <column> <name>CHAN_HAS_HELP</name>    <type>VARCHAR</type>   <param>1</param>   </column>
       <column> <name>CHAN_HAS_ABOUT</name>   <type>VARCHAR</type>   <param>1</param>   </column>
-      <column> <name>CHAN_DETACHABLE</name>  <type>VARCHAR</type>   <param>1</param>   </column>
       <column> <name>CHAN_FNAME</name>       <type>VARCHAR</type>   <param>255</param> </column>
     </columns>
     <primary-key>CHAN_ID</primary-key>

@@ -198,11 +198,9 @@ public class RDBMUserLayoutStore
     Timestamp chanPublDt;
     Timestamp chanApvlDt;
     int chanTimeout;
-    boolean chanMinimizable;
     boolean chanEditable;
     boolean chanHasHelp;
     boolean chanHasAbout;
-    boolean chanDetachable;
     String chanName = "";
     String chanFName = "";
     ArrayList parameters;
@@ -230,20 +228,18 @@ public class RDBMUserLayoutStore
     }
 
     public ChannelDefinition(int chanId, String chanTitle, String chanDesc, String chanClass, int chanTypeId, int chanPupblUsrId, int chanApvlId,
-      Timestamp chanPublDt, Timestamp chanApvlDt, int chanTimeout, String chanMinimizable, String chanEditable, String chanHasHelp,
-      String chanHasAbout, String chanDetachable, String chanName, String chanFName) {
+      Timestamp chanPublDt, Timestamp chanApvlDt, int chanTimeout, String chanEditable, String chanHasHelp,
+      String chanHasAbout, String chanName, String chanFName) {
         this(chanId, chanTitle, chanDesc, chanClass, chanTypeId, chanPupblUsrId, chanApvlId, chanPublDt,  chanApvlDt, chanTimeout,
-              chanMinimizable != null && chanMinimizable.equalsIgnoreCase("Y"),
               chanEditable!= null && chanEditable.equalsIgnoreCase("Y"),
               chanHasHelp!= null && chanHasHelp.equalsIgnoreCase("Y"),
               chanHasAbout!= null && chanHasAbout.equalsIgnoreCase("Y"),
-              chanDetachable!= null && chanDetachable.equalsIgnoreCase("Y"),
               chanName, chanFName);
     }
 
     public ChannelDefinition(int chanId, String chanTitle, String chanDesc, String chanClass, int chanTypeId, int chanPupblUsrId, int chanApvlId,
-      Timestamp chanPublDt, Timestamp chanApvlDt, int chanTimeout, boolean chanMinimizable, boolean chanEditable, boolean chanHasHelp,
-      boolean chanHasAbout, boolean chanDetachable, String chanName, String chanFName) {
+      Timestamp chanPublDt, Timestamp chanApvlDt, int chanTimeout, boolean chanEditable, boolean chanHasHelp,
+      boolean chanHasAbout, String chanName, String chanFName) {
 
       this.chanId = chanId;
       this.chanTitle = chanTitle;
@@ -255,11 +251,9 @@ public class RDBMUserLayoutStore
       this.chanPublDt = chanPublDt;
       this.chanApvlDt = chanApvlDt;
       this.chanTimeout = chanTimeout;
-      this.chanMinimizable =chanMinimizable;
       this.chanEditable = chanEditable;
       this.chanHasHelp = chanHasHelp;
       this.chanHasAbout = chanHasAbout;
-      this.chanDetachable = chanDetachable;
       this.chanName = chanName;
       this.chanFName =chanFName;
       }
@@ -275,8 +269,8 @@ public class RDBMUserLayoutStore
       /**
        * Minimum attributes a channel must have
        */
-      private Element getBase(DocumentImpl doc, String idTag, String chanClass, boolean minimizable,
-        boolean editable, boolean hasHelp, boolean  hasAbout, boolean detachable) {
+      private Element getBase(DocumentImpl doc, String idTag, String chanClass,
+        boolean editable, boolean hasHelp, boolean  hasAbout) {
         Element channel = doc.createElement("channel");
         doc.putIdentifier(idTag, channel);
         channel.setAttribute("ID", idTag);
@@ -290,11 +284,9 @@ public class RDBMUserLayoutStore
         channel.setAttribute("fname", chanFName);
         channel.setAttribute("class", chanClass);
         channel.setAttribute("typeID", chanTypeId + "");
-        channel.setAttribute("minimizable", minimizable ? "true" : "false");
         channel.setAttribute("editable", editable ? "true" : "false");
         channel.setAttribute("hasHelp", hasHelp ? "true" : "false");
         channel.setAttribute("hasAbout", hasAbout ? "true" : "false");
-        channel.setAttribute("detachable", detachable ? "true" : "false");
         return channel;
       }
 
@@ -325,8 +317,7 @@ public class RDBMUserLayoutStore
        * Display a message where this channel should be
        */
       public Element getDocument(DocumentImpl doc, String idTag, String statusMsg, int errorId) {
-        Element channel = getBase(doc, idTag, "org.jasig.portal.channels.CError", false, false, false,
-                                  false, false);
+        Element channel = getBase(doc, idTag, "org.jasig.portal.channels.CError", false, false, false);
         addParameters(doc, channel);
         channel.appendChild(nodeParameter(doc, "CErrorMessage", statusMsg));
         channel.appendChild(nodeParameter(doc, "CErrorChanId", idTag));
@@ -337,8 +328,7 @@ public class RDBMUserLayoutStore
        * return an xml representation of this channel
        */
       public Element getDocument(DocumentImpl doc, String idTag) {
-        Element channel = getBase(doc, idTag, chanClass, chanMinimizable, chanEditable, chanHasHelp,
-          chanHasAbout, chanDetachable);
+        Element channel = getBase(doc, idTag, chanClass, chanEditable, chanHasHelp, chanHasAbout);
         channel.setAttribute("description", chanDesc);
         addParameters(doc, channel);
         return channel;
@@ -503,7 +493,7 @@ public class RDBMUserLayoutStore
    protected static final MyPreparedStatement getChannelPstmt(Connection con) throws SQLException {
     String sql;
     sql = "SELECT UC.CHAN_TITLE,UC.CHAN_DESC,UC.CHAN_CLASS,UC.CHAN_TYPE_ID,UC.CHAN_PUBL_ID,UC.CHAN_APVL_ID,UC.CHAN_PUBL_DT,UC.CHAN_APVL_DT,"+
-      "UC.CHAN_TIMEOUT,UC.CHAN_MINIMIZABLE,UC.CHAN_EDITABLE,UC.CHAN_HAS_HELP,UC.CHAN_HAS_ABOUT,UC.CHAN_DETACHABLE,UC.CHAN_NAME,UC.CHAN_FNAME";
+      "UC.CHAN_TIMEOUT,UC.CHAN_EDITABLE,UC.CHAN_HAS_HELP,UC.CHAN_HAS_ABOUT,UC.CHAN_NAME,UC.CHAN_FNAME";
 
     if (supportsOuterJoins) {
       sql += ",CHAN_PARM_NM, CHAN_PARM_VAL,CHAN_PARM_OVRD,CHAN_PARM_DESC " + dbStrings.channel;
@@ -627,11 +617,11 @@ public class RDBMUserLayoutStore
         channel = new ChannelDefinition(chanId, rs.getString(1), rs.getString(2), rs.getString(3),
         rs.getInt(4), rs.getInt(5), rs.getInt(6), rs.getTimestamp(7), rs.getTimestamp(8), rs.getInt(9),
           rs.getString(10), rs.getString(11), rs.getString(12), rs.getString(13),
-          rs.getString(14), rs.getString(15), rs.getString(16));
+          rs.getString(14));
 
         int dbOffset = 0;
         if (pstmtChannelParm == null) { // we are using a join statement so no need for a new query
-          dbOffset = 16;
+          dbOffset = 14;
         } else {
           rs.close();
           pstmtChannelParm.clearParameters();
@@ -1516,11 +1506,9 @@ public class RDBMUserLayoutStore
       if (sqlTimeout != null && sqlTimeout.trim().length() != 0) {
         timeout  = sqlTimeout;
       }
-      String sqlMinimizable = dbBool(channel.getAttribute("minimizable"));
       String sqlEditable = dbBool(channel.getAttribute("editable"));
       String sqlHasHelp = dbBool(channel.getAttribute("hasHelp"));
       String sqlHasAbout = dbBool(channel.getAttribute("hasAbout"));
-      String sqlDetachable = dbBool(channel.getAttribute("detachable"));
       String sqlName = sqlEscape(channel.getAttribute("name"));
       String sqlFName = sqlEscape(channel.getAttribute("fname"));
 
@@ -1540,11 +1528,9 @@ public class RDBMUserLayoutStore
         "CHAN_APVL_ID=NULL, " +
         "CHAN_APVL_DT=NULL, " +
         "CHAN_TIMEOUT=" + timeout + ", " +
-        "CHAN_MINIMIZABLE='" + sqlMinimizable + "', " +
         "CHAN_EDITABLE='" + sqlEditable + "', " +
         "CHAN_HAS_HELP='" + sqlHasHelp + "', " +
         "CHAN_HAS_ABOUT='" + sqlHasAbout + "', " +
-        "CHAN_DETACHABLE='" + sqlDetachable + "', " +
         "CHAN_NAME='" + sqlName + "', " +
         "CHAN_FNAME='" + sqlFName + "' " +
         "WHERE CHAN_ID=" + id;
@@ -1552,11 +1538,11 @@ public class RDBMUserLayoutStore
         stmt.executeUpdate(sUpdate);
       } else {
         String sInsert = "INSERT INTO UP_CHANNEL (CHAN_ID, CHAN_TITLE, CHAN_DESC, CHAN_CLASS, CHAN_TYPE_ID, CHAN_PUBL_ID, CHAN_PUBL_DT,  CHAN_TIMEOUT, "
-            + "CHAN_MINIMIZABLE, CHAN_EDITABLE, CHAN_HAS_HELP, CHAN_HAS_ABOUT, CHAN_DETACHABLE, CHAN_NAME, CHAN_FNAME) ";
+            + "CHAN_EDITABLE, CHAN_HAS_HELP, CHAN_HAS_ABOUT, CHAN_NAME, CHAN_FNAME) ";
         sInsert += "VALUES (" + id + ", '" + sqlTitle + "', '" + sqlDescription + "', '" + sqlClass + "', " + sqlTypeID + ", "
-            + publisher.getID() + ", " + sysdate + ", " + timeout + ", '" + sqlMinimizable
+            + publisher.getID() + ", " + sysdate + ", " + timeout
             + "', '" + sqlEditable + "', '" + sqlHasHelp + "', '" + sqlHasAbout
-            + "', '" + sqlDetachable + "', '" + sqlName + "', '" + sqlFName + "')";
+            + "', '" + sqlName + "', '" + sqlFName + "')";
         LogService.instance().log(LogService.DEBUG, "RDBMUserLayoutStore::addChannel(): " + sInsert);
         stmt.executeUpdate(sInsert);
       }

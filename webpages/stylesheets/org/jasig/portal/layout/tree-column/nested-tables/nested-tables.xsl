@@ -254,18 +254,14 @@
 							<img alt="edit" src="media/org/jasig/portal/layout/treeColumn/edit001.gif" width="16" height="16" border="0"/>
 						</a>
 					</xsl:if>
-					<xsl:if test="@minimizable='true'">
-						<a>
-							<xsl:attribute name="href">index.jsp?userLayoutTarget=<xsl:value-of select="@ID"/>&amp;action=minimize</xsl:attribute>
-							<img alt="minimize" src="media/org/jasig/portal/layout/treeColumn/min001.gif" width="16" height="16" border="0"/>
-						</a>
-					</xsl:if>
-					<xsl:if test="@detachable='true'">
-						<a>
-							<xsl:attribute name="href">JavaScript:openWin('detach.jsp?tab=<xsl:number count="folder"/>&amp;column=<xsl:number count="column"/>&amp;channel=<xsl:number count="channel"/>', 'detachedWindow', 550, 450)</xsl:attribute>
-							<img alt="detach" src="media/org/jasig/portal/layout/treeColumn/detach001.gif" width="16" height="16" border="0"/>
-						</a>
-					</xsl:if>
+					<a>
+						<xsl:attribute name="href">index.jsp?userLayoutTarget=<xsl:value-of select="@ID"/>&amp;action=minimize</xsl:attribute>
+						<img alt="minimize" src="media/org/jasig/portal/layout/treeColumn/min001.gif" width="16" height="16" border="0"/>
+					</a>
+					<a>
+						<xsl:attribute name="href">JavaScript:openWin('detach.jsp?tab=<xsl:number count="folder"/>&amp;column=<xsl:number count="column"/>&amp;channel=<xsl:number count="channel"/>', 'detachedWindow', 550, 450)</xsl:attribute>
+						<img alt="detach" src="media/org/jasig/portal/layout/treeColumn/detach001.gif" width="16" height="16" border="0"/>
+					</a>
 					<xsl:if test="@removable='true'">
 						<a>
 							<xsl:attribute name="href">index.jsp?userLayoutTarget=<xsl:value-of select="@ID"/>&amp;action=remove</xsl:attribute>

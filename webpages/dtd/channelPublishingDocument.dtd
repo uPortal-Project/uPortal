@@ -72,16 +72,12 @@ $Revision$
 <!ATTLIST value display CDATA #IMPLIED>
 
 
-
 <!ELEMENT defaultControls EMPTY>
 <!ATTLIST defaultControls 
-	minimizable  (true|false) "false"
 	editable  (true|false) "false"
 	hasHelp  (true|false) "false"
 	hasAbout  (true|false) "false"
-	printable  (true|false) "false"
-	removable  (true|false) "true"
-	detachable  (true|false) "false">
+	printable  (true|false) "false">
 
 
 
