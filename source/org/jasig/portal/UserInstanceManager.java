@@ -42,27 +42,33 @@ import  javax.servlet.http.HttpServletRequest;
 import  javax.servlet.http.HttpSessionBindingEvent;
 import  javax.servlet.http.HttpSessionBindingListener;
 import  java.util.HashMap;
+import  org.jasig.portal.security.PortalSecurityException;
 import  org.jasig.portal.security.IPerson;
-import  org.jasig.portal.security.PersonManager;
+import  org.jasig.portal.security.PersonManagerFactory;
+import  org.jasig.portal.services.LogService;
 
 
 /**
  * Caches UserInstance objects
  */
 public class UserInstanceManager {
-  private static HashMap userInstanceCache = new HashMap(200);
-  private static GuestUserInstance m_guestUserInstance = null;
 
   /**
    * Returns the UserInstance object that is associated with the given request.
    * @param request Incoming HttpServletRequest
    * @return UserInstance object associated with the given request
    */
-  public static UserInstance getUserInstance (HttpServletRequest request) {
-    // Retrieve the person object that is associated with the request
-    IPerson person = PersonManager.getPerson(request);
-    // Return the UserInstance from the cache if it exists
-    UserInstance userInstance = (UserInstance)userInstanceCache.get(request.getSession(false).getId());
+  public static UserInstance getUserInstance (HttpServletRequest request) throws PortalSecurityException {
+    IPerson person = null;
+    try {
+      // Retrieve the person object that is associated with the request
+      person = PersonManagerFactory.getPersonManagerInstance().getPerson(request);
+    } catch (Exception e) {
+      LogService.instance().log(LogService.ERROR, "UserInstanceManager: Unable to retrieve IPerson!", e);
+      throw  (new PortalSecurityException("Could not retrieve IPerson"));
+    }
+    // Return the UserInstance object if it's in the session
+    UserInstance userInstance = (UserInstance)request.getSession(false).getAttribute("org.jasig.portal.UserInstance");
     if (userInstance != null) {
       return  (userInstance);
     }
@@ -75,40 +81,10 @@ public class UserInstanceManager {
     else {
       userInstance = new UserInstance(person);
     }
-    // Add the new userInstance to the cache
-    userInstanceCache.put(request.getSession().getId(), userInstance);
-    // Add the session listener to the session
-    request.getSession().setAttribute("UIMSL", new UserInstanceManagerSessionListener());
+    // Put the user instance in the user's session
+    request.getSession(false).setAttribute("org.jasig.portal.UserInstance", userInstance);
     // Return the new UserInstance
     return  (userInstance);
-  }
-
-  /**
-   * Removes UserInstance from the cache
-   * @param request
-   */
-  public static void removeUserInstance (HttpServletRequest request) {
-    // Remove the user instance from the cache
-    userInstanceCache.remove(request.getSession().getId());
-  }
-
-  private static class UserInstanceManagerSessionListener
-      implements HttpSessionBindingListener {
-
-    /**
-     * put your documentation comment here
-     * @param bindingEvent
-     */
-    public void valueBound (HttpSessionBindingEvent bindingEvent) {}
-
-    /**
-     * Removes UserInstance from cache when associated session expires
-     * @param bindingEvent
-     */
-    public void valueUnbound (HttpSessionBindingEvent bindingEvent) {
-      // Remove the UserInstance from the cache
-      userInstanceCache.remove(bindingEvent.getSession().getId());
-    }
   }
 }
 
