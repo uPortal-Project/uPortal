@@ -15,11 +15,6 @@
     <load-on-startup>0</load-on-startup>
   </servlet>
 
-  <servlet-mapping>
-    <servlet-name>uPortal</servlet-name>
-    <url-pattern>*.uP</url-pattern>
-  </servlet-mapping>
-
   <servlet>
     <servlet-name>Authentication</servlet-name>
     <servlet-class>org.jasig.portal.AuthenticationServlet</servlet-class>
@@ -29,6 +24,11 @@
     </init-param>
     <load-on-startup>0</load-on-startup>
   </servlet>
+
+  <servlet-mapping>
+    <servlet-name>uPortal</servlet-name>
+    <url-pattern>*.uP</url-pattern>
+  </servlet-mapping>
 
   <servlet-mapping>
     <servlet-name>Authentication</servlet-name>
