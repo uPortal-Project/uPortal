@@ -2,6 +2,10 @@
 
 <!DOCTYPE channel-definition SYSTEM "channelDefinition.dtd">
 
+<!-- This is a test portlet that comes with the Pluto Portal.
+     http://jakarta.apache.org/pluto/
+ -->
+    
 <channel-definition>
 
     <title>Test Portlet 2</title>

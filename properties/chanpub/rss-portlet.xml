@@ -2,6 +2,11 @@
 
 <!DOCTYPE channel-definition SYSTEM "channelDefinition.dtd">
 
+<!-- You can download this RSS Sample Portlet from the Portlet Open Source Trading site (POST).
+     http://portlet-opensrc.sourceforge.net/
+     http://prdownloads.sourceforge.net/portlet-opensrc/RssPortlet.zip?download
+-->
+
 <channel-definition>
 
     <title>RSS Portlet</title>
