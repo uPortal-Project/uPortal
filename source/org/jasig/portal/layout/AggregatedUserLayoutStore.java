@@ -2376,8 +2376,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         if ( stmt != null ) stmt.close();
       }
     } catch ( Exception e ) {
-         e.printStackTrace();
-         log.error(e);
+         log.error("Error getting aggregated layout for user " + person, e);
          throw new PortalException(e);
       } finally {
           RDBMServices.releaseConnection(con);
@@ -2789,8 +2788,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
 
     } catch ( Exception e ) {
-         e.printStackTrace();
-         log.error(e);
+         log.error("Error concerning fragement " + fragmentIdStr, e);
          throw new PortalException(e);
       } finally {
           RDBMServices.releaseConnection(con);
