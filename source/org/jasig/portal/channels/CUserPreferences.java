@@ -667,7 +667,7 @@ public class CUserPreferences implements ISpecialChannel
     
   private void prepareReorder () {
       mode = BROWSE;
-      String folderID = runtimeData.getParameter ("folderID"); // the folder or channel ID
+      String folderID = runtimeData.getParameter ("elementID"); // the folder or channel ID
       String direction = runtimeData.getParameter ("dir"); // "up" or "down"
    
       Node element = userLayoutXML.getElementById (folderID);
