@@ -24,34 +24,63 @@ import java.util.Set;
  * @since uPortal 2.5
  */
 public final class MultivaluedPersonAttributeUtils {
-    private MultivaluedPersonAttributeUtils() { }
+
     
     /**
-     * Set the {@link Map} to use for mapping from a attribute name to another
-     * attribute name or {@link Set} of attribute names.
-     * <br>
-     * The passed {@link Map} must have keys of type {@link String} and values
-     * of type {@link String} or a {@link Set} of {@link String}.
+     * Translate from a more flexible Attribute to Attribute mapping format to a Map
+     * from String to Set of Strings.
      * 
-     * @param mapping {@link Map} from column names to attribute names.
+     * The point of the map is to map from attribute names in the underlying data store
+     * (e.g., JDBC column names, LDAP attribute names) to uPortal attribute names. 
+     * Any given underlying data store attribute might map to zero uPortal
+     * attributes (not appear in the map at all), map to exactly one uPortal attribute
+     * (appear in the Map as a mapping from a String to a String or as a mapping
+     * from a String to a Set containing just one String), or map to several uPortal
+     * attribute names (appear in the Map as a mapping from a String to a Set
+     * of Strings).
+     * 
+     * This method takes as its argument a {@link Map} that must have keys of 
+     * type {@link String} and values of type {@link String} or {@link Set} of 
+     * {@link String}s.  The argument must not be null and must have no null
+     * keys or null values.  It must contain no keys other than Strings and no
+     * values other than Strings or Sets of Strings.  This method will throw
+     * IllegalArgumentException if the method argument doesn't meet these 
+     * requirements.
+     * 
+     * This method returns a Map equivalent to its argument except whereever there
+     * was a String value in the Map there will instead be an immutable Set containing
+     * the String value.  That is, the return value is normalized to be a Map from
+     * String to Set (of String).
+     * 
+     * @param mapping {@link Map} from String names of attributes in the underlying store 
+     * to uP attribute names or Sets of such names.
+     * @return a Map from String to Set of Strings
      * @throws IllegalArgumentException If the {@link Map} doesn't follow the rules stated above.
      */
-    public static  Map parseAttributeToAttributeMapping(final Map mapping) {
+    static  Map parseAttributeToAttributeMapping(final Map mapping) {
         //null is assumed to be an empty map
         if (mapping == null) {
             return Collections.EMPTY_MAP;
         }
         //do a defenisve copy of the map
-        else {
             final Map mappedAttributesBuilder = new HashMap();
             
             for (final Iterator sourceAttrNameItr = mapping.keySet().iterator(); sourceAttrNameItr.hasNext(); ) {
-                final String sourceAttrName = (String)sourceAttrNameItr.next();
+                final Object key = sourceAttrNameItr.next();
                 
-                //The column name must exist
-                if (sourceAttrName == null)
+                //The key must exist
+                if (key == null) {
                     throw new IllegalArgumentException("The map from attribute names to attributes must not have any null keys.");
+                }
                 
+                // the key must be of type String
+                if (! (key instanceof String)) {
+                    throw new IllegalArgumentException("The map from attribute names to attributes must only have String keys.  Encountered a key of class [" + key.getClass().getName() + "]");
+                }
+                
+                final String sourceAttrName = (String) key;
+                
+                        
                 final Object mappedAttribute = mapping.get(sourceAttrName);
                 
                 //mapping cannot be null
@@ -63,7 +92,7 @@ public final class MultivaluedPersonAttributeUtils {
                     final Set mappedSet = Collections.singleton(mappedAttribute);
                     mappedAttributesBuilder.put(sourceAttrName, mappedSet);
                 }
-                //Create a defenisve copy of the mapped set & verify it's contents are strings
+                //Create a defenisve copy of the mapped set & verify its contents are strings
                 else if (mappedAttribute instanceof Set) {
                     final Set sourceSet = (Set)mappedAttribute;
                     final Set mappedSet = new HashSet();
@@ -88,7 +117,6 @@ public final class MultivaluedPersonAttributeUtils {
             }
             
             return Collections.unmodifiableMap(mappedAttributesBuilder);
-        }
     }
     
     /**
@@ -97,14 +125,28 @@ public final class MultivaluedPersonAttributeUtils {
      * <br>
      * Since multi-valued attributes end up with a value of type
      * {@link List}, passing in a {@link List} of any type will
-     * cause it's contents to be added to the <code>results</code>
+     * cause its contents to be added to the <code>results</code>
      * {@link Map} directly under the specified <code>key</code>
      * 
      * @param results The {@link Map} to modify.
      * @param key The key to add the value for.
      * @param value The value to add for the key.
+     * @throws IllegalArgumentException if any argument is null
      */
-    public static void addResult(final Map results, final Object key, final Object value) {
+    static void addResult(final Map results, final Object key, final Object value) {
+        
+        if (results == null) {
+            throw new IllegalArgumentException("Cannot add a result to a null map.");
+        }
+        
+        if (key == null) {
+            throw new IllegalArgumentException("Cannot add a result with a null key.");
+        }
+        
+        if (value == null) {
+            throw new IllegalArgumentException("Cannot add a result with a null value.");
+        }
+        
         final Object currentValue = results.get(key);
 
         //Key doesn't have a value yet, add the value 
@@ -162,7 +204,12 @@ public final class MultivaluedPersonAttributeUtils {
      * @param source The {@link Collection} to flatten.
      * @return A flattened {@link Collection} that contains all entries from all levels of <code>source</code>.
      */
-    public static Collection flattenCollection(final Collection source) {
+    static Collection flattenCollection(final Collection source) {
+        
+        if (source == null) {
+            throw new IllegalArgumentException("Cannot flatten a null collection.");
+        }
+        
         final Collection result = new LinkedList();
         
         for (final Iterator setItr = source.iterator(); setItr.hasNext();) {
@@ -178,5 +225,13 @@ public final class MultivaluedPersonAttributeUtils {
         }
         
         return result;
+    }
+    
+    /**
+     * This class is not meant to be instantiated.
+     */
+    private MultivaluedPersonAttributeUtils() {
+        // private constructor makes this static utility method class
+        // uninstantiable.
     }
 }
