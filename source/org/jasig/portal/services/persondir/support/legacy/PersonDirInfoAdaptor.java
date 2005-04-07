@@ -106,7 +106,7 @@ final class PersonDirInfoAdaptor {
                 source = new RDBMServicesDataSource(dsRefName);
             } else {
                 JndiObjectFactoryBean factory = new JndiObjectFactoryBean();
-                factory.setJndiName(dsRefName);
+                factory.setJndiName("jdbc/" + dsRefName);
                 factory.setResourceRef(true);
                 
                 try {
