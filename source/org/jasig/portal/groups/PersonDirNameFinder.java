@@ -81,20 +81,23 @@ public class PersonDirNameFinder
     private String primGetName (String key) throws java.sql.SQLException {
         String name = key;
         Map userInfo = pa.getUserAttributes(name);
-        Object displayName = userInfo.get("displayName");
-        String displayNameStr = "";
-        if (displayName != null)
+        if (userInfo != null)
         {
-            if (displayName instanceof java.util.List)
+            Object displayName = userInfo.get("displayName");
+            String displayNameStr = "";
+            if (displayName != null)
             {
-                List displayNameList = (List) displayName;
-                if (! displayNameList.isEmpty() )
-                    { displayNameStr = (String)displayNameList.get(0); } 
-            }
-            else displayNameStr = (String)displayName;
+                if (displayName instanceof java.util.List)
+                {
+                    List displayNameList = (List) displayName;
+                    if (! displayNameList.isEmpty() )
+                        { displayNameStr = (String)displayNameList.get(0); } 
+                }
+                else displayNameStr = (String)displayName;
         
-            if (! displayNameStr.trim().equals("")) 
-                { name = displayNameStr; }
+                if (! displayNameStr.trim().equals("")) 
+                    { name = displayNameStr; }
+            }
         }
         return  name;
     }
