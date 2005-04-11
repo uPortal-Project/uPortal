@@ -306,18 +306,6 @@ public class SimpleUserLayoutManagerTest extends TestCase implements LayoutEvent
 
     }
 
-    public void testMoveUnderRootNode() throws Exception {
-        // try moving a channel
-        String nodeId="n3";
-        String targetId="root";
-        IUserLayoutNodeDescription rootNode=man.getNode(targetId);
-        assertTrue("Can channel \""+nodeId+"\" be moved to folder \""+targetId+"\"",man.canMoveNode(nodeId,targetId,null));
-        man.moveNode(nodeId,targetId,null);
-        assertEquals("New channel attachment point",man.getParentId(nodeId),targetId);
-        assertEquals("Next siblingId",man.getNextSiblingId(nodeId),null);
-        //  System.out.println("Layout\n"+XML.serializeNode(man.getUserLayoutDOM()));
-    }
-
     public void testUpdateChannel() throws Exception {
         String channelId="n8";
         UserLayoutChannelDescription chan=(UserLayoutChannelDescription) man.getNode(channelId);
