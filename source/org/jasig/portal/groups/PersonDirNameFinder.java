@@ -1,4 +1,4 @@
-/* Copyright 2002 The JA-SIG Collaborative.  All rights reserved.
+/* Copyright 2002, 2005 The JA-SIG Collaborative.  All rights reserved.
 *  See license distributed with this file and
 *  available online at http://www.uportal.org/license.html
 */
@@ -6,56 +6,56 @@
 
 package  org.jasig.portal.groups;
 
-import java.sql.SQLException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jasig.portal.services.PersonDirectory;
 import org.jasig.portal.services.persondir.IPersonAttributeDao;
 import org.jasig.portal.utils.SoftHashMap;
 
 
 /**
- * PersonDirectory implementation of <code>IEntityNameFinder</code> for <code>IPersons</code>.
+ * Implementation of <code>IEntityNameFinder</code> for <code>IPersons</code> by 
+ * looking up displayName from an <code>IPersonAttributeDao</code>.
  * @author Alex Vigdor
  * @version $Revision$
  */
 public class PersonDirNameFinder
         implements IEntityNameFinder {
-    // Singleton instance:
-    private static IEntityNameFinder singleton;
-    private static IPersonAttributeDao pa;
-    // Our cache of entity names:
-    private SoftHashMap names;
+    
+    /**
+     * Data Access Object backing this name finder.
+     */
+    private IPersonAttributeDao paDao;
+    
+    /** Our cache of entity names: */
+    private Map names = Collections.synchronizedMap(new SoftHashMap());
 
     /**
-     * ReferenceIPersonNameFinder constructor comment.
+     * Instantiate a PersonDirNameFinder backed by the given
+     * IPersonAttributeDao.
+     * @param pa DAO to back this PersonDirNameFinder
      */
-    private PersonDirNameFinder () throws SQLException
-    {
-        super();
-        pa = PersonDirectory.getPersonAttributeDao();
-        names = new SoftHashMap();
+    PersonDirNameFinder (IPersonAttributeDao pa) {
+        this.paDao = pa;
     }
 
-    /**
-     * Given the key, returns the entity's name.
-     * @param key java.lang.String
-     */
-    public String getName (String key) throws Exception {
-        if (primGetNames().get(key) == null) {
-            primGetNames().put(key, primGetName(key));
+
+    public String getName (String key) {
+        String name = (String) this.names.get(key);
+        
+        if (name == null) {
+            // cached name not found, get name from underlying DAO.
+            name = primGetName(key);
+            // cache the name
+            this.names.put(key, name);
         }
-        return  (String)primGetNames().get(key);
+        return  name;
     }
 
-    /**
-     * Given an array of keys, returns the names of the entities.  If a key
-     * is not found, its name will be null.
-     * @param keys java.lang.String[]
-     */
-    public java.util.Map getNames (java.lang.String[] keys) throws Exception {
+
+    public java.util.Map getNames (java.lang.String[] keys) {
         Map selectedNames = new HashMap();
         for (int i = 0; i < keys.length; i++) {
             String name = getName(keys[i]);
@@ -64,23 +64,19 @@ public class PersonDirNameFinder
         return  selectedNames;
     }
 
-    /**
-     * Returns the entity type for this <code>IEntityFinder</code>.
-     * @return java.lang.Class
-     */
+
     public Class getType () {
         return  org.jasig.portal.security.IPerson.class;
     }
 
     /**
-     * put your documentation comment here
-     * @param key
-     * @return
-     * @exception java.sql.SQLException
+     * Actually lookup a user name using the underlying IPersonAttributeDao.
+     * @param key - entity key which in this case is a unique identifier for a user
+     * @return the display name for the identified user
      */
-    private String primGetName (String key) throws java.sql.SQLException {
+    private String primGetName (String key) {
         String name = key;
-        Map userInfo = pa.getUserAttributes(name);
+        Map userInfo = this.paDao.getUserAttributes(name);
         if (userInfo != null)
         {
             Object displayName = userInfo.get("displayName");
@@ -102,22 +98,13 @@ public class PersonDirNameFinder
         return  name;
     }
 
-
     /**
-     * @return java.util.Map
+     * Get a static singleton instance of this class backed by PersonDirectory.
+     * @return singleton PersonDirNameFinder backed by PersonDirectory
+     * @deprecated as of uP 2.5 instead use PersonDirNameFinderFactory
      */
-    private Map primGetNames () {
-        return  names;
-    }
-
-    /**
-     * @return IEntityNameFinder
-     */
-    public static synchronized IEntityNameFinder singleton () throws SQLException {
-        if (singleton == null) {
-            singleton = new PersonDirNameFinder();
-        }
-        return  singleton;
+    public static IEntityNameFinder singleton () {
+        return new PersonDirNameFinderFactory().newFinder();
     }
 
     /**
@@ -125,7 +112,7 @@ public class PersonDirNameFinder
      * @return a string representation of the receiver
      */
     public String toString () {
-        return  "IEntityNameFinder for " + getType().getName();
+        return  "PersonDirNameFinder backed by " + this.paDao;
     }
 }
 
