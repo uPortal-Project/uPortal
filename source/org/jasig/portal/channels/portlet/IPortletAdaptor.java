@@ -16,6 +16,8 @@ package org.jasig.portal.channels.portlet;
  * @since uPortal 2.5
  */
 public interface IPortletAdaptor {
+    
+    // this marker interface declares no methods.
 
 }
 
