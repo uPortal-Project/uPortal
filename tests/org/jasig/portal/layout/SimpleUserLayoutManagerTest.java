@@ -27,6 +27,13 @@ import org.w3c.dom.Document;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
  
+/*
+ * TODO: This testcase is SERIOUSLY BROKEN.  It is testing against a sample layout
+ * XML that is not of the structure that is actually used in uPortal, failing to reflect
+ * a change to place a root <folder/> element under the root <layout/> element,
+ * making the root <layout/> element a mere decorator, that happened around
+ * uPortal 2.2.
+ */
 
 /**
  * JUnit testcase for SimpleUserLayoutManager.

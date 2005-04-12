@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE greeting SYSTEM "userLayout.dtd">
 
+<!--
+This sample layout fragment is seriously broken.  It
+does not reflect changes to layout structure as of approximately
+uPortal 2.2 that introduced a single child folder element under the root
+layout element.
+
+CVS Metadata:
+$Revision$ $Date$
+
+-->
+
 <layout ID="root">
     <folder ID="s1" hidden="false" immutable="false" name="Header folder"
         type="header" unremovable="false">
