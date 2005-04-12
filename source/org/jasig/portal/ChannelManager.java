@@ -34,10 +34,10 @@ import org.jasig.portal.channels.error.CError;
 import org.jasig.portal.channels.error.ErrorCode;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.layout.IUserLayout;
+import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.LayoutEvent;
 import org.jasig.portal.layout.LayoutEventListener;
 import org.jasig.portal.layout.LayoutMoveEvent;
-import org.jasig.portal.layout.TransientUserLayoutManagerWrapper;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.properties.PropertiesManager;
@@ -729,12 +729,10 @@ public class ChannelManager implements LayoutEventListener {
         if ( fname != null )
         {
             // need to get to wrapper for obtaining a subscribe id
-            TransientUserLayoutManagerWrapper iulm =
-                (TransientUserLayoutManagerWrapper) upm
-                .getUserLayoutManager();
+            IUserLayoutManager ulm = upm.getUserLayoutManager();
             // get a subscribe id for the fname
             try {
-             channelTarget = iulm.getSubscribeId(fname);
+                channelTarget = ulm.getSubscribeId(fname);
             } catch ( PortalException pe ) {
                log.error("ChannelManager::processRequestChannelParameters(): Unable to get subscribe ID for fname="+fname, pe);
               }
