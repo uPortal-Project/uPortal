@@ -20,6 +20,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.pluto.om.common.Preference;
 import org.apache.pluto.om.common.PreferenceSet;
 import org.jasig.portal.channels.portlet.CPortletAdapter;
+import org.jasig.portal.concurrency.CachingException;
 import org.jasig.portal.container.om.common.PreferenceSetImpl;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IEntity;
@@ -210,15 +211,6 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
         } finally {
             stmt.close();
         }
-      } catch (Exception e) {
-          log.error(e.getMessage(), e);
-          if (e instanceof SQLException)
-              throw (SQLException)e;
-          else {
-            SQLException sqle = new SQLException(e.getMessage());
-            sqle.initCause(e);
-            throw sqle;
-        }
       } finally {
         RDBMServices.releaseConnection(con);
       }
@@ -256,15 +248,6 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
           throw sqle;
         } finally {
             stmt.close();
-        }
-      } catch (Exception e) {
-          log.error(e.getMessage(), e);
-          if (e instanceof SQLException)
-              throw (SQLException)e;
-          else {
-            SQLException sqle = new SQLException(e.getMessage());
-            sqle.initCause(e);
-            throw sqle;
         }
       } finally {
         RDBMServices.releaseConnection(con);
@@ -321,15 +304,6 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
       } finally {
           stmt.close();
       }
-    } catch (Exception e) {
-        log.error(e.getMessage(), e);
-        if (e instanceof SQLException)
-            throw (SQLException)e;
-        else {
-            SQLException sqle = new SQLException(e.getMessage());
-            sqle.initCause(e);
-            throw sqle;
-        }
     } finally {
       RDBMServices.releaseConnection(con);
     }
@@ -448,33 +422,38 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
             }
           }
 
+          IPortletPreferencesStore portletPrefStore = PortletPreferencesStoreFactory.getPortletPreferencesStoreImpl();
+          PreferenceSet preferences = null;
           try {
-              IPortletPreferencesStore portletPrefStore = PortletPreferencesStoreFactory.getPortletPreferencesStoreImpl();
-              PreferenceSet preferences = portletPrefStore.getDefinitionPreferences(channelPublishId);
-
-              for (Iterator prefItr = preferences.iterator(); prefItr.hasNext();) {
-                  Preference pref = (Preference)prefItr.next();
-
-                  String name = pref.getName();
-                  String value = "";
-                  String override;
-
-                  if (pref.isReadOnly()) {
-                      override = "N";
-                  }
-                  else {
-                      override = "Y";
-                  }
-
-                  //Since publish params only support single valued params just look for the first value.
-                  Iterator valuesItr = pref.getValues();
-                  if (valuesItr.hasNext())
-                      value = (String)valuesItr.next();
-
-                  channelDef.addParameter(CPortletAdapter.portletPreferenceNamePrefix + name, value, override);
-              }
+              preferences = portletPrefStore.getDefinitionPreferences(channelPublishId);
           }
-          catch (Exception e) { }
+          catch (Exception e) {
+              log.error(e,e);
+              preferences = null;
+          }
+          if (preferences != null){
+	          for (Iterator prefItr = preferences.iterator(); prefItr.hasNext();) {
+	              Preference pref = (Preference)prefItr.next();
+	
+	              String name = pref.getName();
+	              String value = "";
+	              String override;
+	
+	              if (pref.isReadOnly()) {
+	                  override = "N";
+	              }
+	              else {
+	                  override = "Y";
+	              }
+	
+	              //Since publish params only support single valued params just look for the first value.
+	              Iterator valuesItr = pref.getValues();
+	              if (valuesItr.hasNext())
+	                  value = (String)valuesItr.next();
+	
+	              channelDef.addParameter(CPortletAdapter.portletPreferenceNamePrefix + name, value, override);
+	          }
+          }
 
           if (localeAware) {
               // Read UP_CHANNEL_MDATA
@@ -501,7 +480,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
                           break;
                       }
                   }
-              }  catch (Exception e) {
+              }  catch (SQLException e) {
                   log.error( "RDBMChannelRegistryStore.getChannelDefinition(): Database being used is not internationalized. Execute `ant i18n-db' for internationalized database setting.");
               }
           }
@@ -514,7 +493,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
         // Add the channel definition to the cache
         try {
           EntityCachingService.instance().add(channelDef);
-        } catch (Exception e) {
+        } catch (CachingException e) {
           log.error("Error caching channel definition " + channelDef, e);
         }
 
@@ -787,7 +766,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
         // Notify the cache
         try {
           EntityCachingService.instance().remove(channelDef);
-        } catch (Exception e) {
+        } catch (CachingException e) {
           log.error("Error removing channel definition "
                   + channelDef + " from cache.", e);
         }
