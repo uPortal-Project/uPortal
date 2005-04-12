@@ -82,13 +82,11 @@ private void initialize() throws LockingException
 {
     String eMsg = null;
     String factoryName =
-        PropertiesManager.getProperty("org.jasig.portal.concurrency.IEntityLockServiceFactory");
+        PropertiesManager.getProperty("org.jasig.portal.concurrency.IEntityLockServiceFactory", null);
 
-    if ( factoryName == null )
-    {
-        eMsg = "EntityLockService.initialize(): No entry for org.jasig.portal.concurrency.IEntityLockServiceFactory in portal.properties.";
-        log.error( eMsg);
-        throw new LockingException(eMsg);
+    if ( factoryName == null ) {
+        log.warn("Property org.jasig.portal.concurrency.IEntityLockServiceFactory not configured in PropertiesManager.  Defaulting to  org.jasig.portal.concurrency.locking.ReferenceEntityLockServiceFactory");
+        factoryName =  "org.jasig.portal.concurrency.locking.ReferenceEntityLockServiceFactory";
     }
 
     try
