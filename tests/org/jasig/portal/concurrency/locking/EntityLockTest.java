@@ -18,7 +18,7 @@ import org.jasig.portal.services.EntityLockService;
  * Tests the entity lock framework.
  * @author: Dan Ellentuck
  */
-public class EntityLockTester extends TestCase {
+public class EntityLockTest extends TestCase {
     private static Class GROUP_CLASS;
     private static Class IPERSON_CLASS;
     private IEntityLock[] testLocks;
@@ -32,7 +32,7 @@ public class EntityLockTester extends TestCase {
 /**
  * EntityLockTester constructor comment.
  */
-public EntityLockTester(String name) {
+public EntityLockTest(String name) {
     super(name);
 }
 /**
@@ -143,14 +143,14 @@ protected void setUp()
 public static junit.framework.Test suite() {
     TestSuite suite = new TestSuite();
 
-    suite.addTest(new EntityLockTester("testExistsInStore"));
-    suite.addTest(new EntityLockTester("testSelectFromStore"));
-    suite.addTest(new EntityLockTester("testExpirationInStore"));
-    suite.addTest(new EntityLockTester("testStoreUpdate"));
-    suite.addTest(new EntityLockTester("testServiceNewLock"));
-    suite.addTest(new EntityLockTester("testServiceLockRenewal"));
-    suite.addTest(new EntityLockTester("testServiceConvert"));
-    suite.addTest(new EntityLockTester("testService"));
+    suite.addTest(new EntityLockTest("testExistsInStore"));
+    suite.addTest(new EntityLockTest("testSelectFromStore"));
+    suite.addTest(new EntityLockTest("testExpirationInStore"));
+    suite.addTest(new EntityLockTest("testStoreUpdate"));
+    suite.addTest(new EntityLockTest("testServiceNewLock"));
+    suite.addTest(new EntityLockTest("testServiceLockRenewal"));
+    suite.addTest(new EntityLockTest("testServiceConvert"));
+    suite.addTest(new EntityLockTest("testService"));
 
 //	Add more tests here.
 //  NB: Order of tests is not guaranteed.
