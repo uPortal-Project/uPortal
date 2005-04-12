@@ -376,7 +376,7 @@ public class ChannelRenderer
      * This method suppose to take care of the runaway rendering threads.
      * This method will be called from ChannelManager explictly.
      */
-    protected void kill () throws Throwable  {
+    protected void kill (){
        if(workTracker!=null && !workTracker.isJobComplete())
             workTracker.killJob();
     }
