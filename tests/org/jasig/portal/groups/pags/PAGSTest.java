@@ -28,7 +28,7 @@ import org.jasig.portal.security.provider.PersonImpl;
  * Tests the PAGS testers.  
  * @author: Dan Ellentuck
  */
-public class PAGSTester extends TestCase {
+public class PAGSTest extends TestCase {
     private static Class IPERSON_CLASS;
     private static String CR = "\n";
     private Random random = new Random();
@@ -49,7 +49,7 @@ public class PAGSTester extends TestCase {
 /**
  * PAGSTester constructor.
  */
-public PAGSTester(String name) {
+public PAGSTest(String name) {
     super(name);
 }
 
@@ -135,16 +135,16 @@ protected void setUp()
 public static junit.framework.Test suite() {
     TestSuite suite = new TestSuite();
 
-  suite.addTest(new PAGSTester("testStringEqualsTester"));
-  suite.addTest(new PAGSTester("testStringEqualsIgnoreCaseTester"));
-  suite.addTest(new PAGSTester("testIntegerEQTester"));
-  suite.addTest(new PAGSTester("testIntegerGTTester")); 
-  suite.addTest(new PAGSTester("testIntegerLTTester"));
-  suite.addTest(new PAGSTester("testIntegerGETester")); 
-  suite.addTest(new PAGSTester("testIntegerLETester")); 
-  suite.addTest(new PAGSTester("testRegexTester"));  
-  suite.addTest(new PAGSTester("testValueExistsTester"));
-  suite.addTest(new PAGSTester("testValueMissingTester"));
+  suite.addTest(new PAGSTest("testStringEqualsTester"));
+  suite.addTest(new PAGSTest("testStringEqualsIgnoreCaseTester"));
+  suite.addTest(new PAGSTest("testIntegerEQTester"));
+  suite.addTest(new PAGSTest("testIntegerGTTester")); 
+  suite.addTest(new PAGSTest("testIntegerLTTester"));
+  suite.addTest(new PAGSTest("testIntegerGETester")); 
+  suite.addTest(new PAGSTest("testIntegerLETester")); 
+  suite.addTest(new PAGSTest("testRegexTester"));  
+  suite.addTest(new PAGSTest("testValueExistsTester"));
+  suite.addTest(new PAGSTest("testValueMissingTester"));
   
 //  Add more tests here.
 //  NB: Order of tests is not guaranteed.
