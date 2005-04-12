@@ -78,7 +78,7 @@ public class RDBMServices {
     private static Map namedDbServerFailures = Collections.synchronizedMap(new HashMap());
     private static IDatabaseServer jdbcDbServer = null;
 
-    private static final Object syncObject = new Object();
+    private static final Object SYNC_OBJECT = new Object();
     private static int activeConnections;
 
     /**
@@ -280,7 +280,7 @@ public class RDBMServices {
         final IDatabaseServer dbs = getDatabaseServer();
 
         if (dbs != null) {
-          synchronized(syncObject) {
+          synchronized(SYNC_OBJECT) {
             activeConnections++;
           }
           return dbs.getConnection();
@@ -301,7 +301,7 @@ public class RDBMServices {
         final IDatabaseServer dbs = getDatabaseServer(dbName);
 
         if (dbs != null) {
-          synchronized(syncObject) {
+          synchronized(SYNC_OBJECT) {
             activeConnections++;
           }
           return dbs.getConnection();
@@ -315,7 +315,7 @@ public class RDBMServices {
      */
     public static void releaseConnection(final Connection con) {
         try {
-          synchronized(syncObject) {
+          synchronized(SYNC_OBJECT) {
             activeConnections--;
           }
 
