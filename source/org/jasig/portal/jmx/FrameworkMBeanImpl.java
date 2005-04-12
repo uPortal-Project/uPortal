@@ -43,7 +43,7 @@ public class FrameworkMBeanImpl implements FrameworkMBean {
    * @return Date
    */
   public Date getStartedAt() {
-    return PortalSessionManager.startedAt;
+    return PortalSessionManager.STARTED_AT;
   }
 
   public long getRenderAverage() {

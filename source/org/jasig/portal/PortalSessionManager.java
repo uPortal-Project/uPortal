@@ -87,7 +87,7 @@ public class PortalSessionManager extends HttpServlet {
   // random number generator
   private static final Random randomGenerator = new Random();
 
-  public static final Date startedAt = new Date();
+  public static final Date STARTED_AT = new Date();
   static {
     log.info( "uPortal started");
   }
