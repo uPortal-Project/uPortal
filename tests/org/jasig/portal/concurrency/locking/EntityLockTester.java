@@ -99,7 +99,7 @@ protected void setUp()
     try
     {
         boolean multiServer =
-            PropertiesManager.getPropertyAsBoolean("org.jasig.portal.concurrency.multiServer");
+            PropertiesManager.getPropertyAsBoolean("org.jasig.portal.concurrency.multiServer", false);
 
         lockStore = ( multiServer )
             ? RDBMEntityLockStore.singleton()
