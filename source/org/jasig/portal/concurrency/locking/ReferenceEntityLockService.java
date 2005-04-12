@@ -143,7 +143,7 @@ private void initialize() throws LockingException
 
     try
     {
-        multiServer = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.concurrency.multiServer");
+        multiServer = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.concurrency.multiServer", false);
 
         lockStore = ( multiServer )
             ? RDBMEntityLockStore.singleton()
