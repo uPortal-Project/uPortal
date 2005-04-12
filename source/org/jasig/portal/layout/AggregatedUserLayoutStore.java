@@ -45,6 +45,8 @@ import org.jasig.portal.layout.node.UserLayoutFolderDescription;
 import org.jasig.portal.layout.restrictions.IUserLayoutRestriction;
 import org.jasig.portal.layout.restrictions.PriorityRestriction;
 import org.jasig.portal.layout.restrictions.UserLayoutRestrictionFactory;
+import org.jasig.portal.rdbm.DatabaseMetaDataImpl;
+import org.jasig.portal.rdbm.IDatabaseMetadata;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.GroupService;
 import org.apache.commons.logging.Log;
@@ -101,33 +103,37 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                                   "CHAN_FNAME,CHAN_SECURE) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
   private static String fragmentJoinQuery = "";
+  
+  // set this value to true to enable use of outer joins
+  private static boolean ALuseOuterJoins = false;
 
   public AggregatedUserLayoutStore() throws Exception {
     super();
-    RDBMServices.supportsOuterJoins = false;
-    if (RDBMServices.supportsOuterJoins) {
-      if (RDBMServices.joinQuery instanceof RDBMServices.JdbcDb) {
-        RDBMServices.joinQuery.addQuery("layout_aggr",
+    IDatabaseMetadata dmd = RDBMServices.getDbMetaData();
+    if (ALuseOuterJoins && dmd.supportsOuterJoins()) ALuseOuterJoins = true;
+    if (ALuseOuterJoins) {
+      if (dmd.getJoinQuery() instanceof DatabaseMetaDataImpl.JdbcDb) {
+        dmd.getJoinQuery().addQuery("layout_aggr",
           "{oj UP_LAYOUT_STRUCT_AGGR ULS LEFT OUTER JOIN UP_LAYOUT_PARAM USP ON ULS.USER_ID = USP.USER_ID AND ULS.NODE_ID = USP.STRUCT_ID} WHERE");
         fragmentJoinQuery =
             "{oj UP_FRAGMENTS UF LEFT OUTER JOIN UP_FRAGMENT_PARAM UFP ON UF.NODE_ID = UFP.NODE_ID AND UF.FRAGMENT_ID = UFP.FRAGMENT_ID} WHERE";
 
-        //RDBMServices.joinQuery.addQuery("ss_struct", "{oj UP_SS_STRUCT USS LEFT OUTER JOIN UP_SS_STRUCT_PAR USP ON USS.SS_ID=USP.SS_ID} WHERE");
-        //RDBMServices.joinQuery.addQuery("ss_theme", "{oj UP_SS_THEME UTS LEFT OUTER JOIN UP_SS_THEME_PARM UTP ON UTS.SS_ID=UTP.SS_ID} WHERE");
-      } else if (RDBMServices.joinQuery instanceof RDBMServices.PostgreSQLDb) {
-         RDBMServices.joinQuery.addQuery("layout_aggr",
+        //dmd.getJoinQuery().addQuery("ss_struct", "{oj UP_SS_STRUCT USS LEFT OUTER JOIN UP_SS_STRUCT_PAR USP ON USS.SS_ID=USP.SS_ID} WHERE");
+        //dmd.getJoinQuery().addQuery("ss_theme", "{oj UP_SS_THEME UTS LEFT OUTER JOIN UP_SS_THEME_PARM UTP ON UTS.SS_ID=UTP.SS_ID} WHERE");
+      } else if (dmd.getJoinQuery() instanceof DatabaseMetaDataImpl.PostgreSQLDb) {
+         dmd.getJoinQuery().addQuery("layout_aggr",
           "UP_LAYOUT_STRUCT_AGGR ULS LEFT OUTER JOIN UP_LAYOUT_PARAM USP ON ULS.USER_ID = USP.USER_ID AND ULS.NODE_ID = USP.STRUCT_ID WHERE");
          fragmentJoinQuery =
              "UP_FRAGMENTS UF LEFT OUTER JOIN UP_FRAGMENT_PARAM UFP ON UF.NODE_ID = UFP.NODE_ID AND UF.FRAGMENT_ID = UFP.FRAGMENT_ID WHERE";
-        //RDBMServices.joinQuery.addQuery("ss_struct", "UP_SS_STRUCT USS LEFT OUTER JOIN UP_SS_STRUCT_PAR USP ON USS.SS_ID=USP.SS_ID WHERE");
-        //RDBMServices.joinQuery.addQuery("ss_theme", "UP_SS_THEME UTS LEFT OUTER JOIN UP_SS_THEME_PARM UTP ON UTS.SS_ID=UTP.SS_ID WHERE");
-     } else if (RDBMServices.joinQuery instanceof RDBMServices.OracleDb) {
-        RDBMServices.joinQuery.addQuery("layout_aggr",
+        //RDBMServices.getJoinQuery().addQuery("ss_struct", "UP_SS_STRUCT USS LEFT OUTER JOIN UP_SS_STRUCT_PAR USP ON USS.SS_ID=USP.SS_ID WHERE");
+        //RDBMServices.getJoinQuery().addQuery("ss_theme", "UP_SS_THEME UTS LEFT OUTER JOIN UP_SS_THEME_PARM UTP ON UTS.SS_ID=UTP.SS_ID WHERE");
+     } else if (dmd.getJoinQuery() instanceof DatabaseMetaDataImpl.OracleDb) {
+         dmd.getJoinQuery().addQuery("layout_aggr",
           "UP_LAYOUT_STRUCT_AGGR ULS, UP_LAYOUT_PARAM USP WHERE ULS.NODE_ID = USP.STRUCT_ID(+) AND ULS.USER_ID = USP.USER_ID AND");
         fragmentJoinQuery =
           "UP_FRAGMENTS UF, UP_FRAGMENT_PARAM UFP WHERE UF.NODE_ID = UFP.NODE_ID(+) AND UF.FRAGMENT_ID = UFP.FRAGMENT_ID AND";
-        //RDBMServices.joinQuery.addQuery("ss_struct", "UP_SS_STRUCT USS, UP_SS_STRUCT_PAR USP WHERE USS.SS_ID=USP.SS_ID(+) AND");
-        //RDBMServices.joinQuery.addQuery("ss_theme", "UP_SS_THEME UTS, UP_SS_THEME_PARM UTP WHERE UTS.SS_ID=UTP.SS_ID(+) AND");
+        //dmd.getJoinQuery().addQuery("ss_struct", "UP_SS_STRUCT USS, UP_SS_STRUCT_PAR USP WHERE USS.SS_ID=USP.SS_ID(+) AND");
+        //dmd.getJoinQuery().addQuery("ss_theme", "UP_SS_THEME UTS, UP_SS_THEME_PARM UTP WHERE UTS.SS_ID=UTP.SS_ID(+) AND");
       } else {
         throw new Exception("Unknown database!");
       }
@@ -1887,8 +1893,8 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         // layout query
         String sqlLayout = "SELECT ULS.NODE_ID,ULS.NEXT_NODE_ID,ULS.CHLD_NODE_ID,ULS.PREV_NODE_ID,ULS.PRNT_NODE_ID,ULS.CHAN_ID,ULS.NAME,ULS.TYPE,ULS.HIDDEN,"+
           "ULS.UNREMOVABLE,ULS.IMMUTABLE,ULS.PRIORITY,ULS.FRAGMENT_ID,ULS.FRAGMENT_NODE_ID";
-        if (RDBMServices.supportsOuterJoins) {
-          sqlLayout += ",USP.STRUCT_PARM_NM,USP.STRUCT_PARM_VAL FROM " + RDBMServices.joinQuery.getQuery("layout_aggr");
+        if (ALuseOuterJoins) {
+          sqlLayout += ",USP.STRUCT_PARM_NM,USP.STRUCT_PARM_VAL FROM " + RDBMServices.getDbMetaData().getJoinQuery().getQuery("layout_aggr");
         } else {
           sqlLayout += " FROM UP_LAYOUT_STRUCT_AGGR ULS WHERE ";
         }
@@ -1899,7 +1905,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         // The query for getting information of the fragments
         String sqlFragment = "SELECT DISTINCT UF.NODE_ID,UF.NEXT_NODE_ID,UF.CHLD_NODE_ID,UF.PREV_NODE_ID,UF.PRNT_NODE_ID,UF.CHAN_ID,UF.NAME,UF.TYPE,UF.HIDDEN,"+
           "UF.UNREMOVABLE,UF.IMMUTABLE,UF.PRIORITY,UF.FRAGMENT_ID";
-        if (RDBMServices.supportsOuterJoins) {
+        if (ALuseOuterJoins) {
           sqlFragment += ",UFP.PARAM_NAME,UFP.PARAM_VALUE FROM UP_LAYOUT_STRUCT_AGGR ULS, " + fragmentJoinQuery;
         } else {
           sqlFragment += " FROM UP_FRAGMENTS UF, UP_LAYOUT_STRUCT_AGGR ULS WHERE ";
@@ -2111,7 +2117,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
               int index = (sql.equals(sqlLayout))?15:14;
 
-              if (RDBMServices.supportsOuterJoins) {
+              if (ALuseOuterJoins) {
                 do {
                   String name = rs.getString(index);
                   String value = rs.getString(index+1); // Oracle JDBC requires us to do this for longs
@@ -2194,7 +2200,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
             chanIds.clear();
         }
 
-        if ( !RDBMServices.supportsOuterJoins && structParms.length() > 0 ) { // Pick up structure parameters
+        if ( !ALuseOuterJoins && structParms.length() > 0 ) { // Pick up structure parameters
           String paramSql = "SELECT STRUCT_ID, STRUCT_PARM_NM,STRUCT_PARM_VAL FROM UP_LAYOUT_PARAM WHERE USER_ID=" + userId + " AND LAYOUT_ID=" + layoutId +
             " AND STRUCT_ID IN (" + structParms.toString() + ") ORDER BY STRUCT_ID";
           if (log.isDebugEnabled())
@@ -2496,7 +2502,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         // The query for getting information of the fragments
         String sqlFragment = "SELECT DISTINCT UF.NODE_ID,UF.NEXT_NODE_ID,UF.CHLD_NODE_ID,UF.PREV_NODE_ID,UF.PRNT_NODE_ID,UF.CHAN_ID,UF.NAME,UF.TYPE,UF.HIDDEN,"+
           "UF.UNREMOVABLE,UF.IMMUTABLE,UF.PRIORITY,UF.FRAGMENT_ID";
-        if (RDBMServices.supportsOuterJoins) {
+        if (ALuseOuterJoins) {
           sqlFragment += ",UFP.PARAM_NAME,UFP.PARAM_VALUE FROM UP_OWNER_FRAGMENT UOF, " + fragmentJoinQuery;
         } else {
           sqlFragment += " FROM UP_FRAGMENTS UF, UP_OWNER_FRAGMENT UOF WHERE ";
@@ -2655,7 +2661,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                rsRestr.close();
                if ( psRestr != null ) psRestr.close();
 
-              if (RDBMServices.supportsOuterJoins) {
+              if (ALuseOuterJoins) {
                 do {
                   String name = rs.getString(14);
                   String value = rs.getString(15); // Oracle JDBC requires us to do this for longs
@@ -2736,7 +2742,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
           chanIds.clear();
         }
 
-        if ( !RDBMServices.supportsOuterJoins && structParms.length() > 0 ) { // Pick up structure parameters
+        if ( !ALuseOuterJoins && structParms.length() > 0 ) { // Pick up structure parameters
           String sql = "SELECT NODE_ID, PARAM_NAME, PARAM_VALUE FROM UP_FRAGMENT_PARAM WHERE FRAGMENT_ID=" + fragmentId +
             " AND NODE_ID IN (" + structParms.toString() + ") ORDER BY NODE_ID";
           if (log.isDebugEnabled())

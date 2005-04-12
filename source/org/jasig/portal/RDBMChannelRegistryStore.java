@@ -29,6 +29,7 @@ import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.groups.ILockableEntityGroup;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.properties.PropertiesManager;
+import org.jasig.portal.rdbm.DatabaseMetaDataImpl;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.EntityCachingService;
 import org.jasig.portal.services.GroupService;
@@ -48,15 +49,15 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
    */
   static {
     try {
-      if (RDBMServices.supportsOuterJoins) {
-        if (RDBMServices.joinQuery instanceof RDBMServices.JdbcDb) {
-          RDBMServices.joinQuery.addQuery("channel",
+      if (RDBMServices.getDbMetaData().supportsOuterJoins()) {
+        if (RDBMServices.getDbMetaData().getJoinQuery() instanceof DatabaseMetaDataImpl.JdbcDb) {
+          RDBMServices.getDbMetaData().getJoinQuery().addQuery("channel",
             "{oj UP_CHANNEL UC LEFT OUTER JOIN UP_CHANNEL_PARAM UCP ON UC.CHAN_ID = UCP.CHAN_ID} WHERE");
-        } else if (RDBMServices.joinQuery instanceof RDBMServices.PostgreSQLDb) {
-           RDBMServices.joinQuery.addQuery("channel",
+        } else if (RDBMServices.getDbMetaData().getJoinQuery() instanceof DatabaseMetaDataImpl.PostgreSQLDb) {
+           RDBMServices.getDbMetaData().getJoinQuery().addQuery("channel",
             "UP_CHANNEL UC LEFT OUTER JOIN UP_CHANNEL_PARAM UCP ON UC.CHAN_ID = UCP.CHAN_ID WHERE");
-       } else if (RDBMServices.joinQuery instanceof RDBMServices.OracleDb) {
-          RDBMServices.joinQuery.addQuery("channel",
+       } else if (RDBMServices.getDbMetaData().getJoinQuery() instanceof DatabaseMetaDataImpl.OracleDb) {
+          RDBMServices.getDbMetaData().getJoinQuery().addQuery("channel",
             "UP_CHANNEL UC, UP_CHANNEL_PARAM UCP WHERE UC.CHAN_ID = UCP.CHAN_ID(+) AND");
         } else {
           throw new Exception("Unknown database driver");
@@ -248,6 +249,15 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
           throw sqle;
         } finally {
             stmt.close();
+        }
+      } catch (Exception e) {
+          log.error(e.getMessage(), e);
+          if (e instanceof SQLException)
+              throw (SQLException)e;
+          else {
+            SQLException sqle = new SQLException(e.getMessage());
+            sqle.initCause(e);
+            throw sqle;
         }
       } finally {
         RDBMServices.releaseConnection(con);
@@ -598,9 +608,9 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
         String sqlClass = channelDef.getJavaClass();
         int sqlTypeID = channelDef.getTypeId();
         int chanPublisherId = channelDef.getPublisherId();
-        String chanPublishDate = RDBMServices.sqlTimeStamp(channelDef.getPublishDate());
+        String chanPublishDate = RDBMServices.getDbMetaData().sqlTimeStamp(channelDef.getPublishDate());
         int chanApproverId = channelDef.getApproverId();
-        String chanApprovalDate = RDBMServices.sqlTimeStamp(channelDef.getApprovalDate());
+        String chanApprovalDate = RDBMServices.getDbMetaData().sqlTimeStamp(channelDef.getApprovalDate());
         int sqlTimeout = channelDef.getTimeout();
         String sqlEditable = RDBMServices.dbFlag(channelDef.isEditable());
         String sqlHasHelp = RDBMServices.dbFlag(channelDef.hasHelp());
@@ -1049,8 +1059,8 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
                  "UC.CHAN_TIMEOUT, UC.CHAN_EDITABLE, UC.CHAN_HAS_HELP, UC.CHAN_HAS_ABOUT, " +
                  "UC.CHAN_NAME, UC.CHAN_FNAME, UC.CHAN_SECURE";
 
-    if (RDBMServices.supportsOuterJoins) {
-      sql += ", CHAN_PARM_NM, CHAN_PARM_VAL, CHAN_PARM_OVRD, CHAN_PARM_DESC FROM " + RDBMServices.joinQuery.getQuery("channel");
+    if (RDBMServices.getDbMetaData().supportsOuterJoins()) {
+      sql += ", CHAN_PARM_NM, CHAN_PARM_VAL, CHAN_PARM_OVRD, CHAN_PARM_DESC FROM " + RDBMServices.getDbMetaData().getJoinQuery().getQuery("channel");
     } else {
       sql += " FROM UP_CHANNEL UC WHERE";
     }
@@ -1061,7 +1071,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
   }
 
   protected static final PreparedStatement getChannelParamPstmt(Connection con) throws SQLException {
-    if (RDBMServices.supportsOuterJoins) {
+    if (RDBMServices.getDbMetaData().supportsOuterJoins()) {
       return null;
     } else {
       return con.prepareStatement("SELECT CHAN_PARM_NM, CHAN_PARM_VAL,CHAN_PARM_OVRD,CHAN_PARM_DESC FROM UP_CHANNEL_PARAM WHERE CHAN_ID=?");

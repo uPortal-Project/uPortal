@@ -36,7 +36,7 @@ public class FrameworkMBeanImpl implements FrameworkMBean {
   private static String database;
 
   public FrameworkMBeanImpl() {
-    database = RDBMServices.getDatabaseServer().toString();
+    database = RDBMServices.getDataSource().toString();
   }
   /**
    * Time/Data uPortal was started

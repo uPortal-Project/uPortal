@@ -63,7 +63,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
 
     try {
       stmt = con.createStatement();
-      if (RDBMServices.supportsTransactions)
+      if (RDBMServices.getDbMetaData().supportsTransactions())
         con.setAutoCommit(false);
 
       // START of Addition after bug declaration (bug id 1516)
@@ -201,7 +201,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
       stmt.executeUpdate(SQLDelete);      
       // END of Addition after bug declaration (bug id 1516)
         
-      if (RDBMServices.supportsTransactions)
+      if (RDBMServices.getDbMetaData().supportsTransactions())
         con.commit();
 
       try {
@@ -214,7 +214,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
     catch (SQLException se) {
       try {
       	log.error( "RDBMUserIdentityStore::removePortalUID(): " + se);
-        if (RDBMServices.supportsTransactions)
+        if (RDBMServices.getDbMetaData().supportsTransactions())
           con.rollback();
       }
       catch (SQLException e) {
@@ -302,7 +302,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
 
   static final protected void commit (Connection connection) {
     try {
-      if (RDBMServices.supportsTransactions)
+      if (RDBMServices.getDbMetaData().supportsTransactions())
         connection.commit();
     } catch (Exception e) {
       log.error( "RDBMUserIdentityStore::commit(): " + e);
@@ -311,7 +311,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
 
   static final protected void rollback (Connection connection) {
     try {
-      if (RDBMServices.supportsTransactions)
+      if (RDBMServices.getDbMetaData().supportsTransactions())
         connection.rollback();
     } catch (Exception e) {
       log.error( "RDBMUserIdentityStore::rollback(): " + e);
@@ -480,7 +480,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
       try {
           con = RDBMServices.getConnection();
           // Turn off autocommit if the database supports it
-          if (RDBMServices.supportsTransactions)
+          if (RDBMServices.getDbMetaData().supportsTransactions())
               con.setAutoCommit(false);
         
           PreparedStatement deleteStmt = null;
@@ -641,7 +641,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                   insertStmt.close();
 
                   // If we made it all the way though, commit the transaction
-                  if (RDBMServices.supportsTransactions)
+                  if (RDBMServices.getDbMetaData().supportsTransactions())
                       con.commit();
                                                           
               }
@@ -656,7 +656,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
           }
       }
       catch (SQLException sqle) {
-          if (RDBMServices.supportsTransactions)
+          if (RDBMServices.getDbMetaData().supportsTransactions())
               con.rollback();
           throw new AuthorizationException("SQL database error while retrieving user's portal UID", sqle);           
       }
@@ -685,7 +685,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
       try {
           con = RDBMServices.getConnection();
           // Turn off autocommit if the database supports it
-          if (RDBMServices.supportsTransactions)
+          if (RDBMServices.getDbMetaData().supportsTransactions())
               con.setAutoCommit(false);
         
           PreparedStatement queryStmt = null;
@@ -829,7 +829,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
 
                   
                   // If we made it all the way though, commit the transaction
-                  if (RDBMServices.supportsTransactions)
+                  if (RDBMServices.getDbMetaData().supportsTransactions())
                       con.commit();
                   
                   uPortalUID = newUID;
@@ -842,7 +842,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
               try { if (insertStmt != null) insertStmt.close(); } catch (Exception e) {}
           }
       } catch (SQLException sqle) {
-          if (RDBMServices.supportsTransactions)
+          if (RDBMServices.getDbMetaData().supportsTransactions())
               con.rollback();
           throw new AuthorizationException("SQL database error while retrieving user's portal UID", sqle);           
       } finally {

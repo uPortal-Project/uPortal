@@ -15,7 +15,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -27,10 +26,8 @@ import javax.sql.DataSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.properties.PropertiesManager;
-import org.jasig.portal.rdbm.DatabaseServerImpl;
-import org.jasig.portal.rdbm.IDatabaseServer;
-import org.jasig.portal.rdbm.IJoinQueryString;
-import org.jasig.portal.rdbm.JoinQueryString;
+import org.jasig.portal.rdbm.DatabaseMetaDataImpl;
+import org.jasig.portal.rdbm.IDatabaseMetadata;
 import org.jasig.portal.rdbm.pool.IPooledDataSourceFactory;
 import org.jasig.portal.rdbm.pool.PooledDataSourceFactoryFactory;
 import org.springframework.dao.DataAccessException;
@@ -46,11 +43,11 @@ import org.springframework.dao.DataAccessResourceFailureException;
  * @author Ken Weiner, kweiner@unicon.net
  * @author George Lindholm, george.lindholm@ubc.ca
  * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
+ * @author Susan Bramhall <a href="mailto:susan.bramhall@yale.edu">susan.bramhall@yale.edu</a>
  * @version $Revision$ $Date$
  */
 public class RDBMServices {
     public static final String PORTAL_DB = PropertiesManager.getProperty("org.jasig.portal.RDBMServices.PortalDatasourceJndiName", "PortalDb"); // JNDI name for portal database
-    public static final String PERSON_DB = PropertiesManager.getProperty("org.jasig.portal.RDBMServices.PersonDatasourceJndiName", "PersonDb"); // JNDI name for person database
     public static final String DEFAULT_DATABASE = "DEFAULT_DATABASE";
 
     private static final boolean getDatasourceFromJndi = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.RDBMServices.getDatasourceFromJndi", true);
@@ -64,193 +61,190 @@ public class RDBMServices {
     /** Specifies how long to wait before trying to look a JNDI data source that previously failed */
     private static final int JNDI_RETRY_TIME = PropertiesManager.getPropertyAsInt("org.jasig.portal.RDBMServices.jndiRetryDelay", 30000); // JNDI retry delay;
 
-
-    public static IJoinQueryString joinQuery = null;
-    public static boolean supportsOuterJoins = false;
-    public static boolean supportsTransactions = false;
     public static int RETRY_COUNT = 5;
 
-    protected static boolean supportsPreparedStatements = false;
-    protected static final boolean usePreparedStatements = true;
-
-    private static boolean rdbmPropsLoaded = false;
-    private static Map namedDbServers =  Collections.synchronizedMap(new HashMap());
+    private static Map namedDataSources =  Collections.synchronizedMap(new HashMap());
     private static Map namedDbServerFailures = Collections.synchronizedMap(new HashMap());
-    private static IDatabaseServer jdbcDbServer = null;
+    
+    /* info legacy utilities */
+    private static String jdbcUrl;
+    private static String jdbcUser;
+    private static String jdbcDriver;
+    
+    private static IDatabaseMetadata dbMetaData = null;
 
     private static final Object SYNC_OBJECT = new Object();
     private static int activeConnections;
 
+
+
     /**
-     * Perform one time initialization of the data source
+     * Gets the default DataSource. If no server is found
+     * a runtime sxception will be thrown.
      */
-    static {
-        loadRDBMServer();
-
-        //Cache lookups to the two JNDI data sources we "know" about
-        if (getDatasourceFromJndi) {
-            getDatabaseServer(PORTAL_DB);
-            getDatabaseServer(PERSON_DB);
-        }
-
-        //Legacy support for the public fields
-        final IDatabaseServer dbs = getDatabaseServer();
-        if(dbs != null) {
-            joinQuery = dbs.getJoinQuery();
-            supportsOuterJoins = dbs.supportsOuterJoins();
-            supportsTransactions = dbs.supportsTransactions();
-            supportsPreparedStatements = dbs.supportsPreparedStatements();
-        }
-        else {
-            final RuntimeException re = new IllegalStateException("No default database could be found after static initialization.");
-            LOG.fatal("Error initializing RDBMServices", re);
-            throw re;
-        }
+    public static DataSource getDataSource() {
+        return getDataSource(PORTAL_DB);
     }
-
     /**
-     * Loads a JDBC data source from rdbm.properties. Attempts to uses
-     * a connection pooling data source wrapper for added performance.
-     */
-    private synchronized static void loadRDBMServer() {
-        final String PROP_FILE = "/properties/rdbm.properties";
-
-        if (!rdbmPropsLoaded) {
-            final InputStream jdbcPropStream = RDBMServices.class.getResourceAsStream(PROP_FILE);
-
-            try {
-                try {
-                    final Properties jdbpProperties = new Properties();
-                    jdbpProperties.load(jdbcPropStream);
-
-                    final IPooledDataSourceFactory pdsf = PooledDataSourceFactoryFactory.getPooledDataSourceFactory();
-
-                    final String driverClass = jdbpProperties.getProperty("jdbcDriver");
-                    final String username = jdbpProperties.getProperty("jdbcUser");
-                    final String password = jdbpProperties.getProperty("jdbcPassword");
-                    final String url = jdbpProperties.getProperty("jdbcUrl");
-                    final boolean usePool = Boolean.valueOf(jdbpProperties.getProperty("jdbcUsePool")).booleanValue();
-
-                    if (usePool) {
-                        //Try using a pooled DataSource
-                        try {
-                            final DataSource ds = pdsf.createPooledDataSource(driverClass, username, password, url);
-
-                            if (LOG.isInfoEnabled())
-                                LOG.info("Creating IDatabaseServer instance for pooled JDBC");
-                            jdbcDbServer = new DatabaseServerImpl(ds);
-                        }
-                        catch (Exception e) {
-                            LOG.error("Error using pooled JDBC data source.", e);
-                        }
-                    }
-
-                    if (jdbcDbServer == null) {
-                        //Pooled DataSource isn't being used or failed during creation
-                        try {
-                            final Driver d = (Driver)Class.forName(driverClass).newInstance();
-                            final DataSource ds = new GenericDataSource(d, url, username, password);
-
-                            if (LOG.isInfoEnabled())
-                                LOG.info("Creating IDatabaseServer instance for JDBC");
-                            jdbcDbServer = new DatabaseServerImpl(ds);
-                        }
-                        catch (Exception e) {
-                            LOG.error("JDBC Driver Creation Failed. (" + driverClass + ")", e);
-                        }
-                    }
-                }
-                finally {
-                    jdbcPropStream.close();
-                }
-            }
-            catch (IOException ioe) {
-                LOG.error("An error occured while reading " + PROP_FILE, ioe);
-            }
-
-            if (!getDatasourceFromJndi && jdbcDbServer == null) {
-                throw new RuntimeException("No JDBC DataSource or JNDI DataSource avalable.");
-            }
-
-            rdbmPropsLoaded = true;
-        }
-    }
-
-    /**
-     * Gets the default {@link IDatabaseServer}. If getDatasourceFromJndi
-     * is true {@link #getDatabaseServer(String)} is called with
-     * {@link RDBMServices#PORTAL_DB} as the argument. If no server is found
-     * the jdbc based server loaded from rdbm.properties is used.
-     *
-     * @return The default {@link IDatabaseServer}.
-     */
-    public static IDatabaseServer getDatabaseServer() {
-        IDatabaseServer dbs = null;
-
-        if (getDatasourceFromJndi) {
-            dbs = getDatabaseServer(PORTAL_DB);
-        }
-
-        if (dbs == null) {
-            dbs = jdbcDbServer;
-        }
-
-        return dbs;
-    }
-
-    /**
-     * Gets a named {@link IDatabaseServer} from JNDI. Successfull lookups
+     * Gets a named DataSource from JNDI. Successfull lookups
      * are cached and not done again. Failed lookups are cached for the
      * number of milliseconds specified by {@link #JNDI_RETRY_TIME} to reduce
      * JNDI overhead and log spam.
+     * 
+     * When getting data source for default database additional
+     * metadata object is instantiated. This implementation will 
+     * first try to get the connection by looking in the
+     * JNDI context for the name defined by the portal property
+     * org.jasig.portal.RDBMServices.PortalDatasourceJndiName
+     * if the org.jasig.portal.RDBMServices.getDatasourceFromJndi
+     * property is enabled.
+
      *
-     * @param name The name of the {@link IDatabaseServer} to get.
-     * @return A named {@link IDatabaseServer} or <code>null</code> if one cannot be found.
+     * @param name The name of the DataSource to get.
+     * @return A named DataSource or <code>null</code> if one cannot be found.
      */
-    public static IDatabaseServer getDatabaseServer(final String name) {
+    public static DataSource getDataSource(String name) {
+        final String PROP_FILE = "/properties/rdbm.properties";
+
         if (DEFAULT_DATABASE.equals(name)) {
-            return getDatabaseServer();
+            return getDataSource(PORTAL_DB); 
         }
+        
+        DataSource ds = (DataSource)namedDataSources.get(name);
+        
+        // if already have a dtasource just return it
+        if (ds!=null) return ds;
+        
+        // For non default database cache the datasource and return it
+        if (!PORTAL_DB.equals(name)) {
+            ds = getJndiDataSource(name);
+            namedDataSources.put(name,ds);
+            // For non default database return whatever we have (could be null)
+            return ds;  
+        }
+           
+        // portal database is special - create metadata object too.
+        if (getDatasourceFromJndi) {
+            ds = getJndiDataSource(name);
+            if (ds != null) {
+                if (LOG.isInfoEnabled())
+                    LOG.info("Creating DataSource instance for " + name);
+                dbMetaData = new DatabaseMetaDataImpl(ds);
+                namedDataSources.put(name, ds);
+                return ds; 
+                }                               
+            }
+        
+        // get here if not getDatasourceFromJndi OR jndi lookup returned null
+        // try to get datasource via properties
+        try {
+            final InputStream jdbcPropStream = RDBMServices.class.getResourceAsStream(PROP_FILE);
+            
+            try {
+                final Properties jdbpProperties = new Properties();
+                jdbpProperties.load(jdbcPropStream);
 
-        IDatabaseServer dbs = (IDatabaseServer)namedDbServers.get(name);
+                final IPooledDataSourceFactory pdsf = PooledDataSourceFactoryFactory.getPooledDataSourceFactory();
 
-        if (dbs == null) {
-            final Long failTime = (Long)namedDbServerFailures.get(name);
+                final String driverClass = jdbpProperties.getProperty("jdbcDriver");
+                final String username = jdbpProperties.getProperty("jdbcUser");
+                final String password = jdbpProperties.getProperty("jdbcPassword");
+                final String url = jdbpProperties.getProperty("jdbcUrl");
+                boolean usePool = true; 
+                if (jdbpProperties.getProperty("jdbcUsePool")!=null)
+                    usePool = Boolean.valueOf(jdbpProperties.getProperty("jdbcUsePool")).booleanValue();
 
-            if (failTime == null || (failTime.longValue() + JNDI_RETRY_TIME) <= System.currentTimeMillis()) {
-                if (failTime != null) {
-                    namedDbServerFailures.remove(name);
-                }
+                if (usePool) {
+                    //Try using a pooled DataSource
+                    try {
+                        ds = pdsf.createPooledDataSource(driverClass, username, password, url);
 
-                try {
-                    final Context initCtx = new InitialContext();
-                    final Context envCtx = (Context)initCtx.lookup("java:comp/env");
-                    final DataSource ds = (DataSource)envCtx.lookup("jdbc/" + name);
-
-                    if (ds != null) {
                         if (LOG.isInfoEnabled())
-                            LOG.info("Creating IDatabaseServer instance for " + name);
-                        dbs = new DatabaseServerImpl(ds);
-                        namedDbServers.put(name, dbs);
+                            LOG.info("Creating DataSource instance for pooled JDBC");
+                        
+                        namedDataSources.put(PORTAL_DB,ds);
+                        jdbcUrl = url;
+                        jdbcUser = username;
+                        jdbcDriver = driverClass;
+                        dbMetaData = new DatabaseMetaDataImpl(ds);
+                    }
+                    catch (Exception e) {
+                        LOG.error("Error using pooled JDBC data source.", e);
                     }
                 }
-                catch (Throwable t) {
-                    //Cache the failure to decrease lookup attempts and reduce log spam.
-                    namedDbServerFailures.put(name, new Long(System.currentTimeMillis()));
-                    if (LOG.isWarnEnabled())
-                        LOG.warn("Error getting DataSource named (" + name + ") from JNDI.", t);
+
+                if (ds == null && driverClass != null) {
+                    //Pooled DataSource isn't being used or failed during creation
+                    try {
+                        final Driver d = (Driver)Class.forName(driverClass).newInstance();
+                        ds = new GenericDataSource(d, url, username, password);
+
+                        if (LOG.isInfoEnabled())
+                            LOG.info("Creating DataSource for JDBC native");
+                        
+                        namedDataSources.put(PORTAL_DB,ds);
+                        jdbcUrl = url;
+                        jdbcUser = username;
+                        jdbcDriver = driverClass;
+                        dbMetaData = new DatabaseMetaDataImpl(ds);
+                    }
+                    catch (Exception e) {
+                        LOG.error("JDBC Driver Creation Failed. (" + driverClass + ")", e);
+                    }
                 }
             }
-            else {
-                if (LOG.isDebugEnabled()) {
-                    final long waitTime = (failTime.longValue() + JNDI_RETRY_TIME) - System.currentTimeMillis();
-                    LOG.debug("Skipping lookup on failed JNDI lookup for name (" + name + ") for approximately " + waitTime + " more milliseconds.");
-
-                }
+            finally {
+                jdbcPropStream.close();
+            }
+            
+        }
+        catch (IOException ioe) {
+            LOG.error("An error occured while reading " + PROP_FILE, ioe);
+        }
+        // if we failed to find a datasource then throw a runtime exception
+        if (ds == null) {
+                throw new RuntimeException("No JDBC DataSource or JNDI DataSource avalable.");
+        }
+        return ds;
+       }
+        
+    /**
+     * Does the JNDI lookup and returns datasource
+     * @param name
+     * @return
+     */
+    private static DataSource getJndiDataSource(String name) {
+    
+        final Long failTime = (Long)namedDbServerFailures.get(name);
+        DataSource ds = null;
+    
+        if (failTime == null || (failTime.longValue() + JNDI_RETRY_TIME) <= System.currentTimeMillis()) {
+            if (failTime != null) {
+                namedDbServerFailures.remove(name);
+            }
+    
+            try {
+                final Context initCtx = new InitialContext();
+                final Context envCtx = (Context)initCtx.lookup("java:comp/env");
+                ds = (DataSource)envCtx.lookup("jdbc/" + name);
+    
+ 
+            }
+            catch (Throwable t) {
+                //Cache the failure to decrease lookup attempts and reduce log spam.
+                namedDbServerFailures.put(name, new Long(System.currentTimeMillis()));
+                if (LOG.isWarnEnabled())
+                    LOG.warn("Error getting DataSource named (" + name + ") from JNDI.", t);
             }
         }
-
-        return dbs;
+        else {
+            if (LOG.isDebugEnabled()) {
+                final long waitTime = (failTime.longValue() + JNDI_RETRY_TIME) - System.currentTimeMillis();
+                LOG.debug("Skipping lookup on failed JNDI lookup for name (" + name + ") for approximately " + waitTime + " more milliseconds.");
+    
+            }
+        }
+        return ds;
     }
 
     /**
@@ -263,50 +257,61 @@ public class RDBMServices {
 
     /**
      * Gets a database connection to the portal database.
-     *
-     * This implementation will first try to get the connection by looking in the
-     * JNDI context for the name defined by the portal property
-     * org.jasig.portal.RDBMServices.PortalDatasourceJndiName
-     * if the org.jasig.portal.RDBMServices.getDatasourceFromJndi
-     * property is enabled.
-     *
-     * If not enabled, the Connection will be produced by
-     * {@link java.sql.Driver#connect(java.lang.String, java.util.Properties)}
-     *
+     * If datasource not available a runtime exception is thrown
      * @return a database Connection object
      * @throws DataAccessException if unable to return a connection
      */
     public static Connection getConnection() {
-        final IDatabaseServer dbs = getDatabaseServer();
-
-        if (dbs != null) {
+        
+        DataSource ds = (DataSource) namedDataSources.get(PORTAL_DB);
+        if (ds==null) ds = getDataSource();
+        
+        if (ds != null) {
           synchronized(SYNC_OBJECT) {
             activeConnections++;
           }
-          return dbs.getConnection();
+          try {
+            return ds.getConnection();
+          } catch (SQLException e) {
+             throw new DataAccessResourceFailureException("RDBMServices.getConnection() failed: ",e);
+        	}
         }
-        throw new DataAccessResourceFailureException("RDBMServices fatally misconfigured such that getDatabaseServer() returned null.");
+        throw new DataAccessResourceFailureException("RDBMServices fatally misconfigured such that DataSource is null.");
     }
 
 
     /**
      * Returns a connection produced by a DataSource found in the
      * JNDI context.  The DataSource should be configured and
-     * loaded into JNDI by the J2EE container.
+     * loaded into JNDI by the J2EE container or may be the portal
+     * default database.
+     * 
      * @param dbName the database name which will be retrieved from
      *   the JNDI context relative to "jdbc/"
      * @return a database Connection object or <code>null</code> if no Connection
      */
     public static Connection getConnection(final String dbName) {
-        final IDatabaseServer dbs = getDatabaseServer(dbName);
+       
+        if (dbName==DEFAULT_DATABASE || dbName==PORTAL_DB) return getConnection();
+        
+        DataSource ds = (DataSource) namedDataSources.get(dbName);
+        if (ds==null) {
+            ds = getDataSource(dbName);
+        }
 
-        if (dbs != null) {
+        if (ds != null) {
           synchronized(SYNC_OBJECT) {
             activeConnections++;
           }
-          return dbs.getConnection();
+          try {
+            return ds.getConnection();
+        } catch (SQLException e) {
+            throw new DataAccessResourceFailureException
+            	("RDBMServices sql error trying to get connection to "+dbName,e);
         }
-        throw new DataAccessResourceFailureException("RDBMServices fatally misconfigured such that getDatabaseServer() returned null.");
+        }
+        // datasource is still null so give up
+        throw new DataAccessResourceFailureException("RDBMServices fatally misconfigured such that getDataSource() returned null.");
     }
 
     /**
@@ -420,62 +425,26 @@ public class RDBMServices {
      * Returns the name of the JDBC driver being used for the default
      * uPortal database connections.
      *
-     * This implementation calls {@link #getDatabaseServer()} then calls
-     * {@link IDatabaseServer#getJdbcDriver()} on the returned instance.
-     *
-     * @see IDatabaseServer#getJdbcDriver()
      * @return the name of the JDBC Driver.
-     * @throws DataAccessException if unable to determine name of driver.
      */
     public static String getJdbcDriver () {
-        final IDatabaseServer dbs = getDatabaseServer();
-
-        if (dbs != null)
-            return dbs.getJdbcDriver();
-
-        throw new DataAccessResourceFailureException("RDBMServices " +
-                "fatally misconfigured such that getDatabaseServer() returned null.");
+        return jdbcDriver;
     }
 
     /**
      * Gets the JDBC URL of the default uPortal database connections.
      *
-     * This implementation calls {@link #getDatabaseServer()} then calls
-     * {@link IDatabaseServer#getJdbcUrl()} on the returned instance.
-     *
-     * @see IDatabaseServer#getJdbcUrl()
-     * @throws DataAccessException on internal failure
-     * @return the JDBC URL of the default uPortal database connections
      */
     public static String getJdbcUrl () {
-        final IDatabaseServer dbs = getDatabaseServer();
-
-        if (dbs != null)
-            return dbs.getJdbcUrl();
-
-        throw new DataAccessResourceFailureException("RDBMServices " +
-            "fatally misconfigured such that getDatabaseServer() returned null.");
+        return jdbcUrl;
     }
 
     /**
      * Get the username under which we are connecting for the default uPortal
      * database connections.
-     *
-     * This implementation calls {@link #getDatabaseServer()} then calls
-     * {@link IDatabaseServer#getJdbcUser()} on the returned instance.
-     *
-     * @see IDatabaseServer#getJdbcUser()
-     * @return the username under which we are connecting for default connections
-     * @throws DataAccessException on internal failure
      */
     public static String getJdbcUser () {
-        final IDatabaseServer dbs = getDatabaseServer();
-
-        if (dbs != null)
-            return dbs.getJdbcUser();
-
-        throw new DataAccessResourceFailureException("RDBMServices " +
-            "fatally misconfigured such that getDatabaseServer() returned null.");
+        return jdbcUser;
     }
 
 
@@ -505,65 +474,7 @@ public class RDBMServices {
     }
 
     /**
-     * Returns a String representing the current time
-     * in SQL suitable for use with the default database connections.
-     *
-     * This implementation calls {@link #getDatabaseServer()} then calls
-     * {@link IDatabaseServer#sqlTimeStamp()} on the returned instance.
-     *
-     * @see IDatabaseServer#sqlTimeStamp()
-     * @return SQL representing the current time
-     */
-    public static final String sqlTimeStamp() {
-        final IDatabaseServer dbs = getDatabaseServer();
-
-        if (dbs != null) {
-            return dbs.sqlTimeStamp();
-        }
-        else {
-            return localSqlTimeStamp(System.currentTimeMillis());
-        }
-    }
-
-    /**
-     * Calls {@link #getDatabaseServer()} then calls
-     * {@link IDatabaseServer#sqlTimeStamp(long)} on the returned instance.
-     *
-     * @see IDatabaseServer#sqlTimeStamp(long)
-     */
-    public static final String sqlTimeStamp(final long date) {
-        final IDatabaseServer dbs = getDatabaseServer();
-
-        if (dbs != null) {
-            return dbs.sqlTimeStamp(date);
-        }
-        else {
-            return localSqlTimeStamp(date);
-        }
-    }
-
-    /**
-     * Calls {@link #getDatabaseServer()} then calls
-     * {@link IDatabaseServer#sqlTimeStamp(Date)} on the returned instance.
-     *
-     * @see IDatabaseServer#sqlTimeStamp(Date)
-     */
-    public static final String sqlTimeStamp(final Date date) {
-        final IDatabaseServer dbs = getDatabaseServer();
-
-        if (dbs != null) {
-            return dbs.sqlTimeStamp(date);
-        }
-        else {
-            if (date == null)
-                return "NULL";
-            else
-                return localSqlTimeStamp(date.getTime());
-        }
-    }
-
-    /**
-     * Utility method if there is no default {@link IDatabaseServer}
+     * Utility method if there is no default 
      * instance.
      *
      * @param date The date in milliseconds to convert into a SQL TimeStamp.
@@ -609,6 +520,14 @@ public class RDBMServices {
                 return sb.toString();
             }
         }
+    }
+    /**
+     * @return IDatabaseMetadata
+     * If no metadata object yet, call datasource to initialize
+     */
+    public static IDatabaseMetadata getDbMetaData() {
+        if (dbMetaData==null) getDataSource();
+        return dbMetaData;
     }
 
 
@@ -710,7 +629,7 @@ public class RDBMServices {
 
     /**
      * Wrapper for/Emulator of PreparedStatement class
-     * @deprecated Instead of this class a wrapper around the DataSource, Connection and Prepared statement should be done in {@link DatabaseServerImpl}
+     * @deprecated Instead of this class a wrapper around the DataSource, Connection and Prepared statement should be done in {@link DatabaseMetaDataImpl}
      */
     public static final class PreparedStatement {
         private Connection con;
@@ -725,7 +644,7 @@ public class RDBMServices {
             this.con = con;
             this.query = query;
             activeQuery = this.query;
-            if (supportsPreparedStatements) {
+            if (dbMetaData.supportsPreparedStatements()) {
                 pstmt = con.prepareStatement(query);
             }
             else {
@@ -734,7 +653,7 @@ public class RDBMServices {
         }
 
         public void clearParameters() throws SQLException {
-            if (supportsPreparedStatements) {
+            if (dbMetaData.supportsPreparedStatements()) {
                 pstmt.clearParameters();
             }
             else {
@@ -744,7 +663,7 @@ public class RDBMServices {
         }
 
         public void setDate(int index, java.sql.Date value) throws SQLException {
-            if (supportsPreparedStatements) {
+            if (dbMetaData.supportsPreparedStatements()) {
                 pstmt.setDate(index, value);
             }
             else {
@@ -756,7 +675,7 @@ public class RDBMServices {
                     if (pos == -1) {
                         throw new SQLException("Missing '?'");
                     }
-                    activeQuery = activeQuery.substring(0, pos) + sqlTimeStamp(value)
+                    activeQuery = activeQuery.substring(0, pos) + dbMetaData.sqlTimeStamp(value)
                             + activeQuery.substring(pos + 1);
                     lastIndex = index;
                 }
@@ -764,7 +683,7 @@ public class RDBMServices {
         }
 
         public void setInt(int index, int value) throws SQLException {
-            if (supportsPreparedStatements) {
+            if (dbMetaData.supportsPreparedStatements()) {
                 pstmt.setInt(index, value);
             }
             else {
@@ -784,7 +703,7 @@ public class RDBMServices {
         }
 
         public void setNull(int index, int sqlType) throws SQLException {
-            if (supportsPreparedStatements) {
+            if (dbMetaData.supportsPreparedStatements()) {
                 pstmt.setNull(index, sqlType);
             }
             else {
@@ -808,7 +727,7 @@ public class RDBMServices {
                 setNull(index, java.sql.Types.VARCHAR);
             }
             else {
-                if (supportsPreparedStatements) {
+                if (dbMetaData.supportsPreparedStatements()) {
                     pstmt.setString(index, value);
                 }
                 else {
@@ -829,7 +748,7 @@ public class RDBMServices {
         }
 
         public void setTimestamp(int index, java.sql.Timestamp value) throws SQLException {
-            if (supportsPreparedStatements) {
+            if (dbMetaData.supportsPreparedStatements()) {
                 pstmt.setTimestamp(index, value);
             }
             else {
@@ -841,7 +760,7 @@ public class RDBMServices {
                     if (pos == -1) {
                         throw new SQLException("Missing '?'");
                     }
-                    activeQuery = activeQuery.substring(0, pos) + sqlTimeStamp(value)
+                    activeQuery = activeQuery.substring(0, pos) + dbMetaData.sqlTimeStamp(value)
                             + activeQuery.substring(pos + 1);
                     lastIndex = index;
                 }
@@ -849,7 +768,7 @@ public class RDBMServices {
         }
 
         public ResultSet executeQuery() throws SQLException {
-            if (supportsPreparedStatements) {
+            if (dbMetaData.supportsPreparedStatements()) {
                 return pstmt.executeQuery();
             }
             else {
@@ -858,7 +777,7 @@ public class RDBMServices {
         }
 
         public int executeUpdate() throws SQLException {
-            if (supportsPreparedStatements) {
+            if (dbMetaData.supportsPreparedStatements()) {
                 return pstmt.executeUpdate();
             }
             else {
@@ -867,7 +786,7 @@ public class RDBMServices {
         }
 
         public String toString() {
-            if (supportsPreparedStatements) {
+            if (dbMetaData.supportsPreparedStatements()) {
                 return query;
             }
             else {
@@ -876,7 +795,7 @@ public class RDBMServices {
         }
 
         public void close() throws SQLException {
-            if (supportsPreparedStatements) {
+            if (dbMetaData.supportsPreparedStatements()) {
                 pstmt.close();
             }
             else {
@@ -885,21 +804,4 @@ public class RDBMServices {
         }
     }
 
-    public static final class JdbcDb extends JoinQueryString {
-        public JdbcDb(final String testString) {
-          super(testString);
-        }
-    }
-
-    public static final class OracleDb extends JoinQueryString {
-        public OracleDb(final String testString) {
-            super(testString);
-        }
-    }
-
-    public static final class PostgreSQLDb extends JoinQueryString {
-        public PostgreSQLDb(final String testString) {
-            super(testString);
-        }
-    }
 }

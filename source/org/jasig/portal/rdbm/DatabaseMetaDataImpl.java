@@ -20,9 +20,6 @@ import javax.sql.DataSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.RDBMServices;
-import org.jasig.portal.RDBMServices.JdbcDb;
-import org.jasig.portal.RDBMServices.OracleDb;
-import org.jasig.portal.RDBMServices.PostgreSQLDb;
 import org.springframework.dao.DataAccessResourceFailureException;
 
 
@@ -30,17 +27,35 @@ import org.springframework.dao.DataAccessResourceFailureException;
  * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
  * @version $Revision$ $Date$
  */
-public class DatabaseServerImpl implements IDatabaseServer {
-    private static final Log LOG = LogFactory.getLog(DatabaseServerImpl.class);
+public class DatabaseMetaDataImpl implements IDatabaseMetadata {
+    public static final class PostgreSQLDb extends JoinQueryString {
+        public PostgreSQLDb(final String testString) {
+            super(testString);
+        }
+    }
+
+    public static final class OracleDb extends JoinQueryString {
+        public OracleDb(final String testString) {
+            super(testString);
+        }
+    }
+
+    public static final class JdbcDb extends JoinQueryString {
+        public JdbcDb(final String testString) {
+          super(testString);
+        }
+    }
+
+    private static final Log LOG = LogFactory.getLog(DatabaseMetaDataImpl.class);
     
     /** Define the oracle TO_DATE format */
     private static final SimpleDateFormat TO_DATE_FORMAT = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
     
     //Define the different join queries we know about with the
     //appropriately typed JoinQueryString implementation. 
-    private static final JoinQueryString jdbcDb = new JdbcDb("{oj UP_USER LEFT OUTER JOIN UP_USER_LAYOUT ON UP_USER.USER_ID = UP_USER_LAYOUT.USER_ID} WHERE");
-    private static final JoinQueryString postgreSQLDb = new PostgreSQLDb("UP_USER LEFT OUTER JOIN UP_USER_LAYOUT ON UP_USER.USER_ID = UP_USER_LAYOUT.USER_ID WHERE");
-    private static final JoinQueryString oracleDb = new OracleDb("UP_USER, UP_USER_LAYOUT WHERE UP_USER.USER_ID = UP_USER_LAYOUT.USER_ID(+) AND");
+    private static final JoinQueryString jdbcDb = new DatabaseMetaDataImpl.JdbcDb("{oj UP_USER LEFT OUTER JOIN UP_USER_LAYOUT ON UP_USER.USER_ID = UP_USER_LAYOUT.USER_ID} WHERE");
+    private static final JoinQueryString postgreSQLDb = new DatabaseMetaDataImpl.PostgreSQLDb("UP_USER LEFT OUTER JOIN UP_USER_LAYOUT ON UP_USER.USER_ID = UP_USER_LAYOUT.USER_ID WHERE");
+    private static final JoinQueryString oracleDb = new DatabaseMetaDataImpl.OracleDb("UP_USER, UP_USER_LAYOUT WHERE UP_USER.USER_ID = UP_USER_LAYOUT.USER_ID(+) AND");
     
     /** Array of join tests to perform. */
     private static final JoinQueryString[] joinTests = {jdbcDb, postgreSQLDb, oracleDb};
@@ -66,12 +81,12 @@ public class DatabaseServerImpl implements IDatabaseServer {
     
     
     /**
-     * Creates a new {@link DatabaseServerImpl} with the specified
+     * Creates a new {@link DatabaseMetaDataImpl} with the specified
      * {@link DataSource}.
      * 
      * @param ds The {@link DataSource} to use as the base for this server interface.
      */
-    public DatabaseServerImpl(final DataSource ds) {
+    public DatabaseMetaDataImpl(final DataSource ds) {
         if (ds == null)
             throw new IllegalArgumentException("DataSource cannot be null");
         
@@ -82,44 +97,6 @@ public class DatabaseServerImpl implements IDatabaseServer {
             LOG.info(this.toString());
     }
 
-    /**
-     * @see org.jasig.portal.rdbm.IDatabaseServer#getDataSource()
-     */
-    public DataSource getDataSource() {
-        return this.dataSource;
-    }
-
-    /**
-     * @see org.jasig.portal.rdbm.IDatabaseServer#getConnection()
-     */
-    public Connection getConnection() {
-        Connection conn = null;
-        
-        for (int tryCount = 0; conn == null && tryCount < RDBMServices.RETRY_COUNT; tryCount++) {
-            try {
-                conn = this.dataSource.getConnection();
-                
-                //Normalize the connection
-                if (conn != null && !conn.getAutoCommit()) {
-                    RDBMServices.rollback(conn);
-                    RDBMServices.setAutoCommit(conn, true);
-                }
-            }
-            catch (SQLException sqle) {
-                final String errMsg = "An error occured while getting a connection to (try " + tryCount + "):\n" + this.toString();
-                
-                if (tryCount == 0)
-                    LOG.error(errMsg, sqle);
-                else
-                    LOG.warn(errMsg, sqle);
-                
-                throw new DataAccessResourceFailureException("Error getting connection to [" + this + "]", sqle);
-            }            
-        }
-
-        return conn;
-    }
-    
     /**
      * @see org.jasig.portal.rdbm.IDatabaseServer#releaseConnection(java.sql.Connection)
      */
@@ -132,27 +109,6 @@ public class DatabaseServerImpl implements IDatabaseServer {
         catch (Exception e) {
             LOG.warn("An error occured while closing a connection.", e);
         }
-    }
-
-    /**
-     * @see org.jasig.portal.rdbm.IDatabaseServer#getJdbcDriver()
-     */
-    public String getJdbcDriver() {
-        return this.driverName;
-    }
-
-    /**
-     * @see org.jasig.portal.rdbm.IDatabaseServer#getJdbcUrl()
-     */
-    public String getJdbcUrl() {
-        return this.dbUrl;
-    }
-
-    /**
-     * @see org.jasig.portal.rdbm.IDatabaseServer#getJdbcUser()
-     */
-    public String getJdbcUser() {
-        return this.userName;
     }
 
     /**
@@ -239,7 +195,7 @@ public class DatabaseServerImpl implements IDatabaseServer {
         dbInfo.append(") database/driver");
         dbInfo.append("\n");
         dbInfo.append("    Connected To: ");
-        dbInfo.append(this.getJdbcUrl());
+        dbInfo.append(this.dbUrl);
         dbInfo.append("\n");
         dbInfo.append("    Supports:");        
         dbInfo.append("\n");
@@ -269,9 +225,10 @@ public class DatabaseServerImpl implements IDatabaseServer {
      * Run a set of tests on the database to provide better meta data.
      */
     private void runDatabaseTests() {
-        final Connection conn = getConnection();
-        
-        //The order of these tests is IMPORTANT, each may depend on the
+        final Connection conn;
+        try {
+            conn = this.dataSource.getConnection();
+       //The order of these tests is IMPORTANT, each may depend on the
         //results of the previous tests.
         this.getMetaData(conn);
         this.testPreparedStatements(conn);
@@ -280,7 +237,10 @@ public class DatabaseServerImpl implements IDatabaseServer {
         this.testTransactions(conn);
         
         this.releaseConnection(conn);
-    }
+        } catch (SQLException e) {
+            LOG.error("Error during database initialization. "+e);
+        }
+     }
     
     /**
      * Gets meta data about the connection.

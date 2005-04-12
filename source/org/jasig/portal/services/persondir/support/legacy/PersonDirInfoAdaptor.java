@@ -20,7 +20,6 @@ import org.jasig.portal.RDBMServices;
 import org.jasig.portal.ldap.ILdapServer;
 import org.jasig.portal.ldap.LdapServerImpl;
 import org.jasig.portal.ldap.LdapServices;
-import org.jasig.portal.rdbm.RDBMServicesDataSource;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.persondir.IPersonAttributeDao;
 import org.jasig.portal.services.persondir.support.JdbcPersonAttributeDaoImpl;
@@ -103,7 +102,7 @@ final class PersonDirInfoAdaptor {
             
             if (dsRefName.equals(RDBMServices.DEFAULT_DATABASE)) {
                 // get a DataSource from RDBMServices
-                source = new RDBMServicesDataSource(dsRefName);
+                source = RDBMServices.getDataSource(dsRefName);
             } else {
                 JndiObjectFactoryBean factory = new JndiObjectFactoryBean();
                 factory.setJndiName("jdbc/" + dsRefName);

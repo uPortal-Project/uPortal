@@ -71,7 +71,7 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
 
         try {
             // Set autocommit false for the connection
-            if (RDBMServices.supportsTransactions)
+            if (RDBMServices.getDbMetaData().supportsTransactions())
                 RDBMServices.setAutoCommit(con, false);
             
             PreparedStatement selectPrefIdsPstmt = null;
@@ -161,12 +161,12 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
                     }
                 }
                 
-                if (RDBMServices.supportsTransactions)
+                if (RDBMServices.getDbMetaData().supportsTransactions())
                     RDBMServices.commit(con);
             }
             catch (Exception e) {
                 // Roll back the transaction
-                if (RDBMServices.supportsTransactions)
+                if (RDBMServices.getDbMetaData().supportsTransactions())
                     RDBMServices.rollback(con);
                 throw e;
             }
@@ -294,7 +294,7 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
 
         try {
             // Set autocommit false for the connection
-            if (RDBMServices.supportsTransactions)
+            if (RDBMServices.getDbMetaData().supportsTransactions())
                 RDBMServices.setAutoCommit(con, false);
         
             PreparedStatement selectPrefIdsPstmt = null;
@@ -389,12 +389,12 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
                     }
                 }
 
-                if (RDBMServices.supportsTransactions)
+                if (RDBMServices.getDbMetaData().supportsTransactions())
                     RDBMServices.commit(con);
             }
             catch (Exception e) {
                 // Roll back the transaction
-                if (RDBMServices.supportsTransactions)
+                if (RDBMServices.getDbMetaData().supportsTransactions())
                     RDBMServices.rollback(con);
                 throw e;
             }
@@ -504,7 +504,7 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
 
         try {
             // Set autocommit false for the connection
-            if (RDBMServices.supportsTransactions)
+            if (RDBMServices.getDbMetaData().supportsTransactions())
                 RDBMServices.setAutoCommit(con, false);
 
             PreparedStatement selectPrefIdsPstmt = null;
@@ -538,12 +538,12 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
                 deletePrefNamesPstmt.setInt(1, userId);
                 deletePrefNamesPstmt.executeUpdate();
 
-                if (RDBMServices.supportsTransactions)
+                if (RDBMServices.getDbMetaData().supportsTransactions())
                     RDBMServices.commit(con);
             }
             catch (Exception e) {
                 // Roll back the transaction
-                if (RDBMServices.supportsTransactions)
+                if (RDBMServices.getDbMetaData().supportsTransactions())
                     RDBMServices.rollback(con);
                 throw e;
             }
@@ -582,7 +582,7 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
 
         try {
             // Set autocommit false for the connection
-            if (RDBMServices.supportsTransactions)
+            if (RDBMServices.getDbMetaData().supportsTransactions())
                 RDBMServices.setAutoCommit(con, false);
 
             PreparedStatement selectPrefIdsPstmt = null;
@@ -620,12 +620,12 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
                 deletePrefNamesPstmt.setString(3, chanDescId);                
                 deletePrefNamesPstmt.executeUpdate();
 
-                if (RDBMServices.supportsTransactions)
+                if (RDBMServices.getDbMetaData().supportsTransactions())
                     RDBMServices.commit(con);
             }
             catch (Exception e) {
                 // Roll back the transaction
-                if (RDBMServices.supportsTransactions)
+                if (RDBMServices.getDbMetaData().supportsTransactions())
                     RDBMServices.rollback(con);
                 throw e;
             }

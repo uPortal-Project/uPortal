@@ -738,6 +738,6 @@ private static long getTimestampMillis(Timestamp ts)
  */
 private static java.lang.String printTimestamp(Timestamp ts)
 {
-    return RDBMServices.sqlTimeStamp(getTimestampMillis(ts));
+    return RDBMServices.getDbMetaData().sqlTimeStamp(getTimestampMillis(ts));
 }
 }

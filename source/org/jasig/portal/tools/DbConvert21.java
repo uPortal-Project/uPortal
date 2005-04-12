@@ -50,7 +50,7 @@ public class DbConvert21 {
          
 
 
-		if (RDBMServices.supportsTransactions)
+		if (RDBMServices.getDbMetaData().supportsTransactions())
 		  con.setAutoCommit(false);
 
 		// Create the JDBC statement
@@ -170,7 +170,7 @@ public class DbConvert21 {
 					}
 				}
 
-				if (RDBMServices.supportsTransactions)
+				if (RDBMServices.getDbMetaData().supportsTransactions())
 				  con.commit();
 
 				} finally {
