@@ -354,13 +354,12 @@ public class ChannelRenderer
     }
 
     /**
-     * I am not really sure if this will take care of the runaway rendering threads.
-     * The alternative is kill them explicitly in ChannelManager.
+     * This method suppose to take care of the runaway rendering threads.
+     * This method will be called from ChannelManager explictly.
      */
-    protected void finalize () throws Throwable  {
+    protected void kill() throws Throwable  {
        if(workTracker!=null && !workTracker.isJobComplete())
             workTracker.killJob();
-       super.finalize ();
     }
 
 
