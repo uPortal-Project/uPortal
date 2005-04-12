@@ -218,6 +218,14 @@ public class ChannelManager implements LayoutEventListener {
      */
     public void finishedRenderingCycle() {
         // clean up
+        for (Enumeration enumeration = rendererTable.elements(); enumeration.hasMoreElements();) {
+            ChannelRenderer channelRenderer = (ChannelRenderer) enumeration.nextElement();
+            try {
+                channelRenderer.kill();
+            } catch (Throwable exception) {
+                log.error("Error cleaning up runaway thread state ", exception);
+            }
+        }
         rendererTable.clear();
         clearRepeatedRenderings();
         targetParams=null;
