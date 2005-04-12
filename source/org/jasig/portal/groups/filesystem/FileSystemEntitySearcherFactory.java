@@ -36,12 +36,6 @@ protected static FileSystemGroupStore getGroupStore() throws GroupsException
 }
 public IEntitySearcher newEntitySearcher() throws GroupsException
 {
-    try
-        { return getGroupStore(); }
-    catch ( Exception ex )
-    {
-        log.error(ex.getMessage(), ex);
-        throw new GroupsException(ex);
-    }
+    return getGroupStore();
 }
 }

@@ -263,7 +263,7 @@ protected Iterator findContainingGroups(IEntity ent) throws GroupsException
                     { groups.add(find(files[i])); }
             }
         }
-        catch (Exception ex)
+        catch (IOException ex)
             { throw new GroupsException("Problem reading group files", ex); }
     }
 
@@ -299,7 +299,7 @@ protected Iterator findContainingGroups(IEntityGroup group) throws GroupsExcepti
                     { groups.add(find(files[i])); }
             }
         }
-        catch (Exception ex)
+        catch (IOException ex)
             { throw new GroupsException("Problem reading group files", ex); }
     }
     return groups.iterator();
@@ -383,7 +383,7 @@ public java.lang.String[] findMemberGroupKeys(IEntityGroup group) throws GroupsE
             Collection groupKeys = getGroupIdsFromFile(f);
             keys = (String[])groupKeys.toArray(new String[groupKeys.size()]);
         }
-        catch (Exception ex)
+        catch (IOException ex)
             { throw new GroupsException(DEBUG_CLASS_NAME + ".findMemberGroupKeys(): " +
                  "problem finding group members", ex); }
     }
@@ -503,7 +503,6 @@ protected Collection getEntityIdsFromFile(File idFile) throws IOException, FileN
  */
 protected Class getEntityType(File f)
 {
-    Class cl = null;
     String path = f.getPath();
     String afterRootPath = null;
     Class type = null;
@@ -655,14 +654,18 @@ protected void initialize()
 
     defaultEntityType = org.jasig.portal.security.IPerson.class;
     
+    String sep = null;
+    
     try
+        { sep = GroupServiceConfiguration.getConfiguration().getNodeSeparator(); }
+    catch (Exception ex) 
+        { throw new RuntimeException(ex); }
+    
+    if (sep != null)
     {
-        String sep = GroupServiceConfiguration.getConfiguration().getNodeSeparator();
         String period = String.valueOf(PERIOD);
         useSubstitutePeriod = sep.equals(period);
     }
-    catch (Exception ex) {}
-
 }
 /**
  * @return org.jasig.portal.groups.IEntityGroup
@@ -789,7 +792,6 @@ throws GroupsException
         Set allDirs = getAllDirectoriesBelow(baseDir);
         allDirs.add(baseDir);
 
-        Set allFiles = new HashSet();
         for (Iterator itr = allDirs.iterator(); itr.hasNext(); )
         {
             File[] files = ((File)itr.next()).listFiles(filter);

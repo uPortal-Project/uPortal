@@ -45,13 +45,7 @@ protected static FileSystemGroupStore getGroupStore() throws GroupsException
  */
 public IEntityStore newEntityStore() throws GroupsException
 {
-    try
-        { return getGroupStore(); }
-    catch ( Exception ex )
-    {
-        log.error(ex.getMessage(), ex);
-        throw new GroupsException(ex);
-    }
+    return getGroupStore();
 }
 /**
  * Return an instance of the entity group store implementation.
@@ -70,18 +64,10 @@ public IEntityGroupStore newGroupStore() throws GroupsException
 public IEntityGroupStore newGroupStore(ComponentGroupServiceDescriptor svcDescriptor)
 throws GroupsException
 {
-    try
-    {
-        FileSystemGroupStore fsGroupStore = (FileSystemGroupStore)getGroupStore();
-        String groupsRoot = (String)svcDescriptor.get("groupsRoot");
-        if ( groupsRoot != null )
-            { fsGroupStore.setGroupsRootPath(groupsRoot); }
+    FileSystemGroupStore fsGroupStore = (FileSystemGroupStore)getGroupStore();
+    String groupsRoot = (String)svcDescriptor.get("groupsRoot");
+    if ( groupsRoot != null )
+        { fsGroupStore.setGroupsRootPath(groupsRoot); }
         return fsGroupStore;
-    }
-    catch ( Exception ex )
-    {
-        log.error(ex.getMessage(), ex);
-        throw new GroupsException(ex);
-    }
 }
 }
