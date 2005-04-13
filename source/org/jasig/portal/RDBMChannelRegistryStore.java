@@ -20,7 +20,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.pluto.om.common.Preference;
 import org.apache.pluto.om.common.PreferenceSet;
 import org.jasig.portal.channels.portlet.CPortletAdapter;
-import org.jasig.portal.concurrency.CachingException;
 import org.jasig.portal.container.om.common.PreferenceSetImpl;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IEntity;
@@ -503,7 +502,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
         // Add the channel definition to the cache
         try {
           EntityCachingService.instance().add(channelDef);
-        } catch (CachingException e) {
+        } catch (Exception e) {
           log.error("Error caching channel definition " + channelDef, e);
         }
 
@@ -776,7 +775,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
         // Notify the cache
         try {
           EntityCachingService.instance().remove(channelDef);
-        } catch (CachingException e) {
+        } catch (Exception e) {
           log.error("Error removing channel definition "
                   + channelDef + " from cache.", e);
         }
