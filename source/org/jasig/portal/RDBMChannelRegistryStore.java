@@ -249,15 +249,6 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
         } finally {
             stmt.close();
         }
-      } catch (Exception e) {
-          log.error(e.getMessage(), e);
-          if (e instanceof SQLException)
-              throw (SQLException)e;
-          else {
-            SQLException sqle = new SQLException(e.getMessage());
-            sqle.initCause(e);
-            throw sqle;
-        }
       } finally {
         RDBMServices.releaseConnection(con);
       }
