@@ -54,8 +54,12 @@ public class JdbcPersonAttributeDaoImplTest
                                  "VALUES ('edalquist', 'Eric', 'edalquist@unicon.net', 'blue')").execute();
 
         con.prepareStatement("INSERT INTO user_table " +
-                                 "(netid, name, email, shirt_color) " +
-                                 "VALUES ('atest', 'Andrew', 'andrew.test@test.net', 'red')").execute();
+				                "(netid, name, email, shirt_color) " +
+				                "VALUES ('atest', 'Andrew', 'andrew.test@test.net', 'red')").execute();
+        
+        con.prepareStatement("INSERT INTO user_table " +
+				                "(netid, name, email, shirt_color) " +
+				                "VALUES ('susan', 'Susan', 'susan.test@test.net', null)").execute();
         con.close();
     }
 
@@ -106,39 +110,64 @@ public class JdbcPersonAttributeDaoImplTest
        assertEquals(attributeNames, expectedAttributeNames);
    }
 
-    /**
-     * Test for a query with a single attribute
-     */
-    public void testSingleAttrQuery() {
-        final String queryAttr = "uid";
-        final List queryAttrList = new LinkedList();
-        queryAttrList.add(queryAttr);
+   /**
+    * Test for a query with a single attribute
+    */
+   public void testSingleAttrQuery() {
+       final String queryAttr = "uid";
+       final List queryAttrList = new LinkedList();
+       queryAttrList.add(queryAttr);
 
-        JdbcPersonAttributeDaoImpl impl = 
-            new JdbcPersonAttributeDaoImpl(testDataSource, queryAttrList,
-                "SELECT name, email, shirt_color FROM user_table WHERE netid = ?");
+       JdbcPersonAttributeDaoImpl impl = 
+           new JdbcPersonAttributeDaoImpl(testDataSource, queryAttrList,
+               "SELECT name, email, shirt_color FROM user_table WHERE netid = ?");
 
-        impl.setDefaultAttributeName(queryAttr);
-        
-        Map columnsToAttributes = new HashMap();
-        columnsToAttributes.put("name", "firstName");
+       impl.setDefaultAttributeName(queryAttr);
+       
+       Map columnsToAttributes = new HashMap();
+       columnsToAttributes.put("name", "firstName");
 
-        Set emailAttributeNames = new HashSet();
-        emailAttributeNames.add("email");
-        emailAttributeNames.add("emailAddress");
-        columnsToAttributes.put("email", emailAttributeNames);
-        columnsToAttributes.put("shirt_color", "dressShirtColor");
-        impl.setColumnsToAttributes(columnsToAttributes);
+       Set emailAttributeNames = new HashSet();
+       emailAttributeNames.add("email");
+       emailAttributeNames.add("emailAddress");
+       columnsToAttributes.put("email", emailAttributeNames);
+       columnsToAttributes.put("shirt_color", "dressShirtColor");
+       impl.setColumnsToAttributes(columnsToAttributes);
 
-        Map attribs = impl.getUserAttributes("awp9");
-        assertEquals("andrew.petro@yale.edu", attribs.get("email"));
-        assertEquals("andrew.petro@yale.edu", attribs.get("emailAddress"));
-        assertEquals("blue", attribs.get("dressShirtColor"));
-        assertNull(attribs.get("shirt_color"));
-        assertEquals("Andrew", attribs.get("firstName"));
-    }
-    
-    
+       Map attribs = impl.getUserAttributes("awp9");
+       assertEquals("andrew.petro@yale.edu", attribs.get("email"));
+       assertEquals("andrew.petro@yale.edu", attribs.get("emailAddress"));
+       assertEquals("blue", attribs.get("dressShirtColor"));
+       assertNull(attribs.get("shirt_color"));
+       assertEquals("Andrew", attribs.get("firstName"));
+   }
+   
+   
+   /**
+    * Test for a query with a null value attribute
+    */
+   public void testNullAttrQuery() {
+       final String queryAttr = "uid";
+       final List queryAttrList = new LinkedList();
+       queryAttrList.add(queryAttr);
+
+       JdbcPersonAttributeDaoImpl impl = 
+           new JdbcPersonAttributeDaoImpl(testDataSource, queryAttrList,
+               "SELECT name, email, shirt_color FROM user_table WHERE netid = ?");
+
+       impl.setDefaultAttributeName(queryAttr);
+       
+       Map columnsToAttributes = new HashMap();
+       columnsToAttributes.put("name", "firstName");
+       columnsToAttributes.put("shirt_color", "dressShirtColor");
+       impl.setColumnsToAttributes(columnsToAttributes);
+
+       Map attribs = impl.getUserAttributes("susan");
+       assertNull(attribs.get("dressShirtColor"));
+       assertEquals("Susan", attribs.get("firstName"));
+   }
+   
+   
     /**
      * Test case for a query that needs multiple attributes to complete and
      * more attributes than are needed to complete are passed to it.

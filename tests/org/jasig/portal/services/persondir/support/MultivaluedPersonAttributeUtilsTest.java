@@ -220,17 +220,12 @@ public class MultivaluedPersonAttributeUtilsTest extends TestCase {
     }
     
     /**
-     * Test that attempting to add a result with a null value yields IllegalArgumentException.
+     * Test that attempting to add a result with a null value yields no change.
      */
     public void testAddResultNullValue() {
-        try {
-            MultivaluedPersonAttributeUtils.addResult(new HashMap(), "key", null);
-        } catch (IllegalArgumentException iae) {
-            // good
-            return;
-        }
-        fail("Attempting to add a result with a null value should yield IllegalArgumentException.");
-    }
+        Map immutableMap = Collections.unmodifiableMap(new HashMap());
+        MultivaluedPersonAttributeUtils.addResult(immutableMap, "key", null);
+   }
 
     /**
      * Test a simple non-colliding add.

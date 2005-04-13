@@ -144,7 +144,7 @@ public final class MultivaluedPersonAttributeUtils {
         }
         
         if (value == null) {
-            throw new IllegalArgumentException("Cannot add a result with a null value.");
+            return; /* don't put null values into the Map. */
         }
         
         final Object currentValue = results.get(key);
