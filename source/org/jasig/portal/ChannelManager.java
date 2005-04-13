@@ -526,7 +526,7 @@ public class ChannelManager implements LayoutEventListener {
             log.warn("Replacing channel [" + oldInstance
                 + "], which had subscribeId [" + channelSubscribeId 
                 + "] with error channel because of error code " 
-                + errorCode + " message: " + message + " and throwable [" + t +"]");
+                + errorCode + " message: " + message + " and throwable [" + t +"]",t);
         
         channelTable.remove(channelSubscribeId);
         rendererTable.remove(channelSubscribeId);
