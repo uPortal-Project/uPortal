@@ -1,4 +1,4 @@
-/* Copyright 2002 The JA-SIG Collaborative.  All rights reserved.
+/* Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
 *  See license distributed with this file and
 *  available online at http://www.uportal.org/license.html
 */
@@ -33,12 +33,7 @@ import org.xml.sax.ContentHandler;
 import org.jasig.portal.services.LogService;
 
 /**
- * <p>Title: </p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2003</p>
- * <p>Company: </p>
- * @version 2.0
- * @author <a href="mailto:smb1@cornell.edu?subject=CUserManager">Steve Barrett</a>
+ * @author smb1@cornell.edu
  */
 public class CUserManager extends CUserManagerPermissions implements IChannel, IPermissible {
 

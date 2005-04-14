@@ -1,4 +1,4 @@
-/* Copyright 2002 The JA-SIG Collaborative.  All rights reserved.
+/* Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
 *  See license distributed with this file and
 *  available online at http://www.uportal.org/license.html
 */
@@ -33,15 +33,8 @@ import org.jasig.portal.services.LogService;
 import org.jasig.portal.channels.cusermanager.*;
 
 /**
- * <p>Title: IDataHander.java</p>
- * <p>Description: Interface for data gets/sets</p>
- * <p>Copyright: Copyright (c) 2003</p>
- * <p>Company: Cornell University</p>
- * @author <a href='mailto:smb1@cornell.edu?subject=CUserManager Channel'>Steve Barrett</a>
- * @version 1.0
- *
+ * @author smb1@cornell.edu
  */
-
 public class DefaultDataHandlerImpl implements IDataHandler {
 
   protected static final String SINGLEQUOTE = "'";

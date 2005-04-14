@@ -1,15 +1,13 @@
-/* Copyright 2002 The JA-SIG Collaborative.  All rights reserved.
+/* Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
 *  See license distributed with this file and
 *  available online at http://www.uportal.org/license.html
 */
 package org.jasig.portal.channels.cusermanager.provider;
 
 /**
- *
  * copied from uportal package path to correct it for use
+ * @author smb1@cornell.edu
  */
-
-
 import org.jasig.portal.*;
 import java.io.*;
 import java.util.Date;

@@ -1,4 +1,4 @@
-/* Copyright 2002 The JA-SIG Collaborative.  All rights reserved.
+/* Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
 *  See license distributed with this file and
 *  available online at http://www.uportal.org/license.html
 */
@@ -11,14 +11,8 @@ import org.jasig.portal.IPermissible;
 import org.jasig.portal.channels.permissionsmanager.RDBMPermissibleRegistry;
 
 /**
- * <p>Title: </p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2003</p>
- * <p>Company: </p>
- * @author <a href="mailto:smb1@cornell.edu?subject=CUserManager">Steve Barrett</a>
- * @version 2.0
+ * @author smb1@cornell.edu
  */
-
 class CUserManagerPermissions implements IPermissible {
 
     /**
