@@ -157,10 +157,10 @@ public abstract class AbstractPool implements ThreadPool {
 		if (isDestroyed) {
 			throw new IllegalStateException("This pool has been destroyed!");
 		}
-		if ( !thread.isInterrupted() )
-		  thread.interrupt();
 		busyThreads.remove(thread);
         idleThreads.remove(thread);
+        if ( !thread.isInterrupted() )
+  		  thread.interrupt();
         thread = null;
 	}
 
