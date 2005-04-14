@@ -90,9 +90,9 @@ public final class Worker extends Thread {
 	 */
 	public void stopWorker() {
 		continueWorking = false;
-                if ( !this.isInterrupted() )
+        if ( !this.isInterrupted() )
 		 this.interrupt();
-                pool.destroyThread(this);
+         pool.destroyThread(this);
 	}
 
 	private void cleanState() {

@@ -96,14 +96,7 @@ public abstract class AbstractPool implements ThreadPool {
     // Creates a new thread
     protected abstract Thread createNewThread() throws Exception;
 
-         /**
-	 * Destroys the pooled thread
-         * @param thread the thread to be destroyed
-         *
-	 */
-	public abstract void destroyThread(Thread thread);
-
-         /**
+    /**
 	 * Destroys the pool and all it's threads.  A destroyed pool thread can not be used
 	 * after is has been destroyed.  Threads running when a pool is destroyed are interrupted
 	 * and then destroyed.
@@ -157,6 +150,19 @@ public abstract class AbstractPool implements ThreadPool {
 		return busyThreads.size();
 	}
 
+    /**
+	 * Destroyed a pooled thread
+	 */
+	public synchronized void destroyThread( Thread thread ) {
+		if (isDestroyed) {
+			throw new IllegalStateException("This pool has been destroyed!");
+		}
+		if ( !thread.isInterrupted() )
+		  thread.interrupt();
+		busyThreads.remove(thread);
+        idleThreads.remove(thread);
+        thread = null;
+	}
 
 
         /**
@@ -166,7 +172,7 @@ public abstract class AbstractPool implements ThreadPool {
 
         public synchronized void releaseThread(Thread thread) throws Exception {
              if (isDestroyed) {
-			throw new IllegalStateException("This pool has been destroyed!");
+			    throw new IllegalStateException("This pool has been destroyed!");
              }
 
              busyThreads.remove(thread);

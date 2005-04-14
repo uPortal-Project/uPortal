@@ -41,19 +41,6 @@ public class BoundedThreadPool extends AbstractPool{
 	}
 
 
-        /**
-	 * Destroyed a pooled thread
-	 */
-	public synchronized void destroyThread( Thread thread ) {
-		if (isDestroyed) {
-			return;
-		}
-
-		Worker worker = (Worker) thread;
-        worker.stopWorker();
-		worker = null;
-	}
-
 
 	/**
 	* Queues up a task to be executed.  The queue use FIFO ordering.
