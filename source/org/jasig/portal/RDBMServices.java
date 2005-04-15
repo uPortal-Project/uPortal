@@ -292,7 +292,9 @@ public class RDBMServices {
      */
     public static Connection getConnection(final String dbName) {
        
-        if (dbName==DEFAULT_DATABASE || dbName==PORTAL_DB) return getConnection();
+        if (DEFAULT_DATABASE.equals(dbName) || PORTAL_DB.equals(dbName)) {
+            return getConnection();
+        }
         
         DataSource ds = (DataSource) namedDataSources.get(dbName);
         if (ds==null) {
