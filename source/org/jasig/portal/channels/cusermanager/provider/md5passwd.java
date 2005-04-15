@@ -25,7 +25,7 @@ import org.jasig.portal.security.provider.AccountStoreFactory;
  * @author Andrew Newman, newman@yale.edu (heavily modified by smb1@cornell.edu)
  * @version $Revision$
  */
-class md5passwd {
+class Md5passwd {
 
   public static final String ACCOUNTLOCK = "*LCK*";
 
