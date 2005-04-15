@@ -362,6 +362,20 @@ public class ChannelRenderer
             workTracker.killJob();
     }
 
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        
+        sb.append("ChannelRenderer ");
+        sb.append("channel = [").append(this.channel).append("] ");
+        sb.append("rd = [").append(this.rd).append("] ");
+        sb.append("rendering=").append(this.rendering).append(" ");
+        sb.append("donerendering=").append(this.donerendering).append(" ");
+        sb.append("startTime=").append(this.startTime).append(" ");
+        sb.append("timeOut=").append(this.timeOut).append(" ");
+        
+        return sb.toString();
+    }
+    
 
     protected class Worker extends WorkerTask{
         private boolean successful;
