@@ -4,12 +4,12 @@
 
 <channel-definition>
 
-    <title>Thrower</title>
-    <name>Thrower</name>
-    <fname>thrower</fname>
-    <desc>Exception thrower channel</desc>
+    <title>Timeout</title>
+    <name>Timeout</name>
+    <fname>timeout</fname>
+    <desc>Rendering timeout testing channel.</desc>
     <type>Custom</type>
-    <class>org.jasig.portal.channels.error.CThrower</class>
+    <class>org.jasig.portal.channels.error.CTimeout</class>
     <timeout>5000</timeout>
     
     <hasedit>N</hasedit>
