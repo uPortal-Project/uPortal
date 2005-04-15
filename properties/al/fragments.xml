@@ -20,6 +20,34 @@
 		</folder>
 	</fragment>
 	
+	<fragment name="errorHandling" type="pushed">
+		<description>Demonstrates error handling.</description>
+		<groups>
+			<group>Everyone</group>
+			<group>Guests</group>
+		</groups>
+		<restrictions>
+			<restriction path="local" name="priority" value="19999-20000"/>
+			<restriction path="local" name="depth" value="1"/>
+		</restrictions>
+		
+		<folder name="Error Handling" immutable="Y" unremovable="Y" hidden="N">
+			<folder name="throw" immutable="Y" unremovable="Y" hidden="N">
+				<folder name="column1" immutable="Y" unremovable="Y" hidden="N">
+					<channel fname="thrower" immutable="Y" unremovable="Y" 
+						hidden="N"/>
+				</folder>
+			</folder>
+			<folder name="timeout" immutable="Y" unremovable="Y" hidden="N">
+				<folder name="column1" immutable="Y" unremovable="Y" hidden="N">
+					<channel fname="timeout" immutable="Y" unremovable="Y" 
+						hidden="N"/>
+				</folder>
+			</folder>
+		</folder>
+		
+	</fragment>
+	
 	<fragment name="news" type="pushed">
 		<description>News channels</description>
 		<groups>
