@@ -235,10 +235,10 @@ public class DatabaseTagHandler
                         + " and \n"
                         + dataString
                         + ".\nLogged Output:\n---------------------\n"
-                        + logBfr.toString()
+                        + logBfr
                         + (createScript
                             ? "\nDatabase Script:\n---------------------\n"
-                                + scriptLog.toString()
+                                + scriptLog
                             : ""));
             }
             catch(Exception e)
@@ -249,11 +249,11 @@ public class DatabaseTagHandler
                         + " and \n"
                         + dataString
                         + ".\nLogged Output:\n---------------------\n"
-                        + logBfr.toString()
+                        + logBfr
                         + (createScript
                             ? "\nDatabase Script:\n---------------------\n"
-                                + scriptLog.toString()
-                            : ""));
+                                + scriptLog
+                            : ""),e);
             }
         }
         catch(Exception e)
