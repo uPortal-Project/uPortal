@@ -7,8 +7,11 @@ package org.jasig.portal.channels.cusermanager;
 import java.util.Enumeration;
 import java.text.MessageFormat;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.IChannel;
 
+import org.jasig.portal.channels.cusermanager.provider.DefaultDataHandlerImpl;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.provider.PersonImpl;
@@ -30,13 +33,12 @@ import org.w3c.dom.Element;
 
 import org.xml.sax.ContentHandler;
 
-import org.jasig.portal.services.LogService;
-
 /**
  * @author smb1@cornell.edu
  */
 public class CUserManager extends CUserManagerPermissions implements IChannel, IPermissible {
-
+  private static final Log LOG = LogFactory.getLog(DefaultDataHandlerImpl.class);
+  
   private IDataHandler datasource;
 
   private String mode = Constants.MODEDISPLAY;
@@ -111,7 +113,9 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
           PwdChngMode = false;
 
       }// for
-    }catch( AuthorizationException ae ){ LogService.log( LogService.ERROR, ae ); }
+    }catch( AuthorizationException ae ){ 
+        LOG.error(ae,ae); 
+    }
 
   }// setStaticData
 
@@ -158,10 +162,9 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
       // see if we have form data to process
       if( CRD.getParameter( Constants.FORMACTION ) != null ){
 
-        LogService.log( LogService.DEBUG,
-             "form.action=" + (String)CRD.getParameter( Constants.FORMACTION ));
+        LOG.debug("form.action=" + CRD.getParameter( Constants.FORMACTION ));
 
-        switch( Integer.parseInt( (String)CRD.getParameter( Constants.FORMACTION ))) {
+        switch( Integer.parseInt( CRD.getParameter( Constants.FORMACTION ))) {
 
             case 1: { // update
 
@@ -305,7 +308,7 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
      }// if
 
      if( !ManagerMode && PersonalDocument == null
-              && mode != Constants.MODEABOUT && mode != Constants.MODEHELP ) // always override
+              && !mode.equals(Constants.MODEABOUT) && !mode.equals(Constants.MODEHELP) ) // always override
        mode = Constants.MODEDISPLAY;  // force a read
 
      // look up the person we are supposed to display
@@ -318,11 +321,11 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
                  : CRD.getParameter( Constants.FORMCHOSEN ) )) };
 
 
-     if( !ManagerMode && mode != Constants.MODEABOUT && mode != Constants.MODEHELP ) // always override
+     if( !ManagerMode && !mode.equals(Constants.MODEABOUT) && !mode.equals(Constants.MODEHELP) ) // always override
        mode = Constants.MODEPWDCHNG;
 
      if( (ManagerMode || ( !ManagerMode && PersonalDocument == null ))
-             && mode != Constants.MODEABOUT && mode != Constants.MODEHELP ) {
+             && !mode.equals(Constants.MODEABOUT) && !mode.equals(Constants.MODEHELP) ) {
        doc = DocumentFactory.getNewDocument();
 
        // fill in info about the user
@@ -396,7 +399,7 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
      xslt.transform();
 
    }catch( Exception e ){
-      LogService.log( LogService.ERROR, e );
+      LOG.error(e,e);
 
       throw new PortalException(
                    (e.getMessage()!=null?e.getMessage():e.toString()));
@@ -407,15 +410,13 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
 
     if( datasource == null )
       datasource = (IDataHandler)
-       this.getClass().forName(
-
+       Class.forName(
          (
            CSD.getParameter( Constants.CHNPARAMDATAHANDLER ) == null?
              Constants.DEFAULTDATAHANDLER
              :
              CSD.getParameter( Constants.CHNPARAMDATAHANDLER )
          )
-
         ).newInstance();
 
     return datasource;

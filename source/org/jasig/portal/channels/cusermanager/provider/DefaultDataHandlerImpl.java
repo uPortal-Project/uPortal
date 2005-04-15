@@ -14,6 +14,8 @@ import java.util.Vector;
 import java.util.Iterator;
 import java.util.Enumeration;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.services.GroupService;
@@ -28,14 +30,13 @@ import org.jasig.portal.IUserIdentityStore;
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.RDBMUserIdentityStore;
 
-import org.jasig.portal.services.LogService;
-
 import org.jasig.portal.channels.cusermanager.*;
 
 /**
  * @author smb1@cornell.edu
  */
 public class DefaultDataHandlerImpl implements IDataHandler {
+  private static final Log LOG = LogFactory.getLog(DefaultDataHandlerImpl.class);
 
   protected static final String SINGLEQUOTE = "'";
   protected static final String WILDCARD = "%";
@@ -69,16 +70,16 @@ public class DefaultDataHandlerImpl implements IDataHandler {
            + "or last_name like {0} or first_name like {0} " });
 
   private IUserIdentityStore rdbmuser = new RDBMUserIdentityStore();
-
+  
   static {
-   LogService.log( LogService.DEBUG, "USERSELECT: " + USERSELECT );
-   LogService.log( LogService.DEBUG, "ALLUSERS: " + ALLUSERS );
-   LogService.log( LogService.DEBUG, "GETTHISUSER: " + GETTHISUSER );
-   LogService.log( LogService.DEBUG, "SEARCHUSERS: " + SEARCHUSERS );
-   LogService.log( LogService.DEBUG, "ADDUSER: " + ADDUSER );
-   LogService.log( LogService.DEBUG, "UPDMASK: " + UPDMASK );
-   LogService.log( LogService.DEBUG, "UPDCONDMASK: " + UPDCONDMASK );
-   LogService.log( LogService.DEBUG, "UPDPWD: " + UPDPWD );
+      LOG.debug("USERSELECT: " + USERSELECT );
+      LOG.debug("ALLUSERS: " + ALLUSERS );
+      LOG.debug("GETTHISUSER: " + GETTHISUSER );
+      LOG.debug("SEARCHUSERS: " + SEARCHUSERS );
+      LOG.debug("ADDUSER: " + ADDUSER );
+      LOG.debug("UPDMASK: " + UPDMASK );
+      LOG.debug("UPDCONDMASK: " + UPDCONDMASK );
+      LOG.debug("UPDPWD: " + UPDPWD );
   }// static
 
   public IPerson[] getAllUsers() throws Exception {
@@ -122,7 +123,7 @@ public class DefaultDataHandlerImpl implements IDataHandler {
      updsql.setLength( updsql.length() -2 );
      updsql.append( tmpcond );
 
-     LogService.log( LogService.DEBUG, "Issuing: " + updsql.toString() );
+     LOG.debug("Issuing: " + updsql.toString() );
 
      Connection C = getDBConn();
      C.createStatement().executeUpdate( updsql.toString());
@@ -226,8 +227,7 @@ public class DefaultDataHandlerImpl implements IDataHandler {
   public void removeUser( IPerson AnIndividual ) throws Exception {
 
        IPerson per= new PersonImpl();
-       per.setAttribute(per.USERNAME, (String)
-                AnIndividual.getAttribute( Constants.UNFIELD ));
+       per.setAttribute(IPerson.USERNAME, AnIndividual.getAttribute( Constants.UNFIELD ));
 
        int portalUID = -1;
        try{
@@ -251,8 +251,7 @@ public class DefaultDataHandlerImpl implements IDataHandler {
                lg.removeMember( gm );
                lg.update();
 
-               LogService.log( LogService.INFO,
-                         "Removed " + userName + " from " + group.getKey());
+               LOG.info("Removed " + userName + " from " + group.getKey());
              }// if
           }// for
 
@@ -330,8 +329,8 @@ public class DefaultDataHandlerImpl implements IDataHandler {
        try{
          pwdtst = new PersonImpl();
 
-         pwdtst.setAttribute( pwdtst.USERNAME,
-              (String)people[ i ].getAttribute( Constants.UNFIELD ));
+         pwdtst.setAttribute( IPerson.USERNAME,
+              people[ i ].getAttribute( Constants.UNFIELD ));
 
          rdbmuser.getPortalUID( pwdtst, false );
        }catch(org.jasig.portal.AuthorizationException ae) {

@@ -4,11 +4,6 @@
 */
 package org.jasig.portal.channels.cusermanager.provider;
 
-/**
- * copied from uportal package path to correct it for use
- * @author smb1@cornell.edu
- */
-import org.jasig.portal.*;
 import java.io.*;
 import java.util.Date;
 import java.security.*;
@@ -22,6 +17,8 @@ import org.jasig.portal.security.provider.AccountStoreFactory;
  * causes the user to be created if he/she doesn't exist. The <code>-l</code>
  * flag causes the specified user's account to be locked.</p>
  *
+ * copied from uportal package path to correct it for use
+ * @author smb1@cornell.edu
  * @author Andrew Newman, newman@yale.edu (heavily modified by smb1@cornell.edu)
  * @version $Revision$
  */
@@ -44,8 +41,6 @@ class Md5passwd {
     Long date = new Long((new Date()).getTime());
     SecureRandom r = new SecureRandom((date.toString()).getBytes());
     MessageDigest md = MessageDigest.getInstance("MD5");
-
-    int cnt = 0;
 
     // Create a password for this user
     if( !ProposedPassword.equals( ACCOUNTLOCK )) {
