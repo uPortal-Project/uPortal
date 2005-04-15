@@ -190,7 +190,7 @@ public class DefaultDataHandlerImpl implements IDataHandler {
   public void setUserPassword( IPerson AnIndividual, String OriginalPassword ) throws Exception {
 
     if( OriginalPassword != null )
-      if( !md5passwd.verifyPassword( (String)AnIndividual.getAttribute(
+      if( !Md5passwd.verifyPassword( (String)AnIndividual.getAttribute(
         Constants.UNFIELD ), OriginalPassword ))
           throw new Exception( Constants.ERRMSG_PWDNOTMATACHED );
 
@@ -198,7 +198,7 @@ public class DefaultDataHandlerImpl implements IDataHandler {
 
       if( !((String)AnIndividual.getAttribute(
             Constants.ENCRYPTPWDFIELD )).equals( Constants.NULLIFYUSER ))
-         newpwd = md5passwd.Encode(
+         newpwd = Md5passwd.Encode(
             (String)AnIndividual.getAttribute( Constants.ENCRYPTPWDFIELD ));
 
       Connection C = getDBConn();
