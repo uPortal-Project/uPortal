@@ -1088,6 +1088,26 @@
         <column><name>CHAN_HAS_ABOUT</name><value>Y</value></column>
         <column><name>CHAN_FNAME</name><value>contentsubscriber</value></column>
       </row>
+
+      <!-- 2005.04.16 - smb1@cornell.edu -->
+      <row sinceMajor="2" sinceMinor="5">
+        <column><name>CHAN_ID</name><value>82</value></column>
+        <column><name>CHAN_TITLE</name><value>Password Management</value></column>
+        <column><name>CHAN_NAME</name><value>Password Management</value></column>
+        <column><name>CHAN_DESC</name><value>Allows management of passwords.</value></column>
+        <column><name>CHAN_PUBL_ID</name><value>0</value></column>
+        <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_APVL_ID</name><value>0</value></column>
+        <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_TYPE_ID</name><value>-1</value></column>
+        <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.cusermanager.CUserManager</value></column>
+        <column><name>CHAN_TIMEOUT</name><value>100000</value></column>
+        <column><name>CHAN_EDITABLE</name><value>N</value></column>
+        <column><name>CHAN_HAS_HELP</name><value>Y</value></column>
+        <column><name>CHAN_HAS_ABOUT</name><value>N</value></column>
+        <column><name>CHAN_FNAME</name><value>passwordmgr</value></column>
+        <column><name>CHAN_SECURE</name><value>N</value></column>
+      </row>
      </rows>
   </table>
 
@@ -1172,12 +1192,15 @@
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
 
-      <!-- uPortal Developers Reference -->
+      <!-- uPortal Developers Reference 
+	   This was kindly housed at "http://www.princeton.edu/~mbarton/jasigdev.rss" for
+	   a number of years.  We now host this on the clearing house site.  2005.04.16 - smb1@cornell.edu
+	  -->
       <row>
         <column><name>CHAN_ID</name><value>7</value></column>
         <column><name>CHAN_PARM_NM</name><value>xmlUri</value></column>
         <column><name>CHAN_PARM_DESC</name><value></value></column>
-        <column><name>CHAN_PARM_VAL</name><value>http://www.princeton.edu/~mbarton/jasigdev.rss</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>http://jasigch.princeton.edu/static/jasigdev.rss</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
       <row>
@@ -4692,6 +4715,41 @@
         <column><name>TARGET</name><value>local.0</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
+	  
+	  <!-- 2005.04.16 - smb1@cornell.edu, for CUserManager -->
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL_TYPE</name><value>3</value></column>
+        <column><name>PRINCIPAL_KEY</name><value>local.1</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.82</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL_TYPE</name><value>3</value></column>
+        <column><name>PRINCIPAL_KEY</name><value>local.2</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.82</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL_TYPE</name><value>3</value></column>
+        <column><name>PRINCIPAL_KEY</name><value>local.3</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.82</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row>
+        <column><name>OWNER</name><value>org.jasig.portal.channels.cusermanager.CUserManager</value></column>
+        <column><name>PRINCIPAL_TYPE</name><value>3</value></column>
+        <column><name>PRINCIPAL_KEY</name><value>local.14</value></column>
+        <column><name>ACTIVITY</name><value>acctmgr</value></column>
+        <column><name>TARGET</name><value>Account Manager</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+
     </rows>
   </table>
 
@@ -5397,6 +5455,15 @@
         <column><name>MEMBER_KEY</name><value>95</value></column>
         <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
       </row>
+
+      <!-- 2005.04.16 - smb1@cornell.edu -->
+      <row>
+        <column><name>GROUP_ID</name><value>51</value></column>
+        <column><name>MEMBER_SERVICE</name><value>local</value></column>
+        <column><name>MEMBER_KEY</name><value>82</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+      </row>
+
     </rows>
   </table>
 
