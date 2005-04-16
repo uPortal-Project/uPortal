@@ -70,7 +70,7 @@ public class DefaultDataHandlerImpl implements IDataHandler {
            + "or last_name like {0} or first_name like {0} " });
 
   private IUserIdentityStore rdbmuser = new RDBMUserIdentityStore();
-  
+
   static {
       LOG.debug("USERSELECT: " + USERSELECT );
       LOG.debug("ALLUSERS: " + ALLUSERS );
@@ -199,7 +199,7 @@ public class DefaultDataHandlerImpl implements IDataHandler {
 
       if( !((String)AnIndividual.getAttribute(
             Constants.ENCRYPTPWDFIELD )).equals( Constants.NULLIFYUSER ))
-         newpwd = Md5passwd.Encode(
+         newpwd = Md5passwd.encode(
             (String)AnIndividual.getAttribute( Constants.ENCRYPTPWDFIELD ));
 
       Connection C = getDBConn();

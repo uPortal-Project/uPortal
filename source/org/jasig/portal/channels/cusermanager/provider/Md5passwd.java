@@ -34,7 +34,7 @@ class Md5passwd {
    * @throws NoSuchAlgorithmException
    * @throws SQLException
    */
-  protected static String Encode( String ProposedPassword )
+  protected static String encode( String ProposedPassword )
                throws IOException, NoSuchAlgorithmException {
 
     byte[] hash, rnd = new byte[8], fin = new byte[24];
@@ -54,7 +54,7 @@ class Md5passwd {
      }else
       fin = ACCOUNTLOCK.getBytes();
 
-    return "(MD5)" + encode(fin);
+    return "(MD5)" + encodeRaw(fin);
   }// Encode
 
   /**
@@ -109,7 +109,7 @@ class Md5passwd {
 // Java Cryptography published by O'Reilly Associates (1st Edition 1998)
 //
 
-  private static String encode(byte[] raw) {
+  private static String encodeRaw(byte[] raw) {
     StringBuffer encoded = new StringBuffer();
     for (int i = 0; i < raw.length; i += 3) {
       encoded.append(encodeBlock(raw, i));
