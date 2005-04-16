@@ -51,7 +51,7 @@
            <br/><br/>
 		   
            <font class="uportal-channel-emphasis">
-             insert into up_channel_param values ( (select chan_id from up_channel where chan_name='Password Change'),
+             insert into up_channel_param values ( (select chan_id from up_channel where chan_name='Password Management'),
 			  'IDataHandler.class', '' ,'org.jasig.portal.channels.cusermanager.provider.DefaultDataHandlerImpl', 'N')
            </font>
            <br/><br/>
