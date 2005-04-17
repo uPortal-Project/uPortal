@@ -121,7 +121,7 @@ public class ErrorCode {
      * channel refresh would be an appropriate response.
      * Some ErrorCodes are representative of problems that refreshing just
      * won't fix, such as a failure when setting static data.
-     * @return
+     * @return true if refresh is allowed, false otherwise
      */
     public boolean isRefreshAllowed() {
         return this.refreshable;
