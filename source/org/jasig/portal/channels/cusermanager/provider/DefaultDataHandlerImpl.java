@@ -34,6 +34,7 @@ import org.jasig.portal.channels.cusermanager.*;
 
 /**
  * @author smb1@cornell.edu
+ * @version $Revision$ $Date$ 
  */
 public class DefaultDataHandlerImpl implements IDataHandler {
   private static final Log LOG = LogFactory.getLog(DefaultDataHandlerImpl.class);

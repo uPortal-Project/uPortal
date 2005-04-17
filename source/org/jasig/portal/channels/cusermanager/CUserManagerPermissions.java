@@ -12,6 +12,7 @@ import org.jasig.portal.channels.permissionsmanager.RDBMPermissibleRegistry;
 
 /**
  * @author smb1@cornell.edu
+ * @version $Revision$ $Date$
  */
 class CUserManagerPermissions implements IPermissible {
 

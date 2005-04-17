@@ -6,6 +6,7 @@ package org.jasig.portal.channels.cusermanager;
 
 /**
  * @author smb1@cornell.edu
+ * @version $Revision$ $Date$
  */
 public interface Constants {
 

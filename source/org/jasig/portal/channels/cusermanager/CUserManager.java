@@ -35,6 +35,7 @@ import org.xml.sax.ContentHandler;
 
 /**
  * @author smb1@cornell.edu
+ * @version $Revision$ $Date$
  */
 public class CUserManager extends CUserManagerPermissions implements IChannel, IPermissible {
   private static final Log LOG = LogFactory.getLog(DefaultDataHandlerImpl.class);
