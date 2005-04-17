@@ -12,7 +12,8 @@ import org.jasig.portal.PortalException;
  * layout operation.
  * 
  * @author Peter Kharchenko: pkharchenko at unicon.net
- * 
+ * @version $Revision$ $Date$
+ * @since this Interface introduced for uPortal 2.5.
  */
 public interface IALCommand {
     /**
