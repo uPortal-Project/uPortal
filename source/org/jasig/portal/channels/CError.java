@@ -166,23 +166,14 @@ public class CError
         this.delegate.renderCharacters(out);
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.IChannel#setRuntimeData(org.jasig.portal.ChannelRuntimeData)
-     */
     public void setRuntimeData(ChannelRuntimeData rd) throws PortalException {
         this.delegate.setRuntimeData(rd);
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.IChannel#receiveEvent(org.jasig.portal.PortalEvent)
-     */
     public void receiveEvent(PortalEvent ev) {
         this.delegate.receiveEvent(ev);
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.IChannel#getRuntimeProperties()
-     */
     public ChannelRuntimeProperties getRuntimeProperties() {
         return this.delegate.getRuntimeProperties();
     }
