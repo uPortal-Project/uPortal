@@ -27,7 +27,7 @@ import org.springframework.jdbc.object.MappingSqlQuery;
 /**
  * An {@link org.jasig.portal.services.persondir.IPersonAttributeDao}
  * implementation that maps from column names in the result of a SQL query
- * to attribute names.<br>
+ * to attribute names. <br>
  * You must set a Map from column names to attribute names and only column names
  * appearing as keys in that map will be used.
  * <br>
