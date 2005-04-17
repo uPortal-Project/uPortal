@@ -1,4 +1,4 @@
-/* Copyright 2001 The JA-SIG Collaborative.  All rights reserved.
+/* Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
 *  See license distributed with this file and
 *  available online at http://www.uportal.org/license.html
 */
@@ -18,17 +18,11 @@ import org.jasig.portal.utils.MovingAverage;
 import org.jasig.portal.utils.MovingAverage.Sample;
 
 /**
- *
- * <p>Title: FrameworkMBeanImpl</p>
- *
- * <p>Description: uPortal metrics to make available to JMX </p>
- *
- * <p>Copyright: Copyright © 2005</p>
- *
- * <p>Company: </p>
+ * uPortal metrics to make available to JMX.
  *
  * @author George Lindholm <a href="mailto:George.Lindholm@ubc.ca">George.Lindholm@ubc.ca</a>
- * @version 1.0
+ * @version $Revision$ $Date$
+ * @since uPortal 2.5
  */
 public class FrameworkMBeanImpl implements FrameworkMBean {
   private static MovingAverage renderTimes = new MovingAverage(100);
