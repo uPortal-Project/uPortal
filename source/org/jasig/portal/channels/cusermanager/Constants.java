@@ -9,7 +9,7 @@ package org.jasig.portal.channels.cusermanager;
  */
 public interface Constants {
 
-  /** Value = "2.0" */
+  /** Value = "3.0" */
   public static final String VERSION = "3.0";
 
   /** Value = "already exists" */
@@ -92,13 +92,13 @@ public interface Constants {
   /** Value = "User-Pwd-Only-Mode" */
   public static final String MODEUSRPWDCHNG = "User-Pwd-Only-Mode";
 
-  /** Value = "PSWD" */
+  /** Value = "pswd" */
   public static final String PWDFIELD = "pswd";
 
-  /** Value = "ENCRPTD_PSWD" */
+  /** Value = "encrptd_pswd" */
   public static final String ENCRYPTPWDFIELD = "encrptd_pswd";
 
-  /** Value = "USER_NAME" */
+  /** Value = "user_name" */
   public static final String UNFIELD = "user_name";
 
   /** Value = "username" */
@@ -110,7 +110,7 @@ public interface Constants {
   /** Value = "Acc.Is.Locked" */
   public static final String ACCOUNTLOCKACKNOWLEDGE = "Acc.Is.Locked";
 
-  /** Value = "form-action" */
+  /** Value = "form_action" */
   public static final String FORMACTION  = "form_action";
 
   /** Value = "chosen" */
