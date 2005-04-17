@@ -7,13 +7,14 @@ package org.jasig.portal.channels.cusermanager;
 import org.jasig.portal.security.IPerson;
 
 /**
- * @author smb1@cornell.edu
- *
  * This interface uses the default org.jasig.portal.security.provider.PersonImpl of
  * the IPerson object to send and recieve data arrays.  These are not functional
  * IPerson objects.  Rather, the attributes of a person in the IPerson object are
  * the key/value pairs of the column/values contained within the up_person_dir
  * table.
+ * 
+ * @author smb1@cornell.edu
+ * @version $Revision$ $Date$
  */
 
 public interface IDataHandler {
