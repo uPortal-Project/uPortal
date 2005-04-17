@@ -30,7 +30,7 @@ public interface IFragmentRegistry {
 	/**
 	 * Create a new, empty fragment
 	 * 
-	 * @return
+	 * @return a new, empty fragment
 	 */
 	public IFragment createNewFragment();
 	
