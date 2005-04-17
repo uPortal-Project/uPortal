@@ -16,9 +16,6 @@ import org.apache.commons.dbcp.BasicDataSource;
  */
 public class DBCPDataSourceFactory implements IPooledDataSourceFactory {
 
-    /**
-     * @see org.jasig.portal.rdbm.pool.IPooledDataSourceFactory#createPooledDataSource(java.lang.String, java.lang.String, java.lang.String, java.lang.String, int, int, int)
-     */
     public DataSource createPooledDataSource(final String driverClassName,
                                              final String userName,
                                              final String password,
