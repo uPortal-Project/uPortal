@@ -21,6 +21,7 @@ import org.xml.sax.ContentHandler;
  * throwables.
  * @author andrew.petro@yale.edu
  * @version $Revision$ $Date$
+ * @since uPortal 2.5
  */
 public final class CThrower implements IChannel
 {

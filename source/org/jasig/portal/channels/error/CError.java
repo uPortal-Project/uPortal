@@ -50,6 +50,7 @@ import org.xml.sax.ContentHandler;
  * @author Peter Kharchenko, pkharchenko@interactivebusiness.com
  * @author andrew.petro@yale.edu
  * @version $Revision$ $Date$
+ * @since uPortal 2.5.  Prior to 2.5, CError existed only as org.jasig.portal.channels.CError.
  */
 public final class CError extends BaseChannel implements IPrivilegedChannel,
         ICacheable, ICharacterChannel {

@@ -24,6 +24,7 @@ import org.w3c.dom.Element;
  * instantiating this class.
  * @author andrew.petro@yale.edu
  * @version $Revision$ $Date$
+ * @since uPortal 2.5
  */
 public class DelegatingThrowableToElement 
     implements IThrowableToElement{

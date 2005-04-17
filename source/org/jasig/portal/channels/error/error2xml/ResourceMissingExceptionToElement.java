@@ -13,6 +13,7 @@ import org.w3c.dom.Element;
  * Translates ResourceMissingException instances to XML Elements.
  * @author andrew.petro@yale.edu
  * @version $Revision$ $Date$
+ * @since uPortal 2.5
  */
 public class ResourceMissingExceptionToElement 
     implements IThrowableToElement {

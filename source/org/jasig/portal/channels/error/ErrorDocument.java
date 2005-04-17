@@ -15,6 +15,7 @@ import org.w3c.dom.Element;
  * Represents an error renderable by CError.
  * @author andrew.petro@yale.edu
  * @version $Revision$ $Date$
+ * @since uPortal 2.5
  */
 public class ErrorDocument {
 

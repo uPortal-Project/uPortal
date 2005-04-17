@@ -18,6 +18,7 @@ import org.apache.commons.logging.LogFactory;
  * a utility to perform the generic Throwable translation and then add to the results.
  * @author andrew.petro@yale.edu
  * @version $Revision$ $Date$
+ * @since uPortal 2.5
  */
 public class ThrowableToElement 
     implements IThrowableToElement {

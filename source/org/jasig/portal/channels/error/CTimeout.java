@@ -24,6 +24,7 @@ import org.xml.sax.ContentHandler;
  * exists to facilitate demonstrating that fallback behavior.
  * @author andrew.petro@yale.edu
  * @version $Revision$ $Date$
+ * @since uPortal 2.5
  */
 public final class CTimeout 
     implements IChannel {

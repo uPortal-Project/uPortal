@@ -14,6 +14,7 @@ import org.jasig.portal.AuthorizationException;
  * Translates from a uPortal AuthorizationException to an XML element.
  * @author andrew.petro@yale.edu
  * @version $Revision$ $Date$
+ * @since uPortal 2.5
  */
 public final class AuthorizationExceptionToElement 
     implements IThrowableToElement{

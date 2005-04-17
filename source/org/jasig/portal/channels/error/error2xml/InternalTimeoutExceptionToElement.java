@@ -14,6 +14,7 @@ import org.jasig.portal.InternalTimeoutException;
  * Translates from a uPortal InternalTimeoutException to an XML element.
  * @author andrew.petro@yale.edu
  * @version $Revision$ $Date$
+ * @since uPortal 2.5
  */
 public class InternalTimeoutExceptionToElement 
     implements IThrowableToElement{

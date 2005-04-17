@@ -12,6 +12,7 @@ import org.w3c.dom.Element;
  * Interface for translating from a Throwable to an Element.
  * @author andrew.petro@yale.edu
  * @version $Revision$ $Date$
+ * @since uPortal 2.5
  */
 public interface IThrowableToElement {
 

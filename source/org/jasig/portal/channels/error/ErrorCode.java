@@ -9,6 +9,7 @@ package org.jasig.portal.channels.error;
  * Error codes specific to the CError channel.
  * @author andrew.petro@yale.edu
  * @version $Revision$ $Date$
+ * @since uPortal 2.5
  */
 public class ErrorCode {
 
