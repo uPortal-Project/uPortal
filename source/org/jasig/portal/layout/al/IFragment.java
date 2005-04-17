@@ -12,11 +12,12 @@ import org.jasig.portal.layout.al.common.ILayoutSubtree;
  * 
  * @author Peter Kharchenko: pkharchenko at unicon.net
  * @version $Revision$
+ * @since introduced for uPortal 2.5.
  */
 public interface IFragment extends ILayoutSubtree {
     /**
      * Obtain id of a given fragment
-     * @return
+     * @return the id for this fragment.
      */
     public IFragmentId getFragmentId();
 }
