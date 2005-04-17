@@ -190,61 +190,43 @@ public abstract class ALNode implements IALNode {
     public void addRestrictionChildren(Element node, Document root) {
     	((IALNodeDescription)nodeDescription).addRestrictionChildren(node, root);
     }
-    /**
-     * @return
-     */
+    
     public String getGroup() {
         return ((IALNodeDescription)nodeDescription).getGroup();
     }
-    /**
-     * @return
-     */
+
     public String getName() {
         return nodeDescription.getName();
     }
-    /**
-     * @return
-     */
+
     public Collection getRestrictions() {
         return ((IALNodeDescription)nodeDescription).getRestrictions();
     }
-    /**
-     * @return
-     */
+
     public NodeType getType() {
         return nodeDescription.getType();
     }
-    /**
-     * @param root
-     * @return
-     */
+
     public Element getXML(Document root) {
         return nodeDescription.getXML(root);
     }
-    /**
-     * @return
-     */
+    
     public boolean isFragmentRoot() {
         return ((IALNodeDescription)nodeDescription).isFragmentRoot();
     }
-    /**
-     * @return
-     */
+
     public boolean isHidden() {
         return nodeDescription.isHidden();
     }
-    /**
-     * @return
-     */
+
     public boolean isImmutable() {
         return nodeDescription.isImmutable();
     }
-    /**
-     * @return
-     */
+
     public boolean isUnremovable() {
         return nodeDescription.isUnremovable();
     }
+    
     /**
      * @param fragmentId
      */
