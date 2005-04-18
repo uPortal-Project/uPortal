@@ -7,7 +7,6 @@ package org.jasig.portal.channels.cusermanager.provider;
 import java.io.*;
 import java.util.Date;
 import java.security.*;
-import java.sql.*;
 
 import org.jasig.portal.security.provider.AccountStoreFactory;
 
