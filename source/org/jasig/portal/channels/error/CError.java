@@ -24,9 +24,11 @@ import org.jasig.portal.IPrivilegedChannel;
 import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.channels.BaseChannel;
+import org.jasig.portal.channels.error.error2xml.IThrowableToElement;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.services.AuthorizationService;
+import org.jasig.portal.spring.PortalApplicationContextFacade;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.XML;
@@ -35,7 +37,7 @@ import org.w3c.dom.Document;
 import org.xml.sax.ContentHandler;
 
 /**
- * CError is the error channel, also known as the null channel, it is designed
+ * CError is the error channel, also known as the null channel; it is designed
  * to render in place of other channels when something goes wrong.
  * <p>
  * Possible conditions when CError is invoked are:
@@ -100,7 +102,15 @@ public final class CError extends BaseChannel implements IPrivilegedChannel,
      * Construct an uninitialized instance of the CError channel.
      */
     public CError() {
-        // do-nothing default constructor
+        
+        // inject into our ErrorDocument the configured IThrowableToElement that
+        // will translate from Throwables to XML that we can render
+
+        IThrowableToElement throwableToElement = 
+            (IThrowableToElement) PortalApplicationContextFacade.getPortalApplicationContext().getBean("throwableToElement", IThrowableToElement.class);
+        
+        this.errorDocument.setThrowableToElement(throwableToElement);
+        
     }
 
     /**
@@ -119,18 +129,25 @@ public final class CError extends BaseChannel implements IPrivilegedChannel,
      */
     public CError(ErrorCode errorCode, Throwable throwable,
             String channelSubscribeId, IChannel channelInstance) {
-      if (log.isTraceEnabled())
-          log.trace("CError(" + errorCode + ", throwable=[" + throwable + 
-                  "], chanSubId=" + channelSubscribeId + 
-                  ", channelInstance=[" + channelInstance + "]");
+        
+        this();
+        
+        if (log.isTraceEnabled()) {
+            log.trace("CError(" + errorCode + ", throwable=[" + throwable
+                    + "], chanSubId=" + channelSubscribeId
+                    + ", channelInstance=[" + channelInstance + "]");
+        }
+
         
         this.errorDocument.setChannelSubscribeId(channelSubscribeId);
         this.errorDocument.setThrowable(throwable);
         this.the_channel = channelInstance;
         this.errorDocument.setCode(errorCode);
-        
-        if (log.isTraceEnabled())
+
+        if (log.isTraceEnabled()) {
             log.trace("Instantiated CError: " + this);
+        }
+            
       
     }
 
@@ -150,6 +167,8 @@ public final class CError extends BaseChannel implements IPrivilegedChannel,
     public CError(ErrorCode errorCode, String message,
             String channelSubscribeId, IChannel channelInstance) {
 
+        this();
+        
         if (log.isTraceEnabled())
             log.trace("CError(" + errorCode + ", message=[" + message + 
                     "], chanSubId=" + channelSubscribeId + 
@@ -682,14 +701,20 @@ public final class CError extends BaseChannel implements IPrivilegedChannel,
     }
     
     /**
-     * @return Returns the placeHolder.
+     * Returns true iff this CError instance is acting as a placeholder.
+     * @return Returns true iff this CError instance is acting as a placeholder.
      */
     boolean isPlaceHolder() {
         return this.placeHolder;
     }
     
     /**
-     * @param placeHolder The placeHolder to set.
+     * Configure this CError instance to act as a placeholder.  In placeholder
+     * mode, we do not present refresh and restart controls.  Instead, we 
+     * display a message about why we have taken the place of a channel -
+     * perhaps because the user is not authorized to view the channel or 
+     * because the channel no longer exists.
+     * @param placeHolder true to suppress refresh and renew controls, false otherwise
      */
     void setPlaceHolder(boolean placeHolder) {
         this.placeHolder = placeHolder;
