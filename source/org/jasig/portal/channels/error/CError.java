@@ -673,12 +673,12 @@ public final class CError extends BaseChannel implements IPrivilegedChannel,
         /**
          * Whether refreshing the channel is allowed.
          */
-        boolean allowRefresh = false;
+        boolean allowRefresh = true;
         
         /**
          * Whether reloading the channel is allowed.
          */
-        boolean allowReinstantiation = false;
+        boolean allowReinstantiation = true;
         
         public String toString() {
             return "refresh=" + this.allowRefresh 
