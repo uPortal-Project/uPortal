@@ -13,6 +13,7 @@ import org.xml.sax.ContentHandler;
  * that path.
  * 
  * @author mboyd
+ * @version $Revision$ $Date$
  **/
 class PathRouter
 {
