@@ -357,10 +357,10 @@
     <pathelement location="${commons-pool.jar}"/>
     <pathelement location="${servlet.jar}"/>
     <pathelement location="${spring.jar}"/>
-  	<pathelement location="${whirlycache.jar}" />
-  	<pathelement location="${jdom.jar}" />
-  	<pathelement location="${concurrent.jar}" />
-  	<pathelement location="${backport.jar}" />
+    <pathelement location="${whirlycache.jar}" />
+    <pathelement location="${jdom.jar}" />
+    <pathelement location="${concurrent.jar}" />
+    <pathelement location="${backport.jar}" />
   </path>
 
 
@@ -469,9 +469,9 @@
     <!-- Copy the Logger.properties file to the well-known location log4j expects.-->
     <copy file="properties/Logger.properties" tofile="${build.home}/WEB-INF/classes/log4j.properties"/>
 
-  	<!-- Copy WhirlyCache to proper folder -->
-  	<copy file="properties/whirlycache.xml" tofile="${build.home}/WEB-INF/classes/whirlycache.xml" />
-  	
+    <!-- Copy WhirlyCache to proper folder -->
+    <copy file="properties/whirlycache.xml" tofile="${build.home}/WEB-INF/classes/whirlycache.xml" />
+
     <!-- Copy all stylesheets, stylesheet descriptions  and stylesheet list files -->
     <copy  todir="${build.home}/WEB-INF/classes">
         <fileset dir="webpages/stylesheets" includes="**/*.xsl,**/*.ssl,**/*.sdf,**/*.properties" excludes="**/*.UTF-8.properties"/>
@@ -532,10 +532,10 @@
     <copy todir="${deploy.home}/WEB-INF/lib" file="${jdbcDriver.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${spring.jar}"/>
 
-  	<copy todir="${deploy.home}/WEB-INF/lib" file="${whirlycache.jar}" />
-  	<copy todir="${deploy.home}/WEB-INF/lib" file="${jdom.jar}" />
-  	<copy todir="${deploy.home}/WEB-INF/lib" file="${concurrent.jar}" />
-  	<copy todir="${deploy.home}/WEB-INF/lib" file="${backport.jar}" />
+    <copy todir="${deploy.home}/WEB-INF/lib" file="${whirlycache.jar}" />
+    <copy todir="${deploy.home}/WEB-INF/lib" file="${jdom.jar}" />
+    <copy todir="${deploy.home}/WEB-INF/lib" file="${concurrent.jar}" />
+    <copy todir="${deploy.home}/WEB-INF/lib" file="${backport.jar}" />
 
     <!-- These are Tomcat-specific!  We need to think about a new property
          that lets us specify the appropriate directory for other servers
@@ -548,7 +548,8 @@
          We need to find out the best way to ensure cross-context
          behavior in all servlet containers.
     -->
-    <copy tofile="${server.home}/conf/Catalina/localhost/${webapp.docBase}.xml" file="properties/${webapp.contextFile}">
+    <mkdir dir="${deploy.home}/META-INF"/>
+    <copy tofile="${deploy.home}/META-INF/context.xml" file="properties/${webapp.contextFile}">
         <filterset>
             <filter token="webappDocBase" value="${webapp.docBase}"/>
             <filter token="webappPath" value="${webapp.path}"/>
