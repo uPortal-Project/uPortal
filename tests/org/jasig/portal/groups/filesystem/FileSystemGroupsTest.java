@@ -8,38 +8,49 @@ package org.jasig.portal.groups.filesystem;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+
+import javax.sql.DataSource;
 
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.groups.ComponentGroupServiceDescriptor;
+import org.jasig.portal.EntityTypes;
+import org.jasig.portal.groups.EntityImpl;
 import org.jasig.portal.groups.GroupServiceConfiguration;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IEntity;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IEntityGroupStore;
-import org.jasig.portal.groups.IEntityStore;
 import org.jasig.portal.groups.IGroupConstants;
 import org.jasig.portal.groups.IGroupMember;
-import org.jasig.portal.groups.RDBMEntityStore;
-import org.jasig.portal.services.GroupService;
+import org.jasig.portal.rdbm.TransientDatasource;
 
 /**
- * This class tests the filesystem group store in the context of the composite
- * group service.  In order to run these tests, you must (i) define a composite 
- * groups service; (ii) configure a component file system service named 
- * <code>GROUP_SERVICE_NAME</code> (see below); and (iii) create an accessible 
- * groupsRoot directory declared in (ii).
+ * This class was rewritten to eliminate external dependencies, chiefly
+ * on the composite group service.  Although this was mostly achieved,
+ * 2 dependencies remain.  It needs a file system to read via java.io, 
+ * since this is what is being tested, and it requires a composite
+ * group service configuration document.  I will eventually remove these
+ * dependencies but it seemed better to get the test in now.  I was 
+ * thinking we could eventually use something like Apache Commons VFS 
+ * to set up a virtual file system (a future enhancement for the 
+ * FileSystem group service).  In the meantime, this class must create a 
+ * GROUPS_ROOT directory and write to it.  The class first tries to 
+ * create the directory in the user.home.  If unsuccessful, it tries to 
+ * create it in the current directory, and if this is unsuccessful, 
+ * it dies.     
  *
  * @author Dan Ellentuck
  * @version $Revision$
  */
-public class FileSystemGroupsTester extends TestCase {
+public class FileSystemGroupsTest extends TestCase {
     private static Class GROUP_CLASS;
     private static Class IPERSON_CLASS;
     private static String CR = "\n";
@@ -50,17 +61,19 @@ public class FileSystemGroupsTester extends TestCase {
     private int numTestFiles;
     private int numTestEntities;
 
-    private static String GROUPS_ROOT;
-    private static String IPERSON_GROUPS_ROOT;
+    private String GROUPS_ROOT;
+    private File groupsRoot;
+    private String IPERSON_GROUPS_ROOT;
     private List allFiles = null, directoryFiles = null, keyFiles = null;
     private String NON_EXISTENT_ID = "xyzxyzxyz";
-    private String GROUP_SERVICE_NAME = "filesystem";
     private IEntityGroupStore groupStore;
     private String GROUP_SEPARATOR;
+    
+    private DataSource testDataSource;
 /**
- * FileSystemGroupsTester.
+ * FileSystemGroupsTest.
  */
-public FileSystemGroupsTester(String name) {
+public FileSystemGroupsTest(String name) {
     super(name);
 }
 /**
@@ -97,7 +110,7 @@ protected void addIdsToFile(File f)
         bw.close();
 
     } // end try
-    catch (Exception ex) { print("FileSystemGroupsTester.addIdsToFile(): " + ex.getMessage());}
+    catch (Exception ex) { print("FileSystemGroupsTest.addIdsToFile(): " + ex.getMessage());}
  }
 /**
  * @return org.jasig.portal.groups.IEntityGroup
@@ -105,21 +118,15 @@ protected void addIdsToFile(File f)
 private IEntityGroup findGroup(File file) throws GroupsException
 {
     String key = getKeyFromFile(file);
-    return findGroup(GROUP_SERVICE_NAME + GROUP_SEPARATOR + key);
+    return findGroup(key);
 }
 /**
+ * Note that this is the local, not composite, key.
  * @return org.jasig.portal.groups.IEntityGroup
  */
 private IEntityGroup findGroup(String key) throws GroupsException
 {
-    return GroupService.findGroup(key);
-}
-/**
- * @return RDBMEntityStore
- */
-private IEntityStore getEntityStore() throws GroupsException
-{
-    return RDBMEntityStore.singleton();
+    return getGroupStore().find(key);
 }
 /**
  * @return org.jasig.portal.services.GroupService
@@ -131,29 +138,30 @@ private Collection getGroupMembers(IGroupMember gm) throws GroupsException
         { list.add(itr.next()); }
     return list;
 }
-/**
- * @return java.lang.String
- * @param serviceName java.lang.String
- */
-private String getGroupsRoot(String serviceName) 
-{
-    ComponentGroupServiceDescriptor desc = null;
-    String groupsRoot = null;
-    try 
-    {
-        List descriptors = GroupServiceConfiguration.getConfiguration().getServiceDescriptors();
-        for ( Iterator itr=descriptors.iterator(); itr.hasNext(); )
-        {
-            desc = (ComponentGroupServiceDescriptor) itr.next();
-            if ( desc.getName().equals(serviceName) )
-            {
-                groupsRoot = (String)desc.get("groupsRoot");
-                break;
-            }
-        }
-    }
-    catch (Exception ex) {}
+private File getGroupsRoot() {
+    if ( groupsRoot == null )
+        { groupsRoot = createGroupsRoot(); }
     return groupsRoot;
+}
+/**
+ * Try to create the groups root directory in the user.home and if
+ * not possible try in the current directory.
+ * @return java.io.File
+ */
+private File createGroupsRoot() 
+{
+    File gr = null;
+    String userHome = System.getProperty("user.home");
+    if ( userHome != null )
+    {
+        File uh = new File(userHome);
+        if ( uh.exists() && uh.canWrite() )
+            { gr = new File(uh.getPath() + File.separator + "GROUPS-ROOT"); }
+    }
+    else
+        { gr = new File("GROUPS-ROOT"); }
+
+    return ( gr.mkdir() ) ? gr : null;
 }
 /**
  * @return FileSystemGroupStore
@@ -161,7 +169,12 @@ private String getGroupsRoot(String serviceName)
 private FileSystemGroupStore getGroupStore() throws GroupsException
 {
     if ( groupStore == null )
-        { groupStore = new FileSystemGroupStore(); }
+    { 
+        GroupServiceConfiguration config = new GroupServiceConfiguration();
+        Map atts = config.getAttributes();
+        atts.put("nodeSeparator",IGroupConstants.NODE_SEPARATOR);
+        groupStore = new FileSystemGroupStore(config);
+    }
     return (FileSystemGroupStore)groupStore;
 }
 /**
@@ -173,7 +186,7 @@ private String getKeyFromFile(File file) throws GroupsException
     if ( key.startsWith(GROUPS_ROOT) )
     {
         key = key.substring(GROUPS_ROOT.length());
-        if ( GROUP_SEPARATOR.equals(".") )
+        if ( GROUP_SEPARATOR.equals(String.valueOf(FileSystemGroupStore.PERIOD)) )
             { key = key.replace(FileSystemGroupStore.PERIOD, FileSystemGroupStore.SUBSTITUTE_PERIOD); } 
     }
     return key;
@@ -181,9 +194,16 @@ private String getKeyFromFile(File file) throws GroupsException
 /**
  * @return org.jasig.portal.groups.IEntity
  */
-private IEntity getNewEntity(String key) throws GroupsException
+private IEntity getNewIPersonEntity(String key) throws GroupsException
 {
-    return 	GroupService.getEntity(key, IPERSON_CLASS);
+    return getNewEntity(IPERSON_CLASS, key);
+}
+/**
+ * @return org.jasig.portal.groups.IEntity
+ */
+private IEntity getNewEntity(Class type, String key) throws GroupsException
+{
+    return  new EntityImpl(key, type);
 }
 /**
 *  @return java.lang.String
@@ -202,25 +222,15 @@ private String getRandomString(java.util.Random r, int length) {
     return new String(chars);
 }
 /**
- * @return org.jasig.portal.services.GroupService
- */
-private GroupService getService() throws GroupsException
-{
-    return GroupService.instance();
-}
-/**
  * Starts the application.
  * @param args an array of command-line arguments
  */
 public static void main(java.lang.String[] args) throws Exception
 {
-    String[] mainArgs = {"org.jasig.portal.groups.filesystem.FileSystemGroupsTester"};
-    print("START TESTING FILESYSTEM GROUP STORE");
-    printBlankLine();
+    String[] mainArgs = {"org.jasig.portal.groups.filesystem.FileSystemGroupsTest"};
+    print("START TESTING FILESYSTEM GROUP STORE" + CR);
     junit.swingui.TestRunner.main(mainArgs);
-    printBlankLine();
-    print("END TESTING FILESYSTEM GROUP STORE");
-
+    print(CR + "END TESTING FILESYSTEM GROUP STORE");
 }
 /**
  * @param msg java.lang.String
@@ -230,15 +240,11 @@ private static void print(String msg)
     java.sql.Timestamp ts = new java.sql.Timestamp(System.currentTimeMillis());
     System.out.println(ts + " : " + msg);
 }
-private static void printBlankLine()
-{
-    System.out.println("");
-}
 /**
  */
 protected void setUp()
 {
-    print("Entering FilesystemGroupsTester.setUp()");
+//    print("Entering FilesystemGroupsTester.setUp()");
     try {
         if ( GROUP_CLASS == null )
             { GROUP_CLASS = Class.forName("org.jasig.portal.groups.IEntityGroup"); }
@@ -276,13 +282,21 @@ protected void setUp()
     testGroupKeys = new ArrayList();
 
     // Create directory structure:
-    String tempGroupsRoot = getGroupsRoot("filesystem");
+    File gr = getGroupsRoot();
+    if ( gr == null )
+    {
+        print("COULD NOT CREATE GROUPS ROOT DIRECTORY!!!");
+        print("You must have WRITE permission on either user.home or the current directory.");
+        throw new RuntimeException("Could not create groups root directory.");
+    }
+    String tempGroupsRoot = gr.getAbsolutePath();
     getGroupStore().setGroupsRootPath(tempGroupsRoot);
     GROUPS_ROOT = getGroupStore().getGroupsRootPath();
 
+    GROUP_SEPARATOR = IGroupConstants.NODE_SEPARATOR;
+
     // initialize composite service:
-    GROUP_SEPARATOR = GroupServiceConfiguration.getConfiguration().getNodeSeparator();
-    GroupService.findGroup("local" + GROUP_SEPARATOR + "0");
+    // GroupService.findGroup("local" + GROUP_SEPARATOR + "0");
 
     IPERSON_GROUPS_ROOT = GROUPS_ROOT + IPERSON_CLASS.getName();
     iPersonGroupsRootDir = new File(IPERSON_GROUPS_ROOT);
@@ -317,11 +331,40 @@ protected void setUp()
             }
         }
     }
+    
+    this.testDataSource = new TransientDatasource();
+    Connection con = testDataSource.getConnection();
+    
+    con.prepareStatement("CREATE TABLE UP_ENTITY_TYPE " +
+                              "(ENTITY_TYPE_ID INTEGER, " +
+                              "ENTITY_TYPE_NAME VARCHAR, " +
+                              "DESCRIPTIVE_NAME VARCHAR)").execute();
+
+    con.prepareStatement("INSERT INTO UP_ENTITY_TYPE " +
+                              "VALUES (1, 'java.lang.Object', 'Generic')").execute();
+
+    con.prepareStatement("INSERT INTO UP_ENTITY_TYPE " +
+                             "VALUES (2, 'org.jasig.portal.security.IPerson', 'IPerson')").execute();
+
+    con.prepareStatement("INSERT INTO UP_ENTITY_TYPE " +
+                             "VALUES (3, 'org.jasig.portal.groups.IEntityGroup', 'Group')").execute();
+    
+    con.prepareStatement("INSERT INTO UP_ENTITY_TYPE " +
+                             "VALUES (4, 'org.jasig.portal.ChannelDefinition', 'Channel')").execute();
+
+    con.prepareStatement("INSERT INTO UP_ENTITY_TYPE " +
+                             "VALUES (5, 'org.jasig.portal.groups.IEntity', 'Grouped Entity')").execute();
+
+    con.close(); 
+    
+    // initialize EntityTypes
+    EntityTypes.singleton(testDataSource);
+    
 
     } // end try
-    catch (Exception ex) { print("FileSystemGroupsTester.setUp(): " + ex.getMessage());}
+    catch (Exception ex) { print("FileSystemGroupsTest.setUp(): " + ex.getMessage());}
 
-    print("Leaving FileSystemGroupsTester.setUp()" + CR);
+  //  print("Leaving FileSystemGroupsTest.setUp()" + CR);
 
  }
 /**
@@ -330,13 +373,13 @@ protected void setUp()
 public static junit.framework.Test suite() {
     TestSuite suite = new TestSuite();
 
-  suite.addTest(new FileSystemGroupsTester("testFind"));
-  suite.addTest(new FileSystemGroupsTester("testFindContainingGroups"));
-  suite.addTest(new FileSystemGroupsTester("testFindEntitiesForGroup"));
-  suite.addTest(new FileSystemGroupsTester("testFindMemberGroupKeys"));
-  suite.addTest(new FileSystemGroupsTester("testFindMemberGroups"));
-  suite.addTest(new FileSystemGroupsTester("testSearchForGroups"));
-  suite.addTest(new FileSystemGroupsTester("testFindEmbeddedMemberGroups"));
+  suite.addTest(new FileSystemGroupsTest("testFind"));
+  suite.addTest(new FileSystemGroupsTest("testFindContainingGroups"));
+  suite.addTest(new FileSystemGroupsTest("testFindEntitiesForGroup"));
+  suite.addTest(new FileSystemGroupsTest("testFindMemberGroupKeys"));
+  suite.addTest(new FileSystemGroupsTest("testFindMemberGroups"));
+  suite.addTest(new FileSystemGroupsTest("testSearchForGroups"));
+  suite.addTest(new FileSystemGroupsTest("testFindEmbeddedMemberGroups"));
 
 //	Add more tests here.
 //  NB: Order of tests is not guaranteed.
@@ -347,7 +390,7 @@ public static junit.framework.Test suite() {
  */
 protected void tearDown()
 {
-    print("Entering FileSystemGroupsTester.tearDown()");
+//    print("Entering FileSystemGroupsTest.tearDown()");
     try
     {
         testEntityKeys = null;
@@ -358,16 +401,30 @@ protected void tearDown()
 
         for ( int i = oldFiles.length; i>0; i-- )
             { oldFiles[i - 1].delete(); }
+        
+        getGroupsRoot().delete();
 
         allFiles = null;
         directoryFiles = null;
         keyFiles = null;
         groupStore = null;
+        groupsRoot = null;
+        
+        
+        Connection con = this.testDataSource.getConnection();
+        
+        con.prepareStatement("DROP TABLE UP_ENTITY_TYPE").execute();
+        con.prepareStatement("SHUTDOWN").execute();
+
+        con.close();
+        
+        this.testDataSource = null;
+
 
     }
-    catch (Exception ex) { print("FileSystemGroupsTester.tearDown()" + ex.getMessage());}
+    catch (Exception ex) { print("FileSystemGroupsTest.tearDown()" + ex.getMessage());}
 
-    print("Leaving FilesystemGroupsTester.tearDown()");
+//    print("Leaving FilesystemGroupsTester.tearDown()");
 
 }
 /**
@@ -403,7 +460,7 @@ public void testFind() throws Exception
 
     print("Test completed successfully." + CR);
 
-    print("***** LEAVING FileSystemGroupsTester.testFind() *****" + CR);
+    print("***** LEAVING FileSystemGroupsTest.testFind() *****" + CR);
 
 }
 /**
@@ -412,7 +469,7 @@ public void testFind() throws Exception
  */
 public void testFindContainingGroups() throws Exception
 {
-    print("***** ENTERING FileSystemGroupsTester.testFindContainingGroups() *****" + CR);
+    print("***** ENTERING FileSystemGroupsTest.testFindContainingGroups() *****" + CR);
 
     String msg = null;
     Class type = IPERSON_CLASS;
@@ -427,11 +484,11 @@ public void testFindContainingGroups() throws Exception
     print(msg);
     for ( int i=0; i<testEntityKeys.length; i++ )
     {
-        ent = getNewEntity(testEntityKeys[i]);
+        ent = getNewIPersonEntity(testEntityKeys[i]);
         msg = "Finding containing groups for " + ent;
         print(msg);
         containingGroups.clear();
-        for (itr = ent.getContainingGroups(); itr.hasNext();)
+        for (itr = getGroupStore().findContainingGroups(ent); itr.hasNext();)
         {
             group = (IEntityGroup) itr.next();
             containingGroups.add(group);
@@ -440,11 +497,11 @@ public void testFindContainingGroups() throws Exception
         assertEquals(msg, keyFiles.size(), containingGroups.size());
     }
 
-    ent = getNewEntity(NON_EXISTENT_ID);
+    ent = getNewIPersonEntity(NON_EXISTENT_ID);
     msg = "Finding containing groups for non-existent key: " + NON_EXISTENT_ID;
     print(msg);
     containingGroups.clear();
-    for (itr = ent.getContainingGroups(); itr.hasNext();)
+    for (itr = getGroupStore().findContainingGroups(ent); itr.hasNext();)
             { containingGroups.add(itr.next()); }
         assertEquals(msg, 0, containingGroups.size());
 
@@ -458,7 +515,7 @@ public void testFindContainingGroups() throws Exception
         assertTrue(msg, group instanceof IEntityGroup);
         containingGroups.clear();
 
-        for (Iterator cg = group.getContainingGroups(); cg.hasNext();)
+        for (Iterator cg = getGroupStore().findContainingGroups(group); cg.hasNext();)
         {
             containingGroup = (IEntityGroup) cg.next();
             assertTrue(msg, containingGroup instanceof IEntityGroup);
@@ -470,14 +527,14 @@ public void testFindContainingGroups() throws Exception
     msg = "Finding containing groups for a non-existent type...";
     print(msg);
 
-    ent = GroupService.getEntity(testEntityKeys[0], new Object().getClass());
-    itr = ent.getContainingGroups();
+    ent = getNewEntity(new Object().getClass(), testEntityKeys[0]);
+    itr = getGroupStore().findContainingGroups(ent);
     boolean hasContainingGroup = itr.hasNext();
     assertTrue(msg, ! hasContainingGroup);
     
     print("Test completed successfully." + CR);
 
-    print("***** LEAVING FileSystemGroupsTester.testFindContainingGroups() *****" + CR);
+    print("***** LEAVING FileSystemGroupsTest.testFindContainingGroups() *****" + CR);
 
 }
 /**
@@ -485,7 +542,7 @@ public void testFindContainingGroups() throws Exception
  */
 public void testFindEmbeddedMemberGroups() throws Exception
 {
-    print("***** ENTERING FileSystemGroupsTester.testFindEmbeddedMemberGroups() *****" + CR);
+    print("***** ENTERING FileSystemGroupsTest.testFindEmbeddedMemberGroups() *****" + CR);
 
     String msg = null;
     IEntityGroup group = null, memberGroup = null;
@@ -510,13 +567,13 @@ public void testFindEmbeddedMemberGroups() throws Exception
     assertTrue(msg, group instanceof IEntityGroup);
     memberKeys = getGroupStore().findMemberGroupKeys(group);
     assertEquals(msg, 1, memberKeys.length);
-    memberGroup = findGroup(GROUP_SERVICE_NAME + GROUP_SEPARATOR + memberKeys[0]);
+    memberGroup = findGroup(memberKeys[0]);
     assertNotNull(msg, memberGroup);
-    assertTrue(msg, memberGroup.isMemberOf(group));
+    assertTrue(msg, getGroupStore().contains(group, memberGroup));
 
     print("Test completed successfully." + CR);
 
-    print("***** LEAVING FileSystemGroupsTester.testFindEmbeddedMemberGroups() *****" + CR);
+    print("***** LEAVING FileSystemGroupsTest.testFindEmbeddedMemberGroups() *****" + CR);
 
 }
 /**
@@ -524,11 +581,11 @@ public void testFindEmbeddedMemberGroups() throws Exception
  */
 public void testFindEntitiesForGroup() throws Exception
 {
-    print("***** ENTERING FileSystemGroupsTester.testFindEntitiesForGroup() *****" + CR);
+    print("***** ENTERING FileSystemGroupsTest.testFindEntitiesForGroup() *****" + CR);
 
     String msg = null;
     IEntityGroup group = null;
-    IEntity ent = null;
+    String entityKey = null;
     File f = null, f2 = null;
     Iterator itr = null;
     List memberEntities = new ArrayList();
@@ -544,11 +601,12 @@ public void testFindEntitiesForGroup() throws Exception
         assertTrue(msg, group instanceof IEntityGroup);
         memberEntities.clear();
 
-        for (Iterator members = group.getEntities(); members.hasNext();)
+        for (Iterator members = getGroupStore().getEntityIdsFromFile(f).iterator(); members.hasNext();)
         {
-            ent = (IEntity) members.next();
-            assertTrue(msg, ent instanceof IEntity);
-            memberEntities.add(ent);
+            entityKey = (String) members.next();
+            assertTrue(msg, entityKey != null);
+            assertTrue(msg, entityKey.length() > 0);
+            memberEntities.add(entityKey);
         }
         assertEquals(msg, numTestEntities, memberEntities.size());
     }
@@ -559,14 +617,12 @@ public void testFindEntitiesForGroup() throws Exception
     msg = "Finding entities for " + f2 + " (should have none).";
     group = findGroup(f2);
     assertTrue(msg, group instanceof IEntityGroup);
-    boolean hasEntities = group.getEntities().hasNext();
+    boolean hasEntities = getGroupStore().findEntitiesForGroup(group).hasNext();
     assertTrue(msg, ! hasEntities);
-
-    msg = "Finding entities for a directory (should be none).";
 
     print("Test completed successfully." + CR);
 
-    print("***** LEAVING FileSystemGroupsTester.testFindEntitiesForGroup() *****" + CR);
+    print("***** LEAVING FileSystemGroupsTest.testFindEntitiesForGroup() *****" + CR);
 
 }
 /**
@@ -574,7 +630,7 @@ public void testFindEntitiesForGroup() throws Exception
  */
 public void testFindMemberGroupKeys() throws Exception
 {
-    print("***** ENTERING FileSystemGroupsTester.testFindMemberGroupKeys() *****" + CR);
+    print("***** ENTERING FileSystemGroupsTest.testFindMemberGroupKeys() *****" + CR);
 
     String msg = null;
     IEntityGroup group = null, memberGroup = null;
@@ -595,9 +651,9 @@ public void testFindMemberGroupKeys() throws Exception
         assertEquals(msg, numTestFiles, memberKeys.length);
         for ( int i=0; i<memberKeys.length; i++ )
         {
-            memberGroup = findGroup(GROUP_SERVICE_NAME + GROUP_SEPARATOR + memberKeys[i]);
+            memberGroup = findGroup(memberKeys[i]);
             assertNotNull(msg, memberGroup);
-            assertTrue(msg, memberGroup.isMemberOf(group));
+            assertTrue(msg, getGroupStore().contains(group, memberGroup));
         }
     }
 
@@ -617,7 +673,7 @@ public void testFindMemberGroupKeys() throws Exception
 
     print("Test completed successfully." + CR);
 
-    print("***** LEAVING FileSystemGroupsTester.testFindMemberGroupKeys() *****" + CR);
+    print("***** LEAVING FileSystemGroupsTest.testFindMemberGroupKeys() *****" + CR);
 
 }
 /**
@@ -625,7 +681,7 @@ public void testFindMemberGroupKeys() throws Exception
  */
 public void testFindMemberGroups() throws Exception
 {
-    print("***** ENTERING FileSystemGroupsTester.testFindMemberGroups() *****" + CR);
+    print("***** ENTERING FileSystemGroupsTest.testFindMemberGroups() *****" + CR);
 
     String msg = null, groupKey = null;
     IEntityGroup group = null, memberGroup = null;
@@ -647,9 +703,9 @@ public void testFindMemberGroups() throws Exception
         {
             memberGroup = (IEntityGroup)memberGroups.next();
             assertNotNull(msg, memberGroup);
-            groupKey = GROUP_SERVICE_NAME + GROUP_SEPARATOR + memberGroup.getKey();
+            groupKey = memberGroup.getKey();
             memberGroup = findGroup(groupKey);
-            assertTrue(msg, memberGroup.isMemberOf(group));
+            assertTrue(msg, getGroupStore().contains(group, memberGroup));
         }
     }
 
@@ -668,7 +724,7 @@ public void testFindMemberGroups() throws Exception
 
     print("Test completed successfully." + CR);
 
-    print("***** LEAVING FileSystemGroupsTester.testFindMemberGroups() *****" + CR);
+    print("***** LEAVING FileSystemGroupsTest.testFindMemberGroups() *****" + CR);
 
 }
 /**
@@ -677,7 +733,7 @@ public void testFindMemberGroups() throws Exception
  */
 public void testSearchForGroups() throws Exception
 {
-    print("***** ENTERING FileSystemGroupsTester.testSearchForGroups() *****" + CR);
+    print("***** ENTERING FileSystemGroupsTest.testSearchForGroups() *****" + CR);
 
     String msg = null;
     String is = null, startsWith = null, endsWith = null, contains = null, badQuery = null;
@@ -699,7 +755,7 @@ public void testSearchForGroups() throws Exception
         msg = "Searching for IS " + is;
         ids = getGroupStore().searchForGroups(is, IGroupConstants.IS, type);
         assertEquals(msg, ids.length, 1);
-        member = GroupService.findGroup(GROUP_SERVICE_NAME + GROUP_SEPARATOR + ids[0].getKey());
+        member = findGroup(ids[0].getKey());
         assertTrue(msg, member.isGroup());
 
         msg = "Searching for STARTS WITH " + startsWith;
@@ -720,11 +776,9 @@ public void testSearchForGroups() throws Exception
 
     }
 
-
-
     print("Test completed successfully." + CR);
 
-    print("***** LEAVING FileSwystemGroupsTester.testSearchForGroups() *****" + CR);
+    print("***** LEAVING FileSystemGroupsTest.testSearchForGroups() *****" + CR);
 
 }
 }

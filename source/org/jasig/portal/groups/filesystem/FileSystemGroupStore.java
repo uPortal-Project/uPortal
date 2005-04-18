@@ -164,8 +164,14 @@ IEntitySearcher
  * FileSystemGroupStore constructor.
  */
 public FileSystemGroupStore() {
+    this(null);
+}
+/**
+ * FileSystemGroupStore constructor.
+ */
+public FileSystemGroupStore(GroupServiceConfiguration cfg) {
     super();
-    initialize();
+    initialize(cfg);
 }
 /**
  * @return GroupHolder
@@ -645,7 +651,7 @@ protected String getKeyFromFile(File f)
 /**
  *
  */
-protected void initialize()
+protected void initialize(GroupServiceConfiguration cfg)
 {
     cache = Collections.synchronizedMap(new HashMap());
 
@@ -653,14 +659,16 @@ protected void initialize()
     badSeparator = ( goodSeparator == FORWARD_SLASH ) ? BACK_SLASH : FORWARD_SLASH;
 
     defaultEntityType = org.jasig.portal.security.IPerson.class;
-    
-    String sep = null;
-    
-    try
-        { sep = GroupServiceConfiguration.getConfiguration().getNodeSeparator(); }
-    catch (Exception ex) 
-        { throw new RuntimeException(ex); }
-    
+    GroupServiceConfiguration config = cfg;
+    if ( config == null )
+    {
+        try
+            { config = GroupServiceConfiguration.getConfiguration(); }
+        catch (Exception ex) 
+            { throw new RuntimeException(ex); }
+    }
+
+    String sep = config.getNodeSeparator();
     if (sep != null)
     {
         String period = String.valueOf(PERIOD);

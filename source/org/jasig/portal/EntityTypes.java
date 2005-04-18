@@ -16,6 +16,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.sql.DataSource;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.services.SequenceGenerator;
@@ -75,13 +77,10 @@ public class EntityTypes {
             return desc + " (" + getTypeId() + ") " + getType().getName();
         }
     }
-/**
- * EntityTypes constructor comment.
- */
-private EntityTypes()
+private EntityTypes(DataSource ds)
 {
     super();
-    initialize();
+    initialize(ds);
 }
 
 /**
@@ -360,14 +359,31 @@ private static java.lang.String getUpdateEntityTypeSql()
     return "UPDATE " + ENTITY_TYPE_TABLE + " SET "  + DESCRIPTIVE_NAME_COLUMN +
       " = ? WHERE " + TYPE_ID_COLUMN + " = ?";
 }
-
-/**
- * Cache entityTypes.
- */
-private void initialize()
+private void initialize(DataSource ds)
+{
+    Connection conn = null;
+    try
+    {
+        conn = ( ds == null )
+          ? RDBMServices.getConnection()
+          : ds.getConnection();
+        initialize(conn);     
+    }          
+            
+    catch (Exception ex)
+        { log.error("Exception initializing cache of entity types.", ex); }
+    finally
+    { 
+        if (conn != null)
+        { 
+            try {conn.close();}
+            catch (Exception ex) {} 
+        }
+    }
+}
+private void initialize(Connection conn)
 {
     initializeCaches();
-    Connection conn = null;
     Integer typeID = null;
     Class entityType = null;
     String description = null;
@@ -375,7 +391,6 @@ private void initialize()
 
     try
     {
-        conn = RDBMServices.getConnection();
         Statement stmnt = conn.createStatement();
         try
         {
@@ -399,8 +414,25 @@ private void initialize()
     }
     catch (Exception ex)
         { log.error("Exception initializing cache of entity types.", ex); }
+}
+/**
+ * Cache entityTypes.
+ */
+private void initialize()
+{
+    Connection conn = null;
+    try
+    {
+        conn = RDBMServices.getConnection();
+        initialize(conn);
+    }
+    catch (Exception ex)
+        { log.error("Exception initializing cache of entity types.", ex); }
     finally
-        { RDBMServices.releaseConnection(conn); }
+    { 
+        if ( conn != null )
+            { RDBMServices.releaseConnection(conn); }
+    }
 }
 
 /**
@@ -508,12 +540,19 @@ public synchronized void setEntityTypesByType(Map m)
 }
 
 /**
- * @return org.jasig.portal.groups.EntityTypes
+ * @return org.jasig.portal.EntityTypes
  */
-public static synchronized EntityTypes singleton()
+public static EntityTypes singleton()
+{
+    return singleton(null);
+}
+/**
+ * @return org.jasig.portal.EntityTypes
+ */
+public static synchronized EntityTypes singleton(DataSource ds)
 {
     if ( singleton == null )
-        { singleton = new EntityTypes(); }
+        { singleton = new EntityTypes(ds); }
     return singleton;
 }
 /**
