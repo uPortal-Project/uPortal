@@ -5,6 +5,8 @@
 
 package  org.jasig.portal.channels;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ChannelRuntimeProperties;
 import org.jasig.portal.ChannelStaticData;
@@ -23,6 +25,13 @@ import org.xml.sax.ContentHandler;
 public abstract class BaseChannel implements IChannel {
   protected ChannelStaticData staticData;
   protected ChannelRuntimeData runtimeData;
+  
+  /**
+   * A Commons Logging log instance which will log as the runtime class extending
+   * this BaseChannel.  Channels extending BaseChannel can use this Log instance
+   * rather than instantiating their own.
+   */
+  protected Log log = LogFactory.getLog(getClass());
 
   public ChannelRuntimeProperties getRuntimeProperties() {
     return  new ChannelRuntimeProperties();
