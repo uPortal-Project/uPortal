@@ -20,8 +20,8 @@ public class RecordLogoutWorkerTask extends StatsRecorderWorkerTask {
     this.person = person;
   }
 
-  public void run() {
-    statsRecorder.recordLogout(person);
+  public void execute() throws Exception {
+    this.statsRecorder.recordLogout(this.person);
   }
 }
 

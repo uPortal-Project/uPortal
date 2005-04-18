@@ -27,8 +27,8 @@ public class RecordFolderRemovedFromLayoutWorkerTask extends StatsRecorderWorker
     this.folderDesc = folderDesc;
   }
 
-  public void run() {
-    statsRecorder.recordFolderRemovedFromLayout(person, profile, folderDesc);
+  public void execute() throws Exception {
+    this.statsRecorder.recordFolderRemovedFromLayout(this.person, this.profile, this.folderDesc);
   }
 }
 

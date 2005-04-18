@@ -27,8 +27,8 @@ public class RecordChannelUpdatedInLayoutWorkerTask extends StatsRecorderWorkerT
     this.channelDesc = channelDesc;
   }
 
-  public void run() {
-    statsRecorder.recordChannelUpdatedInLayout(person, profile, channelDesc);
+  public void execute() throws Exception {
+    this.statsRecorder.recordChannelUpdatedInLayout(this.person, this.profile, this.channelDesc);
   }
 }
 

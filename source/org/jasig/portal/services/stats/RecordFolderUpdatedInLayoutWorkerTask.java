@@ -27,8 +27,8 @@ public class RecordFolderUpdatedInLayoutWorkerTask extends StatsRecorderWorkerTa
     this.folderDesc = folderDesc;
   }
 
-  public void run() {
-    statsRecorder.recordFolderUpdatedInLayout(person, profile, folderDesc);
+  public void execute() throws Exception {
+    this.statsRecorder.recordFolderUpdatedInLayout(this.person, this.profile, this.folderDesc);
   }
 }
 

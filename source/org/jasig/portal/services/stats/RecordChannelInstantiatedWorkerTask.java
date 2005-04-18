@@ -27,8 +27,8 @@ public class RecordChannelInstantiatedWorkerTask extends StatsRecorderWorkerTask
     this.channelDesc = channelDesc;
   }
 
-  public void run() {
-    statsRecorder.recordChannelInstantiated(person, profile, channelDesc);
+  public void execute() throws Exception {
+    this.statsRecorder.recordChannelInstantiated(this.person, this.profile, this.channelDesc);
   }
 }
 

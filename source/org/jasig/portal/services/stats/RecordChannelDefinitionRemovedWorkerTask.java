@@ -23,8 +23,8 @@ public class RecordChannelDefinitionRemovedWorkerTask extends StatsRecorderWorke
     this.channelDef = channelDef;
   }
 
-  public void run() {
-    statsRecorder.recordChannelDefinitionRemoved(person, channelDef);
+  public void execute() throws Exception {
+    this.statsRecorder.recordChannelDefinitionRemoved(this.person, this.channelDef);
   }
 }
 

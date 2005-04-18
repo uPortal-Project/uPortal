@@ -27,8 +27,8 @@ public class RecordChannelMovedInLayoutWorkerTask extends StatsRecorderWorkerTas
     this.channelDesc = channelDesc;
   }
 
-  public void run() {
-    statsRecorder.recordChannelMovedInLayout(person, profile, channelDesc);
+  public void execute() throws Exception {
+    this.statsRecorder.recordChannelMovedInLayout(this.person, this.profile, this.channelDesc);
   }
 }
 

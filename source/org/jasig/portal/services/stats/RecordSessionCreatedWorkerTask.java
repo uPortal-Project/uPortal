@@ -20,8 +20,8 @@ public class RecordSessionCreatedWorkerTask extends StatsRecorderWorkerTask {
     this.person = person;
   }
 
-  public void run() {
-    statsRecorder.recordSessionCreated(person);
+  public void execute() throws Exception {
+    this.statsRecorder.recordSessionCreated(this.person);
   }
 }
 

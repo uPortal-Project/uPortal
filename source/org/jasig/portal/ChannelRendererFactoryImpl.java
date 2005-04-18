@@ -6,9 +6,14 @@
 package org.jasig.portal;
 
 import org.jasig.portal.properties.PropertiesManager;
+import org.jasig.portal.utils.threading.PriorityThreadFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.utils.threading.BoundedThreadPool;
+
+import edu.emory.mathcs.backport.java.util.concurrent.ExecutorService;
+import edu.emory.mathcs.backport.java.util.concurrent.LinkedBlockingQueue;
+import edu.emory.mathcs.backport.java.util.concurrent.ThreadPoolExecutor;
+import edu.emory.mathcs.backport.java.util.concurrent.TimeUnit;
 
 /**
  * <p>The <code>ChannelRendererFactoryImpl</code> creates
@@ -27,10 +32,10 @@ public final class ChannelRendererFactoryImpl
     private static final Log log = LogFactory.getLog(ChannelRendererFactoryImpl.class);
     
     /** <p>Thread pool per factory.</p> */
-    private BoundedThreadPool mThreadPool = null;
+    private ExecutorService mThreadPool = null;
 
     /** <p>Shared thread pool for all factories.</p> */
-    private static BoundedThreadPool cSharedThreadPool = null;
+    private static ExecutorService cSharedThreadPool = null;
 
     /**
      * <p>Creates a new instance of a bounded thread pool channel
@@ -95,19 +100,11 @@ public final class ChannelRendererFactoryImpl
 
         if( sharedPool )
         {
-            cSharedThreadPool = new BoundedThreadPool(
-                initialThreads,
-                maxThreads,
-                threadPriority
-                );
+            cSharedThreadPool = new ThreadPoolExecutor(initialThreads, maxThreads, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue(), new PriorityThreadFactory(threadPriority));
         }
         else
         {
-            mThreadPool = new BoundedThreadPool(
-                initialThreads,
-                maxThreads,
-                threadPriority
-                );
+            this.mThreadPool = new ThreadPoolExecutor(initialThreads, maxThreads, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue(), new PriorityThreadFactory(threadPriority));
         }
     }
 
@@ -128,7 +125,7 @@ public final class ChannelRendererFactoryImpl
         return new ChannelRenderer(
             channel,
             channelRuntimeData,
-            (null == mThreadPool) ? cSharedThreadPool : mThreadPool
+            (null == this.mThreadPool) ? cSharedThreadPool : this.mThreadPool
             );
     }
 }

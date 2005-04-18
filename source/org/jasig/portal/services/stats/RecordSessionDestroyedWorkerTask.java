@@ -20,8 +20,8 @@ public class RecordSessionDestroyedWorkerTask extends StatsRecorderWorkerTask {
     this.person = person;
   }
 
-  public void run() {
-    statsRecorder.recordSessionDestroyed(person);
+  public void execute() throws Exception {
+    this.statsRecorder.recordSessionDestroyed(this.person);
   }
 }
 
