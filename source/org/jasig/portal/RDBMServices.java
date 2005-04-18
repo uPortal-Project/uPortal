@@ -523,20 +523,27 @@ public class RDBMServices {
             }
         }
     }
+    
     /**
-     * @return IDatabaseMetadata
-     * If no metadata object yet, call datasource to initialize
+     * Get metadata about the default DataSource.
+     * @return metadata about the default DataSource.
      */
     public static IDatabaseMetadata getDbMetaData() {
-        if (dbMetaData==null) getDataSource();
+        if (dbMetaData==null) {
+            // if metadata not yet populated, call getDataSource(), which
+            // has side effect of populating dbMetaData.
+            getDataSource();
+        }
         return dbMetaData;
     }
 
 
 
     /**
+     * Inner class implementation of DataSource.  We currently construct an instance
+     * of this class from the properties defined in rdbm.properties when we are using
+     * rdbm.properties to define our core uPortal DataSource.
      * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
-     * @version $Revision $
      */
     public static class GenericDataSource implements DataSource {
 
