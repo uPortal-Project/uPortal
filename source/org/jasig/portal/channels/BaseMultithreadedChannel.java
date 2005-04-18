@@ -9,6 +9,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ChannelRuntimeProperties;
 import org.jasig.portal.ChannelStaticData;
@@ -20,7 +22,7 @@ import org.xml.sax.ContentHandler;
 /**
  * A base class from which channels implementing IMultithreadedChannel interface can be derived.
  * Use this only if you are familiar with the IMultithreadedChannel interface.
- * Channels that extend MultithreadedChannel typically only need to override the renderXML method
+ * Channels that extend BaseMultithreadedChannel typically only need to override the renderXML method
  * and should not contain any non-static member variables.
  * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
@@ -28,6 +30,13 @@ import org.xml.sax.ContentHandler;
 public abstract class BaseMultithreadedChannel implements IMultithreadedChannel {
   protected static Map channelStateMap;
 
+  /**
+   * A Commons Logging log instance which will log as the runtime class extending
+   * this BaseChannel.  Channels extending BaseChannel can use this Log instance
+   * rather than instantiating their own.
+   */
+  protected Log log = LogFactory.getLog(getClass());
+  
   /**
    * The channel's state including the static data, runtime data,
    * portal event, and a channelData map which is analagous to the
