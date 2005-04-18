@@ -357,7 +357,10 @@
     <pathelement location="${commons-pool.jar}"/>
     <pathelement location="${servlet.jar}"/>
     <pathelement location="${spring.jar}"/>
-
+  	<pathelement location="${whirlycache.jar}" />
+  	<pathelement location="${jdom.jar}" />
+  	<pathelement location="${concurrent.jar}" />
+  	<pathelement location="${backport.jar}" />
   </path>
 
 
@@ -466,6 +469,9 @@
     <!-- Copy the Logger.properties file to the well-known location log4j expects.-->
     <copy file="properties/Logger.properties" tofile="${build.home}/WEB-INF/classes/log4j.properties"/>
 
+  	<!-- Copy WhirlyCache to proper folder -->
+  	<copy file="properties/whirlycache.xml" tofile="${build.home}/WEB-INF/classes/whirlycache.xml" />
+  	
     <!-- Copy all stylesheets, stylesheet descriptions  and stylesheet list files -->
     <copy  todir="${build.home}/WEB-INF/classes">
         <fileset dir="webpages/stylesheets" includes="**/*.xsl,**/*.ssl,**/*.sdf,**/*.properties" excludes="**/*.UTF-8.properties"/>
@@ -525,6 +531,11 @@
     <copy todir="${deploy.home}/WEB-INF/lib" file="${commons-pool.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${jdbcDriver.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${spring.jar}"/>
+
+  	<copy todir="${deploy.home}/WEB-INF/lib" file="${whirlycache.jar}" />
+  	<copy todir="${deploy.home}/WEB-INF/lib" file="${jdom.jar}" />
+  	<copy todir="${deploy.home}/WEB-INF/lib" file="${concurrent.jar}" />
+  	<copy todir="${deploy.home}/WEB-INF/lib" file="${backport.jar}" />
 
     <!-- These are Tomcat-specific!  We need to think about a new property
          that lets us specify the appropriate directory for other servers

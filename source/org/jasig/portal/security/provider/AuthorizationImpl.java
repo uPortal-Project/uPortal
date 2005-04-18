@@ -7,7 +7,6 @@ package org.jasig.portal.security.provider;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -31,39 +30,55 @@ import org.jasig.portal.security.IPermissionStore;
 import org.jasig.portal.security.IUpdatingPermissionManager;
 import org.jasig.portal.services.EntityCachingService;
 import org.jasig.portal.services.GroupService;
+import org.jasig.portal.utils.cache.CacheFactory;
+import org.jasig.portal.utils.cache.CacheFactoryLocator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
  * @author Bernie Durfee, bdurfee@interactivebusiness.com
  * @author Dan Ellentuck
- * @version $Revision$
+ * @author Scott Battaglia
+ * @version $Revision$ $Date$
  */
 public class AuthorizationImpl implements IAuthorizationService {
 
+    /** Instance of log in order to log events. */
     private static final Log log = LogFactory.getLog(AuthorizationImpl.class);
-
-    /**
-     * Default value to which cachePermissions will be set if
-     * the corresponding property cannot be loaded.
-     */
-    private static final boolean DEFAULT_CACHE_PERMISSIONS = false;
     
-    protected IPermissionStore permissionStore;
-    protected IPermissionPolicy defaultPermissionPolicy;
-    protected Map principalCache = new HashMap(100);
-    protected String PERIOD_STRING = ".";
-    protected Class PERMISSION_SET_TYPE;
-    protected boolean cachePermissions;
-    protected static IAuthorizationService singleton;
+    /** Constant representing the separator used in the principal key. */
+    private static final String PRINCIPAL_SEPARATOR = ".";
+
+    /** The static instance of the AuthorizationImpl for purposes of creating a AuthorizationImpl singleton. */
+    private static final IAuthorizationService singleton;
+    
+    /** Instance of the Permission Store for storing permission information. */
+    private IPermissionStore permissionStore;
+
+    /** The default Permission Policy this Authorization implementation will use. */
+    private IPermissionPolicy defaultPermissionPolicy;
+
+    /** The cache to hold the list of principals. */
+    private Map principalCache = CacheFactoryLocator.getCacheFactory().getCache(CacheFactory.PRINCIPAL_CACHE);
+
+    /** The class representing the permission set type. */
+    private Class PERMISSION_SET_TYPE;
+
+    /** variable to determine if we should cache permissions or not. */
+    private boolean cachePermissions;
+
+    static {
+        singleton = new AuthorizationImpl();
+    }
+
   /**
    *
    */
-protected AuthorizationImpl () throws AuthorizationException
-{
-    super();
-    initialize();
-}
+    protected AuthorizationImpl ()
+    {
+        super();
+        initialize();
+    }
 /**
  * Adds <code>IPermissions</code> to the back end store.
  * @param permissions IPermission[]
@@ -75,7 +90,7 @@ throws AuthorizationException
     if (permissions.length > 0)
     {
         getPermissionStore().add(permissions);
-        if ( cachePermissions )
+        if ( this.cachePermissions )
             { removeFromPermissionsCache(permissions); }
     }
 }
@@ -101,7 +116,7 @@ throws AuthorizationException
     try
     {
         return (IPermissionSet)
-          EntityCachingService.instance().get(PERMISSION_SET_TYPE, principal.getPrincipalString());
+          EntityCachingService.instance().get(this.PERMISSION_SET_TYPE, principal.getPrincipalString());
     }
     catch (CachingException ce)
         { throw new AuthorizationException("Problem adding permissions for " + principal + " to cache", ce); }
@@ -114,7 +129,7 @@ throws AuthorizationException
 protected void cacheRemove(IAuthorizationPrincipal ap) throws AuthorizationException
 {
     try
-        { EntityCachingService.instance().remove(PERMISSION_SET_TYPE, ap.getPrincipalString()); }
+        { EntityCachingService.instance().remove(this.PERMISSION_SET_TYPE, ap.getPrincipalString()); }
     catch (CachingException ce)
         { throw new AuthorizationException("Problem removing permissions for " + ap + " from cache", ce); }
 }
@@ -288,7 +303,7 @@ throws AuthorizationException
  * @return org.jasig.portal.security.IPermissionPolicy
  */
 protected IPermissionPolicy getDefaultPermissionPolicy() {
-    return defaultPermissionPolicy;
+    return this.defaultPermissionPolicy;
 }
 
 /**
@@ -409,7 +424,7 @@ throws AuthorizationException
  */
 private IPermissionStore getPermissionStore()
 {
-    return permissionStore;
+    return this.permissionStore;
 }
 
 /**
@@ -422,7 +437,7 @@ public IAuthorizationPrincipal getPrincipal(IPermission permission)
 throws AuthorizationException
 {
     String principalString = permission.getPrincipal();
-    int idx = principalString.indexOf(PERIOD_STRING);
+    int idx = principalString.indexOf(PRINCIPAL_SEPARATOR);
     Integer typeId = new Integer(principalString.substring(0, idx));
     Class type = EntityTypes.getEntityType(typeId);
     String key = principalString.substring(idx + 1);
@@ -469,7 +484,7 @@ public String getPrincipalString(IAuthorizationPrincipal principal)
 }
 private String getPrincipalString(Class pType, String pKey) {
     Integer type = EntityTypes.getEntityTypeID(pType);
-    return type + PERIOD_STRING + pKey;
+    return type + PRINCIPAL_SEPARATOR + pKey;
 }
 
 /**
@@ -498,67 +513,62 @@ throws AuthorizationException
     return primRetrievePermissions(owner, pString, activity, target);
 }
 
-/**
- *
- */
-private void initialize() throws AuthorizationException
-{
-    String eMsg = null;
-    String factoryName =
-      PropertiesManager.getProperty("org.jasig.portal.security.IPermissionStore.implementation", null);
-    String policyName =
-      PropertiesManager.getProperty("org.jasig.portal.security.IPermissionPolicy.defaultImplementation", null);
-    cachePermissions =
-      PropertiesManager.getPropertyAsBoolean("org.jasig.portal.security.IAuthorizationService.cachePermissions", DEFAULT_CACHE_PERMISSIONS);
+    private void initialize() throws IllegalArgumentException {
+        final boolean DEFAULT_CACHE_PERMISSIONS = false;
+    
+         String factoryName = PropertiesManager.getProperty(
+             "org.jasig.portal.security.IPermissionStore.implementation", null);
+         String policyName = PropertiesManager
+             .getProperty(
+                 "org.jasig.portal.security.IPermissionPolicy.defaultImplementation",
+                 null);
+         this.cachePermissions = PropertiesManager.getPropertyAsBoolean(
+             "org.jasig.portal.security.IAuthorizationService.cachePermissions",
+             DEFAULT_CACHE_PERMISSIONS);
+    
+         if (factoryName == null) {
+             final String eMsg = "AuthorizationImpl.initialize(): No entry for org.jasig.portal.security.IPermissionStore.implementation portal.properties.";
+             log.error(eMsg);
+             throw new IllegalArgumentException(eMsg);
+         }
+    
+         if (policyName == null) {
+             final String eMsg = "AuthorizationImpl.initialize(): No entry for org.jasig.portal.security.IPermissionPolicy.defaultImplementation portal.properties.";
+             log.error(eMsg);
+             throw new IllegalArgumentException(eMsg);
+         }
+    
+         try {
+             this.permissionStore = (IPermissionStore)Class.forName(factoryName)
+                 .newInstance();
+         }
+         catch (Exception e) {
+             final String eMsg = "AuthorizationImpl.initialize(): Problem creating permission store... ";
+             log.error(eMsg, e);
+             throw new IllegalArgumentException(eMsg);
+         }
+    
+         try {
+             this.defaultPermissionPolicy = (IPermissionPolicy)Class.forName(
+                 policyName).newInstance();
+         }
+         catch (Exception e) {
+             final String eMsg = "AuthorizationImpl.initialize(): Problem creating default permission policy... ";
+             log.error(eMsg, e);
+             throw new IllegalArgumentException(eMsg);
+         }
+    
+         try {
+             this.PERMISSION_SET_TYPE = Class
+                 .forName("org.jasig.portal.security.IPermissionSet");
+         }
+         catch (ClassNotFoundException cnfe) {
+             final String eMsg = "AuthorizationImpl.initialize(): Problem initializing service. ";
+             log.error(eMsg, cnfe);
+             throw new IllegalArgumentException(eMsg);
+         }
+     }
 
-
-    if ( factoryName == null )
-    {
-        eMsg = "AuthorizationImpl.initialize(): No entry for org.jasig.portal.security.IPermissionStore.implementation portal.properties.";
-        log.error( eMsg);
-        throw new AuthorizationException(eMsg);
-    }
-
-    if ( policyName == null )
-    {
-        eMsg = "AuthorizationImpl.initialize(): No entry for org.jasig.portal.security.IPermissionPolicy.defaultImplementation portal.properties.";
-        log.error( eMsg);
-        throw new AuthorizationException(eMsg);
-    }
-
-    try
-    {
-        permissionStore = (IPermissionStore)Class.forName(factoryName).newInstance();
-    }
-    catch (Exception e)
-    {
-        eMsg = "AuthorizationImpl.initialize(): Problem creating permission store... ";
-        log.error( eMsg, e);
-        throw new AuthorizationException(eMsg, e);
-    }
-
-    try
-    {
-        defaultPermissionPolicy = (IPermissionPolicy)Class.forName(policyName).newInstance();
-    }
-    catch (Exception e)
-    {
-        eMsg = "AuthorizationImpl.initialize(): Problem creating default permission policy... ";
-        log.error( eMsg, e);
-        throw new AuthorizationException(eMsg, e);
-    }
-
-    try
-    {
-        PERMISSION_SET_TYPE = Class.forName("org.jasig.portal.security.IPermissionSet");
-    }
-    catch (ClassNotFoundException cnfe)
-    {
-        eMsg = "AuthorizationImpl.initialize(): Problem initializing service. ";
-        log.error( eMsg, cnfe);
-        throw new AuthorizationException(eMsg, cnfe);
-    }
-}
 
 /**
  * Factory method for an <code>IPermission</code>.
@@ -597,32 +607,25 @@ public IPermissionManager newPermissionManager(String owner)
     return new PermissionManagerImpl(owner, this);
 }
 
+
 /**
- * Factory method for IAuthorizationPrincipal.
- * First check the principal cache, and if not present, create the principal
- * and cache it.
+ * Factory method for IAuthorizationPrincipal. First check the principal
+ * cache, and if not present, create the principal and cache it.
+ * 
  * @return org.jasig.portal.security.IAuthorizationPrincipal
  * @param key java.lang.String
  * @param type java.lang.Class
  */
-public IAuthorizationPrincipal newPrincipal(String key, Class type)
-{
-    String principalKey = getPrincipalString(type, key);
-    IAuthorizationPrincipal principal = (IAuthorizationPrincipal)getPrincipalCache().get(principalKey);
-    if ( principal == null )
-    {
-        synchronized (this)
-        {
-            principal = (IAuthorizationPrincipal)getPrincipalCache().get(key);
-            if ( principal == null )
-            {
-                principal = primNewPrincipal(key, type);
-                Map cache = copyPrincipalCache();
-                cache.put(principalKey, principal);
-                setPrincipalCache(cache);
-            }
-        }  // end synchronized
+public synchronized IAuthorizationPrincipal newPrincipal(String key, Class type) {
+    final String principalKey = getPrincipalString(type, key);
+    
+    if (this.principalCache.containsKey(principalKey)) {
+        return (IAuthorizationPrincipal) this.principalCache.get(principalKey);
     }
+    
+    final IAuthorizationPrincipal principal = primNewPrincipal(key, type);
+    this.principalCache.put(principalKey, principal);
+    
     return principal;
 }
 
@@ -667,7 +670,7 @@ public IUpdatingPermissionManager newUpdatingPermissionManager(String owner)
 private IPermission[] primGetPermissionsForPrincipal(IAuthorizationPrincipal principal)
 throws AuthorizationException
 {
-    if ( ! cachePermissions )
+    if ( ! this.cachePermissions )
         { return getUncachedPermissionsForPrincipal(principal, null, null, null);}
 
     IPermissionSet ps = null;
@@ -781,7 +784,7 @@ throws AuthorizationException
     if (permissions.length > 0)
     {
         getPermissionStore().delete(permissions);
-        if ( cachePermissions )
+        if ( this.cachePermissions )
             { removeFromPermissionsCache(permissions); }
     }
 }
@@ -790,24 +793,14 @@ throws AuthorizationException
  * @param newDefaultPermissionPolicy org.jasig.portal.security.IPermissionPolicy
  */
 protected void setDefaultPermissionPolicy(IPermissionPolicy newDefaultPermissionPolicy) {
-    defaultPermissionPolicy = newDefaultPermissionPolicy;
-}
-
-/**
- * @param newPermissionStore org.jasig.portal.security.provider.ReferencePermissionStore
- */
-private void setPermissionStore(IPermissionStore newPermissionStore) {
-    permissionStore = newPermissionStore;
+    this.defaultPermissionPolicy = newDefaultPermissionPolicy;
 }
 
 /**
  * @return org.jasig.portal.security.provider.IAuthorizationService
  */
 public static synchronized IAuthorizationService singleton()
-throws AuthorizationException
 {
-    if ( singleton == null )
-        { singleton = new AuthorizationImpl(); }
     return singleton;
 }
 
@@ -822,31 +815,8 @@ throws AuthorizationException
     if (permissions.length > 0)
     {
         getPermissionStore().update(permissions);
-        if ( cachePermissions )
+        if ( this.cachePermissions )
             { removeFromPermissionsCache(permissions); }
     }
 }
-
-/**
- * @return Map
- */
-private synchronized Map getPrincipalCache() {
-    return principalCache;
-}
-
-/**
- * @param map
- */
-private synchronized void setPrincipalCache(Map map) {
-    principalCache = map;
-}
-
-/**
- * @return Map
- */
-private Map copyPrincipalCache() {
-    HashMap hm = (HashMap)getPrincipalCache();
-    return (Map)hm.clone();
-}
-
 }
