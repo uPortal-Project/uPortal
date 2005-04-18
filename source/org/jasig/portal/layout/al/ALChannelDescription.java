@@ -22,7 +22,7 @@ import org.w3c.dom.Element;
  *
  * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
  * @author <a href="mailto:mvi@immagic.com">Michael Ivanov</a>
- * @version 1.0
+ * @version $Revision$ $Date$ 
  */
 public class ALChannelDescription extends ChannelDescriptionImpl implements IALNodeDescription {
 

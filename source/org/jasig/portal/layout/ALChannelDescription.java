@@ -21,7 +21,7 @@ import org.w3c.dom.Element;
  * An extension of the ChannelDescription for the Aggregated Layout implementation
  *
  * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
- * @version 1.0
+ * @version $Revision$ $Date$ 
  */
 public class ALChannelDescription extends UserLayoutChannelDescription implements IALChannelDescription {
 
