@@ -3,10 +3,15 @@
 <beans>
 	<!--
 	 | The default application context for uPortal. Other spring configurations
-	 | should be added to the list if they have beans that need to be avalable
+	 | should be added to the list in beanRefFactory.xml if they have beans that need to be avalable
 	 | in the uPortal application context.
 	 +-->
 	 
+	<!--
+	  | Here we define additional startup checks.  These are in addition to hard-coded checks that
+	  | are intended to detect problems that would prevent us from reading in and using these 
+	  | configurable checks.
+	  +-->
 	<bean id='checkRunner' class="org.jasig.portal.tools.checks.BasicCheckRunner">
 		<property name="checks">
 			<list>
@@ -29,4 +34,35 @@
 			</list>
 		</property>
 	</bean>
+	
+	<!--
+	  | Here we define the IThrowableToElement that will map fom Throwables that channels throw
+	  | to XML Elements that become part of the XML input to the XSLT that CError uses to render
+	  | messages about failed channels.
+	  +-->
+	<bean id="throwableToElement" class="org.jasig.portal.channels.error.error2xml.DelegatingThrowableToElement">
+		<property name="throwableToElements">
+			<list>
+				<!-- 
+				  | This is a list from most specific to most general handling of Throwables.  
+				  | The DelegatingThrowableToElement implementation is to iterate over this list until it finds a 
+				  | mapping that is willing to translate the Throwable we're trying to handle.
+				  | 
+				  | In order to add a custom CError message for some particular exception that requires information
+				  | from that exception, what you do is write an
+				  | IThrowableToElement implementation which produces the XML Element conveying the
+				  | exception's information and then edit the XSLTs that CError uses to render to read that
+				  | information from the Document and use it.
+				  | 
+				  | If just the classname is sufficient, you can switch in the XSLT on the classname set by
+				  | the generic ThrowableToElement handler.
+				  +-->
+				<bean class="org.jasig.portal.channels.error.error2xml.ResourceMissingExceptionToElement"/>
+				<bean class="org.jasig.portal.channels.error.error2xml.InternalTimeoutExceptionToElement"/>
+				<bean class="org.jasig.portal.channels.error.error2xml.AuthorizationExceptionToElement"/>
+				<bean class="org.jasig.portal.channels.error.error2xml.ThrowableToElement"/>
+			</list>
+		</property>
+	</bean>
+	
 </beans>
