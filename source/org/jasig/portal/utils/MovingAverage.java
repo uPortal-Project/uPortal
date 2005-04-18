@@ -1,16 +1,14 @@
+/* Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
+*  See license distributed with this file and
+*  available online at http://www.uportal.org/license.html
+*/
+
 package org.jasig.portal.utils;
 
 /**
- * <p>Title: </p>
- *
- * <p>Description: </p>
- *
- * <p>Copyright: Copyright © 2005</p>
- *
- * <p>Company: </p>
- *
  * @author George Lindholm <a href="mailto:George.Lindholm@ubc.ca">George.Lindholm@ubc.ca</a>
- * @version 1.0
+ * @version $Revision$ $Date$
+ * @since uPortal 2.5
  */
 public class MovingAverage {
   private long[] samples;
