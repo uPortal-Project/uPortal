@@ -80,25 +80,39 @@ public class RDBMServices {
 
     /**
      * Gets the default DataSource. If no server is found
-     * a runtime sxception will be thrown.
+     * a runtime exception will be thrown.  This method will never return null.
+     * @return the core uPortal DataSource
+     * @throws RuntimeException on failure
      */
     public static DataSource getDataSource() {
         return getDataSource(PORTAL_DB);
     }
+    
     /**
-     * Gets a named DataSource from JNDI. Successfull lookups
-     * are cached and not done again. Failed lookups are cached for the
+     * Gets a named DataSource from JNDI, with special handling for the PORTAL_DB
+     * datasource. Successful lookups
+     * are cached and not done again. Lookup failure is remembered and blocks retry
+     * for a
      * number of milliseconds specified by {@link #JNDI_RETRY_TIME} to reduce
      * JNDI overhead and log spam.
      * 
-     * When getting data source for default database additional
-     * metadata object is instantiated. This implementation will 
+     * There are two ways in which we handle the core uPortal DataSource 
+     * specially.
+     * 
+     * We determine and remember metadata in an DbMetaData object for the core
+     * uPortal DataSource.  We do not compute this DbMetaData for any other
+     * DataSource.
+     * 
+     * We fall back on using rdbm.properties to construct our core uPortal 
+     * DataSource in the case where we cannot find it from JNDI.  If the portal
+     * property org.jasig.portal.RDBMServices.getDatasourceFromJNDI is true, 
+     * we first 
      * first try to get the connection by looking in the
      * JNDI context for the name defined by the portal property
-     * org.jasig.portal.RDBMServices.PortalDatasourceJndiName
-     * if the org.jasig.portal.RDBMServices.getDatasourceFromJndi
-     * property is enabled.
-
+     * org.jasig.portal.RDBMServices.PortalDatasourceJndiName .
+     * 
+     * If we were not configured to check JNDI or we didn't find it in JNDI having
+     * checked, we then fall back on rdbm.properties.
      *
      * @param name The name of the DataSource to get.
      * @return A named DataSource or <code>null</code> if one cannot be found.
