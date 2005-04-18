@@ -121,7 +121,7 @@ public class RDBMServices {
         final String PROP_FILE = "/properties/rdbm.properties";
 
         if (DEFAULT_DATABASE.equals(name)) {
-            return getDataSource(PORTAL_DB); 
+            name = PORTAL_DB; 
         }
         
         DataSource ds = (DataSource)namedDataSources.get(name);
