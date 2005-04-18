@@ -36,7 +36,7 @@ import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
  * @version $Revision$
  */
 public class CSecureInfo extends BaseChannel implements IPrivilegedChannel, ICacheable {
-    private static final Log log = LogFactory.getLog(CSecureInfo.class);
+
     protected String str_channelSubscribeId=null;
     protected IChannel the_channel=null;
     

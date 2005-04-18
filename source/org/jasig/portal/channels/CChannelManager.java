@@ -43,7 +43,6 @@ import org.xml.sax.ContentHandler;
  * @version $Revision$
  */
 public class CChannelManager extends BaseChannel {
-    private static final Log log = LogFactory.getLog(CChannelManager.class);
     
     protected static final String sslLocation = "CChannelManager/CChannelManager.ssl";
     protected static final Document emptyDoc = DocumentFactory.getNewDocument();
