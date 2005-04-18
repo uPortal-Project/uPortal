@@ -88,9 +88,6 @@ public class DelegatingThrowableToElement
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.channels.error.tt.ThrowableToElement#throwableToElement(java.lang.Throwable)
-     */
     public Element throwableToElement(Throwable t, Document parentDoc) 
         throws IllegalArgumentException {
         
