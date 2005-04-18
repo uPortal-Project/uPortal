@@ -36,7 +36,6 @@ import org.xml.sax.ContentHandler;
  */
 public class CApplet extends BaseMultithreadedChannel implements IMultithreadedCacheable {
   private static final String sslLocation = "CApplet/CApplet.ssl";
-  private static final Log log = LogFactory.getLog(CApplet.class);
 
   /**
    * Output channel content to the portal

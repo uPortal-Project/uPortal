@@ -42,7 +42,7 @@ import org.xml.sax.ContentHandler;
  * @version $Revision$ $Date$
  */
 public class CPersonAttributes extends BaseMultithreadedChannel implements IMultithreadedMimeResponse {
-  private static final Log log = LogFactory.getLog(CPersonAttributes.class);
+
   private static final String sslLocation = "CPersonAttributes/CPersonAttributes.ssl";
 
   public void renderXML (ContentHandler out, String uid) throws PortalException {

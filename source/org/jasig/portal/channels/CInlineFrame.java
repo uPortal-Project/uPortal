@@ -35,7 +35,7 @@ import org.xml.sax.ContentHandler;
  * @version $Revision$
  */
 public class CInlineFrame extends BaseMultithreadedChannel implements IMultithreadedCacheable {
-    private static final Log log = LogFactory.getLog(CInlineFrame.class);
+
   private static final String sslLocation = "CInlineFrame/CInlineFrame.ssl";
 
   /**

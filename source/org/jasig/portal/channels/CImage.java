@@ -41,7 +41,7 @@ import org.xml.sax.ContentHandler;
  */
 public class CImage extends BaseMultithreadedChannel implements IMultithreadedCacheable
 {
-    private static final Log log = LogFactory.getLog(CImage.class);
+
   private static final String sslLocation = "CImage/CImage.ssl";
 
   /**
