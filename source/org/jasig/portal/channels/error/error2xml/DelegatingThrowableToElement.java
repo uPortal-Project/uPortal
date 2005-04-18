@@ -20,9 +20,10 @@ import org.w3c.dom.Element;
  * 
  * You can add handling for other Throwables by either editing this implementation 
  * code to include additional ThrowableToElement implementations by default or
- * by injecting a different List of ThrowableToElement implementations after 
- * instantiating this class.
- * @author andrew.petro@yale.edu
+ * by injecting a different List of ThrowableToElement implementations where 
+ * the instance of this class that CError actually uses is configured
+ * in applicationContext.xml.
+ * 
  * @version $Revision$ $Date$
  * @since uPortal 2.5
  */
@@ -32,7 +33,8 @@ public class DelegatingThrowableToElement
     /**
      * List of ThrowableToElement implementations in order from most specific
      * to least specific.  These will be polled in order to make our response to our
-     * interface methods.
+     * interface methods.  
+     * Our constructor currently defaults this to a basic list of such mappings.
      */
     private List throwableToElements;
     
@@ -69,9 +71,6 @@ public class DelegatingThrowableToElement
     }
 
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.channels.error.tt.ThrowableToNode#supports(java.lang.Class)
-     */
     public boolean supports(Class c) throws IllegalArgumentException {
         if (c == null)
             throw new IllegalArgumentException("Cannot support a null class");
