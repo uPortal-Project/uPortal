@@ -11,7 +11,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.IChannel;
 
-import org.jasig.portal.channels.cusermanager.provider.DefaultDataHandlerImpl;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.provider.PersonImpl;
@@ -38,7 +37,7 @@ import org.xml.sax.ContentHandler;
  * @version $Revision$ $Date$
  */
 public class CUserManager extends CUserManagerPermissions implements IChannel, IPermissible {
-  private static final Log LOG = LogFactory.getLog(DefaultDataHandlerImpl.class);
+  private static final Log LOG = LogFactory.getLog(CUserManager.class);
   
   private IDataHandler datasource;
 
