@@ -189,6 +189,7 @@
 		<folder name="Admin Tools" immutable="Y" unremovable="Y" hidden="N">
 			<folder name="column1" immutable="Y" unremovable="Y" hidden="N">
 				<channel fname="groupsmanager" immutable="Y" unremovable="Y" hidden="N"/>
+				<channel fname="passwordmgr" immutable="Y" unremovable="Y" hidden="N"/>
 			</folder>
 			<folder name="column2" immutable="Y" unremovable="Y" hidden="N">
 				<channel fname="permissionsmanager" immutable="Y" unremovable="Y" hidden="N"/>
