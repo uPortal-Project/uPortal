@@ -9,6 +9,8 @@ import org.jasig.portal.layout.al.common.node.INodeId;
 
 /**
  * @author Michael Ivanov: mvi at immagic.com
+ * @version $Revision$ $Date$
+ * @since uPortal 2.5
  */
 public abstract class AbstractCommand implements IALCommand {
     
