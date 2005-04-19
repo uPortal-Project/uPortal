@@ -35,7 +35,7 @@ import org.apache.commons.logging.LogFactory;
  * @author howard.gilbert@yale.edu
  * @author andrew.petro@yale.edu
  * @version $Revision$ $Date$
- * @since uPortal 2.0
+ * @since uPortal 2.4, this class existed in the main package since uPortal 2.0
  */
 public class PropertiesManager {
     
