@@ -5,6 +5,11 @@
 
 package org.jasig.portal.security.provider;
 
+
+
+import org.jasig.portal.security.ISecurityContext;
+import org.jasig.portal.security.ISecurityContextFactory;
+
 /**
  * <p>The factory class for the cache security context. Just returns a new
  * instance of the CacheSecurityContext. See the notes and warnings
@@ -13,10 +18,6 @@ package org.jasig.portal.security.provider;
  * @author Andrew Newman, newman@yale.edu
  * @version $Revision$
  */
-
-import org.jasig.portal.security.ISecurityContext;
-import org.jasig.portal.security.ISecurityContextFactory;
-
 public class CacheSecurityContextFactory implements ISecurityContextFactory {
 
   public ISecurityContext getSecurityContext() {
