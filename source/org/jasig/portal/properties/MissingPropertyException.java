@@ -10,6 +10,8 @@ package org.jasig.portal.properties;
  * An undeclared (Runtime) exception to be thrown by the PropertiesManager
  * when a property is requested but cannot be found.
  * @author andrew.petro@yale.edu
+ * @version $Revision$ $Date$
+ * @since uPortal 2.4
  */
 public class MissingPropertyException extends RuntimeException {
 
