@@ -26,7 +26,7 @@ import java.net.HttpURLConnection;
  * </p>
  *
  *  @author Stephen Barrett, smb1@cornell.edu
- * 
+ *  @version $Revision$ $Date$ 
  */
 
 public class BasicLocalConnectionContext extends LocalConnectionContext {
