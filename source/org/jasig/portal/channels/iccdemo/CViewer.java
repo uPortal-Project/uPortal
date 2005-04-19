@@ -21,7 +21,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
 
-/*
+/**
  * This is a modified version of the CInlineFrame channel that uses inter-channel communications.
  *
  * @author Peter Kharchenko
