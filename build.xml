@@ -399,6 +399,7 @@
   <path id="tests.classpath">
     <path refid="compile.classpath"/>
     <pathelement location="${junit.jar}"/>
+  	<pathelement location="lib/hsqldb.jar"/>
   </path>
 
 
