@@ -5,6 +5,8 @@
 
 package org.jasig.portal.utils.threading;
 
+import java.util.ArrayList;
+
 /**
  * An implmentation of the Queue interface which has an upper limit 
  * on the number of items it can contain
@@ -12,9 +14,6 @@ package org.jasig.portal.utils.threading;
  * @author <a href="mailto:clajoie@vt.edu">Chad La Joie</a>)
  * @version $Revision$
  */
-
-import java.util.ArrayList;
-
 public class BoundedQueue implements Queue {
 	private ArrayList elements;
 	private int capacity;
