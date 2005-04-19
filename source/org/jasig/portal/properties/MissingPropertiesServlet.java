@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
  * has been asked about but for which it has no values.
  * @author andrew.petro@yale.edu
  * @version $Revision$ $Date$
+ * @since uPortal 2.4
  */
 public class MissingPropertiesServlet extends HttpServlet {
 

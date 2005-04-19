@@ -11,6 +11,7 @@ package org.jasig.portal.properties;
  * parsed and returned as the desired type.
  * @author andrew.petro@yale.edu
  * @version $Revision$ $Date$
+ * @since uPortal 2.4
  */
 public class BadPropertyException extends RuntimeException {
     
