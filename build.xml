@@ -294,6 +294,24 @@
                        the use of the Inversion of Control (IoC) design pattern.
                        Version 1.1.1
                        URL: http://www.springframework.org/
+                       
+  concurrent-1.3.4.jar	Doug Lea's Concurrency package.  Used by WhirlyCache
+  						Version 1.3.4
+  						URL: http://gee.cs.oswego.edu/dl/classes/EDU/oswego/cs/dl/util/concurrent/intro.html
+
+  jdom-1.0.jar			JDom is used to parse XML by WhirlyCache
+  						Version 1.0
+  						URL: http://www.jdom.org
+  						
+  whirlycache-0.7.1.jar	WhirlyCache is a fast caching package that is configurable via
+  						XML.
+  						Version 0.7.1
+  						URL: https://whirlycache.dev.java.net/
+  						
+  backport-util-concurrent.jar Backport of Doug Lea's Concurrency package.  Similar
+  						to the Java 1.5 java.util.concurrent package.
+  						Version CVS_HEAD (4/18/2005)
+  						URL: http://www.mathcs.emory.edu/dcl/util/backport-util-concurrent/
 
 -->
 
@@ -319,6 +337,11 @@
   <property name="servlet.jar" value="(set this in build.properties!)"/>
   <property name="spring.jar" value="(set this in build.properties!)"/>
   <property name="commons-collection.jar" value="(set this in build.properties!)"/>
+  <property name="whirlycache.jar" value="{set this in build.properties!)" />
+  <property name="jdom.jar" value="{set this in build.properties!)" />
+  <property name="concurrent.jar" value="{set this in build.properties!)" />
+  <property name="backport.jar" value="{set this in build.properties!)" />
+	
 
 <!-- ==================== Compilation Classpath =========================== -->
 
@@ -357,10 +380,10 @@
     <pathelement location="${commons-pool.jar}"/>
     <pathelement location="${servlet.jar}"/>
     <pathelement location="${spring.jar}"/>
-    <pathelement location="${whirlycache.jar}" />
-    <pathelement location="${jdom.jar}" />
-    <pathelement location="${concurrent.jar}" />
-    <pathelement location="${backport.jar}" />
+  	<pathelement location="${whirlycache.jar}" />
+  	<pathelement location="${jdom.jar}" />
+  	<pathelement location="${concurrent.jar}" />
+  	<pathelement location="${backport.jar}" />
   </path>
 
 
@@ -469,9 +492,9 @@
     <!-- Copy the Logger.properties file to the well-known location log4j expects.-->
     <copy file="properties/Logger.properties" tofile="${build.home}/WEB-INF/classes/log4j.properties"/>
 
-    <!-- Copy WhirlyCache to proper folder -->
-    <copy file="properties/whirlycache.xml" tofile="${build.home}/WEB-INF/classes/whirlycache.xml" />
-
+  	<!-- Copy WhirlyCache to proper folder -->
+  	<copy file="properties/whirlycache.xml" tofile="${build.home}/WEB-INF/classes/whirlycache.xml" />
+  	
     <!-- Copy all stylesheets, stylesheet descriptions  and stylesheet list files -->
     <copy  todir="${build.home}/WEB-INF/classes">
         <fileset dir="webpages/stylesheets" includes="**/*.xsl,**/*.ssl,**/*.sdf,**/*.properties" excludes="**/*.UTF-8.properties"/>
@@ -532,10 +555,10 @@
     <copy todir="${deploy.home}/WEB-INF/lib" file="${jdbcDriver.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${spring.jar}"/>
 
-    <copy todir="${deploy.home}/WEB-INF/lib" file="${whirlycache.jar}" />
-    <copy todir="${deploy.home}/WEB-INF/lib" file="${jdom.jar}" />
-    <copy todir="${deploy.home}/WEB-INF/lib" file="${concurrent.jar}" />
-    <copy todir="${deploy.home}/WEB-INF/lib" file="${backport.jar}" />
+  	<copy todir="${deploy.home}/WEB-INF/lib" file="${whirlycache.jar}" />
+  	<copy todir="${deploy.home}/WEB-INF/lib" file="${jdom.jar}" />
+  	<copy todir="${deploy.home}/WEB-INF/lib" file="${concurrent.jar}" />
+  	<copy todir="${deploy.home}/WEB-INF/lib" file="${backport.jar}" />
 
     <!-- These are Tomcat-specific!  We need to think about a new property
          that lets us specify the appropriate directory for other servers
