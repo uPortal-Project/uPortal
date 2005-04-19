@@ -5,15 +5,16 @@
 
 package org.jasig.portal.security.provider;
 
+
+
+import org.jasig.portal.PortalException;
+
 /**
  * A factory for account store implementation.
  *
  * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
  * @version $Revision$
  */
-
-import org.jasig.portal.PortalException;
-
 public class AccountStoreFactory {
     private static IAccountStore accountStoreImpl = null;
 
