@@ -85,10 +85,16 @@
 	</bean>
 
 
-	- JDBC Person Attribute Source, uses the default portal DataSource via RDBMServicesDataSource -
+	- JDBC Person Attribute Source, using the default portal DataSource via RDBMServices -
 	<bean id="uPortalJdbcAttributeSource" class="org.jasig.portal.services.persondir.support.JdbcPersonAttributeDaoImpl">
 		<constructor-arg>
-			<bean id="myDataSource" class="org.jasig.portal.rdbm.RDBMServicesDataSource"/>
+			- here we're saying, Spring, please call RDBMServices.getDataSource() and inject the returned DataSource as the first constructor argument
+			- to our JdbcPersonAttributeDaoImpl instance.
+			<bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+				<property name="staticMethod">
+					<value>org.jasig.portal.RDBMServices.getDataSource</value>
+				</property>
+			</bean>
 		</constructor-arg> 
 		<constructor-arg>
 			<list>
