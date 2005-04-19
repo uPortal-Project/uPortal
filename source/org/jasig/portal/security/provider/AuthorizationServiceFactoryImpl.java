@@ -5,6 +5,11 @@
 
 package org.jasig.portal.security.provider;
 
+
+import org.jasig.portal.AuthorizationException;
+import org.jasig.portal.security.IAuthorizationService;
+import org.jasig.portal.security.IAuthorizationServiceFactory;
+
 /**
  * <p>The factory class for the uPortal reference 
  * IAuthorizationService implementation.</p>
@@ -12,10 +17,6 @@ package org.jasig.portal.security.provider;
  * @author Dan Ellentuck
  * @version $Revision$
  */
-import org.jasig.portal.AuthorizationException;
-import org.jasig.portal.security.IAuthorizationService;
-import org.jasig.portal.security.IAuthorizationServiceFactory;
-
 public class AuthorizationServiceFactoryImpl 
     implements IAuthorizationServiceFactory {
     
