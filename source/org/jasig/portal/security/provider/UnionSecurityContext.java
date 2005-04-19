@@ -16,8 +16,8 @@ import org.jasig.portal.security.PortalSecurityException;
  * are "authenticated."</p>
  *
  * @author Shawn Bayern
+ * @version $Revision$ $Date$
  */
-
 class UnionSecurityContext extends ChainingSecurityContext {
   private final int UNION_SECURITY_AUTHTYPE = 0xFF0A;
 

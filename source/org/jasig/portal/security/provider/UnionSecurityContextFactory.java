@@ -10,8 +10,8 @@ package org.jasig.portal.security.provider;
  * instance of the TruestSecurityContext.</p>
  *
  * @author susan Bramhall susan.bramhall@yale.edu
+ * @version $Revision$ $Date$ 
  */
-
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.ISecurityContextFactory;
 
