@@ -8,10 +8,16 @@ If compiling and deploying under JDK 1.4.x, drop these .jar files into your /lib
 and into the /commmon/endorsed/ directory of your Tomcat.
 The 'JAXP-Install' target in the uPortal build.xml will do this for you.
 
+You also need to copy /lib/xalan-2-6-0.jar to the /lib/endorsed/ directory of your JDK's JRE
+and into the /common/endorsed/ directory of your Tomcat.  xalan-2-6-0.jar overrides
+the org.apache.xml APIs that were included in JDK 1.4.
+
 If using JDK 1.5:
 
 You don't need this folder at all if you're running JDK 1.5 as both 
 your development environment and your Tomcat environment.  
+
+You will still need to make /lib/xalan-2-6-0.jar available to provide the org.apache.xml APIs.
 
 What are these jars?
 
