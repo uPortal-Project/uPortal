@@ -33,6 +33,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.XML;
 import org.jasig.portal.utils.XSLT;
+import org.springframework.beans.BeansException;
 import org.w3c.dom.Document;
 import org.xml.sax.ContentHandler;
 
@@ -106,10 +107,18 @@ public final class CError extends BaseChannel implements IPrivilegedChannel,
         // inject into our ErrorDocument the configured IThrowableToElement that
         // will translate from Throwables to XML that we can render
 
-        IThrowableToElement throwableToElement = 
-            (IThrowableToElement) PortalApplicationContextFacade.getPortalApplicationContext().getBean("throwableToElement", IThrowableToElement.class);
-        
-        this.errorDocument.setThrowableToElement(throwableToElement);
+        try {
+            IThrowableToElement throwableToElement = 
+                (IThrowableToElement) PortalApplicationContextFacade.getPortalApplicationContext().getBean("throwableToElement", IThrowableToElement.class);
+            
+            this.errorDocument.setThrowableToElement(throwableToElement);
+        } catch (BeansException be) {
+            // do not allow a Beans failure to break CError
+            log.error("Error retrieving the mapping from throwables to Elements for CError rendering.", be);
+            // since our ErrorDocument has a default mapping from Throwables to Elements
+            // we can fall back on that default by not doing anything.
+        }
+
         
     }
 
