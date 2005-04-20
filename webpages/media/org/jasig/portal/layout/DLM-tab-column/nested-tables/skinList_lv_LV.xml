@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+
+<skins>
+  <skin>
+    <skin>java</skin>
+    <skin-name>Java</skin-name>
+    <skin-description>Sun's Java color scheme</skin-description>
+  </skin>
+  <skin>
+    <skin>uosm</skin>
+    <skin-name>UOSM</skin-name>
+    <skin-description>University of Santa Maria's colors</skin-description>
+  </skin>
+  <skin>
+    <skin>vsac</skin>
+    <skin-name>VSAC</skin-name>
+    <skin-description>VSAC color scheme</skin-description>
+  </skin>
+  <skin>
+    <skin>imm</skin>
+    <skin-name>IM and M</skin-name>
+    <skin-description>Instructional Media and Magic color scheme</skin-description>
+  </skin>
+  <skin>
+    <skin>matrix</skin>
+    <skin-name>Matrix</skin-name>
+    <skin-description>Skin based on the movie "Matrix"</skin-description>
+  </skin>
+</skins>

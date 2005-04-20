@@ -1,0 +1,211 @@
+BODY {
+	background-color : #666699;
+	margin : 0;
+}
+A {
+	text-decoration : none;
+	font-family : System, Verdana, Geneva, Arial, Helvetica, sans-serif;
+	color : #555555;
+}
+A:VISITED {
+	color : #333333;
+}
+A:HOVER {
+	color : #000000;
+}
+A.navigation {
+	color : Black;
+}
+A.navigation:visited {
+	color : Black;
+}
+A.navigation:hover {
+	color : #666699;
+}
+.uportal-text{
+	color : Black;
+	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size : 12px;
+}
+.uportal-text-small{
+	color : Black;
+	font-family : Georgia, "Times New Roman", Times, serif;
+	font-size : 10px;
+}
+.uportal-button{
+	color : Black;
+	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size : 10px;
+	background : #CCCCFF;
+}
+.uportal-label{
+	color : Black;
+	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size : 10px;
+	font-weight : bold;
+}
+.uportal-input-text{
+	color : Black;
+	font-size: 12px;
+	font-family: Monaco, Andale Mono, monospace;
+	background : #CCCCFF;
+}
+.uportal-text-reversed{
+	color : White;
+	font-family : Georgia, "Times New Roman", Times, serif;
+	font-size : 12px;
+}
+A.uportal-navigation-category{
+	color : Black;
+	font-size : 12px;
+	font-weight : bold;
+}
+A.uportal-navigation-category:visited{
+	color : Black;
+	font-size : 12px;
+	font-weight : bold;
+}
+A.uportal-navigation-category:hover{
+	color : #666699;
+	font-size : 12px;
+	font-weight : bold;
+}
+.uportal-navigation-category-selected{
+	font-size : 12px;
+	font-weight : bold;
+	color : #666699;
+}
+A.uportal-navigation-channel{
+	color : Black;
+	font-size : 12px;
+}
+A.uportal-navigation-channel:visited{
+	color : Black;
+	font-size : 12px;
+}
+A.uportal-navigation-channel:hover{
+	color : #666699;
+	font-size : 12px;
+}
+.uportal-navigation-channel-selected{
+	background : Black;
+	font-size : 12px;
+	color : White;
+}
+.uportal-crumbtrail{
+	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size : 10px;
+	color : #666666;
+}
+.uportal-copyright{
+	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size : 11px;
+	color : Black;
+	font-style : italic;
+}
+.uportal-channel-text{
+	color : Black;
+	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size : 12px;
+}
+.uportal-channel-title{
+	color : Black;
+	font-family : Georgia, "MS Sans Serif", Geneva, sans-serif;
+	font-size : 16px;
+	font-weight : bold;
+}
+.uportal-channel-title-reversed{
+	color : #FFFFFF;
+	font-family : Georgia, "MS Sans Serif", Geneva, sans-serif;
+	font-size : 16px;
+	font-weight : bold;
+}
+.uportal-channel-subtitle{
+	color : #999999;
+	font-family : Georgia, "MS Sans Serif", Geneva, sans-serif;
+	font-size : 12px;
+	font-weight : bold;
+}
+.uportal-channel-subtitle-reversed{
+	color : #333333;
+	font-family : Georgia, "MS Sans Serif", Geneva, sans-serif;
+	font-size : 12px;
+	font-weight : bold;
+}
+.uportal-channel-emphasis{
+	font-weight : bold;
+	font-size : 12px;
+	font-family : Georgia, "Times New Roman", Times, serif;
+
+}
+.uportal-channel-strong{
+	font-weight : bold;
+	font-size : 12px;
+	font-family : Georgia, "Times New Roman", Times, serif;
+}
+.uportal-channel-code{
+	color : Black;
+	font-size: 12px;
+	font-family: Monaco, Andale Mono, monospace;
+}
+.uportal-channel-copyright{
+	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size : 11px;
+	color : Black;
+	font-style : italic;
+}
+.uportal-channel-warning{
+	font-size: 10px;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	color : #8B0000;
+}
+.uportal-channel-error{
+	color : Black;
+	font-size: 11px;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+}
+.uportal-channel-table-caption{
+	color : #6666FF;
+	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size : 12px;
+	font-weight : bold;
+	text-align: center;
+}
+.uportal-channel-table-header{
+	color : #666699;
+	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size : 12px;
+	font-weight : bold;
+	text-align: left;
+}
+.uportal-channel-table-row-even{
+	color : Black;
+	font-size: 11px;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+}
+.uportal-channel-table-row-odd{
+	color : #666666;
+	font-size: 11px;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+}
+.uportal-background{
+	background : #FFFFFF;
+}
+.uportal-background-dark{
+	background : #666699;
+}
+.uportal-background-med{
+	background : #9999CC;
+}
+.uportal-background-light{
+	background : #CCCCFF;
+}
+.uportal-background-content{
+	background : #FFFFFF;
+}
+.uportal-background-highlight{
+	background : #FFCCFF;
+}
+.uportal-background-shadow{
+	background : #000000;
+}
