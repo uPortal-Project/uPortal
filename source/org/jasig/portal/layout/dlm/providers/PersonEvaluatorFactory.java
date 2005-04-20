@@ -11,6 +11,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.jasig.portal.layout.dlm.Evaluator;
 import org.jasig.portal.layout.dlm.EvaluatorFactory;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.utils.XML;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.NamedNodeMap;
@@ -49,7 +50,7 @@ public class PersonEvaluatorFactory
         {
             throw new Exception( "Invalid content. Expected one to many " +
                                  "<paren>, <NOT>, or <attribute> in '" + 
-                                 getXML( node ) + "'" );
+                                 XML.serializeNode(node) + "'" );
         }
         return container;
     }
@@ -101,7 +102,7 @@ public class PersonEvaluatorFactory
         else if ( nodeName.equals( "attribute" ) )
             return createAttributeEvaluator( node );
         throw new Exception( "Unrecognized element '" + nodeName + "' in '" +
-                             getXML( node ) + "'" );
+                XML.serializeNode(node) + "'" );
     }
 
     private Evaluator createParen( Node n )
@@ -114,7 +115,7 @@ public class PersonEvaluatorFactory
         if ( opNode == null )
             throw new Exception( "Invalid mode. Expected 'AND','OR', or 'NOT'"
                                  + " in '" +
-                                 getXML( n ) + "'" );
+                                 XML.serializeNode(n) + "'" );
         else if ( opNode.getNodeValue().equals( "OR" ))
             return getGroupEvaluator( OR, n );
         else if ( opNode.getNodeValue().equals( "NOT" ))
@@ -124,7 +125,7 @@ public class PersonEvaluatorFactory
         else
             throw new Exception( "Invalid mode. Expected 'AND','OR', or 'NOT'"
                                  + " in '" +
-                                 getXML( n ) + "'" );
+                                 XML.serializeNode(n) + "'" );
     }
 
     private Evaluator createAttributeEvaluator( Node n )
@@ -136,7 +137,7 @@ public class PersonEvaluatorFactory
         if ( attribNode == null ||
              attribNode.getNodeValue().equals( "" ) )
             throw new Exception( "Missing or empty name attribute in '" +
-                                 getXML( n ) + "'" );
+                    XML.serializeNode(n) + "'" );
         String name = attribNode.getNodeValue();
         String value = null;
         attribNode = attribs.getNamedItem( "value" );
@@ -149,7 +150,7 @@ public class PersonEvaluatorFactory
         if ( attribNode == null ||
              attribNode.getNodeValue().equals( "" ) )
             throw new Exception( "Missing or empty mode attribute in '" +
-                                 getXML( n ) + "'" );
+                    XML.serializeNode(n) + "'" );
         String mode = attribNode.getNodeValue();
         Evaluator eval = null;
         
@@ -159,7 +160,7 @@ public class PersonEvaluatorFactory
         }
         catch( Exception e )
         {
-            throw new Exception( e.getMessage() + " in '" + getXML( n ) );
+            throw new Exception( e.getMessage() + " in '" + XML.serializeNode(n));
         }
         return eval;
     }
@@ -181,30 +182,5 @@ public class PersonEvaluatorFactory
         throws Exception
     {
         return new AttributeEvaluator( name, mode, value );
-    }
-
-    
-    private String getXML( Node node )
-    {
-        try
-        {
-            DOMSource ds = new DOMSource( node );
-            Transformer t = TransformerFactory.newInstance().newTransformer();
-            t.setOutputProperty( OutputKeys.METHOD, "xml" );
-            t.setOutputProperty( OutputKeys.OMIT_XML_DECLARATION, "yes" );
-            t.setOutputProperty( OutputKeys.INDENT, "yes" );
-            StringWriter sw = new StringWriter();
-            StreamResult sr = new StreamResult( sw );
-            t.transform( ds, sr );
-            String xml = sw.toString();
-            if ( xml.endsWith( "\r\n" ) )
-                return xml.substring(0,xml.length()-2); 
-            return xml;
-        }
-        catch( Exception e )
-        {
-            // can't generate xml so return anything we can
-            return "* " + node.getNodeValue();
-        }
     }
 }
