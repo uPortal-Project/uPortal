@@ -55,7 +55,17 @@ public class FragmentLoader {
     static final String configXSL="/properties/al/FragmentLoader.xsl";
 
     public static void main(String[] args) throws Exception {
-
+        IUserLayoutStore layoutStoreImpl = UserLayoutStoreFactory.getUserLayoutStoreImpl();
+        if ( layoutStoreImpl != null && !(layoutStoreImpl instanceof IAggregatedUserLayoutStore) )
+        {
+            System.out.println("Configured UserLayoutStore is: ");
+            System.out.println("  " + layoutStoreImpl.getClass().getName());
+            System.out.println("This step requires use of:");
+            System.out.println("  " + IAggregatedUserLayoutStore.class.getName());
+            System.out.println();
+            System.out.println(">>>> Skipping this step.");
+            System.exit(0);
+        }
         String alConfigFile=args[0];
         String outputDataFile=args[1];
 

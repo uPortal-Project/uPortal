@@ -102,7 +102,16 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
     public void getUserLayout(String nodeId, ContentHandler ch) throws PortalException {
         IUserLayoutNodeDescription node = this.getNode(nodeId);
         if ( null != node ) {
-          IUserLayoutNodeDescription layoutNode = man.getNode(nodeId);
+          IUserLayoutNodeDescription layoutNode = null;
+          try
+          {
+              layoutNode = man.getNode(nodeId);
+          }
+          catch(PortalException pe)
+          {
+              // disregard. This means that the node isn't had within the
+              // nested layout manager so we can use the transient one.
+          }
           if ( layoutNode != null )
            man.getUserLayout(nodeId, new TransientUserLayoutManagerSAXFilter(ch));
           else {

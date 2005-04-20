@@ -13,6 +13,7 @@ import java.util.HashMap;
 
 import org.jasig.portal.IPermissible;
 import org.jasig.portal.RDBMServices;
+import  org.jasig.portal.car.CarResources;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -52,7 +53,9 @@ public class RDBMPermissibleRegistry {
             while (rs.next()) {
                 String classname = rs.getString(1);
                 try {
-                    Class newowner = Class.forName(classname);
+                    Class newowner =
+                        CarResources.getInstance().getClassLoader().loadClass(
+                            classname);
                     owners.put(classname, newowner);
                 } catch (Exception e) {
                     if (log.isDebugEnabled())
@@ -139,7 +142,12 @@ public class RDBMPermissibleRegistry {
                 + classname);
         if (!owners.containsKey(classname)) {
             try {
-                IPermissible ip = (IPermissible)Class.forName(classname).newInstance();
+                IPermissible ip =
+                    (IPermissible) CarResources
+                        .getInstance()
+                        .getClassLoader()
+                        .loadClass(classname)
+                        .newInstance();
                 if (ip != null){
 	                Connection conn = null;
 	                Statement st = null;
@@ -148,7 +156,10 @@ public class RDBMPermissibleRegistry {
 	                    st = conn.createStatement();
 	                    st.executeUpdate("INSERT INTO UPC_PERM_MGR VALUES('" + classname
 	                            + "')");
-	                    owners.put(classname, Class.forName(classname));
+                    owners.put(
+                        classname,
+                        CarResources.getInstance().getClassLoader().loadClass(
+                            classname));
 	                } catch (Exception e) {
 	                    log.error(e, e);
 	                } finally {

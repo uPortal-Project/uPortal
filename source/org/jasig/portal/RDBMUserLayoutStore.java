@@ -65,14 +65,16 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
    * LayoutStructure
    * Encapsulate the layout structure
    */
-   protected final class LayoutStructure {
-    private class StructureParameter {
+   public final class LayoutStructure {
+    public class StructureParameter {
       String name;
       String value;
       public StructureParameter(String name, String value) {
         this.name = name;
         this.value = value;
       }
+      public String getName() { return name; }
+      public String getValue() { return value; }
     }
 
     int structId;
@@ -137,71 +139,37 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     public int getChildId () {return childId;}
     public int getChanId () {return chanId;}
 
-    public Element getStructureDocument(Document doc) throws Exception {
-      Element structure = null;
-      if (isChannel()) {
-        ChannelDefinition channelDef = crs.getChannelDefinition(chanId);
-        if (channelDef != null && channelApproved(channelDef.getApprovalDate())) {
-            if (localeAware) {
-                channelDef.setLocale(locale); // for i18n by Shoji
-            }
-          structure = channelDef.getDocument(doc, channelPrefix + structId);
-        } else {
-          // Create an error channel if channel is missing or not approved
-          ChannelDefinition cd = new ChannelDefinition(chanId);
-          cd.setTitle("Missing channel");
-          cd.setName("Missing channel");
-          cd.setTimeout(20000);
-          String missingChannel = "Unknown";
-          if (channelDef != null) {
-            missingChannel = channelDef.getName();
-          }
-          structure = cd.getDocument(doc, channelPrefix + structId,
-           "The '" + missingChannel + "' channel is no longer available. Please remove it from your layout.",
-           ErrorCode.CHANNEL_MISSING_EXCEPTION.getCode());
-        }
-      } else {
-        structure = doc.createElement("folder");
-        
-        structure.setAttribute("ID", folderPrefix + structId);
-        structure.setIdAttribute("ID", true);
-        
-        structure.setAttribute("name", name);
-        structure.setAttribute("type", (type != null ? type : "regular"));
-      }
-
-      structure.setAttribute("hidden", (hidden ? "true" : "false"));
-      structure.setAttribute("immutable", (immutable ? "true" : "false"));
-      structure.setAttribute("unremovable", (unremovable ? "true" : "false"));
-      if (localeAware) {
-          structure.setAttribute("locale", locale);  // for i18n by Shoji
-      }
-
-      if (parameters != null) {
-        for (int i = 0; i < parameters.size(); i++) {
-          StructureParameter sp = (StructureParameter)parameters.get(i);
-
-          if (!isChannel()) {        // Folder
-            structure.setAttribute(sp.name, sp.value);
-          } else {                    // Channel
-            NodeList nodeListParameters = structure.getElementsByTagName("parameter");
-            for (int j = 0; j < nodeListParameters.getLength(); j++) {
-              Element parmElement = (Element)nodeListParameters.item(j);
-              NamedNodeMap nm = parmElement.getAttributes();
-
-              String nodeName = nm.getNamedItem("name").getNodeValue();
-              if (nodeName.equals(sp.name)) {
-                Node override = nm.getNamedItem("override");
-                if (override != null && override.getNodeValue().equals("yes")) {
-                  Node valueNode = nm.getNamedItem("value");
-                  valueNode.setNodeValue(sp.value);
-                }
-              }
-            }
-          }
-        }
-      }
-      return structure;
+    public int getStructId()
+    {
+        return structId;
+    }
+    public boolean isHidden()
+    {
+        return hidden;
+    }
+    public boolean isImmutable()
+    {
+        return immutable;
+    }
+    public String getLocale()
+    {
+        return locale;
+    }
+    public String getName()
+    {
+        return name;
+    }
+    public ArrayList getParameters()
+    {
+        return parameters;
+    }
+    public String getType()
+    {
+        return type;
+    }
+    public boolean isUnremovable()
+    {
+        return unremovable;
     }
   }
 
@@ -601,7 +569,10 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           System.err.println("CreateLayout(" + structId + ")");
         }
         LayoutStructure ls = (LayoutStructure) layoutStructure.get(new Integer(structId));
-        Element structure = ls.getStructureDocument(doc);
+        // replaced with call to method in containing class to allow overriding
+        // by subclasses of RDBMUserLayoutStore.
+        // Element structure = ls.getStructureDocument(doc);
+        Element structure = getStructure(doc, ls);
         root.appendChild(structure);
         
         String id = structure.getAttribute("ID");
@@ -2280,7 +2251,74 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     }
   }
 
-  protected final int saveStructure (Node node, PreparedStatement structStmt, PreparedStatement parmStmt) throws java.sql.SQLException {
+  protected Element getStructure(Document doc, LayoutStructure ls) throws Exception {
+      Element structure = null;
+      if (ls.isChannel()) {
+        ChannelDefinition channelDef = crs.getChannelDefinition(ls.chanId);
+        if (channelDef != null && channelApproved(channelDef.getApprovalDate())) {
+            if (localeAware) {
+                channelDef.setLocale(ls.locale); // for i18n by Shoji
+            }
+          structure = channelDef.getDocument(doc, channelPrefix + ls.structId);
+        } else {
+          // Create an error channel if channel is missing or not approved
+          ChannelDefinition cd = new ChannelDefinition(ls.chanId);
+          cd.setTitle("Missing channel");
+          cd.setName("Missing channel");
+          cd.setTimeout(20000);
+          String missingChannel = "Unknown";
+          if (channelDef != null) {
+            missingChannel = channelDef.getName();
+          }
+          structure = cd.getDocument(doc, channelPrefix + ls.structId,
+           "The '" + missingChannel + "' channel is no longer available. Please remove it from your layout.",
+           ErrorCode.CHANNEL_MISSING_EXCEPTION.getCode());
+        }
+      } else {
+        structure = doc.createElement("folder");
+
+        structure.setAttribute("ID", folderPrefix + ls.structId);
+        structure.setIdAttribute("ID", true);
+
+        structure.setAttribute("name", ls.name);
+        structure.setAttribute("type", (ls.type != null ? ls.type : "regular"));
+      }
+
+      structure.setAttribute("hidden", (ls.hidden ? "true" : "false"));
+      structure.setAttribute("immutable", (ls.immutable ? "true" : "false"));
+      structure.setAttribute("unremovable", (ls.unremovable ? "true" : "false"));
+      if (localeAware) {
+          structure.setAttribute("locale", ls.locale);  // for i18n by Shoji
+      }
+
+      if (ls.parameters != null) {
+        for (int i = 0; i < ls.parameters.size(); i++) {
+          LayoutStructure.StructureParameter sp = (LayoutStructure.StructureParameter)ls.parameters.get(i);
+
+          if (!ls.isChannel()) {        // Folder
+            structure.setAttribute(sp.name, sp.value);
+          } else {                    // Channel
+            NodeList nodeListParameters = structure.getElementsByTagName("parameter");
+            for (int j = 0; j < nodeListParameters.getLength(); j++) {
+              Element parmElement = (Element)nodeListParameters.item(j);
+              NamedNodeMap nm = parmElement.getAttributes();
+
+              String nodeName = nm.getNamedItem("name").getNodeValue();
+              if (nodeName.equals(sp.name)) {
+                Node override = nm.getNamedItem("override");
+                if (override != null && override.getNodeValue().equals("yes")) {
+                  Node valueNode = nm.getNamedItem("value");
+                  valueNode.setNodeValue(sp.value);
+                }
+              }
+            }
+          }
+        }
+      }
+      return structure;
+    }
+
+  protected int saveStructure (Node node, PreparedStatement structStmt, PreparedStatement parmStmt) throws java.sql.SQLException {
     if (node == null || node.getNodeName().equals("parameter")) { // No more or parameter node
       return  0;
     }

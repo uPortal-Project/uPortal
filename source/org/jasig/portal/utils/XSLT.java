@@ -8,6 +8,7 @@ package  org.jasig.portal.utils;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.StringReader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -18,6 +19,7 @@ import java.util.ResourceBundle;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
+import javax.xml.transform.SourceLocator;
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
@@ -283,6 +285,12 @@ public class XSLT {
       trans.transform(xmlSource, xmlResult);
     } catch (PortalException pe) {
       throw pe;
+    } catch (SAXParseException p) {
+        throw new PortalException("Parse exception occurred " +
+                "on line " +p.getLineNumber() + ", column " +
+                p.getColumnNumber() + " in " +
+                "document with public ID " + p.getPublicId() + 
+                ", and system ID " + p.getSystemId() + ".", p);
     } catch (Exception e) {
       throw new PortalException(e);
     }
@@ -361,8 +369,9 @@ public class XSLT {
         if(temp == null) {
             Document xsl = null;
             try {
+                URL url = ResourceLoader.getResourceAsURL(DocumentFactory.class, stylesheetURI);
                 xsl = DocumentFactory.getDocumentFromStream(
-                                    new BufferedInputStream(ResourceLoader.getResourceAsStream(DocumentFactory.class, stylesheetURI),2048));
+                                   new BufferedInputStream(url.openStream(),2048), url.toExternalForm());
             }
             catch(IOException e) {
                 throw new ResourceMissingException(stylesheetURI, "Stylesheet", "Unable to read stylesheet from the specified location. Please check the stylesheet URL");
@@ -432,7 +441,15 @@ public class XSLT {
     try {
       t = getTemplates(stylesheetURI,l18n).newTransformer();
     } catch (TransformerConfigurationException tce) {
-      log.error("XSLT::getTransformer() : TRAX transformer is misconfigured", tce);
+      log.error("XSLT::getTransformer() : TRAX transformer is misconfigured : "+tce.getMessage());
+      SourceLocator loc = tce.getLocator();
+      if (loc != null)
+          throw new PortalException(tce.getClass().getName() + " occurred " +
+                  "for document " + stylesheetURI + " at line " +
+                          loc.getLineNumber() + " and column " + 
+                          loc.getColumnNumber() + ".", tce);
+      throw new PortalException(tce.getClass().getName() + " occurred " +
+              "for document " + stylesheetURI + ".", tce);
     }
     return t;
   }
@@ -579,7 +596,7 @@ public class XSLT {
                                 e.removeChild(cl.item(j));
                             }
                         }
-                       e.setAttribute("select","'"+escape(localization.getString(name))+"'");
+		       e.appendChild( xsl.createTextNode( localization.getString(name) ) );
                         keys.remove(name);
                     }
                 }
@@ -588,13 +605,15 @@ public class XSLT {
 
         for(int z=0;z<keys.size();z++){
             String k = (String)keys.get(z);
-            String v = escape(localization.getString(k));
+            String v = localization.getString(k);
             Element e = xsl.createElementNS("http://www.w3.org/1999/XSL/Transform","xsl:variable");
             e.setAttribute("name",k);
-            e.setAttribute("select","'"+v+"'");
+            e.appendChild( xsl.createTextNode( v ) );
+	    
             //System.out.println(e.getAttribute("select"));
             root.insertBefore(e,ft);
         }
+        xsl.normalizeDocument();
 
     }
     

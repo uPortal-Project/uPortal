@@ -158,7 +158,10 @@ public class ResourceLoader {
    * @throws java.io.IOException
    */
   public static InputSource getResourceAsSAXInputSource(Class requestingClass, String resource) throws ResourceMissingException, IOException {
-    return new InputSource(getResourceAsURL(requestingClass, resource).openStream());
+      URL url = getResourceAsURL(requestingClass, resource);
+      InputSource source = new InputSource(url.openStream());
+      source.setPublicId(url.toExternalForm());
+    return source;
   }
 
   /**

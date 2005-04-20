@@ -447,6 +447,30 @@
         <column><name>USER_DFLT_LAY_ID</name><value>1</value></column>
         <column><name>NEXT_STRUCT_ID</name><value>40</value></column>
       </row>
+      <row>
+        <column><name>USER_ID</name><value>3</value></column>
+        <column><name>USER_NAME</name><value>fragmentTemplate</value></column>
+        <column><name>USER_DFLT_USR_ID</name><value>2</value></column>
+        <column><name>USER_DFLT_LAY_ID</name><value>1</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>45</value></column>
+        <column><name>LST_CHAN_UPDT_DT</name><value>2005-04-08 00:00:00.0</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>4</value></column>
+        <column><name>USER_NAME</name><value>ent-lo</value></column>
+        <column><name>USER_DFLT_USR_ID</name><value>2</value></column>
+        <column><name>USER_DFLT_LAY_ID</name><value>1</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>51</value></column>
+        <column><name>LST_CHAN_UPDT_DT</name><value>2005-04-08 00:00:00.0</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>5</value></column>
+        <column><name>USER_NAME</name><value>news-lo</value></column>
+        <column><name>USER_DFLT_USR_ID</name><value>2</value></column>
+        <column><name>USER_DFLT_LAY_ID</name><value>1</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>52</value></column>
+        <column><name>LST_CHAN_UPDT_DT</name><value>2005-04-08 00:00:00.0</value></column>
+      </row>
       <!-- We need default layout for developer then we should add this
       <row>
         <column><name>USER_ID</name><value>6</value></column>
@@ -510,6 +534,30 @@
           <column><name>LAST_NAME</name><value>User</value></column>
           <column><name>EMAIL</name><value>demo.user@jasig.org</value></column>
         </row>
+      <row>
+        <column><name>USER_NAME</name><value>ent-lo</value></column>
+        <column><name>ENCRPTD_PSWD</name><value>(MD5)FwlZ/YNTQ/hbNPEIUl8yTGfYwwnp65/g</value></column>
+        <column><name>LST_PSWD_CGH_DT</name></column>
+        <column><name>FIRST_NAME</name>Entertainment</column>
+        <column><name>LAST_NAME</name>Fragment</column>
+        <column><name>EMAIL</name></column>
+      </row>
+      <row>
+        <column><name>USER_NAME</name><value>fragmentTemplate</value></column>
+        <column><name>ENCRPTD_PSWD</name><value>(MD5)TcJ+RAxMebVLfq2+xF1YY4Mv5dRGo7Rg</value></column>
+        <column><name>LST_PSWD_CGH_DT</name></column>
+        <column><name>FIRST_NAME</name>Fragment</column>
+        <column><name>LAST_NAME</name>Template</column>
+        <column><name>EMAIL</name></column>
+      </row>
+      <row>
+        <column><name>USER_NAME</name><value>news-lo</value></column>
+        <column><name>ENCRPTD_PSWD</name><value>(MD5)d3ST813VSpkgg4g7mlVsK2T2pue7b9J6</value></column>
+        <column><name>LST_PSWD_CGH_DT</name></column>
+        <column><name>FIRST_NAME</name>News</column>
+        <column><name>LAST_NAME</name>Fragment</column>
+        <column><name>EMAIL</name></column>
+      </row>
         <row>
           <column><name>USER_NAME</name><value>student</value></column>
           <column><name>ENCRPTD_PSWD</name><value>(MD5)mhmjKvf2F3gPizS9DrA+CsFmqj74oTSb</value></column>
@@ -966,6 +1014,23 @@
         <column><name>CHAN_SECURE</name><value>N</value></column>
       </row>
       <row>
+        <column><name>CHAN_ID</name><value>91</value></column>
+        <column><name>CHAN_TITLE</name><value>User Preferences</value></column>
+        <column><name>CHAN_NAME</name><value>User Preferences</value></column>
+        <column><name>CHAN_DESC</name><value>DLM User Preferences channel</value></column>
+        <column><name>CHAN_PUBL_ID</name><value>0</value></column>
+        <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_APVL_ID</name><value>0</value></column>
+        <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
+        <column><name>CHAN_TYPE_ID</name><value>-1</value></column>
+        <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.DLMUserPreferences.CUserPreferences</value></column>
+        <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
+        <column><name>CHAN_EDITABLE</name><value>N</value></column>
+        <column><name>CHAN_HAS_HELP</name><value>N</value></column>
+        <column><name>CHAN_FNAME</name><value>portal/userpreferences/dlm</value></column>
+        <column><name>CHAN_SECURE</name><value>N</value></column>
+      </row>
+      <row>
         <column><name>CHAN_ID</name><value>92</value></column>
         <column><name>CHAN_TITLE</name><value>User Preferences</value></column>
         <column><name>CHAN_NAME</name><value>User Preferences</value></column>
@@ -1070,6 +1135,7 @@
         <column><name>CHAN_HAS_HELP</name><value>Y</value></column>
         <column><name>CHAN_HAS_ABOUT</name><value>Y</value></column>
         <column><name>CHAN_FNAME</name><value>skinselector</value></column>
+        <column><name>CHAN_SECURE</name><value>N</value></column>
       </row>
       <row sinceMajor="2" sinceMinor="2">
         <column><name>CHAN_ID</name><value>81</value></column>
@@ -1087,6 +1153,7 @@
         <column><name>CHAN_HAS_HELP</name><value>Y</value></column>
         <column><name>CHAN_HAS_ABOUT</name><value>Y</value></column>
         <column><name>CHAN_FNAME</name><value>contentsubscriber</value></column>
+        <column><name>CHAN_SECURE</name><value>N</value></column>
       </row>
 
       <!-- 2005.04.16 - smb1@cornell.edu -->
@@ -1587,6 +1654,24 @@
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>USER_ID</name><value>13</value></column>
         <column><name>LAYOUT_TITLE</name><value>Student layout</value></column>
+        <column><name>INIT_STRUCT_ID</name><value>1</value></column>
+      </row>
+      <row>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>USER_ID</name><value>3</value></column>
+        <column><name>LAYOUT_TITLE</name><value>FragmntTemplate</value></column>
+        <column><name>INIT_STRUCT_ID</name><value>1</value></column>
+      </row>
+      <row>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>USER_ID</name><value>4</value></column>
+        <column><name>LAYOUT_TITLE</name><value>Entertainment</value></column>
+        <column><name>INIT_STRUCT_ID</name><value>1</value></column>
+      </row>
+      <row>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>USER_ID</name><value>5</value></column>
+        <column><name>LAYOUT_TITLE</name><value>News</value></column>
         <column><name>INIT_STRUCT_ID</name><value>1</value></column>
       </row>
     </rows>
@@ -2661,7 +2746,9 @@
       <!-- Student Layout -->
       <!-- layout root node -->
       <row>
-        <column><name>STRUCT_ID</name><value>1</value></column><column><name>USER_ID</name><value>13</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>USER_ID</name><value>13</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>  
+        <column><name>STRUCT_ID</name><value>1</value></column>
         <column><name>NAME</name><value>Root folder</value></column>
         <column><name>TYPE</name><value>root</value></column>
         <column><name>NEXT_STRUCT_ID</name><value>NULL</value></column>
@@ -2807,6 +2894,503 @@
         <column><name>IMMUTABLE</name><value>Y</value></column>
         <column><name>UNREMOVABLE</name><value>Y</value></column>
       </row>
+      
+      
+      <!-- DLM FragmentTemplate User Layout -->
+      <!-- 
+      This user's layout is copied for the initial layout for all fragment owner
+      accounts when logged in for the first time. This is akin to 
+      defaultTemplateUserName being demo for regular, non-fragment accounts.
+       -->
+      <row>
+        <column><name>USER_ID</name><value>3</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>1</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>0</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>9</value></column>
+        <column><name>EXTERNAL_ID</name></column>
+        <column><name>CHAN_ID</name></column>
+        <column><name>NAME</name><value>Root folder</value></column>
+        <column><name>TYPE</name><value>root</value></column>
+        <column><name>HIDDEN</name><value>N</value></column>
+        <column><name>IMMUTABLE</name><value>N</value></column>
+        <column><name>UNREMOVABLE</name><value>Y</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>3</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>2</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>3</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>0</value></column>
+        <column><name>EXTERNAL_ID</name></column>
+        <column><name>CHAN_ID</name><value>10</value></column>
+        <column><name>NAME</name></column>
+        <column><name>TYPE</name><value></value></column>
+        <column><name>HIDDEN</name><value>N</value></column>
+        <column><name>IMMUTABLE</name><value>N</value></column>
+        <column><name>UNREMOVABLE</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>3</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>3</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>333</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>0</value></column>
+        <column><name>EXTERNAL_ID</name></column>
+        <column><name>CHAN_ID</name><value>99</value></column>
+        <column><name>NAME</name></column>
+        <column><name>TYPE</name><value></value></column>
+        <column><name>HIDDEN</name><value>N</value></column>
+        <column><name>IMMUTABLE</name><value>N</value></column>
+        <column><name>UNREMOVABLE</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>3</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>9</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>27</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>2</value></column>
+        <column><name>EXTERNAL_ID</name></column>
+        <column><name>CHAN_ID</name></column>
+        <column><name>NAME</name><value>Header folder</value></column>
+        <column><name>TYPE</name><value>header</value></column>
+        <column><name>HIDDEN</name><value>N</value></column>
+        <column><name>IMMUTABLE</name><value>Y</value></column>
+        <column><name>UNREMOVABLE</name><value>Y</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>3</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>27</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>0</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>28</value></column>
+        <column><name>EXTERNAL_ID</name></column>
+        <column><name>CHAN_ID</name></column>
+        <column><name>NAME</name><value>Footer folder</value></column>
+        <column><name>TYPE</name><value>footer</value></column>
+        <column><name>HIDDEN</name><value>N</value></column>
+        <column><name>IMMUTABLE</name><value>N</value></column>
+        <column><name>UNREMOVABLE</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>3</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>28</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>0</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>0</value></column>
+        <column><name>EXTERNAL_ID</name></column>
+        <column><name>CHAN_ID</name><value>19</value></column>
+        <column><name>NAME</name></column>
+        <column><name>TYPE</name><value></value></column>
+        <column><name>HIDDEN</name><value>N</value></column>
+        <column><name>IMMUTABLE</name><value>N</value></column>
+        <column><name>UNREMOVABLE</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>3</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>333</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>0</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>0</value></column>
+        <column><name>EXTERNAL_ID</name></column>
+        <column><name>CHAN_ID</name><value>96</value></column>
+        <column><name>NAME</name></column>
+        <column><name>TYPE</name><value></value></column>
+        <column><name>HIDDEN</name><value>N</value></column>
+        <column><name>IMMUTABLE</name><value>N</value></column>
+        <column><name>UNREMOVABLE</name><value>N</value></column>
+      </row>
+
+      <!-- DLM Entertainment Fragment Layout -->
+      <!-- 
+      This layout represents nodes incorporated into other user's layouts if they
+      meet the criteria specified for this fragment as defined in dlm.xml
+       -->
+      <row>
+        <column><name>USER_ID</name><value>4</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>1</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>0</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>9</value></column>
+        <column><name>EXTERNAL_ID</name></column>
+        <column><name>CHAN_ID</name></column>
+        <column><name>NAME</name><value>Root folder</value></column>
+        <column><name>TYPE</name><value>root</value></column>
+        <column><name>HIDDEN</name><value>N</value></column>
+        <column><name>IMMUTABLE</name><value>N</value></column>
+        <column><name>UNREMOVABLE</name><value>Y</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>4</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>2</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>3</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>0</value></column>
+        <column><name>EXTERNAL_ID</name></column>
+        <column><name>CHAN_ID</name><value>10</value></column>
+        <column><name>NAME</name></column>
+        <column><name>TYPE</name><value></value></column>
+        <column><name>HIDDEN</name><value>N</value></column>
+        <column><name>IMMUTABLE</name><value>N</value></column>
+        <column><name>UNREMOVABLE</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>4</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>3</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>333</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>0</value></column>
+        <column><name>EXTERNAL_ID</name></column>
+        <column><name>CHAN_ID</name><value>99</value></column>
+        <column><name>NAME</name></column>
+        <column><name>TYPE</name><value></value></column>
+        <column><name>HIDDEN</name><value>N</value></column>
+        <column><name>IMMUTABLE</name><value>N</value></column>
+        <column><name>UNREMOVABLE</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>4</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>9</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>27</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>2</value></column>
+        <column><name>EXTERNAL_ID</name></column>
+        <column><name>CHAN_ID</name></column>
+        <column><name>NAME</name><value>Header folder</value></column>
+        <column><name>TYPE</name><value>header</value></column>
+        <column><name>HIDDEN</name><value>N</value></column>
+        <column><name>IMMUTABLE</name><value>Y</value></column>
+        <column><name>UNREMOVABLE</name><value>Y</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>4</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>27</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>46</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>28</value></column>
+        <column><name>EXTERNAL_ID</name></column>
+        <column><name>CHAN_ID</name></column>
+        <column><name>NAME</name><value>Footer folder</value></column>
+        <column><name>TYPE</name><value>footer</value></column>
+        <column><name>HIDDEN</name><value>N</value></column>
+        <column><name>IMMUTABLE</name><value>N</value></column>
+        <column><name>UNREMOVABLE</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>4</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>28</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>0</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>0</value></column>
+        <column><name>EXTERNAL_ID</name></column>
+        <column><name>CHAN_ID</name><value>19</value></column>
+        <column><name>NAME</name></column>
+        <column><name>TYPE</name><value></value></column>
+        <column><name>HIDDEN</name><value>N</value></column>
+        <column><name>IMMUTABLE</name><value>N</value></column>
+        <column><name>UNREMOVABLE</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>4</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>46</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>0</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>48</value></column>
+        <column><name>EXTERNAL_ID</name></column>
+        <column><name>CHAN_ID</name></column>
+        <column><name>NAME</name><value>Real Entertainment</value></column>
+        <column><name>TYPE</name><value>regular</value></column>
+        <column><name>HIDDEN</name><value>N</value></column>
+        <column><name>IMMUTABLE</name><value>N</value></column>
+        <column><name>UNREMOVABLE</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>4</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>47</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>0</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>50</value></column>
+        <column><name>EXTERNAL_ID</name></column>
+        <column><name>CHAN_ID</name></column>
+        <column><name>NAME</name><value>Column</value></column>
+        <column><name>TYPE</name><value>regular</value></column>
+        <column><name>HIDDEN</name><value>N</value></column>
+        <column><name>IMMUTABLE</name><value>N</value></column>
+        <column><name>UNREMOVABLE</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>4</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>48</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>47</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>49</value></column>
+        <column><name>EXTERNAL_ID</name></column>
+        <column><name>CHAN_ID</name></column>
+        <column><name>NAME</name><value>Column</value></column>
+        <column><name>TYPE</name><value>regular</value></column>
+        <column><name>HIDDEN</name><value>N</value></column>
+        <column><name>IMMUTABLE</name><value>N</value></column>
+        <column><name>UNREMOVABLE</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>4</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>49</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>51</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>0</value></column>
+        <column><name>EXTERNAL_ID</name></column>
+        <column><name>CHAN_ID</name><value>14</value></column>
+        <column><name>NAME</name></column>
+        <column><name>TYPE</name><value></value></column>
+        <column><name>HIDDEN</name><value>N</value></column>
+        <column><name>IMMUTABLE</name><value>N</value></column>
+        <column><name>UNREMOVABLE</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>4</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>50</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>0</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>0</value></column>
+        <column><name>EXTERNAL_ID</name></column>
+        <column><name>CHAN_ID</name><value>1</value></column>
+        <column><name>NAME</name></column>
+        <column><name>TYPE</name><value></value></column>
+        <column><name>HIDDEN</name><value>N</value></column>
+        <column><name>IMMUTABLE</name><value>N</value></column>
+        <column><name>UNREMOVABLE</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>4</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>51</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>0</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>0</value></column>
+        <column><name>EXTERNAL_ID</name></column>
+        <column><name>CHAN_ID</name><value>9</value></column>
+        <column><name>NAME</name></column>
+        <column><name>TYPE</name><value></value></column>
+        <column><name>HIDDEN</name><value>N</value></column>
+        <column><name>IMMUTABLE</name><value>N</value></column>
+        <column><name>UNREMOVABLE</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>4</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>333</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>0</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>0</value></column>
+        <column><name>EXTERNAL_ID</name></column>
+        <column><name>CHAN_ID</name><value>96</value></column>
+        <column><name>NAME</name></column>
+        <column><name>TYPE</name><value></value></column>
+        <column><name>HIDDEN</name><value>N</value></column>
+        <column><name>IMMUTABLE</name><value>N</value></column>
+        <column><name>UNREMOVABLE</name><value>N</value></column>
+      </row>
+      
+      <!-- DLM News Fragment Layout -->
+      <!-- 
+      This layout represents nodes incorporated into other user's layouts if they
+      meet the criteria specified for this fragment as defined in dlm.xml
+       -->
+
+      <row>
+        <column><name>USER_ID</name><value>5</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>1</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>0</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>9</value></column>
+        <column><name>EXTERNAL_ID</name></column>
+        <column><name>CHAN_ID</name></column>
+        <column><name>NAME</name><value>Root folder</value></column>
+        <column><name>TYPE</name><value>root</value></column>
+        <column><name>HIDDEN</name><value>N</value></column>
+        <column><name>IMMUTABLE</name><value>N</value></column>
+        <column><name>UNREMOVABLE</name><value>Y</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>5</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>2</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>3</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>0</value></column>
+        <column><name>EXTERNAL_ID</name></column>
+        <column><name>CHAN_ID</name><value>10</value></column>
+        <column><name>NAME</name></column>
+        <column><name>TYPE</name><value></value></column>
+        <column><name>HIDDEN</name><value>N</value></column>
+        <column><name>IMMUTABLE</name><value>N</value></column>
+        <column><name>UNREMOVABLE</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>5</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>3</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>333</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>0</value></column>
+        <column><name>EXTERNAL_ID</name></column>
+        <column><name>CHAN_ID</name><value>99</value></column>
+        <column><name>NAME</name></column>
+        <column><name>TYPE</name><value></value></column>
+        <column><name>HIDDEN</name><value>N</value></column>
+        <column><name>IMMUTABLE</name><value>N</value></column>
+        <column><name>UNREMOVABLE</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>5</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>9</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>27</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>2</value></column>
+        <column><name>EXTERNAL_ID</name></column>
+        <column><name>CHAN_ID</name></column>
+        <column><name>NAME</name><value>Header folder</value></column>
+        <column><name>TYPE</name><value>header</value></column>
+        <column><name>HIDDEN</name><value>N</value></column>
+        <column><name>IMMUTABLE</name><value>Y</value></column>
+        <column><name>UNREMOVABLE</name><value>Y</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>5</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>27</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>46</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>28</value></column>
+        <column><name>EXTERNAL_ID</name></column>
+        <column><name>CHAN_ID</name></column>
+        <column><name>NAME</name><value>Footer folder</value></column>
+        <column><name>TYPE</name><value>footer</value></column>
+        <column><name>HIDDEN</name><value>N</value></column>
+        <column><name>IMMUTABLE</name><value>N</value></column>
+        <column><name>UNREMOVABLE</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>5</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>28</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>0</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>0</value></column>
+        <column><name>EXTERNAL_ID</name></column>
+        <column><name>CHAN_ID</name><value>19</value></column>
+        <column><name>NAME</name></column>
+        <column><name>TYPE</name><value></value></column>
+        <column><name>HIDDEN</name><value>N</value></column>
+        <column><name>IMMUTABLE</name><value>N</value></column>
+        <column><name>UNREMOVABLE</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>5</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>46</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>0</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>48</value></column>
+        <column><name>EXTERNAL_ID</name></column>
+        <column><name>CHAN_ID</name></column>
+        <column><name>NAME</name><value>Useful News</value></column>
+        <column><name>TYPE</name><value>regular</value></column>
+        <column><name>HIDDEN</name><value>N</value></column>
+        <column><name>IMMUTABLE</name><value>N</value></column>
+        <column><name>UNREMOVABLE</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>5</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>47</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>0</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>51</value></column>
+        <column><name>EXTERNAL_ID</name></column>
+        <column><name>CHAN_ID</name></column>
+        <column><name>NAME</name><value>Column</value></column>
+        <column><name>TYPE</name><value>regular</value></column>
+        <column><name>HIDDEN</name><value>N</value></column>
+        <column><name>IMMUTABLE</name><value>N</value></column>
+        <column><name>UNREMOVABLE</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>5</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>48</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>47</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>49</value></column>
+        <column><name>EXTERNAL_ID</name></column>
+        <column><name>CHAN_ID</name></column>
+        <column><name>NAME</name><value>Column</value></column>
+        <column><name>TYPE</name><value>regular</value></column>
+        <column><name>HIDDEN</name><value>N</value></column>
+        <column><name>IMMUTABLE</name><value>N</value></column>
+        <column><name>UNREMOVABLE</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>5</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>49</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>50</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>0</value></column>
+        <column><name>EXTERNAL_ID</name></column>
+        <column><name>CHAN_ID</name><value>12</value></column>
+        <column><name>NAME</name></column>
+        <column><name>TYPE</name><value></value></column>
+        <column><name>HIDDEN</name><value>N</value></column>
+        <column><name>IMMUTABLE</name><value>N</value></column>
+        <column><name>UNREMOVABLE</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>5</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>50</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>0</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>0</value></column>
+        <column><name>EXTERNAL_ID</name></column>
+        <column><name>CHAN_ID</name><value>11</value></column>
+        <column><name>NAME</name></column>
+        <column><name>TYPE</name><value></value></column>
+        <column><name>HIDDEN</name><value>N</value></column>
+        <column><name>IMMUTABLE</name><value>N</value></column>
+        <column><name>UNREMOVABLE</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>5</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>51</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>52</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>0</value></column>
+        <column><name>EXTERNAL_ID</name></column>
+        <column><name>CHAN_ID</name><value>13</value></column>
+        <column><name>NAME</name></column>
+        <column><name>TYPE</name><value></value></column>
+        <column><name>HIDDEN</name><value>N</value></column>
+        <column><name>IMMUTABLE</name><value>N</value></column>
+        <column><name>UNREMOVABLE</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>5</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>52</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>0</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>0</value></column>
+        <column><name>EXTERNAL_ID</name></column>
+        <column><name>CHAN_ID</name><value>6</value></column>
+        <column><name>NAME</name></column>
+        <column><name>TYPE</name><value></value></column>
+        <column><name>HIDDEN</name><value>N</value></column>
+        <column><name>IMMUTABLE</name><value>N</value></column>
+        <column><name>UNREMOVABLE</name><value>N</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>5</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>333</value></column>
+        <column><name>NEXT_STRUCT_ID</name><value>0</value></column>
+        <column><name>CHLD_STRUCT_ID</name><value>0</value></column>
+        <column><name>EXTERNAL_ID</name></column>
+        <column><name>CHAN_ID</name><value>96</value></column>
+        <column><name>NAME</name></column>
+        <column><name>TYPE</name><value></value></column>
+        <column><name>HIDDEN</name><value>N</value></column>
+        <column><name>IMMUTABLE</name><value>N</value></column>
+        <column><name>UNREMOVABLE</name><value>N</value></column>
+      </row>
     </rows>
   </table>
 
@@ -2837,6 +3421,48 @@
         <column><name>STRUCT_ID</name><value>7</value></column>
         <column><name>STRUCT_PARM_NM</name><value>maxNum</value></column>
         <column><name>STRUCT_PARM_VAL</name><value>150</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>4</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>46</value></column>
+        <column><name>STRUCT_PARM_NM</name><value>cp:editAllowed</value></column>
+        <column><name>STRUCT_PARM_VAL</name><value>false</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>5</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>46</value></column>
+        <column><name>STRUCT_PARM_NM</name><value>cp:moveAllowed</value></column>
+        <column><name>STRUCT_PARM_VAL</name><value>false</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>4</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>49</value></column>
+        <column><name>STRUCT_PARM_NM</name><value>cp:deleteAllowed</value></column>
+        <column><name>STRUCT_PARM_VAL</name><value>false</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>4</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>49</value></column>
+        <column><name>STRUCT_PARM_NM</name><value>cp:moveAllowed</value></column>
+        <column><name>STRUCT_PARM_VAL</name><value>false</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>4</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>49</value></column>
+        <column><name>STRUCT_PARM_NM</name><value>maxNum</value></column>
+        <column><name>STRUCT_PARM_VAL</name><value>100</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>4</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>49</value></column>
+        <column><name>STRUCT_PARM_NM</name><value>minNum</value></column>
+        <column><name>STRUCT_PARM_VAL</name><value>1</value></column>
       </row>
     </rows>
   </table>
@@ -3024,6 +3650,33 @@
         <column><name>THEME_SS_ID</name><value><sequence id="UP_SS_THEME">integratedModes</sequence></value></column>
       </row>
 
+      <row>
+        <column><name>USER_ID</name><value>3</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>PROFILE_NAME</name><value>HTML browser profile</value></column>
+        <column><name>DESCRIPTION</name><value>A sample profile for common web browsers</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCTURE_SS_ID</name><value>4</value></column>
+        <column><name>THEME_SS_ID</name><value>3</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>4</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>PROFILE_NAME</name><value>HTML browser profile</value></column>
+        <column><name>DESCRIPTION</name><value>A system profile for common web browsers</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCTURE_SS_ID</name><value>4</value></column>
+        <column><name>THEME_SS_ID</name><value>3</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>5</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>PROFILE_NAME</name><value>HTML browser profile</value></column>
+        <column><name>DESCRIPTION</name><value>A system profile for common web browsers</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>STRUCTURE_SS_ID</name><value>4</value></column>
+        <column><name>THEME_SS_ID</name><value>3</value></column>
+      </row>
     </rows>
   </table>
 
@@ -3118,12 +3771,100 @@
         <column><name>PARAM_NAME</name><value>skin</value></column>
         <column><name>PARAM_VAL</name><value>vsac</value></column>
       </row>
+      <row>
+        <column><name>USER_ID</name><value>3</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>4</value></column>
+        <column><name>SS_TYPE</name><value>1</value></column>
+        <column><name>PARAM_NAME</name><value>activeTab</value></column>
+        <column><name>PARAM_VAL</name><value>1</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>3</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>3</value></column>
+        <column><name>SS_TYPE</name><value>2</value></column>
+        <column><name>PARAM_NAME</name><value>skin</value></column>
+        <column><name>PARAM_VAL</name><value>imm</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>4</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>4</value></column>
+        <column><name>SS_TYPE</name><value>1</value></column>
+        <column><name>PARAM_NAME</name><value>activeTab</value></column>
+        <column><name>PARAM_VAL</name><value>1</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>4</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>3</value></column>
+        <column><name>SS_TYPE</name><value>2</value></column>
+        <column><name>PARAM_NAME</name><value>skin</value></column>
+        <column><name>PARAM_VAL</name><value>imm</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>5</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>4</value></column>
+        <column><name>SS_TYPE</name><value>1</value></column>
+        <column><name>PARAM_NAME</name><value>activeTab</value></column>
+        <column><name>PARAM_VAL</name><value>1</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>5</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>3</value></column>
+        <column><name>SS_TYPE</name><value>2</value></column>
+        <column><name>PARAM_NAME</name><value>skin</value></column>
+        <column><name>PARAM_VAL</name><value>imm</value></column>
+      </row>
     </rows>
   </table>
 
   <table sinceMajor="2" sinceMinor="1">
     <name>UP_SS_USER_ATTS</name>
     <rows>
+      <row>
+        <column><name>USER_ID</name><value>4</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>4</value></column>
+        <column><name>SS_TYPE</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>48</value></column>
+        <column><name>PARAM_NAME</name><value>width</value></column>
+        <column><name>PARAM_TYPE</name><value>2</value></column>
+        <column><name>PARAM_VAL</name><value>40%</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>4</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>4</value></column>
+        <column><name>SS_TYPE</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>47</value></column>
+        <column><name>PARAM_NAME</name><value>width</value></column>
+        <column><name>PARAM_TYPE</name><value>2</value></column>
+        <column><name>PARAM_VAL</name><value>60%</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>5</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>4</value></column>
+        <column><name>SS_TYPE</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>48</value></column>
+        <column><name>PARAM_NAME</name><value>width</value></column>
+        <column><name>PARAM_TYPE</name><value>2</value></column>
+        <column><name>PARAM_VAL</name><value>30%</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>5</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>4</value></column>
+        <column><name>SS_TYPE</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>47</value></column>
+        <column><name>PARAM_NAME</name><value>width</value></column>
+        <column><name>PARAM_TYPE</name><value>2</value></column>
+        <column><name>PARAM_VAL</name><value>70%</value></column>
+      </row>
       <row>
         <column><name>USER_ID</name><value>2</value></column>
         <column><name>PROFILE_ID</name><value>1</value></column>
@@ -3266,6 +4007,69 @@
         <column><name>PARAM_TYPE</name><value>2</value></column>
         <column><name>PARAM_VAL</name><value>30%</value></column>
       </row>
+
+	<!-- Duplicate structure SS atts for DLM stylesheets  -->
+      <row>
+        <column><name>USER_ID</name><value>1</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>4</value></column>
+        <column><name>SS_TYPE</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>5</value></column>
+        <column><name>PARAM_NAME</name><value>width</value></column>
+        <column><name>PARAM_TYPE</name><value>2</value></column>
+        <column><name>PARAM_VAL</name><value>30%</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>1</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>4</value></column>
+        <column><name>SS_TYPE</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>7</value></column>
+        <column><name>PARAM_NAME</name><value>width</value></column>
+        <column><name>PARAM_TYPE</name><value>2</value></column>
+        <column><name>PARAM_VAL</name><value>70%</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>1</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>4</value></column>
+        <column><name>SS_TYPE</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>12</value></column>
+        <column><name>PARAM_NAME</name><value>width</value></column>
+        <column><name>PARAM_TYPE</name><value>2</value></column>
+        <column><name>PARAM_VAL</name><value>70%</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>1</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>4</value></column>
+        <column><name>SS_TYPE</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>10</value></column>
+        <column><name>PARAM_NAME</name><value>width</value></column>
+        <column><name>PARAM_TYPE</name><value>2</value></column>
+        <column><name>PARAM_VAL</name><value>30%</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>1</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>4</value></column>
+        <column><name>SS_TYPE</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>15</value></column>
+        <column><name>PARAM_NAME</name><value>width</value></column>
+        <column><name>PARAM_TYPE</name><value>2</value></column>
+        <column><name>PARAM_VAL</name><value>70%</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>1</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>4</value></column>
+        <column><name>SS_TYPE</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>17</value></column>
+        <column><name>PARAM_NAME</name><value>width</value></column>
+        <column><name>PARAM_TYPE</name><value>2</value></column>
+        <column><name>PARAM_VAL</name><value>30%</value></column>
+      </row>
+
       <row>
         <column><name>USER_ID</name><value>7</value></column>
         <column><name>PROFILE_ID</name><value>1</value></column>
@@ -3526,6 +4330,46 @@
         <column><name>PARAM_TYPE</name><value>2</value></column>
         <column><name>PARAM_VAL</name><value>70%</value></column>
       </row>
+      <row>
+        <column><name>USER_ID</name><value>4</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>4</value></column>
+        <column><name>SS_TYPE</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>48</value></column>
+        <column><name>PARAM_NAME</name><value>width</value></column>
+        <column><name>PARAM_TYPE</name><value>2</value></column>
+        <column><name>PARAM_VAL</name><value>40%</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>4</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>4</value></column>
+        <column><name>SS_TYPE</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>47</value></column>
+        <column><name>PARAM_NAME</name><value>width</value></column>
+        <column><name>PARAM_TYPE</name><value>2</value></column>
+        <column><name>PARAM_VAL</name><value>60%</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>5</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>4</value></column>
+        <column><name>SS_TYPE</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>48</value></column>
+        <column><name>PARAM_NAME</name><value>width</value></column>
+        <column><name>PARAM_TYPE</name><value>2</value></column>
+        <column><name>PARAM_VAL</name><value>30%</value></column>
+      </row>
+      <row>
+        <column><name>USER_ID</name><value>5</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>4</value></column>
+        <column><name>SS_TYPE</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>47</value></column>
+        <column><name>PARAM_NAME</name><value>width</value></column>
+        <column><name>PARAM_TYPE</name><value>2</value></column>
+        <column><name>PARAM_VAL</name><value>70%</value></column>
+      </row>
     </rows>
   </table>
 
@@ -3553,6 +4397,13 @@
         <column><name>SS_DESCRIPTION_URI</name><value>/org/jasig/portal/layout/AL_TabColumn/AL_TabColumn.sdf</value></column>
         <column><name>SS_DESCRIPTION_TEXT</name><value>Presents the layout in terms of tabs and columns</value></column>
       </row>
+      <row sinceMajor="2" sinceMinor="5">
+        <column><name>SS_ID</name><value>4</value></column>
+        <column><name>SS_NAME</name><value>DLM Tabs and columns</value></column>
+        <column><name>SS_URI</name><value>/org/jasig/portal/layout/DLM-tab-column/tab-column.xsl</value></column>
+        <column><name>SS_DESCRIPTION_URI</name><value>/org/jasig/portal/layout/DLM-tab-column/tab-column.sdf</value></column>
+        <column><name>SS_DESCRIPTION_TEXT</name><value>Presents the DLM layout in terms of tabs and columns.</value></column>
+      </row>
     </rows>
   </table>
 
@@ -3572,6 +4423,20 @@
         <column><name>DEVICE_TYPE</name><value>workstation</value></column>
         <column><name>SERIALIZER_NAME</name><value>HTML</value></column>
         <column><name>UP_MODULE_CLASS</name><value>org.jasig.portal.channels.UserPreferences.TabColumnPrefsState</value></column>
+      </row>
+      <row sinceMajor="2" sinceMinor="5">
+        <column><name>SS_ID</name><value>3</value></column>
+        <column><name>SS_NAME</name><value>DLM Nested tables</value></column>
+        <column><name>SS_URI</name><value>/org/jasig/portal/layout/DLM-tab-column/nested-tables/nested-tables.xsl</value></column>
+        <column><name>SS_DESCRIPTION_URI</name><value>/org/jasig/portal/layout/DLM-tab-column/nested-tables/nested-tables.sdf</value></column>
+        <column><name>SS_DESCRIPTION_TEXT</name><value>Renders DLM tabs and columns as nested tables</value></column>
+        <column><name>STRUCT_SS_ID</name><value>4</value></column>
+        <column><name>SAMPLE_ICON_URI</name><value>media/org/jasig/portal/layout/DLM-tab-column/nested-tables/sample_icon.gif</value></column>
+        <column><name>SAMPLE_URI</name><value>media/org/jasig/portal/layout/DLM-tab-column/nested-tables/sample_full.gif</value></column>
+        <column><name>MIME_TYPE</name><value>text/html</value></column>
+        <column><name>DEVICE_TYPE</name><value>workstation</value></column>
+        <column><name>SERIALIZER_NAME</name><value>HTML</value></column>
+        <column><name>UP_MODULE_CLASS</name><value>org.jasig.portal.channels.DLMUserPreferences.TabColumnPrefsState</value></column>
       </row>
       <row>
         <column><name>SS_ID</name><value>2</value></column>
@@ -3624,6 +4489,22 @@
          <column><name>TYPE</name><value>3</value></column>
         </row>
 
+       <!-- For DLM nested-tables theme -->
+       <row sinceMajor="2" sinceMinor="5">
+         <column><name>SS_ID</name><value>3</value></column>
+         <column><name>PARAM_NAME</name><value>skin</value></column>
+         <column><name>PARAM_DEFAULT_VAL</name><value>java</value></column>
+         <column><name>PARAM_DESCRIPT</name><value>Design skin name</value></column>
+         <column><name>TYPE</name><value>1</value></column>
+        </row>
+       <row sinceMajor="2" sinceMinor="5">
+         <column><name>SS_ID</name><value>3</value></column>
+         <column><name>PARAM_NAME</name><value>minimized</value></column>
+         <column><name>PARAM_DEFAULT_VAL</name><value>false</value></column>
+         <column><name>PARAM_DESCRIPT</name><value>Flag determining if the channel is minimized or not</value></column>
+         <column><name>TYPE</name><value>3</value></column>
+        </row>
+        
         <!-- For integratedModes theme -->
        <row sinceMajor="2" sinceMinor="2">
          <column><name>SS_ID</name><value><sequence id="UP_SS_THEME">integratedModes</sequence></value></column>
@@ -3661,6 +4542,22 @@
          <column><name>TYPE</name><value>2</value></column>
         </row>
 
+       <!-- For DLM tab-column structure -->
+       <row sinceMajor="2" sinceMinor="5">
+         <column><name>SS_ID</name><value>4</value></column>
+         <column><name>PARAM_NAME</name><value>activeTab</value></column>
+         <column><name>PARAM_DEFAULT_VAL</name><value>1</value></column>
+         <column><name>PARAM_DESCRIPT</name><value>The number of the DLM tab that is initially active</value></column>
+         <column><name>TYPE</name><value>1</value></column>
+        </row>
+       <row sinceMajor="2" sinceMinor="5">
+         <column><name>SS_ID</name><value>4</value></column>
+         <column><name>PARAM_NAME</name><value>width</value></column>
+         <column><name>PARAM_DEFAULT_VAL</name><value>100%</value></column>
+         <column><name>PARAM_DESCRIPT</name><value>Width of a DLM column</value></column>
+         <column><name>TYPE</name><value>2</value></column>
+        </row>
+
        <!-- For AL_TabColumn structure -->
        <row sinceMajor="2" sinceMinor="2">
          <column><name>SS_ID</name><value>3</value></column>
@@ -3686,6 +4583,13 @@
       <row>
         <column><name>THEME_SS_ID</name><value>1</value></column>
         <column><name>STRUCT_SS_ID</name><value>1</value></column>
+        <column><name>MIME_TYPE</name><value>text/html</value></column>
+      </row>
+      
+      <!--  for DLM values. Not sure if this is used or not. -->
+      <row sinceMajor="2" sinceMinor="5">
+        <column><name>THEME_SS_ID</name><value>3</value></column>
+        <column><name>STRUCT_SS_ID</name><value>4</value></column>
         <column><name>MIME_TYPE</name><value>text/html</value></column>
       </row>
       <row>
@@ -3927,6 +4831,14 @@
         <column><name>PRINCIPAL_KEY</name><value>local.4</value></column>
         <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
         <column><name>TARGET</name><value>CHAN_ID.90</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+      <row sinceMajor="2" sinceMinor="5">
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL_TYPE</name><value>3</value></column>
+        <column><name>PRINCIPAL_KEY</name><value>local.0</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.91</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
       <row>
@@ -5048,6 +5960,12 @@
      <row>
         <column><name>GROUP_ID</name><value>0</value></column>
         <column><name>MEMBER_SERVICE</name><value>local</value></column>
+        <column><name>MEMBER_KEY</name><value>fragmentTemplate</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>0</value></column>
+        <column><name>MEMBER_SERVICE</name><value>local</value></column>
         <column><name>MEMBER_KEY</name><value>15</value></column>
         <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
      </row>
@@ -5127,6 +6045,18 @@
         <column><name>GROUP_ID</name><value>4</value></column>
         <column><name>MEMBER_SERVICE</name><value>local</value></column>
         <column><name>MEMBER_KEY</name><value>demo</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>4</value></column>
+        <column><name>MEMBER_SERVICE</name><value>local</value></column>
+        <column><name>MEMBER_KEY</name><value>ent-lo</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>4</value></column>
+        <column><name>MEMBER_SERVICE</name><value>local</value></column>
+        <column><name>MEMBER_KEY</name><value>news-lo</value></column>
         <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
      </row>
      <row>

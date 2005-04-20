@@ -75,4 +75,63 @@ public interface IUserLayoutNodeDescription {
 
     public void addNodeAttributes(Element node);
 
+    /**
+     * Returns true if child nodes can be added to the node.
+     * Added by SCT for DLM.
+     */
+    public boolean isAddChildAllowed();
+
+    /**
+     * Set whether or not child nodes can be added to this node.
+     * Added by SCT for DLM.
+     */
+    public void setAddChildAllowed( boolean setting );
+
+    /**
+     * Returns true if the node's attributes can be edited.
+     * Added by SCT for DLM.
+     */
+    public boolean isEditAllowed();
+
+    /**
+     * Set whether a node's attributes can be edited or not.
+     * Added by SCT for DLM.
+     */
+    public void setEditAllowed( boolean setting );
+
+    /**
+     * Returns the precedence value for this node. The precedence is 0.0 for
+     * a user owned node and the value of the node's owning fragment's
+     * precedence for a node incorporated from another fragment. Added by SCT
+     * for DLM.
+     */
+    public double getPrecedence();
+
+    /**
+     * Set the precedence of a node. See getPrecedence for more information.
+     * Added by SCT for DLM.
+     */
+    public void setPrecedence( double setting );
+
+    /**
+     * Returns true if the node can be moved. Added by SCT for DLM.
+     */
+    public boolean isMoveAllowed();
+
+    /**
+     * Set whether a node can be moved or not. Added by SCT for DLM.
+     */
+    public void setMoveAllowed( boolean setting );
+
+    /**
+     * Returns true if the node can be deleted. Added by SCT for DLM.
+     */
+    public boolean isDeleteAllowed();
+
+    /**
+     * Set whether a node can be deleted or not. Added by SCT for DLM.
+     */
+    public void setDeleteAllowed( boolean setting );
+    
+    
 }

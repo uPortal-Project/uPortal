@@ -6,6 +6,7 @@
 package org.jasig.portal.layout.node;
 
 import org.jasig.portal.PortalException;
+import org.jasig.portal.layout.dlm.Constants;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -23,6 +24,11 @@ public abstract class UserLayoutNodeDescription implements IUserLayoutNodeDescri
     protected boolean immutable=false;
     protected boolean unremovable=false;
     protected boolean hidden=false;
+    protected boolean deleteAllowed = true; // used in DLM
+    protected boolean editAllowed = true; // used in DLM
+    protected boolean moveAllowed = true; // used in DLM
+    protected boolean addChildAllowed = true; // used in DLM
+    protected double precedence = 0.0; // used in DLM
 
 
     public UserLayoutNodeDescription() {};
@@ -32,6 +38,131 @@ public abstract class UserLayoutNodeDescription implements IUserLayoutNodeDescri
         this.immutable=d.isImmutable();
         this.unremovable=d.isUnremovable();
         this.hidden=d.isHidden();
+    }
+
+    UserLayoutNodeDescription( Element xmlNode )
+        throws PortalException
+    {
+        // standard Node attributes
+        this.setId(xmlNode.getAttribute("ID"));
+        this.setName(xmlNode.getAttribute("name"));
+        this.setUnremovable((new Boolean(xmlNode.getAttribute("unremovable"))).booleanValue());
+        this.setImmutable((new Boolean(xmlNode.getAttribute("immutable"))).booleanValue());
+
+        if ( xmlNode.getAttribute( Constants.ATT_DELETE_ALLOWED )
+             .equals( "false" ) )
+            this.setDeleteAllowed( false );
+        
+        if ( xmlNode.getAttribute( Constants.ATT_MOVE_ALLOWED )
+             .equals( "false" ) )
+            this.setMoveAllowed( false );
+
+        if ( xmlNode.getAttribute( Constants.ATT_EDIT_ALLOWED )
+             .equals( "false" ) )
+            this.setEditAllowed( false );
+
+        if ( xmlNode.getAttribute( Constants.ATT_ADD_CHILD_ALLOWED )
+             .equals( "false" ) )
+            this.setAddChildAllowed( false );
+
+        String precedence = xmlNode.getAttribute( Constants.ATT_PRECEDENCE );
+        
+        if ( ! precedence.equals( "" ) )
+        {
+            try
+            {
+                this.setPrecedence( Double.parseDouble( precedence ) );
+            }
+            catch( NumberFormatException nfe )
+            {
+                // if format is invalid leave it as default
+            }
+        }
+    }
+    
+    /**
+     * Returns the precedence value for this node. The precedence is 0.0 for
+     * a user owned node and the value of the node's owning fragment's
+     * precedence for a node incorporated from another fragment. Added by SCT
+     * for DLM.
+     */
+    public double getPrecedence()
+    {
+        return this.precedence;
+    }
+
+    /**
+     * Set the precedence of a node. See getPrecedence for more information.
+     * Added by SCT for DLM.
+     */
+    public void setPrecedence( double setting )
+    {
+        this.precedence = setting;
+    }
+
+    /**
+     * Returns true if the node can be moved. Added by SCT for DLM.
+     */
+    public boolean isMoveAllowed()
+    {
+        return this.moveAllowed;
+    }
+
+    /**
+     * Set whether a node can be moved or not. Added by SCT for DLM.
+     */
+    public void setMoveAllowed( boolean setting )
+    {
+        this.moveAllowed = setting;
+    }
+
+    /**
+     * Returns true if the node can be deleted. Added by SCT for DLM.
+     */
+    public boolean isDeleteAllowed()
+    {
+        return this.deleteAllowed;
+    }
+
+    /**
+     * Set whether a node can be deleted or not. Added by SCT for DLM.
+     */
+    public void setDeleteAllowed( boolean setting )
+    {
+        this.deleteAllowed = setting;
+    }
+
+    /**
+     * Returns true if the node can be edited. Added by SCT for DLM.
+     */
+    public boolean isEditAllowed() 
+    {
+        return this.editAllowed;
+    }
+
+    /**
+     * Set whether a node can be edited or not. Added by SCT for DLM.
+     */
+    public void setEditAllowed(boolean setting) 
+    {
+        this.editAllowed=setting;
+    }
+
+    /**
+     * Returns true if a child node may be added to the node. Added by SCT for DLM.
+     */
+    public boolean isAddChildAllowed()
+    {
+        return this.addChildAllowed;
+    }
+
+    /**
+     * Set whether or not child nodes can be added to this node.
+     * Added by SCT for DLM.
+     */
+    public void setAddChildAllowed( boolean setting )
+    {
+        this.addChildAllowed = setting;
     }
 
     /**
@@ -114,6 +245,23 @@ public abstract class UserLayoutNodeDescription implements IUserLayoutNodeDescri
         node.setAttribute("unremovable",(new Boolean(this.isUnremovable())).toString());
         node.setAttribute("immutable",(new Boolean(this.isImmutable())).toString());
         node.setAttribute("hidden",(new Boolean(this.isHidden())).toString());
+
+        if ( ! this.isDeleteAllowed() )
+            node.setAttributeNS( Constants.NS_URI,
+                                 Constants.ATT_DELETE_ALLOWED, "false" );
+        if ( ! this.isMoveAllowed() )
+            node.setAttributeNS( Constants.NS_URI,
+                                 Constants.ATT_MOVE_ALLOWED, "false" );
+        if ( ! this.isEditAllowed() )
+            node.setAttributeNS( Constants.NS_URI,
+                                 Constants.ATT_EDIT_ALLOWED, "false" );
+        if ( ! this.isAddChildAllowed() )
+            node.setAttributeNS( Constants.NS_URI,
+                                 Constants.ATT_ADD_CHILD_ALLOWED, "false" );
+        if ( this.getPrecedence() != 0.0 )
+            node.setAttributeNS( Constants.NS_URI,
+                                 Constants.ATT_PRECEDENCE,
+                                 Double.toString( this.getPrecedence() ) );
     }
 
     /**
@@ -132,7 +280,8 @@ public abstract class UserLayoutNodeDescription implements IUserLayoutNodeDescri
         } else if(nodeName.equals("folder")) {
             return new UserLayoutFolderDescription(xmlNode);
         } else {
-            throw new PortalException("Given XML element is neither folder nor channel");
+            throw new PortalException("Given XML element '" + nodeName +
+                                      "' is neither folder nor channel");
         }
     }
 

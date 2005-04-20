@@ -9,8 +9,10 @@ import org.jasig.portal.ChannelCacheKey;
 import org.jasig.portal.ICacheable;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.i18n.LocaleManager;
+import org.jasig.portal.layout.dlm.DistributedLayoutManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.utils.XSLT;
@@ -74,6 +76,8 @@ public class CHeader extends BaseChannel implements ICacheable {
   private Document getUserXML() {
     // Get the fullname of the current user
     String fullName = (String)staticData.getPerson().getFullName();
+    if (fullName == null)
+        fullName = "";
     // Get a new DOM instance
     Document doc = DocumentFactory.getNewDocument();
     // Create <header> element
@@ -101,6 +105,15 @@ public class CHeader extends BaseChannel implements ICacheable {
 
       // Create <preferences-chanid> element under <header>
       Element preferencesChanidEl = doc.createElement("preferences-chanid");
+      
+      // make fname of prefs be appropriate for simple layouts versus DLM
+      String layoutMgmFac = PropertiesManager
+                    .getProperty(
+                            "org.jasig.portal.layout.UserLayoutManagerFactory.coreImplementation",
+                            "default");
+      if (layoutMgmFac.equals(DistributedLayoutManager.class.getName()))
+          preferencesChanidEl.appendChild(doc.createTextNode("portal/userpreferences/dlm"));
+      else
       preferencesChanidEl.appendChild(doc.createTextNode("portal/userpreferences/general"));
       headerEl.appendChild(preferencesChanidEl);
     }

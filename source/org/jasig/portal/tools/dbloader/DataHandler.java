@@ -486,6 +486,7 @@ import org.xml.sax.helpers.DefaultHandler;
         {
           config.getLog().println();
           config.getLog().println(preparedStatement);
+          config.getLog().println(row.toString());
           sqle.printStackTrace(config.getLog());
         }
         catch (Exception e)
@@ -603,6 +604,18 @@ import org.xml.sax.helpers.DefaultHandler;
       public void setSinceMinor(int sinceMinor) { this.sinceMinor = sinceMinor; }
       public int getSinceMajor() { return sinceMajor; }
       public int getSinceMinor() { return sinceMinor; }
+      public String toString()
+      {
+          StringBuffer out = new StringBuffer();
+          out.append("Column Values Are: ");
+          for(int i=0; i<columns.size(); i++)
+          {
+              if (i>0)
+                  out.append(", ");
+              out.append(((Column) columns.get(i)).toString());
+          }
+          return out.toString();
+      }
     }
 
     class Column
@@ -617,5 +630,10 @@ import org.xml.sax.helpers.DefaultHandler;
       public void setName(String name) { this.name = name; }
       public void setValue(String value) { this.value = value; }
       public void setType(String type) { this.type = type; }
+      public String toString()
+      {
+          return new StringBuffer().append((String)name)
+          .append("='").append((String)value).append('\'').toString();
+      }
     }
   }

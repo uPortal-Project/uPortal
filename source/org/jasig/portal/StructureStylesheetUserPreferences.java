@@ -44,6 +44,15 @@ public class StructureStylesheetUserPreferences extends ThemeStylesheetUserPrefe
         this.defaultFolderAttributeValues=new ArrayList(fsup.defaultFolderAttributeValues);
     }
 
+    /**
+     * If instantiated with a theme stylesheet this object will be used only
+     * for theme type work and so don't instantiate the variables added by
+     * this class. Used in DLM.
+     */
+    public StructureStylesheetUserPreferences( ThemeStylesheetUserPreferences tsup) {
+        super(tsup);
+    }
+
     public String getFolderAttributeValue(String folderID,String attributeName) {
         Integer attributeNumber=(Integer)folderAttributeNumbers.get(attributeName);
         if(attributeNumber==null) {
@@ -181,6 +190,9 @@ public class StructureStylesheetUserPreferences extends ThemeStylesheetUserPrefe
 
     public String getCacheKey() {
         StringBuffer sbKey = new StringBuffer();
+        // if no folder values then skip adding to prevent null pointer ex.
+        if (folderAttributeValues != null)
+        {
         for(Enumeration e=folderAttributeValues.keys();e.hasMoreElements();) {
             String folderId=(String)e.nextElement();
             sbKey.append("(folder:").append(folderId).append(':');
@@ -191,6 +203,7 @@ public class StructureStylesheetUserPreferences extends ThemeStylesheetUserPrefe
                 sbKey.append(value).append(",");
             }
             sbKey.append(")");
+        }
         }
         return super.getCacheKey().concat(sbKey.toString());
     }

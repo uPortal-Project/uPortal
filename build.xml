@@ -936,7 +936,7 @@
 
 
   <target name="pubfragments" depends="compile"
-   description="Loads fragments into the uPortal database">
+   description="Loads ALM fragments into the uPortal database">
     <property name="tempDataXML" value="/properties/al/fragment.temp.data.xml"/>
     <property name="fragmentFile" value=" "/>
     <echo message="Resetting layout fragments configuration."/>
@@ -949,7 +949,15 @@
             <path refid="compile.classpath"/>
         </classpath>
     </java>
-    <!-- load data.xml file -->
+  	<available file="${build.home}/WEB-INF/classes/${tempDataXML}" 
+  		property="temp.fragment.data.file.present"/>
+  	<antcall target="pubfragments.load"/>
+    <echo message="Done updating ALM fragment configuration."/>
+    </target>
+	
+	<target name="pubfragments.load" if="temp.fragment.data.file.present">
+  	
+ 	<!-- load data.xml file -->
     <echo message="Loading new fragments into the database."/>
     <java fork="true" dir="${build.home}/WEB-INF/classes"
           classname="org.jasig.portal.tools.dbloader.DbLoader">
@@ -964,7 +972,6 @@
         </classpath>
     </java>
     <delete file="${build.home}/WEB-INF/classes/${tempDataXML}"/>
-    <echo message="Done updating fragment configuration."/>
   </target>
 
 
@@ -1397,5 +1404,4 @@
           <fileset dir="${jaxp.lib}" includes="*.jar"/>
       </copy>
     </target>
-
 </project>

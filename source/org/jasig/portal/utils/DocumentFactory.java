@@ -15,6 +15,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
@@ -66,18 +67,50 @@ public class DocumentFactory {
         return doc;
     }
 
+    /**
+     * @param stream
+     * @return
+     * @throws IOException
+     * @throws SAXException
+     * @deprecated Does not provide document identifier in exceptions.
+     */
     public static Document getDocumentFromStream(InputStream stream) throws IOException, SAXException {
             DocumentBuilder builder = newDocumentBuilder();
             Document doc = builder.parse(stream);
             return doc;
     }
 
+/**
+ * @param stream
+ * @param er
+ * @return
+ * @throws IOException
+ * @throws SAXException
+ * @deprecated Does not provide document identifier in exceptions.
+ */
     public static Document getDocumentFromStream(InputStream stream, EntityResolver er) throws IOException, SAXException {
             DocumentBuilder builder = newDocumentBuilder();
             builder.setEntityResolver(er);
             Document doc = builder.parse(stream);
             return doc;
     }
+
+public static Document getDocumentFromStream(InputStream stream, String publicId) throws IOException, SAXException {
+    DocumentBuilder builder = newDocumentBuilder();
+    InputSource source = new InputSource(stream);
+    source.setPublicId(publicId);
+    Document doc = builder.parse(source);
+    return doc;
+}
+
+public static Document getDocumentFromStream(InputStream stream, EntityResolver er, String publicId) throws IOException, SAXException {
+    DocumentBuilder builder = newDocumentBuilder();
+    builder.setEntityResolver(er);
+    InputSource source = new InputSource(stream);
+    source.setPublicId(publicId);
+    Document doc = builder.parse(source);
+    return doc;
+}
 
     public static DocumentBuilder newDocumentBuilder() {
         DocumentBuilder builder = (DocumentBuilder)localDocBuilder.get();
