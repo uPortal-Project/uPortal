@@ -247,7 +247,6 @@ public class DbLoader
                 config.getLog().println("Populating tables...disabled.");
 
             // cleanup and exit
-            config.getConnection().commit();
             config.getLog().println("Done!");
             long endTime = System.currentTimeMillis();
             config.getLog().println(
