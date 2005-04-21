@@ -7,7 +7,6 @@
 package org.jasig.portal.layout.dlm.providers;
 
 import org.jasig.portal.layout.dlm.Evaluator;
-import org.w3c.dom.Node;
 
 
 /**
@@ -42,7 +41,7 @@ import org.w3c.dom.Node;
  *      java.lang.String, java.lang.String) *
  * @author mboyd@sungardsct.com
  */
-public class GroupMembershipEvaluatorFactory extends IPersonEvaluatorFactory
+public class GroupMembershipEvaluatorFactory extends PersonEvaluatorFactory
 {
     /**
      * Returns an instance of an evaluator specific to this factory and the 
