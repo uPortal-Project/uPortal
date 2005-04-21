@@ -37,7 +37,7 @@ import org.jasig.portal.layout.dlm.Evaluator;
  * Case is important for both mode and name. The value attribute is not used in
  * configuration of these group membership evaluators.
  * 
- * @see org.jasig.portal.layout.dlm.providers.IPersonEvaluatorFactory#getAttributeEvaluator(java.lang.String,
+ * @see org.jasig.portal.layout.dlm.providers.PersonEvaluatorFactory#getAttributeEvaluator(java.lang.String,
  *      java.lang.String, java.lang.String) *
  * @author mboyd@sungardsct.com
  */
