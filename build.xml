@@ -294,7 +294,7 @@
                        the use of the Inversion of Control (IoC) design pattern.
                        Version 1.1.1
                        URL: http://www.springframework.org/
-                       
+
   concurrent-1.3.4.jar	Doug Lea's Concurrency package.  Used by WhirlyCache
   						Version 1.3.4
   						URL: http://gee.cs.oswego.edu/dl/classes/EDU/oswego/cs/dl/util/concurrent/intro.html
@@ -341,7 +341,6 @@
   <property name="jdom.jar" value="{set this in build.properties!)" />
   <property name="concurrent.jar" value="{set this in build.properties!)" />
   <property name="backport.jar" value="{set this in build.properties!)" />
-	
 
 <!-- ==================== Compilation Classpath =========================== -->
 
@@ -380,10 +379,10 @@
     <pathelement location="${commons-pool.jar}"/>
     <pathelement location="${servlet.jar}"/>
     <pathelement location="${spring.jar}"/>
-  	<pathelement location="${whirlycache.jar}" />
-  	<pathelement location="${jdom.jar}" />
-  	<pathelement location="${concurrent.jar}" />
-  	<pathelement location="${backport.jar}" />
+    <pathelement location="${whirlycache.jar}" />
+    <pathelement location="${jdom.jar}" />
+    <pathelement location="${concurrent.jar}" />
+    <pathelement location="${backport.jar}" />
   </path>
 
 
@@ -493,9 +492,9 @@
     <!-- Copy the Logger.properties file to the well-known location log4j expects.-->
     <copy file="properties/Logger.properties" tofile="${build.home}/WEB-INF/classes/log4j.properties"/>
 
-  	<!-- Copy WhirlyCache to proper folder -->
-  	<copy file="properties/whirlycache.xml" tofile="${build.home}/WEB-INF/classes/whirlycache.xml" />
-  	
+    <!-- Copy WhirlyCache to proper folder -->
+    <copy file="properties/whirlycache.xml" tofile="${build.home}/WEB-INF/classes/whirlycache.xml" />
+
     <!-- Copy all stylesheets, stylesheet descriptions  and stylesheet list files -->
     <copy  todir="${build.home}/WEB-INF/classes">
         <fileset dir="webpages/stylesheets" includes="**/*.xsl,**/*.ssl,**/*.sdf,**/*.properties" excludes="**/*.UTF-8.properties"/>
@@ -556,10 +555,10 @@
     <copy todir="${deploy.home}/WEB-INF/lib" file="${jdbcDriver.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${spring.jar}"/>
 
-  	<copy todir="${deploy.home}/WEB-INF/lib" file="${whirlycache.jar}" />
-  	<copy todir="${deploy.home}/WEB-INF/lib" file="${jdom.jar}" />
-  	<copy todir="${deploy.home}/WEB-INF/lib" file="${concurrent.jar}" />
-  	<copy todir="${deploy.home}/WEB-INF/lib" file="${backport.jar}" />
+    <copy todir="${deploy.home}/WEB-INF/lib" file="${whirlycache.jar}" />
+    <copy todir="${deploy.home}/WEB-INF/lib" file="${jdom.jar}" />
+    <copy todir="${deploy.home}/WEB-INF/lib" file="${concurrent.jar}" />
+    <copy todir="${deploy.home}/WEB-INF/lib" file="${backport.jar}" />
 
     <!-- These are Tomcat-specific!  We need to think about a new property
          that lets us specify the appropriate directory for other servers
@@ -788,7 +787,7 @@
     <property name="populatetables" value=" "/>
     <property name="localeaware" value=" "/>
     <property name="adminlocale" value=" "/>
-    <java fork="true" dir="${basedir}" classname="org.jasig.portal.tools.dbloader.DbLoader">
+    <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.tools.dbloader.DbLoader">
       <classpath>
         <pathelement path="${build.home}/WEB-INF/classes"/>
         <path refid="compile.classpath"/>
@@ -818,7 +817,7 @@
     <property name="droptables" value=""/>
     <property name="createtables" value=" "/>
     <property name="populatetables" value=" "/>
-    <java fork="true" dir="${basedir}" classname="org.jasig.portal.tools.dbloader.DbLoader">
+    <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.tools.dbloader.DbLoader">
       <classpath>
         <pathelement path="${build.home}/WEB-INF/classes"/>
         <path refid="compile.classpath"/>
@@ -849,7 +848,7 @@
     <property name="populatetables" value=" "/>
     <property name="localeaware" value="-l"/>
     <property name="adminlocale" value="en_US"/>
-    <java fork="true" dir="${basedir}" classname="org.jasig.portal.tools.dbloader.DbLoader">
+    <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.tools.dbloader.DbLoader">
       <classpath>
         <pathelement path="${build.home}/WEB-INF/classes"/>
         <pathelement path="${xalan.jar}"/>
@@ -891,7 +890,7 @@
     <echo message="Invoking DbUnload"/>
     <property name="tablename" value=" "/>
     <property name="xmlfile" value=" "/>
-    <java fork="true" dir="${basedir}" classname="org.jasig.portal.tools.dbloader.DbUnload">
+    <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.tools.dbloader.DbUnload">
       <classpath>
         <pathelement path="${build.home}/WEB-INF/classes"/>
         <path refid="compile.classpath"/>
@@ -941,7 +940,7 @@
     <property name="fragmentFile" value=" "/>
     <echo message="Resetting layout fragments configuration."/>
     <!-- create data.xml file -->
-    <java fork="true" dir="${basedir}" failonerror="true" classname="org.jasig.portal.layout.utils.FragmentLoader">
+    <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.layout.utils.FragmentLoader">
         <arg value="${fragmentFile}"/>
         <arg value="${build.home}/WEB-INF/classes/${tempDataXML}"/>
         <classpath>
@@ -957,9 +956,9 @@
 	
 	<target name="pubfragments.load" if="temp.fragment.data.file.present">
   	
- 	<!-- load data.xml file -->
+    <!-- load data.xml file -->
     <echo message="Loading new fragments into the database."/>
-    <java fork="true" dir="${build.home}/WEB-INF/classes"
+    <java fork="true" failonerror="true" dir="${build.home}/WEB-INF/classes" 
           classname="org.jasig.portal.tools.dbloader.DbLoader">
         <arg value="-d"/>
         <arg value="${tempDataXML}"/>
@@ -1249,7 +1248,7 @@
 
 
   <target name="swingtests" depends="compiletests" description="Run JUnit Test Suite">
-    <java fork="true" classname="junit.swingui.TestRunner">
+    <java fork="true" failonerror="true" classname="junit.swingui.TestRunner">
       <classpath>
        <path refid="tests.classpath"/>
        <path location="${build.home}/WEB-INF/classes"/>
@@ -1287,7 +1286,7 @@
     <property name="XmlInput" value=" "/>
     <property name="Xslfile" value=" "/>
     <property name="outputFile" value=" "/>
-    <java fork="true" dir="${basedir}" classname="org.jasig.portal.tools.RunXSLT">
+    <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.tools.RunXSLT">
       <classpath>
         <pathelement path="${build.home}"/>
         <pathelement path="${build.home}/WEB-INF/classes"/>
@@ -1322,7 +1321,7 @@
     <echo message="Invoking Channel Publisher Tool"/>
 
     <property name="channel" value=" "/>
-    <java fork="true" dir="${basedir}" classname="org.jasig.portal.tools.chanpub.ChannelPublisher">
+    <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.tools.chanpub.ChannelPublisher">
       <classpath>
           <pathelement path="${build.home}/WEB-INF/classes"/>
           <path refid="compile.classpath"/>
@@ -1354,7 +1353,7 @@
     <echo message="Invoking Portlet Application Deployment Tool"/>
 
     <property name="portletApp" value=" "/>
-    <java fork="true" dir="${basedir}" classname="org.jasig.portal.container.deploy.Deployer">
+    <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.container.deploy.Deployer">
       <classpath>
         <pathelement path="${build.home}/WEB-INF/classes"/>
         <path refid="compile.classpath"/>
@@ -1404,4 +1403,5 @@
           <fileset dir="${jaxp.lib}" includes="*.jar"/>
       </copy>
     </target>
+
 </project>
