@@ -6,6 +6,7 @@
 package  org.jasig.portal.tools;
 
 import org.jasig.portal.IUserLayoutStore;
+import org.jasig.portal.RDBMServices;
 import org.jasig.portal.StructureStylesheetDescription;
 import org.jasig.portal.ThemeStylesheetDescription;
 import org.jasig.portal.UserLayoutStoreFactory;
@@ -23,6 +24,8 @@ public class RegisterStylesheet {
     }
 
     public static void main(String[] args) {
+        RDBMServices.setGetDatasourceFromJndi(false); /*don't try jndi when not in web app */
+        
         String stylesheetURI = null;
         String stylesheetDescriptionURI = null;
         int stylesheetId = -1;

@@ -37,6 +37,7 @@ import org.w3c.dom.NodeList;
 
 public class SimpleLayout2ALIM {
     public static void main(String[] args) {
+        RDBMServices.setGetDatasourceFromJndi(false); /*don't try jndi when not in web app */        
 
         if (args.length<1 ) {
             System.out.println("Usage \"SimpleLayout2ALIM [-all] <userid> [<profileid>]\" \n profileid defaults to 1 ");

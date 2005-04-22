@@ -29,6 +29,8 @@ import org.springframework.dao.DataAccessException;
 public class DeleteUser {
 
   public static void main(String[] args) {
+    RDBMServices.setGetDatasourceFromJndi(false); /*don't try jndi when not in web app */
+      
     if (args.length < 1)
     {
         System.err.println("Usage \"DeleteUser <username>\"");

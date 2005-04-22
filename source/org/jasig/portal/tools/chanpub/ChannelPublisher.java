@@ -25,6 +25,7 @@ import org.jasig.portal.ChannelType;
 import org.jasig.portal.Constants;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.IChannelRegistryStore;
+import org.jasig.portal.RDBMServices;
 import org.jasig.portal.groups.IEntity;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupConstants;
@@ -89,6 +90,7 @@ public class ChannelPublisher
      */
     public static void main(String[] args)throws Exception{
         try{
+            RDBMServices.setGetDatasourceFromJndi(false); /*don't try jndi when not in web app */
             /*
              
              Channel Publisher Tool Workflow.

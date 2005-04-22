@@ -46,6 +46,7 @@ public class DbConvert21 {
 	String testNextStructId = "SELECT NEXT_STRUCT_ID FROM UP_USER where user_id=? ";
 
       try {
+          RDBMServices.setGetDatasourceFromJndi(false); /*don't try jndi when not in web app */
          con = RDBMServices.getConnection ();
          
 

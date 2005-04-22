@@ -45,7 +45,7 @@ public class PersonDirNameFinder
     public String getName (String key) {
         String name = (String) this.names.get(key);
         
-        if (name == null) {
+        if (name == null && key !=null) {
             // cached name not found, get name from underlying DAO.
             name = primGetName(key);
             // cache the name

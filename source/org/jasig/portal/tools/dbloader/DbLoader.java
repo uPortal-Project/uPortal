@@ -97,7 +97,9 @@ public class DbLoader
   
   public static void main(String[] args)
   {
-    Configuration config = new Configuration();
+      RDBMServices.setGetDatasourceFromJndi(false); /*don't try jndi when not in web app */
+      Configuration config = new Configuration();
+   
     try
     {
         // read dbloader.xml properties

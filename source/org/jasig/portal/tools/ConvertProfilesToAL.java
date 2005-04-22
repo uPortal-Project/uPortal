@@ -42,6 +42,7 @@ public class ConvertProfilesToAL {
    private static IUserLayoutStore uls;
 
    public static void main(String[] args) throws Exception {
+       RDBMServices.setGetDatasourceFromJndi(false); /*don't try jndi when not in web app */
       uls = UserLayoutStoreFactory.getUserLayoutStoreImpl();
       BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 

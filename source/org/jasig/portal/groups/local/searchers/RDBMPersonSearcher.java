@@ -99,13 +99,13 @@ public class RDBMPersonSearcher  implements ITypedEntitySearcher{
         } catch (SQLException e) {
             throw new GroupsException("RDBMChannelDefSearcher.searchForEntities(): " + ps,e);
         } finally {
-            RDBMServices.closeResultSet(rs);
-            RDBMServices.closeResultSet(urs);
-            RDBMServices.closeResultSet(uprs);
-            RDBMServices.closeStatement(ps);
-            RDBMServices.closeStatement(uis);
-            RDBMServices.closeStatement(ups);
-            RDBMServices.releaseConnection(conn);
+            if (rs!=null) RDBMServices.closeResultSet(rs);
+            if (urs!=null) RDBMServices.closeResultSet(urs);
+            if (uprs!=null) RDBMServices.closeResultSet(uprs);
+            if (ps!=null) RDBMServices.closeStatement(ps);
+            if (uis!=null) RDBMServices.closeStatement(uis);
+            if (ups!=null) RDBMServices.closeStatement(ups);
+            if (conn!=null) RDBMServices.releaseConnection(conn);
         }
       return (EntityIdentifier[]) ar.toArray(r);
   }

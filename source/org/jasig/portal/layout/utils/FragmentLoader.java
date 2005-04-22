@@ -55,6 +55,7 @@ public class FragmentLoader {
     static final String configXSL="/properties/al/FragmentLoader.xsl";
 
     public static void main(String[] args) throws Exception {
+        RDBMServices.setGetDatasourceFromJndi(false); /*don't try jndi when not in web app */        
         IUserLayoutStore layoutStoreImpl = UserLayoutStoreFactory.getUserLayoutStoreImpl();
         if ( layoutStoreImpl != null && !(layoutStoreImpl instanceof IAggregatedUserLayoutStore) )
         {
@@ -145,9 +146,10 @@ public class FragmentLoader {
 
 
    public static void cleanTables( Map fragmentIds ) {
-
+       
+    RDBMServices.setGetDatasourceFromJndi(false);
     Connection con = RDBMServices.getConnection();
-
+    
     if ( fragmentIds != null && !fragmentIds.isEmpty() ) {
 
      try {

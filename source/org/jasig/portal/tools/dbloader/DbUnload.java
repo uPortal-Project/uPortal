@@ -104,6 +104,7 @@ public class DbUnload {
         xmlOut = new PrintWriter(System.out);
       }
 
+      RDBMServices.setGetDatasourceFromJndi(false); /*don't try jndi when not in web app */
       con = RDBMServices.getConnection ();
       
 

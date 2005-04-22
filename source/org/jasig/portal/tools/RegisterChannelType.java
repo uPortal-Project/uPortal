@@ -8,6 +8,7 @@ package org.jasig.portal.tools;
 import org.jasig.portal.ChannelRegistryStoreFactory;
 import org.jasig.portal.ChannelType;
 import org.jasig.portal.IChannelRegistryStore;
+import org.jasig.portal.RDBMServices;
 
 /**
  * <p>A tool for registering a new channel type with uPortal.
@@ -25,6 +26,8 @@ public class RegisterChannelType
 
     public static void main(String[] args)
     {
+        RDBMServices.setGetDatasourceFromJndi(false); /*don't try jndi when not in web app */
+        
         // Enforce that exactly 4 arguments are given: class, name, description, and URI
         // and that no arguments are empty
         if (args.length == 4)

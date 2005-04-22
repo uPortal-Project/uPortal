@@ -50,7 +50,7 @@ public class RDBMServices {
     public static final String PORTAL_DB = PropertiesManager.getProperty("org.jasig.portal.RDBMServices.PortalDatasourceJndiName", "PortalDb"); // JNDI name for portal database
     public static final String DEFAULT_DATABASE = "DEFAULT_DATABASE";
 
-    private static final boolean getDatasourceFromJndi = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.RDBMServices.getDatasourceFromJndi", true);
+    private static boolean getDatasourceFromJndi = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.RDBMServices.getDatasourceFromJndi", true);
     private static final Log LOG = LogFactory.getLog(RDBMServices.class);
 
     //DBFlag constants
@@ -827,4 +827,16 @@ public class RDBMServices {
         }
     }
 
+    /**
+     * @return Returns the getDatasourceFromJndi.
+     */
+    public static boolean isGetDatasourceFromJndi() {
+        return getDatasourceFromJndi;
+    }
+    /**
+     * @param getDatasourceFromJndi The getDatasourceFromJndi to set.
+     */
+    public static void setGetDatasourceFromJndi(boolean getDatasourceFromJndi) {
+        RDBMServices.getDatasourceFromJndi = getDatasourceFromJndi;
+    }
 }

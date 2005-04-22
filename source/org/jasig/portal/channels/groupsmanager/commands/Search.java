@@ -95,6 +95,7 @@ public class Search extends GroupsManagerCommand {
       IEntityGroup sr = new SearchResultsGroupImpl(type);
       sr.setName("Search Results");
       sr.setDescription("Search for a " + label + " whose name" + methods[methodInt] + "'" + query + "'");
+      sr.setCreatorID("CGroupsManager");
       for (int sub = 0; sub < results.length; sub++) {
          EntityIdentifier entID = results[sub];
          IGroupMember resultGroup = GroupService.getGroupMember(entID);
