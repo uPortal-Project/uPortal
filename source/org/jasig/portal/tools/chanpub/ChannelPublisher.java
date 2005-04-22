@@ -81,7 +81,13 @@ public class ChannelPublisher
 
     private static final String chanDefsLocation = "/properties/chanpub";
 
-    public static void main(String[] args) {
+    /**
+     * @param args
+     * @throws Exception We let Exceptions bubble up so that ant will know 
+     * that the publishing failed and can report the error message and stack
+     * trace to the user.
+     */
+    public static void main(String[] args) throws Exception{
 
         /*
         
@@ -95,79 +101,59 @@ public class ChannelPublisher
         3) publish one channel at a time
         
         */
+        
+        // determine whether user wants to publish one or all of the channels in current directory
+        int mode = LOAD_ALL_FILES;
 
-        try {
+        if (args[1] != null && args[1].length() > 0) {
+            // MODE = 0 for all channels in directory
+            // MODE = 1 for individual channel
+            if (args[1].equals("all"))
+                mode = LOAD_ALL_FILES;
+            else
+                mode = LOAD_ONE_FILE;
 
-            // determine whether user wants to publish one or all of the channels in current directory
-            int mode = LOAD_ALL_FILES;
+        }
 
-            if (args[1] != null && args[1].length() > 0) {
-                // MODE = 0 for all channels in directory
-                // MODE = 1 for individual channel
-                if (args[1].equals("all"))
-                    mode = LOAD_ALL_FILES;
-                else
-                    mode = LOAD_ONE_FILE;
+        ChannelPublisher publisher = getCommandLineInstance();
 
-            }
+        // determine what mode we are in
+        if (mode == LOAD_ONE_FILE) {
+            System.out.println(
+                "You have chosen to publish one channel.....");
+            System.out.print("Publishing channel " + args[1] + ".....");
+            // lets publish one channel only
+            publisher.publishChannel(args[1]);
+            System.out.println("Done");
+        } else {
+            // lets publish all channels in directory
+            System.out.println ("You have chosen to publish all channels.....");
 
-            ChannelPublisher publisher = getCommandLineInstance();
-
-            // determine what mode we are in
-            if (mode == LOAD_ONE_FILE) {
-                System.out.println(
-                    "You have chosen to publish one channel.....");
-                System.out.print("Publishing channel " + args[1] + ".....");
-                // lets publish one channel only
-                publisher.publishChannel(args[1]);
-                System.out.println("Done");
-            } else {
-                // lets publish all channels in directory
-                System.out.println ("You have chosen to publish all channels.....");
-
-                // user has selected to publish all channel in the /channels directory
-                // lets publish all channel one by one that is
-                // create InputStream object to pass to next method
-                File f =
-                    ResourceLoader.getResourceAsFile(
-                        ChannelPublisher.class,
-                        chanDefsLocation + "/");
-                if (f.isDirectory()) {
-                        
-                    // Consider only files that end in .xml
-                    class ChannelDefFileFilter implements FileFilter {
-                        public boolean accept(File file) {
-                            return file.getName().endsWith(".xml");
-                        }
+            // user has selected to publish all channel in the /channels directory
+            // lets publish all channel one by one that is
+            // create InputStream object to pass to next method
+            File f =
+                ResourceLoader.getResourceAsFile(
+                    ChannelPublisher.class,
+                    chanDefsLocation + "/");
+            if (f.isDirectory()) {
+                
+                // Consider only files that end in .xml
+                class ChannelDefFileFilter implements FileFilter {
+                    public boolean accept(File file) {
+                        return file.getName().endsWith(".xml");
                     }
-                    File[] files = f.listFiles(new ChannelDefFileFilter());
-
-                    for (int j = 0; j < files.length; j++) {
-                        try {
-                            System.out.print("Publishing channel " + files[j].getName() + ".....");
-                            // lets publish one at a time
-                            publisher.publishChannel(files[j].getName());
-                            System.out.println("Done!");
-                        } catch (Exception e) {
-                            System.out.println("FAILED!");
-                            log.error("Exception occurred while publishing " + files[j].getName() + " channel. ", e);
-                        }
-                    }
+                }
+                File[] files = f.listFiles(new ChannelDefFileFilter());
+                
+                for (int j = 0; j < files.length; j++) {
+                    System.out.print("Publishing channel " + files[j].getName() + ".....");
+                    // lets publish one at a time
+                    publisher.publishChannel(files[j].getName());
+                    System.out.println("Done!");
                 }
             }
         }
-        catch (Exception e)
-        {
-            // Need to revisit this and handle the error!
-            System.out.println(
-                "Exception occurred in main method. "
-                    + e
-                    + ". Please see portal.log for details");
-            log.error("main() :: Exception occurred in main method.", e);
-            e.printStackTrace();
-        }
-
-        // Done!
         System.out.println("Publishing finished.");
         System.exit(0);
     }
