@@ -156,7 +156,7 @@ public class ChannelPublisher
                             // file has the problem.
                             throw new Exception("Unable to publish file: "+name,e);
                         }
-                        System.out.print("Published channel " + name);
+                        System.out.println("Published channel " + name);
                     }
                 }
             }
