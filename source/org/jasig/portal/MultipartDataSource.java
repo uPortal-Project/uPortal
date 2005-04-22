@@ -39,7 +39,11 @@
  *
  * We have to buffer the data stream since the MimePart class will try to
  * read the stream several times (??) and we can't rewind the HttpRequest stream.
- *
+ * <p>
+ * <b>Note</b>: The clients of this class must explictly call <code>dispose()</code> 
+ * method to release temp files associated with this object.
+ * </p>
+ * 
  * @author George Lindholm, ITServices, UBC
  * @version $Revision$
 */
@@ -107,12 +111,25 @@ public class MultipartDataSource implements DataSource {
     return this.isAvailable;
   }
 
-  public void finalize() {
-    buff = null;
-    if(tempfile!=null){
-        tempfile.delete();
-        tempfile = null;
-    }
+  protected void finalize() throws Throwable {
+      try {
+          dispose();
+      } finally {
+          super.finalize();
+      }
+  }
+
+  /**
+   * Releases tempfile associated with this object any memory they consume
+   * will be returned to the OS.
+   *  
+   */
+  public void dispose() {
+      buff = null;
+      if (tempfile != null) {
+          tempfile.delete();
+          tempfile = null;
+      }
   }
 
   public InputStream getInputStream() throws IOException {
