@@ -66,6 +66,7 @@ throws CachingException
     setCache(new LRUCache(maxSize, maxUnusedTime));
     String threadName = "uPortal ReferenceEntityCache sweeper thread #" + ++threadID;
     cleanupThread = new Thread(new CacheSweeper(), threadName);
+    cleanupThread.setDaemon(true);
     cleanupThread.start();
 }
 
