@@ -13,7 +13,6 @@ import java.sql.Driver;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +29,6 @@ import org.jasig.portal.rdbm.DatabaseMetaDataImpl;
 import org.jasig.portal.rdbm.IDatabaseMetadata;
 import org.jasig.portal.rdbm.pool.IPooledDataSourceFactory;
 import org.jasig.portal.rdbm.pool.PooledDataSourceFactoryFactory;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataAccessResourceFailureException;
 
 
@@ -490,23 +488,6 @@ public class RDBMServices {
     }
 
     /**
-     * Utility method if there is no default 
-     * instance.
-     *
-     * @param date The date in milliseconds to convert into a SQL TimeStamp.
-     * @return A SQL TimeStamp representing the date.
-     */
-    private static final String localSqlTimeStamp(final long date) {
-        final StringBuffer sqlTS = new StringBuffer();
-
-        sqlTS.append("'");
-        sqlTS.append(new Timestamp(date).toString());
-        sqlTS.append("'");
-
-        return sqlTS.toString();
-    }
-
-    /**
      * Make a string SQL safe
      * @param sql
      * @return SQL safe string
@@ -655,7 +636,6 @@ public class RDBMServices {
      * @deprecated Instead of this class a wrapper around the DataSource, Connection and Prepared statement should be done in {@link DatabaseMetaDataImpl}
      */
     public static final class PreparedStatement {
-        private Connection con;
         private String query;
         private String activeQuery;
         private java.sql.PreparedStatement pstmt;
@@ -664,7 +644,6 @@ public class RDBMServices {
 
 
         public PreparedStatement(Connection con, String query) throws SQLException {
-            this.con = con;
             this.query = query;
             activeQuery = this.query;
             if (dbMetaData.supportsPreparedStatements()) {
