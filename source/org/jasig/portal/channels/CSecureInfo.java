@@ -5,8 +5,6 @@
 
 package org.jasig.portal.channels;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.ChannelCacheKey;
 import org.jasig.portal.ICacheable;
 import org.jasig.portal.IChannel;

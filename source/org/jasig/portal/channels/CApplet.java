@@ -15,8 +15,6 @@ import org.jasig.portal.GeneralRenderingException;
 import org.jasig.portal.IMultithreadedCacheable;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.i18n.LocaleManager;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Document;

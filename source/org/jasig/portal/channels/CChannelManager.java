@@ -26,8 +26,6 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.EntityNameFinderService;
 import org.jasig.portal.services.GroupService;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Document;
