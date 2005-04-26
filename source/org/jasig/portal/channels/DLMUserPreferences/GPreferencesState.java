@@ -6,10 +6,9 @@
 
 package  org.jasig.portal.channels.DLMUserPreferences;
 
-import  java.io.StringWriter;
-import  java.util.Enumeration;
-import  java.util.Hashtable;
-import java.util.Locale;
+import java.io.StringWriter;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.ResourceBundle;
 
 import org.apache.commons.logging.Log;
