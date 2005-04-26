@@ -179,7 +179,6 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
     // Otherwise, do an update.
     ChannelType chanTypeInStore = getChannelType(chanType.getId());
     if (chanTypeInStore == null) {
-      try {
         int chanTypeId = chanType.getId();
         String javaClass = chanType.getJavaClass();
         String name = chanType.getName();
@@ -190,27 +189,35 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
 
         // Set autocommit false for the connection
         RDBMServices.setAutoCommit(con, false);
-        Statement stmt = con.createStatement();
         try {
           // Insert channel type.
           String insert = "INSERT INTO UP_CHAN_TYPE VALUES (" +
-           "'" + chanTypeId + "', " +
-           "'" + javaClass + "', " +
-           "'" + name + "', " +
-           "'" + descr + "', " +
-           "'" + cpdUri + "')";
-          log.debug("RDBMChannelRegistryStore.saveChannelType(): " + insert);
-          int rows = stmt.executeUpdate(insert);
+           "?, ?, ?, ?, ?)";
+          PreparedStatement pstmt = con.prepareStatement(insert);
+          try {
+              pstmt.setInt(1, chanTypeId);
+              pstmt.setString(2, javaClass);
+              pstmt.setString(3, name);
+              pstmt.setString(4, descr);
+              pstmt.setString(5, cpdUri);
 
-          // Commit the transaction
-          RDBMServices.commit(con);
-        } catch (SQLException sqle) {
-          // Roll back the transaction
-          RDBMServices.rollback(con);
-          throw sqle;
-        } finally {
-            stmt.close();
-        }
+              if (log.isDebugEnabled())
+                  log.debug("Save Channel Type SQL('" + chanTypeId + "', " + 
+                      "'" + javaClass + "', " + 
+                      "'" + name + "', " + 
+                      "'" + descr + "', " + 
+                      "'" + cpdUri + "'): " + insert );
+              pstmt.executeUpdate();
+
+              // Commit the transaction
+              RDBMServices.commit(con);
+          } catch (SQLException sqle) {
+              // Roll back the transaction
+              RDBMServices.rollback(con);
+              throw sqle;
+          } finally {
+            pstmt.close();
+          }
       } finally {
         RDBMServices.releaseConnection(con);
       }
