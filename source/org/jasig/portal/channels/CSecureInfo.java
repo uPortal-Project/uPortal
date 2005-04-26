@@ -152,8 +152,4 @@ public class CSecureInfo extends BaseChannel implements IPrivilegedChannel, ICac
     public boolean isCacheValid(Object validity) {
         return true;
     }
-
-    private String toString(boolean b) {
-        if(b) return("true"); else return ("false");
-    }
 }
