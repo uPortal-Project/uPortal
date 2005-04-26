@@ -36,6 +36,8 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
     private boolean renderingAsRoot=false;
     private boolean targeted = false;
     private static final String TRADITIONAL_MEDIA_BASE = "media/";
+    public static final String CAR_BASE = "/CAR_BASE";
+    public static final String WEB_APP_BASE = null;
 
     /**
      * Default empty constructor
@@ -306,6 +308,10 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
     public String getBaseMediaURL( Class aChannelClass )
     throws PortalException
     {
+        if (aChannelClass == null)
+            return TRADITIONAL_MEDIA_BASE;
+        if (aChannelClass == CarResources.class)
+            return createBaseCarMediaURL();
         if ( aChannelClass.getClassLoader() ==
              CarResources.getInstance().getClassLoader() )
             return createBaseCarMediaURL();
@@ -325,6 +331,10 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
     public String getBaseMediaURL( String resourcePath )
     throws PortalException
     {
+        if ( resourcePath == null || resourcePath.equals(WEB_APP_BASE))
+            return TRADITIONAL_MEDIA_BASE;
+        if ( resourcePath.equals(CAR_BASE))
+            return createBaseCarMediaURL();
         if ( CarResources.getInstance().containsResource( resourcePath ) )
             return createBaseCarMediaURL();
         return TRADITIONAL_MEDIA_BASE;
