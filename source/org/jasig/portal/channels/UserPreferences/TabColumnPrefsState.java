@@ -605,11 +605,6 @@ public class TabColumnPrefsState extends BaseState
   }
 
 
-  private void saveLayout (boolean channelsAdded) throws PortalException
-  {
-      ulm.saveUserLayout();
-  }
-
   private void saveUserPreferences () throws PortalException
   {
     userPrefs.getStructureStylesheetUserPreferences().putParameterValue("userLayoutRoot", staticData.getChannelSubscribeId());

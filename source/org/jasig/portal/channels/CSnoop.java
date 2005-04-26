@@ -35,7 +35,6 @@ import org.xml.sax.ContentHandler;
  */
 public class CSnoop implements IPrivilegedChannel {
   private PortalControlStructures pcs;
-  private ChannelStaticData staticData;
   private ChannelRuntimeData runtimeData;
 
   private static final String sslLocation = "CSnoop/CSnoop.ssl";
@@ -45,7 +44,6 @@ public class CSnoop implements IPrivilegedChannel {
    * No-argument constructor for CSnoop.
    */
   public CSnoop () {
-    this.staticData = new ChannelStaticData ();
     this.runtimeData = new ChannelRuntimeData ();
   }
 
@@ -80,7 +78,6 @@ public class CSnoop implements IPrivilegedChannel {
    * @param sd static channel data
    */
   public void setStaticData (ChannelStaticData sd) {
-    this.staticData = sd;
   }
 
   /**

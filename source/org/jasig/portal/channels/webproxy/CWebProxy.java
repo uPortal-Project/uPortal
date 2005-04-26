@@ -173,7 +173,6 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
   // All state variables stored here
   private class ChannelState
   {
-    private int id;
     private IPerson iperson;
     private String person;
     private String personAllow;
@@ -205,7 +204,6 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
     {
       fullxmlUri = buttonxmlUri = xmlUri = key = passThrough = sslUri = null;
       xslTitle = xslUri = infoUri = helpUri = editUri = tidy = null;
-      id = 0;
       cacheMode = null;
       iperson = null;
       refresh = -1;
@@ -234,7 +232,6 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
   {
     ChannelState state = new ChannelState();
 
-    state.id = sd.getPerson().getID();
     state.iperson = sd.getPerson();
     state.person = sd.getParameter("cw_person");
     String personAllow = sd.getParameter ("cw_personAllow");

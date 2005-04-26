@@ -5,8 +5,6 @@
 
 package  org.jasig.portal.channels.UserPreferences;
 
-import java.io.File;
-
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ChannelRuntimeProperties;
 import org.jasig.portal.ChannelStaticData;
@@ -39,19 +37,16 @@ public class CUserPreferences implements IPrivilegedChannel {
   ChannelRuntimeData runtimeData = null;
   ChannelStaticData staticData = null;
   StylesheetSet set = null;
-  private static final String fs = File.separator;
   private static final String sslLocation = "/org/jasig/portal/channels/CUserPreferences/CUserPreferences.ssl";
   private UserPreferences up = null;
-  private int mode;
   public static final int MANAGE_PREFERENCES = 1;
   public static final int MANAGE_PROFILES = 2;
   IPrivilegedChannel internalState = null;
   IPrivilegedChannel managePreferences = null;
   IPrivilegedChannel manageProfiles = null;
   protected IUserLayoutStore ulsdb;
-  private PortalControlStructures pcs;
-    private boolean initialized=false;
-    UserProfile editedProfile=null;
+  private boolean initialized=false;
+  UserProfile editedProfile=null;
 
   public CUserPreferences() throws PortalException {
     this.runtimeData = new ChannelRuntimeData();
@@ -91,7 +86,6 @@ public class CUserPreferences implements IPrivilegedChannel {
     if (up == null)
       up = upm.getUserPreferencesCopy();
     // instantiate the browse state here
-    this.pcs = pcs;
 
     if (!initialized) {
         instantiateManagePreferencesState(up.getProfile());
@@ -220,15 +214,6 @@ public class CUserPreferences implements IPrivilegedChannel {
    */
   public void renderXML(ContentHandler out) throws PortalException {
     internalState.renderXML(out);
-  }
-
-  private void prepareSaveChanges() throws PortalException {
-    // write code to persist the userLayoutXML to the session
-    // and the database (remember, as the user interacts with this
-    // channel, changes are only made to a copy of the userLayoutXML
-    // until this method is called)
-    upm.setNewUserLayoutAndUserPreferences(null, up);
-    
   }
 
   protected UserPreferences getUserPreferencesFromStore(UserProfile profile) throws Exception {

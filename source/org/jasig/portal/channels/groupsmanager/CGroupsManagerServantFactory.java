@@ -6,7 +6,6 @@
 package org.jasig.portal.channels.groupsmanager;
 import java.util.Calendar;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Iterator;
 
 import org.jasig.portal.ChannelStaticData;
@@ -40,7 +39,6 @@ import org.w3c.dom.Element;
 public class CGroupsManagerServantFactory implements GroupsManagerConstants{
     private static CGroupsManagerServantFactory _instance;
     private static int UID = 0;
-    private HashMap servantClasses = new HashMap();
     private static CGroupsManager _groupsManager = new CGroupsManager();
 
     /** Creates new CGroupsManagerServantFactory */

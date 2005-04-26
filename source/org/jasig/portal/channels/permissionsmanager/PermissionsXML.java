@@ -26,7 +26,6 @@ import org.w3c.dom.NodeList;
  */
 public class PermissionsXML {
     private static final Log log = LogFactory.getLog(PermissionsXML.class);
-    private static final String findPermissibles = "SELECT IPERMISSIBLE_CLASS FROM UPC_PERM_MGR";
 
     /** Creates new PermissionsXML */
     protected PermissionsXML () {
