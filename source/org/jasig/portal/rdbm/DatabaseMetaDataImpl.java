@@ -20,7 +20,6 @@ import javax.sql.DataSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.RDBMServices;
-import org.springframework.dao.DataAccessResourceFailureException;
 
 
 /**

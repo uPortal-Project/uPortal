@@ -1,16 +1,8 @@
 
 package org.jasig.portal.layout.dlm.providers;
 
-import java.io.StringWriter;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
 import org.jasig.portal.layout.dlm.Evaluator;
 import org.jasig.portal.layout.dlm.EvaluatorFactory;
-import org.jasig.portal.security.IPerson;
 import org.jasig.portal.utils.XML;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;

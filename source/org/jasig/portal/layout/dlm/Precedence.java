@@ -2,7 +2,6 @@
 package org.jasig.portal.layout.dlm;
 
 import org.jasig.portal.UserLayoutStoreFactory;
-import org.jasig.portal.services.LogService;
 
 public final class Precedence
 {

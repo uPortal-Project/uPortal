@@ -24,7 +24,6 @@ import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
 import org.jasig.portal.ldap.ILdapServer;
-import org.jasig.portal.services.persondir.IPersonAttributeDao;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 
