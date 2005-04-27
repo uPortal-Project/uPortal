@@ -32,6 +32,7 @@ import org.jasig.portal.rdbm.DatabaseMetaDataImpl;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.EntityCachingService;
 import org.jasig.portal.services.GroupService;
+import org.jasig.portal.tools.versioning.VersionsManager;
 import org.jasig.portal.utils.CounterStoreFactory;
 
 /**
@@ -178,22 +179,18 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
     // Check if channel type exists.  If it doesn't exist, do an insert.
     // Otherwise, do an update.
     ChannelType chanTypeInStore = getChannelType(chanType.getId());
+    int chanTypeId = chanType.getId();
+    String javaClass = chanType.getJavaClass();
+    String name = chanType.getName();
+    String descr = chanType.getDescription();
+    String cpdUri = chanType.getCpdUri();
+    con = RDBMServices.getConnection();
+
     if (chanTypeInStore == null) {
-        int chanTypeId = chanType.getId();
-        String javaClass = chanType.getJavaClass();
-        String name = chanType.getName();
-        String descr = chanType.getDescription();
-        String cpdUri = chanType.getCpdUri();
-
-        con = RDBMServices.getConnection();
-
-        // Set autocommit false for the connection
-        RDBMServices.setAutoCommit(con, false);
         try {
-          // Insert channel type.
-          String insert = "INSERT INTO UP_CHAN_TYPE VALUES (" +
-           "?, ?, ?, ?, ?)";
-          PreparedStatement pstmt = con.prepareStatement(insert);
+            String insert = "INSERT INTO UP_CHAN_TYPE VALUES (" +
+            "?, ?, ?, ?, ?)";
+            PreparedStatement pstmt = con.prepareStatement(insert);
           try {
               pstmt.setInt(1, chanTypeId);
               pstmt.setString(2, javaClass);
@@ -203,14 +200,9 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
 
               if (log.isDebugEnabled())
                   log.debug("Save Channel Type SQL('" + chanTypeId + "', " + 
-                      "'" + javaClass + "', " + 
-                      "'" + name + "', " + 
-                      "'" + descr + "', " + 
-                      "'" + cpdUri + "'): " + insert );
+                      "'" + javaClass + "', " + "'" + name + "', " + 
+                      "'" + descr + "', " + "'" + cpdUri + "'): " + insert );
               pstmt.executeUpdate();
-
-              // Commit the transaction
-              RDBMServices.commit(con);
           } catch (SQLException sqle) {
               // Roll back the transaction
               RDBMServices.rollback(con);
@@ -224,37 +216,27 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
     } else {
       // The channel type exists, so do an update
       try {
-        int chanTypeId = chanType.getId();
-        String javaClass = chanType.getJavaClass();
-        String name = chanType.getName();
-        String descr = chanType.getDescription();
-        String cpdUri = chanType.getCpdUri();
-
-        con = RDBMServices.getConnection();
-
-        // Set autocommit false for the connection
-        RDBMServices.setAutoCommit(con, false);
-        Statement stmt = con.createStatement();
+        String update = "UPDATE UP_CHAN_TYPE SET TYPE=?, TYPE_NAME=?, " +
+                "TYPE_DESCR=?, TYPE_DEF_URI=? WHERE TYPE_ID=?";
+        PreparedStatement pstmt = con.prepareStatement(update);
         try {
-          // Update channel type.
-          String update = "UPDATE UP_CHAN_TYPE SET " +
-           "TYPE='" + javaClass + "', " +
-           "TYPE_NAME='" + name + "', " +
-           "TYPE_DESCR='" + descr + "', " +
-           "TYPE_DEF_URI='" + cpdUri + "' " +
-           "WHERE TYPE_ID=" + chanTypeId;
-          if (log.isDebugEnabled())
-              log.debug("RDBMChannelRegistryStore.saveChannelType(): " + update);
-          int rows = stmt.executeUpdate(update);
-
-          // Commit the transaction
-          RDBMServices.commit(con);
+            pstmt.setString(1, javaClass);
+            pstmt.setString(2, name);
+            pstmt.setString(3, descr);
+            pstmt.setString(4, cpdUri);
+            pstmt.setInt(5, chanTypeId);
+            if (log.isDebugEnabled())
+                log.debug("Save Channel Type SQL('" + javaClass + "', " + 
+                    "'" + name + "', " + "'" + descr + "', " + 
+                    "'" + cpdUri + "'" + chanTypeId + "', " + 
+                    "'): " + update );
+            pstmt.executeUpdate();
         } catch (SQLException sqle) {
           // Roll back the transaction
           RDBMServices.rollback(con);
           throw sqle;
         } finally {
-            stmt.close();
+            pstmt.close();
         }
       } finally {
         RDBMServices.releaseConnection(con);
@@ -735,6 +717,10 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
       Statement stmt = con.createStatement();
       try {
         int channelPublishId = channelDef.getId();
+
+        // Remove versioning information for channel if found.
+        VersionsManager mgr = VersionsManager.getInstance();
+        mgr.removeVersion(channelDef.getFName());
 
         // Delete from UP_CHANNEL
         String delete = "DELETE FROM UP_CHANNEL WHERE CHAN_ID=" + channelPublishId;
