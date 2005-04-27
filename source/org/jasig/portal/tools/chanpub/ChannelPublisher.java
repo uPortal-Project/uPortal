@@ -44,6 +44,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 /**
  * This is a Channel Publisher tool to install uPortal channels from outside of
@@ -60,7 +63,7 @@ import org.w3c.dom.NodeList;
  * @author Mark Boyd, mboyd@sct.com
  * @version $Revision$
  */
-public class ChannelPublisher
+public class ChannelPublisher implements ErrorHandler
 {
     private static final Log log = LogFactory.getLog(ChannelPublisher.class);
 
@@ -224,6 +227,11 @@ public class ChannelPublisher
             return null;
 
         try {
+            if (ci.chanDef.getTypeId() != -1)
+            {
+                ChannelType type = crs.getChannelType(ci.chanDef.getTypeId());
+                ci.chanDef.setJavaClass(type.getJavaClass());
+            }
             crs.saveChannelDefinition(ci.chanDef);
 
             // Permission for everyone to subscribe to channel
@@ -294,6 +302,7 @@ public class ChannelPublisher
             dbf.setValidating(true);
             domParser = dbf.newDocumentBuilder();
             domParser.setEntityResolver(new ChannelDefDtdResolver());
+            domParser.setErrorHandler(this);
         } catch (Exception e) {
             log.error( "setupDomParser() :: creating Dom Parser. ", e);
             throw e;
@@ -738,5 +747,39 @@ public class ChannelPublisher
     public static ChannelPublisher getChannelArchiveInstance() throws Exception
     {
         return new ChannelPublisher(false);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.xml.sax.ErrorHandler#warning(org.xml.sax.SAXParseException)
+     */
+    public void warning(SAXParseException arg0) throws SAXException
+    {
+        if (log.isInfoEnabled())
+            log.info("Warning occurred while parsing channel definition.",
+                            arg0);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.xml.sax.ErrorHandler#error(org.xml.sax.SAXParseException)
+     */
+    public void error(SAXParseException arg0) throws SAXException
+    {
+        throw new SAXException(
+                "Error occurred while parsing channel definition.", arg0);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.xml.sax.ErrorHandler#fatalError(org.xml.sax.SAXParseException)
+     */
+    public void fatalError(SAXParseException arg0) throws SAXException
+    {
+        throw new SAXException(
+                "Fatal Error occurred while parsing channel definition.", arg0);
     }
 }
