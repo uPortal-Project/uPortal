@@ -39,6 +39,8 @@ public class DefaultChanPubInnerHandler
     public DefaultChanPubInnerHandler( ParsingContext ctx )
     {
         this.ctx = ctx;
+        buffer.append("<!DOCTYPE channel-definition " +
+                "SYSTEM \"channelDefinition.dtd\">");
     }
         
     public void startElement(String namespaceURI,
@@ -73,6 +75,8 @@ public class DefaultChanPubInnerHandler
         buffer.append("</");
         buffer.append(qName);
         buffer.append('>');
+        // clean out the buffer at end also to properly handle nested elements
+        charBuf = new StringBuffer();
 
         // now see if this is the last piece of info for this chan-def
         if (qName.equals(DescriptorHandler.CHANDEF_TAG_NAME)
