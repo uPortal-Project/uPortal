@@ -425,7 +425,7 @@ public class RDBMDistributedLayoutStore
                     }
                 }
             };
-
+        t2.setDaemon(true);
         t2.start();
     }
     
