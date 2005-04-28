@@ -81,14 +81,6 @@ public class MultipartDataSource implements DataSource {
     return this.isAvailable;
   }
 
-  protected void finalize() throws Throwable {
-        try {
-            dispose();
-        } finally {
-            super.finalize();
-        }
-    }
-
     /**
      * Releases tempfile associated with this object any memory they consume
      * will be returned to the OS.
