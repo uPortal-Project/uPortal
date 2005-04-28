@@ -82,7 +82,6 @@ public class RDBMDistributedLayoutStore
     private LayoutDecorator decorator = null;
     private IUserIdentityStore identityStore = null;
     private FragmentActivator activator = null;
-    //Priority DEBUG = LogService.DEBUG;
     private Object initializationLock = new Object();
     private boolean initialized = false;
     static final String TEMPLATE_USER_NAME
@@ -1048,7 +1047,6 @@ public class RDBMDistributedLayoutStore
                             else
                                 folderStructId = getStructId(structId,chanId);
                             ssup.setFolderAttributeValue(folderStructId, rs.getString(1), rs.getString(2));
-                            //LogService.log(LogService.DEBUG,"RDBMUserLayoutStore::getStructureStylesheetUserPreferences() :  read folder attribute "+rs.getString("PARAM_NAME")+"("+rs.getString("STRUCT_ID")+")=\""+rs.getString("PARAM_VAL")+"\"");      
                         }       
                         else if (param_type == 3) {
                             // channel attribute
@@ -1059,7 +1057,6 @@ public class RDBMDistributedLayoutStore
                             else
                                 channelStructId = getStructId(structId,chanId);
                             ssup.setChannelAttributeValue(channelStructId, rs.getString(1), rs.getString(2));
-                            //LogService.log(LogService.DEBUG,"RDBMUserLayoutStore::getStructureStylesheetUserPreferences() :  read channel attribute "+rs.getString("PARAM_NAME")+"("+rs.getString("STRUCT_ID")+")=\""+rs.getString("PARAM_VAL")+"\"");
                         }
                         else {
                             // unknown param type

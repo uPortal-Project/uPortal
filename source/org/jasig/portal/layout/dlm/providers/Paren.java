@@ -1,14 +1,16 @@
 
 package org.jasig.portal.layout.dlm.providers;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.layout.dlm.Evaluator;
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.services.LogService;
 
 public class Paren
     implements Evaluator
 {
     public static final String RCS_ID = "@(#) $Header$";
+    private static Log LOG = LogFactory.getLog(Paren.class);
 
     public static final ParenType OR  = new ParenType( "OR" );
     public static final ParenType AND = new ParenType( "AND" );
@@ -37,10 +39,9 @@ public class Paren
     public boolean isApplicable( IPerson toPerson )
     {
         boolean isApplicable = false;
-        LogService.log( LogService.DEBUG,
-                                   " >>>> calling paren[" + this + ", op="
-                                   + type
-                                   + "].isApplicable()");
+        if (LOG.isDebugEnabled())
+            LOG.debug(" >>>> calling paren[" + this + ", op=" + type + 
+                    "].isApplicable()");
         if ( type == OR )
         {
             for( int i=0; i<evaluators.length; i++ )
@@ -72,10 +73,9 @@ public class Paren
                 }
             isApplicable = ! isApplicable;
         }
-        LogService.log( LogService.DEBUG,
-                                   " ---- paren[" + this + ", op="
-                                   + type
-                                   + "].isApplicable()=" + isApplicable );
+        if (LOG.isDebugEnabled())
+            LOG.debug(" ---- paren[" + this + ", op=" + type
+                    + "].isApplicable()=" + isApplicable);
         return isApplicable;
     }
 }

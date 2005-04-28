@@ -1,9 +1,10 @@
 
 package org.jasig.portal.layout.dlm;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.services.LogService;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -13,6 +14,7 @@ import org.w3c.dom.Element;
 public class TabColumnPrefsHandler
 {
     public static final String RCS_ID = "@(#) $Header$";
+    private static Log LOG = LogFactory.getLog(TabColumnPrefsHandler.class);
 
     /**
        This method is called from the TabColumnPrefsState class after a node
@@ -33,14 +35,15 @@ public class TabColumnPrefsHandler
                                     IPerson person )
         throws PortalException
     {
-        LogService ls = LogService.instance();
-        ls.log( ls.INFO, "moving "
+        if (LOG.isInfoEnabled())
+            LOG.info("moving "
                 + compViewNode.getAttribute( Constants.ATT_ID ) );
         Element compViewParent = (Element) compViewNode.getParentNode();
 
         if ( oldCompViewParent != compViewParent )
         {
-                ls.log( ls.INFO, "reparenting from " +
+            if (LOG.isInfoEnabled())
+                LOG.info("reparenting from " +
                         oldCompViewParent.getAttribute( Constants.ATT_ID )
                         + " to " +
                         compViewParent.getAttribute( Constants.ATT_ID ));
@@ -54,7 +57,8 @@ public class TabColumnPrefsHandler
             {
                 PositionManager.updatePositionSet( oldCompViewParent,
                                                    plfParent, person );
-                ls.log( ls.INFO, "updating old parent's position set" );
+                if (LOG.isInfoEnabled())
+                    LOG.info("updating old parent's position set" );
             }
         }
         // now take care of the destination
@@ -65,14 +69,16 @@ public class TabColumnPrefsHandler
         if ( compViewNode.getAttribute( Constants.ATT_ID ).startsWith( "u" ) )
         {
             // ilf node being inserted
-            ls.log( ls.INFO, "ilf node being moved, only update new parent pos set" );
+            if (LOG.isInfoEnabled())
+                LOG.info("ilf node being moved, only update new parent pos set" );
             PositionManager.updatePositionSet( compViewParent,
                                                plfParent, person );
         }
         else
         {
             // plf node
-            ls.log( ls.INFO, "plf node being moved, updating old parent's position set" );
+            if (LOG.isInfoEnabled())
+                LOG.info("plf node being moved, updating old parent's position set" );
             Document plf = (Document) person.getAttribute( Constants.PLF );
             HandlerUtils
             .createOrMovePLFOwnedNode( compViewNode, compViewParent,
@@ -122,13 +128,14 @@ public class TabColumnPrefsHandler
     public static Element getPlfChannel( Element compViewChannel, IPerson person )
         throws PortalException
     {
-        LogService ls = LogService.instance();
-        ls.log( ls.INFO, "TabColumnPrefsHandler>>getPlfChannel():" );
+        if (LOG.isInfoEnabled())
+            LOG.info("TabColumnPrefsHandler>>getPlfChannel():" );
         Element plf = HandlerUtils
             .getPLFNode( compViewChannel, person,
                          true, // create node if not found
                          false ); // don't create children
-        ls.log( ls.INFO, "TabColumnPrefsHandler>>getPlfChannel(): retrieved PLFChannel" );
+        if (LOG.isInfoEnabled())
+            LOG.info("TabColumnPrefsHandler>>getPlfChannel(): retrieved PLFChannel" );
         return plf;
     }
 
@@ -246,12 +253,12 @@ public class TabColumnPrefsHandler
             changeRestriction( Constants.ATT_ADD_CHILD_ALLOWED, plfNode,
                                addChildAllowed );
         }
-        LogService.log( LogService.INFO,
-                                   "changing restrictions:\nmoveAllowed=" +
-                                   moveAllowed + "\neditAllowed=" +
-                                   editAllowed + "\naddChildAllowed=" +
-                                   addChildAllowed + "\ndeleteAllowed=" +
-                                   deleteAllowed );
+        if (LOG.isInfoEnabled())
+            LOG.info("changing restrictions:\nmoveAllowed=" +
+                     moveAllowed + "\neditAllowed=" +
+                     editAllowed + "\naddChildAllowed=" +
+                     addChildAllowed + "\ndeleteAllowed=" +
+                     deleteAllowed );
     }
 }
 

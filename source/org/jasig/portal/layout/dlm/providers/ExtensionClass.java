@@ -1,7 +1,8 @@
 package org.jasig.portal.layout.dlm.providers;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.layout.dlm.Constants;
-import org.jasig.portal.services.LogService;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -11,6 +12,7 @@ import org.w3c.dom.NodeList;
 public class ExtensionClass
 {
     public static final String RCS_ID = "@(#) $Header$";
+    private static Log LOG = LogFactory.getLog(ExtensionClass.class);
 
     private static ThreadLocal cThreadedCpInfo = null;
 
@@ -35,12 +37,14 @@ public class ExtensionClass
     {
         if (cThreadedCpInfo == null)
         {
-            LogService.log( LogService.DEBUG, "cThreadedCpInfo == null" );
+            if (LOG.isDebugEnabled())
+                LOG.debug("cThreadedCpInfo == null" );
             throw new IllegalStateException("cThreadedCpInfo == null");
         }
         else if (cThreadedCpInfo.get() == null)
         {
-            LogService.log( LogService.DEBUG, "cThreadedCpInfo.get() == null" );
+            if (LOG.isDebugEnabled())
+                LOG.debug("cThreadedCpInfo.get() == null" );
             throw new IllegalStateException("cThreadedCpInfo.get() == null");
         }
         
@@ -57,7 +61,8 @@ public class ExtensionClass
      */
     public static String[] getLDAPAttributes(String LDAPAttributeName)
     {
-        LogService.log( LogService.DEBUG, "In getLDAPAttributes.  Param is: " + LDAPAttributeName );
+        if (LOG.isDebugEnabled())
+            LOG.debug("In getLDAPAttributes.  Param is: " + LDAPAttributeName );
         // return the LDAP Attributes for the given name
         // This will be stored as a child element named cp:cpProperty in the cpInfo Node
         // return null if none present or if the LDAPAttributeName is null
@@ -69,18 +74,21 @@ public class ExtensionClass
         // Sanity check - cpInfo Node should be an Element Node
         if (cpInfo.getNodeType() != Node.ELEMENT_NODE) 
         {
-            LogService.log( LogService.ERROR, "cpInfo Node in ExtensionClass is the wrong type: " + cpInfo.getNodeType() );
+            LOG.error("cpInfo Node in ExtensionClass is the wrong type: " + 
+                    cpInfo.getNodeType() );
             return new String[0];
         }
         if (!cpInfo.hasChildNodes()) 
         {
-            LogService.log( LogService.DEBUG, "cpInfo has no child nodes" );
+            if (LOG.isDebugEnabled())
+                LOG.debug("cpInfo has no child nodes" );
             return new String[0];
         }
 
         // Look for a cp:cpProperty child element node with name==LDAPAttributeName
         NodeList TempList = cpInfo.getElementsByTagNameNS(Constants.NS_URI,"cpProperty");
-        LogService.log( LogService.DEBUG, "TempList obtained OK" );
+        if (LOG.isDebugEnabled())
+            LOG.debug("TempList obtained OK" );
         Element TempElement = null;
 
         for (int i = 0; i < TempList.getLength(); i++) 
@@ -89,7 +97,8 @@ public class ExtensionClass
             if (TempElement.getAttribute("name").equals(LDAPAttributeName))
             {
                 // We've found the right node, now get the children
-                LogService.log( LogService.DEBUG, "We have the correct node at: " + i );
+                if (LOG.isDebugEnabled())
+                    LOG.debug("We have the correct node at: " + i );
                 TempList = TempElement.getElementsByTagNameNS(Constants.NS_URI,"cpValue");
                 int TempLength = TempList.getLength();
                 if (TempLength == 0) 
@@ -100,16 +109,20 @@ public class ExtensionClass
                 String[] ReturnValues = new String[TempLength];
                 for (int j = 0; j < TempLength; j++)
                 {
-                    LogService.log( LogService.DEBUG, "About to set ReturnValues[" + j + "] to: " + TempList.item(j).getFirstChild().getNodeValue() );
+                    if (LOG.isDebugEnabled())
+                        LOG.debug("About to set ReturnValues[" + j + "] to: " + 
+                                TempList.item(j).getFirstChild().getNodeValue() );
                     ReturnValues[j] = TempList.item(j).getFirstChild().getNodeValue();
-                    LogService.log( LogService.DEBUG, "Just set ReturnValues[" + j + "]" );
+                    if (LOG.isDebugEnabled())
+                        LOG.debug("Just set ReturnValues[" + j + "]" );
                 }
                 return ReturnValues;
             }
         }
 
         // We didn't find any values for this LDAP property
-        LogService.log( LogService.DEBUG, "We didn't find any values for this LDAP property.  About to return array of length 0." );
+        if (LOG.isDebugEnabled())
+            LOG.debug("We didn't find any values for this LDAP property.  About to return array of length 0." );
         return new String[0];
     }
 
@@ -134,7 +147,8 @@ public class ExtensionClass
         // Sanity check - cpInfo Node should be an Element Node
         if (cpInfo.getNodeType() != Node.ELEMENT_NODE) 
         {
-            LogService.log( LogService.ERROR, "cpInfo Node in ExtensionClass is the wrong type: " + cpInfo.getNodeType() );
+            LOG.error("cpInfo Node in ExtensionClass is the wrong type: " + 
+                    cpInfo.getNodeType() );
             return "";
         }
         return cpInfo.getAttribute(DirectoryPropertyName);

@@ -4,9 +4,9 @@ package org.jasig.portal.layout.dlm.providers;
 import org.jasig.portal.layout.dlm.Evaluator;
 import org.jasig.portal.layout.dlm.EvaluatorFactory;
 import org.jasig.portal.utils.XML;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.NamedNodeMap;
 
 /**
  * Implementation of the Evaluator Factory interface that creates evaluators

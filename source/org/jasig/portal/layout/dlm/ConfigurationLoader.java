@@ -45,7 +45,8 @@ public class ConfigurationLoader
             logConfigFileInfo();
 
             InputStream inputStream = configFileURL.openStream();
-            Document doc = DocumentFactory.getDocumentFromStream(inputStream);
+            Document doc = DocumentFactory.getDocumentFromStream(inputStream,
+                    configFileURL.toExternalForm());
 
             NodeList properties = doc.getElementsByTagName( "dlm:property" );
             NodeList definitions = doc.getElementsByTagName( "dlm:fragment" );

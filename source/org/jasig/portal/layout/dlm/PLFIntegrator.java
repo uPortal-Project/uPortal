@@ -1,7 +1,8 @@
 
 package org.jasig.portal.layout.dlm;
 
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -11,6 +12,7 @@ import org.w3c.dom.NodeList;
 public class PLFIntegrator
 {
     public static final String RCS_ID = "@(#) $Header$";
+    private static Log LOG = LogFactory.getLog(PLFIntegrator.class);
 
     /**
      * @return boolean true if PLF was changed, false otherwise.
@@ -38,7 +40,6 @@ public class PLFIntegrator
     {
         Element positions = null;
         boolean changeOccurred = false;
-        LogService ls = LogService.instance();
 
         if( null == plfParent )
         {
@@ -65,13 +66,15 @@ public class PLFIntegrator
         if ( positions != null )
         {
             IntegrationResult posResult = new IntegrationResult();
-            ls.log( ls.INFO, "applying positions" );
+            if (LOG.isInfoEnabled())
+                LOG.info( "applying positions" );
             PositionManager.applyPositions( ilfParent,
                                             positions,
                                             posResult );
             if( posResult.changedILF == false )
             {
-                ls.log( ls.INFO, "removing positionSet" );
+                if (LOG.isInfoEnabled())
+                    LOG.info("removing positionSet");
                 plfParent.removeChild( positions );
                 result.changedPLF = true;
             }
@@ -90,7 +93,6 @@ public class PLFIntegrator
                                       IntegrationResult result )
         throws Exception
     {
-        LogService ls = LogService.instance();
         String id = plfChild.getAttribute( Constants.ATT_ID );
                 
         if ( id.startsWith( "u" ) )
@@ -100,12 +102,15 @@ public class PLFIntegrator
         }
         else // plf channel
         {
-            ls.log( ls.INFO, "merging into ilf channel " + id );
+            if (LOG.isInfoEnabled())
+                LOG.info("merging into ilf channel " + id);
+
             if ( ilfParent.getAttribute( Constants.ATT_ADD_CHILD_ALLOWED )
                  .equals( "false" ) )
             {
-                ls.log( ls.INFO, "removing from plf disallowed add of channel "
-                        + id );
+                if (LOG.isInfoEnabled())
+                    LOG.info("removing from plf disallowed add of channel "
+                            + id );
                 plfParent.removeChild( plfChild );
                 result.changedPLF = true;
             }
@@ -123,7 +128,6 @@ public class PLFIntegrator
                                      IntegrationResult result )
         throws Exception
     {
-        LogService ls = LogService.instance();
         String id = plfChild.getAttribute( Constants.ATT_ID );
         
         if ( id.startsWith( "u" ) )
@@ -176,7 +180,8 @@ public class PLFIntegrator
                  .equals( "false" ) )
             {
                 // nope, delete directive from plf
-                ls.log( ls.INFO, "removing folder from plf " + id );
+                if (LOG.isInfoEnabled())
+                    LOG.info("removing folder from plf " + id);
                 plfParent.removeChild( plfChild );
                 result.changedPLF = true;
                 return;

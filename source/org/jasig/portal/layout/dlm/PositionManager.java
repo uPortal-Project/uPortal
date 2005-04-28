@@ -7,11 +7,12 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.IUserLayoutStore;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.UserLayoutStoreFactory;
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.services.LogService;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -22,6 +23,7 @@ import org.w3c.dom.Node;
 public class PositionManager
 {
     public static final String RCS_ID = "@(#) $Header$";
+    private static Log LOG = LogFactory.getLog(PositionManager.class);
 
     private static RDBMDistributedLayoutStore dls = null;
     /**
@@ -541,13 +543,14 @@ public class PositionManager
                                           IPerson person )
         throws PortalException
     {
-        LogService ls = LogService.instance();
-        ls.log( ls.DEBUG, "PositionManager>>updatePositionSet(): " );
+        if (LOG.isDebugEnabled())
+            LOG.debug("Updating Position Set");
 
         if ( compViewParent.getChildNodes().getLength() == 0 )
         {
             // no nodes to position. if set exists reclaim the space.
-        ls.log( ls.DEBUG, "PositionManager>>updatePositionSet(): No Nodes to position" );
+            if (LOG.isDebugEnabled())
+                LOG.debug("No Nodes to position");
             Element positions = getPositionSet( plfParent, person, false );
             if ( positions != null )
             plfParent.removeChild( positions );
@@ -647,8 +650,8 @@ public class PositionManager
                                                     IPerson person )
         throws PortalException
     {
-        LogService ls = LogService.instance();
-        ls.log( ls.DEBUG, "PositionManager>>createAndAppendPosition(" + elementID + "): " );
+        if (LOG.isDebugEnabled())
+            LOG.debug("Adding Position Set entry " + elementID + ".");
 
         String ID = null;
 

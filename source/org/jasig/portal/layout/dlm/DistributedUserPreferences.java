@@ -5,7 +5,8 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
-import org.jasig.portal.services.LogService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.StructureStylesheetUserPreferences;
 import org.jasig.portal.ThemeStylesheetUserPreferences;
 
@@ -20,6 +21,7 @@ public class DistributedUserPreferences
     extends StructureStylesheetUserPreferences
 {
     public static final String RCS_ID = "@(#) $Header$";
+    private static Log LOG = LogFactory.getLog(DistributedUserPreferences.class);
 
     protected Hashtable incorporatedChannelAttributeValues;
     protected Hashtable incorporatedFolderAttributeValues;
@@ -74,7 +76,8 @@ public class DistributedUserPreferences
 
         if(attributeNumber==null)
         {
-            LogService.log(LogService.ERROR,"DistributedUserPreferences::getFolderAttributeValue() : Attempting to obtain a non-existing attribute \""+attributeName+"\".");
+            LOG.error("Attempting to obtain a non-existing attribute \""
+                    + attributeName + "\".");
             return null;
         }
         String value=null;
@@ -106,7 +109,8 @@ public class DistributedUserPreferences
                     }
                     catch (IndexOutOfBoundsException e)
                     {
-                        LogService.log(LogService.ERROR,"DistributedUserPreferences::getFolderAttributeValue() : internal error - attribute name is registered, but no default value is provided.");
+                        LOG.error("Internal Error - attribute name is " +
+                                "registered, but no default value is provided.");
                         return null;
                     }
                 }
@@ -134,7 +138,8 @@ public class DistributedUserPreferences
                     catch (IndexOutOfBoundsException e)
                     {
                         // no default specified, should never occur.
-                        LogService.log(LogService.ERROR,"DistributedUserPreferences::getFolderAttributeValue() : internal error - attribute name is registered, but no default value is provided.");
+                        LOG.error("Internal Error - attribute name is " +
+                                "registered, but no default value is provided.");
                         return null;
                     }
                 }
@@ -154,7 +159,8 @@ public class DistributedUserPreferences
                         }
                         catch (IndexOutOfBoundsException e)
                         {
-                            LogService.log(LogService.ERROR,"DistributedUserPreferences::getFolderAttributeValue() : internal error - attribute name is registered, but no default value is provided.");
+                            LOG.error("Internal Error - attribute name is " +
+                            "registered, but no default value is provided.");
                             return null;
                         }
                     }
@@ -173,7 +179,8 @@ public class DistributedUserPreferences
         
         if(attributeNumber==null)
         {
-            LogService.log(LogService.ERROR,"DistributedUserPreferences::setIncorporatedFolderAttribute() : Attempting to set a non-existing folder attribute \""+attributeName+"\".");
+            LOG.error("Attempting to set a non-existing folder attribute \"" +
+                    attributeName + "\".");
             return;
         }
         List l=(List) incorporatedFolderAttributeValues.get(folderSubscribeId);
@@ -198,14 +205,16 @@ public class DistributedUserPreferences
         if(folderAttributeValues.remove(folderID)==null &&
            incorporatedFolderAttributeValues.remove( folderID ) == null )
         {
-            LogService.log(LogService.ERROR,"StructureStylesheetUserPreferences::removeFolder() : Attempting to remove an non-existing folder (folderID=\""+folderID+"\") "); //at \n\n" + sw.toString() + "\n" );
+            LOG.error("Attempting to remove an non-existing folder " +
+                    "(folderID=\"" + folderID + "\") ");
         }
     }
 
     public void removeChannel(String channelSubscribeId) {
         if(channelAttributeValues.remove(channelSubscribeId)==null &&
            incorporatedChannelAttributeValues.remove(channelSubscribeId)==null)
-            LogService.log(LogService.ERROR,"ThemeStylesheetUserPreferences::removeChannel() : Attempting to remove an non-existing channel (channelSubscribeId=\""+channelSubscribeId+"\").");
+            LOG.error("Attempting to remove an non-existing channel " +
+                    "(channelSubscribeId=\""+channelSubscribeId+"\").");
     }
 
 
@@ -271,7 +280,8 @@ public class DistributedUserPreferences
         
         if(attributeNumber==null)
         {
-            LogService.log(LogService.ERROR,"ThemeStylesheetUserPreferences::getChannelAttributeValue() : Attempting to obtain a non-existing attribute \""+attributeName+"\".");
+            LOG.error("Attempting to obtain a non-existing attribute \"" + 
+                    attributeName + "\".");
             return null;
         }
         String value=null;
@@ -303,7 +313,8 @@ public class DistributedUserPreferences
                     }
                     catch (IndexOutOfBoundsException e)
                     {
-                        LogService.log(LogService.ERROR,"ThemeStylesheetUserPreferences::getChannelAttributeValue() : internal error - attribute name is registered, but no default value is provided.");
+                        LOG.error("Internal Error - attribute name is " +
+                                "registered, but no default value is provided.");
                         return null;
                     }
                 }
@@ -331,7 +342,8 @@ public class DistributedUserPreferences
                     catch (IndexOutOfBoundsException e)
                     {
                         // no default specified, should never occur.
-                        LogService.log(LogService.ERROR,"ThemeStylesheetUserPreferences::getChannelAttributeValue() : internal error - attribute name is registered, but no default value is provided.");
+                        LOG.error("Internal Error - attribute name is " +
+                                "registered, but no default value is provided.");
                         return null;
                     }
                 }
@@ -351,7 +363,8 @@ public class DistributedUserPreferences
                         }
                         catch (IndexOutOfBoundsException e)
                         {
-                            LogService.log(LogService.ERROR,"ThemeStylesheetUserPreferences::getChannelAttributeValue() : internal error - attribute name is registered, but no default value is provided.");
+                            LOG.error("Internal Error - attribute name is " +
+                                    "registered, but no default value is provided.");
                             return null;
                         }
                     }
@@ -370,7 +383,8 @@ public class DistributedUserPreferences
         
         if(attributeNumber==null)
         {
-            LogService.log(LogService.ERROR,"ThemeStylesheetUserPreferences::setChannelAttribute() : Attempting to set a non-existing channel attribute \""+attributeName+"\".");
+            LOG.error("Attempting to set a non-existing channel attribute \""+
+                    attributeName+"\".");
             return;
         }
         List l=(List) incorporatedChannelAttributeValues.get(channelSubscribeId);
