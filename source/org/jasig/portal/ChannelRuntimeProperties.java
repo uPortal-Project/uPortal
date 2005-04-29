@@ -7,9 +7,14 @@ package org.jasig.portal;
 
 /**
  * Used to store Runtime channel properties.
+ * 
+ * Warning: ChannelRuntimeProperties are currently useless and have no effect.
+ * 
  * Current version gathers the following information
  * <ul>
- *  <li> willRender  - a boolean flag signaling if the channel will render at all in the current state. This flag will be checked after the ChannelRuntimeData has been passed to a channel, but prior to the renderXML() call.</li>
+ *  <li> willRender  - a boolean flag signaling if the channel will render at all in the current state. 
+ * This flag could be checked after the ChannelRuntimeData has been passed to a channel, but prior to the renderXML() call.
+ *   However, no framework code currently checks the willRender property of ChannelRuntimeData.</li>
  * </ul>
  * @version $Revision$
  * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
@@ -29,7 +34,10 @@ public class ChannelRuntimeProperties
     }
 
     /**
-     * Setter method for willRender property.
+     * Set whether the channel will render if asked to do so (if renderXML() is called).
+     *
+     * Warning: no known code currently accesses this property of ChannelRuntimeProperties
+     * and so currently setting this property will have no effect.
      *
      * @param value a <code>boolean</code> value
      */
