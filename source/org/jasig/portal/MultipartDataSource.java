@@ -122,10 +122,6 @@ public class MultipartDataSource implements DataSource {
     return errorMessage;
   }
 
-  public File getFile() throws Exception {
-    throw new Exception("getFile() not implemented");
-  }
-
   public void setFileTypeMap(javax.activation.FileTypeMap p0) throws Exception {
     throw new Exception("setFileTypeMap() not implemented");
   }
