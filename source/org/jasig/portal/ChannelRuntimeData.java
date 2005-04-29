@@ -496,4 +496,22 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
 	public void setRemoteAddress(String string) {
 		remoteAddress = string;
 	}	
+    
+    
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        sb.append("ChannelRuntimeData: map=[").append(super.toString()).append("]");
+        sb.append(" browserInfo = [").append(this.binfo).append("] ");
+        sb.append(" locales = [").append(this.locales).append("] ");
+        sb.append(" channelUPFile = [").append(this.channelUPFile).append("] ");
+        sb.append(" baseActionURL = [").append(this.baseActionURL).append("] ");
+        sb.append(" httpRequestMethod = [").append(this.httpRequestMethod).append("] ");
+        sb.append(" remoteAddress = [").append(this.remoteAddress).append("] ");
+        sb.append(" keywords = [").append(this.keywords).append("] ");
+        sb.append(" renderingAsRoot = [").append(this.renderingAsRoot).append("] ");
+        sb.append(" targeted = [").append(this.targeted).append("]");
+        
+        return sb.toString();
+    }
+    
 }
