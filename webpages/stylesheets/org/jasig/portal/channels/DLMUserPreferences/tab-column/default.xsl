@@ -1447,45 +1447,8 @@ document.location = loc;
 
 <xsl:template name="optionMenuNewTab">
 <SCRIPT LANGUAGE="JavaScript">
-function checkUrl()
-{
 
-   if ( document.formNewTab.tab_type[1].checked == true )
-   {
-       v = document.formNewTab.tabURL.value.toLowerCase();
-       
-       if ( v.indexOf( "ftp://" ) != -1
-            || v.indexOf( "http://" ) != -1
-            || v.indexOf( "https://" ) != -1
-            || v.indexOf( "gopher://" ) != -1
-            || v.indexOf( "mailto:" ) != -1
-            || v.indexOf( "news://" ) != -1
-            || v.indexOf( "nntp://" ) != -1 )
-       {
-          return true;
-       }
-    
-       idx = v.indexOf( ":/" );
-       if ( idx &gt; 0 )
-       {
-          alert( "unsupported protocol in URL: " + document.formNewTab.tabURL.value.substring( 0, idx ) );
-          document.formNewTab.tabURL.focus();
-          return false;
-       }
-        
-       document.formNewTab.tabURL.value = "http://" + document.formNewTab.tabURL.value;
-       return true;
-   
-   }
-   else
-   {
-      document.formNewTab.tabURL.value = "";
-      return true;
-   }
-   
-}
-
-   var count = 0;
+var count = 0;
 
 function validateForm()
 {
@@ -1526,11 +1489,7 @@ function validateForm()
           count = 0;
           return;
        }
-
-       checkUrl();
-
        document.formNewTab.submit();
-
     }
     else
     {
@@ -1559,48 +1518,6 @@ function validateForm()
    </tr>
    <tr>
         <td align="right" class="uportal-text12-bold">2.</td>
-        <td class="uportal-channel-text"><xsl:value-of select="$SELECT_THE_TYPE"/></td>
-   </tr>
-   <tr>
-        <td><img alt="" height="10" title="" width="10"><xsl:attribute name="src"><xsl:value-of select='$mediaPath'/><xsl:value-of select="$IMAGE_SRC_TRANSPARENT_GIF"/></xsl:attribute></img></td>
-        <td class="uportal-channel-text">
-        <table border="0" cellpadding="3" cellspacing="0">
-           <tr>
-<!-- tab type radio buttons -->
-                <td nowrap="nowrap">
-                  <img alt="" height="5" title="" width="1"><xsl:attribute name="src"><xsl:value-of select='$mediaPath'/><xsl:value-of select="$IMAGE_SRC_TRANSPARENT_GIF"/></xsl:attribute></img>
-                  <input checked="" name="tab_type" onClick="checkUrl();" type="radio"><xsl:attribute name="value"><xsl:value-of select="$TRADITIONAL"/></xsl:attribute></input>
-                </td>
-                <td class="uportal-background-med" nowrap="nowrap">
-                  <img alt="" height="5" title="" width="5"><xsl:attribute name="src"><xsl:value-of select='$mediaPath'/><xsl:value-of select="$IMAGE_SRC_TRANSPARENT_GIF"/></xsl:attribute></img>
-                  <span class="uportal-text-small"><xsl:value-of select="$TRADITIONAL"/></span>
-                  <img alt="" height="5" title="" width="5"><xsl:attribute name="src"><xsl:value-of select='$mediaPath'/><xsl:value-of select="$IMAGE_SRC_TRANSPARENT_GIF"/></xsl:attribute></img>
-                </td>
-                <td nowrap="nowrap">
-                      <img alt="" height="5" title="" width="10"><xsl:attribute name="src"><xsl:value-of select='$mediaPath'/><xsl:value-of select="$IMAGE_SRC_TRANSPARENT_GIF"/></xsl:attribute></img><input name="tab_type" onClick="checkUrl();" type="radio"><xsl:attribute name="value"><xsl:value-of select="$FRAMED"/></xsl:attribute></input>
-                </td>
-                <td class="uportal-background-med" nowrap="nowrap">
-                  <img alt="" height="5" title="" width="5"><xsl:attribute name="src"><xsl:value-of select='$mediaPath'/><xsl:value-of select="$IMAGE_SRC_TRANSPARENT_GIF"/></xsl:attribute></img>
-                  <span class="uportal-text-small"><xsl:value-of select="$FRAMEDURL"/></span>
-                </td>
-<!-- tab type radio buttons *end* -->
-                <td class="uportal-background-med">
-                  <span class="uportal-text-small">
-                  <input class="uportal-input-text" name="tabURL" size="30" type="text"/>
-                  </span>
-                </td>
-<!-- tab type radio buttons *end* -->
-                <td class="uportal-background-med">
-                  <span class="uportal-text-small">
-                  <img alt="" height="5" title="" width="5"><xsl:attribute name="src"><xsl:value-of select='$mediaPath'/><xsl:value-of select="$IMAGE_SRC_TRANSPARENT_GIF"/></xsl:attribute></img><xsl:value-of select="$I_E_HTTP_WWW_THEINTERNET_COM"/><img alt="" height="5" title="" width="5"><xsl:attribute name="src"><xsl:value-of select='$mediaPath'/><xsl:value-of select="$IMAGE_SRC_TRANSPARENT_GIF"/></xsl:attribute></img>
-                  </span>
-                </td>
-           </tr>
-        </table>
-        </td>
-   </tr>
-   <tr>
-        <td align="right" class="uportal-text12-bold">3.</td>
         <td class="uportal-channel-text"><xsl:value-of select="$SELECT_A_POSITION_FOR_THE_TAB"/></td>
    </tr>
    <tr>
@@ -1637,7 +1554,7 @@ function validateForm()
    </tr>
    <tr><td colspan="2"><input name="action" type="hidden" value="addTab"/></td></tr>
    <tr>
-        <td align="right" class="uportal-text12-bold">4.</td>
+        <td align="right" class="uportal-text12-bold">3.</td>
         <td>
         <table border="0" cellpadding="0" cellspacing="0">
            <tr>
