@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author andrew.petro@yale.edu
  * @version $Revision$ $Date$
  * @since uPortal 2.4
+ * @deprecated No longer necessary since CMissingProperties was introduced in uPortal 2.5.
  */
 public class MissingPropertiesServlet extends HttpServlet {
 
