@@ -37,11 +37,6 @@
     <servlet-name>Problems</servlet-name>
     <servlet-class>org.jasig.portal.Problems</servlet-class>
   </servlet>
-  
-  <servlet>
-    <servlet-name>MissingProperties</servlet-name>
-    <servlet-class>org.jasig.portal.properties.MissingPropertiesServlet</servlet-class>
-  </servlet>
 
   <servlet>
     <servlet-name>Instrumentation</servlet-name>
@@ -76,11 +71,6 @@
   <servlet-mapping>
     <servlet-name>Problems</servlet-name>
     <url-pattern>/problems</url-pattern>
-  </servlet-mapping>
-  
-  <servlet-mapping>
-    <servlet-name>MissingProperties</servlet-name>
-    <url-pattern>/missingProperties</url-pattern>
   </servlet-mapping>
   
    <servlet-mapping>
