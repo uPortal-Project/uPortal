@@ -8,8 +8,8 @@
     <name>Missing Properties</name>
     <fname>missing-properties</fname>
     <desc>Shows any properties that the properties manager looked for, but did not find.</desc>
-    <type>XML XSLT</type>
-    <class>org.jasig.portal.channels.CGenericXSLT</class>
+	<type>Custom</type>
+    <class>org.jasig.portal.properties.CMissingProperties</class>
     <timeout>10000</timeout>
     
     <hasedit>N</hasedit>
@@ -29,14 +29,8 @@
     
     <parameters>
         <parameter>
-            <name>xmlUri</name>
-            <value>http://localhost:8080/uPortal/missingProperties</value>
-            <description>The location of the missing properties servlet</description>
-            <ovrd>N</ovrd>
-        </parameter>
-        <parameter>
             <name>xslUri</name>
-            <value>CGenericXSLT/PropertiesManager/MissingProperties.xsl</value>
+            <value>MissingProperties.xsl</value>
             <description>The location of the missing properties stylesheet</description>
             <ovrd>N</ovrd>
         </parameter>
