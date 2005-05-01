@@ -46,11 +46,11 @@ import org.xml.sax.InputSource;
 /**
  * SQL implementation for the 2.x relational database model
  * @author George Lindholm
- * @version $Revision$
+ * @version $Revision$ $Date$
  */
 public class RDBMUserLayoutStore implements IUserLayoutStore {
 
-    private static final Log log = LogFactory.getLog(RDBMUserLayoutStore.class);
+    protected final Log log = LogFactory.getLog(getClass());
 
   //This class is instantiated ONCE so NO class variables can be used to keep state between calls
   protected static int DEBUG = 0;
