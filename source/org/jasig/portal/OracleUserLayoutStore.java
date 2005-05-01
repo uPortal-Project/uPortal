@@ -26,8 +26,6 @@ import org.apache.commons.logging.LogFactory;
  */
 public final class OracleUserLayoutStore extends RDBMUserLayoutStore
     implements IUserLayoutStore {
-
-    private static final Log log = LogFactory.getLog(OracleUserLayoutStore.class);
     
   public OracleUserLayoutStore() throws Exception {
     super();

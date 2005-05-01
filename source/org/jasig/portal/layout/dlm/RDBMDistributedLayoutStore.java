@@ -75,7 +75,6 @@ public class RDBMDistributedLayoutStore
     extends RDBMUserLayoutStore
 {
     public static final String RCS_ID = "@(#) $Header$";
-    private static final Log log = LogFactory.getLog(RDBMDistributedLayoutStore.class);
 
     private Properties properties = null;
     private FragmentDefinition[] definitions = null;

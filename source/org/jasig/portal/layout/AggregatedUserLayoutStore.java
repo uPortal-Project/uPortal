@@ -65,8 +65,6 @@ import org.jasig.portal.utils.CommonUtils;
  */
 
 public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IAggregatedUserLayoutStore {
-
-    private static final Log log = LogFactory.getLog(AggregatedUserLayoutStore.class);
     
   private static final int LOST_FOLDER_ID = -1;
   private static final String NODE_SEPARATOR = "-";
