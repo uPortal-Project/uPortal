@@ -4,10 +4,12 @@
 */
 
 
-package org.jasig.portal.security;
+package org.jasig.portal.security.provider;
 
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ChannelStaticData;
+import org.jasig.portal.security.LocalConnectionContext;
+
 import sun.misc.BASE64Encoder;
 import java.text.MessageFormat;
 import java.net.HttpURLConnection;
@@ -22,7 +24,7 @@ import java.net.HttpURLConnection;
  * <p>
  * In order to use this class you should define two publish time parameters for
  * your channel: <code>remote.username</code> and <code>remote.password</code>.
- * The username and password defaut to "tomcat" if you don't set them. 
+ * The username and password default to "tomcat" if you don't set them. 
  * </p>
  *
  *  @author Stephen Barrett, smb1@cornell.edu

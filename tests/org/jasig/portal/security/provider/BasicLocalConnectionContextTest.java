@@ -3,7 +3,7 @@
 *  available online at http://www.uportal.org/license.html
 */
 
-package org.jasig.portal.security;
+package org.jasig.portal.security.provider;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -14,6 +14,7 @@ import java.util.Map;
 
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ChannelStaticData;
+import org.jasig.portal.security.provider.BasicLocalConnectionContext;
 
 import junit.framework.TestCase;
 

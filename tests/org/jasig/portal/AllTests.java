@@ -4,7 +4,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.jasig.portal.layout.AllLayoutTests;
-import org.jasig.portal.security.BasicLocalConnectionContextTest;
+import org.jasig.portal.security.provider.BasicLocalConnectionContextTest;
 
 public class AllTests {
 
