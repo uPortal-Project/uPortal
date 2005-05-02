@@ -35,8 +35,6 @@ public class UPFileSpec {
     public static final String RENDER_URL_ELEMENT="render";
     public static final String PORTAL_URL_SEPARATOR=".";
     public static final String PORTAL_URL_SUFFIX="uP";
-    public static final String PORTLET_PARAMS_DELIM_BEG = "portlet-params@";
-    public static final String PORTLET_PARAMS_DELIM_END = "@portlet-params";
 
     // individual worker URL elements
     public static final String FILE_DOWNLOAD_WORKER = "download";
@@ -316,8 +314,6 @@ public class UPFileSpec {
         // determine tag or method
         if(uPTokenizer.hasMoreTokens()) {
             String currentToken=uPTokenizer.nextToken();
-            if ( currentToken.startsWith(PORTLET_PARAMS_DELIM_BEG) )
-              currentToken = uPTokenizer.nextToken();
             // is it a "tag" ?
             if(currentToken.equals(TAG_URL_ELEMENT)) {
                 // yes it's, a tag

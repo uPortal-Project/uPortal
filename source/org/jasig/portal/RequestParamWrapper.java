@@ -54,10 +54,6 @@ public class RequestParamWrapper extends HttpServletRequestWrapper {
         
         // only bother with parameter work if should be accessable
         if (request_verified) {
-            //Decode portlet parameters and store them as standard request parameters in this wrapper
-            final Map portletParameters = PortletStateManager.getURLDecodedParameters(source);
-            this.parameters.putAll(portletParameters);
-            
             //Determine if this is a request for a portlet
             boolean isPortletRequest = parameters.containsKey(PortletStateManager.ACTION);
                         

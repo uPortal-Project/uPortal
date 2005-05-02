@@ -27,7 +27,10 @@ import org.jasig.portal.container.services.information.PortletStateManager;
  * @version $Revision$
  */
 public class PortletParameterRequestWrapper extends HttpServletRequestWrapper {
-
+    private static final String ESCAPE_PREFIX = PortletStateManager.UP_PARAM_PREFIX + PortletStateManager.UP_PARAM_PREFIX;
+    
+    private final Map portletParams;
+    
     /**
      * Creates a new wrapper and wraps the specified request.
      * 
@@ -36,6 +39,7 @@ public class PortletParameterRequestWrapper extends HttpServletRequestWrapper {
      */
     public PortletParameterRequestWrapper(final HttpServletRequest request) {
         super(request);
+        this.portletParams = this.getPortletParameterMap();
     }
     
     /* 
@@ -54,15 +58,14 @@ public class PortletParameterRequestWrapper extends HttpServletRequestWrapper {
      * @see javax.servlet.ServletRequest#getParameterMap()
      */
     public Map getParameterMap() {
-        return this.getPortletParameterMap();
+        return this.portletParams;
     }
 
     /* 
      * @see javax.servlet.ServletRequest#getParameterNames()
      */
     public Enumeration getParameterNames() {
-        final Map portletParams = this.getPortletParameterMap();
-        return Collections.enumeration(portletParams.keySet());
+        return Collections.enumeration(this.portletParams.keySet());
     }
 
     /* 
@@ -84,9 +87,8 @@ public class PortletParameterRequestWrapper extends HttpServletRequestWrapper {
      * @return A {@link Map} of non-portal parameters.
      */
     private Map getPortletParameterMap() {
-        //TODO should this be done on every call or can the results be cached?
         final Map allParams = super.getParameterMap();
-        final Map portletParams = new HashMap((int)(((float)allParams.size()) / .75f));
+        final Map portletParams = new HashMap(allParams.size() * 2);
         
         for (final Iterator pNameItr = allParams.keySet().iterator(); pNameItr.hasNext(); ) {
             final String pName = (String)pNameItr.next();
@@ -95,7 +97,13 @@ public class PortletParameterRequestWrapper extends HttpServletRequestWrapper {
                 final Object pVal = allParams.get(pName);
                 
                 portletParams.put(pName, pVal);
-            }   
+            }
+            //Deals with parameters that are ok and start with the prefix
+            else if (pName.startsWith(ESCAPE_PREFIX)) {
+                final Object pVal = allParams.get(pName);
+                
+                portletParams.put(pName.substring(PortletStateManager.UP_PARAM_PREFIX.length()), pVal);
+            }
         }
         
         return Collections.unmodifiableMap(portletParams);

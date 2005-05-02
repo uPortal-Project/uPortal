@@ -10,11 +10,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.StringTokenizer;
-import java.util.Vector;
 
 import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
@@ -31,7 +28,6 @@ import org.jasig.portal.UPFileSpec;
 import org.jasig.portal.UserInstance;
 import org.jasig.portal.container.om.window.PortletWindowImpl;
 import org.jasig.portal.layout.IUserLayout;
-import org.jasig.portal.utils.CommonUtils;
 
 
 /**
@@ -47,25 +43,24 @@ import org.jasig.portal.utils.CommonUtils;
 public class PortletStateManager {
     private static final Log log = LogFactory.getLog(PortletStateManager.class);
 	
+    public static final String UP_PARAM_PREFIX = "uP_";
+    
     // The portlet control parameter names
-    public static final String ACTION = "uP_portlet_action";
+    public static final String ACTION = UP_PARAM_PREFIX + "portlet_action";
     public static final String MODE = "mode";
     public static final String MULTI = "multi_";
     public static final String PREV_MODE = "pmode";
     public static String PREV_STATE = "pstate";
     public static final String STATE = "state";
 	
-	public static final String UP_ROOT = "uP_root";
-	public static final String UP_TCATTR = "uP_tcattr";
-	public static final String UP_HELP_TARGET = "uP_help_target";
-	public static final String UP_EDIT_TARGET = "uP_edit_target";
-	public static final String UP_VIEW_TARGET = "uP_view_target";
-    public static final String UP_WINDOW_STATE = "uP_window_state";
-	public static final String MIN_CHAN_ID = "minimized_channelId";
+	public static final String UP_ROOT = UP_PARAM_PREFIX + "root";
+	public static final String UP_TCATTR = UP_PARAM_PREFIX + "tcattr";
+	public static final String UP_HELP_TARGET = UP_PARAM_PREFIX + "help_target";
+	public static final String UP_EDIT_TARGET = UP_PARAM_PREFIX + "edit_target";
+	public static final String UP_VIEW_TARGET = UP_PARAM_PREFIX + "view_target";
+    public static final String UP_WINDOW_STATE = UP_PARAM_PREFIX + "window_state";
+	public static final String MIN_CHAN_ID = UP_PARAM_PREFIX + "minimized_channelId";
 	
-    public static final String UP_PARAM_PREFIX = "uP_";
-    
-	private static final String ENC_SEP = "~~%%~~";
 	private static final String MINIMIZED = "minimized";
     private static final String ROOT = IUserLayout.ROOT_NODE_NAME;
 	
@@ -101,21 +96,6 @@ public class PortletStateManager {
 	  runtimeData = windowOfAction.getChannelRuntimeData();
 	  if ( windowOfAction != null && runtimeData != null && request != null )
 		analyzeRequestInformation();
-	}
-	
-	public static synchronized Hashtable getURLDecodedParameters ( HttpServletRequest request ) {
-	    String url = request.getRequestURL().toString();
-	    if ( url.indexOf(UPFileSpec.PORTLET_PARAMS_DELIM_BEG) > 0 ) {
-	        int offset = UPFileSpec.PORTLET_PARAMS_DELIM_BEG.length();	
-	        String encodedParams = url.substring(url.indexOf(UPFileSpec.PORTLET_PARAMS_DELIM_BEG)+offset,
-	                url.indexOf(UPFileSpec.PORTLET_PARAMS_DELIM_END));	
-	        try {
-	            return decodeURLParameters(URLDecoder.decode(encodedParams,"UTF-8"));
-	        } catch (UnsupportedEncodingException e) {
-	            throw new RuntimeException(e);
-	        }
-	    }	
-	    return new Hashtable();	
 	}
 	
 	/**
@@ -203,25 +183,9 @@ public class PortletStateManager {
 	private static String encodeMultiName( PortletWindow window, String sessionId, String paramName) {
 		return getKey(window) + MULTI + paramName;
 	}
-
-	private static String encodeValues( String values[] ) {
-	   String value = ENC_SEP;
-	   for ( int i = 0; i < values.length; i++ )
-	     value += values[i] + ENC_SEP;
-	   return value;  
-	}
-
-    private static String[] decodeValues( String value ) {
-	   StringTokenizer tokenizer = new StringTokenizer(value, ENC_SEP);
-	   String[] values = new String[tokenizer.countTokens()];
-	   for ( int i = 0; i < values.length && tokenizer.hasMoreTokens(); i++ )
-		 values[i] = tokenizer.nextToken();
-	   return values;  
-	}
 	
-	
-	private static String encodeQueryString ( String text ) {
-        String result = CommonUtils.replaceText(text, UPFileSpec.PORTAL_URL_SEPARATOR, getPercentEncodedString(UPFileSpec.PORTAL_URL_SEPARATOR));
+	private static String encodeString ( String text ) {
+        String result = text;
         try {
             result = URLEncoder.encode(result,"UTF-8");
         } catch (UnsupportedEncodingException e) {
@@ -231,92 +195,17 @@ public class PortletStateManager {
         return result;
 	}
     
-	private static String decodeQueryString ( String text ) {
+	private static String decodeString ( String text ) {
         String result;
         try {
             result = result = URLDecoder.decode(text,"UTF-8");
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
-        result = CommonUtils.replaceText(result, getPercentEncodedString(UPFileSpec.PORTAL_URL_SEPARATOR), UPFileSpec.PORTAL_URL_SEPARATOR);
         
         return result;
     }
-    
-    /**
-     * Provides the URL Encoding algorithm for any string of characters.
-     * The URL Encoding algorthim is defined at http://www.rfc-editor.org/rfc/rfc1738.txt
-     * 
-     * This method is needed to encode the seperator string used by the
-     * UPFileSpec to ensure it is properly encoded if it exists in a parameter
-     * name or value that gets embedded in the uPFile.
-     * 
-     * @param str The string to encode.
-     * @return The encoded string.
-     */
-    private static String getPercentEncodedString(String str) {
-        StringBuffer stringbuffer = new StringBuffer();
-        
-        for (int cIndex = 0; cIndex < str.length(); cIndex++) {
-            char cIn = str.charAt(cIndex);
-            
-            //Append the % as the beginning of the encoding
-            stringbuffer.append('%');
-            
-            //Convert the low bits of the character to base 16
-            char cOut = Character.forDigit(cIn >> 4 & 0xf, 16);
-            if (Character.isLetter(cOut))
-                cOut -= ' '; //ensure it's a valid char
-            stringbuffer.append(cOut);
-            
-            //Convert the high bits of the character to base 16
-            cOut = Character.forDigit(cIn & 0xf, 16);
-            if (Character.isLetter(cOut))
-                cOut -= ' '; //ensure it's a valid char
-            stringbuffer.append(cOut);
-        }
-        
-        return stringbuffer.toString();
-    }
 	
-	
-	public static Hashtable decodeURLParameters ( String encodedParameters ) {
-	  Hashtable params = new Hashtable();		
-	  if ( encodedParameters == null || encodedParameters.length() <= 0 )
-	    return params;	
-	  StringTokenizer tokenizer = new StringTokenizer(decodeQueryString(encodedParameters),"&");
-	  while ( tokenizer.hasMoreTokens() ) {
-	  	String param = tokenizer.nextToken();
-	  	String paramName = param.substring(0,param.indexOf('='));
-	  	String paramValue = param.substring(param.indexOf("=")+1);
-	  	if ( params.containsKey(paramName) ){
-	  	  Vector values = (Vector) params.get(paramName);
-	  	  values.add(paramValue);	
-	  	} else {
-	  	   Vector values = new Vector();
-	  	   values.add(paramValue);	
-	  	   params.put(paramName,values);
-	  	}
-	  }
-	  for ( Iterator i = params.keySet().iterator(); i.hasNext(); ) {
-	  	Object key = i.next();
-	  	Vector values = (Vector) params.get(key);
-	  	int size = values.size();
-	  	String[] strValues = new String[size];
-	  	for ( int j = 0; j < size; j++ )
-	  	 strValues[j] = (String) values.get(j);
-	  	params.put(key,strValues);
-	  }
-	    return params;   
-	}
-	
-	
-	public static String encodeURLParameters ( String urlParameters ) {
-		if ( urlParameters == null || urlParameters.length() <= 0 )
-		  return "";
-		return encodeQueryString(urlParameters);
-	}	
-		
 	
 	/**
 	  * Generates the hash key for the given PortletWindow
@@ -482,12 +371,15 @@ public class PortletStateManager {
 	}
 
 
-	/**
-	  * Generates the string representation of the portlet URL based on the 
-	  * next/current portlet modes/states and render parameters for the current
-	  * PortletWindow
-	  */ 
 	public String toString() {
+        return this.getEncodedParameterString();
+    }
+    
+    /**
+     * Generates the string representation of the request parameters for
+     * the portlet based on it's current state. 
+     */ 
+    private String getEncodedParameterString() {
         if (windowOfAction == null)
             return "";
 
@@ -556,46 +448,54 @@ public class PortletStateManager {
             url.append("&");
         }
 
-        // Other parameters  
-        Iterator keys = params.keySet().iterator();
-        while (keys.hasNext()) {
-            String name = (String)keys.next();
-            Object value = params.get(name);
-            String[] values = (value instanceof String[]) ? (String[])value : new String[] { value.toString() };
+        // Other parameters
+        for (final Iterator entryItr = params.entrySet().iterator(); entryItr.hasNext(); ) {
+            final Map.Entry entry = (Map.Entry)entryItr.next();
+            String name = (String)entry.getKey();
+            
+            //Deals with parameters that start with the prefix string
+            if (name.startsWith(UP_PARAM_PREFIX)) {
+                name = encodeString(UP_PARAM_PREFIX + name);
+            }
+            else {
+                name = encodeString(name);
+            }
+            
+            final Object value = entry.getValue();
+            final String[] values;
+            if (value instanceof String[])
+                values = (String[])value;
+            else
+                values = new String[] { value.toString() };
+            
             for (int i = 0; i < values.length; i++) {
-                url.append(name).append("=").append(values[i]);
+                url.append(name);
+                url.append("=");
+                url.append(encodeString(values[i]));
                 url.append("&");
             }
         }
 
-        String strURL = url.toString();
-        while (strURL.endsWith("&"))
-            strURL = strURL.substring(0, strURL.lastIndexOf("&"));
+        while (url.charAt(url.length() - 1) == '&')
+            url.deleteCharAt(url.length() - 1);
 
-        return strURL;
+        for (int index = url.indexOf("&&"); index >= 0; index = url.indexOf("&&")) {
+            url.replace(index, index + 2, "&");
+        }
+        
+        return url.toString();
     } 
 	
+    /**
+     * Returns a full portlet URL including uP file
+     */
     public String getActionURL() {
         final StringBuffer actionUrl = new StringBuffer();
         final WindowState curState = getState(windowOfAction);
-        final String encodedUrlParams = encodeURLParameters(this.toString());
-        final StringBuffer urlEncodedParams = new StringBuffer();
-
-        //Generate the portlet encoded parameter string
-        if (encodedUrlParams.length() > 0) {
-            urlEncodedParams.append(UPFileSpec.PORTLET_PARAMS_DELIM_BEG);
-            
-            final String urlEncodedUrlParams;
-            try {
-                urlEncodedUrlParams = URLEncoder.encode(encodedUrlParams,"UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                throw new RuntimeException(e);
-            }
-            urlEncodedParams.append(urlEncodedUrlParams);
-            
-            urlEncodedParams.append(UPFileSpec.PORTLET_PARAMS_DELIM_END);
-            urlEncodedParams.append(UPFileSpec.PORTAL_URL_SEPARATOR);
-        }
+        
+        //URLs are always absolute
+        actionUrl.append(request.getContextPath());
+        actionUrl.append("/");
         
         //Get the appropriate URL base
         if (PortalContextProviderImpl.EXCLUSIVE.equals(this.nextState) || (this.nextState == null && PortalContextProviderImpl.EXCLUSIVE.equals(curState))) {
@@ -607,19 +507,14 @@ public class PortletStateManager {
             actionUrl.append(urlBase);
         }
         
-        //Insert the parameters in the url after the last slash to the uPfile is correct
-        final int lastSlash = actionUrl.lastIndexOf("/");
-        actionUrl.insert(lastSlash + 1, urlEncodedParams);
+        actionUrl.append("?");
+        actionUrl.append(this.getEncodedParameterString());
         
         //Add the anchor to the URL
         if (ChannelManager.isUseAnchors()) {
             actionUrl.append("#");
             actionUrl.append(windowOfAction.getId());
         }
-        
-        //Insert the uPortal context path, this makes sure the URLs will always work
-        actionUrl.insert(0, "/");
-        actionUrl.insert(0, request.getContextPath());
 
         return actionUrl.toString();
     }
