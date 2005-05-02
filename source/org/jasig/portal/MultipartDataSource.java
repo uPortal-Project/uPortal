@@ -83,7 +83,8 @@ public class MultipartDataSource implements DataSource {
     /**
      * Releases tempfile associated with this object any memory they consume
      * will be returned to the OS.
-     *  
+     * @since uPortal 2.5.  Prior to uPortal 2.5, tempfile deletion was a side effect
+     * of the finalizer.
      */
     public void dispose() {
         buff = null;
