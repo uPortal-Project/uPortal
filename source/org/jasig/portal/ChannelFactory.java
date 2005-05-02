@@ -27,13 +27,14 @@ public class ChannelFactory {
 
     private static final Log log = LogFactory.getLog(ChannelFactory.class);
     
-    // table of multithreaded channels
+    /** table of multithreaded channels */
     private static final Hashtable staticChannels = new Hashtable();
     
-    // create a CAR class loader object for loading channel classes from CARs
-    // Note that the current class loader is passed as the parent and is
-    // searched before CARs are. So if a class exists in the VM classpath
-    // _and_ in a CAR the one on the classpath will be found first.
+    /** Create a CAR class loader object for loading channel classes from CARs
+     * Note that the current class loader is passed as the parent and is
+     * searched before CARs are. So if a class exists in the VM classpath
+     * _and_ in a CAR the one on the classpath will be found first.
+     */
     private static ClassLoader classLoader = CarResources.getInstance()
         .getClassLoader();
     
