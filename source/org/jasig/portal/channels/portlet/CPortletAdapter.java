@@ -102,7 +102,7 @@ import org.xml.sax.ContentHandler;
 public class CPortletAdapter 
 	implements IMultithreadedCharacterChannel, IMultithreadedPrivileged, IMultithreadedCacheable, IMultithreadedDirectResponse, IPortletAdaptor {
     
-	private static final Log log = LogFactory.getLog(CPortletAdapter.class);
+	protected final Log log = LogFactory.getLog(getClass());
         
     protected static Map channelStateMap;
     private static boolean portletContainerInitialized;
@@ -140,6 +140,12 @@ public class CPortletAdapter
         servletConfig = config;
     }
     
+    /**
+     * 
+     * @param uid A String uniquely identifying the IChannel 'instance' we are virtually representing
+     * as an IMultithreadedChannel.  
+     * @throws PortalException
+     */
     protected void initPortletContainer(String uid) throws PortalException {
 
         try {
@@ -215,23 +221,21 @@ public class CPortletAdapter
             
             // Add the user information into the request See PLT.17.2.
             Map userInfo = cd.getUserInfo();
+            
             if (userInfo == null) {
-                userInfo = new HashMap();
-                IPerson person = sd.getPerson();
-                if (person.getSecurityContext().isAuthenticated()) {
-                    UserAttributeListImpl userAttributes = ((PortletApplicationDefinitionImpl)portletDefinition.getPortletApplicationDefinition()).getUserAttributes();
-                    for (Iterator iter = userAttributes.iterator(); iter.hasNext(); ) {
-                        UserAttributeImpl userAttribute = (UserAttributeImpl)iter.next();
-                        String attName = userAttribute.getName();
-                        String attValue = (String)person.getAttribute(attName);
-                        final String PASSWORD_ATTR = "password";
-                        if ((attValue == null || attValue.equals("")) && attName.equals(PASSWORD_ATTR)) {
-                            attValue = getPassword(person.getSecurityContext());
-                        }
-                        userInfo.put(attName, attValue);
-                    }
-                    cd.setUserInfo(userInfo);
+                UserAttributeListImpl userAttributeList = ((PortletApplicationDefinitionImpl)portletDefinition.getPortletApplicationDefinition()).getUserAttributes();
+                
+                // here we ask an overridable method to get the user attributes.
+                // you can extend CPortletAdapter to change the implementation of
+                // how we get user attributes.  This whole initPortletWindow method
+                // is also overridable.
+                //
+                // Note that we will only call getUserInfo() once.
+                userInfo = getUserInfo(uid, sd, userAttributeList);
+                if (log.isTraceEnabled()) {
+                    log.trace("For user [" + uid + "] got user info : [" + userInfo + "]");
                 }
+                cd.setUserInfo(userInfo);
             }
             
             // Wrap the request
@@ -529,6 +533,7 @@ public class CPortletAdapter
      * This is where we do the real work of getting the markup.
      * This is called from both renderXML() and renderCharacters().
      * @param uid a unique ID used to identify the state of the channel
+     * @return markup representing channel content
      */
     protected synchronized String getMarkup(String uid) throws PortalException {
         ChannelState channelState = (ChannelState)channelStateMap.get(uid);
@@ -780,17 +785,71 @@ public class CPortletAdapter
     }
     
     /**
-     * Adds the appropriate information to the request attributes of the portlet
+     * Adds the appropriate information to the request attributes of the portlet.
+     * 
+     * This is an extension point.  You can override this method to set other
+     * request attributes.
      * 
      * @param request The request to add the attributes to
      * @param uid The uid of the request so the appropriate ChannelState can be accessed
      */
-    private void setupRequestAttributes(final HttpServletRequest request, final String uid) {
+    protected void setupRequestAttributes(final HttpServletRequest request, final String uid) {
         final ChannelState channelState = (ChannelState)channelStateMap.get(uid);
         final ChannelData cd = channelState.getChannelData();
  
         //Add the user information map
         request.setAttribute(PortletRequest.USER_INFO, cd.getUserInfo());
+    }
+    
+    /**
+     * Get the Map of portlet user attribute names to portlet user attribute values.
+     * 
+     * This is an extension point.  You can extend CPortletAdapter and override this
+     * method to implement the particular user attribute Map creation strategy that
+     * you need to implement.  Such strategies might rename uPortal
+     * user attributes to names that your particular portlet knows how to consume,
+     * transform the user attribute values to forms expected by your portlet, add
+     * additional attributes, convey a CAS proxy ticket or other security token.
+     * This extension point is the way to accomodate the particular user attributes
+     * particular portlets require.
+     * 
+     * The default implementation of this method includes in the userInfo Map
+     * those uPortal IPerson attributes matching entries in the list of attributes the
+     * Portlet declared it wanted.  Additionally, the default implementation copies
+     * the cached user password if the Portlet declares it wants the user attribute
+     * 'password'.
+     * 
+     * We take the uid as an argument even though the default implementation does
+     * not use it because overriding implementations might use the uid to key into
+     * state maps.
+     * 
+     * @param uid a String uniquely identifying the IChannel 'instance' we are emulating
+     * as an IMultithreaded channel.  
+     * @param staticData data associated with the particular instance of the portlet window for the particular
+     * user session
+     * @param userAttributes the user attributes requested by the Portlet
+     * @return a Map from portlet user attribute names to portlet user attribute values.
+     */
+    protected Map getUserInfo(String uid, ChannelStaticData staticData, UserAttributeListImpl userAttributes) {
+        
+        final String PASSWORD_ATTR = "password";
+        
+        Map userInfo = new HashMap();
+        IPerson person = staticData.getPerson();
+        if (person.getSecurityContext().isAuthenticated()) {
+            
+            // for each attribute the Portlet requested
+            for (Iterator iter = userAttributes.iterator(); iter.hasNext(); ) {
+                UserAttributeImpl userAttribute = (UserAttributeImpl)iter.next();
+                String attName = userAttribute.getName();
+                String attValue = (String)person.getAttribute(attName);
+                if ((attValue == null || attValue.equals("")) && attName.equals(PASSWORD_ATTR)) {
+                    attValue = getPassword(person.getSecurityContext());
+                }
+                userInfo.put(attName, attValue);
+            }
+        }
+        return userInfo;
     }
 }
 
