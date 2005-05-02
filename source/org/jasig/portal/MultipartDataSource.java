@@ -88,7 +88,11 @@ public class MultipartDataSource implements DataSource {
     public void dispose() {
         buff = null;
         if (tempfile != null) {
-            tempfile.delete();
+            boolean success = tempfile.delete();
+            if (! success) {
+                log.error("Unable to delete temp file [" + tempfile.getPath() + "]");
+            }
+            
             tempfile = null;
         }
     }
