@@ -18,7 +18,9 @@ import org.jasig.portal.ThemeStylesheetUserPreferences;
  * Distributed layout Extension to user preferences object for stylesheets
  * performing structure or theme transformation. This extension adds support
  * for user preferences set by layout owneres in incorporated elements.
- * @author Mark Boyd <a href="mailto:">mboyd@campuspipeline.com</>a
+ * @author Mark Boyd <a href="mailto:">mboyd@campuspipeline.com</a>
+ * @version $Revision$ $Date$
+ * @since uPortal 2.5
  */
 
 public class DistributedUserPreferences

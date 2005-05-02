@@ -24,6 +24,10 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+/**
+ * @version $Revision$ $Date$
+ * @since uPortal 2.5
+ */
 public class FragmentDefinition
     implements Evaluator
 {

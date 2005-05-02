@@ -58,7 +58,8 @@ import EDU.oswego.cs.dl.util.concurrent.ReentrantWriterPreferenceReadWriteLock;
  * layout fragments owned by various users. Copied from SimpleLayoutManager.
  *
  * @author <a href="mailto:mboyd@sct.com">Mark Boyd</a>
- * @version 1.0
+ * @version 1.0  $Revision$ $Date$
+ * @since uPortal 2.5
  */
 public class DistributedLayoutManager implements IUserLayoutManager
 {

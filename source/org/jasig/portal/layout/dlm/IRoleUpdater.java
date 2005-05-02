@@ -8,7 +8,6 @@ package org.jasig.portal.layout.dlm;
 import java.util.List;
 
 /**
- * @author mboyd
  *
  * Interface added solely to get around threads needing to be tagged when 
  * updating group membership information from within the uPortal code base.
@@ -19,6 +18,10 @@ import java.util.List;
  * interface allows us to place the implementing code over in the cp tree and
  * instantiate the class via the class name and call it via its implementation
  * of this interface.
+ * 
+ * @author mboyd
+ * @version $Revision$ $Date$
+ * @since uPortal 2.5
  */
 public interface IRoleUpdater 
 {

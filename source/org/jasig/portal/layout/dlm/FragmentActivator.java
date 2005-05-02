@@ -26,7 +26,10 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-
+/**
+ * @version $Revision$ $Date$
+ * @since uPortal 2.5
+ */
 public class FragmentActivator
 {
     public static final String RCS_ID = "@(#) $Header$";

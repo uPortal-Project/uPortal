@@ -11,9 +11,13 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-/** Applies user changes that are part of the uPortal User Preferences
+/** 
+ * Applies user changes that are part of the uPortal User Preferences
  * storage (not part of the layout structure) to the user's plf prior to
  * persisting.
+ * 
+ * @version $Revision$ $Date$
+ * @since uPortal 2.5
  */
 public class UserPrefsHandler
 {

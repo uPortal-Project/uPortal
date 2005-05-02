@@ -10,6 +10,10 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.layout.dlm.Evaluator;
 import org.jasig.portal.security.IPerson;
 
+/**
+ * @version $Revision$ $Date$
+ * @since uPortal 2.5
+ */
 public class Paren
     implements Evaluator
 {

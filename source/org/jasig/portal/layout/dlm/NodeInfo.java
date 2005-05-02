@@ -7,6 +7,10 @@ package org.jasig.portal.layout.dlm;
 
 import org.w3c.dom.Element;
 
+/**
+ * @version $Revision$ $Date$
+ * @since uPortal 2.5
+ */
 public class NodeInfo
 {
     public static final String RCS_ID = "@(#) $Header$";

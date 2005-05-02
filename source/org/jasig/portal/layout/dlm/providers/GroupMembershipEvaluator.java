@@ -21,6 +21,8 @@ import org.jasig.portal.services.GroupService;
  * constructor of this class.
  * 
  * @author mboyd@sungardsct.com
+ * @version $Revision$ $Date$
+ * @since uPortal 2.5
  */
 public class GroupMembershipEvaluator implements Evaluator
 {

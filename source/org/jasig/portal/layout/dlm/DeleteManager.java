@@ -14,9 +14,13 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-    /** Looks for, applies against the ilf, and updates accordingly the delete
-     *  set within a plf.
-     */
+/** 
+ * Looks for, applies against the ilf, and updates accordingly the delete
+ * set within a plf.
+ * 
+ * @version $Revision$ $Date$
+ * @since uPortal 2.5
+ */
 public class DeleteManager
 {
     public static final String RCS_ID = "@(#) $Header$";

@@ -13,8 +13,12 @@ import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-    /** Applies user prefs changes to the user's plf prior to persisting.
-     */
+/** 
+ * Applies user prefs changes to the user's plf prior to persisting.
+ * 
+ * @version $Revision$ $Date$
+ * @since uPortal 2.5
+ */
 public class TabColumnPrefsHandler
 {
     public static final String RCS_ID = "@(#) $Header$";

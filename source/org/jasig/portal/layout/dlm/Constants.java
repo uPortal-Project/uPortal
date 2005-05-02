@@ -6,8 +6,12 @@
 package org.jasig.portal.layout.dlm;
 
 
-    /** Constants used in DLM.
-     */
+/**
+ * Constants used in DLM.
+ * 
+ * @version $Revision$ $Date$
+ * @since uPortal 2.5
+ */
 public class Constants
 {
     public static final String RCS_ID = "@(#) $Header$";

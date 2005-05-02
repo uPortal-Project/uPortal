@@ -8,6 +8,10 @@ package org.jasig.portal.layout.dlm;
 import java.util.Enumeration;
 import java.util.NoSuchElementException;
 
+/**
+ * @version $Revision$ $Date$
+ * @since uPortal 2.5
+ */
 public class CompositeEnumeration
     implements Enumeration
 {

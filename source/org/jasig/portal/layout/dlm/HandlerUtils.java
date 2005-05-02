@@ -12,8 +12,12 @@ import org.jasig.portal.security.IPerson;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-/** Utility functions for applying user changes to the user's plf prior
+/** 
+ * Utility functions for applying user changes to the user's plf prior
  * to persisting.
+ * 
+ * @version $Revision$Date$
+ * @since uPortal 2.5
  */
 public class HandlerUtils
 {

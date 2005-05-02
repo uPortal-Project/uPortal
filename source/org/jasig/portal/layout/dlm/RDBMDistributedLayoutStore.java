@@ -65,13 +65,16 @@ import EDU.oswego.cs.dl.util.concurrent.ReadWriteLock;
 import EDU.oswego.cs.dl.util.concurrent.ReentrantWriterPreferenceReadWriteLock;
 
 /**
-   This class extends RDBMUserLayoutStore and implements instantiating and
-   storing layouts that conform to the design of the distribute layout
-   management system. These layouts consist of two types: layout fragments
-   that are the layouts owned by a user specified in dlm.xml, and composite
-   view layouts which represent regular users with zero or more UI elements
-   incorporated from layout fragments. Only a user's personal layout fragment
-   is 
+ * This class extends RDBMUserLayoutStore and implements instantiating and
+ * storing layouts that conform to the design of the distribute layout
+ * management system. These layouts consist of two types: layout fragments
+ * that are the layouts owned by a user specified in dlm.xml, and composite
+ * view layouts which represent regular users with zero or more UI elements
+ * incorporated from layout fragments. Only a user's personal layout fragment
+ * is
+ * 
+ * @version $Revision$ $Date$
+ * @since uPortal 2.5 
  */
 public class RDBMDistributedLayoutStore
     extends RDBMUserLayoutStore

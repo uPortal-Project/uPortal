@@ -7,6 +7,10 @@ package org.jasig.portal.layout.dlm;
 
 import org.jasig.portal.UserLayoutStoreFactory;
 
+/**
+ * @version $Revision$ $Date$
+ * @since uPortal 2.5
+ */
 public final class Precedence
 {
     public static final String RCS_ID = "@(#) $Header$";

@@ -21,9 +21,13 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-    /** Applies and updates position specifiers for child nodes in the
-        composite layout.
-     */
+/** 
+ * Applies and updates position specifiers for child nodes in the
+ * composite layout.
+ * 
+ * @version $Revision$ $Date$
+ * @since uPortal 2.5
+ */
 public class PositionManager
 {
     public static final String RCS_ID = "@(#) $Header$";

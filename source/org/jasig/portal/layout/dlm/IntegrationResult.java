@@ -9,6 +9,8 @@ package org.jasig.portal.layout.dlm;
  * This class is used to keep track of changes when integrating PLF and ILF
  * components.
  * 
+ * @version $Revision$ $Date$
+ * @since uPortal 2.5
  */
  
 public class IntegrationResult

@@ -9,6 +9,10 @@ import org.w3c.dom.Document;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.security.IPerson;
 
+/**
+ * @version $Revision$ $Date$
+ * @since uPortal 2.5
+ */
 public interface LayoutDecorator
 {
     public static final String RCS_ID = "@(#) $Header$";

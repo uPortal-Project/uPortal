@@ -11,8 +11,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-    /** Performs merging of PLF into ILF for DLM.
-     */
+/** Performs merging of PLF into ILF for DLM.
+ * @version $Revision$ $Date$
+ * @since uPortal 2.5
+ */
 public class PLFIntegrator
 {
     public static final String RCS_ID = "@(#) $Header$";

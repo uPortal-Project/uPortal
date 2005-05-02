@@ -9,10 +9,12 @@ import java.io.StringWriter;
 import java.io.PrintWriter;
 
 /**
-   Loads the class specified in className and verifies that it conforms to
-   the LayoutDecorator interface. If a null class name is passed in this
-   class returns null. If an error occurs an exception is thrown indicating
-   the problems that occurred.
+ * Loads the class specified in className and verifies that it conforms to
+ * the LayoutDecorator interface. If a null class name is passed in this
+ * class returns null. If an error occurs an exception is thrown indicating
+ * the problems that occurred.
+ * @version $Revision$ $Date$
+ * @since uPortal 2.5
  */
 class DecoratorLoader
 {

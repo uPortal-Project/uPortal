@@ -12,8 +12,10 @@ import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
  * A class that embodies the logic for determining if a node can be moved to
  * the left or right of another node based on getMovedAllowed() and
  * getPrecedence().
+ * 
+ * @version $Revision$ $Date$
+ * @since uPortal 2.5
  */
-
 public class MovementRules
 {
     public static final String RCS_ID = "@(#) $Header$";

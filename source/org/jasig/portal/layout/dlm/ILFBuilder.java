@@ -13,13 +13,16 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-    /** Performs merging of layout fragments into a single document containing
-        all incorporated layout fragment elements from the set of fragments
-        passed in. This merge is trivial, appending all children of each
-        fragment into the composite document and recording their identifiers
-        in the document identifier cache. No changes are made to the source
-        fragments passed in.
-     */
+/** Performs merging of layout fragments into a single document containing
+ * all incorporated layout fragment elements from the set of fragments
+ * passed in. This merge is trivial, appending all children of each
+ * fragment into the composite document and recording their identifiers
+ * in the document identifier cache. No changes are made to the source
+ * fragments passed in.
+ * 
+ * @version $Revision$ $Date$
+ * @since uPortal 2.5
+ */
 public class ILFBuilder
 {
     public static final String RCS_ID = "@(#) $Header$";

@@ -18,6 +18,8 @@ import org.w3c.dom.NodeList;
  * gets a layout fragment.
  *   
  * @author mboyd@sungardsct.com
+ * @version $Revision$ $Date$
+ * @since uPortal 2.5
  */
 public class PersonEvaluatorFactory
     implements EvaluatorFactory
