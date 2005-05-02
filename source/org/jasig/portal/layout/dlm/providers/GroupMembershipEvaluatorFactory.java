@@ -1,9 +1,8 @@
-/*
- * Created on Jan 13, 2005
- *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
+/* Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
+*  See license distributed with this file and
+*  available online at http://www.uportal.org/license.html
+*/
+
 package org.jasig.portal.layout.dlm.providers;
 
 import org.jasig.portal.layout.dlm.Evaluator;
