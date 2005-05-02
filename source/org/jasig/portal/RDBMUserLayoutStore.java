@@ -10,11 +10,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Vector;
 
@@ -27,6 +27,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.channels.error.ErrorCode;
 import org.jasig.portal.i18n.LocaleManager;
+import org.jasig.portal.layout.LayoutStructure;
+import org.jasig.portal.layout.StructureParameter;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.rdbm.DatabaseMetaDataImpl;
 import org.jasig.portal.security.IPerson;
@@ -60,118 +62,6 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
   protected ICounterStore csdb;
   // I18n propertiy
   protected static final boolean localeAware = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.i18n.LocaleManager.locale_aware");
-
-  /**
-   * LayoutStructure
-   * Encapsulate the layout structure
-   */
-   public final class LayoutStructure {
-    public class StructureParameter {
-      String name;
-      String value;
-      public StructureParameter(String name, String value) {
-        this.name = name;
-        this.value = value;
-      }
-      public String getName() { return name; }
-      public String getValue() { return value; }
-    }
-
-    int structId;
-    int nextId;
-    int childId;
-    int chanId;
-    String name;
-    String type;
-    boolean hidden;
-    boolean unremovable;
-    boolean immutable;
-    ArrayList parameters;
-    String locale;
-
-    /**
-     *
-     */
-    public LayoutStructure(int structId, int nextId,int childId,int chanId, String hidden, String unremovable, String immutable) {
-      this.nextId = nextId;
-      this.childId = childId;
-      this.chanId = chanId;
-      this.structId = structId;
-      this.hidden = RDBMServices.dbFlag(hidden);
-      this.immutable = RDBMServices.dbFlag(immutable);
-      this.unremovable = RDBMServices.dbFlag(unremovable);
-
-      if (DEBUG > 1) {
-        System.err.println("New layout: id=" + structId + ", next=" + nextId + ", child=" + childId +", chan=" +chanId);
-      }
-    }
-
-    public LayoutStructure(int structId, int nextId,int childId,int chanId, String hidden, String unremovable, String immutable, String locale) {
-      this.nextId = nextId;
-      this.childId = childId;
-      this.chanId = chanId;
-      this.structId = structId;
-      this.hidden = RDBMServices.dbFlag(hidden);
-      this.immutable = RDBMServices.dbFlag(immutable);
-      this.unremovable = RDBMServices.dbFlag(unremovable);
-      this.locale = locale; // for i18n by Shoji
-
-      if (DEBUG > 1) {
-        System.err.println("New layout: id=" + structId + ", next=" + nextId + ", child=" + childId +", chan=" +chanId);
-      }
-    }
-
-    public void addFolderData(String name, String type) {
-      this.name = name;
-      this.type = type;
-    }
-
-    public boolean isChannel () {return chanId != 0;}
-
-    public void addParameter(String name, String value) {
-      if (parameters == null) {
-        parameters = new ArrayList(5);
-      }
-      parameters.add(new StructureParameter(name, value));
-    }
-
-    public int getNextId () {return nextId;}
-    public int getChildId () {return childId;}
-    public int getChanId () {return chanId;}
-
-    public int getStructId()
-    {
-        return structId;
-    }
-    public boolean isHidden()
-    {
-        return hidden;
-    }
-    public boolean isImmutable()
-    {
-        return immutable;
-    }
-    public String getLocale()
-    {
-        return locale;
-    }
-    public String getName()
-    {
-        return name;
-    }
-    public ArrayList getParameters()
-    {
-        return parameters;
-    }
-    public String getType()
-    {
-        return type;
-    }
-    public boolean isUnremovable()
-    {
-        return unremovable;
-    }
-  }
 
   public RDBMUserLayoutStore () throws Exception {
     crs = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl();
@@ -1853,7 +1743,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
                 } while (structId == lastStructId);
               } else { // Do second SELECT later on for structure parameters
                 if (ls.isChannel()) {
-                  structChanIds.append(sepChar + ls.chanId);
+                  structChanIds.append(sepChar + ls.getChanId());
                   sepChar = ",";
                 }
                 if (rs.next()) {
@@ -2254,15 +2144,15 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
   protected Element getStructure(Document doc, LayoutStructure ls) throws Exception {
       Element structure = null;
       if (ls.isChannel()) {
-        ChannelDefinition channelDef = crs.getChannelDefinition(ls.chanId);
+        ChannelDefinition channelDef = crs.getChannelDefinition(ls.getChanId());
         if (channelDef != null && channelApproved(channelDef.getApprovalDate())) {
             if (localeAware) {
-                channelDef.setLocale(ls.locale); // for i18n by Shoji
+                channelDef.setLocale(ls.getLocale()); // for i18n by Shoji
             }
-          structure = channelDef.getDocument(doc, channelPrefix + ls.structId);
+          structure = channelDef.getDocument(doc, channelPrefix + ls.getStructId());
         } else {
           // Create an error channel if channel is missing or not approved
-          ChannelDefinition cd = new ChannelDefinition(ls.chanId);
+          ChannelDefinition cd = new ChannelDefinition(ls.getChanId());
           cd.setTitle("Missing channel");
           cd.setName("Missing channel");
           cd.setTimeout(20000);
@@ -2270,33 +2160,34 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           if (channelDef != null) {
             missingChannel = channelDef.getName();
           }
-          structure = cd.getDocument(doc, channelPrefix + ls.structId,
+          structure = cd.getDocument(doc, channelPrefix + ls.getStructId(),
            "The '" + missingChannel + "' channel is no longer available. Please remove it from your layout.",
            ErrorCode.CHANNEL_MISSING_EXCEPTION.getCode());
         }
       } else {
         structure = doc.createElement("folder");
 
-        structure.setAttribute("ID", folderPrefix + ls.structId);
+        structure.setAttribute("ID", folderPrefix + ls.getStructId());
         structure.setIdAttribute("ID", true);
 
-        structure.setAttribute("name", ls.name);
-        structure.setAttribute("type", (ls.type != null ? ls.type : "regular"));
+        structure.setAttribute("name", ls.getName());
+        structure.setAttribute("type", (ls.getType() != null ? ls.getType() : "regular"));
       }
 
-      structure.setAttribute("hidden", (ls.hidden ? "true" : "false"));
-      structure.setAttribute("immutable", (ls.immutable ? "true" : "false"));
-      structure.setAttribute("unremovable", (ls.unremovable ? "true" : "false"));
+      structure.setAttribute("hidden", (ls.isHidden() ? "true" : "false"));
+      structure.setAttribute("immutable", (ls.isImmutable() ? "true" : "false"));
+      structure.setAttribute("unremovable", (ls.isUnremovable() ? "true" : "false"));
       if (localeAware) {
-          structure.setAttribute("locale", ls.locale);  // for i18n by Shoji
+          structure.setAttribute("locale", ls.getLocale());  // for i18n by Shoji
       }
 
-      if (ls.parameters != null) {
-        for (int i = 0; i < ls.parameters.size(); i++) {
-          LayoutStructure.StructureParameter sp = (LayoutStructure.StructureParameter)ls.parameters.get(i);
+        for (Iterator layoutStructureParamIterator = ls.getParameters().iterator(); 
+                layoutStructureParamIterator.hasNext(); ) {
+            
+          StructureParameter sp = (StructureParameter) layoutStructureParamIterator.next();
 
           if (!ls.isChannel()) {        // Folder
-            structure.setAttribute(sp.name, sp.value);
+            structure.setAttribute(sp.getName(), sp.getValue());
           } else {                    // Channel
             NodeList nodeListParameters = structure.getElementsByTagName("parameter");
             for (int j = 0; j < nodeListParameters.getLength(); j++) {
@@ -2304,17 +2195,16 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
               NamedNodeMap nm = parmElement.getAttributes();
 
               String nodeName = nm.getNamedItem("name").getNodeValue();
-              if (nodeName.equals(sp.name)) {
+              if (nodeName.equals(sp.getName())) {
                 Node override = nm.getNamedItem("override");
                 if (override != null && override.getNodeValue().equals("yes")) {
                   Node valueNode = nm.getNamedItem("value");
-                  valueNode.setNodeValue(sp.value);
+                  valueNode.setNodeValue(sp.getValue());
                 }
               }
             }
           }
         }
-      }
       return structure;
     }
 

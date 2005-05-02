@@ -26,15 +26,17 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Vector;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+
 import org.jasig.portal.ChannelDefinition;
 import org.jasig.portal.IUserIdentityStore;
+import org.jasig.portal.layout.LayoutStructure;
+import org.jasig.portal.layout.StructureParameter;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.RDBMUserLayoutStore;
@@ -1397,9 +1399,8 @@ public class RDBMDistributedLayoutStore
       structure.setAttribute("locale", ls.getLocale());  // for i18n by Shoji
   }
 
-  if (ls.getParameters() != null) {
-    for (int i = 0; i < ls.getParameters().size(); i++) {
-      LayoutStructure.StructureParameter sp = (LayoutStructure.StructureParameter)ls.getParameters().get(i);
+    for (Iterator structureParamIter = ls.getParameters().iterator(); structureParamIter.hasNext(); ) {
+      StructureParameter sp = (StructureParameter) structureParamIter.next();
 
                 if (!ls.isChannel())
                 { // Folder
@@ -1440,7 +1441,6 @@ public class RDBMDistributedLayoutStore
                     }
                 }
             }
-        }
         // finish setting up elements based on loaded params
         String origin = structure.getAttribute(Constants.ATT_ORIGIN);
         String prefix = (ls.isChannel() ? channelPrefix : folderPrefix);
