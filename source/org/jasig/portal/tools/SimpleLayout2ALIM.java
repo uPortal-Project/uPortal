@@ -13,13 +13,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.jasig.portal.IUserLayoutStore;
 import org.jasig.portal.RDBMServices;
-import org.jasig.portal.RDBMUserLayoutStore;
 import org.jasig.portal.UserProfile;
-import org.jasig.portal.layout.AggregatedLayout;
-import org.jasig.portal.layout.AggregatedLayoutManager;
-import org.jasig.portal.layout.AggregatedUserLayoutStore;
+import org.jasig.portal.layout.IUserLayoutStore;
+import org.jasig.portal.layout.alm.AggregatedLayout;
+import org.jasig.portal.layout.alm.AggregatedLayoutManager;
+import org.jasig.portal.layout.alm.AggregatedUserLayoutStore;
+import org.jasig.portal.layout.simple.RDBMUserLayoutStore;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
 import org.w3c.dom.Document;

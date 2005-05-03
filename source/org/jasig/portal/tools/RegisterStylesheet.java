@@ -5,11 +5,11 @@
 
 package  org.jasig.portal.tools;
 
-import org.jasig.portal.IUserLayoutStore;
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.StructureStylesheetDescription;
 import org.jasig.portal.ThemeStylesheetDescription;
 import org.jasig.portal.UserLayoutStoreFactory;
+import org.jasig.portal.layout.IUserLayoutStore;
 
 
 /**
