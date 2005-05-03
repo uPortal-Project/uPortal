@@ -7,6 +7,7 @@ package org.jasig.portal;
 
 import java.io.*;
 import java.net.*;
+import java.util.StringTokenizer;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -40,21 +41,38 @@ public class HttpProxyServlet extends HttpServlet {
 	// check referrer property - return 404 if incorrect.
 	final String checkReferer = PropertiesManager.getProperty(HttpProxyServlet.class.getName()
 		+ ".checkReferer", null);
-
+	
 	String target;
 	
 	// if checking referer then only supply proxied content for specific referer
 	// Ensures requests come from pages in the portal
 	if (null!=checkReferer){
+		StringTokenizer  checkedReferers = new StringTokenizer (checkReferer, " ");
+		boolean refOK = false;
 		String referer = request.getHeader("Referer");
+		
         if (log.isDebugEnabled())
             log.debug("HttpProxyServlet: HTTP Referer: " + referer);
-		if (null!=referer && !referer.startsWith(checkReferer)) {
-			if (log.isWarnEnabled())
-			    log.warn("HttpProxyServlet: bad Referer: " + referer);
-			response.setStatus(404);
-			return;
-		}
+        if (null!=referer) {
+            while (checkedReferers.hasMoreTokens()) {
+                String goodRef = checkedReferers.nextToken();
+                if (log.isDebugEnabled()) 
+                    log.debug("HttpProxyServlet: checking for "+goodRef);
+                if (referer.startsWith(goodRef)) {
+                    refOK = true;
+                    if (log.isDebugEnabled()) 
+                        log.debug("HttpProxyServlet: referer accepted "+goodRef);
+                    break;
+                }
+            }
+    		if (!refOK) {
+            if (log.isWarnEnabled())
+    			    log.warn("HttpProxyServlet: bad Referer: " + referer);
+    			response.setStatus(404);
+    			return;
+    		}
+            
+        }
 	}
 	
 	if (request.getSession(false)==null) {
