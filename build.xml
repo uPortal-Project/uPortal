@@ -940,7 +940,7 @@
     <property name="fragmentFile" value=" "/>
     <echo message="Resetting layout fragments configuration."/>
     <!-- create data.xml file -->
-    <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.layout.utils.FragmentLoader">
+    <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.layout.alm.tool.FragmentLoader">
         <arg value="${fragmentFile}"/>
         <arg value="${build.home}/WEB-INF/classes/${tempDataXML}"/>
         <classpath>
