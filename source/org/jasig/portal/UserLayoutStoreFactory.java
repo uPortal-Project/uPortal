@@ -5,6 +5,7 @@
 
 package org.jasig.portal;
 
+import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.properties.PropertiesManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -21,17 +22,17 @@ public class UserLayoutStoreFactory {
     
   private static IUserLayoutStore userLayoutStoreImpl = null;
 
-  private static final String DEFAULT_CLASS_NAME = "org.jasig.portal.layout.AggregatedUserLayoutStore";
+  private static final String DEFAULT_CLASS_NAME = "org.jasig.portal.layout.alm.AggregatedUserLayoutStore";
   private static String className;
 
   static {
     try {
       // Retrieve the class name of the concrete IUserLayoutStore implementation
-      className = PropertiesManager.getProperty("org.jasig.portal.UserLayoutStoreFactory.implementation");
+      className = PropertiesManager.getProperty("org.jasig.portal.layout.UserLayoutStoreFactory.implementation");
     } catch (Exception e ) {}
   
     if (className == null || className.length() == 0 )
-      log.error( "UserLayoutStoreFactory: org.jasig.portal.UserLayoutStoreFactory.implementation must be specified in portal.properties");
+      log.error( "UserLayoutStoreFactory: org.jasig.portal.layout.UserLayoutStoreFactory.implementation must be specified in portal.properties");
   }
 
   /**
