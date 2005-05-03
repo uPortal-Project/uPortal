@@ -1,0 +1,47 @@
+<!--
+Copyright 2001 The JA-SIG Collaborative.  All rights reserved.
+See license distributed with this file and
+available online at http://www.uportal.org/license.html
+
+Author: John Laker, jlaker@udel.edu
+$Revision$
+-->
+
+<!ELEMENT layout (folder|channel)*>
+<!ELEMENT layout_fragment (folder|channel)*>
+
+<!ATTLIST layout
+  ID ID #REQUIRED>
+
+<!ELEMENT folder (folder|channel)*>
+<!ATTLIST folder
+  ID ID #REQUIRED
+  type (header|footer|regular) "regular"
+  hidden (true|false) "false"
+  unremovable (true|false) "false"
+  immutable (true|false) "false"
+  name CDATA #IMPLIED>
+
+
+<!ELEMENT channel (parameter)*>
+<!ATTLIST channel
+  ID ID #REQUIRED
+  name CDATA #REQUIRED
+  description CDATA #REQUIRED
+  title CDATA #REQUIRED 
+  class CDATA #REQUIRED
+  chanID CDATA #REQUIRED
+  typeID CDATA #REQUIRED
+  fname CDATA #IMPLIED   
+  timeout CDATA "10000"
+  hidden (true|false) "false"
+  editable (true|false) "false"
+  hasHelp (true|false) "false"
+  hasAbout (true|false) "false">
+
+
+<!ELEMENT parameter EMPTY>
+<!ATTLIST parameter
+  name CDATA #REQUIRED
+  value CDATA #REQUIRED
+  override (yes|no) "no">
