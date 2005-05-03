@@ -15,6 +15,5 @@ public interface EvaluatorFactory
 {
     public static final String RCS_ID = "@(#) $Header$";
 
-    public Evaluator getEvaluator( Node audience )
-    throws Exception;
+    public Evaluator getEvaluator( Node audience );
 }

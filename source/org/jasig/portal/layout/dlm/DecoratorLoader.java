@@ -33,7 +33,7 @@ class DecoratorLoader
             throw new Exception( "java.lang.ClassNotFoundException occurred" +
                                  " while loading class '" + 
                                  className + "' (or one of its " +
-                                 "dependent classes)." );
+                                 "dependent classes).", cnfe );
         }
         catch( ExceptionInInitializerError eiie )
         {
@@ -52,7 +52,7 @@ class DecoratorLoader
                                  " initializer or the initializer for a " +
                                  "static variable. The stack trace is as" +
                                  " follows:\n----------\n" + s.toString() +
-                                 "\n----------" );
+                                 "\n----------", eiie );
         }
         catch( LinkageError le )
         {
@@ -60,7 +60,7 @@ class DecoratorLoader
                                  "loading class '" + 
                                  className + "'. \nThis typically means " +
                                  "that a dependent class has changed " +
-                                 "incompatibly after compiling this class. " );
+                                 "incompatibly after compiling this class. ", le );
         }
 
         Object theInstance = null;
@@ -77,7 +77,7 @@ class DecoratorLoader
                                  "dependent classes). \nVerify that this " +
                                  "is a public class " +
                                  "and that it contains a public, zero " +
-                                 "argument constructor." );
+                                 "argument constructor.", iae );
         }
         catch( InstantiationException ie ) 
         {
@@ -87,7 +87,7 @@ class DecoratorLoader
                                  "dependent classes). \nVerify that the " +
                                  "specified class is a " +
                                  "class and not an interface or abstract " +
-                                 "class." );
+                                 "class.", ie );
         }
         try
         {
@@ -99,7 +99,7 @@ class DecoratorLoader
                                  "while loading class '" + 
                                  className + "'. \nVerify that the " +
                                  "class implements the " +
-                                 "LayoutDecorator interface." );
+                                 "LayoutDecorator interface.", cce );
         }
     }
 }

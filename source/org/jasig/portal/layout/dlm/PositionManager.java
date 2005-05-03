@@ -638,7 +638,7 @@ public class PositionManager
         {
             throw new PortalException( "Exception encountered while " +
                                        "generating new position set node " +
-                                       "Id for userId=" + person.getID() );
+                                       "Id for userId=" + person.getID(),e );
         }
         Document plf = plfParent.getOwnerDocument();
         Element positions = plf.createElement( Constants.ELM_POSITION_SET );
@@ -671,7 +671,7 @@ public class PositionManager
         {
             throw new PortalException( "Exception encountered while " +
                                        "generating new position node " +
-                                       "Id for userId=" + person.getID() );
+                                       "Id for userId=" + person.getID(), e );
         }
         Document plf = positions.getOwnerDocument();
         Element position = plf.createElement( Constants.ELM_POSITION );
@@ -694,4 +694,3 @@ public class PositionManager
     }
 
 }
-

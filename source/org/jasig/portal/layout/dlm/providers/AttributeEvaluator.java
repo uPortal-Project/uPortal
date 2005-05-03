@@ -28,15 +28,13 @@ public class AttributeEvaluator
     protected String value = null;
 
     public AttributeEvaluator( String name, String mode, String value )
-        throws Exception
     {
         if ( mode.equals( "equals" ) )
         {
             this.mode = EQUALS;
             if ( value == null )
-                throw new Exception( "Missing value attribute" +
-                                     ". For mode of 'equals' value " +
-                                     "must be defined" );
+                throw new RuntimeException("Missing value attribute"
+                        + ". For mode of 'equals' value must be defined.");
         }
         else if ( mode.equals( "exists" ) )
             this.mode = EXISTS;
@@ -44,30 +42,32 @@ public class AttributeEvaluator
         {
             this.mode = CONTAINS;
             if ( value == null || value.equals( "" ) )
-                throw new Exception( "Missing or invalid value attribute" +
-                                     ". For mode of 'contains' value " +
-                                     "must be defined and not empty" );
+                throw new RuntimeException("Missing or invalid value attribute"
+                        + ". For mode of 'contains' value "
+                        + "must be defined and not empty");
         }
         else if ( mode.equals( "startsWith" ) )
         {
             this.mode = STARTS_WITH;
             if ( value == null || value.equals( "" ) )
-                throw new Exception( "Missing or invalid value attribute. " +
-                                     "For mode of 'startsWith' value must " +
-                                     "be defined and not empty" );
+                throw new RuntimeException(
+                        "Missing or invalid value attribute. "
+                                + "For mode of 'startsWith' value must "
+                                + "be defined and not empty");
         }
         else if ( mode.equals( "endsWith" ) )
         {
             this.mode = ENDS_WITH;
             if ( value == null || value.equals( "" ) )
-                throw new Exception( "Missing or invalid value attribute. " +
-                                     "For mode of 'endsWith' value must be " +
-                                     "defined and not empty" );
+                throw new RuntimeException(
+                        "Missing or invalid value attribute. "
+                                + "For mode of 'endsWith' value must be "
+                                + "defined and not empty");
         }
         else
-            throw new Exception( "Invalid mode attribute. Expected mode " +
-                                 "of 'contains', 'equals', 'startsWith', " +
-                                 "'exists', or 'endsWith'" );
+            throw new RuntimeException("Invalid mode attribute. Expected mode "
+                    + "of 'contains', 'equals', 'startsWith', "
+                    + "'exists', or 'endsWith'");
             
         this.name = name;
         this.value = value;

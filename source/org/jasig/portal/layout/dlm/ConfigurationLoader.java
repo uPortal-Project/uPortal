@@ -22,6 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.utils.DocumentFactory;
+import org.jasig.portal.utils.XML;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -66,11 +67,7 @@ public class ConfigurationLoader
         {
             throw new RuntimeException(ConfigurationLoader.class.getName() +
                            " could not load distributed layout " +
-                           "configuration. " +
-                           ( e.getMessage() == null ?
-                         "Please make sure " +
-                           "that the dlm.xml file exists." :
-                         ". Details: " + e.getMessage() ) );
+                           "configuration.", e);
         }
     }
 
@@ -122,7 +119,7 @@ public class ConfigurationLoader
                     LOG.info("\n\n---------- Warning ----------\nThe 'name'" +
                             " attribute of the " +
                             "property element is required and must not be empty " +
-                            "in \n'" + getXML( node ) +
+                            "in \n'" + XML.serializeNode(node) +
                             "'\nfrom distributed layout managment configuration " +
                             "file \n" + configFileURL.toString() +
                             "  \n-----------------------------\n");
@@ -194,34 +191,4 @@ public class ConfigurationLoader
         newArr[frags.length] = f;
         return newArr;
     }
-
-    private static String getXML( Node node )
-    {
-        try
-        {
-            DOMSource ds = new DOMSource( node );
-            Transformer t = TransformerFactory.newInstance().newTransformer();
-            t.setOutputProperty( OutputKeys.METHOD, "xml" );
-            t.setOutputProperty( OutputKeys.OMIT_XML_DECLARATION, "yes" );
-            t.setOutputProperty( OutputKeys.INDENT, "yes" );
-            StringWriter sw = new StringWriter();
-            StreamResult sr = new StreamResult( sw );
-            t.transform( ds, sr );
-            return sw.toString();
-        }
-        catch( Exception e )
-        {
-            // can't generate xml so return anything we can
-            return "* " + node.getNodeValue();
-        }
-    }
 }
-
-
-
-
-
-
-
-
-

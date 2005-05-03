@@ -30,33 +30,48 @@ public class GroupMembershipEvaluator implements Evaluator
 
     private IEntityGroup group = null;
 
-    public GroupMembershipEvaluator(String mode, String name) throws Exception
+    public GroupMembershipEvaluator(String mode, String name)
     {
         if (! mode.equals("memberOf"))
         {
-            throw new Exception(
-                    "Unsupported mode '"
-                            + mode
-                            + "' specified. Only 'memberOf' is " +
-                                    "supported at this time.");
+            throw new RuntimeException("Unsupported mode '" + mode
+                    + "' specified. Only 'memberOf' is "
+                    + "supported at this time.");
         }
         this.groupName = name;
         this.group = getGroup();
     }
 
-    private IEntityGroup getGroup() throws Exception
+    private IEntityGroup getGroup()
     {
         IEntityGroup theGroup = null;
-        EntityIdentifier[] groups = GroupService.searchForGroups(groupName,
+        EntityIdentifier[] groups = null;
+        try
+        {
+            groups = GroupService.searchForGroups(groupName,
                 IGroupConstants.IS, org.jasig.portal.security.IPerson.class);
-
+        } catch (GroupsException e1)
+        {
+            throw new RuntimeException("An exception occurred searching for " +
+                    "the group " + groupName + ".", e1);
+        }
         if (groups == null || groups.length == 0)
-            throw new Exception("Group with name '" + groupName
+            throw new RuntimeException("Group with name '" + groupName
                     + "' not found for " + this.getClass().getName()
                     + ". All evaluations will return false.");
+        
+        try
+        {
         theGroup = GroupService.findGroup(groups[0].getKey());
+        } catch (GroupsException e)
+        {
+            throw new RuntimeException("An exception occurred retrieving " +
+                    "the group " + groupName + ".", e);
+        }
+        
+        
         if (theGroup == null)
-            throw new Exception("Person Group with key '" + groups[0].getKey()
+            throw new RuntimeException("Person Group with key '" + groups[0].getKey()
                     + "' not found for " + this.getClass().getName()
                     + ". All evaluations will return false.");
         return theGroup;

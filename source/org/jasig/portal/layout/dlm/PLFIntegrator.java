@@ -7,6 +7,7 @@ package org.jasig.portal.layout.dlm;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.PortalException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -42,7 +43,7 @@ public class PLFIntegrator
     private static void applyChildChanges( Element plfParent, 
                                            Element ilfParent,
                                            IntegrationResult result )
-        throws Exception
+        throws PortalException
     {
         Element positions = null;
         boolean changeOccurred = false;
@@ -50,7 +51,8 @@ public class PLFIntegrator
         if( null == plfParent )
         {
             throw new java.lang.Error(
-                "(Bug 20224)The PLF parent element is missing, so the database has been corrupted."
+                "The PLF parent element is missing, so it appears that the " +
+                "database has been corrupted."
                 );
         }
         
@@ -97,7 +99,6 @@ public class PLFIntegrator
                                       Element plfParent,
                                       Element ilfParent,
                                       IntegrationResult result )
-        throws Exception
     {
         String id = plfChild.getAttribute( Constants.ATT_ID );
                 
@@ -132,7 +133,7 @@ public class PLFIntegrator
                                      Element plfParent,
                                      Element ilfParent,
                                      IntegrationResult result )
-        throws Exception
+    throws PortalException
     {
         String id = plfChild.getAttribute( Constants.ATT_ID );
         
@@ -230,18 +231,7 @@ public class PLFIntegrator
                                  copy, true );
             }
         }
-
-
-        /* mrb DOM3 change
-         * 
-        // now make the xerces identifier in the doc so we can get nodes via
-        // getElementById.
-        IPortalDocument xercesDoc = (IPortalDocument) document;
-        xercesDoc.putIdentifier( plfChild.getAttribute( Constants.ATT_ID ),
-                                 copy );
-        */
         return copy;
     }
     
 }
-

@@ -10,15 +10,10 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.utils.XML;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -53,7 +48,6 @@ public class FragmentDefinition
      * @throws Exception
      */
     public FragmentDefinition ( Element e )
-    throws Exception
     {
         final boolean REQUIRED = true;
         final boolean NOT_REQUIRED = false;
@@ -73,8 +67,8 @@ public class FragmentDefinition
         }
         catch( NumberFormatException nfe ) 
         {
-            throw new Exception( "Invalid format for precedence attribute " +
-                                 "of <fragment> in\n'" + getXML( e ) );
+            throw new RuntimeException( "Invalid format for precedence attribute " +
+                                 "of <fragment> in\n'" + XML.serializeNode(e), nfe );
         }
         loadOwnerRoles( e.getElementsByTagName( "dlm:role" ));
         loadAudienceEvaluators( e.getElementsByTagName( "dlm:audience" ) );
@@ -121,7 +115,6 @@ public class FragmentDefinition
     }
 
     private void loadAudienceEvaluators( NodeList nodes )
-    throws Exception
     {
         final String evaluatorFactoryAtt = "evaluatorFactory";
 
@@ -137,10 +130,10 @@ public class FragmentDefinition
             NamedNodeMap atts = audience.getAttributes();
             Node att = atts.getNamedItem( evaluatorFactoryAtt );
             if ( att == null || att.getNodeValue().equals("") )
-                throw new Exception( "Required attibute '" + 
+                throw new RuntimeException( "Required attibute '" + 
                                      evaluatorFactoryAtt + "' " +
                                      "is missing or empty on 'audience' " +
-                                     " element in\n'" + getXML( audience ) + 
+                                     " element in\n'" + XML.serializeNode(audience) + 
                                      "'" );
             String className = att.getNodeValue();
             EvaluatorFactory factory = loadEvaluatorFactory( className,
@@ -150,17 +143,16 @@ public class FragmentDefinition
     }
 
     private void addEvaluator( EvaluatorFactory factory, Node audience )
-    throws Exception
     {
         Evaluator evaluator = factory.getEvaluator( audience );
 
         if ( evaluator == null )
-            throw new Exception( "Evaluator factory '" + 
+            throw new RuntimeException( "Evaluator factory '" + 
                                  factory.getClass().getName() + 
                                  "' failed to " +
                                  "return an evaluator for 'audience' element" +
                                  " in\n'" +
-                                 getXML( audience ) + 
+                                 XML.serializeNode(audience) + 
                                  "'" );
         if ( evaluators == null )
             evaluators = new Evaluator[] { evaluator };
@@ -174,7 +166,6 @@ public class FragmentDefinition
     }
     private EvaluatorFactory loadEvaluatorFactory( String factoryClassName,
                                                    Node audience )
-    throws Exception
     {
         Class theClass = null;
         try
@@ -183,44 +174,37 @@ public class FragmentDefinition
         }
         catch( ClassNotFoundException cnfe )
         {
-            throw new Exception( "java.lang.ClassNotFoundException occurred" +
+            throw new RuntimeException( "java.lang.ClassNotFoundException occurred" +
                                  " while loading evaluator factory class '" + 
                                  factoryClassName + "' (or one of its " +
                                  "dependent classes) for 'audience' element " +
-                                 "in\n'" + getXML( audience ) + 
+                                 "in\n'" + XML.serializeNode(audience) + 
                                  "'" );
         }
         catch( ExceptionInInitializerError eiie )
         {
-            StringWriter s = new StringWriter();
-            PrintWriter p = new PrintWriter( s );
-            eiie.printStackTrace( p );
-            p.flush();
-            
-            throw new Exception( "java.lang.ExceptionInInitializerError " +
+            throw new RuntimeException( "java.lang.ExceptionInInitializerError " +
                                  "occurred while " +
                                  "loading evaluator factory Class '" + 
                                  factoryClassName + "' (or one of its " +
                                  "dependent classes) for 'audience' element " +
-                                 "in\n'" + getXML( audience ) + 
+                                 "in\n'" + XML.serializeNode(audience) + 
                                  "'. \nThis indicates that an exception " +
                                  "occurred during evaluation of a static" +
                                  " initializer or the initializer for a " +
-                                 "static variable. The stack trace is as" +
-                                 " follows:\n----------\n" + s.toString() +
-                                 "\n----------" );
+                                 "static variable.", eiie );
         }
         catch( LinkageError le )
         {
-            throw new Exception( "java.lang.LinkageError occurred while " +
+            throw new RuntimeException( "java.lang.LinkageError occurred while " +
                                  "loading evaluator factory Class '" + 
                                  factoryClassName + "' for " +
                                  "'audience' element in\n'" +
-                                 getXML( audience ) + 
+                                 XML.serializeNode(audience) + 
                                  "'. \nThis typically means that a " +
                                  "dependent class has changed " +
                                  "incompatibly after compiling the " +
-                                 "factory class." );
+                                 "factory class.", le );
         }
 
         Object theInstance = null;
@@ -231,25 +215,25 @@ public class FragmentDefinition
         }
         catch( IllegalAccessException iae ) 
         {
-            throw new Exception( "java.lang.IllegalAccessException occurred " +
+            throw new RuntimeException( "java.lang.IllegalAccessException occurred " +
                                  "while loading evaluator factory Class '" + 
                                  factoryClassName + "' (or one of its " +
                                  "dependent classes) for 'audience' element " +
-                                 "in\n'" + getXML( audience ) + 
+                                 "in\n'" + XML.serializeNode(audience) + 
                                  "' \nVerify that this is a public class " +
                                  "and that it contains a public, zero " +
-                                 "argument constructor." );
+                                 "argument constructor.", iae );
         }
         catch( InstantiationException ie ) 
         {
-            throw new Exception( "java.lang.InstantiationException occurred " +
+            throw new RuntimeException( "java.lang.InstantiationException occurred " +
                                  "while loading evaluator factory Class '" + 
                                  factoryClassName + "' (or one of its " +
                                  "dependent classes) for 'audience' element " +
-                                 "in\n'" + getXML( audience ) + 
+                                 "in\n'" + XML.serializeNode(audience) + 
                                  "' \nVerify that the specified class is a " +
                                  "class and not an interface or abstract " +
-                                 "class." );
+                                 "class.", ie );
         }
         try
         {
@@ -257,13 +241,13 @@ public class FragmentDefinition
         }
         catch( ClassCastException cce ) 
         {
-            throw new Exception( "java.lang.ClassCastException occurred " +
+            throw new RuntimeException( "java.lang.ClassCastException occurred " +
                                  "while loading evaluator factory Class '" + 
                                  factoryClassName + "' (or one of its " +
                                  "dependent classes) for 'audience' element " +
-                                 "in\n'" + getXML( audience ) + 
+                                 "in\n'" + XML.serializeNode(audience) + 
                                  "'. \nVerify that the class implements the " +
-                                 "EvaluatorFactory interface." );
+                                 "EvaluatorFactory interface.", cce );
         }
     }
 
@@ -299,42 +283,16 @@ public class FragmentDefinition
     private String loadAttribute( String name, 
                                   NamedNodeMap atts, 
                                   boolean required ) 
-    throws Exception
     { 
         Node att = atts.getNamedItem( name );
         if ( required && 
              ( att == null  ||
                att.getNodeValue().equals( "" ) ) )
-            throw new Exception( "Missing or empty attribute '" + name +
+            throw new RuntimeException( "Missing or empty attribute '" + name +
                                  "' required by <fragment> in\n'" + 
-                                 getXML( this.configDOM ) + "'" );
+                                 XML.serializeNode(this.configDOM) + "'" );
         if ( att == null )
             return null;
         return att.getNodeValue();
-    }
-
-    private String getXML( Node node )
-    {
-        try
-        {
-            DOMSource ds = new DOMSource( node );
-            Transformer t = TransformerFactory.newInstance().newTransformer();
-            t.setOutputProperty( OutputKeys.METHOD, "xml" );
-            t.setOutputProperty( OutputKeys.OMIT_XML_DECLARATION, "yes" );
-            t.setOutputProperty( OutputKeys.INDENT, "yes" );
-            StringWriter sw = new StringWriter();
-            StreamResult sr = new StreamResult( sw );
-            t.transform( ds, sr );
-            String xml = sw.toString();
-
-            if ( xml.endsWith( "\r\n" ) )
-                return xml.substring( 0, xml.length() -2 );
-            return xml;
-        }
-        catch( Exception e )
-        {
-            // can't generate xml so return anything we can
-            return "* " + node.getNodeValue();
-        }
     }
 }

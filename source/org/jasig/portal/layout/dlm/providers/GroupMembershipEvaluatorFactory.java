@@ -51,7 +51,7 @@ public class GroupMembershipEvaluatorFactory extends PersonEvaluatorFactory
      * added in the future like, "deepMemberOf".
      */
     public Evaluator getAttributeEvaluator(String name, String mode,
-            String value) throws Exception
+            String value)
     {
         return new GroupMembershipEvaluator(mode, name);
     }

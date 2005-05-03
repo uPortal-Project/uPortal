@@ -54,8 +54,8 @@ import EDU.oswego.cs.dl.util.concurrent.ReentrantWriterPreferenceReadWriteLock;
 
 
 /**
- * A proprietary SCT layout manager that provides layout control through
- * layout fragments owned by various users. Copied from SimpleLayoutManager.
+ * A layout manager that provides layout control through
+ * layout fragments that are derived from regular portal user accounts.
  *
  * @author <a href="mailto:mboyd@sct.com">Mark Boyd</a>
  * @version 1.0  $Revision$ $Date$
@@ -64,10 +64,8 @@ import EDU.oswego.cs.dl.util.concurrent.ReentrantWriterPreferenceReadWriteLock;
 public class DistributedLayoutManager implements IUserLayoutManager
 {
     public static final String RCS_ID = "@(#) $Header$";
-    private static final Log cLog = LogFactory.getLog(DistributedLayoutManager.class);
+    private static final Log LOG = LogFactory.getLog(DistributedLayoutManager.class);
 
-    // The names for marking nodes
-    // added for uPortal 2.3.2 upgrade.
     private static final String ADD_COMMAND = "add";
     private static final String MOVE_COMMAND = "move";
 
@@ -127,19 +125,22 @@ public class DistributedLayoutManager implements IUserLayoutManager
     public DistributedLayoutManager(IPerson owner, UserProfile profile,
             IUserLayoutStore store) throws PortalException
     {
-        try
-        {
             if (owner == null)
             {
                 throw new PortalException(
-                        "A non-null owner needs to be specified.");
+                    "Unable to instantiate DistributedLayoutManager. " +
+                    "A non-null owner must to be specified.");
             }
 
             if (profile == null)
             {
                 throw new PortalException(
-                        "A non-null profile needs to be specified.");
+                    "Unable to instantiate DistributedLayoutManager for " 
+                    + owner.getAttribute(IPerson.USERNAME) + ". A " 
+                    + "non-null profile must to be specified.");
             }
+        try
+        {
 
             this.owner = owner;
             this.profile = profile;
@@ -203,36 +204,24 @@ public class DistributedLayoutManager implements IUserLayoutManager
             });
         } catch (Throwable e)
         {
-            cLog.error("Unable to instantiate DistributedLayoutManager "
-                    + "for user " + owner.getFullName(), e);
-            if (e instanceof PortalException)
-                throw (PortalException) e;
-            else
-                throw new RuntimeException(
-                        "Unable to instantiate DistributedLayoutManager "
-                                + "for user " + owner.getFullName(), e);
+            throw new PortalException(
+                    "Unable to instantiate DistributedLayoutManager for " 
+                        + owner.getAttribute(IPerson.USERNAME)+".", e);
         }
     }
 
-
-    // This method should be removed whenever it becomes possible
     private void setUserLayoutDOM(Document doc) {
         this.userLayoutDocument = doc;
         this.updateCacheKey();
 
-        // determine if this is a layout fragment by looking at the root node
+        // determine if this is a layout fragment by looking at the layout node
         // for a cp:fragment attribute.
-        // changes since uP2.4.1 now has a separate nested folder that is the
-        // root folder and the only child of the outermost, containing, layout 
-        // element.
-        //Element layout = (Element) this.userLayoutDocument
-        //    .getElementById( ROOT_FOLDER_ID );
         Element layout = this.userLayoutDocument.getDocumentElement();
         Node attr = layout.getAttributeNodeNS( Constants.NS_URI,
                                                Constants.LCL_FRAGMENT_NAME );
         this.isFragment = attr != null;
     }
-    // This method should be removed whenever it becomes possible
+
     public Document getUserLayoutDOM() {
         return this.userLayoutDocument;
     }
@@ -240,7 +229,8 @@ public class DistributedLayoutManager implements IUserLayoutManager
     public void getUserLayout(ContentHandler ch) throws PortalException {
         Document ul=this.getUserLayoutDOM();
         if(ul==null) {
-            throw new PortalException("User layout has not been initialized");
+            throw new PortalException("User layout has not been initialized for " 
+                        + owner.getAttribute(IPerson.USERNAME)+".");
         } else {
             getUserLayout(ul,ch);
         }
@@ -250,11 +240,14 @@ public class DistributedLayoutManager implements IUserLayoutManager
         Document ul=this.getUserLayoutDOM();
 
         if(ul==null) {
-            throw new PortalException("User layout has not been initialized");
+            throw new PortalException("User layout has not been initialized for " 
+                        + owner.getAttribute(IPerson.USERNAME)+".");
         } else {
             Node rootNode=ul.getElementById(nodeId);
             if(rootNode==null) {
-                throw new PortalException("A requested root node (with id=\""+nodeId+"\") is not in the user layout.");
+                throw new PortalException("A requested root node (with id=\"" 
+                        + nodeId + "\") is not in the user layout for " 
+                        + owner.getAttribute(IPerson.USERNAME)+".");
             } else {
                 getUserLayout(rootNode,ch);
             }
@@ -267,9 +260,12 @@ public class DistributedLayoutManager implements IUserLayoutManager
             Transformer emptyt=TransformerFactory.newInstance().newTransformer();
             emptyt.transform(new DOMSource(n), new SAXResult(ch));
         } catch (Exception e) {
-            cLog.error("Encountered an exception trying to output "
-                    + "user layout:", e);
-            throw new PortalException("Encountered an exception trying to output user layout",e);
+            LOG.error("Encountered an exception trying to output "
+                    + "user layout for " + owner.getAttribute(IPerson.USERNAME)
+                    + ".", e);
+            throw new PortalException("Encountered an exception trying to " 
+                    + "output user layout for " 
+                    + owner.getAttribute(IPerson.USERNAME) + ".",e);
         }
     }
 
@@ -287,11 +283,25 @@ public class DistributedLayoutManager implements IUserLayoutManager
         IUserLayoutStore layoutStore = getLayoutStore();
 
         if(layoutStore==null) {
-            throw new PortalException("Store implementation has not been set.");
+            throw new PortalException("Store implementation has not been " 
+                    + "set for " 
+                    + owner.getAttribute(IPerson.USERNAME) + ".");
         } else {
+            Document uli= null;
             try {
-                Document uli=layoutStore.getUserLayout(this.owner,this.profile);
-                
+                uli=layoutStore.getUserLayout(this.owner,this.profile);
+            } catch (Exception e) {
+                throw new PortalException("Exception encountered while " +
+                        "reading a layout for userId=" + this.owner.getID() +
+                        ", profileId=" + this.profile.getProfileId() ,e);
+            }
+            if(uli == null) {
+                throw new PortalException("Null user layout returned " +
+                        "for ownerId=\"" + owner.getID() + 
+                        "\", profileId=\"" + profile.getProfileId() 
+                        + "\", layoutId=\"" + profile.getLayoutId() + "\"");
+            }
+            try {
                if(uli!=null) {
                     this.setUserLayoutDOM(uli);
                     // inform listeners
@@ -299,16 +309,12 @@ public class DistributedLayoutManager implements IUserLayoutManager
                         LayoutEventListener lel=(LayoutEventListener)i.next();
                         lel.layoutLoaded();
                     }
-
-                } else {
-                    throw new PortalException("Null user layout returned for ownerId=\""+owner.getID()+"\", profileId=\""+profile.getProfileId()+"\", layoutId=\""+profile.getLayoutId()+"\"");
                 }
-            } catch (PortalException pe) {
-                throw pe;
             } catch (Exception e) {
-                String message = "Exception encountered while reading a layout for userId="+this.owner.getID()+", profileId="+this.profile.getProfileId();
-                cLog.error(message, e);
-                throw new PortalException(message ,e);
+                   throw new PortalException("Exception encountered contacting " +
+                           "layout listeners of layout for userId=" +
+                           this.owner.getID() + ", profileId=" + 
+                           this.profile.getProfileId() ,e);
             }
         }
     }
@@ -317,27 +323,33 @@ public class DistributedLayoutManager implements IUserLayoutManager
         Document uld=this.getUserLayoutDOM();
         
         if(uld==null) {
-            throw new PortalException("UserLayout has not been initialized.");
+            throw new PortalException("UserLayout has not been initialized for " 
+                    + owner.getAttribute(IPerson.USERNAME) + ".");
         } else {
             IUserLayoutStore layoutStore = getLayoutStore();
 
             if(layoutStore==null) {
-                throw new PortalException("Store implementation has not been set.");
+                throw new PortalException("Store implementation has not been set for " 
+                    + owner.getAttribute(IPerson.USERNAME) + ".");
             } else {
                 try {
                     layoutStore.setUserLayout(this.owner,this.profile,uld,channelsAdded);
-                    
-                    // inform listeners
+                } catch (Exception e) {
+                    throw new PortalException("Exception encountered while " +
+                            "saving layout for userId=" + this.owner.getID() +
+                            ", profileId=" + this.profile.getProfileId(),e);
+                }
+                try // inform listeners
+                {
                     for(Iterator i=listeners.iterator();i.hasNext();) {
                         LayoutEventListener lel=(LayoutEventListener)i.next();
                         lel.layoutSaved();
                     }
-                } catch (PortalException pe) {
-                    throw pe;
                 } catch (Exception e) {
-                    String message = "Exception encountered while trying to save a layout for userId="+this.owner.getID()+", profileId="+this.profile.getProfileId();
-                    cLog.error(message, e);
-                    throw new PortalException(message,e);
+                    throw new PortalException("Exception encountered contacting " +
+                            "layout listeners of layout for userId=" +
+                            this.owner.getID() + ", profileId=" + 
+                            this.profile.getProfileId() ,e);
                 }
                 
             }
@@ -353,16 +365,16 @@ public class DistributedLayoutManager implements IUserLayoutManager
         Document uld=this.getUserLayoutDOM();
 
         if( uld==null )
-        {
-            throw new PortalException("UserLayout has not been initialized.");
-        }
+            throw new PortalException("UserLayout has not been initialized for " 
+                    + owner.getAttribute(IPerson.USERNAME) + ".");
 
         // find an element with a given id
         Element element = (Element) uld.getElementById( nodeId );
         if( element == null )
         {
             throw new PortalException("Element with ID=\"" + nodeId +
-                                      "\" doesn't exist." );
+                                      "\" doesn't exist for " 
+                    + owner.getAttribute(IPerson.USERNAME) + "." );
         }
         return UserLayoutNodeDescription.createUserLayoutNodeDescription(element);
     }
@@ -381,7 +393,8 @@ public class DistributedLayoutManager implements IUserLayoutManager
             IUserLayoutStore layoutStore = getLayoutStore();
 
             if(layoutStore==null) {
-                throw new PortalException("Store implementation has not been set.");
+                throw new PortalException("Store implementation has not been set for " 
+                    + owner.getAttribute(IPerson.USERNAME) + ".");
             } else {
                 try {
                     if(node instanceof IUserLayoutChannelDescription) {
@@ -390,10 +403,10 @@ public class DistributedLayoutManager implements IUserLayoutManager
                     } else {
                         node.setId(layoutStore.generateNewFolderId(owner));
                     }
-                } catch (PortalException pe) {
-                    throw pe;
                 } catch (Exception e) {
-                    throw new PortalException("Exception encountered while generating new usre layout node Id for userId="+this.owner.getID());
+                    throw new PortalException("Exception encountered while " +
+                            "generating new user layout node Id for  for " 
+                            + owner.getAttribute(IPerson.USERNAME));
                 }
             }
 
@@ -407,9 +420,6 @@ public class DistributedLayoutManager implements IUserLayoutManager
                 parentElement.insertBefore(childElement,nextSibling);
             }
             // register element id
-            /* mrb DOM3 change
-            ((IPortalDocument) uld).putIdentifier(node.getId(),childElement);
-            */
             childElement.setIdAttribute(Constants.ATT_ID, true);
             childElement.setAttribute(Constants.ATT_ID, node.getId());
             this.updateCacheKey();
@@ -491,7 +501,9 @@ public class DistributedLayoutManager implements IUserLayoutManager
             if(parent!=null) {
                 parent.removeChild(childElement);
             } else {
-                throw new PortalException("Node \""+nodeId+"\" has a NULL parent !");
+                throw new PortalException("Node \""+nodeId +
+                        "\" has a NULL parent for layout of " 
+                    + owner.getAttribute(IPerson.USERNAME) + ".");
             }
             this.updateCacheKey();
 
@@ -558,9 +570,6 @@ public class DistributedLayoutManager implements IUserLayoutManager
                     parent.removeChild( oldChannelElement );
                     parent.insertBefore( newChannelElement, nextSibling );
                     // register new child instead
-                    /* mrb DOM3 change
-                    ((IPortalDocument) uld).putIdentifier( node.getId(), newChannelElement );
-                    */
                     newChannelElement.setIdAttribute(Constants.ATT_ID, true);
 
                     // inform the listeners
@@ -576,7 +585,10 @@ public class DistributedLayoutManager implements IUserLayoutManager
                 }
                 else
                 {
-                    throw new PortalException("Change channel to folder is not allowed by updateNode() method!");
+                    throw new PortalException("Change channel to folder is " +
+                            "not allowed by updateNode() method! Occurred " +
+                            "in layout for " 
+                            + owner.getAttribute(IPerson.USERNAME) + ".");
                 }
             }
             else
@@ -611,9 +623,6 @@ public class DistributedLayoutManager implements IUserLayoutManager
                     parent.removeChild(oldFolderElement);
                     parent.insertBefore(newFolderElement,nextSibling);
                     // register new child instead
-                    /* mrb DOM3 change
-                    ((IPortalDocument) uld).putIdentifier( node.getId(), newFolderElement );
-                    */
                     newFolderElement.setIdAttribute(Constants.ATT_ID, true);
 
                     // inform the listeners
@@ -708,10 +717,17 @@ public class DistributedLayoutManager implements IUserLayoutManager
         if(nextSiblingId!=null) {
             IUserLayoutNodeDescription sibling=getNode(nextSiblingId);
             if(sibling==null) {
-                throw new PortalException("Unable to find a sibling node with id=\""+nextSiblingId+"\"");
+                throw new PortalException("Unable to find a sibling node " +
+                        "with id=\""+nextSiblingId+"\".  Occurred " +
+                            "in layout for " 
+                            + owner.getAttribute(IPerson.USERNAME) + ".");
             }
             if(!parent.getId().equals(getParentId(nextSiblingId))) {
-                throw new PortalException("Given sibling (\""+nextSiblingId+"\") is not a child of a given parentId (\""+parent.getId()+"\")");
+                throw new PortalException("Given sibling (\""+nextSiblingId
+                        +"\") is not a child of a given parentId (\""
+                        +parent.getId()+"\"). Occurred " +
+                            "in layout for " 
+                            + owner.getAttribute(IPerson.USERNAME) + ".");
             }
         }
 
@@ -919,7 +935,9 @@ public class DistributedLayoutManager implements IUserLayoutManager
                 return null;
             }
         } else {
-            throw new PortalException("Node with id=\""+nodeId+"\" doesn't exist.");
+            throw new PortalException("Node with id=\""+nodeId+
+                    "\" doesn't exist. Occurred in layout for " 
+                    + owner.getAttribute(IPerson.USERNAME) + ".");
         }
     }
 
@@ -939,7 +957,10 @@ public class DistributedLayoutManager implements IUserLayoutManager
                 return null;
             }
         } else {
-            throw new PortalException("Node with id=\""+nodeId+"\" doesn't exist.");
+            throw new PortalException("Node with id=\""+nodeId+
+                    "\" doesn't exist. Occurred " +
+                            "in layout for " 
+                            + owner.getAttribute(IPerson.USERNAME) + ".");
         }
     }
 
@@ -959,7 +980,9 @@ public class DistributedLayoutManager implements IUserLayoutManager
                 return null;
             }
         } else {
-            throw new PortalException("Node with id=\""+nodeId+"\" doesn't exist.");
+            throw new PortalException("Node with id=\""+nodeId+
+                    "\" doesn't exist. Occurred in layout for " 
+                            + owner.getAttribute(IPerson.USERNAME) + ".");
         }
     }
 
@@ -1027,8 +1050,6 @@ public class DistributedLayoutManager implements IUserLayoutManager
     public String getSubscribeId(String fname) {
         try
         {
-                // mrb JAXP1.3 upgrade change for standardization
-                // Element fnameNode = (Element) XPathAPI.selectSingleNode(this.getUserLayoutDOM(),"//channel[@fname=\'"+fname+"\']");
                 String expression = "//channel[@fname=\'"+fname+"\']";
                 XPathFactory fac = XPathFactory.newInstance();
                 XPath xpath = fac.newXPath();
@@ -1041,8 +1062,10 @@ public class DistributedLayoutManager implements IUserLayoutManager
                 }
         } catch (XPathExpressionException e)
         {
-            cLog.error("Encountered the exception, while trying to identify " +
-                    "subscribe channel id for the fname=\""+fname+"\".", e);
+            LOG.error("Encountered exception while trying to identify " +
+                    "subscribe channel id for the fname=\""+fname+"\"" +
+                            " in layout of" 
+                            + owner.getAttribute(IPerson.USERNAME) + ".", e);
             return null;
         }
     }
@@ -1085,14 +1108,11 @@ public class DistributedLayoutManager implements IUserLayoutManager
      */
     public String getRootFolderId()
     {
+        String expression = "//layout/folder";
         try
         {
             if (rootNodeId == null)
             {
-                // mrb JAXP1.3 upgrade change for standardization
-                // Element rootNode = (Element)
-                // XPathAPI.selectSingleNode(this.getUserLayoutDOM(),"//layout/folder");
-                String expression = "//layout/folder";
                 XPathFactory fac = XPathFactory.newInstance();
                 XPath xpath = fac.newXPath();
                 Element rootNode = (Element) xpath.evaluate(expression, this
@@ -1101,7 +1121,9 @@ public class DistributedLayoutManager implements IUserLayoutManager
             }
         } catch (XPathExpressionException e)
         {
-            cLog.error(e);
+            LOG.error("Unable to locate node with path " + expression + 
+                    " in layout of" 
+                            + owner.getAttribute(IPerson.USERNAME) + ".", e);
         }
         return rootNodeId;
     }

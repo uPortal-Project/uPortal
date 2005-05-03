@@ -1,21 +1,7 @@
-// $Header$
-// ############################################################################
-//
-//                  Copyright (c) 2002 Campus Pipeline, Inc.
-//                            All Rights Reserved
-//
-// THIS WORK IS AN UNPUBLISHED WORK AND CONTAINS CONFIDENTIAL, PROPRIETARY,
-// AND TRADE SECRET INFORMATION OF CAMPUS PIPELINE, INC.  ACCESS TO THIS
-// WORK IS RESTRICTED.  NO PART OF THIS WORK MAY BE USED, PRACTICED, PERFORMED,
-// COPIED, DISTRIBUTED, REPRODUCED, REVISED, MODIFIED, TRANSLATED,
-// ABRIDGED, CONDENSED, EXPANDED, COLLECTED, COMPILED, LINKED, RECAST,
-// TRANSFORMED, ADAPTED, OR REVERSE ENGINEERED WITHOUT THE PRIOR WRITTEN
-// CONSENT OF CAMPUS PIPELINE, INC.  ANY USE OR EXPLOITATION OF THIS WORK
-// WITHOUT EXPRESS AUTHORIZATION COULD SUBJECT THE PERPETRATOR TO CRIMINAL
-// AND CIVIL LIABILITY.
-//
-// ############################################################################
-
+/* Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
+*  See license distributed with this file and
+*  available online at http://www.uportal.org/license.html
+*/
 package org.jasig.portal.layout.dlm;
 
 import java.io.PrintWriter;
@@ -26,17 +12,15 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Vector;
 
-
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.ChannelDefinition;
 import org.jasig.portal.IUserIdentityStore;
-import org.jasig.portal.layout.LayoutStructure;
-import org.jasig.portal.layout.StructureParameter;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.RDBMUserLayoutStore;
@@ -47,6 +31,8 @@ import org.jasig.portal.ThemeStylesheetUserPreferences;
 import org.jasig.portal.UserIdentityStoreFactory;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.channels.CError;
+import org.jasig.portal.layout.LayoutStructure;
+import org.jasig.portal.layout.StructureParameter;
 import org.jasig.portal.rdbm.DatabaseMetaDataImpl;
 import org.jasig.portal.rdbm.IDatabaseMetadata;
 import org.jasig.portal.security.IPerson;
@@ -80,7 +66,10 @@ public class RDBMDistributedLayoutStore
     extends RDBMUserLayoutStore
 {
     public static final String RCS_ID = "@(#) $Header$";
+    private static final Log LOG = LogFactory.getLog(RDBMDistributedLayoutStore.class);
 
+    private String systemDefaultUser = null;
+    private boolean systemDefaultUserLoaded = false;
     private Properties properties = null;
     private FragmentDefinition[] definitions = null;
     private LayoutDecorator decorator = null;
@@ -161,13 +150,10 @@ public class RDBMDistributedLayoutStore
         }
         catch( Exception e ) 
         {
-            if ( log.isDebugEnabled() )
-            log.debug("\n\n---------- Warning ---------\nUnable to load "
+            LOG.error("\n\n---------- Warning ---------\nUnable to load "
                         + "layout decorator '"
                         + properties.getProperty(DECORATOR_PROPERTY)
-                        + "' specified in dlm.xml. It will not be used."
-                        + "\n Details: " + e.getMessage()
-                        + "  \n----------------------------\n");
+                        + "' specified in dlm.xml. It will not be used.", e);
         }
         
         // activate fragments in a separate thread because many parts of the
@@ -190,7 +176,7 @@ public class RDBMDistributedLayoutStore
                     }
                     catch( Exception e )
                     {
-                        log.error("Problem loading fragments: " + e.getMessage(), e);
+                        LOG.error("Problem loading fragments.", e);
                     }
                 }
             };
@@ -423,7 +409,7 @@ public class RDBMDistributedLayoutStore
                         }
                         catch( Exception e )
                         {
-                            log.error(" *** Error - DLM Fragment cleaner problem:  \n\n", e );
+                            LOG.error(" *** Error - DLM Fragment cleaner problem:  \n\n", e );
                         }                            
                     }
                 }
@@ -512,27 +498,8 @@ public class RDBMDistributedLayoutStore
             // release the read lock
             releaseReadLock(person);
         }
-        /*
-         * These lines below may need to go into super conditionalized for DLM
-         * being enabled if we have problems with the namespace not being set
-         * before construction of the layout DOM and being done after the fact.
-         */
         Element layout = layoutDoc.getDocumentElement();
-        //Element rootFolder = (Element) docRoot.getFirstChild();
         layout.setAttribute(Constants.NS_DECL, Constants.NS_URI);
-        //layout.setAttribute("ID", DistributedLayoutManager.ROOT_FOLDER_ID);
-        /* mrb DOM3 change
-        ((IPortalDocument) layoutDoc).putIdentifier(
-                DistributedLayoutManager.ROOT_FOLDER_ID, layout);
-        */
-        //layout.setIdAttribute("ID", true);
-        /*
-         * mboyd: Note that layout structure has changed to be dependant on
-         * a containing < layout > element with a single folder having a "type"
-         * attribute with a value of "root". In 2.1 the layout element had
-         * an ID of "root". Conforming to 2.4.1 structure caused these lines
-         * to be changed. 
-         */
         return layoutDoc;
     }
     
@@ -575,8 +542,8 @@ public class RDBMDistributedLayoutStore
                 layoutNode.setAttributeNS( Constants.NS_URI,
                                            Constants.ATT_FRAGMENT_NAME,
                                            ownedFragment.name );
-                if (log.isDebugEnabled())
-                    log.debug("User '" + userName + "' is owner of '"
+                if (LOG.isDebugEnabled())
+                    LOG.debug("User '" + userName + "' is owner of '"
                             + ownedFragment.name + "' fragment.");
             }
             else if ( isLayoutOwnerDefault )
@@ -657,7 +624,7 @@ public class RDBMDistributedLayoutStore
         }
         catch( Exception e )
         {
-            // ignore. this should never occur.
+            LOG.error("An exception occurred attempting to update a layout.", e);
         }
     }
 
@@ -680,18 +647,21 @@ public class RDBMDistributedLayoutStore
         if ( globalDefault != null &&
              globalDefault.equals( userName ) )
             return true;
+        
+        if (!systemDefaultUserLoaded)
+        {
+            systemDefaultUserLoaded = true;
         try
         {
-            String systemDefaultUser
-            = PropertiesManager.getProperty( TEMPLATE_USER_NAME );
-            if ( systemDefaultUser != null &&
-                 systemDefaultUser.equals ( userName ) )
+                systemDefaultUser = PropertiesManager
+                        .getProperty(TEMPLATE_USER_NAME);
+            } catch (RuntimeException re)
+            {
+                LOG.error("Property '" + TEMPLATE_USER_NAME + "' not defined.",
+                        re);
+            }
+            if (systemDefaultUser != null && systemDefaultUser.equals(userName))
                 return true;
-        }
-        catch( RuntimeException re )
-        {
-            // ignore. If default user not found then this user isn't the
-            // same right?
         }
         
         return false;
@@ -873,8 +843,8 @@ public class RDBMDistributedLayoutStore
                 
                 String subSelectString = "SELECT LAYOUT_ID FROM UP_USER_PROFILE WHERE USER_ID=" + userId + " AND PROFILE_ID=" +
                 profileId;
-                if (log.isDebugEnabled())
-                    log.debug("RDBMUserLayoutStore::getUserLayout()1 " + subSelectString);
+                if (LOG.isDebugEnabled())
+                    LOG.debug("RDBMUserLayoutStore::getUserLayout()1 " + subSelectString);
                 int layoutId;
                 ResultSet rs = stmt.executeQuery(subSelectString);
                 try {
@@ -894,8 +864,8 @@ public class RDBMDistributedLayoutStore
                 if (layoutId == 0) { 
                     stmt = con.createStatement();
                     String sQuery = "SELECT USER_DFLT_USR_ID FROM UP_USER WHERE USER_ID=" + userId;
-                    if (log.isDebugEnabled())
-                        log.debug("RDBMUserLayoutStore::getUserLayout(): " + sQuery);
+                    if (LOG.isDebugEnabled())
+                        LOG.debug("RDBMUserLayoutStore::getUserLayout(): " + sQuery);
                     rs = stmt.executeQuery(sQuery);
                     try {
                         rs.next();
@@ -987,15 +957,15 @@ public class RDBMDistributedLayoutStore
                     if (db.getJoinQuery() 
                             instanceof DatabaseMetaDataImpl.JdbcDb) 
                     {
-                        if (log.isDebugEnabled())
-                            log.debug("RDBMUserLayoutStore::getStructureStylesheetUserPreferences() :  instanceof jdbcdb");      
+                        if (LOG.isDebugEnabled())
+                            LOG.debug("RDBMUserLayoutStore::getStructureStylesheetUserPreferences() :  instanceof jdbcdb");      
                         sQuery = "SELECT PARAM_NAME, PARAM_VAL, PARAM_TYPE, ULS.STRUCT_ID, CHAN_ID, ULP.STRUCT_PARM_NM, ULP.STRUCT_PARM_VAL FROM UP_LAYOUT_STRUCT ULS, UP_SS_USER_ATTS UUSA LEFT OUTER JOIN UP_LAYOUT_PARAM ULP ON UUSA.STRUCT_ID = ULP.STRUCT_ID AND UUSA.USER_ID=" + userId + " AND UUSA.USER_ID = ULP.USER_ID AND PROFILE_ID=" + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND UUSA.STRUCT_ID = ULS.STRUCT_ID AND UUSA.USER_ID = ULS.USER_ID AND UUSA.USER_ID = ULP.USER_ID";
                     } 
                     else if (db.getJoinQuery() 
                             instanceof DatabaseMetaDataImpl.PostgreSQLDb) 
                     {
-                        if (log.isDebugEnabled())
-                            log.debug("RDBMUserLayoutStore::getStructureStylesheetUserPreferences() :  instanceof jpostgressqldbdbcdb");      
+                        if (LOG.isDebugEnabled())
+                            LOG.debug("RDBMUserLayoutStore::getStructureStylesheetUserPreferences() :  instanceof jpostgressqldbdbcdb");      
 
                         sQuery = "SELECT PARAM_NAME, PARAM_VAL, PARAM_TYPE, ULS.STRUCT_ID, CHAN_ID, ULP.STRUCT_PARM_NM, ULP.STRUCT_PARM_VAL FROM UP_SS_USER_ATTS UUSA, UP_LAYOUT_STRUCT ULS, UP_LAYOUT_PARAM ULP WHERE UUSA.USER_ID=" + userId + " AND PROFILE_ID="
                             + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND UUSA.STRUCT_ID = ULS.STRUCT_ID AND UUSA.USER_ID = ULS.USER_ID AND UUSA.STRUCT_ID *= ULP.STRUCT_ID AND UUSA.USER_ID *= ULP.USER_ID";
@@ -1004,8 +974,8 @@ public class RDBMDistributedLayoutStore
                     else if (db.getJoinQuery() 
                             instanceof DatabaseMetaDataImpl.OracleDb) 
                     {
-                        if (log.isDebugEnabled())
-                            log.debug("RDBMUserLayoutStore::getStructureStylesheetUserPreferences() :  instanceof oracledb");      
+                        if (LOG.isDebugEnabled())
+                            LOG.debug("RDBMUserLayoutStore::getStructureStylesheetUserPreferences() :  instanceof oracledb");      
                         sQuery = "SELECT /*+ USE_NL(UP_LAYOUT_STRUCT) */ PARAM_NAME, PARAM_VAL, PARAM_TYPE, ULS.STRUCT_ID, CHAN_ID, ULP.STRUCT_PARM_NM, ULP.STRUCT_PARM_VAL FROM UP_SS_USER_ATTS UUSA, UP_LAYOUT_STRUCT ULS, UP_LAYOUT_PARAM ULP WHERE UUSA.USER_ID=" + userId + " AND PROFILE_ID="
                             + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND UUSA.STRUCT_ID = ULS.STRUCT_ID AND UUSA.USER_ID = ULS.USER_ID AND UUSA.STRUCT_ID = ULP.STRUCT_ID(+) AND UUSA.USER_ID = ULP.USER_ID(+)";
 
@@ -1017,8 +987,8 @@ public class RDBMDistributedLayoutStore
                     }
                 }
 
-                if (log.isDebugEnabled())
-                    log.debug("RDBMUserLayoutStore::getStructureStylesheetUserPreferences(): " + sQuery);
+                if (LOG.isDebugEnabled())
+                    LOG.debug("RDBMUserLayoutStore::getStructureStylesheetUserPreferences(): " + sQuery);
 
                 stmt = con.createStatement();
                 rs = stmt.executeQuery(sQuery);
@@ -1037,8 +1007,8 @@ public class RDBMDistributedLayoutStore
                         }
                         if (param_type == 1) {
                             // stylesheet param
-                            if (log.isDebugEnabled())
-                                log.debug("RDBMUserLayoutStore::getStructureStylesheetUserPreferences() :  stylesheet global params should be specified in the user defaults table ! UP_SS_USER_ATTS is corrupt. (userId="
+                            if (LOG.isDebugEnabled())
+                                LOG.debug("RDBMUserLayoutStore::getStructureStylesheetUserPreferences() :  stylesheet global params should be specified in the user defaults table ! UP_SS_USER_ATTS is corrupt. (userId="
                                                       + Integer.toString(userId) + ", profileId=" + Integer.toString(profileId) + ", stylesheetId=" + Integer.toString(stylesheetId)
                                                       + ", param_name=\"" + rs.getString(1) + "\", param_type=" + Integer.toString(param_type));
                         }
@@ -1064,8 +1034,7 @@ public class RDBMDistributedLayoutStore
                         }
                         else {
                             // unknown param type
-                                log
-                                    .error("RDBMUserLayoutStore::getStructureStylesheetUserPreferences() : unknown param type encountered! DB corrupt. (userId="
+                                LOG.error("RDBMUserLayoutStore::getStructureStylesheetUserPreferences() : unknown param type encountered! DB corrupt. (userId="
                                             + Integer.toString(userId)
                                             + ", profileId="
                                             + Integer.toString(profileId)
@@ -1084,10 +1053,6 @@ public class RDBMDistributedLayoutStore
             } finally {
                 //stmt.close();
             }
-        }    catch (Exception e)
-        {
-            log.error(e);
-            throw e;
         }
         finally {
             RDBMServices.releaseConnection(con);
@@ -1132,8 +1097,8 @@ public class RDBMDistributedLayoutStore
                       definitions[i].view.structUserPrefs );
         }
         
-        if (log.isDebugEnabled())
-            log.debug("***** " + person.getAttribute( "username" )
+        if (LOG.isDebugEnabled())
+            LOG.debug("***** " + person.getAttribute( "username" )
               + "'s StructureStylesheetUserPrefereneces\n" +
               showFolderAttribs( ssup ) +
               showChannelAttribs( ssup ) );
@@ -1177,8 +1142,8 @@ public class RDBMDistributedLayoutStore
                                                  definitions[i].view.themeUserPrefs);
         }
         
-        if (log.isDebugEnabled())
-            log.debug("***** " + person.getAttribute( "username" )
+        if (LOG.isDebugEnabled())
+            LOG.debug("***** " + person.getAttribute( "username" )
               + "'s ThemeStylesheetUserPrefereneces\n" +
               showChannelAttribs( tsup ) );
 
@@ -1330,7 +1295,7 @@ public class RDBMDistributedLayoutStore
         }
         catch( Exception e)
         {
-            log.error(" *** Error - DLM unable to update fragment prefs:  \n\n", e );
+            LOG.error(" *** Error - DLM unable to update fragment prefs:  \n\n", e );
         }
     }
 
@@ -1388,8 +1353,6 @@ public class RDBMDistributedLayoutStore
             }
             else
                 structure = doc.createElement("folder");
-    // can't put id in doc here since may need swapping for inc'd nodes down below            
-    //((IPortalDocument)doc).putIdentifier(folderPrefix+structId, structure);
     structure.setAttribute("ID", folderPrefix + ls.getStructId());
     structure.setAttribute("name", ls.getName());
     structure.setAttribute("type", (ls.getType() != null ? ls.getType() : "regular"));
@@ -1402,8 +1365,9 @@ public class RDBMDistributedLayoutStore
       structure.setAttribute("locale", ls.getLocale());  // for i18n by Shoji
   }
 
-    for (Iterator structureParamIter = ls.getParameters().iterator(); structureParamIter.hasNext(); ) {
-      StructureParameter sp = (StructureParameter) structureParamIter.next();
+  if (ls.getParameters() != null) {
+    for (int i = 0; i < ls.getParameters().size(); i++) {
+      StructureParameter sp = (StructureParameter)ls.getParameters().get(i);
 
                 if (!ls.isChannel())
                 { // Folder
@@ -1444,6 +1408,7 @@ public class RDBMDistributedLayoutStore
                     }
                 }
             }
+        }
         // finish setting up elements based on loaded params
         String origin = structure.getAttribute(Constants.ATT_ORIGIN);
         String prefix = (ls.isChannel() ? channelPrefix : folderPrefix);
@@ -1457,11 +1422,6 @@ public class RDBMDistributedLayoutStore
                 Constants.NS_URI,
                 Constants.ATT_PLF_ID,
                 prefix + ls.getStructId());
-            /* mrb DOM3 change
-            ((IPortalDocument)doc).putIdentifier(origin, structure);
-            */
-            // element must be contained in a document before calling setIdAtt.
-            //structure.setIdAttribute("ID", true);
             structure.setAttribute("ID", origin);
         }
         else if (!ls.isChannel())
@@ -1471,36 +1431,19 @@ public class RDBMDistributedLayoutStore
         {
             if (ls.getType() != null && ls.getType().startsWith(Constants.NS))
             {
-                /* mrb DOM3 change
-                ((IPortalDocument)doc).putIdentifier(
-                    Constants.DIRECTIVE_PREFIX + ls.getStructId(),
-                    structure);
-                */
-                // element must be contained in a document before calling setIdAtt.
-                //structure.setIdAttribute("ID", true);
                 structure.setAttribute(
                     "ID",
                     Constants.DIRECTIVE_PREFIX + ls.getStructId());
             }
             else
             {
-                /* mrb DOM3 change
-                ((IPortalDocument)doc).putIdentifier(folderPrefix + ls.getStructId(), structure);
-                */
-                // element must be contained in a document before calling setIdAtt.
-                //structure.setIdAttribute("ID", true);
                 structure.setAttribute("ID", folderPrefix + ls.getStructId());
             }
         }
         else
         {
-            if (log.isDebugEnabled())
-                log.debug("Adding identifier " + folderPrefix + ls.getStructId() );
-            /* mrb DOM3 change
-            ((IPortalDocument)doc).putIdentifier(channelPrefix + ls.getStructId(), structure);
-            */
-            // element must be contained in a document before calling setIdAtt.
-            //structure.setIdAttribute("ID", true);
+            if (LOG.isDebugEnabled())
+                LOG.debug("Adding identifier " + folderPrefix + ls.getStructId() );
             structure.setAttribute("ID", channelPrefix + ls.getStructId());
         }
         
@@ -1519,8 +1462,8 @@ public class RDBMDistributedLayoutStore
             }
             Element structure = (Element) node;
 
-            if (log.isDebugEnabled())
-                log.debug("saveStructure XML content: "
+            if (LOG.isDebugEnabled())
+                LOG.debug("saveStructure XML content: "
                     + XML.serializeNode(node));
             
             // determine the struct_id for storing in the db. For incorporated nodes in
@@ -1587,8 +1530,8 @@ public class RDBMDistributedLayoutStore
                 10,
                 RDBMServices.dbFlag(
                     xmlBool(structure.getAttribute("unremovable"))));
-            if (log.isDebugEnabled())
-                log.debug("RDBMUserLayoutStore::saveStructure(): " + structStmt);
+            if (LOG.isDebugEnabled())
+                LOG.debug("RDBMUserLayoutStore::saveStructure(): " + structStmt);
             structStmt.executeUpdate();
 
             // code to persist extension attributes for dlm
@@ -1608,8 +1551,8 @@ public class RDBMDistributedLayoutStore
                     parmStmt.setInt(1, saveStructId);
                     parmStmt.setString(2, name);
                     parmStmt.setString(3, attrib.getNodeValue());
-                    if (log.isDebugEnabled())
-                        log.debug("RDBMUserLayoutStore::saveStructure(): " + parmStmt);
+                    if (LOG.isDebugEnabled())
+                        LOG.debug("RDBMUserLayoutStore::saveStructure(): " + parmStmt);
                     parmStmt.executeUpdate();
                 }
             }
@@ -1630,11 +1573,7 @@ public class RDBMDistributedLayoutStore
                         if (override == null
                             || !override.getNodeValue().equals("yes"))
                         {
-/*                            if (DEBUG > 0)
-                                System.err.println(
-                                    "Not saving channel defined parameter value "
-                                        + nodeName);
-                                        */
+                            // can't override
                         }
                         else
                         {
@@ -1642,9 +1581,8 @@ public class RDBMDistributedLayoutStore
                             parmStmt.setInt(1, saveStructId);
                             parmStmt.setString(2, nodeName);
                             parmStmt.setString(3, nodeValue);
-                            if (log.isDebugEnabled())
-                                log.debug("RDBMUserLayoutStore::saveStructure(): "
-                                    + parmStmt);
+                            if (LOG.isDebugEnabled())
+                                LOG.debug(parmStmt);
                             parmStmt.executeUpdate();
                         }
                     }
@@ -1679,8 +1617,8 @@ public class RDBMDistributedLayoutStore
                     // see if the parameter was already there
                     String sQuery = "SELECT PARAM_VAL FROM UP_SS_USER_PARM WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId
                     + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND PARAM_NAME='" + pName + "'";
-                    if (log.isDebugEnabled())
-                        log.debug(sQuery);
+                    if (LOG.isDebugEnabled())
+                        LOG.debug(sQuery);
                     ResultSet rs = stmt.executeQuery(sQuery);
                     try {
                         if (rs.next()) {
@@ -1697,8 +1635,8 @@ public class RDBMDistributedLayoutStore
                     } finally {
                         rs.close();
                     }
-                    if (log.isDebugEnabled())
-                        log.debug("RDBMDistributedLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
+                    if (LOG.isDebugEnabled())
+                        LOG.debug(sQuery);
                     stmt.executeUpdate(sQuery);
                 }
 
@@ -1707,8 +1645,8 @@ public class RDBMDistributedLayoutStore
                 "WHERE USER_ID=" + userId + " AND " +
                 "PROFILE_ID=" + profileId + " AND " +
                 "SS_ID=" + stylesheetId;
-                if (log.isDebugEnabled())
-                    log.debug(sQuery);
+                if (LOG.isDebugEnabled())
+                    LOG.debug(sQuery);
                 stmt.executeUpdate(sQuery);
 
 
@@ -1730,8 +1668,8 @@ public class RDBMDistributedLayoutStore
                             sQuery = "SELECT PARAM_VAL FROM UP_SS_USER_ATTS WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId
                             + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND STRUCT_ID='" + plfFolderId.substring(1) + "' AND PARAM_NAME='" + pName
                             + "' AND PARAM_TYPE=2";
-                            if (log.isDebugEnabled())
-                                log.debug(sQuery);
+                            if (LOG.isDebugEnabled())
+                                LOG.debug(sQuery);
                             ResultSet rs = stmt.executeQuery(sQuery);
                             try {
                                 if (rs.next()) {
@@ -1749,8 +1687,8 @@ public class RDBMDistributedLayoutStore
                             } finally {
                                 rs.close();
                             }
-                            if (log.isDebugEnabled())
-                                log.debug(sQuery);
+                            if (LOG.isDebugEnabled())
+                                LOG.debug(sQuery);
                             stmt.executeUpdate(sQuery);
                         }
                     }
@@ -1773,8 +1711,8 @@ public class RDBMDistributedLayoutStore
                             sQuery = "SELECT PARAM_VAL FROM UP_SS_USER_ATTS WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId
                             + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND STRUCT_ID='" + plfChannelId.substring(1) + "' AND PARAM_NAME='" + pName
                             + "' AND PARAM_TYPE=3";
-                            if (log.isDebugEnabled())
-                                log.debug("RDBMUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
+                            if (LOG.isDebugEnabled())
+                                LOG.debug(sQuery);
                             ResultSet rs = stmt.executeQuery(sQuery);
                             try {
                                 if (rs.next()) {
@@ -1792,8 +1730,8 @@ public class RDBMDistributedLayoutStore
                             } finally {
                                 rs.close();
                             }
-                            if (log.isDebugEnabled())
-                                log.debug("RDBMUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
+                            if (LOG.isDebugEnabled())
+                                LOG.debug(sQuery);
                             stmt.executeUpdate(sQuery);
                         }
                     }
@@ -1803,11 +1741,12 @@ public class RDBMDistributedLayoutStore
                 updateFragmentSSUP( person,
                                     (DistributedUserPreferences) ssup );
             } catch (Exception e) {
-                if (log.isDebugEnabled())
-                    log.debug("Problem occurred ", e);
+                if (LOG.isDebugEnabled())
+                    LOG.debug("Problem occurred ", e);
                 // Roll back the transaction
                 RDBMServices.rollback(con);
-                throw  e;
+                throw new Exception("Exception setting Structure Sylesheet " +
+                        "User Preferences",e);
             } finally {
                 stmt.close();
             }
@@ -1831,8 +1770,8 @@ public class RDBMDistributedLayoutStore
                     // see if the parameter was already there
                     String sQuery = "SELECT PARAM_VAL FROM UP_SS_USER_PARM WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId
                     + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=2 AND PARAM_NAME='" + pName + "'";
-                    if (log.isDebugEnabled())
-                        log.debug(sQuery);
+                    if (LOG.isDebugEnabled())
+                        LOG.debug(sQuery);
                     ResultSet rs = stmt.executeQuery(sQuery);
                     try {
                         if (rs.next()) {
@@ -1849,8 +1788,8 @@ public class RDBMDistributedLayoutStore
                     } finally {
                         rs.close();
                     }
-                    if (log.isDebugEnabled())
-                        log.debug(sQuery);
+                    if (LOG.isDebugEnabled())
+                        LOG.debug(sQuery);
                     stmt.executeUpdate(sQuery);
                 }
                 // write out channel attributes
@@ -1864,8 +1803,8 @@ public class RDBMDistributedLayoutStore
                             String sQuery = "SELECT PARAM_VAL FROM UP_SS_USER_ATTS WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId
                             + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=2 AND STRUCT_ID='" + channelId.substring(1) + "' AND PARAM_NAME='" + pName
                             + "' AND PARAM_TYPE=3";
-                            if (log.isDebugEnabled())
-                                log.debug(sQuery);
+                            if (LOG.isDebugEnabled())
+                                LOG.debug(sQuery);
                             ResultSet rs = stmt.executeQuery(sQuery);
                             try {
                                 if (rs.next()) {
@@ -1883,8 +1822,8 @@ public class RDBMDistributedLayoutStore
                             } finally {
                                 rs.close();
                             }
-                            if (log.isDebugEnabled())
-                                log.debug(sQuery);
+                            if (LOG.isDebugEnabled())
+                                LOG.debug(sQuery);
                             stmt.executeUpdate(sQuery);
                         }
                     }
@@ -1894,7 +1833,8 @@ public class RDBMDistributedLayoutStore
             } catch (Exception e) {
                 // Roll back the transaction
                 RDBMServices.rollback(con);
-                throw  e;
+                throw new Exception("Exception setting Theme Sylesheet " +
+                        "User Preferences",e);
             } finally {
                 stmt.close();
             }

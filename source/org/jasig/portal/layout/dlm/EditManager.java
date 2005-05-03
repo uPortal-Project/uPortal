@@ -78,7 +78,7 @@ public class EditManager
         {
             throw new PortalException( "Exception encountered while " +
                                        "generating new edit set node " +
-                                       "Id for userId=" + person.getID() );
+                                       "Id for userId=" + person.getID(), e );
         }
         Element editSet = plf.createElement( Constants.ELM_EDIT_SET );
         editSet.setAttribute( Constants.ATT_TYPE,
@@ -152,7 +152,7 @@ public class EditManager
             {
                 throw new PortalException( "Exception encountered while " +
                                            "generating new edit node " +
-                                           "Id for userId=" + person.getID() );
+                                           "Id for userId=" + person.getID(), e );
         }
             edit = plf.createElement( type );
             edit.setAttribute( Constants.ATT_TYPE, type );
@@ -306,4 +306,3 @@ public class EditManager
             node.removeChild( editSet );
     }
 }
-

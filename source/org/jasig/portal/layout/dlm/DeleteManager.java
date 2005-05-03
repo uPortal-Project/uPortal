@@ -5,6 +5,8 @@
 
 package org.jasig.portal.layout.dlm;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.IUserLayoutStore;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.UserLayoutStoreFactory;
@@ -24,6 +26,7 @@ import org.w3c.dom.NodeList;
 public class DeleteManager
 {
     public static final String RCS_ID = "@(#) $Header$";
+    private static final Log LOG = LogFactory.getLog(DeleteManager.class);
 
     private static RDBMDistributedLayoutStore dls = null;
 
@@ -63,6 +66,8 @@ public class DeleteManager
         }
         catch( Exception e )
         {
+            LOG.error("Exception occurred while getting user's DLM delete-set.", 
+                    e);
         }
 
         if ( dSet == null )
@@ -112,9 +117,6 @@ public class DeleteManager
         Element p = (Element) e.getParentNode();
         e.setIdAttribute(Constants.ATT_ID, false);
         p.removeChild( e );
-        /* mrb DOM3 change
-        ((IPortalDocument) ilf).removeIdentifier( nodeID );
-        */
         return true;
     }
 
@@ -150,7 +152,7 @@ public class DeleteManager
         {
             throw new PortalException( "Exception encountered while " +
                                        "generating new delete set node " +
-                                       "Id for userId=" + person.getID() );
+                                       "Id for userId=" + person.getID(), e );
         }
         Element delSet = plf.createElement( Constants.ELM_DELETE_SET );
         delSet.setAttribute( Constants.ATT_TYPE,
@@ -203,7 +205,7 @@ public class DeleteManager
         {
             throw new PortalException( "Exception encountered while " +
                                        "generating new delete node " +
-                                       "Id for userId=" + person.getID() );
+                                       "Id for userId=" + person.getID(), e );
         }
         Element delete = plf.createElement( Constants.ELM_DELETE );
         delete.setAttribute( Constants.ATT_TYPE, Constants.ELM_DELETE );
@@ -211,7 +213,6 @@ public class DeleteManager
         delete.setAttributeNS( Constants.NS_URI,
                        Constants.ATT_NAME, elementID );
         delSet.appendChild( delete );
-        System.out.println( "**** adding delete directive for " + ID );
 
         // now pass through children and add delete directives for those with
         // IDs indicating that they were incorporated
@@ -226,4 +227,3 @@ public class DeleteManager
         }
     }
 }
-

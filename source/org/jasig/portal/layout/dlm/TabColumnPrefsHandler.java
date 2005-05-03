@@ -96,54 +96,15 @@ public class TabColumnPrefsHandler
         }
     }
     
-    /**
-       Creates a new tab in the plf. This method really is not needed because
-       all the functionality is provided by the called method but was added
-       for clarity.
-     
-    public static void addTab( Element compViewNode, IPerson person )
-        throws PortalException
-    {
-        HandlerUtils.createPlfNodeAndPath( compViewNode, false, person );
-    }
-
-    
-    **
-       Creates a new column along with any parent nodes if needed in the plf.
-       This method really is not needed because
-       all the functionality is provided by the called method but was added
-       for clarity.
-     *
-    public static void addColumn( Element compViewNode, IPerson person )
-        throws PortalException
-    {
-        HandlerUtils.createPlfNodeAndPath( compViewNode, false, person );
-    }
-
-    **
-       Creates a new channel along with any parent nodes, if needed, and all
-       child nodes in the plf. This method really is not needed because
-       all the functionality is provided by the called method but was added
-       for clarity.
-     *
-    public static void addChannel( Element compViewNode, IPerson person )
-        throws Exception
-    {
-        HandlerUtils.createPlfNodeAndPath( compViewNode, true, person );
-    }
-    */
-
     public static Element getPlfChannel( Element compViewChannel, IPerson person )
         throws PortalException
     {
-        if (LOG.isInfoEnabled())
-            LOG.info("TabColumnPrefsHandler>>getPlfChannel():" );
         Element plf = HandlerUtils
             .getPLFNode( compViewChannel, person,
                          true, // create node if not found
                          false ); // don't create children
         if (LOG.isInfoEnabled())
-            LOG.info("TabColumnPrefsHandler>>getPlfChannel(): retrieved PLFChannel" );
+            LOG.info("Retrieved PLFChannel" + compViewChannel.getAttribute("ID"));
         return plf;
     }
 
@@ -269,4 +230,3 @@ public class TabColumnPrefsHandler
                      deleteAllowed );
     }
 }
-

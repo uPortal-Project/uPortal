@@ -31,13 +31,11 @@ public class PersonEvaluatorFactory
     private static final int NOT = 2;
 
     public Evaluator getEvaluator( Node audience ) 
-        throws Exception
     {
         return getGroupEvaluator( OR, audience );
     }
 
     private Evaluator getGroupEvaluator( int type, Node node ) 
-        throws Exception
     {
         NodeList nodes = node.getChildNodes();
         Evaluator container = null;
@@ -46,7 +44,7 @@ public class PersonEvaluatorFactory
              nodes.getLength() == 0 || 
              ( container = createGroupEvaluator( type, nodes ) ) == null )
         {
-            throw new Exception( "Invalid content. Expected one to many " +
+            throw new RuntimeException( "Invalid content. Expected one to many " +
                                  "<paren>, <NOT>, or <attribute> in '" + 
                                  XML.serializeNode(node) + "'" );
         }
@@ -54,7 +52,6 @@ public class PersonEvaluatorFactory
     }
 
     private Evaluator createGroupEvaluator( int type, NodeList nodes )
-        throws Exception
     {
         // if only one child skip wrapping in container for AND and OR
         if ( nodes.getLength() == 1 &&
@@ -91,7 +88,6 @@ public class PersonEvaluatorFactory
     }
 
     private Evaluator createEvaluator( Node node )
-        throws Exception
     {
         String nodeName = node.getNodeName();
 
@@ -99,19 +95,18 @@ public class PersonEvaluatorFactory
             return createParen( node );
         else if ( nodeName.equals( "attribute" ) )
             return createAttributeEvaluator( node );
-        throw new Exception( "Unrecognized element '" + nodeName + "' in '" +
+        throw new RuntimeException( "Unrecognized element '" + nodeName + "' in '" +
                 XML.serializeNode(node) + "'" );
     }
 
     private Evaluator createParen( Node n )
-        throws Exception
     {
         NamedNodeMap attribs = n.getAttributes();
         Node opNode = attribs.getNamedItem( "mode" );
 
         
         if ( opNode == null )
-            throw new Exception( "Invalid mode. Expected 'AND','OR', or 'NOT'"
+            throw new RuntimeException( "Invalid mode. Expected 'AND','OR', or 'NOT'"
                                  + " in '" +
                                  XML.serializeNode(n) + "'" );
         else if ( opNode.getNodeValue().equals( "OR" ))
@@ -121,20 +116,19 @@ public class PersonEvaluatorFactory
         else if ( opNode.getNodeValue().equals( "AND" ) )
             return getGroupEvaluator( AND, n );
         else
-            throw new Exception( "Invalid mode. Expected 'AND','OR', or 'NOT'"
+            throw new RuntimeException( "Invalid mode. Expected 'AND','OR', or 'NOT'"
                                  + " in '" +
                                  XML.serializeNode(n) + "'" );
     }
 
     private Evaluator createAttributeEvaluator( Node n )
-        throws Exception
     {
         NamedNodeMap attribs =  n.getAttributes();
         Node attribNode = attribs.getNamedItem( "name" );
 
         if ( attribNode == null ||
              attribNode.getNodeValue().equals( "" ) )
-            throw new Exception( "Missing or empty name attribute in '" +
+            throw new RuntimeException( "Missing or empty name attribute in '" +
                     XML.serializeNode(n) + "'" );
         String name = attribNode.getNodeValue();
         String value = null;
@@ -147,7 +141,7 @@ public class PersonEvaluatorFactory
 
         if ( attribNode == null ||
              attribNode.getNodeValue().equals( "" ) )
-            throw new Exception( "Missing or empty mode attribute in '" +
+            throw new RuntimeException( "Missing or empty mode attribute in '" +
                     XML.serializeNode(n) + "'" );
         String mode = attribNode.getNodeValue();
         Evaluator eval = null;
@@ -158,7 +152,7 @@ public class PersonEvaluatorFactory
         }
         catch( Exception e )
         {
-            throw new Exception( e.getMessage() + " in '" + XML.serializeNode(n));
+            throw new RuntimeException( e.getMessage() + " in '" + XML.serializeNode(n));
         }
         return eval;
     }

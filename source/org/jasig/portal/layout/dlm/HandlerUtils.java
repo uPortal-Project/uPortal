@@ -120,7 +120,7 @@ public class HandlerUtils
             {
                 throw new PortalException( "Exception encountered while " +
                                            "generating new user layout node " +
-                                           "Id for userId=" + person.getID() );
+                                           "Id for userId=" + person.getID(), e );
             }
                 
             plfNode.setAttributeNS( Constants.NS_URI,
@@ -189,9 +189,6 @@ public class HandlerUtils
                 plfNode = (Element) plf.importNode( compViewNode,
                                                     createChildNodes );
                 String ID = plfNode.getAttribute( Constants.ATT_ID );
-                /* mrb DOM3 change
-                ((IPortalDocument) plf).putIdentifier( ID, plfNode );
-                */
                 plfNode.setIdAttribute(Constants.ATT_ID, true);
             }
             else
@@ -207,4 +204,3 @@ public class HandlerUtils
         return (Element) plfNode;
     }
 }
-
