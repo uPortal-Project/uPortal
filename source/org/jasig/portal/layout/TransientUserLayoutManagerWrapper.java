@@ -18,7 +18,6 @@ import javax.xml.transform.sax.SAXResult;
 import org.jasig.portal.ChannelDefinition;
 import org.jasig.portal.ChannelParameter;
 import org.jasig.portal.ChannelRegistryStoreFactory;
-import org.jasig.portal.IUserLayoutStore;
 import org.jasig.portal.PortalException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

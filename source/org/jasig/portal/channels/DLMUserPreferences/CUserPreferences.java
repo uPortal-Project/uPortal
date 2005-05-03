@@ -10,6 +10,7 @@ import  org.jasig.portal.*;
 import  org.xml.sax.ContentHandler;
 
 import org.jasig.portal.layout.IUserLayoutManager;
+import org.jasig.portal.layout.IUserLayoutStore;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

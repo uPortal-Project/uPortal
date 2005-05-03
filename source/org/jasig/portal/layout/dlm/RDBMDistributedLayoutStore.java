@@ -23,7 +23,7 @@ import org.jasig.portal.ChannelDefinition;
 import org.jasig.portal.IUserIdentityStore;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.RDBMServices;
-import org.jasig.portal.RDBMUserLayoutStore;
+import org.jasig.portal.layout.simple.RDBMUserLayoutStore;
 import org.jasig.portal.StructureStylesheetDescription;
 import org.jasig.portal.StructureStylesheetUserPreferences;
 import org.jasig.portal.ThemeStylesheetDescription;

@@ -18,6 +18,7 @@ import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.jndi.JNDIManager;
 import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutManager;
+import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.layout.TransientUserLayoutManagerWrapper;
 import org.jasig.portal.layout.UserLayoutManagerFactory;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;

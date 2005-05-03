@@ -7,7 +7,6 @@ package org.jasig.portal.layout;
 
 import java.util.Enumeration;
 
-import org.jasig.portal.IUserLayoutStore;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.w3c.dom.Document;
