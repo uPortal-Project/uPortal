@@ -15,7 +15,6 @@ import java.util.ResourceBundle;
 
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.GeneralRenderingException;
-import org.jasig.portal.IUserLayoutStore;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.PortalSessionManager;
 import org.jasig.portal.ResourceMissingException;
@@ -23,6 +22,7 @@ import org.jasig.portal.StylesheetSet;
 import org.jasig.portal.ThemeStylesheetDescription;
 import org.jasig.portal.UserLayoutStoreFactory;
 import org.jasig.portal.UserProfile;
+import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
 import org.apache.commons.logging.Log;

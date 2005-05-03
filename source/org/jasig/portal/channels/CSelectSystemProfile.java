@@ -9,11 +9,11 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 
 import org.jasig.portal.ChannelRuntimeData;
-import org.jasig.portal.IUserLayoutStore;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.StandaloneChannelRenderer;
 import org.jasig.portal.UserLayoutStoreFactory;
 import org.jasig.portal.UserProfile;
+import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Document;

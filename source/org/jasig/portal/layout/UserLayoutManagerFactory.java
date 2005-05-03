@@ -7,10 +7,11 @@ package org.jasig.portal.layout;
 
 import java.lang.reflect.Constructor;
 
-import org.jasig.portal.IUserLayoutStore;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.UserLayoutStoreFactory;
 import org.jasig.portal.UserProfile;
+import org.jasig.portal.layout.immutable.ImmutableUserLayoutManagerWrapper;
+import org.jasig.portal.layout.simple.SimpleUserLayoutManager;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
 import org.apache.commons.logging.Log;

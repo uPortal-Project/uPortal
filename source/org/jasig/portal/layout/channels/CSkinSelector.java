@@ -11,7 +11,6 @@ import java.io.InputStream;
 
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.IPrivileged;
-import org.jasig.portal.IUserLayoutStore;
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalException;
@@ -19,6 +18,7 @@ import org.jasig.portal.PortalSessionManager;
 import org.jasig.portal.UserLayoutStoreFactory;
 import org.jasig.portal.UserPreferences;
 import org.jasig.portal.channels.BaseChannel;
+import org.jasig.portal.layout.IUserLayoutStore;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.XSLT;

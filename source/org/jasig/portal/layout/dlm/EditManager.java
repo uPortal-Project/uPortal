@@ -5,9 +5,9 @@
 
 package org.jasig.portal.layout.dlm;
 
-import org.jasig.portal.IUserLayoutStore;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.UserLayoutStoreFactory;
+import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.security.IPerson;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
