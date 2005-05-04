@@ -30,7 +30,7 @@ import org.jasig.portal.ThemeStylesheetDescription;
 import org.jasig.portal.ThemeStylesheetUserPreferences;
 import org.jasig.portal.UserIdentityStoreFactory;
 import org.jasig.portal.UserProfile;
-import org.jasig.portal.channels.CError;
+import org.jasig.portal.channels.error.ErrorCode;
 import org.jasig.portal.layout.LayoutStructure;
 import org.jasig.portal.layout.StructureParameter;
 import org.jasig.portal.rdbm.DatabaseMetaDataImpl;
@@ -1331,19 +1331,20 @@ public class RDBMDistributedLayoutStore
             }
       structure = channelDef.getDocument(doc, channelPrefix + ls.getStructId());
     } else {
-                // Create an error channel if channel is missing or not approved
-                ChannelDefinition cd = new ChannelDefinition(ls.getChanId());
-                cd.setTitle("Missing channel");
-                cd.setName("Missing channel");
-                cd.setTimeout(20000);
-                String missingChannel = "Unknown";
-      if (channelDef != null) {
-                    missingChannel = channelDef.getName();
-                }
-      structure = cd.getDocument(doc, channelPrefix + ls.getStructId(),
-       "The '" + missingChannel + "' channel is no longer available. Please remove it from your layout.",
-                        CError.CHANNEL_MISSING_EXCEPTION);
-            }
+        // Create an error channel if channel is missing or not approved
+        ChannelDefinition cd = new ChannelDefinition(ls.getChanId());
+        cd.setTitle("Missing channel");
+        cd.setName("Missing channel");
+        cd.setTimeout(20000);
+        String missingChannel = "Unknown";
+        if (channelDef != null) {
+            missingChannel = channelDef.getName();
+        }
+        structure = cd.getDocument(doc, channelPrefix + ls.getStructId(),
+                "The '" + missingChannel + "' channel is no longer available. " +
+                "Please remove it from your layout.",
+                ErrorCode.CHANNEL_MISSING_EXCEPTION.getCode());
+    }
   } else
         {
             // create folder objects including dlm new types in cp namespace
