@@ -40,3 +40,17 @@ other initial tasks. Running initportal again is similiar to hitting a reset
 button on the portal. Any saved configuration in the portal is lost and a clean
 version of the portal is configured.
 
+Logging
+---------------------------------------
+The ant build moves /properties/Logger.properties to the root of the classes directory so that the resulting
+log4j.properties file will be available on the classpath for Commons Logging / log4j to find.  You'll need to either
+change that configuration in Logger.properties before the build or to change it in /WEB-INF/classes/ afterwards.
+You can configure the logging level, where the file should be, or even choose a different logging approach (log
+via XML to a ChainSaw instance, say).
+
+Database configuration
+--------------------------------------
+Database configuration is configured in /properties/rdbm.properties.  The ant build will produce a /META-INF/context.xml
+file which, when you deploy your .war, will configure the context to make the uPortal database available via
+servlet-container-managed DataSource via JNIDI.  You can choose to get your DataSource via JNDI in the
+context of a servlet container by configuring the relevant portal.properties property.
