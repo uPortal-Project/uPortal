@@ -5,8 +5,6 @@
 
 package org.jasig.portal.layout.dlm;
 
-import java.io.StringWriter;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 

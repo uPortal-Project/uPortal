@@ -12,7 +12,6 @@ import java.util.HashSet;
 import java.util.Vector;
 
 import org.jasig.portal.PortalException;
-import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.LayoutEventListener;
 import org.jasig.portal.layout.node.IUserLayoutFolderDescription;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
