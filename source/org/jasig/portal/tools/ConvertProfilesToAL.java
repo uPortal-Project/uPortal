@@ -21,9 +21,9 @@ import org.jasig.portal.PortalException;
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.StructureStylesheetDescription;
 import org.jasig.portal.ThemeStylesheetDescription;
-import org.jasig.portal.UserLayoutStoreFactory;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.layout.IUserLayoutStore;
+import org.jasig.portal.layout.UserLayoutStoreFactory;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
 

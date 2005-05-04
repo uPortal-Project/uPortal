@@ -8,7 +8,6 @@ package org.jasig.portal.layout;
 import java.lang.reflect.Constructor;
 
 import org.jasig.portal.PortalException;
-import org.jasig.portal.UserLayoutStoreFactory;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.layout.immutable.ImmutableUserLayoutManagerWrapper;
 import org.jasig.portal.layout.simple.SimpleUserLayoutManager;

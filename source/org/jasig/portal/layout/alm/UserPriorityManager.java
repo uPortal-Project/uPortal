@@ -10,12 +10,12 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
 
-import org.jasig.portal.UserLayoutStoreFactory;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.layout.IUserLayoutStore;
+import org.jasig.portal.layout.UserLayoutStoreFactory;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.GroupService;
 

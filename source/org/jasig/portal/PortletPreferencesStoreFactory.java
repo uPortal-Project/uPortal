@@ -5,6 +5,7 @@
 
 package org.jasig.portal;
 
+import org.jasig.portal.layout.UserLayoutStoreFactory;
 import org.jasig.portal.properties.PropertiesManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

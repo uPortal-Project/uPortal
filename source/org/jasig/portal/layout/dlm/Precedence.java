@@ -5,7 +5,7 @@
 
 package org.jasig.portal.layout.dlm;
 
-import org.jasig.portal.UserLayoutStoreFactory;
+import org.jasig.portal.layout.UserLayoutStoreFactory;
 
 /**
  * @version $Revision$ $Date$
