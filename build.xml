@@ -571,9 +571,11 @@
          We need to find out the best way to ensure cross-context
          behavior in all servlet containers.
          
-         The context file goes into META-INF where it will work for a war file.  
-         This will be deployed correctly by Tomcat manager upload.
-         It also needs to be copied into the local Tomcat location.
+         The context file goes into META-INF so it will be part of the .war file and available
+         to deployment processes that honor it, such as deployment via the Tomcat manager application.
+         We also copy it into the Tomcat server configuration directory so that Tomcat will configure the
+         context properly where we don't use a .war deployment process that honors
+         /META-INF/context.xml .
     -->
     <mkdir dir="${deploy.home}/META-INF"/>
     <copy tofile="${deploy.home}/META-INF/context.xml" file="properties/${webapp.contextFile}">
