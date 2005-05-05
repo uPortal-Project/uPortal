@@ -45,30 +45,30 @@ public class DefaultDataHandlerImpl implements IDataHandler {
   protected static final String UPDMASK = "{0}={1}, ";
 
   protected static final String UPDCONDMASK
-                                     = " where user_name={0}";
+                                     = " where USER_NAME={0}";
 
-  protected static final String COUNTUSERS = "select count( user_name ) cnt"
-                         + " from up_person_dir" + UPDCONDMASK;
+  protected static final String COUNTUSERS = "select count( USER_NAME ) cnt"
+                         + " from UP_PERSON_DIR" + UPDCONDMASK;
 
-  protected static final String ADDUSER = "insert into up_person_dir ({0}) "
+  protected static final String ADDUSER = "insert into UP_PERSON_DIR ({0}) "
                                                 + "values ({1})";
 
-  protected static final String UPDPWD = ("update up_person_dir set "
-          + "encrptd_pswd={0}, lst_pswd_cgh_dt={1} where user_name={2} ")
+  protected static final String UPDPWD = ("update UP_PERSON_DIR set "
+          + "ENCRPTD_PSWD={0}, LST_PSWD_CGH_DT={1} where USER_NAME={2} ")
             .toUpperCase();
 
-  protected static final String USERSELECT = "select * from up_person_dir {0} "
-                   + "order by user_name, first_name, last_name";
+  protected static final String USERSELECT = "select * from UP_PERSON_DIR {0} "
+                   + "order by USER_NAME, FIRST_NAME, LAST_NAME";
 
   protected static final String ALLUSERS
                     = MessageFormat.format( USERSELECT, new String[] { "" } );
 
   protected static final String GETTHISUSER = MessageFormat.format( USERSELECT,
-                  new String[] { "where user_name = {0} " } );
+                  new String[] { "where USER_NAME = {0} " } );
 
   protected static final String SEARCHUSERS = MessageFormat.format( USERSELECT,
-                   new String[] { "where user_name like {0} "
-           + "or last_name like {0} or first_name like {0} " });
+                   new String[] { "where USER_NAME like {0} "
+           + "or LAST_NAME like {0} or FIRST_NAME like {0} " });
 
   private IUserIdentityStore rdbmuser = new RDBMUserIdentityStore();
 
@@ -98,7 +98,7 @@ public class DefaultDataHandlerImpl implements IDataHandler {
   public void setUserInformation( IPerson AnIndividual ) throws Exception {
 
      // build sql and update table
-     StringBuffer updsql = new StringBuffer( "update up_person_dir set ".toUpperCase() );
+     StringBuffer updsql = new StringBuffer( "update UP_PERSON_DIR set ".toUpperCase() );
      String tmpcond = null;
      String worker = null;
      Enumeration E = AnIndividual.getAttributeNames();
