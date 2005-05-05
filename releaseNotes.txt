@@ -17,10 +17,6 @@ Known issues
 There are many known bugs in this release.  You can query our JIRA system for known issues affecting this release, including
 issues discovered after this release went to press.
 
-In particular, there is a known issue with our use of context.xml in the META-INF directory of the produced webapp.
-Please see the README.  You will likely need to take a manual step locally for this application's context to properly deploy.
-
-
 This release includes many improvements, fixes, and other changes beyond 2.5.0 M1, which in turn included many
 changes beyond 2.5.0.  
 
