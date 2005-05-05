@@ -92,13 +92,17 @@ import java.util.Vector;
 
 import javax.xml.transform.Result;
 
+import org.jasig.portal.IAnchoringSerializer;
 import org.jasig.portal.properties.PropertiesManager;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.DocumentType;
 import org.w3c.dom.Element;
+import org.w3c.dom.Entity;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
+import org.w3c.dom.Notation;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.DTDHandler;
 import org.xml.sax.DocumentHandler;
@@ -154,10 +158,10 @@ import org.xml.sax.ext.LexicalHandler;
  */
 public abstract class BaseMarkupSerializer
     implements ContentHandler, DocumentHandler, LexicalHandler,
-               DTDHandler, DeclHandler, DOMSerializer, Serializer
+               DTDHandler, DeclHandler, DOMSerializer, Serializer, IAnchoringSerializer
 {
 
-
+    protected String anchorId = null;
     private EncodingInfo _encodingInfo;
 
 
@@ -1051,6 +1055,10 @@ public abstract class BaseMarkupSerializer
         case Node.DOCUMENT_NODE : {
             DocumentType      docType;
             DOMImplementation domImpl;
+            NamedNodeMap      map;
+            Entity            entity;
+            Notation          notation;
+            int               i;
 
             // If there is a document type, use the SAX events to
             // serialize it.
@@ -1147,7 +1155,7 @@ public abstract class BaseMarkupSerializer
             // change the state to not-empty and close the
             // opening element tag.
             if ( state.empty ) {
-                _printer.printText( '>' );
+               _printer.printText( ">" );
                 state.empty = false;
             }
             // Except for one content type, all of them
@@ -1299,6 +1307,7 @@ public abstract class BaseMarkupSerializer
                                     boolean preserveSpace, boolean unescaped )
         throws IOException
     {
+        int index;
         char ch;
 
         if ( preserveSpace ) {
@@ -1576,6 +1585,31 @@ public abstract class BaseMarkupSerializer
         }
         return null;
     }
+    
+    public void startAnchoring(String anchorId) {
+        this.anchorId = anchorId;
+    }
+    
+    public void stopAnchoring() {
+        this.anchorId = null;
+    }
 
-
+    protected String appendAnchorIfNecessary(String elementName, String attributeName, String attributeValue) {
+        if (anchorId != null) {
+            // looking for an <a> or <form> tag element
+            if (elementName.equalsIgnoreCase("a") || elementName.equalsIgnoreCase("form")) {
+                // found an <a> or <form>, let's peek at the attributes it contains
+                // does it contain either an "href" or "action" attribute
+                if (attributeName.equalsIgnoreCase("href") || attributeName.equalsIgnoreCase("action")) {
+                    // found the attribute, now lets make sure it points back to a channel
+                    if (attributeValue.indexOf(".render.") != -1 && attributeValue.indexOf("javascript:") == -1) {
+                        // this link points back to a channel, so let's
+                        // rewrite it and place back into the Attribute Object
+                        attributeValue += "#" + anchorId;
+                    }
+                }
+            }
+        }
+        return attributeValue;
+    }    
 }

@@ -1,9 +1,5 @@
-/* Copyright 2001 The JA-SIG Collaborative.  All rights reserved.
-*  See license distributed with this file and
-*  available online at http://www.uportal.org/license.html
-*/
-
 package org.jasig.portal.serialize;
+
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -18,7 +14,7 @@ import java.io.Writer;
  * @see Serializer
  */
 public final class CachingXHTMLSerializer
-    extends HTMLSerializer implements CachingSerializer
+    extends XHTMLSerializer implements CachingSerializer
 {
 
     CharacterCachingWriter cacher;
@@ -31,7 +27,7 @@ public final class CachingXHTMLSerializer
      */
     public CachingXHTMLSerializer()
     {
-        super( true, new OutputFormat( Method.XHTML, null, false ) );
+        super(new OutputFormat( Method.XHTML, null, false ) );
     }
 
 
@@ -42,7 +38,7 @@ public final class CachingXHTMLSerializer
      */
     public CachingXHTMLSerializer( OutputFormat format )
     {
-        super( true, format != null ? format : new OutputFormat( Method.XHTML, null, false ) );
+        super(format != null ? format : new OutputFormat( Method.XHTML, null, false ) );
         this.encoding=format.getEncoding();
     }
 
@@ -57,7 +53,7 @@ public final class CachingXHTMLSerializer
      */
     public CachingXHTMLSerializer( Writer writer, OutputFormat format )
     {
-        super( true, format != null ? format : new OutputFormat( Method.XHTML, null, false ) );
+        super(format != null ? format : new OutputFormat( Method.XHTML, null, false ) );
         CachingWriter cw=new CachingWriter(writer);
         this.cacher=cw;
         setOutputCharStream(cw);
@@ -80,7 +76,7 @@ public final class CachingXHTMLSerializer
      */
     public CachingXHTMLSerializer( OutputStream output, OutputFormat format )
     {
-        super( true, format != null ? format : new OutputFormat( Method.XHTML, null, false ) );
+        super(format != null ? format : new OutputFormat( Method.XHTML, null, false ) );
         CachingOutputStream cos=new CachingOutputStream(output);
         this.cacher=cos;
         setOutputByteStream( cos );
