@@ -54,3 +54,12 @@ Database configuration is configured in /properties/rdbm.properties.  The ant bu
 file which, when you deploy your .war, will configure the context to make the uPortal database available via
 servlet-container-managed DataSource via JNIDI.  You can choose to get your DataSource via JNDI in the
 context of a servlet container by configuring the relevant portal.properties property.
+
+IMPORTANT: There's apparently a problem with Tomcat acquiring the context information from /META-INF/context.xml 
+in the case where the application is not deployed as a .war, but rather is simply copied into a folder in the webapps
+directory of the Tomcat.  This is the typical way in which a developer builds and deploys uPortal.  So, you will
+almost certainly have to copy the context.xml file to your Tomcat/conf/Catalina/localhost/ folder, renaming it to
+be {Context}.xml, where {Context} is the name of the context as which you're running uPortal (uPortal, uPortal25Rc1,
+etc. -- whatever you're calling the context such that you expect to go to http://yourserver:yourtomcatport/{Context}/ and
+access uPortal.
+
