@@ -1,0 +1,52 @@
+This is a file for notes specific to the uPortal release that the code you're looking at
+either is (in the case of a tagged release) or will become (in the case of the tip of a patches or main branch).
+
+
+Release notes for uPortal 2.5.0 RC 1:
+
+
+
+This is a "release candidate".  It is intended to bring about feature freeze and an increased attention to
+bugfixes and quality assurance so that we can release our project.
+
+
+Known issues
+
+
+
+There are many known bugs in this release.  You can query our JIRA system for known issues affecting this release, including
+issues discovered after this release went to press.
+
+In particular, there is a known issue with our use of context.xml in the META-INF directory of the produced webapp.
+Please see the README.  You will likely need to take a manual step locally for this application's context to properly deploy.
+
+
+This release includes many improvements, fixes, and other changes beyond 2.5.0 M1, which in turn included many
+changes beyond 2.5.0.  
+
+You can ask our JIRA issue tracking system to generate notes for this release here:
+
+http://jasigch.princeton.edu:9000/jira/secure/ReleaseNote.jspa?projectId=10020&styleName=Html&version=10140
+
+and for the 2.5.0 M1 release upon which this release builds, here:
+
+http://jasigch.princeton.edu:9000/jira/secure/ReleaseNote.jspa?projectId=10020&styleName=Html&version=10096
+
+
+Please make known any issues you discover with this release.
+
+
+The release egineer's system:
+
+Lynn Hollerman asked that we document what systems a release was tested on.  This is only the first release candidate, and
+so while we're making an effort to produce a quality release, it has several serious known issues and isn't as well
+tested as we would like.  For what it's worth: the release engineer (Andrew Petro, Yale) informally tested this release
+before tagging on
+a Windows / Tomcat 5.0.25 / Java 1.4.2_04 with JAXP 1.3 extensions against the default HSQLDB database via 
+the clean, runtests, initportal Ant build sequence.
+
+The actual release distribution was produced on a Red Hat linux machine using Jdk 1.5.0_02 . (Note: since you'll need to
+build from source for your environment, as the distribution does not contain uPortal .class, .jar, or .war files produced
+by the build, using JDK 1.5 to produce the release should not affect JDK 1.4 compatibility.)
+
+The release was then tested in the Windows environment described above.
