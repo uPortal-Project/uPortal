@@ -9,7 +9,7 @@
     <fname>contentsubscriber</fname>
     <desc>Content Subscriber channel</desc>
     <type>Custom</type>
-    <class>org.jasig.portal.layout.channels.CContentSubscriber</class>
+    <class>org.jasig.portal.layout.alm.channels.CContentSubscriber</class>
     <timeout>5000</timeout>
     
     <hasedit>N</hasedit>
