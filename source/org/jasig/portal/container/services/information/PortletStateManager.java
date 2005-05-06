@@ -471,7 +471,10 @@ public class PortletStateManager {
             for (int i = 0; i < values.length; i++) {
                 url.append(name);
                 url.append("=");
-                url.append(encodeString(values[i]));
+                
+                if (values[i] != null)
+                    url.append(encodeString(values[i]));
+                
                 url.append("&");
             }
         }
