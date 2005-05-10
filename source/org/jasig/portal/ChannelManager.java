@@ -803,7 +803,7 @@ public class ChannelManager implements LayoutEventListener {
                 }
                 while (en.hasMoreElements()) {
                     String pName= (String) en.nextElement();
-                    if (!pName.equals ("uP_channelTarget")) {
+                    if (!pName.equals ("uP_channelTarget")&& !pName.equals ("uP_fname")) {
                         Object[] val= (Object[]) req.getParameterValues(pName);
                         if (val == null) {
                             val = ((RequestParamWrapper)req).getObjectParameterValues(pName);
