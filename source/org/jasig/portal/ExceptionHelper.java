@@ -305,8 +305,8 @@ public class ExceptionHelper {
 		resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		try {
 			PrintWriter out = resp.getWriter();
-			out.println("<h1>Cannot start uPortal</h1>");
-			out.println("<p>Sorry, but a problem is preventing the Portal from starting. "+
+			out.println("<h1>uPortal Error</h1>");
+			out.println("<p>Sorry, but uPortal encountered an error that is preventing it from rendering. "+
 				"The error must be corrected by system administrators. Try again later.</p>");
 			//out.println("<p><a href='http://www.yale.edu/portal'>Click here to display the static Yaleinfo page.</a></p>");	
 			out.println("<!--");
