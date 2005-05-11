@@ -8,7 +8,7 @@ package org.jasig.portal.layout.alm;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 
 /**
- * An interface describing an Aggregated Layout folder descriptions.
+ * An Aggregated Layout channel description.
  * 
  * Prior to uPortal 2.5, this class existed in the package org.jasig.portal.layout.
  * It was moved to its present package to reflect that it is part of Aggregated
