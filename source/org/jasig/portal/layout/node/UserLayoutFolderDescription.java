@@ -31,17 +31,11 @@ public class UserLayoutFolderDescription extends UserLayoutNodeDescription imple
      * @exception PortalException if xml is malformed
      */
     public UserLayoutFolderDescription(Element xmlNode) throws PortalException {
+        super( xmlNode );
+        
         if(!xmlNode.getNodeName().equals("folder")) {
             throw new PortalException("Given XML Element is not a folder!");
         }
-
-        // could do some validation here, but this code will probably go away anyhow
-
-        // standard Node attributes
-        this.setId(xmlNode.getAttribute("ID"));
-        this.setName(xmlNode.getAttribute("name"));
-        this.setUnremovable((new Boolean(xmlNode.getAttribute("unremovable"))).booleanValue());
-        this.setImmutable((new Boolean(xmlNode.getAttribute("immutable"))).booleanValue());
 
         // folder-specific attributes
         String typeName=xmlNode.getAttribute("type");

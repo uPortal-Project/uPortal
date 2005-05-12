@@ -46,6 +46,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
     boolean isSecure=false;
     
     public UserLayoutChannelDescription() {
+        super();
         parameters=new Hashtable();
         override=new Hashtable();
     }
@@ -77,18 +78,13 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
      * @exception PortalException if xml is malformed
      */
     public UserLayoutChannelDescription(Element xmlNode) throws PortalException {
-        this();
+        super( xmlNode );
+        parameters=new Hashtable();
+        override=new Hashtable();
+        
         if(!xmlNode.getNodeName().equals("channel")) {
             throw new PortalException("Given XML Element is not a channel!");
         }
-
-        // could do some validation here, but this code will probably go away anyhow
-
-        // standard Node attributes
-        this.setId(xmlNode.getAttribute("ID"));
-        this.setName(xmlNode.getAttribute("name"));
-        this.setUnremovable((new Boolean(xmlNode.getAttribute("unremovable"))).booleanValue());
-        this.setImmutable((new Boolean(xmlNode.getAttribute("immutable"))).booleanValue());
 
         // channel-specific attributes
         this.setTitle(xmlNode.getAttribute("title"));
