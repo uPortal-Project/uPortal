@@ -713,8 +713,6 @@ public class RDBMDistributedLayoutStore
         {
             PLF = _safeGetUserLayout( person, profile );
         }
-        log.error("mboyd: " + person.getAttribute(IPerson.USERNAME) +
-                "-PLF =" + XML.serializeNode(PLF));
         Document ILF = ILFBuilder.constructILF( PLF, applicables );
         person.setAttribute( Constants.PLF, PLF );
         IntegrationResult result = new IntegrationResult();
