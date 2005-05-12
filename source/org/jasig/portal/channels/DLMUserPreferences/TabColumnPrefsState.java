@@ -1228,6 +1228,7 @@ public class TabColumnPrefsState extends BaseState
                   context.internalState.setStaticData(staticData);
                 }
               } catch (Exception e) {
+                  log.error("Problem occurred adding Channel.", e);
                 errorMessage = errorMessageNewChannel;
               }
             }
