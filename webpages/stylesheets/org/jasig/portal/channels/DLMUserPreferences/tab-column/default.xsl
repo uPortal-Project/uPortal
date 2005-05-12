@@ -33,7 +33,7 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
 
 Author: Jultin Tilton, jet@immagic.com
 $Revision$
---><xsl:stylesheet version="1.0" xmlns:cp="http://www.campuspipeline.com" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+--><xsl:stylesheet version="1.0" xmlns:dlm="http://www.uportal.org/layout/dlm" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output indent="no" method="html"/>
   <xsl:param name="baseActionURL">render.userLayoutRootNode.uP</xsl:param>
   <xsl:param name="activeTab">1</xsl:param>
@@ -182,29 +182,29 @@ END DEBUG CODE -->
             <xsl:when test="not(position()=1)">            
                 <xsl:choose>                    
                     <xsl:when test="(
-                                        not(@cp:moveAllowed = 'false') 
+                                        not(@dlm:moveAllowed = 'false') 
                                         and 
                                         (
-                                            not($precedingTab/@cp:moveAllowed = 'false') 
+                                            not($precedingTab/@dlm:moveAllowed = 'false') 
                                             or
                                             (
-                                                $precedingTab/@cp:moveAllowed = 'false'
+                                                $precedingTab/@dlm:moveAllowed = 'false'
                                                 and
-                                                $precedingTab/@cp:precedence &lt; self::node()/@cp:precedence
+                                                $precedingTab/@dlm:precedence &lt; self::node()/@dlm:precedence
                                             )
                                         )
                                     )
                                     or
                                     (
-                                        @cp:moveAllowed = 'false' 
+                                        @dlm:moveAllowed = 'false' 
                                         and 
-                                        $precedingTab/@cp:precedence &gt; self::node()/@cp:precedence
+                                        $precedingTab/@dlm:precedence &gt; self::node()/@dlm:precedence
                                         and
-                                        not($precedingTab/@cp:moveAllowed = 'false') 
+                                        not($precedingTab/@dlm:moveAllowed = 'false') 
                                     )
                                     and
                                     (
-                                        not(@cp:moveAllowed = 'false' )
+                                        not(@dlm:moveAllowed = 'false' )
                                     )">
 
                                    <a href="{$baseActionURL}?action=moveTab&amp;elementID={@ID}&amp;method_ID=insertBefore_{preceding-sibling::folder[@type='regular' and @hidden='false'][1]/@ID}" onMouseover="window.status=''; return true;">
@@ -255,27 +255,27 @@ END DEBUG CODE -->
 </xsl:when>-->
     
                     <xsl:when test="(
-                                        not(@cp:moveAllowed = 'false') 
+                                        not(@dlm:moveAllowed = 'false') 
                                         and 
                                         (
-                                            not($followingTab/@cp:moveAllowed = 'false') 
+                                            not($followingTab/@dlm:moveAllowed = 'false') 
                                             or
                                             (
-                                                $followingTab/@cp:moveAllowed = 'false' 
+                                                $followingTab/@dlm:moveAllowed = 'false' 
                                                 and 
-                                                $followingTab/@cp:precedence &lt; self::node()/@cp:precedence
+                                                $followingTab/@dlm:precedence &lt; self::node()/@dlm:precedence
                                             )
                                         )
                                     )
                                     or
                                     (
-                                        @cp:moveAllowed = 'false' 
+                                        @dlm:moveAllowed = 'false' 
                                         and 
-                                        $followingTab/@cp:precedence &gt; self::node()/@cp:precedence
+                                        $followingTab/@dlm:precedence &gt; self::node()/@dlm:precedence
                                     )
                                     and
                                     (
-                                        not(@cp:moveAllowed = 'false')
+                                        not(@dlm:moveAllowed = 'false')
                                     )
                                     ">
 
@@ -392,23 +392,23 @@ END DEBUG CODE -->
 <xsl:template name="optionMenu">
 <!--Begin Option Menu-->
 <table myName="mboyd" border="0" cellpadding="10" cellspacing="0" class="uportal-background-content" width="100%">
-      <xsl:if test="/layout[@cp:fragmentName]">
+      <xsl:if test="/layout[@dlm:fragmentName]">
       <tr class="uportal-background-light">
         <td class="uportal-channel-title">
             <xsl:choose>               
-                <xsl:when test="/layout/@cp:fragmentName = 'All Users'"><xsl:value-of select="$LAYOUT_FRAGMENT"/></xsl:when>
+                <xsl:when test="/layout/@dlm:fragmentName = 'All Users'"><xsl:value-of select="$LAYOUT_FRAGMENT"/></xsl:when>
                 <xsl:otherwise><xsl:value-of select="$LAYOUT_TEMPLATE"/></xsl:otherwise>
            </xsl:choose>
 
-	  <xsl:value-of select="/layout/@cp:fragmentName"/>
+	  <xsl:value-of select="/layout/@dlm:fragmentName"/>
 
         </td>
       </tr>
       </xsl:if>
       
-    <xsl:if test="/layout[@cp:isTemplateUser]">
+    <xsl:if test="/layout[@dlm:isTemplateUser]">
    <tr class="uportal-background-light">
-        <td class="uportal-channel-title"><xsl:value-of select="$LAYOUT_TEMPLATE"/><xsl:value-of select="/layout/@cp:templateLoginID"/>
+        <td class="uportal-channel-title"><xsl:value-of select="$LAYOUT_TEMPLATE"/><xsl:value-of select="/layout/@dlm:templateLoginID"/>
         </td>
    </tr>
     </xsl:if>
@@ -464,7 +464,7 @@ END DEBUG CODE -->
            <!--Begin [select Column]row -->
 
     <xsl:choose>
-        <xsl:when test="@cp:moveAllowed = 'false'">
+        <xsl:when test="@dlm:moveAllowed = 'false'">
            <tr class="uportal-background-light"><td align="center" class="uportal-text-small" height="22"><xsl:value-of select="$COLUMN_IS_UNMOVABLE"/></td></tr>
         </xsl:when>
         <xsl:otherwise>
@@ -488,7 +488,7 @@ END DEBUG CODE -->
 -->
                 <xsl:when test="not(position()=1)">
                     <xsl:choose>
-                        <xsl:when test="not(@cp:moveAllowed = 'false' or preceding-sibling::*[1][@cp:moveAllowed = 'false'])">
+                        <xsl:when test="not(@dlm:moveAllowed = 'false' or preceding-sibling::*[1][@dlm:moveAllowed = 'false'])">
                         <a class="uportal-text-small" href="{$baseActionURL}?action=moveColumnHere&amp;sourceID={@ID}&amp;method=insertBefore&amp;elementID={preceding-sibling::folder[@type='regular' and @hidden='false'][1]/@ID}" onMouseover="window.status=''; return true;">
                         <img HSPACE="3" VSPACE="2" border="0" height="16" width="16"><xsl:attribute name="src"><xsl:value-of select='$mediaPath'/><xsl:value-of select="$IMAGE_SRC_CHANNEL_ARROW_LEFT_GIF"/></xsl:attribute><xsl:attribute name="alt"><xsl:value-of select="$CLICK_TO_MOVE_THIS_COLUMN_LEFT"/></xsl:attribute><xsl:attribute name="title"><xsl:value-of select="$CLICK_TO_MOVE_THIS_COLUMN_LEFT"/></xsl:attribute></img>
                         </a>
@@ -519,7 +519,7 @@ END DEBUG CODE -->
 -->
                         <xsl:when test="not(position() = (last()-1))">
                             <xsl:choose>
-                            <xsl:when test="not(@cp:moveAllowed = 'false' or following-sibling::*[1][@cp:moveAllowed = 'false'])">
+                            <xsl:when test="not(@dlm:moveAllowed = 'false' or following-sibling::*[1][@dlm:moveAllowed = 'false'])">
                                  <a class="uportal-text-small" href="{$baseActionURL}?action=moveColumnHere&amp;sourceID={@ID}&amp;method=insertBefore&amp;elementID={following-sibling::folder[@type='regular' and @hidden='false'][2]/@ID}" onMouseover="window.status=''; return true;">
                                  <img HSPACE="3" VSPACE="2" border="0" height="16" width="16"><xsl:attribute name="src"><xsl:value-of select='$mediaPath'/><xsl:value-of select="$IMAGE_SRC_CHANNEL_ARROW_RIGHT_GIF"/></xsl:attribute><xsl:attribute name="alt"><xsl:value-of select="$CLICK_TO_MOVE_THIS_COLUMN_RIGHT"/></xsl:attribute><xsl:attribute name="title"><xsl:value-of select="$CLICK_TO_MOVE_THIS_COLUMN_RIGHT"/></xsl:attribute></img>
                                  </a>
@@ -532,7 +532,7 @@ END DEBUG CODE -->
                         <xsl:otherwise>
 
                         <xsl:choose>
-                            <xsl:when test="not(@cp:moveAllowed = 'false' or following-sibling::*[1][@cp:moveAllowed = 'false'])">
+                            <xsl:when test="not(@dlm:moveAllowed = 'false' or following-sibling::*[1][@dlm:moveAllowed = 'false'])">
                                  <a class="uportal-text-small" href="{$baseActionURL}?action=moveColumnHere&amp;sourceID={@ID}&amp;method=appendAfter&amp;elementID={following-sibling::folder[@type='regular' and @hidden='false'][1]/@ID}" onMouseover="window.status=''; return true;">
                                  <img HSPACE="3" VSPACE="2" border="0" height="16" width="16"><xsl:attribute name="src"><xsl:value-of select='$mediaPath'/><xsl:value-of select="$IMAGE_SRC_CHANNEL_ARROW_RIGHT_GIF"/></xsl:attribute><xsl:attribute name="alt"><xsl:value-of select="$CLICK_TO_MOVE_THIS_COLUMN_RIGHT"/></xsl:attribute><xsl:attribute name="title"><xsl:value-of select="$CLICK_TO_MOVE_THIS_COLUMN_RIGHT"/></xsl:attribute></img>
                                  </a>
@@ -559,7 +559,7 @@ END DEBUG CODE -->
         </table>
 
     <xsl:choose>
-        <xsl:when test="not(descendant::channel) and not(@cp:addChildAllowed = 'false')">
+        <xsl:when test="not(descendant::channel) and not(@dlm:addChildAllowed = 'false')">
 
                 <xsl:call-template name="newChannel"/>
 
@@ -567,7 +567,7 @@ END DEBUG CODE -->
         <xsl:otherwise>
             <xsl:for-each select="descendant::channel">
 
-                <xsl:if test="not(parent::folder/@cp:addChildAllowed = 'false' or self::*[@cp:moveAllowed = 'false'] or following-sibling::*[@hidden='false'][@cp:moveAllowed='false'])">
+                <xsl:if test="not(parent::folder/@dlm:addChildAllowed = 'false' or self::*[@dlm:moveAllowed = 'false'] or following-sibling::*[@hidden='false'][@dlm:moveAllowed='false'])">
                     <xsl:call-template name="newChannel"/>
                 </xsl:if>
 
@@ -588,7 +588,7 @@ END DEBUG CODE -->
 
                 <xsl:if test="position()=last()">
                     <xsl:choose>
-                        <xsl:when test="not(parent::folder/@cp:addChildAllowed = 'false')">
+                        <xsl:when test="not(parent::folder/@dlm:addChildAllowed = 'false')">
                             <xsl:call-template name="closeContentColumn"/>
                         </xsl:when>
                         <xsl:otherwise>
@@ -628,7 +628,7 @@ END DEBUG CODE -->
         <!--End [select Column] row -->
         </table>
 
-    <xsl:if test="not(descendant::channel) and                   not(@cp:addChildAllowed = 'false')">
+    <xsl:if test="not(descendant::channel) and                   not(@dlm:addChildAllowed = 'false')">
          <xsl:call-template name="newChannel"/>
     </xsl:if>
     </td>
@@ -658,7 +658,7 @@ END DEBUG CODE -->
         </xsl:when>
         <xsl:otherwise>
             <xsl:choose>
-                <xsl:when test="not(/layout/folder/folder[@ID=$activeTabID and @cp:addChildAllowed = 'false'])">
+                <xsl:when test="not(/layout/folder/folder[@ID=$activeTabID and @dlm:addChildAllowed = 'false'])">
         <td ALIGN="CENTER" class="uportal-background-light" valign="top" width="20">
           <a class="uportal-text-small" href="{$baseActionURL}?action=newColumn&amp;method=appendAfter&amp;elementID={@ID}" onMouseover="window.status=''; return true;">
             <img border="0" height="96" width="16"><xsl:attribute name="src"><xsl:value-of select='$mediaPath'/><xsl:value-of select="$IMAGE_SRC_NEWCOLUMN_GIF"/></xsl:attribute><xsl:attribute name="alt"><xsl:value-of select="$CLICK_TO_ADD_A_NEW_COLUMN_HERE"/></xsl:attribute><xsl:attribute name="title"><xsl:value-of select="$CLICK_TO_ADD_A_NEW_COLUMN_HERE"/></xsl:attribute></img>
@@ -698,7 +698,7 @@ END DEBUG CODE -->
 <!-- or following-sibling::*[position() < follow-sibling::*[@ID=$elementID]/position()]  )"> -->
             <xsl:choose>
 
-                <xsl:when test="not(@cp:moveAllowed = 'false' or following-sibling::folder[@hidden='false'][@cp:moveAllowed='false'])">
+                <xsl:when test="not(@dlm:moveAllowed = 'false' or following-sibling::folder[@hidden='false'][@dlm:moveAllowed='false'])">
                 
         <td ALIGN="CENTER" class="uportal-background-highlight" width="20">
           <a class="uportal-text-small" href="{$baseActionURL}?action=moveColumnHere&amp;method=insertBefore&amp;elementID={@ID}" onMouseover="window.status=''; return true;">
@@ -720,7 +720,7 @@ END DEBUG CODE -->
         <xsl:otherwise>
 
             <xsl:choose>
-                <xsl:when test="not(@cp:moveAllowed = 'false' or following-sibling::folder[@hidden='false'][@cp:moveAllowed='false'] or /layout/folder/folder[@ID=$activeTabID][@cp:addChildAllowed = 'false'])">
+                <xsl:when test="not(@dlm:moveAllowed = 'false' or following-sibling::folder[@hidden='false'][@dlm:moveAllowed='false'] or /layout/folder/folder[@ID=$activeTabID][@dlm:addChildAllowed = 'false'])">
 
 
         <td ALIGN="CENTER" class="uportal-background-light" valign="top" width="20">
@@ -811,7 +811,7 @@ END DEBUG CODE -->
 		</A>
     <xsl:choose>
 <!-- <xsl:when test="not(@unremovable='true') and not(ancestor-or-self::*[@immutable='true'])"> -->
-        <xsl:when test="not(@cp:deleteAllowed = 'false')">
+        <xsl:when test="not(@dlm:deleteAllowed = 'false')">
 		<A HREF="{$baseActionURL}?action=deleteChannel&amp;elementID={@ID}" onClick="return confirm('Are you sure you want to remove this channel?')" onMouseover="window.status=''; return true;">
 		  <IMG BORDER="0" HEIGHT="16" HSPACE="2" VSPACE="2" WIDTH="16"><xsl:attribute name="ALT"><xsl:value-of select="$CLICK_TO_REMOVE_THIS_CHANNEL"/></xsl:attribute><xsl:attribute name="title"><xsl:value-of select="$CLICK_TO_REMOVE_THIS_CHANNEL"/></xsl:attribute><xsl:attribute name="SRC"><xsl:value-of select='$mediaPath'/><xsl:value-of select="$IMAGE_SRC_CHANNEL_CHAN_REMOVE_GIF"/></xsl:attribute></IMG>
 		</A>
@@ -831,7 +831,7 @@ END DEBUG CODE -->
 		<IMG ALT="This channel is locked" title="This channel is locked" src="{$mediaPath}/locked/chan03.gif" WIDTH="26" HEIGHT="25" BORDER="0" VSPACE="1"/>
         </xsl:when>
 -->
-        <xsl:when test="not(position()=1 or preceding-sibling::*[1][@cp:moveAllowed = 'false'] or self::*[@cp:moveAllowed = 'false'])">
+        <xsl:when test="not(position()=1 or preceding-sibling::*[1][@dlm:moveAllowed = 'false'] or self::*[@dlm:moveAllowed = 'false'])">
 		  <IMG HEIGHT="9" WIDTH="1" alt="" title=""><xsl:attribute name="SRC"><xsl:value-of select='$mediaPath'/><xsl:value-of select="$IMAGE_SRC_TRANSPARENT_GIF"/></xsl:attribute></IMG><BR/>
 		<A HREF="{$baseActionURL}?action=moveChannelHere&amp;sourceID={@ID}&amp;method=insertBefore&amp;elementID={preceding-sibling::channel[not(@hidden='true')][1]/@ID}" class="uportal-text-small" onMouseover="window.status=''; return true;">
 		  <IMG BORDER="0" HEIGHT="16" VSPACE="1" WIDTH="16"><xsl:attribute name="SRC"><xsl:value-of select='$mediaPath'/><xsl:value-of select="$IMAGE_SRC_CHANNEL_ARROW_UP_GIF"/></xsl:attribute><xsl:attribute name="ALT"><xsl:value-of select="$CLICK_TO_MOVE_THIS_CHANNEL_UP"/></xsl:attribute><xsl:attribute name="title"><xsl:value-of select="$CLICK_TO_MOVE_THIS_CHANNEL_UP"/></xsl:attribute></IMG>
@@ -853,17 +853,17 @@ END DEBUG CODE -->
         </xsl:when>
 -->
 
-        <xsl:when test="                         not(                                ../../folder[1]/@ID = parent::folder/@ID                                 or                                 self::*[@cp:moveAllowed = 'false']                                 or                                parent::folder/preceding-sibling::folder[1][@cp:addChildAllowed = 'false']                                or                                following-sibling::*[@cp:moveAllowed = 'false']                                                            )">
+        <xsl:when test="                         not(                                ../../folder[1]/@ID = parent::folder/@ID                                 or                                 self::*[@dlm:moveAllowed = 'false']                                 or                                parent::folder/preceding-sibling::folder[1][@dlm:addChildAllowed = 'false']                                or                                following-sibling::*[@dlm:moveAllowed = 'false']                                                            )">
             <xsl:choose>
 
-               <xsl:when test="parent::folder/preceding-sibling::folder[not(@cp:addChildAllowed = 'false')][1]/channel[1]/@ID">
-		<A HREF="{$baseActionURL}?action=moveChannelHere&amp;sourceID={@ID}&amp;method=appendAfter&amp;elementID={parent::folder/preceding-sibling::folder[not(@cp:addChildAllowed = 'false')][1]/channel[last()]/@ID}" class="uportal-text-small" onMouseover="window.status=''; return true;">
+               <xsl:when test="parent::folder/preceding-sibling::folder[not(@dlm:addChildAllowed = 'false')][1]/channel[1]/@ID">
+		<A HREF="{$baseActionURL}?action=moveChannelHere&amp;sourceID={@ID}&amp;method=appendAfter&amp;elementID={parent::folder/preceding-sibling::folder[not(@dlm:addChildAllowed = 'false')][1]/channel[last()]/@ID}" class="uportal-text-small" onMouseover="window.status=''; return true;">
 		  <IMG BORDER="0" HEIGHT="16" HSPACE="9" VSPACE="1" WIDTH="16"><xsl:attribute name="ALT"><xsl:value-of select="$CLICK_TO_MOVE_THIS_CHANNEL_TO_THE_BOTTOM_OF_THE_PREVIOUS_COLUMN"/></xsl:attribute><xsl:attribute name="title"><xsl:value-of select="$CLICK_TO_MOVE_THIS_CHANNEL_TO_THE_BOTTOM_OF_THE_PREVIOUS_COLUMN"/></xsl:attribute><xsl:attribute name="SRC"><xsl:value-of select='$mediaPath'/><xsl:value-of select="$IMAGE_SRC_CHANNEL_ARROW_LEFT_GIF"/></xsl:attribute></IMG>
 		</A>
                </xsl:when>
 
                <xsl:otherwise>
-		<A HREF="{$baseActionURL}?action=moveChannelHere&amp;sourceID={@ID}&amp;method=insertBefore&amp;elementID={parent::folder/preceding-sibling::folder[not(@cp:addChildAllowed = 'false')][1]/@ID}" class="uportal-text-small" onMouseover="window.status=''; return true;">
+		<A HREF="{$baseActionURL}?action=moveChannelHere&amp;sourceID={@ID}&amp;method=insertBefore&amp;elementID={parent::folder/preceding-sibling::folder[not(@dlm:addChildAllowed = 'false')][1]/@ID}" class="uportal-text-small" onMouseover="window.status=''; return true;">
 		  <IMG BORDER="0" HEIGHT="16" HSPACE="9" VSPACE="1" WIDTH="16"><xsl:attribute name="SRC"><xsl:value-of select='$mediaPath'/><xsl:value-of select="$IMAGE_SRC_CHANNEL_ARROW_LEFT_GIF"/></xsl:attribute><xsl:attribute name="ALT"><xsl:value-of select="$CLICK_TO_MOVE_THIS_CHANNEL_TO_THE_TOP_OF_THE_PREVIOUS_COLUMN"/></xsl:attribute><xsl:attribute name="title"><xsl:value-of select="$CLICK_TO_MOVE_THIS_CHANNEL_TO_THE_TOP_OF_THE_PREVIOUS_COLUMN"/></xsl:attribute></IMG>
 		</A>
                </xsl:otherwise>
@@ -883,18 +883,18 @@ END DEBUG CODE -->
 	        <img alt="This channel is locked" title="This channel is locked" src="{$mediaPath}/locked/chan11.gif" width="25" height="26" border="0" VSPACE="1"/>
         </xsl:when>
 -->
-        <xsl:when test="                        not(                               ../../folder[position()=last()]/@ID = parent::folder/@ID                               or                                self::*[@cp:moveAllowed = 'false']                                or                               parent::folder/following-sibling::folder[1][@cp:addChildAllowed = 'false']                               or                               following-sibling::*[@cp:moveAllowed = 'false']                            )">
+        <xsl:when test="                        not(                               ../../folder[position()=last()]/@ID = parent::folder/@ID                               or                                self::*[@dlm:moveAllowed = 'false']                                or                               parent::folder/following-sibling::folder[1][@dlm:addChildAllowed = 'false']                               or                               following-sibling::*[@dlm:moveAllowed = 'false']                            )">
                 
             <xsl:choose>
 
-               <xsl:when test="parent::folder/following-sibling::folder[not(@cp:addChildAllowed = 'false')][1]/channel[1]/@ID">
-	        <A HREF="{$baseActionURL}?action=moveChannelHere&amp;sourceID={@ID}&amp;method=appendAfter&amp;elementID={parent::folder/following-sibling::folder[not(@cp:addChildAllowed = 'false')][1]/channel[last()]/@ID}" class="uportal-text-small" onMouseover="window.status=''; return true;">
+               <xsl:when test="parent::folder/following-sibling::folder[not(@dlm:addChildAllowed = 'false')][1]/channel[1]/@ID">
+	        <A HREF="{$baseActionURL}?action=moveChannelHere&amp;sourceID={@ID}&amp;method=appendAfter&amp;elementID={parent::folder/following-sibling::folder[not(@dlm:addChildAllowed = 'false')][1]/channel[last()]/@ID}" class="uportal-text-small" onMouseover="window.status=''; return true;">
 	          <IMG BORDER="0" HEIGHT="16" HSPACE="9" VSPACE="1" WIDTH="16"><xsl:attribute name="ALT"><xsl:value-of select="$CLICK_TO_MOVE_THIS_CHANNEL_TO_THE_BOTTOM_OF_THE_NEXT_COLUMN"/></xsl:attribute><xsl:attribute name="title"><xsl:value-of select="$CLICK_TO_MOVE_THIS_CHANNEL_TO_THE_BOTTOM_OF_THE_NEXT_COLUMN"/></xsl:attribute><xsl:attribute name="SRC"><xsl:value-of select='$mediaPath'/><xsl:value-of select="$IMAGE_SRC_CHANNEL_ARROW_RIGHT_GIF"/></xsl:attribute></IMG>
 	        </A>
                </xsl:when>
 
                <xsl:otherwise>
-	        <A HREF="{$baseActionURL}?action=moveChannelHere&amp;sourceID={@ID}&amp;method=insertBefore&amp;elementID={parent::folder/following-sibling::folder[not(@cp:addChildAllowed = 'false')][1]/@ID}" class="uportal-text-small" onMouseover="window.status=''; return true;">
+	        <A HREF="{$baseActionURL}?action=moveChannelHere&amp;sourceID={@ID}&amp;method=insertBefore&amp;elementID={parent::folder/following-sibling::folder[not(@dlm:addChildAllowed = 'false')][1]/@ID}" class="uportal-text-small" onMouseover="window.status=''; return true;">
 	          <IMG BORDER="0" HEIGHT="16" HSPACE="9" VSPACE="1" WIDTH="16"><xsl:attribute name="SRC"><xsl:value-of select='$mediaPath'/><xsl:value-of select="$IMAGE_SRC_CHANNEL_ARROW_RIGHT_GIF"/></xsl:attribute><xsl:attribute name="ALT"><xsl:value-of select="$CLICK_TO_MOVE_THIS_CHANNEL_TO_THE_TOP_OF_THE_NEXT_COLUMN"/></xsl:attribute><xsl:attribute name="title"><xsl:value-of select="$CLICK_TO_MOVE_THIS_CHANNEL_TO_THE_TOP_OF_THE_NEXT_COLUMN"/></xsl:attribute></IMG>
 	        </A>
                </xsl:otherwise>
@@ -915,7 +915,7 @@ END DEBUG CODE -->
 	        <img alt="This channel is locked" title="This channel is locked" src="{$mediaPath}/locked/chan16.gif" width="26" height="24" border="0" VSPACE="1"/>
         </xsl:when>
 -->
-        <xsl:when test="not(position()=last() or following-sibling::*[1][@cp:moveAllowed = 'false'] or self::*[@cp:moveAllowed = 'false'])">
+        <xsl:when test="not(position()=last() or following-sibling::*[1][@dlm:moveAllowed = 'false'] or self::*[@dlm:moveAllowed = 'false'])">
             <xsl:choose>
                <xsl:when test="not(position() = (last()-1))">
 	        <A HREF="{$baseActionURL}?action=moveChannelHere&amp;sourceID={@ID}&amp;method=insertBefore&amp;elementID={following-sibling::channel[not(@hidden='true')][2]/@ID}" class="uportal-text-small" onMouseover="window.status=''; return true;">
@@ -1021,13 +1021,13 @@ profile is supported for fragments and users.
 <span class="uportal-channel-subtitle-reversed"><xsl:value-of select="$OPTIONS_FOR_MODIFYING_THIS_TAB"/></span><br/>
 
 <table border="0" cellpadding="1" cellspacing="7" width="100%">
-<xsl:if test="not(/layout[@cp:fragmentName] or /layout[@cp:isTemplateUser])">
+<xsl:if test="not(/layout[@dlm:fragmentName] or /layout[@dlm:isTemplateUser])">
    <tr><td colspan="2" width="100%"><span class="uportal-channel-text"><a href="{$baseActionURL}?action=setActiveTab&amp;tab={$activeTabID}" onMouseover="window.status=''; return true;"><img border="0" height="9" hspace="7" width="9"><xsl:attribute name="src"><xsl:value-of select="$mediaPath"/><xsl:value-of select="$IMAGE_SRC_BULLET_GIF"/></xsl:attribute><xsl:attribute name="alt"><xsl:value-of select="$MAKE_THIS_THE_DEFAULT_ACTIVE_TAB"/></xsl:attribute><xsl:attribute name="title"><xsl:value-of select="$MAKE_THIS_THE_DEFAULT_ACTIVE_TAB"/></xsl:attribute></img><xsl:value-of select="$MAKE_THIS_THE_DEFAULT_ACTIVE_TAB_"/></a></span></td></tr>
 </xsl:if>
 
 <!-- <xsl:if test="not(/layout/folder/folder[@ID=$activeTabID]/@immutable = 'true')"> -->
 
-    <xsl:if test="not(/layout/folder/folder[@ID=$activeTabID]/@cp:editAllowed = 'false') or (/layout[@cp:fragmentName] or /layout[@cp:isTemplateUser])">
+    <xsl:if test="not(/layout/folder/folder[@ID=$activeTabID]/@dlm:editAllowed = 'false') or (/layout[@dlm:fragmentName] or /layout[@dlm:isTemplateUser])">
    <script language="JavaScript">
     var count = 0;
     function doNameCheck()
@@ -1104,7 +1104,7 @@ profile is supported for fragments and users.
     </xsl:if>
 
 <!-- conditionally add in permission elements for distributed layout owners -->
-        <xsl:if test="/layout[@cp:fragmentName]">
+        <xsl:if test="/layout[@dlm:fragmentName]">
    <tr><td colspan="2"><span class="uportal-channel-text"><img height="9" hspace="7" width="9"><xsl:attribute name="src"><xsl:value-of select="$mediaPath"/><xsl:value-of select="$IMAGE_SRC_BULLET_GIF"/></xsl:attribute></img><xsl:value-of select="$SET_ACTIONS_ALLOWED_BY_USERS"/></span></td></tr>
    <tr>
         <td><img alt="" height="5" title="" width="16"><xsl:attribute name="src"><xsl:value-of select='$mediaPath'/><xsl:value-of select="$IMAGE_SRC_TRANSPARENT_GIF"/></xsl:attribute></img></td>
@@ -1113,25 +1113,25 @@ profile is supported for fragments and users.
         <table border="0" cellpadding="2" cellspacing="0">
            <tr>
                 <td nowrap="nowrap">
-                  <input class="uportal-input-text" name="moveAllowed" type="checkbox" value="true"><xsl:if test="not(/layout/folder/folder[@ID=$activeTabID][@cp:moveAllowed='false'])"><xsl:attribute name="checked">true</xsl:attribute></xsl:if></input>
+                  <input class="uportal-input-text" name="moveAllowed" type="checkbox" value="true"><xsl:if test="not(/layout/folder/folder[@ID=$activeTabID][@dlm:moveAllowed='false'])"><xsl:attribute name="checked">true</xsl:attribute></xsl:if></input>
                 </td>
                 <td class="uportal-background-med" nowrap="nowrap">
                   <span class="uportal-text-small"><xsl:value-of select="$MOVE_TAB"/></span>
                 </td>
                 <td nowrap="nowrap">
-                  <img alt="" height="5" title="" width="15"><xsl:attribute name="src"><xsl:value-of select='$mediaPath'/><xsl:value-of select="$IMAGE_SRC_TRANSPARENT_GIF"/></xsl:attribute></img><input class="uportal-input-text" name="editAllowed" type="checkbox" value="true"><xsl:if test="not(/layout/folder/folder[@ID=$activeTabID][@cp:editAllowed='false'])"><xsl:attribute name="checked">true</xsl:attribute></xsl:if></input>
+                  <img alt="" height="5" title="" width="15"><xsl:attribute name="src"><xsl:value-of select='$mediaPath'/><xsl:value-of select="$IMAGE_SRC_TRANSPARENT_GIF"/></xsl:attribute></img><input class="uportal-input-text" name="editAllowed" type="checkbox" value="true"><xsl:if test="not(/layout/folder/folder[@ID=$activeTabID][@dlm:editAllowed='false'])"><xsl:attribute name="checked">true</xsl:attribute></xsl:if></input>
                 </td>
                 <td class="uportal-background-med" nowrap="nowrap">
                   <span class="uportal-text-small"><xsl:value-of select="$EDIT_PROPERTIES"/></span>
                 </td>
                 <td nowrap="nowrap">
-                  <img alt="" height="5" title="" width="15"><xsl:attribute name="src"><xsl:value-of select='$mediaPath'/><xsl:value-of select="$IMAGE_SRC_TRANSPARENT_GIF"/></xsl:attribute></img><input class="uportal-input-text" name="addChildAllowed" type="checkbox" value="true"><xsl:if test="not(/layout/folder/folder[@ID=$activeTabID][@cp:addChildAllowed='false'])"><xsl:attribute name="checked">true</xsl:attribute></xsl:if></input>
+                  <img alt="" height="5" title="" width="15"><xsl:attribute name="src"><xsl:value-of select='$mediaPath'/><xsl:value-of select="$IMAGE_SRC_TRANSPARENT_GIF"/></xsl:attribute></img><input class="uportal-input-text" name="addChildAllowed" type="checkbox" value="true"><xsl:if test="not(/layout/folder/folder[@ID=$activeTabID][@dlm:addChildAllowed='false'])"><xsl:attribute name="checked">true</xsl:attribute></xsl:if></input>
                 </td>
                 <td class="uportal-background-med" nowrap="nowrap">
                   <span class="uportal-text-small"><xsl:value-of select="$ADD_COLUMNS"/></span>
                 </td>
                 <td nowrap="nowrap">
-                  <img alt="" height="5" title="" width="15"><xsl:attribute name="src"><xsl:value-of select='$mediaPath'/><xsl:value-of select="$IMAGE_SRC_TRANSPARENT_GIF"/></xsl:attribute></img><input class="uportal-input-text" name="deleteAllowed" type="checkbox" value="true"><xsl:if test="not(/layout/folder/folder[@ID=$activeTabID][@cp:deleteAllowed='false'])"><xsl:attribute name="checked">true</xsl:attribute></xsl:if></input>
+                  <img alt="" height="5" title="" width="15"><xsl:attribute name="src"><xsl:value-of select='$mediaPath'/><xsl:value-of select="$IMAGE_SRC_TRANSPARENT_GIF"/></xsl:attribute></img><input class="uportal-input-text" name="deleteAllowed" type="checkbox" value="true"><xsl:if test="not(/layout/folder/folder[@ID=$activeTabID][@dlm:deleteAllowed='false'])"><xsl:attribute name="checked">true</xsl:attribute></xsl:if></input>
                 </td>
                 <td class="uportal-background-med" nowrap="nowrap">
                   <span class="uportal-text-small"><xsl:value-of select="$DELETE_TAB"/></span>
@@ -1148,7 +1148,7 @@ profile is supported for fragments and users.
         </td>
    </tr>
         </xsl:if>
-<!-- </cp:change> -->
+<!-- </dlm:change> -->
 <!-- Add the lock/unlock icon if the user is allowed to make things immutable
       <xsl:if test="$showLockUnlock = 'true'">
    <tr>
@@ -1166,7 +1166,7 @@ profile is supported for fragments and users.
 
 <!-- <xsl:if test="not(/layout/folder/folder[@ID=$activeTabID]/@unremovable = 'true')"> -->
 
-        <xsl:if test="not(/layout/folder/folder[@ID=$activeTabID]/descendant-or-self::*[@cp:deleteAllowed = 'false'])">
+        <xsl:if test="not(/layout/folder/folder[@ID=$activeTabID]/descendant-or-self::*[@dlm:deleteAllowed = 'false'])">
         
    <tr>
         <td colspan="2">
@@ -1230,7 +1230,7 @@ function confirmTabDelete()
                 <td align="center" class="uportal-text-small" nowrap="nowrap">
                 
                   <xsl:choose>
-                      <xsl:when test="@cp:editAllowed = 'false'">
+                      <xsl:when test="@dlm:editAllowed = 'false'">
                           <img alt="" height="5" title="" width="30"><xsl:attribute name="src"><xsl:value-of select='$mediaPath'/><xsl:value-of select="$IMAGE_SRC_TRANSPARENT_GIF"/></xsl:attribute></img><br/>
                           <xsl:value-of select="@width"/>
                       </xsl:when>
@@ -1263,7 +1263,7 @@ function confirmTabDelete()
 <!-- <xsl:if test="not(/layout/descendant::folder[@ID=$elementID]/ancestor::*[@immutable='true'])"> -->
 
 <!--
-<xsl:if test="not(/layout/folder/folder[@ID = $activeTabID]/descendant::folder[@ID = $elementID][@cp:moveAllowed = 'false'])">
+<xsl:if test="not(/layout/folder/folder[@ID = $activeTabID]/descendant::folder[@ID = $elementID][@dlm:moveAllowed = 'false'])">
    <tr>
         <td colspan="2" class="uportal-channel-text">
             <a href="{$baseActionURL}?action=moveColumn&amp;elementID={$elementID}"><img alt="Move this column to a different location" title="Move this column to a different location" src="{$mediaPath}/bullet.gif" hspace="7" width="9" height="9" border="0"/>Move this column to a different location</a>
@@ -1274,7 +1274,7 @@ function confirmTabDelete()
 
 <!-- </xsl:if> -->
 <!-- conditionally add in permission elements for distributed layout owners -->
-<xsl:if test="/layout[@cp:fragmentName]">
+<xsl:if test="/layout[@dlm:fragmentName]">
    <tr><td colspan="2"><span class="uportal-channel-text"><img border="0" height="9" hspace="7" width="9"><xsl:attribute name="src"><xsl:value-of select="$mediaPath"/><xsl:value-of select="$IMAGE_SRC_BULLET_GIF"/></xsl:attribute></img><xsl:value-of select="$ADJUST_ACTIONS_ALLOWED_BY_USERS"/></span></td></tr>
    <tr>
         <td><img alt="" height="16" title="" width="16"><xsl:attribute name="src"><xsl:value-of select='$mediaPath'/><xsl:value-of select="$IMAGE_SRC_TRANSPARENT_GIF"/></xsl:attribute></img></td>
@@ -1284,25 +1284,25 @@ function confirmTabDelete()
         <table border="0" cellpadding="2" cellspacing="0">
            <tr>
                 <td nowrap="nowrap">
-                  <input name="moveAllowed" type="checkbox" value="true"><xsl:if test="not(/layout/descendant::folder[@ID=$elementID][@cp:moveAllowed='false'])"><xsl:attribute name="checked">true</xsl:attribute></xsl:if></input>
+                  <input name="moveAllowed" type="checkbox" value="true"><xsl:if test="not(/layout/descendant::folder[@ID=$elementID][@dlm:moveAllowed='false'])"><xsl:attribute name="checked">true</xsl:attribute></xsl:if></input>
                 </td>
                 <td class="uportal-background-med" nowrap="nowrap">
                   <span class="uportal-text-small"><xsl:value-of select="$MOVE_COLUMN"/></span>
                 </td>
                 <td nowrap="nowrap">
-                  <img alt="" height="5" title="" width="15"><xsl:attribute name="src"><xsl:value-of select='$mediaPath'/><xsl:value-of select="$IMAGE_SRC_TRANSPARENT_GIF"/></xsl:attribute></img><input name="editAllowed" type="checkbox" value="true"><xsl:if test="not(/layout/descendant::folder[@ID=$elementID][@cp:editAllowed='false'])"><xsl:attribute name="checked">true</xsl:attribute></xsl:if></input>
+                  <img alt="" height="5" title="" width="15"><xsl:attribute name="src"><xsl:value-of select='$mediaPath'/><xsl:value-of select="$IMAGE_SRC_TRANSPARENT_GIF"/></xsl:attribute></img><input name="editAllowed" type="checkbox" value="true"><xsl:if test="not(/layout/descendant::folder[@ID=$elementID][@dlm:editAllowed='false'])"><xsl:attribute name="checked">true</xsl:attribute></xsl:if></input>
                 </td>
                 <td class="uportal-background-med" nowrap="nowrap">
                   <span class="uportal-text-small"><xsl:value-of select="$EDIT_PROPERTIES"/></span>
                 </td>
                 <td nowrap="nowrap">
-                  <img alt="" height="5" title="" width="15"><xsl:attribute name="src"><xsl:value-of select='$mediaPath'/><xsl:value-of select="$IMAGE_SRC_TRANSPARENT_GIF"/></xsl:attribute></img><input name="addChildAllowed" type="checkbox" value="true"><xsl:if test="not(/layout/descendant::folder[@ID=$elementID][@cp:addChildAllowed='false'])"><xsl:attribute name="checked">true</xsl:attribute></xsl:if></input>
+                  <img alt="" height="5" title="" width="15"><xsl:attribute name="src"><xsl:value-of select='$mediaPath'/><xsl:value-of select="$IMAGE_SRC_TRANSPARENT_GIF"/></xsl:attribute></img><input name="addChildAllowed" type="checkbox" value="true"><xsl:if test="not(/layout/descendant::folder[@ID=$elementID][@dlm:addChildAllowed='false'])"><xsl:attribute name="checked">true</xsl:attribute></xsl:if></input>
                 </td>
                 <td class="uportal-background-med" nowrap="nowrap">
                   <span class="uportal-text-small"><xsl:value-of select="$ADD_CHANNELS"/></span>
                 </td>
                 <td nowrap="nowrap">
-                  <img alt="" height="5" title="" width="15"><xsl:attribute name="src"><xsl:value-of select='$mediaPath'/><xsl:value-of select="$IMAGE_SRC_TRANSPARENT_GIF"/></xsl:attribute></img><input name="deleteAllowed" type="checkbox" value="true"><xsl:if test="not(/layout/descendant::folder[@ID=$elementID][@cp:deleteAllowed='false'])"><xsl:attribute name="checked">true</xsl:attribute></xsl:if></input>
+                  <img alt="" height="5" title="" width="15"><xsl:attribute name="src"><xsl:value-of select='$mediaPath'/><xsl:value-of select="$IMAGE_SRC_TRANSPARENT_GIF"/></xsl:attribute></img><input name="deleteAllowed" type="checkbox" value="true"><xsl:if test="not(/layout/descendant::folder[@ID=$elementID][@dlm:deleteAllowed='false'])"><xsl:attribute name="checked">true</xsl:attribute></xsl:if></input>
                 </td>
                 <td class="uportal-background-med" nowrap="nowrap">
                   <span class="uportal-text-small"><xsl:value-of select="$DELETE_COLUMN"/></span>
@@ -1319,12 +1319,12 @@ function confirmTabDelete()
         </td>
    </tr>
 </xsl:if>
-<!-- </cp:change> -->
+<!-- </dlm:change> -->
 <!-- If ancestor or self is unremovable - the column cannot be deleted-->
 
 <!-- <xsl:if test="not(/layout/descendant::folder[@ID=$elementID]/ancestor-or-self::*[@unremovable='true'])"> -->
 
-<xsl:if test="not(/layout/descendant::folder[@ID = $elementID]/descendant-or-self::*[@cp:deleteAllowed = 'false'])">
+<xsl:if test="not(/layout/descendant::folder[@ID = $elementID]/descendant-or-self::*[@dlm:deleteAllowed = 'false'])">
    <tr>
         <td class="uportal-channel-text" colspan="2">
 
@@ -1393,7 +1393,7 @@ document.location = loc;
       </xsl:if>
 
 <!-- conditionally add in permission elements for distributed layout owners -->
-      <xsl:if test="/layout[@cp:fragmentName]">
+      <xsl:if test="/layout[@dlm:fragmentName]">
    <tr><td class="uportal-channel-text" colspan="2"><img border="0" height="9" hspace="7" width="9"><xsl:attribute name="src"><xsl:value-of select="$mediaPath"/><xsl:value-of select="$IMAGE_SRC_BULLET_GIF"/></xsl:attribute></img><xsl:value-of select="$ADJUST_ACTIONS_ALLOWED_BY_USERS"/></td></tr>
    <tr>
         <td><img alt="" height="16" title="" width="16"><xsl:attribute name="src"><xsl:value-of select='$mediaPath'/><xsl:value-of select="$IMAGE_SRC_TRANSPARENT_GIF"/></xsl:attribute></img></td>
@@ -1402,13 +1402,13 @@ document.location = loc;
         <table border="0" cellpadding="2" cellspacing="0">
            <tr>
                 <td nowrap="nowrap">
-                  <input name="moveAllowed" type="checkbox" value="true"><xsl:if test="not(/layout/descendant::channel[@ID=$elementID][@cp:moveAllowed='false'])"><xsl:attribute name="checked">true</xsl:attribute></xsl:if></input>
+                  <input name="moveAllowed" type="checkbox" value="true"><xsl:if test="not(/layout/descendant::channel[@ID=$elementID][@dlm:moveAllowed='false'])"><xsl:attribute name="checked">true</xsl:attribute></xsl:if></input>
                 </td>
                 <td class="uportal-background-med" nowrap="nowrap">
                   <span class="uportal-text-small"><xsl:value-of select="$MOVE_CHANNEL"/></span>
                 </td>
                 <td nowrap="nowrap">
-                  <img alt="" height="5" title="" width="15"><xsl:attribute name="src"><xsl:value-of select='$mediaPath'/><xsl:value-of select="$IMAGE_SRC_TRANSPARENT_GIF"/></xsl:attribute></img><input name="deleteAllowed" type="checkbox" value="true"><xsl:if test="not(/layout/descendant::channel[@ID=$elementID][@cp:deleteAllowed='false'])"><xsl:attribute name="checked">true</xsl:attribute></xsl:if></input>
+                  <img alt="" height="5" title="" width="15"><xsl:attribute name="src"><xsl:value-of select='$mediaPath'/><xsl:value-of select="$IMAGE_SRC_TRANSPARENT_GIF"/></xsl:attribute></img><input name="deleteAllowed" type="checkbox" value="true"><xsl:if test="not(/layout/descendant::channel[@ID=$elementID][@dlm:deleteAllowed='false'])"><xsl:attribute name="checked">true</xsl:attribute></xsl:if></input>
                 </td>
                 <td class="uportal-background-med" nowrap="nowrap">
                   <span class="uportal-text-small"><xsl:value-of select="$DELETE_CHANNEL"/></span>
@@ -1425,12 +1425,12 @@ document.location = loc;
         </td>
    </tr>
       </xsl:if>
-<!-- </cp:change> -->
+<!-- </dlm:change> -->
 
       <!-- If ancestor or self is unremovable - the channel cannot be deleted-->
       
 <!-- <xsl:if test="not(/layout/descendant::*[@ID=$elementID]/ancestor-or-self::*[@unremovable='true'])"> -->
-<xsl:if test="not(/layout/descendant::*[@ID=$elementID][@cp:deleteAllowed = 'false'])">
+<xsl:if test="not(/layout/descendant::*[@ID=$elementID][@dlm:deleteAllowed = 'false'])">
    <tr><td class="uportal-channel-text" colspan="2" width="100%"><a href="{$baseActionURL}?action=deleteChannel&amp;elementID={$elementID}" onMouseover="window.status=''; return true;"><img border="0" height="9" hspace="7" width="9"><xsl:attribute name="alt"><xsl:value-of select="$DELETE_THIS_CHANNEL"/></xsl:attribute><xsl:attribute name="title"><xsl:value-of select="$DELETE_THIS_CHANNEL"/></xsl:attribute><xsl:attribute name="src"><xsl:value-of select="$mediaPath"/><xsl:value-of select="$IMAGE_SRC_BULLET_GIF"/></xsl:attribute></img><xsl:value-of select="$DELETE_THIS_CHANNEL"/></a></td></tr>
 </xsl:if>
 <!-- </xsl:if> -->
@@ -1529,7 +1529,7 @@ function validateForm()
             <xsl:for-each select="/layout/folder/folder[@type='regular' and @hidden='false']">
 
                 <xsl:choose>
-                    <xsl:when test="not(@cp:moveAllowed = 'false' or following-sibling::folder[@type='regular' and @hidden='false'][@cp:moveAllowed='false'])">
+                    <xsl:when test="not(@dlm:moveAllowed = 'false' or following-sibling::folder[@type='regular' and @hidden='false'][@dlm:moveAllowed='false'])">
                 <td nowrap="nowrap"><input name="method_ID" type="radio" value="insertBefore_{@ID}"/></td>
                     </xsl:when>
                     <xsl:otherwise>

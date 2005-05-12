@@ -673,13 +673,13 @@ public class RDBMDistributedLayoutStore
     */
     private FragmentDefinition getOwnedFragment( IPerson person )
     {
-        String userName = (String) person.getAttribute( "username" );
+        int userId = person.getID();
         FragmentDefinition ownedFragment = null;
         
-        if ( userName != null && definitions != null )
+        if ( definitions != null )
         {
             for( int i=0; i<definitions.length; i++ )
-                if ( definitions[i].ownerID.equals( userName ) )
+                if ( definitions[i].userID == userId )
                     return definitions[i];
         }
         return null;
@@ -713,6 +713,8 @@ public class RDBMDistributedLayoutStore
         {
             PLF = _safeGetUserLayout( person, profile );
         }
+        log.error("mboyd: " + person.getAttribute(IPerson.USERNAME) +
+                "-PLF =" + XML.serializeNode(PLF));
         Document ILF = ILFBuilder.constructILF( PLF, applicables );
         person.setAttribute( Constants.PLF, PLF );
         IntegrationResult result = new IntegrationResult();
@@ -938,7 +940,7 @@ public class RDBMDistributedLayoutStore
                 }
 
                 // now load in the folder and channel attributes from the
-                // up_ss_user_atts table pulling in cp:origin from the
+                // up_ss_user_atts table pulling in dlm:origin from the
                 // up_layout_param table indicating these values are for an
                 // overriden value on an incorporated element.
 
@@ -1016,7 +1018,8 @@ public class RDBMDistributedLayoutStore
                             // folder attribute
                             String folderStructId = null;
                             if ( ulp_parmName != null &&
-                                 ulp_parmName.equals( Constants.ATT_ORIGIN ) )
+                                 (ulp_parmName.equals( Constants.ATT_ORIGIN ) ||
+                                  ulp_parmName.equals( Constants.LEGACY_ATT_ORIGIN )))
                                 folderStructId = originId;
                             else
                                 folderStructId = getStructId(structId,chanId);
@@ -1026,7 +1029,8 @@ public class RDBMDistributedLayoutStore
                             // channel attribute
                             String channelStructId = null;
                             if ( ulp_parmName != null &&
-                                 ulp_parmName.equals( Constants.ATT_ORIGIN ) )
+                                 (ulp_parmName.equals( Constants.ATT_ORIGIN ) ||
+                                  ulp_parmName.equals( Constants.LEGACY_ATT_ORIGIN )))
                                 channelStructId = originId;
                             else
                                 channelStructId = getStructId(structId,chanId);
@@ -1323,6 +1327,12 @@ public class RDBMDistributedLayoutStore
     protected Element getStructure(Document document, LayoutStructure ls) throws Exception {
         Document doc = document;
         Element structure = null;
+
+        // handle migration of legacy namespace
+        String type = ls.getType(); 
+        if (type != null && type.startsWith(Constants.LEGACY_NS))
+            type = Constants.NS + type.substring(Constants.LEGACY_NS.length());
+
   if (ls.isChannel()) {
             ChannelDefinition channelDef = crs.getChannelDefinition(ls.getChanId());
     if (channelDef != null && channelApproved(channelDef.getApprovalDate())) {
@@ -1348,15 +1358,15 @@ public class RDBMDistributedLayoutStore
   } else
         {
             // create folder objects including dlm new types in cp namespace
-            if (ls.getType() != null && ls.getType().startsWith(Constants.NS))
+            if (type != null && (type.startsWith(Constants.NS)))
             {
-                structure = doc.createElementNS(Constants.NS_URI, ls.getType());
+                structure = doc.createElementNS(Constants.NS_URI, type);
             }
             else
                 structure = doc.createElement("folder");
     structure.setAttribute("ID", folderPrefix + ls.getStructId());
     structure.setAttribute("name", ls.getName());
-    structure.setAttribute("type", (ls.getType() != null ? ls.getType() : "regular"));
+    structure.setAttribute("type", (type != null ? type : "regular"));
         }
 
         structure.setAttribute("hidden", (ls.isHidden() ? "true" : "false"));
@@ -1369,23 +1379,28 @@ public class RDBMDistributedLayoutStore
   if (ls.getParameters() != null) {
     for (int i = 0; i < ls.getParameters().size(); i++) {
       StructureParameter sp = (StructureParameter)ls.getParameters().get(i);
-
+      String pName = sp.getName();
+      
+      // handle migration of legacy namespace
+      if (pName.startsWith(Constants.LEGACY_NS))
+          pName = Constants.NS + sp.getName().substring(Constants.LEGACY_NS.length());
+      
                 if (!ls.isChannel())
                 { // Folder
-                    if (sp.getName().startsWith(Constants.NS))
+                    if (pName.startsWith(Constants.NS))
                         structure.setAttributeNS(
                             Constants.NS_URI,
-                            sp.getName(),
+                            pName,
                             sp.getValue());
                     else
-                        structure.setAttribute(sp.getName(), sp.getValue());
+                        structure.setAttribute(pName, sp.getValue());
       } else { // Channel
 
-                    // if dealing with a cp namespace param add as attribute
-                    if (sp.getName().startsWith(Constants.NS))
+                    // if dealing with a dlm namespace param add as attribute
+                    if (pName.startsWith(Constants.NS))
                         structure.setAttributeNS(
                             Constants.NS_URI,
-                            sp.getName(),
+                            pName,
                             sp.getValue());
                     else // do traditional override processing
                         {
@@ -1398,7 +1413,7 @@ public class RDBMDistributedLayoutStore
                             NamedNodeMap nm = parmElement.getAttributes();
 
                             String nodeName = nm.getNamedItem("name").getNodeValue();
-                            if (nodeName.equals(sp.getName())) {
+                            if (nodeName.equals(pName)) {
                                 Node override = nm.getNamedItem("override");
                                 if (override != null && override.getNodeValue().equals("yes")) {
                                     Node valueNode = nm.getNamedItem("value");
@@ -1430,7 +1445,7 @@ public class RDBMDistributedLayoutStore
             // directive or ui element. If the latter then use traditional id
             // structure
         {
-            if (ls.getType() != null && ls.getType().startsWith(Constants.NS))
+            if (type != null && type.startsWith(Constants.NS))
             {
                 structure.setAttribute(
                     "ID",
@@ -1469,7 +1484,7 @@ public class RDBMDistributedLayoutStore
             
             // determine the struct_id for storing in the db. For incorporated nodes in
             // the plf their ID is a system-wide unique ID while their struct_id for
-            // storing in the db is cached in a cp:plfID attribute.
+            // storing in the db is cached in a dlm:plfID attribute.
             int saveStructId = -1;
             String plfID = structure.getAttribute(Constants.ATT_PLF_ID);
 

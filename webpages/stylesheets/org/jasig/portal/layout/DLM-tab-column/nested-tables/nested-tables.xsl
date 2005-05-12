@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xsl:stylesheet version="1.0" xmlns:cp="http://www.campuspipeline.com" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:stylesheet version="1.0" xmlns:dlm="http://www.uportal.org/layout/dlm" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="html" indent="no"/>
   <xsl:param name="baseActionURL">render.userLayoutRootNode.uP</xsl:param>
   <xsl:param name="baseIdempotentActionURL">render.userLayoutRootNode.uP</xsl:param>
@@ -45,7 +45,7 @@
 <xsl:template match="layout">
     <html>
       <head>
-        <title><xsl:value-of select="$uP_productAndVersion"/><xsl:if test="/layout/@cp:fragmentName"> - <xsl:value-of select="/layout/@cp:fragmentName"/> - fragment owner</xsl:if></title>
+        <title><xsl:value-of select="$uP_productAndVersion"/><xsl:if test="/layout/@dlm:fragmentName"> - <xsl:value-of select="/layout/@dlm:fragmentName"/> - fragment owner</xsl:if></title>
         <link type="text/css" rel="stylesheet" href="{$mediaPath}/{$skin}/skin/{$skin}.css"/>
         <link rel="icon" href="favicon.ico" type="image/x-icon"/>
         <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
@@ -66,7 +66,7 @@
 </html>
 </xsl:template>
 <xsl:template match="header">
-    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+    <table width="100%" border="3" cellspacing="0" cellpadding="0">
       <tr class="uportal-background-med">
         <td colspan="2" rowspan="1">
           <img alt="" src="{$mediaPath}/{$skin}/skin/transparent.gif" width="1" height="1"/>
@@ -88,7 +88,7 @@
       </tr>
     </table>
     <xsl:copy-of select="channel[@name='Login']"/>
-    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+    <table width="100%" border="3" cellspacing="0" cellpadding="0">
       <tr>
         <td colspan="1" rowspan="1">
           <img alt="uPortal by JA-SIG large logo" title="uPortal by JA-SIG large Logo" src="{$mediaPath}/{$skin}/institutional/uportal_logo_grid.gif" width="600" height="50"/>
@@ -420,7 +420,7 @@
           <!-- Remove button -->
     <xsl:if test="not(@unremovable='true') and not(//focused)">
         <xsl:choose>
-            <xsl:when test="not(@cp:deleteAllowed = 'false')">
+            <xsl:when test="not(@dlm:deleteAllowed = 'false')">
                 <a href="{$baseActionURL}?uP_remove_target={@ID}" onClick="return confirm('Are you sure you want to remove this channel?')" onMouseover="window.status=''; return true;">
                   <img alt="remove" title="remove" src="{$mediaPath}/{$skin}/controls/remove.gif" width="16" height="16" border="0"/>
                 </a>

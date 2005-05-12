@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xsl:stylesheet version="1.0" xmlns:cp="http://www.campuspipeline.com" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:stylesheet version="1.0" xmlns:dlm="http://www.uportal.org/layout/dlm" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
 <xsl:param name="activeTab">1</xsl:param>
 <xsl:param name="userLayoutRoot">root</xsl:param>
@@ -60,8 +60,8 @@
 <xsl:template match="layout">
    <xsl:for-each select="folder[@type='root']">
   <layout>
-    <xsl:if test="/layout/@cp:fragmentName">
-        <xsl:attribute name="cp:fragmentName"><xsl:value-of select="/layout/@cp:fragmentName"/></xsl:attribute>
+    <xsl:if test="/layout/@dlm:fragmentName">
+        <xsl:attribute name="dlm:fragmentName"><xsl:value-of select="/layout/@dlm:fragmentName"/></xsl:attribute>
     </xsl:if>
 
     <header>

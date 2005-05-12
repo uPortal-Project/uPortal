@@ -257,7 +257,7 @@ public class EditManager
     }
 
     /**
-     * Searches for a cp:pref command which indicates that a user preference
+     * Searches for a dlm:pref command which indicates that a user preference
      * was change and if found removes it from the user's PLF.
      */
     public static void removePreferenceDirective( IPerson person,

@@ -17,16 +17,30 @@ public class Constants
     public static final String RCS_ID = "@(#) $Header$";
 
     // define the namespace prefixe on dlm elements and attributes.
-    public static final String NS = "cp:";
-    public static final String NS_DECL = "xmlns:cp";
-    public static final String NS_URI ="http://www.campuspipeline.com";
+    public static final String NS = "dlm:";
+    public static final String NS_DECL = "xmlns:dlm";
+    public static final String NS_URI ="http://www.uportal.org/layout/dlm";
+    
+    // the following variables are to support backwards compatibility for
+    // users of the DLM functionality before it was rolled into the uPortal
+    // baseline code. This provides for just-in-time migration of any database
+    // values containing the old namespace prefix.
+    public static final String LEGACY_NS = "cp:";
+    public static final String LEGACY_ATT_ORIGIN      = LEGACY_NS + "origin";
+
     
     // define the names of attributes that hold layout adjustment permissions
+    // LCL refers to the local name without a namespace prefix.
        
-    public static final String ATT_DELETE_ALLOWED     = NS+"deleteAllowed";
-    public static final String ATT_MOVE_ALLOWED       = NS+"moveAllowed";
-    public static final String ATT_EDIT_ALLOWED       = NS+"editAllowed";
-    public static final String ATT_ADD_CHILD_ALLOWED  = NS+"addChildAllowed";
+    public static final String LCL_DELETE_ALLOWED     = "deleteAllowed";
+    public static final String LCL_MOVE_ALLOWED       = "moveAllowed";
+    public static final String LCL_EDIT_ALLOWED       = "editAllowed";
+    public static final String LCL_ADD_CHILD_ALLOWED  = "addChildAllowed";
+
+    public static final String ATT_DELETE_ALLOWED     = NS+LCL_DELETE_ALLOWED;
+    public static final String ATT_MOVE_ALLOWED       = NS+LCL_MOVE_ALLOWED;
+    public static final String ATT_EDIT_ALLOWED       = NS+LCL_EDIT_ALLOWED;
+    public static final String ATT_ADD_CHILD_ALLOWED  = NS+LCL_ADD_CHILD_ALLOWED;
 
     public static final String ATT_ID                  = "ID";
     public static final String ATT_TYPE                = "type";

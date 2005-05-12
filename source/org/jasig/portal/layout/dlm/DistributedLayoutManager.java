@@ -215,7 +215,7 @@ public class DistributedLayoutManager implements IUserLayoutManager
         this.updateCacheKey();
 
         // determine if this is a layout fragment by looking at the layout node
-        // for a cp:fragment attribute.
+        // for a dlm:fragment attribute.
         Element layout = this.userLayoutDocument.getDocumentElement();
         Node attr = layout.getAttributeNodeNS( Constants.NS_URI,
                                                Constants.LCL_FRAGMENT_NAME );

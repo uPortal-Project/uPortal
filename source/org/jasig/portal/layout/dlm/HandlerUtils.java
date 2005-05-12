@@ -98,6 +98,17 @@ public class HandlerUtils
     {
         Element plfNode = (Element) plf.importNode( compViewNode,
                                                     includeChildNodes );
+        // make sure that we don't include ILF restriction params in the PLF if
+        // this ILF node contained any.
+        plfNode.removeAttributeNS(Constants.NS_URI,
+                Constants.LCL_ADD_CHILD_ALLOWED);
+        plfNode.removeAttributeNS(Constants.NS_URI,
+                Constants.LCL_DELETE_ALLOWED);
+        plfNode.removeAttributeNS(Constants.NS_URI,
+                Constants.LCL_EDIT_ALLOWED);
+        plfNode.removeAttributeNS(Constants.NS_URI,
+                Constants.LCL_MOVE_ALLOWED);
+        
         String ID = plfNode.getAttribute( Constants.ATT_ID );
         plfNode.setIdAttribute(Constants.ATT_ID, true);
 

@@ -11,6 +11,8 @@ import org.jasig.portal.layout.dlm.EvaluatorFactory;
 import org.jasig.portal.security.IPerson;
 
 /**
+ * Used to target a fragment to all users of the system including guest users.
+ * 
  * @version $Revision$ $Date$
  * @since uPortal 2.5
  */
