@@ -251,12 +251,12 @@ public class XHTMLSerializer extends BaseMarkupSerializer
                 preserveSpace = true;
 
             if ( addNSAttr ) {
-                Enumeration enum;
+                Enumeration enum1;
 
-                enum = _prefixes.keys();
-                while ( enum.hasMoreElements() ) {
+                enum1 = _prefixes.keys();
+                while ( enum1.hasMoreElements() ) {
                     _printer.printSpace();
-                    value = (String) enum.nextElement();
+                    value = (String) enum1.nextElement();
                     name = (String) _prefixes.get( value );
                     if ( name.length() == 0 ) {
                         _printer.printText( "xmlns=\"" );
