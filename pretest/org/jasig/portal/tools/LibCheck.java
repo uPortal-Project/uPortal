@@ -22,8 +22,9 @@ public class LibCheck {
         try {
             Class c = LibCheck.class.getClassLoader().loadClass(importantClass);
         } catch (ClassNotFoundException e) {
-            System.err.println("Unable to load "+importantClass+". "+e);
-            System.err.println("Check that you have the JAXP jars installed in your JDK.\n" +
+            System.err.println(e);
+            System.err.println("The missing class is provided as part of JAXP.\n" +
+                    "Check that you have the JAXP jars installed in your JDK.\n" +
                 "For more information see http://jasigch.princeton.edu:9000/display/UPC/2.5");
             System.exit(1);
         }
