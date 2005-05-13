@@ -24,8 +24,8 @@ public class LibCheck {
         } catch (ClassNotFoundException e) {
             System.err.println(e);
             System.err.println("The missing class is provided as part of JAXP.\n" +
-                    "Check that you have the JAXP jars installed in your JDK.\n" +
-                "For more information see http://jasigch.princeton.edu:9000/display/UPC/2.5");
+                "Check that you have the JAXP jars installed in your JDK.\n" +
+                "For more information see http://jasigch.princeton.edu:9000/display/UPC/Practical+uP25+XML+Changes");
             System.exit(1);
         }
         System.exit(0);
