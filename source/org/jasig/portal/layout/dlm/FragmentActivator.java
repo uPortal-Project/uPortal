@@ -277,6 +277,13 @@ public class FragmentActivator
         {
             // fix hard coded 1 later for multiple profiles
             UserProfile profile = dls.getUserProfileById(p, 1);
+            
+            // see if we have structure & theme stylesheets for this user yet.
+            // If not then fall back on system's selected stylesheets.
+            if (profile.getStructureStylesheetId() == 0 ||
+                    profile.getThemeStylesheetId() == 0)
+                profile = dls.getSystemProfileById(profile.getProfileId());
+            
             view.profileId = profile.getProfileId();
             view.layoutId = profile.getLayoutId();
             view.structureStylesheetId = profile.getStructureStylesheetId();
