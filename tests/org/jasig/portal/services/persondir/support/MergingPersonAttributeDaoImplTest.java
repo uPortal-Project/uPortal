@@ -12,8 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import junit.framework.TestCase;
-
 import org.jasig.portal.services.persondir.IPersonAttributeDao;
 import org.jasig.portal.services.persondir.support.merger.MultivaluedAttributeMerger;
 import org.jasig.portal.services.persondir.support.merger.NoncollidingAttributeAdder;

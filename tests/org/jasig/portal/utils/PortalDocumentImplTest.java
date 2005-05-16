@@ -5,21 +5,12 @@
 
 package org.jasig.portal.utils;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Hashtable;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.FactoryConfigurationError;
-import javax.xml.parsers.ParserConfigurationException;
+import junit.framework.TestCase;
 
-import org.jasig.portal.ResourceMissingException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.xml.sax.SAXException;
-
-import junit.framework.TestCase;
 
 /**
  * Testcase for PortalDocumentImpl as deprecated for uPortal 2.5.

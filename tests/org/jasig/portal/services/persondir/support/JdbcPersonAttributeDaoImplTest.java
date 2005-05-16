@@ -15,8 +15,6 @@ import java.util.Set;
 
 import javax.sql.DataSource;
 
-import junit.framework.TestCase;
-
 import org.jasig.portal.rdbm.TransientDatasource;
 import org.jasig.portal.services.persondir.IPersonAttributeDao;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
