@@ -208,7 +208,7 @@ public class ChannelDefinition implements IBasicEntity {
    * @param override the channel parameter override setting
    */   
   public void addParameter(String name, String value, String override) {
-    parameters.put(name, new ChannelParameter(name, value, override));
+    parameters.put(name, new ChannelParameter(name, value, Boolean.valueOf(override).booleanValue()));
   }
   
   /**
