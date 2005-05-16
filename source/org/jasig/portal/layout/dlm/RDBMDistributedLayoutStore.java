@@ -713,7 +713,7 @@ public class RDBMDistributedLayoutStore
         {
             PLF = _safeGetUserLayout( person, profile );
         }
-        Document ILF = ILFBuilder.constructILF( PLF, applicables );
+        Document ILF = ILFBuilder.constructILF( PLF, applicables, person );
         person.setAttribute( Constants.PLF, PLF );
         IntegrationResult result = new IntegrationResult();
         PLFIntegrator.mergePLFintoILF( PLF, ILF, result );

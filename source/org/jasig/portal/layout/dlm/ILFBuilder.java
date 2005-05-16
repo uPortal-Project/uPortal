@@ -8,7 +8,13 @@ package org.jasig.portal.layout.dlm;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import org.jasig.portal.AuthorizationException;
+import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.utils.DocumentFactory;
+import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -27,8 +33,8 @@ public class ILFBuilder
 {
     public static final String RCS_ID = "@(#) $Header$";
 
-    public static Document constructILF( Document PLF, Vector sequence )
-    throws javax.xml.parsers.ParserConfigurationException
+    public static Document constructILF( Document PLF, Vector sequence, IPerson person)
+    throws javax.xml.parsers.ParserConfigurationException, AuthorizationException
     {
         // first construct the destination document and root element. The root
         // element should be a complete copy of the PLF's root including its
@@ -50,11 +56,18 @@ public class ILFBuilder
             ilfRoot.setIdAttribute(Constants.ATT_ID, true);
         el = result.getElementById(id);
 
+        // build the auth principal for determining if pushed channels can be 
+        // used by this user
+        EntityIdentifier ei = person.getEntityIdentifier();
+        AuthorizationService authS = AuthorizationService.instance();
+        IAuthorizationPrincipal ap = authS.newPrincipal(ei.getKey(), 
+                ei.getType());
+
         // now merge fragments one at a time into ILF document
         Enumeration fragments = sequence.elements();
 
         while( fragments.hasMoreElements() )
-            mergeFragment( (Document) fragments.nextElement(), result );
+            mergeFragment( (Document) fragments.nextElement(), result, ap );
         return result;
     }
 
@@ -62,19 +75,24 @@ public class ILFBuilder
      * Passes the layout root of each of these documents to mergeChildren
      * causing all children of newLayout to be merged into compositeLayout
      * following merging protocal for distributed layout management.
+     * @throws AuthorizationException
     **/
     public static void mergeFragment( Document fragment,
-                                      Document composite )
+                                      Document composite,
+                                      IAuthorizationPrincipal ap ) 
+    throws AuthorizationException
     {
         Element fragmentLayout = fragment.getDocumentElement();
         Element fragmentRoot = (Element) fragmentLayout.getFirstChild();
         Element compositeLayout = composite.getDocumentElement();
         Element compositeRoot = (Element) compositeLayout.getFirstChild();
-        mergeChildren( fragmentRoot, compositeRoot );
+        mergeChildren( fragmentRoot, compositeRoot, ap );
     }
 
     private static void mergeChildren( Element source, // parent of children
-                                       Element dest )  // receiver of children
+                                       Element dest,   // receiver of children
+                                       IAuthorizationPrincipal ap ) 
+    throws AuthorizationException
     {
         Document destDoc = dest.getOwnerDocument();
 
@@ -91,15 +109,36 @@ public class ILFBuilder
             Element child = (Element) item;
             Element newChild = null;
 
-            if( null != child )
+            if( null != child && mergeAllowed( child, ap ))
             {
                 newChild = (Element) destDoc.importNode( child, false );
                 dest.appendChild( newChild );
                 String id = newChild.getAttribute(Constants.ATT_ID);
                 if (id != null && ! id.equals(""))
                     newChild.setIdAttribute(Constants.ATT_ID, true);
-                mergeChildren( child, newChild );
+                mergeChildren( child, newChild, ap );
             }
         }
+    }
+    
+    /**
+     * Tests to see if channels to be merged from ILF can be rendered by the
+     * end user. If not then they are discarded from the merge.
+     * 
+     * @param child
+     * @param person
+     * @return
+     * @throws AuthorizationException
+     * @throws NumberFormatException
+     */
+    private static boolean mergeAllowed( Element child, 
+            IAuthorizationPrincipal ap ) 
+    throws AuthorizationException
+    {
+        if (! child.getTagName().equals("channel"))
+            return true;
+        
+        String channelPublishId = child.getAttribute("chanID");
+        return ap.canRender(Integer.parseInt(channelPublishId));
     }
 }
