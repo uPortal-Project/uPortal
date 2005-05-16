@@ -249,15 +249,18 @@ public final class LayoutStructure {
     }
 
     /**
-     * Get a String representing the type of the folder that this LayoutStructure
+     * Get the String representing the type of the folder that this LayoutStructure
      * represents, or null if this LayoutStructure does not represent a folder.
+     * Different layout management approaches may define differing types of
+     * folders for their own purposes. The core types typically used by all
+     * are: header, footer, and regular. The value returned is the value found
+     * in the up_layout_struct table's type column. For instances of 
+     * LayoutStructure that represent a channel this method will return a 
+     * value of null.
      * 
      * @return a String representing the type of this layout structure.
      */
     public String getType() {
-        // TODO: improve method comment
-        // someone who understands this class could provide a less-lame JavaDoc
-        // comment for this method...
         return this.type;
     }
 
