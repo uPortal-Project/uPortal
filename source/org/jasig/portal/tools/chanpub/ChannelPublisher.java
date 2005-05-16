@@ -558,8 +558,10 @@ public class ChannelPublisher implements ErrorHandler
                 {
                     povrd = XML.getElementText((Element) ovrdnodes.item(0));
                 }
+                
+                boolean b = povrd != null && ("Y".equalsIgnoreCase(povrd) || "T".equalsIgnoreCase(povrd));
                 ChannelParameter chanParam =
-                    new ChannelParameter(pname, pvalue, povrd);
+                    new ChannelParameter(pname, pvalue, b);
                 chanParam.setDescription(pdescr);
                 ci.chanDef.addParameter(chanParam);
             }
