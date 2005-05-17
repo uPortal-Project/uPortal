@@ -11,10 +11,17 @@ import org.apache.commons.dbcp.BasicDataSource;
 
 
 /**
+ * DBCPDataSourceFactory produces an instance of {@link BasicDataSource} 
+ * for the given driver class name, username, password, and URL, defaulting
+ * the maxActive, maxIdle, and maxWait properties.
+ * 
+ * This class is final because it is not designed to be subclassed.
+ * 
  * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
  * @version $Revision$ $Date$
+ * @since uPortal 2.5
  */
-public class DBCPDataSourceFactory implements IPooledDataSourceFactory {
+public final class DBCPDataSourceFactory implements IPooledDataSourceFactory {
 
     public DataSource createPooledDataSource(final String driverClassName,
                                              final String userName,
@@ -29,6 +36,20 @@ public class DBCPDataSourceFactory implements IPooledDataSourceFactory {
         ds.setUrl(url);
         
         //TODO Create a properties file to for DBCP
+        
+        // I'd like to see us move to using Spring to produce and manage our
+        // DataSource singletons rather than creating another properties file for
+        // the configuration of this use of DBCP.  
+        //
+        // Think of Spring as the ultimate DataSource factory.  Want some particular
+        // configuration of one of the standard dbcp DataSource implementations?
+        // It can do that.  Want to get your DataSource from JNDI?  It can do that.
+        // Want to wire together our own custom DataSource implementation?
+        // It can do that too.  My personal viewpoint is that the factory API
+        // in this package isn't buying us much beyond what we'd get if we wired
+        // together singleton DataSources directly in our Spring configuration.
+        // -Andrew Petro
+        
         ds.setMaxActive(100);
         ds.setMaxIdle(30);
         ds.setMaxWait(10000);
