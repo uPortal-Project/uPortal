@@ -189,12 +189,21 @@ public class UserInstance implements HttpSessionBindingListener {
      * @param res the http servlet response
      */
     protected boolean processPortletActionIfNecessary(HttpServletRequest req, HttpServletResponse res) {
-        boolean isPortletAction = (new Boolean(req.getParameter(PortletStateManager.ACTION))).booleanValue();
-        if (isPortletAction) {
-            this.channelManager.startRenderingCycle(req, res, new UPFileSpec(req));
+        if (this.channelManager != null) {
+            boolean isPortletAction = (new Boolean(req.getParameter(PortletStateManager.ACTION))).booleanValue();
+            if (isPortletAction) {
+                try {
+                    this.channelManager.startRenderingCycle(req, res, new UPFileSpec(req));
+                }
+                finally {
+                    this.channelManager.finishedRenderingCycle();
+                }
+            }
+
+            return isPortletAction;
         }
 
-        return isPortletAction;
+        return false;
     }
 
     /**
