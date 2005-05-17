@@ -68,7 +68,7 @@ included for reference in this directory as cpl-v10.html
 
 Tyrex
 
-Due credit is here given to the to the ExoLab Group (http://www.exolab.org).
+Due credit is here given to the ExoLab Group (http://www.exolab.org).
 
 
 Xerces
