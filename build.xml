@@ -292,7 +292,7 @@
 
   spring.jar           Spring, a java/j2ee application framework that facilitates
                        the use of the Inversion of Control (IoC) design pattern.
-                       Version 1.1.1
+                       Version 1.2.0
                        URL: http://www.springframework.org/
 
   concurrent-1.3.4.jar	Doug Lea's Concurrency package.  Used by WhirlyCache
