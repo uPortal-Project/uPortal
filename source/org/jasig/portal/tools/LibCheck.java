@@ -25,7 +25,7 @@ public class LibCheck {
             System.err.println(e);
             System.err.println("The missing class is provided as part of JAXP.\n" +
                 "Check that you have the JAXP jars installed in your JDK.\n" +
-                "For more information see http://jasigch.princeton.edu:9000/display/UPC/Practical+uP25+XML+Changes");
+                "For more information see lib/jaxp/README.txt for more information.");
             System.exit(1);
         }
         System.exit(0);
