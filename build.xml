@@ -694,11 +694,12 @@
 
   	<!-- Test that JAXP is installed in the JVM before trying to compile all of uPortal -->
     <mkdir    dir="${build.home}/WEB-INF/classes"/>
-    <javac srcdir="pretest"
+    <javac srcdir="source"
           destdir="${build.home}/WEB-INF/classes"
             debug="${compile.debug}"
       deprecation="${compile.deprecation}"
          optimize="${compile.optimize}">
+      <include name="org/jasig/portal/tools/LibCheck.java"/>
       <classpath refid="compile.classpath"/>
     </javac>
     <java fork="true" failonerror="true" dir="" classname="org.jasig.portal.tools.LibCheck">
