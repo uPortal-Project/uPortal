@@ -2,7 +2,7 @@ This is a file for notes specific to the uPortal release that the code you're lo
 either is (in the case of a tagged release) or will become (in the case of the tip of a patches or main branch).
 
 
-Release notes for uPortal 2.5.0 RC 1:
+Release notes for uPortal 2.5.0 RC 2:
 
 
 
@@ -22,9 +22,13 @@ changes beyond 2.5.0.
 
 You can ask our JIRA issue tracking system to generate notes for this release here:
 
+http://jasigch.princeton.edu:9000/jira/secure/ReleaseNote.jspa?projectId=10020&styleName=Html&version=10142
+
+and for the 2.5.0 RC1 release upon which this release builds, here:
+
 http://jasigch.princeton.edu:9000/jira/secure/ReleaseNote.jspa?projectId=10020&styleName=Html&version=10140
 
-and for the 2.5.0 M1 release upon which this release builds, here:
+and for the 2.5.0 M1 release upon which the 2.5.0 RC1 release builds, here:
 
 http://jasigch.princeton.edu:9000/jira/secure/ReleaseNote.jspa?projectId=10020&styleName=Html&version=10096
 
@@ -34,9 +38,8 @@ Please make known any issues you discover with this release.
 
 The release egineer's system:
 
-Lynn Hollerman asked that we document what systems a release was tested on.  This is only the first release candidate, and
-so while we're making an effort to produce a quality release, it has several serious known issues and isn't as well
-tested as we would like.  For what it's worth: the release engineer (Andrew Petro, Yale) informally tested this release
+Lynn Hollerman asked that we document what systems a release was tested on.  For what it's worth: 
+the release engineer (Andrew Petro, Yale) informally tested this release
 before tagging on
 a Windows / Tomcat 5.0.25 / Java 1.4.2_04 with JAXP 1.3 extensions against the default HSQLDB database via 
 the clean, runtests, initportal Ant build sequence.
