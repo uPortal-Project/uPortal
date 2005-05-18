@@ -511,12 +511,15 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
     Connection con = RDBMServices.getConnection();
 
     try {
-      Statement stmt = con.createStatement();
+        String query = "SELECT CHAN_ID FROM UP_CHANNEL WHERE CHAN_FNAME=? ORDER BY CHAN_APVL_DT DESC";
+        PreparedStatement pstmt = con.prepareStatement(query);
       try {
-        String query = "SELECT CHAN_ID FROM UP_CHANNEL WHERE CHAN_FNAME='" + channelFunctionalName + "' ORDER BY CHAN_APVL_DT DESC";
         if (log.isDebugEnabled())
-            log.debug("RDBMChannelRegistryStore.getChannelDefinition(): " + query);
-        ResultSet rs = stmt.executeQuery(query);
+            log.debug("Executing '" + query + "' with CHAN_FNAME=" + 
+                    channelFunctionalName);
+        
+        pstmt.setString(1, channelFunctionalName);
+        ResultSet rs = pstmt.executeQuery();
         try {
           if (rs.next()) {
             channelDef = getChannelDefinition(rs.getInt("CHAN_ID"));
@@ -525,7 +528,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
           rs.close();
         }
       } finally {
-        stmt.close();
+        pstmt.close();
       }
     } finally {
       RDBMServices.releaseConnection(con);
