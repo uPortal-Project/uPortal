@@ -32,6 +32,12 @@
 		</restrictions>
 		
 		<folder name="Error Handling" immutable="Y" unremovable="Y" hidden="N">
+			
+			<folder name="documentation" immutable="Y" unremovable="Y" hidden="N">
+				<folder name="column1" immutable="Y" unremovable="Y" hidden="N">
+					<channel fname="error-handling-fragment-doc" immutable="Y" unremovable="Y" hidden="N"/>
+				</folder>
+			</folder>
 			<folder name="throw" immutable="Y" unremovable="Y" hidden="N">
 				<folder name="column1" immutable="Y" unremovable="Y" hidden="N">
 					<channel fname="thrower" immutable="Y" unremovable="Y" 
