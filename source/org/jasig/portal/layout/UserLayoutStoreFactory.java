@@ -93,7 +93,7 @@ public final class UserLayoutStoreFactory {
             className = PropertiesManager.getProperty(LAYOUT_STORE_IMPL_PROPERTY);
             userLayoutStoreImpl = (IUserLayoutStore) Class.forName(className).newInstance();
             // note that we stored the static singleton instance
-            LOG.debug("Instantiated and stored singleton IUserLayoutStore of type " + className);
+            LOG.info("Instantiated and stored singleton IUserLayoutStore of type " + className);
             return userLayoutStoreImpl;
             
         } catch (Exception e) {

@@ -26,7 +26,7 @@ import org.jasig.portal.services.StatsRecorder;
  */
 public class UserLayoutManagerFactory {
     
-	private static final Log log = LogFactory.getLog(UserLayoutManagerFactory.class);
+	private static final Log LOG = LogFactory.getLog(UserLayoutManagerFactory.class);
     
     private static Class coreUserLayoutManagerImpl=SimpleUserLayoutManager.class;
 
@@ -34,12 +34,13 @@ public class UserLayoutManagerFactory {
         // Retrieve the class name of the core IUserLayoutManager implementation
         String className = PropertiesManager.getProperty("org.jasig.portal.layout.UserLayoutManagerFactory.coreImplementation", null);
         if (className == null)
-            log.error( "UserLayoutManagerFactory: org.jasig.portal.layout.UserLayoutManagerFactory.coreImplementation must be specified in portal.properties");
+            LOG.error( "UserLayoutManagerFactory: org.jasig.portal.layout.UserLayoutManagerFactory.coreImplementation must be specified in portal.properties");
         try {
             Class newClass = Class.forName(className);
             coreUserLayoutManagerImpl=newClass;
+            LOG.info("UserLayoutManagerFactory: Layout Manager Factory successfully loaded: "+className);
         } catch (Exception e) {
-            log.error( "UserLayoutManagerFactory: Could not instantiate " + className, e);
+            LOG.error( "UserLayoutManagerFactory: Could not instantiate " + className, e);
         }
     }
 
