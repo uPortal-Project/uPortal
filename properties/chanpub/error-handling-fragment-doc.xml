@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE channel-definition SYSTEM "channelDefinition.dtd">
+
+<channel-definition>
+
+    <title>Error Handling Fragment Documentation</title>
+    <name>Error Handling Fragment Documentation</name>
+    <fname>error-handling-fragment-doc</fname>
+    <desc>Displays static HTML documenting the Error Handling fragment.</desc>
+    <type>XML XSLT</type>
+    <class>org.jasig.portal.channels.CGenericXSLT</class>
+    <timeout>10000</timeout>
+    
+    <hasedit>N</hasedit>
+    <hashelp>N</hashelp>
+    <hasabout>N</hasabout>
+
+    <secure>N</secure>
+    <locale>en_US</locale>
+    
+    <categories>
+        <category>Development</category>
+    </categories>
+    
+    <groups>
+        <group>Everyone</group>
+		<group>Guests</group>
+    </groups>
+    
+    <parameters>
+        <parameter>
+            <name>xmlUri</name>
+            <value>error/errorHandlingTabDoc/errorHandlingTab.xml</value>
+            <description>The static HTML documentation.</description>
+            <ovrd>N</ovrd>
+        </parameter>
+        <parameter>
+            <name>xslUri</name>
+            <value>webproxy/xhtml.xsl</value>
+            <description>The location of the XHTML XSL.</description>
+            <ovrd>N</ovrd>
+        </parameter>
+    </parameters>
+    
+</channel-definition>
