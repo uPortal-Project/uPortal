@@ -737,13 +737,31 @@ public class RDBMDistributedLayoutStore
                                Document layoutXML, boolean channelsAdded)
       throws Exception
     {
+        setUserLayout(person, profile, layoutXML, channelsAdded, true);
+    }
+
+    /**
+       This method overrides the same method in the super class to persist
+       only layout information stored in the user's person layout fragment
+       or PLF. If fragment cache update is requested then it checks to see if
+       this person is a layout owner and if so then their changes are pushed
+       into the appropriate layout fragment.
+     */
+    void setUserLayout (IPerson person, UserProfile profile,
+                        Document layoutXML, boolean channelsAdded,
+                        boolean updateFragmentCache)
+      throws Exception
+    {
         Document plf = (Document) person.getAttribute( Constants.PLF );
         super.setUserLayout( person, profile, plf, channelsAdded );
 
-        FragmentDefinition fragment = getOwnedFragment( person );
+        if (updateFragmentCache)
+        {
+            FragmentDefinition fragment = getOwnedFragment(person);
 
-        if ( fragment != null )
-            updateCachedLayout( plf, profile, fragment );
+            if (fragment != null)
+                updateCachedLayout(plf, profile, fragment);
+        }
     }
     
     /**
@@ -801,6 +819,15 @@ public class RDBMDistributedLayoutStore
     {
         this.definitions = frags;
     }
+
+    /**
+     * Gets the configured dlm fragment definitions.
+     */
+    FragmentDefinition[] getDefinitions()
+    {
+        return this.definitions;
+    }
+
 
     //////// User Preferences handling methods. //////////
     

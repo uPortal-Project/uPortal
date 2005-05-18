@@ -101,10 +101,20 @@ public class FragmentActivator
 
                     try
                     {
-                        bindToOwner( fragments[i] );
+                        IPerson owner = bindToOwner( fragments[i] );
                         updateOwnerRoles( fragments[i] );
                         UserView view = new UserView();
-                        loadLayout( view, fragments[i] );
+                        loadLayout( view, fragments[i], owner );
+                        
+                        // if owner just created we need to push the layout into
+                        // the db so that our fragment template user is used and
+                        // not the default template user as determined by
+                        // the user identity store.
+                        if (owner.getAttribute("newlyCreated") != null)
+                        {
+                            owner.setAttribute( Constants.PLF, view.layout );
+                            saveLayout( view, owner );
+                        }
                         loadPreferences( view, fragments[i] );
                         fragmentizeLayout( view, fragments[i] );
                         fragmentizeTSUP( view, fragments[i] );
@@ -160,6 +170,19 @@ public class FragmentActivator
     }
     
     /**
+     * Saves the loaded layout in the database for the user and profile.
+     * @param view
+     * @param owner
+     * @throws Exception
+     */
+    private void saveLayout(UserView view, IPerson owner) throws Exception
+    {
+        UserProfile profile = new UserProfile();
+        profile.setProfileId(view.profileId);
+        dls.setUserLayout(owner, profile, view.layout, true, false);
+    }
+
+    /**
      * Makes sure that the fragment owner has the roles specified and no 
      * others.
      * 
@@ -175,7 +198,7 @@ public class FragmentActivator
         }
     }
 
-    private void bindToOwner( FragmentDefinition fragment )
+    private IPerson bindToOwner( FragmentDefinition fragment )
     {
         IPerson owner = new PersonImpl();
         owner.setAttribute( "username", fragment.ownerID );
@@ -183,23 +206,23 @@ public class FragmentActivator
         
         try
         {
-            userID = identityStore.getPortalUID( owner, true );
+            userID = identityStore.getPortalUID( owner, false );
         }
-        catch( AuthorizationException ae )
+        catch( Exception ae )
         {
-            if ( ! ae.getMessage().startsWith( "No portal info" ) )
-            {
-                throw new RuntimeException( 
-                      "Anomaly occurred while binding fragment definition '" +
-                      fragment.name + "' to declared owner '" +
-                      fragment.ownerID + "'. The fragment will not be " +
-                      "available for inclusion into user layouts.", ae );
-            }
+            if ( LOG.isDebugEnabled() )
+                LOG.debug("Anomaly occurred looking up declared owner '" +
+                        fragment.ownerID + "' for fragment definition '" +
+                        fragment.name + "'.", ae );
+        }
+        if (userID == -1)
+        {
             userID = createOwner( owner, fragment );
-            // if create failed userID will be -1 indicating that the fragment
-            // is not bound.
+            owner.setAttribute("newlyCreated", "" + (userID != -1));
         }
         fragment.userID = userID;
+        owner.setID(userID);
+        return owner;
     }
     
     private int createOwner( IPerson owner, FragmentDefinition fragment )
@@ -252,7 +275,8 @@ public class FragmentActivator
         return userID;
     }
     private void loadLayout( UserView view,
-                             FragmentDefinition fragment )
+                             FragmentDefinition fragment,
+                             IPerson owner )
     {
         // if fragment not bound to user can't return any layouts.
         if ( fragment.userID == -1 )
@@ -267,16 +291,12 @@ public class FragmentActivator
         // and will have a hard coded id of 1 which is the default for profiles.
         // If anyone changes this user all heck could break loose for dlm. :-(
         
-        IPerson p = new PersonImpl();
-        p.setID( fragment.userID );
-        p.setAttribute( "username", fragment.ownerID );
-
         Document layout = null;
 
         try
         {
             // fix hard coded 1 later for multiple profiles
-            UserProfile profile = dls.getUserProfileById(p, 1);
+            UserProfile profile = dls.getUserProfileById(owner, 1);
             
             // see if we have structure & theme stylesheets for this user yet.
             // If not then fall back on system's selected stylesheets.
@@ -289,7 +309,7 @@ public class FragmentActivator
             view.structureStylesheetId = profile.getStructureStylesheetId();
             view.themeStylesheetId = profile.getThemeStylesheetId();
             
-            layout = dls.getFragmentLayout( p, profile ); 
+            layout = dls.getFragmentLayout( owner, profile ); 
             Element root = layout.getDocumentElement();
             root.setAttribute( Constants.ATT_ID,
                                "u" + fragment.userID + "l" + view.layoutId );
