@@ -427,7 +427,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
           con = RDBMServices.getConnection();
           PreparedStatement pstmt = null;
           try {
-              String query = "SELECT * FROM UP_USER_PROFILE WHERE USER_ID=? AND LAYOUT_ID IS NOT NULL";
+              String query = "SELECT * FROM UP_USER_PROFILE WHERE USER_ID=? AND LAYOUT_ID IS NOT NULL AND LAYOUT_ID!=0";
               
               pstmt = con.prepareStatement(query);
               pstmt.setInt(1, userId);
