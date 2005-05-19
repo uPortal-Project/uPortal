@@ -208,8 +208,7 @@ public class ChannelDefinition implements IBasicEntity {
    * @param override the channel parameter override setting
    */   
   public void addParameter(String name, String value, String override) {
-    boolean b = override != null && ("Y".equalsIgnoreCase(override) || "T".equalsIgnoreCase(override));
-    parameters.put(name, new ChannelParameter(name, value, b));
+    parameters.put(name, new ChannelParameter(name, value,RDBMServices.dbFlag(override)));
   }
   
   /**
