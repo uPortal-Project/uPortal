@@ -1,0 +1,96 @@
+The uPortal distribution may include a number of other libraries, resources, and products.  Intellectual property.  
+This folder exists for two reasons.  The first reason is that we'd like to acknowledge the important contributions 
+these other projects and resources make to our project.  The success of this project has been and continues to be dependent upon
+the quality tools and resources produced by others in the Java community.
+
+Some of these projects and resources we include in our distribution are subject to license agreements.  
+The second reason for this folder is to provide a place in the distribution where we include the other files necessary for
+our distribution to comply with the terms of these agreements.
+
+We have attempted here to comply with applicable license agreements and give credit where credit is due. If we have overlooked
+acknowledgement of any contribution to this project please bring this to our attention.
+
+
+Java 1.4 backport of JSR 166 (java.util.concurrent)
+backport-util-concurrent.jar is released to the Public Domain 
+http://creativecommons.org/licenses/publicdomain/
+as per http://www.mathcs.emory.edu/dcl/util/backport-util-concurrent/.  
+We especially acknowledge Doug Lea's original work and Dawid Kurzniec's work maintaining this library.
+
+Doug Lee's concurrent library
+
+Doug Lea's concurrent library (concurrent)  is released to the Public Domain
+http://creativecommons.org/licenses/publicdomain/
+as per
+http://gee.cs.oswego.edu/dl/classes/EDU/oswego/cs/dl/util/concurrent/intro.html
+With the exception that portions of Doug Lee's work are subject to Sun copyright as 
+described at http://gee.cs.oswego.edu/dl/classes/EDU/oswego/cs/dl/util/sun-u.c.license.pdf.
+The text of this Sun license is also reproduced in the file sun-u-c-license.txt.
+
+The JAXP libraries:
+
+We redistribute the JAXP 1.3 endorsed extensions for JDK 1.4 pursuant to our continued support for JDK 1.4.  These .jars are
+subject to licenses in this directory including License-ASF.txt, License-W3C.html, and jaxp-binary.txt.
+
+
+Dependencies under the Apache license, version 1.1:
+
+log4j
+
+See the apache11-license.txt in this directory for reference.
+
+
+Dependencies under the Apache License, version 2.0:
+
+Axis, commons-dbcp, commons-discovery, commons-logging, jakarta-oro, pluto, 
+whirlycache, xml-apis, and xalan.
+
+See the apache20-license.txt file in this directory for reference.
+
+See also the notice files in the notices directory of this directory.
+
+
+The com.oreilly.servlet package:
+
+The source code, object code, and documentation in the com.oreilly.servlet package is copyright and owned by Jason Hunter.
+
+
+The Spring framework:
+
+This product includes software developed by the Spring Framework Project (http://www.springframework.org).
+
+
+JUnit
+
+JUnit is used in this project and included in this project distribution persuant to its license, the Common Public License, 
+included for reference in this directory as cpl-v10.html
+
+
+Tyrex
+
+Due credit is here given to the ExoLab Group (http://www.exolab.org).
+
+
+Xerces
+
+This product includes software developed by the Apache Software Foundation (http://www.apache.org/).
+Also please see w3c_license.html included for reference in this folder.
+
+
+Tidy
+
+Though apparently not required to do so, we acknowledge the fine contribution of 
+Dave Raggett and others in the Tidy project community of their excellent tidy.jar library. 
+
+
+wsdl4j
+
+wsdl4j is distributed under the Common Public License version 1.0. Please see cpl-v10.html included in this folder for reference.
+
+
+
+
+
+The Portlet API
+
+TODO: What to say about the Portlet API?
