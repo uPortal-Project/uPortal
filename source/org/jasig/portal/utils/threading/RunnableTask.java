@@ -13,24 +13,26 @@ package org.jasig.portal.utils.threading;
  * @author Aaron Hamid (arh14 at cornell dot edu)
  */
 public class RunnableTask extends BaseTask {
-  protected Runnable runnable;
-  /**
-   * Constructs a RunnableTask with a Runnable object
-   * @param runnable a runnable implementation
-   */
-  public RunnableTask(Runnable runnable) {
-    this.runnable = runnable;
-  }
-  /**
-   * Simply calls the run() on the runnable that this
-   * RunnableTask was constructed with.  BaseTask
-   * will catch and store any Exception the runnable,
-   * and hence this method, throws.
-   */
-  public void execute() throws Exception {
-    // may throw RuntimeExceptions
-    // BaseTask will catch and expose them
-    // through getException
-    this.runnable.run();
-  }
+	protected Runnable runnable;
+
+	/**
+	 * Constructs a RunnableTask with a Runnable object
+	 * @param runnable a runnable implementation
+	 */
+	public RunnableTask(Runnable runnable) {
+		this.runnable = runnable;
+	}
+
+	/**
+	 * Simply calls the run() on the runnable that this
+	 * RunnableTask was constructed with.  BaseTask
+	 * will catch and store any Exception the runnable,
+	 * and hence this method, throws.
+	 */
+	public void execute() throws Exception {
+		// may throw RuntimeExceptions
+		// BaseTask will catch and expose them
+		// through getException
+		this.runnable.run();
+	}
 }

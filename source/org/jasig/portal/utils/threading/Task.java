@@ -10,9 +10,9 @@ package org.jasig.portal.utils.threading;
  * @author Aaron Hamid (arh14 at cornell dot edu)
  */
 public interface Task extends Runnable {
-  /**
-   * Returns the exception that occurred during execution, if any
-   * @return the exception that occurred during execution, if any
-   */
-  Exception getException();
+	/**
+	 * Returns the exception that occurred during execution, if any
+	 * @return the exception that occurred during execution, if any
+	 */
+	Exception getException();
 }
