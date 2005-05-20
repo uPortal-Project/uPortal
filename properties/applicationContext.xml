@@ -15,22 +15,47 @@
 	<bean id='checkRunner' class="org.jasig.portal.tools.checks.BasicCheckRunner">
 		<property name="checks">
 			<list>
+				
+				<!--
+				  | Check that a bean named personAttributeDao of type
+				  | IPersonAttributeDao is available via the PortalApplicationContextFacade.
+				  +-->
 				<bean class="org.jasig.portal.tools.checks.SpringBeanCheck">
-					<!-- check that a bean named personAttributeDao is present and is of type
-						IPersonAttributeDao. -->
+					<!-- We are checking for the Spring-configured bean named "personAttributeDao". -->
 					<constructor-arg index="0" type="java.lang.String">
 						<value>personAttributeDao</value>
 					</constructor-arg>
+					<!-- We are checking that that bean is an instanceof this class. -->
 					<constructor-arg index="1" type="java.lang.String">
 						<value>org.jasig.portal.services.persondir.IPersonAttributeDao</value>
 					</constructor-arg>
 				</bean>
+				
+				<!--
+				  | Check for a class that will only be present in JAXP 1.3 is present.
+				  | We attempt with this check to catch and assist deployers who neglect to
+				  | make the JAXP 1.3 jars available in a JDK 1.4 environment.
+				  | This is the runtime equivalent of the Ant-build-time invocation of LibCheck.
+				  +-->
 				<bean class="org.jasig.portal.tools.checks.XalanVersionCheck">
 					<constructor-arg index="0" type="java.lang.String">
 						<value>Xalan Java 2.6.0</value>
 					</constructor-arg>
 				</bean>
+				
+				<!--
+				  | Check for a class that will only be present if JAXP 1.3 is present.
+				  | We attempt with this check to catch and assist deployers who neglect to
+				  | make the JAXP 1.3 jars available in a JDK 1.4 environment.
+				  | This is the runtime equivalent of the Ant-build-time invocation of LibCheck.
+				  +-->
+				<bean class="org.jasig.portal.tools.checks.JaxpCheck"/>
+				
+				<!--
+				  | Include the time at which the checks were run in the check result reporting.
+				  +-->
 				<bean class="org.jasig.portal.tools.checks.TimeCheck"/>
+				
 			</list>
 		</property>
 	</bean>
