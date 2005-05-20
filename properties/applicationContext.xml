@@ -52,6 +52,16 @@
 				<bean class="org.jasig.portal.tools.checks.JaxpCheck"/>
 				
 				<!--
+				  | Check for a method that will only be present if the org.w3c.dom API that is is present
+				  | is DOM level 3.
+				  | We attempt with this check to catch and assist deployers who neglect to
+				  | make the JAXP 1.3 jars available in a JDK 1.4 environment.
+				  | 
+                  | This check is largely redundant with the JaxpCheck.
+				  +-->
+				<bean class="org.jasig.portal.tools.checks.Dom3Check"/>
+				
+				<!--
 				  | Include the time at which the checks were run in the check result reporting.
 				  +-->
 				<bean class="org.jasig.portal.tools.checks.TimeCheck"/>
