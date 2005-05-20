@@ -180,6 +180,7 @@ public class RDBMDistributedLayoutStore
                     }
                 }
             };
+        t.setName("DLM Fragment Activator");
         t.start();
 
         // start fragment cleaning thread
@@ -414,6 +415,7 @@ public class RDBMDistributedLayoutStore
                     }
                 }
             };
+        t2.setName("DLM Fragment Updater");
         t2.setDaemon(true);
         t2.start();
     }
