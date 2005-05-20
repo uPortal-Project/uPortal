@@ -291,6 +291,8 @@ public class XSLT {
                 p.getColumnNumber() + " in " +
                 "document with public ID " + p.getPublicId() + 
                 ", and system ID " + p.getSystemId() + ".", p);
+    } catch (TransformerException p) {
+        throw new PortalException(p.getMessageAndLocation(), p);
     } catch (Exception e) {
       throw new PortalException(e);
     }
@@ -422,7 +424,7 @@ public class XSLT {
         // Catch the sax exception so we can report line number info
         if ( null != sx.getException() && (sx.getException() instanceof TransformerException)) {
           TransformerException trx = (TransformerException)sx.getException();
-          throw new GeneralRenderingException(trx);
+          throw new GeneralRenderingException(trx.getMessageAndLocation(), trx);
         }
         throw sx;
       }
