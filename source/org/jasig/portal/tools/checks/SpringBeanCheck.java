@@ -14,12 +14,14 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 
 /**
  * Check that a particular named Spring bean is defined.
- * @author andrew.petro@yale.edu
+ * 
  * @version $Revision$ $Date$
+ * @since uPortal 2.5
  */
 public class SpringBeanCheck 
     implements ICheck {
-    Log LOG = LogFactory.getLog(SpringBeanCheck.class);
+    
+    protected final Log log = LogFactory.getLog(getClass());
 
     private final String beanName;
     
@@ -75,7 +77,7 @@ public class SpringBeanCheck
                     "Fix the declaration of bean [" + this.beanName + "] to be of the required type.");
             
         } catch (BeansException be) {
-            LOG.error("Error instantiating "+ this.beanName, be);
+            log.error("Error instantiating "+ this.beanName, be);
             return CheckResult.createFailure("There was an error instantiating the bean [" + this.beanName + "] required for configuration of configuration checking.", 
                     "The required XML files for Spring bean configuration in uPortal may not be present or may not conform to the required DTD or they may have definitions that a syntactically valid but do not correspond to actual bean constructors and methods.");
         } catch (ClassNotFoundException cnfe) {
