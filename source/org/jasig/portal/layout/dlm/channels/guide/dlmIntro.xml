@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<content>
+<title>Distributed Layout Management</title>
+
+<section>
+<title>Whence Came This Tab?</title>
+<p>If you are seeing this channel for the first time chances are you just turned on a feature known as <em>Distributed Layout 
+Management</em> or <em>DLM</em>. Of the tabs in this page, this one is unique. Most are part of the guest user's own layout. 
+This tab isn't. In DLM terminology it is a <em>fragment</em> that was merged in by DLM. Traditionally, if you wanted to change what 
+guests see you would set a password for the guest user, log in as guest, and change the layout. Not with DLM. <em>To 
+change the contents of this tab</em> log in with the following user id and password:
+</p>
+<p>
+User Id: <strong>guest-lo</strong>, Password: <strong>guest-lo</strong>
+</p>
+<p>
+This user is a DLM fragment owner. This account has all of the same capabilities 
+as a regular user with one exception, <em>no fragments are merged into a fragment owner's layout</em>. Fragment owners 
+see only their owned layout since that layout becomes the fragment that is pushed into other layouts. 
+</p>
+<p>
+Now once you log in, change the guest fragment, and log out, <em>you will notice that this tab didn't change</em>. Doesn't DLM push 
+changes to the guest layout? Of course it does. The problem here is that the guest layout that you see is cached in a layout 
+manager. For regular users a layout 
+manager is loaded when they log in. Hence, so is their layout. The guest layout manager is loaded when the first request is
+made to the portal after starting up and is cached in memory thereafter. So changes made to fragments that go to regular users 
+will present their changes the next time that a user logs in after that fragment has been changed. But currently, to see changes pushed to the 
+guest layout, the portal must be restarted. This will be fixed soon.
+</p>
+<p>
+<em>To learn more about DLM select any of the links to the left.</em>
+</p>
+</section>
+<section>
+<title>Whence Came DLM?</title>
+<p>In uPortal, Layout Management refers to how the user interface seen by a user is generated and changed. In version 2.0,
+only Simple Layout Management, SLM, was available in the portal. All layout pieces like tabs,
+columns, and channels were owned by the user. There was little control available for an institution to control a user's layout. 
+When Sungard SCT, then Campus Pipeline, adopted uPortal for their Luminis product they had to allow <em>schools</em> to <em>choose how much 
+or how little</em> of the layout <em>is locked in place</em>. Furthermore, this should be modifiable at any time and such 
+changes should then appear in the portal. The result was Distributed Layout Management or DLM which debuted in Luminis in 2002.
+</p>
+<p>This resulted in JA-SIG designing a similar feature known as Aggregated Layout Management or ALM. With the advent of ALM there
+were two approaches to dynamic layout management. However, although they have complimentary features, ALM and DLM each provide benefits 
+that are not had by the other implementation. In 2004 Sungard SCT was contacted to see if the features of ALM and DLM could converge 
+into a single offering. The benefits are obvious. With the community working to enhance the features of a single offering all will 
+benefit. Accordingly, work was started in late 2004 to contribute DLM back to the community and have it available starting in uPortal 
+version 2.5.0.
+</p>
+</section>
+
+<section>
+<title>Defining Framents</title>
+<p>When DLM was developed, time was of the essence. A new user interface taylored to building fragments and a new database schema was 
+too aggresive an undertaking for engineers new to the uPortal code base. Upon further investigation of the portal architecture and 
+database schema it was determined that a derivative approach could be taken instead. In this approach, existing, reliable, 
+pieces of the portal could be used. Furthermore, there would be no database schema changes. Namely, fragments could be obtained by using regular portal accounts to 
+define what each fragment should look like. These could then be merged into the layouts of users. Such is the current implementation 
+of DLM.
+</p>
+<p>Fragments are defined in a file called <strong>dlm.xml</strong> located in the <em>properties</em> directory and each fragment declaration 
+indicates an ownerID which is a portal log-in id that can be used to log in and set up the layout that will be used for that 
+fragment. The following sample is one of the fragments defined in the default dlm.xml file that comes with uPortal.
+</p>
+<p><code>
+  &lt;dlm:fragment name='Guests' ownerID='guest-lo' precedence='10'>
+   &lt;dlm:audience evaluatorFactory='org.jasig.portal.layout.dlm.providers.GuestUserEvaluatorFactory'/>
+  &lt;/dlm:fragment>
+</code></p>
+<p></p>
+<p><strong>The 'name' Attribute</strong></p>
+<p>
+All elements defined and expected by DLM are prefixed with <em>dlm</em> indicating that they are part of DLM namespace. The fragment 
+element has a <strong>name</strong> attribute that should be unique for all fragments. This name is presented in the title bar of the portal when the owner of this fragment 
+is logged in as shown below.
+</p>
+<p><image>fragmentTitleBar.jpg</image></p>
+<p></p>
+<p><strong>The 'ownerID' Attribute</strong></p>
+<p>
+Each fragment must declare an <strong>ownerID</strong> attribute. This will be the user identifier to use when logging in to edit 
+the layout for this fragment. <strong>It is important that this account not exist prior to adding the fragment</strong>. When dlm.xml 
+is modfied the portal must be restarted for the configuration to be loaded. Upon loading, if that account already exists and has a 
+layout it will immediately be pushed to users. If the account does not exist, then upon restarting the portal, DLM will create that 
+account with an empty layout. That way this fragment does not push any content to users until the owner has time to set up the layout 
+that should be pushed. <strong>Note</strong> that the md5passwd command line utility must still be used after restarting 
+to set the password for the new account to allow an administrator to log in and set up the layout:<code>ant md5passwd -Dusername=guest-lo</code> 
+</p>
+<p></p>
+<p><strong>The 'precedence' Attribute</strong></p>
+<p>Each fragment must also declare an integer <strong>precedence</strong> value. This value is used during merging of fragments to 
+position elements contributed from different fragments. It is also used to determine that precedence elements 
+can override a lower precedence, movement-restricted element forcing it to a less valueable real-estate location. For example, the default dlm.xml file defines three 
+fragments:
+<code>Guests: precedence = 10
+Entertainment: precedence = 100
+News: precedence = 80
+</code>
+Upon logging into the portal and selecting the <em>Preferences</em> link the following ordering of tabs will appear. Note that the 
+entertainment tab can move to the right of the news tab but that the student tab is not allowed to move to the left of the news tab. 
+This is because the news tab has been marked as <strong>not moveable</strong> by the fragment owner. However, restricting movement 
+is relative. A tab from a fragment with higher precedence like the entertainment tab can override that setting and jump the lower 
+precedence tab without restriction. The student tab is owned by the student user. User layout elements have a precedence of zero and 
+hence any fragment element can always force user owned elements to lower real-estate locations.
+</p>
+<p><image>tabs_ent_news_stu.jpg</image></p>
+<p>Try moving the tabs around. Note that due to the locked news tab and the corresponding precedence that the user tab has compared 
+to the news fragment the student's tab is never allowed to move beyond the news tab.</p>
+<p><image>tabs_news_ent_stu.jpg</image></p>
+<p><image>tabs_news_stu_ent.jpg</image></p>
+</section>
+
+<section>
+<title>Defining Audiences</title>
+<p>TBD: This section will define the dlm:audience tag and relate items like evaluator factories.</p>
+</section>
+
+<section>
+<title>Properties in dlm.xml</title>
+<p>TBD: This section will define the dlm:property elements of dlm.xml.</p>
+</section>
+
+<section>
+<title>Setting up Fragment Layouts</title>
+<p>TBD: This section will define what additional features are available in the preferences channel for fragment owners and the 
+impact on the users of the fragments.</p>
+</section>
+
+<section>
+<title>User Changes</title>
+<p>TBD: This section will explain when and how end users can make changes to fragments.</p>
+</section>
+
+<section>
+<title>Future Direction</title>
+<p>TBD: This section will outline the coming features in DLM post release of uPortal 2.5.0.</p>
+</section>
+
+</content>
