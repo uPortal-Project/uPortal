@@ -1,3 +1,16 @@
+<!--+
+      | Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
+      |  See license distributed with this file and
+      |  available online at http://www.uportal.org/license.html
+      +-->
+   
+<!--+
+	  | This file contains the static HTML that we render in the 
+	  | Error Handling Fragment Documentation channel in the
+	  | Error Handling fragmnet.  It provides context for the
+	  | Thrower and Timeout demonstation channels also in that fragment.
+	  +-->
+	
 <html>
 	<head>
 		<title>Error handling tab documentation</title>
@@ -37,3 +50,7 @@
 		</div>
 	</body>
 </html>
+
+<!-- CVS Metadata:
+   $Revision$ $Date$
+ -->
