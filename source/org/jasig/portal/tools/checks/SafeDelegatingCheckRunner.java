@@ -18,8 +18,9 @@ import org.jasig.portal.spring.PortalApplicationContextFacade;
  * ICheckRunner.  Even if Spring isn't present or that ICheckRunner is misconfigured
  * or broken, instances of this class will still implement the ICheckRunner API - that is,
  * they will express this failure as a return value from the interface method.
- * @author andrew.petro@yale.edu
+ * 
  * @version $Revision$ $Date$
+ * @since uPortal 2.5
  */
 public class SafeDelegatingCheckRunner
     implements ICheckRunner {

@@ -9,8 +9,9 @@ import org.springframework.core.SpringVersion;
 
 /**
  * Test that the spring.jar is available on the classpath.
- * @author andrew.petro@yale.edu
+ * 
  * @version $Revision$ $Date$
+ * @since uPortal 2.5
  */
 public class SpringPresenceCheck 
     implements ICheck {

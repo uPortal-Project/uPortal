@@ -39,8 +39,8 @@ import org.apache.commons.logging.LogFactory;
  * implementation of the method that logs the results from the SafeDelegatingCheckRunner.
  * In this way you can implement some other logging strategy.
  * 
- * @author andrew.petro@yale.edu
  * @version $Revision$ $Date$
+ * @since uPortal 2.5
  */
 public class CheckingContextListener 
     implements ServletContextListener {

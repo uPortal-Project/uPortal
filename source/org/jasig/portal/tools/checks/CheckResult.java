@@ -10,8 +10,8 @@ package org.jasig.portal.tools.checks;
  * of a check.
  * Additionally, CheckResults representing failures convey advice about how
  * to remediate the failed check.
- * @author andrew.petro@yale.edu
  * @version $Revision$ $Date$
+ * @since uPortal 2.5
  */
 public class CheckResult {
     

@@ -8,8 +8,8 @@ package org.jasig.portal.tools.checks;
 /**
  * Represents a description of a check as well as the result of having performed that
  * check.
- * @author andrew.petro@yale.edu
  * @version $Revision$ $Date$
+ * @since uPortal 2.5
  */
 public class CheckAndResult {
 

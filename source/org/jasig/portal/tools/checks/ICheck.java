@@ -7,8 +7,8 @@ package org.jasig.portal.tools.checks;
 /**
  * A single runtime check that to be performed to validate an application deployment.
  * 
- * @author andrew.petro@yale.edu
  * @version $Revision$ $Date$
+ * @since uPortal 2.5
  */
 public interface ICheck {
 

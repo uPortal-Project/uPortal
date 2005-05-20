@@ -7,8 +7,9 @@ package org.jasig.portal.tools.checks;
 
 /**
  * Checks the Xalan version against a configured value.
- * @author andrew.petro@yale.edu
+ * 
  * @version $Revision$ $Date$
+ * @since uPortal 2.5
  */
 public class XalanVersionCheck 
     implements ICheck {

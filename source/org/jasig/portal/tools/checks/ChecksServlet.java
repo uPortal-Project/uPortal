@@ -16,8 +16,8 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * A Servlet which renders the results of the checks.
- * @author andrew.petro@yale.edu
  * @version $Revision$ $Date$
+ * @since uPortal 2.5
  */
 public class ChecksServlet 
     extends HttpServlet{

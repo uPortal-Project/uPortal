@@ -10,8 +10,8 @@ import java.util.List;
 /**
  * Interface for objects that execute IChecks and return Lists of CheckAndResult
  * objects.
- * @author andrew.petro@yale.edu
  * @version $Revision$ $Date$
+ * @since uPortal 2.5
  */
 public interface ICheckRunner {
     
