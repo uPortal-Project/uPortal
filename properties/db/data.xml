@@ -1157,6 +1157,26 @@
         <column><name>CHAN_FNAME</name><value>passwordmgr</value></column>
         <column><name>CHAN_SECURE</name><value>N</value></column>
       </row>
+      
+      <!-- 2005.05.20 - mboyd@sungardsct.com -->
+      <row sinceMajor="2" sinceMinor="5">
+        <column><name>CHAN_ID</name><value>81</value></column>
+        <column><name>CHAN_TITLE</name><value>DLM Administrator&apos;s Guide</value></column>
+        <column><name>CHAN_NAME</name><value>DLM Administrator&apos;s Guide</value></column>
+        <column><name>CHAN_DESC</name><value>A channel that presents an administrator&apos;s guide for Distributed Layout Management.</value></column>
+        <column><name>CHAN_CLASS</name><value>org.jasig.portal.layout.dlm.channels.guide.DlmIntroChannel</value></column>
+        <column><name>CHAN_TYPE_ID</name><value>-1</value></column>
+        <column><name>CHAN_PUBL_ID</name><value>2</value></column>
+        <column><name>CHAN_PUBL_DT</name><value>2005-05-20 16:22:04.991</value></column>
+        <column><name>CHAN_APVL_ID</name><value>2</value></column>
+        <column><name>CHAN_APVL_DT</name><value>2005-05-20 16:22:04.991</value></column>
+        <column><name>CHAN_TIMEOUT</name><value>5000</value></column>
+        <column><name>CHAN_EDITABLE</name><value>N</value></column>
+        <column><name>CHAN_HAS_HELP</name><value>N</value></column>
+        <column><name>CHAN_HAS_ABOUT</name><value>N</value></column>
+        <column><name>CHAN_FNAME</name><value>dlm.admin.guide</value></column>
+        <column><name>CHAN_SECURE</name><value>N</value></column>
+      </row>
      </rows>
   </table>
 
@@ -5644,6 +5664,16 @@
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
 
+	  <!-- 2005.05.20 - mboyd@sungardsct.com, for DLM admin guide -->
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL_TYPE</name><value>3</value></column>
+        <column><name>PRINCIPAL_KEY</name><value>local.0</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.81</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+
     </rows>
   </table>
 
@@ -6373,6 +6403,14 @@
         <column><name>GROUP_ID</name><value>51</value></column>
         <column><name>MEMBER_SERVICE</name><value>local</value></column>
         <column><name>MEMBER_KEY</name><value>82</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+      </row>
+
+      <!-- 2005.05.20 - mboyd@sungardsct.com -->
+      <row sinceMajor="2" sinceMinor="5">
+        <column><name>GROUP_ID</name><value>52</value></column>
+        <column><name>MEMBER_SERVICE</name><value>local</value></column>
+        <column><name>MEMBER_KEY</name><value>81</value></column>
         <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
       </row>
 
