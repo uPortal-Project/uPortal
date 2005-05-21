@@ -1160,7 +1160,7 @@
       
       <!-- 2005.05.20 - mboyd@sungardsct.com -->
       <row sinceMajor="2" sinceMinor="5">
-        <column><name>CHAN_ID</name><value>81</value></column>
+        <column><name>CHAN_ID</name><value>50</value></column>
         <column><name>CHAN_TITLE</name><value>DLM Administrator&apos;s Guide</value></column>
         <column><name>CHAN_NAME</name><value>DLM Administrator&apos;s Guide</value></column>
         <column><name>CHAN_DESC</name><value>A channel that presents an administrator&apos;s guide for Distributed Layout Management.</value></column>
@@ -5670,7 +5670,7 @@
         <column><name>PRINCIPAL_TYPE</name><value>3</value></column>
         <column><name>PRINCIPAL_KEY</name><value>local.0</value></column>
         <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
-        <column><name>TARGET</name><value>CHAN_ID.81</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.50</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
 
@@ -6410,7 +6410,7 @@
       <row sinceMajor="2" sinceMinor="5">
         <column><name>GROUP_ID</name><value>52</value></column>
         <column><name>MEMBER_SERVICE</name><value>local</value></column>
-        <column><name>MEMBER_KEY</name><value>81</value></column>
+        <column><name>MEMBER_KEY</name><value>50</value></column>
         <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
       </row>
 
