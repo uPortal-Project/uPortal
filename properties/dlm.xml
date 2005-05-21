@@ -32,5 +32,9 @@
    </dlm:audience>
  </dlm:fragment>
   
+  <dlm:fragment name='Guests' ownerID='guest-lo' precedence='10'>
+   <dlm:audience evaluatorFactory='org.jasig.portal.layout.dlm.providers.GuestUserEvaluatorFactory'/>
+  </dlm:fragment>
+
 </managedLayoutFragments>
 
