@@ -7,8 +7,6 @@ package org.jasig.portal.rdbm.pool;
 
 import java.util.Properties;
 
-import javax.sql.DataSource;
-
 import org.jasig.portal.properties.PropertiesManager;
 
 import junit.framework.TestCase;

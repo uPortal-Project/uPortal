@@ -5,17 +5,10 @@
 
 package org.jasig.portal.layout.dlm.channels.guide;
 
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Locale;
 import java.util.Map;
 
 import org.jasig.portal.ChannelCacheKey;
