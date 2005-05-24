@@ -550,7 +550,10 @@ public class CPortletAdapter
 
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
-            HttpServletRequest wrappedRequest = ((PortletWindowImpl)cd.getPortletWindow()).getHttpServletRequest();
+            HttpServletRequest wrappedRequest = new ServletRequestImpl(((PortletWindowImpl)cd.getPortletWindow()).getHttpServletRequest(), 
+                                                                       sd.getPerson(), 
+                                                                       portletWindow.getPortletEntity().getPortletDefinition().getInitSecurityRoleRefSet());
+            
             HttpServletResponse wrappedResponse = ServletObjectAccess.getStoredServletResponse(pcs.getHttpServletResponse(), pw);
            
                                                 
