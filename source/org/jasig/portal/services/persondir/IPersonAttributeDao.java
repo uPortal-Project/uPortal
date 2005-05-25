@@ -22,7 +22,7 @@ public interface IPersonAttributeDao {
 
     /**
      * Obtains a mutable {@link Map} from attribute names to values for
-     * the given query seed. The values may be mutable objects but it is
+     * the given query seed which is an immutable Map. The values may be mutable objects but it is
      * recommended that they be immutable.<br>
      * 
      * For the returned {@link Map}; Keys must be {@link String}, Values
@@ -47,7 +47,7 @@ public interface IPersonAttributeDao {
      * "555-1212", this means that your implementation also believes that the
      * "phone" attribute should have this value.
      * 
-     * @param seed Map of attributes to values to seed the query
+     * @param seed immutable Map of attributes to values to seed the query
      * @return Map from attribute names to values
      * @throws IllegalArgumentException If <code>seed</code> is <code>null.</code>
      */
