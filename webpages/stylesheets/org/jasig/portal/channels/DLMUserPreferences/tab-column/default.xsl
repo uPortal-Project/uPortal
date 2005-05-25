@@ -999,6 +999,9 @@ END DEBUG CODE -->
       <a href="{$baseActionURL}?action=resetLayout" onClick="return confirm('You are about to replace your current layout with a default layout.  You cannot undo these changes.  Do you want to continue?')"><xsl:value-of select="$REVERT_TO_DEFAULT_LAYOUT"/></a>
     </td>
   </tr>
+    <tr>
+      <td class="uportal-channel-text"><a href="{$baseActionURL}?uP_fname=user-locales-selector" onMouseover="window.status=''; return true;"><img alt="" title="" src="{$mediaPath}/bullet.gif" width="9" height="9" hspace="7" border="0"/>Select a Locale</a></td>
+    </tr>
 <!--
 Disabled since DLM does not currently support multiple profiles. 
 The challenge is in matching up the current profile being used by
