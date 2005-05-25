@@ -18,7 +18,7 @@ public class Version {
     private static String major = "2";
     private static String minor = "5";
     private static String patch = "0";
-    private static String extra = "RC1";
+    private static String extra = "RC3";
     
     private static String releaseTag;
     private static String version;
