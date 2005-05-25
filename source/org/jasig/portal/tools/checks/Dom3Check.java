@@ -32,29 +32,37 @@ public final class Dom3Check
     protected final Log log = LogFactory.getLog(getClass());
     
     public CheckResult doCheck() {
+        
+        CheckResult checkResult;
+        
         try {
             Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
             doc.normalizeDocument();
+            
+            checkResult = CheckResult.createSuccess("Successfully invoked the DOM3 method Document.normalizeDocument()");
+            
         } catch (NoSuchMethodError noSuchMethod) {
             // deliberately logging without stack trace since 
             // it is the exception message and not the stack trace that matters here.
             log.error("DOM3 check failing because DOM3 method not found: ", noSuchMethod);
-            CheckResult failure = CheckResult.createFailure("DOM3 API method Document.normalizeDocument() not found.",
+            checkResult = CheckResult.createFailure("DOM3 API method Document.normalizeDocument() not found.",
                     "uPortal requires the DOM3 API which you make available under JDK 1.4 by installing "
                     + "the JAXP 1.3 jars into the endorsed directory of your JDK and of  " 
-                    + "your servlet container.  See also the README.txt in the /lib/jaxp/ directory.");
-            return failure;
+                    + "your servlet container.  "
+                    + "However, under JDK 1.5 you should not install extra XML API jars into tomcat/common/endorsed.  "
+                    + "See also the README.txt in the /lib/jaxp/ directory.");
         } catch (ParserConfigurationException e) {
             log.error("Dom3Check could not run because it could not obtain a Document at all.", e);
-            CheckResult failure = CheckResult.createFailure("Dom3Check could not run because it could not obtain a Document at all: "
+            checkResult = CheckResult.createFailure("Dom3Check could not run because it could not obtain a Document at all: "
                     + e,
                     "uPortal requires the DOM3 API which you make available under JDK 1.4 by installing "
                     + "the JAXP 1.3 jars into the endorsed directory of your JDK and of  " 
-                    + "your servlet container.  See also the README.txt in the /lib/jaxp/ directory.");
+                    + "your servlet container.  "
+                    + "See also the README.txt in the /lib/jaxp/ directory.");
         }
         
-        CheckResult success = CheckResult.createSuccess("Successfully invoked the DOM3 method Document.normalizeDocument()");
-        return success;
+        
+        return checkResult;
     }
 
     public String getDescription() {
