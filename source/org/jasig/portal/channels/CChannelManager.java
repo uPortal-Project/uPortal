@@ -194,7 +194,7 @@ public class CChannelManager extends BaseChannel {
                 }
                 ((IChannel)groupServant).setRuntimeData((ChannelRuntimeData)runtimeData.clone());
             } catch (Exception e) {
-                log.error( e);
+                log.error(e, e);
             }
             log.debug("CChannelManager.getGroupServant():  created new servant");
         }
@@ -222,7 +222,7 @@ public class CChannelManager extends BaseChannel {
                 }
                 ((IChannel)categoryServant).setRuntimeData((ChannelRuntimeData)runtimeData.clone());
             } catch (Exception e) {
-                log.error( e);
+                log.error(e, e);
             }
             log.debug("CChannelManager.getCategoryServant():  created new servant");
         }

@@ -81,7 +81,7 @@ public class LoggerImpl implements Logger {
     }    
     
     public void error(Throwable aThrowable) {
-        this.log.error( aThrowable);
+        this.log.error(aThrowable, aThrowable);
     }
 
 }

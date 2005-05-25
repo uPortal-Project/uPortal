@@ -666,7 +666,7 @@ public class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            log.error( e);
+            log.error(e, e);
             action = "error";
             errorMessage = errorMessageSetActiveTab;
           }
@@ -683,7 +683,7 @@ public class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            log.error( e);
+            log.error(e, e);
             action = "error";
             errorMessage = errorMessageRenameTab;
           }
@@ -709,7 +709,7 @@ public class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            log.error( e);
+            log.error(e, e);
             action = "error";
             errorMessage = errorMessageMoveTab;
           }
@@ -735,7 +735,7 @@ public class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            log.error( e);
+            log.error(e, e);
             action = "error";
             errorMessage = errorMessageAddTab;
           }
@@ -751,7 +751,7 @@ public class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            log.error( e);
+            log.error(e, e);
             action = "error";
             errorMessage = errorMessageDeleteTab;
           }
@@ -767,7 +767,7 @@ public class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            log.error( e);
+            log.error(e, e);
             action = "error";
             errorMessage = errorMessageLockTab;
           }
@@ -783,7 +783,7 @@ public class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            log.error( e);
+            log.error(e, e);
             action = "error";
             errorMessage = errorMessageUnlockTab;
           }
@@ -815,7 +815,7 @@ public class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            log.error( e);
+            log.error(e, e);
             action = "error";
             errorMessage = errorMessageChangeColumnWidths;
           }
@@ -845,7 +845,7 @@ public class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            log.error( e);
+            log.error(e, e);
             action = "error";
             errorMessage = errorMessageMoveColumn;
           }
@@ -864,7 +864,7 @@ public class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            log.error( e);
+            log.error(e, e);
             action = "error";
             errorMessage = errorMessageNewColumn;
           }
@@ -887,7 +887,7 @@ public class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            log.error( e);
+            log.error(e, e);
             action = "error";
             errorMessage = errorMessageDeleteColumn;
           }
@@ -939,7 +939,7 @@ public class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            log.error( e);
+            log.error(e, e);
             action = "error";
             errorMessage = errorMessageMoveChannel;
           }
@@ -955,7 +955,7 @@ public class TabColumnPrefsState extends BaseState
           }
           catch (Exception e)
           {
-            log.error( e);
+            log.error(e, e);
             action = "error";
             errorMessage = errorMessageDeleteChannel;
           }
@@ -1045,7 +1045,7 @@ public class TabColumnPrefsState extends BaseState
           log.error( "TablColumnPrefsState::renderXML() : Unable to obtain SAX Transformer Factory ! Check your TRAX configuration.");
         }
       } catch (Exception e) {
-        log.error( e);
+        log.error(e, e);
         throw new GeneralRenderingException(e);
       }
     }
@@ -1129,7 +1129,7 @@ public class TabColumnPrefsState extends BaseState
 					if (xmlStream != null)
 						xmlStream.close();
 				} catch (IOException exception) {
-					log.error("TabColumnPrefsState:renderXML()::unalbe to close InputStream "+ exception);
+					log.error("TabColumnPrefsState:renderXML()::unalbe to close InputStream ", exception);
 				}
 			}
     }

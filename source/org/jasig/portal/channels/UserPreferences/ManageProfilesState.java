@@ -300,7 +300,7 @@ class ManageProfilesState extends BaseState {
       /*  try {
        log.debug(org.jasig.portal.utils.XML.serializeNode(doc));
        } catch (Exception e) {
-       log.error(e);
+       log.error(e, e);
        }
        */
       // debug printout of the document sent to the XSLT

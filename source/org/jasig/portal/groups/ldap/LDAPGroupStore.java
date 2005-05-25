@@ -293,8 +293,7 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
           try {
             userlist = context.search(usercontext,filter,sc);
           } catch (NamingException nex) {
-            log.error("LDAPGroupStore: Unable to perform filter "+filter);
-            log.error(nex);
+            log.error("LDAPGroupStore: Unable to perform filter "+filter, nex);
           }
           processLdapResults(userlist,keys);
           break;
@@ -305,8 +304,7 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
           try {
             userlist2 = context2.search(usercontext,attributes,new String[] {keyfield});
           } catch (NamingException nex) {
-            log.error("LDAPGroupStore: Unable to perform attribute search");
-            log.error(nex);
+            log.error("LDAPGroupStore: Unable to perform attribute search", nex);
           }
           processLdapResults(userlist2,keys);
           break;

@@ -303,7 +303,7 @@ class ManageProfilesState extends BaseState {
       /*  try {
        log.debug(org.jasig.portal.utils.XML.serializeNode(doc));
        } catch (Exception e) {
-       log.error(e);
+       log.error(e, e);
        }
        */
       // debug printout of the document sent to the XSLT
@@ -387,7 +387,7 @@ class ManageProfilesState extends BaseState {
 					if (in != null)
 						in.close();
 				} catch (IOException ioe) {
-              log.error( "Unable to close InputStream " + ioe);
+              log.error( "Unable to close InputStream ", ioe);
 				}
       }
       this.context = context;
@@ -669,7 +669,7 @@ class ManageProfilesState extends BaseState {
                     serializer.serialize(doc);
                     log.debug(outString.toString());
       } catch (Exception e) {
-                    log.debug(e);
+                    log.debug(e, e);
       }
       }
       // end debug block

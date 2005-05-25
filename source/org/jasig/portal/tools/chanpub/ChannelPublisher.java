@@ -169,7 +169,7 @@ public class ChannelPublisher implements ErrorHandler
             System.exit(0);
         }catch(Exception e){
             // signal failure to ant and log
-            log.error(e);
+            log.error(e, e);
             throw e;
         }
     }
