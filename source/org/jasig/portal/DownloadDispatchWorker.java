@@ -128,7 +128,7 @@ public class DownloadDispatchWorker implements IWorkerRequestProcessor {
                             if (out != null) 
                                 out.close();
                         } catch (IOException ioe) {
-                            log.error( "DownloadDispatchWorker:processWorkerDispatch unable to close IOStream "+ ioe);
+                            log.error( "DownloadDispatchWorker:processWorkerDispatch unable to close IOStream ", ioe);
                         }
                     }
                 } else if (ch instanceof org.jasig.portal.IDirectResponse) {

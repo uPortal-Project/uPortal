@@ -237,7 +237,7 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata {
         
         this.releaseConnection(conn);
         } catch (SQLException e) {
-            LOG.error("Error during database initialization. "+e);
+            LOG.error("Error during database initialization. ", e);
         }
      }
     

@@ -148,7 +148,7 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
       }
       catch (Exception e)
       {
-        log.error( "CGenericXSLT: Cannot initialize ILocalConnectionContext: " + e);
+        log.error( "CGenericXSLT: Cannot initialize ILocalConnectionContext: ", e);
       }
     }
     state.params.putAll(sd);

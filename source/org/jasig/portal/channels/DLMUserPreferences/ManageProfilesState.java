@@ -381,7 +381,7 @@ class ManageProfilesState extends BaseState {
         in = PortalSessionManager.getResourceAsStream(mimeImagesPropsFile);
         mimeImagesProps.load(in);
       } catch (Exception e) {
-        log.error( "Unable to load mime type images properties file located at " + mimeImagesPropsFile);
+        log.error( "Unable to load mime type images properties file located at " + mimeImagesPropsFile, e);
       } finally {
 				try {
 					if (in != null)

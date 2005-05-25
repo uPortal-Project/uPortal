@@ -38,7 +38,7 @@ public final class Dom3Check
         } catch (NoSuchMethodError noSuchMethod) {
             // deliberately logging without stack trace since 
             // it is the exception message and not the stack trace that matters here.
-            log.error("DOM3 check failing because DOM3 method not found: " + noSuchMethod);
+            log.error("DOM3 check failing because DOM3 method not found: ", noSuchMethod);
             CheckResult failure = CheckResult.createFailure("DOM3 API method Document.normalizeDocument() not found.",
                     "uPortal requires the DOM3 API which you make available under JDK 1.4 by installing "
                     + "the JAXP 1.3 jars into the endorsed directory of your JDK and of  " 

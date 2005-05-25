@@ -921,7 +921,7 @@ public class ChannelManager implements LayoutEventListener {
             try {
                 ch.receiveEvent(PortalEvent.UNSUBSCRIBE_EVENT);
             } catch (Exception e) {
-                log.error( e);
+                log.error(e, e);
             }
             channelTable.remove(ch);
             if (log.isDebugEnabled())

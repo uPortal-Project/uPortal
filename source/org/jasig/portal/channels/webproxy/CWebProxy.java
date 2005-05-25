@@ -296,7 +296,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
       }
       catch (Exception e)
       {
-        log.error( "CWebProxy: Cannot initialize LocalConnectionContext: " + e);
+        log.error( "CWebProxy: Cannot initialize LocalConnectionContext: ", e);
       }
     }
 
