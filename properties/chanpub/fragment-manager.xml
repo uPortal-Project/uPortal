@@ -9,7 +9,7 @@
     <fname>fragment-manager</fname>
     <desc>The fragment constructor/publisher channel</desc>
     <type>Custom</type>
-    <class>org.jasig.portal.layout.channels.CFragmentManager</class>
+    <class>org.jasig.portal.layout.alm.channels.CFragmentManager</class>
     <timeout>5000</timeout>
     
     <hasedit>N</hasedit>
