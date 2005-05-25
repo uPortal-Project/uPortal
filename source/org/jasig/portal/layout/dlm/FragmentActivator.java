@@ -208,12 +208,14 @@ public class FragmentActivator
         {
             userID = identityStore.getPortalUID( owner, false );
         }
-        catch( Exception ae )
+        catch( AuthorizationException ae )
         {
-            if ( LOG.isDebugEnabled() )
-                LOG.debug("Anomaly occurred looking up declared owner '" +
-                        fragment.ownerID + "' for fragment definition '" +
-                        fragment.name + "'.", ae );
+            // current implementation of RDMBUserIdentityStore throws an
+            // auth exception if the user doesn't exist even if 
+            // create data is false as we have it here. So this exception
+            // can be discarded since we check for the userID being -1
+            // meaning that the user wasn't found to trigger creating
+            // that user.
         }
         if (userID == -1)
         {
