@@ -47,19 +47,21 @@ Microsoft at<br/>
 <a href="http://www.microsoft.com/sql/default.asp">http://www.microsoft.com/sql/default.asp 
 </a></p>
 <h5>Obtaining the Driver </h5>
-<p>An MSSQL JDBC driver is available through Microsoft at:<br>
-<a href="http://www.microsoft.com/sql/downloads/default.asp">http://www.microsoft.com/sql/downloads/default.asp</a> 
+<p>
+Based on several recommendations, the jTDS driver appears to be the best driver for Microsoft SQL Server.  The driver may be downloaded from the
+<a href="http://jtds.sourceforge.net">jTDS Project Site</a>
 </p>
-<p>Once the <i>Microsoft SQL Server 2000 Driver for JDBC </i>package has been 
-downloaded the jar file must be copied to a location accessible from uPortal (for 
-example, <tt>/usr/local/java/mssql/lib/mssqlserver.jar</tt>). 
+<p>Once the zipfile for the driver has been downloaded it must be extracted 
+and the jar file must be copied to a location accessible from uPortal (for 
+example, <tt>/usr/local/java/jtds/lib/jtds-1.0.3.jar</tt>). You may wish to 
+copy it to the <tt>lib</tt> directory in the uPortal release.
 <h5> Properties Configuration </h5>
 
    <p>The uPortal <tt>build.properties</tt> may need to be modifed. Find the 
    property called jdbcDriver and change it to point to the MSSQL 
    jar file, for example: </p>   
    
-<blockquote><tt> jdbcDriver.jar=./lib/mssqlserver.jar </tt></blockquote> 
+<blockquote><tt> jdbcDriver.jar=./lib/jtds-1.0.3.jar </tt></blockquote> 
    
       
 <p> The uPortal <tt>rdbm.properties</tt> file (in the properties directory) may 
@@ -69,13 +71,13 @@ database and make whatever changes necessary to match your local database instal
 For example: </p>
    
       
-<blockquote><tt> #### Microsoft SQL Server<br>
-jdbcDriver=com.microsoft.jdbc.sqlserver.SQLServerDriver<br>
-jdbcUrl=jdbc:microsoft:sqlserver://localhost:1433<br>
-jdbcPassword=sa<br>
+<blockquote><tt> #### SQL Server 2000<br/> 
+jdbcDriver=net.sourceforge.jtds.jdbc.Driver<br/> 
+jdbcUrl=jdbc:jtds:sqlserver://localhost:1433;DatabaseName=uPortal;SelectMethod=Cursor; <br/>
+jdbcUser=sa<br/>
 jdbcPassword= </tt></blockquote> 
    
-<p>The <tt>dbloader.xml</tt> properties file (also in the properties directory) 
+<p>The <tt>dbloader.xml</tt> properties file (in the properties/db directory) 
 may also need to be modified. This file is used by the DbLoader tool to create 
 the uPortal database tables and populate the database. It contains several sample 
 entries which create db-type-mappings for different databases. Find the tags for 
@@ -86,16 +88,17 @@ as necessary. For example: </p>
    
 <blockquote>
 <tt>
-&lt;db-type-mapping&gt;<br>
-&nbsp;&nbsp;&lt;db-name>Microsoft SQL Server 2000&lt;/db-name&gt;<br>
-&nbsp;&nbsp;&lt;db-version7.0&lt;/db-version&gt;<br>
-&nbsp;&nbsp;&lt;driver-name&gt;Microsoft SQL Server Driver for JDBC&lt;/driver-name&gt;<br>
-&nbsp;&nbsp;&lt;driver-version&gt;2.2&lt;/driver-version&gt;<br>
-&nbsp;&nbsp;&lt;type&gt;&lt;generic&gt;INTEGER&lt;/generic&gt;&lt;local&gt;INTEGER&lt;/local&gt;&lt;/type&gt;<br>
-&nbsp;&nbsp;&lt;type&gt;&lt;generic&gt;VARCHAR&lt;/generic&gt;&lt;local&gt;VARCHAR&lt;/local&gt;&lt;/type&gt;<br>
-&nbsp;&nbsp;&lt;type&gt;&lt;generic&gt;LONGVARCHAR&lt;/generic&gt;&lt;local&gt;LONGVARCHAR&lt;/local&gt;&lt;/type&gt;<br>
-&nbsp;&nbsp;&lt;!-- map more types here --&gt;<br>
-&lt;/db-type-mapping&gt;<br>
+&lt;db-type-mapping&gt; 
+    &lt;db-name&gt;Microsoft SQL Server 2000&lt;/db-name&gt; 
+    &lt;db-version&gt;8.00.760&lt;/db-version&gt; 
+    &lt;driver-name&gt;SQLServer&lt;/driver-name&gt; 
+    &lt;driver-version&gt;2.2.0040&lt;/driver-version&gt; 
+    &lt;type&gt;&lt;generic&gt;INTEGER&lt;/generic&gt;&lt;local&gt;INTEGER&lt;/local&gt;&lt;/type&gt; 
+    &lt;type&gt;&lt;generic&gt;VARCHAR&lt;/generic&gt;&lt;local&gt;VARCHAR&lt;/local&gt;&lt;/type&gt; 
+    &lt;type&gt;&lt;generic&gt;LONGVARCHAR&lt;/generic&gt;&lt;local&gt;LONGVARCHAR&lt;/local&gt;&lt;/type&gt; 
+    &lt;type&gt;&lt;generic&gt;SQL_VARIANT&lt;/generic&gt;&lt;local&gt;VARCHAR&lt;/local&gt;&lt;/type&gt;         
+    &lt;!-- map more types here --&gt; 
+&lt;/db-type-mapping&gt; 
 </tt></blockquote>
       
 <p class="content"> The PersonDirs.xml file (also in the properties directory) 
@@ -103,8 +106,8 @@ may need to be modified; This file is used if the database is to be used to prov
 user directory information</p>
    
 <blockquote><tt> &lt;!-- JDBC Properties --&gt;<br>
-&lt;driver&gt;jdbcDriver=com.microsoft.jdbc.sqlserver.SQLServerDriver&lt;/driver&gt;<br>
-&lt;url&gt;jdbc:microsoft:sqlserver://localhost:1433&lt;/url&gt;<br>
+&lt;driver&gt;jdbcDriver=net.sourceforge.jtds.jdbc.Driver&lt;/driver&gt;<br>
+&lt;url&gt;jdbc:jtds:sqlserver://localhost:1433;DatabaseName=uPortal;SelectMethod=Cursor; &lt;/url&gt;<br>
 &lt;logonid&gt;sa&lt;/logonid&gt;<br>
 &lt;logonpassword&gt;&lt;/logonpassword&gt;,<br>
 &lt;uidquery&gt;SELECT FIRST_NAME||' '||LAST_NAME AS FIRST_LAST,<br>
