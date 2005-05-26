@@ -2,11 +2,8 @@ This is a file for notes specific to the uPortal release that the code you're lo
 either is (in the case of a tagged release) or will become (in the case of the tip of a patches or main branch).
 
 
-Release notes for uPortal 2.5.0 RC 3:
+Release notes for uPortal 2.5.0 GA (general audience release):
 
-
-
-This is the third and likely final uPortal 2.5.0 Release Candidate.
 
 
 Known issues
@@ -19,12 +16,12 @@ http://jasigch.princeton.edu:9000/jira/
 Search for issues with a "Matches Versions" of this release.
 
 
-This release includes several improvements and fixes beyond 2.5.0 RC 2, which in turn included many
-changes beyond 2.5.0 RC 1, and 2.5.0 M1.  
+This release includes several no significant changes beyond 2.5.0 RC 3.
 
 Here are links to dynamic issue information.  At the end of this file is a snapshot of the change log.
 
-You can ask our JIRA issue tracking sytem to generate notes for this release:
+You can ask our JIRA issue tracking sytem to generate notes for the 2.5.0 RC3 release.  2.5.0 RC3 describes the most recent significant changes.
+Changes between RC 3 and this general audience release were trivial.
 
 http://jasigch.princeton.edu:9000/jira/secure/IssueNavigator.jspa?reset=true&pid=10020&fixfor=10141
 
@@ -59,8 +56,16 @@ by the build, using JDK 1.5 to produce the release should not affect JDK 1.4 com
 
 CHANGE LOG:
 
+uPortal - Version 2.5.0 general audience release
+
+Tasks completed
+
+    * [UP-1120] - update Version
+    * [UP-1121] - update release notes
+
 uPortal - Version 2.5.0 RC3
-Bug
+
+Bugs fixed
 
     * [UP-1004] - RDBMChannelRegistryStore needs prepared statements
     * [UP-1048] - Locale selector channel not showing for logged in users when using DLM.
@@ -76,12 +81,12 @@ Bug
     * [UP-1113] - ServletRequestImpl is not used during render phase of portlets
     * [UP-1116] - Check for DOM3 remediation advice for JDK 1.5
 
-Task
+Tasks completed
 
     * [UP-1036] - Include Jira-produced and more literate release notes
     * [UP-1078] - update version
 
-Improvement
+Improvements realized
 
     * [UP-987] - Make guest layout a fragment in DLM and editable by non-guest, admin user.
     * [UP-1059] - Need DLM Admin page in documentation
@@ -99,7 +104,8 @@ Improvement
 
 
 uPortal - Version 2.5.0 RC2
-Bug
+
+Bugs fixed
 
     * [UP-198] - HTMLSerializer shorthands all empty HTML elements
     * [UP-769] - Losing Portlet stack traces
@@ -117,12 +123,12 @@ Bug
     * [UP-1072] - remove variables named enum to fix compile on JDK 1.5
     * [UP-1073] - Eliminate use of deprecated constructor of ChannelParameter
 
-Task
+Tasks completed
 
     * [UP-1035] - Include Jira-produced and more literate release notes
     * [UP-1070] - Remove un necessary classes from org.jasig.portal.utils.threading package.
 
-Improvement
+Improvements realized
 
     * [UP-625] - direct URL to channel
     * [UP-1075] - upgrade to Spring 1.2 (from 1.1.1)
@@ -130,7 +136,8 @@ Improvement
 
 
 uPortal - Version 2.5.0 RC1
-Bug
+
+Bugs fixed
 
     * [UP-675] - remove call to commit() in DbLoader.process()
     * [UP-762] - anchors should not be set for links that already contain an anchor
@@ -159,19 +166,19 @@ Bug
     * [UP-1050] - eliminate deprecated use of org.jasig.portal.channels.CError in RDBMDistributedLayoutStore
     * [UP-1051] - context.xml created by Ant not discovered by Tomcat
 
-New Feature
+New Features implemented
 
     * [UP-998] - make CPortletAdapter extensible
     * [UP-1024] - add CAbstractXslt
     * [UP-1042] - HttpProxyServlet should accept a lsit of referers not just one
 
-Task
+Tasks completed
 
     * [UP-995] - move org.jasig.portal.layout.al out of HEAD and into Sandbox
     * [UP-1034] - Include Jira-produced and more literate release notes
     * [UP-1052] - update the UP version string for 2.5.0 RC1
 
-Improvement
+Improvements realized
 
     * [UP-879] - Place context file in META-INF
     * [UP-884] - test portlets
@@ -197,7 +204,7 @@ Improvement
 
 uPortal - Version 2.5.0 M1
 
-Bug
+Bugs fixed
     * [UP-169] - RDBMPermissibleRegistry not using CarClassLoader
     * [UP-338] - RENDERING_DONE Event never sent
     * [UP-466] - replace alt="interface image" with alt=""
@@ -261,7 +268,7 @@ Bug
     * [UP-977] - CacheSecurityContextFactory type JavaDoc trapped before import
     * [UP-978] - ant runtests target requires hsqldb
 
-New Feature
+New Features added
 
     * [UP-784] - include CUserManager by default
     * [UP-785] - ability to purge XSLT cache
@@ -277,13 +284,13 @@ New Feature
     * [UP-964] - CError refactoring
     * [UP-971] - BaseChannel and BaseMultithreadedChannel should bear Log instances
 
-Task
+Tasks completed
 
     * [UP-839] - remove deprecated WSRP Producer
     * [UP-981] - eliminate BoundedThreadPool, UnboundedThreadPool
     * [UP-982] - update version data for 2.5.0M1
 
-Improvement
+Improvements realized
 
     * [UP-117] - Need to be able to publish xml/xsl
     * [UP-385] - Utility to modify url depending on user attributes
