@@ -93,6 +93,18 @@
     <!-- map more types here -->
   </db-type-mapping>
 
+  <db-type-mapping> 
+    <db-name>Microsoft SQL Server 2000</db-name> 
+    <db-version>8.00.760</db-version> 
+    <driver-name>SQLServer</driver-name> 
+    <driver-version>2.2.0040</driver-version> 
+    <type><generic>INTEGER</generic><local>INTEGER</local></type> 
+    <type><generic>VARCHAR</generic><local>VARCHAR</local></type> 
+    <type><generic>LONGVARCHAR</generic><local>LONGVARCHAR</local></type> 
+    <type><generic>SQL_VARIANT</generic><local>VARCHAR</local></type>         
+    <!-- map more types here --> 
+  </db-type-mapping> 
+
   <db-type-mapping>
     <db-name>MySQL</db-name>
     <db-version>3.23.34a</db-version>
