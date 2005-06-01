@@ -996,9 +996,20 @@ public class RDBMDistributedLayoutStore
                         if (LOG.isDebugEnabled())
                             LOG.debug("RDBMUserLayoutStore::getStructureStylesheetUserPreferences() :  instanceof jpostgressqldbdbcdb");      
 
-                        sQuery = "SELECT PARAM_NAME, PARAM_VAL, PARAM_TYPE, ULS.STRUCT_ID, CHAN_ID, ULP.STRUCT_PARM_NM, ULP.STRUCT_PARM_VAL FROM UP_SS_USER_ATTS UUSA, UP_LAYOUT_STRUCT ULS, UP_LAYOUT_PARAM ULP WHERE UUSA.USER_ID=" + userId + " AND PROFILE_ID="
-                            + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND UUSA.STRUCT_ID = ULS.STRUCT_ID AND UUSA.USER_ID = ULS.USER_ID AND UUSA.STRUCT_ID *= ULP.STRUCT_ID AND UUSA.USER_ID *= ULP.USER_ID";
-
+                        sQuery = "SELECT PARAM_NAME, PARAM_VAL, PARAM_TYPE," +
+                                " ULS.STRUCT_ID, CHAN_ID, ULP.STRUCT_PARM_NM," +
+                                " ULP.STRUCT_PARM_VAL " +
+                                "FROM UP_LAYOUT_STRUCT ULS, " +
+                                " UP_SS_USER_ATTS UUSA LEFT OUTER JOIN" +
+                                " UP_LAYOUT_PARAM ULP " +
+                                "ON UUSA.STRUCT_ID = ULP.STRUCT_ID" +
+                                " AND UUSA.USER_ID = ULP.USER_ID " +
+                                "WHERE UUSA.USER_ID=" + userId + 
+                                " AND PROFILE_ID=" + profileId + 
+                                " AND SS_ID=" + stylesheetId + 
+                                " AND SS_TYPE=1" +
+                                " AND UUSA.STRUCT_ID = ULS.STRUCT_ID" +
+                                " AND UUSA.USER_ID = ULS.USER_ID";
                     } 
                     else if (db.getJoinQuery() 
                             instanceof DatabaseMetaDataImpl.OracleDb) 
