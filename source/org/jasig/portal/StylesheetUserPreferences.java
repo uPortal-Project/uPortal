@@ -27,6 +27,18 @@ public class StylesheetUserPreferences {
         this.id=sup.id;
         this.parameters=new Hashtable(sup.getParameterValues());
     }
+    
+    /**
+     * Provides a copy of this object with all fields instantiated to reflect 
+     * the values of this object. This allows subclasses to override to add
+     * correct copying behavior for their added fields.
+     * 
+     * @return a copy of this object
+     */
+    public Object newInstance()
+    {
+        return new StylesheetUserPreferences(this);
+    }
 
     public int getStylesheetId() { return id; }
     public void setStylesheetId(int n) { id=n; }
