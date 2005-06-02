@@ -32,6 +32,10 @@ public class DistributedUserPreferences
     protected Hashtable incorporatedChannelAttributeValues;
     protected Hashtable incorporatedFolderAttributeValues;
 
+    /**
+     * Creates a new DistributedUserPreferences object with empty tables.
+     *
+     */
     public DistributedUserPreferences()
     {
         super();
@@ -39,6 +43,13 @@ public class DistributedUserPreferences
         this.incorporatedFolderAttributeValues=new Hashtable();
     }
 
+    /**
+     * Creates a DistributedUserPreferences with values for super classes 
+     * derived from those of the passed in StructureStylesheetUserPreferences 
+     * object.
+     * 
+     * @param ssup
+     */
     public DistributedUserPreferences
         ( StructureStylesheetUserPreferences ssup )
     {
@@ -57,6 +68,35 @@ public class DistributedUserPreferences
     {
         super(tsup);
         this.incorporatedChannelAttributeValues=new Hashtable();
+    }
+
+    /**
+     * Creates a new DistributedUserPreferences object populated with all values
+     * from the passed-in instance.
+     * 
+     * @param dup
+     */
+    public DistributedUserPreferences(DistributedUserPreferences dup)
+    {
+        super((StructureStylesheetUserPreferences) dup);
+        if (dup.incorporatedChannelAttributeValues != null)
+            this.incorporatedChannelAttributeValues = new Hashtable(
+                    dup.incorporatedChannelAttributeValues);
+        if (dup.incorporatedFolderAttributeValues != null)
+            this.incorporatedFolderAttributeValues = new Hashtable(
+                    dup.incorporatedFolderAttributeValues);
+    }
+    
+    /**
+     * Provides a copy of this object with all fields instantiated to reflect 
+     * the values of this object. This allows subclasses to override to add
+     * correct copying behavior for their added fields.
+     * 
+     * @return a copy of this object
+     */
+    public Object newInstance()
+    {
+        return new DistributedUserPreferences(this);
     }
 
     //////////// extensions for structure super class
