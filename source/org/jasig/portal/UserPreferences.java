@@ -29,8 +29,10 @@ public class UserPreferences {
      * Copy-constructor
      */
     public UserPreferences(UserPreferences up) {
-        fsup=new StructureStylesheetUserPreferences(up.getStructureStylesheetUserPreferences());
-        ssup=new ThemeStylesheetUserPreferences(up.getThemeStylesheetUserPreferences());
+        fsup = (StructureStylesheetUserPreferences) up
+                .getStructureStylesheetUserPreferences().newInstance();
+        ssup = (ThemeStylesheetUserPreferences) up
+                .getThemeStylesheetUserPreferences().newInstance();
         profile=up.getProfile();
     }
 
