@@ -5,6 +5,7 @@
 
  package org.jasig.portal;
 
+import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
@@ -15,7 +16,7 @@ import java.util.Hashtable;
  * @version $Revision$
  */
 
-public class StylesheetUserPreferences {
+public class StylesheetUserPreferences implements Serializable {
     private int id;
     private Hashtable parameters;
 

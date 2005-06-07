@@ -235,13 +235,6 @@ public class PortalSessionManager extends HttpServlet {
 
                 final RequestParamWrapper wrappedRequest = new RequestParamWrapper(req, request_verified);
 
-                //If the request is for a portlet and an action request run that portlet's processAction
-                final boolean didAction = userInstance.processPortletActionIfNecessary(wrappedRequest, res);
-
-                //If an action was performed a redirect will be issued to the HttpResponse so this request won't render anything
-                if (didAction)
-                    return;
-
                 // fire away
                 if(ALLOW_REPEATED_REQUESTS) {
                     userInstance.writeContent(wrappedRequest, res);
