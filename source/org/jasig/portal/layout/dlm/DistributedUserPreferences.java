@@ -69,7 +69,7 @@ public class DistributedUserPreferences
         super(tsup);
         this.incorporatedChannelAttributeValues=new Hashtable();
     }
-
+    
     /**
      * Creates a new DistributedUserPreferences object populated with all values
      * from the passed-in instance.
