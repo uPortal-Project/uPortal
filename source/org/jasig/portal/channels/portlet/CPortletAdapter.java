@@ -29,8 +29,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.pluto.PortletContainer;
 import org.apache.pluto.PortletContainerImpl;
 import org.apache.pluto.PortletContainerServices;
-import org.apache.pluto.core.InternalActionResponse;
-import org.apache.pluto.factory.PortletObjectAccess;
 import org.apache.pluto.om.entity.PortletEntity;
 import org.apache.pluto.om.portlet.PortletDefinition;
 import org.apache.pluto.om.window.PortletWindow;
@@ -67,6 +65,7 @@ import org.jasig.portal.container.services.information.PortletStateManager;
 import org.jasig.portal.container.services.log.LogServiceImpl;
 import org.jasig.portal.container.services.property.PropertyManagerServiceImpl;
 import org.jasig.portal.container.servlet.DummyParameterRequestWrapper;
+import org.jasig.portal.container.servlet.PortletAttributeRequestWrapper;
 import org.jasig.portal.container.servlet.PortletParameterRequestWrapper;
 import org.jasig.portal.container.servlet.ServletObjectAccess;
 import org.jasig.portal.container.servlet.ServletRequestImpl;
@@ -402,34 +401,39 @@ public class CPortletAdapter
      */
     public void setRuntimeData(ChannelRuntimeData rd, String uid) throws PortalException {
         ChannelState channelState = (ChannelState)channelStateMap.get(uid);
-        channelState.setRuntimeData(rd);
-        
-        ChannelStaticData sd = channelState.getStaticData();
         ChannelData cd = channelState.getChannelData();
+        ChannelStaticData sd = channelState.getStaticData();
+        PortalControlStructures pcs = channelState.getPortalControlStructures();
         
+        channelState.setRuntimeData(rd);
+
         if (!cd.isPortletWindowInitialized()) {
             this.initPortletWindow(uid);
         }
-        
+
         try {
             PortletContainerServices.prepare(uniqueContainerName);
+            
+            final PortletWindowImpl portletWindow = (PortletWindowImpl)cd.getPortletWindow();
+            final PortletEntity portletEntity = portletWindow.getPortletEntity();
+            final PortletDefinition portletDef = portletEntity.getPortletDefinition();
+            final HttpServletRequest baseRequest = pcs.getHttpServletRequest();
 
-            PortalControlStructures pcs = channelState.getPortalControlStructures();
-            HttpServletRequest wrappedRequest = new ServletRequestImpl(pcs.getHttpServletRequest(), sd.getPerson(),
-                    cd.getPortletWindow().getPortletEntity().getPortletDefinition().getInitSecurityRoleRefSet());
-
+            HttpServletRequest wrappedRequest = new ServletRequestImpl(baseRequest, sd.getPerson(), portletDef.getInitSecurityRoleRefSet());
+            
+            //Wrap the request to scope attributes to this portlet instance
+            wrappedRequest = new PortletAttributeRequestWrapper(wrappedRequest);
+            
             //Set up request attributes (user info, portal session, etc...)
             setupRequestAttributes(wrappedRequest, uid);
 
             // Put the current runtime data and wrapped request into the portlet window
-            PortletWindowImpl portletWindow = (PortletWindowImpl)cd.getPortletWindow();
             portletWindow.setChannelRuntimeData(rd);
             portletWindow.setHttpServletRequest(wrappedRequest);
 
             // Get the portlet url manager which will analyze the request parameters
             DynamicInformationProvider dip = InformationProviderAccess.getDynamicProvider(wrappedRequest);
             PortletStateManager psm = ((DynamicInformationProviderImpl)dip).getPortletStateManager(portletWindow);
-
             PortletActionProvider pap = dip.getPortletActionProvider(portletWindow);
 
             //If portlet is rendering as root, change mode to maximized, otherwise minimized
@@ -449,19 +453,21 @@ public class CPortletAdapter
             }
             cd.setNewWindowState(null);
 
+            //Check for a portlet mode change
             PortletMode newMode = cd.getNewPortletMode();
             if (newMode != null) {
                 pap.changePortletMode(newMode);
+                PortletStateManager.setMode(portletWindow, newMode);
             }
             cd.setNewPortletMode(null);
 
             // Process action if this is the targeted channel and the URL is an action URL
-            if (rd.isTargeted() && psm.isAction() && !cd.hasProcessedAction()) {
-                try {
-                    //Create a sink to throw out and output (portlets can't output content during an action)
-                    PrintWriter pw = new PrintWriter(new NullOutputStream());
-                    HttpServletResponse wrappedResponse = ServletObjectAccess.getStoredServletResponse(pcs.getHttpServletResponse(), pw);
+            if (rd.isTargeted() && psm.isAction()) {
+                //Create a sink to throw out and output (portlets can't output content during an action)
+                PrintWriter pw = new PrintWriter(new NullOutputStream());
+                HttpServletResponse wrappedResponse = ServletObjectAccess.getStoredServletResponse(pcs.getHttpServletResponse(), pw);
 
+                try {
                     //See if a WindowState change was requested for an ActionURL
                     final String newWindowStateName = wrappedRequest.getParameter(PortletStateManager.UP_WINDOW_STATE);
                     if (newWindowStateName != null) {
@@ -469,19 +475,15 @@ public class CPortletAdapter
                     }
 
                     HttpServletRequest wrappedPortletRequest = new PortletParameterRequestWrapper(wrappedRequest);
-                    // record a portlet action
 
                     portletContainer.processPortletAction(portletWindow, wrappedPortletRequest, wrappedResponse);
-                    InternalActionResponse actionResponse = (InternalActionResponse)PortletObjectAccess.getActionResponse(cd.getPortletWindow(), pcs.getHttpServletRequest(), pcs.getHttpServletResponse());
-                    cd.setProcessedAction(true);
                 } catch (Exception e) {
                     throw new PortalException(e);
                 }
             }
         } finally {
             PortletContainerServices.release();
-        }
-        
+        }        
     }
 
     /**
@@ -552,30 +554,37 @@ public class CPortletAdapter
      */
     protected synchronized String getMarkup(String uid) throws PortalException {
         ChannelState channelState = (ChannelState)channelStateMap.get(uid);
-        ChannelRuntimeData rd = channelState.getRuntimeData();
-        ChannelStaticData sd = channelState.getStaticData();
         ChannelData cd = channelState.getChannelData();
-        PortletWindow portletWindow = cd.getPortletWindow();
+        ChannelStaticData sd = channelState.getStaticData();
         PortalControlStructures pcs = channelState.getPortalControlStructures();
-        
-        String markup = "<b>Problem rendering portlet " + sd.getParameter("portletDefinitionId") + "</b>";
         
         try {
             PortletContainerServices.prepare(uniqueContainerName);
-
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            HttpServletRequest wrappedRequest = new ServletRequestImpl(((PortletWindowImpl)cd.getPortletWindow()).getHttpServletRequest(), 
-                                                                       sd.getPerson(), 
-                                                                       portletWindow.getPortletEntity().getPortletDefinition().getInitSecurityRoleRefSet());
             
-            HttpServletResponse wrappedResponse = ServletObjectAccess.getStoredServletResponse(pcs.getHttpServletResponse(), pw);
+            final PortletWindowImpl portletWindow = (PortletWindowImpl)cd.getPortletWindow();
+            final PortletEntity portletEntity = portletWindow.getPortletEntity();
+            final PortletDefinition portletDef = portletEntity.getPortletDefinition();
+            final HttpServletRequest baseRequest = pcs.getHttpServletRequest();
+
+            HttpServletRequest wrappedRequest = new ServletRequestImpl(baseRequest, sd.getPerson(), portletDef.getInitSecurityRoleRefSet());
+            
+            //Wrap the request to scope attributes to this portlet instance
+            wrappedRequest = new PortletAttributeRequestWrapper(wrappedRequest);
+            
+            //Set up request attributes (user info, portal session, etc...)
+            setupRequestAttributes(wrappedRequest, uid);
+
+            
+            final StringWriter sw = new StringWriter();
+            HttpServletResponse wrappedResponse = ServletObjectAccess.getStoredServletResponse(pcs.getHttpServletResponse(), new PrintWriter(sw));
            
                                                 
-            // Hide the request parameters if this portlet isn't targeted
+            //Use the parameters from the last request so the portlet maintains it's state
+            final ChannelRuntimeData rd = channelState.getRuntimeData();
             final String sessionParamsKey = REQUEST_PARAMS_KEY + "." + uid;
             if (!rd.isTargeted()) {
                 final HttpSession portalSession = pcs.getHttpServletRequest().getSession(false);
+                
                 final Map requestParams;
                 if (portalSession != null) {
                     requestParams = (Map)portalSession.getAttribute(sessionParamsKey);
@@ -586,28 +595,21 @@ public class CPortletAdapter
 
                 wrappedRequest = new DummyParameterRequestWrapper(wrappedRequest, requestParams);
             }
-            // Use the parameters from the last request so the portlet maintains it's state
+            //Hide the request parameters if this portlet isn't targeted
             else {
                 wrappedRequest = new PortletParameterRequestWrapper(wrappedRequest);
 
                 final HttpSession portalSession = pcs.getHttpServletRequest().getSession(true);
                 portalSession.setAttribute(sessionParamsKey, wrappedRequest.getParameterMap());
             }
-            
-            //Set up request attributes (user info, portal session, etc...)
-            setupRequestAttributes(wrappedRequest, uid);
-            
-            //System.out.println("Rendering portlet " + cd.getPortletWindow().getId());
+
             portletContainer.renderPortlet(portletWindow, wrappedRequest, wrappedResponse);
             
             //Support for the portlet modifying it's cache timeout
-            Map properties = PropertyManager.getRequestProperties(portletWindow, wrappedRequest);
-            String[] exprCacheTimeStr = (String[])properties.get(RenderResponse.EXPIRATION_CACHE);
+            final Map properties = PropertyManager.getRequestProperties(portletWindow, wrappedRequest);
+            final String[] exprCacheTimeStr = (String[])properties.get(RenderResponse.EXPIRATION_CACHE);
             
             if (exprCacheTimeStr != null && exprCacheTimeStr.length > 0) {
-                PortletEntity pe = portletWindow.getPortletEntity();
-                PortletDefinition pd = pe.getPortletDefinition();
-                                
                 try {
                     Integer.parseInt(exprCacheTimeStr[0]); //Check for valid number
                     cd.setExpirationCache(exprCacheTimeStr[0]);
@@ -618,9 +620,11 @@ public class CPortletAdapter
                 }
             }
             
-            markup = sw.toString();
+            //Keep track of the last time the portlet was successfully rendered
+            cd.setLastRenderTime(System.currentTimeMillis());
             
-            cd.setProcessedAction(false);
+            //Return the content
+            return sw.toString();
                         
         } catch (Throwable t) {
             log.error(t, t);
@@ -628,11 +632,6 @@ public class CPortletAdapter
         } finally {
             PortletContainerServices.release();
         }
-        
-        //Keep track of the last time the portlet was successfully rendered
-        cd.setLastRenderTime(System.currentTimeMillis());
-        
-        return markup;
     }
     
     //***************************************************************
@@ -741,24 +740,29 @@ public class CPortletAdapter
         
         try {
             PortletContainerServices.prepare(uniqueContainerName);
-
-            PortletWindowImpl portletWindow = (PortletWindowImpl)cd.getPortletWindow();
             
-            // Get the portlet url manager which will analyze the request parameters
-            DynamicInformationProvider dip = InformationProviderAccess.getDynamicProvider(pcs.getHttpServletRequest());
-            PortletStateManager psm = ((DynamicInformationProviderImpl)dip).getPortletStateManager(portletWindow);
-            
-            //Since the portlet is rendering through IDirectResponse change the window state to "exclusive"
-            PortletActionProvider pap = dip.getPortletActionProvider(portletWindow);
-            pap.changePortletWindowState(new WindowState("exclusive"));
+            final PortletWindowImpl portletWindow = (PortletWindowImpl)cd.getPortletWindow();
+            final PortletEntity portletEntity = portletWindow.getPortletEntity();
+            final PortletDefinition portletDef = portletEntity.getPortletDefinition();
+            final HttpServletRequest baseRequest = pcs.getHttpServletRequest();
 
-            //Create the request to send to the portlet container
-            HttpServletRequest wrappedRequest = new ServletRequestImpl(pcs.getHttpServletRequest(), sd.getPerson(), 
-                    portletWindow.getPortletEntity().getPortletDefinition().getInitSecurityRoleRefSet());
-                
+            HttpServletRequest wrappedRequest = new ServletRequestImpl(baseRequest, sd.getPerson(), portletDef.getInitSecurityRoleRefSet());
+            
+            //Wrap the request to scope attributes to this portlet instance
+            wrappedRequest = new PortletAttributeRequestWrapper(wrappedRequest);
+            
             //Set up request attributes (user info, portal session, etc...)
             setupRequestAttributes(wrappedRequest, uid);
+            
+            //Hide the request parameters if this portlet isn't targeted 
             wrappedRequest = new PortletParameterRequestWrapper(wrappedRequest);
+
+            
+            //Since the portlet is rendering through IDirectResponse change the window state to "exclusive"
+            DynamicInformationProvider dip = InformationProviderAccess.getDynamicProvider(pcs.getHttpServletRequest());
+            PortletActionProvider pap = dip.getPortletActionProvider(portletWindow);
+            pap.changePortletWindowState(new WindowState("exclusive"));
+            
 
             HttpServletResponse wrappedResponse = new OutputStreamResponseWrapper(response);
 
@@ -767,9 +771,6 @@ public class CPortletAdapter
             
             //Ensure all the data gets written out
             wrappedResponse.flushBuffer();
-            
-            cd.setProcessedAction(false);
-                        
         } catch (Throwable t) {
             log.error(t, t);
         } finally {
