@@ -5,6 +5,7 @@
 
 package org.jasig.portal;
 
+import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.HashSet;
 
@@ -18,7 +19,7 @@ import org.w3c.dom.NodeList;
  * @version $Revision$
  */
 
-public class UserPreferences {
+public class UserPreferences implements Serializable {
 
     protected UserProfile profile;
 
@@ -33,7 +34,7 @@ public class UserPreferences {
                 .getStructureStylesheetUserPreferences().newInstance();
         ssup = (ThemeStylesheetUserPreferences) up
                 .getThemeStylesheetUserPreferences().newInstance();
-        profile=up.getProfile();
+        profile = up.getProfile();
     }
 
     public void setProfile(UserProfile p) { profile=p; }

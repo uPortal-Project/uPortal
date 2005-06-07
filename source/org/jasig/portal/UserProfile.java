@@ -5,6 +5,8 @@
 
 package org.jasig.portal;
 
+import java.io.Serializable;
+
 import org.jasig.portal.i18n.LocaleManager;
 
 /**
@@ -12,7 +14,7 @@ import org.jasig.portal.i18n.LocaleManager;
  * @author Peter Kharchenko
  * @version $Revision$
  */
-public class UserProfile {
+public class UserProfile implements Serializable {
     protected int id=-1;
     protected String pName;
     protected String description;

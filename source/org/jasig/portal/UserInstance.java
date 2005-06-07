@@ -173,6 +173,13 @@ public class UserInstance implements HttpSessionBindingListener {
             p_rendering_lock=new Object();
         }
 
+        //If the request is for a portlet and an action request run that portlet's processAction
+        final boolean didAction = this.processPortletActionIfNecessary(req, res);
+
+        //If an action was performed a redirect will be issued to the HttpResponse so this request won't render anything
+        if (didAction)
+            return;
+
         // Begin the rendering process
         renderState (req, res, this.channelManager, this.localeManager, uPreferencesManager, p_rendering_lock);
     }

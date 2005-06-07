@@ -5,9 +5,11 @@
 
 package  org.jasig.portal;
 
+import java.io.Serializable;
 import java.util.Hashtable;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonManagerFactory;
@@ -44,8 +46,15 @@ public class UserInstanceManager {
       log.error( "UserInstanceManager: Unable to retrieve IPerson!", e);
       throw  (new PortalSecurityException("Could not retrieve IPerson", e));
     }
+    
+    HttpSession session = request.getSession(false);
+    
     // Return the UserInstance object if it's in the session
-    UserInstance userInstance = (UserInstance)request.getSession(false).getAttribute("org.jasig.portal.UserInstance");
+    UserInstance userInstance = null;
+    UserInstanceHolder holder = (UserInstanceHolder)session.getAttribute(UserInstanceHolder.KEY);
+    if (holder != null)
+        userInstance = holder.getUserInstance();
+
     if (userInstance != null) {
       return  (userInstance);
     }
@@ -66,11 +75,44 @@ public class UserInstanceManager {
             throw new PortalSecurityException("System does not allow for unauthenticated non-guest users.");
         }
     }
+    
+    if (holder == null)
+        holder = new UserInstanceHolder();
+    holder.setUserInstance(userInstance);
+    
     // Put the user instance in the user's session
-    request.getSession(false).setAttribute("org.jasig.portal.UserInstance", userInstance);
+    session.setAttribute(UserInstanceHolder.KEY, holder);
+
     // Return the new UserInstance
     return  (userInstance);
   }
+  
+    /**
+     * Serializable wrapper class so the UserInstance object can
+     * be indirectly stored in the session. The manager can deal with
+     * this class returning a null value and its field is transient
+     * so the session can be serialized successfully with the
+     * UserInstance object in it.  
+     */
+    private static class UserInstanceHolder implements Serializable {
+        public transient static final String KEY = UserInstanceHolder.class.getName();
+        
+        private transient UserInstance ui = null;
+
+        /**
+         * @return Returns the userInstance.
+         */
+        protected UserInstance getUserInstance() {
+            return this.ui;
+        }
+
+        /**
+         * @param userInstance The userInstance to set.
+         */
+        protected void setUserInstance(UserInstance userInstance) {
+            this.ui = userInstance;
+        }
+    }
 }
 
 
