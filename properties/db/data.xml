@@ -3853,8 +3853,8 @@
         <column><name>PROFILE_NAME</name><value>HTML browser profile</value></column>
         <column><name>DESCRIPTION</name><value>A sample profile for common web browsers</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
-        <column><name>STRUCTURE_SS_ID</name>4</column>
-        <column><name>THEME_SS_ID</name>3</column>
+        <column><name>STRUCTURE_SS_ID</name><value>4</value></column>
+        <column><name>THEME_SS_ID</name><value>3</value></column>
       </row>
     </rows>
   </table>
