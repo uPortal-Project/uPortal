@@ -36,6 +36,7 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
     private static final String READ_ONLY_TRUE = "Y";
     private static final String READ_ONLY_FALSE = "N";
     private static final String UP_PORTLET_PREFERENCE_VALUE = "UP_PORTLET_PREFERENCE_VALUE";
+    private static final String PREFIX = "UP_PORTLET_PREF_PREFIX__";
 
     /**
      * @see org.jasig.portal.IPortletPreferencesStore#setDefinitionPreferences(int, org.apache.pluto.om.common.PreferenceSet)
@@ -156,7 +157,7 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
                         if (log.isDebugEnabled())
                             log.debug("RDBMPortletPreferencesStore::setDefinitionPreferences(): " + insertPrefValue);
                         insertPrefValuePstmt.setInt(1, prefId);
-                        insertPrefValuePstmt.setString(2, value);
+                        insertPrefValuePstmt.setString(2, PREFIX + value);
                         insertPrefValuePstmt.executeUpdate();
                     }
                 }
@@ -215,7 +216,9 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
                 try {
                     while (rs.next()) {
                         final String prefName = rs.getString("PORTLET_PREF_NAME");
-                        final String prefValue = rs.getString("PORTLET_PREF_VALUE");
+                        String prefValue = rs.getString("PORTLET_PREF_VALUE");
+                        if (prefValue != null && prefValue.startsWith(PREFIX))
+                            prefValue = prefValue.substring(PREFIX.length());
                         
                         if (!readOnlyMap.containsKey(prefName)) {
                             if (READ_ONLY_TRUE.equals(rs.getString("PORTLET_PREF_READONLY"))) {
@@ -384,7 +387,7 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
                         if (log.isDebugEnabled())
                             log.debug("RDBMPortletPreferencesStore::setEntityPreferences(): " + insertPrefValue);
                         insertPrefValuePstmt.setInt(1, prefId);
-                        insertPrefValuePstmt.setString(2, value);
+                        insertPrefValuePstmt.setString(2, PREFIX + value);
                         insertPrefValuePstmt.executeUpdate();
                     }
                 }
@@ -445,7 +448,9 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
                 try {
                     while (rs.next()) {
                         final String prefName = rs.getString("PORTLET_PREF_NAME");
-                        final String prefValue = rs.getString("PORTLET_PREF_VALUE");
+                        String prefValue = rs.getString("PORTLET_PREF_VALUE");
+                        if (prefValue != null && prefValue.startsWith(PREFIX))
+                            prefValue = prefValue.substring(PREFIX.length());
                                                 
                         List prefList = (List)prefsBuilder.get(prefName);
                         
