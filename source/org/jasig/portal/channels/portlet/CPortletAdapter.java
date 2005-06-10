@@ -58,6 +58,7 @@ import org.apache.pluto.PortletContainer;
 import org.apache.pluto.PortletContainerServices;
 import org.apache.pluto.core.InternalActionResponse;
 import org.apache.pluto.factory.PortletObjectAccess;
+import org.apache.pluto.om.window.PortletWindow;
 import org.apache.pluto.services.information.DynamicInformationProvider;
 import org.apache.pluto.services.information.InformationProviderAccess;
 import org.apache.pluto.services.information.PortletActionProvider;
@@ -255,7 +256,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
              
             // Now create the PortletWindow and hold a reference to it
             PortletWindowImpl portletWindow = new PortletWindowImpl();
-            portletWindow.setId(sd.getChannelSubscribeId());
+            portletWindow.setId(uid);
             portletWindow.setPortletEntity(portletEntity);
 			portletWindow.setChannelRuntimeData(rd);
             portletWindow.setHttpServletRequest(wrappedRequest);
@@ -295,6 +296,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
     public void receiveEvent(PortalEvent ev, String uid) {
         ChannelState channelState = (ChannelState)channelStateMap.get(uid);
         ChannelData cd = channelState.getChannelData();
+        PortletWindow pw = cd.getPortletWindow();
         PortalControlStructures pcs = channelState.getPortalControlStructures();
         
         try {
@@ -340,7 +342,7 @@ public class CPortletAdapter implements IMultithreadedCharacterChannel, IMultith
                 case PortalEvent.SESSION_DONE:
                     // For both SESSION_DONE and UNSUBSCRIBE, we might want to
                     // release resources here if we need to
-                    PortletStateManager.clearState(pcs.getHttpServletRequest());
+                    PortletStateManager.clearState(pw);
                     break;
                     
                 default:
