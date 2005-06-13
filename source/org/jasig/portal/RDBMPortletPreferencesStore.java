@@ -157,7 +157,7 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
                         if (log.isDebugEnabled())
                             log.debug("RDBMPortletPreferencesStore::setDefinitionPreferences(): " + insertPrefValue);
                         insertPrefValuePstmt.setInt(1, prefId);
-                        insertPrefValuePstmt.setString(2, PREFIX + value);
+                        insertPrefValuePstmt.setString(2, this.prefixValue(value));
                         insertPrefValuePstmt.executeUpdate();
                     }
                 }
@@ -216,9 +216,7 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
                 try {
                     while (rs.next()) {
                         final String prefName = rs.getString("PORTLET_PREF_NAME");
-                        String prefValue = rs.getString("PORTLET_PREF_VALUE");
-                        if (prefValue != null && prefValue.startsWith(PREFIX))
-                            prefValue = prefValue.substring(PREFIX.length());
+                        final String prefValue = this.unPrefixValue(rs.getString("PORTLET_PREF_VALUE"));
                         
                         if (!readOnlyMap.containsKey(prefName)) {
                             if (READ_ONLY_TRUE.equals(rs.getString("PORTLET_PREF_READONLY"))) {
@@ -387,7 +385,7 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
                         if (log.isDebugEnabled())
                             log.debug("RDBMPortletPreferencesStore::setEntityPreferences(): " + insertPrefValue);
                         insertPrefValuePstmt.setInt(1, prefId);
-                        insertPrefValuePstmt.setString(2, PREFIX + value);
+                        insertPrefValuePstmt.setString(2, this.prefixValue(value));
                         insertPrefValuePstmt.executeUpdate();
                     }
                 }
@@ -448,9 +446,7 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
                 try {
                     while (rs.next()) {
                         final String prefName = rs.getString("PORTLET_PREF_NAME");
-                        String prefValue = rs.getString("PORTLET_PREF_VALUE");
-                        if (prefValue != null && prefValue.startsWith(PREFIX))
-                            prefValue = prefValue.substring(PREFIX.length());
+                        final String prefValue = this.unPrefixValue(rs.getString("PORTLET_PREF_VALUE"));
                                                 
                         List prefList = (List)prefsBuilder.get(prefName);
                         
@@ -644,4 +640,19 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
             RDBMServices.releaseConnection(con);
         }
     }    
+    
+    
+    private String prefixValue(String value) {
+        if (value == null)
+            return value;
+        else
+            return PREFIX + value;
+    }
+    
+    private String unPrefixValue(String value) {
+        if (value != null && value.startsWith(PREFIX))
+            return value.substring(PREFIX.length());
+        else
+            return value;
+    }
 }
