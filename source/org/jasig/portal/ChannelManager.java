@@ -129,7 +129,8 @@ public class ChannelManager implements LayoutEventListener {
 
     // global channel rendering cache
     public static final int SYSTEM_CHANNEL_CACHE_MIN_SIZE=50; // this should be in a file somewhere
-    public static final SoftHashMap systemCache=new SoftHashMap(SYSTEM_CHANNEL_CACHE_MIN_SIZE);
+    
+    public static final Map systemCache = Collections.synchronizedMap(new SoftHashMap(SYSTEM_CHANNEL_CACHE_MIN_SIZE));
 
     public static final String channelAddressingPathElement="channel";
     private static boolean useAnchors = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.ChannelManager.use_anchors", false);
