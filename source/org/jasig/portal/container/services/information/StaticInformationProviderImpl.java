@@ -51,10 +51,23 @@ public class StaticInformationProviderImpl implements StaticInformationProvider 
     }
 
     public PortletDefinition getPortletDefinition(ObjectID portletGUID) {
+        
+        if (portletGUID == null) {
+            throw new IllegalArgumentException("Cannot get portlet definition for null portletGUID.");
+        }
+        
         // I think this method should throw an exception,
-        // but Pluto currently defines it to throw no exception.
+        // but Pluto currently defines it to throw no exception. -kweiner
+        
         String portletDefinitionId = portletGUID.toString();
-        String contextName = portletDefinitionId.substring(0, portletDefinitionId.indexOf("."));
+        int dotIndex = portletDefinitionId.indexOf(".");
+        
+        if (dotIndex < 0) {
+            throw new IllegalArgumentException("portletGUID [" + portletGUID 
+                    + "] was not in required format: portletGUIDs must contain a '.' character.");
+        }
+        
+        String contextName = portletDefinitionId.substring(0, dotIndex);
         PortletApplicationDefinition portletApplicationDefinition = portletApplicationDefinitionList.get(ObjectIDImpl.createFromString(contextName));
         PortletDefinition portletDefinition = null;
         if (portletApplicationDefinition != null) {
