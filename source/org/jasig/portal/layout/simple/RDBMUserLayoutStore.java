@@ -79,8 +79,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
   protected static final String folderPrefix = "s";
   protected IChannelRegistryStore crs;
   protected ICounterStore csdb;
-  // I18n propertiy
-  protected static final boolean localeAware = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.i18n.LocaleManager.locale_aware",false);
+  // I18n property
+  protected static final boolean localeAware = LocaleManager.isLocaleAware();
 
   public RDBMUserLayoutStore () throws Exception {
     crs = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl();
