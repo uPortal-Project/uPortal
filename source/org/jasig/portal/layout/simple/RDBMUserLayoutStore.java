@@ -43,7 +43,6 @@ import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.layout.LayoutStructure;
 import org.jasig.portal.layout.StructureParameter;
-import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.rdbm.DatabaseMetaDataImpl;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.ISecurityContext;
@@ -80,7 +79,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
   protected IChannelRegistryStore crs;
   protected ICounterStore csdb;
   // I18n propertiy
-  protected static final boolean localeAware = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.i18n.LocaleManager.locale_aware",false);
+  protected static final boolean localeAware = LocaleManager.isLocaleAware();
 
   public RDBMUserLayoutStore () throws Exception {
     crs = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl();
