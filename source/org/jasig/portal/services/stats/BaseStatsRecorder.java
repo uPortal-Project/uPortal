@@ -5,6 +5,8 @@
 
 package org.jasig.portal.services.stats;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.ChannelDefinition;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
@@ -25,6 +27,9 @@ import org.jasig.portal.security.IPerson;
  * @version $Revision$
  */
 public class BaseStatsRecorder implements IStatsRecorder {
+    
+    protected Log log = LogFactory.getLog(getClass());
+    
   public void recordLogin(IPerson person) {}
   public void recordLogout(IPerson person) {}  
   public void recordSessionCreated(IPerson person) {}
