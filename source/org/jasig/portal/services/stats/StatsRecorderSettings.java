@@ -12,13 +12,20 @@ import org.apache.commons.logging.LogFactory;
 /**
  * This class is responsible for maintaining the on/off settings
  * for each type of portal event that the StatsRecorder can record.
- * StatsRecorder will consult with this class before it attempts
- * to record an event.  The initial values for each setting will
- * be read upon portal startup from portal.properties.  At runtime,
+ * The default, legacy StatsRecorder implementation will consult with this 
+ * class before it attempts to record an event.  The initial values for each 
+ * setting will be read upon portal startup from portal.properties.  At runtime,
  * the settings in this class can be controlled via
  * <code>StatsRecorder.set()</code>.
+ * 
+ * <p>
+ * An alternative to using this Static Singleton is to wrap your IStatsRecorder
+ * implementation with ConditionalStatsRecorder and use a StatsRecorderFlagsImpl
+ * to represent the settings as a JavaBean.  That approach allows multiple 
+ * IStatsRecorder instances differently configured.
+ * </p>
  * @author Ken Weiner, kweiner@unicon.net
- * @version $Revision$
+ * @version $Revision$ $Date$
  */
 public class StatsRecorderSettings {
   
