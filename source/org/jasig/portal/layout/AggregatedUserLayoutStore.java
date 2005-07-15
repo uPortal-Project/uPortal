@@ -1914,16 +1914,21 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         log.debug(sqlLayout);
 
         // The query for getting information of the fragments
-        String sqlFragment = "SELECT DISTINCT UF.NODE_ID,UF.NEXT_NODE_ID,UF.CHLD_NODE_ID,UF.PREV_NODE_ID,UF.PRNT_NODE_ID,UF.CHAN_ID,UF.NAME,UF.TYPE,UF.HIDDEN,"+
+        String sqlFragment = "SELECT UF.NODE_ID,UF.NEXT_NODE_ID,UF.CHLD_NODE_ID,UF.PREV_NODE_ID,UF.PRNT_NODE_ID,UF.CHAN_ID,UF.NAME,UF.TYPE,UF.HIDDEN,"+
           "UF.UNREMOVABLE,UF.IMMUTABLE,UF.PRIORITY,UF.FRAGMENT_ID";
         if (RDBMServices.supportsOuterJoins) {
           sqlFragment += ",UFP.PARAM_NAME,UFP.PARAM_VALUE FROM UP_LAYOUT_STRUCT_AGGR ULS, " + fragmentJoinQuery;
         } else {
           sqlFragment += " FROM UP_FRAGMENTS UF, UP_LAYOUT_STRUCT_AGGR ULS WHERE ";
         }
-        sqlFragment += "(ULS.USER_ID="+userId+" AND ULS.FRAGMENT_ID=UF.FRAGMENT_ID)" + ((pushFragmentIds!=null)?" OR UF.FRAGMENT_ID IN ("+pushFragmentIds+")":"");
+        sqlFragment += "(ULS.USER_ID="+userId+" AND ULS.FRAGMENT_ID=UF.FRAGMENT_ID)";
+        if (pushFragmentIds!=null){
+            sqlFragment += " UNION SELECT UF.NODE_ID,UF.NEXT_NODE_ID,UF.CHLD_NODE_ID,UF.PREV_NODE_ID,UF.PRNT_NODE_ID,UF.CHAN_ID,UF.NAME,UF.TYPE,UF.HIDDEN,"+
+                           "UF.UNREMOVABLE,UF.IMMUTABLE,UF.PRIORITY,UF.FRAGMENT_ID" +
+                           " FROM UP_FRAGMENTS UF WHERE UF.FRAGMENT_ID IN ("+pushFragmentIds+")";
+        }
 
-        log.debug(sqlFragment);
+        log.debug(sqlFragment); 
 
         // The hashtable object containing the fragment nodes that are next to the user layout nodes
         Hashtable fragmentNodes = new Hashtable();
