@@ -57,7 +57,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class ReferenceEntityCache implements IEntityCache
 {
-    private static final Log log = LogFactory.getLog(ReferenceEntityCache.class);
+    private static final Log LOG = LogFactory.getLog(ReferenceEntityCache.class);
     protected Map cache;
     protected Class entityType;
     protected String simpleTypeName;
@@ -131,10 +131,14 @@ private void initializeEntityType(Class type) throws CachingException
 public void cleanupCache()
 {
     int before = size();
+    if (LOG.isDebugEnabled()) {
     debug("ENTERING ReferenceEntityCache.cleanupCache() for " + getSimpleTypeName() + " : number of entries: " + before);
+    }
     ((LRUCache)getCache()).sweepCache();
+    if (LOG.isDebugEnabled()) {
     debug("LEAVING ReferenceEntityCache.cleanupCache() for " + getSimpleTypeName() + " : removed " +
         (before - size()) + " cache entries.");
+    }
 }
 
 /**
@@ -150,7 +154,7 @@ public void clearCache()
 void debug(String msg)
 {
     java.sql.Timestamp ts = new java.sql.Timestamp(System.currentTimeMillis());
-    log.debug(ts + " : " + msg);
+    LOG.debug(ts + " : " + msg);
 }
 
 /**
