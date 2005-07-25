@@ -36,6 +36,7 @@
 package org.jasig.portal.utils;
 
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 
 import javax.servlet.ServletOutputStream;
 
@@ -44,6 +45,9 @@ import javax.servlet.ServletOutputStream;
  * A filter presenting a <code>ServletOutputStream</code> that performs
  * word substitution (search&replace) on the fly.
  *
+ * 7/25/05 - UP-1180 - dmindler@rutgers.edu
+ * Modified to make use of optimized SubstitutionIntegerFilter
+ * 
  * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
  * @version $Revision$
  */
@@ -58,7 +62,7 @@ public class SubstitutionServletOutputStream extends ServletOutputStream {
      * @param substitute a <code>byte[]</code> value with which the target will be replaced
      */
     public SubstitutionServletOutputStream(ServletOutputStream out, byte[] target, byte[] substitute) {
-        filter=new SubstitutionIntegerFilter(new WriteableOutputStreamWrapper(out),getIntArrayFromByteArray(target),getIntArrayFromByteArray(substitute));
+        filter=new SubstitutionIntegerFilter(new OutputStreamWriter(out),getCharArrayFromByteArray(target),getCharArrayFromByteArray(substitute));
     }
 
     /**
@@ -70,11 +74,11 @@ public class SubstitutionServletOutputStream extends ServletOutputStream {
      * @param bufferSize a buffer size
      */
     public SubstitutionServletOutputStream(ServletOutputStream out, byte[] target, byte[] substitute, int bufferSize) {
-        filter=new SubstitutionIntegerFilter(new WriteableOutputStreamWrapper(out),getIntArrayFromByteArray(target),getIntArrayFromByteArray(substitute),bufferSize);
+        filter=new SubstitutionIntegerFilter(new OutputStreamWriter(out),getCharArrayFromByteArray(target),getCharArrayFromByteArray(substitute),bufferSize);
     }
 
     public void write(int i) throws IOException {
-        filter.write(i);
+        filter.write((char) i);
     }
 
     public void flush() throws IOException {
@@ -90,10 +94,10 @@ public class SubstitutionServletOutputStream extends ServletOutputStream {
      * @param c a <code>byte[]</code> value
      * @return an <code>int[]</code> value
      */
-    private static int[] getIntArrayFromByteArray(byte[] c) {
-        int[] ic=new int[c.length];
+    private static char[] getCharArrayFromByteArray(byte[] c) {
+        char[] ic=new char[c.length];
         for(int i=0;i<c.length;i++) {
-            ic[i]=(int)c[i];
+            ic[i]=(char)c[i];
         }
         return ic;
     }
