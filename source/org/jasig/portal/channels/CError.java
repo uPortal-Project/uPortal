@@ -116,7 +116,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
 
     private PortalControlStructures portcs;
     private static final String sslLocation = "CError/CError.ssl";
-    protected static MediaManager mediaM=new MediaManager();
+    protected static final MediaManager MEDIAMANAGER=MediaManager.getMediaManager();
 
     public CError() {
     }
@@ -174,8 +174,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
       }
       placeHolder = true;  // Should only get here if we are a "normal channel"
     }
-    
-    
+
     public void receiveEvent(PortalEvent ev) {
         if (the_channel != null) {
             // propagate the portal events to the normal channel
@@ -504,7 +503,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
                             ((ICharacterChannel) the_channel).renderCharacters(out);
                         } else {
                             ThemeStylesheetDescription tsd=portcs.getUserPreferencesManager().getThemeStylesheetDescription();
-                            BaseMarkupSerializer serOut = mediaM.getSerializerByName(tsd.getSerializerName(), out);
+                            BaseMarkupSerializer serOut = MEDIAMANAGER.getSerializerByName(tsd.getSerializerName(), out);
                             the_channel.renderXML(serOut);
                         }
                         return;
@@ -532,7 +531,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
                                     ((ICharacterChannel) the_channel).renderCharacters(out);
                                 } else {
                                     ThemeStylesheetDescription tsd=portcs.getUserPreferencesManager().getThemeStylesheetDescription();
-                                    BaseMarkupSerializer serOut = mediaM.getSerializerByName(tsd.getSerializerName(), out);
+                                    BaseMarkupSerializer serOut = MEDIAMANAGER.getSerializerByName(tsd.getSerializerName(), out);
                                     the_channel.renderXML(serOut);
                                 }
                                 return;
@@ -556,7 +555,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
         BaseMarkupSerializer serOut=null;
         try {
             ThemeStylesheetDescription tsd=portcs.getUserPreferencesManager().getThemeStylesheetDescription();
-            serOut = mediaM.getSerializerByName(tsd.getSerializerName(), out);        
+            serOut = MEDIAMANAGER.getSerializerByName(tsd.getSerializerName(), out);        
         } catch (Exception e) {
             log.error("CError::renderCharacters() : unable to obtain proper markup serializer : "+e); 
         }
