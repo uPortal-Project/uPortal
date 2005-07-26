@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xsl:stylesheet version="1.0" xmlns:dlm="http://www.uportal.org/layout/dlm" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:stylesheet version="1.0" xmlns:dlm="http://www.uportal.org/layout/dlm" 
+xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+exclude-result-prefixes="dlm">
   <xsl:output method="html" indent="no"/>
   <xsl:param name="baseActionURL">render.userLayoutRootNode.uP</xsl:param>
   <xsl:param name="baseIdempotentActionURL">render.userLayoutRootNode.uP</xsl:param>
