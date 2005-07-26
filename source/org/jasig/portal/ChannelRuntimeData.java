@@ -268,6 +268,28 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
     }
 
     /**
+     * Returns an idempotent URL that includes a single query parameter that 
+     * targets a channel for focus mode by functional name. Additional 
+     * query parameters appended will be passed to the focused channel via 
+     * the channel's ChannelRuntimeData object.
+     *
+     * @return a value of URL including a single query parameter.
+     * @since  2.5.1
+     */
+    public String getFnameActionURL(String fname) {
+        String url=null;
+        try {
+                UPFileSpec upfs=new UPFileSpec(channelUPFile);
+                upfs.setTagId(PortalSessionManager.IDEMPOTENT_URL_TAG);
+                url=upfs.getUPFile();
+                url = url + "?" + Constants.FNAME_PARAM + "=" + fname;
+        } catch (Exception e) {
+            log.error("Unable to construct a fname action URL!", e);
+        }
+        return url;
+    }
+
+    /**
      * Returns the URL to invoke one of the workers specified in PortalSessionManager.
      * Typically the channel that is invoked with the worker will have to implement an
      * interface specific for that worker.
