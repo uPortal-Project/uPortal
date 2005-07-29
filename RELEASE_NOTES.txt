@@ -2,7 +2,34 @@ $Id$
 
 uPortal Release Notes
 ---------------------
+Release Notes - uPortal - Version 2.4.3-RC1
+Bug
 
+    * [UP-694] - NPE persists after publishing fragment with no name and description
+    * [UP-735] - Content Subscriber exception when searching for "what's"
+    * [UP-754] - Problem on deleting non-empty tabs
+    * [UP-818] - HttpProxyServlet ignores query string
+    * [UP-823] - MInesweeper codebase web site moved.
+    * [UP-849] - RDBMPortletPreferencesStore doesn't support MS-SQL
+    * [UP-865] - simple layout manager won't start
+    * [UP-921] - very long time to connect: AggregatedUserLayoutStore SQL
+    * [UP-931] - ChannelRenderer finalizer is causing lots of loitered objects in memory causing a serious memory leak.
+    * [UP-1016] - BoundedThreadPool infinite loop or deadlock [2-4-patches]
+    * [UP-1102] - Restore safety to channel rendering
+    * [UP-1119] - memory leak happens under stress when CPortletAdapter portlets are asked to clean themselves up when the session ends.
+    * [UP-1123] - PortletStateManager.clearState(PortletWindow) implementation is buggy and can lead to ConcurrentModificationException under stress.
+    * [UP-1145] - access to SoftHashMap systemCache across threads is not synchronized
+
+Improvement
+
+    * [UP-734] - Make "Cannot start uPortal" message give HTTP 500 status code
+    * [UP-815] - ChannelFactory should log source exception on instantiation failure
+    * [UP-992] - MultipartDataSource.finalize( ) is not implemented properly.
+    * [UP-1079] - StaticInformationProvider.getPortletDefinition() should give helpful exception if portletGUID doesn't have a "."
+    * [UP-1146] - javadoc SoftHashMap to say it isn't synchronized
+    * [UP-1177] - org.jasig.portal.MultipartDataSource incorrectly implemented finalize ( ) method.
+    * [UP-1187] - Enhance ChannelRuntimeData by adding a new method that generates the functional-name-focusing URL for channels.
+----------------------------------------------------------------
 Release Notes - uPortal - Version 2.4.2
 
 ** Bug
