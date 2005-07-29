@@ -57,8 +57,8 @@ public class RecordFolderAddedToLayoutWorkerTask extends StatsRecorderWorkerTask
     this.folderDesc = folderDesc;
   }
 
-  public void run() {
-    statsRecorder.recordFolderAddedToLayout(person, profile, folderDesc);
+  public void execute() throws Exception {
+    this.statsRecorder.recordFolderAddedToLayout(this.person, this.profile, this.folderDesc);
   }
 }
 

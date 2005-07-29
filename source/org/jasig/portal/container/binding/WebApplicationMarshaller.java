@@ -291,7 +291,7 @@ public class WebApplicationMarshaller {
         if (resourceRefs != null) {
             for (int i = 0; i < resourceRefs.length; i++) {
                 ResourceRefImpl resourceRef = resourceRefs[i];
-                Element resourceRefE = doc.createElement("resource-env-ref");
+                Element resourceRefE = doc.createElement("resource-ref");
                 addDescriptions(resourceRefE, resourceRef.getDescriptions());
                 addTextElement(resourceRefE, "res-ref-name", resourceRef.getResRefName());
                 addTextElement(resourceRefE, "res-type", resourceRef.getResType());

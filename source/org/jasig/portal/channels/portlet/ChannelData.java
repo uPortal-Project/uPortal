@@ -54,6 +54,7 @@ public class ChannelData {
     private boolean receivedEvent = false;
     private boolean focused = false;
     private PortletMode newPortletMode = null;
+    private Map lastRequestParameters = null;
         
     public boolean isPortletWindowInitialized() { return this.portletWindowInitialized; }
     public PortletWindow getPortletWindow() { return this.portletWindow; }
@@ -62,6 +63,7 @@ public class ChannelData {
     public boolean hasReceivedEvent() { return this.receivedEvent; }
     public boolean isFocused() { return this.focused; }
     public PortletMode getNewPortletMode() { return this.newPortletMode; }
+    public Map getLastRequestParameters() { return this.lastRequestParameters; }
         
     public void setPortletWindowInitialized(boolean portletWindowInitialized) { this.portletWindowInitialized = portletWindowInitialized; }
     public void setPortletWindow(PortletWindow portletWindow) { this.portletWindow = portletWindow; }
@@ -70,5 +72,6 @@ public class ChannelData {
     public void setReceivedEvent(boolean receivedEvent) { this.receivedEvent = receivedEvent; }
     public void setFocused(boolean focused) { this.focused = focused; }
     public void setNewPortletMode(PortletMode newPortletMode) { this.newPortletMode = newPortletMode; }
+    public void setLastRequestParameters(Map lastRequestParameters) { this.lastRequestParameters = lastRequestParameters; }
 }
 

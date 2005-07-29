@@ -294,12 +294,12 @@ public void testService() throws Exception
     readLock1 = EntityLockService.instance().newReadLock(IPERSON_CLASS, key, testIds[0]);
 
     print("Creating second read lock (for same entity).");
-    readLock2 = EntityLockService.instance().newReadLock(IPERSON_CLASS, key, testIds[1]);
+    readLock2 = EntityLockService.instance().newReadLock(IPERSON_CLASS, key, testIds[0]);
 
     msg = "Attempting to create a write lock for the entity: should fail.";
     print(msg);
     try
-        { writeLock = EntityLockService.instance().newWriteLock(IPERSON_CLASS, key, testIds[2]); }
+        { writeLock = EntityLockService.instance().newWriteLock(IPERSON_CLASS, key, testIds[0]); }
     catch (LockingException le)
         { System.out.println("Caught Exception: " + le.getMessage()); }
 
@@ -315,7 +315,7 @@ public void testService() throws Exception
     msg = "Attempting to create a write lock for the entity: should succeed.";
     print(msg);
     try
-        { writeLock = EntityLockService.instance().newWriteLock(IPERSON_CLASS, key, testIds[2]); }
+        { writeLock = EntityLockService.instance().newWriteLock(IPERSON_CLASS, key, testIds[0]); }
     catch (LockingException le)
         { System.out.println("Caught Exception: " + le.getMessage()); }
 

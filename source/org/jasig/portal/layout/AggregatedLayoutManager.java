@@ -1097,8 +1097,8 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
                 updateCacheKey();
             }
         } catch ( Exception e ) {
-            log.error( e);
-            throw new PortalException(e.getMessage());
+            log.error("Exception loading user layout", e);
+            throw new PortalException("Exception loading user layout: " + e.getMessage(), e);
         }
     }
     
@@ -1462,16 +1462,20 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
     }
     
     private void cleanLayoutData( String nodeId, boolean result ) throws PortalException {
-    	ALNode node = getLayoutNode(nodeId);
-    	result = (layout.getLayoutData().remove(nodeId)!=null) && result;
-        if ( node.getNodeType() == IUserLayoutNodeDescription.FOLDER ) {
-         // Loop for all children
-          String firstChildId = ((ALFolder)node).getFirstChildNodeId();
-          for ( String nextNodeId = firstChildId; nextNodeId != null; ) {
-           cleanLayoutData(nextNodeId,result);
-           nextNodeId = getLayoutNode(nextNodeId).getNextNodeId();
-          } 
-        }  
+        ALNode node = getLayoutNode(nodeId);
+        result = (layout.getLayoutData().remove(nodeId)!=null) && result;
+        if (node != null && node.getNodeType() == IUserLayoutNodeDescription.FOLDER ) {
+            // Loop for all children
+            String firstChildId = ((ALFolder)node).getFirstChildNodeId();
+            for ( String nextNodeId = firstChildId; nextNodeId != null; ) {
+                cleanLayoutData(nextNodeId,result);
+                ALNode temp = getLayoutNode(nextNodeId);
+                if (temp != null)
+                    nextNodeId = temp.getNextNodeId();
+                else
+                    nextNodeId = null;
+            } 
+        }
     }
 
     public synchronized IUserLayoutNodeDescription addNode(IUserLayoutNodeDescription nodeDesc, String parentId,String nextSiblingId) throws PortalException {

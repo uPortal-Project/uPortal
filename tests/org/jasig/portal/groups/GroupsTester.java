@@ -16,6 +16,7 @@ import org.jasig.portal.EntityTypes;
 import org.jasig.portal.IBasicEntity;
 import org.jasig.portal.concurrency.CachingException;
 import org.jasig.portal.concurrency.caching.ReferenceEntityCachingService;
+import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.GroupService;
 
 /**
@@ -220,7 +221,7 @@ private RDBMEntityGroupStore getGroupStore() throws GroupsException
  */
 private IEntity getNewEntity(String key) throws GroupsException
 {
-    return 	GroupService.getEntity(key, TEST_ENTITY_CLASS);
+    return GroupService.getEntity(key, TEST_ENTITY_CLASS);
 }
 /**
  * @return org.jasig.portal.groups.IEntityGroup
@@ -337,8 +338,8 @@ public static junit.framework.Test suite() {
   suite.addTest(new GroupsTester("testDeleteChildGroup"));
   suite.addTest(new GroupsTester("testMixLockableAndNonLockableGroups"));
   suite.addTest(new GroupsTester("testConcurrentAccess"));
-  suite.addTest(new GroupsTester("testParseCompoundKeys")); 
-  
+  suite.addTest(new GroupsTester("testParseCompoundKeys"));
+  suite.addTest(new GroupsTester("testPagsContains"));
   suite.addTest(new GroupsTester("testAddToALargeGroup"));
 
 //	Add more tests here.
@@ -403,7 +404,7 @@ public void testAddToALargeGroup() throws Exception
 {
     print(CR + "***** ENTERING GroupsTester.testAddToALargeGroup() *****" + CR);
     
-    int numEntities = 5000;
+    int numEntities = 1000;
     String msg = null;
     int idx = 0;
 
@@ -422,6 +423,7 @@ public void testAddToALargeGroup() throws Exception
     print("Creating new group.");
     IEntityGroup bigGroup = getNewGroup();
     bigGroup.setName("Big Group");
+    bigGroup.getMembers();
     print("Created" + bigGroup + ".  Will now add members...");    
     
     for (idx=0; idx<numEntities; idx++)
@@ -491,6 +493,72 @@ public void testAddToALargeGroup() throws Exception
    print(CR + "***** LEAVING GroupsTester.testAddToALargeGroup() *****" + CR);
 
     }
+
+public void testPagsContains() throws Exception
+{
+    print(CR + "***** ENTERING GroupsTester.testPagsContains() *****" + CR);
+    String message = null;
+    boolean result = false;
+    
+    // We will rely on the groups defined in the sample configuration.
+    print("Attempting to retrieve PAGS groups.");
+    IEntityGroup pagsRoot = GroupService.findGroup("pags.0");
+    IEntityGroup pagsUsers = GroupService.findGroup("pags.1");
+    IEntityGroup pagsDs = GroupService.findGroup("pags.3");
+    assertNotNull(pagsRoot);
+    assertNotNull(pagsUsers);
+    assertNotNull(pagsDs);
+    print("Found PAGS groups.");
+    
+    
+    message = "PAGS groups should contain no entity members";
+    Iterator itr = null;
+    Object o = null;
+    
+    for (itr = pagsRoot.getAllEntities(); itr.hasNext();)
+        { o = itr.next(); }
+    assertTrue(message, o==null);
+    
+    for (itr = pagsUsers.getMembers(); itr.hasNext();)
+        { o = itr.next(); }
+    assertTrue(message, o==null);
+    
+    for (itr = pagsDs.getMembers(); itr.hasNext();)
+        { o = itr.next(); }
+    assertTrue(message, o==null);
+    
+    
+    // Entities existing in UP_PERSON_DIR
+    IEntity demo = GroupService.getEntity("demo",IPerson.class);
+    IEntity admin = GroupService.getEntity("admin",IPerson.class);
+    IEntity staff = GroupService.getEntity("staff",IPerson.class);
+    
+    // Entity not existing in UP_PERSON_DIR
+    IEntity testUser = GroupService.getEntity("test",IPerson.class);
+        
+    message = "pags.1 (users) should contain all entities in UP_PERSON_DIR.";
+    result = pagsUsers.contains(demo);
+    assertTrue(message,result);
+    result = pagsUsers.contains(admin);
+    assertTrue(message,result);
+    result = pagsUsers.contains(staff);
+    assertTrue(message,result);
+    
+    message = "pags.1 (users) should not contain test entity.";    
+    result = pagsUsers.contains(testUser);
+    assertTrue(message, ! result);
+    
+    message = "pags.0 (root) should deepContain all entities in UP_PERSON_DIR.";
+    result = pagsRoot.deepContains(demo);
+    assertTrue(message,result);
+    message = "pags.0 (users) should not deepContain test entity.";    
+    result = pagsRoot.deepContains(testUser);
+    assertTrue(message, ! result);
+
+   print(CR + "***** LEAVING GroupsTester.testPagsContains() *****" + CR);
+
+    }
+
 
 /**
  */

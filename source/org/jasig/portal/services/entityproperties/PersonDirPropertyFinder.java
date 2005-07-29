@@ -104,7 +104,7 @@ public class PersonDirPropertyFinder
             try {
                 ht = pd.getUserDirectoryInformation(entityID.getKey());
             } catch (Exception e) {
-                log.error( e);
+                log.error("Error getting properties hash for entityID [" + entityID + "]", e);
             }
             cache.put(entityID.getKey(), ht);
         }

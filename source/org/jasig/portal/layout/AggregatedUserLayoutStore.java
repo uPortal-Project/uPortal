@@ -1,5 +1,5 @@
 /**
- * Copyright © 2002 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ? 2002 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1501,8 +1501,16 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
     Map fragments = new Hashtable();
     Statement stmt = con.createStatement();
     ResultSet rs = stmt.executeQuery("SELECT FRAGMENT_ID, FRAGMENT_DESCRIPTION FROM UP_OWNER_FRAGMENT WHERE OWNER_ID="+person.getID());
-    while ( rs.next() )
-      fragments.put ( rs.getInt(1) + "", rs.getString(2) );
+    while ( rs.next() ){
+      // Oracle will return nulls instead of the empty string.
+      // Hashtable doesn't allow null values so we convert them 
+      // to "" before storing in the Hashtable.
+      String col2  = rs.getString(2);
+      if (col2 == null){
+          col2 = "";
+      }
+      fragments.put ( rs.getInt(1) + "", col2 );
+    }
 
     if ( rs != null ) rs.close();
     if ( stmt != null ) stmt.close();
@@ -1906,16 +1914,21 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         log.debug(sqlLayout);
 
         // The query for getting information of the fragments
-        String sqlFragment = "SELECT DISTINCT UF.NODE_ID,UF.NEXT_NODE_ID,UF.CHLD_NODE_ID,UF.PREV_NODE_ID,UF.PRNT_NODE_ID,UF.CHAN_ID,UF.NAME,UF.TYPE,UF.HIDDEN,"+
+        String sqlFragment = "SELECT UF.NODE_ID,UF.NEXT_NODE_ID,UF.CHLD_NODE_ID,UF.PREV_NODE_ID,UF.PRNT_NODE_ID,UF.CHAN_ID,UF.NAME,UF.TYPE,UF.HIDDEN,"+
           "UF.UNREMOVABLE,UF.IMMUTABLE,UF.PRIORITY,UF.FRAGMENT_ID";
         if (RDBMServices.supportsOuterJoins) {
           sqlFragment += ",UFP.PARAM_NAME,UFP.PARAM_VALUE FROM UP_LAYOUT_STRUCT_AGGR ULS, " + fragmentJoinQuery;
         } else {
           sqlFragment += " FROM UP_FRAGMENTS UF, UP_LAYOUT_STRUCT_AGGR ULS WHERE ";
         }
-        sqlFragment += "(ULS.USER_ID="+userId+" AND ULS.FRAGMENT_ID=UF.FRAGMENT_ID)" + ((pushFragmentIds!=null)?" OR UF.FRAGMENT_ID IN ("+pushFragmentIds+")":"");
+        sqlFragment += "(ULS.USER_ID="+userId+" AND ULS.FRAGMENT_ID=UF.FRAGMENT_ID)";
+        if (pushFragmentIds!=null){
+            sqlFragment += " UNION SELECT UF.NODE_ID,UF.NEXT_NODE_ID,UF.CHLD_NODE_ID,UF.PREV_NODE_ID,UF.PRNT_NODE_ID,UF.CHAN_ID,UF.NAME,UF.TYPE,UF.HIDDEN,"+
+                           "UF.UNREMOVABLE,UF.IMMUTABLE,UF.PRIORITY,UF.FRAGMENT_ID" +
+                           " FROM UP_FRAGMENTS UF WHERE UF.FRAGMENT_ID IN ("+pushFragmentIds+")";
+        }
 
-        log.debug(sqlFragment);
+        log.debug(sqlFragment); 
 
         // The hashtable object containing the fragment nodes that are next to the user layout nodes
         Hashtable fragmentNodes = new Hashtable();
@@ -2376,8 +2389,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         if ( stmt != null ) stmt.close();
       }
     } catch ( Exception e ) {
-         e.printStackTrace();
-         log.error(e);
+         log.error("Error getting aggregated layout for user " + person, e);
          throw new PortalException(e);
       } finally {
           RDBMServices.releaseConnection(con);
@@ -2789,8 +2801,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
 
     } catch ( Exception e ) {
-         e.printStackTrace();
-         log.error(e);
+         log.error("Error concerning fragement " + fragmentIdStr, e);
          throw new PortalException(e);
       } finally {
           RDBMServices.releaseConnection(con);
@@ -3023,13 +3034,11 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         String subSelectString = "SELECT LAYOUT_ID FROM UP_USER_PROFILE WHERE USER_ID=" + userId + " AND PROFILE_ID=" +
             profileId;
         log.debug("RDBMUserLayoutStore::getStructureStylesheetUserPreferences(): " + subSelectString);
-        int layoutId;
+        int layoutId = 0;
         ResultSet rs = stmt.executeQuery(subSelectString);
         try {
-          rs.next();
-          layoutId = rs.getInt(1);
-          if (rs.wasNull()) {
-            layoutId = 0;
+          if (rs.next()) {
+              layoutId = rs.getInt(1);
           }
         } finally {
           rs.close();
