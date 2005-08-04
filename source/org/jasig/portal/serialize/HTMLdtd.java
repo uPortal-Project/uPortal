@@ -77,7 +77,7 @@ public final class HTMLdtd
      * Table of reverse character reference mapping. Character codes are held
      * as single-character strings, mapped to their reference name.
      */
-    private static Map        _byChar;
+    private static String[] _entity;
 
 
     /**
@@ -343,11 +343,12 @@ public final class HTMLdtd
        if (value > 0xffff)
             return null;
 
-        String name;
-
         initialize();
-        name = (String) _byChar.get( new Integer( value ) );
-        return name;
+        if( value < _entity.length){
+        return  _entity[value];
+        } else {
+            return null;
+    }
     }
 
 
@@ -368,11 +369,11 @@ public final class HTMLdtd
         String          line;
 
         // Make sure not to initialize twice.
-        if ( _byName != null )
+        if ( _entity != null )
             return;
         try {
             _byName = new HashMap();
-            _byChar = new HashMap();
+            _entity = new String[10000];
             is = HTMLdtd.class.getResourceAsStream( ENTITIES_RESOURCE );
             if ( is == null ) {
             	throw new RuntimeException( 
@@ -417,7 +418,7 @@ public final class HTMLdtd
         }
         // save only the unmodifiable map to the member variable.
 		_byName = Collections.unmodifiableMap(_byName);
-		_byChar = Collections.unmodifiableMap(_byChar);
+//		_byChar = Collections.unmodifiableMap(_byChar);
     }
 
 
@@ -433,11 +434,24 @@ public final class HTMLdtd
      * @param name The entity's name
      * @param value The entity's value
      */
-    private static void defineEntity( String name, char value )
-    {
-        if ( _byName.get( name ) == null ) {
-            _byName.put( name, new Integer( value ) );
-            _byChar.put( new Integer( value ), name );
+    private static void defineEntity(String name, char value) {
+        int intValue = (int) value;
+        if (intValue < _entity.length) {
+            if (_entity[intValue] == null) {
+
+                _entity[intValue] = name;
+        }
+        } else {
+            /*
+             * increase the size of array and put the new
+             * entity name at the appropriate index value.
+             */
+            final String newArray[] = _entity;
+            _entity = new String[intValue + 1];
+            for (int i = 0, n = newArray.length; i < n; i++) {
+                _entity[i] = newArray[i];
+    }
+            _entity[intValue] = name;
         }
     }
 
