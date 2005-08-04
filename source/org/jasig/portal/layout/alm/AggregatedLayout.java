@@ -70,6 +70,20 @@ public class AggregatedLayout implements IAggregatedLayout {
   }
   
   public void setLayoutData ( Hashtable layout ) throws PortalException {
+	  // check that layout isn't corrupt 
+	  for ( Enumeration nodeIds = layout.keys(); nodeIds.hasMoreElements() ;) {
+		  String nodeId = nodeIds.nextElement().toString();
+		  ALNode node = (ALNode)layout.get(nodeId);
+		  // check for nodes that reference themselves
+		  if (node != null && (nodeId.equals(node.nextNodeId) ||
+				  nodeId.equals(node.previousNodeId) ||
+				  nodeId.equals(node.parentNodeId)) 
+		  ){
+			  throw new RuntimeException(
+					  "corrupted layout detected, node: "+nodeId +" " +
+					  "layout:"+layout);
+		  }
+	  }
     this.layout = layout;
   }
 
@@ -104,14 +118,36 @@ public class AggregatedLayout implements IAggregatedLayout {
   }
 
   public ALNode getLayoutNode(String nodeId) {
-     if ( nodeId != null )
-        return (ALNode)layout.get(nodeId);
+	  ALNode aln = (ALNode)layout.get(nodeId);
+
+	  if ( nodeId != null ){
+		  if (aln != null && (nodeId.equals(aln.nextNodeId) ||
+			  nodeId.equals(aln.previousNodeId) ||
+			  nodeId.equals(aln.parentNodeId)) 
+		  ){
+			  throw new RuntimeException(
+					  "corrupted layout detected, node: "+nodeId +" " +
+					  "layout:"+layout);
+		  }
+		  return aln;
+	  }
         return null;
   }
 
   public ALFolder getLayoutFolder(String folderId) {
-     if ( folderId != null )
-        return (ALFolder)layout.get(folderId);
+	  if ( folderId != null ){
+		  ALFolder aln = (ALFolder)layout.get(folderId);
+		  if (aln != null && 
+				  (folderId.equals(aln.nextNodeId) ||
+				  folderId.equals(aln.previousNodeId) ||
+				  folderId.equals(aln.parentNodeId)) 
+		  ){
+			  throw new RuntimeException(
+					  "corrupted layout detected, node: "+folderId +" " +
+					  "layout:"+layout);
+		  }
+		  return aln;
+	  }
         return null;
   }
 

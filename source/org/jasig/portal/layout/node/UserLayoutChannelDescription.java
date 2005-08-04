@@ -533,5 +533,8 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
       return CHANNEL;
     }
 
+	public String toString() {
+		return "["+channelPublishId+","+title+"]";
+	}
 
 }
