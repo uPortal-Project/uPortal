@@ -1046,6 +1046,13 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
       return layout.getNodeDescription(nodeId);
     }
 
+    /**
+     * Moves a node to a place in the tree denoted by parent and next sibling.
+     * 
+     * @param nodeId node to be moved
+     * @param parentId parent of where nodeId should be moved
+     * @param nextSiblingId nextSibling of where nodeId should be moved
+     */
     public synchronized boolean moveNode(String nodeId, String parentId, String nextSiblingId) throws PortalException {
     	
         // if the node is being moved to itself that operation must be prevented	
@@ -1272,6 +1279,15 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
         }
           
         String nodeId = layoutNode.getId();
+		// assert  that no node references itself
+    	if (layoutNode != null && (nodeId.equals(layoutNode.nextNodeId) ||
+        		nodeId.equals(layoutNode.previousNodeId) ||
+        		nodeId.equals(layoutNode.parentNodeId)) 
+        		){
+    			  throw new RuntimeException(
+					  "corrupted layout detected, node: "+nodeId +" " +
+					  "layout:"+layout);
+        	}        
 
         // Putting the new node into the hashtable
         layout.getLayoutData().put(nodeId,layoutNode);
