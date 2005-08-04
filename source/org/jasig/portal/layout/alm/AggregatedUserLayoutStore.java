@@ -151,192 +151,390 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
   }
 
   public void setStructureStylesheetUserPreferences (IPerson person, int profileId, StructureStylesheetUserPreferences ssup) throws Exception {
-    int userId = person.getID();
-    Connection con = RDBMServices.getConnection();
-    try {
-      // Set autocommit false for the connection
-      int stylesheetId = ssup.getStylesheetId();
-      RDBMServices.setAutoCommit(con, false);
-      Statement stmt = con.createStatement();
+      int userId = person.getID();
+      Connection con = null;
       try {
-        // write out params
-        for (Enumeration e = ssup.getParameterValues().keys(); e.hasMoreElements();) {
-          String pName = (String)e.nextElement();
-          // see if the parameter was already there
-          String sQuery = "SELECT PARAM_VAL FROM UP_SS_USER_PARM WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId
-              + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND PARAM_NAME='" + pName + "'";
-          if (log.isDebugEnabled())
-              log.debug("AggregatedUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
-          ResultSet rs = stmt.executeQuery(sQuery);
-          if (rs.next()) {
-            // update
-            sQuery = "UPDATE UP_SS_USER_PARM SET PARAM_VAL='" + ssup.getParameterValue(pName) + "' WHERE USER_ID=" + userId
-                + " AND PROFILE_ID=" + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND PARAM_NAME='" + pName
-                + "'";
-          }
-          else {
-            // insert
-            sQuery = "INSERT INTO UP_SS_USER_PARM (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,PARAM_NAME,PARAM_VAL) VALUES (" + userId
-                + "," + profileId + "," + stylesheetId + ",1,'" + pName + "','" + ssup.getParameterValue(pName) + "')";
-          }
-          if (log.isDebugEnabled())
-              log.debug("AggregatedUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
-          stmt.executeUpdate(sQuery);
-        }
-        // write out folder attributes
-        for (Enumeration e = ssup.getFolders(); e.hasMoreElements();) {
-          String folderId = (String)e.nextElement();
-          for (Enumeration attre = ssup.getFolderAttributeNames(); attre.hasMoreElements();) {
-            String pName = (String)attre.nextElement();
-            String pValue = ssup.getDefinedFolderAttributeValue(folderId, pName);
-            if (pValue != null) {
-              // store user preferences
-              String sQuery = "SELECT PARAM_VAL FROM UP_SS_USER_ATTS WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId
-                  + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND STRUCT_ID=" + folderId + " AND PARAM_NAME='" + pName
-                  + "' AND PARAM_TYPE=2";
-              if (log.isDebugEnabled())
-                  log.debug("AggregatedUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
-              ResultSet rs = stmt.executeQuery(sQuery);
-              if (rs.next()) {
-                // update
-                sQuery = "UPDATE UP_SS_USER_ATTS SET PARAM_VAL='" + pValue + "' WHERE USER_ID=" + userId + " AND PROFILE_ID="
-                    + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND STRUCT_ID=" + folderId + " AND PARAM_NAME='"
-                    + pName + "' AND PARAM_TYPE=2";
+          con = RDBMServices.getConnection();
+          // Set autocommit false for the connection
+          int stylesheetId = ssup.getStylesheetId();
+          RDBMServices.setAutoCommit(con, false);
+          
+          // write out params
+          for (Enumeration e = ssup.getParameterValues().keys(); e.hasMoreElements();) {
+              String pName = (String)e.nextElement();
+              // see if the parameter was already there
+              PreparedStatement selectStmt = null;
+              try {
+                  final String sQuery = "SELECT PARAM_VAL FROM UP_SS_USER_PARM WHERE USER_ID=? AND PROFILE_ID=? AND SS_ID=? AND SS_TYPE=1 AND PARAM_NAME=?";
+                  selectStmt = con.prepareStatement(sQuery);
+                  selectStmt.setInt(1, userId);
+                  selectStmt.setInt(2, profileId);
+                  selectStmt.setInt(3, stylesheetId);
+                  selectStmt.setString(4, pName);
+                  if (log.isDebugEnabled())
+                      log.debug("AggregatedUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
+                  ResultSet rs = null;
+                  try {
+                      rs = selectStmt.executeQuery();
+                      String query = null;
+                      if (rs.next()) {
+                           // update
+                          query = "UPDATE UP_SS_USER_PARM SET PARAM_VAL=? WHERE USER_ID=? AND PROFILE_ID=? AND SS_ID=? AND SS_TYPE=? AND PARAM_NAME=?"; 
+                      }
+                      else {
+                           // insert
+                          query = "INSERT INTO UP_SS_USER_PARM (PARAM_VAL,USER_ID,PROFILE_ID,SS_ID,SS_TYPE,PARAM_NAME) VALUES (?,?,?,?,?,?)";
+                      }
+                      PreparedStatement insertStmt = null;
+                      try {
+                          insertStmt = con.prepareStatement(query);
+                          insertStmt.setString(1, ssup.getParameterValue(pName));
+                          insertStmt.setInt(2, userId);
+                          insertStmt.setInt(3, profileId);
+                          insertStmt.setInt(4, stylesheetId);
+                          insertStmt.setInt(5, 1);
+                          insertStmt.setString(6, pName);
+                          if (log.isDebugEnabled())
+                              log.debug("AggregatedUserLayoutStore::setStructureStylesheetUserPreferences(): " + query);
+                          insertStmt.executeUpdate();
+                      } finally {
+                          try { insertStmt.close(); } catch (Exception ee) {}
+                      }
+                  } finally {
+                      try { rs.close(); } catch (Exception ee) {}
+                  }
+              } finally {
+                  try { selectStmt.close(); } catch (Exception ee) {}
               }
-              else {
-                // insert
-                sQuery = "INSERT INTO UP_SS_USER_ATTS (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,STRUCT_ID,PARAM_NAME,PARAM_TYPE,PARAM_VAL) VALUES ("
-                    + userId + "," + profileId + "," + stylesheetId + ",1," + folderId + ",'" + pName + "',2,'" + pValue
-                    + "')";
-              }
-              if (log.isDebugEnabled())
-                  log.debug("AggregatedUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
-              stmt.executeUpdate(sQuery);
-            }
           }
-        }
-        // write out channel attributes
-        for (Enumeration e = ssup.getChannels(); e.hasMoreElements();) {
-          String channelId = (String)e.nextElement();
-          for (Enumeration attre = ssup.getChannelAttributeNames(); attre.hasMoreElements();) {
-            String pName = (String)attre.nextElement();
-            String pValue = ssup.getDefinedChannelAttributeValue(channelId, pName);
-            if (pValue != null) {
-              // store user preferences
-              String sQuery = "SELECT PARAM_VAL FROM UP_SS_USER_ATTS WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId
-                  + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND STRUCT_ID=" + channelId + " AND PARAM_NAME='" + pName
-                  + "' AND PARAM_TYPE=3";
-              if (log.isDebugEnabled())
-                  log.debug("AggregatedUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
-              ResultSet rs = stmt.executeQuery(sQuery);
-              if (rs.next()) {
-                // update
-                sQuery = "UPDATE UP_SS_USER_ATTS SET PARAM_VAL='" + pValue + "' WHERE USER_ID=" + userId + " AND PROFILE_ID="
-                    + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND STRUCT_ID=" + channelId + " AND PARAM_NAME='"
-                    + pName + "' AND PARAM_TYPE=3";
+          
+          final String _sQuery = "SELECT PARAM_VAL FROM UP_SS_USER_ATTS WHERE USER_ID=? AND PROFILE_ID=? AND SS_ID=? AND SS_TYPE=1 AND STRUCT_ID=? AND PARAM_NAME=? AND PARAM_TYPE=2";
+          final String _sUpdateQuery = "UPDATE UP_SS_USER_ATTS SET PARAM_VAL=? WHERE USER_ID=? AND PROFILE_ID=? AND SS_ID=? AND SS_TYPE=1 AND STRUCT_ID=? AND PARAM_NAME=? AND PARAM_TYPE=2"; 
+          final String _sInsertQuery = "INSERT INTO UP_SS_USER_ATTS (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,STRUCT_ID,PARAM_NAME,PARAM_TYPE,PARAM_VAL) VALUES (?,?,?,1,?,?,2,?)";
+          // write out folder attributes
+          for (Enumeration e = ssup.getFolders(); e.hasMoreElements();) {
+              String folderId = (String)e.nextElement();
+              for (Enumeration attre = ssup.getFolderAttributeNames(); attre.hasMoreElements();) {
+                  String pName = (String)attre.nextElement();
+                  String pValue = ssup.getDefinedFolderAttributeValue(folderId, pName);
+                  if (pValue != null) {
+                      
+                      PreparedStatement selectStmt = null;
+                      try {
+                          selectStmt = con.prepareStatement(_sQuery);
+                          selectStmt.setInt(1, userId);
+                          selectStmt.setInt(2, profileId);
+                          selectStmt.setInt(3, stylesheetId);
+                          selectStmt.setInt(4, new Integer (folderId).intValue());
+                          selectStmt.setString(5, pName);
+                          if (log.isDebugEnabled())
+                              log.debug("AggregatedUserLayoutStore::setStructureStylesheetUserPreferences(): " + _sQuery);
+                          ResultSet rs = null;
+                          try {
+                              rs = selectStmt.executeQuery();
+                              if (rs.next()) {
+                                  // update
+                                  PreparedStatement updateStmt = null;
+                                  try {
+                                      updateStmt = con.prepareStatement(_sUpdateQuery);
+                                      updateStmt.setString(1, pValue);
+                                      updateStmt.setInt(2, userId);
+                                      updateStmt.setInt(3, profileId);
+                                      updateStmt.setInt(4, stylesheetId);
+                                      updateStmt.setInt(5, new Integer (folderId).intValue());
+                                      updateStmt.setString(6, pName);
+                                      if (log.isDebugEnabled())
+                                          log.debug("AggregatedUserLayoutStore::setStructureStylesheetUserPreferences(): " + _sUpdateQuery);
+                                      updateStmt.executeUpdate();
+                                  } finally {
+                                      try { updateStmt.close(); } catch (Exception ee) {}
+                                  }
+                              }
+                              else {
+                                  // insert
+                                  PreparedStatement insertStmt = null;
+                                  try {
+                                      insertStmt = con.prepareStatement(_sInsertQuery);
+                                      insertStmt.setInt(1, userId);
+                                      insertStmt.setInt(2, profileId);
+                                      insertStmt.setInt(3, stylesheetId);
+                                      insertStmt.setInt(4, new Integer (folderId).intValue());    	                
+                                      insertStmt.setString(5, pName);
+                                      insertStmt.setString(6, pValue);
+                                      if (log.isDebugEnabled())
+                                          log.debug("AggregatedUserLayoutStore::setStructureStylesheetUserPreferences(): " + _sInsertQuery);
+                                      insertStmt.executeUpdate();
+                                  } finally {
+                                      try { insertStmt.close(); } catch (Exception ee) {}
+                                  }
+                              }
+                          } finally {
+                              try { rs.close(); } catch (Exception ee) {}
+                          }
+                      } finally {
+                          try { selectStmt.close(); } catch (Exception ee) {}
+                      }
+                  }
               }
-              else {
-                // insert
-                sQuery = "INSERT INTO UP_SS_USER_ATTS (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,STRUCT_ID,PARAM_NAME,PARAM_TYPE,PARAM_VAL) VALUES ("
-                    + userId + "," + profileId + "," + stylesheetId + ",1," + channelId + ",'" + pName + "',3,'" + pValue
-                    + "')";
-              }
-              if (log.isDebugEnabled())
-                  log.debug("AggregatedUserLayoutStore::setStructureStylesheetUserPreferences(): " + sQuery);
-              stmt.executeUpdate(sQuery);
-            }
           }
-        }
-        // Commit the transaction
-        RDBMServices.commit(con);
-      } catch (Exception e) {
-        // Roll back the transaction
-        RDBMServices.rollback(con);
-        throw  e;
+          // store user preferences
+          final String _chanQuery = "SELECT PARAM_VAL FROM UP_SS_USER_ATTS WHERE USER_ID=? AND PROFILE_ID=? AND SS_ID=? AND SS_TYPE=1 AND STRUCT_ID=? AND PARAM_NAME=? AND PARAM_TYPE=3";
+          final String _chanUpdateQuery = "UPDATE UP_SS_USER_ATTS SET PARAM_VAL=? WHERE USER_ID=? AND PROFILE_ID=? AND SS_ID=? AND SS_TYPE=1 AND STRUCT_ID=? AND PARAM_NAME=? AND PARAM_TYPE=3";
+          final String _chanInsertQuery = "INSERT INTO UP_SS_USER_ATTS (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,STRUCT_ID,PARAM_NAME,PARAM_TYPE,PARAM_VAL) VALUES (?,?,?,1,?,?,3,?)";
+          // write out channel attributes
+          for (Enumeration e = ssup.getChannels(); e.hasMoreElements();) {
+              String channelId = (String)e.nextElement();
+              for (Enumeration attre = ssup.getChannelAttributeNames(); attre.hasMoreElements();) {
+                  String pName = (String)attre.nextElement();
+                  String pValue = ssup.getDefinedChannelAttributeValue(channelId, pName);
+                  if (pValue != null) {
+                      PreparedStatement selectStmt = null;
+                      try {
+                          selectStmt = con.prepareStatement(_chanQuery);
+                          selectStmt.setInt(1, userId);
+                          selectStmt.setInt(2, profileId);
+                          selectStmt.setInt(3, stylesheetId);
+                          selectStmt.setInt(4, new Integer (channelId).intValue());
+                          selectStmt.setString(5, pName);
+                          if (log.isDebugEnabled())
+                              log.debug("AggregatedUserLayoutStore::setStructureStylesheetUserPreferences(): " + _chanQuery);
+                          ResultSet rs = null;
+                          try {
+                              rs = selectStmt.executeQuery();
+                              if (rs.next()) {
+                                  // update
+                                  PreparedStatement updateStmt = null;
+                                  try {
+                                      updateStmt = con.prepareStatement(_chanUpdateQuery);
+                                      updateStmt.setString(1, pValue);
+                                      updateStmt.setInt(2, userId);
+                                      updateStmt.setInt(3, profileId);
+                                      updateStmt.setInt(4, stylesheetId);
+                                      updateStmt.setInt(5, new Integer (channelId).intValue());
+                                      updateStmt.setString(6, pName);
+                                      if (log.isDebugEnabled())
+                                          log.debug("AggregatedUserLayoutStore::setStructureStylesheetUserPreferences(): " + _chanUpdateQuery);
+                                      updateStmt.executeUpdate();
+                                  } finally {
+                                      try { updateStmt.close(); } catch (Exception ee) {}
+                                  }
+                              }
+                              else {
+                                  // insert
+                                  PreparedStatement insertStmt = null;
+                                  try {
+                                      insertStmt = con.prepareStatement(_chanInsertQuery);
+                                      insertStmt.setInt(1, userId);
+                                      insertStmt.setInt(2, profileId);
+                                      insertStmt.setInt(3, stylesheetId);
+                                      insertStmt.setInt(4, new Integer (channelId).intValue());    	                
+                                      insertStmt.setString(5, pName);
+                                      insertStmt.setString(6, pValue);
+                                      if (log.isDebugEnabled())
+                                          log.debug("AggregatedUserLayoutStore::setStructureStylesheetUserPreferences(): " + _chanInsertQuery);
+                                      insertStmt.executeUpdate();
+                                  } finally {
+                                      try { insertStmt.close(); } catch (Exception ee) {}
+                                  }
+                              }
+                          } finally {
+                              try { rs.close(); } catch (Exception ee) {}
+                          }
+                      } finally {
+                          try { selectStmt.close(); } catch (Exception ee) {}
+                      }
+                  }
+              }
+          }
+          RDBMServices.commit(con);
+      }catch (Exception e) {
+          // Roll back the transaction
+          RDBMServices.rollback(con);
+          throw  e;
       } finally {
-        stmt.close();
+          RDBMServices.releaseConnection(con);
       }
-    } finally {
-      RDBMServices.releaseConnection(con);
-    }
   }
 
   public void setThemeStylesheetUserPreferences (IPerson person, int profileId, ThemeStylesheetUserPreferences tsup) throws Exception {
     int userId = person.getID();
-    Connection con = RDBMServices.getConnection();
+    Connection con = null;
     try {
-      // Set autocommit false for the connection
+      con = RDBMServices.getConnection();
       int stylesheetId = tsup.getStylesheetId();
+      // Set autocommit false for the connection
       RDBMServices.setAutoCommit(con, false);
-      Statement stmt = con.createStatement();
-      try {
-        // write out params
-        for (Enumeration e = tsup.getParameterValues().keys(); e.hasMoreElements();) {
-          String pName = (String)e.nextElement();
+      // write out params
+      final String sQuery = "SELECT PARAM_VAL FROM UP_SS_USER_PARM WHERE USER_ID=? AND PROFILE_ID=? AND SS_ID=? AND SS_TYPE=2 AND PARAM_NAME=?";
+      final String sUpdateQuery = "UPDATE UP_SS_USER_PARM SET PARAM_VAL=? WHERE USER_ID=? AND PROFILE_ID=? AND SS_ID=? AND SS_TYPE=2 AND PARAM_NAME=?"; 
+      final String sInsertQuery = "INSERT INTO UP_SS_USER_PARM (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,PARAM_NAME,PARAM_VAL) VALUES (?,?,?,?,?,?)";
+
+      for (Enumeration e = tsup.getParameterValues().keys(); e.hasMoreElements();) {
+        String pName = (String)e.nextElement();
+        PreparedStatement selectStmt = null;
+        try {
           // see if the parameter was already there
-          String sQuery = "SELECT PARAM_VAL FROM UP_SS_USER_PARM WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId
-              + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=2 AND PARAM_NAME='" + pName + "'";
+		  // fix for escaping column entries
+          // String sQuery = "SELECT PARAM_VAL FROM UP_SS_USER_PARM WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId
+		  //   + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=2 AND PARAM_NAME='" + pName + "'";
+          selectStmt = con.prepareStatement(sQuery);
+          selectStmt.setInt(1, userId);
+          selectStmt.setInt(2, profileId);
+          selectStmt.setInt(3, stylesheetId);
+          selectStmt.setString(4, pName);
           if (log.isDebugEnabled())
               log.debug("AggregatedUserLayoutStore::setThemeStylesheetUserPreferences(): " + sQuery);
-          ResultSet rs = stmt.executeQuery(sQuery);
-          if (rs.next()) {
-            // update
-            sQuery = "UPDATE UP_SS_USER_PARM SET PARAM_VAL='" + tsup.getParameterValue(pName) + "' WHERE USER_ID=" + userId
-                + " AND PROFILE_ID=" + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=2 AND PARAM_NAME='" + pName
-                + "'";
-          }
-          else {
-            // insert
-            sQuery = "INSERT INTO UP_SS_USER_PARM (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,PARAM_NAME,PARAM_VAL) VALUES (" + userId
-                + "," + profileId + "," + stylesheetId + ",2,'" + pName + "','" + tsup.getParameterValue(pName) + "')";
-          }
-          if (log.isDebugEnabled())
-              log.debug("AggregatedUserLayoutStore::setThemeStylesheetUserPreferences(): " + sQuery);
-          stmt.executeUpdate(sQuery);
-        }
-        // write out channel attributes
-        for (Enumeration e = tsup.getChannels(); e.hasMoreElements();) {
-          String channelId = (String)e.nextElement();
-          for (Enumeration attre = tsup.getChannelAttributeNames(); attre.hasMoreElements();) {
-            String pName = (String)attre.nextElement();
-            String pValue = tsup.getDefinedChannelAttributeValue(channelId, pName);
-            if (pValue != null) {
-              // store user preferences
-              String sQuery = "SELECT PARAM_VAL FROM UP_SS_USER_ATTS WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId
-                  + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=2 AND STRUCT_ID=" + channelId.substring(1) + " AND PARAM_NAME='" + pName
-                  + "' AND PARAM_TYPE=3";
-              if (log.isDebugEnabled())
-                  log.debug("AggregatedUserLayoutStore::setThemeStylesheetUserPreferences(): " + sQuery);
-              ResultSet rs = stmt.executeQuery(sQuery);
-              if (rs.next()) {
-                // update
-                sQuery = "UPDATE UP_SS_USER_ATTS SET PARAM_VAL='" + pValue + "' WHERE USER_ID=" + userId + " AND PROFILE_ID="
-                    + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=2 AND STRUCT_ID=" + channelId.substring(1) + " AND PARAM_NAME='"
-                    + pName + "' AND PARAM_TYPE=3";
-              }
-              else {
-                // insert
-                sQuery = "INSERT INTO UP_SS_USER_ATTS (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,STRUCT_ID,PARAM_NAME,PARAM_TYPE,PARAM_VAL) VALUES ("
-                    + userId + "," + profileId + "," + stylesheetId + ",2," + channelId.substring(1) + ",'" + pName + "',3,'" + pValue
-                    + "')";
-              }
-              if (log.isDebugEnabled())
-                  log.debug("AggregatedUserLayoutStore::setThemeStylesheetUserPreferences(): " + sQuery);
-              stmt.executeUpdate(sQuery);
+          ResultSet rs = null;
+          try {
+	          rs = selectStmt.executeQuery();
+	          if (rs.next()) {
+	              // update
+	              // CSU Chico fix for escaping column entries  
+				  // sQuery = "UPDATE UP_SS_USER_PARM SET PARAM_VAL='" + tsup.getParameterValue(pName) + "' WHERE USER_ID=" + userId
+				  //  + " AND PROFILE_ID=" + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=2 AND PARAM_NAME='" + pName
+				  //  + "'";
+	              PreparedStatement updateStmt = null;
+	              try {
+	                updateStmt = con.prepareStatement(sUpdateQuery);
+	                updateStmt.setString(1, tsup.getParameterValue(pName));
+	                updateStmt.setInt(2, userId);
+	                updateStmt.setInt(3, profileId);
+	                updateStmt.setInt(4, stylesheetId);
+	                updateStmt.setString(5, pName);
+                    if (log.isDebugEnabled())
+                        log.debug("AggregatedUserLayoutStore::setThemeStylesheetUserPreferences(): " + sUpdateQuery);
+	                updateStmt.executeUpdate();
+	              } catch (Exception eex){
+	                  // should we throw exception or just simply allow for this one 2 fail and attempt the rest since these are just theme attributes?
+	              } finally {
+	    	          try { updateStmt.close(); } catch (Exception ee) {}
+	              }
+	          }
+	          else {
+	              // insert
+	              // CSU Chico fix for escaping column entries  
+	              // sQuery = "INSERT INTO UP_SS_USER_PARM (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,PARAM_NAME,PARAM_VAL) VALUES (" + userId
+	              // + "," + profileId + "," + stylesheetId + ",2,'" + pName + "','" + tsup.getParameterValue(pName) + "')";	
+	              PreparedStatement insertStmt = null;
+	              try {
+	                insertStmt = con.prepareStatement(sInsertQuery);
+	                insertStmt.setInt(1, userId);
+	                insertStmt.setInt(2, profileId);
+	                insertStmt.setInt(3, stylesheetId);
+	                insertStmt.setInt(4, 2);
+	                insertStmt.setString(5, pName);
+	                insertStmt.setString(6, tsup.getParameterValue(pName));
+                    if (log.isDebugEnabled())
+                        log.debug("AggregatedUserLayoutStore::setThemeStylesheetUserPreferences(): " + sInsertQuery);
+	                insertStmt.executeUpdate();
+	              } catch (Exception eex){
+	              } finally {
+	    	          try { insertStmt.close(); } catch (Exception ee) {}
+	              }
+	          }
+	      } finally {
+	          try { rs.close(); } catch (Exception ee) {}
+	      }
+	    } finally {
+          try { selectStmt.close(); } catch (Exception ee) {}
+	    }
+      }
+
+      final String _sSelectQuery = "SELECT PARAM_VAL FROM UP_SS_USER_ATTS WHERE USER_ID=? AND PROFILE_ID=? AND SS_ID=? AND SS_TYPE=2 AND STRUCT_ID=? AND PARAM_NAME=? AND PARAM_TYPE=3";
+      final String _sUpdateQuery = "UPDATE UP_SS_USER_ATTS SET PARAM_VAL=? WHERE USER_ID=? AND PROFILE_ID=? AND SS_ID=? AND SS_TYPE=2 AND STRUCT_ID=? AND PARAM_NAME=? AND PARAM_TYPE=3";
+      final String _sInsertQuery = "INSERT INTO UP_SS_USER_ATTS (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,STRUCT_ID,PARAM_NAME,PARAM_TYPE,PARAM_VAL) VALUES (?,?,?,?,?,?,?,?)";
+
+      // write out channel attributes
+      for (Enumeration e = tsup.getChannels(); e.hasMoreElements();) {
+        String channelId = (String)e.nextElement();
+        for (Enumeration attre = tsup.getChannelAttributeNames(); attre.hasMoreElements();) {
+          String pName = (String)attre.nextElement();
+          String pValue = tsup.getDefinedChannelAttributeValue(channelId, pName);
+          if (pValue != null) {
+            // store user preferences
+			// String sQuery = "SELECT PARAM_VAL FROM UP_SS_USER_ATTS WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId
+			//  + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=2 AND STRUCT_ID=" + channelId.substring(1) + " AND PARAM_NAME='" + pName
+			//  + "' AND PARAM_TYPE=3";
+            PreparedStatement pssq = null;
+            try {
+                pssq = con.prepareStatement(_sSelectQuery);
+                pssq.setInt(1, userId);
+                pssq.setInt(2, profileId);
+                pssq.setInt(3, stylesheetId);
+                pssq.setInt(4, new Integer (channelId.substring(1)).intValue());
+                pssq.setString(5, pName);
+                if (log.isDebugEnabled())
+                    log.debug("AggregatedUserLayoutStore::setThemeStylesheetUserPreferences(): " + _sSelectQuery);
+                ResultSet rs = null;
+                try {
+                  rs = pssq.executeQuery();
+                  if (rs.next()) {
+                      // update
+					  // sQuery = "UPDATE UP_SS_USER_ATTS SET PARAM_VAL='" + pValue + "' WHERE USER_ID=" + userId + " AND PROFILE_ID="
+					  //  + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=2 AND STRUCT_ID=" + channelId.substring(1) + " AND PARAM_NAME='"
+					  //  + pName + "' AND PARAM_TYPE=3";
+    	              PreparedStatement updateStmt = null;
+    	              try {
+    	                updateStmt = con.prepareStatement(_sUpdateQuery);
+    	                updateStmt.setString(1, pValue);
+    	                updateStmt.setInt(2, userId);
+    	                updateStmt.setInt(3, profileId);
+    	                updateStmt.setInt(4, stylesheetId);
+    	                updateStmt.setInt(5, new Integer (channelId.substring(1)).intValue());
+    	                updateStmt.setString(6, pName);
+                        if (log.isDebugEnabled())
+                            log.debug("AggregatedUserLayoutStore::setThemeStylesheetUserPreferences(): " + _sUpdateQuery);
+    	                updateStmt.executeUpdate();
+    	              } finally {
+    	    	          try { updateStmt.close(); } catch (Exception ee) {}
+    	              }
+    	          }
+    	          else {
+                      // insert
+					  // sQuery = "INSERT INTO UP_SS_USER_ATTS (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,STRUCT_ID,PARAM_NAME,PARAM_TYPE,PARAM_VAL) VALUES ("
+					  // + userId + "," + profileId + "," + stylesheetId + ",2," + channelId.substring(1) + ",'" + pName + "',3,'" + pValue
+					  // + "')";
+    	              PreparedStatement insertStmt = null;
+    	              try {
+    	                insertStmt = con.prepareStatement(_sInsertQuery);
+    	                insertStmt.setInt(1, userId);
+    	                insertStmt.setInt(2, profileId);
+    	                insertStmt.setInt(3, stylesheetId);
+    	                insertStmt.setInt(4, 2);
+    	                insertStmt.setInt(5, new Integer (channelId.substring(1)).intValue());
+    	                insertStmt.setString(6, pName);
+    	                insertStmt.setInt(7, 3);
+    	                insertStmt.setString(8, pValue);
+                        if (log.isDebugEnabled())
+                            log.debug("AggregatedUserLayoutStore::setThemeStylesheetUserPreferences(): " + _sInsertQuery);
+    	                insertStmt.executeUpdate();
+    	              } finally {
+    	    	          try { insertStmt.close(); } catch (Exception ee) {}
+    	              }
+    	          }
+      	      } catch (Exception ex) {
+    	          // Roll back the transaction
+    		      // RDBMServices.rollback(con);
+    		      throw  ex;
+    	      } finally {
+    	          try { rs.close(); } catch (Exception ee) {}
+    	      }
+            } catch (Exception eex){
+  		        throw  eex;
+            } finally {
+	          try { pssq.close(); } catch (Exception ee) {}
             }
           }
         }
-        // Commit the transaction
-        RDBMServices.commit(con);
-      } catch (Exception e) {
+      }
+      // Commit the transaction
+      RDBMServices.commit(con);
+    } catch (Exception e) {
         // Roll back the transaction
         RDBMServices.rollback(con);
         throw  e;
-      } finally {
-        stmt.close();
-      }
     } finally {
-      RDBMServices.releaseConnection(con);
+        RDBMServices.releaseConnection(con);
     }
   }
 
@@ -1349,60 +1547,143 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
        throw new PortalException("The user layout object should have \"AggregatedLayout\" type");
 
     AggregatedLayout layout = (AggregatedLayout) layoutImpl;
-
     int userId = person.getID();
     int profileId=profile.getProfileId();
     int layoutId = Integer.parseInt(layoutImpl.getId());
-
-    Connection con = RDBMServices.getConnection();
-
-    try {
-
+    
+    Connection con = null;
+    
+	try {
+	
+	  con  = RDBMServices.getConnection();
       RDBMServices.setAutoCommit(con, false);
 
-      Statement stmt = con.createStatement();
-
-      String sQuery = "SELECT LAYOUT_ID FROM UP_USER_PROFILE WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId;
-      ResultSet rs = stmt.executeQuery(sQuery);
-      if (rs.next()) {
-          rs.getInt(1);
-          if ( rs.wasNull() ) {
-              sQuery = "UPDATE UP_USER_PROFILE SET LAYOUT_ID="+layoutId+" WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId;
-              stmt.executeUpdate(sQuery);
+      PreparedStatement psSelect = null;
+      final String sQuery = "SELECT LAYOUT_ID FROM UP_USER_PROFILE WHERE USER_ID=? AND PROFILE_ID=?";
+      try {
+          psSelect = con.prepareStatement(sQuery);
+          psSelect.setInt(1, userId);
+          psSelect.setInt(2, profileId);
+    	  ResultSet rs = null;
+    	  try {
+              rs = psSelect.executeQuery();
+         	  if (rs.next()) {
+         	  	rs.getInt(1);
+         		if ( rs.wasNull() ) {
+                    final String sUpdateProfileQuery = "UPDATE UP_USER_PROFILE SET LAYOUT_ID=? WHERE USER_ID=? AND PROFILE_ID=?";
+                    PreparedStatement psUpdateUserProfile = null;
+                    try {
+                        psUpdateUserProfile = con.prepareStatement(sUpdateProfileQuery);
+                        psUpdateUserProfile.setInt(1,layoutId);
+                        psUpdateUserProfile.setInt(2,userId);
+                        psUpdateUserProfile.setInt(3, profileId);
+                        if (log.isDebugEnabled())
+                            log.debug("AggregatedUserLayoutStore::setAggregatedLayout(): " + sUpdateProfileQuery);
+                        psUpdateUserProfile.executeUpdate();
+                    } finally {
+                        if (psUpdateUserProfile != null){
+                            try { psUpdateUserProfile.close(); } catch (Exception e){}
+                        }
+                    }
+         		}
+         	  }
+          } finally {
+            if (rs != null){
+                try {rs.close();} catch (Exception e) {}
+            }
+          }
+      } finally {
+          if (psSelect != null){
+              try { psSelect.close(); } catch (Exception e){}
           }
       }
-      rs.close();   
-
-      sQuery = "SELECT INIT_NODE_ID FROM UP_USER_LAYOUT_AGGR WHERE USER_ID=" + userId + " AND LAYOUT_ID=" + layoutId;
+          
+      
+      final String sSelectInitQuery = "SELECT INIT_NODE_ID FROM UP_USER_LAYOUT_AGGR WHERE USER_ID=? AND LAYOUT_ID=?";
       if (log.isDebugEnabled())
-          log.debug("AggregatedUserLayoutStore::setAggregatedLayout(): " + sQuery);
+          log.debug("AggregatedUserLayoutStore::setAggregatedLayout(): " + sSelectInitQuery);
       String firstNodeId = layout.getLayoutFolder(layout.getRootId()).getFirstChildNodeId();
-      rs = stmt.executeQuery(sQuery);
-      if ( !rs.next() ) {
-         sQuery = "INSERT INTO UP_USER_LAYOUT_AGGR (LAYOUT_ID,USER_ID,LAYOUT_TITLE,INIT_NODE_ID) VALUES ("+layoutId+","+userId+",'"+person.getFullName()+" layout',"
-                  +firstNodeId+")";
-      } else {
-         sQuery = "UPDATE UP_USER_LAYOUT_AGGR SET INIT_NODE_ID="+firstNodeId+" WHERE LAYOUT_ID="+layoutId+" AND USER_ID="+userId;
-        }
-      if (log.isDebugEnabled())
-          log.debug("AggregatedUserLayoutStore::setAggregatedLayout(): " + sQuery);
-      stmt.executeUpdate(sQuery);
-      if ( rs != null ) rs.close();
-
+      PreparedStatement psSelectInit = null;
+      try {
+          psSelectInit = con.prepareStatement(sSelectInitQuery);
+          psSelectInit.setInt(1,userId);
+          psSelectInit.setInt(2,layoutId);
+          ResultSet rsInit = null;
+          try {
+              rsInit = psSelectInit.executeQuery();
+              if ( !rsInit.next() ) {
+                 final String insertLayoutQuery = "INSERT INTO UP_USER_LAYOUT_AGGR (LAYOUT_ID,USER_ID,LAYOUT_TITLE,INIT_NODE_ID) VALUES (?,?,?,?)";
+                 PreparedStatement psInsertLayout = null;
+                 try {
+                     psInsertLayout = con.prepareStatement(insertLayoutQuery);
+        			 psInsertLayout.setInt(1,layoutId);
+        			 psInsertLayout.setInt(2,userId);
+        			 psInsertLayout.setString(3, new String (person.getFullName()+" layout"));
+        			 psInsertLayout.setInt(4,Integer.parseInt(firstNodeId));
+                     if (log.isDebugEnabled())
+                         log.debug("AggregatedUserLayoutStore::setAggregatedLayout(): "+insertLayoutQuery+ "  with values ("+layoutId+", "+userId+", "+new String (person.getFullName()+" layout")+", "+firstNodeId+")");
+        			 psInsertLayout.executeUpdate();
+                 } finally {
+                     if (psInsertLayout != null){
+                         try { psInsertLayout.close(); } catch (Exception e){}
+                     }
+                 }
+             } else {
+                 final String sUpdateQuery = "UPDATE UP_USER_LAYOUT_AGGR SET INIT_NODE_ID=? WHERE LAYOUT_ID=? AND USER_ID=?";
+                 PreparedStatement psUpdateLayout = null;
+                 try {
+                     psUpdateLayout = con.prepareStatement(sUpdateQuery);
+                     psUpdateLayout.setInt(1,Integer.parseInt(firstNodeId));
+                     psUpdateLayout.setInt(2,layoutId);
+                     psUpdateLayout.setInt(3, userId);
+                     if (log.isDebugEnabled())
+                         log.debug("AggregatedUserLayoutStore::setAggregatedLayout(): " + sUpdateQuery);
+                     psUpdateLayout.executeUpdate();
+                 } finally {
+                     if (psUpdateLayout != null){
+                         try { psUpdateLayout.close(); } catch (Exception e){}
+                     }
+                 }
+             }
+          } finally {
+              if (rsInit != null){
+                  try { rsInit.close(); } catch (Exception e){}
+              }
+          }
+      } finally {
+          if (psSelectInit != null){
+              try { psSelectInit.close(); } catch (Exception e){}
+          }
+      }
+      
       // Clear the previous data related to the user layout
-      PreparedStatement psDeleteLayout = con.prepareStatement("DELETE FROM UP_LAYOUT_STRUCT_AGGR WHERE USER_ID=? AND LAYOUT_ID=?");
-      // Deleting the node from the user layout
-      psDeleteLayout.setInt(1,userId);
-      psDeleteLayout.setInt(2,layoutId);
-      psDeleteLayout.executeUpdate();
+      PreparedStatement psDeleteLayout = null;
+      try {
+          psDeleteLayout = con.prepareStatement("DELETE FROM UP_LAYOUT_STRUCT_AGGR WHERE USER_ID=? AND LAYOUT_ID=?");
+          // Deleting the node from the user layout
+          psDeleteLayout.setInt(1,userId);
+          psDeleteLayout.setInt(2,layoutId);
+          psDeleteLayout.executeUpdate();
+      } finally {
+          if (psDeleteLayout != null){
+              try { psDeleteLayout.close(); } catch (Exception e){}
+          }
+      }
 
+      
       // Deleting restrictions for regular nodes
-      PreparedStatement psDeleteLayoutRestriction = con.prepareStatement("DELETE FROM UP_LAYOUT_RESTRICTIONS WHERE USER_ID=? AND LAYOUT_ID=?");
-      // Deleting restrictions for the node
-      psDeleteLayoutRestriction.setInt(1,userId);
-      psDeleteLayoutRestriction.setInt(2,layoutId);
-      psDeleteLayoutRestriction.executeUpdate();
-
+      PreparedStatement psDeleteLayoutRestriction = null;
+      try {
+          psDeleteLayoutRestriction = con.prepareStatement("DELETE FROM UP_LAYOUT_RESTRICTIONS WHERE USER_ID=? AND LAYOUT_ID=?");
+          // Deleting restrictions for the node
+          psDeleteLayoutRestriction.setInt(1,userId);
+          psDeleteLayoutRestriction.setInt(2,layoutId);
+          psDeleteLayoutRestriction.executeUpdate();
+      } finally {
+          if (psDeleteLayoutRestriction != null){
+              try { psDeleteLayoutRestriction.close(); } catch (Exception e){}
+          }
+      }
 
       // Add prepared statements
       PreparedStatement  psAddLayoutNode = con.prepareStatement(LAYOUT_ADD_SQL);
@@ -1435,39 +1716,30 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                     }
                }*/
 
-                 addUserLayoutNode(userId,layoutId,node,psAddLayoutNode,psAddLayoutRestriction,null,null,stmt);
-              
-             rs.close();
+                 addUserLayoutNode(userId,layoutId,node,psAddLayoutNode,psAddLayoutRestriction,null,null,null);
          }   
  
         } // End if
        } // End for
 
-
-      if ( stmt != null ) stmt.close();
-
-      // Commit all the changes
+       // Commit all the changes
       RDBMServices.commit(con);
 
-      if ( psDeleteLayout != null ) psDeleteLayout.close();
-      if ( psDeleteLayoutRestriction != null ) psDeleteLayoutRestriction.close();
-
-   
       if ( psAddLayoutNode != null ) psAddLayoutNode.close();
       if ( psAddLayoutRestriction != null ) psAddLayoutRestriction.close();
 
 
     } catch (Exception e) {
-        e.printStackTrace();
-        String errorMessage = e.getMessage();
-        try { RDBMServices.rollback(con); } catch ( SQLException sqle ) {
-           log.error( sqle.getMessage(), sqle );
-           errorMessage += ":" + sqle.getMessage();
+        log.error(e,e);
+        try { 
+        	RDBMServices.rollback(con); 
+        } catch ( Exception ee ) {
+            /*ignore*/
         }
-         throw new PortalException(errorMessage, e);
-      } finally {
-        RDBMServices.releaseConnection(con); 
-      }
+        throw new PortalException(e);
+    } finally {
+		RDBMServices.releaseConnection(con); 
+    }
  }
 
 
@@ -1855,17 +2127,6 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
           RDBMServices.commit(con); // Make sure it appears in the store
         } // end if layoutID == null
 
-        // we have to delete all the records from up_layout_struct_aggr table related to the lost nodes
-        stmt.executeUpdate("DELETE FROM UP_LAYOUT_STRUCT_AGGR WHERE USER_ID="+userId+" AND LAYOUT_ID="+layoutId+" AND PRNT_NODE_ID="+LOST_FOLDER_ID);
-
-        // Instantiating the layout and setting the layout ID
-        layout = new AggregatedLayout ( layoutId + "" );
-
-        String restrLayoutSQL = "SELECT RESTRICTION_NAME, RESTRICTION_VALUE, RESTRICTION_TREE_PATH FROM UP_LAYOUT_RESTRICTIONS "+
-                                      "WHERE LAYOUT_ID="+layoutId+" AND USER_ID="+userId+" AND NODE_ID=?";
-        String restrFragmentSQL = "SELECT RESTRICTION_NAME, RESTRICTION_VALUE, RESTRICTION_TREE_PATH FROM UP_FRAGMENT_RESTRICTIONS "+
-                                      "WHERE FRAGMENT_ID=? AND NODE_ID=?";
-
         int firstStructId = -1;
         String sQuery = "SELECT INIT_NODE_ID FROM UP_USER_LAYOUT_AGGR WHERE USER_ID=" + userId + " AND LAYOUT_ID = " + layoutId;
         if (log.isDebugEnabled())
@@ -1874,12 +2135,62 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         try {
           if ( rs.next() )
             firstStructId = rs.getInt(1);
-          else
-            throw new PortalException("AggregatedUserLayoutStore::getAggregatedLayout(): No INIT_NODE_ID in UP_USER_LAYOUT_AGGR for " + userId + " and LAYOUT_ID " + layoutId);
+          else {
+              if (userId == realUserId) {
+                  // read the template userid
+                  String tQuery = "SELECT USER_DFLT_USR_ID, USER_DFLT_LAY_ID FROM UP_USER WHERE USER_ID=" + userId;
+                  log.debug("AggregatedUserLayoutStore::getAggregatedLayout(): " + tQuery);
+                  rs = stmt.executeQuery(tQuery);
+                  try {
+                      if ( rs.next() ) {
+                          userId = rs.getInt(1);
+                          layoutId = rs.getInt(2);
+                      }
+                  } finally {
+                      rs.close();
+                  }
+                  if (userId != realUserId) {
+                      // retry reading the structid -- now from the template user
+                      sQuery = "SELECT INIT_NODE_ID FROM UP_USER_LAYOUT_AGGR WHERE USER_ID=" + userId + " AND LAYOUT_ID = " + layoutId;
+                      log.debug("AggregatedUserLayoutStore::getAggregatedLayout(): " + sQuery);
+                      rs = stmt.executeQuery(sQuery);
+                      try {
+                          if ( rs.next() )
+                              firstStructId = rs.getInt(1);
+                      } finally {
+                          rs.close();
+                      }
+                  }
+              }
+              if (firstStructId < 0)          
+                  throw new PortalException("AggregatedUserLayoutStore::getAggregatedLayout(): No INIT_NODE_ID in UP_USER_LAYOUT_AGGR for " + userId + " and LAYOUT_ID " + layoutId);
+          }
         } finally {
           rs.close();
         }
 
+        // we have to delete all the records from up_layout_struct_aggr table related to the lost nodes.
+        // do this only if we are not deferring to the template. (once in a great while 'we' will BE the template)
+        if (userId == realUserId){
+            /* end */
+            log.debug("deleting lost nodes because userId:"+userId+"== realUserId:"+realUserId);
+            stmt.executeUpdate("DELETE FROM UP_LAYOUT_STRUCT_AGGR WHERE USER_ID="+userId+" AND LAYOUT_ID="+layoutId+" AND PRNT_NODE_ID="+LOST_FOLDER_ID);
+        }else{
+            log.debug("not deleting lost nodes because userId:"+userId+"!= realUserId:"+realUserId);
+        }
+        
+        
+        // Instantiating the layout and setting the layout ID
+        layout = new AggregatedLayout ( layoutId + "" );
+        
+        String restrLayoutSQL = "SELECT RESTRICTION_NAME, RESTRICTION_VALUE, RESTRICTION_TREE_PATH FROM UP_LAYOUT_RESTRICTIONS "+
+                                      "WHERE LAYOUT_ID="+layoutId+" AND USER_ID="+userId+" AND NODE_ID=?";
+        String restrFragmentSQL = "SELECT RESTRICTION_NAME, RESTRICTION_VALUE, RESTRICTION_TREE_PATH FROM UP_FRAGMENT_RESTRICTIONS "+
+                                      "WHERE FRAGMENT_ID=? AND NODE_ID=?";
+        
+        
+        
+        
         // Creating a root folder
         rootNode = ALFolder.createRootFolder();
         // Setting the first layout node ID to the root folder
@@ -1900,26 +2211,32 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         }
         sqlLayout += " ULS.USER_ID="+userId+" AND ULS.LAYOUT_ID="+layoutId;
 
-        log.debug(sqlLayout);
-
+            log.debug(sqlLayout);
 
         // The query for getting information of the fragments
-        String sqlFragment = "SELECT UF.NODE_ID,UF.NEXT_NODE_ID,UF.CHLD_NODE_ID,UF.PREV_NODE_ID,UF.PRNT_NODE_ID,UF.CHAN_ID,UF.NAME,UF.TYPE,UF.HIDDEN,"+
-          "UF.UNREMOVABLE,UF.IMMUTABLE,UF.PRIORITY,UF.FRAGMENT_ID";
-        if (ALuseOuterJoins) {
-          sqlFragment += ",UFP.PARAM_NAME,UFP.PARAM_VALUE FROM UP_LAYOUT_STRUCT_AGGR ULS, " + fragmentJoinQuery;
-        } else {
-          sqlFragment += " FROM UP_FRAGMENTS UF, UP_LAYOUT_STRUCT_AGGR ULS WHERE ";
-        }
-        sqlFragment += "(ULS.USER_ID="+userId+" AND ULS.FRAGMENT_ID=UF.FRAGMENT_ID)";
-        if (pushFragmentIds!=null){
-            sqlFragment += " UNION SELECT UF.NODE_ID,UF.NEXT_NODE_ID,UF.CHLD_NODE_ID,UF.PREV_NODE_ID,UF.PRNT_NODE_ID,UF.CHAN_ID,UF.NAME,UF.TYPE,UF.HIDDEN,"+
-                           "UF.UNREMOVABLE,UF.IMMUTABLE,UF.PRIORITY,UF.FRAGMENT_ID" +
-                           " FROM UP_FRAGMENTS UF WHERE UF.FRAGMENT_ID IN ("+pushFragmentIds+")";
-        }
+        String sqlFragment = "SELECT DISTINCT UF.NODE_ID,UF.NEXT_NODE_ID,UF.CHLD_NODE_ID,UF.PREV_NODE_ID,UF.PRNT_NODE_ID,UF.CHAN_ID,UF.NAME,UF.TYPE,UF.HIDDEN,"+
+        "UF.UNREMOVABLE,UF.IMMUTABLE,UF.PRIORITY,UF.FRAGMENT_ID ";
+      sqlFragment += "FROM UP_FRAGMENTS UF, UP_LAYOUT_STRUCT_AGGR ULS ";
 
-        log.debug(sqlFragment); 
+      sqlFragment += "WHERE ULS.USER_ID="+userId+" AND ULS.FRAGMENT_ID=UF.FRAGMENT_ID ";
+
+      sqlFragment += "UNION ";
+      sqlFragment += "SELECT DISTINCT UF.NODE_ID,UF.NEXT_NODE_ID,UF.CHLD_NODE_ID,UF.PREV_NODE_ID,UF.PRNT_NODE_ID,UF.CHAN_ID,UF.NAME,UF.TYPE,UF.HIDDEN,"+
+        "UF.UNREMOVABLE,UF.IMMUTABLE,UF.PRIORITY,UF.FRAGMENT_ID ";
+      sqlFragment += "FROM UP_FRAGMENTS UF ";
+      sqlFragment += ((pushFragmentIds!=null)?"WHERE UF.FRAGMENT_ID IN ("+pushFragmentIds+")":"");
         
+//        String sqlFragment = "SELECT DISTINCT UF.NODE_ID,UF.NEXT_NODE_ID,UF.CHLD_NODE_ID,UF.PREV_NODE_ID,UF.PRNT_NODE_ID,UF.CHAN_ID,UF.NAME,UF.TYPE,UF.HIDDEN,"+
+//          "UF.UNREMOVABLE,UF.IMMUTABLE,UF.PRIORITY,UF.FRAGMENT_ID";
+//        if (RDBMServices.supportsOuterJoins) {
+//          sqlFragment += ",UFP.PARAM_NAME,UFP.PARAM_VALUE FROM UP_LAYOUT_STRUCT_AGGR ULS, " + fragmentJoinQuery;
+//        } else {
+//          sqlFragment += " FROM UP_FRAGMENTS UF, UP_LAYOUT_STRUCT_AGGR ULS WHERE ";
+//        }
+//        sqlFragment += "(ULS.USER_ID="+userId+" AND ULS.FRAGMENT_ID=UF.FRAGMENT_ID)" + ((pushFragmentIds!=null)?" OR UF.FRAGMENT_ID IN ("+pushFragmentIds+")":"");
+//
+      log.debug(sqlFragment);
+
         // The hashtable object containing the fragment nodes that are next to the user layout nodes
         Hashtable fragmentNodes = new Hashtable();
 
