@@ -426,7 +426,7 @@ public final class CError extends BaseChannel implements IPrivilegedChannel,
 
         Document doc = this.errorDocument.getDocument();
         
-        if (log.isTraceEnabled()){
+        if (log.isWarnEnabled()){
             try {
 //                java.io.StringWriter outString = new java.io.StringWriter();
 //                org.apache.xml.serialize.OutputFormat format = 
@@ -436,9 +436,9 @@ public final class CError extends BaseChannel implements IPrivilegedChannel,
 //                org.apache.xml.serialize.XMLSerializer xsl = 
 //                    new org.apache.xml.serialize.XMLSerializer(outString, format);
 //                xsl.serialize(doc);
-                log.trace("ErrorDocument XML is \n" + XML.serializeNode(doc));
+                log.warn("ErrorDocument XML is \n" + XML.serializeNode(doc));
             } catch (Exception e) {
-                log.warn(e, e);
+                log.error(e, e);
             }  
         }
 
