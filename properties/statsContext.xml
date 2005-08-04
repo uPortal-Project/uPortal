@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+<!--
+ | The parent bean is the Conditional wrapper because first we want to filter down to
+ | the events we're actually going to log.
+ +-->
+ <bean name="statsRecorder"
+     class="org.jasig.portal.services.stats.ConditionalStatsRecorder">
+     <property name="flags">
+         <!--
+         | This JavaBean lets us configure which events we'd like the Conditional 
+         | wrapper to propogate.  The flags default to false so we need only declared those
+         | methods we would like to propogate.
+         +-->
+         <bean class="org.jasig.portal.services.stats.StatsRecorderFlagsImpl">
+             <property name="recordChannelRendered" value="true"/>
+         </bean>
+     </property>
+     
+     <!-- 
+     | The Conditional stats recorder will call this target when its condition is fulfilled, that is
+     | when the method call is recordChannelRendered().  IStatsRecorder calls other than 
+     | recordChannelRendered will have no effect, that is, are filtered away 
+     | by the Conditional stats recorder. 
+     +-->
+     <property name="targetStatsRecorder">
+         <!-- 
+         | The target of the Conditional is the thread firing wrapper so that we'll use separate
+         | threads to perform the actual logging. 
+         +-->
+         <bean class="org.jasig.portal.services.stats.ThreadFiringStatsRecorder">
+             <!-- initial thread pool size -->
+             <constructor-arg value="5"/>
+             <!-- maximum thread pool size -->
+             <constructor-arg value="15"/>
+             <!-- thread priority -->
+             <constructor-arg value="5"/>
+             
+             <!--
+             | The target of the threads we fire is this LoggingStatsRecorder instance.
+             +-->
+             <property name="targetStatsRecorder">
+                 <bean class="org.jasig.portal.services.stats.LoggingStatsRecorder"/>
+             </property>
+             
+         </bean>
+     </property>
+ </bean>
+</beans>
+ 
