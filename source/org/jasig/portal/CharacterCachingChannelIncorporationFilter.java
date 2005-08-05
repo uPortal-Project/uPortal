@@ -101,7 +101,7 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
                     log.error("CharacterCachingChannelIncorporationFilter::startDocument() : unable to start caching!");
                 }
             } catch (IOException ioe) {
-                log.error("CharacterCachingChannelIncorporationFilter::startDocument() : unable to start caching!");
+                log.error("CharacterCachingChannelIncorporationFilter::startDocument() : unable to start caching!",ioe);
             }
         }
         super.startDocument();
@@ -116,9 +116,9 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
                     try {
                         systemCCacheBlocks.add(ser.getCache());
                     } catch (UnsupportedEncodingException e) {
-                        log.error("CharacterCachingChannelIncorporationFilter::endDocument() : unable to obtain character cache, invalid encoding specified ! "+e);
+                        log.error("CharacterCachingChannelIncorporationFilter::endDocument() : unable to obtain character cache, invalid encoding specified ! ",e);
                     } catch (IOException ioe) {
-                        log.error("CharacterCachingChannelIncorporationFilter::endDocument() : IO exception occurred while retreiving character cache ! "+ioe);
+                        log.error("CharacterCachingChannelIncorporationFilter::endDocument() : IO exception occurred while retreiving character cache ! ",ioe);
                     }
                 } else {
                     log.error("CharacterCachingChannelIncorporationFilter::endDocument() : unable to stop caching!");
@@ -146,9 +146,9 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
                             log.error("CharacterCachingChannelIncorporationFilter::startElement() : unable to reset cache state ! Serializer was not caching when it should've been !");
                         }
                     } catch (UnsupportedEncodingException e) {
-                        log.error("CharacterCachingChannelIncorporationFilter::startElement() : unable to obtain character cache, invalid encoding specified ! "+e);
+                        log.error("CharacterCachingChannelIncorporationFilter::startElement() : unable to obtain character cache, invalid encoding specified ! ",e);
                     } catch (IOException ioe) {
-                        log.error("CharacterCachingChannelIncorporationFilter::startElement() : IO exception occurred while retreiving character cache ! "+ioe);
+                        log.error("CharacterCachingChannelIncorporationFilter::startElement() : IO exception occurred while retreiving character cache ! ",ioe);
                     }
                 }
             } else {
@@ -173,7 +173,7 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
                                 log.error("CharacterCachingChannelIncorporationFilter::endElement() : unable to restart cache after a channel end!");
                             }
                         } catch (IOException ioe) {
-                            log.error("CharacterCachingChannelIncorporationFilter::endElement() : unable to start caching!");
+                            log.error("CharacterCachingChannelIncorporationFilter::endElement() : unable to start caching!",ioe);
                         }
                     }
                 }
