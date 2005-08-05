@@ -667,10 +667,13 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           ResultSet rs = stmt.executeQuery(sQuery);
           int currentStructId;
           try {
-            rs.next();
-            currentStructId = rs.getInt(1);
+        	  if (rs.next()){
+        		  currentStructId = rs.getInt(1);
+        	  }else{
+        		  throw new SQLException("no rows returned for query ["+sQuery+"]");
+        	  }
           } finally {
-            rs.close();
+        	  rs.close();
           }
           int nextStructId = currentStructId + 1;
           try {
