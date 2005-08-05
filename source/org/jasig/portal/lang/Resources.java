@@ -54,7 +54,7 @@ public final class Resources {
      * is not found
      **/
     public static final String getString(Class client, String name, String[] objects){
-        return MessageFormat.format(getString( client, name ), objects);
+        return MessageFormat.format(getString( client, name ), (Object[])objects);
     }
     /**
      * Private constructor.
