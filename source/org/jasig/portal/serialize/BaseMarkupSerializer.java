@@ -1077,18 +1077,18 @@ public abstract class BaseMarkupSerializer
                     String docTypePublicId = null;
                     String docTypeSystemId = null;
                     try {
-                        java.lang.reflect.Method getPublicId = docTypeClass.getMethod("getPublicId", null);
+                        java.lang.reflect.Method getPublicId = docTypeClass.getMethod("getPublicId", (Class[])null);
                         if (getPublicId.getReturnType().equals(String.class)) {
-                            docTypePublicId = (String)getPublicId.invoke(docType, null);
+                            docTypePublicId = (String)getPublicId.invoke(docType, (Object[])null);
                         }
                     }
                     catch (Exception e) {
                         // ignore
                     }
                     try {
-                        java.lang.reflect.Method getSystemId = docTypeClass.getMethod("getSystemId", null);
+                        java.lang.reflect.Method getSystemId = docTypeClass.getMethod("getSystemId", (Class[])null);
                         if (getSystemId.getReturnType().equals(String.class)) {
-                            docTypeSystemId = (String)getSystemId.invoke(docType, null);
+                            docTypeSystemId = (String)getSystemId.invoke(docType, (Object[])null);
                         }
                     }
                     catch (Exception e) {

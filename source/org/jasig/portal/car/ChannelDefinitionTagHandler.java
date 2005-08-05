@@ -120,7 +120,7 @@ public class ChannelDefinitionTagHandler
         try
         {
             cDefaultConstructor =
-                cHandlerClass.getConstructor( null );
+                cHandlerClass.getConstructor( (Class[])null );
         }
         catch(NoSuchMethodException nsme)
         {
