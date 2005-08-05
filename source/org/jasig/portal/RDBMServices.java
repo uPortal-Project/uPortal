@@ -274,21 +274,7 @@ public class RDBMServices {
      * @throws DataAccessException if unable to return a connection
      */
     public static Connection getConnection() {
-        
-        DataSource ds = (DataSource) namedDataSources.get(PORTAL_DB);
-        if (ds==null) ds = getDataSource();
-        
-        if (ds != null) {
-          synchronized(SYNC_OBJECT) {
-            activeConnections++;
-          }
-          try {
-            return ds.getConnection();
-          } catch (SQLException e) {
-             throw new DataAccessResourceFailureException("RDBMServices.getConnection() failed: ",e);
-        	}
-        }
-        throw new DataAccessResourceFailureException("RDBMServices fatally misconfigured such that DataSource is null.");
+    	return getConnection(PORTAL_DB);
     }
 
 
@@ -302,30 +288,28 @@ public class RDBMServices {
      *   the JNDI context relative to "jdbc/"
      * @return a database Connection object or <code>null</code> if no Connection
      */
-    public static Connection getConnection(final String dbName) {
-       
-        if (DEFAULT_DATABASE.equals(dbName) || PORTAL_DB.equals(dbName)) {
-            return getConnection();
-        }
-        
-        DataSource ds = (DataSource) namedDataSources.get(dbName);
-        if (ds==null) {
-            ds = getDataSource(dbName);
-        }
-
-        if (ds != null) {
-          synchronized(SYNC_OBJECT) {
-            activeConnections++;
-          }
-          try {
-            return ds.getConnection();
-        } catch (SQLException e) {
-            throw new DataAccessResourceFailureException
-            	("RDBMServices sql error trying to get connection to "+dbName,e);
-        }
-        }
-        // datasource is still null so give up
-        throw new DataAccessResourceFailureException("RDBMServices fatally misconfigured such that getDataSource() returned null.");
+    public static Connection getConnection(String dbName) {
+    	if (DEFAULT_DATABASE.equals(dbName)){
+    		dbName = PORTAL_DB;
+    	}
+    	DataSource ds = (DataSource) namedDataSources.get(dbName);
+    	if (ds==null) {
+    		ds = getDataSource(dbName);
+    	}
+    	
+    	if (ds != null) {
+    		synchronized(SYNC_OBJECT) {
+    			activeConnections++;
+    		}
+    		try {
+    			return ds.getConnection();
+    		} catch (SQLException e) {
+    			throw new DataAccessResourceFailureException
+    			("RDBMServices sql error trying to get connection to "+dbName,e);
+    		}
+    	}
+    	// datasource is still null so give up
+    	throw new DataAccessResourceFailureException("RDBMServices fatally misconfigured such that getDataSource() returned null.");
     }
 
     /**
