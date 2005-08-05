@@ -53,7 +53,7 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
      * @return crd the cloned ChannelRuntimeData object
      */
     public Object clone() {
-      ChannelRuntimeData crd = new ChannelRuntimeData();
+      ChannelRuntimeData crd = (ChannelRuntimeData)super.clone(); 
       crd.binfo = binfo;
       crd.locales = locales;
       crd.channelUPFile = channelUPFile;
