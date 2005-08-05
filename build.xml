@@ -1346,7 +1346,7 @@
   <target name="pubchan" description="Publishes channels" depends="compile">
     <echo message="Invoking Channel Publisher Tool"/>
 
-    <property name="channel" value=" "/>
+    <property name="channel" value="all"/>
     <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.tools.chanpub.ChannelPublisher">
       <classpath>
           <pathelement path="${build.home}/WEB-INF/classes"/>
