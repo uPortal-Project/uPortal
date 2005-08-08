@@ -47,15 +47,11 @@ import org.xml.sax.SAXException;
  */
 public class ChannelServlet extends HttpServlet {
   public static String detachBaseStart = "detach_";
-  private static int sizeLimit = 3000000;       // Should be channel specific
   StylesheetSet set;
   MediaManager mediaM;
   private boolean initialized = false;
   private IChannel channel;
   private String channelName;
-  private boolean hasEdit = false;
-  private boolean hasAbout = false;
-  private boolean hasHelp = false;
   private long timeOut = 10000;                 // 10 seconds is the default timeout value
   private static final String fs = File.separator;
   private static final String relativeSSLLocation = "ChannelServlet/ChannelServlet.ssl";
@@ -78,9 +74,6 @@ public class ChannelServlet extends HttpServlet {
       // determine the channel with its parameters
       String className = sc.getInitParameter("className");
       channelName = sc.getInitParameter("channelName");
-      hasEdit = Boolean.getBoolean(sc.getInitParameter("hasEdit"));
-      hasHelp = Boolean.getBoolean(sc.getInitParameter("hasHelp"));
-      hasAbout = Boolean.getBoolean(sc.getInitParameter("hasAbout"));
       String s_timeOut = sc.getInitParameter("timeOut");
       if (s_timeOut != null) {
           this.timeOut = Long.parseLong(s_timeOut);
