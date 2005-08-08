@@ -75,9 +75,9 @@ public class AggregatedLayout implements IAggregatedLayout {
 		  String nodeId = nodeIds.nextElement().toString();
 		  ALNode node = (ALNode)layout.get(nodeId);
 		  // check for nodes that reference themselves
-		  if (node != null && (nodeId.equals(node.nextNodeId) ||
-				  nodeId.equals(node.previousNodeId) ||
-				  nodeId.equals(node.parentNodeId)) 
+		  if (node != null && (nodeId.equals(node.getNextNodeId()) ||
+				  nodeId.equals(node.getPreviousNodeId()) ||
+				  nodeId.equals(node.getParentNodeId())) 
 		  ){
 			  throw new RuntimeException(
 					  "corrupted layout detected, node: "+nodeId +" " +
@@ -121,9 +121,9 @@ public class AggregatedLayout implements IAggregatedLayout {
 	  ALNode aln = (ALNode)layout.get(nodeId);
 
 	  if ( nodeId != null ){
-		  if (aln != null && (nodeId.equals(aln.nextNodeId) ||
-			  nodeId.equals(aln.previousNodeId) ||
-			  nodeId.equals(aln.parentNodeId)) 
+		  if (aln != null && (nodeId.equals(aln.getNextNodeId()) ||
+			  nodeId.equals(aln.getPreviousNodeId()) ||
+			  nodeId.equals(aln.getParentNodeId())) 
 		  ){
 			  throw new RuntimeException(
 					  "corrupted layout detected, node: "+nodeId +" " +
