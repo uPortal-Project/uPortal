@@ -1280,9 +1280,9 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
           
         String nodeId = layoutNode.getId();
 		// assert  that no node references itself
-    	if (layoutNode != null && (nodeId.equals(layoutNode.nextNodeId) ||
-        		nodeId.equals(layoutNode.previousNodeId) ||
-        		nodeId.equals(layoutNode.parentNodeId)) 
+    	if (layoutNode != null && (nodeId.equals(layoutNode.getNextNodeId()) ||
+        		nodeId.equals(layoutNode.getPreviousNodeId()) ||
+        		nodeId.equals(layoutNode.getParentNodeId())) 
         		){
     			  throw new RuntimeException(
 					  "corrupted layout detected, node: "+nodeId +" " +
