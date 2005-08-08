@@ -138,9 +138,9 @@ public class AggregatedLayout implements IAggregatedLayout {
 	  if ( folderId != null ){
 		  ALFolder aln = (ALFolder)layout.get(folderId);
 		  if (aln != null && 
-				  (folderId.equals(aln.nextNodeId) ||
-				  folderId.equals(aln.previousNodeId) ||
-				  folderId.equals(aln.parentNodeId)) 
+				  (folderId.equals(aln.getNextNodeId()) ||
+				  folderId.equals(aln.getPreviousNodeId()) ||
+				  folderId.equals(aln.getParentNodeId())) 
 		  ){
 			  throw new RuntimeException(
 					  "corrupted layout detected, node: "+folderId +" " +
