@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <!--
 Copyright (c) 2001 The JA-SIG Collaborative.  All rights reserved.
 Redistribution and use in source and binary forms, with or without
@@ -123,10 +122,11 @@ Version $Revision$
         <label>Enable HTML Filter? (cw_tidy)</label>
         <type base="string" input="single-choice" display="drop-down">
           <restriction type="enumeration">
-            <value default="true">off</value>
+            <value>off</value>
             <value>on</value>
           </restriction>
         </type>
+        <defaultValue>off</defaultValue>
       </parameter>
 
       <parameter modify="publish-only">
@@ -134,12 +134,13 @@ Version $Revision$
         <label>Pass-through Type (cw_passThrough)</label>
         <type base="string" input="single-choice" display="drop-down">
           <restriction type="enumeration">
-            <value default="true">none</value>
+            <value>none</value>
             <value>marked</value>
             <value>application</value>
             <value>all</value>
           </restriction>
         </type>
+        <defaultValue>none</defaultValue>
       </parameter>
 
       <!-- added for cacheable CWebProxy -->
@@ -158,10 +159,11 @@ Version $Revision$
 	<label>Default Cache Mode (cw_cacheDefaultMode)</label>
 	<type base="string" input="single-choice" display="drop-down">
           <restriction type="enumeration">
-	    <value default="true">none</value>
+	    <value>none</value>
 	    <value>all</value>
 	  </restriction>
 	</type>
+    <defaultValue>none</defaultValue>
       </parameter>
 
       <parameter modify="publish-only">
@@ -178,11 +180,12 @@ Version $Revision$
 	<label>Cache Mode for initial request only (cw_cacheMode)</label>
 	<type base="string" input="single-choice" display="drop-down">
 	  <restriction type="enumeration">
-	    <value default="true"></value>
+	    <value></value>
 	    <value>none</value>
 	    <value>all</value>
 	  </restriction>                                
 	</type>                                        
+    <defaultValue></defaultValue>
       </parameter>
 
       <parameter modify="publish-only">
