@@ -1668,9 +1668,10 @@ public class RDBMDistributedLayoutStore
                 // write out params
                 for (Enumeration e = ssup.getParameterValues().keys(); e.hasMoreElements();) {
                     String pName = (String)e.nextElement();
+                    String pNameEscaped = RDBMServices.sqlEscape(pName);
                     // see if the parameter was already there
                     String sQuery = "SELECT PARAM_VAL FROM UP_SS_USER_PARM WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId
-                    + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND PARAM_NAME='" + pName + "'";
+                    + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND PARAM_NAME='" + pNameEscaped + "'";
                     if (LOG.isDebugEnabled())
                         LOG.debug(sQuery);
                     ResultSet rs = stmt.executeQuery(sQuery);
@@ -1678,13 +1679,13 @@ public class RDBMDistributedLayoutStore
                         if (rs.next()) {
                             // update
                             sQuery = "UPDATE UP_SS_USER_PARM SET PARAM_VAL='" + ssup.getParameterValue(pName) + "' WHERE USER_ID=" + userId
-                            + " AND PROFILE_ID=" + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND PARAM_NAME='" + pName
+                            + " AND PROFILE_ID=" + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND PARAM_NAME='" + pNameEscaped
                             + "'";
                         }
                         else {
                             // insert
                             sQuery = "INSERT INTO UP_SS_USER_PARM (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,PARAM_NAME,PARAM_VAL) VALUES (" + userId
-                            + "," + profileId + "," + stylesheetId + ",1,'" + pName + "','" + ssup.getParameterValue(pName) + "')";
+                            + "," + profileId + "," + stylesheetId + ",1,'" + pNameEscaped + "','" + ssup.getParameterValue(pName) + "')";
                         }
                     } finally {
                         rs.close();
