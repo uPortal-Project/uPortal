@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+    This file configures the set of links that appear when the AdminNavChannel
+    uses the ListModel for its internal implementation to provide a simple
+    list of links that appear when a user selects the "Channel Admin" link. This
+    file conforms to the structure expected by 
+    org.jasig.portal.channels.adminnav.XMLLinksHandler. 
+    
+    When selected, these admin navigation links bring a channel into focus that
+    implements the functionality represented by that link. The channel to be 
+    focused is declared using its functional name in the channelFunctionalName 
+    attribute of the link element. The system will construct a URL appropriate 
+    for each current user of the system to bring that channel into focus.
+    
+    The text that should appear in the link is NOT specified in this file. 
+    Link text must be specified in a locale dependant manner. This is 
+    accomplished by specifying a textual moniker for the labelId attribute for
+    any links that you add. That moniker must be unique among all
+    labelId attributes declared in this file. Then the locale specific 
+    text for your link is specified in a locale specific resource bundle whose
+    base bundle is "adminNav.properties" located in the same directory as this
+    file. So assuming that you have added a link
+    with a labelId of "MY_ADMIN_LINK" then to add a label for the German locale
+    you would open the file "adminNav_de_DE.properties" and add the following
+    property:
+    
+    MY_ADMIN_LINK=<German specific label text goes here>
+    
+    If the channel being called needs additional query parameters as part of 
+    fulfilling that link's functionality, those parameters can be declared with 
+    nested 'parameter' elements within that link. The name of the attribute as it 
+    should appear in the URL is declared with a 'name' attribute on the 
+    'parameter' element and the value that should appear in the URL is declared in that 
+    parameter's value attribute. No encoding is performed on these parameters 
+    so if encoding is needed the encoded values should be specified in this 
+    file. 
+    
+    It is also important to note that this set of links can be added to 
+    dynamically at runtime by otaining the AdminNavChannel's instance of
+    ILinkRegistrar via calling the static method getLinkRegistrar() and then
+    calling the registrar's addLink() method passing appropriate parameters.
+    That same method is used for registering the links
+    declared in this file. For those calls an instance of ResourceRundleResolver
+    is used as the ILableResolver to look for the
+    locale specific resource bundles outlined above and uses them to return a
+    suitable label for the user's locale.
+    
+    
+    If any implementation of ILabelResolver returns a null value to indicate 
+    that it has no text available for the given locale then the label text 
+    will appear with the value of "???" followed by the classname of the
+    ILabelResolver implementation followed by the specified labelId wrapped in
+    sqare brackets followed by "???". 
+    
+    For example, suppose we added a link having a lableId of 'PUBLISH_NEW_CHANNEL' 
+    but forgot to add the moniker and its
+    locale specific text to any resource bundle. ResourceBundleResolver would 
+    attempt to find a resource bundle in the traditional manner falling back 
+    on the base bundle if none were found for the specific locale. If a locale
+    specific resource bundle was found but it did not have a value for that
+    moniker or if no locale specific resource bundle were found and the value
+    for that moniker was not added into the base resource bundle then the 
+    text for that label would appear as:
+    
+    ???org.jasig.portal.channels.adminNav.StaticLinksLoader[PUBLISH_NEW_CHANNEL]???
+    
+    For dynamically registered links, if their registered ILableResolver 
+    implementation returned null for that moniker to indicate that no locale
+    appropriate label is available then the link's text will appear as shown
+    above but of course with appropriate values for the class and labelId.
+-->
+<links>
+
+    <link labelId="MODIFY_PUBLISHED_CHANNEL"
+        channelFunctionalName="portal/channelmanager/general">
+        <parameter name="uPCM_action" value="selectModifyChannel" />
+        <parameter name="uPAN_caller" value="admin.navigation.links" />
+    </link>
+
+    <link labelId="PUBLISH_NEW_CHANNEL"
+        channelFunctionalName="portal/channelmanager/general">
+        <parameter name="uPCM_action" value="selectChannelType" />
+        <parameter name="uPCM_reset" value="true" />
+        <parameter name="uPAN_caller" value="admin.navigation.links" />
+    </link>
+    
+</links>

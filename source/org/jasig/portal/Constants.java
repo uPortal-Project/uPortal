@@ -39,4 +39,16 @@ public class Constants
      * category and if not found during publishing is automatically created.
      */
     public static final String AUTO_PUBLISH_CATEGORY = "Auto-Published";
+    
+    /**
+     * The default functional name of the administrative links channel. This is
+     * used by channels designed for being delegated to from the administrative
+     * links channel that return to that channel when the user is finished 
+     * with their functionality. Returning to the links channel is accomplished
+     * through the use of a URL obtained from 
+     * ChannelRuntimeData.getFnameActionUrl passing a functional name. The
+     * value of this field can be passed to that method to obtain a URL that 
+     * will bring that channel into focus.
+     */
+    public static final String NAVIGATION_CHAN_FNAME = "admin.navigation.links";
 }

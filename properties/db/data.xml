@@ -1193,6 +1193,26 @@
         <column><name>CHAN_FNAME</name><value>dlm.admin.guide</value></column>
         <column><name>CHAN_SECURE</name><value>N</value></column>
       </row>
+
+      <!-- 2005.07.26 - mboyd@sungardsct.com -->
+      <row sinceMajor="2" sinceMinor="6">
+        <column><name>CHAN_ID</name><value>51</value></column>
+        <column><name>CHAN_TITLE</name><value>Administration</value></column>
+        <column><name>CHAN_NAME</name><value>Administration</value></column>
+        <column><name>CHAN_DESC</name><value>A channel that renders administration links for channels to which the user has authorization.</value></column>
+        <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.adminnav.AdminNavChannel</value></column>
+        <column><name>CHAN_TYPE_ID</name><value>-1</value></column>
+        <column><name>CHAN_PUBL_ID</name><value>2</value></column>
+        <column><name>CHAN_PUBL_DT</name><value>2005-06-02 22:53:36.0</value></column>
+        <column><name>CHAN_APVL_ID</name><value>2</value></column>
+        <column><name>CHAN_APVL_DT</name><value>2005-06-02 22:53:36.0</value></column>
+        <column><name>CHAN_TIMEOUT</name><value>5000</value></column>
+        <column><name>CHAN_EDITABLE</name><value>N</value></column>
+        <column><name>CHAN_HAS_HELP</name><value>N</value></column>
+        <column><name>CHAN_HAS_ABOUT</name><value>N</value></column>
+        <column><name>CHAN_FNAME</name><value>admin.navigation.links</value></column>
+        <column><name>CHAN_SECURE</name><value>N</value></column>
+      </row>
      </rows>
   </table>
 
@@ -5865,6 +5885,18 @@
         <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
         <column><name>TARGET</name><value>CHAN_ID.50</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
+
+      <!-- 2005.07.26 - mboyd@sungardsct.com, for admin nav chan -->
+      <row>
+        <column><name>OWNER</name><value>UP_FRAMEWORK</value></column>
+        <column><name>PRINCIPAL_TYPE</name><value>3</value></column>
+        <column><name>PRINCIPAL_KEY</name><value>local.0</value></column>
+        <column><name>ACTIVITY</name><value>SUBSCRIBE</value></column>
+        <column><name>TARGET</name><value>CHAN_ID.51</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+        <column><name>EFFECTIVE</name></column>
+        <column><name>EXPIRES</name></column>
       </row>
 
     </rows>

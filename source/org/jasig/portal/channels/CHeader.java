@@ -6,8 +6,10 @@
 package org.jasig.portal.channels;
 
 import org.jasig.portal.ChannelCacheKey;
+import org.jasig.portal.Constants;
 import org.jasig.portal.ICacheable;
 import org.jasig.portal.PortalException;
+import org.jasig.portal.channels.adminnav.AdminNavChannel;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.layout.dlm.DistributedLayoutManager;
 import org.apache.commons.logging.Log;
@@ -35,17 +37,20 @@ public class CHeader extends BaseChannel implements ICacheable {
   private static final String sslLocation = "CHeader/CHeader.ssl";
 
   /**
-   * Checks user permissions to see if the user is authorized to publish channels
-   * @return true if user can publish
+   * Checks user permissions to see if the user is authorized to access any 
+   * channels available from the admin area.
+   * @return true if user has access to any registered administration channels 
    */
-  private boolean canUserPublish() {
+  private boolean canUserAccessAdminNavigation() {
     boolean canPublish = false;    
     try {
-            // Let the authorization service decide:
-            canPublish = staticData.getAuthorizationPrincipal().canPublish();      
+        // Let the admin navigation channel determine since it knows what 
+        // channels are available
+        canPublish = AdminNavChannel.canAccess(staticData.getAuthorizationPrincipal());      
     } catch (Exception e) {
-      log.error("Exception determining whether user can publish, defaulting to false.", e);
-      // Deny the user publish access if anything went wrong
+      log.error("Exception determining whether user can access administrative" +
+            " channels, defaulting to false.", e);
+      // Deny the user access if anything went wrong
     }
     return canPublish;
   }
@@ -96,10 +101,10 @@ public class CHeader extends BaseChannel implements ICacheable {
     headerEl.appendChild(timeStampShortEl);
     // Don't render the publish, subscribe, user preferences links if it's the guest user
     if (staticData.getPerson().getSecurityContext().isAuthenticated()) {
-      if (canUserPublish()) {
+      if (canUserAccessAdminNavigation()) {
         // Create <chan-mgr-chanid> element under <header>
         Element chanMgrChanidEl = doc.createElement("chan-mgr-chanid");
-        chanMgrChanidEl.appendChild(doc.createTextNode("portal/channelmanager/general"));
+        chanMgrChanidEl.appendChild(doc.createTextNode(Constants.NAVIGATION_CHAN_FNAME));
         headerEl.appendChild(chanMgrChanidEl);
       }
 
@@ -142,7 +147,7 @@ public class CHeader extends BaseChannel implements ICacheable {
     sbKey.append("locales:").append(LocaleManager.stringValueOf(runtimeData.getLocales()));
     sbKey.append("authenticated:").append(staticData.getPerson().getSecurityContext().isAuthenticated()).append(", ");
     sbKey.append("baseActionURL:").append(runtimeData.getBaseActionURL()).append(", ");
-    sbKey.append("hasPermissionToPublish:").append(String.valueOf(canUserPublish())).append(", ");
+    sbKey.append("hasAdminAccess:").append(String.valueOf(canUserAccessAdminNavigation())).append(", ");
     sbKey.append("stylesheetURI:");
     try {
       String sslUri = ResourceLoader.getResourceAsURLString(this.getClass(), sslLocation);

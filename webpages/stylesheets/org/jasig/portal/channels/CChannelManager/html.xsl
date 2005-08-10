@@ -7,6 +7,7 @@
   <xsl:param name="stepID">1</xsl:param>
   <xsl:param name="errorMsg">no parameter passed</xsl:param>
   <xsl:param name="stylesheetCacheSize">0</xsl:param>
+  <xsl:param name="callingChannelActionUrl">none</xsl:param>
 	
   <xsl:variable name="mediaPath">media/org/jasig/portal/channels/CChannelManager</xsl:variable>
   <xsl:variable name="defaultLength">10</xsl:variable>
@@ -243,7 +244,16 @@
           <td>
             <input type="submit" name="uPCM_submit" value="Next &gt;" onclick="document.workflow.uPCM_action.value='selectGeneralSettings'" class="uportal-button"/>
             <input type="submit" name="uPCM_submit" value="Review" onclick="document.workflow.uPCM_action.value='reviewChannel'" class="uportal-button"/>
-            <input type="submit" name="uPCM_submit" value="Cancel" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/> </td>
+            <xsl:choose>
+            <xsl:when test="$callingChannelActionUrl = 'none'">
+            <input type="submit" name="uPCM_submit" value="Cancel" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/>
+            </xsl:when>
+            <xsl:otherwise>
+            <input type="submit" name="uPCM_submit" value="Cancel" class="uportal-button">
+             <xsl:attribute name="onclick">document.workflow.action='<xsl:value-of select="$callingChannelActionUrl"/>'</xsl:attribute></input>
+            </xsl:otherwise>
+            </xsl:choose>
+          </td>
         </tr>
       </table>
     </form>
@@ -279,7 +289,14 @@
                 <img alt="bullet point" src="{$mediaPath}/bullet.gif" width="16" height="16"/>
               </td>
               <td class="uportal-channel-text" width="100%">
+            <xsl:choose>
+            <xsl:when test="$callingChannelActionUrl = 'none'">
                 <a href="{$baseActionURL}?uPCM_action=cancel">Cancel and return</a>
+            </xsl:when>
+            <xsl:otherwise>
+                <a><xsl:attribute name="href"><xsl:value-of select="$callingChannelActionUrl"/></xsl:attribute>Done</a>
+            </xsl:otherwise>
+            </xsl:choose>
               </td>
             </tr>
           </table>
@@ -548,7 +565,7 @@
         </td>
       </xsl:if>
       <td>
-        <img alt="timeline right arrow" src="{$mediaPath}/arrow_right_timeline.gif"/>
+        <img alt="right arrow" src="{$mediaPath}/arrow_right_timeline.gif"/>
       </td>
       <td>
         <table border="0" cellspacing="0" cellpadding="1" class="uportal-background-dark">
@@ -877,7 +894,15 @@
             <input type="submit" name="uPCM_submit" value="&lt; Back" onclick="document.workflow.uPCM_action.value='selectChannelType'" class="uportal-button"/>
             <input type="submit" name="uPCM_submit" value="Next &gt;" onclick="document.workflow.uPCM_action.value='channelParams'" class="uportal-button"/>
             <input type="submit" name="uPCM_submit" value="Review" onclick="document.workflow.uPCM_action.value='reviewChannel'" class="uportal-button"/>
-            <input type="submit" name="uPCM_submit" value="Cancel" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/> </td>
+            <xsl:choose>
+            <xsl:when test="$callingChannelActionUrl = 'none'">
+            <input type="submit" name="uPCM_submit" value="Cancel" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/>
+            </xsl:when>
+            <xsl:otherwise>
+            <input type="submit" name="uPCM_submit" value="Cancel" class="uportal-button">
+             <xsl:attribute name="onclick">document.workflow.action='<xsl:value-of select="$callingChannelActionUrl"/>'</xsl:attribute></input>
+            </xsl:otherwise>
+            </xsl:choose></td>
         </tr>
       </table>
     </form>
@@ -971,7 +996,15 @@
               </xsl:attribute>
             </input>
             <input type="submit" name="uPCM_submit" value="Review" onclick="document.workflow.uPCM_action.value='reviewChannel'" class="uportal-button"/>
+            <xsl:choose>
+            <xsl:when test="$callingChannelActionUrl = 'none'">
             <input type="submit" name="uPCM_submit" value="Cancel" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/> 
+            </xsl:when>
+            <xsl:otherwise>
+            <input type="submit" name="uPCM_submit" value="Cancel" class="uportal-button">
+             <xsl:attribute name="onclick">document.workflow.action='<xsl:value-of select="$callingChannelActionUrl"/>'</xsl:attribute></input>
+            </xsl:otherwise>
+            </xsl:choose>
           </td>
         </tr>
       </table>
@@ -1147,7 +1180,15 @@
               </xsl:attribute>
             </input>
             <input type="submit" name="uPCM_submit" value="Review" onclick="document.workflow.uPCM_action.value='reviewChannel'" class="uportal-button"/>
+            <xsl:choose>
+            <xsl:when test="$callingChannelActionUrl = 'none'">
             <input type="submit" name="uPCM_submit" value="Cancel" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/> 
+            </xsl:when>
+            <xsl:otherwise>
+            <input type="submit" name="uPCM_submit" value="Cancel" class="uportal-button">
+             <xsl:attribute name="onclick">document.workflow.action='<xsl:value-of select="$callingChannelActionUrl"/>'</xsl:attribute></input>
+            </xsl:otherwise>
+            </xsl:choose>
           </td></form>
         </tr>
     </table>
@@ -1779,7 +1820,16 @@
             <input type="submit" name="uPCM_submit" value="&lt; Back" onclick="document.workflow.uPCM_action.value='channelParams';document.workflow.uPCM_step.value='{count(//channelDef//step)}'" class="uportal-button"/>
             <input type="submit" name="uPCM_submit" value="Next &gt;" onclick="document.workflow.uPCM_action.value='selectCategories'" class="uportal-button"/>
             <input type="submit" name="uPCM_submit" value="Review" onclick="document.workflow.uPCM_action.value='reviewChannel'" class="uportal-button"/>
-            <input type="submit" name="uPCM_submit" value="Cancel" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/> </td>
+            <xsl:choose>
+            <xsl:when test="$callingChannelActionUrl = 'none'">
+            <input type="submit" name="uPCM_submit" value="Cancel" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/>
+            </xsl:when>
+            <xsl:otherwise>
+            <input type="submit" name="uPCM_submit" value="Cancel" class="uportal-button">
+             <xsl:attribute name="onclick">document.workflow.action='<xsl:value-of select="$callingChannelActionUrl"/>'</xsl:attribute></input>
+            </xsl:otherwise>
+            </xsl:choose>
+          </td>
         </tr>
       </table>
     </form>
@@ -1806,7 +1856,15 @@
           <input type="submit" name="uPCM_submit" value="&lt; Back" onclick="document.workflow.uPCM_action.value='selectControls'" class="uportal-button"/>
           <input type="submit" name="uPCM_submit" value="Next &gt;" onclick="document.workflow.uPCM_action.value='selectGroups'" class="uportal-button"/>
           <input type="submit" name="uPCM_submit" value="Review" onclick="document.workflow.uPCM_action.value='reviewChannel'" class="uportal-button"/>
+            <xsl:choose>
+            <xsl:when test="$callingChannelActionUrl = 'none'">
           <input type="submit" name="uPCM_submit" value="Cancel" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/>
+            </xsl:when>
+            <xsl:otherwise>
+            <input type="submit" name="uPCM_submit" value="Cancel" class="uportal-button">
+             <xsl:attribute name="onclick">document.workflow.action='<xsl:value-of select="$callingChannelActionUrl"/>'</xsl:attribute></input>
+            </xsl:otherwise>
+            </xsl:choose>
         </td>
       </tr>
 
@@ -2254,7 +2312,15 @@
         <td>
           <input type="submit" name="uPCM_submit" value="&lt; Back" onclick="document.workflow.uPCM_action.value='selectGroups'" class="uportal-button" />
           <input type="submit" name="uPCM_submit" value="Finished" onclick="document.workflow.uPCM_action.value='finished'" class="uportal-button" />
+            <xsl:choose>
+            <xsl:when test="$callingChannelActionUrl = 'none'">
           <input type="submit" name="uPCM_submit" value="Cancel" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button" />
+            </xsl:when>
+            <xsl:otherwise>
+            <input type="submit" name="uPCM_submit" value="Cancel" class="uportal-button">
+             <xsl:attribute name="onclick">document.workflow.action='<xsl:value-of select="$callingChannelActionUrl"/>'</xsl:attribute></input>
+            </xsl:otherwise>
+            </xsl:choose>
         </td>
       </tr>
 
@@ -2385,7 +2451,15 @@
           <input type="submit" name="uPCM_submit" value="&lt; Back" onclick="document.workflow.uPCM_action.value='selectGeneralSettings'" class="uportal-button"/>
           <input type="submit" name="uPCM_submit" value="Next &gt;" onclick="document.workflow.uPCM_action.value='selectControls'" class="uportal-button"/>
           <input type="submit" name="uPCM_submit" value="Review" onclick="document.workflow.uPCM_action.value='reviewChannel'" class="uportal-button"/>
+            <xsl:choose>
+            <xsl:when test="$callingChannelActionUrl = 'none'">
           <input type="submit" name="uPCM_submit" value="Cancel" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/>
+            </xsl:when>
+            <xsl:otherwise>
+            <input type="submit" name="uPCM_submit" value="Cancel" class="uportal-button">
+             <xsl:attribute name="onclick">document.workflow.action='<xsl:value-of select="$callingChannelActionUrl"/>'</xsl:attribute></input>
+            </xsl:otherwise>
+            </xsl:choose>
         </td>
         </form>
       </tr>
@@ -2537,7 +2611,15 @@
           <input type="submit" name="uPCM_submit" value="&lt; Back" onclick="document.workflow.uPCM_action.value='selectCategories'" class="uportal-button"/>
           <input type="submit" name="uPCM_submit" value="Next &gt;" onclick="document.workflow.uPCM_action.value='reviewChannel'" class="uportal-button"/>
           <input type="submit" name="uPCM_submit" value="Review" onclick="document.workflow.uPCM_action.value='reviewChannel'" class="uportal-button"/>
+            <xsl:choose>
+            <xsl:when test="$callingChannelActionUrl = 'none'">
           <input type="submit" name="uPCM_submit" value="Cancel" onclick="document.workflow.uPCM_action.value='cancel'" class="uportal-button"/>
+            </xsl:when>
+            <xsl:otherwise>
+            <input type="submit" name="uPCM_submit" value="Cancel" class="uportal-button">
+             <xsl:attribute name="onclick">document.workflow.action='<xsl:value-of select="$callingChannelActionUrl"/>'</xsl:attribute></input>
+            </xsl:otherwise>
+            </xsl:choose>
         </td>
       </tr>
 

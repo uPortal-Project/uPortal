@@ -56,14 +56,16 @@ public class CChannelManager extends BaseChannel {
     protected static final short CHANNEL_REVIEW_STATE = 8;
     protected static final short MODIFY_CHANNEL_STATE = 9;
     protected String action;
+  protected String reset;
     protected String stepID;
     protected Document channelManagerDoc;
-    protected ChannelDefinition channelDef;
+    protected ChannelDefinition channelDef = new ChannelDefinition();
     protected ModifyChannelSettings modChanSettings = new ModifyChannelSettings();
     protected IPerson person;
     protected IServant categoryServant;
     protected IServant groupServant;
     protected String errorMsg;
+    protected String callingChannelActionUrl = null;
 
     // Called after publishing so that you won't see any previous settings
     // on the next publish attempt
@@ -81,6 +83,14 @@ public class CChannelManager extends BaseChannel {
     }
 
     public void setRuntimeData (ChannelRuntimeData rd) throws PortalException {
+        // see if we are running in delegate mode for admin navigation channel
+        // if so then this url is used for all cancel button operations to 
+        // return to the admin nav channel.
+        String caller = rd.getParameter("uPAN_caller");
+        
+        if (caller != null && ! caller.equals(""))
+            this.callingChannelActionUrl = rd.getFnameActionURL(caller);
+        
         runtimeData = rd;
         action = runtimeData.getParameter("uPCM_action");
         // handle category selection servant
@@ -97,6 +107,10 @@ public class CChannelManager extends BaseChannel {
             state = CHANNEL_GROUPS_STATE;
             ((IChannel)getGroupServant()).setRuntimeData(rd);
         }
+        if (action != null && action.equals("selectChannelType"))
+        {
+            reset = runtimeData.getParameter("uPCM_reset");
+        }
         // Capture information that the user entered on previous screen
         doCapture();            // Keep after "action = " because action might change inside doCapture()
         // Prepare the appropriate XML documents for the destination screen
@@ -112,6 +126,10 @@ public class CChannelManager extends BaseChannel {
         xslt.setStylesheetParameter("stylesheetCacheSize",
                 XSLT.getStylesheetCacheSize()+"");
         
+        if (callingChannelActionUrl != null)
+            xslt.setStylesheetParameter("callingChannelActionUrl",
+                    callingChannelActionUrl);
+            
         String action = null;
         switch (state) {
             case DEFAULT_STATE:
@@ -356,6 +374,10 @@ public class CChannelManager extends BaseChannel {
     protected void doAction () throws PortalException {
         if (action != null) {
             if (action.equals("selectChannelType")) {
+        // this will clear out any remnants of a prior
+        // channel
+        if ( null != reset && reset.equals("true") )
+            resetSettings();
                 state = CHANNEL_TYPE_STATE;
                 Workflow workflow = new Workflow();
                 // Add channel types and channel def
@@ -468,6 +490,20 @@ public class CChannelManager extends BaseChannel {
                     Element channelE = channelDef.toXML();
                     ChannelRegistryManager.publishChannel(channelE, catIDs, groupMembers, person);
                     resetSettings();
+                    
+                    // see if we are running in delegate mode from the admin
+                    // navigation channel. If so then we don't return to the 
+                    // default state showing the "modify existing channel" and
+                    // "publish new channel" links. Instead, go to the modify
+                    // existing state showing he list of available channels
+                    // including the one that was just published. Then the 
+                    // user can select the cancel link there to return to the
+                    // admin navigation channel.
+                    if (this.callingChannelActionUrl != null)
+                    {
+                        state = MODIFY_CHANNEL_STATE;
+                        channelManagerDoc = getChannelManagerDoc(modChanSettings);
+                    }
                 } catch (Exception e) {
                     // Need to revisit this and handle the error!
                     throw  new PortalException(e);
@@ -514,6 +550,7 @@ public class CChannelManager extends BaseChannel {
                 }
             }
             else if (action.equals("editChannelSettings")) {
+		        resetSettings(); // so previous chan views don't appear in workflow
                 String str_channelPublishId = runtimeData.getParameter("channelID");
                 // Set the channel definition
                 channelDef.setChannelDefinition(ChannelRegistryManager.getChannel(str_channelPublishId));
