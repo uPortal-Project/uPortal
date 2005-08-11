@@ -868,6 +868,8 @@ public class UserInstance implements HttpSessionBindingListener {
             for (int i = 0; i < values.length; i++) {
                 ulm.deleteNode(values[i]);
             }
+            
+            ulm.saveUserLayout();
         }
 
         String param = req.getParameter("uP_cancel_targets");
