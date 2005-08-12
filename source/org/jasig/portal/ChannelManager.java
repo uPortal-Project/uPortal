@@ -819,8 +819,17 @@ public class ChannelManager implements LayoutEventListener {
                 try {
                     chObj=instantiateChannel(channelTarget);
                 } catch (Throwable e) {
-                    log.error("unable to pass find/create an instance of a channel. " +
-                            "Bogus Id ? ! (id=\""+channelTarget+"\").", e);
+					if (upm.getPerson().isGuest() == true)
+					{
+						// We get this alot when people's sessions have timed out and they get directed
+						// to the guest page. Changed to WARN because there might be a need to note this
+						// to diagnose problems with the guest layout.
+                		 
+						log.warn("ChannelManager::processRequestChannelParameters() : unable to pass find/create an instance of a channel. Bogus Id ? ! (id=\""+channelTarget+"\").");
+					}else{
+						log.error("ChannelManager::processRequestChannelParameters() : unable to pass find/create an instance of a channel. Bogus Id ? ! (id=\""
+								+channelTarget+"\" uid=\""+upm.getPerson().getID()+"\").",e);
+					}
                     chObj=replaceWithErrorChannel(channelTarget,ErrorCode.SET_STATIC_DATA_EXCEPTION,e,null,false);
                 }
             }
