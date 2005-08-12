@@ -2,8 +2,9 @@ $Id$
 
 uPortal Release Notes
 ---------------------
-Release Notes - uPortal - Version 2.4.3-RC1
-Bug
+Release Notes - uPortal - Version 2.4.3
+
+**Bug
 
     * [UP-694] - NPE persists after publishing fragment with no name and description
     * [UP-735] - Content Subscriber exception when searching for "what's"
@@ -20,7 +21,7 @@ Bug
     * [UP-1123] - PortletStateManager.clearState(PortletWindow) implementation is buggy and can lead to ConcurrentModificationException under stress.
     * [UP-1145] - access to SoftHashMap systemCache across threads is not synchronized
 
-Improvement
+**Improvement
 
     * [UP-734] - Make "Cannot start uPortal" message give HTTP 500 status code
     * [UP-815] - ChannelFactory should log source exception on instantiation failure
@@ -28,7 +29,12 @@ Improvement
     * [UP-1079] - StaticInformationProvider.getPortletDefinition() should give helpful exception if portletGUID doesn't have a "."
     * [UP-1146] - javadoc SoftHashMap to say it isn't synchronized
     * [UP-1177] - org.jasig.portal.MultipartDataSource incorrectly implemented finalize ( ) method.
+    * [UP-1178] - HTMLdtd.fromChar(int) method creats un-necessary objects during the lookup.
+    * [UP-1179] - Debug statements in the codebase causes un-necessary creation of string objects.
+    * [UP-1180] - Reduce object creation in SubstitutionIntegerFilter.java
+    * [UP-1181] - Reduce number of MediaManager objects created
     * [UP-1187] - Enhance ChannelRuntimeData by adding a new method that generates the functional-name-focusing URL for channels.
+
 ----------------------------------------------------------------
 Release Notes - uPortal - Version 2.4.2
 
