@@ -70,7 +70,7 @@ public class SimplePersonManager implements IPersonManager {
         person = PersonFactory.createGuestPerson();
       } catch (Exception e) {
         // Log the exception
-        log.error( e);
+        log.error("Exception creating guest person.", e);
       }
       // Add this person object to the user's session
       if (person != null && session != null)

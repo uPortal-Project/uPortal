@@ -508,7 +508,7 @@ public Iterator findEntitiesForGroup(IEntityGroup group) throws GroupsException
         }
     catch (SQLException sqle)
     {
-        log.error( sqle);
+        log.error("Problem retrieving Entities for Group: " + group, sqle);
         throw new GroupsException("Problem retrieving Entities for Group: " + sqle.getMessage());
     }
     finally
@@ -1254,7 +1254,7 @@ private void primAdd(IEntityGroup group, Connection conn) throws SQLException, G
     }
     catch (java.sql.SQLException sqle)
     {
-        log.error( sqle);
+        log.error("Error inserting an entity into the database. Group:" + group, sqle);
         throw sqle;
     }
 }
@@ -1393,7 +1393,7 @@ private void primUpdate(IEntityGroup group, Connection conn) throws SQLException
     }
     catch (java.sql.SQLException sqle)
     {
-        log.error( sqle);
+        log.error("Error updating entity in database. Group: " + group, sqle);
         throw sqle;
     }
 }
@@ -1527,7 +1527,7 @@ private void primUpdateMembers(EntityGroupImpl egi, Connection conn) throws java
     }
     catch (SQLException sqle)
     {
-        log.error( sqle);
+        log.error("Error inserting/deleting membership rows.", sqle);
         throw sqle;
     }
 }
@@ -1581,8 +1581,7 @@ protected static void rollback(Connection conn) throws java.sql.SQLException
             }
             ps.close();
         } catch (Exception e) {
-            log.error("RDBMChannelDefSearcher.searchForEntities(): " + ps);
-            log.error( e);
+            log.error("RDBMChannelDefSearcher.searchForEntities(): " + ps, e);
         } finally {
             RDBMServices.releaseConnection(conn);
         }

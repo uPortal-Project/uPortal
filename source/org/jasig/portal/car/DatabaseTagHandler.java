@@ -246,17 +246,25 @@ public class DatabaseTagHandler
             config.setDataURL(dataURL);
             
             DbLoader loader = new DbLoader(config);
+            
+            String dataString = "(no data definition)";
+            if (dataURL != null) {
+                dataString = dataURL.toString();
+            }
+            
             try
             {
                 loader.process();
                 logWriter.flush();
                 if (config.getScriptWriter() != null )
                     config.getScriptWriter().flush();
+
+                
                 log.info(
                     "***** Successfully processed *****\n"
-                        + tablesURL.toString()
+                        + tablesURL
                         + " and \n"
-                        + dataURL.toString()
+                        + dataString
                         + ".\nLogged Output:\n---------------------\n"
                         + logBfr.toString()
                         + (createScript
@@ -268,9 +276,9 @@ public class DatabaseTagHandler
             {            
                 log.error(
                     "***** Failure during processing ***** \n"
-                        + tablesURL.toString()
+                        + tablesURL
                         + " and \n"
-                        + dataURL.toString()
+                        + dataString
                         + ".\nLogged Output:\n---------------------\n"
                         + logBfr.toString()
                         + (createScript

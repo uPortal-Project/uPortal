@@ -52,6 +52,7 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPrincipal;
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.PortalSecurityException;
+import org.jasig.portal.security.provider.ChainingSecurityContext;
 
 /**
  * Attempts to authenticate a user and retrieve attributes
@@ -70,6 +71,8 @@ public class Authentication {
     
     private static final Log log = LogFactory.getLog(Authentication.class);
     
+   private final static String BASE_CONTEXT_NAME = "root";
+   
    protected org.jasig.portal.security.IPerson m_Person = null;
    protected ISecurityContext ic = null;
 
@@ -84,26 +87,15 @@ public class Authentication {
        
       // Retrieve the security context for the user
       ISecurityContext securityContext = person.getSecurityContext();
-      Enumeration subCtxNames = securityContext.getSubContextNames();
+      
+      //Set the principals and credentials for the security context chain
+      this.configureSecurityContextChain(principals, credentials, person, securityContext, BASE_CONTEXT_NAME);
+      
       // NOTE: The LoginServlet looks in the security.properties file to
       // determine what tokens to look for that represent the principals and
       // credentials for each context. It then retrieves the values from the request
       // and stores the values in the principals and credentials HashMaps that are
       // passed to the Authentication service.
-      // Set the principals and credentials for the root context first.
-      setContextParameters (principals, credentials, "root", securityContext, person);
-
-      // load principals and credentials for the subContexts
-      while (subCtxNames.hasMoreElements()) {
-         String subCtxName = (String)subCtxNames.nextElement();
-         // root context is handled above
-         if (!subCtxName.equals("root")){
-            // strip off "root." part of name
-            String subCtxNameWithoutPrefix = (subCtxName.startsWith("root.") ? subCtxName.substring(5) : subCtxName);
-            ISecurityContext sc = securityContext.getSubContext(subCtxNameWithoutPrefix);
-            setContextParameters (principals, credentials, subCtxName, sc, person);
-         }
-      }
 
       // Attempt to authenticate the user
       securityContext.authenticate();
@@ -142,8 +134,13 @@ public class Authentication {
                   person.setAttribute(key, additionalAttributes.get(key));
                }
             }
-            else {
-               log.warn("Authentication Service recieved unknown additional descriptor");
+            
+            // if the additional descriptor is just the default additional descriptor from
+            // ChainingSecurityContext, we can ignore it.
+            else if (addInfo instanceof ChainingSecurityContext.ChainingAdditionalDescriptor) {
+                // do nothing 
+            } else {
+               log.warn("Authentication Service recieved unknown additional descriptor: " + addInfo );
             }
          }
          // Populate the person object using the PersonDirectory if applicable
@@ -195,6 +192,10 @@ public class Authentication {
             throw  new PortalSecurityException("Authentication Service: Exception retrieving UID");
          }
          
+         //Ensure the person cache is using the most recent version
+         PersonDirectory.cachePerson(person);
+         
+         
          // Record the successful authentication
          StatsRecorder.recordLogin(person);
       }
@@ -238,8 +239,8 @@ public class Authentication {
       String credential = (String)credentials.get(ctxName);
       // If username or credential are null, this indicates that the token was not
       // set in security properties. We will then use the value for root.
-      username = (username != null ? username : (String)principals.get("root"));
-      credential = (credential != null ? credential : (String)credentials.get("root"));
+      username = (username != null ? username : (String)principals.get(BASE_CONTEXT_NAME));
+      credential = (credential != null ? credential : (String)credentials.get(BASE_CONTEXT_NAME));
       log.debug("Authentication::setContextParameters() username: " + username);
       // Retrieve and populate an instance of the principal object
       IPrincipal principalInstance = securityContext.getPrincipalInstance();
@@ -250,4 +251,34 @@ public class Authentication {
       IOpaqueCredentials credentialsInstance = securityContext.getOpaqueCredentialsInstance();
       credentialsInstance.setCredentials(credential);
    }
+   
+   /**
+    * Recureses through the {@link ISecurityContext} chain, setting the credentials
+    * for each.
+    * TODO This functionality should be moved into the {@link org.jasig.portal.security.provider.ChainingSecurityContext}.
+    * 
+    * @param principals
+    * @param credentials
+    * @param person
+    * @param securityContext
+    * @throws PortalSecurityException
+    */
+   private void configureSecurityContextChain(final HashMap principals, final HashMap credentials, final IPerson person, final ISecurityContext securityContext, final String baseContextName) throws PortalSecurityException {
+       this.setContextParameters (principals, credentials, baseContextName, securityContext, person);
+       
+       // load principals and credentials for the subContexts
+       for (final Enumeration subCtxNames = securityContext.getSubContextNames(); subCtxNames.hasMoreElements(); ) {
+           final String fullSubCtxName = (String)subCtxNames.nextElement();
+           
+           //Strip off the base of the name
+           String localSubCtxName = fullSubCtxName;
+           if (fullSubCtxName.startsWith(baseContextName + ".")) {
+               localSubCtxName = localSubCtxName.substring(baseContextName.length() + 1);
+           }
+          
+           final ISecurityContext sc = securityContext.getSubContext(localSubCtxName);
+           
+           this.configureSecurityContextChain(principals, credentials, person, sc, fullSubCtxName);
+       }
+   }   
 }

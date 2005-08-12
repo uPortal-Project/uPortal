@@ -78,7 +78,7 @@ public class CViewer extends BaseChannel {
         } catch (NotContextException nce) {
             log.error( "CHistory.getUserXML(): Could not find subcontext /channel-obj in JNDI");
         } catch (NamingException e) {
-            log.error( e);
+            log.error("Failed lookup of /channel-obj", e);
         }
 
         // bind new ViewerURL object
@@ -87,7 +87,7 @@ public class CViewer extends BaseChannel {
         } catch (NotContextException nce) {
             log.error( "CHistory.getUserXML(): Could not bind channel object for channel id="+staticData.getChannelSubscribeId());
         } catch (NamingException e) {
-            log.error( e);
+            log.error("Failed bind", e);
         }
 
         // regsiter history channel
@@ -207,14 +207,14 @@ public class CViewer extends BaseChannel {
         } catch (NotContextException nce) {
             log.error( "CURLSelector.getUserXML(): Could not find subcontext /channel-ids in JNDI");
         } catch (NamingException e) {
-            log.error( e);
+            log.error("Failed lookup /channel-ids", e);
         }
         try {
             id=(String)globalIDContext.lookup(fname);
         } catch (NotContextException nce) {
             log.error( "CURLSelector.getUserXML(): Could not find channel ID for fname="+fname);
         } catch (NamingException e) {
-            log.error( e);
+            log.error("Failed lookup " + fname, e);
         }
         return id;
     }
@@ -234,7 +234,7 @@ public class CViewer extends BaseChannel {
         } catch (NotContextException nce) {
             log.error( "CURLSelector.getUserXML(): Could not find subcontext /channel-obj in JNDI");
         } catch (NamingException e) {
-            log.error( e);
+            log.error("Failed lookup /channel-obj", e);
         }
 
         try {
@@ -242,7 +242,7 @@ public class CViewer extends BaseChannel {
         } catch (NotContextException nce) {
             log.error( "CURLSelector.getUserXML(): Could not find channel bound object for channel id="+channelSubscribeId);
         } catch (NamingException e) {
-            log.error( e);
+            log.error("Failed lookup " + channelSubscribeId, e);
         }
         return o;        
     }

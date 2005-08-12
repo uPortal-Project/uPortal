@@ -82,7 +82,7 @@ public class PermissibleSubscribeChannels
                 targets.put("CHAN_ID." + chanID, chanf.getName(chanID));
             }
         } catch (Exception e) {
-            log.error( e);
+            log.error(e, e);
         }
     }
 

@@ -1,0 +1,82 @@
+$Id$
+
+uPortal Release Notes
+---------------------
+Release Notes - uPortal - Version 2.4.3
+
+**Bug
+
+    * [UP-694] - NPE persists after publishing fragment with no name and description
+    * [UP-735] - Content Subscriber exception when searching for "what's"
+    * [UP-754] - Problem on deleting non-empty tabs
+    * [UP-818] - HttpProxyServlet ignores query string
+    * [UP-823] - MInesweeper codebase web site moved.
+    * [UP-849] - RDBMPortletPreferencesStore doesn't support MS-SQL
+    * [UP-865] - simple layout manager won't start
+    * [UP-921] - very long time to connect: AggregatedUserLayoutStore SQL
+    * [UP-931] - ChannelRenderer finalizer is causing lots of loitered objects in memory causing a serious memory leak.
+    * [UP-1016] - BoundedThreadPool infinite loop or deadlock [2-4-patches]
+    * [UP-1102] - Restore safety to channel rendering
+    * [UP-1119] - memory leak happens under stress when CPortletAdapter portlets are asked to clean themselves up when the session ends.
+    * [UP-1123] - PortletStateManager.clearState(PortletWindow) implementation is buggy and can lead to ConcurrentModificationException under stress.
+    * [UP-1145] - access to SoftHashMap systemCache across threads is not synchronized
+
+**Improvement
+
+    * [UP-734] - Make "Cannot start uPortal" message give HTTP 500 status code
+    * [UP-815] - ChannelFactory should log source exception on instantiation failure
+    * [UP-992] - MultipartDataSource.finalize( ) is not implemented properly.
+    * [UP-1079] - StaticInformationProvider.getPortletDefinition() should give helpful exception if portletGUID doesn't have a "."
+    * [UP-1146] - javadoc SoftHashMap to say it isn't synchronized
+    * [UP-1177] - org.jasig.portal.MultipartDataSource incorrectly implemented finalize ( ) method.
+    * [UP-1178] - HTMLdtd.fromChar(int) method creats un-necessary objects during the lookup.
+    * [UP-1179] - Debug statements in the codebase causes un-necessary creation of string objects.
+    * [UP-1180] - Reduce object creation in SubstitutionIntegerFilter.java
+    * [UP-1181] - Reduce number of MediaManager objects created
+    * [UP-1187] - Enhance ChannelRuntimeData by adding a new method that generates the functional-name-focusing URL for channels.
+
+----------------------------------------------------------------
+Release Notes - uPortal - Version 2.4.2
+
+** Bug
+    * [UP-338] - RENDERING_DONE Event never sent
+    * [UP-476] - User's LDAP groups not loaded if username contains uppercase
+    * [UP-512] - User agent too long for db column
+    * [UP-685] - wrong fname in fragment produces exception with no useful error
+                 message
+    * [UP-744] - PersonDirectory has a memory leak related to caching IPersons in
+                 a WeakHashMap
+    * [UP-745] - ChannelManager has a memory leak, when it swaps out a channel
+                 for the CError channel, the end session events never progagate
+                 to the original channel
+    * [UP-746] - CSecureInfo has a memory leak, when ChannelManager swaps out a
+                 channel for the CSecureInfo channel, the to end session events 
+                 never propagate to the original channel
+    * [UP-747] - Change to portlet parameter encoding breaks download worker URLs
+    * [UP-748] - Infinite recursion in RestrictedPerson
+    * [UP-749] - render parameter does not survive refresh
+    * [UP-753] - ChannelFactory should not expose internal map of static channels, 
+                 not create more than one instance of a multithreaded channel
+    * [UP-758] - CContentSubscriber prints exception to stdout instead of log
+    * [UP-759] - Xalan jar should be deployed to endorsed directory
+    * [UP-760] - Entity locks not expired correctly
+    * [UP-761] - A lock owner is limited to single READ lock on an entity
+    * [UP-772] - Classpath resources not being copied to build
+    * [UP-775] - Duplicate read locks for a single owner not permitted.
+    * [UP-776] - WebApplicationMarshaller.java turns resource-ref into 
+                 resource-env-ref
+    * [UP-778] - AggregatedLayoutManager.loadUserLayout() fails to log stack 
+                 trace for exception
+    * [UP-779] - ChannelRenderer declares constants that are already declared 
+                 in its base class
+    * [UP-780] - Eliminate "unknown additional descriptor warning" when using 
+                 ChainingSecurityContext
+    * [UP-796] - contains() doesn't always work for PAGS groups
+    * [UP-798] - GroupService.isComposite always returns null
+    * [UP-811] - NPE when Data tag not present in DatabaseTagHandler
+
+** Improvement
+    * [UP-770] - Document hsqldb version included with uPortal
+    * [UP-800] - Add comment to clarify usage of Logger.properties
+    * [UP-809] - Move portlet request attribute configuration to helper method
+    * [UP-810] - Log logging implementation

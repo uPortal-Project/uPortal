@@ -58,10 +58,10 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.car.CarResources;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.layout.IALFolderDescription;
+import org.jasig.portal.layout.IAggregatedUserLayoutManager;
 import org.jasig.portal.layout.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.IUserLayoutNodeDescription;
-import org.jasig.portal.layout.IAggregatedUserLayoutManager;
 import org.jasig.portal.layout.TransientUserLayoutManagerWrapper;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
@@ -108,7 +108,7 @@ public class UserInstance implements HttpSessionBindingListener {
     private LocaleManager localeManager;
 
     // contains information relating client names to media and mime types
-    private static MediaManager mediaM;
+    private static final MediaManager MEDIAMANAGER = MediaManager.getMediaManager();
 
     // system profile mapper standalone instance
     private StandaloneChannelRenderer p_browserMapper = null;
@@ -142,12 +142,12 @@ public class UserInstance implements HttpSessionBindingListener {
         this.person=person;
 
         // init the media manager
-        if(mediaM==null) {
-            String mediaPropsUrl = this.getClass().getResource("/properties/media.properties").toString();
-            String mimePropsUrl = this.getClass().getResource("/properties/mime.properties").toString();
-            String serializerPropsUrl = this.getClass().getResource("/properties/serializer.properties").toString();
-            mediaM = new MediaManager(mediaPropsUrl, mimePropsUrl, serializerPropsUrl);
-        }
+//        if(MEDIAMANAGER==null) {
+//            String mediaPropsUrl = this.getClass().getResource("/properties/media.properties").toString();
+//            String mimePropsUrl = this.getClass().getResource("/properties/mime.properties").toString();
+//            String serializerPropsUrl = this.getClass().getResource("/properties/serializer.properties").toString();
+//            MEDIAMANAGER = new MediaManager(mediaPropsUrl, mimePropsUrl, serializerPropsUrl);
+//        }
     }
 
     /**
@@ -239,7 +239,7 @@ public class UserInstance implements HttpSessionBindingListener {
                 //              |
                 //        JspWriter
                 //
-
+                BaseMarkupSerializer markupSerializer = null;
                 try {
 
                     // call layout manager to process all user-preferences-related request parameters
@@ -365,7 +365,7 @@ public class UserInstance implements HttpSessionBindingListener {
                     // obtain the writer - res.getWriter() must occur after res.setContentType()
                     PrintWriter out = res.getWriter();
                     // get a serializer appropriate for the target media
-                    BaseMarkupSerializer markupSerializer = mediaM.getSerializerByName(tsd.getSerializerName(), out);
+                    markupSerializer = MEDIAMANAGER.getSerializerByName(tsd.getSerializerName(), out);
                     // set up the serializer
                     markupSerializer.asContentHandler();
                     // see if we can use character caching
@@ -629,6 +629,9 @@ public class UserInstance implements HttpSessionBindingListener {
                     throw pe;
                 } catch (Exception e) {
                     throw new PortalException(e);
+                } finally {
+                    // cleanup
+                    markupSerializer = null;
                 }
             }
         }
@@ -736,7 +739,7 @@ public class UserInstance implements HttpSessionBindingListener {
                 themePrefs.putParameterValue("authorizedChannelPublisher", "true");
             }
         } catch (Exception e) {
-            log.error(e);
+            log.error("Exception determining publish rights for " + this.person, e);
         }
         
         String[] values;
