@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/3.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/3.0.0
+http://maven.apache.org/maven-v3_0_0.xsd">
+  <pomVersion>3</pomVersion>
+  <!-- ================================================================== -->
+  <!-- Standard project information                                       -->
+  <!-- ================================================================== -->
+  <id>uportal</id>
+  <artifactId>uportal</artifactId>
+  <name>uPortal</name>
+  <groupId>ja-sig</groupId>
+  <currentVersion>2.5.0</currentVersion>
+  <inceptionYear>2005</inceptionYear>
+  <logo></logo>
+  <!-- ================================================================== -->
+  <!-- Library and artifact dependencies                                  -->
+  <!-- ================================================================== -->
+  <dependencies>
+    <!-- ================================================================== -->
+    <!-- These should not be bundled with the WAR. They are expected        -->
+    <!-- to be available through the container class loader.                -->
+    <!-- ================================================================== -->
+    <dependency>
+      <type>jar</type>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging-api</artifactId>
+      <version>1.0.4</version>
+    </dependency>
+    <dependency>
+      <type>jar</type>
+      <groupId>servletapi</groupId>
+      <artifactId>servletapi</artifactId>
+      <version>2.3</version>
+    </dependency>
+    <dependency>
+      <type>jar</type>
+      <groupId>xalan</groupId>
+      <artifactId>xalan</artifactId>
+      <version>2.6.0</version>
+    </dependency>      
+    <!-- ================================================================== -->
+    <!-- These should be bundled with the WAR                               -->
+    <!-- ================================================================== -->
+    <dependency>
+      <type>jar</type>
+      <groupId>activation</groupId>
+      <artifactId>activation</artifactId>
+      <version>1.0.2</version>
+      <properties>
+        <war.bundle>true</war.bundle>
+      </properties>
+    </dependency>
+    <dependency>
+      <type>jar</type>
+      <groupId>commons-collections</groupId>
+      <artifactId>commons-collections</artifactId>
+      <version>3.1</version>
+      <properties>
+        <war.bundle>true</war.bundle>
+      </properties>
+    </dependency>
+    <dependency>
+      <type>jar</type>
+      <groupId>portlet-api</groupId>
+      <artifactId>portlet-api</artifactId>
+      <version>1.0</version>
+      <properties>
+        <war.bundle>true</war.bundle>
+      </properties>
+    </dependency>
+    <dependency>
+      <type>jar</type>
+      <groupId>pluto</groupId>
+      <artifactId>pluto</artifactId>
+      <version>1.0.1-rc3</version>
+      <properties>
+        <war.bundle>true</war.bundle>
+      </properties>
+    </dependency>
+    <dependency>
+      <type>jar</type>
+      <groupId>spring</groupId>
+      <artifactId>spring</artifactId>
+      <version>1.1</version>
+      <properties>
+        <war.bundle>true</war.bundle>
+      </properties>
+    </dependency>
+    <dependency>
+      <type>jar</type>
+      <groupId>com.servlets</groupId>
+      <artifactId>cos</artifactId>
+      <version>05Nov2002</version>
+      <properties>
+        <war.bundle>true</war.bundle>
+      </properties>
+    </dependency>
+    <dependency>
+      <type>jar</type>
+      <groupId>concurrent</groupId>
+      <artifactId>concurrent</artifactId>
+      <version>1.3.4</version>
+      <properties>
+        <war.bundle>true</war.bundle>
+      </properties>
+    </dependency>
+    <dependency>
+      <type>jar</type>
+      <groupId>backport-util-concurrent</groupId>
+      <artifactId>backport-util-concurrent</artifactId>
+      <version>1.1_01</version>
+      <properties>
+        <war.bundle>true</war.bundle>
+      </properties>
+    </dependency>
+    <dependency>
+      <type>jar</type>
+      <groupId>whirlycache</groupId>
+      <artifactId>whirlycache</artifactId>
+      <version>0.7.1</version>
+      <properties>
+        <war.bundle>true</war.bundle>
+      </properties>
+    </dependency>
+    <dependency>
+      <type>jar</type>
+      <groupId>oro</groupId>
+      <artifactId>oro</artifactId>
+      <version>2.0.8</version>
+      <properties>
+        <war.bundle>true</war.bundle>
+      </properties>
+    </dependency>
+    <dependency>
+      <type>jar</type>
+      <groupId>jtidy</groupId>
+      <artifactId>jtidy</artifactId>
+      <version>4aug2000r7-dev</version>
+      <properties>
+        <war.bundle>true</war.bundle>
+      </properties>
+    </dependency>
+    <dependency>
+      <type>jar</type>
+      <groupId>wsrp4j</groupId>
+      <artifactId>wsrp4j-shared</artifactId>
+      <version>0.3</version>
+      <properties>
+        <war.bundle>true</war.bundle>
+      </properties>
+    </dependency>
+    <dependency>
+      <type>jar</type>
+      <groupId>wsrp4j</groupId>
+      <artifactId>wsrp4j-consumer</artifactId>
+      <version>0.3</version>
+      <properties>
+        <war.bundle>true</war.bundle>
+      </properties>
+    </dependency>
+    <dependency>
+      <type>jar</type>
+      <groupId>proxyportlet</groupId>
+      <artifactId>proxyportlet</artifactId>
+      <version>1.0</version>
+      <properties>
+        <war.bundle>true</war.bundle>
+      </properties>
+    </dependency>
+    <!-- added for uPortal 2.5 -->
+    <dependency>
+      <type>jar</type>
+      <groupId>tyrex</groupId>
+      <artifactId>tyrex</artifactId>
+      <version>1.0.1</version>
+      <properties>
+        <war.bundle>true</war.bundle>
+      </properties>
+    </dependency>
+    <dependency>
+      <type>jar</type>
+      <groupId>commons-dbcp</groupId>
+      <artifactId>commons-dbcp</artifactId>
+      <version>1.2.1</version>
+      <properties>
+        <war.bundle>true</war.bundle>
+      </properties>
+    </dependency>
+    <dependency>
+      <type>jar</type>
+      <groupId>commons-pool</groupId>
+      <artifactId>commons-pool</artifactId>
+      <version>1.2</version>
+      <properties>
+        <war.bundle>true</war.bundle>
+      </properties>
+    </dependency>
+    <dependency>
+      <type>jar</type>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.8</version>
+      <properties>
+        <war.bundle>true</war.bundle>
+      </properties>
+    </dependency>
+    
+  </dependencies>
+  <!-- ================================================================== -->
+  <!-- Build information                                                  -->
+  <!-- ================================================================== -->
+  <build>
+    <sourceDirectory>source</sourceDirectory>
+    <resources>
+      <!-- Include all properties files as classpath resources -->
+      <resource>
+        <directory>properties</directory>
+        <targetPath>properties</targetPath>
+        <includes>
+          <include>*/**</include>
+          <exclude>CVS</exclude>
+        </includes>
+      </resource>
+      <!-- Specify some resources to be places in the root package -->
+      <resource>
+        <directory>properties</directory>
+        <includes>
+          <include>properties/log4j.xml</include>
+          <include>properties/log4j.dtd</include>
+          <include>properties/whirlycache.xml</include>
+          <exclude>CVS</exclude>
+        </includes>
+      </resource>
+      <!-- Specify some resources to be places in the root package -->
+      <resource>
+        <directory>webpages/stylesheets</directory>
+        <includes>
+          <include>**/*.cpd,**/*.xsl,**/*.ssl,**/*.sdf,**/*.properties</include>
+          <exclude>CVS,**/*.UTF-8.properties</exclude>
+        </includes>
+      </resource>
+      <!-- Specify some resources to be places in the root package -->
+      <resource>
+        <directory>webpages/media</directory>
+        <includes>
+          <exclude>CVS,**/*.gif,**/*.jpg,**/*.css</exclude>
+        </includes>
+      </resource>
+      <!-- Specify some resources to be places in the root package -->
+      <resource>
+        <directory>webpages/dtd</directory>
+        <targetPath>properties/chanpub/chandefs</targetPath>
+        <includes>
+          <include>channelDefinition.dtd</include>
+        </includes>
+      </resource>
+      <!-- Specify some resources to be places in the root package -->
+      <resource>
+        <directory>webpages/dtd</directory>
+        <targetPath>org/jasig/portal/container/deploy</targetPath>
+        <includes>
+          <include>web-app_2_3.dtd</include>
+        </includes>
+      </resource>
+    </resources>
+  </build>
+</project>
