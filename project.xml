@@ -11,7 +11,20 @@ http://maven.apache.org/maven-v3_0_0.xsd">
   <groupId>ja-sig</groupId>
   <currentVersion>2.6.0-SNAPSHOT</currentVersion>
   <inceptionYear>2005</inceptionYear>
-  <logo></logo>
+  <url>http://www.uportal.org</url>
+  <logo>http://www.ja-sig.org/images/jasig-head.gif</logo>
+  <issueTrackingUrl>http://jasigch.princeton.edu:9000/jira/browse/UP</issueTrackingUrl>
+  <license>
+    <name>Ja-Sig Collaborative License</name>
+    <url>http://www.uportal.org/license.html</url>
+    <distribution>manual</distribution>
+    <comments/>
+  </license>
+  <repository>
+    <connection>scm:cvs:pserver:anonymous@www.uportal.org:/home/cvs/jasig:portal</connection>
+    <developerConnection>scm:cvs:pserver:localhost:/home/cvs/jasig:portal</developerConnection>
+    <url>http://www.uportal.org/cgi-bin/viewcvs.cgi/</url>
+  </repository>  
   <!-- ================================================================== -->
   <!-- Library and artifact dependencies                                  -->
   <!-- ================================================================== -->
