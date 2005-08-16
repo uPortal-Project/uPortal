@@ -80,9 +80,16 @@ public class PropertyManagerServiceImpl implements PropertyManagerService {
         if (exprTime == null) {
             final PortletEntity pe = window.getPortletEntity();
             final PortletDefinition pd = pe.getPortletDefinition();
+            final String value = pd.getExpirationCache();
+            try {
+                Integer.parseInt(value);
+            }
+            catch (Throwable t) {
+                value = "-1";
+            }
             
             //Values MUST be String[]
-            properties.put(RenderResponse.EXPIRATION_CACHE, new String[] {pd.getExpirationCache()});
+            properties.put(RenderResponse.EXPIRATION_CACHE, new String[] {value});
         }
                         
         return properties;
