@@ -12,6 +12,8 @@ import javax.portlet.RenderResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.pluto.om.entity.PortletEntity;
 import org.apache.pluto.om.portlet.PortletDefinition;
 import org.apache.pluto.om.window.PortletWindow;
@@ -34,6 +36,7 @@ import org.apache.pluto.services.property.PropertyManagerService;
  */
 public class PropertyManagerServiceImpl implements PropertyManagerService {
     private final Map propertyMapping = new WeakHashMap();
+    protected Log log = LogFactory.getLog(getClass());
     
     /**
      * Stores the properties in a {@link WeakHashMap} that is keyed off the
@@ -84,7 +87,9 @@ public class PropertyManagerServiceImpl implements PropertyManagerService {
             try {
                 Integer.parseInt(value);
             }
-            catch (Throwable t) {
+            catch (NumberFormatException e) {
+            	log.warn("Expriation cache \""+value+"\" must be an integer in window "+window+". " +
+            			"Using -1 instead.",e);
                 value = "-1";
             }
             
