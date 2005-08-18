@@ -64,4 +64,13 @@ public class UserProfile implements Serializable {
     public LocaleManager getLocaleManager() {
 	return localeManager;
     }
+    public String toString(){
+        return "name :"+pName+","+
+	        "description: "+description+","+
+	        "layout_id: "+layout_id+","+
+	        "struct_ss_id: "+struct_ss_id+","+
+	        "theme_ss_id: "+theme_ss_id+","+
+	        "system: "+system+","+
+	        "localeManager: "+localeManager;
+    }
 }
