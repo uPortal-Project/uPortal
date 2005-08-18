@@ -67,7 +67,15 @@ public class DbUnload {
             if (!rs.wasNull()) {
               value = ts.toString();
             }
-          } else {
+          } else if (columnType[i] == java.sql.Types.DATE)
+          {
+			java.sql.Date dt= rs.getDate(i+1);
+			if (!rs.wasNull()) {
+				java.sql.Timestamp ts = new java.sql.Timestamp(dt.getTime());
+			  	value = ts.toString();
+			}
+          }
+          else{
             throw new Exception("Unrecognized column type " + columnType[i] + " for column " + (i + 1) +
             " in table " + tableName);
           }
