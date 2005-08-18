@@ -33,71 +33,71 @@
 
   <xsl:template match="request-info">
     <tr>
-      <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even"><xsl:value-of select="$REQUEST_PROTOCOL"/> </p></td>
+      <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><span class="uportal-channel-table-row-even"><xsl:value-of select="$REQUEST_PROTOCOL"/> </span></td>
       <td class="uportal-channel-table-row-odd"><xsl:value-of select="request-protocol"/></td>
     </tr>  
     <tr>
-      <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even"><xsl:value-of select="$REQUEST_METHOD"/> </p></td>
+      <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><span class="uportal-channel-table-row-even"><xsl:value-of select="$REQUEST_METHOD"/> </span></td>
       <td width="100%" class="uportal-channel-table-row-odd"><xsl:value-of select="request-method"/></td>
     </tr>
     <tr>
-      <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even"><xsl:value-of select="$SERVER_NAME"/> </p></td>
+      <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><span class="uportal-channel-table-row-even"><xsl:value-of select="$SERVER_NAME"/> </span></td>
       <td class="uportal-channel-table-row-even"><xsl:value-of select="server-name"/></td>
     </tr>
     <tr>
-      <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even"><xsl:value-of select="$SERVER_PORT"/> </p></td>
+      <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><span class="uportal-channel-table-row-even"><xsl:value-of select="$SERVER_PORT"/> </span></td>
       <td class="uportal-channel-table-row-odd"><xsl:value-of select="server-port"/></td>
     </tr>    
     <tr>
-      <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even"><xsl:value-of select="$REQUEST_URI"/> </p></td>
+      <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><span class="uportal-channel-table-row-even"><xsl:value-of select="$REQUEST_URI"/> </span></td>
       <td class="uportal-channel-table-row-even"><xsl:value-of select="request-uri"/></td>
     </tr>
     <tr>
-      <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even"><xsl:value-of select="$CONTEXT_PATH"/> </p></td>
+      <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><span class="uportal-channel-table-row-even"><xsl:value-of select="$CONTEXT_PATH"/> </span></td>
       <td class="uportal-channel-table-row-even"><xsl:value-of select="context-path"/></td>
     </tr>        
     <tr>
-      <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even"><xsl:value-of select="$SERVLET_PATH"/> </p></td>
+      <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><span class="uportal-channel-table-row-even"><xsl:value-of select="$SERVLET_PATH"/> </span></td>
       <td class="uportal-channel-table-row-even"><xsl:value-of select="servlet-path"/></td>
     </tr>
     <tr>
-      <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even"><xsl:value-of select="$QUERY_STRING"/> </p></td>
+      <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><span class="uportal-channel-table-row-even"><xsl:value-of select="$QUERY_STRING"/> </span></td>
       <td class="uportal-channel-table-row-odd"><xsl:value-of select="query-string"/></td>
     </tr>    
     <tr>
-      <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even"><xsl:value-of select="$PATH_INFO"/> </p></td>
+      <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><span class="uportal-channel-table-row-even"><xsl:value-of select="$PATH_INFO"/> </span></td>
       <td class="uportal-channel-table-row-odd"><xsl:value-of select="path-info"/></td>
     </tr>
     <tr>
-      <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even"><xsl:value-of select="$PATH_TRANSLATED"/> </p></td>
+      <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><span class="uportal-channel-table-row-even"><xsl:value-of select="$PATH_TRANSLATED"/> </span></td>
       <td class="uportal-channel-table-row-even"><xsl:value-of select="path-translated"/></td>
     </tr>
     <tr>
-      <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even"><xsl:value-of select="$CONTENT_LENGTH"/> </p></td>
+      <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><span class="uportal-channel-table-row-even"><xsl:value-of select="$CONTENT_LENGTH"/> </span></td>
       <td class="uportal-channel-table-row-even"><xsl:value-of select="content-length"/></td>
     </tr>
     <tr>
-      <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even"><xsl:value-of select="$CONTENT_TYPE"/> </p></td>
+      <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><span class="uportal-channel-table-row-even"><xsl:value-of select="$CONTENT_TYPE"/> </span></td>
       <td class="uportal-channel-table-row-odd"><xsl:value-of select="content-type"/></td>
     </tr>
     <tr>
-      <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even"><xsl:value-of select="$REMOTE_USER"/> </p></td>
+      <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><span class="uportal-channel-table-row-even"><xsl:value-of select="$REMOTE_USER"/> </span></td>
       <td class="uportal-channel-table-row-even"><xsl:value-of select="remote-user"/></td>
     </tr>
     <tr>
-      <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even"><xsl:value-of select="$REMOTE_ADDRESS"/> </p></td>
+      <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><span class="uportal-channel-table-row-even"><xsl:value-of select="$REMOTE_ADDRESS"/> </span></td>
       <td class="uportal-channel-table-row-odd"><xsl:value-of select="remote-address"/></td>
     </tr>
     <tr>
-      <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even"><xsl:value-of select="$REMOTE_HOST"/> </p></td>
+      <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><span class="uportal-channel-table-row-even"><xsl:value-of select="$REMOTE_HOST"/> </span></td>
       <td class="uportal-channel-table-row-even"><xsl:value-of select="remote-host"/></td>
     </tr>
     <tr>
-      <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even"><xsl:value-of select="$AUTHORIZATION_SCHEME"/> </p></td>
+      <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><span class="uportal-channel-table-row-even"><xsl:value-of select="$AUTHORIZATION_SCHEME"/> </span></td>
       <td class="uportal-channel-table-row-odd"><xsl:value-of select="authorization-scheme"/></td>
     </tr>
     <tr>
-      <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><p class="uportal-channel-table-row-even"><xsl:value-of select="$LOCALE"/> </p></td>
+      <td nowrap="nowrap" valign="top" align="right" class="uportal-background-light"><span class="uportal-channel-table-row-even"><xsl:value-of select="$LOCALE"/> </span></td>
       <td class="uportal-channel-table-row-even"><xsl:value-of select="locale"/></td>
     </tr>
   </xsl:template>
