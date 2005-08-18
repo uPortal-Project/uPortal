@@ -25,6 +25,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -694,21 +695,38 @@ public class ChannelManager implements LayoutEventListener {
         if(ap.canRender(Integer.parseInt(channelPublishId))) {
 
             // Instantiate the channel and notify the StatsRecorder
-            ch = ChannelFactory.instantiateLayoutChannel(cd,this.pcs.getHttpServletRequest().getSession(false).getId());
-            StatsRecorder.recordChannelInstantiated(upm.getPerson(), upm.getCurrentProfile(), cd);
 
-            // Create and stuff the channel static data
-            ChannelStaticData sd = new ChannelStaticData();
-            sd.setChannelSubscribeId(channelSubscribeId);
-            sd.setTimeout(cd.getTimeout());
-            sd.setParameters(cd.getParameterMap());
-            sd.setPerson(upm.getPerson());
-            sd.setJNDIContext(channelContext);
-            sd.setICCRegistry(new ICCRegistry(this,channelSubscribeId));
-            sd.setChannelPublishId(cd.getChannelPublishId());
+			HttpServletRequest sr = this.pcs.getHttpServletRequest();
+			if (sr == null){
+				ch=new CError(ErrorCode.GENERAL_ERROR,"Unable to get SessionId. getHttpServletRequest returned null.",channelSubscribeId,null);
+			}else{
+				HttpSession hs  = sr.getSession(false);
+				if (hs == null){
+					ch=new CError(ErrorCode.GENERAL_ERROR,"Unable to get SessionId. getSession returned null.",channelSubscribeId,null);
+				}else{				
+					String id = hs.getId();
+					if (id == null){
+						ch=new CError(ErrorCode.GENERAL_ERROR,"Unable to get SessionId. getId returned null.",channelSubscribeId,null);
+					}else{			
+						           	
+						ch = ChannelFactory.instantiateLayoutChannel(cd,id);
+            			StatsRecorder.recordChannelInstantiated(upm.getPerson(), upm.getCurrentProfile(), cd);
 
-            ch.setStaticData(sd);
+			            // Create and stuff the channel static data
+			            ChannelStaticData sd = new ChannelStaticData();
+            			sd.setChannelSubscribeId(channelSubscribeId);
+			            sd.setTimeout(cd.getTimeout());
+           				sd.setParameters(cd.getParameterMap());
+			            sd.setPerson(upm.getPerson());
+			            sd.setJNDIContext(channelContext);
+            			sd.setICCRegistry(new ICCRegistry(this,channelSubscribeId));
+			            sd.setChannelPublishId(cd.getChannelPublishId());
 
+            			ch.setStaticData(sd);
+					}
+				}
+			}
+   
         } else {
             // user is not authorized to instantiate this channel
             // create an instance of an error channel instead
@@ -1124,7 +1142,10 @@ public class ChannelManager implements LayoutEventListener {
         }
 
         // Check if channel is rendering as the root element of the layout
-        String userLayoutRoot = upm.getUserPreferences().getStructureStylesheetUserPreferences().getParameterValue("userLayoutRoot");
+        
+		UserPreferences tempUserPref = upm.getUserPreferences();
+		StructureStylesheetUserPreferences tempSSUP = tempUserPref.getStructureStylesheetUserPreferences();
+		String userLayoutRoot = tempSSUP.getParameterValue("userLayoutRoot");
         if (rd != null && userLayoutRoot != null && !userLayoutRoot.equals(IUserLayout.ROOT_NODE_NAME)) {
             rd.setRenderingAsRoot(true);
         }
