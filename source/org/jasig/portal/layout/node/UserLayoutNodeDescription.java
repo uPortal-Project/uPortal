@@ -285,7 +285,8 @@ public abstract class UserLayoutNodeDescription implements IUserLayoutNodeDescri
         }
     }
 
-    public String toString() {
-    	return "["+id+","+name+"]";
-}
+	public String toString() {
+		return "["+id+","+name+"]";
+	}
+
 }
