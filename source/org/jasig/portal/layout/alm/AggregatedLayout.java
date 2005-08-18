@@ -84,7 +84,7 @@ public class AggregatedLayout implements IAggregatedLayout {
 					  "layout:"+layout);
 		  }
 	  }
-    this.layout = layout;
+	  this.layout = layout;
   }
 
   public Hashtable getLayoutData() throws PortalException {
@@ -118,9 +118,8 @@ public class AggregatedLayout implements IAggregatedLayout {
   }
 
   public ALNode getLayoutNode(String nodeId) {
-	  ALNode aln = (ALNode)layout.get(nodeId);
-
 	  if ( nodeId != null ){
+		  ALNode aln = (ALNode)layout.get(nodeId);
 		  if (aln != null && (nodeId.equals(aln.getNextNodeId()) ||
 			  nodeId.equals(aln.getPreviousNodeId()) ||
 			  nodeId.equals(aln.getParentNodeId())) 
@@ -131,7 +130,7 @@ public class AggregatedLayout implements IAggregatedLayout {
 		  }
 		  return aln;
 	  }
-        return null;
+	  return null;
   }
 
   public ALFolder getLayoutFolder(String folderId) {
@@ -148,7 +147,7 @@ public class AggregatedLayout implements IAggregatedLayout {
 		  }
 		  return aln;
 	  }
-        return null;
+	  return null;
   }
 
   public ALNode getLastSiblingNode ( String nodeId ) {
