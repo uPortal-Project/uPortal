@@ -170,4 +170,9 @@ public abstract class ALNode implements IALNode {
         }
     }
 
+    public String toString() {
+    	return "{"+parentNodeId+","+nextNodeId+","+previousNodeId
+    	+ ","+nodeDescription+ ","+priority+"}";
+    }
+
   }
