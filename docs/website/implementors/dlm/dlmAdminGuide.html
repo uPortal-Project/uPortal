@@ -1,0 +1,297 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title>Distributed Layout Management</title>
+  <meta http-equiv="content-type">
+  <link href="../../uportal.css" rel="stylesheet">
+</head>
+<body style="background-color: rgb(255, 255, 255);">
+<table cellspacing="0" cellpadding="0" width="100%">
+  <tbody>
+    <tr>
+      <td align="left" valign="bottom" colspan="3"><img
+ src="../../images/uportal-head.gif" alt="uPortal by JA-SIG" border="0"
+ height="87" width="592"> </td>
+    </tr>
+    <tr>
+      <td><img src="../../images/spacer.gif" alt="." border="0"
+ height="4" width="1"> </td>
+    </tr>
+  </tbody>
+</table>
+<table cellspacing="0" cellpadding="5" width="100%" border="0">
+  <tbody>
+    <tr>
+      <td valign="top" width="150" bgcolor="#ccccff"> <img
+ src="../../images/spacer.gif" border="0" height="4"> <br>
+      <p><a class="sidelinks" href="http://www.ja-sig.org/"><b> JA-SIG
+Home</b></a></p>
+      <p><a class="sidelinks" href="../../index.html"><b> About uPortal</b></a></p>
+      <p><a class="sidelinks" href="../../docs.html"><b> Documentation</b></a></p>
+      <p><a class="sidelinks" href="../../administrators/index.html"><b>
+Getting Started</b></a></p>
+      <p><a class="sidelinks" href="../../developers/index.html"><b>
+Developers</b></a></p>
+	
+      <p><a class="sidelinks" href="../index.html"><b> Implementors</b></a></p>
+	
+      <p><a class="sidelinks" href="../../users/index.html"><b> Users</b></a></p>
+      <p><a class="sidelinks" href="../../architecture/index.html"><b>
+Background</b></a></p>
+      <p><a class="sidelinks" href="../../release/index.html"><b> Release</b></a></p>
+      <p><img src="../../images/mellon.gif" alt="" border="0"
+ width="145" height="93"> </p>
+      </td>
+<!-- main body goes in this table cell  (see BELOW)   --> <td
+ valign="top"> <img height="4" width="692"
+ src="../../images/orange-pixel.gif" border="0" alt="."> <a
+ href="dlmAdminGuide_prt.html"> <img
+ src="../../images/print_this.gif" border="0" width="86" height="20"
+ alt="Printable version of this document" align="right"> </a> <br>
+<!-- TO CHANGE: main body goes HERE <<<<<<<<<<<<<<<<<< --><!-- start cut this section to put into jasig table cell format -->
+      <div align="center"><big><big>Distributed Layout Management (DLM)</big></big><br>
+      </div>
+      <br>
+      <big><br>
+      <span style="font-weight: bold;"> Contents</span><br>
+      </big>
+      <blockquote><a href="#whence_came_dlm">What is DLM and where did it come from?</a><br>
+        <a href="#configuring_uportal_for_dlm">Configuring uPortal to Use DLM</a><br>
+        <a href="#dlm_guest_fragment">DLM Guest Fragment</a><br>
+        <a href="#introducing_dlm_xml">Introducing dlm.xml</a><br>
+        <a href="#defining_fragments">Defining Fragments</a><br>
+        <a href="#defining_audiences">Defining Audiences</a><br>
+        <a href="#setting_up_layouts">Setting up Fragment Layouts</a><br>
+        <a href="#future_direction">Future Direction</a><br>
+        
+      </blockquote>
+      <br>
+      <br>
+      <big><a name="whence_came_dlm"></a><span style="font-weight: bold;">What is DLM and where did it come from?</span></big><br>
+      <p> In uPortal, Layout Management refers to how the user interface seen by a user is generated and changed. In version 2.0, only Simple Layout Management, SLM, was available in the portal. All layout pieces like tabs, columns, and channels were owned by the user. There was little control available for an institution to control a user's layout. When Sungard SCT, then Campus Pipeline, adopted uPortal for their Luminis product they had to allow <span style="font-style: italic;">schools</span> to <span style="font-style: italic;">choose how much or how little</span> of the layout <span style="font-style: italic;">choose how much or how little</span> is locked in place. Furthermore, this should be modifiable at any time and such changes should then appear in the portal. The result was Distributed Layout Management or DLM which debuted in Luminis in 2002.&nbsp;</p>
+      <p> This resulted in JA-SIG designing a similar feature known as Aggregated Layout Management or ALM. With the advent of ALM there were two approaches to dynamic layout management. However, although they have complimentary features, ALM and DLM each provide benefits that are not had by the other implementation. In 2004 Sungard SCT was contacted to see if the features of ALM and DLM could converge into a single offering. The benefits are obvious. With the community working to enhance the features of a single offering all will benefit. Accordingly, work was started in late 2004 to contribute DLM back to the community and have it available starting in uPortal version 2.5.0. <br>
+      </p>
+      <big><a name="configuring_uportal_for_dlm"></a><span
+ style="font-weight: bold;">Configuring uPortal to Use DLM</span></big><br>
+      <p> uPortal version 2.5 comes configured to use ALM by default. To convert between the different layout management approaches follow these simple steps.</p>
+      <p><span style="font-weight: bold;">Step 1: </span>Stop the web server if not stopped already.</p>
+      <p><span style="font-weight: bold;">Step 2: </span>Open portal.properties and search for any of these three accronyms. There are two properties that the portal uses to startup the appropriate code to perform that layout management functionality. Preceding each of these properties is a comment block outlining what value that property should have for each of the respective layout management approaches. The properties that need to be changed are:</p>
+<table border="1"><tr><th>portal.properties to be Changed</th></tr>
+<tr><td>org.jasig.portal.layout.UserLayoutStoreFactory.implementation</td></tr>
+<tr><td>org.jasig.portal.layout.UserLayoutManagerFactory.coreImplementation</td></tr>
+</table>      
+      <p>After changing this value redeploy using, <span style="font-weight: bold;">"ant deploy"</span>, so that the modified portal.properties file is pushed to <span style="font-weight: bold;">&lt;webApplicationRoot&gt;/WEB-INF/classes/properties</span> unless you changed the version in that location.</p>
+      <p><span style="font-weight: bold;">Step 3: </span>Modify user accounts in the database. Specifically, the UP_USER_PROFILE table contains a lookup of the structure and theme stylesheets that should be used by users. The following SQL can be used to modify the values for the respective layout management approaches. See the following table for the specific stylesheet values that come in the default uPortal database.</p>
+<table border="1"><tr><td style="font-family: monospace;"><pre>UPDATE up_user_profile
+SET structure_ss_id=&lt;struct Id From Below&gt;,
+theme_ss_id=&lt;theme Id From Below&gt;
+WHERE theme_ss_id=&lt;current Theme Id In up_user_profile&gt;</pre>
+</td></tr></table><br/>     
+<table border="1">
+<tr><th>Approach</th><th>Structure Stylesheet Id</th><th>Theme Stylesheet Id</th></tr>
+<tr><td>SLM</td><td>1</td><td>1</td></tr>
+<tr><td>ALM</td><td>3</td><td>11</td></tr>
+<tr><td>DLM</td><td>4</td><td>3</td></tr>
+</table> 
+      <p><span style="font-weight: bold;">Step 4: </span>Restart the web server.</p>
+      
+      <big><a name="dlm_guest_fragment"></a><span
+ style="font-weight: bold;">DLM Guest Fragment</span></big><br>
+      <p>When you first configure the portal to use DLM, start up the web server, and go to the portal with a browser you will notice a new "Welcome" tab appears. Of the tabs in the login page, this one is unique. Most are part of the guest user's own layout. This tab isn't. In DLM terminology it is a <span style="font-style: italic;">fragment</span> that was merged in by DLM. Traditionally, if you wanted to change what guests see you would set a password for the guest user, log in as guest, and change the layout. Not with DLM. <span style="font-style: italic;">To change the contents of this tab</span> log in with the following user id and password:</p>
+      <p>User Id: <span style="font-weight: bold;">guest-lo</span>, Password: <span style="font-weight: bold;">guest-lo</span></p>
+      <p>This user is a DLM fragment owner. This account has all of the same capabilities as a regular user with one exception, <span style="font-style: italic;">no fragments are merged into a fragment owner's layout</span>. Fragment owners see only their owned layout since that layout becomes the fragment that is pushed into other layouts.</p>
+      <p>Now once you log in, change the guest fragment, and log out, <span style="font-style: italic;">you will notice that this tab didn't change</span>. Doesn't DLM push changes to the guest layout? Of course it does. The problem here is that the guest layout that you see is cached in a layout manager. For regular users a layout manager is loaded when they log in. Hence, so is their layout. The guest layout manager is loaded when the first request is made to the portal after starting up and is cached in memory thereafter. So changes made to fragments that go to regular users will present their changes the next time that a user logs in after that fragment has been changed. But currently, to see changes pushed to the guest layout, the portal must be restarted. This will be fixed soon. We hope.</p>
+      
+      <big><a name="introducing_dlm_xml"></a><span
+ style="font-weight: bold;">Introducing dlm.xml</span></big><br>
+      <p>When DLM was developed, time was of the essence. A new user interface taylored to building fragments and a new database schema was too aggresive an undertaking for engineers new to the uPortal code base. Upon further investigation of the portal architecture and database schema it was determined that a derivative approach could be taken instead. In a derivative approach, existing, reliable pieces of the portal could be used to produce layout fragments to be pushed to users. Furthermore, there would be no database schema changes. Specifically, fragments would be obtained by using regular portal accounts to define what each fragment should look like. Such was and is the design of DLM. A configuration file, <span style="font-weight: bold;">dlm.xml</span> <span style="font-style: italic;">defines fragments, their audiences, and the special portal accounts used to set up their layouts</span>. (See Future Direction on how dlm.xml will be replaced in the near future.)</p>
+      <p>Although dlm.xml is xml based it does not have a defined schema or DTD. Its expected structure is defined by the expectations of the DLM loading infrastructure. This is in part due to the extensible nature of dlm.xml as will be seen in the declarations of the fragment audience definitions. Therefore, the remaining information in this section and related sections will portray the implicit structure expected by the DLM loading infrastructure.</p>
+      <p>The dlm.xml file is <span style="font-style: italic;">located in the properties</span> directory. The top level element in dlm.xml is the &lt;managedLayoutFragments&gt; element. It includes the namespace declaration for DLM used to prefix all expected DLM property, fragment, and audience elements. This element appears as follows in dlm.xml.</p>
+
+<blockquote><span style="font-family: monospace;">&lt;managedLayoutFragments xmlns:dlm="http://org.jasig.portal.layout.dlm.config"&gt;</span></blockquote>
+
+      <p>The only two supported child elements for <span style="font-style: italic;">managedLayoutFragments</span> are &lt;dlm:property&gt; and &lt;dlm:fragment&gt;. Others may be included but they will be ignored. The <span style="font-weight: bold;">&lt;dlm:property&gt;</span> element has two required attributes, <span style="font-style: italic;">'name'</span> and <span style="font-style: italic;">'value'</span>. There are currently only two properties supported by DLM and if not defined, suitable defaults will be used as explained below.</p>
+
+      <span style="font-weight: bold;">The 'defaultLayoutOwner' Property</span>
+      <p>If defined the value of this property should be the user ID (ie: the log-in ID) of an account whose layout should be copied for all new fragment owners. When a fragment is defined in dlm.xml it includes an <span style="font-style: italic;">ownerID</span> attribute. (See the related section on defining fragments.) Since fragments are layouts for special accounts then these accounts must have a layout. When regular users log in for the first time and have no layout, the portal gives them a copy of a default account's layout as declared in portal.properties. This default should not be used for fragment owner accounts since it will result in that entire layout being pushed to all users. The approach take by the default dlm.xml is to use a special account included in the portal. To change this account you can use the following credentials.</p>
+      <p>User Id: <span style="font-weight: bold;">fragmentTemplate</span>, Password: <span style="font-weight: bold;">fragmentTemplate</span></p>
+      <p><span style="font-weight: bold;">Warning:</span> It is strongly recommended that you do not change this user account's layout. It is empty except for hidden content like the header and footer folders and their channels. The layout for this account including hidden but necessary content is copied whenever a new fragment owner is declared in dlm.xml. The layout for the owner account is created immediately after adding the fragment's declaration to dlm.xml and restarting the portal. These accounts should be empty until such time that the account can be accessed and the proper layout set up that should be pushed for that fragment.</p>
+      <span style="font-weight: bold;">The 'org.jasig.portal.layout.dlm.RDBMDistributedLayoutStore.fragment_cache_refresh' Property</span>
+      <p>For performance, DLM caches the layout for each defined fragment in memory. When layout owners modify the layout, those changes are pushed into the database and into the in-memory cache in the server handling the session for that account. If multiple servers are employed, the other servers will not see these changes made by the fragment owner. This property determines how often the cache of fragment layouts is reloaded to force such changes to appear in other servers. This does not include instantiating new fragments declared in dlm.xml. This only forces a reload of the fragments seen in dlm.xml when the servers were last restarted.</p>
+  
+      <big><a name="defining_fragments"></a><span
+ style="font-weight: bold;">Defining Framents</span></big><br>
+      <p>The &lt;dlm:fragment&gt; child element of the outer most <span style="font-style: italic;">managedLayoutFragments</span> element is used to define a fragment. There is no restriction on the number of child &lt;dlm:fragment&gt; elements of <span style="font-style: italic;">managedLayoutFragments</span>. The following sample is one of the fragments defined in the default dlm.xml file that comes with uPortal.</p>
+
+<blockquote><code>&lt;dlm:fragment name='Guests' ownerID='guest-lo' precedence='10'&gt;</code><br>
+<code>&nbsp; &lt;dlm:audience evaluatorFactory='org.jasig.portal.layout.dlm.providers.GuestUserEvaluatorFactory'/&gt;</code><br>
+<code>&lt;/dlm:fragment&gt;</code><br>
+</blockquote>
+
+      <p>All elements defined and expected by DLM are prefixed with dlm indicating that they are part of the DLM namespace. The fragment element has a <span style="font-weight: bold;">name</span> attribute that should be unique for all fragments. This name is presented in the title bar of the portal when the owner of this fragment is logged in as shown below.</p>
+      <p><img src="fragmentTitleBar.jpg"/></p>
+      <span style="font-weight: bold;">The 'ownerID' Attribute</span>
+      <p>Each fragment must declare an <span style="font-weight: bold;">ownerID</span> attribute. This is the log-in to use when logging in to edit the layout for this fragment. <span style="font-style: italic;">It is important that this account not exist prior to adding the fragment</span>. When dlm.xml is modfied, the portal must be restarted for the configuration to be loaded. Upon loading, if that account already exists and has a layout it will immediately be pushed to users. If the account does not exist, then upon restarting the portal, DLM will create that account and populate its layout with a copy of the layout of the account specified with dlm.xml's <span style="font-style: italic;">defaultLayoutOwner</span> property. That layout has no visible content. In this way this fragment does not push any content to users until the owner has time to set up the layout that should be pushed. <span style="font-weight: bold;">Note:</span> the md5passwd command line utility must still be used after restarting to set the password for the new account to allow a fragment maintainer to log in to that account and set up the layout:</p>
+<blockquote><code>ant md5passwd -Dusername=guest-lo</code><br></blockquote>
+      <span style="font-weight: bold;">The 'precedence' Attribute</span>
+      <p>Each fragment must also declare an integer <span style="font-weight: bold;">precedence</span> value. This value is used during merging of fragments to position elements contributed from different fragments. It is also used to determine that precedence elements can override a lower precedence, movement-restricted element forcing it to a less valueable real-estate location. For example, the default dlm.xml file defines three fragments:</p>
+ 
+<blockquote><code>Guests: precedence = 10</code><br>
+<code>Entertainment: precedence = 100</code><br>
+<code>News: precedence = 80</code><br>
+</blockquote>
+      <p>When a regular user, in this case the student account, logs in to the portal and selects the <span style="font-style: italic;">Preferences</span> link the following ordering of tabs will appear. Note that the entertainment tab can move to the right of the news tab but that the student tab is not allowed to move to the left of the news tab.</p>
+      <p><img src="tabs_ent_news_stu.jpg"/></p>
+      <p>This behavior is due to the owner of the news tab's fragment marking the news tab as <span style="font-weight: bold;">not moveable</span>. However, restricting movement is relative. All elements from a fragment inherit the precedence of that fragment. A tab from a fragment with higher precedence like the entertainment tab, can override a movement restriction of a lower precedence tab.</p>
+      <p><img src="tabs_news_ent_stu.jpg"/></p>
+      <p>Now the student tab is owned by the student user. <span style="font-style: italic;">User layout elements have a precedence of zero</span> and hence any fragment element can always force user owned elements to lower-valued real-estate locations. However, if a fragment element has not been movement restricted then lower precedence tabs can move them as is shown below with the student tab moved to the left of the entertainment tab. But note that due to the locked news tab and the relative precedences that the student tab is never allowed to move beyond the news tab.</p>
+      <p><img src="tabs_news_stu_ent.jpg"/></p>
+      <p>As can be seen, movement restrictions restrict movement of lower precedence elements to higher valued screen real-estate locations. <span style="font-style: italic;">DLM allows users to alter fragment elements pushed into their layouts if such changes are allowed by the fragment</span>. This means that users can add columns to fragment tabs and channels to fragment columns. Accordingly, real-estate value differs based on element type. For tabs, the most valued real-estate is furthest to the left since tabs to the right can ultimately be forced off of the right side of the page and outside the view being shown by the browser. Columns have a similar value direction of left to right from highest to lowest value for a similar reason. Channels have a direction from the top of a column to the bottom for highest to lowest value respectively since channels further down in a column can be forced off of the bottom of the browser's visible viewing area.</p>
+
+      <big><a name="defining_audiences"></a><span
+ style="font-weight: bold;">Defining Audiences</span></big><br>
+      <p>Each &lt;dlm:fragment&gt; element can contain from zero to many &lt;dlm:audience&gt; elements. Each audience element defines a group of users who will receive that fragment. If a fragment has more than one audience element then the set of users that get that fragment is the union of all nested audience elements.</p>
+      <span style="font-weight: bold;">The 'evaluatorFactory' Attribute</span>
+      <p>The &lt;dlm:audience&gt; element has a single required attribute, <span style="font-style: italic;">evaluatorFactory</span>. This attribute should have the fully qualified path name of a class which implements the org.jasig.portal.layout.dlm.EvaluatorFactory interface for aquiring an evaluator. The factory implementation should have a zero argument constructor and implement the only method in the interface:</p>
+<blockquote><code>public Evaluator getEvaluator( org.w3c.dom.Node audience )</code><br>
+<code>throws Exception;</code><br></blockquote>
+      <p>The DLM infrastructure will instantiate the factory using the zero argument constructor and call <span style="font-style: italic;">getEvalutator</span> passing a node representing the &lt;dlm:audience&gt; element. This can then be used by the factory to return an evaluator appropriate for any configuration information included within the audience block. This means that the <span style="font-style: italic;">contents of the audience element are dictated completely by the declared EvaluatorFactory</span>.</p>
+      <p>The object returned from <span style="font-style: italic;">getEvalutator</span> must implement the org.jasig.portal.layout.dlm.Evaluator interface as shown below.</p>
+<blockquote><code>public boolean isApplicable( IPerson p )</code><br></blockquote>
+      <p>DLM obtains from each audience's factory an evaluator and when a user logs in it passes through every fragment asking its audience evaluators, <span style="font-style: italic;">isApplicable</span>, passing an IPerson implementation. If the user meets the requirements defined for that audience then the method returns a value of true and that fragment is included in the layout for that user. If the factory is unable to create and return an evaluator it should throw an Exception with a clear message indicating the problem. For example, suppose the <dlm:audience> element were as follows:</p>
+<blockquote><code>&lt;dlm:audience evaluatorFactory="IPersonEvaluatorFactory"/&gt;<code><br></blockquote>
+      <p>This would result in the IPersonEvaluatorFactory, to be explained shortly, throwing an exception with the following message since it requires nested configuration content:</p>
+      <p><span style="font-style: italic;">Invalid content. Expected one to many &lt;paren&gt;, &lt;NOT&gt;, or &lt;attribute&gt; in '&lt;dlm:audience evaluatorFactory="IPersonEvaluatorFactory"/&gt;'</span></p>
+      <p>If an exception is thrown when obtaining an evaluator from an evaluator factory then the message is logged as a warning and the audience element in question is discarded and not included in the evaluators for that layout fragment. Other evaluators for that layout would still be in effect.</p>
+      <p>The following evaluator factories are provided. All are found in the <span style="font-style: italic;">org.jasig.portal.layout.dlm.providers</span> package. </p>
+      <span style="font-weight: bold;">The GuestUserEvaluatorFactory</span>
+      <p>This factory produces and evaluator that returns the value of <span style="font-style: italic;">IPerson.isGuest()</span>. As such it does not use any configuration information within the audience element that declares it so the element can be empty. This factory is used in the version of dlm.xml included in the portal to push the Guest fragment to the guest user so that it shows on the log-in page.</p>
+<blockquote><code>&lt;dlm:fragment name='Guests' ownerID='guest-lo' precedence='10'&gt;</code><br>
+<code>&nbsp; &lt;dlm:audience evaluatorFactory='org.jasig.portal.layout.dlm.providers.GuestUserEvaluatorFactory'/&gt;</code><br>
+<code>&lt;/dlm:fragment&gt;</code><br></blockquote>
+      <span style="font-weight: bold;">The AllUsersEvaluatorFactory</span>
+      <p>This factory produces and evaluator that always returns true. This can be used to push a fragment to all portal users <span style="font-style: italic;">including</span> the guest user. Like GuestUserEvaluatorFactory it requires no content within the audience element and hence the element can be empty.</p>
+      <span style="font-weight: bold;">The PersonEvaluatorFactory</span>
+      <p>This factory produces an evaluator configured as defined by required content nested within its declaring audience element. It supports a configuration syntax from which arbitrarily complex grants of the fragment can be made based on attributes found in the passed-in IPerson object. Specifically, it obtains attributes from the IPerson object using the <span style="font-style: italic;">getAttribute</span> call. The following syntax elements are supported.</p>
+<blockquote><code>&lt;paren&gt; ELEMENT<code><br></blockquote>
+      <p>This element has one optional attribute "mode" which can contain one of three cast-sensitive values: <span style="font-style: italic;">OR</span>, which is the default, <span style="font-style: italic;">AND</span>, or <span style="font-style: italic;">NOT</span>. <span style="font-style: italic;">OR</span> causes the paren element to evaluate all contained tests and if any of them returns true then it too will return true. <span style="font-style: italic;">AND</span> returns true only if all contained tests are true. <span style="font-style: italic;">NOT</span> inverts any contained test. If more than one contained test is included then a logical <span style="font-style: italic;">OR</span> operation is performed first and that result inverted. It should be noted that when PersonEvaluatorFactory factory is used it provides an implicit <paren mode="OR"> element into which all child elements of &lt;dlm:audience&gt; are placed. So if your configuration requires such a top level paren element you can just specify its children within the &lt;dlm:audience&gt; element.</p>
+<blockquote><code>&lt;attribute&gt; ELEMENT<code><br></blockquote>
+      <p>This element is used to specify which one of five available tests should be performed on an attribute in the passed-in IPerson object. The particular attribute to be tested is indicated in the required <span style="font-style: italic;">name</span> attribute. The required <span style="font-style: italic;">mode</span> attribute indicates the type of test and can be one of the following: <span style="font-style: italic;">exists</span>, <span style="font-style: italic;">equals</span>, <span style="font-style: italic;">contains</span>, <span style="font-style: italic;">startsWith</span>, and <span style="font-style: italic;">endsWith</span>. The value to be compared is indicated by the <span style="font-style: italic;">value</span> attribute. The <span style="font-style: italic;">value</span> attribute is not required and indeed not used for the "exists" mode. Values for both mode and name are case sensitive.</p>
+      <p>The Entertainment fragment included in the default dlm.xml file in the portal uses this factory to push the entertainment fragment to all users that do not have a "username" attribute with a value of "guest".</p>
+<blockquote><code>&lt;dlm:fragment name='Entertainment' ownerID='ent-lo' precedence='100'&gt;</code><br>
+<code>&nbsp; &lt;dlm:audience evaluatorFactory='org.jasig.portal.layout.dlm.providers.PersonEvaluatorFactory'&gt;</code><br>
+<code>&nbsp; &nbsp; &lt;paren mode="NOT"&gt;</code><br>
+<code>&nbsp; &nbsp; &nbsp; &lt;attribute name="username" mode='equals' value='guest'/&gt;</code><br>
+<code>&nbsp; &nbsp; &lt;/paren&gt;</code><br>
+<code>&nbsp; &lt;/dlm:audience&gt;</code><br>
+<code>&lt;/dlm:fragment&gt;</code><br></blockquote>
+      <span style="font-weight: bold;">The GroupMembershipEvaluatorFactory</span>
+      <p>This factory returns an evaluator that can evaluate group memberships. Specifically, the returned class inherits from the evaluator provided by PersonEvaluatorFactory. This means that its syntax semantics are identical except for the &lt;attribute&gt; element. Its semantics are overwritten to support only a single mode, <span style="font-style: italic;">memberOf</span>. The <span style="font-style: italic;">name</span> attribute should contain the name of the group with matching case. The <span style="font-style: italic;">value</span> attribute is not used. The News fragment in the default dlm.xml file in the portal uses this factory to push the news fragment to members of the Students group who are not also members of the Faculty group.</p>
+<blockquote><code>&lt;dlm:fragment name='News' ownerID='news-lo' precedence='80'&gt;</code><br>
+<code>&nbsp; &lt;dlm:audience evaluatorFactory='org.jasig.portal.layout.dlm.providers.GroupMembershipEvaluatorFactory'&gt;</code><br>
+<code>&nbsp; &nbsp; &lt;paren mode="AND"&gt;</code><br>
+<code>&nbsp; &nbsp; &nbsp; &lt;attribute mode='memberOf' name='Students'/&gt;</code><br>
+<code>&nbsp; &nbsp; &nbsp; &lt;paren mode="NOT"&gt;</code><br>
+<code>&nbsp; &nbsp; &nbsp; &nbsp; &lt;attribute mode='memberOf' name='Faculty'/&gt;</code><br>
+<code>&nbsp; &nbsp; &nbsp; &lt;/paren&gt;</code><br>
+<code>&nbsp; &nbsp; &lt;/paren&gt;</code><br>
+<code>&nbsp; &lt;/dlm:audience&gt;</code><br>
+<code>&lt;/dlm:fragment&gt;</code><br></blockquote>
+      <p><span style="font-weight: bold;">Note:</span> dlm.xml was designed to allow institutions the ability to define and plug-in their own custom evaluators. The dlm.xml file will be replaced in the near future with the new permissions work that is targeted for uPortal 2.6.0. That solution will have more flexibility than is had with the current design of dlm.xml. For example, although completely different technology, logically the new solution blurs the boundary between audience elements allowing person attribute tests to be combined in the same boolean equation as group membership evaluations. When DLM migrates to that new approach only these classes and their semantics are guaranteed to be migrated. Any configuration added via custom factories from an institution will have to be planned for and migrated by that institution as part of upgrading to the version of DLM in 2.6.0.</p>
+
+      <big><a name="setting_up_layouts"></a><span
+ style="font-weight: bold;">Setting up Fragment Layouts</span></big><br>
+      <p>Once a fragment is defined in dlm.xml, the server bounced, and the password configured for the new fragment owner account, a fragment maintainer can log into that account and set up the layout that should be used for that fragment. For this, an extended version of SimpleLayoutManagement's Preferences channel is provided and is the channel seen when using DLM and the Preferences link is selected. For non-fragment users they see that channel in the traditional manner. For fragment owner the preferences channel changes slightly to indicate the name of the fragment that is being edited as can be seen in the images below. Additionally, controls are added to the user interface to provide the ability to restrict what users of the fragment can do to fragment elements.</p>
+      <span style="font-weight: bold;">Tabs</span>
+      <p>In the image below the typical controls for a tab are shown along with some DLM specific fragment-user-actions that can be restricted. By default all check boxes are selected and hence all actions are allowed by end users. As seen in the image, the "Useful News" tab in the News fragment's layout restricts movement by end users of the fragment. To modify any of these actions the appropriate checkbox should be checked or unchecked as needed and the "Set Actions" button pressed. Each of these actions that can be restricted for tabs is discussed below.</p>
+      <p><img src="fragmentTabEdit.jpg"/></p>
+      <span style="font-style: italic;">Move Tab</span>
+      <p>If moving a tab is restricted by a fragment owner then users will not be able to move any of their personally-added tabs to the left of this tab. If any tabs exist in the user's layout that come from a fragment with lower precedence as declared in dlm.xml then the user will also be unable to move those tabs to the left of this tab. Tabs from a fragment with higher precedence can be moved by the end user to the left of this tab. If any of these lower precedence tabs or user-added tabs were moved to the left of this tab prior to it being marked as movement restricted then those tabs will be pushed to the right of this tab when the user next logs back in. To the end user the inability to move a lower precedence tab including those added by the user is depicted by the lack of the buttons allowing the user to move the tab to the left as seen in the image below.</p>
+      <p><img src="tabs_news_stu_ent.jpg"/></p>
+      <span style="font-style: italic;">Edit Properties</span>
+      <p>If editing tab properties is restricted by a fragment owner then users will not be able to rename that tab in their layout. If a user has previously renamed that tab and the fragment owner then marks the tab to prevent editing of properties then the next time that the user logs in that tab name change will be discarded and the name set by the fragment owner will reappear. When such a tab is restricted from editing the controls for renaming that tab are removed from the user's view when selecting that tab as shown in the image below. The "Real Entertainment" tab has editing of properties restricted as can be seen by the missing renaming elements when viewed by the student user. </p>
+      <p><img src="userFragTabEditPropRest.jpg"/></p>
+      <span style="font-style: italic;">Add Columns</span>
+      <p>If adding columns is restricted by a fragment owner then users will not be able to add columns to that tab in their layout. If a user has previously added columns to that tab and the fragment owner then marks the tab to prevent adding columns then the next time that the user logs in those <span style="font-style: italic;">user columns will be discarded</span>. (There is currently no holding place to such discarded items. Such a holding place similar to the waste basket concept could be added if there was a pressing needed and a channel could be created to allow a user to restore those items to some other location in their layout.) When such a tab is restricted from adding columns the "Add Column" buttons are removed from the user's view when selecting that tab as shown in the image below. The "Useful News" tab has adding columns restricted as can be seen by the missing buttons in the spaces between and to the left and right of columns when viewed by the student user. </p>
+      <p><img src="userAddColsRest.jpg"/></p>
+      <span style="font-style: italic;">Delete Tab</span>
+      <p>If deleting the tab is restricted by a fragment owner then users will not be able to delete this tab from their layout. If a user has previously deleted this tab and the fragment owner then marks the tab to prevent deleting then the next time that the user logs in, that tab will reappear. When such a tab is restricted from being deleted the "Delete this tab" link is removed from the user interface for that tab when end users are editing their layout. </p>
+      <span style="font-weight: bold;">Columns</span>
+      <p>The action-restricting controls for columns are nearly identical to those of tabs as is their application.</p>
+      <span style="font-style: italic;">Move Column</span>
+      <p>If moving a column is restricted by a fragment owner then users will not be able to move any columns that they have added to the tab to the left of this column assuming that the tab allowed them to add their own columns. If any user-added columns have were previously added to the left of this column and the fragment owner marked this column as movement restricted then those user added columns will be bumped to the right of this column the next time that the user logs in. Additionally, the buttons for moving those user added columns to the left of this column are removed from the user interface when a user is editing that tab in their layout. </p>
+      <span style="font-style: italic;">Edit Properties</span>
+      <p>Restriction of column property editing is identical to restriction of tab property editing except that the only property that currently exists for columns is width. If editing column properties is restricted by a fragment owner then users will not be able to change the column's width. They can read it but they can't change it as shown in the image below. Note that only one of these columns is marked as being edit restricted. </p>
+      <p><img src="userFragColEditPropRest.jpg"/></p>
+      <span style="font-style: italic;">Add Channels</span>
+      <p>If adding channels is restricted by a fragment owner then users will not be able to add channels to that column in their layout. If a user had previously added channels to that column and the fragment owner then marked the column to prevent adding channels then the next time that the user logs in <span style="font-style: italic;">those user added channels will be discarded</span>. When such a column is restricted from adding channels, all "Add Channel" buttons are removed from the user's view of that column. </p>
+      <span style="font-style: italic;">Delete Column</span>
+      <p>If deleting the column is restricted by a fragment owner then users will not be able to delete this column from their layout. Additionally, <span style="font-style: italic;">the user will not be able to delete the tab containing this column</span>. When such a column is restricted from being deleted the "Delete this column" link is removed from the user interface for that column and the "Delete this tab" link is removed for its containing tab when end users are editing their layout. </p>
+      <span style="font-weight: bold;">Channels</span>
+      <p>The action-restricting controls for channels vary from those of columns and tabs in that only move and delete are restricted.</p>
+      <span style="font-style: italic;">Move Channel</span>
+      <p>If moving a channel is restricted by a fragment owner then users will not be able to move any channels that they have added above this channel assuming that the column allowed them to add their own channels. If any channels were previously added above this channel and the fragment owner marked this channel as movement restricted then those user added channels will be bumped below this channel the next time that the user logs in. Additionally, the buttons for moving those user added channels above this channel are removed from the user interface when a user is editing the column containing that channel in their layout. </p>
+      <span style="font-style: italic;">Delete Channel</span>
+      <p>If deleting a channel is restricted by a fragment owner then users will not be able to delete that channel from their layout. Additionally,       <span style="font-style: italic;">the user will not be able to delete the containing column and tab</span>. If any of these were previously removed by the user and the fragment owner then marked that channel as undeletable then the tab and all of its columns and channels would reappear the next time that the user logged in. When such a channel is restricted from being deleted the delete button for the channel is removed from the user interface when an end user is editing their layout. Additionally, the "Delete this column" link is removed from the user interface for that channel's containing column and the "Delete this tab" link is removed for its containing tab. </p>
+ 
+      <big><a name="future_direction"></a><span
+ style="font-weight: bold;">Future Direction</span></big><br>
+      <p>The initial release of DLM in uPortal 2.5.0 is DLM as used in Sungard SCT's Luminis product since 2002. For uPortal 2.6.0 focus will be placed on the following areas to enhance DLM. The information provided here represents the items that are anticipated to be for 2.6.0. Additionally, this information represents some intended designs. Such may change as implementation proceeds or requirements are clarified based in experience with the new pieces. If you have suggestions or questions on these items please share them on the uPortal email lists. </p>
+      <span style="font-style: italic;">Fragment Manager</span>
+      <p>The dlm.xml file is being replaced with a Fragment Manager channel allowing fragments to be defined via the portal user interface. A mock-up of this fragment manager is as shown below. Most items currently configured using the dlm.xml file are visible. For example, precedence is a point value for fragments but even when two fragments are given an equal precedence, DLM then drops back to the ordering in dlm.xml with the first fragment of these two encountered during loading interpreted as having the higher precedence. So ultimately, there is no such thing as equal precedence in DLM. One fragment has greater or lesser precedence than any other fragment. This is depicted within the Fragment Manager by the ordering of fragments from top to bottom. Up and down buttons in the Precedence column enable an administrator with proper permissions to adjust the precedences of fragments.
+      <p><img src="fragmentMgr.jpg"/></p>
+      <p>The name of each fragment corresponds to the "name" attribute of the &lt;dlm:fragment&gt; element. The magnifying glass button to the right of the Precedence column allows a user with proper permission to view and edit the layout of a fragment. Each fragment's layout will be protected by a layout editing permission. If a user is granted that permission then they will be able to use the fragment manager but will only see those fragments for which they have permission. The delete button is for deleting a fragment. The edit button immediately to the left of the fragment name allows an administrator to change the name and type of the fragment. </p>
+      <p>DLM does not currently support "pulled" fragments, fragments that users can subscribe to. As can be seen this capability will be added. Both pushed and pulled fragments will be shown in the same view in the Fragment Manager. This is important since each type can restrict movement of tabs and hence those tabs may be competing for location in a user's layout. The ordering here with respect to each other clearly shows which will have greater precedence when competing in a user's layout. </p>
+      <p>The edit button to the right of the Type column will delegate over to a new channel being created as part of the permissions effort also under way for 2.6.0. Note the complex boolean expressions based on both user attributes and group membership constructs. Such will be the anticipated capability of the new permissions functionality. It is also anticipated that there will be a direct migration path for the constructs currently supported in dlm.xml by the currently defined set of evaluator factories. </p>
+      <span style="font-style: italic;">Pulled Fragments</span>
+      <p>As noted in the mock view of the Fragment Manager, pulled fragment support will be added. The audience specified for pulled fragments is the set of users who will have that fragment show up in the list of fragments that they can subscribe to from within their preferences area via a new link added for that purpose. The list of available fragments will be provided by a new channel that is brought into focus mode by selecting that link. Once a fragment is selected the focus will return to the preferences area and that fragment's tabs will be included at that time. </p>
+      <span style="font-style: italic;">Integrated Modes</span>
+      <p>This is a challenging area to define not because integrated modes is challenging but due to different groups of people having different perspectives on the easy of use or difficulty of use of integrated modes. Currently, DLM uses the preferences channel. It seems that the best approach would be to offer both the preferences channel and integrated modes support and let institutions determine which will be used or allow users to select the one that works best for them. So more work will be done here to determine which route should be taken. </p>
+
+      <i>mrb 8/22/2005</i><br>
+      <br>
+<!-- end cut this section to put into jasig table cell format --> <br>
+<!-- end of main body table cell --> <img height="4" width="692"
+ src="../../images/orange-pixel.gif" border="0" alt="."> 	 </td>
+    </tr>
+  </tbody>
+</table>
+<!-- page footer -->
+<table cellspacing="0" cellpadding="0" width="100%">
+  <tbody>
+    <tr>
+      <td align="center">&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><img height="3" src="../../images/spacer.gif"
+ width="1" border="0" alt="."> <br>
+      <font face="Verdana, Arial, sans-serif" size="1"><a
+ href="http://www.ja-sig.org/">JA-SIG Home</a> <img height="13" alt="*"
+ src="../../images/diamond-lo.gif" width="8" border="0"> <a
+ href="../../index.html"> About uPortal</a> <img height="13" alt="*"
+ src="../../images/diamond-lo.gif" width="8" border="0"> <a
+ href="../../faq.html">FAQ</a> <img height="13" alt="*"
+ src="../../images/diamond-lo.gif" width="8" border="0"> <a
+ href="../download.html">Download</a> <img height="13" alt="*"
+ src="../../images/diamond-lo.gif" width="8" border="0"> <a
+ href="../../docs.html">Documentation</a> <img height="13" alt="*"
+ src="../../images/diamond-lo.gif" width="8" border="0"> <a
+ href="../../getinv.html">Getting Involved</a> <img height="13" alt="*"
+ src="../../images/diamond-lo.gif" width="8" border="0"> <br>
+      <a href="../../cvs.html">Code Repository</a> <img height="13"
+ alt="*" src="../../images/diamond-lo.gif" width="8" border="0"> <a
+ href="../../bugs.html">Reporting Bugs</a> <img height="13" alt="*"
+ src="../../images/diamond-lo.gif" width="8" border="0"> <a
+ href="../../license.html">License</a> <img height="13" alt="*"
+ src="../../images/diamond-lo.gif" width="8" border="0"> </font></td>
+    </tr>
+  </tbody>
+</table>
+<!-- end page footer --> <br>
+<br>
+<br>
+<br>
+<br>
+<br>
+</body>
+</html>
