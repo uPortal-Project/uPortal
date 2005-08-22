@@ -54,6 +54,17 @@ $Revision$
 var hasSubs = false;
 </script>
 
+<xsl:if test="$errorMessage != 'no parameter passed' 
+and $errorMessage != 'Nothing is wrong!'">
+<table class="uportal-background-med" border="0"><tr>
+<td  class="uportal-channel-title" valign="top">Warning:</td>
+<td width="100%" valign="top">
+ <table width="100%" class="uportal-background-content">
+ <tr><td class="uportal-channel-title-reversed" valign="top"><xsl:value-of select="$errorMessage"/></td></tr>
+ </table>
+</td></tr></table>
+</xsl:if>
+
 <table border="0" cellpadding="10" cellspacing="0" class="uportal-background-content" width="100%">
    <tr class="uportal-background-light">
         <td class="uportal-channel-text">
