@@ -10,6 +10,8 @@ import java.util.Hashtable;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpSessionBindingEvent;
+import javax.servlet.http.HttpSessionBindingListener;
 
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonManagerFactory;
@@ -88,13 +90,15 @@ public class UserInstanceManager {
   }
   
     /**
-     * Serializable wrapper class so the UserInstance object can
+     * <p>Serializable wrapper class so the UserInstance object can
      * be indirectly stored in the session. The manager can deal with
      * this class returning a null value and its field is transient
      * so the session can be serialized successfully with the
-     * UserInstance object in it.  
+     * UserInstance object in it.</p>
+     * <p>Implements HttpSessionBindingListener and delegates those methods to
+     * the wrapped UserInstance, if present.</p>
      */
-    private static class UserInstanceHolder implements Serializable {
+    private static class UserInstanceHolder implements Serializable, HttpSessionBindingListener {
         public transient static final String KEY = UserInstanceHolder.class.getName();
         
         private transient UserInstance ui = null;
@@ -111,6 +115,22 @@ public class UserInstanceManager {
          */
         protected void setUserInstance(UserInstance userInstance) {
             this.ui = userInstance;
+        }
+
+        public void valueBound(HttpSessionBindingEvent bindingEvent) {
+            // delegate to contained UserInstance if there is one
+            if (this.ui != null) {
+                this.ui.valueBound(bindingEvent);
+            }
+            
+        }
+
+        public void valueUnbound(HttpSessionBindingEvent bindingEvent) {
+            // delegate to contained UserInstance if there is one
+            if (this.ui != null) {
+                this.ui.valueUnbound(bindingEvent);
+            }
+            
         }
     }
 }
