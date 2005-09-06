@@ -714,7 +714,15 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
     DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
     DTDResolver dtdResolver = new DTDResolver();
     docBuilder.setEntityResolver(dtdResolver);
-    return  docBuilder.parse(urlConnect.getInputStream());
+    InputStream is = urlConnect.getInputStream();
+    Document doc;
+    try {
+        doc = docBuilder.parse(is);
+    } finally {
+        is.close();
+    }
+    
+    return (doc);
   }
 
   /**
