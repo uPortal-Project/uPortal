@@ -66,7 +66,7 @@ import org.jasig.portal.services.SequenceGenerator;
  */
 public class ReferenceInvalidatingEntityCache extends ReferenceEntityCache
 {
-    private static final Log log = LogFactory.getLog(ReferenceInvalidatingEntityCache.class);
+    private static final Log LOG = LogFactory.getLog(ReferenceInvalidatingEntityCache.class);
     private static RDBMCachedEntityInvalidationStore invalidationStore;
     private long lastUpdateMillis = 0;
     private long clockTolerance = 5000;
@@ -135,7 +135,7 @@ public void cleanupCache()
     java.sql.Timestamp ts;
 
     start = System.currentTimeMillis();
-    if (log.isDebugEnabled()) {
+    if (LOG.isDebugEnabled()) {
     debug("ENTERING " + this + " cleanupCache() ");
     }
 
@@ -146,7 +146,7 @@ public void cleanupCache()
     }
 
     end = System.currentTimeMillis();
-    if (log.isDebugEnabled()) {
+    if (LOG.isDebugEnabled()) {
     msg = "LEAVING " + this + " cleanupCache(); total time: " + (end - start) + "ms";
     debug(msg);
     }
@@ -237,7 +237,7 @@ public void removeInvalidEntities()
     long nowMillis = System.currentTimeMillis();
     Date lastUpdate = new Date(lastUpdateMillis - clockTolerance);
     int removed = 0;
-    if (log.isDebugEnabled()) {
+    if (LOG.isDebugEnabled()) {
     debug("ReferenceInvalidatingEntityCache.removeInvalidEntries(): " + getEntityType() +
           " checking for cache invalidations added since: " + lastUpdate);
     }
@@ -245,7 +245,7 @@ public void removeInvalidEntities()
     {
         Integer cID = new Integer(getCacheID());
         invalidations = getInvalidationStore().findAfter(lastUpdate, getEntityType(), null, cID);
-        if (log.isDebugEnabled()) {
+        if (LOG.isDebugEnabled()) {
         debug("ReferenceInvalidatingEntityCache.removeInvalidEntries(): " + getEntityType() +
               " retrieved " + invalidations.length + " invalidations.");
         }
@@ -266,14 +266,14 @@ public void removeInvalidEntities()
                 }
             }          
         }
-        if (log.isDebugEnabled()) {
+        if (LOG.isDebugEnabled()) {
         debug("ReferenceInvalidatingEntityCache.removeInvalidEntries(): " + getEntityType() +
               " removed " + removed + " cache entries.");
         }
     }
     catch (Exception ex)
     {
-        log.error(
+        LOG.error(
             "ReferenceInvalidatingEntityCache.removeInvalidEntries(): " + ex.getMessage());
     }
 
@@ -315,7 +315,7 @@ private void initializeCacheID() throws CachingException
     }
     catch (Exception ex)
     {
-        log.error(
+        LOG.error(
             "ReferenceInvalidatingEntityCache.initializeCacheID(): " + ex.getMessage());
         throw new CachingException(ex.getMessage());
     }
