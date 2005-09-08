@@ -55,7 +55,7 @@ import org.jasig.portal.layout.IUserLayoutManager;
  */
 public class ChannelFactory {
 
-    private static final Log log = LogFactory.getLog(ChannelFactory.class);
+    private static final Log LOG = LogFactory.getLog(ChannelFactory.class);
     
     // table of multithreaded channels
     private static final Hashtable staticChannels = new Hashtable();
@@ -87,7 +87,7 @@ public class ChannelFactory {
             try {
                 return instantiateChannel(channelSubscribeId,channelPublishId, className,timeOut,channel.getParameterMap(),sessionId);
             } catch (Exception ex) {
-                log.error("ChannelManager::instantiateChannel() : unable to instantiate channel class \""+className+"\". "+ex);
+                LOG.error("ChannelManager::instantiateChannel() : unable to instantiate channel class \""+className+"\". "+ex);
                 return null;
             }
         } else return null;
@@ -133,13 +133,13 @@ public class ChannelFactory {
                 // the default class loader before looking into the CARs
                 channelClass = classLoader.loadClass(className);                
             } catch (Exception e) {
-                log.error("Unable to load class '" + className + "'", e); 
+                LOG.error("Unable to load class '" + className + "'", e); 
                 throw new PortalException("Unable to load class '" + className + "'", e);
             }
             try {
                 cobj =  channelClass.newInstance();
             } catch (Throwable t) {
-                log.error("Unable to instantiate class '" + className + "'", t); 
+                LOG.error("Unable to instantiate class '" + className + "'", t); 
                 throw new PortalException("Unable to instantiate class '" + className + "'", new Exception(t.getMessage()));
             }            
         }
