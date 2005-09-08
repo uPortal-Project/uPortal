@@ -36,7 +36,7 @@ import org.jasig.portal.services.SequenceGenerator;
  */
 public class ReferenceInvalidatingEntityCache extends ReferenceEntityCache
 {
-    private static final Log log = LogFactory.getLog(ReferenceInvalidatingEntityCache.class);
+    private static final Log LOG = LogFactory.getLog(ReferenceInvalidatingEntityCache.class);
     private static RDBMCachedEntityInvalidationStore invalidationStore;
     private long lastUpdateMillis = 0;
     private long clockTolerance = 5000;
@@ -236,7 +236,7 @@ public void removeInvalidEntities()
     }
     catch (Exception ex)
     {
-        log.error(ex.getMessage(), ex);
+        LOG.error(ex.getMessage(), ex);
     }
 
     lastUpdateMillis = nowMillis;
@@ -277,7 +277,7 @@ private void initializeCacheID() throws CachingException
     }
     catch (Exception ex)
     {
-        log.error(ex.getMessage(), ex);
+        LOG.error(ex.getMessage(), ex);
         throw new CachingException(ex);
     }
 }

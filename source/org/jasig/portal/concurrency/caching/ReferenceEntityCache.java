@@ -27,7 +27,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class ReferenceEntityCache implements IEntityCache
 {
-    private static final Log log = LogFactory.getLog(ReferenceEntityCache.class);
+    private static final Log LOG = LogFactory.getLog(ReferenceEntityCache.class);
     protected Map cache;
     protected Class entityType;
     protected String simpleTypeName;
@@ -119,9 +119,9 @@ public void clearCache()
  */
 void debug(String msg)
 {
-    if (log.isDebugEnabled()) {
+    if (LOG.isDebugEnabled()) {
         java.sql.Timestamp ts = new java.sql.Timestamp(System.currentTimeMillis());
-        log.debug(ts + " : " + msg);
+        LOG.debug(ts + " : " + msg);
     }
 }
 
