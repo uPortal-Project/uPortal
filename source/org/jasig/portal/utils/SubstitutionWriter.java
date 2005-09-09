@@ -43,7 +43,7 @@ import java.io.Writer;
  * A filter presenting a <code>Writer</code> that performs
  * word substitution (search&replace) on the fly.
  *
- * 7/25/05 - UP-1120 - dmindler@rutgers.edu
+ * 7/25/05 - UP-1180 - dmindler@rutgers.edu
  * Modified to make use of optimized SubstitutionIntegerFilter
  * 
  * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
