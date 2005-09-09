@@ -78,7 +78,7 @@ public class UserInstance implements HttpSessionBindingListener {
     private LocaleManager localeManager;
 
     // contains information relating client names to media and mime types
-    private static MediaManager mediaM;
+    private static final MediaManager MEDIAMANAGER = MediaManager.getMediaManager();
 
     // system profile mapper standalone instance
     private StandaloneChannelRenderer p_browserMapper = null;
@@ -112,12 +112,12 @@ public class UserInstance implements HttpSessionBindingListener {
         this.person=person;
 
         // init the media manager
-        if(mediaM==null) {
-            String mediaPropsUrl = this.getClass().getResource("/properties/media.properties").toString();
-            String mimePropsUrl = this.getClass().getResource("/properties/mime.properties").toString();
-            String serializerPropsUrl = this.getClass().getResource("/properties/serializer.properties").toString();
-            mediaM = new MediaManager(mediaPropsUrl, mimePropsUrl, serializerPropsUrl);
-        }
+//        if(MEDIAMANAGER==null) {
+//            String mediaPropsUrl = this.getClass().getResource("/properties/media.properties").toString();
+//            String mimePropsUrl = this.getClass().getResource("/properties/mime.properties").toString();
+//            String serializerPropsUrl = this.getClass().getResource("/properties/serializer.properties").toString();
+//            MEDIAMANAGER = new MediaManager(mediaPropsUrl, mimePropsUrl, serializerPropsUrl);
+//        }
     }
 
     /**
@@ -374,7 +374,7 @@ public class UserInstance implements HttpSessionBindingListener {
                     // obtain the writer - res.getWriter() must occur after res.setContentType()
                     PrintWriter out = res.getWriter();
                     // get a serializer appropriate for the target media
-                    BaseMarkupSerializer markupSerializer = mediaM.getSerializerByName(tsd.getSerializerName(), out);
+                    BaseMarkupSerializer markupSerializer = MEDIAMANAGER.getSerializerByName(tsd.getSerializerName(), out);
                     // set up the serializer
                     markupSerializer.asContentHandler();
                     // see if we can use character caching

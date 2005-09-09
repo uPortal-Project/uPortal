@@ -97,7 +97,7 @@ public final class CError extends BaseChannel implements IPrivilegedChannel,
      */
     private static final String sslLocation = "CError/CError.ssl";
 
-    private static MediaManager mediaM = new MediaManager();
+    private static final MediaManager MEDIAMANAGER=MediaManager.getMediaManager();
 
     /**
      * Construct an uninitialized instance of the CError channel.
@@ -524,7 +524,7 @@ public final class CError extends BaseChannel implements IPrivilegedChannel,
                             ThemeStylesheetDescription tsd = this.portcs
                                     .getUserPreferencesManager()
                                     .getThemeStylesheetDescription();
-                            BaseMarkupSerializer serOut = mediaM
+                            BaseMarkupSerializer serOut = MEDIAMANAGER
                                     .getSerializerByName(tsd
                                             .getSerializerName(), out);
                             this.the_channel.renderXML(serOut);
@@ -567,7 +567,7 @@ public final class CError extends BaseChannel implements IPrivilegedChannel,
                                     ThemeStylesheetDescription tsd = this.portcs
                                             .getUserPreferencesManager()
                                             .getThemeStylesheetDescription();
-                                    BaseMarkupSerializer serOut = mediaM
+                                    BaseMarkupSerializer serOut = MEDIAMANAGER
                                             .getSerializerByName(tsd
                                                     .getSerializerName(), out);
                                     this.the_channel.renderXML(serOut);
@@ -605,7 +605,7 @@ public final class CError extends BaseChannel implements IPrivilegedChannel,
             ThemeStylesheetDescription tsd = this.portcs
                     .getUserPreferencesManager()
                     .getThemeStylesheetDescription();
-            serOut = mediaM.getSerializerByName(tsd.getSerializerName(), out);
+            serOut = MEDIAMANAGER.getSerializerByName(tsd.getSerializerName(), out);
         } catch (Exception e) {
             log.error("CError::renderCharacters() : " +
                     "unable to obtain proper markup serializer : ", e);
