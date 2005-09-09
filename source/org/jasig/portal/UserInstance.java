@@ -110,14 +110,6 @@ public class UserInstance implements HttpSessionBindingListener {
 
     public UserInstance (IPerson person) {
         this.person=person;
-
-        // init the media manager
-//        if(MEDIAMANAGER==null) {
-//            String mediaPropsUrl = this.getClass().getResource("/properties/media.properties").toString();
-//            String mimePropsUrl = this.getClass().getResource("/properties/mime.properties").toString();
-//            String serializerPropsUrl = this.getClass().getResource("/properties/serializer.properties").toString();
-//            MEDIAMANAGER = new MediaManager(mediaPropsUrl, mimePropsUrl, serializerPropsUrl);
-//        }
     }
 
     /**
