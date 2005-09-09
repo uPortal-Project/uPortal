@@ -101,10 +101,7 @@ public class StandaloneChannelRenderer
     public void initialize(Hashtable params,String channelName,boolean hasHelp, boolean hasAbout, boolean hasEdit, long timeOut,IPerson person) throws PortalException {
         this.set = new StylesheetSet(ResourceLoader.getResourceAsURLString(this.getClass(), relativeSSLLocation));
         String mediaPropsUrl = ResourceLoader.getResourceAsURLString(this.getClass(), "/properties/media.properties");
-//        String mimePropsUrl = ResourceLoader.getResourceAsURLString(this.getClass(), "/properties/mime.properties");
-//        String serializerPropsUrl = ResourceLoader.getResourceAsURLString(this.getClass(), "/properties/serializer.properties");
         this.set.setMediaProps(mediaPropsUrl);
-//        this.mediaM = new MediaManager(mediaPropsUrl, mimePropsUrl, serializerPropsUrl);
         this.mediaM = MediaManager.getMediaManager();
         this.channelName=channelName;
         this.hasHelp=hasHelp;
@@ -197,7 +194,8 @@ public class StandaloneChannelRenderer
         UPFileSpec upfs=new UPFileSpec(req);
         String channelTarget = upfs.getTargetNodeId();
 
-        log.debug("StandaloneRenderer::render() : channelTarget=\""+channelTarget+"\".");
+        if (log.isDebugEnabled())
+            log.debug("StandaloneRenderer::render() : channelTarget=\""+channelTarget+"\".");
         Enumeration en = req.getParameterNames();
         if (en != null) {
             while (en.hasMoreElements()) {
@@ -221,7 +219,8 @@ public class StandaloneChannelRenderer
         try {
             rd.setUPFile(new UPFileSpec(PortalSessionManager.INTERNAL_TAG_VALUE,UPFileSpec.RENDER_METHOD,"servletRoot",chanID,null));
         } catch (Exception e) {
-            log.debug("StandaloneRenderer::render() : unable to generate baseActionURL. "+e);
+            if (log.isDebugEnabled())
+                log.debug("StandaloneRenderer::render() : unable to generate baseActionURL. "+e);
         }
 
         return rd;
