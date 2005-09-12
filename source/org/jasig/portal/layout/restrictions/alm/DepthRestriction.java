@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.utils.CommonUtils;
 
@@ -25,6 +27,8 @@ import org.jasig.portal.utils.CommonUtils;
  * @version $Revision$
  */
 public class DepthRestriction extends ALRestriction {
+	  private static final Log LOG = LogFactory.getLog(ALRestriction.class);
+	
 
 
          private Integer[] minDepthArray, maxDepthArray, depthArray;
@@ -74,7 +78,7 @@ public class DepthRestriction extends ALRestriction {
                 depthArray[i] = Integer.valueOf((String)depthList.get(i));
 
            } catch ( Exception e ) {
-             e.printStackTrace();
+        	 LOG.error(e,e);
              throw new PortalException(e);
             }
 

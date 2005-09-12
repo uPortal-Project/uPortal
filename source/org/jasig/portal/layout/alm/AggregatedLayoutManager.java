@@ -990,7 +990,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 			 return newFragmentId;
 			 
 		  } catch ( Exception e ) {
-		  	e.printStackTrace();
+			log.error(e,e);
 			throw new PortalException(e);
 		  }
 	}
