@@ -974,9 +974,8 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         return node;
 
      } catch (Exception e) {
-        e.printStackTrace();
-        String errorMessage = e.getMessage();
-        throw new PortalException(errorMessage, e);
+    	log.error(e,e);
+        throw new PortalException(e);
        }
 
     }
@@ -1345,9 +1344,8 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         return count > 0;
 
      } catch (Exception e) {
-        e.printStackTrace();
-        String errorMessage = e.getMessage();
-        throw new PortalException(errorMessage, e);
+    	log.error(e,e);
+        throw new PortalException(e);
        }
   }
 
@@ -1787,7 +1785,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
     int userId = person.getID();
     String fragmentId = fragment.getId();
-    Connection con = RDBMServices.getConnection();
+    Connection con=null;
 
      if ( !(fragment instanceof ALFragment) )
        throw new PortalException("The user layout fragment must have "+ALFragment.class.getName()+" type!");
@@ -1795,9 +1793,8 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
     ALFragment layout = (ALFragment) fragment;
 
    try {
-
+	   con = RDBMServices.getConnection();
        RDBMServices.setAutoCommit(con, false);       // May speed things up, can't hurt
-
 
        Statement stmt = con.createStatement();
 
@@ -1887,24 +1884,20 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
       // Commit all the changes
       RDBMServices.commit(con);
 
-
-
       if ( psAddFragmentNode != null ) psAddFragmentNode.close();
       if ( psAddFragmentRestriction != null ) psAddFragmentRestriction.close();
 
-      // Close the connection
-      if ( con != null ) con.close();
-
-
     } catch (Exception e) {
-        e.printStackTrace();
-        String errorMessage = e.getMessage();
-        try { RDBMServices.rollback(con); } catch ( SQLException sqle ) {
-           log.error( sqle.getMessage(), sqle );
-           errorMessage += ":" + sqle.getMessage();
+    	log.error(e,e);
+        try { 
+        	RDBMServices.rollback(con); 
+        } catch ( Exception e1 ) {
+        	//ignore
         }
-         throw new PortalException(errorMessage, e);
-      }
+        throw new PortalException(e);
+    }finally{
+    	RDBMServices.releaseConnection(con);
+    }
  }
 
 
@@ -1915,60 +1908,57 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
      * @param fragmentId a fragment ID
      * @exception PortalException if an error occurs
      */
-   public void deleteFragment (IPerson person, String fragmentId) throws PortalException {
+ public void deleteFragment (IPerson person, String fragmentId) throws PortalException {
+	 
+	 int userId = person.getID();
+	 Connection con = RDBMServices.getConnection();
+	 
+	 try {
+		 
+		 RDBMServices.setAutoCommit(con, false);       // May speed things up, can't hurt
+		 
+		 Statement stmt = con.createStatement();
+		 boolean isOwner = false;
+		 // Check if the user was an owner
+		 ResultSet rs = stmt.executeQuery("SELECT OWNER_ID FROM UP_OWNER_FRAGMENT WHERE FRAGMENT_ID="+fragmentId);
+		 if ( rs.next() ) {
+			 if ( rs.getInt(1) == userId )
+				 isOwner = true;
+		 }
+		 if ( rs != null ) rs.close();
+		 
+		 if ( !isOwner )
+			 throw new PortalException("The user "+userId+" is not an owner of the fragment with ID="+fragmentId);
+		 
+		 stmt.executeUpdate("DELETE FROM UP_FRAGMENT_RESTRICTIONS WHERE FRAGMENT_ID="+fragmentId);
+		 stmt.executeUpdate("DELETE FROM UP_GROUP_FRAGMENT WHERE FRAGMENT_ID="+fragmentId);
+		 stmt.executeUpdate("DELETE FROM UP_FRAGMENTS WHERE FRAGMENT_ID="+fragmentId);
 
-       int userId = person.getID();
-       Connection con = RDBMServices.getConnection();
-
-    try {
-
-        RDBMServices.setAutoCommit(con, false);       // May speed things up, can't hurt
-
-        Statement stmt = con.createStatement();
-        boolean isOwner = false;
-        // Check if the user was an owner
-        ResultSet rs = stmt.executeQuery("SELECT OWNER_ID FROM UP_OWNER_FRAGMENT WHERE FRAGMENT_ID="+fragmentId);
-        if ( rs.next() ) {
-         if ( rs.getInt(1) == userId )
-            isOwner = true;
-        }
-         if ( rs != null ) rs.close();
-
-         if ( !isOwner )
-            throw new PortalException("The user "+userId+" is not an owner of the fragment with ID="+fragmentId);
-
-        stmt.executeUpdate("DELETE FROM UP_FRAGMENT_RESTRICTIONS WHERE FRAGMENT_ID="+fragmentId);
-        
-        stmt.executeUpdate("DELETE FROM UP_GROUP_FRAGMENT WHERE FRAGMENT_ID="+fragmentId);
-
-        stmt.executeUpdate("DELETE FROM UP_FRAGMENTS WHERE FRAGMENT_ID="+fragmentId);
-        
-        String sqlUpdate = "DELETE FROM UP_OWNER_FRAGMENT WHERE OWNER_ID=? AND FRAGMENT_ID=?";
-        PreparedStatement ps = con.prepareStatement(sqlUpdate);
-        ps.setInt(1,userId);
-        ps.setInt(2,CommonUtils.parseInt(fragmentId));
-        ps.executeUpdate();
-        ps.close();
-
-        if ( stmt != null ) stmt.close();
-
-        // Commit all the changes
-        RDBMServices.commit(con);
-
-        // Close the connection
-        if ( con != null ) con.close();
-
-
-      } catch (Exception e) {
-                e.printStackTrace();
-                String errorMessage = e.getMessage();
-                try { RDBMServices.rollback(con); } catch ( SQLException sqle ) {
-                   log.error( sqle.getMessage(), sqle );
-                   errorMessage += ":" + sqle.getMessage();
-                }
-                 throw new PortalException(errorMessage, e);
-              }
-
+		 if ( stmt != null ) stmt.close();
+		 
+		 String sqlUpdate = "DELETE FROM UP_OWNER_FRAGMENT WHERE OWNER_ID=? AND FRAGMENT_ID=?";
+		 PreparedStatement ps = con.prepareStatement(sqlUpdate);
+		 ps.setInt(1,userId);
+		 ps.setInt(2,CommonUtils.parseInt(fragmentId));
+		 ps.executeUpdate();
+		 ps.close();
+		 
+		 // Commit all the changes
+		 RDBMServices.commit(con);
+		 
+	 } catch (Exception e) {
+		 log.error(e,e);
+		 try {
+			RDBMServices.rollback(con);
+   		 } catch (SQLException e1) {
+			// ignore
+		 } 
+		 throw new PortalException(e);
+	 }finally{
+		 // Close the connection
+		 RDBMServices.releaseConnection(con);
+	 }
+    
    }
 
 
