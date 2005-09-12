@@ -977,7 +977,7 @@ public class ChannelManager implements LayoutEventListener {
             try {
                 portalContext=getPortalContext();
             } catch (NamingException ne) {
-                log.error("ChannelManager::setReqNRes(): exception raised when trying to obtain initial JNDI context : ", ne);
+                log.error(ne, ne);
             }
         }
         // construct a channel context
@@ -985,7 +985,7 @@ public class ChannelManager implements LayoutEventListener {
             try {
                 channelContext=getChannelJndiContext(portalContext,request.getSession(false).getId(),Integer.toString(this.pcs.getUserPreferencesManager().getPerson().getID()),Integer.toString(this.pcs.getUserPreferencesManager().getCurrentProfile().getLayoutId()));
             } catch (NamingException ne) {
-                log.error("ChannelManager::setReqNRes(): exception raised when trying to obtain channel JNDI context : ", ne);
+                log.error(ne, ne);
             }
         }
         processRequestChannelParameters(request);
