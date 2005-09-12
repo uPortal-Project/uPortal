@@ -14,7 +14,25 @@
          | methods we would like to propogate.
          +-->
          <bean class="org.jasig.portal.services.stats.StatsRecorderFlagsImpl">
-             <property name="recordChannelRendered" value="true"/>
+             <property name="recordLogin" value="true"/>
+             <property name="recordLogout" value="true"/>
+             <property name="recordSessionCreated" value="true"/>
+             <property name="recordSessionDestroyed" value="true"/>
+             <property name="recordChannelDefinitionPublished" value="true"/>
+             <property name="recordChannelDefinitionModified" value="true"/>
+             <property name="recordChannelDefinitionRemoved" value="true"/>
+             <property name="recordChannelAddedToLayout" value="true"/>
+             <property name="recordChannelUpdatedInLayout" value="true"/>
+             <property name="recordChannelMovedInLayout" value="true"/>
+             <property name="recordChannelRemovedFromLayout" value="true"/>
+             <property name="recordFolderAddedToLayout" value="true"/>
+             <property name="recordFolderUpdatedInLayout" value="true"/>
+             <property name="recordFolderMovedInLayout" value="true"/>
+             <property name="recordFolderRemovedFromLayout" value="true"/>
+             
+             <property name="recordChannelInstantiated" value="false"/>
+             <property name="recordChannelRendered" value="false"/>
+             <property name="recordChannelTargeted" value="false"/>
          </bean>
      </property>
      
@@ -43,7 +61,21 @@
              <property name="targetStatsRecorder">
                  <bean class="org.jasig.portal.services.stats.LoggingStatsRecorder"/>
              </property>
-             
+             <!--
+             | Below is an example of using listStatsRecorder to log to more than one IStatsRecorder.
+             +-->
+			<!--
+            <property name="targetStatsRecorder">
+                 <bean class="org.jasig.portal.services.stats.ListStatsRecorder">
+                     <property name="children">
+                          <list>
+                             <bean class="org.jasig.portal.services.stats.LoggingStatsRecorder"/>
+                             <bean class="edu.cornell.uportal.channels.runtimeinfo.providers.Statistics"/>
+                         </list>
+                     </property>
+                 </bean>
+             </property>
+			-->
          </bean>
      </property>
  </bean>
