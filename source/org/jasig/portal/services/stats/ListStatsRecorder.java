@@ -35,7 +35,7 @@ public final class ListStatsRecorder
     /**
      * Recorders to which we broadcast IStatsRecorder method calls, in order.
      */
-    private IStatsRecorder[] children;
+    private IStatsRecorder[] children = new IStatsRecorder[0];
     
     /**
      * Get the recorders to which we broadcast IStatsRecorder method calls.
@@ -53,6 +53,7 @@ public final class ListStatsRecorder
         if (children == null) {
             throw new IllegalArgumentException("Cannot set children to null.");
         }
+        this.children=children;
     }
     
     public void recordLogin(IPerson person) {
