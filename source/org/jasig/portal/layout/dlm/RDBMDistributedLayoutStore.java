@@ -20,7 +20,6 @@ import java.util.Vector;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.ChannelDefinition;
-import org.jasig.portal.IUserIdentityStore;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.layout.simple.RDBMUserLayoutStore;
@@ -28,7 +27,6 @@ import org.jasig.portal.StructureStylesheetDescription;
 import org.jasig.portal.StructureStylesheetUserPreferences;
 import org.jasig.portal.ThemeStylesheetDescription;
 import org.jasig.portal.ThemeStylesheetUserPreferences;
-import org.jasig.portal.UserIdentityStoreFactory;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.channels.error.ErrorCode;
 import org.jasig.portal.layout.LayoutStructure;
@@ -73,7 +71,6 @@ public class RDBMDistributedLayoutStore
     private Properties properties = null;
     private FragmentDefinition[] definitions = null;
     private LayoutDecorator decorator = null;
-    private IUserIdentityStore identityStore = null;
     private FragmentActivator activator = null;
     private Object initializationLock = new Object();
     private boolean initialized = false;
@@ -118,16 +115,6 @@ public class RDBMDistributedLayoutStore
         getReadWriteLock(person).readLock().release();
     }
 
-    private void acquireWriteLock(IPerson person) throws InterruptedException
-    {
-        getReadWriteLock(person).writeLock().acquire();
-    }
-
-    private void releaseWriteLock(IPerson person)
-    {
-        getReadWriteLock(person).writeLock().release();
-    }
-
     public RDBMDistributedLayoutStore ( )
         throws Exception
     {
@@ -135,7 +122,6 @@ public class RDBMDistributedLayoutStore
         tsdCache = new SmartCache();
         ssdCache = new SmartCache();
 
-        identityStore = UserIdentityStoreFactory.getUserIdentityStoreImpl();
         ConfigurationLoader.load( this );
         
         try
@@ -379,9 +365,7 @@ public class RDBMDistributedLayoutStore
                                     for( int i=0; i<definitions.length; i++ )
                                     {
                                         String ownerId = definitions[i].ownerID;
-                                        String layoutOwnerId = definitions[i].defaultLayoutOwnerID;
                                         int userId  = definitions[i].userID;
-                                        String name = definitions[i].name;
                                         
                                         if ( null != ownerId )
                                         {
@@ -520,7 +504,6 @@ public class RDBMDistributedLayoutStore
                                      UserProfile profile)
         throws Exception
     {
-        int profileId = profile.getProfileId();
         String userName = (String) person.getAttribute( "username" );
         FragmentDefinition ownedFragment = getOwnedFragment( person );
         boolean isLayoutOwnerDefault = isLayoutOwnerDefault( person );
@@ -676,7 +659,6 @@ public class RDBMDistributedLayoutStore
     private FragmentDefinition getOwnedFragment( IPerson person )
     {
         int userId = person.getID();
-        FragmentDefinition ownedFragment = null;
         
         if ( definitions != null )
         {
@@ -1534,7 +1516,6 @@ public class RDBMDistributedLayoutStore
 
             int nextStructId = 0;
             int childStructId = 0;
-            String sQuery;
             
             if (node.hasChildNodes())
             {
