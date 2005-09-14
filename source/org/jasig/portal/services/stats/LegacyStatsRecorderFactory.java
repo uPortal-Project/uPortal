@@ -74,9 +74,9 @@ public final class LegacyStatsRecorderFactory
         
             // read thread pooling configuration from portal.properties
             String prefix = "org.jasig.portal.services.StatsRecorder.threadPool_";
-            int initialThreads = PropertiesManager.getPropertyAsInt(prefix + "initialThreads");
-            int maxThreads = PropertiesManager.getPropertyAsInt(prefix + "maxThreads");
-            int threadPriority = PropertiesManager.getPropertyAsInt(prefix + "threadPriority");
+            int initialThreads = PropertiesManager.getPropertyAsInt(prefix + "initialThreads",5);
+            int maxThreads = PropertiesManager.getPropertyAsInt(prefix + "maxThreads",15);
+            int threadPriority = PropertiesManager.getPropertyAsInt(prefix + "threadPriority",5);
             
             // instantiate the thread firing wrapper
             ThreadFiringStatsRecorder threadFiringWrapper = 
