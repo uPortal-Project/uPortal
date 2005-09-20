@@ -45,6 +45,15 @@ public class MediaManager {
   protected OrderedProps serializerProps = null;
   private static boolean outputIndenting = 
       PropertiesManager.getPropertyAsBoolean("org.jasig.portal.MediaManager.output_indenting", false);
+ 
+  /**
+   * As of uPortal 2.5.1, this property is "no" (meaning false) in the distributed 
+   * portal.properties.  This Java code continues to default the property to true
+   * to maintain the behavior of 2.5.0 when the property is not specified in
+   * portal.properties.  In a future release of uPortal, this property will
+   * default to false in order to restore agreement between default here and
+   * default in portal.properties.
+   */  
   private static boolean omitDoctype = 
       PropertiesManager.getPropertyAsBoolean("org.jasig.portal.MediaManager.omit_doctype", true);
 
