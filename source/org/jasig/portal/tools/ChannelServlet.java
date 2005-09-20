@@ -5,7 +5,6 @@
 
 package  org.jasig.portal.tools;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -20,6 +19,8 @@ import javax.servlet.http.HttpSession;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.sax.TransformerHandler;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.BrowserInfo;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ChannelSAXStreamFilter;
@@ -46,6 +47,7 @@ import org.xml.sax.SAXException;
  * @version $Revision$
  */
 public class ChannelServlet extends HttpServlet {
+  private static final Log LOG = LogFactory.getLog(ChannelServlet.class);
   public static String detachBaseStart = "detach_";
   StylesheetSet set;
   MediaManager mediaM;
@@ -53,7 +55,6 @@ public class ChannelServlet extends HttpServlet {
   private IChannel channel;
   private String channelName;
   private long timeOut = 10000;                 // 10 seconds is the default timeout value
-  private static final String fs = File.separator;
   private static final String relativeSSLLocation = "ChannelServlet/ChannelServlet.ssl";
 
   public void init() throws ServletException {
@@ -92,7 +93,7 @@ public class ChannelServlet extends HttpServlet {
         initialized = true;
       } catch (Exception e) {
           // some diagnostic state can be saved here
-          e.printStackTrace();
+    	  LOG.error(e,e);
       }
     }
   }
@@ -120,7 +121,7 @@ public class ChannelServlet extends HttpServlet {
       try {
           rd.setUPFile(new UPFileSpec(null,UPFileSpec.RENDER_METHOD,"servletRoot","singlet",null));
       } catch (PortalException pe) {
-          System.out.println("unable to construct a UPFile !");
+    	  LOG.error("unable to construct a UPFile !",pe);
       }
       
       if (channel instanceof IPrivilegedChannel) {
@@ -132,7 +133,7 @@ public class ChannelServlet extends HttpServlet {
           ((IPrivilegedChannel)channel).setPortalControlStructures(pcs);
         } catch (Exception e) {
           // channel failed to accept portal control structures
-          System.out.println("channel failed to accept portal control structures.");
+      	  LOG.error("channel failed to accept portal control structures.",e);
         }
       }
       // start rendering in a separate thread
@@ -165,7 +166,7 @@ public class ChannelServlet extends HttpServlet {
                   workerThread.join(wait);
           } catch (InterruptedException e) {
               // thread waiting on the worker has been interrupted
-              System.out.println("thread waiting on the worker has been interrupted.");
+          	  LOG.error("thread waiting on the worker has been interrupted.",e);
           }
           // kill the working thread
           // yes, this is terribly crude and unsafe, but I don't see an alternative
@@ -186,8 +187,7 @@ public class ChannelServlet extends HttpServlet {
                       th.endDocument();
                   } catch (SAXException e) {
                       // worst case scenario: partial content output :(
-                      System.out.println("error during unbuffering");
-                      e.printStackTrace();
+                  	  LOG.error("error during unbuffering",e);
                   }
               } else {
                   // rendering was not successful
