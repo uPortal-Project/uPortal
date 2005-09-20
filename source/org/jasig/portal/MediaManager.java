@@ -45,8 +45,12 @@ public class MediaManager {
   protected OrderedProps serializerProps = null;
   private static boolean outputIndenting = 
       PropertiesManager.getPropertyAsBoolean("org.jasig.portal.MediaManager.output_indenting", false);
+  /**
+   * In uPortal 2.5.x, this property defaulted to true.  As of uPortal 2.6.0, 
+   * it defaults to false.
+   */  
   private static boolean omitDoctype = 
-      PropertiesManager.getPropertyAsBoolean("org.jasig.portal.MediaManager.omit_doctype", true);
+      PropertiesManager.getPropertyAsBoolean("org.jasig.portal.MediaManager.omit_doctype", false);
 
   private static final String mediaPropsUrl = MediaManager.class.getResource("/properties/media.properties").toString();
   private static final String mimePropsUrl = MediaManager.class.getResource("/properties/mime.properties").toString();
