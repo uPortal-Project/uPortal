@@ -114,7 +114,7 @@ public final class Resources
     {
         return MessageFormat.format(
             getString( client, name ),
-            objects
+            (Object[])objects
             );
     }
 

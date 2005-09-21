@@ -1,36 +1,6 @@
-/**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
- *
- * 3. Redistributions of any form whatsoever must retain the following
- *    acknowledgment:
- *    "This product includes software developed by the JA-SIG Collaborative
- *    (http://www.jasig.org/)."
- *
- * THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
- * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE JA-SIG COLLABORATIVE OR
- * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE.
- *
+/* Copyright 2001,2005 The JA-SIG Collaborative.  All rights reserved.
+*  See license distributed with this file and
+*  available online at http://www.uportal.org/license.html
  */
 
 
@@ -61,6 +31,9 @@ import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
+
+import com.sun.org.apache.xml.internal.serialize.OutputFormat;
+import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 
 /** 
  * <p>CUserPreferences state for managing profiles</p>
@@ -315,9 +288,9 @@ class ManageProfilesState extends BaseState {
       // debug printout of the document sent to the XSLT
       /*
       StringWriter dbwr1 = new StringWriter();
-      org.apache.xml.serialize.OutputFormat outputFormat = new org.apache.xml.serialize.OutputFormat();
+      com.sun.org.apache.xml.internal.serialize.OutputFormat outputFormat = new com.sun.org.apache.xml.internal.serialize.OutputFormat();
       outputFormat.setIndenting(true);
-      org.apache.xml.serialize.XMLSerializer dbser1 = new org.apache.xml.serialize.XMLSerializer(dbwr1, outputFormat);
+      com.sun.org.apache.xml.internal.serialize.XMLSerializer dbser1 = new com.sun.org.apache.xml.internal.serialize.XMLSerializer(dbwr1, outputFormat);
       try {
           dbser1.serialize(doc);
       log.debug("ManageProfilesState::renderXML() : XML incoming to the XSLT :\n\n" + dbwr1.toString() + "\n\n");
@@ -653,17 +626,28 @@ class ManageProfilesState extends BaseState {
       }
       doc.appendChild(profileEl);
       // debug printout of the prepared xml
+      if (log.isDebugEnabled()) {
       try {
         StringWriter outString = new StringWriter();
-        org.apache.xml.serialize.OutputFormat format = new org.apache.xml.serialize.OutputFormat();
+                    /*
+                     * This should be reviewed at some point to see if we can
+                     * use the DOM3 LS capability and hence a standard way of
+                     * doing this rather than using an internal implementation
+                     * class.
+                     */
+                    OutputFormat format = new OutputFormat();
         format.setOmitXMLDeclaration(true);
         format.setIndenting(true);
-        org.apache.xml.serialize.XMLSerializer xsl = new org.apache.xml.serialize.XMLSerializer(outString, format);
-        xsl.serialize(doc);
+                    XMLSerializer serializer = new XMLSerializer(outString,
+                            format);
+                    serializer.serialize(doc);
         log.debug(outString.toString());
       } catch (Exception e) {
         log.debug(e, e);
       }
+      }
+      // end debug block
+      
       StylesheetSet set = context.getStylesheetSet();
       if (set == null)
         throw  new GeneralRenderingException("Unable to determine the stylesheet list");

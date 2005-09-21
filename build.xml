@@ -451,8 +451,24 @@ backport-util-concurrent.jar Backport of Doug Lea's Concurrency package.  Simila
 
     <!-- Compile Java classes as necessary -->
     <mkdir    dir="${build.home}/WEB-INF/classes"/>
+    <echo message="Compiling uPortal (except for WSRP)"/> 
     <javac srcdir="source"
           destdir="${build.home}/WEB-INF/classes"
+        excludes="org/jasig/portal/wsrp/**"
+            source="1.4"
+            target="1.4"
+            debug="${compile.debug}"
+      deprecation="${compile.deprecation}"
+         optimize="${compile.optimize}">
+      <classpath refid="compile.classpath"/>
+    </javac>
+
+    <echo message="Compiling WSRP for uPortal"/> 
+    <javac srcdir="source"
+          destdir="${build.home}/WEB-INF/classes"
+         includes="org/jasig/portal/wsrp/**"
+           source="1.4"
+           target="1.4"
             debug="${compile.debug}"
       deprecation="${compile.deprecation}"
          optimize="${compile.optimize}">
@@ -652,6 +668,23 @@ backport-util-concurrent.jar Backport of Doug Lea's Concurrency package.  Simila
 
     <!-- Copy static files from external dependencies as needed -->
 
+  	<!-- Test that JAXP is installed in the JVM before trying to compile all of uPortal -->
+    <mkdir    dir="${build.home}/WEB-INF/classes"/>
+    <javac srcdir="source"
+          destdir="${build.home}/WEB-INF/classes"
+            debug="${compile.debug}"
+      deprecation="${compile.deprecation}"
+         optimize="${compile.optimize}">
+      <include name="org/jasig/portal/tools/LibCheck.java"/>
+      <classpath refid="compile.classpath"/>
+    </javac>
+    <java fork="true" failonerror="true" dir="" classname="org.jasig.portal.tools.LibCheck">
+      <classpath>
+        <pathelement path="${build.home}/WEB-INF/classes"/>
+        <path refid="compile.classpath"/>
+      </classpath>
+    </java>
+  	
   </target>
 
 
@@ -1316,4 +1349,42 @@ backport-util-concurrent.jar Backport of Doug Lea's Concurrency package.  Simila
     </java>
   </target>
 
+	  <!-- ===================== JAXP-Install Target ========================= -->
+	
+	  <!--
+	
+	    The "JAXP-Install" copies the JAXP libraries into the JAVA_HOME/lib/endorsed
+	    directory of your JDK and into the ${server.home}/common/endorsed directory.
+	    The copying for the server.home is assuming Tomcat as the container.
+	
+	  -->
+	
+	<target name="JAXP-Install"
+	  description="Installs JAXP into the JVM and container">
+	
+	  <!--
+	   Ensure we are installing to a 1.4 JDK
+	  -->
+	  <fail message="Cannot install JAXP on ${java.version}. Expected version is 1.4.*">
+	    <condition>
+	      <not>
+	        <contains string="JDK${java.version}" substring="JDK1.4"/>
+	      </not>
+	    </condition>
+	  </fail>
+	
+	  <echo message="Installing JAXP to:"/>
+	
+	  <echo message="${java.home}/lib/endorsed"/>
+	  <mkdir dir="${java.home}/lib/endorsed"/>
+	  <copy todir="${java.home}/lib/endorsed">
+	    <fileset dir="${jaxp.lib}" includes="*.jar"/>
+	  </copy>
+	
+	  <echo message="${server.home}/common/endorsed"/>
+	  <mkdir dir="${server.home}/common/endorsed"/>
+	  <copy todir="${server.home}/common/endorsed">
+	      <fileset dir="${jaxp.lib}" includes="*.jar"/>
+	  </copy>
+	</target>
 </project>

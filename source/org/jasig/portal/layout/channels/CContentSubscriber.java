@@ -1,36 +1,6 @@
-/**
- * Copyright ? 2004 The JA-SIG Collaborative.  All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
- *
- * 3. Redistributions of any form whatsoever must retain the following
- *    acknowledgment:
- *    "This product includes software developed by the JA-SIG Collaborative
- *    (http://www.jasig.org/)."
- *
- * THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
- * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE JA-SIG COLLABORATIVE OR
- * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE.
- *
+/* Copyright 2004,2005 The JA-SIG Collaborative.  All rights reserved.
+*  See license distributed with this file and
+*  available online at http://www.uportal.org/license.html
  */
 
 package org.jasig.portal.layout.channels;
@@ -42,12 +12,18 @@ import org.jasig.portal.utils.CommonUtils;
 import org.jasig.portal.utils.XSLT;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.layout.IAggregatedLayout;
+import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.xpath.XPathAPI;
+
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
 import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
 
@@ -56,8 +32,6 @@ import java.util.Set;
 import java.util.Iterator;
 import java.util.Enumeration;
 import java.util.Collection;
-
-import javax.xml.transform.TransformerException;
 
   /**
    * A channel for adding new content to a layout.
@@ -210,7 +184,11 @@ public class CContentSubscriber extends FragmentManager {
 			String escapedSearchQuery = escapeQuotesForXpath(searchQuery);
 			// Clear all the previous state
 			if ( searchQuery != null ) {
-				NodeList nodeList = XPathAPI.selectNodeList(registry,"//*");
+		        searchQuery = searchQuery.toLowerCase();
+		        String expression = "//*";
+		        XPathFactory fac = XPathFactory.newInstance();
+		        XPath xpath = fac.newXPath();
+		        NodeList nodeList = (NodeList) xpath.evaluate(expression, registry, XPathConstants.NODESET);
 				for ( int k = 0; k < nodeList.getLength(); k++ ) {
 				  Element node = (Element) nodeList.item(k);
 				  node.setAttribute("search-selected","false");
@@ -228,15 +206,23 @@ public class CContentSubscriber extends FragmentManager {
 			  for ( int i = 0; i < xPathQueries.length; i++) {  
 			   if ( xPathQueries[i] != null ) {
 			    log.debug("xPathQueries["+i+"]: "+xPathQueries[i]);
-			    NodeList nodeList =  XPathAPI.selectNodeList(registry,xPathQueries[i]);
+		                XPathFactory fac = XPathFactory.newInstance();
+		                XPath xpath = fac.newXPath();
+		                NodeList nodeList = (NodeList) xpath.evaluate(xPathQueries[i], registry, 
+		                        XPathConstants.NODESET);
 			    for ( int k = 0; k < nodeList.getLength(); k++ ) {
 				 Element node = (Element) nodeList.item(k);
+		                    // check description and name attribute
+		                    String name = node.getAttribute("name").toLowerCase();
+		                    String desc = node.getAttribute("description").toLowerCase();
+		                    if (name.indexOf(searchQuery) >= 0 || desc.indexOf(searchQuery) >= 0){
 				 node.setAttribute("search-selected","true");
 				 expandAscendents(node);
 			    } 
 			   } 
 			  } 
 			}		
+		}
 		}
 			 
 		Vector removedItems = new Vector(); 
@@ -256,7 +242,10 @@ public class CContentSubscriber extends FragmentManager {
 			      xPathQuery = "//channel[../@ID='"+item.getCategoryId()+"' and @ID='"+item.getItemId()+"']";
 			     else 
 			      xPathQuery = "//*[@ID='"+item.getItemId()+"']";   
-				 Element elem = (Element) XPathAPI.selectSingleNode(registry,xPathQuery);
+                 XPathFactory fac = XPathFactory.newInstance();
+                 XPath xpath = fac.newXPath();
+                 Element elem = (Element) xpath.evaluate(xPathQuery,
+                         registry, XPathConstants.NODE);
 				 if ( elem != null ) 
 				  elem.setAttribute(attrName,(k==0)?"expanded":"condensed");
 				 else
@@ -301,7 +290,9 @@ public class CContentSubscriber extends FragmentManager {
 		     xslt.setStylesheetParameter("search-category", searchCategory);
 		     xslt.setStylesheetParameter("search-query", CommonUtils.nvl(searchQuery));
 		     
-	  } catch ( TransformerException e ) {
+	  } catch ( DOMException e ) {
+	  	  throw new PortalException(e);     
+	  } catch (XPathExpressionException e) {
 	  	  throw new PortalException(e);	     
 	  }
 			 

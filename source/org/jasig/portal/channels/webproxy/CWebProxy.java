@@ -58,6 +58,13 @@ import java.util.StringTokenizer;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.ChannelCacheKey;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ChannelRuntimeProperties;
@@ -1010,8 +1017,9 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
 
   public boolean isCacheValid(Object validity,String uid)
   {
-    if (!(validity instanceof Long))
+    if (!(validity instanceof Long)) {
       return false;
+    }
 
     ChannelState state = (ChannelState)stateTable.get(uid);
 

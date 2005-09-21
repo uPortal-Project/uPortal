@@ -2,3 +2,4 @@ build
 dist
 .project
 .classpath
+.settings

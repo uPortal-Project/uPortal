@@ -1726,8 +1726,8 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 
         // Checking restrictions for the node
         if ( rhash != null ) {
-           for ( Enumeration enum = rhash.elements(); enum.hasMoreElements(); )
-             if ( !((IUserLayoutRestriction)enum.nextElement()).checkRestriction(node) ) {
+           for ( Enumeration enumeration = rhash.elements(); enumeration.hasMoreElements(); )
+             if ( !((IUserLayoutRestriction)enumeration.nextElement()).checkRestriction(node) ) {
                   node.setNodeDescription(currentNodeDesc);
                   return false;
              }

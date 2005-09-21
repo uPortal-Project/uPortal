@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2001,2005 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -408,10 +408,10 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
         // debug block
         try {
             java.io.StringWriter outString = new java.io.StringWriter ();
-            org.apache.xml.serialize.OutputFormat format=new org.apache.xml.serialize.OutputFormat();
+            com.sun.org.apache.xml.internal.serialize.OutputFormat format=new com.sun.org.apache.xml.internal.serialize.OutputFormat();
             format.setOmitXMLDeclaration(true);
             format.setIndenting(true);
-            org.apache.xml.serialize.XMLSerializer xsl = new org.apache.xml.serialize.XMLSerializer (outString,format);
+            com.sun.org.apache.xml.internal.serialize.XMLSerializer xsl = new com.sun.org.apache.xml.internal.serialize.XMLSerializer(outString,format);
             xsl.serialize (doc);
             log.debug(outString.toString());
         } catch (Exception e) {

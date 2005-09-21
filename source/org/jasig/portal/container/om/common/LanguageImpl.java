@@ -186,8 +186,8 @@ public class LanguageImpl implements Language, Serializable {
 
         private void importData(ResourceBundle bundle) {
             if (bundle != null) {
-                for (Enumeration enum = bundle.getKeys(); enum.hasMoreElements();) {
-                    String key = (String)enum.nextElement();
+                for (Enumeration enumeration = bundle.getKeys(); enumeration.hasMoreElements();) {
+                    String key = (String)enumeration.nextElement();
                     Object value = bundle.getObject(key);
                     data.put(key, value);
                 }
