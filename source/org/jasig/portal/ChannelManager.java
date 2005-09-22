@@ -343,7 +343,7 @@ public class ChannelManager implements LayoutEventListener {
                         	
                             BaseMarkupSerializer temp = (BaseMarkupSerializer)contentHandler;
                             char [] emptyChars = new char[0];
-                            temp.characters(emptyChars,0,0);
+                            //temp.characters(emptyChars,0,0);
                             
                             // actually start caching
                             
