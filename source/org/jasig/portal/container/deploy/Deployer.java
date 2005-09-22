@@ -8,9 +8,11 @@ package org.jasig.portal.container.deploy;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Locale;
@@ -245,7 +247,7 @@ public class Deployer {
 
                 SecurityRoleRefSet portletSecurityRoleRefs = portlet.getInitSecurityRoleRefSet();
 
-                SecurityRoleRefSetCtrl portletSecurityRoleRefSetCtrl = (SecurityRoleRefSetCtrl)controllerFactory.get(portletSecurityRoleRefs);
+                //SecurityRoleRefSetCtrl portletSecurityRoleRefSetCtrl = (SecurityRoleRefSetCtrl)controllerFactory.get(portletSecurityRoleRefs);
 
                 Iterator p = portletSecurityRoleRefs.iterator();
 
@@ -287,7 +289,9 @@ public class Deployer {
             // As large as needed to prevent linebreaks in text nodes
             of.setDoctype(WEB_PORTLET_PUBLIC_ID, WEB_PORTLET_DTD);
 
-            FileWriter writer = new FileWriter(webAppsDir + webModule + File.separator + "WEB-INF" + File.separator + "web.xml");
+            OutputStream outputStream = new FileOutputStream(webAppsDir + webModule + File.separator + "WEB-INF" + File.separator + "web.xml");
+            Writer writer = new OutputStreamWriter(outputStream, "utf-8"); 
+
             Serializer serializer = new XMLSerializer(writer, of);
             try {
                 WebApplicationMarshaller wam = new WebApplicationMarshaller();
