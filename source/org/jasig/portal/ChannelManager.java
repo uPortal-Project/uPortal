@@ -1,37 +1,7 @@
-/**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
- *
- * 3. Redistributions of any form whatsoever must retain the following
- *    acknowledgment:
- *    "This product includes software developed by the JA-SIG Collaborative
- *    (http://www.jasig.org/)."
- *
- * THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
- * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE JA-SIG COLLABORATIVE OR
- * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- */
+/* Copyright 2001, 2004 The JA-SIG Collaborative.  All rights reserved.
+*  See license distributed with this file and
+*  available online at http://www.uportal.org/license.html
+*/
 
 package org.jasig.portal;
 
@@ -130,7 +100,7 @@ public class ChannelManager implements LayoutEventListener {
     // global channel rendering cache
     public static final int SYSTEM_CHANNEL_CACHE_MIN_SIZE=50; // this should be in a file somewhere
     
-    public static final Map systemCache = Collections.synchronizedMap(new SoftHashMap(SYSTEM_CHANNEL_CACHE_MIN_SIZE));
+    public static final Map systemCache = new SoftHashMap(SYSTEM_CHANNEL_CACHE_MIN_SIZE);
 
     public static final String channelAddressingPathElement="channel";
     private static boolean useAnchors = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.ChannelManager.use_anchors", false);
@@ -247,7 +217,7 @@ public class ChannelManager implements LayoutEventListener {
     public void finishedRenderingCycle() {
         // clean up
         for (Enumeration enumeration = rendererTable.elements(); enumeration.hasMoreElements();) {
-            ChannelRenderer channelRenderer = (ChannelRenderer)enumeration.nextElement(); 
+            ChannelRenderer channelRenderer = (ChannelRenderer) enumeration.nextElement();
             try {
                 /*
                  * For well behaved, finished channel renderers, killing doesn't do
@@ -273,6 +243,7 @@ public class ChannelManager implements LayoutEventListener {
                  */
                 log.error("Error cleaning up runaway channel renderer: [" + channelRenderer + "]", t);
             }
+
         }
         rendererTable.clear();
         clearRepeatedRenderings();
@@ -291,8 +262,8 @@ public class ChannelManager implements LayoutEventListener {
 
         // send SESSION_DONE event to all the channels
         PortalEvent ev=new PortalEvent(PortalEvent.SESSION_DONE);
-        for(Enumeration enumeration=channelTable.elements();enumeration.hasMoreElements();) {
-            IChannel ch = (IChannel)enumeration.nextElement();
+        for(Enumeration enum1=channelTable.elements();enum1.hasMoreElements();) {
+            IChannel ch = (IChannel)enum1.nextElement();
             if (ch != null) {
                 try {
                     ch.receiveEvent(ev);
