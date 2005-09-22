@@ -6,7 +6,6 @@
 
 package  org.jasig.portal.groups;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +29,7 @@ public class PersonDirNameFinder
     private IPersonAttributeDao paDao;
     
     /** Our cache of entity names: */
-    private Map names = Collections.synchronizedMap(new SoftHashMap());
+    private Map names = new SoftHashMap();
 
     /**
      * Instantiate a PersonDirNameFinder backed by the given
