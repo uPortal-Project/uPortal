@@ -416,9 +416,10 @@ public class UserInstance implements HttpSessionBindingListener {
 
                                 for(int sb=0; sb<ccsize-1;sb++) {
                                     cSerializer.printRawCharacters((String)cCache.systemBuffers.get(sb));
-
-                                    //LogService.log(LogService.DEBUG,"----------printing frame piece "+Integer.toString(sb));
-                                    //LogService.log(LogService.DEBUG,(String)cCache.systemBuffers.get(sb));
+									if (log.isDebugEnabled()){
+	                                    log.debug("----------printing frame piece "+Integer.toString(sb));
+    	                                log.debug((String)cCache.systemBuffers.get(sb));
+                                    }
 
                                     // get channel output
                                     String channelSubscribeId=(String) cCache.channelIds.get(sb);
@@ -427,8 +428,10 @@ public class UserInstance implements HttpSessionBindingListener {
 
                                 // print out the last block
                                 cSerializer.printRawCharacters((String)cCache.systemBuffers.get(ccsize-1));
-                                //LogService.log(LogService.DEBUG,"----------printing frame piece "+Integer.toString(ccsize-1));
-                                //LogService.log(LogService.DEBUG,(String)cCache.systemBuffers.get(ccsize-1));
+								if (log.isDebugEnabled()){
+	                                log.debug("----------printing frame piece "+Integer.toString(ccsize-1));
+    	                            log.debug((String)cCache.systemBuffers.get(ccsize-1));
+    	                        }
 
                                 cSerializer.flush();
                                 output_produced=true;
@@ -608,22 +611,20 @@ public class UserInstance implements HttpSessionBindingListener {
                             } else {
                                 // record cache
                                 systemCharacterCache.put(cacheKey,ce);
-                                if (log.isDebugEnabled())
-                                    log.debug("UserInstance::renderState() : recorded transformation character block cache with key \""+cacheKey+"\"");
-
-                                /*
-                                  LogService.log(LogService.DEBUG,"Printing transformation cache system blocks:");
-                                  for(int i=0;i<ce.systemBuffers.size();i++) {
-                                  LogService.log(LogService.DEBUG,"----------piece "+Integer.toString(i));
-                                  LogService.log(LogService.DEBUG,(String)ce.systemBuffers.get(i));
-                                  }
-                                  LogService.log(LogService.DEBUG,"Printing transformation cache channel IDs:");
-                                  for(int i=0;i<ce.channelIds.size();i++) {
-                                  LogService.log(LogService.DEBUG,"----------channel entry "+Integer.toString(i));
-                                  LogService.log(LogService.DEBUG,(String)ce.channelIds.get(i));
-                                  }
-                                */
-
+                                if (log.isDebugEnabled()){
+                                	log.debug("UserInstance::renderState() : recorded transformation character block cache with key \""+cacheKey+"\"");
+	                                
+	                                log.debug("Printing transformation cache system blocks:");
+	                                for(int i=0;i<ce.systemBuffers.size();i++) {
+	                                	log.debug("----------piece "+Integer.toString(i));
+	                                	log.debug((String)ce.systemBuffers.get(i));
+	                                }
+	                                log.debug("Printing transformation cache channel IDs:");
+	                                for(int i=0;i<ce.channelIds.size();i++) {
+	                                	log.debug("----------channel entry "+Integer.toString(i));
+	                                	log.debug((String)ce.channelIds.get(i));
+	                                }
+                                }
                             }
                         }
 

@@ -70,7 +70,6 @@ public class ChannelRenderer
 
     protected SetCheckInSemaphore groupSemaphore;
     protected Object groupRenderingKey;
-    private Object cacheWriteLock;
 
     /**
      * Default contstructor
@@ -84,7 +83,6 @@ public class ChannelRenderer
         this.rd=runtimeData;
         this.rendering = false;
         this.ccacheable=false;
-        this.cacheWriteLock=new Object();
         tp = threadPool;
 
         if(systemCache==null) {
@@ -126,7 +124,6 @@ public class ChannelRenderer
         }
         // clear channel chace
         this.channelCache=null;
-        this.cacheWriteLock=new Object();
     }
     
     /**
@@ -382,7 +379,6 @@ public class ChannelRenderer
         private boolean successful;
         private boolean done;
         private boolean setRuntimeDataComplete;
-        private boolean decremented;
         private IChannel channel;
         private ChannelRuntimeData rd;
         private SAX2BufferImpl buffer;

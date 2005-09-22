@@ -43,6 +43,7 @@ import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.serialize.BaseMarkupSerializer;
 import org.jasig.portal.serialize.CachingSerializer;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.StatsRecorder;
@@ -334,6 +335,18 @@ public class ChannelManager implements LayoutEventListener {
                     if(bufferedContent!=null) {
                         // translate SAX Buffer into the character version
                         try {
+                        	
+                        	// Before we start caching the channel's content we output empty
+                        	// content to thc content handler. This will allow for the content handler
+                        	// to write out the ">" before trying to cache the channel content.
+                        	// See JIRA issue UP-1074 for more info.
+                        	
+                            BaseMarkupSerializer temp = (BaseMarkupSerializer)contentHandler;
+                            char [] emptyChars = new char[0];
+                            temp.characters(emptyChars,0,0);
+                            
+                            // actually start caching
+                            
                             if(!cs.startCaching()) {
                                 log.error("ChannelManager::outputChannel() : unable to restart character cache while compiling character cache for channel \""+channelSubscribeId+"\" !");
                             }
@@ -343,6 +356,7 @@ public class ChannelManager implements LayoutEventListener {
                             if(cs.stopCaching()) {
                                 try {
                                     characterContent=cs.getCache();
+                                	log.debug("outputChannel 2: "+characterContent);
                                     if(characterContent!=null) {
                                         // save compiled character cache
                                         cr.setCharacterCache(characterContent);
