@@ -8,39 +8,27 @@ package  org.jasig.portal.utils;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.SoftReference;
 import java.util.AbstractMap;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Set;
+
+import edu.emory.mathcs.backport.java.util.concurrent.ConcurrentHashMap;
 
 
 
 /**
  * A HashMap implementation that uses soft references, 
  * leaving memory management up to the gc.
- * <p><b>Note that, like the JDK's HashMap, this implementation is not 
- * synchronized.</b> If multiple
- * threads access this map concurrently, and at least one of the threads
- * modifies the map structurally, it <i>must</i> be synchronized externally.
- * (A structural modification is any operation that adds or deletes one or
- * more mappings; merely changing the value associated with a key that an
- * instance already contains is not a structural modification.) This is
- * typically accomplished by synchronizing on some object that naturally
- * encapsulates the map. If no such object exists, the map should be
- * "wrapped" using the <tt>Collections.synchronizedMap</tt> method. This is
- * best done at creation time, to prevent accidental unsynchronized access to
- * the map: <pre> Map m = Collections.synchronizedMap(new HashMap(...));
- * </pre>
+ * 
  * @author Peter Kharchenko (thanks to Dr. Kabutz on whose article the code is based)
  * @version $Revision$
  */
 public class SoftHashMap extends AbstractMap {
 
-    private final HashMap map=new HashMap();
+    private final ConcurrentHashMap map=new ConcurrentHashMap();
     private final LinkedList fifo=new LinkedList();
     private final ReferenceQueue removeQueue=new ReferenceQueue();
 
     private int minSize;
-    private int maxSize;
     
     /**
      * Construct a SoftHashMap
