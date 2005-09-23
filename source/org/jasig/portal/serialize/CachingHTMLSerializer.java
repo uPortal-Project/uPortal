@@ -123,10 +123,12 @@ public final class CachingHTMLSerializer
 
     // caching methods
     public boolean startCaching() throws IOException{
+		content();
         _printer.flush();
         return cacher.startCaching();
     }
     public boolean stopCaching() throws IOException {
+		content();
         _printer.flush();
         return cacher.stopCaching(); 
     }
