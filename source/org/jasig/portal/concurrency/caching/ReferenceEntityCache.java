@@ -27,7 +27,13 @@ import org.apache.commons.logging.LogFactory;
  */
 public class ReferenceEntityCache implements IEntityCache
 {
-    private static final Log LOG = LogFactory.getLog(ReferenceEntityCache.class);
+    /**
+     * Commons Logging instance configured to log as the runtime class.
+     * Available to subclasses for logging, and used in the implementation of
+     * debug() so that debug messages will log as the runtime class.
+     */
+    protected final Log log = LogFactory.getLog(getClass());
+    
     protected Map cache;
     protected Class entityType;
     protected String simpleTypeName;
@@ -116,12 +122,23 @@ public void clearCache()
 }
 
 /**
+ * Print a debug message prepended with the current time.
+ * <p>This method is deprecated.  Instead use Commons Logging directly.  Backing 
+ * logging implementations such as log4j have capabilities for including
+ * (and formatting) the timestamps of log entries without that timestamp
+ * being explicitly generated here in the logging client.</p>
+ * 
+ * <p>While this method internally guards against needless additional object 
+ * creation, code calling this method should itself use the isDebugEnabled()
+ * guard in order to avoid generating intermediary Strings as the <code>msg</code> 
+ * argument to this method.</p>
+ * @deprecated Use Commons Logging directly.
  */
 void debug(String msg)
 {
-    if (LOG.isDebugEnabled()) {
+    if (log.isDebugEnabled()) {
         java.sql.Timestamp ts = new java.sql.Timestamp(System.currentTimeMillis());
-        LOG.debug(ts + " : " + msg);
+        log.debug(ts + " : " + msg);
     }
 }
 
