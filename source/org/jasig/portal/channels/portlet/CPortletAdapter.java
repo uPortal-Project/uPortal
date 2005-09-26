@@ -51,6 +51,7 @@ import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalEvent;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.container.om.common.ObjectIDImpl;
+import org.jasig.portal.container.om.entity.PortletApplicationEntityImpl;
 import org.jasig.portal.container.om.entity.PortletEntityImpl;
 import org.jasig.portal.container.om.portlet.PortletApplicationDefinitionImpl;
 import org.jasig.portal.container.om.portlet.PortletDefinitionImpl;
@@ -210,11 +211,17 @@ public class CPortletAdapter
             ChannelDefinition channelDefinition = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl().getChannelDefinition(Integer.parseInt(sd.getChannelPublishId()));
             portletDefinition.setChannelDefinition(channelDefinition);
             portletDefinition.loadPreferences();
+
+            // Create the PortletApplicationEntity
+            final PortletApplicationEntityImpl portAppEnt = new PortletApplicationEntityImpl();
+            portAppEnt.setId(portletDefinition.getId().toString());
+            portAppEnt.setPortletApplicationDefinition(portletDefinition.getPortletApplicationDefinition());
             
             // Create the PortletEntity
             PortletEntityImpl portletEntity = new PortletEntityImpl();
             portletEntity.setId(sd.getChannelPublishId());
             portletEntity.setPortletDefinition(portletDefinition);
+            portletEntity.setPortletApplicationEntity(portAppEnt);
             portletEntity.setUserLayout(pcs.getUserPreferencesManager().getUserLayoutManager().getUserLayout());
             portletEntity.setChannelDescription((IUserLayoutChannelDescription)pcs.getUserPreferencesManager().getUserLayoutManager().getNode(sd.getChannelSubscribeId()));
             portletEntity.setPerson(sd.getPerson());
