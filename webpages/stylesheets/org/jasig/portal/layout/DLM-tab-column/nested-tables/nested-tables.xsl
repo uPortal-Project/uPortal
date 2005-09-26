@@ -66,7 +66,7 @@
 </html>
 </xsl:template>
 <xsl:template match="header">
-    <table width="100%" border="3" cellspacing="0" cellpadding="0">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
       <tr class="uportal-background-med">
         <td colspan="2" rowspan="1">
           <img alt="" src="{$mediaPath}/{$skin}/skin/transparent.gif" width="1" height="1"/>
@@ -88,7 +88,7 @@
       </tr>
     </table>
     <xsl:copy-of select="channel[@name='Login']"/>
-    <table width="100%" border="3" cellspacing="0" cellpadding="0">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
       <tr>
         <td colspan="1" rowspan="1">
           <img alt="uPortal by JA-SIG large logo" title="uPortal by JA-SIG large Logo" src="{$mediaPath}/{$skin}/institutional/uportal_logo_grid.gif" width="600" height="50"/>
