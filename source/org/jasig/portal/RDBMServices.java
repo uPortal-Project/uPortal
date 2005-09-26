@@ -35,8 +35,22 @@ import org.springframework.dao.DataAccessResourceFailureException;
 
 /**
  * Provides relational database access and helper methods.
- * A static routine determins if the database/driver supports
+ * A static routine determines if the database/driver supports
  * prepared statements and/or outer joins.
+ * 
+ * <p>This class provides database access as a service.  Via the class, uPortal
+ * code can obtain a connection to the core uPortal database as well as to other
+ * databases available via JNDI.  (Doing that JNDI lookup directly allows your
+ * code to avoid dependence upon this class.)  This class provides 
+ * traditional getConnection() methods as well as static covers for getting a
+ * reference to the backing DataSource.</p>
+ * 
+ * <p>This class also provides helper methods for manipulating connections.
+ * Mostof the methods are wrappers around methods on the underlying Connection
+ * that handle (log and swallow) the SQLExceptions that the underlying methods 
+ * declare to be thrown (these helpers also catch 
+ * and log RuntimeExceptions encountered).  They provide an alternative to trying
+ * and catching those methods using the JDBC APIs directly.</p>
  *
  * @author Ken Weiner, kweiner@unicon.net
  * @author George Lindholm, george.lindholm@ubc.ca
@@ -313,7 +327,10 @@ public class RDBMServices {
     }
 
     /**
-     * Releases database connection
+     * Releases database connection.
+     * Unlike the underlying connection.close(), this method does not throw
+     * SQLException or any other exception.  It will fail silently from the
+     * perspective of calling code, logging errors using Commons Logging.
      * @param con a database Connection object
      */
     public static void releaseConnection(final Connection con) {
@@ -375,10 +392,13 @@ public class RDBMServices {
     }
 
     /**
-     * Commit pending transactions
+     * Commit pending transactions.
+     * Unlike the underlying commit(), this method does not throw SQLException or
+     * any other exception.  It will fail silently from the perspective of calling code,
+     * logging any errors using Commons Logging.
      * @param connection
      */
-    static final public void commit(final Connection connection) throws SQLException {
+    static final public void commit(final Connection connection) {
         try {
             connection.commit();
         }
@@ -389,11 +409,15 @@ public class RDBMServices {
     }
 
     /**
-     * Set auto commit state for the connection
+     * Set auto commit state for the connection.
+     * Unlike the underlying connection.setAutoCommit(), this method does not
+     * throw SQLException or any other Exception.  It fails silently from the
+     * perspective of calling code, logging any errors encountered using 
+     * Commons Logging.
      * @param connection
      * @param autocommit
      */
-    public static final void setAutoCommit(final Connection connection, boolean autocommit) throws SQLException {
+    public static final void setAutoCommit(final Connection connection, boolean autocommit) {
         try {
             connection.setAutoCommit(autocommit);
         }
