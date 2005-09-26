@@ -11,8 +11,18 @@
 	  | Here we define additional startup checks.  These are in addition to hard-coded checks that
 	  | are intended to detect problems that would prevent us from reading in and using these 
 	  | configurable checks.
+	  |
+	  | This bean is lazy-init so that it will not be instantiated by Spring
+	  | unless actually needed.  This reduces the chance that a broken checks
+	  | configuration, or one that depends on resources that are unavailable
+	  | (such as JNDI resources outside the context of a JNDI container) 
+	  | will not break the use of a uPortal administrative tool / break a 
+	  | uPortal deployment.
+	  |
 	  +-->
-	<bean id='checkRunner' class="org.jasig.portal.tools.checks.BasicCheckRunner">
+	<bean id='checkRunner' 
+	    class="org.jasig.portal.tools.checks.BasicCheckRunner"
+	    lazy-init="true">
 		<property name="checks">
 			<list>
 				
