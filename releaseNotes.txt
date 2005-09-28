@@ -2,334 +2,67 @@ This is a file for notes specific to the uPortal release that the code you're lo
 either is (in the case of a tagged release) or will become (in the case of the tip of a patches or main branch).
 
 
-Release notes for uPortal 2.5.0 GA (general audience release):
-
-
+Release notes for uPortal 2.5.1 RC1 (release candidate):
 
 Known issues
 
-
-There are many known bugs in this release.  You can query our JIRA system for known issues affecting this release, including
-issues discovered after this release went to press.
+There are many known bugs in uPortal.  We expect there are many fewer of them in this release than in 2.5.0.  
+You can query our JIRA system for known issues affecting this release, including
+issues discovered after this release was cut.
 
 http://jasigch.princeton.edu:9000/jira/
 Search for issues with a "Matches Versions" of this release.
 
 
-This release includes several no significant changes beyond 2.5.0 RC 3.
+Upgrading:
 
-Here are links to dynamic issue information.  At the end of this file is a snapshot of the change log.
+While your current channels and theme transforms will work unchanged in uPortal 2.5.1 if they worked in 2.5.0, 
+transforms require minor changes and channels potentially major changes to take advantage of dynamic 
+channel titles.  CTimeTitle and the changes to the ALM / Integration Modes theme transform provide an example.
 
-You can ask our JIRA issue tracking sytem to generate notes for the 2.5.0 RC3 release.  2.5.0 RC3 describes the most recent significant changes.
-Changes between RC 3 and this general audience release were trivial.
-
-http://jasigch.princeton.edu:9000/jira/secure/IssueNavigator.jspa?reset=true&pid=10020&fixfor=10141
-
-You can ask our JIRA issue tracking system to generate notes for the 2.5.0 RC 2 release upon which this release builds:
-
-http://jasigch.princeton.edu:9000/jira/secure/ReleaseNote.jspa?projectId=10020&styleName=Html&version=10142
-
-and for the 2.5.0 RC1 release upon which this release builds, here:
-
-http://jasigch.princeton.edu:9000/jira/secure/ReleaseNote.jspa?projectId=10020&styleName=Html&version=10140
-
-and for the 2.5.0 M1 release upon which the 2.5.0 RC1 release builds, here:
-
-http://jasigch.princeton.edu:9000/jira/secure/ReleaseNote.jspa?projectId=10020&styleName=Html&version=10096
-
-
-Please make known any issues you discover with this release.
-
-
-The release egineer's system:
-
-Lynn Hollerman asked that we document what systems a release was tested on.  For what it's worth: 
-the release engineer (Andrew Petro, Yale) informally tested this release
-before tagging on
-a Windows / Tomcat 5.0.25 / Java 1.4.2_04 with JAXP 1.3 extensions against the default HSQLDB database via 
-the clean, runtests, initportal Ant build sequence.
-
-The actual release distribution was produced on a Red Hat linux machine using Jdk 1.5.0_02 . (Note: since you'll need to
-build from source for your environment, as the distribution does not contain uPortal .class, .jar, or .war files produced
-by the build, using JDK 1.5 to produce the release should not affect JDK 1.4 compatibility.)
-
-
-CHANGE LOG:
-
-uPortal - Version 2.5.0 general audience release
-
-Tasks completed
-
-    * [UP-1120] - update Version
-    * [UP-1121] - update release notes
-
-uPortal - Version 2.5.0 RC3
-
-Bugs fixed
-
-    * [UP-1004] - RDBMChannelRegistryStore needs prepared statements
-    * [UP-1048] - Locale selector channel not showing for logged in users when using DLM.
-    * [UP-1068] - New Fragment Owners don't get the layout of the dlm template user.
-    * [UP-1076] - UserLayoutStoreFactory double checked locking
-    * [UP-1080] - Portlet redirects leave ChannelManager in inconsistent state
-    * [UP-1081] - Double checked locking in PooledDataSourceFactoryFactory
-    * [UP-1082] - PooledDataSourceFactoryFactory default broken
-    * [UP-1087] - PortletPreferencesStoreFactory double checked locking
-    * [UP-1089] - reset of layout does not use new template
-    * [UP-1096] - FragmentActivator.bindToOwner() Exception caught needs to be logged at error or warn level
-    * [UP-1104] - Two points in XSLT don't include available document location info in exceptions
-    * [UP-1113] - ServletRequestImpl is not used during render phase of portlets
-    * [UP-1116] - Check for DOM3 remediation advice for JDK 1.5
-
-Tasks completed
-
-    * [UP-1036] - Include Jira-produced and more literate release notes
-    * [UP-1078] - update version
-
-Improvements realized
-
-    * [UP-987] - Make guest layout a fragment in DLM and editable by non-guest, admin user.
-    * [UP-1059] - Need DLM Admin page in documentation
-    * [UP-1065] - Log info message when layout components loaded
-    * [UP-1083] - DBCPDataSourceFactory maintenance
-    * [UP-1084] - Specify Map argument to IPersonAttributeDao to be immutable
-    * [UP-1093] - Add documentation channel to error handling fragment
-    * [UP-1095] - Add JAXP13 sanity check to checks run by CheckingContextListener
-    * [UP-1099] - declare @since JavaDoc tag in org.jasig.portal.tools.checks classes
-    * [UP-1101] - Note db schema changes in release notes
-    * [UP-1103] - Add DOM3 sanity check to checks run by CheckingContextListener
-    * [UP-1105] - DLM daemon threads don't have descriptive names.
-    * [UP-1117] - Fixed logging of exceptions to include stack trace.
+RDBMServices changed to stop declaring some SQLExceptions it would never throw.  Code catching those exceptions
+will no longer compile (compile will fail with an unreachable catch block error).  Fixing this is trivial:
+remove the unreachable catch blocks.
 
 
 
-uPortal - Version 2.5.0 RC2
+Major new features and improvements in this release:
 
-Bugs fixed
-
-    * [UP-198] - HTMLSerializer shorthands all empty HTML elements
-    * [UP-769] - Losing Portlet stack traces
-    * [UP-882] - "Can Not Start uPortal" message misleading
-    * [UP-979] - Case of database column names a problem with MySQL on Unix
-    * [UP-985] - DLM code contains references to campus pipeline namespace
-    * [UP-1043] - IALChannelDescription JavaDoc comment incorrect
-    * [UP-1055] - ALM: unable to subscribe to channels
-    * [UP-1058] - Worker.java (in utils.threading) the releaseThread method is *only* called in the try block. This call should be in finally block.
-    * [UP-1060] - Fragment restriction changes aren't being persisted for columns.
-    * [UP-1061] - Fragment element restrictions are being pushed into regular user's layout.
-    * [UP-1062] - If error occurs adding a channel when using DLM no error log entry is created.
-    * [UP-1069] - Profile for new users contains null values in up_user_profile which breaks many areas.
-    * [UP-1071] - provide helpful error message if JAXP is not installed on JDK 1.4
-    * [UP-1072] - remove variables named enum to fix compile on JDK 1.5
-    * [UP-1073] - Eliminate use of deprecated constructor of ChannelParameter
-
-Tasks completed
-
-    * [UP-1035] - Include Jira-produced and more literate release notes
-    * [UP-1070] - Remove un necessary classes from org.jasig.portal.utils.threading package.
-
-Improvements realized
-
-    * [UP-625] - direct URL to channel
-    * [UP-1075] - upgrade to Spring 1.2 (from 1.1.1)
+Dynamic channel titles: now channels can specify at runtime their desired title, instead of just using 
+a title configured at the time of channel publication.  Of course, including support for JSR-168 dynamic portlet
+titles via the CPortletAdapter.
+Support for multiple stats recorders.
+Inherent threadsafety of SoftHashMap.
+And many more minor enhancements.
 
 
 
-uPortal - Version 2.5.0 RC1
+Bug fixes in this release:
 
-Bugs fixed
-
-    * [UP-675] - remove call to commit() in DbLoader.process()
-    * [UP-762] - anchors should not be set for links that already contain an anchor
-    * [UP-862] - BoundedThreadPool infinite loop or deadlock
-    * [UP-950] - convert cusermanager to use commons logger and do some minor cleanup
-    * [UP-983] - Exception caught and ignored in IPersonEvaluatorFactory.java
-    * [UP-984] - should IPersonEvaluatorFactory start with an "I"? It isn't an interface.
-    * [UP-990] - build.xml needs to have failonerror true when forking to java
-    * [UP-991] - RDBMServices fails to fail over to rdbm.properties when PortalDb not available via JNDI
-    * [UP-993] - ChannelPublisher.main() should failfast and communicate failure to ant build
-    * [UP-994] - ReferenceEntityCache thread should be set daemon
-    * [UP-997] - convert DLM code to use commons logger
-    * [UP-999] - No way to communicate desired media base to ChannelRuntimeData
-    * [UP-1007] - ant compile target does not copy .cpd file for channel types to WEB-INF/classes area
-    * [UP-1008] - ChannelPublisher doesn't use correct class when publishing channel of non custom-java type.
-    * [UP-1009] - channel versions are not being removed from UP_VERSIONS when channel definitions are deleted.
-    * [UP-1010] - CAR Auto-publishing causes error message on console
-    * [UP-1011] - CAR Auto-publishing is throwing a Parse Exception for document type "null"
-    * [UP-1012] - CAR Auto-publishing incorrectly handles characters in nested elements
-    * [UP-1013] - DLM fragment cleaner thread should be set daemon
-    * [UP-1021] - remove MultipartDataSource setFileTypeMap()
-    * [UP-1023] - Framed Tab fields showing in create new tab page.
-    * [UP-1029] - RDBMDistributedLayoutStore copyright header
-    * [UP-1038] - Remove unused class in DLM package.
-    * [UP-1041] - NoClassDefFoundError for javax.transaction.Transaction
-    * [UP-1050] - eliminate deprecated use of org.jasig.portal.channels.CError in RDBMDistributedLayoutStore
-    * [UP-1051] - context.xml created by Ant not discovered by Tomcat
-
-New Features implemented
-
-    * [UP-998] - make CPortletAdapter extensible
-    * [UP-1024] - add CAbstractXslt
-    * [UP-1042] - HttpProxyServlet should accept a lsit of referers not just one
-
-Tasks completed
-
-    * [UP-995] - move org.jasig.portal.layout.al out of HEAD and into Sandbox
-    * [UP-1034] - Include Jira-produced and more literate release notes
-    * [UP-1052] - update the UP version string for 2.5.0 RC1
-
-Improvements realized
-
-    * [UP-879] - Place context file in META-INF
-    * [UP-884] - test portlets
-    * [UP-885] - @version tags $Revision$ $Date$
-    * [UP-912] - Encode portlet params as standard params rather than in uP file
-    * [UP-988] - Add a new Component to the uPortal project for Distributed Layout Management.
-    * [UP-1001] - Document ChannelRuntimeProperties setWillRender() no effect
-    * [UP-1019] - remove MultipartDataSource getFile()
-    * [UP-1020] - add ChannelRuntimeData toString()
-    * [UP-1022] - repackage BasicLocalConnectionContext to be among providers
-    * [UP-1025] - add CMissingProperties
-    * [UP-1026] - RDBMUserLayoutStore protected instance logger
-    * [UP-1027] - Layout packaging
-    * [UP-1028] - extract LayoutStructure and StructureParameter from RDBMUserLayoutStore
-    * [UP-1030] - Apply JA-SIG copyright header to DLM code
-    * [UP-1031] - DLM type JavaDoc metadata
-    * [UP-1032] - MultipartDataSource log on failure to delete temp file
-    * [UP-1033] - ChannelFactory use JavaDoc style comments for staticChannels and classLoader
-    * [UP-1037] - Document in README how to configure DataSource
-    * [UP-1044] - eliminate AllTests
+Reduction of excessive object creation.
+Threadsafety of system cache.
+And many more minor bug fixes.
 
 
 
-uPortal - Version 2.5.0 M1
 
-Bugs fixed
-    * [UP-169] - RDBMPermissibleRegistry not using CarClassLoader
-    * [UP-338] - RENDERING_DONE Event never sent
-    * [UP-466] - replace alt="interface image" with alt=""
-    * [UP-632] - Compilation with JDK1.5.0 fails
-    * [UP-656] - add logging message to ChannelManger.replaceWithErrorChannel()
-    * [UP-658] - CError should never fail to render
-    * [UP-662] - The CContentSubscriber channel caches the channel list
-    * [UP-684] - pubfragments fails but overall build succeeds
-    * [UP-710] - Pluto-in-uPortal unique name is hardcoded into the CPortletAdapter.java file
-    * [UP-750] - ILdapServer.getConnection() hid connection exception
-    * [UP-765] - remove unused table UPC_KEYWORD
-    * [UP-766] - ActionResponse redirect & setWindowState methods do nothing
-    * [UP-773] - ActionResponse.setWindowState(EXCUSIVE) doesn't work
-    * [UP-781] - PortletURLs generated in EXCLUSIVE window state are incorrect
-    * [UP-782] - Changing PortletMode while in EXCLUSIVE does not work
-    * [UP-789] - RenderResponse.getWriter() doesn't work in EXCLUSIVE WindowState
-    * [UP-802] - Upgrade/Remove Apache Axis jar to fix reserved word compile error on Jdk 1.5
-    * [UP-806] - Eliminate log4j dependency in LoggingStatsRecorder
-    * [UP-808] - GuidGenerator default constructor generates last component of guid wrong
-    * [UP-817] - CPortletAdapter opaque credentials parser has extra code
-    * [UP-831] - Render/Action parameters don't get passed correctly in EXCLUSIVE WindowState
-    * [UP-843] - Remove jdbc2_0-stdext.jar now that we require jdk 1.4 and up
-    * [UP-844] - Remove jaas.jar now that we require jdk 1.4 and up
-    * [UP-866] - set initCause on IOExceptions in PortletEntityImpl
-    * [UP-867] - eliminate need for caching Exception in constructor of RDBMChannelDefSearcher and RDBMPersonSearcher
-    * [UP-869] - Unecessary Copy of principalCache on newPrincipal creation
-    * [UP-871] - RDBMServices throws RuntimeErrors in its static block when it can't connect to the database
-    * [UP-874] - AuthorizationImpl never lets go of cached values
-    * [UP-880] - NPE during login when attribute value is null
-    * [UP-891] - SimpleUserLayoutManagerTest testUpdateFolder semantic equality
-    * [UP-892] - SimpleUserLayoutManagerTest testMoveUnderRootNode fails (fixed in 2.5)
-    * [UP-893] - DatabaseServerImpl tests fail for non UP data sources
-    * [UP-896] - ChannelDefinition.getBase wants IPortalDocument
-    * [UP-918] - Null pointer exception in UserLayoutChannelDescription
-    * [UP-920] - Passing of remote address with runtime data incomplete
-    * [UP-922] - PortalSessionManager static final "startedAt" should be STARTED_AT
-    * [UP-923] - PersonDirNameFinder.primGetName() can fail with an NPE
-    * [UP-925] - PersonDirNameFinder getName() may return null
-    * [UP-926] - AggregatedUserLayoutStore sets supportsOuterJoins false
-    * [UP-928] - PersonDirNameFinder not threadsafe
-    * [UP-929] - RDBMChannelRegistryStore: Remove catch Exception references or replace with more specific exception type
-    * [UP-930] - Fixup Exception handling in org.jasig.portal.groups.filesystem
-    * [UP-941] - Channel Subscriber gets StackOverflowError when trying to list channels
-    * [UP-942] - log Throwable stack trace in ChannelManager.replaceWithErrorChannel()
-    * [UP-944] - StackOverflowError Login during rendering
-    * [UP-946] - Restore safety to channel rendering
-    * [UP-949] - cusermanager: md5passwd.java should be Md5passwd.java
-    * [UP-951] - RDBMServices compares strings by reference in getConnection(String)
-    * [UP-952] - DatabaseTagHandler: Print out stack trace in log.error()
-    * [UP-953] - no retry and refresh buttons are displayed in error channel after timeout
-    * [UP-955] - JavaDoc declarations of constants in CUserManager Constants don't match values
-    * [UP-956] - IFragmentRegistry empty @return tag
-    * [UP-957] - DBCPDataSourceFactory JavaDoc comment references non-existing method
-    * [UP-960] - IFragment @return tag has no arguments
-    * [UP-961] - ALNode methods with no-arg @return tags
-    * [UP-963] - no-arg @return JavaDoc for ErrorCode isRefreshAllowed()
-    * [UP-972] - Fix AccountStoreFactory JavaDoc
-    * [UP-973] - AuthzServiceFactoryImpl type JavaDoc before import
-    * [UP-975] - BoundedQueue type JavaDoc trapped
-    * [UP-976] - CViewer type comment not marked as JavaDoc
-    * [UP-977] - CacheSecurityContextFactory type JavaDoc trapped before import
-    * [UP-978] - ant runtests target requires hsqldb
 
-New Features added
+Database schema changes
 
-    * [UP-784] - include CUserManager by default
-    * [UP-785] - ability to purge XSLT cache
-    * [UP-840] - DLM as alternative LM
-    * [UP-853] - Add API and facility for deploy and runtime sanity checking
-    * [UP-854] - Include JAXP 1.3 jars with uPortal
-    * [UP-895] - JAXP-Install Ant target
-    * [UP-903] - RDBMServices.getDataSource()
-    * [UP-904] - RDBMServices.getDataSource(String dbName)
-    * [UP-905] - Core database meta data
-    * [UP-945] - errorHandling tab
-    * [UP-948] - add CTimeout channel
-    * [UP-964] - CError refactoring
-    * [UP-971] - BaseChannel and BaseMultithreadedChannel should bear Log instances
+There are no database schema changes between uPortal 2.5.0 and uPortal 2.5.1.
 
-Tasks completed
+There were minor database schema changes between uPortal 2.4.x and uPortal 2.5.0.  These affect Aggregated Layouts.
 
-    * [UP-839] - remove deprecated WSRP Producer
-    * [UP-981] - eliminate BoundedThreadPool, UnboundedThreadPool
-    * [UP-982] - update version data for 2.5.0M1
 
-Improvements realized
+Discussing this release and reporting issues:
 
-    * [UP-117] - Need to be able to publish xml/xsl
-    * [UP-385] - Utility to modify url depending on user attributes
-    * [UP-686] - Add the ability to pool connections defined in rdbm.properties
-    * [UP-687] - JNDI to JDBC fail over
-    * [UP-688] - Configurable JNDI names
-    * [UP-689] - Removed use of and deprecated RDBMServices.PreparedStatement
-    * [UP-690] - RDBMServices refactoring
-    * [UP-691] - RDBMServices get default server
-    * [UP-692] - LDAPServices get default server
-    * [UP-697] - PLT18 - Expiration Caching of the portlet spec is not implemented
-    * [UP-742] - Get a list of servers from LdapServices
-    * [UP-757] - check versions of important libraries on startup
-    * [UP-763] - Make PortalSecurityException chainable
-    * [UP-768] - Change default ant target to output help message
-    * [UP-774] - Add BasicLocalConnectionContext.java to uPortal CVS
-    * [UP-777] - Springify the PersonDirectory service
-    * [UP-804] - deprecate extraneous ChannelParameter constructor
-    * [UP-805] - JavaDoc ChannelParameter
-    * [UP-821] - patch to make CContentSubscriber search case insensitive
-    * [UP-835] - upgrade to JAXP 1.3 XML APIs
-    * [UP-848] - CGenericXSLT pass static params to xsl transforms
-    * [UP-852] - RDBMServices getConnection fail with a RuntimeException rather than with null
-    * [UP-855] - UserInstanceManager chain PortalSecurityException when unable to obtain person
-    * [UP-856] - Upgrade pluto to 1.0.1-rc2
-    * [UP-861] - move to mainstream thread pool impl
-    * [UP-883] - portlet IChannel marker interface
-    * [UP-894] - Update LdapServices link in SimpleLdapSecurityContext JavaDoc
-    * [UP-899] - Activate GroupService JavaDoc comments
-    * [UP-901] - Direct JNDI lookup for DS referenced from PersonDirs.xml
-    * [UP-902] - Don't log stack trace for expected sql errors
-    * [UP-916] - package scope PersonDirInfo code
-    * [UP-917] - PersonDirInfoAdaptor static method
-    * [UP-919] - Move IPersonAttributeDao out of support package
-    * [UP-936] - EntityLockTester becomes EntityLockTest
-    * [UP-937] - Rename PAGSTester to PAGSTest
-    * [UP-938] - Remove external dependencies and rename filesystem unit test class
-    * [UP-954] - document JNDI name for uPortal DataSource
-    * [UP-959] - JavaDoc improvements to FrameworkMBeanImpl
-    * [UP-965] - MovingAverage comment improvements
-    * [UP-974] - add @since tag for properties package
+Please discuss this release on the uPortal project discussion lists.  Please post issues discovered into JIRA.
 
+
+Release engineer's environment:
+
+This release was engineered on an 
+IBM Thinkpad R31  / Windows XP SP2 / Eclipse 3.0.1 / HSQLDB,
+building under JDK 1.5.0_01 and testing in a Tomcat 5.5.9 under the same JDK.
+
+and was actually built on a RedHat Linux machine using a version of the shell script in /etc/.
