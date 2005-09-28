@@ -9,6 +9,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Map;
 
+import org.jasig.portal.channels.support.IChannelTitle;
 import org.jasig.portal.properties.PropertiesManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -377,7 +378,33 @@ public class ChannelRenderer
         
         return sb.toString();
     }
-    
+
+
+	public String getChannelTitle() {
+	    
+		
+		if (log.isTraceEnabled()) {
+			log.trace("Getting channel title for ChannelRenderer " + this);
+		}
+	    
+		// default to null, which indicates the ChannelRenderer doesn't have
+		// a dynamic channel title available.
+		String channelTitle = null; 
+	    try {
+	        // block on channel rendering to allow channel opportunity to 
+	        // provide dynamic title.
+	        int renderingStatus = completeRendering();
+	        if (renderingStatus == RENDERING_SUCCESSFUL) {
+	            channelTitle = this.worker.getChannelTitle();
+	        }
+	    } catch (Throwable t) {
+	        log.error("Channel rendering failed while getting title for channel renderer " + this, t);
+	    }
+	    
+	    // will be null indicating no dynamic title unless successfully obtained title.
+	    return channelTitle;
+
+	}
 
     protected class Worker extends BaseTask {
         private boolean successful;
@@ -387,6 +414,11 @@ public class ChannelRenderer
         private ChannelRuntimeData rd;
         private SAX2BufferImpl buffer;
         private String cbuffer;
+        
+        /**
+         * The dynamic title of the channel, if any.  Null otherwise.
+         */
+        private String channelTitle = null;
 
         public Worker (IChannel ch, ChannelRuntimeData runtimeData) {
             this.channel=ch;  this.rd=runtimeData;
@@ -552,9 +584,44 @@ public class ChannelRenderer
                 }
                 this.setException(e);
             }
+            
+            /*
+             * Get the channel's ChannelRuntimeProperties, and handle them.
+             */
+            processChannelRuntimeProperties();
+            
             done = true;
         }
 
+        /**
+		 * Query the channel for ChannelRuntimePRoperties and process those
+		 * properties.
+		 * 
+		 * Currently, only handles the optional @link{IChannelTitle} interface.
+		 */
+		private void processChannelRuntimeProperties() {
+			ChannelRuntimeProperties channelProps = this.channel.getRuntimeProperties();
+            
+            if (channelProps != null) {
+            	if (channelProps instanceof IChannelTitle) {
+                	
+                	this.channelTitle = ((IChannelTitle) channelProps).getChannelTitle();
+                	if (log.isTraceEnabled()) {
+                		log.trace("Read title " + this.channelTitle + ".");
+                	}
+                } else {
+                	if (log.isTraceEnabled()) {
+                		log.trace("ChannelRuntimeProperties were non-null but did not implement ITitleable.");
+                	}
+                }
+            } else {
+            	if (log.isTraceEnabled()) {
+            		log.trace("ChannelRuntimeProperties were null from channel " + channel);
+            	}
+            }
+		}
+        
+        
         public boolean successful () {
             return this.successful;
         }
@@ -625,6 +692,27 @@ public class ChannelRenderer
 
         public boolean done () {
             return this.done;
+        }
+        
+        /**
+         * Get a Sring representing the dynamic channel title reported by the
+         * IChannel this ChannelRenderer rendered.  Returns null if the channel
+         * reported no such title or the channel isn't done rendering.
+         * 
+         * @return dynamic channel title, or null if no title available.
+         */
+        String getChannelTitle() {
+        	
+        	if (log.isTraceEnabled()) {
+        		log.trace("Getting channel title (" + this.channelTitle + "] for " + this);
+        	}
+        	
+        	// currently, just provides no dynamic title if not done rendering
+        	if (this.done) {
+        	    return this.channelTitle;
+        	} else {
+        	    return null;
+        	}
         }
     }
 }
