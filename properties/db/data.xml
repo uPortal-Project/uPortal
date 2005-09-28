@@ -1104,7 +1104,7 @@
         <column><name>CHAN_TITLE</name><value>Session Locale Selector</value></column>
         <column><name>CHAN_NAME</name><value>Session Locale Selector</value></column>
         <column><name>CHAN_DESC</name><value>A tool for selecting a locale</value></column>
-        <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.layout.locales.CSessionLocalesSelector</value></column>
+        <column><name>CHAN_CLASS</name><value>org.jasig.portal.layout.channels.locales.CSessionLocalesSelector</value></column>
         <column><name>CHAN_TYPE_ID</name><value>-1</value></column>
         <column><name>CHAN_PUBL_ID</name><value>0</value></column>
         <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
