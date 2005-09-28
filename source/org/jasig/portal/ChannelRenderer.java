@@ -10,6 +10,7 @@ import java.io.StringWriter;
 import java.util.Map;
 
 import org.jasig.portal.channels.support.IChannelTitle;
+import org.jasig.portal.channels.support.IDynamicChannelTitleRenderer;
 import org.jasig.portal.properties.PropertiesManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,7 +34,7 @@ import edu.emory.mathcs.backport.java.util.concurrent.TimeoutException;
  * @version $Revision$
  */
 public class ChannelRenderer
-    implements IChannelRenderer
+    implements IChannelRenderer, IDynamicChannelTitleRenderer
 {
     protected final Log log = LogFactory.getLog(getClass());
     
