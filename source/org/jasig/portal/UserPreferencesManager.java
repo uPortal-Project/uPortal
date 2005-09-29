@@ -277,25 +277,6 @@ public class UserPreferencesManager implements IUserPreferencesManager {
      * @param req current <code>HttpServletRequest</code>
      */
     public void processUserPreferencesParameters(HttpServletRequest req) {
-        // save processing
-        String saveWhat=req.getParameter("uP_save");
-        if(saveWhat!=null) {
-            try {
-                if(saveWhat.equals("preferences")) {
-                    ulsdb.putUserPreferences(m_person, complete_up);
-                } else if(saveWhat.equals("layout")) {
-                    ulm.saveUserLayout();
-                } else if(saveWhat.equals("all")) {
-                    ulsdb.putUserPreferences(m_person, complete_up);
-                    ulm.saveUserLayout();
-                  }
-                log.debug("UserPreferencesManager::processUserPreferencesParameters() : persisted "+saveWhat+" changes.");
-
-            } catch (Exception e) {
-                log.error( "UserPreferencesManager::processUserPreferencesParameters() : unable to persist "+saveWhat+" changes. "+e);
-            }
-        }
-
         // layout root setting
         String root;
         if ((root = req.getParameter("uP_root")) != null) {
@@ -407,6 +388,24 @@ public class UserPreferencesManager implements IUserPreferencesManager {
                         log.debug("UserPreferencesManager::processUserPreferencesParameters() : setting tcattr \"" + aName + "\" of \"" + aNode[j] + "\" to \"" + aValue + "\".");
                     }
                 }
+            }
+        }
+        // save processing
+        String saveWhat=req.getParameter("uP_save");
+        if(saveWhat!=null) {
+            try {
+                if(saveWhat.equals("preferences")) {
+                    ulsdb.putUserPreferences(m_person, complete_up);
+                } else if(saveWhat.equals("layout")) {
+                    ulm.saveUserLayout();
+                } else if(saveWhat.equals("all")) {
+                    ulsdb.putUserPreferences(m_person, complete_up);
+                    ulm.saveUserLayout();
+                  }
+                log.debug("UserPreferencesManager::processUserPreferencesParameters() : persisted "+saveWhat+" changes.");
+
+            } catch (Exception e) {
+                log.error( "UserPreferencesManager::processUserPreferencesParameters() : unable to persist "+saveWhat+" changes. "+e);
             }
         }
     }
