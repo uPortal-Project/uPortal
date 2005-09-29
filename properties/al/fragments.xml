@@ -136,6 +136,9 @@
 			<folder name="column1" immutable="Y" unremovable="Y" hidden="N">
 				<channel fname="timetitle" immutable="Y" unremovable="Y" hidden="N"/>
 			</folder>
+			<folder name="column2" immutable="Y" unremovable="Y" hidden="N">
+				<channel fname="render-count-portlet" immutable="Y" unremovable="Y" hidden="N"/>
+			</folder>
 		</folder>
 	</fragment>
 
