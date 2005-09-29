@@ -98,6 +98,15 @@ class RemoteUserSecurityContext extends ChainingSecurityContext
 		}
 		return;
 	}
+	
+	/**
+	 * Set the remote user for this security context.
+	 * 
+	 * @param remoteuser the REMOTE_USER environment variable.
+	 */
+	public void setRemoteUser( String remoteUser ) {
+	    this.remoteUser = remoteUser;
+	}
 }
 
 
