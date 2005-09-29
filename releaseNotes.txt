@@ -29,8 +29,9 @@ remove the unreachable catch blocks.
 Major new features and improvements in this release:
 
 Dynamic channel titles: now channels can specify at runtime their desired title, instead of just using 
-a title configured at the time of channel publication.  Of course, including support for JSR-168 dynamic portlet
-titles via the CPortletAdapter.
+a title configured at the time of channel publication.  CPortletAdapter needs enhancement to take advantage of this
+feature to present dynamic portlet titles as dynamic channel titles.
+
 Support for multiple stats recorders.
 Inherent threadsafety of SoftHashMap.
 And many more minor enhancements.
