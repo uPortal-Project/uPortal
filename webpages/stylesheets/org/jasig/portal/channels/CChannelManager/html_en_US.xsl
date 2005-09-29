@@ -13,7 +13,6 @@
   <xsl:variable name="defaultMaxLength">20</xsl:variable>
   <xsl:variable name="defaultTextCols">40</xsl:variable>
   <xsl:variable name="defaultTextRows">10</xsl:variable>
-  <xsl:param name="stylesheetCacheSize">0</xsl:param>
 
 
 

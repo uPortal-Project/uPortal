@@ -53,7 +53,7 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
      * @return crd the cloned ChannelRuntimeData object
      */
     public Object clone() {
-      ChannelRuntimeData crd = new ChannelRuntimeData();
+      ChannelRuntimeData crd = (ChannelRuntimeData)super.clone(); 
       crd.binfo = binfo;
       crd.locales = locales;
       crd.channelUPFile = channelUPFile;
@@ -263,6 +263,28 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
             }
         } catch (Exception e) {
             log.error("ChannelRuntimeData::getBaseActionURL() : unable to construct a base action URL!");
+        }
+        return url;
+    }
+
+    /**
+     * Returns an idempotent URL that includes a single query parameter that 
+     * targets a channel for focus mode by functional name. Additional 
+     * query parameters appended will be passed to the focused channel via 
+     * the channel's ChannelRuntimeData object.
+     *
+     * @return a value of URL including a single query parameter.
+     * @since  2.5.1
+     */
+    public String getFnameActionURL(String fname) {
+        String url=null;
+        try {
+                UPFileSpec upfs=new UPFileSpec(channelUPFile);
+                upfs.setTagId(PortalSessionManager.IDEMPOTENT_URL_TAG);
+                url=upfs.getUPFile();
+                url = url + "?" + Constants.FNAME_PARAM + "=" + fname;
+        } catch (Exception e) {
+            log.error("Unable to construct a fname action URL!", e);
         }
         return url;
     }

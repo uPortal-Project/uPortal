@@ -5,15 +5,16 @@
 
 package org.jasig.portal.i18n;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.StringTokenizer;
 
-import org.jasig.portal.properties.PropertiesManager;
-import org.jasig.portal.security.IPerson;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.properties.PropertiesManager;
+import org.jasig.portal.security.IPerson;
 import org.jasig.portal.utils.CommonUtils;
 import org.jasig.portal.utils.DocumentFactory;
 import org.w3c.dom.Document;
@@ -38,7 +39,7 @@ import org.w3c.dom.Element;
  * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
-public class LocaleManager  {
+public class LocaleManager implements Serializable {
 
     private static final Log log = LogFactory.getLog(LocaleManager.class);
     

@@ -14,13 +14,13 @@ clean build directories and publish the uPortal build into a configured Tomcat i
 accidentally run the build such that it overwrites a uPortal instance you care about.  Locations affected by
 the build are declared in build.properties.
 
-
+Backup your work before running builds.
 
 Manifest
 ----------------------------------------
 build.properties    o Contains configuration for the build file that needs to
                       be customized for your environment.
-build.xml           o Contains the ant build targets for working with uPortal.
+build.xml           o Contains the Ant build targets for working with uPortal.
 
 Ant Depdency
 ----------------------------------------
@@ -62,7 +62,7 @@ version of the portal is configured.
 
 Logging
 ---------------------------------------
-The ant build moves /properties/Logger.properties to the root of the classes directory so that the resulting
+The ant build copies /properties/Logger.properties to the root of the classes directory so that the resulting
 log4j.properties file will be available on the classpath for Commons Logging / log4j to find.  You'll need to either
 change that configuration in Logger.properties before the build or to change it in /WEB-INF/classes/ afterwards.
 You can configure the logging level, where the file should be, or even choose a different logging approach (log

@@ -153,6 +153,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
 
 {
     private static final Log log = LogFactory.getLog(CWebProxy.class);
+    private static final MediaManager MEDIAMANAGER = MediaManager.getMediaManager();
   Map stateTable;
   // to prepend to the system-wide cache key
   static final String systemCacheId="org.jasig.portal.channels.webproxy.CWebProxy";
@@ -654,7 +655,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
         xslt.setXSL(state.sslUri, state.xslTitle, state.runtimeData.getBrowserInfo());
 
       // Determine mime type
-      MediaManager mm = new MediaManager();
+      MediaManager mm = MEDIAMANAGER;
       String media = mm.getMedia(state.runtimeData.getBrowserInfo());
       String mimeType = mm.getReturnMimeType(media);
       if (MediaManager.UNKNOWN.equals(mimeType)) {
@@ -690,7 +691,15 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
     DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
     DTDResolver dtdResolver = new DTDResolver();
     docBuilder.setEntityResolver(dtdResolver);
-    return  docBuilder.parse(urlConnect.getInputStream());
+    InputStream is = urlConnect.getInputStream();
+    Document doc;
+    try {
+        doc = docBuilder.parse(is);
+    } finally {
+        is.close();
+    }
+    
+    return (doc);
   }
 
   /**

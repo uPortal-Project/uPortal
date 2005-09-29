@@ -13,6 +13,7 @@ package org.jasig.portal.services.stats;
  * @version $Revision$
  */
 public class DoNothingStatsRecorder extends BaseStatsRecorder {
+    // does nothing.
 }
 
 
