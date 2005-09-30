@@ -931,7 +931,11 @@ public class UserInstance implements HttpSessionBindingListener {
 
 
       } catch ( Exception e ) {
-          throw new PortalException(e);
+    	  if (e instanceof PortalException){
+    		  throw (PortalException)e;
+    	  }else{
+    		  throw new PortalException(e);
+    	  }
         }
     }
 
