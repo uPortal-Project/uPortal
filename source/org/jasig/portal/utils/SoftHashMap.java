@@ -44,6 +44,9 @@ public class SoftHashMap extends AbstractMap {
 
     public Object put(Object key,Object value) {
 	cleanMap();
+        if (key == null) {
+            return (null);
+        }
 	KeyReferencePair pair=new KeyReferencePair(value,key,removeQueue);
 	// place the object into fifo
 	addToFIFO(value);
@@ -51,6 +54,9 @@ public class SoftHashMap extends AbstractMap {
     }
 
     public Object get(Object key) {
+        if (key == null) {
+            return (null);
+        }
 	SoftReference soft_ref=(SoftReference) map.get(key);
 	if(soft_ref!=null) {
 	    Object obj=soft_ref.get();
@@ -68,6 +74,9 @@ public class SoftHashMap extends AbstractMap {
 
     public Object remove(Object key) {
 	cleanMap();
+        if (key == null) {
+            return (null);
+        }
 	SoftReference soft_ref=(SoftReference) map.remove(key);
 	if(soft_ref!=null) {
 	    return soft_ref.get();
