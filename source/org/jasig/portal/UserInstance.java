@@ -493,6 +493,8 @@ public class UserInstance implements HttpSessionBindingListener {
                             dupl1.setParent(saif);
                         }
 
+                        // if operating in the detach mode, need wrap everything
+                        // in a document node and a <layout_fragment> node
                         boolean detachMode=!rootNodeId.equals(USER_LAYOUT_ROOT_NODE);
                         if (detachMode) {
                             saif.startDocument();
@@ -716,9 +718,7 @@ public class UserInstance implements HttpSessionBindingListener {
         
         String authenticated = String.valueOf(person.getSecurityContext().isAuthenticated());
         structPrefs.putParameterValue("authenticated", authenticated);
-        //String userName = person.getFullName();
-//        if (userName != null && userName.trim().length() > 0)
-//            themePrefs.putParameterValue("userName", userName);
+        
         try {
             if (ChannelStaticData.getAuthorizationPrincipal(person).canPublish()) {
                 themePrefs.putParameterValue("authorizedFragmentPublisher", "true");
@@ -785,7 +785,6 @@ public class UserInstance implements HttpSessionBindingListener {
         if ((values = req.getParameterValues("uP_add_target")) != null) {
          String[] values1, values2;
          String value = null;
-         //int nodeType = values[0].equals("folder")?IUserLayoutNodeDescription.FOLDER:IUserLayoutNodeDescription.CHANNEL;
          values1 =  req.getParameterValues("targetNextID");
          if ( values1 != null && values1.length > 0 )
             value = values1[0];
