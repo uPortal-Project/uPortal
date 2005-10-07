@@ -43,6 +43,15 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.xml.sax.ContentHandler;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Date;
+import org.jasig.portal.utils.XML;
+
+
 /**
  * An implementation of a user layout manager that uses 2.0-release store implementations.
  *
@@ -671,9 +680,172 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
      *
      */
     private void updateCacheKey() {
-        this.cacheKey=Long.toString(rnd.nextLong());
+        this.cacheKey=generateNewCacheKey();
     }
 
+    /**
+     * The message digest wrapper is optimized for string processing
+     */
+    private static final class MessageDigestWrapper {
+        private final MessageDigest md_;
+        private byte [] ba_;
+        
+        private static final ThreadLocal perThreadByteArray = new ThreadLocal() {
+            protected Object initialValue() {
+                return (new byte[256]);
+            }
+        };
+        
+        public MessageDigestWrapper(final String algo) throws NoSuchAlgorithmException {
+            md_ = MessageDigest.getInstance(algo);
+            // to reduce the number of objects created, we use a thread
+            // local. Note that we resize if necessary.
+            ba_ = (byte[]) perThreadByteArray.get();
+        }
+
+        public final void update(final String data) {
+            if (data == null) {
+                return;
+            }
+
+            // resize the cached byte array if necessary
+            final int len = data.length();
+            if (ba_.length < len) {
+                ba_ = new byte[len];
+                perThreadByteArray.set(ba_);
+            }
+
+            // we use a deprecated method for speed
+            data.getBytes(0, len, ba_, 0);
+            md_.update(ba_, 0, len);
+        }
+        
+        public final byte [] digest() {
+            return (md_.digest());
+        }
+    }
+    
+    /**
+     * Given a message digest, inspect the node and update the digest with the
+     * node name/value and any attribute names/values
+     */
+    private static final void visit(MessageDigestWrapper md, Node node) {
+        int type = node.getNodeType();
+        switch (type) {
+        case Node.DOCUMENT_NODE:
+            break;
+
+        case Node.ELEMENT_NODE:
+            md.update(node.getNodeName());
+            NamedNodeMap nnm = node.getAttributes();
+            if (nnm != null) {
+                int len = nnm.getLength();
+                Attr attr;
+                for (int i = 0; i < len; i++) {
+                    attr = (Attr) nnm.item(i);
+                    md.update(attr.getNodeName());
+                    md.update(attr.getNodeValue());
+                }
+            }
+            break;
+
+        case Node.ENTITY_REFERENCE_NODE:
+            md.update(node.getNodeName());
+            break;
+
+        case Node.CDATA_SECTION_NODE:
+            md.update(node.getNodeValue());
+            break;
+
+        case Node.TEXT_NODE:
+            md.update(node.getNodeValue());
+            break;
+
+        case Node.PROCESSING_INSTRUCTION_NODE:
+            md.update(node.getNodeName());
+            String data = node.getNodeValue();
+            if (data != null && data.length() > 0) {
+                md.update(data);
+            }
+            break;
+
+        }// end of switch
+    }// end of visit
+
+    /**
+     * Walk through a DOM (non-recursively) and update the message
+     * digest with element node names/values and attribute names/values
+     */
+    private static final void updateDigest(MessageDigestWrapper md, Node node) {
+        Node currentNode = node;
+
+        while (currentNode != null) {
+            visit(md, currentNode); // pre order
+
+            // Move down to first child
+            Node nextNode = currentNode.getFirstChild();
+            if (nextNode != null) {
+                currentNode = nextNode;
+                continue;
+            }
+
+            // No child nodes, so walk tree
+            while (currentNode != null) {
+                // visit(md, currentNode); // post order
+
+                // Move to sibling if possible.
+                nextNode = currentNode.getNextSibling();
+                if (nextNode != null) {
+                    currentNode = nextNode;
+                    break;
+                }
+
+                // Move up
+                if (currentNode == node) {
+                    currentNode = null;
+                } else {
+                    currentNode = currentNode.getParentNode();
+                }
+            }
+        }
+    }
+
+    /**
+     * The goal of this method is to generate a unique key
+     * based upon a given layout. A users layout is represented
+     * by the getUserLayoutDOM() result. We then walk through
+     * the DOM, calculating an MD5 hash. This then becomes the
+     * key to represent a layout. Two users, with the same layout
+     * should result in the same cache key.
+     */
+    private String generateNewCacheKey() {
+        String cacheKey = null;
+        long startTime = System.currentTimeMillis();
+        try {          
+            MessageDigestWrapper md = new MessageDigestWrapper("MD5");
+            updateDigest(md, this.getUserLayoutDOM());
+            byte[] digest = md.digest();
+            StringBuffer sb = new StringBuffer(32);
+            for (int i=0; i<digest.length; i++) {
+                if (digest[i] < 0x10 && digest[i] >= 0x0) {
+                    // add a leading 0
+                    sb.append("0");
+                }
+                sb.append(Integer.toHexString((0xff & digest[i])));
+            }
+            cacheKey = sb.toString();
+        } catch (Exception e) {
+          log.error("SimpleUserLayoutManager::generateNewCacheKey() : unable to generate new cache key, using default", e);
+          cacheKey = Long.toString(rnd.nextLong());
+        }
+
+        if (log.isDebugEnabled()) {
+            log.debug("SimpleUserLayoutManager::generateNewCacheKey() : generating new cache key took " + (System.currentTimeMillis()-startTime) + "ms");
+        }
+        return cacheKey;
+    }
+
+    
     public int getLayoutId() {
         return profile.getLayoutId();
     }
