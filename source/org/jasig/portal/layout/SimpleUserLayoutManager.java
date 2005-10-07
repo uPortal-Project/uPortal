@@ -29,8 +29,6 @@ import javax.xml.xpath.XPathFactory;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.serialize.OutputFormat;
-import org.jasig.portal.serialize.XMLSerializer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.DocumentFactory;
@@ -43,13 +41,9 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.xml.sax.ContentHandler;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.StringWriter;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Date;
-import org.jasig.portal.utils.XML;
+
 
 
 /**
