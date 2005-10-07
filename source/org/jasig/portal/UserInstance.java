@@ -106,8 +106,6 @@ public class UserInstance implements HttpSessionBindingListener {
 
     protected IPerson person;
 
-    private IUserLayoutNodeDescription newNodeDescription = null;
-
     public UserInstance (IPerson person) {
         this.person=person;
     }
@@ -728,27 +726,9 @@ public class UserInstance implements HttpSessionBindingListener {
      try {
 
        IUserLayoutManager ulm = uPreferencesManager.getUserLayoutManager();
-     IAggregatedUserLayoutManager alm = getAggregatedLayoutManager(ulm);
-       String newNodeId = null;
 
         // Sending the theme stylesheets parameters based on the user security context
         UserPreferences userPrefs = uPreferencesManager.getUserPreferences();
-        ThemeStylesheetUserPreferences themePrefs = userPrefs.getThemeStylesheetUserPreferences();
-        StructureStylesheetUserPreferences structPrefs = userPrefs.getStructureStylesheetUserPreferences();
-
-        String authenticated = String.valueOf(person.getSecurityContext().isAuthenticated());
-        structPrefs.putParameterValue("authenticated", authenticated);
-        String userName = person.getFullName();
-        if (userName != null && userName.trim().length() > 0)
-            themePrefs.putParameterValue("userName", userName);
-        try {
-            if (ChannelStaticData.getAuthorizationPrincipal(person).canPublish()) {
-                themePrefs.putParameterValue("authorizedFragmentPublisher", "true");
-                themePrefs.putParameterValue("authorizedChannelPublisher", "true");
-            }
-        } catch (Exception e) {
-            log.error("Exception determining publish rights for " + this.person, e);
-        }
 
         String[] values;
         if ((values = req.getParameterValues("uP_help_target")) != null) {
@@ -769,129 +749,6 @@ public class UserInstance implements HttpSessionBindingListener {
         if ((values = req.getParameterValues("uP_detach_target")) != null) {
             channelManager.passPortalEvent(values[0], PortalEvent.DETACH_BUTTON);
         }
-
-        if ((values = req.getParameterValues("uP_request_move_targets")) != null) {
-            if ( values[0].trim().length() == 0 ) values[0] = null;
-             ulm.markMoveTargets(values[0]);
-        } else {
-             ulm.markMoveTargets(null);
-          }
-
-        if ((values = req.getParameterValues("uP_request_add_targets")) != null) {
-            String value;
-            int nodeType = values[0].equals("folder")?IUserLayoutNodeDescription.FOLDER:IUserLayoutNodeDescription.CHANNEL;
-            IUserLayoutNodeDescription nodeDesc = ulm.createNodeDescription(nodeType);
-            nodeDesc.setName("Unnamed");
-            if ( nodeType == IUserLayoutNodeDescription.CHANNEL && (value = req.getParameter("channelPublishID")) != null ) {
-             String contentPublishId = value.trim();
-             if ( contentPublishId.length() > 0 ) {
-              ((IUserLayoutChannelDescription)nodeDesc).setChannelPublishId(contentPublishId);
-              themePrefs.putParameterValue("channelPublishID",contentPublishId);
-             }
-            } else if ( nodeType == IUserLayoutNodeDescription.FOLDER && (value = req.getParameter("fragmentPublishID")) != null ) {
-        String contentPublishId = value.trim();
-        String fragmentRootId = CommonUtils.nvl(req.getParameter("fragmentRootID"));
-        if ( contentPublishId.length() > 0 && fragmentRootId.length() > 0 ) {
-          IALFolderDescription folderDesc = (IALFolderDescription) nodeDesc;
-                   folderDesc.setFragmentId(contentPublishId);
-          folderDesc.setFragmentNodeId(fragmentRootId);
-        }
-        //themePrefs.putParameterValue("uP_fragmentPublishID",contentPublishId);
-            }
-            newNodeDescription = nodeDesc;
-            ulm.markAddTargets(newNodeDescription);
-        } else {
-            ulm.markAddTargets(null);
-          }
-
-        if ((values = req.getParameterValues("uP_add_target")) != null) {
-         String[] values1, values2;
-         String value = null;
-         values1 =  req.getParameterValues("targetNextID");
-         if ( values1 != null && values1.length > 0 )
-            value = values1[0];
-         if ( (values2 = req.getParameterValues("targetParentID")) != null ) {
-          if (  newNodeDescription != null ) {
-            if ( CommonUtils.nvl(value).trim().length() == 0 )
-             value = null;
-
-            // Adding a new node
-            newNodeId = ulm.addNode(newNodeDescription,values2[0],value).getId();
-
-            // if the new node is a fragment being added - we need to re-load the layout
-            if ( newNodeDescription instanceof IALFolderDescription ) {
-              IALFolderDescription folderDesc = (IALFolderDescription) newNodeDescription;
-              if ( folderDesc.getFragmentNodeId() != null ) {
-                ulm.saveUserLayout();
-                ulm.loadUserLayout();
-              }
-            }
-
-          }
-         }
-            newNodeDescription = null;
-        }
-
-        if ((values = req.getParameterValues("uP_move_target")) != null) {
-         String[] values1, values2;
-         String value = null;
-         values1 = req.getParameterValues("targetNextID");
-         if ( values1 != null && values1.length > 0 )
-            value = values1[0];
-         if ( (values2 = req.getParameterValues("targetParentID")) != null ) {
-            if ( CommonUtils.nvl(value).trim().length() == 0 ) value = null;
-            ulm.moveNode(values[0],values2[0],value);
-         }
-        }
-
-        if ((values = req.getParameterValues("uP_rename_target")) != null) {
-         String[] values1;
-         if ( (values1 = req.getParameterValues("uP_target_name")) != null ) {
-            IUserLayoutNodeDescription nodeDesc = ulm.getNode(values[0]);
-            if ( nodeDesc != null ) {
-             String oldName = nodeDesc.getName();
-             nodeDesc.setName(values1[0]);
-             if ( !ulm.updateNode(nodeDesc) )
-              nodeDesc.setName(oldName);
-            }
-         }
-        }
-
-        if ((values = req.getParameterValues("uP_remove_target")) != null) {
-            for (int i = 0; i < values.length; i++) {
-                ulm.deleteNode(values[i]);
-            }
-            
-            ulm.saveUserLayout();
-        }
-
-        String param = req.getParameter("uP_cancel_targets");
-        if ( param != null && param.equals("true") ) {
-           ulm.markAddTargets(null);
-           ulm.markMoveTargets(null);
-           newNodeDescription = null;
-        }
-
-    param = req.getParameter("uP_reload_layout");
-    if ( param != null && param.equals("true") ) {
-      ulm.loadUserLayout();
-    }
-
-    param = req.getParameter("uPcFM_action");
-    if ( param != null ) {
-      if ( alm != null ) {
-      String fragmentId = req.getParameter("uP_fragmentID");
-      if ( param.equals("edit") && fragmentId != null ) {
-             if ( CommonUtils.parseInt(fragmentId) > 0 )
-               alm.loadFragment(fragmentId);
-             else
-               alm.loadUserLayout();
-        } else if ( param.equals("save") ) {
-             alm.saveFragment();
-      }
-      }
-    }
-
 
         //Propagate minimize/maximize events to the channels
         String[] tcattrs = req.getParameterValues("uP_tcattr");
@@ -923,13 +780,7 @@ public class UserInstance implements HttpSessionBindingListener {
             }
         }
 
-    // If we have created a new node we need to let the structure XSL know about it
-    structPrefs.putParameterValue("newNodeID",CommonUtils.nvl(newNodeId));
-    // Sending the parameter indicating whether the layout or the fragment is loaded in the preferences mode
-    if ( alm != null )
-      structPrefs.putParameterValue("current_structure",alm.isFragmentLoaded()?"fragment":"layout");
-
-
+    ulm.processLayoutParameters(person, userPrefs, req);
       } catch ( Exception e ) {
     	  if (e instanceof PortalException){
     		  throw (PortalException)e;

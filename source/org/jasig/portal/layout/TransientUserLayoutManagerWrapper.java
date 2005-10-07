@@ -10,6 +10,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -19,11 +20,13 @@ import org.jasig.portal.ChannelDefinition;
 import org.jasig.portal.ChannelParameter;
 import org.jasig.portal.ChannelRegistryStoreFactory;
 import org.jasig.portal.PortalException;
+import org.jasig.portal.UserPreferences;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.layout.node.UserLayoutChannelDescription;
+import org.jasig.portal.security.IPerson;
 import org.jasig.portal.utils.CommonUtils;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.SAX2FilterImpl;
@@ -607,6 +610,16 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
                 super.startElement(uri,localName,qName,attsImpl);
             }
         }
+    }
+
+
+
+    /**
+     * Delegates to the wrapped layout manager's implementation.
+     */
+    public void processLayoutParameters(IPerson person, UserPreferences userPrefs, HttpServletRequest req) throws PortalException
+    {
+        man.processLayoutParameters(person, userPrefs, req);
     }
 }
 

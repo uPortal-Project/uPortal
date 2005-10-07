@@ -13,6 +13,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.Vector;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -24,7 +25,11 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 
+import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.PortalException;
+import org.jasig.portal.StructureStylesheetUserPreferences;
+import org.jasig.portal.ThemeStylesheetUserPreferences;
+import org.jasig.portal.UserPreferences;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutManager;
@@ -32,6 +37,7 @@ import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.layout.LayoutEvent;
 import org.jasig.portal.layout.LayoutEventListener;
 import org.jasig.portal.layout.LayoutMoveEvent;
+import org.jasig.portal.layout.alm.IALFolderDescription;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.node.IUserLayoutFolderDescription;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
@@ -41,6 +47,7 @@ import org.jasig.portal.layout.node.UserLayoutNodeDescription;
 import org.jasig.portal.security.IPerson;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.utils.CommonUtils;
 import org.jasig.portal.utils.DocumentFactory;
 
 import org.jasig.portal.utils.XSLT;
@@ -87,6 +94,8 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
 
     // marking stylesheet
     private static final String MARKING_XSLT_URI="/org/jasig/portal/layout/MarkUserLayout.xsl";
+
+    private IUserLayoutNodeDescription newNodeDescription = null;
 
 
     public SimpleUserLayoutManager(IPerson owner, UserProfile profile, IUserLayoutStore store) throws PortalException {
@@ -740,4 +749,125 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
     protected boolean isLayoutDirty() { return dirtyState; }
     private void markLayoutDirty() { dirtyState=true; }
     private void clearDirtyFlag() { dirtyState=false; }
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.layout.IUserLayoutManager#processLayoutParameters(org.jasig.portal.security.IPerson, org.jasig.portal.UserPreferences, javax.servlet.http.HttpServletRequest)
+     */
+    public void processLayoutParameters(IPerson person, UserPreferences userPrefs, HttpServletRequest req) throws PortalException
+    {
+        try {
+            String newNodeId = null;
+
+             // Sending the theme stylesheets parameters based on the user security context
+             ThemeStylesheetUserPreferences themePrefs = userPrefs.getThemeStylesheetUserPreferences();
+             StructureStylesheetUserPreferences structPrefs = userPrefs.getStructureStylesheetUserPreferences();
+
+             String authenticated = String.valueOf(person.getSecurityContext().isAuthenticated());
+             structPrefs.putParameterValue("authenticated", authenticated);
+             String userName = person.getFullName();
+             if (userName != null && userName.trim().length() > 0)
+                 themePrefs.putParameterValue("userName", userName);
+             try {
+                 if (ChannelStaticData.getAuthorizationPrincipal(person).canPublish()) {
+                     themePrefs.putParameterValue("authorizedFragmentPublisher", "true");
+                     themePrefs.putParameterValue("authorizedChannelPublisher", "true");
+                 }
+             } catch (Exception e) {
+                 log.error("Exception determining publish rights for " + person, e);
+             }
+
+             String[] values;
+
+             if ((values = req.getParameterValues("uP_request_move_targets")) != null) {
+                 if ( values[0].trim().length() == 0 ) values[0] = null;
+                  this.markMoveTargets(values[0]);
+             } else {
+                  this.markMoveTargets(null);
+               }
+
+             if ((values = req.getParameterValues("uP_request_add_targets")) != null) {
+                 String value;
+                 int nodeType = values[0].equals("folder")?IUserLayoutNodeDescription.FOLDER:IUserLayoutNodeDescription.CHANNEL;
+                 IUserLayoutNodeDescription nodeDesc = this.createNodeDescription(nodeType);
+                 nodeDesc.setName("Unnamed");
+                 if ( nodeType == IUserLayoutNodeDescription.CHANNEL && (value = req.getParameter("channelPublishID")) != null ) {
+                  String contentPublishId = value.trim();
+                  if ( contentPublishId.length() > 0 ) {
+                   ((IUserLayoutChannelDescription)nodeDesc).setChannelPublishId(contentPublishId);
+                   themePrefs.putParameterValue("channelPublishID",contentPublishId);
+                  }
+                 }
+                 newNodeDescription = nodeDesc;
+                 this.markAddTargets(newNodeDescription);
+             } else {
+                 this.markAddTargets(null);
+               }
+
+             if ((values = req.getParameterValues("uP_add_target")) != null) {
+              String[] values1, values2;
+              String value = null;
+              values1 =  req.getParameterValues("targetNextID");
+              if ( values1 != null && values1.length > 0 )
+                 value = values1[0];
+              if ( (values2 = req.getParameterValues("targetParentID")) != null ) {
+               if (  newNodeDescription != null ) {
+                 if ( CommonUtils.nvl(value).trim().length() == 0 )
+                  value = null;
+
+                 // Adding a new node
+                 newNodeId = this.addNode(newNodeDescription,values2[0],value).getId();
+               }
+              }
+                 newNodeDescription = null;
+             }
+
+             if ((values = req.getParameterValues("uP_move_target")) != null) {
+              String[] values1, values2;
+              String value = null;
+              values1 = req.getParameterValues("targetNextID");
+              if ( values1 != null && values1.length > 0 )
+                 value = values1[0];
+              if ( (values2 = req.getParameterValues("targetParentID")) != null ) {
+                 if ( CommonUtils.nvl(value).trim().length() == 0 ) value = null;
+                 this.moveNode(values[0],values2[0],value);
+              }
+             }
+
+             if ((values = req.getParameterValues("uP_rename_target")) != null) {
+              String[] values1;
+              if ( (values1 = req.getParameterValues("uP_target_name")) != null ) {
+                 IUserLayoutNodeDescription nodeDesc = this.getNode(values[0]);
+                 if ( nodeDesc != null ) {
+                  String oldName = nodeDesc.getName();
+                  nodeDesc.setName(values1[0]);
+                  if ( !this.updateNode(nodeDesc) )
+                   nodeDesc.setName(oldName);
+                 }
+              }
+             }
+
+             if ((values = req.getParameterValues("uP_remove_target")) != null) {
+                 for (int i = 0; i < values.length; i++) {
+                     this.deleteNode(values[i]);
+                 }
+             }
+
+             String param = req.getParameter("uP_cancel_targets");
+             if ( param != null && param.equals("true") ) {
+                this.markAddTargets(null);
+                this.markMoveTargets(null);
+                newNodeDescription = null;
+             }
+
+         param = req.getParameter("uP_reload_layout");
+         if ( param != null && param.equals("true") ) {
+           this.loadUserLayout();
+         }
+
+         // If we have created a new node we need to let the structure XSL know about it
+         structPrefs.putParameterValue("newNodeID",CommonUtils.nvl(newNodeId));
+           } catch ( Exception e ) {
+               throw new PortalException(e);
+             }
+    }
 }

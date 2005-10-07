@@ -7,8 +7,12 @@ package org.jasig.portal.layout;
 
 import java.util.Enumeration;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.jasig.portal.PortalException;
+import org.jasig.portal.UserPreferences;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
+import org.jasig.portal.security.IPerson;
 import org.w3c.dom.Document;
 import org.xml.sax.ContentHandler;
 
@@ -294,5 +298,13 @@ public interface IUserLayoutManager {
      * @exception PortalException if the error occurs.
      */
     public IUserLayoutNodeDescription createNodeDescription( int nodeType ) throws PortalException;
-
+    
+    /**
+     * Allows layout manager specific handling of user request parameter 
+     * processing potentially including passing of specific parameters to the
+     * structure and theme transformations via the user preferences object.
+     */
+    public void processLayoutParameters(IPerson person, 
+            UserPreferences userPrefs,
+            HttpServletRequest req) throws PortalException;
 }
