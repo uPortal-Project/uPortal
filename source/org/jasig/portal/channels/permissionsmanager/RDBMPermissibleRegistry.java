@@ -14,6 +14,7 @@ import java.util.HashMap;
 import org.jasig.portal.IPermissible;
 import org.jasig.portal.RDBMServices;
 import  org.jasig.portal.car.CarResources;
+import org.jasig.portal.channels.error.SupportedPermissions;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -122,6 +123,7 @@ public class RDBMPermissibleRegistry {
         iregisterPermissible("org.jasig.portal.channels.permissionsmanager.PermissiblePublishChannels");
         iregisterPermissible("org.jasig.portal.channels.permissionsmanager.PermissibleSubscribeChannels");
         iregisterPermissible("org.jasig.portal.channels.groupsmanager.CGroupsManager");
+        iregisterPermissible(SupportedPermissions.class.getName());
     }
 
     /**

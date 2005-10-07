@@ -119,7 +119,6 @@ public final class CError extends BaseChannel implements IPrivilegedChannel,
             // we can fall back on that default by not doing anything.
         }
 
-        
     }
 
     /**
@@ -415,7 +414,9 @@ public final class CError extends BaseChannel implements IPrivilegedChannel,
                     .getPerson().getEntityIdentifier();
             IAuthorizationPrincipal ap = authService.newPrincipal(ei.getKey(),
                     ei.getType());
-            if (ap.hasPermission("UP_ERROR_CHAN", "VIEW", "DETAILS"))
+            if (ap.hasPermission(SupportedPermissions.OWNER, 
+                    SupportedPermissions.VIEW_ACTIVITY,
+                    SupportedPermissions.DETAILS_TARGET))
                 this.ssTitle = "detailed";
         } catch (Throwable t) {
             log.error("Exception checking whether user authorized to view " +
