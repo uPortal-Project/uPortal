@@ -908,7 +908,8 @@ public class RDBMDistributedLayoutStore
                 }
 
                 // Now load in the stylesheet parameter preferences
-                // from the up_ss_user_param. 
+                // from the up_ss_user_param but only if they are defined
+                // parameters in the stylesheet's .sdf file. 
                 //
                 // First, get the parameters for the effective user ID,
                 // then for the original user ID.  These will differ if
@@ -931,7 +932,9 @@ public class RDBMDistributedLayoutStore
                     rs = pstmt.executeQuery();
                     
                     while (rs.next()) {
-                        ssup.putParameterValue(rs.getString(1), rs.getString(2));
+                        String pName = rs.getString(1);
+                        if (ssd.containsParameterName(pName))
+                            ssup.putParameterValue(pName, rs.getString(2));
                     }
 
                     if (userId != origId) {
@@ -939,7 +942,9 @@ public class RDBMDistributedLayoutStore
                         rs = pstmt.executeQuery();
                             
                         while (rs.next()) {
-                            ssup.putParameterValue(rs.getString(1), rs.getString(2));
+                            String pName = rs.getString(1);
+                            if (ssd.containsParameterName(pName))
+                                ssup.putParameterValue(pName, rs.getString(2));
                         }
                     }
                 }
@@ -1023,6 +1028,7 @@ public class RDBMDistributedLayoutStore
                         }
                         String ulp_parmName = rs.getString(6);
                         String originId = rs.getString(7);
+                        String pName = rs.getString(1);
                         int chanId = rs.getInt(5);
                         if (rs.wasNull()) {
                             chanId = 0;
@@ -1032,7 +1038,7 @@ public class RDBMDistributedLayoutStore
                             if (LOG.isDebugEnabled())
                                 LOG.debug("RDBMUserLayoutStore::getStructureStylesheetUserPreferences() :  stylesheet global params should be specified in the user defaults table ! UP_SS_USER_ATTS is corrupt. (userId="
                                                       + Integer.toString(userId) + ", profileId=" + Integer.toString(profileId) + ", stylesheetId=" + Integer.toString(stylesheetId)
-                                                      + ", param_name=\"" + rs.getString(1) + "\", param_type=" + Integer.toString(param_type));
+                                                      + ", param_name=\"" + pName + "\", param_type=" + Integer.toString(param_type));
                         }
                         else if (param_type == 2) {
                             // folder attribute
@@ -1043,7 +1049,8 @@ public class RDBMDistributedLayoutStore
                                 folderStructId = originId;
                             else
                                 folderStructId = getStructId(structId,chanId);
-                            ssup.setFolderAttributeValue(folderStructId, rs.getString(1), rs.getString(2));
+                            if (ssd.containsFolderAttribute(pName))
+                                ssup.setFolderAttributeValue(folderStructId, pName, rs.getString(2));
                         }       
                         else if (param_type == 3) {
                             // channel attribute
@@ -1054,7 +1061,8 @@ public class RDBMDistributedLayoutStore
                                 channelStructId = originId;
                             else
                                 channelStructId = getStructId(structId,chanId);
-                            ssup.setChannelAttributeValue(channelStructId, rs.getString(1), rs.getString(2));
+                            if (ssd.containsChannelAttribute(pName))
+                                ssup.setChannelAttributeValue(channelStructId, pName, rs.getString(2));
                         }
                         else {
                             // unknown param type
@@ -1636,55 +1644,50 @@ public class RDBMDistributedLayoutStore
         if ( PLF == null )
             throw new Exception( "Unable to obtain user's PLF to translate" +
                                  " incorporated ids to plfIds." );
+        int stylesheetId = ssup.getStylesheetId();
+        StructureStylesheetDescription ssDesc =
+            getStructureStylesheetDescription(stylesheetId);
+        
         Connection con = RDBMServices.getConnection();
         try
         {
             // Set autocommit false for the connection
-            int stylesheetId = ssup.getStylesheetId();
             RDBMServices.setAutoCommit(con, false);
             Statement stmt = con.createStatement();
             
             try
             {
-                // write out params
-                for (Enumeration e = ssup.getParameterValues().keys(); e.hasMoreElements();) {
-                    String pName = (String)e.nextElement();
-                    String pNameEscaped = RDBMServices.sqlEscape(pName);
-                    // see if the parameter was already there
-                    String sQuery = "SELECT PARAM_VAL FROM UP_SS_USER_PARM WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId
-                    + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND PARAM_NAME='" + pNameEscaped + "'";
-                    if (LOG.isDebugEnabled())
-                        LOG.debug(sQuery);
-                    ResultSet rs = stmt.executeQuery(sQuery);
-                    try {
-                        if (rs.next()) {
-                            // update
-                            sQuery = "UPDATE UP_SS_USER_PARM SET PARAM_VAL='" + ssup.getParameterValue(pName) + "' WHERE USER_ID=" + userId
-                            + " AND PROFILE_ID=" + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND PARAM_NAME='" + pNameEscaped
-                            + "'";
-                        }
-                        else {
-                            // insert
-                            sQuery = "INSERT INTO UP_SS_USER_PARM (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,PARAM_NAME,PARAM_VAL) VALUES (" + userId
-                            + "," + profileId + "," + stylesheetId + ",1,'" + pNameEscaped + "','" + ssup.getParameterValue(pName) + "')";
-                        }
-                    } finally {
-                        rs.close();
-                    }
-                    if (LOG.isDebugEnabled())
-                        LOG.debug(sQuery);
-                    stmt.executeUpdate(sQuery);
-                }
-
-                // now before writing out folders and channels clean out old values
-                String sQuery = "DELETE FROM UP_SS_USER_ATTS " +
+                // before writing out params clean out old values
+                String sQuery = "DELETE FROM UP_SS_USER_PARM " +
                 "WHERE USER_ID=" + userId + " AND " +
                 "PROFILE_ID=" + profileId + " AND " +
-                "SS_ID=" + stylesheetId;
+                "SS_ID=" + stylesheetId + " AND SS_TYPE=1";
                 if (LOG.isDebugEnabled())
                     LOG.debug(sQuery);
                 stmt.executeUpdate(sQuery);
+                
+                // write out params only if specified in stylesheet's .sdf file
+                for (Enumeration e = ssup.getParameterValues().keys(); e.hasMoreElements();) {
+                    String pName = (String)e.nextElement();
+                    if (ssDesc.containsParameterName(pName))
+                    {
+                        String pNameEscaped = RDBMServices.sqlEscape(pName);
+                        sQuery = "INSERT INTO UP_SS_USER_PARM (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,PARAM_NAME,PARAM_VAL) VALUES (" + userId
+                          + "," + profileId + "," + stylesheetId + ",1,'" + pNameEscaped + "','" + ssup.getParameterValue(pName) + "')";
+                        if (LOG.isDebugEnabled())
+                            LOG.debug(sQuery);
+                        stmt.executeUpdate(sQuery);
+                    }
+                }
 
+                // now before writing out folders and channels clean out old values
+                sQuery = "DELETE FROM UP_SS_USER_ATTS " +
+                "WHERE USER_ID=" + userId + " AND " +
+                "PROFILE_ID=" + profileId + " AND " +
+                "SS_ID=" + stylesheetId + " AND SS_TYPE=1";
+                if (LOG.isDebugEnabled())
+                    LOG.debug(sQuery);
+                stmt.executeUpdate(sQuery);
 
                 // write out folder attributes
                 for (Enumeration e = ssup.getFolders(); e.hasMoreElements();) {
@@ -1698,34 +1701,19 @@ public class RDBMDistributedLayoutStore
 
                     for (Enumeration attre = ssup.getFolderAttributeNames(); attre.hasMoreElements();) {
                         String pName = (String)attre.nextElement();
-                        String pValue = ssup.getDefinedFolderAttributeValue(folderId, pName);
-                        if (pValue != null) {
-                            // store user preferences
-                            sQuery = "SELECT PARAM_VAL FROM UP_SS_USER_ATTS WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId
-                            + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND STRUCT_ID='" + plfFolderId.substring(1) + "' AND PARAM_NAME='" + pName
-                            + "' AND PARAM_TYPE=2";
-                            if (LOG.isDebugEnabled())
-                                LOG.debug(sQuery);
-                            ResultSet rs = stmt.executeQuery(sQuery);
-                            try {
-                                if (rs.next()) {
-                                    // update
-                                    sQuery = "UPDATE UP_SS_USER_ATTS SET PARAM_VAL='" + pValue + "' WHERE USER_ID=" + userId + " AND PROFILE_ID="
-                                    + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND STRUCT_ID='" + plfFolderId.substring(1) + "' AND PARAM_NAME='"
-                                    + pName + "' AND PARAM_TYPE=2";
-                                }
-                                else {
-                                    // insert
-                                    sQuery = "INSERT INTO UP_SS_USER_ATTS (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,STRUCT_ID,PARAM_NAME,PARAM_TYPE,PARAM_VAL) VALUES ("
-                                    + userId + "," + profileId + "," + stylesheetId + ",1,'" + plfFolderId.substring(1) + "','" + pName + "',2,'" + pValue
+                        if (ssDesc.containsFolderAttribute(pName)) 
+                        {
+                            String pValue = ssup.getDefinedFolderAttributeValue(folderId, pName);
+                            if (pValue != null) {
+                                // store user preferences
+                                String pNameEscaped = RDBMServices.sqlEscape(pName);
+                                sQuery = "INSERT INTO UP_SS_USER_ATTS (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,STRUCT_ID,PARAM_NAME,PARAM_TYPE,PARAM_VAL) VALUES ("
+                                    + userId + "," + profileId + "," + stylesheetId + ",1,'" + plfFolderId.substring(1) + "','" + pNameEscaped + "',2,'" + pValue
                                     + "')";
-                                }
-                            } finally {
-                                rs.close();
+                                if (LOG.isDebugEnabled())
+                                    LOG.debug(sQuery);
+                                stmt.executeUpdate(sQuery);
                             }
-                            if (LOG.isDebugEnabled())
-                                LOG.debug(sQuery);
-                            stmt.executeUpdate(sQuery);
                         }
                     }
                 }
@@ -1741,34 +1729,18 @@ public class RDBMDistributedLayoutStore
 
                     for (Enumeration attre = ssup.getChannelAttributeNames(); attre.hasMoreElements();) {
                         String pName = (String)attre.nextElement();
-                        String pValue = ssup.getDefinedChannelAttributeValue(channelId, pName);
-                        if (pValue != null) {
-                            // store user preferences
-                            sQuery = "SELECT PARAM_VAL FROM UP_SS_USER_ATTS WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId
-                            + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND STRUCT_ID='" + plfChannelId.substring(1) + "' AND PARAM_NAME='" + pName
-                            + "' AND PARAM_TYPE=3";
-                            if (LOG.isDebugEnabled())
-                                LOG.debug(sQuery);
-                            ResultSet rs = stmt.executeQuery(sQuery);
-                            try {
-                                if (rs.next()) {
-                                    // update
-                                    sQuery = "UPDATE UP_SS_USER_ATTS SET PARAM_VAL='" + pValue + "' WHERE USER_ID=" + userId + " AND PROFILE_ID="
-                                    + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND STRUCT_ID='" + plfChannelId.substring(1) + "' AND PARAM_NAME='"
-                                    + pName + "' AND PARAM_TYPE=3";
-                                }
-                                else {
-                                    // insert
-                                    sQuery = "INSERT INTO UP_SS_USER_ATTS (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,STRUCT_ID,PARAM_NAME,PARAM_TYPE,PARAM_VAL) VALUES ("
-                                    + userId + "," + profileId + "," + stylesheetId + ",1,'" + plfChannelId.substring(1) + "','" + pName + "',3,'" + pValue
+                        if (ssDesc.containsChannelAttribute(pName))
+                        {
+                            String pValue = ssup.getDefinedChannelAttributeValue(channelId, pName);
+                            if (pValue != null) {
+                                String pNameEscaped = RDBMServices.sqlEscape(pName);
+                                sQuery = "INSERT INTO UP_SS_USER_ATTS (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,STRUCT_ID,PARAM_NAME,PARAM_TYPE,PARAM_VAL) VALUES ("
+                                    + userId + "," + profileId + "," + stylesheetId + ",1,'" + plfChannelId.substring(1) + "','" + pNameEscaped + "',3,'" + pValue
                                     + "')";
-                                }
-                            } finally {
-                                rs.close();
+                                if (LOG.isDebugEnabled())
+                                    LOG.debug(sQuery);
+                                stmt.executeUpdate(sQuery);
                             }
-                            if (LOG.isDebugEnabled())
-                                LOG.debug(sQuery);
-                            stmt.executeUpdate(sQuery);
                         }
                     }
                 }
@@ -1793,79 +1765,83 @@ public class RDBMDistributedLayoutStore
 
     public void setThemeStylesheetUserPreferences (IPerson person, int profileId, ThemeStylesheetUserPreferences tsup) throws Exception {
         int userId = person.getID();
+        Document PLF = (Document) person.getAttribute( Constants.PLF );
+        if ( PLF == null )
+            throw new Exception( "Unable to obtain user's PLF to translate" +
+                                 " incorporated ids to plfIds." );
+        int stylesheetId = tsup.getStylesheetId();
+        ThemeStylesheetDescription tsDesc =
+            getThemeStylesheetDescription(stylesheetId);
         Connection con = RDBMServices.getConnection();
         try {
             // Set autocommit false for the connection
-            int stylesheetId = tsup.getStylesheetId();
             RDBMServices.setAutoCommit(con, false);
             Statement stmt = con.createStatement();
             try {
-                // write out params
+                // before writing out params clean out old values
+                String sQuery = "DELETE FROM UP_SS_USER_PARM " +
+                "WHERE USER_ID=" + userId + " AND " +
+                "PROFILE_ID=" + profileId + " AND " +
+                "SS_ID=" + stylesheetId + " AND SS_TYPE=2";
+                if (LOG.isDebugEnabled())
+                    LOG.debug(sQuery);
+                stmt.executeUpdate(sQuery);
+                
+                // write out params only if defined in stylesheet's .sdf file
                 for (Enumeration e = tsup.getParameterValues().keys(); e.hasMoreElements();) {
                     String pName = (String)e.nextElement();
-                    // see if the parameter was already there
-                    String sQuery = "SELECT PARAM_VAL FROM UP_SS_USER_PARM WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId
-                    + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=2 AND PARAM_NAME='" + pName + "'";
-                    if (LOG.isDebugEnabled())
-                        LOG.debug(sQuery);
-                    ResultSet rs = stmt.executeQuery(sQuery);
-                    try {
-                        if (rs.next()) {
-                            // update
-                            sQuery = "UPDATE UP_SS_USER_PARM SET PARAM_VAL='" + tsup.getParameterValue(pName) + "' WHERE USER_ID=" + userId
-                            + " AND PROFILE_ID=" + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=2 AND PARAM_NAME='" + pName
-                            + "'";
-                        }
-                        else {
-                            // insert
-                            sQuery = "INSERT INTO UP_SS_USER_PARM (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,PARAM_NAME,PARAM_VAL) VALUES (" + userId
-                            + "," + profileId + "," + stylesheetId + ",2,'" + pName + "','" + tsup.getParameterValue(pName) + "')";
-                        }
-                    } finally {
-                        rs.close();
+                    if (tsDesc.containsParameterName(pName))
+                    {
+                        String pNameEscaped = RDBMServices.sqlEscape(pName);
+                        sQuery = "INSERT INTO UP_SS_USER_PARM (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,PARAM_NAME,PARAM_VAL) VALUES (" + userId
+                        + "," + profileId + "," + stylesheetId + ",2,'" + pNameEscaped + "','" + tsup.getParameterValue(pName) + "')";
+                        if (LOG.isDebugEnabled())
+                            LOG.debug(sQuery);
+                        stmt.executeUpdate(sQuery);
                     }
-                    if (LOG.isDebugEnabled())
-                        LOG.debug(sQuery);
-                    stmt.executeUpdate(sQuery);
                 }
+                // now before writing out channel atts clean out old values
+                sQuery = "DELETE FROM UP_SS_USER_ATTS " +
+                "WHERE USER_ID=" + userId + " AND " +
+                "PROFILE_ID=" + profileId + " AND " +
+                "SS_ID=" + stylesheetId + " AND SS_TYPE=2";
+                if (LOG.isDebugEnabled())
+                    LOG.debug(sQuery);
+                stmt.executeUpdate(sQuery);
+
                 // write out channel attributes
                 for (Enumeration e = tsup.getChannels(); e.hasMoreElements();) {
                     String channelId = (String)e.nextElement();
+                    String plfChannelId = channelId;
+
+                    if ( plfChannelId.startsWith( "u" ) ) // icorporated node
+                        plfChannelId = getPlfId( PLF, channelId );
+                    if ( plfChannelId == null ) //couldn't translate, skip
+                        continue;
+
                     for (Enumeration attre = tsup.getChannelAttributeNames(); attre.hasMoreElements();) {
                         String pName = (String)attre.nextElement();
-                        String pValue = tsup.getDefinedChannelAttributeValue(channelId, pName);
-                        if (pValue != null) {
-                            // store user preferences
-                            String sQuery = "SELECT PARAM_VAL FROM UP_SS_USER_ATTS WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId
-                            + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=2 AND STRUCT_ID='" + channelId.substring(1) + "' AND PARAM_NAME='" + pName
-                            + "' AND PARAM_TYPE=3";
-                            if (LOG.isDebugEnabled())
-                                LOG.debug(sQuery);
-                            ResultSet rs = stmt.executeQuery(sQuery);
-                            try {
-                                if (rs.next()) {
-                                    // update
-                                    sQuery = "UPDATE UP_SS_USER_ATTS SET PARAM_VAL='" + pValue + "' WHERE USER_ID=" + userId + " AND PROFILE_ID="
-                                    + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=2 AND STRUCT_ID='" + channelId.substring(1) + "' AND PARAM_NAME='"
-                                    + pName + "' AND PARAM_TYPE=3";
-                                }
-                                else {
-                                    // insert
-                                    sQuery = "INSERT INTO UP_SS_USER_ATTS (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,STRUCT_ID,PARAM_NAME,PARAM_TYPE,PARAM_VAL) VALUES ("
-                                    + userId + "," + profileId + "," + stylesheetId + ",2,'" + channelId.substring(1) + "','" + pName + "',3,'" + pValue
-                                    + "')";
-                                }
-                            } finally {
-                                rs.close();
+                        if (tsDesc.containsChannelAttribute(pName))
+                        {
+                            String pValue = tsup.getDefinedChannelAttributeValue(channelId, pName);
+                            if (pValue != null) {
+                                String pNameEscaped = RDBMServices.sqlEscape(pName);
+                                sQuery = "INSERT INTO UP_SS_USER_ATTS (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,STRUCT_ID,PARAM_NAME,PARAM_TYPE,PARAM_VAL) VALUES ("
+                                + userId + "," + profileId + "," + stylesheetId + ",2,'" + plfChannelId.substring(1) + "','" + pNameEscaped + "',3,'" + pValue
+                                + "')";
+                                if (LOG.isDebugEnabled())
+                                    LOG.debug(sQuery);
+                                stmt.executeUpdate(sQuery);
                             }
-                            if (LOG.isDebugEnabled())
-                                LOG.debug(sQuery);
-                            stmt.executeUpdate(sQuery);
                         }
                     }
                 }
                 // Commit the transaction
                 RDBMServices.commit(con);
+                // add a method nearly identical to updateFragmentSSUP() if
+                // we want to push things like minimized state of a channel in
+                // a fragment. (TBD: mboyd if needed)
+                // updateFragmentTSUP();
             } catch (Exception e) {
                 // Roll back the transaction
                 RDBMServices.rollback(con);
