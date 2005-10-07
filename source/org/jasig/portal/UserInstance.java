@@ -41,6 +41,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
@@ -49,7 +50,6 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.sax.TransformerHandler;
 
@@ -131,8 +131,8 @@ public class UserInstance implements HttpSessionBindingListener {
     // string that defines which character set to use for content
     private static final String CHARACTER_SET = "UTF-8";
 
-    final SoftHashMap systemCache=new SoftHashMap(SYSTEM_XSLT_CACHE_MIN_SIZE);
-    final SoftHashMap systemCharacterCache=new SoftHashMap(SYSTEM_CHARACTER_BLOCK_CACHE_MIN_SIZE);
+    static final Map systemCache=new SoftHashMap(SYSTEM_XSLT_CACHE_MIN_SIZE);
+    static final Map systemCharacterCache=new SoftHashMap(SYSTEM_CHARACTER_BLOCK_CACHE_MIN_SIZE);
 
     protected IPerson person;
 
@@ -375,7 +375,7 @@ public class UserInstance implements HttpSessionBindingListener {
                         cacheKey=constructCacheKey(this.getPerson(),rootNodeId);
                         if(ccaching) {
                             // obtain character cache
-                            CharacterCacheEntry cCache=(CharacterCacheEntry) this.systemCharacterCache.get(cacheKey);
+                            CharacterCacheEntry cCache=(CharacterCacheEntry) UserInstance.systemCharacterCache.get(cacheKey);
                             if(cCache!=null && cCache.channelIds!=null && cCache.systemBuffers!=null) {
                                 ccache_exists=true;
                                 log.debug("UserInstance::renderState() : retreived transformation character block cache for a key \""+cacheKey+"\"");
@@ -428,7 +428,7 @@ public class UserInstance implements HttpSessionBindingListener {
                         if((!ccaching) || (!ccache_exists)) {
                             // obtain XSLT cache
 
-                            SAX2BufferImpl cachedBuffer=(SAX2BufferImpl) this.systemCache.get(cacheKey);
+                            SAX2BufferImpl cachedBuffer=(SAX2BufferImpl) UserInstance.systemCache.get(cacheKey);
                             if(cachedBuffer!=null) {
                                 // replay the buffer to channel incorporation filter
                                 log.debug("UserInstance::renderState() : retreived XSLT transformation cache for a key \""+cacheKey+"\"");
@@ -453,9 +453,6 @@ public class UserInstance implements HttpSessionBindingListener {
                         // obtain transformer references from the handlers
                         Transformer sst=ssth.getTransformer();
                         Transformer tst=tsth.getTransformer();
-
-                        // empty transformer to do dom2sax transition
-                        Transformer emptyt=TransformerFactory.newInstance().newTransformer();
 
                         // initialize ChannelRenderingBuffer and attach it downstream of the structure transformer
                         ChannelRenderingBuffer crb = new ChannelRenderingBuffer(channelManager,ccaching);
@@ -496,8 +493,6 @@ public class UserInstance implements HttpSessionBindingListener {
                             dupl1.setParent(saif);
                         }
 
-                        // if operating in the detach mode, need wrap everything
-                        // in a document node and a <layout_fragment> node
                         boolean detachMode=!rootNodeId.equals(USER_LAYOUT_ROOT_NODE);
                         if (detachMode) {
                             saif.startDocument();
@@ -643,7 +638,6 @@ public class UserInstance implements HttpSessionBindingListener {
 
     private String constructCacheKey(IPerson person,String rootNodeId) throws PortalException {
         StringBuffer sbKey = new StringBuffer(1024);
-        sbKey.append(person.getID()).append(",");
         sbKey.append(rootNodeId).append(",");
         sbKey.append(uPreferencesManager.getUserPreferences().getCacheKey());
         sbKey.append(uPreferencesManager.getUserLayoutManager().getCacheKey());
@@ -722,9 +716,9 @@ public class UserInstance implements HttpSessionBindingListener {
         
         String authenticated = String.valueOf(person.getSecurityContext().isAuthenticated());
         structPrefs.putParameterValue("authenticated", authenticated);
-        String userName = person.getFullName();
-        if (userName != null && userName.trim().length() > 0)
-            themePrefs.putParameterValue("userName", userName);
+        //String userName = person.getFullName();
+//        if (userName != null && userName.trim().length() > 0)
+//            themePrefs.putParameterValue("userName", userName);
         try {
             if (ChannelStaticData.getAuthorizationPrincipal(person).canPublish()) {
                 themePrefs.putParameterValue("authorizedFragmentPublisher", "true");
@@ -791,7 +785,7 @@ public class UserInstance implements HttpSessionBindingListener {
         if ((values = req.getParameterValues("uP_add_target")) != null) {
          String[] values1, values2;
          String value = null;
-         int nodeType = values[0].equals("folder")?IUserLayoutNodeDescription.FOLDER:IUserLayoutNodeDescription.CHANNEL;
+         //int nodeType = values[0].equals("folder")?IUserLayoutNodeDescription.FOLDER:IUserLayoutNodeDescription.CHANNEL;
          values1 =  req.getParameterValues("targetNextID");
          if ( values1 != null && values1.length > 0 )
             value = values1[0];
