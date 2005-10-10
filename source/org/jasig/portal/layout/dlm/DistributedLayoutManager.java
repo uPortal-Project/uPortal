@@ -39,7 +39,6 @@ import org.jasig.portal.layout.LayoutEvent;
 import org.jasig.portal.layout.LayoutEventListener;
 import org.jasig.portal.layout.LayoutMoveEvent;
 import org.jasig.portal.layout.alm.IALFolderDescription;
-import org.jasig.portal.layout.dlm.channels.AdminLinksRegistrar;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.node.IUserLayoutFolderDescription;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
@@ -82,16 +81,11 @@ public class DistributedLayoutManager implements IUserLayoutManager
     private boolean channelsAdded = false;
     private boolean isFragment = false;
 
-    private static boolean registeredAdminLinks = false;
     private IUserLayoutNodeDescription newNodeDescription = null;
 
     public DistributedLayoutManager(IPerson owner, UserProfile profile,
             IUserLayoutStore store) throws PortalException
     {
-        // register dlm admin channel links if not done already.
-        if (! AdminLinksRegistrar.channelsAreRegistered())
-            AdminLinksRegistrar.registerChannels();
-        
         if (owner == null)
         {
             throw new PortalException(
