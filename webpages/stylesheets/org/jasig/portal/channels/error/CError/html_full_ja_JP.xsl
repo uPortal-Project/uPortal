@@ -3,7 +3,7 @@
   <xsl:output method="html" indent="yes"/>
   <xsl:param name="baseActionURL">baseActionURL_false</xsl:param>
   <xsl:param name="locale">ja_JP</xsl:param>
-  <xsl:variable name="baseMediaURL">media/org/jasig/portal/channels/CError/</xsl:variable>
+  <xsl:variable name="baseMediaURL">media/org/jasig/portal/channels/error/CError/</xsl:variable>
   <xsl:param name="allowRefresh">true</xsl:param>
   <xsl:param name="allowReinstantiation">true</xsl:param>
   <xsl:param name="showStackTrace">true</xsl:param>
