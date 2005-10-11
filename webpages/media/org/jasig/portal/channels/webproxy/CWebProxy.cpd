@@ -219,6 +219,52 @@ Version $Revision$
       </parameter>
 
     </step>
+    
+    
+    <step>
+      <ID>2</ID>
+
+      <name>URI restriction parameters</name>
+
+      <description>Customize restrictions on the URIs CWebProxy can access.</description>
+
+      <parameter modify="publish-only">
+        <name>cw_allow_uri_prefixes</name>
+        <label>Allowed URI prefixes</label>
+        <type base="string" input="text" display="text">
+          <length>40</length>
+          <maxlength>2000</maxlength>
+        </type>
+        <example>http:// https:// file:/portal/proxied/</example>
+        <defaultValue>http:// https://</defaultValue>
+        <description>
+        Optional static data only parameter specifying allowable prefixes
+        for URIs accessed by this channel.  This channel will only use URIs 
+        with these prefixes for obtaining XML and XSLT for use in
+        rendering.  Whitespace delimit allowed prefixes.  Effectively
+        defaults to "http:// https://"; do not allow "file:/" lightly.
+        </description>
+      </parameter>
+
+      <parameter modify="publish-only">
+        <name>cw_block_uri_prefixes</name>
+        <label>Blocked URI prefixes</label>
+        <type base="string" input="text" display="text">
+          <length>40</length>
+          <maxlength>2000</maxlength>
+        </type>
+        <defaultValue></defaultValue>
+        <example>http://restrictedserver.yourschool.edu/</example>
+        <description>
+        Optional static data only parameter further restricting which
+        URIs this channel will use to obtain XML and XSLT.  This channel
+        will not use URIs matching prefixes specified in this 
+        whitespace-delimited parameter.  Effectively defaults to "".
+        </description>
+      </parameter>
+
+    </step>
+    
 
   </params>
 
