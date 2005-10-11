@@ -118,7 +118,7 @@ public class UserPreferencesManager implements IUserPreferencesManager {
                           }
                         }
                     } catch (IOException ioe) {
-                        log.error( "UserPreferencesManager::UserPreferencesManager() : Exception occurred while loading browser mapping file: " + url + ". " + ioe);
+                        log.error( "UserPreferencesManager::UserPreferencesManager() : Exception occurred while loading browser mapping file: " + url + ". ", ioe);
                     }
                 }
 
