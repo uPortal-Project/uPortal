@@ -52,7 +52,7 @@ Version $Revision$
 
       <description>Enter the web proxy parameters</description>
 
-      <parameter modify="publish-only">
+      <parameter modify="publish">
         <name>cw_xml</name>
         <label>Application URI (cw_xml)</label>
         <type base="string" input="text" display="text">
@@ -60,6 +60,9 @@ Version $Revision$
           <maxlength>2000</maxlength>
         </type>
         <example>http://localhost:8080/examples/jsp/num/numguess.jsp</example>
+        <description>Note that if you configure this parameter to be 
+        configurable at subscribe time, you should also configure the XML
+        URI restrictions to apply to ChannelStaticData.</description>
       </parameter>
 
       <parameter modify="publish-only">
@@ -72,7 +75,7 @@ Version $Revision$
         <defaultValue>XHTML.ssl</defaultValue>
       </parameter>
 
-      <parameter modify="publish-only">
+      <parameter modify="publish">
         <name>cw_xslTitle</name>
         <label>XSL Title (cw_xslTitle)</label>
         <type base="string" input="text" display="text">
@@ -263,6 +266,23 @@ Version $Revision$
         </description>
       </parameter>
 
+      <parameter modify="publish-only">
+        <name>cw_restrict_xmlUri_inStaticData</name>
+        <label>Restrict xmlUri as presented in ChannelStaticData.</label>
+        <type base="string" input="single-choice" display="drop-down">
+	      <restriction type="enumeration">
+	        <value>true</value>
+	        <value>false</value>
+	        <defaultValue>false</defaultValue>
+	      </restriction>                              
+	    </type>   
+	    <description>
+        True restricts both in ChannelStaticData and in ChannelRuntimeData.
+        False restricts in only ChannelRuntimeData.  It is important to
+        restict the xmlUri when that URI is configured to be
+        subcribe-time configurable.
+	    </description>
+      </parameter>
     </step>
     
 
