@@ -189,4 +189,8 @@ public class PortletEntityImpl implements PortletEntity, PortletEntityCtrl, Seri
     public void addPortletWindow(PortletWindow portletWindow) {
         ((PortletWindowListCtrl)portletWindows).add(portletWindow);
     }
+    
+    public void setPortletApplicationEntity(PortletApplicationEntity portletApplicationEntity) {
+        this.portletApplicationEntity = portletApplicationEntity;
+    }
 }

@@ -397,22 +397,22 @@ public final class StackTrace
         try
         {
             Method getClassName =
-                element.getClass().getMethod( "getClassName", null ); 
+                element.getClass().getMethod( "getClassName",(Class[]) null ); 
             
             Method getMethodName = 
-                element.getClass().getMethod( "getMethodName", null );
+                element.getClass().getMethod( "getMethodName", (Class[])null );
             
             Method getFileName = 
-                element.getClass().getMethod( "getFileName", null );
+                element.getClass().getMethod( "getFileName", (Class[])null );
 
             Method getLineNumber = 
-                element.getClass().getMethod( "getLineNumber", null );
+                element.getClass().getMethod( "getLineNumber", (Class[])null );
 
             stackTraceElement = new StackTrace(
-                (String)getClassName.invoke( element, null ),
-                (String)getMethodName.invoke( element, null ),
-                (String)getFileName.invoke( element, null ),
-                ((Integer)getLineNumber.invoke( element, null )).intValue()
+                (String)getClassName.invoke( element, (Object[])null ),
+                (String)getMethodName.invoke( element, (Object[])null ),
+                (String)getFileName.invoke( element, (Object[])null ),
+                ((Integer)getLineNumber.invoke( element, (Object[])null )).intValue()
                 );
         }
         catch( Exception x )

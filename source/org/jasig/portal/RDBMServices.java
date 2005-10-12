@@ -35,8 +35,22 @@ import org.springframework.dao.DataAccessResourceFailureException;
 
 /**
  * Provides relational database access and helper methods.
- * A static routine determins if the database/driver supports
+ * A static routine determines if the database/driver supports
  * prepared statements and/or outer joins.
+ * 
+ * <p>This class provides database access as a service.  Via the class, uPortal
+ * code can obtain a connection to the core uPortal database as well as to other
+ * databases available via JNDI.  (Doing that JNDI lookup directly allows your
+ * code to avoid dependence upon this class.)  This class provides 
+ * traditional getConnection() methods as well as static covers for getting a
+ * reference to the backing DataSource.</p>
+ * 
+ * <p>This class also provides helper methods for manipulating connections.
+ * Mostof the methods are wrappers around methods on the underlying Connection
+ * that handle (log and swallow) the SQLExceptions that the underlying methods 
+ * declare to be thrown (these helpers also catch 
+ * and log RuntimeExceptions encountered).  They provide an alternative to trying
+ * and catching those methods using the JDBC APIs directly.</p>
  *
  * @author Ken Weiner, kweiner@unicon.net
  * @author George Lindholm, george.lindholm@ubc.ca
@@ -139,8 +153,9 @@ public class RDBMServices {
         if (getDatasourceFromJndi) {
             ds = getJndiDataSource(name);
             if (ds != null) {
-                if (LOG.isInfoEnabled())
+                if (LOG.isInfoEnabled()) {
                     LOG.info("Creating DataSource instance for " + name);
+                }
                 dbMetaData = new DatabaseMetaDataImpl(ds);
                 namedDataSources.put(name, ds);
                 return ds; 
@@ -171,8 +186,9 @@ public class RDBMServices {
                     try {
                         ds = pdsf.createPooledDataSource(driverClass, username, password, url);
 
-                        if (LOG.isInfoEnabled())
+                        if (LOG.isInfoEnabled()) {
                             LOG.info("Creating DataSource instance for pooled JDBC");
+                        }
                         
                         namedDataSources.put(PORTAL_DB,ds);
                         jdbcUrl = url;
@@ -191,8 +207,9 @@ public class RDBMServices {
                         final Driver d = (Driver)Class.forName(driverClass).newInstance();
                         ds = new GenericDataSource(d, url, username, password);
 
-                        if (LOG.isInfoEnabled())
+                        if (LOG.isInfoEnabled()) {
                             LOG.info("Creating DataSource for JDBC native");
+                        }
                         
                         namedDataSources.put(PORTAL_DB,ds);
                         jdbcUrl = url;
@@ -245,8 +262,9 @@ public class RDBMServices {
             catch (Throwable t) {
                 //Cache the failure to decrease lookup attempts and reduce log spam.
                 namedDbServerFailures.put(name, new Long(System.currentTimeMillis()));
-                if (LOG.isWarnEnabled())
+                if (LOG.isWarnEnabled()) {
                     LOG.warn("Error getting DataSource named (" + name + ") from JNDI.", t);
+                }
             }
         }
         else {
@@ -274,21 +292,7 @@ public class RDBMServices {
      * @throws DataAccessException if unable to return a connection
      */
     public static Connection getConnection() {
-        
-        DataSource ds = (DataSource) namedDataSources.get(PORTAL_DB);
-        if (ds==null) ds = getDataSource();
-        
-        if (ds != null) {
-          synchronized(SYNC_OBJECT) {
-            activeConnections++;
-          }
-          try {
-            return ds.getConnection();
-          } catch (SQLException e) {
-             throw new DataAccessResourceFailureException("RDBMServices.getConnection() failed: ",e);
-        	}
-        }
-        throw new DataAccessResourceFailureException("RDBMServices fatally misconfigured such that DataSource is null.");
+    	return getConnection(PORTAL_DB);
     }
 
 
@@ -302,34 +306,35 @@ public class RDBMServices {
      *   the JNDI context relative to "jdbc/"
      * @return a database Connection object or <code>null</code> if no Connection
      */
-    public static Connection getConnection(final String dbName) {
-       
-        if (DEFAULT_DATABASE.equals(dbName) || PORTAL_DB.equals(dbName)) {
-            return getConnection();
-        }
-        
-        DataSource ds = (DataSource) namedDataSources.get(dbName);
-        if (ds==null) {
-            ds = getDataSource(dbName);
-        }
-
-        if (ds != null) {
-          synchronized(SYNC_OBJECT) {
-            activeConnections++;
-          }
-          try {
-            return ds.getConnection();
-        } catch (SQLException e) {
-            throw new DataAccessResourceFailureException
-            	("RDBMServices sql error trying to get connection to "+dbName,e);
-        }
-        }
-        // datasource is still null so give up
-        throw new DataAccessResourceFailureException("RDBMServices fatally misconfigured such that getDataSource() returned null.");
+    public static Connection getConnection(String dbName) {
+    	if (DEFAULT_DATABASE.equals(dbName)){
+    		dbName = PORTAL_DB;
+    	}
+    	DataSource ds = (DataSource) namedDataSources.get(dbName);
+    	if (ds==null) {
+    		ds = getDataSource(dbName);
+    	}
+    	
+    	if (ds != null) {
+    		synchronized(SYNC_OBJECT) {
+    			activeConnections++;
+    		}
+    		try {
+    			return ds.getConnection();
+    		} catch (SQLException e) {
+    			throw new DataAccessResourceFailureException
+    			("RDBMServices sql error trying to get connection to "+dbName,e);
+    		}
+    	}
+    	// datasource is still null so give up
+    	throw new DataAccessResourceFailureException("RDBMServices fatally misconfigured such that getDataSource() returned null.");
     }
 
     /**
-     * Releases database connection
+     * Releases database connection.
+     * Unlike the underlying connection.close(), this method does not throw
+     * SQLException or any other exception.  It will fail silently from the
+     * perspective of calling code, logging errors using Commons Logging.
      * @param con a database Connection object
      */
     public static void releaseConnection(final Connection con) {
@@ -341,8 +346,9 @@ public class RDBMServices {
             con.close();
         }
         catch (Exception e) {
-            if (LOG.isWarnEnabled())
+            if (LOG.isWarnEnabled()) {
                 LOG.warn("Error closing Connection: " + con, e);
+            }
         }
     }
 
@@ -361,8 +367,9 @@ public class RDBMServices {
             rs.close();
         }
         catch (Exception e) {
-            if (LOG.isWarnEnabled())
+            if (LOG.isWarnEnabled()) {
                 LOG.warn("Error closing ResultSet: " + rs, e);
+            }
         }
     }
 
@@ -375,8 +382,9 @@ public class RDBMServices {
             st.close();
         }
         catch (Exception e) {
-            if (LOG.isWarnEnabled())
+            if (LOG.isWarnEnabled()) {
                 LOG.warn("Error closing Statement: " + st, e);
+            }
         }
     }
 
@@ -391,31 +399,40 @@ public class RDBMServices {
     }
 
     /**
-     * Commit pending transactions
+     * Commit pending transactions.
+     * Unlike the underlying commit(), this method does not throw SQLException or
+     * any other exception.  It will fail silently from the perspective of calling code,
+     * logging any errors using Commons Logging.
      * @param connection
      */
-    static final public void commit(final Connection connection) throws SQLException {
+    static final public void commit(final Connection connection) {
         try {
             connection.commit();
         }
         catch (Exception e) {
-            if (LOG.isWarnEnabled())
+            if (LOG.isWarnEnabled()) {
                 LOG.warn("Error committing Connection: " + connection, e);
+            }
         }
     }
 
     /**
-     * Set auto commit state for the connection
+     * Set auto commit state for the connection.
+     * Unlike the underlying connection.setAutoCommit(), this method does not
+     * throw SQLException or any other Exception.  It fails silently from the
+     * perspective of calling code, logging any errors encountered using 
+     * Commons Logging.
      * @param connection
      * @param autocommit
      */
-    public static final void setAutoCommit(final Connection connection, boolean autocommit) throws SQLException {
+    public static final void setAutoCommit(final Connection connection, boolean autocommit) {
         try {
             connection.setAutoCommit(autocommit);
         }
         catch (Exception e) {
-            if (LOG.isWarnEnabled())
+            if (LOG.isWarnEnabled()) {
                 LOG.warn("Error committing Connection: " + connection + " to: " + autocommit, e);
+            }
         }
     }
 
@@ -428,8 +445,9 @@ public class RDBMServices {
             connection.rollback();
         }
         catch (Exception e) {
-            if (LOG.isWarnEnabled())
+            if (LOG.isWarnEnabled()) {
                 LOG.warn("Error rolling back Connection: " + connection, e);
+            }
         }
     }
 

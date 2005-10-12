@@ -110,15 +110,37 @@
 				<channel fname="missing-properties" immutable="Y" unremovable="Y" hidden="N"/>
 				<channel fname="person-attributes" immutable="Y" unremovable="Y" hidden="N"/>
 				<channel fname="css-viewer" immutable="Y" unremovable="Y" hidden="N"/>
+				
 			</folder>
 			<folder name="column2" immutable="Y" unremovable="Y" hidden="N">
 				<channel fname="snooper" immutable="Y" unremovable="Y" hidden="N"/>
 				<channel fname="uportal-development-books" immutable="Y" unremovable="Y" hidden="N"/>
 				<channel fname="uportal-data-dictionary" immutable="Y" unremovable="Y" hidden="N"/>
 				<channel fname="uportal-developers-reference" immutable="Y" unremovable="Y" hidden="N"/>
+				
 			</folder>
 		</folder>
 	</fragment>	
+
+	<fragment name="dynamicTitles" type="pushed">
+		<description>Demonstrates dynamic title feature.</description>
+		<groups>
+			<group>Everyone</group>
+			<group>Guests</group>
+		</groups>
+		<restrictions>
+			<restriction path="local" name="priority" value="1000-2000"/>
+			<restriction path="local" name="depth" value="1"/>
+		</restrictions>
+		<folder name="Dynamic Titles" immutable="Y" unremovable="Y" hidden="N">
+			<folder name="column1" immutable="Y" unremovable="Y" hidden="N">
+				<channel fname="timetitle" immutable="Y" unremovable="Y" hidden="N"/>
+			</folder>
+			<folder name="column2" immutable="Y" unremovable="Y" hidden="N">
+				<channel fname="render-count-portlet" immutable="Y" unremovable="Y" hidden="N"/>
+			</folder>
+		</folder>
+	</fragment>
 
 	<fragment name="Portlet-examples" type="pushed">
 		<description>Channels that demonstrate the portlet adapter</description>

@@ -76,9 +76,15 @@ Version $Revision$
         <!-- default value for text field -->
         <defaultValue>CGenericXSLT/emptyDocument.xml</defaultValue>
 
+        <description>
+        If you make this URI subscribe-time configurable,
+        you should also turn on applying URI restrictions to the XML URI
+        as discovered from ChannelStaticData.
+        </description>
+
       </parameter>
 
-      <parameter modify="publish">
+      <parameter modify="publish-only">
         <name>sslUri</name>
         <label>Stylesheet list file (.ssl) URI</label>
         <type base="string" input="text" display="text">
@@ -100,6 +106,82 @@ Version $Revision$
         <!-- default value for text field -->
         <defaultValue></defaultValue>
 
+      </parameter>
+
+      </step>
+      
+      
+      <step>
+      <ID>2</ID>
+
+      <!-- displayed at the top of the step screen -->
+      <name>Restrict XML URI</name>
+
+      <!-- intention is for documentation but could be used for other things -->
+      <description>
+        In order to prevent end users from pointing a CGenericXSLT instance
+        at arbitrary URIs, CGenericXSLT contrains the xmlUri to be
+        an http:// or https:// URI by default.  You can customize these 
+        constraints by supplying allow and deny prefixes.
+      </description>
+
+      <parameter modify="publish-only">
+        <name>upc_allow_xmlUri_prefixes</name>
+        <label>Whitespace delimited XML URI prefixes to allow.</label>
+        <type base="string" input="text" display="text">
+
+          <!-- length and maxlength for text field -->
+          <length>80</length>
+          <maxlength>255</maxlength>
+
+        </type>
+
+        <example>http:// https:// file:/user/local/uportal/emptyDocument.xml</example>
+
+        <!-- default value for text field -->
+        <defaultValue>http:// https://</defaultValue>
+        
+        <description>
+            Do not allow file:/ lightly.
+        </description>
+
+      </parameter>
+
+      <parameter modify="publish-only">
+        <name>upc_deny_xmlUri_prefixes</name>
+        <label>Whitespace delimited xmlUri prefixes to block</label>
+        <type base="string" input="text" display="text">
+
+          <!-- length and maxlength for text field -->
+          <length>80</length>
+          <maxlength>255</maxlength>
+
+        </type>
+
+        <example>https://someserver.you.do.not.want.accessed</example>
+
+        <!-- default value for text field -->
+        <defaultValue></defaultValue>
+
+      </parameter>
+
+
+      <parameter modify="publish-only">
+        <name>restrict_xmlUri_inStaticData</name>
+        <label>Restrict xmlUri as presented in ChannelStaticData.</label>
+        <type base="string" input="single-choice" display="drop-down">
+	      <restriction type="enumeration">
+	        <value>true</value>
+	        <value>false</value>
+	        <defaultValue>false</defaultValue>
+	      </restriction>                              
+	    </type>   
+	    <description>
+        True restricts both in ChannelStaticData and in ChannelRuntimeData.
+        False restricts in only ChannelRuntimeData.  It is important to
+        restict the xmlUri when that URI is configured to be
+        subcribe-time configurable.
+	    </description>
       </parameter>
 
       </step>

@@ -17,25 +17,25 @@ public interface Constants {
   public static final String ALREADY_EXISTS = "already exists";
 
   /** Value = "org.jasig.portal.channels.cusermanager.CUserManager" */
-  public static String PERMISSION_OWNERTOKEN = "org.jasig.portal.channels.cusermanager.CUserManager";
+  public static final String PERMISSION_OWNERTOKEN = "org.jasig.portal.channels.cusermanager.CUserManager";
 
   /** Value = "CUserManager" */
-  public static String PERMISSION_OWNERNAME = "CUserManager";
+  public static final String PERMISSION_OWNERNAME = "CUserManager";
 
   /** Value = "Account Manager" */
-  public static String PERMISSION_OWNERTARGET = "Account Manager";
+  public static final String PERMISSION_OWNERTARGET = "Account Manager";
 
   /** Value = "acctmgr" */
-  public static String PERMISSION_MNGRRIGHT = "acctmgr";
+  public static final String PERMISSION_MNGRRIGHT = "acctmgr";
 
   /** Value = "Manage User Accounts" */
-  public static String PERMISSION_MNGRRIGHTDESC = "Manage User Accounts";
+  public static final String PERMISSION_MNGRRIGHTDESC = "Manage User Accounts";
 
   /** Value = "pwdchng" */
-  public static String PERMISSION_PWDCHNGRIGHT = "pwdchng";
+  public static final String PERMISSION_PWDCHNGRIGHT = "pwdchng";
 
   /** Value = "Change Current Password" */
-  public static String PERMISSION_PWDCHNGRIGHTDESC = "Change Current Password";
+  public static final String PERMISSION_PWDCHNGRIGHTDESC = "Change Current Password";
 
   /** Value = "org.jasig.portal.channels.cusermanager.provider.DefaultDataHandlerImpl" */
   public static final String DEFAULTDATAHANDLER

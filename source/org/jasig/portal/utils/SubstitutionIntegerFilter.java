@@ -6,21 +6,38 @@
 package org.jasig.portal.utils;
 
 import java.io.IOException;
+import java.io.Writer;
 
 /**
  * Performs substitution operation on a stream of integer write requests.
  *
+ * 7/25/05 - UP-1180 - dmindler@rutgers.edu
+ * Modified to utilize characters instead of integers. Main reason is
+ * that actual writing was delegated to the WriteableWriterWrapper class,
+ * who had a statement:
+ * <code>
+ *     cbuf[j++]=(char)ibuf[i];
+ * </code>
+ * in effect, converting an integer to a character. This was an expensive
+ * transformation since all data was copied into an int[] then a char[] was
+ * allocated in the WriteableWriterWrapper class to which all data was 
+ * copied (as shown above):
+ * <code>
+ *     char[] cbuf = new char[len-off];
+ * </code>
+ * Note: This class name was not changed.
+ * 
  * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
  * @version $Revision$
  */
 public class SubstitutionIntegerFilter {
     private final static int DEFAULT_BUFFER_SIZE=2048;
-    final IWriteable out;
+    final Writer out;
 
-    final int[] substitute;
-    final int[] target;
+    final char[] substitute;
+    final char[] target;
     private int matchindex;
-    private int[] buffer;
+    private char[] buffer;
     private int bufferindex;
     private int maxBuffer = DEFAULT_BUFFER_SIZE;
 
@@ -31,13 +48,13 @@ public class SubstitutionIntegerFilter {
      * @param target an <code>int[]</code> pattern to be replaced
      * @param substitute an <code>int[]</code> pattern to replace the original
      */
-    public SubstitutionIntegerFilter(IWriteable out, int[] target, int[] substitute) {
+    public SubstitutionIntegerFilter(Writer out, char[] target, char[] substitute) {
         this.out=out;
         this.substitute=substitute;
         this.target=target;
         this.matchindex=0;
         this.bufferindex=0;
-        this.buffer=new int[maxBuffer + target.length];
+        this.buffer=new char[maxBuffer + target.length];
     }
 
     /**
@@ -48,17 +65,17 @@ public class SubstitutionIntegerFilter {
      * @param substitute an <code>int[]</code> pattern to replace the original
      * @param bufferSize a buffer size
      */
-    public SubstitutionIntegerFilter(IWriteable out, int[] target, int[] substitute,int bufferSize) {
+    public SubstitutionIntegerFilter(Writer out, char[] target, char[] substitute,int bufferSize) {
         this.out=out;
         this.substitute=substitute;
         this.target=target;
         this.matchindex=0;
         this.bufferindex=0;
         this.maxBuffer=bufferSize-target.length;
-        this.buffer=new int[maxBuffer + target.length];
+        this.buffer=new char[maxBuffer + target.length];
     }
 
-    public void write(int number) throws IOException {
+    public void write(char number) throws IOException {
         if(number==target[matchindex]) {
             if(matchindex<target.length-1) {
                 // assume match will fail, but track buffered ints
@@ -90,7 +107,7 @@ public class SubstitutionIntegerFilter {
         out.close();
     }
 
-    protected void addToBuffer(int i) throws IOException{
+    protected void addToBuffer(char i) throws IOException{
       // flush if buffer fills up, but only if we're not tracking a possible substitution
         if ((bufferindex > (maxBuffer-2)) && matchindex==0){
           flush();

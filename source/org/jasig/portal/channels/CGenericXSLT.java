@@ -1,4 +1,4 @@
-/* Copyright 2001 The JA-SIG Collaborative.  All rights reserved.
+/* Copyright 2001, 2005 The JA-SIG Collaborative.  All rights reserved.
 *  See license distributed with this file and
 *  available online at http://www.uportal.org/license.html
 */
@@ -7,6 +7,8 @@ package org.jasig.portal.channels;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Collections;
@@ -37,6 +39,9 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.DTDResolver;
 import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.utils.XSLT;
+import org.jasig.portal.utils.uri.BlockedUriException;
+import org.jasig.portal.utils.uri.IUriScrutinizer;
+import org.jasig.portal.utils.uri.PrefixUriScrutinizer;
 import org.w3c.dom.Document;
 import org.xml.sax.ContentHandler;
 
@@ -60,10 +65,34 @@ import org.xml.sax.ContentHandler;
  *                  implementation.
  *                  <i>Use when local data needs to be sent with the
  *                  request for the URL.</i>
+ *  7) "upc_allow_xmlUri_prefixes" - Optional parameter specifying as a whitespace
+ *                  delimited String the allowable xmlUri prefixes.  
+ *                  <i>Defaults to "http:// https://"</i>
+ *  8) "upc_deny_xmlUri_prefixes" - Optional parameter specifying as a whitespace
+ *                  delimited String URI prefixes that should block a URI 
+ *                  as xmlUri even if it matched one of the allow prefixes.
+ *                  <i>Defaults to ""</i>
+ *  9) "restrict_xmlUri_inStaticData" - Optional parameter specifying whether 
+ *                  the xmlUri should be restricted according to the allow and
+ *                  deny prefix rules above as presented in ChannelStaticData
+ *                  or just as presented in ChannelRuntimeData.  "true" means
+ *                  both ChannelStaticData and ChannelRuntimeData will be restricted.
+ *                  Any other value or the parameter not being present means 
+ *                  only ChannelRuntimeData will be restricted.  It is important
+ *                  to set this value to true when using subscribe-time
+ *                  channel parameter configuration of the xmlUri.
  * </p>
- * <p>The static parameters above can be overridden by including
- * parameters of the same name (<code>xmlUri</code>, <code>sslUri</code>,
- * <code>xslTitle</code> and/or <code>xslUri</code> in the HttpRequest string.</p>
+ * <p>The xmlUri and xslTitle static parameters above can be overridden by including
+ * parameters of the same name (<code>xmlUri</code> and/or <code>xslTitle</code>) 
+ * in the HttpRequest string.  Prior to uPortal 2.5.1 sslUri and xslUri could also
+ * be overridden -- these features have been removed to improve the security of
+ * CGenericXSLT instances. </p>
+ * <p>
+ * Additionally, as of uPortal 2.5.1, the xmlUri must match an allowed URI prefix.
+ * By default http:// and https:// URIs are allowed.  If you are using the 
+ * empty document or another XML file from the classpath or from the filesystem,
+ * you will need to allow a prefix to or the full path of that resource.
+ * </p>
  * <p>This channel can be used for all XML formats including RSS.
  * Any other parameters passed to this channel via HttpRequest will get
  * passed in turn to the XSLT stylesheet as stylesheet parameters. They can be
@@ -72,7 +101,7 @@ import org.xml.sax.ContentHandler;
  * <p>CGenericXSLT is also useful for channels that have no dynamic data.  In these types
  * of channels, all the markup comes from the XSLT stylesheets.  An empty XML document
  * can be used and is included with CGenericXSLT.  Just set the xml parameter to this
- * empty document.</p>
+ * empty document and allow the path to the empty document.</p>
  * @author Steve Toth, stoth@interactivebusiness.com
  * @author Ken Weiner, kweiner@unicon.net
  * @author Peter Kharchenko <a href="mailto:">pkharchenko@interactivebusiness.com</a> (multithreading,caching)
@@ -88,6 +117,11 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
   // state class
   private class CState
   {
+    /**
+     * URI from which this channel will obtain XML to render.
+     * Do not set this field directly.  Instead call the setter method, which
+     * provides argument checking.
+     */
     private String xmlUri;
     private String sslUri;
     private String xslTitle;
@@ -97,8 +131,15 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
     private ChannelRuntimeData runtimeData;
     private LocalConnectionContext localConnContext;
 
-    public CState()
+    private final IUriScrutinizer uriScrutinizer;
+    
+    public CState(final IUriScrutinizer uriScrutinizerArg)
     {
+        if (uriScrutinizerArg == null) {
+            throw new IllegalArgumentException("CGenericXSLT channel state requires a non-null IUriScrutinizer");
+        }
+        this.uriScrutinizer = uriScrutinizerArg;
+        
       xmlUri = sslUri = xslTitle = xslUri = null;
       params = new HashMap();
       cacheTimeout = PropertiesManager.getPropertyAsLong("org.jasig.portal.channels.CGenericXSLT.default_cache_timeout");
@@ -118,6 +159,31 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
        }
        return str.toString();
     }
+    
+    /**
+     * Set the URI or resource-relative-path of the XML this CGenericXSLT should
+     * render.
+     * @param xmlUriArg URI or local resource path to the XML this channel should render.
+     * @throws IllegalArgumentException if xmlUriArg specifies a missing resource
+     * or if the URI has bad syntax
+     * @throws BlockedUriException if the xmlUriArg is blocked for policy reasons
+     */
+    public void setXmlUri(String xmlUriArg) {
+        URL url = null;
+        try {
+            url = ResourceLoader.getResourceAsURL(this.getClass(), xmlUriArg);
+        } catch (ResourceMissingException e) {
+            throw new IllegalArgumentException("Resource [" + xmlUriArg + "] missing.", e);
+        }
+        
+        String urlString = url.toExternalForm();
+        try {
+            this.uriScrutinizer.scrutinize(new URI(urlString));
+        }catch (URISyntaxException e1) {
+            throw new IllegalArgumentException("xmlUri [" + xmlUriArg + "] resolved to a URI with bad syntax.");
+        }
+        
+    }
   }
   
   public CGenericXSLT()
@@ -127,8 +193,32 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
 
   public void setStaticData (ChannelStaticData sd, String uid) throws ResourceMissingException
   {
-    CState state = new CState();
-    state.xmlUri = sd.getParameter("xmlUri");
+      
+      String allowXmlUriPrefixesParam = 
+          sd.getParameter("upc_allow_xmlUri_prefixes");
+      String denyXmlUriPrefixesParam = 
+          sd.getParameter("upc_deny_xmlUri_prefixes");
+      
+      IUriScrutinizer uriScrutinizer = 
+          PrefixUriScrutinizer.instanceFromParameters(allowXmlUriPrefixesParam, denyXmlUriPrefixesParam);
+      
+    CState state = new CState(uriScrutinizer);
+    
+    // determine whether we should restrict what URIs we accept as the xmlUri from
+    // ChannelStaticData
+    String scrutinizeXmlUriAsStaticDataString = sd.getParameter("restrict_xmlUri_inStaticData");
+    boolean scrutinizeXmlUriAsStaticData = "true".equals(scrutinizeXmlUriAsStaticDataString);
+    
+    String xmlUriParam = sd.getParameter("xmlUri");
+    if (scrutinizeXmlUriAsStaticData) {
+        // apply configured xmlUri restrictions
+        state.setXmlUri(xmlUriParam);
+    } else {
+        // set the field directly to avoid applying xmlUri restrictions
+        state.xmlUri = xmlUriParam;
+    }
+    
+    
     state.sslUri = sd.getParameter("sslUri");
     state.xslTitle = sd.getParameter("xslTitle");
     state.xslUri = sd.getParameter("xslUri");
@@ -170,22 +260,15 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
       String xmlUri = rd.getParameter("xmlUri");
 
       if (xmlUri != null)
-        state.xmlUri = xmlUri;
+        state.setXmlUri(xmlUri);
 
-      String sslUri = rd.getParameter("sslUri");
-
-      if (sslUri != null)
-        state.sslUri = sslUri;
+      // prior to uPortal 2.5.1 sslUri was configurable via ChannelRuntimeProperties
+      // this feature has been removed to improve security of CGenericXSLT instances.
 
       String xslTitle = rd.getParameter("xslTitle");
 
       if (xslTitle != null)
         state.xslTitle = xslTitle;
-
-      String xslUri = rd.getParameter("xslUri");
-
-      if (xslUri != null)
-        state.xslUri = xslUri;
 
       // grab the parameters and stuff them all into the state object        
       Enumeration enum1 = rd.getParameterNames();
