@@ -19,6 +19,27 @@ import org.jasig.portal.services.persondir.IPersonAttributeDao;
  * {@link IPersonAttributeDao#getUserAttributes(String)} by delegation to 
  * {@link IPersonAttributeDao#getUserAttributes(Map)} using a configurable
  * default attribute name.
+ *  
+ * <br>
+ * <br>
+ * Configuration:
+ * <table border="1">
+ *     <tr>
+ *         <th align="left">Property</th>
+ *         <th align="left">Description</th>
+ *         <th align="left">Required</th>
+ *         <th align="left">Default</th>
+ *     </tr>
+ *     <tr>
+ *         <td align="right" valign="top">defaultAttributeName</td>
+ *         <td>
+ *             The attribute name to use for {@link #getUserAttributes(String)} queries.
+ *             May not be null.
+ *         </td>
+ *         <td valign="top">No</td>
+ *         <td valign="top">{@link org.jasig.portal.security.IPerson#USERNAME}</td>
+ *     </tr>
+ * </table>
  * 
  * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
  * @version $Revision$ $Date$
@@ -78,7 +99,7 @@ public abstract class AbstractDefaultQueryPersonAttributeDao implements IPersonA
      */
     public final void setDefaultAttributeName(final String name) {
         if (name == null)
-            throw new IllegalArgumentException("The default attribute name must be null");
+            throw new IllegalArgumentException("The defaultAttributeName may not be null");
 
         this.defaultAttribute = name;
     }
