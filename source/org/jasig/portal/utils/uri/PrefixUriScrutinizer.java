@@ -7,9 +7,13 @@ package org.jasig.portal.utils.uri;
 
 import java.io.Serializable;
 import java.net.URI;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.util.StringUtils;
 
 
 /**
@@ -26,6 +30,35 @@ import org.apache.commons.logging.LogFactory;
 public final class PrefixUriScrutinizer 
     implements IUriScrutinizer, Serializable {
 
+    public static PrefixUriScrutinizer instanceFromParameters(
+            String allowPrefixesArg, String denyPrefixesArg) {
+        
+        String[] allowPrefixes;
+        if (! StringUtils.hasText(allowPrefixesArg)) {
+            // if the parameter wasn't specified
+            // or contains only whitespace
+            // default to allowing http and https
+            allowPrefixes = new String[]{
+                "http://", "https://"};
+        } else {
+            // parse the whitespace delimited String into a String array
+            allowPrefixes = allowPrefixesArg.split("\\s");
+        }
+        
+        String[] denyPrefixes;
+        if (! StringUtils.hasText(denyPrefixesArg)) {
+            // if the parameter wasn't specified or contains 
+            // only whitespace, default to explicitly denying none.
+            denyPrefixes = new String[0];
+        } else {
+            // parse the whitespace delimited String into a String array
+            denyPrefixes = denyPrefixesArg.split("\\s");
+        }
+        
+        return new PrefixUriScrutinizer(allowPrefixes, denyPrefixes);
+        
+    }
+    
     private final Log log = LogFactory.getLog(getClass());
     
     /**
@@ -60,7 +93,7 @@ public final class PrefixUriScrutinizer
             		"PrefixUriScrutinizer with null array of allow prefixes.");
         }
         
-        // copy prefixes, normallizing case to lowercase
+        // copy prefixes, normalizing case to lowercase
         
         String[] lowercaseAllowPrefixes = new String[allowPrefixesArg.length];
         for (int i = 0; i < allowPrefixesArg.length; i++) {
@@ -68,6 +101,7 @@ public final class PrefixUriScrutinizer
             if (allowPrefix == null) {
                 throw new IllegalArgumentException("Illegal null in allowPrefixesArg: " + allowPrefixesArg);
             }
+            
             lowercaseAllowPrefixes[i] = allowPrefix.toLowerCase();
         }
         
@@ -146,6 +180,24 @@ public final class PrefixUriScrutinizer
         }
         
         
+    }
+    
+    /**
+     * Get an unmodifiable List of the Strings allowed as prefixes to URIs
+     * scrutinized by this PrefixUriScrutinizer.
+     * @return an unmodifiable List of Strings
+     */
+    public List getAllowPrefixes() {
+        return Collections.unmodifiableList(Arrays.asList(this.allowPrefixes));
+    }
+    
+    /**
+     * Get an unmodifiable List of the Strings explicitly denied as prefixes to
+     * URIs scrutinized by this PrefixUriScrutinizer.
+     * @return an unmodifiable potentially empty list of Strings
+     */
+    public List getDenyPrefixes() {
+        return Collections.unmodifiableList(Arrays.asList(this.denyPrefixes));
     }
     
     public String toString() {
