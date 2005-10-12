@@ -6,6 +6,7 @@ package org.jasig.portal.utils.uri;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 
 import junit.framework.TestCase;
 
@@ -263,5 +264,62 @@ public class PrefixUriScrutinizerTest extends TestCase {
         fail("Scrutinize should have blocked URI bearing a blocked prefix.");
         
     }
+    
+    /**
+     * Test that null parameters translate to default behavior.
+     */
+    public void testParsingParametersDefaultsNullNull() {
+        String nullString = null;
+        
+        PrefixUriScrutinizer defaultInstance = PrefixUriScrutinizer.instanceFromParameters(nullString, nullString);
+        
+        List allowPrefixes = defaultInstance.getAllowPrefixes();
+        assertTrue(allowPrefixes.contains("http://"));
+        assertTrue(allowPrefixes.contains("https://"));
+        assertEquals(2, allowPrefixes.size());
+        
+        List denyPrefixes = defaultInstance.getDenyPrefixes();
+        assertTrue(denyPrefixes.isEmpty());
+    }
+    
+    /**
+     * Test that empty parameters translate to default behavior.
+     */
+    public void testParsingParametersEmptyEmpty() {
+        String emptyString = "";
+        
+        PrefixUriScrutinizer defaultInstance = PrefixUriScrutinizer.instanceFromParameters(emptyString, emptyString);
+        
+        List allowPrefixes = defaultInstance.getAllowPrefixes();
+        assertTrue(allowPrefixes.contains("http://"));
+        assertTrue(allowPrefixes.contains("https://"));
+        assertEquals(2, allowPrefixes.size());
+        
+        List denyPrefixes = defaultInstance.getDenyPrefixes();
+        assertTrue(denyPrefixes.isEmpty());
+    }
+    
+    /**
+     * Test successful parsing of overriding allow and deny lists.
+     */
+    public void testParsingParameters() {
+        String allowString = "http:// https:// file:/some/safe/path/";
+        String denyString = "https://restrictedhost.com file:/some/safe/path/hidden";
+        
+        PrefixUriScrutinizer customInstance = 
+            PrefixUriScrutinizer.instanceFromParameters(allowString, denyString);
+        
+        List allowPrefixes = customInstance.getAllowPrefixes();
+        assertTrue(allowPrefixes.contains("http://"));
+        assertTrue(allowPrefixes.contains("https://"));
+        assertTrue(allowPrefixes.contains("file:/some/safe/path/"));
+        assertEquals(3, allowPrefixes.size());
+        
+        List denyPrefixes = customInstance.getDenyPrefixes();
+        assertTrue(denyPrefixes.contains("https://restrictedhost.com"));
+        assertTrue(denyPrefixes.contains("file:/some/safe/path/hidden"));
+        assertEquals(2, denyPrefixes.size());
+    }
+    
     
 }
