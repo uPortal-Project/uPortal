@@ -2,7 +2,7 @@ This is a file for notes specific to the uPortal release that the code you're lo
 either is (in the case of a tagged release) or will become (in the case of the tip of a patches or main branch).
 
 
-Release notes for uPortal 2.5.1 RC1 (release candidate):
+Release notes for uPortal 2.5.1 RC2 (release candidate):
 
 Known issues
 
@@ -16,7 +16,14 @@ Search for issues with a "Matches Versions" of this release.
 
 Upgrading:
 
-While your current channels and theme transforms will work unchanged in uPortal 2.5.1 if they worked in 2.5.0, 
+CWebProxy and CGenericXSLT changed for this release to address security vulnerabilities.  
+These channels honor fewer ChannelRuntimeParameters now.
+This will not affect most deployments.  A few deployments will need to re-examine CWebProxy and re-implement the 
+insecure features that were removed in more secure ways.  CWebProxy also changed to require that the xmlUri be
+an http:// or https:// URI.  You can make this rule more or less restrictive by publish-time configuration of 
+CWebProxy instances.  (UP-1253)
+
+While your current IChannels and theme transforms will work unchanged in uPortal 2.5.1 if they worked in 2.5.0, 
 transforms require minor changes and channels potentially major changes to take advantage of dynamic 
 channel titles.  CTimeTitle and the changes to the ALM / Integration Modes theme transform provide an example.
 
