@@ -29,4 +29,21 @@
 		
 		<maxsize>150</maxsize>
 	</cache>
+   
+    
+    <!-- CACHE USED BY THE PERSON_ATTRIBUTE_DAO -->
+    <cache name="userInfoCache">
+        <backend>com.whirlycott.cache.impl.ConcurrentHashMapImpl</backend>
+        
+        <!-- define time interval that cleanup thread will run in number of seconds -->
+        <tuner-sleeptime>60</tuner-sleeptime>
+        
+        <!-- evicts least recently used items when pruning -->
+        <policy>com.whirlycott.cache.policy.LRUMaintenancePolicy</policy>
+        
+        <maxsize>150</maxsize>
+        
+        <!-- evicts items older than the specified time (in seconds) when pruning -->
+        <expire-time>600</expire-time>
+    </cache>        
 </whirlycache>

@@ -86,8 +86,14 @@
 	 | The 'username' attribute is what is configured by default in the code
 	 | for simple string queries via the IPersonAttributeDao interfaces
 	 +-->
-	<!--
-	<bean id="personAttributeDao" class="org.jasig.portal.services.persondir.support.MergingPersonAttributeDaoImpl">
+     <!--
+   <bean id="personAttributeDao" class="org.jasig.portal.services.persondir.support.CachingPersonAttributeDaoImpl">
+       <property name="cachedPersonAttributesDao">
+           <ref bean="mergedPersonAttributeDao"/>
+       </property>
+   </bean>
+   
+   <bean id="mergedPersonAttributeDao" class="org.jasig.portal.services.persondir.support.MergingPersonAttributeDaoImpl">
 		<property name="personAttributeDaos">
 			<list>
 				<ref bean="uPortalJdbcAttributeSource"/>
