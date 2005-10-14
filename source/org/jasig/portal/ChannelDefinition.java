@@ -1,37 +1,7 @@
-/**
- * Copyright © 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
- *
- * 3. Redistributions of any form whatsoever must retain the following
- *    acknowledgment:
- *    "This product includes software developed by the JA-SIG Collaborative
- *    (http://www.jasig.org/)."
- *
- * THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
- * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE JA-SIG COLLABORATIVE OR
- * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- */
+/* Copyright 2001, 2002 The JA-SIG Collaborative.  All rights reserved.
+*  See license distributed with this file and
+*  available online at http://www.uportal.org/license.html
+*/
 
 package org.jasig.portal;
 
@@ -43,7 +13,6 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.utils.IPortalDocument;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -229,40 +198,44 @@ public class ChannelDefinition implements IBasicEntity {
   }
 
   /**
-   * Minimum attributes a channel must have
+   * Get an Element expressing the minimum attributes necessary to represent
+   * a channel.
+   * @param doc Document that will be the owner of the Element returned
+   * @param idTag Value of the identifier for the channel
+   * @param chanClassArg fully qualified class name of the channel
+   * @param editable true if the channel handles the Edit event
+   * @param hasHelp true if the channel handles the Help event
+   * @param hasAbout true if the channel handles the About event 
+   * @return Element representing the channel
    */
-  private Element getBase(Document doc, String idTag, String chanClass,
+  private Element getBase(Document doc, String idTag, String chanClassArg,
     boolean editable, boolean hasHelp, boolean  hasAbout) {
     Element channel = doc.createElement("channel");
     
-    if (doc instanceof IPortalDocument) {
-      ((IPortalDocument)doc).putIdentifier(idTag, channel);
-    } else {
-      StringBuffer msg = new StringBuffer(128);
-      msg.append("ChannelDefinition::getBase() : ");
-      msg.append("Document does not implement IPortalDocument, ");
-      msg.append("so element caching cannot be performed.");
-      log.error( msg.toString());
-    }
-
+    // the ID attribute is the identifier for the Channel element
     channel.setAttribute("ID", idTag);
-    channel.setAttribute("chanID", id + "");
-    channel.setAttribute("timeout", chanTimeout + "");
-    if (chanLocale != null) {
-        channel.setAttribute("name", getName(chanLocale));
-        channel.setAttribute("title", getTitle(chanLocale));
-        channel.setAttribute("locale", chanLocale);
+    channel.setIdAttribute("ID", true);
+    
+    channel.setAttribute("chanID", this.id + "");
+    channel.setAttribute("timeout", this.chanTimeout + "");
+    if (this.chanLocale != null) {
+        channel.setAttribute("name", getName(this.chanLocale));
+        channel.setAttribute("title", getTitle(this.chanLocale));
+        channel.setAttribute("locale", this.chanLocale);
     }  else {
-        channel.setAttribute("name", chanName);
-        channel.setAttribute("title", chanTitle);
+        channel.setAttribute("name", this.chanName);
+        channel.setAttribute("title", this.chanTitle);
     }
-    channel.setAttribute("fname", chanFName);
-    channel.setAttribute("class", chanClass);
-    channel.setAttribute("typeID", chanTypeId + "");
+    channel.setAttribute("fname", this.chanFName);
+    
+    // chanClassArg is so named to highlight that we are using the argument
+    // to the method rather than the instance variable chanClass
+    channel.setAttribute("class", chanClassArg);
+    channel.setAttribute("typeID", this.chanTypeId + "");
     channel.setAttribute("editable", editable ? "true" : "false");
     channel.setAttribute("hasHelp", hasHelp ? "true" : "false");
     channel.setAttribute("hasAbout", hasAbout ? "true" : "false");
-    channel.setAttribute("secure", chanIsSecure ? "true" : "false");    
+    channel.setAttribute("secure", this.chanIsSecure ? "true" : "false");    
     return channel;
   }
 
