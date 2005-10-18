@@ -353,16 +353,20 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
             try {
                 URL resourceUrl = ResourceLoader.getResourceAsURL(this.getClass(), uriArg);
                 uriArg = resourceUrl.toExternalForm();
-            } catch (ResourceMissingException e1) {
-                throw new IllegalArgumentException("Resource [" + uriArg + "] missing.", e1);
+            } catch (ResourceMissingException rme) {
+                IllegalArgumentException iae = new IllegalArgumentException("Resource [" + uriArg + "] missing.");
+                iae.initCause(rme);
+                throw iae;
             }
             
             try {
                 this.uriScrutinizer.scrutinize(new URI(uriArg));
                 this.xmlUri = uriArg;
             } catch (URISyntaxException e) {
-                throw new IllegalArgumentException("Value [" + uriArg
-                        + "]had bad URI syntax.", e);
+                IllegalArgumentException iae = new IllegalArgumentException("Value [" + uriArg
+                        + "]had bad URI syntax.");
+                iae.initCause(e);
+                throw iae;
             }
         } 
         // if uriArg was null do nothing.
