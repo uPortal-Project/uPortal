@@ -408,7 +408,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
     String scrutinizeXmlUriAsStaticDataString = sd.getParameter(RESTRICT_STATIC_XMLURI_PREFIXES_PARAM);
     boolean scrutinizeXmlUriAsStaticData = "true".equals(scrutinizeXmlUriAsStaticDataString);
     
-    String xmlUriParam = sd.getParameter("xmlUri");
+    String xmlUriParam = sd.getParameter("cw_xml");
     if (scrutinizeXmlUriAsStaticData) {
         // apply configured xmlUri restrictions
         state.setXmlUri(xmlUriParam);
@@ -441,13 +441,11 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
     }
 
 
-    state.setXmlUri(sd.getParameter ("cw_xml"));
     state.sslUri = sd.getParameter("cw_ssl");
     state.xslTitle = sd.getParameter ("cw_xslTitle");
     state.xslUri = sd.getParameter("cw_xsl");
     state.fullxmlUri = sd.getParameter("cw_xml");
     
-    state.fullxmlUri = sd.getParameter ("cw_xml");
     state.passThrough = sd.getParameter ("cw_passThrough");
     state.tidy = sd.getParameter ("cw_tidy");
     
