@@ -645,9 +645,9 @@ public class RDBMDistributedLayoutStore
                 LOG.error("Property '" + TEMPLATE_USER_NAME + "' not defined.",
                         re);
             }
+        }
             if (systemDefaultUser != null && systemDefaultUser.equals(userName))
                 return true;
-        }
         
         return false;
     }
