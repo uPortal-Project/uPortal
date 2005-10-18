@@ -173,7 +173,9 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
         try {
             url = ResourceLoader.getResourceAsURL(this.getClass(), xmlUriArg);
         } catch (ResourceMissingException e) {
-            throw new IllegalArgumentException("Resource [" + xmlUriArg + "] missing.", e);
+            IllegalArgumentException iae = new IllegalArgumentException("Resource [" + xmlUriArg + "] missing.");
+            iae.initCause(e);
+            throw iae;
         }
         
         String urlString = url.toExternalForm();
