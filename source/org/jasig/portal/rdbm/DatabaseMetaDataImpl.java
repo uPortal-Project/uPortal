@@ -57,7 +57,7 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata {
     private static final JoinQueryString oracleDb = new DatabaseMetaDataImpl.OracleDb("UP_USER, UP_USER_LAYOUT WHERE UP_USER.USER_ID = UP_USER_LAYOUT.USER_ID(+) AND");
     
     /** Array of join tests to perform. */
-    private static final JoinQueryString[] joinTests = {jdbcDb, postgreSQLDb, oracleDb};
+    private static final JoinQueryString[] joinTests = {oracleDb, postgreSQLDb, jdbcDb};
     
     /** The {@link DataSource} that represents the server */
     final private DataSource dataSource;

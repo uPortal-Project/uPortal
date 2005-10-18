@@ -28,7 +28,6 @@ public class ChannelData {
     private long lastRenderTime = Long.MIN_VALUE;
     private String expirationCache = null;
     private WindowState newWindowState = null;
-    private Map lastRequestParameters = null;
         
     public boolean isPortletWindowInitialized() { return this.portletWindowInitialized; }
     public PortletWindow getPortletWindow() { return this.portletWindow; }
@@ -40,7 +39,6 @@ public class ChannelData {
     public WindowState getNewWindowState() { return this.newWindowState; }
     public long getLastRenderTime() { return this.lastRenderTime; }
     public String getExpirationCache() { return this.expirationCache; }
-    public Map getLastRequestParameters() { return this.lastRequestParameters; }
         
     public void setPortletWindowInitialized(boolean portletWindowInitialized) { this.portletWindowInitialized = portletWindowInitialized; }
     public void setPortletWindow(PortletWindow portletWindow) { this.portletWindow = portletWindow; }
@@ -52,6 +50,5 @@ public class ChannelData {
     public void setNewWindowState(WindowState newWindowState) { this.newWindowState = newWindowState; }
     public void setLastRenderTime(long lastRenderTime) { this.lastRenderTime = lastRenderTime; }
     public void setExpirationCache(String expirationCache) { this.expirationCache = expirationCache; }
-    public void setLastRequestParameters(Map lastRequestParameters) { this.lastRequestParameters = lastRequestParameters; }
 }
 

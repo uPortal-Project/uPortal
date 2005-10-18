@@ -162,7 +162,7 @@ public class Resources_Test
     {
         return MessageFormat.format(
             loadString( name ),
-            objects
+            (Object[])objects
             );
     }
     private void stringsEqual( String name )

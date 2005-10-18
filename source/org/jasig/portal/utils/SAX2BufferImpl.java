@@ -274,7 +274,7 @@ public class SAX2BufferImpl extends SAX2FilterImpl
 
     /**
      * Outputs buffer's content to a specified content handler.
-     * Please note that the contant handler can also represent
+     * Please note that the content handler can also represent
      * lexical handler, dtd handler and error handler.
      * This method is thread-safe.
      *

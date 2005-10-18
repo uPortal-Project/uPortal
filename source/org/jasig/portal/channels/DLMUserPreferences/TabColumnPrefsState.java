@@ -46,7 +46,9 @@ import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.layout.node.UserLayoutChannelDescription;
 import org.jasig.portal.layout.node.UserLayoutFolderDescription;
 import org.jasig.portal.layout.UserLayoutManagerFactory;
+import org.jasig.portal.layout.dlm.Constants;
 import org.jasig.portal.layout.dlm.UserPrefsHandler;
+import org.jasig.portal.security.IPerson;
 import org.jasig.portal.serialize.OutputFormat;
 import org.jasig.portal.serialize.XMLSerializer;
 import org.apache.commons.logging.Log;
@@ -1109,8 +1111,10 @@ public class TabColumnPrefsState extends BaseState
 
     public void setRuntimeData(ChannelRuntimeData rd) throws PortalException {
       try {
+        IPerson user  = staticData.getPerson();
         editedUserProfile.setLayoutId(0);
-        ulStore.updateUserProfile(staticData.getPerson(), editedUserProfile);
+        ulStore.updateUserProfile(user, editedUserProfile);
+        user.setAttribute( Constants.PLF, null );
         ulm.loadUserLayout();
       } catch (Exception e) {
         throw new PortalException(e);

@@ -85,7 +85,7 @@ public class ChainedThrowable_Test
             new Error(),
             new Exception(),
             new RuntimeException(),
-            (Throwable)throwable.getDeclaredConstructor( null ).newInstance( null )
+            (Throwable)throwable.getDeclaredConstructor( (Class[])null ).newInstance( (Object[])null )
         };
 
         Constructor[] constructors = throwable.getDeclaredConstructors();
@@ -174,29 +174,29 @@ public class ChainedThrowable_Test
     {
         Method getMessage = throwable.getClass().getMethod(
             "getMessage",
-            null
+            (Class[])null
             );
 
         assertEquals(
             "getMessage should return constructed message",
-            getMessage.invoke( throwable, null ),//(null == findMessage( parameterValues )) && (null != findCause( parameterValues )) ? findCause( parameterValues ).toString() : findMessage( parameterValues ),
-            getMessage.invoke( throwable, null )
+            getMessage.invoke( throwable, (Object[])null ),//(null == findMessage( parameterValues )) && (null != findCause( parameterValues )) ? findCause( parameterValues ).toString() : findMessage( parameterValues ),
+            getMessage.invoke( throwable, (Object[])null )
             );
 
         Method getCause = throwable.getClass().getMethod(
             "getCause",
-            null
+            (Class[])null
             );
 
         assertEquals(
             "getCause should return constructed value",
             findCause( parameterValues ),
-            getCause.invoke( throwable, null )
+            getCause.invoke( throwable, (Object[])null )
             );
 
         testPrintStackTrace(
             throwable,
-            (Throwable)getCause.invoke( throwable, null )
+            (Throwable)getCause.invoke( throwable, (Object[])null )
             );
 
 /*
