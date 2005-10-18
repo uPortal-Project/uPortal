@@ -320,7 +320,7 @@ exclude-result-prefixes="dlm">
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
       <tr align="left" valign="bottom" class="uportal-background-content">
         <td class="uportal-channel-title">
-          <a name="{@ID}"><xsl:value-of select="@title"/></a>
+          <a name="{@ID}"></a><xsl:value-of select="@title"/>
         </td>
         <td align="right" nowrap="nowrap" class="uportal-background-content">
                 <xsl:choose>
