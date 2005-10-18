@@ -163,7 +163,7 @@ public final class PrefixUriScrutinizer
         // if no match, fail
         if (!acceptParamValue) {
             throw new BlockedUriException(uriArg, 
-                    "URI not prefixed by any of the allowed prefixes (" + this.allowPrefixes + ")");
+                    "URI not prefixed by any of the allowed prefixes (" + Arrays.asList(this.allowPrefixes) + ")");
         }
         
         for (int blockedPrefixNum = 0; 
