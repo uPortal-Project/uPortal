@@ -185,6 +185,7 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
             throw new IllegalArgumentException("xmlUri [" + xmlUriArg + "] resolved to a URI with bad syntax.");
         }
         
+        this.xmlUri = xmlUriArg;
     }
   }
   
