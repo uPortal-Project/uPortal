@@ -208,8 +208,6 @@ Version $Revision$
 
     </params>
     
-    
-  </params>
 
   <controls>
     <control type="edit" include="no" override="no"/>
