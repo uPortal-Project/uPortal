@@ -1245,7 +1245,8 @@
 -->
   <!-- You must copy junit.jar into $ANT_HOME/lib directory for this to work -->
   <target name="runtests" depends="compiletests" description="Run JUnit Test Suite">
-    <junit fork="true" printsummary="on" showoutput="off" dir=".." >
+    <junit fork="true" printsummary="off" showoutput="off" dir=".." 
+      haltonerror="true" haltonfailure="true">
       <classpath>
         <pathelement path="${build.home}/WEB-INF/classes"/>
         <path refid="tests.classpath"/>
@@ -1259,6 +1260,7 @@
           <exclude name="**/DbTest.class"/>
       </fileset>
     </batchtest>
+    <formatter type="brief" usefile="no"/>
   </junit>
   </target>
 
