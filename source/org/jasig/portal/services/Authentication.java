@@ -118,14 +118,22 @@ public class Authentication {
             // Retrieve all of the attributes associated with the person logging in
             IPersonAttributeDao pa = PersonDirectory.getPersonAttributeDao();
             Map attribs = pa.getUserAttributes((String)person.getAttribute(IPerson.USERNAME));
-            // Add each of the attributes to the IPerson
-            Iterator en = attribs.keySet().iterator();
-            while (en.hasNext()) {
-               String key = (String)en.next();
-               // String value = (String)attribs.get(key);
-               // person.setAttribute(key, value);
-               person.setAttribute(key, attribs.get(key));
+            
+            if (attribs != null) {
+            	// attribs may be null.  IPersonAttributeDao returns null when it does not recognize a user at all, as 
+            	// distinguished from returning an empty Map of attributes when it recognizes a user has having no 
+            	// attributes.
+            	
+                // Add each of the attributes to the IPerson
+                Iterator en = attribs.keySet().iterator();
+                while (en.hasNext()) {
+                   String key = (String)en.next();
+                   // String value = (String)attribs.get(key);
+                   // person.setAttribute(key, value);
+                   person.setAttribute(key, attribs.get(key));
+                }
             }
+
          }
          // Make sure the the user's fullname is set
          if (person.getFullName() == null) {

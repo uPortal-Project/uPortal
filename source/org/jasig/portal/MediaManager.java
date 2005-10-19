@@ -45,9 +45,23 @@ public class MediaManager {
   protected OrderedProps serializerProps = null;
   private static boolean outputIndenting = 
       PropertiesManager.getPropertyAsBoolean("org.jasig.portal.MediaManager.output_indenting", false);
+ 
+  /**
+   * As of uPortal 2.5.1, this property is "no" (meaning false) in the distributed 
+   * portal.properties.  This Java code continues to default the property to true
+   * to maintain the behavior of 2.5.0 when the property is not specified in
+   * portal.properties.  In a future release of uPortal, this property will
+   * default to false in order to restore agreement between default here and
+   * default in portal.properties.
+   */  
   private static boolean omitDoctype = 
       PropertiesManager.getPropertyAsBoolean("org.jasig.portal.MediaManager.omit_doctype", true);
 
+  private static final String mediaPropsUrl = MediaManager.class.getResource("/properties/media.properties").toString();
+  private static final String mimePropsUrl = MediaManager.class.getResource("/properties/mime.properties").toString();
+  private static final String serializerPropsUrl = MediaManager.class.getResource("/properties/serializer.properties").toString();
+  
+  private static final MediaManager MEDIAMANAGER = new MediaManager(mediaPropsUrl, mimePropsUrl, serializerPropsUrl);
   /**
    * A user agent string to use when the user-agent header value itself is null.
    *
@@ -58,9 +72,18 @@ public class MediaManager {
   /**
    * Constructs a MediaManager
    */
-  public MediaManager () {
+  private MediaManager () {
   }
 
+  /**
+   * 7/25/05 - UP-1181 - change MediaManager into a singleton
+   * 
+   * Returns the default MediaManager singleton
+   */
+  public static MediaManager getMediaManager() {
+      return (MEDIAMANAGER);
+  }
+  
   /**
    * Constructor that initializes all of the property tables.
    * This is equivalent to running a base constructor and
@@ -70,7 +93,7 @@ public class MediaManager {
    * @param mimePropsFile location of the mime properties file
    * @param serializerPropsFile location of the serializer properties file
    */
-  public MediaManager (String mediaPropsFile, String mimePropsFile, String serializerPropsFile) {
+  private MediaManager (String mediaPropsFile, String mimePropsFile, String serializerPropsFile) {
     setMediaProps(mediaPropsFile);
     setMimeProps(mimePropsFile);
     setSerializerProps(serializerPropsFile);

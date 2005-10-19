@@ -5,6 +5,7 @@
 
  package org.jasig.portal;
 
+import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
@@ -15,7 +16,7 @@ import java.util.Hashtable;
  * @version $Revision$
  */
 
-public class StylesheetUserPreferences {
+public class StylesheetUserPreferences implements Serializable {
     private int id;
     private Hashtable parameters;
 
@@ -26,6 +27,18 @@ public class StylesheetUserPreferences {
     public StylesheetUserPreferences(StylesheetUserPreferences sup) {
         this.id=sup.id;
         this.parameters=new Hashtable(sup.getParameterValues());
+    }
+    
+    /**
+     * Provides a copy of this object with all fields instantiated to reflect 
+     * the values of this object. This allows subclasses to override to add
+     * correct copying behavior for their added fields.
+     * 
+     * @return a copy of this object
+     */
+    public Object newInstance()
+    {
+        return new StylesheetUserPreferences(this);
     }
 
     public int getStylesheetId() { return id; }

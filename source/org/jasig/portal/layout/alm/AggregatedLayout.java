@@ -11,6 +11,8 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.Vector;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.layout.LayoutEventListener;
 import org.jasig.portal.layout.node.IUserLayoutFolderDescription;
@@ -38,6 +40,7 @@ import org.xml.sax.helpers.AttributesImpl;
  * @version $Revision$
  */
 public class AggregatedLayout implements IAggregatedLayout {
+    private static final Log LOG = LogFactory.getLog(AggregatedLayout.class);
 
     // The hashtable with the layout nodes
     private Hashtable layout = null;
@@ -70,7 +73,21 @@ public class AggregatedLayout implements IAggregatedLayout {
   }
   
   public void setLayoutData ( Hashtable layout ) throws PortalException {
-    this.layout = layout;
+	  // check that layout isn't corrupt 
+	  for ( Enumeration nodeIds = layout.keys(); nodeIds.hasMoreElements() ;) {
+		  String nodeId = nodeIds.nextElement().toString();
+		  ALNode node = (ALNode)layout.get(nodeId);
+		  // check for nodes that reference themselves
+		  if (node != null && (nodeId.equals(node.getNextNodeId()) ||
+				  nodeId.equals(node.getPreviousNodeId()) ||
+				  nodeId.equals(node.getParentNodeId())) 
+		  ){
+			  throw new RuntimeException(
+					  "corrupted layout detected, node: "+nodeId +" " +
+					  "layout:"+layout);
+		  }
+	  }
+	  this.layout = layout;
   }
 
   public Hashtable getLayoutData() throws PortalException {
@@ -104,15 +121,36 @@ public class AggregatedLayout implements IAggregatedLayout {
   }
 
   public ALNode getLayoutNode(String nodeId) {
-     if ( nodeId != null )
-        return (ALNode)layout.get(nodeId);
-        return null;
+	  if ( nodeId != null ){
+		  ALNode aln = (ALNode)layout.get(nodeId);
+		  if (aln != null && (nodeId.equals(aln.getNextNodeId()) ||
+			  nodeId.equals(aln.getPreviousNodeId()) ||
+			  nodeId.equals(aln.getParentNodeId())) 
+		  ){
+			  throw new RuntimeException(
+					  "corrupted layout detected, node: "+nodeId +" " +
+					  "layout:"+layout);
+		  }
+		  return aln;
+	  }
+	  return null;
   }
 
   public ALFolder getLayoutFolder(String folderId) {
-     if ( folderId != null )
-        return (ALFolder)layout.get(folderId);
-        return null;
+	  if ( folderId != null ){
+		  ALFolder aln = (ALFolder)layout.get(folderId);
+		  if (aln != null && 
+				  (folderId.equals(aln.getNextNodeId()) ||
+				  folderId.equals(aln.getPreviousNodeId()) ||
+				  folderId.equals(aln.getParentNodeId())) 
+		  ){
+			  throw new RuntimeException(
+					  "corrupted layout detected, node: "+folderId +" " +
+					  "layout:"+layout);
+		  }
+		  return aln;
+	  }
+	  return null;
   }
 
   public ALNode getLastSiblingNode ( String nodeId ) {
@@ -211,16 +249,27 @@ public class AggregatedLayout implements IAggregatedLayout {
             else if ( nextId == null )
               isNodeMarkable = true;
 
-            if ( layoutManager != null && isNodeMarkable && !getLayoutNode(parentId).getNodeDescription().isHidden() ) {
-              IALNodeDescription moveTargetsNodeDesc = layoutManager.getNodeBeingMoved();
-              String moveTargetsNodeId = ( moveTargetsNodeDesc != null ) ? moveTargetsNodeDesc.getId() : null;
-              IALNodeDescription addTargetsNodeDesc = layoutManager.getNodeBeingAdded();
-             if ( addTargetsNodeDesc != null && layoutManager.canAddNode(addTargetsNodeDesc,parentId,nextId) )
-               createMarkingLeaf(domLayout,ADD_TARGET,parentId,nextId,node);
-             if ( moveTargetsNodeId != null && !moveTargetsNodeId.equals(nextId) &&
-                  layoutManager.canMoveNode(moveTargetsNodeId,parentId,nextId) )
-               createMarkingLeaf(domLayout,MOVE_TARGET,parentId,nextId,node);
-
+            if ( layoutManager != null && isNodeMarkable ) {
+            	ALNode tempNode = getLayoutNode(parentId);
+            	if ( tempNode == null){
+            		throw new RuntimeException("getLayoutNode("+parentId+") returned null");
+            	}
+            	IUserLayoutNodeDescription desc = tempNode.getNodeDescription();
+            	if (desc == null){
+            		throw new RuntimeException("getNodeDescription() returned null. tempNode: "+tempNode);
+            	}
+            	if (!desc.isHidden()){
+	            	IALNodeDescription moveTargetsNodeDesc = layoutManager.getNodeBeingMoved();
+	            	String moveTargetsNodeId = ( moveTargetsNodeDesc != null ) ? moveTargetsNodeDesc.getId() : null;
+	            	IALNodeDescription addTargetsNodeDesc = layoutManager.getNodeBeingAdded();
+	            	if ( addTargetsNodeDesc != null && layoutManager.canAddNode(addTargetsNodeDesc,parentId,nextId) ){
+	            		createMarkingLeaf(domLayout,ADD_TARGET,parentId,nextId,node);
+	            	}
+	            	if ( moveTargetsNodeId != null && !moveTargetsNodeId.equals(nextId) &&
+	            			layoutManager.canMoveNode(moveTargetsNodeId,parentId,nextId) ){
+	            		createMarkingLeaf(domLayout,MOVE_TARGET,parentId,nextId,node);
+	            	}
+            	}
             }
 
           }
@@ -474,7 +523,7 @@ public class AggregatedLayout implements IAggregatedLayout {
         // Build the DOM
         appendDescendants(document,layoutNode,nodeId);
       } catch ( Exception e ) {
-          e.printStackTrace();
+          LOG.error(e,e);
           throw new PortalException ("Couldn't create the DOM representation: " + e );
         }
     }

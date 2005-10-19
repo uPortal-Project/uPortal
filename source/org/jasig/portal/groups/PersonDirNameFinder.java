@@ -30,7 +30,7 @@ public class PersonDirNameFinder
     private IPersonAttributeDao paDao;
     
     /** Our cache of entity names: */
-    private Map names = Collections.synchronizedMap(new SoftHashMap());
+    private Map names = new SoftHashMap();
 
     /**
      * Instantiate a PersonDirNameFinder backed by the given

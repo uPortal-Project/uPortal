@@ -127,7 +127,11 @@ public class JNDIManager {
       // bind userId to /sessions context
       try {
           Context tsessionContext=(Context)topContext.lookup("/sessions");
-          tsessionContext.bind(session.getId(),userId);
+          try {
+              tsessionContext.bind(session.getId(),userId);
+          } catch (NameAlreadyBoundException nabe) {
+              tsessionContext.rebind(session.getId(),userId);
+          }
       } catch (NamingException ne) {
           log.error( "JNDIManager.initializeSessionContext(): Unable to obtain /sessions context", ne);
       }

@@ -50,24 +50,24 @@ $Revision$
 
 
   publish
-  -------
+  =======
   the publisher can set the parameter value and can also 
   control (via a checkbox) whether or not the user should 
   be able to override the value at subscribe time - defaults 
   to not letting the subscriber override
 
   subscribe
-  ---------
+  =========
   same as above except defaults to letting the 
   subscriber override
 
   publish-only
-  ------------
+  ============
   the parameter value is set by the publisher 
   (publisher cannot change this)
 
   subscribe-only
-  --------------
+  ==============
   the parameter value is set by the subscriber 
   (publisher cannot change this)
 

@@ -97,7 +97,7 @@ public final class CError extends BaseChannel implements IPrivilegedChannel,
      */
     private static final String sslLocation = "CError/CError.ssl";
 
-    private static MediaManager mediaM = new MediaManager();
+    private static final MediaManager MEDIAMANAGER=MediaManager.getMediaManager();
 
     /**
      * Construct an uninitialized instance of the CError channel.
@@ -426,7 +426,7 @@ public final class CError extends BaseChannel implements IPrivilegedChannel,
 
         Document doc = this.errorDocument.getDocument();
         
-        if (log.isTraceEnabled()){
+        if (log.isWarnEnabled()){
             try {
 //                java.io.StringWriter outString = new java.io.StringWriter();
 //                org.apache.xml.serialize.OutputFormat format = 
@@ -436,9 +436,9 @@ public final class CError extends BaseChannel implements IPrivilegedChannel,
 //                org.apache.xml.serialize.XMLSerializer xsl = 
 //                    new org.apache.xml.serialize.XMLSerializer(outString, format);
 //                xsl.serialize(doc);
-                log.trace("ErrorDocument XML is \n" + XML.serializeNode(doc));
+                log.warn("ErrorDocument XML is \n" + XML.serializeNode(doc));
             } catch (Exception e) {
-                log.warn(e, e);
+                log.error(e, e);
             }  
         }
 
@@ -524,7 +524,7 @@ public final class CError extends BaseChannel implements IPrivilegedChannel,
                             ThemeStylesheetDescription tsd = this.portcs
                                     .getUserPreferencesManager()
                                     .getThemeStylesheetDescription();
-                            BaseMarkupSerializer serOut = mediaM
+                            BaseMarkupSerializer serOut = MEDIAMANAGER
                                     .getSerializerByName(tsd
                                             .getSerializerName(), out);
                             this.the_channel.renderXML(serOut);
@@ -567,7 +567,7 @@ public final class CError extends BaseChannel implements IPrivilegedChannel,
                                     ThemeStylesheetDescription tsd = this.portcs
                                             .getUserPreferencesManager()
                                             .getThemeStylesheetDescription();
-                                    BaseMarkupSerializer serOut = mediaM
+                                    BaseMarkupSerializer serOut = MEDIAMANAGER
                                             .getSerializerByName(tsd
                                                     .getSerializerName(), out);
                                     this.the_channel.renderXML(serOut);
@@ -605,7 +605,7 @@ public final class CError extends BaseChannel implements IPrivilegedChannel,
             ThemeStylesheetDescription tsd = this.portcs
                     .getUserPreferencesManager()
                     .getThemeStylesheetDescription();
-            serOut = mediaM.getSerializerByName(tsd.getSerializerName(), out);
+            serOut = MEDIAMANAGER.getSerializerByName(tsd.getSerializerName(), out);
         } catch (Exception e) {
             log.error("CError::renderCharacters() : " +
                     "unable to obtain proper markup serializer : ", e);

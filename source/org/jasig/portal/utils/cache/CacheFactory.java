@@ -16,6 +16,9 @@ import java.util.Map;
  *
  */
 public interface CacheFactory {
+
+    /** The cache to be used to hold user information. */
+    String USER_INFO_CACHE = "userInfoCache";    
     
     /** The cache to be used to hold principals. */
     String PRINCIPAL_CACHE = "principalCache";

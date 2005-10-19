@@ -39,9 +39,22 @@ public class StructureStylesheetUserPreferences extends ThemeStylesheetUserPrefe
 
     public StructureStylesheetUserPreferences( StructureStylesheetUserPreferences fsup) {
         super(fsup);
-        this.folderAttributeNumbers=new Hashtable(fsup.folderAttributeNumbers);
-        this.folderAttributeValues=new Hashtable(fsup.folderAttributeValues);
-        this.defaultFolderAttributeValues=new ArrayList(fsup.defaultFolderAttributeValues);
+        
+        // fields added by this class may be null if we are dealing with an 
+        // instance of DistributeUserPreferences wrapping a 
+        // ThemeStylesheetUserPreferences object since the theme transform does
+        // not use folder preferences. So check for null before instantiating
+        // these fields.
+        
+        if (fsup.folderAttributeNumbers != null)
+            this.folderAttributeNumbers = new Hashtable(
+                    fsup.folderAttributeNumbers);
+        if (fsup.folderAttributeValues != null)
+            this.folderAttributeValues = new Hashtable(
+                    fsup.folderAttributeValues);
+        if (fsup.defaultFolderAttributeValues != null)
+            this.defaultFolderAttributeValues = new ArrayList(
+                    fsup.defaultFolderAttributeValues);
     }
 
     /**
@@ -51,6 +64,18 @@ public class StructureStylesheetUserPreferences extends ThemeStylesheetUserPrefe
      */
     public StructureStylesheetUserPreferences( ThemeStylesheetUserPreferences tsup) {
         super(tsup);
+    }
+
+    /**
+     * Provides a copy of this object with all fields instantiated to reflect 
+     * the values of this object. This allows subclasses to override to add
+     * correct copying behavior for their added fields.
+     * 
+     * @return a copy of this object
+     */
+    public Object newInstance()
+    {
+        return new StructureStylesheetUserPreferences(this);
     }
 
     public String getFolderAttributeValue(String folderID,String attributeName) {

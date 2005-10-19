@@ -48,12 +48,9 @@ public class ILFBuilder
         Element plfRoot = (Element) plfLayout.getFirstChild();
         Element ilfRoot = (Element) result.importNode( plfRoot, false);
         ilfLayout.appendChild(ilfRoot);
-        String id = ilfRoot.getAttribute("ID");
-        Element el = result.getElementById(id);
         
         if (ilfRoot.getAttribute(Constants.ATT_ID) != null)
             ilfRoot.setIdAttribute(Constants.ATT_ID, true);
-        el = result.getElementById(id);
 
         // build the auth principal for determining if pushed channels can be 
         // used by this user
