@@ -79,7 +79,7 @@ Version $Revision$
         <html>
             <head>
                 <title>
-                    <xsl:value-of select="content/channel/@name"/>
+                    <xsl:value-of select="content/channel/@title"/>
                 </title>
                 <META HTTP-EQUIV="expires" CONTENT="Wed, 26 Feb 1997 08:21:57 GMT"/>
                 <META HTTP-EQUIV="pragma" CONTENT="no-cache"/>
@@ -233,7 +233,7 @@ Version $Revision$
                         </td>
                         <td nowrap="nowrap" class="uportal-background-selected">
                             <span class="uportal-channel-title">
-                                <a name="{@ID}"><xsl:value-of select="@name"/></a>
+                                <a name="{@ID}"><xsl:value-of select="@title"/></a>
                                 <xsl:text/>(selected)</span>
                         </td>
                         <td class="uportal-background-dark" style="background-image: url({$mediaPathMainBorder}/headerrightborderselected.gif); background-repeat:repeat-y;">
@@ -270,7 +270,7 @@ Version $Revision$
                         </td>
                         <td nowrap="nowrap" class="uportal-background-semidark">
                             <span class="uportal-channel-title">
-                                <a name="{@ID}"><xsl:value-of select="@name"/></a>
+                                <a name="{@ID}"><xsl:value-of select="@title"/></a>
                             </span>
                         </td>
                         <td class="uportal-background-dark" style="background-image: url({$mediaPathMainBorder}/headerrightborder.gif); background-repeat:repeat-y;">
