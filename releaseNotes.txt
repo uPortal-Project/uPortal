@@ -1,84 +1,45 @@
-Release notes for uPortal 2.5.1 GA (general audience release):
+Release notes for uPortal 2.5.2-SNAPSHOT 
+(the tip of the 2-5-patches branch post-2.5.1):
 
-CVS tag: rel-2-5-1
+CVS branch: 2-5-patches
+
 
 Known issues
 
-There are many known bugs in uPortal.  We expect there are many fewer of them in this release than in 2.5.0.  
-You can query our JIRA system for known issues affecting this release, including
-issues discovered after this release was cut.
-
-http://jasigch.princeton.edu:9000/jira/
-Search for issues with a "Matches Versions" of this release.
+There are many known bugs in uPortal.  We aspire to having fewer of them in 2.5.2 than were present in 2.5.1.  
 
 
 Upgrading:
 
-CWebProxy and CGenericXSLT changed for this release to address security vulnerabilities.  
-These channels honor fewer ChannelRuntimeParameters now.
-This will not affect most deployments.  A few deployments will need to re-examine CWebProxy and re-implement the 
-insecure features that were removed in more secure ways.  CWebProxy also changed to require that the xmlUri be
-an http:// or https:// URI.  You can make this rule more or less restrictive by publish-time configuration of 
-CWebProxy instances.  (UP-1253)
-
-While your current IChannels and theme transforms will work unchanged in uPortal 2.5.1 if they worked in 2.5.0, 
-transforms require minor changes and channels potentially major changes to take advantage of dynamic 
-channel titles.  CTimeTitle and the changes to the ALM / Integration Modes theme transform provide an example. (
-
-RDBMServices changed to stop declaring some SQLExceptions it would never throw.  Code catching those exceptions
-will no longer compile (compile will fail with an unreachable catch block error).  Fixing this is trivial:
-remove the unreachable catch blocks.
+(This release notes section should contain information about upgrading to 2.5.2 from 2.5.1.)
 
 
 
 Major new features and improvements in this release:
 
-Dynamic channel titles: now channels can specify at runtime their desired title, instead of just using 
-a title configured at the time of channel publication.  CPortletAdapter needs enhancement to take advantage of this
-feature to present dynamic portlet titles as dynamic channel titles.
-
-Support for multiple stats recorders.
-Inherent threadsafety of SoftHashMap.
-
-A short-lived caching adaptor for PersonAttributeDao (the API backing PersonDirectory) is now available. (UP-1251)
-Support for 'deepMemberOf' in DLM's GroupMembershipEvaluator. (UP-1284)
-
-DLM revert to default layout now takes effect immediately. (UP-1199)
-
-And many more minor enhancements.
-
+(This section should highlight major new features and improvements beyond 2.5.1).
 
 
 Bug fixes in this release:
 
-This release blocks CWebProxy and CGenericXSLT security exploits.
-
-Reduction of excessive object creation.
-Threadsafety of system cache.
-Recognition of default template user in DLM (UP-1273).
-Aggregated Layouts fixes.
-
-And many more minor bug fixes.
+This section should highlight significant bugfixes in this release.
 
 
 
 Database schema changes
 
-There are no database schema changes between uPortal 2.5.0 and uPortal 2.5.1.
-
-There were minor database schema changes between uPortal 2.4.x and uPortal 2.5.0.  These affect Aggregated Layouts.
+Ideally there will be no database schema changes between 2.5.1 and 2.5.2.
+In the unfortunate case where there are such changes, they should be described here.
 
 
 Discussing this release and reporting issues:
 
-Please discuss this release on the uPortal project discussion lists.  Please post issues discovered into JIRA.
+Please discuss work in 2-5-patches towards 2.5.2 on the uPortal project discussion lists.  
+Please post issues discovered into JIRA.
 
+(Almost) all changes applied to 2-5-patches working towards 2.5.2 should be reflected in JIRA issues.
 
 Release engineer's environment:
 
-This release was engineered on an 
-IBM Thinkpad R31  / Windows XP SP2 / Eclipse 3.0.1 / HSQLDB,
-building under JDK 1.4.2_06 and JDK 1.5.0_01 and tested in a Tomcat 5.5.9 under the 1.5 JDK.
-
-and was actually built on a RedHat Linux machine using a version of the shell script in /etc/,
-under JDK 1.5.0_05.
+When releases are produced, please note the environment in which they were produced here.  This is in response to a
+request that release notes include information about the release engineering environment. 
