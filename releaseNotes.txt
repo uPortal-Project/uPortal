@@ -1,8 +1,6 @@
-This is a file for notes specific to the uPortal release that the code you're looking at
-either is (in the case of a tagged release) or will become (in the case of the tip of a patches or main branch).
+Release notes for uPortal 2.5.1 GA (general audience release):
 
-
-Release notes for uPortal 2.5.1 RC2 (release candidate):
+CVS tag: rel-2-5-1
 
 Known issues
 
@@ -25,7 +23,7 @@ CWebProxy instances.  (UP-1253)
 
 While your current IChannels and theme transforms will work unchanged in uPortal 2.5.1 if they worked in 2.5.0, 
 transforms require minor changes and channels potentially major changes to take advantage of dynamic 
-channel titles.  CTimeTitle and the changes to the ALM / Integration Modes theme transform provide an example.
+channel titles.  CTimeTitle and the changes to the ALM / Integration Modes theme transform provide an example. (
 
 RDBMServices changed to stop declaring some SQLExceptions it would never throw.  Code catching those exceptions
 will no longer compile (compile will fail with an unreachable catch block error).  Fixing this is trivial:
@@ -41,17 +39,26 @@ feature to present dynamic portlet titles as dynamic channel titles.
 
 Support for multiple stats recorders.
 Inherent threadsafety of SoftHashMap.
+
+A short-lived caching adaptor for PersonAttributeDao (the API backing PersonDirectory) is now available. (UP-1251)
+Support for 'deepMemberOf' in DLM's GroupMembershipEvaluator. (UP-1284)
+
+DLM revert to default layout now takes effect immediately. (UP-1199)
+
 And many more minor enhancements.
 
 
 
 Bug fixes in this release:
 
+This release blocks CWebProxy and CGenericXSLT security exploits.
+
 Reduction of excessive object creation.
 Threadsafety of system cache.
+Recognition of default template user in DLM (UP-1273).
+Aggregated Layouts fixes.
+
 And many more minor bug fixes.
-
-
 
 
 
@@ -71,6 +78,7 @@ Release engineer's environment:
 
 This release was engineered on an 
 IBM Thinkpad R31  / Windows XP SP2 / Eclipse 3.0.1 / HSQLDB,
-building under JDK 1.5.0_01 and testing in a Tomcat 5.5.9 under the same JDK.
+building under JDK 1.4.2_06 and JDK 1.5.0_01 and tested in a Tomcat 5.5.9 under the 1.5 JDK.
 
-and was actually built on a RedHat Linux machine using a version of the shell script in /etc/.
+and was actually built on a RedHat Linux machine using a version of the shell script in /etc/,
+under JDK 1.5.0_05.
