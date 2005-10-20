@@ -254,8 +254,9 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
   {
     CState state = (CState)stateTable.get(uid);
 
-    if (state == null)
-      log.error("CGenericXSLT:setRuntimeData() : attempting to access a non-established channel! setStaticData() has never been called on the uid=\""+uid+"\"");
+    if (state == null){
+      log.debug("CGenericXSLT:setRuntimeData() : no entry in state for uid=\""+uid+"\"");
+    }
     else
     {
       // because of the portal rendering model, there is no reason to synchronize on state
@@ -301,7 +302,7 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
     if (stateTable.get(uid) == null)
     {
       rp.setWillRender(false);
-      log.error("CGenericXSLT:getRuntimeProperties() : attempting to access a non-established channel! setStaticData() has never been called on the uid=\""+uid+"\"");
+      log.debug("CGenericXSLT:getRuntimeProperties() : no entry in state for uid=\""+uid+"\"");
     }
     return rp;
   }
@@ -310,10 +311,9 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
   {
     CState state=(CState)stateTable.get(uid);
 
-    if (state == null)
-      log.error("CGenericXSLT:renderXML() : attempting to access a non-established channel! setStaticData() has never been called on the uid=\""+uid+"\"");
-    else
-    {
+    if (state == null){
+        log.debug("CGenericXSLT:renderXML() : no entry in state for uid=\""+uid+"\"");
+    }else{
       if (log.isDebugEnabled())
           log.debug("CGenericXSLT::renderXML() : state = " + state );
       
@@ -413,7 +413,7 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
 
     if (state == null)
     {
-      log.error("CGenericXSLT:generateKey() : attempting to access a non-established channel! setStaticData() has never been called on the uid=\""+uid+"\"");
+      log.debug("CGenericXSLT:generateKey() : no entry in state for uid=\""+uid+"\"");
       return null;
     }
     else
@@ -435,7 +435,7 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
 
     if (state == null)
     {
-      log.error("CGenericXSLT:isCacheValid() : attempting to access a non-established channel! setStaticData() has never been called on the uid=\""+uid+"\"");
+      log.debug("CGenericXSLT:isCacheValid() : no entry in state for uid=\""+uid+"\"");
       return false;
     }
     else

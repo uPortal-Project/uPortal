@@ -499,10 +499,9 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
   public void setRuntimeData (ChannelRuntimeData rd, String uid)
   {
      ChannelState state = (ChannelState)stateTable.get(uid);
-     if (state == null)
-       log.error("CWebProxy:setRuntimeData() : attempting to access a non-established channel! setStaticData() hasn't been called on uid=\""+uid+"\"");
-     else
-     {
+     if (state == null){
+       log.debug("CWebProxy:setRuntimeData() : no entry in state for uid=\""+uid+"\"");
+     }else{
        state.runtimeData = rd;
        if ( rd.isEmpty() && (state.refresh != -1) ) {
          // A refresh-- State remains the same.
@@ -706,9 +705,9 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
   public void receiveEvent (PortalEvent ev, String uid)
   {
     ChannelState state = (ChannelState)stateTable.get(uid);
-    if (state == null)
-       log.error("CWebProxy:receiveEvent() : attempting to access a non-established channel! setStaticData() hasn't been called on uid=\""+uid+"\"");
-    else {
+    if (state == null){
+        log.debug("CWebProxy:receiveEvent() : no entry in state for uid=\""+uid+"\"");
+    }else {
       int evnum = ev.getEventNumber();
 
       switch (evnum)
@@ -748,7 +747,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
     if (stateTable.get(uid) == null)
     {
       rp.setWillRender(false);
-      log.error("CWebProxy:getRuntimeProperties() : attempting to access a non-established channel! setStaticData() hasn't been called on uid=\""+uid+"\"");
+      log.debug("CWebProxy:getRuntimeProperties() : no entry in state for uid=\""+uid+"\"");
     }
     return rp;
   }
@@ -760,10 +759,9 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
   public void renderXML (ContentHandler out, String uid) throws PortalException
   {
     ChannelState state=(ChannelState)stateTable.get(uid);
-    if (state == null)
-      log.error("CWebProxy:renderXML() : attempting to access a non-established channel! setStaticData() hasn't been called on uid=\""+uid+"\"");
-    else
-      {
+    if (state == null){
+      log.debug("CWebProxy:renderXML() : no entry in state for uid=\""+uid+"\"");
+    }else{
       Document xml = null;
       String tidiedXml = null;
       try
@@ -1096,7 +1094,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
 
     if (state == null)
     {
-      log.error("CWebProxy:generateKey() : attempting to access a non-established channel! setStaticData() hasn't been called on uid=\""+uid+"\"");
+      log.debug("CWebProxy:generateKey() : no entry in state for uid=\""+uid+"\"");
       return null;
     }
 
@@ -1159,11 +1157,11 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
 
     if (state == null)
     {
-      log.error("CWebProxy:isCacheValid() : attempting to access a non-established channel! setStaticData() hasn't been called on uid=\""+uid+"\"");
+      log.debug("CWebProxy:isCacheValid() : no entry in state for uid=\""+uid+"\"");
       return false;
+    }else{
+      return (System.currentTimeMillis() - ((Long)validity).longValue() < state.cacheTimeout*1000);
     }
-    else
-    return (System.currentTimeMillis() - ((Long)validity).longValue() < state.cacheTimeout*1000);
   }
 
   public String getContentType(String uid) {
@@ -1179,7 +1177,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
   }
 
   public void downloadData(OutputStream out,String uid) throws IOException {
-    throw(new IOException("CWebProxy: donloadData method not supported - use getInputStream only"));
+    throw(new IOException("CWebProxy: downloadData method not supported - use getInputStream only"));
   }
 
   public String getName(String uid) {
