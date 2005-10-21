@@ -57,8 +57,8 @@ public class RecordChannelRemovedFromLayoutWorkerTask extends StatsRecorderWorke
     this.channelDesc = channelDesc;
   }
 
-  public void run() {
-    statsRecorder.recordChannelRemovedFromLayout(person, profile, channelDesc);
+  public void execute() throws Exception {
+    this.statsRecorder.recordChannelRemovedFromLayout(this.person, this.profile, this.channelDesc);
   }
 }
 

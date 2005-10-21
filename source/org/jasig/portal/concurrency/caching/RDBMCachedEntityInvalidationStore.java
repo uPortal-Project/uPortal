@@ -359,7 +359,7 @@ throws SQLException, CachingException
     }
     catch (java.sql.SQLException sqle)
     {
-        log.error( sqle);
+        log.error(sqle, sqle);
         throw sqle;
     }
 }
@@ -395,7 +395,7 @@ throws CachingException, SQLException
 
     catch (java.sql.SQLException sqle)
     {
-        log.error( sqle);
+        log.error(sqle, sqle);
         throw sqle;
     }
 }
@@ -432,7 +432,7 @@ private CachedEntityInvalidation[] primSelect(String sql, Connection conn) throw
     }
     catch (SQLException sqle)
     {
-        log.error( sqle);
+        log.error(sqle, sqle);
         throw new CachingException("Problem retrieving Invalid Entities " + sqle.getMessage());
     }
 
@@ -479,7 +479,7 @@ throws SQLException, CachingException
     }
     catch (java.sql.SQLException sqle)
     {
-        log.error( sqle);
+        log.error(sqle, sqle);
         throw sqle;
     }
 }

@@ -53,6 +53,13 @@ The following ant command will deploy the documentation:
   ant deploy
 
 
+About HSQLDB
+------------
+
+Using an older version of hsqldb.jar with another version of the HSQLDB server could cause uPortal to hang.
+See hsqldb.jar's entry in build.xml for documentation of exactly what version of hsqldb.jar is included with this release.
+
+
 Copyright
 ---------
 

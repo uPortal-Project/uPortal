@@ -62,7 +62,7 @@ Version $Revision: 1.1 $
           <length>80</length>
           <maxlength>255</maxlength>
         </type>
-        <example>http://www.webservices.org:8080/wsrp/WSRPBaseService</example>
+        <example>http://www.webservices.org:8080/wsrp/wsrp4j/WSRPBaseService</example>
         <description>
           The WSRP Base service
         </description>
@@ -76,7 +76,7 @@ Version $Revision: 1.1 $
           <length>80</length>
           <maxlength>255</maxlength>
         </type>
-        <example>http://www.webservices.org:8080/wsrp/WSRPServiceDescriptionService</example>
+        <example>http://www.webservices.org:8080/wsrp/wsrp4j/WSRPServiceDescriptionService</example>
         <description>
           The WSRP Service Description service
         </description>
@@ -90,7 +90,7 @@ Version $Revision: 1.1 $
           <length>80</length>
           <maxlength>255</maxlength>
         </type>
-        <example>http://www.webservices.org:8080/wsrp/WSRPRegistrationService</example>
+        <example>http://www.webservices.org:8080/wsrp/wsrp4j/WSRPRegistrationService</example>
         <description>
           The WSRP Registration service (optional)
         </description>
@@ -98,13 +98,13 @@ Version $Revision: 1.1 $
 
       <parameter modify="publish">
         <name>PORTLET.wsrp_portlet_mgmt_url</name>
-        <label>Registration Interface URL</label>
+        <label>Portlet Management Interface URL</label>
         <type base="string" input="text" display="text">
           <!-- length and maxlength for text field -->
           <length>80</length>
           <maxlength>255</maxlength>
         </type>
-        <example>http://www.webservices.org:8080/wsrp/WSRPPortletManagementService</example>
+        <example>http://www.webservices.org:8080/wsrp/wsrp4j/WSRPPortletManagementService</example>
         <description>
           The WSRP Portlet Management service (optional)
         </description>

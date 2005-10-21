@@ -168,17 +168,35 @@ public class PortletApplicationUnmarshaller {
     }
     
     private LanguageSet getLanguages(Element portletE) {
+        // Check for a resource bundle element
+        String resources = null;
+        NodeList resourceBundleNL = portletE.getElementsByTagName("resource-bundle");
+        if (resourceBundleNL.getLength() > 0)  {
+            Element resourceBundleE = (Element)resourceBundleNL.item(0); // there should only be one
+            String resourceBundle = XML.getElementText(resourceBundleE);
+            if (resourceBundle.trim().length() > 0) {
+                resources = resourceBundle;
+            }
+        }
+
+        // The portlet-info element is optional if the resource-bundle element is specified
+        String title = null;
+        String shortTitle = null;
+        String keywords = null;
         NodeList portletInfoNL = portletE.getElementsByTagName("portlet-info");
-        Element portletInfoE = (Element)portletInfoNL.item(0); // there should only be one
-        String title = XML.getChildElementText(portletInfoE, "title");
-        String shortTitle = XML.getChildElementText(portletInfoE, "short-title");
-        String keywords = XML.getChildElementText(portletInfoE, "keywords");
-        LanguageSetImpl languages = new LanguageSetImpl(title, shortTitle, keywords, contextName);
+        if (portletInfoNL.getLength() > 0) {
+            Element portletInfoE = (Element)portletInfoNL.item(0); // there should only be one
+            title = XML.getChildElementText(portletInfoE, "title");
+            shortTitle = XML.getChildElementText(portletInfoE, "short-title");
+            keywords = XML.getChildElementText(portletInfoE, "keywords");
+        }
+        
+        LanguageSetImpl languages = new LanguageSetImpl(title, shortTitle, keywords, resources);
         languages.setClassLoader(Thread.currentThread().getContextClassLoader());
         NodeList supportedLocaleNL = portletE.getElementsByTagName("supported-locale");
         for (int i = 0; i < supportedLocaleNL.getLength(); i += 1) {
             Element supportedLocaleE = (Element)supportedLocaleNL.item(i);
-            languages.addLanguage(LocaleManager.parseLocale(XML.getElementText(supportedLocaleE)));
+            languages.addLocale(LocaleManager.parseLocale(XML.getElementText(supportedLocaleE)));
         }
         return languages;
     }

@@ -134,8 +134,7 @@ public class JNDIManager {
       log.debug("JNDIManager::initializePortalContext() : initialized portal JNDI context");
 
     } catch (Exception e) {
-      // Log the exception
-      log.error( e);
+      log.error("Error initializing Portal context", e);
     }
   }
 

@@ -103,11 +103,9 @@ public class LogoutServlet extends HttpServlet {
                }
             }
          } catch (PortalException pe) {
-            log.error( "LogoutServlet::static " + pe);
-            log.error( pe);
+            log.error( "LogoutServlet::static ", pe);
          } catch (IOException ioe) {
-            log.error( "LogoutServlet::static " + ioe);
-            log.error( ioe);
+            log.error( "LogoutServlet::static", ioe);
          }
          REDIRECT_MAP = rdHash;
          DEFAULT_REDIRECT = upFile;
@@ -136,7 +134,8 @@ public class LogoutServlet extends HttpServlet {
                 StatsRecorder.recordLogout(person);
             }
         } catch (Exception e) {
-            log.error( e);
+            log.error("Exception recording logout " +
+                    "associated with request " + request, e);
         }
         
         // Clear out the existing session for the user
@@ -211,8 +210,7 @@ public class LogoutServlet extends HttpServlet {
          }
       } catch (Exception e) {
          // Log the exception
-         log.error( "LogoutServlet::getRedirectionUrl() Error: " + e);
-         log.error( e);
+         log.error( "LogoutServlet::getRedirectionUrl() Error:", e);
       }
       if (redirect == null) {
          redirect = defaultRedirect;
