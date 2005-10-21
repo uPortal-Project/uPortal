@@ -2,6 +2,16 @@ $Id$
 
 uPortal Release Notes
 ---------------------
+Release Notes - uPortal - Version 2.4.3.1
+
+**Bug
+
+    * [UP-1253] - CWebProxy security exploit: proxies file system content
+
+
+----------------------------------------------------------------
+uPortal Release Notes
+---------------------
 Release Notes - uPortal - Version 2.4.3
 
 **Bug
