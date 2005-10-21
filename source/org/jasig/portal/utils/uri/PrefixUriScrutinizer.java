@@ -13,7 +13,6 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.util.StringUtils;
 
 
 /**
@@ -34,7 +33,7 @@ public final class PrefixUriScrutinizer
             String allowPrefixesArg, String denyPrefixesArg) {
         
         String[] allowPrefixes;
-        if (! StringUtils.hasText(allowPrefixesArg)) {
+        if (allowPrefixesArg == null || allowPrefixesArg.trim().length() == 0) {
             // if the parameter wasn't specified
             // or contains only whitespace
             // default to allowing http and https
@@ -46,7 +45,7 @@ public final class PrefixUriScrutinizer
         }
         
         String[] denyPrefixes;
-        if (! StringUtils.hasText(denyPrefixesArg)) {
+        if (denyPrefixesArg == null || denyPrefixesArg.trim().length() == 0)  {
             // if the parameter wasn't specified or contains 
             // only whitespace, default to explicitly denying none.
             denyPrefixes = new String[0];
