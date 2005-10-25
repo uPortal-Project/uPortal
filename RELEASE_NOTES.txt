@@ -7,6 +7,26 @@ Release Notes - uPortal - Version 2.4.3.1
 **Bug
 
     * [UP-1253] - CWebProxy security exploit: proxies file system content
+    * [UP-245]  - CPD default="true" not functional
+
+Notes:
+
+    1. CWebProxy and CGenericXSLT changed for this release to address 
+    security vulnerabilities. These channels honor fewer 
+    ChannelRuntimeParameters now. This will not affect most deployments.  
+    A few deployments will need to re-examine CWebProxy and re-implement the 
+    insecure features that were removed in more secure ways.  CWebProxy 
+    also changed to require that the xmlUri be an http:// or https:// URI.  
+    You can make this rule more or less restrictive by publish-time 
+    configuration of CWebProxy instances.  [UP-1253]
+
+    2. This release and all prior uPortal releases do NOT support JAXP 1.3.
+    This means that it will not compile/run under JDK 1.5 OR JDK 1.4 with 
+    JAXP 1.3 installed. It will compile/run under JDK 1.4. uPortal 2.4.4 
+    is scheduled to include support for JAXP 1.3.
+    
+    Support for JDK 1.5 or JDK 1.4 w/ JAXP 1.3 is provided in and after
+    the uPortal 2.5.0 release.
 
 
 ----------------------------------------------------------------
