@@ -68,7 +68,7 @@ import org.xml.sax.ContentHandler;
  * @version $Revision$
  */
 class ManageProfilesState extends BaseState {
-    private static final Log log = LogFactory.getLog(ManageProfilesState.class);
+  private static final Log log = LogFactory.getLog(ManageProfilesState.class);
   protected Hashtable userProfileList;
   protected Hashtable systemProfileList;
   protected Hashtable userExpandStates;
@@ -662,7 +662,7 @@ class ManageProfilesState extends BaseState {
         xsl.serialize(doc);
         log.debug(outString.toString());
       } catch (Exception e) {
-        log.debug(e);
+        log.debug(e, e);
       }
       StylesheetSet set = context.getStylesheetSet();
       if (set == null)

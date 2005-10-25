@@ -114,7 +114,7 @@ private Map getDirectoryNames() throws java.sql.SQLException
     }
     catch (SQLException sqle)
     {
-        log.error( sqle);
+        log.error("Error getting names by userid from UP_PERSON_DIR", sqle);
         throw sqle;
     }
 
@@ -200,7 +200,7 @@ private Map getUserNames() throws java.sql.SQLException
     }
     catch (SQLException sqle)
     {
-        log.error( sqle);
+        log.error("Error getting names by user ID from UP_USER", sqle);
         throw sqle;
     }
 

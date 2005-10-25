@@ -77,6 +77,11 @@ public class MediaManager {
   private static boolean outputIndenting = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.MediaManager.output_indenting");
   private static boolean omitDoctype = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.MediaManager.omit_doctype");
 
+  private static final String mediaPropsUrl = MediaManager.class.getResource("/properties/media.properties").toString();
+  private static final String mimePropsUrl = MediaManager.class.getResource("/properties/mime.properties").toString();
+  private static final String serializerPropsUrl = MediaManager.class.getResource("/properties/serializer.properties").toString();
+  
+  private static final MediaManager MEDIAMANAGER = new MediaManager(mediaPropsUrl, mimePropsUrl, serializerPropsUrl);
   /**
    * A user agent string to use when the user-agent header value itself is null.
    *
@@ -87,9 +92,18 @@ public class MediaManager {
   /**
    * Constructs a MediaManager
    */
-  public MediaManager () {
+  private MediaManager () {
   }
 
+  /**
+   * 7/25/05 - UP-1181 - change MediaManager into a singleton
+   * 
+   * Returns the default MediaManager singleton
+   */
+  public static MediaManager getMediaManager() {
+      return (MEDIAMANAGER);
+  }
+  
   /**
    * Constructor that initializes all of the property tables.
    * This is equivalent to running a base constructor and
@@ -99,7 +113,7 @@ public class MediaManager {
    * @param mimePropsFile location of the mime properties file
    * @param serializerPropsFile location of the serializer properties file
    */
-  public MediaManager (String mediaPropsFile, String mimePropsFile, String serializerPropsFile) {
+  private MediaManager (String mediaPropsFile, String mimePropsFile, String serializerPropsFile) {
     setMediaProps(mediaPropsFile);
     setMimeProps(mimePropsFile);
     setSerializerProps(serializerPropsFile);

@@ -111,7 +111,7 @@ public abstract class ChainingSecurityContext implements ISecurityContext
         sctx.authenticate();
       } catch (Exception ex) {
       	error = true;
-        log.error( ex);
+        log.error("Exception authenticating subcontext " + sctx, ex);
       }
       // Stop attempting to authenticate if authenticated and if the property flag is set
       if(stopWhenAuthenticated && sctx.isAuthenticated()) {
@@ -164,7 +164,7 @@ public abstract class ChainingSecurityContext implements ISecurityContext
       }
     }
     PortalSecurityException ep = new PortalSecurityException("No such subcontext: " + name);
-    log.debug(ep);
+    log.debug("No such subcontext as " + name, ep);
     return(null);
   }
 
@@ -206,7 +206,7 @@ public abstract class ChainingSecurityContext implements ISecurityContext
     if(doesSubContextExist(name))
     {
       PortalSecurityException ep = new PortalSecurityException("Subcontext already exists: " + name);
-      log.error(ep);
+      log.error("Subcontext already exists:" + name, ep);
       throw(ep);
     }
     else
@@ -289,8 +289,13 @@ public abstract class ChainingSecurityContext implements ISecurityContext
    return scNames.elements();
   }
 
-
-  protected class ChainingAdditionalDescriptor implements IAdditionalDescriptor {
+  /**
+   * A default, placeholder implementation of IAdditionalDescriptor an instance of which
+   * is the default value for the instance variable "myAdditionalDescriptor" of instances of
+   * this class.
+   */
+  public class ChainingAdditionalDescriptor implements IAdditionalDescriptor {
+      // do nothing
   }
 
 // entries in our subcontext list

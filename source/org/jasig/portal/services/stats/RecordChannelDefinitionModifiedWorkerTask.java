@@ -53,8 +53,8 @@ public class RecordChannelDefinitionModifiedWorkerTask extends StatsRecorderWork
     this.channelDef = channelDef;
   }
 
-  public void run() {
-    statsRecorder.recordChannelDefinitionModified(person, channelDef);
+  public void execute() throws Exception {
+    this.statsRecorder.recordChannelDefinitionModified(this.person, this.channelDef);
   }
 }
 

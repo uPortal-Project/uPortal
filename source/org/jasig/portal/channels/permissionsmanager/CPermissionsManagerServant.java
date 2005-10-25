@@ -86,7 +86,7 @@ public class CPermissionsManagerServant extends CPermissionsManager
                 xslt.setStylesheetParameter("isAdminUser", "true");
                 xslt.transform();
             } catch (Exception e) {
-                log.debug(e);
+                log.debug(e, e);
             }
         }
     }
