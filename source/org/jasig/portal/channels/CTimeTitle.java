@@ -18,7 +18,7 @@ import org.w3c.dom.Element;
 
 /**
  * An example channel that includes the current time in its dynamically generated title.
- * @since uPortal 2.5.1
+ * @since uPortal 2.4.4, 2.5.1
  * @version $Revision$ $Date$
  */
 public final class CTimeTitle 
