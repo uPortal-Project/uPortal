@@ -26,7 +26,7 @@ import org.xml.sax.ContentHandler;
  * methods to provide the XML, XSLT, and parameters.
  * 
  * @version $Revision$ $Date$
- * @since uPortal 2.5
+ * @since uPortal 2.4.4, 2.5
  */
 public abstract class CAbstractXslt implements IChannel {
 
@@ -46,7 +46,7 @@ public abstract class CAbstractXslt implements IChannel {
     /**
      * Commons Logging logger for the runtime class of this channel instance.
      */
-    protected Log log = LogFactory.getLog(getClass());
+    protected final Log log = LogFactory.getLog(getClass());
     
     
     public final void setRuntimeData(ChannelRuntimeData rd) {
@@ -89,9 +89,8 @@ public abstract class CAbstractXslt implements IChannel {
     
     public ChannelRuntimeProperties getRuntimeProperties() {
         /*
-         * This basic implementation returns a dummy ChannelRuntimeProperties,
-         * as it appears all known IChannel implementations currrently do.  This 
-         * method is not final so that if you find some useful ChannelRuntimeProperties
+         * This basic implementation returns a dummy ChannelRuntimeProperties.  This 
+         * method is not final so that if you have some useful ChannelRuntimeProperties
          * to return you can return them.
          */
         return new ChannelRuntimeProperties();
@@ -100,9 +99,9 @@ public abstract class CAbstractXslt implements IChannel {
     public final void renderXML(ContentHandler out) throws PortalException {
         
         /*
-         * We implement renderXML by invoking our template methods to get
+         * CAbstractXSLT implements renderXML by invoking its template methods to get
          * the XML, XSLT URL, and XSLT stylesheet parameters, and then
-         * performing a boilerplate XSLT transformation.
+         * performs a boilerplate XSLT transformation.
          */
         
         if (log.isTraceEnabled()) {
@@ -188,7 +187,7 @@ public abstract class CAbstractXslt implements IChannel {
             // we log and wrap in PortalExceptions Exceptions other than
             // PortalException and RuntimeException, so that we conform to
             // the IChannel API.
-            log.error("Error rendering CAbstractXSLT instance.", e);
+            log.error("Exception rendering CAbstractXSLT instance.", e);
             throw new PortalException(e);
         }
     
@@ -205,18 +204,17 @@ public abstract class CAbstractXslt implements IChannel {
      * the developer extending this class.  Such developers should catch or declare 
      * exceptions as appropriate to your needs.  Just because you can
      * throw Exception here doesn't mean you shouldn't, for example, fallback to 
-     * a default XSLT URL when your cannot programmatically determine the URL
-     * of your XSLT.  On the other hand, there's no reason for you to wrap SqlExceptions
+     * a default XML or a reduced but usable set of data when your full Document cannot be generated.  
+     * On the other hand, there's no reason for you to wrap SqlExceptions
      * if you're not going to do anything other than what this abstract class does with them
      * (logs them and wraps them in PortalExceptions).
      * 
      * The method invoking
      * this template method, renderXML(), is declared to throw PortalException by the IChannel
-     * API.  Any PortalException or RuntimeException thrown by getXsltUri() will
+     * API.  Any PortalException or RuntimeException thrown by getXml() will
      * be thrown all the way out of the abstract class's renderXML() method.  This approach
      * ensures that developers extending this class retain control over what exceptions
-     * their implementions throw.  Note that you can map particular exceptions to particular
-     * XML representations and thus particular CError displays as of uPortal 2.5.
+     * their implementions throw.
      * 
      * Exceptions that are neither RuntimeExceptions nor PortalExceptions thrown by
      * this method will be logged and wrapped in PortalExceptions so that this channel
@@ -248,7 +246,7 @@ public abstract class CAbstractXslt implements IChannel {
      * be thrown all the way out of the abstract class's renderXML() method.  This approach
      * ensures that developers extending this class retain control over what exceptions
      * their implementions throw.  Note that you can map particular exceptions to particular
-     * XML representations and thus particular CError displays as of uPortal 2.5.
+     * error displays by customizing CError.
      * 
      * Exceptions that are neither RuntimeExceptions nor PortalExceptions thrown by
      * this method will be logged and wrapped in PortalExceptions so that this channel
@@ -281,7 +279,7 @@ public abstract class CAbstractXslt implements IChannel {
      * render on failure, you might pass parameters to your XSLT characterizing the failure
      * and let your XSLT render the response.  
      * 
-     * There's likely no reason for you to wrap IOExceptions
+     * For example, there's likely no reason for you to wrap IOExceptions
      * if you're not going to do anything other than what this abstract class does with them
      * (logs them and wraps them in PortalExceptions).
      * 
@@ -290,8 +288,8 @@ public abstract class CAbstractXslt implements IChannel {
      * API.  Any PortalException or RuntimeException thrown by getStylesheetParams() will
      * be thrown all the way out of the abstract class's renderXML() method.  This approach
      * ensures that developers extending this class retain control over what exceptions
-     * their implementions throw.  Note that you can map particular exceptions to particular
-     * XML representations and thus particular CError displays as of uPortal 2.5.
+     * their implementions throw.  Note that you can map particular exceptions to CError displays
+     * by customizing CError.
      * 
      * Exceptions that are neither RuntimeExceptions nor PortalExceptions thrown by
      * this method will be logged and wrapped in PortalExceptions so that this channel
