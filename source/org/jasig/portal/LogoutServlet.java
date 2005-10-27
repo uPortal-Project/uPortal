@@ -139,7 +139,16 @@ public class LogoutServlet extends HttpServlet {
         }
         
         // Clear out the existing session for the user
-        session.invalidate();
+        try {
+            session.invalidate();
+        } catch (IllegalStateException ise) {
+        	// IllegalStateException indicates session was already invalidated.
+        	// This is fine.  LogoutServlet is looking to guarantee the logged out session is invalid;
+        	// it need not insist that it be the one to perform the invalidating.
+        	if (log.isTraceEnabled()) {
+        		log.trace("LogoutServlet encountered IllegalStateException invalidating a presumably already-invalidated session.", ise);
+        	}
+        }
     }
 
     // Send the user back to the guest page
