@@ -13,6 +13,7 @@ import org.jasig.portal.ChannelRuntimeProperties;
  * framework code should be written to expect this concrete implementation -
  * the framework should only detect whether the ChannelRuntimeProperties it
  * encounters implements @link{IChannelTitle}.
+ * @since uPortal 2.4.4, 2.5.1, 2.6
  */
 public final class TitledChannelRuntimeProperties 
 	extends ChannelRuntimeProperties
