@@ -30,6 +30,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.channels.CError;
 import org.jasig.portal.channels.CSecureInfo;
+import org.jasig.portal.channels.support.IDynamicChannelTitleRenderer;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.layout.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.IUserLayoutNodeDescription;
@@ -1200,4 +1201,43 @@ public class ChannelManager implements LayoutEventListener {
     public void layoutSaved() {}
 
     public void setLocaleManager(LocaleManager lm) { this.lm = lm; }
+    
+	/**
+	 * Get the dynamic channel title for a given channelSubscribeID.
+	 * Returns null if no dynamic channel (the rendering infrastructure
+	 * calling this method should fall back on a default title when this
+	 * method returns null).
+	 * @since uPortal 2.4.4, 2.5.1
+	 * @param channelSubscribeId
+	 */
+	public String getChannelTitle(String channelSubscribeId) {
+		
+		if (log.isTraceEnabled()) {
+			log.trace("ChannelManager getting dynamic title for channel with subscribe id=" + channelSubscribeId);
+		}
+		
+		// obtain IChannelRenderer
+        Object channelRenderer = rendererTable.get(channelSubscribeId);
+
+        // default to null (no dynamic channel title.
+        String channelTitle = null;
+        
+        // dynamic channel title support is not in IChannelRenderer itself because
+        // that would have required a change to the IChannelRenderer interface
+        if (channelRenderer instanceof IDynamicChannelTitleRenderer ) {
+            
+            IDynamicChannelTitleRenderer channelTitleRenderer = 
+                (IDynamicChannelTitleRenderer) channelRenderer;
+            channelTitle = channelTitleRenderer.getChannelTitle();
+            
+            if (log.isTraceEnabled()) {
+            	log.trace("ChannelManager reports that dynamic title for channel with subscribe id=" 
+            			+ channelSubscribeId + " is [" + channelTitle + "].");
+            }
+        }
+
+        
+        return channelTitle;
+        
+	}
 }
