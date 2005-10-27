@@ -233,7 +233,24 @@ Version $Revision$
                         </td>
                         <td nowrap="nowrap" class="uportal-background-selected">
                             <span class="uportal-channel-title">
-                                <a name="{@ID}"><xsl:value-of select="@name"/></a>
+                                <a name="{@ID}">
+                                    <!-- 
+                                        | This element will be replaced by the 
+                                        | CharacterCachingChannelIncorporationFilter
+                                        | with the dynamic channel title, or with the
+                                        | value of the name attribute of the channel element
+                                        | we matched to get here, in the case where there is no
+                                        | dynamic channel title.
+                                        +-->
+                                    <xsl:element name="channel-title">
+                                        <xsl:attribute name="defaultValue">
+                                            <xsl:value-of select="@name"/>
+                                        </xsl:attribute>
+                                        <xsl:attribute name="channelSubscribeId">
+                                            <xsl:value-of select="@ID" />
+                                        </xsl:attribute>
+                                    </xsl:element>	
+                                </a>
                                 <xsl:text/>(selected)</span>
                         </td>
                         <td class="uportal-background-dark" style="background-image: url({$mediaPathMainBorder}/headerrightborderselected.gif); background-repeat:repeat-y;">
@@ -270,7 +287,24 @@ Version $Revision$
                         </td>
                         <td nowrap="nowrap" class="uportal-background-semidark">
                             <span class="uportal-channel-title">
-                                <a name="{@ID}"><xsl:value-of select="@name"/></a>
+                                <a name="{@ID}">
+                                    <!-- 
+                                        | This element will be replaced by the 
+                                        | CharacterCachingChannelIncorporationFilter
+                                        | with the dynamic channel title, or with the
+                                        | value of the name attribute of the channel element
+                                        | we matched to get here, in the case where there is no
+                                        | dynamic channel title.
+                                        +-->
+                                    <xsl:element name="channel-title">
+                                        <xsl:attribute name="defaultValue">
+                                            <xsl:value-of select="@name"/>
+                                        </xsl:attribute>
+                                        <xsl:attribute name="channelSubscribeId">
+                                            <xsl:value-of select="@ID" />
+                                        </xsl:attribute>
+                                    </xsl:element>	
+                                </a>
                             </span>
                         </td>
                         <td class="uportal-background-dark" style="background-image: url({$mediaPathMainBorder}/headerrightborder.gif); background-repeat:repeat-y;">
