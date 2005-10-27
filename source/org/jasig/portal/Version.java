@@ -16,9 +16,9 @@ public class Version {
     // Use empty strings rather than null when value is not desired.
     private static String product = "uPortal";
     private static String major = "2";
-    private static String minor = "5";
+    private static String minor = "6";
     private static String patch = "0";
-    private static String extra = "";
+    private static String extra = "SNAPSHOT";
     
     private static String releaseTag;
     private static String version;
