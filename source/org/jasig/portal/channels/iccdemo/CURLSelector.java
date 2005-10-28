@@ -223,14 +223,14 @@ public class CURLSelector extends BaseChannel {
         } catch (NotContextException nce) {
             log.error( "CURLSelector.getUserXML(): Could not find subcontext /channel-ids in JNDI");
         } catch (NamingException e) {
-            log.error( e);
+            log.error("Lookup /channel-ids failed",  e);
         }
         try {
             id=(String)globalIDContext.lookup(fname);
         } catch (NotContextException nce) {
             log.error( "CURLSelector.getUserXML(): Could not find channel ID for fname="+fname);
         } catch (NamingException e) {
-            log.error( e);
+            log.error("Lookup " + fname + " failed", e);
         }
         return id;
     }
@@ -250,7 +250,7 @@ public class CURLSelector extends BaseChannel {
         } catch (NotContextException nce) {
             log.error( "CURLSelector.getUserXML(): Could not find subcontext /channel-obj in JNDI");
         } catch (NamingException e) {
-            log.error( e);
+            log.error("Lookup /channel-obj failed", e);
         }
 
         try {
@@ -258,7 +258,7 @@ public class CURLSelector extends BaseChannel {
         } catch (NotContextException nce) {
             log.error( "CURLSelector.getUserXML(): Could not find channel bound object for channel id="+channelSubscribeId);
         } catch (NamingException e) {
-            log.error( e);
+            log.error("Lookup " + channelSubscribeId + " failed", e);
         }
         return o;        
     }

@@ -1,0 +1,137 @@
+uPortal Properties
+==================
+
+browser.mappings
+----------------
+Defines a system profile mapping for common browsers. Each properties line assignes a regular expression for the user agent string to a profile id. Note: order in which regexs are listed is important. The code will evaluate each regex from top to bottom, reporting a profile mapping as soon as something matches. That means, that something like Netscape's user agent should be matched last, since the regex for it is more general then that of IE. To optimize the matching process, describe most popular browsers first.
+
+
+EntityPropertyRegistry.xml
+--------------------------
+Defines property finders for portal entities.
+
+
+global_dictionary.properties
+----------------------------
+Translations for portal text.
+
+
+ldap.properties
+---------------
+Configuration for LDAP connection necessary for the use of the SimpleLdapSecuritycontext and CacheLdapSecurityContext security provider.
+
+
+ldap.xml
+--------
+Configuration file for LdapServices that describes multiple LDAP server configurations.
+
+
+Logger.properties
+-----------------
+Configuration file for logging engine.  The log level (DEBUG, INFO, WARN, ERROR), log file location, logging syntax, etc. can be controlled.
+
+
+media.properties
+----------------
+Specifies a mapping rule between the value contained in the HTTP request's user-Agent field and a value to be scanned for in XSL stylesheet(s) associated with the XML data. This mapping enables relationships to be defined between client capabilities and stylesheets capable of acting on these capabilities.  The rules defined are order-significant.  In other words, if the first rule is unsuccessful, the second rule will be tried, etc.  The media value "unknown" will be used when no rules are satisfied.
+
+
+mime.properties
+---------------
+Maps browser (media) types to their mime types.  
+
+
+PersonDirs.xml
+--------------
+Makes possible a standard way for the uPortal framework and its installed channels to refer to particular person attributes.  For example, if a channel wants to display a user's email address, it will look for an attribute called "mail", which appears as an alias in this file.  This alias maps to the actual name of the field containing an email address in your data repository. Providing this level of indirection for attribute references makes it possible for organizations to share channels that refer to user's attributes.
+
+
+portal.properties
+-----------------
+This is the main configuration file for uPortal.  It contains settings for...
+-caching of content and data structures for optimized performance
+-doctypes settings of markup documents produced by uPortal
+-formatting of markup documnets produced by uPortal
+-default layout templates for new users
+-implementations of uPortal data store interfaces
+-keys for groups service's distinguished groups
+-name finder factory implementations
+-profile management settings
+-method of obtaining database connections
+-default properties for CWebProxy and CGenericXSLT channels
+-object locking and caching settings
+-portal stats recorder implementation and settings
+-thread pool settings
+-permission policy implementation
+
+
+rdbm.properties
+---------------
+Sets the JDBC driver class, URL, user name, and password which is used by the reference implementation of uPortal data storage interfaces.
+
+
+resin.conf
+----------
+Only needed if Resin XSLT transformer is used.  uPortal uses Xalan by default.
+
+
+sample-jaas.conf
+----------------
+Used in conjunction with JAASSecurityContext security provider.
+
+
+security.properties
+-------------------
+Defines the security provider or chain of providers that will establish the authentication of a portal user.  Also specifies the default authorization implementation.
+
+
+serializer.properties
+---------------------
+Defines a mapping between client browser (media) types and serializer names that should be used with that media.
+So far, the following serializers are supported: XML, HTML, XHTML, WML, and HTML for PalmPilot.
+
+
+services.xml
+------------
+This list of services is processed by org.jasig.portal.services.ExternalServices.  When uPortal is started, it will attempt to fire up all the services listed here.  Each specification includes a class name, an optional description of initialization method and jndi binding name.  External services will initialize each service (by either calling a constructor or an initialization method, if such is provided). If jndi binding name is provided either an instance of the specified class, or an object returned by the intialization method (if such method was specified) will be bound under the portal /services jndi context and distributed to the uPortal channels.
+
+
+worker.properties
+-----------------
+This file configures worker dispatch processors.  Workers are used to implement functionality  that requires complete control over the output stream, as well as access to the portal internal structures.
+
+
+al/fragments.xml
+-----------------
+Defines layout fragments and their restrictions to be published by the PublishFragment tool.  These layout fragments will be incorporated into users' layouts via uPortal's aggregated layout manager.
+
+
+chanpub/*
+---------
+This directory holds the channel definition files which can be  published by the ChannelPublisher tool.  Each file should be named after the channel definition's fname.  For example, if the file defines a channel with an fname equal to "my-channel", then the file should be called "my-channel.xml".
+
+
+db/dbloader.xml
+---------------
+Configuation file for DbLoader tool.  Controls whether or not to drop/create/populate tables and whether or not to create a database script based on the SQL statements that are executed.  Contains mappings for SQL data types which will override those specified by a jdbc driver.
+
+
+groups/compositeGroupsServices.xml
+----------------------------------
+Defines the sources of information from which the portal should load its groups.
+
+
+groups/LDAPGroupStoreConfig.xml
+-------------------------------
+Specifies the connection info, groups, and queries for the LDAP groups service.
+
+
+groups/PAGSGroupStoreConfig.xml
+-------------------------------
+Specifies the groups and group membership criteria for the Person Attributes Group Service (PAGS)
+
+
+groups/pags.properties
+----------------------
+Specifies the configuration implementation for the PAGS group store.
+

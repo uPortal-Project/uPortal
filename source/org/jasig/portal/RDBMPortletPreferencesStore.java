@@ -236,10 +236,11 @@ public class RDBMPortletPreferencesStore implements IPortletPreferencesStore {
                 try {
                     while (rs.next()) {
                         final String prefName = rs.getString("PORTLET_PREF_NAME");
+                        final String prefReadOnly = rs.getString("PORTLET_PREF_READONLY");
                         final String prefValue = rs.getString("PORTLET_PREF_VALUE");
                         
                         if (!readOnlyMap.containsKey(prefName)) {
-                            if (READ_ONLY_TRUE.equals(rs.getString("PORTLET_PREF_READONLY"))) {
+                            if (READ_ONLY_TRUE.equals(prefReadOnly)) {
                                 readOnlyMap.put(prefName, Boolean.TRUE);
                             }
                             else {

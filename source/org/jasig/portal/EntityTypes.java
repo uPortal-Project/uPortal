@@ -232,7 +232,7 @@ private void deleteEntityType(EntityType et) throws SQLException
     }
     catch (java.sql.SQLException sqle)
     {
-        log.error( sqle);
+        log.error("Exception deleting entity type [" + et + "]", sqle);
         throw sqle;
     }
 }
@@ -425,7 +425,7 @@ private void initialize()
             { stmnt.close(); }
     }
     catch (Exception ex)
-        { log.error( ex); }
+        { log.error("Exception initializing cache of entity types.", ex); }
     finally
         { RDBMServices.releaseConnection(conn); }
 }
@@ -483,7 +483,7 @@ private void insertEntityType(EntityType et) throws SQLException
     }
     catch (java.sql.SQLException sqle)
     {
-        log.error( sqle);
+        log.error("Error inserting entity type " + et, sqle);
         throw sqle;
     }
 }
@@ -605,7 +605,7 @@ private void updateEntityType(EntityType et) throws SQLException
     }
     catch (java.sql.SQLException sqle)
     {
-        log.error( sqle);
+        log.error("Exception updating entity type [" + et + "]", sqle);
         throw sqle;
     }
 }

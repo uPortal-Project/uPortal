@@ -1,0 +1,77 @@
+<!--
+     $Id$
+     This build.xml contains targets for starting HSQLDB
+     (which listens on port 8887)
+     and starting and stopping Tomcat 5.0.28.
+-->
+
+<project name="uPortal_Quick_Start" default="help" basedir=".">
+
+  <property environment="env"/>
+
+
+<!--
+  The "hsql" target starts HSQLDB
+-->
+
+  <target name="hsql">
+    <echo message="Starting HSQLDB"/>
+    <java fork="true" dir="${basedir}" classname="org.hsqldb.Server">
+      <classpath>
+        <pathelement path="${basedir}/HSQLDB_1-7-2-4/lib/hsqldb.jar"/>
+      </classpath>
+      <arg value="-database"/>
+      <arg value="${basedir}/HSQLDB_1-7-2-4/demo/uPortal"/>
+      <arg value="-port"/>
+      <arg value="8887"/>
+    </java>
+  </target>
+
+<!--
+  The "tomcatstart" target starts Tomcat
+-->
+
+  <target name="tomcatstart">
+    <echo message="Starting Tomcat 5.0.28"/>
+    <java fork="true" dir="${basedir}" classname="org.apache.catalina.startup.Bootstrap">
+      <classpath>
+        <pathelement path="${basedir}/Tomcat_5-0-28/bin/bootstrap.jar"/>
+        <pathelement path="${env.JAVA_HOME}/lib/tools.jar"/>
+      </classpath>
+      <sysproperty key="catalina.home" value="${basedir}/Tomcat_5-0-28"/> 
+      <arg value="start"/>
+    </java>
+  </target>
+
+<!-- ==================== tomcatstop Target ================================ -->
+
+<!--
+
+  The "tomcat" target stops Tomcat
+
+-->
+
+
+  <target name="tomcatstop">
+    <echo message="Stopping Tomcat 5.0.28"/>
+    <java fork="true" dir="${basedir}" classname="org.apache.catalina.startup.Bootstrap">
+      <classpath>
+        <pathelement path="${basedir}/Tomcat_5-0-28/bin/bootstrap.jar"/>
+      </classpath>
+      <sysproperty key="catalina.home" value="${basedir}/Tomcat_5-0-28"/> 
+      <!--jvmarg value="-Dcatalina.home=${basedir}/Tomcat_5-0-28"/--> 
+      <arg value="stop"/>
+    </java>
+  </target>
+
+<!--
+  The "help" target prints a help message
+-->
+
+  <target name="help">
+    <echo message="Please read the README file which explains how to operate this uPortal quick-start package"/>
+    <echo message="To see the possible ant targets, type 'ant -projecthelp'"/>
+  </target>
+
+
+</project>

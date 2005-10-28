@@ -1,36 +1,6 @@
-/**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
- *
- * 3. Redistributions of any form whatsoever must retain the following
- *    acknowledgment:
- *    "This product includes software developed by the JA-SIG Collaborative
- *    (http://www.jasig.org/)."
- *
- * THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
- * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE JA-SIG COLLABORATIVE OR
- * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE.
- *
+/* Copyright 2004 The JA-SIG Collaborative.  All rights reserved.
+ *  See license distributed with this file and
+ *  available online at http://www.uportal.org/license.html
  */
 
 package org.jasig.portal.tools.dbloader;
@@ -49,8 +19,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.utils.XSLT;
@@ -102,13 +70,12 @@ import org.xml.sax.XMLReader;
 public class DbLoader
 {
     private Configuration config = null;
-    private static final Log log = LogFactory.getLog(DbLoader.class);
 
   public DbLoader(Configuration c)
   {
       this.config = c;
   }
-  
+
   /**
    * Creates a default DbLoader with no configuration object installed. Before
    * DbLoader can work it must have a configuration object set.
@@ -117,7 +84,7 @@ public class DbLoader
   public DbLoader()
   {
   }
-  
+
   /**
    * Set the configuration object to govern DbLoader's behavior.
    * @param c
@@ -126,7 +93,7 @@ public class DbLoader
   {
       this.config = c;
   }
-  
+
   public static void main(String[] args)
   {
     Configuration config = new Configuration();
@@ -136,7 +103,7 @@ public class DbLoader
         loadConfiguration(config);
         // read command line arguements to override properties in dbloader.xml
         readOverrides(config, args);
-        
+
         // create the script file if indicated
         if (config.getCreateScript())
           initScript(config);
@@ -157,7 +124,7 @@ public class DbLoader
         exit(config);
     }
     config.getLog().flush();
-    
+
     if (config.getScriptWriter() != null)
         config.getScriptWriter().flush();
   }
@@ -173,7 +140,7 @@ public class DbLoader
         try
         {
             config.setConnection(RDBMServices.getConnection());
-    
+
           if (config.getConnection() == null)
           {
               config.getLog().println(
@@ -184,7 +151,7 @@ public class DbLoader
            long startTime = System.currentTimeMillis();
 
             DbUtils.logDbInfo(config);
-          
+
             if ( config.getDataURL() == null )
                 config.setDataURL(DbLoader.class.getResource(config.getDataUri()));
 
@@ -192,13 +159,13 @@ public class DbLoader
             // get tablesURL and dataURL here
             if ( config.getTablesURL() == null)
               config.setTablesURL(DbLoader.class.getResource(config.getTablesUri()));
-            
+
             config.getLog().println("Getting tables from: "+config.getTablesURL());
             config.getLog().println("Getting data from: "+config.getDataURL());
 
             DocumentBuilder domParser = null;
 
-            // get a dom parser for handling tables.xml and/or indexes.xml 
+            // get a dom parser for handling tables.xml and/or indexes.xml
             try
             {
                 // Read tables.xml
@@ -254,6 +221,12 @@ public class DbLoader
                 xslt.setXML(config.getTablesDoc());
                 xslt.setXSL(config.getTablesXslUri());
                 xslt.setTarget(new TableHandler(config));
+
+                if (config.getUpgradeVersion() != null) {
+                    xslt.setStylesheetParameter("upgradeMajor", Integer.toString(config.getUpgradeMajor()));
+                    xslt.setStylesheetParameter("upgradeMinor", Integer.toString(config.getUpgradeMinor()));
+                }
+
                 xslt.transform();
             }
             else
@@ -262,7 +235,7 @@ public class DbLoader
                 config.getLog().println("Dropping tables and Creating tables...Disabled");
                 config.getLog().println();
             }
-            
+
             // populate tables if indiicated
             // data.xml --> INSERT sql statements
 
@@ -278,7 +251,7 @@ public class DbLoader
             else
                 config.getLog().println("Populating tables...disabled.");
 
-            // cleanup and exit        
+            // cleanup and exit
             config.getConnection().commit();
             config.getLog().println("Done!");
             long endTime = System.currentTimeMillis();
@@ -288,9 +261,9 @@ public class DbLoader
         finally
         {
             RDBMServices.releaseConnection(config.getConnection());
-        }          
+        }
     }
-  
+
     public static void loadConfiguration(Configuration config)
       throws ParserConfigurationException, SAXException, IOException
     {
@@ -304,7 +277,7 @@ public class DbLoader
         handler.properties.getLog().print("Parsing " + handler.properties.getPropertiesURL() + "...");
         parser.parse(new InputSource(handler.properties.getPropertiesURL().openStream()));
     }
-  
+
   /**
      * @param config
      */
@@ -314,9 +287,13 @@ public class DbLoader
         boolean usetable = false;
         boolean useDataUri  = false;
         boolean useDataFile  = false;
+        boolean useLocale = false;
+        boolean upgrade = false;
+
+        String adminLocale = null;
+        String upgradeVersion = null;
 
         for (int i = 0; i < args.length; i++) {
-           //System.out.println("args["+i+"]: "+args[i]);
            if (!args[i].startsWith("-")) {
               if (usetable) {
                  config.setTablesUri(args[i]);
@@ -326,11 +303,28 @@ public class DbLoader
                  config.setDataURL(DbLoader.class.getResource(config.getDataUri()));
                  useDataUri=false;
               } else if (useDataFile) {
-                  URL url = getDataFileUri(args[i]);
+                 URL url = getDataFileUri(args[i]);
                  config.setDataUri(url.toString());
                  config.setDataURL(url);
                  useDataFile=false;
+              } else if (useLocale) {
+                 adminLocale = args[i];
+                 config.setAdminLocale(adminLocale);
+                 useLocale = false;
+              } else if (upgrade) {
+                 upgradeVersion = args[i];
+                 config.setUpgradeVersion(upgradeVersion);
+                 int index = upgradeVersion.indexOf('.');
+                 config.setUpgradeMajor(Integer.parseInt(upgradeVersion.substring(0, index)));
+                 if (upgradeVersion.indexOf('.', index+1) != -1) {
+                    config.setUpgradeMinor(Integer.parseInt(upgradeVersion.substring(index+1, upgradeVersion.indexOf('.', index+1))));
+                 } else {
+                    config.setUpgradeMinor(Integer.parseInt(upgradeVersion.substring(index+1)));
+                 }
+                 upgrade = false;
               }
+           } else if (args[i].equals("-u")) {
+               upgrade = true;
            } else if (args[i].equals("-t")) {
               usetable = true;
            } else if (args[i].equals("-d")) {
@@ -353,7 +347,9 @@ public class DbLoader
                config.setPopulateTables(true);
            } else if (args[i].equals("-nP")) {
                config.setPopulateTables(false);
-           } else {
+           } else if (args[i].equals("-l")) {
+              config.setLocaleAware(true);
+              useLocale = true;
            }
         }
    }
@@ -401,6 +397,7 @@ public class DbLoader
     config.getLog().println("Generating script file " + scriptFile.getAbsolutePath());
     config.setScriptWriter(new PrintWriter(new BufferedWriter(new FileWriter(scriptFileName, true))));
   }
+
 
   static void exit(Configuration config)
   {

@@ -117,7 +117,7 @@ public class PermissionsXML {
                     }
 
                 } catch (Exception e) {
-                    log.error( e);
+                    log.error("Error getting the view doc for session " + session, e);
                 }
             }
         }
@@ -202,7 +202,7 @@ public class PermissionsXML {
               try {
                   name = EntityNameFinderService.instance().getNameFinder(aps[m].getType()).getName(name);
               } catch (Exception e) {
-                  log.error( e);
+                  log.error(e, e);
               }
               ppl.setAttribute("name", name);
               IPermission[] pms = aps[m].getAllPermissions();
@@ -226,7 +226,7 @@ public class PermissionsXML {
               root.appendChild(ppl);
               }
               catch(Exception e){
-                log.error(e);
+                log.error(e, e);
               }
           }
       }

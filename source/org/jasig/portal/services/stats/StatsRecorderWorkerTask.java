@@ -35,21 +35,21 @@
 
 package org.jasig.portal.services.stats;
 
-import org.jasig.portal.utils.threading.WorkerTask;
+import org.jasig.portal.utils.threading.BaseTask;
 
 /**
  * Base class for all stats recorder worker tasks to extend.
  * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
-public abstract class StatsRecorderWorkerTask extends WorkerTask {
+public abstract class StatsRecorderWorkerTask extends BaseTask {
   
   protected IStatsRecorder statsRecorder;
 
   /**
    * Does the real work of the worker task
    */  
-  public abstract void run();
+  public abstract void execute() throws Exception;
   
   /**
    * Set the stats reocorder that this task should use

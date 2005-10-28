@@ -412,7 +412,7 @@ throws SQLException, LockingException
     }
     catch (java.sql.SQLException sqle)
     {
-        log.error( sqle);
+        log.error(sqle, sqle);
         throw sqle;
     }
 }
@@ -453,7 +453,7 @@ private void primDelete(IEntityLock lock, Connection conn) throws LockingExcepti
     }
     catch (java.sql.SQLException sqle)
     {
-        log.error( sqle);
+        log.error(sqle, sqle);
         throw sqle;
     }
 }
@@ -540,7 +540,7 @@ private IEntityLock[] primSelect(String sql) throws LockingException
     }
     catch (SQLException sqle)
     {
-        log.error( sqle);
+        log.error(sqle, sqle);
         throw new LockingException("Problem retrieving EntityLocks " + sqle.getMessage());
     }
     finally
@@ -598,7 +598,7 @@ throws SQLException, LockingException
     }
     catch (java.sql.SQLException sqle)
     {
-        log.error( sqle);
+        log.error(sqle, sqle);
         throw sqle;
     }
 }

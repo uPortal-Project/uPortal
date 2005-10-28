@@ -129,7 +129,8 @@ public class ChannelManager implements LayoutEventListener {
 
     // global channel rendering cache
     public static final int SYSTEM_CHANNEL_CACHE_MIN_SIZE=50; // this should be in a file somewhere
-    public static final SoftHashMap systemCache=new SoftHashMap(SYSTEM_CHANNEL_CACHE_MIN_SIZE);
+    
+    public static final Map systemCache = Collections.synchronizedMap(new SoftHashMap(SYSTEM_CHANNEL_CACHE_MIN_SIZE));
 
     public static final String channelAddressingPathElement="channel";
     private static boolean useAnchors = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.ChannelManager.use_anchors", false);
@@ -245,6 +246,34 @@ public class ChannelManager implements LayoutEventListener {
      */
     public void finishedRenderingCycle() {
         // clean up
+        for (Enumeration enumeration = rendererTable.elements(); enumeration.hasMoreElements();) {
+            ChannelRenderer channelRenderer = (ChannelRenderer)enumeration.nextElement(); 
+            try {
+                /*
+                 * For well behaved, finished channel renderers, killing doesn't do
+                 * anything.
+                 * 
+                 * For runaway, not-finished channel renderers, killing instructs them to
+                 * stop trying to render because at this point we can't use the 
+                 * results of their rendering anyway.  Furthermore, the current
+                 * actual implementation
+                 * of kill is for channel renderers to kill runaway threads.
+                 */
+                channelRenderer.kill();
+            } catch (Throwable t) {
+                /*
+                 * We're trying to clean up.  A particular thread renderer we've asked
+                 * to please die has failed to die in some potentially horrible way.  
+                 * This is unfortunate, but the best thing we can do about it is log
+                 * the problem and then go on and ask the other ChannelRenderers to
+                 * clean up.  If this one won't clean up properly, maybe at least some
+                 * of the others will clean up.  By catching Throwable and handling
+                 * it in this way, we prevent any particular ChannelRenderer's failure
+                 * from blocking our asking other ChannelRenderers to clean up.
+                 */
+                log.error("Error cleaning up runaway channel renderer: [" + channelRenderer + "]", t);
+            }
+        }
         rendererTable.clear();
         clearRepeatedRenderings();
         targetParams=null;
@@ -268,7 +297,7 @@ public class ChannelManager implements LayoutEventListener {
                 try {
                     ch.receiveEvent(ev);
                 } catch (Exception e) {
-                    log.error(e);
+                    log.error("Error sending session done event to channel " + ch, e);
                 }
             }
         }
@@ -718,7 +747,7 @@ public class ChannelManager implements LayoutEventListener {
             try {
                 ch.receiveEvent(le);
             } catch (Exception e) {
-                log.error(e);
+                log.error("Error sending layout event " + le + " to channel " + ch, e);
             }
         } else {
             log.error("ChannelManager::passPortalEvent() : trying to pass an event to a channel that is not in cache. (cahnel=\"" + channelSubscribeId + "\")");
@@ -862,7 +891,7 @@ public class ChannelManager implements LayoutEventListener {
                     chObj.setRuntimeData(rd);
                 }
                 catch (Exception e) {
-                    chObj=replaceWithErrorChannel(channelTarget,CError.SET_RUNTIME_DATA_EXCEPTION,e,null,false);
+                    chObj=replaceWithErrorChannel(channelTarget,CError.SET_RUNTIME_DATA_EXCEPTION,e,null,true);
                 }
             }
         }

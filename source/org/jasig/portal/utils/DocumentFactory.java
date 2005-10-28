@@ -75,8 +75,7 @@ public class DocumentFactory {
             dbFactory.setNamespaceAware(true);
             dbFactory.setValidating(false);
         } catch (Exception e) {
-            log.error( "DocumentFactory: unable to initialize DocumentBuilderFactory");
-            log.error( e);
+            log.error( "DocumentFactory: unable to initialize DocumentBuilderFactory", e);
         }
     }
 
@@ -91,7 +90,8 @@ public class DocumentFactory {
             String className = PropertiesManager.getProperty("org.jasig.portal.utils.IPortalDocument.implementation");
             doc = (IPortalDocument)Class.forName(className).newInstance();
         } catch (Exception e) {
-            log.error( e);
+            log.error("org.jasig.portal.utils.DocumentFactory could not create new " 
+                    + "IPortalDocument: ", e);
             throw new RuntimeException("org.jasig.portal.utils.DocumentFactory could not create new " + "IPortalDocument: " + e.getMessage());
         }
         return doc;
@@ -130,7 +130,7 @@ public class DocumentFactory {
             try {
                 r = instance().dbFactory.newDocumentBuilder();
             } catch (Exception e) {
-                log.error( e);
+                log.error(e, e);
             }
             return r;
         }
