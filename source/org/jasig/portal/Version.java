@@ -18,6 +18,7 @@ public class Version {
     private static String major = "2";
     private static String minor = "5";
     private static String patch = "1";
+    private static String security = "";
     private static String extra = "";
     
     private static String releaseTag;
@@ -29,14 +30,24 @@ public class Version {
         if (patch != null && patch.length() > 0) {
             releaseTag += "-" + patch;
         }
-        releaseTag += extra;
+        if (security != null && security.length() > 0) {
+            releaseTag += "-" + security;
+        }
+        if (extra != null && extra.length() > 0) {
+            releaseTag += "-" + extra;
+        }
         
         // Construct version for display
         version = major + "." + minor;
         if (patch != null && patch.length() > 0) {
             version += "." + patch;
         }
-        version += extra;
+        if (security != null && security.length() > 0) {
+            version += "." + security;
+        }
+        if (extra != null && extra.length() > 0) {
+            version += "-" + extra;
+        }
     }
     
     /**
@@ -74,6 +85,16 @@ public class Version {
      */
     public static String getPatch() {
         return patch;
+    }
+    
+    /**
+     * Returns the security version.
+     * For example, this would return <code>1</code> for uPortal 2.3.4.1.
+     * This method may return an empty String.
+     * @return the security version
+     */
+    public static String getSecurity() {
+        return security;
     }
     
     /**
