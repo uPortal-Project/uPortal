@@ -152,7 +152,7 @@ public final class ConditionalStatsRecorder
             if (this.targetStatsRecorder == null) {
                 log.error("targetStatsRecorder of ConditionalStatsRecorder illegally null");
             } else {
-                this.targetStatsRecorder.recordChannelDefinitionPublished(person, channelDef);
+                this.targetStatsRecorder.recordChannelDefinitionModified(person, channelDef);
             }
         }
     }
