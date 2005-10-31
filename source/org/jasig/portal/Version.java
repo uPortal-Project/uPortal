@@ -17,9 +17,9 @@ public class Version {
     private static String product = "uPortal";
     private static String major = "2";
     private static String minor = "5";
-    private static String patch = "1";
+    private static String patch = "2";
     private static String security = "";
-    private static String extra = "";
+    private static String extra = "SNAPSHOT";
     
     private static String releaseTag;
     private static String version;
