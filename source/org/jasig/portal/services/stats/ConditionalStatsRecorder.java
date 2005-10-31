@@ -268,7 +268,7 @@ public final class ConditionalStatsRecorder
     }
 
     public void recordChannelTargeted(IPerson person, UserProfile profile, IUserLayoutChannelDescription channelDesc) {
-        if (this.flags.isRecordChannelRendered()) {
+        if (this.flags.isRecordChannelTargeted()) {
             if (this.targetStatsRecorder == null) {
                 log.error("targetStatsRecorder of ConditionalStatsRecorder illegally null");
             } else {
