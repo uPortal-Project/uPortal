@@ -26,7 +26,33 @@ http://maven.apache.org/maven-v3_0_0.xsd">
     <connection>scm:cvs:pserver:anonymous@www.uportal.org:/home/cvs/jasig:portal</connection>
     <developerConnection>scm:cvs:pserver:localhost:/home/cvs/jasig:portal</developerConnection>
     <url>http://www.uportal.org/cgi-bin/viewcvs.cgi/</url>
-  </repository>  
+  </repository>
+  <versions>
+    <version>
+      <id>2.6.0-SNAPSHOT</id>
+      <name>2.6.0-SNAPSHOT</name>
+      <tag>HEAD</tag>
+    </version>
+    <version>
+      <id>2.5.1-GA</id>
+      <name>2.5.1-GA</name>
+      <tag>rel_2_5_1</tag>
+    </version>
+  </versions>
+  <mailingLists>
+    <mailingList>
+      <name>JA-SIG Portal</name>
+      <subscribe>http://list.unm.edu/cgi-bin/wa?SUBED1=jasig-portal&amp;A=1</subscribe>
+      <unsubscribe>http://list.unm.edu/cgi-bin/wa?SUBED1=jasig-portal&amp;A=1</unsubscribe>
+      <archive>http://list.unm.edu/archives/jasig-portal.html</archive>
+    </mailingList>
+    <mailingList>
+      <name>JA-SIG Developers</name>
+      <subscribe>http://list.unm.edu/cgi-bin/wa?SUBED1=jasig-dev&amp;A=1</subscribe>
+      <unsubscribe>http://list.unm.edu/cgi-bin/wa?SUBED1=jasig-dev&amp;A=1</unsubscribe>
+      <archive>http://list.unm.edu/archives/jasig-dev.html</archive>
+    </mailingList>
+  </mailingLists>
   <!-- ================================================================== -->
   <!-- Library and artifact dependencies                                  -->
   <!-- ================================================================== -->
@@ -239,8 +265,10 @@ http://maven.apache.org/maven-v3_0_0.xsd">
         <targetPath>properties</targetPath>
         <includes>
           <include>*/**</include>
-          <exclude>CVS</exclude>
         </includes>
+        <excludes>
+          <exclude>CVS</exclude>
+        </excludes>
       </resource>
       <!-- Specify some resources to be places in the root package -->
       <resource>
@@ -249,23 +277,27 @@ http://maven.apache.org/maven-v3_0_0.xsd">
           <include>properties/log4j.xml</include>
           <include>properties/log4j.dtd</include>
           <include>properties/whirlycache.xml</include>
-          <exclude>CVS</exclude>
         </includes>
+        <excludes>
+          <exclude>CVS</exclude>
+        </excludes>
       </resource>
       <!-- Specify some resources to be places in the root package -->
       <resource>
         <directory>webpages/stylesheets</directory>
         <includes>
           <include>**/*.cpd,**/*.xsl,**/*.ssl,**/*.sdf,**/*.properties</include>
-          <exclude>CVS,**/*.UTF-8.properties</exclude>
         </includes>
+        <excludes>
+          <exclude>CVS,**/*.UTF-8.properties</exclude>
+        </excludes>
       </resource>
       <!-- Specify some resources to be places in the root package -->
       <resource>
         <directory>webpages/media</directory>
-        <includes>
+        <excludes>
           <exclude>CVS,**/*.gif,**/*.jpg,**/*.css</exclude>
-        </includes>
+        </excludes>
       </resource>
       <!-- Specify some resources to be places in the root package -->
       <resource>
@@ -285,4 +317,17 @@ http://maven.apache.org/maven-v3_0_0.xsd">
       </resource>
     </resources>
   </build>
+  <reports>
+    <report>maven-junit-report-plugin</report>
+    <report>maven-javadoc-plugin</report>
+    <report>maven-faq-plugin</report>
+    <report>maven-changes-plugin</report>
+    <report>maven-jdepend-plugin</report>
+    <report>maven-jxr-plugin</report>
+    <report>maven-pmd-plugin</report>
+    <report>maven-simian-plugin</report>
+    <report>maven-tasklist-plugin</report>
+    <report>maven-license-plugin</report>
+    <report>maven-clover-plugin</report>
+  </reports>  
 </project>
