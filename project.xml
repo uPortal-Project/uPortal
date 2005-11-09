@@ -316,6 +316,7 @@ http://maven.apache.org/maven-v3_0_0.xsd">
         </includes>
       </resource>
     </resources>
+
   </build>
   <reports>
     <report>maven-junit-report-plugin</report>
