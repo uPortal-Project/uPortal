@@ -13,7 +13,7 @@ http://maven.apache.org/maven-v3_0_0.xsd">
   <inceptionYear>2005</inceptionYear>
   <url>http://www.uportal.org</url>
   <logo>http://www.ja-sig.org/images/jasig-head.gif</logo>
-  <issueTrackingUrl>http://jasigch.princeton.edu:9000/jira/browse/UP</issueTrackingUrl>
+  <issueTrackingUrl>http://jasigch.princeton.edu:9000/jira/BrowseProject.jspa?id=10020</issueTrackingUrl>
   <licenses>
     <license>
       <name>Ja-Sig Collaborative License</name>
@@ -25,7 +25,7 @@ http://maven.apache.org/maven-v3_0_0.xsd">
   <repository>
     <connection>scm:cvs:pserver:anonymous@www.uportal.org:/home/cvs/jasig:portal</connection>
     <developerConnection>scm:cvs:pserver:localhost:/home/cvs/jasig:portal</developerConnection>
-    <url>http://www.uportal.org/cgi-bin/viewcvs.cgi/</url>
+    <url>http://www.uportal.org/cgi-bin/viewcvs.cgi/portal/</url>
   </repository>
   <versions>
     <version>
@@ -331,5 +331,10 @@ http://maven.apache.org/maven-v3_0_0.xsd">
     <report>maven-license-plugin</report>
     <report>maven-clover-plugin</report>
     <report>maven-changelog-plugin</report>
+    <report>maven-developer-activity-plugin</report>
+    <report>maven-file-activity-plugin</report>
+    <!-- 
+    <report>maven-checkstyle-plugin</report>
+    -->
   </reports>  
 </project>
