@@ -417,12 +417,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
      * @return a <code>boolean</code> value
      */
     public boolean canOverrideParameter(String parameterName) {
-        Boolean ov=(Boolean) override.get(parameterName);
-        if(ov!=null) {
-            return ov.booleanValue();
-        } else {
-            return false;
-        }
+        return getParameterOverrideValue(parameterName);
     }
 
     /**
@@ -445,6 +440,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
      * @return an old parameter value.
      */
     public String remove(String parameterName) {
+        override.remove(parameterName);
         return (String) parameters.remove(parameterName);
     }
 
