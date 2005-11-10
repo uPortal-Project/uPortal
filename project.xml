@@ -330,5 +330,6 @@ http://maven.apache.org/maven-v3_0_0.xsd">
     <report>maven-tasklist-plugin</report>
     <report>maven-license-plugin</report>
     <report>maven-clover-plugin</report>
+    <report>maven-changelog-plugin</report>
   </reports>  
 </project>
