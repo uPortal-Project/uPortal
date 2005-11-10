@@ -715,10 +715,10 @@ public class ChannelManager implements LayoutEventListener {
             			StatsRecorder.recordChannelInstantiated(upm.getPerson(), upm.getCurrentProfile(), cd);
 
 			            // Create and stuff the channel static data
-			            ChannelStaticData sd = new ChannelStaticData();
+			            ChannelStaticData sd = new ChannelStaticData(
+                            cd.getParameterMap(), upm.getUserLayoutManager());
             			sd.setChannelSubscribeId(channelSubscribeId);
 			            sd.setTimeout(cd.getTimeout());
-           				sd.setParameters(cd.getParameterMap());
 			            sd.setPerson(upm.getPerson());
 			            sd.setJNDIContext(channelContext);
             			sd.setICCRegistry(new ICCRegistry(this,channelSubscribeId));

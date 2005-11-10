@@ -5,14 +5,18 @@
 
 package org.jasig.portal.layout.dlm;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.Vector;
+import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.transform.Transformer;
@@ -26,7 +30,10 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.ChannelStaticData;
+import org.jasig.portal.ChannelDefinition;
+import org.jasig.portal.ChannelParameter;
+import org.jasig.portal.ChannelRegistryStoreFactory;
+import org.jasig.portal.IChannelRegistryStore;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.StructureStylesheetUserPreferences;
 import org.jasig.portal.ThemeStylesheetUserPreferences;
@@ -38,13 +45,10 @@ import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.layout.LayoutEvent;
 import org.jasig.portal.layout.LayoutEventListener;
 import org.jasig.portal.layout.LayoutMoveEvent;
-import org.jasig.portal.layout.alm.IALFolderDescription;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.node.IUserLayoutFolderDescription;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
-import org.jasig.portal.layout.node.UserLayoutChannelDescription;
 import org.jasig.portal.layout.node.UserLayoutFolderDescription;
-import org.jasig.portal.layout.node.UserLayoutNodeDescription;
 import org.jasig.portal.layout.simple.SimpleLayout;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.utils.CommonUtils;
@@ -69,7 +73,7 @@ public class DistributedLayoutManager implements IUserLayoutManager
 
     protected final IPerson owner;
     protected final UserProfile profile;
-    protected IUserLayoutStore store=null;
+    protected RDBMDistributedLayoutStore store=null;
     protected Set listeners=new HashSet();
 
     protected Document userLayoutDocument=null;
@@ -232,7 +236,7 @@ public class DistributedLayoutManager implements IUserLayoutManager
 
 
     public void setLayoutStore(IUserLayoutStore store) {
-        this.store=store;
+        this.store=(RDBMDistributedLayoutStore) store;
     }
 
     protected IUserLayoutStore getLayoutStore() {
@@ -337,7 +341,15 @@ public class DistributedLayoutManager implements IUserLayoutManager
                                       "\" doesn't exist for " 
                     + owner.getAttribute(IPerson.USERNAME) + "." );
         }
-        return UserLayoutNodeDescription.createUserLayoutNodeDescription(element);
+        IUserLayoutNodeDescription desc =
+            ChannelDescription.createUserLayoutNodeDescription(element);
+        if (nodeId.startsWith(Constants.FRAGMENT_ID_USER_PREFIX)
+                && desc instanceof ChannelDescription)
+        {
+            FragmentChannelInfo info = store.getFragmentChannelInfo(nodeId);
+            ((ChannelDescription)desc).setFragmentChannelInfo(info);
+        }
+        return desc;
     }
 
 
@@ -491,17 +503,19 @@ public class DistributedLayoutManager implements IUserLayoutManager
             return false;
         }
     }
-
+    
+    /**
+     * Handles pushing changes made to the passed-in node into the user's layout.
+     * If the node is an ILF node then the change is recorded via directives in
+     * the PLF if such changes are allowed by the owning fragment. If the node
+     * is a user owned node then the changes are applied directly to the corresponding node
+     * in the PLF. 
+     */
     public synchronized boolean updateNode( IUserLayoutNodeDescription node )
         throws PortalException
     {
         if( canUpdateNode( node ) )
         {
-            // normally here, one would determine what has changed
-            // but we'll just make sure that the node type has not
-            // changed and then regenerate the node Element from scratch,
-            // and attach any children it might have had to it.
-
             String nodeId = node.getId();
             String nextSiblingId = getNextSiblingId( nodeId );
             Element nextSibling = null;
@@ -516,72 +530,36 @@ public class DistributedLayoutManager implements IUserLayoutManager
 
             if( oldNode instanceof IUserLayoutChannelDescription )
             {
-                IUserLayoutChannelDescription oldChannel=(IUserLayoutChannelDescription) oldNode;
-                if( node instanceof IUserLayoutChannelDescription )
+                IUserLayoutChannelDescription oldChanDesc = (IUserLayoutChannelDescription) oldNode;
+                if (!(node instanceof IUserLayoutChannelDescription))
                 {
-                    Document uld = this.userLayoutDocument;
-                    // generate new XML Element
-
-                    Element newChannelElement = node.getXML(uld);
-                    Element oldChannelElement = (Element) uld.getElementById( nodeId );
-                    Node parent = oldChannelElement.getParentNode();
-                    parent.removeChild( oldChannelElement );
-                    parent.insertBefore( newChannelElement, nextSibling );
-                    // register new child instead
-                    newChannelElement.setIdAttribute(Constants.ATT_ID, true);
-
-                    // inform the listeners
-                    LayoutEvent ev=new LayoutEvent( this, node);
-                    for( Iterator i=listeners.iterator(); i.hasNext(); )
-                    {
-                        LayoutEventListener lel=(LayoutEventListener)i.next();
-                        lel.channelUpdated( ev );
-                    }
-                    pushChanDiffsIntoPlf( newChannelElement,
-                                          (IUserLayoutChannelDescription) node,
-                                          oldChannel );
-                }
-                else
-                {
-                    throw new PortalException("Change channel to folder is " +
-                            "not allowed by updateNode() method! Occurred " +
-                            "in layout for " 
+                    throw new PortalException("Change channel to folder is "
+                            + "not allowed by updateNode() method! Occurred "
+                            + "in layout for "
                             + owner.getAttribute(IPerson.USERNAME) + ".");
+                }
+                IUserLayoutChannelDescription newChanDesc = 
+                    (IUserLayoutChannelDescription) node;
+                updateChannelNode(nodeId, newChanDesc, oldChanDesc);
+                // inform the listeners
+                LayoutEvent ev = new LayoutEvent(this, node);
+                for (Iterator i = listeners.iterator(); i.hasNext();)
+                {
+                    LayoutEventListener lel = (LayoutEventListener) i.next();
+                    lel.channelUpdated(ev);
                 }
             }
             else
             {
                  // must be a folder
-                UserLayoutFolderDescription oldFolder=(UserLayoutFolderDescription) oldNode;
-                if (oldFolder.getId().equals(getRootFolderId()))
+                IUserLayoutFolderDescription oldFolderDesc=(IUserLayoutFolderDescription) oldNode;
+                if (oldFolderDesc.getId().equals(getRootFolderId()))
                     throw new PortalException("Update of root node is not currently allowed!");
                     
                 if( node instanceof IUserLayoutFolderDescription )
                 {
-                    Document uld=this.userLayoutDocument;
-                    // generate new XML Element
-                    Element newFolderElement=node.getXML(uld);
-                    Element oldFolderElement=(Element)uld.getElementById(nodeId);
-                    Node parent=oldFolderElement.getParentNode();
-
-                    // move children
-                    Vector children=new Vector();
-                    for( Node n=oldFolderElement.getFirstChild();
-                        n!=null; n=n.getNextSibling() )
-                    {
-                        children.add(n);
-                    }
-
-                    for( int i=0; i<children.size(); i++ )
-                    {
-                        newFolderElement.appendChild((Node)children.get(i));
-                    }
-
-                    // replace the actual node
-                    parent.removeChild(oldFolderElement);
-                    parent.insertBefore(newFolderElement,nextSibling);
-                    // register new child instead
-                    newFolderElement.setIdAttribute(Constants.ATT_ID, true);
+                    IUserLayoutFolderDescription newFolderDesc=(IUserLayoutFolderDescription) node;
+                    updateFolderNode(nodeId, newFolderDesc, oldFolderDesc);
 
                     // inform the listeners
                     LayoutEvent ev=new LayoutEvent(this,node);
@@ -589,9 +567,6 @@ public class DistributedLayoutManager implements IUserLayoutManager
                         LayoutEventListener lel=(LayoutEventListener)i.next();
                         lel.folderUpdated(ev);
                     }
-                    pushFolderDiffsIntoPlf( newFolderElement,
-                                            (UserLayoutFolderDescription) node,
-                                            oldFolder );
                 }
             }
             this.updateCacheKey();
@@ -603,59 +578,368 @@ public class DistributedLayoutManager implements IUserLayoutManager
         }
     }
 
-    private void pushFolderDiffsIntoPlf( Element element,
-                                         UserLayoutFolderDescription newF,
-                                         UserLayoutFolderDescription oldF )
-        throws PortalException
+    /**
+     * Compares the new folder description object with the old folder 
+     * description object to determine what items were changed and if those
+     * changes are allowed. Once all changes are verified as being allowed
+     * changes then they are pushed into both the ILF and the PLF as
+     * appropriate. No changes are made until we determine that all changes are
+     * allowed.
+     * 
+     * @param nodeId
+     * @param newFolderDesc
+     * @param oldFolderDesc
+     * @throws PortalException
+     */
+    private void updateFolderNode(String nodeId,
+            IUserLayoutFolderDescription newFolderDesc,
+            IUserLayoutFolderDescription oldFolderDesc)
+    throws PortalException
     {
-        // currently the only elements that we expect users to change are:
-        // deleteAllowed, moveAllowed, editAllowed, and addChildAllowed (for
-        // fragment owners); name (for regular users).
+        Element ilfNode = 
+            (Element) userLayoutDocument.getElementById(nodeId);
+        List pendingActions = new ArrayList();
 
-        if ( ! newF.getName().equals( oldF.getName() ) )
-            TabColumnPrefsHandler.editAttribute( element,
-                                                 Constants.ATT_NAME,
-                                                 owner );
+        /*
+         * see what structure attributes changed if any and see if allowed.
+         * 
+         * CHANNEL ATTRIBUTES that currently can be EDITED in DLM are:
+         * name - in both fragments and regular layouts
+         * dlm:moveAllowed - only on fragments 
+         * dlm:editAllowed - only on fragments 
+         * dlm:deleteAllowed - only on fragments 
+         * dlm:addChildAllowed - only on fragments
+         */
 
-        if ( newF.isMoveAllowed()     !=  oldF.isMoveAllowed() ||
-             newF.isEditAllowed()     !=  oldF.isEditAllowed() ||
-             newF.isAddChildAllowed() !=  oldF.isAddChildAllowed() ||
-             newF.isDeleteAllowed()   !=  oldF.isDeleteAllowed() )
-            TabColumnPrefsHandler.changeRestrictions( element,
-                                                      newF.isMoveAllowed(),
-                                                      newF.isEditAllowed(),
-                                                      newF.isAddChildAllowed(),
-                                                      newF.isDeleteAllowed(),
-                                                      owner );
+        // ATT: DLM Restrictions
+        if (isFragment
+                && (newFolderDesc.isDeleteAllowed() != 
+                    oldFolderDesc.isDeleteAllowed()
+                 || newFolderDesc.isEditAllowed() != 
+                     oldFolderDesc.isEditAllowed() 
+                 || newFolderDesc.isAddChildAllowed() != 
+                     oldFolderDesc.isAddChildAllowed() 
+                 || newFolderDesc.isMoveAllowed() != 
+                    oldFolderDesc.isMoveAllowed()))
+        {
+            pendingActions.add(new LPA_EditRestriction(owner, ilfNode,
+                    newFolderDesc.isMoveAllowed(), 
+                    newFolderDesc.isDeleteAllowed(), 
+                    newFolderDesc.isEditAllowed(), 
+                    newFolderDesc.isAddChildAllowed()));
+        }
+        
+        // ATT: Name
+        updateNodeAttribute(ilfNode, nodeId, Constants.ATT_NAME, newFolderDesc
+                .getName(), oldFolderDesc.getName(), pendingActions);
+        
+        /*
+         * if we make it to this point then all edits made are allowed so
+         * process the actions to push the edits into the layout
+         */
+        for(Iterator itr = pendingActions.iterator(); itr.hasNext();)
+        {
+            ILayoutProcessingAction action = 
+                (ILayoutProcessingAction) itr.next();
+            action.perform();
+        }
     }
 
-    private void pushChanDiffsIntoPlf( Element element,
-                                       IUserLayoutChannelDescription newChan,
-                                       IUserLayoutChannelDescription oldChan )
-        throws PortalException
+    /**
+     * Handles checking for updates to a named attribute, verifying such change
+     * is allowed, and generates an action object to make that change.
+     * 
+     * @param ilfNode the node in the viewed layout
+     * @param nodeId the id of the ilfNode
+     * @param attName the attribute to be checked
+     * @param newVal the attribute's new value
+     * @param oldVal the attribute's old value
+     * @param pendingActions the set of actions for adding an action 
+     * @throws PortalException if the change is not allowed
+     */
+    private void updateNodeAttribute(Element ilfNode, String nodeId, 
+            String attName, String newVal, String oldVal, List pendingActions) 
+    throws PortalException
     {
-        // currently the only elements that we expect users to change are:
-        // deleteAllowed and moveAllowed (for fragment owners); and child
-        // property elements.
+        if (! newVal.equals(oldVal))
+        {
+            boolean isIncorporated = 
+                nodeId.startsWith(Constants.FRAGMENT_ID_USER_PREFIX); 
+            if (isIncorporated)
+            {
+                /*
+                 * Is a change to this attribute allowed?
+                 */
+                FragmentNodeInfo fragNodeInf = store.getFragmentNodeInfo(nodeId);
+                if (fragNodeInf == null )
+                {
+                    /*
+                     * null should only happen if a node was deleted in the
+                     * fragment and a user happened to already be logged in and
+                     * edited an attribute on that node.
+                     */ 
+                    pendingActions.add(new LPA_ChangeAttribute(nodeId, attName,
+                            newVal, owner, ilfNode));
+                }
+                else if (! fragNodeInf.canOverrideAttributes())
+                {
+                    /*
+                     * It isn't overrideable.
+                     */
+                    throw new PortalException("Layout element '" 
+                            + fragNodeInf.getAttributeValue(attName)
+                            + "' does not allow overriding attribute '" 
+                            + attName + "'.");
+                }
+                else if (! fragNodeInf.getAttributeValue(attName)
+                        .equals(newVal))
+                {
+                    /*
+                     * If we get here we can override and the value is 
+                     * different than that in the fragment so make the change.
+                     */
+                    pendingActions.add(new LPA_ChangeAttribute(nodeId, attName,
+                            newVal, owner, ilfNode));
+                }
+                else 
+                {
+                    /*
+                     * The new value matches that in the fragment. 
+                     */
+                    pendingActions.add(new LPA_ResetAttribute(nodeId, attName,
+                            fragNodeInf.getAttributeValue(attName), owner,
+                            ilfNode));
+                }
+            }
+            else
+            {
+                /*
+                 * Node owned by user so no checking needed. Just change it.
+                 */
+                pendingActions.add(new LPA_ChangeAttribute(nodeId, attName,
+                        newVal, owner, ilfNode));
+            }
+        }
+    }
+    /**
+     * Compares the new channel description object with the old channel
+     * description object to determine what items were changed and if those
+     * changes are allowed. Once all changes are verified as being allowed
+     * changes then they are pushed into both the ILF and the PLF as
+     * appropriate. No changes are made until we determine that all changes are
+     * allowed.
+     * 
+     * @param nodeId
+     * @param newChanDesc
+     * @param oldChanDesc
+     * @throws PortalException
+     */
+    private void updateChannelNode(String nodeId,
+            IUserLayoutChannelDescription newChanDesc,
+            IUserLayoutChannelDescription oldChanDesc)
+    throws PortalException
+    {
+        Element ilfNode = 
+            (Element) userLayoutDocument.getElementById(nodeId);
+        List pendingActions = new ArrayList();
+        boolean isIncorporated = 
+            nodeId.startsWith(Constants.FRAGMENT_ID_USER_PREFIX); 
 
-        if ( newChan.isMoveAllowed()     !=  oldChan.isMoveAllowed() ||
-             newChan.isDeleteAllowed()   !=  oldChan.isDeleteAllowed() )
-            TabColumnPrefsHandler.changeRestrictions( element,
-                                                      newChan.isMoveAllowed(),
-                                                      false,
-                                                      false,
-                                                      newChan.isDeleteAllowed(),
-                                                      owner );
-        // now push changed param children into PLF
-        Element plfChan = TabColumnPrefsHandler.getPlfChannel( element,
-                                                               owner );
-        Document root = plfChan.getOwnerDocument();
+        /*
+         * see what structure attributes changed if any and see if allowed.
+         * 
+         * CHANNEL ATTRIBUTES that currently can be EDITED in DLM are:
+         * dlm:moveAllowed - only on fragments 
+         * dlm:editAllowed - only on fragments 
+         * dlm:deleteAllowed - only on fragments 
+         */
+
+        // ATT: DLM Restrictions
+        if (isFragment
+                && (newChanDesc.isDeleteAllowed() != 
+                    oldChanDesc.isDeleteAllowed()
+                 || newChanDesc.isEditAllowed() != 
+                    oldChanDesc.isEditAllowed() 
+                 || newChanDesc.isMoveAllowed() != 
+                    oldChanDesc.isMoveAllowed()))
+        {
+            pendingActions.add(new LPA_EditRestriction(owner, ilfNode,
+                    newChanDesc.isMoveAllowed(), 
+                    newChanDesc.isDeleteAllowed(), 
+                    newChanDesc.isEditAllowed(), 
+                    newChanDesc.isAddChildAllowed()));
+        }
         
-        // TODO figure out how the line below is supposed to take place in 
-        // the latest codebase via the interface rather than the implemention
-        // class.
-        UserLayoutChannelDescription newChanDef = (UserLayoutChannelDescription) newChan;
-        newChanDef.addParameterChildren( plfChan, root );
+        // ATT: other? if other attributes should be editable in DLM on channels
+        // we can add calls like this to enable such support.
+        //  updateNodeAttribute(ilfNode, nodeId, "hidden", 
+        //     newChanDesc.getName(), oldChanDesc.getName(), pendingActions);
+
+        /*
+         * now we loop through all parameters in the new channel description and
+         * see if there is a corresponding parameter in the old channel
+         * description and see if the change is allowed. For each allowed change
+         * we add an object that will make such a change once all changes have
+         * been approved. As we find matches in the old channel description we
+         * remove those parameters. Then any left there after processing those
+         * of the new channel description indicate parameters that were removed.
+         */
+        FragmentChannelInfo fragChanInf = null;
+        Map pubParms = getPublishedChannelParametersMap(
+                newChanDesc.getChannelPublishId());
+        
+        if (isIncorporated)
+            fragChanInf = store.getFragmentChannelInfo(nodeId);
+        Map oldParms = new HashMap(oldChanDesc.getParameterMap());
+        for (Iterator itr = newChanDesc.getParameterMap().entrySet()
+                .iterator(); itr.hasNext();)
+        {
+            Map.Entry e = (Entry) itr.next();
+            String name = (String) e.getKey();
+            String newVal = (String) e.getValue();
+            String oldVal = (String) oldParms.remove(name);
+
+            if (oldVal == null)
+            {
+                /*
+                 * not in old description so this is a new ad-hoc parameter
+                 */
+                pendingActions.add(new LPA_AddParameter
+                        (nodeId, name, newVal, owner, ilfNode));
+            } else if (!oldVal.equals(newVal)) 
+            {
+                /*
+                 * changing value, is it allowed by the channel and by the
+                 * fragment if this came from a fragment?
+                 */
+                if (!oldChanDesc.canOverrideParameter(name))
+                    throw new PortalException("This instance of "
+                            + oldChanDesc.getTitle() 
+                            + " does not allow overriding parameter " 
+                            + name);
+                if (isIncorporated )
+                {
+                    /*
+                     * if the fragment does not have a value for this parm then
+                     * this is an ad-hoc value and we need a directive to
+                     * persist the user's desired value. if the frament does
+                     * have a value and it is the same as the new value then we
+                     * can remove the override since it won't accomplish
+                     * anything. if the fragment does have a value and it is
+                     * different then we need the directive to persist the
+                     * user's desired value.
+                     */
+                    String fragValue = fragChanInf.getParameterValue(name);
+
+                    if (fragValue == null)
+                    {
+                        /*
+                         * so fragment doesn't override. See if the value
+                         * specified matches that of the channel definition
+                         */
+                        ChannelParameter cp = 
+                            (ChannelParameter) pubParms.get(name);
+                        
+                        if (cp != null && cp.getValue().equals(newVal))
+                            /*
+                             * new value matches that of published channel to
+                             * remove any user parameter spec since not needed
+                             */
+                            pendingActions.add(new LPA_RemoveParameter
+                                    (nodeId, name, owner, ilfNode));
+                        else
+                            /*
+                             * value doesn't match that of published chanel so
+                             * we need change any existing parameter spec or add
+                             * a new one if it doesn't exist.
+                             */
+                            pendingActions.add(new LPA_ChangeParameter
+                                    (nodeId, name, newVal, owner, ilfNode));
+                    } else if (!fragValue.equals(newVal))
+                    {
+                        /*
+                         * so fragment does specify and user value is different
+                         * so change any existing parameter spec or add a new
+                         * one if it doesn't exist.
+                         */
+                        pendingActions.add(new LPA_ChangeParameter
+                                (nodeId, name, newVal, owner, ilfNode));
+                    } else
+                    {
+                        /*
+                         * new val same as fragment value so don't persist.
+                         * remove any parameter spec if it exists.
+                         */
+                        pendingActions.add(new LPA_ResetParameter
+                                (nodeId, name, fragValue, owner, ilfNode));
+                    }
+                }
+                else // not incorporated from a fragment 
+                {
+                    /*
+                     * see if the value specified matches that of the channel
+                     * definition
+                     */
+                    ChannelParameter cp = 
+                        (ChannelParameter) pubParms.get(name);
+                    
+                    if (cp.getValue().equals(newVal))
+                        pendingActions.add(new LPA_RemoveParameter
+                                (nodeId, name, owner, ilfNode));
+                    else
+                        pendingActions.add(new LPA_ChangeParameter
+                                (nodeId, name, newVal, owner, ilfNode));
+                }
+            }
+        }
+        /*
+         * So any parameters remaining in the oldParms map at this point didn't
+         * match those in the new channel description which means that they were
+         * removed. So remove any parameter spec if it exists.
+         */
+        for (Iterator itr = oldParms.entrySet().iterator(); itr
+                .hasNext();)
+        {
+            Map.Entry e = (Entry) itr.next();
+            String name = (String) e.getKey();
+            pendingActions.add(new LPA_RemoveParameter
+                    (nodeId, name, owner, ilfNode));
+        }
+        /*
+         * if we make it to this point then all edits made are allowed so
+         * process the actions to push the edits into the layout
+         */
+        for(Iterator itr = pendingActions.iterator(); itr.hasNext();)
+        {
+            ILayoutProcessingAction action = 
+                (ILayoutProcessingAction) itr.next();
+            action.perform();
+        }
+    }
+    /**
+     * Return a map parameter names to channel parameter objects representing
+     * the parameters specified at publish time for the channel with the
+     * passed-in publish id.
+     * 
+     * @param channelPublishId
+     * @return
+     * @throws PortalException
+     */
+    private Map getPublishedChannelParametersMap(String channelPublishId)
+            throws PortalException
+    {
+        try
+        {
+            IChannelRegistryStore crs = ChannelRegistryStoreFactory
+                .getChannelRegistryStoreImpl();
+            int pubId = Integer.parseInt(channelPublishId);
+            ChannelDefinition def = crs.getChannelDefinition(pubId);
+            return def.getParametersAsUnmodifiableMap();
+        } catch (Exception e)
+        {
+            throw new PortalException("Unable to acquire channel definition.",
+                    e);
+        }
     }
 
     public boolean canAddNode( IUserLayoutNodeDescription node,
@@ -849,18 +1133,17 @@ public class DistributedLayoutManager implements IUserLayoutManager
     }
 
     /**
-       Returns true if the node is a folder node and edits on the folder are
-       allowed or if the folder is a channel.
+     * Returns true if we are dealing with a fragment layout or if editing of
+     * attributes is allowed, or the node is a channel since ad-hoc parameters
+     * can always be added.
      */
     public boolean canUpdateNode( IUserLayoutNodeDescription node )
     {
         if ( node == null )
             return false;
 
-        if ( node instanceof UserLayoutFolderDescription )
-            return isFragment ||
-                ( ( UserLayoutFolderDescription ) node ).isEditAllowed();
-        return true;
+        return isFragment || node.isEditAllowed()
+                || node instanceof IUserLayoutChannelDescription;
     }
 
     /**
@@ -970,7 +1253,7 @@ public class DistributedLayoutManager implements IUserLayoutManager
     {
         Vector v=new Vector();
         IUserLayoutNodeDescription node=getNode(nodeId);
-        if(node instanceof UserLayoutFolderDescription) {
+        if(node instanceof IUserLayoutFolderDescription) {
             Document uld=this.getUserLayoutDOM();
             Element felement=(Element)uld.getElementById(nodeId);
             for(Node n=felement.getFirstChild(); n!=null;n=n.getNextSibling()) {
@@ -1120,7 +1403,7 @@ public class DistributedLayoutManager implements IUserLayoutManager
         }
         else
         {
-            return new UserLayoutChannelDescription();
+            return new ChannelDescription();
         }
     }
 

@@ -11,7 +11,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Properties;
@@ -23,6 +25,7 @@ import org.jasig.portal.ChannelDefinition;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.layout.simple.RDBMUserLayoutStore;
+import org.jasig.portal.ChannelParameter;
 import org.jasig.portal.StructureStylesheetDescription;
 import org.jasig.portal.StructureStylesheetUserPreferences;
 import org.jasig.portal.ThemeStylesheetDescription;
@@ -35,6 +38,7 @@ import org.jasig.portal.rdbm.DatabaseMetaDataImpl;
 import org.jasig.portal.rdbm.IDatabaseMetadata;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.provider.PersonImpl;
+import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.SmartCache;
 import org.jasig.portal.utils.XML;
 import org.w3c.dom.Attr;
@@ -70,6 +74,7 @@ public class RDBMDistributedLayoutStore
     private boolean systemDefaultUserLoaded = false;
     private Properties properties = null;
     private FragmentDefinition[] definitions = null;
+    private Map fragmentInfoCache = null;
     private LayoutDecorator decorator = null;
     private FragmentActivator activator = null;
     private Object initializationLock = new Object();
@@ -89,6 +94,37 @@ public class RDBMDistributedLayoutStore
     /** Map of read/writer lock objects; one per unique person. */
     private Map mLocks = new ConcurrentHashMap();
 
+    /**
+     * Method for acquiring copies of fragment layouts to assist in debugging.
+     * No infrastructure code calls this but channels designed to expose the 
+     * structure of the cached fragments use this to obtain copies.
+     * @return
+     */
+    public Map getFragmentLayoutCopies()
+    throws Exception
+    {
+        if ( ! initialized )
+        {
+            synchronized( initializationLock )
+            {
+                if ( ! initialized )
+                {
+                    initializationLock.wait();
+                }
+            }
+        }
+        Map layouts = new HashMap();
+        
+        for(int i=0; definitions != null && i<definitions.length; i++)
+        {
+            Document layout = DocumentFactory.getNewDocument();
+            Node copy = layout.importNode(definitions[i].view.layout
+                    .getDocumentElement(), true);
+            layout.appendChild(copy);
+            layouts.put(definitions[i].ownerID, layout);
+        }
+        return layouts;
+    }
     private final ReadWriteLock getReadWriteLock(IPerson person)
     {
         Object key = new Integer(person.getID());
@@ -390,7 +426,7 @@ public class RDBMDistributedLayoutStore
                                     updateCachedLayout( layout, profile, fragment );
                                 }
                             }
-
+                            fragmentInfoCache = new HashMap();
                         }
                         catch( Exception e )
                         {
@@ -597,7 +633,9 @@ public class RDBMDistributedLayoutStore
         // Fix later to handle multiple profiles
         Element root = layout.getDocumentElement();
         root.setAttribute( Constants.ATT_ID,
-                           "u" + fragment.userID + "l1" );
+                           Constants.FRAGMENT_ID_USER_PREFIX + 
+                           fragment.userID + 
+                           Constants.FRAGMENT_ID_LAYOUT_PREFIX + "1" );
         UserView view = new UserView( profile,
                                       layout,
                                       fragment.view.structUserPrefs,
@@ -606,6 +644,7 @@ public class RDBMDistributedLayoutStore
         {
             activator.fragmentizeLayout( view, fragment );
             fragment.view = view;
+            this.fragmentInfoCache = new HashMap();
         }
         catch( Exception e )
         {
@@ -697,14 +736,28 @@ public class RDBMDistributedLayoutStore
         {
             PLF = _safeGetUserLayout( person, profile );
         }
+        if (LOG.isDebugEnabled())
+            LOG.debug("PLF for " + person.getAttribute(IPerson.USERNAME) +
+                    " immediately after loading\n" + XML.serializeNode(PLF));
+        
         Document ILF = ILFBuilder.constructILF( PLF, applicables, person );
         person.setAttribute( Constants.PLF, PLF );
         IntegrationResult result = new IntegrationResult();
         PLFIntegrator.mergePLFintoILF( PLF, ILF, result );
-        
+        if (LOG.isDebugEnabled())
+        {
+            LOG.debug("PLF for " + person.getAttribute(IPerson.USERNAME) +
+                    " after MERGING\n" + XML.serializeNode(PLF));
+            LOG.debug("ILF for " + person.getAttribute(IPerson.USERNAME) +
+                    " after MERGING\n" + XML.serializeNode(ILF));
+        }
         // push optimizations made during merge back into db.
         if( result.changedPLF )
         {
+            if (LOG.isDebugEnabled())
+                LOG.debug("Saving PLF for " + 
+                    person.getAttribute(IPerson.USERNAME) +
+                    " due to changes during merge.");
             super.setUserLayout( person, profile, PLF, false );
         }
 
@@ -737,6 +790,9 @@ public class RDBMDistributedLayoutStore
       throws Exception
     {
         Document plf = (Document) person.getAttribute( Constants.PLF );
+        if (LOG.isDebugEnabled())
+            LOG.debug("PLF for " + person.getAttribute(IPerson.USERNAME) +
+                    "\n" + XML.serializeNode(plf));
         super.setUserLayout( person, profile, plf, channelsAdded );
 
         if (updateFragmentCache)
@@ -802,6 +858,61 @@ public class RDBMDistributedLayoutStore
     void setDefinitions( FragmentDefinition[] frags )
     {
         this.definitions = frags;
+        this.fragmentInfoCache = new HashMap();
+    }
+    
+    /**
+     * Returns an object suitable for identifying channel attribute and
+     * parameter values in a user's layout that differ from the values on the
+     * same element in a fragment. This is used by the layout manager to know
+     * which ones must be persisted.
+     * 
+     * @param sId
+     * @return FragmentChannelInfo if available or null if not found.
+     */
+    FragmentChannelInfo getFragmentChannelInfo(String sId)
+    {
+        FragmentNodeInfo node = getFragmentNodeInfo(sId);
+
+        if (node != null && (node instanceof FragmentChannelInfo))
+            return (FragmentChannelInfo) node;
+        return null;
+    }
+    /**
+     * Returns an object suitable for identifying attribute values for folder
+     * nodes and attribute and parameter values for channel nodes in a user's
+     * layout that differ from the values on the same element in a fragment.
+     * This is used by the layout manager to know which ones must be persisted.
+     * 
+     * @param sId
+     * @return FragmentNodeInfo or null if folder not found.
+     */
+    FragmentNodeInfo getFragmentNodeInfo(String sId)
+    {
+        // grab local pointers to variables subject to change at any time
+        Map infoCache = fragmentInfoCache;
+        FragmentDefinition[] defs = definitions;
+        
+        FragmentNodeInfo info = (FragmentNodeInfo) infoCache.get(sId);
+        
+        if (info == null)
+        {
+            for(int i=0; i<defs.length; i++)
+            {
+                Element node = defs[i].view.layout.getElementById(sId);
+                if (node != null) // found it
+                {
+                    if (node.getTagName().equals(Constants.ELM_CHANNEL))
+                        
+                        info = new FragmentChannelInfo(node);
+                    else
+                        info = new FragmentNodeInfo(node);
+                    infoCache.put(sId, info);
+                    break;
+                }
+            }
+        }
+        return info;
     }
 
     /**
@@ -1362,7 +1473,7 @@ public class RDBMDistributedLayoutStore
             type = Constants.NS + type.substring(Constants.LEGACY_NS.length());
 
   if (ls.isChannel()) {
-            ChannelDefinition channelDef = crs.getChannelDefinition(ls.getChanId());
+    ChannelDefinition channelDef = crs.getChannelDefinition(ls.getChanId());
     if (channelDef != null && channelApproved(channelDef.getApprovalDate())) {
         if (localeAware) {
             channelDef.setLocale(ls.getLocale()); // for i18n by Shoji
@@ -1392,7 +1503,8 @@ public class RDBMDistributedLayoutStore
             }
             else
                 structure = doc.createElement("folder");
-    structure.setAttribute("ID", folderPrefix + ls.getStructId());
+    structure.setAttribute(Constants.ATT_ID, folderPrefix + ls.getStructId());
+    structure.setIdAttribute(Constants.ATT_ID, true);
     structure.setAttribute("name", ls.getName());
     structure.setAttribute("type", (type != null ? type : "regular"));
         }
@@ -1404,55 +1516,89 @@ public class RDBMDistributedLayoutStore
       structure.setAttribute("locale", ls.getLocale());  // for i18n by Shoji
   }
 
+  /*
+   * Parameters from up_layout_param are loaded slightly differently for 
+   * folders and channels. For folders all parameters are added as attributes
+   * of the Element. For channels only those parameters with names starting
+   * with the dlm namespace Constants.NS are added as attributes to the Element.
+   * Others are added as child parameter Elements.
+   */
   if (ls.getParameters() != null) {
-    for (int i = 0; i < ls.getParameters().size(); i++) {
-      StructureParameter sp = (StructureParameter)ls.getParameters().get(i);
+    for (Iterator itr = ls.getParameters().iterator(); itr.hasNext();) {
+      StructureParameter sp = (StructureParameter) itr.next();
       String pName = sp.getName();
       
       // handle migration of legacy namespace
       if (pName.startsWith(Constants.LEGACY_NS))
           pName = Constants.NS + sp.getName().substring(Constants.LEGACY_NS.length());
       
-                if (!ls.isChannel())
-                { // Folder
-                    if (pName.startsWith(Constants.NS))
-                        structure.setAttributeNS(
-                            Constants.NS_URI,
-                            pName,
-                            sp.getValue());
-                    else
-                        structure.setAttribute(pName, sp.getValue());
-      } else { // Channel
+      if (!ls.isChannel())
+      { // Folder
+          if (pName.startsWith(Constants.NS))
+              structure.setAttributeNS(Constants.NS_URI, pName, sp.getValue());
+          else
+              structure.setAttribute(pName, sp.getValue());
+      } 
+      else // Channel
+      { 
+          // if dealing with a dlm namespace param add as attribute
+          if (pName.startsWith(Constants.NS))
+          {
+              structure.setAttributeNS(Constants.NS_URI, pName, sp.getValue());
+              itr.remove();
+          }
+          else 
+          {
+              // do traditional override processing. some explanation is in
+              // order. The structure element was created by the 
+              // ChannelDefinition and only contains parameter children if the
+              // definition had defined parameters. These are checked for each
+              // layout loaded parameter as found in LayoutStructure.parameters.
+              // If a name match is found then we need to see if overriding is
+              // allowed and if so we set the value on the child parameter
+              // element. At that point we are done with that version loaded 
+              // from the layout so we remove it from the in-memory set of 
+              // parameters that are being merged-in. Then, after all such have 
+              // been checked against those added by the channel definition we
+              // add in any remaining as adhoc, unregulated parameters.
+              NodeList nodeListParameters =
+                  structure.getElementsByTagName("parameter");
+              for (int j = 0; j < nodeListParameters.getLength(); j++)
+              {
+                  Element parmElement = (Element)nodeListParameters.item(j);
+                  NamedNodeMap nm = parmElement.getAttributes();
 
-                    // if dealing with a dlm namespace param add as attribute
-                    if (pName.startsWith(Constants.NS))
-                        structure.setAttributeNS(
-                            Constants.NS_URI,
-                            pName,
-                            sp.getValue());
-                    else // do traditional override processing
-                        {
-                        NodeList nodeListParameters =
-                            structure.getElementsByTagName("parameter");
-                        for (int j = 0; j < nodeListParameters.getLength(); j++)
-                        {
-                            Element parmElement =
-                                (Element)nodeListParameters.item(j);
-                            NamedNodeMap nm = parmElement.getAttributes();
-
-                            String nodeName = nm.getNamedItem("name").getNodeValue();
-                            if (nodeName.equals(pName)) {
-                                Node override = nm.getNamedItem("override");
-                                if (override != null && override.getNodeValue().equals("yes")) {
-                                    Node valueNode = nm.getNamedItem("value");
-                                    valueNode.setNodeValue(sp.getValue());
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+                  String nodeName = nm.getNamedItem("name").getNodeValue();
+                  if (nodeName.equals(pName)) 
+                  {
+                      Node override = nm.getNamedItem("override");
+                      if (override != null && override.getNodeValue().equals("yes")) 
+                      {
+                          Node valueNode = nm.getNamedItem("value");
+                          valueNode.setNodeValue(sp.getValue());
+                      }
+                      itr.remove();
+                      break; // found the corresponding one so skip the rest
+                  }
+              }
+          }
+      }
+    }
+    // For channels, add any remaining parameter elements loaded with the 
+    // layout as adhoc, unregulated, parameter children that can be overridden.
+    if (ls.isChannel())
+    {
+        for (Iterator itr = ls.getParameters().iterator(); itr.hasNext();) 
+        {
+            StructureParameter sp = (StructureParameter) itr.next();
+            Element parameter = doc.createElement("parameter");
+            parameter.setAttribute("name", sp.getName());
+            parameter.setAttribute("value", sp.getValue());
+            parameter.setAttribute("override", "yes");
+            structure.appendChild(parameter);
         }
+    }
+  }
         // finish setting up elements based on loaded params
         String origin = structure.getAttribute(Constants.ATT_ORIGIN);
         String prefix = (ls.isChannel() ? channelPrefix : folderPrefix);
@@ -1498,7 +1644,7 @@ public class RDBMDistributedLayoutStore
             Node node,
             PreparedStatement structStmt,
             PreparedStatement parmStmt)
-            throws java.sql.SQLException
+            throws Exception
         {
             if (node == null || node.getNodeName().equals("parameter"))
             { // No more or parameter node
@@ -1524,6 +1670,8 @@ public class RDBMDistributedLayoutStore
 
             int nextStructId = 0;
             int childStructId = 0;
+            int chanId = -1;
+            boolean isChannel = node.getNodeName().equals("channel");
             
             if (node.hasChildNodes())
             {
@@ -1548,9 +1696,9 @@ public class RDBMDistributedLayoutStore
                 structStmt.setNull(4, java.sql.Types.NUMERIC);
 
             }
-            if (node.getNodeName().equals("channel"))
+            if (isChannel)
             {
-                int chanId =
+                chanId =
                     Integer.parseInt(
                         node.getAttributes().getNamedItem("chanID").getNodeValue());
                 structStmt.setInt(5, chanId);
@@ -1602,31 +1750,36 @@ public class RDBMDistributedLayoutStore
             NodeList parameters = node.getChildNodes();
             if (parameters != null)
             {
+                ChannelDefinition channelDef = crs.getChannelDefinition(chanId);
                 for (int i = 0; i < parameters.getLength(); i++)
                 {
                     if (parameters.item(i).getNodeName().equals("parameter"))
                     {
                         Element parmElement = (Element) parameters.item(i);
                         NamedNodeMap nm = parmElement.getAttributes();
-                        String nodeName = nm.getNamedItem("name").getNodeValue();
-                        String nodeValue = nm.getNamedItem("value").getNodeValue();
-
+                        String parmName = nm.getNamedItem("name").getNodeValue();
+                        String parmValue = nm.getNamedItem("value").getNodeValue();
                         Node override = nm.getNamedItem("override");
 
-                        if (override == null
-                            || !override.getNodeValue().equals("yes"))
+                        // if no override specified then default to allowed
+                        if (override != null
+                            && !override.getNodeValue().equals("yes"))
                         {
                             // can't override
-                        }
-                        else
+                        } else
                         {
-                            parmStmt.clearParameters();
-                            parmStmt.setInt(1, saveStructId);
-                            parmStmt.setString(2, nodeName);
-                            parmStmt.setString(3, nodeValue);
-                            if (LOG.isDebugEnabled())
-                                LOG.debug(parmStmt);
-                            parmStmt.executeUpdate();
+                            // override only for adhoc or if diff from chan def
+                            ChannelParameter cp = channelDef.getParameter(parmName);
+                            if (cp == null || !cp.getValue().equals(parmValue))
+                            {
+                                parmStmt.clearParameters();
+                                parmStmt.setInt(1, saveStructId);
+                                parmStmt.setString(2, parmName);
+                                parmStmt.setString(3, parmValue);
+                                if (LOG.isDebugEnabled())
+                                    LOG.debug(parmStmt);
+                                parmStmt.executeUpdate();
+                            }
                         }
                     }
                 }
@@ -1694,7 +1847,7 @@ public class RDBMDistributedLayoutStore
                     String folderId = (String)e.nextElement();
                     String plfFolderId = folderId;
 
-                    if ( folderId.startsWith( "u" ) ) // icorporated node
+                    if ( folderId.startsWith( Constants.FRAGMENT_ID_USER_PREFIX ) ) // icorporated node
                         plfFolderId = getPlfId( PLF, folderId );
                     if ( plfFolderId == null ) //couldn't translate, skip
                         continue;
@@ -1722,7 +1875,7 @@ public class RDBMDistributedLayoutStore
                     String channelId = (String)e.nextElement();
                     String plfChannelId = channelId;
 
-                    if ( plfChannelId.startsWith( "u" ) ) // icorporated node
+                    if ( plfChannelId.startsWith( Constants.FRAGMENT_ID_USER_PREFIX ) ) // icorporated node
                         plfChannelId = getPlfId( PLF, channelId );
                     if ( plfChannelId == null ) //couldn't translate, skip
                         continue;
@@ -1814,7 +1967,7 @@ public class RDBMDistributedLayoutStore
                     String channelId = (String)e.nextElement();
                     String plfChannelId = channelId;
 
-                    if ( plfChannelId.startsWith( "u" ) ) // icorporated node
+                    if ( plfChannelId.startsWith( Constants.FRAGMENT_ID_USER_PREFIX ) ) // icorporated node
                         plfChannelId = getPlfId( PLF, channelId );
                     if ( plfChannelId == null ) //couldn't translate, skip
                         continue;

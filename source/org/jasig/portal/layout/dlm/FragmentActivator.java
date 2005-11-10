@@ -313,8 +313,9 @@ public class FragmentActivator
             
             layout = dls.getFragmentLayout( owner, profile ); 
             Element root = layout.getDocumentElement();
-            root.setAttribute( Constants.ATT_ID,
-                               "u" + fragment.userID + "l" + view.layoutId );
+            root.setAttribute( Constants.ATT_ID, 
+                    Constants.FRAGMENT_ID_USER_PREFIX + fragment.userID +
+                    Constants.FRAGMENT_ID_LAYOUT_PREFIX + view.layoutId );
             view.layout = layout;
         }
         catch( Exception e )
@@ -368,7 +369,7 @@ public class FragmentActivator
                           FragmentDefinition fragment )
     {
         Element root = view.layout.getDocumentElement();
-        String labelBase = root.getAttribute( "ID" );
+        String labelBase = root.getAttribute( Constants.ATT_ID );
         fragmentizeIds( labelBase, view.structUserPrefs, FOLDERS );
         fragmentizeIds( labelBase, view.structUserPrefs, CHANNELS );
     }
@@ -384,7 +385,7 @@ public class FragmentActivator
                           FragmentDefinition fragment )
     {
         Element root = view.layout.getDocumentElement();
-        String labelBase = root.getAttribute( "ID" );
+        String labelBase = root.getAttribute( Constants.ATT_ID );
         fragmentizeIds( labelBase, view.themeUserPrefs, CHANNELS );
     }
 
@@ -414,7 +415,7 @@ public class FragmentActivator
         while( elements.hasMoreElements() )
         {
             String id = (String) elements.nextElement();
-            if ( ! id.startsWith( "u" ) ) // already converted don't change
+            if ( ! id.startsWith( Constants.FRAGMENT_ID_USER_PREFIX ) ) // already converted don't change
             {
                 if ( which == CHANNELS )
                     up.changeChannelId( id, labelBase + id );
@@ -474,7 +475,7 @@ public class FragmentActivator
         // now re-lable all remaining nodes below root to have a safe system
         // wide id.
 
-        setIdsAndAttribs( layout, layout.getAttribute( "ID" ),
+        setIdsAndAttribs( layout, layout.getAttribute( Constants.ATT_ID ),
                           "" + fragment.index,
                           "" + fragment.precedence );
     }
@@ -497,11 +498,12 @@ public class FragmentActivator
             if ( children.item(i).getNodeType() == Node.ELEMENT_NODE )
             {
                 Element child = (Element) children.item(i);
-                String id = child.getAttribute( "ID" );
+                String id = child.getAttribute( Constants.ATT_ID );
                 if ( ! id.equals( "" ) )
                 {
                     String newId = labelBase + id;
-                    child.setAttribute( "ID", newId );
+                    child.setAttribute( Constants.ATT_ID, newId );
+                    child.setIdAttribute(Constants.ATT_ID, true);
                     child.setAttributeNS( Constants.NS_URI,
                                           Constants.ATT_FRAGMENT,
                                           index );

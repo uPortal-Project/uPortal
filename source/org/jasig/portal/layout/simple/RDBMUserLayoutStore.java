@@ -2229,7 +2229,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       return structure;
     }
 
-  protected int saveStructure (Node node, PreparedStatement structStmt, PreparedStatement parmStmt) throws java.sql.SQLException {
+  protected int saveStructure (Node node, PreparedStatement structStmt, PreparedStatement parmStmt) throws Exception {
     if (node == null || node.getNodeName().equals("parameter")) { // No more or parameter node
       return  0;
     }

@@ -221,7 +221,7 @@ public class DeleteManager
         while( child != null )
         {
             String childID = child.getAttribute( "ID" );
-            if ( childID.startsWith( "u" ) )
+            if ( childID.startsWith( Constants.FRAGMENT_ID_USER_PREFIX ) )
                 addDeleteDirective( child, childID, person, plf, delSet );
             child = (Element) child.getNextSibling();
         }

@@ -74,7 +74,8 @@ public class TabColumnPrefsHandler
             .getPLFNode( compViewParent, person,
                          true, // create parent if not found
                          false ); // don't create children
-        if ( compViewNode.getAttribute( Constants.ATT_ID ).startsWith( "u" ) )
+        if (compViewNode.getAttribute(Constants.ATT_ID).startsWith(
+                Constants.FRAGMENT_ID_USER_PREFIX))
         {
             // ilf node being inserted
             if (LOG.isInfoEnabled())
@@ -142,7 +143,8 @@ public class TabColumnPrefsHandler
             else
                 plfAttribNode.setValue( attribNode.getValue() );
         }
-        if ( plfNode.getAttribute( Constants.ATT_ID ).startsWith( "u" ) )
+        if (plfNode.getAttribute(Constants.ATT_ID).startsWith(
+                Constants.FRAGMENT_ID_USER_PREFIX))
         {
             // if ilf node being edited then need to add edit directive
             EditManager.addEditDirective( plfNode, attributeName, person );   
@@ -162,7 +164,7 @@ public class TabColumnPrefsHandler
     {
         String ID = compViewNode.getAttribute( Constants.ATT_ID );
 
-        if ( ID.startsWith( "u" ) ) // ilf node
+        if ( ID.startsWith( Constants.FRAGMENT_ID_USER_PREFIX ) ) // ilf node
             DeleteManager.addDeleteDirective( compViewNode, ID, person );
         else 
         {
@@ -179,54 +181,4 @@ public class TabColumnPrefsHandler
         }
     }
 
-    private static void changeRestriction( String name,
-                                           Element element,
-                                           boolean value )
-    {
-        // The default value for these attributes,
-        // if not included on an element, is true so we remove the attribute if
-        // we see a parm value of true and add the attribute with a value of
-        // false if a parm value is false. This also saves on the number of
-        // rows in the up_layout_param table and hence on read and write time.
-        
-        if ( value == false )
-            element.setAttributeNS( Constants.NS_URI, name, "false" );
-        else
-            element.removeAttribute( name );
-    }
-    
-    public static void changeRestrictions( Element compViewNode, 
-                                           boolean moveAllowed,
-                                           boolean editAllowed,
-                                           boolean addChildAllowed,
-                                           boolean deleteAllowed,
-                                           IPerson person ) 
-        throws PortalException
-    {
-        Element plfNode = HandlerUtils
-        .getPLFNode( compViewNode, person,
-                     false, // don't create if not found
-                     false ); // don't create children
-        if ( plfNode == null )
-            return;
-
-        changeRestriction( Constants.ATT_MOVE_ALLOWED, plfNode, moveAllowed );
-        changeRestriction( Constants.ATT_DELETE_ALLOWED,
-                           plfNode, deleteAllowed );
-        if ( plfNode.getAttribute( Constants.ATT_CHANNEL_ID ).equals( "" ) )
-        {
-            // if channel id is empty then this is not a channel so change.
-            // editAllowed and childAllowed aren't defined on channels.
-            changeRestriction( Constants.ATT_EDIT_ALLOWED, plfNode,
-                               editAllowed );
-            changeRestriction( Constants.ATT_ADD_CHILD_ALLOWED, plfNode,
-                               addChildAllowed );
-        }
-        if (LOG.isInfoEnabled())
-            LOG.info("changing restrictions:\nmoveAllowed=" +
-                     moveAllowed + "\neditAllowed=" +
-                     editAllowed + "\naddChildAllowed=" +
-                     addChildAllowed + "\ndeleteAllowed=" +
-                     deleteAllowed );
-    }
 }

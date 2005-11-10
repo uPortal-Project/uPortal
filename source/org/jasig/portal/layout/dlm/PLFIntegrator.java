@@ -37,6 +37,7 @@ public class PLFIntegrator
         Element ilfRoot = (Element) ilfLayout.getFirstChild();
 
         DeleteManager.applyAndUpdateDeleteSet( plf, ilf, result );
+        ParameterEditManager.applyAndUpdateParmEditSet(plf, ilf, result);
         applyChildChanges( plfRoot, ilfRoot, result );
     }
 
@@ -101,7 +102,7 @@ public class PLFIntegrator
     {
         String id = plfChild.getAttribute( Constants.ATT_ID );
                 
-        if ( id.startsWith( "u" ) )
+        if ( id.startsWith( Constants.FRAGMENT_ID_USER_PREFIX ) )
         {
             // this should never happen. Moves of an incorporated channel
             // should be indicated via the position set of the parent
@@ -136,7 +137,7 @@ public class PLFIntegrator
     {
         String id = plfChild.getAttribute( Constants.ATT_ID );
         
-        if ( id.startsWith( "u" ) )
+        if ( id.startsWith( Constants.FRAGMENT_ID_USER_PREFIX ) )
         {
             // incorporated folder - if a copy of an inc'd folder is in the
             // plf it is because either it has attribute edits or there are

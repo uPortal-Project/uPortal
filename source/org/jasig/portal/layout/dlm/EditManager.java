@@ -264,13 +264,37 @@ public class EditManager
                                                   String elementId,
                                                   String attributeName )
     {
+        removeDirective(elementId, attributeName, Constants.ELM_PREF, person);
+    }
+
+    /**
+     * Searches for a dlm:edit command which indicates that a node attribute was
+     * reset to the value in the fragment and if found removes it from the
+     * user's PLF.
+     */
+    public static void removeEditDirective( String elementId,
+                                            String attributeName,
+                                            IPerson person )
+    {
+        removeDirective(elementId, attributeName, Constants.ELM_EDIT, person);
+    }
+
+    /**
+     * Searches for a command of the passed-in type and if found removes it from
+     * the user's PLF.
+     */
+    private static void removeDirective( String elementId,
+                                         String attributeName,
+                                         String type,
+                                         IPerson person )
+    {
         Document plf = (Document) person.getAttribute( Constants.PLF );
         Element node = plf.getElementById( elementId );
         if ( node == null )
             return;
         
         Element editSet = null;
-
+    
         try
         {
             editSet = getEditSet( node, plf, person, false );
@@ -279,16 +303,16 @@ public class EditManager
         {
             return; 
         }
-
-        // if no edit set then the preference can't be there either
+    
+        // if no edit set then the edit can't be there either
         if ( editSet == null )
             return;
         
         Node child = editSet.getFirstChild();
-
+    
         while( child != null )
         {
-            if ( child.getNodeName().equals( Constants.ELM_PREF ) )
+            if ( child.getNodeName().equals( type ) )
             {
                 Attr attr =  ((Element) child)
                 .getAttributeNode( Constants.ATT_NAME );

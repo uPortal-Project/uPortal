@@ -6,10 +6,14 @@
 package org.jasig.portal;
 
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.naming.Context;
 
+import org.jasig.portal.layout.IUserLayoutManager;
+import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.AuthorizationService;
@@ -39,11 +43,37 @@ public class ChannelStaticData extends Hashtable {
   // Cache the IPerson
   private IPerson m_person = null;
   private ICCRegistry iccr=null;
+  // reference to layout manager for persisting parameter changes
+  private IUserLayoutManager ulm;
+
+private IUserLayoutChannelDescription layoutChannelDescription = null;
 
   // Cache the PermissionManager for this channel
   //  private PermissionManager m_permissionManager = null;
 
-
+  public ChannelStaticData()
+  {
+      this(null, null);
+  }
+  
+  /**
+   * If support is being provided to update channel parameters then a Layout
+   * Manager instance is required and the initial values of parameters must be
+   * set here to forgo override checks. If a LayoutManager is had for 
+   * ChannelStaticData then setParameter() and setParameters() restrict
+   * changing parameters that are not overrideable and hence can not be used to
+   * inject the initial parameter values.
+   *  
+   * @param parameters
+   * @param ulm
+   */
+  public ChannelStaticData(Map parameters, IUserLayoutManager ulm)
+  {
+      if (parameters != null)
+          this.putAll(parameters);
+      this.ulm = ulm;
+  }
+  
   /**
    * Returns an instance of the IAuthorizationPrincipal for the IPerson
    * @return instance of the IAuthorizationPrincipal for the IPerson
@@ -150,20 +180,150 @@ public class ChannelStaticData extends Hashtable {
     }
 
     /**
-     * Set information contained in a channel <param> element
-     * Parameters are strings!
-     * @param key param name
-     * @param value param value
+     * Set information contained in a channel <param>element Parameters are
+     * strings!
+     * 
+     * @param key
+     *            param name
+     * @param value
+     *            param value
+     * @throws IllegalChannelParameterOverrideException
+     *             if key is not configured to be overrideable.
      */
     public String setParameter(String key, String value) {
-        return  (String)super.put(key, value);
+        if (ulm == null) // nothing can be persisted so drop back to old way
+            return (String) super.put(key, value);
+
+        try
+        {
+            if (getChannelDescription().canOverrideParameter(key))
+                return (String) super.put(key, value);
+            throw new IllegalChannelParameterOverrideException(key, value);
+        }
+        catch(PortalException pe)
+        {
+            // can't get channel description so fall back to old way
+        }
+        return (String) super.put(key, value);
+    }
+    
+    /**
+     * Returns true if the indicated parameter can be altered. Ad-hoc added
+     * parameters will always be allowed to change. Parameters locked during
+     * publishing or via the plugged-in layout manager will return false. If no
+     * layout manager is available then this method always returns true.
+     * 
+     * @param key
+     * @return
+     */
+    public boolean canSetParameter(String key) throws PortalException
+    {
+        if (ulm == null) // can't tell so everything is modifiable
+            return true;
+
+        if (getChannelDescription().canOverrideParameter(key))
+            return true;
+        return false;
+    }
+    
+    private IUserLayoutChannelDescription getChannelDescription()
+            throws PortalException
+    {
+        if (layoutChannelDescription == null)
+        {
+            layoutChannelDescription = (IUserLayoutChannelDescription) ulm
+                    .getNode(getChannelSubscribeId());
+        }
+        return layoutChannelDescription;
     }
 
     /**
+     * Resets the value of this parameter. If this is an overrideable parameter
+     * then a user's override will be removed and the original value restored.
+     * If this is a non-overrideable parameter this call will have no effect. If
+     * this is an ad-hoc parameter then the parameter will be removed. Ad-hoc
+     * parameters are ones added by a channel instance beyond the set of
+     * parameters specified during channel publishing.
+     * 
+     * @param key
+     *            param name
+     */
+    public void resetParameter(String key) {
+        if (ulm == null) // nothing can be persisted so follow old approach
+        {
+            super.remove(key);
+            return;
+        }
+
+        try
+        {
+            getChannelDescription().resetParameter(key);
+            String value = getChannelDescription().getParameterValue(key);
+            if (value == null) // ad-hoc parm so delete
+                super.remove(key);
+            else // not ad-hoc so value was replaced with channel def value
+                super.put(key, value);
+        }
+        catch(PortalException pe)
+        {
+            // can't get channel description so fall back to old way of just
+            // changing parameters as needed.
+            super.remove(key);
+        }
+    }
+    
+    /**
+     * Writes all string valued parameters to the database as part of the user's
+     * layout.
+     * @param params
+     */
+    public void store() throws PortalException
+    {
+        if (ulm == null)
+            return;
+
+        
+        IUserLayoutChannelDescription cd = getChannelDescription();
+
+        for (Iterator itr = this.entrySet().iterator(); itr.hasNext();)
+        {
+            Map.Entry parm = (Entry) itr.next();
+            cd.setParameterValue((String) parm.getKey(), (String) parm
+                    .getValue());
+        }
+        ulm.updateNode(cd);
+        ulm.saveUserLayout();
+        layoutChannelDescription = null; // force a reload next time
+    }
+    
+    /**
      * Copy parameter list from a Map
-     * @param params a map of params
+     * 
+     * @param params
+     *            a map of params
+     * @throws IllegalChannelParameterOverrideException
+     *             if key is not configured to be overrideable.
      */
     public void setParameters (Map params) {
+        if (ulm == null) // nothing can be persisted so drop back to old way
+            putAll(params);
+
+        try
+        {
+            IUserLayoutChannelDescription cd = getChannelDescription();
+            for(Iterator itr = params.entrySet().iterator(); itr.hasNext();)
+            {
+                Map.Entry e = (Entry) itr.next();
+                if (! cd.canOverrideParameter((String)e.getKey()))
+                    throw new IllegalChannelParameterOverrideException(
+                        (String)e.getKey(), (String) e.getValue());
+            }
+        }
+        catch(PortalException pe)
+        {
+            // if an exception occurs and we can't get channel description 
+            // or all parameters are overrideable then accept all params
+        }
         // Copy the map
         putAll(params);
     }

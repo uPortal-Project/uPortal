@@ -74,7 +74,8 @@ public class HandlerUtils
         // if ilf copy being created we can append to parent and use the
         // position set to place it.
         
-        if ( compViewNode.getAttribute( Constants.ATT_ID ).startsWith( "u" ) )
+        if (compViewNode.getAttribute(Constants.ATT_ID).startsWith(
+                Constants.FRAGMENT_ID_USER_PREFIX))
             return createILFCopy( compViewNode, compViewParent,
                                   includeChildNodes,
                                   plf, plfParent, person );
@@ -170,7 +171,8 @@ public class HandlerUtils
         {
             if ( insertionPointFound &&
                  nextOwnedSibling == null &&
-                 ! child.getAttribute( Constants.ATT_ID ).startsWith( "u" ) )
+                 !child.getAttribute(Constants.ATT_ID).startsWith(
+                            Constants.FRAGMENT_ID_USER_PREFIX))
                 nextOwnedSibling = child;
 
             if ( child == compViewNode )

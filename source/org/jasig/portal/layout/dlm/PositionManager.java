@@ -576,7 +576,7 @@ public class PositionManager
             String type = viewNode.getAttribute( Constants.ATT_TYPE );
             String hidden = viewNode.getAttribute( Constants.ATT_HIDDEN );
 
-            if ( ID.startsWith( "u" ) )
+            if ( ID.startsWith( Constants.FRAGMENT_ID_USER_PREFIX ) )
             ilfNodesFound = true;
             
             if ( ! channelId.equals("") ||    // its a channel node or

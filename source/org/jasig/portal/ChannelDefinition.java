@@ -5,6 +5,7 @@
 
 package org.jasig.portal;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -109,6 +110,15 @@ public class ChannelDefinition implements IBasicEntity {
   }
   
   public ChannelParameter[] getParameters() { return (ChannelParameter[])parameters.values().toArray(new ChannelParameter[0]); }
+  
+  public ChannelParameter getParameter(String key)
+  {
+      return (ChannelParameter) parameters.get(key);
+  }
+  public Map getParametersAsUnmodifiableMap()
+  {
+      return Collections.unmodifiableMap(parameters);
+  }
   public String getLocale() { return chanLocale; }
   
   // I18n
@@ -289,6 +299,9 @@ public class ChannelDefinition implements IBasicEntity {
         Element parameter = nodeParameter(doc, cp.name, cp.value);
         if (cp.override) {
           parameter.setAttribute("override", "yes");
+        }
+        else {
+            parameter.setAttribute("override", "no");
         }
         channel.appendChild(parameter);
       }

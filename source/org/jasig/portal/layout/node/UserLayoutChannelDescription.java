@@ -13,6 +13,10 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.ChannelDefinition;
+import org.jasig.portal.ChannelParameter;
+import org.jasig.portal.ChannelRegistryStoreFactory;
+import org.jasig.portal.IChannelRegistryStore;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.channels.portlet.IPortletAdaptor;
 import org.w3c.dom.Document;
@@ -357,6 +361,48 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
         return (String) parameters.put(parameterName,parameterValue);
     }
 
+
+    /**
+     * Reset a channel parameter value. Since parameter changes by channels
+     * can be persisted if override is allowed this method enables resetting to
+     * the original value or, if the parameter is ad-hoc meaning that the
+     * channel definition does not provide a value for this parameter, then the
+     * parameter value is removed.
+     *
+     * @param parameterName a <code>String</code> value
+     */
+    public void resetParameter(String parameterName) throws PortalException
+    {
+        /*
+         * Since original channel definition parameter values that were 
+         * overridden are not maintained at this level we must consult the 
+         * channel definition to determine the original value and restore it
+         * or discover that this is an ad-hoc parameter and can be removed. 
+         */
+        try
+        {
+            IChannelRegistryStore crs = ChannelRegistryStoreFactory
+                .getChannelRegistryStoreImpl();
+            int pubId = Integer.parseInt(getChannelPublishId());
+            ChannelDefinition def = crs
+                    .getChannelDefinition(pubId);
+            ChannelParameter parm = def.getParameter(parameterName);
+
+            if (parm == null) // ad-hoc parm so delete
+            {
+                parameters.remove(parameterName);
+                override.remove(parameterName);
+            }
+            else if (parm.getOverride())
+                parameters.put(parameterName, parm.getValue());
+        }
+        catch(Exception e)
+        {
+            throw new PortalException("Unable to reset parameter [" +
+                    parameterName + "] for channel [" + getTitle() +
+                    "].", e);
+       }
+    }
 
     /**
      * Obtain a channel parameter value.

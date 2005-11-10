@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Map;
 
+import org.jasig.portal.PortalException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -187,6 +188,19 @@ public interface IUserLayoutChannelDescription extends IUserLayoutNodeDescriptio
      * @return a <code>String</code> value that was set.
      */
     public String setParameterValue(String parameterName, String parameterValue);
+
+
+    /**
+     * Reset a channel parameter value. Since parameter changes by channels
+     * can be persisted if override is allowed this method enables resetting to
+     * the original value or, if the parameter is ad-hoc meaning that the
+     * channel definition does not provide a value for this parameter, then the
+     * parameter value is removed.
+     *
+     * @param parameterName a <code>String</code> value
+     * @throws PortalException
+     */
+    public void resetParameter(String parameterName) throws PortalException;
 
 
     /**
