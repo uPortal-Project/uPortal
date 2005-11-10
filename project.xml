@@ -53,6 +53,58 @@ http://maven.apache.org/maven-v3_0_0.xsd">
       <archive>http://list.unm.edu/archives/jasig-dev.html</archive>
     </mailingList>
   </mailingLists>
+  
+  <!-- 
+  Please add other developers. I've just added a few for now so we can see the 
+  results of the developer activity report 
+  -->
+  <developers>
+    <developer>
+      <name>Andrew Petro</name>
+      <id>apetro</id>
+      <email>andrew.petro@yale.edu</email>
+      <organization>Yale University ITS</organization>
+      <roles>
+        <role>Developer</role>
+      </roles>
+      <url>https://clearinghouse.ja-sig.org/wiki/display/~awp9</url>
+      <timezone>-6</timezone>
+    </developer>
+    <developer>
+      <name>Dan Mindler</name>
+      <id>dmindler</id>
+      <email>dmindler@rutgers.edu</email>
+      <organization>Rutgers University</organization>
+      <roles>
+        <role>Developer</role>
+      </roles>
+      <url>https://clearinghouse.ja-sig.org/wiki/display/~dmindler</url>
+      <timezone>-6</timezone>
+    </developer>
+    <developer>
+      <name>Susan Bramhall</name>
+      <id>susan.bramhall</id>
+      <email>susan.bramhall@YALE.EDU</email>
+      <organization>Yale University ITS</organization>
+      <roles>
+        <role>Developer</role>
+      </roles>
+      <url>https://clearinghouse.ja-sig.org/wiki/display/~susan.bramhall%40yale.edu</url>
+      <timezone>-6</timezone>
+    </developer>
+    <developer>
+      <name>Brad Johnson</name>
+      <id>bjohnson</id>
+      <email>brad.johnson@ttu.edu</email>
+      <organization>Texas Tech University ITIS</organization>
+      <roles>
+        <role>Developer</role>
+      </roles>
+      <url>https://clearinghouse.ja-sig.org/wiki/display/~mk2337</url>
+      <timezone>-6</timezone>
+    </developer>
+  </developers>
+  
   <!-- ================================================================== -->
   <!-- Library and artifact dependencies                                  -->
   <!-- ================================================================== -->
