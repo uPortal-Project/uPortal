@@ -104,7 +104,6 @@ http://maven.apache.org/maven-v3_0_0.xsd">
       <timezone>-6</timezone>
     </developer>
   </developers>
-  
   <!-- ================================================================== -->
   <!-- Library and artifact dependencies                                  -->
   <!-- ================================================================== -->
@@ -310,6 +309,7 @@ http://maven.apache.org/maven-v3_0_0.xsd">
   <!-- ================================================================== -->
   <build>
     <sourceDirectory>source</sourceDirectory>
+    <unitTestSourceDirectory>tests</unitTestSourceDirectory>
     <resources>
       <!-- Include all properties files as classpath resources -->
       <resource>
