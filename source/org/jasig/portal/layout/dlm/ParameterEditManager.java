@@ -56,7 +56,7 @@ public class ParameterEditManager
     */
     static void applyAndUpdateParmEditSet( Document plf,
                                            Document ilf,
-                     IntegrationResult result ) throws Exception
+                     IntegrationResult result ) 
     {
 
         Element pSet = null;
@@ -102,7 +102,7 @@ public class ParameterEditManager
      * and returns false.
      * @throws Exception
      */
-    private static boolean applyEdit( Element edit, Document ilf ) throws Exception
+    private static boolean applyEdit( Element edit, Document ilf ) 
     {
         String nodeID = edit.getAttribute( Constants.ATT_TARGET );
 
