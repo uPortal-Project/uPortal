@@ -15,7 +15,7 @@ import org.w3c.dom.Element;
  * 
  * @author mboyd@sungardsct.com
  */
-public class LPA_ResetAttribute implements ILayoutProcessingAction
+public class LPAResetAttribute implements ILayoutProcessingAction
 {
     private String nodeId = null;
     private String name = null;
@@ -23,7 +23,7 @@ public class LPA_ResetAttribute implements ILayoutProcessingAction
     private Element ilfNode = null;
     private String fragmentValue = null;
     
-    LPA_ResetAttribute(String nodeId, String name, String fragmentValue, IPerson p, 
+    LPAResetAttribute(String nodeId, String name, String fragmentValue, IPerson p, 
             Element ilfNode)
     {
         this.nodeId = nodeId;

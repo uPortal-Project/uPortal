@@ -15,7 +15,7 @@ import org.w3c.dom.Element;
  * 
  * @author mboyd@sungardsct.com
  */
-public class LPA_ResetParameter implements ILayoutProcessingAction
+public class LPAResetParameter implements ILayoutProcessingAction
 {
     private String nodeId = null;
     private String name = null;
@@ -23,7 +23,7 @@ public class LPA_ResetParameter implements ILayoutProcessingAction
     private Element ilfNode = null;
     private String fragmentValue = null;
     
-    LPA_ResetParameter(String nodeId, String name, String fragmentValue, IPerson p, 
+    LPAResetParameter(String nodeId, String name, String fragmentValue, IPerson p, 
             Element ilfNode)
     {
         this.nodeId = nodeId;
@@ -47,6 +47,6 @@ public class LPA_ResetParameter implements ILayoutProcessingAction
             ParameterEditManager.removeParmEditDirective(nodeId, name, person);
         }
         // push the fragment value into the ILF
-        LPA_ChangeParameter.changeParameterChild(ilfNode, name, fragmentValue);
+        LPAChangeParameter.changeParameterChild(ilfNode, name, fragmentValue);
     }
 }

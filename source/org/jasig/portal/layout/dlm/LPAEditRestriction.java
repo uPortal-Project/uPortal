@@ -15,7 +15,7 @@ import org.w3c.dom.Element;
  * 
  * @author mboyd@sungardsct.com
  */
-public class LPA_EditRestriction implements ILayoutProcessingAction
+public class LPAEditRestriction implements ILayoutProcessingAction
 {
     private IPerson person = null;
     private Element ilfNode = null;
@@ -24,7 +24,7 @@ public class LPA_EditRestriction implements ILayoutProcessingAction
     private boolean editAllowed = false;
     private boolean addChildAllowed = false;
 
-    LPA_EditRestriction(IPerson p, Element ilfNode, boolean moveAllowed,
+    LPAEditRestriction(IPerson p, Element ilfNode, boolean moveAllowed,
             boolean deleteAllowed, boolean editAllowed, boolean addChildAllowed)
     {
         this.person = p;

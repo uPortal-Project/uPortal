@@ -622,7 +622,7 @@ public class DistributedLayoutManager implements IUserLayoutManager
                  || newFolderDesc.isMoveAllowed() != 
                     oldFolderDesc.isMoveAllowed()))
         {
-            pendingActions.add(new LPA_EditRestriction(owner, ilfNode,
+            pendingActions.add(new LPAEditRestriction(owner, ilfNode,
                     newFolderDesc.isMoveAllowed(), 
                     newFolderDesc.isDeleteAllowed(), 
                     newFolderDesc.isEditAllowed(), 
@@ -678,7 +678,7 @@ public class DistributedLayoutManager implements IUserLayoutManager
                      * fragment and a user happened to already be logged in and
                      * edited an attribute on that node.
                      */ 
-                    pendingActions.add(new LPA_ChangeAttribute(nodeId, attName,
+                    pendingActions.add(new LPAChangeAttribute(nodeId, attName,
                             newVal, owner, ilfNode));
                 }
                 else if (! fragNodeInf.canOverrideAttributes())
@@ -698,7 +698,7 @@ public class DistributedLayoutManager implements IUserLayoutManager
                      * If we get here we can override and the value is 
                      * different than that in the fragment so make the change.
                      */
-                    pendingActions.add(new LPA_ChangeAttribute(nodeId, attName,
+                    pendingActions.add(new LPAChangeAttribute(nodeId, attName,
                             newVal, owner, ilfNode));
                 }
                 else 
@@ -706,7 +706,7 @@ public class DistributedLayoutManager implements IUserLayoutManager
                     /*
                      * The new value matches that in the fragment. 
                      */
-                    pendingActions.add(new LPA_ResetAttribute(nodeId, attName,
+                    pendingActions.add(new LPAResetAttribute(nodeId, attName,
                             fragNodeInf.getAttributeValue(attName), owner,
                             ilfNode));
                 }
@@ -716,7 +716,7 @@ public class DistributedLayoutManager implements IUserLayoutManager
                 /*
                  * Node owned by user so no checking needed. Just change it.
                  */
-                pendingActions.add(new LPA_ChangeAttribute(nodeId, attName,
+                pendingActions.add(new LPAChangeAttribute(nodeId, attName,
                         newVal, owner, ilfNode));
             }
         }
@@ -763,7 +763,7 @@ public class DistributedLayoutManager implements IUserLayoutManager
                  || newChanDesc.isMoveAllowed() != 
                     oldChanDesc.isMoveAllowed()))
         {
-            pendingActions.add(new LPA_EditRestriction(owner, ilfNode,
+            pendingActions.add(new LPAEditRestriction(owner, ilfNode,
                     newChanDesc.isMoveAllowed(), 
                     newChanDesc.isDeleteAllowed(), 
                     newChanDesc.isEditAllowed(), 
@@ -804,7 +804,7 @@ public class DistributedLayoutManager implements IUserLayoutManager
                 /*
                  * not in old description so this is a new ad-hoc parameter
                  */
-                pendingActions.add(new LPA_AddParameter
+                pendingActions.add(new LPAAddParameter
                         (nodeId, name, newVal, owner, ilfNode));
             } else if (!oldVal.equals(newVal)) 
             {
@@ -845,7 +845,7 @@ public class DistributedLayoutManager implements IUserLayoutManager
                              * new value matches that of published channel to
                              * remove any user parameter spec since not needed
                              */
-                            pendingActions.add(new LPA_RemoveParameter
+                            pendingActions.add(new LPARemoveParameter
                                     (nodeId, name, owner, ilfNode));
                         else
                             /*
@@ -853,7 +853,7 @@ public class DistributedLayoutManager implements IUserLayoutManager
                              * we need change any existing parameter spec or add
                              * a new one if it doesn't exist.
                              */
-                            pendingActions.add(new LPA_ChangeParameter
+                            pendingActions.add(new LPAChangeParameter
                                     (nodeId, name, newVal, owner, ilfNode));
                     } else if (!fragValue.equals(newVal))
                     {
@@ -862,7 +862,7 @@ public class DistributedLayoutManager implements IUserLayoutManager
                          * so change any existing parameter spec or add a new
                          * one if it doesn't exist.
                          */
-                        pendingActions.add(new LPA_ChangeParameter
+                        pendingActions.add(new LPAChangeParameter
                                 (nodeId, name, newVal, owner, ilfNode));
                     } else
                     {
@@ -870,7 +870,7 @@ public class DistributedLayoutManager implements IUserLayoutManager
                          * new val same as fragment value so don't persist.
                          * remove any parameter spec if it exists.
                          */
-                        pendingActions.add(new LPA_ResetParameter
+                        pendingActions.add(new LPAResetParameter
                                 (nodeId, name, fragValue, owner, ilfNode));
                     }
                 }
@@ -884,10 +884,10 @@ public class DistributedLayoutManager implements IUserLayoutManager
                         (ChannelParameter) pubParms.get(name);
                     
                     if (cp.getValue().equals(newVal))
-                        pendingActions.add(new LPA_RemoveParameter
+                        pendingActions.add(new LPARemoveParameter
                                 (nodeId, name, owner, ilfNode));
                     else
-                        pendingActions.add(new LPA_ChangeParameter
+                        pendingActions.add(new LPAChangeParameter
                                 (nodeId, name, newVal, owner, ilfNode));
                 }
             }
@@ -902,7 +902,7 @@ public class DistributedLayoutManager implements IUserLayoutManager
         {
             Map.Entry e = (Entry) itr.next();
             String name = (String) e.getKey();
-            pendingActions.add(new LPA_RemoveParameter
+            pendingActions.add(new LPARemoveParameter
                     (nodeId, name, owner, ilfNode));
         }
         /*

@@ -16,7 +16,7 @@ import org.w3c.dom.Element;
  * 
  * @author mboyd@sungardsct.com
  */
-public class LPA_ChangeAttribute implements ILayoutProcessingAction
+public class LPAChangeAttribute implements ILayoutProcessingAction
 {
     private String nodeId = null;
     private String name = null;
@@ -24,7 +24,7 @@ public class LPA_ChangeAttribute implements ILayoutProcessingAction
     private Element ilfNode = null;
     private String value = null;
     
-    LPA_ChangeAttribute(String nodeId, String name, String value, IPerson p, 
+    LPAChangeAttribute(String nodeId, String name, String value, IPerson p, 
             Element ilfNode)
     {
         this.nodeId = nodeId;

@@ -15,7 +15,7 @@ import org.w3c.dom.Element;
  * 
  * @author mboyd@sungardsct.com
  */
-public class LPA_AddParameter implements ILayoutProcessingAction
+public class LPAAddParameter implements ILayoutProcessingAction
 {
     private String nodeId = null;
     private String name = null;
@@ -23,7 +23,7 @@ public class LPA_AddParameter implements ILayoutProcessingAction
     private Element ilfNode = null;
     private String value = null;
     
-    LPA_AddParameter(String nodeId, String name, String value, IPerson p, 
+    LPAAddParameter(String nodeId, String name, String value, IPerson p, 
             Element ilfNode)
     {
         this.nodeId = nodeId;
