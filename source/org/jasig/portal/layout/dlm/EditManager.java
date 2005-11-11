@@ -301,6 +301,12 @@ public class EditManager
         }
         catch( Exception e )
         {
+            /*
+             * intentionally ignore this exception since we are calling
+             * getEditSet passing create=false meaning that the only portion of
+             * that method that tosses an exception will not be reached with 
+             * this call.
+             */
             return; 
         }
     
