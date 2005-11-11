@@ -5,6 +5,8 @@
 
 package org.jasig.portal.layout.dlm;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.layout.UserLayoutStoreFactory;
@@ -25,6 +27,7 @@ public class EditManager
     public static final String RCS_ID = "@(#) $Header$";
 
     private static RDBMDistributedLayoutStore dls = null;
+    private static final Log LOG = LogFactory.getLog(EditManager.class);
 
     /**
      * Hands back the single instance of RDBMDistributedLayoutStore. There is
@@ -302,11 +305,13 @@ public class EditManager
         catch( Exception e )
         {
             /*
-             * intentionally ignore this exception since we are calling
-             * getEditSet passing create=false meaning that the only portion of
-             * that method that tosses an exception will not be reached with 
-             * this call.
+             * we should never get here since we are calling getEditSet passing
+             * create=false meaning that the only portion of that method that
+             * tosses an exception will not be reached with this call. But if a
+             * runtime exception somehow occurs we will log it so that we don't
+             * lose the information.
              */
+            LOG.error(e, e);
             return; 
         }
     
