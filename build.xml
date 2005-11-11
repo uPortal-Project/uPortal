@@ -475,6 +475,8 @@
           destdir="${build.home}/WEB-INF/classes"
             debug="${compile.debug}"
       deprecation="${compile.deprecation}"
+          target="1.4"
+          source="1.4"
          optimize="${compile.optimize}">
       <classpath refid="compile.classpath"/>
     </javac>
@@ -695,6 +697,8 @@
   	<!-- Test that JAXP is installed in the JVM before trying to compile all of uPortal -->
     <mkdir    dir="${build.home}/WEB-INF/classes"/>
     <javac srcdir="source"
+          target="1.4"
+          source="1.4"
           destdir="${build.home}/WEB-INF/classes"
             debug="${compile.debug}"
       deprecation="${compile.deprecation}"
@@ -1221,6 +1225,9 @@
   <target name="compiletests" depends="compile"
    description="Compile JUnit Tests">
     <javac srcdir="tests"
+      target="1.4"
+      source="1.4"
+      
           destdir="${build.home}/WEB-INF/classes"
             debug="${compile.debug}"
       deprecation="${compile.deprecation}"
