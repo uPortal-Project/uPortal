@@ -309,7 +309,29 @@ http://maven.apache.org/maven-v3_0_0.xsd">
   <!-- ================================================================== -->
   <build>
     <sourceDirectory>source</sourceDirectory>
-    <unitTestSourceDirectory>tests</unitTestSourceDirectory>
+		<unitTestSourceDirectory>${basedir}/tests</unitTestSourceDirectory>
+		<unitTest>
+			<includes>
+				<include>**/*Test.java</include>
+			</includes>
+			<excludes>
+				<exclude>**/Abstract*Test.java</exclude>
+			</excludes>
+<!-- 			<resources>
+				<resource>
+					<directory>${basedir}/core/src/test/resources</directory>
+					<includes>
+						<include>**/**</include>
+						<include>**/*.txt</include>
+					</includes>
+					<excludes>
+						<exclude>**/*.java</exclude>
+					</excludes>
+					<filtering>false</filtering>
+				</resource>
+			</resources>
+ -->
+		</unitTest>
     <resources>
       <!-- Include all properties files as classpath resources -->
       <resource>
