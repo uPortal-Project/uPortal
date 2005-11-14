@@ -3,6 +3,10 @@
    xmlns:ant="jelly:ant"
    xmlns:util="jelly:util"
    xmlns:maven="jelly:maven">
+   
+   <echo>
+   	basedir: ${basedir}
+   	</echo>
 
    <postGoal name="site">
        <j:if test="${not empty siteDir}">
@@ -13,5 +17,12 @@
        </ant:copy>
        </j:if>
    </postGoal> 
+   
+   <preGoal name="test:test">
+   </preGoal>
+   
+   <postGoal name="test:test">
+   </postGoal>
+   
 
 </project>
