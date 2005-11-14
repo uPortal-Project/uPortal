@@ -17,12 +17,4 @@
        </ant:copy>
        </j:if>
    </postGoal> 
-   
-   <preGoal name="test:test">
-   </preGoal>
-   
-   <postGoal name="test:test">
-   </postGoal>
-   
-
 </project>
