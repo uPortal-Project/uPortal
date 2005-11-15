@@ -11,7 +11,7 @@ http://maven.apache.org/maven-v3_0_0.xsd">
 	<artifactId>uportal</artifactId>
 	<name>uPortal</name>
 	<groupId>ja-sig</groupId>
-	<currentVersion>2.6.0-SNAPSHOT</currentVersion>
+	<currentVersion>2.5.2-SNAPSHOT</currentVersion>
 	<inceptionYear>2005</inceptionYear>
 	<url>http://www.uportal.org</url>
 	<logo>http://www.ja-sig.org/images/jasig-head.gif</logo>
@@ -42,11 +42,24 @@ http://maven.apache.org/maven-v3_0_0.xsd">
 			<tag>HEAD</tag>
 		</version>
 		<version>
+			<id>2.5.2-SNAPSHOT</id>
+			<name>2.5.2-SNAPSHOT</name>
+			<tag>rel-2-5-patches</tag>
+		</version>
+		<version>
 			<id>2.5.1-GA</id>
 			<name>2.5.1-GA</name>
 			<tag>rel_2_5_1</tag>
 		</version>
 	</versions>
+	<branches>
+		<branch>
+			<tag>HEAD</tag>
+		</branch>
+		<branch>
+			<tag>rel-2-5-patches</tag>
+		</branch>
+	</branches>
 	<mailingLists>
 		<mailingList>
 			<name>JA-SIG Portal</name>
