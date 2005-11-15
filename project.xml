@@ -368,6 +368,7 @@ http://maven.apache.org/maven-v3_0_0.xsd">
 			</properties>
 		</dependency>
 	</dependencies>
+	<package>org.jasig.portal</package>
 	<!-- ================================================================== -->
 	<!-- Build information                                                  -->
 	<!-- ================================================================== -->
