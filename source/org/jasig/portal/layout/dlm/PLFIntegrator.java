@@ -27,7 +27,7 @@ public class PLFIntegrator
     public static void mergePLFintoILF( Document plf,
                                         Document ilf,
                                         IntegrationResult result )
-        throws Exception
+    throws PortalException
     {
         // we want to use the root folders located as the single child of
         // the layout elements which are the document elements.
