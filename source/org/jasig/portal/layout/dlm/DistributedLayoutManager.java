@@ -517,15 +517,6 @@ public class DistributedLayoutManager implements IUserLayoutManager
         if( canUpdateNode( node ) )
         {
             String nodeId = node.getId();
-            String nextSiblingId = getNextSiblingId( nodeId );
-            Element nextSibling = null;
-
-            if( nextSiblingId != null )
-            {
-                Document uld = this.userLayoutDocument;
-                nextSibling = uld.getElementById( nextSiblingId );
-            }
-
             IUserLayoutNodeDescription oldNode = getNode( nodeId );
 
             if( oldNode instanceof IUserLayoutChannelDescription )

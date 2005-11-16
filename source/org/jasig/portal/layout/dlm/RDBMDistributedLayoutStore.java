@@ -1463,8 +1463,7 @@ public class RDBMDistributedLayoutStore
         return attr.getValue();
     }
     
-    protected Element getStructure(Document document, LayoutStructure ls) throws Exception {
-        Document doc = document;
+    protected Element getStructure(Document doc, LayoutStructure ls) throws Exception {
         Element structure = null;
 
         // handle migration of legacy namespace
@@ -1503,8 +1502,6 @@ public class RDBMDistributedLayoutStore
             }
             else
                 structure = doc.createElement("folder");
-    structure.setAttribute(Constants.ATT_ID, folderPrefix + ls.getStructId());
-    structure.setIdAttribute(Constants.ATT_ID, true);
     structure.setAttribute("name", ls.getName());
     structure.setAttribute("type", (type != null ? type : "regular"));
         }
@@ -1549,18 +1546,20 @@ public class RDBMDistributedLayoutStore
           }
           else 
           {
-              // do traditional override processing. some explanation is in
-              // order. The structure element was created by the 
-              // ChannelDefinition and only contains parameter children if the
-              // definition had defined parameters. These are checked for each
-              // layout loaded parameter as found in LayoutStructure.parameters.
-              // If a name match is found then we need to see if overriding is
-              // allowed and if so we set the value on the child parameter
-              // element. At that point we are done with that version loaded 
-              // from the layout so we remove it from the in-memory set of 
-              // parameters that are being merged-in. Then, after all such have 
-              // been checked against those added by the channel definition we
-              // add in any remaining as adhoc, unregulated parameters.
+              /*
+               * do traditional override processing. some explanation is in
+               * order. The structure element was created by the
+               * ChannelDefinition and only contains parameter children if the
+               * definition had defined parameters. These are checked for each
+               * layout loaded parameter as found in LayoutStructure.parameters.
+               * If a name match is found then we need to see if overriding is
+               * allowed and if so we set the value on the child parameter
+               * element. At that point we are done with that version loaded
+               * from the layout so we remove it from the in-memory set of
+               * parameters that are being merged-in. Then, after all such have
+               * been checked against those added by the channel definition we
+               * add in any remaining as adhoc, unregulated parameters.
+               */
               NodeList nodeListParameters =
                   structure.getElementsByTagName("parameter");
               for (int j = 0; j < nodeListParameters.getLength(); j++)
@@ -1636,7 +1635,7 @@ public class RDBMDistributedLayoutStore
                 LOG.debug("Adding identifier " + folderPrefix + ls.getStructId() );
             structure.setAttribute("ID", channelPrefix + ls.getStructId());
         }
-        
+        structure.setIdAttribute(Constants.ATT_ID, true);
         return structure;
     }
     

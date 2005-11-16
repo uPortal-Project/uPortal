@@ -97,61 +97,6 @@ public class TabColumnPrefsHandler
         }
     }
     
-    public static Element getPlfChannel( Element compViewChannel, IPerson person )
-        throws PortalException
-    {
-        Element plf = HandlerUtils
-            .getPLFNode( compViewChannel, person,
-                         true, // create node if not found
-                         false ); // don't create children
-        if (LOG.isInfoEnabled())
-            LOG.info("Retrieved PLFChannel" + compViewChannel.getAttribute("ID"));
-        return plf;
-    }
-
-    
-    /**
-       Records changes made to attributes of elements by users. Changes to
-       the restriction attributes should not be passed to this method. Those
-       are handled by the changeRestrictions method.
-     */
-    public static void editAttribute( Element compViewNode,
-                                      String attributeName,
-                                      IPerson person )
-        throws PortalException
-    {
-        Element plfNode = HandlerUtils
-        .getPLFNode( compViewNode, person,
-                     true, // create node if not found
-                     false ); // don't create children
-        Attr attribNode = compViewNode.getAttributeNode( attributeName );
-        Attr plfAttribNode = plfNode.getAttributeNode( attributeName );
-
-        if ( attribNode == null ) // attribute deleted
-        {
-            if ( plfAttribNode != null )
-                plfNode.removeAttributeNode( plfAttribNode );
-        }
-        else // attribute added or edited so add and/or edit 
-        {
-            if ( plfAttribNode == null )
-            {
-                Document plf = plfNode.getOwnerDocument();
-                plfAttribNode = (Attr) plf.importNode( attribNode, true );
-                plfNode.setAttributeNode( plfAttribNode );
-            }
-            else
-                plfAttribNode.setValue( attribNode.getValue() );
-        }
-        if (plfNode.getAttribute(Constants.ATT_ID).startsWith(
-                Constants.FRAGMENT_ID_USER_PREFIX))
-        {
-            // if ilf node being edited then need to add edit directive
-            EditManager.addEditDirective( plfNode, attributeName, person );   
-        }
-    }
-
-    
     /**
        Handles user requests to delete UI elements. For ILF owned nodes it
        delegates to the DeleteManager to add a delete directive. For PLF
