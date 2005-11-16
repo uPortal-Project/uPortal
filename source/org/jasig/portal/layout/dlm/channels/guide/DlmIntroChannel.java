@@ -125,36 +125,32 @@ public class DlmIntroChannel extends BaseChannel implements ICacheable,
      */
     public void renderCharacters(PrintWriter pw) throws PortalException
     {
-        //SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MMMMM.dd hh:mm aaa, z");
-        try
-        {
-          /*  pw.println("<span class='uportal-crumbtrail'>Rendered at: "
-                    + sdf.format(new Date(System.currentTimeMillis())) 
-                    + "</span>");
-                    */
-            XSLT xslt = new XSLT(this);
-            xslt.setXSL(STYLESHEET_FILE);
-            
-            File contents = ResourceLoader.getResourceAsFile(
-                    this.getClass(), CONTENT_FILE);
-            xslt.setXML(contents);
-            ByteArrayOutputStream results = new ByteArrayOutputStream();
-            xslt.setTarget(results);
-            
-            xslt.setStylesheetParameter("baseActionUrl", this.runtimeData
-                    .getBaseActionURL(true));
-            xslt.setStylesheetParameter("baseMediaUrl", mediaBase);
-            xslt.setStylesheetParameter("selectedSection", currentSection);
-            xslt.transform();
-            String html = results.toString();
-            pw.print(html);
-        } catch (Exception e)
-        {
-            throw new PortalException("Problem generating content.", e);
-        }
+        /*
+         * SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MMMMM.dd hh:mm aaa,
+         * z");
+         * 
+         * pw.println(" <span class='uportal-crumbtrail'>Rendered at: " +
+         * sdf.format(new Date(System.currentTimeMillis())) + " </span>");
+         */
+        XSLT xslt = new XSLT(this);
+        xslt.setXSL(STYLESHEET_FILE);
+
+        File contents = ResourceLoader.getResourceAsFile(this.getClass(),
+                CONTENT_FILE);
+        xslt.setXML(contents);
+        ByteArrayOutputStream results = new ByteArrayOutputStream();
+        xslt.setTarget(results);
+
+        xslt.setStylesheetParameter("baseActionUrl", this.runtimeData
+                .getBaseActionURL(true));
+        xslt.setStylesheetParameter("baseMediaUrl", mediaBase);
+        xslt.setStylesheetParameter("selectedSection", currentSection);
+        xslt.transform();
+        String html = results.toString();
+        pw.print(html);
     }
     /**
-     * Sets up the base media URL if not done already and determines which 
+     * Sets up the base media URL if not done already and determines which
      * section is desired by the user if any.
      * 
      * @see org.jasig.portal.IChannel#setRuntimeData(org.jasig.portal.ChannelRuntimeData)
