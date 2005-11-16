@@ -38,6 +38,15 @@ public class PLFIntegrator
 
         DeleteManager.applyAndUpdateDeleteSet( plf, ilf, result );
         ParameterEditManager.applyAndUpdateParmEditSet(plf, ilf, result);
+
+        if( null == plfRoot )
+        {
+            throw new RuntimeException(
+                "The PLF layout root element is missing, so it appears " +
+                "that the database has been corrupted."
+                );
+        }
+        
         applyChildChanges( plfRoot, ilfRoot, result );
     }
 
@@ -47,15 +56,6 @@ public class PLFIntegrator
         throws PortalException
     {
         Element positions = null;
-
-        if( null == plfParent )
-        {
-            throw new java.lang.Error(
-                "The PLF parent element is missing, so it appears that the " +
-                "database has been corrupted."
-                );
-        }
-        
         Element node = (Element) plfParent.getFirstChild();
         
         while( node != null )
