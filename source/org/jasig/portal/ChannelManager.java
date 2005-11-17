@@ -415,7 +415,8 @@ public class ChannelManager implements LayoutEventListener {
             try {
               channelDesc = (IUserLayoutChannelDescription)upm.getUserLayoutManager().getNode(channelSubscribeId);
             } catch (PortalException pe) {
-              // Do nothing
+                // Just log exception
+            	log.warn(pe,pe);
             }
             
             // Tell the StatsRecorder that this channel has rendered
@@ -932,6 +933,7 @@ public class ChannelManager implements LayoutEventListener {
             try {
                 ch=instantiateChannel(channelSubscribeId);
             } catch (Throwable e) {
+            	log.warn(e,e);
                 return null;
             }
         }
@@ -1268,7 +1270,7 @@ public class ChannelManager implements LayoutEventListener {
 	 * method returns null).
 	 * @param channelSubscribeId
 	 * @throws IllegalArgumentException if channelSubcribeId is null
-	 * @thorws IllegalStateException if 
+	 * @throws IllegalStateException if 
 	 */
 	public String getChannelTitle(String channelSubscribeId) {
 		
