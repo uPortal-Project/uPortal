@@ -368,7 +368,9 @@ http://maven.apache.org/maven-v3_0_0.xsd">
 			</properties>
 		</dependency>
 	</dependencies>
-	<package>org.jasig.portal</package>
+	<!-- 
+		<package>org.jasig.portal</package>
+	 -->
 	<!-- ================================================================== -->
 	<!-- Build information                                                  -->
 	<!-- ================================================================== -->
@@ -438,19 +440,25 @@ http://maven.apache.org/maven-v3_0_0.xsd">
 			<resource>
 				<directory>webpages/stylesheets</directory>
 				<includes>
-					<include>
-						**/*.cpd,**/*.xsl,**/*.ssl,**/*.sdf,**/*.properties
-					</include>
+					<include>**/*.cpd</include>
+					<include>**/*.xsl</include>
+					<include>**/*.ssl</include>
+					<include>**/*.sdf</include>
+					<include>**/*.properties</include>
 				</includes>
 				<excludes>
-					<exclude>CVS,**/*.UTF-8.properties</exclude>
+					<exclude>CVS</exclude>
+					<exclude>**/*.UTF-8.properties</exclude>
 				</excludes>
 			</resource>
 			<!-- Specify some resources to be places in the root package -->
 			<resource>
 				<directory>webpages/media</directory>
 				<excludes>
-					<exclude>CVS,**/*.gif,**/*.jpg,**/*.css</exclude>
+					<exclude>CVS</exclude>
+					<exclude>**/*.gif</exclude>
+					<exclude>**/*.jpg</exclude>
+					<exclude>**/*.css</exclude>
 				</excludes>
 			</resource>
 			<!-- Specify some resources to be places in the root package -->
