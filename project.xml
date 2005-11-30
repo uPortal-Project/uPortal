@@ -413,7 +413,7 @@ http://maven.apache.org/maven-v3_0_0.xsd">
 			</resources>
 		</unitTest>
 		<resources>
-			<!-- Include all properties files as classpath resources -->
+			<!-- Include all files from the properties directory as classpath resources -->
 			<resource>
 				<directory>properties</directory>
 				<targetPath>properties</targetPath>
@@ -424,19 +424,33 @@ http://maven.apache.org/maven-v3_0_0.xsd">
 					<exclude>CVS</exclude>
 				</excludes>
 			</resource>
-			<!-- Specify some resources to be places in the root package -->
+			
+			<!-- Include all properties and res files as classpath resources -->
 			<resource>
-				<directory>properties</directory>
+				<directory>source</directory>
+				<targetPath></targetPath>
 				<includes>
-					<include>properties/log4j.xml</include>
-					<include>properties/log4j.dtd</include>
-					<include>properties/whirlycache.xml</include>
+					<include>**/*.properties</include>
+					<include>**/*.res</include>
 				</includes>
 				<excludes>
 					<exclude>CVS</exclude>
 				</excludes>
 			</resource>
+			
 			<!-- Specify some resources to be places in the root package -->
+			<resource>
+				<directory>properties</directory>
+				<targetPath></targetPath>
+				<includes>
+					<include>whirlycache.xml</include>
+				</includes>
+				<excludes>
+					<exclude>CVS</exclude>
+				</excludes>
+			</resource>
+			
+			<!-- Include the stylesheets directory in the classpath -->
 			<resource>
 				<directory>webpages/stylesheets</directory>
 				<includes>
@@ -451,7 +465,10 @@ http://maven.apache.org/maven-v3_0_0.xsd">
 					<exclude>**/*.UTF-8.properties</exclude>
 				</excludes>
 			</resource>
-			<!-- Specify some resources to be places in the root package -->
+			<!-- 
+			Include non image media files in class path. 
+			This would include xml and properties files 
+			-->
 			<resource>
 				<directory>webpages/media</directory>
 				<excludes>
@@ -461,7 +478,8 @@ http://maven.apache.org/maven-v3_0_0.xsd">
 					<exclude>**/*.css</exclude>
 				</excludes>
 			</resource>
-			<!-- Specify some resources to be places in the root package -->
+			
+			<!-- Put the DTDs where they are needed -->			
 			<resource>
 				<directory>webpages/dtd</directory>
 				<targetPath>properties/chanpub/chandefs</targetPath>
@@ -469,7 +487,6 @@ http://maven.apache.org/maven-v3_0_0.xsd">
 					<include>channelDefinition.dtd</include>
 				</includes>
 			</resource>
-			<!-- Specify some resources to be places in the root package -->
 			<resource>
 				<directory>webpages/dtd</directory>
 				<targetPath>
