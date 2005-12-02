@@ -943,12 +943,12 @@ public class RDBMDistributedLayoutStore
         throws Exception
     {
         return new DistributedUserPreferences
-            ( super.getThemeStylesheetUserPreferences( person,
+            ( /*super.*/_getThemeStylesheetUserPreferences( person,
                                                        profileId,
                                                        stylesheetId ) );
     }
     
-    public StructureStylesheetUserPreferences _getStructureStylesheetUserPreferences (IPerson person, int profileId, int stylesheetId) throws Exception {
+    private StructureStylesheetUserPreferences _getStructureStylesheetUserPreferences (IPerson person, int profileId, int stylesheetId) throws Exception {
         int userId = person.getID();
         StructureStylesheetUserPreferences ssup;
         Connection con = RDBMServices.getConnection();
@@ -962,24 +962,9 @@ public class RDBMDistributedLayoutStore
                 // important because preference values are stored by layout
                 // element and if the user doesn't have a layout yet then the
                 // default user's preferences need to be loaded.
+                int layoutId = this.getLayoutID(userId, profileId);
+                ResultSet rs = null;
                 
-                String subSelectString = "SELECT LAYOUT_ID FROM UP_USER_PROFILE WHERE USER_ID=" + userId + " AND PROFILE_ID=" +
-                profileId;
-                if (LOG.isDebugEnabled())
-                    LOG.debug("RDBMUserLayoutStore::getUserLayout()1 " + subSelectString);
-                int layoutId;
-                ResultSet rs = stmt.executeQuery(subSelectString);
-                try {
-                    rs.next();
-                    layoutId = rs.getInt(1);
-                    if (rs.wasNull()) {
-                        layoutId = 0;
-                    }
-                } finally {
-                    rs.close();
-                    stmt.close();
-                }
-
                 // if no layout then get the default user id for this user
                 
                 int origId = userId;
@@ -999,7 +984,7 @@ public class RDBMDistributedLayoutStore
                 }
 
                 // create the stylesheet user prefs object then fill
-                // fill it with defaults from the stylesheet definition object
+                // it with defaults from the stylesheet definition object
                 
                 ssup = new StructureStylesheetUserPreferences();
                 ssup.setStylesheetId(stylesheetId);
@@ -1144,14 +1129,13 @@ public class RDBMDistributedLayoutStore
                         if (rs.wasNull()) {
                             chanId = 0;
                         }
-                        if (param_type == 1) {
-                            // stylesheet param
-                            if (LOG.isDebugEnabled())
-                                LOG.debug("RDBMUserLayoutStore::getStructureStylesheetUserPreferences() :  stylesheet global params should be specified in the user defaults table ! UP_SS_USER_ATTS is corrupt. (userId="
-                                                      + Integer.toString(userId) + ", profileId=" + Integer.toString(profileId) + ", stylesheetId=" + Integer.toString(stylesheetId)
-                                                      + ", param_name=\"" + pName + "\", param_type=" + Integer.toString(param_type));
-                        }
-                        else if (param_type == 2) {
+                        // load only folder and channel attributes from the
+                        // table. we should never get any others since we
+                        // purge all values from the db upon pushing them back
+                        // out to db. So if corruption ever does occur it
+                        // should be self correcting.
+                        
+                        if (param_type == 2) {
                             // folder attribute
                             String folderStructId = null;
                             if ( ulp_parmName != null &&
@@ -1175,19 +1159,6 @@ public class RDBMDistributedLayoutStore
                             if (ssd.containsChannelAttribute(pName))
                                 ssup.setChannelAttributeValue(channelStructId, pName, rs.getString(2));
                         }
-                        else {
-                            // unknown param type
-                                LOG.error("RDBMUserLayoutStore::getStructureStylesheetUserPreferences() : unknown param type encountered! DB corrupt. (userId="
-                                            + Integer.toString(userId)
-                                            + ", profileId="
-                                            + Integer.toString(profileId)
-                                            + ", stylesheetId="
-                                            + Integer.toString(stylesheetId)
-                                            + ", param_name=\""
-                                            + rs.getString(1)
-                                            + "\", param_type="
-                                            + Integer.toString(param_type));
-                        }
                     }
                 } finally {
                     rs.close();
@@ -1202,6 +1173,163 @@ public class RDBMDistributedLayoutStore
         }
         return  ssup;
     }
+    
+    private ThemeStylesheetUserPreferences _getThemeStylesheetUserPreferences(
+            IPerson person, int profileId, int stylesheetId) throws Exception
+    {
+        int userId = person.getID();
+        ThemeStylesheetUserPreferences tsup;
+        Connection con = RDBMServices.getConnection();
+        try
+        {
+            Statement stmt = con.createStatement();
+            try
+            {
+                // get stylesheet description
+                ThemeStylesheetDescription tsd = getThemeStylesheetDescription(stylesheetId);
+                // get user defined defaults
+
+                int layoutId = this.getLayoutID(userId, profileId);
+                ResultSet rs = null;
+
+                if (layoutId == 0)
+                { // First time, grab the default layout for this user
+                    String sQuery = "SELECT USER_DFLT_USR_ID FROM UP_USER WHERE USER_ID="
+                            + userId;
+                    if (log.isDebugEnabled())
+                        log
+                                .debug("RDBMUserLayoutStore::getThemeStylesheetUserPreferences(): "
+                                        + sQuery);
+                    rs = stmt.executeQuery(sQuery);
+                    try
+                    {
+                        rs.next();
+                        userId = rs.getInt(1);
+                    } finally
+                    {
+                        rs.close();
+                    }
+                }
+
+                // create the stylesheet user prefs object then fill
+                // it with defaults from the stylesheet definition object
+                
+                tsup = new ThemeStylesheetUserPreferences();
+                tsup.setStylesheetId(stylesheetId);
+                // fill stylesheet description with defaults
+                for (Enumeration e = tsd.getStylesheetParameterNames(); e
+                        .hasMoreElements();)
+                {
+                    String pName = (String) e.nextElement();
+                    tsup.putParameterValue(pName, tsd
+                            .getStylesheetParameterDefaultValue(pName));
+                }
+                for (Enumeration e = tsd.getChannelAttributeNames(); e
+                        .hasMoreElements();)
+                {
+                    String pName = (String) e.nextElement();
+                    tsup.addChannelAttribute(pName, tsd
+                            .getChannelAttributeDefaultValue(pName));
+                }
+
+                // Now load in the stylesheet parameter preferences
+                // from the up_ss_user_param but only if they are defined
+                // parameters in the stylesheet's .sdf file. 
+                //
+
+                String sQuery = 
+                    "SELECT PARAM_NAME, PARAM_VAL " +
+                    "FROM UP_SS_USER_PARM " +
+                    "WHERE USER_ID=?" +
+                    " AND PROFILE_ID=" + profileId +
+                    " AND SS_ID=" + stylesheetId + 
+                    " AND SS_TYPE=2";
+                
+                PreparedStatement pstmt = con.prepareStatement(sQuery);
+                
+                if (log.isDebugEnabled())
+                    log
+                            .debug("RDBMUserLayoutStore::getThemeStylesheetUserPreferences(): "
+                                    + sQuery);
+                try
+                {
+                    pstmt.setInt(1, userId);
+                    rs = pstmt.executeQuery();
+                    while (rs.next())
+                    {
+                        // stylesheet param
+                        String pName = rs.getString(1);
+                        if (tsd.containsParameterName(pName))
+                            tsup.putParameterValue(pName, rs.getString(2));
+                    }
+                } finally
+                {
+                    rs.close();
+                }
+                
+                // Now load in the channel attributes preferences from the
+                // up_ss_user_atts table
+
+                sQuery = "SELECT PARAM_TYPE, PARAM_NAME, PARAM_VAL, " +
+                        "ULS.STRUCT_ID, CHAN_ID " +
+                        "FROM UP_SS_USER_ATTS UUSA, UP_LAYOUT_STRUCT ULS " +
+                        "WHERE UUSA.USER_ID=" + userId +
+                        " AND PROFILE_ID=" + profileId +
+                        " AND SS_ID=" + stylesheetId +
+                        " AND SS_TYPE=2" +
+                        " AND UUSA.STRUCT_ID = ULS.STRUCT_ID" +
+                        " AND UUSA.USER_ID = ULS.USER_ID";
+                if (log.isDebugEnabled())
+                    log.debug("SQL to load theme channel attribute prefs: "
+                                    + sQuery);
+                rs = stmt.executeQuery(sQuery);
+                try
+                {
+                    while (rs.next())
+                    {
+                        int param_type = rs.getInt(1);
+                        if (rs.wasNull())
+                        {
+                            param_type = 0;
+                        }
+                        int structId = rs.getInt(4);
+                        if (rs.wasNull())
+                        {
+                            structId = 0;
+                        }
+                        int chanId = rs.getInt(5);
+                        if (rs.wasNull())
+                        {
+                            chanId = 0;
+                        }
+                        // only use channel attributes ignoring any others.
+                        // we should never get any others in here unless there
+                        // is db corruption and since all are flushed when 
+                        // writting back to the db it should be self correcting
+                        // if it ever does occur somehow.
+                        if (param_type == 3)
+                        {
+                            // channel attribute
+                            tsup.setChannelAttributeValue(getStructId(structId,
+                                    chanId), rs.getString(2), rs.getString(3));
+                        }
+                    }
+                } finally
+                {
+                    rs.close();
+                }
+            } finally
+            {
+                stmt.close();
+            }
+        } finally
+        {
+            RDBMServices.releaseConnection(con);
+        }
+        return tsup;
+    }
+
+
 
     public StructureStylesheetUserPreferences getStructureStylesheetUserPreferences( IPerson person, int profileId, int stylesheetId)
         throws Exception
@@ -1821,7 +1949,9 @@ public class RDBMDistributedLayoutStore
                 // write out params only if specified in stylesheet's .sdf file
                 for (Enumeration e = ssup.getParameterValues().keys(); e.hasMoreElements();) {
                     String pName = (String)e.nextElement();
-                    if (ssDesc.containsParameterName(pName))
+                    if (ssDesc.containsParameterName(pName) &&
+                        ! ssDesc.getStylesheetParameterDefaultValue(pName)
+                            .equals(ssup.getParameterValue(pName)))
                     {
                         String pNameEscaped = RDBMServices.sqlEscape(pName);
                         sQuery = "INSERT INTO UP_SS_USER_PARM (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,PARAM_NAME,PARAM_VAL) VALUES (" + userId
@@ -1853,19 +1983,20 @@ public class RDBMDistributedLayoutStore
 
                     for (Enumeration attre = ssup.getFolderAttributeNames(); attre.hasMoreElements();) {
                         String pName = (String)attre.nextElement();
-                        if (ssDesc.containsFolderAttribute(pName)) 
+                        String pValue = ssup.getDefinedFolderAttributeValue(folderId, pName);
+                        if (ssDesc.containsFolderAttribute(pName) &&
+                            pValue != null &&
+                            ! ssDesc.getFolderAttributeDefaultValue(pName)
+                            .equals(pValue)) 
                         {
-                            String pValue = ssup.getDefinedFolderAttributeValue(folderId, pName);
-                            if (pValue != null) {
-                                // store user preferences
-                                String pNameEscaped = RDBMServices.sqlEscape(pName);
-                                sQuery = "INSERT INTO UP_SS_USER_ATTS (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,STRUCT_ID,PARAM_NAME,PARAM_TYPE,PARAM_VAL) VALUES ("
-                                    + userId + "," + profileId + "," + stylesheetId + ",1,'" + plfFolderId.substring(1) + "','" + pNameEscaped + "',2,'" + pValue
-                                    + "')";
-                                if (LOG.isDebugEnabled())
-                                    LOG.debug(sQuery);
-                                stmt.executeUpdate(sQuery);
-                            }
+                            // store user preferences
+                            String pNameEscaped = RDBMServices.sqlEscape(pName);
+                            sQuery = "INSERT INTO UP_SS_USER_ATTS (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,STRUCT_ID,PARAM_NAME,PARAM_TYPE,PARAM_VAL) VALUES ("
+                                + userId + "," + profileId + "," + stylesheetId + ",1,'" + plfFolderId.substring(1) + "','" + pNameEscaped + "',2,'" + pValue
+                                + "')";
+                            if (LOG.isDebugEnabled())
+                                LOG.debug(sQuery);
+                            stmt.executeUpdate(sQuery);
                         }
                     }
                 }
@@ -1881,18 +2012,19 @@ public class RDBMDistributedLayoutStore
 
                     for (Enumeration attre = ssup.getChannelAttributeNames(); attre.hasMoreElements();) {
                         String pName = (String)attre.nextElement();
-                        if (ssDesc.containsChannelAttribute(pName))
+                        String pValue = ssup.getDefinedChannelAttributeValue(channelId, pName);
+                        if (ssDesc.containsChannelAttribute(pName) &&
+                            pValue != null && 
+                            ! ssDesc.getChannelAttributeDefaultValue(pName)
+                                .equals(pValue))
                         {
-                            String pValue = ssup.getDefinedChannelAttributeValue(channelId, pName);
-                            if (pValue != null) {
-                                String pNameEscaped = RDBMServices.sqlEscape(pName);
-                                sQuery = "INSERT INTO UP_SS_USER_ATTS (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,STRUCT_ID,PARAM_NAME,PARAM_TYPE,PARAM_VAL) VALUES ("
-                                    + userId + "," + profileId + "," + stylesheetId + ",1,'" + plfChannelId.substring(1) + "','" + pNameEscaped + "',3,'" + pValue
-                                    + "')";
-                                if (LOG.isDebugEnabled())
-                                    LOG.debug(sQuery);
-                                stmt.executeUpdate(sQuery);
-                            }
+                            String pNameEscaped = RDBMServices.sqlEscape(pName);
+                            sQuery = "INSERT INTO UP_SS_USER_ATTS (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,STRUCT_ID,PARAM_NAME,PARAM_TYPE,PARAM_VAL) VALUES ("
+                                + userId + "," + profileId + "," + stylesheetId + ",1,'" + plfChannelId.substring(1) + "','" + pNameEscaped + "',3,'" + pValue
+                                + "')";
+                            if (LOG.isDebugEnabled())
+                                LOG.debug(sQuery);
+                            stmt.executeUpdate(sQuery);
                         }
                     }
                 }
@@ -1940,9 +2072,12 @@ public class RDBMDistributedLayoutStore
                 stmt.executeUpdate(sQuery);
                 
                 // write out params only if defined in stylesheet's .sdf file
+                // and user's value differs from default
                 for (Enumeration e = tsup.getParameterValues().keys(); e.hasMoreElements();) {
                     String pName = (String)e.nextElement();
-                    if (tsDesc.containsParameterName(pName))
+                    if (tsDesc.containsParameterName(pName) &&
+                        ! tsDesc.getStylesheetParameterDefaultValue(pName)
+                            .equals(tsup.getParameterValue(pName)))
                     {
                         String pNameEscaped = RDBMServices.sqlEscape(pName);
                         sQuery = "INSERT INTO UP_SS_USER_PARM (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,PARAM_NAME,PARAM_VAL) VALUES (" + userId
@@ -1973,18 +2108,19 @@ public class RDBMDistributedLayoutStore
 
                     for (Enumeration attre = tsup.getChannelAttributeNames(); attre.hasMoreElements();) {
                         String pName = (String)attre.nextElement();
-                        if (tsDesc.containsChannelAttribute(pName))
+                        String pValue = tsup.getDefinedChannelAttributeValue(channelId, pName);
+                        if (tsDesc.containsChannelAttribute(pName) &&
+                            pValue != null &&
+                            ! tsDesc.getChannelAttributeDefaultValue(pName)
+                                .equals(pValue))
                         {
-                            String pValue = tsup.getDefinedChannelAttributeValue(channelId, pName);
-                            if (pValue != null) {
-                                String pNameEscaped = RDBMServices.sqlEscape(pName);
-                                sQuery = "INSERT INTO UP_SS_USER_ATTS (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,STRUCT_ID,PARAM_NAME,PARAM_TYPE,PARAM_VAL) VALUES ("
-                                + userId + "," + profileId + "," + stylesheetId + ",2,'" + plfChannelId.substring(1) + "','" + pNameEscaped + "',3,'" + pValue
-                                + "')";
-                                if (LOG.isDebugEnabled())
-                                    LOG.debug(sQuery);
-                                stmt.executeUpdate(sQuery);
-                            }
+                            String pNameEscaped = RDBMServices.sqlEscape(pName);
+                            sQuery = "INSERT INTO UP_SS_USER_ATTS (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,STRUCT_ID,PARAM_NAME,PARAM_TYPE,PARAM_VAL) VALUES ("
+                            + userId + "," + profileId + "," + stylesheetId + ",2,'" + plfChannelId.substring(1) + "','" + pNameEscaped + "',3,'" + pValue
+                            + "')";
+                            if (LOG.isDebugEnabled())
+                                LOG.debug(sQuery);
+                            stmt.executeUpdate(sQuery);
                         }
                     }
                 }
