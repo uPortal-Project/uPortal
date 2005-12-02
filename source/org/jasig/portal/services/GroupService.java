@@ -271,8 +271,11 @@ protected IEntityGroup igetDistinguishedGroup(String name) throws GroupsExceptio
         String key = getDistinguishedGroupKey(name);
         return compositeGroupService.findGroup(key);
     }
-    catch (Exception ex)
-        { throw new GroupsException("GroupService.getDistinguishedGroup(): could not find key for: " + name); }}
+    catch (Exception ex){
+    	throw new GroupsException("GroupService.getDistinguishedGroup(): "
+            +"could not find key for: " + name,ex); 
+    }
+}
 
 
 
