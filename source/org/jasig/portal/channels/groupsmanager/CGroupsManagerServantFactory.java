@@ -43,7 +43,9 @@ import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.IChannel;
 import org.jasig.portal.IServant;
 import org.jasig.portal.PortalException;
+import org.jasig.portal.channels.groupsmanager.permissions.GroupsManagerAdminPermissions;
 import org.jasig.portal.channels.groupsmanager.permissions.GroupsManagerBlockEntitySelectPermissions;
+import org.jasig.portal.channels.groupsmanager.permissions.GroupsManagerDefaultPermissions;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.groups.ILockableEntityGroup;
@@ -161,7 +163,8 @@ public class CGroupsManagerServantFactory implements GroupsManagerConstants{
         servant.getSessionData().highlightedGroupID = servant.getSessionData().rootViewGroupID;
         servant.getSessionData().mode = "select";
         servant.getSessionData().allowFinish = allowFinish;
-        servant.getSessionData().gmPermissions = GroupsManagerBlockEntitySelectPermissions.getInstance();
+        //servant.getSessionData().gmPermissions = GroupsManagerBlockEntitySelectPermissions.getInstance();
+        servant.getSessionData().gmPermissions = new GroupsManagerBlockEntitySelectPermissions(getPermissionsPolicy(staticData));
         //servant.getSessionData().blockEntitySelect = true;
         if (message != null){
           servant.getSessionData().customMessage = message;
@@ -344,7 +347,7 @@ public class CGroupsManagerServantFactory implements GroupsManagerConstants{
            servant.getSessionData().gmPermissions = permissions;
         }
         else if(!allowEntitySelect) {
-           servant.getSessionData().gmPermissions = GroupsManagerBlockEntitySelectPermissions.getInstance();
+           servant.getSessionData().gmPermissions = new GroupsManagerBlockEntitySelectPermissions(getPermissionsPolicy(staticData));
         }
 
         if (message != null){
@@ -390,5 +393,23 @@ public class CGroupsManagerServantFactory implements GroupsManagerConstants{
          + String.valueOf((time2 - time1)) + " ms to instantiate selection servant");
       return (IServant) servant;
     }
-
+    
+    /**
+     * Returns a permissions policy based upon the users role.
+     *
+     * @return IGroupsManagerPermissions
+     * @param staticData the master channel's staticData
+     * @throws PortalException
+     */
+     public static IGroupsManagerPermissions getPermissionsPolicy(ChannelStaticData staticData) throws PortalException{
+        IGroupsManagerPermissions pp = null;
+        IEntityGroup admin = GroupService.getDistinguishedGroup(GroupService.PORTAL_ADMINISTRATORS);
+        IGroupMember currUser = org.jasig.portal.services.AuthorizationService.instance().getGroupMember(staticData.getAuthorizationPrincipal());
+        boolean isAdminUser = (admin.deepContains(currUser));
+        if (isAdminUser)
+           pp = GroupsManagerAdminPermissions.getInstance();
+        else
+           pp = GroupsManagerDefaultPermissions.getInstance();
+        return pp;
+     }
 }
