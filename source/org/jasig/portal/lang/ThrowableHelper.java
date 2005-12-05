@@ -393,7 +393,7 @@ public final class ThrowableHelper
                     errorName
                     );
 
-                l10nMessage = MessageFormat.format( message, objects );
+                l10nMessage = MessageFormat.format( message, (Object[])objects );
             }
             catch( NoSuchElementException x )
             {

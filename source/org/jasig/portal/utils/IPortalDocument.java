@@ -1,36 +1,6 @@
-/**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
- *
- * 3. Redistributions of any form whatsoever must retain the following
- *    acknowledgment:
- *    "This product includes software developed by the JA-SIG Collaborative
- *    (http://www.jasig.org/)."
- *
- * THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
- * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE JA-SIG COLLABORATIVE OR
- * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE.
- *
+/* Copyright 2001, 2005 The JA-SIG Collaborative.  All rights reserved.
+*  See license distributed with this file and
+*  available online at http://www.uportal.org/license.html
  */
 
 package org.jasig.portal.utils;
@@ -39,21 +9,38 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * An interface that allows a Document to cache elements by known keys.
- * This is used to locally store and manager the ID element mappings 
- * regardless of the actual DOM implementation.
+ * Prior to uPortal 2.4.4/2.5.0 this interface provided an ability to access DOM 3 functionality
+ * on top of a DOM 2 core Document implementation.
+ * 
+ * As of uPortal 2.4.4/2.5.0, uPortal has adopted the JAXP 1.3 standard DOM 3 core Document
+ * implementation (as available in the core JDK 1.5 release).  This does not imply a 
+ * requirement of JDK 1.5 -- these libraries are available as an endorsed extenstion for
+ * JDK 1.4.
+ * 
+ * Therefore, as of uPortal 2.4.4/2.5.0, there is no reason to write code to the IPortalDocument
+ * interface.  Instead, client code should be written to the core Document interface.
+ * 
+ * This interface is formally deprecated.  No new code should be written to this interface
+ * and all existing clients of this interface should be updated to consume the core
+ * DOM3 Document interface.
  *
  * @author Nick Bolton
  * @version $Revision$
+ * @deprecated use DOM 3 Documents instead.
  */
 public interface IPortalDocument extends Document {
 
     /**
-     * Registers an identifier name with a specified element node.
+     * Prior to uPortal 2.4.4/2.5.0, registered an identifier for a given Element of this
+     * Document.  
+     * 
+     * As of uPortal 2.4.4/2.5.0, this interface no longer requires that this method have
+     * any effect.  It is included here only for binary compatibility.
      *
      * @param idName a key used to store an <code>Element</code> object.
      * @param element an <code>Element</code> object to map.
      * document.
+     * @deprecated this method no longer is required to have any effect.
      */
     public void putIdentifier(String idName, Element element);
 
@@ -62,7 +49,11 @@ public interface IPortalDocument extends Document {
      * provide equivalent mappings from IDs to elements in this
      * document provided the elements exist in the source document.
      *
+     * As of uPortal 2.4.4/2.5.0, this interface no longer requires this method to have
+     * any effect and it is included here only for binary compatibility.
+     *
      * @param sourceDoc The source doc to copy from.
+     * @deprecated this methid no longer is required to have any effect
      */
     public void copyCache(IPortalDocument sourceDoc);
 }

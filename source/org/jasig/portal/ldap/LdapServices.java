@@ -1,36 +1,6 @@
-/**
- * Copyright (c) 2001 The JA-SIG Collaborative.  All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
- *
- * 3. Redistributions of any form whatsoever must retain the following
- *    acknowledgment:
- *    "This product includes software developed by the JA-SIG Collaborative
- *    (http://www.jasig.org/)."
- *
- * THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
- * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE JA-SIG COLLABORATIVE OR
- * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE.
- *
+/* Copyright 2001, 2005 The JA-SIG Collaborative.  All rights reserved.
+*  See license distributed with this file and
+*  available online at http://www.uportal.org/license.html
  */
 
 package org.jasig.portal.ldap;
@@ -44,10 +14,12 @@ import java.util.Properties;
 import javax.naming.Context;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
-import javax.xml.transform.TransformerException;
 
-import org.apache.xpath.XPathAPI;
-import org.jasig.portal.ldap.ILdapServer;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.ResourceLoader;
@@ -188,7 +160,11 @@ public class LdapServices
                 config.normalize();
 
                 try {
-                    NodeList connElements = XPathAPI.selectNodeList(config, LDAP_XML_CONNECTION_XPATH);
+                XPathFactory fac = XPathFactory.newInstance();
+                XPath xpath = fac.newXPath();
+                NodeList connElements = (NodeList) xpath.evaluate(
+                     LDAP_XML_CONNECTION_XPATH, config,
+                     XPathConstants.NODESET);
                     
                     //Loop through each <connection> element
                     for (int connIndex = 0; connIndex < connElements.getLength(); connIndex++) {
@@ -265,11 +241,10 @@ public class LdapServices
                                         ILdapServer newConn = new LdapConnectionImpl(name, host, port, baseDN, uidAttribute, managerDN, managerPW, protocol, factory);
                                         ldapConnections.put(name, newConn);
                                         
-                                        if (isDefaultConn && defaultConn == null) {
+                                        if (isDefaultConn) {
                                             defaultConn = newConn;
-                                        }
-                                        else if (isDefaultConn && defaultConn != null) {
-                                            log.error( "LdapServices::initConnections(): Error, multiple default connections specified. Ignoring " + name + " for default.");
+                                            if (log.isInfoEnabled())
+                                                log.info("Replaced '" + LDAP_PROPERTIES_FILE + "' connection with default connection '" + name + "' from '" + LDAP_XML_FILE + "'");
                                         }
                                     }
                                     catch (IllegalArgumentException iae) {
@@ -286,8 +261,8 @@ public class LdapServices
                         }
                     }
                 }
-                catch (TransformerException te) {
-                    log.error( "LdapServices::initConnections(): Error applying XPath query (" + LDAP_XML_CONNECTION_XPATH + ") on " + LDAP_XML_FILE, te);
+            catch (XPathExpressionException e) {
+                log.error( "Error applying XPath query (" + LDAP_XML_CONNECTION_XPATH + ") on " + LDAP_XML_FILE, e);
                 }
             }
             else {

@@ -67,7 +67,7 @@ public class RDBMPersonSearcher  implements ITypedEntitySearcher{
       personDef = Class.forName("org.jasig.portal.security.IPerson");
     }
     catch(Exception e){
-      log.error(e); 
+      log.error(e, e); 
     }
   }
   public EntityIdentifier[] searchForEntities(String query, int method) throws GroupsException {
@@ -130,8 +130,7 @@ public class RDBMPersonSearcher  implements ITypedEntitySearcher{
                 ar.add(new EntityIdentifier(uprs.getString(1),personDef));
             }
         } catch (Exception e) {
-            log.error("RDBMChannelDefSearcher.searchForEntities(): " + ps);
-            log.error( e);
+            log.error("RDBMChannelDefSearcher.searchForEntities(): " + ps, e);
         } finally {
             RDBMServices.closeResultSet(rs); 
             RDBMServices.closeResultSet(urs); 

@@ -42,6 +42,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Random;
 import java.util.Set;
 
@@ -248,7 +249,7 @@ public class PortalSessionManager extends HttpServlet {
 
                 // fire away
                 if(ALLOW_REPEATED_REQUESTS) {
-                    userInstance.writeContent(new RequestParamWrapper(req,true),res);
+                    userInstance.writeContent(new RequestParamWrapper(req,true,false),res);
                 } else {
                     // generate and register a new tag
                     String newTag=Long.toHexString(randomGenerator.nextLong());
@@ -258,8 +259,12 @@ public class PortalSessionManager extends HttpServlet {
                         log.error("PortalSessionManager::doGet() : a duplicate tag has been generated ! Time's up !");
                     }
                     
-                    RequestParamWrapper wrappedRequest = new RequestParamWrapper(req,request_verified);
-					wrappedRequest.getParameterMap().putAll(PortletStateManager.getURLDecodedParameters(wrappedRequest));
+                    // need to decode before calling RequestParamWrapper due to potential portlet upload
+                    Hashtable params = PortletStateManager.getURLDecodedParameters(req);
+                    // do we have the uP_portlet_action parameter?
+                    boolean isPortletAction = params.containsKey(PortletStateManager.ACTION);
+                    RequestParamWrapper wrappedRequest = new RequestParamWrapper(req, request_verified, isPortletAction);
+ 			        wrappedRequest.getParameterMap().putAll(params);
 
                     userInstance.writeContent(wrappedRequest, new ResponseSubstitutionWrapper(res,INTERNAL_TAG_VALUE,newTag));
                 }

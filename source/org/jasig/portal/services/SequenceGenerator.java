@@ -24,7 +24,8 @@ public class SequenceGenerator
         // Look for our factory and instantiate an instance.
         if (s_factoryName == null) 
         {
-  	        log.error( new PortalException
+  	        log.error("Sequence Provider not specified or incorrect in portal.properties", 
+                    new PortalException
   			("Sequence Provider not specified or incorrect in portal.properties"));
         } 
         else 
@@ -35,7 +36,7 @@ public class SequenceGenerator
             } 
             catch (Exception e) 
             {
-                log.error( new PortalException
+                log.error( "Failed to instantiate " + s_factoryName, new PortalException
                 ("Failed to instantiate " + s_factoryName));
             }
         }

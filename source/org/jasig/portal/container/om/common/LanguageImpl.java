@@ -177,14 +177,17 @@ public class LanguageImpl implements Language, Serializable {
 
         public ResourceBundleImpl(ResourceBundle bundle, ResourceBundle defaults) {
             data = new HashMap();
-            importData(defaults);
-            importData(bundle);
+            if (bundle != null) {
+                importData(bundle);
+            } else {
+                importData(defaults);
+            }
         }
 
         private void importData(ResourceBundle bundle) {
             if (bundle != null) {
-                for (Enumeration enum = bundle.getKeys(); enum.hasMoreElements();) {
-                    String key = (String)enum.nextElement();
+                for (Enumeration enumeration = bundle.getKeys(); enumeration.hasMoreElements();) {
+                    String key = (String)enumeration.nextElement();
                     Object value = bundle.getObject(key);
                     data.put(key, value);
                 }

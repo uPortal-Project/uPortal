@@ -1,37 +1,7 @@
-/**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
- *
- * 3. Redistributions of any form whatsoever must retain the following
- *    acknowledgment:
- *    "This product includes software developed by the JA-SIG Collaborative
- *    (http://www.jasig.org/)."
- *
- * THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
- * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE JA-SIG COLLABORATIVE OR
- * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- */
+/* Copyright 2001, 2004 The JA-SIG Collaborative.  All rights reserved.
+*  See license distributed with this file and
+*  available online at http://www.uportal.org/license.html
+*/
 
 package org.jasig.portal;
 
@@ -60,6 +30,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.channels.CError;
 import org.jasig.portal.channels.CSecureInfo;
+import org.jasig.portal.channels.support.IDynamicChannelTitleRenderer;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.layout.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.IUserLayoutNodeDescription;
@@ -129,7 +100,8 @@ public class ChannelManager implements LayoutEventListener {
 
     // global channel rendering cache
     public static final int SYSTEM_CHANNEL_CACHE_MIN_SIZE=50; // this should be in a file somewhere
-    public static final SoftHashMap systemCache=new SoftHashMap(SYSTEM_CHANNEL_CACHE_MIN_SIZE);
+    
+    public static final Map systemCache = new SoftHashMap(SYSTEM_CHANNEL_CACHE_MIN_SIZE);
 
     public static final String channelAddressingPathElement="channel";
     private static boolean useAnchors = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.ChannelManager.use_anchors", false);
@@ -245,6 +217,35 @@ public class ChannelManager implements LayoutEventListener {
      */
     public void finishedRenderingCycle() {
         // clean up
+        for (Enumeration enumeration = rendererTable.elements(); enumeration.hasMoreElements();) {
+            ChannelRenderer channelRenderer = (ChannelRenderer) enumeration.nextElement();
+            try {
+                /*
+                 * For well behaved, finished channel renderers, killing doesn't do
+                 * anything.
+                 * 
+                 * For runaway, not-finished channel renderers, killing instructs them to
+                 * stop trying to render because at this point we can't use the 
+                 * results of their rendering anyway.  Furthermore, the current
+                 * actual implementation
+                 * of kill is for channel renderers to kill runaway threads.
+                 */
+                channelRenderer.kill();
+            } catch (Throwable t) {
+                /*
+                 * We're trying to clean up.  A particular thread renderer we've asked
+                 * to please die has failed to die in some potentially horrible way.  
+                 * This is unfortunate, but the best thing we can do about it is log
+                 * the problem and then go on and ask the other ChannelRenderers to
+                 * clean up.  If this one won't clean up properly, maybe at least some
+                 * of the others will clean up.  By catching Throwable and handling
+                 * it in this way, we prevent any particular ChannelRenderer's failure
+                 * from blocking our asking other ChannelRenderers to clean up.
+                 */
+                log.error("Error cleaning up runaway channel renderer: [" + channelRenderer + "]", t);
+            }
+
+        }
         rendererTable.clear();
         clearRepeatedRenderings();
         targetParams=null;
@@ -262,13 +263,13 @@ public class ChannelManager implements LayoutEventListener {
 
         // send SESSION_DONE event to all the channels
         PortalEvent ev=new PortalEvent(PortalEvent.SESSION_DONE);
-        for(Enumeration enum=channelTable.elements();enum.hasMoreElements();) {
-            IChannel ch = (IChannel)enum.nextElement();
+        for(Enumeration enum1=channelTable.elements();enum1.hasMoreElements();) {
+            IChannel ch = (IChannel)enum1.nextElement();
             if (ch != null) {
                 try {
                     ch.receiveEvent(ev);
                 } catch (Exception e) {
-                    log.error(e);
+                    log.error("Error sending session done event to channel " + ch, e);
                 }
             }
         }
@@ -718,7 +719,7 @@ public class ChannelManager implements LayoutEventListener {
             try {
                 ch.receiveEvent(le);
             } catch (Exception e) {
-                log.error(e);
+                log.error("Error sending layout event " + le + " to channel " + ch, e);
             }
         } else {
             log.error("ChannelManager::passPortalEvent() : trying to pass an event to a channel that is not in cache. (cahnel=\"" + channelSubscribeId + "\")");
@@ -862,7 +863,7 @@ public class ChannelManager implements LayoutEventListener {
                     chObj.setRuntimeData(rd);
                 }
                 catch (Exception e) {
-                    chObj=replaceWithErrorChannel(channelTarget,CError.SET_RUNTIME_DATA_EXCEPTION,e,null,false);
+                    chObj=replaceWithErrorChannel(channelTarget,CError.SET_RUNTIME_DATA_EXCEPTION,e,null,true);
                 }
             }
         }
@@ -1200,4 +1201,43 @@ public class ChannelManager implements LayoutEventListener {
     public void layoutSaved() {}
 
     public void setLocaleManager(LocaleManager lm) { this.lm = lm; }
+    
+	/**
+	 * Get the dynamic channel title for a given channelSubscribeID.
+	 * Returns null if no dynamic channel (the rendering infrastructure
+	 * calling this method should fall back on a default title when this
+	 * method returns null).
+	 * @since uPortal 2.4.4, 2.5.1
+	 * @param channelSubscribeId
+	 */
+	public String getChannelTitle(String channelSubscribeId) {
+		
+		if (log.isTraceEnabled()) {
+			log.trace("ChannelManager getting dynamic title for channel with subscribe id=" + channelSubscribeId);
+		}
+		
+		// obtain IChannelRenderer
+        Object channelRenderer = rendererTable.get(channelSubscribeId);
+
+        // default to null (no dynamic channel title.
+        String channelTitle = null;
+        
+        // dynamic channel title support is not in IChannelRenderer itself because
+        // that would have required a change to the IChannelRenderer interface
+        if (channelRenderer instanceof IDynamicChannelTitleRenderer ) {
+            
+            IDynamicChannelTitleRenderer channelTitleRenderer = 
+                (IDynamicChannelTitleRenderer) channelRenderer;
+            channelTitle = channelTitleRenderer.getChannelTitle();
+            
+            if (log.isTraceEnabled()) {
+            	log.trace("ChannelManager reports that dynamic title for channel with subscribe id=" 
+            			+ channelSubscribeId + " is [" + channelTitle + "].");
+            }
+        }
+
+        
+        return channelTitle;
+        
+	}
 }

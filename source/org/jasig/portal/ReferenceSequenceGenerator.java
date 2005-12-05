@@ -405,7 +405,8 @@ throws SQLException
          }
         catch (SQLException sqle)
         {
-            log.error( sqle);
+            log.error("Error setting counter for table [" + tableName + "] " +
+                    "to " + newCounterValue, sqle);
             throw sqle;
         }
     }

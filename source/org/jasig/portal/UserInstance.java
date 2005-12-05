@@ -41,6 +41,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
@@ -49,7 +50,6 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.sax.TransformerHandler;
 
@@ -58,10 +58,10 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.car.CarResources;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.layout.IALFolderDescription;
+import org.jasig.portal.layout.IAggregatedUserLayoutManager;
 import org.jasig.portal.layout.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.IUserLayoutNodeDescription;
-import org.jasig.portal.layout.IAggregatedUserLayoutManager;
 import org.jasig.portal.layout.TransientUserLayoutManagerWrapper;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
@@ -108,7 +108,7 @@ public class UserInstance implements HttpSessionBindingListener {
     private LocaleManager localeManager;
 
     // contains information relating client names to media and mime types
-    private static MediaManager mediaM;
+    private static final MediaManager MEDIAMANAGER = MediaManager.getMediaManager();
 
     // system profile mapper standalone instance
     private StandaloneChannelRenderer p_browserMapper = null;
@@ -131,8 +131,8 @@ public class UserInstance implements HttpSessionBindingListener {
     // string that defines which character set to use for content
     private static final String CHARACTER_SET = "UTF-8";
 
-    final SoftHashMap systemCache=new SoftHashMap(SYSTEM_XSLT_CACHE_MIN_SIZE);
-    final SoftHashMap systemCharacterCache=new SoftHashMap(SYSTEM_CHARACTER_BLOCK_CACHE_MIN_SIZE);
+    static final Map systemCache=new SoftHashMap(SYSTEM_XSLT_CACHE_MIN_SIZE);
+    static final Map systemCharacterCache=new SoftHashMap(SYSTEM_CHARACTER_BLOCK_CACHE_MIN_SIZE);
 
     protected IPerson person;
 
@@ -140,14 +140,6 @@ public class UserInstance implements HttpSessionBindingListener {
 
     public UserInstance (IPerson person) {
         this.person=person;
-
-        // init the media manager
-        if(mediaM==null) {
-            String mediaPropsUrl = this.getClass().getResource("/properties/media.properties").toString();
-            String mimePropsUrl = this.getClass().getResource("/properties/mime.properties").toString();
-            String serializerPropsUrl = this.getClass().getResource("/properties/serializer.properties").toString();
-            mediaM = new MediaManager(mediaPropsUrl, mimePropsUrl, serializerPropsUrl);
-        }
     }
 
     /**
@@ -239,7 +231,7 @@ public class UserInstance implements HttpSessionBindingListener {
                 //              |
                 //        JspWriter
                 //
-
+                BaseMarkupSerializer markupSerializer = null;
                 try {
 
                     // call layout manager to process all user-preferences-related request parameters
@@ -365,7 +357,7 @@ public class UserInstance implements HttpSessionBindingListener {
                     // obtain the writer - res.getWriter() must occur after res.setContentType()
                     PrintWriter out = res.getWriter();
                     // get a serializer appropriate for the target media
-                    BaseMarkupSerializer markupSerializer = mediaM.getSerializerByName(tsd.getSerializerName(), out);
+                    markupSerializer = MEDIAMANAGER.getSerializerByName(tsd.getSerializerName(), out);
                     // set up the serializer
                     markupSerializer.asContentHandler();
                     // see if we can use character caching
@@ -383,7 +375,7 @@ public class UserInstance implements HttpSessionBindingListener {
                         cacheKey=constructCacheKey(this.getPerson(),rootNodeId);
                         if(ccaching) {
                             // obtain character cache
-                            CharacterCacheEntry cCache=(CharacterCacheEntry) this.systemCharacterCache.get(cacheKey);
+                            CharacterCacheEntry cCache=(CharacterCacheEntry) UserInstance.systemCharacterCache.get(cacheKey);
                             if(cCache!=null && cCache.channelIds!=null && cCache.systemBuffers!=null) {
                                 ccache_exists=true;
                                 log.debug("UserInstance::renderState() : retreived transformation character block cache for a key \""+cacheKey+"\"");
@@ -436,7 +428,7 @@ public class UserInstance implements HttpSessionBindingListener {
                         if((!ccaching) || (!ccache_exists)) {
                             // obtain XSLT cache
 
-                            SAX2BufferImpl cachedBuffer=(SAX2BufferImpl) this.systemCache.get(cacheKey);
+                            SAX2BufferImpl cachedBuffer=(SAX2BufferImpl) UserInstance.systemCache.get(cacheKey);
                             if(cachedBuffer!=null) {
                                 // replay the buffer to channel incorporation filter
                                 log.debug("UserInstance::renderState() : retreived XSLT transformation cache for a key \""+cacheKey+"\"");
@@ -461,9 +453,6 @@ public class UserInstance implements HttpSessionBindingListener {
                         // obtain transformer references from the handlers
                         Transformer sst=ssth.getTransformer();
                         Transformer tst=tsth.getTransformer();
-
-                        // empty transformer to do dom2sax transition
-                        Transformer emptyt=TransformerFactory.newInstance().newTransformer();
 
                         // initialize ChannelRenderingBuffer and attach it downstream of the structure transformer
                         ChannelRenderingBuffer crb = new ChannelRenderingBuffer(channelManager,ccaching);
@@ -629,6 +618,9 @@ public class UserInstance implements HttpSessionBindingListener {
                     throw pe;
                 } catch (Exception e) {
                     throw new PortalException(e);
+                } finally {
+                    // cleanup
+                    markupSerializer = null;
                 }
             }
         }
@@ -648,7 +640,6 @@ public class UserInstance implements HttpSessionBindingListener {
 
     private String constructCacheKey(IPerson person,String rootNodeId) throws PortalException {
         StringBuffer sbKey = new StringBuffer(1024);
-        sbKey.append(person.getID()).append(",");
         sbKey.append(rootNodeId).append(",");
         sbKey.append(uPreferencesManager.getUserPreferences().getCacheKey());
         sbKey.append(uPreferencesManager.getUserLayoutManager().getCacheKey());
@@ -727,16 +718,14 @@ public class UserInstance implements HttpSessionBindingListener {
         
         String authenticated = String.valueOf(person.getSecurityContext().isAuthenticated());
         structPrefs.putParameterValue("authenticated", authenticated);
-        String userName = person.getFullName();
-        if (userName != null && userName.trim().length() > 0)
-            themePrefs.putParameterValue("userName", userName);
+        
         try {
             if (ChannelStaticData.getAuthorizationPrincipal(person).canPublish()) {
                 themePrefs.putParameterValue("authorizedFragmentPublisher", "true");
                 themePrefs.putParameterValue("authorizedChannelPublisher", "true");
             }
         } catch (Exception e) {
-            log.error(e);
+            log.error("Exception determining publish rights for " + this.person, e);
         }
         
         String[] values;
@@ -796,7 +785,6 @@ public class UserInstance implements HttpSessionBindingListener {
         if ((values = req.getParameterValues("uP_add_target")) != null) {
          String[] values1, values2;
          String value = null;
-         int nodeType = values[0].equals("folder")?IUserLayoutNodeDescription.FOLDER:IUserLayoutNodeDescription.CHANNEL;
          values1 =  req.getParameterValues("targetNextID");
          if ( values1 != null && values1.length > 0 )
             value = values1[0];

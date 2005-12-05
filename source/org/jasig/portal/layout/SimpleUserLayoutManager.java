@@ -1,36 +1,6 @@
-/**
- * Copyright © 2002 The JA-SIG Collaborative.  All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
- *
- * 3. Redistributions of any form whatsoever must retain the following
- *    acknowledgment:
- *    "This product includes software developed by the JA-SIG Collaborative
- *    (http://www.jasig.org/)."
- *
- * THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
- * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE JA-SIG COLLABORATIVE OR
- * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE.
- *
+/* Copyright 2002,2005 The JA-SIG Collaborative.  All rights reserved.
+*  See license distributed with this file and
+*  available online at http://www.uportal.org/license.html
  */
 
 
@@ -49,20 +19,32 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXResult;
 
-import org.apache.xpath.XPathAPI;
 import org.jasig.portal.IUserLayoutStore;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
+
 import org.jasig.portal.PortalException;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.security.IPerson;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.DocumentFactory;
-import org.jasig.portal.utils.IPortalDocument;
+
 import org.jasig.portal.utils.XSLT;
+import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.xml.sax.ContentHandler;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
+
 
 /**
  * An implementation of a user layout manager that uses 2.0-release store implementations.
@@ -318,16 +300,10 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
             }
             markLayoutDirty();
             // register element id
-            if (ulm instanceof IPortalDocument) {
-                ((IPortalDocument)ulm).putIdentifier(
-                    node.getId(),childElement);
-            } else {
-                StringBuffer msg = new StringBuffer(128);
-                msg.append("SimpleUserLayoutManager::addNode() : ");
-                msg.append("User Layout does not implement IPortalDocument, ");
-                msg.append("so element caching cannot be performed.");
-                log.error( msg.toString());
-            }
+          
+            childElement.setIdAttribute("ID", true);
+            childElement.setAttribute("ID",node.getId());
+            
 
             this.updateCacheKey();
             this.clearMarkings();
@@ -403,7 +379,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
             if(parent!=null) {
                 parent.removeChild(childElement);
             } else {
-                throw new PortalException("Node \""+nodeId+"\" has a NULL parent !");
+                throw new PortalException("Node \""+nodeId+"\" has a NULL parent ! Owner UID=\""+owner.getID()+"\"");
             }
             markLayoutDirty();
             // clearMarkings(); // this one is questionable
@@ -432,14 +408,19 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
 
     public String getRootFolderId() {
      try {
-      if ( rootNodeId == null ) {
-       Element rootNode = (Element) XPathAPI.selectSingleNode(this.getUserLayoutDOM(),"//layout/folder");
-       rootNodeId = rootNode.getAttribute("ID");
+            if (this.rootNodeId == null) {
+                String expression = "//layout/folder";
+                XPathFactory fac = XPathFactory.newInstance();
+                XPath xpath = fac.newXPath();
+                Element rootNode = (Element) xpath.evaluate(expression, this
+                        .getUserLayoutDOM(), XPathConstants.NODE);
+
+                this.rootNodeId = rootNode.getAttribute("ID");
       }
      } catch ( Exception e ) {
-         log.error( e);
+            log.error("Exception getting root folder id.", e);
        }
-       return rootNodeId;
+        return this.rootNodeId;
     }
 
     public synchronized boolean updateNode(IUserLayoutNodeDescription node) throws PortalException {
@@ -472,17 +453,8 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
                     parent.removeChild(oldChannelElement);
                     parent.insertBefore(newChannelElement,nextSibling);
                     // register new child instead
-                    if (ulm instanceof IPortalDocument) {
-                        ((IPortalDocument)ulm).putIdentifier(
-                            node.getId(),newChannelElement);
-                    } else {
-                        StringBuffer msg = new StringBuffer(128);
-                        msg.append("SimpleUserLayoutManager::updateNode() : ");
-                        msg.append("User Layout does not implement ");
-                        msg.append("IPortalDocument, ");
-                        msg.append("so element caching cannot be performed.");
-                        log.error( msg.toString());
-                    }
+                    newChannelElement.setIdAttribute("ID", true);
+                    newChannelElement.setAttribute("ID",node.getId());
 
                     // inform the listeners
                     LayoutEvent ev=new LayoutEvent(this,node);
@@ -517,17 +489,8 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
                     parent.removeChild(oldFolderElement);
                     parent.insertBefore(newFolderElement,nextSibling);
                     // register new child instead
-                    if (ulm instanceof IPortalDocument) {
-                        ((IPortalDocument)ulm).putIdentifier(
-                            node.getId(), newFolderElement);
-                    } else {
-                        StringBuffer msg = new StringBuffer(128);
-                        msg.append("SimpleUserLayoutManager::updateNode() : ");
-                        msg.append("User Layout does not implement ");
-                        msg.append("IPortalDocument, ");
-                        msg.append("so element caching cannot be performed.");
-                        log.error( msg.toString());
-                    }
+                    newFolderElement.setIdAttribute("ID", true);
+                     newFolderElement.setAttribute("ID",node.getId());
 
                     // inform the listeners
                     LayoutEvent ev=new LayoutEvent(this,node);
@@ -711,9 +674,172 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
      *
      */
     private void updateCacheKey() {
-        this.cacheKey=Long.toString(rnd.nextLong());
+        this.cacheKey=generateNewCacheKey();
     }
 
+    /**
+     * The message digest wrapper is optimized for string processing
+     */
+    private static final class MessageDigestWrapper {
+        private final MessageDigest md_;
+        private byte [] ba_;
+        
+        private static final ThreadLocal perThreadByteArray = new ThreadLocal() {
+            protected Object initialValue() {
+                return (new byte[256]);
+            }
+        };
+        
+        public MessageDigestWrapper(final String algo) throws NoSuchAlgorithmException {
+            md_ = MessageDigest.getInstance(algo);
+            // to reduce the number of objects created, we use a thread
+            // local. Note that we resize if necessary.
+            ba_ = (byte[]) perThreadByteArray.get();
+        }
+
+        public final void update(final String data) {
+            if (data == null) {
+                return;
+            }
+
+            // resize the cached byte array if necessary
+            final int len = data.length();
+            if (ba_.length < len) {
+                ba_ = new byte[len];
+                perThreadByteArray.set(ba_);
+            }
+
+            // we use a deprecated method for speed
+            data.getBytes(0, len, ba_, 0);
+            md_.update(ba_, 0, len);
+        }
+        
+        public final byte [] digest() {
+            return (md_.digest());
+        }
+    }
+    
+    /**
+     * Given a message digest, inspect the node and update the digest with the
+     * node name/value and any attribute names/values
+     */
+    private static final void visit(MessageDigestWrapper md, Node node) {
+        int type = node.getNodeType();
+        switch (type) {
+        case Node.DOCUMENT_NODE:
+            break;
+
+        case Node.ELEMENT_NODE:
+            md.update(node.getNodeName());
+            NamedNodeMap nnm = node.getAttributes();
+            if (nnm != null) {
+                int len = nnm.getLength();
+                Attr attr;
+                for (int i = 0; i < len; i++) {
+                    attr = (Attr) nnm.item(i);
+                    md.update(attr.getNodeName());
+                    md.update(attr.getNodeValue());
+                }
+            }
+            break;
+
+        case Node.ENTITY_REFERENCE_NODE:
+            md.update(node.getNodeName());
+            break;
+
+        case Node.CDATA_SECTION_NODE:
+            md.update(node.getNodeValue());
+            break;
+
+        case Node.TEXT_NODE:
+            md.update(node.getNodeValue());
+            break;
+
+        case Node.PROCESSING_INSTRUCTION_NODE:
+            md.update(node.getNodeName());
+            String data = node.getNodeValue();
+            if (data != null && data.length() > 0) {
+                md.update(data);
+            }
+            break;
+
+        }// end of switch
+    }// end of visit
+
+    /**
+     * Walk through a DOM (non-recursively) and update the message
+     * digest with element node names/values and attribute names/values
+     */
+    private static final void updateDigest(MessageDigestWrapper md, Node node) {
+        Node currentNode = node;
+
+        while (currentNode != null) {
+            visit(md, currentNode); // pre order
+
+            // Move down to first child
+            Node nextNode = currentNode.getFirstChild();
+            if (nextNode != null) {
+                currentNode = nextNode;
+                continue;
+            }
+
+            // No child nodes, so walk tree
+            while (currentNode != null) {
+                // visit(md, currentNode); // post order
+
+                // Move to sibling if possible.
+                nextNode = currentNode.getNextSibling();
+                if (nextNode != null) {
+                    currentNode = nextNode;
+                    break;
+                }
+
+                // Move up
+                if (currentNode == node) {
+                    currentNode = null;
+                } else {
+                    currentNode = currentNode.getParentNode();
+                }
+            }
+        }
+    }
+
+    /**
+     * The goal of this method is to generate a unique key
+     * based upon a given layout. A users layout is represented
+     * by the getUserLayoutDOM() result. We then walk through
+     * the DOM, calculating an MD5 hash. This then becomes the
+     * key to represent a layout. Two users, with the same layout
+     * should result in the same cache key.
+     */
+    private String generateNewCacheKey() {
+        String cacheKey = null;
+        long startTime = System.currentTimeMillis();
+        try {          
+            MessageDigestWrapper md = new MessageDigestWrapper("MD5");
+            updateDigest(md, this.getUserLayoutDOM());
+            byte[] digest = md.digest();
+            StringBuffer sb = new StringBuffer(32);
+            for (int i=0; i<digest.length; i++) {
+                if (digest[i] < 0x10 && digest[i] >= 0x0) {
+                    // add a leading 0
+                    sb.append("0");
+                }
+                sb.append(Integer.toHexString((0xff & digest[i])));
+            }
+            cacheKey = sb.toString();
+        } catch (Exception e) {
+          log.error("SimpleUserLayoutManager::generateNewCacheKey() : unable to generate new cache key, using default", e);
+          cacheKey = Long.toString(rnd.nextLong());
+        }
+
+        if (log.isDebugEnabled()) {
+            log.debug("SimpleUserLayoutManager::generateNewCacheKey() : generating new cache key took " + (System.currentTimeMillis()-startTime) + "ms");
+        }
+        return cacheKey;
+    }
+
+    
     public int getLayoutId() {
         return profile.getLayoutId();
     }
@@ -726,15 +852,19 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
      */
     public String getSubscribeId(String fname) throws PortalException {
         try {
-            Element fnameNode = (Element) XPathAPI.selectSingleNode(this.getUserLayoutDOM(),"//channel[@fname=\'"+fname+"\']");
+            String expression = "//channel[@fname=\'"+fname+"\']";
+            XPathFactory fac = XPathFactory.newInstance();
+            XPath xpath = fac.newXPath();
+            Element fnameNode = (Element) xpath.evaluate(expression, 
+                    this.getUserLayoutDOM(), XPathConstants.NODE);
             if(fnameNode!=null) {
                 return fnameNode.getAttribute("ID");
             } else {
                 return null;
             }
-        } catch (Exception e) {
-            log.error( "SimpleUserLayoutManager::getSubcribeId() : encountered the following exception, while trying to identify subscribe channel id for the fname=\""+fname+"\" : "+e);
-            e.printStackTrace();
+        } catch (XPathExpressionException e) {
+            log.error( "SimpleUserLayoutManager::getSubcribeId() : " +
+                    "encountered exception while trying to identify subscribe channel id for the fname=\""+fname+"\" : ", e);
             return null;
         }
     }

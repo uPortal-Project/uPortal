@@ -44,7 +44,6 @@ import javax.servlet.http.HttpServletRequestWrapper;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.container.services.information.PortletStateManager;
 import org.jasig.portal.properties.PropertiesManager;
 
 import com.oreilly.servlet.multipart.FilePart;
@@ -70,8 +69,9 @@ public class RequestParamWrapper extends HttpServletRequestWrapper {
      *
      * @param source an <code>HttpServletRequest</code> value that's being wrapped.
      * @param request_verified a <code>boolean</code> flag that determines if the request params should be accessable.
+     * @param isPortletAction a <code>boolean</code> flag indicating if a portlet is currently being interacted with (in the case for a probable upload attempt).
      */
-    public RequestParamWrapper(HttpServletRequest source, boolean request_verified) {
+    public RequestParamWrapper(HttpServletRequest source, boolean request_verified, boolean isPortletAction) {
         super(source);        
         setFileUploadMaxSize();
                 
@@ -84,8 +84,7 @@ public class RequestParamWrapper extends HttpServletRequestWrapper {
         if (request_verified) {
             // parse request body
             String contentType = source.getContentType();
-            String portletAction = source.getParameter(PortletStateManager.ACTION);
-            if (contentType != null && contentType.startsWith("multipart/form-data") && portletAction == null) {
+            if (contentType != null && contentType.startsWith("multipart/form-data") && !isPortletAction) {
                 com.oreilly.servlet.multipart.Part attachmentPart;
                 try {
                     MultipartParser multi = new MultipartParser(source, source.getContentLength(), true, true, "UTF-8");
@@ -120,9 +119,6 @@ public class RequestParamWrapper extends HttpServletRequestWrapper {
                             // check if this file has exceeded the maximum allowed upload size
                             if (noAttachments){
                                 fileUpload = new MultipartDataSource(filename, "Exceeded file size allowed");
-                                MultipartDataSource[] valueArray = new MultipartDataSource[1];
-                                valueArray[0] = fileUpload;
-                                parameters.put(partName, valueArray);
                             } else if (filename != null) {
                                 fileUpload = new MultipartDataSource(filePart);
                             }

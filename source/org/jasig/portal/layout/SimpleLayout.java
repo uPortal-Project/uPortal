@@ -1,36 +1,6 @@
-/**
- * Copyright © 2003 The JA-SIG Collaborative.  All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
- *
- * 3. Redistributions of any form whatsoever must retain the following
- *    acknowledgment:
- *    "This product includes software developed by the JA-SIG Collaborative
- *    (http://www.jasig.org/)."
- *
- * THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
- * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE JA-SIG COLLABORATIVE OR
- * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE.
- *
+/* Copyright 2003,2005 The JA-SIG Collaborative.  All rights reserved.
+*  See license distributed with this file and
+*  available online at http://www.uportal.org/license.html
  */
 
 package org.jasig.portal.layout;
@@ -38,7 +8,12 @@ package org.jasig.portal.layout;
 import java.util.Enumeration;
 import java.util.Vector;
 
-import org.apache.xpath.XPathAPI;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.utils.XML;
 import org.w3c.dom.Document;
@@ -59,6 +34,9 @@ public class SimpleLayout implements IUserLayout {
     private Document layout;
     private String layoutId;
     private String cacheKey;
+
+    private Log log = LogFactory.getLog(getClass());
+    
 
     public SimpleLayout(String layoutId, Document layout) {
         this.layoutId = layoutId;
@@ -195,7 +173,11 @@ public class SimpleLayout implements IUserLayout {
     public Enumeration getNodeIds() throws PortalException {
         Vector v = new Vector();
         try {
-            NodeList nl = XPathAPI.selectNodeList(layout, "*");
+            String expression = "*";
+            XPathFactory fac = XPathFactory.newInstance();
+            XPath xpath = fac.newXPath();
+            NodeList nl = (NodeList) xpath.evaluate(expression, layout, 
+                    XPathConstants.NODESET);
             for (int i = 0; i < nl.getLength(); i++) {
                 Node node = nl.item(i);
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
@@ -204,7 +186,7 @@ public class SimpleLayout implements IUserLayout {
                 }
             }
         } catch (Exception e) {
-            // Do nothing for now
+            log.error("Exception getting node ids.", e);
         }
         return v.elements();
     }
@@ -212,10 +194,16 @@ public class SimpleLayout implements IUserLayout {
     public String getRootId() {
         String rootNode = null;
         try {
-            Element rootNodeE = (Element) XPathAPI.selectSingleNode(layout, "/layout/folder");
+            
+            String expression = "/layout/folder";
+            XPathFactory fac = XPathFactory.newInstance();
+            XPath xpath = fac.newXPath();
+            Element rootNodeE = (Element) xpath.evaluate(expression, layout, 
+                    XPathConstants.NODESET);
+            
             rootNode = rootNodeE.getAttribute("ID");
         } catch (Exception e) {
-            // Do nothing for now
+            log.error("Error getting root id.", e);
         }
         return rootNode;
     }

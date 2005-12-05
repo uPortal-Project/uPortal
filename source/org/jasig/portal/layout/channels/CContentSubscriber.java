@@ -1,54 +1,32 @@
-/**
- * Copyright © 2004 The JA-SIG Collaborative.  All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
- *
- * 3. Redistributions of any form whatsoever must retain the following
- *    acknowledgment:
- *    "This product includes software developed by the JA-SIG Collaborative
- *    (http://www.jasig.org/)."
- *
- * THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
- * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE JA-SIG COLLABORATIVE OR
- * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE.
- *
+/* Copyright 2004,2005 The JA-SIG Collaborative.  All rights reserved.
+*  See license distributed with this file and
+*  available online at http://www.uportal.org/license.html
  */
 
 package org.jasig.portal.layout.channels;
 
 import org.jasig.portal.ChannelRegistryManager;
-import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.utils.CommonUtils;
 import org.jasig.portal.utils.XSLT;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.layout.IAggregatedLayout;
+import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
-import org.apache.xpath.XPathAPI;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
 import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
+
 import java.util.Vector;
 import java.util.Set;
 import java.util.Iterator;
@@ -62,6 +40,7 @@ import java.util.Collection;
    */
 public class CContentSubscriber extends FragmentManager {
 
+    private static final Log log = LogFactory.getLog(CContentSubscriber.class);
 	private static final String sslLocation = "/org/jasig/portal/channels/CContentSubscriber/CContentSubscriber.ssl";
 	private Document channelRegistry;
 	private Document registry;
@@ -202,9 +181,14 @@ public class CContentSubscriber extends FragmentManager {
 			searchChannel = CommonUtils.nvl(runtimeData.getParameter("search-channel"),"false");
 			searchCategory = CommonUtils.nvl(runtimeData.getParameter("search-category"),"false");
 			searchQuery = runtimeData.getParameter("search-query");
+			String escapedSearchQuery = escapeQuotesForXpath(searchQuery);
 			// Clear all the previous state
 			if ( searchQuery != null ) {
-				NodeList nodeList = XPathAPI.selectNodeList(registry,"//*");
+		        searchQuery = searchQuery.toLowerCase();
+		        String expression = "//*";
+		        XPathFactory fac = XPathFactory.newInstance();
+		        XPath xpath = fac.newXPath();
+		        NodeList nodeList = (NodeList) xpath.evaluate(expression, registry, XPathConstants.NODESET);
 				for ( int k = 0; k < nodeList.getLength(); k++ ) {
 				  Element node = (Element) nodeList.item(k);
 				  node.setAttribute("search-selected","false");
@@ -214,22 +198,31 @@ public class CContentSubscriber extends FragmentManager {
 			if ( CommonUtils.nvl(searchQuery).length() > 0 ) {
 			  String[] xPathQueries = new String[3];
 			  if ( searchChannel.equals("true") )	
-			   xPathQueries[0] = "//channel[contains(@name,'"+searchQuery+"') or contains(@description,'"+searchQuery+"')]";
+			   xPathQueries[0] = "//channel[contains(@name,"+escapedSearchQuery+") or contains(@description,"+escapedSearchQuery+")]";
 			  if ( searchCategory.equals("true") )
-			   xPathQueries[1] = "//category[contains(@name,'"+searchQuery+"') or contains(@description,'"+searchQuery+"')]"; 
+			   xPathQueries[1] = "//category[contains(@name,"+escapedSearchQuery+") or contains(@description,"+escapedSearchQuery+")]"; 
 			  if ( searchFragment.equals("true") )
-			   xPathQueries[2] = "//fragment[contains(name,'"+searchQuery+"') or contains(description,'"+searchQuery+"')]";
+			   xPathQueries[2] = "//fragment[contains(name,"+escapedSearchQuery+") or contains(description,"+escapedSearchQuery+")]";
 			  for ( int i = 0; i < xPathQueries.length; i++) {  
-			   if ( xPathQueries[i] != null ) {	 	
-			    NodeList nodeList =  XPathAPI.selectNodeList(registry,xPathQueries[i]);
+			   if ( xPathQueries[i] != null ) {
+			    log.debug("xPathQueries["+i+"]: "+xPathQueries[i]);
+		                XPathFactory fac = XPathFactory.newInstance();
+		                XPath xpath = fac.newXPath();
+		                NodeList nodeList = (NodeList) xpath.evaluate(xPathQueries[i], registry, 
+		                        XPathConstants.NODESET);
 			    for ( int k = 0; k < nodeList.getLength(); k++ ) {
 				 Element node = (Element) nodeList.item(k);
+		                    // check description and name attribute
+		                    String name = node.getAttribute("name").toLowerCase();
+		                    String desc = node.getAttribute("description").toLowerCase();
+		                    if (name.indexOf(searchQuery) >= 0 || desc.indexOf(searchQuery) >= 0){
 				 node.setAttribute("search-selected","true");
 				 expandAscendents(node);
 			    } 
 			   } 
 			  } 
 			}		
+		}
 		}
 			 
 		Vector removedItems = new Vector(); 
@@ -249,7 +242,10 @@ public class CContentSubscriber extends FragmentManager {
 			      xPathQuery = "//channel[../@ID='"+item.getCategoryId()+"' and @ID='"+item.getItemId()+"']";
 			     else 
 			      xPathQuery = "//*[@ID='"+item.getItemId()+"']";   
-				 Element elem = (Element) XPathAPI.selectSingleNode(registry,xPathQuery);
+                 XPathFactory fac = XPathFactory.newInstance();
+                 XPath xpath = fac.newXPath();
+                 Element elem = (Element) xpath.evaluate(xPathQuery,
+                         registry, XPathConstants.NODE);
 				 if ( elem != null ) 
 				  elem.setAttribute(attrName,(k==0)?"expanded":"condensed");
 				 else
@@ -294,9 +290,10 @@ public class CContentSubscriber extends FragmentManager {
 		     xslt.setStylesheetParameter("search-category", searchCategory);
 		     xslt.setStylesheetParameter("search-query", CommonUtils.nvl(searchQuery));
 		     
-	  } catch ( Exception e ) {
-	  	  e.printStackTrace();
-	  	  throw new PortalException(e.getMessage());	     
+	  } catch ( DOMException e ) {
+	  	  throw new PortalException(e);     
+	  } catch (XPathExpressionException e) {
+	  	  throw new PortalException(e);	     
 	  }
 			 
 	}		 	
@@ -317,6 +314,7 @@ public class CContentSubscriber extends FragmentManager {
 	}
 
     public void initRegistry() throws PortalException {	
+    	channelRegistry = ChannelRegistryManager.getChannelRegistry(staticData.getPerson());
       	registry = DocumentFactory.getNewDocument();
       	registry.appendChild(registry.importNode(channelRegistry.getDocumentElement(),true));		
         getFragmentList(registry,registry.getDocumentElement());
@@ -332,12 +330,6 @@ public class CContentSubscriber extends FragmentManager {
 			  throw new PortalException ("The layout manager must have type IAgreggatedUserLayoutManager!");  
 	}
 
-    public void setStaticData (ChannelStaticData sd) throws PortalException {
-       super.setStaticData(sd);
-       if ( channelRegistry == null )
-        channelRegistry = ChannelRegistryManager.getChannelRegistry(staticData.getPerson());
-    }
-
     public void renderXML (ContentHandler out) throws PortalException {
     	
       
@@ -350,6 +342,28 @@ public class CContentSubscriber extends FragmentManager {
       xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
       xslt.transform();
       
+    }
+    
+    /**
+     * Prepares a string literal to be placed in an xpath expression.
+     * Uses concat() to allow double quotes and single quotes in the same
+     * literal value. If the string doesn't have any single quotes the new
+     * string will be the string that is passed in but will have single quotes
+     * around it.
+     * 
+     * @param s String to escape 
+     * @return  
+     */
+    private String escapeQuotesForXpath(String s)
+    {
+        if (s.indexOf("'") >= 0){
+            s = s.replaceAll("'","',\"'\",'");
+            s= "concat('"+s+"','')";
+        }else
+        {
+            s = "'"+s+"'";
+        }
+        return s;
     }
 
   }

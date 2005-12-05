@@ -82,7 +82,8 @@ public class ContainingGroupsFinder implements IEntityPropertyFinder {
       r = buf.toString();
     }
     catch(Exception e){
-       log.error(e);
+       log.error("Exception getting property " +
+            "entityId=" + entityID + " name=" + name, e);
     }
     return r;
   }

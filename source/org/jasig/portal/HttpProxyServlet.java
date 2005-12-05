@@ -1,5 +1,5 @@
 /**
- * Copyright © 2003 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright ? 2003 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -95,6 +95,9 @@ public class HttpProxyServlet extends HttpServlet {
 	// pathinfo is "/host/url"
 	if(request.getPathInfo() != null && !request.getPathInfo().equals("")) {
 	    target = "http:/" + request.getPathInfo();
+	    String qs = request.getQueryString();
+	    if (qs != null)
+	        target +="?"+request.getQueryString(); 	
 	} else {
 		response.setStatus(404);
 	    return;

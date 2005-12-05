@@ -92,7 +92,7 @@ public class LocaleManager  {
             try {
                 userLocales = LocaleStoreFactory.getLocaleStoreImpl().getUserLocales(person);
             } catch (Exception e) {
-                log.error( e);
+                log.error("Error populating userLocals", e);
             }
         }
     }

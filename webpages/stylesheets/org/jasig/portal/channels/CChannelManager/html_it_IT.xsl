@@ -752,8 +752,16 @@
                 <td>
                   <span class="uportal-label">Timeout del canale:</span> <br/>
                    <input type="text" name="timeout" size="6" class="uportal-input-text">
-                                       <xsl:if test="manageChannels/selectGeneralSettings/params/step/channel/@timeout">
-                     <xsl:attribute name="value"><xsl:value-of select="manageChannels/selectGeneralSettings/params/step/channel/@timeout"/></xsl:attribute></xsl:if></input>
+                   <xsl:choose>
+						<xsl:when test="manageChannels/selectGeneralSettings/params/step/channel/@timeout">
+							<xsl:attribute name="value"><xsl:value-of select="manageChannels/selectGeneralSettings/params/step/channel/@timeout"/></xsl:attribute>
+						</xsl:when>
+						<xsl:otherwise>
+							<!-- default channel timeout to 5000 milliseconds when otherwise not specified -->
+							<xsl:attribute name="value">5000</xsl:attribute>
+						</xsl:otherwise>
+					</xsl:choose>
+					</input>
                    millisecondi (1000 = 1 secondo)</td>
               </tr>
               

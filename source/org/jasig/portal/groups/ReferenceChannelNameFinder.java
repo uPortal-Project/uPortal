@@ -64,7 +64,7 @@ public class ReferenceChannelNameFinder
         try {
             type = Class.forName("org.jasig.portal.ChannelDefinition");
         } catch (Exception e) {
-            log.error( e);
+            log.error("Exception instantiating ReferenceChannelNameFinder.", e);
         }
     }
 

@@ -329,7 +329,7 @@ public class URLUtil
             // send the results back to the original requestor
             res.getWriter().print(results.toString());
         } catch (IOException ioe) {
-            log.error( ioe);
+            log.error(ioe, ioe);
             throw new PortalException(ioe);
         } finally {
 			try {

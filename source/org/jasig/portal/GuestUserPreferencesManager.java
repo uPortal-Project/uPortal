@@ -268,11 +268,7 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
         } catch (PortalException pe) {
             throw pe;
         } catch (Throwable t) {
-            if(t instanceof Exception) {
-                throw new PortalException((Exception)t);
-            } else {
-                throw new PortalException(t.toString());
-            }
+        	throw new PortalException(t);
         }
         stateTable.put(req.getSession(false).getId(),newState);
     }

@@ -102,6 +102,8 @@ public class ChannelInstanceManager {
     private static final IChannelRendererFactory channelRendererFactory = ChannelRendererFactory.newInstance(ChannelInstanceManager.class.getName());
     protected static String baseUrl;
 
+    private static final MediaManager MEDIAMANAGER = MediaManager.getMediaManager();
+    
     /**
      * Constructs a ChannelInstanceManager.
      * @param portletHandle the portlet handle
@@ -175,7 +177,7 @@ public class ChannelInstanceManager {
         cr.startRendering();
 
         StringWriter sw = new StringWriter();
-        MediaManager mm = new MediaManager();
+        MediaManager mm = MEDIAMANAGER;
         BaseMarkupSerializer markupSerializer = mm.getSerializerByName("XHTML", sw);
         markupSerializer.asContentHandler();
 

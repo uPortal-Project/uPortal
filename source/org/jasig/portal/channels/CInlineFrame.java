@@ -92,7 +92,7 @@ public class CInlineFrame extends BaseMultithreadedChannel implements IMultithre
     try {
       doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
     } catch (ParserConfigurationException pce) {
-      log.error( pce);
+      log.error("Error getting Document", pce);
       throw new GeneralRenderingException(pce.getMessage());
     }
 
