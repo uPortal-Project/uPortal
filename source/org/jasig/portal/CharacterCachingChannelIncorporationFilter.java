@@ -189,6 +189,28 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
 			if (qName.equals("channel")) {
 				this.insideElement = "channel";
 				this.channelSubscribeId = atts.getValue("ID");
+                if (this.channelSubscribeId == null) // fname access used
+                {
+                    String fname = atts.getValue("fname");
+                    if (fname.equals("")) // can't obtain subscribe id
+                        log.error("Incurred a channel with no subscribe id " +
+                                "in attribute 'ID' and no functional name " +
+                                "in attribute 'fname'.");
+                    else
+                    {
+                        // get the channel from layout if there or instantiate 
+                        // in transient layout manager if not
+                        try
+                        {
+                            this.channelSubscribeId = cm.getSubscribeId(fname);
+                        } catch (PortalException e)
+                        {
+                            log.error("Unable to obtain subscribe id for " +
+                                    "channel with functional name '" + fname +
+                                "'.", e);
+                        }
+                    }
+                }
 				if (ccaching) {
 					// save the old cache state
 					try {

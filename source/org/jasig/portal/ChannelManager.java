@@ -1304,4 +1304,9 @@ public class ChannelManager implements LayoutEventListener {
         
 	}
     
+    public String getSubscribeId(String fname) throws PortalException
+    {
+        IUserLayoutManager ulm = upm.getUserLayoutManager();
+        return ulm.getSubscribeId(fname);
+    }
 }
