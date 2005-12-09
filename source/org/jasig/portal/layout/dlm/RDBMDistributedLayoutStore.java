@@ -972,7 +972,7 @@ public class RDBMDistributedLayoutStore
                     stmt = con.createStatement();
                     String sQuery = "SELECT USER_DFLT_USR_ID FROM UP_USER WHERE USER_ID=" + userId;
                     if (LOG.isDebugEnabled())
-                        LOG.debug("RDBMUserLayoutStore::getUserLayout(): " + sQuery);
+                        LOG.debug(sQuery);
                     rs = stmt.executeQuery(sQuery);
                     try {
                         rs.next();
@@ -1070,14 +1070,14 @@ public class RDBMDistributedLayoutStore
                             instanceof DatabaseMetaDataImpl.JdbcDb) 
                     {
                         if (LOG.isDebugEnabled())
-                            LOG.debug("RDBMUserLayoutStore::getStructureStylesheetUserPreferences() :  instanceof jdbcdb");      
+                            LOG.debug("instanceof jdbcdb");      
                         sQuery = "SELECT PARAM_NAME, PARAM_VAL, PARAM_TYPE, ULS.STRUCT_ID, CHAN_ID, ULP.STRUCT_PARM_NM, ULP.STRUCT_PARM_VAL FROM UP_LAYOUT_STRUCT ULS, UP_SS_USER_ATTS UUSA LEFT OUTER JOIN UP_LAYOUT_PARAM ULP ON UUSA.STRUCT_ID = ULP.STRUCT_ID AND UUSA.USER_ID=" + userId + " AND UUSA.USER_ID = ULP.USER_ID AND PROFILE_ID=" + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND UUSA.STRUCT_ID = ULS.STRUCT_ID AND UUSA.USER_ID = ULS.USER_ID AND UUSA.USER_ID = ULP.USER_ID";
                     } 
                     else if (db.getJoinQuery() 
                             instanceof DatabaseMetaDataImpl.PostgreSQLDb) 
                     {
                         if (LOG.isDebugEnabled())
-                            LOG.debug("RDBMUserLayoutStore::getStructureStylesheetUserPreferences() :  instanceof jpostgressqldbdbcdb");      
+                            LOG.debug("instanceof jpostgressqldbdbcdb");      
 
                         sQuery = "SELECT PARAM_NAME, PARAM_VAL, PARAM_TYPE," +
                                 " ULS.STRUCT_ID, CHAN_ID, ULP.STRUCT_PARM_NM," +
@@ -1098,7 +1098,7 @@ public class RDBMDistributedLayoutStore
                             instanceof DatabaseMetaDataImpl.OracleDb) 
                     {
                         if (LOG.isDebugEnabled())
-                            LOG.debug("RDBMUserLayoutStore::getStructureStylesheetUserPreferences() :  instanceof oracledb");      
+                            LOG.debug("instanceof oracledb");      
                         sQuery = "SELECT /*+ USE_NL(UP_LAYOUT_STRUCT) */ PARAM_NAME, PARAM_VAL, PARAM_TYPE, ULS.STRUCT_ID, CHAN_ID, ULP.STRUCT_PARM_NM, ULP.STRUCT_PARM_VAL FROM UP_SS_USER_ATTS UUSA, UP_LAYOUT_STRUCT ULS, UP_LAYOUT_PARAM ULP WHERE UUSA.USER_ID=" + userId + " AND PROFILE_ID="
                             + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND UUSA.STRUCT_ID = ULS.STRUCT_ID AND UUSA.USER_ID = ULS.USER_ID AND UUSA.STRUCT_ID = ULP.STRUCT_ID(+) AND UUSA.USER_ID = ULP.USER_ID(+)";
 
@@ -1111,7 +1111,7 @@ public class RDBMDistributedLayoutStore
                 }
 
                 if (LOG.isDebugEnabled())
-                    LOG.debug("RDBMUserLayoutStore::getStructureStylesheetUserPreferences(): " + sQuery);
+                    LOG.debug(sQuery);
 
                 stmt = con.createStatement();
                 rs = stmt.executeQuery(sQuery);
@@ -1197,9 +1197,7 @@ public class RDBMDistributedLayoutStore
                     String sQuery = "SELECT USER_DFLT_USR_ID FROM UP_USER WHERE USER_ID="
                             + userId;
                     if (log.isDebugEnabled())
-                        log
-                                .debug("RDBMUserLayoutStore::getThemeStylesheetUserPreferences(): "
-                                        + sQuery);
+                        log.debug(sQuery);
                     rs = stmt.executeQuery(sQuery);
                     try
                     {
@@ -1248,9 +1246,7 @@ public class RDBMDistributedLayoutStore
                 PreparedStatement pstmt = con.prepareStatement(sQuery);
                 
                 if (log.isDebugEnabled())
-                    log
-                            .debug("RDBMUserLayoutStore::getThemeStylesheetUserPreferences(): "
-                                    + sQuery);
+                    log.debug(sQuery);
                 try
                 {
                     pstmt.setInt(1, userId);
@@ -1849,7 +1845,7 @@ public class RDBMDistributedLayoutStore
                 RDBMServices.dbFlag(
                     xmlBool(structure.getAttribute("unremovable"))));
             if (LOG.isDebugEnabled())
-                LOG.debug("RDBMUserLayoutStore::saveStructure(): " + structStmt);
+                LOG.debug(structStmt.toString());
             structStmt.executeUpdate();
 
             // code to persist extension attributes for dlm
@@ -1870,7 +1866,7 @@ public class RDBMDistributedLayoutStore
                     parmStmt.setString(2, name);
                     parmStmt.setString(3, attrib.getNodeValue());
                     if (LOG.isDebugEnabled())
-                        LOG.debug("RDBMUserLayoutStore::saveStructure(): " + parmStmt);
+                        LOG.debug(parmStmt.toString());
                     parmStmt.executeUpdate();
                 }
             }
