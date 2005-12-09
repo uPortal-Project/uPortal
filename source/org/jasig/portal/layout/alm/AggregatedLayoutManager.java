@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServletRequest;
 
 
 import org.jasig.portal.layout.IUserLayout;
-import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.layout.LayoutEvent;
 import org.jasig.portal.layout.LayoutEventListener;
@@ -33,7 +32,6 @@ import org.jasig.portal.layout.restrictions.alm.PriorityRestriction;
 import org.jasig.portal.layout.restrictions.alm.RestrictionManagerFactory;
 import org.jasig.portal.layout.restrictions.alm.RestrictionTypes;
 import org.jasig.portal.ChannelStaticData;
-import org.jasig.portal.PortalEvent;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.StructureStylesheetUserPreferences;
 import org.jasig.portal.ThemeStylesheetUserPreferences;
