@@ -16,6 +16,13 @@ public class BlockedUriException
     extends RuntimeException {
 
     /**
+     * Serialized format version number.  Developers must manually increment this
+     * number whenever this class is changed in such a way that its serialized form
+     * changes.
+     */
+    private static final long serialVersionUID = 1L;
+
+    /**
      * The URI that was blocked.
      */
     private final URI uri;
