@@ -713,6 +713,11 @@ public class ChannelManager implements LayoutEventListener {
 					}else{			
 						           	
 						ch = ChannelFactory.instantiateLayoutChannel(cd,id);
+                        
+                        if (ch == null) {
+                            throw new IllegalStateException("ChannelFactory returned null on request to instantiate layout channel with id [" + id + "] and description [" + cd + "]");
+                        }
+                        
             			StatsRecorder.recordChannelInstantiated(upm.getPerson(), upm.getCurrentProfile(), cd);
 
 			            // Create and stuff the channel static data
