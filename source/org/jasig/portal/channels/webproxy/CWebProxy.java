@@ -1,4 +1,4 @@
-/* Copyright 2002 The JA-SIG Collaborative.  All rights reserved.
+/* Copyright 2002, 2005 The JA-SIG Collaborative.  All rights reserved.
 *  See license distributed with this file and
 *  available online at http://www.uportal.org/license.html
 */
@@ -15,6 +15,8 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -51,6 +53,9 @@ import org.jasig.portal.utils.CookieCutter;
 import org.jasig.portal.utils.DTDResolver;
 import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.utils.XSLT;
+import org.jasig.portal.utils.uri.BlockedUriException;
+import org.jasig.portal.utils.uri.IUriScrutinizer;
+import org.jasig.portal.utils.uri.PrefixUriScrutinizer;
 import org.w3c.dom.Document;
 import org.w3c.tidy.Tidy;
 import org.xml.sax.ContentHandler;
@@ -61,21 +66,44 @@ import org.xml.sax.ContentHandler;
  *    for full documentation.
  * </p>
  *
- * <p>Static Channel Parameters:
- *    Except where indicated, static parameters can be updated by equivalent
+ *<p>Static and Runtime Channel Parameters:
+ *   These parameters can be configured both as ChannelStaticData parameters and as 
+ *   ChannelRuntimeData parameters.
+ *   These static parameters can be updated by equivalent
  *    Runtime parameters.  Caching parameters can also be changed temporarily.
  *    Cache defaults and IPerson restrictions are loaded first from properties,
  *    and overridden by static data if there.
- * </p>
- * <ol>
- *  <li>"cw_xml" - a URI for the source XML document
- *  <li>"cw_ssl" - a URI for the corresponding .ssl (stylesheet list) file
+ *</p>
+ *<ol>
+ *  <li>"cw_xml" - a URI for the source XML document.  By default, must be an
+ *      http:// or https:// URI, though this requirement is configurable via
+ *      ChannelStaticData parameters.
  *  <li>"cw_xslTitle" - a title representing the stylesheet (optional)
  *                  <i>If no title parameter is specified, a default
  *                  stylesheet will be chosen according to the media</i>
- *  <li>"cw_xsl" - a URI for the stylesheet to use
+ *  <li>"cw_cacheDefaultMode" - Default caching mode.
+ *          <i>May be <code>none</code> (normally don't cache), or
+ *          <code>all</code> (cache everything).</i>
+ *  <li>"cw_cacheDefaultTimeout" - Default timeout in seconds.
+ *  <li>"cw_cacheMode" - override default for this request only.
+ *          <i>Primarily intended as a runtime parameter, but can
+ *              used statically to override the first instance.</i>
+ *  <li>"cw_cacheTimeout" - override default for this request only.
+ *          <i>Primarily intended as a runtime parameter, but can
+ *              be used statically to override the first instance.</i>
+ *</ol>
+ *
+ * <p>Static Channel Parameters:
+      These parameters can be configured only as ChannelStaticData parameters.
+      They can no longer (as of uPortal 2.5.1) be changed at runtime.  This closes
+      some serious security vulnerabilities wherein the Adversary would manipulate
+      these parameters at runtime to access resources on the local filesystem.
+ * </p>
+ * <ol>
+ *  <li>"cw_ssl" - a URI specifying the corresponding .ssl (stylesheet list) file
+ *  <li>"cw_xsl" - a URI specifying the stylesheet to use
  *                  <i>If <code>cw_xsl</code> is supplied, <code>cw_ssl</code>
- *                  and <code>cw_xslTitle</code> will be ignored.
+ *                  and <code>cw_xslTitle</code> will be ignored.</i>
  *  <li>"cw_passThrough" - indicates how RunTimeData is to be passed through.
  *                  <i>If <code>cw_passThrough</code> is supplied, and not set
  *          to "all" or "application", additional RunTimeData
@@ -86,26 +114,15 @@ import org.xml.sax.ContentHandler;
  *          <code>cw_inChannelLink</code>.  "application" is intended
  *          to keep application-specific links in the channel, while
  *          "all" should keep all links in the channel.  This
- *          distinction is handled entirely in the URL Filters.
+ *          distinction is handled entirely in the URL Filters.</i>
  *  <li>"cw_tidy" - output from <code>xmlUri</code> will be passed though Jtidy
  *  <li>"cw_info" - a URI to be called for the <code>info</code> event.
  *  <li>"cw_help" - a URI to be called for the <code>help</code> event.
  *  <li>"cw_edit" - a URI to be called for the <code>edit</code> event.
- *  <li>"cw_cacheDefaultMode" - Default caching mode.
- *          <i>May be <code>none</code> (normally don't cache), or
- *          <code>all</code> (cache everything).
- *  <li>"cw_cacheDefaultTimeout" - Default timeout in seconds.
- *  <li>"cw_cacheMode" - override default for this request only.
- *          <i>Primarily intended as a runtime parameter, but can
- *              used statically to override the first instance.</i>
- *  <li>"cw_cacheTimeout" - override default for this request only.
- *          <i>Primarily intended as a runtime parameter, but can
- *              be used statically to override the first instance.</i>
  *  <li>"cw_person" - IPerson attributes to pass.
  *          <i>A comma-separated list of IPerson attributes to
  *          pass to the back end application.  The static data
- *          value will be passed on </i>all<i> requests not
- *          overridden by a runtime data cw_person except some
+ *          value will be passed on </i>all<i> requests except some
  *          refresh requests.</i>
  *  <li>"cw_personAllow" - Restrict IPerson attribute passing to this list.
  *          <i>A comma-separated list of IPerson attributes that
@@ -118,6 +135,29 @@ import org.xml.sax.ContentHandler;
  *                  <i>The name of a class to use when data sent to the
  *                  backend application needs to be modified or added
  *                  to suit local needs.  Static data only.</i>
+ *  <li>"cw_allow_uri_prefixes" - permitted URI prefixes.
+ *         <i>Optional static data only parameter specifying allowable prefixes
+ *            for URIs accessed by this channel.  This channel will only use
+ *            URIs with these prefixes for obtaining XML and XSLT for use in
+ *            rendering.  Whitespace delimit allowed prefixes.  Effectively
+ *            defaults to "http:// https://"; do not allow "file:/" lightly.</i>
+ *       </li>
+ *  <li>"cw_block_uri_prefixes" - blocked URI prefixes.
+ *         <i>Optional static data only parameter further restricting which
+ *            URIs this channel will use to obtain XML and XSLT.  This channel
+ *            will not use URIs matching prefixes specified in this whitespace-
+ *            delimited parameter.  Effectively defaults to "".</i>
+ *  </li>
+ *  <li>"cw_restrict_xmlUri_inStaticData" - Optional parameter specifying whether 
+ *                  the xmlUri should be restricted according to the allow and
+ *                  deny prefix rules above as presented in ChannelStaticData
+ *                  or just as presented in ChannelRuntimeData.  "true" means
+ *                  both ChannelStaticData and ChannelRuntimeData will be restricted.
+ *                  Any other value or the parameter not being present means 
+ *                  only ChannelRuntimeData will be restricted.  It is important
+ *                  to set this value to true when using subscribe-time
+ *                  channel parameter configuration of the xmlUri.
+ *  </li>
  * </ol>
  * <p>Runtime Channel Parameters:</p>
  *    The following parameters are runtime-only.
@@ -153,6 +193,38 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
 
 {
     private static final Log log = LogFactory.getLog(CWebProxy.class);
+    
+    /**
+     * The name of the optional ChannelStaticData parameter the value of 
+     * which will be a String containing a whitespace-delimited list of allowable
+     * URI prefixes for URIs from which the configured CWebProxy instance will
+     * obtain XML and XSLT.  Defaults to allowing all URIs of the http://
+     * and https:// methods.
+     */
+    public static final String ALLOW_URI_PREFIXES_PARAM = "cw_allow_uri_prefixes";
+    
+    /**
+     * The name of the optional ChannelStaticData parameter the value of which
+     * will be a String containing a whitespace-delimited list of explicitly
+     * blocked URI prefixes for URIs from which the configured CWebProxy 
+     * instance will not obtain XML and XSLT.  URIs matching these prefixes
+     * will not be used even if they also match an allow prefix specified in
+     * ALLOW_URI_PREFIXES_PARAM.
+     */
+    public static final String BLOCK_URI_PREFIXES_PARAM = "cw_block_uri_prefixes";
+    
+    /**
+     * The name of the optional ChannelStaticData parameter the value of which
+     * will be the String "true" to convey that the xmlUri should be restricted
+     * as received from both ChannelStaticData and CHannelRuntimeData and 
+     * any other value to convey that it should be restricted only as received
+     * from ChannelRuntimeData.  
+     * 
+     * CWebProxy should be configured to restrict xmlUri from ChannelStaticData
+     * in the case where the xmlUri is a subscribe-time configurable parameter.
+     */
+    public static final String RESTRICT_STATIC_XMLURI_PREFIXES_PARAM = "cw_restrict_xmlUri_inStaticData";
+    
     private static final MediaManager MEDIAMANAGER = MediaManager.getMediaManager();
   Map stateTable;
   // to prepend to the system-wide cache key
@@ -171,7 +243,13 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
     }
   }
 
-  // All state variables stored here
+  /**
+   * All state variables are stored in this inner class.
+   * It would probably be an improvement to extract this inner class into its own
+   * fully fledged class in the cwebproxy package, thereby enforcing that its 
+   * properties are only accessed via getter and setter methods that would 
+   * need to be added.
+   */
   private class ChannelState
   {
     private IPerson iperson;
@@ -179,17 +257,50 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
     private String personAllow;
     private HashSet personAllow_set;
     private String fullxmlUri;
+    
+    /**
+     * URI of the source of XML this CWebProxy instance will render in response
+     * to a recent button press (channel control button, e.g. "help").
+     */
     private String buttonxmlUri;
+    
+    /**
+     * URI of the source of XML this CWebProxy instance will render.
+     * Do not set this field directly.  Instead, access it via the setter 
+     * method.
+     */
     private String xmlUri;
     private String key;
     private String passThrough;
     private String tidy;
+    
+    /**
+     * URI of the stylesheet selector this channel will use to select its 
+     * XSLT.
+     */
     private String sslUri;
     private String xslTitle;
+    
+    /**
+     * URI of the XSLT this channel will use to select its XSLT.
+     */
     private String xslUri;
+    
+    /**
+     * URI of the XML this channel will use to render its info mode.
+     */
     private String infoUri;
+    
+    /**
+     * URI of the XML this channel will use to render its help mode.
+     */
     private String helpUri;
+    
+    /**
+     * URI of the XML this channel will use to render its edit mode.
+     */
     private String editUri;
+    
     private String cacheDefaultMode;
     private String cacheMode;
     private String reqParameters;
@@ -200,9 +311,20 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
     private URLConnection connHolder;
     private LocalConnectionContext localConnContext;
     private int refresh;
+    
+    /**
+     * The default scrutinizer is one that allows only http: and https: URIs.
+     * Non-null.  Constructor enforces initialization to a non-null.
+     */
+    private final IUriScrutinizer uriScrutinizer;
 
-    public ChannelState ()
+    public ChannelState (IUriScrutinizer uriScrutinizerArg)
     {
+        if (uriScrutinizerArg == null) {
+            throw new IllegalArgumentException("Cannot instantiate CWebProxy ChannelState with a null URI srutinizer.");
+        }
+        this.uriScrutinizer = uriScrutinizerArg;
+        
       fullxmlUri = buttonxmlUri = xmlUri = key = passThrough = sslUri = null;
       xslTitle = xslUri = infoUri = helpUri = editUri = tidy = null;
       cacheMode = null;
@@ -215,6 +337,42 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
       cookieCutter = new CookieCutter();
       localConnContext = null;
     }
+
+    /**
+     * Set the xmlUri channel state property, applying URI acceptance logic
+     * before accepting the parameter.
+     * @param uriArg URI of XML source, or null
+     * @throws IllegalArgumentException if the uriArg is not in URI syntax or is
+     * a non-URI classpath-relative path which doesn't map to an actually existing resource.
+     * @throws BlockedUriException if the URI is unacceptable for reasons of policy
+     * @since uPortal 2.5.1
+     */
+    public void setXmlUri(String uriArg) {
+        if (uriArg != null && !"".equals(uriArg)) {
+            // resolve partial relative path fragments per ResourceLoader
+            try {
+                URL resourceUrl = ResourceLoader.getResourceAsURL(this.getClass(), uriArg);
+                uriArg = resourceUrl.toExternalForm();
+            } catch (ResourceMissingException rme) {
+                IllegalArgumentException iae = new IllegalArgumentException("Resource [" + uriArg + "] missing.");
+                iae.initCause(rme);
+                throw iae;
+            }
+            
+            try {
+                this.uriScrutinizer.scrutinize(new URI(uriArg));
+                this.xmlUri = uriArg;
+            } catch (URISyntaxException e) {
+                IllegalArgumentException iae = new IllegalArgumentException("Value [" + uriArg
+                        + "]had bad URI syntax.");
+                iae.initCause(e);
+                throw iae;
+            }
+        } 
+        // if uriArg was null do nothing.
+        
+    }
+
   }
 
   public CWebProxy ()
@@ -230,9 +388,35 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
    * @see ChannelStaticData
    */
   public void setStaticData (ChannelStaticData sd, String uid)
-  {
-    ChannelState state = new ChannelState();
+      throws PortalException {
+      
+    // detect static data configuration for URI scrutinizer
+    
+    String allowUriPrefixesParam = 
+        sd.getParameter(ALLOW_URI_PREFIXES_PARAM);
+    String denyUriPrefixesParam = 
+        sd.getParameter(BLOCK_URI_PREFIXES_PARAM);
+    
 
+    // store the scrutinizer into channel state
+    IUriScrutinizer uriScrutinizer = 
+        PrefixUriScrutinizer.instanceFromParameters(allowUriPrefixesParam, denyUriPrefixesParam);
+    ChannelState state = new ChannelState(uriScrutinizer);
+    
+    // determine whether we should restrict what URIs we accept as the xmlUri from
+    // ChannelStaticData
+    String scrutinizeXmlUriAsStaticDataString = sd.getParameter(RESTRICT_STATIC_XMLURI_PREFIXES_PARAM);
+    boolean scrutinizeXmlUriAsStaticData = "true".equals(scrutinizeXmlUriAsStaticDataString);
+    
+    String xmlUriParam = sd.getParameter("cw_xml");
+    if (scrutinizeXmlUriAsStaticData) {
+        // apply configured xmlUri restrictions
+        state.setXmlUri(xmlUriParam);
+    } else {
+        // set the field directly to avoid applying xmlUri restrictions
+        state.xmlUri = xmlUriParam;
+    }
+    
     state.iperson = sd.getPerson();
     state.person = sd.getParameter("cw_person");
     String personAllow = sd.getParameter ("cw_personAllow");
@@ -256,15 +440,17 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
       }
     }
 
-    state.xmlUri = sd.getParameter ("cw_xml");
-    state.sslUri = sd.getParameter ("cw_ssl");
+
+    state.sslUri = sd.getParameter("cw_ssl");
     state.xslTitle = sd.getParameter ("cw_xslTitle");
-    state.xslUri = sd.getParameter ("cw_xsl");
-    state.fullxmlUri = sd.getParameter ("cw_xml");
+    state.xslUri = sd.getParameter("cw_xsl");
+    state.fullxmlUri = sd.getParameter("cw_xml");
+    
     state.passThrough = sd.getParameter ("cw_passThrough");
     state.tidy = sd.getParameter ("cw_tidy");
-    state.infoUri = sd.getParameter ("cw_info");
-    state.helpUri = sd.getParameter ("cw_help");
+    
+    state.infoUri = sd.getParameter("cw_info");
+    state.helpUri = sd.getParameter("cw_help");
     state.editUri = sd.getParameter ("cw_edit");
 
     state.key = state.xmlUri;
@@ -313,10 +499,9 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
   public void setRuntimeData (ChannelRuntimeData rd, String uid)
   {
      ChannelState state = (ChannelState)stateTable.get(uid);
-     if (state == null)
-       log.error("CWebProxy:setRuntimeData() : attempting to access a non-established channel! setStaticData() hasn't been called on uid=\""+uid+"\"");
-     else
-     {
+     if (state == null){
+       log.debug("CWebProxy:setRuntimeData() : no entry in state for uid=\""+uid+"\"");
+     }else{
        state.runtimeData = rd;
        if ( rd.isEmpty() && (state.refresh != -1) ) {
          // A refresh-- State remains the same.
@@ -336,46 +521,24 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
 
        String xmlUri = state.runtimeData.getParameter("cw_xml");
        if (xmlUri != null) {
-         state.xmlUri = xmlUri;
+         state.setXmlUri(xmlUri);
          // don't need an explicit reset if a new URI is provided.
          state.buttonxmlUri = null;
        }
-
-       String sslUri = state.runtimeData.getParameter("cw_ssl");
-       if (sslUri != null)
-          state.sslUri = sslUri;
+       
+       // prior to uPortal 2.5.1, CWebProxy allowed several other parameters
+       // to  be set via channel runtime data.  These features were removed
+       // to close security vulnerabilities.  Some (very few) uPortal deployments
+       // will need to add these features back in or otherwise address them.
 
        String xslTitle = state.runtimeData.getParameter("cw_xslTitle");
        if (xslTitle != null)
           state.xslTitle = xslTitle;
 
-       String xslUri = state.runtimeData.getParameter("cw_xsl");
-       if (xslUri != null)
-          state.xslUri = xslUri;
 
        String passThrough = state.runtimeData.getParameter("cw_passThrough");
        if (passThrough != null)
           state.passThrough = passThrough;
-
-       String person = state.runtimeData.getParameter("cw_person");
-       if (person != null)
-          state.person = person;
-
-       String tidy = state.runtimeData.getParameter("cw_tidy");
-       if (tidy != null)
-          state.tidy = tidy;
-
-       String infoUri = state.runtimeData.getParameter("cw_info");
-       if (infoUri != null)
-          state.infoUri = infoUri;
-
-       String editUri = state.runtimeData.getParameter("cw_edit");
-       if (editUri != null)
-          state.editUri = editUri;
-
-       String helpUri = state.runtimeData.getParameter("cw_help");
-       if (helpUri != null)
-          state.helpUri = helpUri;
 
        String cacheTimeout = state.runtimeData.getParameter("cw_cacheDefaultTimeout");
        if (cacheTimeout != null)
@@ -542,9 +705,9 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
   public void receiveEvent (PortalEvent ev, String uid)
   {
     ChannelState state = (ChannelState)stateTable.get(uid);
-    if (state == null)
-       log.error("CWebProxy:receiveEvent() : attempting to access a non-established channel! setStaticData() hasn't been called on uid=\""+uid+"\"");
-    else {
+    if (state == null){
+        log.debug("CWebProxy:receiveEvent() : no entry in state for uid=\""+uid+"\"");
+    }else {
       int evnum = ev.getEventNumber();
 
       switch (evnum)
@@ -584,7 +747,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
     if (stateTable.get(uid) == null)
     {
       rp.setWillRender(false);
-      log.error("CWebProxy:getRuntimeProperties() : attempting to access a non-established channel! setStaticData() hasn't been called on uid=\""+uid+"\"");
+      log.debug("CWebProxy:getRuntimeProperties() : no entry in state for uid=\""+uid+"\"");
     }
     return rp;
   }
@@ -596,10 +759,9 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
   public void renderXML (ContentHandler out, String uid) throws PortalException
   {
     ChannelState state=(ChannelState)stateTable.get(uid);
-    if (state == null)
-      log.error("CWebProxy:renderXML() : attempting to access a non-established channel! setStaticData() hasn't been called on uid=\""+uid+"\"");
-    else
-      {
+    if (state == null){
+      log.debug("CWebProxy:renderXML() : no entry in state for uid=\""+uid+"\"");
+    }else{
       Document xml = null;
       String tidiedXml = null;
       try
@@ -665,6 +827,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
         }
       }
 
+      
       CWebProxyURLFilter filter2 = CWebProxyURLFilter.newCWebProxyURLFilter(mimeType, state.runtimeData, out);
       AbsoluteURLFilter filter1 = AbsoluteURLFilter.newAbsoluteURLFilter(mimeType, state.xmlUri, filter2);
 
@@ -931,7 +1094,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
 
     if (state == null)
     {
-      log.error("CWebProxy:generateKey() : attempting to access a non-established channel! setStaticData() hasn't been called on uid=\""+uid+"\"");
+      log.debug("CWebProxy:generateKey() : no entry in state for uid=\""+uid+"\"");
       return null;
     }
 
@@ -994,11 +1157,11 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
 
     if (state == null)
     {
-      log.error("CWebProxy:isCacheValid() : attempting to access a non-established channel! setStaticData() hasn't been called on uid=\""+uid+"\"");
+      log.debug("CWebProxy:isCacheValid() : no entry in state for uid=\""+uid+"\"");
       return false;
+    }else{
+      return (System.currentTimeMillis() - ((Long)validity).longValue() < state.cacheTimeout*1000);
     }
-    else
-    return (System.currentTimeMillis() - ((Long)validity).longValue() < state.cacheTimeout*1000);
   }
 
   public String getContentType(String uid) {
@@ -1014,7 +1177,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
   }
 
   public void downloadData(OutputStream out,String uid) throws IOException {
-    throw(new IOException("CWebProxy: donloadData method not supported - use getInputStream only"));
+    throw(new IOException("CWebProxy: downloadData method not supported - use getInputStream only"));
   }
 
   public String getName(String uid) {
@@ -1043,4 +1206,5 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
     log.error(e.getMessage(), e);
   }
 
+  
 }
