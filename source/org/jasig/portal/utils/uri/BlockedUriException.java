@@ -54,5 +54,23 @@ public class BlockedUriException
         this.uri = uriArg;
         this.reasonBlocked = reasonBlockedArg;
     }
+
+    /**
+     * Get the blocked URI.
+     * @return the blocked URI, which may be null.
+     * @since uPortal 2.4.5, 2.5.2.
+     */
+    public Object getBlockedUri() {
+        return this.uri;
+    }
+
+    /**
+     * Get the reason the URI was blocked represented as a String.
+     * @return the reason the URI was blocked, which may be null.
+     * @since uPortal 2.4.5, 2.5.2
+     */
+    public Object getReasonBlocked() {
+        return this.reasonBlocked;
+    }
     
 }
