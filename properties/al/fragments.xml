@@ -203,6 +203,24 @@
 		</folder>
 	</fragment>		
 
+	<fragment name="wsrp-examples" type="pushed">
+		<description>Example WSRP consumer instances</description>
+		<groups>
+			<group>Developers</group>
+			<group>Portal Administrators</group>
+		</groups>
+		<restrictions>
+			<restriction path="local" name="priority" value="0-9999"/>
+			<restriction path="local" name="depth" value="1"/>
+		</restrictions>
+		<folder name="WSRP consumed" immutable="Y" unremovable="Y" hidden="N">
+			<folder name="column1" immutable="Y" unremovable="Y" hidden="N">
+				<channel fname="wsrp-library-search" immutable="Y" unremovable="Y" hidden="N"/>
+			</folder>
+		</folder>
+	</fragment>	
+
+
 	<fragment name="admin-tools" type="pushed">
 		<description>Channels for portal administration</description>
 		<groups>
