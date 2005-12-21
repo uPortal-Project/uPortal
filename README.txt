@@ -101,6 +101,13 @@ Notes
  However, beginning with uPortal 2.4, the WSRP consumer has been replaced with
  one based on WSRP4J.  The WSRP producer has been deprecated but may
  be reintroduced in a future release.
+ 
+-The WSRP consumer proxyportlet requires additional .jar files to operate under 
+JDK 1.5.  Specifically, under JDK 1.5 you'll need to install xml-apis.jar, 
+xmlParserAPIs.jar, and xercesImpl.jar into proxyportlet/WEB-INF/lib, as described
+at 
+http://www.ja-sig.org/wiki/display/UPC/_WSRP+Consumer+Support+for+uPortal+2.5+and+uPortal+2.4+on+JDK+1.5
+( https://www.ja-sig.org/wiki/x/OzM )
 
 Please report bugs and suggestions:
 
