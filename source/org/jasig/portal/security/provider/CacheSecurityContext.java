@@ -112,7 +112,7 @@ class CacheSecurityContext extends ChainingSecurityContext
           log.info( "No such user: " + this.myPrincipal.UID);
       } catch (Exception e) {
         PortalSecurityException ep = new PortalSecurityException("SQL Database Error");
-        log.error( ep);
+        log.error( "SQL database error", e);
         throw  (ep);
       }
     }

@@ -1,37 +1,7 @@
-/**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
- *
- * 3. Redistributions of any form whatsoever must retain the following
- *    acknowledgment:
- *    "This product includes software developed by the JA-SIG Collaborative
- *    (http://www.jasig.org/)."
- *
- * THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
- * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE JA-SIG COLLABORATIVE OR
- * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- */
+/* Copyright 2004 The JA-SIG Collaborative.  All rights reserved.
+*  See license distributed with this file and
+*  available online at http://www.uportal.org/license.html
+*/
 
 package org.jasig.portal.tools.dbloader;
 
@@ -42,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
+
+import org.apache.oro.text.perl.Perl5Util;
 
 import org.jasig.portal.properties.PropertiesManager;
 import org.w3c.dom.Document;
@@ -75,6 +47,9 @@ public class Configuration
     private String upgradeVersion;
     private int upgradeMajor;
     private int upgradeMinor;
+
+    private String adminLocale;
+    private boolean localeAware;
     
     private String tablesUri;
     private String tablesXslUri;
@@ -89,9 +64,13 @@ public class Configuration
       
       ///////// Accessor Methods /////////
 
+    public void setLocaleAware(boolean localeAware) { this.localeAware = localeAware; }
+    public void setAdminLocale(String adminLocale) { this.adminLocale = adminLocale; }
+
     public void setUpgradeVersion(String v) { this.upgradeVersion = v; }
     public String getUpgradeVersion() { return this.upgradeVersion; }
     public void setUpgradeMajor(int m) { this.upgradeMajor = m; }
+
     public int getUpgradeMajor() { return this.upgradeMajor; }
     public void setUpgradeMinor(int m) { this.upgradeMinor = m; }
     public int getUpgradeMinor() { return this.upgradeMinor; }
@@ -115,18 +94,29 @@ public class Configuration
     public void setConnection(Connection c){this.con=c;}
     public void setLog(PrintWriter w) {this.log=w;}
 
-      public boolean getDropTables() { return dropTables; }
-      public boolean getCreateTables() { return createTables; }
+    public boolean getDropTables() { return dropTables; }
+    public boolean getCreateTables() { return createTables; }
     public boolean getCreateScript() { return createScript; }
-      public boolean getPopulateTables() { return populateTables; }
+    public boolean getPopulateTables() { return populateTables; }
 
     public String getTablesUri() { return tablesUri; }
-      public String getTablesXslUri() { return tablesXslUri; }
-    public String getDataUri() { return dataUri; }
-      public String getDataXslUri() { return dataXslUri; }
-      public String getScriptFileName() { return scriptFileName; }
-      public String getStatementTerminator() { return statementTerminator; }
-      public ArrayList getDbTypeMappings() { return dbTypeMappings; }
+    public String getTablesXslUri() { return tablesXslUri; }
+
+    public String getDataUri() {
+		String ret = dataUri;
+		if (localeAware == true && adminLocale != null) {
+			// Switch to replaceAll when we can rely on JDK 1.4
+			// ret = ret.replaceAll("\\.xml", "_" + admin_locale + ".xml");
+			Perl5Util perl5Util = new Perl5Util();
+			ret = perl5Util.substitute("s/\\.xml/_" + adminLocale + ".xml" + "/g", ret);
+		}
+		return ret;
+	}
+
+    public String getDataXslUri() { return dataXslUri; }
+    public String getScriptFileName() { return scriptFileName; }
+    public String getStatementTerminator() { return statementTerminator; }
+    public ArrayList getDbTypeMappings() { return dbTypeMappings; }
 
     public void setDropTables(String dropTables) { this.setDropTables(toBoolean(dropTables)); }
     public void setDropTables(boolean dropTables) { this.dropTables = dropTables; }
@@ -136,14 +126,14 @@ public class Configuration
     public void setPopulateTables(String populateTables) { this.setPopulateTables(toBoolean(populateTables)); }
     public void setPopulateTables(boolean populateTables) { this.populateTables = populateTables; }
     public void setTablesUri(String tablesUri) { this.tablesUri = tablesUri; }
-      public void setTablesXslUri(String tablesXslUri) { this.tablesXslUri = tablesXslUri; }
+    public void setTablesXslUri(String tablesXslUri) { this.tablesXslUri = tablesXslUri; }
     public void setDataUri(String dataUri) { this.dataUri = dataUri; }
-      public void setDataXslUri(String dataXslUri) { this.dataXslUri = dataXslUri; }
+    public void setDataXslUri(String dataXslUri) { this.dataXslUri = dataXslUri; }
     public void setCreateScript(String createScript) { this.setCreateScript(toBoolean(createScript)); }
     public void setCreateScript(boolean createScript) { this.createScript = createScript; }
-      public void setScriptFileName(String scriptFileName) { this.scriptFileName = scriptFileName; }
-      public void setStatementTerminator(String statementTerminator) { this.statementTerminator = statementTerminator; }
-      public void addDbTypeMapping(DbTypeMapping dbTypeMapping) { dbTypeMappings.add(dbTypeMapping); }
+    public void setScriptFileName(String scriptFileName) { this.scriptFileName = scriptFileName; }
+    public void setStatementTerminator(String statementTerminator) { this.statementTerminator = statementTerminator; }
+    public void addDbTypeMapping(DbTypeMapping dbTypeMapping) { dbTypeMappings.add(dbTypeMapping); }
       
     public void setLocalTypeMap(Map m){this.localDbMetaTypeMap = m;}
     public Map getLocalTypeMap(){return this.localDbMetaTypeMap;}

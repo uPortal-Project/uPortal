@@ -167,7 +167,8 @@ public class UserPreferencesManager implements IUserPreferencesManager {
         } catch (PortalException pe) {
             throw pe;
         } catch (Exception e) {
-            log.error( e);
+            log.error("Exception constructing UserPreferencesManager on request " 
+                    + req + " for user " + person, e);
         }
     }
 
@@ -253,7 +254,8 @@ public class UserPreferencesManager implements IUserPreferencesManager {
         } catch (PortalException pe) {
             throw pe;
         } catch (Exception e) {
-            log.error( e);
+            log.error("Exception constructing UserPreferencesManager on request " + 
+                    req + " for user " + person, e);
         }
     }
 
@@ -275,25 +277,6 @@ public class UserPreferencesManager implements IUserPreferencesManager {
      * @param req current <code>HttpServletRequest</code>
      */
     public void processUserPreferencesParameters(HttpServletRequest req) {
-        // save processing
-        String saveWhat=req.getParameter("uP_save");
-        if(saveWhat!=null) {
-            try {
-                if(saveWhat.equals("preferences")) {
-                    ulsdb.putUserPreferences(m_person, complete_up);
-                } else if(saveWhat.equals("layout")) {
-                    ulm.saveUserLayout();
-                } else if(saveWhat.equals("all")) {
-                    ulsdb.putUserPreferences(m_person, complete_up);
-                    ulm.saveUserLayout();
-                  }
-                log.debug("UserPreferencesManager::processUserPreferencesParameters() : persisted "+saveWhat+" changes.");
-
-            } catch (Exception e) {
-                log.error( "UserPreferencesManager::processUserPreferencesParameters() : unable to persist "+saveWhat+" changes. "+e);
-            }
-        }
-
         // layout root setting
         String root;
         if ((root = req.getParameter("uP_root")) != null) {
@@ -407,6 +390,24 @@ public class UserPreferencesManager implements IUserPreferencesManager {
                 }
             }
         }
+        // save processing
+        String saveWhat=req.getParameter("uP_save");
+        if(saveWhat!=null) {
+            try {
+                if(saveWhat.equals("preferences")) {
+                    ulsdb.putUserPreferences(m_person, complete_up);
+                } else if(saveWhat.equals("layout")) {
+                    ulm.saveUserLayout();
+                } else if(saveWhat.equals("all")) {
+                    ulsdb.putUserPreferences(m_person, complete_up);
+                    ulm.saveUserLayout();
+                  }
+                log.debug("UserPreferencesManager::processUserPreferencesParameters() : persisted "+saveWhat+" changes.");
+
+            } catch (Exception e) {
+                log.error( "UserPreferencesManager::processUserPreferencesParameters() : unable to persist "+saveWhat+" changes. "+e);
+            }
+        }
     }
 
     /**
@@ -459,7 +460,8 @@ public class UserPreferencesManager implements IUserPreferencesManager {
 
         }
       } catch (Exception e) {
-        log.error( e);
+        log.error("Exception setting new user layout manager " + newUlm + 
+                " and/or new prefererences " + newPreferences, e);
         throw  new GeneralRenderingException(e.getMessage());
       }
     }

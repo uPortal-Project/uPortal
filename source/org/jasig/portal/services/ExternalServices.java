@@ -180,28 +180,28 @@ public class ExternalServices {
   }
 
   class ServiceItem {
-    String name;
-    String javaClass;
-    String jndiName;
-    String startMethod;
-    String methodType;
+    StringBuffer name = new StringBuffer("");
+    StringBuffer javaClass = new StringBuffer("");
+    StringBuffer jndiName = new StringBuffer("");
+    StringBuffer startMethod = new StringBuffer("");
+    StringBuffer methodType = new StringBuffer("");
     List argList;
 
-    public void setName (String svcName) { name = svcName; }
-    public String getName () { return name; }
+    public void setName (String svcName) { name.append(svcName); }
+    public String getName () { return name.toString(); }
 
-    public void setJavaClass (String svcClass) { javaClass = svcClass; }
-    public String getJavaClass () { return javaClass; }
+    public void setJavaClass (String svcClass) { javaClass.append(svcClass); }
+    public String getJavaClass () { return javaClass.toString(); }
 
-    public void setStartMethod (String methodName) { startMethod = methodName; }
-    public String getStartMethod () { return startMethod; }
+    public void setStartMethod (String methodName) { startMethod.append(methodName); }
+    public String getStartMethod () { return startMethod.toString(); }
 
-    public void setJndiName (String name) { this.jndiName = name; }
-    public String getJndiName () { return jndiName; }
+    public void setJndiName (String name) { this.jndiName.append(name); }
+    public String getJndiName () { return jndiName.toString(); }
 
-    public void setMethodType(String type) { methodType = type; }
+    public void setMethodType(String type) { methodType.append(type); }
 
-    public boolean isStatic() { return !(methodType == null); }
+    public boolean isStatic() { return (methodType.length() > 0); }
 
     public void addArgument (Argument argItem) {
      if (argList == null)
@@ -353,7 +353,7 @@ public class ExternalServices {
             Object returnObject=null;
             
           // check if any method is specified
-          if(svcItem.getStartMethod()!=null) {
+          if(svcItem.getStartMethod().length() > 0) {
               Method startMethod = svcClass.getMethod(svcItem.getStartMethod(), classNames);
               if(Modifier.isStatic(startMethod.getModifiers())) {
                   // no need to instantiate an object
@@ -367,7 +367,7 @@ public class ExternalServices {
           }
  
           // check if jndi binding needed
-          if(svcItem.getJndiName()!=null) {
+          if(svcItem.getJndiName().length() > 0) {
               if(returnObject!=null) {
                   // a non-void method was specified
                   // in the service description, bind 

@@ -1,5 +1,5 @@
 /**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
+ * Copyright © 2001,2005 The JA-SIG Collaborative.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,8 +36,9 @@
 package org.jasig.portal.channels;
 
 import java.io.PrintWriter;
-import java.io.StringWriter;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.ChannelCacheKey;
 import org.jasig.portal.ChannelManager;
@@ -46,22 +47,21 @@ import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.ICacheable;
 import org.jasig.portal.IChannel;
-import org.jasig.portal.MediaManager;
-import org.jasig.portal.serialize.OutputFormat;
-import org.jasig.portal.serialize.XMLSerializer;
-import org.jasig.portal.serialize.BaseMarkupSerializer;
-import org.jasig.portal.ThemeStylesheetDescription;
 import org.jasig.portal.ICharacterChannel;
 import org.jasig.portal.IPrivilegedChannel;
 import org.jasig.portal.InternalTimeoutException;
+import org.jasig.portal.MediaManager;
 import org.jasig.portal.PortalControlStructures;
+import org.jasig.portal.PortalEvent;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.ResourceMissingException;
+import org.jasig.portal.ThemeStylesheetDescription;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.serialize.BaseMarkupSerializer;
+import org.jasig.portal.serialize.OutputFormat;
+import org.jasig.portal.serialize.XMLSerializer;
 import org.jasig.portal.services.AuthorizationService;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Document;
@@ -81,7 +81,7 @@ import org.xml.sax.ContentHandler;
  * In this case a general message is constructed by the portal.</li>
  * </ul>
  * 
- * @author Peter Kharchenko, pkharchenko@interactivebusiness.com
+ * @author Peter Kharchenko, pkharchenko@unicon.net
  * @version $Revision$
  */
 public class CError extends BaseChannel implements IPrivilegedChannel, ICacheable, ICharacterChannel
@@ -116,7 +116,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
 
     private PortalControlStructures portcs;
     private static final String sslLocation = "CError/CError.ssl";
-    protected static MediaManager mediaM=new MediaManager();
+    protected static final MediaManager MEDIAMANAGER=MediaManager.getMediaManager();
 
     public CError() {
     }
@@ -173,6 +173,14 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
         this.errorID = Integer.parseInt(value);
       }
       placeHolder = true;  // Should only get here if we are a "normal channel"
+    }
+
+    public void receiveEvent(PortalEvent ev) {
+        if (the_channel != null) {
+            // propagate the portal events to the normal channel
+            the_channel.receiveEvent(ev);
+        }
+        super.receiveEvent(ev);
     }
 
     public void renderXML(ContentHandler out) {
@@ -353,6 +361,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
                     if(v!=null) {
                         Element timeoutEl=doc.createElement("timeout");
                         timeoutEl.setAttribute("value",v.toString());
+                        excEl.appendChild(timeoutEl);
                     }
                 } else if(pe instanceof AuthorizationException) {
                     excEl.setAttribute("code",Integer.toString(AUTHORIZATION_EXCEPTION));
@@ -399,14 +408,14 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
         // debug block
         try {
             java.io.StringWriter outString = new java.io.StringWriter ();
-            org.apache.xml.serialize.OutputFormat format=new org.apache.xml.serialize.OutputFormat();
+            com.sun.org.apache.xml.internal.serialize.OutputFormat format=new com.sun.org.apache.xml.internal.serialize.OutputFormat();
             format.setOmitXMLDeclaration(true);
             format.setIndenting(true);
-            org.apache.xml.serialize.XMLSerializer xsl = new org.apache.xml.serialize.XMLSerializer (outString,format);
+            com.sun.org.apache.xml.internal.serialize.XMLSerializer xsl = new com.sun.org.apache.xml.internal.serialize.XMLSerializer(outString,format);
             xsl.serialize (doc);
             log.debug(outString.toString());
         } catch (Exception e) {
-            log.debug(e);
+            log.debug(e, e);
         }
         // end of debug block
 
@@ -421,10 +430,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
             xslt.setStylesheetParameter("allowReinstantiation", allowRel);
             xslt.transform();
         } catch (Exception e) {
-            StringWriter sw=new StringWriter();
-            e.printStackTrace(new PrintWriter(sw));
-            sw.flush();
-            log.error( "CError::renderXML() : Things are bad. Error channel threw: " + sw.toString());
+            log.error( "CError::renderXML() : Things are bad. Error channel threw Exception.", e);
         }
     }
 
@@ -497,7 +503,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
                             ((ICharacterChannel) the_channel).renderCharacters(out);
                         } else {
                             ThemeStylesheetDescription tsd=portcs.getUserPreferencesManager().getThemeStylesheetDescription();
-                            BaseMarkupSerializer serOut = mediaM.getSerializerByName(tsd.getSerializerName(), out);
+                            BaseMarkupSerializer serOut = MEDIAMANAGER.getSerializerByName(tsd.getSerializerName(), out);
                             the_channel.renderXML(serOut);
                         }
                         return;
@@ -525,7 +531,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
                                     ((ICharacterChannel) the_channel).renderCharacters(out);
                                 } else {
                                     ThemeStylesheetDescription tsd=portcs.getUserPreferencesManager().getThemeStylesheetDescription();
-                                    BaseMarkupSerializer serOut = mediaM.getSerializerByName(tsd.getSerializerName(), out);
+                                    BaseMarkupSerializer serOut = MEDIAMANAGER.getSerializerByName(tsd.getSerializerName(), out);
                                     the_channel.renderXML(serOut);
                                 }
                                 return;
@@ -549,7 +555,7 @@ public class CError extends BaseChannel implements IPrivilegedChannel, ICacheabl
         BaseMarkupSerializer serOut=null;
         try {
             ThemeStylesheetDescription tsd=portcs.getUserPreferencesManager().getThemeStylesheetDescription();
-            serOut = mediaM.getSerializerByName(tsd.getSerializerName(), out);        
+            serOut = MEDIAMANAGER.getSerializerByName(tsd.getSerializerName(), out);        
         } catch (Exception e) {
             log.error("CError::renderCharacters() : unable to obtain proper markup serializer : "+e); 
         }

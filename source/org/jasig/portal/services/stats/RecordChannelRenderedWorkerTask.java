@@ -57,8 +57,8 @@ public class RecordChannelRenderedWorkerTask extends StatsRecorderWorkerTask {
     this.channelDesc = channelDesc;
   }
 
-  public void run() {
-    statsRecorder.recordChannelRendered(person, profile, channelDesc);
+  public void execute() throws Exception {
+    this.statsRecorder.recordChannelRendered(this.person, this.profile, this.channelDesc);
   }
 }
 

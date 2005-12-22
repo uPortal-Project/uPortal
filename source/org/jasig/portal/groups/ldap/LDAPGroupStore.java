@@ -440,7 +440,7 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
         //long set1 = System.currentTimeMillis();
         Attribute attrib = ldapattribs.get(keyfield);
         if (attrib != null) {
-            keys.add(String.valueOf(attrib.get()));
+            keys.add(String.valueOf(attrib.get()).toLowerCase());
         }
         //long set2 = System.currentTimeMillis();
         //loop1=System.currentTimeMillis();
@@ -450,8 +450,7 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
       }
     }
     catch(NamingException nex){
-        log.error("LDAPGroupStore: error processing results");
-       log.error(nex);
+        log.error("LDAPGroupStore: error processing results", nex);
     }
     finally{
       try{results.close();}catch(Exception e){}
@@ -484,8 +483,7 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
       try {
         context = new InitialDirContext(jndienv);
       } catch (NamingException nex) {
-        log.error("LDAPGroupStore: unable to get context");
-        log.error(nex);
+        log.error("LDAPGroupStore: unable to get context", nex);
       }
       contexts.put("context",context);
     }
@@ -658,8 +656,7 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
     try {
       userlist = context.search(usercontext,query,sc);
     } catch (NamingException nex) {
-      log.error("LDAPGroupStore: Unable to perform filter "+query);
-      log.error(nex);
+      log.error("LDAPGroupStore: Unable to perform filter "+query, nex);
     }
     ArrayList keys = new ArrayList();
     processLdapResults(userlist,keys);

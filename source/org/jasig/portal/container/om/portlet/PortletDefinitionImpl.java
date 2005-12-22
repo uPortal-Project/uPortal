@@ -55,6 +55,7 @@ import org.apache.pluto.om.servlet.ServletDefinition;
 import org.jasig.portal.ChannelDefinition;
 import org.jasig.portal.IPortletPreferencesStore;
 import org.jasig.portal.PortletPreferencesStoreFactory;
+import org.jasig.portal.container.om.common.LanguageSetImpl;
 import org.jasig.portal.container.om.common.ObjectIDImpl;
 import org.jasig.portal.container.om.common.PreferenceSetImpl;
 import org.jasig.portal.container.om.common.SecurityRoleRefSetImpl;
@@ -107,6 +108,7 @@ public class PortletDefinitionImpl implements PortletDefinition, PortletDefiniti
     }
 
     public LanguageSet getLanguageSet() {
+        ((LanguageSetImpl)languages).setClassLoader(getPortletClassLoader());
         return languages;
     }
 
@@ -178,7 +180,7 @@ public class PortletDefinitionImpl implements PortletDefinition, PortletDefiniti
             IPortletPreferencesStore portletPrefsStore = PortletPreferencesStoreFactory.getPortletPreferencesStoreImpl();
             portletPrefsStore.setDefinitionPreferences(channelDefinition.getId(), preferences);
         } catch (Exception e) {
-            log.error( e);
+            log.error("Could not store portlet definition preferences.", e);
             throw new IOException("Could not store portlet definition preferences: " + e.getMessage());
         }
     }
@@ -212,7 +214,7 @@ public class PortletDefinitionImpl implements PortletDefinition, PortletDefiniti
             
             ((PreferenceSetImpl)preferences).addAll(publishPreferences);
         } catch (Exception e) {
-            log.error( e);
+            log.error("Could not load portlet definition preferences", e);
             throw new IOException("Could not load portlet definition preferences: " + e.getMessage());
         }
     }

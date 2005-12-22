@@ -87,7 +87,7 @@
         <logonid>sa</logonid>
         <logonpassword></logonpassword>
 
-        <uidquery>SELECT FIRST_NAME||' '||LAST_NAME AS FIRST_LAST, FIRST_NAME, LAST_NAME, EMAIL FROM UP_PERSON_DIR WHERE USER_NAME=?</uidquery>
+        <uidquery>SELECT FIRST_NAME, LAST_NAME, EMAIL FROM UP_PERSON_DIR WHERE USER_NAME=?</uidquery>
     
         <attributes>
 
@@ -100,7 +100,7 @@
             <attribute><alias>c</alias>                           <name></name></attribute>
             <attribute><alias>cn</alias>                          <name></name></attribute>
             <attribute><alias>description</alias>                 <name></name></attribute>
-            <attribute><alias>displayName</alias>                 <name>FIRST_LAST</name></attribute>
+            <attribute><alias>displayName</alias>                 <name>FIRST_NAME</name></attribute>
             <attribute><alias>facsimileTelephoneNumber</alias>    <name></name></attribute>
             <attribute><alias>givenName</alias>                   <name>FIRST_NAME</name></attribute>
             <attribute><alias>homePhone</alias>                   <name></name></attribute>
@@ -211,6 +211,7 @@
         <url>ldap://yu.yale.edu:389/dc=itstp, dc=yale, dc=edu</url>
         <logonid>cn=bogus,cn=Users,dc=itstp,dc=yale,dc=edu</logonid>
         <logonpassword>foobar</logonpassword>
+        <usercontext>cn=Users</usercontext>
 
         2) Specify the name of an LDAP server as set up in uPortal's ldap.xml.  For example,
         
@@ -223,7 +224,6 @@
         <ldap-ref-name>Main</ldap-ref-name>
 
         <uidquery>(cn={0})</uidquery>
-        <usercontext>cn=Users</usercontext>
 
         <attributes>
 

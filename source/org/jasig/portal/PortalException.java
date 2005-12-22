@@ -1,43 +1,15 @@
-/**
- * Copyright © 2001-2004 The JA-SIG Collaborative.  All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
- *
- * 3. Redistributions of any form whatsoever must retain the following
- *    acknowledgment:
- *    "This product includes software developed by the JA-SIG Collaborative
- *    (http://www.jasig.org/)."
- *
- * THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
- * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE JA-SIG COLLABORATIVE OR
- * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- */
+/* Copyright 2001-2004 The JA-SIG Collaborative.  All rights reserved.
+*  See license distributed with this file and
+*  available online at http://www.uportal.org/license.html
+*/
 
 package org.jasig.portal;
 
-import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.util.Date;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * Base portal exception class.
  * Information contained in this class allows ErrorChannel
@@ -47,38 +19,62 @@ import java.util.Date;
  * @author Peter Kharchenko
  * @version $Revision$
  */
-
 public class PortalException extends Exception {
 
-    // should the user be given an option to reinstantiate
-    // the channel in a given session ?
-    boolean reinstantiable=true;
-    // should the user be given an option to retry rendering
-    // that same channel instance ?
-    boolean refreshable=true;
+    private final Log log = LogFactory.getLog(PortalException.class);
+    
+    /** 
+     * should the user be given an option to reinstantiate
+     * the channel in a given session
+     */
+    boolean reinstantiable = true;
+    
+    /**
+     * should the user be given an option to retry rendering
+     * that same channel instance
+     */
+    boolean refreshable = true;
 
+    /**
+     * True if logging is pending on this exception instance
+     * (has not yet been logged but potentially will be).  True
+     * if all the logging that ought to happen has happened.
+     */
     boolean logPending = true;
+    
+    /**
+     * ErrorID categorizing this PortalException instance.
+     */
     ErrorID errorID = Errors.legacy;
+    
+    /**
+     * Parameter to the ErrorID's template message.
+     */
     String parameter = null;
+    
+    /**
+     * The time at which this PortalException instance was instantiated.
+     */
     Date timestamp = new Date();
     
-
-    // Precursor to Throwable.cause property
-    // for Java < 1.4
-    Exception recordedException;
-
+    /**
+     * Instantiate a generic PortalException.
+     * Instantiating a bare, no-message, no ErrorID, no frills 
+     * PortalException is pretty anti-social.  Wouldn't you rather
+     * use a constructor that provides more information?
+     */
     public PortalException() { 
         ProblemsTable.store(this);
     }
 
     /**
-     * Construct a new portal exception, recording the
-     * exception that originally caused the error.
+     * Construct a new portal exception, recording an
+     * underlying cause.
      *
-     * @param exc an <code>Exception</code> value
+     * @param cause a <code>Throwable</code> causing this exception
      */
-    public PortalException(Exception exc) {
-        this.recordedException=exc;
+    public PortalException(Throwable cause) {
+        super(cause);
         ProblemsTable.store(this);
     }
 
@@ -86,44 +82,59 @@ public class PortalException extends Exception {
      * Creates a new <code>PortalException</code> instance,
      * with a contained text message.
      *
-     * @param msg a <code>String</code> value
+     * @param msg describes exceptional condition
      */
     public PortalException(String msg) {
         super(msg);
         ProblemsTable.store(this);
     }
     
+    /**
+     * Instantiate a PortalException representing an instance of the
+     * type of error represented by the given ErrorID.
+     * @param errorid - type of error
+     */
     public PortalException(ErrorID errorid) {
     	super(errorid.getMessage());
     	this.errorID=errorid;
         ProblemsTable.store(this);
     }
 
-    public PortalException(String msg,Exception exc) {
-        super(msg);
-        this.recordedException=exc;
+    /**
+     * Instantiate a PortalException with the given message and underlying cause.
+     * @param msg - message describing the error
+     * @param cause - underlying cause of the error
+     */
+    public PortalException(String msg, Throwable cause) {
+        super(msg, cause);
         ProblemsTable.store(this);
     }
 
-	public PortalException(ErrorID errorid, Exception exc) {
-		super(errorid.getMessage());
+    /**
+     * Instantiate a PortalException representing an instance of the type of error
+     * represented by the given ErrorID, with the given underlying cause.
+     * @param errorid - type of error
+     * @param cause - underlying cause of error.
+     */
+	public PortalException(ErrorID errorid, Throwable cause) {
+		super(errorid.getMessage(), cause);
 		this.errorID=errorid;
-		this.recordedException=exc;
         ProblemsTable.store(this);
 	}
 
 
     /**
      * Check if user-mediated referesh is allowed.
+     * @return true if refresh allowed, false otherwise.
      */
     public boolean isRefreshable() {
-        return refreshable;
+        return this.refreshable;
     }
     
 	/**
-	 * Legacy support for badly named property accessor
-	 * 
+	 * Legacy support for old name of property accessor.
 	 * @return isRefreshable()
+     * @deprecated use isRefreshable().
 	 */
 	public boolean allowRefresh() {
 		return isRefreshable();
@@ -131,16 +142,16 @@ public class PortalException extends Exception {
 
     /**
      * Check if user-mediated reinstantiation is allowed.
-     *
-     * @return a <code>boolean</code> value
+     * @return true if reinstantiation allowed, false otherwise
      */
     public boolean isReinstantiable() {
-        return reinstantiable;
+        return this.reinstantiable;
     }
     
     /**
-     * Legacy support for badly named property accessor
+     * Legacy support for old name of property accessor
      * @return isRinstantiable();
+     * @deprecated use isReinstantiable()
      */
     public boolean allowReinstantiation() {
     	return isReinstantiable();
@@ -149,11 +160,14 @@ public class PortalException extends Exception {
     /**
      * Retrieve an optionally recorded exception that
      * caused the error.
-     *
-     * @return an <code>Exception</code> value
+     * @return the cause if it is an Exception
+     * @deprecated - use Throwable.getCause()
      */
     public Exception getRecordedException() {
-        return this.recordedException; 
+        Throwable cause = this.getCause();
+        if (cause != null && cause instanceof Exception)
+            return (Exception) cause;
+        return null;
     }
 
     /**
@@ -184,33 +198,49 @@ public class PortalException extends Exception {
      * reporting and user interaction.
      *
      * @param exc an <code>Exception</code> value
+     * @deprecated use initCause() instead.
      */
     public void setRecordedException(Exception exc) {
-        this.recordedException=exc;
+        try {
+            this.initCause(exc);
+        } catch (Throwable t) {
+            // legacy implementation was setting a simple JavaBean property
+            // which could never throw an exception.
+            // we emulate that exceptionless behavior here.
+            if (log.isWarnEnabled())
+                log.warn("Exception setting the recorded exception of [" + this + "] " +
+                    "to [" + exc + "]", t);
+        }
+
     }
+    
     /**
+     * Determine whether logging is pending on this PortalException.
      * @return <code>true</code> if the log is pending, otherwise <code>false</code>
      */
     public boolean isLogPending() {
-        return logPending;
+        return this.logPending;
     }
 
     /**
-     * @param b
+     * Set whether logging is pending on this PortalException.
+     * @param b true if logging is pending
      */
     public void setLogPending(boolean b) {
-        logPending = b;
+        this.logPending = b;
     }
 
     /**
+     * Get the ErrorID representing the type of this error.
      * @return the error ID
      */
     public ErrorID getErrorID() {
-        return errorID;
+        return this.errorID;
     }
 
     /**
-     * @param errorID
+     * Set the ErrorID categorizing this PortalException.
+     * @param errorID the ErrorID categorizing this PortalException.
      */
     public void setErrorID(ErrorID errorID) {
         this.errorID = errorID;
@@ -218,20 +248,28 @@ public class PortalException extends Exception {
     
 
     /**
+     * Get the parameter to the ErrorID template message.
      * @return the parameter
      */
     public String getParameter() {
-        return parameter;
+        return this.parameter;
     }
 
     /**
-     * @param string
+     * Set the parameter to the ErrorID template message.
+     * @param string - parameter to ErrorID template message.
      */
     public void setParameter(String string) {
-        parameter = string;
+        this.parameter = string;
     }
 
-
+    /**
+     * Instantiate a PortalException with the given message and refresh,
+     * reinstantiate state.
+     * @param msg - message describing the problem
+     * @param refresh - whether refresh is appropriate response
+     * @param reinstantiate - whether reinstantiate is appropriate response
+     */
 	public PortalException(String msg, boolean refresh, boolean reinstantiate) {
 		super(msg);
 		this.setReinstantiable(reinstantiate);
@@ -239,65 +277,28 @@ public class PortalException extends Exception {
         ProblemsTable.store(this);
 	}
 
-	public PortalException(String msg, Exception exc, boolean refresh, boolean reinstantiate) {
-		this(msg,refresh,reinstantiate);
-		this.setRecordedException(exc);
+    /**
+     * Instantiate a PortalException with the given message, underlying cause,
+     * refresh, and reinstantiate state.
+     * @param msg - message describing the problem
+     * @param cause - underlying cause of problem
+     * @param refresh - true if refresh is an appropriate response
+     * @param reinstantiate - true if reinstantiate is an appropriate response
+     */
+	public PortalException(String msg, Throwable cause, 
+            boolean refresh, boolean reinstantiate) {
+		super(msg, cause);
+        this.setReinstantiable(reinstantiate);
+        this.setRefreshable(refresh);
         ProblemsTable.store(this);
 	}
-
+		
 	/**
-		 * Override <code>Exception</code> getMessage() method to 
-		 * append the recorded exception message, if applicable
-		 *
-		 * @return the message
-		 */
-		public String getMessage(){
-		  StringBuffer sb = new StringBuffer(String.valueOf(super.getMessage()));
-		  
-		  Exception ex = getRecordedException();
-		  if (ex != null) {
-			  String lmsg = ex.getMessage();
-			  if (lmsg!=null) {
-				  sb.append("\n   [based on exception: ");
-				  sb.append(lmsg);
-				  sb.append("]");
-			  }
-		  }
-		  
-		  return sb.toString();
-		}
-    
-		/**
-		 * Overrides <code>Exception</code> printStackTrace() method 
-		 */
-		public void printStackTrace(){
-		  this.printStackTrace(System.out);
-		}
-    
-		/**
-		 * Overrides <code>Exception</code> printStackTrace(PrintWriter writer) 
-		 * method to print recorded exception stack trace if applicable
-		 */
-		public void printStackTrace(PrintWriter writer){
-		  if (getRecordedException()!=null){
-			getRecordedException().printStackTrace(writer);
-		  }
-		  else{
-			super.printStackTrace(writer);
-		  }
-		}
-    
-		/**
-		 * Overrides <code>Exception</code> printStackTrace(PrintStream stream) method 
-		 */
-		public void printStackTrace(PrintStream stream){
-		  this.printStackTrace(new PrintWriter(stream,true));
-		}
-	/**
+     * Get the Date at which this PortalException instance was instantiated.
 	 * @return Returns the timestamp.
 	 */
 	public Date getTimestamp() {
-		return timestamp;
+		return this.timestamp;
 	}
 
 }

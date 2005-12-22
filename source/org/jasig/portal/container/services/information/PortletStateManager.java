@@ -38,6 +38,7 @@ package org.jasig.portal.container.services.information;
 
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -81,6 +82,8 @@ public class PortletStateManager {
     public static String PREV_STATE = "pstate";
     public static final String STATE = "state";
 	
+    public static final String UP_PARAM_PREFIX = "uP_";
+    
 	public static final String UP_ROOT = "uP_root";
 	public static final String UP_TCATTR = "uP_tcattr";
 	public static final String UP_HELP_TARGET = "uP_help_target";
@@ -98,8 +101,8 @@ public class PortletStateManager {
     // The following maps store the window states 
     // and portlet modes, get cleared at the end of
     // the user session
-	private static Map windowStates = new HashMap();
-	private static Map portletModes = new HashMap();
+	private static Map windowStates = Collections.synchronizedMap(new HashMap());
+	private static Map portletModes = Collections.synchronizedMap(new HashMap());
 	
 	private PortletWindowImpl windowOfAction;
 	private ChannelRuntimeData runtimeData;
@@ -335,10 +338,7 @@ public class PortletStateManager {
 	  * @return a String hash key
 	  */ 
 	public static String getKey(PortletWindow window) {
-		    PortletWindowImpl windowImpl = (PortletWindowImpl) window; 
-		    HttpSession session = windowImpl.getHttpServletRequest().getSession();
-		    String sessionId = (session!=null)?session.getId():null;
-			return ((sessionId!=null)?sessionId+"_":"")+window.getId().toString()+"_"; 
+        return window.getId().toString();
 	}
 	
 	
@@ -347,18 +347,10 @@ public class PortletStateManager {
 	  * @param portletWindow a portlet window
 	  */  
 	public static void clearState(PortletWindow portletWindow) {
-	  Map map = windowStates;	
-	  for ( int i = 0; i < 2; i++ )	{
-		Iterator keyIterator = map.keySet().iterator();
-		while ( keyIterator.hasNext() ) {
-			String name = (String) keyIterator.next();
-			if (name.startsWith(getKey(portletWindow))) {
-				keyIterator.remove();
-			}
-		}
-		 map = portletModes;
-	  }	
-	     
+        String name = getKey(portletWindow);  
+        
+        windowStates.remove(name);
+        portletModes.remove(name);		     
 	}
 	
 	/**
@@ -366,22 +358,23 @@ public class PortletStateManager {
 	  * associated with the given HttpSession
 	  * @param request a <code>HttpServletRequest</code> instance
 	  */  
-	public static void clearState( HttpServletRequest request ) {
+	public static synchronized void clearState( HttpServletRequest request ) {
 	 HttpSession session = request.getSession();	
 	 if ( session == null ) 
 	 	return;
-	 Map map = windowStates;	
-	 for ( int i = 0; i < 2; i++ )	{
-	  Iterator keyIterator = map.keySet().iterator();
-	  while ( keyIterator.hasNext() ) {
-		  String name = (String) keyIterator.next();
-		  
-		  if (name.startsWith(session.getId())) {
-			  keyIterator.remove();
-		  }
-	  }
-	   map = portletModes;
-	 }	
+     Iterator keyIterator = windowStates.keySet().iterator();
+     Vector names = new Vector();
+     String name = null;
+     while ( keyIterator.hasNext() ) {
+             name = (String) keyIterator.next();           
+             if (name.startsWith(session.getId())) {
+                     names.add(name);
+             }
+     }
+     for(int i = 0; i < names.size(); i++){
+             windowStates.remove(names.get(i));
+             portletModes.remove(names.get(i));
+     }	
 	}
 
 	/**
@@ -398,70 +391,88 @@ public class PortletStateManager {
 	  * @return a PortletMode instance
 	  */  
 	public static PortletMode getMode(PortletWindow window) {
-		String mode =
-			(String) portletModes.get(getKey(window)+MODE);
-		if (mode != null)
-			return new PortletMode(mode);
-		else
-			return PortletMode.VIEW;
-	}
+        Map pMode = (Map) portletModes.get(getKey(window));
+        if (pMode != null) {
+            PortletMode mode = (PortletMode) pMode.get(MODE);
+            if (mode != null)
+                return mode;
+        }
+        return PortletMode.VIEW;
+    }
 
 	/**
-	  * Returns the previous portlet mode for the given PortletWindow
-	  * @param window a portlet window
-	  * @return a PortletMode instance
-	  */  
+     * Returns the previous portlet mode for the given PortletWindow
+     * 
+     * @param window a portlet window
+     * @return a PortletMode instance
+     */  
 	public static PortletMode getPrevMode(PortletWindow window) {
-		String mode =
-			(String) portletModes.get(getKey(window)+PREV_MODE);
-		if (mode != null)
-			return new PortletMode(mode);
-		else
-			return PortletMode.VIEW;
-	}
+        Map pMode = (Map) portletModes.get(getKey(window));
+        if (pMode != null) {
+            PortletMode mode = (PortletMode) pMode.get(PREV_MODE);
+            if (mode != null)
+                return mode;
+        }
+        return PortletMode.VIEW;
+    }
 	
 	
 	/**
-	  * Returns the current portlet state for the given PortletWindow
-	  * @param window a portlet window
-	  * @return a WindowState instance
-	  */  
+     * Returns the current portlet state for the given PortletWindow
+     * 
+     * @param window a portlet window
+     * @return a WindowState instance
+     */  
 	public static WindowState getState(PortletWindow window) {
-			String state =
-				(String) windowStates.get(getKey(window)+STATE);
-			if (state != null)
-				return new WindowState(state);
-			else
-				return WindowState.NORMAL;
-	}
+        Map pState = (Map) windowStates.get(getKey(window));
+        if (pState != null) {
+            WindowState state = (WindowState) (pState.get(STATE));
+            if (state != null)
+                return state;
+        }
+
+        return WindowState.NORMAL;
+    }
 
 	/**
-	  * Returns the previous portlet state for the given PortletWindow
-	  * @param window a portlet window
-	  * @return a WindowState instance
-	  */ 
+     * Returns the previous portlet state for the given PortletWindow
+     * 
+     * @param window a portlet window
+     * @return a WindowState instance
+     */ 
 	public static WindowState getPrevState(PortletWindow window) {
-		String state =
-			(String) windowStates.get(getKey(window)+PREV_STATE);
-		if (state != null)
-			return new WindowState(state);
-		else
-			return WindowState.NORMAL;
-	}
+        Map pState = (Map) windowStates.get(getKey(window));
+        if (pState != null) {
+            WindowState state = (WindowState) (pState.get(PREV_STATE));
+            if (state != null)
+                return state;
+        }
+
+        return WindowState.NORMAL;
+    }
 
 
 	/**
-	  * Sets the portlet mode for the given PortletWindow
-	  * @param window a portlet window
-	  * @param mode a portlet mode
-	  */ 
+     * Sets the portlet mode for the given PortletWindow
+     * 
+     * @param window a portlet window
+     * @param mode a portlet mode
+     */ 
 	public static void setMode(PortletWindow window, PortletMode mode) {
-		PortletWindowImpl windowImpl = (PortletWindowImpl) window;
-		Object prevMode = portletModes.get(getKey(window)+MODE);
-		if (prevMode != null)
-		  portletModes.put(getKey(window)+PREV_MODE, prevMode);
-		// set current mode
-		portletModes.put(getKey(window)+MODE, mode.toString() );
+        Map pMode = (Map) portletModes.get(getKey(window));
+        Object prevMode = null;
+        if (pMode != null) {
+            prevMode = pMode.get(MODE);
+        } else {
+            pMode = new HashMap();
+        }
+
+        if (prevMode != null)
+            pMode.put(PREV_MODE, prevMode);
+
+        // set current mode
+        pMode.put(MODE, mode);
+        portletModes.put(getKey(window), pMode);
 	}
 
 	/**
@@ -470,19 +481,28 @@ public class PortletStateManager {
 	  * @param state a window state
 	  */ 
 	public static void setState(PortletWindow window, WindowState state) {
-		Object prevState = windowStates.get(getKey(window)+STATE);
-		if (prevState != null)
-		  windowStates.put(getKey(window)+PREV_STATE, prevState);
-		// set current state
-	    windowStates.put(getKey(window)+STATE, state.toString() );
+        Map pState = (Map) windowStates.get(getKey(window));
+        Object prevState = null;
+        if (pState != null) {
+            prevState = pState.get(STATE);
+        } else {
+            pState = new HashMap();
+        }
+
+        if (prevState != null) {
+            pState.put(PREV_STATE, prevState);
+        }
+        // set current state
+        pState.put(STATE, state);
+        windowStates.put(getKey(window), pState);
 	}
 
 
 	/**
-	  * Generates the string representation of the portlet URL based on the 
-	  * next/current portlet modes/states and render parameters for the current
-	  * PortletWindow
-	  */ 
+     * Generates the string representation of the portlet URL based on the
+     * next/current portlet modes/states and render parameters for the current
+     * PortletWindow
+     */ 
 	public String toString() {
 		
 		if ( windowOfAction == null ) return "";
@@ -549,26 +569,36 @@ public class PortletStateManager {
 		return strURL;
 	} 
 	
-	public String getActionURL() {
-		String baseActionURL;
-		if ( nextState != null && nextState.equals(PortalContextProviderImpl.EXCLUSIVE) ) {
-		    baseActionURL = runtimeData.getBaseWorkerURL(UPFileSpec.FILE_DOWNLOAD_WORKER);
-		}        
-		else {
-		    baseActionURL = runtimeData.getBaseActionURL();
-		}
+    public String getActionURL() {
+        final StringBuffer actionUrl = new StringBuffer();
         
-		String encodedURLParams = encodeURLParameters(this.toString());
-        StringBuffer url = new StringBuffer((encodedURLParams.length()>0)?
-				 (UPFileSpec.PORTLET_PARAMS_DELIM_BEG+
-                  java.net.URLEncoder.encode(encodedURLParams)+
-				  UPFileSpec.PORTLET_PARAMS_DELIM_END+
-				  UPFileSpec.PORTAL_URL_SEPARATOR+baseActionURL):baseActionURL);
+        final String encodedUrlParams = encodeURLParameters(this.toString());
         
-        if (ChannelManager.isUseAnchors()) {
-            url.append("#").append(windowOfAction.getId());
+        if (encodedUrlParams.length() > 0) {
+            actionUrl.append(UPFileSpec.PORTLET_PARAMS_DELIM_BEG);
+            
+            final String urlEncodedUrlParams = URLEncoder.encode(encodedUrlParams);
+            actionUrl.append(urlEncodedUrlParams);
+            
+            actionUrl.append(UPFileSpec.PORTLET_PARAMS_DELIM_END);
         }
         
-		return url.toString();
-	}
+        if (PortalContextProviderImpl.EXCLUSIVE.equals(this.nextState)) {
+            final String urlBase = runtimeData.getBaseWorkerURL(UPFileSpec.FILE_DOWNLOAD_WORKER);
+            actionUrl.insert(0, UPFileSpec.PORTAL_URL_SEPARATOR);
+            actionUrl.insert(0, urlBase);
+        }
+        else {
+            final String urlBase = runtimeData.getBaseActionURL();
+            actionUrl.append(UPFileSpec.PORTAL_URL_SEPARATOR);
+            actionUrl.append(urlBase);
+        }
+        
+        if (ChannelManager.isUseAnchors()) {
+            actionUrl.append("#");
+            actionUrl.append(windowOfAction.getId());
+        }
+        
+        return actionUrl.toString();
+    }
 }

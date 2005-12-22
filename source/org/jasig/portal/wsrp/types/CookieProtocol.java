@@ -29,10 +29,10 @@ public class CookieProtocol implements java.io.Serializable {
     public java.lang.String getValue() { return _value_;}
     public static CookieProtocol fromValue(java.lang.String value)
           throws java.lang.IllegalStateException {
-        CookieProtocol enum = (CookieProtocol)
+        CookieProtocol enumeration = (CookieProtocol)
             _table_.get(value);
-        if (enum==null) throw new java.lang.IllegalStateException();
-        return enum;
+        if (enumeration==null) throw new java.lang.IllegalStateException();
+        return enumeration;
     }
     public static CookieProtocol fromString(java.lang.String value)
           throws java.lang.IllegalStateException {

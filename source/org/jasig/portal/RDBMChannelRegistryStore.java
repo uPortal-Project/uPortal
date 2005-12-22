@@ -361,7 +361,8 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
     try {
       channelDef = (ChannelDefinition)EntityCachingService.instance().get(ChannelDefinition.class, String.valueOf(channelPublishId));
     } catch (Exception e) {
-      log.error( e);
+      log.error("Error checking cache for definition of channel with publish id " 
+              + channelPublishId, e);
     }
     
     // If not found in cache, get it from the store and cache it, otherwise return it
@@ -508,7 +509,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
         try {
           EntityCachingService.instance().add(channelDef);
         } catch (Exception e) {
-          log.error( e);
+          log.error("Error caching channel definition " + channelDef, e);
         }
 
       } finally {
@@ -707,11 +708,11 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
         try {
           EntityCachingService.instance().update(channelDef);
         } catch (Exception e) {
-          log.error( e);
+          log.error("Error updating cache for channel definition " + channelDef, e);
         }
 
       } catch (SQLException sqle) {
-        log.error( sqle);
+        log.error("Exception saving channel definition " + channelDef, sqle);
         RDBMServices.rollback(con);
         throw sqle;
       } finally {
@@ -770,7 +771,8 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
         try {
           EntityCachingService.instance().remove(channelDef);
         } catch (Exception e) {
-          log.error( e);
+          log.error("Error removing channel definition " 
+                  + channelDef + " from cache.", e);
         }
 
       } finally {

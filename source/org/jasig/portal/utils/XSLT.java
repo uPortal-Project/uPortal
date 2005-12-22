@@ -429,7 +429,7 @@ public class XSLT {
           log.info( "Caching templates for: " + stylesheetURI);
         }
       } catch (IOException ioe) {
-        throw new ResourceMissingException(stylesheetURI, "Stylesheet", "Unable to read stylesheet from the specified location. Please check the stylesheet URL");
+        throw new ResourceMissingException(stylesheetURI, "Stylesheet", "Unable to read stylesheet from [" + stylesheetURI + "]. Please check the stylesheet URL");
       } catch (TransformerConfigurationException tce) {
         log.error( "XSLT::getTemplates() : unable to obtain TemplatesHandler due to TRAX misconfiguration!");
         throw new GeneralRenderingException("XSLT: current TRAX configuration does not allow for TemplateHandlers. Please reconfigure/reinstall your TRAX implementation.");

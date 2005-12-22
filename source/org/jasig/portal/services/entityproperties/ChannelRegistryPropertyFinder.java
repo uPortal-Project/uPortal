@@ -78,8 +78,7 @@ public class ChannelRegistryPropertyFinder
       try {
          chan = Class.forName("org.jasig.portal.ChannelDefinition");
       } catch (Exception e) {
-         log.error( "ChannelRegistryPropertyFinder - static:");
-         log.error( e);
+         log.error( "ChannelRegistryPropertyFinder - static:", e);
       }
       INITIALIZED = true;
    }
@@ -118,8 +117,7 @@ public class ChannelRegistryPropertyFinder
                   r = String.valueOf(cd.isSecure());
                 }                
             } catch (Exception e) {
-                log.error( "ChannelRegistryPropertyFinder.getProperty("+entityID.getKey()+"-"+entityID.getType().getName()+","+name+") :");
-                log.error( e);
+                log.error( "ChannelRegistryPropertyFinder.getProperty("+entityID.getKey()+"-"+entityID.getType().getName()+","+name+") :", e);
             }
         }
         return  r;

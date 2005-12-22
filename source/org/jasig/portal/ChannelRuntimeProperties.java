@@ -35,6 +35,9 @@
 
 package org.jasig.portal;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * Used to store Runtime channel properties.
  * Current version gathers the following information
@@ -47,6 +50,8 @@ package org.jasig.portal;
 public class ChannelRuntimeProperties
 {
   private boolean bool_willRender;
+  
+  protected final Log log = LogFactory.getLog(getClass());
 
     /**
      * Default constructor.

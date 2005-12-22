@@ -103,11 +103,9 @@ public class LogoutServlet extends HttpServlet {
                }
             }
          } catch (PortalException pe) {
-            log.error( "LogoutServlet::static " + pe);
-            log.error( pe);
+            log.error( "LogoutServlet::static ", pe);
          } catch (IOException ioe) {
-            log.error( "LogoutServlet::static " + ioe);
-            log.error( ioe);
+            log.error( "LogoutServlet::static", ioe);
          }
          REDIRECT_MAP = rdHash;
          DEFAULT_REDIRECT = upFile;
@@ -136,11 +134,21 @@ public class LogoutServlet extends HttpServlet {
                 StatsRecorder.recordLogout(person);
             }
         } catch (Exception e) {
-            log.error( e);
+            log.error("Exception recording logout " +
+                    "associated with request " + request, e);
         }
         
         // Clear out the existing session for the user
-        session.invalidate();
+        try {
+            session.invalidate();
+        } catch (IllegalStateException ise) {
+        	// IllegalStateException indicates session was already invalidated.
+        	// This is fine.  LogoutServlet is looking to guarantee the logged out session is invalid;
+        	// it need not insist that it be the one to perform the invalidating.
+        	if (log.isTraceEnabled()) {
+        		log.trace("LogoutServlet encountered IllegalStateException invalidating a presumably already-invalidated session.", ise);
+        	}
+        }
     }
 
     // Send the user back to the guest page
@@ -211,8 +219,7 @@ public class LogoutServlet extends HttpServlet {
          }
       } catch (Exception e) {
          // Log the exception
-         log.error( "LogoutServlet::getRedirectionUrl() Error: " + e);
-         log.error( e);
+         log.error( "LogoutServlet::getRedirectionUrl() Error:", e);
       }
       if (redirect == null) {
          redirect = defaultRedirect;

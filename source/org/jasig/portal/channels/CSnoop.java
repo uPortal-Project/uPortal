@@ -223,9 +223,9 @@ public class CSnoop implements IPrivilegedChannel {
     
     // <headers>
     Element headersE = doc.createElement("headers");
-    java.util.Enumeration enum = request.getHeaderNames();
-    while (enum.hasMoreElements()) {
-      String name = (String)enum.nextElement();
+    java.util.Enumeration enumeration = request.getHeaderNames();
+    while (enumeration.hasMoreElements()) {
+      String name = (String)enumeration.nextElement();
       String value = request.getHeader(name);
       Element headerE = doc.createElement("header");
       headerE.setAttribute("name", name);

@@ -1,0 +1,17 @@
+The uPortal distribution may include a number of other libraries, resources, and products.  Intellectual property.  
+This folder exists for two reasons.  The first reason is that we'd like to acknowledge the important contributions 
+these other projects and resources make to our project.  The success of this project has been and continues to be dependent upon
+the quality tools and resources produced by others in the Java community.
+
+Some of these projects and resources we include in our distribution are subject to license agreements.  
+The second reason for this folder is to provide a place in the distribution where we include the other files necessary for
+our distribution to comply with the terms of these agreements.
+
+We have attempted here to comply with applicable license agreements and give credit where credit is due. If we have overlooked
+acknowledgement of any contribution to this project please bring this to our attention.
+
+
+The JAXP libraries:
+
+We redistribute the JAXP 1.3 endorsed extensions for JDK 1.4 pursuant to our continued support for JDK 1.4.  These .jars are
+subject to licenses in this directory including License-ASF.txt, License-W3C.html, and jaxp-binary.txt.

@@ -159,14 +159,14 @@ public class CPermissionsManagerServantFactory {
                         + name);
                 servantClasses.put(name, cserv);
             } catch (Exception e) {
-                log.error( e);
+                log.error(e, e);
             }
         }
         if (servantClasses.get(name) != null) {
             try {
                 rs = (IServant)((Class)servantClasses.get(name)).newInstance();
             } catch (Exception e) {
-                log.error( e);
+                log.error(e, e);
             }
         }
         return  rs;

@@ -94,7 +94,7 @@ public class RDBMPermissibleRegistry {
                 }
             }
         } catch (Exception e) {
-            log.error( e);
+            log.error(e, e);
         } finally {
             RDBMServices.closeResultSet(rs); 
             RDBMServices.closeStatement(st); 
@@ -179,7 +179,7 @@ public class RDBMPermissibleRegistry {
                             + "')");
                     owners.put(classname, Class.forName(classname));
                 } catch (Exception e) {
-                    log.error( e);
+                    log.error(e, e);
                 } finally {
                     RDBMServices.closeStatement(st);
                     releaseConnection(conn);
@@ -205,7 +205,7 @@ public class RDBMPermissibleRegistry {
                     + permissibleClass + "'");
             owners.remove(permissibleClass);
         } catch (Exception e) {
-            log.debug(e);
+            log.debug(e, e);
         } finally {
             RDBMServices.closeStatement(st);
             releaseConnection(conn);

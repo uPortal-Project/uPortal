@@ -1,0 +1,102 @@
+uPortal Tools
+=============
+
+Database Loading and Unloading
+------------------------------
+
+The reference implementation of uPortal's data storage interfaces requires a relational database.  uPortal provides a tool, DbLoader, to load a relational database with the required uPortal tables and sample data.  DbLoader performs the following tasks:
+
+1) Reads in properties/tables.xml file to determine the database schema
+2) Deletes existing tables specified in tables.xml.
+3) Creates the tables specified in tables.xml.
+4) Reads in properties/data.xml file to determine sample data.
+5) Inserts data from data.xml into the newly created tables.
+6) Creates a database script containing all the SQL statements previously executed.
+
+DbLoader can be configured by modifying properties/dbloader.xml.  Because DbLoader relies on database metadata supplied by a JDBC driver, it may be necessary (for some combinations of drivers and databases) to supply a datatype mapping inside dbloader.xml.  If this is necessary, DbLoader will print an error message with instructions.
+
+Another tool, DbUnload, can read an existing database table and serialize it into an xml file similar to tables.xml.  This file can then be used in place of tables.xml to load another database.
+
+The tool DbTest prints out db metadata.
+
+To run DbLoader, type "ant db" from the uPortal base directory.
+To run DbUnload, type "ant dbunload" from the uPortal base directory.
+To run DbTest, type "ant dbtest" from the uPortal base directory.
+
+
+Adding users
+------------
+Data for new users is automatically created provided that the user can authenticate successfully to uPortal.  The reference data store includes a table, UP_PERSON_DIR, that simulates a more robust directory store.  A new user name and md5-encrypted password can be added to this table with the "md5passwd" tool.  To run md5passwd, type "ant md5passwd -Dusername=someUserName" from the uPortal base directory.  Then type the password at the prompt.  Note that the user's first name, last name, and email address are not handled by md5passwd.  These person attributes must be entered into the database with manual SQL statements.
+
+
+Deleting users
+--------------
+Data for portal users is stored in several database tables.  User information can be deleted from the portal database using the "DeleteUser" tool.  To run DeleteUser, type "ant deluser -Duser=someUserName" from the uPortal base directory.
+
+
+Register Channel Types
+----------------------
+The publishing process makes use of channel publishing documents (.cpd files) to determine what parameters and restrictions on parameters are necessary to collect for the use by a published channel.  A set of serveral channel types, each of which references a channel publishing document, is supplied with uPortal.  To add additional channel types, it is necessary to use the RegisterChannelTypes tool.  To run this tool, type "ant regchantype" followed by a set of parameters.  For example:
+
+  ant regchantype
+    -Dclass=org.jasig.portal.channels.CImage
+    -Dname="Image Channel"
+    -Ddescription="Displays image with optional title and subtitle"
+    -Duri=/org/jasig/portal/channels/CImage/CImage.cpd
+
+
+Register Stylesheets
+--------------------
+uPortal comes with a reference structure and theme stylesheet.  To change the final rendering of a uPortal layout, it may be necessary to author and install new stylesheets. The RegisterStylesheet tool can be used to install new stylesheets and their accompanying stylesheet description files.
+
+Usage: registerStylesheet -(s|t) [-(u|d)] [stylesheetURI] [stylesheetDescriptionURI] [stylesheetId]
+The stylesheetId must be specified for update and delete operations.
+The URIs must be specified for add and update operations.
+The CLASSPATH environment variable should be set up to include both "uPortal/build" and "uPortal/build/WEB-INF/classes" dirs.
+
+For deployment all stylesheets are moved under the "/stylesheet/" directory, so the URI for a stylesheet will always begin with "/stylesheet/", unless you're specifying a global URL (which is not recommended).
+
+Stylesheet description files (.sdf) are moved to the same location, so their URI should be specified in the same manner. For example to specify a URI for a tab-column.xsl (part of the distribution), use "/stylesheets/org/jasig/portal/layout/tab-column/tab-column.xsl".
+
+Flag specification:
+  -s : process structure stylesheet (either "-t" or "-s" are required on the command line
+  -t : process theme stylesheet (either "-t" or "-s" are required on the command line
+  -u : update stylesheet definition
+  -u : remove stylesheet
+
+
+Publish Channels
+----------------
+As an alternative to using the publishing GUI inside uPortal, one can define, in XML format, a channel definition that represents a published channel.  Then the channel publishing tool can publish the channel if it is new, or replace the existing channel if it already exists.  The identifier used to determine if a channel has been previously published is the channel "fname" or functional name.  To publish all the availabe channel definitions, run "ant pubchan -Dchannel=all".  To publish just one channel, supply the channel definition file name: "ant pubchan -Dchannel=myChannel.xml".
+
+
+Layout Fragments Loader
+-----------------------
+With the advent of Aggregated Layouts, a tool is necessary to publish a defined layout fragment into the uPortal database.  To run this tool, run "ant pubfragments -DfragmentFile=/properties/al/pushfragments.xml" from the uPortal base directory.  The fragment file is an XML file that defines the pushed and pulled fragments and their restrictions.
+
+
+Deploy Portlet Applications
+---------------------------
+uPortal uses the Apache Pluto Portlet Container to manage Portlets.  The Portlet Deployer tool deploys one or more Portlet applications, rewriting each application's web.xml file to suit the Pluto environment.  To deploy multiple Portlet applications, place the Portlet application WAR files in the lib/portlets directory and run "ant deployPortletApp -DportletApp=all".  To deploy just one Portlet application, supply the Portlet application WAR file location: "ant deployPortletApp -DporltetApp=C:/TEMP/myPortlet.war".
+
+
+XSLT Transformation
+-------------------
+Performs an XSLT transformation using uPortal XSLT libraries.
+
+ant RunXSLT -DXmlInput=input.xml -DoutputFile=output.xml -DXslfile=stylesheet.xsl
+
+where XmlInput is the file to be transformed,
+outputFile is where the result should saved and
+Xslfile is the URL of the xsl file to be used in the transform.
+
+
+uPortal 2.2.x and 2.3.x --> 2.4.x Upgrade Tool
+----------------------------------------------
+No upgrade tool is available to migrate a uPortal 2.2.x or 2.3.x installation to a uPortal 2.4 installation.  Since the database changes are minimal, it should be relatively easy to perform this upgrade.  See the README.txt file for information about database and properties files changes since 2.2.x or 2.3.x.
+
+
+uPortal 2.1.x --> 2.4.x Upgrade Tool
+------------------------------------
+See http://www.uportal.org/implementors/upgrade/upgrade21.html for instructions on using the included upgrade tools.
+

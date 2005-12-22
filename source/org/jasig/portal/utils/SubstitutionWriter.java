@@ -43,6 +43,9 @@ import java.io.Writer;
  * A filter presenting a <code>Writer</code> that performs
  * word substitution (search&replace) on the fly.
  *
+ * 7/25/05 - UP-1180 - dmindler@rutgers.edu
+ * Modified to make use of optimized SubstitutionIntegerFilter
+ * 
  * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
  * @version $Revision$
  */
@@ -58,7 +61,7 @@ public class SubstitutionWriter extends Writer {
      * @param bufferSize a size of the buffer
      */
     public SubstitutionWriter(Writer out, char[] target, char[] substitute, int bufferSize) {
-        filter=new SubstitutionIntegerFilter(new WriteableWriterWrapper(out),getIntArrayFromCharArray(target),getIntArrayFromCharArray(substitute),bufferSize);
+        filter=new SubstitutionIntegerFilter(out,target,substitute,bufferSize);
     }
 
     /**
@@ -69,11 +72,11 @@ public class SubstitutionWriter extends Writer {
      * @param substitute a <code>byte[]</code> value with which the target will be replaced
      */
     public SubstitutionWriter(Writer out, char[] target, char[] substitute) {
-        filter=new SubstitutionIntegerFilter(new WriteableWriterWrapper(out),getIntArrayFromCharArray(target),getIntArrayFromCharArray(substitute));
+        filter=new SubstitutionIntegerFilter(out,target,substitute);
     }
 
     public void write(int i) throws IOException {
-        filter.write(i);
+        filter.write((char) i);
     }
 
     public void flush() throws IOException {
@@ -88,7 +91,7 @@ public class SubstitutionWriter extends Writer {
         if(off+len>cbuf.length) throw new IOException("Invalid offsent or length specified");
 
         for(int i=0;i<len;i++) {
-            filter.write((int)cbuf[i]);
+            filter.write(cbuf[i]);
         }
     }
     

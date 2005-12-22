@@ -166,12 +166,12 @@ public class CNumberGuess implements IChannel
     else if (iGuess > iAnswer)
         sSuggest = l10n.getString("LOWER");
 
-    String GUESS_SUGGEST = MessageFormat.format(l10n.getString("GUESS_SUGGEST"), new  String[] {sSuggest});
-    String THE_ANSWER_WAS_X = MessageFormat.format(l10n.getString("THE_ANSWER_WAS_X"), new  String[] {String.valueOf(iAnswer)});
-    String YOU_GOT_IT_AFTER_X_TRIES = MessageFormat.format(l10n.getString("YOU_GOT_IT_AFTER_X_TRIES"), new String[] {String.valueOf(iGuesses)});
-    String YOU_HAVE_MADE_X_GUESSES = MessageFormat.format(l10n.getString("YOU_HAVE_MADE_X_GUESSES"), new String[] {String.valueOf(iGuesses)});
-    String YOUR_GUESS_OF_GUESS_WAS_INCORRECT = MessageFormat.format(l10n.getString("YOUR_GUESS_OF_GUESS_WAS_INCORRECT"), new String[] {String.valueOf(iGuess)});
-    String I_AM_THINKING_OF_A_NUMBER_BETWEEN_X_AND_Y = MessageFormat.format(l10n.getString("I_AM_THINKING_OF_A_NUMBER_BETWEEN_X_AND_Y"), new String[] {String.valueOf(iMinNum), String.valueOf(iMaxNum)});
+    String GUESS_SUGGEST = MessageFormat.format(l10n.getString("GUESS_SUGGEST"), new  Object[] {sSuggest});
+    String THE_ANSWER_WAS_X = MessageFormat.format(l10n.getString("THE_ANSWER_WAS_X"), new  Object[] {String.valueOf(iAnswer)});
+    String YOU_GOT_IT_AFTER_X_TRIES = MessageFormat.format(l10n.getString("YOU_GOT_IT_AFTER_X_TRIES"), new Object[] {String.valueOf(iGuesses)});
+    String YOU_HAVE_MADE_X_GUESSES = MessageFormat.format(l10n.getString("YOU_HAVE_MADE_X_GUESSES"), new Object[] {String.valueOf(iGuesses)});
+    String YOUR_GUESS_OF_GUESS_WAS_INCORRECT = MessageFormat.format(l10n.getString("YOUR_GUESS_OF_GUESS_WAS_INCORRECT"), new Object[] {String.valueOf(iGuess)});
+    String I_AM_THINKING_OF_A_NUMBER_BETWEEN_X_AND_Y = MessageFormat.format(l10n.getString("I_AM_THINKING_OF_A_NUMBER_BETWEEN_X_AND_Y"), new Object[] {String.valueOf(iMinNum), String.valueOf(iMaxNum)});
 
     StringWriter w = new StringWriter ();
     w.write ("<?xml version='1.0'?>\n");

@@ -37,6 +37,8 @@ package org.jasig.portal.utils;
 
 import java.io.IOException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.DTDHandler;
@@ -71,6 +73,12 @@ public class SAX2FilterImpl implements XMLFilter, EntityResolver, DTDHandler, Co
     protected ContentHandler contentHandler = null;
     protected ErrorHandler errorHandler = null;
     protected LexicalHandler lexicalHandler = null;
+    
+    /**
+     * Log instance in support of logging in subclasses.
+     * @since uPortal 2.4.4, 2.5
+     */
+    protected final Log log = LogFactory.getLog(getClass());
 
 
     // Constructors

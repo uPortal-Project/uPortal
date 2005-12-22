@@ -47,6 +47,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonManagerFactory;
@@ -97,9 +98,9 @@ public class LoginServlet extends HttpServlet {
             }
          }
       } catch(PortalException pe) {
-          log.error("LoginServlet::static "+pe);
+          log.error("LoginServlet::static ", pe);
       } catch(IOException ioe) {
-          log.error("LoginServlet::static "+ioe);
+          log.error("LoginServlet::static ", ioe);
       }
       redirectString=upFile;
       credentialTokens=cHash;
@@ -139,9 +140,23 @@ public class LoginServlet extends HttpServlet {
   	 */
   	String targetFname = request.getParameter("uP_fname");
   	String targetArgs = request.getParameter("uP_args");
-  	// Clear out the existing session for the user
-    request.getSession().invalidate();
-  	//  Retrieve the user's session
+  	
+    // Clear out the existing session for the user if they have one
+    final HttpSession s = request.getSession(false);
+    if (s != null) {
+    	try {
+            s.invalidate();
+    	} catch (IllegalStateException ise) {
+    		// ISE indicates session was already invalidated.
+    		// This is fine.  This servlet trying to guarantee that the session has been invalidated;
+    		// it doesn't have to insist that it is the one that invalidated it.
+    		if (log.isTraceEnabled()) {
+    			log.trace("LoginServlet attempted to invalidate an already invalid session.", ise);
+    		}
+    	}
+    }
+    
+  	//  Create the user's session
     request.getSession(true);
   	IPerson person = null;
     try {
@@ -156,7 +171,7 @@ public class LoginServlet extends HttpServlet {
       m_authenticationService.authenticate(principals, credentials, person);
     } catch (Exception e) {
       // Log the exception
-      log.error( e);
+      log.error("Exception authenticating the request", e);
       // Reset everything
       request.getSession(false).invalidate();
       // Add the authentication failure

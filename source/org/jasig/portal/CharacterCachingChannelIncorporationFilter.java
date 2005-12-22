@@ -1,37 +1,7 @@
-/**
- * Copyright © 2001 The JA-SIG Collaborative.  All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
- *
- * 3. Redistributions of any form whatsoever must retain the following
- *    acknowledgment:
- *    "This product includes software developed by the JA-SIG Collaborative
- *    (http://www.jasig.org/)."
- *
- * THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
- * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE JA-SIG COLLABORATIVE OR
- * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- */
+/* Copyright 2001, 2005 The JA-SIG Collaborative.  All rights reserved.
+*  See license distributed with this file and
+*  available online at http://www.uportal.org/license.html
+*/
 
 package org.jasig.portal;
 
@@ -40,31 +10,57 @@ import java.io.UnsupportedEncodingException;
 import java.util.Vector;
 
 import org.jasig.portal.serialize.CachingSerializer;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.SAX2FilterImpl;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
+
 
 /**
  * A filter that incorporates channel content into the main SAX stream.
  * Unlike a regular {@link ChannelIncorporationFilter}, this class can
  * feed cache character buffers to the {@link CachingSerializer}.
+ * 
+ * <p>Replaces
+ * &lt;channel ID="channelSubcribeId"/&gt;
+ * elements with channel output from the IChannelRenderer for that 
+ * channelSubscribeId.</p>
+ * 
+ * <p><Replaces 
+ * &lt;channel-title 
+ *     channelSubcribeId="channelSubcribeId" 
+ *     defaultValue="defaultTitle" /&gt;
+ *
+ * elements with dynamic channel title from the IChannelRenderer for that 
+ * channelSubcribeId, or the provided defaultValue in the case where there is 
+ * no dynamic channel title.</p>
  *
  * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
- * @version $Revision$
+ * @version $Revision$ $Date$
  */
 public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
     
-    private static final Log log = LogFactory.getLog(CharacterCachingChannelIncorporationFilter.class);
+    /** 
+     * Track what, if any, incorporation element we are currently processing.
+     * "channel" if we are "in" the <channel> element.
+     * "channel-title" if we are "in" the <channel-title> element.
+     * Null if we are not in one of these elements.  Other elements are not
+     * processed by this filter (are not "incorporation elements").
+     */
+    private String insideElement = null;
     
-    // keep track if we are "in" the <channel> element
-    private boolean insideChannelElement = false;
     ChannelManager cm;
 
-    // information about the current channel
-    private String channelSubscribeId;
+    /**
+     * ChannelSubscribeId of the currently-being-incorporated channel, if any.
+     * Null if not currently incorporating a channel (not in an incorporation
+     * element.)
+     */ 
+    private String channelSubscribeId = null;
+    
+    private String channelTitle = null;
+    
     private boolean ccaching;
     private CachingSerializer ser;
 
@@ -73,7 +69,9 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
 
     // constructors
 
-    // downward chaining
+    /**
+     * Downward chaining constructor.
+     */
     public CharacterCachingChannelIncorporationFilter (ContentHandler handler, ChannelManager chanm, boolean ccaching)  {
         super(handler);
 
@@ -128,10 +126,12 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
             // start caching
             try {
                 if(!ser.startCaching()) {
-                    log.error("CharacterCachingChannelIncorporationFilter::startDocument() : unable to start caching!");
+                    log.error("CharacterCachingChannelIncorporationFilter::startDocument() " +
+                    		": unable to start caching!");
                 }
             } catch (IOException ioe) {
-                log.error("CharacterCachingChannelIncorporationFilter::startDocument() : unable to start caching!");
+                log.error("CharacterCachingChannelIncorporationFilter::startDocument() " +
+                		": unable to start caching!",ioe);
             }
         }
         super.startDocument();
@@ -146,71 +146,230 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
                     try {
                         systemCCacheBlocks.add(ser.getCache());
                     } catch (UnsupportedEncodingException e) {
-                        log.error("CharacterCachingChannelIncorporationFilter::endDocument() : unable to obtain character cache, invalid encoding specified ! "+e);
+                        log.error("CharacterCachingChannelIncorporationFilter::endDocument() " +
+                        		": unable to obtain character cache, invalid encoding specified ! ",e);
                     } catch (IOException ioe) {
-                        log.error("CharacterCachingChannelIncorporationFilter::endDocument() : IO exception occurred while retreiving character cache ! "+ioe);
+                        log.error("CharacterCachingChannelIncorporationFilter::endDocument() " +
+                        		": IO exception occurred while retreiving character cache ! ",ioe);
                     }
                 } else {
-                    log.error("CharacterCachingChannelIncorporationFilter::endDocument() : unable to stop caching!");
+                    log.error("CharacterCachingChannelIncorporationFilter::endDocument() " +
+                    		": unable to stop caching!");
                 }
             } catch (IOException ioe) {
-                log.error("CharacterCachingChannelIncorporationFilter::endDocument() : unable to stop caching! Exception: "+ioe.getMessage());
+                log.error("CharacterCachingChannelIncorporationFilter::endDocument() " +
+                		": unable to stop caching!", ioe);
             }
 
         }
     }
 
-    public void startElement (String uri, String localName, String qName, Attributes atts) throws SAXException  {
-        if (!insideChannelElement) {
-            // recognizing "channel"
-            if (qName.equals ("channel")) {
-                insideChannelElement = true;
-                channelSubscribeId = atts.getValue("ID");
-                if(ccaching) {
-                    // save the old cache state
-                    try {
-                        if(ser.stopCaching()) {
-                            //                            log.debug("CharacterCachingChannelIncorporationFilter::endElement() : obtained the following system character entry: \n"+ser.getCache());
-                            systemCCacheBlocks.add(ser.getCache());
-                        } else {
-                            log.error("CharacterCachingChannelIncorporationFilter::startElement() : unable to reset cache state ! Serializer was not caching when it should've been !");
-                        }
-                    } catch (UnsupportedEncodingException e) {
-                        log.error("CharacterCachingChannelIncorporationFilter::startElement() : unable to obtain character cache, invalid encoding specified ! "+e);
-                    } catch (IOException ioe) {
-                        log.error("CharacterCachingChannelIncorporationFilter::startElement() : IO exception occurred while retreiving character cache ! "+ioe);
-                    }
-                }
-            } else {
-                super.startElement(uri,localName,qName,atts);
-            }
-        }
-    }
+    public void startElement(String uri, String localName, String qName,
+			Attributes atts) throws SAXException {
+
+		if (log.isTraceEnabled()) {
+			log
+					.trace("CharacterCachingChannelIncorporationFilter is filtering element with "
+							+ "uri="
+							+ uri
+							+ " localName="
+							+ localName
+							+ " qName="
+							+ qName
+							+ "atts="
+							+ atts
+							+ " .  Current channelSubscribeId="
+							+ this.channelSubscribeId
+							+ " and in element "
+							+ this.insideElement);
+		}
+
+		if (!isInIncorporationElement()) {
+			// recognizing "channel"
+			if (qName.equals("channel")) {
+				this.insideElement = "channel";
+				this.channelSubscribeId = atts.getValue("ID");
+				if (ccaching) {
+					// save the old cache state
+					try {
+						if (ser.stopCaching()) {
+							if (log.isDebugEnabled()) {
+								log
+										.debug("CharacterCachingChannelIncorporationFilter::endElement() "
+												+ ": obtained the following system character entry: \n"
+												+ ser.getCache());
+							}
+							systemCCacheBlocks.add(ser.getCache());
+						} else {
+							log
+									.error("CharacterCachingChannelIncorporationFilter::startElement() "
+											+ ": unable to reset cache state ! Serializer was not caching when it should've been !");
+						}
+					} catch (UnsupportedEncodingException e) {
+						log
+								.error(
+										"CharacterCachingChannelIncorporationFilter::startElement() "
+												+ ": unable to obtain character cache, invalid encoding specified ! ",
+										e);
+					} catch (IOException ioe) {
+						log
+								.error(
+										"CharacterCachingChannelIncorporationFilter::startElement() "
+												+ ": IO exception occurred while retreiving character cache ! ",
+										ioe);
+					}
+				}
+			} else if (qName.equals("channel-title")) {
+				this.insideElement = "channel-title";
+				this.channelSubscribeId = atts.getValue("channelSubscribeId");
+				this.channelTitle = atts.getValue("defaultValue");
+			} else {
+				// not in an incorporation element and not starting one this class
+				// handles specially, so pass the element through this filter.
+				super.startElement(uri, localName, qName, atts);
+
+			}
+		} else {
+			// inside an incorporation element, do nothing.
+			if (log.isTraceEnabled()) {
+				log.trace("Ignoring element " + qName);
+			}
+		}
+	}
 
     public void endElement (String uri, String localName, String qName) throws SAXException  {
-        if (insideChannelElement) {
-            if (qName.equals ("channel")) {
-                insideChannelElement = false;
-                if (this.getContentHandler() != null) {
-                    if(ccaching) {
-                        channelIdBlocks.add(channelSubscribeId);
-                    }
-                    cm.outputChannel(channelSubscribeId,this.getContentHandler());
-                    if(ccaching) {
-                        // start caching again
-                        try {
-                            if(!ser.startCaching()) {
-                                log.error("CharacterCachingChannelIncorporationFilter::endElement() : unable to restart cache after a channel end!");
-                            }
-                        } catch (IOException ioe) {
-                            log.error("CharacterCachingChannelIncorporationFilter::endElement() : unable to start caching!");
-                        }
-                    }
-                }
+    	
+    	if (log.isTraceEnabled()) {
+    		log.trace("CharacterCachingChannelIncorporationFilter is filtering end element with "
+    				+ "url=" + uri + " localName=" + localName 
+					+ " qName=" + qName + " .  Current channelSubscribeId=" 
+					+ this.channelSubscribeId + " and in element " + this.insideElement);
+    	}
+    	
+        // if inside an element this filter handles (incorporates content in place of)
+    	// then this endElement call may be the time to end one of these special elements.
+    	if (isInIncorporationElement()) {
+            if (qName.equals ("channel") && this.insideElement.equals("channel")) {
+
+            	try {
+            	    ContentHandler contentHandler = getContentHandler();
+					if (contentHandler != null) {
+						if (ccaching) {
+							channelIdBlocks.add(channelSubscribeId);
+						}
+						cm.outputChannel(channelSubscribeId, contentHandler);
+						if (ccaching) {
+							// start caching again
+							try {
+								if (!ser.startCaching()) {
+									log
+											.error("CharacterCachingChannelIncorporationFilter::endElement() : unable to restart cache after a channel end!");
+								}
+							} catch (IOException ioe) {
+								log
+										.error(
+												"CharacterCachingChannelIncorporationFilter::endElement() : unable to start caching!",
+												ioe);
+							}
+						}
+					} else {
+						// contentHandler was null. This is a serious problem,
+						// since
+						// filtering is pointless if it's not writing back to a
+						// contentHandler
+						log
+								.error("null ContentHandler prevents outputting channel with subscribe id = "
+										+ channelSubscribeId);
+					}
+            	} finally {
+                    endIncorporationElement();
+            	}
+            } else if (qName.equals("channel-title") && this.insideElement.equals("channel-title")) {
+            	
+    			if (log.isDebugEnabled()) {
+            		log.debug("Incorporating title for channel with subscribeId=[" + this.channelSubscribeId + "]");
+            	}
+            	
+            	try {
+            		
+            		ContentHandler contentHandler = getContentHandler();
+            		if (contentHandler != null) {
+						String dynamicChannelTitle = cm
+								.getChannelTitle(channelSubscribeId);
+
+						// if there is a dynamic channel title, use that.
+						// otherwise, stick with the title that was read from
+						// the channel-title element we're replacing.
+						if (dynamicChannelTitle != null) {
+							this.channelTitle = dynamicChannelTitle;
+						}
+						
+						AttributesImpl noAttributes = new AttributesImpl();
+						
+						//contentHandler.startElement("", "", "span", noAttributes);
+						
+						char[] channelTitleArray = this.channelTitle.toCharArray();
+						
+						contentHandler.characters(channelTitleArray, 0, channelTitleArray.length);
+						//contentHandler.endElement("", "", "span");
+
+					} else {
+            			// contentHandler was null. This is a serious problem,
+            			// since filtering is pointless if it's not writing back
+            			// to a contentHandler.
+            			log.error("null ContentHandler prevents outputting channel title with subcribe id = " + this.channelSubscribeId);
+            		}
+            		
+            	} finally {
+                    endIncorporationElement();
+            	}
+
             }
             
         } else {
+        	// pass non-incorporation elements through untouched.
             super.endElement (uri,localName,qName);
         }
     }
+    
+    public String toString() {
+    	StringBuffer sb = new StringBuffer();
+    	sb.append(getClass());
+    	sb.append(" caching: ").append(this.ccaching);
+    	sb.append(" currently processing: subscribeId=").append(this.channelSubscribeId);
+    	sb.append(" in incorporation element: ").append(this.insideElement);
+    	
+    	return sb.toString();
+    }
+    
+    /**
+     * Returns true if this filter is currently processing an incorporation element.
+     * The purpose of this method is to allow ignoring of elements starting within elements 
+     * this filter is already incorporating, and allow ignoring of end elements except when
+     * those end elements end incorporation elements.
+     * 
+     * @return true if in an incorporation element, false otherwise
+     */
+    private boolean isInIncorporationElement() {
+    	// in an incorporation element when the stored name of that element is not null.
+    	return this.insideElement != null;
+    }
+    
+    /**
+     * Reset filter state to not being "inside" an incorporation element (and
+     * therefore instead being available to process the next incorporation 
+     * element encountered).  
+     *
+     * @throws IllegalStateException if not currently inside an element.
+     */
+    private void endIncorporationElement() {
+    	if (this.channelSubscribeId == null || this.insideElement == null) {
+    		throw new IllegalStateException("Cannot end element when not in element:" + this);
+    	}
+    	this.channelSubscribeId = null;
+    	this.insideElement = null;
+    }
+    
+    
+    
 }

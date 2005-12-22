@@ -80,8 +80,7 @@ public class RDBMPropertyStore
             propsType = Class.forName("org.jasig.portal.services.entityproperties.EntityProperties");
          }
       } catch (Exception e) {
-         log.error( "RDBMPropertyStore.Constructor Unable to create propstype");
-         log.error( e);
+         log.error( "RDBMPropertyStore.Constructor Unable to create propstype", e);
       }   
    }
 
@@ -122,8 +121,7 @@ public class RDBMPropertyStore
          clearCache(entityID);
       } catch (Exception e) {
          log.error( "RDBMPropertyStore.storeProperty "
-                                          + ps);
-         log.error( e);
+                                          + ps, e);
       } finally {
          this.releaseConnection(conn);
       }
@@ -145,8 +143,7 @@ public class RDBMPropertyStore
          clearCache(entityID);
       } catch (Exception e) {
          log.error( "RDBMPropertyStore.unStoreProperty "
-                                          + ps);
-         log.error( e);
+                                          + ps, e);
       } finally {
          this.releaseConnection(conn);
       }
@@ -180,8 +177,7 @@ public class RDBMPropertyStore
             rs.close();
             ps.close();
          } catch (Exception e) {
-            log.error( "RDBMPropertyStore.getPropertyNames: " + ps);
-            log.error( e);
+            log.error( "RDBMPropertyStore.getPropertyNames: " + ps, e);
          } finally {
             this.releaseConnection(conn);
          }

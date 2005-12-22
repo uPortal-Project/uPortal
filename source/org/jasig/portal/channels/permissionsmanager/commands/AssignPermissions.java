@@ -141,7 +141,7 @@ public class AssignPermissions
                 p.setTarget(ph.target);
                 rlist.add(p);
             } catch (Exception e) {
-                log.error(e);
+                log.error(e, e);
             }
         }
         return  (IPermission[])rlist.toArray(new IPermission[0]);
