@@ -2,7 +2,7 @@ $Id$
 
 uPortal Release Notes
 ---------------------
-Release Notes - uPortal - Version 2.4.4-RC1
+Release Notes - uPortal - Version 2.4.4
 
 ** Bug
     * [UP-812] - resource-ref not properly parsed in portlet Deployer
@@ -20,6 +20,9 @@ Release Notes - uPortal - Version 2.4.4-RC1
 ** New Feature
     * [UP-1024] - add CAbstractXslt
     * [UP-1246] - Dynamic channel titles
+
+** Task
+    * [UP-1376] - document how to WSRP consume under JDK 1.5
 
 ** Improvement
     * [UP-1135] - JavaDoc UserInstance.systemCache
