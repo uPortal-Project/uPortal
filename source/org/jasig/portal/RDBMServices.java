@@ -73,8 +73,6 @@ public class RDBMServices {
     /** Specifies how long to wait before trying to look a JNDI data source that previously failed */
     private static final int JNDI_RETRY_TIME = PropertiesManager.getPropertyAsInt("org.jasig.portal.RDBMServices.jndiRetryDelay", 30000); // JNDI retry delay;
 
-    public static int RETRY_COUNT = 5;
-
     private static Map namedDataSources =  Collections.synchronizedMap(new HashMap());
     private static Map namedDbServerFailures = Collections.synchronizedMap(new HashMap());
     
