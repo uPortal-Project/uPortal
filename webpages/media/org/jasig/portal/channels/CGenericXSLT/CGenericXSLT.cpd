@@ -108,6 +108,16 @@ Version $Revision$
 
       </parameter>
 
+      <parameter modify="publish">
+      	<name>cacheTimeout</name>
+        <label>Cache timeout in seconds (cacheTimeout)</label>
+        <type base="string" input="text" display="text">
+          <length>7</length>
+          <maxlength>10</maxlength>
+        </type>
+        <defaultValue>300</defaultValue>
+      </parameter>
+
       <parameter modify="publish-only">
         <name>upc_localConnContext</name>
         <label>LocalConnectionContext implementation (upc_localConnContext)</label>
