@@ -131,6 +131,24 @@ Version $Revision$
           <defaultValue>900</defaultValue>
 
       </parameter>
+      
+      <parameter modify="publish-only">
+        <name>upc_localConnContext</name>
+        <label>LocalConnectionContext implementation (upc_localConnContext)</label>
+        <type base="string" input="text" display="text">
+
+          <!-- length and maxlength for text field -->
+          <length>80</length>
+          <maxlength>200</maxlength>
+
+        </type>
+
+        <example>org.jasig.portal.security.provider.CasConnectionContext</example>
+
+        <!-- default value for text field -->
+        <defaultValue></defaultValue>
+
+      </parameter>
 
     </step>
     
