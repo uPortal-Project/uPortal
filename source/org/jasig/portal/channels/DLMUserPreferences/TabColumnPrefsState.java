@@ -13,7 +13,9 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Map.Entry;
 
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
@@ -23,11 +25,15 @@ import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 
+import org.jasig.portal.ChannelDefinition;
+import org.jasig.portal.ChannelParameter;
 import org.jasig.portal.ChannelRegistryManager;
+import org.jasig.portal.ChannelRegistryStoreFactory;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ChannelSAXStreamFilter;
 import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.GeneralRenderingException;
+import org.jasig.portal.IChannelRegistryStore;
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalException;
@@ -46,6 +52,7 @@ import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.layout.node.UserLayoutChannelDescription;
 import org.jasig.portal.layout.node.UserLayoutFolderDescription;
 import org.jasig.portal.layout.UserLayoutManagerFactory;
+import org.jasig.portal.layout.dlm.ChannelDescription;
 import org.jasig.portal.layout.dlm.Constants;
 import org.jasig.portal.layout.dlm.UserPrefsHandler;
 import org.jasig.portal.security.IPerson;
@@ -60,7 +67,6 @@ import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.ContentHandler;
 
 
@@ -476,14 +482,14 @@ public class TabColumnPrefsState extends BaseState
 
   /**
    * Adds a channel to the layout.
-   * @param newChannel the channel to add
+   * @param channel the channel to add
    * @param position either <code>before</code> or <code>after</code>
    * @param destinationElementId the ID of the channel to insert the new channel before or append after
    * @throws PortalException
    */
-  private final void addChannel(Element newChannel, String position, String destinationElementId) throws PortalException
+  private final void addChannel(IUserLayoutChannelDescription channel, 
+          String position, String destinationElementId) throws PortalException
     {
-      IUserLayoutChannelDescription channel=new UserLayoutChannelDescription(newChannel);
       if(isTab(destinationElementId)) {
           // create a new column and move channel there
           IUserLayoutNodeDescription newColumn=ulm.addNode(createFolder("Column"),destinationElementId,null);
@@ -503,6 +509,19 @@ public class TabColumnPrefsState extends BaseState
       // Make sure ChannelManager knows about the new channel
       pcs.getChannelManager().instantiateChannel(channel.getId());
       saveLayout(true);
+  }
+
+  /**
+   * Adds a channel to the layout.
+   * @param newChannel the channel to add
+   * @param position either <code>before</code> or <code>after</code>
+   * @param destinationElementId the ID of the channel to insert the new channel before or append after
+   * @throws PortalException
+   */
+  private final void addChannel(Element newChannel, String position, String destinationElementId) throws PortalException
+    {
+      IUserLayoutChannelDescription channel=new UserLayoutChannelDescription(newChannel);
+      addChannel(channel, position, destinationElementId);
   }
 
   /**
@@ -605,27 +624,105 @@ public class TabColumnPrefsState extends BaseState
    * @return a list of <parameter> elements whose override attribute is set to true
    * @throws org.jasig.portal.PortalException
    */
-  private final List getOverridableChannelParams(String channelPublishId) throws PortalException {
-    Document channelRegistry = ChannelRegistryManager.getChannelRegistry(staticData.getPerson());
-    Element channel = (Element)channelRegistry.getElementById(channelPublishId.startsWith("chan") ? channelPublishId : "chan" + channelPublishId);
-    List overridableParams = null;
+  private final List getOverridableChannelParams(String channelPublishId)
+            throws PortalException
+    {
+        List overridableParams = null;
+        ChannelParameter parms[] = getChannelDefParams(channelPublishId);
 
-    if (channel != null) {
-      overridableParams = new ArrayList();
-
-      NodeList params = channel.getElementsByTagName("parameter");
-      for (int i = 0; i < params.getLength(); i++) {
-        Element param = (Element)params.item(i);
-        String override = param.getAttribute("override");
-        if (override != null && override.equals("yes"))
-          overridableParams.add(param);
-      }
-    } else {
-    	
-      throw new PortalException("channel.missing.from.registry "+ channelPublishId);
+        if (parms != null && parms.length > 0)
+        {
+            overridableParams = new ArrayList();
+            for (int p = 0; p < parms.length; p++)
+            {
+                if (parms[p].getOverride())
+                    overridableParams.add(parms[p]);
+            }
+        }
+        return overridableParams;
     }
-    return overridableParams;
-  }
+  
+  /**
+   * For a channel already located in the user's layout this method finds any
+   * parameters that are overridable by the user.
+   * 
+   * @param channelDesc
+   *            the IUserLayoutChannelDescription representing the channel 
+   *            in the user's layout.
+   * @return a list of Channel<parameter>elements whose override attribute is set to
+   *         true
+   * @throws org.jasig.portal.PortalException
+   */
+    private final List getOverridableChannelParams(
+            IUserLayoutChannelDescription channelDesc) throws PortalException
+    {
+        // get params in channel description in the layout which can be a super
+        // set of those defined in the publish-time definition due to the
+        // addition of fragment or user added adhoc values. Then pass through
+        // the definition adding overrideable parms to the list and removing
+        // the corresponding value from the description map. Any remaining in
+        // the description map represent adhoc ones and should be added to the
+        // list.
+
+        List overridableParams = null;
+        Map descParms = new HashMap(channelDesc.getParameterMap());
+        ChannelParameter parms[] = getChannelDefParams(channelDesc
+                .getChannelPublishId());
+
+        if (parms != null && parms.length > 0)
+        {
+            overridableParams = new ArrayList();
+            for (int p = 0; p < parms.length; p++)
+            {
+                if (parms[p].getOverride())
+                    overridableParams.add(parms[p]);
+                descParms.remove(parms[p].getName());
+            }
+        }
+        if (descParms.size() > 0)
+        {
+            if (overridableParams == null)
+                overridableParams = new ArrayList();
+
+            // description map is a map of name value pairs. need to convert to
+            // ChannelParameter instances.
+            for(Iterator i = descParms.entrySet().iterator(); i.hasNext();)
+            {
+                Map.Entry e = (Entry) i.next();
+                String name = (String) e.getKey();
+                String value = (String) e.getValue();
+                ChannelParameter parm = new ChannelParameter(name, value, true);
+                overridableParams.add(parm);
+            }
+        }
+        return overridableParams;
+    }
+
+    /**
+     * Return the list of publish-time-specified channel parameters.
+     * 
+     * @param id
+     * @return
+     * @throws PortalException
+     */
+    private ChannelParameter[] getChannelDefParams(String id) 
+    throws PortalException
+    {
+        IChannelRegistryStore crs = ChannelRegistryStoreFactory
+                .getChannelRegistryStoreImpl();
+        id = id.startsWith("chan") ? id.substring(4) : id;
+        int pubId = Integer.parseInt(id);
+        ChannelDefinition def = null;
+        try
+        {
+            def = crs.getChannelDefinition(pubId);
+        } catch (Exception e)
+        {
+            throw new PortalException("unable.to.load.channel.definition "
+                    + id, e);
+        }
+        return def.getParameters();
+    }
 
   private void saveLayout (boolean channelsAdded) throws PortalException
   {
@@ -947,12 +1044,8 @@ public class TabColumnPrefsState extends BaseState
           if (subAction != null && subAction.equals("modifyChannelParams"))
           {
             IUserLayoutChannelDescription layoutChannel=(IUserLayoutChannelDescription)ulm.getNode(elementID);
-            String channelPublishId=layoutChannel.getChannelPublishId();
-
-            Document channelRegistry = ChannelRegistryManager.getChannelRegistry(staticData.getPerson());
-            Element channel = (Element)channelRegistry.getElementById("chan" + channelPublishId);
-            List overridableChanParams = getOverridableChannelParams(channelPublishId);
-            context.internalState = new ParametersState(context, this, overridableChanParams, channel);
+            List overridableChanParams = getOverridableChannelParams(layoutChannel);
+            context.internalState = new ParametersState(context, this, overridableChanParams, layoutChannel);
             context.internalState.setStaticData(staticData);
           }
         }
@@ -1227,8 +1320,16 @@ public class TabColumnPrefsState extends BaseState
                   returnToDefaultState();
                 } else { // present user with screen to specify subscribe-time params
                   Document channelRegistry = ChannelRegistryManager.getChannelRegistry(staticData.getPerson());
-                  Element channel = (Element)channelRegistry.getElementById(selectedChannel);
-                  context.internalState = new ParametersState(context, this, overridableChanParams, channel, position, elementID);
+                  Element channel = channelRegistry.getElementById(selectedChannel);
+                  /*
+                   * The next line is tightly coupled to DLM which is ok since 
+                   * this is the DLM version of the prefs channel. But if we 
+                   * rework the ILayoutManager interface to create an 
+                   * implementation independant approach to instantiating 
+                   * channel descriptions we wouldn't have to tighly couple.
+                   */
+                  ChannelDescription newChannel = new ChannelDescription(channel);
+                  context.internalState = new ParametersState(context, this, overridableChanParams, newChannel, position, elementID);
                   context.internalState.setStaticData(staticData);
                 }
               } catch (Exception e) {
@@ -1294,21 +1395,21 @@ public class TabColumnPrefsState extends BaseState
     protected TabColumnPrefsState context;
     protected BaseState previousState;
     private List overridableChanParams;
-    private Element registryChannel;
+    private IUserLayoutChannelDescription channelDesc;
     private String position;
     private String destinationElementId;
 
     private boolean error = false;
 
-    public ParametersState(TabColumnPrefsState context, BaseState previousState, List overridableChanParams, Element registryChannel) {
+    public ParametersState(TabColumnPrefsState context, BaseState previousState, List overridableChanParams, IUserLayoutChannelDescription channelDesc) {
       this.context = context;
       this.previousState = previousState;
       this.overridableChanParams = overridableChanParams;
-      this.registryChannel = registryChannel;
+      this.channelDesc = channelDesc;
     }
 
-    public ParametersState(TabColumnPrefsState context, BaseState previousState, List overridableChanParams, Element registryChannel, String position, String destinationElementId) {
-      this(context, previousState, overridableChanParams, registryChannel);
+    public ParametersState(TabColumnPrefsState context, BaseState previousState, List overridableChanParams, IUserLayoutChannelDescription channelDesc, String position, String destinationElementId) {
+      this(context, previousState, overridableChanParams, channelDesc);
       this.position = position;
       this.destinationElementId = destinationElementId;
     }
@@ -1365,8 +1466,8 @@ public class TabColumnPrefsState extends BaseState
       // Finally, add the channel to the layout or modify it if it is already there
       try {
         if (previousState instanceof NewChannelState) {
-          processParams(registryChannel);
-          context.addChannel(registryChannel, position, destinationElementId);
+            processParams();
+          context.addChannel(channelDesc, position, destinationElementId);
         }
         else if (previousState instanceof DefaultState) {
           updateParams((IUserLayoutChannelDescription)ulm.getNode(elementID));
@@ -1382,34 +1483,24 @@ public class TabColumnPrefsState extends BaseState
       // Process params
       Iterator iter = overridableChanParams.iterator();
       while (iter.hasNext()) {
-        Element parameterE = (Element)iter.next();
-        String paramName = parameterE.getAttribute("name");
-        String paramValue = runtimeData.getParameter(paramName);
-        cd.setParameterValue(paramName, paramValue);
+          ChannelParameter parm = (ChannelParameter)iter.next();
+          String paramValue = runtimeData.getParameter(parm.getName());
+          cd.setParameterValue(parm.getName(), paramValue);
       }
       ulm.updateNode(cd);
       context.saveLayout(false);
     }
 
-    private void processParams(Element channel) {
-      // Process params
-      Iterator iter = overridableChanParams.iterator();
-      while (iter.hasNext()) {
-        Element parameterE = (Element)iter.next();
-        String paramName = parameterE.getAttribute("name");
-        String paramValue = runtimeData.getParameter(paramName);
-
-        // Find param within channel and update it
-        NodeList params = channel.getElementsByTagName("parameter");
-        for (int i = 0; i < params.getLength(); i++) {
-          Element paramE = (Element)params.item(i);
-          if (paramE.getAttribute("name").equals(paramName)) {
-            paramE.setAttribute("value", paramValue);
-            break;
-          }
+    private void processParams() {
+        // Process params by passing through the overrideable parms list and
+        // pushing the submitted value for that param into the description
+        Iterator iter = overridableChanParams.iterator();
+        while (iter.hasNext()) {
+          ChannelParameter parm = (ChannelParameter)iter.next();
+          String paramValue = runtimeData.getParameter(parm.getName());
+          channelDesc.setParameterValue(parm.getName(), paramValue);
         }
       }
-    }
 
     private Document getParametersDoc() throws PortalException {
       Document doc = DocumentFactory.getNewDocument();
@@ -1418,14 +1509,14 @@ public class TabColumnPrefsState extends BaseState
       Element userPrefParamsE = doc.createElement("userPrefParams");
 
       if (previousState instanceof NewChannelState)
-        userPrefParamsE.appendChild(doc.importNode(registryChannel, true));
+          userPrefParamsE.appendChild(channelDesc.getXML(doc));
       else if (previousState instanceof DefaultState) {
         IUserLayoutNodeDescription node=ulm.getNode(elementID);
         userPrefParamsE.appendChild(node.getXML(doc));
       }
 
       // CPD
-      Document cpd = ChannelRegistryManager.getCPD(registryChannel.getAttribute("typeID"));
+      Document cpd = ChannelRegistryManager.getCPD(channelDesc.getChannelTypeId());
       if (cpd != null)
         userPrefParamsE.appendChild(doc.importNode(cpd.getDocumentElement(), true));
 
