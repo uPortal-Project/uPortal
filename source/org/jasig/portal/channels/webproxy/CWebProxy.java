@@ -20,7 +20,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -36,9 +35,9 @@ import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ChannelRuntimeProperties;
 import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.GeneralRenderingException;
-import org.jasig.portal.IMultithreadedCacheable;
-import org.jasig.portal.IMultithreadedChannel;
-import org.jasig.portal.IMultithreadedMimeResponse;
+import org.jasig.portal.IChannel;
+import org.jasig.portal.IMimeResponse;
+import org.jasig.portal.ICacheable;
 import org.jasig.portal.MediaManager;
 import org.jasig.portal.PortalEvent;
 import org.jasig.portal.PortalException;
@@ -189,7 +188,7 @@ import org.xml.sax.ContentHandler;
  * @author Sarah Arnott, sarnott@mun.ca
  * @version $Revision$
  */
-public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable, IMultithreadedMimeResponse
+public class CWebProxy implements IChannel, ICacheable, IMimeResponse
 
 {
     private static final Log log = LogFactory.getLog(CWebProxy.class);
@@ -226,10 +225,11 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
     public static final String RESTRICT_STATIC_XMLURI_PREFIXES_PARAM = "cw_restrict_xmlUri_inStaticData";
     
     private static final MediaManager MEDIAMANAGER = MediaManager.getMediaManager();
-  Map stateTable;
   // to prepend to the system-wide cache key
   static final String systemCacheId="org.jasig.portal.channels.webproxy.CWebProxy";
   static PrintWriter devNull;
+  
+  ChannelState chanState;
 
   static
   {
@@ -377,7 +377,6 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
 
   public CWebProxy ()
   {
-    stateTable = Collections.synchronizedMap(new HashMap());
   }
 
   /**
@@ -387,7 +386,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
    * @param sd channel static data
    * @see ChannelStaticData
    */
-  public void setStaticData (ChannelStaticData sd, String uid)
+  public void setStaticData (ChannelStaticData sd)
       throws PortalException {
       
     // detect static data configuration for URI scrutinizer
@@ -487,7 +486,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
       }
     }
 
-    stateTable.put(uid,state);
+    chanState = state;
   }
 
   /**
@@ -496,11 +495,11 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
    * @param rd channel runtime data
    * @see ChannelRuntimeData
    */
-  public void setRuntimeData (ChannelRuntimeData rd, String uid)
+  public void setRuntimeData (ChannelRuntimeData rd)
   {
-     ChannelState state = (ChannelState)stateTable.get(uid);
+     ChannelState state = chanState;
      if (state == null){
-       log.debug("CWebProxy:setRuntimeData() : no entry in state for uid=\""+uid+"\"");
+       log.debug("CWebProxy:setRuntimeData() : no entry in state");
      }else{
        state.runtimeData = rd;
        if ( rd.isEmpty() && (state.refresh != -1) ) {
@@ -702,11 +701,11 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
    * to the old one at the end of its task.
    * @param ev the event
    */
-  public void receiveEvent (PortalEvent ev, String uid)
+  public void receiveEvent (PortalEvent ev)
   {
-    ChannelState state = (ChannelState)stateTable.get(uid);
+    ChannelState state = chanState;
     if (state == null){
-        log.debug("CWebProxy:receiveEvent() : no entry in state for uid=\""+uid+"\"");
+        log.debug("CWebProxy:receiveEvent() : no entry in state");
     }else {
       int evnum = ev.getEventNumber();
 
@@ -724,10 +723,6 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
           if (state.infoUri != null)
             state.buttonxmlUri = state.infoUri;
           break;
-        case PortalEvent.SESSION_DONE:
-          stateTable.remove(uid);
-          break;
-        // case PortalEvent.UNSUBSCRIBE:
         default:
           break;
       }
@@ -739,15 +734,15 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
    * This function may be called by the portal framework throughout the session.
    * @see ChannelRuntimeProperties
    */
-  public ChannelRuntimeProperties getRuntimeProperties (String uid)
+  public ChannelRuntimeProperties getRuntimeProperties ()
   {
     ChannelRuntimeProperties rp=new ChannelRuntimeProperties();
 
     // determine if such channel is registered
-    if (stateTable.get(uid) == null)
+    if (chanState == null)
     {
       rp.setWillRender(false);
-      log.debug("CWebProxy:getRuntimeProperties() : no entry in state for uid=\""+uid+"\"");
+      log.debug("CWebProxy:getRuntimeProperties() : no entry in state");
     }
     return rp;
   }
@@ -756,11 +751,11 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
    * Ask channel to render its content.
    * @param out the SAX ContentHandler to output content to
    */
-  public void renderXML (ContentHandler out, String uid) throws PortalException
+  public void renderXML (ContentHandler out) throws PortalException
   {
-    ChannelState state=(ChannelState)stateTable.get(uid);
+    ChannelState state=chanState;
     if (state == null){
-      log.debug("CWebProxy:renderXML() : no entry in state for uid=\""+uid+"\"");
+      log.debug("CWebProxy:renderXML() : no entry in state");
     }else{
       Document xml = null;
       String tidiedXml = null;
@@ -1088,13 +1083,13 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
       return urlConnect;
   }
 
-  public ChannelCacheKey generateKey(String uid)
+  public ChannelCacheKey generateKey()
   {
-    ChannelState state = (ChannelState)stateTable.get(uid);
+    ChannelState state = chanState;
 
     if (state == null)
     {
-      log.debug("CWebProxy:generateKey() : no entry in state for uid=\""+uid+"\"");
+      log.debug("CWebProxy:generateKey() : no entry in state");
       return null;
     }
 
@@ -1148,44 +1143,42 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
       return new PrintWriter(new FileOutputStream("/dev/null"));
   }
 
-  public boolean isCacheValid(Object validity,String uid)
+  public boolean isCacheValid(Object validity)
   {
     if (!(validity instanceof Long))
       return false;
 
-    ChannelState state = (ChannelState)stateTable.get(uid);
+    ChannelState state = chanState;
 
     if (state == null)
     {
-      log.debug("CWebProxy:isCacheValid() : no entry in state for uid=\""+uid+"\"");
+      log.debug("CWebProxy:isCacheValid() : no entry in state");
       return false;
     }else{
       return (System.currentTimeMillis() - ((Long)validity).longValue() < state.cacheTimeout*1000);
     }
   }
 
-  public String getContentType(String uid) {
-    ChannelState state = (ChannelState)stateTable.get(uid);
-    return state.connHolder.getContentType();
+  public String getContentType() {
+    return chanState.connHolder.getContentType();
   }
 
-  public InputStream getInputStream(String uid) throws IOException {
-    ChannelState state = (ChannelState)stateTable.get(uid);
-    InputStream rs = state.connHolder.getInputStream();
-    state.connHolder = null;
+  public InputStream getInputStream() throws IOException {
+    InputStream rs = chanState.connHolder.getInputStream();
+    chanState.connHolder = null;
     return rs;
   }
 
-  public void downloadData(OutputStream out,String uid) throws IOException {
+  public void downloadData(OutputStream out) throws IOException {
     throw(new IOException("CWebProxy: downloadData method not supported - use getInputStream only"));
   }
 
-  public String getName(String uid) {
+  public String getName() {
     return "proxyDL";
   }
 
-  public Map getHeaders(String uid) {
-    ChannelState state = (ChannelState)stateTable.get(uid);
+  public Map getHeaders() {
+    ChannelState state = chanState;
     try {
       state.connHolder= getConnection(state.fullxmlUri, state);
     }
