@@ -89,110 +89,123 @@ public class ChannelFactory {
      * @param uid a unique ID for use with multithreaded channels
      * @return an <code>IChannel</code> object
      */
-    public static synchronized IChannel instantiateChannel(String className, String uid) throws PortalException {
+    public static IChannel instantiateChannel(String className, String uid) throws PortalException {
         IChannel ch = null;
-        boolean exists = false;
-        // Avoid instantiating a multithreaded channel more than once
-        // by storing it in a staticChannels table.
-        Object cobj = staticChannels.get(className);
-        if (cobj != null) {
-            exists = true;
-        } else {
-            Class channelClass = null;
-            try {
-                // Load the class using the CAR class loader which uses
-                // the default class loader before looking into the CARs
-                channelClass = classLoader.loadClass(className);                
-            } catch (Exception e) {
-                throw new PortalException("Unable to load class '" + className + "'", e);
-            }
+        
+        Class channelClass = null;
+        
+        Object cobj = null;
+        try {
+            // Load the class using the CAR class loader which uses
+            // the default class loader before looking into the CARs
+            channelClass = classLoader.loadClass(className);                
+        } catch (Exception e) {
+            throw new PortalException("Unable to load class '" + className + "'", e);
+        }
+        
+        // if this channel is neither an IMultithreadedCharacterChannel nor an
+        // IMultithreadedChannel
+        if (! IMultithreadedCharacterChannel.class.isAssignableFrom(channelClass)
+                &&
+                ! IMultithreadedChannel.class.isAssignableFrom(channelClass)) {
+            
+            // then we can go ahead and instantiate it
             try {
                 cobj =  channelClass.newInstance();
+                return (IChannel)cobj;
             } catch (Throwable t) {
                 throw new PortalException("Unable to instantiate class '" + className + "'", t);
-            }            
-        }
-
-        // determine what kind of a channel it is.
-        // (perhaps, later this all could be moved to JNDI factories, so everything would be transparent)
-        if (cobj instanceof IMultithreadedCharacterChannel) {
-            if (cobj instanceof IMultithreadedCacheable) {
-                if (cobj instanceof IMultithreadedPrivileged) {
-                    if (cobj instanceof IMultithreadedMimeResponse) {
-                        ch = new MultithreadedPrivilegedCacheableMimeResponseCharacterChannelAdapter((IMultithreadedCharacterChannel)cobj, uid);
-                    } else if (cobj instanceof IMultithreadedDirectResponse) {
-                        // cacheable, privileged and direct response
-                        ch = new MultithreadedPrivilegedCacheableDirectResponseCharacterChannelAdapter((IMultithreadedCharacterChannel)cobj, uid);                        
-                    } else {
-                        // both cacheable and privileged
-                        ch = new MultithreadedPrivilegedCacheableCharacterChannelAdapter((IMultithreadedCharacterChannel)cobj, uid);
-                    }
-                } else {
-                    if (cobj instanceof IMultithreadedMimeResponse) {
-                        ch = new MultithreadedCacheableMimeResponseCharacterChannelAdapter((IMultithreadedCharacterChannel)cobj, uid);
-                    } else {
-                        // just cacheable
-                        ch = new MultithreadedCacheableCharacterChannelAdapter((IMultithreadedCharacterChannel)cobj, uid);
-                    }
-                }
-            } else if (cobj instanceof IMultithreadedPrivileged) {
-                if (cobj instanceof IMultithreadedMimeResponse) {
-                    ch = new MultithreadedPrivilegedMimeResponseCharacterChannelAdapter((IMultithreadedCharacterChannel)cobj, uid);
-                } else {
-                    ch = new MultithreadedPrivilegedCharacterChannelAdapter((IMultithreadedCharacterChannel)cobj, uid);
-                }
-            } else {
-                if (cobj instanceof IMultithreadedMimeResponse) {
-                    ch = new MultithreadedMimeResponseCharacterChannelAdapter((IMultithreadedCharacterChannel)cobj, uid);
-                } else {
-                    // plain multithreaded
-                    ch = new MultithreadedCharacterChannelAdapter((IMultithreadedCharacterChannel)cobj, uid);
-                }
             }
-            // see if we need to add the instance to the staticChannels
-            if (!exists) {
-                staticChannels.put(className, cobj);
-            }
-        } else if (cobj instanceof IMultithreadedChannel) {
-            if (cobj instanceof IMultithreadedCacheable) {
-                if (cobj instanceof IMultithreadedPrivileged) {
-                    if (cobj instanceof IMultithreadedMimeResponse) {
-                        ch = new MultithreadedPrivilegedCacheableMimeResponseChannelAdapter((IMultithreadedChannel)cobj, uid);
-                    } else {
-                        // both cacheable and privileged
-                        ch = new MultithreadedPrivilegedCacheableChannelAdapter((IMultithreadedChannel)cobj, uid);
-                    }
-                } else {
-                    if (cobj instanceof IMultithreadedMimeResponse) {
-                        ch = new MultithreadedCacheableMimeResponseChannelAdapter((IMultithreadedChannel)cobj, uid);
-                    } else {
-                        // just cacheable
-                        ch = new MultithreadedCacheableChannelAdapter((IMultithreadedChannel)cobj, uid);
-                    }
-                }
-            } else if (cobj instanceof IMultithreadedPrivileged) {
-                if (cobj instanceof IMultithreadedMimeResponse) {
-                    ch = new MultithreadedPrivilegedMimeResponseChannelAdapter((IMultithreadedChannel)cobj, uid);
-                } else {
-                    ch = new MultithreadedPrivilegedChannelAdapter((IMultithreadedChannel)cobj, uid);
-                }
-            } else {
-                if (cobj instanceof IMultithreadedMimeResponse) {
-                    ch = new MultithreadedMimeResponseChannelAdapter((IMultithreadedChannel)cobj, uid);
-                } else {
-                    // plain multithreaded
-                    ch = new MultithreadedChannelAdapter((IMultithreadedChannel)cobj, uid);
-                }
-            }
-            // see if we need to add the instance to the staticChannels
-            if (!exists) {
-                staticChannels.put(className, cobj);
-            }
+            // note that no synchronization is required to service IChannel instantiation
         } else {
-            // vanilla IChannel
-            ch = (IChannel)cobj;
+            
+            // synchronizing is required to honor IMultithreaded's single-instantiation
+            // guarantee
+            
+            synchronized(ChannelFactory.class) {
+                // Avoid instantiating a multithreaded channel more than once
+                // by storing it in a staticChannels table.
+                cobj = staticChannels.get(className);
+                if (cobj == null) {
+                    try {
+                        cobj =  channelClass.newInstance();
+                        staticChannels.put(className, cobj);
+                    } catch (Throwable t) {
+                        throw new PortalException("Unable to instantiate class '" + className + "'", t);
+                    }
+                }
+            }
+            
+            // determine what kind of a channel it is.
+            if (cobj instanceof IMultithreadedCharacterChannel) {
+                if (cobj instanceof IMultithreadedCacheable) {
+                    if (cobj instanceof IMultithreadedPrivileged) {
+                        if (cobj instanceof IMultithreadedMimeResponse) {
+                            ch = new MultithreadedPrivilegedCacheableMimeResponseCharacterChannelAdapter((IMultithreadedCharacterChannel)cobj, uid);
+                        } else if (cobj instanceof IMultithreadedDirectResponse) {
+                            // cacheable, privileged and direct response
+                            ch = new MultithreadedPrivilegedCacheableDirectResponseCharacterChannelAdapter((IMultithreadedCharacterChannel)cobj, uid);                        
+                        } else {
+                            // both cacheable and privileged
+                            ch = new MultithreadedPrivilegedCacheableCharacterChannelAdapter((IMultithreadedCharacterChannel)cobj, uid);
+                        }
+                    } else {
+                        if (cobj instanceof IMultithreadedMimeResponse) {
+                            ch = new MultithreadedCacheableMimeResponseCharacterChannelAdapter((IMultithreadedCharacterChannel)cobj, uid);
+                        } else {
+                            // just cacheable
+                            ch = new MultithreadedCacheableCharacterChannelAdapter((IMultithreadedCharacterChannel)cobj, uid);
+                        }
+                    }
+                } else if (cobj instanceof IMultithreadedPrivileged) {
+                    if (cobj instanceof IMultithreadedMimeResponse) {
+                        ch = new MultithreadedPrivilegedMimeResponseCharacterChannelAdapter((IMultithreadedCharacterChannel)cobj, uid);
+                    } else {
+                        ch = new MultithreadedPrivilegedCharacterChannelAdapter((IMultithreadedCharacterChannel)cobj, uid);
+                    }
+                } else {
+                    if (cobj instanceof IMultithreadedMimeResponse) {
+                        ch = new MultithreadedMimeResponseCharacterChannelAdapter((IMultithreadedCharacterChannel)cobj, uid);
+                    } else {
+                        // plain multithreaded
+                        ch = new MultithreadedCharacterChannelAdapter((IMultithreadedCharacterChannel)cobj, uid);
+                    }
+                }
+            } else if (cobj instanceof IMultithreadedChannel) {
+                if (cobj instanceof IMultithreadedCacheable) {
+                    if (cobj instanceof IMultithreadedPrivileged) {
+                        if (cobj instanceof IMultithreadedMimeResponse) {
+                            ch = new MultithreadedPrivilegedCacheableMimeResponseChannelAdapter((IMultithreadedChannel)cobj, uid);
+                        } else {
+                            // both cacheable and privileged
+                            ch = new MultithreadedPrivilegedCacheableChannelAdapter((IMultithreadedChannel)cobj, uid);
+                        }
+                    } else {
+                        if (cobj instanceof IMultithreadedMimeResponse) {
+                            ch = new MultithreadedCacheableMimeResponseChannelAdapter((IMultithreadedChannel)cobj, uid);
+                        } else {
+                            // just cacheable
+                            ch = new MultithreadedCacheableChannelAdapter((IMultithreadedChannel)cobj, uid);
+                        }
+                    }
+                } else if (cobj instanceof IMultithreadedPrivileged) {
+                    if (cobj instanceof IMultithreadedMimeResponse) {
+                        ch = new MultithreadedPrivilegedMimeResponseChannelAdapter((IMultithreadedChannel)cobj, uid);
+                    } else {
+                        ch = new MultithreadedPrivilegedChannelAdapter((IMultithreadedChannel)cobj, uid);
+                    }
+                } else {
+                    if (cobj instanceof IMultithreadedMimeResponse) {
+                        ch = new MultithreadedMimeResponseChannelAdapter((IMultithreadedChannel)cobj, uid);
+                    } else {
+                        // plain multithreaded
+                        ch = new MultithreadedChannelAdapter((IMultithreadedChannel)cobj, uid);
+                    }
+                }
+            } else {
+                throw new IllegalStateException("Channel object must either implement IMultithreadedChannel or IMultithreadedChannel for control to get here.");
+            }
         }
-
         return ch;
     }
 }
