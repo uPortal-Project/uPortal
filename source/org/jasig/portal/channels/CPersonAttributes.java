@@ -1,4 +1,4 @@
-/* Copyright 2001 The JA-SIG Collaborative.  All rights reserved.
+/* Copyright 2001, 2005 The JA-SIG Collaborative.  All rights reserved.
 *  See license distributed with this file and
 *  available online at http://www.uportal.org/license.html
 */
@@ -14,9 +14,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.jasig.portal.ChannelRuntimeData;
-import org.jasig.portal.ChannelStaticData;
-import org.jasig.portal.IMultithreadedMimeResponse;
+import org.jasig.portal.IMimeResponse;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.UPFileSpec;
 import org.jasig.portal.security.IPerson;
@@ -32,21 +30,18 @@ import org.xml.sax.ContentHandler;
  * This channel demonstrates the method of obtaining and displaying
  * standard uPortal person attributes.
  *
- * Implements MultithreadedIMimeResponse in order to support the inline display of jpegPhotos
+ * Implements IMimeResponse in order to support the inline display of jpegPhotos
  * Note:  for proper operation, one should use an idempotent baseActionURL.
  *
  * @author Ken Weiner, kweiner@unicon.net
  * @author Yuji Shinozaki, ys2n@virginia.edu
  * @version $Revision$ $Date$
  */
-public class CPersonAttributes extends BaseMultithreadedChannel implements IMultithreadedMimeResponse {
+public class CPersonAttributes extends BaseChannel implements IMimeResponse {
 
   private static final String sslLocation = "CPersonAttributes/CPersonAttributes.ssl";
 
-  public void renderXML (ContentHandler out, String uid) throws PortalException {
-    ChannelState channelState = (ChannelState)channelStateMap.get(uid);
-    ChannelStaticData staticData = channelState.getStaticData();
-    ChannelRuntimeData runtimeData = channelState.getRuntimeData();
+  public void renderXML (ContentHandler out) throws PortalException {
     IPerson person = staticData.getPerson();
     Document doc = DocumentFactory.getNewDocument();
 
@@ -125,7 +120,7 @@ public class CPersonAttributes extends BaseMultithreadedChannel implements IMult
     /**
      * Returns the MIME type of the content.
      */
-    public java.lang.String getContentType (String uid) {
+    public java.lang.String getContentType () {
         // In the future we will need some sort of way of grokking the
         // mime-type of the byte-array and returning an appropriate mime-type
         // Right now there is no good way of doing that, and we will
@@ -135,8 +130,6 @@ public class CPersonAttributes extends BaseMultithreadedChannel implements IMult
         // attributes as differenct mimetypes (e.g certs).
         //
         String mimetype;
-        ChannelState channelState = (ChannelState)channelStateMap.get(uid);
-        ChannelRuntimeData runtimeData = channelState.getRuntimeData();
         // runtime parameter "attribute" determines which attribute to return when
         // called as an IMimeResponse.
         String attrName = runtimeData.getParameter("attribute");
@@ -155,11 +148,7 @@ public class CPersonAttributes extends BaseMultithreadedChannel implements IMult
      * Returns the MIME content in the form of an input stream.
      * Returns null if the code needs the OutputStream object
      */
-    public java.io.InputStream getInputStream (String uid) throws IOException {
-        ChannelState channelState = (ChannelState)channelStateMap.get(uid);
-        ChannelStaticData staticData = channelState.getStaticData();
-        ChannelRuntimeData runtimeData = channelState.getRuntimeData();
-
+    public java.io.InputStream getInputStream () throws IOException {
         String attrName = runtimeData.getParameter("attribute");
         IPerson person = staticData.getPerson();
 
@@ -188,18 +177,16 @@ public class CPersonAttributes extends BaseMultithreadedChannel implements IMult
      * Pass the OutputStream object to the download code if it needs special handling
      * (like outputting a Zip file).  Unimplemented.
      */
-    public void downloadData (OutputStream out, String uid) throws IOException {
+    public void downloadData (OutputStream out) throws IOException {
     }
 
     /**
      * Returns the name of the MIME file.
      */
-    public java.lang.String getName (String uid) {
+    public java.lang.String getName () {
         // As noted above the only attribute we support right now is "image/jpeg" for
         // the jpegPhoto attribute.
 
-        ChannelState channelState = (ChannelState)channelStateMap.get(uid);
-        ChannelRuntimeData runtimeData = channelState.getRuntimeData();
         String payloadName;
         if ("jpegPhoto".equals(runtimeData.getParameter("attribute")))
             payloadName = "image.jpg";
@@ -212,7 +199,7 @@ public class CPersonAttributes extends BaseMultithreadedChannel implements IMult
      * Returns a list of header values that can be set in the HttpResponse.
      * Returns null if no headers need to be set.
      */
-    public Map getHeaders (String uid) {
+    public Map getHeaders () {
         return null;
     }
 
