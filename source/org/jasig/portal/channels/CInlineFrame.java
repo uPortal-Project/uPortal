@@ -1,4 +1,4 @@
-/* Copyright 2001 The JA-SIG Collaborative.  All rights reserved.
+/* Copyright 2001, 2005 The JA-SIG Collaborative.  All rights reserved.
 *  See license distributed with this file and
 *  available online at http://www.uportal.org/license.html
 */
@@ -9,10 +9,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.jasig.portal.ChannelCacheKey;
-import org.jasig.portal.ChannelRuntimeData;
-import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.GeneralRenderingException;
-import org.jasig.portal.IMultithreadedCacheable;
+import org.jasig.portal.ICacheable;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.utils.ResourceLoader;
@@ -32,7 +30,7 @@ import org.xml.sax.ContentHandler;
  * @author Susan Bramhall
  * @version $Revision$
  */
-public class CInlineFrame extends BaseMultithreadedChannel implements IMultithreadedCacheable {
+public class CInlineFrame extends BaseChannel implements ICacheable {
 
   private static final String sslLocation = "CInlineFrame/CInlineFrame.ssl";
 
@@ -46,10 +44,7 @@ public class CInlineFrame extends BaseMultithreadedChannel implements IMultithre
    *    <height>600</height>
    * </iframe>
    */
-  public void renderXML (ContentHandler out, String uid) throws PortalException {
-    ChannelState channelState = (ChannelState)channelStateMap.get(uid);
-    ChannelStaticData staticData = channelState.getStaticData();
-    ChannelRuntimeData runtimeData = channelState.getRuntimeData();
+  public void renderXML (ContentHandler out) throws PortalException {
 
     // Obtain url and height, both static parameters
     String srcUrl = staticData.getParameter("url"); // the url for the IFrame content
@@ -98,23 +93,19 @@ public class CInlineFrame extends BaseMultithreadedChannel implements IMultithre
 
   // IMultithreadedCachable methods...
 
-  public ChannelCacheKey generateKey(String uid) {
+  public ChannelCacheKey generateKey() {
     ChannelCacheKey key = new ChannelCacheKey();
-    key.setKey(getKey(uid));
+    key.setKey(getKey());
     key.setKeyScope(ChannelCacheKey.SYSTEM_KEY_SCOPE);
     key.setKeyValidity(null);
     return key;
   }
 
-  public boolean isCacheValid(Object validity, String uid) {
+  public boolean isCacheValid(Object validity) {
     return true;
   }
 
-  private String getKey(String uid) {
-    ChannelState channelState = (ChannelState)channelStateMap.get(uid);
-    ChannelStaticData staticData = channelState.getStaticData();
-    ChannelRuntimeData runtimeData = channelState.getRuntimeData();
-
+  private String getKey() {
     StringBuffer sbKey = new StringBuffer(1024);
     sbKey.append("org.jasig.portal.channels.CInlineFrame").append(": ");
     sbKey.append("xslUri:");
@@ -130,6 +121,3 @@ public class CInlineFrame extends BaseMultithreadedChannel implements IMultithre
     return sbKey.toString();
   }
 }
-
-
-
