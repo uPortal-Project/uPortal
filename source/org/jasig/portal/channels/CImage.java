@@ -1,4 +1,4 @@
-/* Copyright 2001 The JA-SIG Collaborative.  All rights reserved.
+/* Copyright 2001, 2005 The JA-SIG Collaborative.  All rights reserved.
 *  See license distributed with this file and
 *  available online at http://www.uportal.org/license.html
 */
@@ -9,10 +9,9 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.jasig.portal.ChannelCacheKey;
-import org.jasig.portal.ChannelRuntimeData;
-import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.GeneralRenderingException;
-import org.jasig.portal.IMultithreadedCacheable;
+import org.jasig.portal.ICacheable;
+import org.jasig.portal.IChannel;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.utils.ResourceLoader;
@@ -37,23 +36,19 @@ import org.xml.sax.ContentHandler;
  * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
-public class CImage extends BaseMultithreadedChannel implements IMultithreadedCacheable
+public class CImage extends BaseChannel implements ICacheable, IChannel
 {
 
   private static final String sslLocation = "CImage/CImage.ssl";
-
+  
   /**
    * Output channel content to the portal
    * @param out a sax content handler
    * @param uid a unique ID used to identify the state of the channel
    * @throws org.jasig.portal.PortalException
    */
-  public void renderXML (ContentHandler out, String uid) throws PortalException
+  public void renderXML (ContentHandler out) throws PortalException
   {
-    ChannelState channelState = (ChannelState)channelStateMap.get(uid);
-    ChannelStaticData staticData = channelState.getStaticData();
-    ChannelRuntimeData runtimeData = channelState.getRuntimeData();
-
     // Get the static data
     String sImageUri = staticData.getParameter ("img-uri");
     String sImageWidth = staticData.getParameter ("img-width");
@@ -116,25 +111,21 @@ public class CImage extends BaseMultithreadedChannel implements IMultithreadedCa
     return (s != null && s.length () > 0);
   }
 
-  // IMultithreadedCachable methods...
+  // ICachable methods...
 
-  public ChannelCacheKey generateKey(String uid) {
+  public ChannelCacheKey generateKey() {
     ChannelCacheKey key = new ChannelCacheKey();
-    key.setKey(getKey(uid));
+    key.setKey(getKey());
     key.setKeyScope(ChannelCacheKey.SYSTEM_KEY_SCOPE);
     key.setKeyValidity(null);
     return key;
   }
 
-  public boolean isCacheValid(Object validity, String uid) {
+  public boolean isCacheValid(Object validity) {
     return true;
   }
 
-  private String getKey(String uid) {
-    ChannelState channelState = (ChannelState)channelStateMap.get(uid);
-    ChannelStaticData staticData = channelState.getStaticData();
-    ChannelRuntimeData runtimeData = channelState.getRuntimeData();
-
+  private String getKey() {
     StringBuffer sbKey = new StringBuffer(1024);
     sbKey.append("org.jasig.portal.channels.CImage").append(": ");
     sbKey.append("xslUri:");
