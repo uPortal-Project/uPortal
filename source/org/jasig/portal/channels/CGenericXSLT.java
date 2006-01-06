@@ -1,7 +1,7 @@
 /* Copyright 2001, 2005 The JA-SIG Collaborative.  All rights reserved.
-*  See license distributed with this file and
-*  available online at http://www.uportal.org/license.html
-*/
+ *  See license distributed with this file and
+ *  available online at http://www.uportal.org/license.html
+ */
 
 package org.jasig.portal.channels;
 
@@ -11,7 +11,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -22,12 +21,10 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.jasig.portal.ChannelCacheKey;
 import org.jasig.portal.ChannelRuntimeData;
-import org.jasig.portal.ChannelRuntimeProperties;
 import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.GeneralRenderingException;
-import org.jasig.portal.IMultithreadedCacheable;
-import org.jasig.portal.IMultithreadedChannel;
-import org.jasig.portal.PortalEvent;
+import org.jasig.portal.ICacheable;
+import org.jasig.portal.IChannel;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.ResourceMissingException;
 import org.jasig.portal.Version;
@@ -113,372 +110,295 @@ import org.xml.sax.ContentHandler;
  * @author Peter Kharchenko <a href="mailto:">pkharchenko@interactivebusiness.com</a> (multithreading,caching)
  * @version $Revision$
  */
-public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCacheable
+
+public class CGenericXSLT extends BaseChannel implements IChannel, ICacheable
 {
-    private static final Log log = LogFactory.getLog(CGenericXSLT.class);
-  // state table
-  Map stateTable;
-  static final String systemCacheId="org.jasig.portal.channels.CGenericXSLT"; // to prepend to the system-wide cache key
+	private static final Log log = LogFactory.getLog(CGenericXSLT.class);
+	
+	private String xmlUri;
+	private String sslUri;
+	private String xslTitle;
+	private String xslUri;
+	private final Map params = new HashMap();
+	private long cacheTimeout;
+	private ChannelRuntimeData runtimeData = null;
+	private LocalConnectionContext localConnContext = null;
+	
+	private IUriScrutinizer uriScrutinizer;
+	
+	public CGenericXSLT()
+	{
 
-  // state class
-  private class CState
-  {
-    /**
-     * URI from which this channel will obtain XML to render.
-     * Do not set this field directly.  Instead call the setter method, which
-     * provides argument checking.
-     */
-    private String xmlUri;
-    private String sslUri;
-    private String xslTitle;
-    private String xslUri;
-    private Map params;
-    private long cacheTimeout;
-    private ChannelRuntimeData runtimeData;
-    private LocalConnectionContext localConnContext;
-
-    private final IUriScrutinizer uriScrutinizer;
-    
-    public CState(final IUriScrutinizer uriScrutinizerArg)
-    {
-        if (uriScrutinizerArg == null) {
-            throw new IllegalArgumentException("CGenericXSLT channel state requires a non-null IUriScrutinizer");
-        }
-        this.uriScrutinizer = uriScrutinizerArg;
-        
-      xmlUri = sslUri = xslTitle = xslUri = null;
-      params = new HashMap();
-      cacheTimeout = PropertiesManager.getPropertyAsLong("org.jasig.portal.channels.CGenericXSLT.default_cache_timeout");
-      runtimeData = null;
-      localConnContext = null;
-    }
-    
-    public String toString()
-    {
-       StringBuffer str = new StringBuffer();
-       str.append("xmlUri = "+xmlUri+"\n");
-       str.append("xslUri = "+xslUri+"\n");
-       str.append("sslUri = "+sslUri+"\n");
-       str.append("xslTitle = "+xslTitle+"\n");
-       if (params != null) {
-          str.append("params = "+params.toString()+"\n");
-       }
-       return str.toString();
-    }
-    
-    /**
-     * Set the URI or resource-relative-path of the XML this CGenericXSLT should
-     * render.
-     * @param xmlUriArg URI or local resource path to the XML this channel should render.
-     * @throws IllegalArgumentException if xmlUriArg specifies a missing resource
-     * or if the URI has bad syntax
-     * @throws BlockedUriException if the xmlUriArg is blocked for policy reasons
-     */
-    public void setXmlUri(String xmlUriArg) {
-        URL url = null;
-        try {
-            url = ResourceLoader.getResourceAsURL(this.getClass(), xmlUriArg);
-        } catch (ResourceMissingException e) {
-            IllegalArgumentException iae = new IllegalArgumentException("Resource [" + xmlUriArg + "] missing.");
-            iae.initCause(e);
-            throw iae;
-        }
-        
-        String urlString = url.toExternalForm();
-        try {
-            this.uriScrutinizer.scrutinize(new URI(urlString));
-        }catch (URISyntaxException e1) {
-            throw new IllegalArgumentException("xmlUri [" + xmlUriArg + "] resolved to a URI with bad syntax.");
-        }
-        
-        this.xmlUri = xmlUriArg;
-    }
-  }
-  
-  public CGenericXSLT()
-  {
-    stateTable = Collections.synchronizedMap(new HashMap());
-  }
-
-  public void setStaticData (ChannelStaticData sd, String uid) throws ResourceMissingException
-  {
-      
-      String allowXmlUriPrefixesParam = 
-          sd.getParameter("upc_allow_xmlUri_prefixes");
-      String denyXmlUriPrefixesParam = 
-          sd.getParameter("upc_deny_xmlUri_prefixes");
-      
-      IUriScrutinizer uriScrutinizer = 
-          PrefixUriScrutinizer.instanceFromParameters(allowXmlUriPrefixesParam, denyXmlUriPrefixesParam);
-      
-    CState state = new CState(uriScrutinizer);
-    
-    // determine whether we should restrict what URIs we accept as the xmlUri from
-    // ChannelStaticData
-    String scrutinizeXmlUriAsStaticDataString = sd.getParameter("restrict_xmlUri_inStaticData");
-    boolean scrutinizeXmlUriAsStaticData = "true".equals(scrutinizeXmlUriAsStaticDataString);
-    
-    String xmlUriParam = sd.getParameter("xmlUri");
-    if (scrutinizeXmlUriAsStaticData) {
-        // apply configured xmlUri restrictions
-        state.setXmlUri(xmlUriParam);
-    } else {
-        // set the field directly to avoid applying xmlUri restrictions
-        state.xmlUri = xmlUriParam;
-    }
-    
-    
-    state.sslUri = sd.getParameter("sslUri");
-    state.xslTitle = sd.getParameter("xslTitle");
-    state.xslUri = sd.getParameter("xslUri");
-
-    String cacheTimeout = sd.getParameter("cacheTimeout");
-
-    if (cacheTimeout != null)
-      state.cacheTimeout = Long.parseLong(cacheTimeout);
-
-    String connContext = sd.getParameter ("upc_localConnContext");
-    if (connContext != null)
-    {
-      try
-      {
-        state.localConnContext = (LocalConnectionContext) Class.forName(connContext).newInstance();
-        state.localConnContext.init(sd);
-      }
-      catch (Exception e)
-      {
-        log.error( "CGenericXSLT: Cannot initialize ILocalConnectionContext: ", e);
-      }
-    }
-    state.params.putAll(sd);
-    
-    stateTable.put(uid,state);
-    
-  }
-
-  public void setRuntimeData (ChannelRuntimeData rd, String uid)
-  {
-    CState state = (CState)stateTable.get(uid);
-
-    if (state == null){
-      log.debug("CGenericXSLT:setRuntimeData() : no entry in state for uid=\""+uid+"\"");
-    }
-    else
-    {
-      // because of the portal rendering model, there is no reason to synchronize on state
-      state.runtimeData=rd;
-      String xmlUri = rd.getParameter("xmlUri");
-
-      if (xmlUri != null)
-        state.setXmlUri(xmlUri);
-
-      // prior to uPortal 2.5.1 sslUri was configurable via ChannelRuntimeProperties
-      // this feature has been removed to improve security of CGenericXSLT instances.
-
-      String xslTitle = rd.getParameter("xslTitle");
-
-      if (xslTitle != null)
-        state.xslTitle = xslTitle;
-
-      // grab the parameters and stuff them all into the state object        
-      Enumeration enum1 = rd.getParameterNames();
-      while (enum1.hasMoreElements()) {
-         String n = (String)enum1.nextElement();
-         if (rd.getParameter(n) != null) {
-            state.params.put(n,rd.getParameter(n));
-         }
-      }
-    }
-  }
-
-  public void receiveEvent (PortalEvent ev, String uid)
-  {
-      if (ev.getEventNumber() == PortalEvent.SESSION_DONE)
-      {
-          // clean up
-          stateTable.remove(uid);
-      }
-  }
-
-  public ChannelRuntimeProperties getRuntimeProperties (String uid)
-  {
-    ChannelRuntimeProperties rp=new ChannelRuntimeProperties();
-
-    // determine if such channel is registered
-    if (stateTable.get(uid) == null)
-    {
-      rp.setWillRender(false);
-      log.debug("CGenericXSLT:getRuntimeProperties() : no entry in state for uid=\""+uid+"\"");
-    }
-    return rp;
-  }
-
-  public void renderXML(ContentHandler out,String uid) throws PortalException
-  {
-    CState state=(CState)stateTable.get(uid);
-
-    if (state == null){
-        log.debug("CGenericXSLT:renderXML() : no entry in state for uid=\""+uid+"\"");
-    }else{
-      if (log.isDebugEnabled())
-          log.debug("CGenericXSLT::renderXML() : state = " + state );
-      
-      // OK, pass everything we got cached in params...
-      if (state.params != null) {
-          Iterator it = state.params.keySet().iterator();
-          while (it.hasNext()) {
-              String n = (String) it.next();
-              if (state.params.get((Object) n) != null) {
-                  state.runtimeData.put(n, state.params.get((Object) n));
-              }
-          }
-      }
-
-      Document xmlDoc;
-      InputStream inputStream = null;
-
-      try
-      {
-        DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
-        docBuilderFactory.setNamespaceAware(true);
-        DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
-        DTDResolver dtdResolver = new DTDResolver();
-        docBuilder.setEntityResolver(dtdResolver);
-
-        URL url;
-        if (state.localConnContext != null)
-          url = ResourceLoader.getResourceAsURL(this.getClass(), state.localConnContext.getDescriptor(state.xmlUri, state.runtimeData));
-        else
-          url = ResourceLoader.getResourceAsURL(this.getClass(), state.xmlUri);
-
-        URLConnection urlConnect = url.openConnection();
-
-        if (state.localConnContext != null)
-        {
-          try
-          {
-            state.localConnContext.sendLocalData(urlConnect, state.runtimeData);
-          }
-          catch (Exception e)
-          {
-            log.error( "CGenericXSLT: Unable to send data through " + state.runtimeData.getParameter("upc_localConnContext"), e);
-          }
-        }
-        inputStream = urlConnect.getInputStream();
-        xmlDoc = docBuilder.parse(inputStream);
-      }
-      catch (IOException ioe)
-      {
-        throw new ResourceMissingException (state.xmlUri, "", ioe);
-      }
-      catch (Exception e)
-      {
-        throw new GeneralRenderingException("Problem parsing " + state.xmlUri + ": " + e);
-      } finally {
-        try {
-          if (inputStream != null)
-            inputStream.close();
-        } catch (IOException ioe) {
-          throw new PortalException("CGenericXSLT:renderXML():: could not close InputStream");
-        }
-      }
-
-      state.runtimeData.put("baseActionURL", state.runtimeData.getBaseActionURL());
-      state.runtimeData.put("isRenderingAsRoot", String.valueOf(state.runtimeData.isRenderingAsRoot()));
-      
-      // Add uPortal version string (used in footer channel)
-      state.runtimeData.put("uP_productAndVersion", Version.getProductAndVersion());
-      
-      // OK, pass everything we got cached in params...
-      if (state.params != null)
-      {
-         Iterator it = state.params.keySet().iterator();
-         while (it.hasNext()) {
-            String n = (String)it.next();
-            if (state.params.get((Object)n) != null) {
-               state.runtimeData.put(n,state.params.get((Object)n));
-            }
-         }
-      }
-
-      XSLT xslt = XSLT.getTransformer(this);
-      xslt.setXML(xmlDoc);
-      if (state.xslUri != null)
-        xslt.setXSL(state.xslUri);
-      else
-        xslt.setXSL(state.sslUri, state.xslTitle, state.runtimeData.getBrowserInfo());
-      xslt.setTarget(out);
-      xslt.setStylesheetParameters(state.runtimeData);
-      xslt.transform();
-    }
-  }
-
-  public ChannelCacheKey generateKey(String uid)
-  {
-    CState state = (CState)stateTable.get(uid);
-
-    if (state == null)
-    {
-      log.debug("CGenericXSLT:generateKey() : no entry in state for uid=\""+uid+"\"");
-      return null;
-    }
-    else
-    {
-      ChannelCacheKey k = new ChannelCacheKey();
-      k.setKey(this.getKey(state)+","+uid);
-      k.setKeyScope(ChannelCacheKey.SYSTEM_KEY_SCOPE);
-      k.setKeyValidity(new Long(System.currentTimeMillis()));
-      return k;
-    }
-  }
-
-  public boolean isCacheValid(Object validity,String uid)
-  {
-    if (!(validity instanceof Long))
-      return false;
-
-    CState state = (CState)stateTable.get(uid);
-
-    if (state == null)
-    {
-      log.debug("CGenericXSLT:isCacheValid() : no entry in state for uid=\""+uid+"\"");
-      return false;
-    }
-    else
-      return (System.currentTimeMillis() - ((Long)validity).longValue() < state.cacheTimeout*1000);
-  }
-
-  private String getKey(CState state)
-  {
-    // Maybe not the best way to generate a key, but it seems to work.
-    // If you know a better way, please change it!
-    StringBuffer sbKey = new StringBuffer(1024);
-    sbKey.append(systemCacheId).append(": ");
-    sbKey.append("xmluri:").append(state.xmlUri).append(", ");
-    sbKey.append("sslUri:").append(state.sslUri).append(", ");
-
-    // xslUri may either be specified as a parameter to this channel or we will
-    // get it by looking in the stylesheet list file
-    String xslUriForKey = state.xslUri;
-    try {
-      if (xslUriForKey == null) {
-        String sslUri = ResourceLoader.getResourceAsURLString(CGenericXSLT.class, state.sslUri);
-        xslUriForKey = XSLT.getStylesheetURI(sslUri, state.runtimeData.getBrowserInfo());
-      }
-    } catch (Exception e) {
-      xslUriForKey = "Not attainable: " + e;
-    }
-
-    sbKey.append("locales:").append(LocaleManager.stringValueOf(state.runtimeData.getLocales()));
-    sbKey.append("xslUri:").append(xslUriForKey).append(", ");
-    sbKey.append("cacheTimeout:").append(state.cacheTimeout).append(", ");
-    sbKey.append("isRenderingAsRoot:").append(state.runtimeData.isRenderingAsRoot()).append(", ");
-
-    // If a local connection context is configured, include its descriptor in the key
-    if (state.localConnContext != null)
-      sbKey.append("descriptor:").append(state.localConnContext.getDescriptor(state.xmlUri, state.runtimeData)).append(", ");    
-
-    sbKey.append("params:").append(state.params.toString());
-    return sbKey.toString();
-  }
+	}
+	
+	public void setStaticData (ChannelStaticData sd) throws ResourceMissingException
+	{
+		
+		String allowXmlUriPrefixesParam = 
+			sd.getParameter("upc_allow_xmlUri_prefixes");
+		String denyXmlUriPrefixesParam = 
+			sd.getParameter("upc_deny_xmlUri_prefixes");
+		
+		IUriScrutinizer temp = 
+			PrefixUriScrutinizer.instanceFromParameters(allowXmlUriPrefixesParam, denyXmlUriPrefixesParam);
+		
+		if (temp == null) {
+			throw new IllegalArgumentException("CGenericXSLT channel requires a non-null IUriScrutinizer");
+		}
+		uriScrutinizer = temp;
+		
+		xmlUri = sslUri = xslTitle = xslUri = null;
+		cacheTimeout = PropertiesManager.getPropertyAsLong("org.jasig.portal.channels.CGenericXSLT.default_cache_timeout");
+		
+		
+		// determine whether we should restrict what URIs we accept as the xmlUri from
+		// ChannelStaticData
+		String scrutinizeXmlUriAsStaticDataString = sd.getParameter("restrict_xmlUri_inStaticData");
+		boolean scrutinizeXmlUriAsStaticData = "true".equals(scrutinizeXmlUriAsStaticDataString);
+		
+		String xmlUriParam = sd.getParameter("xmlUri");
+		if (scrutinizeXmlUriAsStaticData) {
+			// apply configured xmlUri restrictions
+			setXmlUri(xmlUriParam);
+		} else {
+			// set the field directly to avoid applying xmlUri restrictions
+			xmlUri = xmlUriParam;
+		}
+		
+		sslUri = sd.getParameter("sslUri");
+		xslTitle = sd.getParameter("xslTitle");
+		xslUri = sd.getParameter("xslUri");
+		
+		String cacheTimeoutText = sd.getParameter("cacheTimeout");
+		
+		if (cacheTimeoutText != null)
+			cacheTimeout = Long.parseLong(cacheTimeoutText);
+		
+		String connContext = sd.getParameter ("upc_localConnContext");
+		if (connContext != null)
+		{
+			try
+			{
+				localConnContext = (LocalConnectionContext) Class.forName(connContext).newInstance();
+				localConnContext.init(sd);
+			}
+			catch (Exception e)
+			{
+				log.error( "CGenericXSLT: Cannot initialize ILocalConnectionContext: "+connContext, e);
+			}
+		}
+		params.putAll(sd);
+	}
+	
+	public void setRuntimeData (ChannelRuntimeData rd)
+	{
+		// because of the portal rendering model, there is no reason to synchronize on state
+		runtimeData=rd;
+		String xmlUri = rd.getParameter("xmlUri");
+		
+		if (xmlUri != null)
+			setXmlUri(xmlUri);
+		
+		// prior to uPortal 2.5.1 sslUri was configurable via ChannelRuntimeProperties
+		// this feature has been removed to improve security of CGenericXSLT instances.
+		
+		String s = rd.getParameter("xslTitle");
+		
+		if (s != null)
+			xslTitle = s;
+		
+		// grab the parameters and stuff them all into the state object        
+		Enumeration enum1 = rd.getParameterNames();
+		while (enum1.hasMoreElements()) {
+			String n = (String)enum1.nextElement();
+			if (rd.getParameter(n) != null) {
+				params.put(n,rd.getParameter(n));
+			}
+		}
+	}
+	
+	public void renderXML(ContentHandler out) throws PortalException
+	{
+		if (log.isDebugEnabled())
+			log.debug(this);
+		
+		// OK, pass everything we got cached in params...
+		if (params != null) {
+			Iterator it = params.keySet().iterator();
+			while (it.hasNext()) {
+				String n = (String) it.next();
+				if (params.get((Object) n) != null) {
+					runtimeData.put(n, params.get((Object) n));
+				}
+			}
+		}
+		
+		Document xmlDoc;
+		InputStream inputStream = null;
+		
+		try
+		{
+			DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+			docBuilderFactory.setNamespaceAware(true);
+			DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+			DTDResolver dtdResolver = new DTDResolver();
+			docBuilder.setEntityResolver(dtdResolver);
+			
+			URL url;
+			if (localConnContext != null)
+				url = ResourceLoader.getResourceAsURL(this.getClass(), localConnContext.getDescriptor(xmlUri, runtimeData));
+			else
+				url = ResourceLoader.getResourceAsURL(this.getClass(), xmlUri);
+			
+			URLConnection urlConnect = url.openConnection();
+			
+			if (localConnContext != null)
+			{
+				try
+				{
+					localConnContext.sendLocalData(urlConnect, runtimeData);
+				}
+				catch (Exception e)
+				{
+					log.error( "CGenericXSLT: Unable to send data through " + runtimeData.getParameter("upc_localConnContext"), e);
+				}
+			}
+			inputStream = urlConnect.getInputStream();
+			xmlDoc = docBuilder.parse(inputStream);
+		}
+		catch (IOException ioe)
+		{
+			throw new ResourceMissingException (xmlUri, "", ioe);
+		}
+		catch (Exception e)
+		{
+			throw new GeneralRenderingException("Problem parsing " + xmlUri , e);
+		} finally {
+			try {
+				if (inputStream != null)
+					inputStream.close();
+			} catch (IOException ioe) {
+				throw new PortalException("CGenericXSLT:renderXML():: could not close InputStream", ioe);
+			}
+		}
+		
+		runtimeData.put("baseActionURL", runtimeData.getBaseActionURL());
+		runtimeData.put("isRenderingAsRoot", String.valueOf(runtimeData.isRenderingAsRoot()));
+		
+		// Add uPortal version string (used in footer channel)
+		runtimeData.put("uP_productAndVersion", Version.getProductAndVersion());
+		
+		// OK, pass everything we got cached in params...
+		if (params != null)
+		{
+			Iterator it = params.keySet().iterator();
+			while (it.hasNext()) {
+				String n = (String)it.next();
+				if (params.get((Object)n) != null) {
+					runtimeData.put(n,params.get((Object)n));
+				}
+			}
+		}
+		
+		XSLT xslt = XSLT.getTransformer(this);
+		xslt.setXML(xmlDoc);
+		if (xslUri != null)
+			xslt.setXSL(xslUri);
+		else
+			xslt.setXSL(sslUri, xslTitle, runtimeData.getBrowserInfo());
+		xslt.setTarget(out);
+		xslt.setStylesheetParameters(runtimeData);
+		xslt.transform();
+	}
+	
+	public ChannelCacheKey generateKey()
+	{
+		ChannelCacheKey k = new ChannelCacheKey();
+		k.setKey(getKey());
+		k.setKeyScope(ChannelCacheKey.INSTANCE_KEY_SCOPE);
+		k.setKeyValidity(new Long(System.currentTimeMillis()));
+		return k;
+	}
+	
+	public boolean isCacheValid(Object validity)
+	{
+		if (!(validity instanceof Long))
+			return false;
+		
+		return (System.currentTimeMillis() - ((Long)validity).longValue() < cacheTimeout*1000);
+	}
+	
+	private String getKey()
+	{
+		// Maybe not the best way to generate a key, but it seems to work.
+		// If you know a better way, please change it!
+		StringBuffer sbKey = new StringBuffer(1024);
+		sbKey.append("xmluri:").append(xmlUri).append(", ");
+		sbKey.append("sslUri:").append(sslUri).append(", ");
+		
+		// xslUri may either be specified as a parameter to this channel or we will
+		// get it by looking in the stylesheet list file
+		String xslUriForKey = xslUri;
+		try {
+			if (xslUriForKey == null) {
+				String s = ResourceLoader.getResourceAsURLString(CGenericXSLT.class, sslUri);
+				xslUriForKey = XSLT.getStylesheetURI(s, runtimeData.getBrowserInfo());
+			}
+		} catch (Exception e) {
+			log.error(e,e);
+			xslUriForKey = "Not attainable: " + e;
+		}
+		
+		sbKey.append("locales:").append(LocaleManager.stringValueOf(runtimeData.getLocales()));
+		sbKey.append("xslUri:").append(xslUriForKey).append(", ");
+		sbKey.append("cacheTimeout:").append(cacheTimeout).append(", ");
+		sbKey.append("isRenderingAsRoot:").append(runtimeData.isRenderingAsRoot()).append(", ");
+		
+		// If a local connection context is configured, include its descriptor in the key
+		if (localConnContext != null)
+			sbKey.append("descriptor:").append(localConnContext.getDescriptor(xmlUri, runtimeData)).append(", ");    
+		
+		sbKey.append("params:").append(params.toString());
+		return sbKey.toString();
+	}
+	
+	/**
+	 * Set the URI or resource-relative-path of the XML this CGenericXSLT should
+	 * render.
+	 * @param xmlUriArg URI or local resource path to the XML this channel should render.
+	 * @throws IllegalArgumentException if xmlUriArg specifies a missing resource
+	 * or if the URI has bad syntax
+	 * @throws BlockedUriException if the xmlUriArg is blocked for policy reasons
+	 */
+	private void setXmlUri(String xmlUriArg) {
+		URL url = null;
+		try {
+			url = ResourceLoader.getResourceAsURL(this.getClass(), xmlUriArg);
+		} catch (ResourceMissingException e) {
+			IllegalArgumentException iae = new IllegalArgumentException("Resource [" + xmlUriArg + "] missing.",e);
+			throw iae;
+		}
+		
+		String urlString = url.toExternalForm();
+		try {
+			uriScrutinizer.scrutinize(new URI(urlString));
+		}catch (URISyntaxException e1) {
+			throw new IllegalArgumentException("xmlUri [" + xmlUriArg + "] resolved to a URI with bad syntax.",e1);
+		}
+		
+		xmlUri = xmlUriArg;
+	}
+	
+	public String toString()
+	{
+		StringBuffer str = new StringBuffer();
+		str.append("xmlUri = "+xmlUri+"\n");
+		str.append("xslUri = "+xslUri+"\n");
+		str.append("sslUri = "+sslUri+"\n");
+		str.append("xslTitle = "+xslTitle+"\n");
+		if (params != null) {
+			str.append("params = "+params.toString()+"\n");
+		}
+		return str.toString();
+	}
 }
