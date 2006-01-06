@@ -6,11 +6,8 @@
 package  org.jasig.portal.channels.groupsmanager;
 
 import org.jasig.portal.ChannelStaticData;
-import org.jasig.portal.IMultithreadedChannel;
 import org.jasig.portal.IServant;
-import org.jasig.portal.MultithreadedCacheableChannelAdapter;
 import org.jasig.portal.PortalEvent;
-import org.jasig.portal.PortalException;
 import org.jasig.portal.groups.IGroupMember;
 
 /**
@@ -20,20 +17,15 @@ import org.jasig.portal.groups.IGroupMember;
  * @version $Revision$
  */
 
-public class CGroupsManagerServant extends MultithreadedCacheableChannelAdapter
+public class CGroupsManagerServant extends CGroupsManager
       implements IServant {
-   final IMultithreadedChannel channel;
-   final String uid;
 
    /**
     * put your documentation comment here
     * @param channel (IMultithreadedChannel)
     * @param uid (String)
     */
-   public CGroupsManagerServant (IMultithreadedChannel channel, String uid) {
-      super(channel,uid);
-      this.channel = channel;
-      this.uid = uid;
+   public CGroupsManagerServant () {
    }
 
    /**
@@ -50,25 +42,13 @@ public class CGroupsManagerServant extends MultithreadedCacheableChannelAdapter
       return  isFinished;
    }
 
-   CGroupsManagerSessionData getSessionData(){
-    return ((CGroupsManager) channel).getSessionData(uid);
-   }
-
    /**
     * Sets the staticData.
     * @param sd (ChannelStaticData)
     */
    public void setStaticData (ChannelStaticData sd) {
-      try {
-         channel.setStaticData(sd, uid);
-         getSessionData().servantMode = true;
-      }
-      catch (PortalException pex) {
-         Utility.logMessage("ERROR", this.getClass().getName()
-            + ".setStaticData() : Unable to set static data for servant. "
-            + "staticData parm = " + sd
-            + "uid parm = " + uid, pex);
-      }
+      super.setStaticData(sd);
+      getSessionData().servantMode = true;
    }
 
    /**
@@ -80,7 +60,7 @@ public class CGroupsManagerServant extends MultithreadedCacheableChannelAdapter
       super.finalize();
       // send SESSION_DONE event to the wrapped CGroupsManager channel.
       PortalEvent ev=PortalEvent.SESSION_DONE_EVENT;
-      channel.receiveEvent(ev, uid);
+      receiveEvent(ev);
    }
 
    /**
@@ -89,7 +69,7 @@ public class CGroupsManagerServant extends MultithreadedCacheableChannelAdapter
     * @return Object[]
     */
    public Object[] getResults () {
-      CGroupsManagerSessionData sessionData = ((CGroupsManager) channel).getSessionData(uid);
+      CGroupsManagerSessionData sessionData = getSessionData();
       ChannelStaticData staticData = sessionData.staticData;
       IGroupsManagerCommand cmd = GroupsManagerCommandFactory.get("Done");
       try{

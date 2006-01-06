@@ -39,14 +39,13 @@ import org.w3c.dom.Element;
 public class CGroupsManagerServantFactory implements GroupsManagerConstants{
     private static CGroupsManagerServantFactory _instance;
     private static int UID = 0;
-    private static CGroupsManager _groupsManager = new CGroupsManager();
 
     /** Creates new CGroupsManagerServantFactory */
     protected CGroupsManagerServantFactory() {
     }
 
     protected static CGroupsManagerServant getGroupsServant(){
-      return new CGroupsManagerServant(_groupsManager, getNextUid());
+      return new CGroupsManagerServant();
     }
 
     /**

@@ -17,7 +17,6 @@ import org.jasig.portal.ChannelRuntimeProperties;
 import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.ICacheable;
 import org.jasig.portal.IChannel;
-import org.jasig.portal.IMultithreadedCacheable;
 import org.jasig.portal.IPermissible;
 import org.jasig.portal.PortalEvent;
 import org.jasig.portal.PortalException;
@@ -37,12 +36,13 @@ import org.xml.sax.ContentHandler;
  * @version $Revision$
  */
 public class CGroupsManager
-      implements org.jasig.portal.IMultithreadedChannel, GroupsManagerConstants, IPermissible, IMultithreadedCacheable {
+      implements IChannel, GroupsManagerConstants, IPermissible, ICacheable {
    // Location of the stylesheet list file
    protected static final String sslLocation = "CGroupsManager.ssl";
    protected static HashMap activities = null;
    protected HashMap targets = null;
-   protected HashMap sessionsMap = new HashMap();
+//   protected HashMap sessionsMap = new HashMap();
+   private CGroupsManagerSessionData sessionData;
 
    /** Creates new GroupsManagerChannel */
    public CGroupsManager () {
@@ -119,7 +119,7 @@ public class CGroupsManager
     * @param uid
     * @return ChannelRuntimeProperties
     */
-   public ChannelRuntimeProperties getRuntimeProperties (String uid) {
+   public ChannelRuntimeProperties getRuntimeProperties () {
       return  new ChannelRuntimeProperties();
    }
 
@@ -130,12 +130,11 @@ public class CGroupsManager
     * @param uid
     * @see PortalEvent
     */
-   public void receiveEvent (PortalEvent ev, String uid)
-   //public void receiveEvent(LayoutEvent ev)
+   public void receiveEvent (PortalEvent ev)
    {
       if (ev.getEventNumber() == PortalEvent.SESSION_DONE) {
          try{
-            CGroupsManagerSessionData sd = getSessionData(uid);
+            CGroupsManagerSessionData sd = sessionData;
             if (sd.lockedGroup != null){
                sd.lockedGroup.getLock().release();
                sd.lockedGroup = null;
@@ -144,7 +143,6 @@ public class CGroupsManager
             if (sd.servantChannel != null){
                sd.servantChannel.receiveEvent(ev);
             }
-            sessionsMap.remove(uid); // Clean up
          } catch (Exception e){
             Utility.logMessage("ERROR", this.getClass().getName() + "::receiveEvent(): Exception = " + e, e);
          }
@@ -157,9 +155,9 @@ public class CGroupsManager
     * @param uid
     * @throws PortalException
     */
-   public void renderXML (ContentHandler out, String uid) throws PortalException {
+   public void renderXML (ContentHandler out) throws PortalException {
       Utility.logMessage("DEBUG", this.getClass().getName() + "::renderXML(): this = " + this);
-      CGroupsManagerSessionData sessionData = getSessionData(uid);
+      CGroupsManagerSessionData sessionData = getSessionData();
       ChannelRuntimeData runtimeData= sessionData.runtimeData;
       long time1 = Calendar.getInstance().getTime().getTime();
       long time2 = 0;
@@ -249,9 +247,9 @@ public class CGroupsManager
     * @see ChannelRuntimeData
     * @param uid
     */
-   public void setRuntimeData (ChannelRuntimeData rd, String uid) {
+   public void setRuntimeData (ChannelRuntimeData rd) {
       Utility.logMessage("DEBUG", this.getClass().getName() + "::setRuntimeData(): this = " + this);
-      CGroupsManagerSessionData sessionData = getSessionData(uid);
+      CGroupsManagerSessionData sessionData = getSessionData();
       sessionData.runtimeData = rd;
       ChannelRuntimeData runtimeData= sessionData.runtimeData;
       sessionData.startRD = Calendar.getInstance().getTime().getTime();
@@ -315,13 +313,12 @@ public class CGroupsManager
     * @see ChannelStaticData
     * @param uid
     */
-   public void setStaticData (ChannelStaticData sd, String uid) {
+   public void setStaticData (ChannelStaticData sd) {
       try{
-         CGroupsManagerSessionData sessionData = getSessionData(uid);
+         CGroupsManagerSessionData sessionData = getSessionData();
          Utility.logMessage("DEBUG", this.getClass().getName() + "::setStaticData(): this = " + this);
          Utility.logMessage("DEBUG", this.getClass().getName() + "::setStaticData(): session Data = " + sessionData);
          Utility.logMessage("DEBUG", this.getClass().getName() + "::setStaticData(): sd = " + sd);
-         Utility.logMessage("DEBUG", this.getClass().getName() + "::setStaticData(): uid = " + uid);
          sessionData.staticData = sd;
          IEntityGroup admin = GroupService.getDistinguishedGroup(GroupService.PORTAL_ADMINISTRATORS);
          IGroupMember currUser = AuthorizationService.instance().getGroupMember(sessionData.staticData.getAuthorizationPrincipal());
@@ -408,19 +405,18 @@ public class CGroupsManager
     * @param uid
     * @return ChannelCacheKey
     */
-   public ChannelCacheKey generateKey (String uid) {
+   public ChannelCacheKey generateKey () {
       Utility.logMessage("DEBUG", this.getClass().getName() + "::generateKey(): this = " + this);
-      CGroupsManagerSessionData sessionData = getSessionData(uid);
+      CGroupsManagerSessionData sessionData = getSessionData();
       ChannelStaticData staticData = sessionData.staticData;
       ChannelCacheKey cck;
-      Utility.logMessage("DEBUG", "CGroupsManager.generateKey():: uid parm = " + uid);
       if (sessionData.servantChannel == null) {
          cck = new ChannelCacheKey();
          cck.setKey(staticData.getChannelPublishId()
             + "-"+staticData.getChannelSubscribeId()
             + "-" + String.valueOf(staticData.getPerson().getID()));
          //   + "-" + Calendar.getInstance().getTime().getTime()));
-         cck.setKeyValidity(vKey(uid));
+         cck.setKeyValidity(vKey());
          Utility.logMessage("DEBUG", "CGroupsManager.generateKey():: [NO SERVANT] key = " + cck.getKey());
       }
       else {
@@ -436,9 +432,9 @@ public class CGroupsManager
     * @param uid
     * @return String
     */
-   private String vKey (String uid) {
+   private String vKey () {
       Utility.logMessage("DEBUG", this.getClass().getName() + "::vKey(): this = " + this);
-      CGroupsManagerSessionData sessionData = getSessionData(uid);
+      CGroupsManagerSessionData sessionData = getSessionData();
       String vkey = sessionData.currentPage+" - "+sessionData.feedback+" - "+sessionData.highlightedGroupID+" - "
         +sessionData.mode+" - "+sessionData.rootViewGroupID;
       Utility.logMessage("DEBUG", this.getClass().getName() + ".vKey() : vKey returns = " + vkey);
@@ -451,14 +447,14 @@ public class CGroupsManager
     * @param uid
     * @return boolean
     */
-   public boolean isCacheValid (Object validity, String uid) {
+   public boolean isCacheValid (Object validity) {
       Utility.logMessage("DEBUG", this.getClass().getName() + "::isCacheValid(): this = " + this);
-      CGroupsManagerSessionData sessionData = getSessionData(uid);
+      CGroupsManagerSessionData sessionData = getSessionData();
       ChannelRuntimeData runtimeData= sessionData.runtimeData;
       boolean valid = false;
       if (sessionData.servantChannel == null) {
          if (validity != null) {
-            if (validity.equals(vKey(uid)) && runtimeData.get("grpCommand") == null) {
+            if (validity.equals(vKey()) && runtimeData.get("grpCommand") == null) {
                valid = true;
             }
          }
@@ -477,13 +473,12 @@ public class CGroupsManager
     * @param uid
     * @return CGroupsManagerSessionData
     */
-   public synchronized CGroupsManagerSessionData getSessionData (String uid) {
-      CGroupsManagerSessionData sd = (CGroupsManagerSessionData) sessionsMap.get(uid);
+   public synchronized CGroupsManagerSessionData getSessionData () {
+      CGroupsManagerSessionData sd = sessionData;
       if (sd == null) {
          sd =  new CGroupsManagerSessionData();
-         sd.uid = uid;
          sd.permissible = this;
-         sessionsMap.put(uid, sd);
+         sessionData = sd;
       }
       Utility.logMessage("DEBUG", this.getClass().getName() + "::getSessionData(): sd = " + sd);
       return sd;

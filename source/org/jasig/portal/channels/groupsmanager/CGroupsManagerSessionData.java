@@ -25,7 +25,7 @@ public class CGroupsManagerSessionData extends CGroupsManagerUnrestrictedSession
    public boolean servantMode = false;
    public boolean allowFinish = true;
    //public boolean blockEntitySelect = false;
-   public String uid;
+   //public String uid;
    public long startRD;
    public ILockableEntityGroup lockedGroup = null;
    public String highlightedGroupID;
