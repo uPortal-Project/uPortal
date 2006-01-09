@@ -375,7 +375,8 @@ public class CGenericXSLT extends BaseChannel implements IChannel, ICacheable
 		try {
 			url = ResourceLoader.getResourceAsURL(this.getClass(), xmlUriArg);
 		} catch (ResourceMissingException e) {
-			IllegalArgumentException iae = new IllegalArgumentException("Resource [" + xmlUriArg + "] missing.",e);
+			IllegalArgumentException iae = new IllegalArgumentException("Resource [" + xmlUriArg + "] missing.");
+			iae.initCause(e);
 			throw iae;
 		}
 		
@@ -383,7 +384,9 @@ public class CGenericXSLT extends BaseChannel implements IChannel, ICacheable
 		try {
 			uriScrutinizer.scrutinize(new URI(urlString));
 		}catch (URISyntaxException e1) {
-			throw new IllegalArgumentException("xmlUri [" + xmlUriArg + "] resolved to a URI with bad syntax.",e1);
+			IllegalArgumentException iae2 = new IllegalArgumentException("xmlUri [" + xmlUriArg + "] resolved to a URI with bad syntax.");
+			iae2.initCause(e1);
+			throw iae2;
 		}
 		
 		xmlUri = xmlUriArg;
