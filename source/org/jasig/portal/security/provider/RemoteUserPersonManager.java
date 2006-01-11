@@ -116,7 +116,7 @@ public class RemoteUserPersonManager implements IPersonManager {
 			// This preserves the default behavior of this class.
 			if ( ! remoteUserSecurityContextExists ) {
 			    RemoteUserSecurityContext remoteuserctx = new RemoteUserSecurityContext(remoteUser);
-				person.setSecurityContext(context);
+				person.setSecurityContext(remoteuserctx);
 			}
 		}
 		catch (Exception e) {
