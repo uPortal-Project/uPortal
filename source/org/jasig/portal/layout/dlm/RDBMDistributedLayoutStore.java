@@ -1988,7 +1988,7 @@ public class RDBMDistributedLayoutStore
                             // store user preferences
                             String pNameEscaped = RDBMServices.sqlEscape(pName);
                             sQuery = "INSERT INTO UP_SS_USER_ATTS (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,STRUCT_ID,PARAM_NAME,PARAM_TYPE,PARAM_VAL) VALUES ("
-                                + userId + "," + profileId + "," + stylesheetId + ",1,'" + plfFolderId.substring(1) + "','" + pNameEscaped + "',2,'" + pValue
+                                + userId + "," + profileId + "," + stylesheetId + ",1," + plfFolderId.substring(1) + ",'" + pNameEscaped + "',2,'" + pValue
                                 + "')";
                             if (LOG.isDebugEnabled())
                                 LOG.debug(sQuery);
@@ -2016,7 +2016,7 @@ public class RDBMDistributedLayoutStore
                         {
                             String pNameEscaped = RDBMServices.sqlEscape(pName);
                             sQuery = "INSERT INTO UP_SS_USER_ATTS (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,STRUCT_ID,PARAM_NAME,PARAM_TYPE,PARAM_VAL) VALUES ("
-                                + userId + "," + profileId + "," + stylesheetId + ",1,'" + plfChannelId.substring(1) + "','" + pNameEscaped + "',3,'" + pValue
+                                + userId + "," + profileId + "," + stylesheetId + ",1," + plfChannelId.substring(1) + ",'" + pNameEscaped + "',3,'" + pValue
                                 + "')";
                             if (LOG.isDebugEnabled())
                                 LOG.debug(sQuery);
@@ -2112,7 +2112,7 @@ public class RDBMDistributedLayoutStore
                         {
                             String pNameEscaped = RDBMServices.sqlEscape(pName);
                             sQuery = "INSERT INTO UP_SS_USER_ATTS (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,STRUCT_ID,PARAM_NAME,PARAM_TYPE,PARAM_VAL) VALUES ("
-                            + userId + "," + profileId + "," + stylesheetId + ",2,'" + plfChannelId.substring(1) + "','" + pNameEscaped + "',3,'" + pValue
+                            + userId + "," + profileId + "," + stylesheetId + ",2," + plfChannelId.substring(1) + ",'" + pNameEscaped + "',3,'" + pValue
                             + "')";
                             if (LOG.isDebugEnabled())
                                 LOG.debug(sQuery);
