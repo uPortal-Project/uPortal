@@ -110,6 +110,28 @@ class ExtensionTagHandler
                         + ".");
                 return;
             }
+            /*
+             * The following throwable check was added to prevent the 
+             * CarResources from failing to load with a NoClassDefFound error
+             * when a CAR was installed that was compile on a latter JVM than
+             * the one running the system. The result is that an 
+             * UnsupportedClassVersionError occurs which passes through the
+             * checks for ClassNotFoundException and causes CarResources'
+             * static initializer to fail resulting in a misleading
+             * NoClassDefFoundError showing in the browser with no indication 
+             * as to the real underlying cause.
+             */
+            catch( Throwable t)
+            {
+                log.error(
+                        "Error occurred loading specified contentHandler class "
+                            + handlerClass
+                            + ". Ignoring extension block "
+                            + "in deployment descriptor of "
+                            + ctx.getJarFile().getName()
+                            + ".", t);
+                    return;
+            }
             try
             {
                 obj = c.newInstance();
