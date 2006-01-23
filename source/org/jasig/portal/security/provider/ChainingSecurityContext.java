@@ -61,7 +61,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public abstract class ChainingSecurityContext implements ISecurityContext
 {
-    private static final Log log = LogFactory.getLog(ChainingSecurityContext.class);
+    protected final Log log = LogFactory.getLog(getClass());
     
   protected static boolean stopWhenAuthenticated = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.security.provider.ChainingSecurityContext.stopWhenAuthenticated");
   protected boolean isauth = false;
