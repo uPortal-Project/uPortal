@@ -35,6 +35,8 @@
 
 package org.jasig.portal.security;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ChannelStaticData;
 
@@ -56,6 +58,8 @@ import org.jasig.portal.ChannelStaticData;
 public abstract class LocalConnectionContext
 {
   protected ChannelStaticData staticData;
+  
+  protected final Log log = LogFactory.getLog(getClass());
 
   /**
    * Initialize	LocalConnectionContext by setting static data.
