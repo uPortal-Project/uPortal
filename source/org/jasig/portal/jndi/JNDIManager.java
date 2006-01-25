@@ -368,7 +368,7 @@ public class JNDIManager {
       try {
           userId=(String)tsessionsContext.lookup(sessionId);
       } catch (NamingException ne) {
-          log.error( "JNDISessionListener.valueUnbound(): Session "+sessionId+" does is not registered under /sessions context !", ne);
+          log.error( "JNDISessionListener.valueUnbound(): Session "+sessionId+" is not registered under /sessions context !", ne);
           return;
       }
       if(userId==null) {
