@@ -638,18 +638,7 @@ public class UserInstance implements HttpSessionBindingListener {
         }
     }
 
-    /**
-     * <code>getRenderingLock</code> returns a rendering lock for this session.
-     * @param sessionId current session id
-     * @return rendering lock <code>Object</code>
-     */
-    Object getRenderingLock(String sessionId) {
-        if(p_rendering_lock==null) {
-            p_rendering_lock=new Object();
-        }
-        return p_rendering_lock;
-    }
-
+    
     private String constructCacheKey(IPerson person,String rootNodeId) throws PortalException {
         StringBuffer sbKey = new StringBuffer(1024);
         sbKey.append(person.getID()).append(",");
