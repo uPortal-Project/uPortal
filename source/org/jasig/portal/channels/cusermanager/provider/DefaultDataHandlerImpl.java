@@ -47,7 +47,7 @@ public class DefaultDataHandlerImpl implements IDataHandler {
   protected static final String UPDCONDMASK
                                      = " where USER_NAME={0}";
 
-  protected static final String COUNTUSERS = "select count( USER_NAME ) cnt"
+  protected static final String COUNTUSERS = "select count( USER_NAME ) as cnt"
                          + " from UP_PERSON_DIR" + UPDCONDMASK;
 
   protected static final String ADDUSER = "insert into UP_PERSON_DIR ({0}) "
