@@ -329,13 +329,23 @@ public class RDBMDistributedLayoutStore
                     Hashtable owners = new Hashtable();
                     long wait_time;
                         
+                    String temp = null;
                     try
                     {
-                        wait_time = (Integer.parseInt(getProperty(
-                            "org.jasig.portal.layout.dlm.RDBMDistributedLayoutStore.fragment_cache_refresh" ))*60) * 1000;
+                    	temp = getProperty(
+                        	"org.jasig.portal.layout.dlm.RDBMDistributedLayoutStore.fragment_cache_refresh" );
+                        wait_time = (Integer.parseInt(temp)*60) * 1000;
                     }
-                    catch( Exception e )
+                    catch( NumberFormatException e )
                     { 
+                    	// specific recovery: if the deployer mangled the property value
+                    	log.warn("unable to parse dlm.xml property org.jasig.portal.layout.dlm.RDBMDistributedLayoutStore.fragment_cache_refresh: "+temp+", set timeout to 1 hour",e);
+                        wait_time = 60 * (1000 * 60); // default to one hour
+                    }
+                    catch( Exception e) 
+                    {
+                    	// general recovery: no matter what went wrong, fall back on default.
+                    	log.error("unable to parse dlm.xml property org.jasig.portal.layout.dlm.RDBMDistributedLayoutStore.fragment_cache_refresh: "+temp+", set timeout to 1 hour",e);
                         wait_time = 60 * (1000 * 60); // default to one hour
                     }
                             
