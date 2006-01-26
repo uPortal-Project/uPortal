@@ -21,6 +21,7 @@ import org.jasig.portal.utils.threading.BaseTask;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
+import edu.emory.mathcs.backport.java.util.concurrent.CancellationException;
 import edu.emory.mathcs.backport.java.util.concurrent.ExecutorService;
 import edu.emory.mathcs.backport.java.util.concurrent.Future;
 import edu.emory.mathcs.backport.java.util.concurrent.TimeUnit;
@@ -276,7 +277,28 @@ public class ChannelRenderer
             try {
                 this.workTracker.get(this.timeOut, TimeUnit.MILLISECONDS);
             } catch (TimeoutException te) {
-                log.debug("ChannelRenderer::outputRendering() : timed out", te);
+                if (log.isDebugEnabled()) {
+                    log.debug("ChannelRenderer::outputRendering() : channel [" + this.channel + "] timed out", te);
+                }
+            } catch (CancellationException ce) {
+                
+                if (log.isDebugEnabled()) {
+                    Throwable t = null;
+                    try {
+                        // in a try block to ensure further errors don't block reporting
+                        // the CancellationException.
+                        t = this.worker.getException();
+                    } catch (Exception e) {
+                        // ignore problem in getting the exception to report.
+                    }
+                    log.debug("ChannelRenderer::outputRendering() : channel [" + this.channel + "] threw an exception [" + t + "] and so its task was cancelled.");
+                }
+                
+            } catch (Exception e) {
+                // no matter what went wrong (CancellationException, a NullPointerException, etc.)
+                // the recovery code following this attempt to get the result from the workTracker Future
+                // should be allowed to run.
+                log.error("Unexpected exceptional condition trying to get the result from the workTracker Future rendering channel [" + this.channel + "].", e);
             }
           
             if(!this.workTracker.isDone()) {
