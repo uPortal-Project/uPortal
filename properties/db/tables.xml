@@ -124,7 +124,7 @@
     <not-null>PREF_ID</not-null>
   </table>  
 
-  <table sinceMajor="2" sinceMinor="2">
+  <table sinceMajor="2" sinceMinor="5">
     <name>UP_LAYOUT_RESTRICTIONS</name>
     <desc>The layout restrictions</desc>
     <columns>
