@@ -6,6 +6,7 @@
 
 package org.jasig.portal.layout.alm.channels;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Collection;
@@ -77,17 +78,22 @@ public class CFragmentManager extends FragmentManager {
 
 	}
 
-    private synchronized IGroupMember[] getGroupMembers(String fragmentId) throws PortalException {
-       Collection groupKeys = alm.getPublishGroups(fragmentId);	
-	   IGroupMember[] members = new IGroupMember[groupKeys.size()];
-	   int i = 0; 
-	   for ( Iterator keys = groupKeys.iterator(); keys.hasNext(); i++ ) {
-       	String groupKey = (String) keys.next();
-       	IGroupMember member = GroupService.findGroup(groupKey);
-       	members[i] = member;  
-       }
-        return members;
-    }   
+	private synchronized IGroupMember[] getGroupMembers(String fragmentId) throws PortalException {
+		Collection groupKeys = alm.getPublishGroups(fragmentId);
+		ArrayList members = new ArrayList();
+		int i = 0;
+		IGroupMember member;
+		for ( Iterator keys = groupKeys.iterator(); keys.hasNext(); i++ ) {
+			String groupKey = (String) keys.next();
+			member = GroupService.findGroup(groupKey);
+			if (member != null){
+				members.add(member);
+			}else{
+				log.warn("Unable to find group member for the groupKey: "+groupKey);
+			}
+		}
+		return (IGroupMember[])members.toArray(new IGroupMember[0]);
+	}   
 
 
     private String getServantKey() {
@@ -105,9 +111,10 @@ public class CFragmentManager extends FragmentManager {
 				 try {
 				  // create the appropriate servant
 				  if ( servantFragmentId != null && CommonUtils.parseInt(servantFragmentId) > 0  ) {
+					IGroupMember[] members = getGroupMembers(servantFragmentId);
 					groupServant = CGroupsManagerServantFactory.getGroupsServantforSelection(staticData,
 													"Please select groups or people who should have access to this fragment:",
-													GroupService.EVERYONE,true,true,getGroupMembers(servantFragmentId));	
+													GroupService.EVERYONE,true,true,members);	
 				  } else 
 					groupServant = CGroupsManagerServantFactory.getGroupsServantforSelection(staticData,
 								"Please select groups or people who should have access to this fragment:",
@@ -118,7 +125,7 @@ public class CFragmentManager extends FragmentManager {
 				  									
 				} catch (Exception e) {
 					throw new PortalException(e);
-				  }
+				}
 		}	
 		 groupServant.setRuntimeData((ChannelRuntimeData)runtimeData.clone());		  
 		 return groupServant;
