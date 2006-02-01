@@ -118,22 +118,16 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         fragmentJoinQuery =
             "{oj UP_FRAGMENTS UF LEFT OUTER JOIN UP_FRAGMENT_PARAM UFP ON UF.NODE_ID = UFP.NODE_ID AND UF.FRAGMENT_ID = UFP.FRAGMENT_ID} WHERE";
 
-        //dmd.getJoinQuery().addQuery("ss_struct", "{oj UP_SS_STRUCT USS LEFT OUTER JOIN UP_SS_STRUCT_PAR USP ON USS.SS_ID=USP.SS_ID} WHERE");
-        //dmd.getJoinQuery().addQuery("ss_theme", "{oj UP_SS_THEME UTS LEFT OUTER JOIN UP_SS_THEME_PARM UTP ON UTS.SS_ID=UTP.SS_ID} WHERE");
       } else if (dmd.getJoinQuery() instanceof DatabaseMetaDataImpl.PostgreSQLDb) {
          dmd.getJoinQuery().addQuery("layout_aggr",
           "UP_LAYOUT_STRUCT_AGGR ULS LEFT OUTER JOIN UP_LAYOUT_PARAM USP ON ULS.USER_ID = USP.USER_ID AND ULS.NODE_ID = USP.STRUCT_ID WHERE");
          fragmentJoinQuery =
              "UP_FRAGMENTS UF LEFT OUTER JOIN UP_FRAGMENT_PARAM UFP ON UF.NODE_ID = UFP.NODE_ID AND UF.FRAGMENT_ID = UFP.FRAGMENT_ID WHERE";
-        //RDBMServices.getJoinQuery().addQuery("ss_struct", "UP_SS_STRUCT USS LEFT OUTER JOIN UP_SS_STRUCT_PAR USP ON USS.SS_ID=USP.SS_ID WHERE");
-        //RDBMServices.getJoinQuery().addQuery("ss_theme", "UP_SS_THEME UTS LEFT OUTER JOIN UP_SS_THEME_PARM UTP ON UTS.SS_ID=UTP.SS_ID WHERE");
      } else if (dmd.getJoinQuery() instanceof DatabaseMetaDataImpl.OracleDb) {
          dmd.getJoinQuery().addQuery("layout_aggr",
           "UP_LAYOUT_STRUCT_AGGR ULS, UP_LAYOUT_PARAM USP WHERE ULS.NODE_ID = USP.STRUCT_ID(+) AND ULS.USER_ID = USP.USER_ID AND");
         fragmentJoinQuery =
           "UP_FRAGMENTS UF, UP_FRAGMENT_PARAM UFP WHERE UF.NODE_ID = UFP.NODE_ID(+) AND UF.FRAGMENT_ID = UFP.FRAGMENT_ID AND";
-        //dmd.getJoinQuery().addQuery("ss_struct", "UP_SS_STRUCT USS, UP_SS_STRUCT_PAR USP WHERE USS.SS_ID=USP.SS_ID(+) AND");
-        //dmd.getJoinQuery().addQuery("ss_theme", "UP_SS_THEME UTS, UP_SS_THEME_PARM UTP WHERE UTS.SS_ID=UTP.SS_ID(+) AND");
       } else {
         throw new Exception("Unknown database!");
       }
@@ -375,8 +369,6 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         try {
           // see if the parameter was already there
 		  // fix for escaping column entries
-          // String sQuery = "SELECT PARAM_VAL FROM UP_SS_USER_PARM WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId
-		  //   + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=2 AND PARAM_NAME='" + pName + "'";
           selectStmt = con.prepareStatement(sQuery);
           selectStmt.setInt(1, userId);
           selectStmt.setInt(2, profileId);
@@ -388,11 +380,6 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
           try {
 	          rs = selectStmt.executeQuery();
 	          if (rs.next()) {
-	              // update
-	              // CSU Chico fix for escaping column entries  
-				  // sQuery = "UPDATE UP_SS_USER_PARM SET PARAM_VAL='" + tsup.getParameterValue(pName) + "' WHERE USER_ID=" + userId
-				  //  + " AND PROFILE_ID=" + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=2 AND PARAM_NAME='" + pName
-				  //  + "'";
 	              PreparedStatement updateStmt = null;
 	              try {
 	                updateStmt = con.prepareStatement(sUpdateQuery);
@@ -452,9 +439,6 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
           String pValue = tsup.getDefinedChannelAttributeValue(channelId, pName);
           if (pValue != null) {
             // store user preferences
-			// String sQuery = "SELECT PARAM_VAL FROM UP_SS_USER_ATTS WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId
-			//  + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=2 AND STRUCT_ID=" + channelId.substring(1) + " AND PARAM_NAME='" + pName
-			//  + "' AND PARAM_TYPE=3";
             PreparedStatement pssq = null;
             try {
                 pssq = con.prepareStatement(_sSelectQuery);
@@ -470,9 +454,6 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                   rs = pssq.executeQuery();
                   if (rs.next()) {
                       // update
-					  // sQuery = "UPDATE UP_SS_USER_ATTS SET PARAM_VAL='" + pValue + "' WHERE USER_ID=" + userId + " AND PROFILE_ID="
-					  //  + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=2 AND STRUCT_ID=" + channelId.substring(1) + " AND PARAM_NAME='"
-					  //  + pName + "' AND PARAM_TYPE=3";
     	              PreparedStatement updateStmt = null;
     	              try {
     	                updateStmt = con.prepareStatement(_sUpdateQuery);
@@ -491,9 +472,6 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
     	          }
     	          else {
                       // insert
-					  // sQuery = "INSERT INTO UP_SS_USER_ATTS (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,STRUCT_ID,PARAM_NAME,PARAM_TYPE,PARAM_VAL) VALUES ("
-					  // + userId + "," + profileId + "," + stylesheetId + ",2," + channelId.substring(1) + ",'" + pName + "',3,'" + pValue
-					  // + "')";
     	              PreparedStatement insertStmt = null;
     	              try {
     	                insertStmt = con.prepareStatement(_sInsertQuery);
@@ -512,11 +490,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
     	    	          try { insertStmt.close(); } catch (Exception ee) {}
     	              }
     	          }
-      	      } catch (Exception ex) {
-    	          // Roll back the transaction
-    		      // RDBMServices.rollback(con);
-    		      throw  ex;
-    	      } finally {
+      	      }  finally {
     	          try { rs.close(); } catch (Exception ee) {}
     	      }
             } catch (Exception eex){
@@ -627,22 +601,6 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
 
         PreparedStatement  psAddChannelParam = null, psAddChannel = null;
-
-        /*if ( node.getNodeType() == IUserLayoutNodeDescription.CHANNEL ) {
-          int publishId = CommonUtils.parseInt(((IALChannelDescription)nodeDesc).getChannelPublishId());
-          if ( publishId > 0 ) {
-           rs = stmt.executeQuery("SELECT CHAN_ID FROM UP_CHANNEL WHERE CHAN_ID=" + publishId);
-           try {
-            if ( !rs.next() ) {
-               psAddChannelParam = con.prepareStatement(CHANNEL_PARAM_ADD_SQL);
-               psAddChannel = con.prepareStatement(CHANNEL_ADD_SQL);
-            }
-           } finally {
-            rs.close();
-           }
-          }
-        }*/
-
 
        if ( node.getNodeType() == IUserLayoutNodeDescription.CHANNEL ) {
           IALChannelDescription channelDesc = (IALChannelDescription) nodeDesc;
@@ -765,10 +723,6 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
          psAddNode.setString(12,(nodeDesc.isImmutable())?"Y":"N");
          psAddNode.setString(13,(nodeDesc.isUnremovable())?"Y":"N");
          psAddNode.setString(14,nodeDesc.getGroup());
-         /*if ( node.getFragmentId() != null )
-          psLayout.setString(16,node.getFragmentId());
-         else
-          psLayout.setNull(16,Types.VARCHAR);*/
          psAddNode.setInt(15,node.getPriority());
 
          //execute update layout
@@ -836,10 +790,6 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
          psAddNode.setString(13,(nodeDesc.isImmutable())?"Y":"N");
          psAddNode.setString(14,(nodeDesc.isUnremovable())?"Y":"N");
          psAddNode.setString(15,nodeDesc.getGroup());
-         /*if ( node.getFragmentId() != null )
-          psLayout.setString(16,node.getFragmentId());
-         else
-          psLayout.setNull(16,Types.VARCHAR);*/
          psAddNode.setInt(16,node.getPriority());
          if ( fragmentId > 0 )
           psAddNode.setInt(17,fragmentId);
@@ -1007,7 +957,6 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         //        int layoutId=profile.getLayoutId();
         // but for now:
         String subSelectString = "SELECT LAYOUT_ID FROM UP_USER_PROFILE WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profile.getProfileId();
-        //log.debug("RDBMUserLayoutStore::getUserLayout(): " + subSelectString);
         int layoutId = -1;
         ResultSet rs = stmt.executeQuery(subSelectString);
         try {
@@ -1070,7 +1019,6 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
      */
   private boolean updateUserLayoutNode (int userId, int layoutId, ALNode node, PreparedStatement psUpdateNode,
                   PreparedStatement psUpdateRestriction, PreparedStatement psUpdateChannel, PreparedStatement psUpdateChannelParam ) throws PortalException {
-      //boolean layoutUpdate = false, channelUpdate = false, paramUpdate = false, restrUpdate = false;
 
       int count = 0;
 
@@ -1205,11 +1153,6 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
          psUpdateNode.setString(10,(nodeDesc.isImmutable())?"Y":"N");
          psUpdateNode.setString(11,(nodeDesc.isUnremovable())?"Y":"N");
          psUpdateNode.setString(12,nodeDesc.getGroup());
-         /*if ( node.getFragmentId() != null )
-          psLayout.setString(13,node.getFragmentId());
-         else
-          psLayout.setNull(13,Types.VARCHAR);*/
-
          psUpdateNode.setInt(13,node.getPriority());
 
          if ( fragmentId > 0 )
@@ -1274,73 +1217,6 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
            } // end for
           }  // end else
          } // end if
-
-
-        // if we have channel parameters
-
-        /*if ( !isFolder ) {
-         IALChannelDescription channelDesc = (IALChannelDescription) nodeDesc;
-         int publishId = CommonUtils.parseInt(channelDesc.getChannelPublishId());
-         if ( publishId > 0 ) {
-
-          for ( Enumeration paramNames = channelDesc.getParameterNames(); paramNames.hasMoreElements(); ) {
-            String paramName = (String) paramNames.nextElement();
-            String paramValue = channelDesc.getParameterValue(paramName);
-
-            if ( channelDesc.getDescription() != null )
-             psUpdateChannelParam.setString(1,channelDesc.getDescription());
-            else
-             psUpdateChannelParam.setNull(1,Types.VARCHAR);
-            psUpdateChannelParam.setString(2,paramValue);
-            psUpdateChannelParam.setString(3,(channelDesc.canOverrideParameter(paramName))?"Y":"N");
-
-             psUpdateChannelParam.setInt(4,publishId);
-
-             psUpdateChannelParam.setString(5,paramName);
-
-            //execute update parameters
-            count += psUpdateChannelParam.executeUpdate();
-          }
-
-           // Inserting channel attributes
-             psUpdateChannel.setString(1,channelDesc.getTitle());
-             psUpdateChannel.setString(2,channelDesc.getName());
-             if ( channelDesc.getDescription() != null )
-              psUpdateChannel.setString(3,channelDesc.getDescription());
-             else
-              psUpdateChannel.setNull(3,Types.VARCHAR);
-             psUpdateChannel.setString(4,channelDesc.getClassName());
-
-             tmpValue = CommonUtils.parseInt(channelDesc.getChannelTypeId());
-             if ( tmpValue > 0 )
-              psUpdateChannel.setInt(5,tmpValue);
-             else
-              psUpdateChannel.setNull(5,Types.INTEGER);
-
-             tmpValue = CommonUtils.parseInt(channelDesc.getChannelPublishId());
-             if ( tmpValue > 0 )
-              psUpdateChannel.setInt(6,tmpValue);
-             else
-              psUpdateChannel.setNull(6,Types.INTEGER);
-
-             Timestamp timestamp = new java.sql.Timestamp(new Date().getTime());
-             psUpdateChannel.setTimestamp(7,timestamp);
-             psUpdateChannel.setInt(8,0);
-             psUpdateChannel.setTimestamp(9,timestamp);
-             psUpdateChannel.setInt(10,(int)channelDesc.getTimeout());
-             psUpdateChannel.setString(11,(channelDesc.isEditable())?"Y":"N");
-             psUpdateChannel.setString(12,(channelDesc.hasHelp())?"Y":"N");
-             psUpdateChannel.setString(13,(channelDesc.hasAbout())?"Y":"N");
-             psUpdateChannel.setString(14,channelDesc.getFunctionalName());
-
-             psUpdateChannel.setInt(15,publishId);
-
-             //execute update parameters
-             count += psUpdateChannel.executeUpdate();
-             //psChan.close();
-         }
-        }*/
-
         return count > 0;
 
      } catch (Exception e) {
@@ -1388,43 +1264,6 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
       int fragmentId = CommonUtils.parseInt(nodeDesc.getFragmentId());
       int fragmentNodeId = CommonUtils.parseInt(nodeDesc.getFragmentNodeId());
-
-      // if we have a channel
-      /*  if ( !isFolder ) {
-          IALChannelDescription channelDesc = (IALChannelDescription) nodeDesc;
-          PreparedStatement  psParam =
-             con.prepareStatement("DELETE FROM UP_CHANNEL_PARAM WHERE CHAN_ID=?,CHAN_PARM_NM=?");
-          tmpValue = CommonUtils.parseInt(channelDesc.getChannelPublishId());
-          for ( Enumeration paramNames = channelDesc.getParameterNames(); paramNames.hasMoreElements(); ) {
-            String paramName = (String) paramNames.nextElement();
-
-            if ( tmpValue > 0 )
-             psParam.setInt(1,tmpValue);
-            else
-             psParam.setNull(1,Types.INTEGER);
-
-             psParam.setString(2,paramName);
-
-            //execute update parameters
-            count += psParam.executeUpdate();
-          }
-            psParam.close();
-
-           // deleting channel attributes
-           PreparedStatement  psChan =
-             con.prepareStatement("DELETE FROM UP_CHANNEL WHERE CHAN_ID=?");
-
-             if ( tmpValue > 0 )
-              psChan.setInt(1,tmpValue);
-             else
-              psChan.setNull(1,Types.INTEGER);
-
-             //execute update parameters
-             count += psChan.executeUpdate();
-             psChan.close();
-
-        }*/
-
 
          // Delete node restrictions
          Hashtable restrHash = nodeDesc.getRestrictions();
@@ -1700,20 +1539,6 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
          int fragmentNodeId = CommonUtils.parseInt(node.getFragmentNodeId());
 
          if ( fragmentNodeId > 0 || fragmentId <= 0 ) {
-         
-          /* boolean channelParamsExist = false;
-
-               if ( node.getNodeType() == IUserLayoutNodeDescription.CHANNEL ) {
-                int publishId = CommonUtils.parseInt(((IALChannelDescription)node.getNodeDescription()).getChannelPublishId());
-                  ResultSet rsChan = stmt.executeQuery("SELECT CHAN_ID FROM UP_CHANNEL WHERE CHAN_ID=" + publishId);
-                  try {
-                   if ( rsChan.next() )
-                     channelParamsExist = true;
-                  } finally {
-                     rsChan.close();
-                    }
-               }*/
-
                  addUserLayoutNode(userId,layoutId,node,psAddLayoutNode,psAddLayoutRestriction,null,null,null);
          }   
  
@@ -1997,8 +1822,6 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
        Iterator containingGroups = groupPerson.getAllContainingGroups();
 
        if ( containingGroups.hasNext() ) {
-        //Connection extraCon = RDBMServices.getConnection();
-
         // Getting push-fragments based on a group key parameter
         PreparedStatement psGroups = con.prepareStatement("SELECT UOF.FRAGMENT_ID, UOF.FRAGMENT_ROOT_ID FROM UP_GROUP_FRAGMENT UPG, UP_OWNER_FRAGMENT UOF " +
                                                           "WHERE UPG.GROUP_KEY=? AND UPG.FRAGMENT_ID = UOF.FRAGMENT_ID AND UOF.PUSHED_FRAGMENT='Y'");
@@ -2025,7 +1848,6 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         }
 
          if ( psGroups != null ) psGroups.close();
-          //RDBMServices.releaseConnection(extraCon);
        } // end if hasNext()
 
         Statement stmt = con.createStatement();
@@ -2215,16 +2037,6 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         "UF.UNREMOVABLE,UF.IMMUTABLE,UF.PRIORITY,UF.FRAGMENT_ID ";
       sqlFragment += "FROM UP_FRAGMENTS UF ";
       sqlFragment += ((pushFragmentIds!=null)?"WHERE UF.FRAGMENT_ID IN ("+pushFragmentIds+")":"");
-        
-//        String sqlFragment = "SELECT DISTINCT UF.NODE_ID,UF.NEXT_NODE_ID,UF.CHLD_NODE_ID,UF.PREV_NODE_ID,UF.PRNT_NODE_ID,UF.CHAN_ID,UF.NAME,UF.TYPE,UF.HIDDEN,"+
-//          "UF.UNREMOVABLE,UF.IMMUTABLE,UF.PRIORITY,UF.FRAGMENT_ID";
-//        if (RDBMServices.supportsOuterJoins) {
-//          sqlFragment += ",UFP.PARAM_NAME,UFP.PARAM_VALUE FROM UP_LAYOUT_STRUCT_AGGR ULS, " + fragmentJoinQuery;
-//        } else {
-//          sqlFragment += " FROM UP_FRAGMENTS UF, UP_LAYOUT_STRUCT_AGGR ULS WHERE ";
-//        }
-//        sqlFragment += "(ULS.USER_ID="+userId+" AND ULS.FRAGMENT_ID=UF.FRAGMENT_ID)" + ((pushFragmentIds!=null)?" OR UF.FRAGMENT_ID IN ("+pushFragmentIds+")":"");
-//
       log.debug(sqlFragment);
 
         // The hashtable object containing the fragment nodes that are next to the user layout nodes
@@ -2245,51 +2057,24 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
           String sepChar = "";
           if (rs.next()) {
             int structId = rs.getInt(1);
-            /*if (rs.wasNull()) {
-              structId = 0;
-            }*/
-
-
             readLayout: while (true) {
 
               if (DEBUG > 1) System.err.println("Found layout structureID " + structId);
 
 
               int nextId = rs.getInt(2);
-              /*if (rs.wasNull()) {
-                nextId = 0;
-              }*/
-
-
               int childId = rs.getInt(3);
-              /*if (rs.wasNull()) {
-                childId = 0;
-              }*/
-
               int prevId = rs.getInt(4);
-              /*if (rs.wasNull()) {
-                prevId = 0;
-              }*/
               int prntId = rs.getInt(5);
-              /*if (rs.wasNull()) {
-                prntId = 0;
-              }*/
               int chanId = rs.getInt(6);
-              /*if (rs.wasNull()) {
-                chanId = 0;
-              }*/
-
               int fragmentId = rs.getInt(13);
               int fragmentNodeId = ( sql.equals(sqlLayout) )?rs.getInt(14):0;
 
               IALNodeDescription nodeDesc= null;
               // Trying to get the node if it already exists
-              //ALNode node = (ALNode) layout.get(structId+"");
               ALNode node;
               String childIdStr = null;
-              //if ( ( chanId <= 0 && fragmentId <= 0 ) || ( fragmentId > 0 && ( childId > 0 || fragmentNodeId > 0 ) ) ) {
               if ( chanId <= 0 ) {
-                //if ( node == null )
                 node = new ALFolder();
                 IALFolderDescription folderDesc = new ALFolderDescription();
                 // If children exist in the folder
@@ -2308,7 +2093,6 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                 folderDesc.setFolderType(intType);
                 nodeDesc = folderDesc;
               } else {
-                 //if ( node == null )
                  node = new ALChannel();
                  ALChannelDescription channelDesc = new ALChannelDescription();
                  channelDesc.setChannelPublishId(rs.getString(6));
@@ -2341,7 +2125,6 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
               // Setting the next node id
               if ( nextId != 0 ) {
-                 //node.setNextNodeId((nextId!=LOST_NODE_ID)?(nextId+""):IALFolderDescription.LOST_FOLDER_ID);
                String nextIdStr = ( fragmentId > 0 && fragmentNodeId <= 0 )?(fragmentId+NODE_SEPARATOR+nextId):(nextId+"");
                node.setNextNodeId(nextIdStr);
               }
@@ -2364,7 +2147,6 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
               // Setting the previous node id
               if ( prevId != 0 ) {
-                //node.setPreviousNodeId((prevId!=LOST_NODE_ID)?(prevId+""):IALFolderDescription.LOST_FOLDER_ID);
                String prevIdStr = ( fragmentId > 0 && fragmentNodeId <= 0 )?(fragmentId+NODE_SEPARATOR+prevId):(prevId+"");
                node.setPreviousNodeId(prevIdStr);
               }
@@ -2383,11 +2165,8 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
               } else {
                   if ( fragmentIdStr != null && fragmentNodes.containsKey(key) ) {
                     ALNode fragNode = (ALNode) fragmentNodes.get(key);
-                    //Keeping some properties of node description from the user layout for "pseudo" nodes
-                    //IUserLayoutNodeDescription oldDesc = fragNode.getNodeDescription();
                     nodeDesc.setId(fragNode.getId());
                     nodeDesc.setFragmentNodeId(fragNode.getFragmentNodeId());
-                    //nodeDesc.setName(oldDesc.getName());
                     nodeDesc.setImmutable(true);
                     fragNode.setNodeDescription(nodeDesc);
                     if ( fragNode.getNodeType() == IUserLayoutNodeDescription.FOLDER ) {
@@ -2485,11 +2264,6 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
 
             } // while
-
-            /*
-             if ( psRestrLayout != null ) psRestrLayout.close();
-             if ( psRestrFragment != null ) psRestrFragment.close();
-            */
           }
         } finally {
           rs.close();
@@ -2532,14 +2306,12 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
               readParm: while(true) {
 
 
-                //LayoutStructure ls = (LayoutStructure)layoutStructure.get(new Integer(structId));
                 ALNode node = (ALNode) layoutData.get(structId+"");
                 if ( node != null ) {
                  IALChannelDescription channelDesc = (IALChannelDescription) node.getNodeDescription();
                  int lastStructId = structId;
                  do {
 
-                   //ls.addParameter(rs.getString(2), rs.getString(3));
                    String name = rs.getString(2);
                    String value = rs.getString(3);
                    channelDesc.setParameterValue(name,value);
@@ -2558,57 +2330,6 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         }
 
        } // End of for
-
-
-       // Very suspicious place !!!!
-       // Check if the node from an user layout points to a fragment node, we have to bind them
-       // The loop for all the nodes from the hashtable
-       //System.out.println( "Getting layout size: " + layout.size() );
-       /*for ( Enumeration nodeIds = layout.keys(); nodeIds.hasMoreElements() ;) {
-          String strNodeId = nodeIds.nextElement().toString();
-          //System.out.println( "Getting nodeId: " + strNodeId );
-          ALNode node = (ALNode) layout.get(strNodeId);
-           if ( node.getFragmentId() == null ) {
-
-                  String nextNodeId = node.getNextNodeId();
-                  ALNode nextNode = null;
-                  if ( nextNodeId != null ) nextNode =  (ALNode) layout.get(nextNodeId);
-
-                  String prevNodeId = node.getPreviousNodeId();
-                  ALNode prevNode = null;
-                  if ( prevNodeId != null ) prevNode =  (ALNode) layout.get(prevNodeId);
-
-                  String prntNodeId = node.getParentNodeId();
-                  ALNode prntNode = null;
-                  if ( prntNodeId != null ) prntNode =  (ALNode) layout.get(prntNodeId);
-
-                  String firstChildId = ("folder".equals(node.getNodeType()))?((ALFolder)node).getFirstChildNodeId():null;
-                  ALNode childNode = null;
-                  if ( firstChildId != null )
-                   childNode = (ALNode)layout.get(firstChildId);
-
-                  if ( nextNode != null && nextNode.getFragmentId() != null ) nextNode.setPreviousNodeId(strNodeId);
-                  if ( prevNode != null && prevNode.getFragmentId() != null ) prevNode.setNextNodeId(strNodeId);
-                  // if we have the following: node = the first child of his parent what is a fragment node :))
-                  if ( prntNode != null && prntNode.getFragmentId() != null && node.getPreviousNodeId() == null )
-                     if ( "folder".equals(prntNode.getNodeType()) )
-                        ((ALFolder)prntNode).setFirstChildNodeId(strNodeId);
-                  // Checking all the children
-                  if ( childNode != null ) {
-                   for ( String tmpNodeId = childNode.getId(); tmpNodeId != null; ) {
-                    ALNode tmpChildNode =  (ALNode) layout.get(tmpNodeId);
-                    // if we got tmpChildNode == NULL we have to get out of the loop
-                    //if ( tmpChildNode != null ) {
-                     if ( tmpChildNode.getFragmentId() != null )
-                       tmpChildNode.setParentNodeId(strNodeId);
-                     tmpNodeId = tmpChildNode.getNextNodeId();
-                    //} else break;
-                   }
-                  }
-            }
-       }
-         */
-
 
         // finding the last node in the sibling line of the root children
         ALNode lastNode = null, prevNode = null;
@@ -2837,41 +2558,16 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
           String sepChar = "";
           if (rs.next()) {
             int structId = rs.getInt(1);
-            /*if (rs.wasNull()) {
-              structId = 0;
-            }*/
-
             readLayout: while (true) {
 
-
               int nextId = rs.getInt(2);
-              /*if (rs.wasNull()) {
-                nextId = 0;
-              }*/
-
-
               int childId = rs.getInt(3);
-              /*if (rs.wasNull()) {
-                childId = 0;
-              }*/
-
               int prevId = rs.getInt(4);
-              /*if (rs.wasNull()) {
-                prevId = 0;
-              }*/
               int prntId = rs.getInt(5);
-              /*if (rs.wasNull()) {
-                prntId = 0;
-              }*/
               int chanId = rs.getInt(6);
-              /*if (rs.wasNull()) {
-                chanId = 0;
-              }*/
-
 
               IALNodeDescription nodeDesc= null;
               // Trying to get the node if it already exists
-              //ALNode node = (ALNode) layout.get(structId+"");
               ALNode node;
               if ( chanId <= 0 ) {
                 node = new ALFolder();
@@ -2899,20 +2595,15 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
               // Setting node description attributes
               if ( node.getNodeType() == IUserLayoutNodeDescription.FOLDER )
                  nodeDesc.setName(rs.getString(7));
-              //nodeDesc.setHidden(("Y".equalsIgnoreCase(rs.getString(9))?true:false));
-              //nodeDesc.setImmutable(("Y".equalsIgnoreCase(rs.getString(11))?true:false));
-              //nodeDesc.setUnremovable(("Y".equalsIgnoreCase(rs.getString(10))?true:false));
               nodeDesc.setHidden(false);
               nodeDesc.setImmutable(false);
               nodeDesc.setUnremovable(false);
               node.setPriority(rs.getInt(12));
 
-
               nodeDesc.setFragmentId(fragmentIdStr);
 
               // Setting the node id
               nodeDesc.setId(structId+"");
-
 
               // Setting the next node id
               if ( nextId != 0 ) {
@@ -2921,7 +2612,6 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
               String parentId;
               switch ( prntId ) {
-
                case 0:
                                parentId = IALFolderDescription.ROOT_FOLDER_ID;
                                break;
@@ -2942,7 +2632,6 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
               }
 
               lastStructId = structId;
-
 
               // Putting the node into the layout hashtable with an appropriate key
               node.setNodeDescription(nodeDesc);
@@ -2982,7 +2671,6 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                       if ( channelDesc != null )
                           channelDesc.setParameterValue(name,value);
                   }
-
 
                   if (!rs.next()) {
                     break readLayout;
@@ -3026,11 +2714,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                  if ( newPriority != priority )
                      node.setPriority(newPriority);
                 }
-
-
             } // while
-
-
           }
         } finally {
           rs.close();
@@ -3043,13 +2727,9 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         if (chanIds.size() > 0) {
 
               for (int i = 0; i < chanIds.size(); i++) {
-
                 String key = (String) chanIds.get(i);
-
                 ALNode node = (ALNode) layoutData.get(key);
-
                 fillChannelDescription( (IALChannelDescription) node.getNodeDescription() );
-
               } // end for
 
           chanIds.clear();
