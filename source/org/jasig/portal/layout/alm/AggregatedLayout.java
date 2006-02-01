@@ -517,9 +517,6 @@ public class AggregatedLayout implements IAggregatedLayout {
       try {
         Element layoutNode = document.createElement((nodeId.equals(getRootId()))?LAYOUT:FRAGMENT);
         document.appendChild(layoutNode);
-        // Create a fragment list which the user owns
-        /*if (nodeId.equals(getRootId()))
-         createFragmentList(document,layoutNode);*/
         // Build the DOM
         appendDescendants(document,layoutNode,nodeId);
       } catch ( Exception e ) {
