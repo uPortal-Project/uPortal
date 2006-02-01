@@ -78,35 +78,6 @@ public class FragmentLoader {
         String outputDataFile=args[1];
 
         HashMap rNames=new HashMap();
-
-        // compile a table of restriction types
-        /*Connection con=null;
-        try {
-            con=RDBMServices.getConnection();
-            if(con!=null) {
-                Statement stmt = con.createStatement();
-
-                String query="SELECT RESTRICTION_TYPE,RESTRICTION_NAME FROM UP_RESTRICTIONS";
-                ResultSet rs=stmt.executeQuery(query);
-                while(rs.next()) {
-                    rNames.put(rs.getString("RESTRICTION_NAME"),rs.getString("RESTRICTION_TYPE"));
-                    System.out.println("DEBUG: restriction type mapping "+rs.getString("RESTRICTION_NAME")+" -> "+rs.getString("RESTRICTION_TYPE"));
-                }
-
-            } else {
-                System.out.println("ERROR: unable to obtain database connection.");
-                System.exit(1);
-            }
-        } catch (Exception e) {
-            System.out.println("ERROR: exception raised while reading restriction type mappings:");
-            e.printStackTrace();
-            System.exit(1);
-        } finally {
-            if(con!=null) {
-                RDBMServices.releaseConnection(con);
-            }
-        }*/
-        
         rNames.putAll(UserLayoutRestrictionFactory.getAvailableRestrictions());
 
         // instantiate transfomer
