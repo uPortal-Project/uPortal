@@ -67,19 +67,12 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
   private IPerson person;
   private Set listeners = new HashSet();
 
-  // Boolean flags for marking nodes
-  //private boolean addTargetsAllowed = false;
-  //private boolean moveTargetsAllowed = false;
-
   private IALNodeDescription addTargetsNodeDesc;
   private String moveTargetsNodeId;
   private boolean autoCommit = false;
 
   // The ID of the current loaded fragment
   private String fragmentId;
-
-  // The IDs and names of the fragments which a user is owner of
-  //private Hashtable fragments;
 
   // GUID generator
   private static GuidGenerator guid = null;
@@ -959,9 +952,6 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 			 //Creating a new folder with the folder description
 			 ALFolder fragmentRoot = new ALFolder(nodeDesc);
 			 
-			 //Updating the DB and getting the node ID for the new node
-			 //fragmentRoot = layoutStore.addUserLayoutNode(person,userProfile,fragmentRoot);
-			 
 			 // Setting the link between the layout root and the fragment root
 			 fragmentRoot.setParentNodeId(rootFolder.getId());
 			 rootFolder.setFirstChildNodeId(fragmentRoot.getId());
@@ -979,11 +969,6 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 			 // Setting the fragment in the database
 			 layoutStore.setFragment(person,fragment);
 		
-		     // Getting the list of the fragments	
-			 /*fragments = (Hashtable) layoutStore.getFragments(person);
-		     if ( fragments != null && fragments.size() > 0 ) 
-			  fragment.setFragments(fragments); */ 
-			
 			 updateCacheKey();
 			 
 			 // Return a new fragment ID
@@ -1012,9 +997,6 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
       try {
        if ( isLayoutFragment() ) {
         layoutStore.setFragment(person,(ILayoutFragment)layout);
-		/*fragments = (Hashtable) layoutStore.getFragments(person);
-		if ( fragments != null && fragments.size() > 0 ) 
-		  layout.setFragments(fragments);*/
        }
         updateCacheKey();
       } catch ( Exception e ) {
