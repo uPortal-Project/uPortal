@@ -69,7 +69,6 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 	
 	private IALNodeDescription addTargetsNodeDesc;
 	private String moveTargetsNodeId;
-	private boolean autoCommit = false;
 	
 	// The ID of the current loaded fragment
 	private String fragmentId;
@@ -85,7 +84,6 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 		this.userProfile = userProfile;
 		layout = new AggregatedLayout ( String.valueOf(getLayoutId()), this );
 		restrictionManager = (IALRestrictionManager) RestrictionManagerFactory.getRestrictionManager(layout);
-		autoCommit = false;
 		if ( guid == null )
 			guid = new GuidGenerator();
 		updateCacheKey();
@@ -143,9 +141,10 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 	/**
 	 * Sets a layout manager to auto-commit mode that allows to update the database immediately
 	 * @param autoCommit a boolean value
+	 * @deprecated this method no longer has any effect
 	 */
 	public void setAutoCommit (boolean  autoCommit) {
-		this.autoCommit = autoCommit;
+		throw new UnsupportedOperationException();
 	}
 	
 	
@@ -1106,34 +1105,20 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 		
 		// TO UPDATE THE APPROPRIATE INFO IN THE DB
 		// TO BE DONE !!!!!!!!!!!
-		boolean result = true;
-		if ( autoCommit ) {
-			if ( sourcePrevNode != null ) result &= layoutStore.updateUserLayoutNode(person,userProfile,sourcePrevNode);
-			if ( sourceNextNode != null ) result &= layoutStore.updateUserLayoutNode(person,userProfile,sourceNextNode);
-			if ( targetPrevNode != null ) result &= layoutStore.updateUserLayoutNode(person,userProfile,targetPrevNode);
-			if ( targetNextNode != null ) result &= layoutStore.updateUserLayoutNode(person,userProfile,targetNextNode);
-			result &= layoutStore.updateUserLayoutNode(person,userProfile,targetFolder);
-			result &= layoutStore.updateUserLayoutNode(person,userProfile,sourceFolder);
-			// Changing the node being moved
-			result &= layoutStore.updateUserLayoutNode(person,userProfile,node);
-		}
-		
-		if (result) {
-			// Inform the layout listeners
-			LayoutMoveEvent ev = new LayoutMoveEvent(this, getNode(nodeId), getParentId(nodeId));
-			for (Iterator i = listeners.iterator(); i.hasNext();) {
-				LayoutEventListener lel=(LayoutEventListener)i.next();
-				if (node.getNodeDescription().getType() == IUserLayoutNodeDescription.CHANNEL) {
-					lel.channelMoved(ev);
-				} else {
-					lel.folderMoved(ev);
-				}
+		// Inform the layout listeners
+		LayoutMoveEvent ev = new LayoutMoveEvent(this, getNode(nodeId), getParentId(nodeId));
+		for (Iterator i = listeners.iterator(); i.hasNext();) {
+			LayoutEventListener lel=(LayoutEventListener)i.next();
+			if (node.getNodeDescription().getType() == IUserLayoutNodeDescription.CHANNEL) {
+				lel.channelMoved(ev);
+			} else {
+				lel.folderMoved(ev);
 			}
 		}
 		
 		updateCacheKey();
 		
-		return result;
+		return true;
 	}
 	
 	public synchronized boolean deleteNode(String nodeId) throws PortalException {
@@ -1169,8 +1154,6 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 		if ( nodeId.equals(parentFolder.getFirstChildNodeId()) ) {
 			// Set the new first child node ID to the source folder
 			parentFolder.setFirstChildNodeId(node.getNextNodeId());
-			// Update it in the database
-			if ( autoCommit ) result = layoutStore.updateUserLayoutNode(person,userProfile,parentFolder);
 		}
 		
 		// Changing the next node id for the previous sibling node
@@ -1181,18 +1164,12 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 		if ( prevSiblingId != null ) {
 			ALNode prevNode = getLayoutNode(prevSiblingId);
 			prevNode.setNextNodeId(nextSiblingId);
-			if ( autoCommit ) result = layoutStore.updateUserLayoutNode(person,userProfile,prevNode);
 		}
 		
 		if ( nextSiblingId != null ) {
 			ALNode nextNode = getLayoutNode(nextSiblingId);
 			nextNode.setPreviousNodeId(prevSiblingId);
-			if ( autoCommit ) result = layoutStore.updateUserLayoutNode(person,userProfile,nextNode);
 		}
-		
-		// DELETE THE NODE FROM THE DB
-		if ( autoCommit )
-			result = layoutStore.deleteUserLayoutNode(person,userProfile,node);
 		
 		// Deleting the node and its children from the hashtable and returning the result value
 		cleanLayoutData(nodeId,result);
@@ -1251,14 +1228,10 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 			layoutNode.setNextNodeId(nextSiblingId);
 		
 		// Add the new node to the database and get the node with a new node ID
-		if ( autoCommit ) 
-			layoutNode = layoutStore.addUserLayoutNode(person,userProfile,layoutNode);
-		else {
-			IALNodeDescription desc = (IALNodeDescription) layoutNode.getNodeDescription();
-			desc.setId(layoutStore.getNextNodeId(person));
-			if ( desc.getType() == IUserLayoutNodeDescription.CHANNEL )
-				layoutStore.fillChannelDescription((IALChannelDescription)desc);  	  
-		}
+		IALNodeDescription desc = (IALNodeDescription) layoutNode.getNodeDescription();
+		desc.setId(layoutStore.getNextNodeId(person));
+		if ( desc.getType() == IUserLayoutNodeDescription.CHANNEL )
+			layoutStore.fillChannelDescription((IALChannelDescription)desc);  	  
 		
 		String nodeId = layoutNode.getId();
 		// assert  that no node references itself
@@ -1283,18 +1256,6 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 		// Setting new child node ID to the parent node
 		if ( prevNode == null )
 			parentFolder.setFirstChildNodeId(nodeId);
-		
-		if ( autoCommit ) {
-			// TO UPDATE ALL THE NEIGHBOR NODES IN THE DATABASE
-			if ( nextNode != null )
-				layoutStore.updateUserLayoutNode(person,userProfile,nextNode);
-			
-			if ( prevNode != null )
-				layoutStore.updateUserLayoutNode(person,userProfile,prevNode);
-			
-			// Update the parent node
-			layoutStore.updateUserLayoutNode(person,userProfile,parentFolder);
-		}  
 		
 		// Inform the layout listeners
 		LayoutEvent ev = new LayoutEvent(this, layoutNode.getNodeDescription());
@@ -1414,14 +1375,8 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 				lel.folderUpdated(ev);
 			}
 		}
-		
 		updateCacheKey();
-		
-		// Update the node into the database
-		if ( autoCommit )
-			return layoutStore.updateUserLayoutNode(person,userProfile,node);
-		else
-			return true;
+		return true;
 	}
 	
 	
