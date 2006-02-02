@@ -2385,11 +2385,13 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 					} // end for
 				} // end if
 				
+				// Fixup the parentId of each channel in a folder inside a fragment
 				for ( Enumeration fragmentNodesEnum = fragmentNodes.keys(); fragmentNodesEnum.hasMoreElements() ;) {
-					String key = fragmentNodesEnum.nextElement().toString();
+					Object key = fragmentNodesEnum.nextElement();
 					ALNode node  = (ALNode ) fragmentNodes.get(key);
 					if ( node.getNodeType() == IUserLayoutNodeDescription.FOLDER ) {
 						String parentId = node.getId();
+						// loop through all the channels in the folder and set the parentId
 						for ( String nextIdStr = ((ALFolder)node).getFirstChildNodeId(); nextIdStr != null; ) {
 							ALNode child = (ALNode) layoutData.get(nextIdStr);
 							child.setParentNodeId(parentId);
