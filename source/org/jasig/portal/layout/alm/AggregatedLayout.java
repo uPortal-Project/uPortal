@@ -179,7 +179,9 @@ public class AggregatedLayout implements IAggregatedLayout {
 	 */
 	public int getDepth(String nodeId) throws PortalException {
 		int depth = 0;
-		for ( String parentId = getParentId(nodeId); parentId != null; parentId = getParentId(parentId), depth++ );
+		for ( String parentId = getParentId(nodeId); parentId != null; parentId = getParentId(parentId), depth++ ){
+			// do nothing
+		}
 		return depth;
 	}
 	
