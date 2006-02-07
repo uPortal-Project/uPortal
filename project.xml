@@ -202,6 +202,15 @@ http://maven.apache.org/maven-v3_0_0.xsd">
 		</dependency>
 		<dependency>
 			<type>jar</type>
+			<groupId>cas</groupId>
+			<artifactId>casclient</artifactId>
+			<version>2.1.1</version>
+			<properties>
+				<war.bundle>true</war.bundle>
+			</properties>
+		</dependency>
+		<dependency>
+			<type>jar</type>
 			<groupId>commons-collections</groupId>
 			<artifactId>commons-collections</artifactId>
 			<version>3.1</version>
