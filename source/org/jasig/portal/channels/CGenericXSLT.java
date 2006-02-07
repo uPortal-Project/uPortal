@@ -49,30 +49,36 @@ import org.xml.sax.ContentHandler;
  * <p>A channel which transforms XML for rendering in the portal.</p>
  *
  * <p>Static channel parameters to be supplied:
- *
- *  1) "xmlUri" - a URI representing the source XML document
- *  2) "sslUri" - a URI representing the corresponding .ssl (stylesheet list) file
- *  3) "xslTitle" - a title representing the stylesheet (optional)
+ * <ol>
+ *  <li> "xmlUri" - a URI representing the source XML document</li>
+ *  <li> "sslUri" - a URI representing the corresponding .ssl (stylesheet list) file</li>
+ *  <li> "xslTitle" - a title representing the stylesheet (optional)
  *                  <i>If no title parameter is specified, a default
  *                  stylesheet will be chosen according to the media</i>
- *  4) "xslUri" - a URI representing the stylesheet to use
+ *  </li>
+ *  <li> "xslUri" - a URI representing the stylesheet to use
  *                  <i>If <code>xslUri</code> is supplied, <code>sslUri</code>
- *                  and <code>xslTitle</code> will be ignored.
- *  5) "cacheTimeout" - the amount of time (in seconds) that the contents of the
+ *                  and <code>xslTitle</code> will be ignored.</i>
+ *  </li>
+ *  <li> "cacheTimeout" - the amount of time (in seconds) that the contents of the
  *                  channel should be cached (optional).  If this parameter is left
  *                  out, a default timeout value will be used.
- *  6) "upc_localConnContext" - The class name of the ILocalConnectionContext 
+ *  </li>          
+ *  <li> "upc_localConnContext" - The class name of the ILocalConnectionContext 
  *                  implementation.
  *                  <i>Use when local data needs to be sent with the
  *                  request for the URL.</i>
- *  7) "upc_allow_xmlUri_prefixes" - Optional parameter specifying as a whitespace
+ *  </li>
+ *  <li> "upc_allow_xmlUri_prefixes" - Optional parameter specifying as a whitespace
  *                  delimited String the allowable xmlUri prefixes.  
  *                  <i>Defaults to "http:// https://"</i>
- *  8) "upc_deny_xmlUri_prefixes" - Optional parameter specifying as a whitespace
+ *  </li>
+ *  <li> "upc_deny_xmlUri_prefixes" - Optional parameter specifying as a whitespace
  *                  delimited String URI prefixes that should block a URI 
  *                  as xmlUri even if it matched one of the allow prefixes.
  *                  <i>Defaults to ""</i>
- *  9) "restrict_xmlUri_inStaticData" - Optional parameter specifying whether 
+ *  </li>
+ *  <li> "restrict_xmlUri_inStaticData" - Optional parameter specifying whether 
  *                  the xmlUri should be restricted according to the allow and
  *                  deny prefix rules above as presented in ChannelStaticData
  *                  or just as presented in ChannelRuntimeData.  "true" means
