@@ -7,11 +7,13 @@
 package  org.jasig.portal.channels.DLMUserPreferences;
 
 import  org.jasig.portal.*;
+import org.w3c.dom.Document;
 import  org.xml.sax.ContentHandler;
 
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.layout.UserLayoutStoreFactory;
+import org.jasig.portal.security.IPerson;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -208,7 +210,11 @@ public class CUserPreferences implements IPrivilegedChannel {
 
   protected UserPreferences getUserPreferencesFromStore(UserProfile profile) throws Exception {
       up = ulsdb.getUserPreferences(getUserPreferencesManager().getPerson(), profile);
-      up.synchronizeWithUserLayoutXML(UserLayoutStoreFactory.getUserLayoutStoreImpl().getUserLayout(getUserPreferencesManager().getPerson(), getCurrentUserPreferences().getProfile()));
+      IUserLayoutStore uls = UserLayoutStoreFactory.getUserLayoutStoreImpl();
+      IPerson person = getUserPreferencesManager().getPerson();
+      UserProfile currProfile = getCurrentUserPreferences().getProfile();
+      Document layout = uls.getUserLayout(person, currProfile);
+      up.synchronizeWithUserLayoutXML(layout);
       return up;
   }
 
