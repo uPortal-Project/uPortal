@@ -315,7 +315,6 @@ public class ParameterEditManager
             return; // no set so no edit to remove
         
         NodeList edits = parmSet.getChildNodes();
-        Element existingEdit = null;
         
         for(int i=0; i<edits.getLength(); i++)
         {
