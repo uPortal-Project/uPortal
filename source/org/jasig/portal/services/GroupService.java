@@ -127,7 +127,7 @@ public class GroupService implements IGroupConstants
      * @return java.lang.String
      */
     public String getDistinguishedGroupKey(String name) {
-        return PropertiesManager.getProperty(GROUP_SERVICE_KEY + name);
+        return PropertiesManager.getProperty(GROUP_SERVICE_KEY + name, "");
     }
 
    /**
