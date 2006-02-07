@@ -313,6 +313,10 @@
   						Version CVS_HEAD (4/18/2005)
   						URL: http://www.mathcs.emory.edu/dcl/util/backport-util-concurrent/
 
+  casclient.jar Yale's Java CAS client.
+                        Version 2.1.1
+                        URL: http://www.ibiblio.org/maven/cas/jars/casclient-2.1.1.jar
+
 -->
 
   <property name="xalan.jar" value="(set this in build.properties!)"/>
@@ -341,6 +345,7 @@
   <property name="jdom.jar" value="{set this in build.properties!)" />
   <property name="concurrent.jar" value="{set this in build.properties!)" />
   <property name="backport.jar" value="{set this in build.properties!)" />
+  <property name="casclient.jar" value="lib/casclient-2.1.1.jar"/>
 
 <!-- ==================== Compilation Classpath =========================== -->
 
@@ -383,6 +388,7 @@
     <pathelement location="${jdom.jar}" />
     <pathelement location="${concurrent.jar}" />
     <pathelement location="${backport.jar}" />
+    <pathelement location="${casclient.jar}"/>
   </path>
 
 
@@ -561,6 +567,7 @@
     <copy todir="${deploy.home}/WEB-INF/lib" file="${jdom.jar}" />
     <copy todir="${deploy.home}/WEB-INF/lib" file="${concurrent.jar}" />
     <copy todir="${deploy.home}/WEB-INF/lib" file="${backport.jar}" />
+    <copy todir="${deploy.home}/WEB-INF/lib" file="${casclient.jar}"/>
 
     <!-- These are Tomcat-specific!  We need to think about a new property
          that lets us specify the appropriate directory for other servers
