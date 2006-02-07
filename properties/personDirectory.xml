@@ -60,9 +60,21 @@
 		PersonDirectory acquires when it asks for the bean of that name.
 		-->
 	
-	<!-- Legacy Person Directory configruation. This will read the config from PersonDirs.xml 
-		and otherwise emulate pre-2.5 PersonDirectory behavior. -->
-	<bean id="personAttributeDao" class="org.jasig.portal.services.persondir.support.legacy.LegacyPersonAttributeDao"/>
+	<!-- 
+	 | Legacy Person Directory configruation. This will read the config from PersonDirs.xml 
+	 | and otherwise emulate pre-2.5 PersonDirectory behavior. 
+	 |
+	 | This bean is marked lazy-init="true" so that Spring will not eagerly 
+	 | initialize this bean when the PortalApplicationContextFacade is touched.
+	 | This avoids unnecessarily building the instantiating the PersonAttributeDao i
+	 | mplementation where it is not being used and where it may not have the
+	 | resources it needs to be used, e.g. when running outside the context of
+	 | a JNDI container.
+	 |
+	 +-->
+	<bean id="personAttributeDao" 
+	    class="org.jasig.portal.services.persondir.support.legacy.LegacyPersonAttributeDao"
+	    lazy-init="true" />
 	
 	<!--
      | Example Person Directory configuration using the Spring implementation,
@@ -74,8 +86,14 @@
 	 | The 'username' attribute is what is configured by default in the code
 	 | for simple string queries via the IPersonAttributeDao interfaces
 	 +-->
-	<!--
-	<bean id="personAttributeDao" class="org.jasig.portal.services.persondir.support.MergingPersonAttributeDaoImpl">
+     <!--
+   <bean id="personAttributeDao" class="org.jasig.portal.services.persondir.support.CachingPersonAttributeDaoImpl">
+       <property name="cachedPersonAttributesDao">
+           <ref bean="mergedPersonAttributeDao"/>
+       </property>
+   </bean>
+   
+   <bean id="mergedPersonAttributeDao" class="org.jasig.portal.services.persondir.support.MergingPersonAttributeDaoImpl">
 		<property name="personAttributeDaos">
 			<list>
 				<ref bean="uPortalJdbcAttributeSource"/>

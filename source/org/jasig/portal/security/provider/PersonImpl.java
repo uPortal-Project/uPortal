@@ -109,6 +109,7 @@ public class PersonImpl implements IPerson {
     if (m_Attributes == null)
       m_Attributes = new Hashtable();
     if (value!=null) m_Attributes.put(key, value);
+    else m_Attributes.remove(key);
     if (key.equals(IPerson.USERNAME)){
        m_eid = new EntityIdentifier(String.valueOf(value),IPerson.class);
     }

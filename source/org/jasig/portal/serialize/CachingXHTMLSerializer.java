@@ -96,11 +96,33 @@ public final class CachingXHTMLSerializer
     }
 
     // caching methods
+    
+    /**
+     * When starting caching if we are inside an opening tag the ">" will
+     * be written in order for the ">" to be included with the correct cache.
+     * 
+     * Normally the serializer doesn't know if a ">" or "/>" should be written
+     * until some content is received or the tag is closed. When starting
+     * caching after an opening tag the tag will be assumed to have some content
+     * and will write out the ">" before starting the cache.
+     */    
     public boolean startCaching() throws IOException{
+    	content();
         _printer.flush();
         return cacher.startCaching();
     }
+    
+    /**
+     * When stopping caching if we are inside an opening tag the ">" will
+     * be written in order for the ">" to be included with the correct cache.
+     * 
+     * Normally the serializer doesn't know if a ">" or "/>" should be written
+     * until some content is received or the tag is closed. When starting
+     * caching after an opening tag the tag will be assumed to have some content
+     * and will write out the ">" before starting the cache.
+     */    
     public boolean stopCaching() throws IOException {
+    	content();
         _printer.flush();
         return cacher.stopCaching(); 
     }

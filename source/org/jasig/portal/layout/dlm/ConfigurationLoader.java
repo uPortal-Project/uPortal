@@ -14,7 +14,6 @@ import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.RDBMServices;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.XML;
 import org.w3c.dom.Document;
@@ -33,7 +32,6 @@ public class ConfigurationLoader
 
     private static final String CONFIG_FILE_NAME = "/properties/dlm.xml";
     private static URL configFileURL = null;
-    private static RDBMServices rdbmService = new RDBMServices();
     private static final Log LOG = LogFactory.getLog(ConfigurationLoader.class);
     
     /**

@@ -168,7 +168,7 @@ public class Configuration
           String driverVersionProp = dbTypeMapping.getDriverVersion();
 
           if (dbNameProp.equalsIgnoreCase(dbName) && dbVersionProp.equalsIgnoreCase(dbVersion) &&
-              driverNameProp.equalsIgnoreCase(driverName) && driverVersionProp.equalsIgnoreCase(driverVersion))
+              driverNameProp.equalsIgnoreCase(driverName) && (driverVersionProp.equalsIgnoreCase(driverVersion) || driverVersion == null))
           {
             // Found a matching database/driver combination
             mappedDataTypeName = dbTypeMapping.getMappedDataTypeName(genericDataTypeName);

@@ -124,7 +124,7 @@
     <not-null>PREF_ID</not-null>
   </table>  
 
-  <table sinceMajor="2" sinceMinor="2">
+  <table sinceMajor="2" sinceMinor="5">
     <name>UP_LAYOUT_RESTRICTIONS</name>
     <desc>The layout restrictions</desc>
     <columns>
@@ -447,6 +447,7 @@
         <desc>Date time of last time channels were updated - It is set when a user adds a channel to his or her layout. The channel manager will be able to (not yet) present a list of channels added since the last time the user checked.</desc>
       </column>
     </columns>
+    <primary-key>USER_ID</primary-key>
   </table>
 
   <table sinceMajor="2" sinceMinor="0">

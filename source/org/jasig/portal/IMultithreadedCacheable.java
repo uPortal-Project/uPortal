@@ -9,9 +9,11 @@ package  org.jasig.portal;
 /**
  * A cacheable interface for the multithreaded channels
  * @author Peter Kharchenko <a href="mailto:">pkharchenko@interactivebusiness.com</a>
- * @version $Revision$
  * @see ICacheable
  * @see IMultithreadedChannel
+ * 
+ * @deprecated Use the IChannel* interfaces instead or write a portlet. For more information see: 
+ * http://www.ja-sig.org/wiki/display/UPC/Proposal+to+Deprecate+IMultithreaded+Interfaces
  */
 
 public interface IMultithreadedCacheable {

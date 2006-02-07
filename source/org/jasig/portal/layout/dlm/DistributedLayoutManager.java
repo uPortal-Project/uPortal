@@ -10,7 +10,6 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.Vector;
@@ -48,11 +47,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.ContentHandler;
 
-import EDU.oswego.cs.dl.util.concurrent.ConcurrentHashMap;
-import EDU.oswego.cs.dl.util.concurrent.ReadWriteLock;
-import EDU.oswego.cs.dl.util.concurrent.ReentrantWriterPreferenceReadWriteLock;
-
-
 /**
  * A layout manager that provides layout control through
  * layout fragments that are derived from regular portal user accounts.
@@ -65,9 +59,6 @@ public class DistributedLayoutManager implements IUserLayoutManager
 {
     public static final String RCS_ID = "@(#) $Header$";
     private static final Log LOG = LogFactory.getLog(DistributedLayoutManager.class);
-
-    private static final String ADD_COMMAND = "add";
-    private static final String MOVE_COMMAND = "move";
 
     protected final IPerson owner;
     protected final UserProfile profile;
@@ -82,45 +73,6 @@ public class DistributedLayoutManager implements IUserLayoutManager
 
     private boolean channelsAdded = false;
     private boolean isFragment = false;
-
-    /** Map of read/writer lock objects; one per unique person. */
-    private Map mLocks = new ConcurrentHashMap();
-
-    private final ReadWriteLock getReadWriteLock(IPerson person)
-    {
-        Object key = new Integer(person.getID());
-
-        ReadWriteLock lock = (ReadWriteLock) mLocks.get(key);
-
-        if (null == lock)
-        {
-            lock = new ReentrantWriterPreferenceReadWriteLock();
-
-            mLocks.put(key, lock);
-        }
-
-        return lock;
-    }
-
-    private void acquireReadLock(IPerson person) throws InterruptedException
-    {
-        getReadWriteLock(person).readLock().acquire();
-    }
-
-    private void releaseReadLock(IPerson person)
-    {
-        getReadWriteLock(person).readLock().release();
-    }
-
-    private void acquireWriteLock(IPerson person) throws InterruptedException
-    {
-        getReadWriteLock(person).writeLock().acquire();
-    }
-
-    private void releaseWriteLock(IPerson person)
-    {
-        getReadWriteLock(person).writeLock().release();
-    }
 
     public DistributedLayoutManager(IPerson owner, UserProfile profile,
             IUserLayoutStore store) throws PortalException
@@ -534,8 +486,6 @@ public class DistributedLayoutManager implements IUserLayoutManager
     public synchronized boolean updateNode( IUserLayoutNodeDescription node )
         throws PortalException
     {
-        boolean isChannel=false;
-
         if( canUpdateNode( node ) )
         {
             // normally here, one would determine what has changed
@@ -560,7 +510,6 @@ public class DistributedLayoutManager implements IUserLayoutManager
                 IUserLayoutChannelDescription oldChannel=(IUserLayoutChannelDescription) oldNode;
                 if( node instanceof IUserLayoutChannelDescription )
                 {
-                    isChannel = true;
                     Document uld = this.userLayoutDocument;
                     // generate new XML Element
 
@@ -915,7 +864,6 @@ public class DistributedLayoutManager implements IUserLayoutManager
 
 
     public void markMoveTargets(String nodeId) throws PortalException {
-        IUserLayoutNodeDescription node=getNode(nodeId);
         this.updateCacheKey();
     }
 

@@ -19,6 +19,9 @@ import org.xml.sax.ContentHandler;
  * @version $Revision$
  * @see IChannel
  * @see IMultithreadedCacheable
+ * 
+ * @deprecated Use the IChannel* interfaces instead or write a portlet. For more information see: 
+ * http://www.ja-sig.org/wiki/display/UPC/Proposal+to+Deprecate+IMultithreaded+Interfaces
  */
 
 public interface IMultithreadedChannel {

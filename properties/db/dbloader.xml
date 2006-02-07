@@ -54,6 +54,18 @@
 
   <db-type-mapping>
     <db-name>Microsoft SQL Server</db-name>
+    <db-version>08.00.0760</db-version>
+    <driver-name>jTDS Type 4 JDBC Driver for MS SQL Server and Sybase</driver-name>
+    <type><generic>INTEGER</generic><local>INTEGER</local></type>
+    <type><generic>VARCHAR</generic><local>VARCHAR</local></type>
+    <type><generic>TEXT</generic><local>TEXT</local></type>
+    <type><generic>TIMESTAMP</generic><local>DATETIME</local></type>
+    <type><generic>LONGVARCHAR</generic><local>NTEXT</local></type>
+    <!-- map more types here -->
+  </db-type-mapping>
+  
+  <db-type-mapping>
+    <db-name>Microsoft SQL Server</db-name>
     <db-version>07.00.0699</db-version>
     <driver-name>JDBC-ODBC Bridge (SQLSRV32.DLL)</driver-name>
     <driver-version>2.0001 (03.70.0820)</driver-version>
