@@ -703,7 +703,9 @@ public class ChannelManager implements LayoutEventListener {
 			if (sr == null){
 				ch=new CError(ErrorCode.GENERAL_ERROR,"Unable to get SessionId. getHttpServletRequest returned null.",channelSubscribeId,null);
 			}else{
-				HttpSession hs  = sr.getSession(false);
+                // getSession() true is apparently required to support cross-context sessions
+                // under Tomcat.  See UP-1320
+				HttpSession hs  = sr.getSession(true);
 				if (hs == null){
 					ch=new CError(ErrorCode.GENERAL_ERROR,"Unable to get SessionId. getSession returned null.",channelSubscribeId,null);
 				}else{				
