@@ -49,6 +49,9 @@ See the apache20-license.txt file in this directory for reference.
 
 See also the notice files in the notices directory of this directory.
 
+CAS client:
+Java CAS client version 2.1.1 was developed by Yale University and is subject to
+the license in yale_casclient.txt.
 
 The com.oreilly.servlet package:
 
