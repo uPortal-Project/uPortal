@@ -53,6 +53,8 @@ public class ChannelDescription extends UserLayoutChannelDescription
     }
     public void setOrigin(String origin)
     {
+        if (origin != null && origin.equals(""))
+            origin = null;
         this.origin = origin;
     }
     public String getPlfId()
@@ -61,6 +63,8 @@ public class ChannelDescription extends UserLayoutChannelDescription
     }
     public void setPlfId(String plfId)
     {
+        if (plfId != null && plfId.equals(""))
+            plfId = null;
         this.plfId = plfId;
     }
     /**
