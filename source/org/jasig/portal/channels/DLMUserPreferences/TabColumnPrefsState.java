@@ -1315,7 +1315,7 @@ public class TabColumnPrefsState extends BaseState
               try {
                 // Determine whether channel has overridable parameters
                 List overridableChanParams = getOverridableChannelParams(selectedChannel);
-                if (overridableChanParams.isEmpty()) {
+                if (overridableChanParams == null || overridableChanParams.isEmpty()) {
                   addChannel(selectedChannel, position, elementID);
                   returnToDefaultState();
                 } else { // present user with screen to specify subscribe-time params
