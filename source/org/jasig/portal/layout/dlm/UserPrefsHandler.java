@@ -69,7 +69,9 @@ public class UserPrefsHandler
             Element plfNode = HandlerUtils.getPLFNode( compViewNode, person,
                                                        true, // create if not found
                                                        false ); 
-            EditManager.addPrefsDirective( plfNode, attributeName, person );
+            if (plfNode.getAttributeNodeNS(Constants.NS_URI, 
+                    Constants.LCL_ORIGIN) != null)
+                EditManager.addPrefsDirective( plfNode, attributeName, person );
         }
     }
 }
