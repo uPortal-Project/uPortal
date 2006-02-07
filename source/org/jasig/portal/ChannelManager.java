@@ -705,7 +705,7 @@ public class ChannelManager implements LayoutEventListener {
 			}else{
                 // getSession() true is apparently required to support cross-context sessions
                 // under Tomcat.  See UP-1320
-				HttpSession hs  = sr.getSession(false);
+				HttpSession hs  = sr.getSession(true);
 				if (hs == null){
 					ch=new CError(ErrorCode.GENERAL_ERROR,"Unable to get SessionId. getSession returned null.",channelSubscribeId,null);
 				}else{				
