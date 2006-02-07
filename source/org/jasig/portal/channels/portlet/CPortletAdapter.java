@@ -370,18 +370,16 @@ public class CPortletAdapter
         staticData = sd;
         
         try {
-            // Register rendering dependencies to ensure that setRuntimeData is called on
-            // all CPortletAdapters before any of them is asked to render
+            
+            // Register this portlet's channel subscribe ID in the JNDI context
+            // this is probably not necessary since afaik nothing other than this
+            // portlet is reading this List. -andrew petro
+            
             List portletIds = (List)sd.getJNDIContext().lookup("/portlet-ids");
-            Iterator iter = portletIds.iterator();
-            while (iter.hasNext()) {
-                String portletId = (String)iter.next();
-                sd.getICCRegistry().addInstructorChannel(portletId);
-                sd.getICCRegistry().addListenerChannel(portletId);
-            }
             portletIds.add(sd.getChannelSubscribeId());
+        
         } catch (Exception e) {
-            throw new PortalException(e);
+            throw new PortalException("Error accessing /portlet-ids JNDI context.", e);
         }                   
     }
 
