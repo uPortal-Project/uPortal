@@ -233,7 +233,7 @@ public class ParameterEditManager
      * for that node and that name then the value of the existing edit is 
      * changed to the passed-in value.
      */
-    public static void addParmEditDirective( Element compViewChannelNode,
+    public static synchronized void addParmEditDirective( Element compViewChannelNode,
                                              String targetId,
                                              String name,
                                              String value,
@@ -324,7 +324,7 @@ public class ParameterEditManager
                     edit.getAttribute(Constants.ATT_NAME).equals(name))
             {
                 parmSet.removeChild(edit);
-                return;
+                break;
             }
         }
         if (parmSet.getChildNodes().getLength() == 0) // no more edits, remove
