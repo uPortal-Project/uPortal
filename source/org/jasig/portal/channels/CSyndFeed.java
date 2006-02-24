@@ -191,19 +191,6 @@ public class CSyndFeed extends BaseChannel implements ICacheable{
 		
 				// for now we always assume html: see Rome bug #26
 	//			if (sc.getType().equals("text/html")){
-					// We strip out all html tags to make the display of 
-					// the description safe.
-					// http://diveintomark.org/archives/2003/06/12/how_to_consume_rss_safely
-		
-//					text = text.replaceAll("\\<.*?\\>","");
-					
-					// https://rome.dev.java.net/servlets/ReadMsg?list=users&msgNo=685
-					// http://mercury.ccil.org/~cowan/XML/tagsoup/
-						
-					// Unescape entities if they are in the
-					// html of the description
-//					text = StringEscapeUtils.unescapeHtml(text);
-					
 					Parser p = new Parser();
 					try {
 						
@@ -216,9 +203,7 @@ public class CSyndFeed extends BaseChannel implements ICacheable{
 					} catch (SAXException e) {
 						throw new RuntimeException(e);
 					}
-					
 	//			}
-//				n.setTextContent(text);
 			}
 		}
 		return doc;
