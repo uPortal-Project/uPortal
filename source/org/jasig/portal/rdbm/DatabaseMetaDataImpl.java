@@ -224,7 +224,7 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata {
      * Run a set of tests on the database to provide better meta data.
      */
     private void runDatabaseTests() {
-        final Connection conn;
+        Connection conn = null;
         try {
             conn = this.dataSource.getConnection();
        //The order of these tests is IMPORTANT, each may depend on the
@@ -235,9 +235,10 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata {
         this.testTimeStamp(conn);
         this.testTransactions(conn);
         
-        this.releaseConnection(conn);
         } catch (SQLException e) {
             LOG.error("Error during database initialization. ", e);
+        }finally{
+        	this.releaseConnection(conn);
         }
      }
     
