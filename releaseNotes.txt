@@ -1,5 +1,5 @@
-Release notes for uPortal 2.5.2-RC1
-(the first release candidate of uPortal 2.5.2):
+Release notes for uPortal 2.5.2 GA
+(the general audience ("final") release of uPortal 2.5.2):
 
 CVS branch: 2-5-patches
 
@@ -7,7 +7,7 @@ CVS branch: 2-5-patches
 Known issues
 
 There are many known bugs in uPortal.  Almost 40 bugs are identified as fixed
-for 2.5.2.  However, at least 20 bugs are known to affect 2.5.2 RC1.
+for 2.5.2.  However, at least 20 bugs are known to affect 2.5.2 GA.
 
 You can query the JA-SIG issue tracking system for the latest information about
 known issues.  The uPortal 2.5.2 wiki page summarizes:
@@ -73,7 +73,7 @@ And a number of other fixes...
 
 Important deprecations:
 
-IMultithreaded channels of all flavors are now deprecated.  It is more performant,
+IMultithreaded channel APIs of all flavors are now deprecated.  It is more performant,
 cleaner, simpler, and preferred to write IChannels or to write JSR-168 portlets
 in place of writing IMultithreaded channels.
 
@@ -86,11 +86,13 @@ There are no database schema changes between 2.5.1 and 2.5.2.
 
 Discussing this release and reporting issues:
 
-Please discuss work in 2-5-patches towards 2.5.2 on the uPortal project discussion lists.  
+Please discuss 2.5.2 on the uPortal project discussion lists.  
 Please post issues discovered into JIRA.
 
 (Almost) all changes applied to 2-5-patches working towards 2.5.2 should be reflected in JIRA issues.
 
+The uPortal project discussion lists are also the place to discuss work going forward on the 2-5-patches
+branch towards 2.5.3 and beyond.
 
 Release engineer's environment:
 
