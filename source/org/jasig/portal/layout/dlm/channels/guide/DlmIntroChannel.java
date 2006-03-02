@@ -132,7 +132,6 @@ public class DlmIntroChannel extends BaseChannel implements ICacheable,
                     + sdf.format(new Date(System.currentTimeMillis())) 
                     + "</span>");
                     */
-            XSLT X;
             XSLT xslt = new XSLT(this);
             xslt.setXSL(STYLESHEET_FILE);
             

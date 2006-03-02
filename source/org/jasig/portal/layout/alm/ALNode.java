@@ -30,11 +30,11 @@ import org.w3c.dom.Element;
  */
 public abstract class ALNode implements IALNode {
 
-     protected String parentNodeId;
-     protected String nextNodeId;
-     protected String previousNodeId;
-     protected IALNodeDescription nodeDescription;
-     protected int priority = 0;
+     private String parentNodeId;
+     private String nextNodeId;
+     private String previousNodeId;
+     private IALNodeDescription nodeDescription;
+     private int priority = 0;
 
      public ALNode() {}
 
@@ -168,6 +168,11 @@ public abstract class ALNode implements IALNode {
         } else {
             throw new PortalException("ALNode::createALNode() : The node description supplied is neither a folder nor a channel! Can't make the ALNode");
         }
+    }
+
+    public String toString() {
+    	return "{"+parentNodeId+","+nextNodeId+","+previousNodeId
+    	+ ","+nodeDescription+ ","+priority+"}";
     }
 
   }

@@ -7,6 +7,7 @@ package org.jasig.portal.tools.checks;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -59,62 +60,32 @@ public class ChecksServlet
         if (results == null) {
             writer.println("<p>Could not find check results in servlet context.</p>");
         } else {
-            writer.println("<p>Results of checks:</p>");
-            writer.println("<table>");
-            writer.println("<tr>");
-            writer.println("<td>");
-            writer.println("Status");
-            writer.println("</td>");
-            writer.println("<td>");
-            writer.println("Check description");
-            writer.println("</td>");
-            writer.println("<td>");
-            writer.println("Check result message");
-            writer.println("</td>");
-            writer.println("<td>");
-            writer.println("Remediation advice");
-            writer.println("</td>");
-            writer.println("</tr>");
+            List failedChecks = failedChecks(results);
             
-            for (Iterator iter = results.iterator(); iter.hasNext(); ) {
-                CheckAndResult checkAndResult = (CheckAndResult) iter.next();
+            if (! failedChecks.isEmpty()) {
+                writer.println("<h3>Failed checks</h3>");
+                writer.println("<p>" + failedChecks.size() + " checks failed.</p>");
                 
-                writer.println("<tr>");
-                writer.println("<td>");
-                if (checkAndResult.isSuccess()) {
-                    writer.println("OK");
-                } else {
-                    writer.println("FAILURE");
-                }
-                writer.println("</td>");
-                writer.println("<td>");
-                writer.println(checkAndResult.getCheckDescription());
-                writer.println("</td>");
-                writer.println("<td>");
-                writer.println(checkAndResult.getResult().getMessage());
-                writer.println("</td>");
-                writer.println("<td>");
-                if (checkAndResult.isSuccess()) {
-                    writer.println("Not applicable.");
-                } else {
-                    writer.println(checkAndResult.getResult().getRemediationAdvice());
-                }
-                writer.println("</td>");
-                writer.println("</tr>");
+                printChecksAsTable(failedChecks, writer);
                 
             }
             
-            writer.println("</table>");
-        }
+            
+            writer.println("<h3>Results of all checks:</h3>");
+            
+            printChecksAsTable(results, writer);
+
         
         writer.println("<form action='instrumentation' method='post'>");
         writer.println("<input name='rerun' value='rerun' type='submit'/>");
         writer.println("</form>");
         
+        }
+        
         // print out package information
         
         writer.println("<br/>");
-        writer.println("<p>Package information.</p>");
+        writer.println("<h3>Package information.</h3>");
         
         writer.println("<table>");
         writer.println("<tr>");
@@ -179,7 +150,87 @@ public class ChecksServlet
         writer.println("</html>");
         writer.flush();
         
+
+    }
+        
+    
+    /**
+     * Returns the List of failed checks that contains, order retained, those
+     * checks from the given list that failed.
+     * @param checks a List of CheckAndResults
+     * @return a List of those of the given CheckAndResults that failed.
+     */
+    private List failedChecks(List checks) {
+        if (checks == null) {
+            throw new IllegalArgumentException("Checks must not be null.");
+        }
+        
+        List failedChecks = new ArrayList();
+        
+        for (Iterator iter = checks.iterator(); iter.hasNext(); ) {
+            CheckAndResult checkAndResult = (CheckAndResult) iter.next();
+            if (! checkAndResult.isSuccess()) {
+                // found a failure
+                failedChecks.add(checkAndResult);
+            }
+        }
+        
+        return failedChecks;
     }
     
 
+    /**
+     * Prints the given List of CheckAndResult instances as a table to the
+     * given PrintWriter.
+     * @param checks CheckAndResult instances
+     * @param writer output target
+     */
+    private void printChecksAsTable(List checks, PrintWriter writer) {
+        writer.println("<table>");
+        writer.println("<tr>");
+        writer.println("<td>");
+        writer.println("Status");
+        writer.println("</td>");
+        writer.println("<td>");
+        writer.println("Check description");
+        writer.println("</td>");
+        writer.println("<td>");
+        writer.println("Check result message");
+        writer.println("</td>");
+        writer.println("<td>");
+        writer.println("Remediation advice");
+        writer.println("</td>");
+        writer.println("</tr>");
+        
+        for (Iterator iter = checks.iterator(); iter.hasNext(); ) {
+            CheckAndResult checkAndResult = (CheckAndResult) iter.next();
+            
+            writer.println("<tr>");
+            writer.println("<td>");
+            if (checkAndResult.isSuccess()) {
+                writer.println("OK");
+            } else {
+                writer.println("FAILURE");
+            }
+            writer.println("</td>");
+            writer.println("<td>");
+            writer.println(checkAndResult.getCheckDescription());
+            writer.println("</td>");
+            writer.println("<td>");
+            writer.println(checkAndResult.getResult().getMessage());
+            writer.println("</td>");
+            writer.println("<td>");
+            if (checkAndResult.isSuccess()) {
+                writer.println("Not applicable.");
+            } else {
+                writer.println(checkAndResult.getResult().getRemediationAdvice());
+            }
+            writer.println("</td>");
+            writer.println("</tr>");
+            
+        }
+        
+        writer.println("</table>");
+    }
+    
 }

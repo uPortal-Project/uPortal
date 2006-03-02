@@ -48,6 +48,10 @@ public abstract class BaseChannel implements IChannel {
   }
 
   public void renderXML (ContentHandler out) throws PortalException {}
+  
+  public String toString(){
+	return "BaseChannel: staticData = ["+staticData+"] runtimeData = ["+runtimeData+"]";
+  }
 }
 
 

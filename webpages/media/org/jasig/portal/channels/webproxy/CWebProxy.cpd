@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <!--
 Copyright (c) 2001 The JA-SIG Collaborative.  All rights reserved.
 Redistribution and use in source and binary forms, with or without
@@ -53,7 +52,7 @@ Version $Revision$
 
       <description>Enter the web proxy parameters</description>
 
-      <parameter modify="publish-only">
+      <parameter modify="publish">
         <name>cw_xml</name>
         <label>Application URI (cw_xml)</label>
         <type base="string" input="text" display="text">
@@ -61,6 +60,9 @@ Version $Revision$
           <maxlength>2000</maxlength>
         </type>
         <example>http://localhost:8080/examples/jsp/num/numguess.jsp</example>
+        <description>Note that if you configure this parameter to be 
+        configurable at subscribe time, you should also configure the XML
+        URI restrictions to apply to ChannelStaticData.</description>
       </parameter>
 
       <parameter modify="publish-only">
@@ -73,7 +75,7 @@ Version $Revision$
         <defaultValue>XHTML.ssl</defaultValue>
       </parameter>
 
-      <parameter modify="publish-only">
+      <parameter modify="publish">
         <name>cw_xslTitle</name>
         <label>XSL Title (cw_xslTitle)</label>
         <type base="string" input="text" display="text">
@@ -123,10 +125,11 @@ Version $Revision$
         <label>Enable HTML Filter? (cw_tidy)</label>
         <type base="string" input="single-choice" display="drop-down">
           <restriction type="enumeration">
-            <value default="true">off</value>
+            <value>off</value>
             <value>on</value>
           </restriction>
         </type>
+        <defaultValue>off</defaultValue>
       </parameter>
 
       <parameter modify="publish-only">
@@ -134,12 +137,13 @@ Version $Revision$
         <label>Pass-through Type (cw_passThrough)</label>
         <type base="string" input="single-choice" display="drop-down">
           <restriction type="enumeration">
-            <value default="true">none</value>
+            <value>none</value>
             <value>marked</value>
             <value>application</value>
             <value>all</value>
           </restriction>
         </type>
+        <defaultValue>none</defaultValue>
       </parameter>
 
       <!-- added for cacheable CWebProxy -->
@@ -158,10 +162,11 @@ Version $Revision$
 	<label>Default Cache Mode (cw_cacheDefaultMode)</label>
 	<type base="string" input="single-choice" display="drop-down">
           <restriction type="enumeration">
-	    <value default="true">none</value>
+	    <value>none</value>
 	    <value>all</value>
 	  </restriction>
 	</type>
+    <defaultValue>none</defaultValue>
       </parameter>
 
       <parameter modify="publish-only">
@@ -178,11 +183,12 @@ Version $Revision$
 	<label>Cache Mode for initial request only (cw_cacheMode)</label>
 	<type base="string" input="single-choice" display="drop-down">
 	  <restriction type="enumeration">
-	    <value default="true"></value>
+	    <value></value>
 	    <value>none</value>
 	    <value>all</value>
 	  </restriction>                                
 	</type>                                        
+    <defaultValue></defaultValue>
       </parameter>
 
       <parameter modify="publish-only">
@@ -216,6 +222,69 @@ Version $Revision$
       </parameter>
 
     </step>
+    
+    
+    <step>
+      <ID>2</ID>
+
+      <name>URI restriction parameters</name>
+
+      <description>Customize restrictions on the URIs CWebProxy can access.</description>
+
+      <parameter modify="publish-only">
+        <name>cw_allow_uri_prefixes</name>
+        <label>Allowed URI prefixes</label>
+        <type base="string" input="text" display="text">
+          <length>40</length>
+          <maxlength>2000</maxlength>
+        </type>
+        <example>http:// https:// file:/portal/proxied/</example>
+        <defaultValue>http:// https://</defaultValue>
+        <description>
+        Optional static data only parameter specifying allowable prefixes
+        for URIs accessed by this channel.  This channel will only use URIs 
+        with these prefixes for obtaining XML and XSLT for use in
+        rendering.  Whitespace delimit allowed prefixes.  Effectively
+        defaults to "http:// https://"; do not allow "file:/" lightly.
+        </description>
+      </parameter>
+
+      <parameter modify="publish-only">
+        <name>cw_block_uri_prefixes</name>
+        <label>Blocked URI prefixes</label>
+        <type base="string" input="text" display="text">
+          <length>40</length>
+          <maxlength>2000</maxlength>
+        </type>
+        <defaultValue></defaultValue>
+        <example>http://restrictedserver.yourschool.edu/</example>
+        <description>
+        Optional static data only parameter further restricting which
+        URIs this channel will use to obtain XML and XSLT.  This channel
+        will not use URIs matching prefixes specified in this 
+        whitespace-delimited parameter.  Effectively defaults to "".
+        </description>
+      </parameter>
+
+      <parameter modify="publish-only">
+        <name>cw_restrict_xmlUri_inStaticData</name>
+        <label>Restrict xmlUri as presented in ChannelStaticData.</label>
+        <type base="string" input="single-choice" display="drop-down">
+	      <restriction type="enumeration">
+	        <value>true</value>
+	        <value>false</value>
+	        <defaultValue>false</defaultValue>
+	      </restriction>                              
+	    </type>   
+	    <description>
+        True restricts both in ChannelStaticData and in ChannelRuntimeData.
+        False restricts in only ChannelRuntimeData.  It is important to
+        restict the xmlUri when that URI is configured to be
+        subcribe-time configurable.
+	    </description>
+      </parameter>
+    </step>
+    
 
   </params>
 

@@ -14,6 +14,13 @@ import org.xml.sax.XMLReader;
 /**
  * A filter that incorporates content rendered by the channels in to
  * the main transformation stream.
+ * 
+ * TODO: there are enhancements in CharacterCachingChannelIncorporationFilter as
+ * of uPortal 2.5.1 to support dynamic channel titles.  Do those enhancements need
+ * to be copied here?  Or is the functionality of this class duplicated by a
+ * degenerate (non-caching) configuration of CharacterCachingChannelIncorporationFilter, 
+ * such that it would be a worthwhile reduction of code duplication to drop this 
+ * class?
  *
  * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
  * @version $Revision$
