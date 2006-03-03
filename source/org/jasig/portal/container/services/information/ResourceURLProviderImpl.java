@@ -21,7 +21,7 @@ import org.jasig.portal.container.om.window.PortletWindowImpl;
  */
 public class ResourceURLProviderImpl implements ResourceURLProvider {
 
-    private String stringUrl = "";
+    private URL url = null;
     private String base = "";
 
     public ResourceURLProviderImpl(PortletWindow portletWindow) {
@@ -31,24 +31,26 @@ public class ResourceURLProviderImpl implements ResourceURLProvider {
     // ResourceURLProvider methods
     
     public void setAbsoluteURL(String path) {
-        stringUrl = path;
+        try {
+            url = new URL(path);
+        } catch (MalformedURLException e) {
+        	IllegalArgumentException iae= new java.lang.IllegalArgumentException("absoluteUrl: "+path);
+        	iae.initCause(e);
+            throw iae; 
+        }
     }
 
     public void setFullPath(String path) {
-        stringUrl = base + path;
+        try {
+            url = new URL(base + path);
+        } catch (MalformedURLException e) {
+        	IllegalArgumentException iae= new java.lang.IllegalArgumentException("fullPath: "+path);
+        	iae.initCause(e);
+            throw iae; 
+        }
     }
     
     public String toString() {
-        URL url = null;
-
-        if (!stringUrl.equals("")) {
-            try {
-                url = new URL(stringUrl);
-            } catch (MalformedURLException e) {
-                throw new java.lang.IllegalArgumentException("A malformed URL has occured");
-            }
-        }
-
         return ((url == null) ? "" : url.toString());
     }
     
