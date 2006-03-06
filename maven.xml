@@ -7,8 +7,6 @@
    <echo>
    	basedir: ${basedir}
    	</echo>
-   	
-   	<echo>Overriding Classpath: ${testMavenOpts}</echo>
 
    <postGoal name="site">
        <j:if test="${not empty siteDir}">
