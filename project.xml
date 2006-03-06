@@ -386,7 +386,7 @@ http://maven.apache.org/maven-v3_0_0.xsd">
 			<type>jar</type>
 			<groupId>org.ccil.cowan.tagsoup</groupId>
 			<artifactId>tagsoup</artifactId>
-			<version>0.9.7</version>
+			<version>1.0rc3</version>
 			<properties>
 				<war.bundle>true</war.bundle>
 			</properties>
