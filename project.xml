@@ -33,7 +33,7 @@ http://maven.apache.org/maven-v3_0_0.xsd">
 		<developerConnection>
 			scm:cvs:pserver:localhost:/home/cvs/jasig:portal
 		</developerConnection>
-		<url>http://www.uportal.org/cgi-bin/viewcvs.cgi/portal/</url>
+		<url>http://developer.ja-sig.org/source/viewrep/jasig/portal</url>
 	</repository>
 	<versions>
 		<version>
