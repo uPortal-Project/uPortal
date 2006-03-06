@@ -229,9 +229,9 @@ http://maven.apache.org/maven-v3_0_0.xsd">
 		</dependency>
 		<dependency>
 			<type>jar</type>
-			<groupId>pluto</groupId>
+			<groupId>org.apache.pluto</groupId>
 			<artifactId>pluto</artifactId>
-			<version>1.0.1-rc3</version>
+			<version>1.0.1</version>
 			<properties>
 				<war.bundle>true</war.bundle>
 			</properties>
