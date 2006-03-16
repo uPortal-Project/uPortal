@@ -641,7 +641,7 @@
         <column><name>CHAN_APVL_ID</name><value>0</value></column>
         <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
         <column><name>CHAN_TYPE_ID</name><value>0</value></column>
-        <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CGenericXSLT</value></column>
+        <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CSyndFeed</value></column>
         <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
@@ -675,7 +675,7 @@
         <column><name>CHAN_APVL_ID</name><value>0</value></column>
         <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
         <column><name>CHAN_TYPE_ID</name><value>0</value></column>
-        <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CGenericXSLT</value></column>
+        <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CSyndFeed</value></column>
         <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
@@ -692,7 +692,7 @@
         <column><name>CHAN_APVL_ID</name><value>0</value></column>
         <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
         <column><name>CHAN_TYPE_ID</name><value>0</value></column>
-        <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CGenericXSLT</value></column>
+        <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CSyndFeed</value></column>
         <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
@@ -709,7 +709,7 @@
         <column><name>CHAN_APVL_ID</name><value>0</value></column>
         <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
         <column><name>CHAN_TYPE_ID</name><value>0</value></column>
-        <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CGenericXSLT</value></column>
+        <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CSyndFeed</value></column>
         <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
@@ -777,7 +777,7 @@
         <column><name>CHAN_APVL_ID</name><value>0</value></column>
         <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
         <column><name>CHAN_TYPE_ID</name><value>0</value></column>
-        <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CGenericXSLT</value></column>
+        <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CSyndFeed</value></column>
         <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
@@ -794,7 +794,7 @@
         <column><name>CHAN_APVL_ID</name><value>0</value></column>
         <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
         <column><name>CHAN_TYPE_ID</name><value>0</value></column>
-        <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CGenericXSLT</value></column>
+        <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CSyndFeed</value></column>
         <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
@@ -811,7 +811,7 @@
         <column><name>CHAN_APVL_ID</name><value>0</value></column>
         <column><name>CHAN_APVL_DT</name><value>SYSDATE</value></column>
         <column><name>CHAN_TYPE_ID</name><value>0</value></column>
-        <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CGenericXSLT</value></column>
+        <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.CSyndFeed</value></column>
         <column><name>CHAN_TIMEOUT</name><value>10000</value></column>
         <column><name>CHAN_EDITABLE</name><value>N</value></column>
         <column><name>CHAN_HAS_HELP</name><value>N</value></column>
@@ -1273,13 +1273,6 @@
         <column><name>CHAN_PARM_VAL</name><value>http://www.unicon.net/publish/jasigPortalDemos.rss</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
-      <row>
-        <column><name>CHAN_ID</name><value>5</value></column>
-        <column><name>CHAN_PARM_NM</name><value>sslUri</value></column>
-        <column><name>CHAN_PARM_DESC</name><value></value></column>
-        <column><name>CHAN_PARM_VAL</name><value>CGenericXSLT/RSS/RSS-0_9x.ssl</value></column>
-        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
-      </row>
 
       <!-- UNICON News -->
       <row>
@@ -1287,13 +1280,6 @@
         <column><name>CHAN_PARM_NM</name><value>xmlUri</value></column>
         <column><name>CHAN_PARM_DESC</name><value></value></column>
         <column><name>CHAN_PARM_VAL</name><value>http://www.unicon.net/publish/uniconnews.rss</value></column>
-        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
-      </row>
-      <row>
-        <column><name>CHAN_ID</name><value>6</value></column>
-        <column><name>CHAN_PARM_NM</name><value>sslUri</value></column>
-        <column><name>CHAN_PARM_DESC</name><value></value></column>
-        <column><name>CHAN_PARM_VAL</name><value>CGenericXSLT/RSS/RSS-0_9x.ssl</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
 
@@ -1306,13 +1292,6 @@
         <column><name>CHAN_PARM_NM</name><value>xmlUri</value></column>
         <column><name>CHAN_PARM_DESC</name><value></value></column>
         <column><name>CHAN_PARM_VAL</name><value>http://jasigch.princeton.edu/static/jasigdev.rss</value></column>
-        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
-      </row>
-      <row>
-        <column><name>CHAN_ID</name><value>7</value></column>
-        <column><name>CHAN_PARM_NM</name><value>sslUri</value></column>
-        <column><name>CHAN_PARM_DESC</name><value></value></column>
-        <column><name>CHAN_PARM_VAL</name><value>CGenericXSLT/RSS/RSS-0_9x.ssl</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
 
@@ -1426,13 +1405,6 @@
         <column><name>CHAN_PARM_VAL</name><value>http://www.dictionary.com/wordoftheday/wotd.rss</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
-      <row>
-        <column><name>CHAN_ID</name><value>11</value></column>
-        <column><name>CHAN_PARM_NM</name><value>sslUri</value></column>
-        <column><name>CHAN_PARM_DESC</name><value></value></column>
-        <column><name>CHAN_PARM_VAL</name><value>CGenericXSLT/RSS/RSS-0_9x.ssl</value></column>
-        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
-      </row>
 
       <!-- Salon.com -->
       <row>
@@ -1442,27 +1414,12 @@
         <column><name>CHAN_PARM_VAL</name><value>http://www.salon.com/feed/RDF/salon_use.rdf</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
-      <row>
-        <column><name>CHAN_ID</name><value>12</value></column>
-        <column><name>CHAN_PARM_NM</name><value>sslUri</value></column>
-        <column><name>CHAN_PARM_DESC</name><value></value></column>
-        <column><name>CHAN_PARM_VAL</name><value>CGenericXSLT/RSS/RSS-0_9x.ssl</value></column>
-        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
-      </row>
-
       <!-- Motley Fool -->
       <row>
         <column><name>CHAN_ID</name><value>13</value></column>
         <column><name>CHAN_PARM_NM</name><value>xmlUri</value></column>
         <column><name>CHAN_PARM_DESC</name><value></value></column>
         <column><name>CHAN_PARM_VAL</name><value>http://www.fool.com/xml/foolnews_rss091.xml</value></column>
-        <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
-      </row>
-      <row>
-        <column><name>CHAN_ID</name><value>13</value></column>
-        <column><name>CHAN_PARM_NM</name><value>sslUri</value></column>
-        <column><name>CHAN_PARM_DESC</name><value></value></column>
-        <column><name>CHAN_PARM_VAL</name><value>CGenericXSLT/RSS/RSS-0_9x.ssl</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
 
