@@ -23,15 +23,20 @@
     
     <div class="uportal-background-content">
       <p class="uportal-channel-subtitle">
-        <a target="_blank" href="{image/link}">
-          <img src="{image/url}" alt="{image/description}" class="news-feed-img"/>
-        </a>
+
+        <xsl:apply-templates select="image"/>
         <!-- <a target="_blank" href="{link}"> --><xsl:value-of select="desc"/><!-- </a> -->
       </p>
       <div class="news-items">
         <xsl:apply-templates select="items"/>
       </div>
     </div>
+  </xsl:template>
+
+  <xsl:template match="image">
+    <a target="_blank" href="{link}">
+      <img src="{url}" alt="{description}" class="news-feed-img"/>
+    </a>
   </xsl:template>
   
   <xsl:template match="items">
