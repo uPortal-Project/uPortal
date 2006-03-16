@@ -3663,9 +3663,9 @@
       <row>
         <column><name>TYPE_ID</name><value>0</value></column>
         <column><name>TYPE_NAME</name><value>RSS</value></column>
-        <column><name>TYPE</name><value>org.jasig.portal.channels.CGenericXSLT</value></column>
+        <column><name>TYPE</name><value>org.jasig.portal.channels.CSyndFeed</value></column>
         <column><name>TYPE_DESCR</name><value>Renders content provided in the popular RSS (Rich Site Summary) format</value></column>
-        <column><name>TYPE_DEF_URI</name><value>/org/jasig/portal/channels/CGenericXSLT/RSS/RSS.cpd</value></column>
+        <column><name>TYPE_DEF_URI</name><value>/org/jasig/portal/channels/CSyndFeed/CSyndFeed.cpd</value></column>
       </row>
 
       <row>
