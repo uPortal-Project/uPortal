@@ -280,20 +280,9 @@ private void initializeContainingGroupKeys() throws GroupsException
  */
 public boolean isDeepMemberOf(IGroupMember gm) throws GroupsException {
 
-    if ( gm.isEntity() )
-        return false;
     if ( this.isMemberOf(gm) )
-        return true;
-
-    boolean isMember = false;
-    Iterator it = gm.getMembers();
-    while ( it.hasNext() && !isMember )
-    {
-        IGroupMember potentialParent = (IGroupMember) it.next();
-        isMember = this.isDeepMemberOf(potentialParent);
-    }
-
-    return isMember;
+        { return true; }
+    return gm.deepContains( this );
 }
 /**
  * @return boolean
@@ -324,7 +313,7 @@ protected boolean isKnownEntityType(Class anEntityType) throws GroupsException
  */
 public boolean isMemberOf(IGroupMember gm) throws GroupsException
 {
-    if ( gm.isEntity() )
+    if ( gm==this || gm.isEntity() )
         { return false; }
     Object cacheKey = gm.getKey();
     return getGroupKeys().contains(cacheKey);

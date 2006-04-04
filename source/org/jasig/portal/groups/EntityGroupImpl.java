@@ -166,13 +166,13 @@ public boolean contains(IGroupMember gm) throws GroupsException
 {
     if ( areMemberKeysInitialized() )
     {
-    Object cacheKey = gm.getKey();
-    return getMemberGroupKeys().contains(cacheKey) ||
-           getMemberEntityKeys().contains(cacheKey);
+        Object cacheKey = gm.getKey();
+        return getMemberGroupKeys().contains(cacheKey) ||
+               getMemberEntityKeys().contains(cacheKey);
     }
     else
     {
-        return getLocalGroupService().contains(this,gm);
+        return gm.isMemberOf( this );
     }
 }
 /**
@@ -183,14 +183,14 @@ public boolean contains(IGroupMember gm) throws GroupsException
 public boolean deepContains(IGroupMember gm) throws GroupsException
 {
     if ( this.contains(gm) )
-        return true;
+        { return true; }
 
     boolean found = false;
-    Iterator it = getMembers();
+    Iterator it = getMemberGroups();
     while ( it.hasNext() && !found )
     {
-        IGroupMember myGm = (IGroupMember) it.next();
-        found = myGm.deepContains(gm);
+        IEntityGroup group = (IEntityGroup) it.next();
+        found = group.deepContains(gm);
     }
 
     return found;
