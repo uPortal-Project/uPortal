@@ -2,7 +2,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
 	<xsl:param name="baseActionURL">render.userLayoutRootNode.uP</xsl:param>
-	<xsl:param name="skinsPath">media/org/jasig/portal/layout/tab-column/xhtml-theme</xsl:param>
+	<xsl:param name="skinsPath">media/org/jasig/portal/layout/AL_TabColumn</xsl:param>
 	<xsl:param name="currentSkin">immII</xsl:param>
 	<xsl:variable name="mediaPath">media/org/jasig/portal/channels/CSkinSelector</xsl:variable>
         <xsl:param name="locale">en_US</xsl:param>
@@ -20,7 +20,7 @@
 			<table width="100%" border="0" cellspacing="0" cellpadding="10" class="uportal-background-light">
 				<tr class="uportal-channel-text">
 					<td>
-						<strong>Modified Skin Selection:</strong>Select a portal skin below, then click [Change Skin].</td>
+						<strong>Skin Selection:</strong>Select a portal skin below, then click [Change Skin].</td>
 				</tr>
 				<tr>
 					<td>

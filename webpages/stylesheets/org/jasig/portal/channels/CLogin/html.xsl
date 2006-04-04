@@ -45,23 +45,29 @@ $Revision$
     <!-- ~ -->
     <xsl:template match="/">
         <xsl:if test="$unauthenticated='true'">
-	        <xsl:apply-templates/>
-        </xsl:if>
-        <xsl:if test="$unauthenticated='false'">
-        		Welcome <xsl:value-of select="//login-status/full-name"/>&#160;&#160;
+            <xsl:apply-templates/>
         </xsl:if>
     </xsl:template>
     <!-- ~ -->
     <!-- ~ If user is not authenticated insert login form-->
     <!-- ~ -->
     <xsl:template match="login-status">
-        <form action="Login" method="post" style="padding:0;margin:0 0 0 5px;vertical-align:middle;">
-           <input type="hidden" name="action" value="login"/>
-           Username: <input style="vertical-align:middle;" type="text" name="userName" size="15" value="{failure/@attemptedUserName}"/>&#160;
-           Password: <input style="vertical-align:middle;" type="password" name="password" size="15"/>&#160;
-           <input type="submit" style="vertical-align:middle;" value="Login" name="Login" class="portlet-form-button"/>
-           
-           <xsl:apply-templates/>
+        <form action="Login" method="post">
+            <table width="100%" border="0" cellspacing="0" cellpadding="5">
+                <tr class="uportal-background-light">
+                    <td width="100%" class="uportal-channel-text" nowrap="nowrap">
+                        <input type="hidden" name="action" value="login"/>
+                        <span class="uportal-label">Name:<img alt="" src="{$mediaPath}/transparent.gif" width="4" height="1"/>
+                            <input class="uportal-input-text" type="text" name="userName" size="15" value="{failure/@attemptedUserName}"/>
+                            <img alt="" src="{$mediaPath}/transparent.gif" width="16" height="1"/>Password:<img alt="" src="{$mediaPath}/transparent.gif" width="4" height="1"/>
+                            <input class="uportal-input-text" type="password" name="password" size="15"/>
+                            <img alt="" src="{$mediaPath}/transparent.gif" width="8" height="1"/>
+                            <input type="submit" value="Login" name="Login" class="uportal-button"/>
+                        </span>
+                    </td>
+                </tr>
+                <xsl:apply-templates/>
+            </table>
         </form>
     </xsl:template>
     <!-- ~ -->
