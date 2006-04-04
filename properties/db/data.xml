@@ -3726,8 +3726,8 @@
         <column><name>PROFILE_NAME</name><value>HTML browser profile</value></column>
         <column><name>DESCRIPTION</name><value>A system profile for common web browsers</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
-        <column><name>STRUCTURE_SS_ID</name><value>3</value></column>
-        <column><name>THEME_SS_ID</name><value><sequence id="UP_SS_THEME">integratedModes</sequence></value></column>
+        <column><name>STRUCTURE_SS_ID</name><value>4</value></column>
+        <column><name>THEME_SS_ID</name><value>4</value></column>
       </row>
 
       <row>
@@ -3747,7 +3747,7 @@
         <column><name>DESCRIPTION</name><value>A sample profile for web browsers</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>STRUCTURE_SS_ID</name><value>3</value></column>
-        <column><name>THEME_SS_ID</name><value><sequence id="UP_SS_THEME">integratedModes</sequence></value></column>
+        <column><name>THEME_SS_ID</name><value>4</value></column>
       </row>
 
       <row>
@@ -3767,7 +3767,7 @@
         <column><name>DESCRIPTION</name><value>A sample profile for web browsers</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>STRUCTURE_SS_ID</name><value>3</value></column>
-        <column><name>THEME_SS_ID</name><value><sequence id="UP_SS_THEME">integratedModes</sequence></value></column>
+        <column><name>THEME_SS_ID</name><value>4</value></column>
       </row>
 
       <row>
@@ -3787,7 +3787,7 @@
         <column><name>DESCRIPTION</name><value>A system profile for common web browsers</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>STRUCTURE_SS_ID</name><value>3</value></column>
-        <column><name>THEME_SS_ID</name><value><sequence id="UP_SS_THEME">integratedModes</sequence></value></column>
+        <column><name>THEME_SS_ID</name><value>4</value></column>
       </row>
 
       <row>
@@ -3797,7 +3797,7 @@
         <column><name>DESCRIPTION</name><value>A system profile for common web browsers</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>STRUCTURE_SS_ID</name><value>3</value></column>
-        <column><name>THEME_SS_ID</name><value><sequence id="UP_SS_THEME">integratedModes</sequence></value></column>
+        <column><name>THEME_SS_ID</name><value>4</value></column>
       </row>
 
       <row>
@@ -3807,7 +3807,7 @@
         <column><name>DESCRIPTION</name><value>A system profile for common web browsers</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>STRUCTURE_SS_ID</name><value>3</value></column>
-        <column><name>THEME_SS_ID</name><value><sequence id="UP_SS_THEME">integratedModes</sequence></value></column>
+        <column><name>THEME_SS_ID</name><value>4</value></column>
       </row>
 
       <row>
@@ -3817,7 +3817,7 @@
         <column><name>DESCRIPTION</name><value>A system profile for common web browsers</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>STRUCTURE_SS_ID</name><value>3</value></column>
-        <column><name>THEME_SS_ID</name><value><sequence id="UP_SS_THEME">integratedModes</sequence></value></column>
+        <column><name>THEME_SS_ID</name><value>4</value></column>
       </row>
 
       <row>
@@ -3827,7 +3827,7 @@
         <column><name>DESCRIPTION</name><value>A sample profile for common web browsers</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>STRUCTURE_SS_ID</name><value>4</value></column>
-        <column><name>THEME_SS_ID</name><value>3</value></column>
+        <column><name>THEME_SS_ID</name><value>4</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>4</value></column>
@@ -3836,7 +3836,7 @@
         <column><name>DESCRIPTION</name><value>A system profile for common web browsers</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>STRUCTURE_SS_ID</name><value>4</value></column>
-        <column><name>THEME_SS_ID</name><value>3</value></column>
+        <column><name>THEME_SS_ID</name><value>4</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>5</value></column>
@@ -3845,7 +3845,7 @@
         <column><name>DESCRIPTION</name><value>A system profile for common web browsers</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>STRUCTURE_SS_ID</name><value>4</value></column>
-        <column><name>THEME_SS_ID</name><value>3</value></column>
+        <column><name>THEME_SS_ID</name><value>4</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>8</value></column>
@@ -3854,7 +3854,7 @@
         <column><name>DESCRIPTION</name><value>A sample profile for common web browsers</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
         <column><name>STRUCTURE_SS_ID</name><value>4</value></column>
-        <column><name>THEME_SS_ID</name><value>3</value></column>
+        <column><name>THEME_SS_ID</name><value>4</value></column>
       </row>
     </rows>
   </table>
@@ -3884,7 +3884,7 @@
         <column><name>SS_ID</name><value>1</value></column>
         <column><name>SS_TYPE</name><value>2</value></column>
         <column><name>PARAM_NAME</name><value>skin</value></column>
-        <column><name>PARAM_VAL</name><value>imm</value></column>
+        <column><name>PARAM_VAL</name><value>spring</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>7</value></column>
@@ -3900,7 +3900,7 @@
         <column><name>SS_ID</name><value>1</value></column>
         <column><name>SS_TYPE</name><value>2</value></column>
         <column><name>PARAM_NAME</name><value>skin</value></column>
-        <column><name>PARAM_VAL</name><value>java</value></column>
+        <column><name>PARAM_VAL</name><value>spring</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>11</value></column>
@@ -3916,7 +3916,7 @@
         <column><name>SS_ID</name><value>1</value></column>
         <column><name>SS_TYPE</name><value>2</value></column>
         <column><name>PARAM_NAME</name><value>skin</value></column>
-        <column><name>PARAM_VAL</name><value>java</value></column>
+        <column><name>PARAM_VAL</name><value>spring</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>12</value></column>
@@ -3932,7 +3932,7 @@
         <column><name>SS_ID</name><value>1</value></column>
         <column><name>SS_TYPE</name><value>2</value></column>
         <column><name>PARAM_NAME</name><value>skin</value></column>
-        <column><name>PARAM_VAL</name><value>uosm</value></column>
+        <column><name>PARAM_VAL</name><value>spring</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>13</value></column>
@@ -3948,7 +3948,7 @@
         <column><name>SS_ID</name><value>1</value></column>
         <column><name>SS_TYPE</name><value>2</value></column>
         <column><name>PARAM_NAME</name><value>skin</value></column>
-        <column><name>PARAM_VAL</name><value>vsac</value></column>
+        <column><name>PARAM_VAL</name><value>spring</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>3</value></column>
@@ -3961,10 +3961,10 @@
       <row>
         <column><name>USER_ID</name><value>3</value></column>
         <column><name>PROFILE_ID</name><value>1</value></column>
-        <column><name>SS_ID</name><value>3</value></column>
+        <column><name>SS_ID</name><value>4</value></column>
         <column><name>SS_TYPE</name><value>2</value></column>
         <column><name>PARAM_NAME</name><value>skin</value></column>
-        <column><name>PARAM_VAL</name><value>imm</value></column>
+        <column><name>PARAM_VAL</name><value>spring</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>4</value></column>
@@ -3977,10 +3977,10 @@
       <row>
         <column><name>USER_ID</name><value>4</value></column>
         <column><name>PROFILE_ID</name><value>1</value></column>
-        <column><name>SS_ID</name><value>3</value></column>
+        <column><name>SS_ID</name><value>4</value></column>
         <column><name>SS_TYPE</name><value>2</value></column>
         <column><name>PARAM_NAME</name><value>skin</value></column>
-        <column><name>PARAM_VAL</name><value>imm</value></column>
+        <column><name>PARAM_VAL</name><value>spring</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>5</value></column>
@@ -3993,10 +3993,10 @@
       <row>
         <column><name>USER_ID</name><value>5</value></column>
         <column><name>PROFILE_ID</name><value>1</value></column>
-        <column><name>SS_ID</name><value>3</value></column>
+        <column><name>SS_ID</name><value>4</value></column>
         <column><name>SS_TYPE</name><value>2</value></column>
         <column><name>PARAM_NAME</name><value>skin</value></column>
-        <column><name>PARAM_VAL</name><value>imm</value></column>
+        <column><name>PARAM_VAL</name><value>spring</value></column>
       </row>
       <row>
         <column><name>USER_ID</name><value>8</value></column>
@@ -4009,10 +4009,10 @@
       <row>
         <column><name>USER_ID</name><value>8</value></column>
         <column><name>PROFILE_ID</name><value>1</value></column>
-        <column><name>SS_ID</name><value>3</value></column>
+        <column><name>SS_ID</name><value>4</value></column>
         <column><name>SS_TYPE</name><value>2</value></column>
         <column><name>PARAM_NAME</name><value>skin</value></column>
-        <column><name>PARAM_VAL</name><value>imm</value></column>
+        <column><name>PARAM_VAL</name><value>spring</value></column>
       </row>
     </rows>
   </table>
@@ -4662,6 +4662,20 @@
         <column><name>SERIALIZER_NAME</name><value>HTML</value></column>
         <!-- <column><name>UP_MODULE_CLASS</name><value> (none) </value></column> -->
       </row>
+      <row sinceMajor="2" sinceMinor="5">
+        <column><name>SS_ID</name><value>4</value></column>
+        <column><name>SS_NAME</name><value>DLM XHTML</value></column>
+        <column><name>SS_URI</name><value>/org/jasig/portal/layout/tab-column/xhtml-theme/xhtml-theme.xsl</value></column>
+        <column><name>SS_DESCRIPTION_URI</name><value>/org/jasig/portal/layout/tab-column/xhtml-theme/xhtml-theme.sdf</value></column>
+        <column><name>SS_DESCRIPTION_TEXT</name><value>Renders DLM tabs and columns as xhtml</value></column>
+        <column><name>STRUCT_SS_ID</name><value>4</value></column>
+        <column><name>SAMPLE_ICON_URI</name><value>media/org/jasig/portal/layout/tab-column/xhtml-theme/sample_icon.gif</value></column>
+        <column><name>SAMPLE_URI</name><value>media/org/jasig/portal/layout/tab-column/xhtml-theme/sample_full.gif</value></column>
+        <column><name>MIME_TYPE</name><value>text/html</value></column>
+        <column><name>DEVICE_TYPE</name><value>workstation</value></column>
+        <column><name>SERIALIZER_NAME</name><value>XHTML</value></column>
+        <column><name>UP_MODULE_CLASS</name><value>org.jasig.portal.channels.DLMUserPreferences.TabColumnPrefsState</value></column>
+      </row>
     </rows>
   </table>
 
@@ -4694,6 +4708,22 @@
         </row>
        <row sinceMajor="2" sinceMinor="5">
          <column><name>SS_ID</name><value>3</value></column>
+         <column><name>PARAM_NAME</name><value>minimized</value></column>
+         <column><name>PARAM_DEFAULT_VAL</name><value>false</value></column>
+         <column><name>PARAM_DESCRIPT</name><value>Flag determining if the channel is minimized or not</value></column>
+         <column><name>TYPE</name><value>3</value></column>
+        </row>
+        
+       <!-- For DLM xhtml theme -->
+       <row sinceMajor="2" sinceMinor="5">
+         <column><name>SS_ID</name><value>4</value></column>
+         <column><name>PARAM_NAME</name><value>skin</value></column>
+         <column><name>PARAM_DEFAULT_VAL</name><value>spring</value></column>
+         <column><name>PARAM_DESCRIPT</name><value>Design skin name</value></column>
+         <column><name>TYPE</name><value>1</value></column>
+        </row>
+       <row sinceMajor="2" sinceMinor="5">
+         <column><name>SS_ID</name><value>4</value></column>
          <column><name>PARAM_NAME</name><value>minimized</value></column>
          <column><name>PARAM_DEFAULT_VAL</name><value>false</value></column>
          <column><name>PARAM_DESCRIPT</name><value>Flag determining if the channel is minimized or not</value></column>
@@ -4783,7 +4813,7 @@
       
       <!--  for DLM values. Not sure if this is used or not. -->
       <row sinceMajor="2" sinceMinor="5">
-        <column><name>THEME_SS_ID</name><value>3</value></column>
+        <column><name>THEME_SS_ID</name><value>4</value></column>
         <column><name>STRUCT_SS_ID</name><value>4</value></column>
         <column><name>MIME_TYPE</name><value>text/html</value></column>
       </row>
