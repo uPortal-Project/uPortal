@@ -142,6 +142,8 @@ IEntitySearcher
     // Cache of retrieved groups.
     private Map cache;
 
+    private FilenameFilter fileFilter = new FileFilter();
+    
     private Class defaultEntityType;
 
     // Value holder adds last modified timestamp.
@@ -157,6 +159,26 @@ IEntitySearcher
         }
         protected long getLastModified() {
             return  lastModified;
+        }
+    }
+    
+    private class FileFilter implements FilenameFilter {
+        /**
+         * Tests if a specified file should be included in a file list.
+         *
+         * @param   dir    the directory in which the file was found.
+         * @param   name   the name of the file.
+         * @return  <code>true</code> if and only if the name should be
+         * included in the file list; <code>false</code> otherwise.
+         */
+        public boolean accept(File dir, String name) {
+            return ( ! name.startsWith("#") ) &&
+                     ( ! name.startsWith("%") ) &&
+                     ( ! name.startsWith(".") ) &&
+                     ( ! name.endsWith( "~") ) &&
+                     ( ! name.endsWith( ".tmp") ) &&
+                     ( ! name.endsWith( ".temp") ) &&
+                     ( ! name.endsWith( ".txt") );
         }
     }
 
@@ -220,21 +242,24 @@ private IEntityGroup find(File file) throws GroupsException
 public IEntityGroup find(String key) throws GroupsException
 {
     if (log.isDebugEnabled())
-        log.debug(
-                DEBUG_CLASS_NAME + ".find(): group key: " + key);
+        { log.debug( DEBUG_CLASS_NAME + ".find(): group key: " + key ); }
 
     String path = getFilePathFromKey(key);
     File f = new File(path);
-    if ( ! f.exists() )
-        { return null; }
 
     GroupHolder groupHolder = cacheGet(key);
 
     if ( groupHolder == null || (groupHolder.getLastModified() != f.lastModified()) )
     {
         if (log.isDebugEnabled())
-            log.debug(
-                    DEBUG_CLASS_NAME + ".find(): retrieving group from file system for " + path);
+            { log.debug(  DEBUG_CLASS_NAME + ".find(): retrieving group from file system for " + path); }
+    
+        if ( ! f.exists() )
+        { 
+            if ( log.isDebugEnabled() )
+                { log.debug( DEBUG_CLASS_NAME + ".find(): file does not exist: " + path ); }
+            return null; 
+        }
 
         IEntityGroup group = newInstance(f);
         groupHolder = new GroupHolder(group, f.lastModified()) ;
@@ -720,7 +745,7 @@ throws GroupsException
  */
 private void primGetAllDirectoriesBelow(File dir, Set allDirectories)
 {
-    File[] files = dir.listFiles();
+    File[] files = dir.listFiles(fileFilter);
     for(int i=0; i<files.length; i++)
     {
         if ( files[i].isDirectory() )
@@ -735,7 +760,7 @@ private void primGetAllDirectoriesBelow(File dir, Set allDirectories)
  */
 private void primGetAllFilesBelow(File dir, Set allFiles)
 {
-    File[] files = dir.listFiles();
+    File[] files = dir.listFiles(fileFilter);
     for(int i=0; i<files.length; i++)
     {
         if ( files[i].isDirectory() )
@@ -860,15 +885,10 @@ throws GroupsException
 public boolean contains(IEntityGroup group, IGroupMember member) 
 throws GroupsException 
 {
-    boolean contains = false;
     File f = getFile(group);
-    if ( f.exists() )
-    {
-        contains = ( f.isDirectory() )
-          ? directoryContains(f, member)
-          : fileContains(f, member);
-    }
-    return contains;
+    return( f.isDirectory() )
+      ? directoryContains(f, member)
+      : fileContains(f, member);
 }
 /**
  * Answers if <code>file</code> contains <code>member</code>.  
