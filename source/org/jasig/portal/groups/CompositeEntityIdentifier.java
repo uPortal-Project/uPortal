@@ -143,9 +143,13 @@ public Name pushNode(String newNode) throws InvalidNameException
 /**
  * @param newCompositeKey javax.naming.Name
  */
-public void setCompositeKey(Name newCompositeKey)
+public synchronized void setCompositeKey(Name newCompositeKey)
 {
     compositeKey = newCompositeKey;
+    cachedCompositeKey = null;
+    cachedLocalKey = null;
+    cachedServiceName = null;
+
 }
 /**
  * @param newServiceName javax.naming.Name
@@ -154,6 +158,7 @@ public void setServiceName(Name newServiceName) throws InvalidNameException
 {
     Name newKey = newName().addAll(newServiceName).add(getLocalKey());
     setCompositeKey(newKey);
+    cachedServiceName = newServiceName;
 }
 /**
  * @return int
