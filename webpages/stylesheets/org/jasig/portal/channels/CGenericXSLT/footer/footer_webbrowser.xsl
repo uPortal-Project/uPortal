@@ -6,7 +6,7 @@
     <table width="100%" border="0" cellspacing="5" cellpadding="5">
       <tr>
         <td align="right" class="uportal-label">
-          <a href="http://www.udel.edu/uPortal">Powered by <xsl:value-of select="$uP_productAndVersion"/></a>
+          <a href="http://www.uportal.org">Powered by <xsl:value-of select="$uP_productAndVersion"/></a>
         </td>
       </tr>
     </table>
