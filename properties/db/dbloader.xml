@@ -163,6 +163,15 @@
   </db-type-mapping>
 
   <db-type-mapping>
+    <db-name>MySQL</db-name>
+    <db-version>5.0.19-community</db-version>
+    <driver-name>MySQL-AB JDBC Driver</driver-name>
+    <driver-version>mysql-connector-java-3.1.12 ( $Date$, $Revision$ )</driver-version>
+    <type><generic>LONGVARCHAR</generic><local>TEXT</local></type>
+    <!-- map more types here -->
+  </db-type-mapping>
+
+  <db-type-mapping>
     <db-name>Oracle</db-name>
     <!-- Line break has to be here -->
     <db-version>Oracle8 Enterprise Edition Release 8.0.6.2.0 - Production
