@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+
+<skins>
+  
+  <skin>
+    <skin>metal</skin>
+    <skin-name>Metal</skin-name>
+    <skin-description>
+      Gray channel titles, silver buttons, and white channel backgrounds 
+      on a brushed aluminum channels area.</skin-description>
+  </skin>
+  
+  <skin>
+    <skin>ocean</skin>
+    <skin-name>Ocean</skin-name>
+    <skin-description>Ocean channel titles with beige channel backgrounds.</skin-description>
+  </skin>
+  
+  <skin>
+    <skin>usflag</skin>
+    <skin-name>U.S. Flag</skin-name>
+    <skin-description>Red, White, and Blue American themed skin.</skin-description>
+  </skin>
+  
+  <skin>
+    <skin>grape</skin>
+    <skin-name>Grape</skin-name>
+    <skin-description>Purple channel titles with white channel backgrounds.</skin-description>
+  </skin>
+  
+  <skin>
+    <skin>spring</skin>
+    <skin-name>Spring</skin-name>
+    <skin-description>Seasonal spring skin with grass and butterflies.</skin-description>
+  </skin>
+
+  <skin>
+    <skin>winter</skin>
+    <skin-name>Winter</skin-name>
+    <skin-description>Seasonal winter themed skin with snow and snow-men.</skin-description>
+  </skin>
+
+</skins>
+

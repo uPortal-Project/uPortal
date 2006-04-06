@@ -1,0 +1,416 @@
+/* $Id$ */
+/*********************************** GLOBAL */
+html,body {
+	background-color:white;
+	color:#000;
+	border:0;
+	margin:0;
+	padding:0;
+	}
+
+body {font:normal 76% sans-serif;}
+/* body * {position: relative;}  Gets rid of the IE Peekaboo bug */
+
+hr {
+	margin:0;
+	padding:0;
+	background-color:#ccf;
+	color:#ccf;
+	height:1px;
+	border:0;
+	}
+
+fieldset {
+	margin-top:1.5em;
+	border:1px solid #fcc;
+	}
+
+img {border:0;}
+
+ul li {line-height:1.66em;}
+
+/* - tabs */
+#tabs {
+	margin:0;
+	padding:0;
+	width:100%;
+	float:left;
+	line-height:normal;
+	}
+
+#tabs ul {
+	list-style:none;
+	margin:0 0 0 10px;
+	padding:0;
+	}
+
+#tabs li {
+	display:inline;
+	margin:0;
+	padding:0;
+	}
+
+/* Hides rule from IE5-Mac \*/
+#tabs a span {float:none;}
+* html .portlet {height:1%;}
+/* End IE5-Mac hack */
+
+#tabs a:hover span {color:#009;}
+
+#tabs li#active-tab a {
+	background-position:0 -56px;
+	border-width:0;
+	}
+
+#tabs #active-tab a span{
+	padding-bottom:3px;
+	background-position:100% -56px;
+	}
+
+#tabs a:hover {background-position:0 -56px;}
+
+#tabs a:hover span {
+	background-position:100% -56px;
+	cursor:pointer;
+	color:#378B8F;
+	}
+
+#tabs a {
+	float:left;
+	background:url(../navigation/l_tab.gif) no-repeat left top;
+	margin:0;
+	padding:0 0 0 20px;
+	text-decoration:none;
+	white-space:nowrap;
+	}
+
+#tabs a span{
+	float:left;
+	display:block;
+	background:url(../navigation/r_tab.gif) no-repeat right top;
+	padding:2px 20px 3px 0px;
+	color:white;
+	font-size:1em;
+	font-weight:bold;
+	text-decoration:none;
+	white-space:nowrap;
+	}
+
+#tabs li#active-tab a span {
+	color:#378B8F;
+	}
+
+
+/*********************************** PORTAL BODY */
+#portal-page-body {
+	width:100%;
+	clear:both;
+	background:#EEFAF9 url(bg_snow.png) bottom left repeat-x scroll;
+	color:#000;
+	margin:0;
+	padding:0 0 115px 0;
+	}
+
+#portal-page-body ul li { /* needs to be more specific in order not to affect navigation uls */
+	margin:0;
+	padding:0;
+  	line-height:1.66em; /* 1.6em messes up .toolbar ul li in FF */
+	}
+
+#portal-page-body dl dt {
+	margin:0;
+	padding:.3em 0 0 0;
+	}
+
+#portal-page-body dl dd {
+	margin:0;
+	padding:.5em;
+	}
+
+/*********************************** PORTLET TOOLBAR */
+.portlet-toolbar {
+	white-space:nowrap;
+	background:white url(../navigation/l_corner.gif) left top no-repeat scroll;
+	padding-left:4px;
+	border-bottom:solid 1px #C8E5E5;
+	}
+
+/* stops toolbar from shrinking smaller than the size of buttons */
+.portlet-toolbar:after {
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility:hidden;
+	}
+	
+/* Hides from IE-mac \*/
+* html .portlet-toolbar {height: 1%;}
+/* End hide from IE-mac */
+
+/* - toolbar title */
+.uportal-channel-title, .portlet-toolbar h2 {
+	background:transparent url(../navigation/r_corner.gif) right top no-repeat scroll;
+	color:#378B8F;
+	margin:0;
+	padding:0 4px 0 0;
+	font-size:.9em;
+	line-height:1.9em;
+	}
+
+/* - toolbar controls */
+.portlet-toolbar div {
+	float:right;
+	margin:2px 0 0 0;
+	padding-right:2px;
+	/* display:inline; needed for ie double margin bug if horizontal margins are used */
+	}
+
+/* - for IE only */
+* html .portlet-toolbar div {
+	margin:0;
+	padding-top:1px;
+	}
+
+.portlet-toolbar div img {vertical-align:middle;} /* needed to control toolbar height */
+.portlet-toolbar h2 img {vertical-align:middle;} /* needed to control toolbar height */
+
+/*********************************** PORTLET BODY */
+.portlet {
+	position:relative; /* prevents content from disappearing  */
+	padding:10px;
+	border:1px solid #C8E5E5;
+	border-top:none;
+	background-color:white;
+	color:#000;
+	margin:0 0 15px 0;
+	}
+
+/* - sections */
+.portlet-section-header, .uportal-channel-subtitle, .portlet h3, h3 {
+	margin:0 0 10px 0;
+	padding:0 0 5px 0;
+	border-bottom:1px #C8E5E5 solid;
+	background-color:transparent;
+	color:#378B8F;
+	font-size:1em;
+	font-weight:bold;
+	width:100%; /* may not be needed ??? */	
+	}
+
+.portlet-section-subheader, .portlet h4 {
+	background-color:transparent;
+	color:#378B8F;
+	font-size:1em;
+	font-weight:bold;
+	margin:1em 0;
+	padding:0;
+	}
+
+.portlet-section-footer {
+	color:#666;
+	font-size:.8em;
+	border-top:1px solid #C8E5E5;
+	padding:5px 0 0 0;
+	text-align:left;
+	margin:10px 0 0 0;
+	}
+
+/* - forms */
+.portlet form {
+	margin-top:0;
+	margin-bottom:0;
+	}
+
+select, input, textarea {font-family:verdana,sans-serif;}
+
+textarea {font-size:1em;}
+
+.portlet-form-field-label, .portlet form label {
+	background-color:transparent;
+	color:#333;
+	font-weight:bold;
+	line-height:23px;
+	cursor:pointer;
+	}
+
+.portlet form p label {font-size:.9em;}
+
+.portlet-form-button,.uportal-button {
+	border-style:solid;
+	border-color:#fff #336 #336 #fff;
+	border-width:1px;
+	background-color:#C8E5E5;
+	color:#378B8F;
+	cursor:pointer;
+	white-space:nowrap;
+	text-align: center;
+	font:bold .9em sans-serif;
+	}
+
+a.portlet-form-button, a.uportal-button {
+	display:block;
+	background-color:#C8E5E5;
+	text-decoration:none;
+	padding:3px 1px 3px 20px;
+	margin:2px 0 0 0;
+	}
+
+* html input.portlet-form-button, * html input.uportal-button{
+	padding:0;
+	margin:0px;
+	}
+
+/* - messages */
+p.portlet-msg-error, p.uportal-channel-error {
+	background:#fff0ff;
+	color:#f00;
+	font-size:1em;
+	font-weight: bold;
+	text-transform: uppercase;
+	border:1px solid #f00;
+	padding:5px;
+	}
+
+ul.expand, ul.collapse {list-style:none;padding:0;padding-left:25px;margin:0;}
+ul.expand li, ul.collapse li {padding:0;margin:0;}
+ul.expand li a {padding-left:15px;background:transparent url(../navigation/expand.gif) no-repeat center left scroll;}
+ul.collapse li a {padding-left:15px;background:transparent url(../navigation/collapse.gif) no-repeat center left scroll;}
+ul.collapse ul li a {background-image:none;padding:0;}
+
+/*********************************** FOOTER */
+#portal-page-footer {
+	margin:0;
+	padding:10px;
+	clear:both;
+	background:white;
+	}
+
+#portal-page-footer p, .uportal-channel-copyright {
+	margin:0;
+	padding:0;
+	background-color:white;
+	color:#999;
+	font-size:.9em;
+	}
+
+#portal-page-footer div {
+	float:right;
+	width:99px;
+	}
+
+/*********************************** TABLE STYLES */
+table.data {
+	width:100%;
+	border-style:solid;
+	border-color:#aaa #666 #666 #aaa;
+	border-width:1px;
+	background-color:#fff;
+	}
+
+table.data .caption, .uportal-channel-table-caption {
+	background-color:#ccc;
+	color:#333;
+	font-size:1em;
+	}
+
+table.data th, table.data td, .uportal-channel-table-header {
+	font-size:.9em;
+	padding:2px;
+	border-style:solid;
+	border-color:#ddd transparent transparent #ddd;
+	border-width:1px 0 0 1px;
+	line-height:16px;
+	height:16px;
+	}
+
+table.data th, table.data th a, .uportal-channel-table-header, .uportal-channel-table-header a {
+	background-color:#666;
+	color:#fff;
+	font-weight:bold;
+	white-space:nowrap;
+	}
+
+table.data tr, .uportal-channel-table-row-odd {background-color:#fff;}
+
+table.data tr.portlet-section-alternate, .portlet-section-alternate, .uportal-channel-table-row-even {background-color:#eef;}
+
+.l {text-align:left;}
+.c {text-align:center;}
+.r {text-align:right;}
+
+/* preferences */
+.uportal-background-dark{background: #999;}
+/* all of calendar of events table */
+.uportal-background-med {background: #ccc;}
+/* preferences and bus tables */
+.uportal-background-light {background: #eee;}
+.uportal-channel-text{	color: #000;	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;	font-size: 11px;	}
+/*preferences tabs*/
+.uportal-text-small{	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;	font-size: 10px;	}
+/* labels for form elements ??? */
+.uportal-channel-strong{font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;	font-weight: bold;	font-size: 12px;}
+
+.uportal-text{}
+.uportal-channel-title-reversed{}
+.uportal-background{}
+.uportal-background-dark{}
+.uportal-background-med{}
+.uportal-background-light{}
+.uportal-background-content{}
+.uportal-background-highlight{}
+.uportal-background-shadow{}
+/* - fonts - undefined properties inherited from body */
+.uportal-channel-text, .portlet-font {}
+.portlet-font-dim {}
+.uportal-channel-subtitle-reversed{}
+.portlet-section-body {}
+.portlet-section-selected {}
+.portlet-section-text {}
+.portlet-form-label {}
+.portlet-icon-label {}
+.portlet-dlg-icon-label {}
+.portlet-form-field {}
+.portlet-msg-status {}
+.portlet-msg-info {}
+.portlet-msg-alert {}
+.portlet-msg-success {}
+/* menus */
+.portlet-menu {}
+.portlet-menu-item {}
+.portlet-menu-item-selected {}
+.portlet-menu-item-hover {}
+.portlet-menu-item-hover-selected {}
+.portlet-cascade-item {}
+.portlet-menu-cascade-item-selected {}
+.portlet-menu-description {}
+.portlet-menu-caption {}
+
+
+.datasetHeading {
+	width:100%;
+	margin:0;
+	padding:0;
+	border-top:1px dotted #900;
+	color:#b00;
+	font-weight:bold;
+	font-size:1em;
+	line-height:1.4em;
+	}
+
+#announcements p {
+	padding:0;
+	margin:1em 0 1.5em 0;
+	}
+.datestamp {
+	float:right;
+	color:#C77474;
+	}
+.fleft {
+	float:left;
+	margin:0 10px 10px 0;
+	}
+.fright{
+	float:right;
+	margin:0 10px 10px 0;
+	}
