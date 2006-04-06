@@ -59,7 +59,6 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
     private static String findGroupSql;
     private static String findGroupsByCreatorSql;
     private static String findMemberGroupKeysSql;
-    private static String findMemberGroupSql;
     private static String findMemberGroupsSql;
     private static String insertGroupSql;
     private static String updateGroupSql;
@@ -87,7 +86,6 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
     private static String searchGroupsPartial = "SELECT "+GROUP_ID_COLUMN+" FROM "+GROUP_TABLE+" WHERE "+GROUP_TYPE_COLUMN+"=? AND "+GROUP_NAME_COLUMN+" LIKE ?";
     private static String searchGroups = "SELECT "+GROUP_ID_COLUMN+" FROM "+GROUP_TABLE+" WHERE "+GROUP_TYPE_COLUMN+"=? AND "+GROUP_NAME_COLUMN+" = ?";
 
-    private IGroupService groupService;
 
 /**
  * RDBMEntityGroupStore constructor.
@@ -995,12 +993,6 @@ private static java.lang.String getFindMemberGroupsSql()
     return findMemberGroupsSql;
 }
 /**
- * @return org.jasig.portal.groups.IGroupService
- */
-public IGroupService getGroupService() {
-    return groupService;
-}
-/**
  * @return java.lang.String
  */
 private static java.lang.String getInsertGroupSql()
@@ -1591,13 +1583,6 @@ protected static void rollback(Connection conn) throws java.sql.SQLException
 protected static void setAutoCommit(Connection conn, boolean newValue) throws java.sql.SQLException
 {
     SqlTransaction.setAutoCommit(conn, newValue);
-}
-
-/**
- * @param newGroupService org.jasig.portal.groups.IGroupService
- */
-public void setGroupService(IGroupService newGroupService) {
-    groupService = newGroupService;
 }
 
 /**

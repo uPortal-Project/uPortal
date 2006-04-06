@@ -12,6 +12,7 @@ import org.apache.commons.logging.LogFactory;
  * Creates the reference implemetation of <code>IGroupService</code>.
  * @author Dan Ellentuck
  * @version $Revision$
+ * @deprecated
  */
 
 public class ReferenceGroupServiceFactory implements IGroupServiceFactory {

@@ -263,7 +263,7 @@ throws GroupsException
 
     for ( Iterator services = getComponentServices().values().iterator(); services.hasNext(); )
     {
-        IGroupService service = (IGroupService) services.next();
+        IIndividualGroupService service = (IIndividualGroupService) services.next();
         EntityIdentifier[] ids = service.searchForEntities(query, method, type);
         for (int i=0; i<ids.length; i++)
             { allIds.add(ids[i]);}
@@ -282,7 +282,7 @@ throws GroupsException
 
     for ( Iterator services = getComponentServices().values().iterator(); services.hasNext(); )
     {
-        IGroupService service = (IGroupService) services.next();
+        IIndividualGroupService service = (IIndividualGroupService) services.next();
         EntityIdentifier[] ids = service.searchForEntities(query, method, type, ancestor);
         for (int i=0; i<ids.length; i++)
             { allIds.add(ids[i]);}

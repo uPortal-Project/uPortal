@@ -28,6 +28,8 @@ import org.apache.commons.logging.LogFactory;
  * 
  * @author Dan Ellentuck
  * @version $Revision$
+ * @deprecated Use instead an @link{ICompositeGroupService}
+ * implementation.
  */
 public class ReferenceGroupService implements ILockableGroupService
 {
