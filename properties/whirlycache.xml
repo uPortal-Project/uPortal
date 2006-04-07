@@ -45,5 +45,20 @@
         
         <!-- evicts items older than the specified time (in seconds) when pruning -->
         <expire-time>600</expire-time>
-    </cache>        
+    </cache> 
+    
+        <!-- CACHE USED BY CompositeEntityIdentifier to cache Names -->
+    <cache name="nameCache">
+        <backend>com.whirlycott.cache.impl.ConcurrentHashMapImpl</backend>
+
+        <!-- define time interval that cleanup thread will run in number of seconds -->
+        <tuner-sleeptime>300</tuner-sleeptime>
+
+        <!-- evicts least recently used items when pruning -->
+        <policy>com.whirlycott.cache.policy.LRUMaintenancePolicy</policy>
+
+        <maxsize>500</maxsize>
+    </cache>
+
+           
 </whirlycache>
