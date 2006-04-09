@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+    <!--
+        This file sets up contextual information for Distributed Layout 
+        Management. It is intentionally not included in beanRefFactory.xml so 
+        that it only gets loaded if DLM is being used for layout management and 
+        also to ensure that exceptions caused during loading of beanRefFactory
+        don't stop this file from being loaded.
+    -->
+
+    <!--
+        Configure the processing pipe for DLM including optional processors that 
+        can be swapped in and out using the uP_dlmPrc parameter. WARNING: since 
+        these processors are meant to hold user specific parameters and allow 
+        changing the SAX event stream based on those values these beans MUST NOT
+        be singletons. Each instance of the pipe must be a new instance with 
+        all new embedded instances of processors for each user. Thus the 
+        singleton="false" attribute on all of these beans. The only exception
+        to this would be a processor that did not have any instance variables
+        with user specific context. Such a processor could be used as a 
+        singleton.
+        
+        The processing pipe conceptually sits in front of the 
+        DistributedLayoutManager which maintains the user's layout and thus can
+        provide IParameterProcessor implementations that can act on parameters
+        passed as part of a request either every time as a member of the list of
+        fixed processors or only when needed via being included in the optional
+        processor map. 
+        
+        Only one optional processor is active at a time and is
+        activated by including the parameter "uP_dlmPrc=aKey" where "aKey" 
+        matches the corresponding key of the processor in the map in this file.
+        An optional processor remains in place for all further requests until 
+        another occurrance of uP_dlmPrc with an empty value or another key or
+        the processor indicates via the optional interface 
+        IOptionalParameterProcessor that it is finished and is no longer needed
+        in parameter processing. For more indepth information see the javadocs 
+        for the following class and interfaces:
+        
+        org.jasig.portal.layout.dlm.processing.ProcessingPipe
+        org.jasig.portal.layout.dlm.processing.IParameterProcessor
+        org.jasig.portal.layout.dlm.processing.ISaxProcessor
+        org.jasig.portal.layout.dlm.processing.IOptionalParameterProcessor
+    -->
+    <bean id='dlmProcessingPipe'
+        class="org.jasig.portal.layout.dlm.processing.ProcessingPipe"
+        singleton="false">
+        <!-- 
+        Commented out until we return to Integrated Modes stylesheet support.
+        This will result in a valid processing pipe but won't inject a list of
+        fixed processors nor a map of optional processors thus saving on a small
+        amount of memory.
+        -->
+         
+        <property name="fixedProcessors">
+            <list>
+                <!-- A processor for injecting the username into the theme 
+                stylesheet to be presented in the user's layout. -->
+                <bean class="org.jasig.portal.layout.dlm.providers.ThemeParamInjector" singleton="false"/>
+                <bean class="org.jasig.portal.layout.dlm.providers.RegularViewChannelRemover" singleton="false"/>
+
+                <!-- 
+                The following bean is an example of an IParameterProcessor that
+                watches for a tab with name "Sticky Tab" and if found sets that
+                tab as the currently active tab on every request thus forcing
+                the user to remain on that tab regardless of which other tabs
+                are clicked.
+                <bean class="org.jasig.portal.layout.dlm.processing.ExampleStickyTabEnforcer" singleton="false"/>
+                -->
+            </list>
+        </property>
+        <property name="optionalProcessors">
+            <map>
+                <!-- 
+                <entry key="BMR">
+                    The following bean implements ISaxProcessor and when set as
+                    the active optional processor alters the SAX event stream
+                    coming from the DistributedLayoutManager by stripping out
+                    any events related to a channel with name="Bookmarks". This
+                    can be activated by including the query parameter 
+                    "uP_dlmPrc=BMR" in a uPortal request and remains in place 
+                    until a query parameter of "uP_dlmPrc=" is seen.
+                    
+                    <bean class="org.jasig.portal.layout.dlm.processing.ExampleBookmarksRemover" singleton="false"/>
+                </entry> 
+                -->   
+            </map>
+        </property>
+    </bean>
+
+</beans>
