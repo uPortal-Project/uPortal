@@ -45,6 +45,7 @@ import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.layout.LayoutEvent;
 import org.jasig.portal.layout.LayoutEventListener;
 import org.jasig.portal.layout.LayoutMoveEvent;
+import org.jasig.portal.layout.dlm.processing.ProcessingPipe;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.node.IUserLayoutFolderDescription;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
@@ -53,6 +54,9 @@ import org.jasig.portal.layout.simple.SimpleLayout;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.utils.CommonUtils;
 import org.jasig.portal.utils.DocumentFactory;
+import org.springframework.beans.factory.xml.XmlBeanFactory;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -85,7 +89,18 @@ public class DistributedLayoutManager implements IUserLayoutManager
     private boolean channelsAdded = false;
     private boolean isFragment = false;
 
-    private IUserLayoutNodeDescription newNodeDescription = null;
+    private static boolean cLoadedProcessingPipeFactory = false;
+    private static XmlBeanFactory cProcessingPipeFactory = null;
+
+    /**
+     * The following variable contains the configured processing pipe which 
+     * conceptually sits between any class calling processLayoutParemeters() a
+     * and getUserLayout() enabling pluggable URL handlers for layout activities
+     * of custome renderign theme stylesheets.
+     * 
+     * @see org.jasig.portal.layout.dlm.processing.ProcessingPipe
+     */
+    private ProcessingPipe processingPipe = null;
 
     public DistributedLayoutManager(IPerson owner, UserProfile profile,
             IUserLayoutStore store) throws PortalException
@@ -109,6 +124,9 @@ public class DistributedLayoutManager implements IUserLayoutManager
 
             this.owner = owner;
             this.profile = profile;
+            if (cLoadedProcessingPipeFactory == false)
+                loadProcessingPipeFactory();
+            loadProcessingPipe();
             this.setLayoutStore(store);
             this.loadUserLayout();
 
@@ -175,6 +193,29 @@ public class DistributedLayoutManager implements IUserLayoutManager
         }
     }
 
+    /**
+     * Loads processor configuration found in "/properties/dlmContext.xml".
+     *
+     */
+    private static void loadProcessingPipeFactory()
+    {
+        Resource config = new ClassPathResource(ProcessingPipe.PIPE_CONFIG_FILE);
+        cProcessingPipeFactory = new XmlBeanFactory(config);
+        cLoadedProcessingPipeFactory = true;
+    }
+    
+    /**
+     * Loads instances of handlers to assist with layout parameter processing 
+     * layout rendering for the current user's layout.
+     *
+     */
+    private void loadProcessingPipe()
+    {
+        processingPipe = (ProcessingPipe) 
+            cProcessingPipeFactory.getBean(ProcessingPipe.PROCESSING_PIPE_BEAN_ID);
+        processingPipe.setResources(owner, this);
+    }
+    
     private void setUserLayoutDOM(Document doc) {
         this.userLayoutDocument = doc;
         this.updateCacheKey();
@@ -221,19 +262,20 @@ public class DistributedLayoutManager implements IUserLayoutManager
 
     protected void getUserLayout(Node n,ContentHandler ch) throws PortalException {
         // do a DOM2SAX transformation
-        try {
-            Transformer emptyt=TransformerFactory.newInstance().newTransformer();
-            emptyt.transform(new DOMSource(n), new SAXResult(ch));
-        } catch (Exception e) {
-            LOG.error("Encountered an exception trying to output "
-                    + "user layout for " + owner.getAttribute(IPerson.USERNAME)
-                    + ".", e);
-            throw new PortalException("Encountered an exception trying to " 
-                    + "output user layout for " 
-                    + owner.getAttribute(IPerson.USERNAME) + ".",e);
+
+        try 
+        {
+            processingPipe.setExitContentHandler(ch);
+            ch = processingPipe.getEntryContentHandler();
+            Transformer xfrmr = TransformerFactory.newInstance().newTransformer();
+            xfrmr.transform(new DOMSource(n), new SAXResult(ch));
+        } 
+        catch (Exception e) 
+        {
+            throw new PortalException("Unable to output user layout for " 
+                    + owner.getAttribute(IPerson.USERNAME) + ".", e);
         }
     }
-
 
     public void setLayoutStore(IUserLayoutStore store) {
         this.store=(RDBMDistributedLayoutStore) store;
@@ -1138,27 +1180,22 @@ public class DistributedLayoutManager implements IUserLayoutManager
     }
 
     /**
-     * The structure of add targets where a node is to fall after a sibling is:
-     * 
-     * &lt;addTarget parentID="someID" nextID="newFollowingSiblingID"/&gt;
-     * 
-     * For targets at the end of the sibling list the structure is:
-     * 
-     * &lt;addTarget parentID="someID" nextID=""/&gt;
+     * Unsupported operation in DLM. This feature is handled by pluggable 
+     * processors in the DLM processing pipe. See properties/dlmContext.xml.
      */
     public void markAddTargets(IUserLayoutNodeDescription node) {
-        
-        // we use the old prefs channel for now so ignore this.
-        // TODO add for conversion to integrated modes theme
-        
-        // get all folders
-        // so where can we add 
-        this.updateCacheKey();
+        throw new UnsupportedOperationException("Use an appropriate " +
+                "processor for adding targets.");
     }
 
 
+    /**
+     * Unsupported operation in DLM. This feature is handled by pluggable 
+     * processors in the DLM processing pipe. See properties/dlmContext.xml.
+     */
     public void markMoveTargets(String nodeId) throws PortalException {
-        this.updateCacheKey();
+            throw new UnsupportedOperationException("Use an appropriate " +
+            "processor for adding targets.");
     }
 
     public String getParentId(String nodeId) throws PortalException {
@@ -1266,7 +1303,9 @@ public class DistributedLayoutManager implements IUserLayoutManager
     }
 
     public String getCacheKey() {
-        return this.cacheKey;
+        String compositeKey = this.processingPipe.getCacheKey() + ":" 
+        + this.cacheKey;
+        return compositeKey;
     }
 
     /**
@@ -1401,216 +1440,10 @@ public class DistributedLayoutManager implements IUserLayoutManager
     /**
      * Handle layout specific parameters posted with the request.
      */
-    public void processLayoutParameters(IPerson person, UserPreferences userPrefs, HttpServletRequest req) throws PortalException
+    public void processLayoutParameters(IPerson person,
+            UserPreferences userPrefs, HttpServletRequest req)
+            throws PortalException
     {
-        try
-        {
-            String newNodeId = null;
-
-            // Sending the theme stylesheets parameters based on the user
-            // security context
-            ThemeStylesheetUserPreferences themePrefs = userPrefs
-                    .getThemeStylesheetUserPreferences();
-            StructureStylesheetUserPreferences structPrefs = userPrefs
-                    .getStructureStylesheetUserPreferences();
-
-            String authenticated = String.valueOf(person.getSecurityContext()
-                    .isAuthenticated());
-            structPrefs.putParameterValue("authenticated", authenticated);
-            String userName = person.getFullName();
-            if (userName != null && userName.trim().length() > 0)
-                themePrefs.putParameterValue("userName", userName);
-            /*
-            try
-            {
-                if (ChannelStaticData.getAuthorizationPrincipal(person)
-                        .canPublish())
-                {
-                    themePrefs.putParameterValue("authorizedFragmentPublisher",
-                            "true");
-                    themePrefs.putParameterValue("authorizedChannelPublisher",
-                            "true");
-                }
-            } catch (Exception e)
-            {
-                LOG.error("Exception determining publish rights for " + person,
-                        e);
-            }
-            */
-            
-            String[] values;
-
-            if ((values = req.getParameterValues("uP_request_move_targets")) != null)
-            {
-                if (values[0].trim().length() == 0)
-                    values[0] = null;
-                this.markMoveTargets(values[0]);
-            } else
-            {
-                this.markMoveTargets(null);
-            }
-
-            if ((values = req.getParameterValues("uP_request_add_targets")) != null)
-            {
-                String value;
-                int nodeType = values[0].equals("folder")
-                        ? IUserLayoutNodeDescription.FOLDER
-                        : IUserLayoutNodeDescription.CHANNEL;
-                IUserLayoutNodeDescription nodeDesc = this
-                        .createNodeDescription(nodeType);
-                nodeDesc.setName("Unnamed");
-                if (nodeType == IUserLayoutNodeDescription.CHANNEL
-                        && (value = req.getParameter("channelPublishID")) != null)
-                {
-                    String contentPublishId = value.trim();
-                    if (contentPublishId.length() > 0)
-                    {
-                        ((IUserLayoutChannelDescription) nodeDesc)
-                                .setChannelPublishId(contentPublishId);
-                        themePrefs.putParameterValue("channelPublishID",
-                                contentPublishId);
-                    }
-                }
-                /*
-                else if (nodeType == IUserLayoutNodeDescription.FOLDER
-                        && (value = req.getParameter("fragmentPublishID")) != null)
-                {
-                    String contentPublishId = value.trim();
-                    String fragmentRootId = CommonUtils.nvl(req
-                            .getParameter("fragmentRootID"));
-                    if (contentPublishId.length() > 0
-                            && fragmentRootId.length() > 0)
-                    {
-                        IALFolderDescription folderDesc = (IALFolderDescription) nodeDesc;
-                        folderDesc.setFragmentId(contentPublishId);
-                        folderDesc.setFragmentNodeId(fragmentRootId);
-                    }
-                    //themePrefs.putParameterValue("uP_fragmentPublishID",contentPublishId);
-                }
-                */
-                newNodeDescription = nodeDesc;
-                this.markAddTargets(newNodeDescription);
-            } else
-            {
-                this.markAddTargets(null);
-            }
-
-            if ((values = req.getParameterValues("uP_add_target")) != null)
-            {
-                String[] values1, values2;
-                String value = null;
-                values1 = req.getParameterValues("targetNextID");
-                if (values1 != null && values1.length > 0)
-                    value = values1[0];
-                if ((values2 = req.getParameterValues("targetParentID")) != null)
-                {
-                    if (newNodeDescription != null)
-                    {
-                        if (CommonUtils.nvl(value).trim().length() == 0)
-                            value = null;
-
-                        // Adding a new node
-                        newNodeId = this.addNode(newNodeDescription,
-                                values2[0], value).getId();
-                        /*
-                        // if the new node is a fragment being added - we need
-                        // to re-load the layout
-                        if (newNodeDescription instanceof IALFolderDescription)
-                        {
-                            IALFolderDescription folderDesc = (IALFolderDescription) newNodeDescription;
-                            if (folderDesc.getFragmentNodeId() != null)
-                            {
-                                this.saveUserLayout();
-                                this.loadUserLayout();
-                            }
-                        }
-                        */
-                    }
-                }
-                newNodeDescription = null;
-            }
-
-            if ((values = req.getParameterValues("uP_move_target")) != null)
-            {
-                String[] values1, values2;
-                String value = null;
-                values1 = req.getParameterValues("targetNextID");
-                if (values1 != null && values1.length > 0)
-                    value = values1[0];
-                if ((values2 = req.getParameterValues("targetParentID")) != null)
-                {
-                    if (CommonUtils.nvl(value).trim().length() == 0)
-                        value = null;
-                    this.moveNode(values[0], values2[0], value);
-                }
-            }
-
-            if ((values = req.getParameterValues("uP_rename_target")) != null)
-            {
-                String[] values1;
-                if ((values1 = req.getParameterValues("uP_target_name")) != null)
-                {
-                    IUserLayoutNodeDescription nodeDesc = this
-                            .getNode(values[0]);
-                    if (nodeDesc != null)
-                    {
-                        String oldName = nodeDesc.getName();
-                        nodeDesc.setName(values1[0]);
-                        if (!this.updateNode(nodeDesc))
-                            nodeDesc.setName(oldName);
-                    }
-                }
-            }
-
-            if ((values = req.getParameterValues("uP_remove_target")) != null)
-            {
-                for (int i = 0; i < values.length; i++)
-                {
-                    this.deleteNode(values[i]);
-                }
-            }
-
-            String param = req.getParameter("uP_cancel_targets");
-            if (param != null && param.equals("true"))
-            {
-                this.markAddTargets(null);
-                this.markMoveTargets(null);
-                newNodeDescription = null;
-            }
-
-            param = req.getParameter("uP_reload_layout");
-            if (param != null && param.equals("true"))
-            {
-                this.loadUserLayout();
-            }
-
-            /*
-             param = req.getParameter("uPcFM_action");
-             if ( param != null ) {
-             String fragmentId = req.getParameter("uP_fragmentID");
-             if ( param.equals("edit") && fragmentId != null ) {
-             if ( CommonUtils.parseInt(fragmentId) > 0 )
-             this.loadFragment(fragmentId);
-             else
-             this.loadUserLayout();
-             } else if ( param.equals("save") ) {
-             this.saveFragment();
-             }
-             }
-             */
-
-            // If we have created a new node we need to let the structure XSL know about it
-            structPrefs.putParameterValue("newNodeID", CommonUtils
-                    .nvl(newNodeId));
-            /*
-            // Sending the parameter indicating whether the layout or the fragment 
-            // is loaded in the preferences mode
-            structPrefs.putParameterValue("current_structure", this
-                    .isFragmentLoaded() ? "fragment" : "layout");
-            */
-        } catch (Exception e)
-        {
-            throw new PortalException(e);
-        }
+        processingPipe.processParameters(userPrefs, req);
     }
 }
