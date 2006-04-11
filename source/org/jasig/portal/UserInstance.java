@@ -25,6 +25,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.car.CarResources;
 import org.jasig.portal.container.services.information.PortletStateManager;
+import org.jasig.portal.events.EventPublisherLocator;
+import org.jasig.portal.events.support.UserSessionCreatedPortalEvent;
+import org.jasig.portal.events.support.UserSessionDestroyedPortalEvent;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.jmx.FrameworkMBeanImpl;
 import org.jasig.portal.layout.IUserLayoutManager;
@@ -39,7 +42,6 @@ import org.jasig.portal.serialize.CachingSerializer;
 import org.jasig.portal.serialize.OutputFormat;
 import org.jasig.portal.serialize.XMLSerializer;
 import org.jasig.portal.services.GroupService;
-import org.jasig.portal.services.StatsRecorder;
 import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.utils.SAX2BufferImpl;
 import org.jasig.portal.utils.SAX2DuplicatingFilterImpl;
@@ -683,7 +685,7 @@ public class UserInstance implements HttpSessionBindingListener {
          }
      }
         // Record the destruction of the session
-        StatsRecorder.recordSessionDestroyed(person);
+        EventPublisherLocator.getApplicationEventPublisher().publishEvent(new UserSessionDestroyedPortalEvent(this, person));
         GroupService.finishedSession(person);
     }
 
@@ -694,7 +696,7 @@ public class UserInstance implements HttpSessionBindingListener {
      */
     public void valueBound (HttpSessionBindingEvent bindingEvent) {
         // Record the creation of the session
-        StatsRecorder.recordSessionCreated(person);
+    	EventPublisherLocator.getApplicationEventPublisher().publishEvent(new UserSessionCreatedPortalEvent(this, person));
     }
 
     /**

@@ -31,6 +31,11 @@ import edu.emory.mathcs.backport.java.util.concurrent.TimeUnit;
  * setter method.
  * 
  * @version $Revision$ $Date$
+ * 
+ * @deprecated IStatsRecorder implementation is replaced with a much more flexible system 
+ * based on the Spring ApplicationEventPublisher and Event Listeners. 
+ * For more information see:
+ * http://www.ja-sig.org/wiki/display/UPC/Proposal+to+Deprecate+IStatsRecorder
  */
 public final class ThreadFiringStatsRecorder 
     implements IStatsRecorder, InitializingBean {

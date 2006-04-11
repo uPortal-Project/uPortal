@@ -12,6 +12,11 @@ import org.jasig.portal.security.IPerson;
  * Records the publishing of a channel in a separate thread.
  * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
+ * 
+ * @deprecated IStatsRecorder implementation is replaced with a much more flexible system 
+ * based on the Spring ApplicationEventPublisher and Event Listeners. 
+ * For more information see:
+ * http://www.ja-sig.org/wiki/display/UPC/Proposal+to+Deprecate+IStatsRecorder
  */
 public class RecordChannelDefinitionPublishedWorkerTask extends StatsRecorderWorkerTask {
   

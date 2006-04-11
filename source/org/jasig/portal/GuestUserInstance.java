@@ -15,11 +15,13 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
 
+import org.jasig.portal.events.EventPublisherLocator;
+import org.jasig.portal.events.support.UserSessionCreatedPortalEvent;
+import org.jasig.portal.events.support.UserSessionDestroyedPortalEvent;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.security.IPerson;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.services.StatsRecorder;
 
 /**
  * A multithreaded version of a UserInstance.
@@ -98,7 +100,7 @@ public class GuestUserInstance extends UserInstance implements HttpSessionBindin
                     "unbinding session \""+bindingEvent.getSession().getId()+"\"");
 
         // Record the destruction of the session
-        StatsRecorder.recordSessionDestroyed(person);
+        EventPublisherLocator.getApplicationEventPublisher().publishEvent(new UserSessionDestroyedPortalEvent(this, person));
     }
 
     /**
@@ -113,7 +115,7 @@ public class GuestUserInstance extends UserInstance implements HttpSessionBindin
                     bindingEvent.getSession().getId() + "\"");
 
         // Record the creation of the session
-        StatsRecorder.recordSessionCreated(person);
+        EventPublisherLocator.getApplicationEventPublisher().publishEvent(new UserSessionCreatedPortalEvent(this, person));
     }
 
     /**

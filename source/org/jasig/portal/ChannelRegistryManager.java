@@ -15,6 +15,10 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 
+import org.jasig.portal.events.EventPublisherLocator;
+import org.jasig.portal.events.support.ModifiedChannelDefinitionPortalEvent;
+import org.jasig.portal.events.support.PublishedChannelDefinitionPortalEvent;
+import org.jasig.portal.events.support.RemovedChannelDefinitionPortalEvent;
 import org.jasig.portal.groups.IEntity;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
@@ -27,7 +31,6 @@ import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.GroupService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.services.StatsRecorder;
 import org.jasig.portal.utils.CommonUtils;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.ResourceLoader;
@@ -554,10 +557,11 @@ public class ChannelRegistryManager {
                 (newChannel ? "published" : "modified") + ".");
 
     // Record that a channel has been published or modified
-    if (newChannel)
-      StatsRecorder.recordChannelDefinitionPublished(publisher, channelDef);
-    else
-      StatsRecorder.recordChannelDefinitionModified(publisher, channelDef);
+    if (newChannel) {
+    	EventPublisherLocator.getApplicationEventPublisher().publishEvent(new PublishedChannelDefinitionPortalEvent(channelDef, publisher, channelDef));
+    } else {
+    	EventPublisherLocator.getApplicationEventPublisher().publishEvent(new ModifiedChannelDefinitionPortalEvent(channelDef, publisher, channelDef));
+    }
   }
 
   /**
@@ -576,7 +580,7 @@ public class ChannelRegistryManager {
     crs.disapproveChannelDefinition(channelDef);
 
     // Record that a channel has been deleted
-    StatsRecorder.recordChannelDefinitionRemoved(person, channelDef);
+    EventPublisherLocator.getApplicationEventPublisher().publishEvent(new RemovedChannelDefinitionPortalEvent(channelDef, person, channelDef));
   }
 
   /**

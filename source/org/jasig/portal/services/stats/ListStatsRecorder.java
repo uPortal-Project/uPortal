@@ -26,6 +26,10 @@ import org.jasig.portal.security.IPerson;
  * 
  * @version $Revision$ $Date$
  * @since uPortal 2.5.1
+ * 
+ * @deprecated IStatsRecorder implementation is replaced with a much more flexible system based on the Spring ApplicationEventPublisher 
+ * and Event Listeners. For more information see:
+ * http://www.ja-sig.org/wiki/display/UPC/Proposal+to+Deprecate+IStatsRecorder
  */
 public final class ListStatsRecorder 
     implements IStatsRecorder {

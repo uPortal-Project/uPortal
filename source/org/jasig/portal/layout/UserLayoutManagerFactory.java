@@ -15,7 +15,7 @@ import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.services.StatsRecorder;
+import org.jasig.portal.services.stats.StatsRecorderLayoutEventListener;
 
 
 /**
@@ -55,7 +55,7 @@ public class UserLayoutManagerFactory {
             Constructor c=coreUserLayoutManagerImpl.getConstructor(cArgsClasses);
             Object[] cArgs={person,profile,UserLayoutStoreFactory.getUserLayoutStoreImpl()};
             IUserLayoutManager ulm = (IUserLayoutManager)c.newInstance(cArgs);
-            ulm.addLayoutEventListener(StatsRecorder.newLayoutEventListener(person, profile));
+            ulm.addLayoutEventListener(new StatsRecorderLayoutEventListener(person, profile));
             
             // Wrap the implementation to provide lookup by fname
             // support which basically merges a non-persisted channel

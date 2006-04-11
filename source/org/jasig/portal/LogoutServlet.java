@@ -16,12 +16,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.jasig.portal.events.EventPublisherLocator;
+import org.jasig.portal.events.support.UserLoggedOutPortalEvent;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.PersonManagerFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.services.StatsRecorder;
 import org.jasig.portal.utils.ResourceLoader;
 
 /**
@@ -104,7 +105,7 @@ public class LogoutServlet extends HttpServlet {
         try {
             IPerson person = PersonManagerFactory.getPersonManagerInstance().getPerson(request);
             if (person != null && person.getSecurityContext().isAuthenticated()) {
-                StatsRecorder.recordLogout(person);
+            	EventPublisherLocator.getApplicationEventPublisher().publishEvent(new UserLoggedOutPortalEvent(this, person));
             }
         } catch (Exception e) {
             log.error("Exception recording logout " +

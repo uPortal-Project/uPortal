@@ -14,6 +14,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.UserIdentityStoreFactory;
+import org.jasig.portal.events.EventPublisherLocator;
+import org.jasig.portal.events.support.UserLoggedInPortalEvent;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IAdditionalDescriptor;
 import org.jasig.portal.security.IOpaqueCredentials;
@@ -174,7 +176,7 @@ public class Authentication {
          //TODO add IPerson cache
          
          // Record the successful authentication
-         StatsRecorder.recordLogin(person);
+         EventPublisherLocator.getApplicationEventPublisher().publishEvent(new UserLoggedInPortalEvent(this, person));
       }
    }
 

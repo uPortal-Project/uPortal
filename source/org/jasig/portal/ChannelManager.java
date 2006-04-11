@@ -34,6 +34,10 @@ import org.jasig.portal.channels.CSecureInfo;
 import org.jasig.portal.channels.error.CError;
 import org.jasig.portal.channels.error.ErrorCode;
 import org.jasig.portal.channels.support.IDynamicChannelTitleRenderer;
+import org.jasig.portal.events.EventPublisherLocator;
+import org.jasig.portal.events.support.ChannelInstanciatedInLayoutPortalEvent;
+import org.jasig.portal.events.support.ChannelRenderedInLayoutPortalEvent;
+import org.jasig.portal.events.support.ChannelTargetedInLayoutPortalEvent;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutManager;
@@ -46,7 +50,6 @@ import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.serialize.CachingSerializer;
 import org.jasig.portal.services.AuthorizationService;
-import org.jasig.portal.services.StatsRecorder;
 import org.jasig.portal.utils.SAX2BufferImpl;
 import org.jasig.portal.utils.SetCheckInSemaphore;
 import org.jasig.portal.utils.SoftHashMap;
@@ -420,7 +423,7 @@ public class ChannelManager implements LayoutEventListener {
             }
             
             // Tell the StatsRecorder that this channel has rendered
-            StatsRecorder.recordChannelRendered(upm.getPerson(), upm.getCurrentProfile(), channelDesc);
+            EventPublisherLocator.getApplicationEventPublisher().publishEvent(new ChannelRenderedInLayoutPortalEvent(this, upm.getPerson(), upm.getCurrentProfile(), channelDesc));
         } else {
             handleRenderingError(channelSubscribeId,contentHandler,null,renderingStatus,"unsuccessful rendering","unsuccessful rendering",false);
             return;
@@ -720,8 +723,8 @@ public class ChannelManager implements LayoutEventListener {
                             throw new IllegalStateException("ChannelFactory returned null on request to instantiate layout channel with id [" + id + "] and description [" + cd + "]");
                         }
                         
-            			StatsRecorder.recordChannelInstantiated(upm.getPerson(), upm.getCurrentProfile(), cd);
-
+                        EventPublisherLocator.getApplicationEventPublisher().publishEvent(new ChannelInstanciatedInLayoutPortalEvent(this, upm.getPerson(), upm.getCurrentProfile(), cd));
+                        
 			            // Create and stuff the channel static data
 			            ChannelStaticData sd = new ChannelStaticData(
                             cd.getParameterMap(), upm.getUserLayoutManager());
@@ -819,7 +822,7 @@ public class ChannelManager implements LayoutEventListener {
             }
 
             // Tell StatsRecorder that a user has interacted with the channel
-            StatsRecorder.recordChannelTargeted(upm.getPerson(), upm.getCurrentProfile(), channelDesc);
+            EventPublisherLocator.getApplicationEventPublisher().publishEvent(new ChannelTargetedInLayoutPortalEvent(this, upm.getPerson(), upm.getCurrentProfile(), channelDesc));
 
             // process parameters
             Enumeration en = req.getParameterNames();
