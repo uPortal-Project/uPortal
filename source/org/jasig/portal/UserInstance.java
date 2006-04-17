@@ -718,7 +718,9 @@ public class UserInstance implements HttpSessionBindingListener {
         
         String authenticated = String.valueOf(person.getSecurityContext().isAuthenticated());
         structPrefs.putParameterValue("authenticated", authenticated);
-        
+        String userName = person.getFullName();
+        if (userName != null && userName.trim().length() > 0)
+            themePrefs.putParameterValue("userName", userName);
         try {
             if (ChannelStaticData.getAuthorizationPrincipal(person).canPublish()) {
                 themePrefs.putParameterValue("authorizedFragmentPublisher", "true");
