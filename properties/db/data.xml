@@ -1291,7 +1291,7 @@
         <column><name>CHAN_ID</name><value>7</value></column>
         <column><name>CHAN_PARM_NM</name><value>xmlUri</value></column>
         <column><name>CHAN_PARM_DESC</name><value></value></column>
-        <column><name>CHAN_PARM_VAL</name><value>http://jasigch.princeton.edu/static/jasigdev.rss</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>http://uportal.org/rss/news/index.xml</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
 
@@ -1300,7 +1300,7 @@
         <column><name>CHAN_ID</name><value>8</value></column>
         <column><name>CHAN_PARM_NM</name><value>url</value></column>
         <column><name>CHAN_PARM_DESC</name><value></value></column>
-        <column><name>CHAN_PARM_VAL</name><value>http://mis105.mis.udel.edu/ja-sig/uportal/</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>http://uportal.org/</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
       <row>
