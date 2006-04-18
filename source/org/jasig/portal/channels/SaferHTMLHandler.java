@@ -76,10 +76,12 @@ public class SaferHTMLHandler implements ContentHandler{
 
 	public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
 		if (SAFE_ELEMENTS_SET.contains(qName)){
-			// all okay
-			Node n = doc.createTextNode(chars.toString());
-			chars = new StringBuffer();
-			currentNode.appendChild(n);
+			// all okay			
+			if (chars.length()>0){
+				Node n = doc.createTextNode(chars.toString());
+				chars = new StringBuffer();
+				currentNode.appendChild(n);
+			}
 			Element temp = doc.createElement(qName);
 			
 			// add attributes that are allowed
@@ -101,6 +103,11 @@ public class SaferHTMLHandler implements ContentHandler{
 
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		if (SAFE_ELEMENTS_SET.contains(qName)){
+			if (chars.length()>0){
+				Node n = doc.createTextNode(chars.toString());
+				chars = new StringBuffer();
+				currentNode.appendChild(n);
+			}
 			currentNode = currentNode.getParentNode();
 		}
 	}
