@@ -188,7 +188,9 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
         try {
             this.uriScrutinizer.scrutinize(new URI(urlString));
         }catch (URISyntaxException e1) {
-            throw new IllegalArgumentException("xmlUri [" + xmlUriArg + "] resolved to a URI with bad syntax.");
+        	IllegalArgumentException iae = new IllegalArgumentException("xmlUri [" + xmlUriArg + "] resolved to a URI with bad syntax.");
+            iae.initCause(e1);
+            throw iae;
         }
         
         this.xmlUri = xmlUriArg;
@@ -373,13 +375,13 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
       }
       catch (Exception e)
       {
-        throw new GeneralRenderingException("Problem parsing " + state.xmlUri + ": " + e);
+        throw new GeneralRenderingException("Problem parsing " + state.xmlUri + ": " , e);
       } finally {
         try {
           if (inputStream != null)
             inputStream.close();
         } catch (IOException ioe) {
-          throw new PortalException("CGenericXSLT:renderXML():: could not close InputStream");
+          throw new PortalException("CGenericXSLT:renderXML():: could not close InputStream",ioe);
         }
       }
 
@@ -466,6 +468,7 @@ public class CGenericXSLT implements IMultithreadedChannel, IMultithreadedCachea
         xslUriForKey = XSLT.getStylesheetURI(sslUri, state.runtimeData.getBrowserInfo());
       }
     } catch (Exception e) {
+      log.error(e,e);
       xslUriForKey = "Not attainable: " + e;
     }
 
