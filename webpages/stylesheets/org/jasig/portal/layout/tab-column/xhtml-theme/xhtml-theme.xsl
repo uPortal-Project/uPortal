@@ -10,7 +10,7 @@
 		<html xml:lang="en" lang="en">
 			<head>
 				<title><xsl:value-of select="content/channel/@name"/></title>
-				<meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
+				<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 				<meta http-equiv="expires" content="Wed, 26 Feb 1997 08:21:57 GMT" />
 				<meta http-equiv="pragma" content="no-cache" />
 				<link rel="Shortcut Icon" href="favicon.ico" type="image/x-icon" />
@@ -36,7 +36,7 @@
 		<html xml:lang="en" lang="en">
 			<head>
 				<title>uPortal</title>
-				<meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
+				<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 				<link rel="Shortcut Icon" href="favicon.ico" type="image/x-icon" />
 				<link rel="stylesheet" href="{$mediaPath}/{$skin}/skin/{$skin}.css" type="text/css" />
 			</head>
@@ -77,7 +77,7 @@
 		<!-- PORTAL HEADER -->
 		<div id="portal-page-header" class="focused">
 			<div id="logo" style="height:auto;width:auto;font-family:Georgia, 'Times New Roman';">
-				<span style="color:yellow;font=Georgia;">uPortal</span><br/>
+				<span style="color:yellow;">uPortal</span><br/>
 			</div>
 			
 			<div id="welcome">
