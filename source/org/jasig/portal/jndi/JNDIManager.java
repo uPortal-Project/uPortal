@@ -212,7 +212,11 @@ public class JNDIManager {
       // make sure channel-obj context exists
       try {
           sessionIdContext.createSubcontext("channel-obj");
-      } catch (Exception e) {};
+      } catch (NameAlreadyBoundException nabe){
+    	  // ignore
+      } catch (Exception e) {
+    	  log.error(e,e);
+      }
 
       try {
           // check if the layout id binding already exists
