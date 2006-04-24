@@ -5,7 +5,7 @@
 <xsl:param name="locale">en_US</xsl:param>
 
 <xsl:template match="iframe" >
-  <iframe src="{url}" height="{height}" frameborder="no" width="100%">dummyText</iframe>
+  <iframe src="{url}" height="{height}" frameborder="0" width="100%">dummyText</iframe>
 </xsl:template>
 
 </xsl:stylesheet>

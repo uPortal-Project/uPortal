@@ -5,7 +5,7 @@
 <xsl:param name="locale">ja_JP</xsl:param>
 
 <xsl:template match="iframe" >
-  <iframe src="{url}" height="{height}" frameborder="no" width="100%">ダミー文字列</iframe>
+  <iframe src="{url}" height="{height}" frameborder="0" width="100%">ダミー文字列</iframe>
 </xsl:template>
 
 </xsl:stylesheet>
