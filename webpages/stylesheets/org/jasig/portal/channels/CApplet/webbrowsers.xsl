@@ -14,7 +14,6 @@
           width="{@width}"
           height="{@height}"
           align="{@align}"
-          border="{@border}"
           archive="{@archive}">
   <xsl:apply-templates/>
   </applet>
