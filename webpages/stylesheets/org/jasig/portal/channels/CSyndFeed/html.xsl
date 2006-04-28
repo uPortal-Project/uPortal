@@ -10,16 +10,6 @@
   </xsl:template>
   
   <xsl:template match="news">
-    <style>
-      div.news-items img { margin: 2px;}
-      .news-items ul { clear:right;list-style-type: none;  padding-left: 0; margin-left: 0;}
-      .news-items li {
-            background: url(media/org/jasig/portal/channels/CGenericXSLT/bullet.gif) left top no-repeat; 
-            padding-left: 16px;
-            margin-bottom: 16px;
-            } 
-      img.news-feed-img { float: right; border-style: none;}
-    </style>
     
     <div class="uportal-background-content">
       <p class="uportal-channel-subtitle">
@@ -35,12 +25,12 @@
 
   <xsl:template match="image">
     <a target="_blank" href="{link}">
-      <img src="{url}" alt="{description}" class="news-feed-img"/>
+      <img src="{url}" alt="{description}" class="news-feed-img" style="float: right; border-style: none;"/>
     </a>
   </xsl:template>
   
   <xsl:template match="items">
-    <ul>
+    <ul style="clear:right;list-style-image:url(media/org/jasig/portal/channels/CGenericXSLT/bullet.gif);margin-left: 0px;">
       <xsl:apply-templates select="item"/>
     </ul>
   </xsl:template>
