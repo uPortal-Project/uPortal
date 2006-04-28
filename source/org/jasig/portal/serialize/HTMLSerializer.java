@@ -1,58 +1,17 @@
 /*
- * The Apache Software License, Version 1.1
- *
- *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
- * reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
- *
- * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:
- *       "This product includes software developed by the
- *        Apache Software Foundation (http://www.apache.org/)."
- *    Alternately, this acknowledgment may appear in the software itself,
- *    if and wherever such third-party acknowledgments normally appear.
- *
- * 4. The names "Xerces" and "Apache Software Foundation" must
- *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written
- *    permission, please contact apache@apache.org.
- *
- * 5. Products derived from this software may not be called "Apache",
- *    nor may "Apache" appear in their name, without prior written
- *    permission of the Apache Software Foundation.
- *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
- * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
- * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
- * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
- * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
- * ====================================================================
- *
- * This software consists of voluntary contributions made by many
- * individuals on behalf of the Apache Software Foundation and was
- * originally based on software copyright (c) 1999, International
- * Business Machines, Inc., http://www.apache.org.  For more
- * information on the Apache Software Foundation, please see
- * <http://www.apache.org/>.
+ * Copyright 1999-2004 The Apache Software Foundation.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 
@@ -73,11 +32,13 @@
 
 package org.jasig.portal.serialize;
 
+import org.apache.xerces.dom.DOMMessageFormatter;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
 import java.util.Enumeration;
+import java.util.Locale;
 
 import org.jasig.portal.IAnchoringSerializer;
 import org.w3c.dom.Attr;
@@ -100,7 +61,7 @@ import org.xml.sax.SAXException;
  * as specified in the output format.
  * <p>
  * The serializer supports both DOM and SAX. DOM serializing is done
- * by calling {@link #serialize(Element)} and SAX serializing is done by firing
+ * by calling {@link #serialize} and SAX serializing is done by firing
  * SAX events and using the serializer as a document handler.
  * <p>
  * If an I/O exception occurs while serializing, the serializer
@@ -122,29 +83,35 @@ import org.xml.sax.SAXException;
  * <li>Contents of SCRIPT and STYLE elements serialized as CDATA
  * </ul>
  *
- *
+ * @deprecated This class was deprecated in Xerces 2.6.2. It is
+ * recommended that new applications use JAXP's Transformation API 
+ * for XML (TrAX) for serializing HTML. See the Xerces documentation
+ * for more information.
  * @version $Revision$ $Date$
  * @author <a href="mailto:arkin@intalio.com">Assaf Arkin</a>
  * @see Serializer
  */
-public class HTMLSerializer extends BaseMarkupSerializer implements IAnchoringSerializer {
+public class HTMLSerializer
+    extends BaseMarkupSerializer implements IAnchoringSerializer
+{
 
 
     /**
      * True if serializing in XHTML format.
      */
-    private static boolean _xhtml;
+    private boolean _xhtml;
 
 
-    public static String XHTMLNamespace = "";
+    public static final String XHTMLNamespace = "http://www.w3.org/1999/xhtml";
 
-    private String anchorId = null;
+    // for users to override XHTMLNamespace if need be.
+    private String fUserXHTMLNamespace = null;
 
 
     /**
      * Constructs a new HTML/XHTML serializer depending on the value of
      * <tt>xhtml</tt>. The serializer cannot be used without calling
-     * init() first.
+     * {@link #setOutputCharStream} or {@link #setOutputByteStream} first.
      *
      * @param xhtml True if XHTML serializing
      */
@@ -157,7 +124,7 @@ public class HTMLSerializer extends BaseMarkupSerializer implements IAnchoringSe
 
     /**
      * Constructs a new serializer. The serializer cannot be used without
-     * calling {@link #setOutputCharStream(Writer)} or {@link #setOutputByteStream(OutputStream)}
+     * calling {@link #setOutputCharStream} or {@link #setOutputByteStream}
      * first.
      */
     public HTMLSerializer()
@@ -168,7 +135,7 @@ public class HTMLSerializer extends BaseMarkupSerializer implements IAnchoringSe
 
     /**
      * Constructs a new serializer. The serializer cannot be used without
-     * calling {@link #setOutputCharStream(Writer)} or {@link #setOutputByteStream(OutputStream)}
+     * calling {@link #setOutputCharStream} or {@link #setOutputByteStream}
      * first.
      */
     public HTMLSerializer( OutputFormat format )
@@ -213,6 +180,10 @@ public class HTMLSerializer extends BaseMarkupSerializer implements IAnchoringSe
         super.setOutputFormat( format != null ? format : new OutputFormat( Method.HTML, "ISO-8859-1", false ) );
     }
 
+    // Set  value for alternate XHTML namespace.
+    public void setXHTMLNamespace(String newNamespace) {
+        fUserXHTMLNamespace = newNamespace;
+    } // setXHTMLNamespace(String)
 
     //-----------------------------------------//
     // SAX content handler serializing methods //
@@ -233,7 +204,10 @@ public class HTMLSerializer extends BaseMarkupSerializer implements IAnchoringSe
 
         try {
             if ( _printer == null )
-                throw new IllegalStateException( "SER002 No writer supplied for serializer" );
+            	throw new IllegalStateException( 
+				    DOMMessageFormatter.formatMessage(
+				    DOMMessageFormatter.SERIALIZER_DOMAIN,
+                    "NoWriterSupplied", null));
 
             state = getElementState();
             if ( isDocumentState() ) {
@@ -242,7 +216,8 @@ public class HTMLSerializer extends BaseMarkupSerializer implements IAnchoringSe
                 // the document's DOCTYPE. Space preserving defaults
                 // to that of the output format.
                 if ( ! _started )
-                    startDocument( localName == null ? rawName : localName );
+                    startDocument( (localName == null || localName.length() == 0) 
+                        ? rawName : localName );
             } else {
                 // For any other element, if first in parent, then
                 // close parent's opening tag and use the parnet's
@@ -260,21 +235,29 @@ public class HTMLSerializer extends BaseMarkupSerializer implements IAnchoringSe
 
             // Do not change the current element state yet.
             // This only happens in endElement().
+            
+            // As per SAX2, the namespace URI is an empty string if the element has no
+            // namespace URI, or namespaces is turned off. The check against null protects
+            // against broken SAX implementations, so I've left it there. - mrglavas
+            boolean hasNamespaceURI = (namespaceURI != null && namespaceURI.length() != 0);
 
-            if ( rawName == null ) {
+            // SAX2: rawName (QName) could be empty string if 
+            // namespace-prefixes property is false.
+            if ( rawName == null || rawName.length() == 0) {
                 rawName = localName;
-                if ( namespaceURI != null ) {
+                if ( hasNamespaceURI ) {
                     String prefix;
                     prefix = getPrefix( namespaceURI );
-                    if ( prefix.length() > 0 )
+                    if ( prefix != null && prefix.length() != 0 )
                         rawName = prefix + ":" + localName;
                 }
                 addNSAttr = true;
             }
-            if ( namespaceURI == null )
+            if ( !hasNamespaceURI )
                 htmlName = rawName;
             else {
-                if ( namespaceURI.equals( XHTMLNamespace ) )
+                if ( namespaceURI.equals( XHTMLNamespace ) ||
+                        (fUserXHTMLNamespace != null && fUserXHTMLNamespace.equals(namespaceURI)) )
                     htmlName = localName;
                 else
                     htmlName = null;
@@ -283,7 +266,7 @@ public class HTMLSerializer extends BaseMarkupSerializer implements IAnchoringSe
             // XHTML: element names are lower case, DOM will be different
             _printer.printText( '<' );
             if ( _xhtml )
-                _printer.printText( rawName.toLowerCase() );
+                _printer.printText( rawName.toLowerCase(Locale.ENGLISH) );
             else
                 _printer.printText( rawName );
             _printer.indent();
@@ -294,9 +277,9 @@ public class HTMLSerializer extends BaseMarkupSerializer implements IAnchoringSe
             if ( attrs != null ) {
                 for ( i = 0 ; i < attrs.getLength() ; ++i ) {
                     _printer.printSpace();
-                    name = attrs.getQName( i ).toLowerCase();;
+                    name = attrs.getQName( i ).toLowerCase(Locale.ENGLISH);
                     value = attrs.getValue( i );
-                    if ( _xhtml || namespaceURI != null ) {
+                    if ( _xhtml || hasNamespaceURI ) {
                         // XHTML: print empty string for null values.
                         if ( value == null ) {
                             _printer.printText( name );
@@ -312,7 +295,10 @@ public class HTMLSerializer extends BaseMarkupSerializer implements IAnchoringSe
                     } else {
                         // HTML: Empty values print as attribute name, no value.
                         // HTML: URI attributes will print unescaped
-                        if ( value == null || value.length() == 0 )
+                        if ( value == null ) {
+                            value = "";
+                        }
+                        if ( !_format.getPreserveEmptyAttributes() && value.length() == 0 )
                             _printer.printText( name );
                         else if ( HTMLdtd.isURI( rawName, name ) ) {
                             _printer.printText( name );
@@ -335,12 +321,12 @@ public class HTMLSerializer extends BaseMarkupSerializer implements IAnchoringSe
                 preserveSpace = true;
 
             if ( addNSAttr ) {
-                Enumeration enum1;
+                Enumeration keys;
 
-                enum1 = _prefixes.keys();
-                while ( enum1.hasMoreElements() ) {
+                keys = _prefixes.keys();
+                while ( keys.hasMoreElements() ) {
                     _printer.printSpace();
-                    value = (String) enum1.nextElement();
+                    value = (String) keys.nextElement();
                     name = (String) _prefixes.get( value );
                     if ( name.length() == 0 ) {
                         _printer.printText( "xmlns=\"" );
@@ -377,6 +363,12 @@ public class HTMLSerializer extends BaseMarkupSerializer implements IAnchoringSe
                 if ( _xhtml ) {
                     // XHTML: Print contents as CDATA section
                     state.doCData = true;
+                    if (rawName.equalsIgnoreCase( "SCRIPT" )){
+                    	state.inScript = true;
+                    }else{
+                    	state.inScript = false;
+                    }                    
+                    
                 } else {
                     // HTML: Print contents unescaped
                     state.unescaped = true;
@@ -386,6 +378,7 @@ public class HTMLSerializer extends BaseMarkupSerializer implements IAnchoringSe
             throw new SAXException( except );
         }
     }
+
 
     public void endElement( String namespaceURI, String localName,
                             String rawName )
@@ -412,10 +405,11 @@ public class HTMLSerializer extends BaseMarkupSerializer implements IAnchoringSe
         _printer.unindent();
         state = getElementState();
 
-        if ( state.namespaceURI == null )
+        if ( state.namespaceURI == null || state.namespaceURI.length() == 0 )
             htmlName = state.rawName;
         else {
-            if ( state.namespaceURI.equals( XHTMLNamespace ) )
+            if ( state.namespaceURI.equals( XHTMLNamespace ) ||
+                        (fUserXHTMLNamespace != null && fUserXHTMLNamespace.equals(state.namespaceURI)) )
                 htmlName = state.localName;
             else
                 htmlName = null;
@@ -423,14 +417,28 @@ public class HTMLSerializer extends BaseMarkupSerializer implements IAnchoringSe
 
         if ( _xhtml) {
             if ( state.empty ) {
-                _printer.printText( " />" );
+                // Close all empty tags that require proper closer
+                if (!shouldNotExpandEndTagForEmptyElement(state.rawName.toLowerCase())) {
+	                _printer.printText( "></" );
+	                _printer.printText( state.rawName.toLowerCase(Locale.ENGLISH) );
+	                _printer.printText( '>' );
+                }else{
+                	_printer.printText( " />" );
+                }
             } else {
                 // Must leave CData section first
-                if ( state.inCData )
-                    _printer.printText( "]]>" );
+                if ( state.inCData ){
+                	if (html4compat && state.inScript){
+                		_printer.printText( "\n//]]>" );
+                	}else{
+//                		_printer.printText( "\n/*]]>*/-->" );
+                		_printer.printText( "\n/*]]>*/" );
+//                		_printer.printText( "]]>" );
+                	}
+                }
                 // XHTML: element names are lower case, DOM will be different
                 _printer.printText( "</" );
-                _printer.printText( state.rawName.toLowerCase() );
+                _printer.printText( state.rawName.toLowerCase(Locale.ENGLISH) );
                 _printer.printText( '>' );
             }
         } else {
@@ -479,7 +487,9 @@ public class HTMLSerializer extends BaseMarkupSerializer implements IAnchoringSe
         try {
             // HTML: no CDATA section
             state = content();
-            state.doCData = false;
+            if (!_xhtml){
+            	state.doCData = false;
+            }
             super.characters( chars, start, length );
         } catch ( IOException except ) {
             throw new SAXException( except );
@@ -498,7 +508,11 @@ public class HTMLSerializer extends BaseMarkupSerializer implements IAnchoringSe
 
         try {
             if ( _printer == null )
-                throw new IllegalStateException( "SER002 No writer supplied for serializer" );
+                throw new IllegalStateException( 
+				    DOMMessageFormatter.formatMessage(
+				    DOMMessageFormatter.SERIALIZER_DOMAIN,
+                    "NoWriterSupplied", null));
+
 
             state = getElementState();
             if ( isDocumentState() ) {
@@ -529,7 +543,7 @@ public class HTMLSerializer extends BaseMarkupSerializer implements IAnchoringSe
             // XHTML: element names are lower case, DOM will be different
             _printer.printText( '<' );
             if ( _xhtml )
-                _printer.printText( tagName.toLowerCase() );
+                _printer.printText( tagName.toLowerCase(Locale.ENGLISH) );
             else
                 _printer.printText( tagName );
             _printer.indent();
@@ -540,7 +554,7 @@ public class HTMLSerializer extends BaseMarkupSerializer implements IAnchoringSe
             if ( attrs != null ) {
                 for ( i = 0 ; i < attrs.getLength() ; ++i ) {
                     _printer.printSpace();
-                    name = attrs.getName( i ).toLowerCase();;
+                    name = attrs.getName( i ).toLowerCase(Locale.ENGLISH);
                     value = attrs.getValue( i );
                     if ( _xhtml ) {
                         // XHTML: print empty string for null values.
@@ -556,7 +570,10 @@ public class HTMLSerializer extends BaseMarkupSerializer implements IAnchoringSe
                     } else {
                         // HTML: Empty values print as attribute name, no value.
                         // HTML: URI attributes will print unescaped
-                        if ( value == null || value.length() == 0 )
+                        if ( value == null ) {
+                            value = "";
+                        }
+                        if ( !_format.getPreserveEmptyAttributes() && value.length() == 0 )
                             _printer.printText( name );
                         else if ( HTMLdtd.isURI( tagName, name ) ) {
                             _printer.printText( name );
@@ -586,6 +603,12 @@ public class HTMLSerializer extends BaseMarkupSerializer implements IAnchoringSe
             if ( tagName.equalsIgnoreCase( "A" ) || tagName.equalsIgnoreCase( "TD" ) ) {
                 state.empty = false;
                 _printer.printText( '>' );
+            }else{
+                if (_xhtml && shouldNotExpandEndTagForEmptyElement(tagName.toLowerCase())) {
+                    _printer.printText(" />");
+                } else {
+                    _printer.printText(">");
+                }
             }
 
             // Handle SCRIPT and STYLE specifically by changing the
@@ -596,6 +619,11 @@ public class HTMLSerializer extends BaseMarkupSerializer implements IAnchoringSe
                 if ( _xhtml ) {
                     // XHTML: Print contents as CDATA section
                     state.doCData = true;
+                    if (tagName.equalsIgnoreCase( "SCRIPT" )){
+                    	state.inScript = true;
+                    }else{
+                    	state.inScript = false;
+                    }
                 } else {
                     // HTML: Print contents unescaped
                     state.unescaped = true;
@@ -628,12 +656,13 @@ public class HTMLSerializer extends BaseMarkupSerializer implements IAnchoringSe
      * This method will check if it has not been called before ({@link #_started}),
      * will serialize the document type declaration, and will serialize all
      * pre-root comments and PIs that were accumulated in the document
-     * (see {@link #serializePreRoot()}). Pre-root will be serialized even if
+     * (see {@link #serializePreRoot}). Pre-root will be serialized even if
      * this is not the first root element of the document.
      */
     protected void startDocument( String rootTagName )
         throws IOException
     {
+        StringBuffer buffer;
 
         // Not supported in HTML/XHTML, but we still have to switch
         // out of DTD mode.
@@ -653,12 +682,19 @@ public class HTMLSerializer extends BaseMarkupSerializer implements IAnchoringSe
             }
 
             if ( ! _format.getOmitDocumentType() ) {
-                // XHTML: If public idnentifier and system identifier
+                // XHTML: If public identifier and system identifier
                 //  specified, print them, else print just system identifier
                 // HTML: If public identifier specified, print it with
                 //  system identifier, if specified.
+                // XHTML requires that all element names are lower case, so the
+                // root on the DOCTYPE must be 'html'. - mrglavas
                 if ( _docTypePublicId != null && ( ! _xhtml || _docTypeSystemId != null )  ) {
-                    _printer.printText( "<!DOCTYPE HTML PUBLIC " );
+                    if (_xhtml) {
+                        _printer.printText( "<!DOCTYPE html PUBLIC " );
+                    }
+                    else {
+                        _printer.printText( "<!DOCTYPE HTML PUBLIC " );
+                    }
                     printDoctypeURL( _docTypePublicId );
                     if ( _docTypeSystemId != null ) {
                         if ( _indenting ) {
@@ -671,7 +707,12 @@ public class HTMLSerializer extends BaseMarkupSerializer implements IAnchoringSe
                     _printer.printText( '>' );
                     _printer.breakLine();
                 } else if ( _docTypeSystemId != null ) {
-                    _printer.printText( "<!DOCTYPE HTML SYSTEM " );
+                    if (_xhtml) {
+                        _printer.printText( "<!DOCTYPE html SYSTEM " );
+                    }
+                    else {
+                        _printer.printText( "<!DOCTYPE HTML SYSTEM " );
+                    }
                     printDoctypeURL( _docTypeSystemId );
                     _printer.printText( '>' );
                     _printer.breakLine();
@@ -687,7 +728,7 @@ public class HTMLSerializer extends BaseMarkupSerializer implements IAnchoringSe
 
     /**
      * Called to serialize a DOM element. Equivalent to calling {@link
-     * #startElement(String, String, String, Attributes)}, {@link #endElement(String, String, String)} and serializing everything
+     * #startElement}, {@link #endElement} and serializing everything
      * inbetween, but better optimized.
      */
     protected void serializeElement( Element elem )
@@ -733,7 +774,7 @@ public class HTMLSerializer extends BaseMarkupSerializer implements IAnchoringSe
         // XHTML: element names are lower case, DOM will be different
         _printer.printText( '<' );
         if ( _xhtml )
-            _printer.printText( tagName.toLowerCase() );
+            _printer.printText( tagName.toLowerCase(Locale.ENGLISH) );
         else
             _printer.printText( tagName );
         _printer.indent();
@@ -747,7 +788,7 @@ public class HTMLSerializer extends BaseMarkupSerializer implements IAnchoringSe
         if ( attrMap != null ) {
             for ( i = 0 ; i < attrMap.getLength() ; ++i ) {
                 attr = (Attr) attrMap.item( i );
-                name = attr.getName().toLowerCase();
+                name = attr.getName().toLowerCase(Locale.ENGLISH);
                 value = attr.getValue();
                 if ( attr.getSpecified() ) {
                     _printer.printSpace();
@@ -765,7 +806,10 @@ public class HTMLSerializer extends BaseMarkupSerializer implements IAnchoringSe
                     } else {
                         // HTML: Empty values print as attribute name, no value.
                         // HTML: URI attributes will print unescaped
-                        if ( value == null || value.length() == 0 )
+                        if ( value == null ) {
+                            value = "";
+                        }
+                        if ( !_format.getPreserveEmptyAttributes() && value.length() == 0 )
                             _printer.printText( name );
                         else if ( HTMLdtd.isURI( tagName, name ) ) {
                             _printer.printText( name );
@@ -808,6 +852,11 @@ public class HTMLSerializer extends BaseMarkupSerializer implements IAnchoringSe
                 if ( _xhtml ) {
                     // XHTML: Print contents as CDATA section
                     state.doCData = true;
+                    if (tagName.equalsIgnoreCase( "SCRIPT" )){
+                    	state.inScript = true;
+                    }else{
+                    	state.inScript = false;
+                    }                    
                 } else {
                     // HTML: Print contents unescaped
                     state.unescaped = true;
@@ -840,8 +889,10 @@ public class HTMLSerializer extends BaseMarkupSerializer implements IAnchoringSe
     protected void characters( String text )
         throws IOException
     {
+        ElementState state;
+
         // HTML: no CDATA section
-        content();
+        state = content();
         super.characters( text );
     }
 
@@ -897,6 +948,17 @@ public class HTMLSerializer extends BaseMarkupSerializer implements IAnchoringSe
         }
         return attributeValue;
     }
+    public boolean shouldNotExpandEndTagForEmptyElement(String elementName) {
+        boolean aReturn = false;
+        for (int i = 0; !aReturn && i < emptyElementsToNotExpand.length; i++)
+          aReturn = emptyElementsToNotExpand[i].equals(elementName);
+        return aReturn;
+    }
+
+    /** Array of element tag names that are not expanded when empty **/
+    private static final String[] emptyElementsToNotExpand = {"br","hr","area","base","basefont","col","frame","img","input","isindex","link","meta","param"};
+        
+    
 }
 
 
