@@ -116,8 +116,8 @@ public class ILFBuilder
                                        Set visitedNodes ) 
     throws AuthorizationException
     {
-        //Check for a loop in the DOM, this should never happen but it is good to protect against
-        if (visitedNodes.contains(source)) {
+        //Record this node in the visited nodes set. If add returns false a loop has been detected
+        if (!visitedNodes.add(source)) {
             final String msg = "mergeChildren has encountered a loop in the source DOM. currentNode='" + source + "', currentDepth='" + visitedNodes.size() + "', visitedNodes='" + visitedNodes + "'";
             final IllegalStateException ise = new IllegalStateException(msg);
             LOG.error(msg, ise);
@@ -128,34 +128,31 @@ public class ILFBuilder
             throw ise;
         }
         
-        visitedNodes.add(source);
-        try {
-            Document destDoc = dest.getOwnerDocument();
-    
-            Node item = source.getFirstChild();
-            while (item != null) {
-                if (item instanceof Element) {
-                    
-                    Element child = (Element) item;
-                    Element newChild = null;
-        
-                    if( null != child && mergeAllowed( child, ap ))
-                    {
-                        newChild = (Element) destDoc.importNode( child, false );
-                        dest.appendChild( newChild );
-                        String id = newChild.getAttribute(Constants.ATT_ID);
-                        if (id != null && ! id.equals(""))
-                            newChild.setIdAttribute(Constants.ATT_ID, true);
-                        mergeChildren( child, newChild, ap, visitedNodes );
-                    }
-                }
+        Document destDoc = dest.getOwnerDocument();
+
+        Node item = source.getFirstChild();
+        while (item != null) {
+            if (item instanceof Element) {
                 
-                item = item.getNextSibling();
+                Element child = (Element) item;
+                Element newChild = null;
+    
+                if( null != child && mergeAllowed( child, ap ))
+                {
+                    newChild = (Element) destDoc.importNode( child, false );
+                    dest.appendChild( newChild );
+                    String id = newChild.getAttribute(Constants.ATT_ID);
+                    if (id != null && ! id.equals(""))
+                        newChild.setIdAttribute(Constants.ATT_ID, true);
+                    mergeChildren( child, newChild, ap, visitedNodes );
+                }
             }
+            
+            item = item.getNextSibling();
         }
-        finally {
-            visitedNodes.remove(source);
-        }
+        
+        //Remove this node from the visited nodes set
+        visitedNodes.remove(source);
     }
     
     /**
