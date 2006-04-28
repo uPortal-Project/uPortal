@@ -10,13 +10,25 @@
         <xsl:key name="perms" match="permission" use="concat(parent::principal/@token,'|',@owner,'|',@activity,'|',@target)"/>
 
         <xsl:template match="/">
+        <script type="text/javascript" language="Javascript">
+            <![CDATA[
+              function change(form,bool) {
+                  for (i = 0; i < form.length; i++) {
+                    if (form[i].type == "checkbox") {
+                      form[i].checked = bool;
+                    }
+                  }
+              }
+            ]]></script>
           <xsl:choose>
               <xsl:when test="not($isAdminUser)">
                 <xsl:call-template name="notAuthorized"/>
               </xsl:when>
               <xsl:otherwise>
+                  
                 <table border="0" cellpadding="3" cellspacing="3" width="100%">
                     <xsl:call-template name="header"/>
+                    
                     <form action="{$baseActionURL}" method="post" name="permissionsForm">
                     <xsl:choose>
                         <xsl:when test="$prmView='Select Owners'">
@@ -50,19 +62,6 @@
         </xsl:template>
 
         <xsl:template name="selectDeselectAll">
-          <script LANGUAGE="JavaScript">
-            <xsl:text>
-                  &lt;!--
-                  function change(form,bool) {
-                      for (i = 0; i &lt; form.length; i++) {
-                        if (form[i].type == "checkbox") {
-                          form[i].checked = bool;
-                        }
-                      }
-                  }
-                  //  End --&gt;
-             </xsl:text>
-          </script>
           <tr>
             <td colspan="2">
               <input class="uportal-button" type="button" onClick="javascript:change(this.form,true);" value="Select All"/>
