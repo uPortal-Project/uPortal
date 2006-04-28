@@ -1,58 +1,17 @@
 /*
- * The Apache Software License, Version 1.1
- *
- *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
- * reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
- *
- * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:
- *       "This product includes software developed by the
- *        Apache Software Foundation (http://www.apache.org/)."
- *    Alternately, this acknowledgment may appear in the software itself,
- *    if and wherever such third-party acknowledgments normally appear.
- *
- * 4. The names "Xerces" and "Apache Software Foundation" must
- *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written
- *    permission, please contact apache@apache.org.
- *
- * 5. Products derived from this software may not be called "Apache",
- *    nor may "Apache" appear in their name, without prior written
- *    permission of the Apache Software Foundation.
- *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
- * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
- * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
- * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
- * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
- * ====================================================================
- *
- * This software consists of voluntary contributions made by many
- * individuals on behalf of the Apache Software Foundation and was
- * originally based on software copyright (c) 1999, International
- * Business Machines, Inc., http://www.apache.org.  For more
- * information on the Apache Software Foundation, please see
- * <http://www.apache.org/>.
+ * Copyright 1999-2002,2004 The Apache Software Foundation.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 
@@ -66,6 +25,8 @@
 
 package org.jasig.portal.serialize;
 
+
+import java.io.UnsupportedEncodingException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentType;
@@ -104,27 +65,27 @@ public class OutputFormat
     {
 
         /**
-         * Public identifier for HTML document type.
+         * Public identifier for HTML 4.01 (Strict) document type.
          */
-        public static final String HTMLPublicId = "-//W3C//DTD HTML 4.0//EN";
+        public static final String HTMLPublicId = "-//W3C//DTD HTML 4.01//EN";
 
         /**
-         * System identifier for HTML document type.
+         * System identifier for HTML 4.01 (Strict) document type.
          */
         public static final String HTMLSystemId =
-            "http://www.w3.org/TR/WD-html-in-xml/DTD/xhtml1-strict.dtd";
+            "http://www.w3.org/TR/html4/strict.dtd";
 
         /**
-         * Public identifier for XHTML document type.
+         * Public identifier for XHTML 1.0 (Strict) document type.
          */
         public static final String XHTMLPublicId =
             "-//W3C//DTD XHTML 1.0 Strict//EN";
 
         /**
-         * System identifier for XHTML document type.
+         * System identifier for XHTML 1.0 (Strict) document type.
          */
         public static final String XHTMLSystemId =
-            "http://www.w3.org/TR/WD-html-in-xml/DTD/xhtml1-strict.dtd";
+            "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd";
 
     }
 
@@ -186,6 +147,9 @@ public class OutputFormat
      * The EncodingInfo instance for _encoding.
      */
     private EncodingInfo _encodingInfo = null;
+
+    // whether java names for encodings are permitted
+    private boolean _allowJavaNames = false;
 
     /**
      * The specified media type or null.
@@ -266,8 +230,11 @@ public class OutputFormat
      * specify otherwise, or specify the default behavior.
      */
     private boolean _preserve = false;
-
-
+	/** If true, an empty string valued attribute is output as "". If false and
+	 * and we are using the HTMLSerializer, then only the attribute name is 
+	 * serialized. Defaults to false for backwards compatibility.
+	 */
+	private boolean _preserveEmptyAttributes = false;
 
     /**
      * Constructs a new output format with the default values.
@@ -286,9 +253,9 @@ public class OutputFormat
      * @param method The specified output method
      * @param encoding The specified encoding
      * @param indenting True for pretty printing
-     * @see #setEncoding(String)
-     * @see #setIndenting(boolean)
-     * @see #setMethod(String)
+     * @see #setEncoding
+     * @see #setIndenting
+     * @see #setMethod
      */
     public OutputFormat( String method, String encoding, boolean indenting )
     {
@@ -324,9 +291,9 @@ public class OutputFormat
      * @param doc The document to output
      * @param encoding The specified encoding
      * @param indenting True for pretty printing
-     * @see #setEncoding(String)
-     * @see #setIndenting(boolean)
-     * @see #whichMethod(Document)
+     * @see #setEncoding
+     * @see #setIndenting
+     * @see #whichMethod
      */
     public OutputFormat( Document doc, String encoding, boolean indenting )
     {
@@ -436,7 +403,7 @@ public class OutputFormat
     /**
      * Sets the indentation on and off. When set on, the default
      * indentation level and default line wrapping is used
-     * (see <code>Defaults.Indent</code> and <code>Defaults.LineWidth</code>).
+     * (see {@link Defaults#Indent} and {@link Defaults#LineWidth}).
      * To specify a different indentation level or line wrapping,
      * use {@link #setIndent} and {@link #setLineWidth}.
      *
@@ -486,19 +453,33 @@ public class OutputFormat
      * instance.
      */
     public void setEncoding(EncodingInfo encInfo) {
-        _encoding = encInfo.getName();
+        _encoding = encInfo.getIANAName();
         _encodingInfo = encInfo;
     }
 
     /**
      * Returns an <code>EncodingInfo<code> instance for the encoding.
      *
-     * @see #setEncoding(String)
+     * @see #setEncoding
      */
-    public EncodingInfo getEncodingInfo() {
+    public EncodingInfo getEncodingInfo() throws UnsupportedEncodingException {
         if (_encodingInfo == null)
-            _encodingInfo = Encodings.getEncodingInfo(_encoding);
+            _encodingInfo = Encodings.getEncodingInfo(_encoding, _allowJavaNames);
         return _encodingInfo;
+    }
+
+    /**
+     * Sets whether java encoding names are permitted
+     */
+    public void setAllowJavaNames (boolean allow) {
+        _allowJavaNames = allow;
+    }
+
+    /**
+     * Returns whether java encoding names are permitted
+     */
+    public boolean setAllowJavaNames () {
+        return _allowJavaNames;
     }
 
     /**
@@ -715,8 +696,9 @@ public class OutputFormat
     {
         int i;
 
-        if ( _nonEscapingElements == null )
+        if ( _nonEscapingElements == null ) {
             return false;
+        }
         for ( i = 0 ; i < _nonEscapingElements.length ; ++i )
             if ( _nonEscapingElements[ i ].equals( tagName ) )
                 return true;
@@ -822,7 +804,17 @@ public class OutputFormat
         else
             _lineWidth = lineWidth;
     }
-
+	/**
+	 * Returns the preserveEmptyAttribute flag. If flag is false, then'
+	 * attributes with empty string values are output as the attribute 
+	 * name only (in HTML mode).
+	 * @return preserve the preserve flag
+	 */	public boolean getPreserveEmptyAttributes () {		return _preserveEmptyAttributes;	}	/**
+	 * Sets the preserveEmptyAttribute flag. If flag is false, then'
+	 * attributes with empty string values are output as the attribute 
+	 * name only (in HTML mode).
+	 * @param preserve the preserve flag
+	 */	public void setPreserveEmptyAttributes (boolean preserve) {		_preserveEmptyAttributes = preserve;	}
 
     /**
      * Returns the last printable character based on the selected
