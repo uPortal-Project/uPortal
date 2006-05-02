@@ -48,9 +48,9 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import EDU.oswego.cs.dl.util.concurrent.ConcurrentHashMap;
-import EDU.oswego.cs.dl.util.concurrent.ReadWriteLock;
-import EDU.oswego.cs.dl.util.concurrent.ReentrantWriterPreferenceReadWriteLock;
+import edu.emory.mathcs.backport.java.util.concurrent.ConcurrentHashMap;
+import edu.emory.mathcs.backport.java.util.concurrent.locks.ReadWriteLock;
+import edu.emory.mathcs.backport.java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * This class extends RDBMUserLayoutStore and implements instantiating and
@@ -133,7 +133,7 @@ public class RDBMDistributedLayoutStore
 
         if (null == lock)
         {
-            lock = new ReentrantWriterPreferenceReadWriteLock();
+            lock = new ReentrantReadWriteLock();
 
             mLocks.put(key, lock);
         }
@@ -143,12 +143,12 @@ public class RDBMDistributedLayoutStore
 
     private void acquireReadLock(IPerson person) throws InterruptedException
     {
-        getReadWriteLock(person).readLock().acquire();
+        getReadWriteLock(person).readLock().lock();
     }
 
     private void releaseReadLock(IPerson person)
     {
-        getReadWriteLock(person).readLock().release();
+        getReadWriteLock(person).readLock().unlock();
     }
 
     public RDBMDistributedLayoutStore ( )
