@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.EntityTypes;
 import org.jasig.portal.IBasicEntity;
 import org.jasig.portal.concurrency.CachingException;
@@ -65,7 +66,10 @@ public ReferenceEntityCachingService() throws CachingException
  */
 public void add(IBasicEntity ent) throws CachingException
 {
-    getCache(ent.getEntityIdentifier().getType()).add(ent);
+	EntityIdentifier ei = ent.getEntityIdentifier();
+	Class classRef = ei.getType();
+    IEntityCache entCache = getCache(classRef);
+    entCache.add(ent);
 }
 /**
  * Create a cache for a specific entity type.
