@@ -87,13 +87,13 @@
 	 | for simple string queries via the IPersonAttributeDao interfaces
 	 +-->
      <!--
-	<bean id="personAttributeDao" class="org.jasig.portal.services.persondir.support.CachingPersonAttributeDaoImpl">
-		<property name="cachedPersonAttributesDao">
-			<ref bean="mergedPersonAttributeDao"/>
-		</property>
-	</bean>
-	
-	<bean id="mergedPersonAttributeDao" class="org.jasig.portal.services.persondir.support.MergingPersonAttributeDaoImpl">
+   <bean id="personAttributeDao" class="org.jasig.portal.services.persondir.support.CachingPersonAttributeDaoImpl">
+       <property name="cachedPersonAttributesDao">
+           <ref bean="mergedPersonAttributeDao"/>
+       </property>
+   </bean>
+   
+   <bean id="mergedPersonAttributeDao" class="org.jasig.portal.services.persondir.support.MergingPersonAttributeDaoImpl">
 		<property name="personAttributeDaos">
 			<list>
 				<ref bean="uPortalJdbcAttributeSource"/>
@@ -167,12 +167,26 @@
 		</property>
 		<property name="ldapAttributesToPortalAttributes">
 			<map>
-				<entry key="uPortalTemplateUserName">       <value>eduPersonPrimaryAffiliation</value></entry>
-	
+				<entry key="eduPersonPrimaryAffiliation">   <value>uPortalTemplateUserName</value></entry>
 				<entry key="eduPersonAffiliation">          <value>eduPersonAffiliation</value></entry>
-				<entry key="eduPersonNickname">             <value>eduPersonNickname</value></entry>
-				<entry key="eduPersonOrgDN">                <value>eduPersonOrgDN</value></entry>
-				<entry key="eduPersonOrgUnitDN">            <value>eduPersonOrgUnitDN</value></entry>
+				<entry key="eduPersonNickname">
+                                                    <set>
+                                                      <value>eduPersonNickname</value>
+                                                      <value>user.name.nickName</value>
+                                                    </set>
+        </entry>
+				<entry key="eduPersonOrgDN">
+                                                    <set>
+                                                      <value>eduPersonOrgDN</value>
+                                                      <value>user.employer</value>
+                                                    </set>
+        </entry>
+				<entry key="eduPersonOrgUnitDN">
+                                                    <set>
+                                                      <value>eduPersonOrgUnitDN</value>
+                                                      <value>user.department</value>
+                                                    </set>
+        </entry>
 				<entry key="eduPersonPrimaryAffiliation">   <value>eduPersonPrimaryAffiliation</value></entry>
 				<entry key="eduPersonPrincipalName">        <value>eduPersonPrincipalName</value></entry>
 				<entry key="c">                             <value>c</value></entry>
@@ -180,14 +194,24 @@
 				<entry key="description">                   <value>description</value></entry>
 				<entry key="displayName">                   <value>displayName</value></entry>
 				<entry key="facsimileTelephoneNumber">      <value>facsimileTelephoneNumber</value></entry>
-				<entry key="givenName">                     <value>givenName</value></entry>
+				<entry key="givenName">
+                                                    <set>
+                                                      <value>givenName</value>
+                                                      <value>user.name.given</value>
+                                                    </set>
+        </entry>
 				<entry key="homePhone">                     <value>homePhone</value></entry>
 				<entry key="homePostalAddress">             <value>homePostalAddress</value></entry>
 				<entry key="initials">                      <value>initials</value></entry>
 				<entry key="jpegPhoto">                     <value>jpegPhoto</value></entry>
 				<entry key="l">                             <value>l</value></entry>
 				<entry key="labeledURI">                    <value>labeledURI</value></entry>
-				<entry key="mail">                          <value>mail</value></entry>
+				<entry key="mail">
+                                                    <set>
+                                                      <value>mail</value>
+                                                      <value>user.home-info.online.email</value>
+                                                    </set>
+        </entry>
 				<entry key="mobile">                        <value>mobile</value></entry>
 				<entry key="o">                             <value>o</value></entry>
 				<entry key="ou">                            <value>ou</value></entry>
@@ -197,20 +221,18 @@
 				<entry key="postOfficeBox">                 <value>postOfficeBox</value></entry>
 				<entry key="preferredLanguage">             <value>preferredLanguage</value></entry>
 				<entry key="seeAlso">                       <value>seeAlso</value></entry>
-				<entry key="sn">                            <value>sn</value></entry>
+				<entry key="sn">
+                                                    <set>
+                                                      <value>sn</value>
+                                                      <value>user.name.family</value>
+                                                    </set>
+        </entry>
 				<entry key="st">                            <value>st</value></entry>
 				<entry key="street">                        <value>street</value></entry>
 				<entry key="telephoneNumber">               <value>telephoneNumber</value></entry>
 				<entry key="uid">                           <value>uid</value></entry>
 				<entry key="userCertificate">               <value>userCertificate</value></entry>
 				<entry key="userSMIMECertificate">          <value>userSMIMECertificate</value></entry>
-	
-				<entry key="user.employer">                 <value>eduPersonOrgDN</value></entry>
-				<entry key="user.department">               <value>eduPersonOrgUnitDN</value></entry>
-				<entry key="user.name.given">               <value>givenName</value></entry>
-				<entry key="user.name.family">              <value>sn</value></entry>
-				<entry key="user.name.nickName">            <value>eduPersonNickname</value></entry>
-				<entry key="user.home-info.online.email">   <value>mail</value></entry>
 			</map>
 		</property>
 	</bean>
