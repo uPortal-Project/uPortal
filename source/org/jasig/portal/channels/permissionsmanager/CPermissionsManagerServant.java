@@ -9,6 +9,7 @@ import java.util.HashMap;
 
 import org.jasig.portal.IPermissible;
 import org.jasig.portal.IServant;
+import org.jasig.portal.PortalException;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPermission;
 import org.apache.commons.logging.Log;
@@ -76,7 +77,7 @@ public class CPermissionsManagerServant extends CPermissionsManager
         return  results;
     }
 
-    public void setStaticData (org.jasig.portal.ChannelStaticData sD) {
+    public void setStaticData (org.jasig.portal.ChannelStaticData sD) throws PortalException{
         super.setStaticData(sD);
         session.isAuthorized = true;
 

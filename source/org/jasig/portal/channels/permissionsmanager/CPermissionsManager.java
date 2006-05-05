@@ -14,6 +14,7 @@ import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ChannelRuntimeProperties;
 import org.jasig.portal.ICacheable;
 import org.jasig.portal.IChannel;
+import org.jasig.portal.PortalException;
 import org.jasig.portal.channels.groupsmanager.CGroupsManagerServantFactory;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
@@ -258,45 +259,37 @@ public class CPermissionsManager
      * put your documentation comment here
      * @param out
      */
-    public void renderXML (org.xml.sax.ContentHandler out) {
-        try {
-            long time1 = Calendar.getInstance().getTime().getTime();
-            if (session.view.equals("Select Principals") &&
-                    session.isAuthorized) {
-                try {
-                    log.debug("PermissionsManager - Calling servant renderXML");
-                    //IChannel servant = (IChannel)staticData.get("prmServant");
-                    ((IChannel)session.servant).renderXML(out);
-                } catch (Exception e) {
-                    log.error( "CPermissionsManager: failed to use servant"
-                            + e);
-                }
+    public void renderXML (org.xml.sax.ContentHandler out) throws PortalException{
+        long time1 = Calendar.getInstance().getTime().getTime();
+        if (session.view.equals("Select Principals") &&
+                session.isAuthorized) {
+            log.debug("PermissionsManager - Calling servant renderXML");
+            //IChannel servant = (IChannel)staticData.get("prmServant");
+            ((IChannel)session.servant).renderXML(out);
+
+        }
+        if (!session.view.equals("Select Principals")
+                || !session.isAuthorized) {
+            long time2 = Calendar.getInstance().getTime().getTime();
+            XSLT xslt = XSLT.getTransformer(this, session.runtimeData.getLocales());
+            xslt.setXML(PermissionsXML.getViewDoc(session));
+            xslt.setTarget(out);
+            xslt.setStylesheetParameter("baseActionURL", session.runtimeData.getBaseActionURL());
+            xslt.setStylesheetParameter("prmView", session.view);
+            if (session.runtimeData.get("commandResponse") != null) {
+                xslt.setStylesheetParameter("commandResponse", session.runtimeData.getParameter("commandResponse"));
             }
-            if (!session.view.equals("Select Principals")
-                    || !session.isAuthorized) {
-                long time2 = Calendar.getInstance().getTime().getTime();
-                XSLT xslt = XSLT.getTransformer(this, session.runtimeData.getLocales());
-                xslt.setXML(PermissionsXML.getViewDoc(session));
-                xslt.setTarget(out);
-                xslt.setStylesheetParameter("baseActionURL", session.runtimeData.getBaseActionURL());
-                xslt.setStylesheetParameter("prmView", session.view);
-                if (session.runtimeData.get("commandResponse") != null) {
-                    xslt.setStylesheetParameter("commandResponse", session.runtimeData.getParameter("commandResponse"));
-                }
-                xslt.setXSL(sslLocation, "CPermissions", session.runtimeData.getBrowserInfo());
-                transform(xslt);
-                if (log.isDebugEnabled()) {
-                    long time3 = Calendar.getInstance().getTime().getTime();
-                    log.debug("CPermissionsManager timer: "
-                            + String.valueOf((time3 - time1)) + " ms total, xsl took "
-                            + String.valueOf((time3 - time2)) + " ms for view " + session.view);
-                    log.debug("CPermissionsManager timer: "
-                            + String.valueOf((time3 - session.startRD)) + " since start RD");
-                }
-               
+            xslt.setXSL(sslLocation, "CPermissions", session.runtimeData.getBrowserInfo());
+            transform(xslt);
+            if (log.isDebugEnabled()) {
+                long time3 = Calendar.getInstance().getTime().getTime();
+                log.debug("CPermissionsManager timer: "
+                        + String.valueOf((time3 - time1)) + " ms total, xsl took "
+                        + String.valueOf((time3 - time2)) + " ms for view " + session.view);
+                log.debug("CPermissionsManager timer: "
+                        + String.valueOf((time3 - session.startRD)) + " since start RD");
             }
-        } catch (Exception e) {
-            log.error(e, e);
+           
         }
     }
 
@@ -304,32 +297,26 @@ public class CPermissionsManager
      * put your documentation comment here
      * @param xslt
      */
-    protected void transform (XSLT xslt) {
-        try {
-            if (session.isAuthorized) {
-                xslt.setStylesheetParameter("isAdminUser", "true");
-            }
-            xslt.transform();
-        } catch (Exception e) {
-            log.error(e, e);
+    protected void transform (XSLT xslt) throws PortalException{
+    	// TODO need to commit this change to CVS
+    	// fixed so exception will be shown if there is an error in the xslt transform
+        if (session.isAuthorized) {
+            xslt.setStylesheetParameter("isAdminUser", "true");
         }
+        xslt.transform();
     }
 
     /**
      * put your documentation comment here
      * @param sD
      */
-    public void setStaticData (org.jasig.portal.ChannelStaticData sD) {
+    public void setStaticData (org.jasig.portal.ChannelStaticData sD) throws PortalException{
         this.session = new PermissionsSessionData();
         session.staticData = sD;
-        try {
-            IEntityGroup admin = GroupService.getDistinguishedGroup(GroupService.PORTAL_ADMINISTRATORS);
-            IGroupMember me = AuthorizationService.instance().getGroupMember(session.staticData.getAuthorizationPrincipal());
-            if (admin.deepContains(me)) {
-                session.isAuthorized = true;
-            }
-        } catch (Exception e) {
-            log.error(e, e);
+        IEntityGroup admin = GroupService.getDistinguishedGroup(GroupService.PORTAL_ADMINISTRATORS);
+        IGroupMember me = AuthorizationService.instance().getGroupMember(session.staticData.getAuthorizationPrincipal());
+        if (admin.deepContains(me)) {
+            session.isAuthorized = true;
         }
         session.isFinished=false;
 
