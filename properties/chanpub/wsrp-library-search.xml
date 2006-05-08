@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!DOCTYPE channel-definition SYSTEM "channelDefinition.dtd">
+<!DOCTYPE channel-definition PUBLIC "-//uPortal//Channel Definition/EN" "channelDefinition.dtd">
 <!-- This is a remote portlet via WSRP
 -->
 	<channel-definition>
@@ -28,7 +28,7 @@
 	    <parameters>
 
 	        <!--
-	            The syntax of the ID is [portlet-context-name].[portlet-name] 
+	            The syntax of the ID is [portlet-context-name].[portlet-name]
 	        -->
 
 	        <parameter>
@@ -39,9 +39,9 @@
 	            </description>
 	            <ovrd>N</ovrd>
 	        </parameter>
-	        
+
 	        <!--
-	            Portlet entity preference names will be prepended with "PORTLET." 
+	            Portlet entity preference names will be prepended with "PORTLET."
 	        -->
 
 	        <parameter>

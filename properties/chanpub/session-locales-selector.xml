@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!DOCTYPE channel-definition SYSTEM "channelDefinition.dtd">
+<!DOCTYPE channel-definition PUBLIC "-//uPortal//Channel Definition/EN" "channelDefinition.dtd">
 
 <channel-definition>
 
@@ -11,22 +11,22 @@
     <type>Custom</type>
     <class>org.jasig.portal.layout.channels.locales.CSessionLocalesSelector</class>
     <timeout>30000</timeout>
-    
+
     <hasedit>N</hasedit>
     <hashelp>N</hashelp>
     <hasabout>N</hasabout>
 
     <secure>N</secure>
     <locale>en_US</locale>
-    
-    <categories> 
+
+    <categories>
     </categories>
-    
+
     <groups>
         <group>Everyone</group>
     </groups>
-    
+
     <parameters>
     </parameters>
-    
+
 </channel-definition>

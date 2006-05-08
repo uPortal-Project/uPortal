@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!DOCTYPE channel-definition SYSTEM "channelDefinition.dtd">
+<!DOCTYPE channel-definition PUBLIC "-//uPortal//Channel Definition/EN" "channelDefinition.dtd">
 
 <channel-definition>
 
@@ -11,32 +11,32 @@
     <type>Image</type>
     <class>org.jasig.portal.channels.CImage</class>
     <timeout>30000</timeout>
-    
+
     <hasedit>N</hasedit>
     <hashelp>N</hashelp>
     <hasabout>N</hasabout>
 
     <secure>N</secure>
     <locale>en_US</locale>
-    
+
     <categories>
         <category>Entertainment</category>
         <category>CImage</category>
     </categories>
-    
+
     <groups>
         <group>Everyone</group>
     </groups>
-    
+
     <parameters>
-    
+
         <parameter>
             <name>img-uri</name>
             <value>http://www.tedgoff.com/mb/images/today.gif</value>
             <description></description>
             <ovrd>N</ovrd>
         </parameter>
-        
+
         <parameter>
             <name>img-width</name>
             <value>300</value>
@@ -64,7 +64,7 @@
             <description></description>
             <ovrd>N</ovrd>
         </parameter>
-         
+
     </parameters>
-    
+
 </channel-definition>
