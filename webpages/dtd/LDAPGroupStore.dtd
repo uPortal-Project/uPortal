@@ -11,12 +11,12 @@ are met:
    notice, this list of conditions and the following disclaimer in
    the documentation and/or other materials provided with the
    distribution.
-   
+
 3. Redistributions of any form whatsoever must retain the following
    acknowledgment:
    "This product includes software developed by the JA-SIG Collaborative
    (http://www.jasig.org/)."
-   
+
 THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
 EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -47,7 +47,7 @@ $Revision$
 <!-- the ldap attribute that corresponds to the IPerson displayname (e.g. 'cn') -->
 <!ELEMENT namefield (#PCDATA)>
 <!ELEMENT usercontext (#PCDATA)>
-<!-- an integer indicating after how many minutes a group's memberships should be 
+<!-- an integer indicating after how many minutes a group's memberships should be
 refreshed by reloading its entity-set -->
 <!ELEMENT refresh-minutes (#PCDATA)>
 
@@ -74,13 +74,13 @@ refreshed by reloading its entity-set -->
 <!-- return all results from all contained entity sets-->
 <!ELEMENT union (entity-set*)>
 
-<!-- return all common results from all contained entity sets --> 
+<!-- return all common results from all contained entity sets -->
 <!ELEMENT intersection (entity-set*)>
 
 <!-- return all results that occur in only one contained entity set -->
 <!ELEMENT difference (entity-set*)>
 
 <!-- return all members of the first entity set minus any that occur in the rest -->
-<!ELEMENT subtract (entity-set*>
+<!ELEMENT subtract (entity-set*)>
 
 
