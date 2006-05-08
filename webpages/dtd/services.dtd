@@ -48,11 +48,11 @@ $Revision$
 
 <!-- The fully qualified name (with package) of the main service class -->
 
-<!ELEMENT class(#PCDATA)>
+<!ELEMENT class (#PCDATA)>
 
 <!-- The method that would start the service  -->
 
-<!ELEMENT method(#PCDATA)>
+<!ELEMENT method (#PCDATA)>
 <!ATTLIST method
   type static #IMPLIED
 >
