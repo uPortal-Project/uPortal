@@ -37,30 +37,53 @@ public class SAX2BufferImpl extends SAX2FilterImpl
     protected boolean outputAtDocumentEnd;
 
     // types of SAX events
-    public static final Integer STARTDOCUMENT = new Integer(0);
-    public static final Integer ENDDOCUMENT = new Integer(1);
-    public static final Integer STARTELEMENT = new Integer(2);
-    public static final Integer ENDELEMENT = new Integer(3);
-    public static final Integer CHARACTERS = new Integer(4);
-    public static final Integer IGNORABLEWHITESPACE = new Integer(5);
-    public static final Integer PROCESSINGINSTRUCTION = new Integer(6);
-    public static final Integer NOTATIONDECL = new Integer(7);
-    public static final Integer UNPARSEDENTITYDECL = new Integer(8);
-    public static final Integer STARTPREFIXMAPPING = new Integer(9);
-    public static final Integer ENDPREFIXMAPPING = new Integer(10);
-    public static final Integer SKIPPEDENTITY = new Integer(11);
-    public static final Integer WARNING = new Integer(12);
-    public static final Integer ERROR = new Integer(13);
-    public static final Integer FATALERROR = new Integer(14);
-    public static final Integer COMMENT = new Integer(15);
-    public static final Integer STARTCDATA = new Integer(16);
-    public static final Integer ENDCDATA = new Integer(17);
-    public static final Integer STARTDTD = new Integer(18);
-    public static final Integer ENDDTD = new Integer(19);
-    public static final Integer STARTENTITY = new Integer(20);
-    public static final Integer ENDENTITY = new Integer(21);
-    
-    protected boolean copyCharBlock 
+    private static final int ISTARTDOCUMENT = 0;
+    private static final int IENDDOCUMENT = 1;
+    private static final int ISTARTELEMENT = 2;
+    private static final int IENDELEMENT = 3;
+    private static final int ICHARACTERS = 4;
+    private static final int IIGNORABLEWHITESPACE = 5;
+    private static final int IPROCESSINGINSTRUCTION = 6;
+    private static final int INOTATIONDECL = 7;
+    private static final int IUNPARSEDENTITYDECL = 8;
+    private static final int ISTARTPREFIXMAPPING = 9;
+    private static final int IENDPREFIXMAPPING = 10;
+    private static final int ISKIPPEDENTITY = 11;
+    private static final int IWARNING = 12;
+    private static final int IERROR = 13;
+    private static final int IFATALERROR = 14;
+    private static final int ICOMMENT = 15;
+    private static final int ISTARTCDATA = 16;
+    private static final int IENDCDATA = 17;
+    private static final int ISTARTDTD = 18;
+    private static final int IENDDTD = 19;
+    private static final int ISTARTENTITY = 20;
+    private static final int IENDENTITY = 21;
+
+    public static final Integer STARTDOCUMENT = new Integer(ISTARTDOCUMENT);
+    public static final Integer ENDDOCUMENT = new Integer(IENDDOCUMENT);
+    public static final Integer STARTELEMENT = new Integer(ISTARTELEMENT);
+    public static final Integer ENDELEMENT = new Integer(IENDELEMENT);
+    public static final Integer CHARACTERS = new Integer(ICHARACTERS);
+    public static final Integer IGNORABLEWHITESPACE = new Integer(IIGNORABLEWHITESPACE);
+    public static final Integer PROCESSINGINSTRUCTION = new Integer(IPROCESSINGINSTRUCTION);
+    public static final Integer NOTATIONDECL = new Integer(INOTATIONDECL);
+    public static final Integer UNPARSEDENTITYDECL = new Integer(IUNPARSEDENTITYDECL);
+    public static final Integer STARTPREFIXMAPPING = new Integer(ISTARTPREFIXMAPPING);
+    public static final Integer ENDPREFIXMAPPING = new Integer(IENDPREFIXMAPPING);
+    public static final Integer SKIPPEDENTITY = new Integer(ISKIPPEDENTITY);
+    public static final Integer WARNING = new Integer(IWARNING);
+    public static final Integer ERROR = new Integer(IERROR);
+    public static final Integer FATALERROR = new Integer(IFATALERROR);
+    public static final Integer COMMENT = new Integer(ICOMMENT);
+    public static final Integer STARTCDATA = new Integer(ISTARTCDATA);
+    public static final Integer ENDCDATA = new Integer(IENDCDATA);
+    public static final Integer STARTDTD = new Integer(ISTARTDTD);
+    public static final Integer ENDDTD = new Integer(IENDDTD);
+    public static final Integer STARTENTITY = new Integer(ISTARTENTITY);
+    public static final Integer ENDENTITY = new Integer(IENDENTITY);
+
+    protected boolean copyCharBlock
         = PropertiesManager.getPropertyAsBoolean(SAX2BufferImpl.class.getName() + ".copyCharBlock", true);
 
     // constructors
@@ -109,7 +132,7 @@ public class SAX2BufferImpl extends SAX2FilterImpl
         buffering = true;
         outputAtDocumentEnd=false;
         eventTypes = new Vector ();
-        eventArguments = new Vector ();        
+        eventArguments = new Vector ();
     }
 
     /**
@@ -122,7 +145,7 @@ public class SAX2BufferImpl extends SAX2FilterImpl
         buffering = true;
         outputAtDocumentEnd=false;
         eventTypes = new Vector ();
-        eventArguments = new Vector ();        
+        eventArguments = new Vector ();
     }
 
     /**
@@ -165,107 +188,7 @@ public class SAX2BufferImpl extends SAX2FilterImpl
     public void outputBuffer() throws SAXException {
         // for speed purposes, we don't allow contentHandler to be null
         if(contentHandler!=null) {
-            Enumeration args = eventArguments.elements ();
-            ThreeString ths;
-            CharBlock cd;
-            TwoString ts;
-            FourString fs;
-            SAXParseException e;
-        
-            for (Enumeration types = eventTypes.elements (); types.hasMoreElements ();) {
-                Integer type = (Integer)types.nextElement();
-
-                // ContentHandler events
-                if (STARTDOCUMENT.equals(type)) {
-                    contentHandler.startDocument ();
-                } else if (ENDDOCUMENT.equals(type)) {
-                    contentHandler.endDocument ();
-                } else if (STARTPREFIXMAPPING.equals(type)) {
-                    ts=(TwoString) args.nextElement();
-                    contentHandler.startPrefixMapping(ts.first,ts.second);
-                } else if (ENDPREFIXMAPPING.equals(type)) {
-                    contentHandler.endPrefixMapping((String)args.nextElement());
-                } else if (STARTELEMENT.equals(type)) {
-                    StartElementData sed = (StartElementData) args.nextElement ();
-                    contentHandler.startElement (sed.getURI(), sed.getLocalName(), sed.getQName(),sed.getAtts());
-                } else if (ENDELEMENT.equals(type)) {
-                    ths = (ThreeString) args.nextElement ();
-                    contentHandler.endElement (ths.first,ths.second,ths.third);
-                } else if (CHARACTERS.equals(type)) {
-                    cd = (CharBlock) args.nextElement ();
-                    contentHandler.characters (cd.getCh(), cd.getStart(), cd.getLength());
-                } else if (IGNORABLEWHITESPACE.equals(type)) {
-                    cd = (CharBlock) args.nextElement ();
-                    contentHandler.ignorableWhitespace (cd.getCh(), cd.getStart(), cd.getLength());
-                } else if (PROCESSINGINSTRUCTION.equals(type)) {
-                    ts=(TwoString) args.nextElement();
-                    contentHandler.processingInstruction (ts.first,ts.second);
-                
-                // DTDHandler events
-                } else if (NOTATIONDECL.equals(type)) {
-                    if(dtdHandler!=null) {
-                        ths=(ThreeString) args.nextElement();
-                        dtdHandler.notationDecl(ths.first,ths.second,ths.third);
-                    }
-                } else if (UNPARSEDENTITYDECL.equals(type)) {
-                    if(dtdHandler!=null) {
-                        fs=(FourString) args.nextElement();
-                        dtdHandler.unparsedEntityDecl(fs.first,fs.second,fs.third,fs.fourth);
-                    }
-
-                
-                // ErrorHandler events
-                } else if (WARNING.equals(type)) {
-                    if(errorHandler!=null) {
-                        e=(SAXParseException) args.nextElement();
-                        errorHandler.warning(e);
-                    }
-                } else if (ERROR.equals(type)) {
-                    if(errorHandler!=null) {
-                        e=(SAXParseException) args.nextElement();
-                        errorHandler.error(e);
-                    }
-                } else if (FATALERROR.equals(type)) {
-                    if(errorHandler!=null) {
-                        e=(SAXParseException) args.nextElement();
-                        errorHandler.fatalError(e);
-                    }
-                    
-                // LexicalHandler events
-                } else if (STARTDTD.equals(type)) {
-                    if(lexicalHandler!=null) {
-                        ths=(ThreeString) args.nextElement();
-                        lexicalHandler.startDTD(ths.first,ths.second,ths.third);
-                    }
-                } else if (ENDDTD.equals(type)) {
-                    if(lexicalHandler!=null) {
-                        lexicalHandler.endDTD();
-                    }
-                } else if (STARTENTITY.equals(type)) {
-                    if(lexicalHandler!=null) {
-                        String n=(String) args.nextElement();
-                        lexicalHandler.startEntity(n);
-                    } 
-                } else if (ENDENTITY.equals(type)) {
-                    if(lexicalHandler!=null) {
-                        String n=(String) args.nextElement();
-                        lexicalHandler.endEntity(n);
-                    } 
-                } else if (STARTCDATA.equals(type)) {
-                    if(lexicalHandler!=null) {
-                        lexicalHandler.startCDATA();
-                    } 
-                } else if (ENDCDATA.equals(type)) {
-                    if(lexicalHandler!=null) {
-                        lexicalHandler.endCDATA();
-                    } 
-                } else if (COMMENT.equals(type)) {
-                    if(lexicalHandler!=null) {
-                        CharBlock ccd = (CharBlock) args.nextElement ();
-                        lexicalHandler.comment (ccd.getCh(), ccd.getStart(), ccd.getLength());
-                    } 
-                }
-            }
+            outputBuffer(contentHandler, dtdHandler, errorHandler, lexicalHandler);
         } else {
             // Logger.log (Logger.ERROR, "SAX2BufferImpl:stopBuffering() : trying to ouput buffer to a null ContentHandler.");
         }
@@ -291,120 +214,125 @@ public class SAX2BufferImpl extends SAX2FilterImpl
             if(ch instanceof DTDHandler) {
                 dtdh=(DTDHandler) ch;
             }
-            
+
             ErrorHandler erh=null;
             if(ch instanceof ErrorHandler) {
                 erh=(ErrorHandler)ch;
             }
-            
+
             LexicalHandler lh=null;
             if(ch instanceof LexicalHandler) {
                 lh=(LexicalHandler)ch;
             }
-        
-            Enumeration args = eventArguments.elements ();
-            ThreeString ths;
-            CharBlock cd;
-            TwoString ts;
-            FourString fs;
-            SAXParseException e;
-        
-            for (Enumeration types = eventTypes.elements (); types.hasMoreElements ();) {
-                Integer type = (Integer)types.nextElement();
 
-                // ContentHandler events
-                if (STARTDOCUMENT.equals(type)) {
-                    ch.startDocument ();
-                } else if (ENDDOCUMENT.equals(type)) {
-                    ch.endDocument ();
-                } else if (STARTPREFIXMAPPING.equals(type)) {
-                    ts=(TwoString) args.nextElement();
-                    ch.startPrefixMapping(ts.first,ts.second);
-                } else if (ENDPREFIXMAPPING.equals(type)) {
-                    ch.endPrefixMapping((String)args.nextElement());
-                } else if (STARTELEMENT.equals(type)) {
-                    StartElementData sed = (StartElementData) args.nextElement ();
-                    ch.startElement (sed.getURI(), sed.getLocalName(), sed.getQName(),sed.getAtts());
-                } else if (ENDELEMENT.equals(type)) {
-                    ths = (ThreeString) args.nextElement ();
-                    ch.endElement (ths.first,ths.second,ths.third);
-                } else if (CHARACTERS.equals(type)) {
-                    cd = (CharBlock) args.nextElement ();
-                    ch.characters (cd.getCh(), cd.getStart(), cd.getLength());
-                } else if (IGNORABLEWHITESPACE.equals(type)) {
-                    cd = (CharBlock) args.nextElement ();
-                    ch.ignorableWhitespace (cd.getCh(), cd.getStart(), cd.getLength());
-                } else if (PROCESSINGINSTRUCTION.equals(type)) {
-                    ts=(TwoString) args.nextElement();
-                    ch.processingInstruction (ts.first,ts.second);
-                    
-                // DTDHandler events
-                } else if (NOTATIONDECL.equals(type)) {
-                    if(dtdh!=null) {
-                        ths=(ThreeString) args.nextElement();
-                        dtdh.notationDecl(ths.first,ths.second,ths.third);
-                    }
-                } else if (UNPARSEDENTITYDECL.equals(type)) {
-                    if(dtdh!=null) {
-                        fs=(FourString) args.nextElement();
-                        dtdh.unparsedEntityDecl(fs.first,fs.second,fs.third,fs.fourth);
-                    }
-
-                // ErrorHandler events
-                } else if (WARNING.equals(type)) {
-                    if(erh!=null) {
-                        e=(SAXParseException) args.nextElement();
-                        erh.warning(e);
-                    }
-                } else if (ERROR.equals(type)) {
-                    if(erh!=null) {
-                        e=(SAXParseException) args.nextElement();
-                        erh.error(e);
-                    }
-                } else if (FATALERROR.equals(type)) {
-                    if(erh!=null) {
-                        e=(SAXParseException) args.nextElement();
-                        erh.fatalError(e);
-                    }
-                    
-                // LexicalHandler events
-                } else if (STARTDTD.equals(type)) {
-                    if(lh!=null) {
-                        ths=(ThreeString) args.nextElement();
-                        lh.startDTD(ths.first,ths.second,ths.third);
-                    }
-                } else if (ENDDTD.equals(type)) {
-                    if(lh!=null) {
-                        lh.endDTD();
-                    }
-                } else if (STARTENTITY.equals(type)) {
-                    if(lh!=null) {
-                        String n=(String) args.nextElement();
-                        lh.startEntity(n);
-                    } 
-                } else if (ENDENTITY.equals(type)) {
-                    if(lh!=null) {
-                        String n=(String) args.nextElement();
-                        lh.endEntity(n);
-                    } 
-                } else if (STARTCDATA.equals(type)) {
-                    if(lh!=null) {
-                        lh.startCDATA();
-                    } 
-                } else if (ENDCDATA.equals(type)) {
-                    if(lh!=null) {
-                        lh.endCDATA();
-                    } 
-                } else if (COMMENT.equals(type)) {
-                    if(lh!=null) {
-                        CharBlock ccd = (CharBlock) args.nextElement ();
-                        lh.comment (ccd.getCh(), ccd.getStart(), ccd.getLength());
-                    } 
-                }
-            }
+            outputBuffer(ch, dtdh, erh, lh);
         } else {
             // Logger.log (Logger.ERROR, "SAX2BufferImpl:stopBuffering() : trying to ouput buffer to a null ContentHandler.");
         }
+    }
+
+    private void outputBuffer(final ContentHandler ch, final DTDHandler dtdh,
+      final ErrorHandler erh, final LexicalHandler lh) throws SAXException {
+
+      final Enumeration args = eventArguments.elements ();
+
+      for (final Enumeration types = eventTypes.elements (); types.hasMoreElements ();) {
+          final int type = ((Integer)types.nextElement()).intValue();
+
+          // ContentHandler events
+          if (ISTARTDOCUMENT == type) {
+              ch.startDocument ();
+          } else if (IENDDOCUMENT == type) {
+              ch.endDocument ();
+          } else if (ISTARTPREFIXMAPPING == type) {
+              final TwoString ts=(TwoString) args.nextElement();
+              ch.startPrefixMapping(ts.first,ts.second);
+          } else if (IENDPREFIXMAPPING == type) {
+              ch.endPrefixMapping((String)args.nextElement());
+          } else if (ISTARTELEMENT == type) {
+              final StartElementData sed = (StartElementData) args.nextElement ();
+              ch.startElement (sed.getURI(), sed.getLocalName(), sed.getQName(),sed.getAtts());
+          } else if (IENDELEMENT == type) {
+              final ThreeString ths = (ThreeString) args.nextElement ();
+              ch.endElement (ths.first,ths.second,ths.third);
+          } else if (ICHARACTERS == type) {
+              final CharBlock cd = (CharBlock) args.nextElement ();
+              ch.characters (cd.getCh(), cd.getStart(), cd.getLength());
+          } else if (IIGNORABLEWHITESPACE == type) {
+              final CharBlock cd = (CharBlock) args.nextElement ();
+              ch.ignorableWhitespace (cd.getCh(), cd.getStart(), cd.getLength());
+          } else if (IPROCESSINGINSTRUCTION == type) {
+              final TwoString ts=(TwoString) args.nextElement();
+              ch.processingInstruction (ts.first,ts.second);
+          } else {
+            switch (type) {
+            case INOTATIONDECL:
+            case IUNPARSEDENTITYDECL:
+              // DTDHandler events
+              if (dtdh != null) {
+                if (INOTATIONDECL == type) {
+                  final ThreeString ths = (ThreeString) args.nextElement();
+                  dtdh.notationDecl(ths.first, ths.second, ths.third);
+                } else if (IUNPARSEDENTITYDECL == type) {
+                  final FourString fs = (FourString) args.nextElement();
+                  dtdh.unparsedEntityDecl(fs.first, fs.second, fs.third, fs.fourth);
+                }
+              }
+              break;
+
+            case IWARNING:
+            case IERROR:
+            case IFATALERROR:
+              // ErrorHandler events
+              if (erh != null) {
+                final SAXParseException e = (SAXParseException) args.nextElement();;
+                if (IWARNING == type) {
+                  erh.warning(e);
+                } else if (IERROR == type) {
+                  erh.error(e);
+                } else if (IFATALERROR == type) {
+                  erh.fatalError(e);
+                }
+              }
+              break;
+
+            case ISTARTDTD:
+            case IENDDTD:
+            case ISTARTENTITY:
+            case IENDENTITY:
+            case ISTARTCDATA:
+            case IENDCDATA:
+            case ICOMMENT:
+              // LexicalHandler events
+              if (lh != null) {
+                if (ISTARTDTD == type) {
+                  final ThreeString ths = (ThreeString) args.nextElement();
+                  lh.startDTD(ths.first, ths.second, ths.third);
+                } else if (IENDDTD == type) {
+                  lh.endDTD();
+                } else if (ISTARTENTITY == type) {
+                  final String n = (String) args.nextElement();
+                  lh.startEntity(n);
+                } else if (IENDENTITY == type) {
+                  final String n = (String) args.nextElement();
+                  lh.endEntity(n);
+                } else if (ISTARTCDATA == type) {
+                  lh.startCDATA();
+                } else if (IENDCDATA == type) {
+                  lh.endCDATA();
+                } else if (ICOMMENT == type) {
+                  final CharBlock ccd = (CharBlock) args.nextElement();
+                  lh.comment(ccd.getCh(), ccd.getStart(), ccd.getLength());
+                }
+              }
+              break;
+
+             default:
+               throw new SAXException("org.jasig.portal.utils.SAX2BufferImpl::outputBuffer: unexpected element type " +
+                   type + " encountered in SAX stream");
+            }
+          }
+      }
     }
 
     // Implementation of org.xml.sax.ext.LexicalHandler
@@ -470,7 +398,7 @@ public class SAX2BufferImpl extends SAX2FilterImpl
     }
 
     // Implementation of org.xml.sax.DTDHandler
-    
+
     public void notationDecl (String name, String publicId, String systemId) throws SAXException
     {
         if(buffering) {
@@ -652,7 +580,7 @@ public class SAX2BufferImpl extends SAX2FilterImpl
     private class TwoString {
         public String first;
         public String second;
-        
+
         TwoString(String first, String second)   {
             this.first = first;
             this.second = second;
@@ -666,7 +594,7 @@ public class SAX2BufferImpl extends SAX2FilterImpl
         public String first;
         public String second;
         public String third;
-        
+
         ThreeString(String first, String second, String third)   {
             this.first=first;
             this.second=second;
@@ -683,7 +611,7 @@ public class SAX2BufferImpl extends SAX2FilterImpl
         public String second;
         public String third;
         public String fourth;
-        
+
         FourString(String first, String second, String third, String fourth)   {
             this.first=first;
             this.second=second;
@@ -701,7 +629,7 @@ public class SAX2BufferImpl extends SAX2FilterImpl
         public char[] ca_ch;
         public int i_start;
         public int i_length;
-        
+
         CharBlock(char ch[],int start, int length) {
             if (copyCharBlock) {
                 this.ca_ch = new char[length+start];
