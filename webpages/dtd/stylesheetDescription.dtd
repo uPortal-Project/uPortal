@@ -1,4 +1,4 @@
-<!ELEMENT stylesheetdescription (name|description|media+|parameters?|folderattributes?|channelattributes?)>
+<!ELEMENT stylesheetdescription (description|parameters?|folderattributes?|channelattributes?)>
 
 <!ELEMENT parameters (parameter)*>
 
