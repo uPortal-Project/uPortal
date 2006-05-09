@@ -29,35 +29,27 @@ public SqlTransaction() {
  * @param conn java.sql.Connection
  * @exception java.sql.SQLException
  */
-public static void begin(Connection conn) throws java.sql.SQLException
-{
-	try
-	{
-          RDBMServices.setAutoCommit(conn, false);
-	}
-	catch (SQLException sqle)
-	{
-		log.error("Error beginning connection", sqle);
-		throw sqle;
-	}
+public static void begin(Connection conn) throws java.sql.SQLException {
+	/*
+	 * Previously this method was invoked in a try-catch SQLException block.
+	 * Prior to 2.5.1, RDBMS.setAutoCommit didn't actually throw SQLException, and
+	 * as of 2.5.1 its method declaration was corrected to reflect this.
+	 */
+    RDBMServices.setAutoCommit(conn, false);
 }
 /**
  * @param conn java.sql.Connection
  * @exception java.sql.SQLException
  */
-public static void commit(Connection conn) throws java.sql.SQLException
-{
-	try
-	{
-			RDBMServices.commit(conn);
-			RDBMServices.setAutoCommit(conn, true);
-
-	}
-	catch (SQLException sqle)
-	{
-		log.error("Error committing", sqle);
-		throw sqle;
-	}
+public static void commit(Connection conn) throws java.sql.SQLException {
+	/*
+	 * Previously this method was invoked in a try-catch SQLException block.
+	 * Prior to 2.5.1, RDBMS.commit() and RDBMS.setAutoCommit didn't actually 
+	 * throw SQLException, and as of 2.5.1 its method declaration was corrected 
+	 * to reflect this.
+	 */
+    RDBMServices.commit(conn);
+    RDBMServices.setAutoCommit(conn, true);
 }
 /**
  *
@@ -93,14 +85,13 @@ public static void rollback(Connection conn) throws java.sql.SQLException
  */
 public static void setAutoCommit(Connection conn, boolean newValue) throws java.sql.SQLException
 {
-	try
-	{
-          RDBMServices.setAutoCommit(conn, newValue);
-	}
-	catch (SQLException sqle)
-	{
-		log.error("Error setting auto commit to " + newValue, sqle);
-		throw sqle;
-	}
+	/*
+	 * Previously this method was invoked in a try-catch SQLException block.
+	 * Prior to 2.5.1, RDBMS.setAutocommit() didn't actually 
+	 * throw SQLException, and as of 2.5.1 its method declaration was corrected 
+	 * to reflect this.
+	 */
+    RDBMServices.setAutoCommit(conn, newValue);
 }
+
 }

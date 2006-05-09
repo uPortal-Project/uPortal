@@ -113,7 +113,16 @@ public class LoginServlet extends HttpServlet {
     // Clear out the existing session for the user if they have one
     final HttpSession s = request.getSession(false);
     if (s != null) {
-        s.invalidate();
+    	try {
+            s.invalidate();
+    	} catch (IllegalStateException ise) {
+    		// ISE indicates session was already invalidated.
+    		// This is fine.  This servlet trying to guarantee that the session has been invalidated;
+    		// it doesn't have to insist that it is the one that invalidated it.
+    		if (log.isTraceEnabled()) {
+    			log.trace("LoginServlet attempted to invalidate an already invalid session.", ise);
+    		}
+    	}
     }
     
   	//  Create the user's session

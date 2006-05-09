@@ -79,6 +79,13 @@
         </xsl:when>
         <xsl:otherwise>
           <focused>
+          	<!-- Detect whether a focused channel is present in the user's layout -->
+          	<xsl:attribute name="in-user-layout">
+          		<xsl:choose>
+          			<xsl:when test="//folder[@type='regular' and @hidden='false']/channel[@ID = $userLayoutRoot]">yes</xsl:when>
+          			<xsl:otherwise>no</xsl:otherwise>
+          		</xsl:choose>
+          	</xsl:attribute>
             <xsl:apply-templates select="//*[@ID = $userLayoutRoot]"/>
           </focused>
         </xsl:otherwise>

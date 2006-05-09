@@ -12,6 +12,9 @@ import java.io.PrintWriter;
  * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
  * @author <a href="mailto:nbolton@unicon.net">Nick Bolton</a>
  * @version $Revision$
+ * 
+ * @deprecated Use the IChannel* interfaces instead or write a portlet. For more information see: 
+ * http://www.ja-sig.org/wiki/display/UPC/Proposal+to+Deprecate+IMultithreaded+Interfaces
  */
 public interface IMultithreadedCharacterChannel extends IMultithreadedChannel {
     /**

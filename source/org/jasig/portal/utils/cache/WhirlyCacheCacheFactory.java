@@ -16,6 +16,7 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
 import com.whirlycott.cache.Cache;
+import com.whirlycott.cache.CacheConfiguration;
 import com.whirlycott.cache.CacheException;
 import com.whirlycott.cache.CacheManager;
 
@@ -57,7 +58,8 @@ public final class WhirlyCacheCacheFactory implements CacheFactory, Initializing
         
         try {
             log.debug(cacheName + LOG_MESSAGE_NOT_FOUND_IN_CACHE);
-            final Map map = new WhirlyCacheMap(this.cacheManager.getCache(cacheName));
+            final CacheConfiguration config = (CacheConfiguration)CacheManager.getConfiguration().get(cacheName);
+            final Map map = new WhirlyCacheMap(this.cacheManager.getCache(cacheName), config);
             this.caches.put(cacheName, map);
             return map;
         } catch (CacheException ce) {
@@ -71,7 +73,8 @@ public final class WhirlyCacheCacheFactory implements CacheFactory, Initializing
     }
 
     public void afterPropertiesSet() throws Exception {
-        this.caches.put(DEFAULT, new WhirlyCacheMap(this.cacheManager.getCache()));
+        final CacheConfiguration config = (CacheConfiguration)CacheManager.getConfiguration().get(DEFAULT);
+        this.caches.put(DEFAULT, new WhirlyCacheMap(this.cacheManager.getCache(), config));
     }
 
     public void destroy() throws Exception {
@@ -81,9 +84,29 @@ public final class WhirlyCacheCacheFactory implements CacheFactory, Initializing
     
     protected static final class WhirlyCacheMap implements Map {
         private final Cache cache;
+        private final int expirationTime;
         
-        protected WhirlyCacheMap(final Cache cache) {
+        protected WhirlyCacheMap(final Cache cache, final CacheConfiguration config) {
             this.cache = cache;
+            
+            if (config != null) {
+                final String exprTimeStr = config.getAttribute("expire-time");
+                
+                int tempExprTime = -1;
+                if (exprTimeStr != null) {
+                    try {
+                        tempExprTime = Integer.parseInt(exprTimeStr) * 1000; //Convert seconds to miliseconds
+                    }
+                    catch (NumberFormatException nfe) {
+                        log.warn("Invalid 'expire-time' specified in whirly cache configuration file for cache '" + config.getName() + "'", nfe);
+                    }
+                }
+                
+                this.expirationTime = tempExprTime;
+            }
+            else {
+                this.expirationTime = -1;
+            }
         }
         public void clear() {
             this.cache.clear();
@@ -114,7 +137,7 @@ public final class WhirlyCacheCacheFactory implements CacheFactory, Initializing
         }
 
         public Object put(final Object key, final Object value) {
-            this.cache.store(key, value);
+            this.cache.store(key, value, this.expirationTime);
             return value;
         }
 
@@ -122,7 +145,7 @@ public final class WhirlyCacheCacheFactory implements CacheFactory, Initializing
             for (final Iterator iter = map.keySet().iterator(); iter.hasNext();) {
                 final Object key = iter.next();
                 final Object value = map.get(key);
-                this.cache.store(key, value);
+                this.cache.store(key, value, this.expirationTime);
             }
         }
 

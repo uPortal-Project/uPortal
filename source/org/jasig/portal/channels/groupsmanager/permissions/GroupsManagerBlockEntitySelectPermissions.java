@@ -5,6 +5,7 @@
 
 package  org.jasig.portal.channels.groupsmanager.permissions;
 
+import org.jasig.portal.channels.groupsmanager.GroupsManagerConstants;
 import org.jasig.portal.channels.groupsmanager.IGroupsManagerPermissions;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.security.IAuthorizationPrincipal;
@@ -16,25 +17,39 @@ import org.jasig.portal.security.IAuthorizationPrincipal;
  * @author Don Fracapane
  * @version $Revision$
  */
-public class GroupsManagerBlockEntitySelectPermissions extends GroupsManagerDefaultPermissions {
+public class GroupsManagerBlockEntitySelectPermissions 
+        implements IGroupsManagerPermissions, GroupsManagerConstants {
+    
+    /**
+     * put your documentation comment here
+     */
+    public GroupsManagerBlockEntitySelectPermissions () {
+        new GroupsManagerBlockEntitySelectPermissions(GroupsManagerDefaultPermissions.getInstance());
+    }
 
    /**
     * put your documentation comment here
     */
-   public GroupsManagerBlockEntitySelectPermissions () {
+   public GroupsManagerBlockEntitySelectPermissions (IGroupsManagerPermissions pMgr) {
+       permMgr = pMgr;
    }
 
-   protected static IGroupsManagerPermissions _instance = null;
+   protected IGroupsManagerPermissions permMgr;
+   
+   public boolean canAssignPermissions (IAuthorizationPrincipal ap, IGroupMember gm) {
+       return  permMgr.canAssignPermissions(ap, gm);
+   }
 
-   /**
-    * Return the single instance of GroupsManagerBlockEntitySelectPermissions.
-    * @return IGroupsManagerPermissions
-    */
-   public static synchronized IGroupsManagerPermissions getInstance(){
-      if (_instance == null){
-         _instance = new GroupsManagerBlockEntitySelectPermissions();
-      }
-      return _instance;
+   public boolean canCreateGroup (IAuthorizationPrincipal ap, IGroupMember gm) {
+       return  permMgr.canCreateGroup(ap, gm);
+   }
+
+   public boolean canManageMembers (IAuthorizationPrincipal ap, IGroupMember gm) {
+       return  permMgr.canManageMembers(ap, gm);
+   }
+
+   public boolean canDelete (IAuthorizationPrincipal ap, IGroupMember gm) {
+       return  permMgr.canDelete(ap, gm);
    }
 
     /**
@@ -44,7 +59,19 @@ public class GroupsManagerBlockEntitySelectPermissions extends GroupsManagerDefa
     * @return boolean
     */
    public boolean canSelect (IAuthorizationPrincipal ap, IGroupMember gm) {
-      //throw new java.lang.UnsupportedOperationException("Method canSelect() not yet implemented.");
-      return  (gm.isGroup() && isAuthorized(ap, "SELECT", gm));
+       //throw new java.lang.UnsupportedOperationException("Method canSelect() not yet implemented.");
+       return  (gm.isGroup() && permMgr.canSelect(ap, gm));
+    }
+
+   public boolean canUpdate (IAuthorizationPrincipal ap, IGroupMember gm) {
+       return  permMgr.canUpdate(ap, gm);
+   }
+
+   public boolean canView (IAuthorizationPrincipal ap, IGroupMember gm) {
+       return  permMgr.canView(ap, gm);
+   }
+
+   public boolean canViewProperties (IAuthorizationPrincipal ap, IGroupMember gm) {
+       return  permMgr.canViewProperties(ap, gm);
    }
 }

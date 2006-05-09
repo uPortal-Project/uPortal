@@ -18,4 +18,6 @@ import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
  * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
  * @version 1.0 $Revision$ $Date$
  */
-public interface IALNodeDescription extends IUserLayoutNodeDescription, IALNodeProperties {};
+public interface IALNodeDescription extends IUserLayoutNodeDescription, IALNodeProperties {
+	
+}

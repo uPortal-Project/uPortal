@@ -69,7 +69,12 @@ Version $Revision$
     <!-- match registry and recursively build the tree -->
     <!--~-->
     <xsl:template match="registry">
-        <xsl:apply-templates/>
+        <xsl:apply-templates select="category">
+            <xsl:sort select="@name"/>
+        </xsl:apply-templates>            
+        <xsl:apply-templates select="fragments">
+            <xsl:sort select="@name"/>
+        </xsl:apply-templates>            
     </xsl:template>
     <!--~-->
     <!-- tab line table template - draws the browse/search buttons. -->
@@ -1223,7 +1228,12 @@ Version $Revision$
                         </td>
                     </tr>
                 </table>
-                <xsl:apply-templates/>
+                <xsl:apply-templates select="category">
+                    <xsl:sort select="@name"/>
+                </xsl:apply-templates>
+                <xsl:apply-templates select="channel">
+                    <xsl:sort select="@title"/>
+                </xsl:apply-templates>
                 <!-- <xsl:apply-templates select="category"/>
                 <xsl:apply-templates select="channel"/> -->
             </xsl:when>

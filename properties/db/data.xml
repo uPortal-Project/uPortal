@@ -10,7 +10,7 @@
         <column><name>FNAME</name><value>UP_FRAMEWORK</value></column>
         <column><name>MAJOR</name><value>2</value></column>
         <column><name>MINOR</name><value>5</value></column>
-        <column><name>MICRO</name><value>0</value></column>
+        <column><name>MICRO</name><value>1</value></column>
         <column><name>DESCRIPTION</name><value>The uPortal Framework.</value></column>
       </row>
     </rows>
@@ -1104,7 +1104,7 @@
         <column><name>CHAN_TITLE</name><value>Session Locale Selector</value></column>
         <column><name>CHAN_NAME</name><value>Session Locale Selector</value></column>
         <column><name>CHAN_DESC</name><value>A tool for selecting a locale</value></column>
-        <column><name>CHAN_CLASS</name><value>org.jasig.portal.channels.layout.locales.CSessionLocalesSelector</value></column>
+        <column><name>CHAN_CLASS</name><value>org.jasig.portal.layout.channels.locales.CSessionLocalesSelector</value></column>
         <column><name>CHAN_TYPE_ID</name><value>-1</value></column>
         <column><name>CHAN_PUBL_ID</name><value>0</value></column>
         <column><name>CHAN_PUBL_DT</name><value>SYSDATE</value></column>
@@ -1285,7 +1285,7 @@
         <column><name>CHAN_ID</name><value>7</value></column>
         <column><name>CHAN_PARM_NM</name><value>xmlUri</value></column>
         <column><name>CHAN_PARM_DESC</name><value></value></column>
-        <column><name>CHAN_PARM_VAL</name><value>http://jasigch.princeton.edu/static/jasigdev.rss</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>http://uportal.org/rss/news/index.xml</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
       <row>
@@ -1301,7 +1301,7 @@
         <column><name>CHAN_ID</name><value>8</value></column>
         <column><name>CHAN_PARM_NM</name><value>url</value></column>
         <column><name>CHAN_PARM_DESC</name><value></value></column>
-        <column><name>CHAN_PARM_VAL</name><value>http://mis105.mis.udel.edu/ja-sig/uportal/</value></column>
+        <column><name>CHAN_PARM_VAL</name><value>http://uportal.org/</value></column>
         <column><name>CHAN_PARM_OVRD</name><value>N</value></column>
       </row>
       <row>
@@ -3853,8 +3853,8 @@
         <column><name>PROFILE_NAME</name><value>HTML browser profile</value></column>
         <column><name>DESCRIPTION</name><value>A sample profile for common web browsers</value></column>
         <column><name>LAYOUT_ID</name><value>1</value></column>
-        <column><name>STRUCTURE_SS_ID</name>4</column>
-        <column><name>THEME_SS_ID</name>3</column>
+        <column><name>STRUCTURE_SS_ID</name><value>4</value></column>
+        <column><name>THEME_SS_ID</name><value>3</value></column>
       </row>
     </rows>
   </table>
