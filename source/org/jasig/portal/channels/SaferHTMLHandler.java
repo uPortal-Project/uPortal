@@ -84,6 +84,10 @@ public class SaferHTMLHandler implements ContentHandler{
 			}
 			Element temp = doc.createElement(qName);
 			
+			/*
+			 * TODO: Need to validate all attribute values that contain urls to make 
+			 * sure they don't contain javascript.
+			 */
 			// add attributes that are allowed
 			int length = atts.getLength();
 			for (int i = 0; i< length; i++){
