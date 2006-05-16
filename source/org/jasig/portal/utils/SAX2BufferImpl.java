@@ -240,24 +240,25 @@ public class SAX2BufferImpl extends SAX2FilterImpl
           final int type = ((Integer)types.nextElement()).intValue();
 
           // ContentHandler events
-          if (ISTARTDOCUMENT == type) {
-              ch.startDocument ();
-          } else if (IENDDOCUMENT == type) {
-              ch.endDocument ();
+          if (ISTARTELEMENT == type) {
+              final StartElementData sed = (StartElementData) args.nextElement ();
+              ch.startElement (sed.getURI(), sed.getLocalName(), sed.getQName(),sed.getAtts());
+          } else  if (IENDELEMENT == type) {
+              final ThreeString ths = (ThreeString) args.nextElement ();
+              ch.endElement (ths.first,ths.second,ths.third);
           } else if (ISTARTPREFIXMAPPING == type) {
               final TwoString ts=(TwoString) args.nextElement();
               ch.startPrefixMapping(ts.first,ts.second);
-          } else if (IENDPREFIXMAPPING == type) {
-              ch.endPrefixMapping((String)args.nextElement());
-          } else if (ISTARTELEMENT == type) {
-              final StartElementData sed = (StartElementData) args.nextElement ();
-              ch.startElement (sed.getURI(), sed.getLocalName(), sed.getQName(),sed.getAtts());
-          } else if (IENDELEMENT == type) {
-              final ThreeString ths = (ThreeString) args.nextElement ();
-              ch.endElement (ths.first,ths.second,ths.third);
           } else if (ICHARACTERS == type) {
               final CharBlock cd = (CharBlock) args.nextElement ();
               ch.characters (cd.getCh(), cd.getStart(), cd.getLength());
+          } else if (ISTARTDOCUMENT == type) {
+              ch.startDocument ();
+          } else if (IENDDOCUMENT == type) {
+              ch.endDocument ();
+
+          } else if (IENDPREFIXMAPPING == type) {
+              ch.endPrefixMapping((String)args.nextElement());
           } else if (IIGNORABLEWHITESPACE == type) {
               final CharBlock cd = (CharBlock) args.nextElement ();
               ch.ignorableWhitespace (cd.getCh(), cd.getStart(), cd.getLength());
@@ -328,7 +329,7 @@ public class SAX2BufferImpl extends SAX2FilterImpl
               break;
 
              default:
-               throw new SAXException("org.jasig.portal.utils.SAX2BufferImpl::outputBuffer: unexpected element type " +
+               throw new RuntimeException("org.jasig.portal.utils.SAX2BufferImpl::outputBuffer: unexpected element type " +
                    type + " encountered in SAX stream");
             }
           }
