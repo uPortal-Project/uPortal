@@ -1,13 +1,15 @@
 <?xml version="1.0"?>
+<!DOCTYPE servicelist PUBLIC "-//uPortal//Services/EN" "services.dtd">
+
 <!-- $Revision$ -->
 
 <!--
   This list of services is processed by org.jasig.portal.services.ExternalServices.
   When uPortal is started, it will attempt to fire up all the services listed here.
-  
+
   Each specification includes a class name, an optional description of initialization
   method and jndi binding name.
-  External services will initialize each service (by either calling a constructor or 
+  External services will initialize each service (by either calling a constructor or
   an initialization method, if such is provided). If jndi binding name is provided
   either an instance of the specified class, or an object returned by the intialization
   method (if such method was specified) will be bound under the portal /services jndi
@@ -16,7 +18,7 @@
 
 <servicelist>
 
-  <!-- A a functional example of a logger service 
+  <!-- A functional example of a logger service
   -->
   <service>
     <name>LogService</name>
