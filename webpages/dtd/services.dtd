@@ -40,7 +40,7 @@ $Revision$
 <!-- specified using the format specified in this DTD.         -->
 
 <!ELEMENT servicelist (service)*>
-<!ELEMENT service (name, class, method, arguments)>
+<!ELEMENT service (name, class, jndi_name, (method, arguments)?)>
 
 <!-- The descriptive name of the service (for display and log purposes) -->
 
@@ -50,11 +50,15 @@ $Revision$
 
 <!ELEMENT class (#PCDATA)>
 
+<!-- jndi name to bind with-->
+
+<!ELEMENT jndi_name (#PCDATA)>
+
 <!-- The method that would start the service  -->
 
 <!ELEMENT method (#PCDATA)>
 <!ATTLIST method
-  type static #IMPLIED
+  type CDATA ""
 >
 
 <!-- Arguments to the start method -->
