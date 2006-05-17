@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE channelDef PUBLIC "-//uPortal//Channel Publishing/EN" "channelPublishing.dtd">
 
 <!--
 Copyright (c) 2004 The JA-SIG Collaborative.  All rights reserved.
@@ -65,14 +66,14 @@ Version $Revision: 1.1 $
         <description>
           The syntax for the portlet definition ID is the name of the
           portlet application context name, followed by a period, followed by
-          the name of the portlet as defined in the portlet deployment descriptor 
+          the name of the portlet as defined in the portlet deployment descriptor
           (portlet.xml). For example, if the portlet is located in a file called
-          \n\nMyPortletApp.war\n\n and the portlet has a name of 
-          \n\nMyFirstPortlet\n\n then the portlet definition ID would be 
+          \n\nMyPortletApp.war\n\n and the portlet has a name of
+          \n\nMyFirstPortlet\n\n then the portlet definition ID would be
           \n\nMyPortletApp.MyFirstPortlet\n\n
         </description>
       </parameter>
-      
+
     </step>
 
     <step>
@@ -84,11 +85,11 @@ Version $Revision: 1.1 $
         These are the preferences of the portlet itself.  There may
         be zero or more preferences.
       </description>
-      
+
       <arbitrary-parameters>
         <paramName-prefix>PORTLET.</paramName-prefix>
       </arbitrary-parameters>
-      
+
     </step>
 
   </params>

@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE channelDef PUBLIC "-//uPortal//Channel Publishing/EN" "channelPublishing.dtd">
 
 <!--
 Copyright (c) 2001 The JA-SIG Collaborative.  All rights reserved.
@@ -85,7 +86,7 @@ Version $Revision$
       </parameter>
 
     </step>
-    
+
     <step>
       <ID>2</ID>
 
@@ -98,7 +99,7 @@ Version $Revision$
       <parameter modify="publish-only">
         <name>width</name>
         <label>Width</label>
-        <units>pixels</units>        
+        <units>pixels</units>
         <type base="string" input="text" display="text">
           <length>3</length>
           <maxlength>5</maxlength>
@@ -117,8 +118,8 @@ Version $Revision$
         <example>195</example>
       </parameter>
 
-    </step> 
-    
+    </step>
+
     <step>
       <ID>3</ID>
 
@@ -128,13 +129,13 @@ Version $Revision$
         These are the parameters needed for the applet itself.  There may
         be zero or more parameters.
       </description>
-      
+
       <arbitrary-parameters>
         <paramName-prefix>APPLET.</paramName-prefix>
       </arbitrary-parameters>
-      
-    </step>     
-       
+
+    </step>
+
   </params>
 
   <controls>

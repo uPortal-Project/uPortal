@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE channelDef PUBLIC "-//uPortal//Channel Publishing/EN" "channelPublishing.dtd">
 
 <!--
 Copyright (c) 2001 The JA-SIG Collaborative.  All rights reserved.
@@ -99,7 +100,7 @@ Version $Revision$
           </restriction>
         </type>
       </parameter>
-	  
+
       <parameter modify="publish">
         <name>viewNum</name>
           <label>Maximum number of items to display</label>
@@ -131,7 +132,7 @@ Version $Revision$
           <defaultValue>900</defaultValue>
 
       </parameter>
-      
+
       <parameter modify="publish-only">
         <name>upc_localConnContext</name>
         <label>LocalConnectionContext implementation (upc_localConnContext)</label>
@@ -151,7 +152,7 @@ Version $Revision$
       </parameter>
 
     </step>
-    
+
           <step>
       <ID>2</ID>
 
@@ -162,13 +163,13 @@ Version $Revision$
       <description>
         In order to prevent end users from pointing a CGenericXSLT instance
         at arbitrary URIs, CGenericXSLT contrains the xmlUri to be
-        an http:// or https:// URI by default.  You can customize these 
+        an http:// or https:// URI by default.  You can customize these
         constraints by supplying allow and deny prefixes.
       </description>
 
       <parameter modify="publish-only">
         <name>upc_allow_xmlUri_prefixes</name>
-        <label>Whitespace delimited XML URI prefixes to allow.  
+        <label>Whitespace delimited XML URI prefixes to allow.
         Do not allow file:/ lightly.</label>
         <type base="string" input="text" display="text">
 
@@ -202,7 +203,7 @@ Version $Revision$
         <defaultValue></defaultValue>
 
       </parameter>
-      
+
       <parameter modify="publish-only">
         <name>restrict_xmlUri_inStaticData</name>
         <label>Restrict xmlUri as presented in ChannelStaticData.</label>
@@ -211,9 +212,9 @@ Version $Revision$
 	        <value>true</value>
 	        <value>false</value>
 	        <defaultValue>false</defaultValue>
-	      </restriction>                              
-	    </type>   
-	    
+	      </restriction>
+	    </type>
+
 	    <description>
 	    True restricts both in ChannelStaticData and in ChannelRuntimeData.
         False restricts in only ChannelRuntimeData.  It is important to
@@ -225,7 +226,7 @@ Version $Revision$
       </step>
 
     </params>
-    
+
 
   <controls>
     <control type="edit" include="no" override="no"/>

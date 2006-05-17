@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE channelDef PUBLIC "-//uPortal//Channel Publishing/EN" "channelPublishing.dtd">
+
 <!--
 Copyright (c) 2001 The JA-SIG Collaborative.  All rights reserved.
 Redistribution and use in source and binary forms, with or without
@@ -60,7 +62,7 @@ Version $Revision$
           <maxlength>2000</maxlength>
         </type>
         <example>http://localhost:8080/examples/jsp/num/numguess.jsp</example>
-        <description>Note that if you configure this parameter to be 
+        <description>Note that if you configure this parameter to be
         configurable at subscribe time, you should also configure the XML
         URI restrictions to apply to ChannelStaticData.</description>
       </parameter>
@@ -186,8 +188,8 @@ Version $Revision$
 	    <value></value>
 	    <value>none</value>
 	    <value>all</value>
-	  </restriction>                                
-	</type>                                        
+	  </restriction>
+	</type>
     <defaultValue></defaultValue>
       </parameter>
 
@@ -222,8 +224,8 @@ Version $Revision$
       </parameter>
 
     </step>
-    
-    
+
+
     <step>
       <ID>2</ID>
 
@@ -242,7 +244,7 @@ Version $Revision$
         <defaultValue>http:// https://</defaultValue>
         <description>
         Optional static data only parameter specifying allowable prefixes
-        for URIs accessed by this channel.  This channel will only use URIs 
+        for URIs accessed by this channel.  This channel will only use URIs
         with these prefixes for obtaining XML and XSLT for use in
         rendering.  Whitespace delimit allowed prefixes.  Effectively
         defaults to "http:// https://"; do not allow "file:/" lightly.
@@ -261,7 +263,7 @@ Version $Revision$
         <description>
         Optional static data only parameter further restricting which
         URIs this channel will use to obtain XML and XSLT.  This channel
-        will not use URIs matching prefixes specified in this 
+        will not use URIs matching prefixes specified in this
         whitespace-delimited parameter.  Effectively defaults to "".
         </description>
       </parameter>
@@ -274,8 +276,8 @@ Version $Revision$
 	        <value>true</value>
 	        <value>false</value>
 	        <defaultValue>false</defaultValue>
-	      </restriction>                              
-	    </type>   
+	      </restriction>
+	    </type>
 	    <description>
         True restricts both in ChannelStaticData and in ChannelRuntimeData.
         False restricts in only ChannelRuntimeData.  It is important to
@@ -284,7 +286,7 @@ Version $Revision$
 	    </description>
       </parameter>
     </step>
-    
+
 
   </params>
 
