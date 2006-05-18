@@ -1883,7 +1883,6 @@ public class RDBMDistributedLayoutStore
             NodeList parameters = node.getChildNodes();
             if (parameters != null)
             {
-                ChannelDefinition channelDef = crs.getChannelDefinition(chanId);
                 for (int i = 0; i < parameters.getLength(); i++)
                 {
                     if (parameters.item(i).getNodeName().equals("parameter"))
@@ -1901,6 +1900,10 @@ public class RDBMDistributedLayoutStore
                             // can't override
                         } else
                         {
+                            ChannelDefinition channelDef = crs.getChannelDefinition(chanId);
+                            if (channelDef == null){
+                            	log.error("chanDef is null for chanId: "+chanId +" for node:" +node.getTextContent() +","+node.getNodeName());
+                            }
                             // override only for adhoc or if diff from chan def
                             ChannelParameter cp = channelDef.getParameter(parmName);
                             if (cp == null || !cp.getValue().equals(parmValue))

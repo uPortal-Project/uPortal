@@ -208,7 +208,7 @@ public class SimpleLayout implements IUserLayout {
             XPathFactory fac = XPathFactory.newInstance();
             XPath xpath = fac.newXPath();
             Element rootNodeE = (Element) xpath.evaluate(expression, layout, 
-                    XPathConstants.NODESET);
+                    XPathConstants.NODE);
             
             rootNode = rootNodeE.getAttribute("ID");
         } catch (Exception e) {
