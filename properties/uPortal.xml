@@ -18,6 +18,7 @@
     <parameter><name>url</name><value>@jdbcUrl@</value></parameter>
     <parameter><name>username</name><value>@jdbcUser@</value></parameter>
     <parameter><name>password</name><value>@jdbcPassword@</value></parameter>
+    <parameter><name>poolPreparedStatements</name><value>@poolPreparedStatements@</value></parameter>
 
   </ResourceParams>
 
@@ -38,6 +39,7 @@
     <parameter><name>url</name><value>@jdbcUrl@</value></parameter>
     <parameter><name>username</name><value>@jdbcUser@</value></parameter>
     <parameter><name>password</name><value>@jdbcPassword@</value></parameter>
+    <parameter><name>poolPreparedStatements</name><value>@poolPreparedStatements@</value></parameter>
 
   </ResourceParams>
 

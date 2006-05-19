@@ -11,12 +11,12 @@ import org.apache.commons.dbcp.BasicDataSource;
 
 
 /**
- * DBCPDataSourceFactory produces an instance of {@link BasicDataSource} 
+ * DBCPDataSourceFactory produces an instance of {@link BasicDataSource}
  * for the given driver class name, username, password, and URL, defaulting
  * the maxActive, maxIdle, and maxWait properties.
- * 
+ *
  * This class is final because it is not designed to be subclassed.
- * 
+ *
  * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
  * @version $Revision$ $Date$
  * @since uPortal 2.5
@@ -26,20 +26,22 @@ public final class DBCPDataSourceFactory implements IPooledDataSourceFactory {
     public DataSource createPooledDataSource(final String driverClassName,
                                              final String userName,
                                              final String password,
-                                             final String url) {
-        
+                                             final String url,
+                                             final boolean poolPreparedStatements) {
+
         final BasicDataSource ds = new BasicDataSource();
-        
+
         ds.setDriverClassName(driverClassName);
         ds.setUsername(userName);
         ds.setPassword(password);
         ds.setUrl(url);
-        
+        ds.setPoolPreparedStatements(poolPreparedStatements);
+
         //TODO Create a properties file to for DBCP
-        
+
         // I'd like to see us move to using Spring to produce and manage our
         // DataSource singletons rather than creating another properties file for
-        // the configuration of this use of DBCP.  
+        // the configuration of this use of DBCP.
         //
         // Think of Spring as the ultimate DataSource factory.  Want some particular
         // configuration of one of the standard dbcp DataSource implementations?
@@ -49,11 +51,11 @@ public final class DBCPDataSourceFactory implements IPooledDataSourceFactory {
         // in this package isn't buying us much beyond what we'd get if we wired
         // together singleton DataSources directly in our Spring configuration.
         // -Andrew Petro
-        
+
         ds.setMaxActive(100);
         ds.setMaxIdle(30);
         ds.setMaxWait(10000);
-        
+
         return ds;
     }
 }

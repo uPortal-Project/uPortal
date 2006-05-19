@@ -6,12 +6,14 @@
   <Resource name="jdbc/PortalDb" auth="Container" type="javax.sql.DataSource"
     username="@jdbcUser@" password="@jdbcPassword@"
     driverClassName="@jdbcDriver@" url="@jdbcUrl@"
-    maxActive="100" maxIdle="30" maxWait="10000"/>
+    maxActive="100" maxIdle="30" maxWait="10000"
+    poolPreparedStatements="@poolPreparedStatements@" />
 
   <Resource name="jdbc/PersonDb" auth="Container" type="javax.sql.DataSource"
     username="@jdbcUser@" password="@jdbcPassword@"
     driverClassName="@jdbcDriver@" url="@jdbcUrl@"
-    maxActive="100" maxIdle="30" maxWait="10000"/>
+    maxActive="100" maxIdle="30" maxWait="10000"
+    poolPreparedStatements="@poolPreparedStatements@" />
 
     <!-- Disables restart persistence of sessions -->
     <Manager pathname=""/>
