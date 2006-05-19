@@ -31,24 +31,26 @@ import org.jasig.portal.rdbm.pool.IPooledDataSourceFactory;
 import org.jasig.portal.rdbm.pool.PooledDataSourceFactoryFactory;
 import org.springframework.dao.DataAccessResourceFailureException;
 
+import edu.emory.mathcs.backport.java.util.concurrent.atomic.AtomicInteger;
+
 
 
 /**
  * Provides relational database access and helper methods.
  * A static routine determines if the database/driver supports
  * prepared statements and/or outer joins.
- * 
+ *
  * <p>This class provides database access as a service.  Via the class, uPortal
  * code can obtain a connection to the core uPortal database as well as to other
  * databases available via JNDI.  (Doing that JNDI lookup directly allows your
- * code to avoid dependence upon this class.)  This class provides 
+ * code to avoid dependence upon this class.)  This class provides
  * traditional getConnection() methods as well as static covers for getting a
  * reference to the backing DataSource.</p>
- * 
+ *
  * <p>This class also provides helper methods for manipulating connections.
  * Mostof the methods are wrappers around methods on the underlying Connection
- * that handle (log and swallow) the SQLExceptions that the underlying methods 
- * declare to be thrown (these helpers also catch 
+ * that handle (log and swallow) the SQLExceptions that the underlying methods
+ * declare to be thrown (these helpers also catch
  * and log RuntimeExceptions encountered).  They provide an alternative to trying
  * and catching those methods using the JDBC APIs directly.</p>
  *
@@ -75,16 +77,15 @@ public class RDBMServices {
 
     private static Map namedDataSources =  Collections.synchronizedMap(new HashMap());
     private static Map namedDbServerFailures = Collections.synchronizedMap(new HashMap());
-    
+
     /* info legacy utilities */
     private static String jdbcUrl;
     private static String jdbcUser;
     private static String jdbcDriver;
-    
+
     private static IDatabaseMetadata dbMetaData = null;
 
-    private static final Object SYNC_OBJECT = new Object();
-    private static int activeConnections;
+    private static AtomicInteger activeConnections = new AtomicInteger();
 
 
 
@@ -97,7 +98,7 @@ public class RDBMServices {
     public static DataSource getDataSource() {
         return getDataSource(PORTAL_DB);
     }
-    
+
     /**
      * Gets a named DataSource from JNDI, with special handling for the PORTAL_DB
      * datasource. Successful lookups
@@ -105,22 +106,22 @@ public class RDBMServices {
      * for a
      * number of milliseconds specified by {@link #JNDI_RETRY_TIME} to reduce
      * JNDI overhead and log spam.
-     * 
-     * There are two ways in which we handle the core uPortal DataSource 
+     *
+     * There are two ways in which we handle the core uPortal DataSource
      * specially.
-     * 
+     *
      * We determine and remember metadata in an DbMetaData object for the core
      * uPortal DataSource.  We do not compute this DbMetaData for any other
      * DataSource.
-     * 
-     * We fall back on using rdbm.properties to construct our core uPortal 
+     *
+     * We fall back on using rdbm.properties to construct our core uPortal
      * DataSource in the case where we cannot find it from JNDI.  If the portal
-     * property org.jasig.portal.RDBMServices.getDatasourceFromJNDI is true, 
-     * we first 
+     * property org.jasig.portal.RDBMServices.getDatasourceFromJNDI is true,
+     * we first
      * first try to get the connection by looking in the
      * JNDI context for the name defined by the portal property
      * org.jasig.portal.RDBMServices.PortalDatasourceJndiName .
-     * 
+     *
      * If we were not configured to check JNDI or we didn't find it in JNDI having
      * checked, we then fall back on rdbm.properties.
      *
@@ -131,22 +132,22 @@ public class RDBMServices {
         final String PROP_FILE = "/properties/rdbm.properties";
 
         if (DEFAULT_DATABASE.equals(name)) {
-            name = PORTAL_DB; 
+            name = PORTAL_DB;
         }
-        
+
         DataSource ds = (DataSource)namedDataSources.get(name);
-        
+
         // if already have a dtasource just return it
         if (ds!=null) return ds;
-        
+
         // For non default database cache the datasource and return it
         if (!PORTAL_DB.equals(name)) {
             ds = getJndiDataSource(name);
             namedDataSources.put(name,ds);
             // For non default database return whatever we have (could be null)
-            return ds;  
+            return ds;
         }
-           
+
         // portal database is special - create metadata object too.
         if (getDatasourceFromJndi) {
             ds = getJndiDataSource(name);
@@ -155,15 +156,15 @@ public class RDBMServices {
                     LOG.info("Creating DataSource instance for " + name);
                 dbMetaData = new DatabaseMetaDataImpl(ds);
                 namedDataSources.put(name, ds);
-                return ds; 
-                }                               
+                return ds;
+                }
             }
-        
+
         // get here if not getDatasourceFromJndi OR jndi lookup returned null
         // try to get datasource via properties
         try {
             final InputStream jdbcPropStream = RDBMServices.class.getResourceAsStream(PROP_FILE);
-            
+
             try {
                 final Properties jdbpProperties = new Properties();
                 jdbpProperties.load(jdbcPropStream);
@@ -174,18 +175,20 @@ public class RDBMServices {
                 final String username = jdbpProperties.getProperty("jdbcUser");
                 final String password = jdbpProperties.getProperty("jdbcPassword");
                 final String url = jdbpProperties.getProperty("jdbcUrl");
-                boolean usePool = true; 
+                boolean usePool = true;
                 if (jdbpProperties.getProperty("jdbcUsePool")!=null)
                     usePool = Boolean.valueOf(jdbpProperties.getProperty("jdbcUsePool")).booleanValue();
+
 
                 if (usePool) {
                     //Try using a pooled DataSource
                     try {
-                        ds = pdsf.createPooledDataSource(driverClass, username, password, url);
+                    	final boolean poolPreparedStatements = Boolean.valueOf(jdbpProperties.getProperty("poolPreparedStatements")).booleanValue();
+                        ds = pdsf.createPooledDataSource(driverClass, username, password, url, poolPreparedStatements);
 
                         if (LOG.isInfoEnabled())
                             LOG.info("Creating DataSource instance for pooled JDBC");
-                        
+
                         namedDataSources.put(PORTAL_DB,ds);
                         jdbcUrl = url;
                         jdbcUser = username;
@@ -205,7 +208,7 @@ public class RDBMServices {
 
                         if (LOG.isInfoEnabled())
                             LOG.info("Creating DataSource for JDBC native");
-                        
+
                         namedDataSources.put(PORTAL_DB,ds);
                         jdbcUrl = url;
                         jdbcUser = username;
@@ -220,7 +223,7 @@ public class RDBMServices {
             finally {
                 jdbcPropStream.close();
             }
-            
+
         }
         catch (IOException ioe) {
             LOG.error("An error occured while reading " + PROP_FILE, ioe);
@@ -231,28 +234,28 @@ public class RDBMServices {
         }
         return ds;
        }
-        
+
     /**
      * Does the JNDI lookup and returns datasource
      * @param name
      * @return
      */
     private static DataSource getJndiDataSource(String name) {
-    
+
         final Long failTime = (Long)namedDbServerFailures.get(name);
         DataSource ds = null;
-    
+
         if (failTime == null || (failTime.longValue() + JNDI_RETRY_TIME) <= System.currentTimeMillis()) {
             if (failTime != null) {
                 namedDbServerFailures.remove(name);
             }
-    
+
             try {
                 final Context initCtx = new InitialContext();
                 final Context envCtx = (Context)initCtx.lookup("java:comp/env");
                 ds = (DataSource)envCtx.lookup("jdbc/" + name);
-    
- 
+
+
             }
             catch (Throwable t) {
                 //Cache the failure to decrease lookup attempts and reduce log spam.
@@ -265,7 +268,7 @@ public class RDBMServices {
             if (LOG.isDebugEnabled()) {
                 final long waitTime = (failTime.longValue() + JNDI_RETRY_TIME) - System.currentTimeMillis();
                 LOG.debug("Skipping lookup on failed JNDI lookup for name (" + name + ") for approximately " + waitTime + " more milliseconds.");
-    
+
             }
         }
         return ds;
@@ -276,7 +279,7 @@ public class RDBMServices {
      * @return int
      */
     public static int getActiveConnectionCount() {
-      return activeConnections;
+      return activeConnections.intValue();
     }
 
     /**
@@ -295,7 +298,7 @@ public class RDBMServices {
      * JNDI context.  The DataSource should be configured and
      * loaded into JNDI by the J2EE container or may be the portal
      * default database.
-     * 
+     *
      * @param dbName the database name which will be retrieved from
      *   the JNDI context relative to "jdbc/"
      * @return a database Connection object or <code>null</code> if no Connection
@@ -308,13 +311,12 @@ public class RDBMServices {
     	if (ds==null) {
     		ds = getDataSource(dbName);
     	}
-    	
+
     	if (ds != null) {
-    		synchronized(SYNC_OBJECT) {
-    			activeConnections++;
-    		}
     		try {
-    			return ds.getConnection();
+    			final Connection c = ds.getConnection();
+      			activeConnections.incrementAndGet();
+    			return c;
     		} catch (SQLException e) {
     			throw new DataAccessResourceFailureException
     			("RDBMServices sql error trying to get connection to "+dbName,e);
@@ -333,9 +335,7 @@ public class RDBMServices {
      */
     public static void releaseConnection(final Connection con) {
         try {
-          synchronized(SYNC_OBJECT) {
-            activeConnections--;
-          }
+            activeConnections.decrementAndGet();
 
             con.close();
         }
@@ -410,7 +410,7 @@ public class RDBMServices {
      * Set auto commit state for the connection.
      * Unlike the underlying connection.setAutoCommit(), this method does not
      * throw SQLException or any other Exception.  It fails silently from the
-     * perspective of calling code, logging any errors encountered using 
+     * perspective of calling code, logging any errors encountered using
      * Commons Logging.
      * @param connection
      * @param autocommit
@@ -524,7 +524,7 @@ public class RDBMServices {
             }
         }
     }
-    
+
     /**
      * Get metadata about the default DataSource.
      * @return metadata about the default DataSource.
