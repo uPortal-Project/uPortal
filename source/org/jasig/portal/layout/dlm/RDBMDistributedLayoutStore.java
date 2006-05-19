@@ -1881,7 +1881,7 @@ public class RDBMDistributedLayoutStore
                 }
             }
             NodeList parameters = node.getChildNodes();
-            if (parameters != null)
+            if (parameters != null && isChannel)
             {
                 ChannelDefinition channelDef = crs.getChannelDefinition(chanId);
                 for (int i = 0; i < parameters.getLength(); i++)
