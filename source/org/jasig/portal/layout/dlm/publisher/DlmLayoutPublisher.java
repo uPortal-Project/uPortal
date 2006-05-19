@@ -1,3 +1,8 @@
+/* Copyright 2006 The JA-SIG Collaborative.  All rights reserved.
+*  See license distributed with this file and
+*  available online at http://www.uportal.org/license.html
+*/
+
 package org.jasig.portal.layout.dlm.publisher;
 
 import java.io.File;
@@ -5,20 +10,16 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collections;
 import java.util.Enumeration;
-import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.SAXParser;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.xpath.NodeSet;
 
 import org.jasig.portal.ChannelDefinition;
 import org.jasig.portal.ChannelRegistryStoreFactory;
@@ -43,7 +44,6 @@ import org.jasig.portal.security.PersonFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class DlmLayoutPublisher {
@@ -348,8 +348,7 @@ public class DlmLayoutPublisher {
         ChannelDefinition def = null;
         try {
 
-            ChannelRegistryStoreFactory fac = new ChannelRegistryStoreFactory();
-            IChannelRegistryStore store = fac.getChannelRegistryStoreImpl();
+            IChannelRegistryStore store = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl();
             def = store.getChannelDefinition(fName);
 
             if (def == null) {

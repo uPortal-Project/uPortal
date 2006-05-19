@@ -1,12 +1,14 @@
+/* Copyright 2006 The JA-SIG Collaborative.  All rights reserved.
+*  See license distributed with this file and
+*  available online at http://www.uportal.org/license.html
+*/
+
 package org.jasig.portal.layout.dlm.publisher;
 
 import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.util.Enumeration;
 
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -35,13 +37,9 @@ import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.layout.node.UserLayoutFolderDescription;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
-import org.jasig.portal.serialize.OutputFormat;
-import org.jasig.portal.serialize.XMLSerializer;
 import org.jasig.portal.utils.DocumentFactory;
-import org.jasig.portal.utils.XML;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 public class DlmLayoutExporter {
 
@@ -99,21 +97,15 @@ public class DlmLayoutExporter {
                     populateChildren(rootFolderElement, (IUserLayoutFolderDescription) root, dlm, ssup);
 
                     // Write to the indicated file...
-// JAXP seralizing, doesn't indent
-//                    TransformerFactory xformFactory 
-//                     = TransformerFactory.newInstance();
-//                    Transformer idTransform = xformFactory.newTransformer();
-//                    Source input = new DOMSource(doc);
-//                    Result output = new StreamResult(new FileOutputStream(args[1]));
-//                    idTransform.transform(input, output);       
-                    
-// alternative uportal serializing                    
-                    Writer outString = new FileWriter(args[1]);
-                    OutputFormat of = new OutputFormat();
-                    of.setIndenting(true);
-                    of.setPreserveSpace(false);
-                    XMLSerializer xsl = new XMLSerializer(outString, of);
-                    xsl.serialize(doc);
+                    // JAXP seralizing
+                    TransformerFactory xformFactory 
+                      = TransformerFactory.newInstance();
+                    Transformer idTransform = xformFactory.newTransformer();
+                    Source input = new DOMSource(doc);
+                    Result output = new StreamResult(new FileOutputStream(args[1]));
+                    idTransform.setOutputProperty(OutputKeys.INDENT,"yes");
+                   	idTransform.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+                    idTransform.transform(input, output);       
                     
                 } catch (Throwable t) {
                     log.error("The exporter tool terminated unexpectedly.", t);
