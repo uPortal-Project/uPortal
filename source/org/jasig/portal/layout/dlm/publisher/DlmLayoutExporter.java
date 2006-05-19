@@ -97,7 +97,7 @@ public class DlmLayoutExporter {
                     populateChildren(rootFolderElement, (IUserLayoutFolderDescription) root, dlm, ssup);
 
                     // Write to the indicated file...
-                    // JAXP seralizing
+                    // JAXP serializing
                     TransformerFactory xformFactory 
                       = TransformerFactory.newInstance();
                     Transformer idTransform = xformFactory.newTransformer();
