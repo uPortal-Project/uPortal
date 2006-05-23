@@ -70,25 +70,9 @@ public class CInlineFrame extends BaseChannel implements ICacheable {
 
     XSLT xslt = XSLT.getTransformer(this, runtimeData.getLocales());
     xslt.setXML(doc);
-    xslt.setXSL(sslLocation, getStylesheetTitle(runtimeData.getBrowserInfo().getUserAgent()), runtimeData.getBrowserInfo());
+    xslt.setXSL(sslLocation, runtimeData.getBrowserInfo());
     xslt.setTarget(out);
     xslt.transform();
-  }
-
-  /**
-   * Uses the user agent string to determine which stylesheet title to use.
-   * We wouldn't need this method if stylesheet sets could distinguish between browser versions
-   * @param userAgent the user agent string
-   * @return ssTitle the stylesheet title
-   */
-  private String getStylesheetTitle (String userAgent) {
-    String ssTitle = "noIFrameSupport";
-    if ((userAgent.indexOf("MSIE 3") >= 0) || (userAgent.indexOf("MSIE 4") >= 0) ||
-        (userAgent.indexOf("MSIE 5") >= 0) || (userAgent.indexOf("MSIE 6") >= 0) ||
-        (userAgent.indexOf("Mozilla/5") >= 0 || (userAgent.indexOf("Opera/6") >= 0))) {
-      ssTitle = "IFrameSupport";
-    }
-    return  ssTitle;
   }
 
   // IMultithreadedCachable methods...
@@ -111,8 +95,7 @@ public class CInlineFrame extends BaseChannel implements ICacheable {
     sbKey.append("xslUri:");
     try {
       String sslUrl = ResourceLoader.getResourceAsURLString(this.getClass(), sslLocation);
-      String ssTitle = getStylesheetTitle(runtimeData.getBrowserInfo().getUserAgent());
-      sbKey.append(XSLT.getStylesheetURI(sslUrl, ssTitle, runtimeData.getBrowserInfo())).append(", ");
+      sbKey.append(XSLT.getStylesheetURI(sslUrl, runtimeData.getBrowserInfo())).append(", ");
     } catch (PortalException pe) {
       sbKey.append("Not available, ");
     }
