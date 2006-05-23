@@ -1,2 +1,3 @@
 en_US ::: sv_SE
-dummyText ::: utfyllnadstext
+This browser does not support inline frames. ::: Denna webläsare stödjer inte inline frames.
+<a href="{url}" target="_blank">Click here to view content</a> in a separate window. ::: <a href="{url}" target="_blank">Klicka här för att öppna sidan</a> i ett eget fönster.
