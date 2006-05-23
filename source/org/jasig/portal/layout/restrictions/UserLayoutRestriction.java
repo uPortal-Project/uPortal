@@ -121,14 +121,17 @@ public abstract class UserLayoutRestriction implements IUserLayoutRestriction {
      * @param restrictionExpression a <code>String</code> expression
      */
   public void setRestrictionExpression ( String restrictionExpression ) {
-    if ( !restrictionExpression.equals(this.restrictionExpression) ) {
-     this.restrictionExpression = restrictionExpression;
-     try { parseRestrictionExpression(); }
-     catch ( PortalException pe ) { pe.printStackTrace();
-                                    System.out.println( "restriction expression: " + restrictionExpression );
-                                    System.out.println("setRestrictionExpression: " + pe);
-                                  }
-    }
+	  if ( !restrictionExpression.equals(this.restrictionExpression) ) {
+		  this.restrictionExpression = restrictionExpression;
+		  try { 
+			  parseRestrictionExpression(); 
+		  }
+		  catch ( PortalException pe ) { 
+			  pe.printStackTrace();
+			  System.out.println( "restriction expression: " + restrictionExpression );
+			  System.out.println("setRestrictionExpression: " + pe);
+		  }
+	  }
   }
 
 

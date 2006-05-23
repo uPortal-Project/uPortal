@@ -30,7 +30,7 @@
 			}
 		}
 		function grpDeleteGroup(path){
-			if (window.confirm('グループおよび関連する?')){
+			if (window.confirm('グループ�?�よ�?�関連�?�る?')){
 				this.location.href=path;
 			}
 		}
@@ -53,7 +53,7 @@
                 </xsl:when>
                 <xsl:otherwise>
                   <xsl:text>
-                    グループおよびエントリを選択します
+                    グループ�?�よ�?�エントリを�?�択�?��?��?�
                   </xsl:text>
                 </xsl:otherwise>
               </xsl:choose>
@@ -137,7 +137,7 @@
 					<tr>
 					<td colspan="5" class="uportal-channel-text">
 					<input type="checkbox" name="grpCommandArg" value="{//group[@id=$highlightedGroupID]/@key}"/>
-					<em>選択されたグループより下だけを検索</em>
+					<em>�?�択�?�れ�?�グループより下�?��?�を検索</em>
 					</td>
 					</tr>
 				</xsl:if>
@@ -213,11 +213,11 @@
 						<xsl:if test="count(descendant::*[@selected='true'])">
 						  <xsl:text>
 						  </xsl:text>
-						  <input type="submit" class="uportal-button"  onClick="javascript:this.form.action='{$baseActionURL}?grpCommand=Done';" value="選択を確定" />
+						  <input type="submit" class="uportal-button"  onClick="javascript:this.form.action='{$baseActionURL}?grpCommand=Done';" value="�?�択を確定" />
 						</xsl:if>
 					  <xsl:text>
 					  </xsl:text>
-					  <input type="submit" class="uportal-button"  onClick="javascript:this.form.action='{$baseActionURL}?grpCommand=Cancel';" value="選択をキャンセル" />
+					  <input type="submit" class="uportal-button"  onClick="javascript:this.form.action='{$baseActionURL}?grpCommand=Cancel';" value="�?�択をキャンセル" />
 					</xsl:if>
 				  </td>
 				</tr>
@@ -236,7 +236,7 @@
           			<a href="javascript:this.location.href='{$baseActionURL}?grpCommand=Delete&amp;grpCommandArg={$group/@id}';"><img width="16" height="16" border="0" hspace="1" src="{$mediaBase}/delete.gif" alt="グループを削除" title="グループを削除"/></a>
           		</xsl:when>
           		<xsl:when test="$mode='edit'">
-          			<a href="{$baseActionURL}?grpCommand=Unlock&amp;grpCommandArg={$group/@id}"><img width="16" height="16" border="0" hspace="1" src="{$mediaBase}/unlock.gif" alt="グループの編集を終了" title="グループの編集を終了"/></a>
+          			<a href="{$baseActionURL}?grpCommand=Unlock&amp;grpCommandArg={$group/@id}"><img width="16" height="16" border="0" hspace="1" src="{$mediaBase}/unlock.gif" alt="グループ�?�編集を終了" title="グループ�?�編集を終了"/></a>
           			<xsl:if test="$group/@canDelete='true'">
 						<a href="javascript:grpDeleteGroup('{$baseActionURL}?grpCommand=Delete&amp;grpCommandArg={$group/@id}');"><img width="16" height="16" border="0" hspace="1" src="{$mediaBase}/delete.gif" alt="グループを削除" title="グループを削除"/></a>
 					</xsl:if>
@@ -246,7 +246,7 @@
           		</xsl:when>
           	</xsl:choose>
           	
-          	<a href="{$baseActionURL}?grpCommand=Highlight&amp;grpCommandArg="><img width="16" height="16" border="0" hspace="1" src="{$mediaBase}/close.gif" alt="グループを閉じる" title="グループを閉じる"/></a>
+          	<a href="{$baseActionURL}?grpCommand=Highlight&amp;grpCommandArg="><img width="16" height="16" border="0" hspace="1" src="{$mediaBase}/close.gif" alt="グループを閉�?�る" title="グループを閉�?�る"/></a>
           </td>
   </xsl:template>
   
@@ -271,7 +271,7 @@
         <tr>
           <td colspan="2" class="uportal-channel-strong" width="100%">
             <xsl:text>
-              グループの名前:
+              グループ�?��??�?:
             </xsl:text>
           </td>
           <xsl:call-template name="rightPaneButtons">
@@ -325,7 +325,7 @@
         <tr>
           <td colspan="3" class="uportal-channel-strong">
             <xsl:text>
-              グループの説明:
+              グループ�?�説明:
             </xsl:text>
           </td>
         </tr>
@@ -358,7 +358,7 @@
 						<input type="submit"  onClick="javascript:this.form.action='{$baseActionURL}?grpCommand=Permissions';" value="パーミッションを割当" class="uportal-button" />
 					  </xsl:if>
 					<xsl:if test="$group/@canManageMembers='true' or ($grpServantMode='true')">
-						<input type="submit"  onClick="javascript:this.form.action='{$baseActionURL}?grpCommand=Add';" value="メンバの追加" class="uportal-button" />
+						<input type="submit"  onClick="javascript:this.form.action='{$baseActionURL}?grpCommand=Add';" value="メン�?�?�追加" class="uportal-button" />
 					</xsl:if>
 				</td>
 			</tr>
@@ -370,7 +370,7 @@
 					  </xsl:text>
 					</td>
 					<td colspan="2" nowrap="true">
-					  <input type="submit" onClick="javascript:this.form.action='{$baseActionURL}?grpCommand=Create';" value="新規メンバの作成" class="uportal-button" />
+					  <input type="submit" onClick="javascript:this.form.action='{$baseActionURL}?grpCommand=Create';" value="新�?メン�?�?�作�?" class="uportal-button" />
 					  <xsl:text>
 					  </xsl:text>
 					  <input type="text" size="25" name="grpNewName" value="(new group name)" class="uportal-input-text" />
@@ -392,7 +392,7 @@
 	  	<table width="100%" border="0">
     			<tr>
     				<td class="uportal-channel-strong">
-    					<xsl:text>メンバ</xsl:text>
+    					<xsl:text>メン�?</xsl:text>
     				</td>
     				<td width="50%">
 					<img src="{$spacerIMG}" width="16" height="16" border="0"/>
@@ -496,7 +496,7 @@
 							</span> </a>
 					</td>
 					<td align="right" valign="top" class="uportal-channel-table-row-even" nowrap="nowrap">
-					  <xsl:if test="$mode='edit' and (@canManageMembers='true' or ($grpServantMode='true'))">
+					  <xsl:if test="$mode='edit' and (../@canManageMembers='true' or ($grpServantMode='true'))">
 						<a href="javascript:grpRemoveMember('{$baseActionURL}?grpCommand=Remove&amp;grpCommandArg=parent.{parent::group/@id}|child.{@id}','{RDF/Description/title}','{parent::group/RDF/Description/title}');">
 						<img src="{$mediaBase}/remove.gif" height="16" width="16" hspace="1" vspace="1" border="0" align="top" alt="Remove Member" title="Remove Member"/>
 						</a>
@@ -551,7 +551,7 @@
 					</strong>
 				  </td>
 				  <td align="right" valign="top" class="uportal-channel-table-row-odd">
-					<xsl:if test="$mode='edit' and ((@canManageMembers='true') or ($grpServantMode='true'))">
+					<xsl:if test="$mode='edit' and ((../@canManageMembers='true') or ($grpServantMode='true'))">
 					  <a href="javascript:grpRemoveMember('{$baseActionURL}?grpCommand=Remove&amp;grpCommandArg=parent.{parent::group/@id}|child.{@id}','{@displayName}','{parent::group/RDF/Description/title}');">
 					  	<img src="{$mediaBase}/remove.gif" height="16" width="16" hspace="1" vspace="1" border="0" align="top" alt="Remove Member" title="Remove Member"/>
 					  </a>
@@ -578,7 +578,7 @@
     <xsl:if test="$mode='select'">
             <tr>
               <td colspan="2">
-                <input type="submit" onClick="javascript:this.form.action='{$baseActionURL}?grpCommand=Select';"  value="マークしたものを選択" class="uportal-button" />
+                <input type="submit" onClick="javascript:this.form.action='{$baseActionURL}?grpCommand=Select';"  value="マーク�?��?�も�?�を�?�択" class="uportal-button" />
                 
               </td>
             </tr>
@@ -625,7 +625,7 @@
                         </table>
                 </xsl:when>
                 <xsl:otherwise>
-                        <em>追加情報はありません</em>
+                        <em>追加情報�?��?�り�?��?�ん</em>
                 </xsl:otherwise>
         </xsl:choose>
         </td>

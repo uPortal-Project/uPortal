@@ -31,6 +31,7 @@ import org.jasig.portal.CoreStylesheetDescription;
 import org.jasig.portal.CoreXSLTStylesheetDescription;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.IChannelRegistryStore;
+import org.jasig.portal.PortalException;
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.StructureStylesheetDescription;
 import org.jasig.portal.StructureStylesheetUserPreferences;
@@ -43,7 +44,6 @@ import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.layout.LayoutStructure;
 import org.jasig.portal.layout.StructureParameter;
-import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.rdbm.DatabaseMetaDataImpl;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.ISecurityContext;
@@ -80,7 +80,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
   protected IChannelRegistryStore crs;
   protected ICounterStore csdb;
   // I18n propertiy
-  protected static final boolean localeAware = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.i18n.LocaleManager.locale_aware");
+  protected static final boolean localeAware = LocaleManager.isLocaleAware();
 
   public RDBMUserLayoutStore () throws Exception {
     crs = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl();
@@ -667,10 +667,13 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           ResultSet rs = stmt.executeQuery(sQuery);
           int currentStructId;
           try {
-            rs.next();
-            currentStructId = rs.getInt(1);
+        	  if (rs.next()){
+        		  currentStructId = rs.getInt(1);
+        	  }else{
+        		  throw new SQLException("no rows returned for query ["+sQuery+"]");
+        	  }
           } finally {
-            rs.close();
+        	  rs.close();
           }
           int nextStructId = currentStructId + 1;
           try {
@@ -2607,39 +2610,54 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
 
 
   public void setUserBrowserMapping (IPerson person, String userAgent, int profileId) throws Exception {
-    if (userAgent.length() > 255){
-        userAgent = userAgent.substring(0,254);
-        log.debug("userAgent trimmed to 255 characters. userAgent: "+userAgent);
-    }
-    int userId = person.getID();
-    Connection con = RDBMServices.getConnection();
-    try {
-      // Set autocommit false for the connection
-      RDBMServices.setAutoCommit(con, false);
-      // remove the old mapping and add the new one
-      Statement stmt = con.createStatement();
-      try {
-        String sQuery = "DELETE FROM UP_USER_UA_MAP WHERE USER_ID=" + userId + " AND USER_AGENT='" + userAgent + "'";
-        if (log.isDebugEnabled())
-            log.debug("RDBMUserLayoutStore::setUserBrowserMapping(): " + sQuery);
-        stmt.executeUpdate(sQuery);
-        sQuery = "INSERT INTO UP_USER_UA_MAP (USER_ID,USER_AGENT,PROFILE_ID) VALUES (" + userId + ",'" + userAgent + "',"
-            + profileId + ")";
-        if (log.isDebugEnabled())
-            log.debug("RDBMUserLayoutStore::setUserBrowserMapping(): " + sQuery);
-        stmt.executeUpdate(sQuery);
-        // Commit the transaction
-        RDBMServices.commit(con);
-      } catch (Exception e) {
-        // Roll back the transaction
-        RDBMServices.rollback(con);
-        throw  e;
-      } finally {
-        stmt.close();
-      }
-    } finally {
-      RDBMServices.releaseConnection(con);
-    }
+	  if (userAgent.length() > 255){
+		  userAgent = userAgent.substring(0,254);
+		  log.debug("userAgent trimmed to 255 characters. userAgent: "+userAgent);
+	  }
+	  int userId = person.getID();
+	  Connection con = RDBMServices.getConnection();
+	  try {
+		  // Set autocommit false for the connection
+		  RDBMServices.setAutoCommit(con, false);
+		  // remove the old mapping and add the new one
+		  try {
+			  PreparedStatement ps = null;
+			  try{
+				  ps = con.prepareStatement("DELETE FROM UP_USER_UA_MAP WHERE USER_ID=? AND USER_AGENT=?");
+				  ps.setInt(1,userId);
+				  ps.setString(2,userAgent);
+				  ps.executeUpdate();
+			  }finally{
+				  try{
+					  ps.close();
+				  }catch(Exception e){
+					  //ignore
+				  }
+			  }
+			  try{
+				  log.debug("writing to UP_USER_UA_MAP: userId: "+userId+", userAgent: "+userAgent+", profileId: "+profileId);
+				  ps = con.prepareStatement("INSERT INTO UP_USER_UA_MAP (USER_ID,USER_AGENT,PROFILE_ID) VALUES (?,?,?)");
+				  ps.setInt(1,userId);
+				  ps.setString(2,userAgent);
+				  ps.setInt(3,profileId);
+				  ps.executeUpdate();
+			  }finally{
+				  try{
+					  ps.close();
+				  }catch(Exception e){
+					  //ignore
+				  }
+			  }
+			  // Commit the transaction
+			  RDBMServices.commit(con);
+		  } catch (Exception e) {
+			  // Roll back the transaction
+			  RDBMServices.rollback(con);
+			  throw new PortalException("userId: "+userId+", userAgent: "+userAgent+", profileId: "+profileId, e);
+		  }
+	  } finally {
+		  RDBMServices.releaseConnection(con);
+	  }
   }
 
   /**

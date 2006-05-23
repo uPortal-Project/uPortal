@@ -7,6 +7,8 @@ package org.jasig.portal.utils;
 
 import java.io.IOException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.DTDHandler;
@@ -32,6 +34,8 @@ import org.xml.sax.ext.LexicalHandler;
  */
 public class SAX2FilterImpl implements XMLFilter, EntityResolver, DTDHandler, ContentHandler, ErrorHandler, LexicalHandler {
 
+	protected final Log log = LogFactory.getLog(getClass());
+	
     // Internal state
 
     private XMLReader parent = null;

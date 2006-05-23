@@ -78,7 +78,7 @@ public class UserInstance implements HttpSessionBindingListener {
     private LocaleManager localeManager;
 
     // contains information relating client names to media and mime types
-    private static MediaManager mediaM;
+    private static final MediaManager MEDIAMANAGER = MediaManager.getMediaManager();
 
     // system profile mapper standalone instance
     private StandaloneChannelRenderer p_browserMapper = null;
@@ -110,14 +110,6 @@ public class UserInstance implements HttpSessionBindingListener {
 
     public UserInstance (IPerson person) {
         this.person=person;
-
-        // init the media manager
-        if(mediaM==null) {
-            String mediaPropsUrl = this.getClass().getResource("/properties/media.properties").toString();
-            String mimePropsUrl = this.getClass().getResource("/properties/mime.properties").toString();
-            String serializerPropsUrl = this.getClass().getResource("/properties/serializer.properties").toString();
-            mediaM = new MediaManager(mediaPropsUrl, mimePropsUrl, serializerPropsUrl);
-        }
     }
 
     /**
@@ -172,6 +164,13 @@ public class UserInstance implements HttpSessionBindingListener {
             uPreferencesManager.getUserLayoutManager().addLayoutEventListener(channelManager);
             p_rendering_lock=new Object();
         }
+
+        //If the request is for a portlet and an action request run that portlet's processAction
+        final boolean didAction = this.processPortletActionIfNecessary(req, res);
+
+        //If an action was performed a redirect will be issued to the HttpResponse so this request won't render anything
+        if (didAction)
+            return;
 
         // Begin the rendering process
         renderState (req, res, this.channelManager, this.localeManager, uPreferencesManager, p_rendering_lock);
@@ -367,7 +366,7 @@ public class UserInstance implements HttpSessionBindingListener {
                     // obtain the writer - res.getWriter() must occur after res.setContentType()
                     PrintWriter out = res.getWriter();
                     // get a serializer appropriate for the target media
-                    BaseMarkupSerializer markupSerializer = mediaM.getSerializerByName(tsd.getSerializerName(), out);
+                    BaseMarkupSerializer markupSerializer = MEDIAMANAGER.getSerializerByName(tsd.getSerializerName(), out);
                     // set up the serializer
                     markupSerializer.asContentHandler();
                     // see if we can use character caching
@@ -417,9 +416,10 @@ public class UserInstance implements HttpSessionBindingListener {
 
                                 for(int sb=0; sb<ccsize-1;sb++) {
                                     cSerializer.printRawCharacters((String)cCache.systemBuffers.get(sb));
-
-                                    //LogService.log(LogService.DEBUG,"----------printing frame piece "+Integer.toString(sb));
-                                    //LogService.log(LogService.DEBUG,(String)cCache.systemBuffers.get(sb));
+									if (log.isDebugEnabled()){
+	                                    log.debug("----------printing frame piece "+Integer.toString(sb));
+    	                                log.debug((String)cCache.systemBuffers.get(sb));
+                                    }
 
                                     // get channel output
                                     String channelSubscribeId=(String) cCache.channelIds.get(sb);
@@ -428,8 +428,10 @@ public class UserInstance implements HttpSessionBindingListener {
 
                                 // print out the last block
                                 cSerializer.printRawCharacters((String)cCache.systemBuffers.get(ccsize-1));
-                                //LogService.log(LogService.DEBUG,"----------printing frame piece "+Integer.toString(ccsize-1));
-                                //LogService.log(LogService.DEBUG,(String)cCache.systemBuffers.get(ccsize-1));
+								if (log.isDebugEnabled()){
+	                                log.debug("----------printing frame piece "+Integer.toString(ccsize-1));
+    	                            log.debug((String)cCache.systemBuffers.get(ccsize-1));
+    	                        }
 
                                 cSerializer.flush();
                                 output_produced=true;
@@ -609,22 +611,20 @@ public class UserInstance implements HttpSessionBindingListener {
                             } else {
                                 // record cache
                                 systemCharacterCache.put(cacheKey,ce);
-                                if (log.isDebugEnabled())
-                                    log.debug("UserInstance::renderState() : recorded transformation character block cache with key \""+cacheKey+"\"");
-
-                                /*
-                                  LogService.log(LogService.DEBUG,"Printing transformation cache system blocks:");
-                                  for(int i=0;i<ce.systemBuffers.size();i++) {
-                                  LogService.log(LogService.DEBUG,"----------piece "+Integer.toString(i));
-                                  LogService.log(LogService.DEBUG,(String)ce.systemBuffers.get(i));
-                                  }
-                                  LogService.log(LogService.DEBUG,"Printing transformation cache channel IDs:");
-                                  for(int i=0;i<ce.channelIds.size();i++) {
-                                  LogService.log(LogService.DEBUG,"----------channel entry "+Integer.toString(i));
-                                  LogService.log(LogService.DEBUG,(String)ce.channelIds.get(i));
-                                  }
-                                */
-
+                                if (log.isDebugEnabled()){
+                                	log.debug("UserInstance::renderState() : recorded transformation character block cache with key \""+cacheKey+"\"");
+	                                
+	                                log.debug("Printing transformation cache system blocks:");
+	                                for(int i=0;i<ce.systemBuffers.size();i++) {
+	                                	log.debug("----------piece "+Integer.toString(i));
+	                                	log.debug((String)ce.systemBuffers.get(i));
+	                                }
+	                                log.debug("Printing transformation cache channel IDs:");
+	                                for(int i=0;i<ce.channelIds.size();i++) {
+	                                	log.debug("----------channel entry "+Integer.toString(i));
+	                                	log.debug((String)ce.channelIds.get(i));
+	                                }
+                                }
                             }
                         }
 
@@ -640,18 +640,6 @@ public class UserInstance implements HttpSessionBindingListener {
                 }
             }
         }
-    }
-
-    /**
-     * <code>getRenderingLock</code> returns a rendering lock for this session.
-     * @param sessionId current session id
-     * @return rendering lock <code>Object</code>
-     */
-    Object getRenderingLock(String sessionId) {
-        if(p_rendering_lock==null) {
-            p_rendering_lock=new Object();
-        }
-        return p_rendering_lock;
     }
 
     private String constructCacheKey(IPerson person,String rootNodeId) throws PortalException {
@@ -861,6 +849,8 @@ public class UserInstance implements HttpSessionBindingListener {
             for (int i = 0; i < values.length; i++) {
                 ulm.deleteNode(values[i]);
             }
+            
+            ulm.saveUserLayout();
         }
 
         String param = req.getParameter("uP_cancel_targets");
@@ -929,7 +919,11 @@ public class UserInstance implements HttpSessionBindingListener {
 
 
       } catch ( Exception e ) {
-          throw new PortalException(e);
+    	  if (e instanceof PortalException){
+    		  throw (PortalException)e;
+    	  }else{
+    		  throw new PortalException(e);
+    	  }
         }
     }
 

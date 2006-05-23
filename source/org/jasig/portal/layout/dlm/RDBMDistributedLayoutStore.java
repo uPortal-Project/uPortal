@@ -20,7 +20,6 @@ import java.util.Vector;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.ChannelDefinition;
-import org.jasig.portal.IUserIdentityStore;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.layout.simple.RDBMUserLayoutStore;
@@ -28,7 +27,6 @@ import org.jasig.portal.StructureStylesheetDescription;
 import org.jasig.portal.StructureStylesheetUserPreferences;
 import org.jasig.portal.ThemeStylesheetDescription;
 import org.jasig.portal.ThemeStylesheetUserPreferences;
-import org.jasig.portal.UserIdentityStoreFactory;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.channels.error.ErrorCode;
 import org.jasig.portal.layout.LayoutStructure;
@@ -73,7 +71,6 @@ public class RDBMDistributedLayoutStore
     private Properties properties = null;
     private FragmentDefinition[] definitions = null;
     private LayoutDecorator decorator = null;
-    private IUserIdentityStore identityStore = null;
     private FragmentActivator activator = null;
     private Object initializationLock = new Object();
     private boolean initialized = false;
@@ -118,16 +115,6 @@ public class RDBMDistributedLayoutStore
         getReadWriteLock(person).readLock().release();
     }
 
-    private void acquireWriteLock(IPerson person) throws InterruptedException
-    {
-        getReadWriteLock(person).writeLock().acquire();
-    }
-
-    private void releaseWriteLock(IPerson person)
-    {
-        getReadWriteLock(person).writeLock().release();
-    }
-
     public RDBMDistributedLayoutStore ( )
         throws Exception
     {
@@ -135,7 +122,6 @@ public class RDBMDistributedLayoutStore
         tsdCache = new SmartCache();
         ssdCache = new SmartCache();
 
-        identityStore = UserIdentityStoreFactory.getUserIdentityStoreImpl();
         ConfigurationLoader.load( this );
         
         try
@@ -343,13 +329,23 @@ public class RDBMDistributedLayoutStore
                     Hashtable owners = new Hashtable();
                     long wait_time;
                         
+                    String temp = null;
                     try
                     {
-                        wait_time = (Integer.parseInt(getProperty(
-                            "org.jasig.portal.layout.dlm.RDBMDistributedLayoutStore.fragment_cache_refresh" ))*60) * 1000;
+                    	temp = getProperty(
+                        	"org.jasig.portal.layout.dlm.RDBMDistributedLayoutStore.fragment_cache_refresh" );
+                        wait_time = (Integer.parseInt(temp)*60) * 1000;
                     }
-                    catch( Exception e )
+                    catch( NumberFormatException e )
                     { 
+                    	// specific recovery: if the deployer mangled the property value
+                    	log.warn("unable to parse dlm.xml property org.jasig.portal.layout.dlm.RDBMDistributedLayoutStore.fragment_cache_refresh: "+temp+", set timeout to 1 hour",e);
+                        wait_time = 60 * (1000 * 60); // default to one hour
+                    }
+                    catch( Exception e) 
+                    {
+                    	// general recovery: no matter what went wrong, fall back on default.
+                    	log.error("unable to parse dlm.xml property org.jasig.portal.layout.dlm.RDBMDistributedLayoutStore.fragment_cache_refresh: "+temp+", set timeout to 1 hour",e);
                         wait_time = 60 * (1000 * 60); // default to one hour
                     }
                             
@@ -379,9 +375,7 @@ public class RDBMDistributedLayoutStore
                                     for( int i=0; i<definitions.length; i++ )
                                     {
                                         String ownerId = definitions[i].ownerID;
-                                        String layoutOwnerId = definitions[i].defaultLayoutOwnerID;
                                         int userId  = definitions[i].userID;
-                                        String name = definitions[i].name;
                                         
                                         if ( null != ownerId )
                                         {
@@ -520,7 +514,6 @@ public class RDBMDistributedLayoutStore
                                      UserProfile profile)
         throws Exception
     {
-        int profileId = profile.getProfileId();
         String userName = (String) person.getAttribute( "username" );
         FragmentDefinition ownedFragment = getOwnedFragment( person );
         boolean isLayoutOwnerDefault = isLayoutOwnerDefault( person );
@@ -662,9 +655,9 @@ public class RDBMDistributedLayoutStore
                 LOG.error("Property '" + TEMPLATE_USER_NAME + "' not defined.",
                         re);
             }
+        }
             if (systemDefaultUser != null && systemDefaultUser.equals(userName))
                 return true;
-        }
         
         return false;
     }
@@ -676,7 +669,6 @@ public class RDBMDistributedLayoutStore
     private FragmentDefinition getOwnedFragment( IPerson person )
     {
         int userId = person.getID();
-        FragmentDefinition ownedFragment = null;
         
         if ( definitions != null )
         {
@@ -996,9 +988,20 @@ public class RDBMDistributedLayoutStore
                         if (LOG.isDebugEnabled())
                             LOG.debug("RDBMUserLayoutStore::getStructureStylesheetUserPreferences() :  instanceof jpostgressqldbdbcdb");      
 
-                        sQuery = "SELECT PARAM_NAME, PARAM_VAL, PARAM_TYPE, ULS.STRUCT_ID, CHAN_ID, ULP.STRUCT_PARM_NM, ULP.STRUCT_PARM_VAL FROM UP_SS_USER_ATTS UUSA, UP_LAYOUT_STRUCT ULS, UP_LAYOUT_PARAM ULP WHERE UUSA.USER_ID=" + userId + " AND PROFILE_ID="
-                            + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND UUSA.STRUCT_ID = ULS.STRUCT_ID AND UUSA.USER_ID = ULS.USER_ID AND UUSA.STRUCT_ID *= ULP.STRUCT_ID AND UUSA.USER_ID *= ULP.USER_ID";
-
+                        sQuery = "SELECT PARAM_NAME, PARAM_VAL, PARAM_TYPE," +
+                                " ULS.STRUCT_ID, CHAN_ID, ULP.STRUCT_PARM_NM," +
+                                " ULP.STRUCT_PARM_VAL " +
+                                "FROM UP_LAYOUT_STRUCT ULS, " +
+                                " UP_SS_USER_ATTS UUSA LEFT OUTER JOIN" +
+                                " UP_LAYOUT_PARAM ULP " +
+                                "ON UUSA.STRUCT_ID = ULP.STRUCT_ID" +
+                                " AND UUSA.USER_ID = ULP.USER_ID " +
+                                "WHERE UUSA.USER_ID=" + userId + 
+                                " AND PROFILE_ID=" + profileId + 
+                                " AND SS_ID=" + stylesheetId + 
+                                " AND SS_TYPE=1" +
+                                " AND UUSA.STRUCT_ID = ULS.STRUCT_ID" +
+                                " AND UUSA.USER_ID = ULS.USER_ID";
                     } 
                     else if (db.getJoinQuery() 
                             instanceof DatabaseMetaDataImpl.OracleDb) 
@@ -1523,7 +1526,6 @@ public class RDBMDistributedLayoutStore
 
             int nextStructId = 0;
             int childStructId = 0;
-            String sQuery;
             
             if (node.hasChildNodes())
             {
@@ -1657,9 +1659,10 @@ public class RDBMDistributedLayoutStore
                 // write out params
                 for (Enumeration e = ssup.getParameterValues().keys(); e.hasMoreElements();) {
                     String pName = (String)e.nextElement();
+                    String pNameEscaped = RDBMServices.sqlEscape(pName);
                     // see if the parameter was already there
                     String sQuery = "SELECT PARAM_VAL FROM UP_SS_USER_PARM WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId
-                    + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND PARAM_NAME='" + pName + "'";
+                    + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND PARAM_NAME='" + pNameEscaped + "'";
                     if (LOG.isDebugEnabled())
                         LOG.debug(sQuery);
                     ResultSet rs = stmt.executeQuery(sQuery);
@@ -1667,13 +1670,13 @@ public class RDBMDistributedLayoutStore
                         if (rs.next()) {
                             // update
                             sQuery = "UPDATE UP_SS_USER_PARM SET PARAM_VAL='" + ssup.getParameterValue(pName) + "' WHERE USER_ID=" + userId
-                            + " AND PROFILE_ID=" + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND PARAM_NAME='" + pName
+                            + " AND PROFILE_ID=" + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND PARAM_NAME='" + pNameEscaped
                             + "'";
                         }
                         else {
                             // insert
                             sQuery = "INSERT INTO UP_SS_USER_PARM (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,PARAM_NAME,PARAM_VAL) VALUES (" + userId
-                            + "," + profileId + "," + stylesheetId + ",1,'" + pName + "','" + ssup.getParameterValue(pName) + "')";
+                            + "," + profileId + "," + stylesheetId + ",1,'" + pNameEscaped + "','" + ssup.getParameterValue(pName) + "')";
                         }
                     } finally {
                         rs.close();
@@ -1709,7 +1712,7 @@ public class RDBMDistributedLayoutStore
                         if (pValue != null) {
                             // store user preferences
                             sQuery = "SELECT PARAM_VAL FROM UP_SS_USER_ATTS WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId
-                            + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND STRUCT_ID='" + plfFolderId.substring(1) + "' AND PARAM_NAME='" + pName
+                            + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND STRUCT_ID=" + plfFolderId.substring(1) + " AND PARAM_NAME='" + pName
                             + "' AND PARAM_TYPE=2";
                             if (LOG.isDebugEnabled())
                                 LOG.debug(sQuery);
@@ -1718,13 +1721,13 @@ public class RDBMDistributedLayoutStore
                                 if (rs.next()) {
                                     // update
                                     sQuery = "UPDATE UP_SS_USER_ATTS SET PARAM_VAL='" + pValue + "' WHERE USER_ID=" + userId + " AND PROFILE_ID="
-                                    + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND STRUCT_ID='" + plfFolderId.substring(1) + "' AND PARAM_NAME='"
+                                    + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND STRUCT_ID=" + plfFolderId.substring(1) + " AND PARAM_NAME='"
                                     + pName + "' AND PARAM_TYPE=2";
                                 }
                                 else {
                                     // insert
                                     sQuery = "INSERT INTO UP_SS_USER_ATTS (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,STRUCT_ID,PARAM_NAME,PARAM_TYPE,PARAM_VAL) VALUES ("
-                                    + userId + "," + profileId + "," + stylesheetId + ",1,'" + plfFolderId.substring(1) + "','" + pName + "',2,'" + pValue
+                                    + userId + "," + profileId + "," + stylesheetId + ",1," + plfFolderId.substring(1) + ",'" + pName + "',2,'" + pValue
                                     + "')";
                                 }
                             } finally {
@@ -1752,7 +1755,7 @@ public class RDBMDistributedLayoutStore
                         if (pValue != null) {
                             // store user preferences
                             sQuery = "SELECT PARAM_VAL FROM UP_SS_USER_ATTS WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId
-                            + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND STRUCT_ID='" + plfChannelId.substring(1) + "' AND PARAM_NAME='" + pName
+                            + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND STRUCT_ID=" + plfChannelId.substring(1) + " AND PARAM_NAME='" + pName
                             + "' AND PARAM_TYPE=3";
                             if (LOG.isDebugEnabled())
                                 LOG.debug(sQuery);
@@ -1761,7 +1764,7 @@ public class RDBMDistributedLayoutStore
                                 if (rs.next()) {
                                     // update
                                     sQuery = "UPDATE UP_SS_USER_ATTS SET PARAM_VAL='" + pValue + "' WHERE USER_ID=" + userId + " AND PROFILE_ID="
-                                    + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND STRUCT_ID='" + plfChannelId.substring(1) + "' AND PARAM_NAME='"
+                                    + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND STRUCT_ID=" + plfChannelId.substring(1) + " AND PARAM_NAME='"
                                     + pName + "' AND PARAM_TYPE=3";
                                 }
                                 else {
@@ -1844,7 +1847,7 @@ public class RDBMDistributedLayoutStore
                         if (pValue != null) {
                             // store user preferences
                             String sQuery = "SELECT PARAM_VAL FROM UP_SS_USER_ATTS WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profileId
-                            + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=2 AND STRUCT_ID='" + channelId.substring(1) + "' AND PARAM_NAME='" + pName
+                            + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=2 AND STRUCT_ID=" + channelId.substring(1) + " AND PARAM_NAME='" + pName
                             + "' AND PARAM_TYPE=3";
                             if (LOG.isDebugEnabled())
                                 LOG.debug(sQuery);
@@ -1853,7 +1856,7 @@ public class RDBMDistributedLayoutStore
                                 if (rs.next()) {
                                     // update
                                     sQuery = "UPDATE UP_SS_USER_ATTS SET PARAM_VAL='" + pValue + "' WHERE USER_ID=" + userId + " AND PROFILE_ID="
-                                    + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=2 AND STRUCT_ID='" + channelId.substring(1) + "' AND PARAM_NAME='"
+                                    + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=2 AND STRUCT_ID=" + channelId.substring(1) + " AND PARAM_NAME='"
                                     + pName + "' AND PARAM_TYPE=3";
                                 }
                                 else {

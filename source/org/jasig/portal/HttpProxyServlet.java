@@ -46,7 +46,7 @@ public class HttpProxyServlet extends HttpServlet {
 	
 	// if checking referer then only supply proxied content for specific referer
 	// Ensures requests come from pages in the portal
-	if (null!=checkReferer){
+	if (null!=checkReferer && !checkReferer.equals("")){
 		StringTokenizer  checkedReferers = new StringTokenizer (checkReferer, " ");
 		boolean refOK = false;
 		String referer = request.getHeader("Referer");
@@ -90,6 +90,7 @@ public class HttpProxyServlet extends HttpServlet {
 	        target +="?"+request.getQueryString(); 	    
 	} else {
 		response.setStatus(404);
+		log.warn("HttpProxyServlet: getPathInfo is empty");
 	    return;
 	}
 
@@ -113,9 +114,11 @@ public class HttpProxyServlet extends HttpServlet {
 	}
     } catch (MalformedURLException e) {
 		response.setStatus(404);
+		log.warn("HttpProxyServlet: target="+target,e);
 		
     } catch (IOException e) {
 		response.setStatus(404);
+		log.warn(e,e);
 		
     } finally {
         if(is != null)

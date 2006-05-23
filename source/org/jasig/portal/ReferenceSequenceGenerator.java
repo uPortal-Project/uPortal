@@ -310,8 +310,11 @@ throws SQLException
                 log.debug( "ReferenceSequenceGenerator.primIncrementCounter(): " + ps +
                   "(" + nextCounterValue + ", " + tableName + ", " + currentCounterValue + ")");
             int rc = ps.executeUpdate();
-            if (rc != 1)
-                { throw new DataIntegrityException("Data integrity error; could not update counter."); }
+            if (rc != 1){
+            	throw new DataIntegrityException(
+            			"Data integrity error; could not update counter: "+tableName+
+            			" currentCounterValue:"+currentCounterValue); 
+            }
         }
         catch (SQLException sqle)
         {

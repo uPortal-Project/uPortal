@@ -47,7 +47,7 @@ public class DefaultDataHandlerImpl implements IDataHandler {
   protected static final String UPDCONDMASK
                                      = " where USER_NAME={0}";
 
-  protected static final String COUNTUSERS = "select count( USER_NAME ) cnt"
+  protected static final String COUNTUSERS = "select count( USER_NAME ) as cnt"
                          + " from UP_PERSON_DIR" + UPDCONDMASK;
 
   protected static final String ADDUSER = "insert into UP_PERSON_DIR ({0}) "
@@ -61,13 +61,13 @@ public class DefaultDataHandlerImpl implements IDataHandler {
                    + "order by USER_NAME, FIRST_NAME, LAST_NAME";
 
   protected static final String ALLUSERS
-                    = MessageFormat.format( USERSELECT, new String[] { "" } );
+                    = MessageFormat.format( USERSELECT, new Object[] { "" } );
 
   protected static final String GETTHISUSER = MessageFormat.format( USERSELECT,
-                  new String[] { "where USER_NAME = {0} " } );
+                  new Object[] { "where USER_NAME = {0} " } );
 
   protected static final String SEARCHUSERS = MessageFormat.format( USERSELECT,
-                   new String[] { "where USER_NAME like {0} "
+                   new Object[] { "where USER_NAME like {0} "
            + "or LAST_NAME like {0} or FIRST_NAME like {0} " });
 
   private IUserIdentityStore rdbmuser = new RDBMUserIdentityStore();
@@ -109,11 +109,11 @@ public class DefaultDataHandlerImpl implements IDataHandler {
 //       if( worker.indexOf( "-" ) == -1 ) {
          if( worker.toLowerCase().indexOf( Constants.PWDFIELD ) == -1 ) { // don't process password fields
            if( !worker.equals( Constants.UNFIELD ))
-             updsql.append( MessageFormat.format( UPDMASK, new String[] { worker.toUpperCase(),
+             updsql.append( MessageFormat.format( UPDMASK, new Object[] { worker.toUpperCase(),
                 SINGLEQUOTE + (String)AnIndividual.getAttribute( worker )
                   + SINGLEQUOTE } ));
             else
-             tmpcond = MessageFormat.format( UPDCONDMASK.toUpperCase(), new String[]
+             tmpcond = MessageFormat.format( UPDCONDMASK.toUpperCase(), new Object[]
                  { SINGLEQUOTE + (String)AnIndividual.getAttribute( worker )
                      + SINGLEQUOTE } );
          }// if, password flds
@@ -141,7 +141,7 @@ public class DefaultDataHandlerImpl implements IDataHandler {
     ResultSet R =  C.createStatement().executeQuery(
 
       MessageFormat.format(
-         COUNTUSERS, new String[] { SINGLEQUOTE
+         COUNTUSERS, new Object[] { SINGLEQUOTE
               + AnIndividual.getAttribute( Constants.UNFIELD ) + SINGLEQUOTE } )
 
       );
@@ -154,7 +154,7 @@ public class DefaultDataHandlerImpl implements IDataHandler {
 
     if( preexisting )
       throw new Exception(
-          MessageFormat.format( Constants.USER_EXISTS, new String[]
+          MessageFormat.format( Constants.USER_EXISTS, new Object[]
             { (String)AnIndividual.getAttribute( Constants.UNFIELD ) } ));
 
     // clear to add user
@@ -180,7 +180,7 @@ public class DefaultDataHandlerImpl implements IDataHandler {
     C.createStatement().execute(
 
       MessageFormat.format(
-         ADDUSER, new String[] { fields.toString(), values.toString() } )
+         ADDUSER, new Object[] { fields.toString(), values.toString() } )
 
       );
 
@@ -208,7 +208,7 @@ public class DefaultDataHandlerImpl implements IDataHandler {
       C.createStatement().execute(
 
         MessageFormat.format(
-           UPDPWD, new String[] {
+           UPDPWD, new Object[] {
 
              SINGLEQUOTE + newpwd + SINGLEQUOTE,
 
@@ -283,7 +283,7 @@ public class DefaultDataHandlerImpl implements IDataHandler {
     Connection C = getDBConn();
     ResultSet R = C.createStatement().executeQuery(
       (Conditional == null? Query :
-        MessageFormat.format( Query, new String[] {
+        MessageFormat.format( Query, new Object[] {
                               SINGLEQUOTE + Conditional + SINGLEQUOTE } )));
 
     IPerson[] people = mkIPeople( R );

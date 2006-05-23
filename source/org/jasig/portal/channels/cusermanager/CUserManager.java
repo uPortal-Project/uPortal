@@ -137,7 +137,7 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
     // first, be sure they are allowed to be here
     if( !ManagerMode && !PwdChngMode )
       throw new AuthorizationException(  MessageFormat.format(
-        Constants.ERRMSG_NORIGHTS, new String[]
+        Constants.ERRMSG_NORIGHTS, new Object[]
           { (String)CSD.getPerson().getAttribute( IPerson.USERNAME ) } ));
 
     try{

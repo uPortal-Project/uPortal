@@ -30,7 +30,7 @@
 			}
 		}
 		function grpDeleteGroup(path){
-			if (window.confirm('Vai jūs tiešām gribat neatgriezeniski izdzēst šo grupu, ar visām tās tiesībām un dalībām??')){
+			if (window.confirm('Vai jūs tieš�?m gribat neatgriezeniski izdzēst šo grupu, ar vis�?m t�?s tiesīb�?m un dalīb�?m??')){
 				this.location.href=path;
 			}
 		}
@@ -137,7 +137,7 @@
 					<tr>
 					<td colspan="5" class="uportal-channel-text">
 					<input type="checkbox" name="grpCommandArg" value="{//group[@id=$highlightedGroupID]/@key}"/>
-					<em>meklēt tikai šajā grupā</em>
+					<em>meklēt tikai šaj�? grup�?</em>
 					</td>
 					</tr>
 				</xsl:if>
@@ -496,7 +496,7 @@
 							</span> </a>
 					</td>
 					<td align="right" valign="top" class="uportal-channel-table-row-even" nowrap="nowrap">
-					  <xsl:if test="$mode='edit' and (@canManageMembers='true' or ($grpServantMode='true'))">
+					  <xsl:if test="$mode='edit' and (../@canManageMembers='true' or ($grpServantMode='true'))">
 						<a href="javascript:grpRemoveMember('{$baseActionURL}?grpCommand=Remove&amp;grpCommandArg=parent.{parent::group/@id}|child.{@id}','{RDF/Description/title}','{parent::group/RDF/Description/title}');">
 						<img src="{$mediaBase}/remove.gif" height="16" width="16" hspace="1" vspace="1" border="0" align="top" alt="Remove Member" title="Remove Member"/>
 						</a>
@@ -551,7 +551,7 @@
 					</strong>
 				  </td>
 				  <td align="right" valign="top" class="uportal-channel-table-row-odd">
-					<xsl:if test="$mode='edit' and ((@canManageMembers='true') or ($grpServantMode='true'))">
+					<xsl:if test="$mode='edit' and ((../@canManageMembers='true') or ($grpServantMode='true'))">
 					  <a href="javascript:grpRemoveMember('{$baseActionURL}?grpCommand=Remove&amp;grpCommandArg=parent.{parent::group/@id}|child.{@id}','{@displayName}','{parent::group/RDF/Description/title}');">
 					  	<img src="{$mediaBase}/remove.gif" height="16" width="16" hspace="1" vspace="1" border="0" align="top" alt="Remove Member" title="Remove Member"/>
 					  </a>
@@ -625,7 +625,7 @@
                         </table>
                 </xsl:when>
                 <xsl:otherwise>
-                        <em>Nav pieejama papildus informācija</em>
+                        <em>Nav pieejama papildus inform�?cija</em>
                 </xsl:otherwise>
         </xsl:choose>
         </td>

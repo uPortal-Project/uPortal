@@ -20,6 +20,7 @@ import javax.sql.DataSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.RDBMServices;
+import org.springframework.dao.DataAccessResourceFailureException;
 
 
 /**
@@ -57,7 +58,7 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata {
     private static final JoinQueryString oracleDb = new DatabaseMetaDataImpl.OracleDb("UP_USER, UP_USER_LAYOUT WHERE UP_USER.USER_ID = UP_USER_LAYOUT.USER_ID(+) AND");
     
     /** Array of join tests to perform. */
-    private static final JoinQueryString[] joinTests = {jdbcDb, postgreSQLDb, oracleDb};
+    private static final JoinQueryString[] joinTests = {oracleDb, postgreSQLDb, jdbcDb};
     
     /** The {@link DataSource} that represents the server */
     final private DataSource dataSource;
@@ -224,22 +225,28 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata {
      * Run a set of tests on the database to provide better meta data.
      */
     private void runDatabaseTests() {
-        final Connection conn;
-        try {
-            conn = this.dataSource.getConnection();
-       //The order of these tests is IMPORTANT, each may depend on the
-        //results of the previous tests.
-        this.getMetaData(conn);
-        this.testPreparedStatements(conn);
-        this.testOuterJoins(conn);
-        this.testTimeStamp(conn);
-        this.testTransactions(conn);
-        
-        this.releaseConnection(conn);
-        } catch (SQLException e) {
-            LOG.error("Error during database initialization. ", e);
-        }
-     }
+    	Connection conn = null;
+    	try {
+    		conn = this.dataSource.getConnection();
+    		//The order of these tests is IMPORTANT, each may depend on the
+    		//results of the previous tests.
+    		this.getMetaData(conn);
+    		this.testPreparedStatements(conn);
+    		this.testOuterJoins(conn);
+    		this.testTimeStamp(conn);
+    		this.testTransactions(conn);
+    		
+    	} catch (SQLException e) {
+    		LOG.error("Error during database initialization. ", e);
+    		/* 
+    		 * We must throw a RuntimeException here to avoid starting the portal
+    		 * with incorrect assumptions about what the database supports.
+    		 */
+    		throw new DataAccessResourceFailureException("Error during database initialization. ",e);
+    	}finally{
+    		this.releaseConnection(conn);
+    	}
+    }
     
     /**
      * Gets meta data about the connection.

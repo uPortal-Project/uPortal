@@ -467,6 +467,10 @@ public class SAX2DuplicatingFilterImpl extends SAX2FilterImpl {
     public void endDocument ()
 	throws SAXException
     {
+    	if (log.isTraceEnabled()) {
+    		log.trace("ending document");
+    	}
+    	
 	if (contentHandler != null) {
 	    contentHandler.endDocument();
 	}
@@ -666,6 +670,8 @@ public class SAX2DuplicatingFilterImpl extends SAX2FilterImpl {
     public void warning (SAXParseException e)
 	throws SAXException
     {
+    	log.warn("SAX2DuplicatingFilterImpl.warning()", e);
+    	
 	if (errorHandler != null) {
 	    errorHandler.warning(e);
 	}
@@ -686,6 +692,7 @@ public class SAX2DuplicatingFilterImpl extends SAX2FilterImpl {
     public void error (SAXParseException e)
 	throws SAXException
     {
+    	log.error("SAX2DuplicatingFilterImpl.error()", e);
 	if (errorHandler != null) {
 	    errorHandler.error(e);
 	}
@@ -706,6 +713,8 @@ public class SAX2DuplicatingFilterImpl extends SAX2FilterImpl {
     public void fatalError (SAXParseException e)
 	throws SAXException
     {
+    	log.fatal("SAX2DuplicatingFilterImpl.fatalError()", e);
+    	
 	if (errorHandler != null) {
 	    errorHandler.fatalError(e);
 	}
