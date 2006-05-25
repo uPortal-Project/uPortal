@@ -21,9 +21,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.car.CarResources;
+import org.jasig.portal.utils.DTDResolver;
 import org.jasig.portal.utils.ResourceLoader;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
+import org.xml.sax.InputSource;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
  * ExternalServices starts up all the runtime services for the uPortal.
@@ -33,14 +37,14 @@ import org.xml.sax.ContentHandler;
  * implementations.
  * Services are bound into the uPortal /services JNDI branch if <jndiname/> element
  * is specified in the service description.
- * 
+ *
  * @author Sridhar Venkatesh <svenkatesh@interactivebusiness.com>
  * @version $Revision$
  */
 public class ExternalServices {
-    
+
     private static final Log log = LogFactory.getLog(ExternalServices.class);
-    
+
   private ServiceHandler svcHandler;
   private Context servicesContext;
 
@@ -86,8 +90,10 @@ public class ExternalServices {
       if ( svcDescriptor != null )
       {
           try {
-              SAXParser parser = svcMgr.createParser();
-              parser.parse(svcDescriptor, svcMgr.svcHandler);
+        	  XMLReader parser = XMLReaderFactory.createXMLReader();
+        	  parser.setEntityResolver(new DTDResolver("services.dtd"));
+        	  parser.setContentHandler(svcMgr.svcHandler);
+        	  parser.parse(new InputSource(svcDescriptor));
           } catch (Exception ex) {
               throw new PortalException ("Failed to start external portal " +
                                          "services defined in services.xml.",
@@ -96,7 +102,7 @@ public class ExternalServices {
             try{
                 svcDescriptor.close(); //do not need to check for null.
            } catch(IOException exception) {
-                log.error( "ExternalServices:startServices()::could not close InputStream "+ exception);   
+                log.error( "ExternalServices:startServices()::could not close InputStream "+ exception);
             }
          }
       }
@@ -105,6 +111,7 @@ public class ExternalServices {
 
   protected SAXParser createParser() throws Exception {
     SAXParserFactory factory = SAXParserFactory.newInstance();
+    factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
     return factory.newSAXParser();
   }
 
@@ -319,7 +326,7 @@ public class ExternalServices {
         try {
             Object obj=null;
             Object returnObject=null;
-            
+
           // check if any method is specified
           if(svcItem.getStartMethod().length() > 0) {
               Method startMethod = svcClass.getMethod(svcItem.getStartMethod(), classNames);
@@ -327,18 +334,18 @@ public class ExternalServices {
                   // no need to instantiate an object
                   returnObject=startMethod.invoke(null,args);
               } else {
-                  // instantiate 
+                  // instantiate
                   obj = svcClass.newInstance();
                   returnObject=startMethod.invoke(obj,args);
               }
               outputMessage("initialized \"" + svcItem.getName() + "\"");
           }
- 
+
           // check if jndi binding needed
           if(svcItem.getJndiName().length() > 0) {
               if(returnObject!=null) {
                   // a non-void method was specified
-                  // in the service description, bind 
+                  // in the service description, bind
                   // returned object
                   servicesContext.bind(svcItem.getJndiName(), returnObject);
                   outputMessage("bound intialization result for service \"" + svcItem.getName() + "\"");
