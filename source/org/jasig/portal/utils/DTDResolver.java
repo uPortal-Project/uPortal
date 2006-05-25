@@ -15,12 +15,14 @@ import org.xml.sax.InputSource;
  * Provides a means to resolve uPortal DTDs
  * @author Peter Kharchenko, pkharchenko@unicon.net
  * @author Ken Weiner, kweiner@unicon.net
- * @author Dave Wallace, dwallace@udel.edu modifications 
+ * @author Dave Wallace, dwallace@udel.edu modifications
  * @version $Revision$
  */
 public class DTDResolver implements EntityResolver
 {
-  private String dtdPath = "dtd";
+  private static final String dtdPath = "dtd";
+  private static final String channelPublishingDtd = dtdPath + "/channelPublishingDocument.dtd";
+
   private String dtdName = null;
 
   /**
@@ -49,25 +51,31 @@ public class DTDResolver implements EntityResolver
 
     // Check for a match on the systemId
     if (systemId != null) {
-      if (dtdName != null && systemId.indexOf(dtdName) != -1)
+      if (dtdName != null && systemId.indexOf(dtdName) != -1) {
         inStream = PortalSessionManager.getResourceAsStream(dtdPath + "/" + dtdName);
-      else if (systemId.trim().equalsIgnoreCase("http://my.netscape.com/publish/formats/rss-0.91.dtd"))
+      } else if (systemId.trim().equalsIgnoreCase("http://my.netscape.com/publish/formats/rss-0.91.dtd")) {
         inStream = PortalSessionManager.getResourceAsStream(dtdPath + "/rss-0.91.dtd");
-         
-      if ( null != inStream )
+      }
+
+      if ( null != inStream ) {
           return new InputSource(inStream);
+      }
     }
-    
+
     // Check for a match on the public id
     if ( publicId != null ) {
-        if ( publicId.trim().equalsIgnoreCase("-//Netscape Communications//DTD RSS 0.91//EN"))
+        if ( publicId.trim().equalsIgnoreCase("-//Netscape Communications//DTD RSS 0.91//EN")) {
             inStream = PortalSessionManager.getResourceAsStream(dtdPath + "/rss-0.91.dtd");
-            
-        if ( null != inStream )
+        } else if (publicId.trim().equalsIgnoreCase("-//uPortal//Channel Publishing/EN")) {
+        	inStream = PortalSessionManager.getResourceAsStream(channelPublishingDtd);
+        }
+
+        if ( null != inStream ) {
             return new InputSource(inStream);
+        }
     }
-        
-    // Return null to let the parser handle this entity 
+
+    // Return null to let the parser handle this entity
     return null;
   }
 }
