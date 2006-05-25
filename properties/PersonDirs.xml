@@ -1,4 +1,5 @@
 <?xml version="1.0"?>
+<!-- <!DOCTYPE PersonDirs PUBLIC "-//uPortal//PersonDirs/EN" "PersonDirs.dtd"> -->
 
 <!--
      PersonDirs.xml makes possible a standard way for the uPortal
@@ -20,11 +21,11 @@
      obtaining person attributes and should contain a set of attribute
      alias/name pairs in addition to settings for obtaining the data
      from either
-     
+
        1) LDAP properties
        2) Named LDAP server
        3) JDBC properties
-       4) Container-managed JDBC DataSource 
+       4) Container-managed JDBC DataSource
 
      This means that it is possible to obtain person attributes from more
      than one source.
@@ -64,7 +65,7 @@
 
 <PersonDirs>
 
-    <!-- 
+    <!--
         This PersonDirInfo element maps person attribute aliases to JDBC column names.
         The JDBC resource can be specified in the following two ways:
 
@@ -78,18 +79,18 @@
         2) Specify the name of a container-managed JDBC DataSource.  For example,
 
         <res-ref-name>PersonDb</res-ref-name>
-        
+
         3) Specify the use of the configured default uPortal database. For example,
-        
+
         <res-ref-name>DEFAULT_DATABASE</res-ref-name>
 
     -->
     <PersonDirInfo>
 
         <res-ref-name>DEFAULT_DATABASE</res-ref-name>
-        
+
         <uidquery>SELECT FIRST_NAME, LAST_NAME, EMAIL FROM UP_PERSON_DIR WHERE USER_NAME=?</uidquery>
-    
+
         <attributes>
 
             <attribute><alias>eduPersonAffiliation</alias>        <name></name></attribute>
@@ -203,7 +204,7 @@
 
     </PersonDirInfo>
 
-    <!-- 
+    <!--
         This PersonDirInfo element maps person attribute aliases to LDAP attribute names.
         The LDAP resource can be specified in the following two ways:
 
@@ -215,11 +216,11 @@
         <usercontext>cn=Users</usercontext>
 
         2) Specify the name of an LDAP server as set up in uPortal's ldap.xml.  For example,
-        
+
         <ldap-ref-name>Main</ldap-ref-name>
-        
+
         3) Specify the use of the configured default uPortal ldap server. For example,
-        
+
         <ldap-ref-name>DEFAULT_LDAP_SERVER</ldap-ref-name>
 
     -->
