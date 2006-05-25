@@ -111,7 +111,6 @@ public class ExternalServices {
 
   protected SAXParser createParser() throws Exception {
     SAXParserFactory factory = SAXParserFactory.newInstance();
-    factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
     return factory.newSAXParser();
   }
 
