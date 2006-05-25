@@ -74,14 +74,14 @@ Version $Revision$
 
         <example>http://www.some-school.edu/xmldocs/mydoc.xml</example>
 
-        <!-- default value for text field -->
-        <defaultValue>CGenericXSLT/emptyDocument.xml</defaultValue>
-
         <description>
         If you make this URI subscribe-time configurable,
         you should also turn on applying URI restrictions to the XML URI
         as discovered from ChannelStaticData.
         </description>
+
+        <!-- default value for text field -->
+        <defaultValue>CGenericXSLT/emptyDocument.xml</defaultValue>
 
       </parameter>
 
@@ -167,12 +167,12 @@ Version $Revision$
 
         <example>http:// https:// file:/user/local/uportal/emptyDocument.xml</example>
 
-        <!-- default value for text field -->
-        <defaultValue>http:// https://</defaultValue>
-
-        <description>
+       <description>
             Do not allow file:/ lightly.
         </description>
+
+         <!-- default value for text field -->
+        <defaultValue>http:// https://</defaultValue>
 
       </parameter>
 

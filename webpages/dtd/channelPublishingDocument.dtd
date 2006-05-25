@@ -11,12 +11,12 @@ are met:
    notice, this list of conditions and the following disclaimer in
    the documentation and/or other materials provided with the
    distribution.
-   
+
 3. Redistributions of any form whatsoever must retain the following
    acknowledgment:
    "This product includes software developed by the JA-SIG Collaborative
    (http://www.jasig.org/)."
-   
+
 THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
 EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -38,10 +38,10 @@ $Revision$
 <!ELEMENT description (#PCDATA)*>
 <!ELEMENT class (#PCDATA)*>
 <!ELEMENT params (step)+>
-<!ELEMENT step (ID,name,description,(parameter)+)>
+<!ELEMENT step (ID,name,description,(parameter)*, arbitrary-parameters*)>
 <!ELEMENT ID (#PCDATA)*>
 <!ELEMENT name (#PCDATA)*>
-<!ELEMENT parameter (name,label,type,example,description,units,(defaultValue)?)>
+<!ELEMENT parameter (name,label,type,example?,description?,units?,(defaultValue)?)>
 
 <!--
 
@@ -51,24 +51,24 @@ $Revision$
 
   publish
   =======
-  the publisher can set the parameter value and can also 
-  control (via a checkbox) whether or not the user should 
-  be able to override the value at subscribe time - defaults 
+  the publisher can set the parameter value and can also
+  control (via a checkbox) whether or not the user should
+  be able to override the value at subscribe time - defaults
   to not letting the subscriber override
 
   subscribe
   =========
-  same as above except defaults to letting the 
+  same as above except defaults to letting the
   subscriber override
 
   publish-only
   ============
-  the parameter value is set by the publisher 
+  the parameter value is set by the publisher
   (publisher cannot change this)
 
   subscribe-only
   ==============
-  the parameter value is set by the subscriber 
+  the parameter value is set by the subscriber
   (publisher cannot change this)
 
 -->
@@ -81,8 +81,8 @@ $Revision$
 <!ELEMENT example (#PCDATA)*>
 <!ELEMENT units (#PCDATA)*>
 
-<!ELEMENT type (data,base,(display)?,(length)?,(maxlength)?,(restriction)?)>
-<!ATTLIST type 
+<!ELEMENT type ((length)?,(maxlength)?,(restriction)?)>
+<!ATTLIST type
 	base  (string|integer|float|boolean) #REQUIRED
 	input  (multi-choice|single-choice|text) #REQUIRED
 	display  (drop-down|radio|select-list|checkbox|text|textarea|hidden) #IMPLIED>
@@ -105,7 +105,7 @@ $Revision$
 <!ELEMENT controls (control)*>
 
 <!ELEMENT control EMPTY>
-<!ATTLIST control 
+<!ATTLIST control
         type (edit|about|help) #REQUIRED
         include (yes|no) #REQUIRED
         override (yes|no) #REQUIRED>

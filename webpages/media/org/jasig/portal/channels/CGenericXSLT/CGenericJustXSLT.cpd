@@ -52,15 +52,15 @@ Version $Revision$
             <max>40</max>
           </restriction>
 
-          <description>
-           If you turn on subscribe-time configuration of
-        this URI, you should also turn on applying URI restrictions to
-        ChannelStaticData.
-          </description>
-
         </type>
 
         <example>http://www.some-school.edu/xmldocs/mydoc.xml</example>
+
+        <description>
+           If you turn on subscribe-time configuration of
+        this URI, you should also turn on applying URI restrictions to
+        ChannelStaticData.
+        </description>
 
         <!-- default value for text field -->
         <defaultValue>CGenericXSLT/emptyDocument.xml</defaultValue>

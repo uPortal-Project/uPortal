@@ -99,23 +99,23 @@ Version $Revision$
       <parameter modify="publish-only">
         <name>width</name>
         <label>Width</label>
-        <units>pixels</units>
         <type base="string" input="text" display="text">
           <length>3</length>
           <maxlength>5</maxlength>
         </type>
         <example>152</example>
+        <units>pixels</units>
       </parameter>
 
       <parameter modify="publish-only">
         <name>height</name>
         <label>Height</label>
-        <units>pixels</units>
         <type base="string" input="text" display="text">
           <length>3</length>
           <maxlength>5</maxlength>
         </type>
         <example>195</example>
+        <units>pixels</units>
       </parameter>
 
     </step>

@@ -241,7 +241,6 @@ Version $Revision$
           <maxlength>2000</maxlength>
         </type>
         <example>http:// https:// file:/portal/proxied/</example>
-        <defaultValue>http:// https://</defaultValue>
         <description>
         Optional static data only parameter specifying allowable prefixes
         for URIs accessed by this channel.  This channel will only use URIs
@@ -249,6 +248,7 @@ Version $Revision$
         rendering.  Whitespace delimit allowed prefixes.  Effectively
         defaults to "http:// https://"; do not allow "file:/" lightly.
         </description>
+        <defaultValue>http:// https://</defaultValue>
       </parameter>
 
       <parameter modify="publish-only">
@@ -258,7 +258,6 @@ Version $Revision$
           <length>40</length>
           <maxlength>2000</maxlength>
         </type>
-        <defaultValue></defaultValue>
         <example>http://restrictedserver.yourschool.edu/</example>
         <description>
         Optional static data only parameter further restricting which
@@ -266,6 +265,7 @@ Version $Revision$
         will not use URIs matching prefixes specified in this
         whitespace-delimited parameter.  Effectively defaults to "".
         </description>
+        <defaultValue></defaultValue>
       </parameter>
 
       <parameter modify="publish-only">

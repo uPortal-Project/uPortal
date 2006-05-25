@@ -73,13 +73,13 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
 
         <example>http://www.some-school.edu/xmldocs/mydoc.rss</example>
 
-        <!-- default value for text field -->
-        <defaultValue></defaultValue>
-
         <description>
         If you configure this URL to be subscribe-time configurable, you
         should turn on resctions on this URL as read from ChannelStaticData.
         </description>
+
+        <!-- default value for text field -->
+        <defaultValue></defaultValue>
 
       </parameter>
 

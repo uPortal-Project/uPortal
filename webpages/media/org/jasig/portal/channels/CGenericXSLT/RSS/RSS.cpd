@@ -76,13 +76,13 @@ Version $Revision$
 
         <example>http://www.some-school.edu/xmldocs/mydoc.rss</example>
 
-        <!-- default value for text field -->
-        <defaultValue></defaultValue>
-
         <description>
         If you configure this URL to be subscribe-time configurable, you
         should turn on resctions on this URL as read from ChannelStaticData.
         </description>
+
+        <!-- default value for text field -->
+        <defaultValue></defaultValue>
 
       </parameter>
 
@@ -93,7 +93,7 @@ Version $Revision$
         <type base="string" input="single-choice" display="drop-down">
           <restriction type="enumeration">
             <value display="0.9 (netscape simple RDF format)">CGenericXSLT/RSS/RSS-0_9.ssl</value>
-            <value display="0.9x (RSS format)" default="true" >CGenericXSLT/RSS/RSS-0_9x.ssl</value>
+            <value display="0.9x (RSS format)">CGenericXSLT/RSS/RSS-0_9x.ssl</value>
             <value display="1.0x (RDF format)">CGenericXSLT/RSS/RSS-1_0x.ssl</value>
             <value display="Universal (0.90-2.0)">CGenericXSLT/RSS/RSS-universal.ssl</value>
             <defaultValue>CGenericXSLT/RSS/RSS-universal.ssl</defaultValue>
