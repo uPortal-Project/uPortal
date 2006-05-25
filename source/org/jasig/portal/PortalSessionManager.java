@@ -87,17 +87,15 @@ public class PortalSessionManager extends HttpServlet {
   // random number generator
   private static final Random randomGenerator = new Random();
 
-  public static final Date STARTED_AT = new Date();
-  static {
-    log.info( "uPortal started");
-  }
-
+  public static Date STARTED_AT = new Date(0); // Loaded, but not initialized
   /**
    * Initialize the PortalSessionManager servlet
    * @throws ServletException
    */
   public void init() throws ServletException {
     if(!initialized) {
+      STARTED_AT = new Date();
+
       instance = this;
       // Retrieve the servlet configuration object from the servlet container
       // and make sure it's available
@@ -132,27 +130,23 @@ public class PortalSessionManager extends HttpServlet {
          }
       }
 
-      // Log orderly shutdown time
-      Runtime.getRuntime().addShutdownHook(new Thread("uPortal shutdown hook") {
-          public void run() {
-            log.info( "uPortal stopped");
-          }
-        });
-
-
-      // Flag that the portal has been initialized
-      initialized = true;
 
       // Get the SAX implementation
       if (System.getProperty("org.xml.sax.driver") == null) {
           System.setProperty("org.xml.sax.driver", PropertiesManager.getProperty("org.xml.sax.driver", DEFAULT_SAX_DRIVER));
       }
 
+      // Flag that the portal has been initialized
+      initialized = true;
+      log.info( "uPortal started");
     }
   }
 
 
-
+  public void destroy()	 {
+      // Log orderly shutdown time
+	  log.info( "uPortal stopped");
+  }
     /**
      * Process HTTP POST request
      *
