@@ -6165,18 +6165,6 @@
      <row>
         <column><name>GROUP_ID</name><value>0</value></column>
         <column><name>MEMBER_SERVICE</name><value>local</value></column>
-        <column><name>MEMBER_KEY</name><value>fragmentTemplate</value></column>
-        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
-     </row>
-      <row>
-        <column><name>GROUP_ID</name><value>0</value></column>
-        <column><name>MEMBER_SERVICE</name><value>local</value></column>
-        <column><name>MEMBER_KEY</name><value>guest-lo</value></column>
-        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
-      </row>
-     <row>
-        <column><name>GROUP_ID</name><value>0</value></column>
-        <column><name>MEMBER_SERVICE</name><value>local</value></column>
         <column><name>MEMBER_KEY</name><value>15</value></column>
         <column><name>MEMBER_IS_GROUP</name><value>T</value></column>
      </row>
