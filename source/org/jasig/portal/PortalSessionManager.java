@@ -296,11 +296,16 @@ public class PortalSessionManager extends HttpServlet {
    * @return an input stream assosiated with the named resource
    */
   public static java.io.InputStream getResourceAsStream(String resource) {
-    //Make sure resource string starts with a "/"
-    if (!resource.startsWith("/"))
-      resource = "/" + resource;
+	if (servletContext != null) {
+	  //Make sure resource string starts with a "/"
+      if (!resource.startsWith("/")) {
+        resource = "/" + resource;
+      }
 
-    return servletContext.getResourceAsStream(resource);
+      return servletContext.getResourceAsStream(resource);
+	} else {
+      return null;
+	}
   }
 
 }

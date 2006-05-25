@@ -180,9 +180,22 @@ public class ResourceLoader {
     Document document = null;
     InputStream inputStream = null;
     try {
+      if (resource.equals("/properties/PersonDirs.xml")) {
+    	/*
+    	 * This is a very ugly hack to get around the problem that PersonsDirs.xml
+    	 * is loaded before uPortal has been initialized so there is no way
+    	 * to load PersonDirs.dtd through the web container. It also
+    	 * means we can't reference PersonsDirs.dtd in the xml file (commented
+    	 * out for now. GNL
+    	 */
+    	f.setValidating(false);
+      } else {
+    	f.setValidating(true);
+      }
       inputStream = getResourceAsStream(requestingClass, resource);
       DocumentBuilder db = f.newDocumentBuilder();
       db.setEntityResolver(new DTDResolver());
+      db.setErrorHandler(new SAXErrorHandler("ResourceLoader.getResourceAsDocument(" + resource + ")"));
       document = db.parse(inputStream);
     } finally {
       if (inputStream != null)

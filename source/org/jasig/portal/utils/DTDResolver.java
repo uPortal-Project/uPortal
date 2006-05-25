@@ -22,6 +22,7 @@ public class DTDResolver implements EntityResolver
 {
   private static final String dtdPath = "dtd";
   private static final String channelPublishingDtd = dtdPath + "/channelPublishingDocument.dtd";
+  private static final String personDirsDtd = dtdPath + "/PersonDirs.dtd";
 
   private String dtdName = null;
 
@@ -68,6 +69,8 @@ public class DTDResolver implements EntityResolver
             inStream = PortalSessionManager.getResourceAsStream(dtdPath + "/rss-0.91.dtd");
         } else if (publicId.trim().equalsIgnoreCase("-//uPortal//Channel Publishing/EN")) {
         	inStream = PortalSessionManager.getResourceAsStream(channelPublishingDtd);
+        } else if (publicId.trim().equalsIgnoreCase("-//uPortal//PersonDirs/EN")) {
+        	inStream = PortalSessionManager.getResourceAsStream(personDirsDtd);
         }
 
         if ( null != inStream ) {
