@@ -16,6 +16,7 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.util.Properties;
 
+import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -42,21 +43,22 @@ import org.xml.sax.SAXException;
 public class ResourceLoader {
 
     private static final Log log = LogFactory.getLog(ResourceLoader.class);
-    
+
   private static DocumentBuilderFactory f;
   static {
     f = DocumentBuilderFactory.newInstance();
+    f.setValidating(false);
     f.setNamespaceAware(true);
     try{
       String handler = PropertiesManager.getProperty("org.jasig.portal.utils.ResourceLoader.HttpsHandler");
-      if ((System.getProperty("java.protocol.handler.pkgs") != null) && 
+      if ((System.getProperty("java.protocol.handler.pkgs") != null) &&
         !(System.getProperty("java.protocol.handler.pkgs").equals(""))){
         handler = handler+"|"+System.getProperty("java.protocol.handler.pkgs");
       }
       System.setProperty("java.protocol.handler.pkgs",handler);
     }
     catch(Exception e){
-      log.error("Unable to set HTTPS Protocol handler", e); 
+      log.error("Unable to set HTTPS Protocol handler", e);
     }
   }
 
@@ -179,10 +181,12 @@ public class ResourceLoader {
     InputStream inputStream = null;
     try {
       inputStream = getResourceAsStream(requestingClass, resource);
-      document = f.newDocumentBuilder().parse(inputStream);  	
+      DocumentBuilder db = f.newDocumentBuilder();
+      db.setEntityResolver(new DTDResolver());
+      document = db.parse(inputStream);
     } finally {
       if (inputStream != null)
-        inputStream.close();  		
+        inputStream.close();
     }
     return document;
   }
@@ -204,11 +208,11 @@ public class ResourceLoader {
       props.load(inputStream);
     } finally {
       if(inputStream != null)
-        inputStream.close(); 		
-    }	
+        inputStream.close();
+    }
     return props;
-  }  
-  
+  }
+
   /**
    * Get the contents of a URL as a String
    * @param requestingClass the java.lang.Class object of the class that is attempting to load the resource
@@ -228,7 +232,7 @@ public class ResourceLoader {
         sbText.append (line).append ("\n");
     } finally {
       if(in != null )
-        in.close();    	
+        in.close();
     }
     return sbText.toString ();
   }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- <!DOCTYPE channelDef PUBLIC "-//uPortal//Channel Publishing/EN" "channelPublishing.dtd"> -->
+<!DOCTYPE channelDef PUBLIC "-//uPortal//Channel Publishing/EN" "channelPublishingDocument.dtd">
 
 <!--
 Copyright (c) 2001 The JA-SIG Collaborative.  All rights reserved.
@@ -46,7 +46,7 @@ Version $Revision$
 
   <class>org.jasig.portal.channels.webproxy.CWebProxy</class>
 
-  <params>
+  <params2>
     <step>
       <ID>1</ID>
 
