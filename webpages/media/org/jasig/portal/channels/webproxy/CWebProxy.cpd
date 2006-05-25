@@ -46,7 +46,7 @@ Version $Revision$
 
   <class>org.jasig.portal.channels.webproxy.CWebProxy</class>
 
-  <params2>
+  <params>
     <step>
       <ID>1</ID>
 
