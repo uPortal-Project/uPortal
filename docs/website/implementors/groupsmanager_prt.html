@@ -37,7 +37,7 @@
     <P STYLE="margin-bottom: 0cm">
     The Groups Manager channel is a tool
     that runs within the uPortal framework that allows a user to
-    manipulate groups, group memberships, and their permissions. 
+    manipulate groups, group memberships, and their permissions.
     </P>
     <P STYLE="margin-bottom: 0cm">
     The uPortal 2.1 group service is a
@@ -55,7 +55,7 @@
     LDAPGroupStoreConfig.xml file located in the same file directory. It
     should also be kept in mind that group information from some services
     may be read-only. For a more detailed discussion of configuration
-    issues, refer to the 
+    issues, refer to the
     <B>
       <A href = "./services/compositeGroupService.html">Groups documentation.</A>
     </B>
@@ -70,7 +70,7 @@
     Groups Manager channel because the question soon arises where one
     starts the representation of the groups system. The uPortal 2.1 group
     service allows for the definition of special groups called root
-    groups. A 
+    groups. A
     <B>
       root group
     </B>
@@ -98,7 +98,7 @@
     As mentioned above, the group members
     have permissions assigned to them directly or by virtue of their
     membership in a group. In regards to permissions owned by the Groups
-    Manager channel, the distinguished group of 
+    Manager channel, the distinguished group of
     <B>
       portal administrators
     </B>
@@ -116,14 +116,14 @@
     org.jasig.portal.services.GroupService.key_org.jasig.portal.security.IPerson.PortalAdministrators=local.14
     </P>
     <P STYLE="margin-bottom: 0cm">
-    A quick start tutorial of the Groups Manager channel is located in 
+    A quick start tutorial of the Groups Manager channel is located in
     <B>
       <I>
         <A href = "#appendix1">Appendix I: Test Drive</A>
       </I>
     </B>
     section of this document. For a more detailed discussion of Groups,
-    see the 
+    see the
     <B>
       <A href = "./services/compositeGroupService.html">Groups documentation.</A>
     </B>
@@ -141,13 +141,13 @@
     </B>
     </P>
     <P STYLE="margin-bottom: 0cm">
-    When the Groups Manager opens, the channel displays all root groups (see 
+    When the Groups Manager opens, the channel displays all root groups (see
     <A href = "#overview">Overview</A>
     above) for which the
     user has view permissions (see Figure 1). A group can be expanded by
-    clicking on the 
+    clicking on the
     <IMG SRC="images/expand.jpg" NAME="Graphic1" ALIGN=BOTTOM WIDTH=16 HEIGHT=16 BORDER=0>
-    icon or collapsed by clicking on the 
+    icon or collapsed by clicking on the
     <IMG SRC="images/collapse.jpg" NAME="Graphic2" ALIGN=BOTTOM WIDTH=16 HEIGHT=16 BORDER=0>
     icon. User permissions determine the group members that the user sees
     as well as the functions that are made available for each group
@@ -158,7 +158,7 @@
     visible. If the group Tenured Professors is not a member of any other
     group that is displayed, it will be invisible to the user from the
     tree view. The only way for the user to see the group is to search
-    for it (See 
+    for it (See
     <A href = "#searching">Searching</A>
     below).
     </P>
@@ -192,17 +192,17 @@
     the detail view (see Figure 2) by clicking on the group name. This
     will open a new panel to the right of the tree view where information
     will be displayed about the group. The detail view can be closed by
-    clicking on the 
+    clicking on the
     <IMG SRC="images/close.jpg" NAME="Graphic4" ALIGN=BOTTOM WIDTH=16 HEIGHT=16 BORDER=0>
     icon. Group members can be displayed in the detail view from this
     panel also by clicking on the group name. In addition, properties for
-    a group member can be displayed by clicking on the 
+    a group member can be displayed by clicking on the
     <IMG SRC="images/showprops.jpg" NAME="Graphic5" ALIGN=BOTTOM WIDTH=16 HEIGHT=16 BORDER=0>
-    icon. The properties can then be hidden by clicking on the 
+    icon. The properties can then be hidden by clicking on the
     <IMG SRC="images/hideprops.jpg" NAME="Graphic6" ALIGN=BOTTOM WIDTH=16 HEIGHT=16 BORDER=0>
     icon.
     The group displayed in the detail view can be edited by
-    clicking on the lock 
+    clicking on the lock
     <IMG SRC="images/lock.jpg" NAME="Graphic7" ALIGN=BOTTOM WIDTH=16 HEIGHT=16 BORDER=0>
     icon (&quot;
     <B>
@@ -211,7 +211,7 @@
     &quot;). If this group is not being edited by
     someone else, the edit view will be rendered. This icon will only be
     displayed when the user has update permissions for the selected group
-    and the group service is not a read-only service. 
+    and the group service is not a read-only service.
     </P>
     <P STYLE="margin-bottom: 0cm">
     <BR>
@@ -242,15 +242,15 @@
     The edit view (see Figure 3) is similar
     to the detail view but the group information is updatable and
     additional functions are available based upon the user&apos;s
-    privileges. The group can be 
+    privileges. The group can be
     <B>
       deleted
     </B>
-    by clicking on the 
+    by clicking on the
     <IMG SRC="images/delete.jpg" NAME="Graphic9" ALIGN=BOTTOM WIDTH=16 HEIGHT=16 BORDER=0>
     icon. This will physically delete the group and remove references to
     it held by all containing groups. The group name and description can
-    be changed and subsequently saved by clicking on the 
+    be changed and subsequently saved by clicking on the
     <B>
       Update
     </B>
@@ -259,32 +259,32 @@
     <B>
       (new group name)
     </B>
-    &quot; is displayed and then clicking on the 
+    &quot; is displayed and then clicking on the
     <B>
       Create New Member Group
     </B>
     button. Group members that already exist can be
-    added to the Faculty group by clicking on the 
+    added to the Faculty group by clicking on the
     <B>
       Add Members
     </B>
     button. Adding members to a group is discussed in more detail later.
     Permissions can be assigned for this group (i.e. Faculty) by clicking
-    on the 
+    on the
     <B>
       Assign Permissions
     </B>
     button. This will display the
     Permissions Manager channel as an IServant. Assigning permissions to
     a group is discussed in more detail later. When you are through with
-    your modifications, you can click on the unlock icon 
+    your modifications, you can click on the unlock icon
     <IMG SRC="images/unlock.jpg" NAME="Graphic10" ALIGN=BOTTOM WIDTH=16 HEIGHT=16 BORDER=0>
     (&quot;
     <B>
       Finish Editing Group
     </B>
     &quot;) that will allow another user to
-    edit the Faculty group. 
+    edit the Faculty group.
     </P>
     <P STYLE="margin-bottom: 0cm">
     <BR>
@@ -312,7 +312,7 @@
     </B>
     </P>
     <P STYLE="margin-bottom: 0cm">
-    After clicking on 
+    After clicking on
     <B>
       Add Members
     </B>
@@ -320,28 +320,28 @@
     the detail view (see Figure 4) is displayed with checkboxes to the
     left of the group member names. Group members can be selected by
     clicking in the checkbox of the associated groups and then clicking
-    on 
+    on
     <B>
       Select Marked
     </B>
     button. The view is then rendered with a
-    permanent &quot; 
+    permanent &quot;
     <B>
       X
     </B>
     &quot; along side the selected members. To deselect any
     member, click in the checkbox of the member name Selected Groups
-    section at the bottom, and click on the 
+    section at the bottom, and click on the
     <B>
       Deselect
     </B>
     button. When
-    finished with member selection, click on the 
+    finished with member selection, click on the
     <B>
       Done with Selection
     </B>
     button, and the selected member will be added to the parent group
-    that was originally selected. 
+    that was originally selected.
     <B>
       Cancel Selection
     </B>
@@ -378,15 +378,15 @@
     </FONT>
     </P>
     <P STYLE="margin-bottom: 0cm">
-    After clicking on the 
+    After clicking on the
     <B>
-      Assign Permissions 
+      Assign Permissions
     </B>
     button, you will see the same detail view
     <SUP>
       <A CLASS="sdfootnoteanc" NAME="sdfootnote1anc" HREF="#sdfootnote1sym"><SUP>1</SUP></A>
     </SUP>
-    as displayed for the 
+    as displayed for the
     <B>
       Add Member View
     </B>
@@ -394,29 +394,29 @@
     be granting permissions for the target group that was being edited in
     the previous view. You can select the group members to which you want
     to grant permissions by clicking in the checkbox to the left of the
-    group member&apos;s name and then clicking on 
+    group member&apos;s name and then clicking on
     <B>
       Select Marked
     </B>
-    (see the 
+    (see the
     <B>
       <I>
-        See 
+        See
         <A href = "#addmembers">Add Member View</A>
 
       </I>
     </B>
     discussion for more details). Once
-    you have clicked on the 
+    you have clicked on the
     <B>
-      Done with Selection 
+      Done with Selection
     </B>
     button, the
     Permissions Manager channel will be displayed. This view shows a grid
     with the principals that were selected in the previous view as rows
     and with all of the defined permissions as columns. You can select
     Grant or Deny permissions from each of the drop lists. The
-    permissions will be saved once you click on the 
+    permissions will be saved once you click on the
     <B>
       Submit
     </B>
@@ -467,7 +467,7 @@
     Figure 5), change the first search argument to &quot;Group of Persons&quot;,
     the second argument to &quot;contains&quot; or &quot;starts with&quot; and the
     third argument to &quot;Tenured&quot;. If you only want to search within
-    the currently selected group, click on the 
+    the currently selected group, click on the
     <B>
       &quot;Search only descendants of the selected group&quot;
     </B>
@@ -475,7 +475,7 @@
     <B>
       Go
     </B>
-    , a new 
+    , a new
     <B>
       Search results
     </B>
@@ -497,7 +497,7 @@
     privileges. This includes being able to select the groups in order to
     add them to another group. Group members held by all component group
     services will be discovered once they are configured.  Group services
-    configuration was discussed in the 
+    configuration was discussed in the
     <B>
       <I>
         Overview
@@ -558,7 +558,7 @@
       </P>
       <LI>
       <P STYLE="margin-bottom: 0cm">
-      Expand the Faculty group in the Groups Manager channel by clicking on the 
+      Expand the Faculty group in the Groups Manager channel by clicking on the
       <IMG SRC="images/expand.jpg" NAME="Graphic15" ALIGN=BOTTOM WIDTH=16 HEIGHT=16 BORDER=0>
       icon that is next to the group name &quot;Faculty&quot;.
       </P>
@@ -566,13 +566,13 @@
       <P STYLE="margin-bottom: 0cm">
       Open the detail view of the
       Faculty group by clicking on the group name &quot;Faculty&quot; (to the
-      right of the 
+      right of the
       <IMG SRC="images/collapse.jpg" NAME="Graphic16" ALIGN=BOTTOM WIDTH=16 HEIGHT=16 BORDER=0>
       icon).
       </P>
       <LI>
       <P STYLE="margin-bottom: 0cm">
-      Click on the 
+      Click on the
       <IMG SRC="images/showprops.jpg" NAME="Graphic17" ALIGN=BOTTOM WIDTH=16 HEIGHT=16 BORDER=0>
       next
       to the Associate Professors group to show the properties for this
@@ -580,13 +580,13 @@
       </P>
       <LI>
       <P STYLE="margin-bottom: 0cm">
-      Click on the 
+      Click on the
       <IMG SRC="images/hideprops.jpg" NAME="Graphic18" ALIGN=BOTTOM WIDTH=16 HEIGHT=16 BORDER=0>
       to hide the properties.
       </P>
       <LI>
       <P STYLE="margin-bottom: 0cm">
-      Click on the 
+      Click on the
       <IMG SRC="images/close.jpg" NAME="Graphic19" ALIGN=BOTTOM WIDTH=16 HEIGHT=16 BORDER=0>
       to close the detail view.
       </P>
@@ -605,13 +605,13 @@
       <LI>
       <P STYLE="margin-bottom: 0cm">
       Edit the Faculty group by clicking
-      on the 
+      on the
       <IMG SRC="images/lock.jpg" NAME="Graphic20" ALIGN=BOTTOM WIDTH=16 HEIGHT=16 BORDER=0>
       icon.
       </P>
       <LI>
       <P STYLE="margin-bottom: 0cm">
-      Change &quot;(new group name)&quot; to &quot;Nutty Prof&quot; and click on the 
+      Change &quot;(new group name)&quot; to &quot;Nutty Prof&quot; and click on the
       <B>
         Create New Member Group
       </B>
@@ -619,7 +619,7 @@
       </P>
       <LI>
       <P STYLE="margin-bottom: 0cm">
-      Click on the 
+      Click on the
       <IMG SRC="images/unlock.jpg" NAME="Graphic21" ALIGN=BOTTOM WIDTH=16 HEIGHT=16 BORDER=0>
       icon to finish editing the group.
       </P>
@@ -630,7 +630,7 @@
       </P>
       <LI>
       <P STYLE="margin-bottom: 0cm">
-      Click on the 
+      Click on the
       <IMG SRC="images/lock.jpg" NAME="Graphic22" ALIGN=BOTTOM WIDTH=16 HEIGHT=16 BORDER=0>
       icon to edit the group.
       </P>
@@ -638,7 +638,7 @@
       <P STYLE="margin-bottom: 0cm">
       Change the Nutty Prof group to
       Nutty Professors and add a description the description &quot;Son of
-      Flubber&quot;. Click on the 
+      Flubber&quot;. Click on the
       <B>
         Update
       </B>
@@ -653,7 +653,7 @@
     <OL>
       <LI>
       <P STYLE="margin-bottom: 0cm">
-      Click on the 
+      Click on the
       <B>
         Add Members
       </B>
@@ -661,7 +661,7 @@
       </P>
       <LI>
       <P STYLE="margin-bottom: 0cm">
-      Search for a 
+      Search for a
       <B>
         Person
       </B>
@@ -669,7 +669,7 @@
       <B>
         contains
       </B>
-      demo. Click on 
+      demo. Click on
       <B>
         Go
       </B>
@@ -678,7 +678,7 @@
       <LI>
       <P STYLE="margin-bottom: 0cm">
       Show the properties for the entity
-      &quot;demo&quot; by clicking on the 
+      &quot;demo&quot; by clicking on the
       <IMG SRC="images/showprops.jpg" NAME="Graphic23" ALIGN=BOTTOM WIDTH=16 HEIGHT=16 BORDER=0>
       icon that is next to &quot;demo&quot;. You are doing this to make sure you
       have the right member.
@@ -690,7 +690,7 @@
       </P>
       <LI>
       <P STYLE="margin-bottom: 0cm">
-      Click on the 
+      Click on the
       <B>
         Select Marked
       </B>
@@ -704,7 +704,7 @@
       </P>
       <LI>
       <P STYLE="margin-bottom: 0cm">
-      Click on the 
+      Click on the
       <B>
         Deselect Marked
       </B>
@@ -716,7 +716,7 @@
       </P>
       <LI>
       <P STYLE="margin-bottom: 0cm">
-      Click on the 
+      Click on the
       <B>
         Done with Selection
       </B>
@@ -732,7 +732,7 @@
     <OL>
       <LI>
       <P STYLE="margin-bottom: 0cm">
-      Click on the 
+      Click on the
       <B>
         Assign Permissions
       </B>
@@ -745,7 +745,7 @@
       </P>
       <LI>
       <P STYLE="margin-bottom: 0cm">
-      Click on the 
+      Click on the
       <B>
         Select Marked
       </B>
@@ -754,7 +754,7 @@
       <LI>
       <P STYLE="margin-bottom: 0cm">
       When you are finished selecting
-      principals, click on the 
+      principals, click on the
       <B>
         Done with Selection
       </B>
@@ -770,12 +770,12 @@
       </P>
       <LI>
       <P STYLE="margin-bottom: 0cm">
-      Click on the 
+      Click on the
       <B>
         Submit
       </B>
       button.
-      You have just granted Students all permissions to Nutty Professors. 
+      You have just granted Students all permissions to Nutty Professors.
       </P>
     </OL>
     <P STYLE="margin-bottom: 0cm">
@@ -804,7 +804,7 @@
       <LI>
       <P STYLE="margin-bottom: 0cm">
       Delete the Nutty Professors group
-      by clicking on the 
+      by clicking on the
       <IMG SRC="images/delete.jpg" NAME="Graphic25" ALIGN=BOTTOM WIDTH=16 HEIGHT=16 BORDER=0>
       icon.
       </P>
@@ -874,7 +874,7 @@
     <BR>
     GroupService.newGroup(Class.forName(&quot;org.jasig.portal.IBook&quot;))
     <BR>
-    OR 
+    OR
     <BR>
     GroupService.newGroup(Class.forName(&quot;org.jasig.portal.IBook&quot;),
     amazonCom).
@@ -903,7 +903,7 @@
     </FONT>
     </P>
     <P ALIGN=LEFT STYLE="margin-bottom: 0cm">
-      <a 
+      <a
 	    href="mailto:df7@columbia.edu">Don Fracapane
       </a>
 	  <br>
@@ -911,8 +911,8 @@
     </P>
     <DIV ID="sdfootnote1">
       <P CLASS="sdfootnote-western">
-        <HR>
-        <BR>
+        <HR/>
+        <BR/>
         <A CLASS="sdfootnotesym" NAME="sdfootnote1sym" HREF="#sdfootnote1anc">1</A>
         <FONT SIZE=2>
           This view is actually the Permissions Manager channel running in
