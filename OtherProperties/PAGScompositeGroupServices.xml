@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<!-- $Revision$ -->
+<!--
+This list of component group services is processed by the composite, or "root" service as it assembles itself.  Each service element has 2 required elements: name and service_factory.  The values of all service elements are delivered to the service_factory.  
+-->
+
+<servicelist defaultService="local" 
+             compositeFactory="org.jasig.portal.groups.ReferenceCompositeGroupServiceFactory"
+             nodeSeparator=".">
+  <service>
+    <name>local</name>
+    <service_factory>org.jasig.portal.groups.ReferenceIndividualGroupServiceFactory</service_factory>
+    <entity_store_factory>org.jasig.portal.groups.ReferenceEntityStoreFactory</entity_store_factory>
+    <group_store_factory>org.jasig.portal.groups.ReferenceEntityGroupStoreFactory</group_store_factory>
+    <entity_searcher_factory>org.jasig.portal.groups.ReferenceEntitySearcherFactory</entity_searcher_factory>
+    <internally_managed>true</internally_managed>
+    <caching_enabled>true</caching_enabled>
+  </service>
+
+<!--  Uncomment to configure an LDAP group service component.  Be sure to edit LDAPGroupStoreConfig.xml with your values. -->
+<!--  
+  <service>
+    <name>ldap</name>
+    <service_factory>org.jasig.portal.groups.ReferenceIndividualGroupServiceFactory</service_factory>
+    <entity_store_factory>org.jasig.portal.groups.ldap.LDAPEntityStoreFactory</entity_store_factory>
+    <group_store_factory>org.jasig.portal.groups.ldap.LDAPGroupStoreFactory</group_store_factory>
+    <entity_searcher_factory>org.jasig.portal.groups.ldap.LDAPEntitySearcherFactory</entity_searcher_factory>
+    <internally_managed>false</internally_managed>
+    <caching_enabled>false</caching_enabled>
+  </service>
+-->
+
+<!-- Uncomment to configure a file system group service component.  Change groupsRoot as appropriate. -->
+<!-- 
+  <service groupsRoot="C:/groups">
+    <name>filesystem</name>
+    <service_factory>org.jasig.portal.groups.ReferenceIndividualGroupServiceFactory</service_factory>
+    <entity_store_factory>org.jasig.portal.groups.filesystem.FileSystemGroupStoreFactory</entity_store_factory>
+    <group_store_factory>org.jasig.portal.groups.filesystem.FileSystemGroupStoreFactory</group_store_factory>
+    <entity_searcher_factory>org.jasig.portal.groups.filesystem.FileSystemEntitySearcherFactory</entity_searcher_factory>
+    <internally_managed>false</internally_managed>
+    <caching_enabled>false</caching_enabled>
+  </service>
+-->
+
+<!-- Uncomment to configure a Person Attributes group service component.  Configure your person attributes groups in PAGSGroupStoreConfig.xml. -->
+
+  <service>
+    <name>pags</name>
+    <service_factory>org.jasig.portal.groups.ReferenceIndividualGroupServiceFactory</service_factory>
+    <entity_store_factory>org.jasig.portal.groups.pags.PersonAttributesEntityStoreFactory</entity_store_factory>
+    <group_store_factory>org.jasig.portal.groups.pags.PersonAttributesGroupStoreFactory</group_store_factory>
+    <entity_searcher_factory>org.jasig.portal.groups.pags.PersonAttributesEntitySearcherFactory</entity_searcher_factory>
+    <internally_managed>false</internally_managed>
+    <caching_enabled>true</caching_enabled>
+  </service>
+
+
+</servicelist>
