@@ -28,12 +28,14 @@ $Revision$
   ID ID #REQUIRED
   name CDATA #REQUIRED
   description CDATA #REQUIRED
-  title CDATA #REQUIRED 
+  title CDATA #REQUIRED
   class CDATA #REQUIRED
   chanID CDATA #REQUIRED
   typeID CDATA #REQUIRED
-  fname CDATA #IMPLIED   
+  fname CDATA #IMPLIED
   timeout CDATA "10000"
+  unremovable (true|false) "false"
+  immutable (true|false) "false"
   hidden (true|false) "false"
   editable (true|false) "false"
   hasHelp (true|false) "false"
