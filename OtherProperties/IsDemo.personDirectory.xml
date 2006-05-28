@@ -161,6 +161,11 @@
 				<property name="staticMethod">
 					<value>org.jasig.portal.RDBMServices.getDataSource</value>
 				</property>
+				<property name="arguments">
+					<list>
+						<value>PersonDb</value>
+					</list>
+				</property>
 			</bean>
 		</constructor-arg>
 		<constructor-arg>
