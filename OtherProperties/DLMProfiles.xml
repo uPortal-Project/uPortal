@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
-
+<!-- this file contains just the UP_USER_PROFILE data.  It can be used to replace
+    that table in the data.ml distributed with uPortal 2.5 -->
 <data>
   <table>
     <name>UP_USER_PROFILE</name>
