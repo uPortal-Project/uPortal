@@ -3718,147 +3718,136 @@
   </table>
 
   <table sinceMajor="2" sinceMinor="1">
-    <name>UP_USER_PROFILE</name>
-    <rows>
-      <row>
-        <column><name>USER_ID</name><value>0</value></column>
-        <column><name>PROFILE_ID</name><value>1</value></column>
-        <column><name>PROFILE_NAME</name><value>HTML browser profile</value></column>
-        <column><name>DESCRIPTION</name><value>A system profile for common web browsers</value></column>
-        <column><name>LAYOUT_ID</name><value>1</value></column>
-        <column><name>STRUCTURE_SS_ID</name><value>3</value></column>
-        <column><name>THEME_SS_ID</name><value><sequence id="UP_SS_THEME">integratedModes</sequence></value></column>
-      </row>
-
-      <row>
-        <column><name>USER_ID</name><value>0</value></column>
-        <column><name>PROFILE_ID</name><value>2</value></column>
-        <column><name>PROFILE_NAME</name><value>WML browser profile</value></column>
-        <column><name>DESCRIPTION</name><value>A system profile for WAP cell phones</value></column>
-        <column><name>LAYOUT_ID</name><value>1</value></column>
-        <column><name>STRUCTURE_SS_ID</name><value>1</value></column>
-        <column><name>THEME_SS_ID</name><value>2</value></column>
-      </row>
-
-      <row>
-        <column><name>USER_ID</name><value>1</value></column>
-        <column><name>PROFILE_ID</name><value>1</value></column>
-        <column><name>PROFILE_NAME</name><value>Guest Web Browser Profile</value></column>
-        <column><name>DESCRIPTION</name><value>A sample profile for web browsers</value></column>
-        <column><name>LAYOUT_ID</name><value>1</value></column>
-        <column><name>STRUCTURE_SS_ID</name><value>3</value></column>
-        <column><name>THEME_SS_ID</name><value><sequence id="UP_SS_THEME">integratedModes</sequence></value></column>
-      </row>
-
-      <row>
-        <column><name>USER_ID</name><value>1</value></column>
-        <column><name>PROFILE_ID</name><value>2</value></column>
-        <column><name>PROFILE_NAME</name><value>Guest Cell Phone Profile</value></column>
-        <column><name>DESCRIPTION</name><value>A sample profile for cell phone browsers</value></column>
-        <column><name>LAYOUT_ID</name><value>1</value></column>
-        <column><name>STRUCTURE_SS_ID</name><value>1</value></column>
-        <column><name>THEME_SS_ID</name><value>2</value></column>
-      </row>
-
-      <row>
-        <column><name>USER_ID</name><value>2</value></column>
-        <column><name>PROFILE_ID</name><value>1</value></column>
-        <column><name>PROFILE_NAME</name><value>My web browser profile</value></column>
-        <column><name>DESCRIPTION</name><value>A sample profile for web browsers</value></column>
-        <column><name>LAYOUT_ID</name><value>1</value></column>
-        <column><name>STRUCTURE_SS_ID</name><value>3</value></column>
-        <column><name>THEME_SS_ID</name><value><sequence id="UP_SS_THEME">integratedModes</sequence></value></column>
-      </row>
-
-      <row>
-        <column><name>USER_ID</name><value>2</value></column>
-        <column><name>PROFILE_ID</name><value>2</value></column>
-        <column><name>PROFILE_NAME</name><value>My Cell Phone Profile</value></column>
-        <column><name>DESCRIPTION</name><value>A sample profile for cell phone browsers</value></column>
-        <column><name>LAYOUT_ID</name><value>1</value></column>
-        <column><name>STRUCTURE_SS_ID</name><value>1</value></column>
-        <column><name>THEME_SS_ID</name><value>2</value></column>
-      </row>
-
-      <row>
-        <column><name>USER_ID</name><value>7</value></column>
-        <column><name>PROFILE_ID</name><value>1</value></column>
-        <column><name>PROFILE_NAME</name><value>My web browser profile</value></column>
-        <column><name>DESCRIPTION</name><value>A system profile for common web browsers</value></column>
-        <column><name>LAYOUT_ID</name><value>1</value></column>
-        <column><name>STRUCTURE_SS_ID</name><value>3</value></column>
-        <column><name>THEME_SS_ID</name><value><sequence id="UP_SS_THEME">integratedModes</sequence></value></column>
-      </row>
-
-      <row>
-        <column><name>USER_ID</name><value>11</value></column>
-        <column><name>PROFILE_ID</name><value>1</value></column>
-        <column><name>PROFILE_NAME</name><value>My web browser profile</value></column>
-        <column><name>DESCRIPTION</name><value>A system profile for common web browsers</value></column>
-        <column><name>LAYOUT_ID</name><value>1</value></column>
-        <column><name>STRUCTURE_SS_ID</name><value>3</value></column>
-        <column><name>THEME_SS_ID</name><value><sequence id="UP_SS_THEME">integratedModes</sequence></value></column>
-      </row>
-
-      <row>
-        <column><name>USER_ID</name><value>12</value></column>
-        <column><name>PROFILE_ID</name><value>1</value></column>
-        <column><name>PROFILE_NAME</name><value>My web browser profile</value></column>
-        <column><name>DESCRIPTION</name><value>A system profile for common web browsers</value></column>
-        <column><name>LAYOUT_ID</name><value>1</value></column>
-        <column><name>STRUCTURE_SS_ID</name><value>3</value></column>
-        <column><name>THEME_SS_ID</name><value><sequence id="UP_SS_THEME">integratedModes</sequence></value></column>
-      </row>
-
-      <row>
-        <column><name>USER_ID</name><value>13</value></column>
-        <column><name>PROFILE_ID</name><value>1</value></column>
-        <column><name>PROFILE_NAME</name><value>My web browser profile</value></column>
-        <column><name>DESCRIPTION</name><value>A system profile for common web browsers</value></column>
-        <column><name>LAYOUT_ID</name><value>1</value></column>
-        <column><name>STRUCTURE_SS_ID</name><value>3</value></column>
-        <column><name>THEME_SS_ID</name><value><sequence id="UP_SS_THEME">integratedModes</sequence></value></column>
-      </row>
-
-      <row>
-        <column><name>USER_ID</name><value>3</value></column>
-        <column><name>PROFILE_ID</name><value>1</value></column>
-        <column><name>PROFILE_NAME</name><value>HTML browser profile</value></column>
-        <column><name>DESCRIPTION</name><value>A sample profile for common web browsers</value></column>
-        <column><name>LAYOUT_ID</name><value>1</value></column>
-        <column><name>STRUCTURE_SS_ID</name><value>4</value></column>
-        <column><name>THEME_SS_ID</name><value>3</value></column>
-      </row>
-      <row>
-        <column><name>USER_ID</name><value>4</value></column>
-        <column><name>PROFILE_ID</name><value>1</value></column>
-        <column><name>PROFILE_NAME</name><value>HTML browser profile</value></column>
-        <column><name>DESCRIPTION</name><value>A system profile for common web browsers</value></column>
-        <column><name>LAYOUT_ID</name><value>1</value></column>
-        <column><name>STRUCTURE_SS_ID</name><value>4</value></column>
-        <column><name>THEME_SS_ID</name><value>3</value></column>
-      </row>
-      <row>
-        <column><name>USER_ID</name><value>5</value></column>
-        <column><name>PROFILE_ID</name><value>1</value></column>
-        <column><name>PROFILE_NAME</name><value>HTML browser profile</value></column>
-        <column><name>DESCRIPTION</name><value>A system profile for common web browsers</value></column>
-        <column><name>LAYOUT_ID</name><value>1</value></column>
-        <column><name>STRUCTURE_SS_ID</name><value>4</value></column>
-        <column><name>THEME_SS_ID</name><value>3</value></column>
-      </row>
-      <row>
-        <column><name>USER_ID</name><value>8</value></column>
-        <column><name>PROFILE_ID</name><value>1</value></column>
-        <column><name>PROFILE_NAME</name><value>HTML browser profile</value></column>
-        <column><name>DESCRIPTION</name><value>A sample profile for common web browsers</value></column>
-        <column><name>LAYOUT_ID</name><value>1</value></column>
-        <column><name>STRUCTURE_SS_ID</name><value>4</value></column>
-        <column><name>THEME_SS_ID</name><value>3</value></column>
-      </row>
-    </rows>
-  </table>
-
+      <name>UP_USER_PROFILE</name>
+      <rows>
+        <row>
+          <column><name>USER_ID</name><value>0</value></column>
+          <column><name>PROFILE_ID</name><value>1</value></column>
+          <column><name>PROFILE_NAME</name><value>HTML browser profile</value></column>
+          <column><name>DESCRIPTION</name><value>A system profile for common web browsers</value></column>
+          <column><name>LAYOUT_ID</name><value>1</value></column>
+          <column><name>STRUCTURE_SS_ID</name><value>4</value></column>
+          <column><name>THEME_SS_ID</name><value>3</value></column>
+        </row>
+        <row>
+          <column><name>USER_ID</name><value>0</value></column>
+          <column><name>PROFILE_ID</name><value>2</value></column>
+          <column><name>PROFILE_NAME</name><value>WML browser profile</value></column>
+          <column><name>DESCRIPTION</name><value>A system profile for WAP cell phones</value></column>
+          <column><name>LAYOUT_ID</name><value>1</value></column>
+          <column><name>STRUCTURE_SS_ID</name><value>1</value></column>
+          <column><name>THEME_SS_ID</name><value>2</value></column>
+        </row>
+        <row>
+          <column><name>USER_ID</name><value>1</value></column>
+          <column><name>PROFILE_ID</name><value>1</value></column>
+          <column><name>PROFILE_NAME</name><value>Guest Web Browser Profile</value></column>
+          <column><name>DESCRIPTION</name><value>A sample profile for web browsers</value></column>
+          <column><name>LAYOUT_ID</name><value>1</value></column>
+          <column><name>STRUCTURE_SS_ID</name><value>4</value></column>
+          <column><name>THEME_SS_ID</name><value>3</value></column>
+        </row>
+        <row>
+          <column><name>USER_ID</name><value>1</value></column>
+          <column><name>PROFILE_ID</name><value>2</value></column>
+          <column><name>PROFILE_NAME</name><value>Guest Cell Phone Profile</value></column>
+          <column><name>DESCRIPTION</name><value>A sample profile for cell phone browsers</value></column>
+          <column><name>LAYOUT_ID</name><value>1</value></column>
+          <column><name>STRUCTURE_SS_ID</name><value>1</value></column>
+          <column><name>THEME_SS_ID</name><value>2</value></column>
+        </row>
+        <row>
+          <column><name>USER_ID</name><value>2</value></column>
+          <column><name>PROFILE_ID</name><value>1</value></column>
+          <column><name>PROFILE_NAME</name><value>HTML browser profile</value></column>
+          <column><name>DESCRIPTION</name><value>A system profile for common web browsers</value></column>
+          <column><name>LAYOUT_ID</name><value>1</value></column>
+          <column><name>STRUCTURE_SS_ID</name><value>4</value></column>
+          <column><name>THEME_SS_ID</name><value>3</value></column>
+        </row>
+        <row>
+          <column><name>USER_ID</name><value>2</value></column>
+          <column><name>PROFILE_ID</name><value>2</value></column>
+          <column><name>PROFILE_NAME</name><value>My Cell Phone Profile</value></column>
+          <column><name>DESCRIPTION</name><value>A sample profile for cell phone browsers</value></column>
+          <column><name>LAYOUT_ID</name><value>1</value></column>
+          <column><name>STRUCTURE_SS_ID</name><value>1</value></column>
+          <column><name>THEME_SS_ID</name><value>2</value></column>
+        </row>
+        <row>
+          <column><name>USER_ID</name><value>3</value></column>
+          <column><name>PROFILE_ID</name><value>1</value></column>
+          <column><name>PROFILE_NAME</name><value>HTML browser profile</value></column>
+          <column><name>DESCRIPTION</name><value>A sample profile for common web browsers</value></column>
+          <column><name>LAYOUT_ID</name><value>1</value></column>
+          <column><name>STRUCTURE_SS_ID</name><value>4</value></column>
+          <column><name>THEME_SS_ID</name><value>3</value></column>
+        </row>
+        <row>
+          <column><name>USER_ID</name><value>4</value></column>
+          <column><name>PROFILE_ID</name><value>1</value></column>
+          <column><name>PROFILE_NAME</name><value>HTML browser profile</value></column>
+          <column><name>DESCRIPTION</name><value>A system profile for common web browsers</value></column>
+          <column><name>LAYOUT_ID</name><value>1</value></column>
+          <column><name>STRUCTURE_SS_ID</name><value>4</value></column>
+          <column><name>THEME_SS_ID</name><value>3</value></column>
+        </row>
+        <row>
+          <column><name>USER_ID</name><value>5</value></column>
+          <column><name>PROFILE_ID</name><value>1</value></column>
+          <column><name>PROFILE_NAME</name><value>HTML browser profile</value></column>
+          <column><name>DESCRIPTION</name><value>A system profile for common web browsers</value></column>
+          <column><name>LAYOUT_ID</name><value>1</value></column>
+          <column><name>STRUCTURE_SS_ID</name><value>4</value></column>
+          <column><name>THEME_SS_ID</name><value>3</value></column>
+        </row>
+        <row>
+          <column><name>USER_ID</name><value>7</value></column>
+          <column><name>PROFILE_ID</name><value>1</value></column>
+          <column><name>PROFILE_NAME</name><value>My web browser profile</value></column>
+          <column><name>DESCRIPTION</name><value>A system profile for common web browsers</value></column>
+          <column><name>LAYOUT_ID</name><value>1</value></column>
+          <column><name>STRUCTURE_SS_ID</name><value>4</value></column>
+          <column><name>THEME_SS_ID</name><value>3</value></column>
+        </row>
+        <row>
+          <column><name>USER_ID</name><value>8</value></column>
+          <column><name>PROFILE_ID</name><value>1</value></column>
+          <column><name>PROFILE_NAME</name><value>HTML browser profile</value></column>
+          <column><name>DESCRIPTION</name><value>A sample profile for common web browsers</value></column>
+          <column><name>LAYOUT_ID</name><value>1</value></column>
+          <column><name>STRUCTURE_SS_ID</name><value>4</value></column>
+          <column><name>THEME_SS_ID</name><value>3</value></column>
+        </row>
+        <row>
+          <column><name>USER_ID</name><value>11</value></column>
+          <column><name>PROFILE_ID</name><value>1</value></column>
+          <column><name>PROFILE_NAME</name><value>My web browser profile</value></column>
+          <column><name>DESCRIPTION</name><value>A system profile for common web browsers</value></column>
+          <column><name>LAYOUT_ID</name><value>1</value></column>
+          <column><name>STRUCTURE_SS_ID</name><value>4</value></column>
+          <column><name>THEME_SS_ID</name><value>3</value></column>
+        </row>
+        <row>
+          <column><name>USER_ID</name><value>12</value></column>
+          <column><name>PROFILE_ID</name><value>1</value></column>
+          <column><name>PROFILE_NAME</name><value>My web browser profile</value></column>
+          <column><name>DESCRIPTION</name><value>A system profile for common web browsers</value></column>
+          <column><name>LAYOUT_ID</name><value>1</value></column>
+          <column><name>STRUCTURE_SS_ID</name><value>4</value></column>
+          <column><name>THEME_SS_ID</name><value>3</value></column>
+        </row>
+        <row>
+          <column><name>USER_ID</name><value>13</value></column>
+          <column><name>PROFILE_ID</name><value>1</value></column>
+          <column><name>PROFILE_NAME</name><value>My web browser profile</value></column>
+          <column><name>DESCRIPTION</name><value>A system profile for common web browsers</value></column>
+          <column><name>LAYOUT_ID</name><value>1</value></column>
+          <column><name>STRUCTURE_SS_ID</name><value>4</value></column>
+          <column><name>THEME_SS_ID</name><value>3</value></column>
+        </row>
+      </rows>
+    </table>
   <table sinceMajor="2" sinceMinor="1">
     <name>UP_SS_USER_PARM</name>
     <rows>
