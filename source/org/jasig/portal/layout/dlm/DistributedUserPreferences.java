@@ -6,9 +6,13 @@
 package org.jasig.portal.layout.dlm;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Set;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.StructureStylesheetUserPreferences;
@@ -105,7 +109,16 @@ public class DistributedUserPreferences
     {
         Enumeration userOwned = folderAttributeValues.keys();
         Enumeration incorporated = incorporatedFolderAttributeValues.keys();
-        return new CompositeEnumeration( userOwned, incorporated );
+        Set attribs = new HashSet();
+        while(userOwned.hasMoreElements())
+        {
+            attribs.add(userOwned.nextElement());
+    }
+        while(incorporated.hasMoreElements())
+        {
+            attribs.add(incorporated.nextElement());
+        }
+        return Collections.enumeration(attribs);
     }
 
     public boolean hasFolder( String folderId )
@@ -114,6 +127,53 @@ public class DistributedUserPreferences
         incorporatedFolderAttributeValues.containsKey( folderId );
     }
     
+    /**
+     * Returns the default value for the specified attribute for the specified
+     * folder. Defaults for an attribute may be unique to a folder since an
+     * incorporated value becomes the default value for a fragment user.
+     */
+    public String getDefaultFolderAttributeValue(String folderId,
+            String attributeName)
+    {
+        Integer attributeNumber = (Integer) folderAttributeNumbers
+                .get(attributeName);
+
+        if (attributeNumber == null)
+        {
+            LOG.error("Attempting to obtain a non-existing attribute \""
+                    + attributeName + "\".");
+            return null;
+        }
+        String value = null;
+        List l = (List) incorporatedFolderAttributeValues.get(folderId);
+        // no incorporated value so use default
+        if (l == null)
+        {
+            return (String) defaultFolderAttributeValues.get(attributeNumber
+                    .intValue());
+        }
+        // inc'd list found, is it long enough?
+        if (attributeNumber.intValue() < l.size())
+        {
+            value = (String) l.get(attributeNumber.intValue());
+        }
+        // if not long enough, use default
+        if (value == null)
+        {
+            try
+            {
+                value = (String) defaultFolderAttributeValues
+                        .get(attributeNumber.intValue());
+            } catch (IndexOutOfBoundsException e)
+            {
+                LOG.error("Internal Error - attribute name is "
+                        + "registered, but no default value is provided.");
+                return null;
+            }
+        }
+        return value;
+    }
+
     public String getFolderAttributeValue(String folderId,
                                           String attributeName)
     {
@@ -138,8 +198,6 @@ public class DistributedUserPreferences
                 return (String) defaultFolderAttributeValues
                 .get(attributeNumber.intValue());
             }
-            else
-            {
                 // inc'd list found, is it long enough?
                 if(attributeNumber.intValue()<l.size())
                 {
@@ -161,8 +219,7 @@ public class DistributedUserPreferences
                     }
                 }
             }
-        }
-        else // user attribute changes list found for this channel
+        else // user attribute changes list found for this folder
         {
             // is list long enough for my attribute?
             if(attributeNumber.intValue()<l.size())
@@ -216,6 +273,17 @@ public class DistributedUserPreferences
         return value;
     }
 
+    /**
+     * Sets the value of an attribute to the value that it had on the folder in 
+     * the fragment from which it was incorporated. User overrides, if allowed, 
+     * are not set here. The setFolderAttributeValue() method is where user 
+     * overrides are set and maintained distinctly from the original values had
+     * in the originating fragment.
+     * 
+     * @param folderSubscribeId
+     * @param attributeName
+     * @param attributeValue
+     */
     public void setIncorporatedFolderAttributeValue(String folderSubscribeId,
                                                     String attributeName,
                                                     String attributeValue)
@@ -296,6 +364,17 @@ public class DistributedUserPreferences
         return l;
     }
     
+    /**
+     * Used when loading fragment layouts and converting them to their 
+     * "fragmentized" version suitable for incorporating into other user's 
+     * layouts. One aspect of fragmentization is converting the user and layout 
+     * node IDs to globally unique and consistent IDs. This method is used to 
+     * replace the folder's user and layout specific ID with its globally 
+     * unique value.
+     * 
+     * @param oldFolderId
+     * @param newFolderId
+     */
     public void changeFolderId( String oldFolderId, String newFolderId )
     {
         List l = (List) folderAttributeValues.remove( oldFolderId );
@@ -309,7 +388,16 @@ public class DistributedUserPreferences
     {
         Enumeration userOwned = channelAttributeValues.keys();
         Enumeration incorporated = incorporatedChannelAttributeValues.keys();
-        return new CompositeEnumeration( userOwned, incorporated );
+        Set attribs = new HashSet();
+        while(userOwned.hasMoreElements())
+        {
+            attribs.add(userOwned.nextElement());
+    }
+        while(incorporated.hasMoreElements())
+        {
+            attribs.add(incorporated.nextElement());
+        }
+        return Collections.enumeration(attribs);
     }
 
     public boolean hasChannel( String chanId )
@@ -318,6 +406,54 @@ public class DistributedUserPreferences
         incorporatedChannelAttributeValues.containsKey( chanId );
     }
     
+    /**
+     * Returns the default value for the specified attribute for the specified
+     * channel. Defaults for an attribute may be unique to a channel since an
+     * incorporated value becomes the default value for a fragment user.
+     */
+    public String getDefaultChannelAttributeValue(String channelSubscribeId,
+            String attributeName)
+    {
+        Integer attributeNumber = (Integer) channelAttributeNumbers
+                .get(attributeName);
+
+        if (attributeNumber == null)
+        {
+            LOG.error("Attempting to obtain a non-existing attribute \""
+                    + attributeName + "\".");
+            return null;
+        }
+        String value = null;
+        List l = (List) incorporatedChannelAttributeValues
+                .get(channelSubscribeId);
+        // no incorporated value so use default
+        if (l == null)
+        {
+            return (String) defaultChannelAttributeValues.get(attributeNumber
+                    .intValue());
+        }
+        // inc'd list found, is it long enough?
+        if (attributeNumber.intValue() < l.size())
+        {
+            value = (String) l.get(attributeNumber.intValue());
+        }
+        // if not long enough, use default
+        if (value == null)
+        {
+            try
+            {
+                value = (String) defaultChannelAttributeValues
+                        .get(attributeNumber.intValue());
+            } catch (IndexOutOfBoundsException e)
+            {
+                LOG.error("Internal Error - attribute name is "
+                        + "registered, but no default value is provided.");
+                return null;
+            }
+        }
+        return value;
+    }
+
     public String getChannelAttributeValue(String channelSubscribeId,
                                            String attributeName)
     {
@@ -342,27 +478,24 @@ public class DistributedUserPreferences
                 return (String) defaultChannelAttributeValues
                 .get(attributeNumber.intValue());
             }
-            else
+            // inc'd list found, is it long enough?
+            if(attributeNumber.intValue()<l.size())
             {
-                // inc'd list found, is it long enough?
-                if(attributeNumber.intValue()<l.size())
+                value=(String) l.get(attributeNumber.intValue());
+            }
+            // if not long enough, use default
+            if(value==null)
+            {
+                try
                 {
-                    value=(String) l.get(attributeNumber.intValue());
-                }
-                // if not long enough, use default
-                if(value==null)
-                {
-                    try
-                    {
-                        value=(String) defaultChannelAttributeValues
+                    value=(String) defaultChannelAttributeValues
                         .get(attributeNumber.intValue());
-                    }
-                    catch (IndexOutOfBoundsException e)
-                    {
-                        LOG.error("Internal Error - attribute name is " +
-                                "registered, but no default value is provided.");
-                        return null;
-                    }
+                }
+                catch (IndexOutOfBoundsException e)
+                {
+                    LOG.error("Internal Error - attribute name is " +
+                            "registered, but no default value is provided.");
+                    return null;
                 }
             }
         }
@@ -420,6 +553,17 @@ public class DistributedUserPreferences
         return value;
     }
 
+    /**
+     * Sets the value of an attribute to the value that it had on the channel in 
+     * the fragment from which it was incorporated. User overrides, if allowed, 
+     * are not set here. The setChannelAttributeValue() method is where user 
+     * overrides are set and maintained distinctly from the original values had
+     * in the originating fragment.
+     * 
+     * @param folderSubscribeId
+     * @param attributeName
+     * @param attributeValue
+     */
     public void setIncorporatedChannelAttributeValue(String channelSubscribeId,
                                                      String attributeName,
                                                      String attributeValue)
@@ -484,6 +628,17 @@ public class DistributedUserPreferences
         return l;
     }
     
+    /**
+     * Used when loading fragment layouts and converting them to their 
+     * "fragmentized" version suitable for incorporating into other user's 
+     * layouts. One aspect of fragmentization is converting the user and layout 
+     * node IDs to globally unique and consistent IDs. This method is used to 
+     * replace the channel's user and layout specific ID with its globally 
+     * unique value.
+     * 
+     * @param oldChannelId
+     * @param newChannelId
+     */
     public void changeChannelId( String oldChannelId, String newChannelId )
     {
         List l = (List) channelAttributeValues.remove( oldChannelId );

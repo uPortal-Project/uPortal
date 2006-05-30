@@ -9,6 +9,7 @@ import java.io.StringWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -964,6 +965,8 @@ public class RDBMDistributedLayoutStore
         Connection con = RDBMServices.getConnection();
         try {
             Statement stmt = con.createStatement();
+            String sQuery = null;
+
             try {
                 // get stylesheet description
                 StructureStylesheetDescription ssd = getStructureStylesheetDescription(stylesheetId);
@@ -980,7 +983,7 @@ public class RDBMDistributedLayoutStore
                 int origId = userId;
                 if (layoutId == 0) { 
                     stmt = con.createStatement();
-                    String sQuery = "SELECT USER_DFLT_USR_ID FROM UP_USER WHERE USER_ID=" + userId;
+                    sQuery = "SELECT USER_DFLT_USR_ID FROM UP_USER WHERE USER_ID=" + userId;
                     if (LOG.isDebugEnabled())
                         LOG.debug(sQuery);
                     rs = stmt.executeQuery(sQuery);
@@ -1059,66 +1062,82 @@ public class RDBMDistributedLayoutStore
                     pstmt.close();
                 }
 
-                // now load in the folder and channel attributes from the
-                // up_ss_user_atts table pulling in dlm:origin from the
-                // up_layout_param table indicating these values are for an
-                // overriden value on an incorporated element.
+                /*
+                 * Now we need to load in the folder and channel attributes from
+                * the up_ss_user_atts table. But before doing so to avoid using
+                * an outer join and to work around an oracle restriction of 
+                * having only on LONG type returned per result set we first
+                * load dlm:origin IDs for the corresponding nodes it any. These
+                * origin IDs indicate that the node whose attribute is being 
+                * overridden came from a fragment and that origin ID must then
+                * be used for the node id when setting them on the structure
+                * stylesheet user preferences object.
+                */
 
-                /***** replaced by Anthony for supporting differing outerjoin
-                       syntax for multiple databases. See below.
+                /*
+                 * the list of structure stylesheet attributes that have user
+                 * overrides to the default values specified by the stylesheet's
+                 * .sdf file
+                 */
+                String structIdsWithCustomUserValues = "SELECT struct_id FROM up_ss_user_atts "
+                                        + "WHERE user_id="
+                                        + userId
+                                        + " AND profile_id="
+                                        + profileId
+                                        + " AND ss_type=1"
+                                        + " AND ss_id="
+                                        + stylesheetId;
                        
-                sQuery = "SELECT PARAM_NAME, PARAM_VAL, PARAM_TYPE, ULS.STRUCT_ID, CHAN_ID, ULP.STRUCT_PARM_NM, ULP.STRUCT_PARM_VAL FROM UP_SS_USER_ATTS UUSA, UP_LAYOUT_STRUCT ULS, UP_LAYOUT_PARAM ULP WHERE UUSA.USER_ID=" + userId + " AND PROFILE_ID="
-                + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND UUSA.STRUCT_ID = ULS.STRUCT_ID AND UUSA.USER_ID = ULS.USER_ID AND UUSA.STRUCT_ID = ULP.STRUCT_ID(+) AND UUSA.USER_ID = ULP.USER_ID(+)";
-                *****/
+                /*
+                 * the list of origin Ids if any for nodes having overridden
+                 * structure stylesheet attributes.
+                 */
+                String originIdQuery = "SELECT struct_id, struct_parm_val "
+                                                + "FROM up_layout_param "
+                                                + "WHERE user_id="
+                                                + userId
+                                                + " AND layout_id = 1 and "
+                                                + "(struct_parm_nm='"
+                                                + Constants.ATT_ORIGIN
+                                                + "' OR struct_parm_nm='"
+                                                + Constants.LEGACY_ATT_ORIGIN
+                                                + "') AND struct_id IN ("
+                                                + structIdsWithCustomUserValues + ")";
 
-                String sQuery = null;
-                
-                IDatabaseMetadata db = RDBMServices.getDbMetaData();
-                if (db.supportsOuterJoins()) 
+                stmt = con.createStatement();
+                rs = stmt.executeQuery(originIdQuery);
+                Map originIds = null;
+                try {
+                    while (rs.next()) {
+                        if (originIds == null)
+                                originIds = new HashMap();
+                        // get the LONG column first so Oracle doesn't toss a
+                        // java.sql.SQLException: Stream has already been closed
+                        String originId = rs.getString(2);
+                        int structId = rs.getInt(1);
+                        originIds.put(new Integer(structId), originId);
+                    }
+                }
+                finally
                 {
-                    if (db.getJoinQuery() 
-                            instanceof DatabaseMetaDataImpl.JdbcDb) 
-                    {
-                        if (LOG.isDebugEnabled())
-                            LOG.debug("instanceof jdbcdb");      
-                        sQuery = "SELECT PARAM_NAME, PARAM_VAL, PARAM_TYPE, ULS.STRUCT_ID, CHAN_ID, ULP.STRUCT_PARM_NM, ULP.STRUCT_PARM_VAL FROM UP_LAYOUT_STRUCT ULS, UP_SS_USER_ATTS UUSA LEFT OUTER JOIN UP_LAYOUT_PARAM ULP ON UUSA.STRUCT_ID = ULP.STRUCT_ID AND UUSA.USER_ID=" + userId + " AND UUSA.USER_ID = ULP.USER_ID AND PROFILE_ID=" + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND UUSA.STRUCT_ID = ULS.STRUCT_ID AND UUSA.USER_ID = ULS.USER_ID AND UUSA.USER_ID = ULP.USER_ID";
+                    rs.close();
+                    stmt.close();
                     } 
-                    else if (db.getJoinQuery() 
-                            instanceof DatabaseMetaDataImpl.PostgreSQLDb) 
-                    {
-                        if (LOG.isDebugEnabled())
-                            LOG.debug("instanceof jpostgressqldbdbcdb");      
 
+                /*
+                 * now go get the overridden values and compare them against the
+                 * map for their origin ids.
+                 */
                         sQuery = "SELECT PARAM_NAME, PARAM_VAL, PARAM_TYPE," +
-                                " ULS.STRUCT_ID, CHAN_ID, ULP.STRUCT_PARM_NM," +
-                                " ULP.STRUCT_PARM_VAL " +
+                " ULS.STRUCT_ID, CHAN_ID " +
                                 "FROM UP_LAYOUT_STRUCT ULS, " +
-                                " UP_SS_USER_ATTS UUSA LEFT OUTER JOIN" +
-                                " UP_LAYOUT_PARAM ULP " +
-                                "ON UUSA.STRUCT_ID = ULP.STRUCT_ID" +
-                                " AND UUSA.USER_ID = ULP.USER_ID " +
+                " UP_SS_USER_ATTS UUSA " +
                                 "WHERE UUSA.USER_ID=" + userId + 
                                 " AND PROFILE_ID=" + profileId + 
                                 " AND SS_ID=" + stylesheetId + 
                                 " AND SS_TYPE=1" +
                                 " AND UUSA.STRUCT_ID = ULS.STRUCT_ID" +
                                 " AND UUSA.USER_ID = ULS.USER_ID";
-                    } 
-                    else if (db.getJoinQuery() 
-                            instanceof DatabaseMetaDataImpl.OracleDb) 
-                    {
-                        if (LOG.isDebugEnabled())
-                            LOG.debug("instanceof oracledb");      
-                        sQuery = "SELECT /*+ USE_NL(UP_LAYOUT_STRUCT) */ PARAM_NAME, PARAM_VAL, PARAM_TYPE, ULS.STRUCT_ID, CHAN_ID, ULP.STRUCT_PARM_NM, ULP.STRUCT_PARM_VAL FROM UP_SS_USER_ATTS UUSA, UP_LAYOUT_STRUCT ULS, UP_LAYOUT_PARAM ULP WHERE UUSA.USER_ID=" + userId + " AND PROFILE_ID="
-                            + profileId + " AND SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND UUSA.STRUCT_ID = ULS.STRUCT_ID AND UUSA.USER_ID = ULS.USER_ID AND UUSA.STRUCT_ID = ULP.STRUCT_ID(+) AND UUSA.USER_ID = ULP.USER_ID(+)";
-
-
-
-                    } else 
-                    {
-                        throw new Exception("Unknown database driver");
-                    }
-                }
 
                 if (LOG.isDebugEnabled())
                     LOG.debug(sQuery);
@@ -1127,53 +1146,57 @@ public class RDBMDistributedLayoutStore
                 rs = stmt.executeQuery(sQuery);
                 try {
                     while (rs.next()) {
-                        int param_type = rs.getInt(3);
+                        // get the LONG column first so Oracle doesn't toss a
+                        // java.sql.SQLException: Stream has already been closed
+                        String param_val = rs.getString(2);
                         int structId = rs.getInt(4);
+                        String originId = null;
+                        if (originIds != null)
+                                originId = (String) originIds.get(new Integer(structId));
+                        
+                        int param_type = rs.getInt(3);
                         if (rs.wasNull()) {
                             structId = 0;
                         }
-                        String ulp_parmName = rs.getString(6);
-                        String originId = rs.getString(7);
                         String pName = rs.getString(1);
                         int chanId = rs.getInt(5);
                         if (rs.wasNull()) {
                             chanId = 0;
                         }
-                        // load only folder and channel attributes from the
-                        // table. we should never get any others since we
-                        // purge all values from the db upon pushing them back
-                        // out to db. So if corruption ever does occur it
-                        // should be self correcting.
-                        
+                        /*
+                         * ignore unexpected param_types since persisting
+                         * removes all entries in table and it will get resolved
+                         * without a log entry to point out the error.
+                         */
                         if (param_type == 2) {
                             // folder attribute
                             String folderStructId = null;
-                            if ( ulp_parmName != null &&
-                                 (ulp_parmName.equals( Constants.ATT_ORIGIN ) ||
-                                  ulp_parmName.equals( Constants.LEGACY_ATT_ORIGIN )))
+                            if ( originId != null )
                                 folderStructId = originId;
                             else
                                 folderStructId = getStructId(structId,chanId);
                             if (ssd.containsFolderAttribute(pName))
-                                ssup.setFolderAttributeValue(folderStructId, pName, rs.getString(2));
+                                ssup.setFolderAttributeValue(folderStructId, pName, param_val);
                         }       
                         else if (param_type == 3) {
                             // channel attribute
                             String channelStructId = null;
-                            if ( ulp_parmName != null &&
-                                 (ulp_parmName.equals( Constants.ATT_ORIGIN ) ||
-                                  ulp_parmName.equals( Constants.LEGACY_ATT_ORIGIN )))
+                            if ( originId != null )
                                 channelStructId = originId;
                             else
                                 channelStructId = getStructId(structId,chanId);
                             if (ssd.containsChannelAttribute(pName))
-                                ssup.setChannelAttributeValue(channelStructId, pName, rs.getString(2));
+                                ssup.setChannelAttributeValue(channelStructId, pName, param_val);
                         }
                     }
                 } finally {
                     rs.close();
                     stmt.close();
                 }
+            }
+            catch(SQLException sqe)
+            {
+                throw new RuntimeException(sQuery, sqe);
             } finally {
                 //stmt.close();
             }
@@ -1925,6 +1948,7 @@ public class RDBMDistributedLayoutStore
                                                        StructureStylesheetUserPreferences ssup )
         throws Exception
     {
+        DistributedUserPreferences dssup = (DistributedUserPreferences) ssup;
         int userId = person.getID();
         Document PLF = (Document) person.getAttribute( Constants.PLF );
         if ( PLF == null )
@@ -1940,17 +1964,11 @@ public class RDBMDistributedLayoutStore
             // Set autocommit false for the connection
             RDBMServices.setAutoCommit(con, false);
             Statement stmt = con.createStatement();
-            
+            PreparedStatement pstmt = null;
             try
             {
                 // before writing out params clean out old values
-                String sQuery = "DELETE FROM UP_SS_USER_PARM " +
-                "WHERE USER_ID=" + userId + " AND " +
-                "PROFILE_ID=" + profileId + " AND " +
-                "SS_ID=" + stylesheetId + " AND SS_TYPE=1";
-                if (LOG.isDebugEnabled())
-                    LOG.debug(sQuery);
-                stmt.executeUpdate(sQuery);
+                deleteFromUpSsUserParm(stmt, userId, profileId, stylesheetId,1);
                 
                 // write out params only if specified in stylesheet's .sdf file
                 for (Enumeration e = ssup.getParameterValues().keys(); e.hasMoreElements();) {
@@ -1960,7 +1978,7 @@ public class RDBMDistributedLayoutStore
                             .equals(ssup.getParameterValue(pName)))
                     {
                         String pNameEscaped = RDBMServices.sqlEscape(pName);
-                        sQuery = "INSERT INTO UP_SS_USER_PARM (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,PARAM_NAME,PARAM_VAL) VALUES (" + userId
+                        String sQuery = "INSERT INTO UP_SS_USER_PARM (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,PARAM_NAME,PARAM_VAL) VALUES (" + userId
                           + "," + profileId + "," + stylesheetId + ",1,'" + pNameEscaped + "','" + ssup.getParameterValue(pName) + "')";
                         if (LOG.isDebugEnabled())
                             LOG.debug(sQuery);
@@ -1969,68 +1987,70 @@ public class RDBMDistributedLayoutStore
                 }
 
                 // now before writing out folders and channels clean out old values
-                sQuery = "DELETE FROM UP_SS_USER_ATTS " +
-                "WHERE USER_ID=" + userId + " AND " +
-                "PROFILE_ID=" + profileId + " AND " +
-                "SS_ID=" + stylesheetId + " AND SS_TYPE=1";
-                if (LOG.isDebugEnabled())
-                    LOG.debug(sQuery);
-                stmt.executeUpdate(sQuery);
+                deleteFromUpSsUserAtts(stmt, userId, profileId, stylesheetId,1);
 
                 // write out folder attributes
+                pstmt = con.prepareStatement(INSERT__INTO__UP_SS_USER_ATTS);
                 for (Enumeration e = ssup.getFolders(); e.hasMoreElements();) {
                     String folderId = (String)e.nextElement();
-                    String plfFolderId = folderId;
+                    String plfId = folderId;
 
                     if ( folderId.startsWith( Constants.FRAGMENT_ID_USER_PREFIX ) ) // icorporated node
-                        plfFolderId = getPlfId( PLF, folderId );
-                    if ( plfFolderId == null ) //couldn't translate, skip
+                        plfId = getPlfId( PLF, folderId );
+                    if ( plfId == null ) //couldn't translate, skip
                         continue;
 
                     for (Enumeration attre = ssup.getFolderAttributeNames(); attre.hasMoreElements();) {
                         String pName = (String)attre.nextElement();
                         String pValue = ssup.getDefinedFolderAttributeValue(folderId, pName);
-                        if (ssDesc.containsFolderAttribute(pName) &&
-                            pValue != null &&
-                            ! ssDesc.getFolderAttributeDefaultValue(pName)
-                            .equals(pValue)) 
+                        
+                        /*
+                         * Persist folder attributes defined in the stylesheet
+                         * description only if the user value is non null and
+                         * there is no default or the user value 
+                         * differs from the default.
+                         */
+                        if (ssDesc.containsFolderAttribute(pName))
                         {
-                            // store user preferences
-                            String pNameEscaped = RDBMServices.sqlEscape(pName);
-                            sQuery = "INSERT INTO UP_SS_USER_ATTS (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,STRUCT_ID,PARAM_NAME,PARAM_TYPE,PARAM_VAL) VALUES ("
-                                + userId + "," + profileId + "," + stylesheetId + ",1," + plfFolderId.substring(1) + ",'" + pNameEscaped + "',2,'" + pValue
-                                + "')";
-                            if (LOG.isDebugEnabled())
-                                LOG.debug(sQuery);
-                            stmt.executeUpdate(sQuery);
+                            String deflt = dssup
+                            .getDefaultFolderAttributeValue(folderId, pName);
+                            if(pValue != null && (deflt == null ||
+                                    ! pValue.equals(deflt))) 
+                                insertIntoUpSsUserAtts(pstmt, userId,
+                                        profileId, stylesheetId, 1,
+                                        plfId, 2, pName, pValue);
                         }
                     }
                 }
                 // write out channel attributes
                 for (Enumeration e = ssup.getChannels(); e.hasMoreElements();) {
                     String channelId = (String)e.nextElement();
-                    String plfChannelId = channelId;
+                    String plfId = channelId;
 
-                    if ( plfChannelId.startsWith( Constants.FRAGMENT_ID_USER_PREFIX ) ) // icorporated node
-                        plfChannelId = getPlfId( PLF, channelId );
-                    if ( plfChannelId == null ) //couldn't translate, skip
+                    if ( plfId.startsWith( Constants.FRAGMENT_ID_USER_PREFIX ) ) // icorporated node
+                        plfId = getPlfId( PLF, channelId );
+                    if ( plfId == null ) //couldn't translate, skip
                         continue;
 
                     for (Enumeration attre = ssup.getChannelAttributeNames(); attre.hasMoreElements();) {
                         String pName = (String)attre.nextElement();
                         String pValue = ssup.getDefinedChannelAttributeValue(channelId, pName);
-                        if (ssDesc.containsChannelAttribute(pName) &&
-                            pValue != null && 
-                            ! ssDesc.getChannelAttributeDefaultValue(pName)
-                                .equals(pValue))
+
+                        /*
+                         * Persist channel attributes defined in the stylesheet
+                         * description only if the user value is non null and
+                         * there is no default or the user value 
+                         * differs from the default.
+                         */
+                        if (ssDesc.containsChannelAttribute(pName))
                         {
-                            String pNameEscaped = RDBMServices.sqlEscape(pName);
-                            sQuery = "INSERT INTO UP_SS_USER_ATTS (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,STRUCT_ID,PARAM_NAME,PARAM_TYPE,PARAM_VAL) VALUES ("
-                                + userId + "," + profileId + "," + stylesheetId + ",1," + plfChannelId.substring(1) + ",'" + pNameEscaped + "',3,'" + pValue
-                                + "')";
-                            if (LOG.isDebugEnabled())
-                                LOG.debug(sQuery);
-                            stmt.executeUpdate(sQuery);
+                            String deflt = dssup
+                            .getDefaultChannelAttributeValue(channelId, pName);
+                            if(pValue != null && (deflt == null ||
+                                    ! pValue.equals(deflt))) 
+                                insertIntoUpSsUserAtts(pstmt, userId,
+                                        profileId, stylesheetId, 1,
+                                        plfId, 3, pName, pValue);
                         }
                     }
                 }
@@ -2047,13 +2067,18 @@ public class RDBMDistributedLayoutStore
                         "User Preferences",e);
             } finally {
                 stmt.close();
+                if (pstmt != null)
+                    pstmt.close();
             }
         } finally {
             RDBMServices.releaseConnection(con);
         }
     }
 
-    public void setThemeStylesheetUserPreferences (IPerson person, int profileId, ThemeStylesheetUserPreferences tsup) throws Exception {
+    public void setThemeStylesheetUserPreferences (IPerson person, 
+            int profileId, ThemeStylesheetUserPreferences tsup) 
+    throws Exception {
+        DistributedUserPreferences dtsup = (DistributedUserPreferences) tsup;
         int userId = person.getID();
         Document PLF = (Document) person.getAttribute( Constants.PLF );
         if ( PLF == null )
@@ -2067,15 +2092,10 @@ public class RDBMDistributedLayoutStore
             // Set autocommit false for the connection
             RDBMServices.setAutoCommit(con, false);
             Statement stmt = con.createStatement();
+            PreparedStatement pstmt = null;
             try {
                 // before writing out params clean out old values
-                String sQuery = "DELETE FROM UP_SS_USER_PARM " +
-                "WHERE USER_ID=" + userId + " AND " +
-                "PROFILE_ID=" + profileId + " AND " +
-                "SS_ID=" + stylesheetId + " AND SS_TYPE=2";
-                if (LOG.isDebugEnabled())
-                    LOG.debug(sQuery);
-                stmt.executeUpdate(sQuery);
+                deleteFromUpSsUserParm(stmt, userId, profileId, stylesheetId,2);
                 
                 // write out params only if defined in stylesheet's .sdf file
                 // and user's value differs from default
@@ -2086,7 +2106,7 @@ public class RDBMDistributedLayoutStore
                             .equals(tsup.getParameterValue(pName)))
                     {
                         String pNameEscaped = RDBMServices.sqlEscape(pName);
-                        sQuery = "INSERT INTO UP_SS_USER_PARM (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,PARAM_NAME,PARAM_VAL) VALUES (" + userId
+                        String sQuery = "INSERT INTO UP_SS_USER_PARM (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,PARAM_NAME,PARAM_VAL) VALUES (" + userId
                         + "," + profileId + "," + stylesheetId + ",2,'" + pNameEscaped + "','" + tsup.getParameterValue(pName) + "')";
                         if (LOG.isDebugEnabled())
                             LOG.debug(sQuery);
@@ -2094,15 +2114,10 @@ public class RDBMDistributedLayoutStore
                     }
                 }
                 // now before writing out channel atts clean out old values
-                sQuery = "DELETE FROM UP_SS_USER_ATTS " +
-                "WHERE USER_ID=" + userId + " AND " +
-                "PROFILE_ID=" + profileId + " AND " +
-                "SS_ID=" + stylesheetId + " AND SS_TYPE=2";
-                if (LOG.isDebugEnabled())
-                    LOG.debug(sQuery);
-                stmt.executeUpdate(sQuery);
+                deleteFromUpSsUserAtts(stmt, userId, profileId, stylesheetId,2);
 
                 // write out channel attributes
+                pstmt = con.prepareStatement(INSERT__INTO__UP_SS_USER_ATTS);
                 for (Enumeration e = tsup.getChannels(); e.hasMoreElements();) {
                     String channelId = (String)e.nextElement();
                     String plfChannelId = channelId;
@@ -2115,18 +2130,22 @@ public class RDBMDistributedLayoutStore
                     for (Enumeration attre = tsup.getChannelAttributeNames(); attre.hasMoreElements();) {
                         String pName = (String)attre.nextElement();
                         String pValue = tsup.getDefinedChannelAttributeValue(channelId, pName);
-                        if (tsDesc.containsChannelAttribute(pName) &&
-                            pValue != null &&
-                            ! tsDesc.getChannelAttributeDefaultValue(pName)
-                                .equals(pValue))
+
+                        /*
+                         * Persist channel attributes defined in the stylesheet
+                         * description only if the user value is non null and
+                         * there is no default or the user value 
+                         * differs from the default.
+                         */
+                        if (tsDesc.containsChannelAttribute(pName))
                         {
-                            String pNameEscaped = RDBMServices.sqlEscape(pName);
-                            sQuery = "INSERT INTO UP_SS_USER_ATTS (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,STRUCT_ID,PARAM_NAME,PARAM_TYPE,PARAM_VAL) VALUES ("
-                            + userId + "," + profileId + "," + stylesheetId + ",2," + plfChannelId.substring(1) + ",'" + pNameEscaped + "',3,'" + pValue
-                            + "')";
-                            if (LOG.isDebugEnabled())
-                                LOG.debug(sQuery);
-                            stmt.executeUpdate(sQuery);
+                            String deflt = dtsup
+                            .getDefaultChannelAttributeValue(channelId, pName);
+                            if(pValue != null && (deflt == null ||
+                                    ! pValue.equals(deflt))) 
+                                insertIntoUpSsUserAtts(pstmt, userId,
+                                        profileId, stylesheetId, 2,
+                                        plfChannelId, 3, pName, pValue);
                         }
                     }
                 }
@@ -2143,10 +2162,122 @@ public class RDBMDistributedLayoutStore
                         "User Preferences",e);
             } finally {
                 stmt.close();
+                if (pstmt != null)
+                    pstmt.close();
             }
         } finally {
             RDBMServices.releaseConnection(con);
         }
     }
     
+
+    private static final String INSERT__INTO__UP_SS_USER_ATTS 
+    = "INSERT INTO UP_SS_USER_ATTS " +
+            "(USER_ID," +
+            "PROFILE_ID," +
+            "SS_ID," +
+            "SS_TYPE," + // 1=structure, 2=theme
+            "STRUCT_ID," +
+            "PARAM_TYPE," + // 2=folder, 3=channel, 1=sheet parm not allowed 
+            "PARAM_NAME," +
+            "PARAM_VAL) " +  
+            "VALUES (?,?,?,?,?,?,?,?)";
+
+    /**
+     * Handles inserts into the UP_SS_USER_ATTS table.
+     * 
+     * @param pstmt
+     * @param userId
+     * @param profileId
+     * @param stylesheetId
+     * @param stylesheetType
+     * @param nodeId
+     * @param parmType
+     * @param parmName
+     * @param parmValue
+     * @throws SQLException
+     */
+    private void insertIntoUpSsUserAtts(
+            PreparedStatement pstmt,
+            int userId, 
+            int profileId, 
+            int stylesheetId, 
+            int stylesheetType, // 1=structure, 2=theme
+            String nodeId, 
+            int parmType, // 2=folder, 1=channel
+            String parmName,
+            String parmValue
+            ) throws SQLException
+    {
+        int structId = Integer.parseInt(nodeId.substring(1));
+        pstmt.setInt(1, userId);
+        pstmt.setInt(2, profileId);
+        pstmt.setInt(3, stylesheetId);
+        pstmt.setInt(4, stylesheetType);
+        pstmt.setInt(5, structId);
+        pstmt.setInt(6, parmType);
+        pstmt.setString(7, parmName);
+        pstmt.setString(8, parmValue);
+    
+        if (LOG.isDebugEnabled())
+        {
+            LOG.debug(INSERT__INTO__UP_SS_USER_ATTS +
+                ": with values" +
+                " USER_ID=" + userId +
+                ", PROFILE_ID=" + profileId +
+                ", SS_ID=" + stylesheetId +
+                ", SS_TYPE=" + stylesheetType +
+                ", STRUCT_ID=" + structId +
+                ", PARAM_TYPE=" + parmType +
+                ", PARAM_NAME=" + parmName +
+                ", PARAM_VAL=" + parmValue);
+}
+        pstmt.execute();
+    }
+ 
+    /**
+     * Handles deletes from UP_SS_USER_PARM table.
+     * 
+     * @param stmt
+     * @param userId
+     * @param profileId
+     * @param stylesheetId
+     * @param stylesheetType
+     * @throws SQLException
+     */
+    private void deleteFromUpSsUserParm(Statement stmt, int userId,
+            int profileId, int stylesheetId, int stylesheetType) throws SQLException
+    {
+        String sQuery = "DELETE FROM UP_SS_USER_PARM " +
+        "WHERE USER_ID=" + userId + " AND " +
+        "PROFILE_ID=" + profileId + " AND " +
+        "SS_ID=" + stylesheetId + " AND SS_TYPE=" + stylesheetType;
+        if (LOG.isDebugEnabled())
+            LOG.debug(sQuery);
+        stmt.executeUpdate(sQuery);
+    }
+    
+    /**
+     * Handles deletes from UP_SS_USER_ATTS table.
+     * 
+     * @param stmt
+     * @param userId
+     * @param profileId
+     * @param stylesheetId
+     * @param stylesheetType
+     * @throws SQLException
+     */
+    private void deleteFromUpSsUserAtts(Statement stmt, int userId,
+            int profileId, int stylesheetId, int stylesheetType) throws SQLException
+    {
+        String sQuery = "DELETE FROM UP_SS_USER_ATTS " +
+        "WHERE USER_ID=" + userId + " AND " +
+        "PROFILE_ID=" + profileId + " AND " +
+        "SS_ID=" + stylesheetId + " AND SS_TYPE=" + stylesheetType;
+        if (LOG.isDebugEnabled())
+        {
+            LOG.debug(sQuery);
+        }
+        stmt.executeUpdate(sQuery);  
+    }
 }
