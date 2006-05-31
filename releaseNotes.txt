@@ -1,18 +1,18 @@
-Release notes for uPortal 2.5.2 GA
-(the general audience ("final") release of uPortal 2.5.2):
+Release notes for uPortal 2.5.3 RC1
+(the first release candidate of uPortal 2.5.3):
 
 CVS branch: 2-5-patches
 
 
 Known issues
 
-There are many known bugs in uPortal.  Almost 40 bugs are identified as fixed
-for 2.5.2.  However, at least 20 bugs are known to affect 2.5.2 GA.
+There are many known bugs in uPortal.  More than 10 bugs are identified as fixed
+for 2.5.3 RC1.  However, at least 20 bugs are known to affect 2.5.3 RC1.
 
 You can query the JA-SIG issue tracking system for the latest information about
-known issues.  The uPortal 2.5.2 wiki page summarizes:
+known issues.  The uPortal 2.5.3 wiki page summarizes:
 
-http://www.ja-sig.org/wiki/display/UPC/2.5.2
+http://www.ja-sig.org/wiki/display/UPC/2.5.3
 
 The most serious known issues at this writing include lack of access control
 on the ALM Fragment Manager, bugs in supporting JSR-168 portlets for
@@ -20,82 +20,55 @@ guest user (non logged in), bugs in publishing fragments to particular users,
 caching problems, lost opportunities to chain some exceptions, Aggregated Layouts
 committing broken transactions, DLM layout resetting not behaving as expected,
 Group manager servant failing to complete when no selections are made, lack of
-error checking in ALM fragment pushing, problems with named LDAP support in
-Persondirs.xml...
+error checking in ALM fragment pushing...
 
 
 Upgrading:
 
-Upgrading from 2.5.1 to 2.5.2 should be seamless.
-uPortal deployments using CAS may wish to switch to the uPortal CAS adaptor
-included in the uPortal source tree.
+Upgrading from 2.5.2 to 2.5.3 should be seamless.
 
 
 Major new features and improvements in this release:
 
-Multiple threads can now concurrently instantiate channels, making deployments more
-able to take advantage of performance advantages of IChannels.  
-
-The uPortal CAS security provider module is now a part of the uPortal project itself,
-making it easier to set up uPortal to use CAS for authentication.
-
+None.
 
 
 Bug fixes in this release:
 
-Login and LogoutServlet now cope with IllegalStateException from multiply
-invalidated sessions.  Prior to this fix these servlets would not work in 
-Tomcat 5.5.10 and later.
-
-CPortletAdapter no longer needlessly groups portlet rendering, improving portlet
-rendering performance, potentially eliminating a deadlock opportunity, and simplifying
-the channel.
-
-Some ALM fragment publishing bugs now have less severe consequences, and ALM has
-other fixes and improvements.
-
-ChannelRenderer now handles CancellationException, restoring support for custom
-error UIs.
-
-RemoteUserPersonManager has an important fix.
-
-Portlets no longer fail to initialize due to phantom null sessions.
-
-RSS.cpd is no longer ill-formed.
-
-uPortal now recovers more gracefully from channels throwing exceptions on
-construction.
-
-And a number of other fixes...
-
-
+DLM no longer produces a StackOverflowError under load.
+Render parameters are no longer "sticky" between different requests
+Named LDAP service problems in Persondirs.xml are resolved.
+CGenericXSLT now chains more exceptions.
+CGroupsManager now implements ADD/REMOVE permission correctly
+Suggested CAS configuration is corrected in security.properties comments.
+...
 
 
 Important deprecations:
 
 IMultithreaded channel APIs of all flavors are now deprecated.  It is more performant,
 cleaner, simpler, and preferred to write IChannels or to write JSR-168 portlets
-in place of writing IMultithreaded channels.
+in place of writing IMultithreaded channels.  
 
 
 Database schema changes
 
-There are no database schema changes between 2.5.1 and 2.5.2.
+There are no database schema changes between 2.5.2 and 2.5.3.
 
 
 
 Discussing this release and reporting issues:
 
-Please discuss 2.5.2 on the uPortal project discussion lists.  
+Please discuss 2.5.3 on the uPortal project discussion lists.  
 Please post issues discovered into JIRA.
 
-(Almost) all changes applied to 2-5-patches working towards 2.5.2 should be reflected in JIRA issues.
+(Almost) all changes applied to 2-5-patches working towards 2.5.3 should be reflected in JIRA issues.
 
 The uPortal project discussion lists are also the place to discuss work going forward on the 2-5-patches
-branch towards 2.5.3 and beyond.
+branch towards 2.5.4 and beyond.
 
 Release engineer's environment:
 
-This release was tested and tagged on a Dell WinXP pro laptop using JDK 1.5, Eclipse 3.1, and Tomcat 5.5.12.
+This release was tested and tagged on a Dell WinXP pro laptop using JDK 1.5, Eclipse 3.1, and Tomcat 5.5.17.
 The release deliverable was built on the tp.its.yale.edu Linux server using the shell script in /etc/
 that checks out a tag and builds a release from it.
