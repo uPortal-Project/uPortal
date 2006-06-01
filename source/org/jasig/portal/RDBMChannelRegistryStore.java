@@ -70,7 +70,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
 
   // I18n property
   protected static final boolean localeAware = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.i18n.LocaleManager.locale_aware", LocaleManager.DEFAULT_LOCALE_AWARE);
-  
+
   /**
    * Create a new ChannelType object.
    * @return channelType, the new channel type
@@ -199,8 +199,8 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
               pstmt.setString(5, cpdUri);
 
               if (log.isDebugEnabled())
-                  log.debug("Save Channel Type SQL('" + chanTypeId + "', " + 
-                      "'" + javaClass + "', " + "'" + name + "', " + 
+                  log.debug("Save Channel Type SQL('" + chanTypeId + "', " +
+                      "'" + javaClass + "', " + "'" + name + "', " +
                       "'" + descr + "', " + "'" + cpdUri + "'): " + insert );
               pstmt.executeUpdate();
           } catch (SQLException sqle) {
@@ -226,9 +226,9 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
             pstmt.setString(4, cpdUri);
             pstmt.setInt(5, chanTypeId);
             if (log.isDebugEnabled())
-                log.debug("Save Channel Type SQL('" + javaClass + "', " + 
-                    "'" + name + "', " + "'" + descr + "', " + 
-                    "'" + cpdUri + "'" + chanTypeId + "', " + 
+                log.debug("Save Channel Type SQL('" + javaClass + "', " +
+                    "'" + name + "', " + "'" + descr + "', " +
+                    "'" + cpdUri + "'" + chanTypeId + "', " +
                     "'): " + update );
             pstmt.executeUpdate();
         } catch (SQLException sqle) {
@@ -316,6 +316,10 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
    * @throws java.sql.SQLException
    */
   public ChannelDefinition getChannelDefinition(int channelPublishId) throws SQLException {
+    if (channelPublishId < 1) {
+      throw new IllegalArgumentException("Invalid channel Id requested: " + channelPublishId);
+    }
+
     ChannelDefinition channelDef = null;
 
     // Check the cache
@@ -342,7 +346,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
         pstmtChannel.clearParameters();
         pstmtChannel.setInt(1, channelPublishId);
         if (log.isDebugEnabled())
-            log.debug("RDBMChannelRegistryStore.getChannelDefinition(): " + 
+            log.debug("RDBMChannelRegistryStore.getChannelDefinition(): " +
                     pstmtChannel);
         rs = pstmtChannel.executeQuery();
 
@@ -391,7 +395,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
             pstmtChannelParam.clearParameters();
             pstmtChannelParam.setInt(1, channelPublishId);
             if (log.isDebugEnabled())
-                log.debug("RDBMChannelRegistryStore.getChannelDefinition(): " + 
+                log.debug("RDBMChannelRegistryStore.getChannelDefinition(): " +
                         pstmtChannelParam);
             rs = pstmtChannelParam.executeQuery();
           }
@@ -423,23 +427,23 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
           if (preferences != null){
 	          for (Iterator prefItr = preferences.iterator(); prefItr.hasNext();) {
 	              Preference pref = (Preference)prefItr.next();
-	
+
 	              String name = pref.getName();
 	              String value = "";
 	              String override;
-	
+
 	              if (pref.isReadOnly()) {
 	                  override = "N";
 	              }
 	              else {
 	                  override = "Y";
 	              }
-	
+
 	              //Since publish params only support single valued params just look for the first value.
 	              Iterator valuesItr = pref.getValues();
 	              if (valuesItr.hasNext())
 	                  value = (String)valuesItr.next();
-	
+
 	              channelDef.addParameter(CPortletAdapter.portletPreferenceNamePrefix + name, value, override);
 	          }
           }
@@ -450,7 +454,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
               pstmtChannelMdata.clearParameters();
               pstmtChannelMdata.setInt(1, channelPublishId);
               if (log.isDebugEnabled())
-                  log.debug("RDBMChannelRegistryStore.getChannelDefinition(): " + 
+                  log.debug("RDBMChannelRegistryStore.getChannelDefinition(): " +
                           pstmtChannelMdata);
               try {
                   rs = pstmtChannelMdata.executeQuery();
@@ -476,7 +480,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
         }
 
         if (log.isDebugEnabled())
-            log.debug("RDBMChannelRegistryStore.getChannelDefinition(): Read channel " + 
+            log.debug("RDBMChannelRegistryStore.getChannelDefinition(): Read channel " +
                     channelPublishId + " from the store");
 
         // Add the channel definition to the cache
@@ -515,9 +519,9 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
         PreparedStatement pstmt = con.prepareStatement(query);
       try {
         if (log.isDebugEnabled())
-            log.debug("Executing '" + query + "' with CHAN_FNAME=" + 
+            log.debug("Executing '" + query + "' with CHAN_FNAME=" +
                     channelFunctionalName);
-        
+
         pstmt.setString(1, channelFunctionalName);
         ResultSet rs = pstmt.executeQuery();
         try {
