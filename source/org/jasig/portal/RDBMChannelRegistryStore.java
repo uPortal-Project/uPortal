@@ -314,6 +314,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
    * @return channelDefinition, a definition of the channel or <code>null</code>
    *   if no matching channel definition can be found
    * @throws java.sql.SQLException
+   * @throws java.lang.IllegalArgumentException
    */
   public ChannelDefinition getChannelDefinition(int channelPublishId) throws SQLException {
     if (channelPublishId < 1) {
