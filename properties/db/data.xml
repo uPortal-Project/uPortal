@@ -3713,6 +3713,15 @@
         <column><name>TYPE_DEF_URI</name><value>/org/jasig/portal/channels/CGenericXSLT/CGenericJustXSLT.cpd</value></column>
       </row>
 	  
+      <row sinceMajor="2" sinceMinor="5">
+        <column><name>TYPE_ID</name><value>9</value></column>
+        <column><name>TYPE_NAME</name><value>User configured RSS</value></column>
+        <column><name>TYPE</name><value>org.jasig.portal.channels.CGenericXSLT</value></column>
+        <column><name>TYPE_DESCR</name><value>Prompts user for RSS preferences at subscribe time.</value></column>
+        <column><name>TYPE_DEF_URI</name><value>/org/jasig/portal/channels/CGenericXSLT/RSS/enduserconfigured/rss.cpd</value></column>
+      </row>
+      
+	  
 	  
     </rows>
   </table>
