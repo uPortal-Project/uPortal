@@ -203,10 +203,6 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
 								"'" + javaClass + "', " + "'" + name + "', " +
 								"'" + descr + "', " + "'" + cpdUri + "'): " + insert );
 					pstmt.executeUpdate();
-				} catch (SQLException sqle) {
-					// Roll back the transaction
-					RDBMServices.rollback(con);
-					throw sqle;
 				} finally {
 					pstmt.close();
 				}
@@ -231,10 +227,6 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
 								"'" + cpdUri + "'" + chanTypeId + "', " +
 								"'): " + update );
 					pstmt.executeUpdate();
-				} catch (SQLException sqle) {
-					// Roll back the transaction
-					RDBMServices.rollback(con);
-					throw sqle;
 				} finally {
 					pstmt.close();
 				}
@@ -281,7 +273,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
 					String delete = "DELETE FROM UP_CHAN_TYPE WHERE TYPE_ID=" + chanTypeId;
 					if (log.isDebugEnabled())
 						log.debug("RDBMChannelRegistryStore.deleteChannelType(): " + delete);
-					int rows = stmt.executeUpdate(delete);
+					stmt.executeUpdate(delete);
 				}
 				
 				// Commit the transaction
