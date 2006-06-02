@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE channel-definition SYSTEM "channelDefinition.dtd">
+
+<!--
+ | End-user configured RSS reader.
+ +-->
+<channel-definition>
+
+    <title>RSS Reader</title>
+    <name>RSS Reader</name>
+    <fname>rss-reader</fname>
+    <desc>An end-user-configurable channel for reading RSS feeds.</desc>
+    <type>User configured RSS</type>
+    <class>org.jasig.portal.channels.CGenericXSLT</class>
+    <timeout>5000</timeout>
+    
+    <hasedit>N</hasedit>
+    <hashelp>N</hashelp>
+    <hasabout>N</hasabout>
+
+    <secure>N</secure>
+    <locale>en_US</locale>
+    
+    <categories>
+        <category>News</category>
+    </categories>
+    
+    <groups>
+        <group>Everyone</group>
+    </groups>
+    
+    <parameters>
+        
+        <!-- The syntax of the ID is [portlet-context-name].[portlet-name] -->
+        <parameter>
+            <name>xmlUri</name>
+            <value>set URL</value>
+            <description>URL of the RSS feed</description>
+            <!-- Y indicates the end user can override it -->
+            <ovrd>Y</ovrd>
+        </parameter>
+        <parameter>
+            <name>sslUri</name>
+            <value>CGenericXSLT/RSS/RSS-universal.ssl</value>
+            <description>Stylesheet selector for rendering RSS</description>
+            <!-- set once centrally -->
+            <ovrd>N</ovrd>
+        </parameter>
+        <parameter>
+            <name>includeRssTitle</name>
+            <value>false</value>
+            <description>Display the title provided in the feed content</description>
+            <!-- end users can choose-->
+            <ovrd>Y</ovrd>
+        </parameter>
+        <parameter>
+            <name>viewNum</name>
+            <value>5</value>
+            <description>How many items to show.</description>
+            <!-- end users can choose -->
+            <ovrd>Y</ovrd>
+        </parameter>
+        
+    </parameters>
+    
+</channel-definition>
