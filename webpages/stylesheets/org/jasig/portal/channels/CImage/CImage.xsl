@@ -8,7 +8,7 @@
   <p align="center"><xsl:value-of select="caption"/></p>
   <p align="center">
     <a href="{image/@link}">
-      <img src="{image/@src}" width="{image/@width}" height="{image/@height}" border="{image/@border}"/>
+      <img src="{image/@src}" alt="" width="{image/@width}" height="{image/@height}" border="{image/@border}"/>
     </a>
   </p>
   <p align="center"><font size="2"><xsl:value-of select="subcaption"/></font></p>
