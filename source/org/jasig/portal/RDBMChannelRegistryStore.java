@@ -475,7 +475,9 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
 								}
 							}
 						}  catch (SQLException e) {
-							log.error( "RDBMChannelRegistryStore.getChannelDefinition(): Database being used is not internationalized. Execute `ant i18n-db' for internationalized database setting.");
+							log.error( "RDBMChannelRegistryStore.getChannelDefinition(): " +
+									"Database being used is not internationalized. " +
+									"Execute `ant i18n-db' for internationalized database setting.",e);
 						}
 					}
 				}
