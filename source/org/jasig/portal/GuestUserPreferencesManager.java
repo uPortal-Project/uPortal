@@ -219,7 +219,8 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
                             }
                         }
                     } catch (Exception e) {
-                        log.error("GuestUserPreferencesManager::registerSession() : unable to find UP for a profile \""+upl.getProfileName()+"\"");
+                        log.error("GuestUserPreferencesManager::registerSession() : " +
+                        		"unable to find UP for a profile \""+upl.getProfileName()+"\"",e);
                         cleanUP=new UserPreferences(upl);
                     }
                 }
@@ -227,7 +228,8 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
                 if(cleanUP!=null) {
                     newState.complete_up=new UserPreferences(cleanUP);
                 } else {
-                    log.error("GuestUserPreferencesManager::registerSession() : unable to find UP for a profile \""+upl.getProfileName()+"\"");
+                    log.error("GuestUserPreferencesManager::registerSession() : " +
+                    		"unable to find UP for a profile \""+upl.getProfileName()+"\"");
                     newState.complete_up=new UserPreferences(upl);
                 }
 
@@ -259,8 +261,7 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
     public void processUserPreferencesParameters(HttpServletRequest req) {
         MState state=(MState)stateTable.get(req.getSession(false).getId());
         if(state==null) {
-            log.error("GuestUserPreferencesManager::processUserPreferencesParameters() : trying to envoke a method on a non-registered sessionId=\""+req.getSession(false).getId()+"\".");
-            return;
+        	throw new IllegalStateException("Trying to envoke a method on a non-registered sessionId=\""+req.getSession(false).getId()+"\".");
         }
         // layout root setting
         String root;
@@ -371,8 +372,7 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
     public boolean isUserAgentUnmapped (String sessionId) {
         MState state=(MState)stateTable.get(sessionId);
         if(state==null) {
-            log.error("GuestUserPreferencesManager::userAgentUnmapped() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
-            return false;
+        	throw new IllegalStateException("Trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
         }
         return  state.unmapped_user_agent;
     }
@@ -384,8 +384,7 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
     public UserPreferences getUserPreferences (String sessionId) {
         MState state=(MState)stateTable.get(sessionId);
         if(state==null) {
-            log.error("GuestUserPreferencesManager::getUserPreferences() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
-            return null;
+        	throw new IllegalStateException("Trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
         }
         return  state.complete_up;
     }
@@ -430,8 +429,7 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
     public ThemeStylesheetDescription getThemeStylesheetDescription (String sessionId) throws Exception {
         MState state=(MState)stateTable.get(sessionId);
         if(state==null) {
-            log.error("GuestUserPreferencesManager::getThemeStylesheetDescription() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
-            return null;
+        	throw new IllegalStateException("Trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
         }
         if (state.tsd == null) {
             int sid=state.complete_up.getProfile().getThemeStylesheetId();
@@ -451,8 +449,7 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
     public StructureStylesheetDescription getStructureStylesheetDescription (String sessionId) throws Exception{
         MState state=(MState)stateTable.get(sessionId);
         if(state==null) {
-            log.error("GuestUserPreferencesManager::getThemeStylesheetDescription() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
-            return null;
+        	throw new IllegalStateException("Trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
         }
         if (state.ssd == null) {
             int sid=state.complete_up.getProfile().getStructureStylesheetId();
@@ -472,8 +469,7 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
     public IUserLayoutManager getUserLayoutManager(String sessionId) {
         MState state=(MState)stateTable.get(sessionId);
         if(state==null) {
-            log.error("GuestUserPreferencesManager::getUserLayout() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
-            return null;
+        	throw new IllegalStateException("Trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
         }
         return  state.ulm;
     }
