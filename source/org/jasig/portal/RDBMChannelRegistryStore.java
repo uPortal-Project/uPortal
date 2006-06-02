@@ -24,6 +24,7 @@ import org.jasig.portal.container.om.common.PreferenceSetImpl;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IEntity;
 import org.jasig.portal.groups.IEntityGroup;
+import org.jasig.portal.groups.IGroupConstants;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.groups.ILockableEntityGroup;
 import org.jasig.portal.i18n.LocaleManager;
@@ -643,7 +644,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
 				String delete = "DELETE FROM UP_CHANNEL_PARAM WHERE CHAN_ID=" + channelPublishId;
 				if (log.isDebugEnabled())
 					log.debug("RDBMChannelRegistryStore.saveChannelDefinition(): " + delete);
-				int recordsDeleted = stmt.executeUpdate(delete);
+				stmt.executeUpdate(delete);
 				
 				ChannelParameter[] parameters = channelDef.getParameters();
 				
@@ -869,7 +870,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
 	 * @throws org.jasig.portal.groups.GroupsException
 	 */
 	public ChannelCategory getTopLevelChannelCategory() throws GroupsException {
-		IEntityGroup categoryGroup = GroupService.getDistinguishedGroup(GroupService.CHANNEL_CATEGORIES);
+		IEntityGroup categoryGroup = GroupService.getDistinguishedGroup(IGroupConstants.CHANNEL_CATEGORIES);
 		return getChannelCategory(categoryGroup.getKey());
 	}
 	
