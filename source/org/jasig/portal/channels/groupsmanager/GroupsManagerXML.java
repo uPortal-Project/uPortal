@@ -144,6 +144,8 @@ public class GroupsManagerXML
          // get values from IEntityGroup
          entName = entGrp.getName();
          entDesc = entGrp.getDescription();
+         if ( entDesc == null ) 
+             { entDesc = new String(); }
          entCreator = GroupsManagerXML.getEntityName(ENTITY_CLASSNAME, entGrp.getCreatorID());
       }
       //* Maybe I should have all parms in a java.util.HashMap
