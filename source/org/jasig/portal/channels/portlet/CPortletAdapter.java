@@ -555,7 +555,7 @@ public class CPortletAdapter
      * @param uid a unique ID used to identify the state of the channel
      * @return markup representing channel content
      */
-    protected synchronized String getMarkup(String uid) throws PortalException {
+    protected String getMarkup(String uid) throws PortalException {
         ChannelState channelState = (ChannelState)channelStateMap.get(uid);
         ChannelData cd = channelState.getChannelData();
         ChannelStaticData sd = channelState.getStaticData();
