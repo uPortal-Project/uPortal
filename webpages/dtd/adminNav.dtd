@@ -1,0 +1,19 @@
+<!--
+ Copyright 2006 The JA-SIG Collaborative.  All rights reserved.
+ See license distributed with this file and
+ available online at http://www.uportal.org/license.html
+
+ Author: George Lindholm
+ $Revision$
+-->
+
+<!ELEMENT links (link+)>
+<!ELEMENT link (parameter+)>
+<!ATTLIST link
+          labelId CDATA #REQUIRED
+          channelFunctionalName CDATA #REQUIRED>
+
+<!ELEMENT parameter EMPTY>
+<!ATTLIST parameter
+          name CDATA #REQUIRED
+          value CDATA #REQUIRED>

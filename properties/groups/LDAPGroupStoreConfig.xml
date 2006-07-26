@@ -1,14 +1,15 @@
 <?xml version="1.0"?>
+<!DOCTYPE LDAPGroupStore PUBLIC "-//uPortal//LDAPGroupStore/EN" "LDAPGroupStore.dtd">
 
 <!--
-	LDAPGroupStoreConfig.xml is used to configure the default LDAP group store.  
+	LDAPGroupStoreConfig.xml is used to configure the default LDAP group store.
 	Additional LDAP group stores can be configured by creating additional configuration
-	documents, and cerating an IGroupServiceFactory implementation that instantiates 
-	a new LDAPGroupStore with the other configuration document as an argument to 
+	documents, and cerating an IGroupServiceFactory implementation that instantiates
+	a new LDAPGroupStore with the other configuration document as an argument to
 	the constructor.
-	
+
 	See LDAPGroupStore.dtd for xml grammar.
-	
+
 	NOTE: For demonstration purposes, this document contains Columbia-specific
         configuration information.  This should be replaced with a configuration
         suitable to your institution

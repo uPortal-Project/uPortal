@@ -1,5 +1,7 @@
 <?xml version="1.0"?>
 <!-- $Revision$ -->
+<!DOCTYPE tables PUBLIC "-//uPortal//Tables/EN" "tables.dtd">
+
 
 <tables>
   <table sinceMajor="2" sinceMinor="4">
@@ -9,8 +11,8 @@
       <column>
         <name>FNAME</name>
         <type>VARCHAR</type>
-        <desc>The functional name of the entity.</desc>
         <param>255</param>
+        <desc>The functional name of the entity.</desc>
         <key>PK</key>
      </column>
       <column>
@@ -31,9 +33,9 @@
       <column>
         <name>DESCRIPTION</name>
         <type>VARCHAR</type>
+       <param>255</param>
         <desc>A description of the code represented by the functional name</desc>
-        <param>255</param>
-     </column>
+      </column>
     </columns>
     <primary-key>FNAME</primary-key>
   </table>
@@ -51,43 +53,43 @@
         <type>LONGVARCHAR</type>
         <desc>The name of the preference</desc>
       </column>
-      <column> 
-        <name>PORTLET_PREF_READONLY</name>   
-        <type>VARCHAR</type> 
-        <param>1</param>
+      <column>
+        <name>PORTLET_PREF_READONLY</name>
+        <type>VARCHAR</type>
+         <param>1</param>
         <desc>Y/N Toggle on to see if the preference is read only</desc>
       </column>
       <column>
         <name>PREF_ID</name>
         <type>INTEGER</type>
         <desc>Preference key foreign key for UP_PORTLET_PREF_VALUES</desc>
-      </column>      
+      </column>
     </columns>
     <primary-key>CHAN_ID</primary-key>
     <primary-key>PREF_ID</primary-key>
     <not-null>PORTLET_PREF_NAME</not-null>
   </table>
-  
+
   <table sinceMajor="2" sinceMinor="4">
     <name>UP_PORTLET_ENTITY_PREFS</name>
     <desc>Enitity level portlet preferences</desc>
      <columns>
-      <column> 
-        <name>USER_ID</name>         
+      <column>
+        <name>USER_ID</name>
         <type>INTEGER</type>
         <desc>Foreign key user_id of table up_user</desc>
       </column>
-      <column> 
-        <name>LAYOUT_ID</name>       
+      <column>
+        <name>LAYOUT_ID</name>
         <type>INTEGER</type>
         <desc>Foreign key layout_id of table up_user_layout and compound key</desc>
       </column>
-      <column> 
-        <name>CHAN_DESC_ID</name>       
+      <column>
+        <name>CHAN_DESC_ID</name>
         <type>VARCHAR</type>
         <param>255</param>
         <desc>Foreign key of table UP_LAYOUT_STRUCT and compound key or key from aggregated layout</desc>
-      </column>          
+      </column>
       <column>
         <name>PORTLET_PREF_NAME</name>
         <type>LONGVARCHAR</type>
@@ -97,21 +99,21 @@
         <name>PREF_ID</name>
         <type>INTEGER</type>
         <desc>Preference key foreign key for UP_PORTLET_PREF_VALUES</desc>
-      </column>   
+      </column>
     </columns>
     <primary-key>USER_ID</primary-key>
     <primary-key>LAYOUT_ID</primary-key>
     <primary-key>CHAN_DESC_ID</primary-key>
     <primary-key>PREF_ID</primary-key>
     <not-null>PORTLET_PREF_NAME</not-null>
-  </table>  
-  
+  </table>
+
   <table sinceMajor="2" sinceMinor="4">
     <name>UP_PORTLET_PREF_VALUES</name>
     <desc>Portlet preference values</desc>
      <columns>
-      <column> 
-        <name>PREF_ID</name>         
+      <column>
+        <name>PREF_ID</name>
         <type>INTEGER</type>
         <desc>Foreign key pref_id of tables UP_PORTLET_ENTITY_PREFS or UP_PORTLET_DEFINITION_PREFS</desc>
       </column>
@@ -122,7 +124,7 @@
       </column>
     </columns>
     <not-null>PREF_ID</not-null>
-  </table>  
+  </table>
 
   <table sinceMajor="2" sinceMinor="5">
     <name>UP_LAYOUT_RESTRICTIONS</name>
@@ -791,8 +793,8 @@
     <desc>Emulates auto-increment/sequence values for the the various uPortal tables primary keys. Not used by DBLoader.</desc>
     <columns>
       <column> <name>SEQUENCE_NAME</name>  <type>VARCHAR</type> <param>255</param>
-        <key>PK</key>
         <desc>Name of sequence, corresponds to table name</desc>
+        <key>PK</key>
       </column>
       <column> <name>SEQUENCE_VALUE</name> <type>INTEGER</type>
         <desc>Next available number</desc>
@@ -821,6 +823,7 @@
 
   <table sinceMajor="2" sinceMinor="1">
     <name>UP_USER_PROFILE</name>
+    <desc></desc>
     <columns>
       <column> <name>USER_ID</name>           <type>INTEGER</type>
         <desc>Foreign key USER_ID of table up_user</desc>

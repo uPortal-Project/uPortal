@@ -1,0 +1,23 @@
+<!--
+ Copyright 2006 The JA-SIG Collaborative.  All rights reserved.
+ See license distributed with this file and
+ available online at http://www.uportal.org/license.html
+
+ Author: George Lindholm
+ $Revision$
+-->
+
+<!ELEMENT data (table+) >
+<!ELEMENT table (name, rows) >
+<!ATTLIST table
+   sinceMajor  CDATA #REQUIRED
+   sinceMinor  CDATA #REQUIRED>
+
+<!ELEMENT rows (row+)>
+<!ELEMENT row (column+)>
+<!ATTLIST row
+   sinceMajor  CDATA #IMPLIED
+   sinceMinor  CDATA #IMPLIED>
+<!ELEMENT column (name, value)>
+<!ELEMENT name (#PCDATA)>
+<!ELEMENT value ANY>

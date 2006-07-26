@@ -11,12 +11,12 @@ are met:
    notice, this list of conditions and the following disclaimer in
    the documentation and/or other materials provided with the
    distribution.
-   
+
 3. Redistributions of any form whatsoever must retain the following
    acknowledgment:
    "This product includes software developed by the JA-SIG Collaborative
    (http://www.jasig.org/)."
-   
+
 THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
 EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -38,10 +38,19 @@ $Revision$
 <!-- Use to validate tables.xml that is used with DbLoader -->
 
 <!ELEMENT tables (table+) >
-<!ELEMENT table (name, desc, columns, primary-key*) >
+<!ATTLIST table
+   sinceMajor  CDATA #REQUIRED
+   sinceMinor  CDATA #REQUIRED>
+<!ELEMENT table (name, desc, columns, primary-key*,not-null*) >
 <!ELEMENT columns (column+)>
-<!ELEMENT column (name, type, desc)>
+<!ELEMENT column (name, type, param?, desc?, key?)>
+<!ATTLIST column
+   sinceMajor  CDATA #IMPLIED
+   sinceMinor  CDATA #IMPLIED>
+<!ELEMENT param (#PCDATA)>
 <!ELEMENT name (#PCDATA)>
 <!ELEMENT type (#PCDATA)>
 <!ELEMENT desc (#PCDATA)>
+<!ELEMENT key (#PCDATA)>
 <!ELEMENT primary-key (#PCDATA)>
+<!ELEMENT not-null (#PCDATA)>

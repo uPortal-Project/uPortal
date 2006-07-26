@@ -21,6 +21,7 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.jasig.portal.PortalException;
 import org.jasig.portal.RDBMServices;
+import org.jasig.portal.utils.DTDResolver;
 import org.jasig.portal.utils.XSLT;
 import org.springframework.dao.DataAccessException;
 import org.w3c.dom.Document;
@@ -76,7 +77,7 @@ public class DbLoader
   {
       this.config = c;
   }
-  
+
   /**
    * Creates a default DbLoader with no configuration object installed. Before
    * DbLoader can work it must have a configuration object set.
@@ -85,7 +86,7 @@ public class DbLoader
   public DbLoader()
   {
   }
-  
+
   /**
    * Set the configuration object to govern DbLoader's behavior.
    * @param c
@@ -94,19 +95,19 @@ public class DbLoader
   {
       this.config = c;
   }
-  
+
   public static void main(String[] args)
   {
       RDBMServices.setGetDatasourceFromJndi(false); /*don't try jndi when not in web app */
       Configuration config = new Configuration();
-   
+
     try
     {
         // read dbloader.xml properties
         loadConfiguration(config);
         // read command line arguements to override properties in dbloader.xml
         readOverrides(config, args);
-        
+
         // create the script file if indicated
         if (config.getCreateScript())
           initScript(config);
@@ -127,7 +128,7 @@ public class DbLoader
         exit(config);
     }
     config.getLog().flush();
-    
+
     if (config.getScriptWriter() != null)
         config.getScriptWriter().flush();
   }
@@ -143,12 +144,12 @@ public class DbLoader
         try
         {
             config.setConnection(RDBMServices.getConnection());
-    
-           
+
+
            long startTime = System.currentTimeMillis();
 
             DbUtils.logDbInfo(config);
-          
+
             if ( config.getDataURL() == null )
                 config.setDataURL(DbLoader.class.getResource(config.getDataUri()));
 
@@ -156,13 +157,13 @@ public class DbLoader
             // get tablesURL and dataURL here
             if ( config.getTablesURL() == null)
               config.setTablesURL(DbLoader.class.getResource(config.getTablesUri()));
-            
+
             config.getLog().println("Getting tables from: "+config.getTablesURL());
             config.getLog().println("Getting data from: "+config.getDataURL());
 
             DocumentBuilder domParser = null;
 
-            // get a dom parser for handling tables.xml and/or indexes.xml 
+            // get a dom parser for handling tables.xml and/or indexes.xml
             try
             {
                 // Read tables.xml
@@ -183,7 +184,7 @@ public class DbLoader
             {
                 // Eventually, write and validate against a DTD
                 //domParser.setFeature ("http://xml.org/sax/features/validation", true);
-                //domParser.setEntityResolver(new DTDResolver("tables.dtd"));
+                domParser.setEntityResolver(new DTDResolver("tables.dtd"));
 
                 //tablesURL = DbLoader.class.getResource(Configuration.properties.getTablesUri());
                 if (config.getCreateTables()
@@ -218,7 +219,7 @@ public class DbLoader
                 xslt.setXML(config.getTablesDoc());
                 xslt.setXSL(config.getTablesXslUri());
                 xslt.setTarget(new TableHandler(config));
-                
+
                 if (config.getUpgradeVersion() != null) {
                     xslt.setStylesheetParameter("upgradeMajor", Integer.toString(config.getUpgradeMajor()));
                     xslt.setStylesheetParameter("upgradeMinor", Integer.toString(config.getUpgradeMinor()));
@@ -232,7 +233,7 @@ public class DbLoader
                 config.getLog().println("Dropping tables and Creating tables...Disabled");
                 config.getLog().println();
             }
-            
+
             // populate tables if indiicated
             // data.xml --> INSERT sql statements
 
@@ -243,6 +244,7 @@ public class DbLoader
                 DataHandler dataHandler = new DataHandler(config);
                 parser.setContentHandler(dataHandler);
                 parser.setErrorHandler(dataHandler);
+                parser.setEntityResolver(new DTDResolver("data.dtd"));
                 parser.parse(new InputSource(config.getDataURL().openStream()));
             }
             else
@@ -263,9 +265,9 @@ public class DbLoader
         finally
         {
             RDBMServices.releaseConnection(config.getConnection());
-        }          
+        }
     }
-  
+
     public static void loadConfiguration(Configuration config)
       throws ParserConfigurationException, SAXException, IOException
     {
@@ -279,7 +281,7 @@ public class DbLoader
         handler.properties.getLog().print("Parsing " + handler.properties.getPropertiesURL() + "...");
         parser.parse(new InputSource(handler.properties.getPropertiesURL().openStream()));
     }
-  
+
   /**
      * @param config
      */
@@ -311,7 +313,7 @@ public class DbLoader
                  useDataFile=false;
               } else if (useLocale) {
                  adminLocale = args[i];
-                 config.setAdminLocale(adminLocale);                
+                 config.setAdminLocale(adminLocale);
                  useLocale = false;
               } else if (upgrade) {
                  upgradeVersion = args[i];
