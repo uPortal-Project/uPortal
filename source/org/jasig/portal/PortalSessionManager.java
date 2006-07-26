@@ -309,6 +309,13 @@ public class PortalSessionManager extends HttpServlet {
 	}
   }
 
+  /**
+   * See if our servlet context is available
+   * @return boolean if so
+   */
+  public static boolean isServletContext() {
+      return servletContext != null;
+  }
 }
 
 
