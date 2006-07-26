@@ -11,12 +11,12 @@ are met:
    notice, this list of conditions and the following disclaimer in
    the documentation and/or other materials provided with the
    distribution.
-   
+
 3. Redistributions of any form whatsoever must retain the following
    acknowledgment:
    "This product includes software developed by the JA-SIG Collaborative
    (http://www.jasig.org/)."
-   
+
 THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
 EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -45,7 +45,7 @@ $Revision$
   unremovable (true|false) "false"
   immutable (true|false) "false"
   name CDATA #IMPLIED
-  locale CDATA>
+  locale CDATA #IMPLIED>
 
 
 <!ELEMENT channel (parameter)*>
@@ -53,17 +53,17 @@ $Revision$
   ID ID #REQUIRED
   name CDATA #REQUIRED
   description CDATA #REQUIRED
-  title CDATA #REQUIRED 
+  title CDATA #REQUIRED
   class CDATA #REQUIRED
   chanID CDATA #REQUIRED
   typeID CDATA #REQUIRED
-  fname CDATA #IMPLIED   
+  fname CDATA #IMPLIED
   timeout CDATA "10000"
   hidden (true|false) "false"
   editable (true|false) "false"
   hasHelp (true|false) "false"
   hasAbout (true|false) "false"
-  locale CDATA>
+  locale CDATA #IMPLIED>
 
 
 <!ELEMENT parameter EMPTY>
