@@ -44,7 +44,7 @@ import org.xml.sax.helpers.DefaultHandler;
     private static boolean insideSequence = false;
     private boolean supportsPreparedStatements = false;
     private static String sequenceId;
-    
+
     private static Map sequences = new HashMap();
 
     Table table;
@@ -134,7 +134,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
         int sinceMajor = row.getSinceMajor();
         int sinceMinor = row.getSinceMinor();
-        
+
         if (sinceMajor == -1) {
            sinceMajor = table.getSinceMajor();
            sinceMinor = table.getSinceMinor();
@@ -430,8 +430,9 @@ import org.xml.sax.helpers.DefaultHandler;
 
             // Get a java sql data type for column name
             int javaSqlDataType = DomUtils.getJavaSqlDataTypeOfColumn(config, table.getName(), column.getName());
-            if (value==null || (value!=null && value.equalsIgnoreCase("NULL")))
+            if (value==null || (value!=null && (value.equalsIgnoreCase("NULL") || value.trim().length() == 0))) {
               pstmt.setNull(i, javaSqlDataType);
+            }
             else if (javaSqlDataType == Types.TIMESTAMP)
             {
               if (value.equals("SYSDATE"))
