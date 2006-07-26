@@ -5,7 +5,10 @@
 
 package org.jasig.portal.utils;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.net.URL;
 
 import org.jasig.portal.PortalSessionManager;
 import org.xml.sax.EntityResolver;
@@ -23,6 +26,7 @@ public class DTDResolver implements EntityResolver
   private static final String dtdPath = "dtd";
   private static final String channelPublishingDtd = dtdPath + "/channelPublishingDocument.dtd";
   private static final String personDirsDtd = dtdPath + "/PersonDirs.dtd";
+  private static final String tablesDtd = dtdPath + "/tables.dtd";
 
   private String dtdName = null;
 
@@ -53,9 +57,9 @@ public class DTDResolver implements EntityResolver
     // Check for a match on the systemId
     if (systemId != null) {
       if (dtdName != null && systemId.indexOf(dtdName) != -1) {
-        inStream = PortalSessionManager.getResourceAsStream(dtdPath + "/" + dtdName);
+        inStream = getResourceAsStream(dtdPath + "/" + dtdName);
       } else if (systemId.trim().equalsIgnoreCase("http://my.netscape.com/publish/formats/rss-0.91.dtd")) {
-        inStream = PortalSessionManager.getResourceAsStream(dtdPath + "/rss-0.91.dtd");
+        inStream = getResourceAsStream(dtdPath + "/rss-0.91.dtd");
       }
 
       if ( null != inStream ) {
@@ -66,11 +70,13 @@ public class DTDResolver implements EntityResolver
     // Check for a match on the public id
     if ( publicId != null ) {
         if ( publicId.trim().equalsIgnoreCase("-//Netscape Communications//DTD RSS 0.91//EN")) {
-            inStream = PortalSessionManager.getResourceAsStream(dtdPath + "/rss-0.91.dtd");
+            inStream = getResourceAsStream(dtdPath + "/rss-0.91.dtd");
         } else if (publicId.trim().equalsIgnoreCase("-//uPortal//Channel Publishing/EN")) {
-        	inStream = PortalSessionManager.getResourceAsStream(channelPublishingDtd);
+        	inStream = getResourceAsStream(channelPublishingDtd);
         } else if (publicId.trim().equalsIgnoreCase("-//uPortal//PersonDirs/EN")) {
-        	inStream = PortalSessionManager.getResourceAsStream(personDirsDtd);
+        	inStream = getResourceAsStream(personDirsDtd);
+        } else if (publicId.trim().equalsIgnoreCase("-//uPortal//Tables/EN")) {
+            inStream = getResourceAsStream(tablesDtd);
         }
 
         if ( null != inStream ) {
@@ -80,5 +86,19 @@ public class DTDResolver implements EntityResolver
 
     // Return null to let the parser handle this entity
     return null;
+  }
+
+  public InputStream getResourceAsStream(String resource){
+      if (PortalSessionManager.isServletContext()) {
+          return PortalSessionManager.getResourceAsStream(resource);
+      } else {
+        try {
+            URL root = DTDResolver.class.getResource("/");
+            InputStream in = new FileInputStream(root.getPath() + "../../" + resource);
+            return in;
+        } catch (FileNotFoundException e) {
+            return null;
+        }
+      }
   }
 }
