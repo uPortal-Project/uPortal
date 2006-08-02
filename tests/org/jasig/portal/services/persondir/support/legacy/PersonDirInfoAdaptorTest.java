@@ -37,10 +37,10 @@ public class PersonDirInfoAdaptorTest extends TestCase {
         
         IPersonAttributeDao dao = PersonDirInfoAdaptor.adapt(pdi);
         
-        Map attributes = dao.getUserAttributes("awp9");
+        Map attributes = dao.getUserAttributes("susan");
         
         assertFalse(attributes.isEmpty());
-        assertEquals("andrew.petro@yale.edu", attributes.get("emailfromldap"));
+        assertEquals("susan.bramhall@yale.edu", attributes.get("emailfromldap"));
         
     }
 }
