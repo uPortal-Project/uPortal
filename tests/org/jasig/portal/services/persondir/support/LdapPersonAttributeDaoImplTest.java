@@ -69,10 +69,10 @@ public class LdapPersonAttributeDaoImplTest
         impl.setQueryAttributes(queryAttrList);
         
         Map queryMap = new HashMap();
-        queryMap.put(queryAttr, "awp9");
+        queryMap.put(queryAttr, "susan");
         
         Map attribs = impl.getUserAttributes(queryMap);
-        assertEquals("andrew.petro@yale.edu", attribs.get("email"));
+        assertEquals("susan.bramhall@yale.edu", attribs.get("email"));
     }
     
     /**
@@ -100,12 +100,12 @@ public class LdapPersonAttributeDaoImplTest
         impl.setQueryAttributes(queryAttrList);
         
         Map queryMap = new HashMap();
-        queryMap.put(queryAttr1, "awp9");
-        queryMap.put(queryAttr2, "andrew.petro");
+        queryMap.put(queryAttr1, "susan");
+        queryMap.put(queryAttr2, "susan.bramhall");
         queryMap.put("email", "edalquist@unicon.net");
         
         Map attribs = impl.getUserAttributes(queryMap);
-        assertEquals("andrew.petro@yale.edu", attribs.get("email"));
+        assertEquals("susan.bramhall@yale.edu", attribs.get("email"));
     }
     
     /**
