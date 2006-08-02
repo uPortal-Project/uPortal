@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE channel-definition PUBLIC "-//uPortal//Channel Definition/EN" "channelDefinition.dtd" >
+<channel-definition>
+	<channelId>8</channelId>
+	<title>uPortal Home Page</title>
+	<name>uPortal Home Page</name>
+	<fname>uportal-home-page</fname>
+	<desc>uPortal Home Page channel</desc>
+	<type>Inline Frame</type>
+	<class>org.jasig.portal.channels.CInlineFrame</class>
+	<timeout>20000</timeout>
+	<hasedit>N</hasedit>
+	<hashelp>N</hashelp>
+	<hasabout>N</hasabout>
+	<secure>N</secure>
+	<locale></locale>
+	<categories>
+		<category>uPortal</category>
+	</categories>
+	<groups>
+		<group>Everyone</group>
+	</groups>
+	<parameters>
+		<parameter>
+			<name>url</name>
+			<value>http://uportal.org/</value>
+			<description></description>
+			<ovrd>N</ovrd>
+		</parameter>
+		<parameter>
+			<name>height</name>
+			<value>800</value>
+			<description></description>
+			<ovrd>N</ovrd>
+		</parameter>
+	</parameters>
+</channel-definition>

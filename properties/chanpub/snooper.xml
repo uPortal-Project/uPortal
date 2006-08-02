@@ -3,7 +3,7 @@
 <!DOCTYPE channel-definition PUBLIC "-//uPortal//Channel Definition/EN" "channelDefinition.dtd">
 
 <channel-definition>
-
+	<channelId>16</channelId>
     <title>Snooper</title>
     <name>Snooper</name>
     <fname>snooper</fname>

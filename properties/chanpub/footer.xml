@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE channel-definition PUBLIC "-//uPortal//Channel Definition/EN" "channelDefinition.dtd" >
+<channel-definition>
+	<channelId>19</channelId>
+	<title>Footer</title>
+	<name>Footer</name>
+	<fname>footer</fname>
+	<desc>uPortal Footer channel</desc>
+	<type>XML SSL</type>
+	<class>org.jasig.portal.channels.CGenericXSLT</class>
+	<timeout>10000</timeout>
+	<hasedit>N</hasedit>
+	<hashelp>N</hashelp>
+	<hasabout>N</hasabout>
+	<secure>N</secure>
+	<locale></locale>
+	<categories />
+	<groups>
+		<group>Everyone</group>
+	</groups>
+	<parameters>
+		<parameter>
+			<name>xmlUri</name>
+			<value>CGenericXSLT/emptyDocument.xml</value>
+			<description></description>
+			<ovrd>N</ovrd>
+		</parameter>
+		<parameter>
+			<name>sslUri</name>
+			<value>CGenericXSLT/footer/footer.ssl</value>
+			<description></description>
+			<ovrd>N</ovrd>
+		</parameter>
+		<parameter>
+			<name>cacheTimeout</name>
+			<value>3600</value>
+			<description>
+				Overrides the default cache timeout for CGenericXSLT
+				channels
+			</description>
+			<ovrd>N</ovrd>
+		</parameter>
+	</parameters>
+</channel-definition>

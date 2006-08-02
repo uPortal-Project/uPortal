@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE channel-definition PUBLIC "-//uPortal//Channel Definition/EN" "channelDefinition.dtd" >
+<channel-definition>
+	<channelId>50</channelId>
+	<title>DLM Administrator's Guide</title>
+	<name>DLM Administrator's Guide</name>
+	<fname>dlm.admin.guide</fname>
+	<desc>
+		A channel that presents an administrator's guide for Distributed
+		Layout Management.
+	</desc>
+	<type>Custom</type>
+	<class>
+		org.jasig.portal.layout.dlm.channels.guide.DlmIntroChannel
+	</class>
+	<timeout>5000</timeout>
+	<hasedit>N</hasedit>
+	<hashelp>N</hashelp>
+	<hasabout>N</hasabout>
+	<secure>N</secure>
+	<locale></locale>
+	<categories>
+		<category>Development</category>
+	</categories>
+	<groups>
+		<group>Everyone</group>
+	</groups>
+</channel-definition>

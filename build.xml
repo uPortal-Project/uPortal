@@ -302,12 +302,12 @@
   jdom-1.0.jar			JDom is used to parse XML by WhirlyCache
   						Version 1.0
   						URL: http://www.jdom.org
-  						
+
   whirlycache-0.7.1.jar	WhirlyCache is a fast caching package that is configurable via
   						XML.
   						Version 0.7.1
   						URL: https://whirlycache.dev.java.net/
-  						
+
   backport-util-concurrent.jar Backport of Doug Lea's Concurrency package.  Similar
   						to the Java 1.5 java.util.concurrent package.
   						Version CVS_HEAD (4/18/2005)
@@ -320,7 +320,7 @@
   rome.jar              ROME: RSS and Atom Utilities for Java
                         Version 0.8
                         URL: https://rome.dev.java.net
-  
+
   tagsoup.jar           TagSoup HTML Parser that "Just Keeps On Truckin'"
                         Version 1.0rc3
                         URL: http://home.ccil.org/~cowan/XML/tagsoup/
@@ -356,7 +356,7 @@
   <property name="casclient.jar" value="lib/casclient-2.1.1.jar"/>
   <property name="rome.jar" value="(set this in build.properties!)"/>
   <property name="tagsoup.jar" value="(set this in build.properties!)"/>
-  
+
 <!-- ==================== Compilation Classpath =========================== -->
 
 <!--
@@ -582,7 +582,7 @@
     <copy todir="${deploy.home}/WEB-INF/lib" file="${casclient.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${rome.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${tagsoup.jar}"/>
-    
+
     <!-- These are Tomcat-specific!  We need to think about a new property
          that lets us specify the appropriate directory for other servers
     -->
@@ -593,7 +593,7 @@
     <!-- This is Tomcat-specific and server name-specific!
          We need to find out the best way to ensure cross-context
          behavior in all servlet containers.
-         
+
          The context file goes into META-INF so it will be part of the .war file and available
          to deployment processes that honor it, such as deployment via the Tomcat manager application.
          We also copy it into the Tomcat server configuration directory so that Tomcat will configure the
@@ -609,8 +609,8 @@
         </filterset>
     </copy>
 
-    <copy tofile="${server.home}/conf/Catalina/localhost/${webapp.docBase}.xml" 
-    	file="${deploy.home}/META-INF/context.xml" />  	
+    <copy tofile="${server.home}/conf/Catalina/localhost/${webapp.docBase}.xml"
+    	file="${deploy.home}/META-INF/context.xml" />
     <copy todir="${server.home}/conf/Catalina/localhost" file="properties/proxyportlet.xml"/>
 
         <!-- Deploy classes to support the modified version of WSRP4J's proxyportlet.
@@ -733,7 +733,7 @@
         <path refid="compile.classpath"/>
       </classpath>
     </java>
-  	
+
   </target>
 
 
@@ -751,10 +751,10 @@
     <echo message="Initializing uPortal"/>
     <antcall target="deploy"/>
     <antcall target="db"/>
-    <antcall target="i18n-db"/>
     <antcall target="pubchan">
       <param name="channel" value="all"/>
     </antcall>
+    <antcall target="i18n-db"/>
     <antcall target="pubfragments">
       <param name="fragmentFile" value="/properties/al/fragments.xml"/>
     </antcall>
@@ -999,17 +999,17 @@
             <path refid="compile.classpath"/>
         </classpath>
     </java>
-  	<available file="${build.home}/WEB-INF/classes/${tempDataXML}" 
+  	<available file="${build.home}/WEB-INF/classes/${tempDataXML}"
   		property="temp.fragment.data.file.present"/>
   	<antcall target="pubfragments.load"/>
     <echo message="Done updating ALM fragment configuration."/>
     </target>
-	
+
 	<target name="pubfragments.load" if="temp.fragment.data.file.present">
-  	
+
     <!-- load data.xml file -->
     <echo message="Loading new fragments into the database."/>
-    <java fork="true" failonerror="true" dir="${build.home}/WEB-INF/classes" 
+    <java fork="true" failonerror="true" dir="${build.home}/WEB-INF/classes"
           classname="org.jasig.portal.tools.dbloader.DbLoader">
         <arg value="-d"/>
         <arg value="${tempDataXML}"/>
@@ -1248,7 +1248,7 @@
     <javac srcdir="tests"
       target="1.4"
       source="1.4"
-      
+
           destdir="${build.home}/WEB-INF/classes"
             debug="${compile.debug}"
       deprecation="${compile.deprecation}"
@@ -1273,7 +1273,7 @@
 -->
   <!-- You must copy junit.jar into $ANT_HOME/lib directory for this to work -->
   <target name="runtests" depends="compiletests" description="Run JUnit Test Suite">
-    <junit fork="true" printsummary="off" showoutput="off" dir=".." 
+    <junit fork="true" printsummary="off" showoutput="off" dir=".."
       haltonerror="true" haltonfailure="true">
       <classpath>
         <pathelement path="${build.home}/WEB-INF/classes"/>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE channel-definition PUBLIC "-//uPortal//Channel Definition/EN" "channelDefinition.dtd" >
+<channel-definition>
+	<channelId>11</channelId>
+	<title>Word of the Day</title>
+	<name>Word of the Day</name>
+	<fname>word-of-the-day</fname>
+	<desc>Word of the Day channel</desc>
+	<type>RSS</type>
+	<class>org.jasig.portal.channels.CSyndFeed</class>
+	<timeout>10000</timeout>
+	<hasedit>N</hasedit>
+	<hashelp>N</hashelp>
+	<hasabout>N</hasabout>
+	<secure>N</secure>
+	<locale></locale>
+	<categories>
+		<category>Entertainment</category>
+	</categories>
+	<groups>
+		<group>Everyone</group>
+	</groups>
+	<parameters>
+		<parameter>
+			<name>xmlUri</name>
+			<value>
+				http://www.dictionary.com/wordoftheday/wotd.rss
+			</value>
+			<description></description>
+			<ovrd>N</ovrd>
+		</parameter>
+	</parameters>
+</channel-definition>

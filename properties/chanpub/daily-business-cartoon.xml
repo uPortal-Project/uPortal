@@ -3,7 +3,7 @@
 <!DOCTYPE channel-definition PUBLIC "-//uPortal//Channel Definition/EN" "channelDefinition.dtd">
 
 <channel-definition>
-
+	<channelId>1</channelId>
     <title>Daily Business Cartoon</title>
     <name>Daily Business Cartoon</name>
     <fname>daily-business-cartoon</fname>

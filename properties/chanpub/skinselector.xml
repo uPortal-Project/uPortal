@@ -3,7 +3,7 @@
 <!DOCTYPE channel-definition PUBLIC "-//uPortal//Channel Definition/EN" "channelDefinition.dtd">
 
 <channel-definition>
-
+	<channelId>80</channelId>
     <title>Skin Selector</title>
     <name>Skin Selector</name>
     <fname>skinselector</fname>

@@ -11,12 +11,12 @@ are met:
    notice, this list of conditions and the following disclaimer in
    the documentation and/or other materials provided with the
    distribution.
-   
+
 3. Redistributions of any form whatsoever must retain the following
    acknowledgment:
    "This product includes software developed by the JA-SIG Collaborative
    (http://www.jasig.org/)."
-   
+
 THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
 EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -35,7 +35,7 @@ Author: Ken Weiner, kweiner@unicon.net
 $Revision$
 -->
 
-<!ELEMENT channel-definition (title, name, fname, desc, type, class, timeout, hasedit, hashelp, hasabout, secure, locale, categories, groups, users?, parameters?, makeFNameAccessibleOnly? )>
+<!ELEMENT channel-definition (channelId?,title, name, fname, desc, type, class, timeout, hasedit, hashelp, hasabout, secure, locale, categories, groups, users?, parameters?, makeFNameAccessibleOnly? )>
 
 <!ELEMENT categories (category)*>
 
@@ -48,6 +48,7 @@ $Revision$
 <!ELEMENT parameter (name, value, description, ovrd)>
 
 <!ELEMENT makeFNameAccessibleOnly EMPTY>
+<!ELEMENT channelId (#PCDATA)>
 <!ELEMENT title (#PCDATA)>
 <!ELEMENT name (#PCDATA)>
 <!ELEMENT fname (#PCDATA)>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE channel-definition PUBLIC "-//uPortal//Channel Definition/EN" "channelDefinition.dtd" >
+<channel-definition>
+	<channelId>51</channelId>
+	<title>Administration</title>
+	<name>Administration</name>
+	<fname>admin.navigation.links</fname>
+	<desc>
+		A channel that renders administration links for channels to
+		which the user has authorization.
+	</desc>
+	<type>Custom</type>
+	<class>org.jasig.portal.channels.adminnav.AdminNavChannel</class>
+	<timeout>5000</timeout>
+	<hasedit>N</hasedit>
+	<hashelp>N</hashelp>
+	<hasabout>N</hasabout>
+	<secure>N</secure>
+	<locale></locale>
+	<categories></categories>
+	<groups>
+		<group>Everyone</group>
+	</groups>
+</channel-definition>

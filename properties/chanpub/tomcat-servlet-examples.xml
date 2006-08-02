@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE channel-definition PUBLIC "-//uPortal//Channel Definition/EN" "channelDefinition.dtd" >
+<channel-definition>
+	<channelId>18</channelId>
+	<title>Tomcat's Servlet Examples</title>
+	<name>Tomcat's Servlet Examples</name>
+	<fname>tomcat-servlet-examples</fname>
+	<desc>Tomcat's Servlet Examples</desc>
+	<type>Web Proxy</type>
+	<class>org.jasig.portal.channels.webproxy.CWebProxy</class>
+	<timeout>10000</timeout>
+	<hasedit>Y</hasedit>
+	<hashelp>Y</hashelp>
+	<hasabout>Y</hasabout>
+	<secure>N</secure>
+	<locale></locale>
+	<categories>
+		<category>uPortal</category>
+	</categories>
+	<groups>
+		<group>Developers</group>
+	</groups>
+	<parameters>
+		<parameter>
+			<name>cw_xml</name>
+			<value>
+				http://localhost:8080/servlets-examples/index.html
+			</value>
+			<description></description>
+			<ovrd>N</ovrd>
+		</parameter>
+		<parameter>
+			<name>cw_ssl</name>
+			<value>XHTML.ssl</value>
+			<description></description>
+			<ovrd>N</ovrd>
+		</parameter>
+		<parameter>
+			<name>cw_tidy</name>
+			<value>on</value>
+			<description></description>
+			<ovrd>N</ovrd>
+		</parameter>
+		<parameter>
+			<name>cw_passThrough</name>
+			<value>all</value>
+			<description></description>
+			<ovrd>N</ovrd>
+		</parameter>
+		<parameter>
+			<name>cw_help</name>
+			<value>examples/servlet_help.html</value>
+			<description></description>
+			<ovrd>N</ovrd>
+		</parameter>
+		<parameter>
+			<name>cw_info</name>
+			<value>examples/servlet_info.html</value>
+			<description></description>
+			<ovrd>N</ovrd>
+		</parameter>
+		<parameter>
+			<name>cw_edit</name>
+			<value>examples/servlet_edit.html</value>
+			<description></description>
+			<ovrd>N</ovrd>
+		</parameter>
+	</parameters>
+</channel-definition>

@@ -24,3 +24,6 @@ uPortal.oif
 uPortal.refactor
 untitled1.patch
 untitled2.patch
+.settings
+.springBeans
+portal.log.*

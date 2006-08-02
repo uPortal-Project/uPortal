@@ -3,7 +3,7 @@
 <!DOCTYPE channel-definition PUBLIC "-//uPortal//Channel Definition/EN" "channelDefinition.dtd">
 
 <channel-definition>
-
+	<channelId>96</channelId>
     <title>Session Locales Selector</title>
     <name>Session Locales Selector</name>
     <fname>session-locales-selector</fname>

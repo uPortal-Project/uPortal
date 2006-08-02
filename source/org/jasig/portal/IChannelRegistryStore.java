@@ -62,6 +62,14 @@ public interface IChannelRegistryStore {
   public ChannelDefinition newChannelDefinition() throws Exception;
 
   /**
+   * Create a new ChannelDefinition object.
+   * @param channel id
+   * @return the new channel definition
+   * @throws java.lang.Exception
+   */
+  public ChannelDefinition newChannelDefinition(int id) throws Exception;
+
+  /**
    * Get a channel definition.
    * @param channelPublishId a channel publish ID
    * @return a definition of the channel or <code>null</code> if no matching channel definition can be found
@@ -129,9 +137,9 @@ public interface IChannelRegistryStore {
 
   /**
    * Creates a new channel category with the specified values.
-   * @param name the name of the category 
-   * @param description the name of the description 
-   * @param creatorId the id of the creator or system 
+   * @param name the name of the category
+   * @param description the name of the description
+   * @param creatorId the id of the creator or system
    * @return channelCategory the new channel category
    * @throws java.lang.Exception
    */

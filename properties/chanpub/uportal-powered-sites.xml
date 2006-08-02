@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE channel-definition PUBLIC "-//uPortal//Channel Definition/EN" "channelDefinition.dtd" >
+<channel-definition>
+  <channelId>5</channelId>
+  <title>uPortal-Powered Sites</title>
+  <name>uPortal-Powered Sites</name>
+  <fname>uportal-powered-sites</fname>
+  <desc>uPortal Demos channel</desc>
+  <type>RSS</type>
+  <class>org.jasig.portal.channels.CSyndFeed</class>
+  <timeout>10000</timeout>
+  <hasedit>N</hasedit>
+  <hashelp>N</hashelp>
+  <hasabout>N</hasabout>
+  <secure>N</secure>
+  <locale></locale>
+  <categories>
+    <category>uPortal</category>
+  </categories>
+  <groups>
+    <group>Everyone</group>
+  </groups>
+  <parameters>
+    <parameter>
+      <name>xmlUri</name>
+      <value>http://www.unicon.net/publish/jasigPortalDemos.rss</value>
+      <description></description>
+      <ovrd>N</ovrd>
+    </parameter>
+  </parameters>
+</channel-definition>

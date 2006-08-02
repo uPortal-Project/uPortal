@@ -51,7 +51,7 @@ import org.xml.sax.SAXParseException;
 /**
  * This is a Channel Publisher tool to install uPortal channels from outside of
  * the portal or from within a channel archive.
- * Currently configured to be executed via Jakarta Ant or via a 
+ * Currently configured to be executed via Jakarta Ant or via a
  * channel-definition block within a CAR deployment descriptor.
  *
  * Sample of command line arguments:
@@ -87,7 +87,7 @@ public class ChannelPublisher implements ErrorHandler
 
     /**
      * @param args
-     * @throws Exception We let Exceptions bubble up so that ant will know 
+     * @throws Exception We let Exceptions bubble up so that ant will know
      * that the publishing failed and can report the error message and stack
      * trace to the user.
      */
@@ -95,21 +95,21 @@ public class ChannelPublisher implements ErrorHandler
         try{
             RDBMServices.setGetDatasourceFromJndi(false); /*don't try jndi when not in web app */
             /*
-             
+
              Channel Publisher Tool Workflow.
              1) read all or specified channel.xml file
-             
+
              ant publish -Dchannel=all or -Dchannel=webmail.xml
-             
+
              2) validate each against the channelDefinition.dtd file
-             
+
              3) publish one channel at a time
-             
+
              */
-            
+
             // determine whether user wants to publish one or all of the channels in current directory
             int mode = LOAD_ALL_FILES;
-            
+
             if (args[1] != null && args[1].length() > 0) {
                 // MODE = 0 for all channels in directory
                 // MODE = 1 for individual channel
@@ -117,11 +117,11 @@ public class ChannelPublisher implements ErrorHandler
                     mode = LOAD_ALL_FILES;
                 else
                     mode = LOAD_ONE_FILE;
-                
+
             }
-            
+
             ChannelPublisher publisher = getCommandLineInstance();
-            
+
             // determine what mode we are in
             if (mode == LOAD_ONE_FILE) {
                 System.out.println(
@@ -133,7 +133,7 @@ public class ChannelPublisher implements ErrorHandler
             } else {
                 // lets publish all channels in directory
                 System.out.println ("You have chosen to publish all channels.....");
-                
+
                 // user has selected to publish all channel in the /channels directory
                 // lets publish all channel one by one that is
                 // create InputStream object to pass to next method
@@ -142,7 +142,7 @@ public class ChannelPublisher implements ErrorHandler
                             ChannelPublisher.class,
                             chanDefsLocation + "/");
                 if (f.isDirectory()) {
-                    
+
                     // Consider only files that end in .xml
                     class ChannelDefFileFilter implements FileFilter {
                         public boolean accept(File file) {
@@ -150,14 +150,14 @@ public class ChannelPublisher implements ErrorHandler
                         }
                     }
                     File[] files = f.listFiles(new ChannelDefFileFilter());
-                    
+
                     for (int j = 0; j < files.length; j++) {
                         String name = files[j].getName();
                         // lets publish one at a time
                         try{
                             publisher.publishChannel(name);
                         }catch(Exception e){
-                            // Add file name into exception so we will know which 
+                            // Add file name into exception so we will know which
                             // file has the problem.
                             throw new Exception("Unable to publish file: "+name,e);
                         }
@@ -184,10 +184,10 @@ public class ChannelPublisher implements ErrorHandler
     }
 
     /**
-     * Publishes the channel represented by the XML located in the file 
-     * represented by the passed in filename and returns the resultant 
+     * Publishes the channel represented by the XML located in the file
+     * represented by the passed in filename and returns the resultant
      * ChannelDefinition object.
-     * 
+     *
      * @param filename the name of a file containing the channel XML definition
      * @return org.jasig.portal.ChannelDefinition the published channel definition
      * @throws Exception
@@ -199,9 +199,9 @@ public class ChannelPublisher implements ErrorHandler
     }
 
     /**
-     * Publishes the channel represented by the XML accessed via the passed in 
+     * Publishes the channel represented by the XML accessed via the passed in
      * InputStream object and returns the resultant ChannelDefinition object.
-     * 
+     *
      * @param is and InputStream containing the channel XML definition
      * @return org.jasig.portal.ChannelDefinition the published channel definition
      * @throws Exception
@@ -215,7 +215,7 @@ public class ChannelPublisher implements ErrorHandler
     /**
      * Publishes the channel represented by the passed in ChannelDefinition
      * object and returns the resultant ChannelDefinition object.
-     * 
+     *
      * @param ci
      * @return
      * @throws Exception
@@ -293,7 +293,7 @@ public class ChannelPublisher implements ErrorHandler
 
     /**
      * Set up a DOM parser for handling the XML channel-definition data.
-     * 
+     *
      * @throws Exception
      */
     private void setupDomParser() throws Exception {
@@ -311,9 +311,9 @@ public class ChannelPublisher implements ErrorHandler
 
     /**
      * Populates and returns a ChannelInfo object based on the passed in
-     * file name containing XML data structured according to the 
+     * file name containing XML data structured according to the
      * channel-definition dtd.
-     *  
+     *
      * @param chanDefFile
      * @return
      * @throws Exception
@@ -329,7 +329,7 @@ public class ChannelPublisher implements ErrorHandler
     /**
      * Populates and returns a ChannelInfo object based on the input stream
      * containing XML data structured according to the channel-definition dtd.
-     *  
+     *
      * @param is
      * @return
      * @throws Exception
@@ -342,24 +342,29 @@ public class ChannelPublisher implements ErrorHandler
         doc = domParser.parse(is);
 
         Element chanDefE = doc.getDocumentElement();
-        String fname = getFname(chanDefE);
+        final String id = getId(chanDefE);
+        if (id != null) {
+            ci.chanDef = crs.newChannelDefinition(Integer.parseInt(id));
+        } else {
+            String fname = getFname(chanDefE);
 
-        // Use existing channel definition if it exists,
-        // otherwise make a new one with a new ID
-        ci.chanDef = crs.getChannelDefinition(fname);
+            // Use existing channel definition if it exists,
+            // otherwise make a new one with a new ID
+            ci.chanDef = crs.getChannelDefinition(fname);
 
-        if (ci.chanDef != null && !mOverrideExisting)
-        {
-            log.error(
-                "chanDef with fname "
-                    + fname
-                    + " already exists "
-                    + "and override is false. Terminating publication.");
-            return null;
-        }
+            if (ci.chanDef != null && !mOverrideExisting)
+            {
+                log.error(
+                        "chanDef with fname "
+                        + fname
+                        + " already exists "
+                        + "and override is false. Terminating publication.");
+                return null;
+            }
 
-        if (ci.chanDef == null) {
-            ci.chanDef = crs.newChannelDefinition();
+            if (ci.chanDef == null) {
+                ci.chanDef = crs.newChannelDefinition();
+            }
         }
 
         for (Node param = chanDefE.getFirstChild(); param != null; param = param.getNextSibling()) {
@@ -367,7 +372,7 @@ public class ChannelPublisher implements ErrorHandler
                 continue; // whitespace (typically \n) between tags
             Element pele = (Element) param;
             String tagname = pele.getTagName();
-            String value = XML.getElementText(pele);
+            String value = XML.getElementText(pele).trim();
 
             // each tagname corresponds to an object data field
             if (tagname.equals("title"))
@@ -393,7 +398,7 @@ public class ChannelPublisher implements ErrorHandler
             else if (tagname.equals("hasabout"))
                 ci.chanDef.setHasAbout((value != null && value.equals("Y")) ? true : false);
                 else if (tagname.equals("secure"))
-                  ci.chanDef.setIsSecure((value != null && value.equals("Y")) ? true : false);                
+                  ci.chanDef.setIsSecure((value != null && value.equals("Y")) ? true : false);
             else if (mOnCommandLine && tagname.equals("categories"))
                 getCategories(ci, pele);
             else if (mOnCommandLine && tagname.equals("groups"))
@@ -415,7 +420,7 @@ public class ChannelPublisher implements ErrorHandler
 
     /**
      * Determines the functional name of the channel.
-     * 
+     *
      * @param chanDefE
      * @return
      * @throws Exception
@@ -443,8 +448,33 @@ public class ChannelPublisher implements ErrorHandler
     }
 
     /**
+     * Find the channel id.
+     *
+     * @param chanDefE
+     * @return possible channel id
+     * @throws Exception
+     */
+    private String getId(Element chanDefE) throws Exception
+    {
+        String id = null;
+        for (Node n = chanDefE.getFirstChild();
+            n != null;
+            n = n.getNextSibling())
+        {
+            if (n.getNodeType() == Node.ELEMENT_NODE)
+            {
+                if (n.getNodeName().equals("channelId"))
+                {
+                    id = XML.getElementText((Element) n);
+                }
+            }
+        }
+        return id;
+    }
+
+    /**
      * Translate the declared channel type name into a channel type id.
-     *  
+     *
      * @param ci
      * @param value
      * @throws Exception
@@ -490,7 +520,7 @@ public class ChannelPublisher implements ErrorHandler
 
     /**
      * Translate channel category names into category ids.
-     * 
+     *
      * @param ci The ChannelInfo object being populated.
      * @param pele The Element containing the category elements.
      * @throws Exception
@@ -518,11 +548,11 @@ public class ChannelPublisher implements ErrorHandler
             }
         }
     }
-    
+
 
     /**
      * Load the declared parameters.
-     * 
+     *
      * @param ci The ChannelInfo object being populated.
      * @param pele The Element containing the parameter elements.
      */
@@ -568,7 +598,7 @@ public class ChannelPublisher implements ErrorHandler
 
     /**
      * Translate access group names into group ids.
-     * 
+     *
      * @param ci The ChannelInfo object being populated.
      * @param pele The Element containing the group elements.
      * @throws Exception
@@ -599,7 +629,7 @@ public class ChannelPublisher implements ErrorHandler
 
     /**
      * Translate access user ids into the user entity objects.
-     * 
+     *
      * @param ci The ChannelInfo object being populated.
      * @param pele The Element containing the user elements.
      * @throws Exception
@@ -692,11 +722,11 @@ public class ChannelPublisher implements ErrorHandler
 
     /**
      * Load the lookup table to translate channel type names into ids.
-     * 
+     *
      * @throws Exception
      */
-    private void initChanTypeMap() 
-    throws Exception 
+    private void initChanTypeMap()
+    throws Exception
     {
         if (chanTypesNamesToIds == null) {
             chanTypesNamesToIds = new HashMap();
@@ -708,7 +738,7 @@ public class ChannelPublisher implements ErrorHandler
                 new Integer(types[i].getId()));
         }
     }
-  
+
     private static class ChannelInfo
     {
         ChannelDefinition chanDef;
@@ -751,7 +781,7 @@ public class ChannelPublisher implements ErrorHandler
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.xml.sax.ErrorHandler#warning(org.xml.sax.SAXParseException)
      */
     public void warning(SAXParseException arg0) throws SAXException
@@ -763,7 +793,7 @@ public class ChannelPublisher implements ErrorHandler
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.xml.sax.ErrorHandler#error(org.xml.sax.SAXParseException)
      */
     public void error(SAXParseException arg0) throws SAXException
@@ -774,7 +804,7 @@ public class ChannelPublisher implements ErrorHandler
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.xml.sax.ErrorHandler#fatalError(org.xml.sax.SAXParseException)
      */
     public void fatalError(SAXParseException arg0) throws SAXException

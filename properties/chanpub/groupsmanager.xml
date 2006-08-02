@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE channel-definition PUBLIC "-//uPortal//Channel Definition/EN" "channelDefinition.dtd" >
+<channel-definition>
+	<channelId>94</channelId>
+	<title>Groups Manager</title>
+	<name>Groups Manager</name>
+	<fname>groupsmanager</fname>
+	<desc>
+		An administrative tool for creating and managing groups and
+		memberships
+	</desc>
+	<type>Custom</type>
+	<class>
+		org.jasig.portal.channels.groupsmanager.CGroupsManager
+	</class>
+	<timeout>40000</timeout>
+	<hasedit>N</hasedit>
+	<hashelp>N</hashelp>
+	<hasabout>N</hasabout>
+	<secure>N</secure>
+	<locale></locale>
+	<categories>
+		<category>Applications</category>
+	</categories>
+	<groups>
+		<group>Everyone</group>
+	</groups>
+</channel-definition>
