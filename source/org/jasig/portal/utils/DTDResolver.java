@@ -24,10 +24,23 @@ import org.xml.sax.InputSource;
 public class DTDResolver implements EntityResolver
 {
   private static final String dtdPath = "dtd";
-  private static final String channelPublishingDtd = dtdPath + "/channelPublishingDocument.dtd";
-  private static final String personDirsDtd = dtdPath + "/PersonDirs.dtd";
-  private static final String tablesDtd = dtdPath + "/tables.dtd";
 
+  private static class PublicId {
+      public String publicId;
+      public String dtdFile;
+      public PublicId(final String publicId, final String dtdFile) {
+          this.publicId = publicId;
+          this.dtdFile = dtdPath + "/"  + dtdFile;
+      }
+  }
+  private static final PublicId[] publicIds = new PublicId[]{
+      new PublicId ("-//Netscape Communications//DTD RSS 0.91//EN", "rss-0.91.dtd"),
+      new PublicId ("-//uPortal//Tables/EN", "tables.dtd"),
+      new PublicId ("-//uPortal//PersonDirs/EN", "PersonDirs.dtd"),
+      new PublicId ("-//uPortal//Channel Publishing/EN", "channelPublishingDocument"),
+      new PublicId ("-//uPortal//Data/EN", "data.dtd"),
+      new PublicId ("-//uPortal//PAGSGroupStore/EN", "PAGSGroupStore.dtd"),
+      new PublicId ("-//uPortal//LDAPGroupStore/EN", "LDAPGroupStore.dtd")};
   private String dtdName = null;
 
   /**
@@ -69,18 +82,15 @@ public class DTDResolver implements EntityResolver
 
     // Check for a match on the public id
     if ( publicId != null ) {
-        if ( publicId.trim().equalsIgnoreCase("-//Netscape Communications//DTD RSS 0.91//EN")) {
-            inStream = getResourceAsStream(dtdPath + "/rss-0.91.dtd");
-        } else if (publicId.trim().equalsIgnoreCase("-//uPortal//Channel Publishing/EN")) {
-        	inStream = getResourceAsStream(channelPublishingDtd);
-        } else if (publicId.trim().equalsIgnoreCase("-//uPortal//PersonDirs/EN")) {
-        	inStream = getResourceAsStream(personDirsDtd);
-        } else if (publicId.trim().equalsIgnoreCase("-//uPortal//Tables/EN")) {
-            inStream = getResourceAsStream(tablesDtd);
-        }
-
-        if ( null != inStream ) {
-            return new InputSource(inStream);
+        publicId = publicId.trim();
+        for (int i = 0; i < publicIds.length; i++) {
+            if (publicId.equalsIgnoreCase(publicIds[i].publicId)) {
+                inStream = getResourceAsStream(publicIds[i].dtdFile);
+                if ( null != inStream ) {
+                    return new InputSource(inStream);
+                }
+                break;
+            }
         }
     }
 
@@ -93,9 +103,8 @@ public class DTDResolver implements EntityResolver
           return PortalSessionManager.getResourceAsStream(resource);
       } else {
         try {
-            URL root = DTDResolver.class.getResource("/");
-            InputStream in = new FileInputStream(root.getPath() + "../../" + resource);
-            return in;
+            final URL root = DTDResolver.class.getResource("/");
+            return new FileInputStream(root.getPath() + "../../" + resource);
         } catch (FileNotFoundException e) {
             return null;
         }
