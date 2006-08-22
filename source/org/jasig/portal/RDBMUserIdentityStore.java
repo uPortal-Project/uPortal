@@ -705,7 +705,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                   "INSERT INTO UP_USER (USER_ID, USER_NAME, USER_DFLT_USR_ID, USER_DFLT_LAY_ID, NEXT_STRUCT_ID, LST_CHAN_UPDT_DT)" +
                   "VALUES (?, ?, ?, ?, null, null)";
 
-              String userName = person.getAttribute(IPerson.USERNAME).toString();
+              String userName = getUsername(person);
 
               insertStmt = con.prepareStatement(insert);
               insertStmt.setInt(1, newUID);
