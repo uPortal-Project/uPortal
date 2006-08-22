@@ -61,11 +61,11 @@ import org.xml.sax.InputSource;
 
 /**
  * SQL implementation for the 2.x relational database model.
- * 
+ *
  * Prior to uPortal 2.5, this class existed in the org.jasig.portal package.  It was
  * moved to its present package to express that it is part of the
  * Simple Layout Manager implementation.
- * 
+ *
  * @author George Lindholm
  * @version $Revision$ $Date$
  */
@@ -483,12 +483,12 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
         // Element structure = ls.getStructureDocument(doc);
         Element structure = getStructure(doc, ls);
         root.appendChild(structure);
-        
+
         String id = structure.getAttribute("ID");
         if (id != null && ! id.equals("")) {
             structure.setIdAttribute("ID", true);
         }
-        
+
         if (!ls.isChannel()) {          // Folder
           createLayout(layoutStructure, doc,  structure, ls.getChildId());
         }
@@ -1838,7 +1838,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
               log.debug("RDBMUserLayoutStore::getUserLayout(): Layout document for user " + userId + " took " +
                 (stopTime - startTime) + " milliseconds to create");
           }
-        
+
           doc.appendChild(root);
 
           if (DEBUG > 1) {
@@ -2203,9 +2203,9 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           structure.setAttribute("locale", ls.getLocale());  // for i18n by Shoji
       }
 
-        for (Iterator layoutStructureParamIterator = ls.getParameters().iterator(); 
+        for (Iterator layoutStructureParamIterator = ls.getParameters().iterator();
                 layoutStructureParamIterator.hasNext(); ) {
-            
+
           StructureParameter sp = (StructureParameter) layoutStructureParamIterator.next();
 
           if (!ls.isChannel()) {        // Folder
@@ -3276,6 +3276,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       public void setSecurityContext(ISecurityContext context) {}
 
       public EntityIdentifier getEntityIdentifier() {return null;}
+      public void setEntityIdentifier(EntityIdentifier ei) {}
     }
 
     private IPerson systemUser = new SystemUser(); // We should be getting this from the uPortal
