@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.Map;
 
+import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.IBasicEntity;
 
 /**
@@ -16,7 +17,7 @@ import org.jasig.portal.IBasicEntity;
  * @version $Revision$
  */
 public interface IPerson extends IAdditionalDescriptor, IBasicEntity, Serializable {
-    
+
   // string used as a key for the eduPerson username attribute
   public static final String USERNAME = "username";
 
@@ -50,7 +51,7 @@ public interface IPerson extends IAdditionalDescriptor, IBasicEntity, Serializab
    * @return attribute associated with the user
    */
   public Object getAttribute (String key);
-  
+
   /**
    * Gets multiple values of an attribute associated with the user
    * @param key
@@ -64,7 +65,7 @@ public interface IPerson extends IAdditionalDescriptor, IBasicEntity, Serializab
    * @param value
    */
   public void setAttribute (String key, Object value);
-  
+
   /**
    * Associates attributes with the user
    * @param attrs
@@ -100,6 +101,14 @@ public interface IPerson extends IAdditionalDescriptor, IBasicEntity, Serializab
    * @return true if user is considered a guest
    */
   public boolean isGuest ();
+
+  /**
+   * Explicitly set the entity identifier
+   * The default implementation enforces a one time setting
+   * so that the value can't be changed once explicitly set.
+   * @param ei
+   */
+  public void setEntityIdentifier(EntityIdentifier ei);
 }
 
 

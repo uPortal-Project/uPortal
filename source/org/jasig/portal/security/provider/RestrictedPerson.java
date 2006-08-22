@@ -30,7 +30,7 @@ public class RestrictedPerson implements IPerson {
     public Object getAttribute(String key) {
         return this.person.getAttribute(key);
     }
-    
+
     public Object[] getAttributeValues(String key) {
         return this.person.getAttributeValues(key);
     }
@@ -58,7 +58,7 @@ public class RestrictedPerson implements IPerson {
     public void setAttribute(String key, Object value) {
         this.person.setAttribute(key, value);
     }
-    
+
     public void setAttributes(Map attrs) {
         this.person.setAttributes(attrs);
     }
@@ -90,6 +90,10 @@ public class RestrictedPerson implements IPerson {
 
     public EntityIdentifier getEntityIdentifier() {
         return this.person.getEntityIdentifier();
+    }
+
+    public void setEntityIdentifier(final EntityIdentifier ei) {
+    	// Nothing to do
     }
 }
 

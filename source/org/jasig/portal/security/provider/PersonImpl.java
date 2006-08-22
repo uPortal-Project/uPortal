@@ -28,7 +28,8 @@ public class PersonImpl implements IPerson {
   protected int m_ID = -1;
   protected ISecurityContext m_securityContext = null;
   protected EntityIdentifier m_eid= new EntityIdentifier(null,IPerson.class);
-  
+  protected boolean entityIdentifierSet = false;
+
   public ISecurityContext getSecurityContext () {
     return m_securityContext;
   }
@@ -53,7 +54,7 @@ public class PersonImpl implements IPerson {
     else
       return value;
   }
-  
+
   /**
    * Returns multiple attributes for a key.  If only one
    * value exists, it will be returned in an array of size one.
@@ -70,7 +71,7 @@ public class PersonImpl implements IPerson {
        return ((List)value).toArray();
      } else {
        return new Object[] { value };
-     } 
+     }
   }
 
   /**
@@ -98,10 +99,10 @@ public class PersonImpl implements IPerson {
 
   /**
    * Sets the specified attribute to a value.
-   * 
+   *
    * Reference impementation checks for the setting of the username attribute
    * and updates the EntityIdentifier accordingly
-   * 
+   *
    * @param key Attribute's name
    * @param value Attribute's value
    */
@@ -110,22 +111,22 @@ public class PersonImpl implements IPerson {
       m_Attributes = new Hashtable();
     if (value!=null) m_Attributes.put(key, value);
     else m_Attributes.remove(key);
-    if (key.equals(IPerson.USERNAME)){
+    if (!entityIdentifierSet && key.equals(IPerson.USERNAME)){
        m_eid = new EntityIdentifier(String.valueOf(value),IPerson.class);
     }
   }
-  
+
   /**
    * Sets the specified attributes. Uses {@link #setAttribute(String, Object)}
    * to set each.
-   *  
+   *
    * @see org.jasig.portal.security.IPerson#setAttributes(java.util.Map)
    */
   public void setAttributes (final Map attrs) {
     for (final Iterator attrItr = attrs.keySet().iterator(); attrItr.hasNext();) {
       final String key = (String)attrItr.next();
       final Object val = attrs.get(key);
-      
+
       this.setAttribute(key, val);
     }
   }
@@ -188,17 +189,26 @@ public class PersonImpl implements IPerson {
     }
     return isGuest;
   }
-  
+
   /**
    * Returns an EntityIdentifier for this person.  The key contains the value
-   * of the eudPerson username attribute, or null 
-   * 
+   * of the eudPerson username attribute, or null
+   *
    * @return EntityIdentifier with attribute 'username' as key.
    */
   public EntityIdentifier getEntityIdentifier(){
-    return m_eid; 
+    return m_eid;
   }
-  
+
+  /**
+   * One time set of the entity identifier
+   * @param ei
+   */
+  public void setEntityIdentifier(final EntityIdentifier ei) {
+	  m_eid = ei;
+	  entityIdentifierSet = true;
+  }
+
   public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append(PersonImpl.class.getName());

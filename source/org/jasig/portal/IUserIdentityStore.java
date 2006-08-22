@@ -34,4 +34,11 @@ public interface IUserIdentityStore {
 
   public void removePortalUID(int uPortalUID) throws Exception;
 
+  /**
+   * Return the username to be used for authorization (exit hook)
+   * @param person
+   * @return usernmae
+   */
+  public String getUsername(IPerson person);
+
 }

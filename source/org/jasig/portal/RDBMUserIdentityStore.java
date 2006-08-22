@@ -28,7 +28,7 @@ import org.jasig.portal.utils.CounterStoreFactory;
 public class RDBMUserIdentityStore  implements IUserIdentityStore {
 
     private static final Log log = LogFactory.getLog(RDBMUserIdentityStore.class);
-    
+
   //*********************************************************************
   // Constants
     private static final String defaultTemplateUserName = PropertiesManager.getProperty("org.jasig.portal.services.Authentication.defaultTemplateUserName");
@@ -57,9 +57,9 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
    */
   public void removePortalUID(int uPortalUID) throws Exception {
     Connection con = RDBMServices.getConnection();
-    java.sql.PreparedStatement ps = null; 
-    Statement stmt = null; 
-    ResultSet rs = null; 
+    java.sql.PreparedStatement ps = null;
+    Statement stmt = null;
+    ResultSet rs = null;
 
     try {
       stmt = con.createStatement();
@@ -67,7 +67,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         con.setAutoCommit(false);
 
       // START of Addition after bug declaration (bug id 1516)
-      // Permissions delete 
+      // Permissions delete
       // must be made before delete user in UP_USER
       rs = stmt.executeQuery("SELECT USER_NAME FROM UP_USER WHERE USER_ID="+uPortalUID);
       String name = "";
@@ -87,7 +87,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
 
       rs = stmt.executeQuery("SELECT M.GROUP_ID " +
 			"FROM UP_GROUP_MEMBERSHIP M, UP_GROUP G, UP_ENTITY_TYPE E " +
-			"WHERE M.GROUP_ID = G.GROUP_ID " + 
+			"WHERE M.GROUP_ID = G.GROUP_ID " +
 			"  AND G.ENTITY_TYPE_ID = E.ENTITY_TYPE_ID " +
 			"  AND  E.ENTITY_TYPE_NAME = 'org.jasig.portal.security.IPerson'" +
 			"  AND  M.MEMBER_KEY ='"+name+"' AND  M.MEMBER_IS_GROUP = 'F'");
@@ -96,11 +96,11 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         groups.add(rs.getString(1));
       rs.close();
       rs = null;
-        
-      // Remove from local group 
+
+      // Remove from local group
       // Delete from DeleteUser.java and place here
       // must be made before delete user in UP_USER
-      ps = con.prepareStatement("DELETE FROM UP_GROUP_MEMBERSHIP WHERE MEMBER_KEY='"+name+"' AND GROUP_ID=?");     
+      ps = con.prepareStatement("DELETE FROM UP_GROUP_MEMBERSHIP WHERE MEMBER_KEY='"+name+"' AND GROUP_ID=?");
       for ( int i = 0; i < groups.size(); i++ ) {
         String group = (String) groups.get(i);
         ps.setString(1,group);
@@ -108,12 +108,12 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
       }
       if ( ps != null ) ps.close();
       // END of Addition after bug declaration (bug id 1516)
-        
+
       SQLDelete = "DELETE FROM UP_USER WHERE USER_ID = " + uPortalUID;
       if (log.isDebugEnabled())
           log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
-      stmt.executeUpdate(SQLDelete);        
-        
+      stmt.executeUpdate(SQLDelete);
+
       SQLDelete = "DELETE FROM UP_USER_LAYOUT  WHERE USER_ID = " + uPortalUID;
       if (log.isDebugEnabled())
           log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
@@ -127,13 +127,13 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
       SQLDelete = "DELETE FROM UP_USER_PROFILE  WHERE USER_ID = " + uPortalUID;
       if (log.isDebugEnabled())
           log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
-      stmt.executeUpdate(SQLDelete);        
-        
+      stmt.executeUpdate(SQLDelete);
+
       SQLDelete = "DELETE FROM UP_USER_LAYOUT    WHERE USER_ID = " + uPortalUID;
       if (log.isDebugEnabled())
           log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
       stmt.executeUpdate(SQLDelete);
-        
+
       SQLDelete = "DELETE FROM UP_SS_USER_ATTS WHERE USER_ID = " + uPortalUID;
       if (log.isDebugEnabled())
           log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
@@ -184,23 +184,23 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
       if (log.isDebugEnabled())
           log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
       stmt.executeUpdate(SQLDelete);
-        
+
       SQLDelete = "DELETE FROM UP_LAYOUT_STRUCT_AGGR  WHERE USER_ID = " + uPortalUID;
       if (log.isDebugEnabled())
           log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
       stmt.executeUpdate(SQLDelete);
-        
+
       SQLDelete = "DELETE FROM UP_LAYOUT_STRUCT_MDATA  WHERE USER_ID = " + uPortalUID;
       if (log.isDebugEnabled())
           log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
-      stmt.executeUpdate(SQLDelete);              
-        
+      stmt.executeUpdate(SQLDelete);
+
       SQLDelete = "DELETE FROM UP_LAYOUT_RESTRICTIONS  WHERE USER_ID = " + uPortalUID;
       if (log.isDebugEnabled())
           log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
-      stmt.executeUpdate(SQLDelete);      
+      stmt.executeUpdate(SQLDelete);
       // END of Addition after bug declaration (bug id 1516)
-        
+
       if (RDBMServices.getDbMetaData().supportsTransactions())
         con.commit();
 
@@ -209,7 +209,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
           portletPrefStore.deletePortletPreferencesByUser(uPortalUID);
       }
       catch (Exception e) { }
-      
+
     }
     catch (SQLException se) {
       try {
@@ -230,16 +230,25 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         throw se;
       }
     finally {
-      RDBMServices.closeResultSet(rs); 
-      RDBMServices.closeStatement(stmt); 
-      RDBMServices.closeStatement(ps); 
+      RDBMServices.closeResultSet(rs);
+      RDBMServices.closeStatement(stmt);
+      RDBMServices.closeStatement(ps);
       RDBMServices.releaseConnection(con);
     }
     }
 
    /**
+    * Return the username to be used for authorization (exit hook)
+    * @param person
+    * @return usernmae
+    */
+   public String getUsername(IPerson person) {
+	   return (String)person.getAttribute(IPerson.USERNAME);
+   }
+
+   /**
     * Get the portal user ID for this person object.
-    * @param person 
+    * @param person
     * @param createPortalData indicating whether to try to create all uPortal data for this user from template prototype
     * @return uPortalUID number or -1 if unable to create user.
     * @throws AuthorizationException if createPortalData is false and no user is found
@@ -247,22 +256,22 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
     */
    public synchronized int getPortalUID (IPerson person, boolean createPortalData) throws AuthorizationException {
        PortalUser portalUser = null;
-       
+
        try {
-           String userName = (String)person.getAttribute(IPerson.USERNAME);
+           String userName = getUsername(person);
            String templateName = getTemplateName(person);
            portalUser = getPortalUser(userName);
-        
+
            if (createPortalData) {
                //If we are allowed to modify the database
-               
+
                if (portalUser != null) {
                    //If the user has logged in we may have to update their template user information
 
                    boolean hasSavedLayout = userHasSavedLayout(portalUser.getUserId());
                    if (!hasSavedLayout) {
 
-                       TemplateUser templateUser = getTemplateUser(templateName);                       
+                       TemplateUser templateUser = getTemplateUser(templateName);
                        if (portalUser.getDefaultUserId() != templateUser.getUserId()) {
                            //Update user data with new template user's data
                            updateUser(portalUser.getUserId(), person, templateUser);
@@ -277,10 +286,10 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                    if (templateUser == null) {
                        throw new AuthorizationException("No information found for template user = " + templateName + ". Cannot create new account for " + userName);
                    }
-                   
+
                    // Get a new user ID for this user
                    int newUID = CounterStoreFactory.getCounterStoreImpl().getIncrementIntegerId("UP_USER");
-                   
+
                    // Add new user to all appropriate tables
                    int newPortalUID = addNewUser(newUID, person, templateUser);
                    portalUser = new PortalUser();
@@ -296,7 +305,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
            log.error(e.getMessage(), e);
            throw new AuthorizationException(e);
        }
-     
+
        return portalUser.getUserId();
    }
 
@@ -317,28 +326,28 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
       log.error( "RDBMUserIdentityStore::rollback(): " + e);
     }
   }
-  
+
   /**
    * Gets the PortalUser data store object for the specified user name.
-   * 
+   *
    * @param userName The user's name
    * @return A PortalUser object or null if the user doesn't exist.
    * @throws Exception
    */
   protected PortalUser getPortalUser(String userName) throws Exception {
       PortalUser portalUser = null;
-      
+
       Connection con = null;
       try {
           con = RDBMServices.getConnection();
           PreparedStatement pstmt = null;
-          
+
           try {
               String query = "SELECT USER_ID, USER_DFLT_USR_ID FROM UP_USER WHERE USER_NAME=?";
-              
+
               pstmt = con.prepareStatement(query);
               pstmt.setString(1, userName);
-              
+
               ResultSet rs = null;
               try {
                   if (log.isDebugEnabled())
@@ -359,9 +368,9 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
       } finally {
           try { RDBMServices.releaseConnection(con); } catch (Exception e) {}
       }
-       
+
       return portalUser;
-  }  
+  }
 
   protected String getTemplateName(IPerson person) {
       String templateName = (String)person.getAttribute(templateAttrName);
@@ -374,24 +383,24 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
 
   /**
    * Gets the TemplateUser data store object for the specified template user name.
-   * 
+   *
    * @param templateUserName The template user's name
    * @return A TemplateUser object or null if the user doesn't exist.
    * @throws Exception
    */
   protected TemplateUser getTemplateUser(String templateUserName) throws Exception {
       TemplateUser templateUser = null;
-        
+
       Connection con = null;
       try {
           con = RDBMServices.getConnection();
           PreparedStatement pstmt = null;
           try {
               String query = "SELECT USER_ID, USER_DFLT_LAY_ID FROM UP_USER WHERE USER_NAME=?";
-              
+
               pstmt = con.prepareStatement(query);
               pstmt.setString(1, templateUserName);
-              
+
               ResultSet rs = null;
               try {
                   if (log.isDebugEnabled())
@@ -416,10 +425,10 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
       } finally {
           try { RDBMServices.releaseConnection(con); } catch (Exception e) {}
       }
-       
+
       return templateUser;
   }
-  
+
   protected boolean userHasSavedLayout(int userId) throws Exception {
       boolean userHasSavedLayout = false;
       Connection con = null;
@@ -428,10 +437,10 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
           PreparedStatement pstmt = null;
           try {
               String query = "SELECT * FROM UP_USER_PROFILE WHERE USER_ID=? AND LAYOUT_ID IS NOT NULL AND LAYOUT_ID!=0";
-              
+
               pstmt = con.prepareStatement(query);
               pstmt.setInt(1, userId);
-              
+
               ResultSet rs = null;
               try {
                   if (log.isDebugEnabled())
@@ -449,13 +458,13 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
       } finally {
           try { RDBMServices.releaseConnection(con); } catch (Exception e) {}
       }
-      
+
       return userHasSavedLayout;
   }
-  
+
   protected void updateUser(int userId, IPerson person, TemplateUser templateUser) throws Exception {
       // Remove my existing group memberships
-      IGroupMember me = GroupService.getGroupMember(person.getEntityIdentifier()); 
+      IGroupMember me = GroupService.getGroupMember(person.getEntityIdentifier());
       Iterator myExistingGroups = me.getContainingGroups();
       while (myExistingGroups.hasNext()) {
           IEntityGroup eg = (IEntityGroup)myExistingGroups.next();
@@ -464,7 +473,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
             eg.updateMembers();
           }
       }
-      
+
       // Copy template user's groups memberships
       IGroupMember template = GroupService.getEntity(templateUser.getUserName(), Class.forName("org.jasig.portal.security.IPerson"));
       Iterator templateGroups = template.getContainingGroups();
@@ -473,16 +482,16 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
           if (eg.isEditable()) {
             eg.addMember(me);
             eg.updateMembers();
-          }        
-      }        
-      
+          }
+      }
+
       Connection con = null;
       try {
           con = RDBMServices.getConnection();
           // Turn off autocommit if the database supports it
           if (RDBMServices.getDbMetaData().supportsTransactions())
               con.setAutoCommit(false);
-        
+
           PreparedStatement deleteStmt = null;
           PreparedStatement queryStmt = null;
           PreparedStatement insertStmt = null;
@@ -494,23 +503,23 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                       "USER_DFLT_LAY_ID=?, " +
                       "NEXT_STRUCT_ID=null " +
                   "WHERE USER_ID=?";
-              
+
               insertStmt = con.prepareStatement(update);
               insertStmt.setInt(1, templateUser.getUserId());
               insertStmt.setInt(2, templateUser.getDefaultLayoutId());
               insertStmt.setInt(3, userId);
-              
+
               if (log.isDebugEnabled())
                   log.debug("RDBMUserIdentityStore::addNewUser(): " + update);
               insertStmt.executeUpdate();
               insertStmt.close();
-                              
+
               // Start copying...
               ResultSet rs = null;
               String delete = null;
               String query = null;
               String insert = null;
-              try {                  
+              try {
                   // Update UP_USER_PARAM
                   delete =
                       "DELETE FROM UP_USER_PARAM " +
@@ -525,36 +534,36 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                   query =
                       "SELECT USER_ID, USER_PARAM_NAME, USER_PARAM_VALUE " +
                       "FROM UP_USER_PARAM " +
-                      "WHERE USER_ID=?"; 
+                      "WHERE USER_ID=?";
                   queryStmt = con.prepareStatement(query);
                   queryStmt.setInt(1, templateUser.getUserId());
                   if (log.isDebugEnabled())
                       log.debug("RDBMUserIdentityStore::updateUser(USER_ID=" + templateUser.getUserId() + "): " + query);
                   rs = queryStmt.executeQuery();
-                  
+
                   while (rs.next()) {
                       insert =
                           "INSERT INTO UP_USER_PARAM (USER_ID, USER_PARAM_NAME, USER_PARAM_VALUE) " +
-                          "VALUES(?, ?, ?)";      
-                      
+                          "VALUES(?, ?, ?)";
+
                       String userParamName = rs.getString("USER_PARAM_NAME");
                       String userParamValue = rs.getString("USER_PARAM_VALUE");
-                      
+
                       insertStmt = con.prepareStatement(insert);
                       insertStmt.setInt(1, userId);
                       insertStmt.setString(2, userParamName);
                       insertStmt.setString(3, userParamValue);
-                      
+
                       if (log.isDebugEnabled())
                           log.debug("RDBMUserIdentityStore::updateUser(USER_ID=" + userId + ", USER_PARAM_NAME=" + userParamName + ", USER_PARAM_VALUE=" + userParamValue + "): " + insert);
-                      insertStmt.executeUpdate();                       
+                      insertStmt.executeUpdate();
                   }
                   rs.close();
                   queryStmt.close();
                   insertStmt.close();
-                  
-                  
-                  // Update UP_USER_PROFILE                    
+
+
+                  // Update UP_USER_PROFILE
                   delete =
                       "DELETE FROM UP_USER_PROFILE " +
                       "WHERE USER_ID=?";
@@ -564,8 +573,8 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                       log.debug("RDBMUserIdentityStore::updateUser(USER_ID=" + userId + "): " + delete);
                   deleteStmt.executeUpdate();
                   deleteStmt.close();
-                  
-                  query = 
+
+                  query =
                       "SELECT USER_ID, PROFILE_ID, PROFILE_NAME, DESCRIPTION " +
                       "FROM UP_USER_PROFILE " +
                       "WHERE USER_ID=?";
@@ -574,31 +583,31 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                   if (log.isDebugEnabled())
                       log.debug("RDBMUserIdentityStore::updateUser(USER_ID=" + templateUser.getUserId() + "): " + query);
                   rs = queryStmt.executeQuery();
-                  
+
                   while (rs.next()) {
                       insert =
                           "INSERT INTO UP_USER_PROFILE (USER_ID, PROFILE_ID, PROFILE_NAME, DESCRIPTION, LAYOUT_ID, STRUCTURE_SS_ID, THEME_SS_ID) " +
-                          "VALUES(?, ?, ?, ?, NULL, NULL, NULL)";  
-                      
+                          "VALUES(?, ?, ?, ?, NULL, NULL, NULL)";
+
                       int profileId = rs.getInt("PROFILE_ID");
                       String profileName = rs.getString("PROFILE_NAME");
                       String description = rs.getString("DESCRIPTION");
-                      
+
                       insertStmt = con.prepareStatement(insert);
                       insertStmt.setInt(1, userId);
                       insertStmt.setInt(2, profileId);
                       insertStmt.setString(3, profileName);
                       insertStmt.setString(4, description);
-                      
+
                       if (log.isDebugEnabled())
                           log.debug("RDBMUserIdentityStore::updateUser(USER_ID=" + userId + ", PROFILE_ID=" + profileId + ", PROFILE_NAME=" + profileName + ", DESCRIPTION=" + description + "): " + insert);
-                      insertStmt.executeUpdate();                      
+                      insertStmt.executeUpdate();
                   }
                   rs.close();
                   queryStmt.close();
                   insertStmt.close();
-                  
-                  
+
+
                   // Update UP_USER_UA_MAP
                   delete =
                       "DELETE FROM UP_USER_UA_MAP " +
@@ -607,9 +616,9 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                   deleteStmt.setInt(1, userId);
                   if (log.isDebugEnabled())
                       log.debug("RDBMUserIdentityStore::updateUser(USER_ID=" + userId + "): " + delete);
-                  deleteStmt.executeUpdate();                  
+                  deleteStmt.executeUpdate();
                   deleteStmt.close();
-                                    
+
                   query =
                       "SELECT USER_ID, USER_AGENT, PROFILE_ID " +
                       "FROM UP_USER_UA_MAP WHERE USER_ID=?";
@@ -618,23 +627,23 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                   if (log.isDebugEnabled())
                       log.debug("RDBMUserIdentityStore::updateUser(USER_ID=" + templateUser.getUserId() + "): " + query);
                   rs = queryStmt.executeQuery();
-                  
+
                   while (rs.next()) {
                       insert =
                           "INSERT INTO UP_USER_UA_MAP (USER_ID, USER_AGENT, PROFILE_ID) " +
                           "VALUES(?, ?, ?)";
-                      
+
                       String userAgent = rs.getString("USER_AGENT");
                       String profileId = rs.getString("PROFILE_ID");
-                      
+
                       insertStmt = con.prepareStatement(insert);
                       insertStmt.setInt(1, userId);
                       insertStmt.setString(2, userAgent);
                       insertStmt.setString(3, profileId);
-                      
+
                       if (log.isDebugEnabled())
                           log.debug("RDBMUserIdentityStore::updateUser(USER_ID=" + userId + ", USER_AGENT=" + userAgent + ", PROFILE_ID=" + profileId + "): " + insert);
-                      insertStmt.executeUpdate();  
+                      insertStmt.executeUpdate();
                   }
                   rs.close();
                   queryStmt.close();
@@ -643,11 +652,11 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                   // If we made it all the way though, commit the transaction
                   if (RDBMServices.getDbMetaData().supportsTransactions())
                       con.commit();
-                                                          
+
               }
               finally {
                   try { rs.close(); } catch (Exception e) {}
-              }                              
+              }
           }
           finally {
               try { deleteStmt.close(); } catch (Exception e) {}
@@ -658,18 +667,18 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
       catch (SQLException sqle) {
           if (RDBMServices.getDbMetaData().supportsTransactions())
               con.rollback();
-          throw new AuthorizationException("SQL database error while retrieving user's portal UID", sqle);           
+          throw new AuthorizationException("SQL database error while retrieving user's portal UID", sqle);
       }
       finally {
           try { RDBMServices.releaseConnection(con); } catch (Exception e) {}
       }
-       
+
       return;
   }
-  
+
   protected int addNewUser(int newUID, IPerson person, TemplateUser templateUser) throws Exception {
       // Copy template user's groups memberships
-      IGroupMember me = GroupService.getGroupMember(person.getEntityIdentifier());                
+      IGroupMember me = GroupService.getGroupMember(person.getEntityIdentifier());
       IGroupMember template = GroupService.getEntity(templateUser.getUserName(), Class.forName("org.jasig.portal.security.IPerson"));
       Iterator templateGroups = template.getContainingGroups();
       while (templateGroups.hasNext()) {
@@ -679,7 +688,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
               eg.updateMembers();
           }
       }
-      
+
       int uPortalUID = -1;
       Connection con = null;
       try {
@@ -687,7 +696,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
           // Turn off autocommit if the database supports it
           if (RDBMServices.getDbMetaData().supportsTransactions())
               con.setAutoCommit(false);
-        
+
           PreparedStatement queryStmt = null;
           PreparedStatement insertStmt = null;
           try {
@@ -695,26 +704,26 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
               String insert =
                   "INSERT INTO UP_USER (USER_ID, USER_NAME, USER_DFLT_USR_ID, USER_DFLT_LAY_ID, NEXT_STRUCT_ID, LST_CHAN_UPDT_DT)" +
                   "VALUES (?, ?, ?, ?, null, null)";
-              
+
               String userName = person.getAttribute(IPerson.USERNAME).toString();
-              
+
               insertStmt = con.prepareStatement(insert);
               insertStmt.setInt(1, newUID);
               insertStmt.setString(2, userName);
               insertStmt.setInt(3, templateUser.getUserId());
               insertStmt.setInt(4, templateUser.getDefaultLayoutId());
-              
+
               if (log.isDebugEnabled())
                   log.debug("RDBMUserIdentityStore::addNewUser(USER_ID=" + newUID + ", USER_NAME=" + userName + ", USER_DFLT_USR_ID=" + templateUser.getUserId() + ", USER_DFLT_LAY_ID=" + templateUser.getDefaultLayoutId() + "): " + insert);
               insertStmt.executeUpdate();
               insertStmt.close();
               insertStmt = null;
-              
-              
+
+
               // Start copying...
               ResultSet rs = null;
               String query = null;
-              try {                 
+              try {
                   // Add to UP_USER_PARAM
                   query =
                       "SELECT USER_ID, USER_PARAM_NAME, USER_PARAM_VALUE " +
@@ -725,23 +734,23 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                   if (log.isDebugEnabled())
                       log.debug("RDBMUserIdentityStore::addNewUser(USER_ID=" + templateUser.getUserId() + "): " + query);
                   rs = queryStmt.executeQuery();
-                  
+
                   while (rs.next()) {
-                      insert = 
+                      insert =
                           "INSERT INTO UP_USER_PARAM (USER_ID, USER_PARAM_NAME, USER_PARAM_VALUE) " +
-                          "VALUES(?, ?, ?)";            
+                          "VALUES(?, ?, ?)";
 
                       String userParamName = rs.getString("USER_PARAM_NAME");
                       String userParamValue = rs.getString("USER_PARAM_VALUE");
-                      
+
                       insertStmt = con.prepareStatement(insert);
                       insertStmt.setInt(1, newUID);
                       insertStmt.setString(2, userParamName);
                       insertStmt.setString(3, userParamValue);
-                      
+
                       if (log.isDebugEnabled())
                           log.debug("RDBMUserIdentityStore::addNewUser(USER_ID=" + newUID + ", USER_PARAM_NAME=" + userParamName + ", USER_PARAM_VALUE=" + userParamValue + "): " + insert);
-                      insertStmt.executeUpdate();                        
+                      insertStmt.executeUpdate();
                   }
                   rs.close();
                   queryStmt.close();
@@ -750,9 +759,9 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                     insertStmt.close();
                     insertStmt = null;
                   }
-                 
 
-                  // Add to UP_USER_PROFILE                    
+
+                  // Add to UP_USER_PROFILE
                   query =
                       "SELECT USER_ID, PROFILE_ID, PROFILE_NAME, DESCRIPTION " +
                       "FROM UP_USER_PROFILE " +
@@ -762,25 +771,25 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                   if (log.isDebugEnabled())
                       log.debug("RDBMUserIdentityStore::addNewUser(USER_ID=" + templateUser.getUserId() + "): " + query);
                   rs = queryStmt.executeQuery();
-                  
+
                   while (rs.next()) {
                       insert =
                           "INSERT INTO UP_USER_PROFILE (USER_ID, PROFILE_ID, PROFILE_NAME, DESCRIPTION, LAYOUT_ID, STRUCTURE_SS_ID, THEME_SS_ID) " +
-                          "VALUES(?, ?, ?, ?, NULL, NULL, NULL)";  
-                      
+                          "VALUES(?, ?, ?, ?, NULL, NULL, NULL)";
+
                       int profileId = rs.getInt("PROFILE_ID");
                       String profileName = rs.getString("PROFILE_NAME");
                       String description = rs.getString("DESCRIPTION");
-                      
+
                       insertStmt = con.prepareStatement(insert);
                       insertStmt.setInt(1, newUID);
                       insertStmt.setInt(2, profileId);
                       insertStmt.setString(3, profileName);
                       insertStmt.setString(4, description);
-                      
+
                       if (log.isDebugEnabled())
                           log.debug("RDBMUserIdentityStore::addNewUser(USER_ID=" + newUID + ", PROFILE_ID=" + profileId + ", PROFILE_NAME=" + profileName + ", DESCRIPTION=" + description + "): " + insert);
-                      insertStmt.executeUpdate();                      
+                      insertStmt.executeUpdate();
                   }
                   rs.close();
                   queryStmt.close();
@@ -790,7 +799,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                     insertStmt = null;
                   }
 
-                  
+
                   query =
                       "SELECT USER_ID, USER_AGENT, PROFILE_ID " +
                       "FROM UP_USER_UA_MAP WHERE USER_ID=?";
@@ -799,23 +808,23 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                   if (log.isDebugEnabled())
                       log.debug("RDBMUserIdentityStore::addNewUser(USER_ID=" + templateUser.getUserId() + "): " + query);
                   rs = queryStmt.executeQuery();
-                  
+
                   while (rs.next()) {
                       insert =
                           "INSERT INTO UP_USER_UA_MAP (USER_ID, USER_AGENT, PROFILE_ID) " +
                           "VALUES(?, ?, ?)";
-                      
+
                       String userAgent = rs.getString("USER_AGENT");
                       String profileId = rs.getString("PROFILE_ID");
-                      
+
                       insertStmt = con.prepareStatement(insert);
                       insertStmt.setInt(1, newUID);
                       insertStmt.setString(2, userAgent);
                       insertStmt.setString(3, profileId);
-                      
+
                       if (log.isDebugEnabled())
                           log.debug("RDBMUserIdentityStore::addNewUser(USER_ID=" + newUID + ", USER_AGENT=" + userAgent + ", PROFILE_ID=" + profileId + "): " + insert);
-                      insertStmt.executeUpdate();  
+                      insertStmt.executeUpdate();
                   }
                   rs.close();
                   rs = null;
@@ -827,16 +836,16 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                     insertStmt = null;
                   }
 
-                  
+
                   // If we made it all the way though, commit the transaction
                   if (RDBMServices.getDbMetaData().supportsTransactions())
                       con.commit();
-                  
+
                   uPortalUID = newUID;
-                                      
+
               } finally {
                   try { if (rs != null) rs.close(); } catch (Exception e) {}
-              }                              
+              }
           } finally {
               try { if (queryStmt != null) queryStmt.close(); } catch (Exception e) {}
               try { if (insertStmt != null) insertStmt.close(); } catch (Exception e) {}
@@ -844,11 +853,11 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
       } catch (SQLException sqle) {
           if (RDBMServices.getDbMetaData().supportsTransactions())
               con.rollback();
-          throw new AuthorizationException("SQL database error while retrieving user's portal UID", sqle);           
+          throw new AuthorizationException("SQL database error while retrieving user's portal UID", sqle);
       } finally {
           try { RDBMServices.releaseConnection(con); } catch (Exception e) {}
       }
-       
+
       return uPortalUID;
   }
 
@@ -862,8 +871,8 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
       public void setUserName(String userName) { this.userName = userName; }
       public void setUserId(int userId) { this.userId = userId; }
       public void setDefaultUserId(int defaultUserId) { this.defaultUserId = defaultUserId; }
-  }    
-  
+  }
+
   protected class TemplateUser {
       String userName;
       int userId;
