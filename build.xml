@@ -320,6 +320,7 @@
 -->
 
   <property name="xalan.jar" value="(set this in build.properties!)"/>
+  <property name="serializer.jar" value="(set this in build.properties!)"/>
   <property name="xercesImpl.jar" value="(set this in build.properties!)"/>
   <property name="xml-apis.jar" value="(set this in build.properties!)"/>
   <property name="tidy.jar" value="(set this in build.properties!)"/>
@@ -364,6 +365,7 @@
 
     <!-- Include all JAR files that will be included in /WEB-INF/lib -->
     <pathelement location="${xalan.jar}"/>
+	<pathelement location="${serializer.jar}"/>
     <pathelement location="${xercesImpl.jar}"/>
     <pathelement location="${xml-apis.jar}"/>
     <pathelement location="${tidy.jar}"/>
@@ -548,8 +550,6 @@
 
     <!-- Copy external dependencies as required -->
     <mkdir  dir="${deploy.home}/WEB-INF/lib"/>
-    <copy todir="${deploy.home}/WEB-INF/lib" file="${xercesImpl.jar}"/>
-    <copy todir="${deploy.home}/WEB-INF/lib" file="${xml-apis.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${tidy.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${tyrex.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${activation.jar}"/>
@@ -575,6 +575,9 @@
     <copy todir="${server.home}/shared/lib" file="${portlet-api.jar}"/>
     <copy todir="${server.home}/shared/lib" file="${pluto.jar}"/>
     <copy todir="${server.home}/common/endorsed" file="${xalan.jar}"/>
+    <copy todir="${server.home}/common/endorsed" file="${serializer.jar}"/>	
+	<copy todir="${server.home}/common/endorsed" file="${xercesImpl.jar}"/>
+    <copy todir="${server.home}/common/endorsed" file="${xml-apis.jar}"/>  
 
     <!-- This is Tomcat-specific and server name-specific!
          We need to find out the best way to ensure cross-context
@@ -889,6 +892,7 @@
       <classpath>
         <pathelement path="${build.home}/WEB-INF/classes"/>
         <pathelement path="${xalan.jar}"/>
+		<pathelement path="${serializer.jar}"/>
         <pathelement path="${xercesImpl.jar}"/>
         <pathelement path="${xml-apis.jar}"/>
         <pathelement path="${oro.jar}"/>
