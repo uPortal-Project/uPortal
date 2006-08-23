@@ -17,8 +17,8 @@ import org.jasig.portal.EntityIdentifier;
  *
  * @author Dan Ellentuck
  * @version $Revision$
- * @deprecated Use instead @link{ICompositeGroupService} or 
- * @link{IIndividualGroupService}
+ * @deprecated Use instead {@link ICompositeGroupService} or
+ * {@link IIndividualGroupService}
  */
 public interface IGroupService {
 

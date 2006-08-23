@@ -22,7 +22,6 @@ public class PLFIntegrator
     private static Log LOG = LogFactory.getLog(PLFIntegrator.class);
 
     /**
-     * @return boolean true if PLF was changed, false otherwise.
      */
     public static void mergePLFintoILF( Document plf,
                                         Document ilf,
@@ -46,22 +45,22 @@ public class PLFIntegrator
                 "that the database has been corrupted."
                 );
         }
-        
+
         applyChildChanges( plfRoot, ilfRoot, result );
     }
 
-    private static void applyChildChanges( Element plfParent, 
+    private static void applyChildChanges( Element plfParent,
                                            Element ilfParent,
                                            IntegrationResult result )
         throws PortalException
     {
         Element positions = null;
         Element node = (Element) plfParent.getFirstChild();
-        
+
         while( node != null )
         {
             Element nextNode = (Element) node.getNextSibling();
-            
+
             if ( node.getNodeName().equals( "folder" ) )
                 mergeFolder( node, plfParent, ilfParent, result );
             else if ( node.getNodeName().equals( Constants.ELM_POSITION_SET ) )
@@ -101,7 +100,7 @@ public class PLFIntegrator
                                       IntegrationResult result )
     {
         String id = plfChild.getAttribute( Constants.ATT_ID );
-                
+
         if ( id.startsWith( Constants.FRAGMENT_ID_USER_PREFIX ) )
         {
             // this should never happen. Moves of an incorporated channel
@@ -128,7 +127,7 @@ public class PLFIntegrator
             }
         }
     }
-    
+
     private static void mergeFolder( Element plfChild,
                                      Element plfParent,
                                      Element ilfParent,
@@ -136,7 +135,7 @@ public class PLFIntegrator
     throws PortalException
     {
         String id = plfChild.getAttribute( Constants.ATT_ID );
-        
+
         if ( id.startsWith( Constants.FRAGMENT_ID_USER_PREFIX ) )
         {
             // incorporated folder - if a copy of an inc'd folder is in the
@@ -144,7 +143,7 @@ public class PLFIntegrator
             // nested child changes to be applied. It does not imply movement.
             // That is accomplished by the position set. So see if it still
             // exists in the ilf for applying changes
-           
+
             Document ilf = ilfParent.getOwnerDocument();
             Element original = ilf.getElementById( id );
 
@@ -159,7 +158,7 @@ public class PLFIntegrator
             // found it, apply changes and see if they had any affect
             boolean attributeChanged = false;
             IntegrationResult childChanges = new IntegrationResult();
-            
+
             attributeChanged = EditManager.applyEditSet( plfChild, original );
             applyChildChanges( plfChild, original, childChanges );
 
@@ -176,12 +175,12 @@ public class PLFIntegrator
             if ( childChanges.changedPLF )
                 result.changedPLF = true;
         }
-        else 
+        else
         {
             // plf folder - the real node. What is being portrayed in this
             // case is a plf node that is supposed to be added into the ilf
             // parent
-            
+
             if ( ilfParent
                  .getAttribute( Constants.ATT_ADD_CHILD_ALLOWED )
                  .equals( "false" ) )
@@ -198,7 +197,7 @@ public class PLFIntegrator
 
             IntegrationResult childChanges = new IntegrationResult();
             applyChildChanges( plfChild, ilfChild, childChanges );
-            
+
             if ( childChanges.changedPLF )
                 result.changedPLF = true;
         }
@@ -215,7 +214,7 @@ public class PLFIntegrator
         Document document = parent.getOwnerDocument();
         Element copy = (Element) document.importNode( plfChild, false );
         parent.appendChild( copy );
-        
+
         // set the identifier for the doc if warrented
         String id = copy.getAttribute(Constants.ATT_ID);
         if (id != null && ! id.equals(""))
@@ -233,5 +232,5 @@ public class PLFIntegrator
         }
         return copy;
     }
-    
+
 }

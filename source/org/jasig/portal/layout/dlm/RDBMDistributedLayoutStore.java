@@ -61,9 +61,9 @@ import edu.emory.mathcs.backport.java.util.concurrent.locks.ReentrantReadWriteLo
  * view layouts which represent regular users with zero or more UI elements
  * incorporated from layout fragments. Only a user's personal layout fragment
  * is
- * 
+ *
  * @version $Revision$ $Date$
- * @since uPortal 2.5 
+ * @since uPortal 2.5
  */
 public class RDBMDistributedLayoutStore
     extends RDBMUserLayoutStore
@@ -97,9 +97,9 @@ public class RDBMDistributedLayoutStore
 
     /**
      * Method for acquiring copies of fragment layouts to assist in debugging.
-     * No infrastructure code calls this but channels designed to expose the 
+     * No infrastructure code calls this but channels designed to expose the
      * structure of the cached fragments use this to obtain copies.
-     * @return
+     * @return Map
      */
     public Map getFragmentLayoutCopies()
     throws Exception
@@ -115,7 +115,7 @@ public class RDBMDistributedLayoutStore
             }
         }
         Map layouts = new HashMap();
-        
+
         for(int i=0; definitions != null && i<definitions.length; i++)
         {
             Document layout = DocumentFactory.getNewDocument();
@@ -160,10 +160,10 @@ public class RDBMDistributedLayoutStore
         ssdCache = new SmartCache();
 
         ConfigurationLoader.load( this );
-        
+
         try
         {
-            
+
             String decoratorClass = null;
             if ( properties != null )
                 decoratorClass = properties.getProperty( DECORATOR_PROPERTY );
@@ -171,14 +171,14 @@ public class RDBMDistributedLayoutStore
             if ( decoratorClass != null )
                 decorator = DecoratorLoader.load( decoratorClass );
         }
-        catch( Exception e ) 
+        catch( Exception e )
         {
             LOG.error("\n\n---------- Warning ---------\nUnable to load "
                         + "layout decorator '"
                         + properties.getProperty(DECORATOR_PROPERTY)
                         + "' specified in dlm.xml. It will not be used.", e);
         }
-        
+
         // activate fragments in a separate thread because many parts of the
         // system including activation rely on UserLayoutFactory to instantiate
         // and then hand out to callers a single instance of this class and if
@@ -207,13 +207,14 @@ public class RDBMDistributedLayoutStore
         t.start();
 
         // start fragment cleaning thread
-        initializeFragmentCleaner();        
+        initializeFragmentCleaner();
     }
 
     /**
      * Registers a NEW structure stylesheet with the database. This overloads
      * the version in the parent to add caching of stylesheets.
      * @param tsd Stylesheet description object
+     * @return Integer
      */
     public Integer addStructureStylesheetDescription(StructureStylesheetDescription ssd)
         throws Exception
@@ -221,8 +222,8 @@ public class RDBMDistributedLayoutStore
         Integer id = super.addStructureStylesheetDescription(ssd);
         ssdCache.put(new Integer(id.intValue()), ssd);
         return id;                // Put into TSD cache
-    }   
-    
+    }
+
     /**
      * Registers a NEW theme stylesheet with the database. This overloads
      * the version in the parent to add caching of stylesheets.
@@ -239,8 +240,8 @@ public class RDBMDistributedLayoutStore
     /**
      * Obtain structure stylesheet description object for a given structure
      * stylesheet id. Overloads parent version to add caching of stylesheets.
-     * 
-     * @para id id of the structure stylesheet
+     *
+     * @param stylesheetId id of the structure stylesheet
      * @return structure stylesheet description
      */
     public StructureStylesheetDescription getStructureStylesheetDescription(
@@ -250,7 +251,7 @@ public class RDBMDistributedLayoutStore
         StructureStylesheetDescription ssd = null;
         ssd = (StructureStylesheetDescription) ssdCache.get(new Integer(
                 stylesheetId));
-        
+
         if (ssd != null)
             return ssd;
         ssd = super.getStructureStylesheetDescription(stylesheetId);
@@ -258,12 +259,12 @@ public class RDBMDistributedLayoutStore
         // Put this value in the cache
         ssdCache.put(new Integer(stylesheetId), ssd);
         return ssd;
-    }    
+    }
 
     /**
      * Obtain theme stylesheet description object for a given theme stylesheet
      * id. Overloads a parent version to add caching.
-     * @para id id of the theme stylesheet
+     * @param stylesheetId id of the theme stylesheet
      * @return theme stylesheet description
      */
     public ThemeStylesheetDescription getThemeStylesheetDescription(int stylesheetId)
@@ -281,15 +282,15 @@ public class RDBMDistributedLayoutStore
         }
         tsd = super.getThemeStylesheetDescription(stylesheetId);
 
-        // Put it in the cache.    
+        // Put it in the cache.
         tsdCache.put(new Integer(stylesheetId), tsd);
         return tsd;
     }
 
     /**
-     * Removes a structure stylesheet description object for a given structure 
+     * Removes a structure stylesheet description object for a given structure
      * stylesheet id. Overloads a parent version for cache handling.
-     * @para id id of the structure stylesheet
+     * @param stylesheetId id of the structure stylesheet
      */
     public void removeStructureStylesheetDescription(int stylesheetId)
             throws Exception
@@ -301,9 +302,9 @@ public class RDBMDistributedLayoutStore
     }
 
     /**
-     * Removes a theme stylesheet description object for a given theme 
+     * Removes a theme stylesheet description object for a given theme
      * stylesheet id. Overloads a parent version for cache handling.
-     * @para id id of the theme stylesheet
+     * @param stylesheetId id of the theme stylesheet
      */
     public void removeThemeStylesheetDescription(int stylesheetId)
             throws Exception
@@ -311,13 +312,13 @@ public class RDBMDistributedLayoutStore
         super.removeThemeStylesheetDescription(stylesheetId);
         // Remove it from the cache
         tsdCache.remove(new Integer(stylesheetId));
-    }    
+    }
 
     /**
      * Updates an existing structure stylesheet description with a new one. Old
      * stylesheet description is found based on the Id provided in the parameter
      * structure. Overloads version in parent to add cache support.
-     * 
+     *
      * @param ssd
      *            new stylesheet description
      */
@@ -325,7 +326,7 @@ public class RDBMDistributedLayoutStore
         throws Exception
     {
             super.updateStructureStylesheetDescription(ssd);
-            
+
             // Update the cached value
             ssdCache.put(new Integer(ssd.getId()), ssd);
     }
@@ -334,9 +335,8 @@ public class RDBMDistributedLayoutStore
      * Updates an existing structure stylesheet description with a new one. Old
      * stylesheet description is found based on the Id provided in the parameter
      * structure. Overloads version in parent to add cache support.
-     * 
-     * @param ssd
-     *            new stylesheet description
+     *
+     * @param tsd new stylesheet description
      */
     public void updateThemeStylesheetDescription(ThemeStylesheetDescription tsd)
         throws Exception
@@ -346,13 +346,13 @@ public class RDBMDistributedLayoutStore
         // Set the new one in the cache
         tsdCache.put(new Integer(tsd.getId()), tsd);
     }
-    
+
     /**
      * Starts a Thread that is responsible for cleaning out the layout fragments
      * periodically. This is done so that changes made to the channels within a
      * layout are visible to the users who have that layout incorporated into
      * their own.
-     * 
+     *
      * The interval at which this thread runs is set in the dlm.xml file as
      * 'org.jasig.portal.layout.dlm.RDBMDistributedLayoutStore.fragment_cache_refresh',
      * specified in minutes.
@@ -365,7 +365,7 @@ public class RDBMDistributedLayoutStore
                 {
                     Hashtable owners = new Hashtable();
                     long wait_time;
-                        
+
                     String temp = null;
                     try
                     {
@@ -374,18 +374,18 @@ public class RDBMDistributedLayoutStore
                         wait_time = (Integer.parseInt(temp)*60) * 1000;
                     }
                     catch( NumberFormatException e )
-                    { 
+                    {
                     	// specific recovery: if the deployer mangled the property value
                     	log.warn("unable to parse dlm.xml property org.jasig.portal.layout.dlm.RDBMDistributedLayoutStore.fragment_cache_refresh: "+temp+", set timeout to 1 hour",e);
                         wait_time = 60 * (1000 * 60); // default to one hour
                     }
-                    catch( Exception e) 
+                    catch( Exception e)
                     {
                     	// general recovery: no matter what went wrong, fall back on default.
                     	log.error("unable to parse dlm.xml property org.jasig.portal.layout.dlm.RDBMDistributedLayoutStore.fragment_cache_refresh: "+temp+", set timeout to 1 hour",e);
                         wait_time = 60 * (1000 * 60); // default to one hour
                     }
-                            
+
                     while( true )
                     {
                         try
@@ -400,10 +400,10 @@ public class RDBMDistributedLayoutStore
                                     }
                                 }
                             }
-                            
+
                             // sleep for specified period of time
                             sleep( wait_time );
-                            
+
                             //get each layout owner
                             if ( null != definitions )
                             {
@@ -413,7 +413,7 @@ public class RDBMDistributedLayoutStore
                                     {
                                         String ownerId = definitions[i].ownerID;
                                         int userId  = definitions[i].userID;
-                                        
+
                                         if ( null != ownerId )
                                         {
                                             IPerson p = new PersonImpl();
@@ -442,7 +442,7 @@ public class RDBMDistributedLayoutStore
                         catch( Exception e )
                         {
                             LOG.error(" *** Error - DLM Fragment cleaner problem:  \n\n", e );
-                        }                            
+                        }
                     }
                 }
             };
@@ -450,7 +450,7 @@ public class RDBMDistributedLayoutStore
         t2.setDaemon(true);
         t2.start();
     }
-    
+
     /**
        Returns a double value indicating the precedence value declared for a
        fragment in the dlm.xml. Precedence is actually based on two elements in
@@ -498,9 +498,9 @@ public class RDBMDistributedLayoutStore
                 }
             }
         }
-        
+
         Document layout = _getUserLayout( person, profile );
-        
+
         if ( decorator != null )
             decorator.decorate( layout, person, profile );
 
@@ -510,7 +510,7 @@ public class RDBMDistributedLayoutStore
     /**
      * Handles locking and identifying proper root and namespaces that used to
      * take place in super class.
-     * 
+     *
      * @param person
      * @param profile
      * @return
@@ -535,7 +535,7 @@ public class RDBMDistributedLayoutStore
         layout.setAttribute(Constants.NS_DECL, Constants.NS_URI);
         return layoutDoc;
     }
-    
+
     /**
      * Returns the layout for a user. This method overrides the same
      * method in the superclass to return a composite layout for non
@@ -554,7 +554,7 @@ public class RDBMDistributedLayoutStore
         String userName = (String) person.getAttribute( "username" );
         FragmentDefinition ownedFragment = getOwnedFragment( person );
         boolean isLayoutOwnerDefault = isLayoutOwnerDefault( person );
-        
+
         // if this user is an owner then ownedFragment will be non null. For
         // fragment owners and owners of any default layout from which a
         // fragment owners layout is copied there should not be any imported
@@ -591,7 +591,7 @@ public class RDBMDistributedLayoutStore
             person.setAttribute( Constants.PLF, PLF );
             return ILF;
         }
-        
+
         return getCompositeLayout( person, profile );
     }
 
@@ -619,8 +619,8 @@ public class RDBMDistributedLayoutStore
             initializationLock.notifyAll();
         }
     }
-    
-    /** 
+
+    /**
      * Generates a new struct id for directive elements that dlm places in
      * the PLF version of the layout tree. These elements are atifacts of the
      * dlm storage model and used during merge but do not appear in the user's
@@ -629,7 +629,7 @@ public class RDBMDistributedLayoutStore
     public String getNextStructDirectiveId (IPerson person) throws Exception {
         return  super.getNextStructId(person, Constants.DIRECTIVE_PREFIX );
     }
-    
+
     /**
        Replaces the layout Document stored on a fragment definition with a new
        version. This is called when a fragment owner updates their layout.
@@ -644,8 +644,8 @@ public class RDBMDistributedLayoutStore
         // Fix later to handle multiple profiles
         Element root = layout.getDocumentElement();
         root.setAttribute( Constants.ATT_ID,
-                           Constants.FRAGMENT_ID_USER_PREFIX + 
-                           fragment.userID + 
+                           Constants.FRAGMENT_ID_USER_PREFIX +
+                           fragment.userID +
                            Constants.FRAGMENT_ID_LAYOUT_PREFIX + "1" );
         UserView view = new UserView( profile,
                                       layout,
@@ -670,7 +670,7 @@ public class RDBMDistributedLayoutStore
     private boolean isLayoutOwnerDefault( IPerson person )
     {
         String userName = (String) person.getAttribute( "username" );
-        
+
         if ( userName != null && definitions != null )
         {
             for( int i=0; i<definitions.length; i++ )
@@ -682,7 +682,7 @@ public class RDBMDistributedLayoutStore
         if ( globalDefault != null &&
              globalDefault.equals( userName ) )
             return true;
-        
+
         if (!systemDefaultUserLoaded)
         {
             systemDefaultUserLoaded = true;
@@ -698,7 +698,7 @@ public class RDBMDistributedLayoutStore
             if (systemDefaultUser != null && systemDefaultUser.equals(userName))
                 return true;
         }
-        
+
         return false;
     }
 
@@ -709,7 +709,7 @@ public class RDBMDistributedLayoutStore
     private FragmentDefinition getOwnedFragment( IPerson person )
     {
         int userId = person.getID();
-        
+
         if ( definitions != null )
         {
             for( int i=0; i<definitions.length; i++ )
@@ -731,7 +731,7 @@ public class RDBMDistributedLayoutStore
         throws Exception
     {
         Vector applicables = new Vector();
-        
+
         if ( definitions != null )
         {
             for( int i=0; i<definitions.length; i++ )
@@ -750,7 +750,7 @@ public class RDBMDistributedLayoutStore
         if (LOG.isDebugEnabled())
             LOG.debug("PLF for " + person.getAttribute(IPerson.USERNAME) +
                     " immediately after loading\n" + XML.serializeNode(PLF));
-        
+
         Document ILF = ILFBuilder.constructILF( PLF, applicables, person );
         person.setAttribute( Constants.PLF, PLF );
         IntegrationResult result = new IntegrationResult();
@@ -766,7 +766,7 @@ public class RDBMDistributedLayoutStore
         if( result.changedPLF )
         {
             if (LOG.isDebugEnabled())
-                LOG.debug("Saving PLF for " + 
+                LOG.debug("Saving PLF for " +
                     person.getAttribute(IPerson.USERNAME) +
                     " due to changes during merge.");
             super.setUserLayout( person, profile, PLF, false );
@@ -814,7 +814,7 @@ public class RDBMDistributedLayoutStore
                 updateCachedLayout(plf, profile, fragment);
         }
     }
-    
+
     /**
        Returns the number of properties loaded from the dlm.xml file.
      */
@@ -848,7 +848,7 @@ public class RDBMDistributedLayoutStore
     /**
        Returns the specified property loaded from dlm.xml or null if not found.
      */
-    public String getProperty( String name ) 
+    public String getProperty( String name )
     {
         if ( properties == null )
             return null;
@@ -871,13 +871,13 @@ public class RDBMDistributedLayoutStore
         this.definitions = frags;
         this.fragmentInfoCache = new HashMap();
     }
-    
+
     /**
      * Returns an object suitable for identifying channel attribute and
      * parameter values in a user's layout that differ from the values on the
      * same element in a fragment. This is used by the layout manager to know
      * which ones must be persisted.
-     * 
+     *
      * @param sId
      * @return FragmentChannelInfo if available or null if not found.
      */
@@ -894,7 +894,7 @@ public class RDBMDistributedLayoutStore
      * nodes and attribute and parameter values for channel nodes in a user's
      * layout that differ from the values on the same element in a fragment.
      * This is used by the layout manager to know which ones must be persisted.
-     * 
+     *
      * @param sId
      * @return FragmentNodeInfo or null if folder not found.
      */
@@ -903,9 +903,9 @@ public class RDBMDistributedLayoutStore
         // grab local pointers to variables subject to change at any time
         Map infoCache = fragmentInfoCache;
         FragmentDefinition[] defs = definitions;
-        
+
         FragmentNodeInfo info = (FragmentNodeInfo) infoCache.get(sId);
-        
+
         if (info == null)
         {
             for(int i=0; i<defs.length; i++)
@@ -914,7 +914,7 @@ public class RDBMDistributedLayoutStore
                 if (node != null) // found it
                 {
                     if (node.getTagName().equals(Constants.ELM_CHANNEL))
-                        
+
                         info = new FragmentChannelInfo(node);
                     else
                         info = new FragmentNodeInfo(node);
@@ -936,7 +936,7 @@ public class RDBMDistributedLayoutStore
 
 
     //////// User Preferences handling methods. //////////
-    
+
     DistributedUserPreferences getDistributedSSUP( IPerson person,
                                                    int profileId,
                                                    int stylesheetId )
@@ -947,7 +947,7 @@ public class RDBMDistributedLayoutStore
                                                            profileId,
                                                            stylesheetId ) );
     }
-    
+
     DistributedUserPreferences getDistributedTSUP( IPerson person,
                                                    int profileId,
                                                    int stylesheetId )
@@ -958,7 +958,7 @@ public class RDBMDistributedLayoutStore
                                                        profileId,
                                                        stylesheetId ) );
     }
-    
+
     private StructureStylesheetUserPreferences _getStructureStylesheetUserPreferences (IPerson person, int profileId, int stylesheetId) throws Exception {
         int userId = person.getID();
         StructureStylesheetUserPreferences ssup;
@@ -977,11 +977,11 @@ public class RDBMDistributedLayoutStore
                 // default user's preferences need to be loaded.
                 int layoutId = this.getLayoutID(userId, profileId);
                 ResultSet rs = null;
-                
+
                 // if no layout then get the default user id for this user
-                
+
                 int origId = userId;
-                if (layoutId == 0) { 
+                if (layoutId == 0) {
                     stmt = con.createStatement();
                     sQuery = "SELECT USER_DFLT_USR_ID FROM UP_USER WHERE USER_ID=" + userId;
                     if (LOG.isDebugEnabled())
@@ -998,7 +998,7 @@ public class RDBMDistributedLayoutStore
 
                 // create the stylesheet user prefs object then fill
                 // it with defaults from the stylesheet definition object
-                
+
                 ssup = new StructureStylesheetUserPreferences();
                 ssup.setStylesheetId(stylesheetId);
 
@@ -1018,7 +1018,7 @@ public class RDBMDistributedLayoutStore
 
                 // Now load in the stylesheet parameter preferences
                 // from the up_ss_user_param but only if they are defined
-                // parameters in the stylesheet's .sdf file. 
+                // parameters in the stylesheet's .sdf file.
                 //
                 // First, get the parameters for the effective user ID,
                 // then for the original user ID.  These will differ if
@@ -1030,8 +1030,8 @@ public class RDBMDistributedLayoutStore
                     "SELECT PARAM_NAME, PARAM_VAL " +
                     "FROM UP_SS_USER_PARM " +
                     "WHERE USER_ID=?" +
-                    " AND PROFILE_ID=" + profileId + 
-                    " AND SS_ID=" + stylesheetId + 
+                    " AND PROFILE_ID=" + profileId +
+                    " AND SS_ID=" + stylesheetId +
                     " AND SS_TYPE=1";
 
                 PreparedStatement pstmt = con.prepareStatement(pstmtQuery);
@@ -1039,7 +1039,7 @@ public class RDBMDistributedLayoutStore
                 try {
                     pstmt.setInt(1, userId);
                     rs = pstmt.executeQuery();
-                    
+
                     while (rs.next()) {
                         String pName = rs.getString(1);
                         if (ssd.containsParameterName(pName))
@@ -1049,7 +1049,7 @@ public class RDBMDistributedLayoutStore
                     if (userId != origId) {
                         pstmt.setInt(1, origId);
                         rs = pstmt.executeQuery();
-                            
+
                         while (rs.next()) {
                             String pName = rs.getString(1);
                             if (ssd.containsParameterName(pName))
@@ -1065,10 +1065,10 @@ public class RDBMDistributedLayoutStore
                 /*
                  * Now we need to load in the folder and channel attributes from
                 * the up_ss_user_atts table. But before doing so to avoid using
-                * an outer join and to work around an oracle restriction of 
+                * an outer join and to work around an oracle restriction of
                 * having only on LONG type returned per result set we first
                 * load dlm:origin IDs for the corresponding nodes it any. These
-                * origin IDs indicate that the node whose attribute is being 
+                * origin IDs indicate that the node whose attribute is being
                 * overridden came from a fragment and that origin ID must then
                 * be used for the node id when setting them on the structure
                 * stylesheet user preferences object.
@@ -1087,7 +1087,7 @@ public class RDBMDistributedLayoutStore
                                         + " AND ss_type=1"
                                         + " AND ss_id="
                                         + stylesheetId;
-                       
+
                 /*
                  * the list of origin Ids if any for nodes having overridden
                  * structure stylesheet attributes.
@@ -1122,7 +1122,7 @@ public class RDBMDistributedLayoutStore
                 {
                     rs.close();
                     stmt.close();
-                    } 
+                    }
 
                 /*
                  * now go get the overridden values and compare them against the
@@ -1132,9 +1132,9 @@ public class RDBMDistributedLayoutStore
                 " ULS.STRUCT_ID, CHAN_ID " +
                                 "FROM UP_LAYOUT_STRUCT ULS, " +
                 " UP_SS_USER_ATTS UUSA " +
-                                "WHERE UUSA.USER_ID=" + userId + 
-                                " AND PROFILE_ID=" + profileId + 
-                                " AND SS_ID=" + stylesheetId + 
+                                "WHERE UUSA.USER_ID=" + userId +
+                                " AND PROFILE_ID=" + profileId +
+                                " AND SS_ID=" + stylesheetId +
                                 " AND SS_TYPE=1" +
                                 " AND UUSA.STRUCT_ID = ULS.STRUCT_ID" +
                                 " AND UUSA.USER_ID = ULS.USER_ID";
@@ -1153,7 +1153,7 @@ public class RDBMDistributedLayoutStore
                         String originId = null;
                         if (originIds != null)
                                 originId = (String) originIds.get(new Integer(structId));
-                        
+
                         int param_type = rs.getInt(3);
                         if (rs.wasNull()) {
                             structId = 0;
@@ -1177,7 +1177,7 @@ public class RDBMDistributedLayoutStore
                                 folderStructId = getStructId(structId,chanId);
                             if (ssd.containsFolderAttribute(pName))
                                 ssup.setFolderAttributeValue(folderStructId, pName, param_val);
-                        }       
+                        }
                         else if (param_type == 3) {
                             // channel attribute
                             String channelStructId = null;
@@ -1206,7 +1206,7 @@ public class RDBMDistributedLayoutStore
         }
         return  ssup;
     }
-    
+
     private ThemeStylesheetUserPreferences _getThemeStylesheetUserPreferences(
             IPerson person, int profileId, int stylesheetId) throws Exception
     {
@@ -1244,7 +1244,7 @@ public class RDBMDistributedLayoutStore
 
                 // create the stylesheet user prefs object then fill
                 // it with defaults from the stylesheet definition object
-                
+
                 tsup = new ThemeStylesheetUserPreferences();
                 tsup.setStylesheetId(stylesheetId);
                 // fill stylesheet description with defaults
@@ -1265,19 +1265,19 @@ public class RDBMDistributedLayoutStore
 
                 // Now load in the stylesheet parameter preferences
                 // from the up_ss_user_param but only if they are defined
-                // parameters in the stylesheet's .sdf file. 
+                // parameters in the stylesheet's .sdf file.
                 //
 
-                String sQuery = 
+                String sQuery =
                     "SELECT PARAM_NAME, PARAM_VAL " +
                     "FROM UP_SS_USER_PARM " +
                     "WHERE USER_ID=?" +
                     " AND PROFILE_ID=" + profileId +
-                    " AND SS_ID=" + stylesheetId + 
+                    " AND SS_ID=" + stylesheetId +
                     " AND SS_TYPE=2";
-                
+
                 PreparedStatement pstmt = con.prepareStatement(sQuery);
-                
+
                 if (log.isDebugEnabled())
                     log.debug(sQuery);
                 try
@@ -1295,7 +1295,7 @@ public class RDBMDistributedLayoutStore
                 {
                     rs.close();
                 }
-                
+
                 // Now load in the channel attributes preferences from the
                 // up_ss_user_atts table
 
@@ -1333,7 +1333,7 @@ public class RDBMDistributedLayoutStore
                         }
                         // only use channel attributes ignoring any others.
                         // we should never get any others in here unless there
-                        // is db corruption and since all are flushed when 
+                        // is db corruption and since all are flushed when
                         // writting back to the db it should be self correcting
                         // if it ever does occur somehow.
                         if (param_type == 3)
@@ -1373,7 +1373,7 @@ public class RDBMDistributedLayoutStore
                 }
             }
         }
-        
+
         DistributedUserPreferences ssup = getDistributedSSUP( person,
                                                               profileId,
                                                               stylesheetId );
@@ -1382,12 +1382,12 @@ public class RDBMDistributedLayoutStore
         // incorporate any incorporated user preferences
         FragmentDefinition ownedFragment = getOwnedFragment( person );
         boolean isLayoutOwnerDefault = isLayoutOwnerDefault( person );
-        
+
         if ( ownedFragment != null || isLayoutOwnerDefault )
             return ssup;
 
         // regular user, find which layouts apply and include their set prefs
-        
+
         if ( definitions != null )
         {
             for( int i=0; i<definitions.length; i++ )
@@ -1396,14 +1396,14 @@ public class RDBMDistributedLayoutStore
                     ( person, STRUCT, ssup,
                       definitions[i].view.structUserPrefs );
         }
-        
+
         if (LOG.isDebugEnabled())
             LOG.debug("***** " + person.getAttribute( "username" )
               + "'s StructureStylesheetUserPrefereneces\n" +
               showFolderAttribs( ssup ) +
               showChannelAttribs( ssup ) );
-        
-        return ssup; 
+
+        return ssup;
     }
 
     public ThemeStylesheetUserPreferences getThemeStylesheetUserPreferences( IPerson person, int profileId, int stylesheetId)
@@ -1419,7 +1419,7 @@ public class RDBMDistributedLayoutStore
                 }
             }
         }
-        
+
         DistributedUserPreferences tsup = getDistributedTSUP( person,
                                                               profileId,
                                                               stylesheetId );
@@ -1428,12 +1428,12 @@ public class RDBMDistributedLayoutStore
         // incorporate any incorporated user preferences
         FragmentDefinition ownedFragment = getOwnedFragment( person );
         boolean isLayoutOwnerDefault = isLayoutOwnerDefault( person );
-        
+
         if ( ownedFragment != null || isLayoutOwnerDefault )
             return tsup;
 
         // regular user, find which layouts apply and include their set prefs
-        
+
         if ( definitions != null )
         {
             for( int i=0; i<definitions.length; i++ )
@@ -1441,7 +1441,7 @@ public class RDBMDistributedLayoutStore
                     loadIncorporatedPreferences( person, THEME, tsup,
                                                  definitions[i].view.themeUserPrefs);
         }
-        
+
         if (LOG.isDebugEnabled())
             LOG.debug("***** " + person.getAttribute( "username" )
               + "'s ThemeStylesheetUserPrefereneces\n" +
@@ -1487,7 +1487,7 @@ public class RDBMDistributedLayoutStore
         // if theme stylesheet prefs don't do folders
         if ( which == THEME )
             return;
-        
+
         for ( Enumeration folders = incdPrefs.getFolders();
               folders.hasMoreElements(); )
         {
@@ -1517,13 +1517,13 @@ public class RDBMDistributedLayoutStore
             }
         }
     }
-                                              
+
     private String showFolderAttribs( StructureStylesheetUserPreferences ssup )
     {
         StringWriter sw = new StringWriter ();
         PrintWriter pw = new PrintWriter( sw );
 
-        pw.println( "\n*** Folder Attributes" ); 
+        pw.println( "\n*** Folder Attributes" );
         for ( Enumeration folders = ssup.getFolders();
               folders.hasMoreElements(); )
         {
@@ -1549,7 +1549,7 @@ public class RDBMDistributedLayoutStore
         StringWriter sw = new StringWriter ();
         PrintWriter pw = new PrintWriter( sw );
 
-        pw.println( "\n*** Channel Attributes" ); 
+        pw.println( "\n*** Channel Attributes" );
         for ( Enumeration channels = tsup.getChannels();
               channels.hasMoreElements(); )
         {
@@ -1619,12 +1619,12 @@ public class RDBMDistributedLayoutStore
             return null;
         return attr.getValue();
     }
-    
+
     protected Element getStructure(Document doc, LayoutStructure ls) throws Exception {
         Element structure = null;
 
         // handle migration of legacy namespace
-        String type = ls.getType(); 
+        String type = ls.getType();
         if (type != null && type.startsWith(Constants.LEGACY_NS))
             type = Constants.NS + type.substring(Constants.LEGACY_NS.length());
 
@@ -1671,7 +1671,7 @@ public class RDBMDistributedLayoutStore
   }
 
   /*
-   * Parameters from up_layout_param are loaded slightly differently for 
+   * Parameters from up_layout_param are loaded slightly differently for
    * folders and channels. For folders all parameters are added as attributes
    * of the Element. For channels only those parameters with names starting
    * with the dlm namespace Constants.NS are added as attributes to the Element.
@@ -1681,27 +1681,27 @@ public class RDBMDistributedLayoutStore
     for (Iterator itr = ls.getParameters().iterator(); itr.hasNext();) {
       StructureParameter sp = (StructureParameter) itr.next();
       String pName = sp.getName();
-      
+
       // handle migration of legacy namespace
       if (pName.startsWith(Constants.LEGACY_NS))
           pName = Constants.NS + sp.getName().substring(Constants.LEGACY_NS.length());
-      
+
       if (!ls.isChannel())
       { // Folder
           if (pName.startsWith(Constants.NS))
               structure.setAttributeNS(Constants.NS_URI, pName, sp.getValue());
           else
               structure.setAttribute(pName, sp.getValue());
-      } 
+      }
       else // Channel
-      { 
+      {
           // if dealing with a dlm namespace param add as attribute
           if (pName.startsWith(Constants.NS))
           {
               structure.setAttributeNS(Constants.NS_URI, pName, sp.getValue());
               itr.remove();
           }
-          else 
+          else
           {
               /*
                * do traditional override processing. some explanation is in
@@ -1725,10 +1725,10 @@ public class RDBMDistributedLayoutStore
                   NamedNodeMap nm = parmElement.getAttributes();
 
                   String nodeName = nm.getNamedItem("name").getNodeValue();
-                  if (nodeName.equals(pName)) 
+                  if (nodeName.equals(pName))
                   {
                       Node override = nm.getNamedItem("override");
-                      if (override != null && override.getNodeValue().equals("yes")) 
+                      if (override != null && override.getNodeValue().equals("yes"))
                       {
                           Node valueNode = nm.getNamedItem("value");
                           valueNode.setNodeValue(sp.getValue());
@@ -1740,11 +1740,11 @@ public class RDBMDistributedLayoutStore
           }
       }
     }
-    // For channels, add any remaining parameter elements loaded with the 
+    // For channels, add any remaining parameter elements loaded with the
     // layout as adhoc, unregulated, parameter children that can be overridden.
     if (ls.isChannel())
     {
-        for (Iterator itr = ls.getParameters().iterator(); itr.hasNext();) 
+        for (Iterator itr = ls.getParameters().iterator(); itr.hasNext();)
         {
             StructureParameter sp = (StructureParameter) itr.next();
             Element parameter = doc.createElement("parameter");
@@ -1795,7 +1795,7 @@ public class RDBMDistributedLayoutStore
         structure.setIdAttribute(Constants.ATT_ID, true);
         return structure;
     }
-    
+
     protected int saveStructure(
             Node node,
             PreparedStatement structStmt,
@@ -1811,7 +1811,7 @@ public class RDBMDistributedLayoutStore
             if (LOG.isDebugEnabled())
                 LOG.debug("saveStructure XML content: "
                     + XML.serializeNode(node));
-            
+
             // determine the struct_id for storing in the db. For incorporated nodes in
             // the plf their ID is a system-wide unique ID while their struct_id for
             // storing in the db is cached in a dlm:plfID attribute.
@@ -1828,7 +1828,7 @@ public class RDBMDistributedLayoutStore
             int childStructId = 0;
             int chanId = -1;
             boolean isChannel = node.getNodeName().equals("channel");
-            
+
             if (node.hasChildNodes())
             {
                 childStructId =
@@ -1957,7 +1957,7 @@ public class RDBMDistributedLayoutStore
         int stylesheetId = ssup.getStylesheetId();
         StructureStylesheetDescription ssDesc =
             getStructureStylesheetDescription(stylesheetId);
-        
+
         Connection con = RDBMServices.getConnection();
         try
         {
@@ -1969,7 +1969,7 @@ public class RDBMDistributedLayoutStore
             {
                 // before writing out params clean out old values
                 deleteFromUpSsUserParm(stmt, userId, profileId, stylesheetId,1);
-                
+
                 // write out params only if specified in stylesheet's .sdf file
                 for (Enumeration e = ssup.getParameterValues().keys(); e.hasMoreElements();) {
                     String pName = (String)e.nextElement();
@@ -2003,11 +2003,11 @@ public class RDBMDistributedLayoutStore
                     for (Enumeration attre = ssup.getFolderAttributeNames(); attre.hasMoreElements();) {
                         String pName = (String)attre.nextElement();
                         String pValue = ssup.getDefinedFolderAttributeValue(folderId, pName);
-                        
+
                         /*
                          * Persist folder attributes defined in the stylesheet
                          * description only if the user value is non null and
-                         * there is no default or the user value 
+                         * there is no default or the user value
                          * differs from the default.
                          */
                         if (ssDesc.containsFolderAttribute(pName))
@@ -2015,7 +2015,7 @@ public class RDBMDistributedLayoutStore
                             String deflt = dssup
                             .getDefaultFolderAttributeValue(folderId, pName);
                             if(pValue != null && (deflt == null ||
-                                    ! pValue.equals(deflt))) 
+                                    ! pValue.equals(deflt)))
                                 insertIntoUpSsUserAtts(pstmt, userId,
                                         profileId, stylesheetId, 1,
                                         plfId, 2, pName, pValue);
@@ -2039,7 +2039,7 @@ public class RDBMDistributedLayoutStore
                         /*
                          * Persist channel attributes defined in the stylesheet
                          * description only if the user value is non null and
-                         * there is no default or the user value 
+                         * there is no default or the user value
                          * differs from the default.
                          */
                         if (ssDesc.containsChannelAttribute(pName))
@@ -2047,7 +2047,7 @@ public class RDBMDistributedLayoutStore
                             String deflt = dssup
                             .getDefaultChannelAttributeValue(channelId, pName);
                             if(pValue != null && (deflt == null ||
-                                    ! pValue.equals(deflt))) 
+                                    ! pValue.equals(deflt)))
                                 insertIntoUpSsUserAtts(pstmt, userId,
                                         profileId, stylesheetId, 1,
                                         plfId, 3, pName, pValue);
@@ -2075,8 +2075,8 @@ public class RDBMDistributedLayoutStore
         }
     }
 
-    public void setThemeStylesheetUserPreferences (IPerson person, 
-            int profileId, ThemeStylesheetUserPreferences tsup) 
+    public void setThemeStylesheetUserPreferences (IPerson person,
+            int profileId, ThemeStylesheetUserPreferences tsup)
     throws Exception {
         DistributedUserPreferences dtsup = (DistributedUserPreferences) tsup;
         int userId = person.getID();
@@ -2096,7 +2096,7 @@ public class RDBMDistributedLayoutStore
             try {
                 // before writing out params clean out old values
                 deleteFromUpSsUserParm(stmt, userId, profileId, stylesheetId,2);
-                
+
                 // write out params only if defined in stylesheet's .sdf file
                 // and user's value differs from default
                 for (Enumeration e = tsup.getParameterValues().keys(); e.hasMoreElements();) {
@@ -2134,7 +2134,7 @@ public class RDBMDistributedLayoutStore
                         /*
                          * Persist channel attributes defined in the stylesheet
                          * description only if the user value is non null and
-                         * there is no default or the user value 
+                         * there is no default or the user value
                          * differs from the default.
                          */
                         if (tsDesc.containsChannelAttribute(pName))
@@ -2142,7 +2142,7 @@ public class RDBMDistributedLayoutStore
                             String deflt = dtsup
                             .getDefaultChannelAttributeValue(channelId, pName);
                             if(pValue != null && (deflt == null ||
-                                    ! pValue.equals(deflt))) 
+                                    ! pValue.equals(deflt)))
                                 insertIntoUpSsUserAtts(pstmt, userId,
                                         profileId, stylesheetId, 2,
                                         plfChannelId, 3, pName, pValue);
@@ -2169,23 +2169,23 @@ public class RDBMDistributedLayoutStore
             RDBMServices.releaseConnection(con);
         }
     }
-    
 
-    private static final String INSERT__INTO__UP_SS_USER_ATTS 
+
+    private static final String INSERT__INTO__UP_SS_USER_ATTS
     = "INSERT INTO UP_SS_USER_ATTS " +
             "(USER_ID," +
             "PROFILE_ID," +
             "SS_ID," +
             "SS_TYPE," + // 1=structure, 2=theme
             "STRUCT_ID," +
-            "PARAM_TYPE," + // 2=folder, 3=channel, 1=sheet parm not allowed 
+            "PARAM_TYPE," + // 2=folder, 3=channel, 1=sheet parm not allowed
             "PARAM_NAME," +
-            "PARAM_VAL) " +  
+            "PARAM_VAL) " +
             "VALUES (?,?,?,?,?,?,?,?)";
 
     /**
      * Handles inserts into the UP_SS_USER_ATTS table.
-     * 
+     *
      * @param pstmt
      * @param userId
      * @param profileId
@@ -2199,11 +2199,11 @@ public class RDBMDistributedLayoutStore
      */
     private void insertIntoUpSsUserAtts(
             PreparedStatement pstmt,
-            int userId, 
-            int profileId, 
-            int stylesheetId, 
+            int userId,
+            int profileId,
+            int stylesheetId,
             int stylesheetType, // 1=structure, 2=theme
-            String nodeId, 
+            String nodeId,
             int parmType, // 2=folder, 1=channel
             String parmName,
             String parmValue
@@ -2218,7 +2218,7 @@ public class RDBMDistributedLayoutStore
         pstmt.setInt(6, parmType);
         pstmt.setString(7, parmName);
         pstmt.setString(8, parmValue);
-    
+
         if (LOG.isDebugEnabled())
         {
             LOG.debug(INSERT__INTO__UP_SS_USER_ATTS +
@@ -2234,10 +2234,10 @@ public class RDBMDistributedLayoutStore
 }
         pstmt.execute();
     }
- 
+
     /**
      * Handles deletes from UP_SS_USER_PARM table.
-     * 
+     *
      * @param stmt
      * @param userId
      * @param profileId
@@ -2256,10 +2256,10 @@ public class RDBMDistributedLayoutStore
             LOG.debug(sQuery);
         stmt.executeUpdate(sQuery);
     }
-    
+
     /**
      * Handles deletes from UP_SS_USER_ATTS table.
-     * 
+     *
      * @param stmt
      * @param userId
      * @param profileId
@@ -2278,6 +2278,6 @@ public class RDBMDistributedLayoutStore
         {
             LOG.debug(sQuery);
         }
-        stmt.executeUpdate(sQuery);  
+        stmt.executeUpdate(sQuery);
     }
 }

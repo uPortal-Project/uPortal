@@ -47,25 +47,25 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata {
     }
 
     private static final Log LOG = LogFactory.getLog(DatabaseMetaDataImpl.class);
-    
+
     /** Define the oracle TO_DATE format */
     private static final SimpleDateFormat TO_DATE_FORMAT = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
-    
+
     //Define the different join queries we know about with the
-    //appropriately typed JoinQueryString implementation. 
+    //appropriately typed JoinQueryString implementation.
     private static final JoinQueryString jdbcDb = new DatabaseMetaDataImpl.JdbcDb("{oj UP_USER LEFT OUTER JOIN UP_USER_LAYOUT ON UP_USER.USER_ID = UP_USER_LAYOUT.USER_ID} WHERE");
     private static final JoinQueryString postgreSQLDb = new DatabaseMetaDataImpl.PostgreSQLDb("UP_USER LEFT OUTER JOIN UP_USER_LAYOUT ON UP_USER.USER_ID = UP_USER_LAYOUT.USER_ID WHERE");
     private static final JoinQueryString oracleDb = new DatabaseMetaDataImpl.OracleDb("UP_USER, UP_USER_LAYOUT WHERE UP_USER.USER_ID = UP_USER_LAYOUT.USER_ID(+) AND");
-    
+
     /** Array of join tests to perform. */
     private static final JoinQueryString[] joinTests = {oracleDb, postgreSQLDb, jdbcDb};
-    
+
     /** The {@link DataSource} that represents the server */
     final private DataSource dataSource;
-    
+
     /** The {@link IJoinQueryString} to use for performing outer joins */
     private IJoinQueryString joinTest = null;
-    
+
     //Database meta information
     private boolean useTSWrapper = false;
     private boolean useToDate = false;
@@ -78,27 +78,27 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata {
     private String driverVersion = null;
     private String userName = null;
     private String dbUrl = null;
-    
-    
+
+
     /**
      * Creates a new {@link DatabaseMetaDataImpl} with the specified
      * {@link DataSource}.
-     * 
+     *
      * @param ds The {@link DataSource} to use as the base for this server interface.
      */
     public DatabaseMetaDataImpl(final DataSource ds) {
         if (ds == null)
             throw new IllegalArgumentException("DataSource cannot be null");
-        
+
         this.dataSource = ds;
-        
+
         this.runDatabaseTests();
         if (LOG.isInfoEnabled())
             LOG.info(this.toString());
     }
 
     /**
-     * @see org.jasig.portal.rdbm.IDatabaseServer#releaseConnection(java.sql.Connection)
+     *
      */
     public void releaseConnection(final Connection conn) {
         try {
@@ -112,46 +112,46 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata {
     }
 
     /**
-     * @see org.jasig.portal.rdbm.IDatabaseServer#getJoinQuery()
+     * @see org.jasig.portal.rdbm.IDatabaseMetadata#getJoinQuery()
      */
     public final IJoinQueryString getJoinQuery() {
         return this.joinTest;
     }
 
     /**
-     * @see org.jasig.portal.rdbm.IDatabaseServer#supportsOuterJoins()
+     * @see org.jasig.portal.rdbm.IDatabaseMetadata#supportsOuterJoins()
      */
     public final boolean supportsOuterJoins() {
         return (this.joinTest != null);
     }
 
     /**
-     * @see org.jasig.portal.rdbm.IDatabaseServer#supportsTransactions()
+     * @see org.jasig.portal.rdbm.IDatabaseMetadata#supportsTransactions()
      */
     public final boolean supportsTransactions() {
         return this.supportsTransactions;
     }
-    
+
     /**
-     * @see org.jasig.portal.rdbm.IDatabaseServer#supportsPreparedStatements()
+     * @see org.jasig.portal.rdbm.IDatabaseMetadata#supportsPreparedStatements()
      */
     public final boolean supportsPreparedStatements() {
         return this.supportsPreparedStatements;
-    }    
+    }
 
     /**
-     * @see org.jasig.portal.rdbm.IDatabaseServer#sqlTimeStamp()
+     * @see org.jasig.portal.rdbm.IDatabaseMetadata#sqlTimeStamp()
      */
     public String sqlTimeStamp() {
         return this.sqlTimeStamp(System.currentTimeMillis());
     }
 
     /**
-     * @see org.jasig.portal.rdbm.IDatabaseServer#sqlTimeStamp(long)
+     * @see org.jasig.portal.rdbm.IDatabaseMetadata#sqlTimeStamp(long)
      */
     public String sqlTimeStamp(final long date) {
         final StringBuffer sqlTS = new StringBuffer();
-        
+
         if (useToDate) {
             sqlTS.append("TO_DATE('");
             sqlTS.append(TO_DATE_FORMAT.format(new Date(date)));
@@ -167,12 +167,12 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata {
             sqlTS.append(new Timestamp(date).toString());
             sqlTS.append("'");
         }
-        
+
         return sqlTS.toString();
     }
 
     /**
-     * @see org.jasig.portal.rdbm.IDatabaseServer#sqlTimeStamp(java.util.Date)
+     * @see org.jasig.portal.rdbm.IDatabaseMetadata#sqlTimeStamp(java.util.Date)
      */
     public String sqlTimeStamp(final Date date) {
         if (date == null)
@@ -180,11 +180,11 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata {
         else
             return this.sqlTimeStamp(date.getTime());
     }
-    
-    
+
+
     public String toString() {
         final StringBuffer dbInfo = new StringBuffer();
-        
+
         dbInfo.append(this.databaseProductName);
         dbInfo.append(" (");
         dbInfo.append(this.databaseProductVersion);
@@ -197,10 +197,10 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata {
         dbInfo.append("    Connected To: ");
         dbInfo.append(this.dbUrl);
         dbInfo.append("\n");
-        dbInfo.append("    Supports:");        
+        dbInfo.append("    Supports:");
         dbInfo.append("\n");
         dbInfo.append("        Prepared Statements:  ");
-        dbInfo.append(this.supportsPreparedStatements());        
+        dbInfo.append(this.supportsPreparedStatements());
         dbInfo.append("\n");
         dbInfo.append("        Outer Joins:          ");
         dbInfo.append(this.supportsOuterJoins());
@@ -213,14 +213,14 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata {
         dbInfo.append(this.useTSWrapper);
         dbInfo.append("\n");
         dbInfo.append("        TO_DATE():            ");
-        dbInfo.append(this.useToDate);              
-        
+        dbInfo.append(this.useToDate);
+
         return dbInfo.toString();
     }
 
 
 
-    
+
     /**
      * Run a set of tests on the database to provide better meta data.
      */
@@ -235,10 +235,10 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata {
     		this.testOuterJoins(conn);
     		this.testTimeStamp(conn);
     		this.testTransactions(conn);
-    		
+
     	} catch (SQLException e) {
     		LOG.error("Error during database initialization. ", e);
-    		/* 
+    		/*
     		 * We must throw a RuntimeException here to avoid starting the portal
     		 * with incorrect assumptions about what the database supports.
     		 */
@@ -247,16 +247,16 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata {
     		this.releaseConnection(conn);
     	}
     }
-    
+
     /**
      * Gets meta data about the connection.
-     * 
+     *
      * @param conn The connection to use.
      */
     private void getMetaData(final Connection conn) {
         try {
             final DatabaseMetaData dmd = conn.getMetaData();
-            
+
             this.databaseProductName = dmd.getDatabaseProductName();
             this.databaseProductVersion = dmd.getDatabaseProductVersion();
             this.driverName = dmd.getDriverName();
@@ -268,11 +268,11 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata {
             LOG.error("Error getting database meta data.", sqle);
         }
     }
-    
+
     /**
      * Tests the database for prepared statement support.
-     * 
-     * @param conn The connection to use. 
+     *
+     * @param conn The connection to use.
      */
     private void testPreparedStatements(final Connection conn) {
         try {
@@ -280,15 +280,15 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata {
                 "SELECT USER_ID " +
                 "FROM UP_USER " +
                 "WHERE USER_ID=?";
-            
+
             final PreparedStatement pStmt = conn.prepareStatement(pStmtTestQuery);
-            
+
             try {
                 pStmt.clearParameters();
                 final int userId = 0;
                 pStmt.setInt(1, userId); //Set USER_ID=0
                 final ResultSet rs = pStmt.executeQuery();
-                
+
                 try {
                     if (rs.next() && userId == rs.getInt(1)) {
                         this.supportsPreparedStatements = true;
@@ -306,7 +306,7 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata {
             LOG.error("PreparedStatements are not supported!", sqle);
         }
     }
-    
+
     /**
      * Test the database to see if it really supports outer joins.
      * @param conn The connection to use.
@@ -315,27 +315,27 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata {
         try {
             if (conn.getMetaData().supportsOuterJoins()) {
                 final Statement joinTestStmt = conn.createStatement();
-                
+
                 try {
                     for (int index = 0; index < joinTests.length; index++) {
                         final String joinTestQuery =
                             "SELECT COUNT(UP_USER.USER_ID) " +
                             "FROM " + joinTests[index].getTestJoin() + " UP_USER.USER_ID=0";
-                        
+
                         try {
                             final ResultSet rs = joinTestStmt.executeQuery(joinTestQuery);
-                            
+
                             RDBMServices.closeResultSet(rs);
-                            
+
                             this.joinTest = joinTests[index];
                             if (LOG.isInfoEnabled())
-                                LOG.info("Using join test: " + 
+                                LOG.info("Using join test: " +
                                         this.joinTest.getClass().getName());
                             break;
                         }
                         catch (SQLException sqle) {
                             if (LOG.isInfoEnabled())
-                                LOG.info("Join test failed: " + joinTests[index].getClass().getName() + 
+                                LOG.info("Join test failed: " + joinTests[index].getClass().getName() +
                                         " with sql error: '" + sqle.getLocalizedMessage() + "' on statement: '" +
                                         joinTestQuery + "'");
                         }
@@ -350,7 +350,7 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata {
             LOG.warn("Error running join tests.", sqle);
         }
     }
-    
+
     /**
      * Test the database to find the supported timestamp format
      * @param conn The connection to use.
@@ -358,18 +358,18 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata {
     private void testTimeStamp(final Connection conn) {
         try {
             //Try using {ts }
-            final String timeStampTestQuery = 
+            final String timeStampTestQuery =
                 "SELECT USER_ID " +
                 "FROM UP_USER " +
                 "WHERE LST_CHAN_UPDT_DT={ts '2001-01-01 00:00:00.0'} AND USER_ID = 0";
-            
+
             final PreparedStatement timeStampTestPStmt = conn.prepareStatement(timeStampTestQuery);
-            
+
             try {
                 final ResultSet rs = timeStampTestPStmt.executeQuery();
-                
+
                 RDBMServices.closeResultSet(rs);
-                
+
                 this.useTSWrapper = true;
             }
             finally {
@@ -378,21 +378,21 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata {
         }
         catch (SQLException sqle1) {
             LOG.info("Error running {ts } test.", sqle1);
-            
+
             //Try using TO_DATE()
             try {
-                final String toDateTestQuery = 
+                final String toDateTestQuery =
                     "SELECT USER_ID " +
                     "FROM UP_USER " +
                     "WHERE LST_CHAN_UPDT_DT=TO_DATE('2001 01 01 00:00', 'YYYY MM DD HH24:MI:SS') AND USER_ID=0";
-                
+
                 final PreparedStatement toDateTestPStmt = conn.prepareStatement(toDateTestQuery);
-                
+
                 try {
                     final ResultSet rs = toDateTestPStmt.executeQuery();
-                    
+
                     RDBMServices.closeResultSet(rs);
-                    
+
                     this.useToDate = true;
                 }
                 finally {
@@ -404,7 +404,7 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata {
             }
         }
     }
-    
+
     /**
      * Test the database to see if it really supports transactions
      * @param conn The connection to use.
@@ -413,22 +413,22 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata {
         try {
             if (conn.getMetaData().supportsTransactions()) {
                 conn.setAutoCommit(false); //Not using RDBMServices here, we want to see the exception if it happens
-                
+
                 final Statement transTestStmt = conn.createStatement();
-                    
+
                 try {
-                    final String transTestUpdate = 
+                    final String transTestUpdate =
                         "UPDATE UP_USER " +
                         "SET LST_CHAN_UPDT_DT=" + this.sqlTimeStamp() + " " +
                         "WHERE USER_ID=0";
-                    
+
                     transTestStmt.executeUpdate(transTestUpdate);
                     conn.rollback();
                     this.supportsTransactions = true;
                 }
                 finally {
                     RDBMServices.closeStatement(transTestStmt);
-                }                
+                }
             }
         }
         catch (SQLException sqle) {

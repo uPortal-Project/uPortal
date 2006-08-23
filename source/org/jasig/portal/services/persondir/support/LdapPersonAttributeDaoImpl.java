@@ -28,22 +28,22 @@ import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 
 /**
- * LDAP implementation of {@link IPersonAttributeDao}. This is code copied
+ * LDAP implementation of {@link org.jasig.portal.services.persondir.IPersonAttributeDao}. This is code copied
  * from uPortal 2.4 {@link org.jasig.portal.services.PersonDirectory} and
  * made to implement this DAO interface. Dependent upon JNDI.
- * 
+ *
  * In the case of multi valued attributes, now stores a
  * {@link java.util.ArrayList} rather than a {@link java.util.Vector}.
- * 
+ *
  * @author andrew.petro@yale.edu
  * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
  * @version $Revision$ $Date$
  * @since uPortal 2.5
  */
 public class LdapPersonAttributeDaoImpl extends AbstractDefaultQueryPersonAttributeDao {
-    
+
     /**
-     * Time limit, in milliseconds, for LDAP query.  
+     * Time limit, in milliseconds, for LDAP query.
      * Zero means wait indefinitely.
      */
     private int timeLimit = 0;
@@ -52,17 +52,17 @@ public class LdapPersonAttributeDaoImpl extends AbstractDefaultQueryPersonAttrib
      * The query we should execute.
      */
     private String query;
-    
+
     /**
      * Map from LDAP attribute names to uPortal attribute names.
      */
     private Map attributeMappings = Collections.EMPTY_MAP;
-    
+
     /**
      * {@link Set} of attributes this DAO may provide when queried.
      */
     private Set userAttributes = Collections.EMPTY_SET;
-    
+
     /**
      * List of names of uPortal attributes the values of which
      * will be used, in order, to populate the parameters of the
@@ -74,18 +74,18 @@ public class LdapPersonAttributeDaoImpl extends AbstractDefaultQueryPersonAttrib
      * The ldap server to use to make the queries against.
      */
     private ILdapServer ldapServer;
-    
+
 
     /**
      * Returned {@link Map} will have values of String or String[] or byte[]
-     * 
+     *
      * @see org.jasig.portal.services.persondir.IPersonAttributeDao#getUserAttributes(java.util.Map)
      */
     public Map getUserAttributes(final Map seed) {
         //Checks to make sure the argument & state is valid
         if (seed == null)
             throw new IllegalArgumentException("The query seed Map cannot be null.");
-        
+
         if (this.ldapServer == null)
             throw new IllegalStateException("ILdapServer is null");
 
@@ -101,11 +101,11 @@ public class LdapPersonAttributeDaoImpl extends AbstractDefaultQueryPersonAttrib
         DirContext context = null;
         try {
             context = this.ldapServer.getConnection();
-            
+
             if (context == null) {
                 throw new DataAccessResourceFailureException("No LDAP Connection could be obtained. Aborting ldap person attribute lookup.");
             }
-           
+
             // Search for the userid in the usercontext subtree of the directory
             // Use the uidquery substituting username for {0}, {1}, ...
             final SearchControls sc = new SearchControls();
@@ -120,15 +120,15 @@ public class LdapPersonAttributeDaoImpl extends AbstractDefaultQueryPersonAttrib
                 final String attrName = (String)this.queryAttributes.get(index);
                 args[index] = seed.get(attrName);
             }
-            
+
             //Search the LDAP
             final NamingEnumeration userlist = context.search(this.ldapServer.getBaseDN(), this.query, args, sc);
             try {
                 if (userlist.hasMoreElements()) {
                     final Map rowResults = new HashMap();
-                    
+
                     final SearchResult result = (SearchResult)userlist.next();
-                    
+
                     //Only allow one result for the query, do the check here to
                     //save on attribute processing time.
                     if (userlist.hasMoreElements()) {
@@ -136,41 +136,41 @@ public class LdapPersonAttributeDaoImpl extends AbstractDefaultQueryPersonAttrib
                     }
 
                     final Attributes ldapAttributes = result.getAttributes();
-                    
+
                     //Iterate through the attributes
                     for (final Iterator ldapAttrIter = this.attributeMappings.keySet().iterator(); ldapAttrIter.hasNext();) {
                         final String ldapAttributeName = (String)ldapAttrIter.next();
-                        
+
                         final Attribute attribute = ldapAttributes.get(ldapAttributeName);
-                        
+
                         //The attribute exists
                         if (attribute != null) {
                             for (final NamingEnumeration attrValueEnum = attribute.getAll(); attrValueEnum.hasMore();) {
                                 Object attributeValue = attrValueEnum.next();
-                                
+
                                 //Convert everything except byte[] to String
                                 //TODO should we be doing this conversion?
                                 if (!(attributeValue instanceof byte[])) {
                                     attributeValue = attributeValue.toString();
                                 }
-                                
+
                                 //See if the ldap attribute is mapped
                                 Set attributeNames = (Set)attributeMappings.get(ldapAttributeName);
-                                
+
                                 //No mapping was found, just use the ldap attribute name
                                 if (attributeNames == null)
                                     attributeNames = Collections.singleton(ldapAttributeName);
-                                
+
                                 //Run through the mapped attribute names
                                 for (final Iterator attrNameItr = attributeNames.iterator(); attrNameItr.hasNext();){
                                     final String attributeName = (String)attrNameItr.next();
-                                    
+
                                     MultivaluedPersonAttributeUtils.addResult(rowResults, attributeName, attributeValue);
                                 }
                             }
                         }
                     }
-                    
+
                     return rowResults;
                 }
                 else {
@@ -185,22 +185,22 @@ public class LdapPersonAttributeDaoImpl extends AbstractDefaultQueryPersonAttrib
                     log.warn("Error closing ldap person attribute search results.", ne);
                 }
             }
-        } 
+        }
         catch (final Throwable t) {
             throw new DataAccessResourceFailureException("LDAP person attribute lookup failure.", t);
-        } 
+        }
         finally {
             this.ldapServer.releaseConnection(context);
         }
     }
-    
-    /* 
+
+    /*
      * @see org.jasig.portal.services.persondir.support.IPersonAttributeDao#getPossibleUserAttributeNames()
      */
     public Set getPossibleUserAttributeNames() {
         return this.userAttributes;
     }
-    
+
     /**
      * Get the mapping from LDAP attribute names to uPortal attribute names.
      * Mapping type is from String to [String | Set of String].
@@ -209,9 +209,9 @@ public class LdapPersonAttributeDaoImpl extends AbstractDefaultQueryPersonAttrib
     public Map getLdapAttributesToPortalAttributes() {
         return this.attributeMappings;
     }
-    
+
     /**
-     * Set the {@link Map} to use for mapping from a ldap attribute name to a 
+     * Set the {@link Map} to use for mapping from a ldap attribute name to a
      * portal attribute name or {@link Set} of portal attribute names. Ldap
      * attribute names that are specified but have null mappings will use the
      * ldap attribute name for the portal attribute name.
@@ -220,47 +220,47 @@ public class LdapPersonAttributeDaoImpl extends AbstractDefaultQueryPersonAttrib
      * <br>
      * The passed {@link Map} must have keys of type {@link String} and values
      * of type {@link String} or a {@link Set} of {@link String}.
-     * 
+     *
      * @param ldapAttributesToPortalAttributesArg {@link Map} from ldap attribute names to portal attribute names.
      * @throws IllegalArgumentException If the {@link Map} doesn't follow the rules stated above.
      * @see MultivaluedPersonAttributeUtils#parseAttributeToAttributeMapping(Map)
      */
     public void setLdapAttributesToPortalAttributes(final Map ldapAttributesToPortalAttributesArg) {
         this.attributeMappings = MultivaluedPersonAttributeUtils.parseAttributeToAttributeMapping(ldapAttributesToPortalAttributesArg);
-        final Collection userAttributeCol = MultivaluedPersonAttributeUtils.flattenCollection(this.attributeMappings.values()); 
-        
+        final Collection userAttributeCol = MultivaluedPersonAttributeUtils.flattenCollection(this.attributeMappings.values());
+
         this.userAttributes = Collections.unmodifiableSet(new HashSet(userAttributeCol));
 
     }
-    
+
     /**
      * @return Returns the timeLimit.
      */
     public int getTimeLimit() {
         return this.timeLimit;
     }
-    
+
     /**
      * @param timeLimit The timeLimit to set.
      */
     public void setTimeLimit(int timeLimit) {
         this.timeLimit = timeLimit;
     }
-    
+
     /**
      * @return Returns the query.
      */
     public String getQuery() {
         return this.query;
     }
-    
+
     /**
      * @param uidQuery The query to set.
      */
     public void setQuery(String uidQuery) {
         this.query = uidQuery;
     }
-   
+
     /**
      * @return Returns the ldapServer.
      */
@@ -273,28 +273,28 @@ public class LdapPersonAttributeDaoImpl extends AbstractDefaultQueryPersonAttrib
     public void setLdapServer(ILdapServer ldapServer) {
         this.ldapServer = ldapServer;
     }
-    
+
     /**
      * @return Returns the queryAttributes.
      */
     public List getQueryAttributes() {
         return this.queryAttributes;
     }
-    
+
     /**
      * @param queryAttributes The queryAttributes to set.
      */
     public void setQueryAttributes(List queryAttributes) {
         this.queryAttributes = Collections.unmodifiableList(new LinkedList(queryAttributes));;
     }
-    
+
     public String toString() {
     	StringBuffer sb = new StringBuffer();
     	sb.append(getClass().getName());
     	sb.append(" query=[").append(this.query).append("]");
     	sb.append(" attributeMappings=").append(this.attributeMappings);
     	sb.append(" ldapServer=").append(this.ldapServer);
-    	
+
     	return sb.toString();
     }
 }

@@ -116,7 +116,6 @@ public class CGroupsManager
     * Acquires ChannelRuntimeProperites from the channel.
     * This function may be called by the portal framework throughout the session.
     * @see ChannelRuntimeProperties
-    * @param uid
     * @return ChannelRuntimeProperties
     */
    public ChannelRuntimeProperties getRuntimeProperties () {
@@ -127,7 +126,6 @@ public class CGroupsManager
     * Passes an outside event to a channel.
     * Events should normally come from the LayoutBean.
     * @param ev PortalEvent object
-    * @param uid
     * @see PortalEvent
     */
    public void receiveEvent (PortalEvent ev)
@@ -152,7 +150,6 @@ public class CGroupsManager
    /**
     * Ask channel to render its content.
     * @param out the SAX ContentHandler to output content to
-    * @param uid
     * @throws PortalException
     */
    public void renderXML (ContentHandler out) throws PortalException {
@@ -245,7 +242,6 @@ public class CGroupsManager
     * This function is called prior to the renderXML() call.
     * @param rd channel runtime data
     * @see ChannelRuntimeData
-    * @param uid
     */
    public void setRuntimeData (ChannelRuntimeData rd) {
       Utility.logMessage("DEBUG", this.getClass().getName() + "::setRuntimeData(): this = " + this);
@@ -311,7 +307,6 @@ public class CGroupsManager
     * see org.jasig.portal.StaticData
     * @param sd channel static data
     * @see ChannelStaticData
-    * @param uid
     */
    public void setStaticData (ChannelStaticData sd) {
       try{
@@ -402,7 +397,6 @@ public class CGroupsManager
 
    /**
     * put your documentation comment here
-    * @param uid
     * @return ChannelCacheKey
     */
    public ChannelCacheKey generateKey () {
@@ -429,7 +423,6 @@ public class CGroupsManager
 
    /**
     * put your documentation comment here
-    * @param uid
     * @return String
     */
    private String vKey () {
@@ -444,7 +437,6 @@ public class CGroupsManager
    /**
     * put your documentation comment here
     * @param validity
-    * @param uid
     * @return boolean
     */
    public boolean isCacheValid (Object validity) {
@@ -470,7 +462,6 @@ public class CGroupsManager
 
    /**
     * Returns the session data for a thread
-    * @param uid
     * @return CGroupsManagerSessionData
     */
    public synchronized CGroupsManagerSessionData getSessionData () {

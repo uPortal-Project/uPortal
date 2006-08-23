@@ -23,7 +23,7 @@ import org.w3c.dom.Text;
  * an XML file.  See the example file in /properties/groups/PAGSGroupStoreConfig.xml
  * and the DTD in /webpages/dtd/PAGSGroupStore.dtd for information on the
  * file format.
- * 
+ *
  * @author Al Wold
  * @version $Revision$
  */
@@ -63,7 +63,7 @@ public class XMLPersonAttributesConfiguration
             element.normalize();
             String text = null;
             if (element.getFirstChild() instanceof Text) {
-               text = ((Text)element.getFirstChild()).getData();
+               text = ((Text)element.getFirstChild()).getData().trim();
             }
             if (tagName.equals("group-key")) {
                groupDef.setKey(text);
@@ -123,7 +123,7 @@ public class XMLPersonAttributesConfiguration
             Element member = (Element)node;
             member.normalize();
             if (member.getFirstChild() instanceof Text) {
-               groupDef.addMember(((Text)member.getFirstChild()).getData()); 
+               groupDef.addMember(((Text)member.getFirstChild()).getData());
             }
          }
       }

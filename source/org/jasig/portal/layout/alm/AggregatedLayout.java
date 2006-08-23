@@ -31,7 +31,7 @@ import org.xml.sax.helpers.AttributesImpl;
 
 /**
  * The aggregated user layout implementation.
- * 
+ *
  * Prior to uPortal 2.5, this class existed in the package org.jasig.portal.layout.
  * It was moved to its present package to reflect that it is part of Aggregated
  * Layouts.
@@ -41,46 +41,46 @@ import org.xml.sax.helpers.AttributesImpl;
  */
 public class AggregatedLayout implements IAggregatedLayout {
 	private static final Log LOG = LogFactory.getLog(AggregatedLayout.class);
-	
+
 	// The hashtable with the layout nodes
 	private Hashtable layout = null;
-	
+
 	// The layout ID value
 	private String layoutId;
-	
+
 	// The layout manager
 	private IAggregatedUserLayoutManager layoutManager = null;
-	
+
 	// GUID generator
 	private static GuidGenerator guid = null;
 	private String cacheKey = null;
-	
-	
+
+
 	public AggregatedLayout (  String layoutId, IAggregatedUserLayoutManager layoutManager ) throws PortalException {
 		this ( layoutId );
 		this.layoutManager = layoutManager;
 	}
-	
+
 	public AggregatedLayout (  String layoutId ) throws PortalException {
 		this.layoutId = layoutId;
 		if ( guid == null )
 			guid = new GuidGenerator();
 		updateCacheKey();
 	}
-	
+
 	public void setLayoutManager ( IAggregatedUserLayoutManager layoutManager ) {
 		this.layoutManager = layoutManager;
 	}
-	
+
 	public void setLayoutData ( Hashtable layout ) throws PortalException {
-		// check that layout isn't corrupt 
+		// check that layout isn't corrupt
 		for ( Enumeration nodeIds = layout.keys(); nodeIds.hasMoreElements() ;) {
 			String nodeId = nodeIds.nextElement().toString();
 			ALNode node = (ALNode)layout.get(nodeId);
 			// check for nodes that reference themselves
 			if (node != null && (nodeId.equals(node.getNextNodeId()) ||
 					nodeId.equals(node.getPreviousNodeId()) ||
-					nodeId.equals(node.getParentNodeId())) 
+					nodeId.equals(node.getParentNodeId()))
 			){
 				throw new RuntimeException(
 						"corrupted layout detected, node: "+nodeId +" " +
@@ -89,15 +89,15 @@ public class AggregatedLayout implements IAggregatedLayout {
 		}
 		this.layout = layout;
 	}
-	
+
 	public Hashtable getLayoutData() throws PortalException {
 		return layout;
 	}
-	
+
 	private void updateCacheKey() {
 		cacheKey = guid.getNewGuid();
 	}
-	
+
 	private void bindRestrictions( IALNodeDescription nodeDesc, ContentHandler contentHandler ) throws SAXException {
 		Hashtable restrictions = nodeDesc.getRestrictions();
 		if ( restrictions != null ) {
@@ -112,20 +112,20 @@ public class AggregatedLayout implements IAggregatedLayout {
 							((int)priorRestriction.getMaxValue()/IAggregatedUserLayoutManager.PRIORITY_COEFF));
 				} else
 					paramAttrs.addAttribute("","value","value","CDATA",restriction.getRestrictionExpression());
-				
+
 				paramAttrs.addAttribute("","type","type","CDATA",restriction.getName());
 				contentHandler.startElement("",RESTRICTION,RESTRICTION,paramAttrs);
 				contentHandler.endElement("",RESTRICTION,RESTRICTION);
 			}
-		} 
+		}
 	}
-	
+
 	public ALNode getLayoutNode(String nodeId) {
 		if ( nodeId != null ){
 			ALNode aln = (ALNode)layout.get(nodeId);
 			if (aln != null && (nodeId.equals(aln.getNextNodeId()) ||
 					nodeId.equals(aln.getPreviousNodeId()) ||
-					nodeId.equals(aln.getParentNodeId())) 
+					nodeId.equals(aln.getParentNodeId()))
 			){
 				throw new RuntimeException(
 						"corrupted layout detected, node: "+nodeId +" " +
@@ -135,14 +135,14 @@ public class AggregatedLayout implements IAggregatedLayout {
 		}
 		return null;
 	}
-	
+
 	public ALFolder getLayoutFolder(String folderId) {
 		if ( folderId != null ){
 			ALFolder aln = (ALFolder)layout.get(folderId);
-			if (aln != null && 
+			if (aln != null &&
 					(folderId.equals(aln.getNextNodeId()) ||
 							folderId.equals(aln.getPreviousNodeId()) ||
-							folderId.equals(aln.getParentNodeId())) 
+							folderId.equals(aln.getParentNodeId()))
 			){
 				throw new RuntimeException(
 						"corrupted layout detected, node: "+folderId +" " +
@@ -152,7 +152,7 @@ public class AggregatedLayout implements IAggregatedLayout {
 		}
 		return null;
 	}
-	
+
 	public ALNode getLastSiblingNode ( String nodeId ) {
 		ALNode node = null;
 		for ( String nextId = nodeId; nextId != null; ) {
@@ -161,7 +161,7 @@ public class AggregatedLayout implements IAggregatedLayout {
 		}
 		return node;
 	}
-	
+
 	public ALNode getFirstSiblingNode ( String nodeId ) {
 		ALNode node = null;
 		for ( String prevId = nodeId; prevId != null; ) {
@@ -170,7 +170,7 @@ public class AggregatedLayout implements IAggregatedLayout {
 		}
 		return node;
 	}
-	
+
 	/**
 	 * Gets the tree depth for a given node
 	 * @param nodeId a <code>String</code> node ID
@@ -184,7 +184,7 @@ public class AggregatedLayout implements IAggregatedLayout {
 		}
 		return depth;
 	}
-	
+
 	private void createMarkingLeaf(ContentHandler contentHandler, String leafName, String parentNodeId, String nextNodeId) throws PortalException {
 		try {
 			AttributesImpl attributes = new AttributesImpl();
@@ -196,8 +196,8 @@ public class AggregatedLayout implements IAggregatedLayout {
 			throw new PortalException(saxe);
 		}
 	}
-	
-	
+
+
 	private void createMarkingLeaf(Document document, String leafName, String parentNodeId, String nextNodeId, Node node) throws PortalException {
 		try {
 			Element markingLeaf = document.createElement(leafName);
@@ -208,7 +208,7 @@ public class AggregatedLayout implements IAggregatedLayout {
 			throw new PortalException(saxe);
 		}
 	}
-	
+
 	/**
 	 * Build the DOM consistent of folders and channels using the internal representation
 	 * @param domLayout a <code>Document</code> a user layout document.
@@ -220,13 +220,13 @@ public class AggregatedLayout implements IAggregatedLayout {
 		ALNode layoutNode = getLayoutNode(nodeId);
 		IALNodeDescription nodeDesc = (IALNodeDescription) layoutNode.getNodeDescription();
 		Element newNode = domLayout.createElement((layoutNode.getNodeType()==IUserLayoutNodeDescription.FOLDER)?FOLDER:CHANNEL);
-		
+
 		layoutNode.addNodeAttributes(newNode);
-		
+
 		String parentId = layoutNode.getParentNodeId();
 		String nextId = layoutNode.getNextNodeId();
-		
-		
+
+
 		if ( layoutManager != null && parentId != null && layoutNode.getPreviousNodeId() == null ) {
 			if ( !nodeDesc.isHidden() && !getLayoutNode(parentId).getNodeDescription().isHidden() ) {
 				IALNodeDescription moveTargetsNodeDesc = layoutManager.getNodeBeingMoved();
@@ -234,23 +234,23 @@ public class AggregatedLayout implements IAggregatedLayout {
 				IALNodeDescription addTargetsNodeDesc = layoutManager.getNodeBeingAdded();
 				if ( addTargetsNodeDesc != null && layoutManager.canAddNode(addTargetsNodeDesc,parentId,nodeId) )
 					createMarkingLeaf(domLayout,ADD_TARGET,parentId,nodeId,node);
-				
+
 				if ( moveTargetsNodeId != null && layoutManager.canMoveNode(moveTargetsNodeId,parentId,nodeId) )
 					createMarkingLeaf(domLayout,MOVE_TARGET,parentId,nodeId,node);
 			}
 		}
-		
+
 		// Appending a new node
 		node.appendChild(newNode);
-		
+
 		if ( parentId != null ) {
-			
+
 			boolean isNodeMarkable = false;
 			if ( nextId != null && !getLayoutNode(nextId).getNodeDescription().isHidden() )
 				isNodeMarkable = true;
 			else if ( nextId == null )
 				isNodeMarkable = true;
-			
+
 			if ( layoutManager != null && isNodeMarkable ) {
 				ALNode tempNode = getLayoutNode(parentId);
 				if ( tempNode == null){
@@ -273,10 +273,10 @@ public class AggregatedLayout implements IAggregatedLayout {
 					}
 				}
 			}
-			
+
 		}
-		
-		
+
+
 		// Adding restrictions to the node
 		nodeDesc.addRestrictionChildren(newNode,domLayout);
 		if ( layoutNode.getNodeType() == IUserLayoutNodeDescription.FOLDER ) {
@@ -293,8 +293,8 @@ public class AggregatedLayout implements IAggregatedLayout {
 			channelDesc.addParameterChildren(newNode,domLayout);
 		}
 	}
-	
-	
+
+
 	/**
 	 * Returns a list of fragment Ids existing in the layout.
 	 *
@@ -308,10 +308,10 @@ public class AggregatedLayout implements IAggregatedLayout {
 			String fragmentId = node.getFragmentId();
 			if ( fragmentId != null && !fragmentIds.contains(fragmentId))
 				fragmentIds.add(fragmentId);
-		} 	
+		}
 		return fragmentIds;
 	}
-	
+
 	/**
 	 * Returns an fragment Id for a given node.
 	 * Returns null if the node is not part of any fragments.
@@ -323,7 +323,7 @@ public class AggregatedLayout implements IAggregatedLayout {
 	public String getFragmentId(String nodeId) throws PortalException {
 		return getNode(nodeId).getFragmentId();
 	}
-	
+
 	/**
 	 * Returns an fragment root Id for a given fragment.
 	 *
@@ -332,15 +332,15 @@ public class AggregatedLayout implements IAggregatedLayout {
 	 * @exception PortalException if an error occurs
 	 */
 	public String getFragmentRootId(String fragmentId) throws PortalException {
-		ILayoutFragment fragment = layoutManager.getFragment(fragmentId);	
+		ILayoutFragment fragment = layoutManager.getFragment(fragmentId);
 		if ( fragment != null && (fragment instanceof ALFragment)) {
 			ALFolder rootFolder = (ALFolder) ((ALFragment)fragment).getNode(fragment.getRootId());
-			return rootFolder.getFirstChildNodeId();	
+			return rootFolder.getFirstChildNodeId();
 		}
 		throw new PortalException("Check that the fragment with ID="+fragmentId+" has "+ALFragment.class.getName()+" type and is not NULL!");
 	}
-	
-	
+
+
 	/**
 	 * Writes user layout content (with appropriate markings) into
 	 * a <code>ContentHandler</code>
@@ -351,7 +351,7 @@ public class AggregatedLayout implements IAggregatedLayout {
 	public void writeTo(ContentHandler ch) throws PortalException {
 		writeTo ( getRootId(), ch );
 	}
-	
+
 	/**
 	 * Writes subtree of a user layout (with appropriate markings) defined by a particular node into
 	 * a <code>ContentHandler</code>
@@ -361,26 +361,26 @@ public class AggregatedLayout implements IAggregatedLayout {
 	 * @exception PortalException if an error occurs
 	 */
 	public void writeTo(String nodeId, ContentHandler contentHandler ) throws PortalException {
-		
+
 		IALFolderDescription folderDescription = null;
 		IALChannelDescription channelDescription = null;
-		
+
 		if ( contentHandler != null && nodeId != null ) {
 			try {
-				
+
 				ALNode node = getLayoutNode(nodeId);
 				AttributesImpl attributes = new AttributesImpl();
-				
+
 				// If we have a folder
 				if ( node.getNodeType() == IUserLayoutNodeDescription.FOLDER ) {
-					
+
 					// Start document if we have the root node
 					if (nodeId.equals(getRootId())) contentHandler.startDocument();
-					
+
 					if (nodeId.equals(getRootId())) {
 						contentHandler.startElement("",LAYOUT,LAYOUT,new AttributesImpl());
 					}
-					
+
 					ALFolder folder = (ALFolder) node;
 					folderDescription = (IALFolderDescription) node.getNodeDescription();
 					attributes.addAttribute("","ID","ID","ID",nodeId);
@@ -391,16 +391,16 @@ public class AggregatedLayout implements IAggregatedLayout {
 					attributes.addAttribute("","immutable","immutable","CDATA",CommonUtils.boolToStr(folderDescription.isImmutable()));
 					attributes.addAttribute("","name","name","CDATA",folderDescription.getName());
 					attributes.addAttribute("","priority","priority","CDATA",folder.getPriority()+"");
-					
+
 					contentHandler.startElement("",FOLDER,FOLDER,attributes);
-					
-					
+
+
 					// Loop for all children
 					String firstChildId = folder.getFirstChildNodeId();
 					for ( String nextNodeId = firstChildId; nextNodeId != null; ) {
-						
+
 						// if necessary we add marking nodes
-						if ( layoutManager != null ) {	
+						if ( layoutManager != null ) {
 							if ( !node.getNodeDescription().isHidden() && !getLayoutNode(nextNodeId).getNodeDescription().isHidden() ) {
 								IALNodeDescription nodeDesc = layoutManager.getNodeBeingMoved();
 								String moveTargetsNodeId = ( nodeDesc != null ) ? nodeDesc.getId() : null;
@@ -411,12 +411,12 @@ public class AggregatedLayout implements IAggregatedLayout {
 									createMarkingLeaf(contentHandler,MOVE_TARGET,nodeId,nextNodeId);
 							}
 						}
-						
+
 						// Recurrence
 						writeTo (nextNodeId,contentHandler);
 						nextNodeId = getLayoutNode(nextNodeId).getNextNodeId();
 					}
-					
+
 					// if necessary we add marking nodes to the end of the sibling line
 					if ( layoutManager != null && !node.getNodeDescription().isHidden() ) {
 						IALNodeDescription nodeDesc = layoutManager.getNodeBeingMoved();
@@ -427,23 +427,23 @@ public class AggregatedLayout implements IAggregatedLayout {
 						if ( moveTargetsNodeId != null && layoutManager.canMoveNode(moveTargetsNodeId,nodeId,null) )
 							createMarkingLeaf(contentHandler,MOVE_TARGET,nodeId,null);
 					}
-					
+
 					// Putting restrictions to the content handler
 					bindRestrictions(folderDescription,contentHandler);
-					
+
 					contentHandler.endElement("",FOLDER,FOLDER);
-					
+
 					// Start document if we have the root node
 					if (nodeId.equals(getRootId())) contentHandler.endElement("",LAYOUT,LAYOUT);
 					if (nodeId.equals(getRootId())) contentHandler.endDocument();
-					
-					
-					
+
+
+
 					// If we have a channel
 				} else {
-					
+
 					channelDescription = (IALChannelDescription) node.getNodeDescription();
-					
+
 					attributes.addAttribute("","ID","ID","ID",nodeId);
 					attributes.addAttribute("","typeID","typeID","CDATA",channelDescription.getChannelTypeId());
 					attributes.addAttribute("","hidden","hidden","CDATA",CommonUtils.boolToStr(channelDescription.isHidden()));
@@ -462,9 +462,9 @@ public class AggregatedLayout implements IAggregatedLayout {
 					attributes.addAttribute("","secure","secure","CDATA",CommonUtils.boolToStr(channelDescription.isSecure()));
 					attributes.addAttribute("","isPortlet","isPortlet","CDATA",CommonUtils.boolToStr(channelDescription.isPortlet()));
 					attributes.addAttribute("","priority","priority","CDATA",node.getPriority()+"");
-					
+
 					contentHandler.startElement("",CHANNEL,CHANNEL,attributes);
-					
+
 					if ( channelDescription.hasParameters() ) {
 						Enumeration paramNames = channelDescription.getParameterNames();
 						while ( paramNames.hasMoreElements() ) {
@@ -478,24 +478,24 @@ public class AggregatedLayout implements IAggregatedLayout {
 							contentHandler.startElement("",PARAMETER,PARAMETER,paramAttrs);
 							contentHandler.endElement("",PARAMETER,PARAMETER);
 						}
-						
+
 					}
-					
+
 					// Putting restrictions to the content handler
 					bindRestrictions(channelDescription,contentHandler);
-					
+
 					contentHandler.endElement("",CHANNEL,CHANNEL);
-					
+
 				}
-				
+
 			} catch ( SAXException saxe ) {
 				throw new PortalException(saxe);
 			}
-			
+
 		}
-		
+
 	}
-	
+
 	/**
 	 * Writes user layout content (with appropriate markings) into
 	 * a <code>Document</code> object
@@ -506,7 +506,7 @@ public class AggregatedLayout implements IAggregatedLayout {
 	public void writeTo(Document document) throws PortalException {
 		writeTo ( getRootId(), document );
 	}
-	
+
 	/**
 	 * Writes subtree of a user layout (with appropriate markings) defined by a particular node into
 	 * a <code>Document</code>
@@ -526,7 +526,7 @@ public class AggregatedLayout implements IAggregatedLayout {
 			throw new PortalException ("Couldn't create the DOM representation: " + e );
 		}
 	}
-	
+
 	/**
 	 * Obtain a description of a node (channel or a folder) in a given user layout.
 	 *
@@ -540,7 +540,7 @@ public class AggregatedLayout implements IAggregatedLayout {
 			return node.getNodeDescription();
 		throw new PortalException ( "The node with nodeID="+nodeId+" does not exist in the layout!" );
 	}
-	
+
 	/**
 	 * Returns a node specified by a node ID.
 	 *
@@ -551,10 +551,10 @@ public class AggregatedLayout implements IAggregatedLayout {
 	public ALNode getNode( String nodeId) throws PortalException {
 		return getLayoutNode(nodeId);
 	}
-	
+
 	/**
 	 * Returns an Id of a parent user layout node.
-	 * The user layout root node always has ID={@link IUserLayout#ROOT_NODE_NAME}
+	 * The user layout root node always has ID={@link org.jasig.portal.layout.IUserLayout#ROOT_NODE_NAME}
 	 *
 	 * @param nodeId a <code>String</code> value
 	 * @return a <code>String</code> value
@@ -566,7 +566,7 @@ public class AggregatedLayout implements IAggregatedLayout {
 			return node.getParentNodeId();
 		throw new PortalException ( "The node with nodeID="+nodeId+" does not exist in the layout!" );
 	}
-	
+
 	/**
 	 * Returns a list of child node Ids for a given node.
 	 *
@@ -583,7 +583,7 @@ public class AggregatedLayout implements IAggregatedLayout {
 		}
 		return childIds.elements();
 	}
-	
+
 	/**
 	 * Determine an Id of a next sibling node.
 	 *
@@ -597,8 +597,8 @@ public class AggregatedLayout implements IAggregatedLayout {
 			return node.getNextNodeId();
 		throw new PortalException ( "The node with nodeID="+nodeId+" does not exist in the layout!" );
 	}
-	
-	
+
+
 	/**
 	 * Determine an Id of a previous sibling node.
 	 *
@@ -612,7 +612,7 @@ public class AggregatedLayout implements IAggregatedLayout {
 			return node.getPreviousNodeId();
 		throw new PortalException ( "The node with nodeID="+nodeId+" does not exist in the layout!" );
 	}
-	
+
 	/**
 	 * Return a cache key, uniqly corresponding to the composition and the structure of the user layout.
 	 *
@@ -622,8 +622,8 @@ public class AggregatedLayout implements IAggregatedLayout {
 	public String getCacheKey() throws PortalException {
 		return cacheKey;
 	}
-	
-	
+
+
 	/**
 	 * Register a layout event listener
 	 *
@@ -634,8 +634,8 @@ public class AggregatedLayout implements IAggregatedLayout {
 		// TO IMPLEMENT
 		return false;
 	}
-	
-	
+
+
 	/**
 	 * Remove a registered layout event listener.
 	 *
@@ -646,7 +646,7 @@ public class AggregatedLayout implements IAggregatedLayout {
 		// TO IMPLEMENT
 		return false;
 	}
-	
+
 	/**
 	 * Returns a layout Id associated with this manager/
 	 *
@@ -655,7 +655,7 @@ public class AggregatedLayout implements IAggregatedLayout {
 	public String getId() {
 		return layoutId;
 	}
-	
+
 	/**
 	 * Returns a node id associated with the supplied functional name.
 	 *
@@ -675,7 +675,7 @@ public class AggregatedLayout implements IAggregatedLayout {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns a list of node Ids in the layout.
 	 *
@@ -687,7 +687,7 @@ public class AggregatedLayout implements IAggregatedLayout {
 			throw new PortalException ( "The layout is NULL!" );
 		return layout.keys();
 	}
-	
+
 	/**
 	 * Returns an id of the root node.
 	 *
@@ -696,5 +696,5 @@ public class AggregatedLayout implements IAggregatedLayout {
 	public String getRootId() {
 		return IALFolderDescription.ROOT_FOLDER_ID;
 	}
-	
+
 }

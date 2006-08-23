@@ -28,8 +28,8 @@ import edu.emory.mathcs.backport.java.util.concurrent.TimeUnit;
 import edu.emory.mathcs.backport.java.util.concurrent.TimeoutException;
 
 /**
- * This class takes care of initiating channel rendering thread, 
- * monitoring it for timeouts, retreiving cache, and returning 
+ * This class takes care of initiating channel rendering thread,
+ * monitoring it for timeouts, retreiving cache, and returning
  * rendering results and status.
  * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
  * @version $Revision$
@@ -37,17 +37,17 @@ import edu.emory.mathcs.backport.java.util.concurrent.TimeoutException;
 public class ChannelRenderer
     implements IChannelRenderer, IDynamicChannelTitleRenderer
 {
-    
+
     protected final Log log = LogFactory.getLog(getClass());
-    
+
     /**
      * Default value for CACHE_CHANNELS.
      * This value will be used when the corresponding property cannot be loaded.
      */
     private static final boolean DEFAULT_CACHE_CHANNELS = false;
-    
+
     public static final boolean CACHE_CHANNELS=PropertiesManager.getPropertyAsBoolean("org.jasig.portal.ChannelRenderer.cache_channels", DEFAULT_CACHE_CHANNELS);
-  
+
     public static final String[] renderingStatus={"successful","failed","timed out"};
 
     protected IChannel channel;
@@ -120,7 +120,7 @@ public class ChannelRenderer
      */
     public void setChannel(IChannel channel) {
         if (log.isDebugEnabled())
-            log.debug("ChannelRenderer::setChannel() : channel is being reset!");        
+            log.debug("ChannelRenderer::setChannel() : channel is being reset!");
         this.channel=channel;
         if(this.worker!=null) {
             this.worker.setChannel(channel);
@@ -128,7 +128,7 @@ public class ChannelRenderer
         // clear channel chace
         this.channelCache=null;
     }
-    
+
     /**
      * Obtains a content cache specific for this channel instance.
      *
@@ -225,7 +225,7 @@ public class ChannelRenderer
                     throw e;
                 }
             } else {
-                log.error( "ChannelRenderer::outputRendering() : output buffer is null even though rendering was a success?! trying to rendering for ccaching ?"); 
+                log.error( "ChannelRenderer::outputRendering() : output buffer is null even though rendering was a success?! trying to rendering for ccaching ?");
                 throw new PortalException("unable to obtain rendering buffer");
             }
         }
@@ -247,8 +247,8 @@ public class ChannelRenderer
         }
         boolean abandoned=false;
         long timeOutTarget = this.startTime + this.timeOut;
-      
-      
+
+
         // separate waits caused by rendering group
         if(this.groupSemaphore!=null) {
             while(!this.worker.isSetRuntimeDataComplete() && System.currentTimeMillis() < timeOutTarget && !this.workTracker.isDone()) {
@@ -272,7 +272,7 @@ public class ChannelRenderer
             // reset timer for rendering
             timeOutTarget=System.currentTimeMillis()+this.timeOut;
         }
-      
+
         if(!abandoned) {
             try {
                 this.workTracker.get(this.timeOut, TimeUnit.MILLISECONDS);
@@ -281,7 +281,7 @@ public class ChannelRenderer
                     log.debug("ChannelRenderer::outputRendering() : channel [" + this.channel + "] timed out", te);
                 }
             } catch (CancellationException ce) {
-                
+
                 if (log.isDebugEnabled()) {
                     Throwable t = null;
                     try {
@@ -293,14 +293,14 @@ public class ChannelRenderer
                     }
                     log.debug("ChannelRenderer::outputRendering() : channel [" + this.channel + "] threw an exception [" + t + "] and so its task was cancelled.");
                 }
-                
+
             } catch (Exception e) {
                 // no matter what went wrong (CancellationException, a NullPointerException, etc.)
                 // the recovery code following this attempt to get the result from the workTracker Future
                 // should be allowed to run.
                 log.error("Unexpected exceptional condition trying to get the result from the workTracker Future rendering channel [" + this.channel + "].", e);
             }
-          
+
             if(!this.workTracker.isDone()) {
                 this.workTracker.cancel(true);
                 abandoned=true;
@@ -310,9 +310,9 @@ public class ChannelRenderer
                 boolean successful = this.workTracker.isDone() && !this.workTracker.isCancelled() && this.worker.getException() == null;
                 abandoned=!successful;
             }
-          
+
         }
-      
+
         if (!abandoned && this.worker.done ()) {
             if (this.worker.successful() && (((this.worker.getBuffer())!=null) || (this.ccacheable && this.worker.cbuffer!=null))) {
                 return RENDERING_SUCCESSFUL;
@@ -329,7 +329,7 @@ public class ChannelRenderer
             if (this.worker != null) {
               e = this.worker.getException();
             }
-            
+
             if (e != null) {
                 throw new InternalPortalException(e);
             } else {
@@ -357,7 +357,7 @@ public class ChannelRenderer
         if(this.worker!=null) {
             return this.worker.getCharacters();
         }
-        
+
         if (log.isDebugEnabled()) {
             log.debug("ChannelRenderer::getCharacters() : worker is null already !");
         }
@@ -386,7 +386,7 @@ public class ChannelRenderer
 
     public String toString() {
         StringBuffer sb = new StringBuffer();
-        
+
         sb.append("ChannelRenderer ");
         sb.append("channel = [").append(this.channel).append("] ");
         sb.append("rd = [").append(this.rd).append("] ");
@@ -394,22 +394,22 @@ public class ChannelRenderer
         sb.append("donerendering=").append(this.donerendering).append(" ");
         sb.append("startTime=").append(this.startTime).append(" ");
         sb.append("timeOut=").append(this.timeOut).append(" ");
-        
+
         return sb.toString();
     }
-    
+
 	public String getChannelTitle() {
-	    
-		
+
+
 		if (log.isTraceEnabled()) {
 			log.trace("Getting channel title for ChannelRenderer " + this);
 		}
-	    
+
 		// default to null, which indicates the ChannelRenderer doesn't have
 		// a dynamic channel title available.
-		String channelTitle = null; 
+		String channelTitle = null;
 	    try {
-	        // block on channel rendering to allow channel opportunity to 
+	        // block on channel rendering to allow channel opportunity to
 	        // provide dynamic title.
 	        int renderingStatus = completeRendering();
 	        if (renderingStatus == RENDERING_SUCCESSFUL) {
@@ -418,12 +418,12 @@ public class ChannelRenderer
 	    } catch (Throwable t) {
 	        log.error("Channel rendering failed while getting title for channel renderer " + this, t);
 	    }
-	    
+
 	    // will be null indicating no dynamic title unless successfully obtained title.
 	    return channelTitle;
 
 	}
-    
+
 
     protected class Worker extends BaseTask {
         private boolean successful;
@@ -433,7 +433,7 @@ public class ChannelRenderer
         private ChannelRuntimeData rd;
         private SAX2BufferImpl buffer;
         private String cbuffer;
-        
+
         /**
          * The dynamic title of the channel, if any.  Null otherwise.
          */
@@ -459,7 +459,7 @@ public class ChannelRenderer
                     channel.setRuntimeData(rd);
                 }
                 setRuntimeDataComplete=true;
-                
+
                 if(groupSemaphore!=null) {
                     groupSemaphore.checkInAndWaitOn(groupRenderingKey);
                 }
@@ -530,7 +530,7 @@ public class ChannelRenderer
                         // Imagine a VERY popular cache entry timing out, then portal will attempt
                         // to re-render the page in many threads (serving many requests) simultaneously.
                         // If one was to synchronize on writing cache for a particular key, one thread
-                        // would render and others would wait for it to complete. 
+                        // would render and others would wait for it to complete.
 
                         // check if need to render
                         if((ccacheable && cbuffer==null && buffer==null) || ((!ccacheable) && buffer==null)) {
@@ -603,27 +603,27 @@ public class ChannelRenderer
                 }
                 this.setException(e);
             }
-            
+
             /*
              * Get the channel's ChannelRuntimeProperties, and handle them.
              */
             processChannelRuntimeProperties();
-            
+
             done = true;
         }
-        
+
         /**
 		 * Query the channel for ChannelRuntimePRoperties and process those
 		 * properties.
-		 * 
-		 * Currently, only handles the optional @link{IChannelTitle} interface.
+		 *
+		 * Currently, only handles the optional {@link IChannelTitle} interface.
 		 */
 		private void processChannelRuntimeProperties() {
 			ChannelRuntimeProperties channelProps = this.channel.getRuntimeProperties();
-            
+
             if (channelProps != null) {
             	if (channelProps instanceof IChannelTitle) {
-                	
+
                 	this.channelTitle = ((IChannelTitle) channelProps).getChannelTitle();
                 	if (log.isTraceEnabled()) {
                 		log.trace("Read title " + this.channelTitle + ".");
@@ -659,7 +659,7 @@ public class ChannelRenderer
                 return null;
             }
         }
-       
+
 
         /**
          * Sets a character cache for the current rendering.
@@ -711,20 +711,20 @@ public class ChannelRenderer
         public boolean done () {
             return this.done;
         }
-        
+
         /**
          * Get a Sring representing the dynamic channel title reported by the
          * IChannel this ChannelRenderer rendered.  Returns null if the channel
          * reported no such title or the channel isn't done rendering.
-         * 
+         *
          * @return dynamic channel title, or null if no title available.
          */
         String getChannelTitle() {
-        	
+
         	if (log.isTraceEnabled()) {
         		log.trace("Getting channel title (" + this.channelTitle + "] for " + this);
         	}
-        	
+
         	// currently, just provides no dynamic title if not done rendering
         	if (this.done) {
         	    return this.channelTitle;

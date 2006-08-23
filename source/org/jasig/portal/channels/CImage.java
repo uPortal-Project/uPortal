@@ -40,11 +40,10 @@ public class CImage extends BaseChannel implements ICacheable, IChannel
 {
 
   private static final String sslLocation = "CImage/CImage.ssl";
-  
+
   /**
    * Output channel content to the portal
    * @param out a sax content handler
-   * @param uid a unique ID used to identify the state of the channel
    * @throws org.jasig.portal.PortalException
    */
   public void renderXML (ContentHandler out) throws PortalException

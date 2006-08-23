@@ -25,23 +25,23 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * Reference group service.
- * 
+ *
  * @author Dan Ellentuck
  * @version $Revision$
- * @deprecated Use instead an @link{ICompositeGroupService}
+ * @deprecated Use instead an {@link ICompositeGroupService}
  * implementation.
  */
 public class ReferenceGroupService implements ILockableGroupService
 {
     private static final Log log = LogFactory.getLog(ReferenceGroupService.class);
-    
+
     /**
      * Default value for cacheInUse.
      * This value will be used when the corresponding property cannot be loaded.
      */
     private static final boolean DEFAULT_USE_CACHE = false;
-    
-    
+
+
     // Singleton instance:
     protected static IGroupService singleton = null;
 
@@ -62,7 +62,7 @@ public class ReferenceGroupService implements ILockableGroupService
         super();
         initialize();
     }
-    
+
 /**
  *
  */
@@ -78,7 +78,7 @@ protected void addGroupToCache(IEntityGroup group) throws CachingException
     {
         return cacheInUse;
     }
-    
+
 /**
  * Removes the <code>IEntityGroup</code> from the cache and the store.
  * @param group IEntityGroup
@@ -150,7 +150,7 @@ public Iterator findContainingGroups(IGroupMember gm) throws GroupsException
     {
       return (cacheInUse()) ? findGroupWithCache(key) : groupFactory.find(key);
     }
-    
+
     /**
      * Returns a pre-existing <code>IEntityGroup</code> or null if it
      * does not exist.
@@ -171,7 +171,7 @@ public Iterator findContainingGroups(IGroupMember gm) throws GroupsException
         catch (CachingException ce)
             { throw new GroupsException("Problem retrieving group " + key, ce);}
     }
-    
+
 /**
  * Returns a pre-existing <code>ILockableEntityGroup</code> or null if the
  * group is not found.
@@ -241,7 +241,7 @@ public Iterator findMemberGroups(IEntityGroup eg) throws GroupsException
      * <code>IEntityGroup</code>.
      */
     public IEntityGroup getDistinguishedGroup(String name) throws GroupsException{
-        
+
       String key = PropertiesManager.getProperty("org.jasig.portal.groups.ReferenceGroupService.key_"+name, null);
       if (key != null){
         return findGroup(key);
@@ -250,7 +250,7 @@ public Iterator findMemberGroups(IEntityGroup eg) throws GroupsException
         throw new GroupsException("ReferenceGroupService.getDistinguishedGroup(): no key found to match requested name [" + name + "]");
       }
     }
-    
+
     /**
      * Returns an <code>IEntity</code> representing a portal entity.  This does
      * not guarantee that the entity actually exists.
@@ -259,7 +259,7 @@ public Iterator findMemberGroups(IEntityGroup eg) throws GroupsException
     {
       return entityFactory.newInstance(key, type);
     }
-    
+
 /**
  * Returns a cached <code>IEntityGroup</code> or null if it has not been cached.
  */
@@ -279,7 +279,7 @@ protected IEntityGroup getGroupFromCache(String key) throws CachingException
       return getGroupMember(underlyingEntityIdentifier.getKey(),
           underlyingEntityIdentifier.getType());
     }
-    
+
     /**
      * Returns an <code>IGroupMember</code> representing either a group or a
      * portal entity.  If the parm <code>type</code> is the group type,
@@ -295,7 +295,7 @@ protected IEntityGroup getGroupFromCache(String key) throws CachingException
         gm = getEntity(key, type);
       return gm;
     }
-    
+
     /**
      * Returns the implementation of <code>IEntityGroupStore</code> whose class name
      * was retrieved by the PropertiesManager (see initialize()).
@@ -351,7 +351,7 @@ protected IEntityGroup getGroupFromCache(String key) throws CachingException
       tes[1]=new RDBMPersonSearcher();
       entitySearcher = new EntitySearcherImpl(tes);
     }
-    
+
 /**
  * Returns a new <code>IEntityGroup</code> for the given Class with an unused
  * key.
@@ -388,7 +388,7 @@ protected void removeGroupFromCache(IEntityGroup group) throws CachingException
           { singleton = new ReferenceGroupService(); }
       return singleton;
     }
-    
+
 /**
  * Updates the cache and the store with the new <code>IEntityGroup</code>.
  * @param group IEntityGroup
@@ -516,15 +516,15 @@ throws GroupsException
   public EntityIdentifier[] searchForGroups(String query, int method, Class leaftype) throws GroupsException {
     return removeDuplicates(groupFactory.searchForGroups(query,method,leaftype));
   }
-  
+
   public EntityIdentifier[] searchForGroups(String query, int method, Class leaftype, IEntityGroup ancestor) throws GroupsException {
     return filterEntities(searchForGroups(query,method,leaftype),ancestor);
   }
-  
+
   public EntityIdentifier[] searchForEntities(String query, int method, Class type) throws GroupsException {
     return removeDuplicates(entitySearcher.searchForEntities(query,method,type));
   }
-  
+
   public EntityIdentifier[] searchForEntities(String query, int method, Class type, IEntityGroup ancestor) throws GroupsException {
     return filterEntities(searchForEntities(query,method,type),ancestor);
   }

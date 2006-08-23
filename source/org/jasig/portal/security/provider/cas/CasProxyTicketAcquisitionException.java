@@ -12,7 +12,7 @@ import edu.yale.its.tp.cas.client.CASReceipt;
 /**
  * Represents an exceptional condition encountered while attempting to
  * acquire a CAS Proxy Ticket.
- * 
+ *
  * This exception evolved from edu.yale.its.tp.portal.security.CASProxyTicketAcquisitionException
  * as distributed in the Yale uPortal CAS security provider distribution version 3.0.0.
  */
@@ -24,13 +24,13 @@ public class CasProxyTicketAcquisitionException extends PortalException {
      * The service for which a proxy ticket could not be acquired.
      */
     private final String service;
-    
+
     /**
      * CASReceipt provding background about the interaction with the CAS server
      * that did not produce a proxy granting ticket.
      */
     private final CASReceipt receipt;
-    
+
     /**
      * The pgtiou that was unsuccessfully presented for obtaining a proxy
      * ticket.  This field will be null when the constructor supplies a
@@ -38,11 +38,11 @@ public class CasProxyTicketAcquisitionException extends PortalException {
      */
     private final String pgtIou;
 
-    
+
     /**
      * Exception thrown when cannot obtain proxy ticket for a given service using the given receipt.
-     * @param service - service for which a PT was requested
-     * @param receipt - receipt the pgtIou of which was being used to obtain the PT.
+     * @param serviceArg - service for which a PT was requested
+     * @param receiptArg - receipt the pgtIou of which was being used to obtain the PT.
      */
     public CasProxyTicketAcquisitionException(String serviceArg, CASReceipt receiptArg){
         super("Could not obtain proxy ticket for service [" + serviceArg + "] using credentials [" + receiptArg + "]");
@@ -50,11 +50,11 @@ public class CasProxyTicketAcquisitionException extends PortalException {
         this.receipt = receiptArg;
         this.pgtIou = null;
     }
-    
+
     /**
      * Exception thrown when cannot obtain proxy ticket for a given service using the given receipt.
-     * @param service - service for which a PT was requested
-     * @param receipt - receipt the pgtIou of which was being used to obtain the PT.
+     * @param serviceArg - service for which a PT was requested
+     * @param receiptArg - receipt the pgtIou of which was being used to obtain the PT.
      * @param cause - underlying throwable causing the error condition
      */
     public CasProxyTicketAcquisitionException(String serviceArg, CASReceipt receiptArg, Throwable cause){
@@ -63,11 +63,11 @@ public class CasProxyTicketAcquisitionException extends PortalException {
         this.receipt = receiptArg;
         this.pgtIou = null;
     }
-    
-    /** 
+
+    /**
      * Exception thrown when cannot obtain proxy ticket for a given service using the given pgtIou.
-     * @param service - service for which a PT was requested.
-     * @param pgtIou - the pgtIou for the PGT which was to be used to obtain the PT.
+     * @param serviceArg - service for which a PT was requested.
+     * @param pgtIouArg - the pgtIou for the PGT which was to be used to obtain the PT.
      */
     public CasProxyTicketAcquisitionException(String serviceArg, String pgtIouArg){
         super("Could not obtain proxy ticket for service [" + serviceArg + "] using credentials [" + pgtIouArg + "]");
@@ -75,11 +75,11 @@ public class CasProxyTicketAcquisitionException extends PortalException {
         this.pgtIou = pgtIouArg;
         this.receipt = null;
     }
-    
-    /** 
+
+    /**
      * Exception thrown when cannot obtain proxy ticket for a given service using the given pgtIou.
-     * @param service - service for which a PT was requested.
-     * @param pgtIou - the pgtIou for the PGT which was to be used to obtain the PT.
+     * @param serviceArg - service for which a PT was requested.
+     * @param pgtIouArg - the pgtIou for the PGT which was to be used to obtain the PT.
      * @param cause - underlying cause of the error condition
      */
     public CasProxyTicketAcquisitionException(String serviceArg, String pgtIouArg, Throwable cause){
@@ -88,7 +88,7 @@ public class CasProxyTicketAcquisitionException extends PortalException {
         this.pgtIou = pgtIouArg;
         this.receipt = null;
     }
-    
+
     /**
      * Get the CASReceipt if present, null otherwise.
      * CASReceipts convey information about a CAS authentication and can provide
@@ -101,7 +101,7 @@ public class CasProxyTicketAcquisitionException extends PortalException {
     public CASReceipt getReceipt() {
         return this.receipt;
     }
-    
+
     /**
      * Get the identifer of the service service for which the portal was trying
      * to obtain a Proxy Ticket when this exception was generated.
@@ -110,7 +110,7 @@ public class CasProxyTicketAcquisitionException extends PortalException {
     public String getService() {
         return this.service;
     }
-    
+
     /**
      * Get the PgtIou.
      * The pgtiou may have been set explicitly in the constructor or this method
@@ -118,13 +118,13 @@ public class CasProxyTicketAcquisitionException extends PortalException {
      * @return the pgtiou.
      */
     public String getPgtIou() {
-        
+
         if (this.pgtIou != null) {
             return this.pgtIou;
         } else if (this.receipt != null) {
             return this.receipt.getPgtIou();
         }
-        
+
         return null;
     }
 }

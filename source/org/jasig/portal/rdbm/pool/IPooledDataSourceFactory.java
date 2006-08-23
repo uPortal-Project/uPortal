@@ -22,9 +22,6 @@ public interface IPooledDataSourceFactory {
      * @param password The password to connect to the database with.
      * @param url The url to locate the database with.
      * @param poolPreparedStatements Should prepared statements be pooled
-     * @param maxActive Maximum number of dB connections in pool. Set to 0 for no limit.
-     * @param maxIdle Maximum number of idle dB connections to retain in pool. Set to 0 for no limit.
-     * @param maxWait Maximum time to wait for a dB connection to become available in ms, in this example 10 seconds. Set to -1 to wait indefinitely.
      * @return A {@link DataSource} that is backed by a connection pool.
      */
     public DataSource createPooledDataSource(String driverClassName, String userName, String password, String url, boolean poolPreparedStatements);

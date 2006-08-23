@@ -30,7 +30,7 @@ import org.apache.commons.logging.LogFactory;
 public class ChannelStaticData extends Hashtable {
 
     private static final Log log = LogFactory.getLog(ChannelStaticData.class);
-    
+
   private long m_timeout = java.lang.Long.MAX_VALUE;
   // Cache a reference to the portal's JNDI context
   private Context m_portalContext = null;
@@ -55,15 +55,15 @@ private IUserLayoutChannelDescription layoutChannelDescription = null;
   {
       this(null, null);
   }
-  
+
   /**
    * If support is being provided to update channel parameters then a Layout
    * Manager instance is required and the initial values of parameters must be
-   * set here to forgo override checks. If a LayoutManager is had for 
+   * set here to forgo override checks. If a LayoutManager is had for
    * ChannelStaticData then setParameter() and setParameters() restrict
    * changing parameters that are not overrideable and hence can not be used to
    * inject the initial parameter values.
-   *  
+   *
    * @param parameters
    * @param ulm
    */
@@ -73,7 +73,7 @@ private IUserLayoutChannelDescription layoutChannelDescription = null;
           this.putAll(parameters);
       this.ulm = ulm;
   }
-  
+
   /**
    * Returns an instance of the IAuthorizationPrincipal for the IPerson
    * @return instance of the IAuthorizationPrincipal for the IPerson
@@ -182,7 +182,7 @@ private IUserLayoutChannelDescription layoutChannelDescription = null;
     /**
      * Set information contained in a channel <param>element Parameters are
      * strings!
-     * 
+     *
      * @param key
      *            param name
      * @param value
@@ -206,15 +206,15 @@ private IUserLayoutChannelDescription layoutChannelDescription = null;
         }
         return (String) super.put(key, value);
     }
-    
+
     /**
      * Returns true if the indicated parameter can be altered. Ad-hoc added
      * parameters will always be allowed to change. Parameters locked during
      * publishing or via the plugged-in layout manager will return false. If no
      * layout manager is available then this method always returns true.
-     * 
+     *
      * @param key
-     * @return
+     * @return boolean
      */
     public boolean canSetParameter(String key) throws PortalException
     {
@@ -225,7 +225,7 @@ private IUserLayoutChannelDescription layoutChannelDescription = null;
             return true;
         return false;
     }
-    
+
     private IUserLayoutChannelDescription getChannelDescription()
             throws PortalException
     {
@@ -244,7 +244,7 @@ private IUserLayoutChannelDescription layoutChannelDescription = null;
      * this is an ad-hoc parameter then the parameter will be removed. Ad-hoc
      * parameters are ones added by a channel instance beyond the set of
      * parameters specified during channel publishing.
-     * 
+     *
      * @param key
      *            param name
      */
@@ -271,18 +271,17 @@ private IUserLayoutChannelDescription layoutChannelDescription = null;
             super.remove(key);
         }
     }
-    
+
     /**
      * Writes all string valued parameters to the database as part of the user's
      * layout.
-     * @param params
      */
     public void store() throws PortalException
     {
         if (ulm == null)
             return;
 
-        
+
         IUserLayoutChannelDescription cd = getChannelDescription();
 
         for (Iterator itr = this.entrySet().iterator(); itr.hasNext();)
@@ -295,10 +294,10 @@ private IUserLayoutChannelDescription layoutChannelDescription = null;
         ulm.saveUserLayout();
         layoutChannelDescription = null; // force a reload next time
     }
-    
+
     /**
      * Copy parameter list from a Map
-     * 
+     *
      * @param params
      *            a map of params
      * @throws IllegalChannelParameterOverrideException
@@ -321,7 +320,7 @@ private IUserLayoutChannelDescription layoutChannelDescription = null;
         }
         catch(PortalException pe)
         {
-            // if an exception occurs and we can't get channel description 
+            // if an exception occurs and we can't get channel description
             // or all parameters are overrideable then accept all params
         }
         // Copy the map
@@ -361,10 +360,10 @@ private IUserLayoutChannelDescription layoutChannelDescription = null;
     public void setICCRegistry(ICCRegistry registry) {
         this.iccr=registry;
     }
-    
+
     public String toString(){
         StringBuffer sb = new StringBuffer();
-        
+
         sb.append("ChannelStaticData: ");
         sb.append("Channel Publish ID = [").append(this.m_channelPublishId).append("] ");
         sb.append("Channel Subscribe ID = [").append(this.m_channelSubscribeId).append("] ");

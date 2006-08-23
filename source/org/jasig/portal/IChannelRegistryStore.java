@@ -63,7 +63,7 @@ public interface IChannelRegistryStore {
 
   /**
    * Create a new ChannelDefinition object.
-   * @param channel id
+   * @param id channel id
    * @return the new channel definition
    * @throws java.lang.Exception
    */

@@ -29,9 +29,9 @@ import org.xml.sax.ContentHandler;
  * layout via the getUserLayout call pass through the pipe along with the
  * resulting SAX event stream. This is conceptual only. The pipe is actually
  * embedded within the DistributedLayoutManager.
- * 
+ *
  * <pre>
- * 
+ *
  *              time proceeds forward moving downward
  *                              |
  *                              |
@@ -52,10 +52,10 @@ import org.xml.sax.ContentHandler;
  *   |          |&lt;-----------------|           |&lt;----------------|             |
  *   |          |                  |           |                 |             |
  *   +----------+                  +-----------+                 +-------------+
- *  
- *  
+ *
+ *
  * </pre>
- * 
+ *
  * This pipe allows us to do specific URL parameter handling that may be unique
  * to a structure and theme stylesheet set. A special parameter uP_dlmPrc is
  * also looked for which causes an optional processor to be embedded within the
@@ -65,22 +65,22 @@ import org.xml.sax.ContentHandler;
  * like adding channel targets, adding column or tab targets, adding targets for
  * moving channels and a different policy for adding targets for moving columns
  * or tabs, etc.
- * 
+ *
  * There are two types of processors supported, a fixed set which does not
  * change and an optional set from which a single processor can be added to the
  * pipe via the uP_dlmPrc parameter. All are configured via the
  * "/properties/dlmContext.xml" file.
- * 
+ *
  * The pipe provides a "front" ContentHandler to the DistributedLayoutManager
  * representing the front of the pipe for SAX events generated in the
  * getUserLayout() method. The ContentHandler passed in from UserInstance via
  * the getUserLayout() method is set as the "back" ContentHandler to which all
  * events exiting the pipe are pushed.
- * 
+ *
  * As such this pipe can act on incoming layout parameters and then influence
  * the perceived layout seen by UserInstance by altering the SAX stream
  * accordingly as it flows back toward UserInstance's ContentHandler.
- * 
+ *
  * @author mark.boyd@sungardhe.com
  */
 public class ProcessingPipe implements IParameterProcessor
@@ -92,18 +92,18 @@ public class ProcessingPipe implements IParameterProcessor
 
     /**
      * Holds the configured array of fixed processors if any in the order that
-     * they are allowed to process layout parameters and optionally filter the 
+     * they are allowed to process layout parameters and optionally filter the
      * SAX event stream if they are IProcessingHandlers.
      */
     private List fixedProcessors = null;
-    
+
     /**
-     * Holds a configured map of optional processors. One of these can be 
+     * Holds a configured map of optional processors. One of these can be
      * selected at a time and can participate in layout parameter processing
      * and SAX event stream handling. These are selected by a request parameter
-     * of uP_dlmPrc containing one of the keys in this map. If uP_dlmPrc is 
+     * of uP_dlmPrc containing one of the keys in this map. If uP_dlmPrc is
      * specified and a corresponding key is not found a IllegalArgumentException
-     * is thrown. An optional processor remains in place until a subsequent 
+     * is thrown. An optional processor remains in place until a subsequent
      * request clears the optional processor by specifying an empty string for
      * the uP_dlmPrc value or specified a different processor. In the request
      * in which the optional processor is cleared or replaced the old processor
@@ -117,26 +117,26 @@ public class ProcessingPipe implements IParameterProcessor
      * be either in implementation of IParameterProcessor or ISaxProcessor.
      */
     private Object optionalProcessor = null;
-    
+
     /**
      * Holds the key of the currently selected optional processor.
      */
     private String optionalProcessorKey;
-    
+
     /**
-     * Holds the last processor in the configured list of fixed processors if 
+     * Holds the last processor in the configured list of fixed processors if
      * any that processes the SAX event stream.
      */
     private ISaxProcessor lastSaxProcessor = null;
 
     /**
-     * Holds the first processor in the configured list of fixed processors if 
+     * Holds the first processor in the configured list of fixed processors if
      * any that processes the SAX event stream.
      */
     private ISaxProcessor firstSaxProcessor = null;
 
     /**
-     * Holds the back ContentHandler to which all SAX events will be pushed 
+     * Holds the back ContentHandler to which all SAX events will be pushed
      * including changes made to the event stream by the pipe.
      */
     private ContentHandler exitContentHandler;
@@ -144,15 +144,15 @@ public class ProcessingPipe implements IParameterProcessor
     /**
      * The parameter watched for by this pipe in the request whose value if
      * included should be an empty String or a value that matches one of the
-     * keys in the optionalProcessors Map. An empty String value removes the 
+     * keys in the optionalProcessors Map. An empty String value removes the
      * currently selected optional processor if any from pipe processing. A
-     * value matching a key sets the corresponding processor as the optional 
+     * value matching a key sets the corresponding processor as the optional
      * procesor prior to performing regular pipe processing. This means that the
      * request in which a processor is made the currently selected optional
      * processor is the first request that that processor will be allowed to
-     * participate in processing. Furthermore, when a currently selected 
+     * participate in processing. Furthermore, when a currently selected
      * optional processor is replaced it does not take part in processing of the
-     * request during which it was replaced. 
+     * request during which it was replaced.
      */
     public static final String CHANGE_PROCESSOR_PARAM = "uP_dlmPrc";
 
@@ -176,18 +176,18 @@ public class ProcessingPipe implements IParameterProcessor
      * stream. These processors will take part in either parameter processing
      * or SAX event stream modification depending on which interfaces they
      * implement. See IParmeterProcessor and ISaxProcessor.
-     * 
+     *
      * @param fixedProcessors
      */
     public void setFixedProcessors(List fixedProcessors)
     {
         firstSaxProcessor = null;
         lastSaxProcessor = null;
-        
+
         if (fixedProcessors != null && fixedProcessors.size()>0)
         {
             this.fixedProcessors = fixedProcessors;
-            
+
             if (fixedProcessors.size() == 1)
             {
                 // see if it handles SAX events as well
@@ -229,19 +229,19 @@ public class ProcessingPipe implements IParameterProcessor
         }
     }
     /**
-     * Sets or clears the optional processor and correspondingly alters the 
+     * Sets or clears the optional processor and correspondingly alters the
      * pipeline through which SAX events pass. If there are no fixed processors
      * then the termination processor is the value for the option processor. If
      * there are fixed processors then the termination processor is the last
      * processor in the fixed list when the options processor is cleared and it
      * is the optional processor when it is set to a non-null value.
-     * 
+     *
      * @param optionalProcessor
      */
     private void setOptionalProcessor(Object optionalProcessor)
     {
         this.optionalProcessor = optionalProcessor;
-        
+
         // see if we need to adjust fixed pipe
         if (optionalProcessor != null &&
                 (this.optionalProcessor instanceof ISaxProcessor))
@@ -254,12 +254,12 @@ public class ProcessingPipe implements IParameterProcessor
             }
         }
     }
-    
+
     /**
-     * Sets the map of optional processors that can be included in the 
+     * Sets the map of optional processors that can be included in the
      * processing and SAX event pipe via inclusion of the uP_dlmPrc parameter
      * being included with a value corresponding to a key in this map.
-     * 
+     *
      * @param optionalProcessors
      */
     public void setOptionalProcessors(Map optionalProcessors)
@@ -267,12 +267,12 @@ public class ProcessingPipe implements IParameterProcessor
         optionalProcessor = null;
         this.optionalProcessors = optionalProcessors;
     }
-    
+
     /**
      * Hands the passed-in instances or IPerson and DistributedLayoutManager
-     * to all configured fixed and optional processors. Hence, this should be 
+     * to all configured fixed and optional processors. Hence, this should be
      * called after setFixedProcessors() and setOptionalProcessors().
-     * 
+     *
      * @see org.jasig.portal.layout.dlm.processing.IParameterProcessor#setResources(org.jasig.portal.security.IPerson, org.jasig.portal.layout.dlm.DistributedLayoutManager)
      */
     public void setResources(IPerson person, DistributedLayoutManager dlm)
@@ -283,7 +283,7 @@ public class ProcessingPipe implements IParameterProcessor
         }
         if (optionalProcessors != null)
         {
-            initProcessorResources(optionalProcessors.values().iterator(), 
+            initProcessorResources(optionalProcessors.values().iterator(),
                     person, dlm);
         }
     }
@@ -291,7 +291,7 @@ public class ProcessingPipe implements IParameterProcessor
     /**
      * Passes the person and DLM objects to those processors that implement the
      * IParameterProcessor interface.
-     * 
+     *
      * @param itr
      * @param person
      * @param dlm
@@ -315,7 +315,7 @@ public class ProcessingPipe implements IParameterProcessor
      * pipe allowing them to act on query or post parameters embedded in the
      * request. This will include all fixed processors if any followed by the
      * optional processor if one is set.
-     * 
+     *
      * If this request includes the uP_dlmPrc parameter then prior to passing
      * the request to any processors the optional processor state is updated
      * according to the value of uP_dlmPrc. If it is an empty String then the
@@ -326,26 +326,26 @@ public class ProcessingPipe implements IParameterProcessor
      * corresponding optional processor becomes part of the pipe possibly
      * replacing an existing optional processor set when uP_dlmPrc was last
      * specified in a request.
-     * 
+     *
      * @see org.jasig.portal.layout.dlm.processing.IParameterProcessor#processParameters(org.jasig.portal.UserPreferences,
      *      javax.servlet.http.HttpServletRequest)
      */
-    public void processParameters(UserPreferences prefs, 
+    public void processParameters(UserPreferences prefs,
             HttpServletRequest request)
     {
         handleOptionalProcessorSelection(request);
         pushRequestToProcessors(prefs, request);
     }
-    
+
     /**
      * Calls the processParameters() method on all fixed processors followed by
      * the currently selected optional processor if any allowing them to act on
      * submitted parameters accordingly to their implemented policy.
-     * 
+     *
      * @param prefs
      * @param request
      */
-    private void pushRequestToProcessors(UserPreferences prefs, 
+    private void pushRequestToProcessors(UserPreferences prefs,
             HttpServletRequest request)
     {
         if (fixedProcessors != null)
@@ -360,7 +360,7 @@ public class ProcessingPipe implements IParameterProcessor
                 }
             }
         }
-        if (optionalProcessor != null && 
+        if (optionalProcessor != null &&
                 optionalProcessor instanceof IParameterProcessor)
         {
             ((IParameterProcessor) optionalProcessor).processParameters(prefs,
@@ -368,20 +368,20 @@ public class ProcessingPipe implements IParameterProcessor
             if (optionalProcessor instanceof IOptionalParameterProcessor &&
                 ((IOptionalParameterProcessor) optionalProcessor).isFinished())
                 setOptionalProcessor(null);
-                
+
         }
     }
-    
+
     /**
-     * Watch for the uP_dlmPrc parameter and swap the optional processor 
+     * Watch for the uP_dlmPrc parameter and swap the optional processor
      * accordingly.
-     * 
+     *
      * @param request
      */
     private void handleOptionalProcessorSelection(HttpServletRequest request)
     {
         String key = request.getParameter(CHANGE_PROCESSOR_PARAM);
-        
+
         if (key != null) // one specified
         {
             if (key.equals("")) // clear currently selected optional processor
@@ -400,7 +400,7 @@ public class ProcessingPipe implements IParameterProcessor
                 if (proc == null)
                 {
                     LOG.error("Optional Processor for " +
-                            CHANGE_PROCESSOR_PARAM + "=" + key + 
+                            CHANGE_PROCESSOR_PARAM + "=" + key +
                             " not found in registered optional processors.");
                 }
                 else
@@ -408,12 +408,12 @@ public class ProcessingPipe implements IParameterProcessor
             }
         }
     }
-    
+
     /**
-     * Returns a cache key indicative of the affect that the pipe has on the 
-     * SAX event stream. If there is no effect on the SAX event stream then an 
+     * Returns a cache key indicative of the affect that the pipe has on the
+     * SAX event stream. If there is no effect on the SAX event stream then an
      * empty String is returned.
-     * 
+     *
      * @see org.jasig.portal.layout.dlm.processing.IProcessor#getCacheKey()
      */
     public String getCacheKey()
@@ -421,9 +421,9 @@ public class ProcessingPipe implements IParameterProcessor
         // only contribute to the key if the pipe alters the SAX stream
         if (fixedProcessors == null && optionalProcessors == null)
             return "";
-        
+
         StringBuffer buf = new StringBuffer();
-        
+
         if (fixedProcessors != null && firstSaxProcessor != null)
         {
             ISaxProcessor sProc  = null;
@@ -443,7 +443,7 @@ public class ProcessingPipe implements IParameterProcessor
             if (sProc != null)
                 buf.append("]");
         }
-        if (optionalProcessor != null && 
+        if (optionalProcessor != null &&
                 optionalProcessor instanceof ISaxProcessor)
         {
             buf.append("OP[");
@@ -454,45 +454,44 @@ public class ProcessingPipe implements IParameterProcessor
         }
         return buf.toString();
     }
-    
+
     /**
      * Sets the ContentHandler to which all SAX events passing through the pipe
      * will be passed including any modifications made to that stream by any of
      * the fixed processors if any or the currently selected optional processor
-     * if any. If there are no fixed processors and no currently selected 
-     * optional processor then the "front" and "back" ContentHandler will be 
-     * the same object. Accordingly, this method must be called prior to 
+     * if any. If there are no fixed processors and no currently selected
+     * optional processor then the "front" and "back" ContentHandler will be
+     * the same object. Accordingly, this method must be called prior to
      * calling getFrontContentHandler().
-     *  
-     * @see org.jasig.portal.layout.dlm.processing.IParameterProcessor#setWrappedContentHandler(org.xml.sax.ContentHandler)
+     *
      */
     public void setExitContentHandler(ContentHandler handler)
     {
         exitContentHandler = handler;
 
         // now plug it into the pipe if it exists
-        if (optionalProcessor != null && 
+        if (optionalProcessor != null &&
                 optionalProcessor instanceof ISaxProcessor)
             ((ISaxProcessor)optionalProcessor).setExitContentHandler(handler);
         else if (lastSaxProcessor != null)
             lastSaxProcessor.setExitContentHandler(handler);
     }
-    
+
     /**
-     * Returns the ContentHandler into which SAX events should be pushed after 
-     * flowing through all ContentHandlers that are part of the pipe. This 
+     * Returns the ContentHandler into which SAX events should be pushed after
+     * flowing through all ContentHandlers that are part of the pipe. This
      * method should only be called after calling setBackContentHandler passing
-     * a valid ContentHandler since that ContentHandler will be returned by 
+     * a valid ContentHandler since that ContentHandler will be returned by
      * this method of there are no fixed processors or a currently selected
      * optional processor.
-     * 
+     *
      * @return
      */
     public ContentHandler getEntryContentHandler()
     {
         if (firstSaxProcessor != null)
             return firstSaxProcessor.getEntryContentHandler();
-        if (optionalProcessor != null && 
+        if (optionalProcessor != null &&
                 optionalProcessor instanceof ISaxProcessor)
             return ((ISaxProcessor)optionalProcessor).getEntryContentHandler();
         return exitContentHandler;

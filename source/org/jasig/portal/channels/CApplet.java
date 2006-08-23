@@ -36,7 +36,6 @@ public class CApplet extends BaseChannel implements ICacheable {
   /**
    * Output channel content to the portal
    * @param out a sax document handler
-   * @param uid a unique ID used to identify the state of the channel
    */
   public void renderXML (ContentHandler out) throws PortalException {
     Document doc = null;
