@@ -31,7 +31,7 @@ public interface CacheFactory {
      * 
      * @param cacheName the name of the cache to retrieve.
      * @return the cache that is referenced by the cache name provided.
-     * @throw IllegalArgumentException if a cache by that name cannot be retrieved.
+     * @throws IllegalArgumentException if a cache by that name cannot be retrieved.
      */
     Map getCache(String cacheName) throws IllegalArgumentException;
     
