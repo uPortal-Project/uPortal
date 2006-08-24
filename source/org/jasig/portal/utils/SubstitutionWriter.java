@@ -11,11 +11,11 @@ import java.io.Writer;
 
 /**
  * A filter presenting a <code>Writer</code> that performs
- * word substitution (search&replace) on the fly.
+ * word substitution (search and replace) on the fly.
  *
  * 7/25/05 - UP-1180 - dmindler@rutgers.edu
  * Modified to make use of optimized SubstitutionIntegerFilter
- * 
+ *
  * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
  * @version $Revision$
  */
@@ -64,7 +64,7 @@ public class SubstitutionWriter extends Writer {
             filter.write(cbuf[i]);
         }
     }
-    
+
     /**
      * A helper method to convert char array to int array.
      * I am sure there's a way to cast it correctly, but I don't want to take my chances :)
@@ -86,13 +86,13 @@ public class SubstitutionWriter extends Writer {
     public static void main(String[] args) {
         // construct a string
         String inputString="Marry had a little lamb, little lamb, little lamb.";
-        
+
         // set out the sink
         java.io.StringWriter sw=new java.io.StringWriter();
         SubstitutionWriter substw=new SubstitutionWriter(sw,(new String("lamb")).toCharArray(),(new String("rump")).toCharArray());
         try {
             substw.write(inputString);
-            substw.flush(); 
+            substw.flush();
             String resultString=sw.toString();
             if(resultString.equals("Marry had a little rump, little rump, little rump.")) {
                System.out.println("Test passed.");
@@ -103,7 +103,7 @@ public class SubstitutionWriter extends Writer {
             System.out.println("Test failed:");
             e.printStackTrace();
         }
-                                                         
+
     }
-            
+
 }

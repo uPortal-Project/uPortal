@@ -12,14 +12,14 @@ import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
  * A class that embodies the logic for determining if a node can be moved to
  * the left or right of another node based on getMovedAllowed() and
  * getPrecedence().
- * 
+ *
  * @version $Revision$ $Date$
  * @since uPortal 2.5
  */
 public class MovementRules
 {
     public static final String RCS_ID = "@(#) $Header$";
-    
+
     /**
        Returns true if hopper is allowed to hop in the rightward, higher-
        sibling direction over the node being hopped; nbh. This is determined
@@ -29,11 +29,11 @@ public class MovementRules
        to a string value of 'false'. The non-existence of a moveAllowed
        attribute defaults to making that node moveable. In otherwords the
        attribute is only included (asserted) when movement is being restricted.
-       
+
        <pre>
        Scenario  |    NBH      |   hopper    |
                  | moveAllowed | moveAllowed |
-       ----------+-------------+-------------+   
+       ----------+-------------+-------------+
           A      |     0       |     0       |
           B      |     0       |     1       |
           C      |     1       |     0       |
@@ -47,16 +47,16 @@ public class MovementRules
        through D are as defined above for the moveAllowed values.
 
        <pre>
-       Scenario --> | A | B | C | D |
+       Scenario --&gt; | A | B | C | D |
        -------------+---+---+---+---+
         Pnbh = Ph   | 0 | 0 | 0 | 1 |
-        Pnbh > Ph   | 0 | 1 | 1 | 1 |
-        Pnbh < Ph   | 0 | 1 | 0 | 1 |
+        Pnbh &gt; Ph   | 0 | 1 | 1 | 1 |
+        Pnbh &lt; Ph   | 0 | 1 | 0 | 1 |
        -------------+---+---+---+---+
        </pre>
      */
     public static boolean canHopRight( IUserLayoutNodeDescription hopper,
-                                       IUserLayoutNodeDescription nbh ) 
+                                       IUserLayoutNodeDescription nbh )
     {
         boolean nbhMoveAld = nbh.isMoveAllowed();
         boolean hopperMoveAld = hopper.isMoveAllowed();
@@ -74,7 +74,7 @@ public class MovementRules
         if ( Pnbh < Ph &&
              hopperMoveAld == true )
             return true;
-        
+
         return false;
     }
 
@@ -94,11 +94,11 @@ public class MovementRules
        from top to bottom on the screen for lowest to highest child node index
        in the parent node for channels. In the tables below a
        zero equates to false and a one equates to true.
-       
+
        <pre>
        Scenario  |    NBH      |   hopper    |
                  | moveAllowed | moveAllowed |
-       ----------+-------------+-------------+   
+       ----------+-------------+-------------+
           A      |     0       |     0       |
           B      |     0       |     1       |
           C      |     1       |     0       |
@@ -116,13 +116,13 @@ public class MovementRules
        and determining what expected and reasonable behavior should be. A
        higher precedence value takes precedence over movement restrictions
        imposed by a node from a fragment with lesser precedence.
-       
+
        <pre>
-       Scenario --> | A | B | C | D |
+       Scenario --&gt; | A | B | C | D |
        -------------+---+---+---+---+
         Pnbh = Ph   | 0 | 0 | 0 | 1 |
-        Pnbh > Ph   | 0 | 0 | 1 | 1 |
-        Pnbh < Ph   | 0 | 1 | 1 | 1 |
+        Pnbh &gt; Ph   | 0 | 0 | 1 | 1 |
+        Pnbh &lt; Ph   | 0 | 1 | 1 | 1 |
        -------------+---+---+---+---+
        </pre>
 
@@ -149,7 +149,7 @@ public class MovementRules
         if ( Pnbh > Ph &&
              nbhMoveAld == true )
             return true;
-        
+
         return false;
     }
 }
