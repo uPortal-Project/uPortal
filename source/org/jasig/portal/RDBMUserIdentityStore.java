@@ -24,6 +24,7 @@ import org.jasig.portal.utils.CounterStoreFactory;
 /**
  * SQL implementation for managing creation and removal of User Portal Data
  * @author Susan Bramhall, Yale University (modify by Julien Marchal, University Nancy 2; Eric Dalquist - edalquist@unicon.net)
+ * @version $Revision$
  */
 public class RDBMUserIdentityStore  implements IUserIdentityStore {
 
