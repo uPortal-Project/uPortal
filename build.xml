@@ -325,6 +325,10 @@
                         Version 1.0rc3
                         URL: http://home.ccil.org/~cowan/XML/tagsoup/
 
+  xom.jar					new XML object model.
+  						Version 1.1
+  						URL: http://www.xom.nu/
+
 -->
 
   <property name="xalan.jar" value="(set this in build.properties!)"/>
@@ -356,6 +360,7 @@
   <property name="casclient.jar" value="lib/casclient-2.1.1.jar"/>
   <property name="rome.jar" value="(set this in build.properties!)"/>
   <property name="tagsoup.jar" value="(set this in build.properties!)"/>
+  <property name="xom.jar" value="(set this in build.properties!)"/>
 
 <!-- ==================== Compilation Classpath =========================== -->
 
@@ -401,6 +406,7 @@
     <pathelement location="${casclient.jar}"/>
     <pathelement location="${rome.jar}"/>
     <pathelement location="${tagsoup.jar}"/>
+    <pathelement location="${xom.jar}"/>
   </path>
 
 
@@ -671,10 +677,14 @@
   target in case the developer wants to create Javadocs independently.
 
 -->
+    <path id="doc.class.path">
+      <pathelement location="${xom.jar}"/>
+      <pathelement location="${build.home}/WEB-INF/classes"/>
+      <pathelement location="${tagsoup.jar}"/>
+    </path>
 
   <target name="javadoc" depends="compile"
    description="Create Javadoc API documentation">
-
     <mkdir dir="${dist.home}/docs/api"/>
     <javadoc sourcepath="source"
            classpathref="compile.classpath"
@@ -690,7 +700,21 @@
 
   </target>
 
-
+  <!--
+    This "javadoXHtml'  target takes the html files produced by the "javadoc" target
+    and runs them throug xom and tagsoup to produce XHTML complient html files
+  -->
+  <target name="javadocXHtml" depends="javadoc">
+ 	<!--
+  	  Sanitize the javadoc
+  	-->
+  	<echo message="Sanitizing the javadoc files"/>
+    <java classname="org.jasig.portal.utils.XHTMLJavaDoc" fork="yes">
+       <jvmarg value="-Xbootclasspath/p:${xercesImpl.jar}:${xml-apis.jar}:${xalan.jar}"/>
+       <classpath refid="doc.class.path" />
+       <arg value="${dist.home}/docs/api"/>
+     </java>
+</target>
 
 <!-- ==================== Prepare Target ================================== -->
 
