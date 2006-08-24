@@ -48,10 +48,10 @@ public class DistributedUserPreferences
     }
 
     /**
-     * Creates a DistributedUserPreferences with values for super classes 
-     * derived from those of the passed in StructureStylesheetUserPreferences 
+     * Creates a DistributedUserPreferences with values for super classes
+     * derived from those of the passed in StructureStylesheetUserPreferences
      * object.
-     * 
+     *
      * @param ssup
      */
     public DistributedUserPreferences
@@ -73,11 +73,11 @@ public class DistributedUserPreferences
         super(tsup);
         this.incorporatedChannelAttributeValues=new Hashtable();
     }
-    
+
     /**
      * Creates a new DistributedUserPreferences object populated with all values
      * from the passed-in instance.
-     * 
+     *
      * @param dup
      */
     public DistributedUserPreferences(DistributedUserPreferences dup)
@@ -90,12 +90,12 @@ public class DistributedUserPreferences
             this.incorporatedFolderAttributeValues = new Hashtable(
                     dup.incorporatedFolderAttributeValues);
     }
-    
+
     /**
-     * Provides a copy of this object with all fields instantiated to reflect 
+     * Provides a copy of this object with all fields instantiated to reflect
      * the values of this object. This allows subclasses to override to add
      * correct copying behavior for their added fields.
-     * 
+     *
      * @return a copy of this object
      */
     public Object newInstance()
@@ -104,7 +104,7 @@ public class DistributedUserPreferences
     }
 
     //////////// extensions for structure super class
-    
+
     public Enumeration getFolders()
     {
         Enumeration userOwned = folderAttributeValues.keys();
@@ -126,7 +126,7 @@ public class DistributedUserPreferences
         return folderAttributeValues.containsKey( folderId ) ||
         incorporatedFolderAttributeValues.containsKey( folderId );
     }
-    
+
     /**
      * Returns the default value for the specified attribute for the specified
      * folder. Defaults for an attribute may be unique to a folder since an
@@ -274,12 +274,12 @@ public class DistributedUserPreferences
     }
 
     /**
-     * Sets the value of an attribute to the value that it had on the folder in 
-     * the fragment from which it was incorporated. User overrides, if allowed, 
-     * are not set here. The setFolderAttributeValue() method is where user 
+     * Sets the value of an attribute to the value that it had on the folder in
+     * the fragment from which it was incorporated. User overrides, if allowed,
+     * are not set here. The setFolderAttributeValue() method is where user
      * overrides are set and maintained distinctly from the original values had
      * in the originating fragment.
-     * 
+     *
      * @param folderSubscribeId
      * @param attributeName
      * @param attributeValue
@@ -290,7 +290,7 @@ public class DistributedUserPreferences
     {
         Integer attributeNumber=(Integer)folderAttributeNumbers
         .get(attributeName);
-        
+
         if(attributeNumber==null)
         {
             LOG.error("Attempting to set a non-existing folder attribute \"" +
@@ -341,7 +341,7 @@ public class DistributedUserPreferences
         // if that attribute isn't defined then we are done
         if(attributeNumber==null)
             return;
-        
+
         List l=(List) folderAttributeValues.get(folderID);
 
         // if no atts found for folder then it doesn't have to be removed
@@ -363,15 +363,15 @@ public class DistributedUserPreferences
         incorporatedFolderAttributeValues.put(folderID,l);
         return l;
     }
-    
+
     /**
-     * Used when loading fragment layouts and converting them to their 
-     * "fragmentized" version suitable for incorporating into other user's 
-     * layouts. One aspect of fragmentization is converting the user and layout 
-     * node IDs to globally unique and consistent IDs. This method is used to 
-     * replace the folder's user and layout specific ID with its globally 
+     * Used when loading fragment layouts and converting them to their
+     * "fragmentized" version suitable for incorporating into other user's
+     * layouts. One aspect of fragmentization is converting the user and layout
+     * node IDs to globally unique and consistent IDs. This method is used to
+     * replace the folder's user and layout specific ID with its globally
      * unique value.
-     * 
+     *
      * @param oldFolderId
      * @param newFolderId
      */
@@ -405,7 +405,7 @@ public class DistributedUserPreferences
         return channelAttributeValues.containsKey( chanId ) ||
         incorporatedChannelAttributeValues.containsKey( chanId );
     }
-    
+
     /**
      * Returns the default value for the specified attribute for the specified
      * channel. Defaults for an attribute may be unique to a channel since an
@@ -459,10 +459,10 @@ public class DistributedUserPreferences
     {
         Integer attributeNumber=(Integer)channelAttributeNumbers
         .get(attributeName);
-        
+
         if(attributeNumber==null)
         {
-            LOG.error("Attempting to obtain a non-existing attribute \"" + 
+            LOG.error("Attempting to obtain a non-existing attribute \"" +
                     attributeName + "\".");
             return null;
         }
@@ -554,13 +554,13 @@ public class DistributedUserPreferences
     }
 
     /**
-     * Sets the value of an attribute to the value that it had on the channel in 
-     * the fragment from which it was incorporated. User overrides, if allowed, 
-     * are not set here. The setChannelAttributeValue() method is where user 
+     * Sets the value of an attribute to the value that it had on the channel in
+     * the fragment from which it was incorporated. User overrides, if allowed,
+     * are not set here. The setChannelAttributeValue() method is where user
      * overrides are set and maintained distinctly from the original values had
      * in the originating fragment.
-     * 
-     * @param folderSubscribeId
+     *
+     * @param channelSubscribeId
      * @param attributeName
      * @param attributeValue
      */
@@ -570,7 +570,7 @@ public class DistributedUserPreferences
     {
         Integer attributeNumber=(Integer)channelAttributeNumbers
         .get(attributeName);
-        
+
         if(attributeNumber==null)
         {
             LOG.error("Attempting to set a non-existing channel attribute \""+
@@ -604,7 +604,7 @@ public class DistributedUserPreferences
         // if that attribute isn't defined then we are done
         if(attributeNumber==null)
             return;
-        
+
         List l=(List) channelAttributeValues.get(channelID);
 
         // if no atts found for channel then it doesn't have to be removed
@@ -627,15 +627,15 @@ public class DistributedUserPreferences
         incorporatedChannelAttributeValues.put(channelSubscribeId,l);
         return l;
     }
-    
+
     /**
-     * Used when loading fragment layouts and converting them to their 
-     * "fragmentized" version suitable for incorporating into other user's 
-     * layouts. One aspect of fragmentization is converting the user and layout 
-     * node IDs to globally unique and consistent IDs. This method is used to 
-     * replace the channel's user and layout specific ID with its globally 
+     * Used when loading fragment layouts and converting them to their
+     * "fragmentized" version suitable for incorporating into other user's
+     * layouts. One aspect of fragmentization is converting the user and layout
+     * node IDs to globally unique and consistent IDs. This method is used to
+     * replace the channel's user and layout specific ID with its globally
      * unique value.
-     * 
+     *
      * @param oldChannelId
      * @param newChannelId
      */

@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <!-- $Revision$ -->
 <!--
-This list of component group services is processed by the composite, or "root" service as it assembles itself.  Each service element has 2 required elements: name and service_factory.  The values of all service elements are delivered to the service_factory.  
+This list of component group services is processed by the composite, or "root" service as it assembles itself.  Each service element has 2 required elements: name and service_factory.  The values of all service elements are delivered to the service_factory.
 -->
 
-<servicelist defaultService="local" 
+<servicelist defaultService="local"
              compositeFactory="org.jasig.portal.groups.ReferenceCompositeGroupServiceFactory"
              nodeSeparator=".">
   <service>
@@ -18,7 +18,7 @@ This list of component group services is processed by the composite, or "root" s
   </service>
 
 <!--  Uncomment to configure an LDAP group service component.  Be sure to edit LDAPGroupStoreConfig.xml with your values. -->
-<!--  
+<!--
   <service>
     <name>ldap</name>
     <service_factory>org.jasig.portal.groups.ReferenceIndividualGroupServiceFactory</service_factory>
@@ -31,7 +31,7 @@ This list of component group services is processed by the composite, or "root" s
 -->
 
 <!-- Uncomment to configure a file system group service component.  Change groupsRoot as appropriate. -->
-<!-- 
+<!--
   <service groupsRoot="C:/groups">
     <name>filesystem</name>
     <service_factory>org.jasig.portal.groups.ReferenceIndividualGroupServiceFactory</service_factory>
@@ -44,7 +44,7 @@ This list of component group services is processed by the composite, or "root" s
 -->
 
 <!-- Uncomment to configure a Person Attributes group service component.  Configure your person attributes groups in PAGSGroupStoreConfig.xml. -->
-<!-- 
+
   <service>
     <name>pags</name>
     <service_factory>org.jasig.portal.groups.ReferenceIndividualGroupServiceFactory</service_factory>
@@ -54,6 +54,6 @@ This list of component group services is processed by the composite, or "root" s
     <internally_managed>false</internally_managed>
     <caching_enabled>true</caching_enabled>
   </service>
--->
+
 
 </servicelist>

@@ -18,11 +18,10 @@ import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
  * @version $Revision$
  */
 public interface IRestrictionManager {
-	
+
   /**
      * Sets the user layout.
      * @param layout a <code>IUserLayout</code> user layout to be checked
-     * @return a boolean value
      * @exception PortalException if an error occurs
      */
   public void setUserLayout(IUserLayout layout) throws PortalException;
@@ -47,7 +46,7 @@ public interface IRestrictionManager {
      * @exception PortalException if an error occurs
      */
   public boolean checkRestriction(String nodeId, String restrictionName, String propertyValue ) throws PortalException;
-  
+
   /**
    * Checks the necessary restrictions while adding a new node
    * @param node a <code>ILayoutNode</code> a new node to be added
@@ -94,7 +93,7 @@ public interface IRestrictionManager {
      * @exception PortalException if an error occurs
      */
   public boolean checkDepthRestrictions( String nodeId, int depth ) throws PortalException;
-  
+
 
   /**
    * Checks the necessary restrictions while updating a node.
@@ -103,5 +102,5 @@ public interface IRestrictionManager {
    * @exception PortalException if an error occurs
    */
   public boolean checkUpdateRestrictions(IUserLayoutNodeDescription nodeDescription) throws PortalException;
-  
+
 }

@@ -213,7 +213,7 @@ public class RDBMDistributedLayoutStore
     /**
      * Registers a NEW structure stylesheet with the database. This overloads
      * the version in the parent to add caching of stylesheets.
-     * @param tsd Stylesheet description object
+     * @param ssd Stylesheet description object
      * @return Integer
      */
     public Integer addStructureStylesheetDescription(StructureStylesheetDescription ssd)

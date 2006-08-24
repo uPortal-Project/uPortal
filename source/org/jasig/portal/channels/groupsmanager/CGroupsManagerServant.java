@@ -22,9 +22,7 @@ public class CGroupsManagerServant extends CGroupsManager
 
    /**
     * put your documentation comment here
-    * @param channel (IMultithreadedChannel)
-    * @param uid (String)
-    */
+s    */
    public CGroupsManagerServant () {
    }
 

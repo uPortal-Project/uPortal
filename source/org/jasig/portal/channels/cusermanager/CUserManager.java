@@ -38,7 +38,7 @@ import org.xml.sax.ContentHandler;
  */
 public class CUserManager extends CUserManagerPermissions implements IChannel, IPermissible {
   private static final Log LOG = LogFactory.getLog(CUserManager.class);
-  
+
   private IDataHandler datasource;
 
   private String mode = Constants.MODEDISPLAY;
@@ -75,7 +75,7 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
    *  Process layout-level events coming from the portal.
    *  Satisfies implementation of IChannel Interface.
    *
-   *  @param <b>PortalEvent</b> ev a portal layout event
+   *  @param ev <b>PortalEvent</b> a portal layout event
    */
   public void receiveEvent(PortalEvent ev) {
 
@@ -87,7 +87,7 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
    *  Receive static channel data from the portal.
    *  Satisfies implementation of IChannel Interface.
    *
-   *  @param <b>ChannelStaticData</b> sd static channel data
+   *  @param sd <b>ChannelStaticData</b> static channel data
    */
   public void setStaticData(ChannelStaticData sd) {
     CSD = sd;
@@ -113,8 +113,8 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
           PwdChngMode = false;
 
       }// for
-    }catch( AuthorizationException ae ){ 
-        LOG.error(ae,ae); 
+    }catch( AuthorizationException ae ){
+        LOG.error(ae,ae);
     }
 
   }// setStaticData
@@ -123,7 +123,7 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
    *  Receive channel runtime data from the portal.
    *  Satisfies implementation of IChannel Interface.
    *
-   *  @param <b>ChannelRuntimeData</b> rd handle to channel runtime data
+   *  @param rd <b>ChannelRuntimeData</b> handle to channel runtime data
    */
   public void setRuntimeData(ChannelRuntimeData rd) {
     CRD = rd;

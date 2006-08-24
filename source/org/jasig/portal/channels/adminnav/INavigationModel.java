@@ -11,7 +11,7 @@ import org.jasig.portal.security.IAuthorizationPrincipal;
 /**
  * Represents a pluggable facility for implementing the administrative navigation
  * channel's functionality.
- * 
+ *
  * @author mboyd@sungardsct.com
  */
 public interface INavigationModel extends ICacheable, IChannel, ILinkRegistrar
@@ -19,9 +19,9 @@ public interface INavigationModel extends ICacheable, IChannel, ILinkRegistrar
     /**
      * Answers true if the user represented by the passed-in authorization
      * principal can access any of the channels pointed
-     *   
+     *
      * @param ap
-     * @return
+     * @return boolean
      */
     public boolean canAccess(IAuthorizationPrincipal ap);
 }

@@ -81,13 +81,13 @@ import org.xml.sax.ContentHandler;
 /**
  * A JSR 168 Portlet adapter that presents a portlet
  * through the uPortal channel interface.
- * <p> 
+ * <p>
  * There is a related channel type called
  * "Portlet Adapter" that is included with uPortal, so to use
  * this channel, just select the "Portlet" type when publishing.
  * </p>
  * <p>
- * Note: A portlet can specify the String "password" in the 
+ * Note: A portlet can specify the String "password" in the
  * user attributes section of the portlet.xml.  In this is done,
  * this adapter will look for the user's cached password. If
  * the user's password is being stored in memory by a caching
@@ -98,28 +98,28 @@ import org.xml.sax.ContentHandler;
  * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
-public class CPortletAdapter 
+public class CPortletAdapter
 	implements ICharacterChannel, IPrivileged, ICacheable, IDirectResponse, IPortletAdaptor {
-    
+
 	protected final Log log = LogFactory.getLog(getClass());
-        
+
     private static boolean portletContainerInitialized;
     private static PortletContainer portletContainer;
     private static ServletConfig servletConfig;
     private static final ChannelCacheKey systemCacheKey;
     private static final ChannelCacheKey instanceCacheKey;
-    
-    private static final String uniqueContainerName = 
+
+    private static final String uniqueContainerName =
         PropertiesManager.getProperty("org.jasig.portal.channels.portlet.CPortletAdapter.uniqueContainerName", "Pluto-in-uPortal");
-        
+
     // Publish parameters expected by this channel
     private static final String portletDefinitionIdParamName = "portletDefinitionId";
     public static final String portletPreferenceNamePrefix = "PORTLET.";
-    
+
     private ChannelStaticData staticData = null;
     private ChannelRuntimeData runtimeData = null;
     private PortalControlStructures pcs = null;
-    
+
     private boolean portletWindowInitialized = false;
     private PortletWindow portletWindow = null;
     private Map userInfo = null;
@@ -129,11 +129,11 @@ public class CPortletAdapter
     private long lastRenderTime = Long.MIN_VALUE;
     private String expirationCache = null;
     private WindowState newWindowState = null;
-    
+
     private Map requestParams = null;
 
     static {
-        portletContainerInitialized = false;        
+        portletContainerInitialized = false;
 
         // Initialize cache keys
         ChannelCacheKey key = new ChannelCacheKey();
@@ -145,7 +145,7 @@ public class CPortletAdapter
         key.setKey("INSTANCE_SCOPE_KEY");
         instanceCacheKey = key;
     }
-    
+
     /**
      * Receive the servlet config from uPortal's PortalSessionManager servlet.
      * Pluto needs access to this object from serveral places.
@@ -154,49 +154,49 @@ public class CPortletAdapter
     public static void setServletConfig(ServletConfig config) {
         servletConfig = config;
     }
-    
+
     /**
-     * 
+     *
      * @throws PortalException
      */
     private synchronized static void initPortletContainer() throws PortalException {
         if (!portletContainerInitialized) {
             portletContainerInitialized = true;
 	        try {
-	            PortletContainerEnvironmentImpl environment = new PortletContainerEnvironmentImpl();        
+	            PortletContainerEnvironmentImpl environment = new PortletContainerEnvironmentImpl();
 	            LogServiceImpl logService = new LogServiceImpl();
 	            FactoryManagerServiceImpl factorManagerService = new FactoryManagerServiceImpl();
 	            InformationProviderServiceImpl informationProviderService = new InformationProviderServiceImpl();
 	            PropertyManagerService propertyManagerService = new PropertyManagerServiceImpl();
-	            
+
 	            logService.init(servletConfig, null);
 	            factorManagerService.init(servletConfig, null);
 	            informationProviderService.init(servletConfig, null);
-	            
+
 	            environment.addContainerService(logService);
 	            environment.addContainerService(factorManagerService);
 	            environment.addContainerService(informationProviderService);
 	            environment.addContainerService(propertyManagerService);
-	
+
 	            //Call added in case the context has been re-loaded
 	            PortletContainerServices.destroyReference(uniqueContainerName);
 	            portletContainer = new PortletContainerImpl();
 	            portletContainer.init(uniqueContainerName, servletConfig, environment, new Properties());
-	            
+
 	        } catch (Exception e) {
 	            String message = "Initialization of the portlet container failed.";
 	            //log.error( message, e);
 	            throw new PortalException(message, e);
 	        }
-        }        
+        }
 
     }
-        
+
     protected void initPortletWindow() throws PortalException {
-        
+
         try {
         	initPortletContainer();
-            
+
             PortletContainerServices.prepare(uniqueContainerName);
 
             // Get the portlet definition Id which must be specified as a publish
@@ -205,7 +205,7 @@ public class CPortletAdapter
             if (portletDefinitionId == null) {
                 throw new PortalException("Missing publish parameter '" + portletDefinitionIdParamName + "'");
             }
-            
+
             // Create the PortletDefinition
             PortletDefinitionImpl portletDefinition = (PortletDefinitionImpl)InformationProviderAccess.getStaticProvider().getPortletDefinition(ObjectIDImpl.createFromString(portletDefinitionId));
             if (portletDefinition == null) {
@@ -219,7 +219,7 @@ public class CPortletAdapter
             final PortletApplicationEntityImpl portAppEnt = new PortletApplicationEntityImpl();
             portAppEnt.setId(portletDefinition.getId().toString());
             portAppEnt.setPortletApplicationDefinition(portletDefinition.getPortletApplicationDefinition());
-            
+
             // Create the PortletEntity
             PortletEntityImpl portletEntity = new PortletEntityImpl();
             portletEntity.setId(staticData.getChannelPublishId());
@@ -229,12 +229,12 @@ public class CPortletAdapter
             portletEntity.setChannelDescription((IUserLayoutChannelDescription)pcs.getUserPreferencesManager().getUserLayoutManager().getNode(staticData.getChannelSubscribeId()));
             portletEntity.setPerson(staticData.getPerson());
             portletEntity.loadPreferences();
-            
+
             // Add the user information into the request See PLT.17.2.
-            
+
             if (userInfo == null) {
                 UserAttributeListImpl userAttributeList = ((PortletApplicationDefinitionImpl)portletDefinition.getPortletApplicationDefinition()).getUserAttributes();
-                
+
                 // here we ask an overridable method to get the user attributes.
                 // you can extend CPortletAdapter to change the implementation of
                 // how we get user attributes.  This whole initPortletWindow method
@@ -246,10 +246,10 @@ public class CPortletAdapter
                     //log.trace("For user [" + uid + "] got user info : [" + userInfo + "]");
                 }
             }
-            
+
             // Wrap the request
             ServletRequestImpl wrappedRequest = new ServletRequestImpl(pcs.getHttpServletRequest(), staticData.getPerson(), portletDefinition.getInitSecurityRoleRefSet());
-             
+
             // Now create the PortletWindow and hold a reference to it
             PortletWindowImpl pw = new PortletWindowImpl();
             pw.setId(staticData.getChannelSubscribeId());
@@ -257,14 +257,14 @@ public class CPortletAdapter
             pw.setChannelRuntimeData(runtimeData);
             pw.setHttpServletRequest(wrappedRequest);
             portletWindow = pw;
-                
+
             // Ask the container to load the portlet
             synchronized(this) {
                 portletContainer.portletLoad(portletWindow, wrappedRequest, pcs.getHttpServletResponse());
             }
-            
+
             portletWindowInitialized = true;
-            
+
         } catch (Exception e) {
             String message = "Initialization of the portlet container failed.";
             log.error( message, e);
@@ -288,20 +288,20 @@ public class CPortletAdapter
      * @param ev a portal event
      */
     public void receiveEvent(PortalEvent ev) {
-        
+
         try {
             PortletContainerServices.prepare(uniqueContainerName);
-            
+
             receivedEvent =true;
-            
+
             switch (ev.getEventNumber()) {
-                
-                // Detect portlet mode changes  
-                
+
+                // Detect portlet mode changes
+
                 // Cannot use the PortletActionProvider to change modes here. It uses
                 // PortletWindow information to store the changes and the window is
                 // not current at this point.
-                
+
                 case PortalEvent.EDIT_BUTTON_EVENT:
                     newPortletMode = PortletMode.EDIT;
                     break;
@@ -311,20 +311,20 @@ public class CPortletAdapter
                 case PortalEvent.ABOUT_BUTTON_EVENT:
                     // We might want to consider a custom ABOUT mode here
                     break;
-                    
+
                 //Detect portlet window state changes
                 case PortalEvent.MINIMIZE_EVENT:
                     newWindowState = WindowState.MINIMIZED;
                     break;
-                
+
                 case PortalEvent.MAXIMIZE_EVENT:
                 	newWindowState = WindowState.NORMAL;
                     break;
-                    
+
                 case PortalEvent.DETACH_BUTTON_EVENT:
                 	newWindowState = WindowState.MAXIMIZED;
                     break;
-            
+
                 //Detect end of session or portlet removed from layout
                 case PortalEvent.UNSUBSCRIBE:
                     //User is removing this portlet from their layout, remove all
@@ -336,7 +336,7 @@ public class CPortletAdapter
                     catch (Exception e) {
                         log.error(e,e);
                     }
-                    
+
                 case PortalEvent.SESSION_DONE:
                     // For both SESSION_DONE and UNSUBSCRIBE, we might want to
                     // release resources here if we need to
@@ -352,12 +352,12 @@ public class CPortletAdapter
                     }
 
                     break;
-                    
+
                 default:
                     break;
             }
         } finally {
-            PortletContainerServices.release();     
+            PortletContainerServices.release();
         }
     }
 
@@ -368,19 +368,19 @@ public class CPortletAdapter
      */
     public void setStaticData(ChannelStaticData sd) throws PortalException {
         staticData = sd;
-        
+
         try {
-            
+
             // Register this portlet's channel subscribe ID in the JNDI context
             // this is probably not necessary since afaik nothing other than this
             // portlet is reading this List. -andrew petro
-            
+
             List portletIds = (List)sd.getJNDIContext().lookup("/portlet-ids");
             portletIds.add(sd.getChannelSubscribeId());
-        
+
         } catch (Exception e) {
             throw new PortalException("Error accessing /portlet-ids JNDI context.", e);
-        }                   
+        }
     }
 
     /**
@@ -397,17 +397,17 @@ public class CPortletAdapter
 
         try {
             PortletContainerServices.prepare(uniqueContainerName);
-            
+
             final PortletWindowImpl portletWindowimp = (PortletWindowImpl)portletWindow;
             final PortletEntity portletEntity = portletWindow.getPortletEntity();
             final PortletDefinition portletDef = portletEntity.getPortletDefinition();
             final HttpServletRequest baseRequest = pcs.getHttpServletRequest();
 
             HttpServletRequest wrappedRequest = new ServletRequestImpl(baseRequest, staticData.getPerson(), portletDef.getInitSecurityRoleRefSet());
-            
+
             //Wrap the request to scope attributes to this portlet instance
             wrappedRequest = new PortletAttributeRequestWrapper(wrappedRequest);
-            
+
             //Set up request attributes (user info, portal session, etc...)
             setupRequestAttributes(wrappedRequest);
 
@@ -465,12 +465,12 @@ public class CPortletAdapter
             }
         } finally {
             PortletContainerServices.release();
-        }        
+        }
     }
 
     /**
      * Sets the portal control structures.
-     * @param pcs the portal control structures
+     * @param pcs1 the portal control structures
      * @throws org.jasig.portal.PortalException
      */
     public void setPortalControlStructures(PortalControlStructures pcs1) throws PortalException {
@@ -481,40 +481,40 @@ public class CPortletAdapter
      * Output channel content to the portal as raw characters
      * @param pw a print writer
      */
-    public void renderCharacters(PrintWriter pw) throws PortalException {        
-        
+    public void renderCharacters(PrintWriter pw) throws PortalException {
+
         if (!portletWindowInitialized) {
             initPortletWindow();
         }
 
-        try {           
+        try {
             String markupString = getMarkup();
-            pw.print(markupString);                       
+            pw.print(markupString);
         } catch (Exception e) {
             throw new PortalException(e);
-        }    
+        }
     }
-  
+
     /**
-     * Output channel content to the portal.  This version of the 
+     * Output channel content to the portal.  This version of the
      * render method is normally not used since this is a "character channel".
      * @param out a sax document handler
      */
-    public void renderXML(ContentHandler out) throws PortalException {        
+    public void renderXML(ContentHandler out) throws PortalException {
 
         if (!portletWindowInitialized) {
             initPortletWindow();
         }
-        
+
         try {
             String markupString = getMarkup();
-                                
+
             // Output content.  This assumes that markupString
             // is well-formed.  Consider changing to a character
             // channel when it becomes available.  Until we use the
             // character channel, these <div> tags will be necessary.
             SAXHelper.outputContent(out, "<div>" + markupString + "</div>");
-                     
+
         } catch (Exception e) {
             throw new PortalException(e);
         }
@@ -528,27 +528,27 @@ public class CPortletAdapter
     protected synchronized String getMarkup() throws PortalException {
         try {
             PortletContainerServices.prepare(uniqueContainerName);
-            
+
             final PortletEntity portletEntity = portletWindow.getPortletEntity();
             final PortletDefinition portletDef = portletEntity.getPortletDefinition();
             final HttpServletRequest baseRequest = pcs.getHttpServletRequest();
 
             HttpServletRequest wrappedRequest = new ServletRequestImpl(baseRequest, staticData.getPerson(), portletDef.getInitSecurityRoleRefSet());
-            
+
             //Wrap the request to scope attributes to this portlet instance
             wrappedRequest = new PortletAttributeRequestWrapper(wrappedRequest);
-            
+
             //Set up request attributes (user info, portal session, etc...)
             setupRequestAttributes(wrappedRequest);
 
-            
+
             final StringWriter sw = new StringWriter();
             HttpServletResponse wrappedResponse = ServletObjectAccess.getStoredServletResponse(pcs.getHttpServletResponse(), new PrintWriter(sw));
-           
-                                                
+
+
             //Use the parameters from the last request so the portlet maintains it's state
             final ChannelRuntimeData rd = runtimeData;
-            
+
             if (!rd.isTargeted() && requestParams != null) {
                wrappedRequest = new DummyParameterRequestWrapper(wrappedRequest, requestParams);
             }
@@ -560,11 +560,11 @@ public class CPortletAdapter
             }
 
             portletContainer.renderPortlet(portletWindow, wrappedRequest, wrappedResponse);
-            
+
             //Support for the portlet modifying it's cache timeout
             final Map properties = PropertyManager.getRequestProperties(portletWindow, wrappedRequest);
             final String[] exprCacheTimeStr = (String[])properties.get(RenderResponse.EXPIRATION_CACHE);
-            
+
             if (exprCacheTimeStr != null && exprCacheTimeStr.length > 0) {
                 try {
                     Integer.parseInt(exprCacheTimeStr[0]); //Check for valid number
@@ -575,13 +575,13 @@ public class CPortletAdapter
                     throw nfe;
                 }
             }
-            
+
             //Keep track of the last time the portlet was successfully rendered
             lastRenderTime = System.currentTimeMillis();
-            
+
             //Return the content
             return sw.toString();
-                        
+
         } catch (Throwable t) {
             log.error(t, t);
             throw new PortalException(t);
@@ -589,7 +589,7 @@ public class CPortletAdapter
             PortletContainerServices.release();
         }
     }
-    
+
     /**
      * Generates a channel cache key.  The key scope is set to be system-wide
      * when the channel is anonymously accessed, otherwise it is set to be
@@ -618,25 +618,25 @@ public class CPortletAdapter
      * <li>No runtime parameters are sent to the channel</li>
      * <li>The focus hasn't switched.</li>
      * </ol>
-     * Otherwise, return <code>false</code>.  
+     * Otherwise, return <code>false</code>.
      * <p>
-     * In other words, cache the content in all cases <b>except</b> 
-     * for when a user clicks a channel button, a link or form button within the channel, 
+     * In other words, cache the content in all cases <b>except</b>
+     * for when a user clicks a channel button, a link or form button within the channel,
      * or the <i>focus</i> or <i>unfocus</i> button.
      * @param validity the validity object
      * @return <code>true</code> if the cache is still valid, otherwise <code>false</code>
      */
     public boolean isCacheValid(Object validity) {
-        
+
         PortletEntity pe = portletWindow.getPortletEntity();
         PortletDefinition pd = pe.getPortletDefinition();
-        
+
         //Expiration based caching support for the portlet.
         String exprCacheTimeStr = pd.getExpirationCache();
         try {
             if (expirationCache != null)
                 exprCacheTimeStr = expirationCache;
-            
+
             int exprCacheTime = Integer.parseInt(exprCacheTimeStr);
 
             if (exprCacheTime == 0) {
@@ -658,50 +658,50 @@ public class CPortletAdapter
         boolean previouslyFocused = focused;
         focused = runtimeData.isRenderingAsRoot();
         boolean focusHasSwitched = focused != previouslyFocused;
-    
+
         // Dirty cache only when we receive an event, one or more request params, or a change in focus
         boolean cacheValid = !(receivedEvent || runtimeData.isTargeted() || focusHasSwitched);
-    
+
         receivedEvent = false;
         return cacheValid;
     }
 
-    
+
     //***************************************************************
     // IDirectResponse methods
-    //***************************************************************  
-    
-    public synchronized void setResponse(HttpServletResponse response) {        
+    //***************************************************************
+
+    public synchronized void setResponse(HttpServletResponse response) {
         try {
             PortletContainerServices.prepare(uniqueContainerName);
-            
+
             final PortletEntity portletEntity = portletWindow.getPortletEntity();
             final PortletDefinition portletDef = portletEntity.getPortletDefinition();
             final HttpServletRequest baseRequest = pcs.getHttpServletRequest();
 
             HttpServletRequest wrappedRequest = new ServletRequestImpl(baseRequest, staticData.getPerson(), portletDef.getInitSecurityRoleRefSet());
-            
+
             //Wrap the request to scope attributes to this portlet instance
             wrappedRequest = new PortletAttributeRequestWrapper(wrappedRequest);
-            
+
             //Set up request attributes (user info, portal session, etc...)
             setupRequestAttributes(wrappedRequest);
-            
-            //Hide the request parameters if this portlet isn't targeted 
+
+            //Hide the request parameters if this portlet isn't targeted
             wrappedRequest = new PortletParameterRequestWrapper(wrappedRequest);
 
-            
+
             //Since the portlet is rendering through IDirectResponse change the window state to "exclusive"
             DynamicInformationProvider dip = InformationProviderAccess.getDynamicProvider(pcs.getHttpServletRequest());
             PortletActionProvider pap = dip.getPortletActionProvider(portletWindow);
             pap.changePortletWindowState(new WindowState("exclusive"));
-            
+
 
             HttpServletResponse wrappedResponse = new OutputStreamResponseWrapper(response);
 
             //render the portlet
             portletContainer.renderPortlet(portletWindow, wrappedRequest, wrappedResponse);
-            
+
             //Ensure all the data gets written out
             wrappedResponse.flushBuffer();
         } catch (Throwable t) {
@@ -710,24 +710,24 @@ public class CPortletAdapter
             PortletContainerServices.release();
         }
     }
-    
-    
+
+
     //***************************************************************
     // Helper methods
-    //***************************************************************  
+    //***************************************************************
 
     /**
      * Retrieves the users password by iterating over
      * the user's security contexts and returning the first
      * available cached password.
-     * 
+     *
      * @param baseContext The security context to start looking for a password from.
      * @return the users password
      */
     private String getPassword(ISecurityContext baseContext) {
         String password = null;
         IOpaqueCredentials oc = baseContext.getOpaqueCredentials();
-        
+
         if (oc instanceof NotSoOpaqueCredentials) {
             NotSoOpaqueCredentials nsoc = (NotSoOpaqueCredentials)oc;
             password = nsoc.getCredentials();
@@ -739,26 +739,26 @@ public class CPortletAdapter
             ISecurityContext subContext = (ISecurityContext)en.nextElement();
             password = this.getPassword(subContext);
         }
-        
+
         return password;
     }
-    
+
     /**
      * Adds the appropriate information to the request attributes of the portlet.
-     * 
+     *
      * This is an extension point.  You can override this method to set other
      * request attributes.
-     * 
+     *
      * @param request The request to add the attributes to
      */
     protected void setupRequestAttributes(final HttpServletRequest request) {
         //Add the user information map
         request.setAttribute(PortletRequest.USER_INFO, userInfo);
     }
-    
+
     /**
      * Get the Map of portlet user attribute names to portlet user attribute values.
-     * 
+     *
      * This is an extension point.  You can extend CPortletAdapter and override this
      * method to implement the particular user attribute Map creation strategy that
      * you need to implement.  Such strategies might rename uPortal
@@ -767,26 +767,26 @@ public class CPortletAdapter
      * additional attributes, convey a CAS proxy ticket or other security token.
      * This extension point is the way to accomodate the particular user attributes
      * particular portlets require.
-     * 
+     *
      * The default implementation of this method includes in the userInfo Map
      * those uPortal IPerson attributes matching entries in the list of attributes the
      * Portlet declared it wanted.  Additionally, the default implementation copies
      * the cached user password if the Portlet declares it wants the user attribute
      * 'password'.
-     * 
+     *
      * @param staticData data associated with the particular instance of the portlet window for the particular
      * user session
      * @param userAttributes the user attributes requested by the Portlet
      * @return a Map from portlet user attribute names to portlet user attribute values.
      */
     protected Map getUserInfo(ChannelStaticData staticData, UserAttributeListImpl userAttributes) {
-        
+
         final String PASSWORD_ATTR = "password";
-        
+
         Map userInfo = new HashMap();
         IPerson person = staticData.getPerson();
         if (person.getSecurityContext().isAuthenticated()) {
-            
+
             // for each attribute the Portlet requested
             for (Iterator iter = userAttributes.iterator(); iter.hasNext(); ) {
                 UserAttributeImpl userAttribute = (UserAttributeImpl)iter.next();

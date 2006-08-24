@@ -24,9 +24,9 @@ import org.xml.sax.SAXException;
  * @version $Revision$
  */
 public class DocumentFactory {
-    
+
     private static final Log log = LogFactory.getLog(DocumentFactory.class);
-    
+
     protected static DocumentFactory _instance;
     protected static final LocalDocumentBuilder localDocBuilder = new LocalDocumentBuilder();
     protected DocumentBuilderFactory dbFactory = null;
@@ -69,7 +69,7 @@ public class DocumentFactory {
 
     /**
      * @param stream
-     * @return
+     * @return Document
      * @throws IOException
      * @throws SAXException
      * @deprecated Does not provide document identifier in exceptions.
@@ -83,7 +83,7 @@ public class DocumentFactory {
 /**
  * @param stream
  * @param er
- * @return
+ * @return Document
  * @throws IOException
  * @throws SAXException
  * @deprecated Does not provide document identifier in exceptions.

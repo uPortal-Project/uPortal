@@ -17,10 +17,10 @@ import org.jasig.portal.layout.node.ILayoutNode;
 
 public abstract class UserLayoutRestriction implements IUserLayoutRestriction {
 
-  private String name;	
+  private String name;
   private String restrictionExpression;
   protected String nodePath;
-  
+
   public UserLayoutRestriction() {
      this("",LOCAL_RESTRICTION_PATH);
   }
@@ -36,29 +36,29 @@ public abstract class UserLayoutRestriction implements IUserLayoutRestriction {
 
   /**
    * Sets the name of the current restriction
-   * @param a <code>String</code> name
+   * @param name <code>String</code> name
    */
   public void setName( String name ) {
   	this.name = name;
   }
-  
+
   /**
    * Returns the name of the current restriction
-   * @return a <code>String</code> name
+   * @return name <code>String</code> name
    */
   public String getName() {
   	return name;
   }
-  
-  
+
+
   /**
    * Sets the restriction path
-   * @param restrictionPath a <code>String</code> path
+   * @param nodePath a <code>String</code> path
    */
   public void setRestrictionPath ( String nodePath ) {
   	this.nodePath = nodePath;
   }
-  
+
 
   /**
      * Parses the restriction expression of the current node
@@ -100,7 +100,7 @@ public abstract class UserLayoutRestriction implements IUserLayoutRestriction {
      * @return a <code>String</code> restriction name
      */
   public static String getUniqueKey( String restrictionName, String nodePath ) {
-  	 if ( nodePath!=null && nodePath.length() > 0  ) 
+  	 if ( nodePath!=null && nodePath.length() > 0  )
   	 	nodePath = LOCAL_RESTRICTION_PATH;
      return restrictionName+":"+nodePath;
   }
@@ -114,7 +114,7 @@ public abstract class UserLayoutRestriction implements IUserLayoutRestriction {
 	 return getUniqueKey(restrictionName,LOCAL_RESTRICTION_PATH);
   }
 
-  
+
 
   /**
      * Sets the restriction expression
@@ -123,10 +123,10 @@ public abstract class UserLayoutRestriction implements IUserLayoutRestriction {
   public void setRestrictionExpression ( String restrictionExpression ) {
 	  if ( !restrictionExpression.equals(this.restrictionExpression) ) {
 		  this.restrictionExpression = restrictionExpression;
-		  try { 
-			  parseRestrictionExpression(); 
+		  try {
+			  parseRestrictionExpression();
 		  }
-		  catch ( PortalException pe ) { 
+		  catch ( PortalException pe ) {
 			  pe.printStackTrace();
 			  System.out.println( "restriction expression: " + restrictionExpression );
 			  System.out.println("setRestrictionExpression: " + pe);

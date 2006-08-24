@@ -414,7 +414,7 @@ public class ProcessingPipe implements IParameterProcessor
      * SAX event stream. If there is no effect on the SAX event stream then an
      * empty String is returned.
      *
-     * @see org.jasig.portal.layout.dlm.processing.IProcessor#getCacheKey()
+     * @return String cache key
      */
     public String getCacheKey()
     {
@@ -485,7 +485,7 @@ public class ProcessingPipe implements IParameterProcessor
      * this method of there are no fixed processors or a currently selected
      * optional processor.
      *
-     * @return
+     * @return ContentHandler
      */
     public ContentHandler getEntryContentHandler()
     {
