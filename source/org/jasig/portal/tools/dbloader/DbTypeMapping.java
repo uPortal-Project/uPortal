@@ -13,7 +13,7 @@ import java.util.Iterator;
  * to specific types for different databases.
  *
  * @author Ken Weiner, kweiner@unicon.net
- * @author Mark Boyd <mark.boyd@engineer.com>
+ * @author Mark Boyd  {@link <a href="mailto:mark.boyd@engineer.com">mark.boyd@engineer.com</a>}
  * @version $Revision$
  */
 public class DbTypeMapping

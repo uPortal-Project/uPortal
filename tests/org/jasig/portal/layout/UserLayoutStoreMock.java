@@ -16,7 +16,7 @@ import org.jasig.portal.layout.IUserLayoutStore;
 /**
  * A base class for UserLayoutStore mock objects that does nothing.
  *
- * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
+ * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  * @version 1.0
  */
 

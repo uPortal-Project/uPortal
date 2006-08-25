@@ -14,7 +14,7 @@ package org.jasig.portal.tools.versioning;
  * The version of a specific piece of code is represented by three integers.
  * In most significant order these are Major, Minor, and Micro. 
  *
- * @author Mark Boyd <mark.boyd@engineer.com>
+ * @author Mark Boyd  {@link <a href="mailto:mark.boyd@engineer.com">mark.boyd@engineer.com</a>}
  * @version $Revision$
  */
 public class Version

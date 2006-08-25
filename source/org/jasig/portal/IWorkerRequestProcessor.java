@@ -13,7 +13,7 @@ package org.jasig.portal;
  * access to the internal structures.
  *
  * @version $Revision$
- * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
+ * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  */
 public interface IWorkerRequestProcessor {
 

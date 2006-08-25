@@ -18,7 +18,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * A thread pool implementation with a few extra kinks,
  * such as ThreadPoolReceipt.
- * @author Peter Kharchenko <a href="mailto:">pkharchenko@interactivebusiness.com</a>
+ * @author Peter Kharchenko {@link <a href="mailto:pkharchenko@interactivebusiness.com">pkharchenko@interactivebusiness.com</a>}
  * @version $Revision$
  */
 public class ThreadPool extends ThreadGroup {

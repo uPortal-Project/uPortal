@@ -16,7 +16,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * Handles the channel-type tags in CAR deployment descriptors enabling
  * adding of channel types from within CARs automatically.
  *
- * @author Mark Boyd <mark.boyd@engineer.com>
+ * @author Mark Boyd  {@link <a href="mailto:mark.boyd@engineer.com">mark.boyd@engineer.com</a>}
  * @version $Revision$
  */
 public class ChannelTypeTagHandler extends DefaultHandler

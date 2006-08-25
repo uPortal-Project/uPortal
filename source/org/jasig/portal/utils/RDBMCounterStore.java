@@ -19,7 +19,7 @@ import org.apache.commons.logging.LogFactory;
  * A reference implementation for the counter store
  *
  * @author George Lindholm, george.lindholm@ubc.ca
- * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
+ * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
  * @version $Revision$
  */

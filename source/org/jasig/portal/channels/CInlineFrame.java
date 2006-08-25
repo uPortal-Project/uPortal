@@ -39,10 +39,12 @@ public class CInlineFrame extends BaseChannel implements ICacheable {
    * Creates IFrame or link depending on browser capability.
    * The XML will look something like this:
    *
-   * <iframe>
-   *   <url>http://blah.blah.blah</url>
-   *    <height>600</height>
-   * </iframe>
+   * <pre>
+   * &lt;iframe&gt;
+   *   &lt;url&gt;http://blah.blah.blah&lt;/url&gt;
+   *    &lt;height&gt;600&lt;/height&gt;
+   * &lt;/iframe&gt;
+   * </pre>
    */
   public void renderXML (ContentHandler out) throws PortalException {
 

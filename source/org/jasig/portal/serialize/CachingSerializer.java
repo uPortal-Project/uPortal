@@ -10,7 +10,7 @@ import java.io.UnsupportedEncodingException;
 /**
  * <code>CachingSerializer</code> interface allows low-level character interaction with a serializer.
  *
- * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
+ * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  */
 public interface CachingSerializer {
 

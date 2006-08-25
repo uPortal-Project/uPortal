@@ -24,7 +24,7 @@ import org.apache.commons.logging.LogFactory;
  * Provides file download capability for the portal.
  *
  * @author <a href="mailto:svenkatesh@interactivebusiness.com">Sridhar Venkatesh</a>
- * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
+ * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  */
 public class DownloadDispatchWorker implements IWorkerRequestProcessor {
     

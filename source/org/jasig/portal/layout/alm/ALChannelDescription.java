@@ -24,7 +24,7 @@ import org.w3c.dom.Element;
  * It was moved to its present package to reflect that it is part of Aggregated
  * Layouts.
  *
- * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
+ * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  * @version $Revision$ $Date$ 
  */
 public class ALChannelDescription extends UserLayoutChannelDescription implements IALChannelDescription {

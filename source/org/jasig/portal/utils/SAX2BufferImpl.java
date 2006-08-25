@@ -23,7 +23,7 @@ import org.xml.sax.ext.LexicalHandler;
 /**
  * A basic XML buffer implementation.
  *
- * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
+ * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  */
 
 public class SAX2BufferImpl extends SAX2FilterImpl

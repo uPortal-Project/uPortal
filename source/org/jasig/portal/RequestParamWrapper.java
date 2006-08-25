@@ -24,7 +24,7 @@ import com.oreilly.servlet.multipart.ParamPart;
 /**
  * Wraps an http request object to prevent unverified requests from
  * accessing any of the request parameters.
- * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
+ * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  * @version $Revision$
  */
 public class RequestParamWrapper extends HttpServletRequestWrapper {

@@ -16,7 +16,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * contain only attributes and hence only the startElement event is
  * needed.
  * 
- * @author Mark Boyd <mark.boyd@engineer.com>
+ * @author Mark Boyd  {@link <a href="mailto:mark.boyd@engineer.com">mark.boyd@engineer.com</a>}
  * @version $Revision$
  */
 class WorkerTagHandler

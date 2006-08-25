@@ -12,7 +12,7 @@ import java.io.PrintWriter;
  * Note: If a particular channel implements this optional interface, the portal
  * will make use of it if and only if character caching portal setting is turned on.
  * (it is not necessary for the channel to support caching, but character caching needs to be enabled for the portal)
- * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
+ * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  * @author <a href="mailto:nbolton@unicon.net">Nick Bolton</a>
  * @version $Revision$
  */

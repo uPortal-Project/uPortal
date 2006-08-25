@@ -22,7 +22,7 @@ import org.apache.commons.logging.LogFactory;
  * functional name. Version is represented by three integers. In most 
  * significant order these are Major, Minor, and Micro.
  * 
- * @author Mark Boyd <mark.boyd@engineer.com>
+ * @author Mark Boyd  {@link <a href="mailto:mark.boyd@engineer.com">mark.boyd@engineer.com</a>}
  * @version $Revision$
  */
 public class VersionsManager

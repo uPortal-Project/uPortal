@@ -13,7 +13,7 @@ import org.jasig.portal.security.IPerson;
 
 /**
  * Interface to user preferences management class.
- * @author Peter Kharchenko <a href="mailto:">pkharchenko@interactivebusiness.com</a>
+ * @author Peter Kharchenko {@link <a href="mailto:pkharchenko@interactivebusiness.com">pkharchenko@interactivebusiness.com</a>}
  * @version $Revision$
  */
 public interface IUserPreferencesManager {

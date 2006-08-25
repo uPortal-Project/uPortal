@@ -8,7 +8,7 @@ package org.jasig.portal;
 /**
  * This is an ancestor of the {@link IPrivilegedChannel} interface, allows for more general
  * handling of both regular and multithreaded ({@link IMultithreadedChannel}) privileged channels in the framework.
- * @author Peter Kharchenko <a href="mailto:">pkharchenko@interactivebusiness.com</a>
+ * @author Peter Kharchenko {@link <a href="mailto:pkharchenko@interactivebusiness.com">pkharchenko@interactivebusiness.com</a>}
  * @version $Revision$
  * @see IPrivilegedChannel
  */

@@ -63,7 +63,7 @@ import org.apache.commons.logging.LogFactory;
  *   However, no framework code currently checks the willRender property of ChannelRuntimeData.</li>
  * </ul>
  * @version $Revision$ $Date$ 
- * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
+ * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  */
 public class ChannelRuntimeProperties
 {

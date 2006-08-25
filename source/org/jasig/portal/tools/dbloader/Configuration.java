@@ -22,7 +22,7 @@ import org.w3c.dom.Document;
  * Holds all configuration values used in DbLoader as part of loading a database.
  *
  * @author Ken Weiner, kweiner@unicon.net
- * @author Mark Boyd <mark.boyd@engineer.com>
+ * @author Mark Boyd  {@link <a href="mailto:mark.boyd@engineer.com">mark.boyd@engineer.com</a>}
  * @version $Revision$
  */
 public class Configuration

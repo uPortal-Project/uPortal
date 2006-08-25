@@ -11,7 +11,7 @@ import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
  * A layout event involving old parent reference. 
  * Used to related "move" and "delete" node events.
  *
- * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
+ * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  * @version 1.0
  */
 public class LayoutMoveEvent extends LayoutEvent {

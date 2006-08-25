@@ -43,7 +43,7 @@ import org.apache.commons.logging.LogFactory;
  * See the ChannelRuntimeData.getBaseMediaURL methods from which channels
  * can obtain the base URL dynamically without having to know if they are
  * deployed as a traditional channel or as a channel archive.
- * @author Mark Boyd <mark.boyd@engineer.com>
+ * @author Mark Boyd  {@link <a href="mailto:mark.boyd@engineer.com">mark.boyd@engineer.com</a>}
  * @version $Revision$
  */
 public class CarResourceWorker implements IWorkerRequestProcessor {

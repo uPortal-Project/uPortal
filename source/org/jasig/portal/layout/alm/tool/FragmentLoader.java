@@ -52,7 +52,7 @@ import org.xml.sax.helpers.XMLReaderFactory;
  * and to reflect that this functionality is in support of Aggregated Layouts.
  * 
  *
- * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
+ * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  * @author <a href="mailto:mvi@immagic.com">Michael Ivanov</a>
  * @version 1.0 $Revision$ $Date$
  * @since uPortal 2.5

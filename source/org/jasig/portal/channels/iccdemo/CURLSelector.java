@@ -26,7 +26,7 @@ import org.xml.sax.ContentHandler;
 /**
  * A url selector channel (part of the Inter-channel communication demo).
  *
- * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
+ * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  * @version $Revision$
  */
 public class CURLSelector extends BaseChannel {

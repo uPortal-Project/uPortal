@@ -14,7 +14,7 @@ import org.jasig.portal.security.IPerson;
 /**
  * A class that allows <code>GuestUserPreferencesManager</code> to be presented as <code>IUserpreferencesManager</code>.
  *
- * @author Peter Kharchenko <a href="mailto:">pkharchenko@interactivebusiness.com</a>
+ * @author Peter Kharchenko {@link <a href="mailto:pkharchenko@interactivebusiness.com">pkharchenko@interactivebusiness.com</a>}
  * @version $Revision$
  */
 public class GuestUserPreferencesManagerWrapper implements IUserPreferencesManager {

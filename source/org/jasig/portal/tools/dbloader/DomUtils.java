@@ -18,7 +18,7 @@ import org.w3c.dom.Text;
  * loading of the database.
  *
  * @author Ken Weiner, kweiner@unicon.net
- * @author Mark Boyd <mark.boyd@engineer.com>
+ * @author Mark Boyd  {@link <a href="mailto:mark.boyd@engineer.com">mark.boyd@engineer.com</a>}
  * @version $Revision$
  */
 class DomUtils

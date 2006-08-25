@@ -14,7 +14,7 @@ import org.xml.sax.ContentHandler;
  * for updating channel state, and is eventually followed by a call to the {@link #renderXML} method that 
  * retrieves the current state of the channel. These are the main two methods of the interface.
  * 
- * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
+ * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  * @version $Revision$
  */
 public interface IChannel

@@ -10,7 +10,7 @@ import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 /**
  * A basic user layout event, involving just one node.
  *
- * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
+ * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  * @version 1.0
  */
 public class LayoutEvent extends java.util.EventObject {

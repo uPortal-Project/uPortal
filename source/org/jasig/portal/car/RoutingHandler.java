@@ -17,7 +17,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * services. This object also keeps track of the full traversal path
  * from an element back to the containing document object.
  * 
- * @author Mark Boyd <mark.boyd@engineer.com>
+ * @author Mark Boyd  {@link <a href="mailto:mark.boyd@engineer.com">mark.boyd@engineer.com</a>}
  * @version $Revision$
  */
 public class RoutingHandler

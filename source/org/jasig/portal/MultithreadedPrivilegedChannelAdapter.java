@@ -7,7 +7,7 @@ package org.jasig.portal;
 
 /**
  * Internal adapter for a multithreaded channel that is also privileged.
- * @author Peter Kharchenko <a href="mailto:">pkharchenko@interactivebusiness.com</a>
+ * @author Peter Kharchenko {@link <a href="mailto:pkharchenko@interactivebusiness.com">pkharchenko@interactivebusiness.com</a>}
  * @version $Revision$
  * @see MultithreadedChannelAdapter
  */

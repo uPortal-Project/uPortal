@@ -48,7 +48,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * inside of itself.
  *   
  *
- * @author Mark Boyd <mark.boyd@engineer.com>
+ * @author Mark Boyd  {@link <a href="mailto:mark.boyd@engineer.com">mark.boyd@engineer.com</a>}
  * @version $Revision$
  */
 public class ProcessIfTagHandler

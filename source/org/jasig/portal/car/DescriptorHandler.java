@@ -31,7 +31,7 @@ import org.xml.sax.SAXException;
  * take action during parsing and others to cache information in the 
  * descriptor making it accessible via accessor methods.
  *
- * @author Mark Boyd <mark.boyd@engineer.com>
+ * @author Mark Boyd  {@link <a href="mailto:mark.boyd@engineer.com">mark.boyd@engineer.com</a>}
  * @version $Revision$
  */
 public class DescriptorHandler

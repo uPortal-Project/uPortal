@@ -25,7 +25,7 @@ import org.apache.commons.logging.LogFactory;
  * Used to store channel configuration items and parameters.
  * @author Ken Weiner, Peter Kharchenko
  * @version $Revision$
- * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
+ * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  */
 public class ChannelStaticData extends Hashtable {
 

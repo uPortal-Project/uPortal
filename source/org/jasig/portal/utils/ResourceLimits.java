@@ -9,7 +9,7 @@ package  org.jasig.portal.utils;
  * Basic resource limits
  * Limits include : hard upper/lower limits, desired size,
  * activeLimit, update time and prune factor.
- * @author Peter Kharchenko <a href="mailto:">pkharchenko@interactivebusiness.com</a>
+ * @author Peter Kharchenko {@link <a href="mailto:pkharchenko@interactivebusiness.com">pkharchenko@interactivebusiness.com</a>}
  * @version $Revision$
  */
 public class ResourceLimits

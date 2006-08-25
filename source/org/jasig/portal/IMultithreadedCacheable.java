@@ -8,7 +8,7 @@ package  org.jasig.portal;
 
 /**
  * A cacheable interface for the multithreaded channels
- * @author Peter Kharchenko <a href="mailto:">pkharchenko@interactivebusiness.com</a>
+ * @author Peter Kharchenko {@link <a href="mailto:pkharchenko@interactivebusiness.com">pkharchenko@interactivebusiness.com</a>}
  * @see ICacheable
  * @see IMultithreadedChannel
  * 

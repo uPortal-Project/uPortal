@@ -107,7 +107,7 @@ import org.xml.sax.ContentHandler;
  * empty document and allow the path to the empty document.</p>
  * @author Steve Toth, stoth@interactivebusiness.com
  * @author Ken Weiner, kweiner@unicon.net
- * @author Peter Kharchenko <a href="mailto:">pkharchenko@interactivebusiness.com</a> (multithreading,caching)
+ * @author Peter Kharchenko {@link <a href="mailto:pkharchenko@interactivebusiness.com">pkharchenko@interactivebusiness.com</a>} (multithreading,caching)
  * @version $Revision$
  */
 

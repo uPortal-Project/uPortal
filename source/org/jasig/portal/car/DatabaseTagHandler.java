@@ -28,7 +28,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * by tables.xml and hence should be structured identically to uPortal's 
  * default data set file data.xml.
  * 
- * @author Mark Boyd <mark.boyd@engineer.com>
+ * @author Mark Boyd  {@link <a href="mailto:mark.boyd@engineer.com">mark.boyd@engineer.com</a>}
  * @version $Revision$ $Date$
  */
 public class DatabaseTagHandler

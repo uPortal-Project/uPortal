@@ -12,7 +12,7 @@ import java.util.jar.JarFile;
  * path within the XML being parsed and the jarfile whose deployment
  * descriptor is being parsed.
  *
- * @author Mark Boyd <mark.boyd@engineer.com>
+ * @author Mark Boyd  {@link <a href="mailto:mark.boyd@engineer.com">mark.boyd@engineer.com</a>}
  * @version $Revision$
  */
 public class ParsingContext

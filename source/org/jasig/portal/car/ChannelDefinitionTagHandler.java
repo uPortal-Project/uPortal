@@ -19,7 +19,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * delegates to an inner content handler for each block to do the real work
  * of publishing.
  * 
- * @author Mark Boyd <mark.boyd@engineer.com>
+ * @author Mark Boyd  {@link <a href="mailto:mark.boyd@engineer.com">mark.boyd@engineer.com</a>}
  * @version $Revision$
  */
 public class ChannelDefinitionTagHandler

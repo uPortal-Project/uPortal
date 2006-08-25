@@ -25,7 +25,7 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * A multithreaded version of a UserInstance.
- * @author Peter Kharchenko <a href="mailto:">pkharchenko@interactivebusiness.com</a>
+ * @author Peter Kharchenko {@link <a href="mailto:pkharchenko@interactivebusiness.com">pkharchenko@interactivebusiness.com</a>}
  * @version $Revision$
  */
 public class GuestUserInstance extends UserInstance implements HttpSessionBindingListener {

@@ -56,7 +56,7 @@ import org.xml.sax.XMLReader;
  * A class handling holding all user state information. The class is also reponsible for
  * request processing and orchestrating the entire rendering procedure.
  * (this is a replacement for the good old LayoutBean class)
- * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
+ * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  * @version $Revision$
  */
 public class UserInstance implements HttpSessionBindingListener {

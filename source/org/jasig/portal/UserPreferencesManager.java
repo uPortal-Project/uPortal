@@ -33,7 +33,7 @@ import org.jasig.portal.utils.PropsMatcher;
  * UserPreferencesManager is responsible for keeping: user id, user layout, user preferences
  * and stylesheet descriptions.
  * For method descriptions please see {@link IUserPreferencesManager}.
- * @author Peter Kharchenko <a href="mailto:">pkharchenko@interactivebusiness.com</a>
+ * @author Peter Kharchenko {@link <a href="mailto:pkharchenko@interactivebusiness.com">pkharchenko@interactivebusiness.com</a>}
  * @version $Revision$
  */
 public class UserPreferencesManager implements IUserPreferencesManager {

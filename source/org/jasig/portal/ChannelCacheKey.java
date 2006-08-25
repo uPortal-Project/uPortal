@@ -8,7 +8,7 @@ package  org.jasig.portal;
 
 /**
  * A general channel cache key class. The class includes the key iteslf, as well as key properties.
- * @author Peter Kharchenko <a href="mailto:">pkharchenko@interactivebusiness.com</a>
+ * @author Peter Kharchenko {@link <a href="mailto:pkharchenko@interactivebusiness.com">pkharchenko@interactivebusiness.com</a>}
  * @version $Revision$
  */
 public class ChannelCacheKey {

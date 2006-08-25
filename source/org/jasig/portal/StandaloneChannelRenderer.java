@@ -28,7 +28,7 @@ import org.jasig.portal.utils.XSLT;
  * StandaloneChannelRenderer is meant to be used as a base class for channels
  * that might be rendered outside of the standard user-layout driven scheme.
  * (for example CSelectSystemProfile).
- * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
+ * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  * @version $Revision$
  */
 

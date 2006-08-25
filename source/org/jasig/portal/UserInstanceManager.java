@@ -24,7 +24,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * Determines which user instance object to use for a given user.
  *
- * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
+ * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  * @version $Revision 1.1$
  */
 public class UserInstanceManager {

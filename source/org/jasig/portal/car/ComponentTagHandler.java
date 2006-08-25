@@ -22,7 +22,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * and a handler that routes events to the appropriate handlers of specific
  * subsection of the descriptor tree.
  * 
- * @author Mark Boyd <mark.boyd@engineer.com>
+ * @author Mark Boyd  {@link <a href="mailto:mark.boyd@engineer.com">mark.boyd@engineer.com</a>}
  * @version $Revision$
  */
 public class ComponentTagHandler

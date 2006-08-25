@@ -15,7 +15,7 @@ import org.w3c.dom.Element;
  * An class describing common features of user layout nodes,
  * that is channels and folders
  *
- * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
+ * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  * @version 1.0
  */
 public abstract class UserLayoutNodeDescription implements IUserLayoutNodeDescription {

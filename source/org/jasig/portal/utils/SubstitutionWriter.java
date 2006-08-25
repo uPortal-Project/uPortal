@@ -16,7 +16,7 @@ import java.io.Writer;
  * 7/25/05 - UP-1180 - dmindler@rutgers.edu
  * Modified to make use of optimized SubstitutionIntegerFilter
  *
- * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
+ * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  * @version $Revision$
  */
 public class SubstitutionWriter extends Writer {

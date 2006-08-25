@@ -7,7 +7,7 @@ package org.jasig.portal;
 
 /**
  * Internal adapter for a multithreaded character channel that is also both privileged and cacheable.
- * @author Peter Kharchenko <a href="mailto:">pkharchenko@interactivebusiness.com</a>, <a href="mailto:nbolton@unicon.net">Nick Bolton</a>
+ * @author Peter Kharchenko {@link <a href="mailto:pkharchenko@interactivebusiness.com">pkharchenko@interactivebusiness.com</a>}, <a href="mailto:nbolton@unicon.net">Nick Bolton</a>
  * @version $Revision$
  * @see MultithreadedChannelAdapter
  */

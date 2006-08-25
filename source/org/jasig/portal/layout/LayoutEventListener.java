@@ -10,7 +10,7 @@ package org.jasig.portal.layout;
  * An interface implemented by objects interested in 
  * monitoring layout events.
  *
- * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
+ * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  * @version 1.0
  */
 public interface LayoutEventListener extends java.util.EventListener {

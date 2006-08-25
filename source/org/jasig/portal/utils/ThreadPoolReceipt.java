@@ -8,7 +8,7 @@ package  org.jasig.portal.utils;
 /**
  * A receipt that provides some information/control
  * about a job that's being processed on the ThreadPool
- * @author Peter Kharchenko <a href="mailto:">pkharchenko@interactivebusiness.com</a>
+ * @author Peter Kharchenko {@link <a href="mailto:pkharchenko@interactivebusiness.com">pkharchenko@interactivebusiness.com</a>}
  */
 
 public class ThreadPoolReceipt {

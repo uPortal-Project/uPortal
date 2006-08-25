@@ -25,7 +25,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * admins. Then admins can determine in what category it should be
  * placed and to whom it should be granted.
  * 
- * @author Mark Boyd <mark.boyd@engineer.com>
+ * @author Mark Boyd  {@link <a href="mailto:mark.boyd@engineer.com">mark.boyd@engineer.com</a>}
  * @version $Revision$
  */
 public class DefaultChanPubInnerHandler

@@ -36,7 +36,7 @@ import org.xml.sax.helpers.AttributesImpl;
  * channelSubcribeId, or the provided defaultValue in the case where there is 
  * no dynamic channel title.</p>
  *
- * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
+ * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  * @version $Revision$ $Date$
  */
 public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {

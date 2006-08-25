@@ -11,7 +11,7 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * An internal worker thread for the ThreadPool
- * @author Peter Kharchenko <a href="mailto:">pkharchenko@interactivebusiness.com</a>
+ * @author Peter Kharchenko {@link <a href="mailto:pkharchenko@interactivebusiness.com">pkharchenko@interactivebusiness.com</a>}
  */
 public class ThreadPoolWorker extends Thread {
     

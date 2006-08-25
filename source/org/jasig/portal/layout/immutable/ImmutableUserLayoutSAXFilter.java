@@ -19,7 +19,7 @@ import org.xml.sax.helpers.AttributesImpl;
  * It was moved to its present package to associate it with the 
  * ImmutableUserLayoutManagerWrapper and to separate it from the general Layout API.
  * 
- * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
+ * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  * @version 1.0 $Revision$ $Date$
  */
 public class ImmutableUserLayoutSAXFilter extends SAX2FilterImpl {

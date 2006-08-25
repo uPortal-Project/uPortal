@@ -26,7 +26,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * passed to the handler class. It only sees events for content within
  * the block.
  * 
- * @author Mark Boyd <mark.boyd@engineer.com>
+ * @author Mark Boyd  {@link <a href="mailto:mark.boyd@engineer.com">mark.boyd@engineer.com</a>}
  * @version $Revision$
  */
 class ExtensionTagHandler

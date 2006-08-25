@@ -26,7 +26,7 @@ import org.xml.sax.ContentHandler;
 /**
  * A channel showing a list of history URLs, as a part of the inter-channel communication demo.
  *
- * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
+ * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  * @version $Revision$
  */
 public class CHistory extends BaseChannel {

@@ -19,7 +19,7 @@ import org.xml.sax.ContentHandler;
 /**
  * An interface for abstracting operations performed on the user layout.
  *
- * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
+ * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  * @author <a href="mailto:mvi@immagic.com">Michael Ivanov</a>
  * @version 1.1
  */

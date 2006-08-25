@@ -7,7 +7,7 @@ package  org.jasig.portal;
 
 /**
  * An interface that a cacheable channel must implement.
- * @author Peter Kharchenko <a href="mailto:">pkharchenko@interactivebusiness.com</a>
+ * @author Peter Kharchenko {@link <a href="mailto:pkharchenko@interactivebusiness.com">pkharchenko@interactivebusiness.com</a>}
  * @version $Revision$
  */
 public interface ICacheable {

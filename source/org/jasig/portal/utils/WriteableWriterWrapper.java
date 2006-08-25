@@ -11,7 +11,7 @@ import java.io.Writer;
 /**
  * A simple wrapper to present {@link IWriteable} interface for a regular <code>java.io.Writer</code>.
  *
- * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
+ * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  * @version $Revision$
  */
 public class WriteableWriterWrapper implements IWriteable {

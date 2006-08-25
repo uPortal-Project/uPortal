@@ -16,7 +16,7 @@ import org.jasig.portal.RDBMServices;
 /**
  * A reference implementation of {@link IAccountStore}.
  *
- * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
+ * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  * @version $Revision$
  */
 public class RDBMAccountStore implements IAccountStore {

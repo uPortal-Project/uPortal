@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletRequest;
  * <p> uPortal will assume that the .uP file spec is always well-formed, so don't try to construct it on your own, use
  * <code>baseActionURL</code> or one of the <code>workerActionURL</code>s. </p>
  *
- * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
+ * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  * @version $Revision$
  */
 public class UPFileSpec {

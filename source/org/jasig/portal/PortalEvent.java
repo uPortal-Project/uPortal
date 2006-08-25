@@ -7,7 +7,7 @@ package org.jasig.portal;
 
 /**
  * Events which may be arguments to the IChannel receiveEvent() method.
- * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
+ * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  * @author andrew.petro@yale.edu
  * @version $Revision$ $Date$
  */

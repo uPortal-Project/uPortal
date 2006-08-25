@@ -36,7 +36,7 @@ import org.xml.sax.SAXException;
 /**
  * Provides access to resources stored in channel archive files or CARs for
  * short. 
- * @author Mark Boyd <mark.boyd@engineer.com>
+ * @author Mark Boyd  {@link <a href="mailto:mark.boyd@engineer.com">mark.boyd@engineer.com</a>}
  * @version $Revision$
  */
 public class CarResources {

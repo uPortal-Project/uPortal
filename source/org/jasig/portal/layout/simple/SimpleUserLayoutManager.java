@@ -62,7 +62,7 @@ import org.xml.sax.ContentHandler;
  * It was moved to its present package to reflect that it is part of the
  * Simple Layout Management implementation.
  *
- * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
+ * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  * @version $Revision$
  */
 public class SimpleUserLayoutManager implements IUserLayoutManager {

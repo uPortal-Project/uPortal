@@ -11,7 +11,7 @@ import org.xml.sax.ContentHandler;
 
 /**
  * Internal adaptor class that presents {@link IMultithreadedCharacterChannel} as a simple {@link IChannel}
- * @author Peter Kharchenko <a href="mailto:">pkharchenko@interactivebusiness.com</a>, <a href="mailto:nbolton@unicon.net">Nick Bolton</a>
+ * @author Peter Kharchenko {@link <a href="mailto:pkharchenko@interactivebusiness.com">pkharchenko@interactivebusiness.com</a>}, <a href="mailto:nbolton@unicon.net">Nick Bolton</a>
  * @version $Revision$
  * @see IMultithreadedCharacterChannel
  */

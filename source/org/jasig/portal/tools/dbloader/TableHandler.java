@@ -14,7 +14,7 @@ import org.xml.sax.SAXException;
  * Class for handling SAX events during parsing of tables.xml.
  *
  * @author Ken Weiner, kweiner@unicon.net
- * @author Mark Boyd <mark.boyd@engineer.com>
+ * @author Mark Boyd  {@link <a href="mailto:mark.boyd@engineer.com">mark.boyd@engineer.com</a>}
  * @version $Revision$
  */
 public class TableHandler implements ContentHandler

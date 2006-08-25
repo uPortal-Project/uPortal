@@ -9,7 +9,7 @@ import org.xml.sax.ContentHandler;
 
 /**
  * Internal adaptor class that presents {@link IMultithreadedChannel} as a simple {@link IChannel}
- * @author Peter Kharchenko <a href="mailto:">pkharchenko@interactivebusiness.com</a>
+ * @author Peter Kharchenko {@link <a href="mailto:pkharchenko@interactivebusiness.com">pkharchenko@interactivebusiness.com</a>}
  * @version $Revision$
  * @see IMultithreadedChannel
  */

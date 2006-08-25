@@ -8,7 +8,7 @@ package org.jasig.portal.utils;
 /**
  * A store interface that keeps track of multiple unique ID counters.
  *
- * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
+ * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  * @version $Revision$
  */
 public interface ICounterStore {

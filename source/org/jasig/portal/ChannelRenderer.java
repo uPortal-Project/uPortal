@@ -31,7 +31,7 @@ import edu.emory.mathcs.backport.java.util.concurrent.TimeoutException;
  * This class takes care of initiating channel rendering thread,
  * monitoring it for timeouts, retreiving cache, and returning
  * rendering results and status.
- * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
+ * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  * @version $Revision$
  */
 public class ChannelRenderer

@@ -22,7 +22,7 @@ import org.xml.sax.XMLReader;
  * such that it would be a worthwhile reduction of code duplication to drop this 
  * class?
  *
- * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
+ * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  * @version $Revision$
  */
 public class ChannelIncorporationFilter extends SAX2FilterImpl {

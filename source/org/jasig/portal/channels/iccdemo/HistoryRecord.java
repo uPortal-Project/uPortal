@@ -15,7 +15,7 @@ import java.util.LinkedList;
  * This class is bound to jndi "chan-obj" context by CHistory, so
  * that CViewer (or other channels) could add to the history list.
  *
- * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
+ * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  * @version $Revision$
  */
 public class HistoryRecord {

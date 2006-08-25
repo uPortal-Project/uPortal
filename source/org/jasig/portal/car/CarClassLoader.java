@@ -23,7 +23,7 @@ import org.apache.commons.logging.LogFactory;
  * in place of those in the CARs. This is a singleton so that we have a single
  * unified class namespace for all car resources preventing linkage errors and
  * class cast exceptions.
- * @author Mark Boyd <mark.boyd@engineer.com>
+ * @author Mark Boyd  {@link <a href="mailto:mark.boyd@engineer.com">mark.boyd@engineer.com</a>}
  * @version $Revision$
  */
 public class CarClassLoader

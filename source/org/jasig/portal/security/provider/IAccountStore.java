@@ -10,7 +10,7 @@ package org.jasig.portal.security.provider;
  * Note: this interface is particular to the reference security provider
  * and is not part of the core portal interfaces.
  *
- * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenko</a>
+ * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  * @version $Revision$
  */
 
