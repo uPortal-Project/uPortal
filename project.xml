@@ -74,9 +74,9 @@ http://maven.apache.org/maven-v3_0_0.xsd">
 		</mailingList>
 	</mailingLists>
 
-	<!-- 
-		Please add other developers. I've just added a few for now so we can see the 
-		results of the developer activity report 
+	<!--
+		Please add other developers. I've just added a few for now so we can see the
+		results of the developer activity report
 	-->
 	<developers>
 		<developer>
@@ -140,7 +140,7 @@ http://maven.apache.org/maven-v3_0_0.xsd">
 		<!-- These should not be bundled with the WAR. They are expected        -->
 		<!-- to be available through the container class loader.                -->
 		<!-- ================================================================== -->
-		
+
 		<!--  include junit jar? -->
 		<dependency>
 			<groupId>junit</groupId>
@@ -152,7 +152,7 @@ http://maven.apache.org/maven-v3_0_0.xsd">
 				<war.bundle>false</war.bundle>
 			</properties>
 		</dependency>
- 
+
 		<dependency>
 			<groupId>hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>
@@ -163,7 +163,7 @@ http://maven.apache.org/maven-v3_0_0.xsd">
 				<war.bundle>false</war.bundle>
 			</properties>
 		</dependency>
-		
+
 		<dependency>
 			<type>jar</type>
 			<groupId>commons-logging</groupId>
@@ -187,6 +187,12 @@ http://maven.apache.org/maven-v3_0_0.xsd">
 			<groupId>xerces</groupId>
 			<artifactId>xercesImpl</artifactId>
 			<version>2.6.2</version>
+		</dependency>
+		<dependency>
+			<type>jar</type>
+			<groupId>xom</groupId>
+			<artifactId>xom</artifactId>
+			<version>1.1</version>
 		</dependency>
 		<!-- ================================================================== -->
 		<!-- These should be bundled with the WAR                               -->
@@ -244,7 +250,7 @@ http://maven.apache.org/maven-v3_0_0.xsd">
 			<properties>
 				<war.bundle>true</war.bundle>
 			</properties>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<type>jar</type>
 			<groupId>springframework</groupId>
@@ -254,7 +260,7 @@ http://maven.apache.org/maven-v3_0_0.xsd">
 				<war.bundle>true</war.bundle>
 			</properties>
 		</dependency>
-		
+
 		<dependency>
 			<type>jar</type>
 			<groupId>com.servlets</groupId>
@@ -381,7 +387,7 @@ http://maven.apache.org/maven-v3_0_0.xsd">
 			<properties>
 				<war.bundle>true</war.bundle>
 			</properties>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<type>jar</type>
 			<groupId>org.ccil.cowan.tagsoup</groupId>
@@ -390,19 +396,19 @@ http://maven.apache.org/maven-v3_0_0.xsd">
 			<properties>
 				<war.bundle>true</war.bundle>
 			</properties>
-		</dependency>	
-		
+		</dependency>
+
 		<dependency>
 			<type>jar</type>
 			<groupId>jdom</groupId>
-			<artifactId>jdom</artifactId>	
+			<artifactId>jdom</artifactId>
 			<version>1.0</version>
 			<properties>
 				<war.bundle>true</war.bundle>
 			</properties>
 		</dependency>
 	</dependencies>
-	<!-- 
+	<!--
 		<package>org.jasig.portal</package>
 	 -->
 	<!-- ================================================================== -->
@@ -458,7 +464,7 @@ http://maven.apache.org/maven-v3_0_0.xsd">
 					<exclude>CVS</exclude>
 				</excludes>
 			</resource>
-			
+
 			<!-- Include all properties and res files as classpath resources -->
 			<resource>
 				<directory>source</directory>
@@ -471,7 +477,7 @@ http://maven.apache.org/maven-v3_0_0.xsd">
 					<exclude>CVS</exclude>
 				</excludes>
 			</resource>
-			
+
 			<!-- Specify some resources to be places in the root package -->
 			<resource>
 				<directory>properties</directory>
@@ -483,7 +489,7 @@ http://maven.apache.org/maven-v3_0_0.xsd">
 					<exclude>CVS</exclude>
 				</excludes>
 			</resource>
-			
+
 			<!-- Include the stylesheets directory in the classpath -->
 			<resource>
 				<directory>webpages/stylesheets</directory>
@@ -499,9 +505,9 @@ http://maven.apache.org/maven-v3_0_0.xsd">
 					<exclude>**/*.UTF-8.properties</exclude>
 				</excludes>
 			</resource>
-			<!-- 
-			Include non image media files in class path. 
-			This would include xml and properties files 
+			<!--
+			Include non image media files in class path.
+			This would include xml and properties files
 			-->
 			<resource>
 				<directory>webpages/media</directory>
@@ -512,8 +518,8 @@ http://maven.apache.org/maven-v3_0_0.xsd">
 					<exclude>**/*.css</exclude>
 				</excludes>
 			</resource>
-			
-			<!-- Put the DTDs where they are needed -->			
+
+			<!-- Put the DTDs where they are needed -->
 			<resource>
 				<directory>webpages/dtd</directory>
 				<targetPath>properties/chanpub/chandefs</targetPath>
@@ -547,7 +553,7 @@ http://maven.apache.org/maven-v3_0_0.xsd">
 		<report>maven-changelog-plugin</report>
 		<report>maven-developer-activity-plugin</report>
 		<report>maven-file-activity-plugin</report>
-		<!-- 
+		<!--
 		<report>maven-jdiff-plugin</report>
 		<report>maven-checkstyle-plugin</report>
 		-->
