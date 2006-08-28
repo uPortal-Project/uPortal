@@ -8,8 +8,13 @@ package org.jasig.portal.utils;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.ChannelRegistryManager;
 import org.jasig.portal.PortalSessionManager;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
@@ -23,6 +28,9 @@ import org.xml.sax.InputSource;
  */
 public class DTDResolver implements EntityResolver
 {
+
+  private static final Log log = LogFactory.getLog(DTDResolver.class);
+
   private static final String dtdPath = "dtd";
 
   private static class PublicId {
@@ -102,12 +110,15 @@ public class DTDResolver implements EntityResolver
       if (PortalSessionManager.isServletContext()) {
           return PortalSessionManager.getResourceAsStream(resource);
       } else {
-        try {
-            final URL root = DTDResolver.class.getResource("/");
-            return new FileInputStream(root.getPath() + "../../" + resource);
-        } catch (FileNotFoundException e) {
-            return null;
-        }
+            try {
+				final URL root = DTDResolver.class.getResource("/");
+				return new FileInputStream(root.toURI().getPath() + "../../" + resource);
+			} catch (FileNotFoundException e) {
+				log.error("Unable to find path to dtd " + resource, e);
+			} catch (URISyntaxException e) {
+				log.error("Unable to find path to dtd " + resource, e);
+			}
+			return null;
       }
   }
 }
