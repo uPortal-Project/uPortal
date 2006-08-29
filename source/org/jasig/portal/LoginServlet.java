@@ -41,7 +41,7 @@ public class LoginServlet extends HttpServlet {
   private static final String redirectString;
   private static HashMap credentialTokens;
   private static HashMap principalTokens;
-  private Authentication m_authenticationService = null;
+  protected Authentication m_authenticationService = null;
 
     static {
       String upFile=UPFileSpec.RENDER_URL_ELEMENT+UPFileSpec.PORTAL_URL_SEPARATOR+UserInstance.USER_LAYOUT_ROOT_NODE+UPFileSpec.PORTAL_URL_SEPARATOR+UPFileSpec.PORTAL_URL_SUFFIX;
@@ -85,7 +85,7 @@ public class LoginServlet extends HttpServlet {
 
   }
 
- 
+
   /**
    * Process the incoming HttpServletRequest
    * @param request
@@ -95,21 +95,21 @@ public class LoginServlet extends HttpServlet {
    */
   public void service (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
   	CommonUtils.setNoCache(response);
-    
+
     // Call to setCharacterEncoding method should be done before any call to req.getParameter() method.
     try {
         request.setCharacterEncoding("UTF-8");
     } catch (UnsupportedEncodingException uee) {
         log.error("Unable to set UTF-8 character encoding!", uee);
     }
-    
+
   	/* Grab the target functional name, if any, off the login request.
 	 * Also any arguments for the target
   	 * We will pass them  along after authentication.
   	 */
   	String targetFname = request.getParameter("uP_fname");
   	String targetArgs = request.getParameter("uP_args");
-  	
+
     // Clear out the existing session for the user if they have one
     final HttpSession s = request.getSession(false);
     if (s != null) {
@@ -124,7 +124,7 @@ public class LoginServlet extends HttpServlet {
     		}
     	}
     }
-    
+
   	//  Create the user's session
     request.getSession(true);
   	IPerson person = null;
@@ -160,12 +160,12 @@ public class LoginServlet extends HttpServlet {
 				if (targetArgs != null) {
 				redirectTarget = redirectTarget + "&uP_args=" + targetArgs;
 				}
-			} 
-    	    	
+			}
+
       response.sendRedirect(redirectTarget);
     }
     else {
-      if ( request.getMethod().equals("POST") )	
+      if ( request.getMethod().equals("POST") )
        request.getSession(false).setAttribute("up_authenticationAttempted", "true");
       // Preserve the attempted username so it can be redisplayed to the user by CLogin
       String attemptedUserName = request.getParameter("userName");
