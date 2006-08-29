@@ -44,7 +44,7 @@ This list of component group services is processed by the composite, or "root" s
 -->
 
 <!-- Uncomment to configure a Person Attributes group service component.  Configure your person attributes groups in PAGSGroupStoreConfig.xml. -->
-
+<!--
   <service>
     <name>pags</name>
     <service_factory>org.jasig.portal.groups.ReferenceIndividualGroupServiceFactory</service_factory>
@@ -54,6 +54,6 @@ This list of component group services is processed by the composite, or "root" s
     <internally_managed>false</internally_managed>
     <caching_enabled>true</caching_enabled>
   </service>
-
+-->
 
 </servicelist>
