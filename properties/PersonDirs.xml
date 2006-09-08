@@ -205,8 +205,10 @@
     </PersonDirInfo>
 
     <!--
+    <PersonDirInfo>
+
         This PersonDirInfo element maps person attribute aliases to LDAP attribute names.
-        The LDAP resource can be specified in the following two ways:
+        The LDAP resource can be specified in the following three ways:
 
         1) Specify the LDAP connection properties. For example,
 
@@ -223,9 +225,6 @@
 
         <ldap-ref-name>DEFAULT_LDAP_SERVER</ldap-ref-name>
 
-    -->
-    <!--
-    <PersonDirInfo>
 
         <ldap-ref-name>DEFAULT_LDAP_SERVER</ldap-ref-name>
 
