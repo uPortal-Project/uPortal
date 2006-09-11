@@ -21,7 +21,7 @@ public class AttributeEvaluator
     public static final int EQUALS = 1;
     public static final int STARTS_WITH = 2;
     public static final int ENDS_WITH = 3;
-    public static final int EXISTS = 3;
+    public static final int EXISTS = 4;
 
     protected int mode = -1;
     protected String name = null;

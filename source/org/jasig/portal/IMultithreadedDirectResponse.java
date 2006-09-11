@@ -13,6 +13,10 @@ import javax.servlet.http.HttpServletResponse;
  * 
  * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
  * @version $Revision$
+ * 
+ * @deprecated Use the IChannel* interfaces instead or write a portlet. For more information see: 
+ * http://www.ja-sig.org/wiki/display/UPC/Proposal+to+Deprecate+IMultithreaded+Interfaces
+
  */
 public interface IMultithreadedDirectResponse {
     

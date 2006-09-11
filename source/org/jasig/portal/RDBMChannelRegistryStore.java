@@ -473,17 +473,18 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
                   log.error( "RDBMChannelRegistryStore.getChannelDefinition(): Database being used is not internationalized. Execute `ant i18n-db' for internationalized database setting.");
               }
           }
-        }
-
-        if (log.isDebugEnabled())
-            log.debug("RDBMChannelRegistryStore.getChannelDefinition(): Read channel " + 
-                    channelPublishId + " from the store");
-
-        // Add the channel definition to the cache
-        try {
-          EntityCachingService.instance().add(channelDef);
-        } catch (Exception e) {
-          log.error("Error caching channel definition " + channelDef, e);
+          if (log.isDebugEnabled())
+        	  log.debug("RDBMChannelRegistryStore.getChannelDefinition(): Read channel " + 
+        			  channelPublishId + " from the store");
+          
+          // Add the channel definition to the cache
+          try {
+        	  EntityCachingService.instance().add(channelDef);
+          } catch (Exception e) {
+        	  log.error("Error caching channel definition " + channelDef, e);
+          }
+        }else{
+        	log.warn("Couldn't get chanDef for channelPublishId: "+channelPublishId);
         }
 
       } finally {

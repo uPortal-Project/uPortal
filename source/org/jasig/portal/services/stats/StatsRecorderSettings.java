@@ -12,13 +12,20 @@ import org.apache.commons.logging.LogFactory;
 /**
  * This class is responsible for maintaining the on/off settings
  * for each type of portal event that the StatsRecorder can record.
- * StatsRecorder will consult with this class before it attempts
- * to record an event.  The initial values for each setting will
- * be read upon portal startup from portal.properties.  At runtime,
+ * The default, legacy StatsRecorder implementation will consult with this 
+ * class before it attempts to record an event.  The initial values for each 
+ * setting will be read upon portal startup from portal.properties.  At runtime,
  * the settings in this class can be controlled via
  * <code>StatsRecorder.set()</code>.
+ * 
+ * <p>
+ * An alternative to using this Static Singleton is to wrap your IStatsRecorder
+ * implementation with ConditionalStatsRecorder and use a StatsRecorderFlagsImpl
+ * to represent the settings as a JavaBean.  That approach allows multiple 
+ * IStatsRecorder instances differently configured.
+ * </p>
  * @author Ken Weiner, kweiner@unicon.net
- * @version $Revision$
+ * @version $Revision$ $Date$
  */
 public class StatsRecorderSettings {
   
@@ -74,24 +81,24 @@ public class StatsRecorderSettings {
 		try {
       String prefix = this.getClass().getName() + ".";
 	    // Read in the initial settings from portal.properties
-      recordLogin = PropertiesManager.getPropertyAsBoolean(prefix + "recordLogin");
-      recordLogout = PropertiesManager.getPropertyAsBoolean(prefix + "recordLogout");
-      recordSessionCreated = PropertiesManager.getPropertyAsBoolean(prefix + "recordSessionCreated");
-      recordSessionDestroyed = PropertiesManager.getPropertyAsBoolean(prefix + "recordSessionDestroyed");
-      recordChannelDefinitionPublished = PropertiesManager.getPropertyAsBoolean(prefix + "recordChannelDefinitionPublished");
-      recordChannelDefinitionModified = PropertiesManager.getPropertyAsBoolean(prefix + "recordChannelDefinitionModified");
-      recordChannelDefinitionRemoved = PropertiesManager.getPropertyAsBoolean(prefix + "recordChannelDefinitionRemoved");
-      recordChannelAddedToLayout = PropertiesManager.getPropertyAsBoolean(prefix + "recordChannelAddedToLayout");
-      recordChannelUpdatedInLayout = PropertiesManager.getPropertyAsBoolean(prefix + "recordChannelUpdatedInLayout");
-      recordChannelMovedInLayout = PropertiesManager.getPropertyAsBoolean(prefix + "recordChannelMovedInLayout");
-      recordChannelRemovedFromLayout = PropertiesManager.getPropertyAsBoolean(prefix + "recordChannelRemovedFromLayout");
-      recordFolderAddedToLayout = PropertiesManager.getPropertyAsBoolean(prefix + "recordFolderAddedToLayout");
-      recordFolderUpdatedInLayout = PropertiesManager.getPropertyAsBoolean(prefix + "recordFolderUpdatedInLayout");
-      recordFolderMovedInLayout = PropertiesManager.getPropertyAsBoolean(prefix + "recordFolderMovedInLayout");
-      recordFolderRemovedFromLayout = PropertiesManager.getPropertyAsBoolean(prefix + "recordFolderRemovedFromLayout");
-      recordChannelInstantiated = PropertiesManager.getPropertyAsBoolean(prefix + "recordChannelInstantiated");
-      recordChannelRendered = PropertiesManager.getPropertyAsBoolean(prefix + "recordChannelRendered");
-      recordChannelTargeted = PropertiesManager.getPropertyAsBoolean(prefix + "recordChannelTargeted");
+      recordLogin = PropertiesManager.getPropertyAsBoolean(prefix + "recordLogin",false);
+      recordLogout = PropertiesManager.getPropertyAsBoolean(prefix + "recordLogout",false);
+      recordSessionCreated = PropertiesManager.getPropertyAsBoolean(prefix + "recordSessionCreated",false);
+      recordSessionDestroyed = PropertiesManager.getPropertyAsBoolean(prefix + "recordSessionDestroyed",false);
+      recordChannelDefinitionPublished = PropertiesManager.getPropertyAsBoolean(prefix + "recordChannelDefinitionPublished",false);
+      recordChannelDefinitionModified = PropertiesManager.getPropertyAsBoolean(prefix + "recordChannelDefinitionModified",false);
+      recordChannelDefinitionRemoved = PropertiesManager.getPropertyAsBoolean(prefix + "recordChannelDefinitionRemoved",false);
+      recordChannelAddedToLayout = PropertiesManager.getPropertyAsBoolean(prefix + "recordChannelAddedToLayout",false);
+      recordChannelUpdatedInLayout = PropertiesManager.getPropertyAsBoolean(prefix + "recordChannelUpdatedInLayout",false);
+      recordChannelMovedInLayout = PropertiesManager.getPropertyAsBoolean(prefix + "recordChannelMovedInLayout",false);
+      recordChannelRemovedFromLayout = PropertiesManager.getPropertyAsBoolean(prefix + "recordChannelRemovedFromLayout",false);
+      recordFolderAddedToLayout = PropertiesManager.getPropertyAsBoolean(prefix + "recordFolderAddedToLayout",false);
+      recordFolderUpdatedInLayout = PropertiesManager.getPropertyAsBoolean(prefix + "recordFolderUpdatedInLayout",false);
+      recordFolderMovedInLayout = PropertiesManager.getPropertyAsBoolean(prefix + "recordFolderMovedInLayout",false);
+      recordFolderRemovedFromLayout = PropertiesManager.getPropertyAsBoolean(prefix + "recordFolderRemovedFromLayout",false);
+      recordChannelInstantiated = PropertiesManager.getPropertyAsBoolean(prefix + "recordChannelInstantiated",false);
+      recordChannelRendered = PropertiesManager.getPropertyAsBoolean(prefix + "recordChannelRendered",false);
+      recordChannelTargeted = PropertiesManager.getPropertyAsBoolean(prefix + "recordChannelTargeted",false);
       
 		} catch (Exception e) {
 			log.error("Error instantiating StatsRecorderSettings", e);

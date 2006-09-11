@@ -10,8 +10,6 @@ import java.util.Date;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.IBasicEntity;
 import org.jasig.portal.concurrency.CachingException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.services.SequenceGenerator;
 /**
  * Reference implementation of <code>IEntityCache</code> that is meant
@@ -36,7 +34,6 @@ import org.jasig.portal.services.SequenceGenerator;
  */
 public class ReferenceInvalidatingEntityCache extends ReferenceEntityCache
 {
-    private static final Log log = LogFactory.getLog(ReferenceInvalidatingEntityCache.class);
     private static RDBMCachedEntityInvalidationStore invalidationStore;
     private long lastUpdateMillis = 0;
     private long clockTolerance = 5000;
@@ -105,7 +102,9 @@ public void cleanupCache()
     java.sql.Timestamp ts;
 
     start = System.currentTimeMillis();
-    debug("ENTERING " + this + " cleanupCache() ");
+    if (log.isDebugEnabled()) {
+        log.debug("ENTERING " + this + " cleanupCache() ");
+    }
 
     if ( ! getCache().isEmpty() )
     {
@@ -113,10 +112,15 @@ public void cleanupCache()
         super.cleanupCache();
     }
 
-    end = System.currentTimeMillis();
-    msg = "LEAVING " + this + " cleanupCache(); total time: " + (end - start) + "ms";
-    debug(msg);
+    if (log.isDebugEnabled()) {
+        end = System.currentTimeMillis();
+        // String buffer eliminates intermediary Strings in producing log message.
+        StringBuffer sb = new StringBuffer();
+        sb.append("LEAVING ").append(this).append(" cleanupCache(); total time: ").append(end - start).append("ms");
+        log.debug(sb.toString());
+    }
 }
+
 /**
  * May want to do something with the invalidator thread.
  * @throws Throwable
@@ -204,15 +208,20 @@ public void removeInvalidEntities()
     Date lastUpdate = new Date(lastUpdateMillis - clockTolerance);
     int removed = 0;
 
-    debug("ReferenceInvalidatingEntityCache.removeInvalidEntries(): " + getEntityType() +
-          " checking for cache invalidations added since: " + lastUpdate);
+    if (log.isDebugEnabled()) {
+        log.debug("ReferenceInvalidatingEntityCache.removeInvalidEntries(): " + getEntityType() +
+                " checking for cache invalidations added since: " + lastUpdate);
+    }
+    
     try
     {
         Integer cID = new Integer(getCacheID());
         invalidations = getInvalidationStore().findAfter(lastUpdate, getEntityType(), null, cID);
 
-        debug("ReferenceInvalidatingEntityCache.removeInvalidEntries(): " + getEntityType() +
-              " retrieved " + invalidations.length + " invalidations.");
+        if (log.isDebugEnabled()) {
+            log.debug("ReferenceInvalidatingEntityCache.removeInvalidEntries(): " + getEntityType() +
+                    " retrieved " + invalidations.length + " invalidations.");
+        }
 
         for ( int i=0; i<invalidations.length; i++ )
         {
@@ -231,8 +240,11 @@ public void removeInvalidEntities()
             }          
         }
 
-        debug("ReferenceInvalidatingEntityCache.removeInvalidEntries(): " + getEntityType() +
-              " removed " + removed + " cache entries.");
+        if (log.isDebugEnabled()) {
+            log.debug("ReferenceInvalidatingEntityCache.removeInvalidEntries(): " + getEntityType() +
+                    " removed " + removed + " cache entries."); 
+        }
+        
     }
     catch (Exception ex)
     {

@@ -22,7 +22,7 @@ public class PersonDirInfoAdaptorTest extends TestCase {
      * Test adapting from a PersonDirInfo instance that represents a
      * directly-configured LDAP source.
      * 
-     * This testcase will stop working on that fateful day when Andrew
+     * This testcase will stop working on that fateful day when Susan Bramhall
      * is no longer listed in Yale University's LDAP.
      */
     public void testLdap() {
@@ -37,10 +37,10 @@ public class PersonDirInfoAdaptorTest extends TestCase {
         
         IPersonAttributeDao dao = PersonDirInfoAdaptor.adapt(pdi);
         
-        Map attributes = dao.getUserAttributes("awp9");
+        Map attributes = dao.getUserAttributes("susan");
         
         assertFalse(attributes.isEmpty());
-        assertEquals("andrew.petro@yale.edu", attributes.get("emailfromldap"));
+        assertEquals("susan.bramhall@yale.edu", attributes.get("emailfromldap"));
         
     }
 }

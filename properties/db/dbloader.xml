@@ -54,6 +54,18 @@
 
   <db-type-mapping>
     <db-name>Microsoft SQL Server</db-name>
+    <db-version>08.00.0760</db-version>
+    <driver-name>jTDS Type 4 JDBC Driver for MS SQL Server and Sybase</driver-name>
+    <type><generic>INTEGER</generic><local>INTEGER</local></type>
+    <type><generic>VARCHAR</generic><local>VARCHAR</local></type>
+    <type><generic>TEXT</generic><local>TEXT</local></type>
+    <type><generic>TIMESTAMP</generic><local>DATETIME</local></type>
+    <type><generic>LONGVARCHAR</generic><local>NTEXT</local></type>
+    <!-- map more types here -->
+  </db-type-mapping>
+  
+  <db-type-mapping>
+    <db-name>Microsoft SQL Server</db-name>
     <db-version>07.00.0699</db-version>
     <driver-name>JDBC-ODBC Bridge (SQLSRV32.DLL)</driver-name>
     <driver-version>2.0001 (03.70.0820)</driver-version>
@@ -92,6 +104,18 @@
     <type><generic>TIMESTAMP</generic><local>DATETIME</local></type>
     <!-- map more types here -->
   </db-type-mapping>
+
+  <db-type-mapping> 
+    <db-name>Microsoft SQL Server 2000</db-name> 
+    <db-version>8.00.760</db-version> 
+    <driver-name>SQLServer</driver-name> 
+    <driver-version>2.2.0040</driver-version> 
+    <type><generic>INTEGER</generic><local>INTEGER</local></type> 
+    <type><generic>VARCHAR</generic><local>VARCHAR</local></type> 
+    <type><generic>LONGVARCHAR</generic><local>LONGVARCHAR</local></type> 
+    <type><generic>SQL_VARIANT</generic><local>VARCHAR</local></type>         
+    <!-- map more types here --> 
+  </db-type-mapping> 
 
   <db-type-mapping>
     <db-name>MySQL</db-name>
@@ -134,6 +158,15 @@
     <db-version>3.23.46</db-version>
     <driver-name>Mark Matthews&apos; MySQL Driver</driver-name>
     <driver-version>2.0.8</driver-version>
+    <type><generic>LONGVARCHAR</generic><local>TEXT</local></type>
+    <!-- map more types here -->
+  </db-type-mapping>
+  
+  <db-type-mapping>
+    <db-name>MySQL</db-name>
+    <db-version>4.1.14-standard</db-version>
+    <driver-name>MySQL-AB JDBC Driver</driver-name>
+    <driver-version>mysql-connector-java-3.1.12 ( $Date$, $Revision$ )</driver-version>
     <type><generic>LONGVARCHAR</generic><local>TEXT</local></type>
     <!-- map more types here -->
   </db-type-mapping>

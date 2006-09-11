@@ -201,4 +201,14 @@ public class ChannelStaticData extends Hashtable {
     public void setICCRegistry(ICCRegistry registry) {
         this.iccr=registry;
     }
+    
+    public String toString(){
+        StringBuffer sb = new StringBuffer();
+        
+        sb.append("ChannelStaticData: ");
+        sb.append("Channel Publish ID = [").append(this.m_channelPublishId).append("] ");
+        sb.append("Channel Subscribe ID = [").append(this.m_channelSubscribeId).append("] ");
+        sb.append("person= [").append(this.m_person).append("] ");
+        return sb.toString();
+    }
 }

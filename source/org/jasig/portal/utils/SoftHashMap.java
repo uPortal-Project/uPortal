@@ -8,26 +8,27 @@ package  org.jasig.portal.utils;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.SoftReference;
 import java.util.AbstractMap;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Set;
+
+import edu.emory.mathcs.backport.java.util.concurrent.ConcurrentHashMap;
 
 
 
 /**
  * A HashMap implementation that uses soft references, 
  * leaving memory management up to the gc.
+ * 
  * @author Peter Kharchenko (thanks to Dr. Kabutz on whose article the code is based)
  * @version $Revision$
  */
 public class SoftHashMap extends AbstractMap {
 
-    private final HashMap map=new HashMap();
+    private final ConcurrentHashMap map=new ConcurrentHashMap();
     private final LinkedList fifo=new LinkedList();
     private final ReferenceQueue removeQueue=new ReferenceQueue();
 
     private int minSize;
-    private int maxSize;
     
     /**
      * Construct a SoftHashMap
@@ -43,6 +44,9 @@ public class SoftHashMap extends AbstractMap {
 
     public Object put(Object key,Object value) {
 	cleanMap();
+        if (key == null) {
+            return (null);
+        }
 	KeyReferencePair pair=new KeyReferencePair(value,key,removeQueue);
 	// place the object into fifo
 	addToFIFO(value);
@@ -50,6 +54,9 @@ public class SoftHashMap extends AbstractMap {
     }
 
     public Object get(Object key) {
+        if (key == null) {
+            return (null);
+        }
 	SoftReference soft_ref=(SoftReference) map.get(key);
 	if(soft_ref!=null) {
 	    Object obj=soft_ref.get();
@@ -67,6 +74,9 @@ public class SoftHashMap extends AbstractMap {
 
     public Object remove(Object key) {
 	cleanMap();
+        if (key == null) {
+            return (null);
+        }
 	SoftReference soft_ref=(SoftReference) map.remove(key);
 	if(soft_ref!=null) {
 	    return soft_ref.get();

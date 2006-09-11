@@ -218,9 +218,9 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
               try {
     			Class channelClass = Class.forName(this.className);
     			return IPortletAdaptor.class.isAssignableFrom(channelClass);
-    		} catch (ClassNotFoundException e) {
+    		} catch (Throwable e) {
     			log.error("Unable to load class for name [" + this.className 
-    					+ "] and so do not know whether is a portlet.");
+    					+ "] and so do not know whether is a portlet.",e);
     		}
           }
           
@@ -533,5 +533,8 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
       return CHANNEL;
     }
 
+	public String toString() {
+		return "["+channelPublishId+","+title+"]";
+	}
 
 }
