@@ -1,13 +1,12 @@
-Release notes for uPortal 2.5.3 RC1
-(the first release candidate of uPortal 2.5.3):
+Release notes for uPortal 2.5.3 RC2
+(the second release candidate of uPortal 2.5.3):
 
 CVS branch: 2-5-patches
 
 
 Known issues
 
-There are many known bugs in uPortal.  More than 10 bugs are identified as fixed
-for 2.5.3 RC1.  However, at least 20 bugs are known to affect 2.5.3 RC1.
+There are many known bugs in uPortal.
 
 You can query the JA-SIG issue tracking system for the latest information about
 known issues.  The uPortal 2.5.3 wiki page summarizes:
