@@ -40,7 +40,7 @@ public class EntityTestingGroupImpl extends EntityGroupImpl {
     public boolean contains(IGroupMember gm) throws GroupsException
     {
         return ( gm.isEntity() )
-            ? getLocalGroupService().contains(this,gm)
+            ? gm.isMemberOf( this )
             : super.contains(gm);
     }
 }

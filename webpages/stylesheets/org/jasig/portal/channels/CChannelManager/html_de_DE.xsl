@@ -1831,7 +1831,17 @@
              <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectChannelType&amp;uPCM_capture=reviewChannel">Typ des Channels:</a></strong></td>
              <td><img alt="Bildschnittstelle" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
              <td width="100%"><a href="{$baseActionURL}?uPCM_action=selectChannelType&amp;uPCM_capture=reviewChannel">
-               <xsl:value-of select="//selectChannelType/params/step/channelTypes/channelType[@ID=/manageChannels/reviewChannel/params/step/channel/@typeID]/name"/></a></td>
+                <xsl:choose>
+                    <xsl:when
+                test="/manageChannels/reviewChannel/params/step/channel/@typeID = -1 or
+                not(/manageChannels/reviewChannel/params/step/channel/@typeID)">
+                     Custom</xsl:when>
+                     <xsl:otherwise>
+                      <xsl:value-of
+                select="//selectChannelType/params/step/channelTypes/channelType[@ID=/manageChannels/reviewChannel/params/step/channel/@typeID]/name"/>
+                     </xsl:otherwise>
+                </xsl:choose>
+               </a></td>
            </tr>
 
            <tr class="uportal-channel-text">

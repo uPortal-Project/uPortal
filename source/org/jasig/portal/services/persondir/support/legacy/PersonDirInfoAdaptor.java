@@ -113,7 +113,7 @@ final class PersonDirInfoAdaptor {
                     source = (DataSource) factory.getObject();
                 } catch (Exception t) {
                     LOG.error("Error looking up datasource [" + dsRefName + "] from JNDI.", t);
-                    throw new IllegalArgumentException("Referenced JNDI name did not map to a DataSource.");
+                    throw new IllegalArgumentException("Referenced JNDI name [" + dsRefName + "] did not map to a DataSource.");
                 }
 
             }

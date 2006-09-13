@@ -199,7 +199,6 @@ public class HandlerUtils
             {
                 plfNode = (Element) plf.importNode( compViewNode,
                                                     createChildNodes );
-                String ID = plfNode.getAttribute( Constants.ATT_ID );
                 plfNode.setIdAttribute(Constants.ATT_ID, true);
             }
             else

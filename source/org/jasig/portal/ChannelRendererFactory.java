@@ -32,7 +32,7 @@ public final class ChannelRendererFactory
     public final static String RCS_ID = "@(#) $Header$";
 
     
-    private static final Log log = LogFactory.getLog(ChannelRendererFactory.class);
+    private static final Log LOG = LogFactory.getLog(ChannelRendererFactory.class);
     
     /**
      * <p>Creates a new instance of a channel renderer factory object. This
@@ -60,8 +60,8 @@ public final class ChannelRendererFactory
                 keyBase + ".ChannelRendererFactory.className"
                 );
 
-            if (log.isDebugEnabled())
-                log.debug("ChannelRendererFactory::newInstance(" + keyBase + 
+            if (LOG.isDebugEnabled())
+                LOG.debug("ChannelRendererFactory::newInstance(" + keyBase + 
                         ") : about to construct channel renderer factory: " + 
                         factoryClassName);
 
@@ -75,14 +75,14 @@ public final class ChannelRendererFactory
                 new Object[]{ keyBase }
                 );
 
-            if (log.isDebugEnabled())
-                log.debug("ChannelRendererFactory::newInstance(" + keyBase + 
+            if (LOG.isDebugEnabled())
+                LOG.debug("ChannelRendererFactory::newInstance(" + keyBase + 
                         ") : constructed channel renderer factory: " + factoryClassName);
         }
         catch( Exception x )
         {
             // Log the failure.
-            log.error(
+            LOG.error(
                 "ChannelRendererFactory::newInstance(" + keyBase + ") : failed to construct factory: " + factoryClassName,
                 x
                 );

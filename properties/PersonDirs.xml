@@ -88,7 +88,7 @@
 
         <res-ref-name>DEFAULT_DATABASE</res-ref-name>
         
-        <uidquery>SELECT FIRST_NAME||' '||LAST_NAME AS FIRST_LAST, FIRST_NAME, LAST_NAME, EMAIL FROM UP_PERSON_DIR WHERE USER_NAME=?</uidquery>
+        <uidquery>SELECT FIRST_NAME, LAST_NAME, EMAIL FROM UP_PERSON_DIR WHERE USER_NAME=?</uidquery>
     
         <attributes>
 
@@ -101,7 +101,7 @@
             <attribute><alias>c</alias>                           <name></name></attribute>
             <attribute><alias>cn</alias>                          <name></name></attribute>
             <attribute><alias>description</alias>                 <name></name></attribute>
-            <attribute><alias>displayName</alias>                 <name>FIRST_LAST</name></attribute>
+            <attribute><alias>displayName</alias>                 <name>FIRST_NAME</name></attribute>
             <attribute><alias>facsimileTelephoneNumber</alias>    <name></name></attribute>
             <attribute><alias>givenName</alias>                   <name>FIRST_NAME</name></attribute>
             <attribute><alias>homePhone</alias>                   <name></name></attribute>
@@ -204,8 +204,10 @@
     </PersonDirInfo>
 
     <!-- 
+    <PersonDirInfo>
+
         This PersonDirInfo element maps person attribute aliases to LDAP attribute names.
-        The LDAP resource can be specified in the following two ways:
+        The LDAP resource can be specified in the following three ways:
 
         1) Specify the LDAP connection properties. For example,
 
@@ -222,9 +224,6 @@
         
         <ldap-ref-name>DEFAULT_LDAP_SERVER</ldap-ref-name>
 
-    -->
-    <!--
-    <PersonDirInfo>
 
         <ldap-ref-name>DEFAULT_LDAP_SERVER</ldap-ref-name>
 

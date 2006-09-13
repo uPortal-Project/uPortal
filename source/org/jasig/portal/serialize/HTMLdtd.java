@@ -1,58 +1,17 @@
 /*
- * The Apache Software License, Version 1.1
+ * Copyright 1999-2002,2004 The Apache Software Foundation.
  *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
- * reserved.
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
- *
- * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:
- *       "This product includes software developed by the
- *        Apache Software Foundation (http://www.apache.org/)."
- *    Alternately, this acknowledgment may appear in the software itself,
- *    if and wherever such third-party acknowledgments normally appear.
- *
- * 4. The names "Xerces" and "Apache Software Foundation" must
- *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written
- *    permission, please contact apache@apache.org.
- *
- * 5. Products derived from this software may not be called "Apache",
- *    nor may "Apache" appear in their name, without prior written
- *    permission of the Apache Software Foundation.
- *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
- * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
- * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
- * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
- * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
- * ====================================================================
- *
- * This software consists of voluntary contributions made by many
- * individuals on behalf of the Apache Software Foundation and was
- * originally based on software copyright (c) 1999, International
- * Business Machines, Inc., http://www.apache.org.  For more
- * information on the Apache Software Foundation, please see
- * <http://www.apache.org/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 
@@ -63,12 +22,14 @@
 
 package org.jasig.portal.serialize;
 
+import org.apache.xerces.dom.DOMMessageFormatter;
 
-import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.BufferedReader;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 
@@ -90,32 +51,33 @@ public final class HTMLdtd
 {
 
     /**
-     * Public identifier for HTML document type.
+     * Public identifier for HTML 4.01 (Strict) document type.
      */
-    public static final String HTMLPublicId = "-//W3C//DTD HTML 4.0//EN";
+	public static final String HTMLPublicId = "-//W3C//DTD HTML 4.01//EN";
 
     /**
-     * System identifier for HTML document type.
+     * System identifier for HTML 4.01 (Strict) document type.
      */
     public static final String HTMLSystemId =
-        "http://www.w3.org/TR/WD-html-in-xml/DTD/xhtml1-strict.dtd";
+    	"http://www.w3.org/TR/html4/strict.dtd";
 
     /**
-     * Public identifier for XHTML document type.
+     * Public identifier for XHTML 1.0 (Strict) document type.
      */
     public static final String XHTMLPublicId =
         "-//W3C//DTD XHTML 1.0 Strict//EN";
 
     /**
-     * System identifier for XHTML document type.
+     * System identifier for XHTML 1.0 (Strict) document type.
      */
     public static final String XHTMLSystemId =
-        "http://www.w3.org/TR/WD-html-in-xml/DTD/xhtml1-strict.dtd";
+    	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd";
+    
     /**
      * Table of reverse character reference mapping. Character codes are held
      * as single-character strings, mapped to their reference name.
      */
-    private static Map        _byChar;
+    private static String[] _entity;
 
 
     /**
@@ -337,7 +299,7 @@ public final class HTMLdtd
     {
         String[] attrNames;
 
-        attrNames = (String[]) _boolAttrs.get( tagName.toUpperCase() );
+        attrNames = (String[]) _boolAttrs.get( tagName.toUpperCase(Locale.ENGLISH) );
         if ( attrNames == null )
             return false;
         for ( int i = 0 ; i < attrNames.length ; ++i )
@@ -381,11 +343,12 @@ public final class HTMLdtd
        if (value > 0xffff)
             return null;
 
-        String name;
-
         initialize();
-        name = (String) _byChar.get( new Integer( value ) );
-        return name;
+        if( value < _entity.length){
+        return  _entity[value];
+        } else {
+            return null;
+    }
     }
 
 
@@ -406,15 +369,19 @@ public final class HTMLdtd
         String          line;
 
         // Make sure not to initialize twice.
-        if ( _byName != null )
+        if ( _entity != null )
             return;
         try {
             _byName = new HashMap();
-            _byChar = new HashMap();
+            _entity = new String[10000];
             is = HTMLdtd.class.getResourceAsStream( ENTITIES_RESOURCE );
-            if ( is == null )
-                throw new RuntimeException( "SER003 The resource [" + ENTITIES_RESOURCE + "] could not be found.\n" + ENTITIES_RESOURCE);
-            reader = new BufferedReader( new InputStreamReader( is ) );
+            if ( is == null ) {
+            	throw new RuntimeException( 
+				    DOMMessageFormatter.formatMessage(
+				    DOMMessageFormatter.SERIALIZER_DOMAIN,
+                    "ResourceNotFound", new Object[] {ENTITIES_RESOURCE}));
+            }    
+            reader = new BufferedReader( new InputStreamReader( is, "ASCII" ) );
             line = reader.readLine();
             while ( line != null ) {
                 if ( line.length() == 0 || line.charAt( 0 ) == '#' ) {
@@ -438,8 +405,10 @@ public final class HTMLdtd
             }
             is.close();
         }  catch ( Exception except ) {
-            throw new RuntimeException( "SER003 The resource [" + ENTITIES_RESOURCE + "] could not load: " +
-                                        except.toString() + "\n" + ENTITIES_RESOURCE + "\t" + except.toString());
+			throw new RuntimeException( 
+				DOMMessageFormatter.formatMessage(
+				DOMMessageFormatter.SERIALIZER_DOMAIN,
+                "ResourceNotLoaded", new Object[] {ENTITIES_RESOURCE, except.toString()}));        	
         } finally {
             if ( is != null ) {
                 try {
@@ -449,7 +418,7 @@ public final class HTMLdtd
         }
         // save only the unmodifiable map to the member variable.
 		_byName = Collections.unmodifiableMap(_byName);
-		_byChar = Collections.unmodifiableMap(_byChar);
+//		_byChar = Collections.unmodifiableMap(_byChar);
     }
 
 
@@ -465,11 +434,24 @@ public final class HTMLdtd
      * @param name The entity's name
      * @param value The entity's value
      */
-    private static void defineEntity( String name, char value )
-    {
-        if ( _byName.get( name ) == null ) {
-            _byName.put( name, new Integer( value ) );
-            _byChar.put( new Integer( value ), name );
+    private static void defineEntity(String name, char value) {
+        int intValue = (int) value;
+        if (intValue < _entity.length) {
+            if (_entity[intValue] == null) {
+
+                _entity[intValue] = name;
+        }
+        } else {
+            /*
+             * increase the size of array and put the new
+             * entity name at the appropriate index value.
+             */
+            final String newArray[] = _entity;
+            _entity = new String[intValue + 1];
+            for (int i = 0, n = newArray.length; i < n; i++) {
+                _entity[i] = newArray[i];
+    }
+            _entity[intValue] = name;
         }
     }
 
@@ -496,7 +478,7 @@ public final class HTMLdtd
     {
         Integer flags;
 
-        flags = (Integer) _elemDefs.get( name.toUpperCase() );
+        flags = (Integer) _elemDefs.get( name.toUpperCase(Locale.ENGLISH) );
         if ( flags == null )
             return false;
         else

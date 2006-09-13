@@ -127,7 +127,7 @@ public class GroupService implements IGroupConstants
      * @return java.lang.String
      */
     public String getDistinguishedGroupKey(String name) {
-        return PropertiesManager.getProperty(GROUP_SERVICE_KEY + name);
+        return PropertiesManager.getProperty(GROUP_SERVICE_KEY + name, "");
     }
 
    /**
@@ -271,8 +271,11 @@ protected IEntityGroup igetDistinguishedGroup(String name) throws GroupsExceptio
         String key = getDistinguishedGroupKey(name);
         return compositeGroupService.findGroup(key);
     }
-    catch (Exception ex)
-        { throw new GroupsException("GroupService.getDistinguishedGroup(): could not find key for: " + name); }}
+    catch (Exception ex){
+    	throw new GroupsException("GroupService.getDistinguishedGroup(): "
+            +"could not find key for: " + name,ex); 
+    }
+}
 
 
 

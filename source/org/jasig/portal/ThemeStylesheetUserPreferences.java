@@ -40,6 +40,17 @@ public class ThemeStylesheetUserPreferences extends StylesheetUserPreferences {
         this.channelAttributeValues=new Hashtable(ssup.channelAttributeValues);
         this.defaultChannelAttributeValues=new ArrayList(ssup.defaultChannelAttributeValues);
     }
+    /**
+     * Provides a copy of this object with all fields instantiated to reflect 
+     * the values of this object. This allows subclasses to override to add
+     * correct copying behavior for their added fields.
+     * 
+     * @return a copy of this object
+     */
+    public Object newInstance()
+    {
+        return new ThemeStylesheetUserPreferences(this);
+    }
 
     public String getChannelAttributeValue(String channelSubscribeId,String attributeName) {
         Integer attributeNumber=(Integer)channelAttributeNumbers.get(attributeName);

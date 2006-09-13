@@ -5,9 +5,22 @@
 
 package org.jasig.portal.layout.dlm;
 
+import java.io.StringWriter;
 import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Vector;
 
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.security.IAuthorizationPrincipal;
@@ -16,7 +29,7 @@ import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.utils.DocumentFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.Node;
 
 /** Performs merging of layout fragments into a single document containing
  * all incorporated layout fragment elements from the set of fragments
@@ -31,10 +44,14 @@ import org.w3c.dom.NodeList;
 public class ILFBuilder
 {
     public static final String RCS_ID = "@(#) $Header$";
+    private static final Log LOG = LogFactory.getLog(ILFBuilder.class);
 
     public static Document constructILF( Document PLF, Vector sequence, IPerson person)
     throws javax.xml.parsers.ParserConfigurationException, AuthorizationException
     {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Constructing ILF for IPerson='" + person + "'");
+        }
         // first construct the destination document and root element. The root
         // element should be a complete copy of the PLF's root including its
         // node identifier in the new document. This requires the use of
@@ -48,12 +65,9 @@ public class ILFBuilder
         Element plfRoot = (Element) plfLayout.getFirstChild();
         Element ilfRoot = (Element) result.importNode( plfRoot, false);
         ilfLayout.appendChild(ilfRoot);
-        String id = ilfRoot.getAttribute("ID");
-        Element el = result.getElementById(id);
         
         if (ilfRoot.getAttribute(Constants.ATT_ID) != null)
             ilfRoot.setIdAttribute(Constants.ATT_ID, true);
-        el = result.getElementById(id);
 
         // build the auth principal for determining if pushed channels can be 
         // used by this user
@@ -85,39 +99,60 @@ public class ILFBuilder
         Element fragmentRoot = (Element) fragmentLayout.getFirstChild();
         Element compositeLayout = composite.getDocumentElement();
         Element compositeRoot = (Element) compositeLayout.getFirstChild();
-        mergeChildren( fragmentRoot, compositeRoot, ap );
-    }
+        mergeChildren( fragmentRoot, compositeRoot, ap, new HashSet() );
+    }    
 
-    private static void mergeChildren( Element source, // parent of children
-                                       Element dest,   // receiver of children
-                                       IAuthorizationPrincipal ap ) 
+
+    /**
+     * @param source parent of children
+     * @param dest receiver of children
+     * @param ap User's authorization principal for determining if they can view a channel
+     * @param visitedNodes A Set of nodes from the source tree that have been visited to get to this node, used to ensure a loop doesn't exist in the source tree.
+     * @throws AuthorizationException
+     */
+    private static void mergeChildren( Element source,
+                                       Element dest, 
+                                       IAuthorizationPrincipal ap,
+                                       Set visitedNodes ) 
     throws AuthorizationException
     {
+        //Record this node in the visited nodes set. If add returns false a loop has been detected
+        if (!visitedNodes.add(source)) {
+            final String msg = "mergeChildren has encountered a loop in the source DOM. currentNode='" + source + "', currentDepth='" + visitedNodes.size() + "', visitedNodes='" + visitedNodes + "'";
+            final IllegalStateException ise = new IllegalStateException(msg);
+            LOG.error(msg, ise);
+            
+            printNodeToDebug(source, "Source");
+            printNodeToDebug(dest, "Dest");
+            
+            throw ise;
+        }
+        
         Document destDoc = dest.getOwnerDocument();
 
-        NodeList children = source.getChildNodes();
-        int length = children.getLength();
-        
-        for ( int i=0; i<length; i++ )
-        {
-            Object item = children.item(i);
-            
-            if ( ! ( item instanceof Element ) )
-                continue;
-            
-            Element child = (Element) item;
-            Element newChild = null;
-
-            if( null != child && mergeAllowed( child, ap ))
-            {
-                newChild = (Element) destDoc.importNode( child, false );
-                dest.appendChild( newChild );
-                String id = newChild.getAttribute(Constants.ATT_ID);
-                if (id != null && ! id.equals(""))
-                    newChild.setIdAttribute(Constants.ATT_ID, true);
-                mergeChildren( child, newChild, ap );
+        Node item = source.getFirstChild();
+        while (item != null) {
+            if (item instanceof Element) {
+                
+                Element child = (Element) item;
+                Element newChild = null;
+    
+                if( null != child && mergeAllowed( child, ap ))
+                {
+                    newChild = (Element) destDoc.importNode( child, false );
+                    dest.appendChild( newChild );
+                    String id = newChild.getAttribute(Constants.ATT_ID);
+                    if (id != null && ! id.equals(""))
+                        newChild.setIdAttribute(Constants.ATT_ID, true);
+                    mergeChildren( child, newChild, ap, visitedNodes );
+                }
             }
+            
+            item = item.getNextSibling();
         }
+        
+        //Remove this node from the visited nodes set
+        visitedNodes.remove(source);
     }
     
     /**
@@ -139,5 +174,31 @@ public class ILFBuilder
         
         String channelPublishId = child.getAttribute("chanID");
         return ap.canRender(Integer.parseInt(channelPublishId));
+    }
+
+    private static void printNodeToDebug(Node n, String name) throws TransformerFactoryConfigurationError {
+        if (!LOG.isDebugEnabled()) {
+            return;
+        }
+
+        final StringWriter writer = new StringWriter();
+        
+        try {
+            final TransformerFactory transFactory = TransformerFactory.newInstance();
+            final Transformer trans = transFactory.newTransformer();
+            
+            final Source xmlSource = new DOMSource(n);
+            
+            final Result transResult = new StreamResult(writer);
+            trans.transform(xmlSource, transResult);
+            
+            final String xmlStr = writer.toString();
+            LOG.debug(name + " DOM Tree:\n\n" + xmlStr);
+        }
+        catch (Exception e) {
+            LOG.error("Error printing out " + name + " DOM Tree", e);
+            final String xmlStr = writer.toString();
+            LOG.debug("Partial " + name + " DOM Tree:\n\n" + xmlStr);
+        }
     }
 }
