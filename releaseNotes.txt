@@ -1,5 +1,5 @@
-Release notes for uPortal 2.5.3 RC2
-(the second release candidate of uPortal 2.5.3):
+Release notes for uPortal 2.5.3 RC3
+(the third release candidate of uPortal 2.5.3):
 
 CVS branch: 2-5-patches
 
@@ -24,7 +24,12 @@ error checking in ALM fragment pushing...
 
 Upgrading:
 
-Upgrading from 2.5.2 to 2.5.3 should be seamless.
+uPortal 2.5.3 uses a Rutgers-patched Xalan 2.6.0 rather than the standard 2.6.0.
+The new jar file has a different name to reflect its different contents and so
+the xalan.jar property in build.properties must be updated to reflect this new
+.jar name.  This change has been applied to the build.properties included in
+this release.  applicationContext.xml in the properties directory also changes
+to check for this modified .jar instead of for the standard .jar.
 
 
 Major new features and improvements in this release:
