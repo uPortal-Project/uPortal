@@ -24,7 +24,7 @@ error checking in ALM fragment pushing...
 
 Upgrading:
 
-uPortal 2.5.3 uses a Rutgers-patched Xalan 2.6.0 rather than the standard 2.6.0.
+uPortal 2.5.3 uses a patched Xalan 2.6.0 rather than the standard 2.6.0.
 The new jar file has a different name to reflect its different contents and so
 the xalan.jar property in build.properties must be updated to reflect this new
 .jar name.  This change has been applied to the build.properties included in
