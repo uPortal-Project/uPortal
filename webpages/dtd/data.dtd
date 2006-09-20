@@ -20,4 +20,8 @@
    sinceMinor  CDATA #IMPLIED>
 <!ELEMENT column (name, value)>
 <!ELEMENT name (#PCDATA)>
-<!ELEMENT value ANY>
+<!ELEMENT value (#PCDATA|sequence)*>
+
+<!ELEMENT sequence (#PCDATA)>
+<!ATTLIST sequence
+	id CDATA #REQUIRED>
