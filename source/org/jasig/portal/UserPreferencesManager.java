@@ -232,7 +232,7 @@ public class UserPreferencesManager implements IUserPreferencesManager {
             try {
              subId = ulm.getSubscribeId(fname);
             } catch ( PortalException pe ) {
-               log.error( "UserPreferencesManager::processUserPreferencesParameters(): Unable to get subscribe ID for fname="+fname);
+               log.error( "UserPreferencesManager::processUserPreferencesParameters(): Unable to get subscribe ID for fname="+fname, pe);
               }
             if ( ulm instanceof TransientUserLayoutManagerWrapper ){
                 // get wrapper implementation for focusing
@@ -342,7 +342,7 @@ public class UserPreferencesManager implements IUserPreferencesManager {
                     log.debug("UserPreferencesManager::processUserPreferencesParameters() : persisted "+saveWhat+" changes.");
 
             } catch (Exception e) {
-                log.error( "UserPreferencesManager::processUserPreferencesParameters() : unable to persist "+saveWhat+" changes. "+e);
+                log.error( "UserPreferencesManager::processUserPreferencesParameters() : unable to persist "+saveWhat+" changes. ",e);
             }
         }
     }
