@@ -32,6 +32,7 @@ import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.jmx.FrameworkMBeanImpl;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.TransientUserLayoutManagerWrapper;
+import org.jasig.portal.layout.UserLayoutParameterProcessor;
 import org.jasig.portal.layout.alm.IALFolderDescription;
 import org.jasig.portal.layout.alm.IAggregatedUserLayoutManager;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
@@ -283,9 +284,11 @@ public class UserInstance implements HttpSessionBindingListener {
                     // (examples of such events are "remove channel", "minimize channel", etc.
                     //  basically things that directly affect the userLayout structure)
                     try {
-                        processUserLayoutParameters(req,channelManager);
+                        UserPreferences userPrefs = uPreferencesManager.getUserPreferences();
+                        UserLayoutParameterProcessor processor = new UserLayoutParameterProcessor(ulm, userPrefs);
+                        processor.processUserLayoutParameters(req,channelManager, person);
                     } catch (PortalException pe) {
-                        log.error("UserInstance.renderState(): processUserLayoutParameters() threw an exception - ", pe);
+                        log.error("Failure processing user parameters.", pe);
                     }
 
 
@@ -699,85 +702,7 @@ public class UserInstance implements HttpSessionBindingListener {
     	EventPublisherLocator.getApplicationEventPublisher().publishEvent(new UserSessionCreatedPortalEvent(this, person));
     }
 
-    /**
-     * Process layout action events.
-     * Events are described by the following request params:
-     * uP_help_target
-     * uP_about_target
-     * uP_edit_target
-     * uP_remove_target
-     * uP_detach_target
-     * @param req a <code>HttpServletRequest</code> value
-     * @param channelManager a <code>ChannelManager</code> value
-     * @exception PortalException if an error occurs
-     */
-    private synchronized void processUserLayoutParameters (HttpServletRequest req, ChannelManager channelManager) throws PortalException {
-     try {
-
-       IUserLayoutManager ulm = uPreferencesManager.getUserLayoutManager();
-
-        // Sending the theme stylesheets parameters based on the user security context
-        UserPreferences userPrefs = uPreferencesManager.getUserPreferences();
-
-        String[] values;
-        if ((values = req.getParameterValues("uP_help_target")) != null) {
-            for (int i = 0; i < values.length; i++) {
-                channelManager.passPortalEvent(values[i], PortalEvent.HELP_BUTTON);
-            }
-        }
-        if ((values = req.getParameterValues("uP_about_target")) != null) {
-            for (int i = 0; i < values.length; i++) {
-                channelManager.passPortalEvent(values[i], PortalEvent.ABOUT_BUTTON);
-            }
-        }
-        if ((values = req.getParameterValues("uP_edit_target")) != null) {
-            for (int i = 0; i < values.length; i++) {
-                channelManager.passPortalEvent(values[i], PortalEvent.EDIT_BUTTON);
-            }
-        }
-        if ((values = req.getParameterValues("uP_detach_target")) != null) {
-            channelManager.passPortalEvent(values[0], PortalEvent.DETACH_BUTTON);
-        }
-
-        //Propagate minimize/maximize events to the channels
-        String[] tcattrs = req.getParameterValues("uP_tcattr");
-        if (tcattrs != null) {
-            for (int i = 0; i < tcattrs.length; i++) {
-                String aName = tcattrs[i];
-                if ("minimized".equals(aName)) {
-                    String[] aNode = req.getParameterValues(aName + "_channelId");
-                    if (aNode != null && aNode.length > 0) {
-                        for (int j = 0; j < aNode.length; j++) {
-                            String aValue = req.getParameter(aName + "_" + aNode[j] + "_value");
-
-                            PortalEvent e = null;
-
-                            if ("true".equals(aValue)) {
-                                e = PortalEvent.MINIMIZE;
-                            }
-                            else {
-                                e = PortalEvent.MAXIMIZE;
-                            }
-
-                            channelManager.passPortalEvent(aNode[j], e);
-
-                            if (log.isDebugEnabled())
-                                log.debug("Sending window state event to '" + aName + "' of '" + aNode[j] + "' to '" + aValue + "'.");
-                        }
-                    }
-                }
-            }
-        }
-
-    ulm.processLayoutParameters(person, userPrefs, req);
-      } catch ( Exception e ) {
-    	  if (e instanceof PortalException){
-    		  throw (PortalException)e;
-    	  }else{
-    		  throw new PortalException(e);
-    	  }
-        }
-    }
+ 
 
     private IAggregatedUserLayoutManager getAggregatedLayoutManager(IUserLayoutManager ulm) throws PortalException {
     if ( ulm instanceof TransientUserLayoutManagerWrapper )
