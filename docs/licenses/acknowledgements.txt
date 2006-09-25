@@ -49,6 +49,13 @@ See the apache20-license.txt file in this directory for reference.
 
 See also the notice files in the notices directory of this directory.
 
+Special note about xalan:
+As of uPortal 2.5.3, uPortal uses by default a modified xalan 2.6.0 which
+includes a version of a memory leak fix from xalan 2.7.0 and a bugfix.  JA-SIG
+maintains a modified copy of the xalan source code from which this xalan
+jar is built.  Xalan 2.6.0 is modified and redistributed as permitted by the
+Apache license 2.0.
+
 
 The com.oreilly.servlet package:
 

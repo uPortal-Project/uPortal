@@ -172,7 +172,7 @@ public boolean contains(IGroupMember gm) throws GroupsException
     }
     else
     {
-        return getLocalGroupService().contains(this,gm);
+        return gm.isMemberOf( this );
     }
 }
 /**
@@ -186,11 +186,11 @@ public boolean deepContains(IGroupMember gm) throws GroupsException
         return true;
 
     boolean found = false;
-    Iterator it = getMembers();
+    Iterator it = getMemberGroups();
     while ( it.hasNext() && !found )
     {
-        IGroupMember myGm = (IGroupMember) it.next();
-        found = myGm.deepContains(gm);
+        IEntityGroup group = (IEntityGroup) it.next();
+        found = group.deepContains(gm);
     }
 
     return found;

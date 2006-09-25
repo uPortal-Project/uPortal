@@ -46,7 +46,6 @@ public class PLFIntegrator
         throws PortalException
     {
         Element positions = null;
-        boolean changeOccurred = false;
 
         if( null == plfParent )
         {

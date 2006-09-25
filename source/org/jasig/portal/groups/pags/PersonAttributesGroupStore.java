@@ -138,7 +138,11 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
              person = rp;
          }
          catch (Exception ex)
-             { return false; }
+             { 
+             
+             log.error("Exception acquiring attributes for member " + member + " while checking if group " + group + " contains this member.", ex);
+             
+             return false; }
          return testRecursively(groupDef, person);
       }
    }

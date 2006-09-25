@@ -31,7 +31,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public abstract class ChainingSecurityContext implements ISecurityContext
 {
-    private static final Log log = LogFactory.getLog(ChainingSecurityContext.class);
+    protected final Log log = LogFactory.getLog(getClass());
     
   /**
    * Default value for stopWhenAuthenticated.

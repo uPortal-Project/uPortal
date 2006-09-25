@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.net.URL;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionBindingEvent;
 
 import org.apache.commons.logging.Log;
@@ -38,6 +39,7 @@ import org.jasig.portal.utils.PropsMatcher;
 public class UserPreferencesManager implements IUserPreferencesManager {
 
     private static final Log log = LogFactory.getLog(UserPreferencesManager.class);
+    private static final String USER_PREFERENCES_KEY = UserPreferencesManager.class.getName();
     
     /**
      * Default value for saveUserPreferencesAtLogout.
@@ -72,6 +74,18 @@ public class UserPreferencesManager implements IUserPreferencesManager {
      *  @param person the person object
      */
     public UserPreferencesManager (HttpServletRequest req, IPerson person) throws PortalException {
+        this(req, person, null);
+    }
+
+    /**
+     * Constructor does the following
+     *  1. Read layout.properties
+     *  2. read userLayout from the database
+     *  @param req the servlet request object
+     *  @param person the person object
+     *  @param localeManager the locale manager
+     */
+    public UserPreferencesManager (HttpServletRequest req, IPerson person, LocaleManager localeManager) throws PortalException {
         ulm=null;
         try {
             m_person = person;
@@ -104,7 +118,7 @@ public class UserPreferencesManager implements IUserPreferencesManager {
                           }
                         }
                     } catch (IOException ioe) {
-                        log.error( "UserPreferencesManager::UserPreferencesManager() : Exception occurred while loading browser mapping file: " + url + ". " + ioe);
+                        log.error( "UserPreferencesManager::UserPreferencesManager() : Exception occurred while loading browser mapping file: " + url + ". ", ioe);
                     }
                 }
 
@@ -121,106 +135,35 @@ public class UserPreferencesManager implements IUserPreferencesManager {
             }
 
             if (upl != null) {
-                ulm=UserLayoutManagerFactory.getUserLayoutManager(m_person,upl);
-
-                try {
-                    complete_up=ulsdb.getUserPreferences(m_person, upl);
-                } catch (Exception e) {
-                    log.error( "UserPreferencesManager(): caught an exception trying to retreive user preferences for user=\"" + m_person.getID() + "\", profile=\"" + upl.getProfileName() + "\".", e);
-                    complete_up=new UserPreferences(upl);
-                }
-
-                try {
-                    // Initialize the JNDI context for this user
-                    JNDIManager.initializeSessionContext(req.getSession(),Integer.toString(m_person.getID()),Integer.toString(upl.getLayoutId()),ulm.getUserLayoutDOM());
-                } catch(PortalException ipe) {
-                  log.error( "UserPreferencesManager(): Could not properly initialize user context", ipe);
-                }
-            } else {
-                // there is no user-defined mapping for this particular browser.
-                // user should be redirected to a browser-registration page.
-                unmapped_user_agent = true;
-                if (log.isDebugEnabled())
-                    log.debug("UserPreferencesManager::UserPreferencesManager() : unable to find a profile for user \"" + m_person.getID()+"\" and userAgent=\""+ userAgent + "\".");
-            }
-        } catch (PortalException pe) {
-            throw pe;
-        } catch (Exception e) {
-            log.error("Exception constructing UserPreferencesManager on request " 
-                    + req + " for user " + person, e);
-        }
-    }
-
-    /**
-     * Constructor does the following
-     *  1. Read layout.properties
-     *  2. read userLayout from the database
-     *  @param req the servlet request object
-     *  @param person the person object
-     *  @param localeManager the locale manager
-     */
-    public UserPreferencesManager (HttpServletRequest req, IPerson person, LocaleManager localeManager) throws PortalException {
-        ulm=null;
-        try {
-            m_person = person;
-            // load user preferences
-            // Should obtain implementation in a different way!!
-            ulsdb = UserLayoutStoreFactory.getUserLayoutStoreImpl();
-            // determine user profile
-            String userAgent = req.getHeader("User-Agent");
-            UserProfile upl = ulsdb.getUserProfile(m_person, userAgent);
-            if (upl == null) {
-                upl = ulsdb.getSystemProfile(userAgent);
-            }
-            if(upl==null) {
-                // try guessing the profile through pattern matching
-
-                if(uaMatcher==null) {
-                    // init user agent matcher
-                    URL url = null;
-                    try {
-                        url = this.getClass().getResource("/properties/browser.mappings");
-                        if (url != null) {
-                          InputStream in = url.openStream();
-                          try {
-                            uaMatcher = new PropsMatcher(in);
-                          } finally {
-                            in.close();
-                          }
-                        }
-                    } catch (IOException ioe) {
-                        log.error( "UserPreferencesManager::UserPreferencesManager() : Exception occurred while loading browser mapping file: " + url + ". " + ioe);
-                    }
-                }
-
-                if(uaMatcher!=null) {
-                    // try matching
-                    String profileId=uaMatcher.match(userAgent);
-                    if(profileId!=null) {
-                        // user agent has been matched
-
-                        upl=ulsdb.getSystemProfileById(Integer.parseInt(profileId));
-                    }
-                }
-
-            }
-
-            if (upl != null) {
-                if (LocaleManager.isLocaleAware()) {
+                if (localeManager != null && LocaleManager.isLocaleAware()) {
                     upl.setLocaleManager(localeManager);
                 }
                 ulm=UserLayoutManagerFactory.getUserLayoutManager(m_person,upl);
 
+                final HttpSession session = req.getSession(true);
                 try {
-                    complete_up=ulsdb.getUserPreferences(m_person, upl);
+                    if (session != null) {
+                        complete_up = (UserPreferences)session.getAttribute(USER_PREFERENCES_KEY);
+                    }
+
+                    if (complete_up == null) {
+                        complete_up=ulsdb.getUserPreferences(m_person, upl);
+                    }
+                    else {
+                        log.debug("Found UserPreferences in session, using it instead of creating new UserPreferences");
+                    }
                 } catch (Exception e) {
                     log.error( "UserPreferencesManager(): caught an exception trying to retreive user preferences for user=\"" + m_person.getID() + "\", profile=\"" + upl.getProfileName() + "\".", e);
                     complete_up=new UserPreferences(upl);
                 }
 
+                if (complete_up != null) {
+                    session.setAttribute(USER_PREFERENCES_KEY, complete_up);
+                }
+
                 try {
                     // Initialize the JNDI context for this user
-                    JNDIManager.initializeSessionContext(req.getSession(),Integer.toString(m_person.getID()),Integer.toString(upl.getLayoutId()),ulm.getUserLayoutDOM());
+                    JNDIManager.initializeSessionContext(session,Integer.toString(m_person.getID()),Integer.toString(upl.getLayoutId()),ulm.getUserLayoutDOM());
                 } catch(PortalException ipe) {
                   log.error( "UserPreferencesManager(): Could not properly initialize user context", ipe);
                 }
@@ -257,26 +200,6 @@ public class UserPreferencesManager implements IUserPreferencesManager {
      * @param req current <code>HttpServletRequest</code>
      */
     public void processUserPreferencesParameters(HttpServletRequest req) {
-        // save processing
-        String saveWhat=req.getParameter("uP_save");
-        if(saveWhat!=null) {
-            try {
-                if(saveWhat.equals("preferences")) {
-                    ulsdb.putUserPreferences(m_person, complete_up);
-                } else if(saveWhat.equals("layout")) {
-                    ulm.saveUserLayout();
-                } else if(saveWhat.equals("all")) {
-                    ulsdb.putUserPreferences(m_person, complete_up);
-                    ulm.saveUserLayout();
-                  }
-                if (log.isDebugEnabled())
-                    log.debug("UserPreferencesManager::processUserPreferencesParameters() : persisted "+saveWhat+" changes.");
-
-            } catch (Exception e) {
-                log.error( "UserPreferencesManager::processUserPreferencesParameters() : unable to persist "+saveWhat+" changes. "+e);
-            }
-        }
-
         // layout root setting
         String root;
         if ((root = req.getParameter("uP_root")) != null) {
@@ -309,7 +232,7 @@ public class UserPreferencesManager implements IUserPreferencesManager {
             try {
              subId = ulm.getSubscribeId(fname);
             } catch ( PortalException pe ) {
-               log.error( "UserPreferencesManager::processUserPreferencesParameters(): Unable to get subscribe ID for fname="+fname);
+               log.error( "UserPreferencesManager::processUserPreferencesParameters(): Unable to get subscribe ID for fname="+fname, pe);
               }
             if ( ulm instanceof TransientUserLayoutManagerWrapper ){
                 // get wrapper implementation for focusing
@@ -399,6 +322,25 @@ public class UserPreferencesManager implements IUserPreferencesManager {
                             log.debug("UserPreferencesManager::processUserPreferencesParameters() : setting tcattr \"" + aName + "\" of \"" + aNode[j] + "\" to \"" + aValue + "\".");
                     }
                 }
+            }
+        }
+        // save processing
+        String saveWhat=req.getParameter("uP_save");
+        if(saveWhat!=null) {
+            try {
+                if(saveWhat.equals("preferences")) {
+                    ulsdb.putUserPreferences(m_person, complete_up);
+                } else if(saveWhat.equals("layout")) {
+                    ulm.saveUserLayout();
+                } else if(saveWhat.equals("all")) {
+                    ulsdb.putUserPreferences(m_person, complete_up);
+                    ulm.saveUserLayout();
+                  }
+                if (log.isDebugEnabled())
+                    log.debug("UserPreferencesManager::processUserPreferencesParameters() : persisted "+saveWhat+" changes.");
+
+            } catch (Exception e) {
+                log.error( "UserPreferencesManager::processUserPreferencesParameters() : unable to persist "+saveWhat+" changes. ",e);
             }
         }
     }

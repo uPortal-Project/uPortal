@@ -45,8 +45,11 @@ public interface IChannel
   public void receiveEvent(PortalEvent ev);
 
   /**
-   * Acquires ChannelRuntimeProperites from the channel.
+   * Acquires ChannelRuntimeProperties from the channel.
    * This function may be called by the portal framework throughout the session.
+   * Currently, as of uPortal 2.5.1, the framework calls this method after
+   * each invocation of renderXML (to determine if there is a dynamic channel
+   * title).  Prior to uPortal 2.5.1, the framework would not call this method.
    * @see ChannelRuntimeProperties
    */
   public ChannelRuntimeProperties getRuntimeProperties();

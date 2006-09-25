@@ -20,22 +20,52 @@ import org.jasig.portal.services.GroupService;
  * passed in IPerson is a member of the group whose name is passed to the
  * constructor of this class.
  * 
+ * There are two modes to this evaluator:  'memberOf' and 'deepMemberOf'.
+ * In 'memberOf' mode, the isApplicable() method returns whether the IPerson
+ * is a member of the group, but does not evaluate if they are the member of
+ * any contained groups.  In 'deepMemberOf' mode, the isApplicable returns
+ * whether the IPerson is a member of the groups or any contained groups.
+ * 
+ * For example, supposed there is a group 'Famous People' with a contained
+ * group of 'Actors', and 'Robert Deniro' is a member of 'Actors' only.  If
+ * you construct a GroupMembershipEvaluator for the 'Famous People' group in
+ * the 'memberOf' mode, isApplicable() would return 'false' for 'Robert Deniro'.
+ * If you construct it in the 'deepMemberOf' mode, isApplicable() would return
+ * 'true' for 'Robert Deniro'.
+ * 
+ * Prior to uPortal 2.5.1, this evaluator only supported the 'memberOf' mode
+ * and did not support 'deepMemberOf'.
+ * 
  * @author mboyd@sungardsct.com
  * @version $Revision$ $Date$
  * @since uPortal 2.5
  */
 public class GroupMembershipEvaluator implements Evaluator
 {
+    private static final int MEMBER_OF_MODE = 0;
+    
+    private static final int DEEP_MEMBER_OF_MODE = 1;
+
     private String groupName = null;
 
     private IEntityGroup group = null;
 
+    private final int evaluatorMode;
+
     public GroupMembershipEvaluator(String mode, String name)
     {
-        if (! mode.equals("memberOf"))
+        if (mode.equals("memberOf"))
+        {
+            evaluatorMode = MEMBER_OF_MODE;
+        }
+        else if (mode.equals("deepMemberOf"))
+        {
+            evaluatorMode = DEEP_MEMBER_OF_MODE;
+        }
+        else
         {
             throw new RuntimeException("Unsupported mode '" + mode
-                    + "' specified. Only 'memberOf' is "
+                    + "' specified. Only 'memberOf' and 'deepMemberOf' are "
                     + "supported at this time.");
         }
         this.groupName = name;
@@ -86,7 +116,17 @@ public class GroupMembershipEvaluator implements Evaluator
         {
             EntityIdentifier ei = p.getEntityIdentifier();
             IGroupMember groupMember = GroupService.getGroupMember(ei);
-            return groupMember.isMemberOf(group);
+            boolean isMember =false;
+            
+            if (evaluatorMode == MEMBER_OF_MODE)
+            {
+                isMember = groupMember.isMemberOf(group);
+            }
+            else
+            { 
+                isMember = groupMember.isDeepMemberOf(group);
+            }
+            return isMember;
         } catch (GroupsException e)
         {
             throw new RuntimeException("Unable to determine if user "

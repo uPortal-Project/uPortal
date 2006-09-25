@@ -1,4 +1,4 @@
-/* Copyright 2001 The JA-SIG Collaborative.  All rights reserved.
+/* Copyright 2001, 2006 The JA-SIG Collaborative.  All rights reserved.
 *  See license distributed with this file and
 *  available online at http://www.uportal.org/license.html
 */
@@ -103,90 +103,23 @@ public class CSnoop implements IPrivilegedChannel {
     // <request-info>
     Element requestInfoE = doc.createElement("request-info");
 
-    // <request-protocol>
-    Element requestProtocolE = doc.createElement("request-protocol");
-    requestProtocolE.appendChild(doc.createTextNode(request.getProtocol()));
-    requestInfoE.appendChild(requestProtocolE);
-    
-    // <request-method>
-    Element requestMethodE = doc.createElement("request-method");
-    requestMethodE.appendChild(doc.createTextNode(request.getMethod()));
-    requestInfoE.appendChild(requestMethodE);
-
-    // <server-name>
-    Element serverNameE = doc.createElement("server-name");
-    serverNameE.appendChild(doc.createTextNode(request.getServerName()));
-    requestInfoE.appendChild(serverNameE);
-
-    // <server-port>
-    Element serverPortE = doc.createElement("server-port");
-    serverPortE.appendChild(doc.createTextNode(String.valueOf(request.getServerPort())));
-    requestInfoE.appendChild(serverPortE);
-
-    // <request-uri>
-    Element requestUriE = doc.createElement("request-uri");
-    requestUriE.appendChild(doc.createTextNode(request.getRequestURI()));
-    requestInfoE.appendChild(requestUriE);
-
-    // <context-path>
-    Element contextPathE = doc.createElement("context-path");
-    contextPathE.appendChild(doc.createTextNode(request.getContextPath()));
-    requestInfoE.appendChild(contextPathE);
-
-    // <servlet-path>
-    Element servletPathE = doc.createElement("servlet-path");
-    servletPathE.appendChild(doc.createTextNode(request.getServletPath()));
-    requestInfoE.appendChild(servletPathE);
-    
-    // <query-string>
-    Element queryStringE = doc.createElement("query-string");
-    queryStringE.appendChild(doc.createTextNode(request.getQueryString()));
-    requestInfoE.appendChild(queryStringE);
-
-    // <path-info>
-    Element pathInfoE = doc.createElement("path-info");
-    pathInfoE.appendChild(doc.createTextNode(request.getPathInfo()));
-    requestInfoE.appendChild(pathInfoE);
-
-    // <path-translated>
-    Element pathTranslatedE = doc.createElement("path-translated");
-    pathTranslatedE.appendChild(doc.createTextNode(request.getPathTranslated()));
-    requestInfoE.appendChild(pathTranslatedE);
-
-    // <content-length>
-    Element contentLengthE = doc.createElement("content-length");
-    contentLengthE.appendChild(doc.createTextNode(String.valueOf(request.getContentLength())));
-    requestInfoE.appendChild(contentLengthE);
-
-    // <content-type>
-    Element contentTypeE = doc.createElement("content-type");
-    contentTypeE.appendChild(doc.createTextNode(request.getContentType()));
-    requestInfoE.appendChild(contentTypeE);
-
-    // <remote-user>
-    Element remoteUserE = doc.createElement("remote-user");
-    remoteUserE.appendChild(doc.createTextNode(request.getRemoteUser()));
-    requestInfoE.appendChild(remoteUserE);
-
-    // <remote-address>
-    Element remoteAddressE = doc.createElement("remote-address");
-    remoteAddressE.appendChild(doc.createTextNode(request.getRemoteAddr()));
-    requestInfoE.appendChild(remoteAddressE);
-
-    // <remote-host>
-    Element remoteHostE = doc.createElement("remote-host");
-    remoteHostE.appendChild(doc.createTextNode(request.getRemoteHost()));
-    requestInfoE.appendChild(remoteHostE);
-
-    // <authorization-scheme>
-    Element authorizationSchemeE = doc.createElement("authorization-scheme");
-    authorizationSchemeE.appendChild(doc.createTextNode(request.getAuthType()));
-    requestInfoE.appendChild(authorizationSchemeE);
-
-    // <locale>
-    Element localeE = doc.createElement("locale");
-    localeE.appendChild(doc.createTextNode(request.getLocale().toString()));
-    requestInfoE.appendChild(localeE);
+    addInfo(requestInfoE, "request-protocol", request.getProtocol());
+    addInfo(requestInfoE, "request-method", request.getMethod());
+    addInfo(requestInfoE, "server-name", request.getServerName());
+    addInfo(requestInfoE, "server-port", String.valueOf(request.getServerPort()));
+    addInfo(requestInfoE, "request-uri", request.getRequestURI());
+    addInfo(requestInfoE, "context-path", request.getContextPath());
+    addInfo(requestInfoE, "servlet-path", request.getServletPath());
+    addInfo(requestInfoE, "query-string", request.getQueryString());
+    addInfo(requestInfoE, "path-info", request.getPathInfo());
+    addInfo(requestInfoE, "path-translated", request.getPathTranslated());
+    addInfo(requestInfoE, "content-length", String.valueOf(request.getContentLength()));
+    addInfo(requestInfoE, "content-type", request.getContentType());
+    addInfo(requestInfoE, "remote-user", request.getRemoteUser());
+    addInfo(requestInfoE, "remote-address", request.getRemoteAddr());
+    addInfo(requestInfoE, "remote-host", request.getRemoteHost());
+    addInfo(requestInfoE, "authorization-scheme", request.getAuthType());
+    addInfo(requestInfoE, "locale", request.getLocale().toString());
     
     // <headers>
     Element headersE = doc.createElement("headers");
@@ -225,6 +158,22 @@ public class CSnoop implements IPrivilegedChannel {
     xslt.setXSL(sslLocation, runtimeData.getBrowserInfo());
     xslt.setTarget(out);
     xslt.transform();
+  }
+
+  /**
+   * Adds a text node with the given name and value. If the value is null then no text node
+   * is added to the new node, but the new node is still added to parentElement
+   * @param parentElement parent of the node to be added
+   * @param name name of the node to add
+   * @param value String value of the node to add
+   */
+  private void addInfo(Element parentElement, String name, String value) {
+	  Document doc = parentElement.getOwnerDocument();
+	  Element e = doc.createElement(name);
+	  if (value != null){
+		  e.appendChild(doc.createTextNode(value));
+	  }
+	  parentElement.appendChild(e);
   }
 }
 

@@ -1,0 +1,39 @@
+<project
+   xmlns:j="jelly:core"
+   xmlns:ant="jelly:ant"
+   xmlns:util="jelly:util"
+   xmlns:maven="jelly:maven">
+   
+   <echo>
+   	basedir: ${basedir}
+   	</echo>
+
+   <postGoal name="site">
+       <j:if test="${not empty siteDir}">
+       <ant:copy todir="${siteDir}">
+           <ant:fileset dir="target/docs/">
+               <ant:include name="**" />
+           </ant:fileset>
+       </ant:copy>
+       </j:if>
+   </postGoal>
+   
+   <!-- We have to rename the log4j properties file and place it in the default package in the classpath -->
+   <preGoal name="java:compile">
+       <copy tofile="${maven.build.dest}/log4j.properties" file="properties/Logger.properties"/>
+   </preGoal>
+   
+    <!-- Move the context.xml file into the META-INF directory -->
+    <preGoal name="war:war-resources">
+        <copy tofile="${maven.war.webapp.dir}/META-INF/context.xml" file="properties/${webapp.contextFile}">
+           <filterset>
+               <filter token="webappDocBase" value="${webapp.docBase}"/>
+               <filter token="webappPath" value="${webapp.path}"/>
+               <filtersfile file="properties/rdbm.properties" />
+           </filterset>
+       </copy>
+       
+      <echo>Building context.xml</echo>
+   </preGoal>
+    
+</project>

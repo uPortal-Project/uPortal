@@ -90,9 +90,6 @@ public final class PooledDataSourceFactoryFactory {
                     + className + ", so falling back on default of " 
                     + DEFAULT_POOLED_DATASOURCE_FACTORY, e);
             
-            System.out.println("Unable to instantiate " + className);
-            System.out.println(e);
-            e.printStackTrace();
         }
         
         try {

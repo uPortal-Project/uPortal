@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+<!--
+ | The parent bean is the Conditional wrapper because first we want to filter down to
+ | the events we're actually going to log.
+ +-->
+ <bean name="statsRecorder"
+     class="org.jasig.portal.services.stats.ConditionalStatsRecorder">
+     <property name="flags">
+         <!--
+         | This JavaBean lets us configure which events we'd like the Conditional 
+         | wrapper to propogate.  The flags default to false so we need only declared those
+         | methods we would like to propogate.
+         +-->
+         <bean class="org.jasig.portal.services.stats.StatsRecorderFlagsImpl">
+             <property name="recordLogin" value="true"/>
+             <property name="recordLogout" value="true"/>
+             <property name="recordSessionCreated" value="true"/>
+             <property name="recordSessionDestroyed" value="true"/>
+             <property name="recordChannelDefinitionPublished" value="true"/>
+             <property name="recordChannelDefinitionModified" value="true"/>
+             <property name="recordChannelDefinitionRemoved" value="true"/>
+             <property name="recordChannelAddedToLayout" value="true"/>
+             <property name="recordChannelUpdatedInLayout" value="true"/>
+             <property name="recordChannelMovedInLayout" value="true"/>
+             <property name="recordChannelRemovedFromLayout" value="true"/>
+             <property name="recordFolderAddedToLayout" value="true"/>
+             <property name="recordFolderUpdatedInLayout" value="true"/>
+             <property name="recordFolderMovedInLayout" value="true"/>
+             <property name="recordFolderRemovedFromLayout" value="true"/>
+             
+             <property name="recordChannelInstantiated" value="false"/>
+             <property name="recordChannelRendered" value="false"/>
+             <property name="recordChannelTargeted" value="false"/>
+         </bean>
+     </property>
+     
+     <!-- 
+     | The Conditional stats recorder will call this target when its condition is fulfilled, that is
+     | when the method call is recordChannelRendered().  IStatsRecorder calls other than 
+     | recordChannelRendered will have no effect, that is, are filtered away 
+     | by the Conditional stats recorder. 
+     +-->
+     <property name="targetStatsRecorder">
+         <!-- 
+         | The target of the Conditional is the thread firing wrapper so that we'll use separate
+         | threads to perform the actual logging. 
+         +-->
+         <bean class="org.jasig.portal.services.stats.ThreadFiringStatsRecorder">
+             <!-- initial thread pool size -->
+             <constructor-arg value="5"/>
+             <!-- maximum thread pool size -->
+             <constructor-arg value="15"/>
+             <!-- thread priority -->
+             <constructor-arg value="5"/>
+             
+             <!--
+             | The target of the threads we fire is this LoggingStatsRecorder instance.
+             +-->
+             <property name="targetStatsRecorder">
+                 <bean class="org.jasig.portal.services.stats.LoggingStatsRecorder"/>
+             </property>
+             <!--
+             | Below is an example of using listStatsRecorder to log to more than one IStatsRecorder.
+             +-->
+			<!--
+            <property name="targetStatsRecorder">
+                 <bean class="org.jasig.portal.services.stats.ListStatsRecorder">
+                     <property name="children">
+                          <list>
+                             <bean class="org.jasig.portal.services.stats.LoggingStatsRecorder"/>
+                             <bean class="edu.cornell.uportal.channels.runtimeinfo.providers.Statistics"/>
+                         </list>
+                     </property>
+                 </bean>
+             </property>
+			-->
+         </bean>
+     </property>
+ </bean>
+</beans>
+ 

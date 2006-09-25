@@ -25,6 +25,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,6 +33,7 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.channels.CSecureInfo;
 import org.jasig.portal.channels.error.CError;
 import org.jasig.portal.channels.error.ErrorCode;
+import org.jasig.portal.channels.support.IDynamicChannelTitleRenderer;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutManager;
@@ -102,7 +104,8 @@ public class ChannelManager implements LayoutEventListener {
 
     // global channel rendering cache
     public static final int SYSTEM_CHANNEL_CACHE_MIN_SIZE=50; // this should be in a file somewhere
-    public static final SoftHashMap systemCache=new SoftHashMap(SYSTEM_CHANNEL_CACHE_MIN_SIZE);
+    
+    public static final Map systemCache = new SoftHashMap(SYSTEM_CHANNEL_CACHE_MIN_SIZE);
 
     public static final String channelAddressingPathElement="channel";
     private static boolean useAnchors = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.ChannelManager.use_anchors", false);
@@ -341,6 +344,7 @@ public class ChannelManager implements LayoutEventListener {
                             if(cs.stopCaching()) {
                                 try {
                                     characterContent=cs.getCache();
+                                	log.debug("outputChannel 2: "+characterContent);
                                     if(characterContent!=null) {
                                         // save compiled character cache
                                         cr.setCharacterCache(characterContent);
@@ -411,7 +415,8 @@ public class ChannelManager implements LayoutEventListener {
             try {
               channelDesc = (IUserLayoutChannelDescription)upm.getUserLayoutManager().getNode(channelSubscribeId);
             } catch (PortalException pe) {
-              // Do nothing
+                // Just log exception
+            	log.warn(pe,pe);
             }
             
             // Tell the StatsRecorder that this channel has rendered
@@ -693,21 +698,40 @@ public class ChannelManager implements LayoutEventListener {
         if(ap.canRender(Integer.parseInt(channelPublishId))) {
 
             // Instantiate the channel and notify the StatsRecorder
-            ch = ChannelFactory.instantiateLayoutChannel(cd,this.pcs.getHttpServletRequest().getSession(false).getId());
-            StatsRecorder.recordChannelInstantiated(upm.getPerson(), upm.getCurrentProfile(), cd);
 
-            // Create and stuff the channel static data
-            ChannelStaticData sd = new ChannelStaticData();
-            sd.setChannelSubscribeId(channelSubscribeId);
-            sd.setTimeout(cd.getTimeout());
-            sd.setParameters(cd.getParameterMap());
-            sd.setPerson(upm.getPerson());
-            sd.setJNDIContext(channelContext);
-            sd.setICCRegistry(new ICCRegistry(this,channelSubscribeId));
-            sd.setChannelPublishId(cd.getChannelPublishId());
+			HttpServletRequest sr = this.pcs.getHttpServletRequest();
+			if (sr == null){
+				ch=new CError(ErrorCode.GENERAL_ERROR,"Unable to get SessionId. getHttpServletRequest returned null.",channelSubscribeId,null);
+			}else{
+                // getSession() true is apparently required to support cross-context sessions
+                // under Tomcat.  See UP-1320
+				HttpSession hs  = sr.getSession(true);
+				if (hs == null){
+					ch=new CError(ErrorCode.GENERAL_ERROR,"Unable to get SessionId. getSession returned null.",channelSubscribeId,null);
+				}else{				
+					String id = hs.getId();
+					if (id == null){
+						ch=new CError(ErrorCode.GENERAL_ERROR,"Unable to get SessionId. getId returned null.",channelSubscribeId,null);
+					}else{			
+						           	
+						ch = ChannelFactory.instantiateLayoutChannel(cd,id);
+            			StatsRecorder.recordChannelInstantiated(upm.getPerson(), upm.getCurrentProfile(), cd);
 
-            ch.setStaticData(sd);
+			            // Create and stuff the channel static data
+			            ChannelStaticData sd = new ChannelStaticData();
+            			sd.setChannelSubscribeId(channelSubscribeId);
+			            sd.setTimeout(cd.getTimeout());
+           				sd.setParameters(cd.getParameterMap());
+			            sd.setPerson(upm.getPerson());
+			            sd.setJNDIContext(channelContext);
+            			sd.setICCRegistry(new ICCRegistry(this,channelSubscribeId));
+			            sd.setChannelPublishId(cd.getChannelPublishId());
 
+            			ch.setStaticData(sd);
+					}
+				}
+			}
+   
         } else {
             // user is not authorized to instantiate this channel
             // create an instance of an error channel instead
@@ -818,8 +842,17 @@ public class ChannelManager implements LayoutEventListener {
                 try {
                     chObj=instantiateChannel(channelTarget);
                 } catch (Throwable e) {
-                    log.error("unable to pass find/create an instance of a channel. " +
-                            "Bogus Id ? ! (id=\""+channelTarget+"\").", e);
+					if (upm.getPerson().isGuest() == true)
+					{
+						// We get this alot when people's sessions have timed out and they get directed
+						// to the guest page. Changed to WARN because there might be a need to note this
+						// to diagnose problems with the guest layout.
+                		 
+						log.warn("ChannelManager::processRequestChannelParameters() : unable to pass find/create an instance of a channel. Bogus Id ? ! (id=\""+channelTarget+"\").");
+					}else{
+						log.error("ChannelManager::processRequestChannelParameters() : unable to pass find/create an instance of a channel. Bogus Id ? ! (id=\""
+								+channelTarget+"\" uid=\""+upm.getPerson().getID()+"\").",e);
+					}
                     chObj=replaceWithErrorChannel(channelTarget,ErrorCode.SET_STATIC_DATA_EXCEPTION,e,null,false);
                 }
             }
@@ -902,6 +935,7 @@ public class ChannelManager implements LayoutEventListener {
             try {
                 ch=instantiateChannel(channelSubscribeId);
             } catch (Throwable e) {
+            	log.warn(e,e);
                 return null;
             }
         }
@@ -949,7 +983,7 @@ public class ChannelManager implements LayoutEventListener {
             try {
                 portalContext=getPortalContext();
             } catch (NamingException ne) {
-                log.error("ChannelManager::setReqNRes(): exception raised when trying to obtain initial JNDI context : ", ne);
+                log.error(ne, ne);
             }
         }
         // construct a channel context
@@ -957,7 +991,7 @@ public class ChannelManager implements LayoutEventListener {
             try {
                 channelContext=getChannelJndiContext(portalContext,request.getSession(false).getId(),Integer.toString(this.pcs.getUserPreferencesManager().getPerson().getID()),Integer.toString(this.pcs.getUserPreferencesManager().getCurrentProfile().getLayoutId()));
             } catch (NamingException ne) {
-                log.error("ChannelManager::setReqNRes(): exception raised when trying to obtain channel JNDI context : ", ne);
+                log.error(ne, ne);
             }
         }
         processRequestChannelParameters(request);
@@ -1114,7 +1148,10 @@ public class ChannelManager implements LayoutEventListener {
         }
 
         // Check if channel is rendering as the root element of the layout
-        String userLayoutRoot = upm.getUserPreferences().getStructureStylesheetUserPreferences().getParameterValue("userLayoutRoot");
+        
+		UserPreferences tempUserPref = upm.getUserPreferences();
+		StructureStylesheetUserPreferences tempSSUP = tempUserPref.getStructureStylesheetUserPreferences();
+		String userLayoutRoot = tempSSUP.getParameterValue("userLayoutRoot");
         if (rd != null && userLayoutRoot != null && !userLayoutRoot.equals(IUserLayout.ROOT_NODE_NAME)) {
             rd.setRenderingAsRoot(true);
         }
@@ -1227,4 +1264,44 @@ public class ChannelManager implements LayoutEventListener {
     public void layoutSaved() {}
 
     public void setLocaleManager(LocaleManager lm) { this.lm = lm; }
+    
+	/**
+	 * Get the dynamic channel title for a given channelSubscribeID.
+	 * Returns null if no dynamic channel (the rendering infrastructure
+	 * calling this method should fall back on a default title when this
+	 * method returns null).
+	 * @param channelSubscribeId
+	 * @throws IllegalArgumentException if channelSubcribeId is null
+	 * @throws IllegalStateException if 
+	 */
+	public String getChannelTitle(String channelSubscribeId) {
+		
+		if (log.isTraceEnabled()) {
+			log.trace("ChannelManager getting dynamic title for channel with subscribe id=" + channelSubscribeId);
+		}
+		
+		// obtain IChannelRenderer
+        Object channelRenderer = rendererTable.get(channelSubscribeId);
+
+        // default to null (no dynamic channel title.
+        String channelTitle = null;
+        
+        // dynamic channel title support is not in IChannelRenderer itself because
+        // that would have required a change to the IChannelRenderer interface
+        if (channelRenderer instanceof IDynamicChannelTitleRenderer ) {
+            
+            IDynamicChannelTitleRenderer channelTitleRenderer = 
+                (IDynamicChannelTitleRenderer) channelRenderer;
+            channelTitle = channelTitleRenderer.getChannelTitle();
+            
+            if (log.isTraceEnabled()) {
+            	log.trace("ChannelManager reports that dynamic title for channel with subscribe id=" 
+            			+ channelSubscribeId + " is [" + channelTitle + "].");
+            }
+        }
+
+        
+        return channelTitle;
+        
+	}
 }
