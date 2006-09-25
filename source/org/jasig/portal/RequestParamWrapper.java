@@ -55,7 +55,7 @@ public class RequestParamWrapper extends HttpServletRequestWrapper {
         // only bother with parameter work if should be accessable
         if (request_verified) {
             //Determine if this is a request for a portlet
-            boolean isPortletRequest = parameters.containsKey(PortletStateManager.ACTION);
+            boolean isPortletRequest = source.getParameterMap().containsKey(PortletStateManager.ACTION);
                         
             // parse request body
             String contentType = source.getContentType();
@@ -121,15 +121,7 @@ public class RequestParamWrapper extends HttpServletRequestWrapper {
                     ExceptionHelper.genericTopHandler(Errors.bug, e);
                 }
             }
-            // regular params
-            Enumeration en = source.getParameterNames();
-            if (en != null) {
-                while (en.hasMoreElements()) {
-                    String pName = (String)en.nextElement();
-                    parameters.put(pName, source.getParameterValues(pName));
-                }
-            }
-        }
+         }
     }
 
     /**
@@ -161,7 +153,7 @@ public class RequestParamWrapper extends HttpServletRequestWrapper {
      * @return String[] if parameter is not an Object[]
      */
     public String[] getParameterValues(String name) {
-        Object[] pars = (Object[])this.parameters.get(name);
+        Object[] pars = (Object[])this.getParameterMap().get(name);
         if (pars != null && pars instanceof String[]) {
             return (String[])this.getParameterMap().get(name);
         } else {
@@ -175,7 +167,17 @@ public class RequestParamWrapper extends HttpServletRequestWrapper {
      * @return a <code>Map</code> value
      */
     public Map getParameterMap() {
-        return parameters;
+		if (parameters.isEmpty()) {
+			return super.getParameterMap();
+		}
+		
+		Map mergedParams = new Hashtable(super.getParameterMap());
+		Iterator it = parameters.keySet().iterator();
+		while (it.hasNext()) {
+			String pName = (String) it.next();
+			mergedParams.put(pName, parameters.get(pName));
+		}
+		return mergedParams;
     }
 
     /**

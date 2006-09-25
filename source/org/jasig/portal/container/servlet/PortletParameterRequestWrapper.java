@@ -29,7 +29,6 @@ import org.jasig.portal.container.services.information.PortletStateManager;
 public class PortletParameterRequestWrapper extends HttpServletRequestWrapper {
     private static final String ESCAPE_PREFIX = PortletStateManager.UP_PARAM_PREFIX + PortletStateManager.UP_PARAM_PREFIX;
     
-    private final Map portletParams;
     
     /**
      * Creates a new wrapper and wraps the specified request.
@@ -39,7 +38,6 @@ public class PortletParameterRequestWrapper extends HttpServletRequestWrapper {
      */
     public PortletParameterRequestWrapper(final HttpServletRequest request) {
         super(request);
-        this.portletParams = this.getPortletParameterMap();
     }
     
     /* 
@@ -58,14 +56,14 @@ public class PortletParameterRequestWrapper extends HttpServletRequestWrapper {
      * @see javax.servlet.ServletRequest#getParameterMap()
      */
     public Map getParameterMap() {
-        return this.portletParams;
+        return this.getPortletParameterMap();
     }
 
     /* 
      * @see javax.servlet.ServletRequest#getParameterNames()
      */
     public Enumeration getParameterNames() {
-        return Collections.enumeration(this.portletParams.keySet());
+        return Collections.enumeration(this.getParameterMap().keySet());
     }
 
     /* 
