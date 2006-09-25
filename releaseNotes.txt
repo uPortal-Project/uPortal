@@ -1,5 +1,5 @@
-Release notes for uPortal 2.5.3 RC3
-(the third release candidate of uPortal 2.5.3):
+Release notes for uPortal 2.5.3 General Audience
+(the general audience release of uPortal 2.5.3):
 
 CVS branch: 2-5-patches
 
@@ -16,7 +16,8 @@ http://www.ja-sig.org/wiki/display/UPC/2.5.3
 The most serious known issues at this writing include lack of access control
 on the ALM Fragment Manager, bugs in supporting JSR-168 portlets for
 guest user (non logged in), bugs in publishing fragments to particular users,
-caching problems, lost opportunities to chain some exceptions, Aggregated Layouts
+caching problems, thread pooling size problems, 
+lost opportunities to chain some exceptions, Aggregated Layouts
 committing broken transactions, DLM layout resetting not behaving as expected,
 Group manager servant failing to complete when no selections are made, lack of
 error checking in ALM fragment pushing...
@@ -34,11 +35,16 @@ to check for this modified .jar instead of for the standard .jar.
 
 Major new features and improvements in this release:
 
-None.
+The WSRP consumer portlet in uPortal is now working.
+
 
 
 Bug fixes in this release:
 
+WSRP consumption is no longer broken.
+By virtue of using a patched xalan, xalan no longer leaks memory.
+Portlet file upload now works and request parameter mapping works better
+(yielding better support for the Struts Bridge portlet framework.)
 DLM no longer produces a StackOverflowError under load.
 Render parameters are no longer "sticky" between different requests
 Named LDAP service problems in Persondirs.xml are resolved.
@@ -50,7 +56,8 @@ Suggested CAS configuration is corrected in security.properties comments.
 
 Important deprecations:
 
-IMultithreaded channel APIs of all flavors are now deprecated.  It is more performant,
+IMultithreaded channel APIs of all flavors are now deprecated.  
+It is more performant,
 cleaner, simpler, and preferred to write IChannels or to write JSR-168 portlets
 in place of writing IMultithreaded channels.  
 
