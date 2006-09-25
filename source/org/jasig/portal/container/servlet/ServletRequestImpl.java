@@ -53,7 +53,7 @@ public class ServletRequestImpl extends HttpServletRequestWrapper {
     }
     
     public String getParameter(String name) {
-        String[] values = (String[])parameters.get(name);
+        String[] values = (String[])this.getParameterMap().get(name);
 
         if (values == null || values.length <= 0)
             return null;
@@ -62,7 +62,7 @@ public class ServletRequestImpl extends HttpServletRequestWrapper {
     }
 
     public Map getParameterMap() {
-        return parameters;
+    	return getRequest().getParameterMap();
     }
 
     public Enumeration getParameterNames() {
@@ -70,7 +70,7 @@ public class ServletRequestImpl extends HttpServletRequestWrapper {
     }
 
     public String[] getParameterValues(String name) {
-        return (String[])parameters.get(name);
+        return (String[])this.getParameterMap().get(name);
     }
 
     /**
