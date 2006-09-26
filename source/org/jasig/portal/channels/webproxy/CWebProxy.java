@@ -193,6 +193,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
 
 {
     private static final Log log = LogFactory.getLog(CWebProxy.class);
+    private static final Log accessLog = LogFactory.getLog(CWebProxy.class+".access");
     
     /**
      * The name of the optional ChannelStaticData parameter the value of 
@@ -252,6 +253,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
    */
   private class ChannelState
   {
+	private String publishId;
     private IPerson iperson;
     private String person;
     private String personAllow;
@@ -329,6 +331,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
       xslTitle = xslUri = infoUri = helpUri = editUri = tidy = null;
       cacheMode = null;
       iperson = null;
+      publishId = null;
       refresh = -1;
       cacheTimeout = cacheDefaultTimeout = PropertiesManager.getPropertyAsLong("org.jasig.portal.channels.webproxy.CWebProxy.cache_default_timeout");
       cacheMode = cacheDefaultMode = PropertiesManager.getProperty("org.jasig.portal.channels.webproxy.CWebProxy.cache_default_mode");
@@ -418,6 +421,7 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
     }
     
     state.iperson = sd.getPerson();
+    state.publishId = sd.getChannelPublishId();
     state.person = sd.getParameter("cw_person");
     String personAllow = sd.getParameter ("cw_personAllow");
     if ( personAllow != null && (!personAllow.trim().equals("")))
@@ -847,22 +851,50 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
    */
   private Document getXml(String uri, ChannelState state) throws Exception
   {
-    URLConnection urlConnect = getConnection(uri, state);
-
-    DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
-    docBuilderFactory.setNamespaceAware(false);
-    DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
-    DTDResolver dtdResolver = new DTDResolver();
-    docBuilder.setEntityResolver(dtdResolver);
-    InputStream is = urlConnect.getInputStream();
-    Document doc;
+	long start = System.currentTimeMillis();
+	int status = 0;
+	  
+	Document doc = null;
     try {
-        doc = docBuilder.parse(is);
+    	URLConnection urlConnect = getConnection(uri, state);
+		if (urlConnect instanceof HttpURLConnection){
+			status = ((HttpURLConnection)urlConnect).getResponseCode();
+		}
+	    DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+	    docBuilderFactory.setNamespaceAware(false);
+	    DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+	    DTDResolver dtdResolver = new DTDResolver();
+	    docBuilder.setEntityResolver(dtdResolver);
+	    InputStream is = null;
+	    try{
+		    is = urlConnect.getInputStream();
+	    	doc = docBuilder.parse(is);
+	    }finally{
+	    	try{
+	    		is.close();
+	    	}catch(Exception e){
+	    		// ignore
+	    	}
+	    }
+	    
     } finally {
-        is.close();
+        long elapsedTimeMillis = System.currentTimeMillis()-start;
+        logAccess(uri, state, status, elapsedTimeMillis);
     }
-    
-    return (doc);
+    return doc;
+  }
+
+  
+  private void logAccess(String uri, ChannelState state, int status, long elapsedTimeMillis) {
+	  // trim off request parameters
+	  int index = uri.indexOf("?");
+	  if (index >= 0){
+		  uri = uri.substring(0,index);
+	  }
+	  // trim off extra spaces and replace needed spaces with %20
+	  uri = uri.trim().replaceAll(" ", "%20");
+	  accessLog.info("logAccess: " +state.publishId+" "+state.iperson.getAttribute(IPerson.USERNAME)+" "
+			  +uri+" "+status+" "+elapsedTimeMillis/1000F);
   }
 
   /**
@@ -873,62 +905,74 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
     */
   private String getTidiedXml(String uri, ChannelState state) throws Exception
   {
-    URLConnection urlConnect = getConnection(uri, state);
-
-    // get character encoding from Content-Type header
-    String encoding = null;
-    String ct = urlConnect.getContentType();
-    int i;
-    if (ct!=null && (i=ct.indexOf("charset="))!=-1)
-    {
-      encoding = ct.substring(i+8).trim();
-      if ((i=encoding.indexOf(";"))!=-1)
-        encoding = encoding.substring(0,i).trim();
-      if (encoding.indexOf("\"")!=-1)
-        encoding = encoding.substring(1,encoding.length()+1);
+    long start = System.currentTimeMillis();
+    String tidiedXml = null;
+    int status = 0;
+    
+    try {
+		URLConnection urlConnect = getConnection(uri, state);
+    	if (urlConnect instanceof HttpURLConnection){
+    		status = ((HttpURLConnection)urlConnect).getResponseCode();
+    	}
+		
+		// get character encoding from Content-Type header
+		String encoding = null;
+		String ct = urlConnect.getContentType();
+		int i;
+		if (ct!=null && (i=ct.indexOf("charset="))!=-1)
+		{
+		  encoding = ct.substring(i+8).trim();
+		  if ((i=encoding.indexOf(";"))!=-1)
+		    encoding = encoding.substring(0,i).trim();
+		  if (encoding.indexOf("\"")!=-1)
+		    encoding = encoding.substring(1,encoding.length()+1);
+		}
+		
+		Tidy tidy = new Tidy ();
+		
+		tidy.setXHTML (true);
+		tidy.setDocType ("omit");
+		tidy.setQuiet(true);
+		tidy.setShowWarnings(false);
+		tidy.setNumEntities(true);
+		tidy.setWord2000(true);
+		
+		// If charset is specified in header, set JTidy's
+		// character encoding  to either UTF-8, ISO-8859-1
+		// or ISO-2022 accordingly (NOTE that these are
+		// the only character encoding sets that are supported in
+		// JTidy).  If character encoding is not specified,
+		// UTF-8 is the default.
+		if (encoding != null)
+		{
+		  if (encoding.toLowerCase().equals("iso-8859-1"))
+		    tidy.setCharEncoding(org.w3c.tidy.Configuration.LATIN1);
+		  else if (encoding.toLowerCase().equals("iso-2022-jp"))
+		    tidy.setCharEncoding(org.w3c.tidy.Configuration.ISO2022);
+		  else
+		    tidy.setCharEncoding(org.w3c.tidy.Configuration.UTF8);
+		}
+		else
+		{
+		  tidy.setCharEncoding(org.w3c.tidy.Configuration.UTF8);
+		}
+		
+		tidy.setErrout(devNull);
+		
+		ByteArrayOutputStream stream = new ByteArrayOutputStream (1024);
+		BufferedOutputStream out = new BufferedOutputStream (stream);
+		
+		tidy.parse (urlConnect.getInputStream(), out);
+		tidiedXml = stream.toString();
+		stream.close();
+		out.close();
+		
+		if ( tidy.getParseErrors() > 0 )
+		  throw new GeneralRenderingException("Unable to convert input document to XHTML");
+    }finally{
+        long elapsedTimeMillis = System.currentTimeMillis()-start;
+        logAccess(uri, state, status, elapsedTimeMillis);
     }
-
-    Tidy tidy = new Tidy ();
-    tidy.setXHTML (true);
-    tidy.setDocType ("omit");
-    tidy.setQuiet(true);
-    tidy.setShowWarnings(false);
-    tidy.setNumEntities(true);
-    tidy.setWord2000(true);
-
-    // If charset is specified in header, set JTidy's
-    // character encoding  to either UTF-8, ISO-8859-1
-    // or ISO-2022 accordingly (NOTE that these are
-    // the only character encoding sets that are supported in
-    // JTidy).  If character encoding is not specified,
-    // UTF-8 is the default.
-    if (encoding != null)
-    {
-      if (encoding.toLowerCase().equals("iso-8859-1"))
-        tidy.setCharEncoding(org.w3c.tidy.Configuration.LATIN1);
-      else if (encoding.toLowerCase().equals("iso-2022-jp"))
-        tidy.setCharEncoding(org.w3c.tidy.Configuration.ISO2022);
-      else
-        tidy.setCharEncoding(org.w3c.tidy.Configuration.UTF8);
-    }
-    else
-    {
-      tidy.setCharEncoding(org.w3c.tidy.Configuration.UTF8);
-    }
-
-    tidy.setErrout(devNull);
-
-    ByteArrayOutputStream stream = new ByteArrayOutputStream (1024);
-    BufferedOutputStream out = new BufferedOutputStream (stream);
-
-    tidy.parse (urlConnect.getInputStream(), out);
-    String tidiedXml = stream.toString();
-    stream.close();
-    out.close();
-
-    if ( tidy.getParseErrors() > 0 )
-      throw new GeneralRenderingException("Unable to convert input document to XHTML");
-
     return tidiedXml;
   }
 
@@ -939,23 +983,8 @@ public class CWebProxy implements IMultithreadedChannel, IMultithreadedCacheable
       // this method encodes everything, including forward slashes and
       // forward slashes are used for determining if the URL is
       // relative or absolute)
-      uri = uri.trim();
-      if (uri.indexOf(" ") != -1)
-      {
-        StringBuffer sbuff = new StringBuffer();
-        int i;
-        while( (i= uri.indexOf(" ")) != -1)
-        {
-          sbuff.append(uri.substring(0, i));
-          sbuff.append("%20");
-          uri = uri.substring(i+1);
-        }
-        sbuff.append(uri);
-        uri = sbuff.toString();
-      }
-
-      // String.replaceAll(String,String) - since jdk 1.4
-      //uri = uri.replaceAll(" ", "%20");
+	  
+      uri = uri.trim().replaceAll(" ", "%20");
 
       URL url;
       if (state.localConnContext != null)
