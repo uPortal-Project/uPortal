@@ -5,7 +5,7 @@
 package org.jasig.portal.channels.adminnav;
 
 import java.io.InputStream;
-
+import org.jasig.portal.utils.DTDResolver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.xml.sax.ContentHandler;
@@ -15,9 +15,9 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
- * Loads links defined in the passed in file path having the XML format 
+ * Loads links defined in the passed in file path having the XML format
  * specified in javadocs for XMLLinksHandler.
- *  
+ *
  * @author mboyd@sungardsct.com
  * @since 2.6
  */
@@ -36,6 +36,7 @@ public class XMLLinksFileLoader
         try
         {
             parser = XMLReaderFactory.createXMLReader();
+            parser.setEntityResolver(new DTDResolver("adminNav.dtd"));
         }
         catch (SAXException e)
         {
