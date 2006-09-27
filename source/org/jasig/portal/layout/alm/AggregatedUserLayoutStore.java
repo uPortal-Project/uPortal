@@ -110,7 +110,6 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 	public AggregatedUserLayoutStore() throws Exception {
 		super();
 		IDatabaseMetadata dmd = RDBMServices.getDbMetaData();
-		if (useOuterJoins && dmd.supportsOuterJoins()) useOuterJoins = true;
 		if (useOuterJoins) {
 			if (dmd.getJoinQuery() instanceof DatabaseMetaDataImpl.JdbcDb) {
 				dmd.getJoinQuery().addQuery("layout_aggr",
