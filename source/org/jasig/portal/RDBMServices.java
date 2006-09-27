@@ -24,11 +24,14 @@ import javax.sql.DataSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.jmx.FrameworkMBeanImpl;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.rdbm.DatabaseMetaDataImpl;
 import org.jasig.portal.rdbm.IDatabaseMetadata;
 import org.jasig.portal.rdbm.pool.IPooledDataSourceFactory;
 import org.jasig.portal.rdbm.pool.PooledDataSourceFactoryFactory;
+import org.jasig.portal.utils.MovingAverage;
+import org.jasig.portal.utils.MovingAverageSample;
 import org.springframework.dao.DataAccessResourceFailureException;
 
 import edu.emory.mathcs.backport.java.util.concurrent.atomic.AtomicInteger;
@@ -85,8 +88,11 @@ public class RDBMServices {
 
     private static IDatabaseMetadata dbMetaData = null;
 
+    // Metric counters
+    private static final MovingAverage databaseTimes = new MovingAverage();
+    public static MovingAverageSample lastDatabase = new MovingAverageSample();
     private static AtomicInteger activeConnections = new AtomicInteger();
-
+    private static int maxConnections = 0;
 
 
     /**
@@ -283,6 +289,14 @@ public class RDBMServices {
     }
 
     /**
+     * Return the maximum number of connections
+     * @return int
+     */
+    public static int getMaxConnectionCount() {
+      return maxConnections;
+    }
+
+    /**
      * Gets a database connection to the portal database.
      * If datasource not available a runtime exception is thrown
      * @return a database Connection object
@@ -314,8 +328,13 @@ public class RDBMServices {
 
     	if (ds != null) {
     		try {
+    			final long start = System.currentTimeMillis();
     			final Connection c = ds.getConnection();
-      			activeConnections.incrementAndGet();
+    			lastDatabase = databaseTimes.add(System.currentTimeMillis() - start); // metric
+      			final int current = activeConnections.incrementAndGet();
+      			if (current > maxConnections) {
+      				maxConnections = current;
+      			}
     			return c;
     		} catch (SQLException e) {
     			throw new DataAccessResourceFailureException
@@ -335,7 +354,7 @@ public class RDBMServices {
      */
     public static void releaseConnection(final Connection con) {
         try {
-            activeConnections.decrementAndGet();
+            int active = activeConnections.decrementAndGet();
 
             con.close();
         }

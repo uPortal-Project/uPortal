@@ -5,6 +5,7 @@
  */
 package org.jasig.portal.events;
 
+import org.jasig.portal.PortalSessionManager;
 import org.jasig.portal.utils.threading.PriorityThreadFactory;
 
 import edu.emory.mathcs.backport.java.util.concurrent.ExecutorService;
@@ -22,7 +23,7 @@ import edu.emory.mathcs.backport.java.util.concurrent.TimeUnit;
  * <li>Max Threads: 30</li>
  * <li>Thread Priority: 5</li>
  * </ul>
- * 
+ *
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 2.6
@@ -54,14 +55,14 @@ public final class ThreadedEventListener extends AbstractEventListener {
 	protected void afterPropertiesSetInternal() throws Exception {
 		this.threadPool = new ThreadPoolExecutor(initialThreads, maxThreads,
 				0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue(),
-				new PriorityThreadFactory(threadPriority));
+				new PriorityThreadFactory(threadPriority, "Priority", PortalSessionManager.getThreadGroup()));
 	}
 
 	protected void onApplicationEventInternal(final PortalEvent event,
 			final EventHandler handler) {
 		this.threadPool.execute(new Task(event, handler));
 	}
-	
+
 
 	public void setInitialThreads(final int initialThreads) {
 		this.initialThreads = initialThreads;

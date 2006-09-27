@@ -24,6 +24,8 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.utils.XSLT;
 
+import edu.emory.mathcs.backport.java.util.concurrent.atomic.AtomicLong;
+
 /**
  * StandaloneChannelRenderer is meant to be used as a base class for channels
  * that might be rendered outside of the standard user-layout driven scheme.
@@ -32,12 +34,12 @@ import org.jasig.portal.utils.XSLT;
  * @version $Revision$
  */
 
-public class StandaloneChannelRenderer 
+public class StandaloneChannelRenderer
     extends BaseChannel
 {
-    
+
     private static final Log log = LogFactory.getLog(StandaloneChannelRenderer.class);
-    
+
     private StylesheetSet set;
     private MediaManager mediaM;
     private String channelName;
@@ -52,9 +54,14 @@ public class StandaloneChannelRenderer
     private static final String chanID="singleton";
     private static final String fs = File.separator;
     private static final String relativeSSLLocation = "/org/jasig/portal/tools/ChannelServlet/ChannelServlet.ssl";
-    private static final IChannelRendererFactory cChannelRendererFactory = 
+
+    // Metrics
+    public static final AtomicLong activeRenderers = new AtomicLong();
+    public static AtomicLong maxRenderThreads = new AtomicLong();
+
+    private static final IChannelRendererFactory cChannelRendererFactory =
         ChannelRendererFactory.newInstance(
-            StandaloneChannelRenderer.class.getName()
+            StandaloneChannelRenderer.class.getName(), activeRenderers, maxRenderThreads
             );
 
     /**

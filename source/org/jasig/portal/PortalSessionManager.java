@@ -69,6 +69,11 @@ public class PortalSessionManager extends HttpServlet {
 
   public static final ErrorID initPortalContext = new ErrorID("config","JNDI","Cannot initialize JNDI context");
 
+  private static final ThreadGroup threadGroup = new ThreadGroup("uPortal");
+  public static ThreadGroup getThreadGroup() {
+	  return threadGroup;
+  }
+
   /**
    * Provides access to the servlet instance ultimately to provide access
    * to the servlet context of the portal.

@@ -38,7 +38,7 @@ import org.jasig.portal.services.SequenceGenerator;
 public class EntityTypes {
 
     private static final Log log = LogFactory.getLog(EntityTypes.class);
-    
+
     private static EntityTypes singleton;
 
     // Caches for EntityType instances.
@@ -108,11 +108,11 @@ throws java.lang.Exception
 }
 
 /**
- * Check if we have the type in our cache.  If not, re-retrieve.  Someone 
+ * Check if we have the type in our cache.  If not, re-retrieve.  Someone
  * might have added it since we last retrieved.  If the type is not
  * found, try to add it to the store.  If the add is not successful,
- * re-retrieve again.  If the type is still not found, rethrow the 
- * SQLException.  Synchronize on update lock to serialize adds, deletes 
+ * re-retrieve again.  If the type is still not found, rethrow the
+ * SQLException.  Synchronize on update lock to serialize adds, deletes
  * and updates while letting reads proceed.
  */
 public void addEntityTypeIfNecessary(Class newType, String description)
@@ -198,7 +198,7 @@ private void deleteEntityType(EntityType et) throws SQLException
             }
             finally
             {
-                RDBMServices.releaseConnection(conn); 
+                RDBMServices.releaseConnection(conn);
             }
         }
     }
@@ -367,17 +367,23 @@ private void initialize(DataSource ds)
         conn = ( ds == null )
           ? RDBMServices.getConnection()
           : ds.getConnection();
-        initialize(conn);     
-    }          
-            
+        initialize(conn);
+    }
+
     catch (Exception ex)
         { log.error("Exception initializing cache of entity types.", ex); }
     finally
-    { 
+    {
         if (conn != null)
-        { 
-            try {conn.close();}
-            catch (Exception ex) {} 
+        {
+            try {
+            	if (ds == null) {
+            		RDBMServices.releaseConnection(conn);
+            	} else {
+            		conn.close();
+            	}
+            }
+            catch (Exception ex) {}
         }
     }
 }
@@ -429,7 +435,7 @@ private void initialize()
     catch (Exception ex)
         { log.error("Exception initializing cache of entity types.", ex); }
     finally
-    { 
+    {
         if ( conn != null )
             { RDBMServices.releaseConnection(conn); }
     }
@@ -464,7 +470,7 @@ private void insertEntityType(EntityType et) throws SQLException
 
             if (log.isDebugEnabled())
                 log.debug("EntityTypes.insertEntityType(): " + ps + "(" +
-                        et.getTypeId() + ", " + et.getType() + ", " + 
+                        et.getTypeId() + ", " + et.getType() + ", " +
                         et.getDescriptiveName() + ")" );
 
             int rc = ps.executeUpdate();
@@ -484,7 +490,7 @@ private void insertEntityType(EntityType et) throws SQLException
             }
             finally
             {
-                RDBMServices.releaseConnection(conn); 
+                RDBMServices.releaseConnection(conn);
             }
         }
     }
@@ -531,12 +537,12 @@ public static synchronized void refresh()
 
 public synchronized void setEntityTypesByID(Map m)
 {
-    entityTypesByID = m;   
+    entityTypesByID = m;
 }
 
 public synchronized void setEntityTypesByType(Map m)
 {
-    entityTypesByType = m;   
+    entityTypesByType = m;
 }
 
 /**
@@ -595,7 +601,7 @@ private void updateEntityType(EntityType et) throws SQLException
 
             if (log.isDebugEnabled())
                 log.debug("EntityTypes.updateEntityType(): " + ps + "(" +
-                        et.getType() + ", " + et.getDescriptiveName() + ", " + 
+                        et.getType() + ", " + et.getDescriptiveName() + ", " +
                         et.getTypeId() + ")" );
 
             int rc = ps.executeUpdate();
@@ -615,7 +621,7 @@ private void updateEntityType(EntityType et) throws SQLException
             }
             finally
             {
-                RDBMServices.releaseConnection(conn); 
+                RDBMServices.releaseConnection(conn);
             }
         }
     }

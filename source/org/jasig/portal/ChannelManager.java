@@ -55,6 +55,8 @@ import org.jasig.portal.utils.SetCheckInSemaphore;
 import org.jasig.portal.utils.SoftHashMap;
 import org.xml.sax.ContentHandler;
 
+import edu.emory.mathcs.backport.java.util.concurrent.atomic.AtomicLong;
+
 import tyrex.naming.MemoryContext;
 
 /**
@@ -69,7 +71,7 @@ import tyrex.naming.MemoryContext;
  */
 public class ChannelManager implements LayoutEventListener {
     private static final Log log = LogFactory.getLog(ChannelManager.class);
-    
+
     private IUserPreferencesManager upm;
     private PortalControlStructures pcs;
 
@@ -97,17 +99,21 @@ public class ChannelManager implements LayoutEventListener {
 
     private IAuthorizationPrincipal ap;
 
-    /** Factory used to build all channel renderer objects. */
+    // Metrics
+    public static final AtomicLong activeRenderers = new AtomicLong();
+    public static AtomicLong maxRenderThreads = new AtomicLong();
+
+   /** Factory used to build all channel renderer objects. */
     private static final IChannelRendererFactory cChannelRendererFactory =
         ChannelRendererFactory.newInstance(
-            ChannelManager.class.getName()
+            ChannelManager.class.getName(), activeRenderers, maxRenderThreads
             );
 
     public UPFileSpec uPElement;
 
     // global channel rendering cache
     public static final int SYSTEM_CHANNEL_CACHE_MIN_SIZE=50; // this should be in a file somewhere
-    
+
     public static final Map systemCache = new SoftHashMap(SYSTEM_CHANNEL_CACHE_MIN_SIZE);
 
     public static final String channelAddressingPathElement="channel";
@@ -230,9 +236,9 @@ public class ChannelManager implements LayoutEventListener {
                 /*
                  * For well behaved, finished channel renderers, killing doesn't do
                  * anything.
-                 * 
+                 *
                  * For runaway, not-finished channel renderers, killing instructs them to
-                 * stop trying to render because at this point we can't use the 
+                 * stop trying to render because at this point we can't use the
                  * results of their rendering anyway.  Furthermore, the current
                  * actual implementation
                  * of kill is for channel renderers to kill runaway threads.
@@ -241,7 +247,7 @@ public class ChannelManager implements LayoutEventListener {
             } catch (Throwable t) {
                 /*
                  * We're trying to clean up.  A particular thread renderer we've asked
-                 * to please die has failed to die in some potentially horrible way.  
+                 * to please die has failed to die in some potentially horrible way.
                  * This is unfortunate, but the best thing we can do about it is log
                  * the problem and then go on and ask the other ChannelRenderers to
                  * clean up.  If this one won't clean up properly, maybe at least some
@@ -406,7 +412,7 @@ public class ChannelManager implements LayoutEventListener {
                     return;
                 }
             }
-            
+
             // Reset the anchorId for an anchoring serializer
             if (useAnchors && contentHandler instanceof IAnchoringSerializer) {
                 IAnchoringSerializer as = (IAnchoringSerializer)contentHandler;
@@ -421,7 +427,7 @@ public class ChannelManager implements LayoutEventListener {
                 // Just log exception
             	log.warn(pe,pe);
             }
-            
+
             // Tell the StatsRecorder that this channel has rendered
             EventPublisherLocator.getApplicationEventPublisher().publishEvent(new ChannelRenderedInLayoutPortalEvent(this, upm.getPerson(), upm.getCurrentProfile(), channelDesc));
         } else {
@@ -487,7 +493,7 @@ public class ChannelManager implements LayoutEventListener {
                 } else {
                     // check status
                     message=message+" channelRenderingStatus=";
-    
+
                     switch( renderingStatus )
                     {
                         case IChannelRenderer.RENDERING_SUCCESSFUL:
@@ -523,7 +529,7 @@ public class ChannelManager implements LayoutEventListener {
                         replaceWithErrorChannel(channelSubscribeId,ErrorCode.GENERAL_ERROR,t,technicalMessage,true);
                     }
                 }
-    
+
                 // remove channel renderer
                 rendererTable.remove(channelSubscribeId);
                 // re-try render
@@ -542,7 +548,7 @@ public class ChannelManager implements LayoutEventListener {
     }
 
     /**
-     * A helper method to replace all occurences of a given channel instance 
+     * A helper method to replace all occurences of a given channel instance
      * with that of an error channel.
      *
      * @param channelSubscribeId a <code>String</code> value
@@ -557,14 +563,14 @@ public class ChannelManager implements LayoutEventListener {
         IChannel oldInstance=(IChannel) channelTable.get(channelSubscribeId);
         if (log.isWarnEnabled())
             log.warn("Replacing channel [" + oldInstance
-                + "], which had subscribeId [" + channelSubscribeId 
-                + "] with error channel because of error code " 
+                + "], which had subscribeId [" + channelSubscribeId
+                + "] with error channel because of error code "
                 + errorCode + " message: " + message + " and throwable [" + t +"]",t);
-        
+
         channelTable.remove(channelSubscribeId);
         rendererTable.remove(channelSubscribeId);
 
-        CError errorChannel = 
+        CError errorChannel =
             new CError(errorCode,t,channelSubscribeId,oldInstance,message);
         if(setRuntimeData) {
             ChannelRuntimeData rd=new ChannelRuntimeData();
@@ -611,7 +617,7 @@ public class ChannelManager implements LayoutEventListener {
                 rd.setLocales(lm.getLocales());
             }
             rd.setHttpRequestMethod(pcs.getHttpServletRequest().getMethod());
-            rd.setRemoteAddress(pcs.getHttpServletRequest().getRemoteAddr());            
+            rd.setRemoteAddress(pcs.getHttpServletRequest().getRemoteAddr());
             UPFileSpec up=new UPFileSpec(uPElement);
             up.setTargetNodeId(channelSubscribeId);
             rd.setUPFile(up);
@@ -711,20 +717,20 @@ public class ChannelManager implements LayoutEventListener {
 				HttpSession hs  = sr.getSession(true);
 				if (hs == null){
 					ch=new CError(ErrorCode.GENERAL_ERROR,"Unable to get SessionId. getSession returned null.",channelSubscribeId,null);
-				}else{				
+				}else{
 					String id = hs.getId();
 					if (id == null){
 						ch=new CError(ErrorCode.GENERAL_ERROR,"Unable to get SessionId. getId returned null.",channelSubscribeId,null);
-					}else{			
-						           	
+					}else{
+
 						ch = ChannelFactory.instantiateLayoutChannel(cd,id);
-                        
+
                         if (ch == null) {
                             throw new IllegalStateException("ChannelFactory returned null on request to instantiate layout channel with id [" + id + "] and description [" + cd + "]");
                         }
-                        
+
                         EventPublisherLocator.getApplicationEventPublisher().publishEvent(new ChannelInstanciatedInLayoutPortalEvent(this, upm.getPerson(), upm.getCurrentProfile(), cd));
-                        
+
 			            // Create and stuff the channel static data
 			            ChannelStaticData sd = new ChannelStaticData(
                             cd.getParameterMap(), upm.getUserLayoutManager());
@@ -739,7 +745,7 @@ public class ChannelManager implements LayoutEventListener {
 					}
 				}
 			}
-   
+
         } else {
             // user is not authorized to instantiate this channel
             // create an instance of an error channel instead
@@ -855,7 +861,7 @@ public class ChannelManager implements LayoutEventListener {
 						// We get this alot when people's sessions have timed out and they get directed
 						// to the guest page. Changed to WARN because there might be a need to note this
 						// to diagnose problems with the guest layout.
-                		 
+
 						log.warn("ChannelManager::processRequestChannelParameters() : unable to pass find/create an instance of a channel. Bogus Id ? ! (id=\""+channelTarget+"\").");
 					}else{
 						log.error("ChannelManager::processRequestChannelParameters() : unable to pass find/create an instance of a channel. Bogus Id ? ! (id=\""
@@ -864,7 +870,7 @@ public class ChannelManager implements LayoutEventListener {
                     chObj=replaceWithErrorChannel(channelTarget,ErrorCode.SET_STATIC_DATA_EXCEPTION,e,null,false);
                 }
             }
-            
+
 
             // Check if the channel is an IPrivilegedChannel, and if it is,
             // pass portal control structures and runtime data.
@@ -874,7 +880,7 @@ public class ChannelManager implements LayoutEventListener {
             }
         }
     }
-    
+
     private IChannel feedPortalControlStructuresToChannel(IChannel chObj, PortalControlStructures pcs) {
         IPrivileged prvChanObj=(IPrivileged)chObj;
         try {
@@ -896,7 +902,7 @@ public class ChannelManager implements LayoutEventListener {
         }
         return chObj;
     }
-    
+
     private IChannel feedRuntimeDataToChannel(IChannel chObj, HttpServletRequest req) {
         try {
             ChannelRuntimeData rd = new ChannelRuntimeData();
@@ -913,16 +919,16 @@ public class ChannelManager implements LayoutEventListener {
             UPFileSpec up=new UPFileSpec(uPElement);
             up.setTargetNodeId(channelTarget);
             rd.setUPFile(up);
-    
+
             // Check if channel is rendering as the root element of the layout
             String userLayoutRoot = upm.getUserPreferences().getStructureStylesheetUserPreferences().getParameterValue("userLayoutRoot");
             if (userLayoutRoot != null && !userLayoutRoot.equals(IUserLayout.ROOT_NODE_NAME)) {
                 rd.setRenderingAsRoot(true);
             }
-            
+
             // Indicate that this channel is targeted
             rd.setTargeted(true);
-            
+
             // Finally, feed runtime data to channel
             chObj.setRuntimeData(rd);
         } catch (Exception e) {
@@ -984,7 +990,7 @@ public class ChannelManager implements LayoutEventListener {
         this.pcs.setHttpServletResponse(response);
         this.binfo=new BrowserInfo(request);
         this.uPElement=uPElement;
-        rendererTable.clear();       
+        rendererTable.clear();
 
         // check portal JNDI context
         if(portalContext==null) {
@@ -1156,7 +1162,7 @@ public class ChannelManager implements LayoutEventListener {
         }
 
         // Check if channel is rendering as the root element of the layout
-        
+
 		UserPreferences tempUserPref = upm.getUserPreferences();
 		StructureStylesheetUserPreferences tempSSUP = tempUserPref.getStructureStylesheetUserPreferences();
 		String userLayoutRoot = tempSSUP.getParameterValue("userLayoutRoot");
@@ -1254,7 +1260,7 @@ public class ChannelManager implements LayoutEventListener {
     public String getChannelTarget() {
         return channelTarget;
     }
-    
+
     // LayoutEventListener interface implementation
     public void channelAdded(LayoutEvent ev) {}
     public void channelUpdated(LayoutEvent ev) {}
@@ -1272,7 +1278,7 @@ public class ChannelManager implements LayoutEventListener {
     public void layoutSaved() {}
 
     public void setLocaleManager(LocaleManager lm) { this.lm = lm; }
-    
+
 	/**
 	 * Get the dynamic channel title for a given channelSubscribeID.
 	 * Returns null if no dynamic channel (the rendering infrastructure
@@ -1281,39 +1287,39 @@ public class ChannelManager implements LayoutEventListener {
 	 * @since uPortal 2.5.1
 	 * @param channelSubscribeId
 	 * @throws IllegalArgumentException if channelSubcribeId is null
-	 * @throws IllegalStateException if 
+	 * @throws IllegalStateException if
 	 */
 	public String getChannelTitle(String channelSubscribeId) {
-		
+
 		if (log.isTraceEnabled()) {
 			log.trace("ChannelManager getting dynamic title for channel with subscribe id=" + channelSubscribeId);
 		}
-		
+
 		// obtain IChannelRenderer
         Object channelRenderer = rendererTable.get(channelSubscribeId);
 
         // default to null (no dynamic channel title.
         String channelTitle = null;
-        
+
         // dynamic channel title support is not in IChannelRenderer itself because
         // that would have required a change to the IChannelRenderer interface
         if (channelRenderer instanceof IDynamicChannelTitleRenderer ) {
-            
-            IDynamicChannelTitleRenderer channelTitleRenderer = 
+
+            IDynamicChannelTitleRenderer channelTitleRenderer =
                 (IDynamicChannelTitleRenderer) channelRenderer;
             channelTitle = channelTitleRenderer.getChannelTitle();
-            
+
             if (log.isTraceEnabled()) {
-            	log.trace("ChannelManager reports that dynamic title for channel with subscribe id=" 
+            	log.trace("ChannelManager reports that dynamic title for channel with subscribe id="
             			+ channelSubscribeId + " is [" + channelTitle + "].");
             }
         }
 
-        
+
         return channelTitle;
-        
+
 	}
-    
+
     public String getSubscribeId(String fname) throws PortalException
     {
         IUserLayoutManager ulm = upm.getUserLayoutManager();

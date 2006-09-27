@@ -27,6 +27,7 @@ import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.layout.simple.RDBMUserLayoutStore;
 import org.jasig.portal.ChannelParameter;
+import org.jasig.portal.PortalSessionManager;
 import org.jasig.portal.StructureStylesheetDescription;
 import org.jasig.portal.StructureStylesheetUserPreferences;
 import org.jasig.portal.ThemeStylesheetDescription;
@@ -189,7 +190,7 @@ public class RDBMDistributedLayoutStore
         // ok.
 
         activator = new FragmentActivator( this, definitions );
-        Thread t = new Thread()
+        Thread t = new Thread(PortalSessionManager.getThreadGroup(), "dlm activator")
             {
                 public void run()
                 {
@@ -359,7 +360,7 @@ public class RDBMDistributedLayoutStore
      */
     private void initializeFragmentCleaner()
     {
-        Thread t2 = new Thread()
+        Thread t2 = new Thread(PortalSessionManager.getThreadGroup(), "dlm cleaner")
             {
                 public void run()
                 {

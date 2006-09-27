@@ -26,6 +26,7 @@ import edu.emory.mathcs.backport.java.util.concurrent.ExecutorService;
 import edu.emory.mathcs.backport.java.util.concurrent.Future;
 import edu.emory.mathcs.backport.java.util.concurrent.TimeUnit;
 import edu.emory.mathcs.backport.java.util.concurrent.TimeoutException;
+import edu.emory.mathcs.backport.java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * This class takes care of initiating channel rendering thread,
@@ -247,7 +248,6 @@ public class ChannelRenderer
         }
         boolean abandoned=false;
         long timeOutTarget = this.startTime + this.timeOut;
-
 
         // separate waits caused by rendering group
         if(this.groupSemaphore!=null) {

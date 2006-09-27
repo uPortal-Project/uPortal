@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.jasig.portal.EntityTypes;
 import org.jasig.portal.IBasicEntity;
+import org.jasig.portal.PortalSessionManager;
 import org.jasig.portal.concurrency.CachingException;
 import org.jasig.portal.concurrency.IEntityCache;
 import org.apache.commons.logging.Log;
@@ -65,7 +66,7 @@ throws CachingException
     sweepIntervalMillis = sweepInterval;
     setCache(new LRUCache(maxSize, maxUnusedTime));
     String threadName = "uPortal ReferenceEntityCache sweeper thread #" + ++threadID;
-    cleanupThread = new Thread(new CacheSweeper(), threadName);
+    cleanupThread = new Thread(PortalSessionManager.getThreadGroup(), new CacheSweeper(), threadName);
     cleanupThread.setDaemon(true);
     cleanupThread.start();
 }
@@ -177,12 +178,12 @@ public String toString() {
     return "ReferenceEntityCache for " + getSimpleTypeName();
 }
 
-private String getSimpleTypeName() 
+private String getSimpleTypeName()
 {
     if ( simpleTypeName == null )
     {
         String name = getEntityType().getName();
-        while (name.indexOf('.') >= 0) 
+        while (name.indexOf('.') >= 0)
             { name = name.substring(name.indexOf('.')+1); }
         simpleTypeName = name;
     }

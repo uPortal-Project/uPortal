@@ -11,6 +11,8 @@ import org.jasig.portal.properties.PropertiesManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import edu.emory.mathcs.backport.java.util.concurrent.atomic.AtomicLong;
+
 /**
  * <p>The <code>ChannelRendererFactory</code> creates
  * <code>IChannelRendererFactory</code> objects which are used to construct
@@ -31,9 +33,9 @@ public final class ChannelRendererFactory
     /** <p> Class version identifier.</p> */
     public final static String RCS_ID = "@(#) $Header$";
 
-    
+
     private static final Log LOG = LogFactory.getLog(ChannelRendererFactory.class);
-    
+
     /**
      * <p>Creates a new instance of a channel renderer factory object. This
      * factory looks for the property <code>keyBase + ".factoryClassName"</code>
@@ -47,7 +49,7 @@ public final class ChannelRendererFactory
      * or <code>null</code>
      **/
     public static final IChannelRendererFactory newInstance(
-        String keyBase
+        String keyBase, final AtomicLong activeThreads, final AtomicLong maxActiveThreads
         )
     {
         IChannelRendererFactory factory = null;
@@ -61,22 +63,22 @@ public final class ChannelRendererFactory
                 );
 
             if (LOG.isDebugEnabled())
-                LOG.debug("ChannelRendererFactory::newInstance(" + keyBase + 
-                        ") : about to construct channel renderer factory: " + 
+                LOG.debug("ChannelRendererFactory::newInstance(" + keyBase +
+                        ") : about to construct channel renderer factory: " +
                         factoryClassName);
 
             // Get the string argument constructor for the class.
             Constructor ctor = Class.forName(
                 factoryClassName
-                ).getConstructor( new Class[]{ String.class } );
+                ).getConstructor( new Class[]{ String.class, AtomicLong.class, AtomicLong.class } );
 
             // Reflectively construct the factory with the key base argument.
             factory = (IChannelRendererFactory)ctor.newInstance(
-                new Object[]{ keyBase }
+                new Object[]{ keyBase, activeThreads, maxActiveThreads}
                 );
 
             if (LOG.isDebugEnabled())
-                LOG.debug("ChannelRendererFactory::newInstance(" + keyBase + 
+                LOG.debug("ChannelRendererFactory::newInstance(" + keyBase +
                         ") : constructed channel renderer factory: " + factoryClassName);
         }
         catch( Exception x )

@@ -10,10 +10,13 @@ import org.jasig.portal.utils.threading.PriorityThreadFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import edu.emory.mathcs.backport.java.util.concurrent.BlockingQueue;
 import edu.emory.mathcs.backport.java.util.concurrent.ExecutorService;
 import edu.emory.mathcs.backport.java.util.concurrent.LinkedBlockingQueue;
+import edu.emory.mathcs.backport.java.util.concurrent.ThreadFactory;
 import edu.emory.mathcs.backport.java.util.concurrent.ThreadPoolExecutor;
 import edu.emory.mathcs.backport.java.util.concurrent.TimeUnit;
+import edu.emory.mathcs.backport.java.util.concurrent.atomic.AtomicLong;
 
 /**
  * <p>The <code>ChannelRendererFactoryImpl</code> creates
@@ -30,12 +33,40 @@ public final class ChannelRendererFactoryImpl
     public final static String RCS_ID = "@(#) $Header$";
 
     private static final Log log = LogFactory.getLog(ChannelRendererFactoryImpl.class);
-    
+
     /** <p>Thread pool per factory.</p> */
     private ExecutorService mThreadPool = null;
 
     /** <p>Shared thread pool for all factories.</p> */
     private static ExecutorService cSharedThreadPool = null;
+
+    private class ChannelRenderThreadPoolExecutor extends ThreadPoolExecutor {
+    	final AtomicLong activeThreads;
+    	final AtomicLong maxActiveThreads;
+		public ChannelRenderThreadPoolExecutor(final AtomicLong activeThreads, final AtomicLong maxActiveThreads,
+				int corePoolSize,
+				int maximumPoolSize, long keepAliveTime, TimeUnit unit,
+				BlockingQueue workQueue, ThreadFactory threadFactory) {
+			super(corePoolSize, maximumPoolSize, keepAliveTime, unit,
+					workQueue, threadFactory);
+
+			this.activeThreads = activeThreads;
+			this.maxActiveThreads = maxActiveThreads;
+		}
+		protected void beforeExecute(java.lang.Thread t,
+                java.lang.Runnable r) {
+			super.beforeExecute(t, r);
+			final long current = activeThreads.incrementAndGet();
+			if (current > maxActiveThreads.get()) {
+				maxActiveThreads.set(current);
+			}
+		}
+		protected void afterExecute(java.lang.Runnable r,
+                java.lang.Throwable t) {
+			super.afterExecute(r, t);
+			activeThreads.decrementAndGet();
+		}
+	}
 
     /**
      * <p>Creates a new instance of a bounded thread pool channel
@@ -60,7 +91,7 @@ public final class ChannelRendererFactoryImpl
      * or <code>null</code>
      */
     public ChannelRendererFactoryImpl(
-        String keyBase
+        final String keyBase, final AtomicLong activeThreads, final AtomicLong maxActiveThreads
         )
     {
         int initialThreads = 1;
@@ -100,11 +131,11 @@ public final class ChannelRendererFactoryImpl
 
         if( sharedPool )
         {
-            cSharedThreadPool = new ThreadPoolExecutor(initialThreads, maxThreads, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue(), new PriorityThreadFactory(threadPriority));
+            cSharedThreadPool = new ChannelRenderThreadPoolExecutor(activeThreads, maxActiveThreads, initialThreads, maxThreads, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue(), new PriorityThreadFactory(threadPriority, keyBase, PortalSessionManager.getThreadGroup()));
         }
         else
         {
-            this.mThreadPool = new ThreadPoolExecutor(initialThreads, maxThreads, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue(), new PriorityThreadFactory(threadPriority));
+            this.mThreadPool = new ChannelRenderThreadPoolExecutor(activeThreads, maxActiveThreads, initialThreads, maxThreads, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue(), new PriorityThreadFactory(threadPriority, keyBase, PortalSessionManager.getThreadGroup()));
         }
     }
 

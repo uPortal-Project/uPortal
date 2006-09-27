@@ -30,6 +30,7 @@ import org.jasig.portal.IPrivilegedChannel;
 import org.jasig.portal.MediaManager;
 import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalException;
+import org.jasig.portal.PortalSessionManager;
 import org.jasig.portal.StylesheetSet;
 import org.jasig.portal.UPFileSpec;
 import org.jasig.portal.security.IPerson;
@@ -123,7 +124,7 @@ public class ChannelServlet extends HttpServlet {
       } catch (PortalException pe) {
     	  LOG.error("unable to construct a UPFile !",pe);
       }
-      
+
       if (channel instanceof IPrivilegedChannel) {
         // provide as much of PCS as we can
         PortalControlStructures pcs = new PortalControlStructures();
@@ -139,7 +140,7 @@ public class ChannelServlet extends HttpServlet {
       // start rendering in a separate thread
       SAX2BufferImpl buffer = new SAX2BufferImpl();
       Worker worker = new Worker(channel, rd, buffer);
-      Thread workerThread = new Thread(worker);
+      Thread workerThread = new Thread(PortalSessionManager.getThreadGroup(), worker, "servlet renderer");
       workerThread.start();
       long startTime = System.currentTimeMillis();
       // set the mime type

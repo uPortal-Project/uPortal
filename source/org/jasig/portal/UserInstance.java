@@ -43,14 +43,18 @@ import org.jasig.portal.serialize.CachingSerializer;
 import org.jasig.portal.serialize.OutputFormat;
 import org.jasig.portal.serialize.XMLSerializer;
 import org.jasig.portal.services.GroupService;
+import org.jasig.portal.utils.MovingAverage;
 import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.utils.SAX2BufferImpl;
 import org.jasig.portal.utils.SAX2DuplicatingFilterImpl;
+import org.jasig.portal.utils.MovingAverageSample;
 import org.jasig.portal.utils.SoftHashMap;
 import org.jasig.portal.utils.URLUtil;
 import org.jasig.portal.utils.XSLT;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.XMLReader;
+
+import edu.emory.mathcs.backport.java.util.concurrent.atomic.AtomicInteger;
 
 
 /**
@@ -106,6 +110,12 @@ public class UserInstance implements HttpSessionBindingListener {
     final SoftHashMap systemCharacterCache=new SoftHashMap(SYSTEM_CHARACTER_BLOCK_CACHE_MIN_SIZE);
 
     protected IPerson person;
+
+    // Metric counters
+    public static final AtomicInteger userSessions = new AtomicInteger();
+    private static final MovingAverage renderTimes = new MovingAverage();
+    public static MovingAverageSample lastRender = new MovingAverageSample();
+
 
     public UserInstance (IPerson person) {
         this.person=person;
@@ -614,7 +624,7 @@ public class UserInstance implements HttpSessionBindingListener {
                                 systemCharacterCache.put(cacheKey,ce);
                                 if (log.isDebugEnabled()){
                                 	log.debug("UserInstance::renderState() : recorded transformation character block cache with key \""+cacheKey+"\"");
-	                                
+
 	                                log.debug("Printing transformation cache system blocks:");
 	                                for(int i=0;i<ce.systemBuffers.size();i++) {
 	                                	log.debug("----------piece "+Integer.toString(i));
@@ -637,13 +647,13 @@ public class UserInstance implements HttpSessionBindingListener {
                 } catch (Exception e) {
                     throw new PortalException(e);
                 } finally {
-                  FrameworkMBeanImpl.setLastRender(System.currentTimeMillis() - startTime);
+                	lastRender = renderTimes.add(System.currentTimeMillis() - startTime);
                 }
             }
         }
     }
 
-    
+
     private String constructCacheKey(IPerson person,String rootNodeId) throws PortalException {
         StringBuffer sbKey = new StringBuffer(1024);
         sbKey.append(person.getID()).append(",");
@@ -689,6 +699,7 @@ public class UserInstance implements HttpSessionBindingListener {
      }
         // Record the destruction of the session
         EventPublisherLocator.getApplicationEventPublisher().publishEvent(new UserSessionDestroyedPortalEvent(this, person));
+        userSessions.decrementAndGet();
         GroupService.finishedSession(person);
     }
 
@@ -700,6 +711,7 @@ public class UserInstance implements HttpSessionBindingListener {
     public void valueBound (HttpSessionBindingEvent bindingEvent) {
         // Record the creation of the session
     	EventPublisherLocator.getApplicationEventPublisher().publishEvent(new UserSessionCreatedPortalEvent(this, person));
+    	userSessions.incrementAndGet();
     }
 
  
@@ -792,6 +804,5 @@ public class UserInstance implements HttpSessionBindingListener {
     }
 
 }
-
 
 

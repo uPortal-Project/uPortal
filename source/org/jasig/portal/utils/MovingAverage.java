@@ -11,40 +11,19 @@ package org.jasig.portal.utils;
  * @since uPortal 2.5
  */
 public class MovingAverage {
+
+  public static final int SAMPLESIZE = 100;
   private long[] samples;
   private int ent = -1;
   private long sum = 0;
   private long totalSamples = 0;
   private long highMax = 0;
 
-  public MovingAverage(final int sampleSize) {
-    samples = new long[sampleSize];
+  public MovingAverage() {
+	  samples = new long[SAMPLESIZE];
   }
 
-  public static class Sample {
-    public long average;
-    public long highMax;
-    public long lastSample;
-    public long max;
-    public long min;
-    public long totalSamples;
-
-    public Sample() {
-    }
-
-    public Sample(final long average, final long highMax, final long lastSample,
-                  final long max,
-                  final long min, final long totalSamples) {
-      this.average = average;
-      this.highMax = highMax;
-      this.lastSample = lastSample;
-      this.max = max;
-      this.min = min;
-      this.totalSamples = totalSamples;
-    }
-  }
-
-  public synchronized Sample add(final long sample) {
+  public synchronized MovingAverageSample add(final long sample) {
 
     final long lastSample = sample;
     final int first = ++ent % samples.length;
@@ -70,6 +49,6 @@ public class MovingAverage {
       }
     }
 
-    return new Sample(sum / arraySize, highMax, lastSample, max, min, totalSamples);
+    return new MovingAverageSample(sum / arraySize, highMax, lastSample, max, min, totalSamples);
   }
 }

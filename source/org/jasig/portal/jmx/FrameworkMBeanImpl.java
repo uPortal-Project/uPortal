@@ -10,60 +10,48 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import org.jasig.portal.ChannelManager;
+import org.jasig.portal.GuestUserInstance;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.PortalSessionManager;
 import org.jasig.portal.ProblemsTable;
 import org.jasig.portal.RDBMServices;
-import org.jasig.portal.utils.MovingAverage;
-import org.jasig.portal.utils.MovingAverage.Sample;
+import org.jasig.portal.UserInstance;
+import org.jasig.portal.services.Authentication;
+import org.jasig.portal.utils.MovingAverageSample;
 
 /**
- * uPortal metrics to make available to JMX.
+ * uPortal metrics to make available via JMX.
  *
  * @author George Lindholm <a href="mailto:George.Lindholm@ubc.ca">George.Lindholm@ubc.ca</a>
  * @version $Revision$ $Date$
  * @since uPortal 2.5
  */
 public class FrameworkMBeanImpl implements FrameworkMBean {
-  private static MovingAverage renderTimes = new MovingAverage(100);
-  private static Sample lastRender = new Sample();
-  private static String database;
-
   public FrameworkMBeanImpl() {
-    database = RDBMServices.getDataSource().toString();
+
   }
+
   /**
    * Time/Data uPortal was started
    * @return Date
    */
-  public Date getStartedAt() {
-    return PortalSessionManager.STARTED_AT;
-  }
+  public Date getStartedAt() {return PortalSessionManager.STARTED_AT;}
 
-  public long getRenderAverage() {
-    return lastRender.average;
-  }
-  public long getRenderHighMax() {
-    return lastRender.highMax;
-  }
-  public long getRenderLast() {
-    return lastRender.lastSample;
-  }
-  public long getRenderMin() {
-    return lastRender.min;
-  }
-  public long getRenderMax() {
-    return lastRender.max;
-  }
-  public long getRenderTotalRenders() {
-    return lastRender.totalSamples;
-  }
 
-  public static void setLastRender(final long time) {
-    lastRender = renderTimes.add(time);
-  }
+  /*
+   * Track framework rendering performance
+   */
+  public long getRenderAverage() {return UserInstance.lastRender.average;}
+  public long getRenderHighMax() {return UserInstance.lastRender.highMax;}
+  public long getRenderLast() {return UserInstance.lastRender.lastSample;}
+  public long getRenderMin() {return UserInstance.lastRender.min;}
+  public long getRenderMax() {return UserInstance.lastRender.max;}
+  public long getRenderTotalRenders() {return UserInstance.lastRender.totalSamples;}
+  public MovingAverageSample getLastRender() {return UserInstance.lastRender;}
 
-  public String[] getRecentProblems() {
+
+   public String[] getRecentProblems() {
     final List rpe = ProblemsTable.getRecentPortalExceptions();
     final ArrayList al = new ArrayList(rpe.size());
     for (Iterator it = rpe.iterator(); it.hasNext(); ) {
@@ -73,13 +61,40 @@ public class FrameworkMBeanImpl implements FrameworkMBean {
     return (String[]) al.toArray(new String[0]);
   }
 
-  /* Database */
-  public int getRDBMActiveConnectionCount() {
-    return RDBMServices.getActiveConnectionCount();
+  /*
+   * sessions
+   */
+  public long getUserSessionCount() {return UserInstance.userSessions.longValue();}
+  public long getGuestSessionCount() {return GuestUserInstance.guestSessions.longValue();}
 
-  }
-  public String getRDBMDatabase() {
-    return database;
-  }
+  /*
+   * Track framework database performance
+   */
+  public MovingAverageSample getLastDatabase() { return RDBMServices.lastDatabase;}
+  public long getDatabaseAverage() {return RDBMServices.lastDatabase.average;}
+  public long getDatabaseHighMax() {return RDBMServices.lastDatabase.highMax;}
+  public long getDatabaseLast() {return RDBMServices.lastDatabase.lastSample;}
+  public long getDatabaseMin() {return RDBMServices.lastDatabase.min;}
+  public long getDatabaseMax() {return RDBMServices.lastDatabase.max;}
+  public long getDatabaseTotalConnections() {return RDBMServices.lastDatabase.totalSamples;}
+  public int getRDBMActiveConnectionCount() {return RDBMServices.getActiveConnectionCount();}
+  public int getRDBMMaxConnectionCount() {return RDBMServices.getMaxConnectionCount();}
 
+
+  /*
+   * Track framework Authentication performance
+   */
+  public MovingAverageSample getLastAuthentication() {return Authentication.lastAuthentication;}
+  public long getAuthenticationAverage() {return Authentication.lastAuthentication.average;}
+  public long getAuthenticationHighMax() {return Authentication.lastAuthentication.highMax;}
+  public long getAuthenticationLast() {return Authentication.lastAuthentication.lastSample;}
+  public long getAuthenticationMin() {return Authentication.lastAuthentication.min;}
+  public long getAuthenticationMax() {return Authentication.lastAuthentication.max;}
+  public long getAuthenticationTotalLogins() {return Authentication.lastAuthentication.totalSamples;}
+
+
+  // Threads
+  public long getThreadCount() {return PortalSessionManager.getThreadGroup().activeCount();}
+  public long getChannelRendererActiveThreads() {return ChannelManager.activeRenderers.get();}
+  public long getChannelRendererMaxActiveThreads() {return ChannelManager.maxRenderThreads.get();}
 }

@@ -16,6 +16,7 @@ import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.UserIdentityStoreFactory;
 import org.jasig.portal.events.EventPublisherLocator;
 import org.jasig.portal.events.support.UserLoggedInPortalEvent;
+import org.jasig.portal.jmx.FrameworkMBeanImpl;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IAdditionalDescriptor;
 import org.jasig.portal.security.IOpaqueCredentials;
@@ -25,6 +26,8 @@ import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.PortalSecurityException;
 import org.jasig.portal.security.provider.ChainingSecurityContext;
 import org.jasig.portal.services.persondir.IPersonAttributeDao;
+import org.jasig.portal.utils.MovingAverage;
+import org.jasig.portal.utils.MovingAverageSample;
 
 /**
  * Attempts to authenticate a user and retrieve attributes
@@ -48,6 +51,12 @@ public class Authentication {
    protected org.jasig.portal.security.IPerson m_Person = null;
    protected ISecurityContext ic = null;
 
+
+   // Metric counters
+   private static final MovingAverage authenticationTimes = new MovingAverage();
+   public static MovingAverageSample lastAuthentication = new MovingAverageSample();
+
+
    /**
     * Attempts to authenticate a given IPerson based on a set of principals and credentials
     * @param principals
@@ -70,9 +79,12 @@ public class Authentication {
       // passed to the Authentication service.
 
       // Attempt to authenticate the user
+      final long start = System.currentTimeMillis();
       securityContext.authenticate();
+      final long elapsed = System.currentTimeMillis() - start;
       // Check to see if the user was authenticated
       if (securityContext.isAuthenticated()) {
+         lastAuthentication = authenticationTimes.add(elapsed); // metric
          // Add the authenticated username to the person object
          // the login name may have been provided or reset by the security provider
          // so this needs to be done after authentication.

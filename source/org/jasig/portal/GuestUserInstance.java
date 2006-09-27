@@ -23,15 +23,18 @@ import org.jasig.portal.security.IPerson;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import edu.emory.mathcs.backport.java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * A multithreaded version of a UserInstance.
  * @author Peter Kharchenko {@link <a href="mailto:pkharchenko@interactivebusiness.com">pkharchenko@interactivebusiness.com</a>}
  * @version $Revision$
  */
 public class GuestUserInstance extends UserInstance implements HttpSessionBindingListener {
-    
+
     private static final Log log = LogFactory.getLog(GuestUserInstance.class);
-    
+    public static final AtomicInteger guestSessions = new AtomicInteger();
+
     // state class
     private class IState {
         private ChannelManager channelManager;
@@ -64,7 +67,7 @@ public class GuestUserInstance extends UserInstance implements HttpSessionBindin
     public void registerSession(HttpServletRequest req) throws PortalException {
 	    IState newState=new IState();
         newState.channelManager=new ChannelManager(new GuestUserPreferencesManagerWrapper(uLayoutManager,req.getSession(false).getId()));
-        newState.localeManager = new LocaleManager(person, req.getHeader("Accept-Language"));        
+        newState.localeManager = new LocaleManager(person, req.getHeader("Accept-Language"));
         newState.p_rendering_lock=new Object();
         uLayoutManager.setLocaleManager(newState.localeManager);
         uLayoutManager.registerSession(req);
@@ -101,6 +104,7 @@ public class GuestUserInstance extends UserInstance implements HttpSessionBindin
 
         // Record the destruction of the session
         EventPublisherLocator.getApplicationEventPublisher().publishEvent(new UserSessionDestroyedPortalEvent(this, person));
+        guestSessions.decrementAndGet();
     }
 
     /**
@@ -116,6 +120,7 @@ public class GuestUserInstance extends UserInstance implements HttpSessionBindin
 
         // Record the creation of the session
         EventPublisherLocator.getApplicationEventPublisher().publishEvent(new UserSessionCreatedPortalEvent(this, person));
+        guestSessions.incrementAndGet();
     }
 
     /**
