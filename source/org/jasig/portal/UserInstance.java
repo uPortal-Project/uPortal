@@ -29,7 +29,6 @@ import org.jasig.portal.events.EventPublisherLocator;
 import org.jasig.portal.events.support.UserSessionCreatedPortalEvent;
 import org.jasig.portal.events.support.UserSessionDestroyedPortalEvent;
 import org.jasig.portal.i18n.LocaleManager;
-import org.jasig.portal.jmx.FrameworkMBeanImpl;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.TransientUserLayoutManagerWrapper;
 import org.jasig.portal.layout.UserLayoutParameterProcessor;

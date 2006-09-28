@@ -16,7 +16,6 @@ import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.UserIdentityStoreFactory;
 import org.jasig.portal.events.EventPublisherLocator;
 import org.jasig.portal.events.support.UserLoggedInPortalEvent;
-import org.jasig.portal.jmx.FrameworkMBeanImpl;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IAdditionalDescriptor;
 import org.jasig.portal.security.IOpaqueCredentials;
