@@ -156,7 +156,7 @@
                        Version: 2.6.0
                        URL: http://xml.apache.org/xalan-j/
 
-serializer.jar         serializer.jar contains the Serializer component of 
+serializer.jar         serializer.jar contains the Serializer component of
 					   Xalan-Java.
 
   xercesImpl.jar       Xerces2 is the next generation of high performance,
@@ -288,6 +288,14 @@ serializer.jar         serializer.jar contains the Serializer component of
                        Version: 1.2
                        URL: http://jakarta.apache.org/commons/pool
 
+  commons-http.jar     httpClient from the Apache commaons project - Better URL implementation
+                       Version: 3.0.1
+                       http://jakarta.apache.org/commons/httpclient
+
+  commons-codec.jar    codec from the Apache commaons project - Needed by httpClient
+                       Version: 1.3
+                       http://jakarta.apache.org/commons/codec
+
   servlet.jar          Contains the javax.servlet APIs.  This is usually supplied
                        by your servlet container.
                        Version: 2.2, 2.3, or 2.4
@@ -354,6 +362,8 @@ serializer.jar         serializer.jar contains the Serializer component of
   <property name="junit.jar" value="(set this in build.properties!)"/>
   <property name="commons-dbcp.jar" value="(set this in build.properties!)"/>
   <property name="commons-pool.jar" value="(set this in build.properties!)"/>
+  <property name="commons-http.jar" value="(set this in build.properties!)"/>
+  <property name="commons-codec.jar" value="(set this in build.properties!)"/>
   <property name="servlet.jar" value="(set this in build.properties!)"/>
   <property name="spring.jar" value="(set this in build.properties!)"/>
   <property name="commons-collection.jar" value="(set this in build.properties!)"/>
@@ -402,6 +412,7 @@ serializer.jar         serializer.jar contains the Serializer component of
     <pathelement location="${commons-collection.jar}"/>
     <pathelement location="${commons-dbcp.jar}"/>
     <pathelement location="${commons-pool.jar}"/>
+    <pathelement location="${commons-http.jar}"/>
     <pathelement location="${servlet.jar}"/>
     <pathelement location="${spring.jar}"/>
     <pathelement location="${whirlycache.jar}" />
@@ -583,6 +594,8 @@ serializer.jar         serializer.jar contains the Serializer component of
     <copy todir="${deploy.home}/WEB-INF/lib" file="${commons-logging.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${commons-dbcp.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${commons-pool.jar}"/>
+    <copy todir="${deploy.home}/WEB-INF/lib" file="${commons-http.jar}"/>
+    <copy todir="${deploy.home}/WEB-INF/lib" file="${commons-codec.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${jdbcDriver.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${spring.jar}"/>
 

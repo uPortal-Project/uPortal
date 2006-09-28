@@ -17,6 +17,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
+ *
  * This class checks a URL or a webserver hosting a URL. It only allows a specific time allocated for
  * connecting to the URL rather than waiting for a timeout.
  * This class uses the <code>java.util.Timer</code> to schedule a task which is cancelling the attempt of calling
@@ -25,12 +26,13 @@ import org.apache.commons.logging.LogFactory;
  * @author <a href="mailto:kazemnaderi@yahoo.ca">Kazem Naderi</a>
  * @version $Revision$
  * @since uPortal 2.2
+ * @deprecated Use {@link HttpClientManager#getNewHTTPClient} instead
  */
 
 public class AddressTester {
-    
+
     private static final Log log = LogFactory.getLog(AddressTester.class);
-    
+
     /**The timer object that takes a timerTask as a parameter when constructed*/
     private static final Timer timer = new Timer();
 
@@ -132,6 +134,7 @@ public class AddressTester {
      * @param urlString
      * @param getHead
      * @throws java.lang.Exception
+     * @deprecated Use {@link HttpClientManager#getNewHTTPClient()} instead
      */
     public AddressTester(String urlString, boolean getHead) throws Exception {
       this(urlString, defaultTimeToWait, getHead);  }
@@ -140,6 +143,7 @@ public class AddressTester {
      * Constructor
      * @param milliSeconds - the number of milliseconds to let the connectioon attempt run
      * @param urlString - the String representing a URL
+     * @deprecated Use {@link HttpClientManager#getNewHTTPClient()} instead
      */
     public AddressTester(int milliSeconds, String urlString) throws Exception {
       this(urlString, milliSeconds, false);
@@ -148,7 +152,8 @@ public class AddressTester {
     /**
      * Constructor
      * @param urlString the String representing a URL
-     */
+     * @deprecated Use {@link HttpClientManager#getNewHTTPClient()} instead
+    */
     public AddressTester(String urlString) throws Exception{
       this(urlString, defaultTimeToWait, false);
     }
