@@ -55,8 +55,6 @@ import org.jasig.portal.utils.CommonUtils;
 
 /**
  * AggregatedUserLayoutStore implementation using the relational database with SQL 92.
- * <p>
- * Company: Instructional Media &amp; Magic
  * 
  * Prior to uPortal 2.5, this class existed in the package org.jasig.portal.layout.
  * It was moved to its present package to reflect that it is part of Aggregated
@@ -65,7 +63,6 @@ import org.jasig.portal.utils.CommonUtils;
  * @author <a href="mailto:mvi@immagic.com">Michael Ivanov</a>
  * @version $Revision$
  */
-
 public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IAggregatedUserLayoutStore {
 	
 	private static final int LOST_FOLDER_ID = -1;
