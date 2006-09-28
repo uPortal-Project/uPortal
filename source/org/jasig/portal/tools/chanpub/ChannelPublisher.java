@@ -576,12 +576,12 @@ public class ChannelPublisher implements ErrorHandler
                 NodeList valuenodes = anode.getElementsByTagName("value");
                 if (valuenodes.getLength() > 0)
                 {
-                    pvalue = XML.getElementText((Element) valuenodes.item(0));
+                    pvalue = XML.getElementText((Element) valuenodes.item(0)).trim();
                 }
                 NodeList descnodes = anode.getElementsByTagName("description");
                 if (descnodes.getLength() > 0)
                 {
-                    pdescr = XML.getElementText((Element) descnodes.item(0));
+                    pdescr = XML.getElementText((Element) descnodes.item(0)).trim();
                 }
                 NodeList ovrdnodes = anode.getElementsByTagName("ovrd");
                 if (ovrdnodes.getLength() > 0)
