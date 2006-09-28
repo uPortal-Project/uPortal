@@ -23,7 +23,7 @@
 	<parameters>
 		<parameter>
 			<name>xmlUri</name>
-			<value>http://uportal.org/rss/news/index.xm</value>
+			<value>http://uportal.org/rss/news/index.xml</value>
 			<description></description>
 			<ovrd>N</ovrd>
 		</parameter>
