@@ -10,7 +10,7 @@
 # should be matched last, since the regex for it is more
 # general then that of IE.
 #
-# Suggestions: to optimize the matching process, describe most 
+# Suggestions: to optimize the matching process, describe most
 # popular browsers first
 
 # Internet Explorer 6.x
@@ -36,6 +36,9 @@ Opera/6.*=1
 
 # Opera 5.x browsers
 Opera/5.*=1
+
+# Google probing bot
+Googlebot/2.*=1
 
 # W3C HTML Validator
 W3C_Validator/1.*=1
