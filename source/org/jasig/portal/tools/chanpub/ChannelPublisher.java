@@ -436,7 +436,7 @@ public class ChannelPublisher implements ErrorHandler
             {
                 if (n.getNodeName().equals("fname"))
                 {
-                    fname = XML.getElementText((Element) n);
+                    fname = XML.getElementText((Element) n).trim();
                 }
             }
         }
@@ -465,7 +465,7 @@ public class ChannelPublisher implements ErrorHandler
             {
                 if (n.getNodeName().equals("channelId"))
                 {
-                    id = XML.getElementText((Element) n);
+                    id = XML.getElementText((Element) n).trim();
                 }
             }
         }
@@ -534,7 +534,7 @@ public class ChannelPublisher implements ErrorHandler
             for (int j = 0; j < anodes.getLength(); j++)
             {
                 Element anode = (Element) anodes.item(j);
-                String catString = XML.getElementText(anode);
+                String catString = XML.getElementText(anode).trim();
                 // need to look up corresponding category id
                 // ie: Applications = local.50
                 //     Entertainment = local.51
@@ -571,7 +571,7 @@ public class ChannelPublisher implements ErrorHandler
                 NodeList namenodes = anode.getElementsByTagName("name");
                 if (namenodes.getLength() > 0)
                 {
-                    pname = XML.getElementText((Element) namenodes.item(0));
+                    pname = XML.getElementText((Element) namenodes.item(0)).trim();
                 }
                 NodeList valuenodes = anode.getElementsByTagName("value");
                 if (valuenodes.getLength() > 0)
@@ -586,7 +586,7 @@ public class ChannelPublisher implements ErrorHandler
                 NodeList ovrdnodes = anode.getElementsByTagName("ovrd");
                 if (ovrdnodes.getLength() > 0)
                 {
-                    povrd = XML.getElementText((Element) ovrdnodes.item(0));
+                    povrd = XML.getElementText((Element) ovrdnodes.item(0)).trim();
                 }
                 ChannelParameter chanParam =
                     new ChannelParameter(pname, pvalue, RDBMServices.dbFlag(povrd));
@@ -612,7 +612,7 @@ public class ChannelPublisher implements ErrorHandler
             for (int j = 0; j < anodes.getLength(); j++)
             {
                 Element anode = (Element) anodes.item(j);
-                String groupStr = XML.getElementText(anode);
+                String groupStr = XML.getElementText(anode).trim();
                 // need to look up corresponding group id
                 // ie: Everyone = local.0
                 //     Developers = local.4
@@ -643,7 +643,7 @@ public class ChannelPublisher implements ErrorHandler
             for (int j = 0; j < anodes.getLength(); j++)
             {
                 Element anode = (Element) anodes.item(j);
-                String userStr = XML.getElementText(anode);
+                String userStr = XML.getElementText(anode).trim();
                 // need to look up corresponding user
                 IEntity user = GroupService.getEntity(userStr, IPerson.class);
 
