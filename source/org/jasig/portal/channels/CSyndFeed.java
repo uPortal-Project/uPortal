@@ -52,36 +52,36 @@ import com.sun.syndication.io.XmlReader;
  *
  * <p>Static channel parameters to be supplied:
  *
- *  1) "xmlUri" -   URI representing the news feed. RSS and	Atom are supported.
- *  				(See Rome's documentation for specific version information.)
+ *  1) "xmlUri" -   URI representing the news feed. RSS and	Atom are supported. 
+ *  				(See Rome's documentation for specific version information.) 
  *  2) "viewNum" -  Maximum number of news articles to list.
  *  3) "cacheTimeout" - the amount of time (in seconds) that the contents of the
  *                  channel should be cached (optional).  If this parameter is left
  *                  out, a default timeout value will be used.
- *  4) "upc_localConnContext" - The class name of the ILocalConnectionContext
+ *  4) "upc_localConnContext" - The class name of the ILocalConnectionContext 
  *                  implementation.
  *                  <i>Use when local data needs to be sent with the
  *                  request for the URL.</i>
  *  5) "upc_allow_xmlUri_prefixes" - Optional parameter specifying as a whitespace
- *                  delimited String the allowable xmlUri prefixes.
+ *                  delimited String the allowable xmlUri prefixes.  
  *                  <i>Defaults to "http:// https://"</i>
  *  6) "upc_deny_xmlUri_prefixes" - Optional parameter specifying as a whitespace
- *                  delimited String URI prefixes that should block a URI
+ *                  delimited String URI prefixes that should block a URI 
  *                  as xmlUri even if it matched one of the allow prefixes.
  *                  <i>Defaults to ""</i>
- *  7) "restrict_xmlUri_inStaticData" - Optional parameter specifying whether
+ *  7) "restrict_xmlUri_inStaticData" - Optional parameter specifying whether 
  *                  the xmlUri should be restricted according to the allow and
  *                  deny prefix rules above as presented in ChannelStaticData
  *                  or just as presented in ChannelRuntimeData.  "true" means
  *                  both ChannelStaticData and ChannelRuntimeData will be restricted.
- *                  Any other value or the parameter not being present means
+ *                  Any other value or the parameter not being present means 
  *                  only ChannelRuntimeData will be restricted.  It is important
  *                  to set this value to true when using subscribe-time
  *                  channel parameter configuration of the xmlUri.
  * </p>
  * <p>
  * As of uPortal 2.5.1, the xmlUri must match an allowed URI prefix.
- * By default http:// and https:// URIs are allowed.  If you are using the
+ * By default http:// and https:// URIs are allowed.  If you are using the 
  * empty document or another XML file from the classpath or from the filesystem,
  * you will need to allow a prefix to or the full path of that resource.
  * </p>
@@ -89,9 +89,9 @@ import com.sun.syndication.io.XmlReader;
 
 public class CSyndFeed extends BaseChannel implements ICacheable{
 
-
-	private static final String SSL_LOCATION = "CSyndFeed/CSyndFeed.ssl";
-
+	
+	private static final String SSL_LOCATION = "CSyndFeed/CSyndFeed.ssl";	
+    
     private SyndFeed feed = null;
 	private int cacheTimeout = 500;
 	private IUriScrutinizer uriScrutinizer;
@@ -99,22 +99,22 @@ public class CSyndFeed extends BaseChannel implements ICacheable{
 
     private int limit = 15;
 	private String xmlUri = null;
-
+	
 	public void renderXML(ContentHandler out) throws PortalException {
 		Document doc;
 
 		feed = getFeed(xmlUri);
-
+		
 		if (feed == null){
 			doc = buildErrorDocument();
 		}else{
 		    doc = buildNewsDocument(feed, limit);
 		}
-
+		
 		if (log.isDebugEnabled()){
 			log.debug("XML: "+org.jasig.portal.utils.XML.serializeNode(doc));
 		}
-
+		
 	    // Now perform the transformation
 	    XSLT xslt = XSLT.getTransformer(this);
 		xslt.setXML(doc);
@@ -138,53 +138,53 @@ public class CSyndFeed extends BaseChannel implements ICacheable{
 		Document doc = DocumentFactory.getNewDocument();
 		Node newsNode = doc.createElement("news");
 		doc.appendChild(newsNode);
-
+		
 		Node temp = doc.createElement("desc");
 		temp.setTextContent(feed.getDescription());
 		newsNode.appendChild(temp);
-
+		
 		temp = doc.createElement("link");
 		temp.setTextContent(feed.getLink());
 		newsNode.appendChild(temp);
-
+		
 		SyndImage image = feed.getImage();
 		if (image != null){
 			Node imageNode = doc.createElement("image");
 			newsNode.appendChild(imageNode);
-
+			
 			temp = doc.createElement("url");
 			temp.setTextContent(image.getUrl());
 			imageNode.appendChild(temp);
-
+			
 			temp = doc.createElement("title");
 			temp.setTextContent(image.getTitle());
 			imageNode.appendChild(temp);
-
+	
 			temp = doc.createElement("description");
 			temp.setTextContent(image.getDescription());
 			imageNode.appendChild(temp);
-
+			
 			temp = doc.createElement("link");
 			temp.setTextContent(image.getLink());
 			imageNode.appendChild(temp);
 		}
-
+		
 		Node itemsNode = doc.createElement("items");
 		newsNode.appendChild(itemsNode);
-
+		
 		List entries = feed.getEntries();
 		int count = 0;
 		for (Iterator i = entries.iterator();i.hasNext() && count < limit;count ++){
 			SyndEntry item = (SyndEntry) i.next();
-
+			
 			Node itemNode = doc.createElement("item");
 			itemsNode.appendChild(itemNode);
 			Node n;
-
+			
 			n = doc.createElement("title");
 			itemNode.appendChild(n);
 			n.setTextContent(item.getTitle());
-
+			
 			n = doc.createElement("link");
 			itemNode.appendChild(n);
 			n.setTextContent(item.getLink());
@@ -194,16 +194,16 @@ public class CSyndFeed extends BaseChannel implements ICacheable{
 				String text = sc.getValue();
 				n = doc.createElement("description");
 				itemNode.appendChild(n);
-
+		
 				// for now we always assume html: see Rome bug #26
 	//			if (sc.getType().equals("text/html")){
 					Parser p = new Parser();
 					try {
-
+						
 						SaferHTMLHandler c = new SaferHTMLHandler(doc,n);
 						p.setContentHandler(c);
 						p.parse(new InputSource(new StringReader(text)));
-
+						
 					} catch (IOException e) {
 						throw new RuntimeException(e);
 					} catch (SAXException e) {
@@ -214,23 +214,23 @@ public class CSyndFeed extends BaseChannel implements ICacheable{
 		}
 		return doc;
 	}
-
+	
 	public void setStaticData(ChannelStaticData sd) throws PortalException {
 		staticData = sd;
-
-		String allowXmlUriPrefixesParam =
+		
+		String allowXmlUriPrefixesParam = 
           sd.getParameter("upc_allow_xmlUri_prefixes");
-		String denyXmlUriPrefixesParam =
+		String denyXmlUriPrefixesParam = 
           sd.getParameter("upc_deny_xmlUri_prefixes");
-
-		uriScrutinizer =
+      
+		uriScrutinizer = 
           PrefixUriScrutinizer.instanceFromParameters(allowXmlUriPrefixesParam, denyXmlUriPrefixesParam);
-
+	      		
 	    // determine whether we should restrict what URIs we accept as the xmlUri from
 	    // ChannelStaticData
 	    String scrutinizeXmlUriAsStaticDataString = sd.getParameter("restrict_xmlUri_inStaticData");
 	    boolean scrutinizeXmlUriAsStaticData = "true".equals(scrutinizeXmlUriAsStaticDataString);
-
+	    
 	    String xmlUriParam = sd.getParameter("xmlUri");
 	    if (scrutinizeXmlUriAsStaticData) {
 	        // apply configured xmlUri restrictions
@@ -238,8 +238,8 @@ public class CSyndFeed extends BaseChannel implements ICacheable{
 	    } else {
 	        // set the field directly to avoid applying xmlUri restrictions
 	        xmlUri = xmlUriParam;
-	    }
-
+	    }		
+		
 		String param = sd.getParameter("cacheTimeout");
 		try{
 			cacheTimeout = Integer.parseInt(param);
@@ -272,7 +272,7 @@ public class CSyndFeed extends BaseChannel implements ICacheable{
 					get.setFollowRedirects(true);
 					final int rc = client.executeMethod(get);
 					if (rc != HttpStatus.SC_OK) {
-						throw new PortalException("Unable to access " + xmlUri);
+						throw new PortalException("HttpStatus:"+ rc+" url: " + xmlUri);
 					}
 					final InputStream in = get.getResponseBodyAsStream();
 					feed = input.build(new InputStreamReader(in));
@@ -280,9 +280,9 @@ public class CSyndFeed extends BaseChannel implements ICacheable{
 					get.releaseConnection();
 				}
 			} else {
-				URL feedUrl;
-				feedUrl = new URL(xmlUri);
-				feed = input.build(new XmlReader(feedUrl));
+			URL feedUrl;
+			feedUrl = new URL(xmlUri);
+			feed = input.build(new XmlReader(feedUrl));
 			}
 		} catch (MalformedURLException e) {
 			throw new PortalException(e);
@@ -301,7 +301,7 @@ public class CSyndFeed extends BaseChannel implements ICacheable{
 	public final ChannelRuntimeProperties getRuntimeProperties() {
 		// this channel returns ChannelRuntimeProperties that specify the
 		// dynamic channel title to be the title of the feed.
-
+		
 		String title = null;
 		if (feed != null)
 			title = feed.getTitle();
@@ -342,15 +342,15 @@ public class CSyndFeed extends BaseChannel implements ICacheable{
             iae.initCause(e);
             throw iae;
         }
-
+        
         String urlString = url.toExternalForm();
         try {
             this.uriScrutinizer.scrutinize(new URI(urlString));
         }catch (URISyntaxException e1) {
             throw new IllegalArgumentException("xmlUri [" + xmlUriArg + "] resolved to a URI with bad syntax.");
         }
-
+        
         this.xmlUri = xmlUriArg;
     }
-
+    
 }
