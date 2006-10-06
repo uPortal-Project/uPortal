@@ -15,6 +15,7 @@ import org.jasig.portal.ChannelRuntimeProperties;
 import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.IChannel;
 import org.jasig.portal.PortalException;
+import org.jasig.portal.utils.XML;
 import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Document;
 import org.xml.sax.ContentHandler;
@@ -62,6 +63,19 @@ public abstract class CAbstractXslt implements IChannel {
         }
 
         this.runtimeData = rd;
+        
+        runtimeDataSet();
+    }
+    
+    /**
+     * This method is called on setRuntimeData() after CAbstractXslt has
+     * updated its state such that a call to getRuntimeData() will return
+     * the latest ChannelRuntimeData.
+     */
+    protected void runtimeDataSet() {
+        // do-nothing default implementation
+        // subclasses can override to be notified when setRuntimeData()
+        // has been received.
     }
     
     protected final ChannelRuntimeData getRuntimeData() {
@@ -81,6 +95,19 @@ public abstract class CAbstractXslt implements IChannel {
         }
 
         this.staticData = sd;
+        
+        staticDataSet();
+    }
+    
+    /**
+     * This method is called on calls to setStaticData() after internal state
+     * has been updated such that getStaticData() will return the 
+     * ChannelStaticData.
+     *
+     */
+    protected void staticDataSet() {
+        // do-nothing default implementation
+        // subclasses can override to be notified when static data was set.
     }
 
     protected final ChannelStaticData getStaticData() {
@@ -117,7 +144,11 @@ public abstract class CAbstractXslt implements IChannel {
             
             if (log.isTraceEnabled()) {
                 log.trace("getXml() returned Document: [" + xml  + "]");
+                String xmlAsString = XML.serializeNode(xml);
+                log.trace("XML DOM was: [" + xmlAsString + "]");
             }
+            
+            
             
             if (xml == null) {
                 throw new IllegalStateException("The Document we would transform, as returned by getXml(), was illegally null.");
