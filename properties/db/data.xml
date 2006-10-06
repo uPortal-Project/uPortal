@@ -2690,7 +2690,14 @@
         <column><name>TYPE_DESCR</name><value>Transforms an XML document into a fragment of markup language using a single XSLT.</value></column>
         <column><name>TYPE_DEF_URI</name><value>/org/jasig/portal/channels/CGenericXSLT/CGenericJustXSLT.cpd</value></column>
       </row>
-
+      
+      <row sinceMajor="2" sinceMinor="6">
+        <column><name>TYPE_ID</name><value>9</value></column>
+        <column><name>TYPE_NAME</name><value>SQL</value></column>
+        <column><name>TYPE</name><value>org.jasig.portal.channels.sqlquery.CSqlQuery</value></column>
+        <column><name>TYPE_DESCR</name><value>Executes a SQL query against a selected DataSource.</value></column>
+        <column><name>TYPE_DEF_URI</name><value>/org/jasig/portal/channels/sqlquery/CSqlQuery/CSqlQuery.cpd</value></column>
+      </row>
 
     </rows>
   </table>
