@@ -17,6 +17,7 @@ import org.jasig.portal.IServant;
 import org.jasig.portal.channels.groupsmanager.CGroupsManagerServantFactory;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.services.GroupService;
+import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.layout.alm.ALFragment;
@@ -256,6 +257,11 @@ public class CFragmentManager extends FragmentManager {
 
 	public void renderXML(ContentHandler out) throws PortalException {
 		
+            if (!staticData.getAuthorizationPrincipal().canPublish()) {
+                final String msg = 
+                    "User is not authorized to access Fragment Manager";
+                throw new AuthorizationException(msg , false, false);
+            }
 		
 		XSLT xslt = XSLT.getTransformer(this, runtimeData.getLocales());
 		
