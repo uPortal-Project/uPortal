@@ -35,14 +35,19 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 
 <xsl:template match="rows">
-      <table>
+      <table border="2" style="text-align:center;">
+      	<tr>
+  		<xsl:for-each select = "row[1]/column">
+      		<th><xsl:value-of select="name" /></th>
+  		</xsl:for-each>
+      	</tr>
       <xsl:apply-templates select="row"/>
       </table>
 </xsl:template>
 
 <xsl:template match="row">
     <tr>
-    <xsl:apply-templates match="column"/>
+    <xsl:apply-templates select="column"/>
     </tr>
 </xsl:template>
 
