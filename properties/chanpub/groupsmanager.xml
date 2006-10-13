@@ -23,6 +23,6 @@
 		<category>Applications</category>
 	</categories>
 	<groups>
-		<group>Everyone</group>
-	</groups>
+		<group>Portal Administrators</group>
+		<group>Developers</group>	</groups>
 </channel-definition>
