@@ -515,8 +515,8 @@ serializer.jar         serializer.jar contains the Serializer component of
           destdir="${build.home}/WEB-INF/classes"
             debug="${compile.debug}"
       deprecation="${compile.deprecation}"
-          target="1.4"
-          source="1.4"
+          target="1.5"
+          source="1.5"
          optimize="${compile.optimize}">
       <classpath refid="compile.classpath"/>
     </javac>
