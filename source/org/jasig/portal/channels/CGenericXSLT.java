@@ -27,10 +27,12 @@ import org.jasig.portal.ICacheable;
 import org.jasig.portal.IChannel;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.ResourceMissingException;
-import org.jasig.portal.Version;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.properties.PropertiesManager;
+import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.LocalConnectionContext;
+import org.jasig.portal.tools.versioning.Version;
+import org.jasig.portal.tools.versioning.VersionsManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.DTDResolver;
@@ -60,39 +62,39 @@ import org.xml.sax.ContentHandler;
  *  <li> "cacheTimeout" - the amount of time (in seconds) that the contents of the
  *                  channel should be cached (optional).  If this parameter is left
  *                  out, a default timeout value will be used.
- *  </li>          
- *  <li> "upc_localConnContext" - The class name of the ILocalConnectionContext 
+ *  </li>
+ *  <li> "upc_localConnContext" - The class name of the ILocalConnectionContext
  *                  implementation.
  *                  <i>Use when local data needs to be sent with the
  *                  request for the URL.</i>
  *  </li>
  *  <li> "upc_allow_xmlUri_prefixes" - Optional parameter specifying as a whitespace
- *                  delimited String the allowable xmlUri prefixes.  
+ *                  delimited String the allowable xmlUri prefixes.
  *                  <i>Defaults to "http:// https://"</i>
  *  </li>
  *  <li> "upc_deny_xmlUri_prefixes" - Optional parameter specifying as a whitespace
- *                  delimited String URI prefixes that should block a URI 
+ *                  delimited String URI prefixes that should block a URI
  *                  as xmlUri even if it matched one of the allow prefixes.
  *                  <i>Defaults to ""</i>
  *  </li>
- *  <li> "restrict_xmlUri_inStaticData" - Optional parameter specifying whether 
+ *  <li> "restrict_xmlUri_inStaticData" - Optional parameter specifying whether
  *                  the xmlUri should be restricted according to the allow and
  *                  deny prefix rules above as presented in ChannelStaticData
  *                  or just as presented in ChannelRuntimeData.  "true" means
  *                  both ChannelStaticData and ChannelRuntimeData will be restricted.
- *                  Any other value or the parameter not being present means 
+ *                  Any other value or the parameter not being present means
  *                  only ChannelRuntimeData will be restricted.  It is important
  *                  to set this value to true when using subscribe-time
  *                  channel parameter configuration of the xmlUri.
  * </p>
  * <p>The xmlUri and xslTitle static parameters above can be overridden by including
- * parameters of the same name (<code>xmlUri</code> and/or <code>xslTitle</code>) 
+ * parameters of the same name (<code>xmlUri</code> and/or <code>xslTitle</code>)
  * in the HttpRequest string.  Prior to uPortal 2.5.1 sslUri and xslUri could also
  * be overridden -- these features have been removed to improve the security of
  * CGenericXSLT instances. </p>
  * <p>
  * Additionally, as of uPortal 2.5.1, the xmlUri must match an allowed URI prefix.
- * By default http:// and https:// URIs are allowed.  If you are using the 
+ * By default http:// and https:// URIs are allowed.  If you are using the
  * empty document or another XML file from the classpath or from the filesystem,
  * you will need to allow a prefix to or the full path of that resource.
  * </p>
@@ -114,7 +116,7 @@ import org.xml.sax.ContentHandler;
 public class CGenericXSLT extends BaseChannel implements IChannel, ICacheable
 {
 	private static final Log log = LogFactory.getLog(CGenericXSLT.class);
-	
+
 	private String xmlUri;
 	private String sslUri;
 	private String xslTitle;
@@ -123,39 +125,39 @@ public class CGenericXSLT extends BaseChannel implements IChannel, ICacheable
 	private long cacheTimeout;
 	private ChannelRuntimeData runtimeData = null;
 	private LocalConnectionContext localConnContext = null;
-	
+
 	private IUriScrutinizer uriScrutinizer;
-	
+
 	public CGenericXSLT()
 	{
 
 	}
-	
+
 	public void setStaticData (ChannelStaticData sd) throws ResourceMissingException
 	{
-		
-		String allowXmlUriPrefixesParam = 
+
+		String allowXmlUriPrefixesParam =
 			sd.getParameter("upc_allow_xmlUri_prefixes");
-		String denyXmlUriPrefixesParam = 
+		String denyXmlUriPrefixesParam =
 			sd.getParameter("upc_deny_xmlUri_prefixes");
-		
-		IUriScrutinizer temp = 
+
+		IUriScrutinizer temp =
 			PrefixUriScrutinizer.instanceFromParameters(allowXmlUriPrefixesParam, denyXmlUriPrefixesParam);
-		
+
 		if (temp == null) {
 			throw new IllegalArgumentException("CGenericXSLT channel requires a non-null IUriScrutinizer");
 		}
 		uriScrutinizer = temp;
-		
+
 		xmlUri = sslUri = xslTitle = xslUri = null;
 		cacheTimeout = PropertiesManager.getPropertyAsLong("org.jasig.portal.channels.CGenericXSLT.default_cache_timeout");
-		
-		
+
+
 		// determine whether we should restrict what URIs we accept as the xmlUri from
 		// ChannelStaticData
 		String scrutinizeXmlUriAsStaticDataString = sd.getParameter("restrict_xmlUri_inStaticData");
 		boolean scrutinizeXmlUriAsStaticData = "true".equals(scrutinizeXmlUriAsStaticDataString);
-		
+
 		String xmlUriParam = sd.getParameter("xmlUri");
 		if (scrutinizeXmlUriAsStaticData) {
 			// apply configured xmlUri restrictions
@@ -164,16 +166,16 @@ public class CGenericXSLT extends BaseChannel implements IChannel, ICacheable
 			// set the field directly to avoid applying xmlUri restrictions
 			xmlUri = xmlUriParam;
 		}
-		
+
 		sslUri = sd.getParameter("sslUri");
 		xslTitle = sd.getParameter("xslTitle");
 		xslUri = sd.getParameter("xslUri");
-		
+
 		String cacheTimeoutText = sd.getParameter("cacheTimeout");
-		
+
 		if (cacheTimeoutText != null)
 			cacheTimeout = Long.parseLong(cacheTimeoutText);
-		
+
 		String connContext = sd.getParameter ("upc_localConnContext");
 		if (connContext != null)
 		{
@@ -189,25 +191,25 @@ public class CGenericXSLT extends BaseChannel implements IChannel, ICacheable
 		}
 		params.putAll(sd);
 	}
-	
+
 	public void setRuntimeData (ChannelRuntimeData rd)
 	{
 		// because of the portal rendering model, there is no reason to synchronize on state
 		runtimeData=rd;
 		String xmlUri = rd.getParameter("xmlUri");
-		
+
 		if (xmlUri != null)
 			setXmlUri(xmlUri);
-		
+
 		// prior to uPortal 2.5.1 sslUri was configurable via ChannelRuntimeProperties
 		// this feature has been removed to improve security of CGenericXSLT instances.
-		
+
 		String s = rd.getParameter("xslTitle");
-		
+
 		if (s != null)
 			xslTitle = s;
-		
-		// grab the parameters and stuff them all into the state object        
+
+		// grab the parameters and stuff them all into the state object
 		Enumeration enum1 = rd.getParameterNames();
 		while (enum1.hasMoreElements()) {
 			String n = (String)enum1.nextElement();
@@ -216,12 +218,12 @@ public class CGenericXSLT extends BaseChannel implements IChannel, ICacheable
 			}
 		}
 	}
-	
+
 	public void renderXML(ContentHandler out) throws PortalException
 	{
 		if (log.isDebugEnabled())
 			log.debug(this);
-		
+
 		// OK, pass everything we got cached in params...
 		if (params != null) {
 			Iterator it = params.keySet().iterator();
@@ -232,10 +234,10 @@ public class CGenericXSLT extends BaseChannel implements IChannel, ICacheable
 				}
 			}
 		}
-		
+
 		Document xmlDoc;
 		InputStream inputStream = null;
-		
+
 		try
 		{
 			DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -243,15 +245,15 @@ public class CGenericXSLT extends BaseChannel implements IChannel, ICacheable
 			DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
 			DTDResolver dtdResolver = new DTDResolver();
 			docBuilder.setEntityResolver(dtdResolver);
-			
+
 			URL url;
 			if (localConnContext != null)
 				url = ResourceLoader.getResourceAsURL(this.getClass(), localConnContext.getDescriptor(xmlUri, runtimeData));
 			else
 				url = ResourceLoader.getResourceAsURL(this.getClass(), xmlUri);
-			
+
 			URLConnection urlConnect = url.openConnection();
-			
+
 			if (localConnContext != null)
 			{
 				try
@@ -281,13 +283,27 @@ public class CGenericXSLT extends BaseChannel implements IChannel, ICacheable
 				throw new PortalException("CGenericXSLT:renderXML():: could not close InputStream", ioe);
 			}
 		}
-		
+
 		runtimeData.put("baseActionURL", runtimeData.getBaseActionURL());
 		runtimeData.put("isRenderingAsRoot", String.valueOf(runtimeData.isRenderingAsRoot()));
-		
-		// Add uPortal version string (used in footer channel)
-		runtimeData.put("uP_productAndVersion", Version.getProductAndVersion());
-		
+
+
+		// add version parameters (used in footer channel)
+        VersionsManager versionsManager = VersionsManager.getInstance();
+        Version[] versions = versionsManager.getVersions();
+
+        for (Version version : versions) {
+            String paramName = "version-" + version.getFname();
+            runtimeData.setParameter(paramName, version.dottedTriple());
+        }
+
+        Version uPortalVersion = versionsManager.getVersion(IPermission.PORTAL_FRAMEWORK);
+
+        // The "uP_productAndVersion" parameter is deprecated
+        // instead use the "version-UP_FRAMEWORK" and other version parameters
+        // generated immediately previously.
+        runtimeData.put("uP_productAndVersion", "uPortal " + uPortalVersion.dottedTriple());
+
 		// OK, pass everything we got cached in params...
 		if (params != null)
 		{
@@ -299,7 +315,7 @@ public class CGenericXSLT extends BaseChannel implements IChannel, ICacheable
 				}
 			}
 		}
-		
+
 		XSLT xslt = XSLT.getTransformer(this);
 		xslt.setXML(xmlDoc);
 		if (xslUri != null)
@@ -310,7 +326,7 @@ public class CGenericXSLT extends BaseChannel implements IChannel, ICacheable
 		xslt.setStylesheetParameters(runtimeData);
 		xslt.transform();
 	}
-	
+
 	public ChannelCacheKey generateKey()
 	{
 		ChannelCacheKey k = new ChannelCacheKey();
@@ -319,15 +335,15 @@ public class CGenericXSLT extends BaseChannel implements IChannel, ICacheable
 		k.setKeyValidity(new Long(System.currentTimeMillis()));
 		return k;
 	}
-	
+
 	public boolean isCacheValid(Object validity)
 	{
 		if (!(validity instanceof Long))
 			return false;
-		
+
 		return (System.currentTimeMillis() - ((Long)validity).longValue() < cacheTimeout*1000);
 	}
-	
+
 	private String getKey()
 	{
 		// Maybe not the best way to generate a key, but it seems to work.
@@ -335,7 +351,7 @@ public class CGenericXSLT extends BaseChannel implements IChannel, ICacheable
 		StringBuffer sbKey = new StringBuffer(1024);
 		sbKey.append("xmluri:").append(xmlUri).append(", ");
 		sbKey.append("sslUri:").append(sslUri).append(", ");
-		
+
 		// xslUri may either be specified as a parameter to this channel or we will
 		// get it by looking in the stylesheet list file
 		String xslUriForKey = xslUri;
@@ -348,20 +364,20 @@ public class CGenericXSLT extends BaseChannel implements IChannel, ICacheable
 			log.error(e,e);
 			xslUriForKey = "Not attainable: " + e;
 		}
-		
+
 		sbKey.append("locales:").append(LocaleManager.stringValueOf(runtimeData.getLocales()));
 		sbKey.append("xslUri:").append(xslUriForKey).append(", ");
 		sbKey.append("cacheTimeout:").append(cacheTimeout).append(", ");
 		sbKey.append("isRenderingAsRoot:").append(runtimeData.isRenderingAsRoot()).append(", ");
-		
+
 		// If a local connection context is configured, include its descriptor in the key
 		if (localConnContext != null)
-			sbKey.append("descriptor:").append(localConnContext.getDescriptor(xmlUri, runtimeData)).append(", ");    
-		
+			sbKey.append("descriptor:").append(localConnContext.getDescriptor(xmlUri, runtimeData)).append(", ");
+
 		sbKey.append("params:").append(params.toString());
 		return sbKey.toString();
 	}
-	
+
 	/**
 	 * Set the URI or resource-relative-path of the XML this CGenericXSLT should
 	 * render.
@@ -379,7 +395,7 @@ public class CGenericXSLT extends BaseChannel implements IChannel, ICacheable
 			iae.initCause(e);
 			throw iae;
 		}
-		
+
 		String urlString = url.toExternalForm();
 		try {
 			uriScrutinizer.scrutinize(new URI(urlString));
@@ -388,10 +404,10 @@ public class CGenericXSLT extends BaseChannel implements IChannel, ICacheable
 			iae2.initCause(e1);
 			throw iae2;
 		}
-		
+
 		xmlUri = xmlUriArg;
 	}
-	
+
 	public String toString()
 	{
 		StringBuffer str = new StringBuffer();
