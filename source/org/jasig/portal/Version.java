@@ -5,51 +5,22 @@
 
 package org.jasig.portal;
 
+import org.jasig.portal.security.IPermission;
+import org.jasig.portal.tools.versioning.VersionsManager;
+
 /**
  * Contains version information about the current release.
  * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
+ * @deprecated use VersionManager with fname UP_FRAMEWORK instead.
  */
 public class Version {
-    
-    // Update these strings appropriately for each release.
-    // Use empty strings rather than null when value is not desired.
+
     private static String product = "uPortal";
-    private static String major = "2";
-    private static String minor = "6";
-    private static String patch = "0";
-    private static String security = "";
-    private static String extra = "SNAPSHOT";
-    
-    private static String releaseTag;
-    private static String version;
-    
-    static {
-        // Construct version
-        releaseTag = "rel-" + major + "-" + minor;
-        if (patch != null && patch.length() > 0) {
-            releaseTag += "-" + patch;
-        }
-        if (security != null && security.length() > 0) {
-            releaseTag += "-" + security;
-        }
-        if (extra != null && extra.length() > 0) {
-            releaseTag += "-" + extra;
-        }
-        
-        // Construct version for display
-        version = major + "." + minor;
-        if (patch != null && patch.length() > 0) {
-            version += "." + patch;
-        }
-        if (security != null && security.length() > 0) {
-            version += "." + security;
-        }
-        if (extra != null && extra.length() > 0) {
-            version += "-" + extra;
-        }
-    }
-    
+
+    private static final org.jasig.portal.tools.versioning.Version uPVersion =
+        VersionsManager.getInstance().getVersion(IPermission.PORTAL_FRAMEWORK);
+
     /**
      * Returns the product name.
      * For example, this would return <code>uPortal</code> for uPortal 2.3.4.
@@ -58,56 +29,64 @@ public class Version {
     public static String getProduct() {
         return product;
     }
-    
+
     /**
      * Returns the major version.
      * For example, this would return <code>2</code> for uPortal 2.3.4.
      * @return the major version
      */
     public static String getMajor() {
-        return major;
+        return Integer.toString(uPVersion.getMajor());
     }
-    
+
     /**
-     * Returns the minor version.  
+     * Returns the minor version.
      * For example, this would return <code>3</code> for uPortal 2.3.4.
      * @return the minor version
      */
     public static String getMinor() {
-        return minor;
+        return Integer.toString(uPVersion.getMinor());
     }
-        
+
     /**
-     * Returns the patch version.  
+     * Returns the patch version.
      * For example, this would return <code>4</code> for uPortal 2.3.4.
      * This method may return an empty String.
      * @return the patch version
      */
     public static String getPatch() {
-        return patch;
+        return Integer.toString(uPVersion.getMicro());
     }
-    
+
     /**
-     * Returns the security version.
+     * Previously, returned the security version.
      * For example, this would return <code>1</code> for uPortal 2.3.4.1.
-     * This method may return an empty String.
-     * @return the security version
+     * Now, this method always returns the String "unknown".  Security
+     * version number is not supported by VersionsManager, upon which
+     * uPortal has standardized since the inception of this class.  This class
+     * is deprecated and will be removed in a future uPortal release.
+     * @return "unknown"
      */
     public static String getSecurity() {
-        return security;
+        return "unknown";
     }
-    
+
     /**
-     * Returns any extra string used to construct this version.
+     * Previously, returned any extra string used to construct this version.
      * For example, this would return <code>+</code> for uPortal 2.3.4+.
      * A plus sign is used to denote that the code is between releases,
-     * the head of a branch in CVS.  This method may return an empty String.
-     * @return the extra string, if any
+     * the head of a branch in CVS.
+     * Now, this method always returns the String "unkown".   Extra information
+     * beyond dotted triple version number is not supported by
+     * VersionsManager, upon which
+     * uPortal has standardized since the inception of this class.  This class
+     * is deprecated and will be removed in a future uPortal release.
+     * @return "unknown"
      */
     public static String getExtra() {
-        return extra;
+        return "unknown";
     }
-    
+
     /**
      * Returns the release tag in the CVS repository
      * corresponding to the current code.
@@ -115,18 +94,18 @@ public class Version {
      * @return the release tag matching the running code
      */
     public static String getReleaseTag() {
-        return releaseTag;
+        return "rel-" + uPVersion.getMajor() + "-" + uPVersion.getMinor() + "-" + uPVersion.getMicro();
     }
-    
+
     /**
      * Returns the version of the current code.
      * For example, <code>2.3.4</code>.
      * @return the current version of the running code
      */
     public static String getVersion() {
-        return version;
+        return uPVersion.dottedTriple();
     }
-    
+
     /**
      * Returns a display-friendly string representing the
      * current product and version.
@@ -134,7 +113,7 @@ public class Version {
      * @return a verison string suitable for display
      */
     public static String getProductAndVersion() {
-        return product + " " + version;
+        return product + " " + getVersion();
     }
 
 }
