@@ -36,12 +36,15 @@ import org.jasig.portal.layout.alm.IALFolderDescription;
 import org.jasig.portal.layout.alm.IAggregatedUserLayoutManager;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.properties.PropertiesManager;
+import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.serialize.BaseMarkupSerializer;
 import org.jasig.portal.serialize.CachingSerializer;
 import org.jasig.portal.serialize.OutputFormat;
 import org.jasig.portal.serialize.XMLSerializer;
 import org.jasig.portal.services.GroupService;
+import org.jasig.portal.tools.versioning.Version;
+import org.jasig.portal.tools.versioning.VersionsManager;
 import org.jasig.portal.utils.MovingAverage;
 import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.utils.SAX2BufferImpl;
@@ -564,7 +567,22 @@ public class UserInstance implements HttpSessionBindingListener {
                                 log.debug("UserInstance::renderState() : setting tparam \"" + pName + "\"=\"" + pValue + "\".");
                             tst.setParameter(pName, pValue);
                         }
-                        tst.setParameter("uP_productAndVersion", Version.getProductAndVersion());
+
+                        VersionsManager versionsManager = VersionsManager.getInstance();
+                        Version[] versions = versionsManager.getVersions();
+
+                        for (Version version : versions) {
+                            String paramName = "version-" + version.getFname();
+                            tst.setParameter(paramName, version.dottedTriple());
+                        }
+
+                        // the uP_productAndVersion stylesheet parameter is deprecated
+                        // instead use the more generic "version-UP_VERSION" generated from the
+                        // framework's functional name when all versions are pulled immediately
+                        // above.
+                        Version uPortalVersion = versionsManager.getVersion(IPermission.PORTAL_FRAMEWORK);
+                        tst.setParameter("uP_productAndVersion", "uPortal " + uPortalVersion.dottedTriple());
+
                         // tst.setParameter("locale", localeManager.getLocaleFromSessionParameter());
 
                         // initialize a filter to fill in channel attributes for the "theme" (second) transformation.
@@ -713,7 +731,7 @@ public class UserInstance implements HttpSessionBindingListener {
     	userSessions.incrementAndGet();
     }
 
- 
+
 
     private IAggregatedUserLayoutManager getAggregatedLayoutManager(IUserLayoutManager ulm) throws PortalException {
     if ( ulm instanceof TransientUserLayoutManagerWrapper )
