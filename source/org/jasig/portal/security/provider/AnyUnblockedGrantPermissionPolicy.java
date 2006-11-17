@@ -212,24 +212,4 @@ public class AnyUnblockedGrantPermissionPolicy
 
     }
 
-    /**
-     * Returns true if a set of IPermission instances contains a GRANT.
-     * False otherwise.
-     * @param permissions
-     * @return
-     */
-    private boolean containsGrant(Set<IPermission> permissions) {
-
-        for (Iterator<IPermission> permissionIter = permissions.iterator(); permissionIter.hasNext(); ) {
-            IPermission permission = permissionIter.next();
-
-            if (permission != null && IPermission.PERMISSION_TYPE_DENY.equals(permission.getType())) {
-                return true;
-            }
-        }
-
-        return false;
-
-    }
-
 }
