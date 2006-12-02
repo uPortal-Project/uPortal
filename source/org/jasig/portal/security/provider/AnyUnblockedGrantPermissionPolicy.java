@@ -48,14 +48,15 @@ public class AnyUnblockedGrantPermissionPolicy
     protected final Log log = LogFactory.getLog(getClass());
 
     public boolean doesPrincipalHavePermission(IAuthorizationService service, IAuthorizationPrincipal principal, String owner, String activity, String target) throws AuthorizationException {
-        // the API states that the arguments must not be null.
-        // if for some reason they are null, log and fail closed
-        if (service == null || principal == null || activity == null || target == null) {
+        // the API states that the service, owner, and activity arguments must 
+        // not be null. If for some reason they are null, log and fail closed
+        // The principal must also not be null.
+        if (service == null || principal == null || owner == null || activity == null) {
 
             log.error("Null argument to AnyUnblockedGrantPermissionPolicy doesPrincipalHavePermission() method " +
                     "should not be possible.  This is indicative of a potentially serious bug in the " +
                     "permissions and authorization infrastructure. " +
-                    "service= [" + service + "] principal = [" + principal + "] owner = [" + owner + "] activity = [" + activity + "]");
+                    "service= [" + service + "] principal = [" + principal + "] owner = [" + owner + "] activity = [" + activity + "] target = [" + target + "]");
 
             // fail closed
             return false;
