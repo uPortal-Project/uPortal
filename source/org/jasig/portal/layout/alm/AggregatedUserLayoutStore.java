@@ -2031,12 +2031,14 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 				sqlFragment += "FROM UP_FRAGMENTS UF, UP_LAYOUT_STRUCT_AGGR ULS ";
 				
 				sqlFragment += "WHERE ULS.USER_ID="+userId+" AND ULS.FRAGMENT_ID=UF.FRAGMENT_ID ";
-				
-				sqlFragment += "UNION ";
-				sqlFragment += "SELECT DISTINCT UF.NODE_ID,UF.NEXT_NODE_ID,UF.CHLD_NODE_ID,UF.PREV_NODE_ID,UF.PRNT_NODE_ID,UF.CHAN_ID,UF.NAME,UF.TYPE,UF.HIDDEN,"+
-				"UF.UNREMOVABLE,UF.IMMUTABLE,UF.PRIORITY,UF.FRAGMENT_ID ";
-				sqlFragment += "FROM UP_FRAGMENTS UF ";
-				sqlFragment += ((pushFragmentIds!=null)?"WHERE UF.FRAGMENT_ID IN ("+pushFragmentIds+")":"");
+			        
+                                if (pushFragmentIds != null) {
+				    sqlFragment += "UNION ";
+				    sqlFragment += "SELECT DISTINCT UF.NODE_ID,UF.NEXT_NODE_ID,UF.CHLD_NODE_ID,UF.PREV_NODE_ID,UF.PRNT_NODE_ID,UF.CHAN_ID,UF.NAME,UF.TYPE,UF.HIDDEN,"+
+				    "UF.UNREMOVABLE,UF.IMMUTABLE,UF.PRIORITY,UF.FRAGMENT_ID ";
+				    sqlFragment += "FROM UP_FRAGMENTS UF ";
+				    sqlFragment += "WHERE UF.FRAGMENT_ID IN ("+pushFragmentIds+")";
+                                }
 				log.debug(sqlFragment);
 				
 				// The hashtable object containing the fragment nodes that are next to the user layout nodes
