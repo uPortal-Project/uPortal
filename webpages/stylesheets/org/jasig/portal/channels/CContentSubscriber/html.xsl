@@ -1234,6 +1234,9 @@ Version $Revision$
                 <xsl:apply-templates select="channel">
                     <xsl:sort select="@title"/>
                 </xsl:apply-templates>
+                <xsl:apply-templates select="fragment">
+                    <xsl:sort select="name"/>
+                </xsl:apply-templates>
                 <!-- <xsl:apply-templates select="category"/>
                 <xsl:apply-templates select="channel"/> -->
             </xsl:when>
