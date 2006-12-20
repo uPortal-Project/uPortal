@@ -36,6 +36,9 @@ import org.jasig.portal.services.GroupService;
  * Prior to uPortal 2.5.1, this evaluator only supported the 'memberOf' mode
  * and did not support 'deepMemberOf'.
  * 
+ * Changed to cache the group key rather than the group itself.  See UP-1532.
+ * d.e 2006/12/19. 
+ * 
  * @author mboyd@sungardsct.com
  * @version $Revision$ $Date$
  * @since uPortal 2.5
@@ -48,7 +51,7 @@ public class GroupMembershipEvaluator implements Evaluator
 
     private String groupName = null;
 
-    private IEntityGroup group = null;
+    private String groupKey = null;
 
     private final int evaluatorMode;
 
@@ -69,12 +72,11 @@ public class GroupMembershipEvaluator implements Evaluator
                     + "supported at this time.");
         }
         this.groupName = name;
-        this.group = getGroup();
+        this.groupKey = getGroupKey();
     }
 
-    private IEntityGroup getGroup()
+    private String getGroupKey()
     {
-        IEntityGroup theGroup = null;
         EntityIdentifier[] groups = null;
         try
         {
@@ -90,31 +92,31 @@ public class GroupMembershipEvaluator implements Evaluator
                     + "' not found for " + this.getClass().getName()
                     + ". All evaluations will return false.");
         
+        return groups[0].getKey();
+    }
+        
+      private IEntityGroup getGroup(String key)
+      {
         try
         {
-        theGroup = GroupService.findGroup(groups[0].getKey());
+            return GroupService.findGroup(key);
         } catch (GroupsException e)
         {
             throw new RuntimeException("An exception occurred retrieving " +
                     "the group " + groupName + ".", e);
         }
-        
-        
-        if (theGroup == null)
-            throw new RuntimeException("Person Group with key '" + groups[0].getKey()
-                    + "' not found for " + this.getClass().getName()
-                    + ". All evaluations will return false.");
-        return theGroup;
     }
 
     public boolean isApplicable(IPerson p)
     {
-        if (group == null || p == null)
+        if (groupKey == null || p == null)
             return false;
-
+        
+        IEntityGroup group = getGroup(groupKey);
+        EntityIdentifier ei = p.getEntityIdentifier();
+        
         try
         {
-            EntityIdentifier ei = p.getEntityIdentifier();
             IGroupMember groupMember = GroupService.getGroupMember(ei);
             boolean isMember =false;
             
