@@ -20,31 +20,48 @@ import org.jasig.portal.services.GroupService;
  * passed in IPerson is a member of the group whose name is passed to the
  * constructor of this class.
  * 
+ * Added support for a 'deepMemberOf' mode, from 2.5 patches
+ * (UP-1284) and cache group key rather than the group itself 
+ * (UP-1532).  d.e 2006/12/19. 
+ * 
  * @author mboyd@sungardsct.com
  * @version $Revision$ $Date$
  * @since uPortal 2.5
  */
 public class GroupMembershipEvaluator implements Evaluator
 {
+    private static final int MEMBER_OF_MODE = 0;
+    
+    private static final int DEEP_MEMBER_OF_MODE = 1;
+
     private String groupName = null;
 
-    private IEntityGroup group = null;
+    private String groupKey = null;
+
+    private final int evaluatorMode;
 
     public GroupMembershipEvaluator(String mode, String name)
     {
-        if (! mode.equals("memberOf"))
+        if (mode.equals("memberOf"))
+        {
+            evaluatorMode = MEMBER_OF_MODE;
+        }
+        else if (mode.equals("deepMemberOf"))
+        {
+            evaluatorMode = DEEP_MEMBER_OF_MODE;
+        }
+        else
         {
             throw new RuntimeException("Unsupported mode '" + mode
-                    + "' specified. Only 'memberOf' is "
+                    + "' specified. Only 'memberOf' and 'deepMemberOf' are "
                     + "supported at this time.");
         }
         this.groupName = name;
-        this.group = getGroup();
+        this.groupKey = getGroupKey();
     }
 
-    private IEntityGroup getGroup()
+    private String getGroupKey()
     {
-        IEntityGroup theGroup = null;
         EntityIdentifier[] groups = null;
         try
         {
@@ -60,37 +77,47 @@ public class GroupMembershipEvaluator implements Evaluator
                     + "' not found for " + this.getClass().getName()
                     + ". All evaluations will return false.");
         
+        return groups[0].getKey();
+    }
+        
+      private IEntityGroup getGroup(String key)
+      {
         try
         {
-        theGroup = GroupService.findGroup(groups[0].getKey());
+            return GroupService.findGroup(key);
         } catch (GroupsException e)
         {
             throw new RuntimeException("An exception occurred retrieving " +
                     "the group " + groupName + ".", e);
         }
-        
-        
-        if (theGroup == null)
-            throw new RuntimeException("Person Group with key '" + groups[0].getKey()
-                    + "' not found for " + this.getClass().getName()
-                    + ". All evaluations will return false.");
-        return theGroup;
     }
 
-    public boolean isApplicable(IPerson p)
-    {
-        if (group == null || p == null)
-            return false;
-
-        try
-        {
-            EntityIdentifier ei = p.getEntityIdentifier();
-            IGroupMember groupMember = GroupService.getGroupMember(ei);
-            return groupMember.isMemberOf(group);
-        } catch (GroupsException e)
-        {
-            throw new RuntimeException("Unable to determine if user "
-                    + p.getFullName() + " is in group " + groupName + ".", e);
-        }
-    }
+      public boolean isApplicable(IPerson p)
+      {
+          if (groupKey == null || p == null)
+              return false;
+          
+          IEntityGroup group = getGroup(groupKey);
+          EntityIdentifier ei = p.getEntityIdentifier();
+          
+          try
+          {
+              IGroupMember groupMember = GroupService.getGroupMember(ei);
+              boolean isMember =false;
+              
+              if (evaluatorMode == MEMBER_OF_MODE)
+              {
+                  isMember = groupMember.isMemberOf(group);
+              }
+              else
+              { 
+                  isMember = groupMember.isDeepMemberOf(group);
+              }
+              return isMember;
+          } catch (GroupsException e)
+          {
+              throw new RuntimeException("Unable to determine if user "
+                      + p.getFullName() + " is in group " + groupName + ".", e);
+          }
+      }
 }
