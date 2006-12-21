@@ -32,7 +32,7 @@ import org.apache.commons.logging.LogFactory;
 public abstract class ChainingSecurityContext implements ISecurityContext
 {
     protected final Log log = LogFactory.getLog(getClass());
-    
+
   /**
    * Default value for stopWhenAuthenticated.
    * This value will be used when the corresponding property cannot be loaded.
@@ -86,7 +86,7 @@ public abstract class ChainingSecurityContext implements ISecurityContext
       try {
         sctx.authenticate();
       } catch (Exception ex) {
-      	error = true;
+        error = true;
         log.error("Exception authenticating subcontext " + sctx, ex);
       }
       // Stop attempting to authenticate if authenticated and if the property flag is set
@@ -201,6 +201,22 @@ public abstract class ChainingSecurityContext implements ISecurityContext
     protected String UID;
     protected String FullName;
 
+    /**
+     * Original, no-arg constructor used by the <code>ChainingSecurityContext</code>.
+     *
+     */
+    public ChainingPrincipal() {}
+
+    /**
+     * Creates a new <code>ChainingPrincipal</code> from the specified <code>IPrincipal</code>.
+     *
+     */
+    public ChainingPrincipal(IPrincipal p) {
+        this.globalUID = p.getGlobalUID();
+        this.UID = p.getUID();
+        this.FullName = p.getFullName();
+    }
+
     public String getUID() {
       return this.UID;
     }
@@ -220,13 +236,13 @@ public abstract class ChainingSecurityContext implements ISecurityContext
       if (this.UID == null)
         this.UID = UID;
     }
-    
-	public void setFullName(String FullName) {
-	  if(this.FullName == null)
-		 this.FullName = FullName;
-	}
 
-    
+    public void setFullName(String FullName) {
+      if(this.FullName == null)
+         this.FullName = FullName;
+    }
+
+
   }
 
   protected class ChainingOpaqueCredentials implements IOpaqueCredentials {

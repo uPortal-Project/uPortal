@@ -36,7 +36,7 @@ class UnionSecurityContext extends ChainingSecurityContext {
       while (e.hasMoreElements()) {
         ISecurityContext subCtx = (ISecurityContext) e.nextElement();
         if (subCtx.isAuthenticated()) {
-            this.myPrincipal=(ChainingPrincipal)subCtx.getPrincipal();
+            this.myPrincipal = new ChainingPrincipal(subCtx.getPrincipal());
             this.myAdditionalDescriptor=subCtx.getAdditionalDescriptor();
             this.isauth=true;
             break;
@@ -53,6 +53,6 @@ class UnionSecurityContext extends ChainingSecurityContext {
       sb.append(this.mySubContexts);
       return sb.toString();
   }
-  
+
 }
 
