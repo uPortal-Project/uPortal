@@ -645,6 +645,55 @@ public class RDBMServices {
             return this.driverRef.connect(this.jdbcUrl, tempProperties);
         }
 
+        /**
+         * This method was introduced in Java SE 6 as part of the java.sql.Wrapper
+         * interface that javax.sql.DataSource was changed to extend from.
+         *
+         * Returns true if this either implements the interface argument
+         * or is directly or indirectly a wrapper for an object that does.
+         * Returns false otherwise. If this implements the interface then
+         * return true, else if this is a wrapper then return the result
+         * of recursively calling <code>isWrapperFor</code> on the wrapped
+         * object. If this does not implement the interface and is not a
+         * wrapper, return false. This method should be implemented as a
+         * low-cost operation compared to <code>unwrap</code> so that
+         * callers can use this method to avoid expensive <code>unwrap</code>
+         * calls that may fail. If this method returns true then calling
+         * <code>unwrap</code> with the same argument should succeed.
+         *
+         * @param iface a Class defining an interface.
+         * @return true if this implements the interface or directly or
+         * indirectly wraps an object that does.
+         * @throws java.sql.SQLException  if an error occurs while determining
+         * whether this is a wrapper for an object with the given interface.
+         * @see java.sql.Wrapper#isWrapperFor(java.lang.Class)
+         */
+		public boolean isWrapperFor(Class iface) throws SQLException {
+			return (iface != null && iface.isAssignableFrom(this.getClass()));
+		}
+
+        /**
+         * This method was introduced in Java SE 6 as part of the java.sql.Wrapper
+         * interface that javax.sql.DataSource was changed to extend from.
+         *
+         * If the receiving object implements the interface passed in, then
+         * the receiving object or a wrapper for the receiving object should
+         * be returned.
+         *
+         * @param iface A Class defining an interface that the result must
+         * implement
+         * @return an object that implements the interface. May be a proxy for
+         * the actual implementing object.
+         * @throws java.sql.SQLException if a class is not a wrapper for another
+         * class and does not implement the interface passed.
+         * @see java.sql.Wrapper#unwrap(java.lang.Class)
+         */
+		public Object unwrap(Class iface) throws SQLException {
+			if (isWrapperFor(iface)) {
+				return this;
+			}
+			throw new SQLException("org.jasig.portal.RDBMServices.GenericDataSource is not a Wrapper for " + iface.toString());
+		}
     }
 
     /**
