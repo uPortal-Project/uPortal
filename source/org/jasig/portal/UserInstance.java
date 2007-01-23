@@ -372,6 +372,8 @@ public class UserInstance implements HttpSessionBindingListener {
                     // see if we can use character caching
                     boolean ccaching=(CHARACTER_CACHE_ENABLED && (markupSerializer instanceof CachingSerializer));
                     channelManager.setCharacterCaching(ccaching);
+                    //pass along the serializer name
+                    channelManager.setSerializerName(tsd.getSerializerName());
                     // initialize ChannelIncorporationFilter
                     // ChannelIncorporationFilter cif = new ChannelIncorporationFilter(markupSerializer, channelManager); // this should be slightly faster then the ccaching version, may be worth adding support later
                     CharacterCachingChannelIncorporationFilter cif = new CharacterCachingChannelIncorporationFilter(markupSerializer, channelManager,UserInstance.CACHE_ENABLED && UserInstance.CHARACTER_CACHE_ENABLED);

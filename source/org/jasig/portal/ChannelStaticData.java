@@ -42,6 +42,8 @@ public class ChannelStaticData extends Hashtable {
 
   // Cache the PermissionManager for this channel
   //  private PermissionManager m_permissionManager = null;
+  
+  private String serializerName;
 
 
   /**
@@ -210,5 +212,21 @@ public class ChannelStaticData extends Hashtable {
         sb.append("Channel Subscribe ID = [").append(this.m_channelSubscribeId).append("] ");
         sb.append("person= [").append(this.m_person).append("] ");
         return sb.toString();
+    }
+    
+    /**
+     * Sets the serializer name.
+     * @return serializerName
+     */
+    public String getSerializerName() {
+        return serializerName;
+    }
+    
+    /**
+     * Setter method for the serializer name.
+     * @param serializerName
+     */
+    public void setSerializerName(String serializerName) {
+        this.serializerName = serializerName;
     }
 }
