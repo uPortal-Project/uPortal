@@ -106,6 +106,12 @@ public class HTMLSerializer
 
     // for users to override XHTMLNamespace if need be.
     private String fUserXHTMLNamespace = null;
+    
+    //  We're using this one instead of BaseMarkupSerializer's _docTypePublicId
+    // because it does funky stuff, changing it's value throughout the parsing
+    // of a document. This will enable us to set the DOCTYPE for any document.
+    private String docTypePublicId = null;
+    private String docTypeSystemId = null;
 
 
     /**
@@ -119,6 +125,10 @@ public class HTMLSerializer
     {
         super( format );
         _xhtml = xhtml;
+        if (format != null) {
+            docTypePublicId = format.getDoctypePublic();
+            docTypeSystemId = format.getDoctypeSystem();
+        }
     }
 
 
@@ -671,12 +681,12 @@ public class HTMLSerializer
             // If the public and system identifiers were not specified
             // in the output format, use the appropriate ones for HTML
             // or XHTML.
-            if ( _docTypePublicId == null && _docTypeSystemId == null ) {
+            if ( docTypePublicId == null && _docTypeSystemId == null ) {
                 if ( _xhtml ) {
-                    _docTypePublicId = HTMLdtd.XHTMLPublicId;
+                    docTypePublicId = HTMLdtd.XHTMLPublicId;
                     _docTypeSystemId = HTMLdtd.XHTMLSystemId;
                 } else {
-                    _docTypePublicId = HTMLdtd.HTMLPublicId;
+                    docTypePublicId = HTMLdtd.HTMLPublicId;
                     _docTypeSystemId = HTMLdtd.HTMLSystemId;
                 }
             }
@@ -688,32 +698,32 @@ public class HTMLSerializer
                 //  system identifier, if specified.
                 // XHTML requires that all element names are lower case, so the
                 // root on the DOCTYPE must be 'html'. - mrglavas
-                if ( _docTypePublicId != null && ( ! _xhtml || _docTypeSystemId != null )  ) {
+                if ( docTypePublicId != null && ( ! _xhtml || _docTypeSystemId != null )  ) {
                     if (_xhtml) {
                         _printer.printText( "<!DOCTYPE html PUBLIC " );
                     }
                     else {
                         _printer.printText( "<!DOCTYPE HTML PUBLIC " );
                     }
-                    printDoctypeURL( _docTypePublicId );
-                    if ( _docTypeSystemId != null ) {
+                    printDoctypeURL( docTypePublicId );
+                    if ( docTypeSystemId != null ) {
                         if ( _indenting ) {
                             _printer.breakLine();
                             _printer.printText( "                      " );
                         } else
                         _printer.printText( ' ' );
-                        printDoctypeURL( _docTypeSystemId );
+                        printDoctypeURL( docTypeSystemId );
                     }
                     _printer.printText( '>' );
                     _printer.breakLine();
-                } else if ( _docTypeSystemId != null ) {
+                } else if ( docTypeSystemId != null ) {
                     if (_xhtml) {
                         _printer.printText( "<!DOCTYPE html SYSTEM " );
                     }
                     else {
                         _printer.printText( "<!DOCTYPE HTML SYSTEM " );
                     }
-                    printDoctypeURL( _docTypeSystemId );
+                    printDoctypeURL( docTypeSystemId );
                     _printer.printText( '>' );
                     _printer.breakLine();
                 }

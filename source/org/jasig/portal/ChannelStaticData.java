@@ -45,6 +45,8 @@ public class ChannelStaticData extends Hashtable {
   private ICCRegistry iccr=null;
   // reference to layout manager for persisting parameter changes
   private IUserLayoutManager ulm;
+  
+  private String serializerName;
 
 private IUserLayoutChannelDescription layoutChannelDescription = null;
 
@@ -370,4 +372,21 @@ private IUserLayoutChannelDescription layoutChannelDescription = null;
         sb.append("person= [").append(this.m_person).append("] ");
         return sb.toString();
     }
+    
+    /**
+     * Sets the serializer name.
+     * @return serializerName
+     */
+    public String getSerializerName() {
+        return serializerName;
+    }
+    
+    /**
+     * Setter method for the serializer name.
+     * @param serializerName
+     */
+    public void setSerializerName(String serializerName) {
+        this.serializerName = serializerName;
+    }
+
 }

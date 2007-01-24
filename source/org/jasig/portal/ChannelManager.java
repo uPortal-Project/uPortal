@@ -102,6 +102,8 @@ public class ChannelManager implements LayoutEventListener {
     // Metrics
     public static final AtomicLong activeRenderers = new AtomicLong();
     public static AtomicLong maxRenderThreads = new AtomicLong();
+    
+    private String serializerName;
 
    /** Factory used to build all channel renderer objects. */
     private static final IChannelRendererFactory cChannelRendererFactory =
@@ -740,6 +742,7 @@ public class ChannelManager implements LayoutEventListener {
 			            sd.setJNDIContext(channelContext);
             			sd.setICCRegistry(new ICCRegistry(this,channelSubscribeId));
 			            sd.setChannelPublishId(cd.getChannelPublishId());
+                        sd.setSerializerName(serializerName);
 
             			ch.setStaticData(sd);
 					}
@@ -1324,5 +1327,21 @@ public class ChannelManager implements LayoutEventListener {
     {
         IUserLayoutManager ulm = upm.getUserLayoutManager();
         return ulm.getSubscribeId(fname);
+    }
+    
+    /**
+     * Sets the serializer name.
+     * @return serializerName
+     */
+    public String getSerializerName() {
+        return serializerName;
+    }
+    
+    /**
+     * Setter method for the serializer name.
+     * @param serializerName
+     */
+    public void setSerializerName(String serializerName) {
+        this.serializerName = serializerName;
     }
 }

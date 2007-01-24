@@ -97,7 +97,7 @@ public final class CError extends BaseChannel implements IPrivilegedChannel,
      */
     private static final String sslLocation = "CError/CError.ssl";
 
-    private static final MediaManager MEDIAMANAGER=MediaManager.getMediaManager();
+    private static final MediaManager MEDIAMANAGER=MediaManager.getMediaManager(true);
 
     /**
      * Construct an uninitialized instance of the CError channel.

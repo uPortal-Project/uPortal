@@ -49,7 +49,7 @@ public class MediaManager {
    * In uPortal 2.5.x, this property defaulted to true.  As of uPortal 2.6.0, 
    * it defaults to false.
    */  
-  private static boolean omitDoctype = 
+  private boolean omitDoctype = 
       PropertiesManager.getPropertyAsBoolean("org.jasig.portal.MediaManager.omit_doctype", false);
 
   private static final String mediaPropsUrl = MediaManager.class.getResource("/properties/media.properties").toString();
@@ -57,12 +57,24 @@ public class MediaManager {
   private static final String serializerPropsUrl = MediaManager.class.getResource("/properties/serializer.properties").toString();
   
   private static final MediaManager MEDIAMANAGER = new MediaManager(mediaPropsUrl, mimePropsUrl, serializerPropsUrl);
+  private static final MediaManager MEDIAMANAGER_OMIT_DOCTYPE = new MediaManager(mediaPropsUrl, mimePropsUrl, serializerPropsUrl, true);
+  private static final MediaManager MEDIAMANAGER_INCLUDE_DOCTYPE = new MediaManager(mediaPropsUrl, mimePropsUrl, serializerPropsUrl, false);
+
   /**
    * A user agent string to use when the user-agent header value itself is null.
    *
    */
   public static final String NULL_USER_AGENT="null";
   public static final String UNKNOWN = "unknown";
+  
+  //doctype fields
+  public static String HTMLPublicId = PropertiesManager.getProperty("org.jasig.portal.MediaManager.HTMLPublicId", "-//W3C//DTD HTML 4.01 Transitional//EN");
+  public static String HTMLSystemId = PropertiesManager.getProperty("org.jasig.portal.MediaManager.HTMLSystemId", "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd");
+  public static String XHTMLPublicId = PropertiesManager.getProperty("org.jasig.portal.MediaManager.XHTMLPublicId", "-//W3C//DTD XHTML 1.0 Transitional//EN");
+  public static String XHTMLSystemId = PropertiesManager.getProperty("org.jasig.portal.MediaManager.XHTMLSystemId", "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd");
+  public static String WMLPublicId = PropertiesManager.getProperty("org.jasig.portal.MediaManager.WMLPublicId", "-//WAPFORUM//DTD WML 1.1//EN");
+  public static String WMLSystemId = PropertiesManager.getProperty("org.jasig.portal.MediaManager.WMLSystemId", "http://www.wapforum.org/DTD/wml_1.1.xml");
+
 
   /**
    * Constructs a MediaManager
@@ -79,6 +91,15 @@ public class MediaManager {
       return (MEDIAMANAGER);
   }
   
+  public static MediaManager getMediaManager(boolean omitDocType) {
+      if (omitDocType) {
+          return MEDIAMANAGER_OMIT_DOCTYPE;
+      } else {
+          return MEDIAMANAGER_INCLUDE_DOCTYPE;
+      }
+  }
+
+  
   /**
    * Constructor that initializes all of the property tables.
    * This is equivalent to running a base constructor and
@@ -92,6 +113,18 @@ public class MediaManager {
     setMediaProps(mediaPropsFile);
     setMimeProps(mimePropsFile);
     setSerializerProps(serializerPropsFile);
+  }
+
+  /**
+   * Constructor that overrides the omitDocType setting.
+   *
+   * @param mediaPropsFile location of the media properties file
+   * @param mimePropsFile location of the mime properties file
+   * @param serializerPropsFile location of the serializer properties file
+   */
+  private MediaManager (String mediaPropsFile, String mimePropsFile, String serializerPropsFile, boolean omitDocType) {
+    this(mediaPropsFile, mimePropsFile, serializerPropsFile);
+    this.omitDoctype = omitDocType;
   }
 
   /**
@@ -320,7 +353,7 @@ public class MediaManager {
   public BaseMarkupSerializer getSerializerByName (String serializerName, java.io.Writer out) {
     if (serializerName != null && serializerName.equals("WML")) {
       OutputFormat frmt = new OutputFormat("wml", "UTF-8", true);
-      frmt.setDoctype("-//WAPFORUM//DTD WML 1.1//EN", "http://www.wapforum.org/DTD/wml_1.1.xml");
+      frmt.setDoctype(WMLPublicId, WMLSystemId);
       return  new XMLSerializer(out, frmt);
     } /* else if (serializerName != null && serializerName.equals("PalmHTML")) {
       OutputFormat frmt = new OutputFormat("HTML", "UTF-8", true);
@@ -332,7 +365,7 @@ public class MediaManager {
       OutputFormat frmt = new OutputFormat("XHTML", "UTF-8", true);
       frmt.setPreserveSpace(true);
       frmt.setIndenting(outputIndenting);
-      frmt.setDoctype("-//W3C//DTD XHTML 1.0 Transitional//EN", "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd");
+      frmt.setDoctype(XHTMLPublicId, XHTMLSystemId);
       frmt.setOmitDocumentType(omitDoctype);
       return  new CachingXHTMLSerializer(out, frmt);
     } else {
@@ -340,7 +373,7 @@ public class MediaManager {
       OutputFormat frmt = new OutputFormat("HTML", "UTF-8", true);
       frmt.setPreserveSpace(true);
       frmt.setIndenting(outputIndenting);
-      frmt.setDoctype("-//W3C//DTD HTML 4.01 Transitional//EN", "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd");
+      frmt.setDoctype(HTMLPublicId, HTMLSystemId);
       frmt.setOmitDocumentType(omitDoctype);
       return  new CachingHTMLSerializer(out, frmt);
     }
