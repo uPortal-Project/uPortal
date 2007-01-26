@@ -19,7 +19,7 @@ import org.xml.sax.helpers.XMLFilterImpl;
  * changing, or injecting events. This is accomplished by watching for a
  * channel with a "name" attributed of "Bookmarks".
  *
- * @author mark.boyd@sungardhe.com
+ * @author Mark Boyd
  */
 public class ExampleBookmarksRemover extends XMLFilterImpl
 implements ISaxProcessor
@@ -98,24 +98,14 @@ implements ISaxProcessor
     //////// end ContentHandler implementation
 
     /**
-     * Returns a ContentHandler which is used to push the SAX event stream to
-     * this class.
+     * Returns this class wrapping the passed-in ContentHandler to which events 
+     * are pushed.
      *
-     * @see org.jasig.portal.layout.dlm.processing.ProcessingPipe#getEntryContentHandler()
+     * @see org.jasig.portal.layout.dlm.processing.ISaxProcessor#getContentHandler(org.xml.sax.ContentHandler)
      */
-    public ContentHandler getEntryContentHandler()
-    {
-        return this;
-    }
-
-    /**
-     * Sets the ContentHandler that this class wraps and to which events are
-     * pushed after having been modfied by this class.
-     *
-     * @see org.jasig.portal.layout.dlm.processing.ISaxProcessor#setExitContentHandler(org.xml.sax.ContentHandler)
-     */
-    public void setExitContentHandler(ContentHandler handler)
+    public ContentHandler getContentHandler(ContentHandler handler)
     {
         super.setContentHandler(handler);
+        return this;
     }
 }

@@ -13,7 +13,7 @@ import org.w3c.dom.Element;
  * Layout processing to reset a channel parameter to the value specified by the
  * owning fragment.
  * 
- * @author mboyd@sungardsct.com
+ * @author Mark Boyd
  */
 public class LPAResetParameter implements ILayoutProcessingAction
 {

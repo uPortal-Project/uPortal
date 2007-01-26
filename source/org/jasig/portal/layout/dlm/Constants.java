@@ -74,6 +74,7 @@ public class Constants
     public static final String ELM_EDIT                = NS+"edit";
     public static final String ELM_PREF                = NS+"pref";
     public static final String ELM_PARAMETER           = "parameter";
+    public static final String ELM_FOLDER              = "folder";
     public static final String ELM_CHANNEL             = "channel";
     
     public static final String ELM_PARM_SET            = NS+"parmSet";
@@ -84,6 +85,7 @@ public class Constants
                                     = "StructureStylesheetUserPreferences";
     public static final String THEME_PREFS = "ThemeStylesheetUserPreferences";
 
+    public static final String ROOT_FOLDER_ID="root";
     public static final String DIRECTIVE_PREFIX = "d";
     public static final String FRAGMENT_ID_USER_PREFIX = "u";
     public static final String FRAGMENT_ID_LAYOUT_PREFIX = "l";

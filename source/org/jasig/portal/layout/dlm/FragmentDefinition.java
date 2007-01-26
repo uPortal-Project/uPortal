@@ -29,6 +29,12 @@ public class FragmentDefinition
     String name = null;
     String ownerID = null;
     int userID = -1;
+    /**
+     * User account whose layout should be copied to create a layout for new
+     * fragments. 
+     */
+    private static String cDefaultLayoutOwnerId = "fragmentTemplate";
+
     String defaultLayoutOwnerID = null;
     Element configDOM = null;
     double precedence = 0.0; // precedence of fragment
@@ -70,6 +76,21 @@ public class FragmentDefinition
         }
         loadOwnerRoles( e.getElementsByTagName( "dlm:role" ));
         loadAudienceEvaluators( e.getElementsByTagName( "dlm:audience" ) );
+    }
+
+    public int getUserId()
+    {
+        return this.userID;
+    }
+
+    public void setUserId(int id)
+    {
+        this.userID = id;
+    }
+
+    public static String getDefaultLayoutOwnerId()
+    {
+        return cDefaultLayoutOwnerId;
     }
 
     /**

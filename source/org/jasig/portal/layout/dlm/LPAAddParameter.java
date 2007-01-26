@@ -13,7 +13,7 @@ import org.w3c.dom.Element;
 /**
  * Layout processing action for adding a channel parameter to the user's layout.
  * 
- * @author mboyd@sungardsct.com
+ * @author Mark Boyd
  */
 public class LPAAddParameter implements ILayoutProcessingAction
 {
@@ -49,7 +49,7 @@ public class LPAAddParameter implements ILayoutProcessingAction
         else
         {
             // node owned by user so add parameter child directly
-            Document plf = (Document) person.getAttribute( Constants.PLF );
+            Document plf = RDBMDistributedLayoutStore.getPLF(person);
             Element plfNode = plf.getElementById(nodeId);
             addParameterChild(plfNode, name, value);
         }

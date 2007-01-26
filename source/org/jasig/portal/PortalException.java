@@ -19,7 +19,7 @@ import org.apache.commons.logging.LogFactory;
  * @author Peter Kharchenko
  * @version $Revision$
  */
-public class PortalException extends Exception {
+public class PortalException extends RuntimeException {
 
     private final Log log = LogFactory.getLog(PortalException.class);
     

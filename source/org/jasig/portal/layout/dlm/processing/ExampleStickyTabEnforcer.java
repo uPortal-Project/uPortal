@@ -20,7 +20,7 @@ import org.w3c.dom.NodeList;
  * "Sticky Tab" and continuously sets that tab's ID as the activeTab
  * stylesheet parameters to force that tab to stay in focus.
  * 
- * @author mark.boyd@sungardhe.com
+ * @author Mark Boyd
  */
 public class ExampleStickyTabEnforcer implements IParameterProcessor
 {
@@ -58,6 +58,7 @@ public class ExampleStickyTabEnforcer implements IParameterProcessor
                 StructureStylesheetUserPreferences ssup 
                     = prefs.getStructureStylesheetUserPreferences();
                 ssup.putParameterValue("activeTab", id);
+                ssup.putParameterValue("tabID", id);
             }
         }
     }

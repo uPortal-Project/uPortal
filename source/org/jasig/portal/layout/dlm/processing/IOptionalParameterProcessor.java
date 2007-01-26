@@ -16,7 +16,7 @@ package org.jasig.portal.layout.dlm.processing;
  * via implementing this interface or it is replaced by a subsequent HTTP
  * request including the uP_dlmPrc parameter.
  *
- * @author mark.boyd@sungardhe.com
+ * @author Mark Boyd
  *
  */
 public interface IOptionalParameterProcessor

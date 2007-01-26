@@ -81,7 +81,7 @@ import org.xml.sax.ContentHandler;
  * the perceived layout seen by UserInstance by altering the SAX stream
  * accordingly as it flows back toward UserInstance's ContentHandler.
  *
- * @author mark.boyd@sungardhe.com
+ * @author Mark Boyd
  */
 public class ProcessingPipe implements IParameterProcessor
 {
@@ -124,22 +124,10 @@ public class ProcessingPipe implements IParameterProcessor
     private String optionalProcessorKey;
 
     /**
-     * Holds the last processor in the configured list of fixed processors if
-     * any that processes the SAX event stream.
+     * Indicates if there are any implementors of ISaxProcessor in the set of
+     * registered fixed processors.
      */
-    private ISaxProcessor lastSaxProcessor = null;
-
-    /**
-     * Holds the first processor in the configured list of fixed processors if
-     * any that processes the SAX event stream.
-     */
-    private ISaxProcessor firstSaxProcessor = null;
-
-    /**
-     * Holds the back ContentHandler to which all SAX events will be pushed
-     * including changes made to the event stream by the pipe.
-     */
-    private ContentHandler exitContentHandler;
+    private boolean hasFixedSaxProcessor = false;
 
     /**
      * The parameter watched for by this pipe in the request whose value if
@@ -157,18 +145,23 @@ public class ProcessingPipe implements IParameterProcessor
     public static final String CHANGE_PROCESSOR_PARAM = "uP_dlmPrc";
 
     /**
-     * Holds the classpath location of the context file for loading instances
-     * of this class.
-     */
-    public static final String PIPE_CONFIG_FILE = "/properties/dlmContext.xml";
-
-    /**
      * Holds the name of the bean configured in the context file that is
      * a factory for instances of this class. The factory must return a new
      * instance of this class and all configured, contained processors for each
      * call to the factory to get an instance of this class.
      */
     public static final String PROCESSING_PIPE_BEAN_ID = "dlmProcessingPipe";
+
+    /**
+     * Construct a pipe.
+     */
+    public ProcessingPipe()
+    {
+        if (LOG.isDebugEnabled())
+        {
+            LOG.debug("Constructing new instance.");
+        }
+    }
 
     /**
      * Sets the configured set of fixed processors in the order that
@@ -181,50 +174,17 @@ public class ProcessingPipe implements IParameterProcessor
      */
     public void setFixedProcessors(List fixedProcessors)
     {
-        firstSaxProcessor = null;
-        lastSaxProcessor = null;
-
         if (fixedProcessors != null && fixedProcessors.size()>0)
         {
             this.fixedProcessors = fixedProcessors;
-
-            if (fixedProcessors.size() == 1)
-            {
-                // see if it handles SAX events as well
-                if (fixedProcessors.get(0) instanceof ISaxProcessor)
-                {
-                    firstSaxProcessor = (ISaxProcessor) fixedProcessors.get(0);
-                    lastSaxProcessor = firstSaxProcessor;
-                }
-            }
-            else
-            {
-                // now link up processors that participate in SAX event.
-                ISaxProcessor lastSaxProc = null;
-                for (Iterator itr = fixedProcessors.iterator(); itr.hasNext();)
-                {
-                    if (lastSaxProc == null)
+            for (Iterator iter = fixedProcessors.iterator(); iter.hasNext();)
                     {
-                        Object proc = itr.next();
+                Object proc = iter.next();
                         if (proc instanceof ISaxProcessor)
                         {
-                            firstSaxProcessor = (ISaxProcessor) proc;
-                            lastSaxProc = firstSaxProcessor;
-                        }
-                    }
-                    else
-                    {
-                        Object next = itr.next();
-                        if (next instanceof ISaxProcessor)
-                        {
-                            ISaxProcessor nextSaxProc = (ISaxProcessor)next;
-                            lastSaxProc.setExitContentHandler(
-                                    nextSaxProc.getEntryContentHandler());
-                            lastSaxProc = nextSaxProc;
-                        }
-                    }
+                    hasFixedSaxProcessor = true;
+                    break;
                 }
-                lastSaxProcessor = lastSaxProc;
             }
         }
     }
@@ -241,23 +201,20 @@ public class ProcessingPipe implements IParameterProcessor
     private void setOptionalProcessor(Object optionalProcessor)
     {
         this.optionalProcessor = optionalProcessor;
-
-        // see if we need to adjust fixed pipe
-        if (optionalProcessor != null &&
-                (this.optionalProcessor instanceof ISaxProcessor))
+        if (LOG.isDebugEnabled())
         {
-            if (lastSaxProcessor != null)
-            {
-                ISaxProcessor sp = (ISaxProcessor)optionalProcessor;
-                lastSaxProcessor.setExitContentHandler(
-                        sp.getEntryContentHandler());
+            if (optionalProcessor == null)
+                LOG.debug("Setting Optional processor to null.");
+            else
+                LOG.debug("Setting Optional processor to: "
+                        + optionalProcessor.getClass().getName());
             }
-        }
+        
     }
 
     /**
      * Sets the map of optional processors that can be included in the
-     * processing and SAX event pipe via inclusion of the uP_dlmPrc parameter
+     * processing and SAX event pipe by inclusion of the uP_dlmPrc parameter
      * being included with a value corresponding to a key in this map.
      *
      * @param optionalProcessors
@@ -367,8 +324,15 @@ public class ProcessingPipe implements IParameterProcessor
                     request);
             if (optionalProcessor instanceof IOptionalParameterProcessor &&
                 ((IOptionalParameterProcessor) optionalProcessor).isFinished())
+            {
+                if (LOG.isDebugEnabled())
+                {
+                    LOG.debug("isFinished() = true: "
+                            + optionalProcessor
+                            .getClass().getName());
+                }
                 setOptionalProcessor(null);
-
+            }   
         }
     }
 
@@ -390,18 +354,19 @@ public class ProcessingPipe implements IParameterProcessor
             }
             else if (optionalProcessors == null || optionalProcessors.isEmpty())
             {
-                LOG.error("Optional Processor for " + CHANGE_PROCESSOR_PARAM +
-                        "=" + key + " requested but there are no optional " +
-                        "processors registered.");
+                LOG.error("Optional Processor for " 
+                        + CHANGE_PROCESSOR_PARAM 
+                        + "=" + key + "requested but there are no " 
+                        + "optional processors registered.");
             }
             else
             {
                 Object proc = optionalProcessors.get(key);
                 if (proc == null)
                 {
-                    LOG.error("Optional Processor for " +
-                            CHANGE_PROCESSOR_PARAM + "=" + key +
-                            " not found in registered optional processors.");
+                    LOG.error("Optional Processor for " 
+                            + CHANGE_PROCESSOR_PARAM + "=" + key 
+                            + " not found in registered optional processors.");
                 }
                 else
                     setOptionalProcessor(proc);
@@ -424,7 +389,7 @@ public class ProcessingPipe implements IParameterProcessor
 
         StringBuffer buf = new StringBuffer();
 
-        if (fixedProcessors != null && firstSaxProcessor != null)
+        if (hasFixedSaxProcessor)
         {
             ISaxProcessor sProc  = null;
             for (Iterator itr = fixedProcessors.iterator(); itr.hasNext();)
@@ -465,35 +430,38 @@ public class ProcessingPipe implements IParameterProcessor
      * calling getFrontContentHandler().
      *
      */
-    public void setExitContentHandler(ContentHandler handler)
+    public ContentHandler getContentHandler(ContentHandler handler)
     {
-        exitContentHandler = handler;
+        ISaxProcessor saxProc = null;
 
-        // now plug it into the pipe if it exists
+        // See if we have an optional SAX processor first and wrap it
         if (optionalProcessor != null &&
                 optionalProcessor instanceof ISaxProcessor)
-            ((ISaxProcessor)optionalProcessor).setExitContentHandler(handler);
-        else if (lastSaxProcessor != null)
-            lastSaxProcessor.setExitContentHandler(handler);
-    }
+        {
+            if (LOG.isDebugEnabled())
+            {
+                LOG.debug("Injecting exit handler into " +
+                        optionalProcessor.getClass().getName());
+        }
+            saxProc = (ISaxProcessor)optionalProcessor;
+            handler = saxProc.getContentHandler(handler);
+        }
 
-    /**
-     * Returns the ContentHandler into which SAX events should be pushed after
-     * flowing through all ContentHandlers that are part of the pipe. This
-     * method should only be called after calling setBackContentHandler passing
-     * a valid ContentHandler since that ContentHandler will be returned by
-     * this method of there are no fixed processors or a currently selected
-     * optional processor.
-     *
-     * @return ContentHandler
-     */
-    public ContentHandler getEntryContentHandler()
-    {
-        if (firstSaxProcessor != null)
-            return firstSaxProcessor.getEntryContentHandler();
-        if (optionalProcessor != null &&
-                optionalProcessor instanceof ISaxProcessor)
-            return ((ISaxProcessor)optionalProcessor).getEntryContentHandler();
-        return exitContentHandler;
+        // now wrap with each successive fixed SAX processor
+        if (fixedProcessors != null && fixedProcessors.size()>0)
+        {
+            for (int i = fixedProcessors.size()-1; i>=0; i--)
+            {
+                Object next = fixedProcessors.get(i);
+                if (next instanceof ISaxProcessor)
+                {
+                    saxProc = (ISaxProcessor)next;
+                    handler = saxProc.getContentHandler(handler);
+                }
+            }
+        }
+        // finally return the resulting handler which may be the one passed in
+        // if nobody ended up wrapping it.
+        return handler;
     }
 }

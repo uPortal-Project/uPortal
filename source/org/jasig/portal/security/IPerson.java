@@ -18,9 +18,26 @@ import org.jasig.portal.IBasicEntity;
  */
 public interface IPerson extends IAdditionalDescriptor, IBasicEntity, Serializable {
 
-  // string used as a key for the eduPerson username attribute
+  /**
+   * String used as a key for the eduPerson username attribute.
+   */
   public static final String USERNAME = "username";
 
+  /**
+   * The default ID for person objects.
+   */
+  public static final int UNDEFINED_ID = -1;
+  
+  /**
+   * The user id for guest users.
+   */
+  public static final int GUEST_ID = 1;
+  
+  /**
+   * The user id for the special system user.
+   */
+  public static final int SYSTEM_USER_ID = 0;
+  
   /**
    * Sets the ID of the user
    * @param sID

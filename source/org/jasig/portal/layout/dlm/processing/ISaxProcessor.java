@@ -13,26 +13,22 @@ import org.xml.sax.ContentHandler;
  * processors or by the currently selected optional processor then SAX events
  * passing through the pipe will be routed through this processing handler.
  *
- * @author mark.boyd@sungardhe.com
+ * @author Mark Boyd
  */
 public interface ISaxProcessor
 {
     /**
-     * Returns a ContentHandler suitable for pushing SAX events into this
+     * Returns a ContentHandler suitable for pushing SAX events into this 
      * processor possibly to be filtered or added to by the processor and then
-     * have the resulting SAX stream pushed into the ContentHandler registered
-     * via setExitContentHandler().
-     *
+     * have the resulting SAX stream pushed into the passed-in ContentHandler.
+     * This method is called once for each rendering cycle of the pipe. If the
+     * state of the processor is such that it will have not impact on the SAX
+     * event stream the processor can elect to return the passed in 
+     * ContentHandler.
+     *  
+     * @param processor
      */
-    public ContentHandler getEntryContentHandler();
-
-    /**
-     * Set the ContentHandler that will receive resulting SAX events that have
-     * pass through and potentially been modified by this processor.
-     *
-     * @param handler
-     */
-    public void setExitContentHandler(ContentHandler handler);
+    public ContentHandler getContentHandler(ContentHandler handler);
 
     /**
      * Provide a key that is indicative of the content contributed to the SAX

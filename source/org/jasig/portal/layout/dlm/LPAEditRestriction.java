@@ -13,7 +13,7 @@ import org.w3c.dom.Element;
  * Layout processing action for changnig the set of restrictions for a fragment
  * node.
  * 
- * @author mboyd@sungardsct.com
+ * @author Mark Boyd
  */
 public class LPAEditRestriction implements ILayoutProcessingAction
 {

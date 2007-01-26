@@ -27,6 +27,7 @@ import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.layout.simple.RDBMUserLayoutStore;
 import org.jasig.portal.ChannelParameter;
+import org.jasig.portal.PortalException;
 import org.jasig.portal.PortalSessionManager;
 import org.jasig.portal.StructureStylesheetDescription;
 import org.jasig.portal.StructureStylesheetUserPreferences;
@@ -703,6 +704,16 @@ public class RDBMDistributedLayoutStore
         return false;
     }
 
+    /**
+     * Determines if a user is a fragment owner.
+     * @param person
+     * @return
+     */
+    public boolean isFragmentOwner(IPerson person)
+    {
+        return getOwnedFragment(person) != null;
+    }
+    
     /**
        Returns the fragment owned by this user if any. If this user is not a
        fragment owner then null is returned.
@@ -1943,6 +1954,19 @@ public class RDBMDistributedLayoutStore
             }
             return saveStructId;
         }
+
+    public static Document getPLF( IPerson person )
+    throws PortalException
+    {
+        try
+        {
+            return (Document) person.getAttribute( Constants.PLF );
+        }
+        catch ( Exception ex )
+        {
+            throw new PortalException( ex );
+        }
+    }
 
     public void setStructureStylesheetUserPreferences( IPerson person,
                                                        int profileId,

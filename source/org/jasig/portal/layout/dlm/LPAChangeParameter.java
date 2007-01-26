@@ -10,12 +10,11 @@ import org.jasig.portal.security.IPerson;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 /**
  * Layout processing action for changing a channel parameter in a user's layout.
  * 
- * @author mboyd@sungardsct.com
+ * @author Mark Boyd
  */
 public class LPAChangeParameter implements ILayoutProcessingAction
 {
@@ -52,7 +51,7 @@ public class LPAChangeParameter implements ILayoutProcessingAction
         else
         {
             // node owned by user so change existing parameter child directly
-            Document plf = (Document) person.getAttribute( Constants.PLF );
+            Document plf = RDBMDistributedLayoutStore.getPLF(person);
             Element plfNode = plf.getElementById(nodeId);
             changeParameterChild(plfNode, name, value);
         }
@@ -72,12 +71,11 @@ public class LPAChangeParameter implements ILayoutProcessingAction
     {
         if (node != null)
         {
-            NodeList params = node.getChildNodes();
             boolean foundIt = false;
             
-            for (int i=0; i<params.getLength(); i++)
+            for (Element parm = (Element) node.getFirstChild(); parm != null;
+                parm = (Element) parm.getNextSibling())
             {
-                Element parm = (Element) params.item(i);
                 Attr att = parm.getAttributeNode(Constants.ATT_NAME);
                 if (att != null && att.getValue().equals(name))
                 {

@@ -9,12 +9,11 @@ import org.jasig.portal.PortalException;
 import org.jasig.portal.security.IPerson;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 /**
  * Layout processing action for removing a channel parameter from the user's layout.
  * 
- * @author mboyd@sungardsct.com
+ * @author Mark Boyd
  */
 public class LPARemoveParameter implements ILayoutProcessingAction
 {
@@ -47,7 +46,7 @@ public class LPARemoveParameter implements ILayoutProcessingAction
         else
         {
             // node owned by user so add parameter child directly
-            Document plf = (Document) person.getAttribute( Constants.PLF );
+            Document plf = RDBMDistributedLayoutStore.getPLF(person);
             Element plfNode = plf.getElementById(nodeId);
             removeParameterChild(plfNode, name);
         }
@@ -64,11 +63,9 @@ public class LPARemoveParameter implements ILayoutProcessingAction
     {
         if (node != null)
         {
-            NodeList params = node.getChildNodes();
-            for (int i=0; i<params.getLength(); i++)
+            for (Element parm = (Element) node.getFirstChild(); parm != null;
+                parm = (Element) parm.getNextSibling())
             {
-                Element parm = (Element) params.item(i);
-                
                 if (parm.getAttribute(Constants.ATT_NAME).equals(name))
                 {
                     node.removeChild(parm);

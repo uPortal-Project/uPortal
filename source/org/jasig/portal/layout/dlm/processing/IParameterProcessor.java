@@ -12,14 +12,18 @@ import org.jasig.portal.layout.dlm.DistributedLayoutManager;
 import org.jasig.portal.security.IPerson;
 
 /**
- * Represents an object that can process query or post parameters submitted to
- * the portal as part of an HTTP request. Implementations of this class enable the decoupling of
+ * Represents an object that can process layout parameters submitted to the
+ * portal as part of a request and/or alter the SAX stream representing the
+ * user's layout. Implementations of this interface can take part in acting on
+ * parameters submitted to the portal dealing with layout manipulation and can
+ * also take part in altering or filtering the SAX events of the raw user
+ * layout. Implementations of this class enable the decoupling of
  * DistributedLayoutManager from processing needed to handle URL syntax for a
  * specific Structure and/or Theme transformation stylesheet combination. These
  * implementations are made available to the DistributedLayoutManager via
  * properties/dlmContext.xml.
  *
- * @author mark.boyd@sungardhe.com
+ * @author Mark Boyd
  */
 public interface IParameterProcessor
 {

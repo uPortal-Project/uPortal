@@ -51,4 +51,17 @@ public class Constants
      * will bring that channel into focus.
      */
     public static final String NAVIGATION_CHAN_FNAME = "admin.navigation.links";
+    
+    /**
+     * The prefix of DTDs owned by uPortal version 2.0. This is used to allow
+     * local resolution of uPortal specific DTDs.
+     */
+    public static final String UPORTAL_2_DTD_PREFIX 
+        = "http://www.ja-sig.org/products/uportal/2/dtds/";
+    
+    /**
+     * The attribute used to convey a custom template account from which to
+     * copy the initial layout for a user.
+     */
+    public static final String TEMPLATE_USER_NAME_ATT = "uPortalTemplateUserName";
 }
