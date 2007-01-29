@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE channelDef SYSTEM "http://www.ja-sig.org/products/uportal/2/dtds/channelPublishingDocument-1.0.dtd">
+
+<channelDef>
+  <typeName>JSP Model II</typeName>
+  <class>org.jasig.portal.channels.jsp.Channel</class>
+  <description>This is a channel for presenting content generated using Java Server Pages.</description>
+
+  <params>
+    <step>
+      <ID>1</ID>
+
+      <helptag>prtl.admin.jsp.chan.cntrls</helptag>
+
+      <name>JSP Controller</name>
+
+      <description>The JSP Model II type requires a controller class that implements the org.jasig.portal.channels.jsp.IController interface.</description>
+
+      <parameter modify="publish-only">
+        <name>controllerClass</name>
+        <label>Controller Class</label>
+        <type base="string" input="text" display="text">
+          <length>70</length>
+          <maxlength>2000</maxlength>
+        </type>
+        <example>com.sct.pipeline.uportal.channels.jspApp.Controller</example>
+        <description>An implementation of org.jasig.portal.channels.jsp.IController</description>
+      </parameter>
+
+    </step>
+
+    <step>
+      <ID>2</ID>
+      <helptag>prtl.admin.jsp.chan.cntrl.prms</helptag>
+      <name>Controller Parameters</name>
+
+      <description>
+        These are parameters expected by the controller itself.  There may
+        be zero or more parameters. See the controller's documentation for 
+        parameters that can be specified.
+      </description>
+      
+      <arbitrary-parameters>
+        <paramName-prefix>JSP.</paramName-prefix>
+      </arbitrary-parameters>
+      
+    </step>
+
+  </params>
+
+  <controls>
+    <control type="edit" include="no" override="yes"/>
+    <control type="about" include="no" override="yes"/>
+    <control type="help" include="no" override="yes"/>
+  </controls>
+
+</channelDef>
