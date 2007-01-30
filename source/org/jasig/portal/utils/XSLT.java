@@ -34,16 +34,18 @@ import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.jasig.portal.car.ResourceResolver;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.BrowserInfo;
 import org.jasig.portal.GeneralRenderingException;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.ResourceMissingException;
 import org.jasig.portal.StylesheetSet;
+import org.jasig.portal.car.ResourceResolver;
 import org.jasig.portal.i18n.LocaleAwareXSLT;
 import org.jasig.portal.properties.PropertiesManager;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.spring.PortalApplicationContextFacade;
+import org.springframework.beans.factory.BeanFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -94,6 +96,7 @@ public class XSLT {
   protected static final Hashtable stylesheetSetCache = new Hashtable();  // Consider changing to org.jasig.portal.utils.SmartCache
 
   private static SAXTransformerFactory saxTFactory = null;
+  private static IXsltcTransletManager xsltcTransletManager = null;
 
   protected Object caller = null;
   protected Source xmlSource;
@@ -101,7 +104,6 @@ public class XSLT {
   protected HashMap stylesheetParams;
   protected String xslURI;
   protected ResourceBundle l18n;
-
 
   /**
    * Constructs an XSLT object. This contructor should
@@ -113,6 +115,8 @@ public class XSLT {
   public XSLT (Object instance) {
     this.stylesheetParams = new HashMap();
     this.caller = instance;
+    
+    
   }
   
   /**
@@ -136,18 +140,39 @@ public class XSLT {
   public static XSLT getTransformer(Object instance, Locale[] locales) {
       return new LocaleAwareXSLT(instance, locales);
   }
-
-  public static SAXTransformerFactory getSAXTFactory() {
+  
+  public static SAXTransformerFactory getSAXTFactory(String stylesheetUri) {
+      IXsltcTransletManager xsltcTransletManager = getXsltcTransletManager();
+      SAXTransformerFactory saxTransformerFactory = null;
+      if (xsltcTransletManager.transletExists(stylesheetUri)) {
+          saxTransformerFactory = xsltcTransletManager.getTransformerFactoryImpl();
+      } else {
+          saxTransformerFactory = getDefaultSAXTFactory();
+      }
+      if (saxTransformerFactory == null) {
+          log.error( "Unable to instantiate SAX transformer ! Please make sure the TRAX implementation you're using supports SAX Transformers");
+      }
+      return saxTransformerFactory;
+  }
+  
+  public static IXsltcTransletManager getXsltcTransletManager() {
+      BeanFactory factory = PortalApplicationContextFacade.getPortalApplicationContext();
+      return (IXsltcTransletManager)factory.getBean(
+          "xsltcTransletManager", IXsltcTransletManager.class);
+  }
+  
+  private static SAXTransformerFactory getDefaultSAXTFactory() {
     if (saxTFactory == null) {
       // attempt to instantiate a sax transformer factory
       TransformerFactory tFactory = TransformerFactory.newInstance();
       tFactory.setURIResolver(new ResourceResolver());
       if (tFactory instanceof SAXTransformerFactory) {
         saxTFactory = ((SAXTransformerFactory)tFactory);
+      } else {
+          log.error(
+              "Transformer factory does not implement SAXTransformerFactory: " +
+              tFactory.getClass().getName());
       }
-    }
-    if (saxTFactory == null) {
-      log.error( "XSLT() : unable to instantiate SAX transformer ! Please make sure the TRAX implementation you're using supports SAX Transformers");
     }
     return saxTFactory;
   }
@@ -402,7 +427,7 @@ public class XSLT {
       // Get the Templates and cache them
       try
       {
-        TemplatesHandler thand = getSAXTFactory().newTemplatesHandler();
+        TemplatesHandler thand = getSAXTFactory(stylesheetURI).newTemplatesHandler();
         XMLReader reader = XMLReaderFactory.createXMLReader();
         reader.setContentHandler(thand);
         reader.parse(stylesheetURI);
@@ -482,7 +507,7 @@ public class XSLT {
   public static TransformerHandler getTransformerHandler(String stylesheetURI) throws SAXException, PortalException {
       TransformerHandler th = null;
       try {
-        th = getSAXTFactory().newTransformerHandler(getTemplates(stylesheetURI));
+        th = getSAXTFactory(stylesheetURI).newTransformerHandler(getTemplates(stylesheetURI));
       } catch (TransformerConfigurationException tce) {
         log.error("XSLT::getTransformerHandler() : TRAX transformer is misconfigured", tce);
       }
@@ -501,7 +526,7 @@ public class XSLT {
       TransformerHandler th = null;
       try {
         String localizedStylesheetURI = LocaleAwareXSLT.getLocaleAwareXslUri(stylesheetURI, locales, caller);
-        th = getSAXTFactory().newTransformerHandler(getTemplates(localizedStylesheetURI));
+        th = getSAXTFactory(localizedStylesheetURI).newTransformerHandler(getTemplates(localizedStylesheetURI));
       } catch (TransformerConfigurationException tce) {
         log.error("XSLT::getTransformerHandler() : TRAX transformer is misconfigured", tce);
       }

@@ -169,6 +169,8 @@
                        the Xalan you are using.
                        Version: (depends on Xalan version)
                        URL: http://xml.apache.org/xalan-j/
+  xsltc.jar            Xalan's precompiled translet library.
+                       URL: http://xml.apache.org/xalan-j/
 
   tidy.jar             Turns HTML into well formed XHTML. There is a problem with
                        the current release that shows up when uPortal is deployed
@@ -317,11 +319,14 @@
                         Version 2.1.1
                         URL: http://www.ibiblio.org/maven/cas/jars/casclient-2.1.1.jar
 
+  dom4j.jar             Dom4j XML processing library.
+                        URL: http://www.dom4j.org/
 -->
 
   <property name="xalan.jar" value="(set this in build.properties!)"/>
   <property name="xercesImpl.jar" value="(set this in build.properties!)"/>
   <property name="xml-apis.jar" value="(set this in build.properties!)"/>
+  <property name="xsltc.jar" value="(set this in build.properties!)"/>
   <property name="tidy.jar" value="(set this in build.properties!)"/>
   <property name="tyrex.jar" value="(set this in build.properties!)"/>
   <property name="activation.jar" value="(set this in build.properties!)"/>
@@ -346,6 +351,7 @@
   <property name="concurrent.jar" value="{set this in build.properties!)" />
   <property name="backport.jar" value="{set this in build.properties!)" />
   <property name="casclient.jar" value="lib/casclient-2.1.1.jar" />
+  <property name="dom4j.jar" value="(set this in build.properties!)"/>
 
 <!-- ==================== Compilation Classpath =========================== -->
 
@@ -366,6 +372,7 @@
     <pathelement location="${xalan.jar}"/>
     <pathelement location="${xercesImpl.jar}"/>
     <pathelement location="${xml-apis.jar}"/>
+    <pathelement location="${xsltc.jar}"/>
     <pathelement location="${tidy.jar}"/>
     <pathelement location="${tyrex.jar}"/>
     <pathelement location="${activation.jar}"/>
@@ -389,6 +396,7 @@
     <pathelement location="${concurrent.jar}" />
     <pathelement location="${backport.jar}" />
     <pathelement location="${casclient.jar}" />
+    <pathelement location="${dom4j.jar}"/>
   </path>
 
 
@@ -494,6 +502,9 @@
 
     <!-- Copy associated resource files -->
     <copy  todir="${build.home}/WEB-INF/classes/properties">
+      <filterset>
+        <filter token="deploy.home" value="${deploy.home}"/>
+      </filterset>
       <fileset dir="properties" includes="**/*"/>
     </copy>
 
@@ -550,6 +561,7 @@
     <mkdir  dir="${deploy.home}/WEB-INF/lib"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${xercesImpl.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${xml-apis.jar}"/>
+    <copy todir="${deploy.home}/WEB-INF/lib" file="${xsltc.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${tidy.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${tyrex.jar}"/>
     <copy todir="${deploy.home}/WEB-INF/lib" file="${activation.jar}"/>
@@ -568,6 +580,7 @@
     <copy todir="${deploy.home}/WEB-INF/lib" file="${concurrent.jar}" />
     <copy todir="${deploy.home}/WEB-INF/lib" file="${backport.jar}" />
     <copy todir="${deploy.home}/WEB-INF/lib" file="${casclient.jar}"/>
+    <copy todir="${deploy.home}/WEB-INF/lib" file="${dom4j.jar}"/>
 
     <!-- These are Tomcat-specific!  We need to think about a new property
          that lets us specify the appropriate directory for other servers

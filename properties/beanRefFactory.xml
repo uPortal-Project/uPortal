@@ -21,6 +21,7 @@
         <value>properties/personDirectory.xml</value>
         <value>properties/applicationContext.xml</value>
         <value>properties/cacheContext.xml</value>
+        <value>properties/xsltcTransletManager.xml</value>
         <!--
         <value>properties/statsContext.xml</value>
         <value>properties/jmxContext.xml</value>
