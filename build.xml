@@ -612,6 +612,9 @@ serializer.jar         serializer.jar contains the Serializer component of
     -->
     <copy todir="${server.home}/shared/lib" file="${portlet-api.jar}"/>
     <copy todir="${server.home}/shared/lib" file="${pluto.jar}"/>
+    <mkdir dir="${server.home}/shared/classes/org/jasig/portal/container"/>
+    <copy todir="${server.home}/shared/classes/org/jasig/portal/container"
+    	file="${build.home}/WEB-INF/classes/org/jasig/portal/container/PortletServlet.class"/>
     <copy todir="${server.home}/common/endorsed" file="${xalan.jar}"/>
   	<copy todir="${server.home}/common/endorsed" file="${serializer.jar}"/>
 

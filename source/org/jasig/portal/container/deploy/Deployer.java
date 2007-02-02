@@ -173,13 +173,13 @@ public class Deployer {
                 // Check if already exists
                 ServletDefinition servlet = webApplicationDefinition.getServletDefinitionList().get(portlet.getName());
                 if (servlet != null) {
-                    if (!servlet.getServletClass().equals("org.apache.pluto.core.PortletServlet")) {
+                    if (!servlet.getServletClass().equals("org.jasig.portal.container.PortletServlet")) {
                         System.out.println("Note: Replaced already existing the servlet with the name '" + portlet.getName() + "' with the wrapper servlet.");
                     }
                     ServletDefinitionCtrl _servletCtrl = (ServletDefinitionCtrl)controllerFactory.get(servlet);
-                    _servletCtrl.setServletClass("org.apache.pluto.core.PortletServlet");
+                    _servletCtrl.setServletClass("org.jasig.portal.container.PortletServlet");
                 } else {
-                    servlet = servletDefinitionSetCtrl.add(portlet.getName(), "org.apache.pluto.core.PortletServlet");
+                    servlet = servletDefinitionSetCtrl.add(portlet.getName(), "org.jasig.portal.container.PortletServlet");
                 }
 
                 ServletDefinitionCtrl servletCtrl = (ServletDefinitionCtrl)controllerFactory.get(servlet);

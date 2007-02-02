@@ -16,6 +16,7 @@ import java.util.Properties;
 
 import javax.portlet.PortletMode;
 import javax.portlet.PortletRequest;
+import javax.portlet.PortletSession;
 import javax.portlet.RenderResponse;
 import javax.portlet.WindowState;
 import javax.servlet.ServletConfig;
@@ -48,6 +49,7 @@ import org.jasig.portal.IPrivileged;
 import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalEvent;
 import org.jasig.portal.PortalException;
+import org.jasig.portal.container.PortletServlet;
 import org.jasig.portal.container.om.common.ObjectIDImpl;
 import org.jasig.portal.container.om.entity.PortletApplicationEntityImpl;
 import org.jasig.portal.container.om.entity.PortletEntityImpl;
@@ -129,6 +131,7 @@ public class CPortletAdapter
     private long lastRenderTime = Long.MIN_VALUE;
     private String expirationCache = null;
     private WindowState newWindowState = null;
+    private PortletSession portletSession = null;
 
     private Map requestParams = null;
 
@@ -351,6 +354,16 @@ public class CPortletAdapter
                         //access the session if it has already been destroyed.
                     }
 
+                    // Invalidate portlet session
+                    if (portletSession != null) {
+                        try {
+                            portletSession.invalidate();
+                        }
+                        catch (Exception e) {
+                            log.error(e,e);
+                        }
+                    }
+
                     break;
 
                 default:
@@ -561,6 +574,12 @@ public class CPortletAdapter
 
             portletContainer.renderPortlet(portletWindow, wrappedRequest, wrappedResponse);
 
+            // Track PortletSession object
+            PortletSession ps = (PortletSession)wrappedRequest.getAttribute(PortletServlet.SESSION_MONITOR_ATTRIBUTE);
+            if (ps != null) {
+                portletSession = ps;
+            }
+
             //Support for the portlet modifying it's cache timeout
             final Map properties = PropertyManager.getRequestProperties(portletWindow, wrappedRequest);
             final String[] exprCacheTimeStr = (String[])properties.get(RenderResponse.EXPIRATION_CACHE);
@@ -701,6 +720,12 @@ public class CPortletAdapter
 
             //render the portlet
             portletContainer.renderPortlet(portletWindow, wrappedRequest, wrappedResponse);
+
+            // Track PortletSession object
+            PortletSession ps = (PortletSession)wrappedRequest.getAttribute(PortletServlet.SESSION_MONITOR_ATTRIBUTE);
+            if (ps != null) {
+                portletSession = ps;
+            }
 
             //Ensure all the data gets written out
             wrappedResponse.flushBuffer();
