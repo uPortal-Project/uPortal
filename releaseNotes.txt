@@ -37,7 +37,13 @@ Major new features and improvements in this release:
 
 The WSRP consumer portlet in uPortal is now working.
 
-
+Xsltc Translet Manager -- This enables the XSLT utility to use precompiled
+xsltc translets.  The translet manager will keep track of a blacklist of
+stylesheets that either fail to compile or fail to execute. Any translet in
+the blacklist will fall back the default transformer factory.  This feature
+is turned off by default.  To enable it, set the activated property to 'true'
+in the xsltcTransletManager bean located in the xsltcTransletManager.xml context
+file.
 
 Bug fixes in this release:
 
