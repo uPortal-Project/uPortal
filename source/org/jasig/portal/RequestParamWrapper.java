@@ -32,6 +32,8 @@ public class RequestParamWrapper extends HttpServletRequestWrapper {
     final protected Map parameters = new Hashtable();
     protected boolean request_verified;
     private static int sizeLimit = -1;
+    
+    public static final String UPLOAD_STATUS = "up_upload_status";
 
     /**
      * Default value for the upload size limit.
@@ -60,6 +62,15 @@ public class RequestParamWrapper extends HttpServletRequestWrapper {
             // parse request body
             String contentType = source.getContentType();
             if (contentType != null && contentType.startsWith("multipart/form-data") && !isPortletRequest) {
+                /*
+                    UploadStatus is used to help with conversational state
+                    that is lost when parameters are not parsed when the
+	                sizeLimit is exceeded... this will help channels
+	                determine the appropriate action when parameters
+	                are lost.
+	            */
+	            UploadStatus uploadStatus = null;
+
                 com.oreilly.servlet.multipart.Part attachmentPart;
                 try {
                     MultipartParser multi = new MultipartParser(source, source.getContentLength(), true, true, "UTF-8");
@@ -113,13 +124,18 @@ public class RequestParamWrapper extends HttpServletRequestWrapper {
                                     valueArray[0] = fileUpload;
                                     parameters.put(partName, valueArray);
                                 }
+                                uploadStatus = new UploadStatus(UploadStatus.SUCCESS, sizeLimit);
                             }
                         }
                     }
                 } catch (Exception e) {
+                    uploadStatus = new UploadStatus(UploadStatus.FAILURE, sizeLimit);
                     //was: LogService.log(LogService.ERROR, e);
                     ExceptionHelper.genericTopHandler(Errors.bug, e);
                 }
+                UploadStatus[] statusArray = new UploadStatus[1];
+                statusArray[0] = uploadStatus;
+                parameters.put(UPLOAD_STATUS, statusArray);
             }
          }
     }
