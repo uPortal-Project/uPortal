@@ -122,7 +122,7 @@ public boolean deepContains(IGroupMember gm) throws GroupsException
  */
 public java.util.Iterator getAllContainingGroups() throws GroupsException
 {
-    return primGetAllContainingGroups(new HashSet()).iterator();
+    return primGetAllContainingGroups(this, new HashSet()).iterator();
 }
 
 /**
@@ -324,14 +324,14 @@ public boolean isMemberOf(IGroupMember gm) throws GroupsException
  * @param s java.lang.Set - A Set that groups are added to.
  * @return java.util.Set
  */
-protected java.util.Set primGetAllContainingGroups(Set s) throws GroupsException
+protected java.util.Set primGetAllContainingGroups(IGroupMember member, Set s) throws GroupsException
 {
-    Iterator i = getContainingGroups();
+    Iterator i = member.getContainingGroups();
     while ( i.hasNext() )
     {
-        GroupMemberImpl gmi = (GroupMemberImpl) i.next();
-        s.add(gmi);
-        gmi.primGetAllContainingGroups(s);
+        IGroupMember gm = (IGroupMember) i.next();
+        s.add(gm);
+        primGetAllContainingGroups(gm, s);
     }
     return s;
 }
