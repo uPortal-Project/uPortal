@@ -616,15 +616,19 @@ public IPermissionManager newPermissionManager(String owner)
  * @param key java.lang.String
  * @param type java.lang.Class
  */
-public synchronized IAuthorizationPrincipal newPrincipal(String key, Class type) {
+public IAuthorizationPrincipal newPrincipal(String key, Class type) {
     final String principalKey = getPrincipalString(type, key);
 
-    if (this.principalCache.containsKey(principalKey)) {
-        return (IAuthorizationPrincipal) this.principalCache.get(principalKey);
-    }
+    IAuthorizationPrincipal principal = null;
 
-    final IAuthorizationPrincipal principal = primNewPrincipal(key, type);
-    this.principalCache.put(principalKey, principal);
+    synchronized (this.principalCache) {
+        if (this.principalCache.containsKey(principalKey)) {
+            principal = (IAuthorizationPrincipal) this.principalCache.get(principalKey);
+        } else {
+            principal = primNewPrincipal(key, type);
+            this.principalCache.put(principalKey, principal);
+        }
+    }
 
     return principal;
 }
