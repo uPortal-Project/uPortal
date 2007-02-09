@@ -26,7 +26,7 @@ import org.jasig.portal.container.services.information.PortletStateManager;
  * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
  * @version $Revision$
  */
-public class PortletParameterRequestWrapper extends HttpServletRequestWrapper {
+public class PortletParameterRequestWrapper extends AttributeRequestWrapper {
     private static final String ESCAPE_PREFIX = PortletStateManager.UP_PARAM_PREFIX + PortletStateManager.UP_PARAM_PREFIX;
     
     

@@ -34,7 +34,7 @@ import sun.security.acl.PrincipalImpl;
  * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
-public class ServletRequestImpl extends HttpServletRequestWrapper {
+public class ServletRequestImpl extends AttributeRequestWrapper {
     
     protected Hashtable parameters;
     protected IPerson person;

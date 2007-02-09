@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletRequestWrapper;
  * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
  * @version $Revision$
  */
-public class DummyParameterRequestWrapper extends HttpServletRequestWrapper {
+public class DummyParameterRequestWrapper extends AttributeRequestWrapper {
     final Map params;
     
     /**
