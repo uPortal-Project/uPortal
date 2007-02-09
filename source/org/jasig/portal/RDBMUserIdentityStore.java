@@ -10,15 +10,20 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
-import org.jasig.portal.groups.IEntityGroup;
-import org.jasig.portal.groups.IGroupMember;
-import org.jasig.portal.properties.PropertiesManager;
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.services.GroupService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.groups.IEntityGroup;
+import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.groups.ILockableEntityGroup;
+import org.jasig.portal.properties.PropertiesManager;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.PersonFactory;
+import org.jasig.portal.services.GroupService;
 import org.jasig.portal.utils.CounterStoreFactory;
 
 /**
@@ -36,6 +41,24 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
     private static final String templateAttrName = "uPortalTemplateUserName";
     private static final int guestUID = 1;
     static int DEBUG = 0;
+    private static final Map userLocks = Collections.synchronizedMap(new HashMap());
+    
+    private static synchronized Object getLock(IPerson person) {
+        String username = (String)person.getAttribute(IPerson.USERNAME);
+        Object lock = userLocks.get(username);
+        if (lock == null) {
+            lock = new Object();
+            userLocks.put(username, lock);
+        }
+        return lock;
+    }
+    
+    private static synchronized void removeLock(IPerson person) {
+        String username = (String)person.getAttribute(IPerson.USERNAME);
+        userLocks.remove(username);
+    }
+
+
 
  /**
    * getuPortalUID -  return a unique uPortal key for a user.
@@ -255,7 +278,24 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
     * @throws AuthorizationException if createPortalData is false and no user is found
     *  or if a sql error is encountered
     */
-   public synchronized int getPortalUID (IPerson person, boolean createPortalData) throws AuthorizationException {
+   public int getPortalUID (IPerson person, boolean createPortalData) throws AuthorizationException {
+       int uid;
+       String username = (String)person.getAttribute(IPerson.USERNAME);
+
+       // only synchronize a non-guest request.
+       if (PersonFactory.GUEST_USERNAME.equals(username)) {
+           uid = __getPortalUID(person, createPortalData);
+       } else {
+           Object lock = getLock(person);
+           synchronized (lock) {
+               uid = __getPortalUID(person, createPortalData);
+           }
+           removeLock(person);
+       }
+       return uid;
+   }
+   
+   private int __getPortalUID (IPerson person, boolean createPortalData) throws AuthorizationException {
        PortalUser portalUser = null;
 
        try {
@@ -462,6 +502,68 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
 
       return userHasSavedLayout;
   }
+  
+  private ILockableEntityGroup getSafeLockableGroup(IEntityGroup eg, IGroupMember gm) {
+      if (log.isTraceEnabled()) {
+          log.trace("Creating lockable group for group/member: " + eg + "/" + gm);
+      }
+      
+      ILockableEntityGroup leg = null;
+      
+      try {
+          if (eg.isEditable()) {
+	          leg = GroupService.findLockableGroup(eg.getKey(), gm.getKey());
+          }
+      } catch (Exception e) {
+          // Bummer.  but the only thing to do is to press on
+          log.error("Unable to create lockable group for group/member: " + eg + "/" + gm, e);
+      }
+      
+      return leg;
+  }
+  
+  /**
+   * Remove a person from a group.  This method catches and logs exceptions
+   * exceptions encountered performing the removal.
+   * @param person person to be removed (used for logging)
+   * @param me member representing the person
+   * @param eg group from which the user should be removed
+   */
+  private void removePersonFromGroup(IPerson person, IGroupMember me, IEntityGroup eg) {
+      if (log.isTraceEnabled()) {
+          log.trace("Removing " + person + " from group " + eg);
+      }
+      try {
+          if (eg.isEditable()) {
+              eg.removeMember(me);
+              eg.updateMembers();
+          }
+      } catch (Exception e) {
+          // Bummer.  but the only thing to do is to press on
+          log.error("Unable to remove " + person + " from group " + eg, e);
+      }
+  }
+  
+  /**
+   * Add a person to a group. This method catches and logs exceptions encountered
+   * performing the removal.
+   * @param person person to be added (used for logging)
+   * @param me member representing the person
+   * @param eg group to which the user should be added
+   */
+  private void addPersonToGroup(IPerson person, IGroupMember me, IEntityGroup eg) {
+      if (log.isTraceEnabled()) {
+          log.trace("Adding " + person + " to group " + eg);
+      }
+      try {
+          if (eg.isEditable()) {
+              eg.addMember(me);
+              eg.updateMembers();
+          }
+      } catch (Exception e) {
+          log.error("Unable to add " + person + " to group " + eg, e);
+      }
+  }
 
   protected void updateUser(int userId, IPerson person, TemplateUser templateUser) throws Exception {
       // Remove my existing group memberships
@@ -469,9 +571,9 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
       Iterator myExistingGroups = me.getContainingGroups();
       while (myExistingGroups.hasNext()) {
           IEntityGroup eg = (IEntityGroup)myExistingGroups.next();
-          if (eg.isEditable()) {
-            eg.removeMember(me);
-            eg.updateMembers();
+          ILockableEntityGroup leg = getSafeLockableGroup(eg, me);
+          if (leg != null) {
+              removePersonFromGroup(person, me, leg);
           }
       }
 
@@ -480,9 +582,9 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
       Iterator templateGroups = template.getContainingGroups();
       while (templateGroups.hasNext()) {
           IEntityGroup eg = (IEntityGroup)templateGroups.next();
-          if (eg.isEditable()) {
-            eg.addMember(me);
-            eg.updateMembers();
+          ILockableEntityGroup leg = getSafeLockableGroup(eg, me);
+          if (leg != null) {
+              addPersonToGroup(person, me, leg);
           }
       }
 
@@ -542,6 +644,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                       log.debug("RDBMUserIdentityStore::updateUser(USER_ID=" + templateUser.getUserId() + "): " + query);
                   rs = queryStmt.executeQuery();
 
+                  insertStmt = con.prepareStatement(insert);
                   while (rs.next()) {
                       insert =
                           "INSERT INTO UP_USER_PARAM (USER_ID, USER_PARAM_NAME, USER_PARAM_VALUE) " +
@@ -550,7 +653,6 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                       String userParamName = rs.getString("USER_PARAM_NAME");
                       String userParamValue = rs.getString("USER_PARAM_VALUE");
 
-                      insertStmt = con.prepareStatement(insert);
                       insertStmt.setInt(1, userId);
                       insertStmt.setString(2, userParamName);
                       insertStmt.setString(3, userParamValue);
@@ -585,16 +687,16 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                       log.debug("RDBMUserIdentityStore::updateUser(USER_ID=" + templateUser.getUserId() + "): " + query);
                   rs = queryStmt.executeQuery();
 
+                  insert =
+                      "INSERT INTO UP_USER_PROFILE (USER_ID, PROFILE_ID, PROFILE_NAME, DESCRIPTION, LAYOUT_ID, STRUCTURE_SS_ID, THEME_SS_ID) " +
+                      "VALUES(?, ?, ?, ?, NULL, NULL, NULL)";
+                  insertStmt = con.prepareStatement(insert);
                   while (rs.next()) {
-                      insert =
-                          "INSERT INTO UP_USER_PROFILE (USER_ID, PROFILE_ID, PROFILE_NAME, DESCRIPTION, LAYOUT_ID, STRUCTURE_SS_ID, THEME_SS_ID) " +
-                          "VALUES(?, ?, ?, ?, NULL, NULL, NULL)";
 
                       int profileId = rs.getInt("PROFILE_ID");
                       String profileName = rs.getString("PROFILE_NAME");
                       String description = rs.getString("DESCRIPTION");
 
-                      insertStmt = con.prepareStatement(insert);
                       insertStmt.setInt(1, userId);
                       insertStmt.setInt(2, profileId);
                       insertStmt.setString(3, profileName);
@@ -629,15 +731,14 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                       log.debug("RDBMUserIdentityStore::updateUser(USER_ID=" + templateUser.getUserId() + "): " + query);
                   rs = queryStmt.executeQuery();
 
+                  insert =
+                      "INSERT INTO UP_USER_UA_MAP (USER_ID, USER_AGENT, PROFILE_ID) " +
+                      "VALUES(?, ?, ?)";
+                  insertStmt = con.prepareStatement(insert);
                   while (rs.next()) {
-                      insert =
-                          "INSERT INTO UP_USER_UA_MAP (USER_ID, USER_AGENT, PROFILE_ID) " +
-                          "VALUES(?, ?, ?)";
-
                       String userAgent = rs.getString("USER_AGENT");
                       String profileId = rs.getString("PROFILE_ID");
 
-                      insertStmt = con.prepareStatement(insert);
                       insertStmt.setInt(1, userId);
                       insertStmt.setString(2, userAgent);
                       insertStmt.setString(3, profileId);
@@ -684,9 +785,9 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
       Iterator templateGroups = template.getContainingGroups();
       while (templateGroups.hasNext()) {
           IEntityGroup eg = (IEntityGroup)templateGroups.next();
-          if (eg.isEditable()) {
-              eg.addMember(me);
-              eg.updateMembers();
+          ILockableEntityGroup leg = getSafeLockableGroup(eg, me);
+          if (leg != null) {
+              addPersonToGroup(person, me, leg);
           }
       }
 
@@ -736,15 +837,14 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                       log.debug("RDBMUserIdentityStore::addNewUser(USER_ID=" + templateUser.getUserId() + "): " + query);
                   rs = queryStmt.executeQuery();
 
+                  insert =
+                      "INSERT INTO UP_USER_PARAM (USER_ID, USER_PARAM_NAME, USER_PARAM_VALUE) " +
+                      "VALUES(?, ?, ?)";
+                  insertStmt = con.prepareStatement(insert);
                   while (rs.next()) {
-                      insert =
-                          "INSERT INTO UP_USER_PARAM (USER_ID, USER_PARAM_NAME, USER_PARAM_VALUE) " +
-                          "VALUES(?, ?, ?)";
-
                       String userParamName = rs.getString("USER_PARAM_NAME");
                       String userParamValue = rs.getString("USER_PARAM_VALUE");
 
-                      insertStmt = con.prepareStatement(insert);
                       insertStmt.setInt(1, newUID);
                       insertStmt.setString(2, userParamName);
                       insertStmt.setString(3, userParamValue);
@@ -773,16 +873,16 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                       log.debug("RDBMUserIdentityStore::addNewUser(USER_ID=" + templateUser.getUserId() + "): " + query);
                   rs = queryStmt.executeQuery();
 
+                  insert =
+                      "INSERT INTO UP_USER_PROFILE (USER_ID, PROFILE_ID, PROFILE_NAME, DESCRIPTION, LAYOUT_ID, STRUCTURE_SS_ID, THEME_SS_ID) " +
+                      "VALUES(?, ?, ?, ?, NULL, NULL, NULL)";
+                  insertStmt = con.prepareStatement(insert);
                   while (rs.next()) {
-                      insert =
-                          "INSERT INTO UP_USER_PROFILE (USER_ID, PROFILE_ID, PROFILE_NAME, DESCRIPTION, LAYOUT_ID, STRUCTURE_SS_ID, THEME_SS_ID) " +
-                          "VALUES(?, ?, ?, ?, NULL, NULL, NULL)";
 
                       int profileId = rs.getInt("PROFILE_ID");
                       String profileName = rs.getString("PROFILE_NAME");
                       String description = rs.getString("DESCRIPTION");
 
-                      insertStmt = con.prepareStatement(insert);
                       insertStmt.setInt(1, newUID);
                       insertStmt.setInt(2, profileId);
                       insertStmt.setString(3, profileName);
@@ -810,15 +910,15 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                       log.debug("RDBMUserIdentityStore::addNewUser(USER_ID=" + templateUser.getUserId() + "): " + query);
                   rs = queryStmt.executeQuery();
 
+                  insert =
+                      "INSERT INTO UP_USER_UA_MAP (USER_ID, USER_AGENT, PROFILE_ID) " +
+                      "VALUES(?, ?, ?)";
+                  insertStmt = con.prepareStatement(insert);
                   while (rs.next()) {
-                      insert =
-                          "INSERT INTO UP_USER_UA_MAP (USER_ID, USER_AGENT, PROFILE_ID) " +
-                          "VALUES(?, ?, ?)";
 
                       String userAgent = rs.getString("USER_AGENT");
                       String profileId = rs.getString("PROFILE_ID");
 
-                      insertStmt = con.prepareStatement(insert);
                       insertStmt.setInt(1, newUID);
                       insertStmt.setString(2, userAgent);
                       insertStmt.setString(3, profileId);
