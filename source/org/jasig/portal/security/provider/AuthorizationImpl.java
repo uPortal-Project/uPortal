@@ -44,14 +44,14 @@ import org.apache.commons.logging.LogFactory;
 public class AuthorizationImpl implements IAuthorizationService {
 
     /** Instance of log in order to log events. */
-    private static final Log log = LogFactory.getLog(AuthorizationImpl.class);
-    
+    protected final Log log = LogFactory.getLog(getClass());
+
     /** Constant representing the separator used in the principal key. */
     private static final String PRINCIPAL_SEPARATOR = ".";
 
     /** The static instance of the AuthorizationImpl for purposes of creating a AuthorizationImpl singleton. */
     private static final IAuthorizationService singleton;
-    
+
     /** Instance of the Permission Store for storing permission information. */
     private IPermissionStore permissionStore;
 
@@ -515,7 +515,7 @@ throws AuthorizationException
 
     private void initialize() throws IllegalArgumentException {
         final boolean DEFAULT_CACHE_PERMISSIONS = false;
-    
+
          String factoryName = PropertiesManager.getProperty(
              "org.jasig.portal.security.IPermissionStore.implementation", null);
          String policyName = PropertiesManager
@@ -525,19 +525,19 @@ throws AuthorizationException
          this.cachePermissions = PropertiesManager.getPropertyAsBoolean(
              "org.jasig.portal.security.IAuthorizationService.cachePermissions",
              DEFAULT_CACHE_PERMISSIONS);
-    
+
          if (factoryName == null) {
              final String eMsg = "AuthorizationImpl.initialize(): No entry for org.jasig.portal.security.IPermissionStore.implementation portal.properties.";
              log.error(eMsg);
              throw new IllegalArgumentException(eMsg);
          }
-    
+
          if (policyName == null) {
              final String eMsg = "AuthorizationImpl.initialize(): No entry for org.jasig.portal.security.IPermissionPolicy.defaultImplementation portal.properties.";
              log.error(eMsg);
              throw new IllegalArgumentException(eMsg);
          }
-    
+
          try {
              this.permissionStore = (IPermissionStore)Class.forName(factoryName)
                  .newInstance();
@@ -547,7 +547,7 @@ throws AuthorizationException
              log.error(eMsg, e);
              throw new IllegalArgumentException(eMsg);
          }
-    
+
          try {
              this.defaultPermissionPolicy = (IPermissionPolicy)Class.forName(
                  policyName).newInstance();
@@ -557,7 +557,7 @@ throws AuthorizationException
              log.error(eMsg, e);
              throw new IllegalArgumentException(eMsg);
          }
-    
+
          try {
              this.PERMISSION_SET_TYPE = Class
                  .forName("org.jasig.portal.security.IPermissionSet");
@@ -611,21 +611,21 @@ public IPermissionManager newPermissionManager(String owner)
 /**
  * Factory method for IAuthorizationPrincipal. First check the principal
  * cache, and if not present, create the principal and cache it.
- * 
+ *
  * @return org.jasig.portal.security.IAuthorizationPrincipal
  * @param key java.lang.String
  * @param type java.lang.Class
  */
 public synchronized IAuthorizationPrincipal newPrincipal(String key, Class type) {
     final String principalKey = getPrincipalString(type, key);
-    
+
     if (this.principalCache.containsKey(principalKey)) {
         return (IAuthorizationPrincipal) this.principalCache.get(principalKey);
     }
-    
+
     final IAuthorizationPrincipal principal = primNewPrincipal(key, type);
     this.principalCache.put(principalKey, principal);
-    
+
     return principal;
 }
 
