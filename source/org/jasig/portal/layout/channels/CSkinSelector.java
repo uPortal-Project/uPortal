@@ -19,6 +19,7 @@ import org.jasig.portal.UserPreferences;
 import org.jasig.portal.channels.BaseChannel;
 import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.layout.UserLayoutStoreFactory;
+import org.jasig.portal.properties.PropertiesManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.XSLT;
@@ -26,14 +27,21 @@ import org.xml.sax.ContentHandler;
 
 /**
  * A channel for selecting skins.
+ *
+ * The path to the available skins is configured by the portal.properties
+ * property "org.jasig.portal.layout.channels.CSkinSelector.skins_path" as
+ * mediated by PropertiesManager.  If that property is not configured, the path
+ * "media/org/jasig/portal/layout/tab-column/xhtml-theme" is used.
+ *
  * @author Michael Ivanov, mvi@immagic.com
  * @version $Revision$
  */
   public class CSkinSelector extends BaseChannel implements IPrivileged {
 
       private static final Log log = LogFactory.getLog(CSkinSelector.class);
-      
-    private static final String SKINS_PATH = "media/org/jasig/portal/layout/tab-column/xhtml-theme";
+
+      private static final String SKINS_PATH = PropertiesManager.getProperty(CSkinSelector.class.getName() + ".skins_path", "media/org/jasig/portal/layout/tab-column/xhtml-theme");
+
     private static final String sslLocation = "/org/jasig/portal/channels/CSkinSelector/CSkinSelector.ssl";
     private PortalControlStructures controlStructures;
     private IUserPreferencesManager upm;
