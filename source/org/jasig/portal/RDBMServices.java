@@ -63,6 +63,7 @@ import edu.emory.mathcs.backport.java.util.concurrent.atomic.AtomicInteger;
  * @version $Revision$ $Date$
  */
 public class RDBMServices {
+    public static final String BASE_JNDI_CONTEXT = PropertiesManager.getProperty("org.jasig.portal.RDBMServices.baseJndiContext");
     public static final String PORTAL_DB = PropertiesManager.getProperty("org.jasig.portal.RDBMServices.PortalDatasourceJndiName", "PortalDb"); // JNDI name for portal database
     public static final String DEFAULT_DATABASE = "DEFAULT_DATABASE";
 
@@ -257,9 +258,8 @@ public class RDBMServices {
 
             try {
                 final Context initCtx = new InitialContext();
-                final Context envCtx = (Context)initCtx.lookup("java:comp/env");
-                ds = (DataSource)envCtx.lookup("jdbc/" + name);
-
+                final Context envCtx = (Context)initCtx.lookup(BASE_JNDI_CONTEXT);
+                ds = (DataSource)envCtx.lookup(name);
 
             }
             catch (Throwable t) {
