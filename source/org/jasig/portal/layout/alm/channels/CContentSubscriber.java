@@ -56,6 +56,7 @@ public class CContentSubscriber extends FragmentManager {
 	private String searchChannel = "true";
     private String searchCategory = "true";
     private String searchQuery = null;
+    private boolean isFragment = false;
 	
 	private final static String CHANNEL = "channel";
 	private final static String FRAGMENT = "fragment";
@@ -130,6 +131,7 @@ public class CContentSubscriber extends FragmentManager {
 		    String categoryId = CommonUtils.nvl(runtimeData.getParameter("uPcCS_categoryID"));
 			String action = CommonUtils.nvl(runtimeData.getParameter("uPcCS_action"));
 		    String channelState = CommonUtils.nvl(runtimeData.getParameter("channel-state"),"browse");
+            isFragment = CommonUtils.nvl(runtimeData.getParameter("isFragment"), String.valueOf(isFragment)).equals("true");
 			boolean all = false,
 			        expand = action.equals("expand"),
 			        condense = action.equals("condense");    
@@ -138,7 +140,7 @@ public class CContentSubscriber extends FragmentManager {
 		           
 		if ( expand || condense ) {
 			 		 	
-				if ( fragmentId.equals("all") ) {
+	            if ( !isFragment && fragmentId.equals("all") ) {
 				   all = true;
 				   tagNames.add(FRAGMENT); 		 
 				}      
@@ -164,16 +166,18 @@ public class CContentSubscriber extends FragmentManager {
 				      itemId = categoryId;
 					  itemName = CATEGORY;
 				  }	  	
-
-				  ListItem item = new ListItem(categoryId,itemId,itemName,channelState.equals("search")?"search":"browse");
-			
-				  if ( expand ) {
-				    expandedItems.add(item);
-				    condensedItems.remove(item);
-				  } else {
-				    condensedItems.add(item);  
-				    expandedItems.remove(item);
-				  }           
+                  
+                  if (!isFragment || (!itemName.equals(FRAGMENT) && !(itemName.equals(CATEGORY) && itemId.equals("Fragments")))) {
+					  ListItem item = new ListItem(categoryId,itemId,itemName,channelState.equals("search")?"search":"browse");
+				
+					  if ( expand ) {
+					    expandedItems.add(item);
+					    condensedItems.remove(item);
+					  } else {
+					    condensedItems.add(item);  
+					    expandedItems.remove(item);
+					  }           
+                  }
 			}
 				 
 			
@@ -182,6 +186,8 @@ public class CContentSubscriber extends FragmentManager {
 			 	initRegistry();
 			 	if ( initRegistry )
 			 	 initRegistry = false;
+			 	// Reset isFragment only from the XSLT params (ignoring cached value)
+                isFragment = CommonUtils.nvl(runtimeData.getParameter("isFragment"), "false").equals("true");
 		} else if ( action.equals("search") ) {
 		    searchFragment = CommonUtils.nvl(runtimeData.getParameter("search-fragment"),"false");
 		    searchChannel = CommonUtils.nvl(runtimeData.getParameter("search-channel"),"false");
@@ -294,6 +300,7 @@ public class CContentSubscriber extends FragmentManager {
 		     xslt.setStylesheetParameter("search-channel", searchChannel);
 		     xslt.setStylesheetParameter("search-category", searchCategory);
 		     xslt.setStylesheetParameter("search-query", CommonUtils.nvl(searchQuery));
+             xslt.setStylesheetParameter("isFragment", String.valueOf(isFragment));
 		     
 	  } catch ( DOMException e ) {
 	  	  throw new PortalException(e);     

@@ -41,6 +41,7 @@ Version $Revision$
     <xsl:param name="locale" select="'en_US'"/>
     <xsl:param name="mediaPath" select="'media/org/jasig/portal/channels/CContentSubscriber'"/>
     <xsl:param name="channel-state" select="'browse'"/>
+    <xsl:param name="isFragment" select="'false'"/>
     <!--~-->
     <!-- parameters for content search -->
     <!--~-->
@@ -859,6 +860,7 @@ Version $Revision$
                                                 <span class="uportal-text-small">Channels</span>
                                             </td>
                                         </tr>
+                                        <xsl:if test="$isFragment='false'">
                                         <tr>
                                             <td>
                                                 <input name="search-fragment" type="checkbox" value="true">
@@ -871,6 +873,7 @@ Version $Revision$
                                                 <span>Fragments</span>
                                             </td>
                                         </tr>
+                                        </xsl:if>
                                     </table>
                                 </td>
                                 <td>
@@ -1183,6 +1186,7 @@ Version $Revision$
     <xsl:template match="category">
         <xsl:choose>
             <xsl:when test="($channel-state='browse' and @view='expanded') or ($channel-state='search' and @search-view='expanded')">
+                <xsl:if test="$isFragment='false' or @name!='Fragments'">
                 <table cellpadding="2" cellspacing="0" border="0" width="100%" class="uportal-background-content">
                     <tr valign="top" align="left">
                         <xsl:if test="$channel-state='search' and @search-selected='true'">
@@ -1228,6 +1232,7 @@ Version $Revision$
                         </td>
                     </tr>
                 </table>
+                </xsl:if>
                 <xsl:apply-templates select="category">
                     <xsl:sort select="@name"/>
                 </xsl:apply-templates>
@@ -1241,6 +1246,7 @@ Version $Revision$
                 <xsl:apply-templates select="channel"/> -->
             </xsl:when>
             <xsl:otherwise>
+                <xsl:if test="$isFragment='false' or @name!='Fragments'">
                 <table cellpadding="2" cellspacing="0" border="0" width="100%" class="uportal-background-content">
                     <tr valign="top" align="left">
                         <xsl:if test="$channel-state='search' and @search-selected='true'">
@@ -1286,6 +1292,7 @@ Version $Revision$
                         </td>
                     </tr>
                 </table>
+                </xsl:if>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
@@ -1547,6 +1554,7 @@ Version $Revision$
     <!-- begin table for fragment list -->
     <!--~-->
     <xsl:template match="fragment">
+        <xsl:if test="$isFragment='false'">
         <xsl:choose>
             <xsl:when test="($channel-state='browse' and @view='expanded') or ($channel-state='search' and @search-view='expanded')">
                 <table cellpadding="2" cellspacing="0" border="0" width="100%" class="uportal-background-highlight">
@@ -1708,6 +1716,7 @@ Version $Revision$
                 </table>
             </xsl:otherwise>
         </xsl:choose>
+        </xsl:if>
     </xsl:template>
     <!--~-->
     <!-- end table for fragment list -->
