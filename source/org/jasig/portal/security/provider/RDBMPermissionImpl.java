@@ -668,6 +668,77 @@ private int primUpdate(IPermission perm, PreparedStatement ps) throws Exception
 
     return ps.executeUpdate();
 }
+
+private void prepareSelectQuery(PreparedStatement stmt, String owner, 
+    String principal, String activity,
+    String target, String type)
+throws SQLException {
+	int i = 1;
+	
+	if ( owner != null ) {
+	stmt.setString(i++, owner);
+	}   
+	
+	if ( principal != null ) {
+	stmt.setInt(i++, getPrincipalType(principal));
+	stmt.setString(i++, getPrincipalKey(principal));
+	}               
+	
+	if ( activity != null ) {
+	stmt.setString(i++, activity);
+	}   
+	
+	if ( target != null ) {
+	stmt.setString(i++, target);
+	}
+	
+	if ( type != null ) {
+	stmt.setString(i++, type);
+	}
+}
+
+
+private String getSelectQuery(String owner, String principal, String activity,
+    String target, String type) {
+	StringBuffer sqlQuery = new StringBuffer(getSelectPermissionSql());
+	sqlQuery.append(" WHERE ");
+	
+	if ( owner != null ) {
+	sqlQuery.append(OWNER_COLUMN);
+	sqlQuery.append(" = ? ");
+	} else {
+	sqlQuery.append("1 = 1 ");
+	}
+	
+	if ( principal != null ) {
+	sqlQuery.append("AND ");
+	sqlQuery.append(PRINCIPAL_TYPE_COLUMN);
+	sqlQuery.append(" = ? AND ");
+	sqlQuery.append(PRINCIPAL_KEY_COLUMN);
+	sqlQuery.append(" = ? ");
+	}
+	
+	if ( activity != null ) {
+	sqlQuery.append("AND ");
+	sqlQuery.append(ACTIVITY_COLUMN);
+	sqlQuery.append(" = ? ");
+	}
+	
+	if ( target != null ) {
+	sqlQuery.append("AND ");
+	sqlQuery.append(TARGET_COLUMN);
+	sqlQuery.append(" = ? ");
+	}
+	
+	if ( type != null ) {
+	sqlQuery.append("AND ");
+	sqlQuery.append(TYPE_COLUMN);
+	sqlQuery.append(" = ? ");
+	}
+	
+	return sqlQuery.toString();
+}
+
 /**
  * Select the Permissions from the store.
  * @param owner String - the Permission owner
@@ -684,96 +755,33 @@ public IPermission[] select
 throws AuthorizationException
 {
     Connection conn = null;
-    Statement stmnt = null;
+    PreparedStatement stmt = null;
     ResultSet rs = null;
     List perms = new ArrayList();
 
-    StringBuffer sqlQuery = new StringBuffer(getSelectPermissionSql());
-    sqlQuery.append(" WHERE ");
-
-    if ( owner != null )
-    {
-        sqlQuery.append(OWNER_COLUMN);
-        sqlQuery.append(" = '");
-        sqlQuery.append(RDBMServices.sqlEscape(owner));
-        sqlQuery.append("' ");
-    }
-    else
-    {
-        sqlQuery.append("1 = 1 ");
+    String query = getSelectQuery(owner, principal, activity, target, type);
+    if (log.isDebugEnabled()) {
+        log.debug("RDBMPermissionImpl.select(): " + query);
     }
 
-    if ( principal != null )
-        {
-            sqlQuery.append("AND ");
-            sqlQuery.append(PRINCIPAL_TYPE_COLUMN);
-            sqlQuery.append(" = ");
-            sqlQuery.append(getPrincipalType(principal));
-            sqlQuery.append(" ");
-            sqlQuery.append("AND ");
-            sqlQuery.append(PRINCIPAL_KEY_COLUMN);
-            sqlQuery.append(" = '");
-            sqlQuery.append(getPrincipalKey(principal));
-            sqlQuery.append("' ");
-        }
-
-    if ( activity != null )
-        {
-            sqlQuery.append("AND ");
-            sqlQuery.append(ACTIVITY_COLUMN);
-            sqlQuery.append(" = '");
-            sqlQuery.append(RDBMServices.sqlEscape(activity));
-            sqlQuery.append("' ");
-        }
-
-    if ( target != null )
-        {
-            sqlQuery.append("AND ");
-            sqlQuery.append(TARGET_COLUMN);
-            sqlQuery.append(" = '");
-            sqlQuery.append(RDBMServices.sqlEscape(target));
-            sqlQuery.append("' ");
-        }
-
-    if ( type != null )
-        {
-            sqlQuery.append("AND ");
-            sqlQuery.append(TYPE_COLUMN);
-            sqlQuery.append(" = '");
-            sqlQuery.append(type);
-            sqlQuery.append("' ");
-        }
-
-    if (log.isDebugEnabled())
-        log.debug("RDBMPermissionImpl.select(): " + sqlQuery.toString());
-
-    try
-    {
+    try {
         conn = RDBMServices.getConnection();
-        stmnt = conn.createStatement();
-        try
-        {
-            rs = stmnt.executeQuery(sqlQuery.toString());
-            try
-            {
+        stmt = conn.prepareStatement(query);
+        prepareSelectQuery(stmt, owner, principal, activity, target, type);
+        try {
+            rs = stmt.executeQuery();
+            try {
                 while ( rs.next() )
                     { perms.add(instanceFromResultSet(rs)); }
-            }
-            finally
-                { rs.close(); }
-        }
-        finally
-            { stmnt.close(); }
-    }
-    catch (SQLException sqle)
-    {
+            } finally { rs.close(); }
+        } finally { stmt.close(); }
+    } catch (SQLException sqle) {
         log.error("Problem retrieving permissions", sqle);
-        throw new AuthorizationException("Problem retrieving Permissions", sqle);
-    }
-    finally
-        { RDBMServices.releaseConnection(conn); }
+        throw new AuthorizationException("Problem retrieving Permissions " + sqle.getMessage(), sqle);
+    } finally { RDBMServices.releaseConnection(conn); }
 
     return ((IPermission[])perms.toArray(new IPermission[perms.size()]));
+
 }
 /**
  * @return org.jasig.portal.security.provider.RDBMPermissionImpl
