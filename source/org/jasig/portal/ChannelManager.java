@@ -188,26 +188,28 @@ public class ChannelManager implements LayoutEventListener {
             HashSet s0=new HashSet();
             Set children;
 
-            s0.add(channelTarget);
-            pendingChannels.remove(channelTarget);
-            children=getListeningChannels(channelTarget);
-            if(children!=null && !children.isEmpty()) {
-                children.retainAll(pendingChannels);
-                while(!children.isEmpty()) {
-                    // move to the next generation
-                    HashSet newChildren=new HashSet();
-                    for(Iterator ci=children.iterator();ci.hasNext();) {
-                        String childId=(String)ci.next();
-                        s0.add(childId);
-                        pendingChannels.remove(childId);
-                        Set currentChildren=getListeningChannels(childId);
-                        if(currentChildren!=null) {
-                            newChildren.addAll(currentChildren);
-                        }
-                    }
-                    newChildren.retainAll(pendingChannels);
-                    children=newChildren;
-                }
+            if (pendingChannels.contains(channelTarget)) {
+	            s0.add(channelTarget);
+	            pendingChannels.remove(channelTarget);
+	            children=getListeningChannels(channelTarget);
+	            if(children!=null && !children.isEmpty()) {
+	                children.retainAll(pendingChannels);
+	                while(!children.isEmpty()) {
+	                    // move to the next generation
+	                    HashSet newChildren=new HashSet();
+	                    for(Iterator ci=children.iterator();ci.hasNext();) {
+	                        String childId=(String)ci.next();
+	                        s0.add(childId);
+	                        pendingChannels.remove(childId);
+	                        Set currentChildren=getListeningChannels(childId);
+	                        if(currentChildren!=null) {
+	                            newChildren.addAll(currentChildren);
+	                        }
+	                    }
+	                    newChildren.retainAll(pendingChannels);
+	                    children=newChildren;
+	                }
+	            }
             }
 
             // now s0 group must be synchronized at renderXML(), while the remaining pendingChildren can be rendered freely
