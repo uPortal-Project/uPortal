@@ -8,8 +8,10 @@ package  org.jasig.portal;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
@@ -46,10 +48,10 @@ import org.jasig.portal.services.GroupService;
 import org.jasig.portal.tools.versioning.Version;
 import org.jasig.portal.tools.versioning.VersionsManager;
 import org.jasig.portal.utils.MovingAverage;
+import org.jasig.portal.utils.MovingAverageSample;
 import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.utils.SAX2BufferImpl;
 import org.jasig.portal.utils.SAX2DuplicatingFilterImpl;
-import org.jasig.portal.utils.MovingAverageSample;
 import org.jasig.portal.utils.SoftHashMap;
 import org.jasig.portal.utils.URLUtil;
 import org.jasig.portal.utils.XSLT;
@@ -108,8 +110,8 @@ public class UserInstance implements HttpSessionBindingListener {
     // string that defines which character set to use for content
     private static final String CHARACTER_SET = "UTF-8";
 
-    final SoftHashMap systemCache=new SoftHashMap(SYSTEM_XSLT_CACHE_MIN_SIZE);
-    final SoftHashMap systemCharacterCache=new SoftHashMap(SYSTEM_CHARACTER_BLOCK_CACHE_MIN_SIZE);
+    private static final Map systemCache=Collections.synchronizedMap(new SoftHashMap(SYSTEM_XSLT_CACHE_MIN_SIZE));
+    private static final Map systemCharacterCache=Collections.synchronizedMap(new SoftHashMap(SYSTEM_CHARACTER_BLOCK_CACHE_MIN_SIZE));
 
     protected IPerson person;
 
@@ -675,7 +677,6 @@ public class UserInstance implements HttpSessionBindingListener {
 
     private String constructCacheKey(IPerson person,String rootNodeId) throws PortalException {
         StringBuffer sbKey = new StringBuffer(1024);
-        sbKey.append(person.getID()).append(",");
         sbKey.append(rootNodeId).append(",");
         sbKey.append(uPreferencesManager.getUserPreferences().getCacheKey());
         sbKey.append(uPreferencesManager.getUserLayoutManager().getCacheKey());
