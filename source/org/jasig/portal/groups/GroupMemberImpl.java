@@ -321,6 +321,7 @@ public boolean isMemberOf(IGroupMember gm) throws GroupsException
 /**
  * Returns the <code>Set</code> of groups in our member <code>Collection</code> and,
  * recursively, in the <code>Collections</code> of our members.
+ * @param member org.jasig.portal.groups.IGroupMember - The current group member in the recursive execution.
  * @param s java.lang.Set - A Set that groups are added to.
  * @return java.util.Set
  */
