@@ -94,12 +94,12 @@
         <tr><td height="10"><img src="{$spacerIMG}" width="2" height="10"/></td></tr>
 
         
-        <xsl:if test="not($mode='edit')">
+      <xsl:if test="not($mode='edit') and not($mode='members')">
         	<xsl:call-template name="hrow">
 				<xsl:with-param name="width" select="5"/>
 			</xsl:call-template>
 			<tr><td height="5"><img src="{$spacerIMG}" width="2" height="5"/></td></tr>
-			<form action="{$baseActionURL}">
+        <form action="{$baseActionURL}" method="POST">
 				<input type="hidden" name="grpCommand" value="Search"/>
 				<input type="hidden" name="uP_root" value="me"/>
 				<tr>
@@ -230,6 +230,7 @@
   <xsl:template name="rightPaneButtons">
   	<xsl:param name="group"/>
   	<td align="right">
+      <xsl:if test="not($mode='members')">
           	<xsl:choose>
           		<xsl:when test="$mode='select'"/>
           		<xsl:when test="$group/@searchResults='true'">
@@ -247,6 +248,7 @@
           	</xsl:choose>
           	
           	<a href="{$baseActionURL}?grpCommand=Highlight&amp;grpCommandArg="><img width="16" height="16" border="0" hspace="1" src="{$mediaBase}/close.gif" alt="Stäng grupp" title="Stäng grupp"/></a>
+      </xsl:if>
           </td>
   </xsl:template>
   
@@ -308,7 +310,18 @@
             <td class="uportal-text" colspan="2">
               <xsl:choose>
                 <xsl:when test="not($mode='edit') or not($group/@canUpdate='true')">
+                    <!-- NOTE: Using read-only text box for compatibility with
+                           read-only text area below due to Mozilla quirk. pag -->
+                    <!-- <xsl:value-of select="$group/RDF/Description/title" /> -->
+                    <input type="text" size="40" maxsize="255" name="grpName" class="uportal-input-text">
+                      <xsl:attribute name="value">
                   <xsl:value-of select="$group/RDF/Description/title" />
+                      </xsl:attribute>
+                      <xsl:attribute name="readonly">
+                        readonly
+                      </xsl:attribute>
+                    </input>
+                    
                 </xsl:when>
                 <xsl:otherwise>
                   <input type="text" size="40" maxsize="255" name="grpName" class="uportal-input-text">
@@ -335,20 +348,28 @@
           <td class="uportal-text" colspan="2">
           	<xsl:choose>
                 <xsl:when test="not($mode='edit') or not($group/@canUpdate='true')">
-                  <xsl:value-of select="$group/RDF/Description/description" />
+                    <!-- NOTE: Must use read-only text area so Mozilla browsers will
+                             post on the first click of "Add Members" instead of
+                             needing to click twice. Don't know why. pag -->
+                    <!-- <xsl:value-of select="$group/RDF/Description/description" /> -->
+                    <textarea  cols="60" rows="5" name="grpDescription" 
+                               class="uportal-input-text" readonly="readonly">
+                      <xsl:value-of select="string($group/RDF/Description/description)" />
+                    </textarea>
                 </xsl:when>
                 <xsl:otherwise>
                   <textarea  cols="60" rows="5" name="grpDescription" class="uportal-input-text">
-                      <xsl:value-of select="$group/RDF/Description/description" />
+                      <xsl:value-of select="string($group/RDF/Description/description)" />
                   </textarea>
                 </xsl:otherwise>
               </xsl:choose>
           </td>
         </tr>
-        <xsl:if test="$mode='edit'">
+            <xsl:if test="($mode='edit') or ($mode='members')">
 			<tr>	
 				<td></td>
 				<td nowrap="nowrap" colspan="2">
+                  <xsl:if test="$mode='edit'">
 					<xsl:if test="$group/@canUpdate='true'">
 						<input type="submit" onClick="javascript:this.form.action='{$baseActionURL}?grpCommand=Update';" value="Uppdatera" class="uportal-button" />
 						<input type="reset" value="Reset Form"  class="uportal-button" />
@@ -357,11 +378,13 @@
 					<xsl:if test="not($highlightedGroupID='0') and not($grpKey='null') and $group/@canAssignPermissions='true'">
 						<input type="submit"  onClick="javascript:this.form.action='{$baseActionURL}?grpCommand=Permissions';" value="Tilldela rättigheter" class="uportal-button" />
 					  </xsl:if>
+                  </xsl:if>
 					<xsl:if test="$group/@canManageMembers='true' or ($grpServantMode='true')">
 						<input type="submit"  onClick="javascript:this.form.action='{$baseActionURL}?grpCommand=Add';" value="Lägg till medlemmar" class="uportal-button" />
 					</xsl:if>
 				</td>
 			</tr>
+              <xsl:if test="$mode='edit'">
 			<xsl:if test="not($grpServantMode='true')">
 			  <xsl:if test="$group/@canCreateGroup='true'">
 				  <tr>
@@ -379,6 +402,7 @@
 			  </xsl:if>
 			</xsl:if>
         </xsl:if>
+            </xsl:if>
         
       </xsl:otherwise>
     </xsl:choose>
@@ -491,12 +515,21 @@
 						</xsl:choose>
 					</td>
 					<td width="100%" class="uportal-channel-table-row-even">
+                    <xsl:choose>
+                      <xsl:when test="$mode='members'">
+                        <span class="uportal-channel-table-row-even"><strong>
+                          <xsl:value-of select="RDF/Description/title" /></strong>
+                        </span>
+                      </xsl:when>
+                      <xsl:otherwise>
 						<a href="{$baseActionURL}?grpCommand=Highlight&amp;grpCommandArg={@id}"> <span class="uportal-channel-table-row-even"><strong>
 							  <xsl:value-of select="RDF/Description/title" /></strong>
 							</span> </a>
+                      </xsl:otherwise>
+                    </xsl:choose>
 					</td>
 					<td align="right" valign="top" class="uportal-channel-table-row-even" nowrap="nowrap">
-					  <xsl:if test="$mode='edit' and (../@canManageMembers='true' or ($grpServantMode='true'))">
+                    <xsl:if test="(($mode='edit') or ($mode='members')) and (../@canManageMembers='true' or ($grpServantMode='true'))">
 						<a href="javascript:grpRemoveMember('{$baseActionURL}?grpCommand=Remove&amp;grpCommandArg=parent.{parent::group/@id}|child.{@id}','{RDF/Description/title}','{parent::group/RDF/Description/title}');">
 						<img src="{$mediaBase}/remove.gif" height="16" width="16" hspace="1" vspace="1" border="0" align="top" alt="Remove Member" title="Remove Member"/>
 						</a>
@@ -551,7 +584,7 @@
 					</strong>
 				  </td>
 				  <td align="right" valign="top" class="uportal-channel-table-row-odd">
-					<xsl:if test="$mode='edit' and ((../@canManageMembers='true') or ($grpServantMode='true'))">
+                  <xsl:if test="(($mode='edit') or ($mode='members')) and ((../@canManageMembers='true') or ($grpServantMode='true'))">
 					  <a href="javascript:grpRemoveMember('{$baseActionURL}?grpCommand=Remove&amp;grpCommandArg=parent.{parent::group/@id}|child.{@id}','{@displayName}','{parent::group/RDF/Description/title}');">
 					  	<img src="{$mediaBase}/remove.gif" height="16" width="16" hspace="1" vspace="1" border="0" align="top" alt="Remove Member" title="Remove Member"/>
 					  </a>
@@ -586,7 +619,7 @@
           </xsl:if>
      </form>
     
-    <xsl:if test="($mode='edit') and ($grpServantMode='true')">
+      <xsl:if test="(($mode='edit') or ($mode='members')) and ($grpServantMode='true')">
 		<form action="{$baseActionURL}" method="POST">
 		<input type="hidden" name="grpCommand" value="Cancel" />
 		  <tr>
@@ -647,12 +680,14 @@
           <input type="hidden" name="uP_root" value="me"/>
           <xsl:apply-templates select="$rootGroup" />
            <xsl:variable name="stype" select="$rootGroup/@entityType"/>
+      <xsl:if test="not($mode='members')">
           <xsl:for-each select="/CGroupsManager/group[@searchResults='true']">
           	<xsl:sort data-type="number" order="ascending" select="@id"/>
           	<xsl:if test="not($stype) or (@entityType=$stype)"> 
 				 <xsl:apply-templates select="." />
 			</xsl:if>
           </xsl:for-each>
+      </xsl:if>
         </form>
   </xsl:template>
   
@@ -690,9 +725,18 @@
                	<xsl:if test="$highlightedGroupID and $highlightedGroupID=@id">
             		<xsl:attribute name="class">uportal-background-highlight</xsl:attribute>
             	</xsl:if>
+                  <xsl:choose>
+                    <xsl:when test="($mode='members')">
+                      <span class="uportal-channel-table-row-even">
+                        <xsl:value-of select="RDF/Description/title" />
+                      </span>
+                    </xsl:when>
+                    <xsl:otherwise>
                   <a href="{$baseActionURL}?uP_root=me&amp;grpCommand=Highlight&amp;grpCommandArg={@id}"> <span class="uportal-channel-table-row-even">
                       <xsl:value-of select="RDF/Description/title" />
                     </span> </a>
+                    </xsl:otherwise>
+                  </xsl:choose>
     
               </td>
               <td>
