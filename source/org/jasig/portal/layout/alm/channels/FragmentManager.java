@@ -146,7 +146,63 @@ public abstract class FragmentManager extends BaseChannel implements IPrivileged
 
 	protected abstract Collection getFragments() throws PortalException;
 	
-	protected abstract void analyzeParameters( XSLT xslt ) throws PortalException;		
+    protected static final class ErrorMessage {
+        
+        // Instance Members.
+        private final String title;
+        private final String description;
 
+        /*
+         * Public API.
+         */
 
+        public ErrorMessage(String title, String description) {
+        
+            // Assertions.
+            if (title == null) {
+                String msg = "Argument 'title' cannot be null.";
+                throw new IllegalArgumentException(msg);
+            }
+            if (description == null) {
+                String msg = "Argument 'description' cannot be null.";
+                throw new IllegalArgumentException(msg);
+            }
+
+            // Instance Members.
+            this.title = title;
+            this.description = description;
+
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public Element toElement(Document doc) {
+
+            // Assertions.
+            if (doc == null) {
+                String msg = "Argument 'doc' cannot be null.";
+                throw new IllegalArgumentException(msg);
+            }
+
+            // Title.
+            Element t = doc.createElement("title");
+            t.appendChild(doc.createTextNode(title));
+
+            // Description.
+            Element d = doc.createElement("body");
+            d.appendChild(doc.createTextNode(description));
+
+            Element rslt = doc.createElement("error-message");
+            rslt.appendChild(t);
+            rslt.appendChild(d);
+
+            return rslt;
+        }
+    }
 }

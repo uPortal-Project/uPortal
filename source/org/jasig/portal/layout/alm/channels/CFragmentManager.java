@@ -7,31 +7,33 @@
 package org.jasig.portal.layout.alm.channels;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
-import org.jasig.portal.groups.IGroupMember;
-import org.jasig.portal.IServant;
-import org.jasig.portal.channels.groupsmanager.CGroupsManagerServantFactory;
-import org.jasig.portal.ChannelRuntimeData;
-import org.jasig.portal.services.GroupService;
 import org.jasig.portal.AuthorizationException;
+import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.IServant;
 import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalException;
+import org.jasig.portal.channels.groupsmanager.CGroupsManagerServantFactory;
+import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.layout.alm.ALFragment;
 import org.jasig.portal.layout.alm.ALNode;
 import org.jasig.portal.layout.alm.IALFolderDescription;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
+import org.jasig.portal.services.GroupService;
 import org.jasig.portal.utils.CommonUtils;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.SAX2FilterImpl;
 import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
-import org.xml.sax.Attributes;
 
 
 /**
@@ -139,10 +141,11 @@ public class CFragmentManager extends FragmentManager {
 		return alm.addNode(folderDesc, getFragmentRootId(fragment.getId()), null).getId();
 	}
 
-	protected void analyzeParameters( XSLT xslt ) throws PortalException {
+	protected ErrorMessage[] analyzeParameters( XSLT xslt ) throws PortalException {
 		
 		String fragmentId = CommonUtils.nvl(runtimeData.getParameter("uPcFM_selectedID"));
 		String action = CommonUtils.nvl(runtimeData.getParameter("uPcFM_action"));
+        List rslt = new ArrayList();
 		  
 				if (action.equals("save_new")) {
 					String fragmentName = runtimeData.getParameter("fragment_name");
@@ -212,6 +215,36 @@ public class CFragmentManager extends FragmentManager {
 				
 		           if ( getGroupServant().isFinished() ) {
 					IGroupMember[] gms = (IGroupMember[]) getGroupServant().getResults();
+                    List fwd = new ArrayList();
+                    List cull = new ArrayList();
+                    for (int i=0; i < gms.length; i++) {
+                        if (gms[i].isGroup()) {
+                            fwd.add(gms[i]);
+                        } else {
+                            cull.add(gms[i]);
+                        }
+                    }
+                    gms = (IGroupMember[]) fwd.toArray(new IGroupMember[0]);
+
+                    // Send a msg if there were users selected.
+                    if (cull.size() > 0) {
+                        String title = "Unable to Publish to Some Targets";
+                        StringBuffer desc = new StringBuffer();
+                        desc.append("Fragments may only be associated with groups.  ")
+                            .append("The following selections are not groups, and ")
+                            .append("will be ignored:  ");
+                        for (int i=0; i < cull.size(); i++) {
+                            IGroupMember m = (IGroupMember) cull.get(i);
+                            desc.append(m.getKey());
+                            if (i == cull.size() - 1) {
+                                desc.append(".");
+                            } else {
+                                desc.append(", ");
+                            }
+                        }
+                        rslt.add(new ErrorMessage(title, desc.toString()));
+                    }
+
 					if ( gms != null && "Done".equals(runtimeData.getParameter("grpCommand")))
 					  alm.setPublishGroups(gms,servantFragmentId);
 		           	servants.remove(getServantKey());
@@ -230,7 +263,7 @@ public class CFragmentManager extends FragmentManager {
 				
 				xslt.setStylesheetParameter("uPcFM_selectedID",fragmentId);
 			    xslt.setStylesheetParameter("uPcFM_action",action);	
-		
+                return (ErrorMessage[]) rslt.toArray(new ErrorMessage[rslt.size()]);
 	}
 	
 	
@@ -264,10 +297,17 @@ public class CFragmentManager extends FragmentManager {
             }
 		
 		XSLT xslt = XSLT.getTransformer(this, runtimeData.getLocales());
+        
+        ErrorMessage[] errors = analyzeParameters(xslt);
+        Document doc = getFragmentList();
+        Element frag = doc.getDocumentElement();
+        Element cat = (Element) frag.getFirstChild();
+        for (int i=0; i < errors.length; i ++) {
+            Element e = errors[i].toElement(doc);
+            frag.insertBefore(e, cat);
+        }
 		
-		analyzeParameters(xslt);
-		
-		xslt.setXML(getFragmentList());
+		xslt.setXML(doc);
 		xslt.setXSL(sslLocation,"fragmentManager",runtimeData.getBrowserInfo());
 		xslt.setTarget(new ServantSAXFilter(out));
 		xslt.setStylesheetParameter("baseActionURL",runtimeData.getBaseActionURL());
