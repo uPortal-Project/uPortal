@@ -7,6 +7,7 @@ package org.jasig.portal.layout.alm;
 
 import java.util.Collection;
 import org.jasig.portal.PortalException;
+import org.jasig.portal.UserPreferences;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.layout.IUserLayoutManager;
 
@@ -39,6 +40,12 @@ public interface IAggregatedUserLayoutManager extends IUserLayoutManager {
      * @exception PortalException if an error occurs
      */
     public void saveFragment() throws PortalException;
+    
+    /**
+     * Saves the current fragment if the layout is a fragment
+     * @exception PortalException if an error occurs
+     */
+    public void saveFragment(UserPreferences userPrefs) throws PortalException;
 
 	/**
 		 * Deletes the current fragment if the layout is a fragment
@@ -53,13 +60,19 @@ public interface IAggregatedUserLayoutManager extends IUserLayoutManager {
      */
     public void loadFragment( String fragmentId ) throws PortalException;
     
-    
+	/**
+	* Saves the fragment in the store
+	* @param fragment a <code>ILayoutFragment</code> instance
+	* @exception PortalException if an error occurs
+	*/
+    public void saveFragment ( ILayoutFragment fragment ) throws PortalException;
+
 	/**
 		* Saves the fragment in the store
 		* @param fragment a <code>ILayoutFragment</code> instance
 		* @exception PortalException if an error occurs
 		*/
-	public void saveFragment ( ILayoutFragment fragment ) throws PortalException;
+	public void saveFragment ( ILayoutFragment fragment, UserPreferences userPrefs ) throws PortalException;
    
 	
 	/**
@@ -142,5 +155,13 @@ public interface IAggregatedUserLayoutManager extends IUserLayoutManager {
 	  * @exception PortalException if an error occurs
 	  */
 	public void setPublishGroups ( IGroupMember[] groups, String fragmentId ) throws PortalException;
+	
+    /**
+     * Signal manager to persist user layout to a database
+     * @param userPrefs <code>UserPreferences</code> that are needed for fragment param saving.
+     * @exception PortalException if an error occurs
+     */
+	public void saveUserLayout(UserPreferences userPrefs) throws PortalException;
+
 
 }

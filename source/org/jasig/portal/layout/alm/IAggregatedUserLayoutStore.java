@@ -8,6 +8,7 @@ package org.jasig.portal.layout.alm;
 import java.util.Map;
 import java.util.Collection;
 import org.jasig.portal.PortalException;
+import org.jasig.portal.UserPreferences;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.groups.IGroupMember;
@@ -36,37 +37,7 @@ public interface IAggregatedUserLayoutStore extends IUserLayoutStore {
      */
     public ALNode addUserLayoutNode (IPerson person, UserProfile profile, ALNode node) throws PortalException;
 
-    /**
-     * Update the new user layout node.
-     * @param person an <code>IPerson</code> object specifying the user
-     * @param profile a user profile for which the layout is being stored
-     * @param node a <code>ALNode</code> object specifying the node
-     * @return a boolean result of this operation
-     * @exception PortalException if an error occurs
-     */
-    public boolean updateUserLayoutNode (IPerson person, UserProfile profile, ALNode node) throws PortalException;
-
-    /**
-     * Update the new user layout node.
-     * @param person an <code>IPerson</code> object specifying the user
-     * @param profile a user profile for which the layout is being stored
-     * @param node a <code>ALNode</code> node ID specifying the node
-     * @return a boolean result of this operation
-     * @exception PortalException if an error occurs
-     */
-    public boolean deleteUserLayoutNode (IPerson person, UserProfile profile, ALNode node) throws PortalException;
-
-    /**
-     * Gets the user layout node.
-     * @param person an <code>IPerson</code> object specifying the user
-     * @param profile a user profile for which the layout is being stored
-     * @param nodeId a <code>String</code> node ID specifying the node
-     * @return a <code>ALNode</code> object
-     * @exception PortalException if an error occurs
-     */
-
-    public ALNode getUserLayoutNode (IPerson person, UserProfile profile, String nodeId) throws PortalException;
-
+ 
     /**
      * Returns the user layout internal representation.
      * @param person an <code>IPerson</code> object specifying the user
@@ -91,9 +62,10 @@ public interface IAggregatedUserLayoutStore extends IUserLayoutStore {
      * Persists the fragment
      * @param person an <code>IPerson</code> object specifying the user
      * @param layoutImpl a <code>ILayoutFragment</code> object containing a fragment
+     * @param userPrefs a <code>UserPreferences</code> object containing user preferences for column width persistance
      * @exception PortalException if an error occurs
      */
-    public void setFragment (IPerson person, ILayoutFragment layoutImpl ) throws PortalException;
+    public void setFragment (IPerson person, ILayoutFragment layoutImpl, UserPreferences userPrefs ) throws PortalException;
 
     /**
      * Returns the layout fragment as a user layout.

@@ -6,9 +6,11 @@
 package org.jasig.portal.layout.alm;
 
 import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Set;
 import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 
 import org.apache.commons.logging.Log;
@@ -391,6 +393,15 @@ public class AggregatedLayout implements IAggregatedLayout {
 					attributes.addAttribute("","immutable","immutable","CDATA",CommonUtils.boolToStr(folderDescription.isImmutable()));
 					attributes.addAttribute("","name","name","CDATA",folderDescription.getName());
 					attributes.addAttribute("","priority","priority","CDATA",folder.getPriority()+"");
+                    
+					// if the node has additional attributes, apply them
+                    Map nodeAttributes = node.getAttributes();
+                    for (Iterator attributeNameIter = nodeAttributes.keySet().iterator(); attributeNameIter.hasNext();) {
+                        String attributeName = (String) attributeNameIter.next();
+                        String attributeValue = (String) nodeAttributes.get(attributeName);                        
+                        attributes.addAttribute("", attributeName, attributeName, "CDATA", attributeValue);
+                    }
+
 
 					contentHandler.startElement("",FOLDER,FOLDER,attributes);
 

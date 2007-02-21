@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.HashSet;
 import java.util.Set;
@@ -34,6 +35,7 @@ import org.jasig.portal.StructureStylesheetUserPreferences;
 import org.jasig.portal.ThemeStylesheetUserPreferences;
 import org.jasig.portal.ThemeStylesheetDescription;
 import org.jasig.portal.StructureStylesheetDescription;
+import org.jasig.portal.UserPreferences;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.channels.error.CError;
 import org.jasig.portal.channels.error.ErrorCode;
@@ -45,6 +47,8 @@ import org.jasig.portal.layout.restrictions.IUserLayoutRestriction;
 import org.jasig.portal.layout.restrictions.UserLayoutRestrictionFactory;
 import org.jasig.portal.layout.restrictions.alm.PriorityRestriction;
 import org.jasig.portal.layout.simple.RDBMUserLayoutStore;
+import org.jasig.portal.rdbm.DatabaseMetaDataImpl;
+import org.jasig.portal.rdbm.IDatabaseMetadata;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.GroupService;
 import org.jasig.portal.utils.CommonUtils;
@@ -53,6 +57,8 @@ import org.jasig.portal.utils.CommonUtils;
 
 /**
  * AggregatedUserLayoutStore implementation using the relational database with SQL 92.
+ * <p>
+ * Company: Instructional Media &amp; Magic
  * 
  * Prior to uPortal 2.5, this class existed in the package org.jasig.portal.layout.
  * It was moved to its present package to reflect that it is part of Aggregated
@@ -61,12 +67,13 @@ import org.jasig.portal.utils.CommonUtils;
  * @author <a href="mailto:mvi@immagic.com">Michael Ivanov</a>
  * @version $Revision$
  */
+
 public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IAggregatedUserLayoutStore {
 	
-
-
-    private static final int LOST_FOLDER_ID = -1;
-	private static final String NODE_SEPARATOR = "-";
+    private final ALFragmentNodeAttributeService nodeAttributeService = new ALFragmentNodeAttributeService(RDBMServices.getDataSource());
+    
+	private static final int LOST_FOLDER_ID = -1;
+	private static final String NODE_SEPARATOR = "_";
 	
 	protected static final String FRAGMENT_UPDATE_SQL = "UPDATE UP_FRAGMENTS SET NEXT_NODE_ID=?,PREV_NODE_ID=?,CHLD_NODE_ID=?,PRNT_NODE_ID=?,"+
 	"EXTERNAL_ID=?,CHAN_ID=?,NAME=?,TYPE=?,HIDDEN=?,IMMUTABLE=?,UNREMOVABLE=?,GROUP_KEY=?,"+
@@ -99,12 +106,12 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 	"CHAN_PUBL_DT,CHAN_APVL_ID,CHAN_APVL_DT,CHAN_TIMEOUT,CHAN_EDITABLE,CHAN_HAS_HELP,CHAN_HAS_ABOUT,"+
 	"CHAN_FNAME,CHAN_SECURE) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 	
-    public AggregatedUserLayoutStore() throws Exception {
-        super();
-        // TODO Auto-generated constructor stub
-    }
-    
-    
+    private Object fragmentLock = new Object();
+	
+	public AggregatedUserLayoutStore() throws Exception {
+		super();
+	}
+	
 	/**
 	 * Return the Structure ID tag (Overloaded)
 	 * @param  structId
@@ -416,7 +423,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 							pssq.setInt(1, userId);
 							pssq.setInt(2, profileId);
 							pssq.setInt(3, stylesheetId);
-							pssq.setInt(4, new Integer (channelId.substring(1)).intValue());
+							pssq.setInt(4, Integer.parseInt(channelId));
 							pssq.setString(5, pName);
 							if (log.isDebugEnabled())
 								log.debug("AggregatedUserLayoutStore::setThemeStylesheetUserPreferences(): " + _sSelectQuery);
@@ -432,7 +439,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 										updateStmt.setInt(2, userId);
 										updateStmt.setInt(3, profileId);
 										updateStmt.setInt(4, stylesheetId);
-										updateStmt.setInt(5, new Integer (channelId.substring(1)).intValue());
+										updateStmt.setInt(5, Integer.parseInt(channelId));
 										updateStmt.setString(6, pName);
 										if (log.isDebugEnabled())
 											log.debug("AggregatedUserLayoutStore::setThemeStylesheetUserPreferences(): " + _sUpdateQuery);
@@ -450,7 +457,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 										insertStmt.setInt(2, profileId);
 										insertStmt.setInt(3, stylesheetId);
 										insertStmt.setInt(4, 2);
-										insertStmt.setInt(5, new Integer (channelId.substring(1)).intValue());
+										insertStmt.setInt(5, Integer.parseInt(channelId));
 										insertStmt.setString(6, pName);
 										insertStmt.setInt(7, 3);
 										insertStmt.setString(8, pValue);
@@ -483,136 +490,202 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 		}
 	}
 	
-	
-	/**
-	 * Add the new user layout node.
-	 * @param person an <code>IPerson</code> object specifying the user
-	 * @param profile a user profile for which the layout is being stored
-	 * @param node a <code>ALNode</code> object specifying the node
-	 * @return a <code>ALNode</code> object specifying the node with the generated node ID
-	 * @exception PortalException if an error occurs
-	 */
-	public synchronized ALNode addUserLayoutNode (IPerson person, UserProfile profile, ALNode node ) throws PortalException {
-		Connection con = RDBMServices.getConnection();
-		
-		try {
-			
-			RDBMServices.setAutoCommit(con,false);
-			
-			int nodeId = 0;
-			int layoutId = -1;
-			int userId = person.getID();
-			IALNodeDescription nodeDesc = (IALNodeDescription) node.getNodeDescription();
-			
-			int fragmentId = CommonUtils.parseInt(nodeDesc.getFragmentId());
-			int fragmentNodeId = CommonUtils.parseInt(nodeDesc.getFragmentNodeId());
-			
-			Statement stmt = con.createStatement();
-			ResultSet rs;
-			
-			// eventually, we need to fix template layout implementations so you can just do this:
-			//        int layoutId=profile.getLayoutId();
-			// but for now:
-			if ( fragmentId > 0 && fragmentNodeId <= 0 ) {
-				
-				// TO GET THE NEXT NODE ID FOR FRAGMENT NODES
-				rs = stmt.executeQuery("SELECT MAX(NODE_ID) FROM UP_FRAGMENTS WHERE FRAGMENT_ID=" + fragmentId);
-				if ( rs.next() )
-					nodeId = rs.getInt(1) + 1;
-				else
-					nodeId = 1;
-				
-				if ( rs != null ) rs.close();
-				
-			} else {
-				String subSelectString = "SELECT LAYOUT_ID FROM UP_USER_PROFILE WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profile.getProfileId();
-				if (log.isDebugEnabled())
-					log.debug("AggregatedUserLayoutStore::addUserLayoutNode(): " + subSelectString);
-				rs = stmt.executeQuery(subSelectString);
-				try {
-					if ( rs.next() )      
-						layoutId = rs.getInt(1);
-				} finally {
-					rs.close();
-				}
-				
-				// Make sure the next struct id is set in case the user adds a channel
-				String sQuery = "SELECT NEXT_STRUCT_ID FROM UP_USER WHERE USER_ID=" + userId;
-				if (log.isDebugEnabled())
-					log.debug("AggregatedUserLayoutStore::addUserLayoutNode(): " + sQuery);
-				
-				rs = stmt.executeQuery(sQuery);
-				try {
-					if ( rs.next() ){
-						nodeId = rs.getInt(1)+1;
-					}
-				} finally {
-					rs.close();
-				}
-				
-				sQuery = "UPDATE UP_USER SET NEXT_STRUCT_ID=" + nodeId + " WHERE USER_ID=" + userId;
-				stmt.executeUpdate(sQuery);
-			}
-			
-			PreparedStatement psAddNode, psAddRestriction;
-			
-			
-			// Setting the node ID
-			nodeDesc.setId(nodeId+"");
-			
-			if ( fragmentId > 0 && fragmentNodeId <= 0 )
-				psAddNode = con.prepareStatement(FRAGMENT_ADD_SQL);
-			else
-				psAddNode = con.prepareStatement(LAYOUT_ADD_SQL);
-			
-			if ( fragmentId > 0 )
-				psAddRestriction = con.prepareStatement(FRAGMENT_RESTRICTION_ADD_SQL);
-			else
-				psAddRestriction = con.prepareStatement(LAYOUT_RESTRICTION_ADD_SQL);
-			
-			
-			PreparedStatement  psAddChannelParam = null, psAddChannel = null;
-			
-			if ( node.getNodeType() == IUserLayoutNodeDescription.CHANNEL ) {
-				IALChannelDescription channelDesc = (IALChannelDescription) nodeDesc;
-				int publishId = CommonUtils.parseInt(channelDesc.getChannelPublishId());
-				if ( publishId > 0 ) {
-					rs = stmt.executeQuery("SELECT CHAN_NAME FROM UP_CHANNEL WHERE CHAN_ID=" + publishId);
-					try {
-						if ( rs.next() ) {
-							channelDesc.setName(rs.getString(1));
-							fillChannelDescription( channelDesc );
-						}
-					} finally {
-						rs.close();
-					}
-				}
-			}
-			
-			
-			ALNode resultNode = addUserLayoutNode ( userId, layoutId, node, psAddNode, psAddRestriction, null, null, stmt );
-			
-			if ( psAddNode != null ) psAddNode.close();
-			if ( psAddRestriction != null ) psAddRestriction.close();
-			if ( psAddChannel != null ) psAddChannel.close();
-			if ( psAddChannelParam != null ) psAddChannelParam.close();
-			
-			stmt.close();
-			RDBMServices.commit(con);
-			con.close();
-			
-			return resultNode;
-			
-		} catch (Exception e) {
-			String errorMessage = e.getMessage();
-			try { RDBMServices.rollback(con); } catch ( SQLException sqle ) {
-				log.error( sqle.getMessage(), sqle );
-				errorMessage += ":" + sqle.getMessage();
-			}
-			throw new PortalException(errorMessage, e);
-		}
-	}
-	
+
+    /**
+     * Add the new user layout node.
+     * @param person an <code>IPerson</code> object specifying the user
+     * @param profile a user profile for which the layout is being stored
+     * @param node a <code>ALNode</code> object specifying the node
+     * @return a <code>ALNode</code> object specifying the node with the generated node ID
+     * @exception PortalException if an error occurs
+     */
+    public synchronized ALNode addUserLayoutNode (IPerson person, UserProfile profile, ALNode node ) throws PortalException {
+        
+        Connection con = null;
+        
+        try {
+            // Retrieve our own connection
+            con = RDBMServices.getConnection();
+            RDBMServices.setAutoCommit(con,false);
+            
+            // Add the user layout node using the connection
+            ALNode newNode = addUserLayoutNode(person, profile, node, con);
+            
+            // Commit all changes
+            RDBMServices.commit(con);
+            
+            return newNode;
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            String errorMessage = e.getMessage();
+            try {
+                RDBMServices.rollback(con);
+            } catch ( SQLException sqle ) {
+                log.error( sqle.toString() );
+                errorMessage += ":" + sqle.getMessage();
+            }
+            throw new PortalException(errorMessage, e);
+        } finally {
+            try {
+                if (con != null) {
+                    RDBMServices.setAutoCommit(con, true);
+                    RDBMServices.releaseConnection(con);
+                }
+            } catch (Exception e) {
+                log.error( "AggregatedUserLayoutStore::addUserLayoutNode(): Failed to clean up resources.");
+            }
+        }
+    }
+    
+    /**
+     * Add the new user layout node.
+     * @param person an <code>IPerson</code> object specifying the user
+     * @param profile a user profile for which the layout is being stored
+     * @param node a <code>ALNode</code> object specifying the node
+     * @param con The connection instance to be used to perform all database operations.
+     * @return a <code>ALNode</code> object specifying the node with the generated node ID
+     * @exception PortalException if an error occurs
+     */
+    private ALNode addUserLayoutNode (IPerson person, UserProfile profile, ALNode node, Connection con)
+    throws PortalException {
+        
+        Statement stmt = null;
+        ResultSet rs = null;
+        PreparedStatement psAddNode = null;
+        PreparedStatement psAddRestriction = null;
+        
+        try {
+            
+            int nodeId = 0;
+            int layoutId = -1;
+            int userId = person.getID();
+            IALNodeDescription nodeDesc = (IALNodeDescription)node.getNodeDescription();
+            int assignedNodeId = CommonUtils.parseInt(nodeDesc.getId());
+            int fragmentId = CommonUtils.parseInt(nodeDesc.getFragmentId());
+            int fragmentNodeId = CommonUtils.parseInt(nodeDesc.getFragmentNodeId());
+            
+            boolean nodeIdAssigned = false;
+            
+            stmt = con.createStatement();
+            
+            // If a valid Id was assigned for this node use that one instead
+            if (assignedNodeId > 0) {
+                nodeId = assignedNodeId;
+                nodeIdAssigned = true;
+            }
+            
+            // eventually, we need to fix template layout implementations so you can just do this:
+            // int layoutId=profile.getLayoutId();
+            // but for now:
+            if ( fragmentId > 0 && fragmentNodeId <= 0 ) {
+                
+                // Assigned a new node Id only if a valid one was not already assigned
+                if (!nodeIdAssigned) {
+                    // TO GET THE NEXT NODE ID FOR FRAGMENT NODES
+                    rs = stmt.executeQuery("SELECT MAX(NODE_ID) FROM UP_FRAGMENTS WHERE FRAGMENT_ID=" + fragmentId);
+                    if ( rs.next() )
+                        nodeId = rs.getInt(1) + 1;
+                    else
+                        nodeId = 1;
+                    
+                    rs.close();
+                    rs = null;
+                }
+                
+            } else {
+                String subSelectString = "SELECT LAYOUT_ID FROM UP_USER_PROFILE WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profile.getProfileId();
+                log.debug( "AggregatedUserLayoutStore::addUserLayoutNode(): " + subSelectString);
+                rs = stmt.executeQuery(subSelectString);
+                try {
+                    if ( rs.next() )
+                        layoutId = rs.getInt(1);
+                } finally {
+                    rs.close();
+                    rs = null;
+                }
+                
+                // Only update next struct_id if a new node id was created- no valid node id was assigned
+                if (!nodeIdAssigned) {
+                    
+                    // Make sure the next struct id is set in case the user adds a channel
+                    String sQuery = "SELECT NEXT_STRUCT_ID FROM UP_USER WHERE USER_ID=" + userId;
+                    log.debug( "AggregatedUserLayoutStore::addUserLayoutNode(): " + sQuery);
+                    
+                    rs = stmt.executeQuery(sQuery);
+                    try {
+                        if ( rs.next() );
+                        nodeId = rs.getInt(1)+1;
+                    } finally {
+                        rs.close();
+                        rs = null;
+                    }
+                    
+                    sQuery = "UPDATE UP_USER SET NEXT_STRUCT_ID=" + nodeId + " WHERE USER_ID=" + userId;
+                    stmt.executeUpdate(sQuery);
+                }
+            }
+            
+            // Setting the node ID
+            nodeDesc.setId(nodeId+"");
+            
+            if ( fragmentId > 0 && fragmentNodeId <= 0 )
+                psAddNode = con.prepareStatement(FRAGMENT_ADD_SQL);
+            else
+                psAddNode = con.prepareStatement(LAYOUT_ADD_SQL);
+            
+            if ( fragmentId > 0 )
+                psAddRestriction = con.prepareStatement(FRAGMENT_RESTRICTION_ADD_SQL);
+            else
+                psAddRestriction = con.prepareStatement(LAYOUT_RESTRICTION_ADD_SQL);
+            
+            if ( node.getNodeType() == IUserLayoutNodeDescription.CHANNEL ) {
+                IALChannelDescription channelDesc = (IALChannelDescription) nodeDesc;
+                int publishId = CommonUtils.parseInt(channelDesc.getChannelPublishId());
+                if ( publishId > 0 ) {
+                    rs = stmt.executeQuery("SELECT CHAN_NAME FROM UP_CHANNEL WHERE CHAN_ID=" + publishId);
+                    try {
+                        if ( rs.next() ) {
+                            channelDesc.setName(rs.getString(1));
+                            fillChannelDescription( channelDesc );
+                        }
+                    } finally {
+                        rs.close();
+                        rs = null;
+                    }
+                }
+            }
+            
+            ALNode resultNode = addUserLayoutNode ( userId, layoutId, node, psAddNode, psAddRestriction, null, null, stmt );
+            
+            stmt.close();
+            stmt = null;
+            
+            return resultNode;
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            String errorMessage = e.getMessage();
+            try {
+                RDBMServices.rollback(con);
+            } catch ( SQLException sqle ) {
+                log.error( sqle.toString() );
+                errorMessage += ":" + sqle.getMessage();
+            }
+            throw new PortalException(errorMessage, e);
+        } finally {
+            try {
+                // Ensure resouces are closed/cleaned-up
+                if ( rs != null) rs.close();
+                if ( stmt != null) stmt.close();
+                if ( psAddNode != null ) psAddNode.close();
+                if ( psAddRestriction != null ) psAddRestriction.close();
+            } catch (Exception e) {
+                log.error( "AggregatedUserLayoutStore::addUserLayoutNode(): Failed to clean up resources.");
+            }
+        }
+    }
+    
 	/**
 	 * Add the new user layout node.
 	 * @param userId the user
@@ -900,85 +973,96 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 		}
 		
 	}
-	
-	
-	/**
-	 * Update the new user layout node.
-	 * @param person an <code>IPerson</code> object specifying the user
-	 * @param profile a user profile for which the layout is being stored
-	 * @param node a <code>ALNode</code> object specifying the node
-	 * @return a boolean result of this operation
-	 * @exception PortalException if an error occurs
-	 */
-	public boolean updateUserLayoutNode (IPerson person, UserProfile profile, ALNode node ) throws PortalException {
-		
-		Connection con = RDBMServices.getConnection();
-		
-		try {
-			
-			RDBMServices.setAutoCommit(con,false);
-			
-			
-			int userId = person.getID();
-			IALNodeDescription nodeDesc = (IALNodeDescription) node.getNodeDescription();
-			
-			Statement stmt = con.createStatement();
-			
-			// eventually, we need to fix template layout implementations so you can just do this:
-			//        int layoutId=profile.getLayoutId();
-			// but for now:
-			String subSelectString = "SELECT LAYOUT_ID FROM UP_USER_PROFILE WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profile.getProfileId();
-			int layoutId = -1;
-			ResultSet rs = stmt.executeQuery(subSelectString);
-			try {
-				if ( rs.next() )
-					layoutId = rs.getInt(1);
-			} finally {
-				rs.close();
-			}
-			
-			PreparedStatement psUpdateNode, psUpdateRestriction;
-			int fragmentId = CommonUtils.parseInt(nodeDesc.getFragmentId());
-			int fragmentNodeId = CommonUtils.parseInt(nodeDesc.getFragmentNodeId());
-			
-			if ( fragmentId > 0 && fragmentNodeId <= 0 )
-				psUpdateNode = con.prepareStatement(FRAGMENT_UPDATE_SQL);
-			else
-				psUpdateNode = con.prepareStatement(LAYOUT_UPDATE_SQL);
-			
-			if ( fragmentId > 0 )
-				psUpdateRestriction = con.prepareStatement(FRAGMENT_RESTRICTION_UPDATE_SQL);
-			else
-				psUpdateRestriction = con.prepareStatement(LAYOUT_RESTRICTION_UPDATE_SQL);
-			
-			PreparedStatement  psUpdateChannelParam = con.prepareStatement(CHANNEL_PARAM_UPDATE_SQL);
-			PreparedStatement  psUpdateChannel = con.prepareStatement(CHANNEL_UPDATE_SQL);
-			
-			boolean result = updateUserLayoutNode ( userId, layoutId, node, psUpdateNode, psUpdateRestriction, null, null );
-			
-			if ( psUpdateNode != null ) psUpdateNode.close();
-			if ( psUpdateRestriction != null ) psUpdateRestriction.close();
-			if ( psUpdateChannel != null ) psUpdateChannel.close();
-			if ( psUpdateChannelParam != null ) psUpdateChannelParam.close();
-			
-			
-			RDBMServices.commit(con);
-			
-			// Closing
-			stmt.close();
-			con.close();
-			
-			return result;
-			
-		} catch (Exception e) {
-			String errorMessage = e.getMessage();
-			try { RDBMServices.rollback(con); } catch ( SQLException sqle ) {
-				log.error( sqle.toString() );
-				errorMessage += ":" + sqle.getMessage();
-			}
-			throw new PortalException(errorMessage, e);
-		}
-	}
+   
+ 
+    /**
+     * Update the new user layout node.
+     * @param person an <code>IPerson</code> object specifying the user
+     * @param profile a user profile for which the layout is being stored
+     * @param node a <code>ALNode</code> object specifying the node
+     * @param con The connection to be used to perform all database operations.
+     * @return a boolean result of this operation
+     * @exception PortalException if an error occurs
+     */
+    private boolean updateUserLayoutNode (IPerson person, UserProfile profile,
+            ALNode node, Connection con )
+    throws PortalException {
+        
+        
+        Statement stmt = null;
+        ResultSet rs = null;
+        PreparedStatement psUpdateNode = null;
+        PreparedStatement psUpdateRestriction = null;
+        
+        try {
+            
+            int userId = person.getID();
+            int nodeId = CommonUtils.parseInt(node.getId());
+            IALNodeDescription nodeDesc = (IALNodeDescription)node.getNodeDescription();
+            
+            stmt = con.createStatement();
+            
+            // eventually, we need to fix template layout implementations so you can just do this:
+            // int layoutId=profile.getLayoutId();
+            // but for now:
+            String subSelectString = "SELECT LAYOUT_ID FROM UP_USER_PROFILE WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profile.getProfileId();
+            //log.debug( "RDBMUserLayoutStore::getUserLayout(): " + subSelectString);
+            int layoutId = -1;
+            rs = stmt.executeQuery(subSelectString);
+            try {
+                if ( rs.next() )
+                    layoutId = rs.getInt(1);
+            } finally {
+                rs.close();
+                rs = null;
+            }
+            
+            int fragmentId = CommonUtils.parseInt(nodeDesc.getFragmentId());
+            int fragmentNodeId = CommonUtils.parseInt(nodeDesc.getFragmentNodeId());
+            
+            if ( fragmentId > 0 && fragmentNodeId <= 0 )
+                psUpdateNode = con.prepareStatement(FRAGMENT_UPDATE_SQL);
+            else
+                psUpdateNode = con.prepareStatement(LAYOUT_UPDATE_SQL);
+            
+            if ( fragmentId > 0 ) {
+                psUpdateRestriction = con.prepareStatement(FRAGMENT_RESTRICTION_UPDATE_SQL);
+            } else {
+                psUpdateRestriction = con.prepareStatement(LAYOUT_RESTRICTION_UPDATE_SQL);
+            }
+            
+            boolean result = updateUserLayoutNode ( userId, layoutId, node, psUpdateNode, psUpdateRestriction, null, null );
+            
+            RDBMServices.commit(con);
+            
+            // Closing
+            stmt.close();
+            stmt = null;
+            
+            return result;
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            String errorMessage = e.getMessage();
+            try {
+                RDBMServices.rollback(con);
+            } catch ( SQLException sqle ) {
+                log.error( sqle.toString() );
+                errorMessage += ":" + sqle.getMessage();
+            }
+            throw new PortalException(errorMessage, e);
+        } finally {
+            try {
+                // Ensure resouces are closed/cleaned-up
+                if ( rs != null) rs.close();
+                if ( stmt != null) stmt.close();
+                if ( psUpdateNode != null ) psUpdateNode.close();
+                if ( psUpdateRestriction != null ) psUpdateRestriction.close();
+            } catch (Exception e) {
+                log.error( "AggregatedUserLayoutStore::updateUserLayoutNode(): Failed to clean up resources.");
+            }
+        }
+    }
 	
 	/**
 	 * Update the new user layout node.
@@ -1061,8 +1145,8 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 				
 				psUpdateNode.setInt(13,node.getPriority());
 				
-				psUpdateNode.setInt(14,nodeId);
-				psUpdateNode.setInt(15,fragmentId);
+				psUpdateNode.setInt(14, fragmentId);
+				psUpdateNode.setInt(15, nodeId);
 				
 				//execute update layout
 				count += psUpdateNode.executeUpdate();
@@ -1196,153 +1280,171 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 		}
 	}
 	
-	/**
-	 * Delete the new user layout node.
-	 * @param person an <code>IPerson</code> object specifying the user
-	 * @param profile a user profile for which the layout is being stored
-	 * @param node a <code>ALNode</code> node ID specifying the node
-	 * @return a boolean result of this operation
-	 * @exception PortalException if an error occurs
-	 */
-	public boolean deleteUserLayoutNode (IPerson person, UserProfile profile, ALNode node ) throws PortalException {
-		Connection con = RDBMServices.getConnection();
-		
-		try {
-			
-			RDBMServices.setAutoCommit(con,false);
-			
-			int count = 0;
-			
-			int userId = person.getID();
-			int nodeId = CommonUtils.parseInt(node.getId());
-			IALNodeDescription nodeDesc = (IALNodeDescription) node.getNodeDescription();
-			Statement stmt = con.createStatement();
-			
-			// eventually, we need to fix template layout implementations so you can just do this:
-			//        int layoutId=profile.getLayoutId();
-			// but for now:
-			String subSelectString = "SELECT LAYOUT_ID FROM UP_USER_PROFILE WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profile.getProfileId();
-			log.debug("AggregatedUserLayoutStore::deleteUserLayoutNode(): " + subSelectString);
-			int layoutId = -1;
-			ResultSet rs = stmt.executeQuery(subSelectString);
-			try {
-				if ( rs.next() )
-					layoutId = rs.getInt(1);
-			} finally {
-				rs.close();
-			}
-			
-			
-			int fragmentId = CommonUtils.parseInt(nodeDesc.getFragmentId());
-			int fragmentNodeId = CommonUtils.parseInt(nodeDesc.getFragmentNodeId());
-			
-			// Delete node restrictions
-			Hashtable restrHash = nodeDesc.getRestrictions();
-			if ( restrHash != null ) {
-				
-				if ( fragmentId > 0 && layoutId < 0 ) {
-					
-					PreparedStatement  psFragmentRestr =
-						con.prepareStatement("DELETE FROM UP_FRAGMENT_RESTRICTIONS"+
-						" WHERE FRAGMENT_ID=? AND NODE_ID=? AND RESTRICTION_NAME=? AND RESTRICTION_TREE_PATH=?");
-					Enumeration restrictions = restrHash.elements();
-					for ( ;restrictions.hasMoreElements(); ) {
-						IUserLayoutRestriction restriction = (IUserLayoutRestriction) restrictions.nextElement();
-						
-						psFragmentRestr.setInt(1,fragmentId);
-						psFragmentRestr.setInt(2,nodeId);
-						psFragmentRestr.setString(3,restriction.getName());
-						
-						String path = restriction.getRestrictionPath();
-						psFragmentRestr.setString(4,path);
-						
-						//execute update restrictions
-						count += psFragmentRestr.executeUpdate();
-						
-					} // end for
-					psFragmentRestr.close();
-					
-					// fragment ID is null
-				} else  if ( fragmentId <= 0 ){
-					
-					PreparedStatement  psRestr =
-						con.prepareStatement("DELETE FROM UP_LAYOUT_RESTRICTIONS"+
-						" WHERE LAYOUT_ID=? AND USER_ID=? AND NODE_ID=? AND RESTRICTION_NAME=? AND RESTRICTION_TREE_PATH=?");
-					
-					Enumeration restrictions = restrHash.elements();
-					for ( ;restrictions.hasMoreElements(); ) {
-						IUserLayoutRestriction restriction = (IUserLayoutRestriction) restrictions.nextElement();
-						
-						psRestr.setInt(1,layoutId);
-						psRestr.setInt(2,userId);
-						psRestr.setInt(3,nodeId);
-						psRestr.setString(4,restriction.getName());
-						
-						String path = restriction.getRestrictionPath();
-						psRestr.setString(5,path);
-						
-						//execute update restrictions
-						count += psRestr.executeUpdate();
-						
-					} // end for
-					psRestr.close();
-				} // end if for fragment ID
-			} // end if
-			
-			
-			if ( fragmentId > 0 && fragmentNodeId <= 0 ) {
-				PreparedStatement  psFragment =
-					con.prepareStatement("DELETE FROM UP_FRAGMENTS WHERE NODE_ID=? AND FRAGMENT_ID=?");
-				
-				psFragment.setInt(1,nodeId);
-				psFragment.setInt(2,fragmentId);
-				
-				//execute update layout
-				count += psFragment.executeUpdate();
-				psFragment.close();
-				
-			} else {
-				PreparedStatement  psLayout =
-					con.prepareStatement("DELETE FROM UP_LAYOUT_STRUCT_AGGR WHERE LAYOUT_ID=? AND USER_ID=? AND NODE_ID=?");
-				
-				psLayout.setInt(1,layoutId);
-				psLayout.setInt(2,userId);
-				psLayout.setInt(3,nodeId);
-				
-				//execute update layout
-				count += psLayout.executeUpdate();
-				psLayout.close();
-			}
-			
-			
-			stmt.close();
-			RDBMServices.commit(con);
-			con.close();
-			
-			return count > 0;
-			
-		} catch (Exception e) {
-			String errorMessage = e.getMessage();
-			try { RDBMServices.rollback(con); } catch ( SQLException sqle ) {
-				log.error( sqle.getMessage(), sqle );
-				errorMessage += ":" + sqle.getMessage();
-			}
-			throw new PortalException(errorMessage, e);
-		}
-	}
-	
-	/**
-	 * Gets the user layout node.
-	 * @param person an <code>IPerson</code> object specifying the user
-	 * @param profile a user profile for which the layout is being stored
-	 * @param nodeId a <code>String</code> node ID specifying the node
-	 * @return a <code>ALNode</code> object
-	 * @exception PortalException if an error occurs
-	 */
-	public ALNode getUserLayoutNode (IPerson person, UserProfile profile, String nodeId ) throws PortalException {
-		return null;
-	}
-	
+    /**
+     * Delete the new user layout node.
+     * @param person an <code>IPerson</code> object specifying the user
+     * @param profile a user profile for which the layout is being stored
+     * @param node a <code>ALNode</code> node ID specifying the node
+     * @param con The connection to be used to perform all database operations.
+     * @return a boolean result of this operation
+     * @exception PortalException if an error occurs
+     */
+    private boolean deleteUserLayoutNode (IPerson person, UserProfile profile,
+            ALNode node, Connection con ) throws PortalException {
+        
+        Statement stmt = null;
+        ResultSet rs = null;
+        PreparedStatement psFragmentRestr = null;
+        PreparedStatement psRestr = null;
+        PreparedStatement psFragment = null;
+        PreparedStatement psLayout = null;
+        
+        try {
+            
+            int count = 0;
+            int userId = person.getID();
+            int nodeId = CommonUtils.parseInt(node.getId());
+            IALNodeDescription nodeDesc = (IALNodeDescription)node.getNodeDescription();
+            
+            stmt = con.createStatement();
+            
+            // eventually, we need to fix template layout implementations so you can just do this:
+            // int layoutId=profile.getLayoutId();
+            // but for now:
+            String subSelectString = "SELECT LAYOUT_ID FROM UP_USER_PROFILE WHERE USER_ID=" + userId + " AND PROFILE_ID=" + profile.getProfileId();
+            log.debug( "AggregatedUserLayoutStore::deleteUserLayoutNode(): " + subSelectString);
+            int layoutId = -1;
+            rs = stmt.executeQuery(subSelectString);
+            try {
+                if ( rs.next() )
+                    layoutId = rs.getInt(1);
+            } finally {
+                rs.close();
+                rs = null;
+            }
+            
+            stmt.close();
+            stmt = null;
+            
+            boolean isFolder = (node.getNodeType() == IUserLayoutNodeDescription.FOLDER);
+            int fragmentId = CommonUtils.parseInt(node.getFragmentId());
+            int fragmentNodeId = CommonUtils.parseInt(node.getFragmentNodeId());
+            int tmpValue = -1;
+            
+            // Delete node restrictions
+            Hashtable restrHash = nodeDesc.getRestrictions();
+            if ( restrHash != null ) {
+                
+                if ( fragmentId > 0 && layoutId < 0 ) {
+                    
+                    psFragmentRestr =
+                        con.prepareStatement("DELETE FROM UP_FRAGMENT_RESTRICTIONS"+
+                        " WHERE FRAGMENT_ID=? AND NODE_ID=? AND RESTRICTION_NAME=? AND RESTRICTION_TREE_PATH=?");
+                    Enumeration restrictions = restrHash.elements();
+                    for ( ;restrictions.hasMoreElements(); ) {
+                        IUserLayoutRestriction restriction = (IUserLayoutRestriction) restrictions.nextElement();
+                        
+                        psFragmentRestr.setInt(1,fragmentId);
+                        psFragmentRestr.setInt(2,nodeId);
+                        psFragmentRestr.setString(3,restriction.getName());
+                        
+                        String path = restriction.getRestrictionPath();
+                        psFragmentRestr.setString(4,path);
+                        
+                        //execute update restrictions
+                        count += psFragmentRestr.executeUpdate();
+                    } // end for
+                    
+                    // Clean up
+                    psFragmentRestr.close();
+                    psFragmentRestr = null;
+                    
+                    // fragment ID is null
+                } else  if ( fragmentId <= 0 ){
+                    
+                    psRestr =
+                        con.prepareStatement("DELETE FROM UP_LAYOUT_RESTRICTIONS"+
+                        " WHERE LAYOUT_ID=? AND USER_ID=? AND NODE_ID=? AND RESTRICTION_NAME=? AND RESTRICTION_TREE_PATH=?");
+                    
+                    Enumeration restrictions = restrHash.elements();
+                    for ( ;restrictions.hasMoreElements(); ) {
+                        IUserLayoutRestriction restriction = (IUserLayoutRestriction) restrictions.nextElement();
+                        
+                        psRestr.setInt(1,layoutId);
+                        psRestr.setInt(2,userId);
+                        psRestr.setInt(3,nodeId);
+                        psRestr.setString(4,restriction.getName());
+                        
+                        String path = restriction.getRestrictionPath();
+                        psRestr.setString(5,path);
+                        
+                        //execute update restrictions
+                        count += psRestr.executeUpdate();
+                    } // end for
+                    
+                    // Clean-up
+                    psRestr.close();
+                    psRestr = null;
+                    
+                } // end if for fragment ID
+            } // end if
+            
+            
+            if ( fragmentId > 0 && fragmentNodeId <= 0 ) {
+                psFragment =
+                    con.prepareStatement("DELETE FROM UP_FRAGMENTS WHERE NODE_ID=? AND FRAGMENT_ID=?");
+                
+                psFragment.setInt(1,nodeId);
+                psFragment.setInt(2,fragmentId);
+                
+                //execute update layout
+                count += psFragment.executeUpdate();
+                psFragment.close();
+                psFragment = null;
+                
+            } else {
+                psLayout =
+                    con.prepareStatement("DELETE FROM UP_LAYOUT_STRUCT_AGGR WHERE LAYOUT_ID=? AND USER_ID=? AND NODE_ID=?");
+                
+                psLayout.setInt(1,layoutId);
+                psLayout.setInt(2,userId);
+                psLayout.setInt(3,nodeId);
+                
+                //execute update layout
+                count += psLayout.executeUpdate();
+                psLayout.close();
+                psLayout = null;
+            }
+            
+            RDBMServices.commit(con);
+            
+            return count > 0;
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            String errorMessage = e.getMessage();
+            try {
+                RDBMServices.rollback(con);
+            } catch ( SQLException sqle ) {
+                log.error( sqle.toString() );
+                errorMessage += ":" + sqle.getMessage();
+            }
+            throw new PortalException(errorMessage, e);
+        } finally {
+            try {
+                // Ensure resouces are closed/cleaned-up
+                if ( rs != null) rs.close();
+                if ( stmt != null) stmt.close();
+                if ( psFragmentRestr != null ) psFragmentRestr.close();
+                if ( psRestr != null ) psRestr.close();
+                if ( psFragment != null ) psFragment.close();
+                if ( psLayout != null ) psLayout.close();
+            } catch (Exception e) {
+                log.error( "AggregatedUserLayoutStore::deleteUserLayoutNode(): Failed to clean up resources.");
+            }
+        }
+    }
+
 	/**
 	 * @param person an <code>IPerson</code> object specifying the user
 	 * @param profile a user profile for which the layout is being stored
@@ -1406,6 +1508,8 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 				}
 			}
 			
+            // Update the user's layout node set and write new node restrictions
+            updateUserLayoutNodes(person, profile, layout, con);
 			
 			final String sSelectInitQuery = "SELECT INIT_NODE_ID FROM UP_USER_LAYOUT_AGGR WHERE USER_ID=? AND LAYOUT_ID=?";
 			if (log.isDebugEnabled())
@@ -1464,64 +1568,8 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 				}
 			}
 			
-			// Clear the previous data related to the user layout
-			PreparedStatement psDeleteLayout = null;
-			try {
-				psDeleteLayout = con.prepareStatement("DELETE FROM UP_LAYOUT_STRUCT_AGGR WHERE USER_ID=? AND LAYOUT_ID=?");
-				// Deleting the node from the user layout
-				psDeleteLayout.setInt(1,userId);
-				psDeleteLayout.setInt(2,layoutId);
-				psDeleteLayout.executeUpdate();
-			} finally {
-				if (psDeleteLayout != null){
-					try { psDeleteLayout.close(); } catch (Exception e){}
-				}
-			}
-			
-			
-			// Deleting restrictions for regular nodes
-			PreparedStatement psDeleteLayoutRestriction = null;
-			try {
-				psDeleteLayoutRestriction = con.prepareStatement("DELETE FROM UP_LAYOUT_RESTRICTIONS WHERE USER_ID=? AND LAYOUT_ID=?");
-				// Deleting restrictions for the node
-				psDeleteLayoutRestriction.setInt(1,userId);
-				psDeleteLayoutRestriction.setInt(2,layoutId);
-				psDeleteLayoutRestriction.executeUpdate();
-			} finally {
-				if (psDeleteLayoutRestriction != null){
-					try { psDeleteLayoutRestriction.close(); } catch (Exception e){}
-				}
-			}
-			
-			// Add prepared statements
-			PreparedStatement  psAddLayoutNode = con.prepareStatement(LAYOUT_ADD_SQL);
-			PreparedStatement  psAddLayoutRestriction = con.prepareStatement(LAYOUT_RESTRICTION_ADD_SQL);
-			
-			
-			// The loop for all the nodes from the layout
-			for ( Enumeration nodeIds = layout.getNodeIds(); nodeIds.hasMoreElements() ;) {
-				String strNodeId = nodeIds.nextElement().toString();
-				
-				if ( !strNodeId.equals(IALFolderDescription.ROOT_FOLDER_ID) && !strNodeId.equals(IALFolderDescription.LOST_FOLDER_ID) ) {
-					
-					ALNode node = layout.getNode(strNodeId);
-					
-					int fragmentId = CommonUtils.parseInt(node.getFragmentId());
-					int fragmentNodeId = CommonUtils.parseInt(node.getFragmentNodeId());
-					
-					if ( fragmentNodeId > 0 || fragmentId <= 0 ) {
-						addUserLayoutNode(userId,layoutId,node,psAddLayoutNode,psAddLayoutRestriction,null,null,null);
-					}   
-					
-				} // End if
-			} // End for
-			
 			// Commit all the changes
 			RDBMServices.commit(con);
-			
-			if ( psAddLayoutNode != null ) psAddLayoutNode.close();
-			if ( psAddLayoutRestriction != null ) psAddLayoutRestriction.close();
-			
 			
 		} catch (Exception e) {
 			log.error(e,e);
@@ -1577,123 +1625,231 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 	 * @param fragment a <code>ILayoutFragment</code> containing a fragment
 	 * @exception PortalException if an error occurs
 	 */
-	public synchronized void setFragment (IPerson person, ILayoutFragment fragment ) throws PortalException {
+	public void setFragment (IPerson person, ILayoutFragment fragment, UserPreferences userPrefs ) throws PortalException {
 		
-		int userId = person.getID();
-		String fragmentId = fragment.getId();
-		Connection con=null;
-		
-		if ( !(fragment instanceof ALFragment) )
-			throw new PortalException("The user layout fragment must have "+ALFragment.class.getName()+" type!");
-		
-		ALFragment layout = (ALFragment) fragment;
-		
-		try {
-			con = RDBMServices.getConnection();
-			RDBMServices.setAutoCommit(con, false);       // May speed things up, can't hurt
-			
-			Statement stmt = con.createStatement();
-			
-			boolean isOwner = false;
-			boolean isNewFragment = false;
-			// Check if the user was an owner
-			ResultSet rs = stmt.executeQuery("SELECT OWNER_ID FROM UP_OWNER_FRAGMENT WHERE FRAGMENT_ID="+fragmentId);
-			if ( rs.next() ) {
-				if ( rs.getInt(1) == userId )
-					isOwner = true;
-			} else
-				isNewFragment = true;
-			if ( rs != null ) rs.close();
-			
-			if ( !isOwner && !isNewFragment )
-				throw new PortalException("The user "+userId+" is not an owner of the fragment with ID="+fragmentId);
-			
-			ALFolder rootNode = layout.getLayoutFolder(layout.getRootId());
-			String fragmentRootId = rootNode.getFirstChildNodeId();
-			
-			// Check if the fragment is new
-			if ( isNewFragment ) {
-				
-				String sqlInsert = "INSERT INTO UP_OWNER_FRAGMENT (FRAGMENT_ID,FRAGMENT_ROOT_ID,OWNER_ID,FRAGMENT_NAME,FRAGMENT_DESCRIPTION,PUSHED_FRAGMENT) "+
-				"VALUES (?,?,?,?,?,?)";
-				PreparedStatement ps = con.prepareStatement(sqlInsert);
-				ps.setInt(1,CommonUtils.parseInt(fragmentId));
-				if ( fragmentRootId != null )
-					ps.setInt(2,CommonUtils.parseInt(fragmentRootId));
-				else
-					ps.setNull(2,Types.INTEGER);
-				ps.setInt(3,userId);
-				ps.setString(4,layout.getName());
-				ps.setString(5,layout.getDescription());
-				ps.setString(6,(layout.isPushedFragment())?"Y":"N");
-				ps.executeUpdate();
-				ps.close();
-			} else {
-				
-				String sqlUpdate = "UPDATE UP_OWNER_FRAGMENT SET FRAGMENT_NAME=?,FRAGMENT_DESCRIPTION=?,PUSHED_FRAGMENT=?,FRAGMENT_ROOT_ID=? WHERE OWNER_ID=? AND FRAGMENT_ID=?";
-				PreparedStatement ps = con.prepareStatement(sqlUpdate);
-				ps.setString(1,layout.getName());
-				ps.setString(2,layout.getDescription());
-				ps.setString(3,(layout.isPushedFragment())?"Y":"N");
-				if ( fragmentRootId != null )
-					ps.setInt(4,CommonUtils.parseInt(fragmentRootId));
-				else
-					ps.setNull(4,Types.INTEGER);
-				ps.setInt(5,userId);
-				ps.setInt(6,CommonUtils.parseInt(fragmentId));
-				ps.executeUpdate();
-				ps.close();
-			}
-			
-			// Clear the previous data related to the user layout
-			stmt.executeUpdate("DELETE FROM UP_FRAGMENTS WHERE FRAGMENT_ID="+fragmentId);
-			
-			// Deleting restrictions for fragment nodes
-			stmt.executeUpdate("DELETE FROM UP_FRAGMENT_RESTRICTIONS WHERE FRAGMENT_ID="+fragmentId);
-			
-			// Add prepared statements
-			PreparedStatement  psAddFragmentNode = con.prepareStatement(FRAGMENT_ADD_SQL);
-			PreparedStatement  psAddFragmentRestriction = con.prepareStatement(FRAGMENT_RESTRICTION_ADD_SQL);
-			
-			// The loop for all the nodes from the layout
-			for ( Enumeration nodeIds = layout.getNodeIds(); nodeIds.hasMoreElements() ;) {
-				String strNodeId = nodeIds.nextElement().toString();
-				
-				if ( !strNodeId.equals(IALFolderDescription.ROOT_FOLDER_ID) && !strNodeId.equals(IALFolderDescription.LOST_FOLDER_ID) ) {
-					
-					ALNode node = layout.getNode(strNodeId);
-					
-					// Setting the fragment ID
-					((IALNodeDescription)node.getNodeDescription()).setFragmentId(fragmentId);
-					
-					int fragmentNodeId = CommonUtils.parseInt(node.getFragmentNodeId());
-					
-					if (  CommonUtils.parseInt(node.getFragmentId()) > 0 && fragmentNodeId <= 0 )
-						addUserLayoutNode(userId,-1,node,psAddFragmentNode,psAddFragmentRestriction,null,null,stmt);
-					
-				} // End if
-			} // End for
-			
-			
-			if ( stmt != null ) stmt.close();
-			
-			// Commit all the changes
-			RDBMServices.commit(con);
-			
-			if ( psAddFragmentNode != null ) psAddFragmentNode.close();
-			if ( psAddFragmentRestriction != null ) psAddFragmentRestriction.close();
-			
-		} catch (Exception e) {
-			log.error(e,e);
-			try { 
-				RDBMServices.rollback(con); 
-			} catch ( Exception e1 ) {
-				//ignore
-			}
-			throw new PortalException(e);
-		}finally{
-			RDBMServices.releaseConnection(con);
-		}
+	    synchronized (fragmentLock) {
+            
+	        int userId = person.getID();
+	        String fragmentId = fragment.getId();
+	        Connection con = null;
+
+	        if ( !(fragment instanceof ALFragment) )
+	            throw new PortalException("The user layout fragment must have "+ALFragment.class.getName()+" type!");
+
+	        ALFragment layout = (ALFragment) fragment;
+
+	        Set currentNodeIds = new HashSet();
+	        Set newNodeIds = new HashSet();
+
+	        try {
+	            con = RDBMServices.getConnection();
+
+	            Statement stmt = con.createStatement();
+
+	            boolean isOwner = false;
+	            boolean isNewFragment = false;
+	            // Check if the user was an owner
+	            ResultSet rs = stmt.executeQuery("SELECT OWNER_ID FROM UP_OWNER_FRAGMENT WHERE FRAGMENT_ID="+fragmentId);
+	            if ( rs.next() ) {
+	                if ( rs.getInt(1) == userId )
+	                    isOwner = true;
+	            } else
+	                isNewFragment = true;
+	            if ( rs != null ) rs.close();
+
+	            if ( !isOwner && !isNewFragment )
+	                throw new PortalException("The user "+userId+" is not an owner of the fragment with ID="+fragmentId);
+
+	            // Add, update and delete prepared statements
+	            PreparedStatement  psAddFragmentNode = con.prepareStatement(FRAGMENT_ADD_SQL);
+	            PreparedStatement  psAddFragmentRestriction = con.prepareStatement(FRAGMENT_RESTRICTION_ADD_SQL);
+	            PreparedStatement  psUpdateFragmentNode = null;
+	            PreparedStatement  psUpdateFragmentRestriction = null;
+	            PreparedStatement  psDeleteFragmentNode = null;
+	            PreparedStatement  psDeleteFragmentRestriction = null;
+
+	            ALFragment currentFragment = null;
+
+	            // If the fragment is not new, a smart-update will be performed
+	            if (!isNewFragment) {
+
+	                currentFragment =  (ALFragment) getFragment(fragmentId);
+
+	                // Build a set of all the fragment node ids of the persisted fragment
+	                for ( Enumeration nodeIds = currentFragment.getNodeIds(); nodeIds.hasMoreElements() ;) {
+
+	                    String strNodeId = (String) nodeIds.nextElement();
+	                    int nodeId = CommonUtils.parseInt(strNodeId);
+
+	                    // Exclude root folder nodes and lost folder nodes
+	                    if (!strNodeId.equals(IALFolderDescription.ROOT_FOLDER_ID) &&
+	                            !strNodeId.equals(IALFolderDescription.LOST_FOLDER_ID)) {
+
+	                        currentNodeIds.add(strNodeId);
+	                    }
+	                }
+
+	                psUpdateFragmentNode = con.prepareStatement(FRAGMENT_UPDATE_SQL);
+	                psUpdateFragmentRestriction = con.prepareStatement(FRAGMENT_RESTRICTION_UPDATE_SQL);
+	            }
+
+	            ALFolder rootNode = layout.getLayoutFolder(layout.getRootId());
+	            String fragmentRootId = rootNode.getFirstChildNodeId();
+
+	            RDBMServices.setAutoCommit(con, false);       // May speed things up, can't hurt
+
+	            // Check if the fragment is new
+	            if ( isNewFragment ) {
+
+	                String sqlInsert = "INSERT INTO UP_OWNER_FRAGMENT (FRAGMENT_ID,FRAGMENT_ROOT_ID,OWNER_ID,FRAGMENT_NAME,FRAGMENT_DESCRIPTION,PUSHED_FRAGMENT) "+
+	                "VALUES (?,?,?,?,?,?)";
+	                PreparedStatement ps = con.prepareStatement(sqlInsert);
+	                ps.setInt(1,CommonUtils.parseInt(fragmentId));
+	                if ( fragmentRootId != null )
+	                    ps.setInt(2,CommonUtils.parseInt(fragmentRootId));
+	                else
+	                    ps.setNull(2,Types.INTEGER);
+	                ps.setInt(3,userId);
+	                ps.setString(4,layout.getName());
+	                ps.setString(5,layout.getDescription());
+	                ps.setString(6,(layout.isPushedFragment())?"Y":"N");
+	                ps.executeUpdate();
+	                ps.close();
+	            } else {
+
+	                String sqlUpdate = "UPDATE UP_OWNER_FRAGMENT SET FRAGMENT_NAME=?,FRAGMENT_DESCRIPTION=?,PUSHED_FRAGMENT=?,FRAGMENT_ROOT_ID=? WHERE OWNER_ID=? AND FRAGMENT_ID=?";
+	                PreparedStatement ps = con.prepareStatement(sqlUpdate);
+	                ps.setString(1,layout.getName());
+	                ps.setString(2,layout.getDescription());
+	                ps.setString(3,(layout.isPushedFragment())?"Y":"N");
+	                if ( fragmentRootId != null )
+	                    ps.setInt(4,CommonUtils.parseInt(fragmentRootId));
+	                else
+	                    ps.setNull(4,Types.INTEGER);
+	                ps.setInt(5,userId);
+	                ps.setInt(6,CommonUtils.parseInt(fragmentId));
+	                ps.executeUpdate();
+	                ps.close();
+	            }
+
+	            // The loop for all the nodes from the layout
+	            for ( Enumeration nodeIds = layout.getNodeIds(); nodeIds.hasMoreElements() ;) {
+	                String strNodeId = nodeIds.nextElement().toString();
+
+	                newNodeIds.add(strNodeId);
+
+	                if ( !strNodeId.equals(IALFolderDescription.ROOT_FOLDER_ID) && !strNodeId.equals(IALFolderDescription.LOST_FOLDER_ID) ) {
+
+	                    ALNode node = layout.getNode(strNodeId);
+	                    int nodeId = CommonUtils.parseInt(node.getId());
+
+	                    // Setting the fragment ID
+	                    ((IALNodeDescription)node.getNodeDescription()).setFragmentId(fragmentId);
+
+	                    int fragmentNodeId = CommonUtils.parseInt(node.getFragmentNodeId());
+	                    String strfragmentNodeId =  Integer.toString(fragmentNodeId);
+
+	                    boolean isFolder = (node.getNodeType() == IUserLayoutNodeDescription.FOLDER);
+
+	                    if ( CommonUtils.parseInt(node.getFragmentId()) > 0 && fragmentNodeId <= 0 ) {
+
+	                        // if the fragment  is new or the fragment node id is new then add the fragment node
+	                        if (isNewFragment || ! currentNodeIds.contains(strNodeId) ) {
+	                            addUserLayoutNode(userId,-1,node,psAddFragmentNode,psAddFragmentRestriction,null,null,stmt);
+	                        } else {
+	                            // Update the existing fragment node
+	                            updateUserLayoutNode(userId,-1,node,psUpdateFragmentNode,psUpdateFragmentRestriction,null,null);
+
+	                        }
+	                    }
+
+	                    if (userPrefs != null) {
+	                        Map attributeNametoValues = new HashMap();
+	                        StructureStylesheetUserPreferences ssup = userPrefs.getStructureStylesheetUserPreferences();
+	                        for (Enumeration attre = ssup.getFolderAttributeNames(); attre.hasMoreElements();) {
+	                            String pName = (String)attre.nextElement();
+	                            String pValue = ssup.getDefinedFolderAttributeValue(strNodeId, pName);
+	                            if (pValue != null) {
+	                                attributeNametoValues.put(pName, pValue);
+	                            }
+	                        }
+	                        if (!attributeNametoValues.isEmpty()) {
+	                            nodeAttributeService.storeFragmentNodeAttributes(Integer.parseInt(fragmentId), Integer.parseInt(strNodeId), attributeNametoValues);
+	                        }
+	                    }
+
+	                } // End if
+	            } // End for
+
+	            if ( stmt != null ) stmt.close();
+
+	            // If this is not a new fragment, check for deleted fragment nodes
+	            if (!isNewFragment) {
+
+	                psDeleteFragmentNode =
+	                    con.prepareStatement("DELETE FROM UP_FRAGMENTS WHERE FRAGMENT_ID=? AND NODE_ID=?");
+	                psDeleteFragmentRestriction =
+	                    con.prepareStatement("DELETE FROM UP_FRAGMENT_RESTRICTIONS WHERE FRAGMENT_ID=? AND NODE_ID=?");
+
+	                Iterator currentFragmentNodes =  currentNodeIds.iterator();
+	                int intFragmentId = CommonUtils.parseInt(fragmentId);
+
+	                while (currentFragmentNodes.hasNext()) {
+
+	                    String currentId = (String) currentFragmentNodes.next();
+
+	                    // Delete all nodes that dont exist in the new layout
+	                    if (!newNodeIds.contains(currentId)) {
+
+	                        int nodeId = CommonUtils.parseInt(currentId);
+	                        psDeleteFragmentNode.setInt(1,intFragmentId);
+	                        psDeleteFragmentNode.setInt(2,nodeId);
+	                        psDeleteFragmentNode.executeUpdate();
+	                        psDeleteFragmentRestriction.setInt(1,intFragmentId);
+	                        psDeleteFragmentRestriction.setInt(2,nodeId);
+	                        psDeleteFragmentRestriction.executeUpdate();
+	                    }
+	                }
+	            }
+
+	            if ( psAddFragmentNode != null ) psAddFragmentNode.close();
+	            if ( psAddFragmentRestriction != null ) psAddFragmentRestriction.close();
+	            if ( psUpdateFragmentNode != null ) psUpdateFragmentNode.close();
+	            if ( psUpdateFragmentRestriction != null ) psUpdateFragmentRestriction.close();
+	            if ( psDeleteFragmentNode != null ) psDeleteFragmentNode.close();
+	            if ( psDeleteFragmentRestriction != null ) psDeleteFragmentRestriction.close();
+
+	            // Commit all the changes
+	            RDBMServices.commit(con);
+	            RDBMServices.setAutoCommit(con, true);
+
+	            String sql = "SELECT chld_node_id from up_fragments where node_id = 1 and fragment_id=" + fragmentId;
+	            stmt = con.createStatement();
+	            rs = stmt.executeQuery(sql);
+
+	            if (rs.next()) {
+	                int childId = rs.getInt(1);
+	            }
+
+	            rs.close();
+	            rs= null;
+	            stmt.close();
+	            stmt = null;
+
+	            // Close the connection
+	            if ( con != null ) con.close();
+
+
+	        } catch (Exception e) {
+	            log.error(e,e);
+	            try { 
+	                RDBMServices.rollback(con); 
+	            } catch ( Exception e1 ) {
+	                //ignore
+	            }
+	            throw new PortalException(e);
+	        }
+        }
 	}
 	
 	
@@ -1727,6 +1883,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 				throw new PortalException("The user "+userId+" is not an owner of the fragment with ID="+fragmentId);
 			
 			stmt.executeUpdate("DELETE FROM UP_FRAGMENT_RESTRICTIONS WHERE FRAGMENT_ID="+fragmentId);
+			stmt.executeUpdate("DELETE FROM UP_FRAGMENT_PARAM WHERE FRAGMENT_ID="+fragmentId);
 			stmt.executeUpdate("DELETE FROM UP_GROUP_FRAGMENT WHERE FRAGMENT_ID="+fragmentId);
 			stmt.executeUpdate("DELETE FROM UP_FRAGMENTS WHERE FRAGMENT_ID="+fragmentId);
 			
@@ -1756,8 +1913,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 		}
 		
 	}
-	
-	
+
 	/**
 	 * Returns the user layout internal representation.
 	 * @param person an <code>IPerson</code> object specifying the user
@@ -1774,6 +1930,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 		AggregatedLayout layout = null;
 		Hashtable layoutData = null;
 		ALFolder rootNode = new ALFolder();
+                ALFolder lostFolder = ALFolder.createLostFolder();
 		//PreparedStatement psRestrLayout = null, psRestrFragment = null;
 		Hashtable pushFragmentRoots = null;
 		String pushFragmentIds = null;
@@ -1878,6 +2035,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 						log.debug("AggregatedUserLayoutStore::getUserLayout(): " + sQuery);
 					stmt.executeUpdate(sQuery);
 					
+					/*
 					sQuery = "DELETE FROM UP_SS_USER_ATTS WHERE USER_ID=" + realUserId;
 					if (log.isDebugEnabled())
 						log.debug("AggregatedUserLayoutStore::getUserLayout(): " + sQuery);
@@ -1903,6 +2061,9 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 							log.debug("AggregatedUserLayoutStore::getUserLayout(): " + Insert);
 						insertStmt.executeUpdate(Insert);
 					}
+					*/
+					
+					syncUserAttributes(con, realUserId, userId);
 					
 					// Close Result Set
 					if ( rs != null ) rs.close();
@@ -1982,12 +2143,11 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 				// Putting the root node
 				layoutData.put(IALFolderDescription.ROOT_FOLDER_ID,rootNode);
 				// Putting the lost folder
-				layoutData.put(IALFolderDescription.LOST_FOLDER_ID,ALFolder.createLostFolder());
+				layoutData.put(IALFolderDescription.LOST_FOLDER_ID,lostFolder);
 				
 				// layout query
 				String sqlLayout = "SELECT ULS.NODE_ID,ULS.NEXT_NODE_ID,ULS.CHLD_NODE_ID,ULS.PREV_NODE_ID,ULS.PRNT_NODE_ID,ULS.CHAN_ID,ULS.NAME,ULS.TYPE,ULS.HIDDEN,"+
 				"ULS.UNREMOVABLE,ULS.IMMUTABLE,ULS.PRIORITY,ULS.FRAGMENT_ID,ULS.FRAGMENT_NODE_ID";
-
 				sqlLayout += " FROM UP_LAYOUT_STRUCT_AGGR ULS WHERE ";
 				sqlLayout += " ULS.USER_ID="+userId+" AND ULS.LAYOUT_ID="+layoutId;
 				
@@ -1999,18 +2159,20 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 				sqlFragment += "FROM UP_FRAGMENTS UF, UP_LAYOUT_STRUCT_AGGR ULS ";
 				
 				sqlFragment += "WHERE ULS.USER_ID="+userId+" AND ULS.FRAGMENT_ID=UF.FRAGMENT_ID ";
-			        
-                                if (pushFragmentIds != null) {
+				
+                if (pushFragmentIds != null) {
 				    sqlFragment += "UNION ";
 				    sqlFragment += "SELECT DISTINCT UF.NODE_ID,UF.NEXT_NODE_ID,UF.CHLD_NODE_ID,UF.PREV_NODE_ID,UF.PRNT_NODE_ID,UF.CHAN_ID,UF.NAME,UF.TYPE,UF.HIDDEN,"+
 				    "UF.UNREMOVABLE,UF.IMMUTABLE,UF.PRIORITY,UF.FRAGMENT_ID ";
 				    sqlFragment += "FROM UP_FRAGMENTS UF ";
 				    sqlFragment += "WHERE UF.FRAGMENT_ID IN ("+pushFragmentIds+")";
-                                }
-				log.debug(sqlFragment);
+                }
+                log.debug(sqlFragment);
 				
 				// The hashtable object containing the fragment nodes that are next to the user layout nodes
 				Hashtable fragmentNodes = new Hashtable();
+                                // Set to contain a list of completed fragments.
+                                Set finishedFragmentNodes = new HashSet();
 				
 				int count = 0;
 				for ( String sql = sqlLayout; count < 2; sql = sqlFragment, count++ ) {
@@ -2062,7 +2224,14 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 										
 										folderDesc.setFolderType(intType);
 										nodeDesc = folderDesc;
-								} else {
+                                        
+                                        // Folder nodes can have attributes
+                                        // (width)
+                                        
+                                        Map nodeAttributes = this.nodeAttributeService.attributesForFragmentNode(fragmentId, structId);
+								        node.putAttributes(nodeAttributes);
+                                
+                                } else {
 									node = new ALChannel();
 									ALChannelDescription channelDesc = new ALChannelDescription();
 									channelDesc.setChannelPublishId(rs.getString(6));
@@ -2077,8 +2246,15 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 									nodeDesc.setImmutable(true);
 								else 
 									nodeDesc.setImmutable(("Y".equalsIgnoreCase(rs.getString(11))?true:false));
-								nodeDesc.setUnremovable(("Y".equalsIgnoreCase(rs.getString(10))?true:false));
-								node.setPriority(rs.getInt(12));
+								
+                                if (pushFragmentRoots.containsKey(Integer.toString(fragmentId))) {
+                                    nodeDesc.setUnremovable(true);
+                                }
+                                else {
+                                    nodeDesc.setUnremovable(("Y".equalsIgnoreCase(rs.getString(10))?true:false));
+                                }
+                                
+                                node.setPriority(rs.getInt(12));
 								
 								
 								nodeDesc.setFragmentId((fragmentId>0)?fragmentId+"":null);
@@ -2143,6 +2319,8 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 											((ALFolder)fragNode).setFirstChildNodeId(childIdStr);
 										}
 										layoutData.put(nodeDesc.getId(),fragNode);
+                                        // Add it to the list of completed fragment nodes
+                                        finishedFragmentNodes.add(key);
 									} else
 										layoutData.put(nodeDesc.getId(),node);
 								}
@@ -2179,21 +2357,20 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 								
 								int index = (sql.equals(sqlLayout))?15:14;
 								
-																	
-									// Adding the channel ID to the String buffer
-									if ( node.getNodeType() == IUserLayoutNodeDescription.CHANNEL ) {
-										structParms.append(sepChar + chanId);
-										sepChar = ",";
+								// Adding the channel ID to the String buffer
+								if ( node.getNodeType() == IUserLayoutNodeDescription.CHANNEL ) {
+									structParms.append(sepChar + chanId);
+									sepChar = ",";
+								}
+								
+								if (rs.next()) {
+									structId = rs.getInt(1);
+									if (rs.wasNull()) {
+										structId = 0;
 									}
-									
-									if (rs.next()) {
-										structId = rs.getInt(1);
-										if (rs.wasNull()) {
-											structId = 0;
-										}
-									} else {
-										break readLayout;
-									}
+								} else {
+									break readLayout;
+								}
 								
 								// Setting up the priority values based on the appropriate priority restrictions
 								PriorityRestriction priorityRestriction = AggregatedLayoutManager.getPriorityRestriction(node);
@@ -2237,7 +2414,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 						chanIds.clear();
 					}
 					
-					if (structParms.length() > 0 ) { // Pick up structure parameters
+					if ( structParms.length() > 0 ) { // Pick up structure parameters
 						String paramSql = "SELECT STRUCT_ID, STRUCT_PARM_NM,STRUCT_PARM_VAL FROM UP_LAYOUT_PARAM WHERE USER_ID=" + userId + " AND LAYOUT_ID=" + layoutId +
 						" AND STRUCT_ID IN (" + structParms.toString() + ") ORDER BY STRUCT_ID";
 						if (log.isDebugEnabled())
@@ -2281,6 +2458,89 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 					
 				} // End of for
 				
+                // Clean up lost fragments
+                Set incompleteFragments = new HashSet(fragmentNodes.keySet());
+                incompleteFragments.removeAll(finishedFragmentNodes);
+                if (!incompleteFragments.isEmpty()) {
+                    // Remap by fragNode id, to allow for lost folder management of
+                    // multiple lost fragments.
+                    Hashtable lostFragmentNodes = new Hashtable();
+                    for (Iterator it = incompleteFragments.iterator(); it.hasNext();) {
+                        String key = (String)it.next();
+                        ALNode fragNode = (ALNode) fragmentNodes.get(key);
+                        lostFragmentNodes.put(fragNode.getId(), fragNode);
+                    }
+
+                    for (Iterator it = incompleteFragments.iterator(); it.hasNext();) {
+                        String key = (String)it.next();
+                        ALNode fragNode = (ALNode) fragmentNodes.get(key);
+                        String nextId = fragNode.getNextNodeId();
+                        String prevId = fragNode.getPreviousNodeId();
+                        String parentId = fragNode.getParentNodeId();
+
+                        ALNode prevNode = null;
+                        if (prevId != null) {
+                            prevNode = (ALNode) layoutData.get(prevId);
+                            if (prevNode == null)
+                                prevNode = (ALNode) lostFragmentNodes.get(prevId);
+                        }
+
+                        ALNode nextNode = null;
+                        if (nextId != null) {
+                            nextNode = (ALNode) layoutData.get(nextId);
+                            if (nextNode == null)
+                                nextNode = (ALNode) lostFragmentNodes.get(nextId);
+                        }
+
+                        if (prevNode != null) {
+                            if (nextNode != null) {
+                                nextNode.setPreviousNodeId(prevId);
+                                prevNode.setNextNodeId(nextId);
+                            } else {
+                                prevNode.setNextNodeId(null);
+                            }
+                        } else {
+                            if (nextNode != null) {
+                                nextNode.setPreviousNodeId(null);
+                            }
+
+                            // Update parent node, as we are their first child.
+                            ALFolder parentNode = null;
+                            if (parentId != null) {
+                                parentNode = (ALFolder) layoutData.get(parentId);
+                                if (parentNode != null) {
+                                    parentNode.setFirstChildNodeId((nextNode == null) ? null : nextId);
+                                }
+                            }
+                        }
+
+                        // Remove this node's distinction as a fragment node
+                        // to be reparented.
+                        fragmentNodes.remove(key);
+
+                        // Academus-specific: Move node to lost folder to ensure row removal from DB.
+                        fragNode.setNextNodeId(null);
+                        fragNode.setParentNodeId(IALFolderDescription.LOST_FOLDER_ID);
+
+                        ALNode lostNodeSib = null;
+                        for ( String nextLostSibId = lostFolder.getFirstChildNodeId(); nextLostSibId != null; ) {
+                            lostNodeSib = (ALNode)layoutData.get(nextLostSibId);
+                            nextLostSibId = lostNodeSib.getNextNodeId();
+                        }
+
+                        if (lostNodeSib != null) {
+                            lostNodeSib.setNextNodeId(fragNode.getId());
+                            fragNode.setPreviousNodeId(lostNodeSib.getId());
+                        } else {
+                            fragNode.setPreviousNodeId(null);
+                            lostFolder.setFirstChildNodeId(fragNode.getId());
+                        }
+
+                        layoutData.put(fragNode.getId(), fragNode);
+                        // End academus-specific
+                    }
+                }
+				
 				// finding the last node in the sibling line of the root children
 				ALNode lastNode = null, prevNode = null;
 				String nextId = rootNode.getFirstChildNodeId();
@@ -2311,6 +2571,8 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 							String newId = getNextStructId(person,"");
 							nodeDesc.setId(newId);
 							nodeDesc.setFragmentNodeId(strFragmentRootId);
+                            nodeDesc.setImmutable(true); // Pushed fragments are immutable
+                            nodeDesc.setUnremovable(true); // Pushed fragments are not removable
 							// Remove the old node and put the new one with another ID
 							layoutData.remove(key);
 							layoutData.put(newId,node);
@@ -2362,6 +2624,8 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 				if ( insertStmt != null ) insertStmt.close();
 				if ( stmt != null ) stmt.close();
 			}
+
+            RDBMServices.commit(con);
 		} catch ( Exception e ) {
 			log.error("Error getting aggregated layout for user " + person, e);
 			throw new PortalException(e);
@@ -2440,7 +2704,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 		try {
 			
 			con = RDBMServices.getConnection();
-			RDBMServices.setAutoCommit(con,false);
+			//RDBMServices.setAutoCommit(con,false);
 			
 			Statement stmt = con.createStatement();
 			
@@ -2461,7 +2725,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 				if ( rs.next() ) {
 					firstStructId = rs.getInt(1);
 					layout.setName(rs.getString(2));
-					layout.setDescription(rs.getString(3));
+					layout.setDescription(CommonUtils.nvl(rs.getString(3)));
 					if ("Y".equals(rs.getString(4)))
 						layout.setPushedFragment();
 					else
@@ -2488,10 +2752,9 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 			// The query for getting information of the fragments
 			String sqlFragment = "SELECT DISTINCT UF.NODE_ID,UF.NEXT_NODE_ID,UF.CHLD_NODE_ID,UF.PREV_NODE_ID,UF.PRNT_NODE_ID,UF.CHAN_ID,UF.NAME,UF.TYPE,UF.HIDDEN,"+
 			"UF.UNREMOVABLE,UF.IMMUTABLE,UF.PRIORITY,UF.FRAGMENT_ID";
-
 			sqlFragment += " FROM UP_FRAGMENTS UF, UP_OWNER_FRAGMENT UOF WHERE ";
 			sqlFragment += " UF.FRAGMENT_ID=UOF.FRAGMENT_ID AND UOF.FRAGMENT_ID=?";
-			log.debug(sqlFragment);
+			log.debug("AggregatedUserLayoutStore::getFragment(): " + sqlFragment + " " + fragmentId);
 			PreparedStatement psFragment = con.prepareStatement(sqlFragment);
 			psFragment.setInt(1,fragmentId);
 			
@@ -2554,6 +2817,10 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 						// Setting the node id
 						nodeDesc.setId(structId+"");
 						
+						// Setting fragment parameters
+						Map nodeAttributes = this.nodeAttributeService.attributesForFragmentNode(fragmentId, structId);
+				        node.putAttributes(nodeAttributes);
+						
 						// Setting the next node id
 						if ( nextId != 0 ) {
 							node.setNextNodeId(nextId+"");
@@ -2611,23 +2878,21 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 						}
 						rsRestr.close();
 						if ( psRestr != null ) psRestr.close();
-						
-						
 							
-							// Adding the channel ID to the String buffer
-							if ( node.getNodeType() == IUserLayoutNodeDescription.CHANNEL ) {
-								structParms.append(sepChar + chanId);
-								sepChar = ",";
+						// Adding the channel ID to the String buffer
+						if ( node.getNodeType() == IUserLayoutNodeDescription.CHANNEL ) {
+							structParms.append(sepChar + chanId);
+							sepChar = ",";
+						}
+						
+						if (rs.next()) {
+							structId = rs.getInt(1);
+							if (rs.wasNull()) {
+								structId = 0;
 							}
-							
-							if (rs.next()) {
-								structId = rs.getInt(1);
-								if (rs.wasNull()) {
-									structId = 0;
-								}
-							} else {
-								break readLayout;
-							}
+						} else {
+							break readLayout;
+						}
 						
 						// Setting up the priority values based on the appropriate priority restrictions
 						PriorityRestriction priorityRestriction = AggregatedLayoutManager.getPriorityRestriction(node);
@@ -2793,44 +3058,48 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 	 * @return a <code>String</code> next fragment ID
 	 * @exception PortalException if an error occurs
 	 */
-	public synchronized String getNextFragmentId() throws PortalException {
-		int attemptsNumber = 20;
-		Statement stmt = null;
-		try {
-			Connection con = RDBMServices.getConnection();
-			try {
-				RDBMServices.setAutoCommit(con, false);
-				stmt = con.createStatement();
-				String sQuery = "SELECT SEQUENCE_VALUE FROM UP_SEQUENCE WHERE SEQUENCE_NAME='UP_FRAGMENT'";
-				for (int i = 0; i < attemptsNumber; i++) {
-					try {
-						if (log.isDebugEnabled())
-							log.debug("AggregatedUserLayoutStore::getNextFragmentId(): " + sQuery);
-						ResultSet rs = stmt.executeQuery(sQuery);
-						int currentId = 0;
-						rs.next();
-						currentId = rs.getInt(1);
-						if ( rs != null ) rs.close();
-						String sUpdate = "UPDATE UP_SEQUENCE SET SEQUENCE_VALUE="+(currentId + 1)+" WHERE SEQUENCE_NAME='UP_FRAGMENT'";
-						if (log.isDebugEnabled())
-							log.debug("AggregatedUserLayoutStore::getNextFragmentId(): " + sUpdate);
-						stmt.executeUpdate(sUpdate);
-						RDBMServices.commit(con);
-						return new String (  (currentId + 1) + "" );
-					} catch (Exception sqle) {
-						RDBMServices.rollback(con);
-						// Assume a concurrent update. Try again after some random amount of milliseconds.
-						Thread.sleep(500); // Retry in up to 1/2 seconds
-					}
-				}
-			} finally {
-				if ( stmt != null ) stmt.close();
-				RDBMServices.releaseConnection(con);
-			}
-		} catch ( Exception e ) {
-			throw new PortalException(e);
-		}
-		throw new PortalException("Unable to generate a new next fragment node id!");
+	public String getNextFragmentId() throws PortalException {
+        
+	    synchronized (fragmentLock) {
+            
+	        int attemptsNumber = 20;
+	        Statement stmt = null;
+	        try {
+	            Connection con = RDBMServices.getConnection();
+	            try {
+	                RDBMServices.setAutoCommit(con, false);
+	                stmt = con.createStatement();
+	                String sQuery = "SELECT SEQUENCE_VALUE FROM UP_SEQUENCE WHERE SEQUENCE_NAME='UP_FRAGMENT'";
+	                for (int i = 0; i < attemptsNumber; i++) {
+	                    try {
+	                        if (log.isDebugEnabled())
+	                            log.debug("AggregatedUserLayoutStore::getNextFragmentId(): " + sQuery);
+	                        ResultSet rs = stmt.executeQuery(sQuery);
+	                        int currentId = 0;
+	                        rs.next();
+	                        currentId = rs.getInt(1);
+	                        if ( rs != null ) rs.close();
+	                        String sUpdate = "UPDATE UP_SEQUENCE SET SEQUENCE_VALUE="+(currentId + 1)+" WHERE SEQUENCE_NAME='UP_FRAGMENT'";
+	                        if (log.isDebugEnabled())
+	                            log.debug("AggregatedUserLayoutStore::getNextFragmentId(): " + sUpdate);
+	                        stmt.executeUpdate(sUpdate);
+	                        RDBMServices.commit(con);
+	                        return new String (  (currentId + 1) + "" );
+	                    } catch (Exception sqle) {
+	                        RDBMServices.rollback(con);
+	                        // Assume a concurrent update. Try again after some random amount of milliseconds.
+	                        Thread.sleep(500); // Retry in up to 1/2 seconds
+	                    }
+	                }
+	            } finally {
+	                if ( stmt != null ) stmt.close();
+	                RDBMServices.releaseConnection(con);
+	            }
+	        } catch ( Exception e ) {
+	            throw new PortalException(e);
+	        }
+	        throw new PortalException("Unable to generate a new next fragment node id!");
+        }
 	}
 	
 	public ThemeStylesheetUserPreferences getThemeStylesheetUserPreferences (IPerson person, int profileId, int stylesheetId) throws Exception {
@@ -3265,5 +3534,373 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 			throw new PortalException(e);
 		} 
 	}
-	
+    
+    /**
+     * Compares the current aggregated layout with the specified one
+     *  and performs and smart-update of the aggregated layout stored
+     *  in the database.
+     */
+    private void updateUserLayoutNodes(IPerson person, UserProfile profile,
+            IAggregatedLayout newLayout, Connection con)
+    throws PortalException{
+        
+        int userId = person.getID();
+        int profileId=profile.getProfileId();
+        int newLayoutId = Integer.parseInt(newLayout.getId());
+        
+        ResultSet rs = null;
+        PreparedStatement detectLayout = null;
+        PreparedStatement psDeleteLayoutRestriction = null;
+        
+        AggregatedLayout currentLayout = null;
+        Set currentNodeSet = null;
+        Enumeration currentNodeIds = null;
+        
+        // Indicates whether a layout already exists for the user or not
+        boolean layoutExists = false;
+        
+        try {
+            
+            // Determine whether a layout already exists for this user
+            detectLayout =
+                con.prepareStatement("SELECT USER_ID FROM UP_USER_LAYOUT_AGGR WHERE USER_ID=? AND LAYOUT_ID=?");
+            
+            detectLayout.setInt(1, userId);
+            detectLayout.setInt(2, newLayoutId);
+            
+            rs = detectLayout.executeQuery();
+            
+            if (rs.next()) {
+                layoutExists = true;
+            }
+            
+            rs.close();
+            rs = null;
+            
+            // Delete node restrictions and retrieve current layout
+            // only if the user had a layout persisted already
+            if (layoutExists) {
+                
+                // Retrieve existing user layout
+                currentLayout = (AggregatedLayout) getAggregatedLayout(person, profile);
+                currentNodeIds = currentLayout.getNodeIds();
+                currentNodeSet = new HashSet();
+                
+                // Store all current node ids in a set
+                while (currentNodeIds.hasMoreElements()) {
+                    String id = (String) currentNodeIds.nextElement();
+                    currentNodeSet.add(id);
+                }
+            }
+            
+            // Set of new nodes in the new layout
+            Set newNodeSet = new HashSet();
+            
+            // Add new nodes and update existing ones
+            for ( Enumeration nodeIds = newLayout.getNodeIds(); nodeIds.hasMoreElements() ;) {
+                
+                String strNodeId = nodeIds.nextElement().toString();
+                
+                newNodeSet.add(strNodeId);
+                
+                if ( !strNodeId.equals(IALFolderDescription.ROOT_FOLDER_ID) && !strNodeId.equals(IALFolderDescription.LOST_FOLDER_ID) ) {
+                    
+                    ALNode node = ((AggregatedLayout) newLayout).getNode(strNodeId);
+                    int nodeId = CommonUtils.parseInt(node.getId());
+                    
+                    int fragmentId = CommonUtils.parseInt(node.getFragmentId());
+                    int fragmentNodeId = CommonUtils.parseInt(node.getFragmentNodeId());
+
+                    if (fragmentId > 0 && fragmentNodeId <= 0 )
+                        continue;
+                    
+                    // Determine whether the node is new or an existing one
+                    // In the case where a layout does not exist yet, all nodes are new ones
+                    if (layoutExists && currentNodeSet.contains(strNodeId)) {
+                        // Perform an update
+                        updateUserLayoutNode(person, profile, node, con);
+                    } else {
+                        // Perform an add
+                        addUserLayoutNode(person, profile, node, con);
+                    }
+                }
+            }
+            
+            if (layoutExists) {
+                
+                currentNodeIds = currentLayout.getNodeIds();
+                String currentNodeId = null;
+                
+                // Remove all nodes that exist in the current layout but not in the
+                // new layout
+                while (currentNodeIds.hasMoreElements()) {
+                    
+                    currentNodeId = (String) currentNodeIds.nextElement();
+                    
+                    if (!newNodeSet.contains(currentNodeId)) {
+                        // Deleting a node that was removed from the layout
+                        ALNode deletedNode = ((AggregatedLayout) currentLayout).getNode(currentNodeId);
+                        deleteUserLayoutNode(person, profile, deletedNode, con);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            String errorMessage = e.getMessage();
+            try {
+                RDBMServices.rollback(con);
+            } catch ( SQLException sqle ) {
+                log.error( sqle.toString() );
+                errorMessage += ":" + sqle.getMessage();
+            }
+            throw new PortalException(errorMessage, e);
+        } finally {
+            try {
+                // Ensure resouces are closed/cleaned-up
+                if (rs != null) { rs.close(); }
+                if (detectLayout != null) { detectLayout.close(); }
+            } catch (Exception e) {
+                log.error( "AggregatedUserLayoutStore::setAggregatedLayout(): Failed to clean up resources.");
+            }
+        }
+    }
+    
+    private void syncUserAttributes(Connection con, int realUserId, int templateUserId) throws SQLException {
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        Set realUserAttributesSet = new HashSet();
+        Map realUserAttributesMap = new HashMap();
+        Set templateUserAttributesSet = new HashSet();
+        int userId;
+        UserAttributes userAttributes;
+        UserAttributes realUserAttributes;
+        Set insertRows = new HashSet();
+        Set updateRows = new HashSet();
+        Set deleteRows = new HashSet();
+        
+        try {
+            final String getUserAttrsSql = "SELECT USER_ID, PROFILE_ID, SS_ID, SS_TYPE, STRUCT_ID, PARAM_NAME, PARAM_TYPE, PARAM_VAL "+
+                " FROM UP_SS_USER_ATTS WHERE USER_ID IN (?,?)";
+            
+            ps = con.prepareStatement(getUserAttrsSql);
+            
+            int i=1;
+            ps.setInt(i++, realUserId);
+            ps.setInt(i++, templateUserId);
+            
+            rs = ps.executeQuery();
+            
+            while (rs.next()) {
+                userId = rs.getInt("USER_ID");
+                userAttributes = new UserAttributes(
+                    rs.getInt("PROFILE_ID"),
+                    rs.getInt("SS_ID"),
+                    rs.getInt("SS_TYPE"),
+                    rs.getInt("STRUCT_ID"),
+                    rs.getString("PARAM_NAME"),
+                    rs.getInt("PARAM_TYPE"),
+                    rs.getString("PARAM_VAL")
+                );
+                
+                if (userId == realUserId) {
+                    realUserAttributesSet.add(userAttributes);
+                    // need to maintain a map for the real user's attributes
+                    // for updates.
+                    realUserAttributesMap.put(new Integer(userAttributes.hashCode()), userAttributes);
+                } else {
+                    templateUserAttributesSet.add(userAttributes);
+                }
+            }
+            
+            // use set operations to determine update, insert, delete buckets
+            
+            deleteRows.addAll(realUserAttributesSet);
+            deleteRows.removeAll(templateUserAttributesSet);
+            
+            insertRows.addAll(templateUserAttributesSet);
+            insertRows.removeAll(realUserAttributesSet);
+            
+            // this will destroy the realUserAttributesSet, so it's the last one we do
+            Iterator itr = templateUserAttributesSet.iterator();
+            while (itr.hasNext()) {
+                userAttributes = (UserAttributes)itr.next();
+                realUserAttributes = (UserAttributes)realUserAttributesMap.get(
+                    new Integer(userAttributes.hashCode()));
+                if (realUserAttributes != null &&
+                    !userAttributes.getParamValue().equals(realUserAttributes.getParamValue())) {
+                    updateRows.add(userAttributes);
+                }
+            }
+        } finally {
+            RDBMServices.closeResultSet(rs);
+            RDBMServices.closePreparedStatement(ps);
+        }
+        
+        insertUserAttributes(con, insertRows, realUserId);
+        deleteUserAttributes(con, deleteRows, realUserId);
+        updateUserAttributes(con, updateRows, realUserId);
+    }
+    
+    private void insertUserAttributes(Connection con, Set insertRows, int userId) throws SQLException {
+        PreparedStatement ps = null;
+        UserAttributes userAttributes;
+        final String sql = "INSERT INTO UP_SS_USER_ATTS " +
+            "(USER_ID, PROFILE_ID, SS_ID, SS_TYPE, STRUCT_ID, PARAM_NAME, PARAM_TYPE, PARAM_VAL) " +
+            "VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
+        
+        try {
+            ps = con.prepareStatement(sql);
+            
+            Iterator itr = insertRows.iterator();
+            while (itr.hasNext()) {
+                userAttributes = (UserAttributes)itr.next();
+                
+                int i=1;
+                ps.setInt(i++, userId);
+                ps.setInt(i++, userAttributes.getProfileId());
+                ps.setInt(i++, userAttributes.getSsId());
+                ps.setInt(i++, userAttributes.getSsType());
+                ps.setInt(i++, userAttributes.getStructId());
+                ps.setString(i++, userAttributes.getParamName());
+                ps.setInt(i++, userAttributes.getParamType());
+                ps.setString(i++, userAttributes.getParamValue());
+                
+                ps.executeUpdate();
+            }
+        } finally {
+            RDBMServices.closePreparedStatement(ps);
+        }
+    }
+    
+    
+    
+    private void deleteUserAttributes(Connection con, Set deleteRows, int userId) throws SQLException {
+        PreparedStatement ps = null;
+        UserAttributes userAttributes;
+        final String sql = "DELETE FROM UP_SS_USER_ATTS WHERE USER_ID = ? AND " +
+            "PROFILE_ID = ? AND SS_ID = ? AND SS_TYPE = ? AND STRUCT_ID = ? AND " +
+            "PARAM_NAME = ? AND PARAM_TYPE = ?";
+        
+        try {
+            ps = con.prepareStatement(sql);
+            
+            Iterator itr = deleteRows.iterator();
+            while (itr.hasNext()) {
+                userAttributes = (UserAttributes)itr.next();
+                
+                int i=1;
+                ps.setInt(i++, userId);
+                ps.setInt(i++, userAttributes.getProfileId());
+                ps.setInt(i++, userAttributes.getSsId());
+                ps.setInt(i++, userAttributes.getSsType());
+                ps.setInt(i++, userAttributes.getStructId());
+                ps.setString(i++, userAttributes.getParamName());
+                ps.setInt(i++, userAttributes.getParamType());
+                
+                ps.executeUpdate();
+            }
+        } finally {
+            RDBMServices.closePreparedStatement(ps);
+        }
+    }
+    
+    private void updateUserAttributes(Connection con, Set updateRows, int userId) throws SQLException {
+        PreparedStatement ps = null;
+        UserAttributes userAttributes;
+        final String sql = "UPDATE UP_SS_USER_ATTS SET PARAM_VAL = ? WHERE USER_ID = ? AND " +
+            "PROFILE_ID = ? AND SS_ID = ? AND SS_TYPE = ? AND STRUCT_ID = ? AND " +
+            "PARAM_NAME = ? AND PARAM_TYPE = ?";
+        
+        try {
+            ps = con.prepareStatement(sql);
+            
+            Iterator itr = updateRows.iterator();
+            while (itr.hasNext()) {
+                userAttributes = (UserAttributes)itr.next();
+                
+                int i=1;
+                ps.setString(i++, userAttributes.getParamValue());
+                ps.setInt(i++, userId);
+                ps.setInt(i++, userAttributes.getProfileId());
+                ps.setInt(i++, userAttributes.getSsId());
+                ps.setInt(i++, userAttributes.getSsType());
+                ps.setInt(i++, userAttributes.getStructId());
+                ps.setString(i++, userAttributes.getParamName());
+                ps.setInt(i++, userAttributes.getParamType());
+                
+                ps.executeUpdate();
+            }
+        } finally {
+            RDBMServices.closePreparedStatement(ps);
+        }
+    }
+    
+	/**
+	 * A class that handles the theme/structure stylesheet attributes. Objects
+	 * are considered *equal* if their keys, which is all the attributes besides value,
+	 * match.
+	 */
+	public class UserAttributes {
+		private int profileId;
+		private int ssId;
+		private int ssType;
+		private int structId;
+		private String paramName;
+		private int paramType;
+		private String paramValue;
+		private String str;
+		
+		public UserAttributes(int profileId, int ssId, int ssType,
+		    int structId, String paramName, int paramType, String paramValue) {
+		    this.profileId = profileId;
+		    this.ssId = ssId;
+		    this.ssType = ssType;
+		    this.structId = structId;
+		    this.paramName = paramName;
+		    this.paramType = paramType;
+		    this.paramValue = paramValue;
+		    
+		    this.str = new StringBuffer().append(profileId).append('.').
+		    	append(ssId).append('.').
+		    	append(ssType).append('.').
+		    	append(structId).append('.').
+		    	append(paramName).append('.').
+		    	append(paramType).toString();
+		}
+		
+        public String toString() {
+            return str; 
+        }
+        
+        public boolean equals(Object obj) {
+            if (obj == null || !(obj instanceof UserAttributes)) return false;
+            return this.hashCode() == ((UserAttributes)obj).hashCode();
+        }
+        
+        public int hashCode() {
+            return str.hashCode();
+        }
+        
+        public int getProfileId() {
+            return profileId;
+        }
+        public int getSsId() {
+            return ssId;
+        }
+        public int getSsType() {
+            return ssType;
+        }
+        public int getStructId() {
+            return structId;
+        }
+        public String getParamName() {
+            return paramName;
+        }
+        public int getParamType() {
+            return paramType;
+        }
+        public String getParamValue() {
+            return paramValue;
+        }
+    }
 }

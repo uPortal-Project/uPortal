@@ -8,6 +8,8 @@ package org.jasig.portal.layout.alm;
 
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 import org.jasig.portal.PortalException;
@@ -35,6 +37,8 @@ public abstract class ALNode implements IALNode {
      private String previousNodeId;
      private IALNodeDescription nodeDescription;
      private int priority = 0;
+     
+     private final Map nodeAttributes = new HashMap(0);
 
      public ALNode() {}
 
@@ -173,6 +177,14 @@ public abstract class ALNode implements IALNode {
     public String toString() {
     	return "{"+parentNodeId+","+nextNodeId+","+previousNodeId
     	+ ","+nodeDescription+ ","+priority+"}";
+    }
+
+    public Map getAttributes() {
+        return this.nodeAttributes;
+    }
+
+    public void putAttributes(Map attributes) {
+        this.nodeAttributes.putAll(attributes);
     }
 
   }

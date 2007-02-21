@@ -5,7 +5,9 @@
 
 package org.jasig.portal.layout.alm;
 
+import java.security.MessageDigest;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -15,7 +17,15 @@ import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 
-
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.ChannelStaticData;
+import org.jasig.portal.PortalException;
+import org.jasig.portal.StructureStylesheetUserPreferences;
+import org.jasig.portal.ThemeStylesheetUserPreferences;
+import org.jasig.portal.UserPreferences;
+import org.jasig.portal.UserProfile;
+import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.layout.LayoutEvent;
@@ -31,19 +41,11 @@ import org.jasig.portal.layout.restrictions.alm.IALRestrictionManager;
 import org.jasig.portal.layout.restrictions.alm.PriorityRestriction;
 import org.jasig.portal.layout.restrictions.alm.RestrictionManagerFactory;
 import org.jasig.portal.layout.restrictions.alm.RestrictionTypes;
-import org.jasig.portal.ChannelStaticData;
-import org.jasig.portal.PortalException;
-import org.jasig.portal.StructureStylesheetUserPreferences;
-import org.jasig.portal.ThemeStylesheetUserPreferences;
-import org.jasig.portal.UserPreferences;
-import org.jasig.portal.UserProfile;
-import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.security.IPerson;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.CommonUtils;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.GuidGenerator;
+import org.jasig.portal.utils.XML;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -94,7 +96,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 		restrictionManager = (IALRestrictionManager) RestrictionManagerFactory.getRestrictionManager(layout);
 		if ( guid == null )
 			guid = new GuidGenerator();
-		updateCacheKey();
+        cacheKey = guid.getNewGuid();
 	}
 	
 	public AggregatedLayoutManager( IPerson person, UserProfile userProfile, IUserLayoutStore layoutStore ) throws Exception {
@@ -104,8 +106,36 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 	}
 	
 	private void updateCacheKey() {
-		cacheKey = guid.getNewGuid();
+		cacheKey = generateNewCacheKey();
 	}
+    
+    private String generateNewCacheKey() {
+        String cacheKey = null; 
+        long startTime = new Date().getTime();
+        try {   
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            md.update(XML.serializeNode(this.getUserLayoutDOM()).getBytes());
+            byte[] digest = md.digest();
+            StringBuffer sb = new StringBuffer(32);
+            for (int i=0; i<digest.length; i++) {
+                if (digest[i] < 0x10 && digest[i] >= 0x0) {
+                    // add a leading 0
+                    sb.append("0");
+                }       
+                sb.append(Integer.toHexString((0xff & digest[i])));
+            }       
+            cacheKey = sb.toString();
+        } catch (Exception e) {
+            log.error("AggregatedUserLayoutManager::generateNewCacheKey() : unable to generate new cache key, using new guid", e);
+            cacheKey = guid.getNewGuid();
+        }       
+
+        if (log.isDebugEnabled()) {
+            log.debug("AggregatedUserLayoutManager::generateNewCacheKey() : generating new cache key took " + (new Date().getTime()-startTime) + "ms");
+        }       
+        return cacheKey;
+    }
+
 	
 	public IUserLayout getUserLayout() throws PortalException {
 		return layout;
@@ -221,7 +251,10 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 			String nodeId = (String) i.next();
 			ALNode node = getLayoutNode(nodeId);
 			if ( node != null && nodeId != null ) {
-				if ( !moveNodeToLostFolder(nodeId) )
+                String prevNodeId = node.getPreviousNodeId();
+                ALNode prevNode = getLayoutNode(prevNodeId);
+
+                if (prevNode != null && !moveNodeToLostFolder(nodeId) )
 					log.info( "Unable to move the pushed fragment with ID="+node.getFragmentId()+" to the lost folder");
 			}
 		}
@@ -887,14 +920,43 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 			throw new PortalException(e);
 		}
 	}
-	
+    
+    public void saveUserLayout(UserPreferences userPrefs) throws PortalException {
+        try {
+            if ( !isLayoutFragment() ) {
+                layoutStore.setAggregatedLayout(person,userProfile,layout);
+                // Inform layout listeners
+                for(Iterator i = listeners.iterator(); i.hasNext();) {
+                    LayoutEventListener lel = (LayoutEventListener)i.next();
+                    lel.layoutSaved();
+                }
+            } else {
+                saveFragment(userPrefs);
+            }
+
+            updateCacheKey();
+        } catch ( Exception e ) {
+            throw new PortalException(e);
+        }
+
+    }
+
 	public void saveFragment ( ILayoutFragment fragment ) throws PortalException {
-		layoutStore.setFragment(person,fragment);	
+        layoutStore.setFragment(person,fragment, null);
 	}
 	
+    public void saveFragment ( ILayoutFragment fragment, UserPreferences userPrefs ) throws PortalException {
+        layoutStore.setFragment(person,fragment,userPrefs);
+    }
 	
 	public void deleteFragment ( String fragmentId ) throws PortalException {
 		layoutStore.deleteFragment(person,fragmentId);	
+		// Refresh the current layout and update the cache key
+        // If the layout is not refreshed the manager may attempt
+        // to save fragments that were deleted as part of user's
+        // layout
+        loadUserLayout();
+        updateCacheKey();
 	}
 	
 	
@@ -974,7 +1036,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 			fragment.setDescription(fragmentDesc);
 			
 			// Setting the fragment in the database
-			layoutStore.setFragment(person,fragment);
+            layoutStore.setFragment(person,fragment,null);
 			
 			updateCacheKey();
 			
@@ -1003,13 +1065,24 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 	public void saveFragment() throws PortalException {
 		try {
 			if ( isLayoutFragment() ) {
-				layoutStore.setFragment(person,(ILayoutFragment)layout);
+				layoutStore.setFragment(person,(ILayoutFragment)layout,null);
 			}
 			updateCacheKey();
 		} catch ( Exception e ) {
 			throw new PortalException(e);
 		}
 	}
+    
+    public void saveFragment(UserPreferences userPrefs) throws PortalException {
+        try {
+            if ( isLayoutFragment() ) {
+                layoutStore.setFragment(person,(ILayoutFragment)layout, userPrefs);
+            }
+            updateCacheKey();
+        } catch ( Exception e ) {
+            throw new PortalException(e);
+        }
+    }
 	
 	/**
 	 * Deletes the current fragment if the layout is a fragment
@@ -1424,15 +1497,23 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 	public void markAddTargets(IUserLayoutNodeDescription nodeDesc) throws PortalException {
 		if ( nodeDesc != null && !( nodeDesc instanceof IALNodeDescription ) )
 			throw new PortalException ( "The given argument is not a node description!" );
+        
+        boolean needsCacheKeyUpdate = (addTargetsNodeDesc != null && nodeDesc != null);
 		addTargetsNodeDesc = (IALNodeDescription)nodeDesc;
-		updateCacheKey();
+        if (needsCacheKeyUpdate) {
+			updateCacheKey();
+        }
 	}
 	
 	public void markMoveTargets(String nodeId) throws PortalException {
 		if ( nodeId != null && getLayoutNode(nodeId) == null )
 			throw new PortalException ( "The node with nodeID="+nodeId+" does not exist in the layout!" );
+        
+        boolean needsCacheKeyUpdate = (moveTargetsNodeId != null && nodeId != null);
 		moveTargetsNodeId = nodeId;
-		updateCacheKey();
+        if (needsCacheKeyUpdate) {
+			updateCacheKey();
+        }
 	}
 	
 	/**
