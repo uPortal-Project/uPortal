@@ -28,10 +28,11 @@ import org.jasig.portal.groups.local.ITypedEntitySearcher;
 
 public class RDBMPersonSearcher  implements ITypedEntitySearcher{
     private static final Log log = LogFactory.getLog(RDBMPersonSearcher.class);
-  private static final String user_is_search="select USER_NAME from UP_USER where USER_NAME=?";
-  private static final String user_partial_search="select USER_NAME from UP_USER where USER_NAME like ?";
-  private static final String person_partial_search="select USER_NAME from UP_PERSON_DIR where (FIRST_NAME like ? or LAST_NAME like ?)";
-  private static final String person_is_search = "select USER_NAME from UP_PERSON_DIR where (FIRST_NAME = ? or LAST_NAME = ?)";
+  private static final String user_is_search="select USER_NAME from UP_USER where UPPER(USER_NAME)=UPPER(?)";
+  private static final String user_partial_search="select USER_NAME from UP_USER where UPPER(USER_NAME) like UPPER(?)";
+  private static final String person_partial_search="select USER_NAME from UP_PERSON_DIR where (UPPER(FIRST_NAME) like UPPER(?) or UPPER(LAST_NAME) like UPPER(?))";
+  private static final String person_is_search = "select USER_NAME from UP_PERSON_DIR where (UPPER(FIRST_NAME) = UPPER(?) or UPPER(LAST_NAME) = UPPER(?))";
+  
   private Class personDef;
 
   public RDBMPersonSearcher() {

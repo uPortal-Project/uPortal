@@ -27,8 +27,8 @@ import org.jasig.portal.groups.local.ITypedEntitySearcher;
 
 public class RDBMChannelDefSearcher implements ITypedEntitySearcher {
     private static final Log log = LogFactory.getLog(RDBMChannelDefSearcher.class);
-  private static final String is_search="select CHAN_ID from UP_CHANNEL where (CHAN_NAME=? or CHAN_TITLE=?)";
-  private static final String partial_search="select CHAN_ID from UP_CHANNEL where (CHAN_NAME like ? or CHAN_TITLE like ?)";
+  private static final String is_search="select CHAN_ID from UP_CHANNEL where (UPPER(CHAN_NAME)=UPPER(?) or UPPER(CHAN_TITLE)=UPPER(?))";
+  private static final String partial_search="select CHAN_ID from UP_CHANNEL where (UPPER(CHAN_NAME) like UPPER(?) or UPPER(CHAN_TITLE) like UPPER(?))";
   private Class chanDef;
 
   public RDBMChannelDefSearcher() {

@@ -83,8 +83,9 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
     private static String insertMemberSql;
 
     // SQL group search string
-    private static String searchGroupsPartial = "SELECT "+GROUP_ID_COLUMN+" FROM "+GROUP_TABLE+" WHERE "+GROUP_TYPE_COLUMN+"=? AND "+GROUP_NAME_COLUMN+" LIKE ?";
-    private static String searchGroups = "SELECT "+GROUP_ID_COLUMN+" FROM "+GROUP_TABLE+" WHERE "+GROUP_TYPE_COLUMN+"=? AND "+GROUP_NAME_COLUMN+" = ?";
+    private static String searchGroupsPartial = "SELECT "+GROUP_ID_COLUMN+" FROM "+GROUP_TABLE+" WHERE "+GROUP_TYPE_COLUMN+"=? AND UPPER("+GROUP_NAME_COLUMN+") LIKE UPPER(?)";
+    private static String searchGroups = "SELECT "+GROUP_ID_COLUMN+" FROM "+GROUP_TABLE+" WHERE "+GROUP_TYPE_COLUMN+"=? AND UPPER("+GROUP_NAME_COLUMN+") = UPPER(?)";
+
 
 
 /**
