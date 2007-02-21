@@ -56,6 +56,7 @@ public class CancelSelection extends GroupsManagerCommand {
          // child members could have changed.
          Element parentElem = GroupsManagerXML.getElementById(model, parentId);
          GroupsManagerXML.refreshAllNodesRecursivelyIfRequired(sessionData.getUnrestrictedData(), parentElem);
+         sessionData.staticData.remove("groupParentId");
       }
       else {
         // @todo refactor into separate servant finish command
