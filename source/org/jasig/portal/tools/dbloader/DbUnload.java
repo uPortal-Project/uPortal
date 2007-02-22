@@ -62,6 +62,8 @@ public class DbUnload {
           } else if (columnType[i] == java.sql.Types.NUMERIC ||
             columnType[i] == java.sql.Types.INTEGER) {
             value = rs.getInt(i+1) + "";
+          } else if (columnType[i] == java.sql.Types.BIGINT) {
+            value = rs.getLong(i+1) + "";
           } else if (columnType[i] == java.sql.Types.TIMESTAMP) {
             java.sql.Timestamp ts = rs.getTimestamp(i+1);
             if (!rs.wasNull()) {

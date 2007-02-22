@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.jasig.portal.services.SequenceGenerator;
+import org.jasig.portal.utils.XML;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -27,8 +28,8 @@ import org.xml.sax.helpers.DefaultHandler;
  * Handles SAX events resulting from parsing of the data.xml file.
  *
  * @author Ken Weiner, kweiner@unicon.net
- * @author Mark Boyd  {@link <a href="mailto:mark.boyd@engineer.com">mark.boyd@engineer.com</a>}
- * @version $Revision$
+ * @author Mark Boyd <mark.boyd@engineer.com>
+ * @version $LastChangedRevision$
 */
   class DataHandler extends DefaultHandler
   {
@@ -44,7 +45,7 @@ import org.xml.sax.helpers.DefaultHandler;
     private static boolean insideSequence = false;
     private boolean supportsPreparedStatements = false;
     private static String sequenceId;
-
+    
     private static Map sequences = new HashMap();
 
     Table table;
@@ -134,7 +135,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
         int sinceMajor = row.getSinceMajor();
         int sinceMinor = row.getSinceMinor();
-
+        
         if (sinceMajor == -1) {
            sinceMajor = table.getSinceMajor();
            sinceMinor = table.getSinceMinor();
@@ -152,8 +153,11 @@ import org.xml.sax.helpers.DefaultHandler;
                 else if (action.equals("add"))
                     executeSQL(table, row, "insert");
             }
-            else if (config.getPopulateTables())
+            else if (config.getPopulateTables()) {
                 executeSQL(table, row, "insert");
+            } else if (config.getCreateScript()) {
+                dumpSQL(table, row, "insert");
+            }
         }
       }
       else if (qName.equals("column"))
@@ -228,6 +232,8 @@ import org.xml.sax.helpers.DefaultHandler;
         else
         {
           String value = column.getValue();
+          int dataType = DomUtils.getJavaSqlDataTypeOfColumn(
+              config, table.getName(), column.getName());
 
           if (value != null)
           {
@@ -235,7 +241,7 @@ import org.xml.sax.helpers.DefaultHandler;
               sb.append(value);
             else if (value.equals("NULL"))
               sb.append(value);
-            else if (DomUtils.getJavaSqlDataTypeOfColumn(config, table.getName(), column.getName()) == Types.INTEGER)
+            else if (dataType == Types.INTEGER || dataType == Types.BIGINT)
               // this column is an integer, so don't put quotes (Sybase cares about this)
               sb.append(value);
             else
@@ -270,13 +276,17 @@ import org.xml.sax.helpers.DefaultHandler;
       ArrayList columns = row.getColumns();
       Iterator iterator = columns.iterator();
       Column column;
+      int dataType;
 
       while (iterator.hasNext())
       {
         column = (Column) iterator.next();
+        dataType = DomUtils.getJavaSqlDataTypeOfColumn(
+            config, table.getName(), column.getName());
+        
         if (preparedStatement)
           sb.append(column.getName() + " = ? and ");
-        else if (DomUtils.getJavaSqlDataTypeOfColumn(config, table.getName(), column.getName()) == Types.INTEGER)
+        else if (dataType == Types.INTEGER || dataType == Types.BIGINT)
           sb.append(column.getName() + " = " + sqlEscape(column.getValue().trim()) + " and ");
         else
           sb.append(column.getName() + " = " + "'" + sqlEscape(column.getValue().trim()) + "' and ");
@@ -307,22 +317,25 @@ import org.xml.sax.helpers.DefaultHandler;
       Hashtable wherePairs = new Hashtable();
       String type;
       Column column;
+      int dataType;
 
       while (iterator.hasNext())
       {
         column = (Column) iterator.next();
         type = column.getType();
+        dataType = DomUtils.getJavaSqlDataTypeOfColumn(
+            config, table.getName(), column.getName());
 
                    if (type != null && type.equals("select"))
         {
-          if (DomUtils.getJavaSqlDataTypeOfColumn(config, table.getName(), column.getName()) == Types.INTEGER)
+          if (dataType == Types.INTEGER || dataType == Types.BIGINT)
             wherePairs.put(column.getName(), column.getValue().trim());
           else
             wherePairs.put(column.getName(), "'" + column.getValue().trim() + "'");
         }
         else
         {
-          if (DomUtils.getJavaSqlDataTypeOfColumn(config, table.getName(), column.getName()) == Types.INTEGER)
+          if (dataType == Types.INTEGER || dataType == Types.BIGINT)
             setPairs.put(column.getName(), column.getValue().trim());
           else
             setPairs.put(column.getName(), "'" + column.getValue().trim() + "'");
@@ -390,7 +403,7 @@ import org.xml.sax.helpers.DefaultHandler;
       }
     }
 
-    private void executeSQL (Table table, Row row, String action)
+    private void dumpSQL(Table table, Row row, String action)
     {
         if (config.getScriptWriter() != null)
       {
@@ -401,6 +414,11 @@ import org.xml.sax.helpers.DefaultHandler;
         else if (action.equals("insert"))
         config.getScriptWriter().println(prepareInsertStatement(row, false) + config.getStatementTerminator());
       }
+    }
+
+    private void executeSQL (Table table, Row row, String action)
+    {
+      dumpSQL(table, row, action);
 
       if (supportsPreparedStatements)
       {

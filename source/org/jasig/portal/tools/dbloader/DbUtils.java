@@ -142,12 +142,16 @@ class DbUtils
       return null;
     }
     
+    static void dumpTableAction(Configuration config, String tableStatement) {
+        if (config.getScriptWriter() != null)
+            config.getScriptWriter().println(tableStatement +
+                config.getStatementTerminator());
+    }
+    
     static void dropTable (Configuration config, String dropTableStatement)
     {
         Statement stmt = null;
 
-        if (config.getScriptWriter() != null)
-      config.getScriptWriter().println(dropTableStatement + config.getStatementTerminator());
 
       try
       {
@@ -179,7 +183,8 @@ class DbUtils
         dataTypeCode = Types.SMALLINT; // 5
       else if (genericDataTypeName.equalsIgnoreCase("INTEGER"))
         dataTypeCode = Types.INTEGER; // 4
-      else if (genericDataTypeName.equalsIgnoreCase("BIGINT"))
+      else if (genericDataTypeName.equalsIgnoreCase("BIGINT") ||
+          genericDataTypeName.equalsIgnoreCase("BIGINTEGER"))
         dataTypeCode = Types.BIGINT; // -5
       else if (genericDataTypeName.equalsIgnoreCase("FLOAT"))
         dataTypeCode = Types.FLOAT; // 6
@@ -246,10 +251,6 @@ class DbUtils
     static void createTable (Configuration config, String createTableStatement)
     {
         Statement stmt = null;
-
-        if (config.getScriptWriter() != null)
-            config.getScriptWriter().println(
-                createTableStatement + config.getStatementTerminator());
 
       try
       {

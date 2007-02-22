@@ -93,12 +93,20 @@ public class TableHandler implements ContentHandler
               config.getLog().println("  " + tableName);
               DbUtils.dropTable(config, statement);
           }
+          if (config.getCreateScript()) {
+              config.getLog().println("  " + tableName);
+              DbUtils.dumpTableAction(config, statement);
+          }
           break;
         case CREATE:
           if (config.getCreateTables())
           {
               config.getLog().println("  " + tableName);
               DbUtils.createTable(config, statement);
+          }
+          if (config.getCreateScript()) {
+              config.getLog().println("  " + tableName);
+              DbUtils.dumpTableAction(config, statement);
           }
           break;
         default:
