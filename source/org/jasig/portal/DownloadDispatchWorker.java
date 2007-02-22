@@ -56,7 +56,7 @@ public class DownloadDispatchWorker implements IWorkerRequestProcessor {
                     if (!pName.equals ("uP_channelTarget")) {
                         Object[] val= (Object[]) req.getParameterValues(pName);
                         if (val == null) {
-                            val = ((RequestParamWrapper)req).getObjectParameterValues(pName);
+                            val = ((IRequestParamWrapper)req).getObjectParameterValues(pName);
                         }
                         targetParams.put(pName, val);
                     }

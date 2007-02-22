@@ -27,7 +27,8 @@ import com.oreilly.servlet.multipart.ParamPart;
  * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  * @version $Revision$
  */
-public class RequestParamWrapper extends HttpServletRequestWrapper {
+public class RequestParamWrapper extends HttpServletRequestWrapper
+implements IRequestParamWrapper {
     
     final protected Map parameters = new Hashtable();
     protected boolean request_verified;

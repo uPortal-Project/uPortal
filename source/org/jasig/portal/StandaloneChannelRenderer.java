@@ -178,7 +178,7 @@ public class StandaloneChannelRenderer
                 String pName= (String) en.nextElement();
                 Object[] val= (Object[]) req.getParameterValues(pName);
                 if (val == null) {
-                    val = ((RequestParamWrapper)req).getObjectParameterValues(pName);
+                    val = ((IRequestParamWrapper)req).getObjectParameterValues(pName);
                 }
                 targetParams.put (pName, val);
             }

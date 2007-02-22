@@ -29,7 +29,6 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.jasig.portal.channels.CSecureInfo;
 import org.jasig.portal.channels.error.CError;
 import org.jasig.portal.channels.error.ErrorCode;
@@ -55,9 +54,8 @@ import org.jasig.portal.utils.SetCheckInSemaphore;
 import org.jasig.portal.utils.SoftHashMap;
 import org.xml.sax.ContentHandler;
 
-import edu.emory.mathcs.backport.java.util.concurrent.atomic.AtomicLong;
-
 import tyrex.naming.MemoryContext;
+import edu.emory.mathcs.backport.java.util.concurrent.atomic.AtomicLong;
 
 /**
  * ChannelManager shall have the burden of squeezing content out of channels.
@@ -849,7 +847,7 @@ public class ChannelManager implements LayoutEventListener {
                     if (!pName.equals ("uP_channelTarget")&& !pName.equals ("uP_fname")) {
                         Object[] val= (Object[]) req.getParameterValues(pName);
                         if (val == null) {
-                            val = ((RequestParamWrapper)req).getObjectParameterValues(pName);
+                            val = ((IRequestParamWrapper)req).getObjectParameterValues(pName);
                         }
                         targetParams.put(pName, val);
                     }
