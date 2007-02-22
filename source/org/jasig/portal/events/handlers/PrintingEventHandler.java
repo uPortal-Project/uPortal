@@ -19,6 +19,6 @@ import org.jasig.portal.events.PortalEvent;
 public final class PrintingEventHandler extends AbstractLimitedSupportEventHandler {
 
 	public void handleEvent(final PortalEvent event) {
-		System.out.println(event.toString());
+		System.out.println(getDefaultMessage(event));
 	}
 }

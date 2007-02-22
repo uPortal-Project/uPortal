@@ -6,6 +6,8 @@ import org.jasig.portal.security.IPerson;
 
 public final class ChannelUpdatedInLayoutPortalEvent extends
 		ChannelLayoutPortalEvent {
+    
+    private static final String EVENT_SUFFIX = " was updated in layout";
 
 	public ChannelUpdatedInLayoutPortalEvent(final Object source,
 			final IPerson person, final UserProfile profile,
@@ -14,10 +16,11 @@ public final class ChannelUpdatedInLayoutPortalEvent extends
 	}
 
 	public String toString() {
-		return "Channel [" + getChannelDescription().getName() + ", "
-				+ getChannelDescription().getChannelPublishId() + ", "
-				+ getChannelDescription().getChannelSubscribeId()
-				+ "] was updated in layout " + getProfile().getLayoutId()
+		return getEvent() + " " + getProfile().getLayoutId()
 				+ " by " + getDisplayName() + " at " + getTimestampAsDate();
 	}
+    
+    public String getEvent() {
+        return super.getEvent() + EVENT_SUFFIX;
+    }
 }

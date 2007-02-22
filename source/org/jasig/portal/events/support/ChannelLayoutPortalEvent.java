@@ -13,6 +13,9 @@ import org.jasig.portal.security.IPerson;
  *
  */
 public abstract class ChannelLayoutPortalEvent extends PortalEvent {
+    
+    protected static final String EVENT_PREFIX = "Channel [";
+    protected static final String EVENT_SEP = ", ";
 
 	private final UserProfile profile;
 	
@@ -33,4 +36,9 @@ public abstract class ChannelLayoutPortalEvent extends PortalEvent {
 		return this.description;
 	}
 	
+    public String getEvent() {
+        return EVENT_PREFIX + getChannelDescription().getName() + EVENT_SEP
+	        + getChannelDescription().getChannelPublishId() + EVENT_SEP
+	        + getChannelDescription().getChannelSubscribeId() + ']';
+    }
 }

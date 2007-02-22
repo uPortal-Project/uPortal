@@ -6,6 +6,8 @@ import org.jasig.portal.security.IPerson;
 
 public final class UserRemovedFolderFromLayoutPortalEvent extends
 		LayoutPortalEvent {
+    
+    private static final String EVENT_SUFFIX = " was removed from layout";
 
 	public UserRemovedFolderFromLayoutPortalEvent(final Object source,
 			final IPerson person, final UserProfile profile,
@@ -14,8 +16,10 @@ public final class UserRemovedFolderFromLayoutPortalEvent extends
 	}
 
 	public String toString() {
-		return "Folder [" + getFolder().getName() + ", " + getFolder().getId()
-				+ "] was removed from layout " + getProfile().getLayoutId()
-				+ " by " + getDisplayName() + " at " + getTimestampAsDate();
+		return getEvent() + " by " + getDisplayName() + " at " + getTimestampAsDate();
 	}
+    
+    public String getEvent() {
+        return super.getEvent() + EVENT_SUFFIX + ' ' + getProfile().getLayoutId();
+    }
 }

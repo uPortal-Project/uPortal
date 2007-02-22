@@ -6,6 +6,8 @@ import org.jasig.portal.security.IPerson;
 
 public final class ChannelRemovedFromLayoutPortalEvent extends
 		ChannelLayoutPortalEvent {
+    
+    private static final String EVENT_SUFFIX = " was removed from layout";
 
 	public ChannelRemovedFromLayoutPortalEvent(final Object source,
 			final IPerson person, final UserProfile profile,
@@ -13,11 +15,13 @@ public final class ChannelRemovedFromLayoutPortalEvent extends
 		super(source, person, profile, description);
 	}
 
-public String toString() {
-		return "Channel [" +
-        getChannelDescription().getName() + ", " + 
-        getChannelDescription().getChannelPublishId() + ", " +
-        getChannelDescription().getChannelSubscribeId() + "] was removed from layout " + getProfile().getLayoutId() + " by " +
-        getDisplayName() + " at " + 
-        getTimestampAsDate();
-	}}
+	public String toString() {
+		return getEvent() + " " + getProfile().getLayoutId() + " by " +
+	        getDisplayName() + " at " + 
+	        getTimestampAsDate();
+	}
+    
+    public String getEvent() {
+        return super.getEvent() + EVENT_SUFFIX;
+    }
+}

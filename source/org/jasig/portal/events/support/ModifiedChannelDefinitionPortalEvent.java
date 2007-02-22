@@ -5,6 +5,8 @@ import org.jasig.portal.security.IPerson;
 
 public final class ModifiedChannelDefinitionPortalEvent extends
 		ChannelPortalEvent {
+    
+    private static final String EVENT_SUFFIX = " was modified";
 
 	public ModifiedChannelDefinitionPortalEvent(final Object source,
 			final IPerson person, final ChannelDefinition channelDefinition) {
@@ -12,8 +14,11 @@ public final class ModifiedChannelDefinitionPortalEvent extends
 	}
 
 	public String toString() {
-		return "Channel '" + getChannelDefinition().getName()
-				+ "' was modified by " + getDisplayName() + " at "
+		return getEvent() + " by " + getDisplayName() + " at "
 				+ getTimestampAsDate();
 	}
+    
+    public String getEvent() {
+        return super.getEvent() + EVENT_SUFFIX;
+    }
 }

@@ -16,12 +16,18 @@ import org.jasig.portal.security.IPerson;
  *
  */
 public final class UserSessionCreatedPortalEvent extends PortalEvent {
+    
+    private static final String EVENT = "Session created";
 
 	public UserSessionCreatedPortalEvent(final Object source, final IPerson person) {
 		super(source, person);
 	}
 	
 	public String toString() {
-		return "Session created for " + getDisplayName() + " at " + getTimestampAsDate(); 
+		return EVENT + " for " + getDisplayName() + " at " + getTimestampAsDate(); 
 	}
+    
+    public String getEvent() {
+        return EVENT;
+    }
 }

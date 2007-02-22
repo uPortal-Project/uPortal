@@ -6,6 +6,8 @@ import org.jasig.portal.security.IPerson;
 
 public final class ChannelTargetedInLayoutPortalEvent extends
 		ChannelLayoutPortalEvent {
+    
+    private static final String EVENT_SUFFIX = " was targeted in layout";
 
 	public ChannelTargetedInLayoutPortalEvent(final Object source,
 			final IPerson person, final UserProfile profile,
@@ -14,10 +16,11 @@ public final class ChannelTargetedInLayoutPortalEvent extends
 	}
 
 	public String toString() {
-		return "Channel [" + getChannelDescription().getName() + ", "
-				+ getChannelDescription().getChannelPublishId() + ", "
-				+ getChannelDescription().getChannelSubscribeId()
-				+ "] was targeted in layout " + getProfile().getLayoutId()
+		return getEvent() + " " + getProfile().getLayoutId()
 				+ " by " + getDisplayName() + " at " + getTimestampAsDate();
 	}
+    
+    public String getEvent() {
+        return super.getEvent() + EVENT_SUFFIX;
+    }
 }

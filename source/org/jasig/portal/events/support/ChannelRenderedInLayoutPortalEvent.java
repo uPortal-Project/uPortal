@@ -6,6 +6,8 @@ import org.jasig.portal.security.IPerson;
 
 public final class ChannelRenderedInLayoutPortalEvent extends
 		ChannelLayoutPortalEvent {
+    
+    private static final String EVENT_SUFFIX = " was rendered in layout";
 
 	public ChannelRenderedInLayoutPortalEvent(final Object source,
 			final IPerson person, final UserProfile profile,
@@ -14,10 +16,11 @@ public final class ChannelRenderedInLayoutPortalEvent extends
 	}
 
 	public String toString() {
-		return "Channel [" + getChannelDescription().getName() + ", "
-				+ getChannelDescription().getChannelPublishId() + ", "
-				+ getChannelDescription().getChannelSubscribeId()
-				+ "] was rendered in layout " + getProfile().getLayoutId()
+		return getEvent() + " " + getProfile().getLayoutId()
 				+ " by " + getDisplayName() + " at " + getTimestampAsDate();
 	}
+    
+    public String getEvent() {
+        return super.getEvent() + EVENT_SUFFIX;
+    }
 }

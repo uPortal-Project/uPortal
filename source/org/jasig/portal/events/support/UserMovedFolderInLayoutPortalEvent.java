@@ -5,6 +5,8 @@ import org.jasig.portal.layout.node.IUserLayoutFolderDescription;
 import org.jasig.portal.security.IPerson;
 
 public final class UserMovedFolderInLayoutPortalEvent extends LayoutPortalEvent {
+    
+    private static final String EVENT_SUFFIX = " was moved in layout";
 
 	public UserMovedFolderInLayoutPortalEvent(final Object source,
 			final IPerson person, final UserProfile profile,
@@ -13,8 +15,10 @@ public final class UserMovedFolderInLayoutPortalEvent extends LayoutPortalEvent 
 	}
 
 	public String toString() {
-		return "Folder [" + getFolder().getName() + ", " + getFolder().getId()
-				+ "] was moved in layout " + getProfile().getLayoutId()
-				+ " by " + getDisplayName() + "  at " + getTimestampAsDate();
+		return getEvent() + " by " + getDisplayName() + "  at " + getTimestampAsDate();
 	}
+    
+    public String getEvent() {
+        return super.getEvent() + EVENT_SUFFIX + ' ' + getProfile().getLayoutId();
+    }
 }

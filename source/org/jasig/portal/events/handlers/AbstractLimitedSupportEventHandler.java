@@ -20,6 +20,9 @@ import org.springframework.beans.factory.InitializingBean;
  */
 public abstract class AbstractLimitedSupportEventHandler implements
 		EventHandler, InitializingBean {
+    
+    protected static final String FOR = " for ";
+    protected static final String AT = " at ";
 
 	/** Protected logging instance. */
 	protected Log log = LogFactory.getLog(this.getClass());
@@ -56,5 +59,10 @@ public abstract class AbstractLimitedSupportEventHandler implements
 	public void setSupportedEvents(final Class[] supportedEvents) {
 		this.supportedEvents = supportedEvents;
 	}
+    
+    protected String getDefaultMessage(PortalEvent event) {
+        return event.getEvent() + FOR + event.getDisplayName()
+            + AT + event.getTimestampAsDate();
+    }
 
 }

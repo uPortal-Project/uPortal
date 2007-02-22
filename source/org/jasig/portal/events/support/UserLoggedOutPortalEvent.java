@@ -16,12 +16,18 @@ import org.jasig.portal.security.IPerson;
  *
  */
 public final class UserLoggedOutPortalEvent extends PortalEvent {
+    
+    private static final String EVENT = "logged out";
 
 	public UserLoggedOutPortalEvent(final Object source, final IPerson person) {
 		super(source, person);
 	}
 	
 	public String toString() {
-		return getDisplayName() + " logged out at " + getTimestampAsDate();
+		return getDisplayName() + EVENT + " at " + getTimestampAsDate();
 	}
+    
+    public String getEvent() {
+        return EVENT;
+    }
 }

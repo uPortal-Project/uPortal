@@ -20,7 +20,7 @@ public final class LoggingEventHandler extends AbstractLimitedSupportEventHandle
 
 	public void handleEvent(final PortalEvent event) {
 		if (log.isInfoEnabled()) {
-			log.info(event.toString());
+			log.info(getDefaultMessage(event));
 		}
 	}
 }

@@ -16,6 +16,8 @@ import org.jasig.portal.security.IPerson;
  * 
  */
 public final class UserSessionDestroyedPortalEvent extends PortalEvent {
+    
+    private static final String EVENT = "Session destroyed";
 
 	public UserSessionDestroyedPortalEvent(final Object source,
 			final IPerson person) {
@@ -23,7 +25,11 @@ public final class UserSessionDestroyedPortalEvent extends PortalEvent {
 	}
 
 	public String toString() {
-		return "Session destroyed for " + getDisplayName() + " at "
+		return EVENT + " for " + getDisplayName() + " at "
 				+ getTimestampAsDate();
 	}
+    
+    public String getEvent() {
+        return EVENT;
+    }
 }
