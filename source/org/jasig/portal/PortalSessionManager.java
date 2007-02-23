@@ -11,6 +11,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
@@ -28,8 +29,10 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.channels.portlet.CPortletAdapter;
 import org.jasig.portal.jndi.JNDIManager;
 import org.jasig.portal.properties.PropertiesManager;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.IPersonManager;
+import org.jasig.portal.security.PersonManagerFactory;
 import org.jasig.portal.utils.ResourceLoader;
-import java.util.Date;
 
 /**
  * This is an entry point into the uPortal.
@@ -66,6 +69,9 @@ public class PortalSessionManager extends HttpServlet {
   private static ServletContext servletContext = null;
   private static PortalSessionManager instance = null;
   private static boolean fatalError = false;
+  private static int unauthenticatedUserSessionTimeout = 0;
+  private static final IPersonManager personManager =
+      PersonManagerFactory.getPersonManagerInstance();
 
   public static final ErrorID initPortalContext = new ErrorID("config","JNDI","Cannot initialize JNDI context");
 
@@ -141,6 +147,16 @@ public class PortalSessionManager extends HttpServlet {
           System.setProperty("org.xml.sax.driver", PropertiesManager.getProperty("org.xml.sax.driver", DEFAULT_SAX_DRIVER));
       }
 
+      // try to set the unauthenticated user's timeout, defaulting to the current server setting
+      unauthenticatedUserSessionTimeout = PropertiesManager.getPropertyAsInt(
+          PortalSessionManager.class.getName()+".unauthenticatedUserSessionTimeout", 0);
+
+      // anything less than -1 is undefined, so
+      // set it to no timeout
+      if (unauthenticatedUserSessionTimeout < -1) {
+          unauthenticatedUserSessionTimeout = -1;
+      }
+
       // Flag that the portal has been initialized
       initialized = true;
       log.info( "uPortal started");
@@ -191,6 +207,20 @@ public class PortalSessionManager extends HttpServlet {
         HttpSession session = req.getSession(false);
 
         if (session != null) {
+            // Update the session timeout for an unauthenticated user.
+            IPerson person = personManager.getPerson(req);
+            if (person != null &&
+                !person.getSecurityContext().isAuthenticated()) {
+
+                if (unauthenticatedUserSessionTimeout != 0) {
+                    session.setMaxInactiveInterval(
+                        unauthenticatedUserSessionTimeout);
+                    if (log.isDebugEnabled()) {
+                        log.debug("UniconPortalSessionManager::doGet : Unauthenticated user session timeout set to: " + unauthenticatedUserSessionTimeout);
+                    }
+                }
+            }
+
             Set requestTags=null;
             boolean request_verified=false;
 
@@ -321,6 +351,34 @@ public class PortalSessionManager extends HttpServlet {
   public static boolean isServletContext() {
       return servletContext != null;
   }
+  
+
+  /**
+   *Accessor for the fatalError member.
+   *@return a boolean value indicating if a fatal error occured duing init
+   */
+  public boolean getFatalError(){
+    return fatalError;
+  }
+
+  /**
+   *Accessor for the ALLOW_REPEATED_REQUESTS member.
+   *@return boolean value that indicates whether handling repeated requests is
+   *        enabled
+   */
+  public boolean getAllowRepeatedRequests(){
+    return ALLOW_REPEATED_REQUESTS;
+  }
+  
+  /**
+   *Accessor for the Random number generator instance
+   *@return an instance of a random number generator instantiated
+   *        by the portal session manager.
+   */
+  public Random getRandom(){
+    return randomGenerator;
+  }
+
 }
 
 
