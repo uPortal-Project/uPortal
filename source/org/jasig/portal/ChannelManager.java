@@ -1133,6 +1133,7 @@ public class ChannelManager implements LayoutEventListener {
             // set up runtime data that will be passed to the IChannelRenderer
             if(!(ch instanceof IPrivileged)) {
                 rd = new ChannelRuntimeData();
+                rd.setTargeted(true);
                 rd.setParameters(targetParams);
                 String qs = pcs.getHttpServletRequest().getQueryString();
                 if (qs != null && qs.indexOf("=") == -1)
