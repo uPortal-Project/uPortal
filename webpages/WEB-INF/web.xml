@@ -43,6 +43,16 @@
     <servlet-class>org.jasig.portal.tools.checks.ChecksServlet</servlet-class>
   </servlet>
 
+  <servlet>
+    <servlet-name>RetrieveChannelListServlet</servlet-name>
+    <servlet-class>org.jasig.portal.layout.dlm.remoting.RetrieveChannelListServlet</servlet-class>
+  </servlet>
+  
+  <servlet>
+    <servlet-name>UpdatePreferencesServlet</servlet-name>
+    <servlet-class>org.jasig.portal.layout.dlm.remoting.UpdatePreferencesServlet</servlet-class>
+  </servlet>
+    
   <servlet-mapping>
     <servlet-name>uPortal</servlet-name>
     <url-pattern>*.uP</url-pattern>
@@ -76,6 +86,16 @@
    <servlet-mapping>
     <servlet-name>Instrumentation</servlet-name>
     <url-pattern>/instrumentation</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>RetrieveChannelListServlet</servlet-name>
+    <url-pattern>/ajax/channelList</url-pattern>
+  </servlet-mapping>
+  
+  <servlet-mapping>
+    <servlet-name>UpdatePreferencesServlet</servlet-name>
+    <url-pattern>/ajax/preferences</url-pattern>
   </servlet-mapping>
 
   <mime-mapping>
