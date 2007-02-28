@@ -694,6 +694,14 @@ public class UserInstance implements HttpSessionBindingListener {
     }
 
     /**
+     * Gets the preferences manager object from the session.  
+     * @return the UserPreferencesManager object, null if no person is logged in
+     */
+    public IUserPreferencesManager getPreferencesManager () {
+        return this.uPreferencesManager;
+    }
+
+    /**
      * This notifies UserInstance that it has been unbound from the session.
      * Method triggers cleanup in ChannelManager.
      *
