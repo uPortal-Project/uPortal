@@ -6,8 +6,6 @@ import org.jasig.portal.security.IPerson;
 
 public final class ChannelAddedToLayoutPortalEvent extends
 		ChannelLayoutPortalEvent {
-    
-    private static final String EVENT_SUFFIX = " was added to layout";
 
 	public ChannelAddedToLayoutPortalEvent(final Object source,
 			final IPerson person, final UserProfile profile,
@@ -16,11 +14,10 @@ public final class ChannelAddedToLayoutPortalEvent extends
 	}
 
 	public String toString() {
-		return getEvent() + " " + getProfile().getLayoutId()
-			+ " by " + getDisplayName() + " at " + getTimestampAsDate();
+		return "Channel [" + getChannelDescription().getName() + ", "
+				+ getChannelDescription().getChannelPublishId() + ", "
+				+ getChannelDescription().getChannelSubscribeId()
+				+ "] was added to layout " + getProfile().getLayoutId()
+				+ " by " + getDisplayName() + " at " + getTimestampAsDate();
 	}
-    
-    public String getEvent() {
-        return super.getEvent() + EVENT_SUFFIX;
-    }
 }

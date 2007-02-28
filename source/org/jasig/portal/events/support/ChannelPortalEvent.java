@@ -17,8 +17,6 @@ import org.jasig.portal.security.IPerson;
  *
  */
 public abstract class ChannelPortalEvent extends PortalEvent {
-    
-    private static final String EVENT_PREFIX = "Channel '";
 
 	private final ChannelDefinition channelDefinition;
 	
@@ -30,8 +28,4 @@ public abstract class ChannelPortalEvent extends PortalEvent {
 	public final ChannelDefinition getChannelDefinition() {
 		return this.channelDefinition;
 	}
-    
-    public String getEvent() {
-        return EVENT_PREFIX + getChannelDefinition().getName() + '\'';
-    }
 }

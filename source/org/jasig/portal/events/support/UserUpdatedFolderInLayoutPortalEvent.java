@@ -6,8 +6,6 @@ import org.jasig.portal.security.IPerson;
 
 public final class UserUpdatedFolderInLayoutPortalEvent extends
 		LayoutPortalEvent {
-    
-    private static final String EVENT_SUFFIX = " was updated in layout";
 
 	public UserUpdatedFolderInLayoutPortalEvent(final Object source,
 			final IPerson person, final UserProfile profile,
@@ -16,10 +14,9 @@ public final class UserUpdatedFolderInLayoutPortalEvent extends
 	}
 
 	public String toString() {
-		return getEvent() + " by " + getDisplayName() + " at " + getTimestampAsDate();
+		return "Folder [" + getFolder().getName() + ", " + getFolder().getId()
+				+ "]  was updated in layout " + getProfile().getLayoutId()
+				+ " by " + getDisplayName() + " at " + getTimestampAsDate();
 	}
-    
-    public String getEvent() {
-        return super.getEvent() + EVENT_SUFFIX + ' ' + getProfile().getLayoutId();
-    }
+
 }

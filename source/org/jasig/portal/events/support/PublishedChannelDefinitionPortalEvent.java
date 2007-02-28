@@ -5,8 +5,6 @@ import org.jasig.portal.security.IPerson;
 
 public final class PublishedChannelDefinitionPortalEvent extends
 		ChannelPortalEvent {
-    
-    private static final String EVENT_SUFFIX = " was published";
 
 	public PublishedChannelDefinitionPortalEvent(final Object source,
 			final IPerson person, final ChannelDefinition channelDefinition) {
@@ -14,11 +12,8 @@ public final class PublishedChannelDefinitionPortalEvent extends
 	}
 
 	public String toString() {
-		return getEvent() + " by " + getDisplayName() + " at "
+		return "Channel '" + getChannelDefinition().getName()
+				+ "' was published by " + getDisplayName() + " at "
 				+ getTimestampAsDate();
 	}
-    
-    public String getEvent() {
-        return super.getEvent() + EVENT_SUFFIX;
-    }
 }

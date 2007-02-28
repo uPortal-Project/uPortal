@@ -16,18 +16,12 @@ import org.jasig.portal.security.IPerson;
  *
  */
 public final class UserLoggedInPortalEvent extends PortalEvent {
-    
-    private static final String EVENT = "logged in successfully";
 
 	public UserLoggedInPortalEvent(final Object source, final IPerson person) {
 		super(source, person);
 	}
 	
 	public String toString() {
-		return getDisplayName() + ' ' + EVENT + " at " + getTimestampAsDate();
+		return getDisplayName() + " logged in successfully at " + getTimestampAsDate();
 	}
-    
-    public String getEvent() {
-        return EVENT;
-    }
 }

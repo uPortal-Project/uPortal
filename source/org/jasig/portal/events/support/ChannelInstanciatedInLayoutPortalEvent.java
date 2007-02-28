@@ -6,8 +6,6 @@ import org.jasig.portal.security.IPerson;
 
 public final class ChannelInstanciatedInLayoutPortalEvent extends
 		ChannelLayoutPortalEvent {
-    
-    private static final String EVENT_SUFFIX = " was instantiated in layout";
 
 	public ChannelInstanciatedInLayoutPortalEvent(final Object source,
 			final IPerson person, final UserProfile profile,
@@ -16,11 +14,10 @@ public final class ChannelInstanciatedInLayoutPortalEvent extends
 	}
 
 	public String toString() {
-		return getEvent() + " " + getProfile().getLayoutId()
+		return "Channel [" + getChannelDescription().getName() + ", "
+				+ getChannelDescription().getChannelPublishId() + ", "
+				+ getChannelDescription().getChannelSubscribeId()
+				+ "] was instantiated in layout " + getProfile().getLayoutId()
 				+ " by " + getDisplayName() + " at " + getTimestampAsDate();
 	}
-    
-    public String getEvent() {
-        return super.getEvent() + EVENT_SUFFIX;
-    }
 }

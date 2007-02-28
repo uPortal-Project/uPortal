@@ -19,21 +19,17 @@ import org.springframework.context.ApplicationEvent;
  *
  */
 public abstract class PortalEvent extends ApplicationEvent {
-    
-    private static final String GUEST_PREFIX = "GUEST_USER (";
-    private static final String EMPTY_STRING = "";
-    private static final String NULL_PERSON = "NULL_PERSON";
-    private static final String SPACE = " ";
 
 	/** Every PortalEvent is associated with a Person. */
 	private final IPerson person;
 	
 	/** Convenience conversion of long to Date. */
-	private Date timeStampAsDate = null;
+	private final Date timeStampAsDate;
 
 	public PortalEvent(final Object source, final IPerson person) {
 		super(source);
 		this.person = person;
+		this.timeStampAsDate = new Date(getTimestamp());
 	}
 
 	public final IPerson getPerson() {
@@ -41,34 +37,29 @@ public abstract class PortalEvent extends ApplicationEvent {
 	}
 
 	public final Date getTimestampAsDate() {
-        if (this.timeStampAsDate == null) {
-            this.timeStampAsDate = new Date(getTimestamp());
-        }
 		return this.timeStampAsDate;
 	}
 
 	private String fixNull(String s) {
-		return s == null ? EMPTY_STRING : s;
+		return s == null ? "" : s;
 	}
 
-	public String getDisplayName() {
+	protected String getDisplayName() {
 		if (person == null) {
-			return NULL_PERSON;
+			return "NULL_PERSON";
 		}
 
 		final String userName = fixNull((String) person
 				.getAttribute(IPerson.USERNAME));
 
 		if (person.isGuest()) {
-			return GUEST_PREFIX + userName + ')';
+			return "GUEST_USER (" + userName + ")";
 		}
 
 		final String firstName = fixNull((String) person
 				.getAttribute("givenName"));
 		final String lastName = fixNull((String) person.getAttribute("sn"));
 
-		return firstName + SPACE + lastName + SPACE + '(' + userName + ')';
+		return firstName + " " + lastName + " (" + userName + ")";
 	}
-    
-    public abstract String getEvent();
 }

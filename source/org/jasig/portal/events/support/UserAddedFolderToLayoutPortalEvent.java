@@ -5,8 +5,6 @@ import org.jasig.portal.layout.node.IUserLayoutFolderDescription;
 import org.jasig.portal.security.IPerson;
 
 public final class UserAddedFolderToLayoutPortalEvent extends LayoutPortalEvent {
-    
-    private static final String EVENT_SUFFIX = " was added to layout";
 
 	public UserAddedFolderToLayoutPortalEvent(final Object source,
 			final IPerson person, final UserProfile profile,
@@ -15,10 +13,8 @@ public final class UserAddedFolderToLayoutPortalEvent extends LayoutPortalEvent 
 	}
 
 	public String toString() {
-		return getEvent() +  " by " + getDisplayName() + " at " + getTimestampAsDate();
+		return "Folder [" + getFolder().getName() + ", " + getFolder().getId()
+				+ "] was added to layout " + getProfile().getLayoutId()
+				+ " by " + getDisplayName() + " at " + getTimestampAsDate();
 	}
-    
-    public String getEvent() {
-        return super.getEvent() + EVENT_SUFFIX + ' ' + getProfile().getLayoutId();
-    }
 }

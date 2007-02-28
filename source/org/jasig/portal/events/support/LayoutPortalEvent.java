@@ -13,9 +13,6 @@ import org.jasig.portal.security.IPerson;
  *
  */
 public abstract class LayoutPortalEvent extends PortalEvent {
-    
-    private static final String EVENT_PREFIX = "Folder [";
-    private static final String EVENT_SEP = ", ";
 
 	private final UserProfile profile;
 	
@@ -35,8 +32,4 @@ public abstract class LayoutPortalEvent extends PortalEvent {
 	public final IUserLayoutFolderDescription getFolder() {
 		return this.folder;
 	}
-    
-    public String getEvent() {
-        return EVENT_PREFIX + getFolder().getName() + EVENT_SEP + getFolder().getId() + ']';
-    }
 }
