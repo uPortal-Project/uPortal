@@ -1,4 +1,5 @@
 /* $Id$ */
-@import url("aqua_standard.css");
+@import url("ocean_standard.css");
+@import url("ocean_preferences.css");
 @import url("../../common/header.css");
 @import url("../../common/channels.css");

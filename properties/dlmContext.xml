@@ -59,6 +59,11 @@
                 stylesheet to be presented in the user's layout. -->
                 <bean class="org.jasig.portal.layout.dlm.providers.ThemeParamInjector" singleton="false"/>
                 <bean class="org.jasig.portal.layout.dlm.providers.RegularViewChannelRemover" singleton="false"/>
+                
+                <!-- Uncomment to enable AJAX preferences -->
+                <!--
+				<bean class="org.jasig.portal.layout.dlm.remoting.AjaxPreferencesThemeParamInjector" singleton="false"/>
+				-->                
 
                 <!-- 
                 The following bean is an example of an IParameterProcessor that
