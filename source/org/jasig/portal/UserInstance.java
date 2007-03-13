@@ -19,7 +19,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
+import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.sax.TransformerHandler;
 
@@ -425,7 +427,7 @@ public class UserInstance implements HttpSessionBindingListener {
                                 int ccsize=cCache.systemBuffers.size();
                                 if(cCache.channelIds.size()!=ccsize-1) {
                                     log.error("UserInstance::renderState() : channelIds character cache has invalid size !  " +
-                                            "UserInstance::renderState() : ccache cotnains "+cCache.systemBuffers.size()+" system buffers and "+cCache.channelIds.size()+" channel entries");
+                                            "UserInstance::renderState() : ccache contains "+cCache.systemBuffers.size()+" system buffers and "+cCache.channelIds.size()+" channel entries");
 
                                 }
                                 CachingSerializer cSerializer=(CachingSerializer) markupSerializer;
@@ -444,6 +446,7 @@ public class UserInstance implements HttpSessionBindingListener {
                                 }
 
                                 // print out the last block
+                                
                                 cSerializer.printRawCharacters((String)cCache.systemBuffers.get(ccsize-1));
 								if (log.isDebugEnabled()){
 	                                log.debug("----------printing frame piece "+Integer.toString(ccsize-1));
@@ -483,7 +486,9 @@ public class UserInstance implements HttpSessionBindingListener {
 
                         // obtain transformer references from the handlers
                         Transformer sst=ssth.getTransformer();
+                        sst.setErrorListener(cErrListener);
                         Transformer tst=tsth.getTransformer();
+                        tst.setErrorListener(cErrListener);
 
                         // initialize ChannelRenderingBuffer and attach it downstream of the structure transformer
                         ChannelRenderingBuffer crb = new ChannelRenderingBuffer(channelManager,ccaching);
@@ -674,6 +679,38 @@ public class UserInstance implements HttpSessionBindingListener {
         }
     }
 
+    /**
+     * Class providing exposure to causal exception information for exceptions
+     * incurred during transformation.
+     * 
+     * @author Mark Boyd
+     *
+     */
+    private static class TransformErrorListener implements ErrorListener
+    {
+
+        public void error(TransformerException te) throws TransformerException
+        {
+            log.error("An error occurred during transforamtion.", te);
+        }
+
+        public void fatalError(TransformerException te) throws TransformerException
+        {
+            log.error("A fatal error occurred during transforamtion.", te);
+        }
+
+        public void warning(TransformerException te) throws TransformerException
+        {
+            log.error("A warning occurred during transforamtion.", te);
+        }
+    }
+
+    /**
+     * Listener that exposes full causal information when exceptions occur 
+     * during transformation. 
+     */
+    private static final TransformErrorListener cErrListener = 
+        new TransformErrorListener();
 
     private String constructCacheKey(IPerson person,String rootNodeId) throws PortalException {
         StringBuffer sbKey = new StringBuffer(1024);

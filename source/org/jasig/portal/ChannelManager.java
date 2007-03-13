@@ -1118,7 +1118,7 @@ public class ChannelManager implements LayoutEventListener {
                 try {
                     ((IPrivileged) ch).setPortalControlStructures(pcs);
                 } catch (Exception e) {
-                    ch=replaceWithErrorChannel(channelTarget,ErrorCode.SET_PCS_EXCEPTION,e,null,false);
+                    ch=replaceWithErrorChannel(channelSubscribeId,ErrorCode.SET_PCS_EXCEPTION,e,null,false);
                     channelTable.remove(ch);
 
                     // set portal control structures for the error channel
