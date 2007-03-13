@@ -375,6 +375,8 @@ serializer.jar         serializer.jar contains the Serializer component of
   <property name="rome.jar" value="(set this in build.properties!)"/>
   <property name="tagsoup.jar" value="(set this in build.properties!)"/>
   <property name="xom.jar" value="(set this in build.properties!)"/>
+  <property name="jstl.jar" value="(set this in build.properties!)"/>
+  <property name="standard.jar" value="(set this in build.properties!)"/>
 
 <!-- ==================== Compilation Classpath =========================== -->
 
@@ -423,6 +425,8 @@ serializer.jar         serializer.jar contains the Serializer component of
     <pathelement location="${rome.jar}"/>
     <pathelement location="${tagsoup.jar}"/>
     <pathelement location="${xom.jar}"/>
+    <pathelement location="${standard.jar}"/>
+    <pathelement location="${jstl.jar}"/>
   </path>
 
 
@@ -612,6 +616,8 @@ serializer.jar         serializer.jar contains the Serializer component of
     -->
     <copy todir="${server.home}/shared/lib" file="${portlet-api.jar}"/>
     <copy todir="${server.home}/shared/lib" file="${pluto.jar}"/>
+    <copy todir="${server.home}/shared/lib" file="${jstl.jar}"/>
+    <copy todir="${server.home}/shared/lib" file="${standard.jar}"/>
     <mkdir dir="${server.home}/shared/classes/org/jasig/portal/container"/>
     <copy todir="${server.home}/shared/classes/org/jasig/portal/container"
     	file="${build.home}/WEB-INF/classes/org/jasig/portal/container/PortletServlet.class"/>
