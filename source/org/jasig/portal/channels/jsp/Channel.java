@@ -362,6 +362,26 @@ public class Channel
         }
         else
             super.setRuntimeData(rd);
+
+        // Now indicate to the JSPs via the HttpRequest which locale is in use.
+        java.util.Locale locale = runtimeData.getLocales()[0];
+
+        // To avoid the compile-time dependency, use the published
+        // strings instead of linking directly to the JSTL Config
+        // class.
+        mRequest.setAttribute(
+            "javax.servlet.jsp.jstl.fmt.locale",
+            locale
+            );
+                                    
+        // To avoid the compile-time dependency, use the published
+        // strings instead of linking directly to the JSTL Config
+        // class.
+        mRequest.setAttribute(
+            "javax.servlet.jsp.jstl.fmt.locale" + ".request",
+            locale
+            );
+
     }
 
     /* (non-Javadoc)
@@ -544,25 +564,6 @@ public class Channel
         mSession = pcs.getHttpSession();
         mRequest = pcs.getHttpServletRequest();
         mResponse = pcs.getHttpServletResponse();
-
-        //java.util.Locale locale = com.sct.util.LocaleManager.getLocale();
-        java.util.Locale locale = runtimeData.getLocales()[0];
-
-        // To avoid the compile-time dependency, use the published
-        // strings instead of linking directly to the JSTL Config
-        // class.
-        mRequest.setAttribute(
-            "javax.servlet.jsp.jstl.fmt.locale",
-            locale
-            );
-                                    
-        // To avoid the compile-time dependency, use the published
-        // strings instead of linking directly to the JSTL Config
-        // class.
-        mRequest.setAttribute(
-            "javax.servlet.jsp.jstl.fmt.locale" + ".request",
-            locale
-            );
 
         if (mController != null && mController instanceof IPrivileged)
         {
