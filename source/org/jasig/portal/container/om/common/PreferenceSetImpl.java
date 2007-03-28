@@ -49,7 +49,7 @@ public class PreferenceSetImpl implements PreferenceSet, PreferenceSetCtrl, Seri
                 throw new IllegalStateException("Portlet class loader is not yet available to load preferences validator.");
             }
             try {
-                if (validatorClassName != null) {
+                if ((validatorClassName != null) && (!"".equals(validatorClassName))) {
                     Object o = classLoader.loadClass(validatorClassName).newInstance();
                     if (o instanceof PreferencesValidator) {
                         validator = (PreferencesValidator)o;
