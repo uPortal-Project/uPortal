@@ -803,7 +803,7 @@ protected void setDefaultPermissionPolicy(IPermissionPolicy newDefaultPermission
 /**
  * @return org.jasig.portal.security.provider.IAuthorizationService
  */
-public static synchronized IAuthorizationService singleton()
+public static IAuthorizationService singleton()
 {
     return singleton;
 }
