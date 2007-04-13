@@ -1,4 +1,4 @@
-/* Copyright 2001, 2005 The JA-SIG Collaborative.  All rights reserved.
+/* Copyright 2001, 2005, 2007 The JA-SIG Collaborative.  All rights reserved.
  *  See license distributed with this file and
  *  available online at http://www.uportal.org/license.html
  */
@@ -33,8 +33,6 @@ import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.LocalConnectionContext;
 import org.jasig.portal.tools.versioning.Version;
 import org.jasig.portal.tools.versioning.VersionsManager;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.DTDResolver;
 import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.utils.XSLT;
@@ -63,6 +61,13 @@ import org.xml.sax.ContentHandler;
  *                  channel should be cached (optional).  If this parameter is left
  *                  out, a default timeout value will be used.
  *  </li>
+ *  <li> "cacheScope" - the desired scope for caching channel responses.  Defaults to
+ *   "instance" indicating that cache is per-channel-instance-per-user.  Cache will
+ *   not match across users.  This is typically desirable to prevent user A from
+ *   seeing user B's data.  Alternately, this parameter may be set to "system"
+ *   indicating that caching should occur across the entire portal
+ *   such that two different users' instances of like-configured CGenericXSLT channels will share cache.
+ *   </li>
  *  <li> "upc_localConnContext" - The class name of the ILocalConnectionContext
  *                  implementation.
  *                  <i>Use when local data needs to be sent with the
@@ -109,13 +114,14 @@ import org.xml.sax.ContentHandler;
  * empty document and allow the path to the empty document.</p>
  * @author Steve Toth, stoth@interactivebusiness.com
  * @author Ken Weiner, kweiner@unicon.net
- * @author Peter Kharchenko {@link <a href="mailto:pkharchenko@interactivebusiness.com">pkharchenko@interactivebusiness.com</a>} (multithreading,caching)
+ * @author Peter Kharchenko pkharchenko@unicon.net
  * @version $Revision$
  */
 
-public class CGenericXSLT extends BaseChannel implements IChannel, ICacheable
-{
-	private static final Log log = LogFactory.getLog(CGenericXSLT.class);
+public class CGenericXSLT
+    extends BaseChannel
+    implements IChannel, ICacheable {
+
 
 	private String xmlUri;
 	private String sslUri;
@@ -123,8 +129,14 @@ public class CGenericXSLT extends BaseChannel implements IChannel, ICacheable
 	private String xslUri;
 	private final Map params = new HashMap();
 	private long cacheTimeout;
-	private ChannelRuntimeData runtimeData = null;
 	private LocalConnectionContext localConnContext = null;
+
+    /**
+     * Either ChannelCacheKey.INSTANCE_KEY_SCOPE or ChannelCacheKey.SYSTEM_KEY_SCOPE.
+     * Indicates cache key scope that should be used in fulfilling the ICacheable API.
+     * Populated from 'cache-scope' channel parameter.
+     */
+    private int channelCacheScope = ChannelCacheKey.INSTANCE_KEY_SCOPE;
 
 	private IUriScrutinizer uriScrutinizer;
 
@@ -175,6 +187,22 @@ public class CGenericXSLT extends BaseChannel implements IChannel, ICacheable
 
 		if (cacheTimeoutText != null)
 			cacheTimeout = Long.parseLong(cacheTimeoutText);
+
+        String cacheScopeText = sd.getParameter(ICacheable.CHANNEL_CACHE_KEY_SCOPE_PARAM_NAME);
+
+        if (cacheScopeText != null) {
+            String trimmedCacheScopeText = cacheScopeText.trim();
+            if (trimmedCacheScopeText.length() > 0) {
+                if (trimmedCacheScopeText.equals(ICacheable.CHANNEL_CACHE_KEY_SYSTEM_SCOPE)) {
+                    this.channelCacheScope = ChannelCacheKey.SYSTEM_KEY_SCOPE;
+                } else if (trimmedCacheScopeText.equals(ICacheable.CHANNEL_CACHE_KEY_SYSTEM_SCOPE)) {
+                    this.channelCacheScope = ChannelCacheKey.INSTANCE_KEY_SCOPE;
+                } else {
+                    log.warn("CGnericXSLT ChannelStaticData parameter [" + ICacheable.CHANNEL_CACHE_KEY_SYSTEM_SCOPE + "] had unrecognized value [" + trimmedCacheScopeText + "]; 'failing shut' with instance scoped caching.");
+                    this.channelCacheScope = ChannelCacheKey.INSTANCE_KEY_SCOPE;
+                }
+            }
+        }
 
 		String connContext = sd.getParameter ("upc_localConnContext");
 		if (connContext != null && !connContext.trim().equals(""))
@@ -331,7 +359,7 @@ public class CGenericXSLT extends BaseChannel implements IChannel, ICacheable
 	{
 		ChannelCacheKey k = new ChannelCacheKey();
 		k.setKey(getKey());
-		k.setKeyScope(ChannelCacheKey.INSTANCE_KEY_SCOPE);
+		k.setKeyScope(this.channelCacheScope);
 		k.setKeyValidity(new Long(System.currentTimeMillis()));
 		return k;
 	}
