@@ -119,6 +119,16 @@ Version $Revision$
         <defaultValue>300</defaultValue>
       </parameter>
 
+      <parameter modify="publish">
+      	<name>cacheScope</name>
+        <label>Cache scope, either 'instance' (default) or 'system' (use with caution)</label>
+        <type base="string" input="text" display="text">
+          <length>7</length>
+          <maxlength>10</maxlength>
+        </type>
+        <defaultValue>instance</defaultValue>
+      </parameter>
+
       <parameter modify="publish-only">
         <name>upc_localConnContext</name>
         <label>LocalConnectionContext implementation (upc_localConnContext)</label>
