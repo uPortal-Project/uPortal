@@ -67,6 +67,16 @@ Version $Revision$
       </parameter>
 
       <parameter modify="publish-only">
+        <name>alt-text</name>
+        <label>Image alt-text</label>
+        <type base="string" input="text" display="text">
+          <length>60</length>
+          <maxlength>2000</maxlength>
+        </type>
+        <example>Photo of two roads diverging in a yellow wood</example>
+      </parameter>
+
+      <parameter modify="publish-only">
         <name>img-width</name>
         <label>Image width (pixels)</label>
         <type base="integer" input="text" display="text">
