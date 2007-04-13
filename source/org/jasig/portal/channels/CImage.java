@@ -32,12 +32,15 @@ import org.xml.sax.ContentHandler;
  *     <tr><td>img-link</td><td>A URI to be used as an href for the image</td><td>http://www.hawaii.edu/visitor/#webcams</td><td>no</td></tr>
  *     <tr><td>caption</td><td>A caption of the image to display</td><td>Almost Live Shot of Hamilton Library Front Entrance</td><td>no</td></tr>
  *     <tr><td>subcaption</td><td>The subcaption of the image to display</td><td>Updated Once per Minute During Daylight Hours</td><td>no</td></tr>
+ *     <tr><td>alt-text</td><td>Text to include as the 'alt' attribute of the img tag</td><td>Almost live shot of Hamilton library front enterance</td><td>no, but highly recommended in support of non-visual browsers</td></tr>
  *   </table>
  * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
 public class CImage extends BaseChannel implements ICacheable, IChannel
 {
+    public static final String ALT_TEXT_CHANNEL_PARAM_NAME = "alt-text";
+
 
   private static final String sslLocation = "CImage/CImage.ssl";
 
@@ -56,6 +59,7 @@ public class CImage extends BaseChannel implements ICacheable, IChannel
     String sImageLink = staticData.getParameter ("img-link");
     String sCaption = staticData.getParameter ("caption");
     String sSubCaption = staticData.getParameter ("subcaption");
+    String sAltText = staticData.getParameter(ALT_TEXT_CHANNEL_PARAM_NAME);
 
     Document doc = null;
     try {
@@ -79,6 +83,9 @@ public class CImage extends BaseChannel implements ICacheable, IChannel
       imageE.setAttribute("border", sImageBorder);
     if (exists(sImageWidth))
       imageE.setAttribute("link", sImageLink);
+    if (exists(sAltText)) {
+        imageE.setAttribute("alt-text", sAltText);
+    }
     contentE.appendChild(imageE);
 
     // Add a caption if it is specified
