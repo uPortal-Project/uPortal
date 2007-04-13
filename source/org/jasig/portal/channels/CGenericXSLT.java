@@ -177,7 +177,7 @@ public class CGenericXSLT extends BaseChannel implements IChannel, ICacheable
 			cacheTimeout = Long.parseLong(cacheTimeoutText);
 
 		String connContext = sd.getParameter ("upc_localConnContext");
-		if (connContext != null)
+		if (connContext != null && !connContext.trim().equals(""))
 		{
 			try
 			{
