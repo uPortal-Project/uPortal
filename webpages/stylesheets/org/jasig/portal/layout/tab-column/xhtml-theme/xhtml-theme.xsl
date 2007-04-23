@@ -146,12 +146,31 @@
 							<script type="text/javascript">
 								var tabId = "<xsl:value-of select="@ID"/>";
 							</script>
-							<li id="tab_{@ID}" class="activeTab"><a id="activeTabLink" href="{$baseActionURL}?uP_root=root&amp;uP_sparam=activeTab&amp;activeTab={position()}">
-								<xsl:choose>
-									<xsl:when test="$isAjaxEnabled='true'"><span id="editableTab" dojoType="inlineEditBox" value="{@name}"><xsl:value-of select="@name"/></span></xsl:when>
-									<xsl:otherwise><span><xsl:value-of select="@name"/></span></xsl:otherwise>
-								</xsl:choose>
-							</a></li>
+							<xsl:choose>
+								<xsl:when test="$isAjaxEnabled='true'">
+									<li id="tab_{@ID}" class="editable-tab">
+										<a id="activeTabLink" title="edit" href="javascript:;" onclick="toggleEditTabDialog('show')">
+											<span id="tabName"><xsl:value-of select="@name"/></span>
+										</a>
+										<a id="editTabLink" style="display:none; cursor: default" href="javascript:;">
+											<span id="editTabName">
+												<img src="{$mediaPath}/{$skin}/controls/leftarrow.gif" onclick="moveTab('{@ID}', 'left')" title="Move tab left" alt="Move tab left"/>
+												<input id="newTabName" type="text" value="{@name}"/>&#160;
+												<input id="tabNameSubmit" type="button" value="Done" onclick="updateTabName('{@ID}')" class="portlet-form-button"/>
+												<img src="{$mediaPath}/{$skin}/controls/rightarrow.gif" onclick="moveTab('{@ID}', 'right')" title="Move tab right" alt="Move tab right"/>
+												<img src="{$mediaPath}/{$skin}/controls/remove.gif" onclick="deleteTab('{@ID}')" title="Remove tab" alt="Remove tab"/>
+											</span>
+										</a>
+									</li>
+								</xsl:when>
+								<xsl:otherwise>
+									<li id="tab_{@ID}" class="active-tab">
+										<a id="activeTabLink" href="{$baseActionURL}?uP_root=root&amp;uP_sparam=activeTab&amp;activeTab={position()}">
+											<span><xsl:value-of select="@name"/></span>
+										</a>
+									</li>
+								</xsl:otherwise>
+							</xsl:choose>
 						</xsl:otherwise>
 					</xsl:choose>
 				</xsl:for-each>
@@ -168,8 +187,7 @@
 						<div id="preference-items">
 							<ul>
 								<li><a href="javascript:;" onClick="showAddChannelDialog();">More Content</a></li>
-								<li><a href="javascript:;" onClick="showEditColumnsDialog();">Page Layout</a></li>
-								<li><a href="javascript:;" onClick="dlg2.show();">Tabs Layout</a></li>
+								<li><a href="javascript:;" onClick="dlg1.show();">Page Layout</a></li>
 							</ul>
 						</div>
 					</xsl:if>
@@ -224,14 +242,14 @@
 	<xsl:template match="channel">
 		<xsl:param name="detachedContent"/>
 		<!-- PORTLET TOOLBAR -->
-		<div id="portlet_{@ID}">
+		<div id="portlet_{@ID}" class="portletContainer">
 			<xsl:element name="div">
 				<xsl:attribute name="id">toolbar_<xsl:value-of select="@ID"/></xsl:attribute>
 				<xsl:attribute name="class">portlet-toolbar</xsl:attribute>
 				<xsl:if test="$isAjaxEnabled='true'">
 					<xsl:attribute name="style">cursor: move</xsl:attribute>
 				</xsl:if>
-				<div id="icons">
+				<div class="icons">
 					<xsl:choose>
 						<xsl:when test="$detachedContent='true'">
 							<xsl:call-template name="detachedChannelControls"/>
@@ -244,10 +262,10 @@
 				<xsl:if test="not(//focused)">
 					<xsl:choose>
 						<xsl:when test="@minimized='true'">
-							<a href="{$baseActionURL}?uP_tcattr=minimized&amp;minimized_channelId={@ID}&amp;minimized_{@ID}_value=false#{@ID}"><img src="{$mediaPath}/{$skin}/controls/min.gif" width="19" height="19" alt="unshade" title="unshade" style="float:left;padding-top:2px;padding-right:3px;margin-left:-2px;"/></a>
+							<a id="togglePortlet_{@ID}" href="{$baseActionURL}?uP_tcattr=minimized&amp;minimized_channelId={@ID}&amp;minimized_{@ID}_value=false#{@ID}"><img id="portletToggleImg_{@ID}" src="{$mediaPath}/{$skin}/controls/min.gif" width="19" height="19" alt="unshade" title="unshade" style="float:left;padding-top:2px;padding-right:3px;margin-left:-2px;"/></a>
 						</xsl:when>
 						<xsl:otherwise>
-							<a href="{$baseActionURL}?uP_tcattr=minimized&amp;minimized_channelId={@ID}&amp;minimized_{@ID}_value=true#{@ID}"><img src="{$mediaPath}/{$skin}/controls/max.gif" width="19" height="19" alt="shade" title="shade" style="float:left;padding-top:2px;padding-right:3px;margin-left:-2px;"/></a>
+							<a id="togglePortlet_{@ID}" href="{$baseActionURL}?uP_tcattr=minimized&amp;minimized_channelId={@ID}&amp;minimized_{@ID}_value=true#{@ID}"><img id="portletToggleImg_{@ID}" src="{$mediaPath}/{$skin}/controls/max.gif" width="19" height="19" alt="shade" title="shade" style="float:left;padding-top:2px;padding-right:3px;margin-left:-2px;"/></a>
 						</xsl:otherwise>
 					</xsl:choose>
 				</xsl:if>
@@ -256,12 +274,14 @@
 			<!-- PORTLET CONTENT -->
 			<xsl:choose>
 				<xsl:when test="@minimized != 'true'">
-				  <div class="portlet clearfix {@fname}">
-					<xsl:copy-of select="."/>
-				  </div>
+					<div id="portletContent_{@ID}" class="portlet clearfix {@fname}">
+						<xsl:copy-of select="."/>
+					</div>
 				</xsl:when>
 				<xsl:otherwise>
-					<br />
+					<div id="portletContent_{@ID}" class="portlet clearfix {@fname}" style="display:none">
+						<xsl:copy-of select="."/>
+					</div>
 				</xsl:otherwise>
 			</xsl:choose>
 		</div>
@@ -325,77 +345,93 @@
 		<div id="dojoMenus" style="display:none;">
 			<!-- Add Channel Menu -->
 			<div id="dialog0" class="preferences-edit-window" dojoType="dialog" bgColor="#e6eefb" bgOpacity="0.7" toggle="fade" toggleDuration="250">
-				<div class="portlet-toolbar"><h2>Add Channel</h2></div>
+				<div class="portlet-toolbar"><h2>More Content</h2></div>
 				<div class="portlet clearfix addchannel" style="margin: 0px;">
+					<h4 id="channelLoading">Loading portlet list . . . </h4>
 					<div id="addChannelTabContainer" dojoType="TabContainer" style="width: 500px; height: 250px;">
-						<div id="tab1" dojoType="ContentPane" label="Browse" >
-							<p>
-								<select id="categorySelectMenu" onchange="selectChannelCategory()" size="12" style="width: 150px;"></select>
-								<select id="channelSelectMenu" onchange="selectChannelChannel(this.value)" size="12" style="width: 300px;"></select>
-							</p>
+						<div id="tab1" dojoType="ContentPane" label="Browse Channels" style="padding: 10px;">
+							<table cellspacing="0" cellpadding="0" border="0">
+								<tr>
+									<td class="portlet-section-subheader">Category</td>
+									<td class="portlet-section-subheader">Portlet</td>
+								</tr>
+								<tr>
+									<td><select id="categorySelectMenu" onchange="browseChannelCategory()" size="14" style="width: 150px; background: url({$mediaPath}/{$skin}/skin/loading.gif) no-repeat center center"></select></td>
+									<td><select id="channelSelectMenu" onchange="selectChannel(this.value)" size="14" style="width: 300px; background: url({$mediaPath}/{$skin}/skin/loading.gif) no-repeat center center"></select></td>
+								</tr>
+							</table>
 						</div>
-						<div id="tab2" dojoType="ContentPane" label="Search">
+						<div id="tab2" dojoType="ContentPane" label="Search" style="overflow:auto; padding: 10px;">
 							<p>
-								Search for: <input id="addChannelSearchTerm" type="text" onkeydown="searchChannels()"/>
+								<label class="portlet-form-field-label" for="addChannelSearchTerm">Search for:</label>&#160;
+								<input id="addChannelSearchTerm" type="text" onkeydown="searchChannels()"/>
 							</p>
-							<h3>Results</h3>
-							<ul id="addChannelSearchResults" style="list-style-type: none; padding: 0px; margin-left: 0px;"></ul>
+							<br/>
+							<h3>Matching portlets</h3>
+							<ul id="addChannelSearchResults" style="list-style-type: none; padding: 0px; margin-left: 5px;"></ul>
 						</div>
 					</div>
 					<br/>
-					<h3 id="channelTitle"></h3>
+					<h3 class="portal-section-header">Portlet Details</h3>
+					<h4 id="channelTitle" class="portal-section-subheader"></h4>
 					<p id="channelDescription"></p>
 					<p style="padding-top: 10px;">
 						<input id="addChannelId" type="hidden"/>
-						<button onclick="addChannel()" class="uportal-button">Add to my page</button>&#160;
-						<button id="previewChannelLink" class="uportal-button">Use it now</button>&#160;
-						<button id="hider0" class="uportal-button">Done</button>
+						<button id="addChannelLink" onclick="addChannel()" class="portlet-form-button">Add to my page</button>&#160;
+						<button id="previewChannelLink" class="portlet-form-button">Use it now</button>&#160;
+						<button id="hider0" class="portlet-form-button">Done</button>
 					</p>
 				</div>
 			</div>
-			<!-- Edit Columns Menu -->
 			<div id="dialog1" class="preferences-edit-window" dojoType="dialog" bgColor="#e6eefb" bgOpacity="0.7" toggle="fade" toggleDuration="250">
-				<div class="portlet-toolbar"><h2>Edit Columns</h2></div>
+				<div class="portlet-toolbar"><h2>Edit Page Layout</h2></div>
 				<div class="portlet clearfix editcolumns">
-					<table class="edit-preferences-window">
-						<tr id="layout-edit-columns">
-							<xsl:for-each select="/layout/content/column">
-								<td id="layoutColumn_{@ID}" width="{@width}">
-									<div class="container-title">Column <xsl:value-of select="position()"/></div>
-									<div style="padding-top: 7x; padding-bottom: 7px;">
-										<a onclick="moveColumn('{@ID}', 'left')" href="javascript:;" title="Move column left"><img class="controlIcon" src="{$mediaPath}/{$skin}/controls/leftarrow.gif"/></a>
-										<a onclick="moveColumn('{@ID}', 'right')" href="javascript:;" title="Move column right"><img class="controlIcon" src="{$mediaPath}/{$skin}/controls/rightarrow.gif"/></a>
-										<a onclick="deleteColumn('{@ID}')" href="javascript:;" title="Remove column"><img class="controlIcon" src="{$mediaPath}/{$skin}/controls/remove.gif"/></a>
-									</div>
-									<div id="columnContents_{@ID}"></div>
-								</td>
-							</xsl:for-each>
-						</tr>
-					</table>
-					<div><button onclick="addColumn()" class="uportal-button">Add Column</button>&#160;<button class="uportal-button" id="hider1">Done</button></div>
-				</div>
-			</div>	
-			<!-- Edit Tabs Menu -->
-			<div id="dialog2" class="preferences-edit-window" dojoType="dialog" bgColor="#e6eefb" bgOpacity="0.7" toggle="fade" toggleDuration="250">
-				<div class="portlet-toolbar"><h2>Edit Tabs</h2></div>
-				<div class="portlet clearfix edittabs">
-					<table class="edit-preferences-window">
-						<tr id="layout-edit-tabs">
-							<xsl:for-each select="/layout/navigation/tab">
-								<td id="layoutTab_{@ID}">
-									<div class="container-title"><xsl:value-of select="@name"/></div>
-									<div style="padding-top: 7x; padding-bottom: 7px;">
-										<a onclick="moveTab('{@ID}', 'left')" href="javascript:;" title="Move tab left"><img class="controlIcon" src="{$mediaPath}/{$skin}/controls/leftarrow.gif"/></a>
-										<a onclick="moveTab('{@ID}', 'right')" href="javascript:;" title="Move tab right"><img class="controlIcon" src="{$mediaPath}/{$skin}/controls/rightarrow.gif"/></a>
-										<xsl:if test="@activeTab='false'">
-											<a onclick="deleteTab('{@ID}')" href="javascript:;" title="Remove tab"><img class="controlIcon" src="{$mediaPath}/{$skin}/controls/remove.gif"/></a>
-										</xsl:if>
-									</div>
-								</td>
-							</xsl:for-each>
-						</tr>
-					</table>
-					<div><button onclick="addTab()" class="uportal-button">Add Tab</button>&#160;<button class="uportal-button" id="hider2">Done</button></div>
+					<p><label class="portlet-form-field-label">Number of columns:</label>
+						<xsl:element name="input">
+							<xsl:attribute name="onclick">changeColumns(1);</xsl:attribute>
+							<xsl:attribute name="name">columnNum</xsl:attribute>
+							<xsl:attribute name="type">radio</xsl:attribute>
+							<xsl:if test="count(/layout/content/column)=1">
+								<xsl:attribute name="checked">true</xsl:attribute>
+							</xsl:if>
+						</xsl:element> <label class="portlet-form-field-label">1</label>
+						<xsl:element name="input">
+							<xsl:attribute name="onclick">changeColumns(2);</xsl:attribute>
+							<xsl:attribute name="name">columnNum</xsl:attribute>
+							<xsl:attribute name="type">radio</xsl:attribute>
+							<xsl:if test="count(/layout/content/column)=2">
+								<xsl:attribute name="checked">true</xsl:attribute>
+							</xsl:if>
+						</xsl:element> <label class="portlet-form-field-label">2</label>
+						<xsl:element name="input">
+							<xsl:attribute name="onclick">changeColumns(3);</xsl:attribute>
+							<xsl:attribute name="name">columnNum</xsl:attribute>
+							<xsl:attribute name="type">radio</xsl:attribute>
+							<xsl:if test="count(/layout/content/column)=3">
+								<xsl:attribute name="checked">true</xsl:attribute>
+							</xsl:if>
+						</xsl:element> <label class="portlet-form-field-label">3</label>
+					</p>
+					
+					<p><label class="portlet-form-field-label">Column widths:</label></p>
+					<div id="columnWidths" dojoType="SplitContainer"
+						orientation="horizontal"
+						sizerWidth="5"
+						activeSizing="false"
+						style="width: 400px; height: 40px; background: #ffffff; padding: 0px; border: thin solid #666666;">
+						
+						<xsl:for-each select="/layout/content/column">
+							<div id="columnWidth_{@ID}" dojoType="ContentPane" sizeShare="{@width}" style="text-align: center; padding-top:5px;">
+								Column <xsl:value-of select="position()"/>
+							</div>
+						</xsl:for-each>
+						
+					</div>
+					<p id="updatePageLayoutMessage"></p>
+					<br/>
+					<p>
+						<button class="portlet-form-button" id="hider1">Done</button>
+					</p>
 				</div>
 			</div>	
 		</div>
@@ -403,6 +439,7 @@
 			
 			dojo.require( "dojo.widget.*" );
 			dojo.require( "dojo.event.*" );
+			dojo.require( "dojo.lfx.*" );
 			dojo.require("portal.widget.PortletDragSource");
 			dojo.require("portal.widget.PortletDropTarget");
 			dojo.require("portal.widget.PortletDragObject");
@@ -420,15 +457,21 @@
 			<xsl:for-each select="/layout/content/column">
 				new portal.widget.PortletDropTarget("column_<xsl:value-of select="@ID"/>", [<xsl:for-each select="/layout/content/column">"<xsl:value-of select="@ID"/>dt"<xsl:if test="position()!=last()">,</xsl:if></xsl:for-each>]);
 				<xsl:for-each select="channel">
-					var drag = new portal.widget.PortletDragSource("toolbar_<xsl:value-of select="@ID"/>", "<xsl:value-of select="../@ID"/>dt");
-					drag.setDragTarget(dojo.byId('portlet_<xsl:value-of select="@ID"/>'));
-					<xsl:if test="not(@unremovable='true') and not(//focused) and /layout/navigation/tab[@activeTab='true']/@immutable='false'">
-						a = dojo.byId("removePortlet_" + '<xsl:value-of select="@ID"/>');
-						a.href = "javascript:;";
-						a.onclick = function(){deleteChannel('<xsl:value-of select="@ID"/>')};
+					<xsl:if test="/layout/navigation/tab[@activeTab='true']/@immutable='false'">
+						var drag = new portal.widget.PortletDragSource("toolbar_<xsl:value-of select="@ID"/>", "<xsl:value-of select="../@ID"/>dt");
+						drag.setDragTarget(dojo.byId('portlet_<xsl:value-of select="@ID"/>'));
+						<xsl:if test="not(@unremoveable='true')">
+							a = dojo.byId("removePortlet_" + '<xsl:value-of select="@ID"/>');
+							a.href = "javascript:;";
+							a.onclick = function(){deleteChannel('<xsl:value-of select="@ID"/>')};
+						</xsl:if>
 					</xsl:if>
+					a = dojo.byId("togglePortlet_" + '<xsl:value-of select="@ID"/>');
+					a.href = "javascript:;";
+					a.onclick = function(){toggleChannel('<xsl:value-of select="@ID"/>')};
 				</xsl:for-each>
 			</xsl:for-each>
+			
 			
 		</script>
 	</xsl:template>
@@ -437,21 +480,21 @@
 		<div id="dojoMenus" style="display:none;">
 			<!-- Add Channel Menu -->
 			<div id="dialog0" dojoType="dialog" bgColor="#e6eefb" bgOpacity="0.7" toggle="fade" toggleDuration="250">
-				<div class="portlet-toolbar"><h2>Add Channel to My Layout</h2></div>
+				<div class="portlet-toolbar"><h2>Add Portlet to My Layout</h2></div>
 				<div class="portlet clearfix addchannel" style="margin: 0px;">
 					<form onsubmit="return addFocusedChannel(this);">
-						<p>
-							Choose a page in which to add this channel:
+						<p class="portlet-form-label">
+							Choose a page in which to add this portlet:
 						</p>
 						<p>
 							<xsl:for-each select="/layout/navigation/tab">
-								<input name="targetTab" value="{@ID}" type="radio"/> <xsl:value-of select="@name"/><br/>
+								<input name="targetTab" value="{@ID}" type="radio"/> <label class="portlet-form-field-label"><xsl:value-of select="@name"/></label><br/>
 							</xsl:for-each>
 						</p>
 						<p>
 							<input name="channelId" type="hidden" value="{//focused/channel/@chanID}"/>
-							<input type="submit" value="Add" class="uportal-button"/>&#160;
-							<input id="hider0" type="cancel" value="Cancel" class="uportal-button"/>
+							<input type="submit" value="Add" class="portlet-form-button"/>&#160;
+							<input id="hider0" type="cancel" value="Cancel" class="portlet-form-button"/>
 						</p>
 					</form>
 				</div>
@@ -469,6 +512,5 @@
 			dojo.addOnLoad(initFocused);
 		</script>
 	</xsl:template>
-	
-	
+		
 </xsl:stylesheet>

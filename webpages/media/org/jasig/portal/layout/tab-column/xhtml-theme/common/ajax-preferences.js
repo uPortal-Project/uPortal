@@ -8,12 +8,13 @@
 
 var channelXml;
 
+/*--------------------------------------------------------------------------
+ * Main page functions
 /*--------------------------------------------------------------------------*/
+ 
 
+// initialize dojo menus and clean up unneeded links for the general page
 function init(e) {
-
-	var dojoMenus = dojo.byId("dojoMenus");
-	dojoMenus.style.display = "block";
 
     var activeTab = dojo.byId("activeTabLink");
     activeTab.removeAttribute('href');
@@ -22,23 +23,14 @@ function init(e) {
 	var btn = document.getElementById("hider0");
 	dlg0.setCloseControl(btn);
 					
-	var editableTab = dojo.widget.byId("editableTab");
-	dojo.event.connect(editableTab, "onSave", "updateTabName");
-					
 	dlg1 = dojo.widget.byId("dialog1");
 	var btn = document.getElementById("hider1");
 	dlg1.setCloseControl(btn);
 					
-	dlg2 = dojo.widget.byId("dialog2");
-	var btn = document.getElementById("hider2");
-	dlg2.setCloseControl(btn);
-
 }
 
+// initialize dojo menus and clean up unneeded links for the focused channel page
 function initFocused(e) {
-
-	var dojoMenus = dojo.byId("dojoMenus");
-	dojoMenus.style.display = "block";
 
     dlg0 = dojo.widget.byId("dialog0");
 	var btn = document.getElementById("hider0");
@@ -50,14 +42,25 @@ function initFocused(e) {
 					
 }
 
-// return the element ID of the first portal column
-function getFirstColumn() {
-	var columnContainer = document.getElementById("portal-page-columns");
-	var first = getChildElementsByTagName(columnContainer, "td")[0];
-	return first.id;
+// minimize / maximize channels via javascript
+function toggleChannel(channelId) {
+    var channel = dojo.byId("portletContent_" + channelId);
+    if (channel.style.display == "none") {
+        channel.style.display = "block";
+        dojo.byId("portletToggleImg_" + channelId).src = skinPath + "/controls/max.gif";
+    } else {
+        channel.style.display = "none";
+        dojo.byId("portletToggleImg_" + channelId).src = skinPath + "/controls/min.gif";
+    }
+    return false;
 }
 
-// return an array of the direct child elements for a parent with the specified tag name
+
+/*--------------------------------------------------------------------------
+ * General helper functions
+/*--------------------------------------------------------------------------*/
+
+// Return an array of the direct child elements for a parent with the specified tag name
 function getChildElementsByTagName(parentElement, tagName) {
 	var items = parentElement.childNodes;
 	var desired = new Array();
@@ -68,78 +71,39 @@ function getChildElementsByTagName(parentElement, tagName) {
 	return desired;
 }
 
-function createControl(type, item) {
-	var a = document.createElement("a");
-	var img = document.createElement("img");
-	if (type == 'left') {
-		img.src = skinPath + '/controls/leftarrow.gif';
-		a.title = 'Move ' + item + ' left';
-	} else if (type == 'right') {
-		img.src = skinPath + '/controls/rightarrow.gif';
-		a.title = 'Move ' + item + ' right';
-	} else if (type == 'remove') {
-		img.src = skinPath + '/controls/remove.gif';
-		a.title = 'Remove ' + item;
-	}
-	a.href = "javascript:;";
-	a.appendChild(img);
-	return a;
+// Display a dojo.io.bind error as a javascript popup
+function displayErrorMessage(type, error) {
+    var errmsg = error.message;
+    errmsg = errmsg.replace(/XMLHttpTransport Error: 500 /, '');
+    alert(errmsg);
+}
+
+// Use dojo animations to flash a message to the user.  This method accepts 
+// a message to display, as well as an element to use as the target.
+function flashMessage(message, elementId) {
+    var element = dojo.byId(elementId)
+    element.innerHTML = message;
+    var flash = dojo.lfx.wipeIn(element, 400, null, function(n) {
+        dojo.lang.setTimeout(function(){dojo.lfx.wipeOut(n, 400).play()},1500);
+    });
+    flash.play();
 }
 
 
+/*--------------------------------------------------------------------------
+ * Tab editing functions
 /*--------------------------------------------------------------------------*/
 
-function updateTabName(newValue, oldValue) {
-	dojo.io.bind({
-		content: {
-			action: 'renameTab',
-			tabId: tabId,
-			tabName: newValue
-		},
-		url: preferencesUrl,
-		load: function(type, data, evt){ },
-		error: function(type, error){ alert("error: " + dojo.errorToString(error)); },
-		mimetype: "text/plain"
-	});
-}
-
-
+// Add a new tab to the layout
 function addTab() {
 	
-	var editParentDiv = document.getElementById("layout-edit-tabs");
-	var editColumns = getChildElementsByTagName(editParentDiv, "td");
-	var lastColumn = editColumns[editColumns.length - 1].id.split("_")[1];
-				
-	var td = document.createElement("td");
-	td.verticalAlign = "top";
-
-	var editTd = document.createElement("td");
-	var titleDiv = document.createElement("div");
-	titleDiv.className = "container-title";
-	titleDiv.appendChild(document.createTextNode("New Tab"));
-	var columnDiv = document.createElement("div");
-
-	var a = createControl('right', 'tab');
-	a.onclick = function(){moveTab(this.parentNode.parentNode.id.split("_")[1], "left")};
-	columnDiv.appendChild(a);
-
-	var a = createControl('left', 'tab');
-	a.onclick = function(){moveTab(this.parentNode.parentNode.id.split("_")[1], "right")};
-	columnDiv.appendChild(a);
-
-	var a = createControl('remove', 'tab');
-	a.onclick = function(){deleteTab(this.parentNode.parentNode.id.split("_")[1])};
-	columnDiv.appendChild(a);
-
-	editTd.appendChild(titleDiv);
-	editTd.appendChild(columnDiv);
-
 	dojo.io.bind({
 		content: {
 			action: 'addTab'
 		},
 		load: function(type, data, evt){
-			var newTabId = data.getElementsByTagName("tabId")[0].firstChild.data;
+		    // add the new tab to the UI and create the link to the newly created layout node
+			var newTabId = data.getElementsByTagName("newNodeId")[0].firstChild.data;
 			var tab = document.createElement("li");
 			tab.id = "tab_" + newTabId;
 			var a = document.createElement("a");
@@ -149,86 +113,22 @@ function addTab() {
 			a.appendChild(span);
 			tab.appendChild(a);
 			dojo.byId("tabList").appendChild(tab);
-			editTd.id = "layoutTab_" + newTabId;
-			editParentDiv.appendChild(editTd);
 		},
 		url: preferencesUrl,
-		error: function(type, error){ alert("error: " + dojo.errorToString(error)); },
+		error: function(type, error){ displayErrorMessage(type, error); },
 		mimetype: "text/xml"
 	});
-	
 
 }
 
-function moveTab(sourceId, direction) {
-				
-	var source = dojo.byId("tab_" + sourceId);
-	var editColumn = dojo.byId("layoutTab_" + sourceId);
-	var parent = dojo.byId("tabList");
-	var editParent = dojo.byId("layout-edit-tabs");
-	var columns = getChildElementsByTagName(parent, "li");
-	var editColumns = getChildElementsByTagName(editParent, "td");
-	var sourcePosition;
-	
-	for (var i = 0; i < columns.length; i++) {
-		if (("tab_" + sourceId) == columns[i].id) {
-			sourcePosition = i;
-			break;
-		}
-	}
-	
-	parent.removeChild(source);
-	editParent.removeChild(editColumn);
-	var method = 'insertBefore';
-	var elementId;
-	if (direction == "left") {
-		parent.insertBefore(source, columns[sourcePosition-1]);
-		editParent.insertBefore(editColumn, editColumns[sourcePosition-1]);
-		elementId = columns[sourcePosition-1].id.split("_")[1];
-	} else if (sourcePosition != columns.length-2) {
-		elementId = columns[sourcePosition+2].id.split("_")[1];
-		parent.insertBefore(source, columns[sourcePosition+2]);
-		editParent.insertBefore(editColumn, editColumns[sourcePosition+2]);
-	} else {
-		method = 'appendAfter';
-		elementId = columns[sourcePosition+1].id.split("_")[1];
-		parent.appendChild(source);
-		editParent.appendChild(editColumn);
-	}
-
-
-	// the tabs' links work by relative position, so we need
-	// to redo them now that we've changed the order
-    var tabLinks = dojo.byId("tabList").getElementsByTagName("a");
-    for (var i = 0; i < tabLinks.length; i++) {
-        var link = tabLinks[i].href;
-        if (link != null) {
-            tabLinks[i].href = link.substring(0, link.lastIndexOf("=")+1) + (i+1);
-        }
-    }
-
-	dojo.io.bind({
-		content: {
-			action: 'moveTabHere',
-			sourceID: sourceId,
-			method: method,
-			elementID: elementId
-		},
-		url: preferencesUrl,
-		load: function(type, data, evt){
-		 },
-		error: function(type, error){ alert("error: " + dojo.errorToString(error)); },
-		mimetype: "text/plain"
-	});
-	
-}
-
-
+// delete a tab from the layout
 function deleteTab(tabId) {
 	
+	// make sure the user really wants to do this
 	var conf = confirm("Are you sure you want to remove this tab and all its content?");
     if (!conf)
         return false;
+
 	dojo.io.bind({
 		content: { 
 			action: 'removeElement', 
@@ -236,235 +136,240 @@ function deleteTab(tabId) {
 		},
 		url: preferencesUrl,
 		load: function(type, data, evt){
-		    // remove the tab from the page
-			var parentDiv = document.getElementById("tabList");
-			parentDiv.removeChild(document.getElementById("tab_" + tabId));
-            // remove the tab from the edit tabs menu
-			parentDiv = dojo.byId("layout-edit-tabs");
-			parentDiv.removeChild(dojo.byId("layoutTab_" + tabId));
+		    // refresh the window to the first tab, since the tab we were on doesn't
+		    // exist anymore
+		    window.location = portalUrl + "?uP_root=root&uP_sparam=activeTab&activeTab=1";
 		 },
-		error: function(type, error){ alert("error: " + dojo.errorToString(error)); },
+		error: function(type, error){ displayErrorMessage(type, error); },
 		mimetype: "text/plain"
 	});
 
 }
 
-
-
-/*--------------------------------------------------------------------------*/
-
-function showEditColumnsDialog() {
-
-    // for each column, add a list of its channels so the user knows what 
-    // s/he is editing
-    var columns = getChildElementsByTagName(dojo.byId("portal-page-columns"), "td");
-    for (var i = 0; i < columns.length; i++) {
-        var contentsDiv = dojo.byId("columnContents_" + columns[i].id.split("_")[1]);
-        contentsDiv.innerHTML = "";
-        var headings = columns[i].getElementsByTagName("h2");
-        for (var j = 0; j < headings.length; j++) {
-            var h2 = headings[j];
-            if (h2.parentNode.id != null && h2.parentNode.id.indexOf("toolbar") == 0) {
-                var div = document.createElement("div");
-                div.appendChild(document.createTextNode(h2.firstChild.data));
-                contentsDiv.appendChild(div);
-            }
-        }
+// Show / hide the tab editing dialog
+function toggleEditTabDialog(action) {
+    var tabNameDiv = dojo.byId("activeTabLink");
+    var editTabDiv = dojo.byId("editTabLink");
+    if (action == "show") {
+        tabNameDiv.style.display = "none";
+        editTabDiv.style.display = "block";
+        tabNameDiv.parentNode.className = "tab-edit";
+    } else {
+        tabNameDiv.parentNode.className = "editable-tab";
+        tabNameDiv.style.display = "block";
+        editTabDiv.style.display = "none";
     }
-    
-    // show the edit columns dialog screen
-    dlg1.show();
-    
 }
 
-// add a new column to the page and commit the change to the storage layer
-function addColumn() {
-				
-	var parentDiv = document.getElementById("portal-page-columns");
-	var columns = getChildElementsByTagName(parentDiv, "td");
-	var editParentDiv = document.getElementById("layout-edit-columns");
-	var editColumns = getChildElementsByTagName(editParentDiv, "td");
-	var lastColumn = columns[columns.length - 1].id.split("_")[1];
-
-    // adjust all the column widths
-	var columnWidth = Math.floor(100 / (columns.length + 1)) + "%";
-	for (var i = 0; i < columns.length; i++) {
-	    columns[i].style.width = columnWidth;
-	}
-	for (var i = 0; i < editColumns.length; i++) {
-	    editColumns[i].style.width = columnWidth;
-	}
-				
-	var td = document.createElement("td");
-	td.style.verticalAlign = "top";
-
-	var editTd = document.createElement("td");
-	var titleDiv = document.createElement("div");
-	titleDiv.className = "container-title";
-	titleDiv.appendChild(document.createTextNode("Column " + (columns.length + 1)));
-	var columnDiv = document.createElement("div");
-
-    // add the movement controls to the edit menu for the new column
-	var a = createControl('left', 'column');
-	a.onclick = function(){moveColumn(this.parentNode.parentNode.id.split("_")[1], "left")};
-	columnDiv.appendChild(a);
-
-	var a = createControl('right', 'column');
-	a.onclick = function(){moveColumn(this.parentNode.parentNode.id.split("_")[1], "right")};
-	columnDiv.appendChild(a);
-
-	var a = createControl('remove', 'column');
-	a.onclick = function(){deleteColumn(this.parentNode.parentNode.id.split("_")[1])};
-	columnDiv.appendChild(a);
-	
-	var contentsDiv = document.createElement("div");
-	columnDiv.appendChild(contentsDiv);
-
-	editTd.appendChild(titleDiv);
-	editTd.appendChild(columnDiv);
+// Update the name of the current tab
+function updateTabName(tabId) {
+    var name = dojo.byId('newTabName').value;
+    var tabNameDiv = dojo.byId("tabName");
 
 	dojo.io.bind({
-		content: { 
-			action: 'addColumn', 
-			elementID: lastColumn
+		content: {
+			action: 'renameTab',
+			tabId: tabId,
+			tabName: name
 		},
 		url: preferencesUrl,
 		load: function(type, data, evt){
-		    var newId = data.getElementsByTagName("response")[0].firstChild.data;
-			td.id = "column_" + newId;
-			td.style.width = columnWidth;
-			parentDiv.appendChild(td);
-			editTd.id = "layoutColumn_" + newId;
-			editTd.style.width = columnWidth;
-        	contentsDiv.id = "columnContents_" + newId;
-			editParentDiv.appendChild(editTd);
-			
-			// add the new column as a drag target for channel arranging
-			var columnIds = new Array();
-			for (var i = 0; i < columns.length; i++) {
-			    columnIds.push(columns[i].id.split("_")[1] + "dt");
-			}
-			new portal.widget.PortletDropTarget("column_" + newId, columnIds);
-		 },
-		error: function(type, error){ alert("error: " + dojo.errorToString(error)); },
-		mimetype: "text/xml"
+            tabNameDiv.innerHTML = "";
+            var editTabDiv = dojo.byId("editTabName");
+            tabNameDiv.appendChild(document.createTextNode(name));
+            toggleEditTabDialog("hide");
+		},
+		error: function(type, error){ displayErrorMessage(type, error); },
+		mimetype: "text/plain"
 	});
-				
+	return false;
 }
 
-// move a portal column and commit the change to the storage layer
-function moveColumn(sourceId, direction) {
+// Move the current tab left or right
+function moveTab(sourceId, direction) {
 				
-	var source = dojo.byId("column_" + sourceId);
-	var editColumn = dojo.byId("layoutColumn_" + sourceId);
-	var parent = dojo.byId("portal-page-columns");
-	var editParent = dojo.byId("layout-edit-columns");
-	var columns = getChildElementsByTagName(parent, "td");
-	var editColumns = getChildElementsByTagName(editParent, "td");
+	var source = dojo.byId("tab_" + sourceId);
+	var parent = dojo.byId("tabList");
+	var columns = getChildElementsByTagName(parent, "li");
 	var sourcePosition;
-				
+	
+	// find the current position of the tab
 	for (var i = 0; i < columns.length; i++) {
-		if (("column_" + sourceId) == columns[i].id) {
+		if (("tab_" + sourceId) == columns[i].id) {
 			sourcePosition = i;
 			break;
 		}
 	}
-				
+	
+	// if this is not a valid move request, just return
+	if ((direction == "left" && sourcePosition == 0) || direction == "right" && sourcePosition == columns.length-1)
+	    return;
+	
 	parent.removeChild(source);
-	editParent.removeChild(editColumn);
 	var method = 'insertBefore';
 	var elementId;
 	if (direction == "left") {
 		parent.insertBefore(source, columns[sourcePosition-1]);
-		editParent.insertBefore(editColumn, editColumns[sourcePosition-1]);
 		elementId = columns[sourcePosition-1].id.split("_")[1];
+		sourcePosition--;
 	} else if (sourcePosition != columns.length-2) {
 		elementId = columns[sourcePosition+2].id.split("_")[1];
 		parent.insertBefore(source, columns[sourcePosition+2]);
-		editParent.insertBefore(editColumn, editColumns[sourcePosition+2]);
+		sourcePosition++;
 	} else {
 		method = 'appendAfter';
 		elementId = columns[sourcePosition+1].id.split("_")[1];
 		parent.appendChild(source);
-		editParent.appendChild(editColumn);
+		sourcePosition++;
 	}
 
 
+	// the tabs' links work by relative position, so we need
+	// to redo them now that we've changed the order
+    var tabLinks = dojo.byId("tabList").getElementsByTagName("a");
+    var count = 1;
+    for (var i = 0; i < tabLinks.length; i++) {
+        var link = tabLinks[i].href;
+        if (tabLinks[i].id != 'editTabLink') {
+            if (link != null && i != sourcePosition)
+                tabLinks[i].href = link.substring(0, link.lastIndexOf("=")+1) + count;
+            count++;
+        }
+    }
+    sourcePosition++;
+    
+    // persist the change
 	dojo.io.bind({
 		content: {
-			action: 'moveColumnHere',
+			action: 'moveTabHere',
 			sourceID: sourceId,
 			method: method,
-			elementID: elementId
+			elementID: elementId,
+			tabPosition: sourcePosition
 		},
 		url: preferencesUrl,
-		load: function(type, data, evt){
-		 },
-		error: function(type, error){ alert("error: " + dojo.errorToString(error)); },
+		load: function(type, data, evt){ },
+		error: function(type, error){ displayErrorMessage(type, error); },
 		mimetype: "text/plain"
 	});
 	
 }
 
-// remove the requested column from the page and commit the change
-// to the storage layer
-function deleteColumn(columnId) {
-	
-	var conf = confirm("Are you sure you want to remove this column and all its channels?");
-    if (!conf)
-        return false;
-	dojo.io.bind({
-		content: { 
-			action: 'removeElement', 
-			elementID: columnId
-		},
-		url: preferencesUrl,
-		load: function(type, data, evt){
-			var parentDiv = document.getElementById("portal-page-columns");
-			parentDiv.removeChild(document.getElementById("column_" + columnId));
-			parentDiv = dojo.byId("layout-edit-columns");
-			parentDiv.removeChild(dojo.byId("layoutColumn_" + columnId));
-		 },
-		error: function(type, error){ alert("error: " + dojo.errorToString(error)); },
-		mimetype: "text/plain"
-	});
 
-}
-
-
+/*--------------------------------------------------------------------------
+ * Page layout (column) editing functions
 /*--------------------------------------------------------------------------*/
 
-// loads the channel list into the channel selection dialog
-function initializeChannelSelection() {
-
-	var categorySelect = dojo.byId("categorySelectMenu");
-
+// Change the number of columns on the page
+function changeColumns(num) {
+	var parentDiv = document.getElementById("portal-page-columns");
+	var columns = getChildElementsByTagName(parentDiv, "td");
+	var container = dojo.widget.byId("columnWidths");
+	for (var i = num; i < columns.length; i++) {
+	    var column = dojo.widget.byId("columnWidth_" + columns[i].id.split("_")[1]);
+	    container.removeChild(column);
+	    
+	    var channels = getChildElementsByTagName(columns[i], "div");
+	    for (var j = 0; j < channels.length; j++) {
+	        columns[i].removeChild(channels[j]);
+	        columns[num-1].appendChild(channels[j]);
+	    }
+	    parentDiv.removeChild(columns[i]);
+	}
+	
 	dojo.io.bind({
-		url: channelListUrl,
-		sync: true,
+		content: { 
+			action: 'changeColumns', 
+			columnNumber: num,
+			tabId: tabId
+		},
+		url: preferencesUrl,
 		load: function(type, data, evt){
-			channelXml = data;
-		},	
-		error: function(type, error){ alert("error: " + dojo.errorToString(error)); },
+		    var ids = data.getElementsByTagName("id");
+		    if (ids.length > 0) {
+		        window.location = portalUrl;
+		        return;
+		    }
+		    
+//		    for (var i = 0; i < ids.length; i++) {
+//		        var newId = ids[i].firstChild.data;
+//        	    var column = document.createElement("td");
+//        	    column.id = "column_" + newId;
+//            	column.style.verticalAlign = "top";
+//	            parentDiv.appendChild(column);
+//        	    var columnWidth = dojo.widget.createWidget("ContentPane", {widgetId:'columnWidth_' + newId, isContainer: true});
+//                columnWidth.setContent('Column ' + (columns.length + i + 1));
+//                columnWidth.id = 'columnWidth_' + newId;
+//        	    container.addChild(columnWidth);
+//		    }
+
+        	// update column widths
+	        columns = getChildElementsByTagName(parentDiv, "td");
+    		var columnIds = new Array();
+	        var columnWidth = Math.floor(100 / (columns.length));
+	        for (var i = 0; i < columns.length; i++) {
+	            columns[i].style.width = columnWidth + "%";
+		        columnIds.push(columns[i].id.split("_")[1] + "dt");
+		        dojo.widget.byId("columnWidth_" + columns[i].id.split("_")[1]).sizeShare = columnWidth;
+	        }
+	        container._layoutPanels();
+
+   			// add the new column as a drag target for channel arranging
+	        for (var i = 0; i < ids.length; i++) {
+    		    new portal.widget.PortletDropTarget("column_" + ids[i].firstChild.data, columnIds);
+	        }
+		 },
+		error: function(type, error){ displayErrorMessage(type, error); },
 		mimetype: "text/xml"
 	});
-
-	var categories = channelXml.getElementsByTagName("category");
-	var j = 0;
-	for (var i = 0; i < categories.length; i++) {
-		if (categories[i].getElementsByTagName("channel").length > 0) {
-		    categorySelect.options[j] = new Option(categories[i].getAttribute("name"), categories[i].getAttribute("ID"));
-            if (j == 0)
-    		    categorySelect.options[j].selected = true;
-    		j++;
-		}
-	}
-
-	selectChannelCategory();
-				
+	
+	
 }
 
+function updateContainerWidths() {
+	var parentDiv = document.getElementById("portal-page-columns");
+	var columns = getChildElementsByTagName(parentDiv, "td");
+	var container = dojo.widget.byId("columnWidths");
+	var sizes = new Array();
+	var totalSize = 0;
+	var ids = new Array();
+	var widths = new Array();
+	var containers = container.getChildrenOfType('ContentPane', false);
+	for (var i = 0; i < columns.length; i++) {
+	    var id = containers[i].widgetId.split("_")[1];
+	    sizes[id] = containers[i].sizeShare;
+	    totalSize += sizes[id];
+	}
+	for (var i = 0; i < columns.length; i++) {
+	    var id = columns[i].id.split("_")[1];
+	    columns[i].width = ((sizes[id]/totalSize) * 100) + "%";
+	    ids.push(id);
+	    widths.push(columns[i].width);
+	}
+	dojo.io.bind({
+		content: { 
+			action: 'updateColumnWidths', 
+			columnIds: ids,
+			columnWidths: widths
+		},
+		url: preferencesUrl,
+		load: function(type, data, evt){
+		 },
+		error: function(type, error){ displayErrorMessage(type, error); },
+		mimetype: "text/xml"
+	});
+}
+
+
+/*--------------------------------------------------------------------------
+ * Channel editing UI functions
+/*--------------------------------------------------------------------------*/
+
+// display the add channel dialog and initialize it if necessary
 function showAddChannelDialog() {
+
+	// show the dialog
+	dlg0.show();
 
     // if this is the first time we're displaying the add channel
     // dialog, get the channel list and add it to the dialog
@@ -473,17 +378,50 @@ function showAddChannelDialog() {
 		initializeChannelSelection();
 	}
 	
-	// show the dialog
-	var dlg0 = dojo.widget.byId("dialog0");
-	dlg0.show();
 }
-						
 
-/*--------------------------------------------------------------------------*/
+// loads the channel list into the channel selection dialog
+function initializeChannelSelection() {
+
+	var categorySelect = dojo.byId("categorySelectMenu");
+
+	dojo.io.bind({
+		url: channelListUrl,
+		load: function(type, data, evt){
+			channelXml = data;
+        	var categories = channelXml.getElementsByTagName("category");
+            var matching = new Array();
+            for (var i = 0; i < categories.length; i++) {
+               matching.push(categories[i]);
+            }
+            matching.sort(sortCategoryResults);
+        	var j = 0;
+        	for (var i = 0; i < matching.length; i++) {
+        		if (matching[i].getElementsByTagName("channel").length > 0) {
+        		    categorySelect.options[j] = new Option(matching[i].getAttribute("name"), matching[i].getAttribute("ID"));
+                    if (j == 0)
+            		    categorySelect.options[j].selected = true;
+            		j++;
+        		}
+        	}
+        
+        	browseChannelCategory();
+        	
+        	// remove the loading graphics and message
+    		dojo.byId("channelLoading").style.display = "none";
+    		dojo.byId("categorySelectMenu").style.backgroundImage = "none";
+    		dojo.byId("channelSelectMenu").style.backgroundImage = "none";
+		},	
+		error: function(type, error){ displayErrorMessage(type, error); },
+		mimetype: "text/xml"
+	});
+
+				
+}
 
 // select a channel category from the menu and display a list of channels in
 // the category
-function selectChannelCategory() {
+function browseChannelCategory() {
 	var categoryId = document.getElementById("categorySelectMenu").value;
 	var category;
 	var categories = channelXml.getElementsByTagName("category");
@@ -515,19 +453,91 @@ function selectChannelCategory() {
    	    }
 	}
 
-	selectChannelChannel(channelSelect.value);
+	selectChannel(channelSelect.value);
 	
 }
 
-function selectChannelChannel(channelId) {
+// Search the channel registry for names or descriptions matching a given string on
+// case-insensitive basis
+function searchChannels() {
+    var searchTerm = dojo.byId("addChannelSearchTerm").value.toLowerCase();
+    var channels = channelXml.getElementsByTagName("channel");
+    var searchResults = dojo.byId("addChannelSearchResults");
+    searchResults.innerHTML = "";
+    
+    // find matching channels
+    var matching = new Array();
+    for (var i = 0; i < channels.length; i++) {
+        if (channels[i].getAttribute("name").toLowerCase().indexOf(searchTerm) >= 0 || channels[i].getAttribute("description").toLowerCase().indexOf(searchTerm) >= 0) {
+            matching.push(channels[i]);
+        }
+    }
+
+    // sort the resulting channels by name
+    matching.sort(sortChannelResults);
+    
+    // add each match to the results list on the UI screen
+    var lastId = "";
+    for (var i = 0; i < matching.length; i++) {
+        if (matching[i].getAttribute("ID") != lastId) {
+            var li = document.createElement("li");
+            var a = document.createElement("a");
+            a.id = "searchResult_" + matching[i].getAttribute("ID");
+            a.appendChild(document.createTextNode(matching[i].getAttribute("name")));
+            a.href = "javascript:;";
+            a.onclick = function(){selectChannel(this.id.split("_")[1])};
+            li.appendChild(a);
+            searchResults.appendChild(li);
+            lastId = matching[i].getAttribute("ID");
+        }
+    }
+
+}
+
+// sort a list of returned channels by name
+function sortCategoryResults(a, b) {
+    var aname = a.getAttribute("name").toLowerCase();
+    var bname = b.getAttribute("name").toLowerCase();
+    if (aname == 'new')
+        return -1;
+    if (bname == 'new')
+        return 1;
+    if (aname == 'popular')
+        return -1;
+    if (bname == 'popular')
+        return 1;
+    if(aname > bname)
+        return 1;
+    if(aname < bname)
+        return -1;
+    return 0;
+}
+
+// sort a list of returned channels by name
+function sortChannelResults(a, b) {
+    var aname = a.getAttribute("name").toLowerCase();
+    var bname = b.getAttribute("name").toLowerCase();
+    if(aname > bname)
+        return 1;
+    if(aname < bname)
+        return -1;
+    return 0;
+}
+
+// Select a channel from the menu and display the associated information along with 
+// a form allowing the user to add it to the layout
+function selectChannel(channelId) {
 	var channel;
+
+    // find the requested channel in the channel registry
 	var channels = channelXml.getElementsByTagName("channel");
 	for (var i = 0; i < channels.length; i++) {
 		if (channels[i].getAttribute("ID") == channelId) {
 			channel = channels[i];
 		}
 	}
-				
+
+    // add the title and description to the UI				
 	var channelTitle = dojo.byId("channelTitle");
 	channelTitle.innerHTML = "";
 	channelTitle.appendChild(document.createTextNode(channel.getAttribute("name")));
@@ -542,12 +552,15 @@ function selectChannelChannel(channelId) {
 	var previewChannelLink = dojo.byId("previewChannelLink");
 	previewChannelLink.onclick = function(){ window.location = portalUrl + "?uP_fname=" + channel.getAttribute("fname"); };
 
+    // if this channel has user-overrideable parameters, present a form allowing the
+    // user to input values
     var parameters = channel.getElementsByTagName("parameter");
     for (var i = 0; i < parameters.length; i++) {
         if (parameters[i].getAttribute("override") == "yes") {
             var p = document.createElement("p");
-            p.appendChild(document.createTextNode(parameters[i].getAttribute("name") + ": "));
+//            p.appendChild(document.createTextNode(parameters[i].getAttribute("name") + ": "));
             var input = document.createElement("input");
+            input.type = "hidden";
             input.name = parameters[i].getAttribute("name");
             input.value = parameters[i].getAttribute("value");
             p.appendChild(input);
@@ -557,50 +570,17 @@ function selectChannelChannel(channelId) {
 
 }
 
-function searchChannels() {
-    var searchTerm = dojo.byId("addChannelSearchTerm").value.toLowerCase();
-    var channels = channelXml.getElementsByTagName("channel");
-    var searchResults = dojo.byId("addChannelSearchResults");
-    searchResults.innerHTML = "";
-    
-    var matching = new Array();
-    for (var i = 0; i < channels.length; i++) {
-        if (channels[i].getAttribute("name").toLowerCase().indexOf(searchTerm) >= 0 || channels[i].getAttribute("description").toLowerCase().indexOf(searchTerm) >= 0) {
-            matching.push(channels[i]);
-        }
-    }
 
-    var lastId = "";
-    matching.sort(sortChannelResults);
-    for (var i = 0; i < matching.length; i++) {
-        if (matching[i].getAttribute("ID") != lastId) {
-            var li = document.createElement("li");
-            li.appendChild(document.createTextNode(matching[i].getAttribute("name")));
-            li.id = "searchResult_" + matching[i].getAttribute("ID");
-            li.onclick = function(){selectChannelChannel(this.id.split("_")[1])};
-            searchResults.appendChild(li);
-            lastId = matching[i].getAttribute("ID");
-        }
-    }
+/*--------------------------------------------------------------------------
+ * Channel editing persistence functions
+/*--------------------------------------------------------------------------*/
 
-
-}
-
-function sortChannelResults(a, b) {
-    var aname = a.getAttribute("name").toLowerCase();
-    var bname = b.getAttribute("name").toLowerCase();
-    if(aname > bname)
-        return 1;
-    if(aname < bname)
-        return -1;
-    return 0;
-}
-
-
-// commit a channel add request to the storage layer
+// Commit a channel add request to the storage layer.  This function is used when
+// users add channels via the browse or search methods on a non-focused page.
 function addChannel() {
 
-	var column = document.getElementById(getFirstColumn());
+	var columnContainer = document.getElementById("portal-page-columns");
+	var column = getChildElementsByTagName(columnContainer, "td")[0];
 	var channelId = document.getElementById("addChannelId").value;
 	var channels = column.getElementsByTagName("div");
 
@@ -615,30 +595,39 @@ function addChannel() {
     params['action'] = 'addChannel';
     params['channelID'] = channelId;
     params['position'] = 'insertBefore';
+    
+    // if the first column has multiple channels, use the id of the first channel.
+    // otherwise, use the id of the column itself
 	if (channels.length > 0)
         params['elementID'] = channels[0].id.split("_")[1];
     else
         params['elementID'] = column.id.split("_")[1];
 
+    // persist the channel addition
 	dojo.io.bind({
 		content: params,
 		url: preferencesUrl,
 		load: function(type, data, evt){
+		    // once the change has been persisted, refresh the current tab to
+		    // show the new channel
 		    window.location = portalUrl;
 		 },
-		error: function(type, error){ alert("error: " + dojo.errorToString(error)); },
+		error: function(type, error){ displayErrorMessage(type, error); },
 		mimetype: "text/xml"
 	});
 
 }
 
-// commit a channel add request to the storage layer
+// Commit a focused channel add request to the storage layer.  This function is used
+// by the "add to my layout" feature on a focused channel page.
 function addFocusedChannel(form) {
 
     var channelId = form.channelId.value;
     var selectedTab;
     var tabPosition;
     
+    // find the tabId of the desired target page to add
+    // this channel to
     for (var i = 0; i < form.targetTab.length; i++) {
         if (form.targetTab[i].checked) {
             selectedTab = form.targetTab[i].value;
@@ -647,31 +636,38 @@ function addFocusedChannel(form) {
     }
     
     var params = new Array();
-
     params['action'] = 'addChannel';
     params['channelID'] = 'chan' + channelId;
     params['position'] = 'insertBefore';
     params['elementID'] = selectedTab;
 
+    // persist the change
 	dojo.io.bind({
 		content: params,
 		url: preferencesUrl,
 		load: function(type, data, evt){
+		    // once the change has been saved to the user layout, 
+		    // reload the page to the target tab
 		    window.location = portalUrl + "?uP_root=root&uP_sparam=activeTab&activeTab=" + tabPosition;
 	    },
-		error: function(type, error){ alert("error: " + dojo.errorToString(error)); },
+		error: function(type, error){ displayErrorMessage(type, error); },
 		mimetype: "text/xml"
 	});
 	return false;
 
 }
 
+// Strips a channel from the layout and persists the change to the backend 
 function deleteChannel(channelId) {
 	
 	var channel = dojo.byId("portlet_" + channelId);
-	var conf = confirm("Are you sure you want to remove this channel?");
+    
+    // make sure the user really wants to delete the channel
+	var conf = confirm("Are you sure you want to remove this portlet?");
 	if (!conf)
 	    return false;
+
+    // persist the change
 	dojo.io.bind({
 		content: { 
 			action: 'removeElement', 
@@ -679,10 +675,12 @@ function deleteChannel(channelId) {
 		},
 		url: preferencesUrl,
 		load: function(type, data, evt){
+		    // once the change has been persisted, strip the channel
+		    // div from the page
 			var parentDiv = channel.parentNode;
 			parentDiv.removeChild(channel);
 		 },
-		error: function(type, error){ alert("error: " + dojo.errorToString(error)); },
+		error: function(type, error){ displayErrorMessage(type, error); },
 		mimetype: "text/plain"
 	});
 	
