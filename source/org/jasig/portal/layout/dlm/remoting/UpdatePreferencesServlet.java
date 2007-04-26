@@ -74,19 +74,19 @@ public class UpdatePreferencesServlet extends HttpServlet {
 		} catch (NullPointerException e1) {
 			// alert the user that his/her session has timed out
 			log
-					.info(
+					.debug(
 							"User encountered session timeout while attempting AJAX preferences action",
 							e1);
 			response
 					.sendError(
 							HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-							"Your CAS session has timed out.  Please log in again to make changes to your layout.");
+							"Your session has timed out.  Please log in again to make changes to your layout.");
 			return;
 		} catch (PortalException e1) {
 			response
 					.sendError(
 							HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-							"Your CAS session has timed out.  Please log in again to make changes to your layout.");
+							"Your session has timed out.  Please log in again to make changes to your layout.");
 			return;
 		}
 
