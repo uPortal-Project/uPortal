@@ -6,6 +6,8 @@
 package org.jasig.portal.layout.dlm;
 
 import org.jasig.portal.PortalException;
+import org.jasig.portal.layout.dlm.Constants;
+import org.jasig.portal.layout.dlm.DistributedLayoutManager;
 import org.jasig.portal.security.IPerson;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -95,7 +97,9 @@ public class LPAChangeAttribute implements ILayoutProcessingAction
          * the rendering will inject the localized name via a special processor.
          * So it doesn't matter what is in the ILF's folder name attribute.
          */
-        if (!name.equals(Constants.ATT_NAME))
+        if (!name.equals(Constants.ATT_NAME) || 
+                DistributedLayoutManager.ContextHolder.labelPolicy == null)
+        		// should always be non-null
         {
             ilfNode.setAttribute(name, value);
         }
