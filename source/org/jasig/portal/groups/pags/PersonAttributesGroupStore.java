@@ -47,7 +47,10 @@ import org.jasig.portal.services.persondir.IPersonAttributeDao;
  * @version $Revision$
  */
 public class PersonAttributesGroupStore implements IEntityGroupStore, IEntityStore, IEntitySearcher {
-    private static final Log log = LogFactory.getLog(PersonAttributesGroupStore.class);
+   private static final Log log = LogFactory.getLog(PersonAttributesGroupStore.class);
+   private static final Class IPERSON_CLASS = IPerson.class;
+   private static final EntityIdentifier[] EMPTY_SEARCH_RESULTS =
+     new EntityIdentifier[0];
    private Properties props;
    private Map groupDefinitions;
    private Map groups;
@@ -86,7 +89,7 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
        for ( i=groupDefs.iterator(); i.hasNext(); )
        {
            GroupDefinition groupDef = (GroupDefinition) i.next();
-           IEntityGroup group = new EntityTestingGroupImpl(groupDef.getKey(), IPerson.class);
+           IEntityGroup group = new EntityTestingGroupImpl(groupDef.getKey(), IPERSON_CLASS);
            group.setName(groupDef.getName());
            group.setDescription(groupDef.getDescription());
            cachePut(group);
@@ -126,7 +129,7 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
       } 
       else 
       {
-         if (member.getEntityType() != IPerson.class) 
+         if (member.getEntityType() != IPERSON_CLASS) 
              { return false; }
          IPerson person = null;
          try {
@@ -274,6 +277,8 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
    }
 
    public EntityIdentifier[] searchForGroups(String query, int method, Class leaftype) throws GroupsException {
+       if ( leaftype != IPERSON_CLASS )
+           { return EMPTY_SEARCH_RESULTS; }
       List results = new ArrayList();
       switch (method) {
          case IS:
@@ -414,8 +419,7 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
    }
 
    public EntityIdentifier[] searchForEntities(String query, int method, Class type) throws GroupsException {
-      List results = new ArrayList();
-      return (EntityIdentifier [])results.toArray(new EntityIdentifier[]{});
+       return EMPTY_SEARCH_RESULTS;   
    }
 
 }
