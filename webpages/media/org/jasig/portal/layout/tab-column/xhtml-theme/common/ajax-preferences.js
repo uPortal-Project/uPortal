@@ -262,21 +262,7 @@ function moveTab(sourceId, direction) {
 
 // Change the number of columns on the page
 function changeColumns(num) {
-	var parentDiv = document.getElementById("portal-page-columns");
-	var columns = getChildElementsByTagName(parentDiv, "td");
-	var container = dojo.widget.byId("columnWidths");
-	for (var i = num; i < columns.length; i++) {
-	    var column = dojo.widget.byId("columnWidth_" + columns[i].id.split("_")[1]);
-	    container.removeChild(column);
-	    
-	    var channels = getChildElementsByTagName(columns[i], "div");
-	    for (var j = 0; j < channels.length; j++) {
-	        columns[i].removeChild(channels[j]);
-	        columns[num-1].appendChild(channels[j]);
-	    }
-	    parentDiv.removeChild(columns[i]);
-	}
-	
+
 	dojo.io.bind({
 		content: { 
 			action: 'changeColumns', 
@@ -285,44 +271,12 @@ function changeColumns(num) {
 		},
 		url: preferencesUrl,
 		load: function(type, data, evt){
-		    var ids = data.getElementsByTagName("id");
-		    if (ids.length > 0) {
-		        window.location = portalUrl;
-		        return;
-		    }
-		    
-//		    for (var i = 0; i < ids.length; i++) {
-//		        var newId = ids[i].firstChild.data;
-//        	    var column = document.createElement("td");
-//        	    column.id = "column_" + newId;
-//            	column.style.verticalAlign = "top";
-//	            parentDiv.appendChild(column);
-//        	    var columnWidth = dojo.widget.createWidget("ContentPane", {widgetId:'columnWidth_' + newId, isContainer: true});
-//                columnWidth.setContent('Column ' + (columns.length + i + 1));
-//                columnWidth.id = 'columnWidth_' + newId;
-//        	    container.addChild(columnWidth);
-//		    }
-
-        	// update column widths
-	        columns = getChildElementsByTagName(parentDiv, "td");
-    		var columnIds = new Array();
-	        var columnWidth = Math.floor(100 / (columns.length));
-	        for (var i = 0; i < columns.length; i++) {
-	            columns[i].style.width = columnWidth + "%";
-		        columnIds.push(columns[i].id.split("_")[1] + "dt");
-		        dojo.widget.byId("columnWidth_" + columns[i].id.split("_")[1]).sizeShare = columnWidth;
-	        }
-	        container._layoutPanels();
-
-   			// add the new column as a drag target for channel arranging
-	        for (var i = 0; i < ids.length; i++) {
-    		    new portal.widget.PortletDropTarget("column_" + ids[i].firstChild.data, columnIds);
-	        }
+	        window.location = portalUrl;
+	        return;
 		 },
 		error: function(type, error){ displayErrorMessage(type, error); },
 		mimetype: "text/xml"
 	});
-	
 	
 }
 

@@ -506,6 +506,7 @@ dojo.widget.defineWidget(
 	},
 
 	_saveState: function (){
+	    updateContainerWidths();    
 		for(var i=0; i<this.children.length; i++) {
 			var cookieName = this._getCookieName(i);
 			dojo.io.cookie.setCookie(cookieName, this.children[i].sizeShare, null, null, null, null);

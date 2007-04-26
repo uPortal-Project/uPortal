@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- $Id$ -->
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml">
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:dlm="http://www.uportal.org/layout/dlm" xmlns="http://www.w3.org/1999/xhtml">
 	<xsl:output method="html" indent="yes"/>
 	<xsl:param name="baseActionURL">render.userLayoutRootNode.uP</xsl:param>
 	<xsl:param name="skin" select="'spring'"/>
@@ -243,12 +243,7 @@
 		<xsl:param name="detachedContent"/>
 		<!-- PORTLET TOOLBAR -->
 		<div id="portlet_{@ID}" class="portletContainer">
-			<xsl:element name="div">
-				<xsl:attribute name="id">toolbar_<xsl:value-of select="@ID"/></xsl:attribute>
-				<xsl:attribute name="class">portlet-toolbar</xsl:attribute>
-				<xsl:if test="$isAjaxEnabled='true'">
-					<xsl:attribute name="style">cursor: move</xsl:attribute>
-				</xsl:if>
+			<div id="toolbar_{@ID}" class="portlet-toolbar">
 				<div class="icons">
 					<xsl:choose>
 						<xsl:when test="$detachedContent='true'">
@@ -270,7 +265,7 @@
 					</xsl:choose>
 				</xsl:if>
 				<a name="{@ID}" id="{@ID}"></a><h2><xsl:value-of select="@title"/></h2>
-			</xsl:element>
+			</div>
 			<!-- PORTLET CONTENT -->
 			<xsl:choose>
 				<xsl:when test="@minimized != 'true'">
@@ -311,7 +306,7 @@
 		<xsl:if test="not(//focused)">
 			<a href="{$baseActionURL}?uP_root={@ID}"><img src="{$mediaPath}/{$skin}/controls/focus.gif" width="19" height="19" alt="maximize" title="maximize" /></a>
 		</xsl:if>
-		<xsl:if test="not(@unremovable='true') and not(//focused) and /layout/navigation/tab[@activeTab='true']/@immutable='false'">
+		<xsl:if test="not(@dlm:deleteAllowed='false') and not(//focused) and /layout/navigation/tab[@activeTab='true']/@immutable='false'">
 			<a id="removePortlet_{@ID}" href="{$baseActionURL}?uP_remove_target={@ID}" onClick="return confirm('Are you sure you want to remove this channel?')"><img src="{$mediaPath}/{$skin}/controls/remove.gif" width="19" height="19" alt="remove" title="remove" /></a>
 		</xsl:if>
 	</xsl:template>
@@ -457,14 +452,15 @@
 			<xsl:for-each select="/layout/content/column">
 				new portal.widget.PortletDropTarget("column_<xsl:value-of select="@ID"/>", [<xsl:for-each select="/layout/content/column">"<xsl:value-of select="@ID"/>dt"<xsl:if test="position()!=last()">,</xsl:if></xsl:for-each>]);
 				<xsl:for-each select="channel">
-					<xsl:if test="/layout/navigation/tab[@activeTab='true']/@immutable='false'">
+					<xsl:if test="not(@dlm:moveAllowed='false')">
 						var drag = new portal.widget.PortletDragSource("toolbar_<xsl:value-of select="@ID"/>", "<xsl:value-of select="../@ID"/>dt");
 						drag.setDragTarget(dojo.byId('portlet_<xsl:value-of select="@ID"/>'));
-						<xsl:if test="not(@unremoveable='true')">
-							a = dojo.byId("removePortlet_" + '<xsl:value-of select="@ID"/>');
-							a.href = "javascript:;";
-							a.onclick = function(){deleteChannel('<xsl:value-of select="@ID"/>')};
-						</xsl:if>
+						dojo.byId('toolbar_<xsl:value-of select="@ID"/>').style.cursor = "move";
+					</xsl:if>
+					<xsl:if test="not(@dlm:deleteAllowed='false')">
+						a = dojo.byId("removePortlet_" + '<xsl:value-of select="@ID"/>');
+						a.href = "javascript:;";
+						a.onclick = function(){deleteChannel('<xsl:value-of select="@ID"/>')};
 					</xsl:if>
 					a = dojo.byId("togglePortlet_" + '<xsl:value-of select="@ID"/>');
 					a.href = "javascript:;";
