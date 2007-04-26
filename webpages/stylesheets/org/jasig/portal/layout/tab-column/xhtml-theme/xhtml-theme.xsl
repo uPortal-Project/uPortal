@@ -102,7 +102,17 @@
 			</div>
 			
 			<div id="focused-channel-title" style="float:left;">
-				<span class="title"><xsl:value-of select="//focused/channel/@title"/></span><br/>
+				<span class="title">
+					<xsl:element name="channel-title">
+						<xsl:attribute name="defaultValue">
+							<xsl:value-of select="//focused/channel/@name"/>
+						</xsl:attribute>
+						<xsl:attribute name="channelSubscribeId">
+							<xsl:value-of select="@ID" />
+						</xsl:attribute>
+					</xsl:element>
+				</span>
+				<br/>
 			</div>
 		
 			<div class="portlet-toolbar" style="clear:left;">
@@ -188,6 +198,7 @@
 							<ul>
 								<li><a href="javascript:;" onClick="showAddChannelDialog();">More Content</a></li>
 								<li><a href="javascript:;" onClick="dlg1.show();">Page Layout</a></li>
+								<li><a href="javascript:;" onClick="showChooseSkinDialog();">Skin</a></li>
 							</ul>
 						</div>
 					</xsl:if>
@@ -264,7 +275,17 @@
 						</xsl:otherwise>
 					</xsl:choose>
 				</xsl:if>
-				<a name="{@ID}" id="{@ID}"></a><h2><xsl:value-of select="@title"/></h2>
+				<a name="{@ID}" id="{@ID}"></a>
+				<h2>
+					<xsl:element name="channel-title">
+						<xsl:attribute name="defaultValue">
+							<xsl:value-of select="@name"/>
+						</xsl:attribute>
+						<xsl:attribute name="channelSubscribeId">
+							<xsl:value-of select="@ID" />
+						</xsl:attribute>
+					</xsl:element>
+				</h2>
 			</div>
 			<!-- PORTLET CONTENT -->
 			<xsl:choose>
@@ -416,9 +437,20 @@
 						style="width: 400px; height: 40px; background: #ffffff; padding: 0px; border: thin solid #666666;">
 						
 						<xsl:for-each select="/layout/content/column">
-							<div id="columnWidth_{@ID}" dojoType="ContentPane" sizeShare="{@width}" style="text-align: center; padding-top:5px;">
+							<xsl:element name="div">
+								<xsl:attribute name="id">columnWidth_<xsl:value-of select="@ID"/></xsl:attribute>
+								<xsl:attribute name="dojoType">ContentPane</xsl:attribute>
+								<xsl:choose>
+									<xsl:when test="contains(@width,'%')">
+										<xsl:attribute name="sizeShare"><xsl:value-of select="substring-before(@width,'%')"/></xsl:attribute>
+									</xsl:when>
+									<xsl:otherwise>
+										<xsl:attribute name="sizeShare"><xsl:value-of select="@width"/></xsl:attribute>
+									</xsl:otherwise>
+								</xsl:choose>
+								<xsl:attribute name="style">text-align: center; padding-top:5px;</xsl:attribute>
 								Column <xsl:value-of select="position()"/>
-							</div>
+							</xsl:element>
 						</xsl:for-each>
 						
 					</div>
@@ -429,6 +461,22 @@
 					</p>
 				</div>
 			</div>	
+			<div id="dialog2" dojoType="dialog" bgColor="#e6eefb" bgOpacity="0.7" toggle="fade" toggleDuration="250">
+				<div class="portlet-toolbar"><h2>Choose a Skin</h2></div>
+				<div class="portlet clearfix chooseskin" style="margin: 0px;">
+					<h4 id="skinLoading">Loading portlet list . . . </h4>
+					<form onsubmit="return chooseSkin(this);">
+						<p class="portlet-form-label">
+							Choose a skin for your portal view:
+						</p>
+						<p id="skinList"></p>
+						<p>
+							<input type="submit" value="Choose" class="portlet-form-button"/>&#160;
+							<input id="hider2" type="cancel" value="Cancel" class="portlet-form-button"/>
+						</p>
+					</form>
+				</div>
+			</div>
 		</div>
 		<script type="text/javascript">
 			
@@ -443,6 +491,8 @@
 			var portalUrl = '<xsl:value-of select="$baseActionURL"/>';
 			var preferencesUrl = 'ajax/preferences';
 			var channelListUrl = 'ajax/channelList';
+			var mediaPath = '<xsl:value-of select="$mediaPath"/>';
+			var currentSkin = '<xsl:value-of select="$skin"/>';
 			var columnCount = <xsl:value-of select="count(/layout/content/column)"/>;
 			var skinPath = '<xsl:value-of select="$mediaPath"/>/<xsl:value-of select="$skin"/>';
 			

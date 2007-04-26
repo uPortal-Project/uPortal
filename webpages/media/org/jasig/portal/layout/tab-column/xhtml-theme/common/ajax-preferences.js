@@ -7,6 +7,7 @@
 /*--------------------------------------------------------------------------*/
 
 var channelXml;
+var skinXml;
 
 /*--------------------------------------------------------------------------
  * Main page functions
@@ -26,6 +27,10 @@ function init(e) {
 	dlg1 = dojo.widget.byId("dialog1");
 	var btn = document.getElementById("hider1");
 	dlg1.setCloseControl(btn);
+					
+	dlg2 = dojo.widget.byId("dialog2");
+	var btn = document.getElementById("hider2");
+	dlg2.setCloseControl(btn);
 					
 }
 
@@ -319,6 +324,21 @@ function updateContainerWidths() {
  * Channel editing UI functions
 /*--------------------------------------------------------------------------*/
 
+function showChooseSkinDialog() {
+
+    // show the dialog
+    dlg2.show();
+    
+    // if this is the first time we're displaying the choose skin
+    // dialog, get the skin list and add the available skins as 
+    // input options
+    var skinMenu = dojo.byId("skinList");
+    if (skinMenu.getElementsByTagName("input").length == 0) {
+         initializeSkinSelection();
+    }
+
+}
+
 // display the add channel dialog and initialize it if necessary
 function showAddChannelDialog() {
 
@@ -332,6 +352,72 @@ function showAddChannelDialog() {
 		initializeChannelSelection();
 	}
 	
+}
+
+function initializeSkinSelection() {
+    
+    var skinMenu = dojo.byId("skinList");
+    
+	dojo.io.bind({
+		url: mediaPath + '/skinList.xml',
+		load: function(type, data, evt){
+			skinXml = data;
+			var skins = getChildElementsByTagName(skinXml.getElementsByTagName("skins")[0], "skin");
+			for (var i = 0; i < skins.length; i++) {
+			    var description = skins[i].getElementsByTagName("skin-description")[0].firstChild.data;
+			    var name = skins[i].getElementsByTagName("skin-name")[0].firstChild.data;
+			    var key = skins[i].getElementsByTagName("skin")[0].firstChild.data;
+			    var input = document.createElement("input");
+			    input.type = "radio";
+			    input.value = key;
+			    input.name = "skinChoice";
+			    if (key == currentSkin)
+			        input.checked = true;
+			    var span = document.createElement("span");
+			    span.appendChild(input);
+			    span.appendChild(document.createTextNode(name));
+			    span.className = "portlet-form-field-label";
+			    skinMenu.appendChild(span);
+			    var div = document.createElement("div");
+			    div.appendChild(document.createTextNode(description));
+			    div.className = "portlet-font-dim";
+			    div.style.paddingLeft = "20px";
+			    div.style.paddingBottom = "10px";
+			    skinMenu.appendChild(div);
+			}
+        	
+        	// remove the loading graphics and message
+    		dojo.byId("skinLoading").style.display = "none";
+		},	
+		error: function(type, error){ displayErrorMessage(type, error); },
+		mimetype: "text/xml"
+	});
+
+}
+
+function chooseSkin(form) {
+
+    var selectedSkin;
+    for (var i = 0; i < form.skinChoice.length; i++) {
+        if (form.skinChoice[i].checked) {
+            selectedSkin = form.skinChoice[i].value;
+        }
+    }
+
+	dojo.io.bind({
+		content: { 
+			action: 'chooseSkin', 
+			skinName: selectedSkin
+		},
+		url: preferencesUrl,
+		load: function(type, data, evt){
+		    window.location = portalUrl;
+		 },
+		error: function(type, error){ displayErrorMessage(type, error); },
+		mimetype: "text/xml"
+	});
+	return false;
+
 }
 
 // loads the channel list into the channel selection dialog
