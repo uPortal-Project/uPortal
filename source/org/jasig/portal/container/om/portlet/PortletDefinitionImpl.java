@@ -8,8 +8,6 @@ package org.jasig.portal.container.om.portlet;
 import java.io.IOException;
 import java.util.Locale;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.pluto.om.common.Description;
 import org.apache.pluto.om.common.DescriptionSet;
 import org.apache.pluto.om.common.DisplayName;
@@ -24,9 +22,6 @@ import org.apache.pluto.om.portlet.PortletApplicationDefinition;
 import org.apache.pluto.om.portlet.PortletDefinition;
 import org.apache.pluto.om.portlet.PortletDefinitionCtrl;
 import org.apache.pluto.om.servlet.ServletDefinition;
-import org.jasig.portal.ChannelDefinition;
-import org.jasig.portal.IPortletPreferencesStore;
-import org.jasig.portal.PortletPreferencesStoreFactory;
 import org.jasig.portal.container.om.common.LanguageSetImpl;
 import org.jasig.portal.container.om.common.ObjectIDImpl;
 import org.jasig.portal.container.om.common.PreferenceSetImpl;
@@ -38,7 +33,6 @@ import org.jasig.portal.container.om.common.SecurityRoleRefSetImpl;
  * @version $Revision$
  */
 public class PortletDefinitionImpl implements PortletDefinition, PortletDefinitionCtrl {
-    private static final Log log = LogFactory.getLog(PortletDefinitionImpl.class);
     private ObjectID objectId = null;
     private String className = null;
     private String name = null;
@@ -53,7 +47,6 @@ public class PortletDefinitionImpl implements PortletDefinition, PortletDefiniti
     private DisplayNameSet displayNames = null;
     private String expirationCache = null;
     private ClassLoader portletClassLoader = null;
-    private ChannelDefinition channelDefinition = null;
     
     public PortletDefinitionImpl() {
         this.securityRoleRefs = new SecurityRoleRefSetImpl();
@@ -146,20 +139,6 @@ public class PortletDefinitionImpl implements PortletDefinition, PortletDefiniti
     }    
 
     public void store() throws IOException {
-        try {
-            IPortletPreferencesStore portletPrefsStore = PortletPreferencesStoreFactory.getPortletPreferencesStoreImpl();
-            portletPrefsStore.setDefinitionPreferences(channelDefinition.getId(), preferences);
-        } catch (Exception e){
-            log.error("Could not store portlet definition preferences.", e);
-
-            if (e instanceof IOException)
-                throw (IOException)e;
-            else {
-                IOException ioe = new IOException("Could not store portlet definition preferences: " + e.getMessage());
-                ioe.initCause(e);
-                throw ioe;
-        }
-    }
     }
     
     // Additional methods
@@ -184,24 +163,6 @@ public class PortletDefinitionImpl implements PortletDefinition, PortletDefiniti
         this.preferences = preferences;
     }
     
-    public void loadPreferences() throws IOException {
-        try {
-            IPortletPreferencesStore portletPrefsStore = PortletPreferencesStoreFactory.getPortletPreferencesStoreImpl();
-            PreferenceSet publishPreferences = portletPrefsStore.getDefinitionPreferences(channelDefinition.getId());
-            
-            ((PreferenceSetImpl)preferences).addAll(publishPreferences);
-        } catch (Exception e) {
-            log.error("Could not load portlet definition preferences", e);
-
-            if (e instanceof IOException)
-                throw (IOException)e;
-            else {
-                IOException ioe = new IOException("Could not store portlet definition preferences: " + e.getMessage());
-                ioe.initCause(e);
-                throw ioe;
-        }
-    }
-    }
 
     public void setContentTypes(ContentTypeSet contentTypes) {
         this.contentTypes = contentTypes;
@@ -215,12 +176,5 @@ public class PortletDefinitionImpl implements PortletDefinition, PortletDefiniti
         this.servletDefinition = definition;
     }
     
-    public ChannelDefinition getChannelDefinition() {
-        return this.channelDefinition;
-    }
-    
-    public void setChannelDefinition(ChannelDefinition channelDefinition) {
-        this.channelDefinition = channelDefinition;
-    }
 
 }

@@ -209,8 +209,6 @@ public class CPortletAdapter
                 throw new PortalException("Unable to find portlet definition for ID '" + portletDefinitionId + "'");
             }
             ChannelDefinition channelDefinition = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl().getChannelDefinition(Integer.parseInt(sd.getChannelPublishId()));
-            portletDefinition.setChannelDefinition(channelDefinition);
-            portletDefinition.loadPreferences();
 
             // Create the PortletApplicationEntity
             final PortletApplicationEntityImpl portAppEnt = new PortletApplicationEntityImpl();
@@ -221,6 +219,7 @@ public class CPortletAdapter
             PortletEntityImpl portletEntity = new PortletEntityImpl();
             portletEntity.setId(sd.getChannelPublishId());
             portletEntity.setPortletDefinition(portletDefinition);
+            portletEntity.setChannelDefinition(channelDefinition);
             portletEntity.setPortletApplicationEntity(portAppEnt);
             portletEntity.setUserLayout(pcs.getUserPreferencesManager().getUserLayoutManager().getUserLayout());
             portletEntity.setChannelDescription((IUserLayoutChannelDescription)pcs.getUserPreferencesManager().getUserLayoutManager().getNode(sd.getChannelSubscribeId()));
@@ -253,7 +252,7 @@ public class CPortletAdapter
             PortletWindowImpl portletWindow = new PortletWindowImpl();
             portletWindow.setId(sd.getChannelSubscribeId());
             portletWindow.setPortletEntity(portletEntity);
-			portletWindow.setChannelRuntimeData(rd);
+            portletWindow.setChannelRuntimeData(rd);
             portletWindow.setHttpServletRequest(wrappedRequest);
             cd.setPortletWindow(portletWindow);
                 
