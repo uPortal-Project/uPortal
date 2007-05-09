@@ -352,6 +352,14 @@ public class CPortletAdapter
                     catch (IllegalStateException ise) {
                         //Ignore an illegal state when the PortletStateManager tries to
                         //access the session if it has already been destroyed.
+                        if (log.isDebugEnabled()) {
+                            log.debug("IllegalStateException attempting to clear portlet state for windowImpl " + windowImpl);
+                        }
+                    } catch (Exception e) {
+                        // regardless of what went wrong clearing portlet state, need to continue the event handling workflow
+                        // therefore, log error and ignore
+                        log.error("Exception attempting to clear portlet state for windowImpl " + windowImpl);
+
                     }
 
                     // Invalidate portlet session
