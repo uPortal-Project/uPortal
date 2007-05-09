@@ -215,8 +215,6 @@ public class CPortletAdapter
                 throw new PortalException("Unable to find portlet definition for ID '" + portletDefinitionId + "'");
             }
             ChannelDefinition channelDefinition = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl().getChannelDefinition(Integer.parseInt(staticData.getChannelPublishId()));
-            portletDefinition.setChannelDefinition(channelDefinition);
-            portletDefinition.loadPreferences();
 
             // Create the PortletApplicationEntity
             final PortletApplicationEntityImpl portAppEnt = new PortletApplicationEntityImpl();
@@ -227,6 +225,7 @@ public class CPortletAdapter
             PortletEntityImpl portletEntity = new PortletEntityImpl();
             portletEntity.setId(staticData.getChannelPublishId());
             portletEntity.setPortletDefinition(portletDefinition);
+            portletEntity.setChannelDefinition(channelDefinition);
             portletEntity.setPortletApplicationEntity(portAppEnt);
             portletEntity.setUserLayout(pcs.getUserPreferencesManager().getUserLayoutManager().getUserLayout());
             portletEntity.setChannelDescription((IUserLayoutChannelDescription)pcs.getUserPreferencesManager().getUserLayoutManager().getNode(staticData.getChannelSubscribeId()));
