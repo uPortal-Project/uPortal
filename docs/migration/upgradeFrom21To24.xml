@@ -1,6 +1,11 @@
 <?xml version="1.0"?>
 
 <!--
+
+NOTE: Move this build file to the root directory of your portal build project (parallel to build.properties
+and build.xml, etc.) before attempting to run this Ant build.  Otherwise the "import" declaration will fail
+to find the main build.xml that it is intended to import.
+
     This build file contains targets useful for upgrading from uPortal
     2.1 to uPortal 2.4.  It is possible to perform this upgrade
     with either of these scenarios:
@@ -14,9 +19,17 @@
     Author: Al Wold (ASU), Nick Bolton (Unicon)
     Version: $Revision: 34590 $
 -->
-<project name="upgrade21" default="upgrade21">
+<project name="upgrade21" default="upgrade21help">
 <import file="build.xml"/>
 
+	<target name="upgrade21help" description="Prints information about using this ant build file.">
+
+	    <echo message="Sorry, not much help here."/>
+	    <echo message="Run 'ant upgrade21' to actually execute the upgrade."/>
+	    <echo message="This no-op help target exists as a 'safe' default so when just running this build 
+	blindly without specifying a target you don't clobber your portal."/>
+	  </target>
+	
   <target name="upgrade21" depends="compile" 
    description="Runs all the targets necessary to upgrade the portal database">
     <echo message="Initializing uPortal"/>
