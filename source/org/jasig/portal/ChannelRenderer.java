@@ -126,7 +126,7 @@ public class ChannelRenderer
         if(this.worker!=null) {
             this.worker.setChannel(channel);
         }
-        // clear channel chace
+        // clear channel cache
         this.channelCache=null;
     }
 
