@@ -66,7 +66,8 @@ The ant build moves /properties/Logger.properties to the root of the classes dir
 log4j.properties file will be available on the classpath for Commons Logging / log4j to find.  You'll need to either
 change that configuration in Logger.properties before the build or to change it in /WEB-INF/classes/ afterwards.
 You can configure the logging level, where the file should be, or even choose a different logging approach (log
-via XML to a ChainSaw instance, say).
+via XML to a ChainSaw instance, say).  New in uPortal 2.6: TRACE previously was synonymous with DEBUG because of mapping issues
+between Commons Logging and Log4j.  With this upgrade log4j now supports TRACE as a more-verbose logging level than DEBUG.
 
 Database configuration + Tomcat context configuration
 --------------------------------------
@@ -85,10 +86,12 @@ in the case where the application is not deployed as a .war, but rather is simpl
 directory of the Tomcat.  This is the typical way in which a developer builds and deploys uPortal.  
 It is not yet well understood and documented under what circumstances the /META-INF/context.xml trick will work.
 
-So, for this release we have restored the Ant build behavior of copying the context.xml file to your 
+To work around this problem, in addition to including the context.xml in /META-INF/, the Ant build 
+will also copy the context.xml file to your 
 Tomcat/conf/Catalina/localhost/ folder, renaming it to
 be {Context}.xml, where {Context} is the name configured in build.properties.
 
 
-CVS Metadata for this file:
-$Revision$ $Date$
+
+
+This README is Copyright Java Architectures Special Interest Group, 2005-2007, and is licensed for your use as per ./license.txt.
