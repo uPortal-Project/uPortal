@@ -5,13 +5,13 @@
 
 package org.jasig.portal;
 
+import org.jasig.portal.channels.error.CError;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.utils.threading.PriorityThreadFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import edu.emory.mathcs.backport.java.util.concurrent.BlockingQueue;
-import edu.emory.mathcs.backport.java.util.concurrent.ExecutorService;
 import edu.emory.mathcs.backport.java.util.concurrent.LinkedBlockingQueue;
 import edu.emory.mathcs.backport.java.util.concurrent.ThreadFactory;
 import edu.emory.mathcs.backport.java.util.concurrent.ThreadPoolExecutor;
@@ -35,10 +35,12 @@ public final class ChannelRendererFactoryImpl
     private static final Log log = LogFactory.getLog(ChannelRendererFactoryImpl.class);
 
     /** <p>Thread pool per factory.</p> */
-    private ExecutorService mThreadPool = null;
+    private ThreadPoolExecutor mThreadPool = null;
+    
+    private static ThreadPoolExecutor cErrorThreadPool = null;
 
     /** <p>Shared thread pool for all factories.</p> */
-    private static ExecutorService cSharedThreadPool = null;
+    private static ThreadPoolExecutor cSharedThreadPool = null;
 
     private class ChannelRenderThreadPoolExecutor extends ThreadPoolExecutor {
     	final AtomicLong activeThreads;
@@ -129,6 +131,9 @@ public final class ChannelRendererFactoryImpl
                 );
         }
 
+        cErrorThreadPool = new ThreadPoolExecutor(20, 20, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue(), new PriorityThreadFactory(threadPriority, "ErrorRendering", PortalSessionManager.getThreadGroup()));
+
+        
         if( sharedPool )
         {
             cSharedThreadPool = new ChannelRenderThreadPoolExecutor(activeThreads, maxActiveThreads, initialThreads, maxThreads, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue(), new PriorityThreadFactory(threadPriority, keyBase, PortalSessionManager.getThreadGroup()));
@@ -153,10 +158,36 @@ public final class ChannelRendererFactoryImpl
         ChannelRuntimeData channelRuntimeData
         )
     {
+    	
+    	ThreadPoolExecutor threadPoolExecutor = null;
+    	// Use special thread pool for CError channel rendering
+    	if (channel instanceof CError){
+    	    		threadPoolExecutor = cErrorThreadPool;
+    	    	}else if (cSharedThreadPool != null){
+    	        	int activeCount = cSharedThreadPool.getActiveCount();
+    	        	int queueSize = cSharedThreadPool.getQueue().size();
+    	        	
+    	        	if (queueSize > 50 || activeCount > 40){
+    	        		log.warn("queueSize: "+queueSize+" activeCount: "+activeCount+" "+
+    	        				"largestPoolSize: "+cSharedThreadPool.getLargestPoolSize());
+    	        	}
+    	        	
+    	        	log.debug(
+    	        			"stp-activeCount: "+cSharedThreadPool.getActiveCount()+" " +
+    	        			"stp-completedTaskCount: "+cSharedThreadPool.getCompletedTaskCount()+" " +
+    	        			"stp-corePoolSize: "+cSharedThreadPool.getCorePoolSize()+" " +
+    	        			"stp-queue-size: "+cSharedThreadPool.getQueue().size()+" " +
+    	        			"");
+    	        	
+    	    		threadPoolExecutor = cSharedThreadPool;
+    	        }else{
+    	        	threadPoolExecutor = this.mThreadPool;
+    	        }
+    	
         return new ChannelRenderer(
             channel,
             channelRuntimeData,
-            (null == this.mThreadPool) ? cSharedThreadPool : this.mThreadPool
+            threadPoolExecutor
             );
     }
 }
