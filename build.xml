@@ -106,9 +106,9 @@
   <property name="deploy.home"   value="(set this in build.properties!)"/>
   <property name="dist.home"     value="dist"/>
 
-  <property name="webapp.DocBase" value="(set this in build.properties!)"/>
-  <property name="webapp.Path"   value="(set this in build.properties!)"/>
-  <property name="webapp.contextFile" value="(set this in build.properties!)"/>
+  <property name="webapp.DocBase" value="uPortal"/>
+  <property name="webapp.Path"   value="/${webapp.docBase}"/>
+  <property name="webapp.contextFile" value="uPortal55.xml"/>
 
 <!--  ==================== Compilation Control Options ==================== -->
 
@@ -149,8 +149,15 @@
   files that you are going to include inside your "/WEB-INF/lib" directory.
 
 -->
-
-
+<property name="lib.compile"       value="./lib/compile"/>
+<property name="lib.container-common" value="./lib/container-common"/>
+<property name="lib.container-common-endorsed" value="./lib/container-common-endorsed"/>
+<property name="lib.container-shared" value="./lib/container-shared"/>
+<property name="lib.portlets" value="./lib/portlets"/>
+<property name="lib.provided" value="./lib/provided"/>
+<property name="lib.runtime" value="./lib/runtime"/>
+<property name="lib.test" value="./lib/test"/>
+	
 
 <!-- ==================== Compilation Classpath =========================== -->
 
@@ -167,23 +174,23 @@
 
   <path id="compile.classpath">
   	
-    <fileset dir="lib/compile">
+    <fileset dir="${lib.compile}">
        <include name="**/*.jar"/>
      </fileset>
   	
-  	<fileset dir="lib/provided">
+  	<fileset dir="${lib.provided}">
   	  <include name="**/*.jar"/>
   	</fileset>
   	
-  	<fileset dir="lib/container-common">
+  	<fileset dir="${lib.container-common}">
   	  <include name="**/*.jar"/>
   	</fileset>
 
-  	<fileset dir="lib/container-shared">
+  	<fileset dir="${lib.container-shared}">
   	  <include name="**/*.jar"/>
   	</fileset>
   	
-  	<fileset dir="lib/container-common-endorsed">
+  	<fileset dir="${lib.container-common-endorsed}">
   	  <include name="**/*.jar"/>
   	</fileset>
   	
@@ -199,10 +206,10 @@
 	
   <path id="tests.classpath">
     <path refid="compile.classpath"/>
-  	<fileset dir="lib/test">
+  	<fileset dir="${lib.test}">
   	  <include name="**/*.jar"/>
   	</fileset>
-  	<fileset dir="lib/runtime">
+  	<fileset dir="${lib.runtime}">
   	  <include name="**/*.jar"/>
   	</fileset>
   </path>
@@ -349,8 +356,8 @@
     <!-- Copy external dependencies as required -->
     <mkdir  dir="${deploy.home}/WEB-INF/lib"/>
     <copy todir="${deploy.home}/WEB-INF/lib">
-    	<fileset dir="lib/compile"/>
-    	<fileset dir="lib/runtime"/>
+    	<fileset dir="${lib.compile}"/>
+    	<fileset dir="${lib.runtime}"/>
     </copy>
    
 
@@ -358,18 +365,18 @@
          that lets us specify the appropriate directory for other servers
     -->
     <copy todir="${server.home}/shared/lib">
-    	<fileset dir="lib/container-shared"/>
+    	<fileset dir="${lib.container-shared}"/>
     </copy>
   	
     <mkdir dir="${server.home}/shared/classes/org/jasig/portal/container"/>
     <copy todir="${server.home}/shared/classes/org/jasig/portal/container"
     	file="${build.home}/WEB-INF/classes/org/jasig/portal/container/PortletServlet.class"/>
     <copy todir="${server.home}/common/endorsed">
-    	<fileset dir="lib/container-common-endorsed"/>
+    	<fileset dir="${lib.container-common-endorsed}"/>
     </copy>
   	
     <copy todir="${server.home}/common/lib">
-    	<fileset dir="lib/container-common"/>
+    	<fileset dir="${lib.container-common}"/>
     </copy>
 
     <!-- This is Tomcat-specific and server name-specific!
@@ -453,11 +460,6 @@
   target in case the developer wants to create Javadocs independently.
 
 -->
-    <path id="doc.class.path">
-      <pathelement location="${xom.jar}"/>
-      <pathelement location="${build.home}/WEB-INF/classes"/>
-      <pathelement location="${tagsoup.jar}"/>
-    </path>
 
   <target name="javadoc" depends="compile"
    description="Create Javadoc API documentation">
@@ -486,8 +488,8 @@
   	-->
   	<echo message="Sanitizing the javadoc files"/>
     <java classname="org.jasig.portal.utils.XHTMLJavaDoc" fork="yes">
-       <jvmarg value="-Xbootclasspath/p:${xercesImpl.jar}:${xml-apis.jar}:${xalan.jar}:${serializer.jar}"/>
-       <classpath refid="doc.class.path" />
+       <jvmarg value="-Xbootclasspath/p:${lb.container-common-endorsed}"/>
+       <classpath refid="compile.classpath" />
        <arg value="${dist.home}/docs/api"/>
      </java>
 </target>
