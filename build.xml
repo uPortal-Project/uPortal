@@ -7,16 +7,20 @@
      Notes:
 
      You shouldn't need to modify this file.  Instead, modify
-     build.properties which contains configurable paths to jar
-     files and other resources.
+     build.properties which contains configurable paths to directories of 
+     jar files and other resources.
 
      "ant initportal" will deploy uPortal and load your database,
      but you must first set up the JDBC properties in
      rdbm.properties and possibly PersonDirs.xml,
-     both of which are in the properties directory.
+     both of which are in the properties directory.  By "load", we mean
+     *clobber*.  Do not point the initportal Ant task at data you care about.
+     You have been warned.
 
      Author: Ken Weiner, kweiner@unicon.net
-     Version $Revision$
+     apetro@unicon.net
+     edalquist@unicon.net; eric.dalquist@doit.wisc.edu
+     drew.wills@unicon.net
 -->
 
 <!-- A "project" describes a set of targets that may be requested
@@ -95,8 +99,8 @@
 
 -->
 
-  <property name="app.name"      value="(set this in build.properties!)"/>
-  <property name="app.version"   value="(set this in build.properties!)"/>
+  <property name="app.name"      value="uPortal"/>
+  <property name="app.version"   value="UNKNOWN_VERSION"/>
   <property name="build.home"    value="build"/>
   <property name="server.home"   value="(set this in build.properties!)"/>
   <property name="deploy.home"   value="(set this in build.properties!)"/>
@@ -139,244 +143,14 @@
   * Being copied into the "/WEB-INF/lib" directory during execution
     of the "deploy" target.
 
-  Because we will automatically include all of the Java classes that Tomcat 4
+  Because we will automatically include all of the Java classes that Tomcat
   exposes to web applications, we will not need to explicitly list any of those
   dependencies.  You only need to worry about external dependencies for JAR
   files that you are going to include inside your "/WEB-INF/lib" directory.
 
-  This version of uPortal requires the following jars:
-
-  xalan.jar            Xalan is an XSLT processor for transforming XML documents
-                       into HTML, text, or other XML document types.
-                       IMPORTANT: See the following web pages that describe
-                       the steps you need to take to ensure that the appropriate
-                       version of Xalan is being used in your environment:
-                       JDK 1.3: http://xml.apache.org/xalan-j/faq.html#faq-N100AF
-                       JDK 1.4: http://xml.apache.org/xalan-j/faq.html#faq-N100CC
-                       Version: 2.6.0
-                       URL: http://xml.apache.org/xalan-j/
-
-serializer.jar         serializer.jar contains the Serializer component of
-					   Xalan-Java.
-
-  xercesImpl.jar       Xerces2 is the next generation of high performance,
-                       fully compliant XML parsers in the Apache Xerces family.
-                       Be sure to use the version of XercesImpl that comes with
-                       the Xalan you are using.
-                       Version: (depends on Xalan version)
-                       URL: http://xml.apache.org/xerces2-j/
-
-  xml-apis.jar         SAX, DOM, and JAVAX interfaces which have been recently
-                       separated from the xalan and xerces jars.
-                       Be sure to use the version of xml-apis.jar that comes with
-                       the Xalan you are using.
-                       Version: (depends on Xalan version)
-                       URL: http://xml.apache.org/xalan-j/
-
-  tidy.jar             Turns HTML into well formed XHTML. There is a problem with
-                       the current release that shows up when uPortal is deployed
-                       in certain web containers including Tomcat 4.0.x.
-                       For information, see http://www.mun.ca/cc/portal/cw/#depend or
-                       download tidy.jar directly from http://www.mun.ca/cc/portal/cw/tidy.jar
-                       Used by the CWebProxy channel.
-                       Version: 04aug2000r6 or fixed version     (see above)
-                       URL: http://jtidy.sourceforge.net/
-                            http://www.mun.ca/cc/portal/cw/#depend   (see above)
-
-  tyrex.jar            An in-memory JNDI implementation.
-                       Version: 1.0.1
-                       URL: http://tyrex.sourceforge.net/
-
-  activation.jar       JavaBeans Activation Framework. Used by MultiPartDataSource.
-                       Version: 1.0.2
-                       URL: http://java.sun.com/products/javabeans/glasgow/jaf.html
-
-  log4j.jar            Logging package used by uPortal.
-                       Version: 1.2.8
-                       URL: http://jakarta.apache.org/log4j/
-
-  cos.jar              Servlet support classes including file upload package
-                       MultipartRequest and MultipartParser. Used by the portal
-                       to make file uploads possible.
-                       Version: 05Nov2002
-                       URL: http://www.servlets.com/cos/
-
-  oro.jar              A set of text-processing Java classes that provide Perl5
-                       compatible regular expressions.
-                       Version: 2.0.8
-                       URL: http://jakarta.apache.org/oro/
-
-  commons-logging.jar  Logging components from the Apache Commons project
-                       Version: ?
-                       URL: http://jakarta.apache.org/commons/logging.html
-
-  portlet-api.jar      Portlet API based on JSR-168.
-                       Version: (from jakarta-pluto CVS on November 2, 2004)
-                       URL: http://www.jcp.org/en/jsr/detail?id=168
-
-  pluto-1.0.1-rc2.jar  Reference Implementation of the Java Portlet Specfication.
-                       This Portlet container provides a runtime environment for
-                       portlets implemented according to the Portlet API.
-                       The project is still in the Apache Incubator.
-                       Version: 1.0.1-rc2
-                       URL: http://portals.apache.org/pluto/
-
-  wsrp4j-shared.jar    WSRP4J shared classes mostly derived from OASIS WSRP WSDL.
-                       Comes with WSRP4J.
-                       Use the version that comes with WSRP4J.
-                       Version: (from ws-wsrp4j CVS on November 2, 2004)
-                       URL: http://ws.apache.org/wsrp4j/
-
-  wsrp4j-consumer.jar  WSRP4J consumer classes.
-                       Comes with WSRP4J.
-                       Version: (same as wsrp4j-shared.jar version)
-                       URL: http://ws.apache.org/wsrp4j/
-
-  proxyportlet.jar     WSRP4J Consumer Proxy Portlet.
-                       Comes with WSRP4J.
-                       Version: (same as wsrp4j-shared.jar version)
-
-                       The following modifications were made to the
-                       WSRP4J proxy portlet source:
-
-                       - portlet.xml
-
-                          IS: <portlet-class>org.jasig.portal.wsrp.consumer.portlet.ProxyPortlet</portlet-class>
-                         WAS: <portlet-class>org.apache.wsrp4j.consumer.portlet.impl.ProxyPortlet</portlet-class>
-
-                          IS: <value>org.jasig.portal.wsrp.consumer.portlet.ConsumerEnvironmentImpl</value>
-                         WAS: <value>org.apache.wsrp4j.consumer.portlet.impl.ConsumerEnvironmentImpl</value>
-
-                       - wsrp4j-logger.properties
-
-                          IS: log4j.appender.A1.File=wsrp4j-consumer.log
-                         WAS: log4j.appender.A1.File=@HOME@/logs/wsrp4j-consumer.log
-
-
-                       URL: http://ws.apache.org/wsrp4j/
-
-  jdbcDriver.jar       This should contain the JDBC driver for whatever relational
-                       database you plan to use.  For development, HypersonicSQL is
-                       a nice choice.  For production, you probably want something
-                       more robust like Oracle or PostgreSQL.
-                       Version: (depends on your database)
-                       URL: (depends on your database)
-
-  hsqldb.jar           Comes with uPortal only as a convenience.  It can and
-                       probably should be replaced with another database driver.
-                       Version: 1.7.2.4
-                       URL: http://hsqldb.sourceforge.net
-
-  junit.jar            JUnit is a regression testing framework.  It is used
-                       to implement unit tests in Java.
-                       Version: 3.8.1
-                       URL: http://www.junit.org/
-
-  commons-collection.jar
-                       Collection components from the Apache Commons project - needed
-                       for database pooling.
-                       Version: 3.1
-                       URL: http://jakarta.apache.org/commons/logging.html
-
-  commons-dbcp.jar     Dbcp components from the Apache Commons project - needed
-                       for database pooling.
-                       Version: 1.2.1
-                       URL: http://jakarta.apache.org/commons/dbcp
-
-  commons-pool.jar     Pool components from the Apache Commons project - needed
-                       for database pooling.
-                       Version: 1.2
-                       URL: http://jakarta.apache.org/commons/pool
-
-  commons-http.jar     httpClient from the Apache commaons project - Better URL implementation
-                       Version: 3.0.1
-                       http://jakarta.apache.org/commons/httpclient
-
-  commons-codec.jar    codec from the Apache commaons project - Needed by httpClient
-                       Version: 1.3
-                       http://jakarta.apache.org/commons/codec
-
-  servlet.jar          Contains the javax.servlet APIs.  This is usually supplied
-                       by your servlet container.
-                       Version: 2.2, 2.3, or 2.4
-                       URL: http://jakarta.apache.org/tomcat/
-
-  spring.jar           Spring, a java/j2ee application framework that facilitates
-                       the use of the Inversion of Control (IoC) design pattern.
-                       Version 1.2.0
-                       URL: http://www.springframework.org/
-
-  concurrent-1.3.4.jar	Doug Lea's Concurrency package.  Used by WhirlyCache
-  						Version 1.3.4
-  						URL: http://gee.cs.oswego.edu/dl/classes/EDU/oswego/cs/dl/util/concurrent/intro.html
-
-  jdom-1.0.jar			JDom is used to parse XML by WhirlyCache
-  						Version 1.0
-  						URL: http://www.jdom.org
-
-  whirlycache-0.7.1.jar	WhirlyCache is a fast caching package that is configurable via
-  						XML.
-  						Version 0.7.1
-  						URL: https://whirlycache.dev.java.net/
-
-  backport-util-concurrent.jar Backport of Doug Lea's Concurrency package.  Similar
-  						to the Java 1.5 java.util.concurrent package.
-  						Version CVS_HEAD (4/18/2005)
-  						URL: http://www.mathcs.emory.edu/dcl/util/backport-util-concurrent/
-
-  casclient.jar         Yale's Java CAS client.
-                        Version 2.1.1
-                        URL: http://www.ibiblio.org/maven/cas/jars/casclient-2.1.1.jar
-
-  rome.jar              ROME: RSS and Atom Utilities for Java
-                        Version 0.8
-                        URL: https://rome.dev.java.net
-
-  tagsoup.jar           TagSoup HTML Parser that "Just Keeps On Truckin'"
-                        Version 1.0rc3
-                        URL: http://home.ccil.org/~cowan/XML/tagsoup/
-
-  xom.jar					new XML object model.
-  						Version 1.1
-  						URL: http://www.xom.nu/
-
 -->
 
-  <property name="xalan.jar" value="(set this in build.properties!)"/>
-  <property name="serializer.jar" value="(set this in build.properties!)"/>
-  <property name="xercesImpl.jar" value="(set this in build.properties!)"/>
-  <property name="xml-apis.jar" value="(set this in build.properties!)"/>
-  <property name="tidy.jar" value="(set this in build.properties!)"/>
-  <property name="tyrex.jar" value="(set this in build.properties!)"/>
-  <property name="activation.jar" value="(set this in build.properties!)"/>
-  <property name="log4j.jar" value="(set this in build.properties!)"/>
-  <property name="cos.jar" value="(set this in build.properties!)"/>
-  <property name="oro.jar" value="(set this in build.properties!)"/>
-  <property name="commons-logging.jar" value="(set this in build.properties!)"/>
-  <property name="portlet-api.jar" value="(set this in build.properties!)"/>
-  <property name="pluto.jar" value="(set this in build.properties!)"/>
-  <property name="wsrp4j-shared.jar" value="(set this in build.properties!)"/>
-  <property name="wsrp4j-consumer.jar" value="(set this in build.properties!)"/>
-  <property name="proxyportlet.jar" value="(set this in build.properties!)"/>
-  <property name="jdbcDriver.jar" value="(set this in build.properties!)"/>
-  <property name="junit.jar" value="(set this in build.properties!)"/>
-  <property name="commons-dbcp.jar" value="(set this in build.properties!)"/>
-  <property name="commons-pool.jar" value="(set this in build.properties!)"/>
-  <property name="commons-http.jar" value="(set this in build.properties!)"/>
-  <property name="commons-codec.jar" value="(set this in build.properties!)"/>
-  <property name="servlet.jar" value="(set this in build.properties!)"/>
-  <property name="spring.jar" value="(set this in build.properties!)"/>
-  <property name="commons-collection.jar" value="(set this in build.properties!)"/>
-  <property name="whirlycache.jar" value="{set this in build.properties!)" />
-  <property name="jdom.jar" value="{set this in build.properties!)" />
-  <property name="concurrent.jar" value="{set this in build.properties!)" />
-  <property name="backport.jar" value="{set this in build.properties!)" />
-  <property name="casclient.jar" value="lib/casclient-2.1.1.jar"/>
-  <property name="rome.jar" value="(set this in build.properties!)"/>
-  <property name="tagsoup.jar" value="(set this in build.properties!)"/>
-  <property name="xom.jar" value="(set this in build.properties!)"/>
-  <property name="jstl.jar" value="(set this in build.properties!)"/>
-  <property name="standard.jar" value="(set this in build.properties!)"/>
+
 
 <!-- ==================== Compilation Classpath =========================== -->
 
@@ -392,41 +166,27 @@ serializer.jar         serializer.jar contains the Serializer component of
 -->
 
   <path id="compile.classpath">
+  	
+    <fileset dir="lib/compile">
+       <include name="**/*.jar"/>
+     </fileset>
+  	
+  	<fileset dir="lib/provided">
+  	  <include name="**/*.jar"/>
+  	</fileset>
+  	
+  	<fileset dir="lib/container-common">
+  	  <include name="**/*.jar"/>
+  	</fileset>
 
-    <!-- Include all JAR files that will be included in /WEB-INF/lib -->
-    <pathelement location="${xalan.jar}"/>
-  	<pathelement location="${serializer.jar}"/>
-    <pathelement location="${xercesImpl.jar}"/>
-    <pathelement location="${xml-apis.jar}"/>
-    <pathelement location="${tidy.jar}"/>
-    <pathelement location="${tyrex.jar}"/>
-    <pathelement location="${activation.jar}"/>
-    <pathelement location="${log4j.jar}"/>
-    <pathelement location="${cos.jar}"/>
-    <pathelement location="${oro.jar}"/>
-    <pathelement location="${commons-logging.jar}"/>
-    <pathelement location="${portlet-api.jar}"/>
-    <pathelement location="${pluto.jar}"/>
-    <pathelement location="${wsrp4j-shared.jar}"/>
-    <pathelement location="${wsrp4j-consumer.jar}"/>
-    <pathelement location="${proxyportlet.jar}"/>
-    <pathelement location="${jdbcDriver.jar}"/>
-    <pathelement location="${commons-collection.jar}"/>
-    <pathelement location="${commons-dbcp.jar}"/>
-    <pathelement location="${commons-pool.jar}"/>
-    <pathelement location="${commons-http.jar}"/>
-    <pathelement location="${servlet.jar}"/>
-    <pathelement location="${spring.jar}"/>
-    <pathelement location="${whirlycache.jar}" />
-    <pathelement location="${jdom.jar}" />
-    <pathelement location="${concurrent.jar}" />
-    <pathelement location="${backport.jar}" />
-    <pathelement location="${casclient.jar}"/>
-    <pathelement location="${rome.jar}"/>
-    <pathelement location="${tagsoup.jar}"/>
-    <pathelement location="${xom.jar}"/>
-    <pathelement location="${standard.jar}"/>
-    <pathelement location="${jstl.jar}"/>
+  	<fileset dir="lib/container-shared">
+  	  <include name="**/*.jar"/>
+  	</fileset>
+  	
+  	<fileset dir="lib/container-common-endorsed">
+  	  <include name="**/*.jar"/>
+  	</fileset>
+  	
   </path>
 
 
@@ -434,15 +194,17 @@ serializer.jar         serializer.jar contains the Serializer component of
 <!-- ====================== Tests Classpath =============================== -->
 
 <!--
-
   Classpath for uPortal test code.
-
 -->
-
+	
   <path id="tests.classpath">
     <path refid="compile.classpath"/>
-    <pathelement location="${junit.jar}"/>
-  	<pathelement location="lib/hsqldb.jar"/>
+  	<fileset dir="lib/test">
+  	  <include name="**/*.jar"/>
+  	</fileset>
+  	<fileset dir="lib/runtime">
+  	  <include name="**/*.jar"/>
+  	</fileset>
   </path>
 
 
@@ -586,43 +348,29 @@ serializer.jar         serializer.jar contains the Serializer component of
 
     <!-- Copy external dependencies as required -->
     <mkdir  dir="${deploy.home}/WEB-INF/lib"/>
-    <copy todir="${deploy.home}/WEB-INF/lib" file="${xercesImpl.jar}"/>
-    <copy todir="${deploy.home}/WEB-INF/lib" file="${xml-apis.jar}"/>
-    <copy todir="${deploy.home}/WEB-INF/lib" file="${tidy.jar}"/>
-    <copy todir="${deploy.home}/WEB-INF/lib" file="${tyrex.jar}"/>
-    <copy todir="${deploy.home}/WEB-INF/lib" file="${activation.jar}"/>
-    <copy todir="${deploy.home}/WEB-INF/lib" file="${log4j.jar}"/>
-    <copy todir="${deploy.home}/WEB-INF/lib" file="${cos.jar}"/>
-    <copy todir="${deploy.home}/WEB-INF/lib" file="${oro.jar}"/>
-    <copy todir="${deploy.home}/WEB-INF/lib" file="${commons-collection.jar}"/>
-    <copy todir="${deploy.home}/WEB-INF/lib" file="${commons-logging.jar}"/>
-    <copy todir="${deploy.home}/WEB-INF/lib" file="${commons-dbcp.jar}"/>
-    <copy todir="${deploy.home}/WEB-INF/lib" file="${commons-pool.jar}"/>
-    <copy todir="${deploy.home}/WEB-INF/lib" file="${commons-http.jar}"/>
-    <copy todir="${deploy.home}/WEB-INF/lib" file="${commons-codec.jar}"/>
-    <copy todir="${deploy.home}/WEB-INF/lib" file="${jdbcDriver.jar}"/>
-    <copy todir="${deploy.home}/WEB-INF/lib" file="${spring.jar}"/>
-
-    <copy todir="${deploy.home}/WEB-INF/lib" file="${whirlycache.jar}" />
-    <copy todir="${deploy.home}/WEB-INF/lib" file="${jdom.jar}" />
-    <copy todir="${deploy.home}/WEB-INF/lib" file="${concurrent.jar}" />
-    <copy todir="${deploy.home}/WEB-INF/lib" file="${backport.jar}" />
-    <copy todir="${deploy.home}/WEB-INF/lib" file="${casclient.jar}"/>
-    <copy todir="${deploy.home}/WEB-INF/lib" file="${rome.jar}"/>
-    <copy todir="${deploy.home}/WEB-INF/lib" file="${tagsoup.jar}"/>
+    <copy todir="${deploy.home}/WEB-INF/lib">
+    	<fileset dir="lib/compile"/>
+    	<fileset dir="lib/runtime"/>
+    </copy>
+   
 
     <!-- These are Tomcat-specific!  We need to think about a new property
          that lets us specify the appropriate directory for other servers
     -->
-    <copy todir="${server.home}/shared/lib" file="${portlet-api.jar}"/>
-    <copy todir="${server.home}/shared/lib" file="${pluto.jar}"/>
-    <copy todir="${server.home}/shared/lib" file="${jstl.jar}"/>
-    <copy todir="${server.home}/shared/lib" file="${standard.jar}"/>
+    <copy todir="${server.home}/shared/lib">
+    	<fileset dir="lib/container-shared"/>
+    </copy>
+  	
     <mkdir dir="${server.home}/shared/classes/org/jasig/portal/container"/>
     <copy todir="${server.home}/shared/classes/org/jasig/portal/container"
     	file="${build.home}/WEB-INF/classes/org/jasig/portal/container/PortletServlet.class"/>
-    <copy todir="${server.home}/common/endorsed" file="${xalan.jar}"/>
-  	<copy todir="${server.home}/common/endorsed" file="${serializer.jar}"/>
+    <copy todir="${server.home}/common/endorsed">
+    	<fileset dir="lib/container-common-endorsed"/>
+    </copy>
+  	
+    <copy todir="${server.home}/common/lib">
+    	<fileset dir="lib/container-common"/>
+    </copy>
 
     <!-- This is Tomcat-specific and server name-specific!
          We need to find out the best way to ensure cross-context
@@ -953,14 +701,7 @@ serializer.jar         serializer.jar contains the Serializer component of
     <property name="adminlocale" value="en_US"/>
     <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.tools.dbloader.DbLoader">
       <classpath>
-        <pathelement path="${build.home}/WEB-INF/classes"/>
-        <pathelement path="${xalan.jar}"/>
-      	<pathelement path="${serializer.jar}"/>
-        <pathelement path="${xercesImpl.jar}"/>
-        <pathelement path="${xml-apis.jar}"/>
-        <pathelement path="${oro.jar}"/>
-        <pathelement path="${log4j.jar}"/>
-        <pathelement path="${jdbcDriver.jar}"/>
+      	<path refid="compile.path"/>
       </classpath>
 
       <arg value="${usetable}"/>

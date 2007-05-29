@@ -1,0 +1,438 @@
+<html>
+<head>
+<title>uPortal Dependencies</title>
+</head>
+<body>
+<p>This file documents the dependencies included with uPortal, their versions, sources, and the licensing that allows uPortal to 
+redistribute them.</p>
+
+<h2>/lib/compile</h2>
+<p>Dependencies required at compile time and at runtime, deployed with uPortal into your servlet container.</p>
+
+<table>
+<tr>
+<th>.jar name</th>
+<th>description</th>
+<th>acquired from</th>
+<th>license</th>
+</tr>
+
+<tr>
+<td>activation-1.0.2.jar</td>
+<td>JavaBeans Activation Framework. Used by MultiPartDataSource.</td>
+<td>http://java.sun.com/products/javabeans/glasgow/jaf.html</td>
+<td>???</td>
+</tr>
+
+<tr>
+<td>backport-util-concurrent-18april05.jar</td>
+<td>Backport of Doug Lea's Concurrency package.  Similar to the Java 1.5 java.util.concurrent package.</td>
+<td>Version CVS_HEAD (4/18/2005) URL: http://www.mathcs.emory.edu/dcl/util/backport-util-concurrent/</td>
+<td>???</td>
+</tr>
+
+<tr>
+<td>casclient-2.1.1.jar</td>
+<td>Yale Java CAS Client</td>
+<td>URL: http://www.ibiblio.org/maven/cas/jars/casclient-2.1.1.jar</td>
+<td><a href="../licenses/yale_casclient.txt">Yale license</a></td>
+</tr>
+                        
+
+<tr>
+<td>commons-codec-1.3.jar</td>
+<td>Codec from the Apache commaons project - Needed by httpClient</td>
+<td>http://jakarta.apache.org/commons/codec</td>
+<td>??</td>
+</tr>
+
+<tr>
+<td>commons-collections-3.1.jar</td>
+<td>Collection components from the Apache Commons project - needed for database pooling.</td>
+<td>???</td>
+<td>???</td>
+</tr>
+
+<tr>
+<td>commons-dbcp-1.2.1.jar</td>
+<td>Dbcp components from the Apache Commons project - needed for database pooling.</td>
+<td>URL: http://jakarta.apache.org/commons/dbcp</td>
+<td>???</td>
+</tr>
+
+<tr>
+<td>commons-httpclient-3.0.1.jar</td>
+<td>httpClient from the Apache commaons project - Better URL implementation</td>
+<td>http://jakarta.apache.org/commons/httpclient</td>
+<td>???</td>
+</tr>
+
+<tr>
+<td>commons-logging-1.1.jar</td>
+<td>Logging components from the Apache Commons project</td>
+<td>URL: http://jakarta.apache.org/commons/logging.html</td>
+<td>???</td>
+</tr>
+
+<tr>
+<td>commons-pool-1.2.jar</td>
+<td>Pool components from the Apache Commons project - needed for database pooling.</td>
+<td>URL: http://jakarta.apache.org/commons/pool</td>
+<td>???</td>
+</tr>
+
+<tr>
+<td>concurrent-1.3.4.jar</td>
+<td>Doug Lea's Concurrency package.  Used by WhirlyCache</td>
+<td>URL: http://gee.cs.oswego.edu/dl/classes/EDU/oswego/cs/dl/util/concurrent/intro.html</td>
+<td>???</td>
+</tr>
+
+<tr>
+<td>cos-05nov2002.jar</td>
+<td>Servlet support classes including file upload package MultipartRequest and MultipartParser. Used by the portal to make file uploads possible.</td>
+<td>Version: 05Nov2002 URL: http://www.servlets.com/cos/</td>
+<td><a href="../licenses/cos_license.txt">COS license</a>  NOTE: While the license grants permission 
+"to use the com.oreilly.servlet.* packages in the development of any non-commercial project" and so the uPortal opensource project itself is ok, 
+beware of building a commercial project on uPortal and continuing to use this library: 
+"For a commercial project, permission is granted to use the com.oreilly.servlet.* packages provided that every person 
+on the development team for that project owns a copy of the book Java Servlet Programming (O'Reilly) in its most recent edition."
+</tr>
+
+<tr>
+<td>jakarta-oro-2.0.8.jar</td>
+<td> A set of text-processing Java classes that provide Perl5 compatible regular expressions.</td>
+<td>URL: http://jakarta.apache.org/oro/</td>
+<td>???</td>
+</tr>
+
+<tr>
+<td>jdom-1.0.jar</td>
+<td>WhirlyCache uses JDom to parse XML.</td>
+<td>URL: http://www.jdom.org</td>
+<td>???</td>
+</tr>
+
+<tr>
+<td>log4j-1.2.14.jar</td>
+<td>log4j would not be a compile-time dependency but for deprecated legacy LogService's use of its APIs.  
+The preferred logging method in modern uPortal is to use Apache Commons Logging and to choose log4j as your runtime logging implementation.</td>
+<td>URL: http://jakarta.apache.org/log4j/</td>
+<td>???</td>
+</tr>
+
+<tr>
+<td>proxyportlet.jar</td>
+<td>WSRP4J Consumer Proxy Portlet. Comes with WSRP4J.
+                       Version: (same as wsrp4j-shared.jar version)
+The following modifications were made to the WSRP4J proxy portlet source:
+
+                       - portlet.xml
+
+                          IS: <portlet-class>org.jasig.portal.wsrp.consumer.portlet.ProxyPortlet</portlet-class>
+                         WAS: <portlet-class>org.apache.wsrp4j.consumer.portlet.impl.ProxyPortlet</portlet-class>
+
+                          IS: <value>org.jasig.portal.wsrp.consumer.portlet.ConsumerEnvironmentImpl</value>
+                         WAS: <value>org.apache.wsrp4j.consumer.portlet.impl.ConsumerEnvironmentImpl</value>
+
+                       - wsrp4j-logger.properties
+
+                          IS: log4j.appender.A1.File=wsrp4j-consumer.log
+                         WAS: log4j.appender.A1.File=@HOME@/logs/wsrp4j-consumer.log
+</td>
+<td>Version: (from ws-wsrp4j CVS on November 2, 2004) URL: http://ws.apache.org/wsrp4j/</td>
+<td>
+???
+</td>
+</tr>
+
+<tr>
+<td>rome-0.8.jar</td>
+<td>ROME: RSS and Atom Utilities for Java</td>
+<td>URL: https://rome.dev.java.net</td>
+<td>????</td>
+</tr>
+
+<tr>
+<td>spring-2.0.0.jar</td>
+<td>Spring, a java/j2ee application framework that facilitates the use of the Inversion of Control (IoC) design pattern.</td>
+<td>URL: http://www.springframework.org/</td>
+<td>???</td>
+</tr>
+
+<tr>
+<td>spring-mock-1.2.6.jar</td>
+<td>???</td>
+<td>????</td>
+<td>???</td>
+</tr>
+
+<tr>
+<td>tagsoup-1.0.1.jar</td>
+<td>TagSoup HTML Parser that "Just Keeps On Truckin'"</td>
+<td>URL: http://home.ccil.org/~cowan/XML/tagsoup/</td>
+<td>????</td>
+</tr>
+
+
+<tr>
+<td>tidy.jar</td>
+<td>Turns HTML into well formed XHTML. There is a problem with the current release that shows up when 
+uPortal is deployed in certain web containers including Tomcat 4.0.x
+(which you should avoid using in favor of Tomcat 5.5.x and later releases, incidentally). 
+For information, see http://www.mun.ca/cc/portal/cw/#depend or
+download tidy.jar directly from http://www.mun.ca/cc/portal/cw/tidy.jar
+                       Used by the CWebProxy channel.
+</td>
+<td>Version: 04aug2000r6 or fixed version     (see above)
+                       URL: http://jtidy.sourceforge.net/
+                            http://www.mun.ca/cc/portal/cw/#depend   (see above)</td>
+<td>????</td>
+</tr>
+
+<tr>
+<td>tyrex-1.0.1.jar</td>
+<td>An in-memory JNDI implementation.</td>
+<td>URL: http://tyrex.sourceforge.net/</td>
+<td>?????</td>
+</tr>
+
+<tr>
+<td>whirlycache-0.7.1.jar</td>
+<td>WhirlyCache is a fast caching package that is configurable via XML.</td>
+<td>URL: https://whirlycache.dev.java.net/</td>
+<td>?????</td>
+</tr>
+
+<tr>
+<td>wsrp4j-consumer-0.3.jar</td>
+<td>WSRP4J consumer classes. Comes with WSRP4J.</td>
+<td>Version: (from ws-wsrp4j CVS on November 2, 2004) URL: http://ws.apache.org/wsrp4j/</td>
+<td>????</td>
+</tr>
+
+<tr>
+<td>wsrp4j-shared.jar</td>
+<td>WSRP4J shared classes mostly derived from OASIS WSRP WSDL.  Comes with WSRP4J.</td>
+<td>Version: (from ws-wsrp4j CVS on November 2, 2004) URL: http://ws.apache.org/wsrp4j/</td>
+<td>?????</td>
+</tr>
+
+<tr>
+<td>xercesImpl.jar</td>
+<td>Xerces2 is the next generation of high performance, fully compliant XML parsers in the Apache Xerces family.
+Be sure to use the version of XercesImpl that comes with the Xalan you are using.</td>
+<td>URL: http://xml.apache.org/xerces2-j/</td>
+<td>????</td>
+</tr>
+
+<tr>
+<td>xml-apis.jar</td>
+<td>SAX, DOM, and JAVAX interfaces which have been recently separated from the xalan and xerces jars.
+Be sure to use the version of xml-apis.jar that comes with the Xalan you are using.</td>
+<td>URL: http://xml.apache.org/xalan-j/</td>
+<td>????</td>
+</tr>
+
+<tr>
+<td>xom.jar</td>
+<td>new XML object model.</td>
+<td>URL: http://www.xom.nu/</td>
+<td>????</td>
+</tr>
+
+</table>
+
+<h2>/lib/container-common</h2>
+<p>Libraries in /lib/container-common will be installed into the servlet container such that the container and the contained web applications share them.</p>
+<p>You can <strong>add your database driver .jar to this directory</strong> and initportal will install your database driver .jar into the servlet container for you.
+This can be a nice convenience in development.</p>
+
+<table>
+<tr>
+<th>.jar name</th>
+<th>description</th>
+<th>acquired from</th>
+<th>license</th>
+</tr>
+
+<tr>
+<td>hsqldb-1.7.2.4.jar</td>
+<td>In-memory database to support quickstarts, development, and unit testing.  In production you should use a "real" database, such as Postgresql.</td>
+<td>URL: http://hsqldb.sourceforge.net</td>
+<td>???</td>
+</tr>
+
+</table>
+
+<h2>/lib/container-common-endorsed</h2>
+<p>.jar files required to not only be shared between application container and web applications at runtime, 
+but required to be endorsed and so supercede classes that may be found elsewhere.</p>
+<p>uPortal endorses Xalan 2.7.0 to supercede the Xalan that may be included in your JVM's default classpath.</p>
+
+<table>
+<tr>
+<th>.jar name</th>
+<th>description</th>
+<th>acquired from</th>
+<th>license</th>
+</tr>
+
+<tr>
+<td>serializer.jar</td>
+<td>The Serializer component of Xalan-Java.</td>
+<td>URL: http://xml.apache.org/xalan-j/</td>
+<td>????</td>
+</tr>
+
+<tr>
+<td>xalan-2.7.0.jar</td>
+<td>Xalan is an XSLT processor for transforming XML documents into HTML, text, or other XML document types.</td>
+<td>URL: http://xml.apache.org/xalan-j/</td>
+<td>????</td>
+</tr>
+</table>
+
+<h2>/lib/container-shared</h2>
+<p>These libraries are to be shared among web applications hosted in your servlet container, but need not be shared with the servlet container itself.</p>
+
+<table>
+<tr>
+<th>.jar name</th>
+<th>description</th>
+<th>acquired from</th>
+<th>license</th>
+</tr>
+
+<tr>
+<td>jstl-1.1.2.jar</td>
+<td>JSP Standard Tag Library, needed to support JSP Channels</td>
+<td>????</td>
+<td>????</td>
+</tr>
+
+<tr>
+<td>pluto-1.0.1.jar</td>
+<td>Reference Implementation of the Java Portlet Specfication.  This Portlet container provides a runtime environment for 
+portlets implemented according to the Portlet API.</td>
+<td>URL: http://portals.apache.org/pluto/</td>
+<td>????</td>
+</tr>
+
+<tr>
+<td>portlet-api-1.0.jar</td>
+<td>Portlet API based on JSR-168.</td>
+<td>Version: (from jakarta-pluto CVS on November 2, 2004) URL: http://www.jcp.org/en/jsr/detail?id=168</td>
+<td>????</td>
+</tr>
+
+<tr>
+<td>standard-1.1.2.jar</td>
+<td>????</td>
+<td>????</td>
+<td>?????</td>
+</tr>
+
+</table>
+
+
+<h2>/lib/portlets</h2>
+<p>JSR-168 portlets included with uPortal.</p>
+
+<table>
+<tr>
+<th>.war name</th>
+<th>description</th>
+<th>acquired from</th>
+<th>license</th>
+</tr>
+
+<tr>
+<td>GooglePortlet.war</td>
+<td>Google search portlet</td>
+<td>???</td>
+<td>???</td>
+</tr>
+
+<tr>
+<td>proxyportlet.war</td>
+<td>Derived from WSRP4J proxyportlet WSRP consumer portlet</td>
+<td>???</td>
+<td>???</td>
+</tr>
+
+<tr>
+<td>RssPortlet.war</td>
+<td>JSR-168 portlet implementing RSS consumption.</td>
+<td>???</td>
+<td>???</td>
+</tr>
+
+<tr>
+<td>testsuite.war</td>
+<td>Pluto JSR-168 compliance test suite</td>
+<td>???</td>
+<td>???</td>
+</tr>
+
+</table>
+
+
+<h2>/lib/provided</h2>
+<p>This directory contains .jars required to compile uPortal 
+but which are expected to be provided at runtime by the application 
+container and so are not deployed with uPortal.</p>
+
+<table>
+<tr>
+<th>.jar name</th>
+<th>description</th>
+<th>acquired from</th>
+<th>license</th>
+</tr>
+
+<tr>
+<td>servlet.jar</td>
+<td>Contains the javax.servlet APIs.  This is usually supplied by your servlet container.</td>
+<td>URL: http://jakarta.apache.org/tomcat/</td>
+<td>???</td>
+</tr>
+</table>
+
+
+<h2>/lib/runtime</h2>
+<p>These libraries are not included at compile time but are deployed with uPortal at runtime.  Currently this directory is empty.
+Were log4j not required by the deprecated legacy LogService uPortal class, it would go here.</p>
+
+<h2>/lib/test</h2>
+<p>Libraries required to compile and/or run the unit tests for the project, but not required to be available at compile time or runtime for the application.</p>
+
+<table>
+<tr>
+<th>.jar name</th>
+<th>description</th>
+<th>acquired from</th>
+<th>license</th>
+</tr>
+
+<tr>
+<td>junit-3.8.1.jar</td>
+<td>JUnit is a regression testing framework.  It is used to implement unit tests in Java.</td>
+<td>URL: http://www.junit.org/</td>
+<td>????</td>
+</tr>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
