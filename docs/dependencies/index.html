@@ -3,8 +3,24 @@
 <title>uPortal Dependencies</title>
 </head>
 <body>
+
+<h2>Introduction</h2>
 <p>This file documents the dependencies included with uPortal, their versions, sources, and the licensing that allows uPortal to 
-redistribute them.</p>
+redistribute them.  This file serves as a practical guide to the dependencies shipping with uPortal as well as a place to 
+document the licenses under which they are included.</p>
+
+<p>The uPortal distribution may include a number of other libraries, resources, and products.  Intellectual property.
+This file exists for several reasons.  The first reason is that we'd like to acknowledge the important contributions
+these other projects and resources make to our project.  The success of this project has been and continues to be dependent upon
+the quality tools and resources produced by others in the Java community.</p>
+
+<p>Some of these projects and resources we include in our distribution are subject to license agreements.
+A second reason for this file to exist is to provide a place in the distribution where we reference the other files necessary for
+our distribution to comply with the terms of these agreements and to document under what licenses we redistribute what libraries.</p>
+
+<p>We have attempted here to comply with applicable license agreements and give credit where credit is due. If we have overlooked
+acknowledgement of any contribution to this project please bring this to the attention of the uPortal developers.</p>
+
 
 <h2>/lib/compile</h2>
 <p>Dependencies required at compile time and at runtime, deployed with uPortal into your servlet container.</p>
@@ -21,21 +37,25 @@ redistribute them.</p>
 <td>activation-1.0.2.jar</td>
 <td>JavaBeans Activation Framework. Used by MultiPartDataSource.</td>
 <td>http://java.sun.com/products/javabeans/glasgow/jaf.html</td>
-<td>???</td>
+<td>This .jar is used and included with uPortal per the
+<a href="./sun_binary_code_license.txt">Sun Binary Code License Agreement</a>.</td>
 </tr>
 
 <tr>
 <td>backport-util-concurrent-18april05.jar</td>
 <td>Backport of Doug Lea's Concurrency package.  Similar to the Java 1.5 java.util.concurrent package.</td>
 <td>Version CVS_HEAD (4/18/2005) URL: http://www.mathcs.emory.edu/dcl/util/backport-util-concurrent/</td>
-<td>???</td>
+<td>This jar is released to the <a href="http://creativecommons.org/licenses/publicdomain/">Public Domain</a> as per 
+<a href="http://www.mathcs.emory.edu/dcl/util/backport-util-concurrent/">this website</a>.
+The uPortal project especially acknowledges Doug Lea's original work and Dawid Kurzniec's work maintaining this library.</td>
 </tr>
 
 <tr>
 <td>casclient-2.1.1.jar</td>
 <td>Yale Java CAS Client</td>
 <td>URL: http://www.ibiblio.org/maven/cas/jars/casclient-2.1.1.jar</td>
-<td><a href="../licenses/yale_casclient.txt">Yale license</a></td>
+<td>Java CAS client version 2.1.1 was developed by Yale University and is subject to
+the license in <a href="../licenses/yale_casclient.txt">yale_casclient.txt</a>.</td>
 </tr>
                         
 
@@ -43,49 +63,67 @@ redistribute them.</p>
 <td>commons-codec-1.3.jar</td>
 <td>Codec from the Apache commaons project - Needed by httpClient</td>
 <td>http://jakarta.apache.org/commons/codec</td>
-<td>??</td>
+<td>Used and redistributed under the <a href="../licenses/apache20-license.txt">apache20-license.txt</a>.
+
+See also the notice files in the <a href="../licenses/notices/">notices</a> directory.</td>
 </tr>
 
 <tr>
 <td>commons-collections-3.1.jar</td>
 <td>Collection components from the Apache Commons project - needed for database pooling.</td>
 <td>???</td>
-<td>???</td>
+<td>Used and redistributed under the <a href="../licenses/apache20-license.txt">apache20-license.txt</a>.
+
+See also the notice files in the <a href="../licenses/notices/">notices</a> directory.</td>
 </tr>
 
 <tr>
 <td>commons-dbcp-1.2.1.jar</td>
 <td>Dbcp components from the Apache Commons project - needed for database pooling.</td>
 <td>URL: http://jakarta.apache.org/commons/dbcp</td>
-<td>???</td>
+<td>Used and redistributed under the <a href="../licenses/apache20-license.txt">apache20-license.txt</a>.
+
+See also the notice files in the <a href="../licenses/notices/">notices</a> directory.</td>
 </tr>
 
 <tr>
 <td>commons-httpclient-3.0.1.jar</td>
 <td>httpClient from the Apache commaons project - Better URL implementation</td>
 <td>http://jakarta.apache.org/commons/httpclient</td>
-<td>???</td>
+<td>Used and redistributed under the <a href="../licenses/apache20-license.txt">apache20-license.txt</a>.
+
+See also the notice files in the <a href="../licenses/notices/">notices</a> directory.</td>
 </tr>
 
 <tr>
 <td>commons-logging-1.1.jar</td>
 <td>Logging components from the Apache Commons project</td>
 <td>URL: http://jakarta.apache.org/commons/logging.html</td>
-<td>???</td>
+<td>Used and redistributed under the <a href="../licenses/apache20-license.txt">apache20-license.txt</a>.
+
+See also the notice files in the <a href="../licenses/notices/">notices</a> directory.</td>
 </tr>
 
 <tr>
 <td>commons-pool-1.2.jar</td>
 <td>Pool components from the Apache Commons project - needed for database pooling.</td>
 <td>URL: http://jakarta.apache.org/commons/pool</td>
-<td>???</td>
+<td>Used and redistributed under the <a href="../licenses/apache20-license.txt">apache20-license.txt</a>.
+
+See also the notice files in the <a href="../licenses/notices/">notices</a> directory.</td>
 </tr>
 
 <tr>
 <td>concurrent-1.3.4.jar</td>
 <td>Doug Lea's Concurrency package.  Used by WhirlyCache</td>
 <td>URL: http://gee.cs.oswego.edu/dl/classes/EDU/oswego/cs/dl/util/concurrent/intro.html</td>
-<td>???</td>
+<td><p>Doug Lea's concurrent library (concurrent)  is released to the <a href="http://creativecommons.org/licenses/publicdomain/">Public Domain</a>
+as per <a href="http://gee.cs.oswego.edu/dl/classes/EDU/oswego/cs/dl/util/concurrent/intro.html">this website</a>.</p>
+
+<p>With the exception that portions of Doug Lee's work are subject to
+<a href="http://gee.cs.oswego.edu/dl/classes/EDU/oswego/cs/dl/util/sun-u.c.license.pdf">Sun copyright</a>.
+The text of this Sun license is also reproduced in the file <a href="./sun-u-c-license.txt">sun-u-c-license.txt</a>. </p>
+</td>
 </tr>
 
 <tr>
@@ -97,13 +135,17 @@ redistribute them.</p>
 beware of building a commercial project on uPortal and continuing to use this library: 
 "For a commercial project, permission is granted to use the com.oreilly.servlet.* packages provided that every person 
 on the development team for that project owns a copy of the book Java Servlet Programming (O'Reilly) in its most recent edition."
+<p>The source code, object code, and documentation in the
+com.oreilly.servlet package is copyright and owned by Jason Hunter.</p>
 </tr>
 
 <tr>
 <td>jakarta-oro-2.0.8.jar</td>
 <td> A set of text-processing Java classes that provide Perl5 compatible regular expressions.</td>
 <td>URL: http://jakarta.apache.org/oro/</td>
-<td>???</td>
+<td>Used and redistributed under the <a href="../licenses/apache20-license.txt">apache20-license.txt</a>.
+
+See also the notice files in the <a href="../licenses/notices/">notices</a> directory.</td>
 </tr>
 
 <tr>
@@ -118,7 +160,9 @@ on the development team for that project owns a copy of the book Java Servlet Pr
 <td>log4j would not be a compile-time dependency but for deprecated legacy LogService's use of its APIs.  
 The preferred logging method in modern uPortal is to use Apache Commons Logging and to choose log4j as your runtime logging implementation.</td>
 <td>URL: http://jakarta.apache.org/log4j/</td>
-<td>???</td>
+<td>Used and redistributed under the <a href="../licenses/apache20-license.txt">apache20-license.txt</a>.
+
+See also the notice files in the <a href="../licenses/notices/">notices</a> directory.</td>
 </tr>
 
 <tr>
@@ -141,9 +185,9 @@ The following modifications were made to the WSRP4J proxy portlet source:
                          WAS: log4j.appender.A1.File=@HOME@/logs/wsrp4j-consumer.log
 </td>
 <td>Version: (from ws-wsrp4j CVS on November 2, 2004) URL: http://ws.apache.org/wsrp4j/</td>
-<td>
-???
-</td>
+<td>Used and redistributed under the <a href="../licenses/apache20-license.txt">apache20-license.txt</a>.
+
+See also the notice files in the <a href="../licenses/notices/">notices</a> directory.</td>
 </tr>
 
 <tr>
@@ -157,7 +201,7 @@ The following modifications were made to the WSRP4J proxy portlet source:
 <td>spring-2.0.0.jar</td>
 <td>Spring, a java/j2ee application framework that facilitates the use of the Inversion of Control (IoC) design pattern.</td>
 <td>URL: http://www.springframework.org/</td>
-<td>???</td>
+<td>This product includes software developed by the Spring Framework Project (http://www.springframework.org).</td>
 </tr>
 
 <tr>
@@ -187,35 +231,42 @@ download tidy.jar directly from http://www.mun.ca/cc/portal/cw/tidy.jar
 <td>Version: 04aug2000r6 or fixed version     (see above)
                        URL: http://jtidy.sourceforge.net/
                             http://www.mun.ca/cc/portal/cw/#depend   (see above)</td>
-<td>????</td>
+<td>Though apparently not required to do so, uPortal acknowledges the fine contribution of
+Dave Raggett and others in the Tidy project community for their excellent tidy.jar library.</td>
 </tr>
 
 <tr>
 <td>tyrex-1.0.1.jar</td>
 <td>An in-memory JNDI implementation.</td>
 <td>URL: http://tyrex.sourceforge.net/</td>
-<td>?????</td>
+<td>Due credit is here given to the ExoLab Group (http://www.exolab.org).</td>
 </tr>
 
 <tr>
 <td>whirlycache-0.7.1.jar</td>
 <td>WhirlyCache is a fast caching package that is configurable via XML.</td>
 <td>URL: https://whirlycache.dev.java.net/</td>
-<td>?????</td>
+<td>Used and redistributed under the <a href="../licenses/apache20-license.txt">apache20-license.txt</a>.
+
+See also the notice files in the <a href="../licenses/notices/">notices</a> directory.</td>
 </tr>
 
 <tr>
 <td>wsrp4j-consumer-0.3.jar</td>
 <td>WSRP4J consumer classes. Comes with WSRP4J.</td>
 <td>Version: (from ws-wsrp4j CVS on November 2, 2004) URL: http://ws.apache.org/wsrp4j/</td>
-<td>????</td>
+<td>Used and redistributed under the <a href="../licenses/apache20-license.txt">apache20-license.txt</a>.
+
+See also the notice files in the <a href="../licenses/notices/">notices</a> directory.</td>
 </tr>
 
 <tr>
 <td>wsrp4j-shared.jar</td>
 <td>WSRP4J shared classes mostly derived from OASIS WSRP WSDL.  Comes with WSRP4J.</td>
 <td>Version: (from ws-wsrp4j CVS on November 2, 2004) URL: http://ws.apache.org/wsrp4j/</td>
-<td>?????</td>
+<td>Used and redistributed under the <a href="../licenses/apache20-license.txt">apache20-license.txt</a>.
+
+See also the notice files in the <a href="../licenses/notices/">notices</a> directory.</td>
 </tr>
 
 <tr>
@@ -223,7 +274,14 @@ download tidy.jar directly from http://www.mun.ca/cc/portal/cw/tidy.jar
 <td>Xerces2 is the next generation of high performance, fully compliant XML parsers in the Apache Xerces family.
 Be sure to use the version of XercesImpl that comes with the Xalan you are using.</td>
 <td>URL: http://xml.apache.org/xerces2-j/</td>
-<td>????</td>
+<td>Used and redistributed under the <a href="../licenses/apache20-license.txt">apache20-license.txt</a>.
+
+See also the notice files in the <a href="../licenses/notices/">notices</a> directory.</td>
+
+<p>This product includes software developed by the
+Apache Software Foundation (http://www.apache.org/).
+Also please see <a href="../licenses/w3c_license.html">the w3c license</a> included for reference in this distribution.
+</p>
 </tr>
 
 <tr>
@@ -231,7 +289,9 @@ Be sure to use the version of XercesImpl that comes with the Xalan you are using
 <td>SAX, DOM, and JAVAX interfaces which have been recently separated from the xalan and xerces jars.
 Be sure to use the version of xml-apis.jar that comes with the Xalan you are using.</td>
 <td>URL: http://xml.apache.org/xalan-j/</td>
-<td>????</td>
+<td>Used and redistributed under the <a href="../licenses/apache20-license.txt">apache20-license.txt</a>.
+
+See also the notice files in the <a href="../licenses/notices/">notices</a> directory.</td>
 </tr>
 
 <tr>
@@ -282,14 +342,18 @@ but required to be endorsed and so supercede classes that may be found elsewhere
 <td>serializer.jar</td>
 <td>The Serializer component of Xalan-Java.</td>
 <td>URL: http://xml.apache.org/xalan-j/</td>
-<td>????</td>
+<td>Used and redistributed under the <a href="../licenses/apache20-license.txt">apache20-license.txt</a>.
+
+See also the notice files in the <a href="../licenses/notices/">notices</a> directory.</td>
 </tr>
 
 <tr>
 <td>xalan-2.7.0.jar</td>
 <td>Xalan is an XSLT processor for transforming XML documents into HTML, text, or other XML document types.</td>
 <td>URL: http://xml.apache.org/xalan-j/</td>
-<td>????</td>
+<td>Used and redistributed under the <a href="../licenses/apache20-license.txt">apache20-license.txt</a>.
+
+See also the notice files in the <a href="../licenses/notices/">notices</a> directory.</td>
 </tr>
 </table>
 
@@ -316,7 +380,9 @@ but required to be endorsed and so supercede classes that may be found elsewhere
 <td>Reference Implementation of the Java Portlet Specfication.  This Portlet container provides a runtime environment for 
 portlets implemented according to the Portlet API.</td>
 <td>URL: http://portals.apache.org/pluto/</td>
-<td>????</td>
+<td>Used and redistributed under the <a href="../licenses/apache20-license.txt">apache20-license.txt</a>.
+
+See also the notice files in the <a href="../licenses/notices/">notices</a> directory.</td>
 </tr>
 
 <tr>
@@ -372,7 +438,9 @@ portlets implemented according to the Portlet API.</td>
 <td>testsuite.war</td>
 <td>Pluto JSR-168 compliance test suite</td>
 <td>???</td>
-<td>???</td>
+<td>Used and redistributed under the <a href="../licenses/apache20-license.txt">apache20-license.txt</a>.
+
+See also the notice files in the <a href="../licenses/notices/">notices</a> directory.</td>
 </tr>
 
 </table>
@@ -419,13 +487,17 @@ Were log4j not required by the deprecated legacy LogService uPortal class, it wo
 <td>junit-3.8.1.jar</td>
 <td>JUnit is a regression testing framework.  It is used to implement unit tests in Java.</td>
 <td>URL: http://www.junit.org/</td>
-<td>????</td>
+<td><p>JUnit is used in this project and included in this project distribution persuant to its license, the Common Public License,
+included for reference as <a href="../licenses/cpl-v10.html">cpl-v10.html</a>.</p>?</td>
 </tr>
 </table>
 
 
 
 
+<h2>Embeded dependencies</h2>
+Dojo is distributed under both the "new" BSD license and the Academic Free License version 2.1.
+Please see <a href="../licenses/dojo_license.txt">dojo_license.txt</a>.
 
 
 
