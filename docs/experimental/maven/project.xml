@@ -219,7 +219,7 @@ http://maven.apache.org/maven-v3_0_0.xsd">
 			<type>jar</type>
 			<groupId>commons-collections</groupId>
 			<artifactId>commons-collections</artifactId>
-			<version>3.1</version>
+			<version>3.2</version>
 			<properties>
 				<war.bundle>true</war.bundle>
 			</properties>
