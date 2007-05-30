@@ -441,7 +441,7 @@
          basedir="${deploy.home}"/>
 
     <!-- Create application JAR file -->
-    <jar jarfile="${dist.home}/${app.name}.jar"
+    <jar jarfile="${dist.home}/${app.name}-${app.version}.jar"
          basedir="${deploy.home}/WEB-INF/classes"/>
 
     <!-- Copy additional files to ${dist.home} as necessary -->
