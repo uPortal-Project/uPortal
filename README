@@ -28,16 +28,6 @@ The build.xml needs to be run under Ant 1.6.2 or better.  Some of our Ant tasks
 have been reported to fail on Ant 1.6.1 and earlier.
 
 
-Library Dependencies
-----------------------------------------
-IMPORTANT Instructions for JDK1.4
-uPortal uses the JAXP 1.3 compatability libraries for its XML APIs. The JAXP
-libraries need to be copied into the endorsed library locations for the JRE
-and Tomcat.
-
-Please refer to the README file in lib/jaxp
-
-
 Initial Configuration
 ----------------------------------------
 To deploy uPortal you must set the server.home variable in the
