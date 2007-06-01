@@ -245,7 +245,7 @@ public class CPortletAdapter
                 // Note that we will only call getUserInfo() once.
                 userInfo = getUserInfo(staticData, userAttributeList);
                 if (log.isTraceEnabled()) {
-                    //log.trace("For user [" + uid + "] got user info : [" + userInfo + "]");
+                    log.trace("For user [" + staticData.getPerson() + "] got user info : [" + userInfo + "]");
                 }
             }
 
