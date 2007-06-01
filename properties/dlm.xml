@@ -20,6 +20,14 @@
 	 </dlm:audience>
   </dlm:fragment>
 
+  <dlm:fragment name='Bookmarks' ownerID='bookmarks-lo' precedence='40'>
+    <dlm:audience evaluatorFactory='org.jasig.portal.layout.dlm.providers.PersonEvaluatorFactory'>
+      <paren mode="AND">
+        <attribute name="username" mode='equals' value='admin'/>
+      </paren>
+    </dlm:audience>
+  </dlm:fragment>
+
   <dlm:fragment name='News' ownerID='news-lo' precedence='80'>
    <!--  <dlm:role>Students</dlm:role> -->
    <dlm:audience evaluatorFactory='org.jasig.portal.layout.dlm.providers.GroupMembershipEvaluatorFactory'>

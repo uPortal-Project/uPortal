@@ -11,7 +11,7 @@
     <name>Bookmarks</name>
     <fname>pbookmarks</fname>
     <desc>UW Eric Dalquist bookmarks portlet</desc>
-    <type>Portlet</type>
+    <type>Bookmarks Portlet</type>
     <class>org.jasig.portal.channels.portlet.CPortletAdapter</class>
     <timeout>60000</timeout>
 

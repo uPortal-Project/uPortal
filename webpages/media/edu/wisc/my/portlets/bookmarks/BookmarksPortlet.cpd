@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE channelDef PUBLIC "-//uPortal//Channel Publishing/EN" "channelPublishingDocument.dtd">
+
+<!--
+Copyright (c) 2007 JA-SIG.  All rights reserved.
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+1. Redistributions of source code must retain the above copyright
+   notice, this list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in
+   the documentation and/or other materials provided with the
+   distribution.
+
+3. Redistributions of any form whatsoever must retain the following
+   acknowledgment:
+   "This product includes software developed by the JA-SIG Collaborative
+   (http://www.jasig.org/)."
+
+THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
+EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE JA-SIG COLLABORATIVE OR
+ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+OF THE POSSIBILITY OF SUCH DAMAGE.
+
+Author: Andrew Petro, apetro@unicon.net
+-->
+
+<channelDef>
+
+  <description>
+    Specialized configuration workflow for the UW Bookmarks Portlet version 1.0.7.
+  </description>
+
+  <class>org.jasig.portal.channels.portlet.CPortletAdapter</class>
+
+  <params>
+    <step>
+      <ID>1</ID>
+
+      <name>Bookmarks Set</name>
+
+      <description>
+        Bookmarks sets are defined per-user per-key.  Bookmarks portlet instances for a given user sharing keys will display and manage the same bookmarks.
+        Bookmarks portlet instances for a given user with different keys will display and manage entirely distinct bookmarks sets.  Bookmarks portlet instances
+        for two different users will display and manage distinct sets of bookmarks regardless of keys.
+      </description>
+
+      <parameter modify="publish">
+        <name>PORTLET.bookmarkSetName</name>
+        <label>Bookmark set name</label>
+        <type base="string" input="text" display="text">
+          <!-- length and maxlength for text field -->
+          <length>80</length>
+          <maxlength>255</maxlength>
+        </type>
+        <example>personalBookmarks</example>
+        <description>String identifying the bookmarks set.  Each bookmarks instance subscribed by a user manages the per-user bookmarks set of the specified name, which might be shared with other bookmarks portlet instances subscribed by that same user, and which will be created on demand the first time a given identifier is used by a given user.</description>
+      </parameter>
+
+    </step>
+  </params>
+
+  <controls>
+    <control type="edit" include="no" override="no"/>
+    <control type="about" include="no" override="no"/>
+    <control type="help" include="no" override="no"/>
+  </controls>
+
+</channelDef>
