@@ -2598,7 +2598,7 @@
         <column><name>NEXT_STRUCT_ID</name><value>0</value></column>
         <column><name>CHLD_STRUCT_ID</name><value>0</value></column>
         <column><name>EXTERNAL_ID</name><value></value></column>
-        <column><name>CHAN_ID</name><value>116</value></column>
+        <column><name>CHAN_ID</name><value>119</value></column>
         <column><name>NAME</name><value></value></column>
         <column><name>TYPE</name><value></value></column>
         <column><name>HIDDEN</name><value>N</value></column>

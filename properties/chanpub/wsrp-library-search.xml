@@ -4,6 +4,7 @@
 <!-- This is a remote portlet via WSRP
 -->
 	<channel-definition>
+		<channelId>119</channelId>
 	    <title>Library Search</title>
 	    <name>Library Search</name>
 	    <fname>wsrp-library-search</fname>
