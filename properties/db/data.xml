@@ -518,7 +518,7 @@
       </row>
       <row>
         <column><name>USER_ID</name><value>14</value></column>
-        <column><name>USER_NAME</name><value>bookmarks-lo</value></column>
+        <column><name>USER_NAME</name><value>portlets-lo</value></column>
         <column><name>USER_DFLT_USR_ID</name><value>2</value></column>
         <column><name>USER_DFLT_LAY_ID</name><value>1</value></column>
         <column><name>NEXT_STRUCT_ID</name><value>52</value></column>
@@ -619,7 +619,7 @@
         </row>
         
         <row>
-          <column><name>USER_NAME</name><value>bookmarks-lo</value></column>
+          <column><name>USER_NAME</name><value>portlets-lo</value></column>
           <column><name>ENCRPTD_PSWD</name><value>(MD5)d3ST813VSpkgg4g7mlVsK2T2pue7b9J6</value></column>
           <column><name>LST_PSWD_CGH_DT</name><value></value></column>
           <column><name>FIRST_NAME</name><value>Bookmarks</value></column>
@@ -2417,7 +2417,7 @@
         <column><name>UNREMOVABLE</name><value>N</value></column>
       </row>
 
-      <!-- DLM Bookmarks Fragment Layout -->
+      <!-- DLM Portlets Fragment Layout -->
       <!--
         This layout represents nodes incorporated into other user's layouts if they
         meet the criteria specified for this fragment as defined in dlm.xml
@@ -2515,7 +2515,7 @@
         <column><name>CHLD_STRUCT_ID</name><value>48</value></column>
         <column><name>EXTERNAL_ID</name><value></value></column>
         <column><name>CHAN_ID</name><value></value></column>
-        <column><name>NAME</name><value>Bookmarks</value></column>
+        <column><name>NAME</name><value>Portlets</value></column>
         <column><name>TYPE</name><value>regular</value></column>
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
@@ -2570,7 +2570,7 @@
         <column><name>NEXT_STRUCT_ID</name><value>0</value></column>
         <column><name>CHLD_STRUCT_ID</name><value>0</value></column>
         <column><name>EXTERNAL_ID</name><value></value></column>
-        <column><name>CHAN_ID</name><value>116</value></column>
+        <column><name>CHAN_ID</name><value>117</value></column>
         <column><name>NAME</name><value></value></column>
         <column><name>TYPE</name><value></value></column>
         <column><name>HIDDEN</name><value>N</value></column>
@@ -2584,7 +2584,7 @@
         <column><name>NEXT_STRUCT_ID</name><value>52</value></column>
         <column><name>CHLD_STRUCT_ID</name><value>0</value></column>
         <column><name>EXTERNAL_ID</name><value></value></column>
-        <column><name>CHAN_ID</name><value>116</value></column>
+        <column><name>CHAN_ID</name><value>118</value></column>
         <column><name>NAME</name><value></value></column>
         <column><name>TYPE</name><value></value></column>
         <column><name>HIDDEN</name><value>N</value></column>

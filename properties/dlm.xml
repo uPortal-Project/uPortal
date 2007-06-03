@@ -20,7 +20,7 @@
 	 </dlm:audience>
   </dlm:fragment>
 
-  <dlm:fragment name='Bookmarks' ownerID='bookmarks-lo' precedence='40'>
+  <dlm:fragment name='Portlets' ownerID='portlets-lo' precedence='40'>
     <dlm:audience evaluatorFactory='org.jasig.portal.layout.dlm.providers.PersonEvaluatorFactory'>
       <paren mode="AND">
         <attribute name="username" mode='equals' value='admin'/>

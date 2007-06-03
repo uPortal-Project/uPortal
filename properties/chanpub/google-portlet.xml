@@ -8,7 +8,7 @@
 -->
 
 <channel-definition>
-
+    <channelId>117</channelId>
     <title>Google Portlet</title>
     <name>Google Portlet</name>
     <fname>google-portlet</fname>

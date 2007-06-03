@@ -7,7 +7,7 @@
  -->
 
 <channel-definition>
-
+    <channelId>118</channelId>
     <title>Test Portlet 1</title>
     <name>Test Portlet 1</name>
     <fname>test-portlet-1</fname>
