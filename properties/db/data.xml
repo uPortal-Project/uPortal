@@ -1037,7 +1037,7 @@
        <!-- CWebProxy Examples -->
        <row>
         <column><name>STRUCT_ID</name><value>21</value></column><column><name>USER_ID</name><value>2</value></column><column><name>LAYOUT_ID</name><value>1</value></column>
-        <column><name>NAME</name><value>CWebProxy Examples</value></column>
+        <column><name>NAME</name><value>CWebProxy</value></column>
         <column><name>NEXT_STRUCT_ID</name><value>31</value></column>
         <column><name>CHLD_STRUCT_ID</name><value>22</value></column>
       </row>
@@ -1445,7 +1445,7 @@
         <column><name>STRUCT_ID</name><value>21</value></column>
         <column><name>NEXT_STRUCT_ID</name><value>27</value></column>
         <column><name>CHLD_STRUCT_ID</name><value>22</value></column>
-        <column><name>NAME</name><value>CWebProxy Examples</value></column>
+        <column><name>NAME</name><value>CWebProxy</value></column>
         <column><name>TYPE</name><value>regular</value></column>
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
@@ -2123,7 +2123,7 @@
         <column><name>CHLD_STRUCT_ID</name><value>48</value></column>
         <column><name>EXTERNAL_ID</name><value></value></column>
         <column><name>CHAN_ID</name><value></value></column>
-        <column><name>NAME</name><value>Real Entertainment</value></column>
+        <column><name>NAME</name><value>Entertainment</value></column>
         <column><name>TYPE</name><value>regular</value></column>
         <column><name>HIDDEN</name><value>N</value></column>
         <column><name>IMMUTABLE</name><value>N</value></column>
