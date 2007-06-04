@@ -126,7 +126,7 @@
 		</constructor-arg>
 		<constructor-arg>
 			<value>	
-				SELECT FIRST_NAME||' '||LAST_NAME AS FIRST_LAST, FIRST_NAME, LAST_NAME, EMAIL 
+				SELECT FIRST_NAME||' '||LAST_NAME AS FIRST_LAST, FIRST_NAME, LAST_NAME, EMAIL, USER_NAME 
 				FROM UP_PERSON_DIR 
 				WHERE USER_NAME=?
 			</value>
@@ -153,6 +153,7 @@
 						<value>user.home-info.online.email</value>
 					</set>
 				</entry>
+				<entry key="USER_NAME"><value>user.login.id</value></entry>
 			</map>
 		</property>
 	</bean>
