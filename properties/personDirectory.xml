@@ -30,7 +30,12 @@
 		
 		Your options for customizing the PersonDirectory implementation for your institution:
 		
-		1) uP 2.4-style: Ignore this XML file.  Ignore the implementing Java code.  Customize PersonDirs.xml to declare your 
+		1) Edit this XML file to use Spring to configure an instance of IPersonAttributeDao, 
+		declaring different configurations of the distributed classes and/or using your own classes.  This
+		is the recommended approach when approach (1) will not meet your needs or you are already familiar with
+		using Spring to wire together objects.
+		
+		2) uP 2.4-style: Ignore this XML file.  Ignore the implementing Java code.  Customize PersonDirs.xml to declare your 
 		institutions attribute sources.  Rely upon the default configuration in this file, which will 
 		cause Spring to instantiate the legacy implementation which will parse PersonDirs.xml and use 
 		default configurations for such things as merge policies to replicate the behavior of uPortal 2.4 and
@@ -38,14 +43,11 @@
 		configuration who are not familiar with Spring and do not have needs beyond what is accomodated by
 		configuration in the domain-specific language of the PersonDirs.xml file.
 		
-		2) Hack uPortal style: Ignore this XML file.  Decide that the flexibility provided by PersonDirs.xml doesn't meet your needs.
+		3) Hack uPortal style: Ignore this XML file.  Decide that the flexibility provided by PersonDirs.xml doesn't meet your needs.
 		Edit the LegacyPersonDirectoryImpl class and/or the classes it uses to customize the Java logic
 		 that implements PersonDirectory.  This approach of hacking the provided .java files is not recommended.
 		 
-		3) Edit this XML file to use Spring to configure an instance of IPersonAttributeDao, 
-		declaring different configurations of the distributed classes and/or using your own classes.  This
-		is the recommended approach when approach (1) will not meet your needs or you are already familiar with
-		using Spring to wire together objects.
+
 		
 		
 		Finally, a few words about what is happening that makes this configuration file actually have an effect on
@@ -72,21 +74,22 @@
 	 | a JNDI container.
 	 |
 	 +-->
+	<!--
 	<bean id="personAttributeDao" 
 	    class="org.jasig.portal.services.persondir.support.legacy.LegacyPersonAttributeDao"
 	    lazy-init="true" />
+	-->
+	
 	
 	<!--
      | Example Person Directory configuration using the Spring implementation,
 	 | this should be the same as the PersonDirs.xml configuration.
 	 |
-     | When removing the comment around the spring example please find the
-	 | lines that begin and end with - below and comment them out
 	 |
 	 | The 'username' attribute is what is configured by default in the code
 	 | for simple string queries via the IPersonAttributeDao interfaces
 	 +-->
-     <!--
+
    <bean id="personAttributeDao" class="org.jasig.portal.services.persondir.support.CachingPersonAttributeDaoImpl">
        <property name="cachedPersonAttributesDao">
            <ref bean="mergedPersonAttributeDao"/>
@@ -97,17 +100,19 @@
 		<property name="personAttributeDaos">
 			<list>
 				<ref bean="uPortalJdbcAttributeSource"/>
+				<!--
 				<ref bean="uPortalLdapAttributeSource"/>
+				-->
 			</list>
 		</property>
 	</bean>
 
 
-	- JDBC Person Attribute Source, using the default portal DataSource via RDBMServices -
+	<!-- JDBC Person Attribute Source, using the default portal DataSource via RDBMServices -->
 	<bean id="uPortalJdbcAttributeSource" class="org.jasig.portal.services.persondir.support.JdbcPersonAttributeDaoImpl">
 		<constructor-arg>
-			- here we're saying, Spring, please call RDBMServices.getDataSource() and inject the returned DataSource as the first constructor argument
-			- to our JdbcPersonAttributeDaoImpl instance.
+			<!-- here we're saying, Spring, please call RDBMServices.getDataSource() and inject the returned DataSource as the first constructor argument
+			 to our JdbcPersonAttributeDaoImpl instance. -->
 			<bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
 				<property name="staticMethod">
 					<value>org.jasig.portal.RDBMServices.getDataSource</value>
@@ -152,7 +157,8 @@
 		</property>
 	</bean>
 	
-	- LDAP Person Attribute Source, uses the default ILdapServer via the LdapServices.getDefaultLdapServer method call -
+	<!-- LDAP Person Attribute Source, uses the default ILdapServer via the LdapServices.getDefaultLdapServer method call -->
+	<!--
 	<bean id="uPortalLdapAttributeSource" class="org.jasig.portal.services.persondir.support.LdapPersonAttributeDaoImpl">
 		<property name="ldapServer">
 			<ref bean="defaultLdapServer"/>
@@ -244,5 +250,3 @@
 	</bean>
 	-->
 </beans>
-
-<!-- CVS metadata: $Revision$ $Date$ -->
