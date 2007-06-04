@@ -102,8 +102,13 @@
   <property name="app.name"      value="uPortal"/>
   <property name="app.version"   value="UNKNOWN_VERSION"/>
   <property name="build.home"    value="build"/>
-  <property name="server.home"   value="(set this in build.properties!)"/>
-  <property name="deploy.home"   value="(set this in build.properties!)"/>
+  <fail unless="server.home">Property 'server.home' is required for the uPortal build, but it is not present.  
+  	It should be the path to the root of your Tomcat.  
+  	Did you forget to set it in build.properties?</fail>
+  <fail unless="deploy.home">Property 'deploy.home' is required for the uPortal build, but it is not present.  
+  	It should be the path to where you want your uPortal deployed.  
+  	Did you forget to set this in build.properties?</fail>
+	
   <property name="dist.home"     value="dist"/>
 
   <property name="webapp.DocBase" value="uPortal"/>
