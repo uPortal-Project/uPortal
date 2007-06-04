@@ -1,3 +1,14 @@
+uPortal is distributed under the BSD License.
+http://www.opensource.org/licenses/bsd-license.php
+
+This license is OSI certified as a "open" license.
+http://www.opensource.org/docs/osd
+
+This license recognized by GNU/FSF as a "free" license.
+http://www.gnu.org/licenses/license-list.html
+
+
+
 License for Use
 
 Copyright (c) 2000 The JA-SIG Collaborative. All rights reserved.
