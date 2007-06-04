@@ -88,7 +88,7 @@
 
         <res-ref-name>DEFAULT_DATABASE</res-ref-name>
         
-        <uidquery>SELECT FIRST_NAME, LAST_NAME, EMAIL FROM UP_PERSON_DIR WHERE USER_NAME=?</uidquery>
+        <uidquery>SELECT USER_NAME, FIRST_NAME, LAST_NAME, EMAIL FROM UP_PERSON_DIR WHERE USER_NAME=?</uidquery>
     
         <attributes>
 
@@ -129,6 +129,7 @@
             <attribute><alias>userSMIMECertificate</alias>        <name></name></attribute>
 
 
+            <attribute><alias>user.login.id</alias>                                <name>USER_NAME</name></attribute>
             <attribute><alias>user.bdate</alias>                                   <name></name></attribute>
             <attribute><alias>user.gender</alias>                                  <name></name></attribute>
             <attribute><alias>user.employer</alias>                                <name></name></attribute>
