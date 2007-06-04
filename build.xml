@@ -1204,7 +1204,12 @@
   <target name="deployPortletApp" description="Deploys a portlet application" depends="compile">
     <echo message="Invoking Portlet Application Deployment Tool"/>
 
-    <property name="portletApp" value=" "/>
+    <fail unless="portletApp">deployPortletApp Ant target requires the name of the portlet app to deploy.  
+    	Here it was invoked with the portletApp property not set.  
+    	It therefore is failing after having done nothing.
+    Execute the help target ('ant help') for help on this and other targets in the uPortal build.
+    </fail>
+  	
     <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.container.deploy.Deployer">
       <classpath>
         <pathelement path="${build.home}/WEB-INF/classes"/>
