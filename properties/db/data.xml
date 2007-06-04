@@ -385,27 +385,27 @@
     <rows>
       <row>
         <column><name>SEQUENCE_NAME</name><value>UP_USER_PROFILE</value></column>
-        <column><name>SEQUENCE_VALUE</name><value>10</value></column>
+        <column><name>SEQUENCE_VALUE</name><value>100</value></column>
       </row>
       <row>
         <column><name>SEQUENCE_NAME</name><value>UP_CHANNEL</value></column>
-        <column><name>SEQUENCE_VALUE</name><value>100</value></column> <!-- Reserve some IDs for internal use, just in case -->
+        <column><name>SEQUENCE_VALUE</name><value>200</value></column> <!-- Reserve some IDs for internal use, just in case -->
       </row>
       <row>
         <column><name>SEQUENCE_NAME</name><value>UP_CHAN_TYPE</value></column>
-        <column><name>SEQUENCE_VALUE</name><value>10</value></column> <!-- Reserve some IDs for internal use, just in case -->
+        <column><name>SEQUENCE_VALUE</name><value>100</value></column> <!-- Reserve some IDs for internal use, just in case -->
       </row>
       <row>
         <column><name>SEQUENCE_NAME</name><value>UP_USER</value></column>
-        <column><name>SEQUENCE_VALUE</name><value>15</value></column> <!-- Reserve some IDs for internal use, just in case -->
+        <column><name>SEQUENCE_VALUE</name><value>100</value></column> <!-- Reserve some IDs for internal use, just in case -->
       </row>
       <row>
         <column><name>SEQUENCE_NAME</name><value>UP_SS_STRUCT</value></column>
-        <column><name>SEQUENCE_VALUE</name><value>10</value></column>
+        <column><name>SEQUENCE_VALUE</name><value>100</value></column>
       </row>
       <row>
         <column><name>SEQUENCE_NAME</name><value>UP_SS_THEME</value></column>
-        <column><name>SEQUENCE_VALUE</name><value>10</value></column>
+        <column><name>SEQUENCE_VALUE</name><value>100</value></column>
       </row>
       <row>
         <column><name>SEQUENCE_NAME</name><value>UP_GROUP</value></column>
@@ -413,15 +413,15 @@
       </row>
       <row>
         <column><name>SEQUENCE_NAME</name><value>UP_ENTITY_TYPE</value></column>
-        <column><name>SEQUENCE_VALUE</name><value>20</value></column> <!-- Reserve some IDs for internal use, just in case -->
+        <column><name>SEQUENCE_VALUE</name><value>100</value></column> <!-- Reserve some IDs for internal use, just in case -->
       </row>
       <row>
         <column><name>SEQUENCE_NAME</name><value>UP_ENTITY_CACHE</value></column>
-        <column><name>SEQUENCE_VALUE</name><value>0</value></column>
+        <column><name>SEQUENCE_VALUE</name><value>100</value></column>
       </row>
       <row sinceMajor="2" sinceMinor="2">
         <column><name>SEQUENCE_NAME</name><value>UP_FRAGMENT</value></column>
-        <column><name>SEQUENCE_VALUE</name><value>10</value></column>
+        <column><name>SEQUENCE_VALUE</name><value>100</value></column>
       </row>
     </rows>
   </table>
