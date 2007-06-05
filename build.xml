@@ -1224,5 +1224,21 @@
       <arg value="${portletApp}"/>
     </java>
   </target>
+	
+	
+	<target name="hsql">
+	   <echo message="Starting HSQL"/>
+	   <echo message="Using: ${basedir}/data/uP2_uPortal"/>
+
+	   <java fork="true" maxmemory="256M" dir="${basedir}" classname="org.hsqldb.Server">
+	      <classpath>
+	        <path refid="compile.classpath"/>
+	      </classpath>
+	      <arg value="-database"/>
+	      <arg value="${basedir}/data/uP2_uPortal"/>
+	      <arg value="-port"/>
+	      <arg value="8887"/>
+	   </java>
+	</target>
 
 </project>
