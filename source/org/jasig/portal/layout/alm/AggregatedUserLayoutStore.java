@@ -2414,8 +2414,14 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 				if ( insertStmt != null ) insertStmt.close();
 				if ( stmt != null ) stmt.close();
 			}
+
 		} catch ( Exception e ) {
 			log.error("Error getting aggregated layout for user " + person, e);
+            try {
+                RDBMServices.rollback(con);
+            } catch(SQLException sqle) { 
+                log.error( sqle.toString() ); 
+            } 
 			throw new PortalException(e);
 		} finally {
 			RDBMServices.releaseConnection(con);
