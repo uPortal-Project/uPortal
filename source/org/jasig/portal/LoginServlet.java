@@ -191,7 +191,21 @@ public class LoginServlet extends HttpServlet {
     while (tokenItr.hasNext()) {
       String ctxName = (String)tokenItr.next();
       String parmName = (String)tokens.get(ctxName);
-      String parmValue = request.getParameter(parmName);
+      String parmValue = null;
+      if (request.getAttribute(parmName) != null) {
+    	  // Upstream components (like servlet filters) may supply information 
+    	  // for the authentication process using request attributes.
+    	  try {
+    		  parmValue = (String) request.getAttribute(parmName);
+    	  } catch (ClassCastException cce) {
+    		  String msg = "The request attribute '" + parmName + "' must be a String.";
+    		  throw new RuntimeException(msg, cce);
+    	  }
+      } else {
+    	  // If a configured parameter isn't provided by a request attribute, 
+    	  // check request parameters (i.e. querystring, form fields).
+    	  parmValue = request.getParameter(parmName);
+      }
       // null value causes exception in context.authentication
       // alternately we could just not set parm if value is null
       parmValue = (parmValue == null ? "" : parmValue).trim();
