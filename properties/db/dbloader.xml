@@ -220,6 +220,18 @@ JServer Release 8.1.7.0.0 - Production</db-version>
   
   <db-type-mapping>
     <db-name>PostgreSQL</db-name>
+    <db-version>8.1.9</db-version>
+    <driver-name>PostgreSQL Native Driver</driver-name>
+    <driver-version>PostgreSQL 8.1 JDBC3 with SSL (build 409)</driver-version>
+    <type><generic>LONGVARCHAR</generic><local>TEXT</local></type>
+    <type><generic>VARCHAR</generic><local>VARCHAR</local></type>
+    <type><generic>LONGVARBINARY</generic><local>BYTEA</local></type>
+    <type><generic>VARBINARY</generic><local>BYTEA</local></type>
+    <type><generic>INTEGER</generic><local>integer</local></type>
+  </db-type-mapping> 
+  
+  <db-type-mapping>
+    <db-name>PostgreSQL</db-name>
     <db-version>7.2.1</db-version>
     <driver-name>PostgreSQL Native Driver</driver-name>
     <driver-version>PostgreSQL 7.2.1 JDBC2</driver-version>
