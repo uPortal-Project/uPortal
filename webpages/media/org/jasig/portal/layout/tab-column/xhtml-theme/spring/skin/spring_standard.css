@@ -58,15 +58,17 @@ ul li {line-height:1.66em;}
 	padding:0 0 0 20px;
 	text-decoration:none;
 	white-space:nowrap;
+	font-size: 12px;
+	line-height: 19px;
+	vertical-align: baseline;
 	}
 
 #tabs a span{
 	float:left;
 	display:block;
 	background:url(../navigation/r_tab.gif) no-repeat right top;
-	padding:2px 20px 3px 0px;
+	padding:5px 20px 3px 0px;
 	color:#66c;
-	font-size:1em;
 	font-weight:bold;
 	text-decoration:none;
 	white-space:nowrap;
@@ -79,20 +81,40 @@ ul li {line-height:1.66em;}
 
 #tabs a:hover span {color:#009;}
 
-#tabs li#active-tab a {
+#tabs li.active-tab a, #tabs li.editable-tab a, #tabs li.tab-edit a {
 	background-position:0 -56px;
 	border-width:0;
 	}
 
-#tabs #active-tab a span{
+#tabs .active-tab a span, #tabs .editable-tab a span, #tabs li.tab-edit a span {
 	padding-bottom:3px;
 	background-position:100% -56px;
 	}
 
-#tabs a:hover {background-position:0 -56px;}
+#tabs li.tab-edit a span {
+    padding-top: 4px;
+	}
+
+#tabs li.tab-edit a span img {
+	vertical-align: middle;
+	}
+
+#tabs li.tab-edit a span input {
+    margin: 0px;
+    padding: 0px;
+	vertical-align: middle;
+	font-size: 12px;
+	line-height: 15px;
+	}
+   
+#tabs li.tab-edit a span input#newTabName {margin-left: 4px;}
+#tabs li.tab-edit a span input#tabNameSubmit {margin-right: 4px;}
+    
+#tabs li.editable-tab a:hover span {cursor: text;}    
+    
+#tabs a:hover {}
 
 #tabs a:hover span {
-	background-position:100% -56px;
 	cursor:pointer;
 	}
 
