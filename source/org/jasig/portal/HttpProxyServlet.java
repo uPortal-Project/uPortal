@@ -5,20 +5,26 @@
 
 package org.jasig.portal;
 
-import java.io.*;
-import java.net.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.util.StringTokenizer;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
+import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
-import org.jasig.portal.properties.PropertiesManager;
-import org.jasig.portal.services.HttpClientManager;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.properties.PropertiesManager;
+import org.jasig.portal.serialize.ProxyResourceMap;
+import org.jasig.portal.services.HttpClientManager;
 
 /**
  * Proxy embedded content such as images for portal sessions.
@@ -46,7 +52,59 @@ public class HttpProxyServlet extends HttpServlet {
 	final String checkReferer = PropertiesManager.getProperty(HttpProxyServlet.class.getName()
 		+ ".checkReferer", null);
 
-	String target;
+	StringBuffer target = new StringBuffer();
+    
+    HttpSession session = request.getSession(false);
+    if (session == null) {
+        if (log.isWarnEnabled()) {
+            log.warn("Proxy attempt with no session.");
+        }
+        response.setStatus(404);
+        return;
+    }
+    
+    ProxyResourceMap<Integer, String> resourceMap = (ProxyResourceMap<Integer, String>)session.getAttribute("proxyResourceMap");
+    if (resourceMap == null) {
+        if (log.isWarnEnabled()) {
+            log.warn("Proxy attempt with no resourceMap.");
+        }
+        response.setStatus(404);
+        return;
+    }
+    
+    String resourceIdStr = request.getParameter("resourceId");
+    if (resourceIdStr == null) {
+        if (log.isWarnEnabled()) {
+            log.warn("Proxy attempt with no resourceId.");
+        }
+        response.setStatus(404);
+        return;
+    }
+    
+    Integer resourceId;
+    
+    try {
+        resourceId = new Integer(resourceIdStr);
+    } catch (NumberFormatException nfe) {
+        response.setStatus(404);
+        return;
+    }
+    
+    String resource = resourceMap.get(resourceId);
+    if (resource == null) {
+        if (log.isWarnEnabled()) {
+            log.warn("Proxy attempt with no resourceId mapping.");
+        }
+        response.setStatus(404);
+        return;
+    }
+    
+    // we only allow the resource to be proxied once
+    resourceMap.remove(resourceId);
+    
+    if (log.isDebugEnabled()) {
+        log.debug("Serving up resourceId/resource: " + resourceId + "/" + resourceMap.get(resourceId));
+    }
 
 	// if checking referer then only supply proxied content for specific referer
 	// Ensures requests come from pages in the portal
@@ -89,23 +147,17 @@ public class HttpProxyServlet extends HttpServlet {
 		response.setStatus(404);
 		return;
 	}
+    
+    target.append("http://").append(resource);
 
-	// pathinfo is "/host/url"
-	if(request.getPathInfo() != null && !request.getPathInfo().equals("")) {
-	    target = "http:/" + request.getPathInfo();
-	    String qs = request.getQueryString();
-	    if (qs != null) {
-	        target +="?"+request.getQueryString();
-	    }
-	} else {
-		response.setStatus(404);
-		log.warn("HttpProxyServlet: getPathInfo is empty");
-	    return;
+	String qs = request.getQueryString();
+	if (qs != null) {
+	    target.append('?').append(qs);
 	}
 
 	try {
 		final HttpClient client = HttpClientManager.getNewHTTPClient();
-		final GetMethod get = new GetMethod(target);
+		final GetMethod get = new GetMethod(target.toString());
 		final int rc = client.executeMethod(get);
 		final Header contentType = get.getResponseHeader("content-type");
 		response.setContentType(contentType.getValue());
@@ -127,7 +179,7 @@ public class HttpProxyServlet extends HttpServlet {
 		}
 	} catch (MalformedURLException e) {
 		response.setStatus(404);
-		log.warn("HttpProxyServlet: target=" + target, e);
+		log.warn("HttpProxyServlet: target=" + target.toString(), e);
 
 	} catch (IOException e) {
 		response.setStatus(404);

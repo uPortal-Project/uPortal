@@ -84,7 +84,7 @@ public class ProxyWriter {
 	 */
 	private static final String PROXY_REWRITE_NO_REDIRECT_DOMAIN = PropertiesManager
 			.getProperty("org.jasig.portal.serialize.ProxyWriter.no_redirect_domain");
-
+    
 	/**
 	 * Examines whther or not the proxying should be done and if so handles differnt situations by delegating
 	 * the rewrite to other methods n the class.
@@ -94,7 +94,7 @@ public class ProxyWriter {
 	 * @return value
 	 */
 	protected static String considerProxyRewrite(final String name, final String localName,
-			final String url) {
+			final String url, final ProxyResourceMap<Integer, String> proxyResourceMap) {
 		if (PROXY_ENABLED
 				&& (name.equalsIgnoreCase("src") || name
 						.equalsIgnoreCase("archive"))
@@ -110,8 +110,8 @@ public class ProxyWriter {
 			 * little network connecting as possible. So as a start, assume "ubc.ca"
 			 * domain images will not be redirected so skip these ones.
 			 */
-			if (PROXY_REWRITE_NO_REDIRECT_DOMAIN.length() > 0
-					&& !domain_only.endsWith(PROXY_REWRITE_NO_REDIRECT_DOMAIN)) {
+			if (PROXY_REWRITE_NO_REDIRECT_DOMAIN.length() == 0
+					|| !domain_only.endsWith(PROXY_REWRITE_NO_REDIRECT_DOMAIN)) {
 				String work_url = url;
 				while (true) {
 					final HttpClient client = HttpClientManager.getNewHTTPClient();
@@ -124,17 +124,21 @@ public class ProxyWriter {
 							// if there is a script element with a src attribute
 							// the src should be rewriten
 							if (localName.equalsIgnoreCase("script")) {
-								return reWrite(work_url, get);
+                                StringBuffer newUri = new StringBuffer();
+                                if (reWrite(work_url, get, newUri)) {
+									return generateMappedProxyUrl(newUri.toString(), proxyResourceMap);
+                                }
+                                return work_url;
 							} else {
 								// handle normal proxies
 								for (int i = 0; i < _proxiableElements.length; i++) {
 									if (localName.equalsIgnoreCase(_proxiableElements[i])) {
-										work_url = PROXY_REWRITE_PREFIX + work_url.substring(7);
+										work_url = work_url.substring(7);
 										break;
 									}
 								}
 							}
-							return work_url;
+							return generateMappedProxyUrl(work_url, proxyResourceMap);
 						}
 
 						/* At this point we will have a redirect directive */
@@ -163,16 +167,29 @@ public class ProxyWriter {
 		}
 		return url;
 	}
+    
+    private static String generateMappedProxyUrl(final String url,
+        final ProxyResourceMap<Integer, String> proxyResourceMap) {
+        
+        int resourceId = proxyResourceMap.getNextResourceId();
+        proxyResourceMap.put(resourceId, url);
+        
+        StringBuffer sb = new StringBuffer(PROXY_REWRITE_PREFIX);
+        sb.append("?resourceId=").append(resourceId);
+        return sb.toString();
+    }
 
 	/**
 	 * This method rewrites include javascript files and replaces the refrences in these files
 	 * to images' sources to use proxy.
 	 * @param scriptUri: The string representing the address of script
-	 * @return value: The new address of the script file which image sources have been rewritten
+	 * @param returnUri: Out parameter for the new address of the script file which image sources have been rewritten
+	 * @return value: Specifies if the scriptUri was modified.
 	 */
-	private static String reWrite(final String scriptUri, final GetMethod get) {
+	private static boolean reWrite(final String scriptUri, final GetMethod get, StringBuffer outUri) {
 		final String fileName = fileNameGenerator(scriptUri);
 		final String filePath = PROXIED_FILES_PATH + fileName;
+        
 		try {
 			final File outputFile = new File(filePath);
 			if (!outputFile.exists()
@@ -197,7 +214,8 @@ public class ProxyWriter {
 							"ProxyWriter::rewrite():Failed to rewrite the file for: "
 									+ scriptUri, e);
 					outputFile.delete();
-					return scriptUri;
+                    outUri.append(scriptUri);
+					return false;
 				} // end catch
 			}
 
@@ -212,10 +230,12 @@ public class ProxyWriter {
 					log.error("ProxyWriter::rewrite(): The file  " + filePath
 							+ " is written but cannot be reached at "
 							+ newScriptPath);
-					return scriptUri;
+                    outUri.append(scriptUri);
+					return false;
 				} else {
-					return PROXY_REWRITE_PREFIX
-							+ PROXIED_FILES_URI.substring(7) + fileName;
+                    outUri.append(PROXIED_FILES_URI.substring(7));
+                    outUri.append(fileName);
+					return true;
 				}
 			} finally {
 				getTest.releaseConnection();
@@ -223,7 +243,8 @@ public class ProxyWriter {
 
 		} catch (IOException e) {
 			log.error("ProxyWriter::rewrite(): Failed to read the file at : " + filePath, e);
-			return scriptUri;
+            outUri.append(scriptUri);
+			return false;
 		}
 	}
 
