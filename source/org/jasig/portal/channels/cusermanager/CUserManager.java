@@ -7,8 +7,6 @@ package org.jasig.portal.channels.cusermanager;
 import java.util.Enumeration;
 import java.text.MessageFormat;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.IChannel;
 
 import org.jasig.portal.security.IPerson;
@@ -37,7 +35,6 @@ import org.xml.sax.ContentHandler;
  * @version $Revision$ $Date$
  */
 public class CUserManager extends CUserManagerPermissions implements IChannel, IPermissible {
-  private static final Log LOG = LogFactory.getLog(CUserManager.class);
 
   private IDataHandler datasource;
 
@@ -114,7 +111,7 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
 
       }// for
     }catch( AuthorizationException ae ){
-        LOG.error(ae,ae);
+        log.error(ae,ae);
     }
 
   }// setStaticData
@@ -162,7 +159,7 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
       // see if we have form data to process
       if( CRD.getParameter( Constants.FORMACTION ) != null ){
 
-        LOG.debug("form.action=" + CRD.getParameter( Constants.FORMACTION ));
+        log.debug("form.action=" + CRD.getParameter( Constants.FORMACTION ));
 
         switch( Integer.parseInt( CRD.getParameter( Constants.FORMACTION ))) {
 
@@ -399,7 +396,7 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
      xslt.transform();
 
    }catch( Exception e ){
-      LOG.error(e,e);
+      log.error(e,e);
 
       throw new PortalException(
                    (e.getMessage()!=null?e.getMessage():e.toString()));

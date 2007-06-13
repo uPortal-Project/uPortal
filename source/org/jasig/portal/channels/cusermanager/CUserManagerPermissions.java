@@ -7,6 +7,8 @@ package org.jasig.portal.channels.cusermanager;
 import java.util.Properties;
 import java.util.Enumeration;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.IPermissible;
 import org.jasig.portal.channels.permissionsmanager.RDBMPermissibleRegistry;
 
@@ -15,6 +17,9 @@ import org.jasig.portal.channels.permissionsmanager.RDBMPermissibleRegistry;
  * @version $Revision$ $Date$
  */
 class CUserManagerPermissions implements IPermissible {
+	
+	protected final Log log = LogFactory.getLog(getClass());
+	
 
     /**
      *  Values for use by the permissions manager
