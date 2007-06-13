@@ -58,34 +58,19 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
   public CUserManager() {
   }// CUserManager
 
-  /**
-   *  Returns channel runtime properties.
-   *  Satisfies implementation of Channel Interface.
-   *
-   *  @return handle to runtime properties
-   */
+
   public ChannelRuntimeProperties getRuntimeProperties() {
     return new ChannelRuntimeProperties();
   }// getRuntimeProperties
 
-  /**
-   *  Process layout-level events coming from the portal.
-   *  Satisfies implementation of IChannel Interface.
-   *
-   *  @param ev <b>PortalEvent</b> a portal layout event
-   */
+
   public void receiveEvent(PortalEvent ev) {
 
     this.lastEvent = ev;
 
   }// receiveEvent
 
-  /**
-   *  Receive static channel data from the portal.
-   *  Satisfies implementation of IChannel Interface.
-   *
-   *  @param sd <b>ChannelStaticData</b> static channel data
-   */
+
   public void setStaticData(ChannelStaticData sd) {
     channelStaticData = sd;
 
@@ -116,19 +101,12 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
 
   }// setStaticData
 
-  /**
-   *  Receive channel runtime data from the portal.
-   *  Satisfies implementation of IChannel Interface.
-   *
-   *  @param rd <b>ChannelRuntimeData</b> handle to channel runtime data
-   */
+
   public void setRuntimeData(ChannelRuntimeData rd) {
     channelRuntimeData = rd;
   }// setRuntimeData
 
-  /** Output channel content to the portal
-   *  @param out a sax document handler
-   */
+
   public void renderXML(ContentHandler out) throws PortalException {
 
     // first, be sure they are allowed to be here
