@@ -41,7 +41,7 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
   private String mode = Constants.MODEDISPLAY;
 
   private ChannelStaticData channelStaticData;
-  private ChannelRuntimeData CRD;
+  private ChannelRuntimeData channelRuntimeData;
 
   private boolean ManagerMode = false;
   private boolean PwdChngMode = true;
@@ -123,7 +123,7 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
    *  @param rd <b>ChannelRuntimeData</b> handle to channel runtime data
    */
   public void setRuntimeData(ChannelRuntimeData rd) {
-    CRD = rd;
+    channelRuntimeData = rd;
   }// setRuntimeData
 
   /** Output channel content to the portal
@@ -145,27 +145,27 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
       mode = Constants.MODEDISPLAY;
 
       // now, b4 we get going, there may have been an event to deal with
-      if( CRD.getParameter( Constants.FORMACTION ) == null && lastEvent != null ) {
+      if( channelRuntimeData.getParameter( Constants.FORMACTION ) == null && lastEvent != null ) {
 
         if( lastEvent.getEventNumber() == PortalEvent.ABOUT_BUTTON_EVENT )
-          CRD.setParameter( Constants.FORMACTION, "10" );
+          channelRuntimeData.setParameter( Constants.FORMACTION, "10" );
 
         if( lastEvent.getEventNumber() == PortalEvent.HELP_BUTTON_EVENT )
-          CRD.setParameter( Constants.FORMACTION, "11" );
+          channelRuntimeData.setParameter( Constants.FORMACTION, "11" );
 
         lastEvent = null; // don't need that anymore
       }// if, null & !null
 
       // see if we have form data to process
-      if( CRD.getParameter( Constants.FORMACTION ) != null ){
+      if( channelRuntimeData.getParameter( Constants.FORMACTION ) != null ){
 
-        log.debug("form.action=" + CRD.getParameter( Constants.FORMACTION ));
+        log.debug("form.action=" + channelRuntimeData.getParameter( Constants.FORMACTION ));
 
-        switch( Integer.parseInt( CRD.getParameter( Constants.FORMACTION ))) {
+        switch( Integer.parseInt( channelRuntimeData.getParameter( Constants.FORMACTION ))) {
 
             case 1: { // update
 
-              getDataSource().setUserInformation( crd2persion( CRD ));
+              getDataSource().setUserInformation( crd2persion( channelRuntimeData ));
               message_to_user_about_action = Constants.MSG_SAVED;
 
               break;
@@ -187,21 +187,21 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
 
             case 4: {  // search
 
-              if( CRD.getParameter( Constants.FORMSRCHSTR ) == null ) {
+              if( channelRuntimeData.getParameter( Constants.FORMSRCHSTR ) == null ) {
                 people = new PersonImpl[0];
                 mode = Constants.MODESEARCH;
                }else{
 
                 // if they did not enter a src str, display mode
                 people = getDataSource().getAllUsersLike(
-                          CRD.getParameter( Constants.FORMSRCHSTR ));
+                          channelRuntimeData.getParameter( Constants.FORMSRCHSTR ));
 
                 if( people.length == 1 ) {
 
                    // this will cause a second lookup but the user experience will benifit
                    mode = Constants.MODEDISPLAY;
 
-                   CRD.setParameter( Constants.UNFIELD,
+                   channelRuntimeData.setParameter( Constants.UNFIELD,
                       (String)people[0].getAttribute( Constants.UNFIELD ));
 
                  }else
@@ -213,7 +213,7 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
 
             case 5: {  // prepare add new user
 
-              CRD.setParameter( Constants.UNFIELD,(String)
+              channelRuntimeData.setParameter( Constants.UNFIELD,(String)
                        channelStaticData.getPerson().getAttribute( Constants.ATTRUSERNAME ));
               mode = Constants.MODEADD;
 
@@ -222,7 +222,7 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
 
             case 6: {  // add new user
 
-              try{ getDataSource().addUser( crd2persion( CRD ));
+              try{ getDataSource().addUser( crd2persion( channelRuntimeData ));
               }catch( Exception adde ) {
 
                 if( adde.getMessage().indexOf( Constants.ALREADY_EXISTS ) > -1 )
@@ -240,7 +240,7 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
             case 7: {  // prepare password chng
 
               people = new IPerson[] { getDataSource().getUser(
-                          CRD.getParameter( Constants.UNFIELD )) };
+                          channelRuntimeData.getParameter( Constants.UNFIELD )) };
 
               mode = Constants.MODEPWDCHNG;
 
@@ -252,8 +252,8 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
               message_to_user_about_action = Constants.MSG_PWD_SAVED;
 
               try{
-               getDataSource().setUserPassword( crd2persion( CRD ),
-                 ( ManagerMode?null: CRD.getParameter( Constants.PWDFIELD )));
+               getDataSource().setUserPassword( crd2persion( channelRuntimeData ),
+                 ( ManagerMode?null: channelRuntimeData.getParameter( Constants.PWDFIELD )));
               }catch( Exception pwdchng ) {
 
                 if( pwdchng.getMessage()
@@ -273,7 +273,7 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
 
             case 9: {  // delete user
 
-              getDataSource().removeUser( crd2persion( CRD ));
+              getDataSource().removeUser( crd2persion( channelRuntimeData ));
 
               mode = Constants.MODEDISPLAY;
 
@@ -298,7 +298,7 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
 
             default: {
               mode = Constants.MODEDISPLAY;
-              CRD.remove( Constants.UNFIELD );
+              channelRuntimeData.remove( Constants.UNFIELD );
             }// default
 
         }// switch
@@ -311,11 +311,11 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
      // look up the person we are supposed to display
      if( mode.equals( Constants.MODEDISPLAY ) || mode.equals( Constants.MODEADD ))
         people = new IPerson[] { getDataSource().getUser(
-          ( CRD.getParameter( Constants.FORMCHOSEN ) == null?
-            ( CRD.getParameter( Constants.UNFIELD ) == null?
+          ( channelRuntimeData.getParameter( Constants.FORMCHOSEN ) == null?
+            ( channelRuntimeData.getParameter( Constants.UNFIELD ) == null?
              (String)channelStaticData.getPerson().getAttribute( Constants.ATTRUSERNAME )
-               : CRD.getParameter( Constants.UNFIELD ))
-                 : CRD.getParameter( Constants.FORMCHOSEN ) )) };
+               : channelRuntimeData.getParameter( Constants.UNFIELD ))
+                 : channelRuntimeData.getParameter( Constants.FORMCHOSEN ) )) };
 
 
      if( !ManagerMode && !mode.equals(Constants.MODEABOUT) && !mode.equals(Constants.MODEHELP) ) // always override
@@ -362,7 +362,7 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
      }// if
 
      // Create a new XSLT styling engine
-     XSLT xslt = XSLT.getTransformer( this, CRD.getLocales());
+     XSLT xslt = XSLT.getTransformer( this, channelRuntimeData.getLocales());
 //     XSLT xslt = new XSLT( this );
 
      // we could have a blank document, help and about
@@ -375,10 +375,10 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
      xslt.setXML( doc );
 
      // specify the stylesheet selector
-     xslt.setXSL( Constants.SSLFILE, mode, CRD.getBrowserInfo());
+     xslt.setXSL( Constants.SSLFILE, mode, channelRuntimeData.getBrowserInfo());
 
      // set parameters that the stylesheet needs.
-     xslt.setStylesheetParameter( Constants.BASEACTION, CRD.getBaseActionURL());
+     xslt.setStylesheetParameter( Constants.BASEACTION, channelRuntimeData.getBaseActionURL());
      xslt.setStylesheetParameter( Constants.MODE, mode );
      xslt.setStylesheetParameter(
                   Constants.DISPLAYMESSAGE, message_to_user_about_action );
