@@ -43,7 +43,7 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
   private ChannelStaticData channelStaticData;
   private ChannelRuntimeData channelRuntimeData;
 
-  private boolean ManagerMode = false;
+  private boolean managerMode = false;
   private boolean PwdChngMode = true;
 
   private PortalEvent lastEvent;
@@ -88,7 +88,7 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
 
          if( perms[ i ].getActivity().equals( Constants.PERMISSION_MNGRRIGHT )
             && perms[ i ].getType().equals( IPermission.PERMISSION_TYPE_GRANT ))
-          ManagerMode = true;
+          managerMode = true;
 
          if( perms[ i ].getActivity().equals( Constants.PERMISSION_PWDCHNGRIGHT )
             && perms[ i ].getType().equals( IPermission.PERMISSION_TYPE_DENY ))
@@ -110,7 +110,7 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
   public void renderXML(ContentHandler out) throws PortalException {
 
     // first, be sure they are allowed to be here
-    if( !ManagerMode && !PwdChngMode )
+    if( !managerMode && !PwdChngMode )
       throw new AuthorizationException(  MessageFormat.format(
         Constants.ERRMSG_NORIGHTS, new Object[]
           { (String)channelStaticData.getPerson().getAttribute( IPerson.USERNAME ) } ));
@@ -231,7 +231,7 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
 
               try{
                getDataSource().setUserPassword( crd2persion( channelRuntimeData ),
-                 ( ManagerMode?null: channelRuntimeData.getParameter( Constants.PWDFIELD )));
+                 ( managerMode?null: channelRuntimeData.getParameter( Constants.PWDFIELD )));
               }catch( Exception pwdchng ) {
 
                 if( pwdchng.getMessage()
@@ -282,7 +282,7 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
         }// switch
      }// if
 
-     if( !ManagerMode && PersonalDocument == null
+     if( !managerMode && PersonalDocument == null
               && !mode.equals(Constants.MODEABOUT) && !mode.equals(Constants.MODEHELP) ) // always override
        mode = Constants.MODEDISPLAY;  // force a read
 
@@ -296,10 +296,10 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
                  : channelRuntimeData.getParameter( Constants.FORMCHOSEN ) )) };
 
 
-     if( !ManagerMode && !mode.equals(Constants.MODEABOUT) && !mode.equals(Constants.MODEHELP) ) // always override
+     if( !managerMode && !mode.equals(Constants.MODEABOUT) && !mode.equals(Constants.MODEHELP) ) // always override
        mode = Constants.MODEPWDCHNG;
 
-     if( (ManagerMode || ( !ManagerMode && PersonalDocument == null ))
+     if( (managerMode || ( !managerMode && PersonalDocument == null ))
              && !mode.equals(Constants.MODEABOUT) && !mode.equals(Constants.MODEHELP) ) {
        doc = DocumentFactory.getNewDocument();
 
@@ -331,7 +331,7 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
        doc.appendChild( outtermost );
        // end - fill in info about the user
 
-       if( !ManagerMode )
+       if( !managerMode )
          PersonalDocument = doc;
 
       }else{
@@ -361,7 +361,7 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
      xslt.setStylesheetParameter(
                   Constants.DISPLAYMESSAGE, message_to_user_about_action );
 
-     String MM = (!ManagerMode?"yes":"no");
+     String MM = (!managerMode?"yes":"no");
      xslt.setStylesheetParameter( Constants.MODEUSRPWDCHNG, MM );
 
   /** If I write the above as shown below it does not work.  Wasted a .5hr on that! */
