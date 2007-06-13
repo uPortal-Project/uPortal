@@ -32,11 +32,12 @@ import org.xml.sax.ContentHandler;
 
 /**
  * @author smb1@cornell.edu
+ * @author apetro@unicon.net
  * @version $Revision$ $Date$
  */
 public class CUserManager extends CUserManagerPermissions implements IChannel, IPermissible {
 
-  private IDataHandler datasource;
+  private IDataHandler dataHandler;
 
   private String mode = Constants.MODEDISPLAY;
 
@@ -73,7 +74,23 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
 
   public void setStaticData(ChannelStaticData sd) {
     channelStaticData = sd;
-
+    
+    String dataHandlerClassName = Constants.DEFAULTDATAHANDLER;
+    
+    String dataHandlerClassNameFromChannelStaticData = channelStaticData.getParameter( Constants.CHNPARAMDATAHANDLER );
+    
+    if (dataHandlerClassNameFromChannelStaticData != null) {
+    	dataHandlerClassName = dataHandlerClassNameFromChannelStaticData;
+    }
+    
+    
+    try {
+    dataHandler = (IDataHandler) Class.forName(dataHandlerClassName).newInstance();
+    } catch (Exception e) {
+    	throw new PortalException("Unable to instantiate CUserManager IDataHandler implementation [" + dataHandlerClassName + "]", e);
+    }
+    
+    
 // Ignore since 2.0 (2003.04.21)
 //    if( CSD.getParameter( Constants.CHNPARAMNOTMGR ) != null )
 //      ManagerMode = false;
@@ -143,7 +160,7 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
 
             case 1: { // update
 
-              getDataSource().setUserInformation( crd2persion( channelRuntimeData ));
+              this.dataHandler.setUserInformation( crd2persion( channelRuntimeData ));
               message_to_user_about_action = Constants.MSG_SAVED;
 
               break;
@@ -157,7 +174,7 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
 
             case 3: {  // choose
 
-              people = getDataSource().getAllUsers();
+              people = this.dataHandler.getAllUsers();
               mode = Constants.MODECHOOSE;
 
               break;
@@ -171,7 +188,7 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
                }else{
 
                 // if they did not enter a src str, display mode
-                people = getDataSource().getAllUsersLike(
+                people = this.dataHandler.getAllUsersLike(
                           channelRuntimeData.getParameter( Constants.FORMSRCHSTR ));
 
                 if( people.length == 1 ) {
@@ -200,7 +217,7 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
 
             case 6: {  // add new user
 
-              try{ getDataSource().addUser( crd2persion( channelRuntimeData ));
+              try{ this.dataHandler.addUser( crd2persion( channelRuntimeData ));
               }catch( Exception adde ) {
 
                 if( adde.getMessage().indexOf( Constants.ALREADY_EXISTS ) > -1 )
@@ -217,7 +234,7 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
 
             case 7: {  // prepare password chng
 
-              people = new IPerson[] { getDataSource().getUser(
+              people = new IPerson[] { this.dataHandler.getUser(
                           channelRuntimeData.getParameter( Constants.UNFIELD )) };
 
               mode = Constants.MODEPWDCHNG;
@@ -230,7 +247,7 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
               message_to_user_about_action = Constants.MSG_PWD_SAVED;
 
               try{
-               getDataSource().setUserPassword( crd2persion( channelRuntimeData ),
+            	  this.dataHandler.setUserPassword( crd2persion( channelRuntimeData ),
                  ( managerMode?null: channelRuntimeData.getParameter( Constants.PWDFIELD )));
               }catch( Exception pwdchng ) {
 
@@ -251,7 +268,7 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
 
             case 9: {  // delete user
 
-              getDataSource().removeUser( crd2persion( channelRuntimeData ));
+            	this.dataHandler.removeUser( crd2persion( channelRuntimeData ));
 
               mode = Constants.MODEDISPLAY;
 
@@ -288,7 +305,7 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
 
      // look up the person we are supposed to display
      if( mode.equals( Constants.MODEDISPLAY ) || mode.equals( Constants.MODEADD ))
-        people = new IPerson[] { getDataSource().getUser(
+        people = new IPerson[] { this.dataHandler.getUser(
           ( channelRuntimeData.getParameter( Constants.FORMCHOSEN ) == null?
             ( channelRuntimeData.getParameter( Constants.UNFIELD ) == null?
              (String)channelStaticData.getPerson().getAttribute( Constants.ATTRUSERNAME )
@@ -381,21 +398,7 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
     }// catch
   }// renderXML
 
-  private IDataHandler getDataSource() throws Exception {
 
-    if( datasource == null )
-      datasource = (IDataHandler)
-       Class.forName(
-         (
-           channelStaticData.getParameter( Constants.CHNPARAMDATAHANDLER ) == null?
-             Constants.DEFAULTDATAHANDLER
-             :
-             channelStaticData.getParameter( Constants.CHNPARAMDATAHANDLER )
-         )
-        ).newInstance();
-
-    return datasource;
-  }// getDataSource
 
   private IPerson crd2persion( ChannelRuntimeData CRD ) throws Exception {
 
