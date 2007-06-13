@@ -51,7 +51,7 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
   /** for pwd chng mode, we want to cache the user's info because
    *  there will be many more of these than admin channels
    */
-  private Document PersonalDocument = null;
+  private Document personalDocument = null;
 
   /**
    */
@@ -244,7 +244,7 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
 
               mode = Constants.MODEDISPLAY;
 
-              PersonalDocument = null;
+              personalDocument = null;
 
               break;
             }// 8
@@ -255,7 +255,7 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
 
               mode = Constants.MODEDISPLAY;
 
-              PersonalDocument = null;
+              personalDocument = null;
 
               break;
             }// 9
@@ -282,7 +282,7 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
         }// switch
      }// if
 
-     if( !managerMode && PersonalDocument == null
+     if( !managerMode && personalDocument == null
               && !mode.equals(Constants.MODEABOUT) && !mode.equals(Constants.MODEHELP) ) // always override
        mode = Constants.MODEDISPLAY;  // force a read
 
@@ -299,7 +299,7 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
      if( !managerMode && !mode.equals(Constants.MODEABOUT) && !mode.equals(Constants.MODEHELP) ) // always override
        mode = Constants.MODEPWDCHNG;
 
-     if( (managerMode || ( !managerMode && PersonalDocument == null ))
+     if( (managerMode || ( !managerMode && personalDocument == null ))
              && !mode.equals(Constants.MODEABOUT) && !mode.equals(Constants.MODEHELP) ) {
        doc = DocumentFactory.getNewDocument();
 
@@ -332,11 +332,11 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
        // end - fill in info about the user
 
        if( !managerMode )
-         PersonalDocument = doc;
+         personalDocument = doc;
 
       }else{
 
-       doc = PersonalDocument;
+       doc = personalDocument;
      }// if
 
      // Create a new XSLT styling engine
