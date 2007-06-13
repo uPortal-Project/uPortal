@@ -44,7 +44,7 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
   private ChannelRuntimeData channelRuntimeData;
 
   private boolean managerMode = false;
-  private boolean PwdChngMode = true;
+  private boolean passwordChangeMode = true;
 
   private PortalEvent lastEvent;
 
@@ -92,7 +92,7 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
 
          if( perms[ i ].getActivity().equals( Constants.PERMISSION_PWDCHNGRIGHT )
             && perms[ i ].getType().equals( IPermission.PERMISSION_TYPE_DENY ))
-          PwdChngMode = false;
+          passwordChangeMode = false;
 
       }// for
     }catch( AuthorizationException ae ){
@@ -110,7 +110,7 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
   public void renderXML(ContentHandler out) throws PortalException {
 
     // first, be sure they are allowed to be here
-    if( !managerMode && !PwdChngMode )
+    if( !managerMode && !passwordChangeMode )
       throw new AuthorizationException(  MessageFormat.format(
         Constants.ERRMSG_NORIGHTS, new Object[]
           { (String)channelStaticData.getPerson().getAttribute( IPerson.USERNAME ) } ));
