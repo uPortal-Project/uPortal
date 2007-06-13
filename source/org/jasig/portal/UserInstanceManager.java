@@ -44,6 +44,9 @@ public class UserInstanceManager {
     try {
       // Retrieve the person object that is associated with the request
       person = PersonManagerFactory.getPersonManagerInstance().getPerson(request);
+      if (person == null) {
+    	  throw new IllegalStateException("Configured PersonManager returned null person for this request.  With no user, there's no UserInstance.  Is PersonManager misconfigured?  RDBMS access misconfigured?");
+      }
     } catch (Exception e) {
       log.error( "UserInstanceManager: Unable to retrieve IPerson!", e);
       throw  (new PortalSecurityException("Could not retrieve IPerson", e));
