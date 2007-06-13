@@ -40,7 +40,7 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
 
   private String mode = Constants.MODEDISPLAY;
 
-  private ChannelStaticData CSD;
+  private ChannelStaticData channelStaticData;
   private ChannelRuntimeData CRD;
 
   private boolean ManagerMode = false;
@@ -87,7 +87,7 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
    *  @param sd <b>ChannelStaticData</b> static channel data
    */
   public void setStaticData(ChannelStaticData sd) {
-    CSD = sd;
+    channelStaticData = sd;
 
 // Ignore since 2.0 (2003.04.21)
 //    if( CSD.getParameter( Constants.CHNPARAMNOTMGR ) != null )
@@ -96,7 +96,7 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
     // let determine the user's rights
     try{
 
-      IPermission[] perms = CSD.getAuthorizationPrincipal().getAllPermissions(
+      IPermission[] perms = channelStaticData.getAuthorizationPrincipal().getAllPermissions(
         Constants.PERMISSION_OWNERTOKEN, null, Constants.PERMISSION_OWNERTARGET );
 
       for( int i = 0; i < perms.length; i++ ) {
@@ -135,7 +135,7 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
     if( !ManagerMode && !PwdChngMode )
       throw new AuthorizationException(  MessageFormat.format(
         Constants.ERRMSG_NORIGHTS, new Object[]
-          { (String)CSD.getPerson().getAttribute( IPerson.USERNAME ) } ));
+          { (String)channelStaticData.getPerson().getAttribute( IPerson.USERNAME ) } ));
 
     try{
 
@@ -214,7 +214,7 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
             case 5: {  // prepare add new user
 
               CRD.setParameter( Constants.UNFIELD,(String)
-                       CSD.getPerson().getAttribute( Constants.ATTRUSERNAME ));
+                       channelStaticData.getPerson().getAttribute( Constants.ATTRUSERNAME ));
               mode = Constants.MODEADD;
 
               break;
@@ -313,7 +313,7 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
         people = new IPerson[] { getDataSource().getUser(
           ( CRD.getParameter( Constants.FORMCHOSEN ) == null?
             ( CRD.getParameter( Constants.UNFIELD ) == null?
-             (String)CSD.getPerson().getAttribute( Constants.ATTRUSERNAME )
+             (String)channelStaticData.getPerson().getAttribute( Constants.ATTRUSERNAME )
                : CRD.getParameter( Constants.UNFIELD ))
                  : CRD.getParameter( Constants.FORMCHOSEN ) )) };
 
@@ -409,10 +409,10 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
       datasource = (IDataHandler)
        Class.forName(
          (
-           CSD.getParameter( Constants.CHNPARAMDATAHANDLER ) == null?
+           channelStaticData.getParameter( Constants.CHNPARAMDATAHANDLER ) == null?
              Constants.DEFAULTDATAHANDLER
              :
-             CSD.getParameter( Constants.CHNPARAMDATAHANDLER )
+             channelStaticData.getParameter( Constants.CHNPARAMDATAHANDLER )
          )
         ).newInstance();
 
