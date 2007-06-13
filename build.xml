@@ -387,24 +387,24 @@
     <!-- This is Tomcat-specific and server name-specific!
          We need to find out the best way to ensure cross-context
          behavior in all servlet containers.
-
-         The context file goes into META-INF so it will be part of the .war file and available
-         to deployment processes that honor it, such as deployment via the Tomcat manager application.
-         We also copy it into the Tomcat server configuration directory so that Tomcat will configure the
-         context properly where we don't use a .war deployment process that honors
-         /META-INF/context.xml .
     -->
-    <mkdir dir="${deploy.home}/META-INF"/>
-    <copy tofile="${deploy.home}/META-INF/context.xml" file="properties/${webapp.contextFile}">
-        <filterset>
-            <filter token="webappDocBase" value="${webapp.docBase}"/>
-            <filter token="webappPath" value="${webapp.path}"/>
-            <filtersfile file="properties/rdbm.properties" />
-        </filterset>
-    </copy>
+  	
+  
+ 	 <!--
+ 	        Copy context configuration into the Tomcat server configuration directory so that Tomcat will configure the
+ 	         context properly.
+ 	         
+ 	         In the "dist" target, the .war produced includes this context declaration in its /META-INF/.
+ 	    -->
 
     <copy tofile="${server.home}/conf/Catalina/localhost/${webapp.docBase}.xml"
-    	file="${deploy.home}/META-INF/context.xml" />
+    	file="properties/${webapp.contextFile}" >
+    <filterset>
+        <filter token="webappDocBase" value="${webapp.docBase}"/>
+        <filter token="webappPath" value="${webapp.path}"/>
+        <filtersfile file="properties/rdbm.properties" />
+    </filterset>
+  	</copy>
     <copy todir="${server.home}/conf/Catalina/localhost" file="properties/proxyportlet.xml"/>
 
         <!-- Deploy classes to support the modified version of WSRP4J's proxyportlet.
@@ -441,6 +441,14 @@
       <fileset dir="docs"/>
     </copy>
 
+  	<!--
+         The context file goes into META-INF so it will be part of the .war file and available
+         to deployment processes that honor it, such as deployment via the Tomcat manager application.
+    -->   
+  	    <mkdir dir="${deploy.home}/META-INF"/>
+  	    <copy tofile="${deploy.home}/META-INF/context.xml" file="${server.home}/conf/Catalina/localhost/${webapp.docBase}.xml"/>
+
+  	
     <!-- Create application WAR file -->
     <jar jarfile="${dist.home}/${app.name}.war"
          basedir="${deploy.home}"/>
@@ -1226,7 +1234,7 @@
   </target>
 	
 	
-	<target name="hsql">
+	<target name="hsql" description="Start a HSQLDB instance consistent with the default RDBMS requirements of uPortal">
 	   <echo message="Starting HSQL"/>
 	   <echo message="Using: ${basedir}/data/uP2_uPortal"/>
 
