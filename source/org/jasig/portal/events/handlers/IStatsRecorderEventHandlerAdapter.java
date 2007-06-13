@@ -50,38 +50,38 @@ public final class IStatsRecorderEventHandlerAdapter implements EventHandler,
 	public void handleEvent(final PortalEvent event) {
 		final Class eventClass = event.getClass();
 		if (eventClass.equals(ChannelAddedToLayoutPortalEvent.class)) {
-			final ChannelLayoutPortalEvent portalEvent = (ChannelAddedToLayoutPortalEvent) event;
+			final ChannelLayoutPortalEvent portalEvent = (ChannelLayoutPortalEvent) event;
 			this.recorder.recordChannelAddedToLayout(portalEvent.getPerson(),
 					portalEvent.getProfile(), portalEvent
 							.getChannelDescription());
 		} else if (eventClass
 				.equals(ChannelInstanciatedInLayoutPortalEvent.class)) {
-			final ChannelLayoutPortalEvent portalEvent = (ChannelAddedToLayoutPortalEvent) event;
+			final ChannelLayoutPortalEvent portalEvent = (ChannelLayoutPortalEvent) event;
 			this.recorder.recordChannelInstantiated(portalEvent.getPerson(),
 					portalEvent.getProfile(), portalEvent
 							.getChannelDescription());
 		} else if (eventClass.equals(ChannelMovedInLayoutPortalEvent.class)) {
-			final ChannelLayoutPortalEvent portalEvent = (ChannelAddedToLayoutPortalEvent) event;
+			final ChannelLayoutPortalEvent portalEvent = (ChannelLayoutPortalEvent) event;
 			this.recorder.recordChannelMovedInLayout(portalEvent.getPerson(),
 					portalEvent.getProfile(), portalEvent
 							.getChannelDescription());
 		} else if (eventClass.equals(ChannelRemovedFromLayoutPortalEvent.class)) {
-			final ChannelLayoutPortalEvent portalEvent = (ChannelAddedToLayoutPortalEvent) event;
+			final ChannelLayoutPortalEvent portalEvent = (ChannelLayoutPortalEvent) event;
 			this.recorder.recordChannelRemovedFromLayout(portalEvent
 					.getPerson(), portalEvent.getProfile(), portalEvent
 					.getChannelDescription());
 		} else if (eventClass.equals(ChannelRenderedInLayoutPortalEvent.class)) {
-			final ChannelLayoutPortalEvent portalEvent = (ChannelAddedToLayoutPortalEvent) event;
+			final ChannelLayoutPortalEvent portalEvent = (ChannelLayoutPortalEvent) event;
 			this.recorder.recordChannelRendered(portalEvent.getPerson(),
 					portalEvent.getProfile(), portalEvent
 							.getChannelDescription());
 		} else if (eventClass.equals(ChannelTargetedInLayoutPortalEvent.class)) {
-			final ChannelLayoutPortalEvent portalEvent = (ChannelAddedToLayoutPortalEvent) event;
+			final ChannelLayoutPortalEvent portalEvent = (ChannelLayoutPortalEvent) event;
 			this.recorder.recordChannelTargeted(portalEvent.getPerson(),
 					portalEvent.getProfile(), portalEvent
 							.getChannelDescription());
 		} else if (eventClass.equals(ChannelUpdatedInLayoutPortalEvent.class)) {
-			final ChannelLayoutPortalEvent portalEvent = (ChannelAddedToLayoutPortalEvent) event;
+			final ChannelLayoutPortalEvent portalEvent = (ChannelLayoutPortalEvent) event;
 			this.recorder.recordChannelUpdatedInLayout(portalEvent.getPerson(),
 					portalEvent.getProfile(), portalEvent
 							.getChannelDescription());
