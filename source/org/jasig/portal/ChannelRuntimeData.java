@@ -22,7 +22,7 @@ import com.oreilly.servlet.multipart.Part;
  * @author <a href="mailto:pkharchenko@unicon.net">Peter Kharchenko</a>
  * @version $Revision$
  */
-public class ChannelRuntimeData extends Hashtable implements Cloneable {
+public class ChannelRuntimeData extends Hashtable<String, Object> implements Cloneable {
     
     private static final Log log = LogFactory.getLog(ChannelRuntimeData.class);
     
@@ -169,7 +169,7 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
      * the Map, then a future call to getParameter(name) will return value[0].
      * @param params a <code>Map</code> of parameter names to parameter value arrays.
      */
-    public void setParameters(Map params) {
+    public void setParameters(Map<String, Object> params) {
       this.putAll(params); // copy a Map
     }
 
@@ -181,7 +181,7 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
      * will return value.
      * @param params a <code>Map</code> of parameter names to parameter value arrays.
      */
-    public void setParametersSingleValued(Map params) {
+    public void setParametersSingleValued(Map<String, Object> params) {
         if (params != null) {
             java.util.Iterator iter = params.keySet().iterator();
             while (iter.hasNext()) {
@@ -478,8 +478,8 @@ public class ChannelRuntimeData extends Hashtable implements Cloneable {
      * Get the parameters as a Map
      * @return a Map of parameter name-value pairs
      */
-    public Map getParameters() {
-        Map params = new java.util.HashMap(this.size());
+    public Map<String, Object> getParameters() {
+        Map<String, Object> params = new java.util.HashMap(this.size());
         Enumeration e = this.getParameterNames();
         while (e.hasMoreElements()) {
           String name = (String)e.nextElement();
