@@ -53,6 +53,8 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
    *  there will be many more of these than admin channels
    */
   private Document personalDocument = null;
+  
+  private ChannelRuntimeDataToPersonConverter channelRuntimeDataToPersonConverter = new ChannelRuntimeDataToPersonConverter();
 
   /**
    */
@@ -160,7 +162,7 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
 
             case 1: { // update
 
-              this.dataHandler.setUserInformation( crd2persion( channelRuntimeData ));
+              this.dataHandler.setUserInformation( channelRuntimeDataToPersonConverter.channelRuntimeDataToPerson( channelRuntimeData ));
               message_to_user_about_action = Constants.MSG_SAVED;
 
               break;
@@ -217,7 +219,7 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
 
             case 6: {  // add new user
 
-              try{ this.dataHandler.addUser( crd2persion( channelRuntimeData ));
+              try{ this.dataHandler.addUser( channelRuntimeDataToPersonConverter.channelRuntimeDataToPerson( channelRuntimeData ));
               }catch( Exception adde ) {
 
                 if( adde.getMessage().indexOf( Constants.ALREADY_EXISTS ) > -1 )
@@ -247,7 +249,7 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
               message_to_user_about_action = Constants.MSG_PWD_SAVED;
 
               try{
-            	  this.dataHandler.setUserPassword( crd2persion( channelRuntimeData ),
+            	  this.dataHandler.setUserPassword( channelRuntimeDataToPersonConverter.channelRuntimeDataToPerson( channelRuntimeData ),
                  ( managerMode?null: channelRuntimeData.getParameter( Constants.PWDFIELD )));
               }catch( Exception pwdchng ) {
 
@@ -268,7 +270,7 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
 
             case 9: {  // delete user
 
-            	this.dataHandler.removeUser( crd2persion( channelRuntimeData ));
+            	this.dataHandler.removeUser( channelRuntimeDataToPersonConverter.channelRuntimeDataToPerson( channelRuntimeData ));
 
               mode = Constants.MODEDISPLAY;
 
@@ -400,21 +402,6 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
 
 
 
-  private IPerson crd2persion( ChannelRuntimeData CRD ) throws Exception {
 
-      String worker = null;
-      IPerson newborn = new PersonImpl();
-      Enumeration E = CRD.getParameterNames();
-      while( E.hasMoreElements()){
-         worker = (String)E.nextElement();
-         if( !worker.equals( Constants.FORMACTION ))
-             newborn.setAttribute( worker,
-              ( CRD.getParameter( worker ) == null?
-                 "" : CRD.getParameter( worker ) ));
-
-      }// while
-
-      return newborn;
-  }// crd2persion
 
 }// eoc
