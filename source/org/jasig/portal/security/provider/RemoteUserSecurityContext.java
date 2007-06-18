@@ -58,17 +58,31 @@ class RemoteUserSecurityContext extends ChainingSecurityContext
 	 *
 	 *@exception  PortalSecurityException
 	 */
-	public synchronized void authenticate()
-		throws PortalSecurityException {
-		isauth = remoteUser != null;
-		if (isauth) {
-			myPrincipal.setUID(remoteUser);
-			super.authenticate();
-		} else {
-			log.info( "Authentication failed. REMOTE_USER not set");
-		}
-		return;
-	}
+   public synchronized void authenticate() throws PortalSecurityException {
+        if (this.remoteUser != null) {
+            // Set the UID for the principal
+            this.myPrincipal.setUID(this.remoteUser);
+
+            // Check that the principal UID matches the remote user
+            final String newUid = this.myPrincipal.getUID();
+            if (this.remoteUser.equals(newUid)) {
+                if (log.isInfoEnabled()) {
+                    log.info("Authentication REMOTE_USER(" + this.remoteUser + ").");
+                }
+
+                this.isauth = true;
+            }
+            else if (log.isInfoEnabled()) {
+                log.info("Authentication failed. REMOTE_USER(" + this.remoteUser + ") != user(" + newUid + ").");
+            }
+        }
+        else if (log.isInfoEnabled()) {
+            log.info("Authentication failed. REMOTE_USER not set for(" + this.myPrincipal.getUID() + ").");
+        }
+
+        super.authenticate();
+        return;
+    }
 	
 	/**
 	 * Set the remote user for this security context.
