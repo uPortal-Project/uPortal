@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE channelDef SYSTEM "http://www.ja-sig.org/products/uportal/2/dtds/channelPublishingDocument-1.0.dtd">
+<!DOCTYPE channelDef PUBLIC "-//uPortal//Channel Publishing/EN" "channelPublishingDocument.dtd">
 
 <channelDef>
-  <typeName>JSP Model II</typeName>
   <class>org.jasig.portal.channels.jsp.Channel</class>
   <description>This is a channel for presenting content generated using Java Server Pages.</description>
 
@@ -10,7 +9,6 @@
     <step>
       <ID>1</ID>
 
-      <helptag>prtl.admin.jsp.chan.cntrls</helptag>
 
       <name>JSP Controller</name>
 
@@ -31,7 +29,6 @@
 
     <step>
       <ID>2</ID>
-      <helptag>prtl.admin.jsp.chan.cntrl.prms</helptag>
       <name>Controller Parameters</name>
 
       <description>
