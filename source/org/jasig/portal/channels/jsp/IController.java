@@ -49,7 +49,7 @@ public interface IController extends ICacheable
      */
     public void setStaticData(ChannelStaticData csd);
 
-    /* Allows the plugged-in controller for the jsp channel to know about 
+    /** Allows the plugged-in controller for the jsp channel to know about 
      * channel events.
      * 
      * @see org.jasig.portal.IChannel#receiveEvent(org.jasig.portal.PortalEvent)
