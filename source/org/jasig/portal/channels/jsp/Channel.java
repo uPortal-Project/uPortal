@@ -115,8 +115,9 @@ public class Channel
      */
     public ChannelCacheKey generateKey()
     {
-        if (mController != null)
+        if (mController != null) {
             return mController.generateKey();
+        }
         return null;
     }
 
@@ -129,8 +130,9 @@ public class Channel
      */
     public boolean isCacheValid(Object validity)
     {
-        if (mController != null)
+        if (mController != null) {
             return mController.isCacheValid(validity);
+        }
         return false;
     }
 
@@ -139,21 +141,24 @@ public class Channel
      */
     public void renderCharacters(PrintWriter pw) throws PortalException
     {
-        if (mController == null)
+        if (mController == null) {
             return;
-
+        }
+            
         // 1) determine what JSP to forward to
         String jspId = mController.getJspToRender();
-        if (jspId == null)
+        if (jspId == null) {
                 throw new PortalException("No JSP id returned by controller.");
-
+        }
+                
         String jsp = mJspMap.getProperty(jspId);
         boolean relativeToController = false;
         
-        if (jsp == null)
+        if (jsp == null) {
             throw new PortalException("No mapping available for JSP id '"
                     + jspId + "'.");
-
+        }
+            
         if (! jsp.startsWith("/"))
         {
             relativeToController = true;
@@ -293,12 +298,13 @@ public class Channel
                         "-       FROM:\n", new Throwable("STACK"));
             }
         }
-        if (dispatch == null)
+        if (dispatch == null) {
             throw new PortalException(
                 "Unable to delegate to JSP '" + jspPath + "'. " +
                 mRequest.getClass().getName() + ".getRequestDispatch('" +
                 jspPath + "') returned NULL.");
-
+        }
+            
         // 4.b) now render the JSP view
         try
         {
@@ -332,8 +338,9 @@ public class Channel
             = PropertiesManager.getProperty(Deployer.JSP_DEPLOY_DIR_PROP,
                     "/WEB-INF/classes");
             if (!ctxRelativePath.endsWith("/")
-                    && !ctxRelativePath.endsWith("\\"))
+                    && !ctxRelativePath.endsWith("\\")) {
                 ctxRelativePath = ctxRelativePath + File.separatorChar;
+            }
             cJspContextPath = ctxRelativePath;
         }
         return cJspContextPath;
@@ -421,8 +428,9 @@ public class Channel
     private void loadJspMap()
     {
         Map jsps = mController.getJspMap();
-        if ( null == jsps )
+        if ( null == jsps ) {
             return;
+        }
         
         for (Iterator itr = jsps.entrySet().iterator(); itr.hasNext();)
         {
@@ -437,18 +445,22 @@ public class Channel
      */
     private void getController() throws PortalException
     {
-        if (mControllerClassname == null)
+        if (mControllerClassname == null) {
         	mControllerClassname = this.staticData.getParameter(CONTROLLER_KEY);
-        
-        if (mControllerClassname == null)
+        }
+        	
+        if (mControllerClassname == null) {
             throw new PortalException("No implementation of " +
                     "org.jasig.portal.channels.jsp.IController " +
                     "specified on ChannelStaticData.");
+        }
+        
         syncDeploymentOfResources(mControllerClassname);
 
-        if (mControllerClassname == null)
+        if (mControllerClassname == null) {
             throw new PortalException("No '" + CONTROLLER_KEY + "' specified.");
-
+        }
+            
         // now lets load and instantiate the handler
         Class c = null;
         Object obj = null;
@@ -581,11 +593,12 @@ public class Channel
      */
     public void setResponse(HttpServletResponse response)
     {
-        if (mController != null && mController instanceof IDirectResponse)
-            ((IDirectResponse)mController).setResponse(response);
-        else
+        if (mController != null && mController instanceof IDirectResponse) {
+        	((IDirectResponse)mController).setResponse(response);
+        } else {
             throw new UnsupportedOperationException("JSP Controller " +
                     mControllerClassname + " does not implement " +
                     IDirectResponse.class.getName() + ".");
-}
+        }
+    }
 }
