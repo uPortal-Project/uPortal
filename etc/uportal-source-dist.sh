@@ -13,18 +13,8 @@ fi
 
 #
 # Export release tag
-#
-cvs -d:pserver:anonymous@mis105.mis.udel.edu:/home/cvs/jasig login
-cvs -d:pserver:anonymous@mis105.mis.udel.edu:/home/cvs/jasig export -r $1 portal
 
-#
-# Remove website directory, build.xml and README in ./docs
-# These are used to maintain the website and are not
-# needed in the distribution.  Is there a better place for these?
-#
-rm -rf ./portal/docs/website
-rm ./portal/docs/build.xml
-rm ./portal/docs/README
+svn export https://www.ja-sig.org/svn/up2/tags/$1 portal
 
 #
 # Remove .cvsignore files. 
@@ -57,8 +47,8 @@ zip -r uPortal_$1 uPortal_$1
 
 echo "done!"
 echo "Now..."
-echo "scp the release to www.jasig.org:/var/www/html/ja-sig/uportaldist"
-echo "update download.html page."
-echo "update cvs.html page."
-echo "update index.html with news about releases."
+echo "scp the release to www.jasig.org:/jasig/htdocs/www/downloads/uportal"
+echo "update download.html page via Hypercontent at http://developer.ja-sig.org/hypercontent"
+echo "add a news item to the uportal site via Hypercontent announcing the release"
+echo "publish that news item, the news index page, the news archive page, and the front page so that your news item is available for consumption."
 exit
