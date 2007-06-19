@@ -1,7 +1,7 @@
-Release notes for uPortal 2.5.3 General Audience
-(the general audience release of uPortal 2.5.3):
+Release notes for uPortal 2.5.3.1 General Audience
+(the general audience release of uPortal 2.5.3.1):
 
-CVS branch: 2-5-patches
+SVN branch: 2-5-3-patches
 
 
 Known issues
@@ -40,6 +40,12 @@ The WSRP consumer portlet in uPortal is now working.
 
 
 Bug fixes in this release:
+
+The rel-2-5-3-1 is a security patch release that fixed the RemoteUserSecurityContext 
+exploit. For more details on this issue, please check the issue UP-1741 in JA-SIG 
+Jira (http://www.ja-sig.org/issues/browse/UP-1741)
+
+Following are the notes for rel-2-5-3
 
 WSRP consumption is no longer broken.
 By virtue of using a patched xalan, xalan no longer leaks memory.
@@ -80,6 +86,6 @@ branch towards 2.5.4 and beyond.
 
 Release engineer's environment:
 
-This release was tested and tagged on a Dell WinXP pro laptop using JDK 1.5, Eclipse 3.1, and Tomcat 5.5.17.
+This release was tested and tagged on a Dell WinXP pro laptop using JDK 1.5, Eclipse 3.2, and Tomcat 5.5.17.
 The release deliverable was built on the tp.its.yale.edu Linux server using the shell script in /etc/
 that checks out a tag and builds a release from it.
