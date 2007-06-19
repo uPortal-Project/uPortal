@@ -99,7 +99,7 @@ public class Channel
     private static boolean loadRenderingCfg()
     {
         boolean serialize = PropertiesManager
-            .getPropertyAsBoolean(SINGLE_THREAD_CFG_PROPERTY);
+            .getPropertyAsBoolean(SINGLE_THREAD_CFG_PROPERTY, false);
         if (LOG.isDebugEnabled())
         {
             LOG.debug("Serializing JSP Request Rendering: " + serialize);
