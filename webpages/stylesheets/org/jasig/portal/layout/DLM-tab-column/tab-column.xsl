@@ -27,8 +27,10 @@
 
      </xsl:when>
  	
-     <xsl:otherwise> <!-- it is a number and hence an index, so use it -->
-      <xsl:value-of select="$activeTab"/>
+ 	 <!-- if the tab index number is greater than the number of tabs, use the first tab -->
+     <xsl:when test="$activeTab &gt; count(/layout/folder/folder[@type='regular' and @hidden='false'])">1</xsl:when>
+     <xsl:otherwise>
+       <xsl:value-of select="$activeTab"/>
      </xsl:otherwise>
     </xsl:choose>
    </xsl:when>
