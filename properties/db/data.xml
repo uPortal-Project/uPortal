@@ -555,15 +555,15 @@
         <column><name>ENCRPTD_PSWD</name><value>(MD5)FwlZ/YNTQ/hbNPEIUl8yTGfYwwnp65/g</value></column>
         <column><name>LST_PSWD_CGH_DT</name><value></value></column>
         <column><name>FIRST_NAME</name><value>Entertainment</value></column>
-        <column><name>LAST_NAME</name><value>Fragment</value></column>
+        <column><name>LAST_NAME</name><value>Layout Owner</value></column>
         <column><name>EMAIL</name><value></value></column>
       </row>
       <row>
         <column><name>USER_NAME</name><value>guest-lo</value></column>
         <column><name>ENCRPTD_PSWD</name><value>(MD5)NZpveCmtCTXi6qaq0Rx7O5HcQDEW3MTE</value></column>
         <column><name>LST_PSWD_CGH_DT</name><value></value></column>
-        <column><name>FIRST_NAME</name><value></value></column>
-        <column><name>LAST_NAME</name><value></value></column>
+        <column><name>FIRST_NAME</name><value>Guest</value></column>
+        <column><name>LAST_NAME</name><value>Layout Owner</value></column>
         <column><name>EMAIL</name><value></value></column>
       </row>
       <row>
@@ -579,7 +579,7 @@
         <column><name>ENCRPTD_PSWD</name><value>(MD5)d3ST813VSpkgg4g7mlVsK2T2pue7b9J6</value></column>
         <column><name>LST_PSWD_CGH_DT</name><value></value></column>
         <column><name>FIRST_NAME</name><value>News</value></column>
-        <column><name>LAST_NAME</name><value>Fragment</value></column>
+        <column><name>LAST_NAME</name><value>Layout Owner</value></column>
         <column><name>EMAIL</name><value></value></column>
       </row>
         <row>
@@ -623,7 +623,7 @@
           <column><name>ENCRPTD_PSWD</name><value>(MD5)d3ST813VSpkgg4g7mlVsK2T2pue7b9J6</value></column>
           <column><name>LST_PSWD_CGH_DT</name><value></value></column>
           <column><name>FIRST_NAME</name><value>Bookmarks</value></column>
-          <column><name>LAST_NAME</name><value>FragmentOwner</value></column>
+          <column><name>LAST_NAME</name><value>Layout Owner</value></column>
           <column><name>EMAIL</name><value>password.that.of.news-lo@ja-sig.org</value></column>
         </row>
         
@@ -5271,6 +5271,12 @@
         <column><name>GROUP_ID</name><value>15</value></column>
         <column><name>MEMBER_SERVICE</name><value>local</value></column>
         <column><name>MEMBER_KEY</name><value>guest</value></column>
+        <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
+     </row>
+     <row>
+        <column><name>GROUP_ID</name><value>15</value></column>
+        <column><name>MEMBER_SERVICE</name><value>local</value></column>
+        <column><name>MEMBER_KEY</name><value>guest-lo</value></column>
         <column><name>MEMBER_IS_GROUP</name><value>F</value></column>
      </row>
      <row>
