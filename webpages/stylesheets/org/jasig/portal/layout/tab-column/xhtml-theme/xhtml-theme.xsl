@@ -168,7 +168,9 @@
 												<input id="newTabName" type="text" value="{@name}"/>&#160;
 												<input id="tabNameSubmit" type="button" value="Done" onclick="updateTabName('{@ID}')" class="portlet-form-button"/>
 												<img src="{$mediaPath}/{$skin}/controls/rightarrow.gif" onclick="moveTab('{@ID}', 'right')" title="Move tab right" alt="Move tab right"/>
-												<img src="{$mediaPath}/{$skin}/controls/remove_tab.gif" onclick="deleteTab('{@ID}')" title="Remove tab" alt="Remove tab"/>
+												<xsl:if test="not(@dlm:deleteAllowed='false')">
+													<img src="{$mediaPath}/{$skin}/controls/remove_tab.gif" onclick="deleteTab('{@ID}')" title="Remove tab" alt="Remove tab"/>
+												</xsl:if>
 											</span>
 										</a>
 									</li>

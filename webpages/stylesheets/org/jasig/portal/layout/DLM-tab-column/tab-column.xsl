@@ -117,6 +117,18 @@
           <xsl:attribute name="unremovable">
             <xsl:value-of select="@unremovable"/>
           </xsl:attribute>
+          <xsl:if test="@dlm:moveAllowed = 'false'">
+            <xsl:attribute name="dlm:moveAllowed">false</xsl:attribute>
+          </xsl:if>
+          <xsl:if test="@dlm:deleteAllowed = 'false'">
+            <xsl:attribute name="dlm:deleteAllowed">false</xsl:attribute>
+          </xsl:if>
+          <xsl:if test="@dlm:editAllowed = 'false'">
+            <xsl:attribute name="dlm:editAllowed">false</xsl:attribute>
+          </xsl:if>
+          <xsl:if test="@dlm:addChildAllowed = 'false'">
+            <xsl:attribute name="dlm:addChildAllowed">false</xsl:attribute>
+          </xsl:if>
       	<xsl:choose>
       	  <xsl:when test="$activeTabID = @ID">
       	    <xsl:attribute name="activeTab">true</xsl:attribute>
