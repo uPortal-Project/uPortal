@@ -5,6 +5,9 @@
 
 package org.jasig.portal.security.provider;
 
+import java.util.Arrays;
+import java.util.Collections;
+
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPermission;
@@ -52,4 +55,12 @@ public IPermission[] getPermissions() {
 public EntityIdentifier getEntityIdentifier() {
     return entityIdentifier;
 }
+
+  public String toString() {
+	StringBuffer sb = new StringBuffer();
+	sb.append("PermissionSetImpl: entitityIdentifier=[" + this.entityIdentifier + "]");
+	sb.append(" permissions: [" + Arrays.toString(permissions) + "]");
+	return sb.toString();
+  }
+
 }
