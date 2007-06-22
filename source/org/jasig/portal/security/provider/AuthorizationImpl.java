@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
@@ -59,7 +60,7 @@ public class AuthorizationImpl implements IAuthorizationService {
     private IPermissionPolicy defaultPermissionPolicy;
 
     /** The cache to hold the list of principals. */
-    private Map principalCache = CacheFactoryLocator.getCacheFactory().getCache(CacheFactory.PRINCIPAL_CACHE);
+    private Map<String, IAuthorizationPrincipal> principalCache = CacheFactoryLocator.getCacheFactory().getCache(CacheFactory.PRINCIPAL_CACHE);
 
     /** The class representing the permission set type. */
     private Class PERMISSION_SET_TYPE;
@@ -119,7 +120,7 @@ throws AuthorizationException
           EntityCachingService.instance().get(this.PERMISSION_SET_TYPE, principal.getPrincipalString());
     }
     catch (CachingException ce)
-        { throw new AuthorizationException("Problem adding permissions for " + principal + " to cache", ce); }
+        { throw new AuthorizationException("Problem getting permissions for " + principal + " from cache", ce); }
 }
 
 /**
@@ -257,7 +258,7 @@ public IPermission[] getAllPermissionsForPrincipal
 throws AuthorizationException
 {
     IPermission[] perms = getPermissionsForPrincipal(principal, owner, activity, target);
-    ArrayList al = new ArrayList(Arrays.asList(perms));
+    ArrayList<IPermission> al = new ArrayList<IPermission>(Arrays.asList(perms));
     Iterator i = getInheritedPrincipals(principal);
     while ( i.hasNext() )
     {
@@ -265,6 +266,12 @@ throws AuthorizationException
         perms = getPermissionsForPrincipal(p, owner, activity, target);
         al.addAll(Arrays.asList(perms));
     }
+    
+    if (log.isTraceEnabled()) {
+    	log.trace("query for all permissions for prcinipal=[" + principal + "], owner=[" + owner + 
+    			"], activity=[" + activity + "], target=[" + target + "] returned permissions [" + al + "]");
+    }
+    
     return ((IPermission[])al.toArray(new IPermission[al.size()]));
 }
 
@@ -323,16 +330,14 @@ throws GroupsException
 private IGroupMember getGroupMemberForPrincipal(IAuthorizationPrincipal principal)
 throws GroupsException
 {
-    if (log.isDebugEnabled())
-        log.debug( "AuthorizationImpl.getGroupMemberForPrincipal(): for principal " +
-                principal);
 
     IGroupMember gm = GroupService.getGroupMember(principal.getKey(), principal.getType());
 
-    if (log.isDebugEnabled())
-        log.debug("AuthorizationImpl.getGroupMemberForPrincipal(): " +
-                "got group member " + gm);
-
+    if (log.isDebugEnabled()) {
+        log.debug("AuthorizationImpl.getGroupMemberForPrincipal(): principal [" + principal + "] " +
+                "got group member [" + gm + "]");
+    }
+        
     return gm;
 }
 
@@ -360,7 +365,7 @@ private Iterator getInheritedPrincipals(IAuthorizationPrincipal principal)
 throws AuthorizationException
 {
     Iterator i = null;
-    ArrayList al = new ArrayList(5);
+    ArrayList<IAuthorizationPrincipal> al = new ArrayList<IAuthorizationPrincipal>(5);
 
     try
         { i = getGroupsForPrincipal(principal); }
@@ -710,17 +715,15 @@ private IPermission[] primGetPermissionsForPrincipal
     String target)
 throws AuthorizationException
 {
-    if (log.isDebugEnabled())
-        log.debug(
-          "AuthorizationImpl.primGetPermissionsForPrincipal(): " +
-          "Principal: " + principal + " owner: " + owner +
-          " activity: " + activity + " target: " + target);
+
 
 
     IPermission[] perms = primGetPermissionsForPrincipal(principal);
     if ( owner == null && activity == null && target == null )
         { return perms; }
-    ArrayList al = new ArrayList(perms.length);
+    
+    List<IPermission> al = new ArrayList<IPermission>(perms.length);
+    
     for ( int i=0; i<perms.length; i++ )
     {
         if (
@@ -731,10 +734,19 @@ throws AuthorizationException
             { al.add(perms[i]); }
     }
 
-    if (log.isDebugEnabled())
+
+    
+    if (log.isTraceEnabled()) {
+        log.trace(
+                "AuthorizationImpl.primGetPermissionsForPrincipal(): " +
+                "Principal: " + principal + " owner: " + owner +
+                " activity: " + activity + " target: " + target + " : permissions retrieved: " + al);
+    } else if (log.isDebugEnabled()) {
         log.debug(
                 "AuthorizationImpl.primGetPermissionsForPrincipal(): " +
-                "# permissions retrieved: " + al.size());
+                "Principal: " + principal + " owner: " + owner +
+                " activity: " + activity + " target: " + target + " : number of permissions retrieved: " + al.size());
+    }
 
 
     return ((IPermission[])al.toArray(new IPermission[al.size()]));
