@@ -154,7 +154,7 @@ public class TabColumnPrefsState extends BaseState
         if (!(internalState instanceof ResetLayoutState)) {
           internalState = new ResetLayoutState(this);
           internalState.setStaticData(staticData);
-        }        
+        }
       } else if (action.equals("managePreferences")) {
         internalState = new DefaultState(this);
         internalState.setStaticData(staticData);
@@ -164,13 +164,13 @@ public class TabColumnPrefsState extends BaseState
 
     try
     {
-        
+
       // Need this check so that we don't override the column width's we just set
       if (internalState instanceof DefaultState){
         if (((DefaultState)internalState).columnHasBeenAdded)
           return;
       }
-        
+
       // The profile the user is currently viewing or modifying...
       editedUserProfile = context.getEditedUserProfile();
       ulm = getUserLayoutManager();
@@ -283,15 +283,15 @@ public class TabColumnPrefsState extends BaseState
         newTab.setName(BLANK_TAB_NAME);
     }
     String siblingId=null;
-    if(method.equals("insertBefore")) 
+    if(method.equals("insertBefore"))
       siblingId=destinationTabId;
     ulm.addNode(newTab,ulm.getRootFolderId(),siblingId);
 
     // Add a new column to this tab
     IUserLayoutFolderDescription newColumn = createFolder("Column");
-    ulm.addNode(newColumn, newTab.getId(), null);    
+    ulm.addNode(newColumn, newTab.getId(), null);
   }
-  
+
   /**
    * This method will remove a column from the user's layout.  The column will be added into the layout
    * via the "add new column" link within the preferences channel.  Clicking on cancel after choosing to add
@@ -300,7 +300,7 @@ public class TabColumnPrefsState extends BaseState
   private final void removeNewColumn() {
       try {
           Document doc = this.ulm.getUserLayoutDOM();
-          Node nNewColumnNode = doc.getElementById(this.newColumnId);    
+          Node nNewColumnNode = doc.getElementById(this.newColumnId);
           if (nNewColumnNode != null){
             Node parent = nNewColumnNode.getParentNode();
             parent.removeChild(nNewColumnNode);
@@ -308,11 +308,11 @@ public class TabColumnPrefsState extends BaseState
           }
       } catch (Exception e){
           if (log.isDebugEnabled())
-              log.debug("removeNewColumn failed to find new column with id " 
+              log.debug("removeNewColumn failed to find new column with id "
                       + this.newColumnId);
       }
   }
-  
+
 
   /**
    * Adds a new column into the layout.  Before the column is added,
@@ -371,7 +371,7 @@ public class TabColumnPrefsState extends BaseState
       if (widthIsValid)
         ssup.setFolderAttributeValue(folderId, "width", newWidth);
       else
-        if (log.isDebugEnabled()) 
+        if (log.isDebugEnabled())
             log.debug("User id " + staticData.getPerson().getID() + " entered invalid column width: " + newWidth);
 
     }
@@ -506,7 +506,7 @@ public class TabColumnPrefsState extends BaseState
         if (list != null && list.getLength() > 0)
             this.setEvenlyAssignedColumnWidths(list);
         this.saveUserPreferences();
-        
+
       } else {
         // this is a tab, go ahead and delete it
         ulm.deleteNode(elementId);
@@ -527,14 +527,14 @@ public class TabColumnPrefsState extends BaseState
         Element c = (Element) list.item(i);
         String nId = c.getAttribute("ID");
         ssup.setFolderAttributeValue(nId, "width", (i == (list.getLength() - 1) ? columnSize+remainder+"%" : columnSize+"%"));
-    }            
+    }
   }
 
   private final void updateTabLock(String elementId, boolean locked) throws Exception
   {
       // NOTE: this method is to be removed soon.
   }
-  
+
   /**
    * A folder is a tab if its parent element is the layout element
    * @param folderId the id of the folder in question
@@ -1099,6 +1099,10 @@ public class TabColumnPrefsState extends BaseState
                 userPrefs.getThemeStylesheetUserPreferences().putParameterValue("skin",skinName);
                 // save user preferences
                 saveUserPreferences();
+                // reset state
+                BaseState df=new DefaultState(context);
+                df.setStaticData(staticData);
+                context.setState(df);
             } else if (runtimeData.getParameter("submitCancel")!=null) {
                 // return to the default state
                 BaseState df=new DefaultState(context);
@@ -1129,7 +1133,7 @@ public class TabColumnPrefsState extends BaseState
 					if (xmlStream != null)
 						xmlStream.close();
 				} catch (IOException exception) {
-					log.error("TabColumnPrefsState:renderXML()::unalbe to close InputStream ", exception);
+					log.error("TabColumnPrefsState:renderXML()::unable to close InputStream ", exception);
 				}
 			}
     }
