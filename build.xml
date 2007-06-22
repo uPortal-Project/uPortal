@@ -600,7 +600,7 @@
          /META-INF/context.xml .
     -->
     <mkdir dir="${deploy.home}/META-INF"/>
-    <copy tofile="${deploy.home}/META-INF/context.xml" file="properties/${webapp.contextFile}">
+    <copy file="properties/${webapp.contextFile}" tofile="${deploy.home}/META-INF/context.xml" overwrite="true">
         <filterset>
             <filter token="webappDocBase" value="${webapp.docBase}"/>
             <filter token="webappPath" value="${webapp.path}"/>
