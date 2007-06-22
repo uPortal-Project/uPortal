@@ -12,12 +12,16 @@
   
   <dlm:property name='org.jasig.portal.layout.dlm.RDBMDistributedLayoutStore.fragment_cache_refresh' value="5"/>
 
-  <dlm:fragment name='Entertainment' ownerID='ent-lo' precedence='100'>
-	 <dlm:audience evaluatorFactory='org.jasig.portal.layout.dlm.providers.PersonEvaluatorFactory'>
-	  <paren mode="NOT">
-       <attribute name="username" mode='equals' value='guest'/>
- 	  </paren>
-	 </dlm:audience>
+  <dlm:fragment name='News' ownerID='news-lo' precedence='80'>
+    <!--  <dlm:role>Students</dlm:role> -->
+    <dlm:audience evaluatorFactory='org.jasig.portal.layout.dlm.providers.GroupMembershipEvaluatorFactory'>
+      <paren mode="AND">     
+        <attribute mode='memberOf' name='Students'/>
+        <paren mode="NOT">
+          <attribute mode='memberOf' name='Faculty'/>
+        </paren>
+      </paren>
+    </dlm:audience>
   </dlm:fragment>
 
   <dlm:fragment name='Portlets' ownerID='portlets-lo' precedence='40'>
@@ -28,20 +32,17 @@
     </dlm:audience>
   </dlm:fragment>
 
-  <dlm:fragment name='News' ownerID='news-lo' precedence='80'>
-   <!--  <dlm:role>Students</dlm:role> -->
-   <dlm:audience evaluatorFactory='org.jasig.portal.layout.dlm.providers.GroupMembershipEvaluatorFactory'>
-     <paren mode="AND">     
-       <attribute mode='memberOf' name='Students'/>
-       <paren mode="NOT">
-	       <attribute mode='memberOf' name='Faculty'/>
-       </paren>
-     </paren>
-   </dlm:audience>
- </dlm:fragment>
   
-  <dlm:fragment name='Guests' ownerID='guest-lo' precedence='10'>
+  <dlm:fragment name='Guests' ownerID='guest-lo' precedence='20'>
    <dlm:audience evaluatorFactory='org.jasig.portal.layout.dlm.providers.GuestUserEvaluatorFactory'/>
+  </dlm:fragment>
+  
+  <dlm:fragment name='Entertainment' ownerID='ent-lo' precedence='10'>
+    <dlm:audience evaluatorFactory='org.jasig.portal.layout.dlm.providers.PersonEvaluatorFactory'>
+      <paren mode="NOT">
+        <attribute name="username" mode='equals' value='guest'/>
+      </paren>
+    </dlm:audience>
   </dlm:fragment>
 
 </managedLayoutFragments>
