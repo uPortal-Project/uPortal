@@ -362,6 +362,10 @@ public class Channel
      */
     public void setRuntimeData(ChannelRuntimeData rd) throws PortalException
     {
+    	
+    	if (log.isTraceEnabled()) {
+    		log.trace("JSP Channel received setRuntimeData [" + rd + "]");
+    	}
         if (mController != null)
         {
             super.setRuntimeData(new MediaResolver(rd));
