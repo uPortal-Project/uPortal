@@ -1,15 +1,15 @@
 <html>
 <head>
-<title>uPortal 2.6.0 M2 release notes</title>
+<title>uPortal 2.6.0 RC2 release notes</title>
 </head>
 <body>
 
 <p>This is a file for notes specific to
-<a href="http://www.ja-sig.org/wiki">uPortal 2.6.0 milestone 2</a>.  Part of the point of
-a milestone release is to make a particular snapshot of progress evailable for
-review and evaluation, so what is known up front and included in these release
-notes will be less than what is discovered about the milestone post release.</p>
-<p>Therefore, please see <a href="http://www.ja-sig.org/wiki">this release's wiki page</a> for more information.</p>
+<a href="http://www.ja-sig.org/wiki/x/0gBl">uPortal 2.6.0 release candidate 2</a>.  Part of the point of
+a release candidate release is to make a particular snapshot of progress evailable for
+review and evaluation, so what is known up front and could have been included in these release
+notes will be less than what is discovered about the release candidate post release.</p>
+<p>Therefore, please see <a href="http://www.ja-sig.org/wiki/x/0gBl">this release's wiki page</a> for more information.</p>
 <h2>Requirements:</h2>
 <ul>
 <li>JDK 1.5 or later</li>
@@ -20,223 +20,10 @@ versions are supported via declaration in the DbLoader utility; if you want to u
 a different database you'll need to declare its eccentricities there.)</li>
 </ul>
 
-<h2>Improvements in this release</h2>
-<p>This is a snapshot of the Jira-generated release notes for this release.</p>
-
-Release Notes - uPortal - <a href="http://www.ja-sig.org/wiki/x/ZgIs">Version 2.6.0 M1</a>
-
-<h3>Bugs resolved in this release</h3>
-<ul>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-550'>UP-550</a>] - contentSubscriber.xsl is no longer needed</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-634'>UP-634</a>] - Need the ability to extend PortalSessionManager</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-667'>UP-667</a>] - pubchan definitions for contentsubscriber.xml, fragment-manager.xml, andskinselector.xml  doesn't match data.xml definition</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-820'>UP-820</a>] - Group Manager Servant does not complete when no selections are made</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-889'>UP-889</a>] - Group manager servant (getGroupsServantforAddRemove)</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-921'>UP-921</a>] - very long time to connect: AggregatedUserLayoutStore SQL</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1014'>UP-1014</a>] - tables.xml UP_LAYOUT_RESTRICTIONS RESTRICTION_NAME should declare version</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1063'>UP-1063</a>] - change catch (Exception e) to catch (NumberFormatException e)</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1112'>UP-1112</a>] - inconsistent attributes returned from USER_INFO map</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1124'>UP-1124</a>] - PortletStateManager.clearState(PortletWindow) implementation is buggy and can lead to ConcurrentModificationException under stress.</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1125'>UP-1125</a>] - memory leak happens under stress when CPortletAdapter portlets are asked to clean themselves up when the session ends.</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1139'>UP-1139</a>] - RDBMPortletPreferencesStore doesn't handle "" versus NULL correctly on Oracle</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1140'>UP-1140</a>] - dlm namespace is being passed into output document sent to browser</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1142'>UP-1142</a>] - deployPortletApp can't install correctly web.xml utf-8 encoding.</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1143'>UP-1143</a>] - Guest fragment showing in demo user account</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1145'>UP-1145</a>] - access to SoftHashMap systemCache across threads is not synchronized</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1157'>UP-1157</a>] - Authentication NPE: fails to handle null return from IPersonAttributeDao</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1167'>UP-1167</a>] - GuestUserPreferencesManager loses non-Exception cause</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1174'>UP-1174</a>] - add properties/statsContext.xml to configure stats recorders</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1176'>UP-1176</a>] - DLM Channel deletion not being persisted</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1199'>UP-1199</a>] - Revert To Default Layout does not take effect immediately</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1204'>UP-1204</a>] - failed unit tests should cause build to abort and fail</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1205'>UP-1205</a>] - useragent causes invalid sql in setUserBrowserMapping()</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1222'>UP-1222</a>] - Errors when adding a channel to layout are not appearing in the page.</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1224'>UP-1224</a>] - StackOverflowError produced by DLM</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1226'>UP-1226</a>] - JSR-168 portlet cannot access the multipart content</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1227'>UP-1227</a>] - WebProxy does not close urlconnection inputstream</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1243'>UP-1243</a>] - NullPointerException getting PortletContext from PortletSession</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1248'>UP-1248</a>] - Bad db version number  in DbLoader.xml for MS SQL server</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1252'>UP-1252</a>] - Change processing order for uP_save</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1258'>UP-1258</a>] - The portal skin seen by a user changes sporadically in DLM.</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1259'>UP-1259</a>] - Permission supported by CError channel is ungrantable to anyone besides the admin user.</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1260'>UP-1260</a>] - Saving UserPreferences in DLM is pushing all information in preferences into the database</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1263'>UP-1263</a>] - ALM specific code in UserInstance.processUserLayoutParameters() needs to be moved into ALMs layout manager</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1273'>UP-1273</a>] - default template user not recognized by RDBMUserLayoutStore</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1287'>UP-1287</a>] - Use of anchor links around channel titles causes titles to appear in the same color as channel links</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1288'>UP-1288</a>] - UserLayoutChannelDescription contradicting code needs to be fixed.</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1303'>UP-1303</a>] - Refactor CGenericXSLT to not implement IMultithreaded* interfaces</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1305'>UP-1305</a>] - LoginServlet doesn't cope with ISE from multiply invalidating session</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1309'>UP-1309</a>] - LogoutServlet doesn't cope with ISE on sesion.invalidate().</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1330'>UP-1330</a>] - Remove unused portal/properties/al.properties</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1334'>UP-1334</a>] - org.jasig.portal.layout.dlm.LPA_* classes shouldn't be named with an underscore in the class name</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1336'>UP-1336</a>] - dlm.EditManager.removeDirective() catches Exception and doesn't log error</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1337'>UP-1337</a>] - dlm.PrarameterEditManager.applyEdit and applyAndUpdateParmEditSet throw Exception</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1338'>UP-1338</a>] - dlm.PLFingegrator.applyChildChanges() throws a java.lang.Error instead of a RuntimeException or a PortalException</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1339'>UP-1339</a>] - dlm.PLFingegrator.mergePLFintoILF() doesn't need to declare throws Exception</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1341'>UP-1341</a>] - dlm.channels.guide.DlmInfroChannel.renderCharacters doesn't need to catch and wrap Exception in a PortalException</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1346'>UP-1346</a>] - In DLMUserPreferences.ManageProfilesState: Change to using DOM3 standard classes instead of internal implementation classes.</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1347'>UP-1347</a>] - Request wrappers do not pass the most recent merged copy of the query string and the request parameters.</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1349'>UP-1349</a>] - CWebProxy security exploit: proxies file system content</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1359'>UP-1359</a>] - Debug message in RDBMDistributedLayoutStore says it is RDBMUserLayoutStore</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1367'>UP-1367</a>] - Refactor CImage to not implement IMultithreaded* interfaces</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1368'>UP-1368</a>] - Refactor CInlineFrame to not implement IMultithreaded* interfaces</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1369'>UP-1369</a>] - Refactor CApplet to not implement IMultithreaded* interfaces</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1370'>UP-1370</a>] - Refactor CPersonAttributes to not implement IMultithreaded* interfaces</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1371'>UP-1371</a>] - Refactor CGroupsManager to not implement IMultithreaded* interfaces</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1381'>UP-1381</a>] - DLM does not save overwritten static parameter correctly</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1386'>UP-1386</a>] - SybSQLException thrown while updating column width.</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1387'>UP-1387</a>] - After upgrading from uportal 2.2 and while using the channel manager to set a category for a new channel, the categories on the left side of the groups manager servant is blank. </li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1388'>UP-1388</a>] - RemoteUserPersonManager doesn't setRemoteUser for single RemoteUserSecurityContext</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1389'>UP-1389</a>] - Car compiled with Newer JVM than runtime env and containing ext block breaks portal</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1397'>UP-1397</a>] - Inadvertently commented out inclusion of userName parameter to theme stylesheet</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1407'>UP-1407</a>] - IllegalArgumentException  on response.setContentType{"application/x-download");</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1415'>UP-1415</a>] - CPortletAdapter needlessly groups portlet rendering</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1417'>UP-1417</a>] - NullPointerException in DLMUserPrefs if channel has not overrideable parameters</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1418'>UP-1418</a>] - Empty cp:origin values are being written to up_layout_param</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1419'>UP-1419</a>] - Make channel parameter persistence thread safe.</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1420'>UP-1420</a>] - DLM edit sets are being added to nodes that belong to a user</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1421'>UP-1421</a>] - CContentSubscriber does not display available fragments</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1458'>UP-1458</a>] - RSS feed in database on HEAD broken: http://jasigch.princeton.edu/static/jasigdev.rss</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1476'>UP-1476</a>] - n CPermissionsManager comment tags around javascript are escaped when rendering as XHTML</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1483'>UP-1483</a>] - Cannot add new tab, delete tab or delete column in DLM User Prefs</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1486'>UP-1486</a>] - Merge in upstream changes from Xerces into serializer code</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1490'>UP-1490</a>] - RDBMChannelRegistryStore.getChannelDefinition argument validation</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1491'>UP-1491</a>] - Rework CPermissionsManager exception handling so that if there is an error in the XSLT that causes and exception the error message will be displayed in the error channel</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1510'>UP-1510</a>] - CInlineFrame hardcodes supported browsers</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1515'>UP-1515</a>] - fragmentTemplate is a member of the Everyone group</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1531'>UP-1531</a>] - Under Xalan 2.7.0 GroupsManager channel throws NPE if group description is null</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1544'>UP-1544</a>] - PersonDirInfoAdaptorTest fails by bad external data</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1545'>UP-1545</a>] - LdapPersonAttributeDaoImplTest fails due to bad external data</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1551'>UP-1551</a>] - Snooper channel stops rendering at PathInfo if using Xalan 2.7.0</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1561'>UP-1561</a>] - Unverified bug - Unfocusing an ICC channel crashes uPortal</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1562'>UP-1562</a>] - Fragment manager: duplicate information on info button when publishing fragment</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1565'>UP-1565</a>] - guest users share portlet cache</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1566'>UP-1566</a>] - concurrency problems sharing data via request attribute</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1569'>UP-1569</a>] - do not allow fragments to be added to fragments</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1573'>UP-1573</a>] - RDBMUserIdentityStore use lockable groups</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1590'>UP-1590</a>] - Portlet / Servlet session sharing</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1607'>UP-1607</a>] - groupsmanager's xsl file should use post method in the form tag</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1619'>UP-1619</a>] - Content Subscriber channel does not display available pulled fragments for a group unless at least one pushed fragment is published to the group</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1630'>UP-1630</a>] - CGenericXSLT doesn't handle empty string for upc_localConnContext, which causes ClassNotFound exception</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1644'>UP-1644</a>] - non privileged channels should get to know if they're being targeted.</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1645'>UP-1645</a>] - JSP Channel causes portal rendering to fail</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1647'>UP-1647</a>] - Portlet Preferences store() method will fail if preference is also defined in portlet.xml</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1648'>UP-1648</a>] - Fix CasSecurityContextMockTest to cope with CasProxyTicketAcquisitionException deriving from RuntimeException</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1649'>UP-1649</a>] - README in /docs/ no longer relevant</li>
-</ul>
-
-<h3>Improvements realized in this release</h3>
-<ul>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-126'>UP-126</a>] - LocalConnectionContext parameter for CGenericXSLT, RSS</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1018'>UP-1018</a>] - org.jasig.portal.Version performance</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1079'>UP-1079</a>] - StaticInformationProvider.getPortletDefinition() should give helpful exception if portletGUID doesn't have a "."</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1098'>UP-1098</a>] - ChecksServlet separate failed from passed checks</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1134'>UP-1134</a>] - Track user state in such a way to allow for session replication</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1135'>UP-1135</a>] - JavaDoc UserInstance.systemCache</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1136'>UP-1136</a>] - JavaDoc UserInstance.systemCharacterCache</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1137'>UP-1137</a>] - eliminate use of concat operator in default persondirs query to support more dbs by default</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1160'>UP-1160</a>] - add publish parameter "cacheScope" to CGenericXSLT</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1162'>UP-1162</a>] - Change trace to warn in CError.java to log the xml error info to the log when a channel fails to render</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1163'>UP-1163</a>] - Log warning for exceptions and errors in HttpProxyServlet</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1168'>UP-1168</a>] - RemoteUserPersonManager support security chains in security.properties</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1170'>UP-1170</a>] - remove unused public member RDBMServices.RETRY_COUNT</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1179'>UP-1179</a>] - Debug statements in the codebase causes un-necessary creation of string objects.</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1180'>UP-1180</a>] - Reduce object creation in SubstitutionIntegerFilter.java</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1181'>UP-1181</a>] - Reduce number of MediaManager objects created</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1195'>UP-1195</a>] - Make SoftHashMap inherently threadsafe</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1209'>UP-1209</a>] - display "Custom" as channel type in Channel Manager</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1251'>UP-1251</a>] - caching userInfo</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1256'>UP-1256</a>] - dbloader.xml entry for jTDS 1.1</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1269'>UP-1269</a>] - Allow configuration of item expiration time for WhirlyCacheCacheFactory generated Maps</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1284'>UP-1284</a>] - Need 'deepMemberOf' mode in GroupMembershipEvaluator</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1299'>UP-1299</a>] - Deprecate IMultithreadedChannel</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1300'>UP-1300</a>] - Refactor CPortletAdapter to not implement IMultithreaded* interfaces</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1306'>UP-1306</a>] - Include URI of missing resource in XSLT missing resource exception message</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1307'>UP-1307</a>] - ChannelRenderer instance logger</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1313'>UP-1313</a>] - Modify Version.java to support security releases</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1318'>UP-1318</a>] - ConditionalStatsRecorder unit test</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1362'>UP-1362</a>] - Allow multiple threads to concurrently instantiate channels</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1372'>UP-1372</a>] - ChannelManager detect and report with context null return from channel instantiation</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1373'>UP-1373</a>] - Include WSRP consumer example</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1374'>UP-1374</a>] - BlockedUriException serializability</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1377'>UP-1377</a>] - add dependency on spring-mock.jar</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1378'>UP-1378</a>] - JUnit test for DummyParameterRequestWrapper</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1379'>UP-1379</a>] - testcase for TitledChannelRuntimeProperties</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1382'>UP-1382</a>] - Configure cache timeout in CGenericXSLT channel publishing workflow</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1393'>UP-1393</a>] - include in security.properties commented example of CAS and local authn</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1394'>UP-1394</a>] - move CAS uPortal security provider into uP source tree</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1395'>UP-1395</a>] - LocalConnectionContext provide Log instance</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1396'>UP-1396</a>] - ChainingSecurityContext provide protected final Log instance</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1428'>UP-1428</a>] - upgrade to xalan 2.7.0</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1449'>UP-1449</a>] - RDBMDistributedLayoutStore should use backport-concurrent.jar</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1467'>UP-1467</a>] - The recursive search algorithm for group memberships should be improved.</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1469'>UP-1469</a>] - Improvements to the Filesystem group store</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1470'>UP-1470</a>] - org.jasig.portal.groups.CompositeEntityIdentifier is a bottleneck.</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1481'>UP-1481</a>] - Expensive compares in SAX2BufferImpl.outputBuffer()</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1505'>UP-1505</a>] - Make groups manager user search case insensitive</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1506'>UP-1506</a>] - RDBMPermissionImpl use prepared statements</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1532'>UP-1532</a>] - The GroupMembershipEvaluator does not pick up group membership changes.</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1540'>UP-1540</a>] - upgrade TagSoup jar to 1.0.1</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1547'>UP-1547</a>] - upgrade xalan from xalan-2-6-0 to latest version xalan-2-7-0</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1548'>UP-1548</a>] - upgrade Xerces version from Xerces-J 2.6.2 to Xerces-J 2.7.1</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1556'>UP-1556</a>] - PAGS should log exception when fails to acquire attributes for a potential group member</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1560'>UP-1560</a>] - Refactor UserInstance to extract user layout parameter processing into helper object</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1567'>UP-1567</a>] - CPortletAdapter render memory usage optimization</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1568'>UP-1568</a>] - GroupMemberImpl allow integration with group impls that do not extend from it</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1570'>UP-1570</a>] - prohibit publishing fragments to individual users</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1571'>UP-1571</a>] - Present upload status to channels</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1572'>UP-1572</a>] - make JNDI base context configurable</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1574'>UP-1574</a>] - RDBMUserIdentityStore getPortalUID only locked per user</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1575'>UP-1575</a>] - UserInstance system caches enable cross user cache hits</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1576'>UP-1576</a>] - DbLoader changes to support additional platforms</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1577'>UP-1577</a>] - AggregatedUserLayoutStore setAggregatedLayout optimization</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1578'>UP-1578</a>] - AggregatedUserlayoutStore setAggregatedLayout adhere to foreign key constraints</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1581'>UP-1581</a>] - CSkinSelector skin path configurable</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1584'>UP-1584</a>] - AggregatedUserLayoutStore no-op in constructor</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1585'>UP-1585</a>] - Eliminate unused useOuterJoins logic branch in AggregatedUserLayoutStore</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1591'>UP-1591</a>] - Upgrade spring to 2.0.0 release for uPortal 2.6</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1593'>UP-1593</a>] - CAbstractXslt callbacks on channel data receipt</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1612'>UP-1612</a>] - Version.dottedTriple()</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1623'>UP-1623</a>] - Implement new JDBC 4 methods in RDBMServices.DataSource inner class</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1632'>UP-1632</a>] - Provide example XML input to default CSqlQuery XSLT</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1633'>UP-1633</a>] - AuthorizationImpl instance rather than static Log</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1634'>UP-1634</a>] - Unsynchronize needlessly synchronized AuthorizationImpl singleton() method</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1635'>UP-1635</a>] - add copyright header to CSqlQuery.cpd</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1638'>UP-1638</a>] - Create IRequestParamWrapper interface for accessing request parameters </li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1639'>UP-1639</a>] - Enable guest users to have a separate session timeout</li>
-</ul>
-
-<h3>New Features added in this release</h3>
-<ul>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-608'>UP-608</a>] - Allow for more than one Stats Recorder</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-838'>UP-838</a>] - Produce Reference/Default CSS Theme</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1246'>UP-1246</a>] - Dynamic channel titles</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1286'>UP-1286</a>] - Add ability to preserve changes to channel parameters in ChannelStaticData</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1317'>UP-1317</a>] - MockStatsRecorder</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1358'>UP-1358</a>] - Make transient channels available to theme stylesheet use</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1380'>UP-1380</a>] - JA-SIG news RSS example</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1413'>UP-1413</a>] - id tag in channel publishing fragments</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1492'>UP-1492</a>] - CImage channel provision alt attribute in generated img tags</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1501'>UP-1501</a>] - Add layout publish and export Ant tools for DLM</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1503'>UP-1503</a>] - Make Serializer available to channels</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1508'>UP-1508</a>] - PerformantMessageStatsRecorder</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1549'>UP-1549</a>] - Authorization with double faced username</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1594'>UP-1594</a>] - CSqlQuery</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1609'>UP-1609</a>] - CVersion channel</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1610'>UP-1610</a>] - CGenericXslt exposes XSLT parameters for all registered component versions</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1614'>UP-1614</a>] - Require and build with JDK 1.5</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1616'>UP-1616</a>] - AnyUnblockedGrantPermissionPolicy</li>
-</ul>
-
-<h3>Tasks completed for this release</h3>
-<ul>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1046'>UP-1046</a>] - Make DLM the default</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1344'>UP-1344</a>] - Clean up code from UP-1286 changes</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1427'>UP-1427</a>] - sample portlet to use exclusive window state</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1523'>UP-1523</a>] - move /docs/website to ATTIC</li>
-<li>[<a href='http://www.ja-sig.org/issues/browse/UP-1592'>UP-1592</a>] - Adopt JDK 1.5 requirement for uPortal 2.6</li>
-</ul>
-
+<h2>What changed for this release</h2>
+<p>
+Issues resolved for this release are enumerated <a href="http://www.ja-sig.org/wiki/x/0gBl">on the wiki page</a>.
+</p>
 
 <h2>Known issues affecting this release</h2>
 
