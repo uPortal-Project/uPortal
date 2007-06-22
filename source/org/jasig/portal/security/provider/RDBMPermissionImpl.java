@@ -13,6 +13,7 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -136,8 +137,8 @@ public void delete(IPermission[] perms) throws AuthorizationException
         }
         catch (Exception ex)
         {
-            log.error("Exception deleting permissions " + perms, ex);
-            throw new AuthorizationException(ex);
+            log.error("Exception deleting permissions " + Arrays.toString(perms), ex);
+            throw new AuthorizationException("Exception deleting permissions " + Arrays.toString(perms), ex);
         }
     }
 }
@@ -163,7 +164,7 @@ public void delete(IPermission perm) throws AuthorizationException
     catch (Exception ex)
     {
         log.error("Exception deleting permission [" + perm + "]", ex);
-        throw new AuthorizationException("Problem deleting Permission " + perm);
+        throw new AuthorizationException("Problem deleting Permission " + perm, ex);
     }
     finally
         { RDBMServices.releaseConnection(conn); }
@@ -736,6 +737,11 @@ private String getSelectQuery(String owner, String principal, String activity,
 	sqlQuery.append(" = ? ");
 	}
 	
+	if (log.isTraceEnabled()) {
+		log.trace("Computed SQL query [" + sqlQuery + "] for owner=[" + owner + "] and principal=[" + principal + 
+				"] and activity=[" + activity + "] and target=[" + target + "] and type=[" + type + "]");
+	}
+	
 	return sqlQuery.toString();
 }
 
@@ -757,12 +763,10 @@ throws AuthorizationException
     Connection conn = null;
     PreparedStatement stmt = null;
     ResultSet rs = null;
-    List perms = new ArrayList();
+    List<IPermission> perms = new ArrayList<IPermission>();
 
     String query = getSelectQuery(owner, principal, activity, target, type);
-    if (log.isDebugEnabled()) {
-        log.debug("RDBMPermissionImpl.select(): " + query);
-    }
+
 
     try {
         conn = RDBMServices.getConnection();
@@ -777,9 +781,16 @@ throws AuthorizationException
         } finally { stmt.close(); }
     } catch (SQLException sqle) {
         log.error("Problem retrieving permissions", sqle);
-        throw new AuthorizationException("Problem retrieving Permissions " + sqle.getMessage(), sqle);
+        throw new AuthorizationException("Problem retrieving Permissions [" + sqle.getMessage() + "] for query=[" + query + 
+        		"] for owner=[" + owner + "] and principal=[" + principal + "] and activity=[" + activity + 
+        		"] and target=[" + target + "] and type=[" + type + "]", sqle);
     } finally { RDBMServices.releaseConnection(conn); }
 
+    if (log.isTraceEnabled()) {
+        log.trace("RDBMPermissionImpl.select(): [" + query + "] for owner=[" + owner + "] and principal=[" 
+        		+ principal + "] and activity=[" + activity + "] and target=[" + target + "] and type=[" + type + "] returned permissions [" + perms + "]");
+    }
+    
     return ((IPermission[])perms.toArray(new IPermission[perms.size()]));
 
 }
