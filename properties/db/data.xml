@@ -3557,6 +3557,7 @@
         <column><name>PARAM_VAL</name><value>30%</value></column>
       </row>
 
+
       <row>
         <column><name>USER_ID</name><value>7</value></column>
         <column><name>PROFILE_ID</name><value>1</value></column>
@@ -3567,6 +3568,18 @@
         <column><name>PARAM_TYPE</name><value>2</value></column>
         <column><name>PARAM_VAL</name><value>60%</value></column>
       </row>
+      <row>
+        <column><name>USER_ID</name><value>7</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>4</value></column>
+        <column><name>SS_TYPE</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>5</value></column>
+        <column><name>PARAM_NAME</name><value>width</value></column>
+        <column><name>PARAM_TYPE</name><value>2</value></column>
+        <column><name>PARAM_VAL</name><value>60%</value></column>
+      </row>
+      
+      
       <row>
         <column><name>USER_ID</name><value>7</value></column>
         <column><name>PROFILE_ID</name><value>1</value></column>
@@ -3580,6 +3593,18 @@
       <row>
         <column><name>USER_ID</name><value>7</value></column>
         <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>4</value></column>
+        <column><name>SS_TYPE</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>8</value></column>
+        <column><name>PARAM_NAME</name><value>width</value></column>
+        <column><name>PARAM_TYPE</name><value>2</value></column>
+        <column><name>PARAM_VAL</name><value>40%</value></column>
+      </row>
+      
+      
+      <row>
+        <column><name>USER_ID</name><value>7</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
         <column><name>SS_ID</name><value>1</value></column>
         <column><name>SS_TYPE</name><value>1</value></column>
         <column><name>STRUCT_ID</name><value>11</value></column>
@@ -3587,6 +3612,19 @@
         <column><name>PARAM_TYPE</name><value>2</value></column>
         <column><name>PARAM_VAL</name><value>50%</value></column>
       </row>
+      <row>
+        <column><name>USER_ID</name><value>7</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>4</value></column>
+        <column><name>SS_TYPE</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>11</value></column>
+        <column><name>PARAM_NAME</name><value>width</value></column>
+        <column><name>PARAM_TYPE</name><value>2</value></column>
+        <column><name>PARAM_VAL</name><value>50%</value></column>
+      </row>
+      
+      
+      
        <row>
         <column><name>USER_ID</name><value>7</value></column>
         <column><name>PROFILE_ID</name><value>1</value></column>
@@ -3600,6 +3638,18 @@
       <row>
         <column><name>USER_ID</name><value>7</value></column>
         <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>4</value></column>
+        <column><name>SS_TYPE</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>13</value></column>
+        <column><name>PARAM_NAME</name><value>width</value></column>
+        <column><name>PARAM_TYPE</name><value>2</value></column>
+        <column><name>PARAM_VAL</name><value>50%</value></column>
+      </row>
+      
+      
+      <row>
+        <column><name>USER_ID</name><value>7</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
         <column><name>SS_ID</name><value>1</value></column>
         <column><name>SS_TYPE</name><value>1</value></column>
         <column><name>STRUCT_ID</name><value>22</value></column>
@@ -3607,6 +3657,18 @@
         <column><name>PARAM_TYPE</name><value>2</value></column>
         <column><name>PARAM_VAL</name><value>50%</value></column>
       </row>
+      <row>
+        <column><name>USER_ID</name><value>7</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>4</value></column>
+        <column><name>SS_TYPE</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>22</value></column>
+        <column><name>PARAM_NAME</name><value>width</value></column>
+        <column><name>PARAM_TYPE</name><value>2</value></column>
+        <column><name>PARAM_VAL</name><value>50%</value></column>
+      </row>
+      
+      
       <row>
         <column><name>USER_ID</name><value>7</value></column>
         <column><name>PROFILE_ID</name><value>1</value></column>
@@ -3620,6 +3682,18 @@
       <row>
         <column><name>USER_ID</name><value>7</value></column>
         <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>4</value></column>
+        <column><name>SS_TYPE</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>25</value></column>
+        <column><name>PARAM_NAME</name><value>width</value></column>
+        <column><name>PARAM_TYPE</name><value>2</value></column>
+        <column><name>PARAM_VAL</name><value>50%</value></column>
+      </row>
+      
+      
+      <row>
+        <column><name>USER_ID</name><value>7</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
         <column><name>SS_ID</name><value>1</value></column>
         <column><name>SS_TYPE</name><value>1</value></column>
         <column><name>STRUCT_ID</name><value>34</value></column>
@@ -3627,6 +3701,17 @@
         <column><name>PARAM_TYPE</name><value>2</value></column>
         <column><name>PARAM_VAL</name><value>50%</value></column>
       </row>
+      <row>
+        <column><name>USER_ID</name><value>7</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>4</value></column>
+        <column><name>SS_TYPE</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>34</value></column>
+        <column><name>PARAM_NAME</name><value>width</value></column>
+        <column><name>PARAM_TYPE</name><value>2</value></column>
+        <column><name>PARAM_VAL</name><value>50%</value></column>
+      </row>
+      
       <row>
         <column><name>USER_ID</name><value>7</value></column>
         <column><name>PROFILE_ID</name><value>1</value></column>
@@ -3638,6 +3723,20 @@
         <column><name>PARAM_VAL</name><value>50%</value></column>
       </row>
       <row>
+        <column><name>USER_ID</name><value>7</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>SS_ID</name><value>4</value></column>
+        <column><name>SS_TYPE</name><value>1</value></column>
+        <column><name>STRUCT_ID</name><value>38</value></column>
+        <column><name>PARAM_NAME</name><value>width</value></column>
+        <column><name>PARAM_TYPE</name><value>2</value></column>
+        <column><name>PARAM_VAL</name><value>50%</value></column>
+      </row>
+      
+      
+      
+      
+      <row>
         <column><name>USER_ID</name><value>11</value></column>
         <column><name>PROFILE_ID</name><value>1</value></column>
         <column><name>SS_ID</name><value>1</value></column>
@@ -3647,6 +3746,9 @@
         <column><name>PARAM_TYPE</name><value>2</value></column>
         <column><name>PARAM_VAL</name><value>60%</value></column>
       </row>
+      
+      
+      
       <row>
         <column><name>USER_ID</name><value>11</value></column>
         <column><name>PROFILE_ID</name><value>1</value></column>
