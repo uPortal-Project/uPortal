@@ -163,6 +163,9 @@
 <property name="lib.runtime" value="./lib/runtime"/>
 <property name="lib.test" value="./lib/test"/>
 	
+	
+<!-- set this property to cause the build to print XML-formatted output -->
+<!--<property name="tests.xmlFormat" value="true"/>-->
 
 <!-- ==================== Compilation Classpath =========================== -->
 
@@ -521,6 +524,8 @@
 -->
 
   <target name="prepare">
+  	
+  	<mkdir dir="${dist.home}"/>
 
     <!-- Create build directory and copy static content -->
     <mkdir  dir="${build.home}"/>
@@ -1082,6 +1087,10 @@
 -->
   <!-- You must copy junit.jar into $ANT_HOME/lib directory for this to work -->
   <target name="runtests" depends="compiletests" description="Run JUnit Test Suite">
+  	
+
+  	  <mkdir dir="${dist.home}/testresults"/>
+  	
     <junit fork="true" printsummary="off" showoutput="off" dir=".."
       haltonerror="true" haltonfailure="true">
       <classpath>
@@ -1089,7 +1098,7 @@
         <path refid="tests.classpath"/>
         <path location="${build.home}/WEB-INF/classes"/>
       </classpath>
-      <batchtest>
+      <batchtest todir="${dist.home}/testresults">
       <fileset dir="${build.home}/WEB-INF/classes">
         <include name="**/*Test.class"/>
         <exclude name="**/Abstract*Test.class"/>
@@ -1098,6 +1107,7 @@
       </fileset>
     </batchtest>
     <formatter type="brief" usefile="no"/>
+  	<formatter type="xml" usefile="yes" if="tests.xmlFormat" />
   </junit>
   </target>
 
@@ -1123,6 +1133,8 @@
   </target>
 
 
+	
+	
 
 <!-- ==================== RunXSLT Target ================================ -->
 
