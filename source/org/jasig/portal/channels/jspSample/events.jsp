@@ -1,6 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8"%>
 <%@ page pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <table cellpadding="0" cellspacing="0" border="0" width="100%">
  <tr><td valign="top"><span class="uportal-channel-subtitle">Channel Events</span></td></tr>
