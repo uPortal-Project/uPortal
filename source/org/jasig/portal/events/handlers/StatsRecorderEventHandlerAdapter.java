@@ -41,7 +41,7 @@ import org.springframework.util.Assert;
  * @since 2.6
  * 
  */
-public final class IStatsRecorderEventHandlerAdapter implements EventHandler,
+public final class StatsRecorderEventHandlerAdapter implements EventHandler,
 		InitializingBean {
 
 	/** Instance of <code>IStatsRecorder</code> to delegate to. */
