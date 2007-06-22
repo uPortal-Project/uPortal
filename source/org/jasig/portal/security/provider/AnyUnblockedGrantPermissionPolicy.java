@@ -46,6 +46,7 @@ public class AnyUnblockedGrantPermissionPolicy
     implements IPermissionPolicy {
 
     protected final Log log = LogFactory.getLog(getClass());
+    
 
     public boolean doesPrincipalHavePermission(IAuthorizationService service, IAuthorizationPrincipal principal, String owner, String activity, String target) throws AuthorizationException {
         // the API states that the service, owner, and activity arguments must 
@@ -62,39 +63,66 @@ public class AnyUnblockedGrantPermissionPolicy
             return false;
         }
 
+        
+        
         // first check for explicit permissions for this Principal
         IPermission[] perms = service.getPermissionsForPrincipal(principal, owner, activity, target);
 
         Set<IPermission> activePermissions = activePermissions(perms);
 
         if (containsType(activePermissions, IPermission.PERMISSION_TYPE_DENY)) {
-            // explicit DENY
+            if (log.isTraceEnabled()) {
+            	log.trace("Principal [" + principal + "] is explicitly denied permission to perform activity [" + activity + "] on target [" + target + "] under permission owning system [" + owner + "].");
+            }
             return false;
         }
 
         if (containsType(activePermissions, IPermission.PERMISSION_TYPE_GRANT)) {
             // explicit GRANT
+            if (log.isTraceEnabled()) {
+            	log.trace("Principal [" + principal + "] is granted permission to perform activity [" + activity + "] on target [" + target + "] under permission owning system [" + owner + "] because this principal has an excplicit GRANT and does not have an exlicit DENY.");
+            }
             return true;
         }
 
         // no explicit permission.  Search for an unblocked GRANT.
+        boolean hasUnblockedPathToGrant;
         try {
             // track groups we've already explored to avoid infinite loop
             Set<IGroupMember> seenGroups = new HashSet<IGroupMember>(100);
-            return hasUnblockedPathToGrant(service, principal, owner, activity, target, seenGroups);
+            hasUnblockedPathToGrant = hasUnblockedPathToGrant(service, principal, owner, activity, target, seenGroups);
         } catch (Exception e) {
             log.error("Error searching for unblocked path to grant for principal [" + principal + "]", e);
             // fail closed
             return false;
         }
+        
+        if (log.isTraceEnabled()) {
+        	if (hasUnblockedPathToGrant) {
+        		log.trace("Principal [" + principal + "] is granted permission to perform activity [" + activity + "] on target [" + target + "] under permission owning system [" + owner + "] because this principal has an unblocked path to a GRANT.");
+        	} else {
+        		log.trace("Principal [" + principal + "] is denied permission to perform activity [" + activity + "] on target [" + target + "] under permission owning system [" + owner + "] because this principal does not have an unblocked path to a GRANT.");
+        	}
+        }
+        
+        return hasUnblockedPathToGrant;
 
     }
 
     private boolean hasUnblockedPathToGrant(IAuthorizationService service, IAuthorizationPrincipal principal, String owner, String activity, String target, Set<IGroupMember> seenGroups) throws GroupsException {
 
+    	if (log.isTraceEnabled()) {
+    		log.trace("Searching for unblocked path to GRANT for principal [" + principal + "] to [" + activity + "] on target [" + target + "] having already checked ["+ seenGroups + "]");
+    	}
+    	
         IGroupMember principalAsGroupMember = service.getGroupMember(principal);
 
         if (seenGroups.contains(principalAsGroupMember)) {
+        	
+        	if (log.isTraceEnabled()) {
+        		log.trace("Declining to re-examine principal [" + principal + "] for permission to [" + activity + "] on [" + target + "] because this group is among already checked groups [" + seenGroups + "]");
+        	}
+        	
             return false;
         }
 
@@ -119,6 +147,11 @@ public class AnyUnblockedGrantPermissionPolicy
                     if (parentPermissionsContainsGrant && ! parentPermissionsContainsDeny) {
                         // there's a GRANT on this group to which we had an unblocked path, and
                         // there's no DENY on this group.
+                    	
+                    	if (log.isTraceEnabled()) {
+                    		log.trace("Found unblocked path to this permission set including a GRANT: [" + activeParentPermissions + "]");
+                    	}
+                    	
                         return true;
                     }
 
