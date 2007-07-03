@@ -1225,26 +1225,25 @@
 
 -->
 
+	  <target name="deployPortletApp" description="Deploys a portlet application" depends="compile">
+	    <echo message="Invoking Portlet Application Deployment Tool"/>
 
-  <target name="deployPortletApp" description="Deploys a portlet application" depends="compile">
-    <echo message="Invoking Portlet Application Deployment Tool"/>
+	    <fail unless="portletApp">deployPortletApp Ant target requires the name of the portlet app to deploy.  
+	    	Here it was invoked with the portletApp property not set.  
+	    	It therefore is failing after having done nothing.
+	    	Execute the help target ('ant help') for help on this and other targets in the uPortal build.
+	    </fail>
 
-    <fail unless="portletApp">deployPortletApp Ant target requires the name of the portlet app to deploy.  
-    	Here it was invoked with the portletApp property not set.  
-    	It therefore is failing after having done nothing.
-    Execute the help target ('ant help') for help on this and other targets in the uPortal build.
-    </fail>
-  	
-    <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.container.deploy.Deployer">
-      <classpath>
-        <pathelement path="${build.home}/WEB-INF/classes"/>
-        <path refid="compile.classpath"/>
-      </classpath>
-      <arg value="${deploy.home}/.."/>
-      <arg value="${portletApp}"/>
-    </java>
-  </target>
-	
+	    <java fork="true" failonerror="true" dir="${basedir}" classname="org.danann.cernunnos.runtime.Main">
+	      <classpath>
+	        <pathelement path="${build.home}/WEB-INF/classes"/>
+	        <path refid="compile.classpath"/>
+	      </classpath>
+	      <arg value="classpath://org/jasig/portal/container/deploy/deploy-archives.crn"/>
+	      <arg value="${portletApp}"/>
+	      <arg value="${deploy.home}/.."/>
+	    </java>
+	  </target>
 	
 	<target name="hsql" description="Start a HSQLDB instance consistent with the default RDBMS requirements of uPortal">
 	   <echo message="Starting HSQL"/>
