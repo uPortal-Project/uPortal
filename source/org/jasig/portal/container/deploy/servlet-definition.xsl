@@ -6,7 +6,7 @@
       <servlet-name><xsl:value-of select="//*[name() = 'portlet-name']"/></servlet-name>
       <display-name><xsl:value-of select="//*[name() = 'portlet-name']"/> Wrapper</display-name>
       <description>Automated generated Portlet Wrapper</description>
-      <servlet-class>org.apache.pluto.core.PortletServlet</servlet-class>
+      <servlet-class>org.jasig.portal.container.PortletServlet</servlet-class>
       <init-param>
         <param-name>portlet-class</param-name>
         <param-value><xsl:value-of select="//*[name() = 'portlet-class']"/></param-value>
