@@ -17,6 +17,7 @@ import org.jasig.portal.ChannelManager;
 import org.jasig.portal.ChannelRegistryManager;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.StructureStylesheetUserPreferences;
+import org.jasig.portal.ThemeStylesheetUserPreferences;
 import org.jasig.portal.UserInstance;
 import org.jasig.portal.UserInstanceManager;
 import org.jasig.portal.UserPreferencesManager;
@@ -128,6 +129,10 @@ public class UpdatePreferencesServlet extends HttpServlet {
 
 				moveTab(per, upm, ulm, request, response);
 
+			} else if (action.equals("chooseSkin")) {
+				
+				chooseSkin(per, upm, ulm, request, response);
+				
 			} else if (action.equals("removeElement")) {
 
 				// Delete the requested element node.  This code is the same for 
@@ -424,6 +429,33 @@ public class UpdatePreferencesServlet extends HttpServlet {
 
 	}
 
+	/**
+	 * Update the user's preferred skin.
+	 * 
+	 * @param per
+	 * @param upm
+	 * @param ulm
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 * @throws PortalException
+	 */
+	private void chooseSkin(IPerson per, UserPreferencesManager upm,
+			IUserLayoutManager ulm, HttpServletRequest request,
+			HttpServletResponse response) throws IOException, PortalException {
+
+		String skinName = request.getParameter("skinName");
+        ThemeStylesheetUserPreferences themePrefs = upm.getUserPreferences().getThemeStylesheetUserPreferences();
+        themePrefs.putParameterValue("skin",skinName);
+		try {
+			ulStore.setThemeStylesheetUserPreferences(per, upm
+					.getUserPreferences().getProfile().getProfileId(), themePrefs);
+		} catch (Exception e) {
+			log.error("Error storing user skin preferences", e);
+		}
+
+		printSuccess(response, "Updated Skin", null);
+}
 	/**
 	 * Set all columns on a given tab to have the same width.
 	 * 
