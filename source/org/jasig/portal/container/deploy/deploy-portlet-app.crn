@@ -31,7 +31,7 @@
             <node-iterator source="${doc(${req($2)}/${req(APP_NAME)}/WEB-INF/portlet.xml)}" xpath="//*[name() = 'portlet']">
             	<if test="${isNull(${jexl(WEB_XML.selectSingleNode(&quot;servlet/servlet-name[text() = '${valueOf(child::*[name() = 'portlet-name'])}']&quot;))})}">
                 	<xslt stylesheet="classpath://org/jasig/portal/container/deploy/servlet-definition.xsl">
-                    	<append-node sibling="${jexl(WEB_XML.selectSingleNode('(listener | filter-mapping | filter | context-param | distributable | description | display-name | icon)[position() = last()]'))}"/>
+                    	<append-node sibling="${jexl(WEB_XML.selectSingleNode(&quot;(./node()[local-name() = 'listener'] | ./node()[local-name() = 'filter-mapping'] | ./node()[local-name() = 'filter'] | ./node()[local-name() = 'context-param'] | ./node()[local-name() = 'distributable'] | ./node()[local-name() = 'description'] | ./node()[local-name() = 'display-name'] | ./node()[local-name() = 'icon'])[position() = last()]&quot;))}"/>
 	                </xslt>
 	            </if>
             </node-iterator>
