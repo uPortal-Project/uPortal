@@ -38,11 +38,11 @@
             <node-iterator source="${doc(${req($2)}/${req(APP_NAME)}/WEB-INF/portlet.xml)}" xpath="//*[name() = 'portlet']">
             	<if test="${isNull(${jexl(WEB_XML.selectSingleNode(&quot;servlet-mapping/servlet-name[text() = '${valueOf(child::*[name() = 'portlet-name'])}']&quot;))})}">
 	                <xslt stylesheet="classpath://org/jasig/portal/container/deploy/servlet-mapping.xsl">
-    	                <append-node sibling="${jexl(WEB_XML.selectSingleNode('servlet[position() = last()]'))}"/>
+    	                <append-node sibling="${jexl(WEB_XML.selectSingleNode(&quot;(./node()[local-name() = 'servlet'])[position() = last()]&quot;))}"/>
         	        </xslt>
 	            </if>
             </node-iterator>
-            <append-node sibling="${jexl(WEB_XML.selectSingleNode('(error-page | welcome-file-list | mime-mapping | session-config | servlet-mapping)[position() = last()]'))}">
+            <append-node sibling="${jexl(WEB_XML.selectSingleNode(&quot;(./node()[local-name() = 'error-page'] | ./node()[local-name() = 'welcome-file-list'] | ./node()[local-name() = 'mime-mapping'] | ./node()[local-name() = 'session-config'] | ./node()[local-name() = 'servlet-mapping'])[position() = last()]&quot;))}">
                 <taglib>
                     <taglib-uri>http://java.sun.com/portlet</taglib-uri>
                     <taglib-location>/WEB-INF/tld/portlet.tld</taglib-location>
