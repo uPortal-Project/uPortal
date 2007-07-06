@@ -15,35 +15,35 @@ var skinXml;
  
 
 // initialize dojo menus and clean up unneeded links for the general page
-function init(e) {
+function initAjaxPortalPreferences(e) {
 
     var activeTab = dojo.byId("activeTabLink");
     activeTab.removeAttribute('href');
 					
-    dlg0 = dojo.widget.byId("dialog0");
-	var btn = document.getElementById("hider0");
-	dlg0.setCloseControl(btn);
+    contentAddingMenu = dojo.widget.byId("contentAddingDialog");
+	var btn = document.getElementById("contentDialogCloser");
+	contentAddingMenu.setCloseControl(btn);
 					
-	dlg1 = dojo.widget.byId("dialog1");
-	var btn = document.getElementById("hider1");
-	dlg1.setCloseControl(btn);
+	pageLayoutMenu = dojo.widget.byId("pageLayoutDialog");
+	var btn = document.getElementById("layoutDialogCloser");
+	pageLayoutMenu.setCloseControl(btn);
 					
-	dlg2 = dojo.widget.byId("dialog2");
-	var btn = document.getElementById("hider2");
-	dlg2.setCloseControl(btn);
+	skinChoosingMenu = dojo.widget.byId("skinChoosingDialog");
+	var btn = document.getElementById("skinDialogCloser");
+	skinChoosingMenu.setCloseControl(btn);
 					
 }
 
 // initialize dojo menus and clean up unneeded links for the focused channel page
-function initFocused(e) {
+function initFocusedAjaxPortalPreferences(e) {
 
-    dlg0 = dojo.widget.byId("dialog0");
-	var btn = document.getElementById("hider0");
-	dlg0.setCloseControl(btn);
+    focusedContentAddingMenu = dojo.widget.byId("focusedContentAddingDialog");
+	var btn = document.getElementById("focusedContentDialogCloser");
+	focusedContentAddingMenu.setCloseControl(btn);
 					
     var activeLink = dojo.byId("add-channel-link");
     activeLink.href = "javascript:;";
-    activeLink.onclick = function(){ dlg0.show() };
+    activeLink.onclick = function(){ focusedContentAddingMenu.show() };
 					
 }
 
@@ -327,7 +327,7 @@ function updateContainerWidths() {
 function showChooseSkinDialog() {
 
     // show the dialog
-    dlg2.show();
+    skinChoosingMenu.show();
     
     // if this is the first time we're displaying the choose skin
     // dialog, get the skin list and add the available skins as 
@@ -343,7 +343,7 @@ function showChooseSkinDialog() {
 function showAddChannelDialog() {
 
 	// show the dialog
-	dlg0.show();
+	contentAddingMenu.show();
 
     // if this is the first time we're displaying the add channel
     // dialog, get the channel list and add it to the dialog

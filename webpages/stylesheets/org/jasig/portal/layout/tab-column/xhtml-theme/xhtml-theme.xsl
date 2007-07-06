@@ -199,7 +199,7 @@
 						<div id="preference-items">
 							<ul>
 								<li><a href="javascript:;" onClick="showAddChannelDialog();">More Content</a></li>
-								<li><a href="javascript:;" onClick="dlg1.show();">Page Layout</a></li>
+								<li><a href="javascript:;" onClick="pageLayoutMenu.show();">Page Layout</a></li>
 								<li><a href="javascript:;" onClick="showChooseSkinDialog();">Skin</a></li>
 							</ul>
 						</div>
@@ -362,7 +362,7 @@
 	<xsl:template name="preferences">
 		<div id="dojoMenus" style="display:none;">
 			<!-- Add Channel Menu -->
-			<div id="dialog0" class="preferences-edit-window" dojoType="dialog" bgColor="#e6eefb" bgOpacity="0.7" toggle="fade" toggleDuration="250">
+			<div id="contentAddingDialog" class="preferences-edit-window" dojoType="dialog" bgColor="#e6eefb" bgOpacity="0.7" toggle="fade" toggleDuration="250">
 				<div class="portlet-toolbar"><h2>More Content</h2></div>
 				<div class="portlet clearfix addchannel" style="margin: 0px;">
 					<h4 id="channelLoading">Loading portlet list . . . </h4>
@@ -397,11 +397,11 @@
 						<input id="addChannelId" type="hidden"/>
 						<button id="addChannelLink" onclick="addChannel()" class="portlet-form-button">Add to my page</button>&#160;
 						<button id="previewChannelLink" class="portlet-form-button">Use it now</button>&#160;
-						<button id="hider0" class="portlet-form-button">Done</button>
+						<button id="contentDialogCloser" class="portlet-form-button">Done</button>
 					</p>
 				</div>
 			</div>
-			<div id="dialog1" class="preferences-edit-window" dojoType="dialog" bgColor="#e6eefb" bgOpacity="0.7" toggle="fade" toggleDuration="250">
+			<div id="pageLayoutDialog" class="preferences-edit-window" dojoType="dialog" bgColor="#e6eefb" bgOpacity="0.7" toggle="fade" toggleDuration="250">
 				<div class="portlet-toolbar"><h2>Edit Page Layout</h2></div>
 				<div class="portlet clearfix editcolumns">
 					<p><label class="portlet-form-field-label">Number of columns:</label>
@@ -459,11 +459,11 @@
 					<p id="updatePageLayoutMessage"></p>
 					<br/>
 					<p>
-						<button class="portlet-form-button" id="hider1">Done</button>
+						<button class="portlet-form-button" id="layoutDialogCloser">Done</button>
 					</p>
 				</div>
 			</div>	
-			<div id="dialog2" dojoType="dialog" bgColor="#e6eefb" bgOpacity="0.7" toggle="fade" toggleDuration="250">
+			<div id="skinChoosingDialog" dojoType="dialog" bgColor="#e6eefb" bgOpacity="0.7" toggle="fade" toggleDuration="250">
 				<div class="portlet-toolbar"><h2>Choose a Skin</h2></div>
 				<div class="portlet clearfix chooseskin" style="margin: 0px;">
 					<h4 id="skinLoading">Loading portlet list . . . </h4>
@@ -474,7 +474,7 @@
 						<p id="skinList"></p>
 						<p>
 							<input type="submit" value="Choose" class="portlet-form-button"/>&#160;
-							<input id="hider2" type="cancel" value="Cancel" class="portlet-form-button"/>
+							<input id="skinDialogCloser" type="cancel" value="Cancel" class="portlet-form-button"/>
 						</p>
 					</form>
 				</div>
@@ -498,8 +498,8 @@
 			var columnCount = <xsl:value-of select="count(/layout/content/column)"/>;
 			var skinPath = '<xsl:value-of select="$mediaPath"/>/<xsl:value-of select="$skin"/>';
 			
-			var dlg0, dlg1, dlg2;
-			dojo.addOnLoad(init);
+			var contentAddingMenu, pageLayoutMenu, skinChoosingMenu;
+			dojo.addOnLoad(initAjaxPortalPreferences);
 			
 			<xsl:for-each select="/layout/content/column">
 				new portal.widget.PortletDropTarget("column_<xsl:value-of select="@ID"/>", [<xsl:for-each select="/layout/content/column">"<xsl:value-of select="@ID"/>dt"<xsl:if test="position()!=last()">,</xsl:if></xsl:for-each>]);
@@ -527,7 +527,7 @@
 	<xsl:template name="focusedPreferences">
 		<div id="dojoMenus" style="display:none;">
 			<!-- Add Channel Menu -->
-			<div id="dialog0" dojoType="dialog" bgColor="#e6eefb" bgOpacity="0.7" toggle="fade" toggleDuration="250">
+			<div id="focusedContentAddingDialog" dojoType="dialog" bgColor="#e6eefb" bgOpacity="0.7" toggle="fade" toggleDuration="250">
 				<div class="portlet-toolbar"><h2>Add Portlet to My Layout</h2></div>
 				<div class="portlet clearfix addchannel" style="margin: 0px;">
 					<form onsubmit="return addFocusedChannel(this);">
@@ -542,7 +542,7 @@
 						<p>
 							<input name="channelId" type="hidden" value="{//focused/channel/@chanID}"/>
 							<input type="submit" value="Add" class="portlet-form-button"/>&#160;
-							<input id="hider0" type="cancel" value="Cancel" class="portlet-form-button"/>
+							<input id="focusedContentDialogCloser" type="cancel" value="Cancel" class="portlet-form-button"/>
 						</p>
 					</form>
 				</div>
@@ -556,8 +556,8 @@
 			var preferencesUrl = 'ajax/preferences';
 			var channelListUrl = 'ajax/channelList';
 			var skinPath = '<xsl:value-of select="$mediaPath"/>/<xsl:value-of select="$skin"/>';
-			var dlg0;
-			dojo.addOnLoad(initFocused);
+			var focusedContentAddingMenu;
+			dojo.addOnLoad(initFocusedAjaxPortalPreferences);
 		</script>
 	</xsl:template>
 		
