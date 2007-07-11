@@ -156,18 +156,32 @@
 							<script type="text/javascript">
 								var tabId = "<xsl:value-of select="@ID"/>";
 							</script>
+							<xsl:variable name="canMoveTabLeft" select="position() > 1 and not(@dlm:moveAllowed='false') and not(./preceding-sibling::node()[position()=last()]/@dlm:moveAllowed='false' and ./preceding-sibling::node()[position()=last()]/@dlm:precedence > @dlm:precedence)"/>
+							<xsl:variable name="canMoveTabRight" select="position()!=last() and not(@dlm:moveAllowed='false')"/>
 							<xsl:choose>
-								<xsl:when test="$isAjaxEnabled='true'">
+								<xsl:when test="$isAjaxEnabled='true' and ($canMoveTabRight or $canMoveTabLeft or not(@dlm:editAllowed='false') or not(@dlm:moveAllowed='false'))">
 									<li id="tab_{@ID}" class="editable-tab">
 										<a id="activeTabLink" title="edit" href="javascript:;" onclick="toggleEditTabDialog('show')">
 											<span id="tabName"><xsl:value-of select="@name"/></span>
 										</a>
 										<a id="editTabLink" style="display:none; cursor: default" href="javascript:;">
 											<span id="editTabName">
-												<img src="{$mediaPath}/{$skin}/controls/leftarrow.gif" onclick="moveTab('{@ID}', 'left')" title="Move tab left" alt="Move tab left"/>
-												<input id="newTabName" type="text" value="{@name}"/>&#160;
-												<input id="tabNameSubmit" type="button" value="Done" onclick="updateTabName('{@ID}')" class="portlet-form-button"/>
-												<img src="{$mediaPath}/{$skin}/controls/rightarrow.gif" onclick="moveTab('{@ID}', 'right')" title="Move tab right" alt="Move tab right"/>
+												<xsl:if test="$canMoveTabLeft">
+													<img src="{$mediaPath}/{$skin}/controls/leftarrow.gif" onclick="moveTab('{@ID}', 'left')" title="Move tab left" alt="Move tab left"/>
+												</xsl:if>
+												<xsl:choose>
+													<xsl:when test="not(@dlm:editAllowed='false')">
+														<input id="newTabName" type="text" value="{@name}"/>&#160;
+														<input id="tabNameSubmit" type="button" value="Done" onclick="updateTabName('{@ID}')" class="portlet-form-button"/>
+													</xsl:when>
+													<xsl:otherwise>
+														<xsl:value-of select="@name"/>&#160;
+														<input id="tabNameSubmit" type="button" value="Done" onclick="toggleEditTabDialog('hide')" class="portlet-form-button"/>
+													</xsl:otherwise>
+												</xsl:choose>
+												<xsl:if test="$canMoveTabRight">
+													<img src="{$mediaPath}/{$skin}/controls/rightarrow.gif" onclick="moveTab('{@ID}', 'right')" title="Move tab right" alt="Move tab right"/>
+												</xsl:if>
 												<xsl:if test="not(@dlm:deleteAllowed='false')">
 													<img src="{$mediaPath}/{$skin}/controls/remove_tab.gif" onclick="deleteTab('{@ID}')" title="Remove tab" alt="Remove tab"/>
 												</xsl:if>
@@ -482,9 +496,10 @@
 		</div>
 		<script type="text/javascript">
 			
-			dojo.require( "dojo.widget.*" );
-			dojo.require( "dojo.event.*" );
-			dojo.require( "dojo.lfx.*" );
+			dojo.require( "dojo.widget.SplitContainer" );
+			dojo.require( "dojo.widget.TabContainer" );
+			dojo.require( "dojo.widget.Dialog" );
+			dojo.require( "dojo.widget.ContentPane" );
 			dojo.require("portal.widget.PortletDragSource");
 			dojo.require("portal.widget.PortletDropTarget");
 			dojo.require("portal.widget.PortletDragObject");

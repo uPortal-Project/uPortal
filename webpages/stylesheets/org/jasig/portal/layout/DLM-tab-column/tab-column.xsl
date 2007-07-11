@@ -129,7 +129,10 @@
           <xsl:if test="@dlm:addChildAllowed = 'false'">
             <xsl:attribute name="dlm:addChildAllowed">false</xsl:attribute>
           </xsl:if>
-      	<xsl:choose>
+        <xsl:if test="@dlm:precedence > 0">
+          <xsl:attribute name="dlm:precedence"><xsl:value-of select="@dlm:precedence"/></xsl:attribute>
+        </xsl:if>
+        <xsl:choose>
       	  <xsl:when test="$activeTabID = @ID">
       	    <xsl:attribute name="activeTab">true</xsl:attribute>
             <xsl:attribute name="activeTabPosition"><xsl:value-of select="$activeTabID"/></xsl:attribute>
