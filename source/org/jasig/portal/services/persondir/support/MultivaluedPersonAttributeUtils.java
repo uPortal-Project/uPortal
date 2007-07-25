@@ -57,7 +57,7 @@ public final class MultivaluedPersonAttributeUtils {
      * @return a Map from String to Set of Strings
      * @throws IllegalArgumentException If the {@link Map} doesn't follow the rules stated above.
      */
-    static  Map parseAttributeToAttributeMapping(final Map mapping) {
+    public static  Map parseAttributeToAttributeMapping(final Map mapping) {
         //null is assumed to be an empty map
         if (mapping == null) {
             return Collections.EMPTY_MAP;
@@ -133,7 +133,7 @@ public final class MultivaluedPersonAttributeUtils {
      * @param value The value to add for the key.
      * @throws IllegalArgumentException if any argument is null
      */
-    static void addResult(final Map results, final Object key, final Object value) {
+    public static void addResult(final Map results, final Object key, final Object value) {
         
         if (results == null) {
             throw new IllegalArgumentException("Cannot add a result to a null map.");
@@ -204,7 +204,7 @@ public final class MultivaluedPersonAttributeUtils {
      * @param source The {@link Collection} to flatten.
      * @return A flattened {@link Collection} that contains all entries from all levels of <code>source</code>.
      */
-    static Collection flattenCollection(final Collection source) {
+    public static Collection flattenCollection(final Collection source) {
         
         if (source == null) {
             throw new IllegalArgumentException("Cannot flatten a null collection.");
