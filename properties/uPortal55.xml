@@ -7,13 +7,29 @@
     username="@jdbcUser@" password="@jdbcPassword@"
     driverClassName="@jdbcDriver@" url="@jdbcUrl@"
     maxActive="100" maxIdle="30" maxWait="10000"
-    poolPreparedStatements="@poolPreparedStatements@" />
+    poolPreparedStatements="@poolPreparedStatements@"
+    
+    validationQuery="SELECT 1"
+    testOnBorrow="true"
+    
+    removeAbandoned="true"
+    removeAbandonedTimeout="300"
+    logAbandoned="true"
+  /> 
 
   <Resource name="jdbc/PersonDb" auth="Container" type="javax.sql.DataSource"
     username="@jdbcUser@" password="@jdbcPassword@"
     driverClassName="@jdbcDriver@" url="@jdbcUrl@"
     maxActive="100" maxIdle="30" maxWait="10000"
-    poolPreparedStatements="@poolPreparedStatements@" />
+    poolPreparedStatements="@poolPreparedStatements@"
+    
+    validationQuery="SELECT 1"
+    testOnBorrow="true"
+    
+    removeAbandoned="true"
+    removeAbandonedTimeout="300"
+    logAbandoned="true"
+  /> 
 
     <!-- Disables restart persistence of sessions -->
     <Manager pathname=""/>
