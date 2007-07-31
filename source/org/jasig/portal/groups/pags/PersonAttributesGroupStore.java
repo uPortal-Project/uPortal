@@ -144,7 +144,7 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
              log.error("Exception acquiring attributes for member " + member + " while checking if group " + group + " contains this member.", ex);
              return false; 
          }
-         return testRecursively(groupDef, person);
+         return testRecursively(groupDef, person, member);
       }
    }
 
@@ -184,21 +184,36 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
        }
    }
 
-   private boolean testRecursively(GroupDefinition groupDef, IPerson person)
+   private boolean testRecursively(GroupDefinition groupDef, IPerson person,
+       IGroupMember member)
    throws GroupsException {
        if ( ! groupDef.contains(person) )
            { return false;}
        else
        {
            IEntityGroup group = cacheGet(groupDef.getKey());
+           IEntityGroup parentGroup = null;
            Set allParents = primGetAllContainingGroups(group, new HashSet());
            boolean testPassed = true;
            for (Iterator i=allParents.iterator(); i.hasNext() && testPassed;)
            {
-               IEntityGroup parentGroup = (IEntityGroup) i.next();
+               parentGroup = (IEntityGroup) i.next();
                GroupDefinition parentGroupDef = 
                  (GroupDefinition) groupDefinitions.get(parentGroup.getLocalKey());
                testPassed = parentGroupDef.test(person);               
+           }
+           
+           if (!testPassed && log.isWarnEnabled()) {
+               StringBuffer sb = new StringBuffer();
+               sb.append("PAGS group=").append(group.getKey());
+               sb.append(" contained person=").append(member.getKey());
+               sb.append(", but the person failed to be contained in ");
+               sb.append("ancesters of this group");
+               sb.append((parentGroup != null ? " (parentGroup="+parentGroup.getKey()+")" : ""));
+               sb.append(". This may indicate a ");
+               sb.append("misconfigured PAGS group ");
+               sb.append("store. Please check PAGSGroupStoreConfig.xml.");
+               log.warn(sb.toString());
            }
            return testPassed;
        }
