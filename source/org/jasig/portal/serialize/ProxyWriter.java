@@ -5,12 +5,8 @@
 
 package org.jasig.portal.serialize;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
@@ -20,7 +16,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.services.HttpClientManager;
-import org.jasig.portal.utils.CommonUtils;
 
 /**
  * This Class allows appending PROXY_REWRITE_PREFIX String in front of all the references to images, javascript files, etc..
@@ -62,18 +57,6 @@ public class ProxyWriter {
 			.getPropertyAsBoolean("org.jasig.portal.serialize.ProxyWriter.resource_proxy_enabled");
 
 	/*
-	 * The URI of location on virtual host on the same server as portal. This URI is used for rewriting proxied files.
-	 */
-	private static String PROXIED_FILES_URI = PropertiesManager
-			.getProperty("org.jasig.portal.serialize.ProxyWriter.proxy_files_uri");
-
-	/*
-	 * The path of location on virtual host on the same server as portal. This path is used for rewriting proxied files.
-	 */
-	private static String PROXIED_FILES_PATH = PropertiesManager
-			.getProperty("org.jasig.portal.serialize.ProxyWriter.proxy_files_path");
-
-	/*
 	 * The prefix used for proxying
 	 */
 	private static final String PROXY_REWRITE_PREFIX = PropertiesManager
@@ -84,7 +67,16 @@ public class ProxyWriter {
 	 */
 	private static final String PROXY_REWRITE_NO_REDIRECT_DOMAIN = PropertiesManager
 			.getProperty("org.jasig.portal.serialize.ProxyWriter.no_redirect_domain");
-    
+	
+	/**
+	 * This will enable the generated proxied urls to be stateful.  This is used
+	 * in conjunction with uPortal's Proxy servlet (/servlet/ProxyServlet/) and
+	 * if enabled with another proxy servlet (i.e. external), will not work.
+	 */
+	private static boolean STATEFUL_PROXY_URLS = PropertiesManager
+            .getPropertyAsBoolean("org.jasig.portal.serialize.ProxyWriter.stateful_proxy_urls", false);
+
+
 	/**
 	 * Examines whther or not the proxying should be done and if so handles differnt situations by delegating
 	 * the rewrite to other methods n the class.
@@ -94,14 +86,16 @@ public class ProxyWriter {
 	 * @return value
 	 */
 	protected static String considerProxyRewrite(final String name, final String localName,
-			final String url, final ProxyResourceMap<Integer, String> proxyResourceMap) {
+			final String url, ProxyResourceMap proxyResourceMap) {
 		if (PROXY_ENABLED
+		        && !localName.equalsIgnoreCase("script")
 				&& (name.equalsIgnoreCase("src") || name
 						.equalsIgnoreCase("archive"))
 				&& url.indexOf("http://") != -1) {
 
 			// capture any resource redirect and set the value to the real
 			// address while proxying it
+		    
 			final String skip_protocol = url.substring(7);
 			final String domain_only = skip_protocol.substring(0, skip_protocol.indexOf("/"));
 			/**
@@ -110,8 +104,8 @@ public class ProxyWriter {
 			 * little network connecting as possible. So as a start, assume "ubc.ca"
 			 * domain images will not be redirected so skip these ones.
 			 */
-			if (PROXY_REWRITE_NO_REDIRECT_DOMAIN.length() == 0
-					|| !domain_only.endsWith(PROXY_REWRITE_NO_REDIRECT_DOMAIN)) {
+			if (PROXY_REWRITE_NO_REDIRECT_DOMAIN.length() > 0
+					&& !domain_only.endsWith(PROXY_REWRITE_NO_REDIRECT_DOMAIN)) {
 				String work_url = url;
 				while (true) {
 					final HttpClient client = HttpClientManager.getNewHTTPClient();
@@ -121,24 +115,18 @@ public class ProxyWriter {
 						final int responseCode = client.executeMethod(get);
 						if (responseCode != HttpStatus.SC_MOVED_PERMANENTLY
 								&& responseCode != HttpStatus.SC_MOVED_TEMPORARILY) {
-							// if there is a script element with a src attribute
-							// the src should be rewriten
-							if (localName.equalsIgnoreCase("script")) {
-                                StringBuffer newUri = new StringBuffer();
-                                if (reWrite(work_url, get, newUri)) {
-									return generateMappedProxyUrl(newUri.toString(), proxyResourceMap);
-                                }
-                                return work_url;
-							} else {
-								// handle normal proxies
-								for (int i = 0; i < _proxiableElements.length; i++) {
-									if (localName.equalsIgnoreCase(_proxiableElements[i])) {
-										work_url = work_url.substring(7);
-										break;
-									}
+							// handle normal proxies
+							for (int i = 0; i < _proxiableElements.length; i++) {
+								if (localName.equalsIgnoreCase(_proxiableElements[i])) {
+								    if (STATEFUL_PROXY_URLS) {
+										work_url = generateMappedProxyUrl(work_url.substring(7), proxyResourceMap);
+								    } else {
+										work_url = PROXY_REWRITE_PREFIX + work_url.substring(7);
+								    }
+									break;
 								}
 							}
-							return generateMappedProxyUrl(work_url, proxyResourceMap);
+							return work_url;
 						}
 
 						/* At this point we will have a redirect directive */
@@ -167,175 +155,16 @@ public class ProxyWriter {
 		}
 		return url;
 	}
-    
-    private static String generateMappedProxyUrl(final String url,
-        final ProxyResourceMap<Integer, String> proxyResourceMap) {
-        
+
+	private static String generateMappedProxyUrl(final String url,
+        final ProxyResourceMap proxyResourceMap) {
+
         int resourceId = proxyResourceMap.getNextResourceId();
         proxyResourceMap.put(resourceId, url);
-        
+
         StringBuffer sb = new StringBuffer(PROXY_REWRITE_PREFIX);
         sb.append("?resourceId=").append(resourceId);
         return sb.toString();
     }
-
-	/**
-	 * This method rewrites include javascript files and replaces the refrences in these files
-	 * to images' sources to use proxy.
-	 * @param scriptUri: The string representing the address of script
-	 * @param returnUri: Out parameter for the new address of the script file which image sources have been rewritten
-	 * @return value: Specifies if the scriptUri was modified.
-	 */
-	private static boolean reWrite(final String scriptUri, final GetMethod get, StringBuffer outUri) {
-		final String fileName = fileNameGenerator(scriptUri);
-		final String filePath = PROXIED_FILES_PATH + fileName;
-        
-		try {
-			final File outputFile = new File(filePath);
-			if (!outputFile.exists()
-					|| (System.currentTimeMillis() - outputFile.lastModified() > 1800 * 1000)) {
-				try {
-					final BufferedReader in = new BufferedReader(new InputStreamReader(get.getResponseBodyAsStream()));
-					try {
-						final FileWriter out = new FileWriter(outputFile);
-						try {
-							String line;
-							while ((line = in.readLine()) != null) {
-								out.write(processLine(line) + "\t\n");
-							}
-						} finally {
-							out.close();
-						}
-					} finally {
-						in.close();
-					}
-				} catch (Exception e) {
-					log.error(
-							"ProxyWriter::rewrite():Failed to rewrite the file for: "
-									+ scriptUri, e);
-					outputFile.delete();
-                    outUri.append(scriptUri);
-					return false;
-				} // end catch
-			}
-
-			// Now make sure that we can read the modified version
-			final String newScriptPath = PROXIED_FILES_URI + fileName;
-			final HttpClient client = HttpClientManager.getNewHTTPClient();
-			final GetMethod getTest = new GetMethod(newScriptPath);
-
-			try {
-				final int rc = client.executeMethod(getTest);
-				if (rc != HttpStatus.SC_OK) {
-					log.error("ProxyWriter::rewrite(): The file  " + filePath
-							+ " is written but cannot be reached at "
-							+ newScriptPath);
-                    outUri.append(scriptUri);
-					return false;
-				} else {
-                    outUri.append(PROXIED_FILES_URI.substring(7));
-                    outUri.append(fileName);
-					return true;
-				}
-			} finally {
-				getTest.releaseConnection();
-			}
-
-		} catch (IOException e) {
-			log.error("ProxyWriter::rewrite(): Failed to read the file at : " + filePath, e);
-            outUri.append(scriptUri);
-			return false;
-		}
-	}
-
-	/**
-	 * This method uses a URI and creates an html file name by simply omiting some characters from the URI.
-	 * The purpose of using the address for the file name is that the file names will be unique and map to addresses.
-	 * @param addr: is the address of the file
-	 * @newName: is the name built form the address
-	 */
-	private static String fileNameGenerator(String addr) {
-		String newName = CommonUtils.replaceText(addr, "/", "");
-		newName = CommonUtils.replaceText(newName, "http:", "");
-		newName = CommonUtils.replaceText(newName, "www.", "");
-		newName = CommonUtils.replaceText(newName, ".", "");
-		newName = CommonUtils.replaceText(newName, "?", "");
-		newName = CommonUtils.replaceText(newName, "&", "");
-
-		return newName.substring(0, Math.min(16, newName.length())) + ".html";
-	}
-
-	/**
-	 * This method parses a line recursivley and replaces all occurances of image references
-	 * with a proxied reference.
-	 * @param line - is the portion of the line or the whole line to be processed.
-	 * @return line - is the portion of the line or the line that has been processed.
-	 */
-	private static String processLine(String line) throws Exception {
-		try {
-			if (line.indexOf(" src") != -1 && line.indexOf("http://") != -1) {
-				String srcValue = extractURL(line);
-				String srcNewValue = createProxyURL(srcValue);
-				line = CommonUtils.replaceText(line, srcValue, srcNewValue);
-				int firstPartIndex = line.lastIndexOf(srcNewValue)
-						+ srcNewValue.length();
-				String remaining = line.substring(firstPartIndex);
-				return line.substring(0, firstPartIndex) + "  "
-						+ processLine(remaining);
-			} else {
-				return line;
-			}
-		} catch (Exception e) {
-
-			log.error("Failed to process a line : " + line, e);
-			throw e;
-		}
-	}
-
-	/**
-	 *
-	 * This method takes a String (line) and parses out the value of  src attribute
-	 * in that string.
-	 * @param line - String
-	 * @return srcValue - String
-	 */
-	private static String extractURL(String line) {
-		int URLStartIndex = 0;
-		int URLEndIndex = 0;
-		//need this to make sure only image paths are pointed to and not href.
-		int srcIndex = line.indexOf(" src");
-		if (line.indexOf("https://", srcIndex) != -1) {
-			return "";
-		}
-		if (line.indexOf("http://", srcIndex) != -1) {
-			URLStartIndex = line.indexOf("http", srcIndex);
-		} else {
-			return "";
-		}
-
-		URLEndIndex = line.indexOf(" ", URLStartIndex);
-		String srcValue = line.substring(URLStartIndex, URLEndIndex);
-		return srcValue;
-	}
-
-	/**
-	 *
-	 * This method receives an image source URL and modified
-	 * it to be proxied.
-	 * @param srcValue - String
-	 * @return srcNewValue - String
-	 */
-	private static String createProxyURL(String srcValue) {
-		String srcNewValue = "";
-		if (srcValue.indexOf("https://") != -1) {
-			return srcValue;
-		} else if (srcValue.indexOf("http://") != -1) {
-			srcNewValue = CommonUtils.replaceText(srcValue, "http://",
-					PROXY_REWRITE_PREFIX);
-		} else {
-			srcNewValue = "";
-		}
-		return srcNewValue;
-	}
-
+	
 }
