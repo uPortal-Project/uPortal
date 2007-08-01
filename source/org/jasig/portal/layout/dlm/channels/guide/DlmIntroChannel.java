@@ -5,21 +5,23 @@
 
 package org.jasig.portal.layout.dlm.channels.guide;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.jasig.portal.ChannelCacheKey;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ICacheable;
-import org.jasig.portal.ICharacterChannel;
+import org.jasig.portal.PortalEvent;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.ResourceMissingException;
-import org.jasig.portal.channels.BaseChannel;
+import org.jasig.portal.channels.CAbstractXslt;
+import org.jasig.portal.utils.DTDResolver;
 import org.jasig.portal.utils.ResourceLoader;
-import org.jasig.portal.utils.XSLT;
+import org.w3c.dom.Document;
 
 /**
  * A simple channel for introducing the capabilities of DLM in the portal. This
@@ -28,8 +30,7 @@ import org.jasig.portal.utils.XSLT;
  * 
  * @author mboyd@sungardsct.com
  */
-public class DlmIntroChannel extends BaseChannel implements ICacheable,
-        ICharacterChannel
+public class DlmIntroChannel extends CAbstractXslt implements ICacheable
 {
     private Map cacheKeys = new HashMap();
     private String mediaBase = null;
@@ -87,10 +88,6 @@ public class DlmIntroChannel extends BaseChannel implements ICacheable,
         return key;
     }
 
-    /**
-     * Always returns true;
-     * @see org.jasig.portal.ICacheable#isCacheValid(java.lang.Object)
-     */
     public boolean isCacheValid(Object validity)
     {
         try
@@ -117,60 +114,62 @@ public class DlmIntroChannel extends BaseChannel implements ICacheable,
             return false;
         }
     }
-    /**
-     * Load and return the content of the channel. This comes from an html file
-     * included with the channel's source files.
-     * 
-     * @see org.jasig.portal.ICharacterChannel#renderCharacters(java.io.PrintWriter)
-     */
-    public void renderCharacters(PrintWriter pw) throws PortalException
-    {
-        /*
-         * SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MMMMM.dd hh:mm aaa,
-         * z");
-         * 
-         * pw.println(" <span class='uportal-crumbtrail'>Rendered at: " +
-         * sdf.format(new Date(System.currentTimeMillis())) + " </span>");
-         */
-        XSLT xslt = new XSLT(this);
-        xslt.setXSL(STYLESHEET_FILE);
 
-        File contents = ResourceLoader.getResourceAsFile(this.getClass(),
-                CONTENT_FILE);
-        xslt.setXML(contents);
-        ByteArrayOutputStream results = new ByteArrayOutputStream();
-        xslt.setTarget(results);
-
-        xslt.setStylesheetParameter("baseActionUrl", this.runtimeData
-                .getBaseActionURL(true));
-        xslt.setStylesheetParameter("baseMediaUrl", mediaBase);
-        xslt.setStylesheetParameter("selectedSection", currentSection);
-        xslt.transform();
-        String html = results.toString();
-        pw.print(html);
-    }
     /**
      * Sets up the base media URL if not done already and determines which
      * section is desired by the user if any.
-     * 
-     * @see org.jasig.portal.IChannel#setRuntimeData(org.jasig.portal.ChannelRuntimeData)
      */
-    public void setRuntimeData(ChannelRuntimeData rd) throws PortalException
+    @Override
+    protected void runtimeDataSet() throws PortalException
     {
-        super.setRuntimeData(rd);
-        
+        ChannelRuntimeData crd = getRuntimeData();
         // get an appropriate media path for this channel's images
         if ( mediaBase == null )
         {
-            mediaBase = rd.getBaseMediaURL( this );
+            mediaBase = crd.getBaseMediaURL( this );
             String cls = getClass().getName();
             String pkg = cls.substring( 0, cls.lastIndexOf( '.' ) );
             mediaBase = mediaBase + pkg.replace( '.', '/' ) + '/';
         }
-        String section = (String) this.runtimeData.getParameter("section");
+        String section = crd.getParameter("section");
         
         if (section == null || section.equals(""))
             currentSection = "1";
         else currentSection = section;
     }
+	
+	public void receiveEvent(PortalEvent ev) {
+		// do nothing on events
+	}
+
+	@Override
+	protected Map getStylesheetParams() throws Exception {
+		// TODO Auto-generated method stub
+		
+		Map<String, String> paramMap = new HashMap<String, String>();
+		paramMap.put("baseActionUrl", this.getRuntimeData().getBaseActionURL(true));
+		paramMap.put("baseMediaUrl", mediaBase);
+		paramMap.put("selectedSection", currentSection);
+		return paramMap;
+	}
+	
+	@Override
+	protected Document getXml() throws Exception {
+
+        File contents = ResourceLoader.getResourceAsFile(this.getClass(),
+                CONTENT_FILE);
+		
+        DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+        docBuilderFactory.setNamespaceAware(true);
+        DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+        DTDResolver dtdResolver = new DTDResolver();
+        docBuilder.setEntityResolver(dtdResolver);
+        Document dom = docBuilder.parse(contents);
+		return dom;
+	}
+	
+	@Override
+	protected String getXsltUri() throws Exception {
+		return STYLESHEET_FILE;
+	}
 }
