@@ -345,11 +345,15 @@ public class XSLT {
       while (iterator.hasNext()) {
         String key = (String)iterator.next();
         Object o = stylesheetParams.get(key);
-        if (o.getClass().getName().equals("[Ljava.lang.String;")) {
-          // This situation occurs for some requests from cell phones
-          o = ((String[])o)[0];
+        if (o != null) {
+          if (o.getClass().getName().equals("[Ljava.lang.String;")) {
+            // This situation occurs for some requests from cell phones
+            o = ((String[])o)[0];
+          }
+          transformer.setParameter(key,o);
+        } else {
+        	log.warn("Stylesheet parameter [" + key + "] was illegally null.");
         }
-        transformer.setParameter(key,o);
       }
     }
   }
