@@ -87,9 +87,9 @@
       <row>
         <column><name>CHAN_ID</name><value>6</value></column>
         <column><name>LOCALE</name><value>en_US</value></column>
-        <column><name>CHAN_TITLE</name><value>IBS News</value></column>
-        <column><name>CHAN_NAME</name><value>IBS News</value></column>
-        <column><name>CHAN_DESC</name><value>IBS News channel</value></column>
+        <column><name>CHAN_TITLE</name><value>Unicon News</value></column>
+        <column><name>CHAN_NAME</name><value>Unicon News</value></column>
+        <column><name>CHAN_DESC</name><value>Unicon News channel</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>7</value></column>
@@ -873,9 +873,9 @@
       <row>
         <column><name>CHAN_ID</name><value>6</value></column>
         <column><name>LOCALE</name><value>ja_JP</value></column>
-        <column><name>CHAN_TITLE</name><value>IBS ニュース</value></column>
-        <column><name>CHAN_NAME</name><value>IBS ニュース</value></column>
-        <column><name>CHAN_DESC</name><value>IBS News channel</value></column>
+        <column><name>CHAN_TITLE</name><value>Unicon ニュース</value></column>
+        <column><name>CHAN_NAME</name><value>Unicon ニュース</value></column>
+        <column><name>CHAN_DESC</name><value>Unicon News channel</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>7</value></column>
@@ -1659,9 +1659,9 @@
       <row>
         <column><name>CHAN_ID</name><value>6</value></column>
         <column><name>LOCALE</name><value>en_GB</value></column>
-        <column><name>CHAN_TITLE</name><value>IBS News</value></column>
-        <column><name>CHAN_NAME</name><value>IBS News</value></column>
-        <column><name>CHAN_DESC</name><value>IBS News channel</value></column>
+        <column><name>CHAN_TITLE</name><value>Unicon News</value></column>
+        <column><name>CHAN_NAME</name><value>Unicon News</value></column>
+        <column><name>CHAN_DESC</name><value>Unicon News channel</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>7</value></column>
@@ -2445,9 +2445,9 @@
       <row>
         <column><name>CHAN_ID</name><value>6</value></column>
         <column><name>LOCALE</name><value>ca_ES</value></column>
-        <column><name>CHAN_TITLE</name><value>IBS News</value></column>
-        <column><name>CHAN_NAME</name><value>IBS News</value></column>
-        <column><name>CHAN_DESC</name><value>IBS News channel</value></column>
+        <column><name>CHAN_TITLE</name><value>Unicon News</value></column>
+        <column><name>CHAN_NAME</name><value>Unicon News</value></column>
+        <column><name>CHAN_DESC</name><value>Unicon News channel</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>7</value></column>
@@ -3231,9 +3231,9 @@
       <row>
         <column><name>CHAN_ID</name><value>6</value></column>
         <column><name>LOCALE</name><value>es_ES</value></column>
-        <column><name>CHAN_TITLE</name><value>Noticias de IBS</value></column>
-        <column><name>CHAN_NAME</name><value>Noticias de IBS</value></column>
-        <column><name>CHAN_DESC</name><value>IBS News channel</value></column>
+        <column><name>CHAN_TITLE</name><value>Noticias de Unicon</value></column>
+        <column><name>CHAN_NAME</name><value>Noticias de Unicon</value></column>
+        <column><name>CHAN_DESC</name><value>Unicon News channel</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>7</value></column>
@@ -4017,9 +4017,9 @@
       <row>
         <column><name>CHAN_ID</name><value>6</value></column>
         <column><name>LOCALE</name><value>fr_FR</value></column>
-        <column><name>CHAN_TITLE</name><value>IBS News</value></column>
-        <column><name>CHAN_NAME</name><value>IBS News</value></column>
-        <column><name>CHAN_DESC</name><value>IBS News channel</value></column>
+        <column><name>CHAN_TITLE</name><value>Unicon News</value></column>
+        <column><name>CHAN_NAME</name><value>Unicon News</value></column>
+        <column><name>CHAN_DESC</name><value>Unicon News channel</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>7</value></column>
@@ -4803,9 +4803,9 @@
       <row>
         <column><name>CHAN_ID</name><value>6</value></column>
         <column><name>LOCALE</name><value>pl_PL</value></column>
-        <column><name>CHAN_TITLE</name><value>IBS News</value></column>
-        <column><name>CHAN_NAME</name><value>IBS News</value></column>
-        <column><name>CHAN_DESC</name><value>IBS News channel</value></column>
+        <column><name>CHAN_TITLE</name><value>Unicon News</value></column>
+        <column><name>CHAN_NAME</name><value>Unicon News</value></column>
+        <column><name>CHAN_DESC</name><value>Unicon News channel</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>7</value></column>
@@ -5589,9 +5589,9 @@
       <row>
         <column><name>CHAN_ID</name><value>6</value></column>
         <column><name>LOCALE</name><value>de_DE</value></column>
-        <column><name>CHAN_TITLE</name><value>IBS Nachrichten</value></column>
-        <column><name>CHAN_NAME</name><value>IBS Nachrichten</value></column>
-        <column><name>CHAN_DESC</name><value>IBS News channel</value></column>
+        <column><name>CHAN_TITLE</name><value>Unicon Nachrichten</value></column>
+        <column><name>CHAN_NAME</name><value>Unicon Nachrichten</value></column>
+        <column><name>CHAN_DESC</name><value>Unicon News channel</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>7</value></column>
@@ -6375,9 +6375,9 @@
       <row>
         <column><name>CHAN_ID</name><value>6</value></column>
         <column><name>LOCALE</name><value>pt_PT</value></column>
-        <column><name>CHAN_TITLE</name><value>IBS News</value></column>
-        <column><name>CHAN_NAME</name><value>IBS News</value></column>
-        <column><name>CHAN_DESC</name><value>IBS News channel</value></column>
+        <column><name>CHAN_TITLE</name><value>Unicon News</value></column>
+        <column><name>CHAN_NAME</name><value>Unicon News</value></column>
+        <column><name>CHAN_DESC</name><value>Unicon News channel</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>7</value></column>
@@ -7161,9 +7161,9 @@
       <row>
         <column><name>CHAN_ID</name><value>6</value></column>
         <column><name>LOCALE</name><value>sv_SE</value></column>
-        <column><name>CHAN_TITLE</name><value>IBS nyheter</value></column>
-        <column><name>CHAN_NAME</name><value>IBS nyheter</value></column>
-        <column><name>CHAN_DESC</name><value>IBS News channel</value></column>
+        <column><name>CHAN_TITLE</name><value>Unicon nyheter</value></column>
+        <column><name>CHAN_NAME</name><value>Unicon nyheter</value></column>
+        <column><name>CHAN_DESC</name><value>Unicon News channel</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>7</value></column>
@@ -7947,9 +7947,9 @@
       <row>
         <column><name>CHAN_ID</name><value>6</value></column>
         <column><name>LOCALE</name><value>it_IT</value></column>
-        <column><name>CHAN_TITLE</name><value>IBS News</value></column>
-        <column><name>CHAN_NAME</name><value>IBS News</value></column>
-        <column><name>CHAN_DESC</name><value>IBS News channel</value></column>
+        <column><name>CHAN_TITLE</name><value>Unicon News</value></column>
+        <column><name>CHAN_NAME</name><value>Unicon News</value></column>
+        <column><name>CHAN_DESC</name><value>Unicon News channel</value></column>
       </row>
       <row>
         <column><name>CHAN_ID</name><value>7</value></column>
