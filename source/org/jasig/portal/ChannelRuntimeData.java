@@ -328,16 +328,26 @@ public class ChannelRuntimeData extends Hashtable<String, Object> implements Clo
        in the web application's document root is returned.
      */
     public String getBaseMediaURL( Class aChannelClass )
-    throws PortalException
-    {
-        if (aChannelClass == null)
-            return TRADITIONAL_MEDIA_BASE;
-        if (aChannelClass == CarResources.class)
-            return createBaseCarMediaURL();
-        if ( aChannelClass.getClassLoader() ==
-             CarResources.getInstance().getClassLoader() )
-            return createBaseCarMediaURL();
-        return TRADITIONAL_MEDIA_BASE;
+    throws PortalException {
+    	
+    String mediaBase = null;
+    
+        if (aChannelClass == null) {
+            mediaBase = TRADITIONAL_MEDIA_BASE;
+        } else if (aChannelClass == CarResources.class) {
+            mediaBase = createBaseCarMediaURL();
+        } else if ( aChannelClass.getClassLoader() ==
+             CarResources.getInstance().getClassLoader() ) {
+        	mediaBase = createBaseCarMediaURL();
+        } else {
+        	mediaBase = TRADITIONAL_MEDIA_BASE;	
+        }
+            
+        if (log.isTraceEnabled()) {
+        	log.trace("Returning media base [" + mediaBase + "] for class [" + aChannelClass + "]");
+        }
+        
+        return mediaBase;
     }
 
     /**
