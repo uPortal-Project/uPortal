@@ -20,30 +20,14 @@ function initAjaxPortalPreferences(e) {
     var activeTab = dojo.byId("activeTabLink");
     activeTab.removeAttribute('href');
 					
-    contentAddingMenu = dojo.widget.byId("contentAddingDialog");
-	var btn = document.getElementById("contentDialogCloser");
-	contentAddingMenu.setCloseControl(btn);
-					
-	pageLayoutMenu = dojo.widget.byId("pageLayoutDialog");
-	var btn = document.getElementById("layoutDialogCloser");
-	pageLayoutMenu.setCloseControl(btn);
-					
-	skinChoosingMenu = dojo.widget.byId("skinChoosingDialog");
-	var btn = document.getElementById("skinDialogCloser");
-	skinChoosingMenu.setCloseControl(btn);
-					
 }
 
 // initialize dojo menus and clean up unneeded links for the focused channel page
 function initFocusedAjaxPortalPreferences(e) {
 
-    focusedContentAddingMenu = dojo.widget.byId("focusedContentAddingDialog");
-	var btn = document.getElementById("focusedContentDialogCloser");
-	focusedContentAddingMenu.setCloseControl(btn);
-					
     var activeLink = dojo.byId("add-channel-link");
     activeLink.href = "javascript:;";
-    activeLink.onclick = function(){ focusedContentAddingMenu.show() };
+    activeLink.onclick = function(){ showFocusedContentAddingDialog() };
 					
 }
 
@@ -286,6 +270,7 @@ function changeColumns(num) {
 }
 
 function updateContainerWidths() {
+
 	var parentDiv = document.getElementById("portal-page-columns");
 	var columns = getChildElementsByTagName(parentDiv, "td");
 	var container = dojo.widget.byId("columnWidths");
@@ -293,10 +278,11 @@ function updateContainerWidths() {
 	var totalSize = 0;
 	var ids = new Array();
 	var widths = new Array();
-	var containers = container.getChildrenOfType('ContentPane', false);
+
 	for (var i = 0; i < columns.length; i++) {
-	    var id = containers[i].widgetId.split("_")[1];
-	    sizes[id] = containers[i].sizeShare;
+	    var id = columns[i].id.split("_")[1];
+        var panel = dojo.widget.byId("columnWidth_" + id);
+	    sizes[id] = panel.sizeShare;
 	    totalSize += sizes[id];
 	}
 	for (var i = 0; i < columns.length; i++) {
@@ -317,6 +303,7 @@ function updateContainerWidths() {
 		error: function(type, error){ displayErrorMessage(type, error); },
 		mimetype: "text/xml"
 	});
+
 }
 
 
@@ -324,38 +311,79 @@ function updateContainerWidths() {
  * Channel editing UI functions
 /*--------------------------------------------------------------------------*/
 
+function showPageLayoutDialog() {
+
+    // if this is the first time we're displaying the add channel
+    // dialog, get the channel list and add it to the dialog
+    if (pageLayoutMenu == null)
+        initializePageLayoutEditor();
+    else
+    	pageLayoutMenu.show();
+	
+}
+
+function initializePageLayoutEditor() {
+
+    var pageLayoutDiv = dojo.byId('pageLayoutDialog');
+   	pageLayoutMenu = dojo.widget.createWidget("Dialog", {}, pageLayoutDiv);
+	var btn = document.getElementById("layoutDialogCloser");
+
+    var splitContainer = dojo.widget.createWidget( "SplitContainer",
+        { id: "columnWidths",
+        orientation: "horizontal",
+        layoutAlign: "client",
+        sizerWidth: 5} );
+    splitContainer.domNode.style.cssText = "height: 40px; width: 400px; padding: 0px; border: thin solid #666666;";
+    
+	var parentDiv = document.getElementById("portal-page-columns");
+	var columns = getChildElementsByTagName(parentDiv, "td");
+	for (var i = 0; i < columns.length; i++) {
+        var width = Number(columns[i].width.split("%")[0]);
+        var id = columns[i].id.split("_")[1];
+        var contentPane = dojo.widget.createWidget( "ContentPane",
+            { id: "columnWidth_" + id, 
+            sizeShare: width } );
+        contentPane.setContent( "Column " + Number(i+1) );
+        contentPane.domNode.style.cssText = "text-align: center; padding-top: 5px;";
+        splitContainer.addChild( contentPane );
+    }
+    
+    dojo.byId("columnWidthsAdjuster").appendChild(splitContainer.domNode);
+
+	pageLayoutMenu.setCloseControl(btn);
+	pageLayoutMenu.show();
+
+}
+
 function showChooseSkinDialog() {
 
-    // show the dialog
-    skinChoosingMenu.show();
-    
-    // if this is the first time we're displaying the choose skin
-    // dialog, get the skin list and add the available skins as 
-    // input options
-    var skinMenu = dojo.byId("skinList");
-    if (skinMenu.getElementsByTagName("input").length == 0) {
-         initializeSkinSelection();
-    }
+    if (skinChoosingMenu == null)
+        initializeSkinSelection();
+    else
+        skinChoosingMenu.show();
 
 }
 
 // display the add channel dialog and initialize it if necessary
 function showAddChannelDialog() {
 
-	// show the dialog
-	contentAddingMenu.show();
-
     // if this is the first time we're displaying the add channel
     // dialog, get the channel list and add it to the dialog
-	var categorySelect = dojo.byId("categorySelectMenu");
-	if (categorySelect.getElementsByTagName("option").length == 0) {
-		initializeChannelSelection();
-	}
+    if (contentAddingMenu == null)
+        initializeChannelSelection();
+    else
+    	contentAddingMenu.show();
 	
 }
 
 function initializeSkinSelection() {
     
+    var skinMenuDiv = dojo.byId('skinChoosingDialog');
+   	skinChoosingMenu = dojo.widget.createWidget("Dialog", {}, skinMenuDiv);
+	var btn = document.getElementById("skinDialogCloser");
+	skinChoosingMenu.setCloseControl(btn);
+	skinChoosingMenu.show();
+
     var skinMenu = dojo.byId("skinList");
     
 	dojo.io.bind({
@@ -423,6 +451,11 @@ function chooseSkin(form) {
 // loads the channel list into the channel selection dialog
 function initializeChannelSelection() {
 
+   	contentAddingMenu = dojo.widget.createWidget("Dialog", {}, dojo.byId('contentAddingDialog'));
+	var btn = document.getElementById("contentDialogCloser");
+	contentAddingMenu.setCloseControl(btn);
+	contentAddingMenu.show();
+
 	var categorySelect = dojo.byId("categorySelectMenu");
 
 	dojo.io.bind({
@@ -457,6 +490,21 @@ function initializeChannelSelection() {
 	});
 
 				
+}
+
+function chooseContentAddingMethod(method) {
+    if (method == 'browse') {
+		dojo.byId('contentAddingBrowseButton').className = "dojoTab current";
+		dojo.byId('contentAddingBrowseTab').style.display = "block";
+		dojo.byId('contentAddingSearchButton').className = "dojoTab";
+		dojo.byId('contentAddingSearchTab').style.display = "none";
+    } else if (method == 'search') {
+		dojo.byId('contentAddingBrowseButton').className = "dojoTab";
+		dojo.byId('contentAddingBrowseTab').style.display = "none";
+		dojo.byId('contentAddingSearchButton').className = "dojoTab current";
+		dojo.byId('contentAddingSearchTab').style.display = "block";
+		dojo.byId('addChannelSearchTerm').focus();
+    }
 }
 
 // select a channel category from the menu and display a list of channels in
@@ -655,6 +703,19 @@ function addChannel() {
 		error: function(type, error){ displayErrorMessage(type, error); },
 		mimetype: "text/xml"
 	});
+
+}
+
+function showFocusedContentAddingDialog() {
+    // if this is the first time we're displaying the add channel
+    // dialog, get the channel list and add it to the dialog
+    if (focusedContentAddingMenu == null) {
+       	focusedContentAddingMenu = dojo.widget.createWidget("Dialog", {}, dojo.byId('focusedContentAddingDialog'));
+    	var btn = document.getElementById("focusedContentDialogCloser");
+    	focusedContentAddingMenu.setCloseControl(btn);
+    	focusedContentAddingMenu.show();
+    } else
+    	focusedContentAddingMenu.show();
 
 }
 

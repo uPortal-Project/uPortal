@@ -42,15 +42,11 @@ public class AjaxPreferencesThemeParamInjector implements IParameterProcessor {
     	
         ThemeStylesheetUserPreferences themePrefs = prefs
     		.getThemeStylesheetUserPreferences();
+		themePrefs.putParameterValue("isAjaxEnabled", "true");
 
         // as long as this isn't a guest user, set the "isAjaxEnabled" flag
-        if (!person.isGuest())
-    		themePrefs.putParameterValue("isAjaxEnabled", "true");
-
-        // if we're in single channel mode, add a flag to the theme
-        String singleChannel = request.getParameter("singleChannelMode");
-        if (singleChannel != null && Boolean.valueOf(singleChannel)) {
-            themePrefs.putParameterValue("singleChannelMode", "true");
+        if (!person.isGuest()) {
+    		themePrefs.putParameterValue("isLoggedInUser", "true");
         }
         
     }

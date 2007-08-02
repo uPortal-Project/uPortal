@@ -6,6 +6,7 @@
 	<xsl:param name="skin" select="'spring'"/>
 	<xsl:variable name="mediaPath">media/org/jasig/portal/layout/tab-column/xhtml-theme</xsl:variable>
 	<xsl:param name="isAjaxEnabled" select="'false'"/>
+	<xsl:param name="isLoggedInUser" select="'false'"/>
 	
 	<xsl:template match="layout_fragment">
 		<html xml:lang="en" lang="en">
@@ -16,6 +17,18 @@
 				<meta http-equiv="pragma" content="no-cache" />
 				<link rel="Shortcut Icon" href="favicon.ico" type="image/x-icon" />
 				<link type="text/css" rel="stylesheet" href="{$mediaPath}/{$skin}/skin/{$skin}.css" />
+				
+				<xsl:if test="$isAjaxEnabled">
+					<script src="{$mediaPath}/common/dojo/dojo.js" type="text/javascript"/>
+					<script src="{$mediaPath}/common/ajax-preferences.js" type="text/javascript"/>
+					<script type="text/javascript">
+						djConfig.parseWidgets = false;
+						djConfig.searchIds = [];
+						dojo.require( "dojo.widget.Dialog" );
+						dojo.hostenv.writeIncludes(); 
+					</script>
+				</xsl:if>
+				
 			</head>
 			<body>
 				<table width="100%" border="0" cellspacing="0" cellpadding="10">
@@ -40,11 +53,25 @@
 				<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 				<link rel="Shortcut Icon" href="favicon.ico" type="image/x-icon" />
 				<link rel="stylesheet" href="{$mediaPath}/{$skin}/skin/{$skin}.css" type="text/css" />
+
 				<xsl:if test="$isAjaxEnabled='true'">
+					<link rel="stylesheet" href="{$mediaPath}/common/dojo/src/widget/templates/SplitContainer.css" type="text/css" />
+					<link rel="stylesheet" href="{$mediaPath}/common/dojo/src/widget/templates/TabContainer.css" type="text/css" />
 					<script src="{$mediaPath}/common/dojo/dojo.js" type="text/javascript"/>
-					<script src="{$mediaPath}/common/dojo/src/debug.js" type="text/javascript"/>
 					<script src="{$mediaPath}/common/ajax-preferences.js" type="text/javascript"/>
-				</xsl:if>
+					<script type="text/javascript">
+						djConfig.parseWidgets = false;
+						djConfig.searchIds = [];
+						dojo.require( "dojo.widget.Dialog" );
+						dojo.require( "dojo.widget.ContentPane" );
+						dojo.require( "dojo.widget.SplitContainer" );
+						dojo.require("portal.widget.PortletDragSource");
+						dojo.require("portal.widget.PortletDropTarget");
+						dojo.require("portal.widget.PortletDragObject");
+						dojo.hostenv.writeIncludes();
+					</script>
+				</xsl:if>				
+				
 			</head>
 			<body>
 				<xsl:choose>
@@ -213,7 +240,7 @@
 						<div id="preference-items">
 							<ul>
 								<li><a href="javascript:;" onClick="showAddChannelDialog();">More Content</a></li>
-								<li><a href="javascript:;" onClick="pageLayoutMenu.show();">Page Layout</a></li>
+								<li><a href="javascript:;" onClick="showPageLayoutDialog();">Page Layout</a></li>
 								<li><a href="javascript:;" onClick="showChooseSkinDialog();">Skin</a></li>
 							</ul>
 						</div>
@@ -376,31 +403,45 @@
 	<xsl:template name="preferences">
 		<div id="dojoMenus" style="display:none;">
 			<!-- Add Channel Menu -->
-			<div id="contentAddingDialog" class="preferences-edit-window" dojoType="dialog" bgColor="#e6eefb" bgOpacity="0.7" toggle="fade" toggleDuration="250">
+			<div id="contentAddingDialog" class="preferences-edit-window" bgColor="#e6eefb" bgOpacity="0.7" toggle="fade" toggleDuration="250">
 				<div class="portlet-toolbar"><h2>More Content</h2></div>
 				<div class="portlet clearfix addchannel" style="margin: 0px;">
-					<h4 id="channelLoading">Loading portlet list . . . </h4>
-					<div id="addChannelTabContainer" dojoType="TabContainer" style="width: 500px; height: 250px;">
-						<div id="tab1" dojoType="ContentPane" label="Browse Channels" style="padding: 10px;">
-							<table cellspacing="0" cellpadding="0" border="0">
-								<tr>
-									<td class="portlet-section-subheader">Category</td>
-									<td class="portlet-section-subheader">Portlet</td>
-								</tr>
-								<tr>
-									<td><select id="categorySelectMenu" onchange="browseChannelCategory()" size="14" style="width: 150px; background: url({$mediaPath}/{$skin}/skin/loading.gif) no-repeat center center"></select></td>
-									<td><select id="channelSelectMenu" onchange="selectChannel(this.value)" size="14" style="width: 300px; background: url({$mediaPath}/{$skin}/skin/loading.gif) no-repeat center center"></select></td>
-								</tr>
-							</table>
+					<div class="dojoTabContainer portal-dojo-container" style="width: 500px; height: 250px;">
+						<div class="dojoTabLabels-top dojoTabNoLayout">
+							<div id="contentAddingBrowseButton" onclick="chooseContentAddingMethod('browse')" class="dojoTab current">
+								<div>
+									<span>Browse Portlets</span>
+								</div>
+							</div>
+							<div id="contentAddingSearchButton" onclick="chooseContentAddingMethod('search')" class="dojoTab">
+								<div>
+									<span>Search</span>
+								</div>
+							</div>
 						</div>
-						<div id="tab2" dojoType="ContentPane" label="Search" style="overflow:auto; padding: 10px;">
-							<p>
-								<label class="portlet-form-field-label" for="addChannelSearchTerm">Search for:</label>&#160;
-								<input id="addChannelSearchTerm" type="text" onkeydown="searchChannels()"/>
-							</p>
-							<br/>
-							<h3>Matching portlets</h3>
-							<ul id="addChannelSearchResults" style="list-style-type: none; padding: 0px; margin-left: 5px;"></ul>
+						<div class="dojoTabPaneWrapper">
+							<div id="contentAddingBrowseTab" class="portal-dojo-pane dojoTabPane" style="padding: 10px; position: relative; width:460px; height: 208px;">
+								<h4 id="channelLoading">Loading portlet list . . . </h4>
+								<table cellspacing="0" cellpadding="0" border="0">
+									<tr>
+										<td class="portlet-section-subheader">Category</td>
+										<td class="portlet-section-subheader">Portlet</td>
+									</tr>
+									<tr>
+										<td><select id="categorySelectMenu" onchange="browseChannelCategory()" size="14" style="width: 150px; background: url({$mediaPath}/{$skin}/skin/loading.gif) no-repeat center center"></select></td>
+										<td><select id="channelSelectMenu" onchange="selectChannel(this.value)" size="14" style="width: 300px; background: url({$mediaPath}/{$skin}/skin/loading.gif) no-repeat center center"></select></td>
+									</tr>
+								</table>
+							</div>
+							<div id="contentAddingSearchTab" class="portal-dojo-pane dojoTabPane" style="overflow:auto; padding: 10px; display: none; position: relative; width:460px; height: 208px;">
+								<p>
+									<label class="portlet-form-field-label" for="addChannelSearchTerm">Search for:</label>&#160;
+									<input id="addChannelSearchTerm" type="text" onkeydown="searchChannels()"/>
+								</p>
+								<br/>
+								<h3>Matching portlets</h3>
+								<ul id="addChannelSearchResults" style="list-style-type: none; padding: 0px; margin-left: 5px;"></ul>
+							</div>
 						</div>
 					</div>
 					<br/>
@@ -415,7 +456,7 @@
 					</p>
 				</div>
 			</div>
-			<div id="pageLayoutDialog" class="preferences-edit-window" dojoType="dialog" bgColor="#e6eefb" bgOpacity="0.7" toggle="fade" toggleDuration="250">
+			<div id="pageLayoutDialog" class="preferences-edit-window" bgColor="#e6eefb" bgOpacity="0.7" toggle="fade" toggleDuration="250">
 				<div class="portlet-toolbar"><h2>Edit Page Layout</h2></div>
 				<div class="portlet clearfix editcolumns">
 					<p><label class="portlet-form-field-label">Number of columns:</label>
@@ -446,38 +487,15 @@
 					</p>
 					
 					<p><label class="portlet-form-field-label">Column widths:</label></p>
-					<div id="columnWidths" dojoType="SplitContainer"
-						orientation="horizontal"
-						sizerWidth="5"
-						activeSizing="false"
-						style="width: 400px; height: 40px; background: #ffffff; padding: 0px; border: thin solid #666666;">
-						
-						<xsl:for-each select="/layout/content/column">
-							<xsl:element name="div">
-								<xsl:attribute name="id">columnWidth_<xsl:value-of select="@ID"/></xsl:attribute>
-								<xsl:attribute name="dojoType">ContentPane</xsl:attribute>
-								<xsl:choose>
-									<xsl:when test="contains(@width,'%')">
-										<xsl:attribute name="sizeShare"><xsl:value-of select="substring-before(@width,'%')"/></xsl:attribute>
-									</xsl:when>
-									<xsl:otherwise>
-										<xsl:attribute name="sizeShare"><xsl:value-of select="@width"/></xsl:attribute>
-									</xsl:otherwise>
-								</xsl:choose>
-								<xsl:attribute name="style">text-align: center; padding-top:5px;</xsl:attribute>
-								Column <xsl:value-of select="position()"/>
-							</xsl:element>
-						</xsl:for-each>
-						
-					</div>
-					<p id="updatePageLayoutMessage"></p>
+					<br/>
+					<div id="columnWidthsAdjuster"></div>
 					<br/>
 					<p>
 						<button class="portlet-form-button" id="layoutDialogCloser">Done</button>
 					</p>
 				</div>
 			</div>	
-			<div id="skinChoosingDialog" dojoType="dialog" bgColor="#e6eefb" bgOpacity="0.7" toggle="fade" toggleDuration="250">
+			<div id="skinChoosingDialog" bgColor="#e6eefb" bgOpacity="0.7" toggle="fade" toggleDuration="250">
 				<div class="portlet-toolbar"><h2>Choose a Skin</h2></div>
 				<div class="portlet clearfix chooseskin" style="margin: 0px;">
 					<h4 id="skinLoading">Loading portlet list . . . </h4>
@@ -495,15 +513,6 @@
 			</div>
 		</div>
 		<script type="text/javascript">
-			
-			dojo.require( "dojo.widget.SplitContainer" );
-			dojo.require( "dojo.widget.TabContainer" );
-			dojo.require( "dojo.widget.Dialog" );
-			dojo.require( "dojo.widget.ContentPane" );
-			dojo.require("portal.widget.PortletDragSource");
-			dojo.require("portal.widget.PortletDropTarget");
-			dojo.require("portal.widget.PortletDragObject");
-			dojo.hostenv.writeIncludes(); 
 			
 			var portalUrl = '<xsl:value-of select="$baseActionURL"/>';
 			var preferencesUrl = 'ajax/preferences';
@@ -542,7 +551,7 @@
 	<xsl:template name="focusedPreferences">
 		<div id="dojoMenus" style="display:none;">
 			<!-- Add Channel Menu -->
-			<div id="focusedContentAddingDialog" dojoType="dialog" bgColor="#e6eefb" bgOpacity="0.7" toggle="fade" toggleDuration="250">
+			<div id="focusedContentAddingDialog" bgColor="#e6eefb" bgOpacity="0.7" toggle="fade" toggleDuration="250">
 				<div class="portlet-toolbar"><h2>Add Portlet to My Layout</h2></div>
 				<div class="portlet clearfix addchannel" style="margin: 0px;">
 					<form onsubmit="return addFocusedChannel(this);">
@@ -564,9 +573,6 @@
 			</div>
 		</div>
 		<script type="text/javascript">
-			dojo.require( "dojo.widget.*" );
-			dojo.require( "dojo.event.*" );
-			dojo.hostenv.writeIncludes(); 
 			var portalUrl = '<xsl:value-of select="$baseActionURL"/>';
 			var preferencesUrl = 'ajax/preferences';
 			var channelListUrl = 'ajax/channelList';
