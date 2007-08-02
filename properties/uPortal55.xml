@@ -1,4 +1,13 @@
 <Context path="@webappPath@" docBase="@webappDocBase@" crossContext="true">
+  <!--
+   | Pool validation is recomended to ensure connections returned from the pool
+   | are still valid. To enable add the following two properties:
+   |
+   | validationQuery="SELECT 1"
+   | testOnBorrow="true"
+   |
+   | Make sure the query is valid for your database
+   +-->
 
     <!-- Maximum number of dB connections in pool. Set to 0 for no limit.-->
     <!-- Maximum number of idle dB connections to retain in pool. Set to 0 for no limit.-->
@@ -8,9 +17,6 @@
     driverClassName="@jdbcDriver@" url="@jdbcUrl@"
     maxActive="100" maxIdle="30" maxWait="10000"
     poolPreparedStatements="@poolPreparedStatements@"
-    
-    validationQuery="SELECT 1"
-    testOnBorrow="true"
     
     removeAbandoned="true"
     removeAbandonedTimeout="300"
@@ -22,9 +28,6 @@
     driverClassName="@jdbcDriver@" url="@jdbcUrl@"
     maxActive="100" maxIdle="30" maxWait="10000"
     poolPreparedStatements="@poolPreparedStatements@"
-    
-    validationQuery="SELECT 1"
-    testOnBorrow="true"
     
     removeAbandoned="true"
     removeAbandonedTimeout="300"
