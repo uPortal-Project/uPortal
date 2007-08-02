@@ -44,11 +44,21 @@ public class ResourceLoader {
 
     private static final Log log = LogFactory.getLog(ResourceLoader.class);
 
-  private static DocumentBuilderFactory f;
+  private static DocumentBuilderFactory validatingDocumentBuilderFactory;
+  
+  private static DocumentBuilderFactory nonValidatingDocumentBuilderFactory;
+  
   static {
-    f = DocumentBuilderFactory.newInstance();
-    f.setValidating(false);
-    f.setNamespaceAware(true);
+    validatingDocumentBuilderFactory = DocumentBuilderFactory.newInstance();
+    nonValidatingDocumentBuilderFactory = DocumentBuilderFactory.newInstance();
+    
+    validatingDocumentBuilderFactory.setValidating(true);
+    nonValidatingDocumentBuilderFactory.setValidating(false);
+    
+    
+    validatingDocumentBuilderFactory.setNamespaceAware(true);
+    nonValidatingDocumentBuilderFactory.setNamespaceAware(true);
+    
     try{
       String handler = PropertiesManager.getProperty("org.jasig.portal.utils.ResourceLoader.HttpsHandler");
       if ((System.getProperty("java.protocol.handler.pkgs") != null) &&
@@ -170,30 +180,30 @@ public class ResourceLoader {
    * Get the contents of a URL as an XML Document
    * @param requestingClass the java.lang.Class object of the class that is attempting to load the resource
    * @param resource a String describing the full or partial URL of the resource whose contents to load
+   * @param validate boolean. True if the document builder factory should validate, false otherwise.
    * @return the actual contents of the resource as an XML Document
    * @throws org.jasig.portal.ResourceMissingException
    * @throws java.io.IOException
    * @throws javax.xml.parsers.ParserConfigurationException
    * @throws org.xml.sax.SAXException
    */
-  public static Document getResourceAsDocument (Class requestingClass, String resource) throws ResourceMissingException, IOException, ParserConfigurationException, SAXException {
+  public static Document getResourceAsDocument (Class requestingClass, String resource, boolean validate) 
+      throws ResourceMissingException, IOException, ParserConfigurationException, SAXException {
     Document document = null;
     InputStream inputStream = null;
+    
     try {
-      if (resource.equals("/properties/PersonDirs.xml")) {
-    	/*
-    	 * This is a very ugly hack to get around the problem that PersonsDirs.xml
-    	 * is loaded before uPortal has been initialized so there is no way
-    	 * to load PersonDirs.dtd through the web container. It also
-    	 * means we can't reference PersonsDirs.dtd in the xml file (commented
-    	 * out for now. GNL
-    	 */
-    	f.setValidating(false);
+    	
+    	DocumentBuilderFactory factoryToUse = null;
+    	
+      if (validate) {
+    	  factoryToUse = ResourceLoader.validatingDocumentBuilderFactory;
       } else {
-    	f.setValidating(true);
+    	factoryToUse = ResourceLoader.nonValidatingDocumentBuilderFactory;
       }
       inputStream = getResourceAsStream(requestingClass, resource);
-      DocumentBuilder db = f.newDocumentBuilder();
+      DocumentBuilder db = factoryToUse.newDocumentBuilder();
+      
       db.setEntityResolver(new DTDResolver());
       db.setErrorHandler(new SAXErrorHandler("ResourceLoader.getResourceAsDocument(" + resource + ")"));
       document = db.parse(inputStream);
@@ -204,6 +214,41 @@ public class ResourceLoader {
     return document;
   }
 
+  /**
+   * Get the contents of a URL as an XML Document, first trying to read the Document with validation turned on, 
+   * and falling back to reading it with validation turned off.
+   * @param requestingClass the java.lang.Class object of the class that is attempting to load the resource
+   * @param resource a String describing the full or partial URL of the resource whose contents to load
+   * @return the actual contents of the resource as an XML Document
+   * @throws org.jasig.portal.ResourceMissingException
+   * @throws java.io.IOException
+   * @throws javax.xml.parsers.ParserConfigurationException
+   * @throws org.xml.sax.SAXException
+   */
+  public static Document getResourceAsDocument (Class requestingClass, String resource) 
+      throws ResourceMissingException, IOException, ParserConfigurationException, SAXException {
+	  
+	  try {
+		  // first try with validation turned on
+		  return getResourceAsDocument(requestingClass, resource, true);
+	  } catch (Exception e) {
+		  
+		  if (log.isDebugEnabled()) {
+			  log.debug("Problem getting resource [" + resource + "] as requested by class [" + requestingClass.getName() + "]", e);
+			    
+		  } else {
+			  log.warn("Problem getting resource [" + resource + "] as requested by class [" + requestingClass.getName() + "]");
+			  
+		  }
+		  
+		  // try again with validation turned off
+		  return getResourceAsDocument(requestingClass, resource, false);
+	  }
+	  
+  }
+	  
+  
+  
   /**
    * Get the contents of a URL as a java.util.Properties object
    * @param requestingClass the java.lang.Class object of the class that is attempting to load the resource
