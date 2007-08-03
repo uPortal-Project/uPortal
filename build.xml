@@ -80,7 +80,8 @@
                        Defaults to "build".
 
   server.home          The root directory of the application server
-                       or servlet container such as Tomcat.
+
+  server.base          The root directory of the servlet container
 
   webapp.docBase       The name of the context within the webcontainer
 
@@ -103,7 +104,10 @@
   <property name="app.version"   value="UNKNOWN_VERSION"/>
   <property name="build.home"    value="build"/>
   <fail unless="server.home">Property 'server.home' is required for the uPortal build, but it is not present.  
-  	It should be the path to the root of your Tomcat.  
+  	It should be the path to the root of your Tomcat (CATALINA_HOME).  
+  	Did you forget to set it in build.properties?</fail>
+  <fail unless="server.base">Property 'server.base' is required for the uPortal build, but it is not present.  
+  	It should be the path to the root of your Tomcat (CATALINA_BASE).  
   	Did you forget to set it in build.properties?</fail>
   <fail unless="deploy.home">Property 'deploy.home' is required for the uPortal build, but it is not present.  
   	It should be the path to where you want your uPortal deployed.  
@@ -372,12 +376,12 @@
     <!-- These are Tomcat-specific!  We need to think about a new property
          that lets us specify the appropriate directory for other servers
     -->
-    <copy todir="${server.home}/shared/lib">
+    <copy todir="${server.base}/shared/lib">
     	<fileset dir="${lib.container-shared}"/>
     </copy>
   	
-    <mkdir dir="${server.home}/shared/classes/org/jasig/portal/container"/>
-    <copy todir="${server.home}/shared/classes/org/jasig/portal/container"
+    <mkdir dir="${server.base}/shared/classes/org/jasig/portal/container"/>
+    <copy todir="${server.base}/shared/classes/org/jasig/portal/container"
     	file="${build.home}/WEB-INF/classes/org/jasig/portal/container/PortletServlet.class"/>
     <copy todir="${server.home}/common/endorsed">
     	<fileset dir="${lib.container-common-endorsed}"/>
@@ -400,7 +404,7 @@
  	         In the "dist" target, the .war produced includes this context declaration in its /META-INF/.
  	    -->
 
-    <copy tofile="${server.home}/conf/Catalina/localhost/${webapp.docBase}.xml"
+    <copy tofile="${server.base}/conf/Catalina/localhost/${webapp.docBase}.xml"
     	file="properties/${webapp.contextFile}" overwrite="true">
     <filterset>
         <filter token="webappDocBase" value="${webapp.docBase}"/>
@@ -408,7 +412,7 @@
         <filtersfile file="properties/rdbm.properties" />
     </filterset>
   	</copy>
-    <copy todir="${server.home}/conf/Catalina/localhost" file="properties/proxyportlet.xml"/>
+    <copy todir="${server.base}/conf/Catalina/localhost" file="properties/proxyportlet.xml"/>
 
         <!-- Deploy classes to support the modified version of WSRP4J's proxyportlet.
              Consider making these classes part of the proxyportlet.war distribution.
@@ -449,7 +453,7 @@
          to deployment processes that honor it, such as deployment via the Tomcat manager application.
     -->   
   	    <mkdir dir="${deploy.home}/META-INF"/>
-  	    <copy tofile="${deploy.home}/META-INF/context.xml" file="${server.home}/conf/Catalina/localhost/${webapp.docBase}.xml"/>
+  	    <copy tofile="${deploy.home}/META-INF/context.xml" file="${server.base}/conf/Catalina/localhost/${webapp.docBase}.xml"/>
 
   	
     <!-- Create application WAR file -->
