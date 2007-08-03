@@ -123,7 +123,7 @@ public class UserInstance implements HttpSessionBindingListener {
     public static final AtomicInteger userSessions = new AtomicInteger();
     private static final MovingAverage renderTimes = new MovingAverage();
     public static MovingAverageSample lastRender = new MovingAverageSample();
-    
+
 
     public UserInstance (IPerson person) {
         this.person=person;
@@ -135,7 +135,6 @@ public class UserInstance implements HttpSessionBindingListener {
      * @param res the servlet response object
      */
     public void writeContent (HttpServletRequest req, HttpServletResponse res) throws PortalException {
-        
         // instantiate user layout manager and check to see if the profile mapping has been established
         if (p_browserMapper != null) {
             try {
@@ -401,13 +400,12 @@ public class UserInstance implements HttpSessionBindingListener {
                     
                     if (PropertiesManager.getPropertyAsBoolean("org.jasig.portal.serialize.ProxyWriter.resource_proxy_enabled")) {
 	                    HttpSession session = req.getSession(false);
-	                    ProxyResourceMap proxyResourceMap = (ProxyResourceMap)session.getAttribute("proxyResourceMap");
+	                    ProxyResourceMap<Integer, String> proxyResourceMap = (ProxyResourceMap<Integer, String>)session.getAttribute("proxyResourceMap");
 	                    if (proxyResourceMap == null) {
-	                        // let the resources be available only for a short period of time
-	                        proxyResourceMap = new ProxyResourceMap(PropertiesManager.getPropertyAsInt("org.jasig.portal.serialize.ProxyWriter.stateful_resource_timeout", 10));
+	                        proxyResourceMap = new ProxyResourceMap<Integer, String>();
                             session.setAttribute("proxyResourceMap", proxyResourceMap);
 	                    }
-	                    //proxyResourceMap.clear();
+	                    proxyResourceMap.clear();
                         serializerStartingPoint = new ProxyFilter(markupSerializer,proxyResourceMap);
                     }
                     
@@ -448,7 +446,7 @@ public class UserInstance implements HttpSessionBindingListener {
                                             "UserInstance::renderState() : ccache contains "+cCache.systemBuffers.size()+" system buffers and "+cCache.channelIds.size()+" channel entries");
 
                                 }
-                                CachingSerializer cSerializer=(CachingSerializer) serializerStartingPoint;
+                                CachingSerializer cSerializer=(CachingSerializer) markupSerializer;
                                 cSerializer.setDocumentStarted(true);
 
                                 for(int sb=0; sb<ccsize-1;sb++) {
@@ -460,7 +458,7 @@ public class UserInstance implements HttpSessionBindingListener {
 
                                     // get channel output
                                     String channelSubscribeId=(String) cCache.channelIds.get(sb);
-                                    channelManager.outputChannel(channelSubscribeId,serializerStartingPoint);
+                                    channelManager.outputChannel(channelSubscribeId,markupSerializer);
                                 }
 
                                 // print out the last block

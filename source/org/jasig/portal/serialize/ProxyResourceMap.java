@@ -5,7 +5,8 @@
 
 package org.jasig.portal.serialize;
 
-import org.jasig.portal.utils.SmartCache;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This class extends <code>HashMap</code> and allows the generation
@@ -13,7 +14,7 @@ import org.jasig.portal.utils.SmartCache;
  * This class is not synchronized and is designed to be stored and accessed
  * in the http session.
  */
-public class ProxyResourceMap extends SmartCache {
+public class ProxyResourceMap<K,V> extends HashMap<K,V> {
     
     private static final long serialVersionUID = 1L;
     
@@ -23,10 +24,18 @@ public class ProxyResourceMap extends SmartCache {
         super();
     }
 
+    public ProxyResourceMap(int arg0, float arg1) {
+        super(arg0, arg1);
+    }
+
     public ProxyResourceMap(int arg0) {
         super(arg0);
     }
 
+    public ProxyResourceMap(Map arg0) {
+        super(arg0);
+    }
+    
     public int getNextResourceId() {
         return nextResourceId++;
     }
