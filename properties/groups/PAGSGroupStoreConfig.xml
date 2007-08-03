@@ -5,7 +5,7 @@
     PAGSGroupStoreConfig.xml is used to configure the person attributes group store.
     See PAGSGroupStore.dtd for xml grammar.
 
-    To control the attributes that are available, see ../PersonDirs.xml.
+    To control the attributes that are available, see ../personDirectory.xml.
 
     Author: Dan Ellentuck, de3@columbia.edu
     Version $Revision$
