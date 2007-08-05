@@ -45,8 +45,6 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.serialize.BaseMarkupSerializer;
 import org.jasig.portal.serialize.CachingSerializer;
 import org.jasig.portal.serialize.OutputFormat;
-import org.jasig.portal.serialize.ProxyFilter;
-import org.jasig.portal.serialize.ProxyResourceMap;
 import org.jasig.portal.serialize.XMLSerializer;
 import org.jasig.portal.services.GroupService;
 import org.jasig.portal.tools.versioning.Version;
@@ -395,21 +393,7 @@ public class UserInstance implements HttpSessionBindingListener {
                     channelManager.setSerializerName(tsd.getSerializerName());
                     // initialize ChannelIncorporationFilter
                     // ChannelIncorporationFilter cif = new ChannelIncorporationFilter(markupSerializer, channelManager); // this should be slightly faster then the ccaching version, may be worth adding support later
-                    
-                    ContentHandler serializerStartingPoint = markupSerializer;
-                    
-                    if (PropertiesManager.getPropertyAsBoolean("org.jasig.portal.serialize.ProxyWriter.resource_proxy_enabled")) {
-	                    HttpSession session = req.getSession(false);
-	                    ProxyResourceMap<Integer, String> proxyResourceMap = (ProxyResourceMap<Integer, String>)session.getAttribute("proxyResourceMap");
-	                    if (proxyResourceMap == null) {
-	                        proxyResourceMap = new ProxyResourceMap<Integer, String>();
-                            session.setAttribute("proxyResourceMap", proxyResourceMap);
-	                    }
-	                    proxyResourceMap.clear();
-                        serializerStartingPoint = new ProxyFilter(markupSerializer,proxyResourceMap);
-                    }
-                    
-                    CharacterCachingChannelIncorporationFilter cif = new CharacterCachingChannelIncorporationFilter(serializerStartingPoint, channelManager,UserInstance.CACHE_ENABLED && UserInstance.CHARACTER_CACHE_ENABLED);
+                    CharacterCachingChannelIncorporationFilter cif = new CharacterCachingChannelIncorporationFilter(markupSerializer, channelManager,UserInstance.CACHE_ENABLED && UserInstance.CHARACTER_CACHE_ENABLED);
 
                     String cacheKey=null;
                     boolean output_produced=false;

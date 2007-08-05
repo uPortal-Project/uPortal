@@ -5,8 +5,6 @@
 
 package org.jasig.portal.channels.webproxy;
 
-import java.util.Set;
-
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.utils.SAX2FilterImpl;
@@ -24,7 +22,6 @@ public abstract class CWebProxyURLFilter extends SAX2FilterImpl
 
   protected ChannelRuntimeData runtimeData;
   protected String baseUrl;
-  protected Set<String> registeredUrls;
 
   /**
    * A constructor which receives a ContentHandler to which
@@ -43,7 +40,7 @@ public abstract class CWebProxyURLFilter extends SAX2FilterImpl
    * @param handler the ContentHandler used to pass along filtered SAX events
    * @param runtimeData the CWebProxy channel runtime data 
    */  
-  public static final CWebProxyURLFilter newCWebProxyURLFilter(String mimeType, ChannelRuntimeData runtimeData, ContentHandler handler, Set<String> registeredUrls) throws PortalException 
+  public static final CWebProxyURLFilter newCWebProxyURLFilter(String mimeType, ChannelRuntimeData runtimeData, ContentHandler handler) throws PortalException 
   {
     // Create a CWebProxyURLFilter, depending on mime type
     CWebProxyURLFilter filter = null;
@@ -64,7 +61,7 @@ public abstract class CWebProxyURLFilter extends SAX2FilterImpl
     // Set CWebProxyURLFilter properties
     filter.runtimeData = runtimeData;
     filter.baseUrl = (String)runtimeData.get("cw_xml");
-    filter.registeredUrls = registeredUrls;
+
     return filter;
   }
   
@@ -109,13 +106,11 @@ public abstract class CWebProxyURLFilter extends SAX2FilterImpl
             {
               if ((attValue.trim().equals("") || xmlUri.equals(base)))
                 attValue = actionURL + query;
-              else {
+              else
                 if (!query.equals(""))
                   attValue =  actionURL + query + "&cw_xml=" + base;
                 else
                   attValue = actionURL + "?cw_xml=" + base;
-                registeredUrls.add(base);
-              }
             }
           }
           else if (passThrough.equals("application"))
@@ -128,13 +123,10 @@ public abstract class CWebProxyURLFilter extends SAX2FilterImpl
             if (attValue.trim().equals("") || xmlUri.equals(base))
               attValue = actionURL + query;
             else
-              if (!query.equals("")) {
+              if (!query.equals(""))
                 attValue = actionURL + query + "&cw_xml=" + base;
-                registeredUrls.add(base);
-              } else {
-                registeredUrls.add(attValue);
+              else
                 attValue = actionURL + "?cw_xml=" + attValue;
-              }
           }
 
           int index = atts.getIndex(attName);

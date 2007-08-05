@@ -5,26 +5,20 @@
 
 package org.jasig.portal;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
+import java.io.*;
+import java.net.*;
 import java.util.StringTokenizer;
 
-import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import javax.servlet.*;
+import javax.servlet.http.*;
 
+import org.jasig.portal.properties.PropertiesManager;
+import org.jasig.portal.services.HttpClientManager;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.properties.PropertiesManager;
-import org.jasig.portal.serialize.ProxyResourceMap;
-import org.jasig.portal.services.HttpClientManager;
 
 /**
  * Proxy embedded content such as images for portal sessions.
@@ -52,59 +46,7 @@ public class HttpProxyServlet extends HttpServlet {
 	final String checkReferer = PropertiesManager.getProperty(HttpProxyServlet.class.getName()
 		+ ".checkReferer", null);
 
-	StringBuffer target = new StringBuffer();
-    
-    HttpSession session = request.getSession(false);
-    if (session == null) {
-        if (log.isWarnEnabled()) {
-            log.warn("Proxy attempt with no session.");
-        }
-        response.setStatus(404);
-        return;
-    }
-    
-    ProxyResourceMap<Integer, String> resourceMap = (ProxyResourceMap<Integer, String>)session.getAttribute("proxyResourceMap");
-    if (resourceMap == null) {
-        if (log.isWarnEnabled()) {
-            log.warn("Proxy attempt with no resourceMap.");
-        }
-        response.setStatus(404);
-        return;
-    }
-    
-    String resourceIdStr = request.getParameter("resourceId");
-    if (resourceIdStr == null) {
-        if (log.isWarnEnabled()) {
-            log.warn("Proxy attempt with no resourceId.");
-        }
-        response.setStatus(404);
-        return;
-    }
-    
-    Integer resourceId;
-    
-    try {
-        resourceId = new Integer(resourceIdStr);
-    } catch (NumberFormatException nfe) {
-        response.setStatus(404);
-        return;
-    }
-    
-    String resource = resourceMap.get(resourceId);
-    if (resource == null) {
-        if (log.isWarnEnabled()) {
-            log.warn("Proxy attempt with no resourceId mapping.");
-        }
-        response.setStatus(404);
-        return;
-    }
-    
-    // we only allow the resource to be proxied once
-    resourceMap.remove(resourceId);
-    
-    if (log.isDebugEnabled()) {
-        log.debug("Serving up resourceId/resource: " + resourceId + "/" + resourceMap.get(resourceId));
-    }
+	String target;
 
 	// if checking referer then only supply proxied content for specific referer
 	// Ensures requests come from pages in the portal
@@ -147,20 +89,35 @@ public class HttpProxyServlet extends HttpServlet {
 		response.setStatus(404);
 		return;
 	}
-    
-    target.append("http://").append(resource);
 
-	String qs = request.getQueryString();
-	if (qs != null) {
-	    target.append('?').append(qs);
+	// pathinfo is "/host/url"
+	if(request.getPathInfo() != null && !request.getPathInfo().equals("")) {
+	    target = "http:/" + request.getPathInfo();
+	    String qs = request.getQueryString();
+	    if (qs != null) {
+	        target +="?"+request.getQueryString();
+	    }
+	} else {
+		response.setStatus(404);
+		log.warn("HttpProxyServlet: getPathInfo is empty");
+	    return;
 	}
 
 	try {
 		final HttpClient client = HttpClientManager.getNewHTTPClient();
-		final GetMethod get = new GetMethod(target.toString());
+		final GetMethod get = new GetMethod(target);
 		final int rc = client.executeMethod(get);
-		final Header contentType = get.getResponseHeader("content-type");
-		response.setContentType(contentType.getValue());
+        if (rc != 200) {
+            response.setStatus(404);
+            log.info("httpProxyServlet returning response 404 after receiving response code: "+rc+" from url: "+"target");
+        }
+        final Header contentType = get.getResponseHeader("content-type");
+        if (log.isDebugEnabled()) 
+            log.debug("httpProxyServlet examining element with content type = "+contentType);
+        if (!contentType.getValue().startsWith("image")){
+            response.setStatus(404);
+            log.info("httpProxyServlet returning response 404 after receiving element with contentType ="+contentType);
+        }		response.setContentType(contentType.getValue());
 
 		final ServletOutputStream out = response.getOutputStream();
 		try {

@@ -297,6 +297,7 @@ public class HTMLSerializer
                         } else {
                             _printer.printText( name );
                             _printer.printText( "=\"" );
+                            value = ProxyWriter.considerProxyRewrite(name,localName,value);   
                             value = appendAnchorIfNecessary(rawName.toLowerCase(),name,value);
                             printEscaped( value );
                             _printer.printText( '"' );
@@ -312,6 +313,7 @@ public class HTMLSerializer
                         else if ( HTMLdtd.isURI( rawName, name ) ) {
                             _printer.printText( name );
                             _printer.printText( "=\"" );
+                            value = ProxyWriter.considerProxyRewrite(name,localName,value); 
                             _printer.printText( escapeURI( value ) );
                             _printer.printText( '"' );
                         } else if ( HTMLdtd.isBoolean( rawName, name ) )

@@ -7,8 +7,8 @@ package org.jasig.portal.channels.webproxy;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -25,22 +25,19 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.StringTokenizer;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.ChannelCacheKey;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ChannelRuntimeProperties;
 import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.GeneralRenderingException;
-import org.jasig.portal.ICacheable;
 import org.jasig.portal.IChannel;
 import org.jasig.portal.IMimeResponse;
+import org.jasig.portal.ICacheable;
 import org.jasig.portal.MediaManager;
 import org.jasig.portal.PortalEvent;
 import org.jasig.portal.PortalException;
@@ -48,6 +45,8 @@ import org.jasig.portal.ResourceMissingException;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.LocalConnectionContext;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.AbsoluteURLFilter;
 import org.jasig.portal.utils.CookieCutter;
 import org.jasig.portal.utils.DTDResolver;
@@ -316,18 +315,6 @@ public class CWebProxy implements IChannel, ICacheable, IMimeResponse
     private int refresh;
     
     /**
-     * Set used to keep urls (page resources) that were generated from
-     * the previous page request.
-     */
-    private Set<String> registeredUrls;
-    
-    /**
-     * Used to track the original uri published with the channel. This is
-     * always a registered url.
-     */
-    private String initialXmlUri;
-    
-    /**
      * The default scrutinizer is one that allows only http: and https: URIs.
      * Non-null.  Constructor enforces initialization to a non-null.
      */
@@ -352,7 +339,6 @@ public class CWebProxy implements IChannel, ICacheable, IMimeResponse
       runtimeData = null;
       cookieCutter = new CookieCutter();
       localConnContext = null;
-      registeredUrls = new HashSet<String>();
     }
 
     /**
@@ -424,15 +410,14 @@ public class CWebProxy implements IChannel, ICacheable, IMimeResponse
     String scrutinizeXmlUriAsStaticDataString = sd.getParameter(RESTRICT_STATIC_XMLURI_PREFIXES_PARAM);
     boolean scrutinizeXmlUriAsStaticData = "true".equals(scrutinizeXmlUriAsStaticDataString);
     
-    state.initialXmlUri = sd.getParameter("cw_xml");
+    String xmlUriParam = sd.getParameter("cw_xml");
     if (scrutinizeXmlUriAsStaticData) {
         // apply configured xmlUri restrictions
-        state.setXmlUri(state.initialXmlUri);
+        state.setXmlUri(xmlUriParam);
     } else {
         // set the field directly to avoid applying xmlUri restrictions
-        state.xmlUri = state.initialXmlUri;
+        state.xmlUri = xmlUriParam;
     }
-    
     
     state.iperson = sd.getPerson();
     state.publishId = sd.getChannelPublishId();
@@ -462,7 +447,7 @@ public class CWebProxy implements IChannel, ICacheable, IMimeResponse
     state.sslUri = sd.getParameter("cw_ssl");
     state.xslTitle = sd.getParameter ("cw_xslTitle");
     state.xslUri = sd.getParameter("cw_xsl");
-    state.fullxmlUri = state.initialXmlUri;
+    state.fullxmlUri = sd.getParameter("cw_xml");
     
     state.passThrough = sd.getParameter ("cw_passThrough");
     state.tidy = sd.getParameter ("cw_tidy");
@@ -538,14 +523,7 @@ public class CWebProxy implements IChannel, ICacheable, IMimeResponse
        state.refresh = 0;
 
        String xmlUri = state.runtimeData.getParameter("cw_xml");
-       
        if (xmlUri != null) {
-         if (!state.initialXmlUri.equals(xmlUri) && !state.registeredUrls.contains(xmlUri)) {
-           if (log.isWarnEnabled()) {
-             log.warn("Attempt to proxy unregistered url: " + xmlUri);
-           }
-           xmlUri = state.initialXmlUri;
-         }
          state.setXmlUri(xmlUri);
          // don't need an explicit reset if a new URI is provided.
          state.buttonxmlUri = null;
@@ -847,9 +825,9 @@ public class CWebProxy implements IChannel, ICacheable, IMimeResponse
           mimeType = "text/html";
         }
       }
+
       
-      state.registeredUrls.clear();
-      CWebProxyURLFilter filter2 = CWebProxyURLFilter.newCWebProxyURLFilter(mimeType, state.runtimeData, out, state.registeredUrls);
+      CWebProxyURLFilter filter2 = CWebProxyURLFilter.newCWebProxyURLFilter(mimeType, state.runtimeData, out);
       AbsoluteURLFilter filter1 = AbsoluteURLFilter.newAbsoluteURLFilter(mimeType, state.xmlUri, filter2);
 
       xslt.setTarget(filter1);
