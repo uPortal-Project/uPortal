@@ -563,7 +563,8 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
         node.setAttribute("editable",(new Boolean(this.isEditable())).toString());
         node.setAttribute("hasHelp",(new Boolean(this.hasHelp())).toString());
         node.setAttribute("hasAbout",(new Boolean(this.hasAbout())).toString());
-        node.setAttribute("secure",(new Boolean(this.isSecure())).toString());        
+        node.setAttribute("secure",(new Boolean(this.isSecure())).toString());
+        node.setAttribute("isPortlet",Boolean.valueOf(this.isPortlet()).toString());
     }
 
     /**

@@ -275,7 +275,9 @@ public class ChannelDefinition implements IBasicEntity {
     channel.setAttribute("editable", editable ? "true" : "false");
     channel.setAttribute("hasHelp", hasHelp ? "true" : "false");
     channel.setAttribute("hasAbout", hasAbout ? "true" : "false");
-    channel.setAttribute("secure", this.chanIsSecure ? "true" : "false");    
+    channel.setAttribute("secure", this.chanIsSecure ? "true" : "false");  
+    channel.setAttribute("isPortlet", Boolean.valueOf(this.isPortlet()).toString());
+
     return channel;
   }
 

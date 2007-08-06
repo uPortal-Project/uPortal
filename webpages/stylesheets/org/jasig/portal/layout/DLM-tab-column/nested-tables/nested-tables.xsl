@@ -345,7 +345,7 @@ exclude-result-prefixes="dlm">
       </tr>
       <tr class="uportal-background-content">
         <td class="uportal-channel-text" colspan="2">
-          <xsl:if test="@minimized != 'true'">
+          <xsl:if test="@minimized != 'true' or @isPortlet = 'true'">
             <xsl:copy-of select="."/>
           </xsl:if>
         </td>

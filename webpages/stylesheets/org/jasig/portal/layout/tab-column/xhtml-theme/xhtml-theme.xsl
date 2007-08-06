@@ -332,7 +332,7 @@
 			</div>
 			<!-- PORTLET CONTENT -->
 			<xsl:choose>
-				<xsl:when test="@minimized != 'true'">
+			    <xsl:when test="@minimized != 'true' or @isPortlet = 'true'">
 					<div id="portletContent_{@ID}" class="portlet clearfix {@fname}">
 						<xsl:copy-of select="."/>
 					</div>
