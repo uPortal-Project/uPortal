@@ -4,33 +4,27 @@
 */
 package org.jasig.portal.channels.cusermanager.provider;
 
-import java.sql.Types;
-import java.sql.ResultSet;
 import java.sql.Connection;
-
+import java.sql.ResultSet;
+import java.sql.Types;
 import java.text.MessageFormat;
-
-import java.util.Vector;
-import java.util.Iterator;
 import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.Vector;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.groups.IEntityGroup;
-import org.jasig.portal.groups.IGroupMember;
-import org.jasig.portal.services.GroupService;
-
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.provider.PersonImpl;
-
-import org.jasig.portal.tools.DeleteUser;
-
 import org.jasig.portal.IUserIdentityStore;
-
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.RDBMUserIdentityStore;
-
-import org.jasig.portal.channels.cusermanager.*;
+import org.jasig.portal.channels.cusermanager.Constants;
+import org.jasig.portal.channels.cusermanager.IDataHandler;
+import org.jasig.portal.groups.IEntityGroup;
+import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.provider.PersonImpl;
+import org.jasig.portal.services.GroupService;
+import org.jasig.portal.tools.DeleteUser;
 
 /**
  * @author smb1@cornell.edu
@@ -209,15 +203,9 @@ public class DefaultDataHandlerImpl implements IDataHandler {
 
         MessageFormat.format(
            UPDPWD, new Object[] {
-
              SINGLEQUOTE + newpwd + SINGLEQUOTE,
-
-             SINGLEQUOTE
-                 + Constants.SDF.format( new java.util.Date()) + SINGLEQUOTE,
-
-             SINGLEQUOTE
-               + (String)AnIndividual.getAttribute( Constants.UNFIELD )
-                 + SINGLEQUOTE
+             RDBMServices.getDbMetaData().sqlTimeStamp(new java.util.Date()),
+             SINGLEQUOTE + (String)AnIndividual.getAttribute( Constants.UNFIELD ) + SINGLEQUOTE
 
          } ));
 
@@ -312,7 +300,7 @@ public class DefaultDataHandlerImpl implements IDataHandler {
             else
              person.setAttribute(
                    R.getMetaData().getColumnName( i ).toLowerCase(),
-                      (R.getString( i )==null?"": Constants.SDF.format(
+                      (R.getString( i )==null?"": RDBMServices.getDbMetaData().sqlTimeStamp(
                          new java.util.Date( R.getTimestamp( i ).getTime()) )));
 
        }// for

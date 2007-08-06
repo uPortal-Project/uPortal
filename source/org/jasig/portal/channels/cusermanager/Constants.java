@@ -141,10 +141,6 @@ public interface Constants {
   public static final String USER_EXISTS
                           = "Username \"{0}\" " + Constants.ALREADY_EXISTS + "!";
 
-  /** Value of date mask = "yyyy-MM-dd hh:mm:ss" */
-  public static final java.text.SimpleDateFormat SDF
-                = new java.text.SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" );
-
   /** Value = "Saved." */
   public static final String MSG_SAVED = "Saved.";
 
