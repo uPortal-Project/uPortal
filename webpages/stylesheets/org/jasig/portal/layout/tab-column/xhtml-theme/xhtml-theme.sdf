@@ -3,13 +3,13 @@
 <stylesheetdescription>
   <name>XHTML Theme</name>
   <description>Renders tabs and columns using nested divs</description>
-  <parentStructureStylesheet>Tabs and columns</parentStructureStylesheet>
+  <parentStructureStylesheet>DLM Tabs and columns</parentStructureStylesheet>
   <mimeType>text/html</mimeType>
   <serializer>XHTML</serializer>
   <deviceType>workstation</deviceType>
   <samplePictureURI>media/org/jasig/portal/layout/tab-column/xhtml-theme/sample_full.gif</samplePictureURI>
   <sampleIconURI>media/org/jasig/portal/layout/tab-column/xhtml-theme/sample_icon.gif</sampleIconURI>
-  <userPreferencesModuleClass>org.jasig.portal.channels.UserPreferences.TabColumnPrefsState</userPreferencesModuleClass> 
+  <userPreferencesModuleClass>org.jasig.portal.channels.DLMUserPreferences.TabColumnPrefsState</userPreferencesModuleClass> 
  
   <parameters>
   	<parameter name="skin">
