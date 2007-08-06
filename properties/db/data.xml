@@ -5013,6 +5013,14 @@
         <column><name>TARGET</name><value>local.0</value></column>
         <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
       </row>
+      <row>
+        <column><name>OWNER</name><value>org.jasig.portal.channels.cusermanager.CUserManager</value></column>
+        <column><name>PRINCIPAL_TYPE</name><value>2</value></column>
+        <column><name>PRINCIPAL_KEY</name><value>admin</value></column>
+        <column><name>ACTIVITY</name><value>acctmgr</value></column>
+        <column><name>TARGET</name><value>Account Manager</value></column>
+        <column><name>PERMISSION_TYPE</name><value>GRANT</value></column>
+      </row>
     </rows>
   </table>
 
