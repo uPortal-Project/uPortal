@@ -1,19 +1,19 @@
 <html>
 <head>
-<title>uPortal 2.6.0 RC2 release notes</title>
+<title>uPortal 2.6.0 GA release notes</title>
 </head>
 <body>
 
 <p>This is a file for notes specific to
-<a href="http://www.ja-sig.org/wiki/x/0gBl">uPortal 2.6.0 release candidate 2</a>.  Part of the point of
-a release candidate release is to make a particular snapshot of progress evailable for
-review and evaluation, so what is known up front and could have been included in these release
-notes will be less than what is discovered about the release candidate post release.</p>
-<p>Therefore, please see <a href="http://www.ja-sig.org/wiki/x/0gBl">this release's wiki page</a> for more information.</p>
+<a href="http://www.ja-sig.org/wiki/display/UPC/2.6.0">uPortal 2.6.0 General Audience release</a>.  
+What is known up front and could have been included in these release
+notes will be less than what is discovered about the release over time.</p>
+<p>Therefore, please see <a href="http://www.ja-sig.org/wiki/display/UPC/2.6.0">this release's wiki page</a> for more information.</p>
 <h2>Requirements:</h2>
 <ul>
 <li>JDK 1.5 or later</li>
-<li>Tomcat 5.x (5.5.x preferred).  Other servlet containers may work. YMMV.</li>
+<li>Tomcat 5.x (5.5.x preferred).  Other servlet containers may work. YMMV.  Less than latest patch releases of 
+Tomcat may have serious known memory issues or other problems</li>
 <li>Database (Oracle, Postgres, MySQL are commonly used in production; 
 these and HSQLDB are commonly used in development; specific vendors and
 versions are supported via declaration in the DbLoader utility; if you want to use
@@ -22,24 +22,32 @@ a different database you'll need to declare its eccentricities there.)</li>
 
 <h2>What changed for this release</h2>
 <p>
-Issues resolved for this release are enumerated <a href="http://www.ja-sig.org/wiki/x/0gBl">on the wiki page</a>.
+Issues resolved for this release are enumerated <a href="http://www.ja-sig.org/wiki/display/UPC/2.6.0">on the wiki page</a>.
 </p>
 
 <h2>Known issues affecting this release</h2>
 
-<p>There are many known bugs in this release.  You can query
+<p>There may be known issues with this release.  You can query
 <a href="https://www.ja-sig.org/issues">the JA-SIG JIRA system</a>
 for known issues affecting this release, including
 issues discovered after this release went to press.
 <a href="http://www.ja-sig.org/issues">Search for issues with a
-"Matches Versions" of this release (2.6.0 M2)</a>.</p>
+"Matches Versions" of this release (2.6.0)</a>.</p>
 
 
-<p>Please make known any issues you discover with this release.</p>
+<p>Please make known any issues you discover with this release.  Anyone can register for a JA-SIG Jira user account and submit an issue.</p>
+
+<h2>Where to find documentation</h2>
+<ul>
+<li><a href="http://www.ja-sig.org/wiki/display/UPC/2.6.0">This release's wiki page, and its children pages</a></li>
+<li><a href="http://www.ja-sig.org/wiki/display/UPM/">The uPortal Manual wiki space (a work in progress)</a></li>
+<li><a href="http://www.ja-sig.org/wiki/display/UPC/">The JA-SIG Wiki more generally</a></li>
+<li>The uPortal deployer and developer email list archives and ongoing discussions</li>
+</ul>
 
 
 <h2>The release engineer's system:</h2>
-<p>This release was built on a Dell Latitude D810 running Ubuntu (Feisty Fawn),
+<p>This release was built on a Dell Latitude D810 running Ubuntu 7.04 (Feisty Fawn),
 Eclipse 3.2.2, and JDK 1.5.0_05.</p>
 
 </body>
