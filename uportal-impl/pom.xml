@@ -193,18 +193,6 @@
             <version>${whirlycache.version}</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>concurrent</groupId>
-            <artifactId>concurrent</artifactId>
-            <version>${concurrent.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>jdom</groupId>
-            <artifactId>jdom</artifactId>
-            <version>${jdom.version}</version>
-            <scope>compile</scope>
-        </dependency>
         
         <dependency>
             <groupId>javax.activation</groupId>
