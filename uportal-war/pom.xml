@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <parent>
+        <groupId>org.jasig.portal</groupId>
+        <artifactId>uportal-parent</artifactId>
+        <version>3.0.0-M5-SNAPSHOT</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.jasig.portal</groupId>
+    <artifactId>uportal-war</artifactId>
+    <packaging>war</packaging>
+    
+    <name>uPortal WAR</name>
+    <description>The uPortal web application.</description>
+
+    <dependencies>
+        <!-- ===== Compile Time Dependencies ============================== -->
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uportal-impl</artifactId>
+            <version>${pom.parent.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+            <version>${jstl.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>taglibs</groupId>
+            <artifactId>standard</artifactId>
+            <version>${standard.version}</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+    
+    <build>
+        <finalName>uPortal</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jspc-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>jspc</id>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <injectString>&lt;!-- [INSERT JSPC FRAGMENT HERE] --&gt;</injectString>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <webXml>${basedir}/target/jspweb.xml</webXml>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

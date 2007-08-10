@@ -17,19 +17,6 @@
     <name>uPortal Source</name>
     <description>The source code for uPortal.</description>
 
-    <pluginRepositories>
-        <pluginRepository>
-            <id>Codehaus Snapshots</id>
-            <url>http://snapshots.repository.codehaus.org/</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-        </pluginRepository>
-    </pluginRepositories>
-
     <dependencies>
         <!-- ===== Compile Time Dependencies ============================== -->
         
