@@ -4,6 +4,7 @@
 	<classpathentry kind="src" path="uportal-impl/src/test/java"/>
 	<classpathentry excluding="**" kind="src" output="uportal-impl/src/main/resources" path="uportal-impl/src/main/resources"/>
 	<classpathentry excluding="**" kind="src" output="uportal-impl/src/test/resources" path="uportal-impl/src/test/resources"/>
+	<classpathentry excluding="**" kind="src" output="uportal-war/src/main/resources" path="uportal-war/src/main/resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
 	<classpathentry kind="output" path="target/classes"/>
