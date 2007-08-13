@@ -55,7 +55,7 @@
         <write-file string="${url(${req($2)}/${req(APP_NAME)}/WEB-INF/web.xml)}" file="${req($2)}/${req(APP_NAME)}/WEB-INF/web.xml"/>
 
         <!-- Add the portlet.tld file... -->
-        <copy-file location="http://svn.apache.org/repos/asf/portals/pluto/tags/pluto-1.1.1/pluto-taglib/src/main/resources/META-INF/portlet.tld" to-file="${req($2)}/${req(APP_NAME)}/WEB-INF/tld/portlet.tld"/>
+        <copy-file location="classpath://org/jasig/portal/container/deploy/portlet.tld" to-file="${req($2)}/${req(APP_NAME)}/WEB-INF/tld/portlet.tld"/>
 
     </with-attribute>
 </with-attribute>
