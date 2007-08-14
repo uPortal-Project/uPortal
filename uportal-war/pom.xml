@@ -43,29 +43,25 @@
     
     <build>
         <finalName>uPortal</finalName>
+        <filters>
+            <filter>${basedir}/src/main/resources/properties/rdbm.properties</filter>
+        </filters>
         <plugins>
-            <!--<plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>jspc-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>jspc</id>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <injectString>&lt;!- - [INSERT JSPC FRAGMENT HERE] - -&gt;</injectString>
-                </configuration>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
-                    <webXml>${basedir}/target/jspweb.xml</webXml>
+                    <webResources>
+                        <resource>
+                            <filtering>true</filtering>
+                            <directory>${basedir}/src/main/webapp</directory>
+                            <includes>
+                                <include>META-INF/context.xml</include>
+                            </includes>
+                        </resource> 
+                    </webResources>
                 </configuration>
-            </plugin>-->
+            </plugin>
         </plugins>
     </build>
 </project>

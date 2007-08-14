@@ -9,6 +9,10 @@
         <antcall target="install-library">
             <param name="artifactId" value="activation" />
         </antcall>
+    	
+    	<antcall target="install-library">
+            <param name="artifactId" value="cernunnos" />
+        </antcall>
 
         <antcall target="install-library">
             <param name="artifactId" value="whirlycache" />

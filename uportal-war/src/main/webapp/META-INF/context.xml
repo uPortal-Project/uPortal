@@ -1,0 +1,35 @@
+<Context path="@webappPath@" docBase="@webappDocBase@" crossContext="true">
+    <Manager className="org.apache.catalina.session.PersistentManager" saveOnRestart="false"/>
+    
+    
+    <!--
+        | Pool validation is recomended to ensure connections returned from the pool
+        | are still valid. To enable add the following two properties:
+        |
+        | validationQuery="SELECT 1"
+        | testOnBorrow="true"
+        |
+        | Make sure the query is valid for your database
+        +-->
+    
+    <!-- Maximum number of dB connections in pool. Set to 0 for no limit.-->
+    <!-- Maximum number of idle dB connections to retain in pool. Set to 0 for no limit.-->
+    <!-- Maximum time to wait for a dB connection to become available in ms, in this example 10 seconds. An Exception is thrown if this timeout is exceeded.  Set to -1 to wait indefinitely. -->
+    <Resource name="jdbc/PortalDb" auth="Container" type="javax.sql.DataSource"
+        username="${jdbcUser}" password="${jdbcPassword}"
+        driverClassName="${jdbcDriver}" url="${jdbcUrl}"
+        maxActive="50" maxIdle="10" maxWait="10000"
+        removeAbandoned="true"
+        removeAbandonedTimeout="300"
+        logAbandoned="true"
+    /> 
+    
+    <Resource name="jdbc/PersonDb" auth="Container" type="javax.sql.DataSource"
+        username="${jdbcUser}" password="${jdbcPassword}"
+        driverClassName="${jdbcDriver}" url="${jdbcUrl}"
+        maxActive="50" maxIdle="10" maxWait="10000"
+        removeAbandoned="true"
+        removeAbandonedTimeout="300"
+        logAbandoned="true"
+    /> 
+</Context>

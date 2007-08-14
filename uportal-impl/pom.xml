@@ -42,6 +42,27 @@
         </dependency>
         
         <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>${commons-codec.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>commons-pool</groupId>
+            <artifactId>commons-pool</artifactId>
+            <version>${commons-pool.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.danann</groupId>
+            <artifactId>cernunnos</artifactId>
+            <version>${cernunnos.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        
+        <dependency>
             <groupId>servlets.com</groupId>
             <artifactId>cos</artifactId>
             <version>${cos.version}</version>
