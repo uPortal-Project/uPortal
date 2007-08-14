@@ -1,4 +1,4 @@
-<Context path="@webappPath@" docBase="@webappDocBase@" crossContext="true">
+<Context path="${webapp.path}" docBase="${webapp.docBase}" crossContext="true">
     <Manager className="org.apache.catalina.session.PersistentManager" saveOnRestart="false"/>
     
     
