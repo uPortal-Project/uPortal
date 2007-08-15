@@ -126,13 +126,6 @@
         </dependency>
         
         <dependency>
-            <groupId>org.apache.pluto</groupId>
-            <artifactId>pluto</artifactId>
-            <version>${pluto.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        
-        <dependency>
             <groupId>cas</groupId>
             <artifactId>casclient</artifactId>
             <version>${casclient.version}</version>
@@ -233,6 +226,13 @@
             <groupId>javax.portlet</groupId>
             <artifactId>portlet-api</artifactId>
             <version>${portlet-api.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.apache.pluto</groupId>
+            <artifactId>pluto</artifactId>
+            <version>${pluto.version}</version>
             <scope>provided</scope>
         </dependency>
 

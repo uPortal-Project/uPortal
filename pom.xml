@@ -124,7 +124,7 @@
     <modules>
         <module>uportal-impl</module>
         <module>uportal-war</module>
-        <!--<module>uportal-ear</module>-->
+        <module>uportal-ear</module>
     </modules>
 
     <build>

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <parent>
+        <groupId>org.jasig.portal</groupId>
+        <artifactId>uportal-parent</artifactId>
+        <version>3.0.0-M5-SNAPSHOT</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.jasig.portal</groupId>
+    <artifactId>uportal-ear</artifactId>
+    <packaging>ear</packaging>
+
+    <name>uPortal EAR</name>
+    <description>The complete uPortal package including dependent portlets.</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uportal-war</artifactId>
+            <version>${pom.parent.version}</version>
+            <type>war</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasig.portlet</groupId>
+            <artifactId>BookmarksPortlet</artifactId>
+            <version>1.0.7</version>
+            <type>war</type>
+        </dependency>
+        
+        <!--
+            BookmarksPortlet
+            googleportlet
+            proxyportlet
+            RssPortlet
+            testsuite 
+         -->
+        
+        <dependency>
+            <groupId>javax.portlet</groupId>
+            <artifactId>portlet-api</artifactId>
+            <version>${portlet-api.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.apache.pluto</groupId>
+            <artifactId>pluto</artifactId>
+            <version>${pluto.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+            <version>${jstl.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>taglibs</groupId>
+            <artifactId>standard</artifactId>
+            <version>${standard.version}</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>uPortal</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-ear-plugin</artifactId>
+                <configuration>
+                    <modules>
+                        <webModule>
+                            <groupId>org.jasig.portal</groupId>
+                            <artifactId>uportal-war</artifactId>
+                            <contextRoot>/uPortal</contextRoot>
+                        </webModule>
+                    </modules>
+                </configuration>
+            </plugin>
+            <!--<plugin> 
+                <groupId>org.apache.pluto</groupId>
+                <artifactId>maven-pluto-plugin</artifactId>
+                <version>${pluto.version}</version>
+                <executions>
+                    <execution>
+                        <id>assemble-ear</id>
+                        <goals>
+                            <goal>assemble</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <archives>
+                                <archive>${project.build.directory}/uPortal.ear</archive>
+                            </archives>
+                            <assemblyOutputDirectory>${project.build.directory}</assemblyOutputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>-->
+        </plugins>
+    </build>
+</project>
