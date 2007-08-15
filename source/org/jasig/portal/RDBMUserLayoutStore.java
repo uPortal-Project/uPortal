@@ -234,26 +234,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
   public RDBMUserLayoutStore () throws Exception {
     crs = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl();
     csdb = CounterStoreFactory.getCounterStoreImpl();
-    if (RDBMServices.supportsOuterJoins) {
-      if (RDBMServices.joinQuery instanceof RDBMServices.JdbcDb) {
-        RDBMServices.joinQuery.addQuery("layout",
-          "{oj UP_LAYOUT_STRUCT ULS LEFT OUTER JOIN UP_LAYOUT_PARAM USP ON ULS.USER_ID = USP.USER_ID AND ULS.STRUCT_ID = USP.STRUCT_ID} WHERE");
-        RDBMServices.joinQuery.addQuery("ss_struct", "{oj UP_SS_STRUCT USS LEFT OUTER JOIN UP_SS_STRUCT_PAR USP ON USS.SS_ID=USP.SS_ID} WHERE");
-        RDBMServices.joinQuery.addQuery("ss_theme", "{oj UP_SS_THEME UTS LEFT OUTER JOIN UP_SS_THEME_PARM UTP ON UTS.SS_ID=UTP.SS_ID} WHERE");
-      } else if (RDBMServices.joinQuery instanceof RDBMServices.PostgreSQLDb) {
-         RDBMServices.joinQuery.addQuery("layout",
-          "UP_LAYOUT_STRUCT ULS LEFT OUTER JOIN UP_LAYOUT_PARAM USP ON ULS.USER_ID = USP.USER_ID AND ULS.STRUCT_ID = USP.STRUCT_ID WHERE");
-        RDBMServices.joinQuery.addQuery("ss_struct", "UP_SS_STRUCT USS LEFT OUTER JOIN UP_SS_STRUCT_PAR USP ON USS.SS_ID=USP.SS_ID WHERE");
-        RDBMServices.joinQuery.addQuery("ss_theme", "UP_SS_THEME UTS LEFT OUTER JOIN UP_SS_THEME_PARM UTP ON UTS.SS_ID=UTP.SS_ID WHERE");
-     } else if (RDBMServices.joinQuery instanceof RDBMServices.OracleDb) {
-        RDBMServices.joinQuery.addQuery("layout",
-          "UP_LAYOUT_STRUCT ULS, UP_LAYOUT_PARAM USP WHERE ULS.STRUCT_ID = USP.STRUCT_ID(+) AND ULS.USER_ID = USP.USER_ID(+) AND");
-        RDBMServices.joinQuery.addQuery("ss_struct", "UP_SS_STRUCT USS, UP_SS_STRUCT_PAR USP WHERE USS.SS_ID=USP.SS_ID(+) AND");
-        RDBMServices.joinQuery.addQuery("ss_theme", "UP_SS_THEME UTS, UP_SS_THEME_PARM UTP WHERE UTS.SS_ID=UTP.SS_ID(+) AND");
-      } else {
-        throw new Exception("Unknown database driver");
-      }
-    }
+
   }
 
   /**
@@ -838,12 +819,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       Statement stmt = con.createStatement();
       int dbOffset = 0;
       String sQuery = "SELECT SS_NAME,SS_URI,SS_DESCRIPTION_URI,SS_DESCRIPTION_TEXT";
-      if (RDBMServices.supportsOuterJoins) {
-        sQuery += ",TYPE,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT FROM " + RDBMServices.joinQuery.getQuery("ss_struct");
-        dbOffset = 4;
-      } else {
+
         sQuery += " FROM UP_SS_STRUCT USS WHERE";
-      }
       sQuery += " USS.SS_ID=" + stylesheetId;
 
       log.debug("RDBMUserLayoutStore::getStructureStylesheetDescription(): " + sQuery);
@@ -858,16 +835,15 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           ssd.setStylesheetWordDescription(rs.getString(4));
         }
 
-        if (!RDBMServices.supportsOuterJoins) {
+
           rs.close();
           // retrieve stylesheet params and attributes
           sQuery = "SELECT TYPE,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT FROM UP_SS_STRUCT_PAR WHERE SS_ID=" + stylesheetId;
           log.debug("RDBMUserLayoutStore::getStructureStylesheetDescription(): " + sQuery);
           rs = stmt.executeQuery(sQuery);
-        }
 
         while (true) {
-          if (!RDBMServices.supportsOuterJoins && !rs.next()) {
+          if (!rs.next()) {
             break;
           }
 
@@ -891,9 +867,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
             log.debug("RDBMUserLayoutStore::getStructureStylesheetDescription() : encountered param of unknown type! (stylesheetId="
                 + stylesheetId + " param_name=\"" + rs.getString(dbOffset + 2) + "\" type=" + type + ").");
           }
-          if (RDBMServices.supportsOuterJoins && !rs.next()) {
-            break;
-          }
+
         }
       } finally {
         try { rs.close(); } catch (Exception e) {}
@@ -1121,12 +1095,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       Statement stmt = con.createStatement();
       int dbOffset = 0;
       String sQuery = "SELECT SS_NAME,SS_URI,SS_DESCRIPTION_URI,SS_DESCRIPTION_TEXT,STRUCT_SS_ID,SAMPLE_ICON_URI,SAMPLE_URI,MIME_TYPE,DEVICE_TYPE,SERIALIZER_NAME,UP_MODULE_CLASS";
-      if (RDBMServices.supportsOuterJoins) {
-        sQuery += ",TYPE,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT FROM " + RDBMServices.joinQuery.getQuery("ss_theme");
-        dbOffset = 11;
-      } else {
+
         sQuery += " FROM UP_SS_THEME UTS WHERE";
-      }
       sQuery += " UTS.SS_ID=" + stylesheetId;
       log.debug("RDBMUserLayoutStore::getThemeStylesheetDescription(): " + sQuery);
       ResultSet rs = stmt.executeQuery(sQuery);
@@ -1151,15 +1121,14 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           tsd.setCustomUserPreferencesManagerClass(rs.getString(11));
         }
 
-        if (!RDBMServices.supportsOuterJoins) {
           rs.close();
           // retrieve stylesheet params and attributes
           sQuery = "SELECT TYPE,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT FROM UP_SS_THEME_PARM WHERE SS_ID=" + stylesheetId;
           log.debug("RDBMUserLayoutStore::getThemeStylesheetDescription(): " + sQuery);
           rs = stmt.executeQuery(sQuery);
-        }
+
         while (true) {
-          if (!RDBMServices.supportsOuterJoins && !rs.next()) {
+          if (!rs.next()) {
             break;
           }
           int type = rs.getInt(dbOffset + 1);
@@ -1183,9 +1152,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
             log.error( "RDBMUserLayoutStore::getThemeStylesheetDescription() : encountered param of unknown type! (stylesheetId="
                 + stylesheetId + " param_name=\"" + rs.getString(dbOffset + 2) + "\" type=" + type + ").");
           }
-          if (RDBMServices.supportsOuterJoins && !rs.next()) {
-            break;
-          }
+
         }
       } finally {
         try { rs.close(); } catch (Exception e) {}
@@ -1748,11 +1715,9 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
                 sql = "SELECT ULS.STRUCT_ID,ULS.NEXT_STRUCT_ID,ULS.CHLD_STRUCT_ID,ULS.CHAN_ID,ULS.NAME,ULS.TYPE,ULS.HIDDEN,"+
               "ULS.UNREMOVABLE,ULS.IMMUTABLE";
             }
-            if (RDBMServices.supportsOuterJoins) {
-              sql += ",USP.STRUCT_PARM_NM,USP.STRUCT_PARM_VAL FROM " + RDBMServices.joinQuery.getQuery("layout");
-            } else {
-              sql += " FROM UP_LAYOUT_STRUCT ULS WHERE ";
-            }
+            
+            sql += " FROM UP_LAYOUT_STRUCT ULS WHERE ";
+            
             sql += " ULS.USER_ID=" + userId + " AND ULS.LAYOUT_ID=" + layoutId + " ORDER BY ULS.STRUCT_ID";
             log.debug("RDBMUserLayoutStore::getUserLayout(): " + sql);
             rs = stmt.executeQuery(sql);
@@ -1831,22 +1796,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
               if (!ls.isChannel()) {
                 ls.addFolderData(temp5, temp6); // Plug in saved column values
               }
-              if (RDBMServices.supportsOuterJoins) {
-                do {
-                  String name = rs.getString(name_index);
-                  String value = rs.getString(value_index); // Oracle JDBC requires us to do this for longs
-                  if (name != null) { // may not be there because of the join
-                    ls.addParameter(name, value);
-                  }
-                  if (!rs.next()) {
-                    break readLayout;
-                  }
-                  structId = rs.getInt(1);
-                  if (rs.wasNull()) {
-                    structId = 0;
-                  }
-                } while (structId == lastStructId);
-              } else { // Do second SELECT later on for structure parameters
+
                 if (ls.isChannel()) {
                   structChanIds.append(sepChar + ls.chanId);
                   sepChar = ",";
@@ -1861,12 +1811,12 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
                 }
               }
             } // while
-          }
+          
         } finally {
           rs.close();
         }
 
-        if (!RDBMServices.supportsOuterJoins) { // Pick up structure parameters
+         // Pick up structure parameters
           // first, get the struct ids for the channels
           String sql = "SELECT STRUCT_ID FROM UP_LAYOUT_STRUCT WHERE USER_ID=" + userId +
             " AND LAYOUT_ID=" + layoutId +
@@ -1908,7 +1858,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           } finally {
             rs.close();
           }
-        }
+        
 
         if (layoutStructure.size() > 0) { // We have a layout to work with
           createLayout(layoutStructure, doc, root, firstStructId);

@@ -79,7 +79,6 @@ public class RDBMServices {
   protected static final boolean getDatasourceFromJndi = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.RDBMServices.getDatasourceFromJndi");
   protected static final boolean usePreparedStatements = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.RDBMServices.usePreparedStatements");
   protected static boolean supportsPreparedStatements = false;
-  public static boolean supportsOuterJoins = false;
   public static boolean supportsTransactions = false;
   private static String tsStart = "";
   private static String tsEnd = "";
@@ -138,31 +137,6 @@ public class RDBMServices {
           } catch (SQLException sqle) {}
         }
 
-        /**
-         * Do we support outer joins?
-         */
-        try {
-          if (con.getMetaData().supportsOuterJoins()) {
-            Statement stmt = con.createStatement();
-            try {
-              for (int i = 0; i < joinTests.length; i++) {
-                sql = "SELECT COUNT(UP_USER.USER_ID) FROM " + joinTests[i].getTestJoin() + " UP_USER.USER_ID=0";
-                try {
-                  ResultSet rs = stmt.executeQuery(sql);
-                  try {
-                    rs.close();
-                  } catch (SQLException sqle) {}
-                  joinQuery = joinTests[i];
-                  supportsOuterJoins = true;
-                  break;
-                } catch (SQLException sqle) {}
-              }
-            } finally {
-              stmt.close();
-            }
-          }
-        } catch (SQLException sqle) {
-        }
 
         /**
          * Does the JDBC driver support the '{ts' (TimeStamp) metasyntax
@@ -229,7 +203,7 @@ public class RDBMServices {
         log.info( md.getDatabaseProductName() +
           "/" + getJdbcDriver() + " (" + md.getDriverVersion() +
           ") database/driver supports:\n     Prepared statements=" + supportsPreparedStatements +
-          ", Outer joins=" + supportsOuterJoins + ", Transactions=" + supportsTransactions + tranMsg +
+          ", Transactions=" + supportsTransactions + tranMsg +
           ", '{ts' metasyntax=" + tsEnd.equals("}") + ", TO_DATE()=" +
           useToDate);
       } finally {

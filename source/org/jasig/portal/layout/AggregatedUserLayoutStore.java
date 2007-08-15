@@ -95,7 +95,9 @@ import org.jasig.portal.utils.CommonUtils;
 
 public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IAggregatedUserLayoutStore {
 
-    private static final Log log = LogFactory.getLog(AggregatedUserLayoutStore.class);
+
+
+	private static final Log log = LogFactory.getLog(AggregatedUserLayoutStore.class);
     
   private static final int LOST_FOLDER_ID = -1;
   private static final String NODE_SEPARATOR = "-";
@@ -131,40 +133,10 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                                   "CHAN_PUBL_DT,CHAN_APVL_ID,CHAN_APVL_DT,CHAN_TIMEOUT,CHAN_EDITABLE,CHAN_HAS_HELP,CHAN_HAS_ABOUT,"+
                                   "CHAN_FNAME,CHAN_SECURE) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
-  private static String fragmentJoinQuery = "";
-
   public AggregatedUserLayoutStore() throws Exception {
-    super();
-    RDBMServices.supportsOuterJoins = false;
-    if (RDBMServices.supportsOuterJoins) {
-      if (RDBMServices.joinQuery instanceof RDBMServices.JdbcDb) {
-        RDBMServices.joinQuery.addQuery("layout_aggr",
-          "{oj UP_LAYOUT_STRUCT_AGGR ULS LEFT OUTER JOIN UP_LAYOUT_PARAM USP ON ULS.USER_ID = USP.USER_ID AND ULS.NODE_ID = USP.STRUCT_ID} WHERE");
-        fragmentJoinQuery =
-            "{oj UP_FRAGMENTS UF LEFT OUTER JOIN UP_FRAGMENT_PARAM UFP ON UF.NODE_ID = UFP.NODE_ID AND UF.FRAGMENT_ID = UFP.FRAGMENT_ID} WHERE";
-
-        //RDBMServices.joinQuery.addQuery("ss_struct", "{oj UP_SS_STRUCT USS LEFT OUTER JOIN UP_SS_STRUCT_PAR USP ON USS.SS_ID=USP.SS_ID} WHERE");
-        //RDBMServices.joinQuery.addQuery("ss_theme", "{oj UP_SS_THEME UTS LEFT OUTER JOIN UP_SS_THEME_PARM UTP ON UTS.SS_ID=UTP.SS_ID} WHERE");
-      } else if (RDBMServices.joinQuery instanceof RDBMServices.PostgreSQLDb) {
-         RDBMServices.joinQuery.addQuery("layout_aggr",
-          "UP_LAYOUT_STRUCT_AGGR ULS LEFT OUTER JOIN UP_LAYOUT_PARAM USP ON ULS.USER_ID = USP.USER_ID AND ULS.NODE_ID = USP.STRUCT_ID WHERE");
-         fragmentJoinQuery =
-             "UP_FRAGMENTS UF LEFT OUTER JOIN UP_FRAGMENT_PARAM UFP ON UF.NODE_ID = UFP.NODE_ID AND UF.FRAGMENT_ID = UFP.FRAGMENT_ID WHERE";
-        //RDBMServices.joinQuery.addQuery("ss_struct", "UP_SS_STRUCT USS LEFT OUTER JOIN UP_SS_STRUCT_PAR USP ON USS.SS_ID=USP.SS_ID WHERE");
-        //RDBMServices.joinQuery.addQuery("ss_theme", "UP_SS_THEME UTS LEFT OUTER JOIN UP_SS_THEME_PARM UTP ON UTS.SS_ID=UTP.SS_ID WHERE");
-     } else if (RDBMServices.joinQuery instanceof RDBMServices.OracleDb) {
-        RDBMServices.joinQuery.addQuery("layout_aggr",
-          "UP_LAYOUT_STRUCT_AGGR ULS, UP_LAYOUT_PARAM USP WHERE ULS.NODE_ID = USP.STRUCT_ID(+) AND ULS.USER_ID = USP.USER_ID AND");
-        fragmentJoinQuery =
-          "UP_FRAGMENTS UF, UP_FRAGMENT_PARAM UFP WHERE UF.NODE_ID = UFP.NODE_ID(+) AND UF.FRAGMENT_ID = UFP.FRAGMENT_ID AND";
-        //RDBMServices.joinQuery.addQuery("ss_struct", "UP_SS_STRUCT USS, UP_SS_STRUCT_PAR USP WHERE USS.SS_ID=USP.SS_ID(+) AND");
-        //RDBMServices.joinQuery.addQuery("ss_theme", "UP_SS_THEME UTS, UP_SS_THEME_PARM UTP WHERE UTS.SS_ID=UTP.SS_ID(+) AND");
-      } else {
-        throw new Exception("Unknown database!");
-      }
-    }
-  }
-
+		super();
+	}
+  
    /**
    * Return the Structure ID tag (Overloaded)
    * @param  structId
@@ -1896,11 +1868,9 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         // layout query
         String sqlLayout = "SELECT ULS.NODE_ID,ULS.NEXT_NODE_ID,ULS.CHLD_NODE_ID,ULS.PREV_NODE_ID,ULS.PRNT_NODE_ID,ULS.CHAN_ID,ULS.NAME,ULS.TYPE,ULS.HIDDEN,"+
           "ULS.UNREMOVABLE,ULS.IMMUTABLE,ULS.PRIORITY,ULS.FRAGMENT_ID,ULS.FRAGMENT_NODE_ID";
-        if (RDBMServices.supportsOuterJoins) {
-          sqlLayout += ",USP.STRUCT_PARM_NM,USP.STRUCT_PARM_VAL FROM " + RDBMServices.joinQuery.getQuery("layout_aggr");
-        } else {
-          sqlLayout += " FROM UP_LAYOUT_STRUCT_AGGR ULS WHERE ";
-        }
+        
+        sqlLayout += " FROM UP_LAYOUT_STRUCT_AGGR ULS WHERE ";
+        
         sqlLayout += " ULS.USER_ID="+userId+" AND ULS.LAYOUT_ID="+layoutId;
 
         log.debug(sqlLayout);
@@ -1908,11 +1878,9 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         // The query for getting information of the fragments
         String sqlFragment = "SELECT DISTINCT UF.NODE_ID,UF.NEXT_NODE_ID,UF.CHLD_NODE_ID,UF.PREV_NODE_ID,UF.PRNT_NODE_ID,UF.CHAN_ID,UF.NAME,UF.TYPE,UF.HIDDEN,"+
           "UF.UNREMOVABLE,UF.IMMUTABLE,UF.PRIORITY,UF.FRAGMENT_ID";
-        if (RDBMServices.supportsOuterJoins) {
-          sqlFragment += ",UFP.PARAM_NAME,UFP.PARAM_VALUE FROM UP_LAYOUT_STRUCT_AGGR ULS, " + fragmentJoinQuery;
-        } else {
+        
           sqlFragment += " FROM UP_FRAGMENTS UF, UP_LAYOUT_STRUCT_AGGR ULS WHERE ";
-        }
+
         sqlFragment += "(ULS.USER_ID="+userId+" AND ULS.FRAGMENT_ID=UF.FRAGMENT_ID)" + ((pushFragmentIds!=null)?" OR UF.FRAGMENT_ID IN ("+pushFragmentIds+")":"");
 
         log.debug(sqlFragment);
@@ -2121,25 +2089,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
               int index = (sql.equals(sqlLayout))?15:14;
 
-              if (RDBMServices.supportsOuterJoins) {
-                do {
-                  String name = rs.getString(index);
-                  String value = rs.getString(index+1); // Oracle JDBC requires us to do this for longs
-                  if (name != null) { // may not be there because of the join
-                      if ( channelDesc != null )
-                          channelDesc.setParameterValue(name,value);
-                  }
-
-
-                  if (!rs.next()) {
-                    break readLayout;
-                  }
-                  structId = rs.getInt(1);
-                  if (rs.wasNull()) {
-                    structId = 0;
-                  }
-                } while (structId == lastStructId);
-              } else { // Do second SELECT later on for structure parameters
+              { // Do second SELECT later on for structure parameters
 
                   // Adding the channel ID to the String buffer
                   if ( node.getNodeType() == IUserLayoutNodeDescription.CHANNEL ) {
@@ -2204,7 +2154,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
             chanIds.clear();
         }
 
-        if ( !RDBMServices.supportsOuterJoins && structParms.length() > 0 ) { // Pick up structure parameters
+        if (structParms.length() > 0 ) { // Pick up structure parameters
           String paramSql = "SELECT STRUCT_ID, STRUCT_PARM_NM,STRUCT_PARM_VAL FROM UP_LAYOUT_PARAM WHERE USER_ID=" + userId + " AND LAYOUT_ID=" + layoutId +
             " AND STRUCT_ID IN (" + structParms.toString() + ") ORDER BY STRUCT_ID";
           log.debug("AggregatedUserLayoutStore::getUserLayout(): " + paramSql);
@@ -2248,56 +2198,6 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         }
 
        } // End of for
-
-
-       // Very suspicious place !!!!
-       // Check if the node from an user layout points to a fragment node, we have to bind them
-       // The loop for all the nodes from the hashtable
-       //System.out.println( "Getting layout size: " + layout.size() );
-       /*for ( Enumeration nodeIds = layout.keys(); nodeIds.hasMoreElements() ;) {
-          String strNodeId = nodeIds.nextElement().toString();
-          //System.out.println( "Getting nodeId: " + strNodeId );
-          ALNode node = (ALNode) layout.get(strNodeId);
-           if ( node.getFragmentId() == null ) {
-
-                  String nextNodeId = node.getNextNodeId();
-                  ALNode nextNode = null;
-                  if ( nextNodeId != null ) nextNode =  (ALNode) layout.get(nextNodeId);
-
-                  String prevNodeId = node.getPreviousNodeId();
-                  ALNode prevNode = null;
-                  if ( prevNodeId != null ) prevNode =  (ALNode) layout.get(prevNodeId);
-
-                  String prntNodeId = node.getParentNodeId();
-                  ALNode prntNode = null;
-                  if ( prntNodeId != null ) prntNode =  (ALNode) layout.get(prntNodeId);
-
-                  String firstChildId = ("folder".equals(node.getNodeType()))?((ALFolder)node).getFirstChildNodeId():null;
-                  ALNode childNode = null;
-                  if ( firstChildId != null )
-                   childNode = (ALNode)layout.get(firstChildId);
-
-                  if ( nextNode != null && nextNode.getFragmentId() != null ) nextNode.setPreviousNodeId(strNodeId);
-                  if ( prevNode != null && prevNode.getFragmentId() != null ) prevNode.setNextNodeId(strNodeId);
-                  // if we have the following: node = the first child of his parent what is a fragment node :))
-                  if ( prntNode != null && prntNode.getFragmentId() != null && node.getPreviousNodeId() == null )
-                     if ( "folder".equals(prntNode.getNodeType()) )
-                        ((ALFolder)prntNode).setFirstChildNodeId(strNodeId);
-                  // Checking all the children
-                  if ( childNode != null ) {
-                   for ( String tmpNodeId = childNode.getId(); tmpNodeId != null; ) {
-                    ALNode tmpChildNode =  (ALNode) layout.get(tmpNodeId);
-                    // if we got tmpChildNode == NULL we have to get out of the loop
-                    //if ( tmpChildNode != null ) {
-                     if ( tmpChildNode.getFragmentId() != null )
-                       tmpChildNode.setParentNodeId(strNodeId);
-                     tmpNodeId = tmpChildNode.getNextNodeId();
-                    //} else break;
-                   }
-                  }
-            }
-       }
-         */
 
 
         // finding the last node in the sibling line of the root children
@@ -2501,11 +2401,8 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         // The query for getting information of the fragments
         String sqlFragment = "SELECT DISTINCT UF.NODE_ID,UF.NEXT_NODE_ID,UF.CHLD_NODE_ID,UF.PREV_NODE_ID,UF.PRNT_NODE_ID,UF.CHAN_ID,UF.NAME,UF.TYPE,UF.HIDDEN,"+
           "UF.UNREMOVABLE,UF.IMMUTABLE,UF.PRIORITY,UF.FRAGMENT_ID";
-        if (RDBMServices.supportsOuterJoins) {
-          sqlFragment += ",UFP.PARAM_NAME,UFP.PARAM_VALUE FROM UP_OWNER_FRAGMENT UOF, " + fragmentJoinQuery;
-        } else {
+
           sqlFragment += " FROM UP_FRAGMENTS UF, UP_OWNER_FRAGMENT UOF WHERE ";
-        }
         sqlFragment += " UF.FRAGMENT_ID=UOF.FRAGMENT_ID AND UOF.FRAGMENT_ID=?";
         log.debug(sqlFragment);
         PreparedStatement psFragment = con.prepareStatement(sqlFragment);
@@ -2663,25 +2560,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                rsRestr.close();
                if ( psRestr != null ) psRestr.close();
 
-              if (RDBMServices.supportsOuterJoins) {
-                do {
-                  String name = rs.getString(14);
-                  String value = rs.getString(15); // Oracle JDBC requires us to do this for longs
-                  if (name != null) { // may not be there because of the join
-                      if ( channelDesc != null )
-                          channelDesc.setParameterValue(name,value);
-                  }
-
-
-                  if (!rs.next()) {
-                    break readLayout;
-                  }
-                  structId = rs.getInt(1);
-                  if (rs.wasNull()) {
-                    structId = 0;
-                  }
-                } while (structId == lastStructId);
-              } else { // Do second SELECT later on for structure parameters
+              { // Do second SELECT later on for structure parameters
 
                   // Adding the channel ID to the String buffer
                   if ( node.getNodeType() == IUserLayoutNodeDescription.CHANNEL ) {
@@ -2744,7 +2623,7 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
           chanIds.clear();
         }
 
-        if ( !RDBMServices.supportsOuterJoins && structParms.length() > 0 ) { // Pick up structure parameters
+        if (structParms.length() > 0 ) { // Pick up structure parameters
           String sql = "SELECT NODE_ID, PARAM_NAME, PARAM_VALUE FROM UP_FRAGMENT_PARAM WHERE FRAGMENT_ID=" + fragmentId +
             " AND NODE_ID IN (" + structParms.toString() + ") ORDER BY NODE_ID";
           log.debug("AggregatedUserLayoutStore::getFragment(): " + sql);

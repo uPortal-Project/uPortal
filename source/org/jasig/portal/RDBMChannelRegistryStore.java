@@ -70,29 +70,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
 
     private static final Log log = LogFactory.getLog(RDBMChannelRegistryStore.class);
     
-  /**
-   * Add join queries for databases that are known to support them
-   */
-  static {
-    try {
-      if (RDBMServices.supportsOuterJoins) {
-        if (RDBMServices.joinQuery instanceof RDBMServices.JdbcDb) {
-          RDBMServices.joinQuery.addQuery("channel",
-            "{oj UP_CHANNEL UC LEFT OUTER JOIN UP_CHANNEL_PARAM UCP ON UC.CHAN_ID = UCP.CHAN_ID} WHERE");
-        } else if (RDBMServices.joinQuery instanceof RDBMServices.PostgreSQLDb) {
-           RDBMServices.joinQuery.addQuery("channel",
-            "UP_CHANNEL UC LEFT OUTER JOIN UP_CHANNEL_PARAM UCP ON UC.CHAN_ID = UCP.CHAN_ID WHERE");
-       } else if (RDBMServices.joinQuery instanceof RDBMServices.OracleDb) {
-          RDBMServices.joinQuery.addQuery("channel",
-            "UP_CHANNEL UC, UP_CHANNEL_PARAM UCP WHERE UC.CHAN_ID = UCP.CHAN_ID(+) AND");
-        } else {
-          throw new Exception("Unknown database driver");
-        }
-      }
-    } catch (Exception e) {
-      log.error( "RDBMChannelRegistryStore: Error in static initializer", e);
-    }
-  }
+
 
   // I18n propertiy
   protected static final boolean localeAware = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.i18n.LocaleManager.locale_aware");
@@ -1053,11 +1031,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
                  "UC.CHAN_TIMEOUT, UC.CHAN_EDITABLE, UC.CHAN_HAS_HELP, UC.CHAN_HAS_ABOUT, " +
                  "UC.CHAN_NAME, UC.CHAN_FNAME, UC.CHAN_SECURE";
 
-    if (RDBMServices.supportsOuterJoins) {
-      sql += ", CHAN_PARM_NM, CHAN_PARM_VAL, CHAN_PARM_OVRD, CHAN_PARM_DESC FROM " + RDBMServices.joinQuery.getQuery("channel");
-    } else {
       sql += " FROM UP_CHANNEL UC WHERE";
-    }
 
     sql += " UC.CHAN_ID=?";
 
@@ -1065,11 +1039,8 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
   }
 
   protected static final RDBMServices.PreparedStatement getChannelParamPstmt(Connection con) throws SQLException {
-    if (RDBMServices.supportsOuterJoins) {
-      return null;
-    } else {
+
       return new RDBMServices.PreparedStatement(con, "SELECT CHAN_PARM_NM, CHAN_PARM_VAL,CHAN_PARM_OVRD,CHAN_PARM_DESC FROM UP_CHANNEL_PARAM WHERE CHAN_ID=?");
-    }
   }
 
   protected static final RDBMServices.PreparedStatement getChannelMdataPstmt(Connection con) throws SQLException {
