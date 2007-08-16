@@ -361,21 +361,24 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
             ALFolder folder = (ALFolder) node;
             String firstChildId = folder.getFirstChildNodeId();
             if ( firstChildId != null ) {
-             try {
-             ALNode lastSiblingNode = getLastSiblingNode(firstChildId);
+               try {
+                 ALNode lastSiblingNode = getLastSiblingNode(firstChildId);
              
-             String id = lastSiblingNode.getId();
-             while ( id != null && !changeSiblingNodesOrder(folder.getFirstChildNodeId()) ) {
-			   String lastNodeId = getLastSiblingNode(id).getId();
-			   id = getLayoutNode(lastNodeId).getPreviousNodeId();
-			   moveNodeToLostFolder(lastNodeId);
-             }  
+                 String id = lastSiblingNode.getId();
+                 while ( id != null && !changeSiblingNodesOrder(folder.getFirstChildNodeId()) ) {
+			       String lastNodeId = getLastSiblingNode(id).getId();
+			       id = getLayoutNode(lastNodeId).getPreviousNodeId();
+			       moveNodeToLostFolder(lastNodeId);
+                 }  
+             
+               } catch (ALMNodeIdMappedToNullNodeException nullNodeException) {
+            	  log.error("Unable to move wrong nodes to lost folder because of null node exception.  Layout corruption?", nullNodeException);
+               }
+             
              for ( String nextId = folder.getFirstChildNodeId(); nextId != null; 
                    nextId = getLayoutNode(nextId).getNextNodeId() )
                moveWrongNodesToLostFolder(nextId,depth);
-             } catch (ALMNodeIdMappedToNullNodeException nullNodeException) {
-            	 log.error("Unable to move wrong nodes to lost folder because of null node exception.  Layout corruption?", nullNodeException);
-             }
+
             } 
         }
 
