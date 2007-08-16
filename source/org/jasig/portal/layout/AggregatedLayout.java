@@ -169,6 +169,12 @@ public class AggregatedLayout implements IAggregatedLayout {
        }
        
        nextId = node.getNextNodeId();
+       
+       if (nextId == nodeIdArg) {
+    	   throw new CorruptedAlmLayoutException("getLastSiblingNode of [" + nodeIdArg + "] encountered that same node ID in tracing the siblings of the node.  " +
+    	   		"This results in an unfortunate infinite loop.  This layout is corrupted and needs to be deleted or manually fixed.");
+       }
+       
      }
        return node;
   }
@@ -185,6 +191,10 @@ public class AggregatedLayout implements IAggregatedLayout {
        }
        
        prevId = node.getPreviousNodeId();
+       if (prevId == nodeIdArg) {
+    	   throw new CorruptedAlmLayoutException("getFirstSiblingNode of [" + nodeIdArg + "] encountered that same node ID in tracing the siblings of the node.  " +
+    	   		"This results in an unfortunate infinite loop.  This layout is corrupted and needs to be deleted or manually fixed.");
+       }
      }
        return node;
   }
