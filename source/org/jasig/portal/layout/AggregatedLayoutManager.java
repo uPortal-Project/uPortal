@@ -360,7 +360,10 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
             ALFolder folder = (ALFolder) node;
             String firstChildId = folder.getFirstChildNodeId();
             if ( firstChildId != null ) {
-             String id = getLastSiblingNode(firstChildId).getId();
+             try {
+             ALNode lastSiblingNode = getLastSiblingNode(firstChildId);
+             
+             String id = lastSiblingNode.getId();
              while ( id != null && !changeSiblingNodesOrder(folder.getFirstChildNodeId()) ) {
 			   String lastNodeId = getLastSiblingNode(id).getId();
 			   id = getLayoutNode(lastNodeId).getPreviousNodeId();
@@ -369,6 +372,9 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
              for ( String nextId = folder.getFirstChildNodeId(); nextId != null; 
                    nextId = getLayoutNode(nextId).getNextNodeId() )
                moveWrongNodesToLostFolder(nextId,depth);
+             } catch (ALMNodeIdMappedToNullNodeException nullNodeException) {
+            	 log.error("Unable to move wrong nodes to lost folder because of null node exception.  Layout corruption?", nullNodeException);
+             }
             } 
         }
 
@@ -637,11 +643,14 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 	   * @param nodeId a <code>String</code> any node ID from the sibling line to be checked
 	   * @return a boolean value
 	   * @exception PortalException if an error occurs
+       * @throws ALMNodeIdMappedToNullNodeException if unable to change sibling node priorities because nodeId mapped to a null node
 	   */
-  protected boolean changeSiblingNodesPriorities( String nodeId ) throws PortalException {
+  protected boolean changeSiblingNodesPriorities( String nodeId ) throws PortalException, ALMNodeIdMappedToNullNodeException {
          
 	int tmpPriority = Integer.MAX_VALUE;
-	String firstNodeId = getFirstSiblingNode(nodeId).getId();
+	ALNode firstSiblingNode = getFirstSiblingNode(nodeId);
+	
+	String firstNodeId = firstSiblingNode.getId();
 
 	// Fill out the vector by priority values
 	for ( String nextId = firstNodeId; nextId != null; ) {
@@ -748,6 +757,7 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 			// If we add a new node to the end of the sibling line
 			if ( nextNode == null ) {
 
+		      try {
 			  // Getting the last node
 			  ALNode lastNode = getLastSiblingNode(firstNodeId);
 
@@ -769,7 +779,9 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 					 node.setPriority(range[0]);
 					 return true;
 			  }
-
+		      } catch (ALMNodeIdMappedToNullNodeException nullNodeException) {
+		    	  log.error("Canot update node priorities because last sibling node was null.  Corrupted layout?", nullNodeException);
+		      }
 			}
 
 
@@ -845,11 +857,29 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
     if ( rightOrder ) return true;
 
     // Check if the current order is right
-    if ( changeSiblingNodesPriorities(firstNodeId) ) return true;
+    
+    
+    try {
+      boolean changeSiblingNodesPrioritiesReturnedTrue = changeSiblingNodesPriorities(firstNodeId);
+//    TODO: give this boolean a better name when its significance is better understood
+      if ( changeSiblingNodesPrioritiesReturnedTrue ) return true;
+    } catch (ALMNodeIdMappedToNullNodeException nullNodeException) {
+    	// there's a problem.  assume current order is not right and further processing required
+    	log.error("Unable to determine whether current node priorities are correct because node ID involved mapped to a null node", nullNodeException);
+    }
+    
+
     
      Set movedNodes = new HashSet();
      //	Choosing more suitable order of the nodes in the sibling line
-     for ( String lastNodeId = getLastSiblingNode(firstNodeId).getId(); lastNodeId != null; ) {
+     // FIXME This implementation amounts to BubbleSort!!!!
+     
+     try {
+     
+     ALNode lastSiblingNode = getLastSiblingNode(firstNodeId);
+     
+     String lastNodeId = lastSiblingNode.getId(); 
+     while (lastNodeId != null) {
        
 	   for ( String curNodeId = lastNodeId; curNodeId != null; ) {
 		if ( !lastNodeId.equals(curNodeId) && !movedNodes.contains(lastNodeId) ) {
@@ -875,7 +905,10 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 	   
 	  lastNodeId = getLayoutNode(lastNodeId).getPreviousNodeId();
 	 }
-		  	 
+	 
+     } catch (ALMNodeIdMappedToNullNodeException nullNodeException) {
+    	 log.error("Error mucking around with layout node ordering due to illegally null node.  Layout corruption?", nullNodeException);
+     }
         return false;
         
   }
@@ -924,11 +957,11 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
      return layout.getLayoutFolder(folderId);
     }
 
-    private ALNode getLastSiblingNode ( String nodeId ) {
+    private ALNode getLastSiblingNode ( String nodeId ) throws ALMNodeIdMappedToNullNodeException {
      return layout.getLastSiblingNode(nodeId);
     }
 
-    private ALNode getFirstSiblingNode ( String nodeId ) {
+    private ALNode getFirstSiblingNode ( String nodeId ) throws ALMNodeIdMappedToNullNodeException {
      return layout.getFirstSiblingNode(nodeId);
     }
 
@@ -1322,10 +1355,17 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
 
         // If the nextNode != null we calculate the prev node from it otherwise we have to run to the last node in the sibling line
 
-        if ( targetNextNode != null )
+        if ( targetNextNode != null ) {
+        	
             targetPrevNode = getLayoutNode(targetNextNode.getPreviousNodeId());
-        else
-            targetPrevNode = getLastSiblingNode(targetFolder.getFirstChildNodeId());
+        } else { // targetNextNode is null
+            try {
+        	targetPrevNode = getLastSiblingNode(targetFolder.getFirstChildNodeId());
+            } catch (ALMNodeIdMappedToNullNodeException nullNodeException) {
+            	log.error("Error running to the last node in the sibling line.  Layout corruption?", nullNodeException);
+            	// allow targetPrevNode to remain null so that the handling code immediately following is executed
+            }
+        }
 
         if ( targetPrevNode != null ) {
             targetPrevNode.setNextNodeId(nodeId);
@@ -1485,11 +1525,18 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
         ALNode prevNode =  null;
 
         // If the nextNode != null we calculate the prev node from it otherwise we have to run to the last node in the sibling line
-        if ( nextNode != null )
+        if ( nextNode != null ) {
              prevNode = getLayoutNode(nextNode.getPreviousNodeId());
-        else
-             prevNode = getLastSiblingNode( parentFolder.getFirstChildNodeId());
-
+        } else {
+            try {
+        	prevNode = getLastSiblingNode( parentFolder.getFirstChildNodeId());
+            } catch (ALMNodeIdMappedToNullNodeException nullNodeException) {
+            	log.error("Error getting last sibling node.  ALM layout corruption?", nullNodeException);
+            	// allow prevNode to remain null so that the null-checking handling in this method applies
+            }
+        }
+        
+        
         // If currently a fragment is loaded the node desc should have a fragment ID
         if ( isFragmentLoaded() )
           ((IALNodeDescription)nodeDesc).setFragmentId(fragmentId);

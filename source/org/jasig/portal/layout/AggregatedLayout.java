@@ -41,6 +41,8 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.Vector;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.layout.restrictions.IUserLayoutRestriction;
 import org.jasig.portal.layout.restrictions.PriorityRestriction;
@@ -62,6 +64,8 @@ import org.xml.sax.helpers.AttributesImpl;
  */
 public class AggregatedLayout implements IAggregatedLayout {
 
+	protected final Log log = LogFactory.getLog(getClass());
+	
     // The hashtable with the layout nodes
     private Hashtable layout = null;
 
@@ -113,7 +117,11 @@ public class AggregatedLayout implements IAggregatedLayout {
   }
 
   private void bindRestrictions( IALNodeDescription nodeDesc, ContentHandler contentHandler ) throws SAXException {
-      Hashtable restrictions = nodeDesc.getRestrictions();
+    if (log.isTraceEnabled()) {
+    	log.trace("Binding restrictions for node [" + nodeDesc + "]");
+    }
+	  
+	  Hashtable restrictions = nodeDesc.getRestrictions();
       for ( Enumeration e = restrictions.keys(); e.hasMoreElements(); ) {
        IUserLayoutRestriction restriction = (IUserLayoutRestriction ) e.nextElement();
        if ( ( restriction.getRestrictionType() & restrictionMask ) > 0 ) {
@@ -146,19 +154,36 @@ public class AggregatedLayout implements IAggregatedLayout {
         return null;
   }
 
-  public ALNode getLastSiblingNode ( String nodeId ) {
-     ALNode node = null;
+  public ALNode getLastSiblingNode (final String nodeIdArg ) throws ALMNodeIdMappedToNullNodeException {
+     String nodeId = nodeIdArg;
+	  ALNode node = null;
      for ( String nextId = nodeId; nextId != null; ) {
        node = getLayoutNode(nextId);
+       
+       if (node == null) {
+    	   log.error("Node identifier [" + nextId + "] referenced null. Unable to get last sibling node, originally for node id [" + nodeIdArg + "]");
+           
+    	   // returning null here because that seems to be the intent of the calling code.
+    	   
+    	   throw new ALMNodeIdMappedToNullNodeException(nextId, nodeIdArg);
+       }
+       
        nextId = node.getNextNodeId();
      }
        return node;
   }
 
-  public ALNode getFirstSiblingNode ( String nodeId ) {
+  public ALNode getFirstSiblingNode (final String nodeIdArg ) throws ALMNodeIdMappedToNullNodeException {
      ALNode node = null;
+     String nodeId = nodeIdArg;
      for ( String prevId = nodeId; prevId != null; ) {
        node = getLayoutNode(prevId);
+       
+       if (node == null) {
+    	   log.error("Node id [" + prevId + "] illegally mapped to a null node; discovered in pursuit of first sibling of node id [" + nodeIdArg + "]");
+           throw new ALMNodeIdMappedToNullNodeException(prevId, nodeIdArg);
+       }
+       
        prevId = node.getPreviousNodeId();
      }
        return node;
