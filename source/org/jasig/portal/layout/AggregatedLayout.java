@@ -155,9 +155,8 @@ public class AggregatedLayout implements IAggregatedLayout {
   }
 
   public ALNode getLastSiblingNode (final String nodeIdArg ) throws ALMNodeIdMappedToNullNodeException {
-     String nodeId = nodeIdArg;
 	  ALNode node = null;
-     for ( String nextId = nodeId; nextId != null; ) {
+     for ( String nextId = nodeIdArg; nextId != null; ) {
        node = getLayoutNode(nextId);
        
        if (node == null) {
@@ -170,7 +169,7 @@ public class AggregatedLayout implements IAggregatedLayout {
        
        nextId = node.getNextNodeId();
        
-       if (nextId == nodeIdArg) {
+       if (nodeIdArg.equals(nextId)) {
     	   throw new CorruptedAlmLayoutException("getLastSiblingNode of [" + nodeIdArg + "] encountered that same node ID in tracing the siblings of the node.  " +
     	   		"This results in an unfortunate infinite loop.  This layout is corrupted and needs to be deleted or manually fixed.");
        }
@@ -181,8 +180,7 @@ public class AggregatedLayout implements IAggregatedLayout {
 
   public ALNode getFirstSiblingNode (final String nodeIdArg ) throws ALMNodeIdMappedToNullNodeException {
      ALNode node = null;
-     String nodeId = nodeIdArg;
-     for ( String prevId = nodeId; prevId != null; ) {
+     for ( String prevId = nodeIdArg; prevId != null; ) {
        node = getLayoutNode(prevId);
        
        if (node == null) {
@@ -191,7 +189,7 @@ public class AggregatedLayout implements IAggregatedLayout {
        }
        
        prevId = node.getPreviousNodeId();
-       if (prevId == nodeIdArg) {
+       if (nodeIdArg.equals(prevId)) {
     	   throw new CorruptedAlmLayoutException("getFirstSiblingNode of [" + nodeIdArg + "] encountered that same node ID in tracing the siblings of the node.  " +
     	   		"This results in an unfortunate infinite loop.  This layout is corrupted and needs to be deleted or manually fixed.");
        }
