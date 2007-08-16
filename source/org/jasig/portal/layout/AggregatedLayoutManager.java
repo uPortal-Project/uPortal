@@ -277,10 +277,11 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
   Collection nodes = layoutStore.getIncorrectPushedFragmentNodes(person,userProfile);
   for ( Iterator i = nodes.iterator(); i.hasNext(); ) {
     String nodeId = (String) i.next();
-    ALNode node = getLayoutNode(nodeId);
-    if ( node != null && nodeId != null ) {
-     if ( !moveNodeToLostFolder(nodeId) )
-      log.info( "Unable to move the pushed fragment with ID="+node.getFragmentId()+" to the lost folder");
+    if (nodeId != null) {
+      ALNode node = getLayoutNode(nodeId);
+      if ( node != null &&  !moveNodeToLostFolder(nodeId) ) {
+        log.info( "Unable to move the pushed fragment with ID="+node.getFragmentId()+" to the lost folder");
+       }
     }
   }
  }
@@ -1866,9 +1867,18 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
     }
 
     public boolean addLayoutEventListener(LayoutEventListener l){
+    	if (log.isTraceEnabled()) {
+    		log.trace("Adding layout event listener [" + l + "]");
+    	}
+    	
         return listeners.add(l);
     }
+    
     public boolean removeLayoutEventListener(LayoutEventListener l){
+    	if (log.isTraceEnabled()) {
+    		log.trace("Removing layout event listener [" + l + "]");
+    	}
+    	
         return listeners.remove(l);
     }
 
