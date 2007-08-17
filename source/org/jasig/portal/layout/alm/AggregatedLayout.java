@@ -155,21 +155,34 @@ public class AggregatedLayout implements IAggregatedLayout {
 		return null;
 	}
 
-	public ALNode getLastSiblingNode ( String nodeId ) {
+	public ALNode getLastSiblingNode ( final String nodeIdArg ) {
 		ALNode node = null;
-		for ( String nextId = nodeId; nextId != null; ) {
+		for ( String nextId = nodeIdArg; nextId != null; ) {
 			node = getLayoutNode(nextId);
 			nextId = node.getNextNodeId();
+			
+			if (nodeIdArg.equals(nextId)) {
+				throw new RuntimeException("getLastSiblingNode of [" + nodeIdArg + "] encountered that same node ID in tracing the siblings of the node.  " +
+    	   		"This results in an unfortunate infinite loop.  This layout is corrupted and needs to be deleted or manually fixed.");
+
+			}
 		}
 		return node;
 	}
 
-	public ALNode getFirstSiblingNode ( String nodeId ) {
+	public ALNode getFirstSiblingNode (final String nodeIdArg ) {
 		ALNode node = null;
-		for ( String prevId = nodeId; prevId != null; ) {
+		for ( String prevId = nodeIdArg; prevId != null; ) {
 			node = getLayoutNode(prevId);
 			prevId = node.getPreviousNodeId();
+			
+			if (nodeIdArg.equals(prevId)) {
+				throw new RuntimeException("getFirstSiblingNode of [" + nodeIdArg + "] encountered that same node ID in tracing the siblings of the node.  " +
+    	   		"This results in an unfortunate infinite loop.  This layout is corrupted and needs to be deleted or manually fixed.");
+
+			}
 		}
+		
 		return node;
 	}
 
