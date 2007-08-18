@@ -42,8 +42,7 @@ public abstract class AbstractLimitedSupportEventHandler implements
 
 	public final void afterPropertiesSet() throws Exception {
 		if (supportedEvents == null) {
-			log
-					.info("No supported events set.   Using default of all PortalEvents.");
+			log.info("No supported events set.   Using default of all PortalEvents.");
 			this.supportedEvents = DEFAULT_SUPPORTED_EVENTS;
 		}
 
