@@ -196,4 +196,9 @@ public abstract class ALNode {
         }
     }
 
+    public String toString() {
+    	  return "{"+parentNodeId+","+nextNodeId+","+previousNodeId
+    	  + ","+nodeDescription+ ","+priority+"}";
+    	}
+    
   }
