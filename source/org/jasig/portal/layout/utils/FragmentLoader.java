@@ -44,6 +44,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.Iterator;
+import java.util.StringTokenizer;
 
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXTransformerFactory;
@@ -408,7 +409,32 @@ public class FragmentLoader {
                         }
                     }
                 } else {
-                    String restrName=ai.getValue("name");
+                	
+                	// Check priority of fragment to see if valid
+                	String priority = ai.getValue("value");
+                	String restrName=ai.getValue("name");
+
+                	if(restrName.equals("priority")) {
+                	  if(priority.equals("")) {
+                	    System.out.println("ERROR: Invalid priority. Priority is empty.");
+                	       System.exit(1);
+                	  }
+                	  StringTokenizer st = new StringTokenizer(priority, "-");
+                	                     
+                	  if (st.countTokens() == 2){
+                	    String minPriority = st.nextToken();
+                	    String maxPriority = st.nextToken();
+                	    if (maxPriority.compareTo(minPriority) < 0){
+                	      System.out.println("ERROR: Invalid priority [" + priority + "]. Check priorities to ensure they are valid.");
+                	      System.exit(1);
+                	    }
+                	  } else {
+                	    System.out.println("ERROR: Invalid priority [" + priority + "]. Check priorities to ensure they are valid.");
+                	    System.exit(1);
+                	  }
+                    }   
+                	
+
                     restrType=(String)rMap.get(restrName);
                     if(restrType!=null) {
                         ai.addAttribute(uri,"type","type","CDATA",restrType);
