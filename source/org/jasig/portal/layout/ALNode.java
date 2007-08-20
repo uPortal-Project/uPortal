@@ -195,5 +195,10 @@ public abstract class ALNode {
             throw new PortalException("ALNode::createALNode() : The node description supplied is neither a folder nor a channel! Can't make the ALNode");
         }
     }
+    
+    public String toString() {
+  	  return "{"+parentNodeId+","+nextNodeId+","+previousNodeId
+  	  + ","+nodeDescription+ ","+priority+"}";
+  	}
 
   }
