@@ -101,6 +101,20 @@ public class AggregatedLayout implements IAggregatedLayout {
   }
   
   public void setLayoutData ( Hashtable layout ) throws PortalException {
+	  
+		  // check that layout isn't corrupt  	
+		  for ( Enumeration nodeIds = layout.keys(); nodeIds.hasMoreElements() ;) {
+			  String nodeId = nodeIds.nextElement().toString();
+			  ALNode node = (ALNode)layout.get(nodeId);
+			  // check for nodes that reference themselves
+			  if (node != null && (nodeId.equals(node.getNextNodeId()) ||
+					  nodeId.equals(node.getPreviousNodeId()) ||
+					  nodeId.equals(node.getParentNodeId())) 
+			      ) {			  
+				  throw new RuntimeException("Corrupted layout detected, node: "+nodeId);			   
+			  }
+		  }
+	  
     this.layout = layout;
   }
 
@@ -135,16 +149,41 @@ public class AggregatedLayout implements IAggregatedLayout {
   }
 
   public ALNode getLayoutNode(String nodeId) {
-     if ( nodeId != null )
-        return (ALNode)layout.get(nodeId);
-        return null;
-  }
+	     if ( nodeId != null ) {
+	    	 
+	 	  	//Sanity check
+	 		  ALNode aln = (ALNode)layout.get(nodeId);
+	 		  if (aln != null && (nodeId.equals(aln.getNextNodeId()) ||
+	 			  nodeId.equals(aln.getPreviousNodeId()) ||
+	 			  nodeId.equals(aln.getParentNodeId())) 
+	 		  ){			
+	 		    throw new RuntimeException("Corrupted layout detected, node: " + nodeId);
+	 		  }
+	 		  return aln;
+	    	 
+	     }
+	     
+	     return null;
+	  }
 
   public ALFolder getLayoutFolder(String folderId) {
-     if ( folderId != null )
-        return (ALFolder)layout.get(folderId);
-        return null;
-  }
+	     if ( folderId != null ) {
+
+	 	  	//Sanity check 	
+	 		  ALFolder aln = (ALFolder)layout.get(folderId);
+	 		  if (aln != null && 
+	 				  (folderId.equals(aln.getNextNodeId()) ||
+	 				  folderId.equals(aln.getPreviousNodeId()) ||
+	 				  folderId.equals(aln.getParentNodeId())) 
+	 		  ){
+	 		    throw new RuntimeException("Corrupted layout detected, folderId: " + folderId);
+	 		  }
+	 		  return aln;
+	    	 
+	     }
+	     
+	     return null;
+	  }
 
   public ALNode getLastSiblingNode ( final String nodeIdArg ) {
      ALNode node = null;
