@@ -7,7 +7,7 @@
      Notes:
 
      You shouldn't need to modify this file.  Instead, modify
-     build.properties which contains configurable paths to directories of 
+     build.properties which contains configurable paths to directories of
      jar files and other resources.
 
      "ant initportal" will deploy uPortal and load your database,
@@ -103,16 +103,16 @@
   <property name="app.name"      value="uPortal"/>
   <property name="app.version"   value="UNKNOWN_VERSION"/>
   <property name="build.home"    value="build"/>
-  <fail unless="server.home">Property 'server.home' is required for the uPortal build, but it is not present.  
-  	It should be the path to the root of your Tomcat (CATALINA_HOME).  
-  	Did you forget to set it in build.properties?</fail>
-  <fail unless="server.base">Property 'server.base' is required for the uPortal build, but it is not present.  
-  	It should be the path to the root of your Tomcat (CATALINA_BASE).  
-  	Did you forget to set it in build.properties?</fail>
-  <fail unless="deploy.home">Property 'deploy.home' is required for the uPortal build, but it is not present.  
-  	It should be the path to where you want your uPortal deployed.  
-  	Did you forget to set this in build.properties?</fail>
-	
+  <fail unless="server.home">Property 'server.home' is required for the uPortal build, but it is not present.
+    It should be the path to the root of your Tomcat (CATALINA_HOME).
+    Did you forget to set it in build.properties?</fail>
+  <fail unless="server.base">Property 'server.base' is required for the uPortal build, but it is not present.
+    It should be the path to the root of your Tomcat (CATALINA_BASE).
+    Did you forget to set it in build.properties?</fail>
+  <fail unless="deploy.home">Property 'deploy.home' is required for the uPortal build, but it is not present.
+    It should be the path to where you want your uPortal deployed.
+    Did you forget to set this in build.properties?</fail>
+
   <property name="dist.home"     value="dist"/>
 
   <property name="webapp.DocBase" value="uPortal"/>
@@ -166,8 +166,8 @@
 <property name="lib.provided" value="./lib/provided"/>
 <property name="lib.runtime" value="./lib/runtime"/>
 <property name="lib.test" value="./lib/test"/>
-	
-	
+
+
 <!-- set this property to cause the build to print XML-formatted output -->
 <!--<property name="tests.xmlFormat" value="true"/>-->
 
@@ -185,27 +185,27 @@
 -->
 
   <path id="compile.classpath">
-  	
+
     <fileset dir="${lib.compile}">
        <include name="**/*.jar"/>
      </fileset>
-  	
-  	<fileset dir="${lib.provided}">
-  	  <include name="**/*.jar"/>
-  	</fileset>
-  	
-  	<fileset dir="${lib.container-common}">
-  	  <include name="**/*.jar"/>
-  	</fileset>
 
-  	<fileset dir="${lib.container-shared}">
-  	  <include name="**/*.jar"/>
-  	</fileset>
-  	
-  	<fileset dir="${lib.container-common-endorsed}">
-  	  <include name="**/*.jar"/>
-  	</fileset>
-  	
+    <fileset dir="${lib.provided}">
+      <include name="**/*.jar"/>
+    </fileset>
+
+    <fileset dir="${lib.container-common}">
+      <include name="**/*.jar"/>
+    </fileset>
+
+    <fileset dir="${lib.container-shared}">
+      <include name="**/*.jar"/>
+    </fileset>
+
+    <fileset dir="${lib.container-common-endorsed}">
+      <include name="**/*.jar"/>
+    </fileset>
+
   </path>
 
 
@@ -215,15 +215,15 @@
 <!--
   Classpath for uPortal test code.
 -->
-	
+
   <path id="tests.classpath">
     <path refid="compile.classpath"/>
-  	<fileset dir="${lib.test}">
-  	  <include name="**/*.jar"/>
-  	</fileset>
-  	<fileset dir="${lib.runtime}">
-  	  <include name="**/*.jar"/>
-  	</fileset>
+    <fileset dir="${lib.test}">
+      <include name="**/*.jar"/>
+    </fileset>
+    <fileset dir="${lib.runtime}">
+      <include name="**/*.jar"/>
+    </fileset>
   </path>
 
 
@@ -322,6 +322,9 @@
     <!-- Copy WhirlyCache to proper folder -->
     <copy file="properties/whirlycache.xml" tofile="${build.home}/WEB-INF/classes/whirlycache.xml" />
 
+    <!-- Copy CatalogManager.properties to proper folder -->
+    <copy file="properties/CatalogManager.properties" tofile="${build.home}/WEB-INF/classes/CatalogManager.properties" />
+
     <!-- Copy all stylesheets, stylesheet descriptions  and stylesheet list files -->
     <copy  todir="${build.home}/WEB-INF/classes">
         <fileset dir="webpages/stylesheets" includes="**/*.cpd,**/*.xsl,**/*.ssl,**/*.sdf,**/*.properties" excludes="**/*.UTF-8.properties"/>
@@ -368,50 +371,50 @@
     <!-- Copy external dependencies as required -->
     <mkdir  dir="${deploy.home}/WEB-INF/lib"/>
     <copy todir="${deploy.home}/WEB-INF/lib">
-    	<fileset dir="${lib.compile}"/>
-    	<fileset dir="${lib.runtime}"/>
+        <fileset dir="${lib.compile}"/>
+        <fileset dir="${lib.runtime}"/>
     </copy>
-   
+
 
     <!-- These are Tomcat-specific!  We need to think about a new property
          that lets us specify the appropriate directory for other servers
     -->
     <copy todir="${server.base}/shared/lib">
-    	<fileset dir="${lib.container-shared}"/>
+        <fileset dir="${lib.container-shared}"/>
     </copy>
-  	
+
     <mkdir dir="${server.base}/shared/classes/org/jasig/portal/container"/>
     <copy todir="${server.base}/shared/classes/org/jasig/portal/container"
-    	file="${build.home}/WEB-INF/classes/org/jasig/portal/container/PortletServlet.class"/>
+        file="${build.home}/WEB-INF/classes/org/jasig/portal/container/PortletServlet.class"/>
     <copy todir="${server.home}/common/endorsed">
-    	<fileset dir="${lib.container-common-endorsed}"/>
+        <fileset dir="${lib.container-common-endorsed}"/>
     </copy>
-  	
+
     <copy todir="${server.home}/common/lib">
-    	<fileset dir="${lib.container-common}"/>
+        <fileset dir="${lib.container-common}"/>
     </copy>
 
     <!-- This is Tomcat-specific and server name-specific!
          We need to find out the best way to ensure cross-context
          behavior in all servlet containers.
     -->
-  	
-  
- 	 <!--
- 	        Copy context configuration into the Tomcat server configuration directory so that Tomcat will configure the
- 	         context properly.
- 	         
- 	         In the "dist" target, the .war produced includes this context declaration in its /META-INF/.
- 	    -->
+
+
+     <!--
+            Copy context configuration into the Tomcat server configuration directory so that Tomcat will configure the
+             context properly.
+
+             In the "dist" target, the .war produced includes this context declaration in its /META-INF/.
+        -->
 
     <copy tofile="${server.base}/conf/Catalina/localhost/${webapp.docBase}.xml"
-    	file="properties/${webapp.contextFile}" overwrite="true">
+        file="properties/${webapp.contextFile}" overwrite="true">
     <filterset>
         <filter token="webappDocBase" value="${webapp.docBase}"/>
         <filter token="webappPath" value="${webapp.path}"/>
         <filtersfile file="properties/rdbm.properties" />
     </filterset>
-  	</copy>
+    </copy>
     <copy todir="${server.base}/conf/Catalina/localhost" file="properties/proxyportlet.xml"/>
 
         <!-- Deploy classes to support the modified version of WSRP4J's proxyportlet.
@@ -448,14 +451,14 @@
       <fileset dir="docs"/>
     </copy>
 
-  	<!--
+    <!--
          The context file goes into META-INF so it will be part of the .war file and available
          to deployment processes that honor it, such as deployment via the Tomcat manager application.
-    -->   
-  	    <mkdir dir="${deploy.home}/META-INF"/>
-  	    <copy tofile="${deploy.home}/META-INF/context.xml" file="${server.base}/conf/Catalina/localhost/${webapp.docBase}.xml"/>
+    -->
+        <mkdir dir="${deploy.home}/META-INF"/>
+        <copy tofile="${deploy.home}/META-INF/context.xml" file="${server.base}/conf/Catalina/localhost/${webapp.docBase}.xml"/>
 
-  	
+
     <!-- Create application WAR file -->
     <jar jarfile="${dist.home}/${app.name}.war"
          basedir="${deploy.home}"/>
@@ -503,10 +506,10 @@
     and runs them throug xom and tagsoup to produce XHTML complient html files
   -->
   <target name="javadocXHtml" depends="javadoc">
- 	<!--
-  	  Sanitize the javadoc
-  	-->
-  	<echo message="Sanitizing the javadoc files"/>
+    <!--
+      Sanitize the javadoc
+    -->
+    <echo message="Sanitizing the javadoc files"/>
     <java classname="org.jasig.portal.utils.XHTMLJavaDoc" fork="yes">
        <jvmarg value="-Xbootclasspath/p:${lb.container-common-endorsed}"/>
        <classpath refid="compile.classpath" />
@@ -528,8 +531,8 @@
 -->
 
   <target name="prepare">
-  	
-  	<mkdir dir="${dist.home}"/>
+
+    <mkdir dir="${dist.home}"/>
 
     <!-- Create build directory and copy static content -->
     <mkdir  dir="${build.home}"/>
@@ -539,7 +542,7 @@
 
     <!-- Copy static files from external dependencies as needed -->
 
-  	<!-- Test that JAXP is installed in the JVM before trying to compile all of uPortal -->
+    <!-- Test that JAXP is installed in the JVM before trying to compile all of uPortal -->
     <mkdir    dir="${build.home}/WEB-INF/classes"/>
     <javac srcdir="source"
           target="1.5"
@@ -725,7 +728,7 @@
     <property name="adminlocale" value="en_US"/>
     <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.tools.dbloader.DbLoader">
       <classpath>
-      	<path refid="compile.path"/>
+        <path refid="compile.path"/>
       </classpath>
 
       <arg value="${usetable}"/>
@@ -817,13 +820,13 @@
             <path refid="compile.classpath"/>
         </classpath>
     </java>
-  	<available file="${build.home}/WEB-INF/classes/${tempDataXML}"
-  		property="temp.fragment.data.file.present"/>
-  	<antcall target="pubfragments.load"/>
+    <available file="${build.home}/WEB-INF/classes/${tempDataXML}"
+        property="temp.fragment.data.file.present"/>
+    <antcall target="pubfragments.load"/>
     <echo message="Done updating ALM fragment configuration."/>
     </target>
 
-	<target name="pubfragments.load" if="temp.fragment.data.file.present">
+    <target name="pubfragments.load" if="temp.fragment.data.file.present">
 
     <!-- load data.xml file -->
     <echo message="Loading new fragments into the database."/>
@@ -1091,10 +1094,10 @@
 -->
   <!-- You must copy junit.jar into $ANT_HOME/lib directory for this to work -->
   <target name="runtests" depends="compiletests" description="Run JUnit Test Suite">
-  	
 
-  	  <mkdir dir="${dist.home}/testresults"/>
-  	
+
+      <mkdir dir="${dist.home}/testresults"/>
+
     <junit fork="true" printsummary="off" showoutput="off" dir=".."
       haltonerror="true" haltonfailure="true">
       <classpath>
@@ -1111,7 +1114,7 @@
       </fileset>
     </batchtest>
     <formatter type="brief" usefile="no"/>
-  	<formatter type="xml" usefile="yes" if="tests.xmlFormat" />
+    <formatter type="xml" usefile="yes" if="tests.xmlFormat" />
   </junit>
   </target>
 
@@ -1137,8 +1140,8 @@
   </target>
 
 
-	
-	
+
+
 
 <!-- ==================== RunXSLT Target ================================ -->
 
@@ -1229,39 +1232,39 @@
 
 -->
 
-	  <target name="deployPortletApp" description="Deploys a portlet application" depends="compile">
-	    <echo message="Invoking Portlet Application Deployment Tool"/>
+      <target name="deployPortletApp" description="Deploys a portlet application" depends="compile">
+        <echo message="Invoking Portlet Application Deployment Tool"/>
 
-	    <fail unless="portletApp">deployPortletApp Ant target requires the name of the portlet app to deploy.  
-	    	Here it was invoked with the portletApp property not set.  
-	    	It therefore is failing after having done nothing.
-	    	Execute the help target ('ant help') for help on this and other targets in the uPortal build.
-	    </fail>
+        <fail unless="portletApp">deployPortletApp Ant target requires the name of the portlet app to deploy.
+            Here it was invoked with the portletApp property not set.
+            It therefore is failing after having done nothing.
+            Execute the help target ('ant help') for help on this and other targets in the uPortal build.
+        </fail>
 
-	    <java fork="true" failonerror="true" dir="${basedir}" classname="org.danann.cernunnos.runtime.Main">
-	      <classpath>
-	        <pathelement path="${build.home}/WEB-INF/classes"/>
-	        <path refid="compile.classpath"/>
-	      </classpath>
-	      <arg value="classpath://org/jasig/portal/container/deploy/deploy-archives.crn"/>
-	      <arg value="${portletApp}"/>
-	      <arg value="${deploy.home}/.."/>
-	    </java>
-	  </target>
-	
-	<target name="hsql" description="Start a HSQLDB instance consistent with the default RDBMS requirements of uPortal">
-	   <echo message="Starting HSQL"/>
-	   <echo message="Using: ${basedir}/data/uP2_uPortal"/>
+        <java fork="true" failonerror="true" dir="webpages" classname="org.danann.cernunnos.runtime.Main">
+          <classpath>
+            <pathelement path="${build.home}/WEB-INF/classes"/>
+            <path refid="compile.classpath"/>
+          </classpath>
+          <arg value="classpath://org/jasig/portal/container/deploy/deploy-archives.crn"/>
+          <arg value="${portletApp}"/>
+          <arg value="${deploy.home}/.."/>
+        </java>
+      </target>
 
-	   <java fork="true" maxmemory="256M" dir="${basedir}" classname="org.hsqldb.Server">
-	      <classpath>
-	        <path refid="compile.classpath"/>
-	      </classpath>
-	      <arg value="-database"/>
-	      <arg value="${basedir}/data/uP2_uPortal"/>
-	      <arg value="-port"/>
-	      <arg value="8887"/>
-	   </java>
-	</target>
+    <target name="hsql" description="Start a HSQLDB instance consistent with the default RDBMS requirements of uPortal">
+       <echo message="Starting HSQL"/>
+       <echo message="Using: ${basedir}/data/uP2_uPortal"/>
+
+       <java fork="true" maxmemory="256M" dir="${basedir}" classname="org.hsqldb.Server">
+          <classpath>
+            <path refid="compile.classpath"/>
+          </classpath>
+          <arg value="-database"/>
+          <arg value="${basedir}/data/uP2_uPortal"/>
+          <arg value="-port"/>
+          <arg value="8887"/>
+       </java>
+    </target>
 
 </project>
