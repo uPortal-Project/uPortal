@@ -1888,6 +1888,9 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
         // The hashtable object containing the fragment nodes that are next to the user layout nodes
         Hashtable fragmentNodes = new Hashtable();
 
+        // Set to contain completed fragments.
+        Set finishedFragmentNodes = new HashSet();
+        
         int count = 0;
         for ( String sql = sqlLayout; count < 2; sql = sqlFragment, count++ ) {
 
@@ -2053,6 +2056,9 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
                      ((ALFolder)fragNode).setFirstChildNodeId(childIdStr);
                     }
                     layoutData.put(nodeDesc.getId(),fragNode);
+                    
+                    // Add it to the set of completed fragment nodes
+                    finishedFragmentNodes.add(key);
                   } else
                       layoutData.put(nodeDesc.getId(),node);
                 }
@@ -2199,6 +2205,67 @@ public class AggregatedUserLayoutStore extends RDBMUserLayoutStore implements IA
 
        } // End of for
 
+        
+        // Clean up lost fragments
+        Set incompleteFragments = new HashSet(fragmentNodes.keySet());
+        incompleteFragments.removeAll(finishedFragmentNodes);
+        if (!incompleteFragments.isEmpty()) {
+        // Remap by fragNode id, to allow for lost folder management of
+        // multiple lost fragments.
+        Hashtable lostFragmentNodes = new Hashtable();
+        for (Iterator it = incompleteFragments.iterator(); it.hasNext();) {
+          String key = (String)it.next();
+          ALNode fragNode = (ALNode) fragmentNodes.get(key);
+          lostFragmentNodes.put(fragNode.getId(), fragNode);
+        }
+        
+        for (Iterator it = incompleteFragments.iterator(); it.hasNext();) {
+          String key = (String)it.next();
+          ALNode fragNode = (ALNode) fragmentNodes.get(key);
+          String nextId = fragNode.getNextNodeId();
+          String prevId = fragNode.getPreviousNodeId();
+          String parentId = fragNode.getParentNodeId();
+        
+          ALNode prevNode = null;
+          if (prevId != null) {
+            prevNode = (ALNode) layoutData.get(prevId);
+            if (prevNode == null)
+              prevNode = (ALNode) lostFragmentNodes.get(prevId);
+            }
+        
+            ALNode nextNode = null;
+            if (nextId != null) {
+              nextNode = (ALNode) layoutData.get(nextId);
+              if (nextNode == null)
+                nextNode = (ALNode) lostFragmentNodes.get(nextId);
+            }
+        
+            if (prevNode != null) {
+              if (nextNode != null) {
+                nextNode.setPreviousNodeId(prevId);
+                prevNode.setNextNodeId(nextId);
+              } else {
+                prevNode.setNextNodeId(null);
+              }
+            } else {
+              if (nextNode != null) {
+                nextNode.setPreviousNodeId(null);
+              }
+        
+              // Update parent node, as we are their first child.
+              ALFolder parentNode = null;
+              if (parentId != null) {
+                parentNode = (ALFolder) layoutData.get(parentId);
+                if (parentNode != null) {
+                  parentNode.setFirstChildNodeId((nextNode == null) ? null : nextId);
+                }
+              }
+            }
+          // Remove this node's distinction as a fragment node
+          // to be reparented.
+          fragmentNodes.remove(key);
+          }
+        }
 
         // finding the last node in the sibling line of the root children
         ALNode lastNode = null, prevNode = null;
