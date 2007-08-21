@@ -1,4 +1,4 @@
-/* Copyright 2001, 2006 The JA-SIG Collaborative.  All rights reserved.
+/* Copyright 2001, 2006, 2007 The JA-SIG Collaborative.  All rights reserved.
 *  See license distributed with this file and
 *  available online at http://www.uportal.org/license.html
 */
@@ -127,7 +127,7 @@ public class CSyndFeed extends BaseChannel implements ICacheable{
 	private static Document buildErrorDocument() {
 		Document doc;
 		doc = DocumentFactory.getNewDocument();
-		// TODO: display something if there was an error with the feed
+		// display something if there was an error with the feed
 		Node newsNode = doc.createElement("error");
 		newsNode.setTextContent("There was an error retrieving the news source. Please try back later.");
 		doc.appendChild(newsNode);
@@ -144,7 +144,8 @@ public class CSyndFeed extends BaseChannel implements ICacheable{
 		newsNode.appendChild(temp);
 		
 		temp = doc.createElement("link");
-		temp.setTextContent(feed.getLink());
+		// make sure link uses a safe URL scheme
+		temp.setTextContent(SaferHTMLHandler.sanitizeURL(feed.getLink()));
 		newsNode.appendChild(temp);
 		
 		SyndImage image = feed.getImage();
@@ -153,7 +154,8 @@ public class CSyndFeed extends BaseChannel implements ICacheable{
 			newsNode.appendChild(imageNode);
 			
 			temp = doc.createElement("url");
-			temp.setTextContent(image.getUrl());
+			// make sure link uses a safe URL scheme
+			temp.setTextContent(SaferHTMLHandler.sanitizeURL(image.getUrl()));
 			imageNode.appendChild(temp);
 			
 			temp = doc.createElement("title");
@@ -165,7 +167,8 @@ public class CSyndFeed extends BaseChannel implements ICacheable{
 			imageNode.appendChild(temp);
 			
 			temp = doc.createElement("link");
-			temp.setTextContent(image.getLink());
+			// make sure link uses a safe URL scheme
+			temp.setTextContent(SaferHTMLHandler.sanitizeURL(image.getLink()));
 			imageNode.appendChild(temp);
 		}
 		
@@ -187,7 +190,8 @@ public class CSyndFeed extends BaseChannel implements ICacheable{
 			
 			n = doc.createElement("link");
 			itemNode.appendChild(n);
-			n.setTextContent(item.getLink());
+			// make sure link uses a safe URL scheme
+			n.setTextContent(SaferHTMLHandler.sanitizeURL(item.getLink()));
 
 			SyndContent sc = item.getDescription();
 			if (sc != null){
