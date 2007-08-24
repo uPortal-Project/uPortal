@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<assembly>
+    <id>tomcat-overlay</id>
+    <formats>
+        <format>zip</format>
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+    <fileSets>
+        <!--
+         | Include the main artifact (extracted)
+         | TODO - replaces uPortal with valid maven variable
+         | TODO - should WARs be exploded? (probably not)
+         +-->
+        <fileSet>
+            <directory>target/uPortal</directory>
+            <outputDirectory>webapps</outputDirectory>
+            <includes>
+                <include>**/*.war</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>target/uPortal</directory>
+            <outputDirectory>shared/lib</outputDirectory>
+            <includes>
+                <include>**/*.jar</include>
+            </includes>
+        </fileSet>
+    </fileSets>
+    <!-- TODO how to specify JDBC driver dependency?
+    
+    define:
+    jdbc.groupId
+    jdbc.artifactId
+    jdbc.version
+    
+    Use those variables in assembly dependency
+     -->
+</assembly>

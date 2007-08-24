@@ -85,26 +85,26 @@
                     </modules>
                 </configuration>
             </plugin>
-            <!--<plugin> 
-                <groupId>org.apache.pluto</groupId>
-                <artifactId>maven-pluto-plugin</artifactId>
-                <version>${pluto.version}</version>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>assemble-ear</id>
-                        <goals>
-                            <goal>assemble</goal>
-                        </goals>
+                        <id>tomcat-overlay-assembly</id>
                         <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
                         <configuration>
-                            <archives>
-                                <archive>${project.build.directory}/uPortal.ear</archive>
-                            </archives>
-                            <assemblyOutputDirectory>${project.build.directory}</assemblyOutputDirectory>
+                            <appendAssemblyId>true</appendAssemblyId>
+                            <attach>false</attach>
+                            <outputDirectory>${project.build.directory}</outputDirectory>
+                            <descriptors>
+                                <descriptor>src/main/assembly/tomcat-overlay-assembly.xml</descriptor>
+                            </descriptors>
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>-->
+            </plugin>
         </plugins>
     </build>
 </project>
