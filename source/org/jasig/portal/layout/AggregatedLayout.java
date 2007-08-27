@@ -104,7 +104,7 @@ public class AggregatedLayout implements IAggregatedLayout {
 					  nodeId.equals(node.getPreviousNodeId()) ||
 					  nodeId.equals(node.getParentNodeId())) 
 			      ) {			  
-				  throw new RuntimeException("Corrupted layout detected, node: "+nodeId);			   
+				  throw new RuntimeException("Corrupted layout detected, node id ["+nodeId + "] of layout id [" + this.layoutId + "] is its own parent or immediate sibling.");			   
 			  }
 		  }
 	  
@@ -117,7 +117,7 @@ public class AggregatedLayout implements IAggregatedLayout {
 
   private void bindRestrictions( IALNodeDescription nodeDesc, ContentHandler contentHandler ) throws SAXException {
     if (log.isTraceEnabled()) {
-    	log.trace("Binding restrictions for node [" + nodeDesc + "]");
+    	log.trace("Binding restrictions for node [" + nodeDesc + "] in layout id [" + this.layoutId + "]");
     }
 	  
 	  Hashtable restrictions = nodeDesc.getRestrictions();
@@ -150,8 +150,13 @@ public class AggregatedLayout implements IAggregatedLayout {
  			  nodeId.equals(aln.getPreviousNodeId()) ||
  			  nodeId.equals(aln.getParentNodeId())) 
  		  ){			
- 		    throw new RuntimeException("Corrupted layout detected, node: " + nodeId);
+ 		    throw new RuntimeException("Corrupted layout detected, node [" + nodeId + "] in layout [" + this.layoutId + "]");
  		  }
+ 		  
+ 		  if (log.isTraceEnabled()) {
+ 			  log.trace("getLayoutNode(" + nodeId + ") returned ALNode=[" + aln + "]");
+ 		  }
+ 		  
  		  return aln;
     	 
      }
@@ -169,8 +174,13 @@ public class AggregatedLayout implements IAggregatedLayout {
  				  folderId.equals(aln.getPreviousNodeId()) ||
  				  folderId.equals(aln.getParentNodeId())) 
  		  ){
- 		    throw new RuntimeException("Corrupted layout detected, folderId: " + folderId);
+ 		    throw new RuntimeException("Corrupted layout detected, folderId [" + folderId + "] in layout [" + this.layoutId + "]");
  		  }
+ 		  
+ 		  if (log.isTraceEnabled()) {
+ 			  log.trace("getLayoutFolder(" + folderId + ") returned ALFolder=[" + aln + "]");
+ 		  }
+ 		  
  		  return aln;
     	 
      }
@@ -184,40 +194,49 @@ public class AggregatedLayout implements IAggregatedLayout {
        node = getLayoutNode(nextId);
        
        if (node == null) {
-    	   log.error("Node identifier [" + nextId + "] referenced null. Unable to get last sibling node, originally for node id [" + nodeIdArg + "]");
-           
-    	   // returning null here because that seems to be the intent of the calling code.
+    	   log.error("Node identifier [" + nextId + "] referenced null. Unable to get last sibling node, originally for node id [" + nodeIdArg + "] in layout [" + this.layoutId + "]");
     	   
-    	   throw new ALMNodeIdMappedToNullNodeException(nextId, nodeIdArg);
+    	   throw new ALMNodeIdMappedToNullNodeException(nextId, nodeIdArg, this.layoutId);
        }
        
        nextId = node.getNextNodeId();
        
        if (nodeIdArg.equals(nextId)) {
     	   throw new CorruptedAlmLayoutException("getLastSiblingNode of [" + nodeIdArg + "] encountered that same node ID in tracing the siblings of the node.  " +
-    	   		"This results in an unfortunate infinite loop.  This layout is corrupted and needs to be deleted or manually fixed.");
+    	   		"This results in an unfortunate infinite loop.  This layout with id [" + this.layoutId + "] is corrupted and needs to be deleted or manually fixed.");
        }
        
      }
+     
+	 if (log.isTraceEnabled()) {
+	   log.trace("getLastSiblingNode(" + nodeIdArg + ") returned ALNode=[" + node + "]");
+     }
+     
        return node;
   }
 
   public ALNode getFirstSiblingNode (final String nodeIdArg ) throws ALMNodeIdMappedToNullNodeException {
+	  
      ALNode node = null;
      for ( String prevId = nodeIdArg; prevId != null; ) {
        node = getLayoutNode(prevId);
        
        if (node == null) {
-    	   log.error("Node id [" + prevId + "] illegally mapped to a null node; discovered in pursuit of first sibling of node id [" + nodeIdArg + "]");
-           throw new ALMNodeIdMappedToNullNodeException(prevId, nodeIdArg);
+    	   log.error("Node id [" + prevId + "] illegally mapped to a null node; discovered in pursuit of first sibling of node id [" + nodeIdArg + "] in layout [" + this.layoutId + "]");
+           throw new ALMNodeIdMappedToNullNodeException(prevId, nodeIdArg, this.layoutId);
        }
        
        prevId = node.getPreviousNodeId();
        if (nodeIdArg.equals(prevId)) {
     	   throw new CorruptedAlmLayoutException("getFirstSiblingNode of [" + nodeIdArg + "] encountered that same node ID in tracing the siblings of the node.  " +
-    	   		"This results in an unfortunate infinite loop.  This layout is corrupted and needs to be deleted or manually fixed.");
+    	   		"This results in an unfortunate infinite loop.  This layout with id [" + this.layoutId + "] is corrupted and needs to be deleted or manually fixed.");
        }
      }
+     
+	  if (log.isTraceEnabled()) {
+		  log.trace("getFirstSiblingNode( " + nodeIdArg + ") returning node [" + node + "]");
+	  }
+     
        return node;
   }
 
@@ -401,7 +420,7 @@ public class AggregatedLayout implements IAggregatedLayout {
 		 ALFolder rootFolder = (ALFolder) ((ALFragment)fragment).getNode(fragment.getRootId());
 		 return rootFolder.getFirstChildNodeId();	
 	   }
-	     throw new PortalException("Check that the fragment with ID="+fragmentId+" has "+ALFragment.class.getName()+" type and is not NULL!");
+	     throw new PortalException("Check that the fragment with ID="+fragmentId+" has "+ALFragment.class.getName()+" type and is not NULL!  In layout [" + this.layoutId + "]");
     }
 
 
@@ -606,9 +625,19 @@ public class AggregatedLayout implements IAggregatedLayout {
      */
     public IUserLayoutNodeDescription getNodeDescription(String nodeId) throws PortalException {
       ALNode node = getLayoutNode(nodeId);
-      if ( node != null )
-       return node.getNodeDescription();
-      throw new PortalException ( "The node with nodeID="+nodeId+" does not exist in the layout!" );
+      
+      if (node == null) {
+          throw new PortalException ( "The node with nodeID="+nodeId+" does not exist in layout with id [" + this.layoutId + "]" );
+      }
+      
+      IUserLayoutNodeDescription nodeDescription = node.getNodeDescription();
+      
+      if (log.isTraceEnabled()) {
+    	  log.trace("getNodeDescription(" + nodeId + ") returning IUserLayoutNodeDescription [" + nodeDescription + "]");
+      }
+      
+       return nodeDescription;
+
     }
 
      /**
@@ -634,7 +663,7 @@ public class AggregatedLayout implements IAggregatedLayout {
       ALNode node = getLayoutNode(nodeId);
       if ( node != null )
        return node.getParentNodeId();
-      throw new PortalException ( "The node with nodeID="+nodeId+" does not exist in the layout!" );
+      throw new PortalException ( "The node with nodeID="+nodeId+" does not exist in the layout [" + this.layoutId + "]" );
     }
 
     /**
@@ -725,16 +754,22 @@ public class AggregatedLayout implements IAggregatedLayout {
      * @exception PortalException if an error occurs
      */
     public String getNodeId(String fname) throws PortalException {
-       for ( Enumeration nodeIds = layout.keys(); nodeIds.hasMoreElements() ;) {
+    	String returnNodeId = null;
+       for ( Enumeration nodeIds = layout.keys(); nodeIds.hasMoreElements() && returnNodeId == null ;) {
           String nodeId = nodeIds.nextElement().toString();
           ALNode node  = getLayoutNode(nodeId);
           if ( node.getNodeType() == IUserLayoutNodeDescription.CHANNEL ) {
               ALChannelDescription channelDesc = (ALChannelDescription) node.getNodeDescription();
               if ( fname.equals(channelDesc.getFunctionalName()) )
-                return node.getId();
+                returnNodeId = node.getId();
           }
         }
-                return null;
+       
+       if (log.isTraceEnabled()) {
+    	   log.trace("getNodeId() for functional name [" + fname + "] returning node id [" + returnNodeId + "] in the context of layout [" + this.layoutId + "]");
+       }
+       
+       return returnNodeId;
     }
 
      /**

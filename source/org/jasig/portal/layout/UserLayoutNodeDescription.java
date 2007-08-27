@@ -165,5 +165,21 @@ public abstract class UserLayoutNodeDescription implements IUserLayoutNodeDescri
             throw new PortalException("Given XML element is neither folder nor channel");
         }
     }
+    
+    public String toString() {
+    	StringBuffer sb = new StringBuffer();
+    	sb.append("UserLayoutNodeDescription id=[");
+    	sb.append(this.id);
+    	sb.append("] name=[");
+    	sb.append(this.name);
+    	sb.append("] immutable=[");
+    	sb.append(this.immutable);
+    	sb.append("] unremovable=[");
+    	sb.append(this.unremovable);
+    	sb.append("] hidden=[");
+    	sb.append(this.hidden);
+    	sb.append("]");
+    	return sb.toString();
+    }
 
 }

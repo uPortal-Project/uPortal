@@ -172,4 +172,16 @@ public class ALFolderDescription extends UserLayoutFolderDescription implements 
     public void addRestrictionChildren(Element node, Document root) {
         this.alproperties.addRestrictionChildren(node,root);
     }
+    
+    public String toString() {
+    	StringBuffer sb = new StringBuffer();
+    	sb.append("ALFolderDescription composed of [");
+    	sb.append(super.toString());
+    	sb.append("] and [");
+    	sb.append(this.alproperties);
+    	sb.append("]");
+    	return sb.toString();
+    }
+    
+    
 }

@@ -170,4 +170,14 @@ public class ALChannelDescription extends UserLayoutChannelDescription implement
     public void addRestrictionChildren(Element node, Document root) {
         this.alproperties.addRestrictionChildren(node,root);
     }
+    
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        sb.append("ALChannelDescription composed of [");
+        sb.append(super.toString());
+        sb.append("] and [");
+        sb.append(this.alproperties);
+        sb.append("]");
+        return sb.toString();
+    }
 }

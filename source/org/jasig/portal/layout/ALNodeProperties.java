@@ -188,4 +188,17 @@ public class ALNodeProperties {
             node.appendChild(pElement);
         }
     }
+    
+    public String toString() {
+    	StringBuffer sb = new StringBuffer();
+    	sb.append("AlNodeProperties fragmentId=[");
+    	sb.append(this.fragmentId);
+    	sb.append("] fragmentNodeId=[");
+    	sb.append(this.fragmentNodeId);
+    	sb.append("] restrictions=[");
+    	sb.append(this.restrictions);
+    	sb.append("] group=[");
+    	sb.append("]");
+    	return sb.toString();
+    }
 }

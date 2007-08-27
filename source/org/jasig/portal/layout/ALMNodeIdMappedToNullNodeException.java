@@ -18,8 +18,8 @@ public class ALMNodeIdMappedToNullNodeException extends Exception {
 	 * @param offendingNodeId - node id that mapped to a null node, giving rise to this exceptional condition
 	 * @param rootNodeId - node whose siblings are being pursued
 	 */
-	public ALMNodeIdMappedToNullNodeException(String offendingNodeId, String rootNodeId) {
-	   super("Node identifier [" + offendingNodeId + "] mapped to null node; encountered pursuing siblings to [ " + rootNodeId + "]");
+	public ALMNodeIdMappedToNullNodeException(String offendingNodeId, String rootNodeId, String layoutId) {
+	   super("Node identifier [" + offendingNodeId + "] mapped to null node; encountered pursuing siblings to [ " + rootNodeId + "], in layout [" + layoutId + "]");
 	}
 
 }

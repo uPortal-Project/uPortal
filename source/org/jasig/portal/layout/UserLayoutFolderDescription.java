@@ -141,4 +141,22 @@ public class UserLayoutFolderDescription extends UserLayoutNodeDescription imple
         super.addNodeAttributes(node);
         node.setAttribute("type",folderTypeNames[this.getFolderType()]);
     }
+    
+    public String toString() {
+    	StringBuffer sb = new StringBuffer();
+    	sb.append("UserLayoutFolderDescription id=[");
+    	sb.append(this.id);
+    	sb.append("] name=[");
+    	sb.append(this.name);
+    	sb.append("] immutable=[");
+    	sb.append(this.immutable);
+    	sb.append("] unremovable=[");
+    	sb.append(this.unremovable);
+    	sb.append("] hidden=[");
+    	sb.append(this.hidden);
+    	sb.append("] folderType=[");
+    	sb.append(this.folderType);
+    	sb.append("]");
+    	return sb.toString();
+    }
 }
