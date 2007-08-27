@@ -135,13 +135,6 @@ public interface IUserLayout {
      */
     public String getPreviousSiblingId(String nodeId) throws PortalException;
 
-    /**
-     * Return a cache key, uniqly corresponding to the composition and the structure of the user layout.
-     *
-     * @return a <code>String</code> value
-     * @exception PortalException if an error occurs
-     */
-    public String getCacheKey() throws PortalException;
 
 
     /**

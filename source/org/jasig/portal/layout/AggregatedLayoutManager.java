@@ -57,7 +57,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.CommonUtils;
 import org.jasig.portal.utils.DocumentFactory;
-import org.jasig.portal.utils.GuidGenerator;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -98,10 +97,13 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
   // The IDs and names of the fragments which a user is owner of
   //private Hashtable fragments;
 
-  // GUID generator
-  private static GuidGenerator guid = null;
-  private String cacheKey = null;
 
+  /**
+   * Do not change this private member variable except through the 
+   * updateCacheKey method, which properly synchronizes changes to it.
+   */
+  private long changeSerialNumber = 0;
+  
 
 
   public AggregatedLayoutManager( IPerson person, UserProfile userProfile ) throws Exception {
@@ -109,9 +111,6 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
     this.userProfile = userProfile;
     layout = new AggregatedLayout ( String.valueOf(getLayoutId()), this );
     autoCommit = false;
-    if ( guid == null )
-      guid = new GuidGenerator();
-      updateCacheKey();
   }
 
   public AggregatedLayoutManager( IPerson person, UserProfile userProfile, IUserLayoutStore layoutStore ) throws Exception {
@@ -120,8 +119,8 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
     this.loadUserLayout();
   }
 
-  private void updateCacheKey() {
-     cacheKey = guid.getNewGuid();
+  private synchronized void updateCacheKey() {
+     this.changeSerialNumber++;
   }
 
   public IUserLayout getUserLayout() throws PortalException {
@@ -925,7 +924,8 @@ public class AggregatedLayoutManager implements IAggregatedUserLayoutManager {
      * @exception PortalException if an error occurs
      */
   public String getCacheKey() throws PortalException {
-      return cacheKey;
+      long stateSerialNumber = this.changeSerialNumber;
+      return Long.toString(stateSerialNumber);
   }
 
   /**

@@ -48,7 +48,6 @@ import org.jasig.portal.layout.restrictions.IUserLayoutRestriction;
 import org.jasig.portal.layout.restrictions.PriorityRestriction;
 import org.jasig.portal.layout.restrictions.RestrictionTypes;
 import org.jasig.portal.utils.CommonUtils;
-import org.jasig.portal.utils.GuidGenerator;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -78,9 +77,6 @@ public class AggregatedLayout implements IAggregatedLayout {
     // The layout manager
     private IAggregatedUserLayoutManager layoutManager = null;
 
-    // GUID generator
-    private static GuidGenerator guid = null;
-    private String cacheKey = null;
 
 
   public AggregatedLayout (  String layoutId, IAggregatedUserLayoutManager layoutManager ) throws PortalException {
@@ -89,15 +85,8 @@ public class AggregatedLayout implements IAggregatedLayout {
     restrictionMask = layoutManager.getRestrictionMask();
   }
 
-  public AggregatedLayout (  String layoutId ) throws PortalException {
+  public AggregatedLayout (  String layoutId ) {
     this.layoutId = layoutId;
-    try {
-     if ( guid == null )
-      guid = new GuidGenerator();
-      updateCacheKey();
-    } catch ( Exception e ) {
-        throw new PortalException(e);
-      }
   }
 
   public void setLayoutManager ( IAggregatedUserLayoutManager layoutManager ) {
@@ -124,10 +113,6 @@ public class AggregatedLayout implements IAggregatedLayout {
 
   public Hashtable getLayoutData() throws PortalException {
     return layout;
-  }
-
-  private void updateCacheKey() {
-     cacheKey = guid.getNewGuid();
   }
 
   private void bindRestrictions( IALNodeDescription nodeDesc, ContentHandler contentHandler ) throws SAXException {
@@ -698,15 +683,6 @@ public class AggregatedLayout implements IAggregatedLayout {
        throw new PortalException ( "The node with nodeID="+nodeId+" does not exist in the layout!" );
     }
 
-    /**
-     * Return a cache key, uniqly corresponding to the composition and the structure of the user layout.
-     *
-     * @return a <code>String</code> value
-     * @exception PortalException if an error occurs
-     */
-    public String getCacheKey() throws PortalException {
-      return cacheKey;
-    }
 
 
     /**
