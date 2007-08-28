@@ -308,8 +308,23 @@ public class AggregatedLayout implements IAggregatedLayout {
      * @param nodeId a <code>String</code> a nodeId from the user layout internal representation
      * @exception PortalException if an error occurs
      */
-   private void appendDescendants(Document domLayout,Node node, String nodeId) throws PortalException {
-          ALNode layoutNode = getLayoutNode(nodeId);
+   private void appendDescendants(Document domLayout,Node node, String nodeId, Set alreadyAppendedNodeIds) throws PortalException {
+          
+	   if ( !("1".equals(nodeId)) && alreadyAppendedNodeIds.contains(nodeId)) {
+		   // not equals 1 because node ID 1 has special behavior as root folder, so seeing it twice is not necessarily a problem
+		   
+		   throw new CorruptedAlmLayoutException("Attempting to append node id [" + nodeId + 
+				   "] with node representation [" + node + "] to layout DOM, but this id is among the already appended ids [" + 
+				   alreadyAppendedNodeIds + "].  In context of layout id [" + this.layoutId + "]");
+	   }
+	   alreadyAppendedNodeIds.add(layoutId);
+	   
+	   if (log.isTraceEnabled()) {
+		   log.trace("appendDescdendants for node [" + node + "], nodeId [" + nodeId + "], alreadyAppendedNodeIds [" + alreadyAppendedNodeIds + "]");
+	   }
+	   
+	   
+	   ALNode layoutNode = getLayoutNode(nodeId);
           IALNodeDescription nodeDesc = layoutNode.getNodeDescription();
           Element markingMoveLeaf = null, markingAddLeaf = null;
 
@@ -367,7 +382,7 @@ public class AggregatedLayout implements IAggregatedLayout {
            String firstChildId = ((ALFolder)layoutNode).getFirstChildNodeId();
             for ( String nextNodeId = firstChildId; nextNodeId != null; ) {
              // !!!!!!!!!!!
-             appendDescendants(domLayout,newNode,nextNodeId);
+             appendDescendants(domLayout,newNode,nextNodeId, alreadyAppendedNodeIds);
              nextNodeId = getLayoutNode(nextNodeId).getNextNodeId();
             }
           } else if ( layoutNode.getNodeType() == IUserLayoutNodeDescription.CHANNEL ) {
@@ -444,11 +459,33 @@ public class AggregatedLayout implements IAggregatedLayout {
      * @exception PortalException if an error occurs
      */
   public void writeTo(String nodeId, ContentHandler contentHandler ) throws PortalException {
-
+	  writeTo(nodeId, contentHandler, new HashSet());
+	  
+  }
+    
+    
+    /**
+     * Writes subtree of a user layout (with appropriate markings) defined by a particular node into
+     * a <code>ContentHandler</code>
+     *
+     * @param nodeId a <code>String</code> a node determining a user layout subtree.
+     * @param contentHandler a <code>ContentHandler</code> value
+     * @param set containing ids of nodes already written out in this recursive run, used to detect and abort infinite recursion on corrupted layout
+     * @exception PortalException if an error occurs
+     */
+  public void writeTo(String nodeId, ContentHandler contentHandler, Set alreadyWrittenNodes ) throws PortalException {
+	  
     IALFolderDescription folderDescription = null;
     IALChannelDescription channelDescription = null;
 
     if ( contentHandler != null && nodeId != null ) {
+    	
+  	  if (alreadyWrittenNodes.contains(nodeId)) {
+		  throw new CorruptedAlmLayoutException("Recursively attempting to write out node id ["
+				  + nodeId + "] when this node id is among already written node ids [" + alreadyWrittenNodes + "], in context of layout id [" + this.layoutId + "]");
+	  }
+	  alreadyWrittenNodes.add(nodeId);
+    	
       try {
 
          ALNode node = getLayoutNode(nodeId);
@@ -498,7 +535,7 @@ public class AggregatedLayout implements IAggregatedLayout {
                  }
 
                 // Recurrence
-                writeTo (nextNodeId,contentHandler);
+                writeTo (nextNodeId,contentHandler, alreadyWrittenNodes);
                 nextNodeId = getLayoutNode(nextNodeId).getNextNodeId();
                }
 
@@ -609,7 +646,7 @@ public class AggregatedLayout implements IAggregatedLayout {
         /*if (nodeId.equals(getRootId()))
          createFragmentList(document,layoutNode);*/
         // Build the DOM
-        appendDescendants(document,layoutNode,nodeId);
+        appendDescendants(document,layoutNode,nodeId, new HashSet());
       } catch ( Exception e ) {
           e.printStackTrace();
           throw new PortalException ("Couldn't create the DOM representation: " + e );
