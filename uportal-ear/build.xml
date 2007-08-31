@@ -5,14 +5,9 @@
         </classpath>
     </taskdef>
 
-    <target name="assembleEarPortlets">
-        <fileset dir="target" id="portletWars">
-            <include name="**/*.war" />
-        </fileset>
-
-        <property name="portletWarsProp" refid="portletWars" />
-        <echo message="WARs: ${portletWarsProp}" />
-
+    <target name="assemblePortlets">
+        <echo message="plugin classpath:  ${plugin_classpath}"/>
+        
         <foreach target="assembleWar" param="warFile">
             <path>
                 <fileset dir="target">
@@ -20,18 +15,24 @@
                 </fileset>
             </path>
         </foreach>
-
-
-        <!--
-            extract EAR to temp dir
-            run cernunos script on each WAR to temp loc
-            re-war each directory back into EAR dir
-            re-ear EAR dir
-        -->
     </target>
 
     <target name="assembleWar">
-        <echo message="deploy: ${warFile}"/>
+        <tempfile property="tempWarDir" prefix="${warFile}." suffix=".tmp"/>
+                
+        <echo message="Assembling: ${warFile} to: ${tempWarDir}" />
+        
+        <java fork="true" failonerror="true" dir="${basedir}" classname="org.danann.cernunnos.runtime.Main">
+            <classpath>
+                <pathelement path="target/classes" />
+                <path refid="plugin_classpath" />
+            </classpath>
+
+            <arg value="classpath://org/jasig/portal/container/deploy/deploy-archives.crn" />
+            <arg value="${warFile}" />
+            
+            <arg value="${tempWarDir}" />
+        </java>
         <!--
             Use maven to depend on cernunnos jar?
             Make 'uportal-assembler' sub-project with cernunnos dependency and scripts?

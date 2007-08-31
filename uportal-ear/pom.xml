@@ -97,7 +97,7 @@
                                 <echo message="plugin classpath:  ${plugin_classpath}"/>
                             
                                 <ant antfile="${basedir}/build.xml">
-                                    <target name="assembleEarPortlets" />
+                                    <target name="assemblePortlets" />
                                 </ant>
                             </tasks>
                         </configuration>
