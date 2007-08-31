@@ -1,0 +1,43 @@
+<project name="uPortal-ear" basedir=".">
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties">
+        <classpath>
+            <pathelement location="../bootstrap/ant-contrib-1.0b3.jar" />
+        </classpath>
+    </taskdef>
+
+    <target name="assembleEarPortlets">
+        <fileset dir="target" id="portletWars">
+            <include name="**/*.war" />
+        </fileset>
+
+        <property name="portletWarsProp" refid="portletWars" />
+        <echo message="WARs: ${portletWarsProp}" />
+
+        <foreach target="assembleWar" param="warFile">
+            <path>
+                <fileset dir="target" id="portletWars">
+                    <include name="**/*.war" />
+                </fileset>
+            </path>
+        </foreach>
+
+
+        <!--
+            extract EAR to temp dir
+            run cernunos script on each WAR to temp loc
+            re-war each directory back into EAR dir
+            re-ear EAR dir
+        -->
+    </target>
+
+    <target name="assembleWar">
+        <echo message="deploy: ${warFile}"/>
+        <!--
+            Use maven to depend on cernunnos jar?
+            Make 'uportal-assembler' sub-project with cernunnos dependency and scripts?
+        
+            run cernunos deployer to tempdir
+            re-war from tempdir over original file
+        -->
+    </target>
+</project>
