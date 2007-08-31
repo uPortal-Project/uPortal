@@ -79,7 +79,12 @@
                         <webModule>
                             <groupId>org.jasig.portal</groupId>
                             <artifactId>uportal-war</artifactId>
-                            <contextRoot>/uPortal</contextRoot>
+                            <bundleFileName>uPortal.war</bundleFileName>
+                        </webModule>
+                        <webModule>
+                            <groupId>org.jasig.portlet</groupId>
+                            <artifactId>BookmarksPortlet</artifactId>
+                            <bundleFileName>BookmarksPortlet.war</bundleFileName>
                         </webModule>
                     </modules>
                 </configuration>
@@ -93,8 +98,7 @@
                         <phase>package</phase>
                         <configuration>
                             <tasks>
-                                <property name="plugin_classpath" refid="maven.plugin.classpath"/>
-                                <echo message="plugin classpath:  ${plugin_classpath}"/>
+                                <property name="maven.plugin.classpath" refid="maven.plugin.classpath"/>
                             
                                 <ant antfile="${basedir}/build.xml">
                                     <target name="assemblePortlets" />
@@ -111,6 +115,11 @@
                         <groupId>org.danann</groupId>
                         <artifactId>cernunnos</artifactId>
                         <version>${cernunnos.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>xml-resolver</groupId>
+                        <artifactId>xml-resolver</artifactId>
+                        <version>${xml-resolver.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>

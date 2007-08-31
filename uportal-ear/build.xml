@@ -6,7 +6,7 @@
     </taskdef>
 
     <target name="assemblePortlets">
-        <echo message="plugin classpath:  ${plugin_classpath}"/>
+        <property name="tempWarDir" value="target/plutoAssembly"/>
         
         <foreach target="assembleWar" param="warFile">
             <path>
@@ -14,31 +14,43 @@
                     <include name="**/*.war" />
                 </fileset>
             </path>
+
+            <param name="maven.plugin.classpath" value="${maven.plugin.classpath}" />
+            <param name="tempWarDir" value="${tempWarDir}"/>
         </foreach>
+        
+        <delete dir="${tempWarDir}"/>
     </target>
 
     <target name="assembleWar">
-        <tempfile property="tempWarDir" prefix="${warFile}." suffix=".tmp"/>
-                
-        <echo message="Assembling: ${warFile} to: ${tempWarDir}" />
+        <basename property="webAppName" file="${warFile}" suffix=".war"/>
+        <property name="tempWebAppDir" value="${tempWarDir}/${webAppName}"/>
         
+        <!-- extracts & assembles the webapp -->
+        <echo message="Assembling: ${warFile} to: ${tempWarDir}" />
         <java fork="true" failonerror="true" dir="${basedir}" classname="org.danann.cernunnos.runtime.Main">
             <classpath>
                 <pathelement path="target/classes" />
-                <path refid="plugin_classpath" />
+                <pathelement path="${maven.plugin.classpath}"/>
             </classpath>
-
+            
             <arg value="classpath://org/jasig/portal/container/deploy/deploy-archives.crn" />
             <arg value="${warFile}" />
-            
+
             <arg value="${tempWarDir}" />
         </java>
-        <!--
-            Use maven to depend on cernunnos jar?
-            Make 'uportal-assembler' sub-project with cernunnos dependency and scripts?
         
-            run cernunos deployer to tempdir
-            re-war from tempdir over original file
-        -->
+        <!-- re-package the webapp to a temp name, then replace the original -->
+        <war destfile="${warFile}.new" 
+            webxml="${tempWebAppDir}/WEB-INF/web.xml" 
+            manifest="${tempWebAppDir}/META-INF/MANIFEST.MF">
+            <fileset dir="${tempWebAppDir}">
+                <exclude name="WEB-INF/web.xml"/>
+            </fileset>
+        </war>
+        <move file="${warFile}.new" tofile="${warFile}" overwrite="true"/>
+        
+        <!-- delete the temp directory -->
+        <delete dir="${tempWebAppDir}"/>        
     </target>
 </project>
