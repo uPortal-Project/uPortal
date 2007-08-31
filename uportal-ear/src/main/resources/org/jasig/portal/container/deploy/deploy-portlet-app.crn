@@ -1,0 +1,61 @@
+<!--
+ | This script deploys a Portlet Application (packaged as a WAR archive) to
+ | uPortal.  You must restart your web server for the change to take effect.
+ |
+ | Command Line Arguments:
+ |   $1 = The location of the Portlet Application archive
+ |   $2 = The location to which the Porlet Application will be deployed (e.g. 'webapps')
+ +-->
+
+<!-- Evaluate the APP_NAME from the name of the WAR file... -->
+<with-attribute key="JAR_FILE" value="${file(${req($1)})}">
+	<echo-ln>Deploying Portlet Application:  ${req(JAR_FILE)}</echo-ln>
+    <with-attribute key="APP_NAME" value="${jexl(JAR_FILE.getName().replace('.war',''))}">
+
+        <!-- Deploy the files... -->
+        <extract-archive location="${req($1)}" to-dir="${req($2)}/${req(APP_NAME)}"/>
+
+        <!-- Add portlet nodes to web.xml... -->
+        <with-attribute key="WEB_XML_FILE" value="${file(${req($2)}/${req(APP_NAME)}/WEB-INF/web.xml)}">
+	        <if test="${not(${jexl(WEB_XML_FILE.exists())})}">
+    	    	<copy-file location="classpath://org/jasig/portal/container/deploy/web.xml.template" to-file="${req($2)}/${req(APP_NAME)}/WEB-INF/web.xml"/>
+        	</if>
+        </with-attribute>
+        <with-attribute key="WEB_XML" value="${doc(${req($2)}/${req(APP_NAME)}/WEB-INF/web.xml)}">
+            <if test="${isNull(${jexl(WEB_XML.selectSingleNode('(description | display-name | icon)[position() = last()]'))})}">
+                <!-- We must ensure there's some content in web.xml from which we can hang our new content... -->
+                <prepend-node parent="${req(WEB_XML)}">
+                    <description>Portlet Application deployed by uPortal.</description>
+                </prepend-node>
+            </if>
+            <node-iterator source="${doc(${req($2)}/${req(APP_NAME)}/WEB-INF/portlet.xml)}" xpath="//*[name() = 'portlet']">
+            	<if test="${isNull(${jexl(WEB_XML.selectSingleNode(&quot;servlet/servlet-name[text() = '${valueOf(child::*[name() = 'portlet-name'])}']&quot;))})}">
+                	<xslt stylesheet="classpath://org/jasig/portal/container/deploy/servlet-definition.xsl">
+                    	<append-node sibling="${jexl(WEB_XML.selectSingleNode(&quot;(./node()[local-name() = 'listener'] | ./node()[local-name() = 'filter-mapping'] | ./node()[local-name() = 'filter'] | ./node()[local-name() = 'context-param'] | ./node()[local-name() = 'distributable'] | ./node()[local-name() = 'description'] | ./node()[local-name() = 'display-name'] | ./node()[local-name() = 'icon'])[position() = last()]&quot;))}"/>
+	                </xslt>
+	            </if>
+            </node-iterator>
+            <node-iterator source="${doc(${req($2)}/${req(APP_NAME)}/WEB-INF/portlet.xml)}" xpath="//*[name() = 'portlet']">
+            	<if test="${isNull(${jexl(WEB_XML.selectSingleNode(&quot;servlet-mapping/servlet-name[text() = '${valueOf(child::*[name() = 'portlet-name'])}']&quot;))})}">
+	                <xslt stylesheet="classpath://org/jasig/portal/container/deploy/servlet-mapping.xsl">
+    	                <append-node sibling="${jexl(WEB_XML.selectSingleNode(&quot;(./node()[local-name() = 'servlet'])[position() = last()]&quot;))}"/>
+        	        </xslt>
+	            </if>
+            </node-iterator>
+            <append-node sibling="${jexl(WEB_XML.selectSingleNode(&quot;(./node()[local-name() = 'error-page'] | ./node()[local-name() = 'welcome-file-list'] | ./node()[local-name() = 'mime-mapping'] | ./node()[local-name() = 'session-config'] | ./node()[local-name() = 'servlet-mapping'])[position() = last()]&quot;))}">
+                <taglib>
+                    <taglib-uri>http://java.sun.com/portlet</taglib-uri>
+                    <taglib-location>/WEB-INF/tld/portlet.tld</taglib-location>
+                </taglib>
+            </append-node>
+            <write-document node="${jexl(WEB_XML.selectSingleNode('/'))}" file="${req($2)}/${req(APP_NAME)}/WEB-INF/web.xml"/>
+        </with-attribute>
+
+        <!-- Token replace APP_NAME into web.xml for Portlet Definition GUIds... -->
+        <write-file string="${url(${req($2)}/${req(APP_NAME)}/WEB-INF/web.xml)}" file="${req($2)}/${req(APP_NAME)}/WEB-INF/web.xml"/>
+
+        <!-- Add the portlet.tld file... -->
+        <copy-file location="http://svn.apache.org/repos/asf/portals/pluto/tags/pluto-1.1.1/pluto-taglib/src/main/resources/META-INF/portlet.tld" to-file="${req($2)}/${req(APP_NAME)}/WEB-INF/tld/portlet.tld"/>
+
+    </with-attribute>
+</with-attribute>

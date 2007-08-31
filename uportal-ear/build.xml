@@ -15,7 +15,7 @@
 
         <foreach target="assembleWar" param="warFile">
             <path>
-                <fileset dir="target" id="portletWars">
+                <fileset dir="target">
                     <include name="**/*.war" />
                 </fileset>
             </path>

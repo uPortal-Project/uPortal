@@ -93,6 +93,9 @@
                         <phase>package</phase>
                         <configuration>
                             <tasks>
+                                <property name="plugin_classpath" refid="maven.plugin.classpath"/>
+                                <echo message="plugin classpath:  ${plugin_classpath}"/>
+                            
                                 <ant antfile="${basedir}/build.xml">
                                     <target name="assembleEarPortlets" />
                                 </ant>
@@ -103,6 +106,13 @@
                         </goals>
                     </execution>
                 </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.danann</groupId>
+                        <artifactId>cernunnos</artifactId>
+                        <version>${cernunnos.version}</version>
+                    </dependency>
+                </dependencies>
             </plugin>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
