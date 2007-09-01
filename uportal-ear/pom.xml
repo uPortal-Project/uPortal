@@ -100,8 +100,8 @@
                             <tasks>
                                 <property name="maven.plugin.classpath" refid="maven.plugin.classpath"/>
                             
-                                <ant antfile="${basedir}/build.xml">
-                                    <target name="assemblePortlets" />
+                                <ant antfile="${basedir}/build.xml" target="assemblePortlets">
+                                    <property name="maven.final.name" value="uPortal" />
                                 </ant>
                             </tasks>
                         </configuration>
