@@ -10,15 +10,90 @@
         <echo message="Run 'ant -p' to get a list of available targets for the project" />
     </target>
 
-    <target name="db" description="Drops then re-initializes the uPortal database using the JDBC configuration from 'uportal-impl/src/main/resources/properties/rdbm.properties'">
+    <target name="initportal" description="Runs all the targets necessary to deploy the portal and prepare the portal database">
+        <echo message="Initializing uPortal" />
+        <!-- TODO <antcall target="deploy" /> -->
+        <antcall target="db" />
+        <antcall target="pubchan">
+            <param name="channel" value="all" />
+        </antcall>
+        <antcall target="i18n-db" />
+        <echo message="Finished initializing uPortal" />
+    </target>
+
+    <target name="db" description="Loads database tables and data">
         <uportalImplWrapper>
             <subTasks>
+                <property name="usetable" value=" " />
+                <property name="tablefile" value=" " />
+                <property name="usedata" value=" " />
+                <property name="datafile" value=" " />
+                <property name="createscript" value=" " />
+                <property name="droptables" value=" " />
+                <property name="createtables" value=" " />
+                <property name="populatetables" value=" " />
+                <property name="localeaware" value=" " />
+                <property name="adminlocale" value=" " />
+
+                <echo message="Invoking DbLoader" />
                 <java fork="true" failonerror="true" dir="${uportal-impl.dir}" classname="org.jasig.portal.tools.dbloader.DbLoader">
                     <classpath refid="uportal-impl-full.classpath" />
+
+                    <arg value="${usetable}" />
+                    <arg value="${tablefile}" />
+                    <arg value="${usedata}" />
+                    <arg value="${datafile}" />
+                    <arg value="${createscript}" />
+                    <arg value="${droptables}" />
+                    <arg value="${createtables}" />
+                    <arg value="${populatetables}" />
+                    <arg value="${localeaware}" />
+                    <arg value="${adminlocale}" />
                 </java>
             </subTasks>
         </uportalImplWrapper>
     </target>
+
+    <target name="i18n-db" description="Loads internationalization tables and data">
+        <echo message="Invoking DbLoader for localizationed database setting" />
+        <antcall target="db">
+            <param name="usetable" value="-t" />
+            <param name="tablefile" value="/properties/db/tables-i18n.xml" />
+            <param name="usedata" value="-d" />
+            <param name="datafile" value="/properties/db/data-i18n.xml" />
+        </antcall>
+    </target>
+
+    <target name="l10n-db" description="Loads localized data">
+        <echo message="Invoking DbLoader for localizationed database setting" />
+        <antcall target="db">
+            <param name="locale" value="en_US" />
+            <param name="usetable" value="-t" />
+            <param name="tablefile" value="/properties/db/tables-l10n.xml" />
+            <param name="usedata" value="-d" />
+            <param name="datafile" value="/properties/db/data-l10n.xml" />
+            <param name="localeaware" value="-l" />
+            <param name="adminlocale" value="en_US" />
+        </antcall>
+    </target>
+
+    <target name="pubchan" description="Publishes channels">
+        <uportalImplWrapper>
+            <subTasks>
+                <echo message="Invoking Channel Publisher Tool" />
+
+                <property name="channel" value="all" />
+                <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.tools.chanpub.ChannelPublisher">
+                    <classpath refid="uportal-impl-full.classpath" />
+
+                    <arg value="-n" />
+                    <arg value="${channel}" />
+                </java>
+            </subTasks>
+        </uportalImplWrapper>
+    </target>
+
+
 
     <!--
      | Provides a wrapper for tasks that need a classpath that includes the uPortal source
@@ -89,6 +164,10 @@
     </macrodef>
 
 
+    <!--
+     | Utility target for executing a maven with some number (up to 10) of goals. The
+     | target should automaticly work on all OSs as long as 'mvn' is on the path.
+     +-->
     <target name="mvn">
         <property name="goal" value="" />
         <property name="goal1" value="" />
