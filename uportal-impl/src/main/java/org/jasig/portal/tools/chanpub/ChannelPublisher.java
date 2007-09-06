@@ -6,17 +6,28 @@
 package org.jasig.portal.tools.chanpub;
 
 import java.io.File;
-import java.io.FileFilter;
+import java.io.FileInputStream;
+import java.io.FilenameFilter;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.GnuParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionGroup;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.ChannelCategory;
 import org.jasig.portal.ChannelDefinition;
 import org.jasig.portal.ChannelParameter;
@@ -24,6 +35,7 @@ import org.jasig.portal.ChannelRegistryStoreFactory;
 import org.jasig.portal.ChannelType;
 import org.jasig.portal.Constants;
 import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.IBasicEntity;
 import org.jasig.portal.IChannelRegistryStore;
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.groups.IEntity;
@@ -36,9 +48,6 @@ import org.jasig.portal.security.IUpdatingPermissionManager;
 import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.GroupService;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.utils.XML;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -73,17 +82,13 @@ public class ChannelPublisher implements ErrorHandler
     private static final String GRANT_PERMISSION_TYPE =
         IPermission.PERMISSION_TYPE_GRANT;
 
-    private static final int LOAD_ALL_FILES = 0;
-    private static final int LOAD_ONE_FILE = 1;
 
     private IPerson systemUser;
     private DocumentBuilder domParser;
     private IChannelRegistryStore crs;
-    private Map chanTypesNamesToIds;
+    private Map<String, Integer> chanTypesNamesToIds;
     private boolean mOnCommandLine = false;
     private boolean mOverrideExisting = false;
-
-    private static final String chanDefsLocation = "/properties/chanpub";
 
     /**
      * @param args
@@ -94,86 +99,90 @@ public class ChannelPublisher implements ErrorHandler
     public static void main(String[] args)throws Exception{
         try{
             RDBMServices.setGetDatasourceFromJndi(false); /*don't try jndi when not in web app */
-            /*
-
-             Channel Publisher Tool Workflow.
-             1) read all or specified channel.xml file
-
-             ant publish -Dchannel=all or -Dchannel=webmail.xml
-
-             2) validate each against the channelDefinition.dtd file
-
-             3) publish one channel at a time
-
-             */
-
-            // determine whether user wants to publish one or all of the channels in current directory
-            int mode = LOAD_ALL_FILES;
-
-            if (args[1] != null && args[1].length() > 0) {
-                // MODE = 0 for all channels in directory
-                // MODE = 1 for individual channel
-                if (args[1].equals("all"))
-                    mode = LOAD_ALL_FILES;
-                else
-                    mode = LOAD_ONE_FILE;
-
+            
+            final ChannelPublisher publisher = getCommandLineInstance();
+            
+            final File[] files;
+            try {
+                files = publisher.parseCommandLine(args);
             }
-
-            ChannelPublisher publisher = getCommandLineInstance();
-
-            // determine what mode we are in
-            if (mode == LOAD_ONE_FILE) {
-                System.out.println(
-                "You have chosen to publish one channel.....");
-                System.out.print("Publishing channel " + args[1] + ".....");
-                // lets publish one channel only
-                publisher.publishChannel(args[1]);
-                System.out.println("Done");
-            } else {
-                // lets publish all channels in directory
-                System.out.println ("You have chosen to publish all channels.....");
-
-                // user has selected to publish all channel in the /channels directory
-                // lets publish all channel one by one that is
-                // create InputStream object to pass to next method
-                File f =
-                    ResourceLoader.getResourceAsFile(
-                            ChannelPublisher.class,
-                            chanDefsLocation + "/");
-                if (f.isDirectory()) {
-
-                    // Consider only files that end in .xml
-                    class ChannelDefFileFilter implements FileFilter {
-                        public boolean accept(File file) {
-                            return file.getName().endsWith(".xml");
-                        }
-                    }
-                    File[] files = f.listFiles(new ChannelDefFileFilter());
-
-                    for (int j = 0; j < files.length; j++) {
-                        String name = files[j].getName();
-                        // lets publish one at a time
-                        try{
-                            publisher.publishChannel(name);
-                        }catch(Exception e){
-                            // Add file name into exception so we will know which
-                            // file has the problem.
-                            throw new Exception("Unable to publish file: "+name,e);
-                        }
-                        System.out.println("Published channel " + name);
-                    }
+            catch(ParseException pe) {
+                throw pe;
+            }
+            
+            for (final File file : files) {
+                // lets publish one at a time
+                try{
+                    publisher.publishChannel(file);
                 }
+                catch (Exception e) {
+                    // Add file name into exception so we will know which
+                    // file has the problem.
+                    throw new Exception("Unable to publish file: " + file, e);
+                }
+                System.out.println("Published channel " + file);
             }
             System.out.println("Publishing finished.");
             System.exit(0);
-        }catch(Exception e){
+        }
+        catch (Exception e) {
             // signal failure to ant and log
             log.error(e, e);
             throw e;
         }
     }
 
+    protected File[] parseCommandLine(String[] args) throws ParseException {
+        final Option fileOpt = new Option("f", "file", true, "A single chanpub file to publish.");
+        final Option dirOpt = new Option("d", "dir", true, "A directory of chanpub files to publish. (all .xml files in the directory will be processed)");
+
+        final OptionGroup optGroup = new OptionGroup();
+        optGroup.addOption(fileOpt);
+        optGroup.addOption(dirOpt);
+        optGroup.setRequired(true);
+
+        final Options options = new Options();
+        options.addOptionGroup(optGroup);
+
+        final CommandLineParser parser = new GnuParser();
+        final CommandLine line;
+        try {
+            // parse the command line arguments
+            line = parser.parse(options, args);
+        }
+        catch (ParseException exp) {
+            final HelpFormatter formatter = new HelpFormatter();
+            formatter.printHelp(120, "java " + this.getClass().getName(), "", options, "", true);
+            throw exp;
+        }
+        
+        final File[] files;
+        if (line.hasOption(fileOpt.getOpt())) {
+            final String chanPubName = line.getOptionValue(fileOpt.getOpt());
+            final File chanPubFile = new File(chanPubName);
+            files = new File[] { chanPubFile };
+        }
+        else if (line.hasOption(dirOpt.getOpt())) {
+            final String chanPubDirName = line.getOptionValue(dirOpt.getOpt());
+            final File chanPubDir = new File(chanPubDirName);
+            
+            if (!chanPubDir.exists()) {
+                throw new IllegalArgumentException("Directory '" + chanPubDir + "' does not exist.");
+            }
+            
+            files = chanPubDir.listFiles(new FilenameFilter() {
+                public boolean accept(File dir, String name) {
+                    return name.endsWith(".xml");
+                }
+            });
+        }
+        else {
+            throw new IllegalStateException("Should not be possible");
+        }
+        
+        return files;
+    }
+    
     /**
      * Sets up the system user for use during publishing.
      *
@@ -192,7 +201,7 @@ public class ChannelPublisher implements ErrorHandler
      * @return org.jasig.portal.ChannelDefinition the published channel definition
      * @throws Exception
      */
-    public ChannelDefinition publishChannel(String filename) throws Exception
+    public ChannelDefinition publishChannel(File filename) throws Exception
     {
         ChannelInfo ci = getChannelInfo(filename);
         return publishChannel(ci);
@@ -318,11 +327,8 @@ public class ChannelPublisher implements ErrorHandler
      * @return
      * @throws Exception
      */
-    private ChannelInfo getChannelInfo(String chanDefFile) throws Exception {
-        InputStream is =
-            ResourceLoader.getResourceAsStream(
-                ChannelPublisher.class,
-                chanDefsLocation + "/" + chanDefFile);
+    private ChannelInfo getChannelInfo(File chanDefFile) throws Exception {
+        InputStream is = new FileInputStream(chanDefFile);
         return getChannelInfo(is);
     }
 
@@ -482,7 +488,7 @@ public class ChannelPublisher implements ErrorHandler
     private void getType(ChannelInfo ci, String value)
         throws Exception
     {
-        Integer typeId = (Integer) chanTypesNamesToIds.get(value);
+        Integer typeId = chanTypesNamesToIds.get(value);
         if (typeId != null)
         {
             ci.chanDef.setTypeId(typeId.intValue());
@@ -491,20 +497,18 @@ public class ChannelPublisher implements ErrorHandler
         {
             StringWriter sw = new StringWriter();
             PrintWriter pw = null;
-            for (Iterator itr = chanTypesNamesToIds.keySet().iterator();
-            itr.hasNext();)
-            {
+            for (final String channelTypeName : chanTypesNamesToIds.keySet()) {
                 if (pw == null)
                 {
                     pw = new PrintWriter(sw);
                     pw.print("['");
-                    pw.print((String) itr.next());
+                    pw.print(channelTypeName);
                     pw.print("'");
                 }
                 else
                 {
                     pw.print(" | '");
-                    pw.print((String) itr.next());
+                    pw.print(channelTypeName);
                     pw.print("'");
                 }
             }
@@ -708,7 +712,7 @@ public class ChannelPublisher implements ErrorHandler
      * @param entityType the kind of entity the group contains
      * @return a group key
      */
-    private static IEntityGroup getGroup(String groupName, Class entityType) throws Exception {
+    private static IEntityGroup getGroup(String groupName, Class<? extends IBasicEntity> entityType) throws Exception {
         IEntityGroup group = null;
         EntityIdentifier[] groups = GroupService.searchForGroups(groupName, IGroupConstants.IS, entityType);
         if (groups != null && groups.length > 0) {
@@ -729,7 +733,7 @@ public class ChannelPublisher implements ErrorHandler
     throws Exception
     {
         if (chanTypesNamesToIds == null) {
-            chanTypesNamesToIds = new HashMap();
+            chanTypesNamesToIds = new HashMap<String, Integer>();
             chanTypesNamesToIds.put("Custom", new Integer(-1));
 
             ChannelType[] types = crs.getChannelTypes();

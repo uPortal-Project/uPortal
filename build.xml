@@ -14,9 +14,7 @@
         <echo message="Initializing uPortal" />
         <!-- TODO <antcall target="deploy" /> -->
         <antcall target="db" />
-        <antcall target="pubchan">
-            <param name="channel" value="all" />
-        </antcall>
+        <antcall target="pubchan" />
         <antcall target="i18n-db" />
         <echo message="Finished initializing uPortal" />
     </target>
@@ -80,13 +78,53 @@
     <target name="pubchan" description="Publishes channels">
         <uportalImplWrapper>
             <subTasks>
-                <echo message="Invoking Channel Publisher Tool" />
+                <!--
+                 | If no channel or directory specified, set default directory
+                 +-->
+                <if>
+                    <not>
+                        <or>
+                            <isset property="directory" />
+                            <isset property="channel" />
+                        </or>
+                    </not>
+                    <then>
+                        <property name="directory" value="${uportal-impl.dir}/src/main/config/chanpub/" />
+                    </then>
+                </if>
 
-                <property name="channel" value="all" />
+                <!--
+                 | Set argument prefix properties if the argument value exists
+                 +-->
+                <if>
+                    <isset property="directory" />
+                    <then>
+                        <property name="directoryArg" value="-d" />
+                    </then>
+                    <else>
+                        <property name="directoryArg" value="" />
+                        <property name="directory" value="" />
+                    </else>
+                </if>
+                <if>
+                    <isset property="channel" />
+                    <then>
+                        <property name="channelArg" value="-f" />
+                    </then>
+                    <else>
+                        <property name="channelArg" value="" />
+                        <property name="channel" value="" />
+                    </else>
+                </if>
+
+                <echo message="Invoking Channel Publisher Tool" />
                 <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.tools.chanpub.ChannelPublisher">
                     <classpath refid="uportal-impl-full.classpath" />
 
-                    <arg value="-n" />
+                    <arg value="${directoryArg}" />
+                    <arg value="${directory}" />
+
+                    <arg value="${channelArg}" />
                     <arg value="${channel}" />
                 </java>
             </subTasks>

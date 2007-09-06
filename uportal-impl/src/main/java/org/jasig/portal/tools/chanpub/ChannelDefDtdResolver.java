@@ -32,7 +32,7 @@ public class ChannelDefDtdResolver implements EntityResolver {
 	    InputSource inputSource = null;
 
         try {
-            InputStream inStream = ResourceLoader.getResourceAsStream(this.getClass(), "/properties/chanpub/chandefs/channelDefinition.dtd");
+            InputStream inStream = ResourceLoader.getResourceAsStream(this.getClass(), "/dtd/channelDefinition.dtd");
             if (inStream != null) {
                 inputSource =  new InputSource(inStream);
             }
