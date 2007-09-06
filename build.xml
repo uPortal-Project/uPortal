@@ -140,7 +140,10 @@
 
     <target name="deploy" description="Deploy application to servlet container">
         <uportal-ear-macro>
-            <echo message="${uportal-ear.artifact}" />
+            <property name="tomcatOverlayZip" location="${uportal-ear.pom.build.directory}/${uportal-ear.pom.build.finalName}-tomcat-overlay.zip" />
+            <echo message="${tomcatOverlayZip}" />
+
+            <!-- Deal with server.home & server.base variables -->
         </uportal-ear-macro>
     </target>
 
@@ -168,7 +171,7 @@
 
         <sequential>
             <!--
-             | Load the uportal-impl pom and classpath
+             | Load the pom and classpath
              +-->
             <artifact:pom file="@{project-path}/pom.xml" id="@{project-name}.pom" />
             <artifact:dependencies pathid="@{project-name}.classpath" verbose="false">
@@ -176,13 +179,13 @@
             </artifact:dependencies>
 
             <!--
-             | Define the location of the uportal-impl JAR
+             | Define the location of the resulting artifact
              +-->
             <property name="@{project-name}.artifact" value="${@{project-name}.pom.build.directory}/${@{project-name}.pom.build.finalName}.${@{project-name}.pom.packaging}" />
 
 
             <!--
-             | Call 'mvn package' if the source code or resources are not up-to-date
+             | Call 'mvn package' if files in the project are not up-to-date
              +-->
             <propertyregex property="@{project-name}.build.directory" input="${@{project-name}.pom.build.directory}" regexp="@{project-path}/(.*)" select="\1" />
             <if>
@@ -194,7 +197,7 @@
                     </uptodate>
                 </not>
                 <then>
-                    <echo message="${@{project-name}.artifact} is not available or out-of-date, calling 'mvn package'" />
+                    <echo message="Artifact '${@{project-name}.artifact}' is not available or out-of-date, calling 'mvn package'" />
                     <pre-package />
 
                     <antcall target="mvn">
@@ -372,7 +375,7 @@
 
     <target name="checkVersion">
         <if>
-            <contains string="${ant.version}" substring="1.7.0"/>
+            <contains string="${ant.version}" substring="1.7.0" />
             <then>
                 <fail message="The nested macros in this build.xml do not work with '${ant.version}'" />
             </then>
