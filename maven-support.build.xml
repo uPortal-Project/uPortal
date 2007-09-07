@@ -1,0 +1,338 @@
+<!--
+ | Contains macros and targets specific to the maven project structure
+ +-->
+<project name="uPortal Maven Support Files" xmlns:artifact="urn:maven-artifact-ant">
+    <!--
+     | Macro for tasks involving a maven project. The macro loads the pom, creates a classpath,
+     | ensures the project artifact is up-to-date, and runs the <sub-tasks> element. If the
+     | artifact is not up-to-date the <pre-package> element can be used to add behavior before
+     | 'mvn package' is called on the project.
+     |
+     | The following are available in the pre-package and sub-tasks elements:
+     | pom object   - @{project-name}.pom       - The Maven POM object for the project
+     | property     - @{project-name}.artifact  - The full path to the final artifact
+     | path         - @{project-name}.classpath - The projects classpath not including the artifact
+     +-->
+    <macrodef name="maven-artifact-macro">
+        <attribute name="project-path" />
+        <attribute name="project-name" />
+
+        <element name="pre-package" optional="true" />
+        <element name="sub-tasks" optional="false" />
+
+        <sequential>
+            <!--
+             | Load the pom and classpath
+             +-->
+            <artifact:pom file="@{project-path}/pom.xml" id="@{project-name}.pom" />
+            <artifact:dependencies pathid="@{project-name}.classpath" verbose="false">
+                <pom refid="@{project-name}.pom" />
+            </artifact:dependencies>
+
+            <!--
+             | Define the location of the resulting artifact
+             +-->
+            <property name="@{project-name}.artifact" value="${@{project-name}.pom.build.directory}/${@{project-name}.pom.build.finalName}.${@{project-name}.pom.packaging}" />
+
+
+            <!--
+             | Call 'mvn package' if files in the project are not up-to-date
+             +-->
+            <propertyregex property="@{project-name}.build.directory" input="${@{project-name}.pom.build.directory}" regexp="@{project-path}/(.*)" select="\1" />
+            <if>
+                <not>
+                    <uptodate targetfile="${@{project-name}.artifact}">
+                        <srcfiles dir="@{project-path}" defaultexcludes="true">
+                            <exclude name="${@{project-name}.build.directory}/" />
+                        </srcfiles>
+                    </uptodate>
+                </not>
+                <then>
+                    <echo message="Artifact '${@{project-name}.artifact}' is not available or out-of-date, calling 'mvn package'" />
+                    <pre-package />
+
+                    <antcall target="mvn">
+                        <param name="dir" value="@{project-path}" />
+                        <param name="goal" value="package" />
+                    </antcall>
+                </then>
+                <else>
+                    <echo message="Artifact '${@{project-name}.artifact}' is up-to-date" />
+                </else>
+            </if>
+
+            <!--
+             | Execute the sub-tasks
+             +-->
+            <sub-tasks />
+        </sequential>
+    </macrodef>
+
+    <!--
+     | Provides a wrapper for tasks that need a classpath that includes the uPortal source
+     | and all of its dependencies. The task also ensures the uportal-impl JAR exists and
+     | is up to date.
+     |
+     | The following are available in the impl-sub-tasks element:
+     | pom object   - uportal-impl.pom              - The Maven POM object for the uportal-impl pom
+     | property     - uportal-impl.artifact         - The full path to the uportal-impl JAR
+     | path         - uportal-impl.classpath        - The uportal-impl classpath not including the uportal-impl JAR
+     | path         - uportal-impl-full.classpath   - The uportal-impl classpath including the uportal-impl JAR
+     +-->
+    <macrodef name="uportal-impl-macro">
+        <element name="impl-sub-tasks" optional="false" implicit="true" />
+
+        <sequential>
+            <maven-artifact-macro project-name="uportal-impl" project-path="${uportal-impl.dir}">
+                <pre-package>
+                    <antcall target="install-root-pom" />
+                </pre-package>
+
+                <sub-tasks>
+                    <!--
+                     | Include the uportal-impl JAR in the final classpath
+                     +-->
+                    <path id="uportal-impl-full.classpath">
+                        <path refid="uportal-impl.classpath" />
+                        <pathelement location="${uportal-impl.artifact}" />
+                    </path>
+
+                    <!--
+                     | Execute the impl-sub-tasks
+                     +-->
+                    <impl-sub-tasks />
+                </sub-tasks>
+            </maven-artifact-macro>
+        </sequential>
+    </macrodef>
+
+    <!--
+     | Provides a wrapper for tasks that need a classpath that includes all of the uPortal WAR
+     | dependencies. The task also ensures the uportal-war WAR exists and is up to date.
+     |
+     | The following are available in the war-sub-tasks element:
+     | pom object   - uportal-impl.pom              - The Maven POM object for the uportal-impl pom
+     | property     - uportal-impl.artifact         - The full path to the uportal-impl JAR
+     | path         - uportal-impl.classpath        - The uportal-impl classpath not including the uportal-impl JAR
+     | path         - uportal-impl-full.classpath   - The uportal-impl classpath including the uportal-impl JAR
+     | pom object   - uportal-war.pom               - The Maven POM object for the uportal-war pom
+     | property     - uportal-war.artifact          - The full path to the uportal-war WAR
+     | path         - uportal-war.classpath         - The uportal-war classpath not including the uportal-war WAR
+     +-->
+    <macrodef name="uportal-war-macro">
+        <element name="war-sub-tasks" optional="false" implicit="true" />
+
+        <sequential>
+            <antcall target="checkVersion" />
+            <uportal-impl-macro>
+                <maven-artifact-macro project-name="uportal-war" project-path="${uportal-war.dir}">
+                    <pre-package>
+                        <artifact:install file="${uportal-impl.artifact}" pomrefid="uportal-impl.pom" />
+                    </pre-package>
+
+                    <sub-tasks>
+                        <!--
+                         | Execute the war-sub-tasks
+                         +-->
+                        <war-sub-tasks />
+                    </sub-tasks>
+                </maven-artifact-macro>
+            </uportal-impl-macro>
+        </sequential>
+    </macrodef>
+
+    <!--
+     | Provides a wrapper for tasks that need a classpath that includes all of the uPortal EAR
+     | dependencies. The task also ensures the uportal-ear EAR exists and is up to date.
+     |
+     | The following are available in the ear-sub-tasks element:
+     | pom object   - uportal-impl.pom              - The Maven POM object for the uportal-impl pom
+     | property     - uportal-impl.artifact         - The full path to the uportal-impl JAR
+     | path         - uportal-impl.classpath        - The uportal-impl classpath not including the uportal-impl JAR
+     | path         - uportal-impl-full.classpath   - The uportal-impl classpath including the uportal-impl JAR
+     | pom object   - uportal-war.pom               - The Maven POM object for the uportal-war pom
+     | property     - uportal-war.artifact          - The full path to the uportal-war WAR
+     | path         - uportal-war.classpath         - The uportal-war classpath not including the uportal-war WAR
+     | pom object   - uportal-ear.pom               - The Maven POM object for the uportal-ear pom
+     | property     - uportal-ear.artifact          - The full path to the uportal-ear EAR
+     | path         - uportal-ear.classpath         - The uportal-ear classpath not including the uportal-ear EAR
+     +-->
+    <macrodef name="uportal-ear-macro">
+        <element name="ear-sub-tasks" optional="false" implicit="true" />
+
+        <sequential>
+            <antcall target="checkVersion" />
+            <uportal-war-macro>
+                <maven-artifact-macro project-name="uportal-ear" project-path="${uportal-ear.dir}">
+                    <pre-package>
+                        <artifact:install file="${uportal-war.artifact}" pomrefid="uportal-war.pom" />
+                    </pre-package>
+
+                    <sub-tasks>
+                        <!--
+                         | Execute the ear-sub-tasks
+                         +-->
+                        <ear-sub-tasks />
+                    </sub-tasks>
+                </maven-artifact-macro>
+            </uportal-war-macro>
+        </sequential>
+    </macrodef>
+
+    <!--
+     | Provides a wrapper for tasks that need a classpath that includes the uPortal ear deployer
+     | and all of its dependencies. The task also ensures the uportal-impl JAR exists and
+     | is up to date.
+     |
+     | The following are available in the ear-deployer-sub-tasks element:
+     | pom object   - uportal-ear-deployer.pom              - The Maven POM object for the uportal-ear-deployer pom
+     | property     - uportal-ear-deployer.artifact         - The full path to the uportal-ear-deployer JAR
+     | path         - uportal-ear-deployer.classpath        - The uportal-ear-deployer classpath not including the uportal-ear-deployer JAR
+     | path         - uportal-ear-deployer-full.classpath   - The uportal-impl classpath including the uportal-impl JAR
+     +-->
+    <macrodef name="uportal-ear-deployer-macro">
+        <element name="ear-deployer-sub-tasks" optional="false" implicit="true" />
+
+        <sequential>
+            <maven-artifact-macro project-name="uportal-ear-deployer" project-path="${uportal-ear-deployer.dir}">
+                <pre-package>
+                    <antcall target="install-root-pom" />
+                </pre-package>
+
+                <sub-tasks>
+                    <!--
+                     | Include the uportal-ear-deployer JAR in the final classpath
+                     +-->
+                    <path id="uportal-ear-deployer-full.classpath">
+                        <path refid="uportal-ear-deployer.classpath" />
+                        <pathelement location="${uportal-ear-deployer.artifact}" />
+                    </path>
+
+                    <!--
+                     | Execute the ear-deployer-sub-tasks
+                     +-->
+                    <ear-deployer-sub-tasks />
+                </sub-tasks>
+            </maven-artifact-macro>
+        </sequential>
+    </macrodef>
+
+    <!--
+     | Provides a wrapper for tasks that need a classpath that includes all of the uPortal WAR
+     | dependencies. The task also ensures the uportal-war WAR exists and is up to date.
+     |
+     | The following are available in the war-sub-tasks element:
+     | pom object   - uportal-ear-deployer.pom              - The Maven POM object for the uportal-ear-deployer pom
+     | property     - uportal-ear-deployer.artifact         - The full path to the uportal-ear-deployer JAR
+     | path         - uportal-ear-deployer.classpath        - The uportal-ear-deployer classpath not including the uportal-ear-deployer JAR
+     | path         - uportal-ear-deployer-full.classpath   - The uportal-impl classpath including the uportal-impl JAR
+     | pom object   - uportal-ant-tasks.pom                 - The Maven POM object for the uportal-ant-tasks pom
+     | property     - uportal-ant-tasks.artifact            - The full path to the uportal-ant-tasks JAR
+     | path         - uportal-ant-tasks.classpath           - The uportal-ant-tasks classpath not including the uportal-ant-tasks WAR
+     | path         - uportal-ant-tasks-full.classpath      - The uportal-ant-tasks classpath including the uportal-ant-tasks JAR
+     +-->
+    <macrodef name="uportal-ant-tasks-macro">
+        <element name="ant-tasks-sub-tasks" optional="false" implicit="true" />
+
+        <sequential>
+            <antcall target="checkVersion" />
+            <uportal-ear-deployer-macro>
+                <maven-artifact-macro project-name="uportal-ant-tasks" project-path="${uportal-ant-tasks.dir}">
+                    <pre-package>
+                        <artifact:install file="${uportal-ear-deployer.artifact}" pomrefid="uportal-ear-deployer.pom" />
+                    </pre-package>
+
+                    <sub-tasks>
+                        <!--
+                         | Include the uportal-ear-deployer JAR in the final classpath
+                         +-->
+                        <path id="uportal-ant-tasks-full.classpath">
+                            <path refid="uportal-ant-tasks.classpath" />
+                            <pathelement location="${uportal-ant-tasks.artifact}" />
+                        </path>
+
+                        <!--
+                         | Execute the ant-tasks-sub-tasks
+                         +-->
+                        <ant-tasks-sub-tasks />
+                    </sub-tasks>
+                </maven-artifact-macro>
+            </uportal-ear-deployer-macro>
+        </sequential>
+    </macrodef>
+
+
+    <!--
+     | Installs just the root uPortal pom
+     +-->
+    <target name="install-root-pom">
+        <antcall target="mvn">
+            <param name="dir" value="${basedir}" />
+            <param name="goal" value="-N" />
+            <param name="goal1" value="install" />
+        </antcall>
+    </target>
+
+    <!--
+     | Utility target for executing a maven with some number (up to 10) of goals. The
+     | target should automaticly work on all OSs as long as 'mvn' is on the path.
+     +-->
+    <target name="mvn">
+        <property name="goal" value="" />
+        <property name="goal1" value="" />
+        <property name="goal2" value="" />
+        <property name="goal3" value="" />
+        <property name="goal4" value="" />
+        <property name="goal5" value="" />
+        <property name="goal6" value="" />
+        <property name="goal7" value="" />
+        <property name="goal8" value="" />
+        <property name="goal9" value="" />
+
+        <if>
+            <os family="windows" />
+            <then>
+                <property name="mvnExecutable" value="mvn.bat" />
+            </then>
+            <else>
+                <property name="mvnExecutable" value="mvn" />
+            </else>
+        </if>
+
+        <exec executable="mvn" dir="${dir}" vmlauncher="true" resolveexecutable="true" searchpath="true" failonerror="true">
+            <arg value="${goal}" />
+            <arg value="${goal1}" />
+            <arg value="${goal2}" />
+            <arg value="${goal3}" />
+            <arg value="${goal4}" />
+            <arg value="${goal5}" />
+            <arg value="${goal6}" />
+            <arg value="${goal7}" />
+            <arg value="${goal8}" />
+            <arg value="${goal9}" />
+        </exec>
+    </target>
+
+    <target name="checkVersion">
+        <if>
+            <contains string="${ant.version}" substring="1.7.0" />
+            <then>
+                <fail message="The nested macros in this build.xml do not work with '${ant.version}'" />
+            </then>
+        </if>
+    </target>
+
+    <!-- ============================== Ant Extensions ============================== -->
+
+    <typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="urn:maven-artifact-ant">
+        <classpath>
+            <pathelement location="${basedir}/bootstrap/maven-ant-tasks-2.0.7.jar" />
+        </classpath>
+    </typedef>
+
+    <taskdef resource="net/sf/antcontrib/antlib.xml">
+        <classpath>
+            <pathelement location="${basedir}/bootstrap/ant-contrib-1.0b3.jar" />
+        </classpath>
+    </taskdef>
+</project>
