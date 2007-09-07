@@ -80,11 +80,13 @@
                             <groupId>org.jasig.portal</groupId>
                             <artifactId>uportal-war</artifactId>
                             <bundleFileName>uPortal.war</bundleFileName>
+                            <contextRoot>/uPortal</contextRoot>
                         </webModule>
                         <webModule>
                             <groupId>org.jasig.portlet</groupId>
                             <artifactId>BookmarksPortlet</artifactId>
                             <bundleFileName>BookmarksPortlet.war</bundleFileName>
+                            <contextRoot>/BookmarksPortlet</contextRoot>
                         </webModule>
                     </modules>
                 </configuration>
