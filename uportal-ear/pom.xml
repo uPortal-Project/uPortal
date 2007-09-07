@@ -32,7 +32,6 @@
         </dependency>
 
         <!--
-            BookmarksPortlet
             googleportlet
             proxyportlet
             RssPortlet
@@ -66,6 +65,13 @@
             <version>${standard.version}</version>
             <scope>compile</scope>
         </dependency>
+
+        <dependency>
+            <groupId>hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>${hsqldb.version}</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -88,6 +94,11 @@
                             <bundleFileName>BookmarksPortlet.war</bundleFileName>
                             <contextRoot>/BookmarksPortlet</contextRoot>
                         </webModule>
+                        <jarModule>
+                            <groupId>hsqldb</groupId>
+                            <artifactId>hsqldb</artifactId>
+                            <bundleDir>common/lib</bundleDir>
+                        </jarModule>
                     </modules>
                 </configuration>
             </plugin>
@@ -100,8 +111,8 @@
                         <phase>package</phase>
                         <configuration>
                             <tasks>
-                                <property name="maven.plugin.classpath" refid="maven.plugin.classpath"/>
-                            
+                                <property name="maven.plugin.classpath" refid="maven.plugin.classpath" />
+
                                 <ant antfile="${basedir}/build.xml" target="assemblePortlets">
                                     <property name="maven.final.name" value="uPortal" />
                                 </ant>
