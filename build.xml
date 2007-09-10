@@ -180,6 +180,19 @@
         </uportal-impl-macro>
     </target>
 
+    <target name="md5passwd" description="Creates a user in the UP_PERSON_DIR table">
+        <uportal-impl-macro>
+            <property name="username" value=" " />
+
+            <echo message="Invoking Md5Passwd" />
+            <java dir="${basedir}" classname="org.jasig.portal.security.Md5Passwd">
+                <classpath refid="uportal-impl-full.classpath" />
+                <arg value="-c" />
+                <arg value="${username}" />
+            </java>
+        </uportal-impl-macro>
+    </target>
+
 
     <!-- ============================== Maven Support Macros ============================== -->
 
