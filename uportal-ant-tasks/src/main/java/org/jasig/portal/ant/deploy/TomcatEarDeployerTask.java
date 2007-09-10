@@ -21,12 +21,10 @@ import org.jasig.portal.tools.deployer.tomcat.TomcatEarDeployer;
  */
 public class TomcatEarDeployerTask extends Task {
     private File catalinaHome;
-    private File catalinaShared;
-    private File catalinaWebapps;
+    private File catalinaBase;
     private File ear;
     private boolean extractWars = false;
     private boolean removeExistingDirectories = false;
-
 
     public File getCatalinaHome() {
         return this.catalinaHome;
@@ -36,30 +34,17 @@ public class TomcatEarDeployerTask extends Task {
         this.catalinaHome = catalinaHome;
     }
 
-    public File getCatalinaShared() {
+    public File getCatalinaBase() {
         final File home = this.getCatalinaHome();
-        if (this.catalinaShared == null && home != null) {
-            return new File(home, "shared");
+        if (this.catalinaBase == null && home != null) {
+            return home;
         }
 
-        return this.catalinaShared;
+        return this.catalinaBase;
     }
 
-    public void setCatalinaShared(File catalinaShared) {
-        this.catalinaShared = catalinaShared;
-    }
-
-    public File getCatalinaWebapps() {
-        final File home = this.getCatalinaHome();
-        if (this.catalinaWebapps == null && home != null) {
-            return new File(home, "webapps");
-        }
-
-        return this.catalinaWebapps;
-    }
-
-    public void setCatalinaWebapps(File catalinaWebapps) {
-        this.catalinaWebapps = catalinaWebapps;
+    public void setCatalinaBase(File catalinaShared) {
+        this.catalinaBase = catalinaShared;
     }
 
     public File getEar() {
@@ -69,7 +54,7 @@ public class TomcatEarDeployerTask extends Task {
     public void setEar(File ear) {
         this.ear = ear;
     }
-    
+
     public boolean isExtractWars() {
         return this.extractWars;
     }
@@ -85,7 +70,6 @@ public class TomcatEarDeployerTask extends Task {
     public void setRemoveExistingDirectories(boolean removeExistingDirectories) {
         this.removeExistingDirectories = removeExistingDirectories;
     }
-    
 
     @Override
     public void execute() throws BuildException {
@@ -93,8 +77,8 @@ public class TomcatEarDeployerTask extends Task {
 
         final TomcatDeployerConfig config = new TomcatDeployerConfig();
 
-        config.setCatalinaShared(this.getCatalinaShared());
-        config.setCatalinaWebapps(this.getCatalinaWebapps());
+        config.setTomcatHome(this.getCatalinaHome());
+        config.setTomcatBase(this.getCatalinaBase());
         config.setEarLocation(this.getEar());
         config.setExtractWars(this.isExtractWars());
         config.setRemoveExistingDirectories(this.isRemoveExistingDirectories());
@@ -108,7 +92,6 @@ public class TomcatEarDeployerTask extends Task {
         }
     }
 
-
     private void validateArgs() throws BuildException {
         if (this.ear == null) {
             throw new BuildException("ear is a required property");
@@ -116,14 +99,8 @@ public class TomcatEarDeployerTask extends Task {
         if (!this.ear.exists()) {
             throw new BuildException("ear '" + this.ear.getAbsolutePath() + "' does not exist");
         }
-        
         if (this.catalinaHome == null) {
-            if (this.catalinaShared == null) {
-                throw new BuildException("catalinaShared is a required property if catalinaHome is not specified");
-            }
-            if (this.catalinaWebapps == null) {
-                throw new BuildException("catalinaWebapps is a required property if catalinaHome is not specified");
-            }
+            throw new BuildException("catalinaHome is a required property");
         }
     }
 }

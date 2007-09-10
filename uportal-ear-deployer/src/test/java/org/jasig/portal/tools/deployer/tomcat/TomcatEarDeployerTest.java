@@ -25,29 +25,32 @@ public class TomcatEarDeployerTest extends TestCase {
         final File testEar = new File(testEarUrl.getFile());
         config.setEarLocation(testEar);
 
-        final File sharedDir = this.getTempDir("shared", "dir");
-        config.setCatalinaShared(sharedDir);
+        final File tomcatHomeDir = this.getTempDir("home", "dir");
+        config.setTomcatHome(tomcatHomeDir);
 
-        final File webappsDir = this.getTempDir("webapps", "dir");
-        config.setCatalinaWebapps(webappsDir);
+        final File tomcatBaseDir = this.getTempDir("base", "dir");
+        config.setTomcatBase(tomcatBaseDir);
         
         try {
             final TomcatEarDeployer deployer = new TomcatEarDeployer();
             deployer.deployEar(config);
 
+            
+            final File expectedCommonJar = new File(new File(tomcatHomeDir, "common/lib"), "common.jar");
+            assertTrue("Expected file '" + expectedCommonJar + "' does not exist.", expectedCommonJar.exists());
 
-            final File expectedPlutoJar = new File(new File(sharedDir, "/lib"), "portlet-api-1.0.jar");
-            assertTrue("Expected file '" + expectedPlutoJar + "' does not exist.", expectedPlutoJar.exists());
+            final File expectedSharedJar = new File(new File(tomcatBaseDir, "shared/lib"), "shared.jar");
+            assertTrue("Expected file '" + expectedSharedJar + "' does not exist.", expectedSharedJar.exists());
 
-            final File expectedWar1 = new File(webappsDir, "WarDeployerTestPortlet1.war");
+            final File expectedWar1 = new File(tomcatBaseDir, "webapps/WarDeployerTestPortlet1.war");
             assertTrue("Expected file '" + expectedWar1 + "' does not exist.", expectedWar1.exists());
 
-            final File expectedWar2 = new File(webappsDir, "WarDeployerTestPortlet2.war");
+            final File expectedWar2 = new File(tomcatBaseDir, "webapps/WarDeployerTestPortlet2.war");
             assertTrue("Expected file '" + expectedWar2 + "' does not exist.", expectedWar2.exists());
         }
         finally {
-            try { FileUtils.deleteDirectory(sharedDir); } catch (Exception e) { }
-            try { FileUtils.deleteDirectory(webappsDir); } catch (Exception e) { }
+            try { FileUtils.deleteDirectory(tomcatHomeDir); } catch (Exception e) { }
+            try { FileUtils.deleteDirectory(tomcatBaseDir); } catch (Exception e) { }
         }
     }
     
@@ -60,37 +63,40 @@ public class TomcatEarDeployerTest extends TestCase {
         final File testEar = new File(testEarUrl.getFile());
         config.setEarLocation(testEar);
 
-        final File sharedDir = this.getTempDir("shared", "dir");
-        config.setCatalinaShared(sharedDir);
+        final File tomcatHomeDir = this.getTempDir("shared", "dir");
+        config.setTomcatHome(tomcatHomeDir);
 
-        final File webappsDir = this.getTempDir("webapps", "dir");
-        config.setCatalinaWebapps(webappsDir);
+        final File tomcatBaseDir = this.getTempDir("webapps", "dir");
+        config.setTomcatBase(tomcatBaseDir);
         
-        final File oldWarDir1 = new File(webappsDir, "WarDeployerTestPortlet1");
+        final File oldWarDir1 = new File(tomcatBaseDir, "webapps/WarDeployerTestPortlet1");
         FileUtils.forceMkdir(oldWarDir1);
         
-        final File oldWarDir2 = new File(webappsDir, "WarDeployerTestPortlet2");
+        final File oldWarDir2 = new File(tomcatBaseDir, "webapps/WarDeployerTestPortlet2");
         FileUtils.forceMkdir(oldWarDir2);
         
         try {
             final TomcatEarDeployer deployer = new TomcatEarDeployer();
             deployer.deployEar(config);
 
+            
+            final File expectedCommonJar = new File(new File(tomcatHomeDir, "common/lib"), "common.jar");
+            assertTrue("Expected file '" + expectedCommonJar + "' does not exist.", expectedCommonJar.exists());
 
-            final File expectedPlutoJar = new File(new File(sharedDir, "/lib"), "portlet-api-1.0.jar");
-            assertTrue("Expected file '" + expectedPlutoJar + "' does not exist.", expectedPlutoJar.exists());
+            final File expectedSharedJar = new File(new File(tomcatBaseDir, "shared/lib"), "shared.jar");
+            assertTrue("Expected file '" + expectedSharedJar + "' does not exist.", expectedSharedJar.exists());
 
-            final File expectedWar1 = new File(webappsDir, "WarDeployerTestPortlet1.war");
+            final File expectedWar1 = new File(tomcatBaseDir, "webapps/WarDeployerTestPortlet1.war");
             assertTrue("Expected file '" + expectedWar1 + "' does not exist.", expectedWar1.exists());
             assertFalse("Directory '" + oldWarDir1 + "' should not exist.", oldWarDir1.exists());
 
-            final File expectedWar2 = new File(webappsDir, "WarDeployerTestPortlet2.war");
+            final File expectedWar2 = new File(tomcatBaseDir, "webapps/WarDeployerTestPortlet2.war");
             assertTrue("Expected file '" + expectedWar2 + "' does not exist.", expectedWar2.exists());
             assertFalse("Directory '" + oldWarDir2 + "' should not exist.", oldWarDir2.exists());
         }
         finally {
-            try { FileUtils.deleteDirectory(sharedDir); } catch (Exception e) { }
-            try { FileUtils.deleteDirectory(webappsDir); } catch (Exception e) { }
+            try { FileUtils.deleteDirectory(tomcatHomeDir); } catch (Exception e) { }
+            try { FileUtils.deleteDirectory(tomcatBaseDir); } catch (Exception e) { }
         }
     }
     
@@ -103,33 +109,36 @@ public class TomcatEarDeployerTest extends TestCase {
         final File testEar = new File(testEarUrl.getFile());
         config.setEarLocation(testEar);
 
-        final File sharedDir = this.getTempDir("shared", "dir");
-        config.setCatalinaShared(sharedDir);
+        final File tomcatHomeDir = this.getTempDir("shared", "dir");
+        config.setTomcatHome(tomcatHomeDir);
 
-        final File webappsDir = this.getTempDir("webapps", "dir");
-        config.setCatalinaWebapps(webappsDir);
+        final File tomcatBaseDir = this.getTempDir("webapps", "dir");
+        config.setTomcatBase(tomcatBaseDir);
         
         try {
             final TomcatEarDeployer deployer = new TomcatEarDeployer();
             deployer.deployEar(config);
 
 
-            final File expectedPlutoJar = new File(new File(sharedDir, "/lib"), "portlet-api-1.0.jar");
-            assertTrue("Expected file '" + expectedPlutoJar + "' does not exist.", expectedPlutoJar.exists());
+            final File expectedCommonJar = new File(new File(tomcatHomeDir, "common/lib"), "common.jar");
+            assertTrue("Expected file '" + expectedCommonJar + "' does not exist.", expectedCommonJar.exists());
 
-            final File expectedWarDir1 = new File(webappsDir, "WarDeployerTestPortlet1");
+            final File expectedSharedJar = new File(new File(tomcatBaseDir, "shared/lib"), "shared.jar");
+            assertTrue("Expected file '" + expectedSharedJar + "' does not exist.", expectedSharedJar.exists());
+
+            final File expectedWarDir1 = new File(tomcatBaseDir, "webapps/WarDeployerTestPortlet1");
             assertTrue("Expected file '" + expectedWarDir1 + "' does not exist.", expectedWarDir1.exists());
             final File expectedPortletXml1 = new File(expectedWarDir1, "/WEB-INF/portlet.xml");
             assertTrue("Expected file '" + expectedPortletXml1 + "' does not exist.", expectedPortletXml1.exists());
 
-            final File expectedWarDir2 = new File(webappsDir, "WarDeployerTestPortlet2");
+            final File expectedWarDir2 = new File(tomcatBaseDir, "webapps/WarDeployerTestPortlet2");
             assertTrue("Expected file '" + expectedWarDir2 + "' does not exist.", expectedWarDir2.exists());
             final File expectedPortletXml2 = new File(expectedWarDir2, "/WEB-INF/portlet.xml");
             assertTrue("Expected file '" + expectedPortletXml2 + "' does not exist.", expectedPortletXml2.exists());
         }
         finally {
-            try { FileUtils.deleteDirectory(sharedDir); } catch (Exception e) { }
-            try { FileUtils.deleteDirectory(webappsDir); } catch (Exception e) { }
+            try { FileUtils.deleteDirectory(tomcatHomeDir); } catch (Exception e) { }
+            try { FileUtils.deleteDirectory(tomcatBaseDir); } catch (Exception e) { }
         }
     }
 

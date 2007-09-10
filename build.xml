@@ -34,7 +34,7 @@
 
     <target name="initportal" description="Runs all the targets necessary to deploy the portal and prepare the portal database">
         <echo message="Initializing uPortal" />
-        <antcall target="deploy" />
+        <antcall target="deploy-ear" />
         <antcall target="db" />
         <antcall target="pubchan" />
         <antcall target="i18n-db" />
@@ -149,14 +149,14 @@
         </uportal-impl-macro>
     </target>
 
-    <target name="deploy" description="Deploy application to servlet container">
+    <target name="deploy-ear" description="Deploy application to servlet container">
         <uportal-ant-tasks-macro>
             <typedef resource="org/jasig/portal/ant/antlib.xml" uri="urn:up-util-ant">
                 <classpath refid="uportal-ant-tasks-full.classpath" />
             </typedef>
 
             <uportal-ear-macro>
-                <up:tomcatEarDeploy ear="${uportal-ear.artifact}" catalinaHome="${server.home}" extractWars="true" removeExistingDirectories="true" />
+                <up:tomcatEarDeploy ear="${uportal-ear.artifact}" catalinaHome="${server.home}" catalinaBase="${server.base}" extractWars="true" removeExistingDirectories="true" />
             </uportal-ear-macro>
         </uportal-ant-tasks-macro>
     </target>

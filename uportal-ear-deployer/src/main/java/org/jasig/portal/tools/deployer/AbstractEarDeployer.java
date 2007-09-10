@@ -41,7 +41,7 @@ import org.xml.sax.SAXException;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public abstract class AbstractEarDeployer {
+public abstract class AbstractEarDeployer<CONFIG extends DeployerConfig> {
     private static final String DESCRIPTOR_PATH        = "META-INF/application.xml";
     private static final String WEB_MODULE_XPATH       = "//application/module/web";
     private static final String WEB_URI_NODE_NAME      = "web-uri";
@@ -59,7 +59,7 @@ public abstract class AbstractEarDeployer {
      * @param deployerConfig
      * @throws Exception
      */
-    public final void deployEar(DeployerConfig deployerConfig) throws IOException {
+    public final void deployEar(CONFIG deployerConfig) throws IOException {
         final JarFile earFile = this.getEarFile(deployerConfig);
         final Document descriptorDom = this.getDescriptorDom(earFile);
         final NodeList webModules = this.getWebModules(descriptorDom);
@@ -91,7 +91,7 @@ public abstract class AbstractEarDeployer {
      * @param deployerConfig Deployer configuration, sub-classes will likely us a DeployerConfig sub-class to pass container specific information
      * @throws IOException If an IO related error occures while deploying the WAR.
      */
-    protected abstract void deployWar(WebModule webModule, JarFile earFile, DeployerConfig deployerConfig) throws IOException;
+    protected abstract void deployWar(WebModule webModule, JarFile earFile, CONFIG deployerConfig) throws IOException;
 
     /**
      * Sub-classes must implement this to deploy the specified JAR file from the EAR to the appropriate
@@ -102,7 +102,7 @@ public abstract class AbstractEarDeployer {
      * @param deployerConfig Deployer configuration, sub-classes will likely us a DeployerConfig sub-class to pass container specific information
      * @throws IOException If an IO related error occures while deploying the JAR.
      */
-    protected abstract void deployJar(JarEntry jarEntry, JarFile earFile, DeployerConfig deployerConfig) throws IOException;
+    protected abstract void deployJar(JarEntry jarEntry, JarFile earFile, CONFIG deployerConfig) throws IOException;
 
     /**
      * Gets the EAR from the configuration in the {@link DeployerConfig}.
@@ -350,8 +350,7 @@ public abstract class AbstractEarDeployer {
         if (node.getNamespaceURI() == null) {
             return node.getNodeName();
         }
-        else {
-            return node.getLocalName();
-        }
+        
+        return node.getLocalName();
     }
 }

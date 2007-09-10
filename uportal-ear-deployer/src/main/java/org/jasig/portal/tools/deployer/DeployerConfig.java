@@ -57,6 +57,7 @@ public class DeployerConfig {
     /**
      * @see java.lang.Object#equals(Object)
      */
+    @Override
     public boolean equals(final Object object) {
         if (object == this) {
             return true;
@@ -75,6 +76,7 @@ public class DeployerConfig {
     /**
      * @see java.lang.Object#hashCode()
      */
+    @Override
     public int hashCode() {
         return new HashCodeBuilder(-110713495, -1544877739)
             .append(this.earLocation)
@@ -86,6 +88,7 @@ public class DeployerConfig {
     /**
      * @see java.lang.Object#toString()
      */
+    @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
             .append("earLocation", this.earLocation)

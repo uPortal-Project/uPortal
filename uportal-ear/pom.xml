@@ -94,10 +94,32 @@
                             <bundleFileName>BookmarksPortlet.war</bundleFileName>
                             <contextRoot>/BookmarksPortlet</contextRoot>
                         </webModule>
+
+
+                        <jarModule>
+                            <groupId>javax.portlet</groupId>
+                            <artifactId>portlet-api</artifactId>
+                            <bundleDir>shared</bundleDir>
+                        </jarModule>
+                        <jarModule>
+                            <groupId>org.apache.pluto</groupId>
+                            <artifactId>pluto</artifactId>
+                            <bundleDir>shared</bundleDir>
+                        </jarModule>
+                        <jarModule>
+                            <groupId>javax.servlet</groupId>
+                            <artifactId>jstl</artifactId>
+                            <bundleDir>shared</bundleDir>
+                        </jarModule>
+                        <jarModule>
+                            <groupId>taglibs</groupId>
+                            <artifactId>standard</artifactId>
+                            <bundleDir>shared</bundleDir>
+                        </jarModule>
                         <jarModule>
                             <groupId>hsqldb</groupId>
                             <artifactId>hsqldb</artifactId>
-                            <bundleDir>common/lib</bundleDir>
+                            <bundleDir>common</bundleDir>
                         </jarModule>
                     </modules>
                 </configuration>
