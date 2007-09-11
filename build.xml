@@ -26,6 +26,7 @@
 
     <target name="initportal" description="Runs all the targets necessary to deploy the portal and prepare the portal database">
         <echo message="Initializing uPortal" />
+        <ant dir="bootstrap" antfile="build.xml" />
         <antcall target="deploy-ear" />
         <antcall target="db" />
         <antcall target="pubchan" />
