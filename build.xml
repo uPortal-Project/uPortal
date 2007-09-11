@@ -208,15 +208,15 @@
      | path         - @{project-name}.classpath - The projects classpath not including the artifact
      +-->
     <macrodef name="maven-artifact-macro">
-        <attribute name="project-path" />
         <attribute name="project-name" />
+        <attribute name="project-path" />
 
         <element name="pre-package" optional="true" />
         <element name="sub-tasks" optional="false" />
 
         <sequential>
             <!--
-             | Load the pom and classpath
+             | Load the pom & classpath
              +-->
             <artifact:pom file="@{project-path}/pom.xml" id="@{project-name}.pom" />
             <artifact:dependencies pathid="@{project-name}.classpath" verbose="false">
@@ -227,7 +227,6 @@
              | Define the location of the resulting artifact
              +-->
             <property name="@{project-name}.artifact" value="${@{project-name}.pom.build.directory}/${@{project-name}.pom.build.finalName}.${@{project-name}.pom.packaging}" />
-
 
             <!--
              | Call 'mvn package' if files in the project are not up-to-date
@@ -242,16 +241,17 @@
                     </uptodate>
                 </not>
                 <then>
-                    <echo message="Artifact '${@{project-name}.artifact}' is not available or out-of-date, calling 'mvn package'" />
+                    <echo message="Artifact '${@{project-name}.artifact}' is not available or out-of-date, calling 'mvn install'" />
                     <pre-package />
 
                     <antcall target="mvn">
                         <param name="dir" value="@{project-path}" />
-                        <param name="goal" value="package" />
+                        <param name="goal" value="install" />
                     </antcall>
                 </then>
                 <else>
                     <echo message="Artifact '${@{project-name}.artifact}' is up-to-date" />
+                    <artifact:install file="${@{project-name}.artifact}" pomrefid="@{project-name}.pom" />
                 </else>
             </if>
 
@@ -261,6 +261,8 @@
             <sub-tasks />
         </sequential>
     </macrodef>
+
+
 
     <!--
      | Provides a wrapper for tasks that need a classpath that includes the uPortal source
@@ -277,11 +279,9 @@
         <element name="impl-sub-tasks" optional="false" implicit="true" />
 
         <sequential>
-            <maven-artifact-macro project-name="uportal-impl" project-path="${uportal-impl.dir}">
-                <pre-package>
-                    <antcall target="install-root-pom" />
-                </pre-package>
+            <antcall target="install-root-pom" />
 
+            <maven-artifact-macro project-name="uportal-impl" project-path="${uportal-impl.dir}">
                 <sub-tasks>
                     <!--
                      | Include the uportal-impl JAR in the final classpath
@@ -320,10 +320,6 @@
             <antcall target="checkVersion" />
             <uportal-impl-macro>
                 <maven-artifact-macro project-name="uportal-war" project-path="${uportal-war.dir}">
-                    <pre-package>
-                        <artifact:install file="${uportal-impl.artifact}" pomrefid="uportal-impl.pom" />
-                    </pre-package>
-
                     <sub-tasks>
                         <!--
                          | Execute the war-sub-tasks
@@ -358,10 +354,6 @@
             <antcall target="checkVersion" />
             <uportal-war-macro>
                 <maven-artifact-macro project-name="uportal-ear" project-path="${uportal-ear.dir}">
-                    <pre-package>
-                        <artifact:install file="${uportal-war.artifact}" pomrefid="uportal-war.pom" />
-                    </pre-package>
-
                     <sub-tasks>
                         <!--
                          | Execute the ear-sub-tasks
@@ -388,11 +380,9 @@
         <element name="ear-deployer-sub-tasks" optional="false" implicit="true" />
 
         <sequential>
-            <maven-artifact-macro project-name="uportal-ear-deployer" project-path="${uportal-ear-deployer.dir}">
-                <pre-package>
-                    <antcall target="install-root-pom" />
-                </pre-package>
+            <antcall target="install-root-pom" />
 
+            <maven-artifact-macro project-name="uportal-ear-deployer" project-path="${uportal-ear-deployer.dir}">
                 <sub-tasks>
                     <!--
                      | Include the uportal-ear-deployer JAR in the final classpath
@@ -432,10 +422,6 @@
             <antcall target="checkVersion" />
             <uportal-ear-deployer-macro>
                 <maven-artifact-macro project-name="uportal-ant-tasks" project-path="${uportal-ant-tasks.dir}">
-                    <pre-package>
-                        <artifact:install file="${uportal-ear-deployer.artifact}" pomrefid="uportal-ear-deployer.pom" />
-                    </pre-package>
-
                     <sub-tasks>
                         <!--
                          | Include the uportal-ear-deployer JAR in the final classpath
@@ -460,11 +446,8 @@
      | Installs just the root uPortal pom
      +-->
     <target name="install-root-pom">
-        <antcall target="mvn">
-            <param name="dir" value="${basedir}" />
-            <param name="goal" value="-N" />
-            <param name="goal1" value="install" />
-        </antcall>
+        <artifact:pom file="${basedir}/pom.xml" id="rootPom" />
+        <artifact:install pomrefid="rootPom" />
     </target>
 
     <!--
