@@ -91,7 +91,7 @@ public class ExternalServices {
       {
           try {
         	  XMLReader parser = XMLReaderFactory.createXMLReader();
-        	  parser.setEntityResolver(new DTDResolver("services.dtd"));
+        	  parser.setEntityResolver(new DTDResolver());
         	  parser.setContentHandler(svcMgr.svcHandler);
         	  parser.parse(new InputSource(svcDescriptor));
           } catch (Exception ex) {

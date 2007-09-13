@@ -43,7 +43,8 @@ public class DTDResolver implements EntityResolver {
             new PublicId("-//uPortal//Channel Publishing/EN", "channelPublishingDocument.dtd"),
             new PublicId("-//uPortal//Data/EN", "data.dtd"),
             new PublicId("-//uPortal//PAGSGroupStore/EN", "PAGSGroupStore.dtd"),
-            new PublicId("-//uPortal//LDAPGroupStore/EN", "LDAPGroupStore.dtd") };
+            new PublicId("-//uPortal//LDAPGroupStore/EN", "LDAPGroupStore.dtd"),
+            new PublicId("-//uPortal//Services/EN", "services.dtd")};
     private String dtdName = null;
 
     /**
