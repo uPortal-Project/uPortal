@@ -211,6 +211,7 @@
     <macrodef name="maven-artifact-macro">
         <attribute name="project-name" />
         <attribute name="project-path" />
+        <attribute name="checkFilesId" default="null" />
 
         <element name="pre-package" optional="true" />
         <element name="sub-tasks" optional="false" />
@@ -230,16 +231,37 @@
             <property name="@{project-name}.artifact" value="${@{project-name}.pom.build.directory}/${@{project-name}.pom.build.finalName}.${@{project-name}.pom.packaging}" />
 
             <!--
-             | Call 'mvn package' if files in the project are not up-to-date
+             | Do uptodate checking for project files and dependencies
              +-->
             <propertyregex property="@{project-name}.build.directory" input="${@{project-name}.pom.build.directory}" regexp="@{project-path}/(.*)" select="\1" />
+            <uptodate property="@{project-name}.projectFilesUTD" targetfile="${@{project-name}.artifact}">
+                <srcfiles dir="@{project-path}" defaultexcludes="true">
+                    <exclude name="${@{project-name}.build.directory}/" />
+                </srcfiles>
+            </uptodate>
             <if>
                 <not>
-                    <uptodate targetfile="${@{project-name}.artifact}">
-                        <srcfiles dir="@{project-path}" defaultexcludes="true">
-                            <exclude name="${@{project-name}.build.directory}/" />
-                        </srcfiles>
+                    <equals arg1="@{checkFilesId}" arg2="null" />
+                </not>
+                <then>
+                    <uptodate property="@{project-name}.dependenciesUTD" targetfile="${@{project-name}.artifact}">
+                        <srcfiles refid="@{checkFilesId}" />
                     </uptodate>
+                </then>
+                <else>
+                    <property name="@{project-name}.dependenciesUTD" value="true" />
+                </else>
+            </if>
+
+            <!--
+             | Call 'mvn package' if files in the project are not up-to-date
+             +-->
+            <if>
+                <not>
+                    <and>
+                        <equals arg1="${@{project-name}.projectFilesUTD}" arg2="true" />
+                        <equals arg1="${@{project-name}.dependenciesUTD}" arg2="true" />
+                    </and>
                 </not>
                 <then>
                     <echo message="Artifact '${@{project-name}.artifact}' is not available or out-of-date, calling 'mvn install'" />
@@ -320,7 +342,8 @@
         <sequential>
             <antcall target="checkVersion" />
             <uportal-impl-macro>
-                <maven-artifact-macro project-name="uportal-war" project-path="${uportal-war.dir}">
+                <fileset id="uportal-impl-artifacts" file="${uportal-impl.artifact}" />
+                <maven-artifact-macro project-name="uportal-war" project-path="${uportal-war.dir}" checkfilesid="uportal-impl-artifacts">
                     <sub-tasks>
                         <!--
                          | Execute the war-sub-tasks
@@ -354,7 +377,8 @@
         <sequential>
             <antcall target="checkVersion" />
             <uportal-war-macro>
-                <maven-artifact-macro project-name="uportal-ear" project-path="${uportal-ear.dir}">
+                <fileset id="uportal-war-artifacts" file="${uportal-war.artifact}" />
+                <maven-artifact-macro project-name="uportal-ear" project-path="${uportal-ear.dir}" checkfilesid="uportal-war-artifacts">
                     <sub-tasks>
                         <!--
                          | Execute the ear-sub-tasks
@@ -422,7 +446,8 @@
         <sequential>
             <antcall target="checkVersion" />
             <uportal-ear-deployer-macro>
-                <maven-artifact-macro project-name="uportal-ant-tasks" project-path="${uportal-ant-tasks.dir}">
+                <fileset id="uportal-ear-deployer-artifacts" file="${uportal-ear-deployer.artifact}" />
+                <maven-artifact-macro project-name="uportal-ant-tasks" project-path="${uportal-ant-tasks.dir}" checkfilesid="uportal-ear-deployer-artifacts">
                     <sub-tasks>
                         <!--
                          | Include the uportal-ear-deployer JAR in the final classpath
@@ -531,7 +556,7 @@
     <macrodef name="echo-fileset">
         <attribute name="filesetref" />
         <sequential>
-            <pathconvert pathsep=" " property="@{filesetref}.echopath">
+            <pathconvert pathsep="\n" property="@{filesetref}.echopath">
                 <path>
                     <fileset refid="@{filesetref}" />
                 </path>
