@@ -31,12 +31,34 @@
             <type>war</type>
         </dependency>
 
-        <!--
-            googleportlet
-            proxyportlet
-            RssPortlet
-            testsuite 
-        -->
+        <dependency>
+            <groupId>org.jasig.portlet</groupId>
+            <artifactId>googleportlet</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <type>war</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasig.portlet</groupId>
+            <artifactId>proxyportlet</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <type>war</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasig.portlet</groupId>
+            <artifactId>RssPortlet</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <type>war</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasig.portlet</groupId>
+            <artifactId>testsuite</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <type>war</type>
+        </dependency>
+
 
         <dependency>
             <groupId>org.jasig.portal</groupId>
@@ -100,6 +122,30 @@
                             <artifactId>BookmarksPortlet</artifactId>
                             <bundleFileName>BookmarksPortlet.war</bundleFileName>
                             <contextRoot>/BookmarksPortlet</contextRoot>
+                        </webModule>
+                        <webModule>
+                            <groupId>org.jasig.portlet</groupId>
+                            <artifactId>googleportlet</artifactId>
+                            <bundleFileName>googleportlet.war</bundleFileName>
+                            <contextRoot>/googleportlet</contextRoot>
+                        </webModule>
+                        <webModule>
+                            <groupId>org.jasig.portlet</groupId>
+                            <artifactId>proxyportlet</artifactId>
+                            <bundleFileName>proxyportlet.war</bundleFileName>
+                            <contextRoot>/proxyportlet</contextRoot>
+                        </webModule>
+                        <webModule>
+                            <groupId>org.jasig.portlet</groupId>
+                            <artifactId>RssPortlet</artifactId>
+                            <bundleFileName>RssPortlet.war</bundleFileName>
+                            <contextRoot>/RssPortlet</contextRoot>
+                        </webModule>
+                        <webModule>
+                            <groupId>org.jasig.portlet</groupId>
+                            <artifactId>testsuite</artifactId>
+                            <bundleFileName>testsuite.war</bundleFileName>
+                            <contextRoot>/testsuite</contextRoot>
                         </webModule>
 
 
