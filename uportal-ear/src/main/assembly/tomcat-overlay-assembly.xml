@@ -9,7 +9,6 @@
         <!--
          | Include the main artifact (extracted)
          | TODO - replaces uPortal with valid maven variable
-         | TODO - should WARs be exploded? (probably not)
          +-->
         <fileSet>
             <directory>target/uPortal</directory>
@@ -19,20 +18,18 @@
             </includes>
         </fileSet>
         <fileSet>
-            <directory>target/uPortal</directory>
+            <directory>target/uPortal/shared</directory>
             <outputDirectory>shared/lib</outputDirectory>
             <includes>
-                <include>**/*.jar</include>
+                <include>*.jar</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>target/uPortal/common</directory>
+            <outputDirectory>common/lib</outputDirectory>
+            <includes>
+                <include>*.jar</include>
             </includes>
         </fileSet>
     </fileSets>
-    <!-- TODO how to specify JDBC driver dependency?
-    
-    define:
-    jdbc.groupId
-    jdbc.artifactId
-    jdbc.version
-    
-    Use those variables in assembly dependency
-     -->
 </assembly>
