@@ -214,7 +214,7 @@
             <version>${log4j.version}</version>
             <scope>compile</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>xml-resolver</groupId>
             <artifactId>xml-resolver</artifactId>
@@ -246,6 +246,13 @@
             <groupId>org.apache.pluto</groupId>
             <artifactId>pluto</artifactId>
             <version>${pluto.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uportal-pluto-support</artifactId>
+            <version>${pom.parent.version}</version>
             <scope>provided</scope>
         </dependency>
 

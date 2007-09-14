@@ -39,6 +39,13 @@
         -->
 
         <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uportal-pluto-support</artifactId>
+            <version>${pom.parent.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
             <groupId>javax.portlet</groupId>
             <artifactId>portlet-api</artifactId>
             <version>${portlet-api.version}</version>
@@ -96,6 +103,11 @@
                         </webModule>
 
 
+                        <jarModule>
+                            <groupId>org.jasig.portal</groupId>
+                            <artifactId>uportal-pluto-support</artifactId>
+                            <bundleDir>shared</bundleDir>
+                        </jarModule>
                         <jarModule>
                             <groupId>javax.portlet</groupId>
                             <artifactId>portlet-api</artifactId>

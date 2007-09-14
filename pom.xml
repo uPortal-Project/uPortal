@@ -132,6 +132,7 @@
         <module>uportal-ear</module>
         <module>uportal-ear-deployer</module>
         <module>uportal-ant-tasks</module>
+        <module>uportal-pluto-support</module>
     </modules>
 
     <build>
