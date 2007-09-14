@@ -7,9 +7,6 @@ package org.jasig.portal.utils;
 
 import java.io.InputStream;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.PortalSessionManager;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 
@@ -21,9 +18,6 @@ import org.xml.sax.InputSource;
  * @version $Revision$
  */
 public class DTDResolver implements EntityResolver {
-
-    private static final Log log = LogFactory.getLog(DTDResolver.class);
-
     private static final String dtdPath = "/dtd";
 
     private static class PublicId {
@@ -104,10 +98,6 @@ public class DTDResolver implements EntityResolver {
     }
 
     public InputStream getResourceAsStream(String resource) {
-        if (PortalSessionManager.isServletContext()) {
-            return PortalSessionManager.getResourceAsStream(resource);
-        }
-        
         return DTDResolver.class.getResourceAsStream(resource);
     }
 }
