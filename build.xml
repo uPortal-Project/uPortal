@@ -233,7 +233,7 @@
             <!--
              | Do uptodate checking for project files and dependencies
              +-->
-            <propertyregex property="@{project-name}.path.fixed" input="@{project-path}" regexp="\\" replace="/" />
+            <propertyregex property="@{project-name}.path.fixed" input="@{project-path}" defaultValue="@{project-path}" regexp="\\" replace="/" global="true" />
             <propertyregex property="@{project-name}.build.directory" input="${@{project-name}.pom.build.directory}" regexp="${@{project-name}.path.fixed}/(.*)" select="\1" />
             <uptodate property="@{project-name}.projectFilesUTD" targetfile="${@{project-name}.artifact}">
                 <srcfiles dir="@{project-path}" defaultexcludes="true">
