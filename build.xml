@@ -344,7 +344,7 @@
                         <path refid="uportal-impl.classpath" />
                         <pathelement location="${uportal-impl.artifact}" />
                     </path>
-    
+
                     <!--
                      | Execute the impl-sub-tasks
                      +-->
@@ -483,8 +483,11 @@
      | Installs just the root uPortal pom
      +-->
     <target name="install-root-pom">
-        <artifact:pom file="${basedir}/pom.xml" id="rootPom" />
-        <artifact:install pomrefid="rootPom" />
+        <antcall target="mvn">
+            <param name="dir" value="${basedir}" />
+            <param name="goal" value="-N" />
+            <param name="goal1" value="install" />
+        </antcall>
     </target>
 
     <!--
