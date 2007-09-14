@@ -32,14 +32,14 @@
     </target>
 
     <target name="install-portlet">
-        <artifact:install file="portlets/${artifactId}.war">
-            <pom file="portlets/${artifactId}.pom" />
+        <artifact:install file="${basedir}/portlets/${artifactId}.war">
+            <pom file="${basedir}/portlets/${artifactId}.pom" />
         </artifact:install>
     </target>
 
     <target name="install-library">
-        <artifact:install file="libraries/${artifactId}.jar">
-            <pom file="libraries/${artifactId}.pom" />
+        <artifact:install file="${basedir}/libraries/${artifactId}.jar">
+            <pom file="${basedir}/libraries/${artifactId}.pom" />
         </artifact:install>
     </target>
 </project>
