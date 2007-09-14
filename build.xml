@@ -516,7 +516,7 @@
             </else>
         </if>
 
-        <exec executable="mvn" dir="${dir}" vmlauncher="true" resolveexecutable="true" searchpath="true" failonerror="true">
+        <exec executable="${mvnExecutable}" dir="${dir}" vmlauncher="true" resolveexecutable="true" searchpath="true" failonerror="true">
             <arg value="${goal}" />
             <arg value="${goal1}" />
             <arg value="${goal2}" />
