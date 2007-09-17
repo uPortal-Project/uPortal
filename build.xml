@@ -232,12 +232,11 @@
 
             <!--
              | Do uptodate checking for project files and dependencies
+             | TODO - parse out relative path from '${@{project-name}.build.directory}' and use that for exclude
              +-->
-            <propertyregex property="@{project-name}.path.fixed" input="@{project-path}" defaultValue="@{project-path}" regexp="\\" replace="/" global="true" />
-            <propertyregex property="@{project-name}.build.directory" input="${@{project-name}.pom.build.directory}" regexp="${@{project-name}.path.fixed}/(.*)" select="\1" />
             <uptodate property="@{project-name}.projectFilesUTD" targetfile="${@{project-name}.artifact}">
                 <srcfiles dir="@{project-path}" defaultexcludes="true">
-                    <exclude name="${@{project-name}.build.directory}/" />
+                    <exclude name="target/" />
                 </srcfiles>
             </uptodate>
             <if>
