@@ -25,9 +25,13 @@
         <echo message="${helpMessage}" />
     </target>
 
+    <target name="bootstrap" description="Installs dependencies into the local maven respository that are not available publicly">
+        <ant dir="bootstrap" antfile="build.xml" />
+    </target>
+
     <target name="initportal" description="Runs all the targets necessary to deploy the portal and prepare the portal database">
         <echo message="Initializing uPortal" />
-        <ant dir="bootstrap" antfile="build.xml" />
+        <antcall target="bootstrap" />
         <antcall target="deploy-ear" />
         <antcall target="db" />
         <antcall target="pubchan" />
@@ -306,6 +310,9 @@
     </target>
 
     <!-- ============================== Deprecated Targets ============================== -->
+    <target name="all">
+        <echo>The "all" Ant task is no supported. Run 'mvn clean compile' for the same result.</echo>
+    </target>
     <target name="clean">
         <echo>The "clean" Ant task is no supported. Run 'mvn clean' for the same result.</echo>
     </target>

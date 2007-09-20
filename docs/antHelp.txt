@@ -97,130 +97,94 @@ Available targets:
 
 "l10n-db" - The "l10n-db" target loads localization database settings.
 
-"dbunload" - The "dbunload" target runs uPortal's DbUnload program to dump a database table.
-  to run this target, you must specify the table name and output file parameters
-  on the command line.
-  For example:
+"dbunload" - The "dbunload" target runs uPortal's DbUnload program to dump a
+    database table. To run this target, you must specify the table name and
+    output file parameters on the command line.
+    
+    Example:
+        ant dbunload -Dtablename=up_channel -Dxmlfile=-
 
-  ant dbunload -Dtablename=up_channel -Dxmlfile=-
+"dbtest" - The "dbtest" target runs uPortal's DbTest program to display
+    information about the database defined in rdbm.properties
 
-"dbtest" - The "dbtest" target runs uPortal's DbTest program to display information
-  about the database defined in rdbm.properties
+"md5passwd" -  The "md5passwd" target runs uPortal's md5passwd program to create
+    an entry for a user in the UP_PERSON_DIR table. To run this target, you must
+    specify the username parameter in the command line.  For example:
 
-"pubfragments" - The "pubfragments" target loads fragments from XML files into the database.
-
-"md5passwd" -  The "md5passwd" target runs uPortal's md5passwd program to create an entry for
-  a user in the UP_PERSON_DIR table. To run this target, you must specify
-  the username parameter in the command line.  For example:
-
-  ant md5passwd -Dusername=ken
-
+    Example:
+        ant md5passwd -Dusername=ken
 
 "deluser" - The "deluser" target runs uPortal's DeleteUser program to delete all
-   traces of a uportal user from the uPortal database.
-   Examples:
-   ant deluser -Duser=username
-   ant deluser -Duser=ashenoy
+    traces of a uportal user from the uPortal database.
+    
+    Examples:
+        ant deluser -Duser=username
 
-"regchantype" - The "regchantype" target runs uPortal's RegisterChannelType program to
-  create an entry for a new generic channel in the UP_CHAN_TYPE table.
-  To run this target, you must specify the class, name, description, and
-  uri parameters in the command line.  For example:
+"regchantype" - The "regchantype" target runs uPortal's RegisterChannelType
+    program to create an entry for a new generic channel in the UP_CHAN_TYPE
+    table. To run this target, you must specify the class, name, description,
+    and uri parameters in the command line.
+    
+    Example:
+        ant regchantype
+            -Dclass=org.jasig.portal.channels.CImage
+            -Dname="Image Channel"
+            -Ddescription="Displays image with optional title and subtitle"
+            -Duri=/org/jasig/portal/channels/CImage/CImage.cpd
 
-  ant regchantype
-    -Dclass=org.jasig.portal.channels.CImage
-    -Dname="Image Channel"
-    -Ddescription="Displays image with optional title and subtitle"
-    -Duri=/org/jasig/portal/channels/CImage/CImage.cpd
+"addstylesheet" - The "addstylesheet" target runs uPortal's RegisterStylesheet
+    program to add core framework stylesheets used to create structures and themes.
 
+    Example:
+        ant addstylesheet
+            -DstylesheetType=-t
+            -DstylesheetUri=/org/jasig/portal/layout/tab-column/nested-tables/nested-tables.xsl
+            -DdescriptionUri=/org/jasig/portal/layout/tab-column/nested-tables/nested-tables.sdf
 
-"addstylesheet" 
-  The "addstylesheet" target runs uPortal's RegisterStylesheet program to
-  add core framework stylesheets used to create structures and themes.
+        where   -s = specify structure stylesheet
+                -t = specify theme stylesheet
 
-  Example:
+"modstylesheet" - The "modstylesheet" target runs uPortal's RegisterStylesheet
+    program to update core framework stylesheets used to create structures and
+    themes.
 
-  ant addstylesheet
-    -DstylesheetType=-t
-    -DstylesheetUri=/org/jasig/portal/layout/tab-column/nested-tables/nested-tables.xsl
-    -DdescriptionUri=/org/jasig/portal/layout/tab-column/nested-tables/nested-tables.sdf
+    Example:
+        ant modstylesheet
+            -DstylesheetType=-s
+            -DstylesheetUri=/org/jasig/portal/layout/tab-column/tab-column.xsl
+            -DdescriptionUri=/org/jasig/portal/layout/tab-column/tab-column.sdf
+            -DstylesheetId=1
 
-  where -s = specify structure stylesheet
-        -t = specify theme stylesheet
+        where   -s = specify structure stylesheet
+                -t = specify theme stylesheet
 
+"delstylesheet" - The "delstylesheet" target runs uPortal's RegisterStylesheet
+    program to delete core framework stylesheets used to create structures and
+    themes.
 
-"modstylesheet" - 
-  The "modstylesheet" target runs uPortal's RegisterStylesheet program to
-  update core framework stylesheets used to create structures and themes.
+    Example:
+        ant delstylesheet -DstylesheetType=-t -DstylesheetId=1
+  
+        where   -s = specify structure stylesheet
+                -t = specify theme stylesheet
 
-  Example:
+"pubchan" - The "pubchan" target runs the ChannelPublisher tool. Channel
+    definitions are defined in XML files.  Each channel definition is published
+    or modified if one already existed with the same functional name. You can
+    publish all the channel definitions at once or just one at a time.
+    
+    Examples:
+        ant pubchan -Dchannel=all
+        ant pubchan -Dchannel=daily-business-cartoon.xml
 
-  ant modstylesheet
-    -DstylesheetType=-s
-    -DstylesheetUri=/org/jasig/portal/layout/tab-column/tab-column.xsl
-    -DdescriptionUri=/org/jasig/portal/layout/tab-column/tab-column.sdf
-    -DstylesheetId=1
+"deployPortletApp" - The "deployPortletApp" target runs the portlet Deployer
+    tool. This tool takes a portlet WAR file, rewrites the web.xml file and
+    deploys the results to the servlet container.
+  
+    Example:
+        ant deployPortletApp -DportletApp=C:/TEMP/myPortlet.war
 
-  where -s = specify structure stylesheet
-        -t = specify theme stylesheet
-
-
-"delstylesheet" - 
-  The "delstylesheet" target runs uPortal's RegisterStylesheet program to
-  delete core framework stylesheets used to create structures and themes.
-
-  Example:
-
-  ant delstylesheet -DstylesheetType=-t -DstylesheetId=1
-
-  where -s = specify structure stylesheet
-        -t = specify theme stylesheet
-
-
-"compiletests" - the "compiletests" target compiles the JUnit tests.
-
-"runtests" - the "runtests" target runs the JUnit tests in the tests/ tree.  It uses the 
-  batchtest task to inspect the tree to find all test implementations.
-
-"swingtests" - the "swingtests" target runs the unit tests with the Swing UI.
-
-"RunXSLT" - the "RunXSLT" target performs an XSL transform using uPortal XML libraries.
-
-For example:
-
- ant RunXSLT -DXmlInput=UP_SEQUENCE_20.XML -DoutputFile=NEW_UP_SEQUENCE.XML -DXslfile=UP_SEQUENCE.xsl
-
- where XmlInput is the file to be transformed,
- outputFile is where the result should saved and
- Xslfile is the URL(!) of the xsl file to be used in the transform.
-
-"pubchan" - 
-  The "pubchan" target runs the ChannelPublisher tool.
-  Channel definitions are defined in XML files.  Each
-  channel definition is published or modified if one
-  already existed with the same functional name.  You
-  can publish all the channel definitions at once or just
-  one at a time.
-  Examples:
-  ant pubchan -Dchannel=all
-  ant pubchan -Dchannel=daily-business-cartoon.xml
-
-"deployPortletApp" - 
-  The "deployPortletApp" target runs the portlet Deployer tool.
-  This tool takes a portlet WAR file, rewrites the web.xml file
-  and deploys the results to the servlet container.  You can deploy
-  multiple portlets at once by placing them in the lib/portlets
-  directory and specifying "all" as the porletApp.
-  Examples:
-  ant deployPortletApp -DportletApp=all
-  ant deployPortletApp -DportletApp=C:/TEMP/myPortlet.war
-
-"hsql"
- The "hsql" target starts an HSQLDB server instance consistent with the default rdbm.properties data access configuration of uPortal.
- Note that this Ant target does not return in a normal execution -- the Ant "build" kicks off the database server but then just keeps on running.
- You'll need to kill it manually, e.g. via control-C or via a stop build control in your IDE.
- 
-
-CVS Metadata about this file:
-
+Metadata about this file:
 $Revision$ $Date$
+
+********** Run 'ant help | more' to make reading this document easier **********
