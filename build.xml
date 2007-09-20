@@ -317,6 +317,26 @@
         </uportal-impl-macro>
     </target>
 
+    <target name="hsql" description="Start a HSQLDB instance consistent with the default RDBMS requirements of uPortal">
+        <artifact:dependencies pathId="hsql.classpath">
+            <dependency groupId="hsqldb" artifactId="hsqldb" version="1.8.0.7" />
+        </artifact:dependencies>
+
+        <property name="database" value="${basedir}/data/uP3_uPortal" />
+        <property name="port" value="8887" />
+
+        <echo message="Starting HSQL" />
+        <echo message="Using: ${basedir}/data/uP3_uPortal" />
+        <java fork="true" maxmemory="256M" dir="${basedir}" classname="org.hsqldb.Server">
+            <classpath refid="hsql.classpath" />
+
+            <arg value="-database" />
+            <arg value="${database}" />
+            <arg value="-port" />
+            <arg value="${port}" />
+        </java>
+    </target>
+
     <!-- ============================== Deprecated Targets ============================== -->
     <target name="all">
         <echo>The "all" Ant task is no supported. Run 'mvn clean compile' for the same result.</echo>

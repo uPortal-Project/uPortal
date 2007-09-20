@@ -183,8 +183,16 @@ Available targets:
   
     Example:
         ant deployPortletApp -DportletApp=C:/TEMP/myPortlet.war
+        
+"hsql" -  The "hsql" target starts an HSQLDB server instance consistent with
+    the default rdbm.properties data access configuration of uPortal. Note that
+    this Ant target does not return in a normal execution -- the Ant "build"
+    kicks off the database server but then just keeps on running.
+    You'll need to kill it manually, e.g. via control-C or via a stop build
+    control in your IDE.
+ 
 
 Metadata about this file:
 $Revision$ $Date$
 
-********** Run 'ant help | more' to make reading this document easier **********
+********** Run 'ant help | more' to make this document easier to read **********
