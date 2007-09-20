@@ -89,6 +89,30 @@
         </antcall>
     </target>
 
+    <target name="dbunload" description="Dumps a database table to a flat file in XML format">
+        <uportal-impl-macro>
+            <property name="tablename" value=" " />
+            <property name="xmlfile" value=" " />
+
+            <echo message="Invoking DbUnload" />
+            <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.tools.dbloader.DbUnload">
+                <classpath refid="uportal-impl-full.classpath" />
+
+                <arg value="${tablename}" />
+                <arg value="${xmlfile}" />
+            </java>
+        </uportal-impl-macro>
+    </target>
+
+    <target name="dbtest" description="Displays information about the database defined in rdbm.properties">
+        <uportal-impl-macro>
+            <echo message="Invoking DbTest" />
+            <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.tools.DbTest">
+                <classpath refid="uportal-impl-full.classpath" />
+            </java>
+        </uportal-impl-macro>
+    </target>
+
     <target name="pubchan" description="Publishes channels">
         <uportal-impl-macro>
             <!--
@@ -143,6 +167,25 @@
         </uportal-impl-macro>
     </target>
 
+    <target name="regchantype" description="Registers a new channel type">
+        <uportal-impl-macro>
+            <property name="class" value=" " />
+            <property name="name" value=" " />
+            <property name="description" value=" " />
+            <property name="uri" value=" " />
+
+            <echo message="Invoking RegisterChannelType" />
+            <java dir="${basedir}" classname="org.jasig.portal.tools.RegisterChannelType">
+                <classpath refid="uportal-impl-full.classpath" />
+
+                <arg value="${class}" />
+                <arg value="${name}" />
+                <arg value="${description}" />
+                <arg value="${uri}" />
+            </java>
+        </uportal-impl-macro>
+    </target>
+
     <target name="deploy-ear" description="Deploy uPortal and dependent libraries and portlets to the servlet container">
         <uportal-ant-tasks-macro>
             <typedef resource="org/jasig/portal/ant/antlib.xml" uri="urn:up-util-ant">
@@ -189,10 +232,100 @@
             <echo message="Invoking Md5Passwd" />
             <java dir="${basedir}" classname="org.jasig.portal.security.Md5Passwd">
                 <classpath refid="uportal-impl-full.classpath" />
+
                 <arg value="-c" />
                 <arg value="${username}" />
             </java>
         </uportal-impl-macro>
+    </target>
+
+    <target name="deluser" description="Delete traces of a user from the portal database">
+        <uportal-impl-macro>
+            <property name="user" value=" " />
+
+            <echo message="Invoking DeleteUser" />
+            <java dir="${basedir}" classname="org.jasig.portal.tools.DeleteUser" fork="true">
+                <classpath refid="uportal-impl-full.classpath" />
+
+                <arg value="${user}" />
+            </java>
+        </uportal-impl-macro>
+    </target>
+
+    <target name="addstylesheet" description="Registers a new theme or structure">
+        <uportal-impl-macro>
+            <property name="stylesheetType" value=" " />
+            <property name="stylesheetUri" value=" " />
+            <property name="descriptionUri" value=" " />
+
+            <echo message="Invoking RegisterStylesheet (add)" />
+            <java dir="${basedir}" fork="true" classname="org.jasig.portal.tools.RegisterStylesheet">
+                <classpath refid="uportal-impl-full.classpath" />
+
+                <arg value="${stylesheetType}" />
+                <arg value="${stylesheetUri}" />
+                <arg value="${descriptionUri}" />
+            </java>
+        </uportal-impl-macro>
+    </target>
+
+    <target name="modstylesheet" description="Modifies an existing theme or structure">
+        <uportal-impl-macro>
+            <property name="stylesheetType" value=" " />
+            <property name="stylesheetUri" value=" " />
+            <property name="descriptionUri" value=" " />
+            <property name="stylesheetId" value=" " />
+
+            <echo message="Invoking RegisterStylesheet (modify)" />
+            <java dir="${basedir}" fork="true" classname="org.jasig.portal.tools.RegisterStylesheet">
+                <classpath refid="uportal-impl-full.classpath" />
+
+                <arg value="${stylesheetType}" />
+                <arg value="-u" />
+                <arg value="${stylesheetUri}" />
+                <arg value="${descriptionUri}" />
+                <arg value="${stylesheetId}" />
+            </java>
+        </uportal-impl-macro>
+    </target>
+
+    <target name="delstylesheet" description="Deletes an existing theme or structure">
+        <uportal-impl-macro>
+            <property name="stylesheetType" value=" " />
+            <property name="stylesheetId" value=" " />
+
+            <echo message="Invoking RegisterStylesheet (delete)" />
+            <java dir="${basedir}" classname="org.jasig.portal.tools.RegisterStylesheet">
+                <classpath refid="uportal-impl-full.classpath" />
+
+                <arg value="${stylesheetType}" />
+                <arg value="-d" />
+                <arg value="${stylesheetId}" />
+            </java>
+        </uportal-impl-macro>
+    </target>
+
+    <!-- ============================== Deprecated Targets ============================== -->
+    <target name="clean">
+        <echo>The "clean" Ant task is no supported. Run 'mvn clean' for the same result.</echo>
+    </target>
+    <target name="compile">
+        <echo>The "compile" Ant task is no supported. Run 'mvn compile' for the same result.</echo>
+    </target>
+    <target name="compiletests">
+        <echo>The "compiletests" Ant task is no supported. Run 'mvn test-compile' for the same result.</echo>
+    </target>
+    <target name="deploy">
+        <echo>The "deploy" Ant task is no supported. Run 'ant deploy-war' for the same result.</echo>
+    </target>
+    <target name="dist">
+        <echo>The "dist" Ant task is no supported. Run 'mvn package site' for a similar result.</echo>
+    </target>
+    <target name="javadoc">
+        <echo>The "javadoc" Ant task is no supported. Run 'mvn javadoc:javadoc' for the same result.</echo>
+    </target>
+    <target name="runtests">
+        <echo>The "runtests" Ant task is no supported. Run 'mvn test' for the same result.</echo>
     </target>
 
 
@@ -534,7 +667,7 @@
         <if>
             <contains string="${ant.version}" substring="1.7.0" />
             <then>
-                <fail message="The nested macros in this build.xml do not work with '${ant.version}'" />
+                <fail message="The nested macros in this build.xml do not work with '${ant.version}', the current recommended version is 1.6.5" />
             </then>
         </if>
     </target>
