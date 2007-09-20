@@ -5,6 +5,14 @@
  | Comments in this file should be targeted to the maintenance of the build script.
  +-->
 <project name="uPortal" default="help" basedir="." xmlns:up="urn:up-util-ant" xmlns:artifact="urn:maven-artifact-ant">
+    <fail message="build.properties does not exist, please copy build.properties.sample and fill in your settings.">
+        <condition>
+            <not>
+                <available file="build.properties" />
+            </not>
+        </condition>
+    </fail>
+
     <property file="build.properties" />
 
     <!--
