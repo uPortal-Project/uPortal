@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <parent>
+        <groupId>org.jasig.portal</groupId>
+        <artifactId>uportal-parent</artifactId>
+        <version>3.0.0-M5-SNAPSHOT</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.jasig.portal</groupId>
+    <artifactId>uportal-ear</artifactId>
+    <packaging>ear</packaging>
+
+    <name>uPortal EAR</name>
+    <description>The complete uPortal package including dependent portlets.</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uportal-war</artifactId>
+            <version>${pom.parent.version}</version>
+            <type>war</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasig.portlet</groupId>
+            <artifactId>BookmarksPortlet</artifactId>
+            <version>1.0.7</version>
+            <type>war</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasig.portlet</groupId>
+            <artifactId>googleportlet</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <type>war</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasig.portlet</groupId>
+            <artifactId>proxyportlet</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <type>war</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasig.portlet</groupId>
+            <artifactId>RssPortlet</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <type>war</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasig.portlet</groupId>
+            <artifactId>testsuite</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <type>war</type>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uportal-pluto-support</artifactId>
+            <version>${pom.parent.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.portlet</groupId>
+            <artifactId>portlet-api</artifactId>
+            <version>${portlet-api.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.pluto</groupId>
+            <artifactId>pluto</artifactId>
+            <version>${pluto.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+            <version>${jstl.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>taglibs</groupId>
+            <artifactId>standard</artifactId>
+            <version>${standard.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>${hsqldb.version}</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>uPortal</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-ear-plugin</artifactId>
+                <configuration>
+                    <modules>
+                        <webModule>
+                            <groupId>org.jasig.portal</groupId>
+                            <artifactId>uportal-war</artifactId>
+                            <bundleFileName>uPortal.war</bundleFileName>
+                            <contextRoot>/uPortal</contextRoot>
+                        </webModule>
+                        <webModule>
+                            <groupId>org.jasig.portlet</groupId>
+                            <artifactId>BookmarksPortlet</artifactId>
+                            <bundleFileName>BookmarksPortlet.war</bundleFileName>
+                            <contextRoot>/BookmarksPortlet</contextRoot>
+                        </webModule>
+                        <webModule>
+                            <groupId>org.jasig.portlet</groupId>
+                            <artifactId>googleportlet</artifactId>
+                            <bundleFileName>googleportlet.war</bundleFileName>
+                            <contextRoot>/googleportlet</contextRoot>
+                        </webModule>
+                        <webModule>
+                            <groupId>org.jasig.portlet</groupId>
+                            <artifactId>proxyportlet</artifactId>
+                            <bundleFileName>proxyportlet.war</bundleFileName>
+                            <contextRoot>/proxyportlet</contextRoot>
+                        </webModule>
+                        <webModule>
+                            <groupId>org.jasig.portlet</groupId>
+                            <artifactId>RssPortlet</artifactId>
+                            <bundleFileName>RssPortlet.war</bundleFileName>
+                            <contextRoot>/RssPortlet</contextRoot>
+                        </webModule>
+                        <webModule>
+                            <groupId>org.jasig.portlet</groupId>
+                            <artifactId>testsuite</artifactId>
+                            <bundleFileName>testsuite.war</bundleFileName>
+                            <contextRoot>/testsuite</contextRoot>
+                        </webModule>
+
+
+                        <jarModule>
+                            <groupId>org.jasig.portal</groupId>
+                            <artifactId>uportal-pluto-support</artifactId>
+                            <bundleDir>shared</bundleDir>
+                        </jarModule>
+                        <jarModule>
+                            <groupId>javax.portlet</groupId>
+                            <artifactId>portlet-api</artifactId>
+                            <bundleDir>shared</bundleDir>
+                        </jarModule>
+                        <jarModule>
+                            <groupId>org.apache.pluto</groupId>
+                            <artifactId>pluto</artifactId>
+                            <bundleDir>shared</bundleDir>
+                        </jarModule>
+                        <jarModule>
+                            <groupId>javax.servlet</groupId>
+                            <artifactId>jstl</artifactId>
+                            <bundleDir>shared</bundleDir>
+                        </jarModule>
+                        <jarModule>
+                            <groupId>taglibs</groupId>
+                            <artifactId>standard</artifactId>
+                            <bundleDir>shared</bundleDir>
+                        </jarModule>
+                        <jarModule>
+                            <groupId>hsqldb</groupId>
+                            <artifactId>hsqldb</artifactId>
+                            <bundleDir>common</bundleDir>
+                        </jarModule>
+                    </modules>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>package</id>
+                        <phase>package</phase>
+                        <configuration>
+                            <tasks>
+                                <property name="maven.plugin.classpath" refid="maven.plugin.classpath" />
+
+                                <ant antfile="${basedir}/build.xml" target="assemblePortlets">
+                                    <property name="maven.final.name" value="uPortal" />
+                                </ant>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.danann</groupId>
+                        <artifactId>cernunnos</artifactId>
+                        <version>${cernunnos.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>xml-resolver</groupId>
+                        <artifactId>xml-resolver</artifactId>
+                        <version>${xml-resolver.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>tomcat-overlay-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <appendAssemblyId>true</appendAssemblyId>
+                            <attach>false</attach>
+                            <outputDirectory>${project.build.directory}</outputDirectory>
+                            <descriptors>
+                                <descriptor>src/main/assembly/tomcat-overlay-assembly.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

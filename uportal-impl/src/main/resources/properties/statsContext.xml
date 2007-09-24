@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+<!--
+ | The parent bean is the Conditional wrapper because first we want to filter down to
+ | the events we're actually going to log.
+ +-->
+ 
+	 <bean id="eventListener" class="org.jasig.portal.events.SimpleEventListener">
+	 	<property name="eventHandlers">
+	 		<list>
+	 			<bean class="org.jasig.portal.events.handlers.PrintingEventHandler" />
+				<bean class="org.jasig.portal.events.handlers.LoggingEventHandler" />
+	 		</list>
+	 	</property>
+	 </bean>
+</beans>

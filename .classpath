@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="uportal-pluto-support/src/main/java"/>
+	<classpathentry kind="src" path="uportal-impl/src/main/java"/>
+	<classpathentry kind="src" path="uportal-impl/src/test/java"/>
+	<classpathentry excluding="**" kind="src" output="uportal-impl/src/main/resources" path="uportal-impl/src/main/resources"/>
+	<classpathentry excluding="**" kind="src" output="uportal-impl/src/test/resources" path="uportal-impl/src/test/resources"/>
+	<classpathentry excluding="**" kind="src" output="uportal-war/src/main/resources" path="uportal-war/src/main/resources"/>
+	<classpathentry excluding="**" kind="src" output="uportal-ear/src/main/resources" path="uportal-ear/src/main/resources"/>
+	<classpathentry kind="src" path="uportal-ear-deployer/src/main/java"/>
+	<classpathentry kind="src" path="uportal-ear-deployer/src/test/java"/>
+	<classpathentry excluding="**" kind="src" output="uportal-ear-deployer/src/test/resources" path="uportal-ear-deployer/src/test/resources"/>
+	<classpathentry kind="src" path="uportal-ant-tasks/src/main/java"/>
+	<classpathentry excluding="**" kind="src" output="uportal-ant-tasks/src/main/resources" path="uportal-ant-tasks/src/main/resources"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
+	<classpathentry kind="output" path="target/classes"/>
+</classpath>

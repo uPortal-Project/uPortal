@@ -1,0 +1,95 @@
+<project name="uPortal-ear" basedir=".">
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties">
+        <classpath>
+            <pathelement location="../bootstrap/ant-contrib-1.0b3.jar" />
+        </classpath>
+    </taskdef>
+
+    <target name="assemblePortlets" description="Runs the Cernunnos deployer on WARs in the staging directory and in the EAR. All packaged files are updated and ready to deploy as is after running this task">
+        <property name="targetDir" value="${basedir}/target" />
+        <property name="baseAssemblyDir" value="${targetDir}/plutoAssembly" />
+
+        <antcall target="assembleWars">
+            <param name="maven.plugin.classpath" value="${maven.plugin.classpath}" />
+            <param name="baseAssemblyDir" value="${baseAssemblyDir}" />
+            <param name="warDir" value="${targetDir}/${maven.final.name}" />
+        </antcall>
+
+        <antcall target="assembleEar">
+            <param name="maven.plugin.classpath" value="${maven.plugin.classpath}" />
+            <param name="baseAssemblyDir" value="${baseAssemblyDir}" />
+            <param name="earFile" value="${targetDir}/${maven.final.name}.ear" />
+        </antcall>
+
+        <delete dir="${baseAssemblyDir}" />
+    </target>
+
+    <target name="assembleEar">
+        <property name="earAssemblyDir" value="${baseAssemblyDir}/earAssembly" />
+
+        <!-- extract the EAR then assemble the WARs -->
+        <unjar src="${earFile}" dest="${earAssemblyDir}" />
+        <antcall target="assembleWars">
+            <param name="maven.plugin.classpath" value="${maven.plugin.classpath}" />
+            <param name="baseAssemblyDir" value="${earAssemblyDir}" />
+            <param name="warDir" value="${earAssemblyDir}" />
+        </antcall>
+
+        <!-- re-package the EAR to a temp name, then replace the original -->
+        <ear destfile="${earFile}.new" appxml="${earAssemblyDir}/META-INF/application.xml" manifest="${earAssemblyDir}/META-INF/MANIFEST.MF">
+            <fileset dir="${earAssemblyDir}">
+                <exclude name="META-INF/application.xml" />
+            </fileset>
+        </ear>
+        <move file="${earFile}.new" tofile="${earFile}" overwrite="true" />
+        
+        <!-- delete the temp directory -->
+        <delete dir="${earAssemblyDir}" />
+    </target>
+
+    <target name="assembleWars">
+        <property name="warAssemblyDir" value="${baseAssemblyDir}/warAssembly" />
+
+        <foreach target="assembleWar" param="warFile">
+            <path>
+                <fileset dir="${warDir}">
+                    <include name="*.war" />
+                </fileset>
+            </path>
+
+            <param name="maven.plugin.classpath" value="${maven.plugin.classpath}" />
+            <param name="warAssemblyDir" value="${warAssemblyDir}" />
+        </foreach>
+
+        <delete dir="${warAssemblyDir}" />
+    </target>
+
+    <target name="assembleWar">
+        <basename property="webAppName" file="${warFile}" suffix=".war" />
+        <property name="webAppAssemblyDir" value="${warAssemblyDir}/${webAppName}" />
+
+        <!-- extracts & assembles the webapp -->
+        <echo message="Assembling: ${warFile} to: ${warAssemblyDir}" />
+        <java fork="true" failonerror="true" dir="${basedir}" classname="org.danann.cernunnos.runtime.Main">
+            <classpath>
+                <pathelement path="target/classes" />
+                <pathelement path="${maven.plugin.classpath}" />
+            </classpath>
+
+            <arg value="classpath://org/jasig/portal/container/deploy/deploy-portlet-app.crn" />
+            <arg value="${warFile}" />
+            <arg value="${warAssemblyDir}" />
+        </java>
+
+        <!-- re-package the webapp to a temp name, then replace the original -->
+        <war destfile="${warFile}.new" webxml="${webAppAssemblyDir}/WEB-INF/web.xml" manifest="${webAppAssemblyDir}/META-INF/MANIFEST.MF">
+            <fileset dir="${webAppAssemblyDir}">
+                <exclude name="WEB-INF/web.xml" />
+            </fileset>
+        </war>
+        <move file="${warFile}.new" tofile="${warFile}" overwrite="true" />
+
+        <!-- delete the temp directory -->
+        <delete dir="${webAppAssemblyDir}" />
+    </target>
+</project>

@@ -1,17 +1,20 @@
 README for basic uPortal deployment
 
 For further help please refer to the uPortal home page http://www.uportal.org or
-the uPortal Confluence site http://jasigch.princeton.edu:9000/display/UPC/Home
+the uPortal Confluence site http://www.ja-sig.org/wiki/display/UPC/Home
 
 WARNINGS:
 ----------------------------------------
-Do not blindly run the ant build against a production database.  There are Ant targets in this build
-which will initialize the database for uPortal.  Before running the ant build, take care that the 
-/properties/rdbm.properties actually describes the database against which you intend to be working.
+Do not blindly run the ant build against a production database.  There are Ant
+targets in this build which will initialize the database for uPortal.  Before
+running the ant build, take care that the 
+/uportal-impl/src/main/resources/properties/rdbm.properties actually describes
+the database against which you intend to be working.
 
-Do not blindly run the ant build on a production system.  There are Ant targets in this build which
-clean build directories and publish the uPortal build into a configured Tomcat instance.  Take care not to
-accidentally run the build such that it overwrites a uPortal instance you care about.  Locations affected by
+Do not blindly run the ant build on a production system.  There are Ant targets
+in this build which clean build directories and publish the uPortal build into
+a configured Tomcat instance.  Take care not to accidentally run the build such
+that it overwrites a uPortal instance you care about.  Locations affected by
 the build are declared in build.properties.
 
 
@@ -21,11 +24,14 @@ Manifest
 build.properties    o Contains configuration for the build file that needs to
                       be customized for your environment.
 build.xml           o Contains the ant build targets for working with uPortal.
+pom.xml             o Contains the maven 2 description of the uPortal project
+
 
 Ant Depdency
 ----------------------------------------
-The build.xml needs to be run under Ant 1.6.2 or better.  Some of our Ant tasks
-have been reported to fail on Ant 1.6.1 and earlier.
+The build.xml needs to be run under Ant 1.6.2 or better except Ant 1.7.0.  Some
+of our Ant tasks have been reported to fail on Ant 1.6.1 and earlier, and on
+Ant 1.7.0.  
 
 
 Initial Configuration
@@ -36,10 +42,11 @@ build.properties file to the instance of Tomcat you want to deploy to.
 
 Build approach
 ----------------------------------------
-The approach here is that there is a generic build.xml that you should not have to edit,
-alongside a build.properties that you absolutely must edit to reflect your local configuration.
-Edit build.properties to reflect such configuration as where your Tomcat is, what context
-you would like uPortal to be deployed as, etc.
+The approach here is that there is a generic pom.xml and build.xml that you
+should not have to edit, alongside a build.properties that you absolutely must
+edit to reflect your local configuration. Edit build.properties to reflect such
+configuration as where your Tomcat is, what context you would like uPortal to
+be deployed as, etc.
 
 
 Initial Deployment
@@ -52,36 +59,28 @@ version of the portal is configured.
 
 Logging
 ---------------------------------------
-The ant build moves /properties/Logger.properties to the root of the classes directory so that the resulting
-log4j.properties file will be available on the classpath for Commons Logging / log4j to find.  You'll need to either
-change that configuration in Logger.properties before the build or to change it in /WEB-INF/classes/ afterwards.
-You can configure the logging level, where the file should be, or even choose a different logging approach (log
-via XML to a ChainSaw instance, say).  New in uPortal 2.6: TRACE previously was synonymous with DEBUG because of mapping issues
-between Commons Logging and Log4j.  With this upgrade log4j now supports TRACE as a more-verbose logging level than DEBUG.
+The /uportal-war/src/main/resources/log4j.properties Log4j configuration file
+will end up on the classpath for Commons Logging / log4j to find. You'll need
+to either change that configuration the build or to change it in
+/WEB-INF/classes/ afterwards. You can configure the logging level, where the
+file should be, or even choose a different logging approach (log via XML to a
+ChainSaw instance, say).
 
 Database configuration + Tomcat context configuration
 --------------------------------------
-Database configuration is configured in /properties/rdbm.properties.  The ant build will produce a /META-INF/context.xml
-file which, when you deploy your .war, will configure the context to make the uPortal database available via
-servlet-container-managed DataSource via JNIDI.  You can choose to get your DataSource via JNDI in the
-context of a servlet container by configuring the relevant portal.properties property.
+Database configuration is configured in /uportal-impl/src/main/resources/properties/rdbm.properties. 
+The ant build will produce a /META-INF/context.xml file which, when you deploy
+your .war, will configure the context to make the uPortal database available
+via servlet-container-managed DataSource via JNIDI.  You can choose to get your
+DataSource via JNDI in the context of a servlet container by configuring the
+relevant /uportal-impl/src/main/resources/properties/portal.properties property.
 
-The ant build transforms the context file declared in build.properties, replacing those @foo@ placeholders
-with the matching properties in rdbm.properties or in build.properties, to produce the context.xml file.  You can
-allow this filtering to happen, or you can remove the @placeholders@ from the context file (by default, uPortal.xml), 
-replacing them with the values you would like to use.
-
-IMPORTANT: There's apparently a problem with Tomcat acquiring the context information from /META-INF/context.xml 
-in the case where the application is not deployed as a .war, but rather is simply copied into a folder in the webapps
-directory of the Tomcat.  This is the typical way in which a developer builds and deploys uPortal.  
-It is not yet well understood and documented under what circumstances the /META-INF/context.xml trick will work.
-
-To work around this problem, in addition to including the context.xml in /META-INF/, the Ant build 
-will also copy the context.xml file to your 
-Tomcat/conf/Catalina/localhost/ folder, renaming it to
-be {Context}.xml, where {Context} is the name configured in build.properties.
-
-
+The maven build transforms the context file declared in build.properties,
+replacing those @foo@ placeholders with the matching properties in
+rdbm.properties or in build.properties, to produce the context.xml file.  You
+can allow this filtering to happen, or you can remove the @placeholders@ from
+the context file (/uportal-war/src/main/webapp/META-INF/context.xml), replacing
+them with the values you would like to use.
 
 
 This README is Copyright Java Architectures Special Interest Group, 2005-2007, and is licensed for your use as per ./license.txt.
