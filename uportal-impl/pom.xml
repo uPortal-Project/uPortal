@@ -136,6 +136,13 @@
             <artifactId>casclient</artifactId>
             <version>${casclient.version}</version>
             <scope>compile</scope>
+            <exclusions>
+                <!-- Pulls in Servlet 2.3 dep if not excluded -->
+                <exclusion>
+                    <groupId>javax.servlet</groupId>
+                    <artifactId>servlet-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
