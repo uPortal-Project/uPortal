@@ -1,19 +1,27 @@
+/**
+ * Copyright 2007 The JA-SIG Collaborative.  All rights reserved.
+ * See license distributed with this file and
+ * available online at http://www.uportal.org/license.html
+ */
 package org.jasig.portal.events;
 
-import org.jasig.portal.spring.PortalApplicationContextFacade;
+import org.jasig.portal.spring.PortalApplicationContextListener;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.web.context.WebApplicationContext;
 
+/**
+ * Simple wrapper to provide access to a {@link ApplicationEventPublisher} for classes that
+ * publish events.
+ * 
+ * @version $Revision$
+ */
 public final class EventPublisherLocator {
-	/** Single instance of the ApplicationEventPublisher that uPortal will use. */
-	private final static ApplicationEventPublisher applicationEventPublisher = (ApplicationEventPublisher) PortalApplicationContextFacade
-			.getPortalApplicationContext();
 
 	/**
-	 * Method to retrieve the cache factory
-	 * 
-	 * @return the cache factory.
+	 * @return The ApplicationEventPublisher to use for publishing events.
 	 */
 	public static final ApplicationEventPublisher getApplicationEventPublisher() {
-		return applicationEventPublisher;
+	    final WebApplicationContext webAppCtx = PortalApplicationContextListener.getRequiredWebApplicationContext();
+		return webAppCtx;
 	}
 }

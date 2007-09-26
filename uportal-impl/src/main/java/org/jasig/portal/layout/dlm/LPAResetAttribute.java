@@ -49,8 +49,8 @@ public class LPAResetAttribute implements ILayoutProcessingAction
             EditManager.removeEditDirective(nodeId, name, person);
             
             // handle label localization updates
-            if (name.equals(Constants.ATT_NAME) && 
-                    DistributedLayoutManager.ContextHolder.labelPolicy != null)
+            final IFolderLabelPolicy labelPolicy = DistributedLayoutManager.ContextHolder.getLabelPolicy();
+            if (name.equals(Constants.ATT_NAME) && labelPolicy != null)
             {
                 Element plfNode = HandlerUtils
                     .getPLFNode( ilfNode, person,
@@ -59,8 +59,7 @@ public class LPAResetAttribute implements ILayoutProcessingAction
                 if (plfNode != null) // will always be non-null if we get here
                 {
                     String plfId = plfNode.getAttribute(Constants.ATT_PLF_ID);
-                    DistributedLayoutManager.ContextHolder.labelPolicy
-                        .deleteNodeLabel(nodeId, plfId, 
+                    labelPolicy.deleteNodeLabel(nodeId, plfId, 
                             false, // only remove for current locale
                             person.getID(), false); // not a fragment owner
                 }

@@ -7,8 +7,8 @@ package org.jasig.portal.utils.cache;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.utils.cache.WhirlyCacheCacheFactory;
-import org.jasig.portal.spring.PortalApplicationContextFacade;
+import org.jasig.portal.spring.PortalApplicationContextListener;
+import org.springframework.web.context.WebApplicationContext;
 
 /**
  *
@@ -30,26 +30,19 @@ public class CacheFactoryLocator {
     /** String name of the CacheFactory we wish to retrieve. */
     private static final String CACHE_FACTORY_BEAN = "cacheFactory";
 
-    /** Single instance of the cache factory that uPortal will use. */
-    private static CacheFactory cacheFactory;
-
-    static {
-        // This form of initialization is necessary b/c  we can't bootstrap the entire bean
-        // container to perform tasks based on Ant scripts (e.g. publish channels or portlets).
-        try {
-            cacheFactory = ((CacheFactory) PortalApplicationContextFacade.getPortalApplicationContext().getBean(CACHE_FACTORY_BEAN));
-        }
-        catch (Throwable t) {
-            log.warn("The 'cacheFactory' bean is unavailable");
-            cacheFactory = new WhirlyCacheCacheFactory();   // default...
-        }
-    }
-
     /**
      * Method to retrieve the cache factory
      * @return the cache factory.
      */
     public static final CacheFactory getCacheFactory() {
-        return cacheFactory;
+        try {
+            final WebApplicationContext webAppCtx = PortalApplicationContextListener.getRequiredWebApplicationContext();
+            final CacheFactory cacheFactory = (CacheFactory)webAppCtx.getBean(CACHE_FACTORY_BEAN, CacheFactory.class);
+            return cacheFactory;
+        }
+        catch (Exception e) {
+            log.warn("Failed to load a CacheFactory interface from the Spring WebApplicationContext for bean name '" + CACHE_FACTORY_BEAN + "'. " + WhirlyCacheCacheFactory.class + " will be used.", e);
+            return new WhirlyCacheCacheFactory();
+        }
     }
 }

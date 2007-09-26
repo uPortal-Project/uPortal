@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd"
+>
+    <bean id="initializingCheckRunning" class="org.jasig.portal.tools.checks.InitializingCheckRunner">
+        <property name="checkRunner" ref="checkRunner" />
+    </bean>
+
+    <!--
+     | Here we define additional startup checks.  These are in addition to hard-coded checks that
+     | are intended to detect problems that would prevent us from reading in and using these 
+     | configurable checks.
+     |
+     | This bean is lazy-init so that it will not be instantiated by Spring
+     | unless actually needed.  This reduces the chance that a broken checks
+     | configuration, or one that depends on resources that are unavailable
+     | (such as JNDI resources outside the context of a JNDI container) 
+     | will not break the use of a uPortal administrative tool / break a 
+     | uPortal deployment.
+     |
+     +-->
+    <bean id='checkRunner' class="org.jasig.portal.tools.checks.SafeCheckRunner" lazy-init="true">
+        <property name="checks">
+            <list value-type="org.jasig.portal.tools.checks.ICheck">
+
+                <!--
+                 | Check that a bean named personAttributeDao of type
+                 | IPersonAttributeDao is available via the PortalApplicationContextFacade.
+                 +-->
+                <bean class="org.jasig.portal.tools.checks.SpringBeanCheck">
+                    <!-- We are checking for the Spring-configured bean named "personAttributeDao". -->
+                    <constructor-arg index="0" type="java.lang.String">
+                        <value>personAttributeDao</value>
+                    </constructor-arg>
+                    <!-- We are checking that that bean is an instanceof this class. -->
+                    <constructor-arg index="1" type="java.lang.String">
+                        <value>org.jasig.portal.services.persondir.IPersonAttributeDao</value>
+                    </constructor-arg>
+                </bean>
+
+                <!--
+                 | Check for a class that will only be present in JAXP 1.3 is present.
+                 | We attempt with this check to catch and assist deployers who neglect to
+                 | make the JAXP 1.3 jars available in a JDK 1.4 environment.
+                 | This is the runtime equivalent of the Ant-build-time invocation of LibCheck.
+                 +-->
+                <bean class="org.jasig.portal.tools.checks.XalanVersionCheck">
+                    <constructor-arg index="0" type="java.lang.String">
+                        <value>Xalan Java 2.7.0</value>
+                    </constructor-arg>
+                </bean>
+
+                <!--
+                 | Check for a class that will only be present if JAXP 1.3 is present.
+                 | We attempt with this check to catch and assist deployers who neglect to
+                 | make the JAXP 1.3 jars available in a JDK 1.4 environment.
+                 | This is the runtime equivalent of the Ant-build-time invocation of LibCheck.
+                 +-->
+                <bean class="org.jasig.portal.tools.checks.JaxpCheck" />
+
+                <!--
+                 | Check for a method that will only be present if the org.w3c.dom API that is is present
+                 | is DOM level 3.
+                 | We attempt with this check to catch and assist deployers who neglect to
+                 | make the JAXP 1.3 jars available in a JDK 1.4 environment.
+                 | 
+                 | This check is largely redundant with the JaxpCheck.
+                 +-->
+                <bean class="org.jasig.portal.tools.checks.Dom3Check" />
+
+                <!--
+                 | Include the time at which the checks were run in the check result reporting.
+                 +-->
+                <bean class="org.jasig.portal.tools.checks.TimeCheck" />
+
+            </list>
+        </property>
+    </bean>
+
+</beans>

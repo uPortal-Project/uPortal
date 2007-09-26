@@ -18,8 +18,8 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.security.provider.RestrictedPerson;
 import org.jasig.portal.services.persondir.IPersonAttributeDao;
-import org.jasig.portal.spring.PortalApplicationContextFacade;
-import org.springframework.beans.factory.BeanFactory;
+import org.jasig.portal.spring.PortalApplicationContextListener;
+import org.springframework.web.context.WebApplicationContext;
 
 /**
  * PersonDirectory is a static lookup mechanism for a singleton instance of 
@@ -85,14 +85,12 @@ public class PersonDirectory {
      * supply the IPersonAttributeDao instance.
      */
     public static IPersonAttributeDao getPersonAttributeDao() {
-        final BeanFactory factory = PortalApplicationContextFacade.getPortalApplicationContext();
+        final WebApplicationContext webAppCtx = PortalApplicationContextListener.getRequiredWebApplicationContext();
+        final IPersonAttributeDao delegate = (IPersonAttributeDao)webAppCtx.getBean(PADAO_BEAN_NAME, IPersonAttributeDao.class);
         
-        final IPersonAttributeDao delegate = (IPersonAttributeDao) 
-			factory.getBean(PADAO_BEAN_NAME, IPersonAttributeDao.class);
-        
-        if (delegate == null)
-            throw new IllegalStateException("PortalAppicationContextFacade " +
-            		"config did not declare a bean named '" + PADAO_BEAN_NAME + "'.");
+        if (delegate == null) {
+            throw new IllegalStateException("A IPersonAttributeDao bean named '" + PADAO_BEAN_NAME + "' does not exist in the Spring WebApplicationContext.");
+        }
                 
         return delegate;
     }

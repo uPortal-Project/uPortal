@@ -8,85 +8,88 @@ package org.jasig.portal.tools.checks;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 /**
  * A Servlet which renders the results of the checks.
  * @version $Revision$ $Date$
  * @since uPortal 2.5
  */
-public class ChecksServlet 
-    extends HttpServlet{
-    
-    protected final void doPost(HttpServletRequest request, HttpServletResponse response) 
-        throws IOException {
-        
-        if ("rerun".equals(request.getParameter("rerun"))) {
-            
-            SafeDelegatingCheckRunner checkRunner = new SafeDelegatingCheckRunner();
-            List results = checkRunner.doChecks();
-            getServletContext().setAttribute(CheckingContextListener.RESULTS_SC_KEY, results);
+public class ChecksServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+
+    private static final String RERUN_PARAM = "rerun";
+
+    @Override
+    protected final void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+        if (RERUN_PARAM.equals(request.getParameter(RERUN_PARAM))) {
+            final ServletContext servletContext = getServletContext();
+            final WebApplicationContext webAppCtx = WebApplicationContextUtils.getRequiredWebApplicationContext(servletContext);
+            final InitializingCheckRunner checkRunner = (InitializingCheckRunner)webAppCtx.getBean("initializingCheckRunning", InitializingCheckRunner.class);
+            servletContext.setAttribute(InitializingCheckRunner.INIT_CHECK_RESULTS, checkRunner);
         }
-        
+
         doGet(request, response);
     }
-    
-    protected final void doGet(HttpServletRequest request, HttpServletResponse response) 
-        throws IOException {
-        
-        List results = (List) this.getServletContext().getAttribute(CheckingContextListener.RESULTS_SC_KEY);
-        
+
+    @Override
+    protected final void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        @SuppressWarnings("unchecked")
+        final List<CheckAndResult> results = (List<CheckAndResult>) this.getServletContext().getAttribute(InitializingCheckRunner.INIT_CHECK_RESULTS);
+
         response.setHeader("pragma", "no-cache");
         response.setHeader("Cache-Control", "no-cache, max-age=0, must-revalidate");
         response.setDateHeader("Expires", 0);
-        
+
         PrintWriter writer = response.getWriter();
-        
+
         writer.println("<html>");
         writer.println("<head>");
         writer.println("<title>");
         writer.println("uPortal instrumentation");
         writer.println("</title>");
         writer.println("</head>");
-        
+
         writer.println("<body>");
 
-        
         if (results == null) {
             writer.println("<p>Could not find check results in servlet context.</p>");
-        } else {
-            List failedChecks = failedChecks(results);
-            
-            if (! failedChecks.isEmpty()) {
+        }
+        else {
+            List<CheckAndResult> failedChecks = failedChecks(results);
+
+            if (!failedChecks.isEmpty()) {
                 writer.println("<h3>Failed checks</h3>");
                 writer.println("<p>" + failedChecks.size() + " checks failed.</p>");
-                
+
                 printChecksAsTable(failedChecks, writer);
-                
+
             }
-            
-            
+
             writer.println("<h3>Results of all checks:</h3>");
-            
+
             printChecksAsTable(results, writer);
 
-        
-        writer.println("<form action='instrumentation' method='post'>");
-        writer.println("<input name='rerun' value='rerun' type='submit'/>");
-        writer.println("</form>");
-        
+            writer.println("<form action='instrumentation' method='post'>");
+            writer.println("<input name='rerun' value='rerun' type='submit'/>");
+            writer.println("</form>");
+
         }
-        
+
         // print out package information
-        
+
         writer.println("<br/>");
         writer.println("<h3>Package information.</h3>");
-        
+
         writer.println("<table>");
         writer.println("<tr>");
         writer.println("<td>");
@@ -111,11 +114,9 @@ public class ChecksServlet
         writer.println("Specification version");
         writer.println("</td>");
         writer.println("</tr>");
-        
+
         Package[] packs = Package.getPackages();
-        
-    
-        
+
         for (int i = 0; i < packs.length; i++) {
             Package pack = packs[i];
             writer.println("<tr>");
@@ -144,40 +145,36 @@ public class ChecksServlet
         }
 
         writer.println("</table>");
-        
+
         writer.println("</body>");
-        
+
         writer.println("</html>");
         writer.flush();
-        
 
     }
-        
-    
+
     /**
      * Returns the List of failed checks that contains, order retained, those
      * checks from the given list that failed.
      * @param checks a List of CheckAndResults
      * @return a List of those of the given CheckAndResults that failed.
      */
-    private List failedChecks(List checks) {
+    private List<CheckAndResult> failedChecks(List<CheckAndResult> checks) {
         if (checks == null) {
             throw new IllegalArgumentException("Checks must not be null.");
         }
-        
-        List failedChecks = new ArrayList();
-        
-        for (Iterator iter = checks.iterator(); iter.hasNext(); ) {
-            CheckAndResult checkAndResult = (CheckAndResult) iter.next();
-            if (! checkAndResult.isSuccess()) {
+
+        List<CheckAndResult> failedChecks = new ArrayList<CheckAndResult>();
+
+        for (final CheckAndResult checkAndResult : checks) {
+            if (!checkAndResult.isSuccess()) {
                 // found a failure
                 failedChecks.add(checkAndResult);
             }
         }
-        
+
         return failedChecks;
     }
-    
 
     /**
      * Prints the given List of CheckAndResult instances as a table to the
@@ -185,7 +182,7 @@ public class ChecksServlet
      * @param checks CheckAndResult instances
      * @param writer output target
      */
-    private void printChecksAsTable(List checks, PrintWriter writer) {
+    private void printChecksAsTable(List<CheckAndResult> checks, PrintWriter writer) {
         writer.println("<table>");
         writer.println("<tr>");
         writer.println("<td>");
@@ -201,15 +198,14 @@ public class ChecksServlet
         writer.println("Remediation advice");
         writer.println("</td>");
         writer.println("</tr>");
-        
-        for (Iterator iter = checks.iterator(); iter.hasNext(); ) {
-            CheckAndResult checkAndResult = (CheckAndResult) iter.next();
-            
+
+        for (final CheckAndResult checkAndResult : checks) {
             writer.println("<tr>");
             writer.println("<td>");
             if (checkAndResult.isSuccess()) {
                 writer.println("OK");
-            } else {
+            }
+            else {
                 writer.println("FAILURE");
             }
             writer.println("</td>");
@@ -222,15 +218,16 @@ public class ChecksServlet
             writer.println("<td>");
             if (checkAndResult.isSuccess()) {
                 writer.println("Not applicable.");
-            } else {
+            }
+            else {
                 writer.println(checkAndResult.getResult().getRemediationAdvice());
             }
             writer.println("</td>");
             writer.println("</tr>");
-            
+
         }
-        
+
         writer.println("</table>");
     }
-    
+
 }

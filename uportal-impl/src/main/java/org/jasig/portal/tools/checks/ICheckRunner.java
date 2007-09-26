@@ -20,5 +20,5 @@ public interface ICheckRunner {
      * representing the results.
      * @return a List of CheckAndResult instances.
      */
-    public List doChecks();
+    public List<CheckAndResult> doChecks();
 }

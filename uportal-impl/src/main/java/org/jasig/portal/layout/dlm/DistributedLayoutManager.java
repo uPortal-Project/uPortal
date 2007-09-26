@@ -36,8 +36,6 @@ import org.jasig.portal.ChannelRegistryStoreFactory;
 import org.jasig.portal.IChannelRegistryStore;
 import org.jasig.portal.IUserIdentityStore;
 import org.jasig.portal.PortalException;
-import org.jasig.portal.StructureStylesheetUserPreferences;
-import org.jasig.portal.ThemeStylesheetUserPreferences;
 import org.jasig.portal.UserIdentityStoreFactory;
 import org.jasig.portal.UserPreferences;
 import org.jasig.portal.UserProfile;
@@ -57,12 +55,10 @@ import org.jasig.portal.layout.simple.SimpleLayout;
 import org.jasig.portal.security.AdminEvaluator;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
-import org.jasig.portal.utils.CommonUtils;
+import org.jasig.portal.spring.PortalApplicationContextListener;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.XML;
-import org.springframework.beans.factory.xml.XmlBeanFactory;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
+import org.springframework.web.context.WebApplicationContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -115,40 +111,19 @@ IFolderLocalNameResolver
      */
     static class ContextHolder
     {
-        /**
-         * The bean factory representing the dlm context configuration.
-         */
-        static final XmlBeanFactory context = load();
-        
-        /**
-         * The configured label policy if any for handling locale specific 
-         * versions of folder labels. Channel labels are owned by the 
-         * configured implementation of IChannelRegistryStore and are not
-         * resolved as part of the layout.
-         */
-        static final IFolderLabelPolicy labelPolicy = loadLabelPolicy();
-        
-        /**
-         * Load the configuration bean factory.
-         * @return
-         */
-        private static XmlBeanFactory load()
-        {
-            Resource config = new ClassPathResource(CONTEXT_CONFIG_FILE);
-            return new XmlBeanFactory(config);
+        public static IFolderLabelPolicy getLabelPolicy() {
+            final WebApplicationContext webAppCtx = getWebApplicationContext();
+            if (webAppCtx.containsBean(FOLDER_LABEL_POLICY)) {
+                final IFolderLabelPolicy folderLabelPolicy = (IFolderLabelPolicy)webAppCtx.getBean(FOLDER_LABEL_POLICY, IFolderLabelPolicy.class);
+                return folderLabelPolicy;
+            }
+            else {
+                return null;
+            }
         }
         
-        /**
-         * Loads the configured policy if defined.
-         * @return IFolderLabelPolicy if defined or null.
-         */
-        private static IFolderLabelPolicy loadLabelPolicy()
-        {
-            IFolderLabelPolicy policy = null;
-            if (context.containsBean(FOLDER_LABEL_POLICY))
-                policy = (IFolderLabelPolicy) context
-                        .getBean(FOLDER_LABEL_POLICY);
-            return policy;
+        public static WebApplicationContext getWebApplicationContext() {
+            return PortalApplicationContextListener.getRequiredWebApplicationContext();
         }
     }
 
@@ -271,9 +246,10 @@ IFolderLocalNameResolver
          * Handle inline migration of user layout folder labels into an I18N
          * store if an I18N label policy is in place.
          */
-        if (ContextHolder.labelPolicy != null)
-            ContextHolder.labelPolicy.coordinateFolderLabels(owner.getID(), 
-                isFragmentOwner, doc);
+        final IFolderLabelPolicy labelPolicy = ContextHolder.getLabelPolicy();
+        if (labelPolicy != null) {
+            labelPolicy.coordinateFolderLabels(owner.getID(), isFragmentOwner, doc);
+        }
     }
     private int domRequests = 0;
 
@@ -321,8 +297,8 @@ IFolderLocalNameResolver
      */
     private void loadProcessingPipe()
     {
-        processingPipe = (ProcessingPipe) ContextHolder.context
-                .getBean(ProcessingPipe.PROCESSING_PIPE_BEAN_ID);
+        final WebApplicationContext webAppCtx = ContextHolder.getWebApplicationContext();
+        processingPipe = (ProcessingPipe)webAppCtx.getBean(ProcessingPipe.PROCESSING_PIPE_BEAN_ID, ProcessingPipe.class);
         processingPipe.setResources(owner, this);
     }
     
@@ -548,9 +524,10 @@ IFolderLocalNameResolver
                     } else {
                         node.setId(layoutStore.generateNewFolderId(owner));
 
-                    if (ContextHolder.labelPolicy != null)
+                    final IFolderLabelPolicy labelPolicy = ContextHolder.getLabelPolicy();
+                    if (labelPolicy != null)
                     {
-                        ContextHolder.labelPolicy.addNodeLabel(node.getId(),
+                        labelPolicy.addNodeLabel(node.getId(),
                                 parentId, getUserLayoutDOM(), owner.getID(),
                                 isFragmentOwner, node.getName());
                     }
@@ -1692,10 +1669,10 @@ IFolderLocalNameResolver
             userStore.removePortalUID( person.getID() );
             userStore.getPortalUID( person, true );
 
-            if (ContextHolder.labelPolicy != null)
+            final IFolderLabelPolicy labelPolicy = ContextHolder.getLabelPolicy();
+            if (labelPolicy != null)
             {
-                ContextHolder.labelPolicy.purgeFolderLabels(person.getID(), 
-                        isFragmentOwner);
+                labelPolicy.purgeFolderLabels(person.getID(), isFragmentOwner);
             }
             
             // see if the current user was the one to reset their layout and if
@@ -1821,9 +1798,10 @@ IFolderLocalNameResolver
                 plfId = null; // no user mods exist for this node
         }
     
-        if (ContextHolder.labelPolicy != null)
+        final IFolderLabelPolicy labelPolicy = ContextHolder.getLabelPolicy();
+        if (labelPolicy != null)
         {
-            label = ContextHolder.labelPolicy.getNodeLabel(nodeId, 
+            label = labelPolicy.getNodeLabel(nodeId, 
                     plfId, 
                     editAllowed, 
                     this.owner.getID(), 

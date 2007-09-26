@@ -43,7 +43,7 @@ public class JaxpCheck
 
     public static void main(String[] args) {
         try {
-            Class c = JaxpCheck.class.getClassLoader().loadClass(A_JAXP_CLASS);
+            JaxpCheck.class.getClassLoader().loadClass(A_JAXP_CLASS);
         } catch (ClassNotFoundException e) {
             System.err.println(e);
             System.err.println("The missing class is provided as part of JAXP.\n" +

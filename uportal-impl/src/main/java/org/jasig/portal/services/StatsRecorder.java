@@ -16,8 +16,8 @@ import org.jasig.portal.services.stats.DoNothingStatsRecorder;
 import org.jasig.portal.services.stats.IStatsRecorder;
 import org.jasig.portal.services.stats.StatsRecorderLayoutEventListener;
 import org.jasig.portal.services.stats.StatsRecorderSettings;
-import org.jasig.portal.spring.PortalApplicationContextFacade;
-import org.springframework.beans.BeansException;
+import org.jasig.portal.spring.PortalApplicationContextListener;
+import org.springframework.web.context.WebApplicationContext;
 
 /**
  * 
@@ -52,35 +52,24 @@ public final class StatsRecorder {
     public static final String BACKING_BEAN_NAME = "statsRecorder";
     
     private static final Log log = LogFactory.getLog(StatsRecorder.class);
-  
-    private static IStatsRecorder STATS_RECORDER;
     
-    /*
-     * Static block in which we discover our backing IStatsRecorder.
-     */
-    static {
-        
-        synchronized (StatsRecorder.class) {
-            try {
-                // our first preference is to get the stats recorder from the 
-                // PortalApplicationContextFacade (which fronts Spring bean configuration)
-                STATS_RECORDER = (IStatsRecorder) PortalApplicationContextFacade.getPortalApplicationContext().getBean(BACKING_BEAN_NAME, IStatsRecorder.class);
-            
-            } catch (BeansException be) {
-                // don't let exceptions about misconfiguration of the stats recorder propogate
-                // to the uPortal code that called StatsRecorder.  Instead, fall back on 
-                // failing to record anything, logging the configuration problem.
-                log.error("Unable to retrieve IStatsRecorder instance from Portal Application Context: is there a bean of name [" + BACKING_BEAN_NAME + "] ?", be);
-                STATS_RECORDER = new DoNothingStatsRecorder();
-            }
-        }
-        
-    }
-    
+    private static final IStatsRecorder DO_NOTHING_STATS_RECORDER = new DoNothingStatsRecorder();
   
     private StatsRecorder() {
         // do nothing
         // we're a static cover, no need to instantiate.
+    }
+    
+    private static IStatsRecorder getStatsRecorder() {
+        try {
+            final WebApplicationContext webAppCtx = PortalApplicationContextListener.getRequiredWebApplicationContext();
+            final IStatsRecorder statsRecorder = (IStatsRecorder)webAppCtx.getBean(BACKING_BEAN_NAME, IStatsRecorder.class);
+            return statsRecorder;
+        }
+        catch (Exception e) {
+            log.warn("Failed to load a IStatsRecorder interface from the Spring WebApplicationContext for bean name '" + BACKING_BEAN_NAME + "'. " + DO_NOTHING_STATS_RECORDER.getClass() + " will be used.", e);
+            return DO_NOTHING_STATS_RECORDER;
+        }
     }
   
   /**
@@ -101,7 +90,7 @@ public final class StatsRecorder {
    * @param person the person who is logging in
    */
   public static void recordLogin(IPerson person) {
-      STATS_RECORDER.recordLogin(person);
+      getStatsRecorder().recordLogin(person);
   }
 
   /**
@@ -109,7 +98,7 @@ public final class StatsRecorder {
    * @param person the person who is logging out
    */
   public static void recordLogout(IPerson person) {
-    STATS_RECORDER.recordLogout(person);
+    getStatsRecorder().recordLogout(person);
   }
   
   /**
@@ -117,7 +106,7 @@ public final class StatsRecorder {
    * @param person the person whose session is being created
    */
   public static void recordSessionCreated(IPerson person) {
-      STATS_RECORDER.recordSessionCreated(person);
+      getStatsRecorder().recordSessionCreated(person);
   }
   
   /**
@@ -127,7 +116,7 @@ public final class StatsRecorder {
    * @param person the person whose session is ending
    */
   public static void recordSessionDestroyed(IPerson person) {
-      STATS_RECORDER.recordSessionDestroyed(person);
+      getStatsRecorder().recordSessionDestroyed(person);
   }
   
   /**
@@ -136,7 +125,7 @@ public final class StatsRecorder {
    * @param channelDef the channel being published
    */
   public static void recordChannelDefinitionPublished(IPerson person, ChannelDefinition channelDef) {
-      STATS_RECORDER.recordChannelDefinitionPublished(person, channelDef);
+      getStatsRecorder().recordChannelDefinitionPublished(person, channelDef);
   } 
   
   /**
@@ -145,7 +134,7 @@ public final class StatsRecorder {
    * @param channelDef the channel being modified
    */
   public static void recordChannelDefinitionModified(IPerson person, ChannelDefinition channelDef) {
-      STATS_RECORDER.recordChannelDefinitionModified(person, channelDef);
+      getStatsRecorder().recordChannelDefinitionModified(person, channelDef);
   }  
   
   /**
@@ -154,7 +143,7 @@ public final class StatsRecorder {
    * @param channelDef the channel being modified
    */
   public static void recordChannelDefinitionRemoved(IPerson person, ChannelDefinition channelDef) {
-      STATS_RECORDER.recordChannelDefinitionRemoved(person, channelDef);
+      getStatsRecorder().recordChannelDefinitionRemoved(person, channelDef);
   }  
   
   /**
@@ -164,7 +153,7 @@ public final class StatsRecorder {
    * @param channelDesc the channel being subscribed to
    */
   public static void recordChannelAddedToLayout(IPerson person, UserProfile profile, IUserLayoutChannelDescription channelDesc) {
-      STATS_RECORDER.recordChannelAddedToLayout(person, profile, channelDesc);
+      getStatsRecorder().recordChannelAddedToLayout(person, profile, channelDesc);
   }    
   
   /**
@@ -174,7 +163,7 @@ public final class StatsRecorder {
    * @param channelDesc the channel being updated
    */
   public static void recordChannelUpdatedInLayout(IPerson person, UserProfile profile, IUserLayoutChannelDescription channelDesc) {
-      STATS_RECORDER.recordChannelUpdatedInLayout(person, profile, channelDesc);
+      getStatsRecorder().recordChannelUpdatedInLayout(person, profile, channelDesc);
   }  
 
   /**
@@ -184,7 +173,7 @@ public final class StatsRecorder {
    * @param channelDesc the channel being moved
    */
   public static void recordChannelMovedInLayout(IPerson person, UserProfile profile, IUserLayoutChannelDescription channelDesc) {
-      STATS_RECORDER.recordChannelMovedInLayout(person, profile, channelDesc);
+      getStatsRecorder().recordChannelMovedInLayout(person, profile, channelDesc);
   }
   
   /**
@@ -194,7 +183,7 @@ public final class StatsRecorder {
    * @param channelDesc the channel being removed from a user layout
    */
   public static void recordChannelRemovedFromLayout(IPerson person, UserProfile profile, IUserLayoutChannelDescription channelDesc) {
-      STATS_RECORDER.recordChannelRemovedFromLayout(person, profile, channelDesc);
+      getStatsRecorder().recordChannelRemovedFromLayout(person, profile, channelDesc);
   }
   
   /**
@@ -204,7 +193,7 @@ public final class StatsRecorder {
    * @param folderDesc the folder being subscribed to
    */
   public static void recordFolderAddedToLayout(IPerson person, UserProfile profile, IUserLayoutFolderDescription folderDesc) {
-      STATS_RECORDER.recordFolderAddedToLayout(person, profile, folderDesc);
+      getStatsRecorder().recordFolderAddedToLayout(person, profile, folderDesc);
   }    
   
   /**
@@ -214,7 +203,7 @@ public final class StatsRecorder {
    * @param folderDesc the folder being updated
    */
   public static void recordFolderUpdatedInLayout(IPerson person, UserProfile profile, IUserLayoutFolderDescription folderDesc) {
-      STATS_RECORDER.recordFolderUpdatedInLayout(person, profile, folderDesc);
+      getStatsRecorder().recordFolderUpdatedInLayout(person, profile, folderDesc);
   }  
 
   /**
@@ -224,7 +213,7 @@ public final class StatsRecorder {
    * @param folderDesc the folder being moved
    */
   public static void recordFolderMovedInLayout(IPerson person, UserProfile profile, IUserLayoutFolderDescription folderDesc) {
-      STATS_RECORDER.recordFolderMovedInLayout(person, profile, folderDesc);
+      getStatsRecorder().recordFolderMovedInLayout(person, profile, folderDesc);
   }
   
   /**
@@ -234,7 +223,7 @@ public final class StatsRecorder {
    * @param folderDesc the folder being removed from a user layout
    */
   public static void recordFolderRemovedFromLayout(IPerson person, UserProfile profile, IUserLayoutFolderDescription folderDesc) {
-      STATS_RECORDER.recordFolderRemovedFromLayout(person, profile, folderDesc);
+      getStatsRecorder().recordFolderRemovedFromLayout(person, profile, folderDesc);
   }  
   
   /**
@@ -244,7 +233,7 @@ public final class StatsRecorder {
    * @param channelDesc the channel being instantiated
    */
   public static void recordChannelInstantiated(IPerson person, UserProfile profile, IUserLayoutChannelDescription channelDesc) {
-      STATS_RECORDER.recordChannelInstantiated(person, profile, channelDesc);
+      getStatsRecorder().recordChannelInstantiated(person, profile, channelDesc);
   }  
   
   /**
@@ -254,7 +243,7 @@ public final class StatsRecorder {
    * @param channelDesc the channel being rendered
    */
   public static void recordChannelRendered(IPerson person, UserProfile profile, IUserLayoutChannelDescription channelDesc) {
-      STATS_RECORDER.recordChannelRendered(person, profile, channelDesc);
+      getStatsRecorder().recordChannelRendered(person, profile, channelDesc);
   }  
 
   /**
@@ -266,7 +255,7 @@ public final class StatsRecorder {
    * @param channelDesc the channel being targeted
    */
   public static void recordChannelTargeted(IPerson person, UserProfile profile, IUserLayoutChannelDescription channelDesc) {
-      STATS_RECORDER.recordChannelTargeted(person, profile, channelDesc);
+      getStatsRecorder().recordChannelTargeted(person, profile, channelDesc);
   }
   
   

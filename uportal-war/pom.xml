@@ -26,13 +26,6 @@
             <scope>compile</scope>
         </dependency>
         
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-            <version>${spring-framework.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        
         <!-- ===== Provided Dependencies ================================== -->
         
         <dependency>
