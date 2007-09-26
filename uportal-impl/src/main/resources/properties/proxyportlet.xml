@@ -1,6 +1,0 @@
-<Context path="/proxyportlet" docBase="proxyportlet" crossContext="true">
-
-    <!-- Disables restart persistence of sessions -->
-    <Manager pathname=""/>
-
-</Context>
