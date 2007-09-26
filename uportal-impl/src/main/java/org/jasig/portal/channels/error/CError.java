@@ -114,9 +114,9 @@ public final class CError extends BaseChannel implements IPrivilegedChannel,
             IThrowableToElement throwableToElement = (IThrowableToElement) webAppCtx.getBean("throwableToElement", IThrowableToElement.class);
             
             this.errorDocument.setThrowableToElement(throwableToElement);
-        } catch (BeansException be) {
+        } catch (Exception e) {
             // do not allow a Beans failure to break CError
-            log.error("Error retrieving the mapping from throwables to Elements for CError rendering.", be);
+            log.warn("Failed to retrieve mapping from throwables to Elements for CError rendering from the WebApplicationContext, the default mapping will be used.", e);
             // since our ErrorDocument has a default mapping from Throwables to Elements
             // we can fall back on that default by not doing anything.
         }

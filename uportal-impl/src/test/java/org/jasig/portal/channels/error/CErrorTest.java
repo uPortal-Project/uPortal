@@ -23,18 +23,18 @@ public class CErrorTest extends TestCase {
 	 * Test that CError propogates events to wrapped channels.
 	 */
 	public void testReceiveEvent() {
-//		EventRecordingChannel irc = new EventRecordingChannel();
-//		
-//		IChannel cError = new CError(ErrorCode.GENERAL_ERROR, new Throwable(), "bogusSusbscribeId", irc);
-//		
-//		assertTrue(irc.getEventsReceived().isEmpty());
-//
-//		cError.receiveEvent(PortalEvent.SESSION_DONE_EVENT);
-//		
-//		List eventsReceived = irc.getEventsReceived();
-//		assertFalse(eventsReceived.isEmpty());
-//		PortalEvent event = (PortalEvent) irc.getEventsReceived().get(0);
-//		assertEquals(PortalEvent.SESSION_DONE, event.getEventNumber());
+		EventRecordingChannel irc = new EventRecordingChannel();
+		
+		IChannel cError = new CError(ErrorCode.GENERAL_ERROR, new Throwable(), "bogusSusbscribeId", irc);
+		
+		assertTrue(irc.getEventsReceived().isEmpty());
+
+		cError.receiveEvent(PortalEvent.SESSION_DONE_EVENT);
+		
+		List eventsReceived = irc.getEventsReceived();
+		assertFalse(eventsReceived.isEmpty());
+		PortalEvent event = (PortalEvent) irc.getEventsReceived().get(0);
+		assertEquals(PortalEvent.SESSION_DONE, event.getEventNumber());
 	}
 
 }
