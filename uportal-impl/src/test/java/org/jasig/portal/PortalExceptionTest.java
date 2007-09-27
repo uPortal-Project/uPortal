@@ -43,18 +43,6 @@ public class PortalExceptionTest extends TestCase {
     }
     
     /**
-     * Test that calling setRecordedException multiple times does not
-     * throw any exceptions.
-     */
-    public void testSetRecordedExceptionMulitply() {
-        PortalException pe = new PortalException("Dummy message");
-        Exception causeOne = new Exception();
-        pe.initCause(causeOne);
-        Exception causeTwo = new Exception();
-        pe.initCause(causeTwo);
-    }
-    
-    /**
      * Test that setRecordedException populates the Throwable.getCause()
      * of a PortalException.
      */
