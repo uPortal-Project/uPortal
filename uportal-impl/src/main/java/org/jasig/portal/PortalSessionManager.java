@@ -29,9 +29,12 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.channels.portlet.CPortletAdapter;
 import org.jasig.portal.jndi.JNDIManager;
 import org.jasig.portal.properties.PropertiesManager;
+import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.security.PersonManagerFactory;
+import org.jasig.portal.tools.versioning.Version;
+import org.jasig.portal.tools.versioning.VersionsManager;
 import org.jasig.portal.utils.ResourceLoader;
 
 /**
@@ -40,6 +43,7 @@ import org.jasig.portal.utils.ResourceLoader;
  * @version $Revision$
  */
 public class PortalSessionManager extends HttpServlet {
+    private static final long serialVersionUID = 1L;
 
     private static final Log log = LogFactory.getLog(PortalSessionManager.class);
 
@@ -103,7 +107,8 @@ public class PortalSessionManager extends HttpServlet {
    * Initialize the PortalSessionManager servlet
    * @throws ServletException
    */
-  public void init() throws ServletException {
+  @Override
+public void init() throws ServletException {
     if(!initialized) {
       STARTED_AT = new Date();
 
@@ -164,7 +169,8 @@ public class PortalSessionManager extends HttpServlet {
   }
 
 
-  public void destroy()	 {
+  @Override
+public void destroy()	 {
       // Log orderly shutdown time
 	  log.info( "uPortal stopped");
   }
@@ -174,6 +180,7 @@ public class PortalSessionManager extends HttpServlet {
      * @param req an incoming <code>HttpServletRequest</code> value
      * @param res an outgoing <code>HttpServletResponse</code> value
      */
+    @Override
     public void doPost(HttpServletRequest req, HttpServletResponse res)  {
         doGet(req, res);
     }
@@ -184,9 +191,12 @@ public class PortalSessionManager extends HttpServlet {
      * @param req an incoming <code>HttpServletRequest</code>
      * @param res an outgoing <code>HttpServletResponse</code>
      */
+    @Override
     public void doGet(HttpServletRequest req, HttpServletResponse res) {
         // Send the uPortal version in a header
-        res.setHeader("uPortal-version", Version.getProduct() + "_" + Version.getReleaseTag());
+        final VersionsManager versionManager = VersionsManager.getInstance();
+        final Version version = versionManager.getVersion(IPermission.PORTAL_FRAMEWORK);
+        res.setHeader("uPortal-version", "uPortal_rel-" + version.getMajor() + "-" + version.getMinor() + "-" + version.getMicro());
 
         if (fatalError) {
             try {
