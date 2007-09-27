@@ -33,18 +33,6 @@ package org.jasig.portal;
     String descr;
 
     /**
-     * Instantiate a ChannelParameter with a particular name, value, and
-     * indication of whether it can be overridden.
-     * @param name - the name of the channel parameter
-     * @param value - the value of the channel parameter
-     * @param override - "Y" if overridable, "N" otherwise.
-     * @deprecated resolve override to a boolean and use the other constructor
-     */
-    public ChannelParameter(String name, String value, String override) {
-      this(name, value, RDBMServices.dbFlag(override));
-    }
-
-    /**
      * Instantiate a ChannelParameter with a particular name, default value,
      * and indication of whether it can be overridden.
      * @param name name of the channel parameter.

@@ -111,43 +111,6 @@ public class PortalEvent {
   private final PortalEventSource source;
   
   /**
-   * Constructor which translates from one of the integers representing a
-   * PortalEvent to the actual PortalEvent class.
-   * @param ev integer representing the event
-   * @deprecated instead reference one of the static singleton events.
-   */
-  public PortalEvent(int ev) {
-      
-      if (ev < 0 || ev > 8)
-          throw new IllegalArgumentException("The integer " + ev + 
-                  " does not identify a PortalEvent.");
-      
-    this.eventNumber = ev;
-    
-    final String [] eventNameArray =
-    {
-        "renderingDone",
-        "sessionDone",
-        "unsubscribe",
-        "editButtonEvent",
-        "helpButtonEvent",
-        "aboutButtonEvent",
-        "detachButtonEvent",
-        "minimizeEvent",
-        "maximizeEvent",
-    };
-    
-    this.eventName = eventNameArray[ev];
-    
-    if (ev < 3) {
-        this.source = PortalEventSource.FRAMEWORK_GENERATED;
-    } else {
-        this.source = PortalEventSource.LAYOUT_GENERATED;
-    }
-        
-  }
-
-  /**
    * Construct a PortalEvent instance from parameters.
    * @param eventNumber - integer representation of event type
    * @param eventName - String name of event
@@ -189,7 +152,8 @@ public class PortalEvent {
  * @return true if other is a PortalEvent with the same eventNumber,
  * false otherwise
    */
-  public boolean equals(Object other) {
+  @Override
+public boolean equals(Object other) {
       if (other == null)
           return false;
       if (! (other instanceof PortalEvent))
@@ -202,7 +166,8 @@ public class PortalEvent {
       return false;
   }
   
-  public String toString() {
+  @Override
+public String toString() {
       return this.eventName;
   }
   
