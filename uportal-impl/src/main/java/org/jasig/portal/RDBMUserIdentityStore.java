@@ -199,27 +199,12 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
           log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
       stmt.executeUpdate(SQLDelete);
 
-      SQLDelete = "DELETE FROM UP_USER_LAYOUT_AGGR WHERE USER_ID = " + uPortalUID;
-      if (log.isDebugEnabled())
-          log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
-      stmt.executeUpdate(SQLDelete);
-
       SQLDelete = "DELETE FROM UP_USER_LAYOUT_MDATA WHERE USER_ID = " + uPortalUID;
       if (log.isDebugEnabled())
           log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
       stmt.executeUpdate(SQLDelete);
 
-      SQLDelete = "DELETE FROM UP_LAYOUT_STRUCT_AGGR  WHERE USER_ID = " + uPortalUID;
-      if (log.isDebugEnabled())
-          log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
-      stmt.executeUpdate(SQLDelete);
-
       SQLDelete = "DELETE FROM UP_LAYOUT_STRUCT_MDATA  WHERE USER_ID = " + uPortalUID;
-      if (log.isDebugEnabled())
-          log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
-      stmt.executeUpdate(SQLDelete);
-
-      SQLDelete = "DELETE FROM UP_LAYOUT_RESTRICTIONS  WHERE USER_ID = " + uPortalUID;
       if (log.isDebugEnabled())
           log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
       stmt.executeUpdate(SQLDelete);

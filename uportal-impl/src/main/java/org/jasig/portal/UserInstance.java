@@ -36,8 +36,6 @@ import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.TransientUserLayoutManagerWrapper;
 import org.jasig.portal.layout.UserLayoutParameterProcessor;
-import org.jasig.portal.layout.alm.IALFolderDescription;
-import org.jasig.portal.layout.alm.IAggregatedUserLayoutManager;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPermission;
@@ -104,7 +102,7 @@ public class UserInstance implements HttpSessionBindingListener {
     public static final boolean CHARACTER_CACHE_ENABLED=PropertiesManager.getPropertyAsBoolean("org.jasig.portal.UserInstance.character_cache_enabled");
 
     // a string that will be used to designate user layout root node in .uP files
-    public static final String USER_LAYOUT_ROOT_NODE=IALFolderDescription.ROOT_FOLDER_ID;
+    public static final String USER_LAYOUT_ROOT_NODE="userLayoutRootNode";
 
     private static final String WORKER_PROPERTIES_FILE_NAME = "/properties/worker.properties";
     private static Properties workerProperties;
@@ -745,23 +743,28 @@ public class UserInstance implements HttpSessionBindingListener {
      * @param bindingEvent an <code>HttpSessionBindingEvent</code> value
      */
     public void valueUnbound(HttpSessionBindingEvent bindingEvent) {
-     if( channelManager != null) {
-         channelManager.finishedSession();
-         if ( uPreferencesManager != null )
-          uPreferencesManager.getUserLayoutManager().removeLayoutEventListener(channelManager);
-     }
-     if( uPreferencesManager != null ) {
-       uPreferencesManager.finishedSession(bindingEvent);
-       try {
-        IUserLayoutManager ulm = uPreferencesManager.getUserLayoutManager();
-    if ( ulm instanceof TransientUserLayoutManagerWrapper )
-      ulm = ((TransientUserLayoutManagerWrapper)ulm).getOriginalLayoutManager();
-        if ( !(ulm instanceof IAggregatedUserLayoutManager) )
-          ulm.saveUserLayout();
-       } catch ( Exception e ) {
-      log.error("UserInstance::valueUnbound(): Error occured while saving the user layout ", e);
-         }
-     }
+        if (channelManager != null) {
+            channelManager.finishedSession();
+            
+            if (uPreferencesManager != null) {
+                uPreferencesManager.getUserLayoutManager().removeLayoutEventListener(channelManager);
+            }
+        }
+        
+        if (uPreferencesManager != null) {
+            uPreferencesManager.finishedSession(bindingEvent);
+            
+            try {
+                IUserLayoutManager ulm = uPreferencesManager.getUserLayoutManager();
+                if (ulm instanceof TransientUserLayoutManagerWrapper) {
+                    ulm = ((TransientUserLayoutManagerWrapper) ulm).getOriginalLayoutManager();
+                }
+            }
+            catch (Exception e) {
+                log.error("UserInstance::valueUnbound(): Error occured while saving the user layout ", e);
+            }
+        }
+        
         // Record the destruction of the session
         EventPublisherLocator.getApplicationEventPublisher().publishEvent(new UserSessionDestroyedPortalEvent(this, person));
         userSessions.decrementAndGet();
@@ -777,16 +780,6 @@ public class UserInstance implements HttpSessionBindingListener {
         // Record the creation of the session
     	EventPublisherLocator.getApplicationEventPublisher().publishEvent(new UserSessionCreatedPortalEvent(this, person));
     	userSessions.incrementAndGet();
-    }
-
-
-
-    private IAggregatedUserLayoutManager getAggregatedLayoutManager(IUserLayoutManager ulm) throws PortalException {
-    if ( ulm instanceof TransientUserLayoutManagerWrapper )
-       ulm = ((TransientUserLayoutManagerWrapper)ulm).getOriginalLayoutManager();
-    if ( ulm instanceof IAggregatedUserLayoutManager )
-       return (IAggregatedUserLayoutManager) ulm;
-         return null;
     }
 
     /**

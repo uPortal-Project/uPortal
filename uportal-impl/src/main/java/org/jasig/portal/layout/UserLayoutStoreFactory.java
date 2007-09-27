@@ -5,10 +5,10 @@
 
 package org.jasig.portal.layout;
 
-import org.jasig.portal.layout.alm.AggregatedUserLayoutStore;
-import org.jasig.portal.properties.PropertiesManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.layout.dlm.RDBMDistributedLayoutStore;
+import org.jasig.portal.properties.PropertiesManager;
 
 /**
  * Produces and manages a static singleton instance of IUserLayoutStore.
@@ -16,7 +16,7 @@ import org.apache.commons.logging.LogFactory;
  * The {@link IUserLayoutStore} implementation that we use is that named by the 
  * portal.properties property "org.jasig.portal.layout.UserLayoutStoreFactory.implementation".
  * In the case where that property is not set or the IUserLayoutStore it names cannot
- * be instantiated, we fall back on the {@link AggregatedUserLayoutStore} as the default.
+ * be instantiated, we fall back on the {@link RDBMDistributedLayoutStore} as the default.
  * 
  * Prior to uPortal 2.5, this class existed in the package org.jasig.portal.
  * It has been moved to its present package to express that it is part of the
@@ -57,7 +57,7 @@ public final class UserLayoutStoreFactory {
      * This field is default scoped so that our testcase can access it.  It is not intended
      * to be part of the public API of this factory.
      */
-    private static final Class DEFAULT_LAYOUT_STORE = AggregatedUserLayoutStore.class;
+    private static final Class <? extends IUserLayoutStore> DEFAULT_LAYOUT_STORE = RDBMDistributedLayoutStore.class;
 
   /**
    * Returns the singleton IUserLayoutStore instance, which will be that specified in portal.properties, 
