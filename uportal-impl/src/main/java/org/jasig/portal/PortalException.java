@@ -7,9 +7,6 @@ package org.jasig.portal;
 
 import java.util.Date;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 /**
  * Base portal exception class.
  * Information contained in this class allows ErrorChannel
@@ -20,9 +17,8 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class PortalException extends RuntimeException {
+    private static final long serialVersionUID = 1L;
 
-    private final Log log = LogFactory.getLog(PortalException.class);
-    
     /** 
      * should the user be given an option to reinstantiate
      * the channel in a given session
@@ -131,15 +127,6 @@ public class PortalException extends RuntimeException {
         return this.refreshable;
     }
     
-	/**
-	 * Legacy support for old name of property accessor.
-	 * @return isRefreshable()
-     * @deprecated use isRefreshable().
-	 */
-	public boolean allowRefresh() {
-		return isRefreshable();
-	}
-
     /**
      * Check if user-mediated reinstantiation is allowed.
      * @return true if reinstantiation allowed, false otherwise
@@ -148,28 +135,6 @@ public class PortalException extends RuntimeException {
         return this.reinstantiable;
     }
     
-    /**
-     * Legacy support for old name of property accessor
-     * @return isRinstantiable();
-     * @deprecated use isReinstantiable()
-     */
-    public boolean allowReinstantiation() {
-    	return isReinstantiable();
-    }
-
-    /**
-     * Retrieve an optionally recorded exception that
-     * caused the error.
-     * @return the cause if it is an Exception
-     * @deprecated - use Throwable.getCause()
-     */
-    public Exception getRecordedException() {
-        Throwable cause = this.getCause();
-        if (cause != null && cause instanceof Exception)
-            return (Exception) cause;
-        return null;
-    }
-
     /**
      * Set if the user should be presented with an option
      * to retry the same operation on the component that
@@ -192,28 +157,6 @@ public class PortalException extends RuntimeException {
         this.reinstantiable=reinstantiate;
     }
 
-    /**
-     * Allows to record the exception that caused the error.
-     * The exception information can later be used in error 
-     * reporting and user interaction.
-     *
-     * @param exc an <code>Exception</code> value
-     * @deprecated use initCause() instead.
-     */
-    public void setRecordedException(Exception exc) {
-        try {
-            this.initCause(exc);
-        } catch (Throwable t) {
-            // legacy implementation was setting a simple JavaBean property
-            // which could never throw an exception.
-            // we emulate that exceptionless behavior here.
-            if (log.isWarnEnabled())
-                log.warn("Exception setting the recorded exception of [" + this + "] " +
-                    "to [" + exc + "]", t);
-        }
-
-    }
-    
     /**
      * Determine whether logging is pending on this PortalException.
      * @return <code>true</code> if the log is pending, otherwise <code>false</code>

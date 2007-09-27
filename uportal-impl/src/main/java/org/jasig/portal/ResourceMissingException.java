@@ -13,6 +13,7 @@ package org.jasig.portal;
  * @version $Revision$ $Date$
  */
 public class ResourceMissingException extends PortalException {
+    private static final long serialVersionUID = 1L;
 
     /**
      * URI of the missing resource
@@ -65,14 +66,6 @@ public class ResourceMissingException extends PortalException {
         super(msg,refresh,reinstantiate);
         this.resourceURI=resourceURI;
         this.description=resourceDescription;
-    }
-
-    /**
-     * Instantiate a bare MissingResourceException.
-     * @deprecated use a more informative constructor
-     */
-    public ResourceMissingException() {
-        super();
     }
     
     /**

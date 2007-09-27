@@ -11,6 +11,7 @@ package org.jasig.portal;
  * @version $Revision$ $Date$
  */
 public class InternalPortalException extends Throwable {
+    private static final long serialVersionUID = 1L;
 
     /**
      * Instantiate an InternalPortalException wrapper around the given
@@ -19,15 +20,6 @@ public class InternalPortalException extends Throwable {
      */
     public InternalPortalException(Throwable cause) {
         super(cause);
-    }
-
-    /**
-     * Delegates to getCause(). 
-     * @return underlying cause
-     * @deprecated use Throwable.getCause() instead
-     */
-    public Throwable getException() {
-        return getCause();
     }
 
 }

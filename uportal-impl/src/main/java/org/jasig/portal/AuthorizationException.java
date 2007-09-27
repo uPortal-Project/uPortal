@@ -13,16 +13,8 @@ package org.jasig.portal;
  */
 
 public class AuthorizationException extends PortalException {
+    private static final long serialVersionUID = 1L;
 
-    /**
-     * Instantiate an AuthorizationException.
-     * @deprecated - use instead a constructor that provides a message or
-     * cause.
-     */
-    public AuthorizationException() {
-        super();
-    }
-    
     /**
      * Instantiate an AuthorizationException with the given cause.
      * @param cause defines the causing Throwable of the authorization violation.
