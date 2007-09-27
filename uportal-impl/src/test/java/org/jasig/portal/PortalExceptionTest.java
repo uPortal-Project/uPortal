@@ -39,7 +39,7 @@ public class PortalExceptionTest extends TestCase {
      */
     public void testSetNullRecordedException() {
         PortalException pe = new PortalException("Dummy message");
-        pe.setRecordedException(null);
+        pe.initCause(null);
     }
     
     /**
@@ -49,9 +49,9 @@ public class PortalExceptionTest extends TestCase {
     public void testSetRecordedExceptionMulitply() {
         PortalException pe = new PortalException("Dummy message");
         Exception causeOne = new Exception();
-        pe.setRecordedException(causeOne);
+        pe.initCause(causeOne);
         Exception causeTwo = new Exception();
-        pe.setRecordedException(causeTwo);
+        pe.initCause(causeTwo);
     }
     
     /**
@@ -61,7 +61,7 @@ public class PortalExceptionTest extends TestCase {
     public void testSetRecordedException(){
         PortalException pe = new PortalException("Dummy message");
         Exception cause = new Exception();
-        pe.setRecordedException(cause);
+        pe.initCause(cause);
         assertEquals(cause, pe.getCause());
     }
     
