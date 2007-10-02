@@ -5255,7 +5255,7 @@
         <column><name>CREATOR_ID</name><value>system</value></column>
         <column><name>ENTITY_TYPE_ID</name><value>4</value></column>
         <column><name>GROUP_NAME</name><value>CImage</value></column>
-        <column><name>DESCRIPTION</name><value>Renders and image with an optional caption and subcaption</value></column>
+        <column><name>DESCRIPTION</name><value>Renders an image with an optional caption and subcaption</value></column>
       </row>
        <row>
         <column><name>GROUP_ID</name><value>60</value></column>

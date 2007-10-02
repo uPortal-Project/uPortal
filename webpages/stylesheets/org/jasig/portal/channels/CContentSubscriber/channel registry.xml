@@ -54,7 +54,7 @@
             <parameter name="xmlUri" value="CGenericXSLT/CSSViewer/cssViewer.xml"/>
           </channel>
         </category>
-        <category id="catlocal.59" description="Renders and image with an optional caption and subcaption" name="CImage" view="condensed">
+        <category id="catlocal.59" description="Renders an image with an optional caption and subcaption" name="CImage" view="condensed">
           <channel id="chan1" view="condensed" chanid="1" class="org.jasig.portal.channels.CImage" description="Daily Business Cartoon by Ted Goff, www.tedgoff.com" editable="false" fname="daily-business-cartoon" hasabout="false" hashelp="false" name="Daily Business Cartoon" secure="false" timeout="30000" title="Daily Business Cartoon" typeid="3">
             <parameter name="img-height" value="300"/>
             <parameter name="img-border" value="0"/>
