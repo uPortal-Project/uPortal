@@ -285,7 +285,7 @@ public class UserInstance implements HttpSessionBindingListener {
                     // (examples of such events are "remove channel", "minimize channel", etc.
                     //  basically things that directly affect the userLayout structure)
                     try {
-                        processUserLayoutParameters(req,channelManager);
+                        processUserLayoutParameters(req,res,channelManager);
                     } catch (PortalException pe) {
                         log.error("UserInstance.renderState(): processUserLayoutParameters() threw an exception - ", pe);
                     }
@@ -714,7 +714,7 @@ public class UserInstance implements HttpSessionBindingListener {
      * @param channelManager a <code>ChannelManager</code> value
      * @exception PortalException if an error occurs
      */
-    private synchronized void processUserLayoutParameters (HttpServletRequest req, ChannelManager channelManager) throws PortalException {
+    private synchronized void processUserLayoutParameters (HttpServletRequest req, HttpServletResponse res, ChannelManager channelManager) throws PortalException {
      try {
 
        IUserLayoutManager ulm = uPreferencesManager.getUserLayoutManager();
@@ -743,21 +743,21 @@ public class UserInstance implements HttpSessionBindingListener {
         String[] values;
         if ((values = req.getParameterValues("uP_help_target")) != null) {
             for (int i = 0; i < values.length; i++) {
-                channelManager.passPortalEvent(values[i], PortalEvent.HELP_BUTTON);
+                channelManager.passPortalEvent(req, res, values[i], PortalEvent.HELP_BUTTON);
             }
         }
         if ((values = req.getParameterValues("uP_about_target")) != null) {
             for (int i = 0; i < values.length; i++) {
-                channelManager.passPortalEvent(values[i], PortalEvent.ABOUT_BUTTON);
+                channelManager.passPortalEvent(req, res, values[i], PortalEvent.ABOUT_BUTTON);
             }
         }
         if ((values = req.getParameterValues("uP_edit_target")) != null) {
             for (int i = 0; i < values.length; i++) {
-                channelManager.passPortalEvent(values[i], PortalEvent.EDIT_BUTTON);
+                channelManager.passPortalEvent(req, res, values[i], PortalEvent.EDIT_BUTTON);
             }
         }
         if ((values = req.getParameterValues("uP_detach_target")) != null) {
-            channelManager.passPortalEvent(values[0], PortalEvent.DETACH_BUTTON);
+            channelManager.passPortalEvent(req, res, values[0], PortalEvent.DETACH_BUTTON);
         }
 
         if ((values = req.getParameterValues("uP_request_move_targets")) != null) {
@@ -903,7 +903,7 @@ public class UserInstance implements HttpSessionBindingListener {
                                 e = PortalEvent.MAXIMIZE;
                             }
 
-                            channelManager.passPortalEvent(aNode[j], e);
+                            channelManager.passPortalEvent(req, res, aNode[j], e);
 
                             if (log.isDebugEnabled())
                                 log.debug("Sending window state event to '" + aName + "' of '" + aNode[j] + "' to '" + aValue + "'.");

@@ -120,7 +120,7 @@ public class StandaloneChannelRenderer
         }
 
         // start rendering
-        IChannelRenderer cr = cChannelRendererFactory.newInstance( this, rd );
+        IChannelRenderer cr = cChannelRendererFactory.newInstance( this, rd, pcs );
         cr.setTimeout (timeOut);
         cr.startRendering ();
 

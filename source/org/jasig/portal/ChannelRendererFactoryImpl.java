@@ -119,12 +119,14 @@ public final class ChannelRendererFactoryImpl
      **/
     public IChannelRenderer newInstance(
         IChannel channel,
-        ChannelRuntimeData channelRuntimeData
+        ChannelRuntimeData channelRuntimeData,
+        PortalControlStructures pcs
         )
     {
         return new ChannelRenderer(
             channel,
             channelRuntimeData,
+            pcs,
             (null == this.mThreadPool) ? cSharedThreadPool : this.mThreadPool
             );
     }
