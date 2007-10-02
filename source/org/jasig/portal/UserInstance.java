@@ -302,7 +302,7 @@ public class UserInstance implements HttpSessionBindingListener {
                     try {
                         UserPreferences userPrefs = uPreferencesManager.getUserPreferences();
                         UserLayoutParameterProcessor processor = new UserLayoutParameterProcessor(ulm, userPrefs);
-                        processor.processUserLayoutParameters(req,channelManager, person);
+                        processor.processUserLayoutParameters(req,res,channelManager, person);
                     } catch (PortalException pe) {
                         log.error("Failure processing user parameters.", pe);
                     }

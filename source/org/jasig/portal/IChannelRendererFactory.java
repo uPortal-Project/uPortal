@@ -38,6 +38,7 @@ public interface IChannelRendererFactory
      **/
     IChannelRenderer newInstance(
         IChannel channel,
-        ChannelRuntimeData channelRuntimeData
+        ChannelRuntimeData channelRuntimeData,
+        PortalControlStructures pcs
         );
 }

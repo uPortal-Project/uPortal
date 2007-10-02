@@ -78,7 +78,10 @@ public class ChannelManager implements LayoutEventListener {
     private Map channelCacheTable;
 
     private String channelTarget;
-    private Hashtable targetParams;
+    //Using a ThreadLocal to store the target parameters to allow
+    //multiple threads to be accessing this class in parallel without
+    //overwriting the others parameters.
+    private static ThreadLocal targetParamsLocal = new ThreadLocal();
     private BrowserInfo binfo;
     private LocaleManager lm;
 
@@ -139,11 +142,8 @@ public class ChannelManager implements LayoutEventListener {
      * @param uPElement an <code>UPFileSpec</code> that includes a tag number.
      */
     public ChannelManager(HttpServletRequest request, HttpServletResponse response, IUserPreferencesManager manager,UPFileSpec uPElement) {
-        this();
-        this.upm=manager;
-        pcs=new PortalControlStructures();
-        pcs.setUserPreferencesManager(upm);
-        pcs.setChannelManager(this);
+        this(manager);
+        
         this.startRenderingCycle(request,response,uPElement);
     }
 
@@ -263,7 +263,11 @@ public class ChannelManager implements LayoutEventListener {
         }
         rendererTable.clear();
         clearRepeatedRenderings();
-        targetParams=null;
+        targetParamsLocal.set(null);
+        //To ensure the old request and response objects are not used by the next
+        //request clear them at the end of the processing cycle.
+        this.pcs.setHttpServletRequest(null);
+        this.pcs.setHttpServletResponse(null);
         pendingChannels=new HashSet();
         groupedRendering=false;
     }
@@ -765,17 +769,33 @@ public class ChannelManager implements LayoutEventListener {
      * @param channelSubscribeId the channel subscribe id
      * @param le the portal event
      */
-    public void passPortalEvent(String channelSubscribeId, PortalEvent le) {
+    public void passPortalEvent(HttpServletRequest req, HttpServletResponse res, String channelSubscribeId, PortalEvent le) {
+        //The latest portlet req/res are required in the portal control structures
+        //for events because of portlet adapter requirements regarding
+        //stats collection.
+        pcs.setHttpServletRequest(req);
+        pcs.setHttpServletResponse(res);
+        
         IChannel ch= (IChannel) channelTable.get(channelSubscribeId);
 
         if (ch != null) {
+            //Ensure the channel (if IPrivileged) has the latest control
+            //structures object before recieving the event.
+            if ((ch instanceof IPrivileged)) {
+                try {
+                    ((IPrivileged) ch).setPortalControlStructures(pcs);
+                } catch (Exception e) {
+                    log.warn("ChannelManager::passPortalEvent() :  ChannelManager threw exception while trying to set portalControlStructures", e);
+                }
+            }
+            
             try {
                 ch.receiveEvent(le);
             } catch (Exception e) {
                 log.error("Error sending layout event " + le + " to channel " + ch, e);
             }
         } else {
-            log.error("ChannelManager::passPortalEvent() : trying to pass an event to a channel that is not in cache. (cahnel=\"" + channelSubscribeId + "\")");
+            log.error("ChannelManager::passPortalEvent() : trying to pass an event to a channel that is not in cache. (channel=\"" + channelSubscribeId + "\")");
         }
     }
 
@@ -788,7 +808,7 @@ public class ChannelManager implements LayoutEventListener {
     private void processRequestChannelParameters(HttpServletRequest req) {
         // clear the previous settings
         channelTarget = null;
-        targetParams = new Hashtable();
+        targetParamsLocal.set(new Hashtable());
 
         // see if this is targeted at an fname channel. if so then it takes
         // precedence. This is done so that a baseActionURL can be used for
@@ -842,6 +862,7 @@ public class ChannelManager implements LayoutEventListener {
                     // detect if channel target talks to other channels
                     groupedRendering=hasListeningChannels(channelTarget);
                 }
+                Map targetParams = (Map)targetParamsLocal.get();
                 while (en.hasMoreElements()) {
                     String pName= (String) en.nextElement();
                     if (!pName.equals ("uP_channelTarget")&& !pName.equals ("uP_fname")) {
@@ -909,7 +930,7 @@ public class ChannelManager implements LayoutEventListener {
     private IChannel feedRuntimeDataToChannel(IChannel chObj, HttpServletRequest req) {
         try {
             ChannelRuntimeData rd = new ChannelRuntimeData();
-            rd.setParameters(targetParams);
+            rd.setParameters((Map)targetParamsLocal.get());
             String qs = pcs.getHttpServletRequest().getQueryString();
             if (qs != null && qs.indexOf("=") == -1)
               rd.setKeywords(qs);
@@ -1148,7 +1169,7 @@ public class ChannelManager implements LayoutEventListener {
             if(!(ch instanceof IPrivileged)) {
                 rd = new ChannelRuntimeData();
                 rd.setTargeted(true);
-                rd.setParameters(targetParams);
+                rd.setParameters((Map)targetParamsLocal.get());
                 String qs = pcs.getHttpServletRequest().getQueryString();
                 if (qs != null && qs.indexOf("=") == -1)
                   rd.setKeywords(qs);
@@ -1177,7 +1198,8 @@ public class ChannelManager implements LayoutEventListener {
         // Build a new channel renderer instance.
         IChannelRenderer cr = cChannelRendererFactory.newInstance(
             ch,
-            rd
+            rd,
+            pcs
             );
 
         cr.setCharacterCacheable(this.isCharacterCaching());

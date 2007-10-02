@@ -9,11 +9,15 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.channels.support.IChannelTitle;
 import org.jasig.portal.channels.support.IDynamicChannelTitleRenderer;
 import org.jasig.portal.properties.PropertiesManager;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.servlet.AttributeScopingRequestWrapper;
 import org.jasig.portal.utils.SAX2BufferImpl;
 import org.jasig.portal.utils.SetCheckInSemaphore;
 import org.jasig.portal.utils.SoftHashMap;
@@ -55,6 +59,7 @@ public class ChannelRenderer
     protected ChannelRuntimeData rd;
     protected Map channelCache;
     protected Map cacheTables;
+    protected PortalControlStructures pcs;
 
     protected boolean rendering;
     protected boolean donerendering;
@@ -82,9 +87,10 @@ public class ChannelRenderer
      * @param runtimeData a <code>ChannelRuntimeData</code> value
      * @param threadPool a <code>ThreadPool</code> value
      */
-    public ChannelRenderer (IChannel chan,ChannelRuntimeData runtimeData, ExecutorService threadPool) {
+    public ChannelRenderer (IChannel chan,ChannelRuntimeData runtimeData, PortalControlStructures pcs, ExecutorService threadPool) {
         this.channel=chan;
         this.rd=runtimeData;
+        this.pcs = pcs;
         this.rendering = false;
         this.ccacheable=false;
         tp = threadPool;
@@ -107,8 +113,8 @@ public class ChannelRenderer
      * @param groupSemaphore a <code>SetCheckInSemaphore</code> for the current rendering group
      * @param groupRenderingKey an <code>Object</code> to be used for check ins with the group semaphore
      */
-    public ChannelRenderer (IChannel chan,ChannelRuntimeData runtimeData, ExecutorService threadPool, SetCheckInSemaphore groupSemaphore, Object groupRenderingKey) {
-        this(chan,runtimeData,threadPool);
+    public ChannelRenderer (IChannel chan,ChannelRuntimeData runtimeData, PortalControlStructures pcs, ExecutorService threadPool, SetCheckInSemaphore groupSemaphore, Object groupRenderingKey) {
+        this(chan,runtimeData,pcs,threadPool);
         this.groupSemaphore=groupSemaphore;
         this.groupRenderingKey=groupRenderingKey;
     }
@@ -178,7 +184,8 @@ public class ChannelRenderer
   {
     // start the rendering thread
 
-    this.worker = new Worker (this.channel,this.rd);
+    //Pass the Request/Response for this thread into the worker so it can use them in the pool thread
+    this.worker = new Worker (this.channel,this.rd, this.pcs.getHttpServletRequest(), this.pcs.getHttpServletResponse());
 
     this.workTracker = tp.submit(this.worker); // XXX is execute okay?
     this.rendering = true;
@@ -433,16 +440,23 @@ public class ChannelRenderer
         private ChannelRuntimeData rd;
         private SAX2BufferImpl buffer;
         private String cbuffer;
+        private HttpServletRequest req;
+        private HttpServletResponse res;
 
         /**
          * The dynamic title of the channel, if any.  Null otherwise.
          */
         private String channelTitle = null;
 
-        public Worker (IChannel ch, ChannelRuntimeData runtimeData) {
+        //Pass the request/response into the worker, this will allow the objects
+        //to be passed into the ThreadLocalized PortalControlStructures when execute()
+        //is called by the worker thread.
+        public Worker (IChannel ch, ChannelRuntimeData runtimeData, HttpServletRequest req, HttpServletResponse res) {
             this.channel=ch;  this.rd=runtimeData;
             successful = false; done = false; setRuntimeDataComplete=false;
             buffer=null; cbuffer=null;
+            this.req = new AttributeScopingRequestWrapper(req);
+            this.res = res;
         }
 
         public void setChannel(IChannel ch) {
@@ -455,6 +469,16 @@ public class ChannelRenderer
 
         public void execute () throws Exception {
             try {
+                if (pcs != null) {
+                    //Set the request/response for this thread.
+                    pcs.setHttpServletRequest(this.req);
+                    pcs.setHttpServletResponse(this.res);
+
+                    if (channel instanceof IPrivileged) {
+                        ((IPrivileged)channel).setPortalControlStructures(pcs);
+                    }
+                }
+                
                 if(rd!=null) {
                     channel.setRuntimeData(rd);
                 }
@@ -602,6 +626,13 @@ public class ChannelRenderer
                     groupSemaphore.checkIn(groupRenderingKey);
                 }
                 this.setException(e);
+            }
+            finally {
+                if (pcs != null) {
+                    //Clear the request/response for this thread
+                    pcs.setHttpServletRequest(null);
+                    pcs.setHttpServletResponse(null);
+                }
             }
 
             /*

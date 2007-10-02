@@ -155,7 +155,8 @@ public final class ChannelRendererFactoryImpl
      **/
     public IChannelRenderer newInstance(
         IChannel channel,
-        ChannelRuntimeData channelRuntimeData
+        ChannelRuntimeData channelRuntimeData,
+        PortalControlStructures pcs
         )
     {
     	
@@ -187,6 +188,7 @@ public final class ChannelRendererFactoryImpl
         return new ChannelRenderer(
             channel,
             channelRuntimeData,
+            pcs,
             threadPoolExecutor
             );
     }

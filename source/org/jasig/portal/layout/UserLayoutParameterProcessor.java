@@ -1,6 +1,7 @@
 package org.jasig.portal.layout;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -55,31 +56,31 @@ public class UserLayoutParameterProcessor {
      *                if an error occurs
      */
     public synchronized void processUserLayoutParameters(
-            HttpServletRequest req, ChannelManager channelManager,
+            HttpServletRequest req, HttpServletResponse res, ChannelManager channelManager,
             IPerson person) throws PortalException {
 
         String[] values;
         if ((values = req.getParameterValues("uP_help_target")) != null) {
             for (int i = 0; i < values.length; i++) {
-                channelManager.passPortalEvent(values[i],
+                channelManager.passPortalEvent(req, res, values[i],
                         PortalEvent.HELP_BUTTON);
             }
         }
         if ((values = req.getParameterValues("uP_about_target")) != null) {
             for (int i = 0; i < values.length; i++) {
-                channelManager.passPortalEvent(values[i],
+                channelManager.passPortalEvent(req, res, values[i],
                         PortalEvent.ABOUT_BUTTON);
             }
         }
         if ((values = req.getParameterValues("uP_edit_target")) != null) {
             for (int i = 0; i < values.length; i++) {
-                channelManager.passPortalEvent(values[i],
+                channelManager.passPortalEvent(req, res, values[i],
                         PortalEvent.EDIT_BUTTON);
             }
         }
         if ((values = req.getParameterValues("uP_detach_target")) != null) {
             channelManager
-                    .passPortalEvent(values[0], PortalEvent.DETACH_BUTTON);
+                    .passPortalEvent(req, res, values[0], PortalEvent.DETACH_BUTTON);
         }
 
         // Propagate minimize/maximize events to the channels
@@ -103,7 +104,7 @@ public class UserLayoutParameterProcessor {
                                 e = PortalEvent.MAXIMIZE;
                             }
 
-                            channelManager.passPortalEvent(aNode[j], e);
+                            channelManager.passPortalEvent(req, res, aNode[j], e);
 
                             if (log.isDebugEnabled())
                                 log.debug("Sending window state event to '"
