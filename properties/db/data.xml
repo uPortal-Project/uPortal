@@ -10,7 +10,7 @@
         <column><name>FNAME</name><value>UP_FRAMEWORK</value></column>
         <column><name>MAJOR</name><value>2</value></column>
         <column><name>MINOR</name><value>6</value></column>
-        <column><name>MICRO</name><value>0</value></column>
+        <column><name>MICRO</name><value>1</value></column>
         <column><name>DESCRIPTION</name><value>The uPortal Framework.</value></column>
       </row>
     </rows>

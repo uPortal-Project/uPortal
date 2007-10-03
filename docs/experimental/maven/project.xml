@@ -11,7 +11,7 @@ http://maven.apache.org/maven-v3_0_0.xsd">
 	<artifactId>uportal</artifactId>
 	<name>uPortal</name>
 	<groupId>ja-sig</groupId>
-	<currentVersion>2.6.0-SNAPSHOT</currentVersion>
+	<currentVersion>2.6.1</currentVersion>
 	<inceptionYear>2005</inceptionYear>
 	<url>http://www.uportal.org</url>
 	<logo>http://www.ja-sig.org/images/jasig-head.gif</logo>
