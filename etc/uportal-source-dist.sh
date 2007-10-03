@@ -16,6 +16,7 @@ fi
 
 svn export https://www.ja-sig.org/svn/up2/tags/$1 portal
 
+
 #
 # Remove .cvsignore files. 
 #
@@ -48,7 +49,6 @@ zip -r uPortal_$1 uPortal_$1
 echo "done!"
 echo "Now..."
 echo "scp the release to www.jasig.org:/jasig/htdocs/www/downloads/uportal"
-echo "update download.html page via Hypercontent at http://developer.ja-sig.org/hypercontent"
-echo "add a news item to the uportal site via Hypercontent announcing the release"
-echo "publish that news item, the news index page, the news archive page, and the front page so that your news item is available for consumption."
+echo "update download.html page."
+echo "update index.html with news about releases."
 exit
