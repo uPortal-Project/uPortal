@@ -300,13 +300,13 @@ Faculty group.
   &lt;/dlm:fragment>
 </code></p>
 <p><strong>Note:</strong> dlm.xml was designed to allow institutions the ability to define and plug-in their own custom evaluators. 
-The dlm.xml file will be replaced in the near future with the new permissions work that is targeted for uPortal 2.6.0. That solution 
-will have more flexibility 
+The dlm.xml file will be replaced in the near future with the new permissions work that is targeted for a future uPortal release.
+That solution will have more flexibility 
 than is had with the current design of dlm.xml. For example, although completely different technology, logically the new solution 
 blurs the boundary between audience elements allowing person attribute 
 tests to be combined in the same boolean equation as group membership evaluations. When DLM migrates to that new approach only these 
 classes and their semantics are guaranteed to be migrated. Any configuration added via custom factories from an institution will 
-have to be planned for and migrated by that institution as part of upgrading to the version of DLM in 2.6.0. 
+have to be planned for and migrated by that institution as part of upgrading to the future version of DLM. 
 </p>
 <em>To learn more select the related links to the left.</em>
 </section>
