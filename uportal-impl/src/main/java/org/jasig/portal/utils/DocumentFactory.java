@@ -67,34 +67,6 @@ public class DocumentFactory {
         return doc;
     }
 
-    /**
-     * @param stream
-     * @return Document
-     * @throws IOException
-     * @throws SAXException
-     * @deprecated Does not provide document identifier in exceptions.
-     */
-    public static Document getDocumentFromStream(InputStream stream) throws IOException, SAXException {
-            DocumentBuilder builder = newDocumentBuilder();
-            Document doc = builder.parse(stream);
-            return doc;
-    }
-
-/**
- * @param stream
- * @param er
- * @return Document
- * @throws IOException
- * @throws SAXException
- * @deprecated Does not provide document identifier in exceptions.
- */
-    public static Document getDocumentFromStream(InputStream stream, EntityResolver er) throws IOException, SAXException {
-            DocumentBuilder builder = newDocumentBuilder();
-            builder.setEntityResolver(er);
-            Document doc = builder.parse(stream);
-            return doc;
-    }
-
 public static Document getDocumentFromStream(InputStream stream, String publicId) throws IOException, SAXException {
     DocumentBuilder builder = newDocumentBuilder();
     InputSource source = new InputSource(stream);

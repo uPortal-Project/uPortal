@@ -69,7 +69,7 @@ public class PortletApplicationUnmarshaller {
     public void init(InputStream inputStream, String contextName) throws IOException, SAXException {
         this.inputStream = inputStream;
         this.contextName = contextName;
-        this.doc = DocumentFactory.getDocumentFromStream(inputStream);    
+        this.doc = DocumentFactory.getDocumentFromStream(inputStream, "PortletContext:" + contextName);    
     }
     
     /**

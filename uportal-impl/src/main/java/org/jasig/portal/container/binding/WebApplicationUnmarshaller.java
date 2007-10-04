@@ -88,7 +88,7 @@ public class WebApplicationUnmarshaller {
      */
     public void init(InputStream inputStream, String contextName) throws IOException, SAXException {
         this.inputStream = inputStream;
-        this.doc = DocumentFactory.getDocumentFromStream(inputStream, webAppDtdResolver);
+        this.doc = DocumentFactory.getDocumentFromStream(inputStream, webAppDtdResolver, "ServletContext:" + contextName);
         this.contextName = contextName;
     }
     
