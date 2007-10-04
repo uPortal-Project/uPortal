@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import javax.xml.transform.Result;
@@ -34,16 +35,16 @@ import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.jasig.portal.car.ResourceResolver;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.BrowserInfo;
 import org.jasig.portal.GeneralRenderingException;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.ResourceMissingException;
 import org.jasig.portal.StylesheetSet;
+import org.jasig.portal.car.ResourceResolver;
 import org.jasig.portal.i18n.LocaleAwareXSLT;
 import org.jasig.portal.properties.PropertiesManager;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -324,22 +325,8 @@ public class XSLT {
    * Extracts name/value pairs from a Hashtable and uses them to create stylesheet parameters
    * @param transformer the XSLT processor
    * @param stylesheetParams name/value pairs used as stylesheet parameters
-   * @deprecated replaced by {@link #setStylesheetParams(Transformer, HashMap)}
    */
-  private static void setStylesheetParams(Transformer transformer, Hashtable stylesheetParams) {
-    if (stylesheetParams != null) {
-      HashMap stylesheetParamsHashMap = new HashMap();
-      stylesheetParamsHashMap.putAll(stylesheetParams);
-      setStylesheetParams(transformer, stylesheetParamsHashMap);
-    }
-  }
-
-  /**
-   * Extracts name/value pairs from a Hashtable and uses them to create stylesheet parameters
-   * @param transformer the XSLT processor
-   * @param stylesheetParams name/value pairs used as stylesheet parameters
-   */
-  private static void setStylesheetParams(Transformer transformer, HashMap stylesheetParams) {
+  private static void setStylesheetParams(Transformer transformer, Map stylesheetParams) {
     if (stylesheetParams != null) {
       Iterator iterator = stylesheetParams.keySet().iterator();
       while (iterator.hasNext()) {
