@@ -398,16 +398,6 @@ public class RDBMServices {
     }
 
     /**
-     * Close a PreparedStatement. Simply delegates the call to
-     * {@link #closeStatement(Statement)}
-     * @param pst a database PreparedStatement object
-     * @deprecated Use {@link #closeStatement(Statement)}.
-     */
-    public static void closePreparedStatement(final java.sql.PreparedStatement pst) {
-        closeStatement(pst);
-    }
-
-    /**
      * Commit pending transactions.
      * Unlike the underlying commit(), this method does not throw SQLException or
      * any other exception.  It will fail silently from the perspective of calling code,

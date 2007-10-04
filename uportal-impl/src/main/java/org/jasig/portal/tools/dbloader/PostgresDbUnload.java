@@ -119,7 +119,7 @@ public class PostgresDbUnload {
         } finally {
             RDBMServices.closeResultSet(rs);
             rs = null;
-            RDBMServices.closePreparedStatement(ps);
+            RDBMServices.closeStatement(ps);
             ps = null;
         }
         xmlOut.println("    </rows>");
