@@ -41,16 +41,4 @@ public class CachingException extends org.jasig.portal.PortalException {
     public CachingException(String msg, Throwable cause) {
         super(msg, cause);
     }
-
-    /**
-     * This method always returns zero.  Presumably it is here because at one time
-     * PortalExceptions were to be identified by integer codes.  In any case, this
-     * method does not correspond to any interface and is deprecated for future
-     * removal.
-     * @return 0
-     * @deprecated
-     */
-    public int getExceptionCode() {
-        return 0;
-    }
 }

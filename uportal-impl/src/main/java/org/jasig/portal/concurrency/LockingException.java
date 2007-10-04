@@ -17,16 +17,6 @@ package org.jasig.portal.concurrency;
 public class LockingException extends org.jasig.portal.PortalException {
     
     /**
-     * Instantiate a bare LockingException.
-     * Deprecated because it would be so much more helpful if you were to
-     * instead throw an exception that provides a message
-     * @deprecated use a more informative constructor
-     */
-    public LockingException() {
-        super();
-    }
-    
-    /**
      * Instantiate a LockingException with the given cause.
      * @param cause Throwable that caused the locking problem
      */
