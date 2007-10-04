@@ -6,7 +6,7 @@
 --%>
 
 <%@ page isErrorPage="true" %>
-<%@ page import="org.jasig.portal.services.LogService" %>
+<% org.apache.commons.logging.Log logger = org.apache.commons.logging.LogFactory.getLog("org.jasig.portal.jsp.Error"); %>
 <html>
 <head>
 <title>Portal: An error has occured</title>
@@ -17,7 +17,7 @@
 <%
 if (exception != null)
 {
-  LogService.log (LogService.ERROR, exception);
+    logger.error(exception.getMessage(), exception);
 %>
 
 <%-- Error message that user will see when an exception is thrown --%>
