@@ -14,14 +14,6 @@ import org.jasig.portal.PortalException;
  * @version $Revision$ $Date$
  */
 public class PortalSecurityException extends PortalException {
-
-    /**
-     * Instantiate a bare PortalSecurityException.
-     * @deprecated instead use a more informative constructor
-     */
-    public PortalSecurityException() {
-        super();
-    }
     
     
     /**
