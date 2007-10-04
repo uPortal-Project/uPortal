@@ -16,17 +16,6 @@ package org.jasig.portal.concurrency;
  */
 public class CachingException extends org.jasig.portal.PortalException {
     
-
-    /**
-     *  Instantiate a bare CachingException.
-     * Deprecated because it would be so much more helpful if you were to
-     * instead use a contructor with a message.
-     * @deprecated use a more helpful constructor
-     */
-    public CachingException() {
-        super();
-    }
-    
     
     /**
      * Instantiate a CachingException with the given cause.
