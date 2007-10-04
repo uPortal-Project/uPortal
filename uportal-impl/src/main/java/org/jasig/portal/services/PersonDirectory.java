@@ -6,7 +6,6 @@
 package org.jasig.portal.services;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
@@ -50,16 +49,6 @@ public class PersonDirectory {
 
     private static final String PADAO_BEAN_NAME = "personAttributeDao";
 	private static final Log log = LogFactory.getLog(PersonDirectory.class);
-
-    /**
-     * This instance variable used to contain the set of attributes mapped in
-     * PersonDir.xml.  It now is merely an empty Set.  It is no longer used by
-     * PersonDirectory and should be removed in a future release.
-     * 
-     * @deprecated you cannot get the list of attributes in the abstract, only
-     * for a particular user.
-     */
-    public static HashSet propertynames = new HashSet();
 
     /** Singleton reference to PersonDirectory */
     private static PersonDirectory instance;
