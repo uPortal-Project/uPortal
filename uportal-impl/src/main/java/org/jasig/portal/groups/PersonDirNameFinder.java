@@ -102,6 +102,7 @@ public class PersonDirNameFinder
      * @return singleton PersonDirNameFinder backed by PersonDirectory
      * @deprecated as of uP 2.5 instead use PersonDirNameFinderFactory
      */
+    @Deprecated
     public static IEntityNameFinder singleton () {
         return new PersonDirNameFinderFactory().newFinder();
     }

@@ -20,6 +20,7 @@ import org.jasig.portal.EntityIdentifier;
  * @deprecated Use instead {@link ICompositeGroupService} or
  * {@link IIndividualGroupService}
  */
+@Deprecated
 public interface IGroupService {
 
   /**

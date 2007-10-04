@@ -18,6 +18,7 @@ import java.util.Map;
  * http://www.ja-sig.org/wiki/display/UPC/Proposal+to+Deprecate+IMultithreaded+Interfaces
  */
 
+@Deprecated
 public interface IMultithreadedMimeResponse {
 
     /**

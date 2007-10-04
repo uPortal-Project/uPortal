@@ -41,14 +41,4 @@ public class LockingException extends org.jasig.portal.PortalException {
     public LockingException(String msg, Throwable cause) {
         super(msg, cause);
     }
-    
-    /**
-     * This method always returns zero.  It is deprecated and will presumably be
-     * removed in the future.
-     * @return 0
-     * @deprecated
-     */
-    public int getExceptionCode() {
-        return 0;
-    }
 }

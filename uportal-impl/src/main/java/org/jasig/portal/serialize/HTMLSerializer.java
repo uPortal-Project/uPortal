@@ -91,6 +91,7 @@ import org.xml.sax.SAXException;
  * @author <a href="mailto:arkin@intalio.com">Assaf Arkin</a>
  * @see Serializer
  */
+@Deprecated
 public class HTMLSerializer
     extends BaseMarkupSerializer implements IAnchoringSerializer
 {

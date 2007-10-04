@@ -698,6 +698,7 @@ public class RDBMServices {
      * Wrapper for/Emulator of PreparedStatement class
      * @deprecated Instead of this class a wrapper around the DataSource, Connection and Prepared statement should be done in {@link DatabaseMetaDataImpl}
      */
+    @Deprecated
     public static final class PreparedStatement {
         private String query;
         private String activeQuery;

@@ -258,6 +258,7 @@ IFolderLocalNameResolver
      * @return
      * @throws PortalException
      */
+    @Deprecated
     public Document getUserLayoutDOM()
         throws PortalException
     {

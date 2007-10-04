@@ -15,6 +15,7 @@ import org.apache.commons.logging.LogFactory;
  * @deprecated
  */
 
+@Deprecated
 public class ReferenceGroupServiceFactory implements IGroupServiceFactory {
     
     private static final Log log = LogFactory.getLog(ReferenceGroupServiceFactory.class);

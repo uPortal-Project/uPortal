@@ -21,6 +21,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
  * @version $Revision$
  * @deprecated This class is a work-around for areas in uPortal that do not have the ability to use the {@link WebApplicationContextUtils} directly.
  */
+@Deprecated
 public class PortalApplicationContextListener implements ServletContextListener {
     private static ServletContext servletContext;
 

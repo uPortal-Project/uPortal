@@ -16,6 +16,7 @@ import java.io.PrintWriter;
  * @deprecated Use the IChannel* interfaces instead or write a portlet. For more information see: 
  * http://www.ja-sig.org/wiki/display/UPC/Proposal+to+Deprecate+IMultithreaded+Interfaces
  */
+@Deprecated
 public interface IMultithreadedCharacterChannel extends IMultithreadedChannel {
     /**
      * Asks the channel to render its content as characters.

@@ -31,6 +31,7 @@ import org.apache.commons.logging.LogFactory;
  * @deprecated Use instead an {@link ICompositeGroupService}
  * implementation.
  */
+@Deprecated
 public class ReferenceGroupService implements ILockableGroupService
 {
     private static final Log log = LogFactory.getLog(ReferenceGroupService.class);

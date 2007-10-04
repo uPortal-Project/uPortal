@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
  * http://www.ja-sig.org/wiki/display/UPC/Proposal+to+Deprecate+IMultithreaded+Interfaces
 
  */
+@Deprecated
 public interface IMultithreadedDirectResponse {
     
     /**

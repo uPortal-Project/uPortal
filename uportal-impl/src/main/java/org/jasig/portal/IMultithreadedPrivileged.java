@@ -14,6 +14,7 @@ package org.jasig.portal;
  * http://www.ja-sig.org/wiki/display/UPC/Proposal+to+Deprecate+IMultithreaded+Interfaces
  */
 
+@Deprecated
 public interface IMultithreadedPrivileged {
   
 	/**

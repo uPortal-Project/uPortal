@@ -19,16 +19,6 @@ package org.jasig.portal.groups;
 public class GroupsException extends org.jasig.portal.PortalException {
     
     /**
-     *  Instantiate a bare GroupsException.
-     * Deprecated because it would be so much more helpful to use a contructor
-     * that includes a descriptive message.
-     * @deprecated use a more informative constructor
-     */
-    public GroupsException() {
-        super();
-    }
-    
-    /**
      * Instantiate a GroupsException with the given cause.
      * @param cause Throwable that caused the problem
      */
@@ -51,14 +41,5 @@ public class GroupsException extends org.jasig.portal.PortalException {
      */
     public GroupsException(String msg, Throwable cause) {
         super(msg, cause);
-    }
-
-    /**
-     * Always returns zero.
-     * @return 0
-     * @deprecated
-     */
-    public int getExceptionCode() {
-        return 0;
     }
 }
