@@ -52,12 +52,12 @@ public class GroupServiceConfiguration
 
       if (qName.equals("servicelist"))
       {
-          infoMessage("Parsing group service configuration.");
+          log.info("Parsing group service configuration.");
           parseAttributes(atts);
       }
       else if (qName.equals("service"))
       {
-        debugMessage("Parsing configuration for component service.");
+        log.debug("Parsing configuration for component service.");
         svcDescriptor = new ComponentGroupServiceDescriptor();
         for(int i=0; i<atts.getLength(); i++)
         {
@@ -73,10 +73,10 @@ public class GroupServiceConfiguration
       if (qName.equals("service"))
       {
         serviceDescriptors.add(svcDescriptor);
-        debugMessage("Parsed configuration for " + svcDescriptor.getName());
+        log.debug("Parsed configuration for " + svcDescriptor.getName());
       }
       else if (qName.equals("servicelist"))
-          { debugMessage("Done parsing group service configuration."); }
+          { log.debug("Done parsing group service configuration."); }
       else if (qName.equals("internally_managed"))
           { svcDescriptor.setInternallyManaged("TRUE".equalsIgnoreCase(val)); }
       else if (qName.equals("caching_enabled"))
@@ -97,26 +97,6 @@ public GroupServiceConfiguration()
 {
     super();
     serviceHandler = new GroupConfigurationHandler();
-}
-
-/**
- * Record a message at "Debug" level.
- * @deprecated see comment inside method
- */
-protected void debugMessage(String msg) {
-    /*
-     * This method is not in keeping with best practices.
-     * Prepending "Group services:" to the message is unnecessary because
-     * Commons Logging is capable of reporting from where the logging message
-     * originated when configured to do so.  The org.jasig.portal.groups package 
-     * in its entirety can be mapped to its own logger.
-     * Logging directly allows instutions wishing to take the performance hit of
-     * doing so to configure log4j to report from exactly what line of code
-     * each logging message originates.  Going through this method causes all
-     * such messages to appear to come from here rather than from whereever
-     * this method is being invoked from.
-     */
-    log.debug("Group services: " + msg);
 }
 /**
  *
@@ -152,27 +132,6 @@ public List getServiceDescriptors()
 {
     return serviceDescriptors;
 }
-
-/**
- * Record a message at "info" level.
- * @deprecated see comment inside method
- */
-protected void infoMessage(String msg) {
-    /*
-     * This method is not in keeping with best practices.
-     * Prepending "Group services:" to the message is unnecessary because
-     * Commons Logging is capable of reporting from where the logging message
-     * originated when configured to do so.  The org.jasig.portal.groups package 
-     * in its entirety can be mapped to its own logger.
-     * Logging directly allows instutions wishing to take the performance hit of
-     * doing so to configure log4j to report from exactly what line of code
-     * each logging message originates.  Going through this method causes all
-     * such messages to appear to come from here rather than from whereever
-     * this method is being invoked from.
-     */
-    log.info( "Group services: " + msg);
-}
-
 
 /**
  *
