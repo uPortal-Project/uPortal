@@ -255,8 +255,10 @@ public interface IUserLayoutManager {
      */
     public boolean removeLayoutEventListener(LayoutEventListener l);
 
-
-    //  This method should be removed whenever it becomes possible
+    /**
+     * @deprecated {@link #getUserLayout()} should be used instead. Direct manipulation of the DOM can cause caching problems and issues where the layout manager doesn't know about DOM changes. Read https://lists.wisc.edu/read/messages?id=2167043 for more information.
+     */
+    @Deprecated
     public Document getUserLayoutDOM() throws PortalException;
 
     /**
