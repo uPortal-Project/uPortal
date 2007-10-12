@@ -111,7 +111,7 @@
         <junit.version>3.8.1</junit.version>
         <log4j.version>1.2.14</log4j.version>
         <oro.version>2.0.8</oro.version>
-        <pluto.version>1.0.1</pluto.version>
+        <pluto.version>1.1.4</pluto.version>
         <portlet-api.version>1.0</portlet-api.version>
         <rome.version>0.8</rome.version>
         <servlet-api.version>2.4</servlet-api.version>
@@ -132,7 +132,6 @@
         <module>uportal-ear</module>
         <module>uportal-ear-deployer</module>
         <module>uportal-ant-tasks</module>
-        <module>uportal-pluto-support</module>
     </modules>
 
     <build>

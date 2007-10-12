@@ -59,14 +59,6 @@
             <type>war</type>
         </dependency>
 
-
-        <dependency>
-            <groupId>org.jasig.portal</groupId>
-            <artifactId>uportal-pluto-support</artifactId>
-            <version>${pom.parent.version}</version>
-            <scope>compile</scope>
-        </dependency>
-
         <dependency>
             <groupId>javax.portlet</groupId>
             <artifactId>portlet-api</artifactId>
@@ -74,12 +66,51 @@
             <scope>compile</scope>
         </dependency>
 
+
+
+
+
+
         <dependency>
             <groupId>org.apache.pluto</groupId>
-            <artifactId>pluto</artifactId>
+            <artifactId>pluto-container</artifactId>
+            <version>${pluto.version}</version>
+            <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.pluto</groupId>
+            <artifactId>pluto-descriptor-api</artifactId>
             <version>${pluto.version}</version>
             <scope>compile</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.pluto</groupId>
+            <artifactId>pluto-descriptor-impl</artifactId>
+            <version>${pluto.version}</version>
+            <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.pluto</groupId>
+            <artifactId>pluto-taglib</artifactId>
+            <version>${pluto.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        
 
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -150,18 +181,28 @@
 
 
                         <jarModule>
-                            <groupId>org.jasig.portal</groupId>
-                            <artifactId>uportal-pluto-support</artifactId>
-                            <bundleDir>shared</bundleDir>
-                        </jarModule>
-                        <jarModule>
                             <groupId>javax.portlet</groupId>
                             <artifactId>portlet-api</artifactId>
                             <bundleDir>shared</bundleDir>
                         </jarModule>
                         <jarModule>
                             <groupId>org.apache.pluto</groupId>
-                            <artifactId>pluto</artifactId>
+                            <artifactId>pluto-container</artifactId>
+                            <bundleDir>shared</bundleDir>
+                        </jarModule>
+                        <jarModule>
+                            <groupId>org.apache.pluto</groupId>
+                            <artifactId>pluto-descriptor-api</artifactId>
+                            <bundleDir>shared</bundleDir>
+                        </jarModule>
+                        <jarModule>
+                            <groupId>org.apache.pluto</groupId>
+                            <artifactId>pluto-descriptor-impl</artifactId>
+                            <bundleDir>shared</bundleDir>
+                        </jarModule>
+                        <jarModule>
+                            <groupId>org.apache.pluto</groupId>
+                            <artifactId>pluto-taglib</artifactId>
                             <bundleDir>shared</bundleDir>
                         </jarModule>
                         <jarModule>

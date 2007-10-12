@@ -5,7 +5,6 @@
 
 package org.jasig.portal;
 
-import org.apache.pluto.om.common.PreferenceSet;
 
 /**
  * The IPortletPreferenceStore allows a portlet to atomicly persist preferences at two

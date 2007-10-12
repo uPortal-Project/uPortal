@@ -279,7 +279,34 @@
 
         <dependency>
             <groupId>org.apache.pluto</groupId>
-            <artifactId>pluto</artifactId>
+            <artifactId>pluto-container</artifactId>
+            <version>${pluto.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.pluto</groupId>
+            <artifactId>pluto-descriptor-api</artifactId>
+            <version>${pluto.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.pluto</groupId>
+            <artifactId>pluto-descriptor-impl</artifactId>
+            <version>${pluto.version}</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>xerces</groupId>
+                    <artifactId>xmlParserAPIs</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.pluto</groupId>
+            <artifactId>pluto-taglib</artifactId>
             <version>${pluto.version}</version>
             <scope>provided</scope>
         </dependency>
