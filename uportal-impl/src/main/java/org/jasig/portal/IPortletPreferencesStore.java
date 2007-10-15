@@ -26,7 +26,7 @@ public interface IPortletPreferencesStore {
      * @param prefs The PreferenceSet which describes the data to store.
      * @throws Exception If any error occurs while storing the data.
      */
-    public abstract void setDefinitionPreferences(final int chanId, final PreferenceSet prefs) throws Exception;
+//    public abstract void setDefinitionPreferences(final int chanId, final PreferenceSet prefs) throws Exception;
     
     /**
      * Gets the definition level preferences for the specified channel into an
@@ -36,7 +36,7 @@ public interface IPortletPreferencesStore {
      * @return An implementation of the PreferenceSet interface that contains the preferences.
      * @throws Exception If any error occurs while getting the data.
      */
-    public abstract PreferenceSet getDefinitionPreferences(final int chanId) throws Exception;
+//    public abstract PreferenceSet getDefinitionPreferences(final int chanId) throws Exception;
     
     /**
      * Stores the entity level preferences described by the PreferenceSet 
@@ -52,7 +52,7 @@ public interface IPortletPreferencesStore {
      * @param prefs The PreferenceSet which describes the data to store.
      * @throws Exception If any error occurs while storing the data.
      */
-    public abstract void setEntityPreferences(final int userId, final int layoutId, final String chanDescId, final PreferenceSet prefs) throws Exception;
+//    public abstract void setEntityPreferences(final int userId, final int layoutId, final String chanDescId, final PreferenceSet prefs) throws Exception;
 
     /**
      * Gets the enitity level preferences for the specified channel into an
@@ -65,7 +65,7 @@ public interface IPortletPreferencesStore {
      * @return An implementation of the PreferenceSet interface that contains the preferences.
      * @throws Exception If any error occurs while getting the data.
      */
-    public abstract PreferenceSet getEntityPreferences(final int userId, final int layoutId, final String chanDescId) throws Exception;
+//    public abstract PreferenceSet getEntityPreferences(final int userId, final int layoutId, final String chanDescId) throws Exception;
     
     /**
      * Removes all portlet preferences stored for the specified user.
@@ -73,7 +73,7 @@ public interface IPortletPreferencesStore {
      * @param userId The id of the user to remove the preferences for.
      * @throws Exception If any error occurs while removing the data.
      */
-    public abstract void deletePortletPreferencesByUser(int userId) throws Exception;
+//    public abstract void deletePortletPreferencesByUser(int userId) throws Exception;
     
     /**
      * Removes portlet preferences for the specific user and instance of a portlet.
@@ -83,5 +83,5 @@ public interface IPortletPreferencesStore {
      * @param chanDescId The structure id to remove the preferences for.
      * @throws Exception If any error occurs while removing the data.
      */
-    public abstract void deletePortletPreferencesByInstance(final int userId, final int layoutId, final String chanDescId) throws Exception;
+//    public abstract void deletePortletPreferencesByInstance(final int userId, final int layoutId, final String chanDescId) throws Exception;
 }

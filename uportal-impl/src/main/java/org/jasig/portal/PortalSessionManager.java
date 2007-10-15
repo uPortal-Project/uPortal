@@ -26,7 +26,6 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.channels.portlet.CPortletAdapter;
 import org.jasig.portal.jndi.JNDIManager;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPermission;
@@ -120,8 +119,8 @@ public void init() throws ServletException {
         throw new ServletException("PortalSessionManager.init(): ServletConfig object was returned as null");
       }
 
-      // Supply PortletContainer with ServletConfig
-      CPortletAdapter.setServletConfig(sc);
+//      // Supply PortletContainer with ServletConfig
+//      CPortletAdapter.setServletConfig(sc);
 
       servletContext = sc.getServletContext();
 

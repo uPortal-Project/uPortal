@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beansProjectDescription>
+	<configExtensions>
+		<configExtension>xml</configExtension>
+	</configExtensions>
+	<configs>
+		<config>uportal-impl/src/main/resources/properties/contexts/applicationContext.xml</config>
+		<config>uportal-impl/src/main/resources/properties/contexts/cacheContext.xml</config>
+		<config>uportal-impl/src/main/resources/properties/contexts/checksContext.xml</config>
+		<config>uportal-impl/src/main/resources/properties/contexts/dlmContext.xml</config>
+		<config>uportal-impl/src/main/resources/properties/contexts/jmxContext.xml</config>
+		<config>uportal-impl/src/main/resources/properties/contexts/personDirectory.xml</config>
+		<config>uportal-impl/src/main/resources/properties/contexts/portletContainerContext.xml</config>
+		<config>uportal-impl/src/main/resources/properties/contexts/statsContext.xml</config>
+	</configs>
+	<configSets>
+		<configSet>
+			<name><![CDATA[webApplicationContext]]></name>
+			<allowBeanDefinitionOverriding>true</allowBeanDefinitionOverriding>
+			<incomplete>false</incomplete>
+			<configs>
+				<config>uportal-impl/src/main/resources/properties/contexts/applicationContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/cacheContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/checksContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/dlmContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/jmxContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/personDirectory.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/portletContainerContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/statsContext.xml</config>
+			</configs>
+		</configSet>
+	</configSets>
+</beansProjectDescription>

@@ -28,7 +28,6 @@ import javax.xml.transform.sax.TransformerHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.car.CarResources;
-import org.jasig.portal.container.services.information.PortletStateManager;
 import org.jasig.portal.events.EventPublisherLocator;
 import org.jasig.portal.events.support.UserSessionCreatedPortalEvent;
 import org.jasig.portal.events.support.UserSessionDestroyedPortalEvent;
@@ -201,19 +200,19 @@ public class UserInstance implements HttpSessionBindingListener {
      * @param res the http servlet response
      */
     protected boolean processPortletActionIfNecessary(HttpServletRequest req, HttpServletResponse res) {
-        if (this.channelManager != null) {
-            boolean isPortletAction = (new Boolean(req.getParameter(PortletStateManager.ACTION))).booleanValue();
-            if (isPortletAction) {
-                try {
-                    this.channelManager.startRenderingCycle(req, res, new UPFileSpec(req));
-                }
-                finally {
-                    this.channelManager.finishedRenderingCycle();
-                }
-            }
-
-            return isPortletAction;
-        }
+//        if (this.channelManager != null) {
+//            boolean isPortletAction = (new Boolean(req.getParameter(PortletStateManager.ACTION))).booleanValue();
+//            if (isPortletAction) {
+//                try {
+//                    this.channelManager.startRenderingCycle(req, res, new UPFileSpec(req));
+//                }
+//                finally {
+//                    this.channelManager.finishedRenderingCycle();
+//                }
+//            }
+//
+//            return isPortletAction;
+//        }
 
         return false;
     }

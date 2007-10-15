@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
 import org.apache.commons.collections.iterators.IteratorEnumeration;
-import org.jasig.portal.container.services.information.PortletStateManager;
 import org.jasig.portal.properties.PropertiesManager;
 
 import com.oreilly.servlet.multipart.FilePart;
@@ -57,8 +56,9 @@ implements IRequestParamWrapper {
         
         // only bother with parameter work if should be accessable
         if (request_verified) {
-            //Determine if this is a request for a portlet
-            boolean isPortletRequest = source.getParameterMap().containsKey(PortletStateManager.ACTION);
+//            //Determine if this is a request for a portlet
+//            boolean isPortletRequest = source.getParameterMap().containsKey(PortletStateManager.ACTION);
+            boolean isPortletRequest = false;
                         
             // parse request body
             String contentType = source.getContentType();

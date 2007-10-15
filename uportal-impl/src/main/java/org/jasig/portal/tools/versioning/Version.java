@@ -189,13 +189,6 @@ public class Version
      * @return a String representing the dotted triple version
      */
     public String dottedTriple() {
-        StringBuffer sb = new StringBuffer();
-        sb.append(this.major);
-        sb.append(".");
-        sb.append(this.minor);
-        sb.append(".");
-        sb.append(this.micro);
-        return sb.toString();
-
+        return this.major + "." + this.minor + "." + this.micro;
     }
 }
