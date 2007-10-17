@@ -1,7 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd"
->
-    <bean id="requiredContainerServices" class="org.jasig.portal.portlet.container.services.RequiredContainerServicesImpl">
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <bean id="requiredContainerServices"
+        class="org.jasig.portal.portlet.container.services.RequiredContainerServicesImpl">
+        <property name="portalContext" ref="portalContext" />
+        <property name="portalCallbackService" ref="portalCallbackService" />
+    </bean>
+
+    <bean id="portalContext" class="org.jasig.portal.portlet.container.PortalContextImpl">
+        <property name="windowStates">
+            <set value-type="javax.portlet.WindowState">
+                <value>MINIMIZED</value>
+                <value>NORMAL</value>
+                <value>MAXIMIZED</value>
+                <value>EXCLUSIVE</value>
+            </set>
+        </property>
+        <property name="portletModes">
+            <set value-type="javax.portlet.PortletMode">
+                <value>VIEW</value>
+                <value>EDIT</value>
+                <value>HELP</value>
+            </set>
+        </property>
+    </bean>
+
+    <bean id="portalCallbackService" class="org.jasig.portal.portlet.container.services.PortalCallbackServiceImpl">
+        <property name="requestPropertiesManager" ref="requestPropertiesManager" />
+    </bean>
+
+    <bean id="requestPropertiesManager" class="org.jasig.portal.portlet.container.properties.RequestPropertiesManagerBroker">
+        <property name="propertiesManagers">
+            <list value-type="org.jasig.portal.portlet.container.properties.IRequestPropertiesManager">
+                <bean class="org.jasig.portal.portlet.container.properties.HttpRequestPropertiesManager" />
+                <bean class="org.jasig.portal.portlet.container.properties.CacheRequestPropertiesManager" />
+            </list>
+        </property>
     </bean>
 </beans>
