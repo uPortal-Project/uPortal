@@ -23,18 +23,24 @@ import org.jasig.portal.services.HttpClientManager;
 import org.jasig.portal.utils.CommonUtils;
 
 /**
- * This Class allows appending PROXY_REWRITE_PREFIX String in front of all the references to images, javascript files, etc..
- * that are on a remote location. This allows the browser while portal is running in https assume that these resources
- * are secure resources(are referenced by https rather than http). This is because the resource URI insteadof
- * http://www.abc.com/image.gif will be rewriten as as https://[portal address]/PROXY_REWRITE_PREFIX/www.abc.com/image.gif
- * This class does the proxy rewrite in the following exceptional situations as well:
- * 1. If the return code poting to the image is 3XX (the image refrence, refrences is a mapping to a diffrent location)
- *    In this case the final destination iddress n which the image or the resource is located is e
- *    and then the rewrite points to this location.
- * 2. If the content of a channel is an include javascript file the file is rewriten to a location on a local virtual host
- *    and at the same time the image or other resources references are rewritten.
- *HttpURLConnection.HTTP_MOVED_PERM
- *
+ * Appends PROXY_REWRITE_PREFIX string in front of all the references to images
+ * that are on a remote location that start with http://. This allows the
+ * browser to load the resources without triggering a warning about mixed
+ * content. For example instead of http://www.abc.com/image.gif the URI will be
+ * rewritten to https://[portaladdress]/PROXY_REWRITE_PREFIX/www.abc.com/image.gif
+ * 
+ * This class also does the proxy rewrite in the following exceptional situations:
+ * 
+ * 1. If the return code pointing to the image is 3XX (the image reference,
+ * references is a mapping to a different location) In this case the final
+ * destination address in which the image or the resource is located is e and
+ * then the rewrite points to this location.
+ * 
+ * 2. If the content of a channel is an include javascript file the file is
+ * rewritten to a location on a local virtual host and at the same time the
+ * image or other resources references are rewritten.
+ * HttpURLConnection.HTTP_MOVED_PERM
+ * 
  * @author <a href="mailto:kazemnaderi@yahoo.ca">Kazem Naderi</a>
  * @version $Revision$
  * @since uPortal 2.2
@@ -50,11 +56,10 @@ public class ProxyWriter {
 	protected boolean _proxying;
 
 	/**
-	 * The list of elemnets which src attribute is rewritten with proxy.
+	 * The list of elements which src attribute is rewritten with proxy.
 	 */
-//    private static final String[] _proxiableElements = { "image", "img",
-//        "script", "input", "applet", "iframe" };
-//    Only image content should be proxied	
+	
+	//    Only image content should be proxied	
     private static final String[] _proxiableElements = { "image", "img", "input"};
 
 	/*
@@ -88,7 +93,7 @@ public class ProxyWriter {
 			.getProperty("org.jasig.portal.serialize.ProxyWriter.no_redirect_domain");
 
 	/**
-	 * Examines whther or not the proxying should be done and if so handles differnt situations by delegating
+	 * Examines whether or not the proxying should be done and if so handles different situations by delegating
 	 * the rewrite to other methods n the class.
 	 * @param name
 	 * @param localName
@@ -107,10 +112,11 @@ public class ProxyWriter {
 			final String skip_protocol = url.substring(7);
 			final String domain_only = skip_protocol.substring(0, skip_protocol.indexOf("/"));
 			/**
-			 * Capture 3xx return codes - specifically, if 301/302, then go to the
-			 * redirected url - note, this in turn may also be redirected. Note - do as
-			 * little network connecting as possible. So as a start, assume "ubc.ca"
-			 * domain images will not be redirected so skip these ones.
+			 * Capture 3xx return codes - specifically, if 301/302, then go to
+			 * the redirected URL - note, this in turn may also be redirected.
+			 * Note - do as little network connecting as possible. So as a
+			 * start, assume PROXY_REWRITE_NO_REDIRECT_DOMAIN domain images will
+			 * not be redirected, so skip these ones.
 			 */
 			if (PROXY_REWRITE_NO_REDIRECT_DOMAIN.length() == 0
 					|| !domain_only.endsWith(PROXY_REWRITE_NO_REDIRECT_DOMAIN)) {
@@ -124,7 +130,7 @@ public class ProxyWriter {
 						if (responseCode != HttpStatus.SC_MOVED_PERMANENTLY
 								&& responseCode != HttpStatus.SC_MOVED_TEMPORARILY) {
 							// if there is a script element with a src attribute
-							// the src should be rewriten
+							// the src should be rewritten
 							if (localName.equalsIgnoreCase("script")) {
 								return reWrite(work_url, get);
 							} else {
@@ -167,8 +173,9 @@ public class ProxyWriter {
 	}
 
 	/**
-	 * This method rewrites include javascript files and replaces the refrences in these files
+	 * This method rewrites included javascript files and replaces the references in these files
 	 * to images' sources to use proxy.
+	 * 
 	 * @param scriptUri: The string representing the address of script
 	 * @return value: The new address of the script file which image sources have been rewritten
 	 */
@@ -230,7 +237,7 @@ public class ProxyWriter {
 	}
 
 	/**
-	 * This method uses a URI and creates an html file name by simply omiting some characters from the URI.
+	 * This method uses a URI and creates an HTML file name by simply omitting some characters from the URI.
 	 * The purpose of using the address for the file name is that the file names will be unique and map to addresses.
 	 * @param addr: is the address of the file
 	 * @newName: is the name built form the address
@@ -247,7 +254,7 @@ public class ProxyWriter {
 	}
 
 	/**
-	 * This method parses a line recursivley and replaces all occurances of image references
+	 * This method parses a line recursively and replaces all occurrences of image references
 	 * with a proxied reference.
 	 * @param line - is the portion of the line or the whole line to be processed.
 	 * @return line - is the portion of the line or the line that has been processed.
@@ -275,7 +282,7 @@ public class ProxyWriter {
 
 	/**
 	 *
-	 * This method takes a String (line) and parses out the value of  src attribute
+	 * This method takes a String (line) and parses out the value of src attribute
 	 * in that string.
 	 * @param line - String
 	 * @return srcValue - String
