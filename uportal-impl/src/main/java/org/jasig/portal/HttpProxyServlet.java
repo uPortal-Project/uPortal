@@ -79,7 +79,13 @@ public class HttpProxyServlet extends HttpServlet {
     			response.setStatus(404);
     			return;
     		}
-
+        }
+        else /* referer is null so don't return element */{
+            if (log.isWarnEnabled()) {
+                log.warn("HttpProxyServlet: bad Referer: " + referer);
+            }
+            response.setStatus(404);
+            return;
         }
 	}
 
