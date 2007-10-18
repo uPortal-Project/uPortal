@@ -109,5 +109,6 @@ public class PortalCallbackServiceImpl implements PortalCallbackService {
     public void setTitle(HttpServletRequest request, PortletWindow plutoPortletWindow, String title) {
         //This is called by the portlet if RenderResponse#setTitle(String) is called.
         // TODO determine how to tie this into uPortal channel title rendering
+        throw new UnsupportedOperationException("Dynamic portlet titles are not yet supported");
     }
 }
