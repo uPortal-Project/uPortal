@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
+>
 
     <parent>
         <groupId>org.jasig.portal</groupId>
@@ -13,7 +13,7 @@
     <groupId>org.jasig.portal</groupId>
     <artifactId>uportal-war</artifactId>
     <packaging>war</packaging>
-    
+
     <name>uPortal WAR</name>
     <description>The uPortal web application.</description>
 
@@ -25,16 +25,16 @@
             <version>${pom.parent.version}</version>
             <scope>compile</scope>
         </dependency>
-        
+
         <!-- ===== Provided Dependencies ================================== -->
-        
+
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>jstl</artifactId>
             <version>${jstl.version}</version>
             <scope>provided</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>taglibs</groupId>
             <artifactId>standard</artifactId>
@@ -42,7 +42,7 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
-    
+
     <build>
         <finalName>uPortal</finalName>
         <filters>
@@ -54,7 +54,9 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
-                    <containerConfigXML>${basedir}/src/main/webapp/META-INF/context.xml</containerConfigXML>
+                    <archiver>
+                        <manifest_entry>value</manifest_entry>
+                    </archiver>
                     <webResources>
                         <resource>
                             <filtering>true</filtering>
@@ -62,7 +64,7 @@
                             <includes>
                                 <include>META-INF/context.xml</include>
                             </includes>
-                        </resource> 
+                        </resource>
                     </webResources>
                 </configuration>
             </plugin>
