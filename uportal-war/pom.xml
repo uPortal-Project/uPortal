@@ -54,9 +54,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
-                    <archiver>
-                        <manifest_entry>value</manifest_entry>
-                    </archiver>
                     <webResources>
                         <resource>
                             <filtering>true</filtering>
