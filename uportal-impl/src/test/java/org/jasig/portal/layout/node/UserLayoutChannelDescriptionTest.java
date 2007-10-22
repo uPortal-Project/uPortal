@@ -7,6 +7,8 @@ package org.jasig.portal.layout.node;
 
 import junit.framework.TestCase;
 
+import org.jasig.portal.PortalControlStructures;
+import org.jasig.portal.PortalException;
 import org.jasig.portal.channels.BaseChannel;
 import org.jasig.portal.channels.error.CError;
 import org.jasig.portal.channels.portlet.IPortletAdaptor;
@@ -58,7 +60,14 @@ public class UserLayoutChannelDescriptionTest extends TestCase {
 	private class AnotherPortletAdaptor 
 		extends BaseChannel 
 		implements IPortletAdaptor {
-		
+
+        /* (non-Javadoc)
+         * @see org.jasig.portal.IPrivileged#setPortalControlStructures(org.jasig.portal.PortalControlStructures)
+         */
+        public void setPortalControlStructures(PortalControlStructures pcs) throws PortalException {
+            // TODO Auto-generated method stub
+            
+        }
 	}
 	
 	

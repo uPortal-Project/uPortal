@@ -311,13 +311,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.jasig.portal</groupId>
-            <artifactId>uportal-pluto-support</artifactId>
-            <version>${pom.parent.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
         <!-- ===== Test Dependencies ====================================== -->
 
         <dependency>

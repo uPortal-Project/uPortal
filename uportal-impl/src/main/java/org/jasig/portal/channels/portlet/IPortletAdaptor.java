@@ -5,6 +5,8 @@
 
 package org.jasig.portal.channels.portlet;
 
+import org.jasig.portal.IPrivilegedChannel;
+
 /**
  * Marker interface for IChannels to communicate that they wish to be treated
  * in the ways we treat JSR-168 portlets being rendered via IChannels.  This
@@ -15,7 +17,7 @@ package org.jasig.portal.channels.portlet;
  * 
  * @since uPortal 2.5
  */
-public interface IPortletAdaptor {
+public interface IPortletAdaptor extends IPrivilegedChannel {
     
     // this marker interface declares no methods.
 
