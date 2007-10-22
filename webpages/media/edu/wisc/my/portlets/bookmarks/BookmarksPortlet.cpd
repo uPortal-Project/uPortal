@@ -67,6 +67,18 @@ Author: Andrew Petro, apetro@unicon.net
         <example>personalBookmarks</example>
         <description>String identifying the bookmarks set.  Each bookmarks instance subscribed by a user manages the per-user bookmarks set of the specified name, which might be shared with other bookmarks portlet instances subscribed by that same user, and which will be created on demand the first time a given identifier is used by a given user.</description>
       </parameter>
+      
+      <parameter modify="publish-only">
+        <name>portletDefinitionId</name>
+        <label>Portlet Definition ID (should be hidden)</label>
+        <type base="string" input="text" display="hidden">
+          <!-- length and maxlength for text field -->
+          <length>80</length>
+          <maxlength>255</maxlength>
+        </type>
+        <example>BookmarksPortlet.BookmarksPortlet</example>
+        <defaultValue>BookmarksPortlet.BookmarksPortlet</defaultValue>
+      </parameter>
 
     </step>
   </params>
