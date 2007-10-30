@@ -227,6 +227,25 @@ public class UserInstance implements HttpSessionBindingListener {
      * @exception PortalException if an error occurs
      */
     public void renderState (HttpServletRequest req, HttpServletResponse res, ChannelManager channelManager, LocaleManager localeManager, IUserPreferencesManager upm, Object rendering_lock) throws PortalException {
+        /* TODO
+         * 
+         * Pull IRequestParameterController from WebAppCtx
+         * 
+         * Use IRequestParameterController to parse request/response
+         *  1. portlet URL parsing
+         *  2. layout URL parsing
+         *  3. Does ChannelManager.processRequestChannelParameters get moved into a parameter processor?
+         *  
+         *  PortletWindowManager can store parameters on request via some sort of manager.setParams(req, params)
+         *  
+         * Determine if URL is an action request
+         * -determine targeted channel id
+         * -if of correct interface type execute action then redirect
+         * 
+         * can use response.isCommited to see if rendering should continue
+         */
+        
+        
         uPreferencesManager = upm;
         // process possible worker dispatch
         if(!processWorkerDispatch(req,res,channelManager)) {
