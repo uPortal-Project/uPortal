@@ -232,17 +232,17 @@ public class UserInstance implements HttpSessionBindingListener {
          * Pull IRequestParameterController from WebAppCtx
          * 
          * Use IRequestParameterController to parse request/response
-         *  1. portlet URL parsing
-         *  2. layout URL parsing
-         *  3. Does ChannelManager.processRequestChannelParameters get moved into a parameter processor?
+         *  1. uPFile parsing
+         *  2. portlet URL parsing
+         *  3. layout URL parsing
+         *  4. channel parameter parsing
          *  
-         *  PortletWindowManager can store parameters on request via some sort of manager.setParams(req, params)
-         *  
-         * Determine if URL is an action request
-         * -determine targeted channel id
-         * -if of correct interface type execute action then redirect
+         * store parsed data via singleton service APIs like void:foo.store(req, data), provide retreival via data:food.get(req)
+         * move ChannelManager.processRequestChannelParameters into url processor, get at data during startRenderingcycle via singleton service
          * 
-         * can use response.isCommited to see if rendering should continue
+         * After URL parsing use service data to check for an action, use ChannelManager to execute the action phase for a channel
+         * 
+         * If no action continue with rendering
          */
         
         
