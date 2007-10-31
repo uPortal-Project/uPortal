@@ -275,6 +275,13 @@ public void destroy()	 {
 
                 //TODO add parameter processing here
                 final WebApplicationContext webApplicationContext = PortalApplicationContextListener.getRequiredWebApplicationContext();
+                /*
+                 * request verification/upfile
+                 * portlet param 
+                 * file upload 
+                 * channel param 
+                 * layout param 
+                 */
                 
                 
                 final RequestParamWrapper wrappedRequest = new RequestParamWrapper(req, request_verified);
