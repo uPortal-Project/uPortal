@@ -3,127 +3,117 @@
  * available online at http://www.uportal.org/license.html
  */
 
-
 package org.jasig.portal.url.processing;
 
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.Validate;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.url.IWritableHttpServletRequest;
 
 /**
- * RequestParameterProcessorListController is a controller that manages an internal set of {@link org.jasig.portal.url.IRequestParameterProcessor}s.
- * The internal processors are invoked in the specified order, possibly multiple times per request round.
- * It also gathers url constructor references from the url contructor providers and contains internal {@link javax.portlet.PortletURL} implementation.
- *
- * @author Peter Kharchenko: pkharchenko at unicon.net
+ * Manages execution of {@link IDynamicRequestParameterProcessor}s and {@link IStaticRequestParameterProcessor}s.
+ * 
+ * @author Eric Dalquist
  * @version $Revision: 11918 $
  */
 public class RequestParameterProcessorListController implements IRequestParameterController {
-    protected List processors=Collections.EMPTY_LIST;
-    protected List urlDecorators=Collections.EMPTY_LIST;
-    protected IUrlConstructorProviderFactoryService constructorConfiguration=new UrlConstructorProviderFactoryServiceImpl(Collections.EMPTY_SET);
-    protected IUrlConstructorProviderFactoryServiceAccessor constructorProviderFactoryServiceAccessor;
-    protected IUrlDecoratorListAccessor urlDecoratorListAccessor;
+    protected final Log logger = LogFactory.getLog(this.getClass());
     
-    
-    protected int maxNumberOfProcessingCycles=10;
-        
-    public void processParameters(IWritableHttpServletRequest req, HttpServletResponse res) {
-        int ncycles=0;
-        List incompleteEvaluatingProcessors=new LinkedList();
-        List incompletePlainProcessors=new LinkedList();
-        
-        // associate url constructor configuration with the current request
-        constructorProviderFactoryServiceAccessor.setUrlConstructorProviderFactoryService(constructorConfiguration,req);
-        // associate url decorators with the current request
-        urlDecoratorListAccessor.setUrlDecoratorList(urlDecorators,req);
-        
-        for (Iterator iter = processors.iterator(); iter.hasNext();) {
-            IRequestParameterProcessor processor = (IRequestParameterProcessor) iter.next();
-            if(processor.canEvaluateVariables()) {
-                incompleteEvaluatingProcessors.add(processor);
-            } else {
-                incompletePlainProcessors.add(processor);
-            }           
-        }
-        // go through evaluating processors
-        while((!incompleteEvaluatingProcessors.isEmpty()) && ncycles<=maxNumberOfProcessingCycles) {
-            List updatedIncompleteControllers=new LinkedList();
-            for (Iterator iter = incompleteEvaluatingProcessors.iterator(); iter.hasNext();) {
-                IRequestParameterProcessor processor = (IRequestParameterProcessor) iter.next();
-                if(!processor.processParameters(req,res)) {
-                    updatedIncompleteControllers.add(processor);
-                }
-            }
-            incompleteEvaluatingProcessors=updatedIncompleteControllers;
-        }
-        
-        if(!incompleteEvaluatingProcessors.isEmpty()) {
-            throw new PortalRuntimeException("unable to process request parameters within "+Integer.toString(maxNumberOfProcessingCycles)+" URL parameter processing cycles");
-        }
-        
-        // go through plain (non-evaluating processors)
-        // one pass is sufficient here
-        for (Iterator iter = incompletePlainProcessors.iterator(); iter.hasNext();) {
-            IRequestParameterProcessor processor = (IRequestParameterProcessor) iter.next();
-            processor.processParameters(req,res);
-        }
-    }
+    private List<IStaticRequestParameterProcessor> staticRequestParameterProcessors = Collections.emptyList();
+    private List<IDynamicRequestParameterProcessor> dynamicRequestParameterProcessors = Collections.emptyList();
+    private int maxNumberOfProcessingCycles = 10;
 
     /**
-     * Set an ordered list of {@link IRequestParameterProcessor}s for this context.
-     * @param controllers the list of controllers
+     * @return the staticRequestParameterProcessors
      */
-    public void setProcessors(List controllers) {
-        this.processors = controllers;
+    public List<IStaticRequestParameterProcessor> getStaticRequestParameterProcessors() {
+        return staticRequestParameterProcessors;
     }
-    
     /**
-     * Set an ordered list of {@link IUrlDecorator}s for this context. 
-     * @param decorators
+     * @param staticRequestParameterProcessors the staticRequestParameterProcessors to set
+     * @throws IllegalArgumentException if the List is null or contains null elements
      */
-    public void setUrlDecorators(List decorators) {
-        //TODO: configuration check
-        this.urlDecorators=decorators;
+    public void setStaticRequestParameterProcessors(List<IStaticRequestParameterProcessor> staticRequestParameterProcessors) {
+        Validate.notNull(staticRequestParameterProcessors, "IStaticRequestParameterProcessor List can not be null");
+        Validate.noNullElements(staticRequestParameterProcessors, "IStaticRequestParameterProcessor List can not contain a null element");
+        
+        this.staticRequestParameterProcessors = staticRequestParameterProcessors;
     }
-    
     /**
-     * @param constructorConfiguration a list of url constructors for the current context
+     * @return the dynamicRequestParameterProcessors
      */
-    public void setUrlConstructorProviders(Set providers) {
-    	constructorConfiguration = new UrlConstructorProviderFactoryServiceImpl(providers);
+    public List<IDynamicRequestParameterProcessor> getDynamicRequestParameterProcessors() {
+        return dynamicRequestParameterProcessors;
     }
-
-    public void init(ServletConfig arg0, Map arg1) throws Exception {}
-
-    public void destroy() throws Exception {}
-
+    /**
+     * @param dynamicRequestParameterProcessors the dynamicRequestParameterProcessors to set
+     * @throws IllegalArgumentException if the List is null or contains null elements
+     */
+    public void setDynamicRequestParameterProcessors(List<IDynamicRequestParameterProcessor> dynamicRequestParameterProcessors) {
+        Validate.notNull(dynamicRequestParameterProcessors, "IDynamicRequestParameterProcessor List can not be null");
+        Validate.noNullElements(dynamicRequestParameterProcessors, "IDynamicRequestParameterProcessor List can not contain a null element");
+        
+        this.dynamicRequestParameterProcessors = dynamicRequestParameterProcessors;
+    }
+    /**
+     * @return the maxNumberOfProcessingCycles
+     */
+    public int getMaxNumberOfProcessingCycles() {
+        return maxNumberOfProcessingCycles;
+    }
     /**
      * Set the max number of round-robin cycles on the controller list after which, if there
-     * are still unfinished controllers the procedure is interrupted.
+     * are still unfinished controllers the procedure is interrupted and a warning is logged,
+     * execution will continue though. 
+     * 
      * @param maxNumberOfProcessingCycles The maxNumberOfProcessingCycles to set.
      */
     public void setMaxNumberOfProcessingCycles(int maxNumberOfProcessingCycles) {
         this.maxNumberOfProcessingCycles = maxNumberOfProcessingCycles;
     }
+
+
     /**
-     * @param constructorProviderFactoryServiceAccessor The constructorProviderFactoryServiceAccessor to set.
+     * Process the request first with the dynamic processors until all are complete and then the static processors.
+     * 
+     * @see org.jasig.portal.url.processing.IRequestParameterController#processParameters(org.jasig.portal.url.IWritableHttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
-    public void setConstructorProviderFactoryServiceAccessor(IUrlConstructorProviderFactoryServiceAccessor constructorProviderFactoryServiceAccessor) {
-        this.constructorProviderFactoryServiceAccessor = constructorProviderFactoryServiceAccessor;
-    }
-    /**
-     * @param urlDecoratorListAccessor The urlDecoratorListAccessor to set.
-     */
-    public void setUrlDecoratorListAccessor(IUrlDecoratorListAccessor urlDecoratorListAccessor) {
-        this.urlDecoratorListAccessor = urlDecoratorListAccessor;
+    public void processParameters(IWritableHttpServletRequest req, HttpServletResponse res) {
+        final List<IDynamicRequestParameterProcessor> incompleteDynamicProcessors = new LinkedList<IDynamicRequestParameterProcessor>(this.dynamicRequestParameterProcessors);
+
+        //Loop while there are still dynamic processors to execute
+        int cycles = 0;
+        while (incompleteDynamicProcessors.size() > 0) {
+            //Run all dynamic processors that are not yet complete
+            for (final Iterator<IDynamicRequestParameterProcessor> processorItr = incompleteDynamicProcessors.iterator(); processorItr.hasNext(); ) {
+                final IDynamicRequestParameterProcessor requestParameterProcessor = processorItr.next();
+
+                //If a dynamic processor completes remove it from the list.
+                final boolean complete = requestParameterProcessor.processParameters(req, res);
+                if (complete) {
+                    processorItr.remove();
+                }
+            }
+            
+            cycles++;
+            
+            //If the max cycle count is reached log a warning and break out of the dynamic processing loop
+            if (cycles >= this.maxNumberOfProcessingCycles) {
+                this.logger.warn(incompleteDynamicProcessors.size() + " IDynamicRequestParameterProcessors did not completel processing after " + cycles + " attempts. Execution will continue but this situation should be reviewed. Incomplete Processors=" + incompleteDynamicProcessors, new Throwable("Stack Trace"));
+                break;
+            }
+        }
+        
+        //Run all static processors
+        for (final IStaticRequestParameterProcessor requestParameterProcessor : this.staticRequestParameterProcessors) {
+            requestParameterProcessor.processParameters(req, res);
+        }
     }
 }

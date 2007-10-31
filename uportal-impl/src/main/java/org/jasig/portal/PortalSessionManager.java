@@ -32,9 +32,11 @@ import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.security.PersonManagerFactory;
+import org.jasig.portal.spring.PortalApplicationContextListener;
 import org.jasig.portal.tools.versioning.Version;
 import org.jasig.portal.tools.versioning.VersionsManager;
 import org.jasig.portal.utils.ResourceLoader;
+import org.springframework.web.context.WebApplicationContext;
 
 /**
  * This is an entry point into the uPortal.
@@ -271,6 +273,10 @@ public void destroy()	 {
                   return;
                 }
 
+                //TODO add parameter processing here
+                final WebApplicationContext webApplicationContext = PortalApplicationContextListener.getRequiredWebApplicationContext();
+                
+                
                 final RequestParamWrapper wrappedRequest = new RequestParamWrapper(req, request_verified);
 
                 // fire away
