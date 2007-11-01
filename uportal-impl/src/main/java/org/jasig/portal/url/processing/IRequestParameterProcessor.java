@@ -16,7 +16,7 @@ import org.jasig.portal.url.IWritableHttpServletRequest;
  * @author Eric Dalquist
  * @version $Revision: 11911 $
  */
-public interface IDynamicRequestParameterProcessor {
+public interface IRequestParameterProcessor {
 	
     /**
      * Analyze current request, process necessary URL parameters, delivering information to the appropriate components.
@@ -31,5 +31,5 @@ public interface IDynamicRequestParameterProcessor {
      * processor should be called again after all other processors have been executed. 
      * @throws IllegalArgumentException If req or res are null.
      */
-    public boolean processParameters(IWritableHttpServletRequest req, HttpServletResponse res);
+    public boolean processParameters(IWritableHttpServletRequest request, HttpServletResponse response);
 }

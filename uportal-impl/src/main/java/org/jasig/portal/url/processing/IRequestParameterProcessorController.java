@@ -16,7 +16,7 @@ import org.jasig.portal.url.IWritableHttpServletRequest;
  * @author Peter Kharchenko: pkharchenko at unicon.net
  * @version $Revision: 11911 $
  */
-public interface IRequestParameterController {
+public interface IRequestParameterProcessorController {
     /**
      * Analyze current request, process necessary URL parameters,
      * and deliver information to the appropriate components.

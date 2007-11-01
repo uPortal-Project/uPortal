@@ -10,11 +10,8 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Random;
-import java.util.Set;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -35,6 +32,9 @@ import org.jasig.portal.security.PersonManagerFactory;
 import org.jasig.portal.spring.PortalApplicationContextListener;
 import org.jasig.portal.tools.versioning.Version;
 import org.jasig.portal.tools.versioning.VersionsManager;
+import org.jasig.portal.url.IWritableHttpServletRequest;
+import org.jasig.portal.url.WritableHttpServletRequestImpl;
+import org.jasig.portal.url.processing.IRequestParameterProcessorController;
 import org.jasig.portal.utils.ResourceLoader;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -47,12 +47,6 @@ public class PortalSessionManager extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     private static final Log log = LogFactory.getLog(PortalSessionManager.class);
-
-    /**
-     * Default value for ALLOW_REPEATED_REQUESTS.
-     * This value will be used when the corresponding property cannot be loaded.
-     */
-    private static final boolean DEFAULT_ALLOW_REPEATED_REQUESTS = false;
 
     /**
      * Default value for whether to cache URLs.
@@ -93,12 +87,6 @@ public class PortalSessionManager extends HttpServlet {
   public static final PortalSessionManager getInstance() {
      return instance;
   }
-
-  // Following flag allows to disable features that prevent
-  // repeated requests from going through. This is useful
-  // when debugging and typing things in on a command line.
-  // Otherwise, the flag should be set to false.
-  private static final boolean ALLOW_REPEATED_REQUESTS = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.PortalSessionManager.allow_repeated_requests", DEFAULT_ALLOW_REPEATED_REQUESTS);
 
   // random number generator
   private static final Random randomGenerator = new Random();
@@ -193,7 +181,9 @@ public void destroy()	 {
      * @param res an outgoing <code>HttpServletResponse</code>
      */
     @Override
-    public void doGet(HttpServletRequest req, HttpServletResponse res) {
+    public void doGet(HttpServletRequest request, HttpServletResponse res) {
+        final IWritableHttpServletRequest writableRequest = new WritableHttpServletRequestImpl(request);
+        
         // Send the uPortal version in a header
         final VersionsManager versionManager = VersionsManager.getInstance();
         final Version version = versionManager.getVersion(IPermission.PORTAL_FRAMEWORK);
@@ -210,16 +200,16 @@ public void destroy()	 {
 
         // Call to setCharacterEncoding method should be done before any call to req.getParameter() method.
         try {
-            req.setCharacterEncoding("UTF-8");
+            writableRequest.setCharacterEncoding("UTF-8");
         } catch (UnsupportedEncodingException uee) {
             log.error("Unable to set UTF-8 character encoding!", uee);
         }
 
-        HttpSession session = req.getSession(false);
+        HttpSession session = writableRequest.getSession(false);
 
         if (session != null) {
             // Update the session timeout for an unauthenticated user.
-            IPerson person = personManager.getPerson(req);
+            IPerson person = personManager.getPerson(writableRequest);
             if (person != null &&
                 !person.getSecurityContext().isAuthenticated()) {
 
@@ -231,89 +221,44 @@ public void destroy()	 {
                     }
                 }
             }
-
-            Set requestTags=null;
-            boolean request_verified=false;
-
-            if(!ALLOW_REPEATED_REQUESTS) {
-                // obtain a tag table
-                synchronized(session) {
-                    requestTags=(Set)session.getAttribute("uP_requestTags");
-                    if(requestTags==null) {
-                        requestTags=Collections.synchronizedSet(new HashSet());
-                        session.setAttribute("uP_requestTags",requestTags);
-                    }
-                }
-                // determine current tag
-                UPFileSpec upfs=new UPFileSpec(req);
-
-                String tag=upfs.getTagId();
-
-                // see if the tag was registered
-                if ( tag != null ) {
-                    request_verified = true;
-                    requestTags.remove(tag);
-                }
-                if (log.isDebugEnabled())
-                    log.debug("PortalSessionManager::doGet() : request verified: "
-                            + request_verified);
-            }
-            else {
-                request_verified = true;
-            }
+            
+            //TODO add parameter processing here
+            final WebApplicationContext webApplicationContext = PortalApplicationContextListener.getRequiredWebApplicationContext();
+            final IRequestParameterProcessorController requestProcessorController = (IRequestParameterProcessorController)webApplicationContext.getBean("requestParameterProcessorController", IRequestParameterProcessorController.class);
+            requestProcessorController.processParameters(writableRequest, res);
+            /*
+             * request verification/upfile (will do later)
+             * portlet param 
+             * file upload/channel param 
+             * layout param 
+             */
+            
+            
 
             try {
                 UserInstance userInstance = null;
                 try {
                     // Retrieve the user's UserInstance object
-                    userInstance = UserInstanceManager.getUserInstance(req);
+                    userInstance = UserInstanceManager.getUserInstance(writableRequest);
                 } catch(Exception e) {
                   ExceptionHelper.genericTopHandler(Errors.bug,e);
                   ExceptionHelper.generateErrorPage(res,e);
                   return;
                 }
 
-                //TODO add parameter processing here
-                final WebApplicationContext webApplicationContext = PortalApplicationContextListener.getRequiredWebApplicationContext();
-                /*
-                 * request verification/upfile
-                 * portlet param 
-                 * file upload 
-                 * channel param 
-                 * layout param 
-                 */
-                
-                
-                final RequestParamWrapper wrappedRequest = new RequestParamWrapper(req, request_verified);
-
                 // fire away
-                if(ALLOW_REPEATED_REQUESTS) {
-                    userInstance.writeContent(wrappedRequest, res);
-                } else {
-                    // generate and register a new tag
-                    String newTag=Long.toHexString(randomGenerator.nextLong());
-                    if (log.isDebugEnabled())
-                        log.debug("PortalSessionManager::doGet() : generated new tag \""+
-                                newTag+"\" for the session "+session.getId());
-                    // no need to check for duplicates :) we'd have to wait a lifetime of a universe for this time happen
-                    if(!requestTags.add(newTag)) {
-                        log.error("PortalSessionManager::doGet() : a duplicate tag has been generated ! Time's up !");
-                    }
-
-                    long startTime = System.currentTimeMillis();
-          userInstance.writeContent(wrappedRequest, new ResponseSubstitutionWrapper(res,INTERNAL_TAG_VALUE,newTag));
-
-                }
-            } catch (Exception e) {
-              ExceptionHelper.genericTopHandler(Errors.bug,e);
-        ExceptionHelper.generateErrorPage(res,e);
-              return;
-           }
+                userInstance.writeContent(writableRequest, res);
+            }
+            catch (Exception e) {
+                ExceptionHelper.genericTopHandler(Errors.bug, e);
+                ExceptionHelper.generateErrorPage(res, e);
+                return;
+            }
 
         } else {
            try {
              //throw new ServletException("Session object is null !");
-           res.sendRedirect(req.getContextPath() + "/Login" );
+           res.sendRedirect(writableRequest.getContextPath() + "/Login" );
            } catch (Exception e) {
             ExceptionHelper.genericTopHandler(Errors.bug,e);
         ExceptionHelper.generateErrorPage(res,e);
@@ -383,15 +328,6 @@ public void destroy()	 {
     return fatalError;
   }
 
-  /**
-   *Accessor for the ALLOW_REPEATED_REQUESTS member.
-   *@return boolean value that indicates whether handling repeated requests is
-   *        enabled
-   */
-  public boolean getAllowRepeatedRequests(){
-    return ALLOW_REPEATED_REQUESTS;
-  }
-  
   /**
    *Accessor for the Random number generator instance
    *@return an instance of a random number generator instantiated

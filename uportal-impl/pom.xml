@@ -67,6 +67,13 @@
             <version>${commons-lang.version}</version>
             <scope>compile</scope>
         </dependency>
+        
+        <dependency>
+            <groupId>commons-fileupload</groupId>
+            <artifactId>commons-fileupload</artifactId>
+            <version>${commons-fileupload}</version>
+            <scope>compile</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.danann</groupId>

@@ -49,9 +49,12 @@ import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.serialize.CachingSerializer;
 import org.jasig.portal.services.AuthorizationService;
+import org.jasig.portal.spring.PortalApplicationContextListener;
+import org.jasig.portal.url.support.IChannelParameterManager;
 import org.jasig.portal.utils.SAX2BufferImpl;
 import org.jasig.portal.utils.SetCheckInSemaphore;
 import org.jasig.portal.utils.SoftHashMap;
+import org.springframework.web.context.WebApplicationContext;
 import org.xml.sax.ContentHandler;
 
 import tyrex.naming.MemoryContext;
@@ -786,39 +789,14 @@ public class ChannelManager implements LayoutEventListener {
      * @param req the <code>HttpServletRequest</code>
      */
     private void processRequestChannelParameters(HttpServletRequest req) {
-        // clear the previous settings
-        channelTarget = null;
-        targetParams = new Hashtable();
+        //TODO this all needs a review for actual functionality when I get this far
 
-        // see if this is targeted at an fname channel. if so then it takes
-        // precedence. This is done so that a baseActionURL can be used for
-        // the basis of an fname targeted channel with the fname query parm
-        // appended to direct all query parms to the fname channel
-        String fname = req.getParameter( Constants.FNAME_PARAM );
-
-        if ( fname != null )
-        {
-            // need to get to wrapper for obtaining a subscribe id
-            IUserLayoutManager ulm = upm.getUserLayoutManager();
-            // get a subscribe id for the fname
-            try {
-                channelTarget = ulm.getSubscribeId(fname);
-            } catch ( PortalException pe ) {
-               log.error("ChannelManager::processRequestChannelParameters(): Unable to get subscribe ID for fname="+fname, pe);
-              }
-        }
-        if ( channelTarget == null )
-        {
-            // check if the uP_channelTarget parameter has been passed
-            channelTarget=req.getParameter("uP_channelTarget");
-        }
-        if(channelTarget==null) {
-            // determine target channel id
-            UPFileSpec upfs=new UPFileSpec(req);
-            channelTarget=upfs.getTargetNodeId();
-            if (log.isDebugEnabled())
-                log.debug("ChannelManager::processRequestChannelParameters() : " +
-                        "channelTarget=\""+channelTarget+"\".");
+        final WebApplicationContext webApplicationContext = PortalApplicationContextListener.getRequiredWebApplicationContext();
+        final IChannelParameterManager channelParameterManager = (IChannelParameterManager)webApplicationContext.getBean("channelParameterManager", IChannelParameterManager.class);
+        
+        final Set<String> targetedChannelIds = channelParameterManager.getTargetedChannelIds(req);
+        if (targetedChannelIds.size() > 0) {
+            this.channelTarget = targetedChannelIds.iterator().next();
         }
 
         if(channelTarget!=null) {
@@ -833,25 +811,16 @@ public class ChannelManager implements LayoutEventListener {
             // Tell StatsRecorder that a user has interacted with the channel
             EventPublisherLocator.getApplicationEventPublisher().publishEvent(new ChannelTargetedInLayoutPortalEvent(this, upm.getPerson(), upm.getCurrentProfile(), channelDesc));
 
-            // process parameters
-            Enumeration en = req.getParameterNames();
-            if (en != null) {
-                if(en.hasMoreElements()) {
-                    // only do grouped rendering if there are some parameters passed
-                    // to the target channel.
-                    // detect if channel target talks to other channels
-                    groupedRendering=hasListeningChannels(channelTarget);
-                }
-                while (en.hasMoreElements()) {
-                    String pName= (String) en.nextElement();
-                    if (!pName.equals ("uP_channelTarget")&& !pName.equals ("uP_fname")) {
-                        Object[] val= (Object[]) req.getParameterValues(pName);
-                        if (val == null) {
-                            val = ((IRequestParamWrapper)req).getObjectParameterValues(pName);
-                        }
-                        targetParams.put(pName, val);
-                    }
-                }
+            
+            final Map<String, Object[]> channelParameters = channelParameterManager.getChannelParameters(req, channelTarget);
+            targetParams.clear(); //TODO needed?
+            targetParams.putAll(channelParameters);
+            
+            if(channelParameters!= null && channelParameters.size() > 0) {
+                // only do grouped rendering if there are some parameters passed
+                // to the target channel.
+                // detect if channel target talks to other channels
+                groupedRendering=hasListeningChannels(channelTarget);
             }
 
             IChannel chObj;

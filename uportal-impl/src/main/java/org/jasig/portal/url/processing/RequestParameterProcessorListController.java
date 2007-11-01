@@ -23,40 +23,23 @@ import org.jasig.portal.url.IWritableHttpServletRequest;
  * @author Eric Dalquist
  * @version $Revision: 11918 $
  */
-public class RequestParameterProcessorListController implements IRequestParameterController {
+public class RequestParameterProcessorListController implements IRequestParameterProcessorController {
     protected final Log logger = LogFactory.getLog(this.getClass());
     
-    private List<IStaticRequestParameterProcessor> staticRequestParameterProcessors = Collections.emptyList();
-    private List<IDynamicRequestParameterProcessor> dynamicRequestParameterProcessors = Collections.emptyList();
+    private List<IRequestParameterProcessor> dynamicRequestParameterProcessors = Collections.emptyList();
     private int maxNumberOfProcessingCycles = 10;
 
     /**
-     * @return the staticRequestParameterProcessors
-     */
-    public List<IStaticRequestParameterProcessor> getStaticRequestParameterProcessors() {
-        return staticRequestParameterProcessors;
-    }
-    /**
-     * @param staticRequestParameterProcessors the staticRequestParameterProcessors to set
-     * @throws IllegalArgumentException if the List is null or contains null elements
-     */
-    public void setStaticRequestParameterProcessors(List<IStaticRequestParameterProcessor> staticRequestParameterProcessors) {
-        Validate.notNull(staticRequestParameterProcessors, "IStaticRequestParameterProcessor List can not be null");
-        Validate.noNullElements(staticRequestParameterProcessors, "IStaticRequestParameterProcessor List can not contain a null element");
-        
-        this.staticRequestParameterProcessors = staticRequestParameterProcessors;
-    }
-    /**
      * @return the dynamicRequestParameterProcessors
      */
-    public List<IDynamicRequestParameterProcessor> getDynamicRequestParameterProcessors() {
+    public List<IRequestParameterProcessor> getDynamicRequestParameterProcessors() {
         return dynamicRequestParameterProcessors;
     }
     /**
      * @param dynamicRequestParameterProcessors the dynamicRequestParameterProcessors to set
      * @throws IllegalArgumentException if the List is null or contains null elements
      */
-    public void setDynamicRequestParameterProcessors(List<IDynamicRequestParameterProcessor> dynamicRequestParameterProcessors) {
+    public void setDynamicRequestParameterProcessors(List<IRequestParameterProcessor> dynamicRequestParameterProcessors) {
         Validate.notNull(dynamicRequestParameterProcessors, "IDynamicRequestParameterProcessor List can not be null");
         Validate.noNullElements(dynamicRequestParameterProcessors, "IDynamicRequestParameterProcessor List can not contain a null element");
         
@@ -86,14 +69,14 @@ public class RequestParameterProcessorListController implements IRequestParamete
      * @see org.jasig.portal.url.processing.IRequestParameterController#processParameters(org.jasig.portal.url.IWritableHttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     public void processParameters(IWritableHttpServletRequest req, HttpServletResponse res) {
-        final List<IDynamicRequestParameterProcessor> incompleteDynamicProcessors = new LinkedList<IDynamicRequestParameterProcessor>(this.dynamicRequestParameterProcessors);
+        final List<IRequestParameterProcessor> incompleteDynamicProcessors = new LinkedList<IRequestParameterProcessor>(this.dynamicRequestParameterProcessors);
 
         //Loop while there are still dynamic processors to execute
         int cycles = 0;
         while (incompleteDynamicProcessors.size() > 0) {
             //Run all dynamic processors that are not yet complete
-            for (final Iterator<IDynamicRequestParameterProcessor> processorItr = incompleteDynamicProcessors.iterator(); processorItr.hasNext(); ) {
-                final IDynamicRequestParameterProcessor requestParameterProcessor = processorItr.next();
+            for (final Iterator<IRequestParameterProcessor> processorItr = incompleteDynamicProcessors.iterator(); processorItr.hasNext(); ) {
+                final IRequestParameterProcessor requestParameterProcessor = processorItr.next();
 
                 //If a dynamic processor completes remove it from the list.
                 final boolean complete = requestParameterProcessor.processParameters(req, res);
@@ -109,11 +92,6 @@ public class RequestParameterProcessorListController implements IRequestParamete
                 this.logger.warn(incompleteDynamicProcessors.size() + " IDynamicRequestParameterProcessors did not completel processing after " + cycles + " attempts. Execution will continue but this situation should be reviewed. Incomplete Processors=" + incompleteDynamicProcessors, new Throwable("Stack Trace"));
                 break;
             }
-        }
-        
-        //Run all static processors
-        for (final IStaticRequestParameterProcessor requestParameterProcessor : this.staticRequestParameterProcessors) {
-            requestParameterProcessor.processParameters(req, res);
         }
     }
 }

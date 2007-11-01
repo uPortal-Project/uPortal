@@ -15,9 +15,9 @@ import java.text.DecimalFormat;
 public class UploadStatus {
 
     private int status;
-    private int maxSize;
+    private long maxSize;
 
-    UploadStatus(int status, int maxSize) {
+    public UploadStatus(int status, long maxSize) {
         this.status = status;
         this.maxSize = maxSize;
     }
@@ -35,7 +35,7 @@ public class UploadStatus {
      * @return the max upload file size as an int.
      */
     public int getMaxSize() {
-        return maxSize;
+        return (int)maxSize;
     }
 
     /**
@@ -44,7 +44,7 @@ public class UploadStatus {
      * @return <code>java.lang.String</code> - the max upload file size.
      */
     public String getFormattedMaxSize() {
-        double availableSpace = ((double)maxSize) / (1024.0 * 1024.0);
+        double availableSpace = maxSize / (1024.0 * 1024.0);
         return (fileSizeFormatter.format(availableSpace) + "MB");
     }
 

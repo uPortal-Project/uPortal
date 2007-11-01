@@ -19,66 +19,71 @@
 */
 package org.jasig.portal;
 
-import java.io.ByteArrayOutputStream;
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.FileOutputStream;
-import java.io.BufferedOutputStream;
-import java.io.FileInputStream;
-import java.io.BufferedInputStream;
+
 import javax.activation.DataSource;
-import com.oreilly.servlet.multipart.FilePart;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.web.multipart.MultipartFile;
 
 public class MultipartDataSource implements DataSource {
-    
     private static final Log log = LogFactory.getLog(MultipartDataSource.class);
-    
-  java.io.File tempfile;
-  ByteArrayOutputStream buff = null;
-  String contentType = null;
-  String filename = null;
-  String errorMessage = null;
-  boolean isAvailable = false;
 
-  public MultipartDataSource(FilePart filePart) throws IOException {
-    contentType = filePart.getContentType();
-    filename = filePart.getFileName();
-    try{
-        tempfile = java.io.File.createTempFile("uPdata",null);
-        tempfile.deleteOnExit();
-        OutputStream out = new BufferedOutputStream(new FileOutputStream(tempfile));
-        filePart.writeTo(out);
-        out.close();
-    }
-    catch(IOException ioe){
-        log.error("MultipartDataSource unable to create temp file", ioe);
-        if(tempfile!=null){
-            try{
-                tempfile.delete();
-            }
-            catch(Exception e){}
-            tempfile = null;
+    java.io.File tempfile;
+    ByteArrayOutputStream buff = null;
+    String contentType = null;
+    String filename = null;
+    String errorMessage = null;
+    boolean isAvailable = false;
+
+    public MultipartDataSource(MultipartFile multipartFile) {
+        contentType = multipartFile.getContentType();
+        filename = multipartFile.getOriginalFilename();
+        
+        try {
+            tempfile = java.io.File.createTempFile("uPdata", null);
+            tempfile.deleteOnExit();
+            
+            multipartFile.transferTo(tempfile);
         }
-        buff = new ByteArrayOutputStream();
-        filePart.writeTo(buff);
+        catch (IOException ioe) {
+            log.error("MultipartDataSource unable to create temp file", ioe);
+            if (tempfile != null) {
+                try {
+                    tempfile.delete();
+                }
+                catch (Exception e) {
+                }
+                tempfile = null;
+            }
+            buff = new ByteArrayOutputStream();
+            
+            try {
+                buff.write(multipartFile.getBytes());
+            }
+            catch (IOException ioe2) {
+                log.error("MultipartDataSource unable to store data in ByteArrayOutputStream", ioe2);
+            }
+        }
+        this.isAvailable = true;
     }
-    this.isAvailable = true;
-  }
-  
-  public MultipartDataSource (String fileName, String errorMessage){
-    this.filename = fileName;
-    this.errorMessage = errorMessage;
-    this.isAvailable = false;
-  }
-  
-  public boolean isAvailable () {
-    return this.isAvailable;
-  }
+
+    public MultipartDataSource(String fileName, String errorMessage) {
+        this.filename = fileName;
+        this.errorMessage = errorMessage;
+        this.isAvailable = false;
+    }
+
+    public boolean isAvailable() {
+        return this.isAvailable;
+    }
 
     /**
      * Releases tempfile associated with this object any memory they consume
@@ -90,40 +95,40 @@ public class MultipartDataSource implements DataSource {
         buff = null;
         if (tempfile != null) {
             boolean success = tempfile.delete();
-            if (! success) {
+            if (!success) {
                 log.error("Unable to delete temp file [" + tempfile.getPath() + "]");
             }
-            
+
             tempfile = null;
         }
     }
 
-  public InputStream getInputStream() throws IOException {
-    if (!isAvailable())
-      throw new IOException (this.getErrorMessage());
-      
-    if(tempfile!=null){
-        return new BufferedInputStream(new FileInputStream(tempfile));
+    public InputStream getInputStream() throws IOException {
+        if (!isAvailable())
+            throw new IOException(this.getErrorMessage());
+
+        if (tempfile != null) {
+            return new BufferedInputStream(new FileInputStream(tempfile));
+        }
+        else {
+            return new ByteArrayInputStream(buff.toByteArray());
+        }
     }
-    else{
-        return new ByteArrayInputStream(buff.toByteArray());
+
+    public OutputStream getOutputStream() throws IOException {
+        throw new IOException("getOutputStream() not implemented");
     }
-  }
 
-  public OutputStream getOutputStream() throws IOException {
-    throw new IOException("getOutputStream() not implemented");
-  }
+    public String getContentType() {
+        return contentType;
+    }
 
-  public String getContentType() {
-    return contentType;
-  }
+    public String getName() {
+        return filename;
+    }
 
-  public String getName() {
-    return filename;
-  }
-  
-  public String getErrorMessage(){
-    return errorMessage;
-  }
+    public String getErrorMessage() {
+        return errorMessage;
+    }
 
 }
