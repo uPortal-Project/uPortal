@@ -80,40 +80,9 @@ public class ChannelParameterProcessor extends CommonsFileUploadSupport implemen
         
         //Map to track channel parameters in
         final Map<String, Object[]> channelParameters = new HashMap<String, Object[]>();
-        String targetChannelId;
+        String targetChannelId = null;
         
-        
-        //Do multipart file upload request processing
-        if (ServletFileUpload.isMultipartContent(new ServletRequestContext(request))) {
-            //Used to communicate to clients of multipart data if the request processing worked correctly
-            UploadStatus uploadStatus;
-            
-            final String encoding = this.determineEncoding(request);
-            final FileUpload fileUpload = this.prepareFileUpload(encoding);
-            try {
-                //TODO this may not support multiple files for a single parameter :(
-                final List<FileItem> fileItems = ((ServletFileUpload) fileUpload).parseRequest(request);
-                final MultipartParsingResult parsingResult = parseFileItems(fileItems, encoding);
-                
-                final Map<String, MultipartDataSource[]> multipartDataSources = this.getMultipartDataSources(parsingResult);
-                channelParameters.putAll(multipartDataSources);
-                
-                final Map<String, String[]> multipartParameters = parsingResult.getMultipartParameters();
-                channelParameters.putAll(multipartParameters);
-                
-                uploadStatus = new UploadStatus(UploadStatus.SUCCESS, this.getFileUpload().getFileSizeMax());
-            }
-            catch (FileUploadException fue) {
-                this.logger.warn("Failed to parse multipart upload, processing will continue but not all parameters may be available.", fue);
-                uploadStatus = new UploadStatus(UploadStatus.FAILURE, this.getFileUpload().getFileSizeMax());
-                ExceptionHelper.genericTopHandler(Errors.bug, fue);
-            }
-            
-            channelParameters.put(UPLOAD_STATUS, new UploadStatus[] { uploadStatus });
-        }
-        
-        
-        //TODO this is not very nice, eventually a session scoped inject bean would be the way to go here
+        //TODO this is not very nice, eventually a session scoped injected bean would be the way to go here
         final UserInstance userInstance = UserInstanceManager.getUserInstance(request);
         final IUserPreferencesManager userPreferencesManager = userInstance.getPreferencesManager();
         final IUserLayoutManager userLayoutManger = userPreferencesManager.getUserLayoutManager();
@@ -148,7 +117,37 @@ public class ChannelParameterProcessor extends CommonsFileUploadSupport implemen
             this.logger.debug("targetChannelId='" + targetChannelId + "'.");
         }
 
+        //Only bother processing parameters if a channel is targeted
         if (targetChannelId != null) {
+            //Do multipart file upload request processing
+            if (ServletFileUpload.isMultipartContent(new ServletRequestContext(request))) {
+                //Used to communicate to clients of multipart data if the request processing worked correctly
+                UploadStatus uploadStatus;
+                
+                final String encoding = this.determineEncoding(request);
+                final FileUpload fileUpload = this.prepareFileUpload(encoding);
+                try {
+                    //TODO this may not support multiple files for a single parameter :(
+                    final List<FileItem> fileItems = ((ServletFileUpload) fileUpload).parseRequest(request);
+                    final MultipartParsingResult parsingResult = parseFileItems(fileItems, encoding);
+                    
+                    final Map<String, MultipartDataSource[]> multipartDataSources = this.getMultipartDataSources(parsingResult);
+                    channelParameters.putAll(multipartDataSources);
+                    
+                    final Map<String, String[]> multipartParameters = parsingResult.getMultipartParameters();
+                    channelParameters.putAll(multipartParameters);
+                    
+                    uploadStatus = new UploadStatus(UploadStatus.SUCCESS, this.getFileUpload().getFileSizeMax());
+                }
+                catch (FileUploadException fue) {
+                    this.logger.warn("Failed to parse multipart upload, processing will continue but not all parameters may be available.", fue);
+                    uploadStatus = new UploadStatus(UploadStatus.FAILURE, this.getFileUpload().getFileSizeMax());
+                    ExceptionHelper.genericTopHandler(Errors.bug, fue);
+                }
+                
+                channelParameters.put(UPLOAD_STATUS, new UploadStatus[] { uploadStatus });
+            }
+
             // process parameters
             final Enumeration<String> parameterNames = request.getParameterNames();
             
