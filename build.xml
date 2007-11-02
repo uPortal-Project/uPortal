@@ -33,13 +33,8 @@
         <echo message="${helpMessage}" />
     </target>
 
-    <target name="bootstrap" description="Installs dependencies into the local maven respository that are not available publicly">
-        <ant dir="bootstrap" antfile="build.xml" />
-    </target>
-
     <target name="initportal" description="Runs all the targets necessary to deploy the portal and prepare the portal database">
         <echo message="Initializing uPortal" />
-        <antcall target="bootstrap" />
         <antcall target="deploy-ear" />
         <antcall target="db" />
         <antcall target="pubchan" />
