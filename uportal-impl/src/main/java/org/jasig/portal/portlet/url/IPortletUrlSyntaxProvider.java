@@ -34,7 +34,8 @@ public interface IPortletUrlSyntaxProvider {
     
     /**
      * Parses the parameters on the request, providing a Map of portlet IDs that were targeted with parameters
-     * and the populated PortletUrl object for that ID.
+     * and the populated PortletUrl object for that ID. All PortletUrl objects returned will have their {@link RequestType}
+     * set.
      * 
      * @param request The request to parse parameters from
      * @return A Map of targeted IPortletWindowIds to populated PortletUrls, will never be null.

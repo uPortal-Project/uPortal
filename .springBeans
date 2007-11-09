@@ -9,7 +9,6 @@
 		<config>uportal-impl/src/main/resources/properties/contexts/checksContext.xml</config>
 		<config>uportal-impl/src/main/resources/properties/contexts/dlmContext.xml</config>
 		<config>uportal-impl/src/main/resources/properties/contexts/jmxContext.xml</config>
-		<config>uportal-impl/src/main/resources/properties/contexts/personDirectory.xml</config>
 		<config>uportal-impl/src/main/resources/properties/contexts/portletContainerContext.xml</config>
 		<config>uportal-impl/src/main/resources/properties/contexts/statsContext.xml</config>
 	</configs>
@@ -24,7 +23,6 @@
 				<config>uportal-impl/src/main/resources/properties/contexts/checksContext.xml</config>
 				<config>uportal-impl/src/main/resources/properties/contexts/dlmContext.xml</config>
 				<config>uportal-impl/src/main/resources/properties/contexts/jmxContext.xml</config>
-				<config>uportal-impl/src/main/resources/properties/contexts/personDirectory.xml</config>
 				<config>uportal-impl/src/main/resources/properties/contexts/portletContainerContext.xml</config>
 				<config>uportal-impl/src/main/resources/properties/contexts/statsContext.xml</config>
 			</configs>

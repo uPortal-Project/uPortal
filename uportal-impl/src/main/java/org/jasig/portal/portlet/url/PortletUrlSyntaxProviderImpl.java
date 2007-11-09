@@ -9,7 +9,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
@@ -187,6 +189,17 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
                     
                     portletParameters.put(parsedParameterName.second, values);
                 }
+            }
+        }
+        
+        //Prune PortletUrl objects that don't have a request type from the returned Map
+        for (final Iterator<Entry<IPortletWindowId, PortletUrl>> parsedUrlEntryItr = parsedUrls.entrySet().iterator(); parsedUrlEntryItr.hasNext(); ) {
+            final Entry<IPortletWindowId, PortletUrl> parsedUrlEntry = parsedUrlEntryItr.next();
+            
+            final PortletUrl portletUrl = parsedUrlEntry.getValue();
+            if (portletUrl.getRequestType() == null) {
+                this.logger.warn("Parameteres targeting IPortletWindowId='" + parsedUrlEntry.getKey() + "' will be ignored as no request type parameter was specified. Ignored data: " + portletUrl);
+                parsedUrlEntryItr.remove();
             }
         }
         

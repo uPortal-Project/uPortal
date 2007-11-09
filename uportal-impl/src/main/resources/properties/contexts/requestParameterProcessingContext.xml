@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <bean id="requestParameterProcessorController" class="org.jasig.portal.url.processing.RequestParameterProcessorListController">
+        <property name="dynamicRequestParameterProcessors">
+            <list value-type="org.jasig.portal.url.processing.IRequestParameterProcessor">
+                <idref local="portletRequestParameterProcessor"/>
+                <idref local="channelRequestParameterProcessor"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="portletRequestParameterProcessor" class="org.jasig.portal.url.processing.PortletRequestParameterProcessor">
+        <property name="portletRequestParameterManager" ref="" />
+        <property name="portletUrlSyntaxProvider" ref="" />
+        <property name="portletWindowRegistry" ref="" />
+    </bean>
+    
+    <bean id="channelRequestParameterProcessor" class="org.jasig.portal.url.processing.ChannelRequestParameterProcessor">
+        <property name="portletRequestParameterManager" ref="" />
+        <property name="channelRequestParameterManager" ref="" />
+        <property name="maxUploadSize">
+            <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+                <property name="targetClass" value="org.jasig.portal.properties.PropertiesManager" />
+                <property name="targetMethod" value="getPropertyAsInt" />
+                <property name="arguments">
+                    <list>
+                        <value>org.jasig.portal.RequestParamWrapper.file_upload_max_size</value>
+                        <value>3000000</value>
+                    </list>
+                </property>
+            </bean>
+        </property>
+    </bean>
+</beans>

@@ -59,14 +59,14 @@ public class ChannelRequestParameterProcessor extends CommonsFileUploadSupport i
     /**
      * @return the portletRequestParameterManager
      */
-    public IPortletRequestParameterManager getPortletRequestSupport() {
+    public IPortletRequestParameterManager getPortletRequestParameterManager() {
         return portletRequestParameterManager;
     }
     /**
      * @param portletRequestParameterManager the portletRequestParameterManager to set
      */
     @Required
-    public void setPortletRequestSupport(IPortletRequestParameterManager portletRequestParameterManager) {
+    public void setPortletRequestParameterManager(IPortletRequestParameterManager portletRequestParameterManager) {
         Validate.notNull(portletRequestParameterManager, "IPortletRequestParameterManager can not be null");
         this.portletRequestParameterManager = portletRequestParameterManager;
     }

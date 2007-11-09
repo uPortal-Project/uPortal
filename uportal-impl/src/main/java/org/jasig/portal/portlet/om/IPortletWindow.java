@@ -6,6 +6,7 @@
 package org.jasig.portal.portlet.om;
 
 import java.io.Serializable;
+import java.util.Map;
 
 import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
@@ -37,4 +38,16 @@ public interface IPortletWindow extends PortletWindow, Serializable {
      * @throws IllegalArgumentException If mode is null
      */
     public void setPortletMode(PortletMode mode);
+    
+    /**
+     * @param requestParameters The current request parameters for the portlet
+     * @throws IllegalArgumentException if parameters is null.
+     */
+    public void setRequestParameters(Map<String, String[]> requestParameters);
+    
+    /**
+     * @return The current request parameters for the portlet
+     */
+    public Map<String, String[]> getRequestParameers();
+    
 }

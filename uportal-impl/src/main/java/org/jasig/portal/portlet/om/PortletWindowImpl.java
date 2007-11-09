@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
@@ -33,6 +35,8 @@ public class PortletWindowImpl implements IPortletWindow {
     private final IPortletWindowId portletWindowID;
     private final String contextPath;
     private final String portletName;
+    
+    private Map<String, String[]> requestParameters = new HashMap<String, String[]>();
     private transient PortletMode portletMode = PortletMode.VIEW;
     private transient WindowState windowState = WindowState.NORMAL;
     
@@ -55,7 +59,7 @@ public class PortletWindowImpl implements IPortletWindow {
     }
     
     /**
-     * Creates a new PortletWindow with the default settings
+     * Creates a new PortletWindow cloned from the passed IPortletWindow
      * 
      * @param portletWindowID The unique idenifier for this PortletWindow
      * @param portletWindow The PortletWindow to clone settings from
@@ -135,6 +139,21 @@ public class PortletWindowImpl implements IPortletWindow {
         this.windowState = state;
     }
     
+    /* (non-Javadoc)
+     * @see org.jasig.portal.portlet.om.IPortletWindow#getRequestParameers()
+     */
+    public Map<String, String[]> getRequestParameers() {
+        return this.requestParameters;
+    }
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.portlet.om.IPortletWindow#setRequestParameters(java.util.Map)
+     */
+    public void setRequestParameters(Map<String, String[]> requestParameters) {
+        Validate.notNull(requestParameters, "requestParameters can not be null");
+        this.requestParameters = requestParameters;
+    }
+    
     
     
     //********** Serializable Methods **********//
@@ -158,20 +177,22 @@ public class PortletWindowImpl implements IPortletWindow {
         if (this.portletName == null) {
             throw new InvalidObjectException("portletName can not be null");
         }
+        if (this.requestParameters == null) {
+            throw new InvalidObjectException("requestParameters can not be null");
+        }
         
         //Read & validate transient fields
         final String portletModeStr = (String)ois.readObject();
+        if (portletModeStr == null) {
+            throw new InvalidObjectException("portletMode can not be null");
+        }
         this.portletMode = new PortletMode(portletModeStr);
         
         final String windowStateStr = (String)ois.readObject();
-        this.windowState = new WindowState(windowStateStr);
-        
-        if (this.portletMode == null) {
-            throw new InvalidObjectException("portletMode can not be null");
-        }
-        if (this.windowState == null) {
+        if (windowStateStr == null) {
             throw new InvalidObjectException("windowState can not be null");
         }
+        this.windowState = new WindowState(windowStateStr);
     }
 
     /**
@@ -192,6 +213,7 @@ public class PortletWindowImpl implements IPortletWindow {
             .append(this.portletName, rhs.getPortletName())
             .append(this.windowState, rhs.getWindowState())
             .append(this.portletMode, rhs.getPortletMode())
+            .append(this.requestParameters, rhs.getRequestParameers())
             .isEquals();
     }
 
@@ -205,7 +227,9 @@ public class PortletWindowImpl implements IPortletWindow {
             .append(this.contextPath)
             .append(this.portletName)
             .append(this.windowState)
-            .append(this.portletMode).toHashCode();
+            .append(this.portletMode)
+            .append(this.requestParameters)
+            .toHashCode();
     }
 
     /**
@@ -219,6 +243,7 @@ public class PortletWindowImpl implements IPortletWindow {
             .append("portletName", this.portletName)
             .append("windowState", this.windowState)
             .append("portletMode", this.portletMode)
+            .append("requestParameters", this.requestParameters)
             .toString();
     }
 }
