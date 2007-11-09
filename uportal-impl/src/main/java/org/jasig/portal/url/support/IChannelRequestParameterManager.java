@@ -16,9 +16,9 @@ import javax.servlet.http.HttpServletRequest;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface IChannelParameterManager {
+public interface IChannelRequestParameterManager {
     /**
-     * Mark this request as not having any parameters associated with it.
+     * Mark this request as not having any channel request parameters associated with it.
      * 
      * @param request The current request.
      * @throws IllegalArgumentException If request is null

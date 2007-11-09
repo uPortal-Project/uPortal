@@ -17,6 +17,8 @@ import org.apache.pluto.spi.ResourceURLProvider;
 import org.jasig.portal.portlet.container.properties.IRequestPropertiesManager;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
+import org.jasig.portal.portlet.url.IPortletUrlSyntaxProvider;
+import org.jasig.portal.portlet.url.PortletURLProviderImpl;
 import org.springframework.beans.factory.annotation.Required;
 
 /**
@@ -30,6 +32,7 @@ import org.springframework.beans.factory.annotation.Required;
 public class PortalCallbackServiceImpl implements PortalCallbackService {
     private IRequestPropertiesManager requestPropertiesManager;
     private IPortletWindowRegistry portletWindowRegistry;
+    private IPortletUrlSyntaxProvider portletUrlSyntaxProvider;
     
     /**
      * @return the requestPropertiesManager
@@ -60,7 +63,21 @@ public class PortalCallbackServiceImpl implements PortalCallbackService {
         Validate.notNull(portletWindowRegistry, "portletWindowRegistry can not be null");
         this.portletWindowRegistry = portletWindowRegistry;
     }
-
+    
+    /**
+     * @return the portletUrlSyntaxProvider
+     */
+    public IPortletUrlSyntaxProvider getPortletUrlSyntaxProvider() {
+        return portletUrlSyntaxProvider;
+    }
+    /**
+     * @param portletUrlSyntaxProvider the portletUrlSyntaxProvider to set
+     */
+    @Required
+    public void setPortletUrlSyntaxProvider(IPortletUrlSyntaxProvider portletUrlSyntaxProvider) {
+        Validate.notNull(portletUrlSyntaxProvider, "portletUrlSyntaxProvider can not be null");
+        this.portletUrlSyntaxProvider = portletUrlSyntaxProvider;
+    }
     
     
     /* (non-Javadoc)
@@ -91,8 +108,8 @@ public class PortalCallbackServiceImpl implements PortalCallbackService {
      * @see org.apache.pluto.spi.PortalCallbackService#getPortletURLProvider(javax.servlet.http.HttpServletRequest, org.apache.pluto.PortletWindow)
      */
     public PortletURLProvider getPortletURLProvider(HttpServletRequest request, PortletWindow plutoPortletWindow) {
-        // TODO Auto-generated method stub
-        return null;
+        final IPortletWindow portletWindow = this.portletWindowRegistry.convertPortletWindow(request, plutoPortletWindow);
+        return new PortletURLProviderImpl(portletWindow, request, this.portletUrlSyntaxProvider);
     }
 
     /* (non-Javadoc)

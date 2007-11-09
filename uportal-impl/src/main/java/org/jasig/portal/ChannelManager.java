@@ -50,7 +50,7 @@ import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.serialize.CachingSerializer;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.spring.PortalApplicationContextListener;
-import org.jasig.portal.url.support.IChannelParameterManager;
+import org.jasig.portal.url.support.IChannelRequestParameterManager;
 import org.jasig.portal.utils.SAX2BufferImpl;
 import org.jasig.portal.utils.SetCheckInSemaphore;
 import org.jasig.portal.utils.SoftHashMap;
@@ -792,7 +792,7 @@ public class ChannelManager implements LayoutEventListener {
         //TODO this all needs a review for actual functionality when I get this far
 
         final WebApplicationContext webApplicationContext = PortalApplicationContextListener.getRequiredWebApplicationContext();
-        final IChannelParameterManager channelParameterManager = (IChannelParameterManager)webApplicationContext.getBean("channelParameterManager", IChannelParameterManager.class);
+        final IChannelRequestParameterManager channelParameterManager = (IChannelRequestParameterManager)webApplicationContext.getBean("channelParameterManager", IChannelRequestParameterManager.class);
         
         final Set<String> targetedChannelIds = channelParameterManager.getTargetedChannelIds(req);
         if (targetedChannelIds.size() > 0) {

@@ -20,6 +20,7 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.servlet.ServletRequestContext;
 import org.apache.commons.io.FileCleaner;
+import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.Constants;
@@ -33,10 +34,11 @@ import org.jasig.portal.UploadStatus;
 import org.jasig.portal.UserInstance;
 import org.jasig.portal.UserInstanceManager;
 import org.jasig.portal.layout.IUserLayoutManager;
+import org.jasig.portal.portlet.url.IPortletRequestParameterManager;
 import org.jasig.portal.url.IWritableHttpServletRequest;
-import org.jasig.portal.url.support.IChannelParameterManager;
-import org.jasig.portal.url.support.IPortletRequestSupport;
+import org.jasig.portal.url.support.IChannelRequestParameterManager;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsFileUploadSupport;
 
@@ -46,28 +48,56 @@ import org.springframework.web.multipart.commons.CommonsFileUploadSupport;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class ChannelParameterProcessor extends CommonsFileUploadSupport implements IRequestParameterProcessor, DisposableBean {
+public class ChannelRequestParameterProcessor extends CommonsFileUploadSupport implements IRequestParameterProcessor, DisposableBean {
     public static final String UPLOAD_STATUS = "up_upload_status";
     
     protected final Log logger = LogFactory.getLog(this.getClass());
 
-    private IPortletRequestSupport portletRequestSupport;
-    private IChannelParameterManager channelParameterManager;
+    private IPortletRequestParameterManager portletRequestParameterManager;
+    private IChannelRequestParameterManager channelRequestParameterManager;
     
-    
+    /**
+     * @return the portletRequestParameterManager
+     */
+    public IPortletRequestParameterManager getPortletRequestSupport() {
+        return portletRequestParameterManager;
+    }
+    /**
+     * @param portletRequestParameterManager the portletRequestParameterManager to set
+     */
+    @Required
+    public void setPortletRequestSupport(IPortletRequestParameterManager portletRequestParameterManager) {
+        Validate.notNull(portletRequestParameterManager, "IPortletRequestParameterManager can not be null");
+        this.portletRequestParameterManager = portletRequestParameterManager;
+    }
+    /**
+     * @return the channelRequestParameterManager
+     */
+    public IChannelRequestParameterManager getChannelRequestParameterManager() {
+        return channelRequestParameterManager;
+    }
+    /**
+     * @param channelRequestParameterManager the channelRequestParameterManager to set
+     */
+    @Required
+    public void setChannelRequestParameterManager(IChannelRequestParameterManager channelRequestParameterManager) {
+        Validate.notNull(channelRequestParameterManager, "IChannelRequestParameterManager can not be null");
+        this.channelRequestParameterManager = channelRequestParameterManager;
+    }
+
     /* (non-Javadoc)
      * @see org.jasig.portal.url.processing.IRequestParameterProcessor#processParameters(org.jasig.portal.url.IWritableHttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     public boolean processParameters(IWritableHttpServletRequest request, HttpServletResponse response) {
         try {
             //If this is a portlet request don't do any channel parameter processing
-            if (this.portletRequestSupport.isPortletTargeted(request)) {
+            if (this.portletRequestParameterManager.isPortletTargeted(request)) {
                 if (this.logger.isInfoEnabled()) {
                     this.logger.info("Request is targeting a portlet, channel parameter processing will not take place.");
                 }
                 
                 //Mark the request as not having any channel specific parameters
-                this.channelParameterManager.setNoChannelParameters(request);
+                this.channelRequestParameterManager.setNoChannelParameters(request);
 
                 //Processing is complete
                 return true;
@@ -78,11 +108,85 @@ public class ChannelParameterProcessor extends CommonsFileUploadSupport implemen
             return false;
         }
         
+        //Determine the targeted channel
+        final String targetChannelId = this.getTargetChannelId(request);
+        
+        //If no channel is targeted mark the request as such in the manager and return
+        if (targetChannelId == null) {
+            this.channelRequestParameterManager.setNoChannelParameters(request);
+        }
+
         //Map to track channel parameters in
         final Map<String, Object[]> channelParameters = new HashMap<String, Object[]>();
+
+        //Do multipart file upload request processing
+        if (ServletFileUpload.isMultipartContent(new ServletRequestContext(request))) {
+            //Used to communicate to clients of multipart data if the request processing worked correctly
+            UploadStatus uploadStatus;
+            
+            final String encoding = this.determineEncoding(request);
+            final FileUpload fileUpload = this.prepareFileUpload(encoding);
+            try {
+                //TODO this may not support multiple files for a single parameter :(
+                final List<FileItem> fileItems = ((ServletFileUpload) fileUpload).parseRequest(request);
+                final MultipartParsingResult parsingResult = parseFileItems(fileItems, encoding);
+                
+                final Map<String, MultipartDataSource[]> multipartDataSources = this.getMultipartDataSources(parsingResult);
+                channelParameters.putAll(multipartDataSources);
+                
+                final Map<String, String[]> multipartParameters = parsingResult.getMultipartParameters();
+                channelParameters.putAll(multipartParameters);
+                
+                uploadStatus = new UploadStatus(UploadStatus.SUCCESS, this.getFileUpload().getFileSizeMax());
+            }
+            catch (FileUploadException fue) {
+                this.logger.warn("Failed to parse multipart upload, processing will continue but not all parameters may be available.", fue);
+                uploadStatus = new UploadStatus(UploadStatus.FAILURE, this.getFileUpload().getFileSizeMax());
+                ExceptionHelper.genericTopHandler(Errors.bug, fue);
+            }
+            
+            channelParameters.put(UPLOAD_STATUS, new UploadStatus[] { uploadStatus });
+        }
+
+        // process parameters on the request object
+        final Enumeration<String> parameterNames = request.getParameterNames();
+        while (parameterNames != null && parameterNames.hasMoreElements()) {
+            final String parameterName = parameterNames.nextElement();
+            
+            if (!parameterName.equals("uP_channelTarget") && !parameterName.equals("uP_fname")) {
+                final String[] parameterValues = request.getParameterValues(parameterName);
+                channelParameters.put(parameterName, parameterValues);
+            }
+        }
+
+        //Set the parameters on the request
+        this.channelRequestParameterManager.setChannelParameters(request, targetChannelId, channelParameters);
+        
+        //Processing is complete
+        return true;
+    }
+    
+    /** 
+     * Ensures the temp files from uploads are cleaned up correctly.
+     * 
+     * @see org.springframework.beans.factory.DisposableBean#destroy()
+     */
+    public void destroy() throws Exception {
+        FileCleaner.exitWhenFinished();        
+    }
+    
+    
+    /**
+     * Determine the targeted channel ID for the request.
+     * 
+     * @param request Current request.
+     * @return The targeted channel ID, null if no channel is targeted.
+     */
+    protected String getTargetChannelId(IWritableHttpServletRequest request) {
         String targetChannelId = null;
         
         //TODO this is not very nice, eventually a session scoped injected bean would be the way to go here
+        //TODO UserInstance may not be initialized yet, need to review it's init code (move to constructor?)
         final UserInstance userInstance = UserInstanceManager.getUserInstance(request);
         final IUserPreferencesManager userPreferencesManager = userInstance.getPreferencesManager();
         final IUserLayoutManager userLayoutManger = userPreferencesManager.getUserLayoutManager();
@@ -117,66 +221,9 @@ public class ChannelParameterProcessor extends CommonsFileUploadSupport implemen
             this.logger.debug("targetChannelId='" + targetChannelId + "'.");
         }
 
-        //Only bother processing parameters if a channel is targeted
-        if (targetChannelId != null) {
-            //Do multipart file upload request processing
-            if (ServletFileUpload.isMultipartContent(new ServletRequestContext(request))) {
-                //Used to communicate to clients of multipart data if the request processing worked correctly
-                UploadStatus uploadStatus;
-                
-                final String encoding = this.determineEncoding(request);
-                final FileUpload fileUpload = this.prepareFileUpload(encoding);
-                try {
-                    //TODO this may not support multiple files for a single parameter :(
-                    final List<FileItem> fileItems = ((ServletFileUpload) fileUpload).parseRequest(request);
-                    final MultipartParsingResult parsingResult = parseFileItems(fileItems, encoding);
-                    
-                    final Map<String, MultipartDataSource[]> multipartDataSources = this.getMultipartDataSources(parsingResult);
-                    channelParameters.putAll(multipartDataSources);
-                    
-                    final Map<String, String[]> multipartParameters = parsingResult.getMultipartParameters();
-                    channelParameters.putAll(multipartParameters);
-                    
-                    uploadStatus = new UploadStatus(UploadStatus.SUCCESS, this.getFileUpload().getFileSizeMax());
-                }
-                catch (FileUploadException fue) {
-                    this.logger.warn("Failed to parse multipart upload, processing will continue but not all parameters may be available.", fue);
-                    uploadStatus = new UploadStatus(UploadStatus.FAILURE, this.getFileUpload().getFileSizeMax());
-                    ExceptionHelper.genericTopHandler(Errors.bug, fue);
-                }
-                
-                channelParameters.put(UPLOAD_STATUS, new UploadStatus[] { uploadStatus });
-            }
-
-            // process parameters
-            final Enumeration<String> parameterNames = request.getParameterNames();
-            
-            while (parameterNames != null && parameterNames.hasMoreElements()) {
-                final String parameterName = parameterNames.nextElement();
-                
-                if (!parameterName.equals("uP_channelTarget") && !parameterName.equals("uP_fname")) {
-                    final String[] parameterValues = request.getParameterValues(parameterName);
-                    channelParameters.put(parameterName, parameterValues);
-                }
-            }
-        }
-
-        //Set the parameters on the request
-        this.channelParameterManager.setChannelParameters(request, targetChannelId, channelParameters);
-        
-        //Processing is complete
-        return true;
+        return targetChannelId;
     }
     
-    /* (non-Javadoc)
-     * @see org.springframework.beans.factory.DisposableBean#destroy()
-     */
-    public void destroy() throws Exception {
-        FileCleaner.exitWhenFinished();        
-    }
-    
-
-
     /* (non-Javadoc)
      * @see org.springframework.web.multipart.commons.CommonsFileUploadSupport#newFileUpload(org.apache.commons.fileupload.FileItemFactory)
      */
@@ -213,11 +260,13 @@ public class ChannelParameterProcessor extends CommonsFileUploadSupport implemen
      */
     protected Map<String, MultipartDataSource[]> getMultipartDataSources(final MultipartParsingResult parsingResult) {
         final Map<String, MultipartFile> multipartFiles = parsingResult.getMultipartFiles();
+        
         final Map<String, MultipartDataSource[]> multipartDataSources = new HashMap<String, MultipartDataSource[]>(multipartFiles.size());
         for (final Map.Entry<String, MultipartFile> multipartFileEntry : multipartFiles.entrySet()) {
             final MultipartDataSource multipartDataSource = new MultipartDataSource(multipartFileEntry.getValue());
             multipartDataSources.put(multipartFileEntry.getKey(), new MultipartDataSource[] { multipartDataSource });
         }
+        
         return multipartDataSources;
     }
 }

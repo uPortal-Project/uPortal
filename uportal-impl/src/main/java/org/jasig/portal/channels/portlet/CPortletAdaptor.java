@@ -20,8 +20,6 @@ import org.xml.sax.ContentHandler;
  * @version $Revision$
  */
 public class CPortletAdaptor implements IPortletAdaptor {
-    public static final String RUNTIME_DATA = CPortletAdaptor.class.getName() + ".RUNTIME_DATA";
-    
     private PortalControlStructures portalControlStructures;
     private ChannelRuntimeData channelRuntimeData;
 
@@ -57,7 +55,7 @@ public class CPortletAdaptor implements IPortletAdaptor {
         
         //Attach the runtime data as an attribute on the request so it is accessible to other portlet rendering related classes  
         final HttpServletRequest httpServletRequest = this.portalControlStructures.getHttpServletRequest();
-        httpServletRequest.setAttribute(RUNTIME_DATA, this.channelRuntimeData);
+        httpServletRequest.setAttribute(ATTRIBUTE_RUNTIME_DATA, this.channelRuntimeData);
     }
 
     /* (non-Javadoc)

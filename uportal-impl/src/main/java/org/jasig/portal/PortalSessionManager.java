@@ -227,7 +227,7 @@ public void destroy()	 {
             final IRequestParameterProcessorController requestProcessorController = (IRequestParameterProcessorController)webApplicationContext.getBean("requestParameterProcessorController", IRequestParameterProcessorController.class);
             requestProcessorController.processParameters(writableRequest, res);
             /*
-             * request verification/upfile (will do later)
+             * upfile (will do later)
              * portlet param 
              * file upload/channel param 
              * layout param 

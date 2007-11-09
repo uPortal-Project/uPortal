@@ -3,11 +3,12 @@
  * See license distributed with this file and
  * available online at http://www.uportal.org/license.html
  */
-package org.jasig.portal.url.processing;
+package org.jasig.portal.portlet.url;
 
 import javax.servlet.http.HttpServletResponse;
 
 import org.jasig.portal.url.IWritableHttpServletRequest;
+import org.jasig.portal.url.processing.IRequestParameterProcessor;
 
 /**
  * @author Eric Dalquist
