@@ -13,8 +13,8 @@
     
     <bean id="portletRequestParameterProcessor" class="org.jasig.portal.url.processing.PortletRequestParameterProcessor">
         <property name="portletRequestParameterManager" ref="" />
-        <property name="portletUrlSyntaxProvider" ref="" />
-        <property name="portletWindowRegistry" ref="" />
+        <property name="portletUrlSyntaxProvider" ref="portletUrlSyntaxProvider" />
+        <property name="portletWindowRegistry" ref="portletWindowRegistry" />
     </bean>
     
     <bean id="channelRequestParameterProcessor" class="org.jasig.portal.url.processing.ChannelRequestParameterProcessor">

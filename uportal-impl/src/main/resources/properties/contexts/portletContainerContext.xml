@@ -29,6 +29,7 @@
     <bean id="portalCallbackService" class="org.jasig.portal.portlet.container.services.PortalCallbackServiceImpl">
         <property name="requestPropertiesManager" ref="requestPropertiesManager" />
         <property name="portletWindowRegistry" ref="portletWindowRegistry" />
+        <property name="portletUrlSyntaxProvider" ref="portletUrlSyntaxProvider" />
     </bean>
 
     <bean id="requestPropertiesManager" class="org.jasig.portal.portlet.container.properties.RequestPropertiesManagerBroker">
@@ -41,5 +42,9 @@
     </bean>
     
     <bean id="portletWindowRegistry" class="org.jasig.portal.portlet.registry.PortletWindowRegistryImpl">
+    </bean>
+    
+    <bean id="portletUrlSyntaxProvider" class="org.jasig.portal.portlet.url.PortletUrlSyntaxProviderImpl">
+        <property name="portletWindowRegistry" ref="portletWindowRegistry" />
     </bean>
 </beans>
