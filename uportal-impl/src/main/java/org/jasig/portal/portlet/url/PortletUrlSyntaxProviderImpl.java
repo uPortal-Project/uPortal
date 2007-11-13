@@ -206,6 +206,13 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
         return parsedUrls;
     }
     
+    /**
+     * Gets/Creates PortletUrl to parse parameters into from the parsedUrls Map
+     * 
+     * @param portletWindowId ID to get ParsedUrl for
+     * @param parsedUrls Map of existing ParsedUrl objects
+     * @return The PortletUrl to parse parameters into for the IPortletWindowId
+     */
     protected PortletUrl getPortletUrl(IPortletWindowId portletWindowId, Map<IPortletWindowId, PortletUrl> parsedUrls) {
         PortletUrl portletUrl = parsedUrls.get(portletWindowId);
         
@@ -217,6 +224,13 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
         return portletUrl;
     }
     
+    /**
+     * Parses a parameter name into a Tuple that contains the second and third parts. The parsing
+     * is done based on the {@link #SEPERATOR} string.
+     * 
+     * @param parameterName Name of parameter to parse
+     * @return A Tuple with the second/third parse of the parameter name, null if the parameter name can not be parsed.
+     */
     protected Tuple<String, String> parseParameterName(String parameterName) {
         final int firstIndex = parameterName.indexOf(SEPERATOR);
         if (firstIndex < 0) {
@@ -253,8 +267,8 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
         //Get the encoding to use for the URL
         final String encoding = this.getEncoding(request);
         
-        //Get the string version of the portlet ID (local variable to avoid needless toString() calls)
-        final String portletWindowIdString = portletWindow.getPortletWindowId().toString();
+        //Get the string version of the portlet ID (local variable to avoid needless getStringId() calls)
+        final String portletWindowIdString = portletWindow.getPortletWindowId().getStringId();
         
         // TODO Need to decide how to deal with 'secure' URL requests
         // Determine the base path for the URL
@@ -307,7 +321,7 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
         }
         
         if (this.logger.isDebugEnabled()) {
-            this.logger.debug("Generated portlet URL '" + url + "' for IPortletWindow='" + portletWindow + "' and PortletUrl='" + portletUrl + "'. StringBuilder started with length " + this.bufferLength + " and ended with length '" + url.capacity() + "'.");
+            this.logger.debug("Generated portlet URL '" + url + "' for IPortletWindow='" + portletWindow + "' and PortletUrl='" + portletUrl + "'. StringBuilder started with length " + this.bufferLength + " and ended with length " + url.capacity() + ".");
         }
         
         return url.toString();
@@ -345,21 +359,26 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
             throw new RuntimeException("Failed to encode portlet URL parameter name '" + name + "' for encoding '" + encoding + "'");
         }
         
-        for (int index = 0; index < values.length; index++) {
-            String value = values[index];
-            
-            try {
-                value = URLEncoder.encode(value, encoding);
+        if (values.length == 0) {
+            url.append(name).append("=");
+        }
+        else {
+            for (int index = 0; index < values.length; index++) {
+                String value = values[index];
+                
+                try {
+                    value = URLEncoder.encode(value, encoding);
+                }
+                catch (UnsupportedEncodingException e) {
+                    throw new RuntimeException("Failed to encode portlet URL parameter value '" + value + "' for encoding '" + encoding + "'");
+                }
+                
+                if (index > 0) {
+                    url.append("&");
+                }
+                
+                url.append(name).append("=").append(value);
             }
-            catch (UnsupportedEncodingException e) {
-                throw new RuntimeException("Failed to encode portlet URL parameter value '" + value + "' for encoding '" + encoding + "'");
-            }
-            
-            if (index > 0) {
-                url.append("&");
-            }
-            
-            url.append(name).append("=").append(value);
         }
     }
 }

@@ -17,13 +17,12 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.IWorkerRequestProcessor;
 import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.PortalSessionManager;
-import org.jasig.portal.RequestParamWrapper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * Class to handle incoming portal requests with specified worker of

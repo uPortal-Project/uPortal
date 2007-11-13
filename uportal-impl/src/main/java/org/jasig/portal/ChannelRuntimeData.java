@@ -262,7 +262,7 @@ public class ChannelRuntimeData extends Hashtable<String, Object> implements Clo
                 url=channelUPFile.getUPFile();
             }
         } catch (Exception e) {
-            log.error("ChannelRuntimeData::getBaseActionURL() : unable to construct a base action URL!");
+            log.error("Unable to construct a base action URL!", e);
         }
         return url;
     }

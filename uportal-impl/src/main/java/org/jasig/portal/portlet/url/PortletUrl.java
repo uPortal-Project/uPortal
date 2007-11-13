@@ -5,6 +5,7 @@
  */
 package org.jasig.portal.portlet.url;
 
+import java.util.Arrays;
 import java.util.Map;
 
 import javax.portlet.PortletMode;
@@ -103,13 +104,34 @@ public class PortletUrl {
             return false;
         }
         PortletUrl rhs = (PortletUrl) object;
-        return new EqualsBuilder()
+        if (new EqualsBuilder()
             .append(this.secure, rhs.secure)
             .append(this.requestType, rhs.requestType)
             .append(this.windowState, rhs.windowState)
-            .append(this.parameters, rhs.parameters)
             .append(this.portletMode, rhs.portletMode)
-            .isEquals();
+            .isEquals()) {
+            
+            //Nasty logic for doing equality checking on the parameters Map that has String[] values
+            if (this.parameters == rhs.parameters || (this.parameters != null && this.parameters.equals(rhs.parameters))) {
+                return true;
+            }
+            else if ((this.parameters != rhs.parameters && (this.parameters == null || rhs.parameters == null)) || this.parameters.size() != rhs.parameters.size()) {
+                return false;
+            }
+            else {
+                for (final Map.Entry<String, String[]> paramEntry : this.parameters.entrySet()) {
+                    final String key = paramEntry.getKey();
+                    
+                    if (!Arrays.equals(paramEntry.getValue(), rhs.parameters.get(key))) {
+                        return false;
+                    }
+                }
+                
+                return true;
+            }
+        }
+        
+        return false;
     }
     /**
      * @see java.lang.Object#hashCode()

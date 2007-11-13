@@ -43,7 +43,9 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsFileUploadSupport;
 
 /**
- * //TODO do configure max size via properties manager via spring
+ * Does request parameter processing on any request that does not explicitly target a portlet.
+ * Takes care of pulling out channel parameters and handling file uploads so the data can be
+ * passed into the ChannelRuntimeData for the targeted channel.
  * 
  * @author Eric Dalquist
  * @version $Revision$

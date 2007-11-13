@@ -8,8 +8,6 @@ package org.jasig.portal.portlet.om;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.pluto.PortletWindowID;
 
 /**
@@ -66,9 +64,7 @@ public class PortletWindowIdImpl implements IPortletWindowId {
      */
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
-            .append("id", this.portletWindowId)
-            .toString();
+        return this.getStringId();
     }
 
 }
