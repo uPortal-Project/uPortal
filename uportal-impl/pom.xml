@@ -158,6 +158,13 @@
             <version>${spring-framework.version}</version>
             <scope>compile</scope>
         </dependency>
+        
+        <dependency>
+            <groupId>org.springframework.ldap</groupId>
+            <artifactId>spring-ldap</artifactId>
+            <version>${spring-ldap.version}</version>
+            <scope>compile</scope>
+        </dependency>
 
         <dependency>
             <groupId>cas</groupId>
