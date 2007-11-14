@@ -6,12 +6,11 @@
 package org.jasig.portal;
 
 import java.lang.reflect.Constructor;
+import java.util.concurrent.atomic.AtomicLong;
 
-import org.jasig.portal.properties.PropertiesManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import edu.emory.mathcs.backport.java.util.concurrent.atomic.AtomicLong;
+import org.jasig.portal.properties.PropertiesManager;
 
 /**
  * <p>The <code>ChannelRendererFactory</code> creates

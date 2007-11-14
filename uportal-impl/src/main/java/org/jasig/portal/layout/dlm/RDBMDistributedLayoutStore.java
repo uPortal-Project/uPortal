@@ -19,16 +19,17 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Vector;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.ChannelDefinition;
-import org.jasig.portal.properties.PropertiesManager;
-import org.jasig.portal.RDBMServices;
-import org.jasig.portal.layout.simple.RDBMUserLayoutStore;
 import org.jasig.portal.ChannelParameter;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.PortalSessionManager;
+import org.jasig.portal.RDBMServices;
 import org.jasig.portal.StructureStylesheetDescription;
 import org.jasig.portal.StructureStylesheetUserPreferences;
 import org.jasig.portal.ThemeStylesheetDescription;
@@ -37,8 +38,8 @@ import org.jasig.portal.UserProfile;
 import org.jasig.portal.channels.error.ErrorCode;
 import org.jasig.portal.layout.LayoutStructure;
 import org.jasig.portal.layout.StructureParameter;
-import org.jasig.portal.rdbm.DatabaseMetaDataImpl;
-import org.jasig.portal.rdbm.IDatabaseMetadata;
+import org.jasig.portal.layout.simple.RDBMUserLayoutStore;
+import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.provider.PersonImpl;
 import org.jasig.portal.utils.DocumentFactory;
@@ -50,10 +51,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import edu.emory.mathcs.backport.java.util.concurrent.ConcurrentHashMap;
-import edu.emory.mathcs.backport.java.util.concurrent.locks.ReadWriteLock;
-import edu.emory.mathcs.backport.java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * This class extends RDBMUserLayoutStore and implements instantiating and
