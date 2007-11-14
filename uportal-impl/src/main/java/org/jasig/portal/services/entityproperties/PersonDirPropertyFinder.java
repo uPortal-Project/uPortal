@@ -14,7 +14,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.services.PersonDirectory;
-import org.jasig.portal.services.persondir.IPersonAttributeDao;
+import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.portal.utils.SoftHashMap;
 
 /**

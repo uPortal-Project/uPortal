@@ -24,7 +24,7 @@ import org.jasig.portal.security.IPrincipal;
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.PortalSecurityException;
 import org.jasig.portal.security.provider.ChainingSecurityContext;
-import org.jasig.portal.services.persondir.IPersonAttributeDao;
+import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.portal.utils.MovingAverage;
 import org.jasig.portal.utils.MovingAverageSample;
 

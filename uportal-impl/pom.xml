@@ -74,7 +74,14 @@
             <version>${cernunnos.version}</version>
             <scope>compile</scope>
         </dependency>
-
+        
+        <dependency>
+            <groupId>org.jasig.service</groupId>
+            <artifactId>person-directory</artifactId>
+            <version>${person-directory.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        
         <dependency>
             <groupId>servlets.com</groupId>
             <artifactId>cos</artifactId>

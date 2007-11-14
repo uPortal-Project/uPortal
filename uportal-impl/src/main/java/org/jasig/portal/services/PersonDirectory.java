@@ -5,8 +5,8 @@
 
 package org.jasig.portal.services;
 
-import org.jasig.portal.services.persondir.IPersonAttributeDao;
 import org.jasig.portal.spring.PortalApplicationContextListener;
+import org.jasig.services.persondir.IPersonAttributeDao;
 import org.springframework.web.context.WebApplicationContext;
 
 /**

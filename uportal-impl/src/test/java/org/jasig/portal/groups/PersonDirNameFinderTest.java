@@ -9,8 +9,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.services.persondir.IPersonAttributeDao;
-import org.jasig.portal.services.persondir.support.ComplexStubPersonAttributeDao;
+import org.jasig.services.persondir.IPersonAttributeDao;
+import org.jasig.services.persondir.support.ComplexStubPersonAttributeDao;
 
 import junit.framework.TestCase;
 
