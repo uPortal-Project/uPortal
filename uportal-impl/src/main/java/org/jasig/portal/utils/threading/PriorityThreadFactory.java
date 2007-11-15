@@ -4,7 +4,7 @@
  */
 package org.jasig.portal.utils.threading;
 
-import edu.emory.mathcs.backport.java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadFactory;
 
 /**
  * Implementation of a ThreadFactory that allows you to set the thread

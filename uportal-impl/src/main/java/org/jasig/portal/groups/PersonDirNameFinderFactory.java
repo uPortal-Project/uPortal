@@ -6,7 +6,7 @@
  package org.jasig.portal.groups;
 
 import org.jasig.portal.services.PersonDirectory;
-import org.jasig.portal.services.persondir.IPersonAttributeDao;
+import org.jasig.services.persondir.IPersonAttributeDao;
 
 /**
  * Factory for creating and obtaining reference to 

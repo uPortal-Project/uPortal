@@ -171,8 +171,6 @@ public class CarResourceWorker implements IWorkerRequestProcessor {
                 if ( vals == null )
                 {
                     pw.print( " " + parm + "(-)" );
-                    if ( req instanceof RequestParamWrapper )
-                        vals = ((RequestParamWrapper)req).getObjectParameterValues(parm);
                     if ( vals == null )
                         pw.print( " " + parm + "(both)=[]" );
                     else

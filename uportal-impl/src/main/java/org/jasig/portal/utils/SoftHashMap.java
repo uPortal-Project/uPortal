@@ -10,8 +10,7 @@ import java.lang.ref.SoftReference;
 import java.util.AbstractMap;
 import java.util.LinkedList;
 import java.util.Set;
-
-import edu.emory.mathcs.backport.java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 

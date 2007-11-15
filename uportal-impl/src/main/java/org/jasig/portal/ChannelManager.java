@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -58,7 +59,6 @@ import org.springframework.web.context.WebApplicationContext;
 import org.xml.sax.ContentHandler;
 
 import tyrex.naming.MemoryContext;
-import edu.emory.mathcs.backport.java.util.concurrent.atomic.AtomicLong;
 
 /**
  * ChannelManager shall have the burden of squeezing content out of channels.

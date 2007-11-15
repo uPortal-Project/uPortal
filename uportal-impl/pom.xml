@@ -74,6 +74,13 @@
             <version>${commons-fileupload}</version>
             <scope>compile</scope>
         </dependency>
+        
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons-io.version}</version>
+            <scope>compile</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.danann</groupId>
@@ -82,6 +89,13 @@
             <scope>compile</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.jasig.service</groupId>
+            <artifactId>person-directory</artifactId>
+            <version>${person-directory.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        
         <dependency>
             <groupId>servlets.com</groupId>
             <artifactId>cos</artifactId>
@@ -100,13 +114,6 @@
             <groupId>tyrex</groupId>
             <artifactId>tyrex</artifactId>
             <version>${tyrex.version}</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>backport-util-concurrent</groupId>
-            <artifactId>backport-util-concurrent</artifactId>
-            <version>${backport-util-concurrent.version}</version>
             <scope>compile</scope>
         </dependency>
 
@@ -170,6 +177,13 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-aop</artifactId>
             <version>${spring-framework.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.springframework.ldap</groupId>
+            <artifactId>spring-ldap</artifactId>
+            <version>${spring-ldap.version}</version>
             <scope>compile</scope>
         </dependency>
 

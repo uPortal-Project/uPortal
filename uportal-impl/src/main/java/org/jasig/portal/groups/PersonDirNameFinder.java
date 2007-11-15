@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jasig.portal.services.persondir.IPersonAttributeDao;
+import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.portal.utils.SoftHashMap;
 
 

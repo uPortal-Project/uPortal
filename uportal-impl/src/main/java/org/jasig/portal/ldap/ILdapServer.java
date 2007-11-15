@@ -8,6 +8,8 @@ package org.jasig.portal.ldap;
 import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
 
+import org.springframework.ldap.core.support.LdapContextSource;
+
 
 /**
  * The <code>ILdapServer</code> interface defines a set of methods
@@ -16,6 +18,7 @@ import javax.naming.directory.DirContext;
  * 
  * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
  * @version $Revision$
+ * @deprecated Framework code should access {@link LdapContextSource} objects in the spring context via injection instead of using these APIs.
  */
 public interface ILdapServer {
 

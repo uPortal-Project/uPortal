@@ -19,7 +19,7 @@ import org.jasig.portal.PortalException;
 import org.jasig.portal.UPFileSpec;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.PersonDirectory;
-import org.jasig.portal.services.persondir.IPersonAttributeDao;
+import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.XSLT;
 import org.w3c.dom.Document;
