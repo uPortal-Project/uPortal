@@ -12,14 +12,14 @@
     </bean>
     
     <bean id="portletRequestParameterProcessor" class="org.jasig.portal.url.processing.PortletRequestParameterProcessor">
-        <property name="portletRequestParameterManager" ref="" />
+        <property name="portletRequestParameterManager" ref="portletRequestParameterManager" />
         <property name="portletUrlSyntaxProvider" ref="portletUrlSyntaxProvider" />
         <property name="portletWindowRegistry" ref="portletWindowRegistry" />
     </bean>
     
     <bean id="channelRequestParameterProcessor" class="org.jasig.portal.url.processing.ChannelRequestParameterProcessor">
-        <property name="portletRequestParameterManager" ref="" />
-        <property name="channelRequestParameterManager" ref="" />
+        <property name="portletRequestParameterManager" ref="portletRequestParameterManager" />
+        <property name="channelRequestParameterManager" ref="channelRequestParameterManager" />
         <property name="maxUploadSize">
             <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
                 <property name="targetClass" value="org.jasig.portal.properties.PropertiesManager" />
@@ -33,4 +33,8 @@
             </bean>
         </property>
     </bean>
+    
+    <bean id="channelRequestParameterManager" class="org.jasig.portal.url.support.ChannelRequestParameterManager" />
+    
+    <bean id="portletRequestParameterManager" class="org.jasig.portal.portlet.url.PortletRequestParameterManager" />
 </beans>

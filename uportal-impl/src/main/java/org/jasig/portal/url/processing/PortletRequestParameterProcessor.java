@@ -93,7 +93,7 @@ public class PortletRequestParameterProcessor implements IRequestParameterProces
 
         //If no PortletUrls then no targeted portlets
         if (portletUrls.isEmpty()) {
-            this.portletRequestParameterManager.setNoPortletParameters(request);
+            this.portletRequestParameterManager.setNoPortletRequest(request);
             return true;
         }
 
