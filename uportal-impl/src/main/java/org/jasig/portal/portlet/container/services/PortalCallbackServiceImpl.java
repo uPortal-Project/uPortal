@@ -19,12 +19,13 @@ import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.portlet.url.IPortletUrlSyntaxProvider;
 import org.jasig.portal.portlet.url.PortletURLProviderImpl;
+import org.jasig.portal.portlet.url.ResourceUrlProviderImpl;
 import org.springframework.beans.factory.annotation.Required;
 
 /**
  * Main callback service Pluto uses when servicing portlet requests. Delegates to {@link IRequestPropertiesManager}
  * for request/response property information, {2link IPortletWindowRegistry} for portlet window information,
- * {@link FOO} for URL generation, and {@link FOO} for dynamic title handling.
+ * {@link IPortletUrlSyntaxProvider} for URL generation, and {@link FOO} for dynamic title handling.
  * 
  * @author Eric Dalquist
  * @version $Revision$
@@ -116,8 +117,7 @@ public class PortalCallbackServiceImpl implements PortalCallbackService {
      * @see org.apache.pluto.spi.PortalCallbackService#getResourceURLProvider(javax.servlet.http.HttpServletRequest, org.apache.pluto.PortletWindow)
      */
     public ResourceURLProvider getResourceURLProvider(HttpServletRequest request, PortletWindow plutoPortletWindow) {
-        // TODO Auto-generated method stub
-        return null;
+        return new ResourceUrlProviderImpl();
     }
 
     /* (non-Javadoc)
