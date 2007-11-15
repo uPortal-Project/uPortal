@@ -34,7 +34,7 @@
                     </constructor-arg>
                     <!-- We are checking that that bean is an instanceof this class. -->
                     <constructor-arg index="1" type="java.lang.String">
-                        <value>org.jasig.portal.services.persondir.IPersonAttributeDao</value>
+                        <value>org.jasig.services.persondir.IPersonAttributeDao</value>
                     </constructor-arg>
                 </bean>
 
