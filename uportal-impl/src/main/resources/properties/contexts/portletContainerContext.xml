@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd"
+>
 
-    <bean id="requiredContainerServices"
-        class="org.jasig.portal.portlet.container.services.RequiredContainerServicesImpl">
+    <bean id="portletContext" class="org.jasig.portal.portlet.container.PortletContainerFactoryBean">
+        <property name="requiredContainerServices" ref="requiredContainerServices" />
+        <property name="optionalContainerServices" ref="optionalContainerServices" />
+    </bean>
+
+    <bean id="requiredContainerServices" class="org.jasig.portal.portlet.container.services.RequiredContainerServicesImpl">
         <property name="portalContext" ref="portalContext" />
         <property name="portalCallbackService" ref="portalCallbackService" />
+    </bean>
+
+    <bean id="optionalContainerServices" class="org.jasig.portal.portlet.container.services.OptionalContainerServicesImpl">
     </bean>
 
     <bean id="portalContext" class="org.jasig.portal.portlet.container.PortalContextImpl">
@@ -40,10 +48,10 @@
             </list>
         </property>
     </bean>
-    
+
     <bean id="portletWindowRegistry" class="org.jasig.portal.portlet.registry.PortletWindowRegistryImpl">
     </bean>
-    
+
     <bean id="portletUrlSyntaxProvider" class="org.jasig.portal.portlet.url.PortletUrlSyntaxProviderImpl">
         <property name="portletWindowRegistry" ref="portletWindowRegistry" />
     </bean>

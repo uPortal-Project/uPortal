@@ -24,7 +24,7 @@ import org.springframework.beans.factory.annotation.Required;
 
 /**
  * Main callback service Pluto uses when servicing portlet requests. Delegates to {@link IRequestPropertiesManager}
- * for request/response property information, {2link IPortletWindowRegistry} for portlet window information,
+ * for request/response property information, {@link IPortletWindowRegistry} for portlet window information,
  * {@link IPortletUrlSyntaxProvider} for URL generation, and {@link FOO} for dynamic title handling.
  * 
  * @author Eric Dalquist
