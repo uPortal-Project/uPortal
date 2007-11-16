@@ -14,6 +14,7 @@
     </bean>
 
     <bean id="optionalContainerServices" class="org.jasig.portal.portlet.container.services.OptionalContainerServicesImpl">
+        <property name="userInfoService" ref="userInfoService" />
     </bean>
 
     <bean id="portalContext" class="org.jasig.portal.portlet.container.PortalContextImpl">
@@ -54,5 +55,11 @@
 
     <bean id="portletUrlSyntaxProvider" class="org.jasig.portal.portlet.url.PortletUrlSyntaxProviderImpl">
         <property name="portletWindowRegistry" ref="portletWindowRegistry" />
+    </bean>
+    
+    <bean id="userInfoService" class="org.jasig.portal.portlet.container.services.PersonDirectoryUserInfoService">
+        <property name="optionalContainerServices" ref="optionalContainerServices" />
+        <property name="portletWindowRegistry" ref="portletWindowRegistry" />
+        <property name="personAttributeDao" ref="personAttributeDao" />
     </bean>
 </beans>

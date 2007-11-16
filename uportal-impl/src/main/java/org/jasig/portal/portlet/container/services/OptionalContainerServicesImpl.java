@@ -9,16 +9,25 @@ import org.apache.pluto.core.DefaultOptionalContainerServices;
 import org.apache.pluto.spi.optional.PortalAdministrationService;
 import org.apache.pluto.spi.optional.PortletEnvironmentService;
 import org.apache.pluto.spi.optional.PortletInfoService;
-import org.apache.pluto.spi.optional.PortletInvokerService;
 import org.apache.pluto.spi.optional.PortletPreferencesService;
-import org.apache.pluto.spi.optional.PortletRegistryService;
 import org.apache.pluto.spi.optional.UserInfoService;
+import org.springframework.beans.factory.annotation.Required;
 
 /**
  * @author Eric Dalquist
  * @version $Revision$
  */
 public class OptionalContainerServicesImpl extends DefaultOptionalContainerServices {
+    private UserInfoService userInfoService;
+    
+    /**
+     * @param userInfoService the userInfoService to set
+     */
+    @Required
+    public void setUserInfoService(UserInfoService userInfoService) {
+        this.userInfoService = userInfoService;
+    }
+    
 
     /* (non-Javadoc)
      * @see org.apache.pluto.core.DefaultOptionalContainerServices#getPortalAdministrationService()
@@ -62,8 +71,7 @@ public class OptionalContainerServicesImpl extends DefaultOptionalContainerServi
      */
     @Override
     public UserInfoService getUserInfoService() {
-        // TODO Tie into person directory
-        return super.getUserInfoService();
+        return this.userInfoService;
     }
 
 }

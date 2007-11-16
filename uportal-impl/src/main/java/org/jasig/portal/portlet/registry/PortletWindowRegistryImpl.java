@@ -12,6 +12,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.Validate;
 import org.apache.pluto.PortletWindow;
+import org.apache.pluto.PortletWindowID;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.om.PortletWindowIdImpl;
@@ -29,15 +30,31 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.registry.IPortletWindowRegistry#convertPortletWindow(javax.servlet.http.HttpServletRequest, org.apache.pluto.PortletWindow)
      */
-    public IPortletWindow convertPortletWindow(HttpServletRequest request, PortletWindow portletWindow) {
+    public IPortletWindow convertPortletWindow(HttpServletRequest request, PortletWindow plutoPortletWindow) {
         Validate.notNull(request, "request can not be null");
-        Validate.notNull(portletWindow, "portletWindow can not be null");
+        Validate.notNull(plutoPortletWindow, "portletWindow can not be null");
         
-        if (portletWindow instanceof IPortletWindow) {
-            return (IPortletWindow)portletWindow;
+        if (plutoPortletWindow instanceof IPortletWindow) {
+            return (IPortletWindow)plutoPortletWindow;
         }
         
-        throw new UnsupportedOperationException("Cannot convert '" + portletWindow.getClass() + "' to '" + IPortletWindow.class + "' at this time");
+        final PortletWindowID plutoPortletWindowId = plutoPortletWindow.getId();
+        final IPortletWindowId portletWindowId;
+        if (plutoPortletWindowId instanceof IPortletWindowId) {
+            portletWindowId = (IPortletWindowId)plutoPortletWindowId;
+        }
+        else {
+            portletWindowId = this.getPortletWindowId(plutoPortletWindowId.getStringId());
+        }
+        
+        final IPortletWindow portletWindow = this.getPortletWindow(request, portletWindowId);
+        
+        if (portletWindow == null) {
+            //TODO come up with a better exception
+            throw new RuntimeException("Could not cast Pluto PortletWindow to uPortal IPortletWindow and no IPortletWindow exists with the specified ID");
+        }
+        
+        return portletWindow;
     }
 
     /* (non-Javadoc)

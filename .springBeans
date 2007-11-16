@@ -9,13 +9,15 @@
 		<config>uportal-impl/src/main/resources/properties/contexts/checksContext.xml</config>
 		<config>uportal-impl/src/main/resources/properties/contexts/dlmContext.xml</config>
 		<config>uportal-impl/src/main/resources/properties/contexts/jmxContext.xml</config>
+		<config>uportal-impl/src/main/resources/properties/contexts/ldapContext.xml</config>
+		<config>uportal-impl/src/main/resources/properties/contexts/personDirectoryContext.xml</config>
 		<config>uportal-impl/src/main/resources/properties/contexts/portletContainerContext.xml</config>
-		<config>uportal-impl/src/main/resources/properties/contexts/statsContext.xml</config>
 		<config>uportal-impl/src/main/resources/properties/contexts/requestParameterProcessingContext.xml</config>
+		<config>uportal-impl/src/main/resources/properties/contexts/statsContext.xml</config>
 	</configs>
 	<configSets>
 		<configSet>
-			<name><![CDATA[webApplicationContext]]></name>
+			<name><![CDATA[WebApplicationContext]]></name>
 			<allowBeanDefinitionOverriding>true</allowBeanDefinitionOverriding>
 			<incomplete>false</incomplete>
 			<configs>
@@ -24,9 +26,11 @@
 				<config>uportal-impl/src/main/resources/properties/contexts/checksContext.xml</config>
 				<config>uportal-impl/src/main/resources/properties/contexts/dlmContext.xml</config>
 				<config>uportal-impl/src/main/resources/properties/contexts/jmxContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/ldapContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/personDirectoryContext.xml</config>
 				<config>uportal-impl/src/main/resources/properties/contexts/portletContainerContext.xml</config>
-				<config>uportal-impl/src/main/resources/properties/contexts/statsContext.xml</config>
 				<config>uportal-impl/src/main/resources/properties/contexts/requestParameterProcessingContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/statsContext.xml</config>
 			</configs>
 		</configSet>
 	</configSets>
