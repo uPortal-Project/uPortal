@@ -50,4 +50,16 @@ public interface IPortletWindow extends PortletWindow, Serializable {
      */
     public Map<String, String[]> getRequestParameers();
     
+    /**
+     * Sets the expiration timeout for the portlet rendering cache. If null is set
+     * the timeout configured in the portlet.xml will be used.
+     * 
+     * @param cacheExpiration Set the cache expiration length for the portlet in seconds.
+     */
+    public void setCacheExpiration(Integer cacheExpiration);
+
+    /**
+     * @return The expiration timeout for the portlet, if null the value from portlet.xml should be used.
+     */
+    public Integer getCacheExpiration();
 }

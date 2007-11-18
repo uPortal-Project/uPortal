@@ -19,7 +19,7 @@ import org.jasig.portal.IPrivilegedChannel;
  * 
  * @since uPortal 2.5
  */
-public interface IPortletAdaptor extends IPrivilegedChannel {
+public interface IPortletAdaptor {
     public static final WindowState EXCLUSIVE = new WindowState("EXCLUSIVE");
     
     public static final String ATTRIBUTE_RUNTIME_DATA = IPortletAdaptor.class.getName() + ".RUNTIME_DATA";
