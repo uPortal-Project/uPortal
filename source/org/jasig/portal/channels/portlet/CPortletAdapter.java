@@ -617,21 +617,16 @@ public class CPortletAdapter
     }
 
     /**
-     * Generates a channel cache key.  The key scope is set to be system-wide
-     * when the channel is anonymously accessed, otherwise it is set to be
-     * instance-wide.  The caching implementation here is simple and may not
-     * handle all cases.  It may also violate the Portlet Specification so
-     * this obviously needs further discussion.
+     * Generates a channel cache key.  The key scope is currently set to be
+     * instance-wide.
+
      * @return the channel cache key
      */
     public ChannelCacheKey generateKey() {
-        ChannelCacheKey cck = null;
-        // Anonymously accessed pages can be cached system-wide
-        if(staticData.getPerson().isGuest()) {
-            cck = systemCacheKey;
-        } else {
-            cck = instanceCacheKey;
-        }
+		//Special handling of 'guest' actually resulted in causing a great many
+		//issues in the guest view for which it was originally intended, and was
+		//not used elsewhere.  Removed as a part of a fix for UP-1869
+        ChannelCacheKey cck = instanceCacheKey;
         return cck;
     }
 
