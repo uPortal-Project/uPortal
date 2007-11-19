@@ -15,7 +15,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.pluto.OptionalContainerServices;
 import org.apache.pluto.PortletContainer;
 import org.apache.pluto.PortletContainerException;
-import org.apache.pluto.descriptors.portlet.PortletAppDD;
 import org.apache.pluto.descriptors.portlet.PortletDD;
 import org.apache.pluto.spi.optional.PortletRegistryService;
 import org.jasig.portal.ChannelCacheKey;
@@ -45,6 +44,7 @@ import org.xml.sax.ContentHandler;
  *  generateKey
  *  isCacheValid
  *  renderCharacters - final call? Cleanup?
+ *  getRuntimeProperties - gets title post rendering
  *  
  * action - TODO implement this
  *  setPortalControlStructures

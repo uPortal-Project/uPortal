@@ -7,8 +7,6 @@ package org.jasig.portal.channels.portlet;
 
 import javax.portlet.WindowState;
 
-import org.jasig.portal.IPrivilegedChannel;
-
 /**
  * Marker interface for IChannels to communicate that they wish to be treated
  * in the ways we treat JSR-168 portlets being rendered via IChannels.  This
@@ -23,6 +21,7 @@ public interface IPortletAdaptor {
     public static final WindowState EXCLUSIVE = new WindowState("EXCLUSIVE");
     
     public static final String ATTRIBUTE_RUNTIME_DATA = IPortletAdaptor.class.getName() + ".RUNTIME_DATA";
+    public static final String ATTRIBUTE_PORTLET_TITLE = IPortletAdaptor.class.getName() + ".PORTLET_TITLE";
     
     // this marker interface declares no methods.
 

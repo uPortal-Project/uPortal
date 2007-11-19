@@ -14,6 +14,7 @@ import org.apache.pluto.PortletWindow;
 import org.apache.pluto.spi.PortalCallbackService;
 import org.apache.pluto.spi.PortletURLProvider;
 import org.apache.pluto.spi.ResourceURLProvider;
+import org.jasig.portal.channels.portlet.IPortletAdaptor;
 import org.jasig.portal.portlet.container.properties.IRequestPropertiesManager;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
@@ -124,8 +125,6 @@ public class PortalCallbackServiceImpl implements PortalCallbackService {
      * @see org.apache.pluto.spi.PortalCallbackService#setTitle(javax.servlet.http.HttpServletRequest, org.apache.pluto.PortletWindow, java.lang.String)
      */
     public void setTitle(HttpServletRequest request, PortletWindow plutoPortletWindow, String title) {
-        //This is called by the portlet if RenderResponse#setTitle(String) is called.
-        // TODO determine how to tie this into uPortal channel title rendering
-        throw new UnsupportedOperationException("Dynamic portlet titles are not yet supported");
+        request.setAttribute(IPortletAdaptor.ATTRIBUTE_PORTLET_TITLE, title);
     }
 }
