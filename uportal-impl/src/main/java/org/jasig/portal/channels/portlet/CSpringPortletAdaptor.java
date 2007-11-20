@@ -47,6 +47,7 @@ public class CSpringPortletAdaptor implements IPortletAdaptor, ICharacterChannel
     public void setStaticData(ChannelStaticData sd) throws PortalException {
         this.channelStaticData = sd;
         
+        //Determine the name of the spring bean to wrap
         final String beanName = this.channelStaticData.getParameter("springBeanName");
         if (beanName == null) {
             throw new IllegalStateException("Channel Parameter 'springBeanName' is not set and is requried");
@@ -55,8 +56,8 @@ public class CSpringPortletAdaptor implements IPortletAdaptor, ICharacterChannel
         final WebApplicationContext applicationContext = null; //TODO this.channelStaticData.getWebApplicationContext();
         this.springPortletChannel = (ISpringPortletChannel)applicationContext.getBean(beanName, ISpringPortletChannel.class);
         
-        
-        this.springPortletChannel.init(this.channelStaticData);
+        //Initialize the static channel immediately with the instance data
+        this.springPortletChannel.initSession(this.channelStaticData);
     }
     
     
@@ -149,8 +150,20 @@ public class CSpringPortletAdaptor implements IPortletAdaptor, ICharacterChannel
             this.springPortletChannel.portalEvent(this.channelStaticData, this.portalControlStructures, ev);
         }
         finally {
-            this.channelRuntimeData = null;
-            this.portalControlStructures = null;
+            //On session done events clean up the remaining instance data
+            if (PortalEvent.SESSION_DONE == ev.getEventNumber()) {
+                try {
+                    this.springPortletChannel.destroySession(this.channelStaticData, this.portalControlStructures);
+                }
+                finally {
+                    this.springPortletChannel = null;
+                    this.channelStaticData = null;
+                    this.portalControlStructures = null;
+                }
+            }
+            else {
+                this.portalControlStructures = null;
+            }
         }
     }
 

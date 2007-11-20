@@ -14,11 +14,14 @@ import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalEvent;
 
 /**
+ * Defines a static version of a IChannel that also implements  IPortletAdaptor, ICharacterChannel
+ * and IPrivilegedChannel, ICacheable.
+ * 
  * @author Eric Dalquist
  * @version $Revision$
  */
 public interface ISpringPortletChannel {
-    public void init(ChannelStaticData channelStaticData);
+    public void initSession(ChannelStaticData channelStaticData);
     
     public ChannelCacheKey generateKey(ChannelStaticData channelStaticData, PortalControlStructures portalControlStructures, ChannelRuntimeData channelRuntimeData);
     
@@ -31,4 +34,6 @@ public interface ISpringPortletChannel {
     public void action(ChannelStaticData channelStaticData, PortalControlStructures portalControlStructures, ChannelRuntimeData channelRuntimeData);
 
     public void portalEvent(ChannelStaticData channelStaticData, PortalControlStructures portalControlStructures, PortalEvent portalEvent);
+    
+    public void destroySession(ChannelStaticData channelStaticData, PortalControlStructures portalControlStructures);
 }
