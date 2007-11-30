@@ -746,6 +746,11 @@ public class ChannelManager implements LayoutEventListener {
             			sd.setICCRegistry(new ICCRegistry(this,channelSubscribeId));
 			            sd.setChannelPublishId(cd.getChannelPublishId());
                         sd.setSerializerName(serializerName);
+                        sd.setWebApplicationContext(PortalApplicationContextListener.getRequiredWebApplicationContext());
+                        
+                        if (ch instanceof IPrivileged) {
+                            this.feedPortalControlStructuresToChannel(ch, this.pcs);
+                        }
 
             			ch.setStaticData(sd);
 					}

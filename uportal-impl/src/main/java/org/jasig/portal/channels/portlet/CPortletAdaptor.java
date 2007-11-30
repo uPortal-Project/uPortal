@@ -74,6 +74,16 @@ public class CPortletAdaptor implements IPortletAdaptor, ICharacterChannel, IPri
         // TODO provide title from PortalCallbackService#setTitle calls
         return null;
     }
+    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.channels.portlet.IPortletAdaptor#processAction()
+     */
+    public void processAction() throws PortalException {
+        // TODO Auto-generated method stub
+        
+    }
+
+
 
     /* (non-Javadoc)
      * @see org.jasig.portal.IChannel#receiveEvent(org.jasig.portal.PortalEvent)

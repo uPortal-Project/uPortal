@@ -17,6 +17,7 @@ import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.AuthorizationService;
+import org.springframework.web.context.WebApplicationContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -45,6 +46,9 @@ public class ChannelStaticData extends Hashtable {
   private ICCRegistry iccr=null;
   // reference to layout manager for persisting parameter changes
   private IUserLayoutManager ulm;
+  
+  // reference to the Spring application context the portal is running in
+  private WebApplicationContext webApplicationContext;
   
   private String serializerName;
 
@@ -75,8 +79,21 @@ private IUserLayoutChannelDescription layoutChannelDescription = null;
           this.putAll(parameters);
       this.ulm = ulm;
   }
+  
+    /**
+     * @return the webApplicationContext
+     */
+    public WebApplicationContext getWebApplicationContext() {
+        return webApplicationContext;
+    }
+    /**
+     * @param webApplicationContext the webApplicationContext to set
+     */
+    public void setWebApplicationContext(WebApplicationContext webApplicationContext) {
+        this.webApplicationContext = webApplicationContext;
+    }
 
-  /**
+/**
    * Returns an instance of the IAuthorizationPrincipal for the IPerson
    * @return instance of the IAuthorizationPrincipal for the IPerson
    */
