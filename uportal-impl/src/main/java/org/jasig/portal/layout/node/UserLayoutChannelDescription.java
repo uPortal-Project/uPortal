@@ -11,6 +11,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.ChannelDefinition;
@@ -40,6 +41,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
     String title=null;
     String description=null;
     String className=null;
+    Class channelClass=null;
     String channelPublishId=null;
     String channelTypeId=null;
     String functionalName=null;
@@ -59,7 +61,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
         this();
         this.title=d.getTitle();
         this.description=d.getDescription();
-        this.className=d.getClassName();
+        this.setClassName(d.getClassName());
         this.channelPublishId=d.getChannelPublishId();
         this.channelTypeId=d.getChannelTypeId();
         this.functionalName=d.getFunctionalName();
@@ -213,22 +215,12 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
      * @return the channel type for portlet / not portlet
      */
     public boolean isPortlet() {
-    	/*
-      	 * We believe we are a portlet if the channel class implements 
-      	 * IPortletAdaptor.
-      	 */
-      	
-          if (this.className != null) {
-              try {
-    			Class channelClass = Class.forName(this.className);
-    			return IPortletAdaptor.class.isAssignableFrom(channelClass);
-    		} catch (Throwable e) {
-    			log.error("Unable to load class for name [" + this.className 
-    					+ "] and so do not know whether is a portlet.",e);
-    		}
-          }
-          
-          return false;
+        /*
+         * We believe we are a portlet if the channel class implements 
+         * IPortletAdaptor.
+         */
+
+        return this.channelClass != null && IPortletAdaptor.class.isAssignableFrom(this.channelClass);
     }
 
     /**
@@ -309,6 +301,16 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
      */
     public void setClassName(String  v) {
         this.className = v;
+
+        //Don't bother with a className that is null, empty or just spaces.
+        if (!StringUtils.isBlank(this.className)) {
+            try {
+                this.channelClass = Class.forName(this.className);
+            }
+            catch (ClassNotFoundException e) {
+                log.error("Unable to load class for name '" + this.className + "' for channel with pubId='" + this.channelPublishId + "', fname='" + this.functionalName + "'.", e);
+            }
+        }
     }
 
     /**
