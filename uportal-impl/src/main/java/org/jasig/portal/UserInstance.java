@@ -761,7 +761,7 @@ public class UserInstance implements HttpSessionBindingListener {
      */
     public void valueUnbound(HttpSessionBindingEvent bindingEvent) {
         if (channelManager != null) {
-            channelManager.finishedSession();
+            channelManager.finishedSession(bindingEvent.getSession());
             
             if (uPreferencesManager != null) {
                 uPreferencesManager.getUserLayoutManager().removeLayoutEventListener(channelManager);

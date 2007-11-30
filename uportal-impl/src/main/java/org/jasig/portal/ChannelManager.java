@@ -11,7 +11,6 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -76,12 +75,12 @@ public class ChannelManager implements LayoutEventListener {
     private IUserPreferencesManager upm;
     private PortalControlStructures pcs;
 
-    private Hashtable channelTable;
-    private Hashtable rendererTable;
-    private Map channelCacheTable;
+    private Map<String, IChannel> channelTable;
+    private Map<String, IChannelRenderer> rendererTable;
+    private Map<IChannel, Map<String, ChannelCacheEntry>> channelCacheTable;
 
     private String channelTarget;
-    private Hashtable targetParams;
+    private Map<String, Object> targetParams;
     private BrowserInfo binfo;
     private LocaleManager lm;
 
@@ -89,13 +88,13 @@ public class ChannelManager implements LayoutEventListener {
     private Context channelContext;
 
     // inter-channel communication tables
-    private HashMap iccTalkers;
-    private HashMap iccListeners;
+    private Map<String, Set<String>> iccTalkers;
+    private Map<String, Set<String>> iccListeners;
 
     // a set of channels requested for rendering, but
     // awaiting rendering set commit due to inter-channel
     // communication
-    private Set pendingChannels;
+    private Set<String> pendingChannels;
     private boolean groupedRendering;
 
     private IAuthorizationPrincipal ap;
@@ -117,20 +116,20 @@ public class ChannelManager implements LayoutEventListener {
     // global channel rendering cache
     public static final int SYSTEM_CHANNEL_CACHE_MIN_SIZE=50; // this should be in a file somewhere
 
-    public static final Map systemCache = new SoftHashMap(SYSTEM_CHANNEL_CACHE_MIN_SIZE);
+    public static final Map<String, ChannelCacheEntry> systemCache = new SoftHashMap(SYSTEM_CHANNEL_CACHE_MIN_SIZE);
 
     public static final String channelAddressingPathElement="channel";
     private static boolean useAnchors = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.ChannelManager.use_anchors", false);
-    private Set repeatRenderings=new HashSet();
+    private Set<String> repeatRenderings=new HashSet<String>();
     private boolean ccaching=false;
 
     public ChannelManager() {
-        channelTable=new Hashtable();
-        rendererTable=new Hashtable();
-        iccTalkers=new HashMap();
-        iccListeners=new HashMap();
-        channelCacheTable=Collections.synchronizedMap(new WeakHashMap());
-        groupedRendering=false;
+        channelTable = new Hashtable<String, IChannel>();
+        rendererTable = new Hashtable<String, IChannelRenderer>();
+        iccTalkers = new HashMap<String, Set<String>>();
+        iccListeners = new HashMap<String, Set<String>>();
+        channelCacheTable = Collections.synchronizedMap(new WeakHashMap<IChannel, Map<String, ChannelCacheEntry>>());
+        groupedRendering = false;
     }
 
     /**
@@ -186,44 +185,43 @@ public class ChannelManager implements LayoutEventListener {
         if(groupedRendering) {
             // separate out the dependency group in s0
 
-            HashSet s0=new HashSet();
-            Set children;
+            Set<String> s0 = new HashSet<String>();
+            Set<String> children;
 
             if (pendingChannels.contains(channelTarget)) {
-	            s0.add(channelTarget);
-	            pendingChannels.remove(channelTarget);
-	            children=getListeningChannels(channelTarget);
-	            if(children!=null && !children.isEmpty()) {
-	                children.retainAll(pendingChannels);
-	                while(!children.isEmpty()) {
-	                    // move to the next generation
-	                    HashSet newChildren=new HashSet();
-	                    for(Iterator ci=children.iterator();ci.hasNext();) {
-	                        String childId=(String)ci.next();
-	                        s0.add(childId);
-	                        pendingChannels.remove(childId);
-	                        Set currentChildren=getListeningChannels(childId);
-	                        if(currentChildren!=null) {
-	                            newChildren.addAll(currentChildren);
-	                        }
-	                    }
-	                    newChildren.retainAll(pendingChannels);
-	                    children=newChildren;
-	                }
-	            }
+                s0.add(channelTarget);
+                pendingChannels.remove(channelTarget);
+                children = getListeningChannels(channelTarget);
+                if (children != null && !children.isEmpty()) {
+                    children.retainAll(pendingChannels);
+                    while (!children.isEmpty()) {
+                        // move to the next generation
+                        Set<String> newChildren = new HashSet<String>();
+                        for (String childId : children) {
+                            s0.add(childId);
+                            pendingChannels.remove(childId);
+                            Set<String> currentChildren = getListeningChannels(childId);
+                            if (currentChildren != null) {
+                                newChildren.addAll(currentChildren);
+                            }
+                        }
+                        newChildren.retainAll(pendingChannels);
+                        children = newChildren;
+                    }
+                }
             }
 
             // now s0 group must be synchronized at renderXML(), while the remaining pendingChildren can be rendered freely
-            SetCheckInSemaphore s0semaphore= new SetCheckInSemaphore(new HashSet(s0));
-            for(Iterator gi=s0.iterator();gi.hasNext();) {
-                String channelSubscribeId=(String)gi.next();
-                IChannelRenderer cr=(IChannelRenderer) rendererTable.get(channelSubscribeId);
+            SetCheckInSemaphore s0semaphore= new SetCheckInSemaphore(new HashSet<String>(s0));
+            for(Iterator<String> gi=s0.iterator();gi.hasNext();) {
+                String channelSubscribeId=gi.next();
+                IChannelRenderer cr=rendererTable.get(channelSubscribeId);
                 cr.startRendering(s0semaphore,channelSubscribeId);
             }
 
-            for(Iterator oi=pendingChannels.iterator();oi.hasNext();) {
-                String channelSubscribeId=(String)oi.next();
-                IChannelRenderer cr=(IChannelRenderer) rendererTable.get(channelSubscribeId);
+            for(Iterator<String> oi=pendingChannels.iterator();oi.hasNext();) {
+                String channelSubscribeId=oi.next();
+                IChannelRenderer cr=rendererTable.get(channelSubscribeId);
                 cr.startRendering();
             }
         }
@@ -235,8 +233,7 @@ public class ChannelManager implements LayoutEventListener {
      */
     public void finishedRenderingCycle() {
         // clean up
-        for (Enumeration enumeration = rendererTable.elements(); enumeration.hasMoreElements();) {
-            ChannelRenderer channelRenderer = (ChannelRenderer) enumeration.nextElement();
+        for (final IChannelRenderer channelRenderer : this.rendererTable.values()) {
             try {
                 /*
                  * For well behaved, finished channel renderers, killing doesn't do
@@ -267,7 +264,7 @@ public class ChannelManager implements LayoutEventListener {
         rendererTable.clear();
         clearRepeatedRenderings();
         targetParams=null;
-        pendingChannels=new HashSet();
+        pendingChannels=new HashSet<String>();
         groupedRendering=false;
     }
 
@@ -276,17 +273,27 @@ public class ChannelManager implements LayoutEventListener {
      * Handle end-of-session cleanup
      *
      */
-    public void finishedSession() {
+    public void finishedSession(HttpSession session) {
         this.finishedRenderingCycle();
+        
+        final PortalControlStructures pcs = new PortalControlStructures();
+        pcs.setHttpSession(session);
+        pcs.setUserPreferencesManager(this.upm);
+        this.setLocaleManager(this.lm);
 
         // send SESSION_DONE event to all the channels
         PortalEvent ev = PortalEvent.SESSION_DONE_EVENT;
-        for(Enumeration enum1=channelTable.elements();enum1.hasMoreElements();) {
-            IChannel ch = (IChannel)enum1.nextElement();
+
+        for (final IChannel ch : this.channelTable.values()) {
             if (ch != null) {
                 try {
+                    if (ch instanceof IPrivilegedChannel) {
+                        ((IPrivilegedChannel) ch).setPortalControlStructures(pcs);
+                    }
+
                     ch.receiveEvent(ev);
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     log.error("Error sending session done event to channel " + ch, e);
                 }
             }
@@ -317,7 +324,7 @@ public class ChannelManager implements LayoutEventListener {
         }
 
         // obtain IChannelRenderer
-        IChannelRenderer cr=(IChannelRenderer)rendererTable.get(channelSubscribeId);
+        IChannelRenderer cr=rendererTable.get(channelSubscribeId);
         if(cr==null) {
             // channel rendering wasn't started ?
             try {
@@ -565,7 +572,7 @@ public class ChannelManager implements LayoutEventListener {
      */
     private IChannel replaceWithErrorChannel(String channelSubscribeId, ErrorCode errorCode, Throwable t, String message,boolean setRuntimeData) {
         // get and delete old channel instance
-        IChannel oldInstance=(IChannel) channelTable.get(channelSubscribeId);
+        IChannel oldInstance=channelTable.get(channelSubscribeId);
         if (log.isWarnEnabled())
             log.warn("Replacing channel [" + oldInstance
                 + "], which had subscribeId [" + channelSubscribeId
@@ -610,7 +617,7 @@ public class ChannelManager implements LayoutEventListener {
      */
     private IChannel replaceWithSecureInfoChannel(String channelSubscribeId, boolean setRuntimeData) {
         // get and delete old channel instance
-        IChannel oldInstance=(IChannel) channelTable.get(channelSubscribeId);
+        IChannel oldInstance=channelTable.get(channelSubscribeId);
         channelTable.remove(channelSubscribeId);
         rendererTable.remove(channelSubscribeId);
 
@@ -672,7 +679,7 @@ public class ChannelManager implements LayoutEventListener {
      * @exception NamingException
      */
     private static Context getPortalContext() throws NamingException {
-        Hashtable environment = new Hashtable(5);
+        Hashtable<String, String> environment = new Hashtable<String, String>(5);
         // Set up the path
         environment.put(Context.INITIAL_CONTEXT_FACTORY, "org.jasig.portal.jndi.PortalInitialContextFactory");
         Context ctx = new InitialContext(environment);
@@ -693,10 +700,11 @@ public class ChannelManager implements LayoutEventListener {
         }
         // get channel information from the user layout manager
         IUserLayoutChannelDescription channel=(IUserLayoutChannelDescription) upm.getUserLayoutManager().getNode(channelSubscribeId);
-        if(channel!=null)
+        if(channel!=null) {
             return instantiateChannel(channel);
-        else
-            return null;
+        }
+
+        return null;
     }
 
     private IChannel instantiateChannel(IUserLayoutChannelDescription cd) throws PortalException {
@@ -774,7 +782,7 @@ public class ChannelManager implements LayoutEventListener {
      * @param le the portal event
      */
     public void passPortalEvent(String channelSubscribeId, PortalEvent le) {
-        IChannel ch= (IChannel) channelTable.get(channelSubscribeId);
+        IChannel ch= channelTable.get(channelSubscribeId);
 
         if (ch != null) {
             try {
@@ -829,7 +837,7 @@ public class ChannelManager implements LayoutEventListener {
             }
 
             IChannel chObj;
-            if ((chObj=(IChannel)channelTable.get(channelTarget)) == null) {
+            if ((chObj=channelTable.get(channelTarget)) == null) {
                 try {
                     chObj=instantiateChannel(channelTarget);
                 } catch (Throwable e) {
@@ -921,7 +929,7 @@ public class ChannelManager implements LayoutEventListener {
      * @return an <code>IChannel</code> object
      */
     public IChannel getChannelInstance(String channelSubscribeId) {
-        IChannel ch=(IChannel)channelTable.get(channelSubscribeId);
+        IChannel ch=channelTable.get(channelSubscribeId);
         if(ch==null) {
             try {
                 ch=instantiateChannel(channelSubscribeId);
@@ -940,7 +948,7 @@ public class ChannelManager implements LayoutEventListener {
      * @param channelSubscribeId a <code>String</code> value
      */
     public void removeChannel(String channelSubscribeId) {
-        IChannel ch=(IChannel)channelTable.get(channelSubscribeId);
+        IChannel ch=channelTable.get(channelSubscribeId);
         if(ch!=null) {
             channelCacheTable.remove(ch);
             try {
@@ -986,6 +994,8 @@ public class ChannelManager implements LayoutEventListener {
             }
         }
         processRequestChannelParameters(request);
+        
+        //TODO cleanup PCS in finally here?
     }
 
     /**
@@ -1062,7 +1072,7 @@ public class ChannelManager implements LayoutEventListener {
         IUserLayoutChannelDescription channel=(IUserLayoutChannelDescription) node;
         timeOut=channel.getTimeout();
 
-        ch = (IChannel) channelTable.get(channelSubscribeId);
+        ch = channelTable.get(channelSubscribeId);
 
         // replace channels that are specified as needing to be
         // rendered securely with CSecureInfo.
@@ -1177,24 +1187,24 @@ public class ChannelManager implements LayoutEventListener {
     }
 
     synchronized void registerChannelDependency(String listenerChannelSubscribeId, String talkerChannelSubscribeId) {
-        Set talkers=(Set)iccListeners.get(listenerChannelSubscribeId);
+        Set<String> talkers=iccListeners.get(listenerChannelSubscribeId);
         if(talkers==null) {
-            talkers=new HashSet();
+            talkers=new HashSet<String>();
             iccListeners.put(listenerChannelSubscribeId,talkers);
         }
         talkers.add(talkerChannelSubscribeId);
 
-        Set listeners=(Set)iccTalkers.get(talkerChannelSubscribeId);
+        Set<String> listeners=iccTalkers.get(talkerChannelSubscribeId);
         if(listeners==null) {
-            listeners=new HashSet();
+            listeners=new HashSet<String>();
             iccTalkers.put(talkerChannelSubscribeId,listeners);
         }
         listeners.add(listenerChannelSubscribeId);
     }
 
 
-    private Set getListeningChannels(String talkerChannelSubscribeId) {
-        return (Set)iccTalkers.get(talkerChannelSubscribeId);
+    private Set<String> getListeningChannels(String talkerChannelSubscribeId) {
+        return iccTalkers.get(talkerChannelSubscribeId);
     }
 
     private boolean isListeningToChannels(String listenerChannelSubscribeId) {
@@ -1206,7 +1216,7 @@ public class ChannelManager implements LayoutEventListener {
     }
 
     synchronized void removeChannelDependency(String listenerChannelSubscribeId, String talkerChannelSubscribeId) {
-        Set talkers=(Set)iccListeners.get(listenerChannelSubscribeId);
+        Set<String> talkers=iccListeners.get(listenerChannelSubscribeId);
         if(talkers!=null) {
             talkers.remove(talkerChannelSubscribeId);
             if(talkers.isEmpty()) {
@@ -1214,7 +1224,7 @@ public class ChannelManager implements LayoutEventListener {
             }
         }
 
-        Set listeners=(Set)iccTalkers.get(talkerChannelSubscribeId);
+        Set<String> listeners=iccTalkers.get(talkerChannelSubscribeId);
         if(listeners!=null) {
             listeners.remove(listenerChannelSubscribeId);
             if(listeners.isEmpty()) {

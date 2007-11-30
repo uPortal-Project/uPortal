@@ -13,6 +13,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
 
@@ -77,13 +78,14 @@ public class GuestUserInstance extends UserInstance implements HttpSessionBindin
      * Unbinds a registered session.
      * @param sessionId a <code>String</code> value
      */
-    public void unbindSession(String sessionId) {
+    public void unbindSession(HttpSession httpSession) {
+        final String sessionId = httpSession.getId();
         IState state=(IState)stateTable.get(sessionId);
         if(state==null) {
             log.error("GuestUserInstance::unbindSession() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
             return;
         }
-        state.channelManager.finishedSession();
+        state.channelManager.finishedSession(httpSession);
         state.channelManager = null;
         uLayoutManager.unbindSession(sessionId);
         stateTable.remove(sessionId);
@@ -96,7 +98,7 @@ public class GuestUserInstance extends UserInstance implements HttpSessionBindin
      * @param bindingEvent an <code>HttpSessionBindingEvent</code> value
      */
     public void valueUnbound (HttpSessionBindingEvent bindingEvent) {
-        this.unbindSession(bindingEvent.getSession().getId());
+        this.unbindSession(bindingEvent.getSession());
         if (log.isDebugEnabled())
             log.debug("GuestUserInstance::valueUnbound() : " +
                     "unbinding session \""+bindingEvent.getSession().getId()+"\"");

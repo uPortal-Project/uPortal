@@ -76,6 +76,11 @@ public interface IChannelRenderer
      * <p>Cancels the rendering job.
      **/
     void cancelRendering();
+    
+    /**
+     * This method suppose to take care of the runaway rendering threads.
+     */
+    void kill();
 
     /**
      * <p>Returns the channel rendering character set.</p>
@@ -115,7 +120,7 @@ public interface IChannelRenderer
      * @param cacheTables cache table for the channel renderer
      **/
     void setCacheTables(
-        Map cacheTables
+        Map<IChannel, Map<String, ChannelCacheEntry>> cacheTables
         );
 
     /**

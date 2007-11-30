@@ -51,8 +51,8 @@ public class ChannelRenderer
 
     protected IChannel channel;
     protected ChannelRuntimeData rd;
-    protected Map channelCache;
-    protected Map cacheTables;
+    protected Map<String, ChannelCacheEntry> channelCache;
+    protected Map<IChannel, Map<String, ChannelCacheEntry>> cacheTables;
 
     protected boolean rendering;
     protected boolean donerendering;
@@ -60,7 +60,7 @@ public class ChannelRenderer
     protected Thread workerThread;
 
     protected Worker worker;
-    protected Future workTracker;
+    protected Future<?> workTracker;
 
     protected long startTime;
     protected long timeOut = java.lang.Long.MAX_VALUE;
@@ -68,7 +68,7 @@ public class ChannelRenderer
     protected boolean ccacheable;
 
     protected static ExecutorService tp=null;
-    protected static Map systemCache=null;
+    protected static Map<String, ChannelCacheEntry> systemCache=null;
 
     protected SetCheckInSemaphore groupSemaphore;
     protected Object groupRenderingKey;
@@ -134,11 +134,11 @@ public class ChannelRenderer
      * @return a key->rendering map for this channel
      */
     // XXX is this thread safe?
-    Map getChannelCache() {
-        if(this.channelCache==null) {
-            if((this.channelCache=(SoftHashMap)this.cacheTables.get(this.channel))==null) {
-                this.channelCache=new SoftHashMap(1);
-                this.cacheTables.put(this.channel,this.channelCache);
+    Map<String, ChannelCacheEntry> getChannelCache() {
+        if (this.channelCache == null) {
+            if ((this.channelCache = this.cacheTables.get(this.channel)) == null) {
+                this.channelCache = new SoftHashMap(1);
+                this.cacheTables.put(this.channel, this.channelCache);
             }
         }
         return this.channelCache;
@@ -153,7 +153,7 @@ public class ChannelRenderer
         this.timeOut = value;
     }
 
-    public void setCacheTables(Map cacheTables) {
+    public void setCacheTables(Map<IChannel, Map<String, ChannelCacheEntry>> cacheTables) {
         this.cacheTables=cacheTables;
     }
 
@@ -377,7 +377,7 @@ public class ChannelRenderer
      * This method suppose to take care of the runaway rendering threads.
      * This method will be called from ChannelManager explictly.
      */
-    protected void kill() {
+    public void kill() {
         if(this.workTracker!=null && !this.workTracker.isDone())
             this.workTracker.cancel(true);
     }
@@ -468,7 +468,7 @@ public class ChannelRenderer
                         ChannelCacheKey key=((ICacheable)channel).generateKey();
                         if(key!=null) {
                             if(key.getKeyScope()==ChannelCacheKey.SYSTEM_KEY_SCOPE) {
-                                ChannelCacheEntry entry=(ChannelCacheEntry)systemCache.get(key.getKey());
+                                ChannelCacheEntry entry=systemCache.get(key.getKey());
                                 if(entry!=null) {
                                     // found cached page
                                     // check page validity
@@ -495,7 +495,7 @@ public class ChannelRenderer
                                 }
                             } else {
                                 // by default we assume INSTANCE_KEY_SCOPE
-                                ChannelCacheEntry entry=(ChannelCacheEntry)getChannelCache().get(key.getKey());
+                                ChannelCacheEntry entry=getChannelCache().get(key.getKey());
                                 if(entry!=null) {
                                     // found cached page
                                     // check page validity
@@ -674,7 +674,7 @@ public class ChannelRenderer
                         }
                         ChannelCacheEntry entry=null;
                         if(key.getKeyScope()==ChannelCacheKey.SYSTEM_KEY_SCOPE) {
-                            entry=(ChannelCacheEntry)systemCache.get(key.getKey());
+                            entry=systemCache.get(key.getKey());
                             if(entry==null) {
                                 if (log.isDebugEnabled()) {
                                     log.debug("ChannelRenderer::setCharacterCache() : setting character cache buffer based on a system key \""+key.getKey()+"\"");
@@ -686,7 +686,7 @@ public class ChannelRenderer
                             systemCache.put(key.getKey(),entry);
                         } else {
                             // by default we assume INSTANCE_KEY_SCOPE
-                            entry=(ChannelCacheEntry)getChannelCache().get(key.getKey());
+                            entry=getChannelCache().get(key.getKey());
                             if(entry==null) {
                                 if (log.isDebugEnabled()) {
                                     log.debug("ChannelRenderer::setCharacterCache() : no existing cache on a key \""+key.getKey()+"\"");
