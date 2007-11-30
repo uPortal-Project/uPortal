@@ -39,6 +39,7 @@ public class PortletWindowImpl implements IPortletWindow {
     private Map<String, String[]> requestParameters = new HashMap<String, String[]>();
     private transient PortletMode portletMode = PortletMode.VIEW;
     private transient WindowState windowState = WindowState.NORMAL;
+    private Integer expirationCache = null;
     
     /**
      * Creates a new PortletWindow with the default settings
@@ -154,10 +155,24 @@ public class PortletWindowImpl implements IPortletWindow {
         this.requestParameters = requestParameters;
     }
     
+    /* (non-Javadoc)
+     * @see org.jasig.portal.portlet.om.IPortletWindow#getExpirationCache()
+     */
+    public Integer getExpirationCache() {
+        return this.expirationCache;
+    }
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.portlet.om.IPortletWindow#setExpirationCache(java.lang.Integer)
+     */
+    public void setExpirationCache(Integer expirationCache) {
+        this.expirationCache = expirationCache;
+    }
     
     
     //********** Serializable Methods **********//
-    
+
+
     private void writeObject(ObjectOutputStream oos) throws IOException {
         oos.defaultWriteObject();
         oos.writeObject(this.portletMode.toString());
@@ -213,6 +228,7 @@ public class PortletWindowImpl implements IPortletWindow {
             .append(this.portletName, rhs.getPortletName())
             .append(this.windowState, rhs.getWindowState())
             .append(this.portletMode, rhs.getPortletMode())
+            .append(this.expirationCache, rhs.getExpirationCache())
             .append(this.requestParameters, rhs.getRequestParameers())
             .isEquals();
     }
@@ -228,6 +244,7 @@ public class PortletWindowImpl implements IPortletWindow {
             .append(this.portletName)
             .append(this.windowState)
             .append(this.portletMode)
+            .append(this.expirationCache)
             .append(this.requestParameters)
             .toHashCode();
     }
@@ -243,6 +260,7 @@ public class PortletWindowImpl implements IPortletWindow {
             .append("portletName", this.portletName)
             .append("windowState", this.windowState)
             .append("portletMode", this.portletMode)
+            .append("expirationCache", this.expirationCache)
             .append("requestParameters", this.requestParameters)
             .toString();
     }

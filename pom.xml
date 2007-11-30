@@ -112,7 +112,7 @@
         <junit.version>3.8.1</junit.version>
         <log4j.version>1.2.14</log4j.version>
         <oro.version>2.0.8</oro.version>
-        <pluto.version>1.1.4</pluto.version>
+        <pluto.version>1.1.5-SNAPSHOT</pluto.version>
         <person-directory.version>1.0.1</person-directory.version>
         <portlet-api.version>1.0</portlet-api.version>
         <rome.version>0.8</rome.version>

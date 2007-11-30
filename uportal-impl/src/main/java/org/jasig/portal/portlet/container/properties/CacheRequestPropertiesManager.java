@@ -26,8 +26,6 @@ import org.jasig.portal.portlet.om.IPortletWindow;
  * @version $Revision$
  */
 public class CacheRequestPropertiesManager extends BaseRequestPropertiesManager {
-//    protected final Log logger = LogFactory.getLog(this.getClass());
-    
     private OptionalContainerServices optionalContainerServices;
     
     /* (non-Javadoc)
@@ -35,18 +33,22 @@ public class CacheRequestPropertiesManager extends BaseRequestPropertiesManager 
      */
     @Override
     public Map<String, String[]> getRequestProperties(HttpServletRequest request, IPortletWindow portletWindow) {
-        final int cacheExpiration;
+        Integer expirationCache = portletWindow.getExpirationCache();
         
-        final Integer cacheExpirationObj = portletWindow.getCacheExpiration();
-        if (cacheExpirationObj != null) {
-            cacheExpiration = cacheExpirationObj.intValue();
-        }
-        else {
+        if (expirationCache == null) {
             final PortletDD portletDeployment = this.getPortletDeployment(portletWindow);
-            cacheExpiration = portletDeployment.getExpirationCache();
+            final int descriptorExpirationCache = portletDeployment.getExpirationCache();
+            
+            if (PortletDD.EXPIRATION_CACHE_UNSET != descriptorExpirationCache) {
+                expirationCache = descriptorExpirationCache;
+            }
         }
 
-        return Collections.singletonMap(RenderResponse.EXPIRATION_CACHE, new String[] { Integer.toString(cacheExpiration) });
+        if (expirationCache != null) {
+            return Collections.singletonMap(RenderResponse.EXPIRATION_CACHE, new String[] { expirationCache.toString() });
+        }
+
+        return Collections.emptyMap();
     }
 
     /* (non-Javadoc)
@@ -56,19 +58,20 @@ public class CacheRequestPropertiesManager extends BaseRequestPropertiesManager 
     public void setResponseProperty(HttpServletRequest request, IPortletWindow portletWindow, String property, String value) {
         if (RenderResponse.EXPIRATION_CACHE.equals(property)) {
             final PortletDD portletDeployment = this.getPortletDeployment(portletWindow);
+            final int descriptorExpirationCache = portletDeployment.getExpirationCache();
             
-            //TODO pluto bug! How do I know if it was set?
-            final int defaultCacheExpiration = portletDeployment.getExpirationCache();
+            //Only set the cache expiration if the descriptor has a cache expiration set (PLT.18.1)
+            if (PortletDD.EXPIRATION_CACHE_UNSET != descriptorExpirationCache) {
+                Integer cacheExpiration = portletWindow.getExpirationCache();
+                try {
+                    cacheExpiration = Integer.valueOf(value);
+                }
+                catch (NumberFormatException nfe) {
+                    this.logger.info("Portlet '" + portletWindow + "' tried to set a cache expiration time of '" + value + "' which could not be parsed into an Integer. The previous value of '" + cacheExpiration + "' will be used.");
+                }
             
-            Integer cacheExpiration = portletWindow.getCacheExpiration();
-            try {
-                cacheExpiration = Integer.valueOf(value);
+                portletWindow.setExpirationCache(cacheExpiration);
             }
-            catch (NumberFormatException nfe) {
-                this.logger.info("Portlet '" + portletWindow + "' tried to set a cache expiration time of '" + value + "' which could not be parsed into an Integer. The previous value of '" + cacheExpiration + "' will be used.");
-            }
-            
-            portletWindow.setCacheExpiration(cacheExpiration);
         }
     }
 
