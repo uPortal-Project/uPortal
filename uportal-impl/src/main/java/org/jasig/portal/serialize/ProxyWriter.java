@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import org.apache.commons.httpclient.ConnectTimeoutException;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
@@ -28,19 +29,19 @@ import org.jasig.portal.utils.CommonUtils;
  * browser to load the resources without triggering a warning about mixed
  * content. For example instead of http://www.abc.com/image.gif the URI will be
  * rewritten to https://[portaladdress]/PROXY_REWRITE_PREFIX/www.abc.com/image.gif
- * 
+ *
  * This class also does the proxy rewrite in the following exceptional situations:
- * 
+ *
  * 1. If the return code pointing to the image is 3XX (the image reference,
  * references is a mapping to a different location) In this case the final
  * destination address in which the image or the resource is located is e and
  * then the rewrite points to this location.
- * 
+ *
  * 2. If the content of a channel is an include javascript file the file is
  * rewritten to a location on a local virtual host and at the same time the
  * image or other resources references are rewritten.
  * HttpURLConnection.HTTP_MOVED_PERM
- * 
+ *
  * @author <a href="mailto:kazemnaderi@yahoo.ca">Kazem Naderi</a>
  * @version $Revision$
  * @since uPortal 2.2
@@ -58,8 +59,8 @@ public class ProxyWriter {
 	/**
 	 * The list of elements which src attribute is rewritten with proxy.
 	 */
-	
-	//    Only image content should be proxied	
+
+	//    Only image content should be proxied
     private static final String[] _proxiableElements = { "image", "img", "input"};
 
 	/*
@@ -161,6 +162,9 @@ public class ProxyWriter {
 						} finally {
 							in.close();
 						}
+					} catch (ConnectTimeoutException cte) {
+					  // Remove non-responding URL to prevent browser trying it again
+					  return "";
 					} catch (IOException ioe) {
 						return url;
 					} finally {
@@ -175,7 +179,7 @@ public class ProxyWriter {
 	/**
 	 * This method rewrites included javascript files and replaces the references in these files
 	 * to images' sources to use proxy.
-	 * 
+	 *
 	 * @param scriptUri: The string representing the address of script
 	 * @return value: The new address of the script file which image sources have been rewritten
 	 */
