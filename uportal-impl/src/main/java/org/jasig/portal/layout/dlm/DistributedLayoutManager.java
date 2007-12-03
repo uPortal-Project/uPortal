@@ -82,7 +82,7 @@ IFolderLocalNameResolver
     protected final IPerson owner;
     protected final UserProfile profile;
     protected RDBMDistributedLayoutStore store=null;
-    protected Set listeners=new HashSet();
+    protected Set<LayoutEventListener> listeners=new HashSet<LayoutEventListener>();
 
     /**
      * Holds the classpath location of the context file for loading dlm specific
@@ -1370,17 +1370,17 @@ IFolderLocalNameResolver
                 + owner.getAttribute(IPerson.USERNAME) + ".");
     }
 
-    public Enumeration getChildIds(String nodeId) throws PortalException {
+    public Enumeration<String> getChildIds(String nodeId) throws PortalException {
         return getChildIds( nodeId, false );
     }
 
-    private Enumeration getVisibleChildIds(String nodeId)
+    private Enumeration<String> getVisibleChildIds(String nodeId)
         throws PortalException
     {
         return getChildIds( nodeId, true );
     }
 
-    private Enumeration getChildIds( String nodeId,
+    private Enumeration<String> getChildIds( String nodeId,
                               boolean visibleOnly)
         throws PortalException
     {

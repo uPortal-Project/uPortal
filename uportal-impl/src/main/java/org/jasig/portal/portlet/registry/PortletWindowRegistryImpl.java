@@ -85,6 +85,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
      * @param request the current request
      * @return The Map of IPortletWindows managed by this class for the request, null if that Map does not yet exist.
      */
+    @SuppressWarnings("unchecked")
     protected Map<IPortletWindowId, IPortletWindow> getPortletWindowMap(HttpServletRequest request) {
         final HttpSession session = this.getSession(request);
         

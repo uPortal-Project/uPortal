@@ -13,5 +13,5 @@
 	<classpathentry excluding="**" kind="src" output="uportal-ant-tasks/src/main/resources" path="uportal-ant-tasks/src/main/resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER/modules"/>
-	<classpathentry kind="output" path="target/classes"/>
+	<classpathentry kind="output" path="target/eclipse-classes"/>
 </classpath>

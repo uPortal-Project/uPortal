@@ -8,6 +8,7 @@ package org.jasig.portal.channels.portlet;
 import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -18,7 +19,10 @@ import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalEvent;
+import org.jasig.portal.portlet.om.IPortletEntity;
+import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
+import org.jasig.portal.security.IPerson;
 
 /**
  * @author Eric Dalquist
@@ -27,6 +31,7 @@ import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 public class SpringPortletChannelImpl implements ISpringPortletChannel {
     protected final Log logger = LogFactory.getLog(this.getClass());
     
+    private IPortletEntityRegistry portletEntityRegistry;
     private IPortletWindowRegistry portletWindowRegistry;
     private OptionalContainerServices optionalContainerServices;
     private PortletContainer portletContainer;
@@ -40,8 +45,25 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
      * @see org.jasig.portal.channels.portlet.ISpringPortletChannel#initSession(org.jasig.portal.ChannelStaticData, org.jasig.portal.PortalControlStructures)
      */
     public void initSession(ChannelStaticData channelStaticData, PortalControlStructures portalControlStructures) {
-        // TODO Auto-generated method stub
-//        this.portletContainer.doLoad(portletWindow, servletRequest, servletResponse);
+        final IPerson person = channelStaticData.getPerson();
+        final String channelSubscribeId = channelStaticData.getChannelSubscribeId();
+        
+        IPortletEntity portletEntity = this.portletEntityRegistry.getPortletEntity(channelSubscribeId, person);
+        if (portletEntity == null) {
+            final String channelPublishId = channelStaticData.getChannelPublishId();
+            
+            portletEntity = this.portletEntityRegistry.createPortletEntity(channelPublishId, channelSubscribeId, person);
+        }
+        
+        
+        
+        
+//        this.portletWindowRegistry.g
+        
+        final HttpServletRequest httpServletRequest = portalControlStructures.getHttpServletRequest();
+        final HttpServletResponse httpServletResponse = portalControlStructures.getHttpServletResponse();
+        
+        this.portletContainer.doLoad(portletWindow, httpServletRequest, httpServletResponse);
     }
 
     /* (non-Javadoc)
@@ -55,8 +77,7 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
     /* (non-Javadoc)
      * @see org.jasig.portal.channels.portlet.ISpringPortletChannel#generateKey(org.jasig.portal.ChannelStaticData, org.jasig.portal.PortalControlStructures, org.jasig.portal.ChannelRuntimeData)
      */
-    public ChannelCacheKey generateKey(ChannelStaticData channelStaticData,
-            PortalControlStructures portalControlStructures, ChannelRuntimeData channelRuntimeData) {
+    public ChannelCacheKey generateKey(ChannelStaticData channelStaticData, PortalControlStructures portalControlStructures, ChannelRuntimeData channelRuntimeData) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -69,7 +90,7 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
         final String title = (String)httpServletRequest.getAttribute(IPortletAdaptor.ATTRIBUTE_PORTLET_TITLE);
         
         if (this.logger.isDebugEnabled()) {
-            this.logger.debug("Retrieved title '" + title + "' from request for channel: pubId=" + channelStaticData.getChannelPublishId() + ", subId=" + channelStaticData.getChannelSubscribeId());
+            this.logger.debug("Retrieved title '" + title + "' from request for: " + channelStaticData);
         }
         
         return title;

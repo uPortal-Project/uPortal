@@ -14,7 +14,8 @@ import javax.portlet.WindowState;
 import org.apache.pluto.PortletWindow;
 
 /**
- * uPortal extensions to the Pluto {@link PortletWindow} interface.
+ * uPortal extensions to the Pluto {@link PortletWindow} interface. A portlet window
+ * represents the actual rendering/interaction layer of the portlet object model.
  * 
  * @author Eric Dalquist
  * @version $Revision$
