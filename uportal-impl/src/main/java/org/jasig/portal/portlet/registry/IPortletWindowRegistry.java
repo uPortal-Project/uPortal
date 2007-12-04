@@ -8,6 +8,7 @@ package org.jasig.portal.portlet.registry;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.pluto.PortletWindow;
+import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
@@ -45,7 +46,7 @@ public interface IPortletWindowRegistry {
     public IPortletWindow getPortletWindow(HttpServletRequest request, String windowInstanceId, IPortletEntityId portletEntityId);
     
     /**
-     * Creates a new portlet entity for the window isntance id and parent entity id. If the parent
+     * Creates a new portlet entity for the window instance id and parent entity id. If the parent
      * {@link org.jasig.portal.portlet.om.IPortletEntity} for the portletEntityId can't be found or a window already
      * exists fpr the window instance id and entity id an exception will be thrown. 
      * 
@@ -59,6 +60,18 @@ public interface IPortletWindowRegistry {
      */
     public IPortletWindow createPortletWindow(HttpServletRequest request, String windowInstanceId, IPortletEntityId portletEntityId);
     
+    /**
+     * Get an existing portlet window for the window instance id and parent entity id. If no window exists for the parameters
+     * a new window will be created and returned. This is a convience for {@link #getPortletWindow(HttpServletRequest, String, IPortletEntityId)}
+     * and {@link #createPortletWindow(HttpServletRequest, String, IPortletEntityId)}
+     * 
+     * @param request The current request.
+     * @param windowInstanceIdThe identifier for the instance of the window, such as an id for an inline window and an id for a detached window.
+     * @param portletEntityId The parent entity id.
+     * @return An existing window if exists or a new window if not.
+     * @throws IllegalArgumentException If request, windowInstanceId or portletEntityId are null
+     */
+    public IPortletWindow getOrCreatePortletWindow(HttpServletRequest request, String windowInstanceId, IPortletEntityId portletEntityId);
     
     /**
      * Converts a Pluto {@link PortletWindow} object to a uPortal {@link IPortletWindow}.
@@ -78,4 +91,12 @@ public interface IPortletWindowRegistry {
      * @throws IllegalArgumentException If portletWindowId is null
      */
     public IPortletWindowId getPortletWindowId(String portletWindowId);
+    
+    /**
+     * Gets the parent portlet entity for the window specified by the window id.
+     * 
+     * @param portletWindowId The window ID to get the parent entity for.
+     * @return The parent portlet entity for the window, null if no window exists for the id. 
+     */
+    public IPortletEntity getParentPortletEntity(IPortletWindowId portletWindowId);
 }

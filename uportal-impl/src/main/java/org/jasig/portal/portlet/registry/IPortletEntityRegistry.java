@@ -41,4 +41,17 @@ public interface IPortletEntityRegistry {
      * subscribe id & person.
      */
     public IPortletEntity createPortletEntity(String channelPublishId, String channelSubscribeId, IPerson person);
+    
+    /**
+     * Get an existing portlet entity for the channel subscribe id and person. If no entity exists for the parameters
+     * a new entity will be created and returned. This is a convience for {@link #getPortletEntity(String, IPerson)}
+     * and {@link #createPortletEntity(String, String, IPerson)}.
+     * 
+     * @param channelPublishId The publish id of the underlying {@link org.jasig.portal.ChannelDefinition}
+     * @param channelSubscribeId The layout subscription id for the underlying channel.
+     * @param person The person the entity is for.
+     * @return An existing entity if exists or a new entity if not.
+     * @throws IllegalArgumentException If channelPublishId, channelSubscribeId, or person are null
+     */
+    public IPortletEntity getOrCreatePortletEntity(String channelPublishId, String channelSubscribeId, IPerson person);
 }

@@ -28,7 +28,8 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  */
-public class ChannelStaticData extends Hashtable {
+public class ChannelStaticData extends Hashtable<Object, Object> {
+    private static final long serialVersionUID = 1L;
 
     private static final Log log = LogFactory.getLog(ChannelStaticData.class);
 
