@@ -13,6 +13,8 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * CommonUtils class contains base useful utilities
  * @author <a href="mailto:mvi@immagic.com">Michael Ivanov</a>

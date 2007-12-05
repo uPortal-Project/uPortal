@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.collections15.map.ReferenceMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.channels.CSecureInfo;
@@ -53,7 +54,6 @@ import org.jasig.portal.spring.PortalApplicationContextListener;
 import org.jasig.portal.url.support.IChannelRequestParameterManager;
 import org.jasig.portal.utils.SAX2BufferImpl;
 import org.jasig.portal.utils.SetCheckInSemaphore;
-import org.jasig.portal.utils.SoftHashMap;
 import org.springframework.web.context.WebApplicationContext;
 import org.xml.sax.ContentHandler;
 
@@ -116,7 +116,7 @@ public class ChannelManager implements LayoutEventListener {
     // global channel rendering cache
     public static final int SYSTEM_CHANNEL_CACHE_MIN_SIZE=50; // this should be in a file somewhere
 
-    public static final Map<String, ChannelCacheEntry> systemCache = new SoftHashMap(SYSTEM_CHANNEL_CACHE_MIN_SIZE);
+    public static final Map<String, ChannelCacheEntry> systemCache = new ReferenceMap<String, ChannelCacheEntry>(ReferenceMap.HARD, ReferenceMap.SOFT, SYSTEM_CHANNEL_CACHE_MIN_SIZE, .75f, true);
 
     public static final String channelAddressingPathElement="channel";
     private static boolean useAnchors = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.ChannelManager.use_anchors", false);

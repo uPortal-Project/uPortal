@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Properties;
@@ -26,6 +25,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.sax.TransformerHandler;
 
+import org.apache.commons.collections15.map.ReferenceMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.car.CarResources;
@@ -52,7 +52,6 @@ import org.jasig.portal.utils.MovingAverageSample;
 import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.utils.SAX2BufferImpl;
 import org.jasig.portal.utils.SAX2DuplicatingFilterImpl;
-import org.jasig.portal.utils.SoftHashMap;
 import org.jasig.portal.utils.URLUtil;
 import org.jasig.portal.utils.XSLT;
 import org.xml.sax.ContentHandler;
@@ -108,8 +107,8 @@ public class UserInstance implements HttpSessionBindingListener {
     // string that defines which character set to use for content
     private static final String CHARACTER_SET = "UTF-8";
 
-    private static final Map systemCache=Collections.synchronizedMap(new SoftHashMap(SYSTEM_XSLT_CACHE_MIN_SIZE));
-    private static final Map systemCharacterCache=Collections.synchronizedMap(new SoftHashMap(SYSTEM_CHARACTER_BLOCK_CACHE_MIN_SIZE));
+    private static final Map<String, SAX2BufferImpl> systemCache = Collections.synchronizedMap(new ReferenceMap<String, SAX2BufferImpl>(ReferenceMap.HARD, ReferenceMap.SOFT, SYSTEM_XSLT_CACHE_MIN_SIZE, .75f, true));
+    private static final Map<String, CharacterCacheEntry> systemCharacterCache = Collections.synchronizedMap(new ReferenceMap<String, CharacterCacheEntry>(ReferenceMap.HARD, ReferenceMap.SOFT, SYSTEM_CHARACTER_BLOCK_CACHE_MIN_SIZE, .75f, true));
 
     protected IPerson person;
 
@@ -418,7 +417,7 @@ public class UserInstance implements HttpSessionBindingListener {
                         cacheKey=constructCacheKey(this.getPerson(),rootNodeId);
                         if(ccaching) {
                             // obtain character cache
-                            CharacterCacheEntry cCache=(CharacterCacheEntry) this.systemCharacterCache.get(cacheKey);
+                            CharacterCacheEntry cCache = systemCharacterCache.get(cacheKey);
                             if(cCache!=null && cCache.channelIds!=null && cCache.systemBuffers!=null) {
                                 ccache_exists=true;
                                 if (log.isDebugEnabled())
@@ -452,7 +451,7 @@ public class UserInstance implements HttpSessionBindingListener {
                                     cSerializer.printRawCharacters((String)cCache.systemBuffers.get(sb));
 									if (log.isDebugEnabled()){
 	                                    log.debug("----------printing frame piece "+Integer.toString(sb));
-    	                                log.debug((String)cCache.systemBuffers.get(sb));
+    	                                log.debug(cCache.systemBuffers.get(sb));
                                     }
 
                                     // get channel output
@@ -465,7 +464,7 @@ public class UserInstance implements HttpSessionBindingListener {
                                 cSerializer.printRawCharacters((String)cCache.systemBuffers.get(ccsize-1));
 								if (log.isDebugEnabled()){
 	                                log.debug("----------printing frame piece "+Integer.toString(ccsize-1));
-    	                            log.debug((String)cCache.systemBuffers.get(ccsize-1));
+    	                            log.debug(cCache.systemBuffers.get(ccsize-1));
     	                        }
 
                                 cSerializer.flush();
@@ -476,7 +475,7 @@ public class UserInstance implements HttpSessionBindingListener {
                         if((!ccaching) || (!ccache_exists)) {
                             // obtain XSLT cache
 
-                            SAX2BufferImpl cachedBuffer=(SAX2BufferImpl) this.systemCache.get(cacheKey);
+                            SAX2BufferImpl cachedBuffer=systemCache.get(cacheKey);
                             if(cachedBuffer!=null) {
                                 // replay the buffer to channel incorporation filter
                                 if (log.isDebugEnabled())
@@ -486,7 +485,7 @@ public class UserInstance implements HttpSessionBindingListener {
                                 // attach channel incorporation filter downstream of the channel rendering buffer
                                 cif.setParent(crb);
                                 crb.setOutputAtDocumentEnd(true);
-                                cachedBuffer.outputBuffer((ContentHandler)crb);
+                                cachedBuffer.outputBuffer(crb);
 
                                 output_produced=true;
                             }
@@ -518,10 +517,10 @@ public class UserInstance implements HttpSessionBindingListener {
                         uPIdempotentElement.setTagId(PortalSessionManager.IDEMPOTENT_URL_TAG);
                         sst.setParameter("baseIdempotentActionURL",uPElement.getUPFile());
 
-                        Hashtable supTable = userPreferences.getStructureStylesheetUserPreferences().getParameterValues();
-                        for (Enumeration e = supTable.keys(); e.hasMoreElements();) {
-                            String pName = (String)e.nextElement();
-                            String pValue = (String)supTable.get(pName);
+                        Hashtable<String, String> supTable = userPreferences.getStructureStylesheetUserPreferences().getParameterValues();
+                        for (Map.Entry<String, String> param : supTable.entrySet()) {
+                            String pName = param.getKey();
+                            String pValue = param.getValue();
                             if (log.isDebugEnabled())
                                 log.debug("UserInstance::renderState() : setting sparam \"" + pName + "\"=\"" + pValue + "\".");
                             sst.setParameter(pName, pValue);
@@ -563,9 +562,9 @@ public class UserInstance implements HttpSessionBindingListener {
                             saif.endDocument();
                         } else {
                             if(rElement==null) {
-                                ulm.getUserLayout((ContentHandler)saif);
+                                ulm.getUserLayout(saif);
                             } else {
-                                ulm.getUserLayout(rElement.getId(),(ContentHandler)saif);
+                                ulm.getUserLayout(rElement.getId(),saif);
                             }
                             //                            emptyt.transform(new DOMSource(rElement),new SAXResult((ContentHandler)saif));
                         }
@@ -583,10 +582,10 @@ public class UserInstance implements HttpSessionBindingListener {
                         tst.setParameter("baseActionURL", uPElement.getUPFile());
                         tst.setParameter("baseIdempotentActionURL",uPIdempotentElement.getUPFile());
 
-                        Hashtable tupTable = userPreferences.getThemeStylesheetUserPreferences().getParameterValues();
-                        for (Enumeration e = tupTable.keys(); e.hasMoreElements();) {
-                            String pName = (String)e.nextElement();
-                            String pValue = (String)tupTable.get(pName);
+                        Hashtable<String, String> tupTable = userPreferences.getThemeStylesheetUserPreferences().getParameterValues();
+                        for (Map.Entry<String, String> param : tupTable.entrySet()) {
+                            String pName = param.getKey();
+                            String pValue = param.getValue();
                             if (log.isDebugEnabled())
                                 log.debug("UserInstance::renderState() : setting tparam \"" + pName + "\"=\"" + pValue + "\".");
                             tst.setParameter(pName, pValue);
@@ -669,12 +668,12 @@ public class UserInstance implements HttpSessionBindingListener {
 	                                log.debug("Printing transformation cache system blocks:");
 	                                for(int i=0;i<ce.systemBuffers.size();i++) {
 	                                	log.debug("----------piece "+Integer.toString(i));
-	                                	log.debug((String)ce.systemBuffers.get(i));
+	                                	log.debug(ce.systemBuffers.get(i));
 	                                }
 	                                log.debug("Printing transformation cache channel IDs:");
 	                                for(int i=0;i<ce.channelIds.size();i++) {
 	                                	log.debug("----------channel entry "+Integer.toString(i));
-	                                	log.debug((String)ce.channelIds.get(i));
+	                                	log.debug(ce.channelIds.get(i));
 	                                }
                                 }
                             }

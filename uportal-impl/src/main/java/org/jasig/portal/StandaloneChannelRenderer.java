@@ -169,7 +169,7 @@ public class StandaloneChannelRenderer
         this.lm=new LocaleManager(this.staticData.getPerson(), acceptLanguage);
         this.lm.setSessionLocales(LocaleManager.parseLocales(requestLocalesString));
 
-        Hashtable targetParams = new Hashtable();
+        Hashtable<String, Object> targetParams = new Hashtable<String, Object>();
         UPFileSpec upfs=new UPFileSpec(req);
         String channelTarget = upfs.getTargetNodeId();
 

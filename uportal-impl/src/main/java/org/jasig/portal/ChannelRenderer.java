@@ -14,6 +14,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import org.apache.commons.collections15.map.ReferenceMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.channels.support.IChannelTitle;
@@ -21,7 +22,6 @@ import org.jasig.portal.channels.support.IDynamicChannelTitleRenderer;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.utils.SAX2BufferImpl;
 import org.jasig.portal.utils.SetCheckInSemaphore;
-import org.jasig.portal.utils.SoftHashMap;
 import org.jasig.portal.utils.threading.BaseTask;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
@@ -137,7 +137,7 @@ public class ChannelRenderer
     Map<String, ChannelCacheEntry> getChannelCache() {
         if (this.channelCache == null) {
             if ((this.channelCache = this.cacheTables.get(this.channel)) == null) {
-                this.channelCache = new SoftHashMap(1);
+                this.channelCache = new ReferenceMap<String, ChannelCacheEntry>(ReferenceMap.HARD, ReferenceMap.SOFT, 2, .75f, true);
                 this.cacheTables.put(this.channel, this.channelCache);
             }
         }

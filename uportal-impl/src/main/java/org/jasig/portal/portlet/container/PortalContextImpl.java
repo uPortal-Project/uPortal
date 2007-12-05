@@ -14,7 +14,7 @@ import javax.portlet.PortalContext;
 import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
 
-import org.apache.commons.collections.iterators.IteratorEnumeration;
+import org.apache.commons.collections15.iterators.IteratorEnumeration;
 import org.apache.commons.lang.Validate;
 import org.jasig.portal.security.IPermission;
 import org.jasig.portal.tools.versioning.Version;
@@ -107,16 +107,14 @@ public class PortalContextImpl implements PortalContext {
     /* (non-Javadoc)
      * @see javax.portlet.PortalContext#getSupportedPortletModes()
      */
-    @SuppressWarnings("unchecked")
     public Enumeration<PortletMode> getSupportedPortletModes() {
-        return new IteratorEnumeration(this.portletModes.iterator());
+        return new IteratorEnumeration<PortletMode>(this.portletModes.iterator());
     }
 
     /* (non-Javadoc)
      * @see javax.portlet.PortalContext#getSupportedWindowStates()
      */
-    @SuppressWarnings("unchecked")
     public Enumeration<WindowState> getSupportedWindowStates() {
-        return new IteratorEnumeration(this.windowStates.iterator());
+        return new IteratorEnumeration<WindowState>(this.windowStates.iterator());
     }
 }
