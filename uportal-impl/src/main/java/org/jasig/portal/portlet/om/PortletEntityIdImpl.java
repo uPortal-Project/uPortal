@@ -8,28 +8,27 @@ package org.jasig.portal.portlet.om;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.pluto.PortletWindowID;
 
 /**
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class PortletWindowIdImpl implements IPortletWindowId {
+public class PortletEntityIdImpl implements IPortletEntityId {
     private static final long serialVersionUID = 1L;
     
-    private final String portletWindowId;
+    private final String portletEntityId;
     
-    public PortletWindowIdImpl(String portletWindowId) {
-        Validate.notNull(portletWindowId, "portletWindowId can not be null");
+    public PortletEntityIdImpl(String portletEntityId) {
+        Validate.notNull(portletEntityId, "portletEntityId can not be null");
 
-        this.portletWindowId = portletWindowId;
+        this.portletEntityId = portletEntityId;
     }
 
     /* (non-Javadoc)
-     * @see org.apache.pluto.PortletWindowID#getStringId()
+     * @see org.apache.pluto.PortletEntityID#getStringId()
      */
     public String getStringId() {
-        return this.portletWindowId;
+        return this.portletEntityId;
     }
 
     /**
@@ -40,12 +39,12 @@ public class PortletWindowIdImpl implements IPortletWindowId {
         if (object == this) {
             return true;
         }
-        if (!(object instanceof PortletWindowID)) {
+        if (!(object instanceof IPortletEntityId)) {
             return false;
         }
-        PortletWindowID rhs = (PortletWindowID) object;
+        IPortletEntityId rhs = (IPortletEntityId) object;
         return new EqualsBuilder()
-            .append(this.portletWindowId, rhs.getStringId())
+            .append(this.portletEntityId, rhs.getStringId())
             .isEquals();
     }
 
@@ -55,7 +54,7 @@ public class PortletWindowIdImpl implements IPortletWindowId {
     @Override
     public int hashCode() {
         return new HashCodeBuilder(-917388291, 674832463)
-            .append(this.portletWindowId)
+            .append(this.portletEntityId)
             .toHashCode();
     }
 

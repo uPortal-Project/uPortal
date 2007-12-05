@@ -29,6 +29,11 @@ public interface IPortletWindow extends PortletWindow, Serializable {
     public IPortletWindowId getPortletWindowId();
     
     /**
+     * @return The ID of the parent portlet entity.
+     */
+    public IPortletEntityId getPortletEntityId();
+    
+    /**
      * @param state The current {@link WindowState} of this PortletWindow
      * @throws IllegalArgumentException If state is null
      */

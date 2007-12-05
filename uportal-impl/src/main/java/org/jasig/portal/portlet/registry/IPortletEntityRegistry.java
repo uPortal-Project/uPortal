@@ -5,7 +5,9 @@
  */
 package org.jasig.portal.portlet.registry;
 
+import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletEntity;
+import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.security.IPerson;
 
 /**
@@ -16,6 +18,15 @@ import org.jasig.portal.security.IPerson;
  * @version $Revision$
  */
 public interface IPortletEntityRegistry {
+    /**
+     * Get an existing portlet entity for the entity id. If no entity exists for the id null will be returned.
+     * 
+     * @param portletEntityId The id of the entity to retrieve
+     * @return The portle entity for the subscribe id and person, null if no entity exists for the parameters.
+     * @throws IllegalArgumentException If portletEntityId is null.
+     */
+    public IPortletEntity getPortletEntity(IPortletEntityId portletEntityId);
+    
     /**
      * Get an existing portlet entity for the channel subscribe id and person. If no entity exists for the parameters
      * null will be returned.
@@ -54,4 +65,12 @@ public interface IPortletEntityRegistry {
      * @throws IllegalArgumentException If channelPublishId, channelSubscribeId, or person are null
      */
     public IPortletEntity getOrCreatePortletEntity(String channelPublishId, String channelSubscribeId, IPerson person);
+    
+    /**
+     * Gets the parent portlet definition for the entity specified by the entity id.
+     * 
+     * @param portletEntityId The entity ID to get the parent definition for.
+     * @return The parent portlet entity for the window, null if no window exists for the id. 
+     */
+    public IPortletDefinition getParentPortletDefinition(IPortletEntityId portletEntityId);
 }

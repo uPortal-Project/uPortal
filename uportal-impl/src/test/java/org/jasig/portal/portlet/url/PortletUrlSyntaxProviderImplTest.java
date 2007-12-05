@@ -17,8 +17,10 @@ import junit.framework.TestCase;
 import org.easymock.EasyMock;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.channels.portlet.IPortletAdaptor;
+import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.jasig.portal.portlet.om.PortletEntityIdImpl;
 import org.jasig.portal.portlet.om.PortletWindowIdImpl;
 import org.jasig.portal.portlet.om.PortletWindowImpl;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
@@ -82,8 +84,9 @@ public class PortletUrlSyntaxProviderImplTest extends TestCase {
         
         final MockHttpServletRequest request = new MockHttpServletRequest();
         
+        final IPortletEntityId portletEntityId = new PortletEntityIdImpl("entityId1");
         final IPortletWindowId portletWindowId = new PortletWindowIdImpl("windowId1");
-        final IPortletWindow portletWindow = new PortletWindowImpl(portletWindowId, "portletApp", "portletName");
+        final IPortletWindow portletWindow = new PortletWindowImpl(portletWindowId, portletEntityId, "portletApp", "portletName");
         
         final PortletUrl portletUrl = new PortletUrl();
         

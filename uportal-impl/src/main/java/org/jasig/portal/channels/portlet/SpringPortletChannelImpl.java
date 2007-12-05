@@ -25,6 +25,7 @@ import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalEvent;
+import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindow;
@@ -44,7 +45,7 @@ import org.springframework.beans.factory.annotation.Required;
  * @version $Revision$
  */
 public class SpringPortletChannelImpl implements ISpringPortletChannel {
-    private static final String PORTLET_WINDOW_ID_PARAM = SpringPortletChannelImpl.class.getName() + ".portletWindowId";
+    protected static final String PORTLET_WINDOW_ID_PARAM = SpringPortletChannelImpl.class.getName() + ".portletWindowId";
     
     protected final Log logger = LogFactory.getLog(this.getClass());
     
@@ -221,6 +222,10 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
         //Get the portlet window
         final HttpServletRequest httpServletRequest = portalControlStructures.getHttpServletRequest();
         final IPortletWindowId portletWindowId = this.getPortletWindowId(channelStaticData);
+        if (portletWindowId == null) {
+            throw new IllegalStateException("No IPortletWindowId exists in the ChannelStaticData, has initSession been called? ChannelStaticData: " + channelStaticData);
+        }
+        
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
         
         //Execute the action, 
@@ -271,29 +276,33 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
             return false;
         }
         
+        //Get the root definition
+        final IPortletEntity portletEntity = this.portletWindowRegistry.getParentPortletEntity(httpServletRequest, portletWindowId);
+        final IPortletDefinition portletDefinition = this.portletEntityRegistry.getParentPortletDefinition(portletEntity.getPortletEntityId());
+        
         //Get the portlet deployment
-        //TODO need a cleaner chain from window->entity->definition->deployment(descriptor)
-        final PortletRegistryService portletRegistryService = this.optionalContainerServices.getPortletRegistryService();
-        final String contextPath = portletWindow.getContextPath();
-        final String portletName = portletWindow.getPortletName();
+        final String portletApplicationId = portletDefinition.getPortletApplicationId();
+        final String portletName = portletDefinition.getPortletName();
         final PortletDD portletDescriptor;
         try {
-            portletDescriptor = portletRegistryService.getPortletDescriptor(contextPath, portletName);
+            final PortletRegistryService portletRegistryService = this.optionalContainerServices.getPortletRegistryService();
+            portletDescriptor = portletRegistryService.getPortletDescriptor(portletApplicationId, portletName);
         }
         catch (PortletContainerException pce) {
             this.logger.warn("Could not retrieve PortletDD for portlet window '" + portletWindow + "' to determine caching configuration. Marking content cache invalid and continuing.", pce);
             return false;
         }
         
+        //If the descriptor value is unset return immediately
         final int descriptorExpirationCache = portletDescriptor.getExpirationCache();
-        final Integer windowExpirationCache = portletWindow.getExpirationCache();
-        
-        //Determine which value to use, if the descriptor value is unset return immediately
-        final int expirationCache;
         if (descriptorExpirationCache == PortletDD.EXPIRATION_CACHE_UNSET) {
             return false;
         }
-        else if (windowExpirationCache != null) {
+        
+        //Use value from window if it is set
+        final Integer windowExpirationCache = portletWindow.getExpirationCache();
+        final int expirationCache;
+        if (windowExpirationCache != null) {
             expirationCache = windowExpirationCache;
         }
         else {
@@ -317,7 +326,7 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
         final long now = System.currentTimeMillis();
         
         //If the expiration time since last render has not passed return true
-        return lastRenderTime + (expirationCache * 1000) <= now;
+        return lastRenderTime + (expirationCache * 1000) >= now;
     }
 
     /* (non-Javadoc)

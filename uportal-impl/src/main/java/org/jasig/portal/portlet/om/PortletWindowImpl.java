@@ -31,8 +31,9 @@ import org.apache.pluto.PortletWindowID;
  */
 public class PortletWindowImpl implements IPortletWindow {
     private static final long serialVersionUID = 1L;
-    
-    private final IPortletWindowId portletWindowID;
+
+    private final IPortletEntityId portletEntityId;
+    private final IPortletWindowId portletWindowId;
     private final String contextPath;
     private final String portletName;
     
@@ -44,17 +45,20 @@ public class PortletWindowImpl implements IPortletWindow {
     /**
      * Creates a new PortletWindow with the default settings
      * 
-     * @param portletWindowID The unique idenifier for this PortletWindow
+     * @param portletWindowId The unique identifier for this PortletWindow
+     * @param portletEntityId The unique identifier of the parent IPortletEntity
      * @param contextPath The path of the {@link javax.servlet.ServletContext} the portlet resides in
      * @param portletName The name of the portlet this window represents
-     * @throws IllegalArgumentException if portletWindowID, contextPath, or portletName are null
+     * @throws IllegalArgumentException if portletWindowId, contextPath, or portletName are null
      */
-    public PortletWindowImpl(IPortletWindowId portletWindowID, String contextPath, String portletName) {
-        Validate.notNull(portletWindowID, "portletWindowID can not be null");
+    public PortletWindowImpl(IPortletWindowId portletWindowId, IPortletEntityId portletEntityId, String contextPath, String portletName) {
+        Validate.notNull(portletWindowId, "portletWindowId can not be null");
+        Validate.notNull(portletEntityId, "portletEntityId can not be null");
         Validate.notNull(contextPath, "contextPath can not be null");
         Validate.notNull(portletName, "portletName can not be null");
         
-        this.portletWindowID = portletWindowID;
+        this.portletWindowId = portletWindowId;
+        this.portletEntityId = portletEntityId;
         this.contextPath = contextPath;
         this.portletName = portletName;
     }
@@ -62,20 +66,22 @@ public class PortletWindowImpl implements IPortletWindow {
     /**
      * Creates a new PortletWindow cloned from the passed IPortletWindow
      * 
-     * @param portletWindowID The unique idenifier for this PortletWindow
+     * @param portletWindowId The unique idenifier for this PortletWindow
      * @param portletWindow The PortletWindow to clone settings from
-     * @throws IllegalArgumentException if portletWindowID, or portletWindow are null
+     * @throws IllegalArgumentException if portletWindowId, or portletWindow are null
      */
-    public PortletWindowImpl(IPortletWindowId portletWindowID, IPortletWindow portletWindow) {
-        Validate.notNull(portletWindowID, "portletWindowID can not be null");
+    public PortletWindowImpl(IPortletWindowId portletWindowId, IPortletWindow portletWindow) {
+        Validate.notNull(portletWindowId, "portletWindowId can not be null");
         Validate.notNull(portletWindow, "portletWindow can not be null");
         
-        this.portletWindowID = portletWindowID;
+        this.portletWindowId = portletWindowId;
+        this.portletEntityId = portletWindow.getPortletEntityId();
         this.contextPath = portletWindow.getContextPath();
         this.portletName = portletWindow.getPortletName();
         this.portletMode = portletWindow.getPortletMode();
         this.windowState = portletWindow.getWindowState();
         
+        Validate.notNull(this.portletEntityId, "portletWindow.parentPortletEntityId can not be null");
         Validate.notNull(this.contextPath, "portletWindow.contextPath can not be null");
         Validate.notNull(this.portletName, "portletWindow.portletName can not be null");
         Validate.notNull(this.portletMode, "portletWindow.portletMode can not be null");
@@ -86,14 +92,21 @@ public class PortletWindowImpl implements IPortletWindow {
      * @see org.apache.pluto.PortletWindow#getId()
      */
     public PortletWindowID getId() {
-        return this.portletWindowID;
+        return this.portletWindowId;
     }
     
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.om.IPortletWindow#getPortletWindowId()
      */
     public IPortletWindowId getPortletWindowId() {
-        return this.portletWindowID;
+        return this.portletWindowId;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.portlet.om.IPortletWindow#getParentPortletEntityId()
+     */
+    public IPortletEntityId getPortletEntityId() {
+        return this.portletEntityId;
     }
 
     /* (non-Javadoc)
@@ -183,8 +196,8 @@ public class PortletWindowImpl implements IPortletWindow {
         //Read & validate non-transient fields
         ois.defaultReadObject();
         
-        if (this.portletWindowID == null) {
-            throw new InvalidObjectException("portletWindowID can not be null");
+        if (this.portletWindowId == null) {
+            throw new InvalidObjectException("portletWindowId can not be null");
         }
         if (this.contextPath == null) {
             throw new InvalidObjectException("contextPath can not be null");
@@ -223,7 +236,7 @@ public class PortletWindowImpl implements IPortletWindow {
         }
         IPortletWindow rhs = (IPortletWindow) object;
         return new EqualsBuilder()
-            .append(this.portletWindowID, rhs.getId())
+            .append(this.portletWindowId, rhs.getId())
             .append(this.contextPath, rhs.getContextPath())
             .append(this.portletName, rhs.getPortletName())
             .append(this.windowState, rhs.getWindowState())
@@ -239,7 +252,7 @@ public class PortletWindowImpl implements IPortletWindow {
     @Override
     public int hashCode() {
         return new HashCodeBuilder(1445247369, -1009176817)
-            .append(this.portletWindowID)
+            .append(this.portletWindowId)
             .append(this.contextPath)
             .append(this.portletName)
             .append(this.windowState)
@@ -255,7 +268,7 @@ public class PortletWindowImpl implements IPortletWindow {
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
-            .append("portletWindowID", this.portletWindowID)
+            .append("portletWindowId", this.portletWindowId)
             .append("contextPath", this.contextPath)
             .append("portletName", this.portletName)
             .append("windowState", this.windowState)

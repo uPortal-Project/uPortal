@@ -95,8 +95,9 @@ public interface IPortletWindowRegistry {
     /**
      * Gets the parent portlet entity for the window specified by the window id.
      * 
+     * @param request The request related to the window objects
      * @param portletWindowId The window ID to get the parent entity for.
      * @return The parent portlet entity for the window, null if no window exists for the id. 
      */
-    public IPortletEntity getParentPortletEntity(IPortletWindowId portletWindowId);
+    public IPortletEntity getParentPortletEntity(HttpServletRequest request, IPortletWindowId portletWindowId);
 }

@@ -5,20 +5,30 @@
  */
 package org.jasig.portal.portlet.registry;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.Validate;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.pluto.PortletWindow;
 import org.apache.pluto.PortletWindowID;
+import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.jasig.portal.portlet.om.IPortletEntity;
+import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.om.PortletWindowIdImpl;
+import org.jasig.portal.portlet.om.PortletWindowImpl;
+import org.springframework.beans.factory.annotation.Required;
 
 /**
  * Provides the default implementation of the window registry
+ * 
+ * TODO may have to do more synchronization work in here
  * 
  * @author Eric Dalquist
  * @version $Revision$
@@ -26,6 +36,25 @@ import org.jasig.portal.portlet.om.PortletWindowIdImpl;
 public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
     private static final String PORTLET_WINDOW_MAP_ATTRIBUTE = PortletWindowRegistryImpl.class.getName() + ".PORTLET_WINDOW_MAP";
     
+    protected final Log logger = LogFactory.getLog(this.getClass());
+    
+    private IPortletEntityRegistry portletEntityRegistry;
+    
+
+    /**
+     * @return the portletEntityRegistry
+     */
+    public IPortletEntityRegistry getPortletEntityRegistry() {
+        return portletEntityRegistry;
+    }
+    /**
+     * @param portletEntityRegistry the portletEntityRegistry to set
+     */
+    @Required
+    public void setPortletEntityRegistry(IPortletEntityRegistry portletEntityRegistry) {
+        this.portletEntityRegistry = portletEntityRegistry;
+    }
+
 
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.registry.IPortletWindowRegistry#convertPortletWindow(javax.servlet.http.HttpServletRequest, org.apache.pluto.PortletWindow)
@@ -34,10 +63,12 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
         Validate.notNull(request, "request can not be null");
         Validate.notNull(plutoPortletWindow, "portletWindow can not be null");
         
+        //Try a direct cast to IPortletWindow
         if (plutoPortletWindow instanceof IPortletWindow) {
             return (IPortletWindow)plutoPortletWindow;
         }
         
+        //Try converting the Pluto ID to a uPortal ID
         final PortletWindowID plutoPortletWindowId = plutoPortletWindow.getId();
         final IPortletWindowId portletWindowId;
         if (plutoPortletWindowId instanceof IPortletWindowId) {
@@ -47,11 +78,55 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
             portletWindowId = this.getPortletWindowId(plutoPortletWindowId.getStringId());
         }
         
+        //Use the converted ID to see if a IPortletWindow exists for it
         final IPortletWindow portletWindow = this.getPortletWindow(request, portletWindowId);
         
+        //If null no window exists, throw an exception since somehow Pluto has a PortletWindow object that this container doesn't know about
         if (portletWindow == null) {
-            //TODO come up with a better exception
-            throw new RuntimeException("Could not cast Pluto PortletWindow to uPortal IPortletWindow and no IPortletWindow exists with the specified ID");
+            throw new IllegalArgumentException("Could not cast Pluto PortletWindow to uPortal IPortletWindow and no IPortletWindow exists with the id: " + plutoPortletWindow.getId());
+        }
+        
+        return portletWindow;
+    }
+    
+    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.portlet.registry.IPortletWindowRegistry#createPortletWindow(javax.servlet.http.HttpServletRequest, java.lang.String, org.jasig.portal.portlet.om.IPortletEntityId)
+     */
+    public IPortletWindow createPortletWindow(HttpServletRequest request, String windowInstanceId, IPortletEntityId portletEntityId) {
+        Validate.notNull(request, "request can not be null");
+        Validate.notNull(windowInstanceId, "windowInstanceId can not be null");
+        Validate.notNull(portletEntityId, "portletEntityId can not be null");
+
+        //Get the parent definition to determine the descriptor data
+        final IPortletDefinition portletDefinition = this.portletEntityRegistry.getParentPortletDefinition(portletEntityId);
+        
+        //Create the window
+        final IPortletWindowId portletWindowId = this.createPortletWindowId(windowInstanceId, portletEntityId);
+        final String portletApplicationId = portletDefinition.getPortletApplicationId();
+        final String portletName = portletDefinition.getPortletName();
+        final IPortletWindow portletWindow = new PortletWindowImpl(portletWindowId, portletEntityId, portletApplicationId, portletName);
+        
+        //Store it in the request
+        this.storePortletWindow(request, portletWindow);
+        
+        return portletWindow;
+    }
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.portlet.registry.IPortletWindowRegistry#getOrCreatePortletWindow(javax.servlet.http.HttpServletRequest, java.lang.String, org.jasig.portal.portlet.om.IPortletEntityId)
+     */
+    public IPortletWindow getOrCreatePortletWindow(HttpServletRequest request, String windowInstanceId, IPortletEntityId portletEntityId) {
+        Validate.notNull(request, "request can not be null");
+        Validate.notNull(windowInstanceId, "windowInstanceId can not be null");
+        Validate.notNull(portletEntityId, "portletEntityId can not be null");
+        
+        //Try the get
+        IPortletWindow portletWindow = this.getPortletWindow(request, windowInstanceId, portletEntityId);
+        
+        //If nothing returned by the get create a new one.
+        if (portletWindow == null) {
+            portletWindow = this.createPortletWindow(request, windowInstanceId, portletEntityId);
         }
         
         return portletWindow;
@@ -73,12 +148,51 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
     }
 
     /* (non-Javadoc)
+     * @see org.jasig.portal.portlet.registry.IPortletWindowRegistry#getPortletWindow(javax.servlet.http.HttpServletRequest, java.lang.String, org.jasig.portal.portlet.om.IPortletEntityId)
+     */
+    public IPortletWindow getPortletWindow(HttpServletRequest request, String windowInstanceId, IPortletEntityId portletEntityId) {
+        Validate.notNull(request, "request can not be null");
+        Validate.notNull(windowInstanceId, "windowInstanceId can not be null");
+        Validate.notNull(portletEntityId, "portletEntityId can not be null");
+        
+        final IPortletWindowId portletWindowId = this.createPortletWindowId(windowInstanceId, portletEntityId);
+        final IPortletWindow portletWindow = this.getPortletWindow(request, portletWindowId);
+        return portletWindow;
+    }
+
+    /* (non-Javadoc)
      * @see org.jasig.portal.portlet.registry.IPortletWindowRegistry#getPortletWindowId(java.lang.String)
      */
     public IPortletWindowId getPortletWindowId(String portletWindowId) {
+        Validate.notNull(portletWindowId, "portletWindowId can not be null");
+        
         return new PortletWindowIdImpl(portletWindowId);
     }
     
+    /* (non-Javadoc)
+     * @see org.jasig.portal.portlet.registry.IPortletWindowRegistry#getParentPortletEntity(javax.servlet.http.HttpServletRequest, org.jasig.portal.portlet.om.IPortletWindowId)
+     */
+    public IPortletEntity getParentPortletEntity(HttpServletRequest request, IPortletWindowId portletWindowId) {
+        Validate.notNull(request, "request can not be null");
+        Validate.notNull(portletWindowId, "portletWindowId can not be null");
+        
+        final IPortletWindow portletWindow = this.getPortletWindow(request, portletWindowId);
+        final IPortletEntityId parentPortletEntityId = portletWindow.getPortletEntityId();
+        final IPortletEntity portletEntity = this.portletEntityRegistry.getPortletEntity(parentPortletEntityId);
+        return portletEntity;
+    }
+    
+    /**
+     * Generates a new, unique, portlet window ID for the window instance ID & entity id.
+     * 
+     * @param windowInstanceId The window instance id.
+     * @param portletEntityId The parent entity id.
+     * @return A portlet window id for the parameters.
+     */
+    protected IPortletWindowId createPortletWindowId(String windowInstanceId, IPortletEntityId portletEntityId) {
+        return new PortletWindowIdImpl(portletEntityId.getStringId() + "." + windowInstanceId);
+    }
+
     /**
      * Get the Map of IPortletWindows for the request.
      * 
@@ -89,7 +203,33 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
     protected Map<IPortletWindowId, IPortletWindow> getPortletWindowMap(HttpServletRequest request) {
         final HttpSession session = this.getSession(request);
         
-        return (Map<IPortletWindowId, IPortletWindow>)session.getAttribute(PORTLET_WINDOW_MAP_ATTRIBUTE);
+        final Map<IPortletWindowId, IPortletWindow> portletWindows;
+        //Sync on the session to ensure the Map isn't in the process of being created
+        synchronized (session) {
+            portletWindows = (Map<IPortletWindowId, IPortletWindow>)session.getAttribute(PORTLET_WINDOW_MAP_ATTRIBUTE);
+        }
+        return portletWindows;
+    }
+    
+    /**
+     * @param request
+     * @param portletWindow
+     */
+    @SuppressWarnings("unchecked")
+    protected void storePortletWindow(HttpServletRequest request, IPortletWindow portletWindow) {
+        final HttpSession session = this.getSession(request);
+        
+        Map<IPortletWindowId, IPortletWindow> portletWindows;
+        //Sync on the session to ensure other threads aren't creating the Map at the same time
+        synchronized (session) {
+            portletWindows = (Map<IPortletWindowId, IPortletWindow>)session.getAttribute(PORTLET_WINDOW_MAP_ATTRIBUTE);
+            if (portletWindows == null) {
+                portletWindows = new HashMap<IPortletWindowId, IPortletWindow>();
+                session.setAttribute(PORTLET_WINDOW_MAP_ATTRIBUTE, portletWindows);
+            }
+        }
+        
+        portletWindows.put(portletWindow.getPortletWindowId(), portletWindow);
     }
 
     /**

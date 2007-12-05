@@ -29,6 +29,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
 import org.apache.commons.lang.Validate;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 
 /**
  * A wrapper implementation that records output content to a buffer without actually
@@ -100,7 +102,9 @@ public class ContentRedirectingHttpServletResponse extends HttpServletResponseWr
      */
     @Override
     public void flushBuffer() {
-        this.writer.flush();
+        if (this.writer != null) {
+            this.writer.flush();
+        }
         
         this.committed = true;
     }
@@ -118,6 +122,37 @@ public class ContentRedirectingHttpServletResponse extends HttpServletResponseWr
         //TODO implement some sort of buffering
     }
     
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof ContentRedirectingHttpServletResponse)) {
+            return false;
+        }
+        
+        final ContentRedirectingHttpServletResponse rhs = (ContentRedirectingHttpServletResponse)obj;
+        
+        return new EqualsBuilder()
+            .append(this.getResponse(), rhs.getResponse())
+            .append(this.committed, rhs.committed)
+            .append(this.wrappedWriter, rhs.wrappedWriter)
+            .isEquals();
+    }
+
+    /**
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(977252351, 179084321)
+            .append(this.getResponse())
+            .append(this.committed)
+            .append(this.wrappedWriter)
+            .toHashCode();
+    }
+
+
     /**
      * Wrapper to watch for {@link #flush()} calls and to mark the response committed when that happens
      */

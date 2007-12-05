@@ -5,6 +5,7 @@
  */
 package org.jasig.portal.portlet.om;
 
+
 /**
  * A portlet entity represents what a user subscribes to (adds to their layout) in
  * the portal object model.
@@ -17,4 +18,9 @@ public interface IPortletEntity {
      * @return The unique identifier for this portlet entity.
      */
     public IPortletEntityId getPortletEntityId();
+    
+    /**
+     * @return The user name of the person this entity is for. 
+     */
+    public String getUserName();
 }
