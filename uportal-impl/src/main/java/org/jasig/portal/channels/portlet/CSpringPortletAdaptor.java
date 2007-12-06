@@ -21,7 +21,7 @@ import org.springframework.web.context.WebApplicationContext;
 import org.xml.sax.ContentHandler;
 
 /**
- * An attempt at a channel that can wrap a singleton spring-conifigured {@link ISpringPortletChannel} instance and
+ * An attempt at a channel that can wrap a singleton spring-configured {@link ISpringPortletChannel} instance and
  * delegate execution to. This class simply must maintain the instance data and pass it on to the ISpringPortletChannel
  * for each method. The channel gets the name of the {@link ISpringPortletChannel} bean to use from the parameter named
  * 'springBeanName' using the {@link #SPRING_BEAN_NAME_PARAM} constant.

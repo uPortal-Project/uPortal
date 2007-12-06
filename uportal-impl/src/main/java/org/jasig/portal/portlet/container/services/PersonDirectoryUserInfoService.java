@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.portlet.PortletRequest;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.pluto.OptionalContainerServices;
 import org.apache.pluto.PortletContainerException;
@@ -18,9 +19,13 @@ import org.apache.pluto.PortletWindow;
 import org.apache.pluto.descriptors.portlet.PortletAppDD;
 import org.apache.pluto.descriptors.portlet.UserAttributeDD;
 import org.apache.pluto.internal.InternalPortletRequest;
+import org.apache.pluto.internal.InternalPortletWindow;
 import org.apache.pluto.spi.optional.PortletRegistryService;
 import org.apache.pluto.spi.optional.UserInfoService;
+import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletWindow;
+import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Required;
@@ -34,8 +39,23 @@ import org.springframework.beans.factory.annotation.Required;
 public class PersonDirectoryUserInfoService implements UserInfoService {
     private IPersonAttributeDao personAttributeDao;
     private IPortletWindowRegistry portletWindowRegistry;
+    private IPortletEntityRegistry portletEntityRegistry;
     private OptionalContainerServices optionalContainerServices;
     
+    
+    /**
+     * @return the portletEntityRegistry
+     */
+    public IPortletEntityRegistry getPortletEntityRegistry() {
+        return this.portletEntityRegistry;
+    }
+    /**
+     * @param portletEntityRegistry the portletEntityRegistry to set
+     */
+    @Required
+    public void setPortletEntityRegistry(IPortletEntityRegistry portletEntityRegistry) {
+        this.portletEntityRegistry = portletEntityRegistry;
+    }
     /**
      * @return the personAttributeDao
      */
@@ -84,20 +104,13 @@ public class PersonDirectoryUserInfoService implements UserInfoService {
      */
     @Deprecated
     public Map<String, String> getUserInfo(PortletRequest request) throws PortletContainerException {
-        //Get the remote user
-        final String remoteUser = request.getRemoteUser();
-        if (remoteUser == null) {
-            return null;
+        if (!(request instanceof InternalPortletRequest)) {
+            throw new IllegalArgumentException("The PersonDirectoryUserInfoServices requires the PortletRequest parameter to implement the '" + InternalPortletRequest.class.getName() + "' interface.");
         }
+        final InternalPortletRequest internalRequest = (InternalPortletRequest)request;
+        final InternalPortletWindow internalPortletWindow = internalRequest.getInternalPortletWindow();
 
-        //Get the list of user attributes the portal knows about the user
-        final Map<String, Object> portalUserAttributes = (Map<String, Object>)this.personAttributeDao.getUserAttributes(remoteUser);
-        if (portalUserAttributes == null) {
-            return Collections.emptyMap();
-        }
-
-        final Map<String, String> portletUserAttributes = this.generateUserInfo(portalUserAttributes, null);
-        return portletUserAttributes;
+        return this.getUserInfo(request, internalPortletWindow);
     }
 
     /* (non-Javadoc)
@@ -109,21 +122,34 @@ public class PersonDirectoryUserInfoService implements UserInfoService {
         if (remoteUser == null) {
             return null;
         }
+        
+        if (!(request instanceof InternalPortletRequest)) {
+            throw new IllegalArgumentException("The PersonDirectoryUserInfoServices requires the PortletRequest parameter to implement the '" + InternalPortletRequest.class.getName() + "' interface.");
+        }
+        final InternalPortletRequest internalRequest = (InternalPortletRequest)request;
 
+        //TODO this may not work since the registry may not have access to uPortal's session here!
+        final IPortletWindow portletWindow = this.portletWindowRegistry.convertPortletWindow(internalRequest.getHttpServletRequest(), plutoPortletWindow);
+        
+        return this.getUserInfo(remoteUser, internalRequest.getHttpServletRequest(), portletWindow);
+    }
+    
+    /**
+     * Commons logic to get a subset of the user's attributes for the specified portlet window.
+     * 
+     * @param remoteUser The user to get attributes for.
+     * @param httpServletRequest The current, underlying httpServletRequest
+     * @param portletWindow The window to filter attributes for
+     * @return A Map of user attributes for the user and windows
+     * @throws PortletContainerException
+     */
+    protected Map<String, String> getUserInfo(String remoteUser, HttpServletRequest httpServletRequest, IPortletWindow portletWindow) throws PortletContainerException {
         //Get the list of user attributes the portal knows about the user
         final Map<String, Object> portalUserAttributes = (Map<String, Object>)this.personAttributeDao.getUserAttributes(remoteUser);
         if (portalUserAttributes == null) {
             return Collections.emptyMap();
         }
-
-        //TODO this may not work since the registry won't have access to uPortal's session here!
-        if (!(request instanceof InternalPortletRequest)) {
-            throw new IllegalArgumentException("The PersonDirectoryUserInfoServices requires the PortletRequest parameter to implement the '" + InternalPortletRequest.class.getName() + "' interface.");
-        }
-        final InternalPortletRequest internalRequest = (InternalPortletRequest)request;
-        final IPortletWindow portletWindow = this.portletWindowRegistry.convertPortletWindow(internalRequest.getHttpServletRequest(), plutoPortletWindow);
-        
-        final List<UserAttributeDD> expectedUserAttributes = this.getExpectedUserAttributes(portletWindow);
+        final List<UserAttributeDD> expectedUserAttributes = this.getExpectedUserAttributes(httpServletRequest, portletWindow);
         
         final Map<String, String> portletUserAttributes = this.generateUserInfo(portalUserAttributes, expectedUserAttributes);
         return portletUserAttributes;
@@ -177,6 +203,8 @@ public class PersonDirectoryUserInfoService implements UserInfoService {
      * does a cast, else if value is a List it uses the first value as a String, if the value type
      * is unknown toString is used.
      * 
+     * TODO this seems like a utility that should come with PersonDirectory
+     * 
      * @param valueObj The person directory value
      * @return The string version of the value
      */
@@ -201,15 +229,19 @@ public class PersonDirectoryUserInfoService implements UserInfoService {
     /**
      * Get the list of user attributes the portlet expects
      * 
+     * @param request The current request.
      * @param portletWindow The window to get the expected user attributes for.
      * @return The List of expected user attributes for the portlet
      * @throws PortletContainerException If expected attributes cannot be determined
      */
-    protected List<UserAttributeDD> getExpectedUserAttributes(final IPortletWindow portletWindow) throws PortletContainerException {
-        final PortletRegistryService portletRegistryService = this.optionalContainerServices.getPortletRegistryService();
+    protected List<UserAttributeDD> getExpectedUserAttributes(HttpServletRequest request, final IPortletWindow portletWindow) throws PortletContainerException {
         
-        final String portletName = portletWindow.getPortletName();
-        final PortletAppDD portletApplicationDescriptor = portletRegistryService.getPortletApplicationDescriptor(portletName);
+        final IPortletEntity portletEntity = this.portletWindowRegistry.getParentPortletEntity(request, portletWindow.getPortletWindowId());
+        final IPortletDefinition portletDefinition = this.portletEntityRegistry.getParentPortletDefinition(portletEntity.getPortletEntityId());
+        
+        final String portletApplicationId = portletDefinition.getPortletApplicationId();
+        final PortletRegistryService portletRegistryService = this.optionalContainerServices.getPortletRegistryService();
+        final PortletAppDD portletApplicationDescriptor = portletRegistryService.getPortletApplicationDescriptor(portletApplicationId);
         
         return (List<UserAttributeDD>)portletApplicationDescriptor.getUserAttributes();
     }

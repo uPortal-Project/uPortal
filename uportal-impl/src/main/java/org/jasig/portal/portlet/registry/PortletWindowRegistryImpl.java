@@ -16,6 +16,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.pluto.PortletWindow;
 import org.apache.pluto.PortletWindowID;
+import org.apache.pluto.internal.InternalPortletWindow;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
@@ -26,7 +27,8 @@ import org.jasig.portal.portlet.om.PortletWindowImpl;
 import org.springframework.beans.factory.annotation.Required;
 
 /**
- * Provides the default implementation of the window registry
+ * Provides the default implementation of the window registry, the backing for the storage
+ * of IPortletWindow objects is a Map stored in the HttpSession for the user.
  * 
  * TODO may have to do more synchronization work in here
  * 
@@ -62,6 +64,11 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
     public IPortletWindow convertPortletWindow(HttpServletRequest request, PortletWindow plutoPortletWindow) {
         Validate.notNull(request, "request can not be null");
         Validate.notNull(plutoPortletWindow, "portletWindow can not be null");
+        
+        //If a pluto InternalPortletWindow, unwrap to the original PorteltWindow
+        if (plutoPortletWindow instanceof InternalPortletWindow) {
+            plutoPortletWindow = ((InternalPortletWindow)plutoPortletWindow).getOriginalPortletWindow();
+        }
         
         //Try a direct cast to IPortletWindow
         if (plutoPortletWindow instanceof IPortletWindow) {

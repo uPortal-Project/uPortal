@@ -51,8 +51,13 @@
     </bean>
 
     <bean id="portletWindowRegistry" class="org.jasig.portal.portlet.registry.PortletWindowRegistryImpl">
+        <property name="portletEntityRegistry" ref="portletEntityRegistry" />
     </bean>
 
+    <bean id="portletEntityRegistry" class="org.jasig.portal.portlet.registry.PortletEntityRegistryImpl">
+        <property name="portletEntityRegistry" ref="portletEntityRegistry" />
+    </bean>
+    
     <bean id="portletUrlSyntaxProvider" class="org.jasig.portal.portlet.url.PortletUrlSyntaxProviderImpl">
         <property name="portletWindowRegistry" ref="portletWindowRegistry" />
     </bean>
@@ -60,6 +65,7 @@
     <bean id="userInfoService" class="org.jasig.portal.portlet.container.services.PersonDirectoryUserInfoService">
         <property name="optionalContainerServices" ref="optionalContainerServices" />
         <property name="portletWindowRegistry" ref="portletWindowRegistry" />
+        <property name="portletEntityRegistry" ref="portletEntityRegistry" />
         <property name="personAttributeDao" ref="personAttributeDao" />
     </bean>
 </beans>
