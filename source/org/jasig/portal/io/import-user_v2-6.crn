@@ -1,0 +1,73 @@
+<with-attribute key="USER_NAME" value="${valueOf(@username)}">
+    <sql-transaction>
+        <sql-query>
+            <sql>SELECT sequence_value + 1 AS NEXT_ID FROM up_sequence WHERE sequence_name = 'UP_USER'</sql>
+            <subtasks>
+
+                <!-- user -->
+                <sql-upsert>
+                    <update-statement>UPDATE up_user SET user_dflt_usr_id = ? WHERE user_name = ?</update-statement>
+                    <insert-statement>INSERT INTO up_user(user_id, user_dflt_usr_id, user_name, user_dflt_lay_id) VALUES(${req(NEXT_ID)}, ?, ?, 1)</insert-statement>
+                    <parameter value="${sql(SELECT user_id FROM up_user WHERE user_name = '${org.jasig.portal.io.DefaultUsernamePhrase(${singleNode(default-user)})}')}"/>
+                    <parameter value="${req(USER_NAME)}"/>
+                </sql-upsert>
+
+                <!-- user profile(s) -->
+                <sql-statement sql="DELETE FROM up_user_profile WHERE user_id = ?">
+                    <parameter value="${sql(SELECT user_id FROM up_user WHERE user_name = '${req(USER_NAME)}')}"/>
+                </sql-statement>
+                <node-iterator xpath="profile">
+                    <with-attribute key="USER_ID" value="${sql(SELECT user_id FROM up_user WHERE user_name = '${req(USER_NAME)}')}">
+                        <with-attribute key="PROFILE_ID" value="${seq(${req(USER_NAME)}-profileId)}">
+                            <sql-statement sql="INSERT INTO up_user_profile(user_id, profile_id, profile_name, description, layout_id, structure_ss_id, theme_ss_id) VALUES(?, ?, ?, ?, 1, ?, ?)">
+                                <parameter value="${req(USER_ID)}"/>
+                                <parameter value="${req(PROFILE_ID)}"/>
+                                <parameter value="${valueOf(@name)}"/>
+                                <parameter value="${valueOf(description)}"/>
+                                <parameter value="${sql(SELECT ss_id FROM up_ss_struct WHERE ss_name = '${valueOf(structure/@name)}')}"/>
+                                <parameter value="${sql(SELECT ss_id FROM up_ss_theme WHERE ss_name = '${valueOf(theme/@name)}')}"/>
+                            </sql-statement>
+                            <!-- User (Profile) Parameters:  structure... -->
+                            <node-iterator xpath="structure/parameter">
+                                <sql-upsert>
+                                    <update-statement>UPDATE up_ss_user_parm SET param_val = ? WHERE user_id = ? AND profile_id = ? AND ss_id = ? AND ss_type = 1 AND param_name = ?</update-statement>
+                                    <insert-statement>INSERT INTO up_ss_user_parm(param_val, user_id, profile_id, ss_id, ss_type, param_name) values(?, ?, ?, ?, 1, ?)</insert-statement>
+                                    <parameter value="${valueOf(value)}"/>
+                                    <parameter value="${req(USER_ID)}"/>
+                                    <parameter value="${req(PROFILE_ID)}"/>
+                                    <parameter value="${sql(SELECT ss_id FROM up_ss_struct WHERE ss_name = '${valueOf(../@name)}')}"/>
+                                    <parameter value="${valueOf(name)}"/>
+                                </sql-upsert>
+                            </node-iterator>
+                            <!-- User (Profile) Parameters:  theme... -->
+                            <node-iterator xpath="theme/parameter">
+                                <sql-upsert sql="">
+                                    <update-statement>UPDATE up_ss_user_parm SET param_val = ? WHERE user_id = ? AND profile_id = ? AND ss_id = ? AND ss_type = 2 AND param_name = ?</update-statement>
+                                    <insert-statement>INSERT INTO up_ss_user_parm(param_val, user_id, profile_id, ss_id, ss_type, param_name) values(?, ?, ?, ?, 2, ?)</insert-statement>
+                                    <parameter value="${valueOf(value)}"/>
+                                    <parameter value="${req(USER_ID)}"/>
+                                    <parameter value="${req(PROFILE_ID)}"/>
+                                    <parameter value="${sql(SELECT ss_id FROM up_ss_theme WHERE ss_name = '${valueOf(../@name)}')}"/>
+                                    <parameter value="${valueOf(name)}"/>
+                                </sql-upsert>
+                            </node-iterator>
+                        </with-attribute>
+                    </with-attribute>
+                </node-iterator>
+
+                <!-- update up_sequence (where necessary) -->
+                <sql-query>
+                    <sql>SELECT 1 FROM up_user WHERE user_id = ?</sql>
+                    <parameter value="${req(NEXT_ID)}"/>
+                    <subtasks>
+                        <!-- The following task will only trigger if a new user was added (i.e. inserted) -->
+                        <sql-statement sql="UPDATE up_sequence SET sequence_value = ? WHERE sequence_name = 'UP_USER'">
+                            <parameter value="${req(NEXT_ID)}"/>
+                        </sql-statement>
+                    </subtasks>
+                </sql-query>
+
+            </subtasks>
+        </sql-query>
+    </sql-transaction>
+</with-attribute>

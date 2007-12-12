@@ -79,7 +79,7 @@ public class DbUnload {
             throw new Exception("Unrecognized column type " + columnType[i] + " for column " + (i + 1) +
             " in table " + tableName);
           }
-          if (rs.wasNull()) 
+          if (rs.wasNull())
             xmlOut.println("        <column><name>" + columnName[i].toUpperCase() + "</name></column>");
           else
             xmlOut.println("        <column><name>" + columnName[i].toUpperCase() + "</name><value>" + value + "</value></column>");
@@ -92,6 +92,11 @@ public class DbUnload {
     xmlOut.println("    </rows>");
     xmlOut.println("  </table>");
     xmlOut.println();
+  }
+
+  // Added to support Cernunnos-based 'full-dbunload' target from import-export.xml
+  public static void execute(String table, String xmlFile) {
+	  DbUnload.main(new String[] {table, xmlFile});
   }
 
   public static void main(String[] args) {
@@ -114,7 +119,7 @@ public class DbUnload {
 
       RDBMServices.setGetDatasourceFromJndi(false); /*don't try jndi when not in web app */
       con = RDBMServices.getConnection ();
-      
+
 
       Statement stmt = con.createStatement();
       xmlOut.println("<?xml version=\"1.0\"?>");

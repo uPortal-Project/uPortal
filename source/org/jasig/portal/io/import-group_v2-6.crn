@@ -1,0 +1,25 @@
+<sql-transaction>
+    <sql-query>
+        <sql>SELECT sequence_value + 1 AS NEXT_ID FROM up_sequence WHERE sequence_name = 'UP_GROUP'</sql>
+        <subtasks>
+            <sql-upsert>
+                <update-statement>UPDATE up_group SET creator_id = ?, description = ? WHERE entity_type_id = ? AND group_name = ?</update-statement>
+                <insert-statement>INSERT INTO up_group(creator_id, description, entity_type_id, group_name, group_id) VALUES(?, ?, ?, ?, '${req(NEXT_ID)}')</insert-statement>
+                <parameter value="${valueOf(creator)}"/>
+                <parameter value="${valueOf(description)}"/>
+                <parameter value="${sql(SELECT entity_type_id FROM up_entity_type WHERE entity_type_name = '${valueOf(entity-type)}')}"/>
+                <parameter value="${valueOf(name)}"/>
+            </sql-upsert>
+            <sql-query>
+                <sql>SELECT * FROM up_group WHERE group_id = ?</sql>
+                <parameter value="${jexl(NEXT_ID.toString())}"/>
+                <subtasks>
+                    <!-- The following task will only trigger if a new group was added (i.e. inserted) -->
+                    <sql-statement sql="UPDATE up_sequence SET sequence_value = ? WHERE sequence_name = 'UP_GROUP'">
+                        <parameter value="${req(NEXT_ID)}"/>
+                    </sql-statement>
+                </subtasks>
+            </sql-query>
+        </subtasks>
+    </sql-query>
+</sql-transaction>

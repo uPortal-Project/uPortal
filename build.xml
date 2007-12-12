@@ -304,12 +304,12 @@
   jdom-1.0.jar			JDom is used to parse XML by WhirlyCache
   						Version 1.0
   						URL: http://www.jdom.org
-  						
+
   whirlycache-0.7.1.jar	WhirlyCache is a fast caching package that is configurable via
   						XML.
   						Version 0.7.1
   						URL: https://whirlycache.dev.java.net/
-  						
+
   backport-util-concurrent.jar Backport of Doug Lea's Concurrency package.  Similar
   						to the Java 1.5 java.util.concurrent package.
   						Version CVS_HEAD (4/18/2005)
@@ -352,6 +352,7 @@
   <property name="backport.jar" value="{set this in build.properties!)" />
   <property name="casclient.jar" value="lib/casclient-2.1.1.jar" />
   <property name="dom4j.jar" value="(set this in build.properties!)"/>
+  <property name="cernunnos.jar" value="lib/cernunnos-1.0-M4.jar"/>
 
 <!-- ==================== Compilation Classpath =========================== -->
 
@@ -397,6 +398,7 @@
     <pathelement location="${backport.jar}" />
     <pathelement location="${casclient.jar}" />
     <pathelement location="${dom4j.jar}"/>
+    <pathelement location="${cernunnos.jar}"/>
   </path>
 
 
@@ -592,7 +594,7 @@
     <!-- This is Tomcat-specific and server name-specific!
          We need to find out the best way to ensure cross-context
          behavior in all servlet containers.
-         
+
          The context file goes into META-INF so it will be part of the .war file and available
          to deployment processes that honor it, such as deployment via the Tomcat manager application.
          We also copy it into the Tomcat server configuration directory so that Tomcat will configure the
@@ -608,8 +610,8 @@
         </filterset>
     </copy>
 
-    <copy tofile="${server.home}/conf/Catalina/localhost/${webapp.docBase}.xml" 
-    	file="${deploy.home}/META-INF/context.xml" />  	
+    <copy tofile="${server.home}/conf/Catalina/localhost/${webapp.docBase}.xml"
+    	file="${deploy.home}/META-INF/context.xml" />
     <copy todir="${server.home}/conf/Catalina/localhost" file="properties/proxyportlet.xml"/>
 
         <!-- Deploy classes to support the modified version of WSRP4J's proxyportlet.
@@ -732,7 +734,7 @@
         <path refid="compile.classpath"/>
       </classpath>
     </java>
-  	
+
   </target>
 
 
@@ -998,17 +1000,17 @@
             <path refid="compile.classpath"/>
         </classpath>
     </java>
-  	<available file="${build.home}/WEB-INF/classes/${tempDataXML}" 
+  	<available file="${build.home}/WEB-INF/classes/${tempDataXML}"
   		property="temp.fragment.data.file.present"/>
   	<antcall target="pubfragments.load"/>
     <echo message="Done updating ALM fragment configuration."/>
     </target>
-	
+
 	<target name="pubfragments.load" if="temp.fragment.data.file.present">
-  	
+
     <!-- load data.xml file -->
     <echo message="Loading new fragments into the database."/>
-    <java fork="true" failonerror="true" dir="${build.home}/WEB-INF/classes" 
+    <java fork="true" failonerror="true" dir="${build.home}/WEB-INF/classes"
           classname="org.jasig.portal.tools.dbloader.DbLoader">
         <arg value="-d"/>
         <arg value="${tempDataXML}"/>
@@ -1247,7 +1249,7 @@
     <javac srcdir="tests"
       target="1.4"
       source="1.4"
-      
+
           destdir="${build.home}/WEB-INF/classes"
             debug="${compile.debug}"
       deprecation="${compile.deprecation}"
@@ -1272,7 +1274,7 @@
 -->
   <!-- You must copy junit.jar into $ANT_HOME/lib directory for this to work -->
   <target name="runtests" depends="compiletests" description="Run JUnit Test Suite">
-    <junit fork="true" printsummary="off" showoutput="off" dir=".." 
+    <junit fork="true" printsummary="off" showoutput="off" dir=".."
       haltonerror="true" haltonfailure="true">
       <classpath>
         <pathelement path="${build.home}/WEB-INF/classes"/>

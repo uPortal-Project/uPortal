@@ -1,0 +1,9 @@
+<table>
+	<name>UP_USER</name>
+	<rows>
+		<row>
+			<column><name>USER_ID</name><value>0</value></column>
+			<column><name>USER_NAME</name><value>system</value></column>
+		</row>
+	</rows>
+</table>

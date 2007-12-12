@@ -1,0 +1,10 @@
+<sql-upsert>
+    <update-statement>UPDATE up_permission SET permission_type = ? WHERE owner = ? AND principal_type = ? AND principal_key = ? AND activity = ? AND target = ?</update-statement>
+    <insert-statement>INSERT INTO up_permission(permission_type, owner, principal_type, principal_key, activity, target) VALUES(?, ?, ?, ?, ?, ?)</insert-statement>
+    <parameter value="${valueOf(permission-type)}"/>
+    <parameter value="${valueOf(owner)}"/>
+    <parameter value="${sql(SELECT entity_type_id FROM up_entity_type WHERE entity_type_name = '${valueOf(principal-type)}')}"/>
+    <parameter value="${org.jasig.portal.io.GroupKeyOrLiteralPhrase(${singleNode(principal/*)})}"/>
+    <parameter value="${valueOf(activity)}"/>
+    <parameter value="${org.jasig.portal.io.GroupKeyOrLiteralPhrase(${singleNode(target/*)})}"/>
+</sql-upsert>
