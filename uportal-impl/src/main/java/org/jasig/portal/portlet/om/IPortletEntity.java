@@ -6,6 +6,7 @@
 package org.jasig.portal.portlet.om;
 
 
+
 /**
  * A portlet entity represents what a user subscribes to (adds to their layout) in
  * the portal object model.
@@ -20,7 +21,29 @@ public interface IPortletEntity {
     public IPortletEntityId getPortletEntityId();
     
     /**
-     * @return The user name of the person this entity is for. 
+     * @return The ID of the parent portlet defintion
      */
-    public String getUserName();
+    public IPortletDefinitionId getPortletDefinitionId();
+    
+    /**
+     * @return The subscribe ID for the channel underlying this entity.
+     */
+    public String getChannelSubscribeId();
+    
+    /**
+     * @return The ID of the user this entity is for. 
+     */
+    public int getUserId();
+    
+    /**
+     * @return The preferences for this portlet entity, will not be null.
+     */
+    public IPortletPreferences getPortletPreferences();
+    
+    /**
+     * @param portletPreferences The preferences for this portlet entity.
+     * @throws IllegalArgumentException If preferences is null.
+     */
+    public void setPortletPreferences(IPortletPreferences portletPreferences);
+    
 }

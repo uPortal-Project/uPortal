@@ -5,7 +5,6 @@
  */
 package org.jasig.portal.portlet.om;
 
-import java.io.Serializable;
 
 
 /**
@@ -14,15 +13,6 @@ import java.io.Serializable;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface IPortletDefinitionId extends Serializable {
-    /**
-     * Returns the unique string ID of the portlet definition.
-     * <p>
-     * Depending on the implementation of <code>toString()</code> is dangerous,
-     * because the original implementation in <code>Object</code> is not
-     * qualified.
-     * </p>
-     * @return the unique string ID of the portlet definition.
-     */
-    public String getStringId();
+public interface IPortletDefinitionId extends IObjectId {
+    
 }
