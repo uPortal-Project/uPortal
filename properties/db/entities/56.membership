@@ -1,0 +1,7 @@
+
+<membership script="classpath://org/jasig/portal/io/import-membership_v2-6.crn">
+  <parent>uPortal</parent>
+  <child> 
+    <channel>person-attributes</channel> 
+  </child>
+</membership>

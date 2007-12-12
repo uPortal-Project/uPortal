@@ -1,0 +1,29 @@
+
+<channel-definition script="classpath://org/jasig/portal/io/import-channel_v2-6.crn">
+  <title>RSS Portlet</title>
+  <name>RSS Portlet</name>
+  <fname>rss-portlet</fname>
+  <desc>RSS Portlet from Portlet Open Source Trading site</desc>
+  <type>Portlet</type>
+  <class>org.jasig.portal.channels.portlet.CPortletAdapter</class>
+  <timeout>60000</timeout>
+  <hasedit>Y</hasedit>
+  <hashelp>Y</hashelp>
+  <hasabout>N</hasabout>
+  <secure>N</secure>
+  <locale>en_US</locale>
+  <categories>
+    <category>Development</category>
+  </categories>
+  <groups>
+    <group>Everyone</group>
+  </groups>
+  <parameters>
+    <parameter> 
+      <name>portletDefinitionId</name>  
+      <value>RssPortlet.RssPortlet</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+  </parameters>
+</channel-definition>

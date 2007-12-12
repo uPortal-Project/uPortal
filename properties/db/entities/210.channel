@@ -1,0 +1,23 @@
+
+<channel-definition script="classpath://org/jasig/portal/io/import-channel_v2-6.crn">
+  <title>Dynamic Time Channel Title</title>
+  <name>Dynamic Time Channel Title</name>
+  <fname>timetitle</fname>
+  <desc>Channel for testing support for dynamic channel titles.</desc>
+  <type>Custom</type>
+  <class>org.jasig.portal.channels.CTimeTitle</class>
+  <timeout>5000</timeout>
+  <hasedit>N</hasedit>
+  <hashelp>N</hashelp>
+  <hasabout>N</hasabout>
+  <secure>N</secure>
+  <locale>en_US</locale>
+  <categories>
+    <category>Development</category>
+  </categories>
+  <groups>
+    <group>Everyone</group>
+    <group>Guests</group>
+  </groups>
+  <parameters/>
+</channel-definition>

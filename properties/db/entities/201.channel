@@ -1,0 +1,20 @@
+
+<channel-definition script="classpath://org/jasig/portal/io/import-channel_v2-6.crn">
+  <title>Content Subscriber</title>
+  <name>Content Subscriber</name>
+  <fname>contentsubscriber</fname>
+  <desc>Content Subscriber channel</desc>
+  <type>Custom</type>
+  <class>org.jasig.portal.layout.alm.channels.CContentSubscriber</class>
+  <timeout>5000</timeout>
+  <hasedit>N</hasedit>
+  <hashelp>N</hashelp>
+  <hasabout>N</hasabout>
+  <secure>N</secure>
+  <locale>en_US</locale>
+  <categories/>
+  <groups>
+    <group>Everyone</group>
+  </groups>
+  <parameters/>
+</channel-definition>

@@ -1,0 +1,13 @@
+
+<user script="classpath://org/jasig/portal/io/import-user_v2-6.crn" username="guest">
+  <profile name="Guest Web Browser Profile"> 
+    <description>A sample profile for web browsers</description>  
+    <structure name="AL Tabs and columns"/>  
+    <theme name="DLM XHTML"/> 
+  </profile>
+  <profile name="Guest Cell Phone Profile"> 
+    <description>A sample profile for cell phone browsers</description>  
+    <structure name="Tabs and columns"/>  
+    <theme name="Deck of cards"/> 
+  </profile>
+</user>

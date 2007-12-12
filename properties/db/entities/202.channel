@@ -1,0 +1,36 @@
+
+<channel-definition script="classpath://org/jasig/portal/io/import-channel_v2-6.crn">
+  <title>Error Handling Fragment Documentation</title>
+  <name>Error Handling Fragment Documentation</name>
+  <fname>error-handling-fragment-doc</fname>
+  <desc>Displays static HTML documenting the Error Handling fragment.</desc>
+  <type>XML XSLT</type>
+  <class>org.jasig.portal.channels.CGenericXSLT</class>
+  <timeout>10000</timeout>
+  <hasedit>N</hasedit>
+  <hashelp>N</hashelp>
+  <hasabout>N</hasabout>
+  <secure>N</secure>
+  <locale>en_US</locale>
+  <categories>
+    <category>Development</category>
+  </categories>
+  <groups>
+    <group>Everyone</group>
+    <group>Guests</group>
+  </groups>
+  <parameters>
+    <parameter> 
+      <name>xslUri</name>  
+      <value>webproxy/xhtml.xsl</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+    <parameter> 
+      <name>xmlUri</name>  
+      <value>error/errorHandlingTabDoc/errorHandlingTab.xml</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+  </parameters>
+</channel-definition>
