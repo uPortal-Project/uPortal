@@ -3,34 +3,47 @@
  * See license distributed with this file and
  * available online at http://www.uportal.org/license.html
  */
-package org.jasig.portal.portlet.registry;
+package org.jasig.portal.mock.portlet.om;
 
-import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.pluto.PortletWindowID;
-import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.jasig.portal.portlet.om.IPortletEntityId;
 
 /**
  * @author Eric Dalquist
  * @version $Revision$
  */
-class PortletWindowIdImpl implements IPortletWindowId {
+public class MockPortletEntityId implements IPortletEntityId {
     private static final long serialVersionUID = 1L;
     
-    private final String portletWindowId;
+    private String portletEntityId;
     
-    public PortletWindowIdImpl(String portletWindowId) {
-        Validate.notNull(portletWindowId, "portletWindowId can not be null");
-
-        this.portletWindowId = portletWindowId;
+    public MockPortletEntityId() {
+        this.portletEntityId = null;
+    }
+    
+    public MockPortletEntityId(String portletEntityId) {
+        this.portletEntityId = portletEntityId;
     }
 
     /* (non-Javadoc)
-     * @see org.apache.pluto.PortletWindowID#getStringId()
+     * @see org.apache.pluto.PortletEntityID#getStringId()
      */
     public String getStringId() {
-        return this.portletWindowId;
+        return this.portletEntityId;
+    }
+    /**
+     * @return the portletEntityId
+     */
+    public String getPortletEntityId() {
+        return portletEntityId;
+    }
+
+    /**
+     * @param portletEntityId the portletEntityId to set
+     */
+    public void setPortletEntityId(String portletEntityId) {
+        this.portletEntityId = portletEntityId;
     }
 
     /**
@@ -41,12 +54,12 @@ class PortletWindowIdImpl implements IPortletWindowId {
         if (object == this) {
             return true;
         }
-        if (!(object instanceof PortletWindowID)) {
+        if (!(object instanceof IPortletEntityId)) {
             return false;
         }
-        PortletWindowID rhs = (PortletWindowID) object;
+        IPortletEntityId rhs = (IPortletEntityId) object;
         return new EqualsBuilder()
-            .append(this.portletWindowId, rhs.getStringId())
+            .append(this.portletEntityId, rhs.getStringId())
             .isEquals();
     }
 
@@ -56,7 +69,7 @@ class PortletWindowIdImpl implements IPortletWindowId {
     @Override
     public int hashCode() {
         return new HashCodeBuilder(-917388291, 674832463)
-            .append(this.portletWindowId)
+            .append(this.portletEntityId)
             .toHashCode();
     }
 

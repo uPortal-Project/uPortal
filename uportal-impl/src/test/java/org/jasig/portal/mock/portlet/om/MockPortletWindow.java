@@ -3,7 +3,7 @@
  * See license distributed with this file and
  * available online at http://www.uportal.org/license.html
  */
-package org.jasig.portal.portlet.registry;
+package org.jasig.portal.mock.portlet.om;
 
 import java.io.IOException;
 import java.io.InvalidObjectException;
@@ -32,34 +32,30 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
  * @author Eric Dalquist
  * @version $Revision$
  */
-class PortletWindowImpl implements IPortletWindow {
+public class MockPortletWindow implements IPortletWindow {
     private static final long serialVersionUID = 1L;
 
-    private final IPortletEntityId portletEntityId;
-    private final IPortletWindowId portletWindowId;
-    private final String contextPath;
-    private final String portletName;
+    private IPortletEntityId portletEntityId;
+    private IPortletWindowId portletWindowId;
+    private String contextPath;
+    private String portletName;
     
     private Map<String, String[]> requestParameters = new HashMap<String, String[]>();
     private transient PortletMode portletMode = PortletMode.VIEW;
     private transient WindowState windowState = WindowState.NORMAL;
     private Integer expirationCache = null;
     
+    public MockPortletWindow() {
+        this.portletWindowId = null;
+        this.portletEntityId = null;
+        this.contextPath = null;
+        this.portletName = null;
+    }
+    
     /**
      * Creates a new PortletWindow with the default settings
-     * 
-     * @param portletWindowId The unique identifier for this PortletWindow
-     * @param portletEntityId The unique identifier of the parent IPortletEntity
-     * @param contextPath The path of the {@link javax.servlet.ServletContext} the portlet resides in
-     * @param portletName The name of the portlet this window represents
-     * @throws IllegalArgumentException if portletWindowId, contextPath, or portletName are null
      */
-    public PortletWindowImpl(IPortletWindowId portletWindowId, IPortletEntityId portletEntityId, String contextPath, String portletName) {
-        Validate.notNull(portletWindowId, "portletWindowId can not be null");
-        Validate.notNull(portletEntityId, "portletEntityId can not be null");
-        Validate.notNull(contextPath, "contextPath can not be null");
-        Validate.notNull(portletName, "portletName can not be null");
-        
+    public MockPortletWindow(IPortletWindowId portletWindowId, IPortletEntityId portletEntityId, String contextPath, String portletName) {
         this.portletWindowId = portletWindowId;
         this.portletEntityId = portletEntityId;
         this.contextPath = contextPath;
@@ -68,27 +64,14 @@ class PortletWindowImpl implements IPortletWindow {
     
     /**
      * Creates a new PortletWindow cloned from the passed IPortletWindow
-     * 
-     * @param portletWindowId The unique idenifier for this PortletWindow
-     * @param portletWindow The PortletWindow to clone settings from
-     * @throws IllegalArgumentException if portletWindowId, or portletWindow are null
      */
-    public PortletWindowImpl(IPortletWindowId portletWindowId, IPortletWindow portletWindow) {
-        Validate.notNull(portletWindowId, "portletWindowId can not be null");
-        Validate.notNull(portletWindow, "portletWindow can not be null");
-        
+    public MockPortletWindow(IPortletWindowId portletWindowId, IPortletWindow portletWindow) {
         this.portletWindowId = portletWindowId;
         this.portletEntityId = portletWindow.getPortletEntityId();
         this.contextPath = portletWindow.getContextPath();
         this.portletName = portletWindow.getPortletName();
         this.portletMode = portletWindow.getPortletMode();
         this.windowState = portletWindow.getWindowState();
-        
-        Validate.notNull(this.portletEntityId, "portletWindow.parentPortletEntityId can not be null");
-        Validate.notNull(this.contextPath, "portletWindow.contextPath can not be null");
-        Validate.notNull(this.portletName, "portletWindow.portletName can not be null");
-        Validate.notNull(this.portletMode, "portletWindow.portletMode can not be null");
-        Validate.notNull(this.windowState, "portletWindow.windowState can not be null");
     }
 
     /* (non-Javadoc)
@@ -144,7 +127,6 @@ class PortletWindowImpl implements IPortletWindow {
      * @see org.jasig.portal.portlet.om.IPortletWindow#setPortletMode(javax.portlet.PortletMode)
      */
     public void setPortletMode(PortletMode mode){
-        Validate.notNull(mode, "mode can not be null");
         this.portletMode = mode;
     }
     
@@ -167,7 +149,6 @@ class PortletWindowImpl implements IPortletWindow {
      * @see org.jasig.portal.portlet.om.IPortletWindow#setRequestParameters(java.util.Map)
      */
     public void setRequestParameters(Map<String, String[]> requestParameters) {
-        Validate.notNull(requestParameters, "requestParameters can not be null");
         this.requestParameters = requestParameters;
     }
     
@@ -184,11 +165,47 @@ class PortletWindowImpl implements IPortletWindow {
     public void setExpirationCache(Integer expirationCache) {
         this.expirationCache = expirationCache;
     }
+
+    /**
+     * @return the requestParameters
+     */
+    public Map<String, String[]> getRequestParameters() {
+        return requestParameters;
+    }
+
+    /**
+     * @param portletEntityId the portletEntityId to set
+     */
+    public void setPortletEntityId(IPortletEntityId portletEntityId) {
+        this.portletEntityId = portletEntityId;
+    }
+
+    /**
+     * @param portletWindowId the portletWindowId to set
+     */
+    public void setPortletWindowId(IPortletWindowId portletWindowId) {
+        this.portletWindowId = portletWindowId;
+    }
+
+    /**
+     * @param contextPath the contextPath to set
+     */
+    public void setContextPath(String contextPath) {
+        this.contextPath = contextPath;
+    }
+
+    /**
+     * @param portletName the portletName to set
+     */
+    public void setPortletName(String portletName) {
+        this.portletName = portletName;
+    }
+
     
     
     //********** Serializable Methods **********//
-
-
+    
+    
     private void writeObject(ObjectOutputStream oos) throws IOException {
         oos.defaultWriteObject();
         oos.writeObject(this.portletMode.toString());

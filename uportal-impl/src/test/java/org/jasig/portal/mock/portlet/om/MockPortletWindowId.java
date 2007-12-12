@@ -3,9 +3,8 @@
  * See license distributed with this file and
  * available online at http://www.uportal.org/license.html
  */
-package org.jasig.portal.portlet.registry;
+package org.jasig.portal.mock.portlet.om;
 
-import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.pluto.PortletWindowID;
@@ -15,14 +14,16 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
  * @author Eric Dalquist
  * @version $Revision$
  */
-class PortletWindowIdImpl implements IPortletWindowId {
+public class MockPortletWindowId implements IPortletWindowId {
     private static final long serialVersionUID = 1L;
     
-    private final String portletWindowId;
+    private String portletWindowId;
     
-    public PortletWindowIdImpl(String portletWindowId) {
-        Validate.notNull(portletWindowId, "portletWindowId can not be null");
-
+    public MockPortletWindowId() {
+        this.portletWindowId = null;
+    }
+    
+    public MockPortletWindowId(String portletWindowId) {
         this.portletWindowId = portletWindowId;
     }
 
@@ -31,6 +32,19 @@ class PortletWindowIdImpl implements IPortletWindowId {
      */
     public String getStringId() {
         return this.portletWindowId;
+    }
+    /**
+     * @return the portletWindowId
+     */
+    public String getPortletWindowId() {
+        return portletWindowId;
+    }
+
+    /**
+     * @param portletWindowId the portletWindowId to set
+     */
+    public void setPortletWindowId(String portletWindowId) {
+        this.portletWindowId = portletWindowId;
     }
 
     /**

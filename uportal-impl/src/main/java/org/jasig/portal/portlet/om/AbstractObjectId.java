@@ -13,22 +13,20 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class PortletEntityIdImpl implements IPortletEntityId {
-    private static final long serialVersionUID = 1L;
-    
-    private final String portletEntityId;
-    
-    public PortletEntityIdImpl(String portletEntityId) {
-        Validate.notNull(portletEntityId, "portletEntityId can not be null");
+public abstract class AbstractObjectId implements IObjectId {
+    private final String objectId;
 
-        this.portletEntityId = portletEntityId;
+    public AbstractObjectId(String objectId) {
+        Validate.notNull(objectId, "objectId can not be null");
+
+        this.objectId = objectId;
     }
 
     /* (non-Javadoc)
      * @see org.apache.pluto.PortletEntityID#getStringId()
      */
     public String getStringId() {
-        return this.portletEntityId;
+        return this.objectId;
     }
 
     /**
@@ -39,13 +37,11 @@ public class PortletEntityIdImpl implements IPortletEntityId {
         if (object == this) {
             return true;
         }
-        if (!(object instanceof IPortletEntityId)) {
+        if (!(object instanceof IObjectId)) {
             return false;
         }
-        IPortletEntityId rhs = (IPortletEntityId) object;
-        return new EqualsBuilder()
-            .append(this.portletEntityId, rhs.getStringId())
-            .isEquals();
+        IObjectId rhs = (IObjectId)object;
+        return new EqualsBuilder().append(this.objectId, rhs.getStringId()).isEquals();
     }
 
     /**
@@ -53,9 +49,7 @@ public class PortletEntityIdImpl implements IPortletEntityId {
      */
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(-917388291, 674832463)
-            .append(this.portletEntityId)
-            .toHashCode();
+        return new HashCodeBuilder(-917388291, 674832463).append(this.objectId).toHashCode();
     }
 
     /**

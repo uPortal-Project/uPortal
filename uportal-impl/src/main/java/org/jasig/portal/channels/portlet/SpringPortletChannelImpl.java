@@ -26,10 +26,12 @@ import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalEvent;
 import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.portlet.url.IPortletRequestParameterManager;
@@ -49,6 +51,7 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
     
     protected final Log logger = LogFactory.getLog(this.getClass());
     
+    private IPortletDefinitionRegistry portletDefinitionRegistry;
     private IPortletEntityRegistry portletEntityRegistry;
     private IPortletWindowRegistry portletWindowRegistry;
     private OptionalContainerServices optionalContainerServices;
@@ -56,6 +59,20 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
     private IPortletRequestParameterManager portletRequestParameterManager;
     
     
+    
+    /**
+     * @return the portletDefinitionRegistry
+     */
+    public IPortletDefinitionRegistry getPortletDefinitionRegistry() {
+        return portletDefinitionRegistry;
+    }
+    /**
+     * @param portletDefinitionRegistry the portletDefinitionRegistry to set
+     */
+    @Required
+    public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
+        this.portletDefinitionRegistry = portletDefinitionRegistry;
+    }
     /**
      * @return the portletEntityRegistry
      */
@@ -183,9 +200,15 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
     public void initSession(ChannelStaticData channelStaticData, PortalControlStructures portalControlStructures) {
         //Get/create the portlet entity to init
         final String channelPublishId = channelStaticData.getChannelPublishId();
+        final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getPortletDefinition(Integer.parseInt(channelPublishId));
+        if (portletDefinition == null) {
+            throw new IllegalStateException("No IPortletDefinition exists for channelPublishId: " + channelPublishId);
+        }
+        
+        final IPortletDefinitionId portletDefinitionId = portletDefinition.getPortletDefinitionId();
         final String channelSubscribeId = channelStaticData.getChannelSubscribeId();
         final IPerson person = channelStaticData.getPerson();
-        final IPortletEntity portletEntity = this.portletEntityRegistry.getOrCreatePortletEntity(channelPublishId, channelSubscribeId, person);
+        final IPortletEntity portletEntity = this.portletEntityRegistry.getOrCreatePortletEntity(portletDefinitionId, channelSubscribeId, person);
 
         //Get/create the portlet window to init
         final HttpServletRequest httpServletRequest = portalControlStructures.getHttpServletRequest();
@@ -366,7 +389,7 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
      */
     public String getTitle(ChannelStaticData channelStaticData, PortalControlStructures portalControlStructures, ChannelRuntimeData channelRuntimeData) {
         final HttpServletRequest httpServletRequest = portalControlStructures.getHttpServletRequest();
-        final String title = (String)httpServletRequest.getAttribute(IPortletAdaptor.ATTRIBUTE_PORTLET_TITLE);
+        final String title = (String)httpServletRequest.getAttribute(IPortletAdaptor.ATTRIBUTE__PORTLET_TITLE);
         
         if (this.logger.isDebugEnabled()) {
             this.logger.debug("Retrieved title '" + title + "' from request for: " + channelStaticData);
@@ -386,7 +409,13 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
             break;
             
             case PortalEvent.UNSUBSCRIBE: {
-                //TODO delete windows, entities & entity preferences
+                final String channelSubscribeId = channelStaticData.getChannelSubscribeId();
+                final IPerson person = channelStaticData.getPerson();
+                final IPortletEntity portletEntity = this.portletEntityRegistry.getPortletEntity(channelSubscribeId, person);
+                
+                //TODO delete portlet windows for entity from the windowRegistry?
+                
+                this.portletEntityRegistry.deletePortletEntity(portletEntity);
             }
             break;
         }

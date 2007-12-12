@@ -17,13 +17,13 @@ import junit.framework.TestCase;
 import org.easymock.EasyMock;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.channels.portlet.IPortletAdaptor;
+import org.jasig.portal.mock.portlet.om.MockPortletEntityId;
+import org.jasig.portal.mock.portlet.om.MockPortletWindow;
+import org.jasig.portal.mock.portlet.om.MockPortletWindowId;
 import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
-import org.jasig.portal.portlet.om.PortletEntityIdImpl;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
-import org.jasig.portal.portlet.registry.PortletWindowIdImpl;
-import org.jasig.portal.portlet.registry.PortletWindowImpl;
 import org.jasig.portal.utils.Tuple;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -84,9 +84,9 @@ public class PortletUrlSyntaxProviderImplTest extends TestCase {
         
         final MockHttpServletRequest request = new MockHttpServletRequest();
         
-        final IPortletEntityId portletEntityId = new PortletEntityIdImpl("entityId1");
-        final IPortletWindowId portletWindowId = new PortletWindowIdImpl("windowId1");
-        final IPortletWindow portletWindow = new PortletWindowImpl(portletWindowId, portletEntityId, "portletApp", "portletName");
+        final IPortletEntityId portletEntityId = new MockPortletEntityId("entityId1");
+        final IPortletWindowId portletWindowId = new MockPortletWindowId("windowId1");
+        final IPortletWindow portletWindow = new MockPortletWindow(portletWindowId, portletEntityId, "portletApp", "portletName");
         
         final PortletUrl portletUrl = new PortletUrl();
         
@@ -121,7 +121,7 @@ public class PortletUrlSyntaxProviderImplTest extends TestCase {
         final ChannelRuntimeData channelRuntimeData = new ChannelRuntimeData();
         channelRuntimeData.setBaseActionURL("http://base/action/url");
         
-        request.setAttribute(IPortletAdaptor.ATTRIBUTE_RUNTIME_DATA, channelRuntimeData);
+        request.setAttribute(IPortletAdaptor.ATTRIBUTE__RUNTIME_DATA, channelRuntimeData);
         
         String urlString = portletUrlSyntaxProvider.generatePortletUrl(request, portletWindow, portletUrl);
         assertEquals("http://base/action/url?plt_type_windowId1=RENDER", urlString);
@@ -167,7 +167,7 @@ public class PortletUrlSyntaxProviderImplTest extends TestCase {
         
         final IPortletWindowRegistry portletWindowRegistry = EasyMock.createMock(IPortletWindowRegistry.class);
         EasyMock.expect(portletWindowRegistry.getPortletWindowId("windowId1"))
-            .andReturn(new PortletWindowIdImpl("windowId1"))
+            .andReturn(new MockPortletWindowId("windowId1"))
             .anyTimes();
         EasyMock.replay(portletWindowRegistry);
         portletUrlSyntaxProvider.setPortletWindowRegistry(portletWindowRegistry);
@@ -180,7 +180,7 @@ public class PortletUrlSyntaxProviderImplTest extends TestCase {
         
         
         PortletUrl portletUrl1 = new PortletUrl();
-        expectedParsedUrls.put(new PortletWindowIdImpl("windowId1"), portletUrl1);
+        expectedParsedUrls.put(new MockPortletWindowId("windowId1"), portletUrl1);
         
         
         request.setParameter("plt_type_windowId1", "RENDER");

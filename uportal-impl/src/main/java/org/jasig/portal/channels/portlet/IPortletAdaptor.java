@@ -24,8 +24,34 @@ import org.jasig.portal.PortalException;
 public interface IPortletAdaptor extends IPrivilegedChannel, ICharacterChannel, ICacheable {
     public static final WindowState EXCLUSIVE = new WindowState("EXCLUSIVE");
     
-    public static final String ATTRIBUTE_RUNTIME_DATA = IPortletAdaptor.class.getName() + ".RUNTIME_DATA";
-    public static final String ATTRIBUTE_PORTLET_TITLE = IPortletAdaptor.class.getName() + ".PORTLET_TITLE";
+    /**
+     * {@link javax.servlet.http.HttpServletRequest} attribute that the adaptor will store the current
+     * {@link org.jasig.portal.ChannelRuntimeData} under.
+     */
+    public static final String ATTRIBUTE__RUNTIME_DATA = IPortletAdaptor.class.getName() + ".RUNTIME_DATA";
+    
+    /**
+     * {@link javax.servlet.http.HttpServletRequest} attribute that the adaptor will store the title the portlet
+     * dynamicly sets under.
+     */
+    public static final String ATTRIBUTE__PORTLET_TITLE = IPortletAdaptor.class.getName() + ".PORTLET_TITLE";
+    
+    /**
+     * Name of the {@link org.jasig.portal.ChannelDefinition} parameter the name of the
+     * {@link org.apache.pluto.descriptors.portlet.PortletAppDD} is defined in.
+     * 
+     * @see org.apache.pluto.spi.optional.PortletRegistryService#getPortletApplicationDescriptor(String)
+     */
+    public static final String CHANNEL_PARAM__PORTLET_APPLICATION_ID = "portletApplicationId";
+
+    /**
+     * Name of the {@link org.jasig.portal.ChannelDefinition} parameter the name of the
+     * {@link org.apache.pluto.descriptors.portlet.PortletDD} is defined in.
+     * 
+     * @see org.apache.pluto.descriptors.portlet.PortletAppDD#getPortlets()
+     */
+    public static final String CHANNEL_PARAM__PORTLET_NAME = "portletName";
+    
     
     /**
      * {@link org.jasig.portal.IChannel#setStaticData(org.jasig.portal.ChannelStaticData)},

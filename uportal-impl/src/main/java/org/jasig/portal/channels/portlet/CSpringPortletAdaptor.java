@@ -96,7 +96,7 @@ public class CSpringPortletAdaptor implements IPortletAdaptor {
 
         //Attach the runtime data as an attribute on the request so it is accessible to other portlet rendering related classes  
         final HttpServletRequest httpServletRequest = this.portalControlStructures.getHttpServletRequest();
-        httpServletRequest.setAttribute(ATTRIBUTE_RUNTIME_DATA, this.channelRuntimeData);
+        httpServletRequest.setAttribute(ATTRIBUTE__RUNTIME_DATA, this.channelRuntimeData);
     }
     
     /* (non-Javadoc)

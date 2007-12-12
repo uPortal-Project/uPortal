@@ -12,8 +12,8 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
+import org.jasig.portal.mock.portlet.om.MockPortletWindowId;
 import org.jasig.portal.portlet.om.IPortletWindowId;
-import org.jasig.portal.portlet.registry.PortletWindowIdImpl;
 import org.jasig.portal.url.processing.RequestParameterProcessingIncompleteException;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -30,7 +30,7 @@ public class PortletRequestParameterManagerTest extends TestCase {
         parameterManager.setNoPortletRequest(request);
         
         try {
-            parameterManager.setRequestType(request, new PortletWindowIdImpl("id"), RequestType.RENDER);
+            parameterManager.setRequestType(request, new MockPortletWindowId("id"), RequestType.RENDER);
             fail("An IllegalStateException should have been thrown for calling setRequestType after setNoPortletRequest");
         }
         catch (IllegalStateException ise) {
@@ -43,7 +43,7 @@ public class PortletRequestParameterManagerTest extends TestCase {
         final Set<IPortletWindowId> targetedPortletWindowIds = parameterManager.getTargetedPortletWindowIds(request);
         assertNull("targetedPortletWindowIds should be null", targetedPortletWindowIds);
         
-        final RequestType portletRequestType = parameterManager.getPortletRequestType(request, new PortletWindowIdImpl("id"));
+        final RequestType portletRequestType = parameterManager.getPortletRequestType(request, new MockPortletWindowId("id"));
         assertNull("portletRequestType should be null", portletRequestType);
     }
     
@@ -55,7 +55,7 @@ public class PortletRequestParameterManagerTest extends TestCase {
         final Map<String, Object[]> parameters = new HashMap<String, Object[]>();
         parameters.put("p1", new Object[] { "v1.1" });
         
-        final PortletWindowIdImpl portletWindowId = new PortletWindowIdImpl("id");
+        final MockPortletWindowId portletWindowId = new MockPortletWindowId("id");
         parameterManager.setRequestType(request, portletWindowId, RequestType.RENDER);
         
         try {
@@ -69,7 +69,7 @@ public class PortletRequestParameterManagerTest extends TestCase {
         final Set<IPortletWindowId> targetedPortletWindowIds = parameterManager.getTargetedPortletWindowIds(request);
         assertEquals(Collections.singleton(portletWindowId), targetedPortletWindowIds);
         
-        final RequestType portletRequestType = parameterManager.getPortletRequestType(request, new PortletWindowIdImpl("id"));
+        final RequestType portletRequestType = parameterManager.getPortletRequestType(request, new MockPortletWindowId("id"));
         assertEquals(RequestType.RENDER, portletRequestType);
     }
 
@@ -87,7 +87,7 @@ public class PortletRequestParameterManagerTest extends TestCase {
         }
         
         try {
-            parameterManager.getPortletRequestType(request, new PortletWindowIdImpl("id"));
+            parameterManager.getPortletRequestType(request, new MockPortletWindowId("id"));
             fail("A RequestParameterProcessingIncompleteException should have been thrown for calling getPortletRequestType before any set method");
         }
         catch (RequestParameterProcessingIncompleteException ise) {

@@ -3,10 +3,12 @@
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd"
 >
 
-    <bean id="portletContext" class="org.jasig.portal.portlet.container.PortletContainerFactoryBean">
+    <bean id="portletContainer" class="org.jasig.portal.portlet.container.PortletContainerFactoryBean">
         <property name="requiredContainerServices" ref="requiredContainerServices" />
         <property name="optionalContainerServices" ref="optionalContainerServices" />
     </bean>
+    
+    <!--********** Container Services ********** -->
 
     <bean id="requiredContainerServices" class="org.jasig.portal.portlet.container.services.RequiredContainerServicesImpl">
         <property name="portalContext" ref="portalContext" />
@@ -49,23 +51,44 @@
             </list>
         </property>
     </bean>
-
-    <bean id="portletWindowRegistry" class="org.jasig.portal.portlet.registry.PortletWindowRegistryImpl">
-        <property name="portletEntityRegistry" ref="portletEntityRegistry" />
-    </bean>
-
-    <bean id="portletEntityRegistry" class="org.jasig.portal.portlet.registry.PortletEntityRegistryImpl">
-        <property name="portletEntityRegistry" ref="portletEntityRegistry" />
-    </bean>
-    
-    <bean id="portletUrlSyntaxProvider" class="org.jasig.portal.portlet.url.PortletUrlSyntaxProviderImpl">
-        <property name="portletWindowRegistry" ref="portletWindowRegistry" />
-    </bean>
     
     <bean id="userInfoService" class="org.jasig.portal.portlet.container.services.PersonDirectoryUserInfoService">
         <property name="optionalContainerServices" ref="optionalContainerServices" />
         <property name="portletWindowRegistry" ref="portletWindowRegistry" />
         <property name="portletEntityRegistry" ref="portletEntityRegistry" />
         <property name="personAttributeDao" ref="personAttributeDao" />
+    </bean>
+    
+    <bean id="portletUrlSyntaxProvider" class="org.jasig.portal.portlet.url.PortletUrlSyntaxProviderImpl">
+        <property name="portletWindowRegistry" ref="portletWindowRegistry" />
+    </bean>
+    
+    
+    <!--********** Portlet Registries ********** -->
+
+    <bean id="portletWindowRegistry" class="org.jasig.portal.portlet.registry.PortletWindowRegistryImpl">
+        <property name="portletEntityRegistry" ref="portletEntityRegistry" />
+    </bean>
+
+    <bean id="portletEntityRegistry" class="org.jasig.portal.portlet.registry.PortletEntityRegistryImpl">
+        <property name="portletDefinitionRegistry" ref="portletDefinitionRegistry" />
+        <property name="portletEntityDao" ref="portletEntityDao" />
+    </bean>
+    
+    
+    <!--********** Portlet DAOs ********** -->
+    
+    
+    
+    
+    <!--********** Portlet Rendering Channel ********** -->
+    
+    <bean id="portletChannel" class="org.jasig.portal.channels.portlet.SpringPortletChannelImpl">
+        <property name="optionalContainerServices" ref="optionalContainerServices" />
+        <property name="portletContainer" ref="portletContainer" />
+        <property name="portletDefinitionRegistry" ref="portletDefinitionRegistry" />
+        <property name="portletEntityRegistry" ref="portletEntityRegistry" />
+        <property name="portletWindowRegistry" ref="portletWindowRegistry" />
+        <property name="portletRequestParameterManager" ref="portletRequestParameterManager" />
     </bean>
 </beans>

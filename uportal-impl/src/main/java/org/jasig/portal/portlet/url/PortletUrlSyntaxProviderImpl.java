@@ -259,9 +259,9 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
         Validate.notNull(portletUrl, "portletUrl can not be null");
         
         //Get the channel runtime data from the request attributes, it should have been set there by the portlet adapter
-        final ChannelRuntimeData channelRuntimeData = (ChannelRuntimeData)request.getAttribute(IPortletAdaptor.ATTRIBUTE_RUNTIME_DATA);
+        final ChannelRuntimeData channelRuntimeData = (ChannelRuntimeData)request.getAttribute(IPortletAdaptor.ATTRIBUTE__RUNTIME_DATA);
         if (channelRuntimeData == null) {
-            throw new IllegalStateException("No ChannelRuntimeData was found as a request attribute for key '" + IPortletAdaptor.ATTRIBUTE_RUNTIME_DATA + "' on request '" + request + "'");
+            throw new IllegalStateException("No ChannelRuntimeData was found as a request attribute for key '" + IPortletAdaptor.ATTRIBUTE__RUNTIME_DATA + "' on request '" + request + "'");
         }
 
         //Get the encoding to use for the URL

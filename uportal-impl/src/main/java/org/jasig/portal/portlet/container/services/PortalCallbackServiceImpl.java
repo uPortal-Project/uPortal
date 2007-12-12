@@ -125,6 +125,6 @@ public class PortalCallbackServiceImpl implements PortalCallbackService {
      * @see org.apache.pluto.spi.PortalCallbackService#setTitle(javax.servlet.http.HttpServletRequest, org.apache.pluto.PortletWindow, java.lang.String)
      */
     public void setTitle(HttpServletRequest request, PortletWindow plutoPortletWindow, String title) {
-        request.setAttribute(IPortletAdaptor.ATTRIBUTE_PORTLET_TITLE, title);
+        request.setAttribute(IPortletAdaptor.ATTRIBUTE__PORTLET_TITLE, title);
     }
 }
