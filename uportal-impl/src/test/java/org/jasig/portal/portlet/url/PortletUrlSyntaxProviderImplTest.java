@@ -21,9 +21,9 @@ import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.om.PortletEntityIdImpl;
-import org.jasig.portal.portlet.om.PortletWindowIdImpl;
-import org.jasig.portal.portlet.om.PortletWindowImpl;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
+import org.jasig.portal.portlet.registry.PortletWindowIdImpl;
+import org.jasig.portal.portlet.registry.PortletWindowImpl;
 import org.jasig.portal.utils.Tuple;
 import org.springframework.mock.web.MockHttpServletRequest;
 

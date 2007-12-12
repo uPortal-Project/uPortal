@@ -22,8 +22,6 @@ import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
-import org.jasig.portal.portlet.om.PortletWindowIdImpl;
-import org.jasig.portal.portlet.om.PortletWindowImpl;
 import org.springframework.beans.factory.annotation.Required;
 
 /**

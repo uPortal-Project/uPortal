@@ -3,12 +3,13 @@
  * See license distributed with this file and
  * available online at http://www.uportal.org/license.html
  */
-package org.jasig.portal.portlet.om;
+package org.jasig.portal.portlet.registry;
 
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.pluto.PortletWindowID;
+import org.jasig.portal.portlet.om.IPortletWindowId;
 
 /**
  * @author Eric Dalquist

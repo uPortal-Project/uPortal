@@ -13,7 +13,7 @@ import java.util.Set;
 import junit.framework.TestCase;
 
 import org.jasig.portal.portlet.om.IPortletWindowId;
-import org.jasig.portal.portlet.om.PortletWindowIdImpl;
+import org.jasig.portal.portlet.registry.PortletWindowIdImpl;
 import org.jasig.portal.url.processing.RequestParameterProcessingIncompleteException;
 import org.springframework.mock.web.MockHttpServletRequest;
 

@@ -3,7 +3,7 @@
  * See license distributed with this file and
  * available online at http://www.uportal.org/license.html
  */
-package org.jasig.portal.portlet.om;
+package org.jasig.portal.portlet.registry;
 
 import java.io.IOException;
 import java.io.InvalidObjectException;
@@ -21,6 +21,9 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.pluto.PortletWindowID;
+import org.jasig.portal.portlet.om.IPortletEntityId;
+import org.jasig.portal.portlet.om.IPortletWindow;
+import org.jasig.portal.portlet.om.IPortletWindowId;
 
 /**
  * Implementation of the {@link IPortletWindow} interface that tracks the current
