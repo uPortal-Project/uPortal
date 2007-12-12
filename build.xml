@@ -578,13 +578,21 @@
     <echo message="Initializing uPortal"/>
     <antcall target="deploy"/>
     <antcall target="db"/>
+<!-- AW (2007/12/12):  Replaced by Import/Export tech
     <antcall target="pubchan">
       <param name="channel" value="all"/>
     </antcall>
+ -->
     <antcall target="i18n-db"/>
+<!-- AW (2007/12/12):  Replaced by Import/Export tech
     <antcall target="pubfragments">
       <param name="fragmentFile" value="/properties/al/fragments.xml"/>
     </antcall>
+ -->
+	<!-- AW (2007/12/12):  Added Import/Export tech... -->
+	<ant antfile="import-export.xml" target="import">
+		<property name="dir" value="properties/db/entities"/>
+	</ant>
     <antcall target="deployPortletApp">
       <param name="portletApp" value="all"/>
     </antcall>
@@ -878,6 +886,10 @@
 
 <!-- ==================== deluser Target ============================ -->
 <!--
+	AW (2007/12/12):  DEPRECATED in favor of:
+
+	  ant -f import-export.xml delete -Dtype=user -Dsysid={username}
+
    The deluser target runs uPortal's DeleteUser program to delete all
    traces of a uportal user from the uPortal database.
    Examples:
@@ -886,16 +898,8 @@
 -->
 
   <target name="deluser"
-   description="Delete traces of a user from the portal database">
-    <echo message="Invoking DeleteUser"/>
-    <property name="user" value=" "/>
-    <java dir="${basedir}" classname="org.jasig.portal.tools.DeleteUser" fork="true" >
-      <classpath>
-        <pathelement path="${build.home}/WEB-INF/classes"/>
-        <path refid="compile.classpath"/>
-      </classpath>
-      <arg value="${user}"/>
-    </java>
+   description="DEPRECATED -- Delete traces of a user from the portal database">
+	<fail message="DEPRECATED in favor of:  ant -f import-export.xml delete -Dtype=user -Dsysid={username}"/>
   </target>
 
 
@@ -1188,6 +1192,10 @@
 
 <!--
 
+	AW (2007/12/12):  DEPRECATED in favor of:
+
+	  ant -f import-export.xml import [-Ddir={dir}] -Dpattern={regex-matching-file-name}
+
   The "pubchan" target runs the ChannelPublisher tool.
   Channel definitions are defined in XML files.  Each
   channel definition is published or modified if one
@@ -1202,17 +1210,7 @@
 
 
   <target name="pubchan" description="Publishes channels" depends="compile">
-    <echo message="Invoking Channel Publisher Tool"/>
-
-    <property name="channel" value="all"/>
-    <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.tools.chanpub.ChannelPublisher">
-      <classpath>
-          <pathelement path="${build.home}/WEB-INF/classes"/>
-          <path refid="compile.classpath"/>
-      </classpath>
-      <arg value="-n"/>
-      <arg value="${channel}"/>
-    </java>
+	<fail message="DEPRECATED in favor of:  ant -f import-export.xml import [-Ddir={dir}] -Dpattern={regex-matching-file-name}"/>
   </target>
 
 

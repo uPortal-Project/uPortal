@@ -1,0 +1,103 @@
+<project name="uPortal" basedir=".">
+
+  <!-- Load user property definition overrides -->
+  <property file="build.properties"/>
+
+
+    <target name="export" description="Exports the specified entity or entities to XML on the file system">
+
+        <!-- Build uPoirtal to ensure Import/Export tech is in the classpath... -->
+        <ant target="compile"/>
+
+        <!-- Three properties control the export:  dir, type, and sysid -->
+        <property name="dir" value="."/>
+        <fail unless="type">You must specify a &quot;type&quot; parameter (-Dtype={something}) from the following:  all, layout, all-layouts, channel, all-channels, all-permissions,  all-memberships, group, all-groups, user, all-users.</fail>
+        <property name="sysid" value=""/>
+
+        <!-- Invoke Cernunnos specifying script and parameters -->
+        <java fork="true" failonerror="true" dir="${basedir}" classname="org.danann.cernunnos.runtime.Main">
+            <classpath>
+                <pathelement path="build/WEB-INF/classes"/>
+                <fileset dir="lib">
+                    <include name="**/*.jar"/>
+                </fileset>
+            </classpath>
+            <arg value="classpath://org/jasig/portal/io/export.crn"/>
+            <arg value="${dir}"/>
+            <arg value="${type}"/>
+            <arg value="${sysid}"/>
+        </java>
+
+    </target>
+
+    <target name="import" description="Imports the specified XML file or files">
+        <!-- Invoke this target in the directory where you want the data.xml to be created:
+            ant -f import-export.xml full-dbunload
+        -->
+
+        <!-- Build uPortal to ensure Import/Export tech is in the classpath... -->
+        <ant target="compile"/>
+
+        <!-- Two properties control the import:  dir and pattern -->
+        <property name="dir" value="."/>
+        <property name="pattern" value="org.jasig.portal.FilePatternPhrase.USE_DEFAULT_VALUE"/>
+
+        <!-- Invoke Cernunnos specifying script and parameters -->
+        <java fork="true" failonerror="true" dir="${basedir}" classname="org.danann.cernunnos.runtime.Main">
+            <classpath>
+                <pathelement path="build/WEB-INF/classes"/>
+                <fileset dir="lib">
+                    <include name="**/*.jar"/>
+                </fileset>
+            </classpath>
+            <arg value="classpath://org/jasig/portal/io/import.crn"/>
+            <arg value="${dir}"/>
+            <arg value="${pattern}"/>
+        </java>
+
+    </target>
+
+    <target name="delete" description="Deletes the specified entity">
+
+        <!-- Build uPoirtal to ensure Import/Export tech is in the classpath... -->
+        <ant target="compile"/>
+
+        <!-- Three properties control the export:  dir, type, and sysid -->
+        <fail unless="type">You must specify a &quot;type&quot; parameter (-Dtype={something}) from the following:  layout, channel, group, user.</fail>
+        <fail unless="sysid">You must specify a &quot;sysid&quot; parameter (-Dsysid={something}).  The value will be a valid username (user or layout), fname (channel), or name (group).</fail>
+
+        <!-- Invoke Cernunnos specifying script and parameters -->
+        <java fork="true" failonerror="true" dir="${basedir}" classname="org.danann.cernunnos.runtime.Main">
+            <classpath>
+                <pathelement path="build/WEB-INF/classes"/>
+                <fileset dir="lib">
+                    <include name="**/*.jar"/>
+                </fileset>
+            </classpath>
+            <arg value="classpath://org/jasig/portal/io/delete.crn"/>
+            <arg value="${type}"/>
+            <arg value="${sysid}"/>
+        </java>
+
+    </target>
+
+    <target name="make-data-xml" description="Runs the DbUnload tool against all tables listed in data.xml">
+
+
+        <!-- Build uPoirtal to ensure Import/Export tech is in the classpath... -->
+        <ant target="compile"/>
+
+        <!-- Invoke Cernunnos specifying script and parameters -->
+        <java fork="true" failonerror="true" dir="${basedir}" classname="org.danann.cernunnos.runtime.Main">
+            <classpath>
+                <pathelement path="build/WEB-INF/classes"/>
+                <fileset dir="lib">
+                    <include name="**/*.jar"/>
+                </fileset>
+            </classpath>
+            <arg value="classpath://org/jasig/portal/tools/dbloader/dbunload.crn"/>
+        </java>
+
+    </target>
+
+</project>
