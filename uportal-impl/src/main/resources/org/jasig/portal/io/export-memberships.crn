@@ -1,0 +1,83 @@
+<with-attribute key="COUNTER" value="${newDoc(counter)}">
+    <sql-query>
+        <sql>SELECT upgm.*, upet.entity_type_name FROM up_group_membership upgm, up_entity_type upet, up_group upg where upgm.group_id = upg.group_id AND upg.entity_type_id = upet.entity_type_id</sql>
+        <subtasks>
+            <with-attribute key="Attributes.NODE" value="${newDoc(membership)}">
+                <append-node node="${attributeNode(script=classpath://org/jasig/portal/io/import-membership_v2-6.crn)}"/>
+                <invoke-method class="org.jasig.portal.services.GroupService" method="findGroup" attribute-name="GROUP">
+                    <parameter value="local.${req(GROUP_ID)}"/>
+                    <subtasks>
+                        <!-- Check for group name == null (indicates an orphaned record) -->
+                        <choose>
+                            <when test="${jexl(GROUP.getName() == null)}">
+                                <log level="warn">Membership parent references a deleted group;  removing orphaned reference.</log>
+                                <append-node node="${attributeNode(cancel=true)}"/>
+                            </when>
+                            <otherwise>
+                                <!-- All is well... -->
+                                <append-node>
+                                    <parent>${jexl(GROUP.getName())}</parent>
+                                </append-node>
+                            </otherwise>
+                        </choose>
+                    </subtasks>
+                </invoke-method>
+                <choose>
+                    <when test="${jexl(MEMBER_IS_GROUP.equals('T'))}">
+                        <invoke-method class="org.jasig.portal.services.GroupService" method="findGroup" attribute-name="GROUP">
+                            <parameter value="${req(MEMBER_SERVICE)}.${req(MEMBER_KEY)}"/>
+                            <subtasks>
+                                <!-- Check for group name == null (indicates an orphaned record) -->
+                                <choose>
+                                    <when test="${jexl(GROUP.getName() == null)}">
+                                        <log level="warn">Membership child references a deleted group;  removing orphaned reference.</log>
+                                        <append-node node="${attributeNode(cancel=true)}"/>
+                                    </when>
+                                    <otherwise>
+                                        <!-- All is well... -->
+                                        <append-node>
+                                            <child>
+                                                <group>${jexl(GROUP.getName())}</group>
+                                            </child>
+                                        </append-node>
+                                    </otherwise>
+                                </choose>
+                            </subtasks>
+                        </invoke-method>
+                    </when>
+                    <when test="${jexl(ENTITY_TYPE_NAME.equals('org.jasig.portal.ChannelDefinition'))}">
+                        <with-attribute key="FNAME" value="${sql(SELECT chan_fname FROM up_channel WHERE chan_id = ${req(MEMBER_KEY)})}">
+                            <choose>
+                                <when test="${jexl(FNAME == null)}">
+                                    <log level="warn">Membership child references a deleted channel;  removing orphaned reference.</log>
+                                    <append-node node="${attributeNode(cancel=true)}"/>
+                                </when>
+                                <otherwise>
+                                    <append-node>
+                                        <child>
+                                            <channel>${req(FNAME)}</channel>
+                                        </child>
+                                    </append-node>
+                                </otherwise>
+                            </choose>
+                        </with-attribute>
+                    </when>
+                    <otherwise>
+                        <append-node>
+                            <child>
+                                <literal>${req(MEMBER_KEY)}</literal>
+                            </child>
+                        </append-node>
+                    </otherwise>
+                </choose>
+                <append-node parent="${req(COUNTER)}">
+                    <row/>
+                </append-node>
+                <if test="${jexl(!Attributes.NODE.valueOf('@cancel').equals('true'))}">
+                    <echo-ln>Export Membership:  PARENT=${valueOf(parent)}, CHILD=${valueOf(child/*)}</echo-ln>
+                    <write-document file="${req(EXPORT_DIR)}/${jexl(COUNTER.valueOf('count(row)'))}.membership"/>
+                </if>
+            </with-attribute>
+        </subtasks>
+    </sql-query>
+</with-attribute>

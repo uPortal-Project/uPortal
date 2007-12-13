@@ -1,0 +1,58 @@
+<properties location="classpath://properties/rdbm.properties">
+    <sql-connection driver="${req(jdbcDriver)}" url="${req(jdbcUrl)}" username="${req(jdbcUser)}" password="${req(jdbcPassword)}">
+        <sql-transaction>
+            <!-- ENTITY_TYPE will be the first command line argument, SYSID the second -->
+            <with-attribute key="ENTITY_TYPE" value="${req($1)}">
+                <choose>
+
+                    <!-- layouts -->
+                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('layout'))}">
+                        <with-attribute key="USER_NAME" value="${req($2)}">
+                            <echo-ln>Delete layout for user:  ${req(USER_NAME)}</echo-ln>
+                            <crn location="delete-layout.crn"/>
+                        </with-attribute>
+                    </when>
+
+                    <!--
+                     | NB:  permissions and memberships records cannot be deleted directly.
+                     | They will be removed, where appropriate, whenever an entity that they
+                     | reference is deleted.
+                     +-->
+
+                    <!-- channels -->
+                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('channel'))}">
+                        <with-attribute key="FNAME" value="${req($2)}">
+                            <echo-ln>Delete channel:  ${req(FNAME)}</echo-ln>
+                            <crn location="delete-channel.crn"/>
+                        </with-attribute>
+                    </when>
+
+                    <!-- groups -->
+                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('group'))}">
+                        <with-attribute key="GROUP_NAME" value="${req($2)}">
+                            <echo-ln>Delete group:  ${req(GROUP_NAME)}</echo-ln>
+                            <crn location="delete-group.crn"/>
+                        </with-attribute>
+                    </when>
+                    <when test="${false()}">
+
+                    </when>
+
+                    <!-- users -->
+                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('user'))}">
+                        <with-attribute key="USER_NAME" value="${req($2)}">
+                            <echo-ln>Delete user:  ${req(USER_NAME)}</echo-ln>
+                            <crn location="delete-user.crn"/>
+                        </with-attribute>
+                    </when>
+
+                    <otherwise>
+                        <echo-ln>WARNING:  Unknown/unsupported entity type:  '${req(ENTITY_TYPE)}'</echo-ln>
+                        <echo-ln>You must pass a valid entity type as the firt argument on the command line.</echo-ln>
+                    </otherwise>
+
+                </choose>
+            </with-attribute>
+        </sql-transaction>
+    </sql-connection>
+</properties>
