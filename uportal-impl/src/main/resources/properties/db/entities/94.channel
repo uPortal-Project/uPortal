@@ -1,0 +1,23 @@
+
+<channel-definition script="classpath://org/jasig/portal/io/import-channel_v2-6.crn">
+  <title>Groups Manager</title>
+  <name>Groups Manager</name>
+  <fname>groupsmanager</fname>
+  <desc>An administrative tool for creating and managing groups and memberships</desc>
+  <type>Custom</type>
+  <class>org.jasig.portal.channels.groupsmanager.CGroupsManager</class>
+  <timeout>40000</timeout>
+  <hasedit>N</hasedit>
+  <hashelp>N</hashelp>
+  <hasabout>N</hasabout>
+  <secure>N</secure>
+  <locale>en_US</locale>
+  <categories>
+    <category>Applications</category>
+  </categories>
+  <groups>
+    <group>Portal Administrators</group>
+    <group>Developers</group>
+  </groups>
+  <parameters/>
+</channel-definition>

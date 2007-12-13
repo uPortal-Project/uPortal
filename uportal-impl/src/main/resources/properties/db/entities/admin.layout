@@ -1,0 +1,60 @@
+
+<layout script="classpath://org/jasig/portal/io/import-layout_v2-6.crn" username="admin">
+  <root unremovable="Y" immutable="N" hidden="N" name="Root folder">
+    <header unremovable="Y" immutable="Y" hidden="N" name="Header folder">
+      <channel fname="header"/>
+      <channel fname="portal/login/general"/>
+    </header>
+    <tab unremovable="N" immutable="N" hidden="N" name="Main">
+      <column unremovable="N" immutable="N" hidden="N" name="Column 1">
+        <channel fname="word-of-the-day"/>
+        <channel fname="number-guessing-game">
+          <param>
+            <name>minNum</name>
+            <value>50</value>
+          </param>
+          <param>
+            <name>maxNum</name>
+            <value>150</value>
+          </param>
+        </channel>
+      </column>
+      <column unremovable="N" immutable="N" hidden="N" name="Column 2">
+        <channel fname="daily-business-cartoon"/>
+      </column>
+    </tab>
+    <tab unremovable="N" immutable="N" hidden="N" name="Admin Tools">
+      <column unremovable="N" immutable="N" hidden="N" name="Column">
+        <channel fname="groupsmanager"/>
+      </column>
+      <column unremovable="N" immutable="N" hidden="N" name="Column">
+        <channel fname="permissionsmanager"/>
+        <channel fname="passwordmgr"/>
+      </column>
+    </tab>
+    <tab unremovable="N" immutable="N" hidden="N" name="Development">
+      <column unremovable="N" immutable="N" hidden="N" name="Column 1">
+        <channel fname="person-attributes"/>
+        <channel fname="css-viewer"/>
+      </column>
+      <column unremovable="N" immutable="N" hidden="N" name="Column 2">
+        <channel fname="uportal-development-books"/>
+        <channel fname="uportal-developers-reference"/>
+        <channel fname="snooper"/>
+        <channel fname="uportal-data-dictionary"/>
+      </column>
+    </tab>
+    <tab unremovable="N" immutable="N" hidden="N" name="CWebProxy">
+      <column unremovable="N" immutable="N" hidden="N" name="Column 1">
+        <channel fname="tomcat-number-guess"/>
+        <channel fname="tomcat-number-guess"/>
+      </column>
+      <column unremovable="N" immutable="N" hidden="N" name="Column 2">
+        <channel fname="tomcat-servlet-examples"/>
+      </column>
+    </tab>
+    <footer unremovable="N" immutable="N" hidden="N" name="Footer folder">
+      <channel fname="footer"/>
+    </footer>
+  </root>
+</layout>

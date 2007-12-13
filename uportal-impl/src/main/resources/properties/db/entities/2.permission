@@ -1,0 +1,13 @@
+
+<permission script="classpath://org/jasig/portal/io/import-permission_v2-6.crn">
+  <owner>UP_ERROR_CHAN</owner>
+  <principal-type>org.jasig.portal.groups.IEntityGroup</principal-type>
+  <principal> 
+    <group>Developers</group> 
+  </principal>
+  <activity>VIEW</activity>
+  <target> 
+    <literal>DETAILS</literal> 
+  </target>
+  <permission-type>GRANT</permission-type>
+</permission>

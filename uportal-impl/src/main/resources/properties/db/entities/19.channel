@@ -1,0 +1,39 @@
+
+<channel-definition script="classpath://org/jasig/portal/io/import-channel_v2-6.crn">
+  <title>Footer</title>
+  <name>Footer</name>
+  <fname>footer</fname>
+  <desc>uPortal Footer channel</desc>
+  <type>XML SSL</type>
+  <class>org.jasig.portal.channels.CGenericXSLT</class>
+  <timeout>10000</timeout>
+  <hasedit>N</hasedit>
+  <hashelp>N</hashelp>
+  <hasabout>N</hasabout>
+  <secure>N</secure>
+  <locale>en_US</locale>
+  <categories/>
+  <groups>
+    <group>Everyone</group>
+  </groups>
+  <parameters>
+    <parameter> 
+      <name>sslUri</name>  
+      <value>CGenericXSLT/footer/footer.ssl</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+    <parameter> 
+      <name>cacheTimeout</name>  
+      <value>3600</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+    <parameter> 
+      <name>xmlUri</name>  
+      <value>CGenericXSLT/emptyDocument.xml</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+  </parameters>
+</channel-definition>

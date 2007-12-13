@@ -1,0 +1,7 @@
+
+<membership script="classpath://org/jasig/portal/io/import-membership_v2-6.crn">
+  <parent>Staff</parent>
+  <child> 
+    <group>Officers</group> 
+  </child>
+</membership>
