@@ -13,7 +13,7 @@
     <groupId>org.jasig.portal</groupId>
     <artifactId>uportal-parent</artifactId>
     <packaging>pom</packaging>
-    
+
     <name>uPortal</name>
     <description>The root project definition for the uPortal project.</description>
     <version>3.0.0-M5-SNAPSHOT</version>
@@ -91,7 +91,7 @@
         <activation.version>1.0.2</activation.version>
         <ant.version>1.6.5</ant.version>
         <casclient.version>2.1.1</casclient.version>
-        <cernunnos.version>1.0-M3</cernunnos.version>
+        <cernunnos.version>1.0-M4</cernunnos.version>
         <commons-codec.version>1.3</commons-codec.version>
         <commons-collections.version>3.2</commons-collections.version>
         <commons-cli.version>1.1</commons-cli.version>

@@ -37,8 +37,14 @@
         <echo message="Initializing uPortal" />
         <antcall target="deploy-ear" />
         <antcall target="db" />
+<!-- AW (2007/12/13):  Replaced by Import/Export tech
         <antcall target="pubchan" />
+-->
         <antcall target="i18n-db" />
+		<!-- AW (2007/12/12):  Added Import/Export tech... -->
+		<ant antfile="import-export.xml" target="import">
+			<property name="dir" value="uportal-impl/target/classes/properties/db/entities"/>
+		</ant>
         <echo message="Finished initializing uPortal" />
     </target>
 
@@ -215,8 +221,8 @@
 
     <target name="deployPortletApp" description="Deploys a portlet application">
         <uportal-impl-macro>
-            <fail unless="portletApp">deployPortletApp Ant target requires the name of the portlet app to deploy.  
-                Here it was invoked with the portletApp property not set.  
+            <fail unless="portletApp">deployPortletApp Ant target requires the name of the portlet app to deploy.
+                Here it was invoked with the portletApp property not set.
                 It therefore is failing after having done nothing.
                 Execute the help target ('ant help') for help on this and other targets in the uPortal build.
             </fail>
@@ -679,7 +685,7 @@
             </else>
         </if>
 
-        <exec executable="${mvnExecutable}" dir="${dir}" vmlauncher="true" resolveexecutable="true" searchpath="true" failonerror="true">
+        <exec executable="${mvnExecutable}" dir="." vmlauncher="true" resolveexecutable="true" searchpath="true" failonerror="true">
             <arg value="${goal}" />
             <arg value="${goal1}" />
             <arg value="${goal2}" />

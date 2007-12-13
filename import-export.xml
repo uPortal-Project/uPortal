@@ -1,0 +1,81 @@
+<project name="uPortal" basedir=".">
+
+	<!-- Load the main build.xml -->
+	<import file="build.xml"/>
+
+    <target name="export" description="Exports the specified entity or entities to XML on the file system">
+		<uportal-impl-macro>
+
+	        <!-- Three properties control the export:  dir, type, and sysid -->
+    	    <property name="dir" value="."/>
+        	<fail unless="type">You must specify a &quot;type&quot; parameter (-Dtype={something}) from the following:  all, layout, all-layouts, channel, all-channels, all-permissions,  all-memberships, group, all-groups, user, all-users.</fail>
+	        <property name="sysid" value=""/>
+
+        	<!-- Invoke Cernunnos specifying script and parameters -->
+	        <java fork="true" failonerror="true" dir="${basedir}" classname="org.danann.cernunnos.runtime.Main">
+<classpath>
+	<pathelement location="uportal-impl/target/uportal-impl-3.0.0-M5-SNAPSHOT.jar"/>
+</classpath>
+    	        <classpath refid="uportal-impl-full.classpath"/>
+        	    <arg value="classpath://org/jasig/portal/io/export.crn"/>
+            	<arg value="${dir}"/>
+	            <arg value="${type}"/>
+    	        <arg value="${sysid}"/>
+        	</java>
+
+		</uportal-impl-macro>
+    </target>
+
+    <target name="import" description="Imports the specified XML file or files">
+    	<uportal-impl-macro>
+
+	        <!-- Invoke this target in the directory where you want the data.xml to be created:
+    	        ant -f import-export.xml full-dbunload
+        	-->
+
+	        <!-- Two properties control the import:  dir and pattern -->
+    	    <property name="dir" value="."/>
+        	<property name="pattern" value="org.jasig.portal.FilePatternPhrase.USE_DEFAULT_VALUE"/>
+
+	        <!-- Invoke Cernunnos specifying script and parameters -->
+    	    <java fork="true" failonerror="true" dir="${basedir}" classname="org.danann.cernunnos.runtime.Main">
+        	    <classpath refid="uportal-impl-full.classpath"/>
+        	    <arg value="classpath://org/jasig/portal/io/import.crn"/>
+            	<arg value="${dir}"/>
+	            <arg value="${pattern}"/>
+    	    </java>
+
+		</uportal-impl-macro>
+    </target>
+
+    <target name="delete" description="Deletes the specified entity">
+		<uportal-impl-macro>
+
+	        <!-- Three properties control the export:  dir, type, and sysid -->
+    	    <fail unless="type">You must specify a &quot;type&quot; parameter (-Dtype={something}) from the following:  layout, channel, group, user.</fail>
+        	<fail unless="sysid">You must specify a &quot;sysid&quot; parameter (-Dsysid={something}).  The value will be a valid username (user or layout), fname (channel), or name (group).</fail>
+
+	        <!-- Invoke Cernunnos specifying script and parameters -->
+    	    <java fork="true" failonerror="true" dir="${basedir}" classname="org.danann.cernunnos.runtime.Main">
+        	    <classpath refid="uportal-impl-full.classpath"/>
+        	    <arg value="classpath://org/jasig/portal/io/delete.crn"/>
+				<arg value="${type}"/>
+	            <arg value="${sysid}"/>
+    	    </java>
+
+		</uportal-impl-macro>
+    </target>
+
+    <target name="make-data-xml" description="Runs the DbUnload tool against all tables listed in data.xml">
+		<uportal-impl-macro>
+
+	        <!-- Invoke Cernunnos specifying script and parameters -->
+    	    <java fork="true" failonerror="true" dir="${basedir}" classname="org.danann.cernunnos.runtime.Main">
+        	    <classpath refid="uportal-impl-full.classpath"/>
+        	    <arg value="classpath://org/jasig/portal/tools/dbloader/dbunload.crn"/>
+	        </java>
+
+		</uportal-impl-macro>
+    </target>
+
+</project>
