@@ -13,6 +13,8 @@ import java.util.Locale;
 
 import javax.portlet.PortletMode;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.pluto.om.common.DescriptionSet;
 import org.apache.pluto.om.common.DisplayNameSet;
 import org.apache.pluto.om.common.LanguageSet;
@@ -55,7 +57,8 @@ public class PortletApplicationUnmarshaller {
     private String contextName = null;
     private Document doc = null; // Might want to consider SAX instead of DOM parsing
     private PortletApplicationDefinitionImpl portletApplicationDefinition = null;
-    
+    private Log log = LogFactory.getLog( getClass( ) );
+
     public PortletApplicationUnmarshaller() {
         portletApplicationDefinition = new PortletApplicationDefinitionImpl();
     }
@@ -69,11 +72,11 @@ public class PortletApplicationUnmarshaller {
     public void init(InputStream inputStream, String contextName) throws IOException, SAXException {
         this.inputStream = inputStream;
         this.contextName = contextName;
-        this.doc = DocumentFactory.getDocumentFromStream(inputStream, "PortletContext:" + contextName);    
+        this.doc = DocumentFactory.getDocumentFromStream(inputStream, "PortletContext:" + contextName);
     }
-    
+
     /**
-     * Returns a PortletApplicationDefinition object that was populated with data 
+     * Returns a PortletApplicationDefinition object that was populated with data
      * from the <code>portlet.xml</code> file.
      * @return the portlet application definition
      */
@@ -86,10 +89,10 @@ public class PortletApplicationUnmarshaller {
         portletApplicationDefinition.setWebApplicationDefinition(webApplicationDefinition);
         return portletApplicationDefinition;
     }
-    
+
     private PortletDefinitionList getPortletDefinitions(Element portletAppE, WebApplicationDefinition webApplicationDefinition) {
         PortletDefinitionListImpl portletDefinitions = new PortletDefinitionListImpl();
-        
+
         NodeList portletNL = portletAppE.getElementsByTagName("portlet");
         for (int i = 0; i < portletNL.getLength(); i += 1) {
             Element portletE = (Element)portletNL.item(i);
@@ -97,7 +100,7 @@ public class PortletApplicationUnmarshaller {
             String portletDefinitionId = contextName + "." + portletName;
             PortletDefinitionImpl portletDefinition = new PortletDefinitionImpl();
             portletDefinition.setId(portletDefinitionId);
-            portletDefinition.setClassName(XML.getChildElementText(portletE, "portlet-class"));           
+            portletDefinition.setClassName(XML.getChildElementText(portletE, "portlet-class"));
             portletDefinition.setName(portletName);
             portletDefinition.setDisplayNames(getDisplayNames(portletE));
             portletDefinition.setDescriptions(getDescriptions(portletE));
@@ -107,11 +110,29 @@ public class PortletApplicationUnmarshaller {
             portletDefinition.setContentTypes(getContentTypes(portletE));
             portletDefinition.setServletDefinition(webApplicationDefinition.getServletDefinitionList().get(portletName));
             portletDefinition.setPortletApplicationDefinition(portletApplicationDefinition);
-            portletDefinition.setExpirationCache(XML.getChildElementText(portletE, "expiration-cache"));
+
+            // If the <expiration-cache> element isn't present in portlet.xml, then we shouldn't
+            // set it as a property of the PortletDefinition.  <expiration-cache> is an optional element
+            // of the portlet.xml deployment descriptor.
+            //
+            // N.B. o.j.p.utils.XML getChildElementText(Element, String) returns an
+            // empty string if the <expiration-cache> element doesn't exist.
+            String expirationCache = XML.getChildElementText( portletE, "expiration-cache" );
+            if ( expirationCache != null && !expirationCache.equals( "" ) ) {
+	            try {
+	                Integer.parseInt( expirationCache );
+	                portletDefinition.setExpirationCache( expirationCache );
+	            } catch ( NumberFormatException nfe )  {
+	                log.error( "The specified <expiration-cache> value" + expirationCache + " is not a number.", nfe );
+	                log.error( "Please check the value of the <expiration-cache> element of the " + portletDefinitionId + " portlet in portlet.xml." );
+	                throw nfe;
+	            }
+            }
+
             portletDefinition.setInitSecurityRoleRefSet(getSecurityRoleRefs(portletE));
-            
+
             portletDefinitions.add(portletDefinitionId, portletDefinition);
-        }        
+        }
         return portletDefinitions;
     }
 
@@ -125,7 +146,7 @@ public class PortletApplicationUnmarshaller {
         }
         return displayNames;
     }
-    
+
     private DescriptionSet getDescriptions(Element portletE) {
         DescriptionSetImpl descriptions = new DescriptionSetImpl();
         NodeList descriptionNL = portletE.getElementsByTagName("description");
@@ -136,7 +157,7 @@ public class PortletApplicationUnmarshaller {
         }
         return descriptions;
     }
-    
+
     private LanguageSet getLanguages(Element portletE) {
         // Check for a resource bundle element
         String resources = null;
@@ -160,7 +181,7 @@ public class PortletApplicationUnmarshaller {
             shortTitle = XML.getChildElementText(portletInfoE, "short-title");
             keywords = XML.getChildElementText(portletInfoE, "keywords");
         }
-        
+
         LanguageSetImpl languages = new LanguageSetImpl(title, shortTitle, keywords, resources);
         languages.setClassLoader(Thread.currentThread().getContextClassLoader());
         NodeList supportedLocaleNL = portletE.getElementsByTagName("supported-locale");
@@ -170,7 +191,7 @@ public class PortletApplicationUnmarshaller {
         }
         return languages;
     }
-    
+
     private ParameterSet getInitParameters(Element portletE) {
         ParameterSetImpl parameters = new ParameterSetImpl();
         NodeList initParamNL = portletE.getElementsByTagName("init-param");
@@ -180,7 +201,7 @@ public class PortletApplicationUnmarshaller {
         }
         return parameters;
     }
-    
+
     private PreferenceSet getPreferences(Element portletE) {
         PreferenceSetImpl preferences = new PreferenceSetImpl();
         NodeList portletPreferencesNL = portletE.getElementsByTagName("portlet-preferences");
@@ -203,7 +224,7 @@ public class PortletApplicationUnmarshaller {
         }
         return preferences;
     }
-    
+
     private SecurityRoleRefSetImpl getSecurityRoleRefs(Element portletE) {
         SecurityRoleRefSetImpl securityRoleRefs = new SecurityRoleRefSetImpl();
         NodeList securityRoleRefsNL = portletE.getElementsByTagName("security-role-ref");
@@ -217,7 +238,7 @@ public class PortletApplicationUnmarshaller {
         }
         return securityRoleRefs;
     }
-    
+
     private ContentTypeSet getContentTypes(Element portletE) {
         ContentTypeSetImpl contentTypes = new ContentTypeSetImpl();
         NodeList supportsNL = portletE.getElementsByTagName("supports");
@@ -230,11 +251,11 @@ public class PortletApplicationUnmarshaller {
                 Element portletModeE = (Element)portletModeNL.item(j);
                 contentType.addPortletMode(new PortletMode(XML.getElementText(portletModeE)));
             }
-            contentTypes.add(contentType);          
+            contentTypes.add(contentType);
         }
         return contentTypes;
     }
-    
+
     private UserAttributeListImpl getUserAttributes(Element portletAppE) {
         UserAttributeListImpl userAttributes = new UserAttributeListImpl();
         NodeList userAttributesNL = portletAppE.getElementsByTagName("user-attribute");
