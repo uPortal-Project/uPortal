@@ -31,11 +31,10 @@ import org.jasig.portal.serialize.BaseMarkupSerializer;
 import org.jasig.portal.serialize.OutputFormat;
 import org.jasig.portal.serialize.XMLSerializer;
 import org.jasig.portal.services.AuthorizationService;
-import org.jasig.portal.spring.PortalApplicationContextListener;
+import org.jasig.portal.spring.PortalApplicationContextLocator;
 import org.jasig.portal.utils.XML;
 import org.jasig.portal.utils.XSLT;
-import org.springframework.beans.BeansException;
-import org.springframework.web.context.WebApplicationContext;
+import org.springframework.context.ApplicationContext;
 import org.w3c.dom.Document;
 import org.xml.sax.ContentHandler;
 
@@ -110,8 +109,8 @@ public final class CError extends BaseChannel implements IPrivilegedChannel,
         // will translate from Throwables to XML that we can render
 
         try {
-            final WebApplicationContext webAppCtx = PortalApplicationContextListener.getRequiredWebApplicationContext();
-            IThrowableToElement throwableToElement = (IThrowableToElement) webAppCtx.getBean("throwableToElement", IThrowableToElement.class);
+            final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
+            IThrowableToElement throwableToElement = (IThrowableToElement) applicationContext.getBean("throwableToElement", IThrowableToElement.class);
             
             this.errorDocument.setThrowableToElement(throwableToElement);
         } catch (Exception e) {

@@ -29,14 +29,14 @@ import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.security.PersonManagerFactory;
-import org.jasig.portal.spring.PortalApplicationContextListener;
+import org.jasig.portal.spring.PortalApplicationContextLocator;
 import org.jasig.portal.tools.versioning.Version;
 import org.jasig.portal.tools.versioning.VersionsManager;
 import org.jasig.portal.url.IWritableHttpServletRequest;
 import org.jasig.portal.url.WritableHttpServletRequestImpl;
 import org.jasig.portal.url.processing.IRequestParameterProcessorController;
 import org.jasig.portal.utils.ResourceLoader;
-import org.springframework.web.context.WebApplicationContext;
+import org.springframework.context.ApplicationContext;
 
 /**
  * This is an entry point into the uPortal.
@@ -223,8 +223,8 @@ public void destroy()	 {
             }
             
             //TODO add parameter processing here
-            final WebApplicationContext webApplicationContext = PortalApplicationContextListener.getRequiredWebApplicationContext();
-            final IRequestParameterProcessorController requestProcessorController = (IRequestParameterProcessorController)webApplicationContext.getBean("requestParameterProcessorController", IRequestParameterProcessorController.class);
+            final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
+            final IRequestParameterProcessorController requestProcessorController = (IRequestParameterProcessorController)applicationContext.getBean("requestParameterProcessorController", IRequestParameterProcessorController.class);
             requestProcessorController.processParameters(writableRequest, res);
             /*
              * upfile (will do later)

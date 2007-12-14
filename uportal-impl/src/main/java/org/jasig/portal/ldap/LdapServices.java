@@ -10,9 +10,9 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.spring.PortalApplicationContextListener;
+import org.jasig.portal.spring.PortalApplicationContextLocator;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
-import org.springframework.web.context.WebApplicationContext;
+import org.springframework.context.ApplicationContext;
 
 /**
  * Provides LDAP access in a way similar to a relational DBMS. This class
@@ -51,11 +51,11 @@ public final class LdapServices {
      * @return An {@link ILdapServer} with the specified name, <code>null</code> if there is no connection with the specified name.
      */
     public static ILdapServer getLdapServer(String name) {
-        final WebApplicationContext webApplicationContext = PortalApplicationContextListener.getRequiredWebApplicationContext();
+        final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
         
         ILdapServer ldapServer = null;
         try {
-            ldapServer = (ILdapServer)webApplicationContext.getBean(name, ILdapServer.class);
+            ldapServer = (ILdapServer)applicationContext.getBean(name, ILdapServer.class);
         }
         catch (NoSuchBeanDefinitionException nsbde) {
             //Ignore the exception for not finding the named bean.
@@ -75,8 +75,8 @@ public final class LdapServices {
      */
     @SuppressWarnings("unchecked")
     public static Map<String, ILdapServer> getLdapServerMap() {
-        final WebApplicationContext webApplicationContext = PortalApplicationContextListener.getRequiredWebApplicationContext();
-        final Map<String, ILdapServer> ldapServers = webApplicationContext.getBeansOfType(ILdapServer.class);
+        final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
+        final Map<String, ILdapServer> ldapServers = applicationContext.getBeansOfType(ILdapServer.class);
         
         if (LOG.isDebugEnabled()) {
             LOG.debug("Found Map of ILdapServers=" + ldapServers + "'");

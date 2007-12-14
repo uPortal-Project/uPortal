@@ -20,6 +20,7 @@ import javax.sql.DataSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.RDBMServices;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.dao.DataAccessResourceFailureException;
 
 
@@ -27,7 +28,7 @@ import org.springframework.dao.DataAccessResourceFailureException;
  * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
  * @version $Revision$ $Date$
  */
-public class DatabaseMetaDataImpl implements IDatabaseMetadata {
+public class DatabaseMetaDataImpl implements IDatabaseMetadata, InitializingBean {
     public static final class PostgreSQLDb extends JoinQueryString {
         public PostgreSQLDb(final String testString) {
             super(testString);
@@ -61,7 +62,7 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata {
     private static final JoinQueryString[] joinTests = {oracleDb, postgreSQLDb, jdbcDb};
 
     /** The {@link DataSource} that represents the server */
-    final private DataSource dataSource;
+    private final DataSource dataSource;
 
     /** The {@link IJoinQueryString} to use for performing outer joins */
     private IJoinQueryString joinTest = null;
@@ -90,17 +91,19 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata {
         if (ds == null)
             throw new IllegalArgumentException("DataSource cannot be null");
 
-        this.dataSource = ds;
-
-        this.runDatabaseTests();
-        if (LOG.isInfoEnabled())
-            LOG.info(this.toString());
+        this.dataSource = ds;    
     }
 
-    /**
-     *
+    /* (non-Javadoc)
+     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
      */
-    public void releaseConnection(final Connection conn) {
+    public void afterPropertiesSet() throws Exception {
+        this.runDatabaseTests();
+        if (LOG.isInfoEnabled())
+            LOG.info(this.toString());            
+    }
+
+    private void releaseConnection(final Connection conn) {
         try {
             if (conn != null) {
                 conn.close();
@@ -137,6 +140,27 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata {
      */
     public final boolean supportsPreparedStatements() {
         return this.supportsPreparedStatements;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.rdbm.IDatabaseMetadata#getJdbcDriver()
+     */
+    public String getJdbcDriver() {
+        return this.driverName;
+    }
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.rdbm.IDatabaseMetadata#getJdbcUrl()
+     */
+    public String getJdbcUrl() {
+        return this.dbUrl;
+    }
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.rdbm.IDatabaseMetadata#getJdbcUser()
+     */
+    public String getJdbcUser() {
+        return this.userName;
     }
 
     /**
@@ -175,13 +199,15 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata {
      * @see org.jasig.portal.rdbm.IDatabaseMetadata#sqlTimeStamp(java.util.Date)
      */
     public String sqlTimeStamp(final Date date) {
-        if (date == null)
+        if (date == null) {
             return "NULL";
-        else
-            return this.sqlTimeStamp(date.getTime());
+        }
+         
+        return this.sqlTimeStamp(date.getTime());
     }
 
 
+    @Override
     public String toString() {
         final StringBuffer dbInfo = new StringBuffer();
 

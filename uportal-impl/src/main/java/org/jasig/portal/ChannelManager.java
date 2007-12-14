@@ -50,10 +50,11 @@ import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.serialize.CachingSerializer;
 import org.jasig.portal.services.AuthorizationService;
-import org.jasig.portal.spring.PortalApplicationContextListener;
+import org.jasig.portal.spring.PortalApplicationContextLocator;
 import org.jasig.portal.url.support.IChannelRequestParameterManager;
 import org.jasig.portal.utils.SAX2BufferImpl;
 import org.jasig.portal.utils.SetCheckInSemaphore;
+import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
 import org.xml.sax.ContentHandler;
 
@@ -754,7 +755,7 @@ public class ChannelManager implements LayoutEventListener {
             			sd.setICCRegistry(new ICCRegistry(this,channelSubscribeId));
 			            sd.setChannelPublishId(cd.getChannelPublishId());
                         sd.setSerializerName(serializerName);
-                        sd.setWebApplicationContext(PortalApplicationContextListener.getRequiredWebApplicationContext());
+                        sd.setWebApplicationContext(PortalApplicationContextLocator.getRequiredWebApplicationContext());
                         
                         if (ch instanceof IPrivileged) {
                             this.feedPortalControlStructuresToChannel(ch, this.pcs);
@@ -804,8 +805,8 @@ public class ChannelManager implements LayoutEventListener {
     private void processRequestChannelParameters(HttpServletRequest req) {
         //TODO this all needs a review for actual functionality when I get this far
 
-        final WebApplicationContext webApplicationContext = PortalApplicationContextListener.getRequiredWebApplicationContext();
-        final IChannelRequestParameterManager channelParameterManager = (IChannelRequestParameterManager)webApplicationContext.getBean("channelParameterManager", IChannelRequestParameterManager.class);
+        final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
+        final IChannelRequestParameterManager channelParameterManager = (IChannelRequestParameterManager)applicationContext.getBean("channelParameterManager", IChannelRequestParameterManager.class);
         
         final Set<String> targetedChannelIds = channelParameterManager.getTargetedChannelIds(req);
         if (targetedChannelIds.size() > 0) {

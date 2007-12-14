@@ -16,6 +16,7 @@ import org.jasig.portal.channels.portlet.IPortletAdaptor;
 import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
+import org.springframework.beans.factory.annotation.Required;
 
 /**
  * Implementation of the definition registry, pulls together the related parts of the framework for creation and access
@@ -32,6 +33,20 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
     
     private IPortletDefinitionDao portletDefinitionDao;
     
+    /**
+     * @return the portletDefinitionDao
+     */
+    public IPortletDefinitionDao getPortletDefinitionDao() {
+        return this.portletDefinitionDao;
+    }
+    /**
+     * @param portletDefinitionDao the portletDefinitionDao to set
+     */
+    @Required
+    public void setPortletDefinitionDao(IPortletDefinitionDao portletDefinitionDao) {
+        this.portletDefinitionDao = portletDefinitionDao;
+    }
+
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.registry.IPortletDefinitionRegistry#createPortletDefinition(int)
      */

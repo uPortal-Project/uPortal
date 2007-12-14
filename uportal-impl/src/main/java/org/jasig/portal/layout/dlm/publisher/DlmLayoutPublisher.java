@@ -20,7 +20,6 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.jasig.portal.ChannelDefinition;
 import org.jasig.portal.ChannelRegistryStoreFactory;
 import org.jasig.portal.IChannelRegistryStore;
@@ -72,9 +71,6 @@ public class DlmLayoutPublisher {
                         log.error("The specified file does not exist:  " + f.toString());
                         throw new IllegalArgumentException();
                     }
-
-                    // Make sure uPortal doesn't try to get a data source from the container...
-                    RDBMServices.setGetDatasourceFromJndi(false);
 
                     // Set up the layout store...
                     IUserLayoutStore store = new RDBMDistributedLayoutStore();

@@ -10,9 +10,9 @@
         <property name="format_sql">true</property>
         <property name="hbm2ddl.auto">update</property>
 
-        <mapping class="org.jasig.portal.dao.jpa.portlet.PortletDefinitionImpl" />
-        <mapping class="org.jasig.portal.dao.jpa.portlet.PortletEntityImpl" />
-        <mapping class="org.jasig.portal.dao.jpa.portlet.PortletPreferencesImpl" />
-        <mapping class="org.jasig.portal.dao.jpa.portlet.PortletPreferenceImpl" />
+        <mapping class="org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl" />
+        <mapping class="org.jasig.portal.portlet.dao.jpa.PortletEntityImpl" />
+        <mapping class="org.jasig.portal.portlet.dao.jpa.PortletPreferencesImpl" />
+        <mapping class="org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl" />
     </session-factory>
 </hibernate-configuration>

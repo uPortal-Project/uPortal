@@ -14,6 +14,8 @@
 		<config>uportal-impl/src/main/resources/properties/contexts/portletContainerContext.xml</config>
 		<config>uportal-impl/src/main/resources/properties/contexts/requestParameterProcessingContext.xml</config>
 		<config>uportal-impl/src/main/resources/properties/contexts/statsContext.xml</config>
+		<config>uportal-impl/src/main/resources/properties/contexts/datasourceContext.xml</config>
+		<config>uportal-impl/src/main/resources/properties/contexts/persistenceContext.xml</config>
 	</configs>
 	<configSets>
 		<configSet>
@@ -31,6 +33,8 @@
 				<config>uportal-impl/src/main/resources/properties/contexts/portletContainerContext.xml</config>
 				<config>uportal-impl/src/main/resources/properties/contexts/requestParameterProcessingContext.xml</config>
 				<config>uportal-impl/src/main/resources/properties/contexts/statsContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/datasourceContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/persistenceContext.xml</config>
 			</configs>
 		</configSet>
 	</configSets>

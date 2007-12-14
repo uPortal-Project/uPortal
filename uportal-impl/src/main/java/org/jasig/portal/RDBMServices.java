@@ -5,33 +5,25 @@
 
 package org.jasig.portal;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.rdbm.DatabaseMetaDataImpl;
 import org.jasig.portal.rdbm.IDatabaseMetadata;
-import org.jasig.portal.rdbm.pool.IPooledDataSourceFactory;
-import org.jasig.portal.rdbm.pool.PooledDataSourceFactoryFactory;
+import org.jasig.portal.spring.PortalApplicationContextLocator;
 import org.jasig.portal.utils.MovingAverage;
 import org.jasig.portal.utils.MovingAverageSample;
+import org.springframework.context.ApplicationContext;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataAccessResourceFailureException;
 
@@ -63,30 +55,22 @@ import org.springframework.dao.DataAccessResourceFailureException;
  * @version $Revision$ $Date$
  */
 public class RDBMServices {
-    public static final String BASE_JNDI_CONTEXT = PropertiesManager.getProperty("org.jasig.portal.RDBMServices.baseJndiContext", "java:comp/env/jdbc");
-    public static final String PORTAL_DB = PropertiesManager.getProperty("org.jasig.portal.RDBMServices.PortalDatasourceJndiName", "PortalDb"); // JNDI name for portal database
-    public static final String DEFAULT_DATABASE = "DEFAULT_DATABASE";
+    /**
+     * Name of the default portal database expected in the Spring application context
+     */
+    public static final String PORTAL_DB = "PortalDb";
 
-    private static boolean getDatasourceFromJndi = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.RDBMServices.getDatasourceFromJndi", true);
+    /**
+     * Name of the {@link IDatabaseMetadata} expected in the Spring application context
+     */
+    public static final String PORTAL_DB_METADATA = PORTAL_DB + ".metadata";
+    
     private static final Log LOG = LogFactory.getLog(RDBMServices.class);
 
     //DBFlag constants
     private static final String FLAG_TRUE = "Y";
     private static final String FLAG_TRUE_OTHER = "T";
     private static final String FLAG_FALSE = "N";
-
-    /** Specifies how long to wait before trying to look a JNDI data source that previously failed */
-    private static final int JNDI_RETRY_TIME = PropertiesManager.getPropertyAsInt("org.jasig.portal.RDBMServices.jndiRetryDelay", 30000); // JNDI retry delay;
-
-    private static Map namedDataSources =  Collections.synchronizedMap(new HashMap());
-    private static Map namedDbServerFailures = Collections.synchronizedMap(new HashMap());
-
-    /* info legacy utilities */
-    private static String jdbcUrl;
-    private static String jdbcUser;
-    private static String jdbcDriver;
-
-    private static IDatabaseMetadata dbMetaData = null;
 
     // Metric counters
     private static final MovingAverage databaseTimes = new MovingAverage();
@@ -100,7 +84,9 @@ public class RDBMServices {
      * a runtime exception will be thrown.  This method will never return null.
      * @return the core uPortal DataSource
      * @throws RuntimeException on failure
+     * @deprecated Where possible code should be injected with a {@link DataSource} object via the Spring application context
      */
+    @Deprecated
     public static DataSource getDataSource() {
         return getDataSource(PORTAL_DB);
     }
@@ -133,163 +119,24 @@ public class RDBMServices {
      *
      * @param name The name of the DataSource to get.
      * @return A named DataSource or <code>null</code> if one cannot be found.
+     * @deprecated Where possible code should be injected with a {@link DataSource} object via the Spring application context
      */
+    @Deprecated
     public static DataSource getDataSource(String name) {
-        final String PROP_FILE = "/properties/rdbm.properties";
-
-        if (DEFAULT_DATABASE.equals(name)) {
-            name = PORTAL_DB;
-        }
-
-        DataSource ds = (DataSource)namedDataSources.get(name);
-
-        // if already have a dtasource just return it
-        if (ds!=null) return ds;
-
-        // For non default database cache the datasource and return it
-        if (!PORTAL_DB.equals(name)) {
-            ds = getJndiDataSource(name);
-            namedDataSources.put(name,ds);
-            // For non default database return whatever we have (could be null)
-            return ds;
-        }
-
-        // portal database is special - create metadata object too.
-        if (getDatasourceFromJndi) {
-            ds = getJndiDataSource(name);
-            if (ds != null) {
-                if (LOG.isInfoEnabled())
-                    LOG.info("Creating DataSource instance for " + name);
-                dbMetaData = new DatabaseMetaDataImpl(ds);
-                namedDataSources.put(name, ds);
-                return ds;
-                }
-            }
-
-        // get here if not getDatasourceFromJndi OR jndi lookup returned null
-        // try to get datasource via properties
-        try {
-            final InputStream jdbcPropStream = RDBMServices.class.getResourceAsStream(PROP_FILE);
-
-            try {
-                final Properties jdbpProperties = new Properties();
-                jdbpProperties.load(jdbcPropStream);
-
-                final IPooledDataSourceFactory pdsf = PooledDataSourceFactoryFactory.getPooledDataSourceFactory();
-
-                final String driverClass = jdbpProperties.getProperty("jdbcDriver");
-                final String username = jdbpProperties.getProperty("jdbcUser");
-                final String password = jdbpProperties.getProperty("jdbcPassword");
-                final String url = jdbpProperties.getProperty("jdbcUrl");
-                boolean usePool = true;
-                if (jdbpProperties.getProperty("jdbcUsePool")!=null)
-                    usePool = Boolean.valueOf(jdbpProperties.getProperty("jdbcUsePool")).booleanValue();
-
-
-                if (usePool) {
-                    //Try using a pooled DataSource
-                    try {
-                    	final boolean poolPreparedStatements = Boolean.valueOf(jdbpProperties.getProperty("poolPreparedStatements")).booleanValue();
-                        ds = pdsf.createPooledDataSource(driverClass, username, password, url, poolPreparedStatements);
-
-                        if (LOG.isInfoEnabled())
-                            LOG.info("Creating DataSource instance for pooled JDBC");
-
-                        namedDataSources.put(PORTAL_DB,ds);
-                        jdbcUrl = url;
-                        jdbcUser = username;
-                        jdbcDriver = driverClass;
-                        dbMetaData = new DatabaseMetaDataImpl(ds);
-                    }
-                    catch (Exception e) {
-                        LOG.error("Error using pooled JDBC data source.", e);
-                    }
-                }
-
-                if (ds == null && driverClass != null) {
-                    //Pooled DataSource isn't being used or failed during creation
-                    try {
-                        final Driver d = (Driver)Class.forName(driverClass).newInstance();
-                        ds = new GenericDataSource(d, url, username, password);
-
-                        if (LOG.isInfoEnabled())
-                            LOG.info("Creating DataSource for JDBC native");
-
-                        namedDataSources.put(PORTAL_DB,ds);
-                        jdbcUrl = url;
-                        jdbcUser = username;
-                        jdbcDriver = driverClass;
-                        dbMetaData = new DatabaseMetaDataImpl(ds);
-                    }
-                    catch (Exception e) {
-                        LOG.error("JDBC Driver Creation Failed. (" + driverClass + ")", e);
-                    }
-                }
-            }
-            finally {
-                jdbcPropStream.close();
-            }
-
-        }
-        catch (IOException ioe) {
-            LOG.error("An error occured while reading " + PROP_FILE, ioe);
-        }
-        // if we failed to find a datasource then throw a runtime exception
-        if (ds == null) {
-                throw new RuntimeException("No JDBC DataSource or JNDI DataSource avalable.");
-        }
-        return ds;
-       }
-
-    /**
-     * Does the JNDI lookup and returns datasource
-     * @param name
-     * @return
-     */
-    private static DataSource getJndiDataSource(String name) {
-
-        final Long failTime = (Long)namedDbServerFailures.get(name);
-        DataSource ds = null;
-
-        if (failTime == null || (failTime.longValue() + JNDI_RETRY_TIME) <= System.currentTimeMillis()) {
-            if (failTime != null) {
-                namedDbServerFailures.remove(name);
-            }
-
-            try {
-                final Context initCtx = new InitialContext();
-                final Context envCtx = (Context)initCtx.lookup(BASE_JNDI_CONTEXT);
-                ds = (DataSource)envCtx.lookup(name);
-
-            }
-            catch (Throwable t) {
-                //Cache the failure to decrease lookup attempts and reduce log spam.
-                namedDbServerFailures.put(name, new Long(System.currentTimeMillis()));
-                if (LOG.isWarnEnabled())
-                    LOG.warn("Error getting DataSource named (" + name + ") from JNDI.", t);
-            }
-        }
-        else {
-            if (LOG.isDebugEnabled()) {
-                final long waitTime = (failTime.longValue() + JNDI_RETRY_TIME) - System.currentTimeMillis();
-                LOG.debug("Skipping lookup on failed JNDI lookup for name (" + name + ") for approximately " + waitTime + " more milliseconds.");
-
-            }
-        }
-        return ds;
+        final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
+        final DataSource dataSource = (DataSource)applicationContext.getBean(name, DataSource.class);
+        return dataSource;
     }
 
     /**
-     * Return the current number of active connections
-     * @return int
+     * @return Return the current number of active connections
      */
     public static int getActiveConnectionCount() {
       return activeConnections.intValue();
     }
 
     /**
-     * Return the maximum number of connections
-     * @return int
+     * @return Return the maximum number of connections
      */
     public static int getMaxConnectionCount() {
       return maxConnections;
@@ -300,7 +147,9 @@ public class RDBMServices {
      * If datasource not available a runtime exception is thrown
      * @return a database Connection object
      * @throws DataAccessException if unable to return a connection
+     * @deprecated Where possible code should be injected with a {@link DataSource} object via the Spring application context
      */
+    @Deprecated
     public static Connection getConnection() {
     	return getConnection(PORTAL_DB);
     }
@@ -315,33 +164,26 @@ public class RDBMServices {
      * @param dbName the database name which will be retrieved from
      *   the JNDI context relative to "jdbc/"
      * @return a database Connection object or <code>null</code> if no Connection
+     * @deprecated Where possible code should be injected with a {@link DataSource} object via the Spring application context
      */
+    @Deprecated
     public static Connection getConnection(String dbName) {
-    	if (DEFAULT_DATABASE.equals(dbName)){
-    		dbName = PORTAL_DB;
-    	}
-    	DataSource ds = (DataSource) namedDataSources.get(dbName);
-    	if (ds==null) {
-    		ds = getDataSource(dbName);
-    	}
+		final DataSource dataSource = getDataSource(dbName);
 
-    	if (ds != null) {
-    		try {
-    			final long start = System.currentTimeMillis();
-    			final Connection c = ds.getConnection();
-    			lastDatabase = databaseTimes.add(System.currentTimeMillis() - start); // metric
-      			final int current = activeConnections.incrementAndGet();
-      			if (current > maxConnections) {
-      				maxConnections = current;
-      			}
-    			return c;
-    		} catch (SQLException e) {
-    			throw new DataAccessResourceFailureException
-    			("RDBMServices sql error trying to get connection to "+dbName,e);
-    		}
-    	}
-    	// datasource is still null so give up
-    	throw new DataAccessResourceFailureException("RDBMServices fatally misconfigured such that getDataSource() returned null.");
+        try {
+            final long start = System.currentTimeMillis();
+            final Connection c = dataSource.getConnection();
+            lastDatabase = databaseTimes.add(System.currentTimeMillis() - start); // metric
+            final int current = activeConnections.incrementAndGet();
+            if (current > maxConnections) {
+                maxConnections = current;
+            }
+            return c;
+        }
+        catch (SQLException e) {
+            throw new DataAccessResourceFailureException(
+                    "RDBMServices sql error trying to get connection to " + dbName, e);
+        }
     }
 
     /**
@@ -350,10 +192,12 @@ public class RDBMServices {
      * SQLException or any other exception.  It will fail silently from the
      * perspective of calling code, logging errors using Commons Logging.
      * @param con a database Connection object
+     * @deprecated Where possible code should be injected with a {@link DataSource} object via the Spring application context
      */
+    @Deprecated
     public static void releaseConnection(final Connection con) {
         try {
-            int active = activeConnections.decrementAndGet();
+            activeConnections.decrementAndGet();
 
             con.close();
         }
@@ -456,7 +300,8 @@ public class RDBMServices {
      * @return the name of the JDBC Driver.
      */
     public static String getJdbcDriver () {
-        return jdbcDriver;
+        final IDatabaseMetadata dbMetaData = getDbMetaData();
+        return dbMetaData.getJdbcDriver();
     }
 
     /**
@@ -464,7 +309,8 @@ public class RDBMServices {
      *
      */
     public static String getJdbcUrl () {
-        return jdbcUrl;
+        final IDatabaseMetadata dbMetaData = getDbMetaData();
+        return dbMetaData.getJdbcUrl();
     }
 
     /**
@@ -472,7 +318,8 @@ public class RDBMServices {
      * database connections.
      */
     public static String getJdbcUser () {
-        return jdbcUser;
+        final IDatabaseMetadata dbMetaData = getDbMetaData();
+        return dbMetaData.getJdbcUser();
     }
 
 
@@ -486,10 +333,11 @@ public class RDBMServices {
      * @return either "Y" or "N"
      */
     public static final String dbFlag(final boolean flag) {
-        if (flag)
+        if (flag) {
             return FLAG_TRUE;
-        else
-            return FLAG_FALSE;
+        }
+
+        return FLAG_FALSE;
     }
 
     /**
@@ -510,27 +358,25 @@ public class RDBMServices {
         if (sql == null) {
             return  "";
         }
-        else {
-            int primePos = sql.indexOf("'");
 
-            if (primePos == -1) {
-                return  sql;
-            }
-            else {
-                final StringBuffer sb = new StringBuffer(sql.length() + 4);
-                int startPos = 0;
+        int primePos = sql.indexOf("'");
 
-                do {
-                    sb.append(sql.substring(startPos, primePos + 1));
-                    sb.append("'");
-                    startPos = primePos + 1;
-                    primePos = sql.indexOf("'", startPos);
-                } while (primePos != -1);
-
-                sb.append(sql.substring(startPos));
-                return sb.toString();
-            }
+        if (primePos == -1) {
+            return  sql;
         }
+
+        final StringBuffer sb = new StringBuffer(sql.length() + 4);
+        int startPos = 0;
+
+        do {
+            sb.append(sql.substring(startPos, primePos + 1));
+            sb.append("'");
+            startPos = primePos + 1;
+            primePos = sql.indexOf("'", startPos);
+        } while (primePos != -1);
+
+        sb.append(sql.substring(startPos));
+        return sb.toString();
     }
 
     /**
@@ -538,12 +384,9 @@ public class RDBMServices {
      * @return metadata about the default DataSource.
      */
     public static IDatabaseMetadata getDbMetaData() {
-        if (dbMetaData==null) {
-            // if metadata not yet populated, call getDataSource(), which
-            // has side effect of populating dbMetaData.
-            getDataSource();
-        }
-        return dbMetaData;
+        final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
+        final IDatabaseMetadata databaseMetadata = (IDatabaseMetadata)applicationContext.getBean(PORTAL_DB_METADATA, IDatabaseMetadata.class);
+        return databaseMetadata;
     }
 
 
@@ -710,6 +553,7 @@ public class RDBMServices {
         public PreparedStatement(Connection con, String query) throws SQLException {
             this.query = query;
             activeQuery = this.query;
+            final IDatabaseMetadata dbMetaData = getDbMetaData();
             if (dbMetaData.supportsPreparedStatements()) {
                 pstmt = con.prepareStatement(query);
             }
@@ -719,6 +563,7 @@ public class RDBMServices {
         }
 
         public void clearParameters() throws SQLException {
+            final IDatabaseMetadata dbMetaData = getDbMetaData();
             if (dbMetaData.supportsPreparedStatements()) {
                 pstmt.clearParameters();
             }
@@ -729,6 +574,8 @@ public class RDBMServices {
         }
 
         public void setDate(int index, java.sql.Date value) throws SQLException {
+            final IDatabaseMetadata dbMetaData = getDbMetaData();
+            
             if (dbMetaData.supportsPreparedStatements()) {
                 pstmt.setDate(index, value);
             }
@@ -736,19 +583,19 @@ public class RDBMServices {
                 if (index != lastIndex + 1) {
                     throw new SQLException("Out of order index");
                 }
-                else {
-                    int pos = activeQuery.indexOf("?");
-                    if (pos == -1) {
-                        throw new SQLException("Missing '?'");
-                    }
-                    activeQuery = activeQuery.substring(0, pos) + dbMetaData.sqlTimeStamp(value)
-                            + activeQuery.substring(pos + 1);
-                    lastIndex = index;
+
+                int pos = activeQuery.indexOf("?");
+                if (pos == -1) {
+                    throw new SQLException("Missing '?'");
                 }
+                activeQuery = activeQuery.substring(0, pos) + dbMetaData.sqlTimeStamp(value) + activeQuery.substring(pos + 1);
+                lastIndex = index;
             }
         }
 
         public void setInt(int index, int value) throws SQLException {
+            final IDatabaseMetadata dbMetaData = getDbMetaData();
+            
             if (dbMetaData.supportsPreparedStatements()) {
                 pstmt.setInt(index, value);
             }
@@ -756,64 +603,61 @@ public class RDBMServices {
                 if (index != lastIndex + 1) {
                     throw new SQLException("Out of order index");
                 }
-                else {
-                    int pos = activeQuery.indexOf("?");
-                    if (pos == -1) {
-                        throw new SQLException("Missing '?'");
-                    }
-                    activeQuery = activeQuery.substring(0, pos) + value
-                            + activeQuery.substring(pos + 1);
-                    lastIndex = index;
+
+                int pos = activeQuery.indexOf("?");
+                if (pos == -1) {
+                    throw new SQLException("Missing '?'");
                 }
+                activeQuery = activeQuery.substring(0, pos) + value + activeQuery.substring(pos + 1);
+                lastIndex = index;
             }
         }
 
         public void setNull(int index, int sqlType) throws SQLException {
+            final IDatabaseMetadata dbMetaData = getDbMetaData();
+            
             if (dbMetaData.supportsPreparedStatements()) {
                 pstmt.setNull(index, sqlType);
             }
-            else {
-                if (index != lastIndex + 1) {
-                    throw new SQLException("Out of order index");
-                }
-                else {
-                    int pos = activeQuery.indexOf("?");
-                    if (pos == -1) {
-                        throw new SQLException("Missing '?'");
-                    }
-                    activeQuery = activeQuery.substring(0, pos) + "NULL"
-                            + activeQuery.substring(pos + 1);
-                    lastIndex = index;
-                }
+
+            if (index != lastIndex + 1) {
+                throw new SQLException("Out of order index");
             }
+
+            int pos = activeQuery.indexOf("?");
+            if (pos == -1) {
+                throw new SQLException("Missing '?'");
+            }
+            activeQuery = activeQuery.substring(0, pos) + "NULL" + activeQuery.substring(pos + 1);
+            lastIndex = index;
         }
 
         public void setString(int index, String value) throws SQLException {
             if (value == null || value.length() == 0) {
                 setNull(index, java.sql.Types.VARCHAR);
             }
+            
+            final IDatabaseMetadata dbMetaData = getDbMetaData();
+            if (dbMetaData.supportsPreparedStatements()) {
+                pstmt.setString(index, value);
+            }
             else {
-                if (dbMetaData.supportsPreparedStatements()) {
-                    pstmt.setString(index, value);
+                if (index != lastIndex + 1) {
+                    throw new SQLException("Out of order index");
                 }
-                else {
-                    if (index != lastIndex + 1) {
-                        throw new SQLException("Out of order index");
-                    }
-                    else {
-                        int pos = activeQuery.indexOf("?");
-                        if (pos == -1) {
-                            throw new SQLException("Missing '?'");
-                        }
-                        activeQuery = activeQuery.substring(0, pos) + "'" + sqlEscape(value) + "'"
-                                + activeQuery.substring(pos + 1);
-                        lastIndex = index;
-                    }
+
+                int pos = activeQuery.indexOf("?");
+                if (pos == -1) {
+                    throw new SQLException("Missing '?'");
                 }
+                activeQuery = activeQuery.substring(0, pos) + "'" + sqlEscape(value) + "'" + activeQuery.substring(pos + 1);
+                lastIndex = index;
             }
         }
 
         public void setTimestamp(int index, java.sql.Timestamp value) throws SQLException {
+            final IDatabaseMetadata dbMetaData = getDbMetaData();
+            
             if (dbMetaData.supportsPreparedStatements()) {
                 pstmt.setTimestamp(index, value);
             }
@@ -821,46 +665,50 @@ public class RDBMServices {
                 if (index != lastIndex + 1) {
                     throw new SQLException("Out of order index");
                 }
-                else {
-                    int pos = activeQuery.indexOf("?");
-                    if (pos == -1) {
-                        throw new SQLException("Missing '?'");
-                    }
-                    activeQuery = activeQuery.substring(0, pos) + dbMetaData.sqlTimeStamp(value)
-                            + activeQuery.substring(pos + 1);
-                    lastIndex = index;
+
+                int pos = activeQuery.indexOf("?");
+                if (pos == -1) {
+                    throw new SQLException("Missing '?'");
                 }
+                activeQuery = activeQuery.substring(0, pos) + dbMetaData.sqlTimeStamp(value) + activeQuery.substring(pos + 1);
+                lastIndex = index;
             }
         }
 
         public ResultSet executeQuery() throws SQLException {
+            final IDatabaseMetadata dbMetaData = getDbMetaData();
+            
             if (dbMetaData.supportsPreparedStatements()) {
                 return pstmt.executeQuery();
             }
-            else {
-                return stmt.executeQuery(activeQuery);
-            }
+
+            return stmt.executeQuery(activeQuery);
         }
 
         public int executeUpdate() throws SQLException {
+            final IDatabaseMetadata dbMetaData = getDbMetaData();
+            
             if (dbMetaData.supportsPreparedStatements()) {
                 return pstmt.executeUpdate();
             }
-            else {
-                return stmt.executeUpdate(activeQuery);
-            }
+
+            return stmt.executeUpdate(activeQuery);
         }
 
+        @Override
         public String toString() {
+            final IDatabaseMetadata dbMetaData = getDbMetaData();
+            
             if (dbMetaData.supportsPreparedStatements()) {
                 return query;
             }
-            else {
-                return activeQuery;
-            }
+
+            return activeQuery;
         }
 
         public void close() throws SQLException {
+            final IDatabaseMetadata dbMetaData = getDbMetaData();
+            
             if (dbMetaData.supportsPreparedStatements()) {
                 pstmt.close();
             }
@@ -868,18 +716,5 @@ public class RDBMServices {
                 stmt.close();
             }
         }
-    }
-
-    /**
-     * @return Returns the getDatasourceFromJndi.
-     */
-    public static boolean isGetDatasourceFromJndi() {
-        return getDatasourceFromJndi;
-    }
-    /**
-     * @param getDatasourceFromJndi The getDatasourceFromJndi to set.
-     */
-    public static void setGetDatasourceFromJndi(boolean getDatasourceFromJndi) {
-        RDBMServices.getDatasourceFromJndi = getDatasourceFromJndi;
     }
 }

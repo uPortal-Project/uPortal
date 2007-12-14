@@ -51,7 +51,11 @@ public class InitializingCheckRunner implements InitializingBean, ServletContext
      */
     public void afterPropertiesSet() throws Exception {
         final List<CheckAndResult> results = this.checkRunner.doChecks();
-        this.servletContext.setAttribute(INIT_CHECK_RESULTS, results);
+        
+        if (this.servletContext != null) {
+            this.servletContext.setAttribute(INIT_CHECK_RESULTS, results);
+        }
+        
         this.logResults(results);
     }
     

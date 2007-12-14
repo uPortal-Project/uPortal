@@ -7,8 +7,8 @@ package org.jasig.portal.utils.cache;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.spring.PortalApplicationContextListener;
-import org.springframework.web.context.WebApplicationContext;
+import org.jasig.portal.spring.PortalApplicationContextLocator;
+import org.springframework.context.ApplicationContext;
 
 /**
  *
@@ -36,8 +36,8 @@ public class CacheFactoryLocator {
      */
     public static final CacheFactory getCacheFactory() {
         try {
-            final WebApplicationContext webAppCtx = PortalApplicationContextListener.getRequiredWebApplicationContext();
-            final CacheFactory cacheFactory = (CacheFactory)webAppCtx.getBean(CACHE_FACTORY_BEAN, CacheFactory.class);
+            final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
+            final CacheFactory cacheFactory = (CacheFactory)applicationContext.getBean(CACHE_FACTORY_BEAN, CacheFactory.class);
             return cacheFactory;
         }
         catch (Exception e) {

@@ -49,7 +49,7 @@
     </listener>
     
     <listener>
-        <listener-class>org.jasig.portal.spring.PortalApplicationContextListener</listener-class>
+        <listener-class>org.jasig.portal.spring.PortalApplicationContextLocator</listener-class>
     </listener>
 
     <servlet>

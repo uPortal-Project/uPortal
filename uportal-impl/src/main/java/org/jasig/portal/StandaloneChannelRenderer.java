@@ -23,11 +23,11 @@ import org.jasig.portal.channels.BaseChannel;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.serialize.BaseMarkupSerializer;
-import org.jasig.portal.spring.PortalApplicationContextListener;
+import org.jasig.portal.spring.PortalApplicationContextLocator;
 import org.jasig.portal.url.support.IChannelRequestParameterManager;
 import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.utils.XSLT;
-import org.springframework.web.context.WebApplicationContext;
+import org.springframework.context.ApplicationContext;
 
 /**
  * StandaloneChannelRenderer is meant to be used as a base class for channels
@@ -176,8 +176,8 @@ public class StandaloneChannelRenderer
         if (log.isDebugEnabled())
             log.debug("StandaloneRenderer::render() : channelTarget=\""+channelTarget+"\".");
         
-        final WebApplicationContext webApplicationContext = PortalApplicationContextListener.getRequiredWebApplicationContext();
-        final IChannelRequestParameterManager channelParameterManager = (IChannelRequestParameterManager)webApplicationContext.getBean("channelParameterManager", IChannelRequestParameterManager.class);
+        final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
+        final IChannelRequestParameterManager channelParameterManager = (IChannelRequestParameterManager)applicationContext.getBean("channelParameterManager", IChannelRequestParameterManager.class);
         
         final Map<String, Object[]> channelParameters = channelParameterManager.getChannelParameters(req, channelTarget);
 

@@ -98,8 +98,6 @@ public class ChannelPublisher implements ErrorHandler
      */
     public static void main(String[] args)throws Exception{
         try{
-            RDBMServices.setGetDatasourceFromJndi(false); /*don't try jndi when not in web app */
-            
             final ChannelPublisher publisher = getCommandLineInstance();
             
             final File[] files;

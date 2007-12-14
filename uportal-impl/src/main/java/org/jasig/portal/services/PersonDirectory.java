@@ -5,9 +5,9 @@
 
 package org.jasig.portal.services;
 
-import org.jasig.portal.spring.PortalApplicationContextListener;
+import org.jasig.portal.spring.PortalApplicationContextLocator;
 import org.jasig.services.persondir.IPersonAttributeDao;
-import org.springframework.web.context.WebApplicationContext;
+import org.springframework.context.ApplicationContext;
 
 /**
  * PersonDirectory is a static lookup mechanism for a singleton instance of 
@@ -51,8 +51,8 @@ public class PersonDirectory {
      * @throws IllegalStateException If WebApplicationContext does not supply the IPersonAttributeDao instance.
      */
     public static IPersonAttributeDao getPersonAttributeDao() {
-        final WebApplicationContext webAppCtx = PortalApplicationContextListener.getRequiredWebApplicationContext();
-        final IPersonAttributeDao delegate = (IPersonAttributeDao)webAppCtx.getBean(PADAO_BEAN_NAME, IPersonAttributeDao.class);
+        final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
+        final IPersonAttributeDao delegate = (IPersonAttributeDao)applicationContext.getBean(PADAO_BEAN_NAME, IPersonAttributeDao.class);
         
         if (delegate == null) {
             throw new IllegalStateException("A IPersonAttributeDao bean named '" + PADAO_BEAN_NAME + "' does not exist in the Spring WebApplicationContext.");
