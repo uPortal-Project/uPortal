@@ -79,7 +79,7 @@ public class CViewer extends BaseChannel {
         }
     }
 
-    
+
     /**
      * Change URL that's being shown
      *
@@ -105,7 +105,7 @@ public class CViewer extends BaseChannel {
             }
         }
     }
-    
+
     public void renderXML (ContentHandler out) throws PortalException {
         // get url from the jndi context (that object can be updated by both URL selector and history channels)
         String frameHeight = "600";
@@ -137,7 +137,7 @@ public class CViewer extends BaseChannel {
         heightE.appendChild(doc.createTextNode(frameHeight));
         iframeE.appendChild(heightE);
         doc.appendChild(iframeE);
-        
+
         XSLT xslt = XSLT.getTransformer(this, runtimeData.getLocales());
         xslt.setXML(doc);
         xslt.setXSL(sslLocation, getStylesheetTitle(runtimeData.getBrowserInfo().getUserAgent()), runtimeData.getBrowserInfo());
@@ -154,9 +154,10 @@ public class CViewer extends BaseChannel {
     private String getStylesheetTitle (String userAgent) {
         String ssTitle = "noIFrameSupport";
         if ((userAgent.indexOf("MSIE 3") >= 0) || (userAgent.indexOf("MSIE 4") >= 0) ||
-            (userAgent.indexOf("MSIE 5") >= 0) || (userAgent.indexOf("MSIE 6") >= 0) ||
-            (userAgent.indexOf("Mozilla/5") >= 0 || (userAgent.indexOf("Opera/6") >= 0))) {
-            ssTitle = "IFrameSupport";
+                (userAgent.indexOf("MSIE 5") >= 0) || (userAgent.indexOf("MSIE 6") >= 0) ||
+                (userAgent.indexOf("Mozilla/5") >= 0) || (userAgent.indexOf("Opera/6") >= 0) ||
+                (userAgent.indexOf("Opera/7") >= 0 || (userAgent.indexOf("Opera/8") >= 0))) {
+                ssTitle = "IFrameSupport";
         }
         return  ssTitle;
     }
@@ -214,7 +215,7 @@ public class CViewer extends BaseChannel {
         } catch (NamingException e) {
             log.error("Failed lookup " + channelSubscribeId, e);
         }
-        return o;        
+        return o;
     }
 }
 
