@@ -15,19 +15,17 @@
         <!-- Deploy the files... -->
         <extract-archive location="${req($1)}" to-dir="${req($2)}/${req(APP_NAME)}"/>
 
-        <!-- Add portlet nodes to web.xml... -->
+        <!-- Provide an empty web.xml if none exists... -->
         <with-attribute key="WEB_XML_FILE" value="${file(${req($2)}/${req(APP_NAME)}/WEB-INF/web.xml)}">
 	        <if test="${not(${jexl(WEB_XML_FILE.exists())})}">
     	    	<copy-file location="classpath://org/jasig/portal/container/deploy/web.xml.template" to-file="${req($2)}/${req(APP_NAME)}/WEB-INF/web.xml"/>
         	</if>
         </with-attribute>
 
-
-
-
+        <!-- Add portlet nodes to web.xml... -->
         <with-attribute key="XmlAttributes.ENTITY_RESOLVER" value="${newInstance(org.apache.xml.resolver.tools.CatalogResolver)}">
 	        <with-attribute key="WEB_XML" value="${doc(${req($2)}/${req(APP_NAME)}/WEB-INF/web.xml)}">
-    	        <if test="${isNull(${jexl(WEB_XML.selectSingleNode('(description | display-name | icon)[position() = last()]'))})}">
+    	        <if test="${isNull(${jexl(WEB_XML.selectSingleNode(&quot;(./node()[local-name() = 'description'] | ./node()[local-name() = 'display-name'] | ./node()[local-name() = 'icon'])[position() = last()]&quot;))})}">
         	        <!-- We must ensure there's some content in web.xml from which we can hang our new content... -->
             	    <prepend-node parent="${req(WEB_XML)}">
                 	    <description>Portlet Application deployed by uPortal.</description>
@@ -56,10 +54,6 @@
     	        <write-document node="${jexl(WEB_XML.selectSingleNode('/'))}" file="${req($2)}/${req(APP_NAME)}/WEB-INF/web.xml"/>
         	</with-attribute>
         </with-attribute>
-
-
-
-
 
         <!-- Token replace APP_NAME into web.xml for Portlet Definition GUIds... -->
         <write-file string="${url(${req($2)}/${req(APP_NAME)}/WEB-INF/web.xml)}" file="${req($2)}/${req(APP_NAME)}/WEB-INF/web.xml"/>

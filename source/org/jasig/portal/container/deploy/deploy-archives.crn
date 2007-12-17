@@ -12,7 +12,7 @@
 	<when test="${jexl($1.equalsIgnoreCase('all'))}">
 		<echo-ln>** Deploying All Portlet Applications in lib/portlets/ **</echo-ln>
 		<!-- Deploy each of the archives... -->
-		<file-iterator dir="../" includes="lib/portlets/**/*.war">
+		<file-iterator includes="lib/portlets/**/*.war">
 			<with-attribute key="$1" value="${req(Attributes.LOCATION)}">
 				<crn location="classpath://org/jasig/portal/container/deploy/deploy-portlet-app.crn"/>
 			</with-attribute>

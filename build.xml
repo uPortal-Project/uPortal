@@ -1239,7 +1239,7 @@
 	    	Execute the help target ('ant help') for help on this and other targets in the uPortal build.
 	    </fail>
 
-	    <java fork="true" failonerror="true" dir="webpages" classname="org.danann.cernunnos.runtime.Main">
+	    <java fork="true" failonerror="true" dir="." classname="org.danann.cernunnos.runtime.Main">
 	      <classpath>
 	        <pathelement path="${build.home}/WEB-INF/classes"/>
 	        <path refid="compile.classpath"/>
