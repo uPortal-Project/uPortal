@@ -129,6 +129,18 @@ Version $Revision$
         <defaultValue>instance</defaultValue>
       </parameter>
 
+		<parameter modify="publish-only">
+			<name>cacheGlobalMode</name>
+			<label>Global Cache Mode (cacheGlobalMode)</label>
+			<type base="string" input="single-choice" display="drop-down">
+				<restriction type="enumeration">
+					<value>false</value>
+					<value>true</value>
+				</restriction>
+			</type>
+			<defaultValue>none</defaultValue>
+		</parameter>
+
       <parameter modify="publish-only">
         <name>upc_localConnContext</name>
         <label>LocalConnectionContext implementation (upc_localConnContext)</label>

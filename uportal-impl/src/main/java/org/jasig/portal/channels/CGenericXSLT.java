@@ -36,11 +36,16 @@ import org.jasig.portal.tools.versioning.VersionsManager;
 import org.jasig.portal.utils.DTDResolver;
 import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.utils.XSLT;
+import org.jasig.portal.utils.cache.CacheFactory;
 import org.jasig.portal.utils.uri.BlockedUriException;
 import org.jasig.portal.utils.uri.IUriScrutinizer;
 import org.jasig.portal.utils.uri.PrefixUriScrutinizer;
 import org.w3c.dom.Document;
 import org.xml.sax.ContentHandler;
+
+import com.whirlycott.cache.Cache;
+import com.whirlycott.cache.CacheException;
+import com.whirlycott.cache.CacheManager;
 
 /**
  * <p>A channel which transforms XML for rendering in the portal.</p>
@@ -91,6 +96,12 @@ import org.xml.sax.ContentHandler;
  *                  only ChannelRuntimeData will be restricted.  It is important
  *                  to set this value to true when using subscribe-time
  *                  channel parameter configuration of the xmlUri.
+ *  </li>
+ *  <li>"cacheGlobalMode" - should content be cached globally
+ *          		<i>May be <code>false</code> (normally don't globally cache), or
+ *          		<code>true</code> (cache everything).</i>
+ *  </li>
+ * </ol>
  * </p>
  * <p>The xmlUri and xslTitle static parameters above can be overridden by including
  * parameters of the same name (<code>xmlUri</code> and/or <code>xslTitle</code>)
@@ -122,6 +133,20 @@ public class CGenericXSLT
     extends BaseChannel
     implements IChannel, ICacheable {
 
+	/**
+	 * Added based on GCCC patch developed by Rutgers.
+	 */
+	private static Cache contentCache;
+	static {
+	    try {
+	        contentCache = CacheManager.getInstance().getCache(CacheFactory.CONTENT_CACHE);
+	    } catch (CacheException e) {
+	        e.printStackTrace();
+	        throw new RuntimeException(e);
+	    }
+	}
+	private boolean cacheGlobalMode = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.channels.CGenericXSLT.cache_global_mode", false);
+	private long cacheContentLoaded;	// last time the content was loaded (instance shared by ALL users)
 
 	private String xmlUri;
 	private String sslUri;
@@ -204,7 +229,24 @@ public class CGenericXSLT
             }
         }
 
-		String connContext = sd.getParameter ("upc_localConnContext");
+        String gcm = sd.getParameter("cacheGlobalMode");
+        	if (gcm != null) {
+        		gcm = gcm.trim().toLowerCase();
+        	if ("true".equals(gcm)) {
+        		cacheGlobalMode = true;
+        	} else if ("false".equals(gcm)) {
+        		cacheGlobalMode = false;
+        	} else {
+        		if (log.isWarnEnabled()) {
+        			log.warn("Invalid channel [" + sd.getChannelPublishId() + ":"
+        				+ xmlUri + "] parameter cacheGlobalMode value ["
+        				+ cacheGlobalMode + "]. Valid values are true|false. Defaulting to ["
+        				+ cacheGlobalMode + "].");
+        		}
+        	}
+        }
+
+        String connContext = sd.getParameter ("upc_localConnContext");
 		if (connContext != null && !connContext.trim().equals(""))
 		{
 			try
@@ -263,58 +305,77 @@ public class CGenericXSLT
 			}
 		}
 
-		Document xmlDoc;
-		InputStream inputStream = null;
+		// Optimized; cache retrieval of content between users
+		Document xmlDoc = null;
 
-		try
-		{
-			DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
-			docBuilderFactory.setNamespaceAware(true);
-			DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
-			DTDResolver dtdResolver = new DTDResolver();
-			docBuilder.setEntityResolver(dtdResolver);
+		// global cache (i.e., share content between users) only if
+		// caching is turned on
+		boolean cacheit = !(cacheGlobalMode == false || cacheTimeout < 0 || localConnContext != null);
 
-			URL url;
-			if (localConnContext != null)
-				url = ResourceLoader.getResourceAsURL(this.getClass(), localConnContext.getDescriptor(xmlUri, runtimeData));
-			else
-				url = ResourceLoader.getResourceAsURL(this.getClass(), xmlUri);
-
-			URLConnection urlConnect = url.openConnection();
-
-			if (localConnContext != null)
-			{
-				try
-				{
-					localConnContext.sendLocalData(urlConnect, runtimeData);
-				}
-				catch (Exception e)
-				{
-					log.error( "CGenericXSLT: Unable to send data through " + runtimeData.getParameter("upc_localConnContext"), e);
-				}
+		if (cacheit) {
+			xmlDoc = (Document) getCacheContent(xmlUri);
+			if (log.isInfoEnabled()) {
+				log.info("Global cache hit [" + (xmlDoc != null) + "] for channel: " + xmlUri);
 			}
-			inputStream = urlConnect.getInputStream();
-			xmlDoc = docBuilder.parse(inputStream);
+		} else {
+			if (log.isInfoEnabled()) {
+				log.info("Global cache not enabled for channel: " + xmlUri);
+			}
 		}
-		catch (IOException ioe)
-		{
-			throw new ResourceMissingException (xmlUri, "", ioe);
-		}
-		catch (Exception e)
-		{
-			throw new GeneralRenderingException("Problem parsing " + xmlUri , e);
-		} finally {
+
+		// xmlDoc is *not* available from globalCache, need to retrieve...
+		if (xmlDoc == null) {
+
+			InputStream inputStream = null;
 			try {
-				if (inputStream != null)
-					inputStream.close();
-			} catch (IOException ioe) {
-				throw new PortalException("CGenericXSLT:renderXML():: could not close InputStream", ioe);
+				DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+				docBuilderFactory.setNamespaceAware(true);
+				DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+				DTDResolver dtdResolver = new DTDResolver();
+				docBuilder.setEntityResolver(dtdResolver);
+
+				URL url;
+				if (localConnContext != null)
+					url = ResourceLoader.getResourceAsURL(this.getClass(), localConnContext.getDescriptor(xmlUri, runtimeData));
+				else
+					url = ResourceLoader.getResourceAsURL(this.getClass(), xmlUri);
+
+				URLConnection urlConnect = url.openConnection();
+
+				if (localConnContext != null) {
+					try {
+						localConnContext.sendLocalData(urlConnect, runtimeData);
+					} catch (Exception e) {
+						log.error( "CGenericXSLT: Unable to send data through " + runtimeData.getParameter("upc_localConnContext"), e);
+					}
+				}
+				inputStream = urlConnect.getInputStream();
+				xmlDoc = docBuilder.parse(inputStream);
 			}
+			catch (IOException ioe) {
+				throw new ResourceMissingException (xmlUri, "", ioe);
+			} catch (Exception e) {
+				throw new GeneralRenderingException("Problem parsing " + xmlUri , e);
+			} finally {
+				try {
+					if (inputStream != null) inputStream.close();
+				} catch (IOException ioe) {
+					throw new PortalException("CGenericXSLT:renderXML():: could not close InputStream", ioe);
+				}
+			}
+
+			// Add the retrieved document to the globalCache...
+			if (cacheit) {
+				if (log.isInfoEnabled()) {
+					log.info("Global cache store for channel: " + xmlUri);
+				}
+				setCacheContent(xmlUri, xmlDoc);
+			}
+
 		}
 
 		runtimeData.put("baseActionURL", runtimeData.getBaseActionURL());
 		runtimeData.put("isRenderingAsRoot", String.valueOf(runtimeData.isRenderingAsRoot()));
-
 
 		// add version parameters (used in footer channel)
         VersionsManager versionsManager = VersionsManager.getInstance();
@@ -369,7 +430,26 @@ public class CGenericXSLT
 		if (!(validity instanceof Long))
 			return false;
 
-		return (System.currentTimeMillis() - ((Long)validity).longValue() < cacheTimeout*1000);
+		if (System.currentTimeMillis() - ((Long)validity).longValue() > cacheTimeout*1000) {
+
+			if (log.isInfoEnabled()) {
+				log.info("Framework cache timeout: " + xmlUri);
+			}
+			return false;
+
+		} else if (getCacheContentLoaded() > ((Long)validity).longValue()) {
+			if (log.isInfoEnabled()) {
+				log.info("Global cache timeout:"
+						+ " >cacheContentLoaded: " + getCacheContentLoaded()
+						+ " >validity: " + validity
+						+ " >currentTime: " + System.currentTimeMillis()
+						+ " >url: " + xmlUri);
+			}
+			return false;
+		}
+
+		return true;
+
 	}
 
 	private String getKey()
@@ -448,4 +528,30 @@ public class CGenericXSLT
 		}
 		return str.toString();
 	}
+
+	/**
+	 * Storing cache data is straigt-forward. We rely on the cache implementation
+	 * to remove data as it ages AND only allow a maximum amount of data into
+	 * the structure.
+	 *
+	 * @param key the URL key String
+	 * @param data our cache data as a String or Document Object
+	 */
+	public synchronized void setCacheContent(String key, Object data) {
+		contentCache.store(key, data, cacheTimeout * 1000);
+		// we substract 2 seconds to the cache content loaded flag on purpose
+		// this is due to the framework running in a different thread and
+		// setting the validity of the content to a different time that
+		// what we have. This ensures us that we will function properly
+		cacheContentLoaded = System.currentTimeMillis() - 2000;
+	}
+
+	public synchronized Object getCacheContent(String key) {
+		return (contentCache.retrieve(key));
+	}
+
+	public synchronized long getCacheContentLoaded() {
+		return (cacheContentLoaded);
+	}
+
 }
