@@ -52,12 +52,17 @@ import org.jasig.portal.utils.CookieCutter;
 import org.jasig.portal.utils.DTDResolver;
 import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.utils.XSLT;
+import org.jasig.portal.utils.cache.CacheFactory;
 import org.jasig.portal.utils.uri.BlockedUriException;
 import org.jasig.portal.utils.uri.IUriScrutinizer;
 import org.jasig.portal.utils.uri.PrefixUriScrutinizer;
 import org.w3c.dom.Document;
 import org.w3c.tidy.Tidy;
 import org.xml.sax.ContentHandler;
+
+import com.whirlycott.cache.Cache;
+import com.whirlycott.cache.CacheException;
+import com.whirlycott.cache.CacheManager;
 
 /**
  * <p>A channel which transforms and interacts with dynamic XML or HTML.
@@ -66,7 +71,7 @@ import org.xml.sax.ContentHandler;
  * </p>
  *
  *<p>Static and Runtime Channel Parameters:
- *   These parameters can be configured both as ChannelStaticData parameters and as 
+ *   These parameters can be configured both as ChannelStaticData parameters and as
  *   ChannelRuntimeData parameters.
  *   These static parameters can be updated by equivalent
  *    Runtime parameters.  Caching parameters can also be changed temporarily.
@@ -147,15 +152,19 @@ import org.xml.sax.ContentHandler;
  *            will not use URIs matching prefixes specified in this whitespace-
  *            delimited parameter.  Effectively defaults to "".</i>
  *  </li>
- *  <li>"cw_restrict_xmlUri_inStaticData" - Optional parameter specifying whether 
+ *  <li>"cw_restrict_xmlUri_inStaticData" - Optional parameter specifying whether
  *                  the xmlUri should be restricted according to the allow and
  *                  deny prefix rules above as presented in ChannelStaticData
  *                  or just as presented in ChannelRuntimeData.  "true" means
  *                  both ChannelStaticData and ChannelRuntimeData will be restricted.
- *                  Any other value or the parameter not being present means 
+ *                  Any other value or the parameter not being present means
  *                  only ChannelRuntimeData will be restricted.  It is important
  *                  to set this value to true when using subscribe-time
  *                  channel parameter configuration of the xmlUri.
+ *  </li>
+ *  <li>"cw_cacheGlobalMode" - should content be cached globally
+ *          <i>May be <code>false</code> (normally don't globally cache), or
+ *          <code>true</code> (cache everything).</i>
  *  </li>
  * </ol>
  * <p>Runtime Channel Parameters:</p>
@@ -193,62 +202,73 @@ public class CWebProxy implements IChannel, ICacheable, IMimeResponse
 {
     private static final Log log = LogFactory.getLog(CWebProxy.class);
     private static final Log accessLog = LogFactory.getLog(CWebProxy.class+".access");
-    
+
     /**
-     * The name of the optional ChannelStaticData parameter the value of 
+     * The name of the optional ChannelStaticData parameter the value of
      * which will be a String containing a whitespace-delimited list of allowable
      * URI prefixes for URIs from which the configured CWebProxy instance will
      * obtain XML and XSLT.  Defaults to allowing all URIs of the http://
      * and https:// methods.
      */
     public static final String ALLOW_URI_PREFIXES_PARAM = "cw_allow_uri_prefixes";
-    
+
     /**
      * The name of the optional ChannelStaticData parameter the value of which
      * will be a String containing a whitespace-delimited list of explicitly
-     * blocked URI prefixes for URIs from which the configured CWebProxy 
+     * blocked URI prefixes for URIs from which the configured CWebProxy
      * instance will not obtain XML and XSLT.  URIs matching these prefixes
      * will not be used even if they also match an allow prefix specified in
      * ALLOW_URI_PREFIXES_PARAM.
      */
     public static final String BLOCK_URI_PREFIXES_PARAM = "cw_block_uri_prefixes";
-    
+
     /**
      * The name of the optional ChannelStaticData parameter the value of which
      * will be the String "true" to convey that the xmlUri should be restricted
-     * as received from both ChannelStaticData and CHannelRuntimeData and 
+     * as received from both ChannelStaticData and CHannelRuntimeData and
      * any other value to convey that it should be restricted only as received
-     * from ChannelRuntimeData.  
-     * 
+     * from ChannelRuntimeData.
+     *
      * CWebProxy should be configured to restrict xmlUri from ChannelStaticData
      * in the case where the xmlUri is a subscribe-time configurable parameter.
      */
     public static final String RESTRICT_STATIC_XMLURI_PREFIXES_PARAM = "cw_restrict_xmlUri_inStaticData";
-    
+
     private static final MediaManager MEDIAMANAGER = MediaManager.getMediaManager();
   // to prepend to the system-wide cache key
   static final String systemCacheId="org.jasig.portal.channels.webproxy.CWebProxy";
   static PrintWriter devNull;
-  
+
   ChannelState chanState;
 
-  static
-  {
-    try
-    {
+  // the content cache shared by ALL users
+  private static Cache contentCache;
+
+  static {
+
+	  try {
       devNull = getErrout();
-    }
-    catch (FileNotFoundException fnfe)
-    {
+    } catch (FileNotFoundException fnfe) {
       /* Ignore */
     }
+
+    // retrieve our content cache. this cache will contain
+    // tidied xml (as a String) and parsed XML (Document) Objects.
+    // it is a global cache, with content shared between all
+    // users who use this channel instance.
+    try {
+    	contentCache = CacheManager.getInstance().getCache(CacheFactory.CONTENT_CACHE);
+    } catch (CacheException e) {
+    	throw new RuntimeException(e);
+    }
+
   }
 
   /**
    * All state variables are stored in this inner class.
    * It would probably be an improvement to extract this inner class into its own
-   * fully fledged class in the cwebproxy package, thereby enforcing that its 
-   * properties are only accessed via getter and setter methods that would 
+   * fully fledged class in the cwebproxy package, thereby enforcing that its
+   * properties are only accessed via getter and setter methods that would
    * need to be added.
    */
   private class ChannelState
@@ -259,50 +279,50 @@ public class CWebProxy implements IChannel, ICacheable, IMimeResponse
     private String personAllow;
     private HashSet personAllow_set;
     private String fullxmlUri;
-    
+
     /**
      * URI of the source of XML this CWebProxy instance will render in response
      * to a recent button press (channel control button, e.g. "help").
      */
     private String buttonxmlUri;
-    
+
     /**
      * URI of the source of XML this CWebProxy instance will render.
-     * Do not set this field directly.  Instead, access it via the setter 
+     * Do not set this field directly.  Instead, access it via the setter
      * method.
      */
     private String xmlUri;
     private String key;
     private String passThrough;
     private String tidy;
-    
+
     /**
-     * URI of the stylesheet selector this channel will use to select its 
+     * URI of the stylesheet selector this channel will use to select its
      * XSLT.
      */
     private String sslUri;
     private String xslTitle;
-    
+
     /**
      * URI of the XSLT this channel will use to select its XSLT.
      */
     private String xslUri;
-    
+
     /**
      * URI of the XML this channel will use to render its info mode.
      */
     private String infoUri;
-    
+
     /**
      * URI of the XML this channel will use to render its help mode.
      */
     private String helpUri;
-    
+
     /**
      * URI of the XML this channel will use to render its edit mode.
      */
     private String editUri;
-    
+
     private String cacheDefaultMode;
     private String cacheMode;
     private String reqParameters;
@@ -313,7 +333,12 @@ public class CWebProxy implements IChannel, ICacheable, IMimeResponse
     private URLConnection connHolder;
     private LocalConnectionContext localConnContext;
     private int refresh;
-    
+
+    private boolean cacheGlobalMode;
+
+    //  last time the content was loaded (instance shared by ALL users)
+    private long cacheContentLoaded;
+
     /**
      * The default scrutinizer is one that allows only http: and https: URIs.
      * Non-null.  Constructor enforces initialization to a non-null.
@@ -326,7 +351,7 @@ public class CWebProxy implements IChannel, ICacheable, IMimeResponse
             throw new IllegalArgumentException("Cannot instantiate CWebProxy ChannelState with a null URI srutinizer.");
         }
         this.uriScrutinizer = uriScrutinizerArg;
-        
+
       fullxmlUri = buttonxmlUri = xmlUri = key = passThrough = sslUri = null;
       xslTitle = xslUri = infoUri = helpUri = editUri = tidy = null;
       cacheMode = null;
@@ -336,6 +361,7 @@ public class CWebProxy implements IChannel, ICacheable, IMimeResponse
       cacheTimeout = cacheDefaultTimeout = PropertiesManager.getPropertyAsLong("org.jasig.portal.channels.webproxy.CWebProxy.cache_default_timeout");
       cacheMode = cacheDefaultMode = PropertiesManager.getProperty("org.jasig.portal.channels.webproxy.CWebProxy.cache_default_mode");
       personAllow = PropertiesManager.getProperty("org.jasig.portal.channels.webproxy.CWebProxy.person_allow");
+      cacheGlobalMode = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.channels.webproxy.CWebProxy.cache_global_mode", false);
       runtimeData = null;
       cookieCutter = new CookieCutter();
       localConnContext = null;
@@ -361,7 +387,7 @@ public class CWebProxy implements IChannel, ICacheable, IMimeResponse
                 iae.initCause(rme);
                 throw iae;
             }
-            
+
             try {
                 this.uriScrutinizer.scrutinize(new URI(uriArg));
                 this.xmlUri = uriArg;
@@ -371,16 +397,39 @@ public class CWebProxy implements IChannel, ICacheable, IMimeResponse
                 iae.initCause(e);
                 throw iae;
             }
-        } 
+        }
         // if uriArg was null do nothing.
-        
+
+    }
+
+    /**
+     * Storing cache data is straigt-forward. We rely on the cache implementation
+     * to remove data as it ages AND only allow a maximum amount of data into
+     * the structure.
+     *
+     * @param key the URL key String
+     * @param data our cache data as a String or Document Object
+     */
+    public synchronized void setCacheContent(String key, Object data) {
+    	contentCache.store(key, data, cacheTimeout * 1000);
+    	// we substract 2 seconds to the cache content loaded flag on purpose
+    	// this is due to the framework running in a different thread and
+    	// setting the validity of the content to a different time that
+    	// what we have. This ensures us that we will function properly
+    	cacheContentLoaded = System.currentTimeMillis() - 2000;
+    }
+
+    public synchronized Object getCacheContent(String key) {
+    	return (contentCache.retrieve(key));
+    }
+
+    public synchronized long getCacheContentLoaded() {
+    	return (cacheContentLoaded);
     }
 
   }
 
-  public CWebProxy ()
-  {
-  }
+  public CWebProxy () {}
 
   /**
    * Passes ChannelStaticData to the channel.
@@ -391,25 +440,25 @@ public class CWebProxy implements IChannel, ICacheable, IMimeResponse
    */
   public void setStaticData (ChannelStaticData sd)
       throws PortalException {
-      
+
     // detect static data configuration for URI scrutinizer
-    
-    String allowUriPrefixesParam = 
+
+    String allowUriPrefixesParam =
         sd.getParameter(ALLOW_URI_PREFIXES_PARAM);
-    String denyUriPrefixesParam = 
+    String denyUriPrefixesParam =
         sd.getParameter(BLOCK_URI_PREFIXES_PARAM);
-    
+
 
     // store the scrutinizer into channel state
-    IUriScrutinizer uriScrutinizer = 
+    IUriScrutinizer uriScrutinizer =
         PrefixUriScrutinizer.instanceFromParameters(allowUriPrefixesParam, denyUriPrefixesParam);
     ChannelState state = new ChannelState(uriScrutinizer);
-    
+
     // determine whether we should restrict what URIs we accept as the xmlUri from
     // ChannelStaticData
     String scrutinizeXmlUriAsStaticDataString = sd.getParameter(RESTRICT_STATIC_XMLURI_PREFIXES_PARAM);
     boolean scrutinizeXmlUriAsStaticData = "true".equals(scrutinizeXmlUriAsStaticDataString);
-    
+
     String xmlUriParam = sd.getParameter("cw_xml");
     if (scrutinizeXmlUriAsStaticData) {
         // apply configured xmlUri restrictions
@@ -418,7 +467,7 @@ public class CWebProxy implements IChannel, ICacheable, IMimeResponse
         // set the field directly to avoid applying xmlUri restrictions
         state.xmlUri = xmlUriParam;
     }
-    
+
     state.iperson = sd.getPerson();
     state.publishId = sd.getChannelPublishId();
     state.person = sd.getParameter("cw_person");
@@ -448,10 +497,10 @@ public class CWebProxy implements IChannel, ICacheable, IMimeResponse
     state.xslTitle = sd.getParameter ("cw_xslTitle");
     state.xslUri = sd.getParameter("cw_xsl");
     state.fullxmlUri = sd.getParameter("cw_xml");
-    
+
     state.passThrough = sd.getParameter ("cw_passThrough");
     state.tidy = sd.getParameter ("cw_tidy");
-    
+
     state.infoUri = sd.getParameter("cw_info");
     state.helpUri = sd.getParameter("cw_help");
     state.editUri = sd.getParameter ("cw_edit");
@@ -475,6 +524,23 @@ public class CWebProxy implements IChannel, ICacheable, IMimeResponse
       state.cacheTimeout = Long.parseLong(cacheTimeout);
     else
       state.cacheTimeout = state.cacheDefaultTimeout;
+
+    cacheMode = sd.getParameter("cw_cacheGlobalMode");
+    if (cacheMode != null) {
+    	cacheMode = cacheMode.trim().toLowerCase();
+    	if ("true".equals(cacheMode)) {
+    		state.cacheGlobalMode = true;
+    	} else if ("false".equals(cacheMode)) {
+    		state.cacheGlobalMode = false;
+    	} else {
+    		if (log.isWarnEnabled()) {
+    			log.warn("Invalid channel [" + sd.getChannelPublishId() + ":"
+    					+ state.fullxmlUri + "] parameter cw_cacheGlobalMode value ["
+    					+ cacheMode + "]. Valid values are true|false. Defaulting to ["
+    					+ state.cacheGlobalMode + "].");
+    		}
+    	}
+    }
 
     String connContext = sd.getParameter ("upc_localConnContext");
     if (connContext != null && !connContext.trim().equals(""))
@@ -528,7 +594,7 @@ public class CWebProxy implements IChannel, ICacheable, IMimeResponse
          // don't need an explicit reset if a new URI is provided.
          state.buttonxmlUri = null;
        }
-       
+
        // prior to uPortal 2.5.1, CWebProxy allowed several other parameters
        // to  be set via channel runtime data.  These features were removed
        // to close security vulnerabilities.  Some (very few) uPortal deployments
@@ -763,16 +829,71 @@ public class CWebProxy implements IChannel, ICacheable, IMimeResponse
     }else{
       Document xml = null;
       String tidiedXml = null;
-      try
-      {
-        if (state.tidy != null && state.tidy.equals("on"))
-          tidiedXml = getTidiedXml(state.fullxmlUri, state);
-        else
-          xml = getXml(state.fullxmlUri, state);
+
+      // Optimized; cache retrieval of content between users
+      Object o = null;
+
+      // Global caching (i.e., cacheit) is calculated for each request.
+      // For testing speed, we utilize OR checks; if any of the conditions
+      // results in "TRUE", then we do NOT want to cache.
+      //
+      // state.cacheGlobalMode == false: the cacheGlobalMode can have
+      // a default value defined in portal properties for all CWebProxy channels.
+      // In addition, each channel can have a value defined. Should global
+      // caching be performed for this channel?
+      //
+      // "none".equalsIgnoreCase(state.cacheMode): the cacheMode defines
+      // framework caching. Should this content be cached by the framework
+      // for this user?
+      //
+      // "post".equalsIgnoreCase(state.runtimeData.getHttpRequestMethod()):
+      // is this an HTTP POST?
+      //
+      // state.fullxmlUri.indexOf('?') >= 0: does the URL include parameters?
+      //
+      // state.localConnContext != null: is a local connection
+      // context is defined?
+      boolean cacheit = !(state.cacheGlobalMode == false
+    		  		|| "none".equalsIgnoreCase(state.cacheMode)
+    		  		|| "post".equalsIgnoreCase(state.runtimeData.getHttpRequestMethod())
+    		  		|| state.fullxmlUri.indexOf('?') >= 0
+    		  		|| state.localConnContext != null);
+
+      if (cacheit) {
+    	  o = state.getCacheContent(state.fullxmlUri);
+    	  if (log.isInfoEnabled()) {
+    		  log.info("Global cache hit [" + (o != null) + "] for channel: " + state.fullxmlUri);
+    	  }
+      } else {
+    	  if (log.isDebugEnabled()) {
+    		  log.debug("Global cache not enabled for channel: " + state.fullxmlUri);
+    	  }
       }
-      catch (Exception e)
-      {
-        throw new GeneralRenderingException ("Problem retrieving contents of " + state.fullxmlUri + ".  Please restart channel. ", e, false, true);
+
+      if (o == null) {
+    	  try {
+    		  if (state.tidy != null && state.tidy.equals("on")) {
+    			  tidiedXml = getTidiedXml(state.fullxmlUri, state);
+    			  o = tidiedXml;
+    		  } else {
+    			  xml = getXml(state.fullxmlUri, state);
+    			  o = xml;
+    		  }
+    	  } catch (Exception e) {
+    		  throw new GeneralRenderingException ("Problem retrieving contents of " + state.fullxmlUri + ".  Please restart channel. ", e, false, true);
+    	  }
+    	  if (cacheit) {
+    		  if (log.isInfoEnabled()) {
+    			  log.info("Global cache store for channel: " + state.fullxmlUri);
+    		  }
+    		  state.setCacheContent(state.fullxmlUri, o);
+    	  }
+      } else {
+    	  if (o instanceof String) {
+    		  tidiedXml = (String) o;
+    	  } else {
+    		  xml = (Document) o;
+    	  }
       }
 
       state.runtimeData.put("baseActionURL", state.runtimeData.getBaseActionURL());
@@ -826,7 +947,7 @@ public class CWebProxy implements IChannel, ICacheable, IMimeResponse
         }
       }
 
-      
+
       CWebProxyURLFilter filter2 = CWebProxyURLFilter.newCWebProxyURLFilter(mimeType, state.runtimeData, out);
       AbsoluteURLFilter filter1 = AbsoluteURLFilter.newAbsoluteURLFilter(mimeType, state.xmlUri, filter2);
 
@@ -848,7 +969,7 @@ public class CWebProxy implements IChannel, ICacheable, IMimeResponse
   {
 	long start = System.currentTimeMillis();
 	int status = 0;
-	  
+
 	Document doc = null;
     try {
     	URLConnection urlConnect = getConnection(uri, state);
@@ -871,7 +992,7 @@ public class CWebProxy implements IChannel, ICacheable, IMimeResponse
 	    		// ignore
 	    	}
 	    }
-	    
+
     } finally {
         long elapsedTimeMillis = System.currentTimeMillis()-start;
         logAccess(uri, state, status, elapsedTimeMillis);
@@ -879,7 +1000,22 @@ public class CWebProxy implements IChannel, ICacheable, IMimeResponse
     return doc;
   }
 
-  
+	// Optimized; share the tidy object in this thread
+	private static final ThreadLocal perThreadTidy = new ThreadLocal() {
+		protected Object initialValue() {
+			Tidy tidy = new Tidy ();
+			tidy.setXHTML (true);
+			tidy.setDocType ("omit");
+			tidy.setQuiet(true);
+			tidy.setShowWarnings(false);
+			tidy.setNumEntities(true);
+			tidy.setWord2000(true);
+
+			tidy.setErrout(devNull);
+			return (tidy);
+		}
+	};
+
   private void logAccess(String uri, ChannelState state, int status, long elapsedTimeMillis) {
 	  // trim off request parameters
 	  int index = uri.indexOf("?");
@@ -903,13 +1039,13 @@ public class CWebProxy implements IChannel, ICacheable, IMimeResponse
     long start = System.currentTimeMillis();
     String tidiedXml = null;
     int status = 0;
-    
+
     try {
 		URLConnection urlConnect = getConnection(uri, state);
     	if (urlConnect instanceof HttpURLConnection){
     		status = ((HttpURLConnection)urlConnect).getResponseCode();
     	}
-		
+
 		// get character encoding from Content-Type header
 		String encoding = null;
 		String ct = urlConnect.getContentType();
@@ -922,16 +1058,9 @@ public class CWebProxy implements IChannel, ICacheable, IMimeResponse
 		  if (encoding.indexOf("\"")!=-1)
 		    encoding = encoding.substring(1,encoding.length()+1);
 		}
-		
-		Tidy tidy = new Tidy ();
-		
-		tidy.setXHTML (true);
-		tidy.setDocType ("omit");
-		tidy.setQuiet(true);
-		tidy.setShowWarnings(false);
-		tidy.setNumEntities(true);
-		tidy.setWord2000(true);
-		
+
+		Tidy tidy = (Tidy) perThreadTidy.get();
+
 		// If charset is specified in header, set JTidy's
 		// character encoding  to either UTF-8, ISO-8859-1
 		// or ISO-2022 accordingly (NOTE that these are
@@ -951,17 +1080,17 @@ public class CWebProxy implements IChannel, ICacheable, IMimeResponse
 		{
 		  tidy.setCharEncoding(org.w3c.tidy.Configuration.UTF8);
 		}
-		
-		tidy.setErrout(devNull);
-		
+
+//		tidy.setErrout(devNull);
+
 		ByteArrayOutputStream stream = new ByteArrayOutputStream (1024);
 		BufferedOutputStream out = new BufferedOutputStream (stream);
-		
+
 		tidy.parse (urlConnect.getInputStream(), out);
 		tidiedXml = stream.toString();
 		stream.close();
 		out.close();
-		
+
 		if ( tidy.getParseErrors() > 0 )
 		  throw new GeneralRenderingException("Unable to convert input document to XHTML");
     }finally{
@@ -978,7 +1107,7 @@ public class CWebProxy implements IChannel, ICacheable, IMimeResponse
       // this method encodes everything, including forward slashes and
       // forward slashes are used for determining if the URL is
       // relative or absolute)
-	  
+
       uri = uri.trim().replaceAll(" ", "%20");
 
       URL url;
@@ -1164,11 +1293,11 @@ public class CWebProxy implements IChannel, ICacheable, IMimeResponse
     return k;
   }
 
-  static PrintWriter getErrout() throws FileNotFoundException 
+  static PrintWriter getErrout() throws FileNotFoundException
   {
-    if (System.getProperty("os.name").indexOf("Windows") != -1) 
+    if (System.getProperty("os.name").indexOf("Windows") != -1)
       return new PrintWriter(new FileOutputStream("nul"));
-    else 
+    else
       return new PrintWriter(new FileOutputStream("/dev/null"));
   }
 
@@ -1183,9 +1312,24 @@ public class CWebProxy implements IChannel, ICacheable, IMimeResponse
     {
       log.debug("CWebProxy:isCacheValid() : no entry in state");
       return false;
-    }else{
-      return (System.currentTimeMillis() - ((Long)validity).longValue() < state.cacheTimeout*1000);
+    } else if (System.currentTimeMillis() - ((Long)validity).longValue() > state.cacheTimeout*1000) {
+    	if (log.isInfoEnabled()) {
+    		log.info("Framework cache timeout: " + state.fullxmlUri);
+    	}
+    	return false;
+    } else if (state.getCacheContentLoaded() > ((Long)validity).longValue()) {
+    	if (log.isInfoEnabled()) {
+    		log.info("Global cache timeout:"
+    				+ " >cacheContentLoaded: " + state.getCacheContentLoaded()
+    				+ " >validity: " + validity
+    				+ " >currentTime: " + System.currentTimeMillis()
+    				+ " >url: " + state.fullxmlUri);
+    	}
+    	return false;
     }
+
+    return true;
+
   }
 
   public String getContentType() {
@@ -1228,5 +1372,5 @@ public class CWebProxy implements IChannel, ICacheable, IMimeResponse
     log.error(e.getMessage(), e);
   }
 
-  
+
 }

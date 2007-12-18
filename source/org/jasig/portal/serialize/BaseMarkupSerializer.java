@@ -1651,8 +1651,17 @@ public abstract class BaseMarkupSerializer
         // character, print it. The list of available entity
         // references is almost but not identical between
         // XML and HTML.
-        charRef = getEntityRef( ch );
-        if ( charRef != null ) {
+
+
+
+//        charRef = getEntityRef( ch );
+//        if ( charRef != null ) {
+
+        // Optimized; quick checks for ASCII letter/whitespace
+        if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')
+        		|| ch == ' ' || ch == '\n' || ch == '\t' || ch == '\r') {
+        	_printer.printText((char)ch );
+        } else if ((charRef = getEntityRef(ch)) != null ) {
             _printer.printText( '&' );
             _printer.printText( charRef );
             _printer.printText( ';' );

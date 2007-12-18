@@ -14,6 +14,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -45,20 +48,20 @@ public class ResourceLoader {
     private static final Log log = LogFactory.getLog(ResourceLoader.class);
 
   private static DocumentBuilderFactory validatingDocumentBuilderFactory;
-  
+
   private static DocumentBuilderFactory nonValidatingDocumentBuilderFactory;
-  
+
   static {
     validatingDocumentBuilderFactory = DocumentBuilderFactory.newInstance();
     nonValidatingDocumentBuilderFactory = DocumentBuilderFactory.newInstance();
-    
+
     validatingDocumentBuilderFactory.setValidating(true);
     nonValidatingDocumentBuilderFactory.setValidating(false);
-    
-    
+
+
     validatingDocumentBuilderFactory.setNamespaceAware(true);
     nonValidatingDocumentBuilderFactory.setNamespaceAware(true);
-    
+
     try{
       String handler = PropertiesManager.getProperty("org.jasig.portal.utils.ResourceLoader.HttpsHandler");
       if ((System.getProperty("java.protocol.handler.pkgs") != null) &&
@@ -120,16 +123,57 @@ public class ResourceLoader {
    * @throws org.jasig.portal.ResourceMissingException
    */
   public static String getResourceAsURLString(Class requestingClass, String resource) throws ResourceMissingException {
-    return getResourceAsURL(requestingClass, resource).toString();
-  }
+	  String res;
+	  final String key = requestingClass.getName();
+	  // Optimized; cache results of first n lookups
+
+	  // maintain a hashmap of hashmaps; keyed off of requestingClass name
+	  Map rmap = (Map) chm.get(key);
+	  if (rmap == null && chm.size() < 96) {
+		  // we store about 96 items; may be a few more since we're not
+		  // sync'ing
+		  chm.put(key, Collections.synchronizedMap(new HashMap(12)));
+
+		  // it's possible rmap below isn't the value we just put - that's ok
+		  // though
+		  rmap = (Map) chm.get(key);
+
+	  } else if ((res = (String) rmap.get(resource)) != null) {
+		  return (res);
+	  }
+
+	  // at this point, we have to execute the expensive operation
+	  res = getResourceAsURL(requestingClass, resource).toString();
+
+	  if (res != null && rmap != null && rmap.size() < 8) {
+		  rmap.put(resource, res);
+	  }
+
+	  return (res);
+	}
+
+	// The resource hash map (chm) is keyed off of the requestingClass name,
+	// and will contain entries of HashMap's, each keyed off of resource. A
+	// single hashmap could have been used with a key of
+	// "classname:resourcename",
+	// but that would involve constructing many string objects when putting
+	// and/or getting from the map. Therefore, two maps are used. Cache sizes
+	// were selected at random; numbers selected successfully cached the
+	// values for the myRutgers portal
+	private static final Map chm = Collections.synchronizedMap(new HashMap(128));
 
   /**
-   * Returns the requested resource as a File.
-   * @param requestingClass the java.lang.Class object of the class that is attempting to load the resource
-   * @param resource a String describing the full or partial URL of the resource to load
-   * @return the requested resource as a File
-   * @throws org.jasig.portal.ResourceMissingException
-   */
+	* Returns the requested resource as a File.
+	*
+	* @param requestingClass
+	*            the java.lang.Class object of the class that is attempting to
+	*            load the resource
+	* @param resource
+	*            a String describing the full or partial URL of the resource to
+	*            load
+	* @return the requested resource as a File
+	* @throws org.jasig.portal.ResourceMissingException
+	*/
   public static File getResourceAsFile(Class requestingClass, String resource) throws ResourceMissingException {
     return new File(getResourceAsFileString(requestingClass, resource));
   }
@@ -187,15 +231,15 @@ public class ResourceLoader {
    * @throws javax.xml.parsers.ParserConfigurationException
    * @throws org.xml.sax.SAXException
    */
-  public static Document getResourceAsDocument (Class requestingClass, String resource, boolean validate) 
+  public static Document getResourceAsDocument (Class requestingClass, String resource, boolean validate)
       throws ResourceMissingException, IOException, ParserConfigurationException, SAXException {
     Document document = null;
     InputStream inputStream = null;
-    
+
     try {
-    	
+
     	DocumentBuilderFactory factoryToUse = null;
-    	
+
       if (validate) {
     	  factoryToUse = ResourceLoader.validatingDocumentBuilderFactory;
       } else {
@@ -203,7 +247,7 @@ public class ResourceLoader {
       }
       inputStream = getResourceAsStream(requestingClass, resource);
       DocumentBuilder db = factoryToUse.newDocumentBuilder();
-      
+
       db.setEntityResolver(new DTDResolver());
       db.setErrorHandler(new SAXErrorHandler("ResourceLoader.getResourceAsDocument(" + resource + ")"));
       document = db.parse(inputStream);
@@ -215,7 +259,7 @@ public class ResourceLoader {
   }
 
   /**
-   * Get the contents of a URL as an XML Document, first trying to read the Document with validation turned on, 
+   * Get the contents of a URL as an XML Document, first trying to read the Document with validation turned on,
    * and falling back to reading it with validation turned off.
    * @param requestingClass the java.lang.Class object of the class that is attempting to load the resource
    * @param resource a String describing the full or partial URL of the resource whose contents to load
@@ -225,30 +269,30 @@ public class ResourceLoader {
    * @throws javax.xml.parsers.ParserConfigurationException
    * @throws org.xml.sax.SAXException
    */
-  public static Document getResourceAsDocument (Class requestingClass, String resource) 
+  public static Document getResourceAsDocument (Class requestingClass, String resource)
       throws ResourceMissingException, IOException, ParserConfigurationException, SAXException {
-	  
+
 	  try {
 		  // first try with validation turned on
 		  return getResourceAsDocument(requestingClass, resource, true);
 	  } catch (Exception e) {
-		  
+
 		  if (log.isDebugEnabled()) {
 			  log.debug("Problem getting resource [" + resource + "] as requested by class [" + requestingClass.getName() + "]", e);
-			    
+
 		  } else {
 			  log.warn("Problem getting resource [" + resource + "] as requested by class [" + requestingClass.getName() + "]");
-			  
+
 		  }
-		  
+
 		  // try again with validation turned off
 		  return getResourceAsDocument(requestingClass, resource, false);
 	  }
-	  
+
   }
-	  
-  
-  
+
+
+
   /**
    * Get the contents of a URL as a java.util.Properties object
    * @param requestingClass the java.lang.Class object of the class that is attempting to load the resource

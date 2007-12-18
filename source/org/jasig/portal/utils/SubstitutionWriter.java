@@ -60,9 +60,8 @@ public class SubstitutionWriter extends Writer {
         // check boundaries
         if(off+len>cbuf.length) throw new IOException("Invalid offsent or length specified");
 
-        for(int i=0;i<len;i++) {
-            filter.write(cbuf[i]);
-        }
+        // Optimized; write character array directly to filter
+        filter.write(cbuf, off, len);
     }
 
     /**
