@@ -6,8 +6,8 @@
     <bean id="requestParameterProcessorController" class="org.jasig.portal.url.processing.RequestParameterProcessorListController">
         <property name="dynamicRequestParameterProcessors">
             <list value-type="org.jasig.portal.url.processing.IRequestParameterProcessor">
-                <idref local="portletRequestParameterProcessor"/>
-                <idref local="channelRequestParameterProcessor"/>
+                <ref local="portletRequestParameterProcessor"/>
+                <ref local="channelRequestParameterProcessor"/>
             </list>
         </property>
     </bean>

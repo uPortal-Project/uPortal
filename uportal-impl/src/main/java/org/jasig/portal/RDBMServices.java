@@ -11,6 +11,7 @@ import java.sql.Driver;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Arrays;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -18,13 +19,11 @@ import javax.sql.DataSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.rdbm.DatabaseMetaDataImpl;
 import org.jasig.portal.rdbm.IDatabaseMetadata;
 import org.jasig.portal.spring.PortalApplicationContextLocator;
 import org.jasig.portal.utils.MovingAverage;
 import org.jasig.portal.utils.MovingAverageSample;
 import org.springframework.context.ApplicationContext;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataAccessResourceFailureException;
 
 
@@ -63,7 +62,7 @@ public class RDBMServices {
     /**
      * Name of the {@link IDatabaseMetadata} expected in the Spring application context
      */
-    public static final String PORTAL_DB_METADATA = PORTAL_DB + ".metadata";
+    public static final String PORTAL_DB_METADATA = "PortalDB.metadata";
     
     private static final Log LOG = LogFactory.getLog(RDBMServices.class);
 
@@ -383,6 +382,7 @@ public class RDBMServices {
      * Get metadata about the default DataSource.
      * @return metadata about the default DataSource.
      */
+    @Deprecated
     public static IDatabaseMetadata getDbMetaData() {
         final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
         final IDatabaseMetadata databaseMetadata = (IDatabaseMetadata)applicationContext.getBean(PORTAL_DB_METADATA, IDatabaseMetadata.class);

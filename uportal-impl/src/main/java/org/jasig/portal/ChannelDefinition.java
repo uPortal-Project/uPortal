@@ -12,6 +12,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.channels.portlet.IPortletAdaptor;
@@ -31,6 +32,7 @@ public class ChannelDefinition implements IBasicEntity {
   private String chanDesc;
   private String chanTitle;
   private String chanClass;
+  private boolean isPortlet = false;
   private int chanTimeout;
   private int chanTypeId;
   private int chanPupblUsrId;
@@ -41,11 +43,11 @@ public class ChannelDefinition implements IBasicEntity {
   private boolean chanHasHelp;
   private boolean chanHasAbout;
   private boolean chanIsSecure;    
-  private Map parameters; // Consider implementing as a Set
+  private Map<String, ChannelParameter> parameters; // Consider implementing as a Set
   private String chanLocale;
-  private Hashtable chanDescs;
-  private Hashtable chanTitles;
-  private Hashtable chanNames;
+  private Map<String, String> chanDescs;
+  private Map<String, String> chanTitles;
+  private Map<String, String> chanNames;
 
   /**
    * Constructs a channel definition.
@@ -55,12 +57,12 @@ public class ChannelDefinition implements IBasicEntity {
     this.id = id;
     this.chanTitle = "";
     this.chanDesc = "";
-    this.chanClass = "";
-    this.parameters = new HashMap();
+    this.setJavaClass("");
+    this.parameters = new HashMap<String, ChannelParameter>();
     this.chanLocale = null;
-    this.chanTitles = new Hashtable();
-    this.chanNames = new Hashtable();
-    this.chanDescs = new Hashtable();
+    this.chanTitles = new Hashtable<String, String>();
+    this.chanNames = new Hashtable<String, String>();
+    this.chanDescs = new Hashtable<String, String>();
   }
 
   // Getter methods
@@ -90,32 +92,16 @@ public class ChannelDefinition implements IBasicEntity {
    * @return true if we know we're a portlet, false otherwise
    */
   public boolean isPortlet() {
-  	
-  	/*
-  	 * We believe we are a portlet if the channel class implements 
-  	 * IPortletAdaptor.
-  	 */
-  	
-      if (this.chanClass != null) {
-          try {
-			Class channelClass = Class.forName(this.chanClass);
-			return IPortletAdaptor.class.isAssignableFrom(channelClass);
-		} catch (ClassNotFoundException e) {
-			log.error("Unable to load class for name [" + this.chanClass 
-					+ "] and so do not know whether is a portlet.");
-		}
-      }
-      
-      return false;
+      return this.isPortlet;
   }
   
-  public ChannelParameter[] getParameters() { return (ChannelParameter[])parameters.values().toArray(new ChannelParameter[0]); }
+  public ChannelParameter[] getParameters() { return parameters.values().toArray(new ChannelParameter[0]); }
   
   public ChannelParameter getParameter(String key)
   {
-      return (ChannelParameter) parameters.get(key);
+      return parameters.get(key);
   }
-  public Map getParametersAsUnmodifiableMap()
+  public Map<String, ChannelParameter> getParametersAsUnmodifiableMap()
   {
       return Collections.unmodifiableMap(parameters);
   }
@@ -123,7 +109,7 @@ public class ChannelDefinition implements IBasicEntity {
   
   // I18n
   public String getName(String locale) {
-      String chanName=(String)chanNames.get(locale);
+      String chanName=chanNames.get(locale);
       if (chanName == null) {
           return this.chanName; // fallback on "en_US"
       }  else {
@@ -135,7 +121,7 @@ public class ChannelDefinition implements IBasicEntity {
       /*
       return chanDesc;
       */
-      String chanDesc=(String)chanDescs.get(locale);
+      String chanDesc=chanDescs.get(locale);
       if (chanDesc == null) {
           return this.chanDesc; // fallback on "en_US"
       }  else {
@@ -147,7 +133,7 @@ public class ChannelDefinition implements IBasicEntity {
       /*
       return chanTitle;
       */
-      String chanTitle=(String)chanTitles.get(locale);
+      String chanTitle=chanTitles.get(locale);
       if (chanTitle == null) {
           return this.chanTitle; // fallback on "en_US"
       }  else {
@@ -160,7 +146,25 @@ public class ChannelDefinition implements IBasicEntity {
   public void setName(String name) {this.chanName = name; }
   public void setDescription(String descr) {this.chanDesc = descr; }
   public void setTitle(String title) {this.chanTitle = title; }
-  public void setJavaClass(String javaClass) {this.chanClass = javaClass; }
+      
+    public void setJavaClass(String javaClass) {
+        this.chanClass = javaClass;
+
+        if (!StringUtils.isBlank(this.chanClass)) {
+            try {
+                final Class<?> channelClazz = Class.forName(this.chanClass);
+                this.isPortlet = IPortletAdaptor.class.isAssignableFrom(channelClazz);
+                
+                if (log.isDebugEnabled()) {
+                    log.debug("Determined channel class '" + this.chanClass + "' " + (this.isPortlet ? "is" : "is not") + " a portlet");
+                }
+            }
+            catch (ClassNotFoundException e) {
+                log.warn("Unable to load class '" + this.chanClass + "' for channel id=" + this.id + ", fname='" + this.chanFName + "'");
+            }
+        }
+    }
+  
   public void setTimeout(int timeout) {this.chanTimeout = timeout; }
   public void setTypeId(int typeId) {this.chanTypeId = typeId; }
   public void setPublisherId(int publisherId) {this.chanPupblUsrId = publisherId; }
@@ -294,9 +298,9 @@ public class ChannelDefinition implements IBasicEntity {
 
   private final void addParameters(Document doc, Element channel) {
     if (parameters != null) {
-      Iterator iter = parameters.values().iterator();
+      Iterator<ChannelParameter> iter = parameters.values().iterator();
       while (iter.hasNext()) {
-        ChannelParameter cp = (ChannelParameter)iter.next();
+        ChannelParameter cp = iter.next();
 
         Element parameter = nodeParameter(doc, cp.name, cp.value);
         if (cp.override) {

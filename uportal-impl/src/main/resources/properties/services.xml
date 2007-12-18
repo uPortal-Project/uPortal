@@ -18,14 +18,6 @@
 
 <servicelist>
 
-  <!-- A functional example of a logger service
-  -->
-  <service>
-    <name>LogService</name>
-    <class>org.jasig.portal.services.LogService</class>
-    <jndi_name>org.jasig.portal.services.LogService</jndi_name>
-  </service>
-
   <!-- Any DOM implementation specific initialization -->
   <!--
   <service>

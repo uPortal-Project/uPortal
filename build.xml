@@ -56,6 +56,8 @@
 
             <echo message="Invoking DbLoader" />
             <java fork="true" failonerror="true" dir="${uportal-impl.dir}" classname="org.jasig.portal.tools.dbloader.DbLoader">
+                <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
+                
                 <classpath refid="uportal-impl-full.classpath" />
 
                 <arg value="${usetable}" />
@@ -102,6 +104,8 @@
 
             <echo message="Invoking DbUnload" />
             <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.tools.dbloader.DbUnload">
+                <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
+                                
                 <classpath refid="uportal-impl-full.classpath" />
 
                 <arg value="${tablename}" />
@@ -114,6 +118,8 @@
         <uportal-impl-macro>
             <echo message="Invoking DbTest" />
             <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.tools.DbTest">
+                <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
+                                
                 <classpath refid="uportal-impl-full.classpath" />
             </java>
         </uportal-impl-macro>
@@ -162,6 +168,8 @@
 
             <echo message="Invoking Channel Publisher Tool" />
             <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.tools.chanpub.ChannelPublisher">
+                <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
+                                
                 <classpath refid="uportal-impl-full.classpath" />
 
                 <arg value="${directoryArg}" />
@@ -199,7 +207,7 @@
             </typedef>
 
             <uportal-ear-macro>
-                <up:tomcatEarDeploy ear="${uportal-ear.artifact}" catalinaHome="${server.home}" catalinaBase="${server.base}" extractWars="true" removeExistingDirectories="true" />
+                <up:tomcatEarDeploy ear="${uportal-ear.artifact}" catalinaBase="${server.base}" extractWars="true" removeExistingDirectories="true" />
             </uportal-ear-macro>
         </uportal-ant-tasks-macro>
     </target>

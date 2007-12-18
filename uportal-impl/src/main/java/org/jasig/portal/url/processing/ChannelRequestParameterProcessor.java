@@ -189,6 +189,7 @@ public class ChannelRequestParameterProcessor extends CommonsFileUploadSupport i
         
         //TODO this is not very nice, eventually a session scoped injected bean would be the way to go here
         //TODO UserInstance may not be initialized yet, need to review it's init code (move to constructor?)
+        //All I really need here is the IUserLayoutManager
         final UserInstance userInstance = UserInstanceManager.getUserInstance(request);
         final IUserPreferencesManager userPreferencesManager = userInstance.getPreferencesManager();
         final IUserLayoutManager userLayoutManger = userPreferencesManager.getUserLayoutManager();

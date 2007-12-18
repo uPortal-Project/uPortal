@@ -105,6 +105,20 @@
         </dependency>
 
         <dependency>
+            <groupId>xerces</groupId>
+            <artifactId>xercesImpl</artifactId>
+            <version>${xercesImpl.version}</version>
+            <scope>compile</scope>
+        </dependency>
+<!-- 
+        <dependency>
+            <groupId>xerces</groupId>
+            <artifactId>xmlParserAPIs</artifactId>
+            <version>${xmlParserAPIs.version}</version>
+            <scope>compile</scope>
+        </dependency>
+ -->
+        <dependency>
             <groupId>org.apache.pluto</groupId>
             <artifactId>pluto-taglib</artifactId>
             <version>${pluto.version}</version>
@@ -123,13 +137,6 @@
             <groupId>taglibs</groupId>
             <artifactId>standard</artifactId>
             <version>${standard.version}</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>hsqldb</groupId>
-            <artifactId>hsqldb</artifactId>
-            <version>${hsqldb.version}</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
@@ -178,48 +185,6 @@
                             <bundleFileName>testsuite.war</bundleFileName>
                             <contextRoot>/testsuite</contextRoot>
                         </webModule>
-
-
-                        <jarModule>
-                            <groupId>javax.portlet</groupId>
-                            <artifactId>portlet-api</artifactId>
-                            <bundleDir>shared</bundleDir>
-                        </jarModule>
-                        <jarModule>
-                            <groupId>org.apache.pluto</groupId>
-                            <artifactId>pluto-container</artifactId>
-                            <bundleDir>shared</bundleDir>
-                        </jarModule>
-                        <jarModule>
-                            <groupId>org.apache.pluto</groupId>
-                            <artifactId>pluto-descriptor-api</artifactId>
-                            <bundleDir>shared</bundleDir>
-                        </jarModule>
-                        <jarModule>
-                            <groupId>org.apache.pluto</groupId>
-                            <artifactId>pluto-descriptor-impl</artifactId>
-                            <bundleDir>shared</bundleDir>
-                        </jarModule>
-                        <jarModule>
-                            <groupId>org.apache.pluto</groupId>
-                            <artifactId>pluto-taglib</artifactId>
-                            <bundleDir>shared</bundleDir>
-                        </jarModule>
-                        <jarModule>
-                            <groupId>javax.servlet</groupId>
-                            <artifactId>jstl</artifactId>
-                            <bundleDir>shared</bundleDir>
-                        </jarModule>
-                        <jarModule>
-                            <groupId>taglibs</groupId>
-                            <artifactId>standard</artifactId>
-                            <bundleDir>shared</bundleDir>
-                        </jarModule>
-                        <jarModule>
-                            <groupId>hsqldb</groupId>
-                            <artifactId>hsqldb</artifactId>
-                            <bundleDir>common</bundleDir>
-                        </jarModule>
                     </modules>
                 </configuration>
             </plugin>
@@ -257,6 +222,7 @@
                     </dependency>
                 </dependencies>
             </plugin>
+            <!-- 
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <executions>
@@ -277,6 +243,7 @@
                     </execution>
                 </executions>
             </plugin>
+             -->
         </plugins>
     </build>
 </project>
