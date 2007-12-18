@@ -9,6 +9,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
@@ -27,6 +29,8 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
  */
 @Deprecated
 public class PortalApplicationContextLocator implements ServletContextListener {
+    private static Log LOGGER = LogFactory.getLog(PortalApplicationContextLocator.class);
+    
     private static ApplicationContext applicationContext;
     private static ServletContext servletContext;
 
@@ -84,16 +88,21 @@ public class PortalApplicationContextLocator implements ServletContextListener {
      */
     public static ApplicationContext getApplicationContext() {
         if (isRunningInWebApplication()) {
+            LOGGER.debug("Using pre-instantiated WebApplicationContext");
             return getWebApplicationContext();
         }
         
         synchronized (PortalApplicationContextLocator.class) {
             if (applicationContext == null) {
-                System.err.println("***** ***** CREATING NEW APPLICATION CONTEXT ***** *****");
-                applicationContext = new ClassPathXmlApplicationContext("/properties/contexts/*.xml"); 
+                LOGGER.info("Creating new ClassPathXmlApplicationContext for the portal");
+                
+                final long startTime = System.currentTimeMillis();
+                applicationContext = new ClassPathXmlApplicationContext("/properties/contexts/*.xml");
+                LOGGER.info("Created new ClassPathXmlApplicationContext for the portal in " + (System.currentTimeMillis() - startTime) + "ms");
             }
         }
         
+        LOGGER.debug("Using pre-instantiated ApplicationContext");
         return applicationContext;
     }
 }

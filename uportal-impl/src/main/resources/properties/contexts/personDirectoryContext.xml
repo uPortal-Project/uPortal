@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
->
+    default-lazy-init="true">
+    
 	<!-- 
 		Prior to uPortal 2.5, PersonDirectory was a monolithic static service which had a lot of responsibilities.
 		It would parse PersonDirs.xml coniguration file.  It would instantiate sources of attributes, 
@@ -91,13 +92,7 @@
 	<!-- JDBC Person Attribute Source, using the default portal DataSource via RDBMServices -->
 	<bean id="uPortalJdbcAttributeSource" class="org.jasig.services.persondir.support.jdbc.SingleRowJdbcPersonAttributeDao">
 		<constructor-arg>
-			<!-- here we're saying, Spring, please call RDBMServices.getDataSource() and inject the returned DataSource as the first constructor argument
-			 to our JdbcPersonAttributeDaoImpl instance. -->
-			<bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-				<property name="staticMethod">
-					<value>org.jasig.portal.RDBMServices.getDataSource</value>
-				</property>
-			</bean>
+            <ref bean="PortalDb"/>
 		</constructor-arg> 
 		<constructor-arg>
 			<list>

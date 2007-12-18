@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
->
+    default-lazy-init="false">
+    
     <bean id="initializingCheckRunning" class="org.jasig.portal.tools.checks.InitializingCheckRunner">
         <property name="checkRunner" ref="checkRunner" />
     </bean>
@@ -34,7 +35,7 @@
                     </constructor-arg>
                     <!-- We are checking that that bean is an instanceof this class. -->
                     <constructor-arg index="1" type="java.lang.String">
-                        <value>org.jasig.portal.services.persondir.IPersonAttributeDao</value>
+                        <value>org.jasig.services.persondir.IPersonAttributeDao</value>
                     </constructor-arg>
                 </bean>
 

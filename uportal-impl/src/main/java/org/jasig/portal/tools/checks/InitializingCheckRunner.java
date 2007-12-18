@@ -55,6 +55,9 @@ public class InitializingCheckRunner implements InitializingBean, ServletContext
         if (this.servletContext != null) {
             this.servletContext.setAttribute(INIT_CHECK_RESULTS, results);
         }
+        else {
+            this.logger.warn("No ServletContext is available, the results will not be acessible");
+        }
         
         this.logResults(results);
     }
