@@ -5,8 +5,6 @@
 
 package  org.jasig.portal;
 
-import java.io.IOException;
-import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -15,6 +13,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSessionBindingEvent;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.jndi.JNDIManager;
 import org.jasig.portal.layout.IUserLayoutManager;
@@ -23,8 +23,6 @@ import org.jasig.portal.layout.UserLayoutStoreFactory;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.PropsMatcher;
 
 /**
@@ -81,7 +79,7 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
         ts_descripts=new Hashtable();
         ss_descripts=new Hashtable();
         m_person = person;
-        ulsdb = UserLayoutStoreFactory.getUserLayoutStoreImpl();
+        userLayoutStore = UserLayoutStoreFactory.getUserLayoutStoreImpl();
     }
 
 
@@ -112,9 +110,9 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
             // see if the profile was cached
             if((upl=(UserProfile)cached_profiles.get(userAgent))==null) {
                 synchronized(cached_profiles) {
-                    upl= ulsdb.getUserProfile(m_person, userAgent);
+                    upl= userLayoutStore.getUserProfile(m_person, userAgent);
                     if (upl == null) {
-                        upl = ulsdb.getSystemProfile(userAgent);
+                        upl = userLayoutStore.getSystemProfile(userAgent);
                     }
                     if(upl!=null) {
                         cached_profiles.put(userAgent,upl);
@@ -125,31 +123,20 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
             if(upl==null) {
                 // try guessing the profile through pattern matching
 
-                if(uaMatcher==null) {
-                    // init user agent matcher
-                    URL url = null;
-                    try {
-                        url = this.getClass().getResource("/properties/browser.mappings");
-                        if (url != null) {
-                            uaMatcher = new PropsMatcher(url.openStream());
-                        }
-                    } catch (IOException ioe) {
-                        log.error( "GuestUserPreferencesManager::GuestUserPreferencesManager() : Exception occurred while loading browser mapping file: " + url + ". " + ioe);
-                    }
-                }
+                final PropsMatcher userAgentMatcher = getUserAgentMatcher();
 
-                if(uaMatcher!=null) {
+                if(userAgentMatcher!=null) {
                     // try matching
-                    String profileId=uaMatcher.match(userAgent);
+                    String profileId=userAgentMatcher.match(userAgent);
                     if(profileId!=null) {
                         // user agent has been matched
                         if (log.isDebugEnabled())
                             log.debug("GuestUserPreferencesManager::GuestUserPreferencesManager() : " +
                                     "userAgent \"" + userAgent + "\" has matched to a profile " + profileId);
-                        upl=ulsdb.getSystemProfileById(Integer.parseInt(profileId));
+                        upl=userLayoutStore.getSystemProfileById(Integer.parseInt(profileId));
                         // save mapping
                         if(SAVE_PROFILE_GUESSES) {
-                            ulsdb.setSystemBrowserMapping(userAgent,upl.getProfileId());
+                            userLayoutStore.setSystemBrowserMapping(userAgent,upl.getProfileId());
                         }
                     } else {
                         if (log.isDebugEnabled())
@@ -210,7 +197,7 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
                 }
                 if(cleanUP==null) {
                     try {
-                        cleanUP=ulsdb.getUserPreferences(m_person, upl);
+                        cleanUP=userLayoutStore.getUserPreferences(m_person, upl);
                         if(cleanUP!=null) {
                             if(upl.isSystemProfile()) {
                                 sp_cleanUPs.put(new Integer(upl.getProfileId()),cleanUP);
@@ -435,7 +422,7 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
             int sid=state.complete_up.getProfile().getThemeStylesheetId();
             state.tsd=(ThemeStylesheetDescription)ts_descripts.get(new Integer(sid));
             if(state.tsd==null) {
-                state.tsd = ulsdb.getThemeStylesheetDescription(sid);
+                state.tsd = userLayoutStore.getThemeStylesheetDescription(sid);
                 ts_descripts.put(new Integer(sid),state.tsd);
             }
         }
@@ -455,7 +442,7 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
             int sid=state.complete_up.getProfile().getStructureStylesheetId();
             state.ssd=(StructureStylesheetDescription)ss_descripts.get(new Integer(sid));
             if(state.ssd==null) {
-                state.ssd = ulsdb.getStructureStylesheetDescription(sid);
+                state.ssd = userLayoutStore.getStructureStylesheetDescription(sid);
                 ss_descripts.put(new Integer(sid),state.ssd);
             }
         }

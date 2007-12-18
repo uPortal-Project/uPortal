@@ -222,15 +222,13 @@ public void destroy()	 {
                 }
             }
             
-            //TODO add parameter processing here
             final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
             final IRequestParameterProcessorController requestProcessorController = (IRequestParameterProcessorController)applicationContext.getBean("requestParameterProcessorController", IRequestParameterProcessorController.class);
             requestProcessorController.processParameters(writableRequest, res);
             /*
              * upfile (will do later)
-             * portlet param 
-             * file upload/channel param 
-             * layout param 
+             * layout param
+             * execute portlet action and return early? 
              */
             
             
