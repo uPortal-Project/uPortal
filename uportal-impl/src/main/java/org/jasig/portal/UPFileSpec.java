@@ -27,6 +27,11 @@ import javax.servlet.http.HttpServletRequest;
  * @version $Revision$
  */
 public class UPFileSpec {
+    /**
+     * Used to designate user layout root node in .uP files
+     */
+    public static final String USER_LAYOUT_ROOT_NODE = "userLayoutRootNode";
+    
     // some URL construction elements
     public static final String TAG_URL_ELEMENT="tag";
     public static final String TARGET_URL_ELEMENT="target";

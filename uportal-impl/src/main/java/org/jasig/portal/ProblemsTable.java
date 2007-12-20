@@ -5,9 +5,11 @@
 
 package org.jasig.portal;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 
 import org.jasig.portal.properties.PropertiesManager;
@@ -25,17 +27,17 @@ public class ProblemsTable {
      *  to CountID objects.  The CountID objects cache the PortalExceptions
      *  that were in the Specific.
      */
-	public static TreeMap registeredIds = new TreeMap();
+	public static Map<String, Map<String, CountID>> registeredIds = new TreeMap<String, Map<String, CountID>>();
     
     /**
      * List of recently modified CountID instances.
      */
-	public static LinkedList recentIds = new LinkedList();
+	public static LinkedList<CountID> recentIds = new LinkedList<CountID>();
     
     /**
      * List of recently reported PortalExceptions, regardless of category.
      */
-    private static LinkedList recentPortalExceptions = new LinkedList();
+    private static LinkedList<PortalException> recentPortalExceptions = new LinkedList<PortalException>();
     
     /**
      * The name of the PropertiesManager property the value of which should be the 
@@ -82,9 +84,9 @@ public class ProblemsTable {
 			return;
 		String category = id.getCategory();
 		String specific = id.getSpecific();
-		TreeMap minor = (TreeMap) registeredIds.get(category);
+		Map<String, CountID> minor = registeredIds.get(category);
 		if (minor == null) {
-			minor = new TreeMap();
+			minor = new TreeMap<String, CountID>();
 			registeredIds.put(category, minor);
 		}
 		if (!minor.containsKey(specific)) {
@@ -107,10 +109,10 @@ public class ProblemsTable {
 			return; // no ErrorID (Msg only PortalException)
 		String category = id.getCategory();
 		String specific = id.getSpecific();
-		TreeMap minor = (TreeMap) registeredIds.get(category);
+		Map<String, CountID> minor = registeredIds.get(category);
 		if (minor == null)
 			return; // ErrorID not registered
-		CountID countid = (CountID) minor.get(specific);
+		CountID countid = minor.get(specific);
 		if (countid == null)
 			return; // ErrorID not registered
 
@@ -132,8 +134,8 @@ public class ProblemsTable {
      * Get an unmodifiable shallow copy of the list of recent PortalExceptions.
      * @return an unmodifiable shallow copy of the list of recent PortalExceptions.
      */
-    public synchronized static List getRecentPortalExceptions(){
-        return Collections.unmodifiableList((List) ProblemsTable.recentPortalExceptions.clone());
+    public synchronized static List<PortalException> getRecentPortalExceptions(){
+        return Collections.unmodifiableList(new ArrayList<PortalException>(ProblemsTable.recentPortalExceptions));
     }
 
 }

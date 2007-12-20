@@ -7,6 +7,7 @@ package org.jasig.portal;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 import java.util.Vector;
 
 import org.jasig.portal.serialize.CachingSerializer;
@@ -14,7 +15,6 @@ import org.jasig.portal.utils.SAX2FilterImpl;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
-import org.xml.sax.helpers.AttributesImpl;
 
 
 /**
@@ -64,8 +64,8 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
     private boolean ccaching;
     private CachingSerializer ser;
 
-    Vector systemCCacheBlocks;
-    Vector channelIdBlocks;
+    private List<String> systemCCacheBlocks;
+    private List<String> channelIdBlocks;
 
     // constructors
 
@@ -86,8 +86,8 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
         this.ccaching=(this.ccaching && ccaching);
         if(this.ccaching) {
             log.debug("CharacterCachingChannelIncorporationFilter() : ccaching=true");
-            systemCCacheBlocks=new Vector();
-            channelIdBlocks=new Vector();
+            systemCCacheBlocks=new Vector<String>();
+            channelIdBlocks=new Vector<String>();
         } else {
             log.debug("CharacterCachingChannelIncorporationFilter() : ccaching=false");
         }
@@ -99,12 +99,11 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
      *
      * @return a <code>Vector</code> of system character blocks in between which channel renderings should be inserted.
      */
-    public Vector getSystemCCacheBlocks() {
+    public List<String> getSystemCCacheBlocks() {
         if(ccaching) {
             return systemCCacheBlocks;
-        } else {
-            return null;
         }
+        return null;
     }
 
     /**
@@ -113,14 +112,14 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
      * @return a <code>Vector</code> of cache entry blocks corresponding to channel 
      * subscribe Id(s) in an order in which they appear in the overall document.
      */
-    public Vector getChannelIdBlocks() {
+    public List<String> getChannelIdBlocks() {
         if(ccaching) {
             return channelIdBlocks;
-        } else {
-            return null;
         }
+        return null;
     }
 
+    @Override
     public void startDocument () throws SAXException {
         if(ccaching) {
             // start caching
@@ -137,6 +136,7 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
         super.startDocument();
     }
 
+    @Override
     public void endDocument () throws SAXException {
         super.endDocument();
         if(ccaching) {
@@ -164,8 +164,8 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
         }
     }
 
-    public void startElement(String uri, String localName, String qName,
-			Attributes atts) throws SAXException {
+    @Override
+    public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
 
 		if (log.isTraceEnabled()) {
 			log
@@ -259,6 +259,7 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
 		}
 	}
 
+    @Override
     public void endElement (String uri, String localName, String qName) throws SAXException  {
     	
     	if (log.isTraceEnabled()) {
@@ -326,14 +327,9 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
 							this.channelTitle = dynamicChannelTitle;
 						}
 						
-						AttributesImpl noAttributes = new AttributesImpl();
-						
-						//contentHandler.startElement("", "", "span", noAttributes);
-						
 						char[] channelTitleArray = this.channelTitle.toCharArray();
 						
 						contentHandler.characters(channelTitleArray, 0, channelTitleArray.length);
-						//contentHandler.endElement("", "", "span");
 
 					} else {
             			// contentHandler was null. This is a serious problem,
@@ -354,6 +350,7 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
         }
     }
     
+    @Override
     public String toString() {
     	StringBuffer sb = new StringBuffer();
     	sb.append(getClass());

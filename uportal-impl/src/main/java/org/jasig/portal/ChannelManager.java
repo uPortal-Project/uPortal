@@ -55,6 +55,7 @@ import org.jasig.portal.url.support.IChannelRequestParameterManager;
 import org.jasig.portal.utils.SAX2BufferImpl;
 import org.jasig.portal.utils.SetCheckInSemaphore;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.web.context.WebApplicationContext;
 import org.xml.sax.ContentHandler;
 
@@ -803,14 +804,16 @@ public class ChannelManager implements LayoutEventListener {
      * @param req the <code>HttpServletRequest</code>
      */
     private void processRequestChannelParameters(HttpServletRequest req) {
-        //TODO this all needs a review for actual functionality when I get this far
-
         final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
-        final IChannelRequestParameterManager channelParameterManager = (IChannelRequestParameterManager)applicationContext.getBean("channelParameterManager", IChannelRequestParameterManager.class);
+        final IChannelRequestParameterManager channelParameterManager = (IChannelRequestParameterManager)applicationContext.getBean("channelRequestParameterManager", IChannelRequestParameterManager.class);
         
         final Set<String> targetedChannelIds = channelParameterManager.getTargetedChannelIds(req);
+        //TODO deal with multiply targeted channels if feature is interesting
         if (targetedChannelIds.size() > 0) {
             this.channelTarget = targetedChannelIds.iterator().next();
+        }
+        else {
+            this.channelTarget = null;
         }
 
         if(channelTarget!=null) {
@@ -823,12 +826,17 @@ public class ChannelManager implements LayoutEventListener {
             }
 
             // Tell StatsRecorder that a user has interacted with the channel
-            EventPublisherLocator.getApplicationEventPublisher().publishEvent(new ChannelTargetedInLayoutPortalEvent(this, upm.getPerson(), upm.getCurrentProfile(), channelDesc));
+            final ApplicationEventPublisher applicationEventPublisher = EventPublisherLocator.getApplicationEventPublisher();
+            applicationEventPublisher.publishEvent(new ChannelTargetedInLayoutPortalEvent(this, upm.getPerson(), upm.getCurrentProfile(), channelDesc));
 
             
             final Map<String, Object[]> channelParameters = channelParameterManager.getChannelParameters(req, channelTarget);
-            targetParams.clear(); //TODO needed?
-            targetParams.putAll(channelParameters);
+            if (channelParameters != null) {
+                targetParams = new HashMap<String, Object>(channelParameters);
+            }
+            else {
+                targetParams = null;
+            }
             
             if(channelParameters!= null && channelParameters.size() > 0) {
                 // only do grouped rendering if there are some parameters passed
@@ -848,10 +856,9 @@ public class ChannelManager implements LayoutEventListener {
 						// to the guest page. Changed to WARN because there might be a need to note this
 						// to diagnose problems with the guest layout.
 
-						log.warn("ChannelManager::processRequestChannelParameters() : unable to pass find/create an instance of a channel. Bogus Id ? ! (id=\""+channelTarget+"\").");
+						log.warn("unable to pass find/create an instance of a channel. Bogus Id ? ! (id=\""+channelTarget+"\").");
 					}else{
-						log.error("ChannelManager::processRequestChannelParameters() : unable to pass find/create an instance of a channel. Bogus Id ? ! (id=\""
-								+channelTarget+"\" uid=\""+upm.getPerson().getID()+"\").",e);
+						log.error("unable to pass find/create an instance of a channel. Bogus Id ? ! (id=\""+channelTarget+"\" uid=\""+upm.getPerson().getID()+"\").",e);
 					}
                     chObj=replaceWithErrorChannel(channelTarget,ErrorCode.SET_STATIC_DATA_EXCEPTION,e,null,false);
                 }

@@ -36,7 +36,7 @@ public class ChannelRequestParameterManagerTest extends TestCase {
         }
         
         final Set<String> targetedChannelIds = parameterManager.getTargetedChannelIds(request);
-        assertNull("targetedChannelIds should be null", targetedChannelIds);
+        assertEquals(Collections.emptySet(), targetedChannelIds);
         
         final Map<String, Object[]> channelParameters = parameterManager.getChannelParameters(request, "id");
         assertNull("channelParameters should be null", channelParameters);

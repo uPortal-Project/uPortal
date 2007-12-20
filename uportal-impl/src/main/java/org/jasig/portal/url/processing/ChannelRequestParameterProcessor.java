@@ -26,12 +26,12 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.Constants;
 import org.jasig.portal.Errors;
 import org.jasig.portal.ExceptionHelper;
+import org.jasig.portal.IUserInstance;
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.MultipartDataSource;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.UPFileSpec;
 import org.jasig.portal.UploadStatus;
-import org.jasig.portal.UserInstance;
 import org.jasig.portal.UserInstanceManager;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.portlet.url.IPortletRequestParameterManager;
@@ -116,6 +116,7 @@ public class ChannelRequestParameterProcessor extends CommonsFileUploadSupport i
         //If no channel is targeted mark the request as such in the manager and return
         if (targetChannelId == null) {
             this.channelRequestParameterManager.setNoChannelParameters(request);
+            return true;
         }
 
         //Map to track channel parameters in
@@ -187,10 +188,7 @@ public class ChannelRequestParameterProcessor extends CommonsFileUploadSupport i
     protected String getTargetChannelId(IWritableHttpServletRequest request) {
         String targetChannelId = null;
         
-        //TODO this is not very nice, eventually a session scoped injected bean would be the way to go here
-        //TODO UserInstance may not be initialized yet, need to review it's init code (move to constructor?)
-        //All I really need here is the IUserLayoutManager
-        final UserInstance userInstance = UserInstanceManager.getUserInstance(request);
+        final IUserInstance userInstance = UserInstanceManager.getUserInstance(request);
         final IUserPreferencesManager userPreferencesManager = userInstance.getPreferencesManager();
         final IUserLayoutManager userLayoutManger = userPreferencesManager.getUserLayoutManager();
 

@@ -11,6 +11,7 @@ import java.util.Hashtable;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionBindingEvent;
 
 import org.apache.commons.logging.Log;
@@ -47,17 +48,17 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
         }
     }
 
-    Map stateTable;
+    Map<String, MState> stateTable;
 
     // tables keeping user layouts and clean user preferences for various profiles
-    Hashtable sp_layouts;
-    Hashtable up_layouts;
+    Hashtable<Integer, IUserLayoutManager> sp_layouts;
+    Hashtable<Integer, IUserLayoutManager> up_layouts;
 
-    Hashtable sp_cleanUPs;
-    Hashtable up_cleanUPs;
-    Hashtable ts_descripts;
-    Hashtable ss_descripts;
-    Hashtable cached_profiles;
+    Hashtable<Integer, UserPreferences> sp_cleanUPs;
+    Hashtable<Integer, UserPreferences> up_cleanUPs;
+    Hashtable<Integer, ThemeStylesheetDescription> ts_descripts;
+    Hashtable<Integer, StructureStylesheetDescription> ss_descripts;
+    Hashtable<String, UserProfile> cached_profiles;
 
     IPerson m_person;
     LocaleManager localeManager;
@@ -70,14 +71,14 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
      */
     public GuestUserPreferencesManager (IPerson person) {
         super(person);
-        stateTable=Collections.synchronizedMap(new HashMap());
-        up_cleanUPs=new Hashtable();
-        sp_cleanUPs=new Hashtable();
-        sp_layouts=new Hashtable();
-        up_layouts=new Hashtable();
-        cached_profiles=new Hashtable();
-        ts_descripts=new Hashtable();
-        ss_descripts=new Hashtable();
+        stateTable=Collections.synchronizedMap(new HashMap<String, MState>());
+        up_cleanUPs=new Hashtable<Integer, UserPreferences>();
+        sp_cleanUPs=new Hashtable<Integer, UserPreferences>();
+        sp_layouts=new Hashtable<Integer, IUserLayoutManager>();
+        up_layouts=new Hashtable<Integer, IUserLayoutManager>();
+        cached_profiles=new Hashtable<String, UserProfile>();
+        ts_descripts=new Hashtable<Integer, ThemeStylesheetDescription>();
+        ss_descripts=new Hashtable<Integer, StructureStylesheetDescription>();
         m_person = person;
         userLayoutStore = UserLayoutStoreFactory.getUserLayoutStoreImpl();
     }
@@ -86,6 +87,7 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
     /**
      * Unbinds a registered session.
      * @param sessionId a <code>String</code> value
+     * @deprecated use {@link #finishedSession(HttpSessionBindingEvent)} instead.
      */
     public void unbindSession(String sessionId) {
         stateTable.remove(sessionId);
@@ -108,7 +110,7 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
             }
             UserProfile upl;
             // see if the profile was cached
-            if((upl=(UserProfile)cached_profiles.get(userAgent))==null) {
+            if((upl=cached_profiles.get(userAgent))==null) {
                 synchronized(cached_profiles) {
                     upl= userLayoutStore.getUserProfile(m_person, userAgent);
                     if (upl == null) {
@@ -149,9 +151,9 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
             if (upl != null) {
                 // see if the user layout xml has been cached
                 if(upl.isSystemProfile()) {
-                    newState.ulm=(IUserLayoutManager)sp_layouts.get(new Integer(upl.getProfileId()));
+                    newState.ulm=sp_layouts.get(new Integer(upl.getProfileId()));
                 } else {
-                    newState.ulm=(IUserLayoutManager)up_layouts.get(new Integer(upl.getProfileId()));
+                    newState.ulm=up_layouts.get(new Integer(upl.getProfileId()));
                 }
                 if(newState.ulm==null) {
                     try {
@@ -191,9 +193,9 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
                 // see if the user preferences for this profile are cached
                 UserPreferences cleanUP;
                 if(upl.isSystemProfile()) {
-                    cleanUP=(UserPreferences)sp_cleanUPs.get(new Integer(upl.getProfileId()));
+                    cleanUP=sp_cleanUPs.get(new Integer(upl.getProfileId()));
                 } else {
-                    cleanUP=(UserPreferences)up_cleanUPs.get(new Integer(upl.getProfileId()));
+                    cleanUP=up_cleanUPs.get(new Integer(upl.getProfileId()));
                 }
                 if(cleanUP==null) {
                     try {
@@ -246,7 +248,7 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
      * It also processes layout root requests (uP_root)
      */
     public void processUserPreferencesParameters(HttpServletRequest req) {
-        MState state=(MState)stateTable.get(req.getSession(false).getId());
+        MState state=stateTable.get(req.getSession(false).getId());
         if(state==null) {
         	throw new IllegalStateException("Trying to envoke a method on a non-registered sessionId=\""+req.getSession(false).getId()+"\".");
         }
@@ -357,7 +359,7 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
     }
 
     public boolean isUserAgentUnmapped (String sessionId) {
-        MState state=(MState)stateTable.get(sessionId);
+        MState state=stateTable.get(sessionId);
         if(state==null) {
         	throw new IllegalStateException("Trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
         }
@@ -369,7 +371,7 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
     }
 
     public UserPreferences getUserPreferences (String sessionId) {
-        MState state=(MState)stateTable.get(sessionId);
+        MState state=stateTable.get(sessionId);
         if(state==null) {
         	throw new IllegalStateException("Trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
         }
@@ -414,13 +416,13 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
     }
 
     public ThemeStylesheetDescription getThemeStylesheetDescription (String sessionId) throws Exception {
-        MState state=(MState)stateTable.get(sessionId);
+        MState state=stateTable.get(sessionId);
         if(state==null) {
         	throw new IllegalStateException("Trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
         }
         if (state.tsd == null) {
             int sid=state.complete_up.getProfile().getThemeStylesheetId();
-            state.tsd=(ThemeStylesheetDescription)ts_descripts.get(new Integer(sid));
+            state.tsd=ts_descripts.get(new Integer(sid));
             if(state.tsd==null) {
                 state.tsd = userLayoutStore.getThemeStylesheetDescription(sid);
                 ts_descripts.put(new Integer(sid),state.tsd);
@@ -434,13 +436,13 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
     }
 
     public StructureStylesheetDescription getStructureStylesheetDescription (String sessionId) throws Exception{
-        MState state=(MState)stateTable.get(sessionId);
+        MState state=stateTable.get(sessionId);
         if(state==null) {
         	throw new IllegalStateException("Trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
         }
         if (state.ssd == null) {
             int sid=state.complete_up.getProfile().getStructureStylesheetId();
-            state.ssd=(StructureStylesheetDescription)ss_descripts.get(new Integer(sid));
+            state.ssd=ss_descripts.get(new Integer(sid));
             if(state.ssd==null) {
                 state.ssd = userLayoutStore.getStructureStylesheetDescription(sid);
                 ss_descripts.put(new Integer(sid),state.ssd);
@@ -454,7 +456,7 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
     }
 
     public IUserLayoutManager getUserLayoutManager(String sessionId) {
-        MState state=(MState)stateTable.get(sessionId);
+        MState state=stateTable.get(sessionId);
         if(state==null) {
         	throw new IllegalStateException("Trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
         }
@@ -470,8 +472,11 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
         stateTable.remove(sessionId);
     }
 
+    @Override
     public void finishedSession(HttpSessionBindingEvent bindingEvent) {
-        throw new UnsupportedOperationException();
+        final HttpSession session = bindingEvent.getSession();
+        final String sessionId = session.getId();
+        this.finishedSession(bindingEvent, sessionId);
     }
 
     public void setLocaleManager(LocaleManager lm) {

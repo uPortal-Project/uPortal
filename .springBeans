@@ -16,6 +16,7 @@
 		<config>uportal-impl/src/main/resources/properties/contexts/statsContext.xml</config>
 		<config>uportal-impl/src/main/resources/properties/contexts/datasourceContext.xml</config>
 		<config>uportal-impl/src/main/resources/properties/contexts/persistenceContext.xml</config>
+		<config>uportal-impl/src/main/resources/properties/contexts/renderingPipelineContext.xml</config>
 	</configs>
 	<configSets>
 		<configSet>
@@ -35,6 +36,7 @@
 				<config>uportal-impl/src/main/resources/properties/contexts/statsContext.xml</config>
 				<config>uportal-impl/src/main/resources/properties/contexts/datasourceContext.xml</config>
 				<config>uportal-impl/src/main/resources/properties/contexts/persistenceContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/renderingPipelineContext.xml</config>
 			</configs>
 		</configSet>
 	</configSets>

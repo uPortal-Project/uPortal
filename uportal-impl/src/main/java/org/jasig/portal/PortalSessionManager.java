@@ -25,6 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.jndi.JNDIManager;
 import org.jasig.portal.properties.PropertiesManager;
+import org.jasig.portal.rendering.IPortalRenderingPipeline;
 import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
@@ -158,11 +159,12 @@ public void init() throws ServletException {
   }
 
 
-  @Override
-public void destroy()	 {
-      // Log orderly shutdown time
-	  log.info( "uPortal stopped");
-  }
+    @Override
+    public void destroy() {
+        // Log orderly shutdown time
+        log.info("uPortal stopped");
+    }
+    
     /**
      * Process HTTP POST request
      *
@@ -183,12 +185,19 @@ public void destroy()	 {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse res) {
         final IWritableHttpServletRequest writableRequest = new WritableHttpServletRequestImpl(request);
-        
+        this.doGetInternal(writableRequest, res);
+    }
+    
+    /**
+     * Internal method just to clarify that the writableRequest should be used from here on out.
+     */
+    protected void doGetInternal(IWritableHttpServletRequest writableRequest, HttpServletResponse res) {
         // Send the uPortal version in a header
         final VersionsManager versionManager = VersionsManager.getInstance();
         final Version version = versionManager.getVersion(IPermission.PORTAL_FRAMEWORK);
         res.setHeader("uPortal-version", "uPortal_rel-" + version.getMajor() + "-" + version.getMinor() + "-" + version.getMicro());
 
+        //Check if the servlet failed to initialize
         if (fatalError) {
             try {
                 res.sendRedirect("error/fatal.htm");
@@ -205,24 +214,37 @@ public void destroy()	 {
             log.error("Unable to set UTF-8 character encoding!", uee);
         }
 
-        HttpSession session = writableRequest.getSession(false);
-
-        if (session != null) {
-            // Update the session timeout for an unauthenticated user.
-            IPerson person = personManager.getPerson(writableRequest);
-            if (person != null &&
-                !person.getSecurityContext().isAuthenticated()) {
-
-                if (unauthenticatedUserSessionTimeout != 0) {
-                    session.setMaxInactiveInterval(
-                        unauthenticatedUserSessionTimeout);
-                    if (log.isDebugEnabled()) {
-                        log.debug("UniconPortalSessionManager::doGet : Unauthenticated user session timeout set to: " + unauthenticatedUserSessionTimeout);
-                    }
-                }
+        //Get the user's session
+        final HttpSession session = writableRequest.getSession(false);
+        if (session == null) {
+            try {
+                //Session is null, redirect to Login servlet
+                res.sendRedirect(writableRequest.getContextPath() + "/Login");
+            }
+            catch (Exception e) {
+                ExceptionHelper.genericTopHandler(Errors.bug, e);
+                ExceptionHelper.generateErrorPage(res, e);
             }
             
+            return;
+        }
+
+        // Update the session timeout for an unauthenticated user.
+        final IPerson person = personManager.getPerson(writableRequest);
+        if (person != null && !person.getSecurityContext().isAuthenticated()) {
+
+            if (unauthenticatedUserSessionTimeout != 0) {
+                session.setMaxInactiveInterval(unauthenticatedUserSessionTimeout);
+                
+                if (log.isDebugEnabled()) {
+                    log.debug("Unauthenticated user session timeout set to: " + unauthenticatedUserSessionTimeout);
+                }
+            }
+        }
+        
+        try {
             final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
+            
             final IRequestParameterProcessorController requestProcessorController = (IRequestParameterProcessorController)applicationContext.getBean("requestParameterProcessorController", IRequestParameterProcessorController.class);
             requestProcessorController.processParameters(writableRequest, res);
             /*
@@ -230,40 +252,19 @@ public void destroy()	 {
              * layout param
              * execute portlet action and return early? 
              */
+
+            // Retrieve the user's UserInstance object
+            final IUserInstance userInstance = UserInstanceManager.getUserInstance(writableRequest);
             
-            
-
-            try {
-                UserInstance userInstance = null;
-                try {
-                    // Retrieve the user's UserInstance object
-                    userInstance = UserInstanceManager.getUserInstance(writableRequest);
-                } catch(Exception e) {
-                  ExceptionHelper.genericTopHandler(Errors.bug,e);
-                  ExceptionHelper.generateErrorPage(res,e);
-                  return;
-                }
-
-                // fire away
-                userInstance.writeContent(writableRequest, res);
-            }
-            catch (Exception e) {
-                ExceptionHelper.genericTopHandler(Errors.bug, e);
-                ExceptionHelper.generateErrorPage(res, e);
-                return;
-            }
-
-        } else {
-           try {
-             //throw new ServletException("Session object is null !");
-           res.sendRedirect(writableRequest.getContextPath() + "/Login" );
-           } catch (Exception e) {
-            ExceptionHelper.genericTopHandler(Errors.bug,e);
-        ExceptionHelper.generateErrorPage(res,e);
-            return;
-             }
+            // fire away
+            final IPortalRenderingPipeline portalRenderingPipeline = (IPortalRenderingPipeline)applicationContext.getBean("portalRenderingPipeline", IPortalRenderingPipeline.class);
+            portalRenderingPipeline.renderState(writableRequest, res, userInstance);
         }
-
+        catch (Exception e) {
+            ExceptionHelper.genericTopHandler(Errors.bug, e);
+            ExceptionHelper.generateErrorPage(res, e);
+            return;
+        }
     }
 
   /**

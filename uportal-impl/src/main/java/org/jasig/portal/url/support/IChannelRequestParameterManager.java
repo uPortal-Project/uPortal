@@ -10,8 +10,6 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.jasig.portal.url.processing.RequestParameterProcessingIncompleteException;
-
 /**
  * Manages request parameters for channels for the duration of a HttpServletRequest.
  * 

@@ -16,12 +16,11 @@ import java.util.Enumeration;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.PortalSessionManager;
 import org.jasig.portal.UPFileSpec;
-import org.jasig.portal.UserInstance;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * The URLUtil class offers static helper methods for manipulating the
@@ -166,7 +165,7 @@ public class URLUtil
                 UPFileSpec.RENDER_METHOD, targetNodeId, null, extras);
         } else {
             up = new UPFileSpec(PortalSessionManager.IDEMPOTENT_URL_TAG,
-                UPFileSpec.RENDER_METHOD, UserInstance.USER_LAYOUT_ROOT_NODE,
+                UPFileSpec.RENDER_METHOD, UPFileSpec.USER_LAYOUT_ROOT_NODE,
                 targetNodeId, extras);
         }
     

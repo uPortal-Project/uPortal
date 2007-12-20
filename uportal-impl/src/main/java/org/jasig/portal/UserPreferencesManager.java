@@ -38,9 +38,6 @@ import org.jasig.portal.utils.PropsMatcher;
  * @version $Revision$
  */
 public class UserPreferencesManager implements IUserPreferencesManager {
-    /**
-     * 
-     */
     private static final String BROWSER_MAPPINGS_PROPERTIES = "/properties/browser.mappings";
 
     private static final String USER_PREFERENCES_KEY = UserPreferencesManager.class.getName();

@@ -16,13 +16,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.events.EventPublisherLocator;
 import org.jasig.portal.events.support.UserLoggedOutPortalEvent;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.PersonManagerFactory;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.ResourceLoader;
 
 /**
@@ -48,11 +48,11 @@ public class LogoutServlet extends HttpServlet {
    public void init () throws ServletException {
       if (!INITIALIZED) {
          String upFile = UPFileSpec.RENDER_URL_ELEMENT + UPFileSpec.PORTAL_URL_SEPARATOR
-               + UserInstance.USER_LAYOUT_ROOT_NODE + UPFileSpec.PORTAL_URL_SEPARATOR
+               + UPFileSpec.USER_LAYOUT_ROOT_NODE + UPFileSpec.PORTAL_URL_SEPARATOR
                + UPFileSpec.PORTAL_URL_SUFFIX;
          HashMap rdHash = new HashMap(1);
          try {
-            upFile = UPFileSpec.buildUPFile(null, UPFileSpec.RENDER_METHOD, UserInstance.USER_LAYOUT_ROOT_NODE,
+            upFile = UPFileSpec.buildUPFile(null, UPFileSpec.RENDER_METHOD, UPFileSpec.USER_LAYOUT_ROOT_NODE,
                   null, null);
             // We retrieve the redirect strings for each context
             // from the security properties file.

@@ -50,7 +50,7 @@ public class ChannelRequestParameterManager implements IChannelRequestParameterM
         final Map<String, Map<String, Object[]>> channelParamMaps = this.getAndCheckChannelParameterMaps(request);
 
         if (channelParamMaps == null) {
-            return null;
+            return Collections.emptySet();
         }
 
         return channelParamMaps.keySet();
