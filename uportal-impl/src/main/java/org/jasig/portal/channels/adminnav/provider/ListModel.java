@@ -77,7 +77,7 @@ public class ListModel extends BaseChannel implements INavigationModel
     private static final String CONFIG_FILE = "/properties/adminNav.xml";
     
     // resource bundle base for config file labels
-    private static final String BUNDLE_BASE = "/properties/adminNav";
+    private static final String BUNDLE_BASE = "properties.adminNav";
     
     // instance of our label resolver
     private static final ILabelResolver resolver 
@@ -363,6 +363,7 @@ public class ListModel extends BaseChannel implements INavigationModel
         catch(MissingResourceException mre)
         {
             // ignore since we handle null below.
+            LOG.warn("Could not resolve labelId '" + labelId + "' for locale '" + locale + "' using resolver '" + resolver.getExternalForm() + "'", mre);
         }
         if (label == null)
         {
