@@ -83,6 +83,7 @@ public class PortletUrlSyntaxProviderImplTest extends TestCase {
         final PortletUrlSyntaxProviderImpl portletUrlSyntaxProvider = new PortletUrlSyntaxProviderImpl();
         
         final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setContextPath("/uPortal");
         
         final IPortletEntityId portletEntityId = new MockPortletEntityId("entityId1");
         final IPortletWindowId portletWindowId = new MockPortletWindowId("windowId1");
@@ -119,12 +120,12 @@ public class PortletUrlSyntaxProviderImplTest extends TestCase {
         }
         
         final ChannelRuntimeData channelRuntimeData = new ChannelRuntimeData();
-        channelRuntimeData.setBaseActionURL("http://base/action/url");
+        channelRuntimeData.setBaseActionURL("base/action.url");
         
         request.setAttribute(IPortletAdaptor.ATTRIBUTE__RUNTIME_DATA, channelRuntimeData);
         
         String urlString = portletUrlSyntaxProvider.generatePortletUrl(request, portletWindow, portletUrl);
-        assertEquals("http://base/action/url?plt_type_windowId1=RENDER", urlString);
+        assertEquals("/uPortal/base/action.url?plt_type_windowId1=RENDER", urlString);
         
         
         final Map<String, String[]> parameters = new TreeMap<String, String[]>(); //Use a treemap so the output string is deterministic
@@ -137,19 +138,19 @@ public class PortletUrlSyntaxProviderImplTest extends TestCase {
         portletUrl.setParameters(parameters);
         
         urlString = portletUrlSyntaxProvider.generatePortletUrl(request, portletWindow, portletUrl);
-        assertEquals("http://base/action/url?plt_type_windowId1=RENDER&plt_state_windowId1=minimized&plt_mode_windowId1=edit&plt_windowId1_key1=value1.1&plt_windowId1_key1=value1.2&plt_windowId1_key2=value2.1&plt_windowId1_key3=", urlString);
+        assertEquals("/uPortal/base/action.url?plt_type_windowId1=RENDER&plt_state_windowId1=minimized&plt_mode_windowId1=edit&plt_windowId1_key1=value1.1&plt_windowId1_key1=value1.2&plt_windowId1_key2=value2.1&plt_windowId1_key3=", urlString);
 
 
         portletUrl.setRequestType(RequestType.ACTION);
         
         urlString = portletUrlSyntaxProvider.generatePortletUrl(request, portletWindow, portletUrl);
-        assertEquals("http://base/action/url?plt_type_windowId1=ACTION&plt_state_windowId1=minimized&plt_mode_windowId1=edit&plt_windowId1_key1=value1.1&plt_windowId1_key1=value1.2&plt_windowId1_key2=value2.1&plt_windowId1_key3=", urlString);
+        assertEquals("/uPortal/base/action.url?plt_type_windowId1=ACTION&plt_state_windowId1=minimized&plt_mode_windowId1=edit&plt_windowId1_key1=value1.1&plt_windowId1_key1=value1.2&plt_windowId1_key2=value2.1&plt_windowId1_key3=", urlString);
         
         portletUrl.setWindowState(new WindowState("EXCLUSIVE"));
         portletUrl.setRequestType(RequestType.RENDER);
         
         urlString = portletUrlSyntaxProvider.generatePortletUrl(request, portletWindow, portletUrl);
-        assertEquals("worker/download/worker.download.uP?plt_type_windowId1=RENDER&plt_state_windowId1=exclusive&plt_mode_windowId1=edit&plt_windowId1_key1=value1.1&plt_windowId1_key1=value1.2&plt_windowId1_key2=value2.1&plt_windowId1_key3=", urlString);
+        assertEquals("/uPortal/worker/download/worker.download.uP?plt_type_windowId1=RENDER&plt_state_windowId1=exclusive&plt_mode_windowId1=edit&plt_windowId1_key1=value1.1&plt_windowId1_key1=value1.2&plt_windowId1_key2=value2.1&plt_windowId1_key3=", urlString);
     }
     
     public void testParsePortletParameters() throws Exception {

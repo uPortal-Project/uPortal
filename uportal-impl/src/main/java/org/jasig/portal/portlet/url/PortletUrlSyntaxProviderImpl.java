@@ -291,6 +291,8 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
         }
 
         final StringBuilder url = new StringBuilder(this.bufferLength);
+        final String contextPath = request.getContextPath();
+        url.append(contextPath).append("/");
         url.append(urlBase);
         
         //Set the request type
