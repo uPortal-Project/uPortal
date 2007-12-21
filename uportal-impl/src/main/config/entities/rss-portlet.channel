@@ -5,7 +5,7 @@
   <fname>rss-portlet</fname>
   <desc>RSS Portlet from Portlet Open Source Trading site</desc>
   <type>Portlet</type>
-  <class>org.jasig.portal.channels.portlet.CPortletAdapter</class>
+  <class>org.jasig.portal.channels.portlet.CSpringPortletAdaptor</class>
   <timeout>60000</timeout>
   <hasedit>Y</hasedit>
   <hashelp>Y</hashelp>
@@ -19,11 +19,17 @@
     <group>Everyone</group>
   </groups>
   <parameters>
-    <parameter> 
-      <name>portletDefinitionId</name>  
-      <value>RssPortlet.RssPortlet</value>  
+    <parameter>
+      <name>portletApplicationId</name>
+      <value>/RssPortlet</value> 
       <description/>  
-      <ovrd>N</ovrd> 
+      <ovrd>N</ovrd>
+    </parameter>
+    <parameter>
+      <name>portletName</name>
+      <value>RssPortlet</value> 
+      <description/>  
+      <ovrd>N</ovrd>
     </parameter>
   </parameters>
 </channel-definition>

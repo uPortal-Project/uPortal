@@ -40,7 +40,7 @@ import org.apache.commons.logging.LogFactory;
  * inspection as to whether it implements this interface.  This method call was
  * added <b>after renderXML()</p>, not before as originally envisioned.  This
  * order was selected because many channels are not prepared to know their dynamic 
- * title until after they have rendered - particularly CPortletAdapter, as the
+ * title until after they have rendered - particularly IPortletAdaptor, as the
  * JSR-168 mechanism for portlets to set their titles is part of their 
  * configuration of the RenderResponse.</p>
  * 

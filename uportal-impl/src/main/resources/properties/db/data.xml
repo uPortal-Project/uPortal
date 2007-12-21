@@ -79,17 +79,7 @@
           <name>SEQUENCE_VALUE</name>
           <value>100</value>
         </column> 
-      </row>  
-      <row> 
-        <column>
-          <name>SEQUENCE_NAME</name>
-          <value>UP_PORTLET_PREFERENCE_VALUE</value>
-        </column>  
-        <column>
-          <name>SEQUENCE_VALUE</name>
-          <value>7</value>
-        </column> 
-      </row>  
+      </row>
       <row> 
         <column>
           <name>SEQUENCE_NAME</name>
@@ -557,7 +547,7 @@
         </column>  
         <column>
           <name>TYPE</name>
-          <value>org.jasig.portal.channels.portlet.CPortletAdapter</value>
+          <value>org.jasig.portal.channels.portlet.CSpringPortletAdaptor</value>
         </column>  
         <column>
           <name>TYPE_NAME</name>
@@ -667,7 +657,7 @@
         </column>  
         <column>
           <name>TYPE</name>
-          <value>org.jasig.portal.channels.portlet.CPortletAdapter</value>
+          <value>org.jasig.portal.channels.portlet.CSpringPortletAdaptor</value>
         </column>  
         <column>
           <name>TYPE_NAME</name>
@@ -679,7 +669,7 @@
         </column>  
         <column>
           <name>TYPE_DEF_URI</name>
-          <value>/org/jasig/portal/channels/portlet/CPortletAdapter.cpd</value>
+          <value>/org/jasig/portal/channels/portlet/CSpringPortletAdaptor.cpd</value>
         </column> 
       </row>  
       <row> 
@@ -689,7 +679,7 @@
         </column>  
         <column>
           <name>TYPE</name>
-          <value>org.jasig.portal.channels.portlet.CPortletAdapter</value>
+          <value>org.jasig.portal.channels.portlet.CSpringPortletAdaptor</value>
         </column>  
         <column>
           <name>TYPE_NAME</name>

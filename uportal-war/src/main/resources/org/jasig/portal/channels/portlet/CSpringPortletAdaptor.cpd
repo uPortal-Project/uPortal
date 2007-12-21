@@ -43,7 +43,7 @@ Version $Revision: 1.1 $
     This is an adapter that makes a Portlet look like a Channel.
   </description>
 
-  <class>org.jasig.portal.channels.portlet.CPortletAdapter</class>
+  <class>org.jasig.portal.channels.portlet.CSpringPortletAdaptor</class>
 
   <params>
     <step>

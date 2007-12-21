@@ -61,17 +61,33 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
             throw new IllegalArgumentException("Failed to retrieve required ChannelDefinition for channelPublishId: " + channelPublishId, e);
         }
         
-        //Grap the parameters that describe the pluto descriptor objects
-        final ChannelParameter portletApplicaitonIdParam = channelDefinition.getParameter(IPortletAdaptor.CHANNEL_PARAM__PORTLET_APPLICATION_ID);
-        final String portletApplicaitonId = portletApplicaitonIdParam.getValue();
+        //Grab the parameters that describe the pluto descriptor objects
+        final ChannelParameter portletApplicationIdParam = channelDefinition.getParameter(IPortletAdaptor.CHANNEL_PARAM__PORTLET_APPLICATION_ID);
+        if (portletApplicationIdParam == null) {
+            throw new IllegalArgumentException("No portletApplicationId available under ChannelParameter '" + IPortletAdaptor.CHANNEL_PARAM__PORTLET_APPLICATION_ID + "' for channelId:" + channelPublishId);
+        }
+        final String portletApplicationId = portletApplicationIdParam.getValue();
         
         final ChannelParameter portletNameParam = channelDefinition.getParameter(IPortletAdaptor.CHANNEL_PARAM__PORTLET_NAME);
+        if (portletNameParam == null) {
+            throw new IllegalArgumentException("No portletName available under ChannelParameter '" + IPortletAdaptor.CHANNEL_PARAM__PORTLET_NAME + "' for channelId:" + channelPublishId);
+        }
         final String portletName = portletNameParam.getValue();
 
-        //Create and return the defintion
-        return this.portletDefinitionDao.createPortletDefinition(channelPublishId, portletApplicaitonId, portletName);
+        return this.createPortletDefinition(channelPublishId, portletApplicationId, portletName);
     }
-
+    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.portlet.registry.IPortletDefinitionRegistry#createPortletDefinition(int, java.lang.String, java.lang.String)
+     */
+    public IPortletDefinition createPortletDefinition(int channelPublishId, String portletApplicationId, String portletName) {
+        Validate.notNull(portletApplicationId, "portletApplicationId can not be null");
+        Validate.notNull(portletName, "portletName can not be null");
+        
+        //Create and return the defintion
+        return this.portletDefinitionDao.createPortletDefinition(channelPublishId, portletApplicationId, portletName);
+    }
+    
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.registry.IPortletDefinitionRegistry#getPortletDefinition(int)
      */
@@ -90,7 +106,20 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
         
         return this.createPortletDefinition(channelPublishId);
     }
-
+    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.portlet.registry.IPortletDefinitionRegistry#getOrCreatePortletDefinition(int, java.lang.String, java.lang.String)
+     */
+    public IPortletDefinition getOrCreatePortletDefinition(int channelPublishId, String portletApplicationId, String portletName) {
+        final IPortletDefinition portletDefinition = this.getPortletDefinition(channelPublishId);
+        if (portletDefinition != null) {
+            return portletDefinition;
+        }
+        
+        return this.createPortletDefinition(channelPublishId, portletApplicationId, portletName);
+    }
+    
+    
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.registry.IPortletDefinitionRegistry#getPortletDefinition(org.jasig.portal.portlet.om.IPortletDefinitionId)
      */
@@ -98,5 +127,13 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
         Validate.notNull(portletDefinitionId, "portletDefinitionId can not be null");
         
         return this.portletDefinitionDao.getPortletDefinition(portletDefinitionId);
+    }
+    /* (non-Javadoc)
+     * @see org.jasig.portal.portlet.registry.IPortletDefinitionRegistry#updatePortletDefinition(org.jasig.portal.portlet.om.IPortletDefinition)
+     */
+    public void updatePortletDefinition(IPortletDefinition portletDefinition) {
+        Validate.notNull(portletDefinition, "portletDefinition can not be null");
+        
+        this.portletDefinitionDao.updatePortletDefinition(portletDefinition);
     }
 }

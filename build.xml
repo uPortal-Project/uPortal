@@ -334,7 +334,7 @@
             <istrue value="${extractWar}" />
         </condition>
         <antcall target="deployPortletApp_assembleAndExtract" />
-        <antcall target="deployPortletApp_assebleDirect" />
+        <antcall target="deployPortletApp_assembleDirect" />
     </target>
 
     <!-- Helper targets for the deployPortletApp target -->
@@ -351,7 +351,7 @@
 
         <delete file="${tempWarDir}/${war.filename}" />
     </target>
-    <target name="deployPortletApp_assebleDirect" unless="extract" depends="setup-assembler">
+    <target name="deployPortletApp_assembleDirect" unless="extract" depends="setup-assembler">
         <assemblePortlet destdir="${tomcat.webapps}" war="${portletApp}" />
     </target>
 

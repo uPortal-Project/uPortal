@@ -110,9 +110,6 @@ public void init() throws ServletException {
         throw new ServletException("PortalSessionManager.init(): ServletConfig object was returned as null");
       }
 
-//      // Supply PortletContainer with ServletConfig
-//      CPortletAdapter.setServletConfig(sc);
-
       servletContext = sc.getServletContext();
 
       try {

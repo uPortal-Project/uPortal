@@ -121,7 +121,7 @@
         <parameter name="url" value="http://mis105.mis.udel.edu/ja-sig/uportal/"/>
       </channel>
     </category>
-    <channel id="chan102" view="condensed" chanid="102" class="org.jasig.portal.channels.portlet.CPortletAdapter" description="Test portlet 1 from Apache Pluto" editable="false" fname="test-portlet-1" hasabout="false" hashelp="false" name="Test Portlet 1" secure="false" timeout="60000" title="Test Portlet 1" typeid="7">
+    <channel id="chan102" view="condensed" chanid="102" class="org.jasig.portal.channels.portlet.CSpringPortletAdaptor" description="Test portlet 1 from Apache Pluto" editable="false" fname="test-portlet-1" hasabout="false" hashelp="false" name="Test Portlet 1" secure="false" timeout="60000" title="Test Portlet 1" typeid="7">
       <parameter name="portletDefinitionId" value="testsuite.TestPortlet1"/>
       <parameter name="PORTLET.TestName4" value="TestValue4"/>
     </channel>
@@ -132,16 +132,16 @@
       <parameter name="xmlUri" value="http://www.unicon.net/publish/uPortalDevBooks/uPortalDevBooks.xml"/>
     </channel>
     <channel id="chan25" view="condensed" chanid="25" class="org.jasig.portal.channels.iccdemo.CHistory" description="Interchannel communications demo History channel" editable="false" fname="portal/iccdemo/history" hasabout="false" hashelp="false" name="ICC History channel" secure="false" timeout="10000" title="CHistory" typeid="-1"/>
-    <channel id="chan105" view="condensed" chanid="105" class="org.jasig.portal.channels.portlet.CPortletAdapter" description="RSS Portlet from Portlet Open Source Trading site" editable="false" fname="rss-portlet" hasabout="false" hashelp="true" name="RSS Portlet" secure="false" timeout="60000" title="RSS Portlet" typeid="7">
+    <channel id="chan105" view="condensed" chanid="105" class="org.jasig.portal.channels.portlet.CSpringPortletAdaptor" description="RSS Portlet from Portlet Open Source Trading site" editable="false" fname="rss-portlet" hasabout="false" hashelp="true" name="RSS Portlet" secure="false" timeout="60000" title="RSS Portlet" typeid="7">
       <parameter name="portletDefinitionId" value="RssPortlet.RssPortlet"/>
     </channel>
     <channel id="chan16" view="condensed" chanid="16" class="org.jasig.portal.channels.CSnoop" description="Snooper channel" editable="false" fname="snooper" hasabout="false" hashelp="false" name="Snooper" secure="false" timeout="5000" title="Snooper" typeid="-1"/>
-    <channel id="chan104" view="condensed" chanid="104" class="org.jasig.portal.channels.portlet.CPortletAdapter" description="Test portlet 2 from Apache Pluto" editable="false" fname="test-portlet-2" hasabout="false" hashelp="false" name="Test Portlet 2" secure="false" timeout="60000" title="Test Portlet 2" typeid="7">
+    <channel id="chan104" view="condensed" chanid="104" class="org.jasig.portal.channels.portlet.CSpringPortletAdaptor" description="Test portlet 2 from Apache Pluto" editable="false" fname="test-portlet-2" hasabout="false" hashelp="false" name="Test Portlet 2" secure="false" timeout="60000" title="Test Portlet 2" typeid="7">
       <parameter name="portletDefinitionId" value="testsuite.TestPortlet2"/>
       <parameter name="PORTLET.TestName4" value="TestValue4"/>
     </channel>
     <channel id="chan4" view="condensed" chanid="4" class="org.jasig.portal.channels.CPersonAttributes" description="A display of person attributes available to channels" editable="false" fname="person-attributes" hasabout="false" hashelp="false" name="Person Attributes" secure="false" timeout="20000" title="Person Attributes" typeid="-1"/>
-    <channel id="chan107" view="condensed" chanid="107" class="org.jasig.portal.channels.portlet.CPortletAdapter" description="Google Portlet from Portlet Open Source Trading site" editable="false" fname="google-portlet" hasabout="false" hashelp="true" name="Google Portlet" secure="false" timeout="60000" title="Google Portlet" typeid="7">
+    <channel id="chan107" view="condensed" chanid="107" class="org.jasig.portal.channels.portlet.CSpringPortletAdaptor" description="Google Portlet from Portlet Open Source Trading site" editable="false" fname="google-portlet" hasabout="false" hashelp="true" name="Google Portlet" secure="false" timeout="60000" title="Google Portlet" typeid="7">
       <parameter name="portletDefinitionId" value="GooglePortlet.GooglePortlet"/>
     </channel>
   </category>

@@ -17,6 +17,7 @@
 		<config>uportal-impl/src/main/resources/properties/contexts/datasourceContext.xml</config>
 		<config>uportal-impl/src/main/resources/properties/contexts/persistenceContext.xml</config>
 		<config>uportal-impl/src/main/resources/properties/contexts/renderingPipelineContext.xml</config>
+		<config>uportal-impl/src/test/resources/jpaTestApplicationContext.xml</config>
 	</configs>
 	<configSets>
 		<configSet>
@@ -37,6 +38,14 @@
 				<config>uportal-impl/src/main/resources/properties/contexts/datasourceContext.xml</config>
 				<config>uportal-impl/src/main/resources/properties/contexts/persistenceContext.xml</config>
 				<config>uportal-impl/src/main/resources/properties/contexts/renderingPipelineContext.xml</config>
+			</configs>
+		</configSet>
+		<configSet>
+			<name><![CDATA[JpaDaoTests]]></name>
+			<allowBeanDefinitionOverriding>true</allowBeanDefinitionOverriding>
+			<incomplete>false</incomplete>
+			<configs>
+				<config>uportal-impl/src/test/resources/jpaTestApplicationContext.xml</config>
 			</configs>
 		</configSet>
 	</configSets>

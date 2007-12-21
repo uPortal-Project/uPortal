@@ -9,6 +9,8 @@ import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.ChannelCacheKey;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ChannelRuntimeProperties;
@@ -34,6 +36,9 @@ import org.xml.sax.ContentHandler;
  */
 public class CSpringPortletAdaptor implements IPortletAdaptor {
     public static final String SPRING_BEAN_NAME_PARAM = "springBeanName";
+    public static final String DEFAULT_SPRING_BEAN_NAME = "portletChannel";
+    
+    protected final Log logger = LogFactory.getLog(this.getClass());
     
     //Data available for the duration of this classes existence (setStaticData to SESSION_DONE)
     private ChannelStaticData channelStaticData;
@@ -56,9 +61,13 @@ public class CSpringPortletAdaptor implements IPortletAdaptor {
             this.channelStaticData = sd;
             
             //Determine the name of the spring bean to wrap
-            final String beanName = this.channelStaticData.getParameter(SPRING_BEAN_NAME_PARAM);
+            String beanName = this.channelStaticData.getParameter(SPRING_BEAN_NAME_PARAM);
             if (beanName == null) {
-                throw new IllegalStateException("Channel Parameter 'springBeanName' is not set and is requried");
+                beanName = DEFAULT_SPRING_BEAN_NAME;
+            }
+            
+            if (this.logger.isInfoEnabled()) {
+                this.logger.info("Using ISpringPortletChannel named '" + beanName + "'");
             }
             
             final WebApplicationContext applicationContext = this.channelStaticData.getWebApplicationContext();

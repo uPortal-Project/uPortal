@@ -5,7 +5,7 @@
   <fname>google-portlet</fname>
   <desc>Google Portlet from http://code.google.com/p/googleportlet/</desc>
   <type>Portlet</type>
-  <class>org.jasig.portal.channels.portlet.CPortletAdapter</class>
+  <class>org.jasig.portal.channels.portlet.CSpringPortletAdaptor</class>
   <timeout>60000</timeout>
   <hasedit>Y</hasedit>
   <hashelp>N</hashelp>
@@ -19,11 +19,17 @@
     <group>Everyone</group>
   </groups>
   <parameters>
-    <parameter> 
-      <name>portletDefinitionId</name>  
-      <value>googleportlet.GooglePortlet</value>  
+    <parameter>
+      <name>portletApplicationId</name>
+      <value>/googleportlet</value> 
       <description/>  
-      <ovrd>N</ovrd> 
+      <ovrd>N</ovrd>
+    </parameter>
+    <parameter>
+      <name>portletName</name>
+      <value>GooglePortlet</value> 
+      <description/>  
+      <ovrd>N</ovrd>
     </parameter>
   </parameters>
 </channel-definition>

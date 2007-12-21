@@ -12,11 +12,17 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.channels.portlet.IPortletAdaptor;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IEntity;
 import org.jasig.portal.groups.IEntityGroup;
@@ -24,13 +30,20 @@ import org.jasig.portal.groups.IGroupConstants;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.groups.ILockableEntityGroup;
 import org.jasig.portal.i18n.LocaleManager;
+import org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl;
+import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.jasig.portal.portlet.om.IPortletPreference;
+import org.jasig.portal.portlet.om.IPortletPreferences;
+import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.rdbm.DatabaseMetaDataImpl;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.EntityCachingService;
 import org.jasig.portal.services.GroupService;
+import org.jasig.portal.spring.PortalApplicationContextLocator;
 import org.jasig.portal.tools.versioning.VersionsManager;
 import org.jasig.portal.utils.CounterStoreFactory;
+import org.springframework.context.ApplicationContext;
 
 /**
  * Reference implementation of IChannelRegistryStore.
@@ -591,12 +604,18 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
 			RDBMServices.setAutoCommit(con, false);
 			try {
 				saveChannelDef(con, channelDef);
+				
+				final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
+				final IPortletDefinitionRegistry portletDefinitionRegistry = (IPortletDefinitionRegistry)applicationContext.getBean("portletDefinitionRegistry", IPortletDefinitionRegistry.class);
+				
 				deleteChannelParams(con, channelPublishId);
 				ChannelParameter[] parameters = channelDef.getParameters();
-
+				
 				if (parameters != null) {
 					// Keep track of any portlet preferences
-//					PreferenceSetImpl preferences = new PreferenceSetImpl();
+				    final LinkedHashMap<String, List<String>> portletPreferencesBuilder = new LinkedHashMap<String, List<String>>();
+				    final Map<String, Boolean> portletPreferencesReadOnly = new HashMap<String, Boolean>();
+				    final boolean isPortlet = channelDef.isPortlet();
 
 					for (int i = 0; i < parameters.length; i++) {
 						String paramName = parameters[i].getName();
@@ -607,23 +626,62 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
 							throw new RuntimeException("Invalid parameter node");
 						}
 
-//						if (paramName.startsWith(CPortletAdapter.portletPreferenceNamePrefix)) {
-//							// We have a portlet preference
-//							String prefName = paramName.substring(CPortletAdapter.portletPreferenceNamePrefix.length());
-//							String prefValue = paramValue;
-//							List prefValues = (List)preferences.get(prefName);
-//							// Unfortunately, we can only support single-valued preferences
-//							// at this level unless we change a lot of uPortal code :(
-//							prefValues = new ArrayList(1);
-//							prefValues.add(prefValue);
-//							preferences.add(prefName, prefValues, !paramOverride);
-//						} else {
-							insertChannelParam(con, channelPublishId, paramName, paramValue, paramOverride);
-//						}
+						if (isPortlet && paramName.startsWith("PORTLET.")) {
+                            // We have a portlet preference
+                            final String prefName = paramName.substring("PORTLET.".length());
+                            final String prefValue = paramValue;
+                            
+                            List<String> prefValues = portletPreferencesBuilder.get(prefName);
+                            if (prefValues == null) {
+                                prefValues = new LinkedList<String>();
+                                portletPreferencesBuilder.put(prefName, prefValues);
+                                
+                                portletPreferencesReadOnly.put(prefName, !paramOverride);
+                            }
+                            
+                            prefValues.add(prefValue);
+                        }
+                        else {
+                            insertChannelParam(con, channelPublishId, paramName, paramValue, paramOverride);
+                        }
 					}
-//					if (preferences.size() > 0) {
-//						PortletPreferencesStoreFactory.getPortletPreferencesStoreImpl().setDefinitionPreferences(channelPublishId, preferences);
-//					}
+					
+					if (isPortlet) {
+				        //Grab the parameters that describe the pluto descriptor objects, the channel may not exist yet
+					    //so these are needed to pass to the portlet registry
+				        final ChannelParameter portletApplicationIdParam = channelDef.getParameter(IPortletAdaptor.CHANNEL_PARAM__PORTLET_APPLICATION_ID);
+				        if (portletApplicationIdParam == null) {
+				            throw new IllegalArgumentException("No portletApplicationId available under ChannelParameter '" + IPortletAdaptor.CHANNEL_PARAM__PORTLET_APPLICATION_ID + "' for channelId:" + channelPublishId);
+				        }
+				        final String portletApplicationId = portletApplicationIdParam.getValue();
+				        
+				        final ChannelParameter portletNameParam = channelDef.getParameter(IPortletAdaptor.CHANNEL_PARAM__PORTLET_NAME);
+				        if (portletNameParam == null) {
+				            throw new IllegalArgumentException("No portletName available under ChannelParameter '" + IPortletAdaptor.CHANNEL_PARAM__PORTLET_NAME + "' for channelId:" + channelPublishId);
+				        }
+				        final String portletName = portletNameParam.getValue();
+					    
+
+				        //Get or Create the portlet definition
+				        final IPortletDefinition portletDefinition = portletDefinitionRegistry.getOrCreatePortletDefinition(channelPublishId, portletApplicationId, portletName);
+					    
+					    
+				        //Convert the Lists into actual IPortletPreference objects
+				        final List<IPortletPreference> portletPreferencesList = new ArrayList<IPortletPreference>(portletPreferencesBuilder.size());
+					    for (final Entry<String, List<String>> prefEntry : portletPreferencesBuilder.entrySet()) {
+					        final String prefName = prefEntry.getKey();
+					        final List<String> prefValues = prefEntry.getValue();
+					        final Boolean readOnly = portletPreferencesReadOnly.get(prefName);
+					        
+					        final IPortletPreference portletPreference = new PortletPreferenceImpl(prefName, readOnly != null ? readOnly : false, prefValues.toArray(new String[prefValues.size()]));
+					        portletPreferencesList.add(portletPreference);
+					    }
+					    
+					    //Update the preferences of the portlet definition
+					    final IPortletPreferences portletPreferences = portletDefinition.getPortletPreferences();
+					    portletPreferences.setPortletPreferences(portletPreferencesList);
+					    portletDefinitionRegistry.updatePortletDefinition(portletDefinition);
+					}
 				}
 
 				// Commit the transaction

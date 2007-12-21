@@ -32,7 +32,24 @@
             </list>
         </property>
     </bean>
+    
+    <bean id="portalPropertyEditorRegistrar" class="org.jasig.portal.spring.properties.PortalPropertyEditorRegistrar">
+        <property name="propertyEditors">
+            <map key-type="java.lang.Class">
+                <entry key="javax.portlet.PortletMode"><bean class="org.jasig.portal.spring.properties.PortletModeEditor" /></entry>
+                <entry key="javax.portlet.WindowState"><bean class="org.jasig.portal.spring.properties.WindowStateEditor" /></entry>
+            </map>
+        </property>
+    </bean>
 
+
+    <bean class="org.springframework.beans.factory.config.CustomEditorConfigurer">
+        <property name="propertyEditorRegistrars">
+            <list>
+                <ref bean="portalPropertyEditorRegistrar"/>
+            </list>
+        </property>
+    </bean>
 
     <bean class="org.springframework.beans.factory.annotation.RequiredAnnotationBeanPostProcessor" />
 </beans>

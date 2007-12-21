@@ -1,11 +1,11 @@
 
 <channel-definition script="classpath://org/jasig/portal/io/import-channel_v2-6.crn">
-  <title>Test Portlet 2</title>
-  <name>Test Portlet 2</name>
-  <fname>test-portlet-2</fname>
-  <desc>Test portlet 2 from Apache Pluto</desc>
+  <title>Test Portlet 1</title>
+  <name>Test Portlet 1</name>
+  <fname>test-portlet-1</fname>
+  <desc>Test portlet 1 from Apache Pluto</desc>
   <type>Portlet</type>
-  <class>org.jasig.portal.channels.portlet.CPortletAdapter</class>
+  <class>org.jasig.portal.channels.portlet.CSpringPortletAdaptor</class>
   <timeout>60000</timeout>
   <hasedit>N</hasedit>
   <hashelp>N</hashelp>
@@ -19,11 +19,17 @@
     <group>Everyone</group>
   </groups>
   <parameters>
-    <parameter> 
-      <name>portletDefinitionId</name>  
-      <value>testsuite.TestPortlet2</value>  
+    <parameter>
+      <name>portletApplicationId</name>
+      <value>/testsuite</value> 
       <description/>  
-      <ovrd>N</ovrd> 
+      <ovrd>N</ovrd>
+    </parameter>
+    <parameter>
+      <name>portletName</name>
+      <value>TestPortlet1</value> 
+      <description/>  
+      <ovrd>N</ovrd>
     </parameter>
     <parameter> 
       <name>PORTLET.TestName4</name>  

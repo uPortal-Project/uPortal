@@ -35,8 +35,8 @@ public interface IPortletDefinitionRegistry {
     public IPortletDefinition getPortletDefinition(int channelPublishId);
     
     /**
-     * Creates a new, persisted, portlet definition for the published channel, portlet application and portlet name. If
-     * the * {@link org.jasig.portal.ChannelDefinition} for the channelPublishId can't be found or an definition already
+     * Creates a new, persisted, portlet definition for the published channel. If the
+     * {@link org.jasig.portal.ChannelDefinition} for the channelPublishId can't be found or an definition already
      * exists for the channel definition id an exception will be thrown.
      * 
      * @param channelPublishId The id of the {@link org.jasig.portal.ChannelDefinition} this portlet definition represents.
@@ -46,6 +46,18 @@ public interface IPortletDefinitionRegistry {
     public IPortletDefinition createPortletDefinition(int channelPublishId);
     
     /**
+     * Creates a new, persisted, portlet definition for the published channel, portlet application and portlet name. If
+     * a portlet definition already exists for the channel definition id an exception will be thrown.
+     * 
+     * @param channelPublishId The id of the {@link org.jasig.portal.ChannelDefinition} this portlet definition represents.
+     * @param portletApplicationId The name of the portlet application the definition is being created for.
+     * @param portletName The name of the portlet the definition is being created for.
+     * @return A new definition for the parameters
+     * @throws IllegalArgumentException If portletApplicationId or portletName are null.
+     */
+    public IPortletDefinition createPortletDefinition(int channelPublishId, String portletApplicationId, String portletName);
+    
+    /**
      * Convience for {@link #getPortletDefinition(int)} and {@link #createPortletDefinition(int)}. If
      * the get returns null the definition will be created and returned.
      * 
@@ -53,4 +65,21 @@ public interface IPortletDefinitionRegistry {
      * @see #createPortletDefinition(int)
      */
     public IPortletDefinition getOrCreatePortletDefinition(int channelPublishId);
+
+    /**
+     * Convience for {@link #getPortletDefinition(int)} and {@link #createPortletDefinition(int, String, String)}. If
+     * the get returns null the definition will be created and returned.
+     * 
+     * @see #getPortletDefinition(int)
+     * @see #createPortletDefinition(int, String, String)
+     */
+    public IPortletDefinition getOrCreatePortletDefinition(int channelPublishId, String portletApplicationId, String portletName);
+    
+    /**
+     * Persists changes to a IPortletDefinition.
+     * 
+     * @param portletDefinition The IPortletDefinition to store changes to.
+     * @throws IllegalArgumentException If portletDefinition is null
+     */
+    public void updatePortletDefinition(IPortletDefinition portletDefinition);
 }
