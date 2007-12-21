@@ -44,14 +44,14 @@
             <version>1.0.0-SNAPSHOT</version>
             <type>war</type>
         </dependency>
-
+<!-- 
         <dependency>
             <groupId>org.jasig.portlet</groupId>
             <artifactId>RssPortlet</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <type>war</type>
         </dependency>
-
+ -->
         <dependency>
             <groupId>org.jasig.portlet</groupId>
             <artifactId>testsuite</artifactId>
@@ -65,9 +65,6 @@
             <version>${portlet-api.version}</version>
             <scope>compile</scope>
         </dependency>
-
-
-
 
 
 
@@ -172,13 +169,13 @@
                             <artifactId>proxyportlet</artifactId>
                             <bundleFileName>proxyportlet.war</bundleFileName>
                             <contextRoot>/proxyportlet</contextRoot>
-                        </webModule>
+                        </webModule><!-- 
                         <webModule>
                             <groupId>org.jasig.portlet</groupId>
                             <artifactId>RssPortlet</artifactId>
                             <bundleFileName>RssPortlet.war</bundleFileName>
                             <contextRoot>/RssPortlet</contextRoot>
-                        </webModule>
+                        </webModule> -->
                         <webModule>
                             <groupId>org.jasig.portlet</groupId>
                             <artifactId>testsuite</artifactId>
@@ -199,7 +196,7 @@
                             <tasks>
                                 <property name="maven.plugin.classpath" refid="maven.plugin.classpath" />
 
-                                <ant antfile="${basedir}/build.xml" target="assemblePortlets">
+                                <ant antfile="${basedir}/build.xml" dir="${basedir}" target="assemblePortlets">
                                     <property name="maven.final.name" value="uPortal" />
                                 </ant>
                             </tasks>
@@ -209,18 +206,6 @@
                         </goals>
                     </execution>
                 </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.danann</groupId>
-                        <artifactId>cernunnos</artifactId>
-                        <version>${cernunnos.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>xml-resolver</groupId>
-                        <artifactId>xml-resolver</artifactId>
-                        <version>${xml-resolver.version}</version>
-                    </dependency>
-                </dependencies>
             </plugin>
             <!-- 
             <plugin>

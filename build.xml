@@ -220,23 +220,62 @@
         </uportal-war-macro>
     </target>
 
-    <target name="deployPortletApp" description="Deploys a portlet application">
-        <uportal-impl-macro>
-            <fail unless="portletApp">deployPortletApp Ant target requires the name of the portlet app to deploy.  
-                Here it was invoked with the portletApp property not set.  
-                It therefore is failing after having done nothing.
-                Execute the help target ('ant help') for help on this and other targets in the uPortal build.
-            </fail>
+    <target name="deployPortletApp" description="Deploys a portlet application" depends="checkTomcatLocation">
+        <!-- Check arguments -->
+        <fail message="'-DportletApp=[WAR File]' must be specified">
+            <condition>
+                <not>
+                    <isset property="portletApp" />
+                </not>
+            </condition>
+        </fail>
+        <fail message="portletApp '${portletApp}' does not exist">
+            <condition>
+                <not>
+                    <available file="${portletApp}" />
+                </not>
+            </condition>
+        </fail>
 
-            <echo message="Invoking Portlet Application Deployment Tool" />
-            <java fork="true" failonerror="true" dir="${basedir}" classname="org.danann.cernunnos.runtime.Main">
-                <classpath refid="uportal-impl-full.classpath" />
+        <!-- Default extractWar to true if it isn't set -->
+        <condition property="extractWar" value="true">
+            <not>
+                <isset property="extractWar" />
+            </not>
+        </condition>
 
-                <arg value="classpath://org/jasig/portal/container/deploy/deploy-portlet-app.crn" />
-                <arg value="${portletApp}" />
-                <arg value="${server.base}/webapps" />
-            </java>
-        </uportal-impl-macro>
+        <basename property="war.filename" file="${portletApp}" />
+        <basename property="war.contextname" file="${portletApp}" suffix=".war" />
+        <property name="destDir" value="${server.base}/webapps/${war.contextname}" />
+
+        <condition property="existingDirectory" value="${destDir}">
+            <istrue value="${removeExistingDirectory}" />
+        </condition>
+        <antcall target="deployPortletApp_removeExistingDirectory" />
+
+        <condition property="extract" value="true">
+            <istrue value="${extractWar}" />
+        </condition>
+        <antcall target="deployPortletApp_assembleAndExtract" />
+        <antcall target="deployPortletApp_assebleDirect" />
+    </target>
+
+    <!-- Helper targets for the deployPortletApp target -->
+    <target name="deployPortletApp_removeExistingDirectory" if="existingDirectory">
+        <delete dir="${existingDirectory}" />
+    </target>
+    <target name="deployPortletApp_assembleAndExtract" if="extract" depends="setup-assembler">
+        <property name="tempWarDir" value="${java.io.tmpdir}" />
+
+        <assemblePortlet destdir="${tempWarDir}" war="${portletApp}" />
+
+        <mkdir dir="${destDir}" />
+        <unwar dest="${destDir}" src="${tempWarDir}/${war.filename}" overwrite="true" />
+
+        <delete file="${tempWarDir}/${war.filename}" />
+    </target>
+    <target name="deployPortletApp_assebleDirect" unless="extract" depends="setup-assembler">
+        <assemblePortlet destdir="${tomcat.webapps}" war="${portletApp}" />
     </target>
 
     <target name="md5passwd" description="Creates a user in the UP_PERSON_DIR table">
@@ -649,8 +688,6 @@
             </else>
         </if>
 
-        <echo message="***** '${dir}' *****"/>
-        <echo message="***** '${mvnExecutable}' *****"/>
         <exec executable="${mvnExecutable}" dir="${dir}" vmlauncher="true" resolveexecutable="true" searchpath="true" failonerror="true">
             <arg value="${goal}" />
             <arg value="${goal1}" />
@@ -674,6 +711,23 @@
         </if>
     </target>
 
+    <target name="checkTomcatLocation">
+        <fail message="server.base build property must be set.">
+            <condition>
+                <not>
+                    <isset property="server.base" />
+                </not>
+            </condition>
+        </fail>
+        <fail message="The server.base build property refers to a non-existant location '${server.base}'">
+            <condition>
+                <not>
+                    <available file="${server.base}" type="dir" />
+                </not>
+            </condition>
+        </fail>
+    </target>
+
     <!-- ============================== Ant Extensions ============================== -->
 
     <typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="urn:maven-artifact-ant">
@@ -688,6 +742,17 @@
         </classpath>
     </taskdef>
 
+    <target name="setup-assembler">
+        <artifact:dependencies pathid="pluto-ant" verbose="false">
+            <pom file="${basedir}/bootstrap/pluto-assembler-pom.xml" />
+        </artifact:dependencies>
+
+        <taskdef classname="org.apache.pluto.ant.AssembleTask" name="assemblePortlet">
+            <classpath>
+                <path refid="pluto-ant" />
+            </classpath>
+        </taskdef>
+    </target>
 
     <macrodef name="echo-path">
         <attribute name="pathref" />
