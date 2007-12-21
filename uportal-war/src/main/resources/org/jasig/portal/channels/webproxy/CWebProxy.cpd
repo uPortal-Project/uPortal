@@ -193,6 +193,18 @@ Version $Revision$
     <defaultValue></defaultValue>
       </parameter>
 
+	<parameter modify="publish-only">
+		<name>cw_cacheGlobalMode</name>
+		<label>Global Cache Mode (cw_cacheGlobalMode)</label>
+		<type base="string" input="single-choice" display="drop-down">
+			<restriction type="enumeration">
+				<value>false</value>
+				<value>true</value>
+			</restriction>
+		</type>
+		<defaultValue>none</defaultValue>
+	</parameter>
+
       <parameter modify="publish-only">
         <name>cw_person</name>
 	<label>Default IPerson Attributes to Pass (cw_person)</label>

@@ -53,7 +53,8 @@ public class DbUnload {
           String value = "";
           if (columnType[i] == java.sql.Types.VARCHAR ||
             columnType[i] == java.sql.Types.LONGVARCHAR||
-            columnType[i] == java.sql.Types.CHAR) {
+            columnType[i] == java.sql.Types.CHAR ||
+            columnType[i] == java.sql.Types.CLOB ) {
             value = rs.getString(i+1);
             value = XMLEscaper.escape(value);
             if (value != null && value.startsWith("<?xml ")) {
