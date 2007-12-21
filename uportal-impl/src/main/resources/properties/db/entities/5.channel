@@ -1,0 +1,29 @@
+
+<channel-definition script="classpath://org/jasig/portal/io/import-channel_v2-6.crn">
+  <title>uPortal-Powered Sites</title>
+  <name>uPortal-Powered Sites</name>
+  <fname>uportal-powered-sites</fname>
+  <desc>uPortal Demos channel</desc>
+  <type>RSS</type>
+  <class>org.jasig.portal.channels.CSyndFeed</class>
+  <timeout>10000</timeout>
+  <hasedit>N</hasedit>
+  <hashelp>N</hashelp>
+  <hasabout>N</hasabout>
+  <secure>N</secure>
+  <locale>en_US</locale>
+  <categories>
+    <category>uPortal</category>
+  </categories>
+  <groups>
+    <group>Everyone</group>
+  </groups>
+  <parameters>
+    <parameter> 
+      <name>xmlUri</name>  
+      <value>http://www.unicon.net/publish/jasigPortalDemos.rss</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+  </parameters>
+</channel-definition>

@@ -36,8 +36,10 @@
         <echo message="Initializing uPortal" />
         <antcall target="deploy-ear" />
         <antcall target="db" />
-        <antcall target="pubchan" />
         <antcall target="i18n-db" />
+        <antcall target="crn-import">
+            <param name="dir" value="uportal-impl/src/main/resources/properties/db/entities" />
+        </antcall>
         <echo message="Finished initializing uPortal" />
     </target>
 
@@ -138,7 +140,9 @@
                     </or>
                 </not>
                 <then>
-                    <property name="directory" value="${uportal-impl.dir}/src/main/config/chanpub/" />
+                    <fail>
+                        Either 'directory' or 'channel' must be set.
+                    </fail>
                 </then>
             </if>
 
@@ -196,6 +200,79 @@
                 <arg value="${name}" />
                 <arg value="${description}" />
                 <arg value="${uri}" />
+            </java>
+        </uportal-impl-macro>
+    </target>
+    
+    <target name="crn-export" description="Exports the specified entity or entities to XML on the file system">
+        <uportal-impl-macro>
+            <!-- Three properties control the export:  dir, type, and sysid -->
+            <fail unless="type">
+                You must specify a &quot;type&quot; parameter (-Dtype={something}) from the following:  all, layout,
+                all-layouts, channel, all-channels, all-permissions,  all-memberships, group, all-groups, user, 
+                all-users.
+            </fail>
+                
+            <property name="dir" value="." />
+            <property name="sysid" value="" />
+
+            <!-- Invoke Cernunnos specifying script and parameters -->
+            <java fork="true" failonerror="true" dir="${basedir}" classname="org.danann.cernunnos.runtime.Main">
+                <classpath refid="uportal-impl-full.classpath" />
+                <arg value="classpath://org/jasig/portal/io/export.crn" />
+                <arg value="${dir}" />
+                <arg value="${type}" />
+                <arg value="${sysid}" />
+            </java>
+        </uportal-impl-macro>
+    </target>
+
+    <target name="crn-import" description="Imports the specified XML file or files">
+        <uportal-impl-macro>
+            <!-- Two properties control the import:  dir and pattern -->
+            <property name="dir" value="." />
+            <property name="pattern" value="org.jasig.portal.FilePatternPhrase.USE_DEFAULT_VALUE "/>
+
+            <!-- Invoke Cernunnos specifying script and parameters -->
+            <java fork="true" failonerror="true" dir="${basedir}" classname="org.danann.cernunnos.runtime.Main">
+                <classpath refid="uportal-impl-full.classpath" />
+                <arg value="classpath://org/jasig/portal/io/import.crn" />
+                <arg value="${dir}" />
+                <arg value="${pattern}" />
+            </java>
+        </uportal-impl-macro>
+    </target>
+
+    <target name="crn-delete" description="Deletes the specified entity">
+        <uportal-impl-macro>
+            <fail unless="type">
+                You must specify a &quot;type&quot; parameter (-Dtype={something}) from the following:  layout, channel,
+                group, user.
+            </fail>
+            
+            <fail unless="sysid">
+                You must specify a &quot;sysid&quot; parameter (-Dsysid={something}).  The value will be a valid username
+                (user or layout), fname (channel), or name (group).
+            </fail>
+
+            <!-- Invoke Cernunnos specifying script and parameters -->
+            <java fork="true" failonerror="true" dir="${basedir}" classname="org.danann.cernunnos.runtime.Main">
+                <classpath refid="uportal-impl-full.classpath" />
+                <arg value="classpath://org/jasig/portal/io/delete.crn" />
+                <arg value="${type}" />
+                <arg value="${sysid}" />
+            </java>
+        </uportal-impl-macro>
+    </target>
+
+    <!-- TODO is this task needed? -->
+    <target name="crn-make-data-xml" description="Runs the DbUnload tool against all tables listed in data.xml">
+        <uportal-impl-macro>
+
+            <!-- Invoke Cernunnos specifying script and parameters -->
+            <java fork="true" failonerror="true" dir="${basedir}" classname="org.danann.cernunnos.runtime.Main">
+                <classpath refid="uportal-impl-full.classpath" />
+                <arg value="classpath://org/jasig/portal/tools/dbloader/dbunload.crn" />
             </java>
         </uportal-impl-macro>
     </target>
@@ -476,7 +553,7 @@
                     <echo message="Artifact '${@{project-name}.artifact}' is not available or out-of-date, calling 'mvn install'" />
 
                     <antcall target="mvn">
-                        <param name="dir" value="@{project-path}" />
+                        <param name="pomDir" value="@{project-path}" />
                         <param name="goal" value="install" />
                     </antcall>
                 </then>
@@ -656,7 +733,7 @@
      +-->
     <target name="install-root-pom">
         <antcall target="mvn">
-            <param name="dir" value="${basedir}" />
+            <param name="pomDir" value="${basedir}" />
             <param name="goal" value="-N" />
             <param name="goal1" value="install" />
         </antcall>
@@ -688,7 +765,7 @@
             </else>
         </if>
 
-        <exec executable="${mvnExecutable}" dir="${dir}" vmlauncher="true" resolveexecutable="true" searchpath="true" failonerror="true">
+        <exec executable="${mvnExecutable}" dir="${pomDir}" vmlauncher="true" resolveexecutable="true" searchpath="true" failonerror="true">
             <arg value="${goal}" />
             <arg value="${goal1}" />
             <arg value="${goal2}" />

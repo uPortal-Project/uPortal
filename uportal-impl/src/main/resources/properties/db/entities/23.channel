@@ -1,0 +1,22 @@
+
+<channel-definition script="classpath://org/jasig/portal/io/import-channel_v2-6.crn">
+  <title>CURLSelector</title>
+  <name>ICC URL selector channel</name>
+  <fname>portal/iccdemo/urlselector</fname>
+  <desc>Interchannel communications demo URL selector channel</desc>
+  <type>Custom</type>
+  <class>org.jasig.portal.channels.iccdemo.CURLSelector</class>
+  <timeout>10000</timeout>
+  <hasedit>N</hasedit>
+  <hashelp>N</hashelp>
+  <hasabout>N</hasabout>
+  <secure>N</secure>
+  <locale>en_US</locale>
+  <categories>
+    <category>Development</category>
+  </categories>
+  <groups>
+    <group>Developers</group>
+  </groups>
+  <parameters/>
+</channel-definition>

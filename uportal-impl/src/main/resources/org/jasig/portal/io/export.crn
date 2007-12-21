@@ -1,0 +1,116 @@
+<properties location="classpath://properties/rdbm.properties">
+    <sql-connection driver="${req(jdbcDriver)}" url="${req(jdbcUrl)}" username="${req(jdbcUser)}" password="${req(jdbcPassword)}">
+        <with-attribute key="EXPORT_DIR" value="${req($1)}">
+            <with-attribute key="ENTITY_TYPE" value="${req($2)}">
+
+                <!-- Select export operation based on the specified ENTITY_TYPE -->
+                <choose>
+
+                    <!-- all -->
+                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all'))}">
+                        <with-attribute key="$2" value="all-layouts">
+                            <crn location="export.crn"/>
+                        </with-attribute>
+                        <with-attribute key="$2" value="all-channels">
+                            <crn location="export.crn"/>
+                        </with-attribute>
+                        <with-attribute key="$2" value="all-permissions">
+                            <crn location="export.crn"/>
+                        </with-attribute>
+                        <with-attribute key="$2" value="all-memberships">
+                            <crn location="export.crn"/>
+                        </with-attribute>
+                        <with-attribute key="$2" value="all-groups">
+                            <crn location="export.crn"/>
+                        </with-attribute>
+                        <with-attribute key="$2" value="all-users">
+                            <crn location="export.crn"/>
+                        </with-attribute>
+                    </when>
+
+                    <!-- layout -->
+                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('layout'))}">
+                        <with-attribute key="USER_NAME" value="${req($3)}">
+                            <crn location="export-layout.crn"/>
+                        </with-attribute>
+                    </when>
+
+                    <!-- all-layouts -->
+                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-layouts'))}">
+                        <sql-query>
+                            <sql>SELECT DISTINCT upu.user_name FROM up_user upu, up_layout_struct upls WHERE upu.user_id = upls.user_id AND upls.layout_id = 1</sql>
+                            <subtasks>
+                                <crn location="export-layout.crn"/>
+                            </subtasks>
+                        </sql-query>
+                    </when>
+
+                    <!-- channel -->
+                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('channel'))}">
+                        <with-attribute key="FNAME" value="${req($3)}">
+                            <crn location="export-channel.crn"/>
+                        </with-attribute>
+                    </when>
+
+                    <!-- all-channels -->
+                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-channels'))}">
+                        <sql-query>
+                            <sql>SELECT chan_fname FROM up_channel</sql>
+                            <subtasks>
+                                <with-attribute key="FNAME" value="${req(CHAN_FNAME)}">
+                                    <crn location="export-channel.crn"/>
+                                </with-attribute>
+                            </subtasks>
+                        </sql-query>
+                    </when>
+
+                    <!-- all-permissions -->
+                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-permissions'))}">
+                        <crn location="export-permissions.crn"/>
+                    </when>
+
+                    <!-- all-memberships -->
+                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-memberships'))}">
+                        <crn location="export-memberships.crn"/>
+                    </when>
+
+                    <!-- group -->
+                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('group'))}">
+                        <with-attribute key="GROUP_NAME" value="${req($3)}">
+                            <crn location="export-group.crn"/>
+                        </with-attribute>
+                    </when>
+
+                    <!-- all-groups -->
+                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-groups'))}">
+                        <sql-query>
+                            <sql>SELECT DISTINCT group_name FROM up_group</sql>
+                            <subtasks>
+                                <crn location="export-group.crn"/>
+                            </subtasks>
+                        </sql-query>
+                    </when>
+
+                    <!-- user -->
+                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('user'))}">
+                        <with-attribute key="USER_NAME" value="${req($3)}">
+                            <crn location="export-user.crn"/>
+                        </with-attribute>
+                    </when>
+
+                    <!-- all-users -->
+                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-users'))}">
+                        <sql-query>
+                            <sql>SELECT user_name FROM up_user</sql>
+                            <subtasks>
+                                <crn location="export-user.crn"/>
+                            </subtasks>
+                        </sql-query>
+                    </when>
+
+                </choose>
+
+            </with-attribute>
+        </with-attribute>
+    </sql-connection>
+</properties>

@@ -1,0 +1,20 @@
+
+<channel-definition script="classpath://org/jasig/portal/io/import-channel_v2-6.crn">
+  <title>Administration</title>
+  <name>Administration</name>
+  <fname>admin.navigation.links</fname>
+  <desc>A channel that renders administration links for channels to which the user has authorization.</desc>
+  <type>Custom</type>
+  <class>org.jasig.portal.channels.adminnav.AdminNavChannel</class>
+  <timeout>5000</timeout>
+  <hasedit>N</hasedit>
+  <hashelp>N</hashelp>
+  <hasabout>N</hasabout>
+  <secure>N</secure>
+  <locale>en_US</locale>
+  <categories/>
+  <groups>
+    <group>Everyone</group>
+  </groups>
+  <parameters/>
+</channel-definition>

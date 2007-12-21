@@ -1,0 +1,20 @@
+
+<channel-definition script="classpath://org/jasig/portal/io/import-channel_v2-6.crn">
+  <title>Session Locales Selector</title>
+  <name>Session Locales Selector</name>
+  <fname>session-locales-selector</fname>
+  <desc>Allows a user to indicate session locale preferences</desc>
+  <type>Custom</type>
+  <class>org.jasig.portal.layout.channels.locales.CSessionLocalesSelector</class>
+  <timeout>30000</timeout>
+  <hasedit>N</hasedit>
+  <hashelp>N</hashelp>
+  <hasabout>N</hasabout>
+  <secure>N</secure>
+  <locale>en_US</locale>
+  <categories/>
+  <groups>
+    <group>Everyone</group>
+  </groups>
+  <parameters/>
+</channel-definition>

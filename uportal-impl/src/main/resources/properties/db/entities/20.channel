@@ -1,0 +1,35 @@
+
+<channel-definition script="classpath://org/jasig/portal/io/import-channel_v2-6.crn">
+  <title>uPortal Development Books</title>
+  <name>uPortal Development Books</name>
+  <fname>uportal-development-books</fname>
+  <desc>A list of books useful to uPortal developers</desc>
+  <type>XML SSL</type>
+  <class>org.jasig.portal.channels.CGenericXSLT</class>
+  <timeout>20000</timeout>
+  <hasedit>N</hasedit>
+  <hashelp>N</hashelp>
+  <hasabout>N</hasabout>
+  <secure>N</secure>
+  <locale>en_US</locale>
+  <categories>
+    <category>Development</category>
+  </categories>
+  <groups>
+    <group>Developers</group>
+  </groups>
+  <parameters>
+    <parameter> 
+      <name>sslUri</name>  
+      <value>CGenericXSLT/uPortalDevBooks/uPortalDevBooks.ssl</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+    <parameter> 
+      <name>xmlUri</name>  
+      <value>http://www.unicon.net/publish/uPortalDevBooks/uPortalDevBooks.xml</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+  </parameters>
+</channel-definition>
