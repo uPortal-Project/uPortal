@@ -23,7 +23,14 @@
             <version>${pom.parent.version}</version>
             <type>war</type>
         </dependency>
-
+        
+        <dependency>
+            <groupId>org.jasig.portal.portlets-overlay</groupId>
+            <artifactId>BookmarksPortlet</artifactId>
+            <version>${pom.parent.version}</version>
+            <type>war</type>
+        </dependency>
+<!-- 
         <dependency>
             <groupId>org.jasig.portlet</groupId>
             <artifactId>BookmarksPortlet</artifactId>
@@ -44,21 +51,21 @@
             <version>1.0.0-SNAPSHOT</version>
             <type>war</type>
         </dependency>
-<!-- 
+
         <dependency>
             <groupId>org.jasig.portlet</groupId>
             <artifactId>RssPortlet</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <type>war</type>
         </dependency>
- -->
+ 
         <dependency>
             <groupId>org.jasig.portlet</groupId>
             <artifactId>testsuite</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <type>war</type>
         </dependency>
-
+-->
         <dependency>
             <groupId>javax.portlet</groupId>
             <artifactId>portlet-api</artifactId>
@@ -102,6 +109,10 @@
                     <groupId>cglib</groupId>
                     <artifactId>cglib-full</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>xerces</groupId>
+                    <artifactId>xmlParserAPIs</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 
@@ -111,34 +122,18 @@
             <version>${xercesImpl.version}</version>
             <scope>compile</scope>
         </dependency>
-<!-- 
-        <dependency>
-            <groupId>xerces</groupId>
-            <artifactId>xmlParserAPIs</artifactId>
-            <version>${xmlParserAPIs.version}</version>
-            <scope>compile</scope>
-        </dependency>
- -->
+
         <dependency>
             <groupId>org.apache.pluto</groupId>
             <artifactId>pluto-taglib</artifactId>
             <version>${pluto.version}</version>
             <scope>compile</scope>
-        </dependency>
-        
-
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>jstl</artifactId>
-            <version>${jstl.version}</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>taglibs</groupId>
-            <artifactId>standard</artifactId>
-            <version>${standard.version}</version>
-            <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 
@@ -157,11 +152,12 @@
                             <contextRoot>/uPortal</contextRoot>
                         </webModule>
                         <webModule>
-                            <groupId>org.jasig.portlet</groupId>
+                            <groupId>org.jasig.portal.portlets-overlay</groupId>
                             <artifactId>BookmarksPortlet</artifactId>
                             <bundleFileName>BookmarksPortlet.war</bundleFileName>
                             <contextRoot>/BookmarksPortlet</contextRoot>
                         </webModule>
+                        <!-- 
                         <webModule>
                             <groupId>org.jasig.portlet</groupId>
                             <artifactId>googleportlet</artifactId>
@@ -173,66 +169,22 @@
                             <artifactId>proxyportlet</artifactId>
                             <bundleFileName>proxyportlet.war</bundleFileName>
                             <contextRoot>/proxyportlet</contextRoot>
-                        </webModule><!-- 
+                        </webModule>
                         <webModule>
                             <groupId>org.jasig.portlet</groupId>
                             <artifactId>RssPortlet</artifactId>
                             <bundleFileName>RssPortlet.war</bundleFileName>
                             <contextRoot>/RssPortlet</contextRoot>
-                        </webModule> -->
+                        </webModule>
                         <webModule>
                             <groupId>org.jasig.portlet</groupId>
                             <artifactId>testsuite</artifactId>
                             <bundleFileName>testsuite.war</bundleFileName>
                             <contextRoot>/testsuite</contextRoot>
-                        </webModule>
+                        </webModule> -->
                     </modules>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>package</id>
-                        <phase>package</phase>
-                        <configuration>
-                            <tasks>
-                                <property name="maven.plugin.classpath" refid="maven.plugin.classpath" />
-
-                                <ant antfile="${basedir}/build.xml" dir="${basedir}" target="assemblePortlets">
-                                    <property name="maven.final.name" value="uPortal" />
-                                </ant>
-                            </tasks>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <!-- 
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>tomcat-overlay-assembly</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                        <configuration>
-                            <appendAssemblyId>true</appendAssemblyId>
-                            <attach>false</attach>
-                            <outputDirectory>${project.build.directory}</outputDirectory>
-                            <descriptors>
-                                <descriptor>src/main/assembly/tomcat-overlay-assembly.xml</descriptor>
-                            </descriptors>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-             -->
         </plugins>
     </build>
 </project>

@@ -152,27 +152,4 @@
         <welcome-file>index.htm</welcome-file>
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
-
-    <resource-ref>
-        <description>
-      Resource reference to a factory for java.sql.Connection
-      instances that may be used for talking to the portal
-      database that is configured in the server.xml file.
-    </description>
-        <res-ref-name>jdbc/PortalDb</res-ref-name>
-        <res-type>javax.sql.DataSource</res-type>
-        <res-auth>Container</res-auth>
-    </resource-ref>
-
-    <resource-ref>
-        <description>
-      Resource reference to a factory for java.sql.Connection
-      instances that may be used for talking to a
-      database that may referenced in the PersonDirs.xml file
-      and configured in the server.xml file.
-    </description>
-        <res-ref-name>jdbc/PersonDb</res-ref-name>
-        <res-type>javax.sql.DataSource</res-type>
-        <res-auth>Container</res-auth>
-    </resource-ref>
 </web-app>

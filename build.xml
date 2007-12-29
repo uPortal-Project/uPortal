@@ -276,6 +276,20 @@
             </java>
         </uportal-impl-macro>
     </target>
+    
+    <target name="clean" description="Removes the deployed uPortal from the container and runs 'mvn clean'">
+        <!-- Clean out uPortal from Tomcat -->
+        <artifact:pom file="${uportal-war.dir}/pom.xml" id="uportal-war.pom" />
+        <property name="destDir" value="${server.base}/webapps/${uportal-war.pom.build.finalName}" />
+        <echo>Deleting '${destDir}'</echo>
+        <delete dir="${destDir}" />
+        
+        <!-- Execute the mvn clean lifecycle -->
+        <antcall target="mvn">
+            <param name="pomDir" value="${basedir}" />
+            <param name="goal" value="clean" />
+        </antcall>
+    </target>
 
     <target name="deploy-ear" description="Deploy uPortal and dependent libraries and portlets to the servlet container">
         <uportal-ant-tasks-macro>
@@ -291,9 +305,11 @@
 
     <target name="deploy-war" description="Deploy the uPortal web application to the servlet container">
         <uportal-war-macro>
-            <antcall target="deployPortletApp">
-                <param name="portletApp" value="${uportal-war.artifact}" />
-            </antcall>
+            <basename property="war.contextname" file="${uportal-war.artifact}" suffix=".war" />
+            <property name="destDir" value="${server.base}/webapps/${war.contextname}" />
+            
+            <mkdir dir="${destDir}" />
+            <unwar dest="${destDir}" src="${uportal-war.artifact}" overwrite="true" />
         </uportal-war-macro>
     </target>
 
@@ -458,9 +474,6 @@
     <!-- ============================== Deprecated Targets ============================== -->
     <target name="all">
         <echo>The "all" Ant task is no supported. Run 'mvn clean compile' for the same result.</echo>
-    </target>
-    <target name="clean">
-        <echo>The "clean" Ant task is no supported. Run 'mvn clean' for the same result.</echo>
     </target>
     <target name="compile">
         <echo>The "compile" Ant task is no supported. Run 'mvn compile' for the same result.</echo>
