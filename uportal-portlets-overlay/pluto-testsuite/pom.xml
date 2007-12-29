@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
+>
+
+    <parent>
+        <groupId>org.jasig.portal</groupId>
+        <artifactId>uportal-portlets-overlay</artifactId>
+        <version>3.0.0-M5-SNAPSHOT</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.jasig.portal.portlets-overlay</groupId>
+    <artifactId>pluto-testsuite</artifactId>
+    <packaging>war</packaging>
+
+    <name>Pluto Test Suite Portlet</name>
+    <description>Overlay on Pluto Test Suite Portlet.</description>
+
+    <dependencies>
+        <!-- ===== Compile Time Dependencies ============================== -->
+        <dependency>
+            <groupId>org.apache.pluto</groupId>
+            <artifactId>pluto-testsuite</artifactId>
+            <version>${pluto.version}</version>
+            <type>war</type>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>pluto-testsuite</finalName>
+        <!-- No pluto assembly since this portlet is already pluto-assembled -->
+    </build>
+</project>

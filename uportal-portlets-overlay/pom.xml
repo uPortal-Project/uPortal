@@ -19,6 +19,9 @@
 
     <modules>
         <module>BookmarksPortlet</module>
+        <module>googleportlet</module>
+        <module>RssPortlet</module>
+        <module>pluto-testsuite</module>
     </modules>
 
     <build>

@@ -30,38 +30,31 @@
             <version>${pom.parent.version}</version>
             <type>war</type>
         </dependency>
+        
+        <dependency>
+            <groupId>org.jasig.portal.portlets-overlay</groupId>
+            <artifactId>googleportlet</artifactId>
+            <version>${pom.parent.version}</version>
+            <type>war</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasig.portal.portlets-overlay</groupId>
+            <artifactId>RssPortlet</artifactId>
+            <version>${pom.parent.version}</version>
+            <type>war</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasig.portal.portlets-overlay</groupId>
+            <artifactId>pluto-testsuite</artifactId>
+            <version>${pom.parent.version}</version>
+            <type>war</type>
+        </dependency>
 <!-- 
         <dependency>
             <groupId>org.jasig.portlet</groupId>
-            <artifactId>BookmarksPortlet</artifactId>
-            <version>1.0.7</version>
-            <type>war</type>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jasig.portlet</groupId>
-            <artifactId>googleportlet</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-            <type>war</type>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jasig.portlet</groupId>
             <artifactId>proxyportlet</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-            <type>war</type>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jasig.portlet</groupId>
-            <artifactId>RssPortlet</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-            <type>war</type>
-        </dependency>
- 
-        <dependency>
-            <groupId>org.jasig.portlet</groupId>
-            <artifactId>testsuite</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <type>war</type>
         </dependency>
@@ -72,8 +65,6 @@
             <version>${portlet-api.version}</version>
             <scope>compile</scope>
         </dependency>
-
-
 
         <dependency>
             <groupId>org.apache.pluto</groupId>
@@ -108,10 +99,6 @@
                 <exclusion>
                     <groupId>cglib</groupId>
                     <artifactId>cglib-full</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>xerces</groupId>
-                    <artifactId>xmlParserAPIs</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -157,31 +144,32 @@
                             <bundleFileName>BookmarksPortlet.war</bundleFileName>
                             <contextRoot>/BookmarksPortlet</contextRoot>
                         </webModule>
-                        <!-- 
                         <webModule>
-                            <groupId>org.jasig.portlet</groupId>
+                            <groupId>org.jasig.portal.portlets-overlay</groupId>
                             <artifactId>googleportlet</artifactId>
                             <bundleFileName>googleportlet.war</bundleFileName>
                             <contextRoot>/googleportlet</contextRoot>
                         </webModule>
+                        <webModule>
+                            <groupId>org.jasig.portal.portlets-overlay</groupId>
+                            <artifactId>RssPortlet</artifactId>
+                            <bundleFileName>RssPortlet.war</bundleFileName>
+                            <contextRoot>/RssPortlet</contextRoot>
+                        </webModule>
+                        <webModule>
+                            <groupId>org.jasig.portal.portlets-overlay</groupId>
+                            <artifactId>pluto-testsuite</artifactId>
+                            <bundleFileName>pluto-testsuite.war</bundleFileName>
+                            <contextRoot>/pluto-testsuite</contextRoot>
+                        </webModule>
+                        <!-- 
                         <webModule>
                             <groupId>org.jasig.portlet</groupId>
                             <artifactId>proxyportlet</artifactId>
                             <bundleFileName>proxyportlet.war</bundleFileName>
                             <contextRoot>/proxyportlet</contextRoot>
                         </webModule>
-                        <webModule>
-                            <groupId>org.jasig.portlet</groupId>
-                            <artifactId>RssPortlet</artifactId>
-                            <bundleFileName>RssPortlet.war</bundleFileName>
-                            <contextRoot>/RssPortlet</contextRoot>
-                        </webModule>
-                        <webModule>
-                            <groupId>org.jasig.portlet</groupId>
-                            <artifactId>testsuite</artifactId>
-                            <bundleFileName>testsuite.war</bundleFileName>
-                            <contextRoot>/testsuite</contextRoot>
-                        </webModule> -->
+                        -->
                     </modules>
                 </configuration>
             </plugin>
