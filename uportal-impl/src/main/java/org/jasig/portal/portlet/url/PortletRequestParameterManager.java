@@ -53,10 +53,10 @@ public class PortletRequestParameterManager implements IPortletRequestParameterM
         final Map<IPortletWindowId, RequestType> requestTypeMap = this.getAndCheckRequestTypeMap(request);
         
         if (requestTypeMap == null) {
-            return null;
+            return Collections.emptySet();
         }
         
-        return requestTypeMap.keySet();
+        return Collections.unmodifiableSet(requestTypeMap.keySet());
     }
 
     /* (non-Javadoc)

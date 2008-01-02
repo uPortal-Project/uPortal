@@ -41,7 +41,7 @@ public class PortletRequestParameterManagerTest extends TestCase {
         assertFalse(portletTargeted);
         
         final Set<IPortletWindowId> targetedPortletWindowIds = parameterManager.getTargetedPortletWindowIds(request);
-        assertNull("targetedPortletWindowIds should be null", targetedPortletWindowIds);
+        assertEquals(Collections.EMPTY_SET, targetedPortletWindowIds);
         
         final RequestType portletRequestType = parameterManager.getPortletRequestType(request, new MockPortletWindowId("id"));
         assertNull("portletRequestType should be null", portletRequestType);

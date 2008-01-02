@@ -126,7 +126,6 @@ public class ChannelManager implements LayoutEventListener {
     // communication
     private final Set<String> pendingChannels = new HashSet<String>();
 
-//    private PortalControlStructures pcs;
     private String channelTarget;
     private Map<String, Object> targetParams;
     private UPFileSpec uPElement;
@@ -774,11 +773,15 @@ public class ChannelManager implements LayoutEventListener {
      * @param channelSubscribeId the channel subscribe id
      * @param le the portal event
      */
-    public void passPortalEvent(String channelSubscribeId, PortalEvent le) {
+    public void passPortalEvent(HttpServletRequest request, HttpServletResponse response, String channelSubscribeId, PortalEvent le) {
         IChannel ch = channelTable.get(channelSubscribeId);
-        //TODO pass portal control structures first
         if (ch != null) {
             try {
+                if (ch instanceof IPrivilegedChannel) {
+                    final PortalControlStructures pcs = this.getPortalControlStructuresForChannel(request, response, channelSubscribeId);
+                    ((IPrivilegedChannel)ch).setPortalControlStructures(pcs);
+                }
+                
                 ch.receiveEvent(le);
             }
             catch (Exception e) {
@@ -1000,7 +1003,7 @@ public class ChannelManager implements LayoutEventListener {
      * @param uPElement an <code>UPFileSpec</code> value
      */
     public void setUPElement(UPFileSpec uPElement) {
-        this.uPElement=uPElement;
+        this.uPElement = uPElement;
     }
 
     /**

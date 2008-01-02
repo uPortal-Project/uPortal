@@ -10,6 +10,8 @@ import java.io.PrintWriter;
 import java.util.Set;
 
 import javax.portlet.PortletException;
+import javax.portlet.PortletMode;
+import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -35,6 +37,7 @@ import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.portlet.url.IPortletRequestParameterManager;
+import org.jasig.portal.portlet.url.RequestType;
 import org.jasig.portal.security.IPerson;
 import org.springframework.beans.factory.annotation.Required;
 
@@ -258,7 +261,6 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
                 this.logger.debug("Executing portlet action for window '" + portletWindow + "' with underlying channel: " + channelStaticData);
             }
             
-            //TODO does the request need to be wrapped here?
             this.portletContainer.doAction(portletWindow, httpServletRequest, httpServletResponse);
         }
         catch (PortletException pe) {
@@ -293,7 +295,7 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
         final IPortletWindowId portletWindowId = this.getPortletWindowId(channelStaticData);
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
         
-        //If this window is targetd invalidate the cache
+        //If this window is targeted invalidate the cache
         final Set<IPortletWindowId> targetedPortletWindowIds = this.portletRequestParameterManager.getTargetedPortletWindowIds(httpServletRequest);
         if (targetedPortletWindowIds.contains(portletWindowId)) {
             return false;
@@ -313,6 +315,11 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
         }
         catch (PortletContainerException pce) {
             this.logger.warn("Could not retrieve PortletDD for portlet window '" + portletWindow + "' to determine caching configuration. Marking content cache invalid and continuing.", pce);
+            return false;
+        }
+        
+        if (portletDescriptor == null) {
+            this.logger.warn("Could not retrieve PortletDD for portlet window '" + portletWindow + "' to determine caching configuration. Marking content cache invalid and continuing.");
             return false;
         }
         
@@ -369,7 +376,6 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
                 this.logger.debug("Rendering portlet for window '" + portletWindow + "' with underlying channel: " + channelStaticData);
             }
             
-            //TODO does the request need to be wrapped here?
             this.portletContainer.doRender(portletWindow, httpServletRequest, contentRedirectingHttpServletResponse);
             contentRedirectingHttpServletResponse.flushBuffer();
         }
@@ -413,9 +419,51 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
                 final IPerson person = channelStaticData.getPerson();
                 final IPortletEntity portletEntity = this.portletEntityRegistry.getPortletEntity(channelSubscribeId, person);
                 
-                //TODO delete portlet windows for entity from the windowRegistry?
+                //TODO delete portlet windows for entity from the windowRegistry since there is no cascade from entity to window?
                 
                 this.portletEntityRegistry.deletePortletEntity(portletEntity);
+            }
+            break;
+            
+            //All of these events require the portlet re-render so the portlet parameter
+            //manager is notified of the render request targing the portlet
+            case PortalEvent.MINIMIZE_EVENT:
+            case PortalEvent.MAXIMIZE_EVENT:
+            case PortalEvent.EDIT_BUTTON_EVENT:
+            case PortalEvent.HELP_BUTTON_EVENT:
+            case PortalEvent.ABOUT_BUTTON_EVENT: {
+                final HttpServletRequest httpServletRequest = portalControlStructures.getHttpServletRequest();
+                final IPortletWindowId portletWindowId = this.getPortletWindowId(channelStaticData);
+                final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
+                this.portletRequestParameterManager.setRequestType(httpServletRequest, portletWindowId, RequestType.RENDER);
+
+                switch (portalEvent.getEventNumber()) {
+                    case PortalEvent.MINIMIZE_EVENT: {
+                        portletWindow.setWindowState(WindowState.MINIMIZED);
+                    }
+                    break;
+                    case PortalEvent.MAXIMIZE_EVENT: {
+                        portletWindow.setWindowState(WindowState.NORMAL);
+                    }
+                    break;
+                    case PortalEvent.EDIT_BUTTON_EVENT: {
+                        portletWindow.setPortletMode(PortletMode.EDIT);
+                    }
+                    break;
+                    case PortalEvent.HELP_BUTTON_EVENT: {
+                        portletWindow.setPortletMode(PortletMode.HELP);
+                    }
+                    break;
+                    case PortalEvent.ABOUT_BUTTON_EVENT: {
+                        portletWindow.setPortletMode(IPortletAdaptor.ABOUT);
+                    }
+                    break;
+                }
+            }
+            break;
+            
+            default: {
+                this.logger.info("Don't know how to handle event of type: " + portalEvent.getEventName() + "(" + portalEvent.getEventNumber() + ")");
             }
             break;
         }

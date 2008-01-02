@@ -6,11 +6,14 @@
     <bean id="requestParameterProcessorController" class="org.jasig.portal.url.processing.RequestParameterProcessorListController">
         <property name="dynamicRequestParameterProcessors">
             <list value-type="org.jasig.portal.url.processing.IRequestParameterProcessor">
-                <ref local="portletRequestParameterProcessor"/>
-                <ref local="channelRequestParameterProcessor"/>
+                <ref local="userLayoutParameterProcessor" />
+                <ref local="portletRequestParameterProcessor" />
+                <ref local="channelRequestParameterProcessor" />
             </list>
         </property>
     </bean>
+    
+    <bean id="userLayoutParameterProcessor" class="org.jasig.portal.url.processing.UserLayoutParameterProcessor" />
     
     <bean id="portletRequestParameterProcessor" class="org.jasig.portal.url.processing.PortletRequestParameterProcessor">
         <property name="portletRequestParameterManager" ref="portletRequestParameterManager" />

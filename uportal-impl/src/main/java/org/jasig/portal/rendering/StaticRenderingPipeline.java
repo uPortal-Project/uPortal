@@ -47,7 +47,6 @@ import org.jasig.portal.UserPreferences;
 import org.jasig.portal.car.CarResources;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.layout.IUserLayoutManager;
-import org.jasig.portal.layout.UserLayoutParameterProcessor;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPermission;
@@ -193,18 +192,6 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline {
                     }
 
                     IUserLayoutManager ulm = uPreferencesManager.getUserLayoutManager();
-
-                    // process events that have to be handed directly to the userPreferencesManager.
-                    // (examples of such events are "remove channel", "minimize channel", etc.
-                    //  basically things that directly affect the userLayout structure)
-                    try {
-                        UserPreferences userPrefs = uPreferencesManager.getUserPreferences();
-                        UserLayoutParameterProcessor processor = new UserLayoutParameterProcessor(ulm, userPrefs);
-                        processor.processUserLayoutParameters(req, channelManager, person);
-                    }
-                    catch (PortalException pe) {
-                        log.error("Failure processing user parameters.", pe);
-                    }
 
                     // determine uPElement (optimistic prediction) --end
 

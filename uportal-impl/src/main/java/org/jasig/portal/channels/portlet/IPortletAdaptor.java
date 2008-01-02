@@ -5,6 +5,7 @@
 
 package org.jasig.portal.channels.portlet;
 
+import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
 
 import org.jasig.portal.ICacheable;
@@ -23,6 +24,8 @@ import org.jasig.portal.PortalException;
  */
 public interface IPortletAdaptor extends IPrivilegedChannel, ICharacterChannel, ICacheable {
     public static final WindowState EXCLUSIVE = new WindowState("EXCLUSIVE");
+    
+    public static final PortletMode ABOUT = new PortletMode("ABOUT");
     
     /**
      * {@link javax.servlet.http.HttpServletRequest} attribute that the adaptor will store the current

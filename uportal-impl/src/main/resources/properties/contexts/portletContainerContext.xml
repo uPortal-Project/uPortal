@@ -33,6 +33,7 @@
                 <value>VIEW</value>
                 <value>EDIT</value>
                 <value>HELP</value>
+                <value>ABOUT</value>
             </set>
         </property>
     </bean>
