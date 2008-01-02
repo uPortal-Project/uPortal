@@ -30,6 +30,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.tools.sax.ClasspathEntityResolver;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -141,6 +142,9 @@ public abstract class AbstractEarDeployer<CONFIG extends DeployerConfig> {
             catch (ParserConfigurationException pce) {
                 throw new RuntimeException("Failed to create DocumentBuilder to parse EAR descriptor.", pce);
             }
+            
+            
+            docBuilder.setEntityResolver(new ClasspathEntityResolver());
             
             final Document descriptorDom;
             try {
