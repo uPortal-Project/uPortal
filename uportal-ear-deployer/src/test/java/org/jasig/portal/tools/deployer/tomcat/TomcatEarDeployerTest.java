@@ -34,7 +34,7 @@ public class TomcatEarDeployerTest extends TestCase {
         try {
             final TomcatEarDeployer deployer = new TomcatEarDeployer();
             deployer.deployEar(config);
-
+            
             
             final File expectedSharedJar = new File(jarDir, "shared.jar");
             assertTrue("Expected file '" + expectedSharedJar + "' does not exist.", expectedSharedJar.exists());
