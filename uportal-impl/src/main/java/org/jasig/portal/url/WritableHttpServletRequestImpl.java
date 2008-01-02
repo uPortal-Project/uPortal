@@ -5,23 +5,14 @@
 
 package org.jasig.portal.url;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.Validate;
@@ -32,9 +23,8 @@ import org.apache.commons.lang.Validate;
  * @author Peter Kharchenko: pkharchenko at unicon.net
  * @version $Revision: 11911 $
  */
-public class WritableHttpServletRequestImpl implements IWritableHttpServletRequest {
+public class WritableHttpServletRequestImpl extends AbstractHttpServletRequestWrapper implements IWritableHttpServletRequest {
     private final Map<String, String[]> parameterMap = new HashMap<String, String[]>();
-    private final HttpServletRequest request;
 
     /**
      * Construct a writable this.request wrapping a real this.request
@@ -42,10 +32,9 @@ public class WritableHttpServletRequestImpl implements IWritableHttpServletReque
      */
     @SuppressWarnings("unchecked")
     public WritableHttpServletRequestImpl(HttpServletRequest request) {
-        Validate.notNull(request, "HttpServletRequest can not be null");
-        this.request = request;
+        super(request);
 
-        // place all parameters into the map
+        // place all parameters into the map, saves run-time merging
         this.parameterMap.putAll(request.getParameterMap());
     }
 
@@ -109,7 +98,7 @@ public class WritableHttpServletRequestImpl implements IWritableHttpServletReque
         return currentValues.length != newValues.size();
     }
 
-    
+    @Override
     public String getParameter(String name) {
         Validate.notNull(name, "name can not be null");
         
@@ -122,233 +111,18 @@ public class WritableHttpServletRequestImpl implements IWritableHttpServletReque
         return null;
     }
 
+    @Override
     public Map<String, String[]> getParameterMap() {
         return this.parameterMap;
     }
 
+    @Override
     public Enumeration<String> getParameterNames() {
         return Collections.enumeration(this.parameterMap.keySet());
     }
 
+    @Override
     public String[] getParameterValues(String name) {
         return this.parameterMap.get(name);
-    }
-    
-    
-
-    public Object getAttribute(String name) {
-        return this.request.getAttribute(name);
-    }
-
-    @SuppressWarnings("unchecked")
-    public Enumeration getAttributeNames() {
-        return this.request.getAttributeNames();
-    }
-
-    public String getAuthType() {
-        return this.request.getAuthType();
-    }
-
-    public String getCharacterEncoding() {
-        return this.request.getCharacterEncoding();
-    }
-
-    public int getContentLength() {
-        return this.request.getContentLength();
-    }
-
-    public String getContentType() {
-        return this.request.getContentType();
-    }
-
-    public String getContextPath() {
-        return this.request.getContextPath();
-    }
-
-    public Cookie[] getCookies() {
-        return this.request.getCookies();
-    }
-
-    public long getDateHeader(String name) {
-        return this.request.getDateHeader(name);
-    }
-
-    public String getHeader(String name) {
-        return this.request.getHeader(name);
-    }
-
-    @SuppressWarnings("unchecked")
-    public Enumeration getHeaderNames() {
-        return this.request.getHeaderNames();
-    }
-
-    @SuppressWarnings("unchecked")
-    public Enumeration getHeaders(String name) {
-        return this.request.getHeaders(name);
-    }
-
-    public ServletInputStream getInputStream() throws IOException {
-        return this.request.getInputStream();
-    }
-
-    public int getIntHeader(String name) {
-        return this.request.getIntHeader(name);
-    }
-
-    public Locale getLocale() {
-        return this.request.getLocale();
-    }
-
-    @SuppressWarnings("unchecked")
-    public Enumeration getLocales() {
-        return this.request.getLocales();
-    }
-
-    public String getMethod() {
-        return this.request.getMethod();
-    }
-
-    public String getPathInfo() {
-        return this.request.getPathInfo();
-    }
-
-    public String getPathTranslated() {
-        return this.request.getPathTranslated();
-    }
-
-    public String getProtocol() {
-        return this.request.getProtocol();
-    }
-
-    public String getQueryString() {
-        return this.request.getQueryString();
-    }
-
-    public BufferedReader getReader() throws IOException {
-        return this.request.getReader();
-    }
-
-    /**
-     * @deprecated
-     * @see javax.servlet.ServletRequest#getRealPath(java.lang.String)
-     */
-    @Deprecated
-    @SuppressWarnings("deprecation")
-    public String getRealPath(String arg0) {
-        return this.request.getRealPath(arg0);
-    }
-
-    public String getRemoteAddr() {
-        return this.request.getRemoteAddr();
-    }
-
-    public String getRemoteHost() {
-        return this.request.getRemoteHost();
-    }
-
-    public String getRemoteUser() {
-        return this.request.getRemoteUser();
-    }
-
-    public RequestDispatcher getRequestDispatcher(String arg0) {
-        return this.request.getRequestDispatcher(arg0);
-    }
-
-    public String getRequestedSessionId() {
-        return this.request.getRequestedSessionId();
-    }
-
-    public String getRequestURI() {
-        return this.request.getRequestURI();
-    }
-
-    public StringBuffer getRequestURL() {
-        return this.request.getRequestURL();
-    }
-
-    public String getScheme() {
-        return this.request.getScheme();
-    }
-
-    public String getServerName() {
-        return this.request.getServerName();
-    }
-
-    public int getServerPort() {
-        return this.request.getServerPort();
-    }
-
-    public String getServletPath() {
-        return this.request.getServletPath();
-    }
-
-    public HttpSession getSession() {
-        return this.request.getSession();
-    }
-
-    public HttpSession getSession(boolean arg0) {
-        return this.request.getSession(arg0);
-    }
-
-    public Principal getUserPrincipal() {
-        return this.request.getUserPrincipal();
-    }
-
-    public boolean isRequestedSessionIdFromCookie() {
-        return this.request.isRequestedSessionIdFromCookie();
-    }
-
-    /**
-     * @deprecated
-     * @see javax.servlet.http.HttpServletRequest#isRequestedSessionIdFromUrl()
-     */
-    @Deprecated
-    @SuppressWarnings("deprecation")
-    public boolean isRequestedSessionIdFromUrl() {
-        return this.request.isRequestedSessionIdFromUrl();
-    }
-
-    public boolean isRequestedSessionIdFromURL() {
-        return this.request.isRequestedSessionIdFromURL();
-    }
-
-    public boolean isRequestedSessionIdValid() {
-        return this.request.isRequestedSessionIdValid();
-    }
-
-    public boolean isSecure() {
-        return this.request.isSecure();
-    }
-
-    public boolean isUserInRole(String role) {
-        return this.request.isUserInRole(role);
-    }
-
-    public void removeAttribute(String name) {
-        this.request.removeAttribute(name);
-    }
-
-    public void setAttribute(String name, Object o) {
-        this.request.setAttribute(name, o);
-    }
-
-    public void setCharacterEncoding(String env) throws UnsupportedEncodingException {
-        this.request.setCharacterEncoding(env);
-    }
-
-    public String getLocalAddr() {
-        return this.request.getLocalAddr();
-    }
-
-    public String getLocalName() {
-        return this.request.getLocalName();
-    }
-
-    public int getLocalPort() {
-        return this.request.getLocalPort();
-    }
-
-    public int getRemotePort() {
-        return this.request.getRemotePort();
     }
 }

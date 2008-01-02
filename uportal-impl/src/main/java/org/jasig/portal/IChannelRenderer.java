@@ -32,9 +32,6 @@ import org.xml.sax.ContentHandler;
  **/
 public interface IChannelRenderer
 {
-    /** <p> Class version identifier.</p> */
-    public final static String RCS_ID = "@(#) $Header$";
-
     /** <p>Channel rendering was successful.</p> */
     public static int RENDERING_SUCCESSFUL = 0;
 

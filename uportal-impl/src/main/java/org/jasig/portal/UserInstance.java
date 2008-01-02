@@ -8,6 +8,7 @@ package  org.jasig.portal;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionBindingEvent;
 
 import org.apache.commons.logging.Log;
@@ -66,7 +67,8 @@ public class UserInstance implements IUserInstance {
         }
 
         //Initialize the ChannelManager
-        this.channelManager = new ChannelManager(this.preferencesManager);
+        final HttpSession session = request.getSession(false);
+        this.channelManager = new ChannelManager(this.preferencesManager, session);
         
         //Register the channel manager as a layout event listener
         final IUserLayoutManager userLayoutManager = this.preferencesManager.getUserLayoutManager();

@@ -10,6 +10,9 @@ import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Vector;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.jasig.portal.serialize.CachingSerializer;
 import org.jasig.portal.utils.SAX2FilterImpl;
 import org.xml.sax.Attributes;
@@ -61,36 +64,39 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
     
     private String channelTitle = null;
     
-    private boolean ccaching;
-    private CachingSerializer ser;
+    private final HttpServletRequest request;
+    private final HttpServletResponse response;
+    
+    private final boolean ccaching;
+    private final CachingSerializer ser;
 
-    private List<String> systemCCacheBlocks;
-    private List<String> channelIdBlocks;
+    private final List<String> systemCCacheBlocks;
+    private final List<String> channelIdBlocks;
 
     // constructors
 
     /**
      * Downward chaining constructor.
      */
-    public CharacterCachingChannelIncorporationFilter (ContentHandler handler, ChannelManager chanm, boolean ccaching)  {
+    public CharacterCachingChannelIncorporationFilter(ContentHandler handler, ChannelManager chanm, boolean ccaching, HttpServletRequest request, HttpServletResponse response) {
         super(handler);
 
-        if(handler instanceof CachingSerializer) {
-            ser=(CachingSerializer) handler;
-            this.ccaching=true;
-        } else {
-            this.ccaching=false;
+        if (handler instanceof CachingSerializer) {
+            this.ccaching = ccaching;
+            this.ser = (CachingSerializer) handler;
+            this.systemCCacheBlocks = new Vector<String>();
+            this.channelIdBlocks = new Vector<String>();
+        }
+        else {
+            this.ccaching = false;
+            this.ser = null;
+            this.systemCCacheBlocks = null;
+            this.channelIdBlocks = null;
         }
 
         this.cm = chanm;
-        this.ccaching=(this.ccaching && ccaching);
-        if(this.ccaching) {
-            log.debug("CharacterCachingChannelIncorporationFilter() : ccaching=true");
-            systemCCacheBlocks=new Vector<String>();
-            channelIdBlocks=new Vector<String>();
-        } else {
-            log.debug("CharacterCachingChannelIncorporationFilter() : ccaching=false");
-        }
+        this.request = request;
+        this.response = response;
     }
 
 
@@ -280,29 +286,24 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
 						if (ccaching) {
 							channelIdBlocks.add(channelSubscribeId);
 						}
-						cm.outputChannel(channelSubscribeId, contentHandler);
+						cm.outputChannel(this.request, this.response, this.channelSubscribeId, contentHandler);
 						if (ccaching) {
 							// start caching again
 							try {
-								if (!ser.startCaching()) {
-									log
-											.error("CharacterCachingChannelIncorporationFilter::endElement() : unable to restart cache after a channel end!");
-								}
-							} catch (IOException ioe) {
-								log
-										.error(
-												"CharacterCachingChannelIncorporationFilter::endElement() : unable to start caching!",
-												ioe);
-							}
+                                if (!ser.startCaching()) {
+                                    log.error("unable to restart cache after a channel end!");
+                                }
+                            }
+                            catch (IOException ioe) {
+                                log.error("unable to start caching!", ioe);
+                            }
 						}
 					} else {
 						// contentHandler was null. This is a serious problem,
 						// since
 						// filtering is pointless if it's not writing back to a
 						// contentHandler
-						log
-								.error("null ContentHandler prevents outputting channel with subscribe id = "
-										+ channelSubscribeId);
+						log.error("null ContentHandler prevents outputting channel with subscribe id = " + channelSubscribeId);
 					}
             	} finally {
                     endIncorporationElement();

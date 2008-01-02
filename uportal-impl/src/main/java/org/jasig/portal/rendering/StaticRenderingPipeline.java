@@ -244,14 +244,14 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline {
                                 URLUtil.redirect(req, res, newRootNodeId, true, skipParams, CHARACTER_SET);
                             }
                             catch (PortalException pe) {
-                                log.error("UserInstance::renderState() : PortalException occurred while redirecting",
+                                log.error("PortalException occurred while redirecting",
                                         pe);
                             }
                             return;
                         }
                     }
 
-                    // LogService.log(LogService.DEBUG,"UserInstance::renderState() : uP_detach_target=\""+rootNodeId+"\".");
+                    // LogService.log(LogService.DEBUG,"uP_detach_target=\""+rootNodeId+"\".");
                     try {
                         rElement = ulm.getNode(rootNodeId);
                     }
@@ -289,8 +289,7 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline {
                     // pass along the serializer name
                     channelManager.setSerializerName(tsd.getSerializerName());
                     // initialize ChannelIncorporationFilter
-                    // ChannelIncorporationFilter cif = new ChannelIncorporationFilter(markupSerializer, channelManager); // this should be slightly faster then the ccaching version, may be worth adding support later
-                    CharacterCachingChannelIncorporationFilter cif = new CharacterCachingChannelIncorporationFilter(markupSerializer, channelManager, CACHE_ENABLED && CHARACTER_CACHE_ENABLED);
+                    CharacterCachingChannelIncorporationFilter cif = new CharacterCachingChannelIncorporationFilter(markupSerializer, channelManager, CACHE_ENABLED && CHARACTER_CACHE_ENABLED, req, res);
 
                     String cacheKey = null;
                     boolean output_produced = false;
@@ -301,22 +300,22 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline {
                         if (ccaching) {
                             // obtain character cache
                             CharacterCacheEntry cCache = systemCharacterCache.get(cacheKey);
-                            if (cCache != null && cCache.channelIds != null && cCache.systemBuffers != null) {
+                            if (cCache != null && cCache.channelIds != null && cCache.systemBuffers != null && cCache.systemBuffers.size() > 0) {
                                 ccache_exists = true;
                                 if (log.isDebugEnabled())
                                     log
-                                            .debug("UserInstance::renderState() : retreived transformation character block cache for a key \""
+                                            .debug("retreived transformation character block cache for a key \""
                                                     + cacheKey + "\"");
                                 // start channel threads
                                 for (int i = 0; i < cCache.channelIds.size(); i++) {
                                     String channelSubscribeId = cCache.channelIds.get(i);
                                     if (channelSubscribeId != null) {
                                         try {
-                                            channelManager.startChannelRendering(channelSubscribeId);
+                                            channelManager.startChannelRendering(req, res, channelSubscribeId);
                                         }
                                         catch (PortalException e) {
                                             log
-                                                    .error("UserInstance::renderState() : unable to start rendering channel (subscribeId=\""
+                                                    .error("unable to start rendering channel (subscribeId=\""
                                                             + channelSubscribeId
                                                             + "\", user="
                                                             + person.getID()
@@ -326,7 +325,7 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline {
                                         }
                                     }
                                     else {
-                                        log.error("UserInstance::renderState() : channel entry " + Integer.toString(i)
+                                        log.error("channel entry " + Integer.toString(i)
                                                 + " in character cache is invalid (user=" + person.getID() + ")!");
                                     }
                                 }
@@ -336,8 +335,8 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline {
                                 int ccsize = cCache.systemBuffers.size();
                                 if (cCache.channelIds.size() != ccsize - 1) {
                                     log
-                                            .error("UserInstance::renderState() : channelIds character cache has invalid size !  "
-                                                    + "UserInstance::renderState() : ccache contains "
+                                            .error("channelIds character cache has invalid size !  "
+                                                    + "ccache contains "
                                                     + cCache.systemBuffers.size()
                                                     + " system buffers and "
                                                     + cCache.channelIds.size() + " channel entries");
@@ -355,7 +354,7 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline {
 
                                     // get channel output
                                     String channelSubscribeId = cCache.channelIds.get(sb);
-                                    channelManager.outputChannel(channelSubscribeId, markupSerializer);
+                                    channelManager.outputChannel(req, res, channelSubscribeId, markupSerializer);
                                 }
 
                                 // print out the last block
@@ -377,13 +376,13 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline {
                             SAX2BufferImpl cachedBuffer = systemCache.get(cacheKey);
                             if (cachedBuffer != null) {
                                 // replay the buffer to channel incorporation filter
-                                if (log.isDebugEnabled())
-                                    log
-                                            .debug("UserInstance::renderState() : retreived XSLT transformation cache for a key \""
-                                                    + cacheKey + "\"");
+                                if (log.isDebugEnabled()) {
+                                    log.debug("retreived XSLT transformation cache for a key '" + cacheKey + "'");
+                                }
+                                
                                 // attach rendering buffer downstream of the cached buffer
-                                ChannelRenderingBuffer crb = new ChannelRenderingBuffer((XMLReader) cachedBuffer,
-                                        channelManager, ccaching);
+                                ChannelRenderingBuffer crb = new ChannelRenderingBuffer((XMLReader) cachedBuffer, channelManager, ccaching, req, res);
+                                
                                 // attach channel incorporation filter downstream of the channel rendering buffer
                                 cif.setParent(crb);
                                 crb.setOutputAtDocumentEnd(true);
@@ -408,7 +407,7 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline {
                         tst.setErrorListener(cErrListener);
 
                         // initialize ChannelRenderingBuffer and attach it downstream of the structure transformer
-                        ChannelRenderingBuffer crb = new ChannelRenderingBuffer(channelManager, ccaching);
+                        ChannelRenderingBuffer crb = new ChannelRenderingBuffer(channelManager, ccaching, req, res);
                         ssth.setResult(new SAXResult(crb));
 
                         // determine and set the stylesheet params
@@ -426,7 +425,7 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline {
                             String pName = param.getKey();
                             String pValue = param.getValue();
                             if (log.isDebugEnabled())
-                                log.debug("UserInstance::renderState() : setting sparam \"" + pName + "\"=\"" + pValue
+                                log.debug("setting sparam \"" + pName + "\"=\"" + pValue
                                         + "\".");
                             sst.setParameter(pName, pValue);
                         }
@@ -486,7 +485,7 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline {
                         if (logXMLBeforeStructureTransformation) {
                             if (log.isDebugEnabled())
                                 log
-                                        .debug("UserInstance::renderState() : XML incoming to the structure transformation :\n\n"
+                                        .debug("XML incoming to the structure transformation :\n\n"
                                                 + dbwr1.toString() + "\n\n");
                         }
 
@@ -502,7 +501,7 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline {
                             String pName = param.getKey();
                             String pValue = param.getValue();
                             if (log.isDebugEnabled())
-                                log.debug("UserInstance::renderState() : setting tparam \"" + pName + "\"=\"" + pValue
+                                log.debug("setting tparam \"" + pName + "\"=\"" + pValue
                                         + "\".");
                             tst.setParameter(pName, pValue);
                         }
@@ -553,7 +552,7 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline {
                             systemCache.put(cacheKey, newCache);
                             newCache.setOutputAtDocumentEnd(true);
                             if (log.isDebugEnabled())
-                                log.debug("UserInstance::renderState() : recorded transformation cache with key \""
+                                log.debug("recorded transformation cache with key \""
                                         + cacheKey + "\"");
                         }
                         else {
@@ -567,7 +566,7 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline {
 
                         // Debug piece to print out the recorded pre-theme transformation XML
                         if (logXMLBeforeThemeTransformation && log.isDebugEnabled()) {
-                            log.debug("UserInstance::renderState() : XML incoming to the theme transformation :\n\n"
+                            log.debug("XML incoming to the theme transformation :\n\n"
                                     + dbwr2.toString() + "\n\n");
                         }
 
@@ -578,14 +577,14 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline {
                             ce.channelIds = cif.getChannelIdBlocks();
                             if (ce.systemBuffers == null || ce.channelIds == null) {
                                 log
-                                        .error("UserInstance::renderState() : CharacterCachingChannelIncorporationFilter returned invalid cache entries!");
+                                        .error("CharacterCachingChannelIncorporationFilter returned invalid cache entries!");
                             }
                             else {
                                 // record cache
                                 systemCharacterCache.put(cacheKey, ce);
                                 if (log.isDebugEnabled()) {
                                     log
-                                            .debug("UserInstance::renderState() : recorded transformation character block cache with key \""
+                                            .debug("recorded transformation character block cache with key \""
                                                     + cacheKey + "\"");
 
                                     log.debug("Printing transformation cache system blocks:");

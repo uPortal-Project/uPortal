@@ -10,6 +10,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -418,8 +419,9 @@ public class UpdatePreferencesServlet extends HttpServlet {
 		String nodeId = node.getId();
 
 		// instantiate the channel in the user's layout
-		ChannelManager cm = new ChannelManager(upm);
-		cm.instantiateChannel(channel.getId());
+		final HttpSession session = request.getSession(false);
+        ChannelManager cm = new ChannelManager(upm, session);
+		cm.instantiateChannel(request, response, channel.getId());
 
 		// save the user layout
 		ulm.saveUserLayout();

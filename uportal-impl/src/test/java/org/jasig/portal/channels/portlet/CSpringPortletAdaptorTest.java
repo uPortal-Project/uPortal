@@ -58,7 +58,7 @@ public class CSpringPortletAdaptorTest extends TestCase {
             //expected
         }
         
-        final PortalControlStructures pcs = new PortalControlStructures();
+        final PortalControlStructures pcs = new PortalControlStructures(new MockHttpServletRequest(), null);
         this.portletAdaptor.setPortalControlStructures(pcs);
         try {
             this.portletAdaptor.setStaticData(sd);
@@ -82,7 +82,7 @@ public class CSpringPortletAdaptorTest extends TestCase {
     public void testInitLifecycle() throws Exception {
         this.sd.setParameter("springBeanName", "portletChannel");
         
-        final PortalControlStructures pcs = new PortalControlStructures();
+        final PortalControlStructures pcs = new PortalControlStructures(new MockHttpServletRequest(), null);
         
         final WebApplicationContext webApplicationContext = EasyMock.createMock(WebApplicationContext.class);
         EasyMock.expect(webApplicationContext.getBean("portletChannel", ISpringPortletChannel.class)).andReturn(this.portletChannel);
@@ -131,7 +131,7 @@ public class CSpringPortletAdaptorTest extends TestCase {
             //expected
         }
         
-        final PortalControlStructures pcs = new PortalControlStructures();
+        final PortalControlStructures pcs = new PortalControlStructures(new MockHttpServletRequest(), null);
         this.portletAdaptor.setPortalControlStructures(pcs);
         try {
             this.portletAdaptor.processAction();
@@ -146,8 +146,7 @@ public class CSpringPortletAdaptorTest extends TestCase {
         //Have to init first
         this.testInitLifecycle();
         
-        final PortalControlStructures pcs = new PortalControlStructures();
-        pcs.setHttpServletRequest(new MockHttpServletRequest());
+        final PortalControlStructures pcs = new PortalControlStructures(new MockHttpServletRequest(), null);
         
         final ChannelRuntimeData rd = new ChannelRuntimeData();
         this.portletAdaptor.setPortalControlStructures(pcs);
@@ -247,7 +246,7 @@ public class CSpringPortletAdaptorTest extends TestCase {
         }
         
         
-        final PortalControlStructures pcs = new PortalControlStructures();
+        final PortalControlStructures pcs = new PortalControlStructures(new MockHttpServletRequest(), null);
         this.portletAdaptor.setPortalControlStructures(pcs);
         try {
             this.portletAdaptor.generateKey();
@@ -283,8 +282,7 @@ public class CSpringPortletAdaptorTest extends TestCase {
       //Have to init first
         this.testInitLifecycle();
         
-        final PortalControlStructures pcs = new PortalControlStructures();
-        pcs.setHttpServletRequest(new MockHttpServletRequest());
+        final PortalControlStructures pcs = new PortalControlStructures(new MockHttpServletRequest(), null);
         
         final ChannelRuntimeData rd = new ChannelRuntimeData();
         this.portletAdaptor.setPortalControlStructures(pcs);
@@ -405,7 +403,7 @@ public class CSpringPortletAdaptorTest extends TestCase {
         //Have to init first
         this.testInitLifecycle();
         
-        final PortalControlStructures pcs = new PortalControlStructures();
+        final PortalControlStructures pcs = new PortalControlStructures(new MockHttpServletRequest(), null);
         this.portletAdaptor.setPortalControlStructures(pcs);
 
         final PortalEvent ev = PortalEvent.MAXIMIZE;
@@ -446,7 +444,7 @@ public class CSpringPortletAdaptorTest extends TestCase {
         //Have to init first
         this.testInitLifecycle();
         
-        final PortalControlStructures pcs = new PortalControlStructures();
+        final PortalControlStructures pcs = new PortalControlStructures(new MockHttpServletRequest(), null);
         this.portletAdaptor.setPortalControlStructures(pcs);
 
         final PortalEvent ev = PortalEvent.SESSION_DONE_EVENT;

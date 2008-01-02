@@ -17,5 +17,7 @@
         </property>
     </bean>
     <bean id="metadataAssembler" class="org.springframework.jmx.export.assembler.InterfaceBasedMBeanInfoAssembler"></bean>
+    
+    
     <bean id="framework" class="org.jasig.portal.jmx.FrameworkMBeanImpl"></bean>
 </beans>

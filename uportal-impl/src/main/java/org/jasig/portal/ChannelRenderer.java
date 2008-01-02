@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.collections15.map.ReferenceMap;
+import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.channels.support.IChannelTitle;
@@ -49,8 +50,8 @@ public class ChannelRenderer
 
     public static final String[] renderingStatus={"successful","failed","timed out"};
 
-    protected IChannel channel;
-    protected ChannelRuntimeData rd;
+    protected final IChannel channel;
+    protected final ChannelRuntimeData rd;
     protected Map<String, ChannelCacheEntry> channelCache;
     protected Map<IChannel, Map<String, ChannelCacheEntry>> cacheTables;
 
@@ -81,6 +82,7 @@ public class ChannelRenderer
      * @param threadPool a <code>ThreadPool</code> value
      */
     public ChannelRenderer (IChannel chan,ChannelRuntimeData runtimeData, ExecutorService threadPool) {
+        Validate.notNull(chan, "IChannel can not be null");
         this.channel=chan;
         this.rd=runtimeData;
         this.rendering = false;
@@ -109,23 +111,6 @@ public class ChannelRenderer
         this(chan,runtimeData,threadPool);
         this.groupSemaphore=groupSemaphore;
         this.groupRenderingKey=groupRenderingKey;
-    }
-
-
-    /**
-     * Sets the channel on which ChannelRenderer is to operate.
-     *
-     * @param channel an <code>IChannel</code>
-     */
-    public void setChannel(IChannel channel) {
-        if (log.isDebugEnabled())
-            log.debug("ChannelRenderer::setChannel() : channel is being reset!");
-        this.channel=channel;
-        if(this.worker!=null) {
-            this.worker.setChannel(channel);
-        }
-        // clear channel cache
-        this.channelCache=null;
     }
 
     /**
@@ -176,7 +161,7 @@ public class ChannelRenderer
   {
     // start the rendering thread
 
-    this.worker = new Worker (this.channel,this.rd);
+    this.worker = new Worker(this.channel, this.rd);
 
     this.workTracker = tp.submit(this.worker); // XXX is execute okay?
     this.rendering = true;
@@ -424,11 +409,12 @@ public class ChannelRenderer
 
 
     protected class Worker extends BaseTask {
+        private final IChannel channel;
+        private final ChannelRuntimeData rd;
+        
         private boolean successful;
         private boolean done;
         private boolean setRuntimeDataComplete;
-        private IChannel channel;
-        private ChannelRuntimeData rd;
         private SAX2BufferImpl buffer;
         private String cbuffer;
 
@@ -437,14 +423,14 @@ public class ChannelRenderer
          */
         private String channelTitle = null;
 
-        public Worker (IChannel ch, ChannelRuntimeData runtimeData) {
-            this.channel=ch;  this.rd=runtimeData;
-            successful = false; done = false; setRuntimeDataComplete=false;
-            buffer=null; cbuffer=null;
-        }
-
-        public void setChannel(IChannel ch) {
-            this.channel=ch;
+        public Worker(IChannel ch, ChannelRuntimeData runtimeData) {
+            this.channel = ch;
+            this.rd = runtimeData;
+            successful = false;
+            done = false;
+            setRuntimeDataComplete = false;
+            buffer = null;
+            cbuffer = null;
         }
 
         public boolean isSetRuntimeDataComplete() {

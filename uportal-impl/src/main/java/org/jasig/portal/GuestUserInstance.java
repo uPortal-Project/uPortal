@@ -69,7 +69,7 @@ public class GuestUserInstance implements IUserInstance {
         this.userPreferencesManager = new GuestUserPreferencesManagerWrapper(preferencesManager, sessionId);
         
         //Initialize the ChannelManager
-        this.channelManager = new ChannelManager(this.userPreferencesManager);
+        this.channelManager = new ChannelManager(this.userPreferencesManager, session);
         
         //Create the rendering lock for the user
         this.renderingLock = new Object();

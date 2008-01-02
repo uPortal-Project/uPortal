@@ -48,6 +48,7 @@ import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.security.IPerson;
 import org.jasig.portal.serialize.CachingSerializer;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.spring.PortalApplicationContextLocator;
@@ -56,7 +57,6 @@ import org.jasig.portal.utils.SAX2BufferImpl;
 import org.jasig.portal.utils.SetCheckInSemaphore;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.web.context.WebApplicationContext;
 import org.xml.sax.ContentHandler;
 
 import tyrex.naming.MemoryContext;
@@ -65,117 +65,187 @@ import tyrex.naming.MemoryContext;
  * ChannelManager shall have the burden of squeezing content out of channels.
  * <p>
  * Validation and timeouts, these two are needed for smooth operation of the portal
- * sometimes channels will timeout with information retreival then the content should
+ * sometimes channels will timeout with information retrieval then the content should
  * be skipped.
  *
  * @author Peter Kharchenko, pkharchenko@unicon.net
  * @version $Revision$
  */
 public class ChannelManager implements LayoutEventListener {
+    private static final String PORTAL_CONTROL_STRUCTURES_MAP_ATTR = ChannelManager.class.getName() + ".PortalControlStructuresMap";
+
+    public static final String channelAddressingPathElement = "channel";
+
+    // Metrics
+    private static final AtomicLong activeRenderers = new AtomicLong();
+    private static final AtomicLong maxRenderThreads = new AtomicLong();
+    
+    public static long getActiveRenderers() {
+        return activeRenderers.get();
+    }
+    
+    public static long getMaxRenderThreads() {
+        return maxRenderThreads.get();
+    }
+    
+    // Factory used to build all channel renderer objects.
+    private static final IChannelRendererFactory cChannelRendererFactory = 
+        ChannelRendererFactory.newInstance(ChannelManager.class.getName(), activeRenderers, maxRenderThreads);
+    
+    // global channel rendering cache
+    public static final int SYSTEM_CHANNEL_CACHE_MIN_SIZE = 50; // this should be in a file somewhere
+    public static final Map<String, ChannelCacheEntry> systemCache = new ReferenceMap<String, ChannelCacheEntry>(ReferenceMap.HARD, ReferenceMap.SOFT, SYSTEM_CHANNEL_CACHE_MIN_SIZE, .75f, true);
+
+    private static boolean useAnchors = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.ChannelManager.use_anchors", false);
+    
+
     private static final Log log = LogFactory.getLog(ChannelManager.class);
 
-    private IUserPreferencesManager upm;
-    private PortalControlStructures pcs;
+    private final IUserPreferencesManager userPreferencesManager;
+    
+    // Channel rendering tables
+    private final Map<String, IChannel> channelTable = new Hashtable<String, IChannel>();
+    private final Map<String, IChannelRenderer> rendererTable = new Hashtable<String, IChannelRenderer>();
+    private final Map<IChannel, Map<String, ChannelCacheEntry>> channelCacheTable = Collections.synchronizedMap(new WeakHashMap<IChannel, Map<String, ChannelCacheEntry>>());;
 
-    private Map<String, IChannel> channelTable;
-    private Map<String, IChannelRenderer> rendererTable;
-    private Map<IChannel, Map<String, ChannelCacheEntry>> channelCacheTable;
-
-    private String channelTarget;
-    private Map<String, Object> targetParams;
-    private BrowserInfo binfo;
-    private LocaleManager lm;
-
-    private Context portalContext;
-    private Context channelContext;
+    // Tracks repeated rendering for an erroring channel 
+    private final Set<String> repeatRenderings = new HashSet<String>();
 
     // inter-channel communication tables
-    private Map<String, Set<String>> iccTalkers;
-    private Map<String, Set<String>> iccListeners;
+    private final Map<String, Set<String>> iccTalkers = new HashMap<String, Set<String>>();
+    private final Map<String, Set<String>> iccListeners = new HashMap<String, Set<String>>();
+
+    // JNDI Context reference for channels
+    private final Context channelContext;
+
+    // Used for channel authorization decisions
+    private final IAuthorizationPrincipal authorizationPrincipal;
 
     // a set of channels requested for rendering, but
     // awaiting rendering set commit due to inter-channel
     // communication
-    private Set<String> pendingChannels;
-    private boolean groupedRendering;
+    private final Set<String> pendingChannels = new HashSet<String>();
 
-    private IAuthorizationPrincipal ap;
-
-    // Metrics
-    public static final AtomicLong activeRenderers = new AtomicLong();
-    public static AtomicLong maxRenderThreads = new AtomicLong();
+//    private PortalControlStructures pcs;
+    private String channelTarget;
+    private Map<String, Object> targetParams;
+    private UPFileSpec uPElement;
     
+    private boolean characterCaching = false;
+    private BrowserInfo browserInfo;
+    private LocaleManager localeManager;
     private String serializerName;
-
-   /** Factory used to build all channel renderer objects. */
-    private static final IChannelRendererFactory cChannelRendererFactory =
-        ChannelRendererFactory.newInstance(
-            ChannelManager.class.getName(), activeRenderers, maxRenderThreads
-            );
-
-    public UPFileSpec uPElement;
-
-    // global channel rendering cache
-    public static final int SYSTEM_CHANNEL_CACHE_MIN_SIZE=50; // this should be in a file somewhere
-
-    public static final Map<String, ChannelCacheEntry> systemCache = new ReferenceMap<String, ChannelCacheEntry>(ReferenceMap.HARD, ReferenceMap.SOFT, SYSTEM_CHANNEL_CACHE_MIN_SIZE, .75f, true);
-
-    public static final String channelAddressingPathElement="channel";
-    private static boolean useAnchors = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.ChannelManager.use_anchors", false);
-    private Set<String> repeatRenderings=new HashSet<String>();
-    private boolean ccaching=false;
-
-    public ChannelManager() {
-        channelTable = new Hashtable<String, IChannel>();
-        rendererTable = new Hashtable<String, IChannelRenderer>();
-        iccTalkers = new HashMap<String, Set<String>>();
-        iccListeners = new HashMap<String, Set<String>>();
-        channelCacheTable = Collections.synchronizedMap(new WeakHashMap<IChannel, Map<String, ChannelCacheEntry>>());
-        groupedRendering = false;
-    }
-
-    /**
-     * Creates a new <code>ChannelManager</code> instance.
-     *
-     * @param request a <code>HttpServletRequest</code> value
-     * @param response a <code>HttpServletResponse</code> value
-     * @param manager an <code>IUserPreferencesManager</code> value
-     * @param uPElement an <code>UPFileSpec</code> that includes a tag number.
-     */
-    public ChannelManager(HttpServletRequest request, HttpServletResponse response, IUserPreferencesManager manager,UPFileSpec uPElement) {
-        this();
-        this.upm=manager;
-        pcs=new PortalControlStructures();
-        pcs.setUserPreferencesManager(upm);
-        pcs.setChannelManager(this);
-        this.startRenderingCycle(request,response,uPElement);
-    }
-
+    private boolean groupedRendering = false;
+    
 
     /**
      * Creates a new <code>ChannelManager</code> instance.
      *
      * @param manager an <code>IUserPreferencesManager</code> value
      */
-    public ChannelManager(IUserPreferencesManager manager) {
-        this();
-        this.upm=manager;
-        pcs=new PortalControlStructures();
-        pcs.setUserPreferencesManager(manager);
-        pcs.setChannelManager(this);
+    public ChannelManager(IUserPreferencesManager manager, HttpSession httpSession) {
+        this.userPreferencesManager = manager;
+        
+        
+        final String sessionId = httpSession.getId();
+        
+        final IPerson person = this.userPreferencesManager.getPerson();
+        final String personId = Integer.toString(person.getID());
+        
+        final UserProfile currentProfile = this.userPreferencesManager.getCurrentProfile();
+        final String layoutId = Integer.toString(currentProfile.getLayoutId());
+
+        this.channelContext = this.getChannelJndiContext(sessionId, personId, layoutId);
+        
+        
+        final EntityIdentifier personEntityIdentifier = person.getEntityIdentifier();
+        this.authorizationPrincipal = AuthorizationService.instance().newPrincipal(personEntityIdentifier.getKey(), personEntityIdentifier.getType());
+    }
+    
+
+
+    /**
+     * <code>getChannelContext</code> generates a JNDI context that
+     * will be passed to the regular channels. The context is pieced
+     * together from the parts of the global portal context.
+     *
+     * @param portalContext uPortal JNDI context
+     * @param sessionId current session id
+     * @param userId id of a current user
+     * @param layoutId id of the layout used by the user
+     * @return a channel <code>InitialContext</code> value
+     */
+    private Context getChannelJndiContext(String sessionId, String userId, String layoutId) {
+        final Context portalContext = this.getPortalContext();
+        if (portalContext == null) {
+            return null;
+        }
+        
+        try {
+            // create a new InitialContext
+            final Context cic = new MemoryContext(new Hashtable<Object, Object>());
+            // get services context
+            final Context servicesContext = (Context) portalContext.lookup("services");
+            // get channel-ids context
+            final Context channel_idsContext = (Context) portalContext.lookup("users/" + userId + "/layouts/" + layoutId + "/channel-ids");
+            // get channel-obj context
+            final Context channel_objContext = (Context) portalContext.lookup("users/" + userId + "/sessions/" + sessionId + "/channel-obj");
+    
+            cic.bind("services", servicesContext);
+            cic.bind("channel-ids", channel_idsContext);
+            cic.bind("channel-obj", channel_objContext);
+            cic.bind("portlet-ids", new ArrayList<Object>());
+    
+            return cic;
+        }
+        catch (NamingException ne) {
+            log.error("Failed to create channel JNDI Context. No JNDI context will be available for rendering channels.", ne);
+            return null;
+        }
     }
 
-
+    /**
+     * Get the uPortal JNDI context
+     * @return uPortal initial JNDI context
+     */
+    private Context getPortalContext() {
+        final Hashtable<String, String> environment = new Hashtable<String, String>(5);
+        // Set up the path
+        environment.put(Context.INITIAL_CONTEXT_FACTORY, "org.jasig.portal.jndi.PortalInitialContextFactory");
+        
+        try {
+            return new InitialContext(environment);
+        }
+        catch (NamingException ne) {
+            log.error("Failed to create portal JNDI Context with environment " + environment, ne);
+            return null;
+        }
+    }
+    
+    private PortalControlStructures getPortalControlStructuresForChannel(HttpServletRequest request, HttpServletResponse response, String channelSubscribeId) {
+        Map<String, PortalControlStructures> existingPortalControlStructures = (Map<String, PortalControlStructures>)request.getAttribute(PORTAL_CONTROL_STRUCTURES_MAP_ATTR);
+        if (existingPortalControlStructures == null) {
+            existingPortalControlStructures = new HashMap<String, PortalControlStructures>();
+            request.setAttribute(PORTAL_CONTROL_STRUCTURES_MAP_ATTR, existingPortalControlStructures);
+        }
+        
+        PortalControlStructures pcs = existingPortalControlStructures.get(channelSubscribeId);
+        if (pcs == null) {
+            pcs = new PortalControlStructures(request, response, this, this.userPreferencesManager);
+            existingPortalControlStructures.put(channelSubscribeId, pcs);
+        }
+        return pcs;
+    }
+    
     /**
      * Directly places a channel instance into the hashtable of active channels.
      * This is designed to be used by the error channel only.
      */
-
-    public void setChannelInstance(String channelSubscribeId,IChannel channelInstance) {
-        if(channelTable.get(channelSubscribeId)!=null) {
+    public void setChannelInstance(String channelSubscribeId, IChannel channelInstance) {
+        if (channelTable.get(channelSubscribeId) != null) {
             channelTable.remove(channelSubscribeId);
         }
-        channelTable.put(channelSubscribeId,channelInstance);
+        channelTable.put(channelSubscribeId, channelInstance);
     }
 
     /**
@@ -264,10 +334,11 @@ public class ChannelManager implements LayoutEventListener {
 
         }
         rendererTable.clear();
-        clearRepeatedRenderings();
-        targetParams=null;
-        pendingChannels=new HashSet<String>();
-        groupedRendering=false;
+        repeatRenderings.clear();
+        pendingChannels.clear();
+        
+        targetParams = null;
+        groupedRendering = false;
     }
 
 
@@ -278,13 +349,10 @@ public class ChannelManager implements LayoutEventListener {
     public void finishedSession(HttpSession session) {
         this.finishedRenderingCycle();
         
-        final PortalControlStructures pcs = new PortalControlStructures();
-        pcs.setHttpSession(session);
-        pcs.setUserPreferencesManager(this.upm);
-        this.setLocaleManager(this.lm);
+        final PortalControlStructures pcs = new PortalControlStructures(session, this, this.userPreferencesManager);
 
         // send SESSION_DONE event to all the channels
-        PortalEvent ev = PortalEvent.SESSION_DONE_EVENT;
+        final PortalEvent ev = PortalEvent.SESSION_DONE_EVENT;
 
         for (final IChannel ch : this.channelTable.values()) {
             if (ch != null) {
@@ -301,10 +369,11 @@ public class ChannelManager implements LayoutEventListener {
             }
         }
 
-        // we dont' really need to clean anything here,
-        // since the entire session will be destroyed
-        //channelCacheTable.clear();
-        //channelTable.clear()
+        //Cleanup tables just to be nice
+        channelTable.clear();
+        channelCacheTable.clear();
+        iccTalkers.clear();
+        iccListeners.clear();
     }
 
     /**
@@ -318,7 +387,7 @@ public class ChannelManager implements LayoutEventListener {
      * @param channelSubscribeId a <code>String</code> value
      * @param contentHandler a <code>ContentHandler</code> value
      */
-    public void outputChannel(String channelSubscribeId,ContentHandler contentHandler) {
+    public void outputChannel(HttpServletRequest request, HttpServletResponse response, String channelSubscribeId, ContentHandler contentHandler) {
         // Set the subscribeId as the achorId for an anchoring serializer
         if (useAnchors && contentHandler instanceof IAnchoringSerializer) {
             IAnchoringSerializer as = (IAnchoringSerializer)contentHandler;
@@ -326,14 +395,15 @@ public class ChannelManager implements LayoutEventListener {
         }
 
         // obtain IChannelRenderer
-        IChannelRenderer cr=rendererTable.get(channelSubscribeId);
-        if(cr==null) {
+        IChannelRenderer cr = rendererTable.get(channelSubscribeId);
+        if (cr == null) {
             // channel rendering wasn't started ?
             try {
-                cr=startChannelRendering(channelSubscribeId);
-            } catch (PortalException pe) {
+                cr = startChannelRendering(request, response, channelSubscribeId);
+            }
+            catch (PortalException pe) {
                 // record, and go on
-               log.error("ChannelManager::outputChannel() : Encountered a portal exception while trying to start channel rendering! :", pe);
+                log.error("Encountered a portal exception while trying to start channel rendering! :", pe);
             }
         }
 
@@ -342,13 +412,13 @@ public class ChannelManager implements LayoutEventListener {
         try {
             renderingStatus=cr.completeRendering();
         } catch (Throwable t) {
-            handleRenderingError(channelSubscribeId,contentHandler,t,renderingStatus,"encountered problem while trying to complete rendering","IChannelRenderer.completeRendering() threw",false);
+            handleRenderingError(request, response, channelSubscribeId,contentHandler,t,renderingStatus,"encountered problem while trying to complete rendering","IChannelRenderer.completeRendering() threw",false);
             return;
         }
 
         if(renderingStatus==IChannelRenderer.RENDERING_SUCCESSFUL) {
             // obtain content
-            if(contentHandler instanceof CachingSerializer && this.isCharacterCaching()) {
+            if(contentHandler instanceof CachingSerializer && this.characterCaching) {
                 CachingSerializer cs=(CachingSerializer) contentHandler;
                 // need to get characters
                 String characterContent=cr.getCharacters();
@@ -359,7 +429,7 @@ public class ChannelManager implements LayoutEventListener {
                         // translate SAX Buffer into the character version
                         try {
                             if(!cs.startCaching()) {
-                                log.error("ChannelManager::outputChannel() : unable to restart character cache while compiling character cache for channel \""+channelSubscribeId+"\" !");
+                                log.error("unable to restart character cache while compiling character cache for channel '"+channelSubscribeId+"' !");
                             }
                             // dump SAX buffer into the serializer
                             bufferedContent.outputBuffer(contentHandler);
@@ -372,41 +442,39 @@ public class ChannelManager implements LayoutEventListener {
                                         // save compiled character cache
                                         cr.setCharacterCache(characterContent);
                                     } else {
-                                        log.error("ChannelManager::outputChannel() : character caching serializer returned NULL character cache for channel \""+channelSubscribeId+"\" !");
+                                        log.error("character caching serializer returned NULL character cache for channel '"+channelSubscribeId+"' !");
                                     }
                                 } catch (UnsupportedEncodingException e) {
-                                    log.error("ChannelManager::outputChannel() :unable to compile character cache for channel \""+channelSubscribeId+"\"! Invalid encoding specified.",e);
+                                    log.error("unable to compile character cache for channel '"+channelSubscribeId+"'! Invalid encoding specified.",e);
                                 } catch (IOException ioe) {
-                                    log.error("ChannelManager::outputChannel() :IO exception occurred while compiling character cache for channel \""+channelSubscribeId+"\" !",ioe);
+                                    log.error("IO exception occurred while compiling character cache for channel '"+channelSubscribeId+"' !",ioe);
                                 }
                             } else {
-                                log.error("ChannelManager::outputChannel() : unable to reset cache state while compiling character cache for channel \""+channelSubscribeId+"\" ! Serializer was not caching when it should've been ! Partial output possible!");
+                                log.error("unable to reset cache state while compiling character cache for channel '"+channelSubscribeId+"' ! Serializer was not caching when it should've been ! Partial output possible!");
                                 return;
                             }
                         } catch (IOException ioe) {
-                            handleRenderingError(channelSubscribeId,contentHandler,ioe,renderingStatus,"encountered a problem compiling channel character content","Encountered IO exception while trying to output channel content SAX to the character caching serializer",true);
+                            handleRenderingError(request, response, channelSubscribeId,contentHandler,ioe,renderingStatus,"encountered a problem compiling channel character content","Encountered IO exception while trying to output channel content SAX to the character caching serializer",true);
                             return;
                         } catch (org.xml.sax.SAXException se) {
-                            handleRenderingError(channelSubscribeId,contentHandler,se,renderingStatus,"encountered a problem compiling channel character content","Encountered SAX exception while trying to output channel content SAX to the character caching serializer",true);
+                            handleRenderingError(request, response, channelSubscribeId,contentHandler,se,renderingStatus,"encountered a problem compiling channel character content","Encountered SAX exception while trying to output channel content SAX to the character caching serializer",true);
                             return;
                         }
 
                     } else {
-                        handleRenderingError(channelSubscribeId,contentHandler,null,renderingStatus,"unable to obtain channel rendering","IChannelRenderer.getBuffer() returned null",false);
+                        handleRenderingError(request, response, channelSubscribeId,contentHandler,null,renderingStatus,"unable to obtain channel rendering","IChannelRenderer.getBuffer() returned null",false);
                         return;
                     }
                 } else { // non-null characterContent case
                     // output character content
                     try {
                         cs.printRawCharacters(characterContent);
-                        // LogService.log(LogService.DEBUG,"------ channel "+channelSubscribeId+" character block (retrieved):");
-                        // LogService.log(LogService.DEBUG,characterContent);
                     } catch (IOException ioe) {
                         if (log.isDebugEnabled())
-                            log.debug("ChannelManager::outputChannel() : " +
+                            log.debug("" +
                                     "exception thrown while trying to output character " +
                                     "cache for channelSubscribeId=" +
-                                    "\""+channelSubscribeId + "\"", ioe);
+                                    "'"+channelSubscribeId + "'", ioe);
                     }
                 }
             } else { // regular serializer case
@@ -418,11 +486,11 @@ public class ChannelManager implements LayoutEventListener {
                         ChannelSAXStreamFilter custodian = new ChannelSAXStreamFilter(contentHandler);
                         bufferedContent.outputBuffer(custodian);
                     } catch (Exception e) {
-                        log.error("ChannelManager::outputChannel() : encountered an exception while trying to output SAX2 content of channel \""+channelSubscribeId+"\" to a regular serializer. Partial output possible !",e);
+                        log.error("encountered an exception while trying to output SAX2 content of channel '"+channelSubscribeId+"' to a regular serializer. Partial output possible !",e);
                         return;
                     }
                 } else {
-                    handleRenderingError(channelSubscribeId,contentHandler,null,renderingStatus,"unable to obtain channel rendering","IChannelRenderer.getBuffer() returned null",false);
+                    handleRenderingError(request, response, channelSubscribeId,contentHandler,null,renderingStatus,"unable to obtain channel rendering","IChannelRenderer.getBuffer() returned null",false);
                     return;
                 }
             }
@@ -436,45 +504,18 @@ public class ChannelManager implements LayoutEventListener {
             // Obtain the channel description
             IUserLayoutChannelDescription channelDesc = null;
             try {
-              channelDesc = (IUserLayoutChannelDescription)upm.getUserLayoutManager().getNode(channelSubscribeId);
+              channelDesc = (IUserLayoutChannelDescription)userPreferencesManager.getUserLayoutManager().getNode(channelSubscribeId);
             } catch (PortalException pe) {
                 // Just log exception
             	log.warn(pe,pe);
             }
 
             // Tell the StatsRecorder that this channel has rendered
-            EventPublisherLocator.getApplicationEventPublisher().publishEvent(new ChannelRenderedInLayoutPortalEvent(this, upm.getPerson(), upm.getCurrentProfile(), channelDesc));
+            EventPublisherLocator.getApplicationEventPublisher().publishEvent(new ChannelRenderedInLayoutPortalEvent(this, userPreferencesManager.getPerson(), userPreferencesManager.getCurrentProfile(), channelDesc));
         } else {
-            handleRenderingError(channelSubscribeId,contentHandler,null,renderingStatus,"unsuccessful rendering","unsuccessful rendering",false);
+            handleRenderingError(request, response, channelSubscribeId,contentHandler,null,renderingStatus,"unsuccessful rendering","unsuccessful rendering",false);
             return;
         }
-    }
-
-    /**
-     * Check if repeated rendering has been attempted for a given channel.
-     *
-     * @param channelSubscribeId a <code>String</code> value
-     * @return a <code>boolean</code> value
-     */
-    private boolean isRepeatedRenderingAttempt(String channelSubscribeId) {
-        return repeatRenderings.contains(channelSubscribeId);
-    }
-
-    /**
-     * Register a repeated rendering attempt for a particular channel.
-     *
-     * @param channelSubscribeId a <code>String</code> value
-     */
-    private void setRepeatedRenderingAttempt(String channelSubscribeId) {
-        repeatRenderings.add(channelSubscribeId);
-    }
-
-    /**
-     * Clear information about repeated rendering attempts.
-     *
-     */
-    private void clearRepeatedRenderings() {
-        repeatRenderings.clear();
     }
 
     /**
@@ -489,19 +530,19 @@ public class ChannelManager implements LayoutEventListener {
      * @param technicalMessage a <code>String</code> value
      * @param partialOutput a <code>boolean</code> value
      */
-    private void handleRenderingError(String channelSubscribeId,ContentHandler contentHandler, Throwable t, int renderingStatus, String commonMessage, String technicalMessage,boolean partialOutput) {
+    private void handleRenderingError(HttpServletRequest request, HttpServletResponse response, String channelSubscribeId,ContentHandler contentHandler, Throwable t, int renderingStatus, String commonMessage, String technicalMessage,boolean partialOutput) {
         try {
-            if (isRepeatedRenderingAttempt(channelSubscribeId)) {
+            if (repeatRenderings.contains(channelSubscribeId)) {
                 // this means that the error channel has failed :(
-                String message="ChannelManager::handleRenderingError() : Unable to handle a rendering error through error channel.";
+                String message="Unable to handle a rendering error through error channel.";
                 if(t!=null) {
                     if(t instanceof InternalPortalException) {
                         InternalPortalException ipe=(InternalPortalException) t;
                         Throwable e=ipe.getCause();
-                        message=message+" Error channel (channelSubscribeId=\""+channelSubscribeId+"\") has thrown the following exception: "+e.toString()+" Partial output possible !";
+                        message=message+" Error channel (channelSubscribeId='"+channelSubscribeId+"') has thrown the following exception: "+e.toString()+" Partial output possible !";
                         log.fatal("CError threw exception. Please fix CError immediately!", e);
                     } else {
-                        message=message+" An following exception encountered while trying to render the error channel for channelSubscribeId=\""+channelSubscribeId+"\": "+t.toString();
+                        message=message+" An following exception encountered while trying to render the error channel for channelSubscribeId='"+channelSubscribeId+"': "+t.toString();
                         log.fatal("CError threw exception. Please fix CError immediately!", t);
                     }
                 } else {
@@ -532,15 +573,15 @@ public class ChannelManager implements LayoutEventListener {
                     if(t instanceof InternalPortalException) {
                         InternalPortalException ipe=(InternalPortalException) t;
                         Throwable channelException=ipe.getCause();
-                        replaceWithErrorChannel(channelSubscribeId, ErrorCode.RENDER_TIME_EXCEPTION,channelException,technicalMessage,true);
+                        replaceWithErrorChannel(request, response, channelSubscribeId, ErrorCode.RENDER_TIME_EXCEPTION,channelException,technicalMessage,true);
                     } else {
-                        replaceWithErrorChannel(channelSubscribeId, ErrorCode.RENDER_TIME_EXCEPTION, t, technicalMessage, true);
+                        replaceWithErrorChannel(request, response, channelSubscribeId, ErrorCode.RENDER_TIME_EXCEPTION, t, technicalMessage, true);
                     }
                 } else {
                     if(renderingStatus==IChannelRenderer.RENDERING_TIMED_OUT) {
-                        replaceWithErrorChannel(channelSubscribeId,ErrorCode.TIMEOUT_EXCEPTION,t,technicalMessage,true);
+                        replaceWithErrorChannel(request, response, channelSubscribeId,ErrorCode.TIMEOUT_EXCEPTION,t,technicalMessage,true);
                     } else {
-                        replaceWithErrorChannel(channelSubscribeId,ErrorCode.GENERAL_ERROR,t,technicalMessage,true);
+                        replaceWithErrorChannel(request, response, channelSubscribeId,ErrorCode.GENERAL_ERROR,t,technicalMessage,true);
                     }
                 }
 
@@ -548,8 +589,8 @@ public class ChannelManager implements LayoutEventListener {
                 rendererTable.remove(channelSubscribeId);
                 // re-try render
                 if(!partialOutput) {
-                    setRepeatedRenderingAttempt(channelSubscribeId);
-                    outputChannel(channelSubscribeId,contentHandler);
+                    repeatRenderings.add(channelSubscribeId);
+                    outputChannel(request, response, channelSubscribeId, contentHandler);
                 }
             }
         } finally {
@@ -572,7 +613,7 @@ public class ChannelManager implements LayoutEventListener {
      * @param setRuntimeData a <code>boolean</code> wether the method should also set the ChannelRuntimeData for the newly instantiated error channel
      * @return an <code>IChannel</code> value of an error channel instance
      */
-    private IChannel replaceWithErrorChannel(String channelSubscribeId, ErrorCode errorCode, Throwable t, String message,boolean setRuntimeData) {
+    private IChannel replaceWithErrorChannel(HttpServletRequest request, HttpServletResponse response, String channelSubscribeId, ErrorCode errorCode, Throwable t, String message, boolean setRuntimeData) {
         // get and delete old channel instance
         IChannel oldInstance=channelTable.get(channelSubscribeId);
         if (log.isWarnEnabled())
@@ -588,10 +629,13 @@ public class ChannelManager implements LayoutEventListener {
             new CError(errorCode,t,channelSubscribeId,oldInstance,message);
         if(setRuntimeData) {
             ChannelRuntimeData rd=new ChannelRuntimeData();
-            rd.setBrowserInfo(binfo);
-            if (lm != null)  {
-                rd.setLocales(lm.getLocales());
+            rd.setBrowserInfo(browserInfo);
+            if (localeManager != null)  {
+                rd.setLocales(localeManager.getLocales());
             }
+            
+            final PortalControlStructures pcs = this.getPortalControlStructuresForChannel(request, response, channelSubscribeId);
+            
 			rd.setRemoteAddress(pcs.getHttpServletRequest().getRemoteAddr());
             rd.setHttpRequestMethod(pcs.getHttpServletRequest().getMethod());
             UPFileSpec up=new UPFileSpec(uPElement);
@@ -617,7 +661,7 @@ public class ChannelManager implements LayoutEventListener {
      * @param setRuntimeData a <code>boolean</code> wether the method should also set the ChannelRuntimeData for the newly instantiated secure info channel
      * @return an <code>IChannel</code> value of a secure info channel instance
      */
-    private IChannel replaceWithSecureInfoChannel(String channelSubscribeId, boolean setRuntimeData) {
+    private IChannel replaceWithSecureInfoChannel(HttpServletRequest request, HttpServletResponse response, String channelSubscribeId, boolean setRuntimeData) {
         // get and delete old channel instance
         IChannel oldInstance=channelTable.get(channelSubscribeId);
         channelTable.remove(channelSubscribeId);
@@ -626,10 +670,13 @@ public class ChannelManager implements LayoutEventListener {
         CSecureInfo secureInfoChannel=new CSecureInfo(channelSubscribeId,oldInstance);
         if(setRuntimeData) {
             ChannelRuntimeData rd=new ChannelRuntimeData();
-            rd.setBrowserInfo(binfo);
-            if (lm != null)  {
-                rd.setLocales(lm.getLocales());
+            rd.setBrowserInfo(browserInfo);
+            if (localeManager != null)  {
+                rd.setLocales(localeManager.getLocales());
             }
+            
+            final PortalControlStructures pcs = this.getPortalControlStructuresForChannel(request, response, channelSubscribeId);
+            
             rd.setHttpRequestMethod(pcs.getHttpServletRequest().getMethod());
             rd.setRemoteAddress(pcs.getHttpServletRequest().getRemoteAddr());
             UPFileSpec up=new UPFileSpec(uPElement);
@@ -646,48 +693,6 @@ public class ChannelManager implements LayoutEventListener {
         return secureInfoChannel;
     }
 
-    /**
-     * <code>getChannelContext</code> generates a JNDI context that
-     * will be passed to the regular channels. The context is pieced
-     * together from the parts of the global portal context.
-     *
-     * @param portalContext uPortal JNDI context
-     * @param sessionId current session id
-     * @param userId id of a current user
-     * @param layoutId id of the layout used by the user
-     * @return a channel <code>InitialContext</code> value
-     */
-    private static Context getChannelJndiContext(Context portalContext,String sessionId,String userId,String layoutId) throws NamingException {
-        // create a new InitialContext
-        Context cic=new MemoryContext(new Hashtable());
-        // get services context
-        Context servicesContext=(Context)portalContext.lookup("services");
-        // get channel-ids context
-        Context channel_idsContext=(Context)portalContext.lookup("users/"+userId+"/layouts/"+layoutId+"/channel-ids");
-        // get channel-obj context
-        Context channel_objContext=(Context)portalContext.lookup("users/"+userId+"/sessions/"+sessionId+"/channel-obj");
-
-        cic.bind("services",servicesContext);
-        cic.bind("channel-ids",channel_idsContext);
-        cic.bind("channel-obj",channel_objContext);
-        cic.bind("portlet-ids",new ArrayList());
-
-        return cic;
-    }
-
-    /**
-     * Get the uPortal JNDI context
-     * @return uPortal initial JNDI context
-     * @exception NamingException
-     */
-    private static Context getPortalContext() throws NamingException {
-        Hashtable<String, String> environment = new Hashtable<String, String>(5);
-        // Set up the path
-        environment.put(Context.INITIAL_CONTEXT_FACTORY, "org.jasig.portal.jndi.PortalInitialContextFactory");
-        Context ctx = new InitialContext(environment);
-        return(ctx);
-    }
-
 
     /**
      * Instantiates a channel given just the channel subscribe Id.
@@ -695,86 +700,72 @@ public class ChannelManager implements LayoutEventListener {
      * @param channelSubscribeId a channel instance Id in the userLayout
      * @return an <code>IChannel</code> object
      */
-    public IChannel instantiateChannel(String channelSubscribeId) throws PortalException {
+    public IChannel instantiateChannel(HttpServletRequest request, HttpServletResponse response, String channelSubscribeId) throws PortalException {
         if (channelTable.get(channelSubscribeId) != null) {
             // reinstantiation
             channelTable.remove(channelSubscribeId);
         }
+        
         // get channel information from the user layout manager
-        IUserLayoutChannelDescription channel=(IUserLayoutChannelDescription) upm.getUserLayoutManager().getNode(channelSubscribeId);
-        if(channel!=null) {
-            return instantiateChannel(channel);
+        final IUserLayoutManager userLayoutManager = userPreferencesManager.getUserLayoutManager();
+        final IUserLayoutChannelDescription channel = (IUserLayoutChannelDescription) userLayoutManager.getNode(channelSubscribeId);
+        if (channel != null) {
+            return this.instantiateChannel(request, response, channel);
         }
 
         return null;
     }
 
-    private IChannel instantiateChannel(IUserLayoutChannelDescription cd) throws PortalException {
-        IChannel ch=null;
-        String channelSubscribeId=cd.getChannelSubscribeId();
-        String channelPublishId=cd.getChannelPublishId();
+    private IChannel instantiateChannel(HttpServletRequest request, HttpServletResponse response, IUserLayoutChannelDescription channelDescription) throws PortalException {
+        final String channelSubscribeId = channelDescription.getChannelSubscribeId();
+        final String channelPublishId = channelDescription.getChannelPublishId();
         // check if the user has permissions to instantiate this channel
-        if(ap==null) {
-            EntityIdentifier ei = this.pcs.getUserPreferencesManager().getPerson().getEntityIdentifier();
-            ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+
+        final IChannel channel;
+        if(authorizationPrincipal.canRender(Integer.parseInt(channelPublishId))) {
+			if (request == null) {
+                channel = new CError(ErrorCode.GENERAL_ERROR, "Unable to get SessionId. No HttpServletRequest provided.", channelSubscribeId, null);
+            }
+            else {
+                final HttpSession session = request.getSession();
+                final String sessionId = session.getId();
+                channel = ChannelFactory.instantiateLayoutChannel(channelDescription, sessionId);
+
+                if (channel == null) {
+                    throw new IllegalStateException("ChannelFactory returned null on request to instantiate layout channel with id [" + sessionId + "] and description [" + channelDescription + "]");
+                }
+
+                final IPerson person = userPreferencesManager.getPerson();
+                
+                final ApplicationEventPublisher applicationEventPublisher = EventPublisherLocator.getApplicationEventPublisher();
+                applicationEventPublisher.publishEvent(new ChannelInstanciatedInLayoutPortalEvent(this, person, userPreferencesManager.getCurrentProfile(), channelDescription));
+
+                // Create and stuff the channel static data
+                final ChannelStaticData channelStaticData = new ChannelStaticData(channelDescription.getParameterMap(), userPreferencesManager.getUserLayoutManager());
+                channelStaticData.setChannelSubscribeId(channelSubscribeId);
+                channelStaticData.setTimeout(channelDescription.getTimeout());
+                channelStaticData.setPerson(person);
+                channelStaticData.setJNDIContext(channelContext);
+                channelStaticData.setICCRegistry(new ICCRegistry(this, channelSubscribeId));
+                channelStaticData.setChannelPublishId(channelDescription.getChannelPublishId());
+                channelStaticData.setSerializerName(serializerName);
+                channelStaticData.setWebApplicationContext(PortalApplicationContextLocator.getRequiredWebApplicationContext());
+
+                if (channel instanceof IPrivilegedChannel) {
+                    this.feedPortalControlStructuresToChannel(request, response, channelSubscribeId, (IPrivilegedChannel)channel);
+                }
+
+                channel.setStaticData(channelStaticData);
+            }
         }
-
-        if(ap.canRender(Integer.parseInt(channelPublishId))) {
-
-            // Instantiate the channel and notify the StatsRecorder
-
-			HttpServletRequest sr = this.pcs.getHttpServletRequest();
-			if (sr == null){
-				ch=new CError(ErrorCode.GENERAL_ERROR,"Unable to get SessionId. getHttpServletRequest returned null.",channelSubscribeId,null);
-			}else{
-                // getSession() true is apparently required to support cross-context sessions
-                // under Tomcat.  See UP-1320
-				HttpSession hs  = sr.getSession(true);
-				if (hs == null){
-					ch=new CError(ErrorCode.GENERAL_ERROR,"Unable to get SessionId. getSession returned null.",channelSubscribeId,null);
-				}else{
-					String id = hs.getId();
-					if (id == null){
-						ch=new CError(ErrorCode.GENERAL_ERROR,"Unable to get SessionId. getId returned null.",channelSubscribeId,null);
-					}else{
-
-						ch = ChannelFactory.instantiateLayoutChannel(cd,id);
-
-                        if (ch == null) {
-                            throw new IllegalStateException("ChannelFactory returned null on request to instantiate layout channel with id [" + id + "] and description [" + cd + "]");
-                        }
-
-                        EventPublisherLocator.getApplicationEventPublisher().publishEvent(new ChannelInstanciatedInLayoutPortalEvent(this, upm.getPerson(), upm.getCurrentProfile(), cd));
-
-			            // Create and stuff the channel static data
-			            ChannelStaticData sd = new ChannelStaticData(
-                            cd.getParameterMap(), upm.getUserLayoutManager());
-            			sd.setChannelSubscribeId(channelSubscribeId);
-			            sd.setTimeout(cd.getTimeout());
-			            sd.setPerson(upm.getPerson());
-			            sd.setJNDIContext(channelContext);
-            			sd.setICCRegistry(new ICCRegistry(this,channelSubscribeId));
-			            sd.setChannelPublishId(cd.getChannelPublishId());
-                        sd.setSerializerName(serializerName);
-                        sd.setWebApplicationContext(PortalApplicationContextLocator.getRequiredWebApplicationContext());
-                        
-                        if (ch instanceof IPrivileged) {
-                            this.feedPortalControlStructuresToChannel(ch, this.pcs);
-                        }
-
-            			ch.setStaticData(sd);
-					}
-				}
-			}
-
-        } else {
+        else {
             // user is not authorized to instantiate this channel
             // create an instance of an error channel instead
-            ch=new CError(ErrorCode.CHANNEL_AUTHORIZATION_EXCEPTION,"You don't have authorization to render this channel.",channelSubscribeId,null);
+            channel = new CError(ErrorCode.CHANNEL_AUTHORIZATION_EXCEPTION, "You don't have authorization to render this channel.", channelSubscribeId, null);
         }
 
-        channelTable.put(channelSubscribeId,ch);
-        return ch;
+        this.channelTable.put(channelSubscribeId, channel);
+        return channel;
     }
 
 
@@ -784,16 +775,18 @@ public class ChannelManager implements LayoutEventListener {
      * @param le the portal event
      */
     public void passPortalEvent(String channelSubscribeId, PortalEvent le) {
-        IChannel ch= channelTable.get(channelSubscribeId);
-
+        IChannel ch = channelTable.get(channelSubscribeId);
+        //TODO pass portal control structures first
         if (ch != null) {
             try {
                 ch.receiveEvent(le);
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 log.error("Error sending layout event " + le + " to channel " + ch, e);
             }
-        } else {
-            log.error("ChannelManager::passPortalEvent() : trying to pass an event to a channel that is not in cache. (cahnel=\"" + channelSubscribeId + "\")");
+        }
+        else {
+            log.error("trying to pass an event to a channel that is not in cache. channelSubscribeId='" + channelSubscribeId + "'");
         }
     }
 
@@ -801,13 +794,13 @@ public class ChannelManager implements LayoutEventListener {
     /**
      * Determine target channel and pass corresponding
      * actions/params to that channel
-     * @param req the <code>HttpServletRequest</code>
+     * @param request the <code>HttpServletRequest</code>
      */
-    private void processRequestChannelParameters(HttpServletRequest req) {
+    private void processRequestChannelParameters(HttpServletRequest request, HttpServletResponse response) {
         final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
         final IChannelRequestParameterManager channelParameterManager = (IChannelRequestParameterManager)applicationContext.getBean("channelRequestParameterManager", IChannelRequestParameterManager.class);
         
-        final Set<String> targetedChannelIds = channelParameterManager.getTargetedChannelIds(req);
+        final Set<String> targetedChannelIds = channelParameterManager.getTargetedChannelIds(request);
         //TODO deal with multiply targeted channels if feature is interesting
         if (targetedChannelIds.size() > 0) {
             this.channelTarget = targetedChannelIds.iterator().next();
@@ -820,17 +813,17 @@ public class ChannelManager implements LayoutEventListener {
             // Obtain the channel description
             IUserLayoutChannelDescription channelDesc = null;
             try {
-              channelDesc = (IUserLayoutChannelDescription)upm.getUserLayoutManager().getNode(channelTarget);
+              channelDesc = (IUserLayoutChannelDescription)userPreferencesManager.getUserLayoutManager().getNode(channelTarget);
             } catch (PortalException pe) {
               // Do nothing
             }
 
             // Tell StatsRecorder that a user has interacted with the channel
             final ApplicationEventPublisher applicationEventPublisher = EventPublisherLocator.getApplicationEventPublisher();
-            applicationEventPublisher.publishEvent(new ChannelTargetedInLayoutPortalEvent(this, upm.getPerson(), upm.getCurrentProfile(), channelDesc));
+            applicationEventPublisher.publishEvent(new ChannelTargetedInLayoutPortalEvent(this, userPreferencesManager.getPerson(), userPreferencesManager.getCurrentProfile(), channelDesc));
 
             
-            final Map<String, Object[]> channelParameters = channelParameterManager.getChannelParameters(req, channelTarget);
+            final Map<String, Object[]> channelParameters = channelParameterManager.getChannelParameters(request, channelTarget);
             if (channelParameters != null) {
                 targetParams = new HashMap<String, Object>(channelParameters);
             }
@@ -838,96 +831,89 @@ public class ChannelManager implements LayoutEventListener {
                 targetParams = null;
             }
             
-            if(channelParameters!= null && channelParameters.size() > 0) {
+            if(channelParameters != null && channelParameters.size() > 0) {
                 // only do grouped rendering if there are some parameters passed
                 // to the target channel.
                 // detect if channel target talks to other channels
-                groupedRendering=hasListeningChannels(channelTarget);
+                groupedRendering = hasListeningChannels(channelTarget);
             }
 
-            IChannel chObj;
-            if ((chObj=channelTable.get(channelTarget)) == null) {
+            IChannel channel;
+            if ((channel=channelTable.get(channelTarget)) == null) {
                 try {
-                    chObj=instantiateChannel(channelTarget);
+                    channel=instantiateChannel(request, response, channelTarget);
                 } catch (Throwable e) {
-					if (upm.getPerson().isGuest() == true)
+					if (userPreferencesManager.getPerson().isGuest() == true)
 					{
 						// We get this alot when people's sessions have timed out and they get directed
 						// to the guest page. Changed to WARN because there might be a need to note this
 						// to diagnose problems with the guest layout.
 
-						log.warn("unable to pass find/create an instance of a channel. Bogus Id ? ! (id=\""+channelTarget+"\").");
+						log.warn("unable to pass find/create an instance of a channel. Bogus Id ? ! (id='"+channelTarget+"').");
 					}else{
-						log.error("unable to pass find/create an instance of a channel. Bogus Id ? ! (id=\""+channelTarget+"\" uid=\""+upm.getPerson().getID()+"\").",e);
+						log.error("unable to pass find/create an instance of a channel. Bogus Id ? ! (id='"+channelTarget+"' uid='"+userPreferencesManager.getPerson().getID()+"').",e);
 					}
-                    chObj=replaceWithErrorChannel(channelTarget,ErrorCode.SET_STATIC_DATA_EXCEPTION,e,null,false);
+                    channel=replaceWithErrorChannel(request, response, channelTarget, ErrorCode.SET_STATIC_DATA_EXCEPTION, e, null, false);
                 }
             }
 
 
             // Check if the channel is an IPrivilegedChannel, and if it is,
             // pass portal control structures and runtime data.
-            if(chObj!=null && (chObj instanceof IPrivileged)) {
-                chObj = feedPortalControlStructuresToChannel(chObj, pcs);
-                chObj = feedRuntimeDataToChannel(chObj, req);
+            if (channel instanceof IPrivilegedChannel) {
+                channel = this.feedPortalControlStructuresToChannel(request, response, channelTarget, (IPrivilegedChannel)channel);
+                channel = this.feedRuntimeDataToChannel(request, response, channel);
             }
         }
     }
 
-    private IChannel feedPortalControlStructuresToChannel(IChannel chObj, PortalControlStructures pcs) {
-        IPrivileged prvChanObj=(IPrivileged)chObj;
+    private IChannel feedPortalControlStructuresToChannel(HttpServletRequest request, HttpServletResponse response, String channelSubscribeId, IPrivilegedChannel prvChanObj) {
+        final PortalControlStructures pcs = this.getPortalControlStructuresForChannel(request, response, channelSubscribeId);
+        
         try {
             prvChanObj.setPortalControlStructures(pcs);
-        } catch (Exception e) {
-            chObj=replaceWithErrorChannel(channelTarget,ErrorCode.SET_PCS_EXCEPTION,e,null,false);
-            prvChanObj=(IPrivileged)chObj;
+        }
+        catch (Exception e) {
+            prvChanObj = (IPrivilegedChannel)replaceWithErrorChannel(request, response, channelSubscribeId, ErrorCode.SET_PCS_EXCEPTION, e, null, false);
 
             // set portal control structures
             try {
                 prvChanObj.setPortalControlStructures(pcs);
-            } catch (Exception e2) {
+            }
+            catch (Exception e2) {
                 // things are looking bad for our hero
-                StringWriter sw=new StringWriter();
+                StringWriter sw = new StringWriter();
                 e2.printStackTrace(new PrintWriter(sw));
                 sw.flush();
                 log.error("Error channel threw ! ", e2);
             }
         }
-        return chObj;
+        
+        return prvChanObj;
     }
 
-    private IChannel feedRuntimeDataToChannel(IChannel chObj, HttpServletRequest req) {
+    private IChannel feedRuntimeDataToChannel(HttpServletRequest request, HttpServletResponse response, IChannel channel) {
         try {
-            ChannelRuntimeData rd = new ChannelRuntimeData();
-            rd.setParameters(targetParams);
-            String qs = pcs.getHttpServletRequest().getQueryString();
-            if (qs != null && qs.indexOf("=") == -1)
-              rd.setKeywords(qs);
-            rd.setBrowserInfo(binfo);
-            if (lm != null)  {
-                rd.setLocales(lm.getLocales());
-            }
-            rd.setHttpRequestMethod(pcs.getHttpServletRequest().getMethod());
-            rd.setRemoteAddress(req.getRemoteAddr());
-            UPFileSpec up=new UPFileSpec(uPElement);
-            up.setTargetNodeId(channelTarget);
-            rd.setUPFile(up);
+            final ChannelRuntimeData runtimeData = this.getChannelRuntimeData(request);
 
             // Check if channel is rendering as the root element of the layout
-            String userLayoutRoot = upm.getUserPreferences().getStructureStylesheetUserPreferences().getParameterValue("userLayoutRoot");
-            if (userLayoutRoot != null && !userLayoutRoot.equals(IUserLayout.ROOT_NODE_NAME)) {
-                rd.setRenderingAsRoot(true);
+            final UserPreferences userPreferences = userPreferencesManager.getUserPreferences();
+            final StructureStylesheetUserPreferences structureStylesheetUserPreferences = userPreferences.getStructureStylesheetUserPreferences();
+            final String userLayoutRoot = structureStylesheetUserPreferences.getParameterValue("userLayoutRoot");
+            if (!IUserLayout.ROOT_NODE_NAME.equals(userLayoutRoot)) {
+                runtimeData.setRenderingAsRoot(true);
             }
 
             // Indicate that this channel is targeted
-            rd.setTargeted(true);
+            runtimeData.setTargeted(true);
 
             // Finally, feed runtime data to channel
-            chObj.setRuntimeData(rd);
-        } catch (Exception e) {
-            chObj = replaceWithErrorChannel(channelTarget, ErrorCode.SET_RUNTIME_DATA_EXCEPTION, e, null, true);
+            channel.setRuntimeData(runtimeData);
+        } 
+        catch (Exception e) {
+            channel = replaceWithErrorChannel(request, response, channelTarget, ErrorCode.SET_RUNTIME_DATA_EXCEPTION, e, null, true);
         }
-        return chObj;
+        return channel;
     }
 
     /**
@@ -936,13 +922,14 @@ public class ChannelManager implements LayoutEventListener {
      * @param channelSubscribeId a <code>String</code> value
      * @return an <code>IChannel</code> object
      */
-    public IChannel getChannelInstance(String channelSubscribeId) {
-        IChannel ch=channelTable.get(channelSubscribeId);
-        if(ch==null) {
+    public IChannel getChannelInstance(HttpServletRequest request, HttpServletResponse response, String channelSubscribeId) {
+        IChannel ch = channelTable.get(channelSubscribeId);
+        if (ch == null) {
             try {
-                ch=instantiateChannel(channelSubscribeId);
-            } catch (Throwable e) {
-            	log.warn(e,e);
+                ch = instantiateChannel(request, response, channelSubscribeId);
+            }
+            catch (Throwable e) {
+                log.warn(e, e);
                 return null;
             }
         }
@@ -966,8 +953,7 @@ public class ChannelManager implements LayoutEventListener {
             }
             channelTable.remove(ch);
             if (log.isDebugEnabled())
-                log.debug("ChannelManager::removeChannel(): " +
-                        "removed channel with subscribe id="+channelSubscribeId);
+                log.debug("removed channel with subscribe id="+channelSubscribeId);
         }
     }
 
@@ -979,31 +965,11 @@ public class ChannelManager implements LayoutEventListener {
      * @param uPElement an <code>UPFileSpec</code> value
      */
     public void startRenderingCycle(HttpServletRequest request, HttpServletResponse response, UPFileSpec uPElement) {
-        this.pcs.setHttpServletRequest(request);
-        this.pcs.setHttpServletResponse(response);
-        this.binfo=new BrowserInfo(request);
-        this.uPElement=uPElement;
-        rendererTable.clear();
+        this.browserInfo = new BrowserInfo(request);
+        this.uPElement = uPElement;
+        this.rendererTable.clear();
 
-        // check portal JNDI context
-        if(portalContext==null) {
-            try {
-                portalContext=getPortalContext();
-            } catch (NamingException ne) {
-                log.error(ne, ne);
-            }
-        }
-        // construct a channel context
-        if(channelContext==null) {
-            try {
-                channelContext=getChannelJndiContext(portalContext,request.getSession(false).getId(),Integer.toString(this.pcs.getUserPreferencesManager().getPerson().getID()),Integer.toString(this.pcs.getUserPreferencesManager().getCurrentProfile().getLayoutId()));
-            } catch (NamingException ne) {
-                log.error(ne, ne);
-            }
-        }
-        processRequestChannelParameters(request);
-        
-        //TODO cleanup PCS in finally here?
+        processRequestChannelParameters(request, response);
     }
 
     /**
@@ -1013,7 +979,7 @@ public class ChannelManager implements LayoutEventListener {
      * @return a <code>boolean</code> value
      */
     public boolean isCharacterCaching() {
-        return this.ccaching;
+        return this.characterCaching;
     }
 
     /**
@@ -1023,7 +989,7 @@ public class ChannelManager implements LayoutEventListener {
      * @param setting a <code>boolean</code> value
      */
     public void setCharacterCaching(boolean setting) {
-        this.ccaching=setting;
+        this.characterCaching=setting;
     }
 
     /**
@@ -1038,23 +1004,14 @@ public class ChannelManager implements LayoutEventListener {
     }
 
     /**
-     * Specify <code>IUserPreferencesManager</code> to use.
-     *
-     * @param m an <code>IUserPreferencesManager</code> value
-     */
-    public void setUserPreferencesManager(IUserPreferencesManager m) {
-        upm=m;
-    }
-
-    /**
      * Initiate channel rendering cycle.
      *
      * @param channelSubscribeId a <code>String</code> value
      * @return a <code>IChannelRenderer</code> value
      * @exception PortalException if an error occurs
      */
-    public IChannelRenderer startChannelRendering(String channelSubscribeId) throws PortalException {
-        return startChannelRendering(channelSubscribeId,false);
+    public IChannelRenderer startChannelRendering(HttpServletRequest request, HttpServletResponse response, String channelSubscribeId) throws PortalException {
+        return startChannelRendering(request, response, channelSubscribeId, false);
     }
 
     /**
@@ -1066,15 +1023,15 @@ public class ChannelManager implements LayoutEventListener {
      * @return a <code>IChannelRenderer</code> value
      * @exception PortalException if an error occurs
      */
-    private IChannelRenderer startChannelRendering(String channelSubscribeId,boolean noTimeout) throws PortalException {
+    private IChannelRenderer startChannelRendering(HttpServletRequest request, HttpServletResponse response, String channelSubscribeId, boolean noTimeout) throws PortalException {
         // see if the channel has already been instantiated
         // see if the channel is cached
         IChannel ch;
         long timeOut=0;
 
-        IUserLayoutNodeDescription node=upm.getUserLayoutManager().getNode(channelSubscribeId);
+        IUserLayoutNodeDescription node=userPreferencesManager.getUserLayoutManager().getNode(channelSubscribeId);
         if(!(node instanceof IUserLayoutChannelDescription)) {
-            throw new PortalException("\""+channelSubscribeId+"\" is not a channel node !");
+            throw new PortalException("'"+channelSubscribeId+"' is not a channel node !");
         }
 
         IUserLayoutChannelDescription channel=(IUserLayoutChannelDescription) node;
@@ -1084,9 +1041,9 @@ public class ChannelManager implements LayoutEventListener {
 
         // replace channels that are specified as needing to be
         // rendered securely with CSecureInfo.
-        if (!pcs.getHttpServletRequest().isSecure() && channel.isSecure()){
-            if (ch == null || !(ch instanceof CSecureInfo)){
-                ch = replaceWithSecureInfoChannel(channelSubscribeId,false);
+        if (!request.isSecure() && channel.isSecure()){
+            if (!(ch instanceof CSecureInfo)){
+                ch = replaceWithSecureInfoChannel(request, response, channelSubscribeId, false);
             }
         }
         else{
@@ -1095,103 +1052,120 @@ public class ChannelManager implements LayoutEventListener {
             // cached CSecureInfo entry.
             if (ch == null || ch instanceof CSecureInfo) {
                 try {
-                    ch=instantiateChannel(channel);
-                } catch (Throwable e) {
-                    ch=replaceWithErrorChannel(channelSubscribeId,ErrorCode.SET_STATIC_DATA_EXCEPTION,e,null,false);
+                    ch = instantiateChannel(request, response, channel);
+                }
+                catch (Throwable e) {
+                    ch = replaceWithErrorChannel(request, response, channelSubscribeId, ErrorCode.SET_STATIC_DATA_EXCEPTION, e, null, false);
                 }
             }
         }
 
-        ChannelRuntimeData rd=null;
-
+        ChannelRuntimeData runtimeData = null;
         if(!channelSubscribeId.equals(channelTarget)) {
-            if((ch instanceof IPrivileged)) {
+            if(ch instanceof IPrivileged) {
+                final PortalControlStructures pcs = this.getPortalControlStructuresForChannel(request, response, channelSubscribeId);
+                
                 // send the control structures
                 try {
                     ((IPrivileged) ch).setPortalControlStructures(pcs);
-                } catch (Exception e) {
-                    ch=replaceWithErrorChannel(channelSubscribeId,ErrorCode.SET_PCS_EXCEPTION,e,null,false);
+                } 
+                catch (Exception outerException) {
+                    ch=replaceWithErrorChannel(request, response, channelSubscribeId, ErrorCode.SET_PCS_EXCEPTION, outerException, null, false);
                     channelTable.remove(ch);
 
                     // set portal control structures for the error channel
                     try {
                         ((IPrivileged) ch).setPortalControlStructures(pcs);
-                    } catch (Exception e2) {
+                    }
+                    catch (Exception errorChannelException) {
                         // things are looking bad for our hero
-
-                        log.error("ChannelManager::outputChannels : Error channel threw ! ", e2);
+                        log.error("Error channel threw exception accepting PortalControlStructures", errorChannelException);
                     }
                 }
             }
-            rd = new ChannelRuntimeData();
-            rd.setBrowserInfo(binfo);
-            if (lm != null)  {
-                rd.setLocales(lm.getLocales());
+            runtimeData = new ChannelRuntimeData();
+            runtimeData.setBrowserInfo(browserInfo);
+            if (localeManager != null)  {
+                runtimeData.setLocales(localeManager.getLocales());
             }
-            rd.setHttpRequestMethod(pcs.getHttpServletRequest().getMethod());
-			rd.setRemoteAddress(pcs.getHttpServletRequest().getRemoteAddr());
+            runtimeData.setHttpRequestMethod(request.getMethod());
+			runtimeData.setRemoteAddress(request.getRemoteAddr());
 
             UPFileSpec up=new UPFileSpec(uPElement);
             up.setTargetNodeId(channelSubscribeId);
-            rd.setUPFile(up);
+            runtimeData.setUPFile(up);
 
-        } else {
+        }
+        else {
             // set up runtime data that will be passed to the IChannelRenderer
-            if(!(ch instanceof IPrivileged)) {
-                rd = new ChannelRuntimeData();
-                rd.setTargeted(true);
-                rd.setParameters(targetParams);
-                String qs = pcs.getHttpServletRequest().getQueryString();
-                if (qs != null && qs.indexOf("=") == -1)
-                  rd.setKeywords(qs);
-                rd.setBrowserInfo(binfo);
-                if (lm != null)  {
-                    rd.setLocales(lm.getLocales());
-                }
-                rd.setHttpRequestMethod(pcs.getHttpServletRequest().getMethod());
-                rd.setRemoteAddress(pcs.getHttpServletRequest().getRemoteAddr());
-
-                UPFileSpec up=new UPFileSpec(uPElement);
-                up.setTargetNodeId(channelSubscribeId);
-                rd.setUPFile(up);
+            if (!(ch instanceof IPrivileged)) {
+                runtimeData = this.getChannelRuntimeData(request);
+                runtimeData.setTargeted(true);
             }
         }
 
         // Check if channel is rendering as the root element of the layout
 
-		UserPreferences tempUserPref = upm.getUserPreferences();
+		UserPreferences tempUserPref = userPreferencesManager.getUserPreferences();
 		StructureStylesheetUserPreferences tempSSUP = tempUserPref.getStructureStylesheetUserPreferences();
 		String userLayoutRoot = tempSSUP.getParameterValue("userLayoutRoot");
-        if (rd != null && userLayoutRoot != null && !userLayoutRoot.equals(IUserLayout.ROOT_NODE_NAME)) {
-            rd.setRenderingAsRoot(true);
+        if (runtimeData != null && userLayoutRoot != null && !userLayoutRoot.equals(IUserLayout.ROOT_NODE_NAME)) {
+            runtimeData.setRenderingAsRoot(true);
         }
 
         // Build a new channel renderer instance.
-        IChannelRenderer cr = cChannelRendererFactory.newInstance(
-            ch,
-            rd
-            );
+        final IChannelRenderer channelRenderer = cChannelRendererFactory.newInstance(ch, runtimeData);
 
-        cr.setCharacterCacheable(this.isCharacterCaching());
+        channelRenderer.setCharacterCacheable(this.characterCaching);
         if(ch instanceof ICacheable) {
-            cr.setCacheTables(this.channelCacheTable);
+            channelRenderer.setCacheTables(this.channelCacheTable);
         }
 
-        if(noTimeout) {
-            cr.setTimeout(0);
-        } else {
-            cr.setTimeout(timeOut);
+        if (noTimeout) {
+            channelRenderer.setTimeout(0);
+        }
+        else {
+            channelRenderer.setTimeout(timeOut);
         }
 
-        if(groupedRendering && (isListeningToChannels(channelSubscribeId) || channelSubscribeId.equals(channelTarget))) {
+        if (groupedRendering && (isListeningToChannels(channelSubscribeId) || channelSubscribeId.equals(channelTarget))) {
             // channel might depend on the target channel
             pendingChannels.add(channelSubscribeId); // defer rendering start
-        } else {
-            cr.startRendering();
         }
-        rendererTable.put(channelSubscribeId,cr);
+        else {
+            channelRenderer.startRendering();
+        }
+        rendererTable.put(channelSubscribeId, channelRenderer);
 
-        return cr;
+        return channelRenderer;
+    }
+
+    /**
+     * Builds ChannelRuntimeData from a request, sets the parameters, query string
+     * browser info, locale manager, method, remote address, and UPFileSpec
+     */
+    private ChannelRuntimeData getChannelRuntimeData(HttpServletRequest request) {
+        final ChannelRuntimeData runtimeData = new ChannelRuntimeData();
+        runtimeData.setParameters(targetParams);
+        
+        final String queryString = request.getQueryString();
+        if (queryString != null && queryString.indexOf("=") == -1) {
+            runtimeData.setKeywords(queryString);
+        }
+        
+        runtimeData.setBrowserInfo(browserInfo);
+        
+        if (localeManager != null)  {
+            runtimeData.setLocales(localeManager.getLocales());
+        }
+        runtimeData.setHttpRequestMethod(request.getMethod());
+        runtimeData.setRemoteAddress(request.getRemoteAddr());
+
+        final UPFileSpec upFile = new UPFileSpec(uPElement);
+        upFile.setTargetNodeId(channelTarget);
+        runtimeData.setUPFile(upFile);
+        
+        return runtimeData;
     }
 
     synchronized void registerChannelDependency(String listenerChannelSubscribeId, String talkerChannelSubscribeId) {
@@ -1241,18 +1215,6 @@ public class ChannelManager implements LayoutEventListener {
         }
     }
 
-    /**
-     * Determines whether or not anchors should be
-     * inserted at the end of URLS within channels.
-     * These anchors typically tell a browser to
-     * position itself with the channel in-view after
-     * a link is clicked or a form is submitted.
-     * @return <code>true</code> if use of anchors is enabled, otherwise <code>false</code>
-     */
-    public static boolean isUseAnchors() {
-        return ChannelManager.useAnchors;
-    }
-
     public String getChannelTarget() {
         return channelTarget;
     }
@@ -1262,7 +1224,8 @@ public class ChannelManager implements LayoutEventListener {
     public void channelUpdated(LayoutEvent ev) {}
     public void channelMoved(LayoutMoveEvent ev) {}
     public void channelDeleted(LayoutMoveEvent ev) {
-        this.removeChannel(ev.getNodeDescription().getId());
+        final IUserLayoutNodeDescription nodeDescription = ev.getNodeDescription();
+        this.removeChannel(nodeDescription.getId());
     }
 
     public void folderAdded(LayoutEvent ev) {}
@@ -1273,7 +1236,9 @@ public class ChannelManager implements LayoutEventListener {
     public void layoutLoaded() {}
     public void layoutSaved() {}
 
-    public void setLocaleManager(LocaleManager lm) { this.lm = lm; }
+    public void setLocaleManager(LocaleManager lm) {
+        this.localeManager = lm;
+    }
 
 	/**
 	 * Get the dynamic channel title for a given channelSubscribeID.
@@ -1301,16 +1266,13 @@ public class ChannelManager implements LayoutEventListener {
         // that would have required a change to the IChannelRenderer interface
         if (channelRenderer instanceof IDynamicChannelTitleRenderer ) {
 
-            IDynamicChannelTitleRenderer channelTitleRenderer =
-                (IDynamicChannelTitleRenderer) channelRenderer;
+            final IDynamicChannelTitleRenderer channelTitleRenderer = (IDynamicChannelTitleRenderer) channelRenderer;
             channelTitle = channelTitleRenderer.getChannelTitle();
 
             if (log.isTraceEnabled()) {
-            	log.trace("ChannelManager reports that dynamic title for channel with subscribe id="
-            			+ channelSubscribeId + " is [" + channelTitle + "].");
+            	log.trace("Dynamic title for channel with subscribe id=" + channelSubscribeId + " is [" + channelTitle + "].");
             }
         }
-
 
         return channelTitle;
 
@@ -1318,7 +1280,7 @@ public class ChannelManager implements LayoutEventListener {
 
     public String getSubscribeId(String fname) throws PortalException
     {
-        IUserLayoutManager ulm = upm.getUserLayoutManager();
+        IUserLayoutManager ulm = userPreferencesManager.getUserLayoutManager();
         return ulm.getSubscribeId(fname);
     }
     

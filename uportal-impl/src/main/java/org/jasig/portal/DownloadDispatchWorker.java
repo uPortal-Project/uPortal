@@ -71,7 +71,8 @@ public class DownloadDispatchWorker implements IWorkerRequestProcessor {
                 }
             }
 
-            IChannel ch = pcs.getChannelManager().getChannelInstance(channelTarget);
+            final ChannelManager channelManager = pcs.getChannelManager();
+            final IChannel ch = channelManager.getChannelInstance(pcs.getHttpServletRequest(), pcs.getHttpServletResponse(), channelTarget);
 
             if(ch!=null) {
                 // set pcs

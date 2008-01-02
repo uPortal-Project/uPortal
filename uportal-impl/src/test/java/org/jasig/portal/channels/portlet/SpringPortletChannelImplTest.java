@@ -8,6 +8,7 @@ package org.jasig.portal.channels.portlet;
 import java.io.PrintWriter;
 import java.util.Collections;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import junit.framework.TestCase;
@@ -76,9 +77,8 @@ public class SpringPortletChannelImplTest extends TestCase {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
         
-        final PortalControlStructures portalControlStructures = new PortalControlStructures();
-        portalControlStructures.setHttpServletRequest(request);
-        portalControlStructures.setHttpServletResponse(response);
+        final PortalControlStructures portalControlStructures = new PortalControlStructures(request, response);
+        final HttpServletRequest pcsRequest = portalControlStructures.getHttpServletRequest();
         
         
         final IPortletDefinitionId portDef1 = new MockPortletDefinitionId("portDef1");
@@ -106,11 +106,11 @@ public class SpringPortletChannelImplTest extends TestCase {
         
 
         final IPortletWindowRegistry portletWindowRegistry = EasyMock.createMock(IPortletWindowRegistry.class);
-        EasyMock.expect(portletWindowRegistry.getOrCreatePortletWindow(request, "sub1", portletEntityId)).andReturn(portletWindow);
+        EasyMock.expect(portletWindowRegistry.getOrCreatePortletWindow(pcsRequest, "sub1", portletEntityId)).andReturn(portletWindow);
         
         
         final PortletContainer portletContainer = EasyMock.createMock(PortletContainer.class);
-        portletContainer.doLoad(portletWindow, request, response);
+        portletContainer.doLoad(portletWindow, pcsRequest, response);
         EasyMock.expectLastCall();
         
         
@@ -139,9 +139,8 @@ public class SpringPortletChannelImplTest extends TestCase {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
         
-        final PortalControlStructures portalControlStructures = new PortalControlStructures();
-        portalControlStructures.setHttpServletRequest(request);
-        portalControlStructures.setHttpServletResponse(response);
+        final PortalControlStructures portalControlStructures = new PortalControlStructures(request, response);
+        final HttpServletRequest pcsRequest = portalControlStructures.getHttpServletRequest();
         
         
         final ChannelRuntimeData channelRuntimeData = new ChannelRuntimeData();
@@ -155,11 +154,11 @@ public class SpringPortletChannelImplTest extends TestCase {
         
 
         final IPortletWindowRegistry portletWindowRegistry = EasyMock.createMock(IPortletWindowRegistry.class);
-        EasyMock.expect(portletWindowRegistry.getPortletWindow(request, portletWindowId)).andReturn(portletWindow);
+        EasyMock.expect(portletWindowRegistry.getPortletWindow(pcsRequest, portletWindowId)).andReturn(portletWindow);
         
         
         final PortletContainer portletContainer = EasyMock.createMock(PortletContainer.class);
-        portletContainer.doAction(portletWindow, request, response);
+        portletContainer.doAction(portletWindow, pcsRequest, response);
         EasyMock.expectLastCall();
         
         
@@ -176,7 +175,7 @@ public class SpringPortletChannelImplTest extends TestCase {
     public void testGenerateCacheKey() throws Exception {
         final ChannelStaticData channelStaticData = new ChannelStaticData();
 
-        final PortalControlStructures portalControlStructures = new PortalControlStructures();
+        final PortalControlStructures portalControlStructures = new PortalControlStructures(new MockHttpServletRequest(), null);
         
         final ChannelRuntimeData channelRuntimeData = new ChannelRuntimeData();
         
@@ -200,9 +199,8 @@ public class SpringPortletChannelImplTest extends TestCase {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
         
-        final PortalControlStructures portalControlStructures = new PortalControlStructures();
-        portalControlStructures.setHttpServletRequest(request);
-        portalControlStructures.setHttpServletResponse(response);
+        final PortalControlStructures portalControlStructures = new PortalControlStructures(request, response);
+        final HttpServletRequest pcsRequest = portalControlStructures.getHttpServletRequest();
         
         
         final ChannelRuntimeData channelRuntimeData = new ChannelRuntimeData();
@@ -216,11 +214,11 @@ public class SpringPortletChannelImplTest extends TestCase {
         
 
         final IPortletWindowRegistry portletWindowRegistry = EasyMock.createMock(IPortletWindowRegistry.class);
-        EasyMock.expect(portletWindowRegistry.getPortletWindow(request, portletWindowId)).andReturn(portletWindow);
+        EasyMock.expect(portletWindowRegistry.getPortletWindow(pcsRequest, portletWindowId)).andReturn(portletWindow);
         
         
         final IPortletRequestParameterManager portletRequestParameterManager = EasyMock.createMock(IPortletRequestParameterManager.class);
-        EasyMock.expect(portletRequestParameterManager.getTargetedPortletWindowIds(request)).andReturn(Collections.singleton(portletWindowId));
+        EasyMock.expect(portletRequestParameterManager.getTargetedPortletWindowIds(pcsRequest)).andReturn(Collections.singleton(portletWindowId));
         
         
         this.springPortletChannel.setPortletWindowRegistry(portletWindowRegistry);
@@ -248,9 +246,8 @@ public class SpringPortletChannelImplTest extends TestCase {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
         
-        final PortalControlStructures portalControlStructures = new PortalControlStructures();
-        portalControlStructures.setHttpServletRequest(request);
-        portalControlStructures.setHttpServletResponse(response);
+        final PortalControlStructures portalControlStructures = new PortalControlStructures(request, response);
+        final HttpServletRequest pcsRequest = portalControlStructures.getHttpServletRequest();
         
         
         final ChannelRuntimeData channelRuntimeData = new ChannelRuntimeData();
@@ -280,12 +277,12 @@ public class SpringPortletChannelImplTest extends TestCase {
         
 
         final IPortletWindowRegistry portletWindowRegistry = EasyMock.createMock(IPortletWindowRegistry.class);
-        EasyMock.expect(portletWindowRegistry.getPortletWindow(request, portletWindowId)).andReturn(portletWindow);
-        EasyMock.expect(portletWindowRegistry.getParentPortletEntity(request, portletWindowId)).andReturn(portletEntity);
+        EasyMock.expect(portletWindowRegistry.getPortletWindow(pcsRequest, portletWindowId)).andReturn(portletWindow);
+        EasyMock.expect(portletWindowRegistry.getParentPortletEntity(pcsRequest, portletWindowId)).andReturn(portletEntity);
         
         
         final IPortletRequestParameterManager portletRequestParameterManager = EasyMock.createMock(IPortletRequestParameterManager.class);
-        EasyMock.expect(portletRequestParameterManager.getTargetedPortletWindowIds(request)).andReturn(Collections.EMPTY_SET);
+        EasyMock.expect(portletRequestParameterManager.getTargetedPortletWindowIds(pcsRequest)).andReturn(Collections.EMPTY_SET);
         
         
         final PortletDD portletDD = new PortletDD();
@@ -324,9 +321,8 @@ public class SpringPortletChannelImplTest extends TestCase {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
         
-        final PortalControlStructures portalControlStructures = new PortalControlStructures();
-        portalControlStructures.setHttpServletRequest(request);
-        portalControlStructures.setHttpServletResponse(response);
+        final PortalControlStructures portalControlStructures = new PortalControlStructures(request, response);
+        final HttpServletRequest pcsRequest = portalControlStructures.getHttpServletRequest();
         
         
         final ChannelRuntimeData channelRuntimeData = new ChannelRuntimeData();
@@ -357,12 +353,12 @@ public class SpringPortletChannelImplTest extends TestCase {
         
 
         final IPortletWindowRegistry portletWindowRegistry = EasyMock.createMock(IPortletWindowRegistry.class);
-        EasyMock.expect(portletWindowRegistry.getPortletWindow(request, portletWindowId)).andReturn(portletWindow);
-        EasyMock.expect(portletWindowRegistry.getParentPortletEntity(request, portletWindowId)).andReturn(portletEntity);
+        EasyMock.expect(portletWindowRegistry.getPortletWindow(pcsRequest, portletWindowId)).andReturn(portletWindow);
+        EasyMock.expect(portletWindowRegistry.getParentPortletEntity(pcsRequest, portletWindowId)).andReturn(portletEntity);
         
         
         final IPortletRequestParameterManager portletRequestParameterManager = EasyMock.createMock(IPortletRequestParameterManager.class);
-        EasyMock.expect(portletRequestParameterManager.getTargetedPortletWindowIds(request)).andReturn(Collections.EMPTY_SET);
+        EasyMock.expect(portletRequestParameterManager.getTargetedPortletWindowIds(pcsRequest)).andReturn(Collections.EMPTY_SET);
         
         
         final PortletDD portletDD = new PortletDD();
@@ -402,9 +398,8 @@ public class SpringPortletChannelImplTest extends TestCase {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
         
-        final PortalControlStructures portalControlStructures = new PortalControlStructures();
-        portalControlStructures.setHttpServletRequest(request);
-        portalControlStructures.setHttpServletResponse(response);
+        final PortalControlStructures portalControlStructures = new PortalControlStructures(request, response);
+        final HttpServletRequest pcsRequest = portalControlStructures.getHttpServletRequest();
         
         
         final ChannelRuntimeData channelRuntimeData = new ChannelRuntimeData();
@@ -435,12 +430,12 @@ public class SpringPortletChannelImplTest extends TestCase {
         
 
         final IPortletWindowRegistry portletWindowRegistry = EasyMock.createMock(IPortletWindowRegistry.class);
-        EasyMock.expect(portletWindowRegistry.getPortletWindow(request, portletWindowId)).andReturn(portletWindow);
-        EasyMock.expect(portletWindowRegistry.getParentPortletEntity(request, portletWindowId)).andReturn(portletEntity);
+        EasyMock.expect(portletWindowRegistry.getPortletWindow(pcsRequest, portletWindowId)).andReturn(portletWindow);
+        EasyMock.expect(portletWindowRegistry.getParentPortletEntity(pcsRequest, portletWindowId)).andReturn(portletEntity);
         
         
         final IPortletRequestParameterManager portletRequestParameterManager = EasyMock.createMock(IPortletRequestParameterManager.class);
-        EasyMock.expect(portletRequestParameterManager.getTargetedPortletWindowIds(request)).andReturn(Collections.EMPTY_SET);
+        EasyMock.expect(portletRequestParameterManager.getTargetedPortletWindowIds(pcsRequest)).andReturn(Collections.EMPTY_SET);
         
         
         final PortletDD portletDD = new PortletDD();
@@ -480,10 +475,8 @@ public class SpringPortletChannelImplTest extends TestCase {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
         
-        final PortalControlStructures portalControlStructures = new PortalControlStructures();
-        portalControlStructures.setHttpServletRequest(request);
-        portalControlStructures.setHttpServletResponse(response);
-        
+        final PortalControlStructures portalControlStructures = new PortalControlStructures(request, response);
+        final HttpServletRequest pcsRequest = portalControlStructures.getHttpServletRequest();
         
         final ChannelRuntimeData channelRuntimeData = new ChannelRuntimeData();
         
@@ -513,12 +506,12 @@ public class SpringPortletChannelImplTest extends TestCase {
         
 
         final IPortletWindowRegistry portletWindowRegistry = EasyMock.createMock(IPortletWindowRegistry.class);
-        EasyMock.expect(portletWindowRegistry.getPortletWindow(request, portletWindowId)).andReturn(portletWindow);
-        EasyMock.expect(portletWindowRegistry.getParentPortletEntity(request, portletWindowId)).andReturn(portletEntity);
+        EasyMock.expect(portletWindowRegistry.getPortletWindow(pcsRequest, portletWindowId)).andReturn(portletWindow);
+        EasyMock.expect(portletWindowRegistry.getParentPortletEntity(pcsRequest, portletWindowId)).andReturn(portletEntity);
         
         
         final IPortletRequestParameterManager portletRequestParameterManager = EasyMock.createMock(IPortletRequestParameterManager.class);
-        EasyMock.expect(portletRequestParameterManager.getTargetedPortletWindowIds(request)).andReturn(Collections.EMPTY_SET);
+        EasyMock.expect(portletRequestParameterManager.getTargetedPortletWindowIds(pcsRequest)).andReturn(Collections.EMPTY_SET);
         
         
         final PortletDD portletDD = new PortletDD();
@@ -558,9 +551,8 @@ public class SpringPortletChannelImplTest extends TestCase {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
         
-        final PortalControlStructures portalControlStructures = new PortalControlStructures();
-        portalControlStructures.setHttpServletRequest(request);
-        portalControlStructures.setHttpServletResponse(response);
+        final PortalControlStructures portalControlStructures = new PortalControlStructures(request, response);
+        final HttpServletRequest pcsRequest = portalControlStructures.getHttpServletRequest();
         
         
         final ChannelRuntimeData channelRuntimeData = new ChannelRuntimeData();
@@ -591,12 +583,12 @@ public class SpringPortletChannelImplTest extends TestCase {
         
 
         final IPortletWindowRegistry portletWindowRegistry = EasyMock.createMock(IPortletWindowRegistry.class);
-        EasyMock.expect(portletWindowRegistry.getPortletWindow(request, portletWindowId)).andReturn(portletWindow);
-        EasyMock.expect(portletWindowRegistry.getParentPortletEntity(request, portletWindowId)).andReturn(portletEntity);
+        EasyMock.expect(portletWindowRegistry.getPortletWindow(pcsRequest, portletWindowId)).andReturn(portletWindow);
+        EasyMock.expect(portletWindowRegistry.getParentPortletEntity(pcsRequest, portletWindowId)).andReturn(portletEntity);
         
         
         final IPortletRequestParameterManager portletRequestParameterManager = EasyMock.createMock(IPortletRequestParameterManager.class);
-        EasyMock.expect(portletRequestParameterManager.getTargetedPortletWindowIds(request)).andReturn(Collections.EMPTY_SET);
+        EasyMock.expect(portletRequestParameterManager.getTargetedPortletWindowIds(pcsRequest)).andReturn(Collections.EMPTY_SET);
         
         
         final PortletDD portletDD = new PortletDD();
@@ -638,9 +630,8 @@ public class SpringPortletChannelImplTest extends TestCase {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
         
-        final PortalControlStructures portalControlStructures = new PortalControlStructures();
-        portalControlStructures.setHttpServletRequest(request);
-        portalControlStructures.setHttpServletResponse(response);
+        final PortalControlStructures portalControlStructures = new PortalControlStructures(request, response);
+        final HttpServletRequest pcsRequest = portalControlStructures.getHttpServletRequest();
         
         
         final ChannelRuntimeData channelRuntimeData = new ChannelRuntimeData();
@@ -671,12 +662,12 @@ public class SpringPortletChannelImplTest extends TestCase {
         
 
         final IPortletWindowRegistry portletWindowRegistry = EasyMock.createMock(IPortletWindowRegistry.class);
-        EasyMock.expect(portletWindowRegistry.getPortletWindow(request, portletWindowId)).andReturn(portletWindow);
-        EasyMock.expect(portletWindowRegistry.getParentPortletEntity(request, portletWindowId)).andReturn(portletEntity);
+        EasyMock.expect(portletWindowRegistry.getPortletWindow(pcsRequest, portletWindowId)).andReturn(portletWindow);
+        EasyMock.expect(portletWindowRegistry.getParentPortletEntity(pcsRequest, portletWindowId)).andReturn(portletEntity);
         
         
         final IPortletRequestParameterManager portletRequestParameterManager = EasyMock.createMock(IPortletRequestParameterManager.class);
-        EasyMock.expect(portletRequestParameterManager.getTargetedPortletWindowIds(request)).andReturn(Collections.EMPTY_SET);
+        EasyMock.expect(portletRequestParameterManager.getTargetedPortletWindowIds(pcsRequest)).andReturn(Collections.EMPTY_SET);
         
         
         final PortletDD portletDD = new PortletDD();
@@ -697,7 +688,7 @@ public class SpringPortletChannelImplTest extends TestCase {
         
         EasyMock.replay(portletRegistryService, optionalContainerServices, portletDefinition, portletRequestParameterManager, portletEntity, portletEntityRegistry, portletWindow, portletWindowRegistry, person);
         
-        //expirationCache is in secods, need to have a validity object that is more than 10 seconds ago
+        //expirationCache is in seconds, need to have a validity object that is more than 10 seconds ago
         final Long validity = System.currentTimeMillis() - 10001;
         final boolean valid = this.springPortletChannel.isCacheValid(channelStaticData, portalControlStructures, channelRuntimeData, validity);
         assertFalse(valid);
@@ -718,9 +709,8 @@ public class SpringPortletChannelImplTest extends TestCase {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
         
-        final PortalControlStructures portalControlStructures = new PortalControlStructures();
-        portalControlStructures.setHttpServletRequest(request);
-        portalControlStructures.setHttpServletResponse(response);
+        final PortalControlStructures portalControlStructures = new PortalControlStructures(request, response);
+        final HttpServletRequest pcsRequest = portalControlStructures.getHttpServletRequest();
         
         
         final ChannelRuntimeData channelRuntimeData = new ChannelRuntimeData();
@@ -751,12 +741,12 @@ public class SpringPortletChannelImplTest extends TestCase {
         
 
         final IPortletWindowRegistry portletWindowRegistry = EasyMock.createMock(IPortletWindowRegistry.class);
-        EasyMock.expect(portletWindowRegistry.getPortletWindow(request, portletWindowId)).andReturn(portletWindow);
-        EasyMock.expect(portletWindowRegistry.getParentPortletEntity(request, portletWindowId)).andReturn(portletEntity);
+        EasyMock.expect(portletWindowRegistry.getPortletWindow(pcsRequest, portletWindowId)).andReturn(portletWindow);
+        EasyMock.expect(portletWindowRegistry.getParentPortletEntity(pcsRequest, portletWindowId)).andReturn(portletEntity);
         
         
         final IPortletRequestParameterManager portletRequestParameterManager = EasyMock.createMock(IPortletRequestParameterManager.class);
-        EasyMock.expect(portletRequestParameterManager.getTargetedPortletWindowIds(request)).andReturn(Collections.EMPTY_SET);
+        EasyMock.expect(portletRequestParameterManager.getTargetedPortletWindowIds(pcsRequest)).andReturn(Collections.EMPTY_SET);
         
         
         final PortletDD portletDD = new PortletDD();
@@ -798,9 +788,8 @@ public class SpringPortletChannelImplTest extends TestCase {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
         
-        final PortalControlStructures portalControlStructures = new PortalControlStructures();
-        portalControlStructures.setHttpServletRequest(request);
-        portalControlStructures.setHttpServletResponse(response);
+        final PortalControlStructures portalControlStructures = new PortalControlStructures(request, response);
+        final HttpServletRequest pcsRequest = portalControlStructures.getHttpServletRequest();
         
         
         final ChannelRuntimeData channelRuntimeData = new ChannelRuntimeData();
@@ -814,12 +803,12 @@ public class SpringPortletChannelImplTest extends TestCase {
         
 
         final IPortletWindowRegistry portletWindowRegistry = EasyMock.createMock(IPortletWindowRegistry.class);
-        EasyMock.expect(portletWindowRegistry.getPortletWindow(request, portletWindowId)).andReturn(portletWindow);
+        EasyMock.expect(portletWindowRegistry.getPortletWindow(pcsRequest, portletWindowId)).andReturn(portletWindow);
         
         final PrintWriter printWriter = new PrintWriter(new NullOutputStream());
         
         final PortletContainer portletContainer = EasyMock.createMock(PortletContainer.class);
-        portletContainer.doRender(portletWindow, request, new ContentRedirectingHttpServletResponse(response, printWriter));
+        portletContainer.doRender(portletWindow, pcsRequest, new ContentRedirectingHttpServletResponse(response, printWriter));
         EasyMock.expectLastCall().andAnswer(new IAnswer<Object>() {
             public Object answer() throws Throwable {
                 final Object[] currentArguments = EasyMock.getCurrentArguments();
@@ -847,8 +836,7 @@ public class SpringPortletChannelImplTest extends TestCase {
         final MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
         httpServletRequest.setAttribute(IPortletAdaptor.ATTRIBUTE__PORTLET_TITLE, "theTitle");
 
-        final PortalControlStructures portalControlStructures = new PortalControlStructures();
-        portalControlStructures.setHttpServletRequest(httpServletRequest);
+        final PortalControlStructures portalControlStructures = new PortalControlStructures(httpServletRequest, null);
         
         final ChannelRuntimeData channelRuntimeData = new ChannelRuntimeData();
         

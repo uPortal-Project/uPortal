@@ -94,6 +94,6 @@ public class FrameworkMBeanImpl implements FrameworkMBean {
 
   // Threads
   public long getThreadCount() {return PortalSessionManager.getThreadGroup().activeCount();}
-  public long getChannelRendererActiveThreads() {return ChannelManager.activeRenderers.get();}
-  public long getChannelRendererMaxActiveThreads() {return ChannelManager.maxRenderThreads.get();}
+  public long getChannelRendererActiveThreads() {return ChannelManager.getActiveRenderers();}
+  public long getChannelRendererMaxActiveThreads() {return ChannelManager.getMaxRenderThreads();}
 }

@@ -334,7 +334,7 @@ public final class CError extends BaseChannel implements IPrivilegedChannel,
                     crd.clear();
                     try {
                         if ((this.the_channel = cm
-                                .instantiateChannel(channelSubscribeId)) == null) {
+                                .instantiateChannel(this.portcs.getHttpServletRequest(), this.portcs.getHttpServletResponse(), channelSubscribeId)) == null) {
                             resetCError(ErrorCode.GENERAL_ERROR, null,
                                     channelSubscribeId, null,
                                     "Channel failed to reinstantiate!");
@@ -550,7 +550,7 @@ public final class CError extends BaseChannel implements IPrivilegedChannel,
                     crd.clear();
                     try {
                         this.the_channel = cm
-                        .instantiateChannel(channelSubscribeId);
+                        .instantiateChannel(this.portcs.getHttpServletRequest(), this.portcs.getHttpServletResponse(), channelSubscribeId);
                         if (this.the_channel == null) {
                             resetCError(ErrorCode.GENERAL_ERROR, null,
                                     channelSubscribeId, null,

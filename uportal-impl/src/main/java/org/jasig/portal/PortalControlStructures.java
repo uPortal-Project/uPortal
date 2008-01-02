@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.jasig.portal.url.AttributeScopingHttpServletRequestWrapper;
+
 /**
  * This object is passed to special channels.
  * 
@@ -16,26 +18,36 @@ import javax.servlet.http.HttpSession;
  * @version $Revision$
  */
 public class PortalControlStructures {
-    protected IUserPreferencesManager ulm;
-    protected HttpServletRequest req;
-    protected HttpServletResponse res;
-    protected HttpSession session;
-    protected ChannelManager cm;
+    protected final IUserPreferencesManager ulm;
+    protected final HttpServletRequest req;
+    protected final HttpServletResponse res;
+    protected final HttpSession session;
+    protected final ChannelManager cm;
 
     public PortalControlStructures(HttpServletRequest req, HttpServletResponse res, ChannelManager cm, IUserPreferencesManager ulm) {
-        this.req = req;
+        if (req instanceof AttributeScopingHttpServletRequestWrapper) {
+            this.req = req;
+        }
+        else {
+            this.req = new AttributeScopingHttpServletRequestWrapper(req);
+        }
+
         this.res = res;
         this.session = null;
         this.cm = cm;
         this.ulm = ulm;
     }
+    
+    public PortalControlStructures(HttpServletRequest req, HttpServletResponse res) {
+        this(req, res, null, null);
+    }
 
-    public PortalControlStructures() {
+    public PortalControlStructures(HttpSession session, ChannelManager cm, IUserPreferencesManager ulm) {
         this.req = null;
         this.res = null;
-        this.session = null;
-        this.cm = null;
-        this.ulm = null;
+        this.session = session;
+        this.cm = cm;
+        this.ulm = ulm;
     }
 
     public IUserPreferencesManager getUserPreferencesManager() {
@@ -68,25 +80,5 @@ public class PortalControlStructures {
         }
 
         return null;
-    }
-
-    public void setUserPreferencesManager(IUserPreferencesManager lm) {
-        ulm = lm;
-    }
-
-    public void setHttpServletRequest(HttpServletRequest r) {
-        req = r;
-    }
-
-    public void setHttpServletResponse(HttpServletResponse r) {
-        res = r;
-    }
-
-    public void setHttpSession(HttpSession httpSession) {
-        this.session = httpSession;
-    }
-
-    public void setChannelManager(ChannelManager m) {
-        cm = m;
     }
 }
