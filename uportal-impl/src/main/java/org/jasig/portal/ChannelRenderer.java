@@ -18,8 +18,10 @@ import org.apache.commons.collections15.map.ReferenceMap;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.channels.portlet.IPortletAdaptor;
 import org.jasig.portal.channels.support.IChannelTitle;
 import org.jasig.portal.channels.support.IDynamicChannelTitleRenderer;
+import org.jasig.portal.portlet.url.RequestType;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.utils.SAX2BufferImpl;
 import org.jasig.portal.utils.SetCheckInSemaphore;
@@ -297,29 +299,28 @@ public class ChannelRenderer
         }
 
         if (!abandoned && this.worker.done ()) {
-            if (this.worker.successful() && (((this.worker.getBuffer())!=null) || (this.ccacheable && this.worker.cbuffer!=null))) {
+            if (this.worker.successful() && (this.worker.getBuffer() != null || (this.ccacheable && this.worker.cbuffer != null) || (this.rd != null && RequestType.ACTION.equals(this.rd.getRequestType())))) {
                 return RENDERING_SUCCESSFUL;
-
-            } else {
-                // rendering was not successful
-                Throwable e;
-                if((e=this.worker.getException())!=null) throw new InternalPortalException(e);
-                // should never get there, unless thread.stop() has seriously messed things up for the worker thread.
-                return RENDERING_FAILED;
             }
-        } else {
-            Throwable e = null;
-            if (this.worker != null) {
-              e = this.worker.getException();
-            }
-
-            if (e != null) {
-                throw new InternalPortalException(e);
-            } else {
-                // Assume rendering has timed out
-                return RENDERING_TIMED_OUT;
-            }
+         
+            // rendering was not successful
+            Throwable e;
+            if((e=this.worker.getException())!=null) throw new InternalPortalException(e);
+            // should never get there, unless thread.stop() has seriously messed things up for the worker thread.
+            return RENDERING_FAILED;
         }
+        
+        Throwable e = null;
+        if (this.worker != null) {
+          e = this.worker.getException();
+        }
+
+        if (e != null) {
+            throw new InternalPortalException(e);
+        }
+        
+        // Assume rendering has timed out
+        return RENDERING_TIMED_OUT;
     }
 
 
@@ -437,13 +438,33 @@ public class ChannelRenderer
             return this.setRuntimeDataComplete;
         }
 
+        //TODO review this for clarity
         public void execute () throws Exception {
             try {
                 if(rd!=null) {
                     channel.setRuntimeData(rd);
+                    
+                    if (RequestType.ACTION.equals(rd.getRequestType())) {
+                        if (channel instanceof IPortletAdaptor) {
+                            try {
+                                ((IPortletAdaptor)channel).processAction();
+                                successful = true;
+                            }
+                            catch (Exception e) {
+                                this.setException(e);
+                            }
+                        }
+                        else {
+                            this.setException(new ClassCastException("Action request for channel that does not implement '" + IPortletAdaptor.class + "'"));
+                        }
+
+                        done = true;
+
+                        return;
+                    }
                 }
                 setRuntimeDataComplete=true;
-
+                
                 if(groupSemaphore!=null) {
                     groupSemaphore.checkInAndWaitOn(groupRenderingKey);
                 }

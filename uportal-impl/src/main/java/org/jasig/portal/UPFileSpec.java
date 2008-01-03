@@ -68,20 +68,19 @@ public class UPFileSpec {
      * @param req a <code>HttpServletRequest</code> value
      */
     public UPFileSpec(HttpServletRequest req) {
-      String servletPath = req.getServletPath();
-      int firstChar = 0;
-      if (servletPath.startsWith("/" + WORKER_URL_ELEMENT + "/" +
-                                 FILE_DOWNLOAD_WORKER)) {
-        servletPath = req.getPathInfo();
-      }
-      if (servletPath.charAt(firstChar) == '/') {
-        firstChar += 1;
-      }
-      int slash = servletPath.indexOf('/', firstChar);
-      if (slash == -1) {
-        slash = servletPath.length();
-      }
-      String uPFile = servletPath.substring(firstChar, slash);
+        String servletPath = req.getServletPath();
+        int firstChar = 0;
+        if (servletPath.startsWith("/" + WORKER_URL_ELEMENT + "/" + FILE_DOWNLOAD_WORKER)) {
+            servletPath = req.getPathInfo();
+        }
+        if (servletPath.charAt(firstChar) == '/') {
+            firstChar += 1;
+        }
+        int slash = servletPath.indexOf('/', firstChar);
+        if (slash == -1) {
+            slash = servletPath.length();
+        }
+        String uPFile = servletPath.substring(firstChar, slash);
 
         analyze(uPFile);
     }

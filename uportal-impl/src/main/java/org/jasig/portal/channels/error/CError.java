@@ -70,7 +70,7 @@ public final class CError extends BaseChannel implements IPrivilegedChannel,
     /**
      * The channel instance that failed.
      */
-    private IChannel the_channel = null;
+    private IChannel targetChannel = null;
 
     /**
      * CError is a placeholder when it is taking the place of a channel that no
@@ -150,7 +150,7 @@ public final class CError extends BaseChannel implements IPrivilegedChannel,
         
         this.errorDocument.setChannelSubscribeId(channelSubscribeId);
         this.errorDocument.setThrowable(throwable);
-        this.the_channel = channelInstance;
+        this.targetChannel = channelInstance;
         this.errorDocument.setCode(errorCode);
 
         if (log.isTraceEnabled()) {
@@ -184,7 +184,7 @@ public final class CError extends BaseChannel implements IPrivilegedChannel,
                     ", channelInstance=[" + channelInstance + "]");
         
         this.errorDocument.setChannelSubscribeId(channelSubscribeId);
-        this.the_channel = channelInstance;
+        this.targetChannel = channelInstance;
         this.errorDocument.setCode(errorCode);
         this.errorDocument.setMessage(message);
         
@@ -238,7 +238,7 @@ public final class CError extends BaseChannel implements IPrivilegedChannel,
         this.errorDocument.setThrowable(throwable);
         this.errorDocument.setChannelSubscribeId(channelSubscribeId);
 
-        this.the_channel = channelInstance;
+        this.targetChannel = channelInstance;
 
         this.errorDocument.setMessage(message);
         
@@ -251,9 +251,9 @@ public final class CError extends BaseChannel implements IPrivilegedChannel,
     }
     
     public void receiveEvent(PortalEvent ev) {
-        if (the_channel != null) {
+        if (targetChannel != null) {
             // propagate the portal events to the normal channel
-            the_channel.receiveEvent(ev);
+            targetChannel.receiveEvent(ev);
         }
         super.receiveEvent(ev);
     }
@@ -292,86 +292,95 @@ public final class CError extends BaseChannel implements IPrivilegedChannel,
     public void renderXML(ContentHandler out) {
         // runtime data processing needs to be done here, otherwise replaced
         // channel will get duplicated setRuntimeData() calls
-        
+
         log.trace("Entering renderXML()");
-        
-        String channelSubscribeId = this.errorDocument.getChannelSubscribeId();
-        
+
+        final String channelSubscribeId = this.errorDocument.getChannelSubscribeId();
         if (channelSubscribeId != null) {
-            String chFate = this.runtimeData.getParameter("action");
-            log.debug("Channel fate is [" + chFate + "] for chanSubscribeId=" 
-                    + channelSubscribeId);
+            
+            final String chFate = this.runtimeData.getParameter("action");
+            log.debug("Channel fate is [" + chFate + "] for chanSubscribeId=" + channelSubscribeId);
             if (chFate != null) {
                 // a fate has been chosen
                 if (chFate.equals("retry")) {
                     // clean things up for the channel
-                    ChannelRuntimeData crd = (ChannelRuntimeData) this.runtimeData
-                            .clone();
+                    ChannelRuntimeData crd = (ChannelRuntimeData) this.runtimeData.clone();
                     crd.clear(); // Remove parameters
+                    
+                    //TODO for a portlet get it's IPortletWindow and remove the request parameters
+                    
                     try {
-                        if (this.the_channel instanceof IPrivilegedChannel)
-                            ((IPrivilegedChannel) this.the_channel)
-                                    .setPortalControlStructures(this.portcs);
-                        this.the_channel.setRuntimeData(crd);
+                        if (this.targetChannel instanceof IPrivilegedChannel) {
+                            ((IPrivilegedChannel) this.targetChannel).setPortalControlStructures(this.portcs);
+                        }
+                        this.targetChannel.setRuntimeData(crd);
                         ChannelManager cm = this.portcs.getChannelManager();
-                        cm.setChannelInstance(channelSubscribeId,
-                                this.the_channel);
-                        this.the_channel.renderXML(out);
+                        cm.setChannelInstance(channelSubscribeId, this.targetChannel);
+                        this.targetChannel.renderXML(out);
                         return;
-                    } catch (Exception e) {
+                    }
+                    catch (Exception e) {
                         // if any of the above didn't work, fall back to the
                         // error channel
-                        resetCError(ErrorCode.SET_RUNTIME_DATA_EXCEPTION, e,
-                                channelSubscribeId, this.the_channel,
+                        resetCError(ErrorCode.SET_RUNTIME_DATA_EXCEPTION,
+                                e,
+                                channelSubscribeId,
+                                this.targetChannel,
                                 "Channel failed a refresh attempt.");
                     }
-                } else if (chFate.equals("restart")) {
+                }
+                else if (chFate.equals("restart")) {
 
                     ChannelManager cm = this.portcs.getChannelManager();
 
-                    ChannelRuntimeData crd = 
-                        (ChannelRuntimeData) this.runtimeData.clone();
+                    ChannelRuntimeData crd = (ChannelRuntimeData) this.runtimeData.clone();
                     crd.clear();
+                    //TODO for a portlet get it's IPortletWindow and remove the request parameters
+                    //TODO for a portlet make a doAdmin call to clear the portlet scoped session
+                    
                     try {
-                        if ((this.the_channel = cm
-                                .instantiateChannel(this.portcs.getHttpServletRequest(), this.portcs.getHttpServletResponse(), channelSubscribeId)) == null) {
-                            resetCError(ErrorCode.GENERAL_ERROR, null,
-                                    channelSubscribeId, null,
-                                    "Channel failed to reinstantiate!");
-                        } else {
+                        if ((this.targetChannel = cm.instantiateChannel(this.portcs.getHttpServletRequest(), this.portcs.getHttpServletResponse(), channelSubscribeId)) == null) {
+                            resetCError(ErrorCode.GENERAL_ERROR, null, channelSubscribeId, null, "Channel failed to reinstantiate!");
+                        }
+                        else {
                             try {
-                                if (this.the_channel instanceof IPrivilegedChannel) {
-                                    ((IPrivilegedChannel) this.the_channel)
-                                            .setPortalControlStructures(this.portcs);
+                                if (this.targetChannel instanceof IPrivilegedChannel) {
+                                    ((IPrivilegedChannel) this.targetChannel).setPortalControlStructures(this.portcs);
                                 }
-                                this.the_channel.setRuntimeData(crd);
-                                this.the_channel.renderXML(out);
+                                this.targetChannel.setRuntimeData(crd);
+                                this.targetChannel.renderXML(out);
                                 return;
-                            } catch (Exception e) {
+                            }
+                            catch (Exception e) {
                                 // if any of the above didn't work, fall back to
                                 // the error channel
                                 resetCError(ErrorCode.SET_RUNTIME_DATA_EXCEPTION,
-                                        e, channelSubscribeId,
-                                        this.the_channel,
+                                        e,
+                                        channelSubscribeId,
+                                        this.targetChannel,
                                         "Channel failed a reload attempt.");
-                                cm.setChannelInstance(
-                                        channelSubscribeId, this);
-                                log.error("CError::setRuntimeData() : " +
-                                        "an error occurred during channel reinitialization. ", e);
+                                cm.setChannelInstance(channelSubscribeId, this);
+                                log.error("CError::setRuntimeData() : "
+                                        + "an error occurred during channel reinitialization. ", e);
                             }
                         }
-                    } catch (Exception e) {
-                        resetCError(ErrorCode.GENERAL_ERROR, e,
-                                channelSubscribeId, null,
-                                "Channel failed to reinstantiate!");
-                        log.error("CError::setRuntimeData() : " +
-                                "an error occurred during channel reinstantiation. ", e);
                     }
-                } else if (chFate.equals("toggle_stack_trace")) {
+                    catch (Exception e) {
+                        resetCError(ErrorCode.GENERAL_ERROR,
+                                e,
+                                channelSubscribeId,
+                                null,
+                                "Channel failed to reinstantiate!");
+                        log.error("CError::setRuntimeData() : " + "an error occurred during channel reinstantiation. ",
+                                e);
+                    }
+                }
+                else if (chFate.equals("toggle_stack_trace")) {
                     this.showStackTrace = !this.showStackTrace;
                 }
             }
         }
+
         // if channel's render XML method was to be called, we would've returned
         // by now
         localRenderXML(out);
@@ -512,15 +521,15 @@ public final class CError extends BaseChannel implements IPrivilegedChannel,
                             .clone();
                     crd.clear(); // Remove parameters
                     try {
-                        if (this.the_channel instanceof IPrivilegedChannel)
-                            ((IPrivilegedChannel) this.the_channel)
+                        if (this.targetChannel instanceof IPrivilegedChannel)
+                            ((IPrivilegedChannel) this.targetChannel)
                                     .setPortalControlStructures(this.portcs);
-                        this.the_channel.setRuntimeData(crd);
+                        this.targetChannel.setRuntimeData(crd);
                         ChannelManager cm = this.portcs.getChannelManager();
                         cm.setChannelInstance(channelSubscribeId,
-                                this.the_channel);
-                        if (this.the_channel instanceof ICharacterChannel) {
-                            ((ICharacterChannel) this.the_channel)
+                                this.targetChannel);
+                        if (this.targetChannel instanceof ICharacterChannel) {
+                            ((ICharacterChannel) this.targetChannel)
                                     .renderCharacters(out);
                         } else {
                             ThemeStylesheetDescription tsd = this.portcs
@@ -529,14 +538,14 @@ public final class CError extends BaseChannel implements IPrivilegedChannel,
                             BaseMarkupSerializer serOut = MEDIAMANAGER
                                     .getSerializerByName(tsd
                                             .getSerializerName(), out);
-                            this.the_channel.renderXML(serOut);
+                            this.targetChannel.renderXML(serOut);
                         }
                         return;
                     } catch (Exception e) {
                         // if any of the above didn't work, fall back to the
                         // error channel
                         resetCError(ErrorCode.SET_RUNTIME_DATA_EXCEPTION, e,
-                                channelSubscribeId, this.the_channel,
+                                channelSubscribeId, this.targetChannel,
                                 "Channel failed a refresh attempt.");
                     }
                 } else if (chFate.equals("restart")) {
@@ -549,21 +558,21 @@ public final class CError extends BaseChannel implements IPrivilegedChannel,
                             .clone();
                     crd.clear();
                     try {
-                        this.the_channel = cm
+                        this.targetChannel = cm
                         .instantiateChannel(this.portcs.getHttpServletRequest(), this.portcs.getHttpServletResponse(), channelSubscribeId);
-                        if (this.the_channel == null) {
+                        if (this.targetChannel == null) {
                             resetCError(ErrorCode.GENERAL_ERROR, null,
                                     channelSubscribeId, null,
                                     "Channel failed to reinstantiate!");
                         } else {
                             try {
-                                if (this.the_channel instanceof IPrivilegedChannel) {
-                                    ((IPrivilegedChannel) this.the_channel)
+                                if (this.targetChannel instanceof IPrivilegedChannel) {
+                                    ((IPrivilegedChannel) this.targetChannel)
                                             .setPortalControlStructures(this.portcs);
                                 }
-                                this.the_channel.setRuntimeData(crd);
-                                if (this.the_channel instanceof ICharacterChannel) {
-                                    ((ICharacterChannel) this.the_channel)
+                                this.targetChannel.setRuntimeData(crd);
+                                if (this.targetChannel instanceof ICharacterChannel) {
+                                    ((ICharacterChannel) this.targetChannel)
                                             .renderCharacters(out);
                                 } else {
                                     ThemeStylesheetDescription tsd = this.portcs
@@ -572,7 +581,7 @@ public final class CError extends BaseChannel implements IPrivilegedChannel,
                                     BaseMarkupSerializer serOut = MEDIAMANAGER
                                             .getSerializerByName(tsd
                                                     .getSerializerName(), out);
-                                    this.the_channel.renderXML(serOut);
+                                    this.targetChannel.renderXML(serOut);
                                 }
                                 return;
                             } catch (Exception e) {
@@ -580,7 +589,7 @@ public final class CError extends BaseChannel implements IPrivilegedChannel,
                                 // the error channel
                                 resetCError(ErrorCode.SET_RUNTIME_DATA_EXCEPTION,
                                         e, channelSubscribeId,
-                                        this.the_channel,
+                                        this.targetChannel,
                                         "Channel failed a reload attempt.");
                                 cm.setChannelInstance(
                                          channelSubscribeId, this);

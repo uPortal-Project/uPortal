@@ -4,5 +4,7 @@
     default-lazy-init="true">
 
     <bean id="portalRenderingPipeline" class="org.jasig.portal.rendering.StaticRenderingPipeline">
+        <property name="portletRequestParameterManager"  ref="portletRequestParameterManager" />
+        <property name="portletWindowRegistry" ref="portletWindowRegistry" />
     </bean>
 </beans>

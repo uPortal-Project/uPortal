@@ -11,6 +11,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.jasig.portal.car.CarResources;
+import org.jasig.portal.portlet.url.RequestType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -33,6 +34,7 @@ public class ChannelRuntimeData extends Hashtable<String, Object> implements Clo
     private String httpRequestMethod=null;
     private String remoteAddress=null;
     private String keywords=null;
+    private RequestType requestType = RequestType.RENDER;
     private boolean renderingAsRoot=false;
     private boolean targeted = false;
     private static final String TRADITIONAL_MEDIA_BASE = "media/";
@@ -60,6 +62,7 @@ public class ChannelRuntimeData extends Hashtable<String, Object> implements Clo
       crd.baseActionURL = baseActionURL;
       crd.httpRequestMethod = httpRequestMethod;
       crd.keywords = keywords;
+      crd.requestType = requestType;
       crd.renderingAsRoot = renderingAsRoot;
       crd.targeted = targeted;
       crd.putAll(this);
@@ -529,7 +532,20 @@ public class ChannelRuntimeData extends Hashtable<String, Object> implements Clo
 		remoteAddress = string;
 	}	
     
-    
+    /**
+     * @return the requestType
+     */
+    public RequestType getRequestType() {
+        return this.requestType;
+    }
+
+    /**
+     * @param requestType the requestType to set
+     */
+    public void setRequestType(RequestType requestType) {
+        this.requestType = requestType;
+    }
+
     public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append("ChannelRuntimeData: map=[").append(super.toString()).append("]");
@@ -540,6 +556,7 @@ public class ChannelRuntimeData extends Hashtable<String, Object> implements Clo
         sb.append(" httpRequestMethod = [").append(this.httpRequestMethod).append("] ");
         sb.append(" remoteAddress = [").append(this.remoteAddress).append("] ");
         sb.append(" keywords = [").append(this.keywords).append("] ");
+        sb.append(" requestType = [").append(this.requestType).append("] ");
         sb.append(" renderingAsRoot = [").append(this.renderingAsRoot).append("] ");
         sb.append(" targeted = [").append(this.targeted).append("]");
         

@@ -93,7 +93,7 @@ public class ChannelRequestParameterProcessor extends CommonsFileUploadSupport i
     public boolean processParameters(IWritableHttpServletRequest request, HttpServletResponse response) {
         try {
             //If this is a portlet request don't do any channel parameter processing
-            if (this.portletRequestParameterManager.isPortletTargeted(request)) {
+            if (this.portletRequestParameterManager.isAnyPortletTargeted(request)) {
                 if (this.logger.isInfoEnabled()) {
                     this.logger.info("Request is targeting a portlet, channel parameter processing will not take place.");
                 }

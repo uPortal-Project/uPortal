@@ -7,6 +7,8 @@ package org.jasig.portal.channels.portlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
 
 import javax.portlet.PortletException;
@@ -37,6 +39,7 @@ import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.portlet.url.IPortletRequestParameterManager;
+import org.jasig.portal.portlet.url.PortletRequestInfo;
 import org.jasig.portal.portlet.url.RequestType;
 import org.jasig.portal.security.IPerson;
 import org.springframework.beans.factory.annotation.Required;
@@ -261,7 +264,15 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
                 this.logger.debug("Executing portlet action for window '" + portletWindow + "' with underlying channel: " + channelStaticData);
             }
             
-            this.portletContainer.doAction(portletWindow, httpServletRequest, httpServletResponse);
+            final PortletRequestInfo portletRequestInfo = this.portletRequestParameterManager.getPortletRequestInfo(httpServletRequest, portletWindowId);
+            Map<String, String[]> parameters = portletRequestInfo.getParameters();
+            if (parameters == null) {
+                parameters = Collections.emptyMap();
+            }
+            
+            final PortletParameterRequestWrapper parameterRequestWrapper = new PortletParameterRequestWrapper(httpServletRequest, parameters);
+
+            this.portletContainer.doAction(portletWindow, parameterRequestWrapper, httpServletResponse);
         }
         catch (PortletException pe) {
             throw new PortletLoadFailureException("The portlet window '" + portletWindow + "' threw an exception while executing action. Underlying channel: " + channelStaticData, portletWindow, pe);
@@ -363,7 +374,7 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
      * @see org.jasig.portal.channels.portlet.ISpringPortletChannel#render(org.jasig.portal.ChannelStaticData, org.jasig.portal.PortalControlStructures, org.jasig.portal.ChannelRuntimeData, java.io.PrintWriter)
      */
     public void render(ChannelStaticData channelStaticData, PortalControlStructures portalControlStructures, ChannelRuntimeData channelRuntimeData, PrintWriter printWriter) {
-      //Get the portlet window
+        //Get the portlet window
         final HttpServletRequest httpServletRequest = portalControlStructures.getHttpServletRequest();
         final IPortletWindowId portletWindowId = this.getPortletWindowId(channelStaticData);
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
@@ -376,7 +387,22 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
                 this.logger.debug("Rendering portlet for window '" + portletWindow + "' with underlying channel: " + channelStaticData);
             }
             
-            this.portletContainer.doRender(portletWindow, httpServletRequest, contentRedirectingHttpServletResponse);
+            final PortletRequestInfo portletRequestInfo = this.portletRequestParameterManager.getPortletRequestInfo(httpServletRequest, portletWindowId);
+            Map<String, String[]> parameters;
+            if (portletRequestInfo == null || (parameters = portletRequestInfo.getParameters()) == null) {
+                parameters = portletWindow.getRequestParameers();
+                
+                if (parameters == null) {
+                    parameters = Collections.emptyMap();
+                }
+            }
+            else {
+                portletWindow.setRequestParameters(parameters);
+            }
+            
+            final PortletParameterRequestWrapper parameterRequestWrapper = new PortletParameterRequestWrapper(httpServletRequest, parameters);
+
+            this.portletContainer.doRender(portletWindow, parameterRequestWrapper, contentRedirectingHttpServletResponse);
             contentRedirectingHttpServletResponse.flushBuffer();
         }
         catch (PortletException pe) {
@@ -435,7 +461,13 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
                 final HttpServletRequest httpServletRequest = portalControlStructures.getHttpServletRequest();
                 final IPortletWindowId portletWindowId = this.getPortletWindowId(channelStaticData);
                 final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
-                this.portletRequestParameterManager.setRequestType(httpServletRequest, portletWindowId, RequestType.RENDER);
+                
+                // If the portlet doesn't have request info associated with it add some to ensure it is re-rendered
+                PortletRequestInfo portletRequestInfo = this.portletRequestParameterManager.getPortletRequestInfo(httpServletRequest, portletWindowId);
+                if (portletRequestInfo == null) {
+                    portletRequestInfo = new PortletRequestInfo(RequestType.RENDER);
+                    this.portletRequestParameterManager.setRequestInfo(httpServletRequest, portletWindowId, portletRequestInfo);
+                }
 
                 switch (portalEvent.getEventNumber()) {
                     case PortalEvent.MINIMIZE_EVENT: {

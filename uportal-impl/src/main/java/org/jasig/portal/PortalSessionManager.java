@@ -244,11 +244,6 @@ public void init() throws ServletException {
             
             final IRequestParameterProcessorController requestProcessorController = (IRequestParameterProcessorController)applicationContext.getBean("requestParameterProcessorController", IRequestParameterProcessorController.class);
             requestProcessorController.processParameters(writableRequest, res);
-            /*
-             * upfile (will do later)
-             * layout param
-             * execute portlet action and return early? 
-             */
 
             // Retrieve the user's UserInstance object
             final IUserInstance userInstance = UserInstanceManager.getUserInstance(writableRequest);

@@ -368,6 +368,10 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
             for (int index = 0; index < values.length; index++) {
                 String value = values[index];
                 
+                if (value == null) {
+                    value = "";
+                }
+                
                 try {
                     value = URLEncoder.encode(value, encoding);
                 }

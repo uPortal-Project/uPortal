@@ -13,6 +13,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,6 +25,7 @@ import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.sax.TransformerHandler;
 
 import org.apache.commons.collections15.map.ReferenceMap;
+import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.ChannelManager;
@@ -48,6 +50,12 @@ import org.jasig.portal.car.CarResources;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
+import org.jasig.portal.portlet.om.IPortletEntity;
+import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
+import org.jasig.portal.portlet.url.IPortletRequestParameterManager;
+import org.jasig.portal.portlet.url.PortletRequestInfo;
+import org.jasig.portal.portlet.url.RequestType;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPerson;
@@ -64,6 +72,7 @@ import org.jasig.portal.utils.SAX2BufferImpl;
 import org.jasig.portal.utils.SAX2DuplicatingFilterImpl;
 import org.jasig.portal.utils.URLUtil;
 import org.jasig.portal.utils.XSLT;
+import org.springframework.beans.factory.annotation.Required;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.XMLReader;
 
@@ -102,21 +111,65 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline {
     
     // worker configuration
     private static final String WORKER_PROPERTIES_FILE_NAME = "/properties/worker.properties";
-    private static Properties workerProperties;
+    private static final Properties workerProperties;
 
     // contains information relating client names to media and mime types
     private static final MediaManager MEDIA_MANAGER = MediaManager.getMediaManager();
 
     // string that defines which character set to use for content
     private static final String CHARACTER_SET = "UTF-8";
-    
+
+    static {
+        //TODO do via setter injection
+        try {
+            workerProperties = ResourceLoader.getResourceAsProperties(StaticRenderingPipeline.class, WORKER_PROPERTIES_FILE_NAME);
+        }
+        catch (IOException ioe) {
+            throw new PortalException("Unable to load worker.properties file. ", ioe);
+        }
+        // now add in component archive declared workers
+        CarResources cRes = CarResources.getInstance();
+        cRes.getWorkers(workerProperties);
+    }
     
     public static MovingAverageSample getLastRenderSample() {
         return lastRender;
     }
     
     protected final Log log = LogFactory.getLog(this.getClass());
-
+    
+    private IPortletRequestParameterManager portletRequestParameterManager;
+    private IPortletWindowRegistry portletWindowRegistry;
+    
+    /**
+     * @return the portletRequestParameterManager
+     */
+    public IPortletRequestParameterManager getPortletRequestParameterManager() {
+        return this.portletRequestParameterManager;
+    }
+    /**
+     * @param portletRequestParameterManager the portletRequestParameterManager to set
+     */
+    @Required
+    public void setPortletRequestParameterManager(IPortletRequestParameterManager portletRequestParameterManager) {
+        Validate.notNull(portletRequestParameterManager, "portletRequestParameterManager can not be null");
+        this.portletRequestParameterManager = portletRequestParameterManager;
+    }
+    
+    /**
+     * @return the portletWindowRegistry
+     */
+    public IPortletWindowRegistry getPortletWindowRegistry() {
+        return this.portletWindowRegistry;
+    }
+    /**
+     * @param portletWindowRegistry the portletWindowRegistry to set
+     */
+    @Required
+    public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
+        Validate.notNull(portletWindowRegistry, "portletWindowRegistry can not be null");
+        this.portletWindowRegistry = portletWindowRegistry;
+    }
     
     /* (non-Javadoc)
      * @see org.jasig.portal.rendering.IPortalRenderingPipeline#renderState(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, org.jasig.portal.IUserInstance)
@@ -128,560 +181,577 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline {
         final ChannelManager channelManager = userInstance.getChannelManager();
         final Object renderingLock = userInstance.getRenderingLock();
         
+        // process possible portlet action
+        final Set<IPortletWindowId> targetedPortletWindowIds = this.portletRequestParameterManager.getTargetedPortletWindowIds(req);
+        for (final IPortletWindowId targetedPortletWindowId : targetedPortletWindowIds) {
+            final PortletRequestInfo portletRequestInfo = this.portletRequestParameterManager.getPortletRequestInfo(req, targetedPortletWindowId);
+            
+            if (RequestType.ACTION.equals(portletRequestInfo.getRequestType())) {
+                final IPortletEntity targetedPortletEntity = this.portletWindowRegistry.getParentPortletEntity(req, targetedPortletWindowId);
+                final String channelSubscribeId = targetedPortletEntity.getChannelSubscribeId();
+                final boolean actionExecuted = channelManager.doChannelAction(req, res, channelSubscribeId, false);
+                
+                if (actionExecuted) {
+                    // The action completed, return immediately
+                    return;
+                }
+
+                // The action failed, continue and try to render normally
+                break;
+            }
+        }
+        
         // process possible worker dispatch
-        if (!processWorkerDispatch(req, res, uPreferencesManager, channelManager)) {
-            final long startTime = System.currentTimeMillis();
-            synchronized (renderingLock) {
-                // This function does ALL the content gathering/presentation work.
-                // The following filter sequence is processed:
-                //        userLayoutXML (in UserPreferencesManager)
-                //              |
-                //        incorporate StructureAttributes
-                //              |
-                //        Structure transformation
-                //              + (buffering step)
-                //        ChannelRendering Buffer
-                //              |
-                //        ThemeAttributesIncorporation Filter
-                //              |
-                //        Theme Transformation
-                //              |
-                //        ChannelIncorporation filter
-                //              |
-                //        Serializer (XHTML/WML/HTML/etc.)
-                //              |
-                //        JspWriter
-                //
+        final boolean workerDispatched = this.processWorkerDispatchIfNecessary(req, res, uPreferencesManager, channelManager);
+        if (workerDispatched) {
+            //If a worker was dispatched to return immediately
+            return;
+        }
+        
+        final long startTime = System.currentTimeMillis();
+        synchronized (renderingLock) {
+            // This function does ALL the content gathering/presentation work.
+            // The following filter sequence is processed:
+            //        userLayoutXML (in UserPreferencesManager)
+            //              |
+            //        incorporate StructureAttributes
+            //              |
+            //        Structure transformation
+            //              + (buffering step)
+            //        ChannelRendering Buffer
+            //              |
+            //        ThemeAttributesIncorporation Filter
+            //              |
+            //        Theme Transformation
+            //              |
+            //        ChannelIncorporation filter
+            //              |
+            //        Serializer (XHTML/WML/HTML/etc.)
+            //              |
+            //        JspWriter
+            //
 
-                try {
+            try {
 
-                    // call layout manager to process all user-preferences-related request parameters
-                    // this will update UserPreference object contained by UserPreferencesManager, so that
-                    // appropriate attribute incorporation filters and parameter tables can be constructed.
-                    uPreferencesManager.processUserPreferencesParameters(req);
+                // call layout manager to process all user-preferences-related request parameters
+                // this will update UserPreference object contained by UserPreferencesManager, so that
+                // appropriate attribute incorporation filters and parameter tables can be constructed.
+                uPreferencesManager.processUserPreferencesParameters(req);
 
-                    // determine uPElement (optimistic prediction) --begin
-                    // We need uPElement for ChannelManager.setReqNRes() call. That call will distribute uPElement
-                    // to Privileged channels. We assume that Privileged channels are smart enough not to delete
-                    // themselves in the detach mode !
+                // determine uPElement (optimistic prediction) --begin
+                // We need uPElement for ChannelManager.setReqNRes() call. That call will distribute uPElement
+                // to Privileged channels. We assume that Privileged channels are smart enough not to delete
+                // themselves in the detach mode !
 
-                    // In general transformations will start at the userLayoutRoot node, unless
-                    // we are rendering something in a detach mode.
-                    IUserLayoutNodeDescription rElement = null;
-                    // see if an old detach target exists in the servlet path
+                // In general transformations will start at the userLayoutRoot node, unless
+                // we are rendering something in a detach mode.
+                IUserLayoutNodeDescription rElement = null;
+                // see if an old detach target exists in the servlet path
 
-                    UPFileSpec upfs = new UPFileSpec(req);
-                    String rootNodeId = upfs.getMethodNodeId();
-                    if (rootNodeId == null) {
-                        rootNodeId = UPFileSpec.USER_LAYOUT_ROOT_NODE;
-                    }
+                UPFileSpec upfs = new UPFileSpec(req);
+                String rootNodeId = upfs.getMethodNodeId();
+                if (rootNodeId == null) {
+                    rootNodeId = UPFileSpec.USER_LAYOUT_ROOT_NODE;
+                }
 
-                    // give channels the current locale manager
-                    channelManager.setLocaleManager(localeManager);
+                // give channels the current locale manager
+                channelManager.setLocaleManager(localeManager);
 
-                    // see if a new root target has been specified
-                    String newRootNodeId = req.getParameter("uP_detach_target");
+                // see if a new root target has been specified
+                String newRootNodeId = req.getParameter("uP_detach_target");
 
-                    // set optimistic uPElement value
-                    UPFileSpec uPElement = new UPFileSpec(PortalSessionManager.INTERNAL_TAG_VALUE,
-                            UPFileSpec.RENDER_METHOD, rootNodeId, null, null);
+                // set optimistic uPElement value
+                UPFileSpec uPElement = new UPFileSpec(PortalSessionManager.INTERNAL_TAG_VALUE,
+                        UPFileSpec.RENDER_METHOD, rootNodeId, null, null);
 
-                    if (newRootNodeId != null) {
-                        // set a new root
-                        uPElement.setMethodNodeId(newRootNodeId);
-                    }
+                if (newRootNodeId != null) {
+                    // set a new root
+                    uPElement.setMethodNodeId(newRootNodeId);
+                }
 
-                    IUserLayoutManager ulm = uPreferencesManager.getUserLayoutManager();
+                IUserLayoutManager ulm = uPreferencesManager.getUserLayoutManager();
 
-                    // determine uPElement (optimistic prediction) --end
+                // determine uPElement (optimistic prediction) --end
 
-                    // set up the channel manager
+                // set up the channel manager
 
-                    channelManager.startRenderingCycle(req, res, uPElement);
+                channelManager.startRenderingCycle(req, res, uPElement);
 
-                    // after this point the layout is determined
+                // after this point the layout is determined
 
-                    UserPreferences userPreferences = uPreferencesManager.getUserPreferences();
-                    StructureStylesheetDescription ssd = uPreferencesManager.getStructureStylesheetDescription();
-                    ThemeStylesheetDescription tsd = uPreferencesManager.getThemeStylesheetDescription();
+                UserPreferences userPreferences = uPreferencesManager.getUserPreferences();
+                StructureStylesheetDescription ssd = uPreferencesManager.getStructureStylesheetDescription();
+                ThemeStylesheetDescription tsd = uPreferencesManager.getThemeStylesheetDescription();
 
-                    // verify upElement and determine rendering root --begin
-                    if (newRootNodeId != null && (!newRootNodeId.equals(rootNodeId))) {
-                        // see if the new detach traget is valid
-                        try {
-                            rElement = ulm.getNode(newRootNodeId);
-                        }
-                        catch (PortalException e) {
-                            rElement = null;
-                        }
-
-                        if (rElement != null) {
-                            // valid new root id was specified. need to redirect
-                            // peterk: should we worry about forwarding
-                            // parameters here ? or those passed with detach
-                            // always get sacked ?
-                            // Andreas: Forwarding parameters with detach
-                            // are not lost anymore with the URLUtil class.
-
-                            // Skip the uP_detach_target parameter since
-                            // it has already been processed
-                            String[] skipParams = new String[] { "uP_detach_target" };
-
-                            try {
-                                URLUtil.redirect(req, res, newRootNodeId, true, skipParams, CHARACTER_SET);
-                            }
-                            catch (PortalException pe) {
-                                log.error("PortalException occurred while redirecting",
-                                        pe);
-                            }
-                            return;
-                        }
-                    }
-
-                    // LogService.log(LogService.DEBUG,"uP_detach_target=\""+rootNodeId+"\".");
+                // verify upElement and determine rendering root --begin
+                if (newRootNodeId != null && (!newRootNodeId.equals(rootNodeId))) {
+                    // see if the new detach traget is valid
                     try {
-                        rElement = ulm.getNode(rootNodeId);
+                        rElement = ulm.getNode(newRootNodeId);
                     }
                     catch (PortalException e) {
                         rElement = null;
                     }
-                    // if we haven't found root node so far, set it to the userLayoutRoot
-                    if (rElement == null) {
-                        rootNodeId = UPFileSpec.USER_LAYOUT_ROOT_NODE;
+
+                    if (rElement != null) {
+                        // valid new root id was specified. need to redirect
+                        // peterk: should we worry about forwarding
+                        // parameters here ? or those passed with detach
+                        // always get sacked ?
+                        // Andreas: Forwarding parameters with detach
+                        // are not lost anymore with the URLUtil class.
+
+                        // Skip the uP_detach_target parameter since
+                        // it has already been processed
+                        String[] skipParams = new String[] { "uP_detach_target" };
+
+                        try {
+                            URLUtil.redirect(req, res, newRootNodeId, true, skipParams, CHARACTER_SET);
+                        }
+                        catch (PortalException pe) {
+                            log.error("PortalException occurred while redirecting",
+                                    pe);
+                        }
+                        return;
                     }
+                }
 
-                    // update the render target
-                    uPElement.setMethodNodeId(rootNodeId);
+                // LogService.log(LogService.DEBUG,"uP_detach_target=\""+rootNodeId+"\".");
+                try {
+                    rElement = ulm.getNode(rootNodeId);
+                }
+                catch (PortalException e) {
+                    rElement = null;
+                }
+                // if we haven't found root node so far, set it to the userLayoutRoot
+                if (rElement == null) {
+                    rootNodeId = UPFileSpec.USER_LAYOUT_ROOT_NODE;
+                }
 
-                    // inform channel manager about the new uPElement value
-                    channelManager.setUPElement(uPElement);
-                    // verify upElement and determine rendering root --begin
+                // update the render target
+                uPElement.setMethodNodeId(rootNodeId);
 
-                    // Disable page caching
-                    res.setHeader("pragma", "no-cache");
-                    res.setHeader("Cache-Control", "no-cache, max-age=0, must-revalidate");
-                    res.setDateHeader("Expires", 0);
-                    // set the response mime type
-                    res.setContentType(tsd.getMimeType() + "; charset=" + CHARACTER_SET);
-                    // obtain the writer - res.getWriter() must occur after res.setContentType()
-                    PrintWriter out = res.getWriter();
-                    // get a serializer appropriate for the target media
-                    BaseMarkupSerializer markupSerializer = MEDIA_MANAGER.getSerializerByName(tsd.getSerializerName(),
-                            out);
-                    // set up the serializer
-                    markupSerializer.asContentHandler();
-                    // see if we can use character caching
-                    boolean ccaching = (CHARACTER_CACHE_ENABLED && (markupSerializer instanceof CachingSerializer));
-                    channelManager.setCharacterCaching(ccaching);
-                    // pass along the serializer name
-                    channelManager.setSerializerName(tsd.getSerializerName());
-                    // initialize ChannelIncorporationFilter
-                    CharacterCachingChannelIncorporationFilter cif = new CharacterCachingChannelIncorporationFilter(markupSerializer, channelManager, CACHE_ENABLED && CHARACTER_CACHE_ENABLED, req, res);
+                // inform channel manager about the new uPElement value
+                channelManager.setUPElement(uPElement);
+                // verify upElement and determine rendering root --begin
 
-                    String cacheKey = null;
-                    boolean output_produced = false;
-                    if (CACHE_ENABLED) {
-                        boolean ccache_exists = false;
-                        // obtain the cache key
-                        cacheKey = constructCacheKey(uPreferencesManager, rootNodeId);
-                        if (ccaching) {
-                            // obtain character cache
-                            CharacterCacheEntry cCache = systemCharacterCache.get(cacheKey);
-                            if (cCache != null && cCache.channelIds != null && cCache.systemBuffers != null && cCache.systemBuffers.size() > 0) {
-                                ccache_exists = true;
-                                if (log.isDebugEnabled())
-                                    log
-                                            .debug("retreived transformation character block cache for a key \""
-                                                    + cacheKey + "\"");
-                                // start channel threads
-                                for (int i = 0; i < cCache.channelIds.size(); i++) {
-                                    String channelSubscribeId = cCache.channelIds.get(i);
-                                    if (channelSubscribeId != null) {
-                                        try {
-                                            channelManager.startChannelRendering(req, res, channelSubscribeId);
-                                        }
-                                        catch (PortalException e) {
-                                            log
-                                                    .error("unable to start rendering channel (subscribeId=\""
-                                                            + channelSubscribeId
-                                                            + "\", user="
-                                                            + person.getID()
-                                                            + " layoutId="
-                                                            + uPreferencesManager.getCurrentProfile().getLayoutId()
-                                                            + e.getCause().toString());
-                                        }
-                                    }
-                                    else {
-                                        log.error("channel entry " + Integer.toString(i)
-                                                + " in character cache is invalid (user=" + person.getID() + ")!");
-                                    }
-                                }
-                                channelManager.commitToRenderingChannelSet();
+                // Disable page caching
+                res.setHeader("pragma", "no-cache");
+                res.setHeader("Cache-Control", "no-cache, max-age=0, must-revalidate");
+                res.setDateHeader("Expires", 0);
+                // set the response mime type
+                res.setContentType(tsd.getMimeType() + "; charset=" + CHARACTER_SET);
+                // obtain the writer - res.getWriter() must occur after res.setContentType()
+                PrintWriter out = res.getWriter();
+                // get a serializer appropriate for the target media
+                BaseMarkupSerializer markupSerializer = MEDIA_MANAGER.getSerializerByName(tsd.getSerializerName(),
+                        out);
+                // set up the serializer
+                markupSerializer.asContentHandler();
+                // see if we can use character caching
+                boolean ccaching = (CHARACTER_CACHE_ENABLED && (markupSerializer instanceof CachingSerializer));
+                channelManager.setCharacterCaching(ccaching);
+                // pass along the serializer name
+                channelManager.setSerializerName(tsd.getSerializerName());
+                // initialize ChannelIncorporationFilter
+                CharacterCachingChannelIncorporationFilter cif = new CharacterCachingChannelIncorporationFilter(markupSerializer, channelManager, CACHE_ENABLED && CHARACTER_CACHE_ENABLED, req, res);
 
-                                // go through the output loop
-                                int ccsize = cCache.systemBuffers.size();
-                                if (cCache.channelIds.size() != ccsize - 1) {
-                                    log
-                                            .error("channelIds character cache has invalid size !  "
-                                                    + "ccache contains "
-                                                    + cCache.systemBuffers.size()
-                                                    + " system buffers and "
-                                                    + cCache.channelIds.size() + " channel entries");
-
-                                }
-                                CachingSerializer cSerializer = (CachingSerializer) markupSerializer;
-                                cSerializer.setDocumentStarted(true);
-
-                                for (int sb = 0; sb < ccsize - 1; sb++) {
-                                    cSerializer.printRawCharacters(cCache.systemBuffers.get(sb));
-                                    if (log.isDebugEnabled()) {
-                                        log.debug("----------printing frame piece " + Integer.toString(sb));
-                                        log.debug(cCache.systemBuffers.get(sb));
-                                    }
-
-                                    // get channel output
-                                    String channelSubscribeId = cCache.channelIds.get(sb);
-                                    channelManager.outputChannel(req, res, channelSubscribeId, markupSerializer);
-                                }
-
-                                // print out the last block
-
-                                cSerializer.printRawCharacters(cCache.systemBuffers.get(ccsize - 1));
-                                if (log.isDebugEnabled()) {
-                                    log.debug("----------printing frame piece " + Integer.toString(ccsize - 1));
-                                    log.debug(cCache.systemBuffers.get(ccsize - 1));
-                                }
-
-                                cSerializer.flush();
-                                output_produced = true;
-                            }
-                        }
-                        // if this failed, try XSLT cache
-                        if ((!ccaching) || (!ccache_exists)) {
-                            // obtain XSLT cache
-
-                            SAX2BufferImpl cachedBuffer = systemCache.get(cacheKey);
-                            if (cachedBuffer != null) {
-                                // replay the buffer to channel incorporation filter
-                                if (log.isDebugEnabled()) {
-                                    log.debug("retreived XSLT transformation cache for a key '" + cacheKey + "'");
-                                }
-                                
-                                // attach rendering buffer downstream of the cached buffer
-                                ChannelRenderingBuffer crb = new ChannelRenderingBuffer((XMLReader) cachedBuffer, channelManager, ccaching, req, res);
-                                
-                                // attach channel incorporation filter downstream of the channel rendering buffer
-                                cif.setParent(crb);
-                                crb.setOutputAtDocumentEnd(true);
-                                cachedBuffer.outputBuffer(crb);
-
-                                output_produced = true;
-                            }
-                        }
-                    }
-                    // fallback on the regular rendering procedure
-                    if (!output_produced) {
-
-                        // obtain transformer handlers for both structure and theme stylesheets
-                        TransformerHandler ssth = XSLT.getTransformerHandler(ResourceLoader.getResourceAsURL(this.getClass(), ssd.getStylesheetURI()).toString());
-                        TransformerHandler tsth = XSLT.getTransformerHandler(tsd.getStylesheetURI(), localeManager
-                                .getLocales(), this);
-
-                        // obtain transformer references from the handlers
-                        Transformer sst = ssth.getTransformer();
-                        sst.setErrorListener(cErrListener);
-                        Transformer tst = tsth.getTransformer();
-                        tst.setErrorListener(cErrListener);
-
-                        // initialize ChannelRenderingBuffer and attach it downstream of the structure transformer
-                        ChannelRenderingBuffer crb = new ChannelRenderingBuffer(channelManager, ccaching, req, res);
-                        ssth.setResult(new SAXResult(crb));
-
-                        // determine and set the stylesheet params
-                        // prepare .uP element and detach flag to be passed to the stylesheets
-                        // Including the context path in front of uPElement is necessary for phone.com browsers to work
-                        sst.setParameter("baseActionURL", uPElement.getUPFile());
-                        // construct idempotent version of the uPElement
-                        UPFileSpec uPIdempotentElement = new UPFileSpec(uPElement);
-                        uPIdempotentElement.setTagId(PortalSessionManager.IDEMPOTENT_URL_TAG);
-                        sst.setParameter("baseIdempotentActionURL", uPElement.getUPFile());
-
-                        Hashtable<String, String> supTable = userPreferences.getStructureStylesheetUserPreferences()
-                                .getParameterValues();
-                        for (Map.Entry<String, String> param : supTable.entrySet()) {
-                            String pName = param.getKey();
-                            String pValue = param.getValue();
-                            if (log.isDebugEnabled())
-                                log.debug("setting sparam \"" + pName + "\"=\"" + pValue
-                                        + "\".");
-                            sst.setParameter(pName, pValue);
-                        }
-
-                        // all the parameters are set up, fire up structure transformation
-
-                        // filter to fill in channel/folder attributes for the "structure" transformation.
-                        StructureAttributesIncorporationFilter saif = new StructureAttributesIncorporationFilter(ssth,
-                                userPreferences.getStructureStylesheetUserPreferences());
-
-                        // This is a debug statement that will print out XML incoming to the
-                        // structure transformation to a log file serializer to a printstream
-                        StringWriter dbwr1 = null;
-                        OutputFormat outputFormat = null;
-                        if (logXMLBeforeStructureTransformation) {
-                            dbwr1 = new StringWriter();
-                            outputFormat = new OutputFormat();
-                            outputFormat.setIndenting(true);
-                            XMLSerializer dbser1 = new XMLSerializer(dbwr1, outputFormat);
-                            SAX2DuplicatingFilterImpl dupl1 = new SAX2DuplicatingFilterImpl(ssth, dbser1);
-                            dupl1.setParent(saif);
-                        }
-
-                        // if operating in the detach mode, need wrap everything
-                        // in a document node and a <layout_fragment> node
-                        boolean detachMode = !rootNodeId.equals(UPFileSpec.USER_LAYOUT_ROOT_NODE);
-                        if (detachMode) {
-                            saif.startDocument();
-                            saif.startElement("",
-                                    "layout_fragment",
-                                    "layout_fragment",
-                                    new org.xml.sax.helpers.AttributesImpl());
-
-                            //                            emptyt.transform(new DOMSource(rElement),new SAXResult(new ChannelSAXStreamFilter((ContentHandler)saif)));
-                            if (rElement == null) {
-                                ulm.getUserLayout(new ChannelSAXStreamFilter((ContentHandler) saif));
-                            }
-                            else {
-                                ulm.getUserLayout(rElement.getId(), new ChannelSAXStreamFilter((ContentHandler) saif));
-                            }
-
-                            saif.endElement("", "layout_fragment", "layout_fragment");
-                            saif.endDocument();
-                        }
-                        else {
-                            if (rElement == null) {
-                                ulm.getUserLayout(saif);
-                            }
-                            else {
-                                ulm.getUserLayout(rElement.getId(), saif);
-                            }
-                            //                            emptyt.transform(new DOMSource(rElement),new SAXResult((ContentHandler)saif));
-                        }
-                        // all channels should be rendering now
-
-                        // Debug piece to print out the recorded pre-structure transformation XML
-                        if (logXMLBeforeStructureTransformation) {
+                String cacheKey = null;
+                boolean output_produced = false;
+                if (CACHE_ENABLED) {
+                    boolean ccache_exists = false;
+                    // obtain the cache key
+                    cacheKey = constructCacheKey(uPreferencesManager, rootNodeId);
+                    if (ccaching) {
+                        // obtain character cache
+                        CharacterCacheEntry cCache = systemCharacterCache.get(cacheKey);
+                        if (cCache != null && cCache.channelIds != null && cCache.systemBuffers != null && cCache.systemBuffers.size() > 0) {
+                            ccache_exists = true;
                             if (log.isDebugEnabled())
                                 log
-                                        .debug("XML incoming to the structure transformation :\n\n"
-                                                + dbwr1.toString() + "\n\n");
+                                        .debug("retreived transformation character block cache for a key \""
+                                                + cacheKey + "\"");
+                            // start channel threads
+                            for (int i = 0; i < cCache.channelIds.size(); i++) {
+                                String channelSubscribeId = cCache.channelIds.get(i);
+                                if (channelSubscribeId != null) {
+                                    try {
+                                        channelManager.startChannelRendering(req, res, channelSubscribeId);
+                                    }
+                                    catch (PortalException e) {
+                                        log
+                                                .error("unable to start rendering channel (subscribeId=\""
+                                                        + channelSubscribeId
+                                                        + "\", user="
+                                                        + person.getID()
+                                                        + " layoutId="
+                                                        + uPreferencesManager.getCurrentProfile().getLayoutId()
+                                                        + e.getCause().toString());
+                                    }
+                                }
+                                else {
+                                    log.error("channel entry " + Integer.toString(i)
+                                            + " in character cache is invalid (user=" + person.getID() + ")!");
+                                }
+                            }
+                            channelManager.commitToRenderingChannelSet();
+
+                            // go through the output loop
+                            int ccsize = cCache.systemBuffers.size();
+                            if (cCache.channelIds.size() != ccsize - 1) {
+                                log
+                                        .error("channelIds character cache has invalid size !  "
+                                                + "ccache contains "
+                                                + cCache.systemBuffers.size()
+                                                + " system buffers and "
+                                                + cCache.channelIds.size() + " channel entries");
+
+                            }
+                            CachingSerializer cSerializer = (CachingSerializer) markupSerializer;
+                            cSerializer.setDocumentStarted(true);
+
+                            for (int sb = 0; sb < ccsize - 1; sb++) {
+                                cSerializer.printRawCharacters(cCache.systemBuffers.get(sb));
+                                if (log.isDebugEnabled()) {
+                                    log.debug("----------printing frame piece " + Integer.toString(sb));
+                                    log.debug(cCache.systemBuffers.get(sb));
+                                }
+
+                                // get channel output
+                                String channelSubscribeId = cCache.channelIds.get(sb);
+                                channelManager.outputChannel(req, res, channelSubscribeId, markupSerializer);
+                            }
+
+                            // print out the last block
+
+                            cSerializer.printRawCharacters(cCache.systemBuffers.get(ccsize - 1));
+                            if (log.isDebugEnabled()) {
+                                log.debug("----------printing frame piece " + Integer.toString(ccsize - 1));
+                                log.debug(cCache.systemBuffers.get(ccsize - 1));
+                            }
+
+                            cSerializer.flush();
+                            output_produced = true;
+                        }
+                    }
+                    // if this failed, try XSLT cache
+                    if ((!ccaching) || (!ccache_exists)) {
+                        // obtain XSLT cache
+
+                        SAX2BufferImpl cachedBuffer = systemCache.get(cacheKey);
+                        if (cachedBuffer != null) {
+                            // replay the buffer to channel incorporation filter
+                            if (log.isDebugEnabled()) {
+                                log.debug("retreived XSLT transformation cache for a key '" + cacheKey + "'");
+                            }
+                            
+                            // attach rendering buffer downstream of the cached buffer
+                            ChannelRenderingBuffer crb = new ChannelRenderingBuffer((XMLReader) cachedBuffer, channelManager, ccaching, req, res);
+                            
+                            // attach channel incorporation filter downstream of the channel rendering buffer
+                            cif.setParent(crb);
+                            crb.setOutputAtDocumentEnd(true);
+                            cachedBuffer.outputBuffer(crb);
+
+                            output_produced = true;
+                        }
+                    }
+                }
+                // fallback on the regular rendering procedure
+                if (!output_produced) {
+
+                    // obtain transformer handlers for both structure and theme stylesheets
+                    TransformerHandler ssth = XSLT.getTransformerHandler(ResourceLoader.getResourceAsURL(this.getClass(), ssd.getStylesheetURI()).toString());
+                    TransformerHandler tsth = XSLT.getTransformerHandler(tsd.getStylesheetURI(), localeManager
+                            .getLocales(), this);
+
+                    // obtain transformer references from the handlers
+                    Transformer sst = ssth.getTransformer();
+                    sst.setErrorListener(cErrListener);
+                    Transformer tst = tsth.getTransformer();
+                    tst.setErrorListener(cErrListener);
+
+                    // initialize ChannelRenderingBuffer and attach it downstream of the structure transformer
+                    ChannelRenderingBuffer crb = new ChannelRenderingBuffer(channelManager, ccaching, req, res);
+                    ssth.setResult(new SAXResult(crb));
+
+                    // determine and set the stylesheet params
+                    // prepare .uP element and detach flag to be passed to the stylesheets
+                    // Including the context path in front of uPElement is necessary for phone.com browsers to work
+                    sst.setParameter("baseActionURL", uPElement.getUPFile());
+                    // construct idempotent version of the uPElement
+                    UPFileSpec uPIdempotentElement = new UPFileSpec(uPElement);
+                    uPIdempotentElement.setTagId(PortalSessionManager.IDEMPOTENT_URL_TAG);
+                    sst.setParameter("baseIdempotentActionURL", uPElement.getUPFile());
+
+                    Hashtable<String, String> supTable = userPreferences.getStructureStylesheetUserPreferences()
+                            .getParameterValues();
+                    for (Map.Entry<String, String> param : supTable.entrySet()) {
+                        String pName = param.getKey();
+                        String pValue = param.getValue();
+                        if (log.isDebugEnabled())
+                            log.debug("setting sparam \"" + pName + "\"=\"" + pValue
+                                    + "\".");
+                        sst.setParameter(pName, pValue);
+                    }
+
+                    // all the parameters are set up, fire up structure transformation
+
+                    // filter to fill in channel/folder attributes for the "structure" transformation.
+                    StructureAttributesIncorporationFilter saif = new StructureAttributesIncorporationFilter(ssth,
+                            userPreferences.getStructureStylesheetUserPreferences());
+
+                    // This is a debug statement that will print out XML incoming to the
+                    // structure transformation to a log file serializer to a printstream
+                    StringWriter dbwr1 = null;
+                    OutputFormat outputFormat = null;
+                    if (logXMLBeforeStructureTransformation) {
+                        dbwr1 = new StringWriter();
+                        outputFormat = new OutputFormat();
+                        outputFormat.setIndenting(true);
+                        XMLSerializer dbser1 = new XMLSerializer(dbwr1, outputFormat);
+                        SAX2DuplicatingFilterImpl dupl1 = new SAX2DuplicatingFilterImpl(ssth, dbser1);
+                        dupl1.setParent(saif);
+                    }
+
+                    // if operating in the detach mode, need wrap everything
+                    // in a document node and a <layout_fragment> node
+                    boolean detachMode = !rootNodeId.equals(UPFileSpec.USER_LAYOUT_ROOT_NODE);
+                    if (detachMode) {
+                        saif.startDocument();
+                        saif.startElement("",
+                                "layout_fragment",
+                                "layout_fragment",
+                                new org.xml.sax.helpers.AttributesImpl());
+
+                        //                            emptyt.transform(new DOMSource(rElement),new SAXResult(new ChannelSAXStreamFilter((ContentHandler)saif)));
+                        if (rElement == null) {
+                            ulm.getUserLayout(new ChannelSAXStreamFilter((ContentHandler) saif));
+                        }
+                        else {
+                            ulm.getUserLayout(rElement.getId(), new ChannelSAXStreamFilter((ContentHandler) saif));
                         }
 
-                        // prepare for the theme transformation
-
-                        // set up of the parameters
-                        tst.setParameter("baseActionURL", uPElement.getUPFile());
-                        tst.setParameter("baseIdempotentActionURL", uPIdempotentElement.getUPFile());
-
-                        Hashtable<String, String> tupTable = userPreferences.getThemeStylesheetUserPreferences()
-                                .getParameterValues();
-                        for (Map.Entry<String, String> param : tupTable.entrySet()) {
-                            String pName = param.getKey();
-                            String pValue = param.getValue();
-                            if (log.isDebugEnabled())
-                                log.debug("setting tparam \"" + pName + "\"=\"" + pValue
-                                        + "\".");
-                            tst.setParameter(pName, pValue);
+                        saif.endElement("", "layout_fragment", "layout_fragment");
+                        saif.endDocument();
+                    }
+                    else {
+                        if (rElement == null) {
+                            ulm.getUserLayout(saif);
                         }
-
-                        VersionsManager versionsManager = VersionsManager.getInstance();
-                        Version[] versions = versionsManager.getVersions();
-
-                        for (Version version : versions) {
-                            String paramName = "version-" + version.getFname();
-                            tst.setParameter(paramName, version.dottedTriple());
+                        else {
+                            ulm.getUserLayout(rElement.getId(), saif);
                         }
+                        //                            emptyt.transform(new DOMSource(rElement),new SAXResult((ContentHandler)saif));
+                    }
+                    // all channels should be rendering now
 
-                        // the uP_productAndVersion stylesheet parameter is deprecated
-                        // instead use the more generic "version-UP_VERSION" generated from the
-                        // framework's functional name when all versions are pulled immediately
-                        // above.
-                        Version uPortalVersion = versionsManager.getVersion(IPermission.PORTAL_FRAMEWORK);
-                        tst.setParameter("uP_productAndVersion", "uPortal " + uPortalVersion.dottedTriple());
+                    // Debug piece to print out the recorded pre-structure transformation XML
+                    if (logXMLBeforeStructureTransformation) {
+                        if (log.isDebugEnabled())
+                            log
+                                    .debug("XML incoming to the structure transformation :\n\n"
+                                            + dbwr1.toString() + "\n\n");
+                    }
 
-                        // tst.setParameter("locale", localeManager.getLocaleFromSessionParameter());
+                    // prepare for the theme transformation
 
-                        // initialize a filter to fill in channel attributes for the "theme" (second) transformation.
-                        // attach it downstream of the channel rendering buffer
-                        ThemeAttributesIncorporationFilter taif = new ThemeAttributesIncorporationFilter(
-                                (XMLReader) crb, userPreferences.getThemeStylesheetUserPreferences());
-                        // attach theme transformation downstream of the theme attribute incorporation filter
-                        taif.setAllHandlers(tsth);
+                    // set up of the parameters
+                    tst.setParameter("baseActionURL", uPElement.getUPFile());
+                    tst.setParameter("baseIdempotentActionURL", uPIdempotentElement.getUPFile());
 
-                        // This is a debug statement that will print out XML incoming to the
-                        // theme transformation to a log file serializer to a printstream
-                        StringWriter dbwr2 = null;
-                        if (logXMLBeforeThemeTransformation) {
-                            dbwr2 = new StringWriter();
-                            XMLSerializer dbser2 = new XMLSerializer(dbwr2, outputFormat);
-                            SAX2DuplicatingFilterImpl dupl2 = new SAX2DuplicatingFilterImpl(tsth, dbser2);
-                            dupl2.setParent(taif);
+                    Hashtable<String, String> tupTable = userPreferences.getThemeStylesheetUserPreferences()
+                            .getParameterValues();
+                    for (Map.Entry<String, String> param : tupTable.entrySet()) {
+                        String pName = param.getKey();
+                        String pValue = param.getValue();
+                        if (log.isDebugEnabled())
+                            log.debug("setting tparam \"" + pName + "\"=\"" + pValue
+                                    + "\".");
+                        tst.setParameter(pName, pValue);
+                    }
+
+                    VersionsManager versionsManager = VersionsManager.getInstance();
+                    Version[] versions = versionsManager.getVersions();
+
+                    for (Version version : versions) {
+                        String paramName = "version-" + version.getFname();
+                        tst.setParameter(paramName, version.dottedTriple());
+                    }
+
+                    // the uP_productAndVersion stylesheet parameter is deprecated
+                    // instead use the more generic "version-UP_VERSION" generated from the
+                    // framework's functional name when all versions are pulled immediately
+                    // above.
+                    Version uPortalVersion = versionsManager.getVersion(IPermission.PORTAL_FRAMEWORK);
+                    tst.setParameter("uP_productAndVersion", "uPortal " + uPortalVersion.dottedTriple());
+
+                    // tst.setParameter("locale", localeManager.getLocaleFromSessionParameter());
+
+                    // initialize a filter to fill in channel attributes for the "theme" (second) transformation.
+                    // attach it downstream of the channel rendering buffer
+                    ThemeAttributesIncorporationFilter taif = new ThemeAttributesIncorporationFilter(
+                            (XMLReader) crb, userPreferences.getThemeStylesheetUserPreferences());
+                    // attach theme transformation downstream of the theme attribute incorporation filter
+                    taif.setAllHandlers(tsth);
+
+                    // This is a debug statement that will print out XML incoming to the
+                    // theme transformation to a log file serializer to a printstream
+                    StringWriter dbwr2 = null;
+                    if (logXMLBeforeThemeTransformation) {
+                        dbwr2 = new StringWriter();
+                        XMLSerializer dbser2 = new XMLSerializer(dbwr2, outputFormat);
+                        SAX2DuplicatingFilterImpl dupl2 = new SAX2DuplicatingFilterImpl(tsth, dbser2);
+                        dupl2.setParent(taif);
+                    }
+
+                    if (CACHE_ENABLED && !ccaching) {
+                        // record cache
+                        // attach caching buffer downstream of the theme transformer
+                        SAX2BufferImpl newCache = new SAX2BufferImpl();
+                        tsth.setResult(new SAXResult(newCache));
+
+                        // attach channel incorporation filter downstream of the caching buffer
+                        cif.setParent(newCache);
+
+                        systemCache.put(cacheKey, newCache);
+                        newCache.setOutputAtDocumentEnd(true);
+                        if (log.isDebugEnabled())
+                            log.debug("recorded transformation cache with key \""
+                                    + cacheKey + "\"");
+                    }
+                    else {
+                        // attach channel incorporation filter downstream of the theme transformer
+                        tsth.setResult(new SAXResult(cif));
+                    }
+                    // fire up theme transformation
+                    crb.stopBuffering();
+                    crb.outputBuffer();
+                    crb.clearBuffer();
+
+                    // Debug piece to print out the recorded pre-theme transformation XML
+                    if (logXMLBeforeThemeTransformation && log.isDebugEnabled()) {
+                        log.debug("XML incoming to the theme transformation :\n\n"
+                                + dbwr2.toString() + "\n\n");
+                    }
+
+                    if (CACHE_ENABLED && ccaching) {
+                        // save character block cache
+                        CharacterCacheEntry ce = new CharacterCacheEntry();
+                        ce.systemBuffers = cif.getSystemCCacheBlocks();
+                        ce.channelIds = cif.getChannelIdBlocks();
+                        if (ce.systemBuffers == null || ce.channelIds == null) {
+                            log
+                                    .error("CharacterCachingChannelIncorporationFilter returned invalid cache entries!");
                         }
-
-                        if (CACHE_ENABLED && !ccaching) {
+                        else {
                             // record cache
-                            // attach caching buffer downstream of the theme transformer
-                            SAX2BufferImpl newCache = new SAX2BufferImpl();
-                            tsth.setResult(new SAXResult(newCache));
-
-                            // attach channel incorporation filter downstream of the caching buffer
-                            cif.setParent(newCache);
-
-                            systemCache.put(cacheKey, newCache);
-                            newCache.setOutputAtDocumentEnd(true);
-                            if (log.isDebugEnabled())
-                                log.debug("recorded transformation cache with key \""
-                                        + cacheKey + "\"");
-                        }
-                        else {
-                            // attach channel incorporation filter downstream of the theme transformer
-                            tsth.setResult(new SAXResult(cif));
-                        }
-                        // fire up theme transformation
-                        crb.stopBuffering();
-                        crb.outputBuffer();
-                        crb.clearBuffer();
-
-                        // Debug piece to print out the recorded pre-theme transformation XML
-                        if (logXMLBeforeThemeTransformation && log.isDebugEnabled()) {
-                            log.debug("XML incoming to the theme transformation :\n\n"
-                                    + dbwr2.toString() + "\n\n");
-                        }
-
-                        if (CACHE_ENABLED && ccaching) {
-                            // save character block cache
-                            CharacterCacheEntry ce = new CharacterCacheEntry();
-                            ce.systemBuffers = cif.getSystemCCacheBlocks();
-                            ce.channelIds = cif.getChannelIdBlocks();
-                            if (ce.systemBuffers == null || ce.channelIds == null) {
+                            systemCharacterCache.put(cacheKey, ce);
+                            if (log.isDebugEnabled()) {
                                 log
-                                        .error("CharacterCachingChannelIncorporationFilter returned invalid cache entries!");
-                            }
-                            else {
-                                // record cache
-                                systemCharacterCache.put(cacheKey, ce);
-                                if (log.isDebugEnabled()) {
-                                    log
-                                            .debug("recorded transformation character block cache with key \""
-                                                    + cacheKey + "\"");
+                                        .debug("recorded transformation character block cache with key \""
+                                                + cacheKey + "\"");
 
-                                    log.debug("Printing transformation cache system blocks:");
-                                    for (int i = 0; i < ce.systemBuffers.size(); i++) {
-                                        log.debug("----------piece " + Integer.toString(i));
-                                        log.debug(ce.systemBuffers.get(i));
-                                    }
-                                    log.debug("Printing transformation cache channel IDs:");
-                                    for (int i = 0; i < ce.channelIds.size(); i++) {
-                                        log.debug("----------channel entry " + Integer.toString(i));
-                                        log.debug(ce.channelIds.get(i));
-                                    }
+                                log.debug("Printing transformation cache system blocks:");
+                                for (int i = 0; i < ce.systemBuffers.size(); i++) {
+                                    log.debug("----------piece " + Integer.toString(i));
+                                    log.debug(ce.systemBuffers.get(i));
+                                }
+                                log.debug("Printing transformation cache channel IDs:");
+                                for (int i = 0; i < ce.channelIds.size(); i++) {
+                                    log.debug("----------channel entry " + Integer.toString(i));
+                                    log.debug(ce.channelIds.get(i));
                                 }
                             }
                         }
-
                     }
-                    // signal the end of the rendering round
-                    channelManager.finishedRenderingCycle();
+
+                }
+                // signal the end of the rendering round
+                channelManager.finishedRenderingCycle();
+            }
+            catch (PortalException pe) {
+                throw pe;
+            }
+            catch (Exception e) {
+                throw new PortalException(e);
+            }
+            finally {
+                lastRender = renderTimes.add(System.currentTimeMillis() - startTime);
+            }
+        }
+    }
+
+
+    /**
+     * A method will determine if current request is a worker dispatch, and if so process it appropriately
+     * 
+     * @return true if a worker was successfully dispatched to, false if no worker dispatch was requested.
+     * @exception PortalException if an error occurs while dispatching
+     */
+    protected boolean processWorkerDispatchIfNecessary(HttpServletRequest req, HttpServletResponse res, IUserPreferencesManager uPreferencesManager, ChannelManager cm) throws PortalException {
+        final HttpSession session = req.getSession(false);
+        if (session != null) {
+            return false;
+        }
+
+        // determine uPFile
+        final UPFileSpec upfs;
+        try {
+            upfs = new UPFileSpec(req);
+        }
+        catch (IndexOutOfBoundsException iobe) {
+            // ill-constructed URL
+            return false;
+        }
+        
+        // is this a worker method ?
+        if (UPFileSpec.WORKER_URL_ELEMENT.equals(upfs.getMethod())) {
+            // this is a worker dispatch, process it
+            // determine worker type
+
+            final String workerName = upfs.getMethodNodeId();
+            if (workerName == null) {
+                throw new PortalException("Unable to determine worker type for name '" + workerName + "', uPFile='" + upfs.getUPFile() + "'.");
+            }
+            
+            final String dispatchClassName = workerProperties.getProperty(workerName);
+            if (dispatchClassName == null) {
+                throw new PortalException("Unable to find processing class for the worker type '" + workerName + "'. Please check worker.properties");
+            }
+            
+            // try to instantiate a worker class
+            try {
+                final CarResources carResources = CarResources.getInstance();
+                final ClassLoader carClassLoader = carResources.getClassLoader();
+                final Class<? extends IWorkerRequestProcessor> dispatcherClass = (Class<IWorkerRequestProcessor>)carClassLoader.loadClass(dispatchClassName);
+                final IWorkerRequestProcessor wrp = dispatcherClass.newInstance();
+
+                // invoke processor
+                try {
+                    final PortalControlStructures portalControlStructures = new PortalControlStructures(req, res, cm, uPreferencesManager);
+                    wrp.processWorkerDispatch(portalControlStructures);
                 }
                 catch (PortalException pe) {
                     throw pe;
                 }
-                catch (Exception e) {
-                    throw new PortalException(e);
-                }
-                finally {
-                    lastRender = renderTimes.add(System.currentTimeMillis() - startTime);
+                catch (RuntimeException re) {
+                    throw new PortalException(re);
                 }
             }
-        }
-    }
-    
-
-
-    /**
-     * A method will determine if current request is a worker dispatch, and if so process it appropriatly
-     * @param req the <code>HttpServletRequest</code>
-     * @param res the <code>HttpServletResponse</code>
-     * @param cm the <code>ChannelManager</code> instance
-     * @return a <code>boolean</code> value
-     * @exception PortalException if an error occurs
-     */
-    protected boolean processWorkerDispatch(HttpServletRequest req, HttpServletResponse res, IUserPreferencesManager uPreferencesManager, ChannelManager cm) throws PortalException {
-
-        HttpSession session = req.getSession(false);
-        if(session!=null) {
-            // determine uPFile
-            try {
-                UPFileSpec upfs=new UPFileSpec(req);
-                // is this a worker method ?
-                if(upfs.getMethod()!=null && upfs.getMethod().equals(UPFileSpec.WORKER_URL_ELEMENT)) {
-                    // this is a worker dispatch, process it
-                    // determine worker type
-
-                    String workerName=upfs.getMethodNodeId();
-
-                    if(workerName!=null) {
-                        if(workerProperties==null) {
-                            // load worker properties
-                            try {
-                                workerProperties=ResourceLoader.getResourceAsProperties(this.getClass(), WORKER_PROPERTIES_FILE_NAME);
-                            } catch (IOException ioe) {
-                                log.error("Unable to load worker.properties file. ", ioe);
-                            }
-                            // now add in component archive declared workers
-                            CarResources cRes = CarResources.getInstance();
-                            cRes.getWorkers( workerProperties );
-                        }
-
-                        String dispatchClassName=workerProperties.getProperty(workerName);
-                        if(dispatchClassName==null) {
-                            throw new PortalException("Unable to find processing class for the worker type \""+workerName+"\". Please check worker.properties");
-                        }
-                        // try to instantiate a worker class
-                        try {
-                            Object obj = CarResources.getInstance()
-                                .getClassLoader()
-                                .loadClass( dispatchClassName )
-                                .newInstance();
-                            IWorkerRequestProcessor wrp=(IWorkerRequestProcessor) obj;
-                            // invoke processor
-                            try {
-                                wrp.processWorkerDispatch(new PortalControlStructures(req,res,cm,uPreferencesManager));
-                            } catch (PortalException pe) {
-                                throw pe;
-                            } catch (RuntimeException re) {
-                                throw new PortalException(re);
-                            }
-                        } catch (ClassNotFoundException cnfe) {
-                            throw new PortalException("Unable to find processing class (\""+dispatchClassName+"\") for the worker type \""+workerName+"\". Please check worker.properties",cnfe);
-                        } catch (InstantiationException ie) {
-                            throw new PortalException("Unable to instantiate processing class (\""+dispatchClassName+"\") for the worker type \""+workerName+"\". Please check worker.properties",ie);
-                        } catch (IllegalAccessException iae) {
-                            throw new PortalException("Unable to access processing class (\""+dispatchClassName+"\") for the worker type \""+workerName+"\". Please check worker.properties",iae);
-                        }
-                    } else {
-                        throw new PortalException("Unable to determine worker type.  uPFile=\""+upfs.getUPFile()+"\".");
-                    }
-
-                    return true;
-                }
-                
-                return false;
-            } catch (IndexOutOfBoundsException iobe) {
-                // ill-constructed URL
-                return false;
+            catch (ClassNotFoundException cnfe) {
+                throw new PortalException("Unable to find processing class '" + dispatchClassName + "' for the worker type '" + workerName + "'. Please check worker.properties", cnfe);
             }
+            catch (InstantiationException ie) {
+                throw new PortalException("Unable to instantiate processing class '" + dispatchClassName + "' for the worker type '" + workerName + "'. Please check worker.properties", ie);
+            }
+            catch (IllegalAccessException iae) {
+                throw new PortalException("Unable to access processing class '" + dispatchClassName + "' for the worker type '" + workerName + "'. Please check worker.properties", iae);
+            }
+
+            return true;
         }
-        // will never get here
+
         return false;
     }
     

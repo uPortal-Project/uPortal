@@ -24,7 +24,7 @@ public interface IPortletRequestParameterManager {
      * 
      * @param request The current request.
      * @throws IllegalArgumentException If request is null
-     * @throws IllegalStateException if {@link #setRequestType(HttpServletRequest, IPortletWindowId, RequestType)} has already been called.
+     * @throws IllegalStateException if {@link #setRequestInfo(HttpServletRequest, IPortletWindowId, PortletRequestInfo)} has already been called.
      */
     public void setNoPortletRequest(HttpServletRequest request);
     
@@ -33,11 +33,11 @@ public interface IPortletRequestParameterManager {
      * 
      * @param request The current request.
      * @param portletId The ID of the portlet targeted
-     * @param type The type of request for the targeted portlet
-     * @throws IllegalArgumentException If request, portletId, or type are null.
+     * @param portletRequestInfo Data about the request
+     * @throws IllegalArgumentException If request, portletId, or portletRequest are null.
      * @throws IllegalStateException if {@link #setNoPortletRequest(HttpServletRequest)} has already been called.
      */
-    public void setRequestType(HttpServletRequest request, IPortletWindowId portletId, RequestType type);
+    public void setRequestInfo(HttpServletRequest request, IPortletWindowId portletId, PortletRequestInfo portletRequestInfo);
     
     /**
      * If this request targets a portlet.
@@ -46,7 +46,7 @@ public interface IPortletRequestParameterManager {
      * @return True if a portlet is targeted by this request 
      * @throws RequestParameterProcessingIncompleteException If {@link org.jasig.portal.url.processing.PortletParameterProcessor} has not completed on this request.
      */
-    public boolean isPortletTargeted(HttpServletRequest request);
+    public boolean isAnyPortletTargeted(HttpServletRequest request);
     
     /**
      * Get all portlet IDs that were targeted by this request.
@@ -63,9 +63,9 @@ public interface IPortletRequestParameterManager {
      * 
      * @param request The current request.
      * @param portletId The ID of the portlet to get the request type for.
-     * @return The type of the request that targeted the portlet id.
+     * @return The info about the request.
      * @throws IllegalArgumentException If request, or portletId
      * @throws org.jasig.portal.url.processing.RequestParameterProcessingIncompleteException If this request doesn't have the necessary information associated with it yet to return a request type
      */
-    public RequestType getPortletRequestType(HttpServletRequest request, IPortletWindowId portletId);
+    public PortletRequestInfo getPortletRequestInfo(HttpServletRequest request, IPortletWindowId portletId);
 }

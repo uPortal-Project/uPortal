@@ -19,7 +19,9 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.portlet.url.IPortletRequestParameterManager;
 import org.jasig.portal.portlet.url.IPortletUrlSyntaxProvider;
+import org.jasig.portal.portlet.url.PortletRequestInfo;
 import org.jasig.portal.portlet.url.PortletUrl;
+import org.jasig.portal.portlet.url.RequestType;
 import org.jasig.portal.url.IWritableHttpServletRequest;
 import org.springframework.beans.factory.annotation.Required;
 
@@ -121,11 +123,10 @@ public class PortletRequestParameterProcessor implements IRequestParameterProces
             }
 
             final Map<String, String[]> parameters = portletUrl.getParameters();
-            if (parameters != null) {
-                portletWindow.setRequestParameters(parameters);
-            }
+            final RequestType requestType = portletUrl.getRequestType();
+            final PortletRequestInfo portletRequestInfo = new PortletRequestInfo(requestType, parameters);
 
-            this.portletRequestParameterManager.setRequestType(request, portletWindowId, portletUrl.getRequestType());
+            this.portletRequestParameterManager.setRequestInfo(request, portletWindowId, portletRequestInfo);
         }
 
         return true;

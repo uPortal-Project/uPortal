@@ -6,8 +6,6 @@
 package org.jasig.portal;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,6 +44,7 @@ import org.jasig.portal.layout.LayoutEventListener;
 import org.jasig.portal.layout.LayoutMoveEvent;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
+import org.jasig.portal.portlet.url.RequestType;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
@@ -804,7 +803,6 @@ public class ChannelManager implements LayoutEventListener {
         final IChannelRequestParameterManager channelParameterManager = (IChannelRequestParameterManager)applicationContext.getBean("channelRequestParameterManager", IChannelRequestParameterManager.class);
         
         final Set<String> targetedChannelIds = channelParameterManager.getTargetedChannelIds(request);
-        //TODO deal with multiply targeted channels if feature is interesting
         if (targetedChannelIds.size() > 0) {
             this.channelTarget = targetedChannelIds.iterator().next();
         }
@@ -812,7 +810,7 @@ public class ChannelManager implements LayoutEventListener {
             this.channelTarget = null;
         }
 
-        if(channelTarget!=null) {
+        if (channelTarget != null) {
             // Obtain the channel description
             IUserLayoutChannelDescription channelDesc = null;
             try {
@@ -860,13 +858,12 @@ public class ChannelManager implements LayoutEventListener {
                 }
             }
 
-
-            // Check if the channel is an IPrivilegedChannel, and if it is,
-            // pass portal control structures and runtime data.
-            if (channel instanceof IPrivilegedChannel) {
-                channel = this.feedPortalControlStructuresToChannel(request, response, channelTarget, (IPrivilegedChannel)channel);
-                channel = this.feedRuntimeDataToChannel(request, response, channel);
-            }
+//            // Check if the channel is an IPrivilegedChannel, and if it is,
+//            // pass portal control structures and runtime data.
+//            if (channel instanceof IPrivilegedChannel) {
+//                channel = this.feedPortalControlStructuresToChannel(request, response, channelTarget, (IPrivilegedChannel)channel);
+//                channel = this.feedRuntimeDataToChannel(request, response, channel);
+//            }
         }
     }
 
@@ -885,39 +882,25 @@ public class ChannelManager implements LayoutEventListener {
             }
             catch (Exception e2) {
                 // things are looking bad for our hero
-                StringWriter sw = new StringWriter();
-                e2.printStackTrace(new PrintWriter(sw));
-                sw.flush();
-                log.error("Error channel threw ! ", e2);
+                log.error("Error channel threw exception accepting PortalControlStructures", e2);
             }
         }
         
         return prvChanObj;
     }
 
-    private IChannel feedRuntimeDataToChannel(HttpServletRequest request, HttpServletResponse response, IChannel channel) {
-        try {
-            final ChannelRuntimeData runtimeData = this.getChannelRuntimeData(request);
-
-            // Check if channel is rendering as the root element of the layout
-            final UserPreferences userPreferences = userPreferencesManager.getUserPreferences();
-            final StructureStylesheetUserPreferences structureStylesheetUserPreferences = userPreferences.getStructureStylesheetUserPreferences();
-            final String userLayoutRoot = structureStylesheetUserPreferences.getParameterValue("userLayoutRoot");
-            if (!IUserLayout.ROOT_NODE_NAME.equals(userLayoutRoot)) {
-                runtimeData.setRenderingAsRoot(true);
-            }
-
-            // Indicate that this channel is targeted
-            runtimeData.setTargeted(true);
-
-            // Finally, feed runtime data to channel
-            channel.setRuntimeData(runtimeData);
-        } 
-        catch (Exception e) {
-            channel = replaceWithErrorChannel(request, response, channelTarget, ErrorCode.SET_RUNTIME_DATA_EXCEPTION, e, null, true);
-        }
-        return channel;
-    }
+//    private IChannel feedRuntimeDataToChannel(HttpServletRequest request, HttpServletResponse response, IChannel channel) {
+//        try {
+//            final ChannelRuntimeData runtimeData = this.getChannelRuntimeData(request, this.channelTarget);
+//
+//            // Finally, feed runtime data to channel
+//            channel.setRuntimeData(runtimeData);
+//        } 
+//        catch (Exception e) {
+//            channel = replaceWithErrorChannel(request, response, channelTarget, ErrorCode.SET_RUNTIME_DATA_EXCEPTION, e, null, true);
+//        }
+//        return channel;
+//    }
 
     /**
      * Obtain an instance of a channel.
@@ -1007,6 +990,83 @@ public class ChannelManager implements LayoutEventListener {
     }
 
     /**
+     * TODO check error handling on exception thrown during action
+     */
+    public boolean doChannelAction(HttpServletRequest request, HttpServletResponse response, String channelSubscribeId, boolean noTimeout) throws PortalException {
+        // see if the channel has already been instantiated
+        // see if the channel is cached
+        IUserLayoutNodeDescription node = userPreferencesManager.getUserLayoutManager().getNode(channelSubscribeId);
+        if (!(node instanceof IUserLayoutChannelDescription)) {
+            throw new PortalException("'" + channelSubscribeId + "' is not a channel node !");
+        }
+
+        final IUserLayoutChannelDescription channel = (IUserLayoutChannelDescription) node;
+        final long timeOut = channel.getTimeout();
+
+        IChannel ch = channelTable.get(channelSubscribeId);
+        final IChannel originalChannel = ch;
+
+        if (ch == null || ch instanceof CSecureInfo) {
+            try {
+                ch = instantiateChannel(request, response, channel);
+            }
+            catch (Throwable e) {
+                ch = replaceWithErrorChannel(request, response, channelSubscribeId, ErrorCode.SET_STATIC_DATA_EXCEPTION, e, null, false);
+            }
+        }
+        
+        if (ch instanceof IPrivilegedChannel) {
+            ch = this.feedPortalControlStructuresToChannel(request, response, channelSubscribeId, (IPrivilegedChannel) ch);
+        }
+        
+        //If the channel object has changed (likely now an error channel) return immediatly 
+        if (originalChannel != ch) {
+            return false;
+        }
+        
+        final ChannelRuntimeData runtimeData = this.getChannelRuntimeData(request, channelSubscribeId, RequestType.ACTION);
+
+        // Build a new channel renderer instance.
+        final IChannelRenderer channelRenderer = cChannelRendererFactory.newInstance(ch, runtimeData);
+
+        if (noTimeout) {
+            channelRenderer.setTimeout(0);
+        }
+        else {
+            channelRenderer.setTimeout(timeOut);
+        }
+
+        channelRenderer.startRendering();
+        
+        final int renderingStatus;
+        try {
+            renderingStatus = channelRenderer.completeRendering();
+        }
+        catch (Throwable t) {
+            ch = replaceWithErrorChannel(request, response, channelSubscribeId, ErrorCode.RENDER_TIME_EXCEPTION, t, null, false);
+            log.error("Failed to complete action", t);
+            //TODO what to do here?
+            return false;
+        }
+
+        if (renderingStatus != IChannelRenderer.RENDERING_SUCCESSFUL) {
+            final ErrorCode errorCode;
+            if (renderingStatus == IChannelRenderer.RENDERING_TIMED_OUT) {
+                errorCode = ErrorCode.TIMEOUT_EXCEPTION;
+            }
+            else {
+                errorCode = ErrorCode.GENERAL_ERROR;
+            }
+            
+            ch = replaceWithErrorChannel(request, response, channelSubscribeId, errorCode, null, "unsuccessful rendering", true);
+            log.error("Action did not compplete successefully: " + renderingStatus);
+            return false;
+        }
+        
+        return true;
+    }
+        
+    /**
      * Initiate channel rendering cycle.
      *
      * @param channelSubscribeId a <code>String</code> value
@@ -1063,57 +1123,17 @@ public class ChannelManager implements LayoutEventListener {
             }
         }
 
-        ChannelRuntimeData runtimeData = null;
+        if (ch instanceof IPrivilegedChannel) {
+            this.feedPortalControlStructuresToChannel(request, response, channelSubscribeId, (IPrivilegedChannel) ch);
+        }
+        
+        final ChannelRuntimeData runtimeData;
         if(!channelSubscribeId.equals(channelTarget)) {
-            if(ch instanceof IPrivileged) {
-                final PortalControlStructures pcs = this.getPortalControlStructuresForChannel(request, response, channelSubscribeId);
-                
-                // send the control structures
-                try {
-                    ((IPrivileged) ch).setPortalControlStructures(pcs);
-                } 
-                catch (Exception outerException) {
-                    ch=replaceWithErrorChannel(request, response, channelSubscribeId, ErrorCode.SET_PCS_EXCEPTION, outerException, null, false);
-                    channelTable.remove(ch);
-
-                    // set portal control structures for the error channel
-                    try {
-                        ((IPrivileged) ch).setPortalControlStructures(pcs);
-                    }
-                    catch (Exception errorChannelException) {
-                        // things are looking bad for our hero
-                        log.error("Error channel threw exception accepting PortalControlStructures", errorChannelException);
-                    }
-                }
-            }
-            runtimeData = new ChannelRuntimeData();
-            runtimeData.setBrowserInfo(browserInfo);
-            if (localeManager != null)  {
-                runtimeData.setLocales(localeManager.getLocales());
-            }
-            runtimeData.setHttpRequestMethod(request.getMethod());
-			runtimeData.setRemoteAddress(request.getRemoteAddr());
-
-            UPFileSpec up=new UPFileSpec(uPElement);
-            up.setTargetNodeId(channelSubscribeId);
-            runtimeData.setUPFile(up);
-
+            runtimeData = this.getChannelRuntimeData(request, channelSubscribeId, RequestType.RENDER);
         }
         else {
             // set up runtime data that will be passed to the IChannelRenderer
-            if (!(ch instanceof IPrivileged)) {
-                runtimeData = this.getChannelRuntimeData(request);
-                runtimeData.setTargeted(true);
-            }
-        }
-
-        // Check if channel is rendering as the root element of the layout
-
-		UserPreferences tempUserPref = userPreferencesManager.getUserPreferences();
-		StructureStylesheetUserPreferences tempSSUP = tempUserPref.getStructureStylesheetUserPreferences();
-		String userLayoutRoot = tempSSUP.getParameterValue("userLayoutRoot");
-        if (runtimeData != null && userLayoutRoot != null && !userLayoutRoot.equals(IUserLayout.ROOT_NODE_NAME)) {
-            runtimeData.setRenderingAsRoot(true);
+            runtimeData = this.getChannelRuntimeData(request, this.channelTarget, RequestType.RENDER);
         }
 
         // Build a new channel renderer instance.
@@ -1147,26 +1167,42 @@ public class ChannelManager implements LayoutEventListener {
      * Builds ChannelRuntimeData from a request, sets the parameters, query string
      * browser info, locale manager, method, remote address, and UPFileSpec
      */
-    private ChannelRuntimeData getChannelRuntimeData(HttpServletRequest request) {
+    private ChannelRuntimeData getChannelRuntimeData(HttpServletRequest request, String channelSubscribeId, RequestType requestType) {
         final ChannelRuntimeData runtimeData = new ChannelRuntimeData();
-        runtimeData.setParameters(targetParams);
         
-        final String queryString = request.getQueryString();
-        if (queryString != null && queryString.indexOf("=") == -1) {
-            runtimeData.setKeywords(queryString);
+        if (channelSubscribeId.equals(this.channelTarget)) {
+            if (this.targetParams != null) {
+                runtimeData.setParameters(this.targetParams);
+            }
+            
+            final String queryString = request.getQueryString();
+            if (queryString != null && queryString.indexOf("=") == -1) {
+                runtimeData.setKeywords(queryString);
+            }
+            
+            runtimeData.setTargeted(true);
         }
         
-        runtimeData.setBrowserInfo(browserInfo);
+        runtimeData.setBrowserInfo(this.browserInfo);
         
-        if (localeManager != null)  {
-            runtimeData.setLocales(localeManager.getLocales());
+        if (this.localeManager != null)  {
+            runtimeData.setLocales(this.localeManager.getLocales());
         }
         runtimeData.setHttpRequestMethod(request.getMethod());
         runtimeData.setRemoteAddress(request.getRemoteAddr());
 
-        final UPFileSpec upFile = new UPFileSpec(uPElement);
-        upFile.setTargetNodeId(channelTarget);
+        final UPFileSpec upFile = new UPFileSpec(this.uPElement);
+        upFile.setTargetNodeId(channelSubscribeId);
         runtimeData.setUPFile(upFile);
+        
+        final UserPreferences userPreferences = this.userPreferencesManager.getUserPreferences();
+        final StructureStylesheetUserPreferences structureStylesheetUserPreferences = userPreferences.getStructureStylesheetUserPreferences();
+        final String userLayoutRoot = structureStylesheetUserPreferences.getParameterValue("userLayoutRoot");
+        if (!IUserLayout.ROOT_NODE_NAME.equals(userLayoutRoot)) {
+            runtimeData.setRenderingAsRoot(true);
+        }
+        
+        runtimeData.setRequestType(requestType);
         
         return runtimeData;
     }
