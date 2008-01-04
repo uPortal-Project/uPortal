@@ -164,10 +164,11 @@ public class SpringPortletChannelImplTest extends TestCase {
         EasyMock.expectLastCall();
         
         
-        final PortletRequestInfo portletRequestInfo = new PortletRequestInfo(RequestType.RENDER);
+        final PortletRequestInfo portletRequestInfo = new PortletRequestInfo(RequestType.RENDER, Collections.EMPTY_MAP);
         
         final IPortletRequestParameterManager portletRequestParameterManager = EasyMock.createMock(IPortletRequestParameterManager.class);
-        EasyMock.expect(portletRequestParameterManager.getPortletRequestInfo(pcsRequest, portletWindowId)).andReturn(portletRequestInfo);
+        EasyMock.expect(portletRequestParameterManager.getTargetedPortletWindowId(pcsRequest)).andReturn(portletWindowId);
+        EasyMock.expect(portletRequestParameterManager.getPortletRequestInfo(pcsRequest)).andReturn(portletRequestInfo);
         
         
         this.springPortletChannel.setPortletRequestParameterManager(portletRequestParameterManager);
@@ -227,7 +228,7 @@ public class SpringPortletChannelImplTest extends TestCase {
         
         
         final IPortletRequestParameterManager portletRequestParameterManager = EasyMock.createMock(IPortletRequestParameterManager.class);
-        EasyMock.expect(portletRequestParameterManager.getTargetedPortletWindowIds(pcsRequest)).andReturn(Collections.singleton(portletWindowId));
+        EasyMock.expect(portletRequestParameterManager.getTargetedPortletWindowId(pcsRequest)).andReturn(portletWindowId);
         
         
         this.springPortletChannel.setPortletWindowRegistry(portletWindowRegistry);
@@ -291,7 +292,7 @@ public class SpringPortletChannelImplTest extends TestCase {
         
         
         final IPortletRequestParameterManager portletRequestParameterManager = EasyMock.createMock(IPortletRequestParameterManager.class);
-        EasyMock.expect(portletRequestParameterManager.getTargetedPortletWindowIds(pcsRequest)).andReturn(Collections.EMPTY_SET);
+        EasyMock.expect(portletRequestParameterManager.getTargetedPortletWindowId(pcsRequest)).andReturn(null);
         
         
         final PortletDD portletDD = new PortletDD();
@@ -367,7 +368,7 @@ public class SpringPortletChannelImplTest extends TestCase {
         
         
         final IPortletRequestParameterManager portletRequestParameterManager = EasyMock.createMock(IPortletRequestParameterManager.class);
-        EasyMock.expect(portletRequestParameterManager.getTargetedPortletWindowIds(pcsRequest)).andReturn(Collections.EMPTY_SET);
+        EasyMock.expect(portletRequestParameterManager.getTargetedPortletWindowId(pcsRequest)).andReturn(null);
         
         
         final PortletDD portletDD = new PortletDD();
@@ -444,7 +445,7 @@ public class SpringPortletChannelImplTest extends TestCase {
         
         
         final IPortletRequestParameterManager portletRequestParameterManager = EasyMock.createMock(IPortletRequestParameterManager.class);
-        EasyMock.expect(portletRequestParameterManager.getTargetedPortletWindowIds(pcsRequest)).andReturn(Collections.EMPTY_SET);
+        EasyMock.expect(portletRequestParameterManager.getTargetedPortletWindowId(pcsRequest)).andReturn(null);
         
         
         final PortletDD portletDD = new PortletDD();
@@ -520,7 +521,7 @@ public class SpringPortletChannelImplTest extends TestCase {
         
         
         final IPortletRequestParameterManager portletRequestParameterManager = EasyMock.createMock(IPortletRequestParameterManager.class);
-        EasyMock.expect(portletRequestParameterManager.getTargetedPortletWindowIds(pcsRequest)).andReturn(Collections.EMPTY_SET);
+        EasyMock.expect(portletRequestParameterManager.getTargetedPortletWindowId(pcsRequest)).andReturn(null);
         
         
         final PortletDD portletDD = new PortletDD();
@@ -597,7 +598,7 @@ public class SpringPortletChannelImplTest extends TestCase {
         
         
         final IPortletRequestParameterManager portletRequestParameterManager = EasyMock.createMock(IPortletRequestParameterManager.class);
-        EasyMock.expect(portletRequestParameterManager.getTargetedPortletWindowIds(pcsRequest)).andReturn(Collections.EMPTY_SET);
+        EasyMock.expect(portletRequestParameterManager.getTargetedPortletWindowId(pcsRequest)).andReturn(null);
         
         
         final PortletDD portletDD = new PortletDD();
@@ -676,7 +677,7 @@ public class SpringPortletChannelImplTest extends TestCase {
         
         
         final IPortletRequestParameterManager portletRequestParameterManager = EasyMock.createMock(IPortletRequestParameterManager.class);
-        EasyMock.expect(portletRequestParameterManager.getTargetedPortletWindowIds(pcsRequest)).andReturn(Collections.EMPTY_SET);
+        EasyMock.expect(portletRequestParameterManager.getTargetedPortletWindowId(pcsRequest)).andReturn(null);
         
         
         final PortletDD portletDD = new PortletDD();
@@ -755,7 +756,7 @@ public class SpringPortletChannelImplTest extends TestCase {
         
         
         final IPortletRequestParameterManager portletRequestParameterManager = EasyMock.createMock(IPortletRequestParameterManager.class);
-        EasyMock.expect(portletRequestParameterManager.getTargetedPortletWindowIds(pcsRequest)).andReturn(Collections.EMPTY_SET);
+        EasyMock.expect(portletRequestParameterManager.getTargetedPortletWindowId(pcsRequest)).andReturn(null);
         
         
         final PortletDD portletDD = new PortletDD();
@@ -834,7 +835,8 @@ public class SpringPortletChannelImplTest extends TestCase {
         final PortletRequestInfo portletRequestInfo = new PortletRequestInfo(RequestType.RENDER);
         
         final IPortletRequestParameterManager portletRequestParameterManager = EasyMock.createMock(IPortletRequestParameterManager.class);
-        EasyMock.expect(portletRequestParameterManager.getPortletRequestInfo(pcsRequest, portletWindowId)).andReturn(portletRequestInfo);
+        EasyMock.expect(portletRequestParameterManager.getTargetedPortletWindowId(pcsRequest)).andReturn(portletWindowId);
+        EasyMock.expect(portletRequestParameterManager.getPortletRequestInfo(pcsRequest)).andReturn(portletRequestInfo);
         
         
         this.springPortletChannel.setPortletRequestParameterManager(portletRequestParameterManager);

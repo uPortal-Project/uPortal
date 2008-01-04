@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Set;
 
 import javax.portlet.PortletException;
 import javax.portlet.PortletMode;
@@ -272,29 +271,33 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
      */
     public void action(ChannelStaticData channelStaticData, PortalControlStructures portalControlStructures, ChannelRuntimeData channelRuntimeData) {
         //Get the portlet window
-        final HttpServletRequest httpServletRequest = portalControlStructures.getHttpServletRequest();
         final IPortletWindowId portletWindowId = this.getPortletWindowId(channelStaticData);
         if (portletWindowId == null) {
             throw new IllegalStateException("No IPortletWindowId exists in the ChannelStaticData, has initSession been called? ChannelStaticData: " + channelStaticData);
         }
+
+        final HttpServletRequest httpServletRequest = portalControlStructures.getHttpServletRequest();
         
-        final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
+        //Load the parameters to provide to the portlet with the request
+        Map<String, String[]> parameters = Collections.emptyMap();
+        final IPortletWindowId targetedPortletWindowId = this.portletRequestParameterManager.getTargetedPortletWindowId(httpServletRequest);
+        if (portletWindowId.equals(targetedPortletWindowId)) {
+            final PortletRequestInfo portletRequestInfo = this.portletRequestParameterManager.getPortletRequestInfo(httpServletRequest);
+            parameters = portletRequestInfo.getParameters();
+        }
+        
+        //Setup the request and response
+        final PortletParameterRequestWrapper parameterRequestWrapper = new PortletParameterRequestWrapper(httpServletRequest, parameters);
+        final HttpServletResponse httpServletResponse = portalControlStructures.getHttpServletResponse();
         
         //Execute the action, 
-         final HttpServletResponse httpServletResponse = portalControlStructures.getHttpServletResponse();
+        final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
+        
+        if (this.logger.isDebugEnabled()) {
+            this.logger.debug("Executing portlet action for window '" + portletWindow + "' with underlying channel: " + channelStaticData);
+        }
+        
         try {
-            if (this.logger.isDebugEnabled()) {
-                this.logger.debug("Executing portlet action for window '" + portletWindow + "' with underlying channel: " + channelStaticData);
-            }
-            
-            final PortletRequestInfo portletRequestInfo = this.portletRequestParameterManager.getPortletRequestInfo(httpServletRequest, portletWindowId);
-            Map<String, String[]> parameters = portletRequestInfo.getParameters();
-            if (parameters == null) {
-                parameters = Collections.emptyMap();
-            }
-            
-            final PortletParameterRequestWrapper parameterRequestWrapper = new PortletParameterRequestWrapper(httpServletRequest, parameters);
-
             this.portletContainer.doAction(portletWindow, parameterRequestWrapper, httpServletResponse);
         }
         catch (PortletException pe) {
@@ -330,8 +333,8 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
         
         //If this window is targeted invalidate the cache
-        final Set<IPortletWindowId> targetedPortletWindowIds = this.portletRequestParameterManager.getTargetedPortletWindowIds(httpServletRequest);
-        if (targetedPortletWindowIds.contains(portletWindowId)) {
+        final IPortletWindowId targetedPortletWindowId = this.portletRequestParameterManager.getTargetedPortletWindowId(httpServletRequest);
+        if (portletWindowId.equals(targetedPortletWindowId)) {
             return false;
         }
         
@@ -402,30 +405,34 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
         final IPortletWindowId portletWindowId = this.getPortletWindowId(channelStaticData);
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
         
-        //Execute the action, 
+        //Setup the response to capture the output
         final HttpServletResponse httpServletResponse = portalControlStructures.getHttpServletResponse();
         final ContentRedirectingHttpServletResponse contentRedirectingHttpServletResponse = new ContentRedirectingHttpServletResponse(httpServletResponse, printWriter); 
-        try {
-            if (this.logger.isDebugEnabled()) {
-                this.logger.debug("Rendering portlet for window '" + portletWindow + "' with underlying channel: " + channelStaticData);
-            }
             
-            final PortletRequestInfo portletRequestInfo = this.portletRequestParameterManager.getPortletRequestInfo(httpServletRequest, portletWindowId);
-            Map<String, String[]> parameters;
-            if (portletRequestInfo == null || (parameters = portletRequestInfo.getParameters()) == null) {
-                parameters = portletWindow.getRequestParameers();
-                
-                if (parameters == null) {
-                    parameters = Collections.emptyMap();
-                }
-            }
-            else {
-                portletWindow.setRequestParameters(parameters);
-            }
+        //Load the parameters to provide with the request
+        final IPortletWindowId targetedPortletWindowId = this.portletRequestParameterManager.getTargetedPortletWindowId(httpServletRequest);
+        final PortletRequestInfo portletRequestInfo = this.portletRequestParameterManager.getPortletRequestInfo(httpServletRequest);
+        Map<String, String[]> parameters;
+        if (!portletWindowId.equals(targetedPortletWindowId) || portletRequestInfo == null || (parameters = portletRequestInfo.getParameters()) == null) {
+            parameters = portletWindow.getRequestParameers();
             
-            final PortletParameterRequestWrapper parameterRequestWrapper = new PortletParameterRequestWrapper(httpServletRequest, parameters);
+            if (parameters == null) {
+                parameters = Collections.emptyMap();
+            }
+        }
+        else {
+            portletWindow.setRequestParameters(parameters);
+        }
+        
+        final PortletParameterRequestWrapper parameterRequestWrapper = new PortletParameterRequestWrapper(httpServletRequest, parameters);
 
-            this.portletContainer.doRender(portletWindow, parameterRequestWrapper, contentRedirectingHttpServletResponse);
+        //Execute the action, 
+        if (this.logger.isDebugEnabled()) {
+            this.logger.debug("Rendering portlet for window '" + portletWindow + "' with underlying channel: " + channelStaticData);
+        }
+
+        try {
+        this.portletContainer.doRender(portletWindow, parameterRequestWrapper, contentRedirectingHttpServletResponse);
             contentRedirectingHttpServletResponse.flushBuffer();
         }
         catch (PortletException pe) {
@@ -486,10 +493,12 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
                 final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
                 
                 // If the portlet doesn't have request info associated with it add some to ensure it is re-rendered
-                PortletRequestInfo portletRequestInfo = this.portletRequestParameterManager.getPortletRequestInfo(httpServletRequest, portletWindowId);
-                if (portletRequestInfo == null) {
-                    portletRequestInfo = new PortletRequestInfo(RequestType.RENDER);
-                    this.portletRequestParameterManager.setRequestInfo(httpServletRequest, portletWindowId, portletRequestInfo);
+                final IPortletWindowId targetedPortletWindowId = this.portletRequestParameterManager.getTargetedPortletWindowId(httpServletRequest);
+                if (targetedPortletWindowId == null) {
+                    this.portletRequestParameterManager.setRequestInfo(httpServletRequest, portletWindowId, new PortletRequestInfo(RequestType.RENDER));
+                }
+                else if (!portletWindowId.equals(targetedPortletWindowId)) {
+                    this.logger.warn("A PortalEvent targeting portlet window id '" + portletWindowId + "' was made but this request already targets portlet window id '" + targetedPortletWindowId + "'. The event will be handled but the portlet may not re-render due to caching.");
                 }
 
                 switch (portalEvent.getEventNumber()) {

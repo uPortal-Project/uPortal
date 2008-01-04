@@ -6,12 +6,14 @@
 package org.jasig.portal.portlet.url;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.HashSet;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
@@ -37,11 +39,15 @@ import org.springframework.beans.factory.annotation.Required;
  */
 public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
     private static final String SEPERATOR = "_";
-    private static final String PORTLET_PARAM_PREFIX = "plt" + SEPERATOR;
+    private static final String PORTLET_CONTROL_PREFIX = "pltc" + SEPERATOR;
+    private static final String PORTLET_PARAM_PREFIX = "pltp" + SEPERATOR;
 
-    private static final String PARAM_REQUEST_TYPE = PORTLET_PARAM_PREFIX + "type" + SEPERATOR;
-    private static final String PARAM_WINDOW_STATE = PORTLET_PARAM_PREFIX + "state" + SEPERATOR;
-    private static final String PARAM_PORTLET_MODE = PORTLET_PARAM_PREFIX + "mode" + SEPERATOR;
+    private static final String PARAM_REQUEST_TARGET = PORTLET_CONTROL_PREFIX + "target";
+    private static final String PARAM_REQUEST_TYPE = PORTLET_CONTROL_PREFIX + "type";
+    private static final String PARAM_WINDOW_STATE = PORTLET_CONTROL_PREFIX + "state";
+    private static final String PARAM_PORTLET_MODE = PORTLET_CONTROL_PREFIX + "mode";
+    
+    private static final Pattern URL_PARAM_NAME = Pattern.compile("&([^&?=\n]*)");
     
     protected final Log logger = LogFactory.getLog(this.getClass());
     
@@ -101,164 +107,103 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.url.IPortletUrlSyntaxProvider#parsePortletParameters(javax.servlet.http.HttpServletRequest)
      */
-    public Map<IPortletWindowId, PortletUrl> parsePortletParameters(HttpServletRequest request) {
+    public Tuple<IPortletWindowId, PortletUrl> parsePortletParameters(HttpServletRequest request) {
         Validate.notNull(request, "request can not be null");
         
-        /*
-         * TODO change this to return a Tuple<id, url>
-         * don't prefix portlet parameters
-         * 
-         * plt_target=foo
-         * plt_type=ACTION
-         * plt_mode=EDIT
-         * plt_state=NORMAL
-         * paramName=paramVal
-         */
+        final String targetedPortletWindowIdStr = request.getParameter(PARAM_REQUEST_TARGET);
+        if (targetedPortletWindowIdStr == null) {
+            return null;
+        }
         
-        final Map<IPortletWindowId, PortletUrl> parsedUrls = new HashMap<IPortletWindowId, PortletUrl>();
+        final IPortletWindowId targetedPortletWindowId = this.portletWindowRegistry.getPortletWindowId(targetedPortletWindowIdStr);
+        final PortletUrl portletUrl = new PortletUrl();
         
-        //Iterate through all request parameters
+        final String requestTypeStr = request.getParameter(PARAM_REQUEST_TYPE);
+        if (requestTypeStr != null) {
+            final RequestType requestType = RequestType.valueOf(requestTypeStr);
+            portletUrl.setRequestType(requestType);
+        }
+        else {
+            //Default to RENDER request if no request type was specified
+            portletUrl.setRequestType(RequestType.RENDER);
+        }
+        
+        final String windowStateStr = request.getParameter(PARAM_WINDOW_STATE);
+        if (windowStateStr != null) {
+            final WindowState windowState = new WindowState(windowStateStr);
+            portletUrl.setWindowState(windowState);
+        }
+        
+        final String portletModeStr = request.getParameter(PARAM_PORTLET_MODE);
+        if (portletModeStr != null) {
+            final PortletMode portletMode = new PortletMode(portletModeStr);
+            portletUrl.setPortletMode(portletMode);
+        }
+        
         final Map<String, String[]> requestParameters = request.getParameterMap();
+        final Set<String> urlParameterNames = this.getUrlParameterNames(request);
+        
+        final Map<String, String[]> portletParameters = new HashMap<String, String[]>(requestParameters.size());
         for (final Map.Entry<String, String[]> parameterEntry : requestParameters.entrySet()) {
             final String parameterName = parameterEntry.getKey();
             
-            //Check each parameter that starts with the portlet prefix
+            //If the parameter starts with the param prefix add it to the Map
             if (parameterName.startsWith(PORTLET_PARAM_PREFIX)) {
-                final Tuple<String, String> parsedParameterName = this.parseParameterName(parameterName);
-                if (parsedParameterName == null) {
-                    //The parameter name wasn't valid, this should have already been logged so just skip it.
-                    continue;
-                }
-                
-                final String[] values = parameterEntry.getValue();
-                
-                if (parameterName.startsWith(PARAM_REQUEST_TYPE)) {
-                    final IPortletWindowId portletWindowId = this.portletWindowRegistry.getPortletWindowId(parsedParameterName.second);
-                    
-                    //Log a warning if there is more than one value for the parameter
-                    if (values.length > 1) {
-                        this.logger.warn("Portlet meta parameter '" + parameterName + "' has " + values.length + " parameters. Only the first will be used, the others will be ignored. values=" + Arrays.toString(values));
-                    }
-                    
-                    //Convert the value to the enum type
-                    final RequestType requestType;
-                    try {
-                        requestType = RequestType.valueOf(values[0]);
-                    }
-                    catch (IllegalArgumentException iae) {
-                        this.logger.warn("The value '" + values[0] + "' of portlet meta parameter '" + parameterName + "' could not be converted to a " + RequestType.class + "'. The parameter will be ignored.", iae);
-                        continue;
-                    }
-                    
-                    //Update the portlet URL for the window
-                    final PortletUrl portletUrl = this.getPortletUrl(portletWindowId, parsedUrls);
-                    portletUrl.setRequestType(requestType);
-                }
-                else if (parameterName.startsWith(PARAM_WINDOW_STATE)) {
-                    final IPortletWindowId portletWindowId = this.portletWindowRegistry.getPortletWindowId(parsedParameterName.second);
-                    
-                    //Log a warning if there is more than one value for the parameter
-                    if (values.length > 1) {
-                        this.logger.warn("Portlet meta parameter '" + parameterName + "' has " + values.length + " parameters. Only the first will be used, the others will be ignored. values=" + Arrays.toString(values));
-                    }
-                    
-                    //Convert the value to a WindowState
-                    final WindowState windowState = new WindowState(values[0]);
-                    //TODO validate the the WindowState is valid for uPortal
-                    
-                    //Update the portlet URL for the window
-                    final PortletUrl portletUrl = this.getPortletUrl(portletWindowId, parsedUrls);
-                    portletUrl.setWindowState(windowState);
-                }
-                else if (parameterName.startsWith(PARAM_PORTLET_MODE)) {
-                    final IPortletWindowId portletWindowId = this.portletWindowRegistry.getPortletWindowId(parsedParameterName.second);
-                    
-                    //Log a warning if there is more than one value for the parameter
-                    if (values.length > 1) {
-                        this.logger.warn("Portlet meta parameter '" + parameterName + "' has " + values.length + " parameters. Only the first will be used, the others will be ignored. values=" + Arrays.toString(values));
-                    }
-                    
-                    //Convert the value to a PortletMode
-                    final PortletMode portletMode = new PortletMode(values[0]);
-                    //TODO validate the the PortletMode is valid for uPortal
-                    
-                    //Update the portlet URL for the window
-                    final PortletUrl portletUrl = this.getPortletUrl(portletWindowId, parsedUrls);
-                    portletUrl.setPortletMode(portletMode);
-                }
-                //just a regular parameter
-                else {
-                    final IPortletWindowId portletWindowId = this.portletWindowRegistry.getPortletWindowId(parsedParameterName.first);
-                    
-                    final PortletUrl portletUrl = this.getPortletUrl(portletWindowId, parsedUrls);
-                    
-                    Map<String, String[]> portletParameters = portletUrl.getParameters();
-                    if (portletParameters == null) {
-                        portletParameters = new HashMap<String, String[]>();
-                        portletUrl.setParameters(portletParameters);
-                    }
-                    
-                    portletParameters.put(parsedParameterName.second, values);
-                }
-            }
-        }
-        
-        //Prune PortletUrl objects that don't have a request type from the returned Map
-        for (final Iterator<Entry<IPortletWindowId, PortletUrl>> parsedUrlEntryItr = parsedUrls.entrySet().iterator(); parsedUrlEntryItr.hasNext(); ) {
-            final Entry<IPortletWindowId, PortletUrl> parsedUrlEntry = parsedUrlEntryItr.next();
-            
-            final PortletUrl portletUrl = parsedUrlEntry.getValue();
-            if (portletUrl.getRequestType() == null) {
-                this.logger.warn("Parameteres targeting IPortletWindowId='" + parsedUrlEntry.getKey() + "' will be ignored as no request type parameter was specified. Ignored data: " + portletUrl);
-                parsedUrlEntryItr.remove();
-            }
-        }
-        
-        return parsedUrls;
-    }
-    
-    /**
-     * Gets/Creates PortletUrl to parse parameters into from the parsedUrls Map
-     * 
-     * @param portletWindowId ID to get ParsedUrl for
-     * @param parsedUrls Map of existing ParsedUrl objects
-     * @return The PortletUrl to parse parameters into for the IPortletWindowId
-     */
-    protected PortletUrl getPortletUrl(IPortletWindowId portletWindowId, Map<IPortletWindowId, PortletUrl> parsedUrls) {
-        PortletUrl portletUrl = parsedUrls.get(portletWindowId);
-        
-        if (portletUrl == null) {
-            portletUrl = new PortletUrl();
-            parsedUrls.put(portletWindowId, portletUrl);
-        }
-        
-        return portletUrl;
-    }
-    
-    /**
-     * Parses a parameter name into a Tuple that contains the second and third parts. The parsing
-     * is done based on the {@link #SEPERATOR} string.
-     * 
-     * @param parameterName Name of parameter to parse
-     * @return A Tuple with the second/third parse of the parameter name, null if the parameter name can not be parsed.
-     */
-    protected Tuple<String, String> parseParameterName(String parameterName) {
-        final int firstIndex = parameterName.indexOf(SEPERATOR);
-        if (firstIndex < 0) {
-            this.logger.warn("Portlet parameter name '" + parameterName + "' cannot be parsed. The index of the first seperator character '" + SEPERATOR + "' returned " + firstIndex + ". The parameter will be ignored.");
-            return null;
-        }
-        
-        final int secondIndex = parameterName.indexOf(SEPERATOR, firstIndex + SEPERATOR.length());
-        if (secondIndex < 0) {
-            this.logger.warn("Portlet parameter name '" + parameterName + "' cannot be parsed. The index of the second seperator character '" + SEPERATOR + "' returned " + secondIndex + ". The parameter will be ignored.");
-            return null;
-        }
-        
-        final String firstPart = parameterName.substring(firstIndex + SEPERATOR.length(), secondIndex);
-        final String secondPart = parameterName.substring(secondIndex + SEPERATOR.length());
+                final String portletParameterName = parameterName.substring(PORTLET_PARAM_PREFIX.length());
+                final String[] portletParameterValues = parameterEntry.getValue();
 
-        return new Tuple<String, String>(firstPart, secondPart);
+                portletParameters.put(portletParameterName, portletParameterValues);
+            }
+            //If it did not appear on the URL it must be a submit parameter so add it to the Map
+            else if (urlParameterNames != null && !urlParameterNames.contains(parameterName)) {
+                final String[] portletParameterValues = parameterEntry.getValue();
+
+                portletParameters.put(parameterName, portletParameterValues);
+            }
+        }
+        portletUrl.setParameters(portletParameters);
+        
+        portletUrl.setSecure(request.isSecure());
+        
+        return new Tuple<IPortletWindowId, PortletUrl>(targetedPortletWindowId, portletUrl);
+    }
+    
+
+
+    /**
+     * Parses the request URL to return a Set of the parameter names that appeared on the URL string.
+     * 
+     * @param request The request to look at.
+     * @return The Set of parameter names from the URL.
+     */
+    protected Set<String> getUrlParameterNames(HttpServletRequest request) {
+        // Only posts can have parameters not in the URL, ignore non-post requests.
+        final String method = request.getMethod();
+        if (!"POST".equals(method)) {
+            return null;
+        }
+        
+        final Set<String> urlParameterNames = new HashSet<String>();
+        
+        final String queryString = request.getQueryString();
+        final Matcher paramNameMatcher = URL_PARAM_NAME.matcher("&" + queryString);
+
+        final String encoding = this.getEncoding(request);
+        
+        while (paramNameMatcher.find()) {
+            final String paramName = paramNameMatcher.group(1);
+            String decParamName;
+            try {
+                decParamName = URLDecoder.decode(paramName, encoding);
+            }
+            catch (UnsupportedEncodingException uee) {
+                decParamName = paramName;
+            }
+            
+            urlParameterNames.add(decParamName);
+        }
+        
+        return urlParameterNames;
     }
 
     /* (non-Javadoc)
@@ -306,20 +251,23 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
         url.append(contextPath).append("/");
         url.append(urlBase);
         
+        //Set the request target
+        this.encodeAndAppend(url.append("?"), encoding, PARAM_REQUEST_TARGET, portletWindowIdString);
+        
         //Set the request type
         final RequestType requestType = portletUrl.getRequestType();
         final String requestTypeString = requestType != null ? requestType.toString() : RequestType.RENDER.toString();
-        this.encodeAndAppend(url.append("?"), encoding, PARAM_REQUEST_TYPE + portletWindowIdString, requestTypeString);
+        this.encodeAndAppend(url.append("&"), encoding, PARAM_REQUEST_TYPE, requestTypeString);
         
         // If set add the window state
         if (windowState != null) {
-            this.encodeAndAppend(url.append("&"), encoding, PARAM_WINDOW_STATE + portletWindowIdString, windowState.toString());
+            this.encodeAndAppend(url.append("&"), encoding, PARAM_WINDOW_STATE, windowState.toString());
         }
         
         //If set add the portlet mode
         final PortletMode portletMode = portletUrl.getPortletMode();
         if (portletMode != null) {
-            this.encodeAndAppend(url.append("&"), encoding, PARAM_PORTLET_MODE + portletWindowIdString, portletMode.toString());
+            this.encodeAndAppend(url.append("&"), encoding, PARAM_PORTLET_MODE, portletMode.toString());
         }
         
         //Add the parameters to the URL
@@ -328,8 +276,8 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
             for (final Map.Entry<String, String[]> parameterEntry : parameters.entrySet()) {
                 final String name = parameterEntry.getKey();
                 final String[] values = parameterEntry.getValue();
-                
-                this.encodeAndAppend(url.append("&"), encoding, PORTLET_PARAM_PREFIX + portletWindowIdString + SEPERATOR + name, values);
+
+                this.encodeAndAppend(url.append("&"), encoding, PORTLET_PARAM_PREFIX + name, values);
             }
         }
         

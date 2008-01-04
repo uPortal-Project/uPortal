@@ -13,7 +13,6 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -181,10 +180,10 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline {
         final ChannelManager channelManager = userInstance.getChannelManager();
         final Object renderingLock = userInstance.getRenderingLock();
         
-        // process possible portlet action
-        final Set<IPortletWindowId> targetedPortletWindowIds = this.portletRequestParameterManager.getTargetedPortletWindowIds(req);
-        for (final IPortletWindowId targetedPortletWindowId : targetedPortletWindowIds) {
-            final PortletRequestInfo portletRequestInfo = this.portletRequestParameterManager.getPortletRequestInfo(req, targetedPortletWindowId);
+        // proccess possible portlet action
+        final IPortletWindowId targetedPortletWindowId = this.portletRequestParameterManager.getTargetedPortletWindowId(req);
+        if (targetedPortletWindowId != null) {
+            final PortletRequestInfo portletRequestInfo = this.portletRequestParameterManager.getPortletRequestInfo(req);
             
             if (RequestType.ACTION.equals(portletRequestInfo.getRequestType())) {
                 final IPortletEntity targetedPortletEntity = this.portletWindowRegistry.getParentPortletEntity(req, targetedPortletWindowId);
@@ -196,8 +195,7 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline {
                     return;
                 }
 
-                // The action failed, continue and try to render normally
-                break;
+                // The action didn't execute, continue and try to render normally
             }
         }
         
@@ -222,7 +220,7 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline {
             //              |
             //        ThemeAttributesIncorporation Filter
             //              |
-            //        Theme Transformation
+            //        Theme Transformatio
             //              |
             //        ChannelIncorporation filter
             //              |

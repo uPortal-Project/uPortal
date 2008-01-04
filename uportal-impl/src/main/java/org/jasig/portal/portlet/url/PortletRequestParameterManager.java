@@ -5,17 +5,13 @@
  */
 package org.jasig.portal.portlet.url;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.Validate;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.url.processing.RequestParameterProcessingIncompleteException;
 import org.jasig.portal.url.support.ChannelRequestParameterManager;
+import org.jasig.portal.utils.Tuple;
 
 /**
  * Manages access to portlet request parameters using a request attribute.
@@ -25,49 +21,37 @@ import org.jasig.portal.url.support.ChannelRequestParameterManager;
  */
 public class PortletRequestParameterManager implements IPortletRequestParameterManager {
     protected static final String PORTLET_REQUEST_MAP_ATTRIBUTE = ChannelRequestParameterManager.class.getName() + ".PORTLET_REQUEST_MAP";
-    protected static final Map<IPortletWindowId, PortletRequestInfo> NO_PARAMETERS = Collections.emptyMap();
+    protected static final Tuple<IPortletWindowId, PortletRequestInfo> NO_PARAMETERS = new Tuple<IPortletWindowId, PortletRequestInfo>(null, null);
 
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.url.IPortletRequestParameterManager#getPortletRequestInfo(javax.servlet.http.HttpServletRequest, org.jasig.portal.portlet.om.IPortletWindowId)
+     * @see org.jasig.portal.portlet.url.IPortletRequestParameterManager#getPortletRequestInfo(javax.servlet.http.HttpServletRequest)
      */
-    public PortletRequestInfo getPortletRequestInfo(HttpServletRequest request, IPortletWindowId portletId) {
+    public PortletRequestInfo getPortletRequestInfo(HttpServletRequest request) {
         Validate.notNull(request, "request can not be null");
-        Validate.notNull(portletId, "portletId can not be null");
 
-        final Map<IPortletWindowId, PortletRequestInfo> requestInfoMap = this.getAndCheckRequestInfoMap(request);
+        final Tuple<IPortletWindowId, PortletRequestInfo> requestInfoMap = this.getAndCheckRequestInfoMap(request);
         
         if (requestInfoMap == null) {
             return null;
         }
         
-        return requestInfoMap.get(portletId);
+        return requestInfoMap.second;
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.url.IPortletRequestParameterManager#getTargetedPortletWindowIds(javax.servlet.http.HttpServletRequest)
+     * @see org.jasig.portal.portlet.url.IPortletRequestParameterManager#getTargetedPortletWindowId(javax.servlet.http.HttpServletRequest)
      */
-    public Set<IPortletWindowId> getTargetedPortletWindowIds(HttpServletRequest request) {
+    public IPortletWindowId getTargetedPortletWindowId(HttpServletRequest request) {
         Validate.notNull(request, "request can not be null");
 
-        final Map<IPortletWindowId, PortletRequestInfo> requestInfoMap = this.getAndCheckRequestInfoMap(request);
+        final Tuple<IPortletWindowId, PortletRequestInfo> requestInfoMap = this.getAndCheckRequestInfoMap(request);
         
         if (requestInfoMap == null) {
-            return Collections.emptySet();
+            return null;
         }
         
-        return Collections.unmodifiableSet(requestInfoMap.keySet());
-    }
-
-    /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.url.IPortletRequestParameterManager#isPortletTargeted(javax.servlet.http.HttpServletRequest)
-     */
-    public boolean isAnyPortletTargeted(HttpServletRequest request) {
-        Validate.notNull(request, "request can not be null");
-
-        final Map<IPortletWindowId, PortletRequestInfo> requestInfoMap = this.getAndCheckRequestInfoMap(request);
-        
-        return requestInfoMap != null;
+        return requestInfoMap.first;
     }
 
     /* (non-Javadoc)
@@ -76,7 +60,7 @@ public class PortletRequestParameterManager implements IPortletRequestParameterM
     public void setNoPortletRequest(HttpServletRequest request) {
         Validate.notNull(request, "request can not be null");
 
-        final Map<IPortletWindowId, PortletRequestInfo> requestInfoMap = this.getRequestInfoMap(request);
+        final Tuple<IPortletWindowId, PortletRequestInfo> requestInfoMap = this.getRequestInfoMap(request);
 
         if (requestInfoMap != null) {
             throw new IllegalStateException("Cannot set no portlet parameters after setRequestType(HttpServletRequest, IPortletWindowId, PortletRequestInfo) has been called.");
@@ -84,7 +68,6 @@ public class PortletRequestParameterManager implements IPortletRequestParameterM
 
         request.setAttribute(PORTLET_REQUEST_MAP_ATTRIBUTE, NO_PARAMETERS);
     }
-
     
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.url.IPortletRequestParameterManager#setRequestInfo(javax.servlet.http.HttpServletRequest, org.jasig.portal.portlet.om.IPortletWindowId, org.jasig.portal.portlet.url.PortletRequestInfo)
@@ -94,16 +77,14 @@ public class PortletRequestParameterManager implements IPortletRequestParameterM
         Validate.notNull(portletId, "portletId can not be null");
         Validate.notNull(portletRequestInfo, "portletRequestInfo can not be null");
 
-        Map<IPortletWindowId, PortletRequestInfo> requestInfoMap = this.getRequestInfoMap(request);
+        Tuple<IPortletWindowId, PortletRequestInfo> requestInfoMap = this.getRequestInfoMap(request);
 
         if (requestInfoMap == NO_PARAMETERS) {
             throw new IllegalStateException("Cannot set request type after setNoPortletRequest(HttpServletRequest) has been called.");
         }
         else if (requestInfoMap == null) {
-            requestInfoMap = new HashMap<IPortletWindowId, PortletRequestInfo>();
+            requestInfoMap = new Tuple<IPortletWindowId, PortletRequestInfo>(portletId, portletRequestInfo);
         }
-
-        requestInfoMap.put(portletId, portletRequestInfo);
 
         request.setAttribute(PORTLET_REQUEST_MAP_ATTRIBUTE, requestInfoMap);
     }
@@ -116,8 +97,8 @@ public class PortletRequestParameterManager implements IPortletRequestParameterM
      * @return Map of portlet id to request info, null if {@link #NO_PARAMETERS} object is set.
      * @throws RequestParameterProcessingIncompleteException if no portlet parameter processing has happened for the request yet.
      */
-    protected Map<IPortletWindowId, PortletRequestInfo> getAndCheckRequestInfoMap(HttpServletRequest request) {
-        final Map<IPortletWindowId, PortletRequestInfo> requestInfoMap = this.getRequestInfoMap(request);
+    protected Tuple<IPortletWindowId, PortletRequestInfo> getAndCheckRequestInfoMap(HttpServletRequest request) {
+        final Tuple<IPortletWindowId, PortletRequestInfo> requestInfoMap = this.getRequestInfoMap(request);
         
         if (requestInfoMap == null) {
             throw new RequestParameterProcessingIncompleteException("No portlet parameter processing has been completed on this request");
@@ -134,7 +115,7 @@ public class PortletRequestParameterManager implements IPortletRequestParameterM
      * Get the Map of request info from the request, hiding the generics casting warning.
      */
     @SuppressWarnings("unchecked")
-    protected Map<IPortletWindowId, PortletRequestInfo> getRequestInfoMap(HttpServletRequest request) {
-        return (Map<IPortletWindowId, PortletRequestInfo>)request.getAttribute(PORTLET_REQUEST_MAP_ATTRIBUTE);
+    protected Tuple<IPortletWindowId, PortletRequestInfo> getRequestInfoMap(HttpServletRequest request) {
+        return (Tuple<IPortletWindowId, PortletRequestInfo>)request.getAttribute(PORTLET_REQUEST_MAP_ATTRIBUTE);
     }
 }

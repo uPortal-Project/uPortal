@@ -5,12 +5,11 @@
  */
 package org.jasig.portal.portlet.url;
 
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.jasig.portal.utils.Tuple;
 
 /**
  * Encapsulates the logic for writing to and reading from URLs for portlets. This should hide the actual paramter
@@ -38,8 +37,8 @@ public interface IPortletUrlSyntaxProvider {
      * set.
      * 
      * @param request The request to parse parameters from
-     * @return A Map of targeted IPortletWindowIds to populated PortletUrls, will never be null.
+     * @return The targeted IPortletWindowId and the PortletUrl representing the arguments, null if no portlet was targeted by the URL.
      * @throws IllegalArgumentException if request is null.
      */
-    public Map<IPortletWindowId, PortletUrl> parsePortletParameters(HttpServletRequest request);
+    public Tuple<IPortletWindowId, PortletUrl> parsePortletParameters(HttpServletRequest request);
 }

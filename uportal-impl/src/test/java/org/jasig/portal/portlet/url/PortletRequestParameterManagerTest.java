@@ -37,13 +37,11 @@ public class PortletRequestParameterManagerTest extends TestCase {
             //expected
         }
         
-        final boolean portletTargeted = parameterManager.isAnyPortletTargeted(request);
-        assertFalse(portletTargeted);
         
-        final Set<IPortletWindowId> targetedPortletWindowIds = parameterManager.getTargetedPortletWindowIds(request);
-        assertEquals(Collections.EMPTY_SET, targetedPortletWindowIds);
+        final IPortletWindowId targetedPortletWindowId = parameterManager.getTargetedPortletWindowId(request);
+        assertNull(targetedPortletWindowId);
         
-        final PortletRequestInfo portletRequestInfo = parameterManager.getPortletRequestInfo(request, new MockPortletWindowId("id"));
+        final PortletRequestInfo portletRequestInfo = parameterManager.getPortletRequestInfo(request);
         assertNull("portletRequestType should be null", portletRequestInfo);
     }
     
@@ -66,10 +64,10 @@ public class PortletRequestParameterManagerTest extends TestCase {
             //expected
         }
         
-        final Set<IPortletWindowId> targetedPortletWindowIds = parameterManager.getTargetedPortletWindowIds(request);
-        assertEquals(Collections.singleton(portletWindowId), targetedPortletWindowIds);
+        final IPortletWindowId targetedPortletWindowId = parameterManager.getTargetedPortletWindowId(request);
+        assertEquals(portletWindowId, targetedPortletWindowId);
         
-        final PortletRequestInfo portletRequestInfo = parameterManager.getPortletRequestInfo(request, new MockPortletWindowId("id"));
+        final PortletRequestInfo portletRequestInfo = parameterManager.getPortletRequestInfo(request);
         assertEquals(new PortletRequestInfo(RequestType.RENDER), portletRequestInfo);
     }
 
@@ -79,7 +77,7 @@ public class PortletRequestParameterManagerTest extends TestCase {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         
         try {
-            parameterManager.getTargetedPortletWindowIds(request);
+            parameterManager.getTargetedPortletWindowId(request);
             fail("A RequestParameterProcessingIncompleteException should have been thrown for calling getTargetedPortletWindowIds before any set method");
         }
         catch (RequestParameterProcessingIncompleteException ise) {
@@ -87,7 +85,7 @@ public class PortletRequestParameterManagerTest extends TestCase {
         }
         
         try {
-            parameterManager.getPortletRequestInfo(request, new MockPortletWindowId("id"));
+            parameterManager.getPortletRequestInfo(request);
             fail("A RequestParameterProcessingIncompleteException should have been thrown for calling getPortletRequestType before any set method");
         }
         catch (RequestParameterProcessingIncompleteException ise) {

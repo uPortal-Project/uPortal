@@ -5,6 +5,7 @@
  */
 package org.jasig.portal.portlet.url;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -32,33 +33,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
  * @version $Revision$
  */
 public class PortletUrlSyntaxProviderImplTest extends TestCase {
-    
-    public void testParseParameterName() throws Exception {
-        final PortletUrlSyntaxProviderImpl portletUrlSyntaxProvider = new PortletUrlSyntaxProviderImpl();
-        
-        Tuple<String, String> parsedParameter = portletUrlSyntaxProvider.parseParameterName("alpha_beta_gamma");
-        assertEquals("beta", parsedParameter.first);
-        assertEquals("gamma", parsedParameter.second);
-        
-        parsedParameter = portletUrlSyntaxProvider.parseParameterName("alpha_beta_gamma_delta");
-        assertEquals("beta", parsedParameter.first);
-        assertEquals("gamma_delta", parsedParameter.second);
-        
-        parsedParameter = portletUrlSyntaxProvider.parseParameterName("alpha_beta_gamma_delta");
-        assertEquals("beta", parsedParameter.first);
-        assertEquals("gamma_delta", parsedParameter.second);
-        
-        parsedParameter = portletUrlSyntaxProvider.parseParameterName("alpha");
-        assertEquals(null, parsedParameter);
-        
-        parsedParameter = portletUrlSyntaxProvider.parseParameterName("alpha_beta");
-        assertEquals(null, parsedParameter);
-        
-        parsedParameter = portletUrlSyntaxProvider.parseParameterName("alpha_beta_");
-        assertEquals("beta", parsedParameter.first);
-        assertEquals("", parsedParameter.second);
-        
-    }
     
     public void testEncodeAndAppend() throws Exception {
         final PortletUrlSyntaxProviderImpl portletUrlSyntaxProvider = new PortletUrlSyntaxProviderImpl();
@@ -125,7 +99,7 @@ public class PortletUrlSyntaxProviderImplTest extends TestCase {
         request.setAttribute(IPortletAdaptor.ATTRIBUTE__RUNTIME_DATA, channelRuntimeData);
         
         String urlString = portletUrlSyntaxProvider.generatePortletUrl(request, portletWindow, portletUrl);
-        assertEquals("/uPortal/base/action.url?plt_type_windowId1=RENDER", urlString);
+        assertEquals("/uPortal/base/action.url?pltc_target=windowId1&pltc_type=RENDER", urlString);
         
         
         final Map<String, String[]> parameters = new TreeMap<String, String[]>(); //Use a treemap so the output string is deterministic
@@ -138,19 +112,19 @@ public class PortletUrlSyntaxProviderImplTest extends TestCase {
         portletUrl.setParameters(parameters);
         
         urlString = portletUrlSyntaxProvider.generatePortletUrl(request, portletWindow, portletUrl);
-        assertEquals("/uPortal/base/action.url?plt_type_windowId1=RENDER&plt_state_windowId1=minimized&plt_mode_windowId1=edit&plt_windowId1_key1=value1.1&plt_windowId1_key1=value1.2&plt_windowId1_key2=value2.1&plt_windowId1_key3=", urlString);
+        assertEquals("/uPortal/base/action.url?pltc_target=windowId1&pltc_type=RENDER&pltc_state=minimized&pltc_mode=edit&pltp_key1=value1.1&pltp_key1=value1.2&pltp_key2=value2.1&pltp_key3=", urlString);
 
 
         portletUrl.setRequestType(RequestType.ACTION);
         
         urlString = portletUrlSyntaxProvider.generatePortletUrl(request, portletWindow, portletUrl);
-        assertEquals("/uPortal/base/action.url?plt_type_windowId1=ACTION&plt_state_windowId1=minimized&plt_mode_windowId1=edit&plt_windowId1_key1=value1.1&plt_windowId1_key1=value1.2&plt_windowId1_key2=value2.1&plt_windowId1_key3=", urlString);
+        assertEquals("/uPortal/base/action.url?pltc_target=windowId1&pltc_type=ACTION&pltc_state=minimized&pltc_mode=edit&pltp_key1=value1.1&pltp_key1=value1.2&pltp_key2=value2.1&pltp_key3=", urlString);
         
         portletUrl.setWindowState(new WindowState("EXCLUSIVE"));
         portletUrl.setRequestType(RequestType.RENDER);
         
         urlString = portletUrlSyntaxProvider.generatePortletUrl(request, portletWindow, portletUrl);
-        assertEquals("/uPortal/worker/download/worker.download.uP?plt_type_windowId1=RENDER&plt_state_windowId1=exclusive&plt_mode_windowId1=edit&plt_windowId1_key1=value1.1&plt_windowId1_key1=value1.2&plt_windowId1_key2=value2.1&plt_windowId1_key3=", urlString);
+        assertEquals("/uPortal/worker/download/worker.download.uP?pltc_target=windowId1&pltc_type=RENDER&pltc_state=exclusive&pltc_mode=edit&pltp_key1=value1.1&pltp_key1=value1.2&pltp_key2=value2.1&pltp_key3=", urlString);
     }
     
     public void testParsePortletParameters() throws Exception {
@@ -173,34 +147,45 @@ public class PortletUrlSyntaxProviderImplTest extends TestCase {
         EasyMock.replay(portletWindowRegistry);
         portletUrlSyntaxProvider.setPortletWindowRegistry(portletWindowRegistry);
         
-        Map<IPortletWindowId, PortletUrl> expectedParsedUrls = new HashMap<IPortletWindowId, PortletUrl>();
         
-        
-        Map<IPortletWindowId, PortletUrl> parsedPortletUrls = portletUrlSyntaxProvider.parsePortletParameters(request);
-        assertEquals(expectedParsedUrls, parsedPortletUrls);
+        Tuple<IPortletWindowId, PortletUrl> parsedPortletUrl = portletUrlSyntaxProvider.parsePortletParameters(request);
+        assertNull(parsedPortletUrl);
         
         
         PortletUrl portletUrl1 = new PortletUrl();
-        expectedParsedUrls.put(new MockPortletWindowId("windowId1"), portletUrl1);
+        Tuple<IPortletWindowId, PortletUrl> expectedParsedUrl = new Tuple<IPortletWindowId, PortletUrl>(new MockPortletWindowId("windowId1"), portletUrl1);
         
-        
-        request.setParameter("plt_type_windowId1", "RENDER");
+        request.setParameter("pltc_target", "windowId1");
+        request.setParameter("pltc_type", "RENDER");
         portletUrl1.setRequestType(RequestType.RENDER);
+        portletUrl1.setParameters(Collections.EMPTY_MAP);
+        portletUrl1.setSecure(false);
         
-        parsedPortletUrls = portletUrlSyntaxProvider.parsePortletParameters(request);
-        assertEquals(expectedParsedUrls, parsedPortletUrls);
+        parsedPortletUrl = portletUrlSyntaxProvider.parsePortletParameters(request);
+        assertEquals(expectedParsedUrl, parsedPortletUrl);
+        
         
         Map<String, String[]> parameters = new HashMap<String, String[]>();
         parameters.put("key1", new String[] { "value1.1", "value1.2" });
         
-        request.setParameter("plt_state_windowId1", "MAXIMIZED");
-        request.setParameter("plt_mode_windowId1", "HELP");
-        request.setParameter("plt_windowId1_key1", new String[] { "value1.1", "value1.2" });
+        request.setParameter("pltc_state", "MAXIMIZED");
+        request.setParameter("pltc_mode", "HELP");
+        request.setParameter("pltp_key1", new String[] { "value1.1", "value1.2" });
         portletUrl1.setWindowState(WindowState.MAXIMIZED);
         portletUrl1.setPortletMode(PortletMode.HELP);
         portletUrl1.setParameters(parameters);
         
-        parsedPortletUrls = portletUrlSyntaxProvider.parsePortletParameters(request);
-        assertEquals(expectedParsedUrls, parsedPortletUrls);
+        parsedPortletUrl = portletUrlSyntaxProvider.parsePortletParameters(request);
+        assertEquals(expectedParsedUrl, parsedPortletUrl);
+        
+        
+        parameters.put("post_parameter", new String[] { "post_value" });
+        
+        request.setMethod("POST");
+        request.setParameter("post_parameter", "post_value");
+        request.setQueryString("pltc_target=windowId1&pltc_type=RENDER&pltc_state=MAXIMIZED&pltc_mode=HELP&pltp_key1=value1.1&pltp_key1=value1.2");
+        
+        parsedPortletUrl = portletUrlSyntaxProvider.parsePortletParameters(request);
+        assertEquals(expectedParsedUrl, parsedPortletUrl);
     }
 }
