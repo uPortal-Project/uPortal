@@ -19,6 +19,7 @@ import org.jasig.portal.IChannel;
 import org.jasig.portal.ICharacterChannel;
 import org.jasig.portal.IPrivilegedChannel;
 import org.jasig.portal.IResetableChannel;
+import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.MediaManager;
 import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalEvent;
@@ -27,7 +28,10 @@ import org.jasig.portal.ThemeStylesheetDescription;
 import org.jasig.portal.channels.BaseChannel;
 import org.jasig.portal.channels.error.error2xml.IThrowableToElement;
 import org.jasig.portal.i18n.LocaleManager;
+import org.jasig.portal.layout.IUserLayoutManager;
+import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.security.IPerson;
 import org.jasig.portal.serialize.BaseMarkupSerializer;
 import org.jasig.portal.serialize.OutputFormat;
 import org.jasig.portal.serialize.XMLSerializer;
@@ -57,8 +61,7 @@ import org.xml.sax.ContentHandler;
  * @version $Revision$ $Date$
  * @since uPortal 2.5.  Prior to 2.5, CError existed only as org.jasig.portal.channels.CError.
  */
-public final class CError extends BaseChannel implements IPrivilegedChannel,
-        ICacheable, ICharacterChannel {
+public final class CError extends BaseChannel implements IPrivilegedChannel, ICacheable, ICharacterChannel {
 
     private static final Log log = LogFactory.getLog(CError.class);
 
@@ -105,22 +108,21 @@ public final class CError extends BaseChannel implements IPrivilegedChannel,
      * Construct an uninitialized instance of the CError channel.
      */
     public CError() {
-        
         // inject into our ErrorDocument the configured IThrowableToElement that
         // will translate from Throwables to XML that we can render
 
         try {
             final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
             IThrowableToElement throwableToElement = (IThrowableToElement) applicationContext.getBean("throwableToElement", IThrowableToElement.class);
-            
+
             this.errorDocument.setThrowableToElement(throwableToElement);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             // do not allow a Beans failure to break CError
             log.warn("Failed to retrieve mapping from throwables to Elements for CError rendering from the WebApplicationContext, the default mapping will be used.", e);
             // since our ErrorDocument has a default mapping from Throwables to Elements
             // we can fall back on that default by not doing anything.
         }
-
     }
 
     /**
@@ -128,18 +130,12 @@ public final class CError extends BaseChannel implements IPrivilegedChannel,
      * render of a particular subscribed channel for reason of having thrown a
      * Throwable.
      * 
-     * @param errorCode -
-     *                one of the static error codes of this class
-     * @param throwable -
-     *                cause of failed channel's failure
-     * @param channelSubscribeId -
-     *                identifies the failed channel
-     * @param channelInstance -
-     *                the failed channel
+     * @param errorCode one of the static error codes of this class
+     * @param throwable cause of failed channel's failure
+     * @param channelSubscribeId identifies the failed channel
+     * @param channelInstance the failed channel
      */
-    public CError(ErrorCode errorCode, Throwable throwable,
-            String channelSubscribeId, IChannel channelInstance) {
-        
+    public CError(ErrorCode errorCode, Throwable throwable, String channelSubscribeId, IChannel channelInstance) {
         this();
         
         if (log.isTraceEnabled()) {
@@ -157,84 +153,65 @@ public final class CError extends BaseChannel implements IPrivilegedChannel,
         if (log.isTraceEnabled()) {
             log.trace("Instantiated CError: " + this);
         }
-            
-      
     }
 
     /**
      * Instantiate a CError representing a particular channel's failure,
      * including a message and errorCode, but not a Throwable.
      * 
-     * @param errorCode -
-     *                one of the static error codes of this class
-     * @param message -
-     *                describes error
-     * @param channelSubscribeId -
-     *                identifies failed channel
-     * @param channelInstance -
-     *                failed channel
+     * @param errorCode one of the static error codes of this class
+     * @param message describes error
+     * @param channelSubscribeId identifies failed channel
+     * @param channelInstance failed channel
      */
-    public CError(ErrorCode errorCode, String message,
-            String channelSubscribeId, IChannel channelInstance) {
-
+    public CError(ErrorCode errorCode, String message, String channelSubscribeId, IChannel channelInstance) {
         this();
         
-        if (log.isTraceEnabled())
+        if (log.isTraceEnabled()) {
             log.trace("CError(" + errorCode + ", message=[" + message + 
                     "], chanSubId=" + channelSubscribeId + 
                     ", channelInstance=[" + channelInstance + "]");
+        }
         
         this.errorDocument.setChannelSubscribeId(channelSubscribeId);
         this.targetChannel = channelInstance;
         this.errorDocument.setCode(errorCode);
         this.errorDocument.setMessage(message);
         
-        if (log.isTraceEnabled())
+        if (log.isTraceEnabled()) {
             log.trace("Instantiated CError: " + this);
+        }
     }
 
     /**
      * Instantiate a CError instance representing the failure of some particular
      * channel, including an error code, message, and the Throwable.
      * 
-     * @param errorCode -
-     *                one of the static error codes of this class
-     * @param exception -
-     *                thrown by the failed channel
-     * @param channelSubscribeId -
-     *                identifies failed channel
-     * @param channelInstance -
-     *                the failed channel instance
-     * @param message -
-     *                message describing failure
+     * @param errorCode one of the static error codes of this class
+     * @param exception thrown by the failed channel
+     * @param channelSubscribeId identifies failed channel
+     * @param channelInstance the failed channel instance
+     * @param message message describing failure
      */
-    public CError(ErrorCode errorCode, Throwable exception,
-            String channelSubscribeId, IChannel channelInstance, String message) {
-        
+    public CError(ErrorCode errorCode, Throwable exception, String channelSubscribeId, IChannel channelInstance, String message) {
         this(errorCode, exception, channelSubscribeId, channelInstance);
         this.errorDocument.setMessage(message);
         
-        if (log.isTraceEnabled())
+        if (log.isTraceEnabled()) {
             log.trace("Instantiated CError: " + this);
+        }
     }
 
     /**
      * Resets internal state of CError.
      * 
-     * @param errorCode -
-     *                new errorCode value
-     * @param throwable -
-     *                new stored Throwable
-     * @param channelSubscribeId -
-     *                new channelSubscribeId
-     * @param channelInstance -
-     *                new failed channel
-     * @param message -
-     *                new failure message
+     * @param errorCode new errorCode value
+     * @param throwable new stored Throwable
+     * @param channelSubscribeId new channelSubscribeId
+     * @param channelInstance new failed channel
+     * @param message new failure message
      */
-    private void resetCError(ErrorCode errorCode, Throwable throwable,
-            String channelSubscribeId, IChannel channelInstance, String message) {
-        
+    private void resetCError(ErrorCode errorCode, Throwable throwable, String channelSubscribeId, IChannel channelInstance, String message) {
         this.errorDocument.setCode(errorCode);
         this.errorDocument.setThrowable(throwable);
         this.errorDocument.setChannelSubscribeId(channelSubscribeId);
@@ -243,8 +220,9 @@ public final class CError extends BaseChannel implements IPrivilegedChannel,
 
         this.errorDocument.setMessage(message);
         
-        if (log.isTraceEnabled())
+        if (log.isTraceEnabled()) {
             log.trace("Reset CError to: " + this);
+        }
     }
 
     public void setPortalControlStructures(PortalControlStructures pcs) {
@@ -267,40 +245,66 @@ public final class CError extends BaseChannel implements IPrivilegedChannel,
      * temporarily).
      */
     public void setStaticData(ChannelStaticData sd) {
-        if (log.isTraceEnabled())
+        if (log.isTraceEnabled()) {
             log.trace("setStaticData(" + sd + ")");
+        }
+        if (sd == null) {
+            log.error("ChannelStaticData argument to setStaticData() illegally null.");
+            return;
+        }
         
         try {
-            if (sd == null) {
-                log.error("ChannelStaticData argument to setStaticData() illegally null.");
-                return;
-            }
             this.errorDocument.setMessage(sd.getParameter("CErrorMessage"));
-            this.errorDocument.setChannelSubscribeId(
-                    sd.getParameter("CErrorChanId"));
-            String value = sd.getParameter("CErrorErrorId");
+            this.errorDocument.setChannelSubscribeId(sd.getParameter("CErrorChanId"));
+            
+            final String value = sd.getParameter("CErrorErrorId");
             if (value != null) {
-                this.errorDocument.setCode(ErrorCode.codeForInt(
-                        Integer.parseInt(value)));
+                this.errorDocument.setCode(ErrorCode.codeForInt(Integer.parseInt(value)));
             }
             this.placeHolder = true; // Should only get here if we are a
                                             // "normal channel"
-        } catch (Throwable t) {
+        }
+        catch (Throwable t) {
             log.error("Error setting static data of CError instance", t);
         }
     }
-
-    public void renderXML(ContentHandler out) {
+    
+    protected void renderChannel(IChannel channel, ContentHandler contentHandler, PrintWriter printWriter) throws Exception {
+        if (contentHandler != null) {
+            channel.renderXML(contentHandler);
+        }
+        else {
+            if (channel instanceof ICharacterChannel) {
+                ((ICharacterChannel) channel).renderCharacters(printWriter);
+            }
+            else {
+                final IUserPreferencesManager userPreferencesManager = this.portcs.getUserPreferencesManager();
+                final ThemeStylesheetDescription tsd = userPreferencesManager.getThemeStylesheetDescription();
+                final String serializerName = tsd.getSerializerName();
+                
+                final BaseMarkupSerializer serOut = MEDIAMANAGER.getSerializerByName(serializerName, printWriter);
+                channel.renderXML(serOut);
+            }
+        }
+    }
+    
+    /**
+     * Logic common to both renderXml and renderCharacters for handling a request for an errored out channel.
+     */
+    protected void doCommonErrorHandling(ContentHandler contentHandler, PrintWriter printWriter) {
         // runtime data processing needs to be done here, otherwise replaced
         // channel will get duplicated setRuntimeData() calls
 
-        log.trace("Entering renderXML()");
+        log.trace("Entering doCommonErrorHandling()");
 
         final String channelSubscribeId = this.errorDocument.getChannelSubscribeId();
         if (channelSubscribeId != null) {
             
             final String chFate = this.runtimeData.getParameter("action");
-            log.debug("Channel fate is [" + chFate + "] for chanSubscribeId=" + channelSubscribeId);
+            if (log.isDebugEnabled()) {
+                log.debug("Channel fate is [" + chFate + "] for chanSubscribeId=" + channelSubscribeId);
+            }
+            
             if (chFate != null) {
                 // a fate has been chosen
                 if (chFate.equals("retry")) {
@@ -322,25 +326,23 @@ public final class CError extends BaseChannel implements IPrivilegedChannel,
                         if (this.targetChannel instanceof IPrivilegedChannel) {
                             ((IPrivilegedChannel) this.targetChannel).setPortalControlStructures(this.portcs);
                         }
+                        
                         this.targetChannel.setRuntimeData(crd);
-                        ChannelManager cm = this.portcs.getChannelManager();
+                        
+                        final ChannelManager cm = this.portcs.getChannelManager();
                         cm.setChannelInstance(channelSubscribeId, this.targetChannel);
-                        this.targetChannel.renderXML(out);
+                        
+                        this.renderChannel(this.targetChannel, contentHandler, printWriter);
+
                         return;
                     }
                     catch (Exception e) {
-                        // if any of the above didn't work, fall back to the
-                        // error channel
-                        resetCError(ErrorCode.SET_RUNTIME_DATA_EXCEPTION,
-                                e,
-                                channelSubscribeId,
-                                this.targetChannel,
-                                "Channel failed a refresh attempt.");
+                        // if any of the above didn't work, fall back to the error channel
+                        resetCError(ErrorCode.SET_RUNTIME_DATA_EXCEPTION, e, channelSubscribeId, this.targetChannel, "Channel failed a refresh attempt.");
                     }
                 }
                 else if (chFate.equals("restart")) {
-
-                    ChannelManager cm = this.portcs.getChannelManager();
+                    final ChannelManager cm = this.portcs.getChannelManager();
 
                     try {
                         //Clean things up for the channel
@@ -354,7 +356,7 @@ public final class CError extends BaseChannel implements IPrivilegedChannel,
                             ((IResetableChannel) this.targetChannel).prepareForReset();
                         }
 
-                        ChannelRuntimeData crd = (ChannelRuntimeData) this.runtimeData.clone();
+                        final ChannelRuntimeData crd = (ChannelRuntimeData) this.runtimeData.clone();
                         crd.clear();
                         
                         if ((this.targetChannel = cm.instantiateChannel(this.portcs.getHttpServletRequest(), this.portcs.getHttpServletResponse(), channelSubscribeId)) == null) {
@@ -365,32 +367,24 @@ public final class CError extends BaseChannel implements IPrivilegedChannel,
                                 if (this.targetChannel instanceof IPrivilegedChannel) {
                                     ((IPrivilegedChannel) this.targetChannel).setPortalControlStructures(this.portcs);
                                 }
+                                
                                 this.targetChannel.setRuntimeData(crd);
-                                this.targetChannel.renderXML(out);
+                                
+                                this.renderChannel(this.targetChannel, contentHandler, printWriter);
+                                
                                 return;
                             }
                             catch (Exception e) {
-                                // if any of the above didn't work, fall back to
-                                // the error channel
-                                resetCError(ErrorCode.SET_RUNTIME_DATA_EXCEPTION,
-                                        e,
-                                        channelSubscribeId,
-                                        this.targetChannel,
-                                        "Channel failed a reload attempt.");
+                                // if any of the above didn't work, fall back to the error channel
+                                resetCError(ErrorCode.SET_RUNTIME_DATA_EXCEPTION, e, channelSubscribeId, this.targetChannel, "Channel failed a reload attempt.");
                                 cm.setChannelInstance(channelSubscribeId, this);
-                                log.error("CError::setRuntimeData() : "
-                                        + "an error occurred during channel reinitialization. ", e);
+                                log.error("an error occurred during channel reinitialization.", e);
                             }
                         }
                     }
                     catch (Exception e) {
-                        resetCError(ErrorCode.GENERAL_ERROR,
-                                e,
-                                channelSubscribeId,
-                                null,
-                                "Channel failed to reinstantiate!");
-                        log.error("CError::setRuntimeData() : " + "an error occurred during channel reinstantiation. ",
-                                e);
+                        resetCError(ErrorCode.GENERAL_ERROR, e, channelSubscribeId, null, "Channel failed to reinstantiate!");
+                        log.error("an error occurred during channel reinstantiation.", e);
                     }
                 }
                 else if (chFate.equals("toggle_stack_trace")) {
@@ -399,9 +393,33 @@ public final class CError extends BaseChannel implements IPrivilegedChannel,
             }
         }
 
-        // if channel's render XML method was to be called, we would've returned
-        // by now
-        localRenderXML(out);
+        // if channel's render method was to be called, we would've returned by now
+        if (contentHandler != null) {
+            localRenderXML(contentHandler);
+        }
+        else {
+            BaseMarkupSerializer serOut = null;
+            try {
+                final IUserPreferencesManager userPreferencesManager = this.portcs.getUserPreferencesManager();
+                final ThemeStylesheetDescription tsd = userPreferencesManager.getThemeStylesheetDescription();
+                serOut = MEDIAMANAGER.getSerializerByName(tsd.getSerializerName(), printWriter);
+            }
+            catch (Exception e) {
+                log.error("unable to obtain proper markup serializer : ", e);
+            }
+
+            if (serOut == null) {
+                // default to XML serializer
+                final OutputFormat frmt = new OutputFormat("XML", "UTF-8", true);
+                serOut = new XMLSerializer(printWriter, frmt);
+            }
+
+            localRenderXML(serOut);
+        }
+    }
+
+    public void renderXML(ContentHandler out) {
+        this.doCommonErrorHandling(out, null);
     }
 
     private void localRenderXML(ContentHandler out) {
@@ -410,110 +428,97 @@ public final class CError extends BaseChannel implements IPrivilegedChannel,
         // output should be generated directly within the method.
         // For now, we'll just do it the usual way.
 
-        if (log.isTraceEnabled())
+        if (log.isTraceEnabled()) {
             log.trace("Entering localRenderXML() for CError " + this);
-        
-        String channelSubscribeId = this.errorDocument.getChannelSubscribeId();
-        
+        }
 
-        if (channelSubscribeId != null){
+        final String channelSubscribeId = this.errorDocument.getChannelSubscribeId();
 
+        final IUserPreferencesManager userPreferencesManager = this.portcs.getUserPreferencesManager();
+        if (channelSubscribeId != null) {
             try {
-                this.errorDocument.setChannelName(
-                        this.portcs.getUserPreferencesManager().
-                        getUserLayoutManager().getNode(channelSubscribeId).
-                        getName());
-            } catch (Throwable t) {
-                log.error("Error determining name of channel with subscribe id [" 
-                        + channelSubscribeId + "]", t);
+                final IUserLayoutManager userLayoutManager = userPreferencesManager.getUserLayoutManager();
+                final IUserLayoutNodeDescription channelNode = userLayoutManager.getNode(channelSubscribeId);
+                this.errorDocument.setChannelName(channelNode.getName());
+            }
+            catch (Throwable t) {
+                log.error("Error determining name of channel with subscribe id [" + channelSubscribeId + "]", t);
             }
         }
 
         // defaults to refresh and reload not allowed.
-        RefreshPolicy policy = new RefreshPolicy();
-        if (channelSubscribeId != null)
+        final RefreshPolicy policy;
+        if (channelSubscribeId != null) {
             policy = computeRefreshPolicy();
+        }
+        else {
+            policy = new RefreshPolicy();
+        }
 
         // Decide whether to render a friendly or detailed screen
         this.ssTitle = "friendly";
         try {
-            AuthorizationService authService = AuthorizationService.instance();
-            EntityIdentifier ei = this.portcs.getUserPreferencesManager()
-                    .getPerson().getEntityIdentifier();
-            IAuthorizationPrincipal ap = authService.newPrincipal(ei.getKey(),
-                    ei.getType());
-            if (ap.hasPermission(SupportedPermissions.OWNER, 
-                    SupportedPermissions.VIEW_ACTIVITY,
-                    SupportedPermissions.DETAILS_TARGET))
+            final AuthorizationService authService = AuthorizationService.instance();
+            final IPerson person = userPreferencesManager.getPerson();
+            final EntityIdentifier ei = person.getEntityIdentifier();
+            final IAuthorizationPrincipal ap = authService.newPrincipal(ei.getKey(), ei.getType());
+            
+            if (ap.hasPermission(SupportedPermissions.OWNER, SupportedPermissions.VIEW_ACTIVITY, SupportedPermissions.DETAILS_TARGET)) {
                 this.ssTitle = "detailed";
-        } catch (Throwable t) {
-            log.error("Exception checking whether user authorized to view " +
-                    "detailed CError view.  Defaulting to friendly view.", t);
+            }
         }
-        
-        log.trace("SSL title is " + this.ssTitle);
+        catch (Throwable t) {
+            log.error("Exception checking whether user authorized to view detailed CError view.  Defaulting to friendly view.", t);
+        }
 
-        Document doc = this.errorDocument.getDocument();
-        
-        if (log.isWarnEnabled()){
+        if (log.isTraceEnabled()) {
+            log.trace("SSL title is " + this.ssTitle);
+        }
+
+        final Document doc = this.errorDocument.getDocument();
+
+        if (log.isWarnEnabled()) {
             try {
-//                java.io.StringWriter outString = new java.io.StringWriter();
-//                org.apache.xml.serialize.OutputFormat format = 
-//                    new org.apache.xml.serialize.OutputFormat();
-//                format.setOmitXMLDeclaration(true);
-//                format.setIndenting(true);
-//                org.apache.xml.serialize.XMLSerializer xsl = 
-//                    new org.apache.xml.serialize.XMLSerializer(outString, format);
-//                xsl.serialize(doc);
                 log.warn("ErrorDocument XML is \n" + XML.serializeNode(doc));
-            } catch (Exception e) {
-                log.error(e, e);
-            }  
+            }
+            catch (Exception e) {
+                log.error("Failed to write error document XML to logger.", e);
+            }
         }
 
         try {
-            XSLT xslt = XSLT
-                    .getTransformer(this, this.runtimeData.getLocales());
+            XSLT xslt = XSLT.getTransformer(this, this.runtimeData.getLocales());
             xslt.setXML(doc);
-            xslt.setXSL(sslLocation, this.ssTitle, this.runtimeData
-                    .getBrowserInfo());
+            xslt.setXSL(sslLocation, this.ssTitle, this.runtimeData.getBrowserInfo());
             xslt.setTarget(out);
-            xslt.setStylesheetParameter("baseActionURL", this.runtimeData
-                    .getBaseActionURL());
-            xslt.setStylesheetParameter("showStackTrace", String
-                    .valueOf(this.showStackTrace));
-            xslt.setStylesheetParameter("allowRefresh", 
-                    Boolean.toString(policy.allowRefresh));
-            xslt.setStylesheetParameter("allowReinstantiation", 
-                    Boolean.toString(policy.allowReinstantiation));
+            xslt.setStylesheetParameter("baseActionURL", this.runtimeData.getBaseActionURL());
+            xslt.setStylesheetParameter("showStackTrace", String.valueOf(this.showStackTrace));
+            xslt.setStylesheetParameter("allowRefresh", Boolean.toString(policy.allowRefresh));
+            xslt.setStylesheetParameter("allowReinstantiation", Boolean.toString(policy.allowReinstantiation));
             xslt.transform();
-        } catch (Exception e) {
-            log.error("CError::renderXML() : Things are bad. " +
-                    "Error channel threw Exception rendering its stylesheet.",
-                            e);
+        }
+        catch (Exception e) {
+            log.error("Things are bad. Error channel threw Exception rendering its stylesheet.", e);
         }
     }
 
     public ChannelCacheKey generateKey() {
         // check if either restart or refresh command has been given, otherwise
         // generate key
-        if (this.runtimeData != null 
-                && this.runtimeData.getParameter("action") != null) {
+        if (this.runtimeData != null && this.runtimeData.getParameter("action") != null) {
             return null;
         }
 
         ChannelCacheKey k = new ChannelCacheKey();
-        StringBuffer sbKey = new StringBuffer(1024);
+        StringBuilder sbKey = new StringBuilder(1024);
 
         // assume that errors can be cached system-wide
         k.setKeyScope(ChannelCacheKey.SYSTEM_KEY_SCOPE);
 
-        sbKey.append("org.jasig.portal.channels.CError: errorDocument=").
-            append(this.errorDocument).append(" strace=").append(
-                Boolean.toString(this.showStackTrace));
+        sbKey.append("org.jasig.portal.channels.CError: errorDocument=").append(this.errorDocument);
+        sbKey.append(" strace=").append(Boolean.toString(this.showStackTrace));
         sbKey.append(", mode=").append(this.ssTitle);
-        sbKey.append(", locales=").append(
-                LocaleManager.stringValueOf(this.runtimeData.getLocales()));
+        sbKey.append(", locales=").append(LocaleManager.stringValueOf(this.runtimeData.getLocales()));
         k.setKey(sbKey.toString());
         return k;
     }
@@ -523,130 +528,7 @@ public final class CError extends BaseChannel implements IPrivilegedChannel,
     }
 
     public void renderCharacters(PrintWriter out) throws PortalException {
-        // runtime data processing needs to be done here, otherwise replaced
-        // channel will get duplicated setRuntimeData() calls
-        
-        String channelSubscribeId = this.errorDocument.getChannelSubscribeId();
-        
-        if (channelSubscribeId != null) {
-            String chFate = this.runtimeData.getParameter("action");
-            if (chFate != null) {
-                // a fate has been chosen
-                if (chFate.equals("retry")) {
-                    log.debug("CError:renderCharacters() : going for retry");
-                    // clean things up for the channel
-                    ChannelRuntimeData crd = (ChannelRuntimeData) this.runtimeData
-                            .clone();
-                    crd.clear(); // Remove parameters
-                    try {
-                        if (this.targetChannel instanceof IPrivilegedChannel)
-                            ((IPrivilegedChannel) this.targetChannel)
-                                    .setPortalControlStructures(this.portcs);
-                        this.targetChannel.setRuntimeData(crd);
-                        ChannelManager cm = this.portcs.getChannelManager();
-                        cm.setChannelInstance(channelSubscribeId,
-                                this.targetChannel);
-                        if (this.targetChannel instanceof ICharacterChannel) {
-                            ((ICharacterChannel) this.targetChannel)
-                                    .renderCharacters(out);
-                        } else {
-                            ThemeStylesheetDescription tsd = this.portcs
-                                    .getUserPreferencesManager()
-                                    .getThemeStylesheetDescription();
-                            BaseMarkupSerializer serOut = MEDIAMANAGER
-                                    .getSerializerByName(tsd
-                                            .getSerializerName(), out);
-                            this.targetChannel.renderXML(serOut);
-                        }
-                        return;
-                    } catch (Exception e) {
-                        // if any of the above didn't work, fall back to the
-                        // error channel
-                        resetCError(ErrorCode.SET_RUNTIME_DATA_EXCEPTION, e,
-                                channelSubscribeId, this.targetChannel,
-                                "Channel failed a refresh attempt.");
-                    }
-                } else if (chFate.equals("restart")) {
-                    log
-                            .debug("CError:renderCharacters() : going for reinstantiation");
-
-                    ChannelManager cm = this.portcs.getChannelManager();
-
-                    ChannelRuntimeData crd = (ChannelRuntimeData) this.runtimeData
-                            .clone();
-                    crd.clear();
-                    try {
-                        this.targetChannel = cm
-                        .instantiateChannel(this.portcs.getHttpServletRequest(), this.portcs.getHttpServletResponse(), channelSubscribeId);
-                        if (this.targetChannel == null) {
-                            resetCError(ErrorCode.GENERAL_ERROR, null,
-                                    channelSubscribeId, null,
-                                    "Channel failed to reinstantiate!");
-                        } else {
-                            try {
-                                if (this.targetChannel instanceof IPrivilegedChannel) {
-                                    ((IPrivilegedChannel) this.targetChannel)
-                                            .setPortalControlStructures(this.portcs);
-                                }
-                                this.targetChannel.setRuntimeData(crd);
-                                if (this.targetChannel instanceof ICharacterChannel) {
-                                    ((ICharacterChannel) this.targetChannel)
-                                            .renderCharacters(out);
-                                } else {
-                                    ThemeStylesheetDescription tsd = this.portcs
-                                            .getUserPreferencesManager()
-                                            .getThemeStylesheetDescription();
-                                    BaseMarkupSerializer serOut = MEDIAMANAGER
-                                            .getSerializerByName(tsd
-                                                    .getSerializerName(), out);
-                                    this.targetChannel.renderXML(serOut);
-                                }
-                                return;
-                            } catch (Exception e) {
-                                // if any of the above didn't work, fall back to
-                                // the error channel
-                                resetCError(ErrorCode.SET_RUNTIME_DATA_EXCEPTION,
-                                        e, channelSubscribeId,
-                                        this.targetChannel,
-                                        "Channel failed a reload attempt.");
-                                cm.setChannelInstance(
-                                         channelSubscribeId, this);
-                                log.error( "CError::renderCharacters() : an error occurred " +
-                                        "during channel reinitialization.", e);
-                            }
-                        }
-                    } catch (Exception e) {
-                        resetCError(ErrorCode.GENERAL_ERROR, e,
-                                channelSubscribeId, null,
-                                "Channel failed to reinstantiate!");
-                        log.error("CError::renderCharacters() : an error occurred during " +
-                                "channel reinstantiation. ", e);
-                    }
-                } else if (chFate.equals("toggle_stack_trace")) {
-                    this.showStackTrace = !this.showStackTrace;
-                }
-            }
-        }
-        // if channel's render XML method was to be called, we would've returned
-        // by now
-        BaseMarkupSerializer serOut = null;
-        try {
-            ThemeStylesheetDescription tsd = this.portcs
-                    .getUserPreferencesManager()
-                    .getThemeStylesheetDescription();
-            serOut = MEDIAMANAGER.getSerializerByName(tsd.getSerializerName(), out);
-        } catch (Exception e) {
-            log.error("CError::renderCharacters() : " +
-                    "unable to obtain proper markup serializer : ", e);
-        }
-
-        if (serOut == null) {
-            // default to XML serializer
-            OutputFormat frmt = new OutputFormat("XML", "UTF-8", true);
-            serOut = new XMLSerializer(out, frmt);
-        }
-
-        localRenderXML(serOut);
+        this.doCommonErrorHandling(null, out);
     }
     
     /**

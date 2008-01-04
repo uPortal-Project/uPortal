@@ -20,13 +20,13 @@
   <parameters>
     <parameter>
       <name>portletApplicationId</name>
-      <value>/TestPortlets</value> 
+      <value>/FunctionalTestsPortlet</value> 
       <description/>  
       <ovrd>N</ovrd>
     </parameter>
     <parameter>
       <name>portletName</name>
-      <value>TestPortlet</value> 
+      <value>FunctionalTestsPortlet</value> 
       <description/>  
       <ovrd>N</ovrd>
     </parameter>

@@ -301,13 +301,13 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
             this.portletContainer.doAction(portletWindow, parameterRequestWrapper, httpServletResponse);
         }
         catch (PortletException pe) {
-            throw new PortletLoadFailureException("The portlet window '" + portletWindow + "' threw an exception while executing action. Underlying channel: " + channelStaticData, portletWindow, pe);
+            throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while executing action. Underlying channel: " + channelStaticData, portletWindow, pe);
         }
         catch (PortletContainerException pce) {
-            throw new PortletLoadFailureException("The portlet container threw an exception while executing action on portlet window '" + portletWindow + "'. Underlying channel: " + channelStaticData, portletWindow, pce);
+            throw new PortletDispatchException("The portlet container threw an exception while executing action on portlet window '" + portletWindow + "'. Underlying channel: " + channelStaticData, portletWindow, pce);
         }
         catch (IOException ioe) {
-            throw new PortletLoadFailureException("The portlet window '" + portletWindow + "' threw an exception while executing action. Underlying channel: " + channelStaticData, portletWindow, ioe);
+            throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while executing action. Underlying channel: " + channelStaticData, portletWindow, ioe);
         }
     }
 
@@ -436,13 +436,13 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
             contentRedirectingHttpServletResponse.flushBuffer();
         }
         catch (PortletException pe) {
-            throw new PortletLoadFailureException("The portlet window '" + portletWindow + "' threw an exception while executing action. Underlying channel: " + channelStaticData, portletWindow, pe);
+            throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while executing action. Underlying channel: " + channelStaticData, portletWindow, pe);
         }
         catch (PortletContainerException pce) {
-            throw new PortletLoadFailureException("The portlet container threw an exception while executing action on portlet window '" + portletWindow + "'. Underlying channel: " + channelStaticData, portletWindow, pce);
+            throw new PortletDispatchException("The portlet container threw an exception while executing action on portlet window '" + portletWindow + "'. Underlying channel: " + channelStaticData, portletWindow, pce);
         }
         catch (IOException ioe) {
-            throw new PortletLoadFailureException("The portlet window '" + portletWindow + "' threw an exception while executing action. Underlying channel: " + channelStaticData, portletWindow, ioe);
+            throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while executing action. Underlying channel: " + channelStaticData, portletWindow, ioe);
         }
     }
 
@@ -559,13 +559,13 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
             this.portletSessionActionManager.clear(portletWindow, httpServletRequest, httpServletResponse);
         }
         catch (PortletException pe) {
-            throw new PortletLoadFailureException("The portlet window '" + portletWindow + "' threw an exception while executing admin command to clear session. Underlying channel: " + channelStaticData, portletWindow, pe);
+            throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while executing admin command to clear session. Underlying channel: " + channelStaticData, portletWindow, pe);
         }
         catch (PortletContainerException pce) {
-            throw new PortletLoadFailureException("The portlet container threw an exception while executing admin command to clear session on portlet window '" + portletWindow + "'. Underlying channel: " + channelStaticData, portletWindow, pce);
+            throw new PortletDispatchException("The portlet container threw an exception while executing admin command to clear session on portlet window '" + portletWindow + "'. Underlying channel: " + channelStaticData, portletWindow, pce);
         }
         catch (IOException ioe) {
-            throw new PortletLoadFailureException("The portlet window '" + portletWindow + "' threw an exception while executing admin command to clear session. Underlying channel: " + channelStaticData, portletWindow, ioe);
+            throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while executing admin command to clear session. Underlying channel: " + channelStaticData, portletWindow, ioe);
         }        
     }
 }

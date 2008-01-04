@@ -3,7 +3,7 @@
 *  available online at http://www.uportal.org/license.html
 */
 
-package  org.jasig.portal.channels;
+package org.jasig.portal.channels;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -15,7 +15,6 @@ import org.jasig.portal.PortalEvent;
 import org.jasig.portal.PortalException;
 import org.xml.sax.ContentHandler;
 
-
 /**
  * A base class from which channels implementing IChannel interface can be derived.
  * Use this only if you are familiar with IChannel interface.
@@ -23,36 +22,35 @@ import org.xml.sax.ContentHandler;
  * @version $Revision$
  */
 public abstract class BaseChannel implements IChannel {
-  protected ChannelStaticData staticData;
-  protected ChannelRuntimeData runtimeData;
-  
-  /**
-   * A Commons Logging log instance which will log as the runtime class extending
-   * this BaseChannel.  Channels extending BaseChannel can use this Log instance
-   * rather than instantiating their own.
-   */
-  protected Log log = LogFactory.getLog(getClass());
+    protected ChannelStaticData staticData;
+    protected ChannelRuntimeData runtimeData;
 
-  public ChannelRuntimeProperties getRuntimeProperties() {
-    return  new ChannelRuntimeProperties();
-  }
+    /**
+     * A Commons Logging log instance which will log as the runtime class extending
+     * this BaseChannel.  Channels extending BaseChannel can use this Log instance
+     * rather than instantiating their own.
+     */
+    protected final Log log = LogFactory.getLog(getClass());
 
-  public void receiveEvent(PortalEvent ev) {}
+    public ChannelRuntimeProperties getRuntimeProperties() {
+        return new ChannelRuntimeProperties();
+    }
 
-  public void setStaticData(ChannelStaticData sd) throws PortalException {
-    this.staticData = sd;
-  }
+    public void receiveEvent(PortalEvent ev) {
+    }
 
-  public void setRuntimeData(ChannelRuntimeData rd) throws PortalException {
-    this.runtimeData = rd;
-  }
+    public void setStaticData(ChannelStaticData sd) throws PortalException {
+        this.staticData = sd;
+    }
 
-  public void renderXML (ContentHandler out) throws PortalException {}
-  
-  public String toString(){
-	return "BaseChannel: staticData = ["+staticData+"] runtimeData = ["+runtimeData+"]";
-  }
+    public void setRuntimeData(ChannelRuntimeData rd) throws PortalException {
+        this.runtimeData = rd;
+    }
+
+    public void renderXML(ContentHandler out) throws PortalException {
+    }
+
+    public String toString() {
+        return "BaseChannel: staticData = [" + staticData + "] runtimeData = [" + runtimeData + "]";
+    }
 }
-
-
-
