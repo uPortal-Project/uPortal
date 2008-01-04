@@ -167,7 +167,6 @@ class PortletWindowImpl implements IPortletWindow {
      * @see org.jasig.portal.portlet.om.IPortletWindow#setRequestParameters(java.util.Map)
      */
     public void setRequestParameters(Map<String, String[]> requestParameters) {
-        Validate.notNull(requestParameters, "requestParameters can not be null");
         this.requestParameters = requestParameters;
     }
     

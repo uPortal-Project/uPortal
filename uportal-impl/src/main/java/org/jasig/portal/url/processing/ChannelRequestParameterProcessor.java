@@ -130,7 +130,6 @@ public class ChannelRequestParameterProcessor extends CommonsFileUploadSupport i
             final String encoding = this.determineEncoding(request);
             final FileUpload fileUpload = this.prepareFileUpload(encoding);
             try {
-                //TODO this may not support multiple files for a single parameter :(
                 final List<FileItem> fileItems = ((ServletFileUpload) fileUpload).parseRequest(request);
                 final MultipartParsingResult parsingResult = parseFileItems(fileItems, encoding);
                 

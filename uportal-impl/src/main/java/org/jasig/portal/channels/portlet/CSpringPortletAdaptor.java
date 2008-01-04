@@ -230,6 +230,53 @@ public class CSpringPortletAdaptor implements IPortletAdaptor {
             }
         }
     }
+    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.IResetableChannel#prepareForRefresh()
+     */
+    public void prepareForRefresh() {
+        try {
+            if (this.channelStaticData == null) {
+                throw new IllegalStateException("No ChannelStaticData is associated with this IChannel, either the channel has not yet been initialized or should be destroyed.");
+            }
+            if (this.portalControlStructures == null) {
+                throw new IllegalStateException("No PortalControlStructures is associated with this IChannel, either no valid request has started or the request is complete.");
+            }
+            if (this.channelRuntimeData == null) {
+                throw new IllegalStateException("No ChannelRuntimeData is associated with this IChannel, either no valid request has started or the request is complete.");
+            }
+         
+            this.springPortletChannel.prepareForRefresh(this.channelStaticData, this.portalControlStructures, this.channelRuntimeData);
+        }
+        finally {
+            this.portalControlStructures = null;
+            this.channelRuntimeData = null;
+        }
+    }
+
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.IResetableChannel#prepareForReset()
+     */
+    public void prepareForReset() {
+        try {
+            if (this.channelStaticData == null) {
+                throw new IllegalStateException("No ChannelStaticData is associated with this IChannel, either the channel has not yet been initialized or should be destroyed.");
+            }
+            if (this.portalControlStructures == null) {
+                throw new IllegalStateException("No PortalControlStructures is associated with this IChannel, either no valid request has started or the request is complete.");
+            }
+            if (this.channelRuntimeData == null) {
+                throw new IllegalStateException("No ChannelRuntimeData is associated with this IChannel, either no valid request has started or the request is complete.");
+            }
+         
+            this.springPortletChannel.prepareForReset(this.channelStaticData, this.portalControlStructures, this.channelRuntimeData);
+        }
+        finally {
+            this.portalControlStructures = null;
+            this.channelRuntimeData = null;
+        }        
+    }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.IChannel#renderXML(org.xml.sax.ContentHandler)

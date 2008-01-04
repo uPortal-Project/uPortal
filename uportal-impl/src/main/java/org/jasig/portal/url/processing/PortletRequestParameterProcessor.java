@@ -92,6 +92,8 @@ public class PortletRequestParameterProcessor implements IRequestParameterProces
      */
     public boolean processParameters(IWritableHttpServletRequest request, HttpServletResponse response) {
         final Map<IPortletWindowId, PortletUrl> portletUrls = this.portletUrlSyntaxProvider.parsePortletParameters(request);
+        
+        //TODO need a way to mark which portlet generated the URL
 
         //If no PortletUrls then no targeted portlets
         if (portletUrls.isEmpty()) {

@@ -11,6 +11,7 @@ import javax.portlet.WindowState;
 import org.jasig.portal.ICacheable;
 import org.jasig.portal.ICharacterChannel;
 import org.jasig.portal.IPrivilegedChannel;
+import org.jasig.portal.IResetableChannel;
 import org.jasig.portal.PortalException;
 
 /**
@@ -22,7 +23,7 @@ import org.jasig.portal.PortalException;
  * 
  * @since uPortal 2.5
  */
-public interface IPortletAdaptor extends IPrivilegedChannel, ICharacterChannel, ICacheable {
+public interface IPortletAdaptor extends IResetableChannel, IPrivilegedChannel, ICharacterChannel, ICacheable {
     public static final WindowState EXCLUSIVE = new WindowState("EXCLUSIVE");
     
     public static final PortletMode ABOUT = new PortletMode("ABOUT");

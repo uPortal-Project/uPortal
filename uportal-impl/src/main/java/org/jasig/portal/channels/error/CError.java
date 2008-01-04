@@ -18,6 +18,7 @@ import org.jasig.portal.ICacheable;
 import org.jasig.portal.IChannel;
 import org.jasig.portal.ICharacterChannel;
 import org.jasig.portal.IPrivilegedChannel;
+import org.jasig.portal.IResetableChannel;
 import org.jasig.portal.MediaManager;
 import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalEvent;
@@ -303,13 +304,21 @@ public final class CError extends BaseChannel implements IPrivilegedChannel,
             if (chFate != null) {
                 // a fate has been chosen
                 if (chFate.equals("retry")) {
-                    // clean things up for the channel
-                    ChannelRuntimeData crd = (ChannelRuntimeData) this.runtimeData.clone();
-                    crd.clear(); // Remove parameters
-                    
-                    //TODO for a portlet get it's IPortletWindow and remove the request parameters
-                    
                     try {
+                        // clean things up for the channel
+                        if (this.targetChannel instanceof IResetableChannel) {
+                            if (this.targetChannel instanceof IPrivilegedChannel) {
+                                ((IPrivilegedChannel) this.targetChannel).setPortalControlStructures(this.portcs);
+                            }
+                            
+                            this.targetChannel.setRuntimeData(this.runtimeData);
+
+                            ((IResetableChannel) this.targetChannel).prepareForRefresh();
+                        }
+
+                        ChannelRuntimeData crd = (ChannelRuntimeData) this.runtimeData.clone();
+                        crd.clear(); // Remove parameters
+
                         if (this.targetChannel instanceof IPrivilegedChannel) {
                             ((IPrivilegedChannel) this.targetChannel).setPortalControlStructures(this.portcs);
                         }
@@ -333,12 +342,21 @@ public final class CError extends BaseChannel implements IPrivilegedChannel,
 
                     ChannelManager cm = this.portcs.getChannelManager();
 
-                    ChannelRuntimeData crd = (ChannelRuntimeData) this.runtimeData.clone();
-                    crd.clear();
-                    //TODO for a portlet get it's IPortletWindow and remove the request parameters
-                    //TODO for a portlet make a doAdmin call to clear the portlet scoped session
-                    
                     try {
+                        //Clean things up for the channel
+                        if (this.targetChannel instanceof IResetableChannel) {
+                            if (this.targetChannel instanceof IPrivilegedChannel) {
+                                ((IPrivilegedChannel) this.targetChannel).setPortalControlStructures(this.portcs);
+                            }
+                            
+                            this.targetChannel.setRuntimeData(this.runtimeData);
+
+                            ((IResetableChannel) this.targetChannel).prepareForReset();
+                        }
+
+                        ChannelRuntimeData crd = (ChannelRuntimeData) this.runtimeData.clone();
+                        crd.clear();
+                        
                         if ((this.targetChannel = cm.instantiateChannel(this.portcs.getHttpServletRequest(), this.portcs.getHttpServletResponse(), channelSubscribeId)) == null) {
                             resetCError(ErrorCode.GENERAL_ERROR, null, channelSubscribeId, null, "Channel failed to reinstantiate!");
                         }

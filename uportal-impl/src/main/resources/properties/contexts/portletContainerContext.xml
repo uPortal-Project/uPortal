@@ -17,6 +17,7 @@
 
     <bean id="optionalContainerServices" class="org.jasig.portal.portlet.container.services.OptionalContainerServicesImpl">
         <property name="userInfoService" ref="userInfoService" />
+        <property name="portalAdministrationService" ref="portalAdministrationService" />
     </bean>
 
     <bean id="portalContext" class="org.jasig.portal.portlet.container.PortalContextImpl">
@@ -60,10 +61,29 @@
         <property name="personAttributeDao" ref="personAttributeDao" />
     </bean>
     
+    <bean id="portalAdministrationService" class="org.apache.pluto.core.DefaultPortalAdministrationService">
+        <property name="administrativeRequestListeners">
+            <list>
+                <bean class="org.jasig.portal.portlet.container.services.AdministrativeRequestListenerController">
+                    <property name="listeners">
+                        <map>
+                            <entry key="sessionActionListener">
+                                <bean class="org.jasig.portal.portlet.session.PortletSessionAdministrativeRequestListener" />
+                            </entry>
+                        </map>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+    
     <bean id="portletUrlSyntaxProvider" class="org.jasig.portal.portlet.url.PortletUrlSyntaxProviderImpl">
         <property name="portletWindowRegistry" ref="portletWindowRegistry" />
     </bean>
     
+    <bean id="portletSessionActionManager" class="org.jasig.portal.portlet.session.PortletSessionActionManagerImpl">
+        <property name="portletContainer" ref="portletContainer" />
+    </bean>
     
     <!--********** Portlet Registries ********** -->
 
@@ -80,10 +100,6 @@
         <property name="portletDefinitionDao" ref="portletDefinitionDao" />
     </bean>
     
-    <!--********** Portlet DAOs ********** -->
-    
-    
-    
     
     <!--********** Portlet Rendering Channel ********** -->
     
@@ -94,5 +110,6 @@
         <property name="portletEntityRegistry" ref="portletEntityRegistry" />
         <property name="portletWindowRegistry" ref="portletWindowRegistry" />
         <property name="portletRequestParameterManager" ref="portletRequestParameterManager" />
+        <property name="portletSessionActionManager" ref="portletSessionActionManager" />
     </bean>
 </beans>

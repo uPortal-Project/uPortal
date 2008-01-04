@@ -17,6 +17,7 @@ import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.pluto.OptionalContainerServices;
@@ -38,6 +39,7 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
+import org.jasig.portal.portlet.session.IPortletSessionActionManager;
 import org.jasig.portal.portlet.url.IPortletRequestParameterManager;
 import org.jasig.portal.portlet.url.PortletRequestInfo;
 import org.jasig.portal.portlet.url.RequestType;
@@ -63,6 +65,7 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
     private OptionalContainerServices optionalContainerServices;
     private PortletContainer portletContainer;
     private IPortletRequestParameterManager portletRequestParameterManager;
+    private IPortletSessionActionManager portletSessionActionManager;
     
     
     
@@ -77,6 +80,7 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
      */
     @Required
     public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
+        Validate.notNull(portletDefinitionRegistry);
         this.portletDefinitionRegistry = portletDefinitionRegistry;
     }
     /**
@@ -104,6 +108,7 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
      */
     @Required
     public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
+        Validate.notNull(portletWindowRegistry);
         this.portletWindowRegistry = portletWindowRegistry;
     }
 
@@ -118,6 +123,7 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
      */
     @Required
     public void setOptionalContainerServices(OptionalContainerServices optionalContainerServices) {
+        Validate.notNull(optionalContainerServices);
         this.optionalContainerServices = optionalContainerServices;
     }
 
@@ -132,6 +138,7 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
      */
     @Required
     public void setPortletContainer(PortletContainer portletContainer) {
+        Validate.notNull(portletContainer);
         this.portletContainer = portletContainer;
     }
 
@@ -146,7 +153,23 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
      */
     @Required
     public void setPortletRequestParameterManager(IPortletRequestParameterManager portletRequestParameterManager) {
+        Validate.notNull(portletRequestParameterManager);
         this.portletRequestParameterManager = portletRequestParameterManager;
+    }
+    
+    /**
+     * @return the portletSessionActionManager
+     */
+    public IPortletSessionActionManager getPortletSessionActionManager() {
+        return this.portletSessionActionManager;
+    }
+    /**
+     * @param portletSessionActionManager the portletSessionActionManager to set
+     */
+    @Required
+    public void setPortletSessionActionManager(IPortletSessionActionManager portletSessionActionManager) {
+        Validate.notNull(portletSessionActionManager);
+        this.portletSessionActionManager = portletSessionActionManager;
     }
 
     
@@ -499,5 +522,41 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
             }
             break;
         }
+    }
+    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.channels.portlet.ISpringPortletChannel#prepareForRefresh(org.jasig.portal.ChannelStaticData, org.jasig.portal.PortalControlStructures, org.jasig.portal.ChannelRuntimeData)
+     */
+    public void prepareForRefresh(ChannelStaticData channelStaticData, PortalControlStructures portalControlStructures, ChannelRuntimeData channelRuntimeData) {
+        final HttpServletRequest httpServletRequest = portalControlStructures.getHttpServletRequest();
+        final IPortletWindowId portletWindowId = this.getPortletWindowId(channelStaticData);
+        final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
+        
+        portletWindow.setRequestParameters(null);
+    }
+    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.channels.portlet.ISpringPortletChannel#prepareForReset(org.jasig.portal.ChannelStaticData, org.jasig.portal.PortalControlStructures, org.jasig.portal.ChannelRuntimeData)
+     */
+    public void prepareForReset(ChannelStaticData channelStaticData, PortalControlStructures portalControlStructures, ChannelRuntimeData channelRuntimeData) {
+        final HttpServletRequest httpServletRequest = portalControlStructures.getHttpServletRequest();
+        final IPortletWindowId portletWindowId = this.getPortletWindowId(channelStaticData);
+        final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
+        
+        portletWindow.setRequestParameters(null);
+        
+        final HttpServletResponse httpServletResponse = portalControlStructures.getHttpServletResponse();
+        try {
+            this.portletSessionActionManager.clear(portletWindow, httpServletRequest, httpServletResponse);
+        }
+        catch (PortletException pe) {
+            throw new PortletLoadFailureException("The portlet window '" + portletWindow + "' threw an exception while executing admin command to clear session. Underlying channel: " + channelStaticData, portletWindow, pe);
+        }
+        catch (PortletContainerException pce) {
+            throw new PortletLoadFailureException("The portlet container threw an exception while executing admin command to clear session on portlet window '" + portletWindow + "'. Underlying channel: " + channelStaticData, portletWindow, pce);
+        }
+        catch (IOException ioe) {
+            throw new PortletLoadFailureException("The portlet window '" + portletWindow + "' threw an exception while executing admin command to clear session. Underlying channel: " + channelStaticData, portletWindow, ioe);
+        }        
     }
 }

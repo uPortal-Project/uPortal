@@ -5,7 +5,9 @@
  */
 package org.jasig.portal.portlet.container.services;
 
+import org.apache.commons.lang.Validate;
 import org.apache.pluto.core.DefaultOptionalContainerServices;
+import org.apache.pluto.core.DefaultPortalAdministrationService;
 import org.apache.pluto.spi.optional.PortalAdministrationService;
 import org.apache.pluto.spi.optional.PortletInfoService;
 import org.apache.pluto.spi.optional.PortletPreferencesService;
@@ -18,23 +20,32 @@ import org.springframework.beans.factory.annotation.Required;
  */
 public class OptionalContainerServicesImpl extends DefaultOptionalContainerServices {
     private UserInfoService userInfoService;
+    private PortalAdministrationService portalAdministrationService = new DefaultPortalAdministrationService();
     
     /**
      * @param userInfoService the userInfoService to set
      */
     @Required
     public void setUserInfoService(UserInfoService userInfoService) {
+        Validate.notNull(userInfoService);
         this.userInfoService = userInfoService;
     }
     
+    /**
+     * @param portalAdministrationService the portalAdministrationService to set
+     */
+    public void setPortalAdministrationService(PortalAdministrationService portalAdministrationService) {
+        Validate.notNull(portalAdministrationService);
+        this.portalAdministrationService = portalAdministrationService;
+    }
+
 
     /* (non-Javadoc)
      * @see org.apache.pluto.core.DefaultOptionalContainerServices#getPortalAdministrationService()
      */
     @Override
     public PortalAdministrationService getPortalAdministrationService() {
-        // TODO return admin listener to allow for session resets & invalidations
-        return super.getPortalAdministrationService();
+        return this.portalAdministrationService;
     }
 
     /* (non-Javadoc)

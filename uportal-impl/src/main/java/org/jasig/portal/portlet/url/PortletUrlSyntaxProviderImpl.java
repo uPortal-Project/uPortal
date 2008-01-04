@@ -104,6 +104,17 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
     public Map<IPortletWindowId, PortletUrl> parsePortletParameters(HttpServletRequest request) {
         Validate.notNull(request, "request can not be null");
         
+        /*
+         * TODO change this to return a Tuple<id, url>
+         * don't prefix portlet parameters
+         * 
+         * plt_target=foo
+         * plt_type=ACTION
+         * plt_mode=EDIT
+         * plt_state=NORMAL
+         * paramName=paramVal
+         */
+        
         final Map<IPortletWindowId, PortletUrl> parsedUrls = new HashMap<IPortletWindowId, PortletUrl>();
         
         //Iterate through all request parameters

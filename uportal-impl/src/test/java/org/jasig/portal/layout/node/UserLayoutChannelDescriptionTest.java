@@ -103,6 +103,22 @@ public class UserLayoutChannelDescriptionTest extends TestCase {
             // TODO Auto-generated method stub
             
         }
+
+        /* (non-Javadoc)
+         * @see org.jasig.portal.IResetableChannel#prepareForRefresh()
+         */
+        public void prepareForRefresh() {
+            // TODO Auto-generated method stub
+            
+        }
+
+        /* (non-Javadoc)
+         * @see org.jasig.portal.IResetableChannel#prepareForReset()
+         */
+        public void prepareForReset() {
+            // TODO Auto-generated method stub
+            
+        }
 	}
 	
 	
