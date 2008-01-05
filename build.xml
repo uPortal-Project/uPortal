@@ -20,6 +20,7 @@
      +-->
     <property name="uportal-impl.dir" value="${basedir}/uportal-impl" />
     <property name="uportal-war.dir" value="${basedir}/uportal-war" />
+    <property name="uportal-portlets-overlay.dir" value="${basedir}/uportal-portlets-overlay" />
     <property name="uportal-ear.dir" value="${basedir}/uportal-ear" />
     <property name="uportal-ear-deployer.dir" value="${basedir}/uportal-ear-deployer" />
     <property name="uportal-ant-tasks.dir" value="${basedir}/uportal-ant-tasks" />
@@ -278,6 +279,8 @@
     </target>
     
     <target name="clean" description="Removes the deployed uPortal from the container and runs 'mvn clean'">
+        <antcall target="install-root-pom" />
+        
         <!-- Clean out uPortal from Tomcat -->
         <artifact:pom file="${uportal-war.dir}/pom.xml" id="uportal-war.pom" />
         <property name="destDir" value="${server.base}/webapps/${uportal-war.pom.build.finalName}" />
@@ -513,7 +516,7 @@
         <attribute name="project-path" />
         <attribute name="checkFilesId" default="null" />
 
-        <element name="sub-tasks" optional="false" implicit="true" />
+        <element name="sub-tasks" optional="true" implicit="true" />
 
         <sequential>
             <!--
@@ -644,6 +647,42 @@
     </macrodef>
 
     <!--
+     | Provides a wrapper for tasks that depend on the portlet overlays being installed and up-to-date.
+     |
+     | No properties are set for the overlay-sub-tasks element.
+     +-->
+    <macrodef name="uportal-portlets-overlay-macro">
+        <element name="overlay-sub-tasks" optional="false" implicit="true" />
+
+        <sequential>
+            <antcall target="checkVersion" />
+            
+            <antcall target="mvn">
+                <param name="pomDir" value="${uportal-portlets-overlay.dir}" />
+                <param name="goal" value="-N" />
+                <param name="goal1" value="install" />
+            </antcall>
+            
+            <for param="portlet-overlay-dir">
+                <path>
+                    <dirset dir="${uportal-portlets-overlay.dir}">
+                        <include name="*"/>
+                    </dirset>
+                </path>
+                <sequential>
+                    <basename file="@{portlet-overlay-dir}" property="@{portlet-overlay-dir}-name" />
+                    <maven-artifact-macro project-name="${@{portlet-overlay-dir}-name}" project-path="@{portlet-overlay-dir}" />
+                </sequential>
+            </for>
+            
+            <!--
+             | Execute the overlay-sub-tasks
+             +-->
+            <overlay-sub-tasks />
+        </sequential>
+    </macrodef>
+    
+    <!--
      | Provides a wrapper for tasks that need a classpath that includes all of the uPortal EAR
      | dependencies. The task also ensures the uportal-ear EAR exists and is up to date.
      |
@@ -660,12 +699,15 @@
             <antcall target="checkVersion" />
             <uportal-war-macro>
                 <fileset id="uportal-war-artifacts" file="${uportal-war.artifact}" />
-                <maven-artifact-macro project-name="uportal-ear" project-path="${uportal-ear.dir}" checkfilesid="uportal-war-artifacts">
-                    <!--
-                     | Execute the ear-sub-tasks
-                     +-->
-                    <ear-sub-tasks />
-                </maven-artifact-macro>
+                
+                <uportal-portlets-overlay-macro>
+                    <maven-artifact-macro project-name="uportal-ear" project-path="${uportal-ear.dir}" checkfilesid="uportal-war-artifacts">
+                        <!--
+                         | Execute the ear-sub-tasks
+                         +-->
+                        <ear-sub-tasks />
+                    </maven-artifact-macro>
+                </uportal-portlets-overlay-macro>
             </uportal-war-macro>
         </sequential>
     </macrodef>
