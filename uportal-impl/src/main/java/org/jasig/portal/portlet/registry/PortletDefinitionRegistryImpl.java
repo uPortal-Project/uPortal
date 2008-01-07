@@ -8,6 +8,11 @@ package org.jasig.portal.portlet.registry;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.pluto.OptionalContainerServices;
+import org.apache.pluto.PortletContainerException;
+import org.apache.pluto.descriptors.portlet.PortletAppDD;
+import org.apache.pluto.descriptors.portlet.PortletDD;
+import org.apache.pluto.spi.optional.PortletRegistryService;
 import org.jasig.portal.ChannelDefinition;
 import org.jasig.portal.ChannelParameter;
 import org.jasig.portal.ChannelRegistryStoreFactory;
@@ -32,6 +37,7 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
     protected final Log logger = LogFactory.getLog(this.getClass());
     
     private IPortletDefinitionDao portletDefinitionDao;
+    private OptionalContainerServices optionalContainerServices;
     
     /**
      * @return the portletDefinitionDao
@@ -44,9 +50,25 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
      */
     @Required
     public void setPortletDefinitionDao(IPortletDefinitionDao portletDefinitionDao) {
+        Validate.notNull(portletDefinitionDao);
         this.portletDefinitionDao = portletDefinitionDao;
     }
-
+    /**
+     * @return the optionalContainerServices
+     */
+    public OptionalContainerServices getOptionalContainerServices() {
+        return this.optionalContainerServices;
+    }
+    /**
+     * @param optionalContainerServices the optionalContainerServices to set
+     */
+    @Required
+    public void setOptionalContainerServices(OptionalContainerServices optionalContainerServices) {
+        Validate.notNull(optionalContainerServices);
+        this.optionalContainerServices = optionalContainerServices;
+    }
+    
+    
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.registry.IPortletDefinitionRegistry#createPortletDefinition(int)
      */
@@ -119,7 +141,6 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
         return this.createPortletDefinition(channelPublishId, portletApplicationId, portletName);
     }
     
-    
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.registry.IPortletDefinitionRegistry#getPortletDefinition(org.jasig.portal.portlet.om.IPortletDefinitionId)
      */
@@ -135,5 +156,36 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
         Validate.notNull(portletDefinition, "portletDefinition can not be null");
         
         this.portletDefinitionDao.updatePortletDefinition(portletDefinition);
+    }
+    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.portlet.registry.IPortletDefinitionRegistry#getParentPortletApplicationDescriptor(org.jasig.portal.portlet.om.IPortletDefinitionId)
+     */
+    public PortletAppDD getParentPortletApplicationDescriptor(IPortletDefinitionId portletDefinitionId) throws PortletContainerException {
+        final IPortletDefinition portletDefinition = this.getPortletDefinition(portletDefinitionId);
+        if (portletDefinition == null) {
+            return null;
+        }
+        
+        final PortletRegistryService portletRegistryService = this.optionalContainerServices.getPortletRegistryService();
+        final String portletApplicationId = portletDefinition.getPortletApplicationId();
+        
+        return portletRegistryService.getPortletApplicationDescriptor(portletApplicationId);
+    }
+    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.portlet.registry.IPortletDefinitionRegistry#getParentPortletDescriptor(org.jasig.portal.portlet.om.IPortletDefinitionId)
+     */
+    public PortletDD getParentPortletDescriptor(IPortletDefinitionId portletDefinitionId) throws PortletContainerException {
+        final IPortletDefinition portletDefinition = this.getPortletDefinition(portletDefinitionId);
+        if (portletDefinition == null) {
+            return null;
+        }
+        
+        final PortletRegistryService portletRegistryService = this.optionalContainerServices.getPortletRegistryService();
+        final String portletApplicationId = portletDefinition.getPortletApplicationId();
+        final String portletName = portletDefinition.getPortletName();
+        
+        return portletRegistryService.getPortletDescriptor(portletApplicationId, portletName);
     }
 }

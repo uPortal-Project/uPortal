@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Required;
 public class OptionalContainerServicesImpl extends DefaultOptionalContainerServices {
     private UserInfoService userInfoService;
     private PortalAdministrationService portalAdministrationService = new DefaultPortalAdministrationService();
+    private PortletPreferencesService portletPreferencesService;
     
     /**
      * @param userInfoService the userInfoService to set
@@ -37,6 +38,15 @@ public class OptionalContainerServicesImpl extends DefaultOptionalContainerServi
     public void setPortalAdministrationService(PortalAdministrationService portalAdministrationService) {
         Validate.notNull(portalAdministrationService);
         this.portalAdministrationService = portalAdministrationService;
+    }
+    
+    /**
+     * @param portletPreferencesService the portletPreferencesService to set
+     */
+    @Required
+    public void setPortletPreferencesService(PortletPreferencesService portletPreferencesService) {
+        Validate.notNull(portletPreferencesService);
+        this.portletPreferencesService = portletPreferencesService;
     }
 
 
@@ -62,8 +72,7 @@ public class OptionalContainerServicesImpl extends DefaultOptionalContainerServi
      */
     @Override
     public PortletPreferencesService getPortletPreferencesService() {
-        // TODO tie into preferences daos, include logic for dupe pref setting
-        return super.getPortletPreferencesService();
+        return this.portletPreferencesService;
     }
 
     /* (non-Javadoc)

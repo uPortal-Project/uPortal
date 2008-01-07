@@ -13,18 +13,18 @@ import java.util.Map;
 import javax.portlet.PortletRequest;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.pluto.OptionalContainerServices;
 import org.apache.pluto.PortletContainerException;
 import org.apache.pluto.PortletWindow;
 import org.apache.pluto.descriptors.portlet.PortletAppDD;
 import org.apache.pluto.descriptors.portlet.UserAttributeDD;
 import org.apache.pluto.internal.InternalPortletRequest;
 import org.apache.pluto.internal.InternalPortletWindow;
-import org.apache.pluto.spi.optional.PortletRegistryService;
 import org.apache.pluto.spi.optional.UserInfoService;
+import org.jasig.portal.portlet.container.PortletContainerUtils;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletWindow;
+import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.services.persondir.IPersonAttributeDao;
@@ -40,7 +40,7 @@ public class PersonDirectoryUserInfoService implements UserInfoService {
     private IPersonAttributeDao personAttributeDao;
     private IPortletWindowRegistry portletWindowRegistry;
     private IPortletEntityRegistry portletEntityRegistry;
-    private OptionalContainerServices optionalContainerServices;
+    private IPortletDefinitionRegistry portletDefinitionRegistry;
     
     
     /**
@@ -85,17 +85,17 @@ public class PersonDirectoryUserInfoService implements UserInfoService {
     }
 
     /**
-     * @return the optionalContainerServices
+     * @return the portletDefinitionRegistry
      */
-    public OptionalContainerServices getOptionalContainerServices() {
-        return this.optionalContainerServices;
+    public IPortletDefinitionRegistry getPortletDefinitionRegistry() {
+        return this.portletDefinitionRegistry;
     }
     /**
-     * @param optionalContainerServices the optionalContainerServices to set
+     * @param portletDefinitionRegistry the portletDefinitionRegistry to set
      */
     @Required
-    public void setOptionalContainerServices(OptionalContainerServices optionalContainerServices) {
-        this.optionalContainerServices = optionalContainerServices;
+    public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
+        this.portletDefinitionRegistry = portletDefinitionRegistry;
     }
     
 
@@ -123,15 +123,10 @@ public class PersonDirectoryUserInfoService implements UserInfoService {
             return null;
         }
         
-        if (!(request instanceof InternalPortletRequest)) {
-            throw new IllegalArgumentException("The PersonDirectoryUserInfoServices requires the PortletRequest parameter to implement the '" + InternalPortletRequest.class.getName() + "' interface.");
-        }
-        final InternalPortletRequest internalRequest = (InternalPortletRequest)request;
-
-        //TODO this may not work since the registry may not have access to uPortal's session here!
-        final IPortletWindow portletWindow = this.portletWindowRegistry.convertPortletWindow(internalRequest.getHttpServletRequest(), plutoPortletWindow);
+        final HttpServletRequest httpServletRequest = PortletContainerUtils.getHttpServletRequest(request);
+        final IPortletWindow portletWindow = this.portletWindowRegistry.convertPortletWindow(httpServletRequest, plutoPortletWindow);
         
-        return this.getUserInfo(remoteUser, internalRequest.getHttpServletRequest(), portletWindow);
+        return this.getUserInfo(remoteUser, httpServletRequest, portletWindow);
     }
     
     /**
@@ -235,13 +230,9 @@ public class PersonDirectoryUserInfoService implements UserInfoService {
      * @throws PortletContainerException If expected attributes cannot be determined
      */
     protected List<UserAttributeDD> getExpectedUserAttributes(HttpServletRequest request, final IPortletWindow portletWindow) throws PortletContainerException {
-        
         final IPortletEntity portletEntity = this.portletWindowRegistry.getParentPortletEntity(request, portletWindow.getPortletWindowId());
         final IPortletDefinition portletDefinition = this.portletEntityRegistry.getParentPortletDefinition(portletEntity.getPortletEntityId());
-        
-        final String portletApplicationId = portletDefinition.getPortletApplicationId();
-        final PortletRegistryService portletRegistryService = this.optionalContainerServices.getPortletRegistryService();
-        final PortletAppDD portletApplicationDescriptor = portletRegistryService.getPortletApplicationDescriptor(portletApplicationId);
+        final PortletAppDD portletApplicationDescriptor = this.portletDefinitionRegistry.getParentPortletApplicationDescriptor(portletDefinition.getPortletDefinitionId());
         
         return (List<UserAttributeDD>)portletApplicationDescriptor.getUserAttributes();
     }

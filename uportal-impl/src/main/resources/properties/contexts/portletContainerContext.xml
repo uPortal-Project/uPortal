@@ -18,6 +18,7 @@
     <bean id="optionalContainerServices" class="org.jasig.portal.portlet.container.services.OptionalContainerServicesImpl">
         <property name="userInfoService" ref="userInfoService" />
         <property name="portalAdministrationService" ref="portalAdministrationService" />
+        <property name="portletPreferencesService" ref="portletPreferencesService" />
     </bean>
 
     <bean id="portalContext" class="org.jasig.portal.portlet.container.PortalContextImpl">
@@ -55,9 +56,9 @@
     </bean>
     
     <bean id="userInfoService" class="org.jasig.portal.portlet.container.services.PersonDirectoryUserInfoService">
-        <property name="optionalContainerServices" ref="optionalContainerServices" />
         <property name="portletWindowRegistry" ref="portletWindowRegistry" />
         <property name="portletEntityRegistry" ref="portletEntityRegistry" />
+        <property name="portletDefinitionRegistry" ref="portletDefinitionRegistry" />
         <property name="personAttributeDao" ref="personAttributeDao" />
     </bean>
     
@@ -75,6 +76,12 @@
                 </bean>
             </list>
         </property>
+    </bean>
+    
+    <bean id="portletPreferencesService" class="org.jasig.portal.portlet.container.services.PortletPreferencesServiceImpl">
+        <property name="portletDefinitionRegistry" ref="portletDefinitionRegistry" />
+        <property name="portletEntityRegistry" ref="portletEntityRegistry" />
+        <property name="portletWindowRegistry" ref="portletWindowRegistry" />
     </bean>
     
     <bean id="portletUrlSyntaxProvider" class="org.jasig.portal.portlet.url.PortletUrlSyntaxProviderImpl">
@@ -98,13 +105,13 @@
     
     <bean id="portletDefinitionRegistry" class="org.jasig.portal.portlet.registry.PortletDefinitionRegistryImpl">
         <property name="portletDefinitionDao" ref="portletDefinitionDao" />
+        <property name="optionalContainerServices" ref="optionalContainerServices" />
     </bean>
     
     
     <!--********** Portlet Rendering Channel ********** -->
     
     <bean id="portletChannel" class="org.jasig.portal.channels.portlet.SpringPortletChannelImpl">
-        <property name="optionalContainerServices" ref="optionalContainerServices" />
         <property name="portletContainer" ref="portletContainer" />
         <property name="portletDefinitionRegistry" ref="portletDefinitionRegistry" />
         <property name="portletEntityRegistry" ref="portletEntityRegistry" />

@@ -19,11 +19,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.pluto.OptionalContainerServices;
 import org.apache.pluto.PortletContainer;
 import org.apache.pluto.PortletContainerException;
 import org.apache.pluto.descriptors.portlet.PortletDD;
-import org.apache.pluto.spi.optional.PortletRegistryService;
 import org.jasig.portal.ChannelCacheKey;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ChannelStaticData;
@@ -61,7 +59,6 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
     private IPortletDefinitionRegistry portletDefinitionRegistry;
     private IPortletEntityRegistry portletEntityRegistry;
     private IPortletWindowRegistry portletWindowRegistry;
-    private OptionalContainerServices optionalContainerServices;
     private PortletContainer portletContainer;
     private IPortletRequestParameterManager portletRequestParameterManager;
     private IPortletSessionActionManager portletSessionActionManager;
@@ -109,21 +106,6 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
     public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
         Validate.notNull(portletWindowRegistry);
         this.portletWindowRegistry = portletWindowRegistry;
-    }
-
-    /**
-     * @return the optionalContainerServices
-     */
-    public OptionalContainerServices getOptionalContainerServices() {
-        return optionalContainerServices;
-    }
-    /**
-     * @param optionalContainerServices the optionalContainerServices to set
-     */
-    @Required
-    public void setOptionalContainerServices(OptionalContainerServices optionalContainerServices) {
-        Validate.notNull(optionalContainerServices);
-        this.optionalContainerServices = optionalContainerServices;
     }
 
     /**
@@ -343,12 +325,9 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
         final IPortletDefinition portletDefinition = this.portletEntityRegistry.getParentPortletDefinition(portletEntity.getPortletEntityId());
         
         //Get the portlet deployment
-        final String portletApplicationId = portletDefinition.getPortletApplicationId();
-        final String portletName = portletDefinition.getPortletName();
         final PortletDD portletDescriptor;
         try {
-            final PortletRegistryService portletRegistryService = this.optionalContainerServices.getPortletRegistryService();
-            portletDescriptor = portletRegistryService.getPortletDescriptor(portletApplicationId, portletName);
+            portletDescriptor = this.portletDefinitionRegistry.getParentPortletDescriptor(portletDefinition.getPortletDefinitionId());
         }
         catch (PortletContainerException pce) {
             this.logger.warn("Could not retrieve PortletDD for portlet window '" + portletWindow + "' to determine caching configuration. Marking content cache invalid and continuing.", pce);

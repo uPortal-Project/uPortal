@@ -18,6 +18,17 @@
 
 
     <!--********** JPA Beans ********** -->
+    
+    <aop:config>
+        <aop:aspect ref="threadContextClassLoaderAspect">
+            <aop:pointcut id="hibernateDaoExecution" 
+                expression="execution(* org.jasig.portal.portlet.dao.jpa.*.*(..))"/>
+
+            <aop:around pointcut-ref="hibernateDaoExecution" method="doThreadContextClassLoaderUpdate"/>
+        </aop:aspect>
+    </aop:config>
+    
+    <bean id="threadContextClassLoaderAspect" class="org.jasig.portal.portlet.dao.jpa.ThreadContextClassLoaderAspect" />
 
     <bean id="factoryBean" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="dataSource" ref="PortalDb" />
@@ -29,12 +40,11 @@
         <property name="database" value="HSQL" />
     </bean>
 
-
     <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
         <property name="entityManagerFactory" ref="factoryBean" />
     </bean>
     
-    <tx:annotation-driven transaction-manager="transactionManager"/>
+    <tx:annotation-driven transaction-manager="transactionManager" />
 
     <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
     

@@ -11,6 +11,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -22,7 +23,9 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
+import org.apache.pluto.descriptors.portlet.PortletPreferenceDD;
 import org.apache.pluto.internal.InternalPortletPreference;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.IndexColumn;
 import org.hibernate.annotations.Type;
@@ -51,7 +54,7 @@ public class PortletPreferenceImpl implements IPortletPreference {
     @Column(name = "READ_ONLY", nullable = false)
     private boolean readOnly = false;
     
-    @CollectionOfElements
+    @CollectionOfElements(fetch = FetchType.EAGER)
     @JoinTable(
         name = "UP_PORTLET_PREF_VALUES",
         joinColumns = @JoinColumn(name = "PORTLET_PREF_ID")
@@ -59,6 +62,7 @@ public class PortletPreferenceImpl implements IPortletPreference {
     @IndexColumn(name="VALUE_ORDER")
     @Type(type = "text")
     @Column(name = "VALUE")
+    @Cascade( { org.hibernate.annotations.CascadeType.DELETE_ORPHAN, org.hibernate.annotations.CascadeType.ALL })
     private List<String> values = null;
     
     
@@ -71,6 +75,17 @@ public class PortletPreferenceImpl implements IPortletPreference {
         this.name = portletPreference.getName();
         this.readOnly = portletPreference.isReadOnly();
         this.setValues(portletPreference.getValues());
+    }
+    
+    public PortletPreferenceImpl(PortletPreferenceDD portletPreference) {
+        this.portletPreferenceId = -1;
+        this.name = portletPreference.getName();
+        this.readOnly = portletPreference.isReadOnly();
+
+        final List<String> values = portletPreference.getValues();
+        if (values != null) {
+            this.setValues(values.toArray(new String[values.size()]));
+        }
     }
     
     public PortletPreferenceImpl(String name, boolean readOnly, String... values) {

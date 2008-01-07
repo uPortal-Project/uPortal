@@ -36,7 +36,7 @@ public interface IPortletAdaptor extends IResetableChannel, IPrivilegedChannel, 
     
     /**
      * {@link javax.servlet.http.HttpServletRequest} attribute that the adaptor will store the title the portlet
-     * dynamicly sets under.
+     * dynamically sets under.
      */
     public static final String ATTRIBUTE__PORTLET_TITLE = IPortletAdaptor.class.getName() + ".PORTLET_TITLE";
     

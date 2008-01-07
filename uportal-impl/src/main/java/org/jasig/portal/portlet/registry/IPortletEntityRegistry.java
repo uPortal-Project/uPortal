@@ -81,7 +81,7 @@ public interface IPortletEntityRegistry {
      * Gets the parent portlet definition for the entity specified by the entity id.
      * 
      * @param portletEntityId The entity ID to get the parent definition for.
-     * @return The parent portlet entity for the window, null if no window exists for the id. 
+     * @return The parent portlet definition for the entity, null if no entity exists for the id. 
      * @throws IllegalArgumentException if portletEntityId is null
      */
     public IPortletDefinition getParentPortletDefinition(IPortletEntityId portletEntityId);

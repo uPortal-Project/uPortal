@@ -10,11 +10,11 @@
         </column>  
         <column>
           <name>MAJOR</name>
-          <value>2</value>
+          <value>3</value>
         </column>  
         <column>
           <name>MINOR</name>
-          <value>6</value>
+          <value>0</value>
         </column>  
         <column>
           <name>MICRO</name>

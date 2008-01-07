@@ -15,12 +15,18 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * Scopes set request attributes to just this request. Attribute retrieval methods fall through
- * to the parent request on a miss. Only the scoped attribute names are enumerated by  {@link #getAttributeNames()}
+ * to the parent request on a miss. Only the scoped attribute names are enumerated by {@link #getAttributeNames()}
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
 public class AttributeScopingHttpServletRequestWrapper extends AbstractHttpServletRequestWrapper {
+    /**
+     * {@link javax.servlet.http.HttpServletRequest} attribute that the portal's {@link HttpServletRequest} object
+     * will be available.
+     */
+    public static final String ATTRIBUTE__PORTAL_HTTP_SERVLET_REQUEST = "org.jasig.portal.servlet.PORTAL_HTTP_SERVLET_REQUEST";
+    
     private final Map<String, Object> attributes = new HashMap<String, Object>();
     
     /**
@@ -32,6 +38,10 @@ public class AttributeScopingHttpServletRequestWrapper extends AbstractHttpServl
 
     @Override
     public Object getAttribute(String name) {
+        if (ATTRIBUTE__PORTAL_HTTP_SERVLET_REQUEST.equals(name)) {
+            return this;
+        }
+        
         final Object attribute = this.attributes.get(name);
         if (attribute != null) {
             return attribute;
