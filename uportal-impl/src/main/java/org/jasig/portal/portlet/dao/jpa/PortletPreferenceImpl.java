@@ -107,6 +107,10 @@ public class PortletPreferenceImpl implements IPortletPreference {
      * @see org.jasig.portal.om.portlet.prefs.InternalPortletPreference#getValues()
      */
     public String[] getValues() {
+        if (this.values == null) {
+            return null;
+        }
+
         return this.values.toArray(new String[this.values.size()]);
     }
 
@@ -121,7 +125,12 @@ public class PortletPreferenceImpl implements IPortletPreference {
      * @see org.jasig.portal.om.portlet.prefs.InternalPortletPreference#setValues(java.lang.String[])
      */
     public void setValues(String[] values) {
-        this.values = new ArrayList<String>(Arrays.asList(values));
+        if (values == null) {
+            this.values = null;
+        }
+        else {
+            this.values = new ArrayList<String>(Arrays.asList(values));
+        }
     }
 
     /* (non-Javadoc)
