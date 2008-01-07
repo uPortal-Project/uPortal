@@ -19,18 +19,10 @@
           <name>width</name>
           <value>30%</value>
         </structure-attribute>
-        <structure-attribute type="folder">
-          <name>width</name>
-          <value>30%</value>
-        </structure-attribute>
         <channel fname="pbookmarks"/>
         <channel fname="google-portlet"/>
       </column>
       <column unremovable="N" immutable="N" hidden="N" name="Column">
-        <structure-attribute type="folder">
-          <name>width</name>
-          <value>70%</value>
-        </structure-attribute>
         <structure-attribute type="folder">
           <name>width</name>
           <value>70%</value>

@@ -50,18 +50,10 @@
           <name>width</name>
           <value>50%</value>
         </structure-attribute>
-        <structure-attribute type="folder">
-          <name>width</name>
-          <value>50%</value>
-        </structure-attribute>
         <channel fname="test-portlet-1"/>
         <channel fname="jasig-test-portlet"/>
       </column>
       <column unremovable="N" immutable="N" hidden="N" name="Column 2">
-        <structure-attribute type="folder">
-          <name>width</name>
-          <value>50%</value>
-        </structure-attribute>
         <structure-attribute type="folder">
           <name>width</name>
           <value>50%</value>
