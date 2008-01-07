@@ -45,12 +45,12 @@ public class JpaPortletEntityDaoTest extends AbstractJpaTests {
 //        final Set<IPortletEntity> portEnts = this.jpaPortletEntityDao.getPortletEntities(new PortletDefinitionIdImpl("1"));
 //        assertEquals(Collections.emptySet(), portEnts);
         
-        final IPortletEntity portEnt = new PortletEntityImpl(new PortletDefinitionImpl(1, "portApp1", "port1"), "chanSub1", 1);
+        final IPortletEntity portEnt = new PortletEntityImpl(new PortletDefinitionImpl(1), "chanSub1", 1);
         this.jpaPortletEntityDao.deletePortletEntity(portEnt);
     }
 
     public void testAllMethods() throws Exception {
-        final IPortletDefinition portDef1 = this.jpaPortletDefinitionDao.createPortletDefinition(1, "portApp1", "port1");
+        final IPortletDefinition portDef1 = this.jpaPortletDefinitionDao.createPortletDefinition(1, "appId", "portName");
         
         final IPortletEntity portEnt1 = this.jpaPortletEntityDao.createPortletEntity(portDef1.getPortletDefinitionId(), "chanSub1", 1);
         this.checkPoint();

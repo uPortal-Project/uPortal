@@ -20,9 +20,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.channels.portlet.IPortletAdaptor;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IEntity;
 import org.jasig.portal.groups.IEntityGroup;
@@ -37,12 +37,16 @@ import org.jasig.portal.portlet.om.IPortletPreferences;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.rdbm.DatabaseMetaDataImpl;
+import org.jasig.portal.rdbm.IDatabaseMetadata;
+import org.jasig.portal.rdbm.IJoinQueryString;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.EntityCachingService;
 import org.jasig.portal.services.GroupService;
 import org.jasig.portal.spring.PortalApplicationContextLocator;
 import org.jasig.portal.tools.versioning.VersionsManager;
 import org.jasig.portal.utils.CounterStoreFactory;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -50,38 +54,49 @@ import org.springframework.context.ApplicationContext;
  * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
-public class RDBMChannelRegistryStore implements IChannelRegistryStore {
+public class RDBMChannelRegistryStore implements IChannelRegistryStore, InitializingBean {
 
 	private static final Log log = LogFactory.getLog(RDBMChannelRegistryStore.class);
 
-	/**
-	 * Add join queries for databases that are known to support them
-	 */
-	static {
-		try {
-			if (RDBMServices.getDbMetaData().supportsOuterJoins()) {
-				if (RDBMServices.getDbMetaData().getJoinQuery() instanceof DatabaseMetaDataImpl.JdbcDb) {
-					RDBMServices.getDbMetaData().getJoinQuery().addQuery("channel",
-					"{oj UP_CHANNEL UC LEFT OUTER JOIN UP_CHANNEL_PARAM UCP ON UC.CHAN_ID = UCP.CHAN_ID} WHERE");
-				} else if (RDBMServices.getDbMetaData().getJoinQuery() instanceof DatabaseMetaDataImpl.PostgreSQLDb) {
-					RDBMServices.getDbMetaData().getJoinQuery().addQuery("channel",
-					"UP_CHANNEL UC LEFT OUTER JOIN UP_CHANNEL_PARAM UCP ON UC.CHAN_ID = UCP.CHAN_ID WHERE");
-				} else if (RDBMServices.getDbMetaData().getJoinQuery() instanceof DatabaseMetaDataImpl.OracleDb) {
-					RDBMServices.getDbMetaData().getJoinQuery().addQuery("channel",
-					"UP_CHANNEL UC, UP_CHANNEL_PARAM UCP WHERE UC.CHAN_ID = UCP.CHAN_ID(+) AND");
-				} else {
-					throw new Exception("Unknown database driver");
-				}
-			}
-		} catch (Exception e) {
-			log.error( "RDBMChannelRegistryStore: Error in static initializer", e);
-		}
-	}
-
 	// I18n property
 	protected static final boolean localeAware = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.i18n.LocaleManager.locale_aware", LocaleManager.DEFAULT_LOCALE_AWARE);
-
+	
+	private IDatabaseMetadata databaseMetadata;
+	
 	/**
+	 * @param databaseMetadata
+	 */
+	@Required
+	public void setDatabaseMetadata(IDatabaseMetadata databaseMetadata) {
+	    Validate.notNull(databaseMetadata);
+	    this.databaseMetadata = databaseMetadata;
+	}
+
+	/* (non-Javadoc)
+     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+     */
+    public void afterPropertiesSet() throws Exception {
+        //Add join queries for databases that are known to support them
+        if (this.databaseMetadata.supportsOuterJoins()) {
+            final IJoinQueryString joinQuery = this.databaseMetadata.getJoinQuery();
+            if (joinQuery instanceof DatabaseMetaDataImpl.JdbcDb) {
+                joinQuery.addQuery("channel", "{oj UP_CHANNEL UC LEFT OUTER JOIN UP_CHANNEL_PARAM UCP ON UC.CHAN_ID = UCP.CHAN_ID} WHERE");
+            }
+            else if (joinQuery instanceof DatabaseMetaDataImpl.PostgreSQLDb) {
+                joinQuery.addQuery("channel", "UP_CHANNEL UC LEFT OUTER JOIN UP_CHANNEL_PARAM UCP ON UC.CHAN_ID = UCP.CHAN_ID WHERE");
+            }
+            else if (joinQuery instanceof DatabaseMetaDataImpl.OracleDb) {
+                joinQuery.addQuery("channel", "UP_CHANNEL UC, UP_CHANNEL_PARAM UCP WHERE UC.CHAN_ID = UCP.CHAN_ID(+) AND");
+            }
+            else {
+                throw new Exception("Unknown database driver");
+            }
+        }
+    }
+
+
+
+    /**
 	 * Create a new ChannelType object.
 	 * @return channelType, the new channel type
 	 * @throws java.lang.Exception
@@ -610,13 +625,13 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
 				
 				deleteChannelParams(con, channelPublishId);
 				ChannelParameter[] parameters = channelDef.getParameters();
+
+                // Keep track of any portlet preferences
+                final boolean isPortlet = channelDef.isPortlet();
+                final LinkedHashMap<String, List<String>> portletPreferencesBuilder = new LinkedHashMap<String, List<String>>();
+                final Map<String, Boolean> portletPreferencesReadOnly = new HashMap<String, Boolean>();
 				
 				if (parameters != null) {
-					// Keep track of any portlet preferences
-				    final LinkedHashMap<String, List<String>> portletPreferencesBuilder = new LinkedHashMap<String, List<String>>();
-				    final Map<String, Boolean> portletPreferencesReadOnly = new HashMap<String, Boolean>();
-				    final boolean isPortlet = channelDef.isPortlet();
-
 					for (int i = 0; i < parameters.length; i++) {
 						String paramName = parameters[i].getName();
 						String paramValue = parameters[i].getValue();
@@ -645,54 +660,57 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
                             insertChannelParam(con, channelPublishId, paramName, paramValue, paramOverride);
                         }
 					}
-					
-					if (isPortlet) {
-				        //Grab the parameters that describe the pluto descriptor objects, the channel may not exist yet
-					    //so these are needed to pass to the portlet registry
-				        final ChannelParameter portletApplicationIdParam = channelDef.getParameter(IPortletAdaptor.CHANNEL_PARAM__PORTLET_APPLICATION_ID);
-				        if (portletApplicationIdParam == null) {
-				            throw new IllegalArgumentException("No portletApplicationId available under ChannelParameter '" + IPortletAdaptor.CHANNEL_PARAM__PORTLET_APPLICATION_ID + "' for channelId:" + channelPublishId);
-				        }
-				        final String portletApplicationId = portletApplicationIdParam.getValue();
-				        
-				        final ChannelParameter portletNameParam = channelDef.getParameter(IPortletAdaptor.CHANNEL_PARAM__PORTLET_NAME);
-				        if (portletNameParam == null) {
-				            throw new IllegalArgumentException("No portletName available under ChannelParameter '" + IPortletAdaptor.CHANNEL_PARAM__PORTLET_NAME + "' for channelId:" + channelPublishId);
-				        }
-				        final String portletName = portletNameParam.getValue();
-					    
-
-				        //Get or Create the portlet definition
-				        final IPortletDefinition portletDefinition = portletDefinitionRegistry.getOrCreatePortletDefinition(channelPublishId, portletApplicationId, portletName);
-					    
-					    
-				        //Convert the Lists into actual IPortletPreference objects
-				        final List<IPortletPreference> portletPreferencesList = new ArrayList<IPortletPreference>(portletPreferencesBuilder.size());
-					    for (final Entry<String, List<String>> prefEntry : portletPreferencesBuilder.entrySet()) {
-					        final String prefName = prefEntry.getKey();
-					        final List<String> prefValues = prefEntry.getValue();
-					        final Boolean readOnly = portletPreferencesReadOnly.get(prefName);
-					        
-					        final IPortletPreference portletPreference = new PortletPreferenceImpl(prefName, readOnly != null ? readOnly : false, prefValues.toArray(new String[prefValues.size()]));
-					        portletPreferencesList.add(portletPreference);
-					    }
-					    
-					    //Update the preferences of the portlet definition
-					    final IPortletPreferences portletPreferences = portletDefinition.getPortletPreferences();
-					    portletPreferences.setPortletPreferences(portletPreferencesList);
-					    portletDefinitionRegistry.updatePortletDefinition(portletDefinition);
-					}
 				}
 
 				// Commit the transaction
 				RDBMServices.commit(con);
-
+				
 				// Notify the cache
 				try {
 					EntityCachingService.instance().update(channelDef);
 				} catch (Exception e) {
 					log.error("Error updating cache for channel definition " + channelDef, e);
 				}
+				
+				//TODO There isn't a good way to tie the success of the portlet commit and the channel definition commit
+				//     together since the portlet definition commit needs the IChannelRegistryStore to know about the channel
+				//     the definition is for during the update.
+                if (isPortlet) {
+//                    //Grab the parameters that describe the pluto descriptor objects, the channel may not exist yet
+//                    //so these are needed to pass to the portlet registry
+//                    final ChannelParameter portletApplicationIdParam = channelDef.getParameter(IPortletAdaptor.CHANNEL_PARAM__PORTLET_APPLICATION_ID);
+//                    if (portletApplicationIdParam == null) {
+//                        throw new IllegalArgumentException("No portletApplicationId available under ChannelParameter '" + IPortletAdaptor.CHANNEL_PARAM__PORTLET_APPLICATION_ID + "' for channelId:" + channelPublishId);
+//                    }
+//                    final String portletApplicationId = portletApplicationIdParam.getValue();
+//                    
+//                    final ChannelParameter portletNameParam = channelDef.getParameter(IPortletAdaptor.CHANNEL_PARAM__PORTLET_NAME);
+//                    if (portletNameParam == null) {
+//                        throw new IllegalArgumentException("No portletName available under ChannelParameter '" + IPortletAdaptor.CHANNEL_PARAM__PORTLET_NAME + "' for channelId:" + channelPublishId);
+//                    }
+//                    final String portletName = portletNameParam.getValue();
+                    
+
+                    //Get or Create the portlet definition
+                    final IPortletDefinition portletDefinition = portletDefinitionRegistry.getOrCreatePortletDefinition(channelPublishId);
+                    
+                    
+                    //Convert the Lists into actual IPortletPreference objects
+                    final List<IPortletPreference> portletPreferencesList = new ArrayList<IPortletPreference>(portletPreferencesBuilder.size());
+                    for (final Entry<String, List<String>> prefEntry : portletPreferencesBuilder.entrySet()) {
+                        final String prefName = prefEntry.getKey();
+                        final List<String> prefValues = prefEntry.getValue();
+                        final Boolean readOnly = portletPreferencesReadOnly.get(prefName);
+                        
+                        final IPortletPreference portletPreference = new PortletPreferenceImpl(prefName, readOnly != null ? readOnly : false, prefValues.toArray(new String[prefValues.size()]));
+                        portletPreferencesList.add(portletPreference);
+                    }
+                    
+                    //Update the preferences of the portlet definition
+                    final IPortletPreferences portletPreferences = portletDefinition.getPortletPreferences();
+                    portletPreferences.setPortletPreferences(portletPreferencesList);
+                    portletDefinitionRegistry.updatePortletDefinition(portletDefinition);
+                }
 
 			} catch (SQLException sqle) {
 				log.error("Exception saving channel definition " + channelDef, sqle);
@@ -704,16 +722,16 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
 		}
 	}
 
-	private static void saveChannelDef(Connection con, ChannelDefinition channelDef) throws SQLException {
+	private void saveChannelDef(Connection con, ChannelDefinition channelDef) throws SQLException {
 		int channelPublishId = channelDef.getId();
 		String sqlTitle = RDBMServices.sqlEscape(channelDef.getTitle());
 		String sqlDescription = RDBMServices.sqlEscape(channelDef.getDescription());
 		String sqlClass = channelDef.getJavaClass();
 		int sqlTypeID = channelDef.getTypeId();
 		int chanPublisherId = channelDef.getPublisherId();
-		String chanPublishDate = RDBMServices.getDbMetaData().sqlTimeStamp(channelDef.getPublishDate());
+		String chanPublishDate = this.databaseMetadata.sqlTimeStamp(channelDef.getPublishDate());
 		int chanApproverId = channelDef.getApproverId();
-		String chanApprovalDate = RDBMServices.getDbMetaData().sqlTimeStamp(channelDef.getApprovalDate());
+		String chanApprovalDate = this.databaseMetadata.sqlTimeStamp(channelDef.getApprovalDate());
 		int sqlTimeout = channelDef.getTimeout();
 		String sqlEditable = RDBMServices.dbFlag(channelDef.isEditable());
 		String sqlHasHelp = RDBMServices.dbFlag(channelDef.hasHelp());
@@ -1134,14 +1152,14 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
 	}
 
 
-	protected static final PreparedStatement getChannelPstmt(Connection con) throws SQLException {
+	protected final PreparedStatement getChannelPstmt(Connection con) throws SQLException {
 		String sql = "SELECT UC.CHAN_TITLE, UC.CHAN_DESC, UC.CHAN_CLASS, UC.CHAN_TYPE_ID, " +
 		"UC.CHAN_PUBL_ID, UC.CHAN_APVL_ID, UC.CHAN_PUBL_DT, UC.CHAN_APVL_DT, " +
 		"UC.CHAN_TIMEOUT, UC.CHAN_EDITABLE, UC.CHAN_HAS_HELP, UC.CHAN_HAS_ABOUT, " +
 		"UC.CHAN_NAME, UC.CHAN_FNAME, UC.CHAN_SECURE";
 
-		if (RDBMServices.getDbMetaData().supportsOuterJoins()) {
-			sql += ", CHAN_PARM_NM, CHAN_PARM_VAL, CHAN_PARM_OVRD, CHAN_PARM_DESC FROM " + RDBMServices.getDbMetaData().getJoinQuery().getQuery("channel");
+		if (this.databaseMetadata.supportsOuterJoins()) {
+			sql += ", CHAN_PARM_NM, CHAN_PARM_VAL, CHAN_PARM_OVRD, CHAN_PARM_DESC FROM " + this.databaseMetadata.getJoinQuery().getQuery("channel");
 		} else {
 			sql += " FROM UP_CHANNEL UC WHERE";
 		}
@@ -1151,15 +1169,15 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore {
 		return con.prepareStatement(sql);
 	}
 
-	protected static final PreparedStatement getChannelParamPstmt(Connection con) throws SQLException {
-		if (RDBMServices.getDbMetaData().supportsOuterJoins()) {
+	protected final PreparedStatement getChannelParamPstmt(Connection con) throws SQLException {
+		if (this.databaseMetadata.supportsOuterJoins()) {
 			return null;
 		} else {
 			return con.prepareStatement("SELECT CHAN_PARM_NM, CHAN_PARM_VAL,CHAN_PARM_OVRD,CHAN_PARM_DESC FROM UP_CHANNEL_PARAM WHERE CHAN_ID=?");
 		}
 	}
 
-	protected static final PreparedStatement getChannelMdataPstmt(Connection con) throws SQLException {
+	protected final PreparedStatement getChannelMdataPstmt(Connection con) throws SQLException {
 		return con.prepareStatement("SELECT LOCALE, CHAN_TITLE, CHAN_DESC, CHAN_NAME FROM UP_CHANNEL_MDATA WHERE CHAN_ID=?");
 	}
 

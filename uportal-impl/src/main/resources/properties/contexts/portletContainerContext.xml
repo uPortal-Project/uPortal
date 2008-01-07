@@ -106,6 +106,7 @@
     <bean id="portletDefinitionRegistry" class="org.jasig.portal.portlet.registry.PortletDefinitionRegistryImpl">
         <property name="portletDefinitionDao" ref="portletDefinitionDao" />
         <property name="optionalContainerServices" ref="optionalContainerServices" />
+        <property name="channelRegistryStore" ref="channelRegistryStore" /> 
     </bean>
     
     

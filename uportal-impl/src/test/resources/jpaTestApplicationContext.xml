@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:p="http://www.springframework.org/schema/p"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+    xmlns:util="http://www.springframework.org/schema/util"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
     
     <bean id="rdbmPropertiesPlacholder" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="location" value="classpath:/properties/dataSource.properties" />
@@ -26,10 +27,56 @@
         <property name="database" value="HSQL" />
     </bean>
 
-    <bean id="portletDefinitionDao" class="org.jasig.portal.portlet.dao.jpa.JpaPortletDefinitionDao" />
+    <bean id="portletDefinitionDao" class="org.jasig.portal.portlet.dao.jpa.JpaPortletDefinitionDao">
+        <property name="channelRegistryStore" ref="channelRegistryStore" />
+    </bean>
     
     <bean id="portletEntityDao" class="org.jasig.portal.portlet.dao.jpa.JpaPortletEntityDao">
         <property name="portletDefinitionDao" ref="portletDefinitionDao" />
+    </bean>
+    
+    <util:constant id="CHANNEL_PARAM__PORTLET_APPLICATION_ID" static-field="org.jasig.portal.channels.portlet.IPortletAdaptor.CHANNEL_PARAM__PORTLET_APPLICATION_ID"/>
+    <util:constant id="CHANNEL_PARAM__PORTLET_NAME" static-field="org.jasig.portal.channels.portlet.IPortletAdaptor.CHANNEL_PARAM__PORTLET_NAME"/>
+    
+    <bean id="channelRegistryStore" class="org.jasig.portal.mock.MockChannelRegistryStore">
+        <property name="channelDefinitions">
+            <set>
+                <bean class="org.jasig.portal.ChannelDefinition">
+                    <constructor-arg value="1" />
+                    <property name="parameters">
+                        <list>
+                            <bean class="org.jasig.portal.ChannelParameter">
+                                <constructor-arg index="0" ref="CHANNEL_PARAM__PORTLET_APPLICATION_ID" />
+                                <constructor-arg index="1" value="appId" />
+                                <constructor-arg index="2" value="true" />
+                            </bean>
+                            <bean class="org.jasig.portal.ChannelParameter">
+                                <constructor-arg index="0" ref="CHANNEL_PARAM__PORTLET_NAME" />
+                                <constructor-arg index="1" value="portName" />
+                                <constructor-arg index="2" value="true" />
+                            </bean>
+                        </list>
+                    </property>
+                </bean>
+                <bean class="org.jasig.portal.ChannelDefinition">
+                    <constructor-arg value="2" />
+                    <property name="parameters">
+                        <list>
+                            <bean class="org.jasig.portal.ChannelParameter">
+                                <constructor-arg index="0" ref="CHANNEL_PARAM__PORTLET_APPLICATION_ID" />
+                                <constructor-arg index="1" value="appId" />
+                                <constructor-arg index="2" value="true" />
+                            </bean>
+                            <bean class="org.jasig.portal.ChannelParameter">
+                                <constructor-arg index="0" ref="CHANNEL_PARAM__PORTLET_NAME" />
+                                <constructor-arg index="1" value="portName" />
+                                <constructor-arg index="2" value="true" />
+                            </bean>
+                        </list>
+                    </property>
+                </bean>
+            </set>
+        </property>
     </bean>
 
 

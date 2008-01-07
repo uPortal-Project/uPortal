@@ -40,10 +40,7 @@ public class JpaPortletDefinitionDaoTest extends AbstractJpaTests {
         final IPortletDefinition nullPortDef1 = this.jpaPortletDefinitionDao.getPortletDefinition(1);
         assertNull(nullPortDef1);
         
-        final Set<IPortletDefinition> portDefs = this.jpaPortletDefinitionDao.getPortletDefinitions("appId", "portName");
-        assertEquals(Collections.emptySet(), portDefs);
-        
-        final IPortletDefinition portDef = new PortletDefinitionImpl(1, "appId", "portName");
+        final PortletDefinitionImpl portDef = new PortletDefinitionImpl(1);
         this.jpaPortletDefinitionDao.deletePortletDefinition(portDef);
     }
 
@@ -60,28 +57,14 @@ public class JpaPortletDefinitionDaoTest extends AbstractJpaTests {
         final IPortletDefinition portDef1b = this.jpaPortletDefinitionDao.getPortletDefinition(1);
         assertEquals(portDef1, portDef1b);
         
-        final Set<IPortletDefinition> portletDefinitions1 = this.jpaPortletDefinitionDao.getPortletDefinitions("appId", "portName");
-        assertEquals(Collections.singleton(portDef1), portletDefinitions1);
-        
-        
         //Create a secod definition with the same app/portlet
         final IPortletDefinition portDef2 = this.jpaPortletDefinitionDao.createPortletDefinition(2, "appId", "portName");
         this.checkPoint();
         
         
-        //Try Set based retrieval of both
-        final Set<IPortletDefinition> portletDefinitions2 = this.jpaPortletDefinitionDao.getPortletDefinitions("appId", "portName");
-        assertEquals(Util.unmodifiableSet(portDef1, portDef2), portletDefinitions2);
-        
-        
         //Remove the first definition
         this.jpaPortletDefinitionDao.deletePortletDefinition(portDef1);
         this.checkPoint();
-        
-        
-        //Make sure the set now only has the second definition in it
-        final Set<IPortletDefinition> portletDefinitions3 = this.jpaPortletDefinitionDao.getPortletDefinitions("appId", "portName");
-        assertEquals(Collections.singleton(portDef2), portletDefinitions3);
         
         
         // Add some preferences

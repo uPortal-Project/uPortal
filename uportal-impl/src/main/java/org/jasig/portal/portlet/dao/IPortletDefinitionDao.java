@@ -23,7 +23,5 @@ public interface IPortletDefinitionDao {
     
     public IPortletDefinition getPortletDefinition(int channelPublishId);
     
-    public Set<IPortletDefinition> getPortletDefinitions(String portletApplicaitonId, String portletName);
-    
     public void deletePortletDefinition(IPortletDefinition portletDefinition);
 }

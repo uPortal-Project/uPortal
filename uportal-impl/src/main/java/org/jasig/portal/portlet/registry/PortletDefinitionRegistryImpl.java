@@ -15,7 +15,6 @@ import org.apache.pluto.descriptors.portlet.PortletDD;
 import org.apache.pluto.spi.optional.PortletRegistryService;
 import org.jasig.portal.ChannelDefinition;
 import org.jasig.portal.ChannelParameter;
-import org.jasig.portal.ChannelRegistryStoreFactory;
 import org.jasig.portal.IChannelRegistryStore;
 import org.jasig.portal.channels.portlet.IPortletAdaptor;
 import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
@@ -28,7 +27,6 @@ import org.springframework.beans.factory.annotation.Required;
  * of {@link IPortletDefinition}s.
  * 
  * TODO this needs to listen for channel deletion events and remove the corresponding portlet definition, this would likley need a hook in ChannelRegistryManager.removeChannel
- * TODO should this class be using ChannelRegistryManager instead of ChannelRegistryStore to get ChannelDefintion objects?
  * 
  * @author Eric Dalquist
  * @version $Revision$
@@ -36,6 +34,7 @@ import org.springframework.beans.factory.annotation.Required;
 public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry {
     protected final Log logger = LogFactory.getLog(this.getClass());
     
+    private IChannelRegistryStore channelRegistryStore;
     private IPortletDefinitionDao portletDefinitionDao;
     private OptionalContainerServices optionalContainerServices;
     
@@ -53,6 +52,7 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
         Validate.notNull(portletDefinitionDao);
         this.portletDefinitionDao = portletDefinitionDao;
     }
+    
     /**
      * @return the optionalContainerServices
      */
@@ -68,20 +68,27 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
         this.optionalContainerServices = optionalContainerServices;
     }
     
+    /**
+     * @return the channelRegistryStore
+     */
+    public IChannelRegistryStore getChannelRegistryStore() {
+        return channelRegistryStore;
+    }
+    /**
+     * @param channelRegistryStore the channelRegistryStore to set
+     */
+    @Required
+    public void setChannelRegistryStore(IChannelRegistryStore channelRegistryStore) {
+        Validate.notNull(channelRegistryStore);
+        this.channelRegistryStore = channelRegistryStore;
+    }
+    
     
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.registry.IPortletDefinitionRegistry#createPortletDefinition(int)
      */
     public IPortletDefinition createPortletDefinition(int channelPublishId) {
-        //Lookup the ChannelDefinition
-        final IChannelRegistryStore channelRegistryStore = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl();
-        final ChannelDefinition channelDefinition;
-        try {
-            channelDefinition = channelRegistryStore.getChannelDefinition(channelPublishId);
-        }
-        catch (Exception e) {
-            throw new IllegalArgumentException("Failed to retrieve required ChannelDefinition for channelPublishId: " + channelPublishId, e);
-        }
+        final ChannelDefinition channelDefinition = this.getChannelDefinition(channelPublishId);
         
         //Grab the parameters that describe the pluto descriptor objects
         final ChannelParameter portletApplicationIdParam = channelDefinition.getParameter(IPortletAdaptor.CHANNEL_PARAM__PORTLET_APPLICATION_ID);
@@ -187,5 +194,20 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
         final String portletName = portletDefinition.getPortletName();
         
         return portletRegistryService.getPortletDescriptor(portletApplicationId, portletName);
+    }
+    
+    /**
+     * Get the ChannelDefinition for the specified channelPublishId
+     */
+    protected ChannelDefinition getChannelDefinition(int channelPublishId) {
+        //Lookup the ChannelDefinition
+        final ChannelDefinition channelDefinition;
+        try {
+            channelDefinition = this.channelRegistryStore.getChannelDefinition(channelPublishId);
+        }
+        catch (Exception e) {
+            throw new IllegalArgumentException("Failed to retrieve required ChannelDefinition for channelPublishId: " + channelPublishId, e);
+        }
+        return channelDefinition;
     }
 }

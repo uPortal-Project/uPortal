@@ -8,16 +8,18 @@
     http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
     http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
     
-    <!--********** Portlet DAOs ********** -->
+    <!-- ********** Portlet DAOs ********** -->
 
-    <bean id="portletDefinitionDao" class="org.jasig.portal.portlet.dao.jpa.JpaPortletDefinitionDao" />
+    <bean id="portletDefinitionDao" class="org.jasig.portal.portlet.dao.jpa.JpaPortletDefinitionDao">
+        <property name="channelRegistryStore" ref="channelRegistryStore" /> 
+    </bean>
     
     <bean id="portletEntityDao" class="org.jasig.portal.portlet.dao.jpa.JpaPortletEntityDao">
         <property name="portletDefinitionDao" ref="portletDefinitionDao" />
     </bean>
 
 
-    <!--********** JPA Beans ********** -->
+    <!-- ********** JPA Beans ********** -->
     
     <aop:config>
         <aop:aspect ref="threadContextClassLoaderAspect">
@@ -47,6 +49,4 @@
     <tx:annotation-driven transaction-manager="transactionManager" />
 
     <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
-    
-    <bean class="org.springframework.beans.factory.annotation.RequiredAnnotationBeanPostProcessor" />
 </beans>

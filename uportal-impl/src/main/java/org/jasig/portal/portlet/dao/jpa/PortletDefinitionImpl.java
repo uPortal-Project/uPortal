@@ -44,7 +44,6 @@ import org.jasig.portal.portlet.om.IPortletPreferences;
 @org.hibernate.annotations.Table(
         appliesTo = "UP_PORTLET_DEF", 
         indexes = {
-            @Index(name = "IDX_PORT_DEF__PORT_APP_DD", columnNames = { "PORTLET_APP_ID", "PORTLET_NAME" }),
             @Index(name = "IDX_PORT_DEF__CHAN_DEF", columnNames = "CHANNEL_DEF_ID")
         }
     )
@@ -57,12 +56,6 @@ class PortletDefinitionImpl implements IPortletDefinition {
 
     @Column(name = "CHANNEL_DEF_ID", nullable = false, updatable = false, unique = true)
     private final int channelDefinitionId;
-
-    @Column(name = "PORTLET_APP_ID", length = 512, nullable = false, updatable = false)
-    private final String portletApplicaitonId;
-
-    @Column(name = "PORTLET_NAME", length = 512, nullable = false, updatable = false)
-    private final String portletName;
 
     //Hidden reference to the parent portlet definition, used by hibernate for referential integrety
     @SuppressWarnings("unused")
@@ -78,6 +71,13 @@ class PortletDefinitionImpl implements IPortletDefinition {
     @Transient
     private IPortletDefinitionId portletDefinitionId = null;
 
+    @Transient
+    private String portletApplicaitonId;
+
+    @Transient
+    private String portletName;
+
+    
     
     /**
      * Used to initialize fields after persistence actions.
@@ -104,12 +104,20 @@ class PortletDefinitionImpl implements IPortletDefinition {
         this.portletPreferences = null;
     }
     
-    public PortletDefinitionImpl(int channelDefinitionId, String portletApplicaitonId, String portletName) {
+    public PortletDefinitionImpl(int channelDefinitionId) {
         this.internalPortletDefinitionId = -1;
         this.channelDefinitionId = channelDefinitionId;
-        this.portletApplicaitonId = portletApplicaitonId;
-        this.portletName = portletName;
+        this.portletApplicaitonId = null;
+        this.portletName = null;
         this.portletPreferences = new PortletPreferencesImpl();
+    }
+    
+    protected void setPortletApplicaitonId(String portletApplicaitonId) {
+        this.portletApplicaitonId = portletApplicaitonId;
+    }
+    
+    protected void setPortletName(String portletName) {
+        this.portletName = portletName;
     }
     
 
@@ -131,6 +139,10 @@ class PortletDefinitionImpl implements IPortletDefinition {
      * @see org.jasig.portal.om.portlet.IPortletDefinition#getPortletApplicationId()
      */
     public String getPortletApplicationId() {
+        if (this.portletApplicaitonId == null) {
+            throw new IllegalStateException("portletApplicaitonId should have been previously initialized");
+        }
+        
         return this.portletApplicaitonId;
     }
 
@@ -138,6 +150,10 @@ class PortletDefinitionImpl implements IPortletDefinition {
      * @see org.jasig.portal.om.portlet.IPortletDefinition#getPortletName()
      */
     public String getPortletName() {
+        if (this.portletName == null) {
+            throw new IllegalStateException("portletName should have been previously initialized");
+        }
+        
         return this.portletName;
     }
 

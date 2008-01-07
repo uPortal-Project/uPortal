@@ -49,28 +49,35 @@ Version $Revision: 1.1 $
     <step>
       <ID>1</ID>
 
-      <name>Portlet Definition</name>
+      <name>Portlet Descriptor</name>
 
       <description>
-        Enter the Portlet Definition ID.
+        Enter the Portlet web-application path and portlet name.
       </description>
 
       <parameter modify="publish-only">
-        <name>portletDefinitionId</name>
-        <label>Portlet definition ID</label>
+        <name>portletApplicationId</name>
+        <label>Portlet Web Application Path</label>
         <type base="string" input="text" display="text">
           <length>40</length>
           <maxlength>2000</maxlength>
         </type>
-        <example>testsuite.TestPortlet1</example>
+        <example>/pluto-testsuite</example>
         <description>
-          The syntax for the portlet definition ID is the name of the
-          portlet application context name, followed by a period, followed by
-          the name of the portlet as defined in the portlet deployment descriptor
-          (portlet.xml). For example, if the portlet is located in a file called
-          \n\nMyPortletApp.war\n\n and the portlet has a name of
-          \n\nMyFirstPortlet\n\n then the portlet definition ID would be
-          \n\nMyPortletApp.MyFirstPortlet\n\n
+          This is the name of the web application the portlet resides in including a preceding /.
+        </description>
+      </parameter>
+      
+      <parameter modify="publish-only">
+        <name>portletName</name>
+        <label>Portlet Name</label>
+        <type base="string" input="text" display="text">
+          <length>40</length>
+          <maxlength>2000</maxlength>
+        </type>
+        <example>test-port-et-1</example>
+        <description>
+          This is the name of the portlet as defined in the portlet.xml descriptor.
         </description>
       </parameter>
 
