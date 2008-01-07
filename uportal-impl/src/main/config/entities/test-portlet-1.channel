@@ -6,7 +6,7 @@
   <desc>Test portlet 1 from Apache Pluto</desc>
   <type>Portlet</type>
   <class>org.jasig.portal.channels.portlet.CSpringPortletAdaptor</class>
-  <timeout>60000</timeout>
+  <timeout>600000</timeout>
   <hasedit>N</hasedit>
   <hashelp>N</hashelp>
   <hasabout>N</hasabout>

@@ -35,7 +35,6 @@
           <name>width</name>
           <value>70%</value>
         </structure-attribute>
-        <channel fname="test-portlet-1"/>
         <channel fname="wsrp-library-search"/>
       </column>
     </tab>
