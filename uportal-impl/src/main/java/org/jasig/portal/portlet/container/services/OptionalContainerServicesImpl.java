@@ -9,7 +9,6 @@ import org.apache.commons.lang.Validate;
 import org.apache.pluto.core.DefaultOptionalContainerServices;
 import org.apache.pluto.core.DefaultPortalAdministrationService;
 import org.apache.pluto.spi.optional.PortalAdministrationService;
-import org.apache.pluto.spi.optional.PortletInfoService;
 import org.apache.pluto.spi.optional.PortletPreferencesService;
 import org.apache.pluto.spi.optional.UserInfoService;
 import org.springframework.beans.factory.annotation.Required;
@@ -56,15 +55,6 @@ public class OptionalContainerServicesImpl extends DefaultOptionalContainerServi
     @Override
     public PortalAdministrationService getPortalAdministrationService() {
         return this.portalAdministrationService;
-    }
-
-    /* (non-Javadoc)
-     * @see org.apache.pluto.core.DefaultOptionalContainerServices#getPortletInfoService()
-     */
-    @Override
-    public PortletInfoService getPortletInfoService() {
-        // TODO tie into channel manager info for title & such
-        return super.getPortletInfoService();
     }
 
     /* (non-Javadoc)
