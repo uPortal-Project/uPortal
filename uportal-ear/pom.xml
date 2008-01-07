@@ -51,6 +51,13 @@
             <version>${pom.parent.version}</version>
             <type>war</type>
         </dependency>
+        
+        <dependency>
+            <groupId>org.jasig.portal.portlets-overlay</groupId>
+            <artifactId>FunctionalTestsPortlet</artifactId>
+            <version>${pom.parent.version}</version>
+            <type>war</type>
+        </dependency>
 <!-- 
         <dependency>
             <groupId>org.jasig.portlet</groupId>
@@ -161,6 +168,12 @@
                             <artifactId>pluto-testsuite</artifactId>
                             <bundleFileName>pluto-testsuite.war</bundleFileName>
                             <contextRoot>/pluto-testsuite</contextRoot>
+                        </webModule>
+                        <webModule>
+                            <groupId>org.jasig.portal.portlets-overlay</groupId>
+                            <artifactId>FunctionalTestsPortlet</artifactId>
+                            <bundleFileName>FunctionalTestsPortlet.war</bundleFileName>
+                            <contextRoot>/FunctionalTestsPortlet</contextRoot>
                         </webModule>
                         <!-- 
                         <webModule>
