@@ -6,6 +6,7 @@
 package  org.jasig.portal.security;
 
 import java.io.Serializable;
+import java.security.Principal;
 import java.util.Enumeration;
 import java.util.Map;
 
@@ -16,7 +17,7 @@ import org.jasig.portal.IBasicEntity;
  * @author Bernie Durfee, bdurfee@interactivebusiness.com
  * @version $Revision$
  */
-public interface IPerson extends IAdditionalDescriptor, IBasicEntity, Serializable {
+public interface IPerson extends Principal, IAdditionalDescriptor, IBasicEntity, Serializable {
 
   /**
    * String used as a key for the eduPerson username attribute.

@@ -5,6 +5,7 @@
 
 package org.jasig.portal.url;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -16,6 +17,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.Validate;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.IPersonManager;
 
 /**
  * WritableHttpServletRequestImpl description.
@@ -23,7 +26,8 @@ import org.apache.commons.lang.Validate;
  * @author Peter Kharchenko: pkharchenko at unicon.net
  * @version $Revision: 11911 $
  */
-public class WritableHttpServletRequestImpl extends AbstractHttpServletRequestWrapper implements IWritableHttpServletRequest {
+public class PortalHttpServletRequest extends AbstractHttpServletRequestWrapper implements IWritableHttpServletRequest {
+    private final IPersonManager personManager;
     private final Map<String, String[]> parameterMap = new HashMap<String, String[]>();
 
     /**
@@ -31,11 +35,14 @@ public class WritableHttpServletRequestImpl extends AbstractHttpServletRequestWr
      * @param this.request Request to wrap, can not be null.
      */
     @SuppressWarnings("unchecked")
-    public WritableHttpServletRequestImpl(HttpServletRequest request) {
+    public PortalHttpServletRequest(HttpServletRequest request, IPersonManager personManager) {
         super(request);
+        Validate.notNull(personManager);
 
         // place all parameters into the map, saves run-time merging
         this.parameterMap.putAll(request.getParameterMap());
+        
+        this.personManager = personManager;
     }
 
     public boolean addParameterValue(String name, String value) {
@@ -124,5 +131,31 @@ public class WritableHttpServletRequestImpl extends AbstractHttpServletRequestWr
     @Override
     public String[] getParameterValues(String name) {
         return this.parameterMap.get(name);
+    }
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.url.AbstractHttpServletRequestWrapper#getRemoteUser()
+     */
+    @Override
+    public String getRemoteUser() {
+        final Principal userPrincipal = this.getUserPrincipal();
+        if (userPrincipal == null) {
+            return null;
+        }
+
+        return userPrincipal.getName();
+    }
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.url.AbstractHttpServletRequestWrapper#getUserPrincipal()
+     */
+    @Override
+    public Principal getUserPrincipal() {
+        final IPerson person = this.personManager.getPerson(this);
+        if (person == null || person.isGuest()) {
+            return null;
+        }
+        
+        return person;
     }
 }

@@ -3277,6 +3277,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
 
       public EntityIdentifier getEntityIdentifier() {return null;}
       public void setEntityIdentifier(EntityIdentifier ei) {}
+
+      public String getName() { return null; }
     }
 
     private IPerson systemUser = new SystemUser(); // We should be getting this from the uPortal

@@ -34,7 +34,7 @@ import org.jasig.portal.spring.PortalApplicationContextLocator;
 import org.jasig.portal.tools.versioning.Version;
 import org.jasig.portal.tools.versioning.VersionsManager;
 import org.jasig.portal.url.IWritableHttpServletRequest;
-import org.jasig.portal.url.WritableHttpServletRequestImpl;
+import org.jasig.portal.url.PortalHttpServletRequest;
 import org.jasig.portal.url.processing.IRequestParameterProcessorController;
 import org.jasig.portal.utils.ResourceLoader;
 import org.springframework.context.ApplicationContext;
@@ -181,7 +181,7 @@ public void init() throws ServletException {
      */
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse res) {
-        final IWritableHttpServletRequest writableRequest = new WritableHttpServletRequestImpl(request);
+        final IWritableHttpServletRequest writableRequest = new PortalHttpServletRequest(request, personManager);
         this.doGetInternal(writableRequest, res);
     }
     
