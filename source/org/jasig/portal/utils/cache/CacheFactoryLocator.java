@@ -40,7 +40,7 @@ public class CacheFactoryLocator {
             cacheFactory = ((CacheFactory) PortalApplicationContextFacade.getPortalApplicationContext().getBean(CACHE_FACTORY_BEAN));
         }
         catch (Throwable t) {
-            log.warn("The 'cacheFactory' bean is unavailable");
+            log.warn("The 'cacheFactory' bean is unavailable", t);
             cacheFactory = new WhirlyCacheCacheFactory();   // default...
         }
     }
