@@ -3,7 +3,7 @@
   <default-user>demo</default-user>
   <profile name="My web browser profile"> 
     <description>A system profile for common web browsers</description>  
-    <structure name="AL Tabs and columns"/>  
+    <structure name="DLM Tabs and columns"/>  
     <theme name="DLM XHTML"/> 
   </profile>
 </user>
