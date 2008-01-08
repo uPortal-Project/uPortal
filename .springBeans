@@ -10,12 +10,27 @@
 		<config>uportal-impl/src/main/resources/properties/contexts/dlmContext.xml</config>
 		<config>uportal-impl/src/main/resources/properties/contexts/jmxContext.xml</config>
 		<config>uportal-impl/src/main/resources/properties/contexts/ldapContext.xml</config>
-		<config>uportal-impl/src/main/resources/properties/contexts/personDirectory.xml</config>
+		<config>uportal-impl/src/main/resources/properties/contexts/personDirectoryContext.xml</config>
+		<config>uportal-impl/src/main/resources/properties/contexts/portletContainerContext.xml</config>
+		<config>uportal-impl/src/main/resources/properties/contexts/requestParameterProcessingContext.xml</config>
 		<config>uportal-impl/src/main/resources/properties/contexts/statsContext.xml</config>
+		<config>uportal-impl/src/main/resources/properties/contexts/datasourceContext.xml</config>
+		<config>uportal-impl/src/main/resources/properties/contexts/persistenceContext.xml</config>
+		<config>uportal-impl/src/main/resources/properties/contexts/renderingPipelineContext.xml</config>
+		<config>uportal-impl/src/test/resources/jpaTestApplicationContext.xml</config>
+		<config>uportal-impl/src/main/resources/properties/contexts/channelContainerContext.xml</config>
 	</configs>
 	<configSets>
 		<configSet>
-			<name><![CDATA[uPortalWebAppCtx]]></name>
+			<name><![CDATA[JpaDaoTests]]></name>
+			<allowBeanDefinitionOverriding>true</allowBeanDefinitionOverriding>
+			<incomplete>false</incomplete>
+			<configs>
+				<config>uportal-impl/src/test/resources/jpaTestApplicationContext.xml</config>
+			</configs>
+		</configSet>
+		<configSet>
+			<name><![CDATA[WebApplicationContext]]></name>
 			<allowBeanDefinitionOverriding>true</allowBeanDefinitionOverriding>
 			<incomplete>false</incomplete>
 			<configs>
@@ -25,8 +40,14 @@
 				<config>uportal-impl/src/main/resources/properties/contexts/dlmContext.xml</config>
 				<config>uportal-impl/src/main/resources/properties/contexts/jmxContext.xml</config>
 				<config>uportal-impl/src/main/resources/properties/contexts/ldapContext.xml</config>
-				<config>uportal-impl/src/main/resources/properties/contexts/personDirectory.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/personDirectoryContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/portletContainerContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/requestParameterProcessingContext.xml</config>
 				<config>uportal-impl/src/main/resources/properties/contexts/statsContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/datasourceContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/persistenceContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/renderingPipelineContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/channelContainerContext.xml</config>
 			</configs>
 		</configSet>
 	</configSets>

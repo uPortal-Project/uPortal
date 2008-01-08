@@ -10,12 +10,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections15.map.ReferenceMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.PersonDirectory;
 import org.jasig.services.persondir.IPersonAttributeDao;
-import org.jasig.portal.utils.SoftHashMap;
 
 /**
  * A finder implementation to provide IPerson properties derived from the
@@ -29,13 +30,13 @@ public class PersonDirPropertyFinder
     
     private static final Log log = LogFactory.getLog(PersonDirPropertyFinder.class);
     
-    private Class person = org.jasig.portal.security.IPerson.class;
+    private Class<IPerson> person = org.jasig.portal.security.IPerson.class;
     private IPersonAttributeDao pa;
-    private SoftHashMap cache;
+    private Map<String, Map> cache;
 
     public PersonDirPropertyFinder() {
         pa = PersonDirectory.getPersonAttributeDao();
-        cache = new SoftHashMap(120);
+        cache = new ReferenceMap<String, Map>(ReferenceMap.HARD, ReferenceMap.SOFT, 120, .75f, true);
     }
 
     public String[] getPropertyNames(EntityIdentifier entityID) {
@@ -69,7 +70,7 @@ public class PersonDirPropertyFinder
     }
     protected Hashtable getPropertiesHash(EntityIdentifier entityID) {
         Map ht;
-        if ((ht = (Map)cache.get(entityID.getKey())) == null) {
+        if ((ht = cache.get(entityID.getKey())) == null) {
             ht = new Hashtable(0);
             try {
                 ht = pa.getUserAttributes(entityID.getKey());

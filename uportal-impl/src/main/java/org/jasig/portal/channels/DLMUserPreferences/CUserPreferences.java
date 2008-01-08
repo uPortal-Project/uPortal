@@ -37,7 +37,6 @@ public class CUserPreferences implements IPrivilegedChannel {
   IPrivilegedChannel managePreferences = null;
   IPrivilegedChannel manageProfiles = null;
   protected IUserLayoutStore ulsdb;
-  private boolean initialized=false;
   UserProfile editedProfile=null;
 
   public CUserPreferences() throws PortalException {
@@ -79,14 +78,6 @@ public class CUserPreferences implements IPrivilegedChannel {
       up = upm.getUserPreferencesCopy();
     // instantiate the browse state here
 
-    if (!initialized) {
-        instantiateManagePreferencesState(up.getProfile());
-        // Initial state should be manage preferences
-        internalState = managePreferences;
-        internalState.setStaticData(staticData);
-        editedProfile=up.getProfile();
-        initialized=true;
-    }
     if(internalState!=null) {
         internalState.setPortalControlStructures(pcs);
     }
@@ -138,6 +129,12 @@ public class CUserPreferences implements IPrivilegedChannel {
    */
   public void setStaticData(ChannelStaticData sd) throws PortalException {
     this.staticData = sd;
+    
+    instantiateManagePreferencesState(up.getProfile());
+    // Initial state should be manage preferences
+    internalState = managePreferences;
+    internalState.setStaticData(staticData);
+    editedProfile=up.getProfile();
   }
 
   /** CUserPreferences listens for an HttpRequestParameter "userPreferencesAction"

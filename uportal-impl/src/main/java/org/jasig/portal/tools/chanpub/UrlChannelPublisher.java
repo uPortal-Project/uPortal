@@ -11,15 +11,11 @@ import java.io.InputStream;
 import org.dom4j.Document;
 import org.dom4j.Element;
 
-import org.jasig.portal.RDBMServices;
-
 public final class UrlChannelPublisher {
 
     public static void publishChannel(Element m) {
 
         try {
-
-            RDBMServices.setGetDatasourceFromJndi(false);
 
             m.remove(m.attribute("script"));
             Document d = m.getDocument();

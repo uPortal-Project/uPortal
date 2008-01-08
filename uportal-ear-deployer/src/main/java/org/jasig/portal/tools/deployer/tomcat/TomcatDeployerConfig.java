@@ -21,24 +21,35 @@ import org.jasig.portal.tools.deployer.DeployerConfig;
  * @version $Revision$
  */
 public class TomcatDeployerConfig extends DeployerConfig {
-    private File tomcatHome;
-    private File tomcatBase;
-    
-    
-    public File getTomcatHome() {
-        return this.tomcatHome;
-    }
-    public void setTomcatHome(File tomcatHome) {
-        this.tomcatHome = tomcatHome;
-    }
-    public File getTomcatBase() {
-        return this.tomcatBase;
-    }
-    public void setTomcatBase(File tomcatBase) {
-        this.tomcatBase = tomcatBase;
-    }
+    private File webAppsDir;
+    private File jarDir;
     
 
+    /**
+     * @return the webAppsDir
+     */
+    public File getWebAppsDir() {
+        return webAppsDir;
+    }
+    /**
+     * @param webAppsDir the webAppsDir to set
+     */
+    public void setWebAppsDir(File webAppsDir) {
+        this.webAppsDir = webAppsDir;
+    }
+    /**
+     * @return the jarDir
+     */
+    public File getJarDir() {
+        return jarDir;
+    }
+    /**
+     * @param jarDir the jarDir to set
+     */
+    public void setJarDir(File jarDir) {
+        this.jarDir = jarDir;
+    }
+    
 
     /**
      * @see java.lang.Object#equals(Object)
@@ -54,8 +65,8 @@ public class TomcatDeployerConfig extends DeployerConfig {
         TomcatDeployerConfig rhs = (TomcatDeployerConfig)object;
         return new EqualsBuilder()
             .appendSuper(super.equals(object))
-            .append(this.tomcatHome, rhs.tomcatHome)
-            .append(this.tomcatBase, rhs.tomcatBase)
+            .append(this.webAppsDir, rhs.webAppsDir)
+            .append(this.jarDir, rhs.jarDir)
             .isEquals();
     }
 
@@ -66,8 +77,8 @@ public class TomcatDeployerConfig extends DeployerConfig {
     public int hashCode() {
         return new HashCodeBuilder(-110713495, -1544877739)
             .appendSuper(super.hashCode())
-            .append(this.tomcatHome)
-            .append(this.tomcatBase)
+            .append(this.webAppsDir)
+            .append(this.jarDir)
             .toHashCode();
     }
 
@@ -77,8 +88,8 @@ public class TomcatDeployerConfig extends DeployerConfig {
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
-            .append("tomcatHome", this.tomcatHome)
-            .append("tomcatBase", this.tomcatBase)
+            .append("webAppsDir", this.webAppsDir)
+            .append("jarDir", this.jarDir)
             .appendSuper(super.toString())
             .toString();
     }

@@ -19,6 +19,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.spring.PortalApplicationContextLocator;
+import org.jasig.portal.url.support.IChannelRequestParameterManager;
+import org.springframework.context.ApplicationContext;
 
 /**
  * Provides file download capability for the portal.
@@ -49,6 +52,11 @@ public class DownloadDispatchWorker implements IWorkerRequestProcessor {
 
         // gather parameters
         if(channelTarget!=null) {
+            final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
+            final IChannelRequestParameterManager channelParameterManager = (IChannelRequestParameterManager)applicationContext.getBean("channelParameterManager", IChannelRequestParameterManager.class);
+            
+            final Map<String, Object[]> channelParameters = channelParameterManager.getChannelParameters(req, channelTarget);
+            
             Enumeration en = req.getParameterNames();
             if (en != null) {
                 while (en.hasMoreElements()) {
@@ -56,14 +64,15 @@ public class DownloadDispatchWorker implements IWorkerRequestProcessor {
                     if (!pName.equals ("uP_channelTarget")) {
                         Object[] val= (Object[]) req.getParameterValues(pName);
                         if (val == null) {
-                            val = ((IRequestParamWrapper)req).getObjectParameterValues(pName);
+                            val = channelParameters.get(pName);
                         }
                         targetParams.put(pName, val);
                     }
                 }
             }
 
-            IChannel ch = pcs.getChannelManager().getChannelInstance(channelTarget);
+            final ChannelManager channelManager = pcs.getChannelManager();
+            final IChannel ch = channelManager.getChannelInstance(pcs.getHttpServletRequest(), pcs.getHttpServletResponse(), channelTarget);
 
             if(ch!=null) {
                 // set pcs
@@ -76,7 +85,7 @@ public class DownloadDispatchWorker implements IWorkerRequestProcessor {
                 rd.setBrowserInfo(new BrowserInfo(req));
                 rd.setHttpRequestMethod(req.getMethod());
 				rd.setRemoteAddress(req.getRemoteAddr());
-                rd.setUPFile(new UPFileSpec(null,UPFileSpec.RENDER_METHOD,UserInstance.USER_LAYOUT_ROOT_NODE,channelTarget,null));
+                rd.setUPFile(new UPFileSpec(null,UPFileSpec.RENDER_METHOD,UPFileSpec.USER_LAYOUT_ROOT_NODE,channelTarget,null));
                 
                 if (ch instanceof org.jasig.portal.IMimeResponse) {
                   ch.setRuntimeData(rd);

@@ -7,7 +7,6 @@ package org.jasig.portal.jmx;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import org.jasig.portal.ChannelManager;
@@ -17,6 +16,7 @@ import org.jasig.portal.PortalSessionManager;
 import org.jasig.portal.ProblemsTable;
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.UserInstance;
+import org.jasig.portal.rendering.StaticRenderingPipeline;
 import org.jasig.portal.services.Authentication;
 import org.jasig.portal.utils.MovingAverageSample;
 
@@ -42,30 +42,29 @@ public class FrameworkMBeanImpl implements FrameworkMBean {
   /*
    * Track framework rendering performance
    */
-  public long getRenderAverage() {return UserInstance.lastRender.average;}
-  public long getRenderHighMax() {return UserInstance.lastRender.highMax;}
-  public long getRenderLast() {return UserInstance.lastRender.lastSample;}
-  public long getRenderMin() {return UserInstance.lastRender.min;}
-  public long getRenderMax() {return UserInstance.lastRender.max;}
-  public long getRenderTotalRenders() {return UserInstance.lastRender.totalSamples;}
-  public MovingAverageSample getLastRender() {return UserInstance.lastRender;}
+  public long getRenderAverage() {return getLastRender().average;}
+  public long getRenderHighMax() {return getLastRender().highMax;}
+  public long getRenderLast() {return getLastRender().lastSample;}
+  public long getRenderMin() {return getLastRender().min;}
+  public long getRenderMax() {return getLastRender().max;}
+  public long getRenderTotalRenders() {return getLastRender().totalSamples;}
+  public MovingAverageSample getLastRender() {return StaticRenderingPipeline.getLastRenderSample();}
 
 
    public String[] getRecentProblems() {
-    final List rpe = ProblemsTable.getRecentPortalExceptions();
-    final ArrayList al = new ArrayList(rpe.size());
-    for (Iterator it = rpe.iterator(); it.hasNext(); ) {
-      final PortalException pe = (PortalException) it.next();
-      al.add(pe.getMessage());
+        final List<PortalException> rpe = ProblemsTable.getRecentPortalExceptions();
+        final ArrayList<String> al = new ArrayList<String>(rpe.size());
+        for (final PortalException pe : rpe) {
+            al.add(pe.getMessage());
+        }
+        return al.toArray(new String[al.size()]);
     }
-    return (String[]) al.toArray(new String[0]);
-  }
 
   /*
    * sessions
    */
-  public long getUserSessionCount() {return UserInstance.userSessions.longValue();}
-  public long getGuestSessionCount() {return GuestUserInstance.guestSessions.longValue();}
+  public long getUserSessionCount() {return UserInstance.getUserSessions();}
+  public long getGuestSessionCount() {return GuestUserInstance.getGuestSessions();}
 
   /*
    * Track framework database performance
@@ -95,6 +94,6 @@ public class FrameworkMBeanImpl implements FrameworkMBean {
 
   // Threads
   public long getThreadCount() {return PortalSessionManager.getThreadGroup().activeCount();}
-  public long getChannelRendererActiveThreads() {return ChannelManager.activeRenderers.get();}
-  public long getChannelRendererMaxActiveThreads() {return ChannelManager.maxRenderThreads.get();}
+  public long getChannelRendererActiveThreads() {return ChannelManager.getActiveRenderers();}
+  public long getChannelRendererMaxActiveThreads() {return ChannelManager.getMaxRenderThreads();}
 }

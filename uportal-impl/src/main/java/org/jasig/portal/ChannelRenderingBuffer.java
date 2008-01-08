@@ -7,11 +7,13 @@ package org.jasig.portal;
 
 import java.util.Hashtable;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.SAX2BufferImpl;
 import org.xml.sax.Attributes;
-import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
@@ -32,63 +34,40 @@ public class ChannelRenderingBuffer extends SAX2BufferImpl
 {
     
     private static final Log log = LogFactory.getLog(ChannelRenderingBuffer.class);
+
+    private final HttpServletRequest request;
+    private final HttpServletResponse response;
+    private final ChannelManager cm;
+    private final boolean ccaching;
+
+    // information about the current channel
+    private boolean insideChannelElement = false;
+    private Hashtable params;
+    private String channelClassName;
+    private String channelSubscribeId;
+    private String channelPublishId;
+    private long timeOut;
     
-  protected ChannelManager cm;
-
-  // information about the current channel
-  private boolean insideChannelElement = false;
-  private Hashtable params;
-  private String channelClassName;
-  private String channelSubscribeId;
-  private String channelPublishId;
-  private long timeOut;
-    boolean ccaching;
-
-  /**
-   * Default constructor.
-   * @param chanman the channel manager
-   */
-  public ChannelRenderingBuffer(ChannelManager chanman) {
-    super();
-    ccaching=false;
-    this.cm = chanman;
-    this.startBuffering();
-    this.setContentHandler(null);
+  public ChannelRenderingBuffer(XMLReader parent, ChannelManager chanman, boolean ccaching, HttpServletRequest request, HttpServletResponse response) {
+      super(parent);
+      this.cm = chanman;
+      this.ccaching = ccaching;
+      this.request = request;
+      this.response = response;
+      
+      this.setContentHandler(null);
+      this.startBuffering();
   }
-
-  public ChannelRenderingBuffer(ContentHandler ch, ChannelManager chanman) {
-    super(ch);
-    ccaching=false;
-    this.cm = chanman;
-    this.startBuffering();
-    this.setContentHandler(null);
+  
+  public ChannelRenderingBuffer(ChannelManager chanman, boolean ccaching, HttpServletRequest request, HttpServletResponse response) {
+      this.cm = chanman;
+      this.ccaching = ccaching;
+      this.request = request;
+      this.response = response;
+      
+      this.setContentHandler(null);
+      this.startBuffering();
   }
-
-  public ChannelRenderingBuffer(XMLReader parent, ChannelManager chanman) {
-    super(parent);
-    ccaching=false;
-    this.cm = chanman;
-    this.startBuffering();
-    this.setContentHandler(null);
-  }
-
-  public ChannelRenderingBuffer(ChannelManager chanman, boolean ccaching) {
-    this(chanman);
-    this.setCharacterCaching(ccaching);
-  }
-
-  public ChannelRenderingBuffer(ContentHandler ch, ChannelManager chanman, boolean ccaching) {
-    this(ch,chanman);
-    this.setCharacterCaching(ccaching);
-  }
-  public ChannelRenderingBuffer(XMLReader parent, ChannelManager chanman, boolean ccaching) {
-    this(parent,chanman);
-    this.setCharacterCaching(ccaching);
-  }
-
-    public void setCharacterCaching(boolean setting) {
-        this.ccaching=setting;
-    }
 
   public void startDocument() throws SAXException {
     insideChannelElement = false;
@@ -125,7 +104,7 @@ public class ChannelRenderingBuffer extends SAX2BufferImpl
     if (insideChannelElement) {
       if (qName.equals("channel")) {
           try {
-              cm.startChannelRendering(channelSubscribeId);
+              cm.startChannelRendering(this.request, this.response, this.channelSubscribeId);
           } catch (PortalException pe) {
               log.error("ChannelRenderingBuffer::endElement() : unable to start rendering channel! (channelSubscribeId=\""+channelSubscribeId+"\")");
           }

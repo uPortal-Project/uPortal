@@ -67,4 +67,19 @@ public interface IDatabaseMetadata {
      * @return SQL TimeStamp or "NULL" if date is null.
      */
     public String sqlTimeStamp(Date date);
+    
+    /**
+     * @return The JDBC Driver being used
+     */
+    public String getJdbcDriver();
+    
+    /**
+     * @return The JDBC URL being used
+     */
+    public String getJdbcUrl();
+    
+    /**
+     * @return The JDBC user name
+     */
+    public String getJdbcUser();
 }

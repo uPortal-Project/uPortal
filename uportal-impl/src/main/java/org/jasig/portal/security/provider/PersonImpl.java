@@ -208,8 +208,15 @@ public class PersonImpl implements IPerson {
 	  m_eid = ei;
 	  entityIdentifierSet = true;
   }
+  
+      /* (non-Javadoc)
+     * @see java.security.Principal#getName()
+     */
+    public String getName() {
+        return (String)getAttribute(IPerson.USERNAME);
+    }
 
-  public String toString() {
+public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append(PersonImpl.class.getName());
         sb.append(" fullName=[");

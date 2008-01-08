@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd"
->
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
+    default-lazy-init="true">
+    
     <bean id="jmxAdapter" class="org.springframework.jmx.export.MBeanExporter">
+        <property name="ensureUniqueRuntimeObjectNames" value="true" />
         <property name="beans">
             <map>
                 <entry key="uPortal:name=framework">
@@ -15,5 +17,7 @@
         </property>
     </bean>
     <bean id="metadataAssembler" class="org.springframework.jmx.export.assembler.InterfaceBasedMBeanInfoAssembler"></bean>
+    
+    
     <bean id="framework" class="org.jasig.portal.jmx.FrameworkMBeanImpl"></bean>
 </beans>

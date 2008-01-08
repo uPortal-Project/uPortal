@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
+>
+
+    <parent>
+        <groupId>org.jasig.portal</groupId>
+        <artifactId>uportal-portlets-overlay</artifactId>
+        <version>3.0.0-M5-SNAPSHOT</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.jasig.portal.portlets-overlay</groupId>
+    <artifactId>BookmarksPortlet</artifactId>
+    <packaging>war</packaging>
+
+    <name>Bookmarks Portlet</name>
+    <description>Overlay on Bookmarks Portlet.</description>
+
+    <dependencies>
+        <!-- ===== Compile Time Dependencies ============================== -->
+        <dependency>
+            <groupId>org.jasig.portlet</groupId>
+            <artifactId>BookmarksPortlet</artifactId>
+            <version>1.0.7</version>
+            <type>war</type>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>BookmarksPortlet</finalName>
+        <plugins>
+           <plugin>
+                <groupId>org.apache.pluto</groupId>
+                <artifactId>maven-pluto-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>

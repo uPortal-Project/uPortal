@@ -8,8 +8,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jasig.portal.ChannelRegistryManager;
+import org.jasig.portal.IUserInstance;
 import org.jasig.portal.PortalException;
-import org.jasig.portal.UserInstance;
 import org.jasig.portal.UserInstanceManager;
 import org.w3c.dom.Document;
 
@@ -24,7 +24,7 @@ public class RetrieveChannelListServlet extends HttpServlet {
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // Retrieve the user's UserInstance object
         try {
-			UserInstance  userInstance = UserInstanceManager.getUserInstance(request);
+            IUserInstance userInstance = UserInstanceManager.getUserInstance(request);
 			Document registry = ChannelRegistryManager.getChannelRegistry(userInstance.getPerson());
 			response.setContentType("text/xml");
 			response.getWriter().print("<?xml version=\"1.0\" encoding=\"utf-8\"?>");

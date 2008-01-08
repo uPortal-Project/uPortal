@@ -55,15 +55,20 @@ public class CLogin implements IPrivilegedChannel, ICacheable
   public void setPortalControlStructures(PortalControlStructures pcs)
   {
     HttpSession session = pcs.getHttpSession();
-    String authenticationAttempted = (String)session.getAttribute("up_authenticationAttempted");
-    String authenticationError = (String)session.getAttribute("up_authenticationError");
-    attemptedUserName = (String)session.getAttribute("up_attemptedUserName");
-
-    if (authenticationAttempted != null)
-      bauthenticationAttemptFailed = true;
-
-    if (authenticationError != null)
-      bSecurityError = true;
+    try {
+        String authenticationAttempted = (String)session.getAttribute("up_authenticationAttempted");
+        String authenticationError = (String)session.getAttribute("up_authenticationError");
+        attemptedUserName = (String)session.getAttribute("up_attemptedUserName");
+    
+        if (authenticationAttempted != null)
+          bauthenticationAttemptFailed = true;
+    
+        if (authenticationError != null)
+            bSecurityError = true;
+    }
+    catch (IllegalStateException ise) {
+        //ignore
+    }
   }
 
   public ChannelRuntimeProperties getRuntimeProperties()

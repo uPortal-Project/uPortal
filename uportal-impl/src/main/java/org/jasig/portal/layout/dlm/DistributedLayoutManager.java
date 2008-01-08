@@ -55,10 +55,10 @@ import org.jasig.portal.layout.simple.SimpleLayout;
 import org.jasig.portal.security.AdminEvaluator;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
-import org.jasig.portal.spring.PortalApplicationContextListener;
+import org.jasig.portal.spring.PortalApplicationContextLocator;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.XML;
-import org.springframework.web.context.WebApplicationContext;
+import org.springframework.context.ApplicationContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -82,7 +82,7 @@ IFolderLocalNameResolver
     protected final IPerson owner;
     protected final UserProfile profile;
     protected RDBMDistributedLayoutStore store=null;
-    protected Set listeners=new HashSet();
+    protected Set<LayoutEventListener> listeners=new HashSet<LayoutEventListener>();
 
     /**
      * Holds the classpath location of the context file for loading dlm specific
@@ -112,18 +112,17 @@ IFolderLocalNameResolver
     static class ContextHolder
     {
         public static IFolderLabelPolicy getLabelPolicy() {
-            final WebApplicationContext webAppCtx = getWebApplicationContext();
-            if (webAppCtx.containsBean(FOLDER_LABEL_POLICY)) {
-                final IFolderLabelPolicy folderLabelPolicy = (IFolderLabelPolicy)webAppCtx.getBean(FOLDER_LABEL_POLICY, IFolderLabelPolicy.class);
+            final ApplicationContext applicationContext = getApplicationContext();
+            if (applicationContext.containsBean(FOLDER_LABEL_POLICY)) {
+                final IFolderLabelPolicy folderLabelPolicy = (IFolderLabelPolicy)applicationContext.getBean(FOLDER_LABEL_POLICY, IFolderLabelPolicy.class);
                 return folderLabelPolicy;
             }
-            else {
-                return null;
-            }
+
+            return null;
         }
         
-        public static WebApplicationContext getWebApplicationContext() {
-            return PortalApplicationContextListener.getRequiredWebApplicationContext();
+        public static ApplicationContext getApplicationContext() {
+            return PortalApplicationContextLocator.getApplicationContext();
         }
     }
 
@@ -298,8 +297,8 @@ IFolderLocalNameResolver
      */
     private void loadProcessingPipe()
     {
-        final WebApplicationContext webAppCtx = ContextHolder.getWebApplicationContext();
-        processingPipe = (ProcessingPipe)webAppCtx.getBean(ProcessingPipe.PROCESSING_PIPE_BEAN_ID, ProcessingPipe.class);
+        final ApplicationContext applicationContext = ContextHolder.getApplicationContext();
+        processingPipe = (ProcessingPipe)applicationContext.getBean(ProcessingPipe.PROCESSING_PIPE_BEAN_ID, ProcessingPipe.class);
         processingPipe.setResources(owner, this);
     }
     
@@ -1370,17 +1369,17 @@ IFolderLocalNameResolver
                 + owner.getAttribute(IPerson.USERNAME) + ".");
     }
 
-    public Enumeration getChildIds(String nodeId) throws PortalException {
+    public Enumeration<String> getChildIds(String nodeId) throws PortalException {
         return getChildIds( nodeId, false );
     }
 
-    private Enumeration getVisibleChildIds(String nodeId)
+    private Enumeration<String> getVisibleChildIds(String nodeId)
         throws PortalException
     {
         return getChildIds( nodeId, true );
     }
 
-    private Enumeration getChildIds( String nodeId,
+    private Enumeration<String> getChildIds( String nodeId,
                               boolean visibleOnly)
         throws PortalException
     {

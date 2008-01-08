@@ -17,16 +17,18 @@ import java.util.Hashtable;
  */
 
 public class StylesheetUserPreferences implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private int id;
-    private Hashtable parameters;
+    private Hashtable<String, String> parameters;
 
     public StylesheetUserPreferences() {
-        parameters=new Hashtable();
+        parameters=new Hashtable<String, String>();
     }
 
     public StylesheetUserPreferences(StylesheetUserPreferences sup) {
         this.id=sup.id;
-        this.parameters=new Hashtable(sup.getParameterValues());
+        this.parameters=new Hashtable<String, String>(sup.getParameterValues());
     }
     
     /**
@@ -45,7 +47,7 @@ public class StylesheetUserPreferences implements Serializable {
     public void setStylesheetId(int n) { id=n; }
 
     public String getParameterValue(String parameterName) {
-        return (parameterName!=null)?(String)parameters.get(parameterName):null;
+        return (parameterName!=null)?parameters.get(parameterName):null;
     }
 
     public void putParameterValue(String parameterName,String parameterValue) {
@@ -59,11 +61,11 @@ public class StylesheetUserPreferences implements Serializable {
        parameters.remove(parameterName);
     }
 
-    public Hashtable getParameterValues() {
+    public Hashtable<String, String> getParameterValues() {
         return parameters;
     }
 
-    public void setParameterValues(Hashtable parameters) {
+    public void setParameterValues(Hashtable<String, String> parameters) {
       if ( parameters != null )  
         this.parameters=parameters;
       else
@@ -72,9 +74,9 @@ public class StylesheetUserPreferences implements Serializable {
 
     public String getCacheKey() {
         StringBuffer sbKey = new StringBuffer();
-        for(Enumeration e=parameters.keys();e.hasMoreElements();) {
-            String pName=(String)e.nextElement();
-            sbKey.append(pName).append("=").append((String)parameters.get(pName));
+        for(Enumeration<String> e=parameters.keys();e.hasMoreElements();) {
+            String pName=e.nextElement();
+            sbKey.append(pName).append("=").append(parameters.get(pName));
         }
         return sbKey.toString();
     }

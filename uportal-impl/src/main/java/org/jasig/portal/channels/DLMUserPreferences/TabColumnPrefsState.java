@@ -26,6 +26,7 @@ import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 
 import org.jasig.portal.ChannelDefinition;
+import org.jasig.portal.ChannelManager;
 import org.jasig.portal.ChannelParameter;
 import org.jasig.portal.ChannelRegistryManager;
 import org.jasig.portal.ChannelRegistryStoreFactory;
@@ -507,7 +508,8 @@ public class TabColumnPrefsState extends BaseState
     }
 
       // Make sure ChannelManager knows about the new channel
-      pcs.getChannelManager().instantiateChannel(channel.getId());
+      final ChannelManager channelManager = pcs.getChannelManager();
+      channelManager.instantiateChannel(pcs.getHttpServletRequest(), pcs.getHttpServletResponse(), channel.getId());
       saveLayout(true);
   }
 

@@ -5,9 +5,9 @@
 
 package org.jasig.portal.services;
 
-import org.jasig.portal.spring.PortalApplicationContextListener;
+import org.jasig.portal.spring.PortalApplicationContextLocator;
 import org.jasig.services.persondir.IPersonAttributeDao;
-import org.springframework.web.context.WebApplicationContext;
+import org.springframework.context.ApplicationContext;
 
 /**
  * PersonDirectory is a static lookup mechanism for a singleton instance of 
@@ -33,22 +33,26 @@ import org.springframework.web.context.WebApplicationContext;
  * @author andrew.petro@yale.edu
  * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
  * @version $Revision$ $Date$
+ * @deprecated If possible classes that need access to the {@link IPersonAttributeDao} should be Spring managed beans
+ * themselves and just have the dependency injected directly. This class should only be used by non Spring managed code.
  */
 public class PersonDirectory {
 
     private static final String PADAO_BEAN_NAME = "personAttributeDao";
 
     /**
-     * Static lookup for a the configured {@link IPersonAttributeDao}
-     * implementation available from PortalApplicationContextFacade.
+     * Static lookup for a the configured {@link IPersonAttributeDao} implementation available from PortalApplicationContextFacade.
+     * <br/>
+     * <b>Clients of this method SHOULD NOT hold on to references of the returned IPersonAttributeDao. This method should
+     * be called each time the dao is needed (within reason, one call for the lifetime of a method is OK). This ensures that
+     * the object changing due to a context reload will not cause problems.</b> 
      * 
      * @return The PortalApplicationContextFacade configured {@link IPersonAttributeDao} implementation.
-     * @throws IllegalStateException - if PortalApplicationContextFacade does not
-     * supply the IPersonAttributeDao instance.
+     * @throws IllegalStateException If WebApplicationContext does not supply the IPersonAttributeDao instance.
      */
     public static IPersonAttributeDao getPersonAttributeDao() {
-        final WebApplicationContext webAppCtx = PortalApplicationContextListener.getRequiredWebApplicationContext();
-        final IPersonAttributeDao delegate = (IPersonAttributeDao)webAppCtx.getBean(PADAO_BEAN_NAME, IPersonAttributeDao.class);
+        final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
+        final IPersonAttributeDao delegate = (IPersonAttributeDao)applicationContext.getBean(PADAO_BEAN_NAME, IPersonAttributeDao.class);
         
         if (delegate == null) {
             throw new IllegalStateException("A IPersonAttributeDao bean named '" + PADAO_BEAN_NAME + "' does not exist in the Spring WebApplicationContext.");

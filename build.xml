@@ -18,9 +18,9 @@
     <!--
      | Properties that describe the maven project
      +-->
-    <property name="uportal-pluto-support.dir" value="${basedir}/uportal-pluto-support" />
     <property name="uportal-impl.dir" value="${basedir}/uportal-impl" />
     <property name="uportal-war.dir" value="${basedir}/uportal-war" />
+    <property name="uportal-portlets-overlay.dir" value="${basedir}/uportal-portlets-overlay" />
     <property name="uportal-ear.dir" value="${basedir}/uportal-ear" />
     <property name="uportal-ear-deployer.dir" value="${basedir}/uportal-ear-deployer" />
     <property name="uportal-ant-tasks.dir" value="${basedir}/uportal-ant-tasks" />
@@ -37,14 +37,10 @@
         <echo message="Initializing uPortal" />
         <antcall target="deploy-ear" />
         <antcall target="db" />
-<!-- AW (2007/12/13):  Replaced by Import/Export tech
-        <antcall target="pubchan" />
--->
         <antcall target="i18n-db" />
-		<!-- AW (2007/12/12):  Added Import/Export tech... -->
-		<ant antfile="import-export.xml" target="import">
-			<property name="dir" value="uportal-impl/target/classes/properties/db/entities"/>
-		</ant>
+        <antcall target="crn-import">
+            <param name="dir" value="uportal-impl/src/main/resources/properties/db/entities" />
+        </antcall>
         <echo message="Finished initializing uPortal" />
     </target>
 
@@ -63,6 +59,8 @@
 
             <echo message="Invoking DbLoader" />
             <java fork="true" failonerror="true" dir="${uportal-impl.dir}" classname="org.jasig.portal.tools.dbloader.DbLoader">
+                <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
+                
                 <classpath refid="uportal-impl-full.classpath" />
 
                 <arg value="${usetable}" />
@@ -109,6 +107,8 @@
 
             <echo message="Invoking DbUnload" />
             <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.tools.dbloader.DbUnload">
+                <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
+                                
                 <classpath refid="uportal-impl-full.classpath" />
 
                 <arg value="${tablename}" />
@@ -121,6 +121,8 @@
         <uportal-impl-macro>
             <echo message="Invoking DbTest" />
             <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.tools.DbTest">
+                <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
+                                
                 <classpath refid="uportal-impl-full.classpath" />
             </java>
         </uportal-impl-macro>
@@ -139,7 +141,9 @@
                     </or>
                 </not>
                 <then>
-                    <property name="directory" value="${uportal-impl.dir}/src/main/config/chanpub/" />
+                    <fail>
+                        Either 'directory' or 'channel' must be set.
+                    </fail>
                 </then>
             </if>
 
@@ -169,6 +173,8 @@
 
             <echo message="Invoking Channel Publisher Tool" />
             <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.tools.chanpub.ChannelPublisher">
+                <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
+                                
                 <classpath refid="uportal-impl-full.classpath" />
 
                 <arg value="${directoryArg}" />
@@ -198,6 +204,95 @@
             </java>
         </uportal-impl-macro>
     </target>
+    
+    <target name="crn-export" description="Exports the specified entity or entities to XML on the file system">
+        <uportal-impl-macro>
+            <!-- Three properties control the export:  dir, type, and sysid -->
+            <fail unless="type">
+                You must specify a &quot;type&quot; parameter (-Dtype={something}) from the following:  all, layout,
+                all-layouts, channel, all-channels, all-permissions,  all-memberships, group, all-groups, user, 
+                all-users.
+            </fail>
+                
+            <property name="dir" value="." />
+            <property name="sysid" value="" />
+
+            <!-- Invoke Cernunnos specifying script and parameters -->
+            <java fork="true" failonerror="true" dir="${basedir}" classname="org.danann.cernunnos.runtime.Main">
+                <classpath refid="uportal-impl-full.classpath" />
+                <arg value="classpath://org/jasig/portal/io/export.crn" />
+                <arg value="${dir}" />
+                <arg value="${type}" />
+                <arg value="${sysid}" />
+            </java>
+        </uportal-impl-macro>
+    </target>
+
+    <target name="crn-import" description="Imports the specified XML file or files">
+        <uportal-impl-macro>
+            <!-- Two properties control the import:  dir and pattern -->
+            <property name="dir" value="." />
+            <property name="pattern" value="org.jasig.portal.FilePatternPhrase.USE_DEFAULT_VALUE "/>
+
+            <!-- Invoke Cernunnos specifying script and parameters -->
+            <java fork="true" failonerror="true" dir="${basedir}" classname="org.danann.cernunnos.runtime.Main">
+                <classpath refid="uportal-impl-full.classpath" />
+                <arg value="classpath://org/jasig/portal/io/import.crn" />
+                <arg value="${dir}" />
+                <arg value="${pattern}" />
+            </java>
+        </uportal-impl-macro>
+    </target>
+
+    <target name="crn-delete" description="Deletes the specified entity">
+        <uportal-impl-macro>
+            <fail unless="type">
+                You must specify a &quot;type&quot; parameter (-Dtype={something}) from the following:  layout, channel,
+                group, user.
+            </fail>
+            
+            <fail unless="sysid">
+                You must specify a &quot;sysid&quot; parameter (-Dsysid={something}).  The value will be a valid username
+                (user or layout), fname (channel), or name (group).
+            </fail>
+
+            <!-- Invoke Cernunnos specifying script and parameters -->
+            <java fork="true" failonerror="true" dir="${basedir}" classname="org.danann.cernunnos.runtime.Main">
+                <classpath refid="uportal-impl-full.classpath" />
+                <arg value="classpath://org/jasig/portal/io/delete.crn" />
+                <arg value="${type}" />
+                <arg value="${sysid}" />
+            </java>
+        </uportal-impl-macro>
+    </target>
+
+    <!-- TODO is this task needed? -->
+    <target name="crn-make-data-xml" description="Runs the DbUnload tool against all tables listed in data.xml">
+        <uportal-impl-macro>
+
+            <!-- Invoke Cernunnos specifying script and parameters -->
+            <java fork="true" failonerror="true" dir="${basedir}" classname="org.danann.cernunnos.runtime.Main">
+                <classpath refid="uportal-impl-full.classpath" />
+                <arg value="classpath://org/jasig/portal/tools/dbloader/dbunload.crn" />
+            </java>
+        </uportal-impl-macro>
+    </target>
+    
+    <target name="clean" description="Removes the deployed uPortal from the container and runs 'mvn clean'">
+        <antcall target="install-root-pom" />
+        
+        <!-- Clean out uPortal from Tomcat -->
+        <artifact:pom file="${uportal-war.dir}/pom.xml" id="uportal-war.pom" />
+        <property name="destDir" value="${server.base}/webapps/${uportal-war.pom.build.finalName}" />
+        <echo>Deleting '${destDir}'</echo>
+        <delete dir="${destDir}" />
+        
+        <!-- Execute the mvn clean lifecycle -->
+        <antcall target="mvn">
+            <param name="pomDir" value="${basedir}" />
+            <param name="goal" value="clean" />
+        </antcall>
+    </target>
 
     <target name="deploy-ear" description="Deploy uPortal and dependent libraries and portlets to the servlet container">
         <uportal-ant-tasks-macro>
@@ -206,36 +301,77 @@
             </typedef>
 
             <uportal-ear-macro>
-                <up:tomcatEarDeploy ear="${uportal-ear.artifact}" catalinaHome="${server.home}" catalinaBase="${server.base}" extractWars="true" removeExistingDirectories="true" />
+                <up:tomcatEarDeploy ear="${uportal-ear.artifact}" catalinaBase="${server.base}" extractWars="true" removeExistingDirectories="true" />
             </uportal-ear-macro>
         </uportal-ant-tasks-macro>
     </target>
 
     <target name="deploy-war" description="Deploy the uPortal web application to the servlet container">
         <uportal-war-macro>
-            <antcall target="deployPortletApp">
-                <param name="portletApp" value="${uportal-war.artifact}" />
-            </antcall>
+            <basename property="war.contextname" file="${uportal-war.artifact}" suffix=".war" />
+            <property name="destDir" value="${server.base}/webapps/${war.contextname}" />
+            
+            <mkdir dir="${destDir}" />
+            <unwar dest="${destDir}" src="${uportal-war.artifact}" overwrite="true" />
         </uportal-war-macro>
     </target>
 
-    <target name="deployPortletApp" description="Deploys a portlet application">
-        <uportal-impl-macro>
-            <fail unless="portletApp">deployPortletApp Ant target requires the name of the portlet app to deploy.
-                Here it was invoked with the portletApp property not set.
-                It therefore is failing after having done nothing.
-                Execute the help target ('ant help') for help on this and other targets in the uPortal build.
-            </fail>
+    <target name="deployPortletApp" description="Deploys a portlet application" depends="checkTomcatLocation">
+        <!-- Check arguments -->
+        <fail message="'-DportletApp=[WAR File]' must be specified">
+            <condition>
+                <not>
+                    <isset property="portletApp" />
+                </not>
+            </condition>
+        </fail>
+        <fail message="portletApp '${portletApp}' does not exist">
+            <condition>
+                <not>
+                    <available file="${portletApp}" />
+                </not>
+            </condition>
+        </fail>
 
-            <echo message="Invoking Portlet Application Deployment Tool" />
-            <java fork="true" failonerror="true" dir="${basedir}" classname="org.danann.cernunnos.runtime.Main">
-                <classpath refid="uportal-impl-full.classpath" />
+        <!-- Default extractWar to true if it isn't set -->
+        <condition property="extractWar" value="true">
+            <not>
+                <isset property="extractWar" />
+            </not>
+        </condition>
 
-                <arg value="classpath://org/jasig/portal/container/deploy/deploy-portlet-app.crn" />
-                <arg value="${portletApp}" />
-                <arg value="${server.base}/webapps" />
-            </java>
-        </uportal-impl-macro>
+        <basename property="war.filename" file="${portletApp}" />
+        <basename property="war.contextname" file="${portletApp}" suffix=".war" />
+        <property name="destDir" value="${server.base}/webapps/${war.contextname}" />
+
+        <condition property="existingDirectory" value="${destDir}">
+            <istrue value="${removeExistingDirectory}" />
+        </condition>
+        <antcall target="deployPortletApp_removeExistingDirectory" />
+
+        <condition property="extract" value="true">
+            <istrue value="${extractWar}" />
+        </condition>
+        <antcall target="deployPortletApp_assembleAndExtract" />
+        <antcall target="deployPortletApp_assembleDirect" />
+    </target>
+
+    <!-- Helper targets for the deployPortletApp target -->
+    <target name="deployPortletApp_removeExistingDirectory" if="existingDirectory">
+        <delete dir="${existingDirectory}" />
+    </target>
+    <target name="deployPortletApp_assembleAndExtract" if="extract" depends="setup-assembler">
+        <property name="tempWarDir" value="${java.io.tmpdir}" />
+
+        <assemblePortlet destdir="${tempWarDir}" war="${portletApp}" />
+
+        <mkdir dir="${destDir}" />
+        <unwar dest="${destDir}" src="${tempWarDir}/${war.filename}" overwrite="true" />
+
+        <delete file="${tempWarDir}/${war.filename}" />
+    </target>
+    <target name="deployPortletApp_assembleDirect" unless="extract" depends="setup-assembler">
+        <assemblePortlet destdir="${tomcat.webapps}" war="${portletApp}" />
     </target>
 
     <target name="md5passwd" description="Creates a user in the UP_PERSON_DIR table">
@@ -342,9 +478,6 @@
     <target name="all">
         <echo>The "all" Ant task is no supported. Run 'mvn clean compile' for the same result.</echo>
     </target>
-    <target name="clean">
-        <echo>The "clean" Ant task is no supported. Run 'mvn clean' for the same result.</echo>
-    </target>
     <target name="compile">
         <echo>The "compile" Ant task is no supported. Run 'mvn compile' for the same result.</echo>
     </target>
@@ -383,7 +516,7 @@
         <attribute name="project-path" />
         <attribute name="checkFilesId" default="null" />
 
-        <element name="sub-tasks" optional="false" implicit="true" />
+        <element name="sub-tasks" optional="true" implicit="true" />
 
         <sequential>
             <!--
@@ -436,7 +569,7 @@
                     <echo message="Artifact '${@{project-name}.artifact}' is not available or out-of-date, calling 'mvn install'" />
 
                     <antcall target="mvn">
-                        <param name="dir" value="@{project-path}" />
+                        <param name="pomDir" value="@{project-path}" />
                         <param name="goal" value="install" />
                     </antcall>
                 </then>
@@ -454,46 +587,11 @@
     </macrodef>
 
     <!--
-     | Provides a wrapper for tasks that need a classpath that includes the uPortal Pluto
-     | support source and all of its dependencies. The task also ensures the uportal-pluto-support
-     | JAR exists and is up to date.
-     |
-     | The following are available in the pluto-support-sub-tasks element:
-     | pom object   - uportal-pluto-support.pom             - The Maven POM object for the uportal-impl pom
-     | property     - uportal-pluto-support.artifact        - The full path to the uportal-impl JAR
-     | path         - uportal-pluto-support.classpath       - The uportal-impl classpath not including the uportal-impl JAR
-     | path         - uportal-pluto-support-full.classpath  - The uportal-impl classpath including the uportal-impl JAR
-     +-->
-    <macrodef name="uportal-pluto-support-macro">
-        <element name="pluto-support-sub-tasks" optional="false" implicit="true" />
-
-        <sequential>
-            <antcall target="install-root-pom" />
-
-            <maven-artifact-macro project-name="uportal-pluto-support" project-path="${uportal-pluto-support.dir}">
-                <!--
-                 | Include the uportal-pluto-support JAR in the final classpath
-                 +-->
-                <path id="uportal-pluto-support-full.classpath">
-                    <path refid="uportal-pluto-support.classpath" />
-                    <pathelement location="${uportal-pluto-support.artifact}" />
-                </path>
-
-                <!--
-                 | Execute the pluto-support-sub-tasks
-                 +-->
-                <pluto-support-sub-tasks />
-            </maven-artifact-macro>
-        </sequential>
-    </macrodef>
-
-    <!--
      | Provides a wrapper for tasks that need a classpath that includes the uPortal source
      | and all of its dependencies. The task also ensures the uportal-impl JAR exists and
      | is up to date.
      |
      | The following are available in the impl-sub-tasks element:
-     | properties from the uportal-pluto-support-macro macrodef
      | pom object   - uportal-impl.pom                      - The Maven POM object for the uportal-impl pom
      | property     - uportal-impl.artifact                 - The full path to the uportal-impl JAR
      | path         - uportal-impl.classpath                - The uportal-impl classpath not including the uportal-impl JAR
@@ -504,22 +602,20 @@
 
         <sequential>
             <antcall target="checkVersion" />
-            <uportal-pluto-support-macro>
-                <maven-artifact-macro project-name="uportal-impl" project-path="${uportal-impl.dir}">
-                    <!--
-                     | Include the uportal-impl JAR in the final classpath
-                     +-->
-                    <path id="uportal-impl-full.classpath">
-                        <path refid="uportal-impl.classpath" />
-                        <pathelement location="${uportal-impl.artifact}" />
-                    </path>
+            <maven-artifact-macro project-name="uportal-impl" project-path="${uportal-impl.dir}">
+                <!--
+                 | Include the uportal-impl JAR in the final classpath
+                 +-->
+                <path id="uportal-impl-full.classpath">
+                    <path refid="uportal-impl.classpath" />
+                    <pathelement location="${uportal-impl.artifact}" />
+                </path>
 
-                    <!--
-                     | Execute the impl-sub-tasks
-                     +-->
-                    <impl-sub-tasks />
-                </maven-artifact-macro>
-            </uportal-pluto-support-macro>
+                <!--
+                 | Execute the impl-sub-tasks
+                 +-->
+                <impl-sub-tasks />
+            </maven-artifact-macro>
         </sequential>
     </macrodef>
 
@@ -551,6 +647,42 @@
     </macrodef>
 
     <!--
+     | Provides a wrapper for tasks that depend on the portlet overlays being installed and up-to-date.
+     |
+     | No properties are set for the overlay-sub-tasks element.
+     +-->
+    <macrodef name="uportal-portlets-overlay-macro">
+        <element name="overlay-sub-tasks" optional="false" implicit="true" />
+
+        <sequential>
+            <antcall target="checkVersion" />
+            
+            <antcall target="mvn">
+                <param name="pomDir" value="${uportal-portlets-overlay.dir}" />
+                <param name="goal" value="-N" />
+                <param name="goal1" value="install" />
+            </antcall>
+            
+            <for param="portlet-overlay-dir">
+                <path>
+                    <dirset dir="${uportal-portlets-overlay.dir}">
+                        <include name="*"/>
+                    </dirset>
+                </path>
+                <sequential>
+                    <basename file="@{portlet-overlay-dir}" property="@{portlet-overlay-dir}-name" />
+                    <maven-artifact-macro project-name="${@{portlet-overlay-dir}-name}" project-path="@{portlet-overlay-dir}" />
+                </sequential>
+            </for>
+            
+            <!--
+             | Execute the overlay-sub-tasks
+             +-->
+            <overlay-sub-tasks />
+        </sequential>
+    </macrodef>
+    
+    <!--
      | Provides a wrapper for tasks that need a classpath that includes all of the uPortal EAR
      | dependencies. The task also ensures the uportal-ear EAR exists and is up to date.
      |
@@ -567,12 +699,15 @@
             <antcall target="checkVersion" />
             <uportal-war-macro>
                 <fileset id="uportal-war-artifacts" file="${uportal-war.artifact}" />
-                <maven-artifact-macro project-name="uportal-ear" project-path="${uportal-ear.dir}" checkfilesid="uportal-war-artifacts">
-                    <!--
-                     | Execute the ear-sub-tasks
-                     +-->
-                    <ear-sub-tasks />
-                </maven-artifact-macro>
+                
+                <uportal-portlets-overlay-macro>
+                    <maven-artifact-macro project-name="uportal-ear" project-path="${uportal-ear.dir}" checkfilesid="uportal-war-artifacts">
+                        <!--
+                         | Execute the ear-sub-tasks
+                         +-->
+                        <ear-sub-tasks />
+                    </maven-artifact-macro>
+                </uportal-portlets-overlay-macro>
             </uportal-war-macro>
         </sequential>
     </macrodef>
@@ -653,7 +788,7 @@
      +-->
     <target name="install-root-pom">
         <antcall target="mvn">
-            <param name="dir" value="${basedir}" />
+            <param name="pomDir" value="${basedir}" />
             <param name="goal" value="-N" />
             <param name="goal1" value="install" />
         </antcall>
@@ -685,7 +820,7 @@
             </else>
         </if>
 
-        <exec executable="${mvnExecutable}" dir="." vmlauncher="true" resolveexecutable="true" searchpath="true" failonerror="true">
+        <exec executable="${mvnExecutable}" dir="${pomDir}" vmlauncher="true" resolveexecutable="true" searchpath="true" failonerror="true">
             <arg value="${goal}" />
             <arg value="${goal1}" />
             <arg value="${goal2}" />
@@ -708,6 +843,23 @@
         </if>
     </target>
 
+    <target name="checkTomcatLocation">
+        <fail message="server.base build property must be set.">
+            <condition>
+                <not>
+                    <isset property="server.base" />
+                </not>
+            </condition>
+        </fail>
+        <fail message="The server.base build property refers to a non-existant location '${server.base}'">
+            <condition>
+                <not>
+                    <available file="${server.base}" type="dir" />
+                </not>
+            </condition>
+        </fail>
+    </target>
+
     <!-- ============================== Ant Extensions ============================== -->
 
     <typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="urn:maven-artifact-ant">
@@ -722,6 +874,17 @@
         </classpath>
     </taskdef>
 
+    <target name="setup-assembler">
+        <artifact:dependencies pathid="pluto-ant" verbose="false">
+            <pom file="${basedir}/bootstrap/pluto-assembler-pom.xml" />
+        </artifact:dependencies>
+
+        <taskdef classname="org.apache.pluto.ant.AssembleTask" name="assemblePortlet">
+            <classpath>
+                <path refid="pluto-ant" />
+            </classpath>
+        </taskdef>
+    </target>
 
     <macrodef name="echo-path">
         <attribute name="pathref" />

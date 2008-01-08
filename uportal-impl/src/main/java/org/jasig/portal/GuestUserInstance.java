@@ -5,16 +5,11 @@
 
 package org.jasig.portal;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionBindingEvent;
-import javax.servlet.http.HttpSessionBindingListener;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -23,153 +18,134 @@ import org.jasig.portal.events.support.UserSessionCreatedPortalEvent;
 import org.jasig.portal.events.support.UserSessionDestroyedPortalEvent;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.security.IPerson;
+import org.springframework.context.ApplicationEventPublisher;
 
 /**
  * A multithreaded version of a UserInstance.
  * @author Peter Kharchenko {@link <a href="mailto:pkharchenko@interactivebusiness.com">pkharchenko@interactivebusiness.com</a>}
  * @version $Revision$
  */
-public class GuestUserInstance extends UserInstance implements HttpSessionBindingListener {
-
-    private static final Log log = LogFactory.getLog(GuestUserInstance.class);
-    public static final AtomicInteger guestSessions = new AtomicInteger();
-
-    // state class
-    private class IState {
-        private ChannelManager channelManager;
-        private LocaleManager localeManager;
-        private StandaloneChannelRenderer p_browserMapper;
-        private Object p_rendering_lock;
-        public IState() {
-            channelManager=null;
-            p_rendering_lock=null;
-            p_browserMapper=null;
-        }
+public class GuestUserInstance implements IUserInstance {
+    private static final AtomicInteger guestSessions = new AtomicInteger();
+    
+    public static long getGuestSessions() {
+        return guestSessions.longValue();
     }
-    Map stateTable;
+    
+    
+    protected final Log log = LogFactory.getLog(this.getClass());
+
+    // manages channel instances and channel rendering
+    private final ChannelManager channelManager;
+    // manages locale
+    private final LocaleManager localeManager;
+
+    // lock preventing concurrent rendering
+    private final Object renderingLock;
+
+    private final IPerson person;
 
     // manages layout and preferences
-    GuestUserPreferencesManager uLayoutManager;
+    private final GuestUserPreferencesManagerWrapper userPreferencesManager;
 
-    public GuestUserInstance(IPerson person) {
-        super(person);
-        // instantiate state table
-	      stateTable=Collections.synchronizedMap(new HashMap());
-        uLayoutManager=new GuestUserPreferencesManager(person);
-    }
+    public GuestUserInstance(IPerson person, GuestUserPreferencesManager preferencesManager, HttpServletRequest request) {
+        this.person = person;
+        
+        // instantiate locale manager (uPortal i18n)
+        final String acceptLanguage = request.getHeader("Accept-Language");
+        this.localeManager = new LocaleManager(person, acceptLanguage);
 
-    /**
-     * Register arrival of a new session.
-     * Create and populate new state entry.
-     * @param req a <code>HttpServletRequest</code> value
-     */
-    public void registerSession(HttpServletRequest req) throws PortalException {
-	    IState newState=new IState();
-        newState.channelManager=new ChannelManager(new GuestUserPreferencesManagerWrapper(uLayoutManager,req.getSession(false).getId()));
-        newState.localeManager = new LocaleManager(person, req.getHeader("Accept-Language"));
-        newState.p_rendering_lock=new Object();
-        uLayoutManager.setLocaleManager(newState.localeManager);
-        uLayoutManager.registerSession(req);
-        stateTable.put(req.getSession(false).getId(),newState);
-    }
-
-    /**
-     * Unbinds a registered session.
-     * @param sessionId a <code>String</code> value
-     */
-    public void unbindSession(String sessionId) {
-        IState state=(IState)stateTable.get(sessionId);
-        if(state==null) {
-            log.error("GuestUserInstance::unbindSession() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
-            return;
+        //Use the shared user preferences manager
+        final HttpSession session = request.getSession(false);
+        final String sessionId = session.getId();
+        
+        preferencesManager.setLocaleManager(this.localeManager);
+        preferencesManager.registerSession(request);
+        
+        if (preferencesManager.isUserAgentUnmapped(sessionId)) {
+            this.log.warn("A Mapping User-Agent could not be found for the GuestUserPreferencesManagerWrapper");
         }
-        state.channelManager.finishedSession();
-        state.channelManager = null;
-        uLayoutManager.unbindSession(sessionId);
-        stateTable.remove(sessionId);
+        
+        this.userPreferencesManager = new GuestUserPreferencesManagerWrapper(preferencesManager, sessionId);
+        
+        //Initialize the ChannelManager
+        this.channelManager = new ChannelManager(this.userPreferencesManager, session);
+        
+        //Create the rendering lock for the user
+        this.renderingLock = new Object();
+    }
+    
+    
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.IUserInstance#getChannelManager()
+     */
+    public ChannelManager getChannelManager() {
+        return this.channelManager;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.IUserInstance#getLocaleManager()
+     */
+    public LocaleManager getLocaleManager() {
+        return this.localeManager;
     }
 
-    /**
-     * This notifies UserInstance that it has been unbound from the session.
-     * Method triggers cleanup in ChannelManager.
-     *
-     * @param bindingEvent an <code>HttpSessionBindingEvent</code> value
+    /* (non-Javadoc)
+     * @see org.jasig.portal.IUserInstance#getPerson()
      */
-    public void valueUnbound (HttpSessionBindingEvent bindingEvent) {
-        this.unbindSession(bindingEvent.getSession().getId());
-        if (log.isDebugEnabled())
-            log.debug("GuestUserInstance::valueUnbound() : " +
-                    "unbinding session \""+bindingEvent.getSession().getId()+"\"");
-
-        // Record the destruction of the session
-        EventPublisherLocator.getApplicationEventPublisher().publishEvent(new UserSessionDestroyedPortalEvent(this, person));
-        guestSessions.decrementAndGet();
+    public IPerson getPerson() {
+        return this.person;
     }
 
-    /**
-     * Notifies UserInstance that it has been bound to a session.
-     *
-     * @param bindingEvent a <code>HttpSessionBindingEvent</code> value
+    /* (non-Javadoc)
+     * @see org.jasig.portal.IUserInstance#getPreferencesManager()
      */
-    public void valueBound (HttpSessionBindingEvent bindingEvent) {
-        if (log.isDebugEnabled())
-            log.debug("GuestUserInstance::valueBound() : " +
-                    "instance bound to a new session \"" +
-                    bindingEvent.getSession().getId() + "\"");
+    public IUserPreferencesManager getPreferencesManager() {
+        return this.userPreferencesManager;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.IUserInstance#getRenderingLock()
+     */
+    public Object getRenderingLock() {
+        return this.renderingLock;
+    }
+
+
+    /* (non-Javadoc)
+     * @see javax.servlet.http.HttpSessionBindingListener#valueBound(javax.servlet.http.HttpSessionBindingEvent)
+     */
+    public void valueBound(HttpSessionBindingEvent bindingEvent) {
+        if (log.isDebugEnabled()) {
+            log.debug("instance bound to a new session '" + bindingEvent.getSession().getId() + "'");
+        }
 
         // Record the creation of the session
-        EventPublisherLocator.getApplicationEventPublisher().publishEvent(new UserSessionCreatedPortalEvent(this, person));
+        final ApplicationEventPublisher applicationEventPublisher = EventPublisherLocator.getApplicationEventPublisher();
+        applicationEventPublisher.publishEvent(new UserSessionCreatedPortalEvent(this, person));
+        
         guestSessions.incrementAndGet();
     }
 
-    /**
-     * Prepares for and initates the rendering cycle.
-     * @param req the servlet request object
-     * @param res the servlet response object
+    /* (non-Javadoc)
+     * @see javax.servlet.http.HttpSessionBindingListener#valueUnbound(javax.servlet.http.HttpSessionBindingEvent)
      */
-    public void writeContent (HttpServletRequest req, HttpServletResponse res) throws PortalException {
-        String sessionId=req.getSession(false).getId();
-        IState state=(IState)stateTable.get(sessionId);
-        if(state==null) {
-            log.error("GuestUserInstance::writeContent() : trying to envoke a method on a non-registered sessionId=\""+sessionId+"\".");
-            return;
+    public void valueUnbound(HttpSessionBindingEvent bindingEvent) {
+        final HttpSession session = bindingEvent.getSession();
+        if (log.isDebugEnabled()) {
+            log.debug("unbinding session '" + session.getId() + "'");
         }
-        // instantiate user layout manager and check to see if the profile mapping has been established
-        if (state.p_browserMapper != null) {
-            try {
-                state.p_browserMapper.prepare(req);
-            } catch (Exception e) {
-                throw new PortalException(e);
-            }
-        }
-        if (uLayoutManager.isUserAgentUnmapped(sessionId)) {
-            uLayoutManager.unbindSession(sessionId);
-            uLayoutManager.registerSession(req);
-        } else {
-            // p_browserMapper is no longer needed
-            state.p_browserMapper = null;
-        }
+        
+        this.channelManager.finishedSession(session);
+        
+        this.userPreferencesManager.finishedSession(bindingEvent);
 
-        if (uLayoutManager.isUserAgentUnmapped(sessionId)) {
-            // unmapped browser
-            if (state.p_browserMapper== null) {
-                state.p_browserMapper = new org.jasig.portal.channels.CSelectSystemProfile();
-                state.p_browserMapper.initialize(new Hashtable(), "CSelectSystemProfile", true, true, false, 10000, getPerson());
-            }
-            try {
-                state.p_browserMapper.render(req, res);
-            } catch (PortalException pe) {
-                throw pe;
-            } catch (Throwable t) {
-                // something went wrong trying to show CSelectSystemProfileChannel
-                log.error("GuestUserInstance::writeContent() : CSelectSystemProfileChannel.render() threw: "+t);
-                throw new PortalException("CSelectSystemProfileChannel.render() threw: "+t);
-            }
-            // don't go any further!
-            return;
-        }
-
-        renderState (req, res, state.channelManager, state.localeManager, new GuestUserPreferencesManagerWrapper(uLayoutManager,sessionId),state.p_rendering_lock);
+        // Record the destruction of the session
+        final ApplicationEventPublisher applicationEventPublisher = EventPublisherLocator.getApplicationEventPublisher();
+        applicationEventPublisher.publishEvent(new UserSessionDestroyedPortalEvent(this, person));
+        
+        guestSessions.decrementAndGet();
     }
 }
 

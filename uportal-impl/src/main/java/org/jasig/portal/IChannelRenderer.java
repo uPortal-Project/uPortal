@@ -32,9 +32,6 @@ import org.xml.sax.ContentHandler;
  **/
 public interface IChannelRenderer
 {
-    /** <p> Class version identifier.</p> */
-    public final static String RCS_ID = "@(#) $Header$";
-
     /** <p>Channel rendering was successful.</p> */
     public static int RENDERING_SUCCESSFUL = 0;
 
@@ -76,6 +73,11 @@ public interface IChannelRenderer
      * <p>Cancels the rendering job.
      **/
     void cancelRendering();
+    
+    /**
+     * This method suppose to take care of the runaway rendering threads.
+     */
+    void kill();
 
     /**
      * <p>Returns the channel rendering character set.</p>
@@ -115,7 +117,7 @@ public interface IChannelRenderer
      * @param cacheTables cache table for the channel renderer
      **/
     void setCacheTables(
-        Map cacheTables
+        Map<IChannel, Map<String, ChannelCacheEntry>> cacheTables
         );
 
     /**

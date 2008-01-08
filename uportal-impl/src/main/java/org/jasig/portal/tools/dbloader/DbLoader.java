@@ -97,9 +97,8 @@ public class DbLoader
       this.config = c;
   }
   
-  public static void main(String[] args)
+  public static void main(String[] args) throws Exception
   {
-      RDBMServices.setGetDatasourceFromJndi(false); /*don't try jndi when not in web app */
       Configuration config = new Configuration();
    
     try
@@ -120,6 +119,7 @@ public class DbLoader
     catch (Exception e)
     {
         e.printStackTrace(config.getLog());
+        throw e;
     }
     finally
         // call local exit method to clean up.  This does not actually
@@ -127,11 +127,13 @@ public class DbLoader
         // the case of a run time error.
         {
         exit(config);
-    }
-    config.getLog().flush();
-    
-    if (config.getScriptWriter() != null)
-        config.getScriptWriter().flush();
+        
+        config.getLog().flush();
+        
+        if (config.getScriptWriter() != null)
+            config.getScriptWriter().flush();
+
+        }
   }
 
   public void process()
@@ -274,7 +276,7 @@ public class DbLoader
             config.getLog().println(
                     "DbLoader couldn't obtain a database connection.  " +
                     "See the portal log for details.");
-                return;
+                throw new RuntimeException("DbLoader couldn't obtain a database connection. See log for details", dae);
         }
         finally
         {

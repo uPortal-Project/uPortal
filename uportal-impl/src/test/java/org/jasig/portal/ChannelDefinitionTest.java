@@ -29,7 +29,7 @@ public class ChannelDefinitionTest extends TestCase {
         cd.setJavaClass("org.jasig.portal.channels.CGenericXSLT");
         assertFalse(cd.isPortlet());
         
-        cd.setJavaClass("org.jasig.portal.channels.portlet.CPortletAdapter");
+        cd.setJavaClass("org.jasig.portal.channels.portlet.CSpringPortletAdaptor");
         assertTrue(cd.isPortlet());
         
     }

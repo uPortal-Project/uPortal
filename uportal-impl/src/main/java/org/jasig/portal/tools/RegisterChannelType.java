@@ -26,8 +26,6 @@ public class RegisterChannelType
 
     public static void main(String[] args)
     {
-        RDBMServices.setGetDatasourceFromJndi(false); /*don't try jndi when not in web app */
-        
         // Enforce that exactly 4 arguments are given: class, name, description, and URI
         // and that no arguments are empty
         if (args.length == 4)

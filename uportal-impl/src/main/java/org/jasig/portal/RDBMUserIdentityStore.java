@@ -213,11 +213,11 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
       if (RDBMServices.getDbMetaData().supportsTransactions())
         con.commit();
 
-      try {
-          IPortletPreferencesStore portletPrefStore = PortletPreferencesStoreFactory.getPortletPreferencesStoreImpl();
-          portletPrefStore.deletePortletPreferencesByUser(uPortalUID);
-      }
-      catch (Exception e) { }
+//      try {
+//          IPortletPreferencesStore portletPrefStore = PortletPreferencesStoreFactory.getPortletPreferencesStoreImpl();
+//          portletPrefStore.deletePortletPreferencesByUser(uPortalUID);
+//      }
+//      catch (Exception e) { }
 
     }
     catch (SQLException se) {

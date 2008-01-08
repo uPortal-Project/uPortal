@@ -42,7 +42,7 @@ Author: Andrew Petro, apetro@unicon.net
     Specialized configuration workflow for the UW Bookmarks Portlet version 1.0.7.
   </description>
 
-  <class>org.jasig.portal.channels.portlet.CPortletAdapter</class>
+  <class>org.jasig.portal.channels.portlet.CSpringPortletAdaptor</class>
 
   <params>
     <step>

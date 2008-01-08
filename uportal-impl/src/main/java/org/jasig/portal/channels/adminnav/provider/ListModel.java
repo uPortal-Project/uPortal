@@ -23,12 +23,11 @@ import org.jasig.portal.IChannelRegistryStore;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.PortalSessionManager;
 import org.jasig.portal.UPFileSpec;
-import org.jasig.portal.UserInstance;
 import org.jasig.portal.channels.BaseChannel;
-import org.jasig.portal.channels.adminnav.XMLLinksFileLoader;
 import org.jasig.portal.channels.adminnav.ILabelResolver;
 import org.jasig.portal.channels.adminnav.INavigationModel;
 import org.jasig.portal.channels.adminnav.ResourceBundleResolver;
+import org.jasig.portal.channels.adminnav.XMLLinksFileLoader;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.XSLT;
@@ -78,7 +77,7 @@ public class ListModel extends BaseChannel implements INavigationModel
     private static final String CONFIG_FILE = "/properties/adminNav.xml";
     
     // resource bundle base for config file labels
-    private static final String BUNDLE_BASE = "/properties/adminNav";
+    private static final String BUNDLE_BASE = "properties.adminNav";
     
     // instance of our label resolver
     private static final ILabelResolver resolver 
@@ -188,7 +187,7 @@ public class ListModel extends BaseChannel implements INavigationModel
                 UPFileSpec.buildUPFile(
                     PortalSessionManager.IDEMPOTENT_URL_TAG,
                     UPFileSpec.RENDER_METHOD,
-                    UserInstance.USER_LAYOUT_ROOT_NODE,
+                    UPFileSpec.USER_LAYOUT_ROOT_NODE,
                     null,
                     null);
 
@@ -364,6 +363,7 @@ public class ListModel extends BaseChannel implements INavigationModel
         catch(MissingResourceException mre)
         {
             // ignore since we handle null below.
+            LOG.warn("Could not resolve labelId '" + labelId + "' for locale '" + locale + "' using resolver '" + resolver.getExternalForm() + "'", mre);
         }
         if (label == null)
         {

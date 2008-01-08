@@ -7,14 +7,17 @@ package org.jasig.portal;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 import java.util.Vector;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.jasig.portal.serialize.CachingSerializer;
 import org.jasig.portal.utils.SAX2FilterImpl;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
-import org.xml.sax.helpers.AttributesImpl;
 
 
 /**
@@ -61,36 +64,39 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
     
     private String channelTitle = null;
     
-    private boolean ccaching;
-    private CachingSerializer ser;
+    private final HttpServletRequest request;
+    private final HttpServletResponse response;
+    
+    private final boolean ccaching;
+    private final CachingSerializer ser;
 
-    Vector systemCCacheBlocks;
-    Vector channelIdBlocks;
+    private final List<String> systemCCacheBlocks;
+    private final List<String> channelIdBlocks;
 
     // constructors
 
     /**
      * Downward chaining constructor.
      */
-    public CharacterCachingChannelIncorporationFilter (ContentHandler handler, ChannelManager chanm, boolean ccaching)  {
+    public CharacterCachingChannelIncorporationFilter(ContentHandler handler, ChannelManager chanm, boolean ccaching, HttpServletRequest request, HttpServletResponse response) {
         super(handler);
 
-        if(handler instanceof CachingSerializer) {
-            ser=(CachingSerializer) handler;
-            this.ccaching=true;
-        } else {
-            this.ccaching=false;
+        if (handler instanceof CachingSerializer) {
+            this.ccaching = ccaching;
+            this.ser = (CachingSerializer) handler;
+            this.systemCCacheBlocks = new Vector<String>();
+            this.channelIdBlocks = new Vector<String>();
+        }
+        else {
+            this.ccaching = false;
+            this.ser = null;
+            this.systemCCacheBlocks = null;
+            this.channelIdBlocks = null;
         }
 
         this.cm = chanm;
-        this.ccaching=(this.ccaching && ccaching);
-        if(this.ccaching) {
-            log.debug("CharacterCachingChannelIncorporationFilter() : ccaching=true");
-            systemCCacheBlocks=new Vector();
-            channelIdBlocks=new Vector();
-        } else {
-            log.debug("CharacterCachingChannelIncorporationFilter() : ccaching=false");
-        }
+        this.request = request;
+        this.response = response;
     }
 
 
@@ -99,12 +105,11 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
      *
      * @return a <code>Vector</code> of system character blocks in between which channel renderings should be inserted.
      */
-    public Vector getSystemCCacheBlocks() {
+    public List<String> getSystemCCacheBlocks() {
         if(ccaching) {
             return systemCCacheBlocks;
-        } else {
-            return null;
         }
+        return null;
     }
 
     /**
@@ -113,14 +118,14 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
      * @return a <code>Vector</code> of cache entry blocks corresponding to channel 
      * subscribe Id(s) in an order in which they appear in the overall document.
      */
-    public Vector getChannelIdBlocks() {
+    public List<String> getChannelIdBlocks() {
         if(ccaching) {
             return channelIdBlocks;
-        } else {
-            return null;
         }
+        return null;
     }
 
+    @Override
     public void startDocument () throws SAXException {
         if(ccaching) {
             // start caching
@@ -137,6 +142,7 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
         super.startDocument();
     }
 
+    @Override
     public void endDocument () throws SAXException {
         super.endDocument();
         if(ccaching) {
@@ -164,8 +170,8 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
         }
     }
 
-    public void startElement(String uri, String localName, String qName,
-			Attributes atts) throws SAXException {
+    @Override
+    public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
 
 		if (log.isTraceEnabled()) {
 			log
@@ -259,6 +265,7 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
 		}
 	}
 
+    @Override
     public void endElement (String uri, String localName, String qName) throws SAXException  {
     	
     	if (log.isTraceEnabled()) {
@@ -279,29 +286,24 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
 						if (ccaching) {
 							channelIdBlocks.add(channelSubscribeId);
 						}
-						cm.outputChannel(channelSubscribeId, contentHandler);
+						cm.outputChannel(this.request, this.response, this.channelSubscribeId, contentHandler);
 						if (ccaching) {
 							// start caching again
 							try {
-								if (!ser.startCaching()) {
-									log
-											.error("CharacterCachingChannelIncorporationFilter::endElement() : unable to restart cache after a channel end!");
-								}
-							} catch (IOException ioe) {
-								log
-										.error(
-												"CharacterCachingChannelIncorporationFilter::endElement() : unable to start caching!",
-												ioe);
-							}
+                                if (!ser.startCaching()) {
+                                    log.error("unable to restart cache after a channel end!");
+                                }
+                            }
+                            catch (IOException ioe) {
+                                log.error("unable to start caching!", ioe);
+                            }
 						}
 					} else {
 						// contentHandler was null. This is a serious problem,
 						// since
 						// filtering is pointless if it's not writing back to a
 						// contentHandler
-						log
-								.error("null ContentHandler prevents outputting channel with subscribe id = "
-										+ channelSubscribeId);
+						log.error("null ContentHandler prevents outputting channel with subscribe id = " + channelSubscribeId);
 					}
             	} finally {
                     endIncorporationElement();
@@ -326,14 +328,9 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
 							this.channelTitle = dynamicChannelTitle;
 						}
 						
-						AttributesImpl noAttributes = new AttributesImpl();
-						
-						//contentHandler.startElement("", "", "span", noAttributes);
-						
 						char[] channelTitleArray = this.channelTitle.toCharArray();
 						
 						contentHandler.characters(channelTitleArray, 0, channelTitleArray.length);
-						//contentHandler.endElement("", "", "span");
 
 					} else {
             			// contentHandler was null. This is a serious problem,
@@ -354,6 +351,7 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
         }
     }
     
+    @Override
     public String toString() {
     	StringBuffer sb = new StringBuffer();
     	sb.append(getClass());

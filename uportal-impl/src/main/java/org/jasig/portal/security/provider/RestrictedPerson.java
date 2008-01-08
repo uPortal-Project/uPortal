@@ -95,5 +95,9 @@ public class RestrictedPerson implements IPerson {
     public void setEntityIdentifier(final EntityIdentifier ei) {
     	// Nothing to do
     }
+
+    public String getName() {
+        return this.person.getName();
+    }
 }
 

@@ -24,8 +24,6 @@ public class RegisterStylesheet {
     }
 
     public static void main(String[] args) {
-        RDBMServices.setGetDatasourceFromJndi(false); /*don't try jndi when not in web app */
-        
         String stylesheetURI = null;
         String stylesheetDescriptionURI = null;
         int stylesheetId = -1;

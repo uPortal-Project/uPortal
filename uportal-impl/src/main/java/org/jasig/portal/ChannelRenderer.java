@@ -14,14 +14,17 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import org.apache.commons.collections15.map.ReferenceMap;
+import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.channels.portlet.IPortletAdaptor;
 import org.jasig.portal.channels.support.IChannelTitle;
 import org.jasig.portal.channels.support.IDynamicChannelTitleRenderer;
+import org.jasig.portal.portlet.url.RequestType;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.utils.SAX2BufferImpl;
 import org.jasig.portal.utils.SetCheckInSemaphore;
-import org.jasig.portal.utils.SoftHashMap;
 import org.jasig.portal.utils.threading.BaseTask;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
@@ -49,10 +52,10 @@ public class ChannelRenderer
 
     public static final String[] renderingStatus={"successful","failed","timed out"};
 
-    protected IChannel channel;
-    protected ChannelRuntimeData rd;
-    protected Map channelCache;
-    protected Map cacheTables;
+    protected final IChannel channel;
+    protected final ChannelRuntimeData rd;
+    protected Map<String, ChannelCacheEntry> channelCache;
+    protected Map<IChannel, Map<String, ChannelCacheEntry>> cacheTables;
 
     protected boolean rendering;
     protected boolean donerendering;
@@ -60,7 +63,7 @@ public class ChannelRenderer
     protected Thread workerThread;
 
     protected Worker worker;
-    protected Future workTracker;
+    protected Future<?> workTracker;
 
     protected long startTime;
     protected long timeOut = java.lang.Long.MAX_VALUE;
@@ -68,7 +71,7 @@ public class ChannelRenderer
     protected boolean ccacheable;
 
     protected static ExecutorService tp=null;
-    protected static Map systemCache=null;
+    protected static Map<String, ChannelCacheEntry> systemCache=null;
 
     protected SetCheckInSemaphore groupSemaphore;
     protected Object groupRenderingKey;
@@ -81,6 +84,7 @@ public class ChannelRenderer
      * @param threadPool a <code>ThreadPool</code> value
      */
     public ChannelRenderer (IChannel chan,ChannelRuntimeData runtimeData, ExecutorService threadPool) {
+        Validate.notNull(chan, "IChannel can not be null");
         this.channel=chan;
         this.rd=runtimeData;
         this.rendering = false;
@@ -111,34 +115,17 @@ public class ChannelRenderer
         this.groupRenderingKey=groupRenderingKey;
     }
 
-
-    /**
-     * Sets the channel on which ChannelRenderer is to operate.
-     *
-     * @param channel an <code>IChannel</code>
-     */
-    public void setChannel(IChannel channel) {
-        if (log.isDebugEnabled())
-            log.debug("ChannelRenderer::setChannel() : channel is being reset!");
-        this.channel=channel;
-        if(this.worker!=null) {
-            this.worker.setChannel(channel);
-        }
-        // clear channel cache
-        this.channelCache=null;
-    }
-
     /**
      * Obtains a content cache specific for this channel instance.
      *
      * @return a key->rendering map for this channel
      */
     // XXX is this thread safe?
-    Map getChannelCache() {
-        if(this.channelCache==null) {
-            if((this.channelCache=(SoftHashMap)this.cacheTables.get(this.channel))==null) {
-                this.channelCache=new SoftHashMap(1);
-                this.cacheTables.put(this.channel,this.channelCache);
+    Map<String, ChannelCacheEntry> getChannelCache() {
+        if (this.channelCache == null) {
+            if ((this.channelCache = this.cacheTables.get(this.channel)) == null) {
+                this.channelCache = new ReferenceMap<String, ChannelCacheEntry>(ReferenceMap.HARD, ReferenceMap.SOFT, 2, .75f, true);
+                this.cacheTables.put(this.channel, this.channelCache);
             }
         }
         return this.channelCache;
@@ -153,7 +140,7 @@ public class ChannelRenderer
         this.timeOut = value;
     }
 
-    public void setCacheTables(Map cacheTables) {
+    public void setCacheTables(Map<IChannel, Map<String, ChannelCacheEntry>> cacheTables) {
         this.cacheTables=cacheTables;
     }
 
@@ -176,7 +163,7 @@ public class ChannelRenderer
   {
     // start the rendering thread
 
-    this.worker = new Worker (this.channel,this.rd);
+    this.worker = new Worker(this.channel, this.rd);
 
     this.workTracker = tp.submit(this.worker); // XXX is execute okay?
     this.rendering = true;
@@ -312,29 +299,28 @@ public class ChannelRenderer
         }
 
         if (!abandoned && this.worker.done ()) {
-            if (this.worker.successful() && (((this.worker.getBuffer())!=null) || (this.ccacheable && this.worker.cbuffer!=null))) {
+            if (this.worker.successful() && (this.worker.getBuffer() != null || (this.ccacheable && this.worker.cbuffer != null) || (this.rd != null && RequestType.ACTION.equals(this.rd.getRequestType())))) {
                 return RENDERING_SUCCESSFUL;
-
-            } else {
-                // rendering was not successful
-                Throwable e;
-                if((e=this.worker.getException())!=null) throw new InternalPortalException(e);
-                // should never get there, unless thread.stop() has seriously messed things up for the worker thread.
-                return RENDERING_FAILED;
             }
-        } else {
-            Throwable e = null;
-            if (this.worker != null) {
-              e = this.worker.getException();
-            }
-
-            if (e != null) {
-                throw new InternalPortalException(e);
-            } else {
-                // Assume rendering has timed out
-                return RENDERING_TIMED_OUT;
-            }
+         
+            // rendering was not successful
+            Throwable e;
+            if((e=this.worker.getException())!=null) throw new InternalPortalException(e);
+            // should never get there, unless thread.stop() has seriously messed things up for the worker thread.
+            return RENDERING_FAILED;
         }
+        
+        Throwable e = null;
+        if (this.worker != null) {
+          e = this.worker.getException();
+        }
+
+        if (e != null) {
+            throw new InternalPortalException(e);
+        }
+        
+        // Assume rendering has timed out
+        return RENDERING_TIMED_OUT;
     }
 
 
@@ -377,7 +363,7 @@ public class ChannelRenderer
      * This method suppose to take care of the runaway rendering threads.
      * This method will be called from ChannelManager explictly.
      */
-    protected void kill() {
+    public void kill() {
         if(this.workTracker!=null && !this.workTracker.isDone())
             this.workTracker.cancel(true);
     }
@@ -424,11 +410,12 @@ public class ChannelRenderer
 
 
     protected class Worker extends BaseTask {
+        private final IChannel channel;
+        private final ChannelRuntimeData rd;
+        
         private boolean successful;
         private boolean done;
         private boolean setRuntimeDataComplete;
-        private IChannel channel;
-        private ChannelRuntimeData rd;
         private SAX2BufferImpl buffer;
         private String cbuffer;
 
@@ -437,27 +424,47 @@ public class ChannelRenderer
          */
         private String channelTitle = null;
 
-        public Worker (IChannel ch, ChannelRuntimeData runtimeData) {
-            this.channel=ch;  this.rd=runtimeData;
-            successful = false; done = false; setRuntimeDataComplete=false;
-            buffer=null; cbuffer=null;
-        }
-
-        public void setChannel(IChannel ch) {
-            this.channel=ch;
+        public Worker(IChannel ch, ChannelRuntimeData runtimeData) {
+            this.channel = ch;
+            this.rd = runtimeData;
+            successful = false;
+            done = false;
+            setRuntimeDataComplete = false;
+            buffer = null;
+            cbuffer = null;
         }
 
         public boolean isSetRuntimeDataComplete() {
             return this.setRuntimeDataComplete;
         }
 
+        //TODO review this for clarity
         public void execute () throws Exception {
             try {
                 if(rd!=null) {
                     channel.setRuntimeData(rd);
+                    
+                    if (RequestType.ACTION.equals(rd.getRequestType())) {
+                        if (channel instanceof IPortletAdaptor) {
+                            try {
+                                ((IPortletAdaptor)channel).processAction();
+                                successful = true;
+                            }
+                            catch (Exception e) {
+                                this.setException(e);
+                            }
+                        }
+                        else {
+                            this.setException(new ClassCastException("Action request for channel that does not implement '" + IPortletAdaptor.class + "'"));
+                        }
+
+                        done = true;
+
+                        return;
+                    }
                 }
                 setRuntimeDataComplete=true;
-
+                
                 if(groupSemaphore!=null) {
                     groupSemaphore.checkInAndWaitOn(groupRenderingKey);
                 }
@@ -468,7 +475,7 @@ public class ChannelRenderer
                         ChannelCacheKey key=((ICacheable)channel).generateKey();
                         if(key!=null) {
                             if(key.getKeyScope()==ChannelCacheKey.SYSTEM_KEY_SCOPE) {
-                                ChannelCacheEntry entry=(ChannelCacheEntry)systemCache.get(key.getKey());
+                                ChannelCacheEntry entry=systemCache.get(key.getKey());
                                 if(entry!=null) {
                                     // found cached page
                                     // check page validity
@@ -495,7 +502,7 @@ public class ChannelRenderer
                                 }
                             } else {
                                 // by default we assume INSTANCE_KEY_SCOPE
-                                ChannelCacheEntry entry=(ChannelCacheEntry)getChannelCache().get(key.getKey());
+                                ChannelCacheEntry entry=getChannelCache().get(key.getKey());
                                 if(entry!=null) {
                                     // found cached page
                                     // check page validity
@@ -674,7 +681,7 @@ public class ChannelRenderer
                         }
                         ChannelCacheEntry entry=null;
                         if(key.getKeyScope()==ChannelCacheKey.SYSTEM_KEY_SCOPE) {
-                            entry=(ChannelCacheEntry)systemCache.get(key.getKey());
+                            entry=systemCache.get(key.getKey());
                             if(entry==null) {
                                 if (log.isDebugEnabled()) {
                                     log.debug("ChannelRenderer::setCharacterCache() : setting character cache buffer based on a system key \""+key.getKey()+"\"");
@@ -686,7 +693,7 @@ public class ChannelRenderer
                             systemCache.put(key.getKey(),entry);
                         } else {
                             // by default we assume INSTANCE_KEY_SCOPE
-                            entry=(ChannelCacheEntry)getChannelCache().get(key.getKey());
+                            entry=getChannelCache().get(key.getKey());
                             if(entry==null) {
                                 if (log.isDebugEnabled()) {
                                     log.debug("ChannelRenderer::setCharacterCache() : no existing cache on a key \""+key.getKey()+"\"");

@@ -25,8 +25,6 @@ public class DbTest {
 
    public static void main(String[] args) {
 
-       RDBMServices.setGetDatasourceFromJndi(false); /*don't try jndi when not in web app */
-       
        Connection con = null;
       try {
          con = RDBMServices.getConnection ();

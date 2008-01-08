@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
+>
+
+    <parent>
+        <groupId>org.jasig.portal</groupId>
+        <artifactId>uportal-parent</artifactId>
+        <version>3.0.0-M5-SNAPSHOT</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.jasig.portal</groupId>
+    <artifactId>uportal-portlets-overlay</artifactId>
+    <packaging>pom</packaging>
+
+    <name>uPortal Portlets</name>
+    <description>Parent package for portlets deployed with uPortal.</description>
+
+    <modules>
+        <module>BookmarksPortlet</module>
+        <module>googleportlet</module>
+        <module>RssPortlet</module>
+        <module>pluto-testsuite</module>
+        <module>FunctionalTestsPortlet</module>
+    </modules>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.pluto</groupId>
+                    <artifactId>maven-pluto-plugin</artifactId>
+                    <version>1.1.5-SNAPSHOT</version>
+                    <executions>
+                        <execution>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>assemble</goal>
+                            </goals>
+                            <configuration>
+                                <assemblyOutputDirectory>${project.build.directory}</assemblyOutputDirectory>
+                                <archives>
+                                    <assembleArchive>${project.build.directory}/${project.build.finalName}.war</assembleArchive>
+                                </archives>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+</project>

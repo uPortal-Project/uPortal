@@ -10,15 +10,16 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.ChannelManager;
 import org.jasig.portal.ChannelRegistryManager;
+import org.jasig.portal.IUserInstance;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.StructureStylesheetUserPreferences;
 import org.jasig.portal.ThemeStylesheetUserPreferences;
-import org.jasig.portal.UserInstance;
 import org.jasig.portal.UserInstanceManager;
 import org.jasig.portal.UserPreferencesManager;
 import org.jasig.portal.layout.IUserLayoutManager;
@@ -54,7 +55,7 @@ public class UpdatePreferencesServlet extends HttpServlet {
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
-		UserInstance ui = null;
+	    IUserInstance ui = null;
 		IPerson per = null;
 		UserPreferencesManager upm = null;
 		IUserLayoutManager ulm = null;
@@ -418,8 +419,9 @@ public class UpdatePreferencesServlet extends HttpServlet {
 		String nodeId = node.getId();
 
 		// instantiate the channel in the user's layout
-		ChannelManager cm = new ChannelManager(upm);
-		cm.instantiateChannel(channel.getId());
+		final HttpSession session = request.getSession(false);
+        ChannelManager cm = new ChannelManager(upm, session);
+		cm.instantiateChannel(request, response, channel.getId());
 
 		// save the user layout
 		ulm.saveUserLayout();

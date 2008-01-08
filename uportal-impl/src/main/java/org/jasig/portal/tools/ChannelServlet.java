@@ -127,9 +127,7 @@ public class ChannelServlet extends HttpServlet {
 
       if (channel instanceof IPrivilegedChannel) {
         // provide as much of PCS as we can
-        PortalControlStructures pcs = new PortalControlStructures();
-        pcs.setHttpServletRequest(req);
-        pcs.setHttpServletResponse(res);
+        PortalControlStructures pcs = new PortalControlStructures(req, res);
         try {
           ((IPrivilegedChannel)channel).setPortalControlStructures(pcs);
         } catch (Exception e) {

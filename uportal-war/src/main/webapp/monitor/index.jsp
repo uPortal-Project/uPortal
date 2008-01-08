@@ -20,11 +20,11 @@
   static final DateFormat dateFormatter = DateFormat.getDateTimeInstance();
 
   public static long getTotalUserCount() {
-    return UserInstance.userSessions.longValue();
+    return UserInstance.getUserSessions();
   }
 
   public static long getTotalGuestCount() {
-    return GuestUserInstance.guestSessions.longValue();
+    return GuestUserInstance.getGuestSessions();
   }
 
   public static long getTotalSessionCount() {
@@ -89,6 +89,7 @@
     }
 %>
 
+<%@page import="org.jasig.portal.rendering.StaticRenderingPipeline"%>
 <html>
   <head>
     <title>uPortal Monitor</title>
@@ -160,7 +161,7 @@
        <table width="100%" border="0" cellpadding="3" cellspacing="3" cols="8">
         <tr><th><%= "@"+MovingAverage.SAMPLESIZE %></th><th></th><th align="right">Total</th><th align="right">Min</th><th align="right">Avg</th><th align="right">Max</th><th align="right">Last</th><th align="right">&gt;Max</th></tr>
         <tr><td>Render</td><td>&nbsp;</td>
-          <% MovingAverageSample render = UserInstance.lastRender; %>
+          <% MovingAverageSample render = StaticRenderingPipeline.getLastRenderSample(); %>
           <td align="right"><%= numFormatter.format(render.totalSamples) %></td>
           <td align="right"><%= numFormatter.format(render.min) %></td>
           <td align="right"><%= numFormatter.format(render.average)%></td>

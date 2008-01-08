@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
+    default-lazy-init="true">
+
+    <!--
+     | DataSource objects used by the portal should be configured 
+     +-->
+
+    <bean id="PortalDb" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName" value="${jdbcDriver}" />
+        <property name="url" value="${jdbcUrl}" />
+        <property name="username" value="${jdbcUser}" />
+        <property name="password" value="${jdbcPassword}" />
+        
+        <property name="maxActive" value="50" />
+        <property name="maxIdle" value="10" />
+        <property name="maxWait" value="1000" />
+        <property name="removeAbandoned" value="true" />
+        <property name="removeAbandonedTimeout" value="300" />
+        <property name="logAbandoned" value="true" />
+    </bean>
+    <bean id="PortalDB.metadata" class="org.jasig.portal.rdbm.DatabaseMetaDataImpl">
+        <constructor-arg index="0" ref="PortalDb" />
+    </bean>
+    
+    <alias alias="PersonDB" name="PortalDb"/>
+    
+    <bean id="rdbmPropertiesPlacholder" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location" value="classpath:/properties/rdbm.properties" />
+    </bean>
+</beans>

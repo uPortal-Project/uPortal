@@ -208,7 +208,7 @@ public interface IUserLayoutManager {
      * @return a <code>List</code> of <code>String</code> child node Ids.
      * @exception PortalException if an error occurs
      */
-    public Enumeration getChildIds(String nodeId) throws PortalException;
+    public Enumeration<String> getChildIds(String nodeId) throws PortalException;
 
     /**
      * Determine an Id of a next sibling node.

@@ -48,12 +48,12 @@ public final class WhirlyCacheCacheFactory implements CacheFactory, Initializing
     private final CacheManager cacheManager = CacheManager.getInstance();
 
     /** Map of caches so that we always return the same instance. */
-    private final Map caches = new HashMap();
+    private final Map<String, Map> caches = new HashMap<String, Map>();
 
     public synchronized Map getCache(String cacheName) throws IllegalArgumentException {
         if (this.caches.containsKey(cacheName)) {
             log.debug(cacheName + LOG_MESSAGE_FOUND_IN_CACHE);
-            return (Map) this.caches.get(cacheName);
+            return this.caches.get(cacheName);
         }
         
         try {
@@ -69,7 +69,7 @@ public final class WhirlyCacheCacheFactory implements CacheFactory, Initializing
     }
     
     public synchronized Map getCache() throws IllegalArgumentException {
-        return (Map) this.caches.get(DEFAULT);
+        return this.caches.get(DEFAULT);
     }
 
     public void afterPropertiesSet() throws Exception {

@@ -3,23 +3,24 @@
 *  available online at http://www.uportal.org/license.html
 */
 
-package  org.jasig.portal;
+package org.jasig.portal;
 
 import java.io.Serializable;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
 
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.PersonManagerFactory;
-import org.jasig.portal.security.PortalSecurityException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.IPersonManager;
+import org.jasig.portal.security.ISecurityContext;
+import org.jasig.portal.security.PersonManagerFactory;
+import org.jasig.portal.security.PortalSecurityException;
 
 /**
  * Determines which user instance object to use for a given user.
@@ -28,70 +29,87 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision 1.1$
  */
 public class UserInstanceManager {
-
     private static final Log log = LogFactory.getLog(UserInstanceManager.class);
     
-    // a table to keep guestUserInstance objects
-    static Hashtable guestUserInstances=new Hashtable();
+    private static Map<Integer, GuestUserPreferencesManager> guestUserPreferencesManagers = new HashMap<Integer, GuestUserPreferencesManager>();
 
-  /**
-   * Returns the UserInstance object that is associated with the given request.
-   * @param request Incoming HttpServletRequest
-   * @return UserInstance object associated with the given request
-   */
-  public static UserInstance getUserInstance(HttpServletRequest request) throws PortalException {
-    IPerson person = null;
-    try {
-      // Retrieve the person object that is associated with the request
-      person = PersonManagerFactory.getPersonManagerInstance().getPerson(request);
-      if (person == null) {
-    	  throw new IllegalStateException("Configured PersonManager returned null person for this request.  With no user, there's no UserInstance.  Is PersonManager misconfigured?  RDBMS access misconfigured?");
-      }
-    } catch (Exception e) {
-      log.error( "UserInstanceManager: Unable to retrieve IPerson!", e);
-      throw  (new PortalSecurityException("Could not retrieve IPerson", e));
-    }
-    
-    HttpSession session = request.getSession(false);
-    
-    // Return the UserInstance object if it's in the session
-    UserInstance userInstance = null;
-    UserInstanceHolder holder = (UserInstanceHolder)session.getAttribute(UserInstanceHolder.KEY);
-    if (holder != null)
-        userInstance = holder.getUserInstance();
-
-    if (userInstance != null) {
-      return  (userInstance);
-    }
-    // Create either a UserInstance or a GuestUserInstance
-    if (person.isGuest()) {
-        GuestUserInstance guestUserInstance = (GuestUserInstance) guestUserInstances.get(new Integer(person.getID()));
-        if(guestUserInstance==null) {
-            guestUserInstance = new GuestUserInstance(person);
-            guestUserInstances.put(new Integer(person.getID()),guestUserInstance);
+    /**
+     * Returns the UserInstance object that is associated with the given request.
+     * @param request Incoming HttpServletRequest
+     * @return UserInstance object associated with the given request
+     */
+    public static IUserInstance getUserInstance(HttpServletRequest request) throws PortalException {
+        final IPerson person;
+        try {
+            // Retrieve the person object that is associated with the request
+            final IPersonManager personManager = PersonManagerFactory.getPersonManagerInstance();
+            person = personManager.getPerson(request);
         }
-        guestUserInstance.registerSession(request);
-        userInstance = guestUserInstance;
-    } else {
-        if(person.getSecurityContext().isAuthenticated()) {
-            userInstance = new UserInstance(person);
-        } else {
-            // we can't allow for unauthenticated, non-guest user to come into the system
-            throw new PortalSecurityException("System does not allow for unauthenticated non-guest users.");
+        catch (Exception e) {
+            log.error("Exception while retrieving IPerson!", e);
+            throw new PortalSecurityException("Could not retrieve IPerson", e);
         }
+        
+        if (person == null) {
+            throw new PortalSecurityException("PersonManager returned null person for this request.  With no user, there's no UserInstance.  Is PersonManager misconfigured?  RDBMS access misconfigured?");
+        }
+
+        final HttpSession session = request.getSession(false);
+        if (session == null) {
+            throw new IllegalStateException("An existing HttpSession is required while retrieving a UserInstance for a HttpServletRequest");
+        }
+
+        // Return the UserInstance object if it's in the session
+        UserInstanceHolder userInstanceHolder = (UserInstanceHolder) session.getAttribute(UserInstanceHolder.KEY);
+        if (userInstanceHolder != null) {
+            final IUserInstance userInstance = userInstanceHolder.getUserInstance();
+            
+            if (userInstance != null) {
+                return userInstance;
+            }
+        }
+
+        // Create either a UserInstance or a GuestUserInstance
+        final IUserInstance userInstance;
+        if (person.isGuest()) {
+            final Integer personId = person.getID();
+            
+            //Get or Create a shared GuestUserPreferencesManager for the Guest IPerson
+            //sync so multiple managers aren't created for a single guest
+            GuestUserPreferencesManager guestUserPreferencesManager;
+            synchronized (guestUserPreferencesManagers) {
+                guestUserPreferencesManager = guestUserPreferencesManagers.get(personId);
+                if (guestUserPreferencesManager == null) {
+                    guestUserPreferencesManager = new GuestUserPreferencesManager(person);
+                    guestUserPreferencesManagers.put(personId, guestUserPreferencesManager);
+                }
+            }
+            
+            userInstance = new GuestUserInstance(person, guestUserPreferencesManager, request);
+        }
+        else {
+            final ISecurityContext securityContext = person.getSecurityContext();
+            if (securityContext.isAuthenticated()) {
+                userInstance = new UserInstance(person, request);
+            }
+            else {
+                // we can't allow for unauthenticated, non-guest user to come into the system
+                throw new PortalSecurityException("System does not allow for unauthenticated non-guest users.");
+            }
+        }
+
+        //Ensure the newly created UserInstance is cached in the session
+        if (userInstanceHolder == null) {
+            userInstanceHolder = new UserInstanceHolder();
+        }
+        userInstanceHolder.setUserInstance(userInstance);
+        session.setAttribute(UserInstanceHolder.KEY, userInstanceHolder);
+
+        // Return the new UserInstance
+        return userInstance;
     }
     
-    if (holder == null)
-        holder = new UserInstanceHolder();
-    holder.setUserInstance(userInstance);
-    
-    // Put the user instance in the user's session
-    session.setAttribute(UserInstanceHolder.KEY, holder);
 
-    // Return the new UserInstance
-    return  (userInstance);
-  }
-  
     /**
      * <p>Serializable wrapper class so the UserInstance object can
      * be indirectly stored in the session. The manager can deal with
@@ -102,21 +120,23 @@ public class UserInstanceManager {
      * the wrapped UserInstance, if present.</p>
      */
     private static class UserInstanceHolder implements Serializable, HttpSessionBindingListener {
+        private static final long serialVersionUID = 1L;
+
         public transient static final String KEY = UserInstanceHolder.class.getName();
-        
-        private transient UserInstance ui = null;
+
+        private transient IUserInstance ui = null;
 
         /**
          * @return Returns the userInstance.
          */
-        protected UserInstance getUserInstance() {
+        protected IUserInstance getUserInstance() {
             return this.ui;
         }
 
         /**
          * @param userInstance The userInstance to set.
          */
-        protected void setUserInstance(UserInstance userInstance) {
+        protected void setUserInstance(IUserInstance userInstance) {
             this.ui = userInstance;
         }
 
@@ -125,7 +145,7 @@ public class UserInstanceManager {
             if (this.ui != null) {
                 this.ui.valueBound(bindingEvent);
             }
-            
+
         }
 
         public void valueUnbound(HttpSessionBindingEvent bindingEvent) {
@@ -133,10 +153,7 @@ public class UserInstanceManager {
             if (this.ui != null) {
                 this.ui.valueUnbound(bindingEvent);
             }
-            
+
         }
     }
 }
-
-
-

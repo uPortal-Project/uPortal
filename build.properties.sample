@@ -19,11 +19,9 @@ server.home=/home/edalquist/JavaClasses/tomcat/apache-tomcat-5.5.20-UP3
 # path to tomcat servlet container (defaults to same directory as the tomcat binaries)
 server.base=${server.home}
 
-webapp.docBase=uPortal
 webapp.path=/${webapp.docBase}
 
-# With Tomcat (at least) you can make uPortal the default application by setting webapp.docBase to ROOT
+# With Tomcat (at least) you can make uPortal the default application by setting uportal-war finalName to ROOT
 # and webapp.path to nothing
 # (and removing the webapps/ROOT directory that came with the Tomcat distribution)
-#webapp.docBase=ROOT
 #webapp.path=

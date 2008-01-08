@@ -9,6 +9,7 @@ package  org.jasig.portal;
 import java.io.File;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,8 +23,11 @@ import org.jasig.portal.channels.BaseChannel;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.serialize.BaseMarkupSerializer;
+import org.jasig.portal.spring.PortalApplicationContextLocator;
+import org.jasig.portal.url.support.IChannelRequestParameterManager;
 import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.utils.XSLT;
+import org.springframework.context.ApplicationContext;
 
 /**
  * StandaloneChannelRenderer is meant to be used as a base class for channels
@@ -165,19 +169,25 @@ public class StandaloneChannelRenderer
         this.lm=new LocaleManager(this.staticData.getPerson(), acceptLanguage);
         this.lm.setSessionLocales(LocaleManager.parseLocales(requestLocalesString));
 
-        Hashtable targetParams = new Hashtable();
+        Hashtable<String, Object> targetParams = new Hashtable<String, Object>();
         UPFileSpec upfs=new UPFileSpec(req);
         String channelTarget = upfs.getTargetNodeId();
 
         if (log.isDebugEnabled())
             log.debug("StandaloneRenderer::render() : channelTarget=\""+channelTarget+"\".");
+        
+        final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
+        final IChannelRequestParameterManager channelParameterManager = (IChannelRequestParameterManager)applicationContext.getBean("channelParameterManager", IChannelRequestParameterManager.class);
+        
+        final Map<String, Object[]> channelParameters = channelParameterManager.getChannelParameters(req, channelTarget);
+
         Enumeration en = req.getParameterNames();
         if (en != null) {
             while (en.hasMoreElements()) {
                 String pName= (String) en.nextElement();
                 Object[] val= (Object[]) req.getParameterValues(pName);
                 if (val == null) {
-                    val = ((IRequestParamWrapper)req).getObjectParameterValues(pName);
+                    val = channelParameters.get(pName);
                 }
                 targetParams.put (pName, val);
             }

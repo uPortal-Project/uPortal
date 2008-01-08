@@ -10,8 +10,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections15.map.ReferenceMap;
+import org.jasig.portal.security.IPerson;
 import org.jasig.services.persondir.IPersonAttributeDao;
-import org.jasig.portal.utils.SoftHashMap;
 
 
 /**
@@ -29,7 +30,7 @@ public class PersonDirNameFinder
     private IPersonAttributeDao paDao;
     
     /** Our cache of entity names: */
-    private Map names = new SoftHashMap();
+    private Map<String, String> names = new ReferenceMap<String, String>(ReferenceMap.HARD, ReferenceMap.SOFT, true);
 
     /**
      * Instantiate a PersonDirNameFinder backed by the given
@@ -42,7 +43,7 @@ public class PersonDirNameFinder
 
 
     public String getName (String key) {
-        String name = (String) this.names.get(key);
+        String name = this.names.get(key);
         
         if (name == null && key !=null) {
             // cached name not found, get name from underlying DAO.
@@ -54,8 +55,8 @@ public class PersonDirNameFinder
     }
 
 
-    public java.util.Map getNames (java.lang.String[] keys) {
-        Map selectedNames = new HashMap();
+    public Map<String, String> getNames (java.lang.String[] keys) {
+        Map<String, String> selectedNames = new HashMap<String, String>();
         for (int i = 0; i < keys.length; i++) {
             String name = getName(keys[i]);
             selectedNames.put(keys[i], name);
@@ -64,7 +65,7 @@ public class PersonDirNameFinder
     }
 
 
-    public Class getType () {
+    public Class<IPerson> getType () {
         return  org.jasig.portal.security.IPerson.class;
     }
 
@@ -111,6 +112,7 @@ public class PersonDirNameFinder
      * Returns a String that represents the value of this object.
      * @return a string representation of the receiver
      */
+    @Override
     public String toString () {
         return  "PersonDirNameFinder backed by " + this.paDao;
     }
