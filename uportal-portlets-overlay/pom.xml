@@ -23,6 +23,7 @@
         <module>RssPortlet</module>
         <module>pluto-testsuite</module>
         <module>FunctionalTestsPortlet</module>
+        <module>wsrp-proxyportlet</module>
     </modules>
 
     <build>

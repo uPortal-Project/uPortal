@@ -58,14 +58,14 @@
             <version>${pom.parent.version}</version>
             <type>war</type>
         </dependency>
-<!-- 
+
         <dependency>
-            <groupId>org.jasig.portlet</groupId>
-            <artifactId>proxyportlet</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <groupId>org.jasig.portal.portlets-overlay</groupId>
+            <artifactId>wsrp-proxyportlet</artifactId>
+            <version>${pom.parent.version}</version>
             <type>war</type>
         </dependency>
--->
+
         <dependency>
             <groupId>javax.portlet</groupId>
             <artifactId>portlet-api</artifactId>
@@ -175,14 +175,12 @@
                             <bundleFileName>FunctionalTestsPortlet.war</bundleFileName>
                             <contextRoot>/FunctionalTestsPortlet</contextRoot>
                         </webModule>
-                        <!-- 
                         <webModule>
-                            <groupId>org.jasig.portlet</groupId>
-                            <artifactId>proxyportlet</artifactId>
+                            <groupId>org.jasig.portal.portlets-overlay</groupId>
+                            <artifactId>wsrp-proxyportlet</artifactId>
                             <bundleFileName>proxyportlet.war</bundleFileName>
                             <contextRoot>/proxyportlet</contextRoot>
                         </webModule>
-                        -->
                     </modules>
                 </configuration>
             </plugin>
