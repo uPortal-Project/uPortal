@@ -231,11 +231,6 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline {
 
             try {
 
-                // call layout manager to process all user-preferences-related request parameters
-                // this will update UserPreference object contained by UserPreferencesManager, so that
-                // appropriate attribute incorporation filters and parameter tables can be constructed.
-                uPreferencesManager.processUserPreferencesParameters(req);
-
                 // determine uPElement (optimistic prediction) --begin
                 // We need uPElement for ChannelManager.setReqNRes() call. That call will distribute uPElement
                 // to Privileged channels. We assume that Privileged channels are smart enough not to delete

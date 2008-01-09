@@ -5,7 +5,6 @@
 
 package  org.jasig.portal;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSessionBindingEvent;
 
 import org.jasig.portal.layout.IUserLayoutManager;
@@ -35,16 +34,6 @@ public class GuestUserPreferencesManagerWrapper implements IUserPreferencesManag
     public GuestUserPreferencesManagerWrapper(GuestUserPreferencesManager gulm, String sessionId) {
         this.gulm=gulm;
         this.sessionId=sessionId;
-    }
-
-    /* This function processes request parameters related to
-     * setting Structure/Theme stylesheet parameters and attributes.
-     * (uP_sparam, uP_tparam, uP_sfattr, uP_scattr uP_tcattr)
-     * It also processes layout root requests (uP_root)
-     * @param req current <code>HttpServletRequest</code>
-     */
-     public void processUserPreferencesParameters (HttpServletRequest req) {
-         this.gulm.processUserPreferencesParameters(req);
     }
 
     /**

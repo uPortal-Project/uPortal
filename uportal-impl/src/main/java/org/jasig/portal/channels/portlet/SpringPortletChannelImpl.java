@@ -41,6 +41,7 @@ import org.jasig.portal.portlet.url.IPortletRequestParameterManager;
 import org.jasig.portal.portlet.url.PortletRequestInfo;
 import org.jasig.portal.portlet.url.RequestType;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.url.processing.RequestParameterProcessingIncompleteException;
 import org.springframework.beans.factory.annotation.Required;
 
 /**
@@ -463,6 +464,7 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
             //All of these events require the portlet re-render so the portlet parameter
             //manager is notified of the render request targing the portlet
             case PortalEvent.MINIMIZE_EVENT:
+            case PortalEvent.NORMAL_EVENT:
             case PortalEvent.MAXIMIZE_EVENT:
             case PortalEvent.EDIT_BUTTON_EVENT:
             case PortalEvent.HELP_BUTTON_EVENT:
@@ -472,7 +474,14 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
                 final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
                 
                 // If the portlet doesn't have request info associated with it add some to ensure it is re-rendered
-                final IPortletWindowId targetedPortletWindowId = this.portletRequestParameterManager.getTargetedPortletWindowId(httpServletRequest);
+                IPortletWindowId targetedPortletWindowId = null;
+                try {
+                    targetedPortletWindowId = this.portletRequestParameterManager.getTargetedPortletWindowId(httpServletRequest);
+                }
+                catch (RequestParameterProcessingIncompleteException rppie) {
+                    //OK, processing isn't complete yet so just assume it isn't targeted
+                }
+                
                 if (targetedPortletWindowId == null) {
                     this.portletRequestParameterManager.setRequestInfo(httpServletRequest, portletWindowId, new PortletRequestInfo(RequestType.RENDER));
                 }
@@ -485,8 +494,12 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
                         portletWindow.setWindowState(WindowState.MINIMIZED);
                     }
                     break;
-                    case PortalEvent.MAXIMIZE_EVENT: {
+                    case PortalEvent.NORMAL_EVENT: {
                         portletWindow.setWindowState(WindowState.NORMAL);
+                    }
+                    break;
+                    case PortalEvent.MAXIMIZE_EVENT: {
+                        portletWindow.setWindowState(WindowState.MAXIMIZED);
                     }
                     break;
                     case PortalEvent.EDIT_BUTTON_EVENT: {

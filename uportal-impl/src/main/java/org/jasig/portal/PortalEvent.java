@@ -26,6 +26,7 @@ public class PortalEvent {
     public static final int DETACH_BUTTON_EVENT = 6;
     public static final int MINIMIZE_EVENT = 7;
     public static final int MAXIMIZE_EVENT = 8;
+    public static final int NORMAL_EVENT = 9;
     
     
   /**
@@ -84,6 +85,14 @@ public class PortalEvent {
    */
   public static final PortalEvent MINIMIZE = 
       new PortalEvent(MINIMIZE_EVENT, "minimizeEvent", 
+              PortalEventSource.LAYOUT_GENERATED);
+  
+  /**
+   * The layout-generated event that is sent to
+   * a channel when the user actuates its maximize control.
+   */
+  public static final PortalEvent NORMAL = 
+      new PortalEvent(NORMAL_EVENT, "normalEvent", 
               PortalEventSource.LAYOUT_GENERATED);
   
   /**
