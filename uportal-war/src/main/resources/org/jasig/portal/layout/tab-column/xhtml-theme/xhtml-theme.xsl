@@ -311,10 +311,30 @@
 				<xsl:if test="not(//focused)">
 					<xsl:choose>
 						<xsl:when test="@minimized='true'">
-							<a id="togglePortlet_{@ID}" href="{$baseActionURL}?uP_tcattr=minimized&amp;minimized_channelId={@ID}&amp;minimized_{@ID}_value=false#{@ID}"><img id="portletToggleImg_{@ID}" src="{$mediaPath}/{$skin}/controls/min.gif" width="19" height="19" alt="unshade" title="unshade" style="float:left;padding-top:2px;padding-right:3px;margin-left:-2px;"/></a>
+							<a href="{$baseActionURL}?uP_tcattr=minimized&amp;minimized_channelId={@ID}&amp;minimized_{@ID}_value=false#{@ID}">
+							    <xsl:choose>
+							        <xsl:when test="@isPortlet = 'true'">
+							            <xsl:attribute name="id">togglePortlet_<xsl:value-of select="@ID"/></xsl:attribute>
+							        </xsl:when>
+							        <xsl:otherwise>
+							            <xsl:attribute name="id">toggleChannel_<xsl:value-of select="@ID"/></xsl:attribute>
+							        </xsl:otherwise>
+							    </xsl:choose>
+							    <img id="portletToggleImg_{@ID}" src="{$mediaPath}/{$skin}/controls/min.gif" width="19" height="19" alt="unshade" title="unshade" style="float:left;padding-top:2px;padding-right:3px;margin-left:-2px;"/>
+                            </a>
 						</xsl:when>
 						<xsl:otherwise>
-							<a id="togglePortlet_{@ID}" href="{$baseActionURL}?uP_tcattr=minimized&amp;minimized_channelId={@ID}&amp;minimized_{@ID}_value=true#{@ID}"><img id="portletToggleImg_{@ID}" src="{$mediaPath}/{$skin}/controls/max.gif" width="19" height="19" alt="shade" title="shade" style="float:left;padding-top:2px;padding-right:3px;margin-left:-2px;"/></a>
+							<a href="{$baseActionURL}?uP_tcattr=minimized&amp;minimized_channelId={@ID}&amp;minimized_{@ID}_value=true#{@ID}">
+							    <xsl:choose>
+							        <xsl:when test="@isPortlet = 'true'">
+							            <xsl:attribute name="id">togglePortlet_<xsl:value-of select="@ID"/></xsl:attribute>
+							        </xsl:when>
+							        <xsl:otherwise>
+							            <xsl:attribute name="id">toggleChannel_<xsl:value-of select="@ID"/></xsl:attribute>
+							        </xsl:otherwise>
+							    </xsl:choose>
+							    <img id="portletToggleImg_{@ID}" src="{$mediaPath}/{$skin}/controls/max.gif" width="19" height="19" alt="shade" title="shade" style="float:left;padding-top:2px;padding-right:3px;margin-left:-2px;"/>
+							</a>
 						</xsl:otherwise>
 					</xsl:choose>
 				</xsl:if>
@@ -538,9 +558,11 @@
 						a.href = "javascript:;";
 						a.onclick = function(){deleteChannel('<xsl:value-of select="@ID"/>')};
 					</xsl:if>
-					a = dojo.byId("togglePortlet_" + '<xsl:value-of select="@ID"/>');
-					a.href = "javascript:;";
-					a.onclick = function(){toggleChannel('<xsl:value-of select="@ID"/>')};
+				    <xsl:if test="not(@isPortlet = 'true')">
+				        a = dojo.byId("toggleChannel_" + '<xsl:value-of select="@ID"/>');
+				        a.href = "javascript:;";
+				        a.onclick = function(){toggleChannel('<xsl:value-of select="@ID"/>')};
+				    </xsl:if>
 				</xsl:for-each>
 			</xsl:for-each>
 			

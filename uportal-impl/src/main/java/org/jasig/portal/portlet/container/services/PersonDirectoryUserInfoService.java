@@ -123,7 +123,7 @@ public class PersonDirectoryUserInfoService implements UserInfoService {
             return null;
         }
         
-        final HttpServletRequest httpServletRequest = PortletContainerUtils.getHttpServletRequest(request);
+        final HttpServletRequest httpServletRequest = PortletContainerUtils.getOriginalPortletAdaptorRequest(request);
         final IPortletWindow portletWindow = this.portletWindowRegistry.convertPortletWindow(httpServletRequest, plutoPortletWindow);
         
         return this.getUserInfo(remoteUser, httpServletRequest, portletWindow);

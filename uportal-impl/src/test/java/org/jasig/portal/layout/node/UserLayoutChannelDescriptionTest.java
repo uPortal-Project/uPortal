@@ -14,6 +14,7 @@ import junit.framework.TestCase;
 import org.jasig.portal.ChannelCacheKey;
 import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalException;
+import org.jasig.portal.UserPreferences;
 import org.jasig.portal.channels.BaseChannel;
 import org.jasig.portal.channels.error.CError;
 import org.jasig.portal.channels.portlet.IPortletAdaptor;
@@ -126,6 +127,14 @@ public class UserLayoutChannelDescriptionTest extends TestCase {
          * @see org.jasig.portal.IDirectResponse#setResponse(javax.servlet.http.HttpServletResponse)
          */
         public void setResponse(HttpServletResponse response) throws PortalException {
+            // TODO Auto-generated method stub
+            
+        }
+
+        /* (non-Javadoc)
+         * @see org.jasig.portal.ILayoutPreferencesAwareChannel#updateUserPreferences(org.jasig.portal.UserPreferences)
+         */
+        public void updateUserPreferences(UserPreferences preferences) {
             // TODO Auto-generated method stub
             
         }

@@ -21,7 +21,6 @@ public interface IPortletRequestParameterManager {
      * 
      * @param request The current request.
      * @throws IllegalArgumentException If request is null
-     * @throws IllegalStateException if {@link #setRequestInfo(HttpServletRequest, IPortletWindowId, PortletRequestInfo)} has already been called.
      */
     public void setNoPortletRequest(HttpServletRequest request);
     
@@ -32,7 +31,6 @@ public interface IPortletRequestParameterManager {
      * @param portletId The ID of the portlet targeted
      * @param portletRequestInfo Data about the request
      * @throws IllegalArgumentException If request, portletId, or portletRequest are null.
-     * @throws IllegalStateException if {@link #setNoPortletRequest(HttpServletRequest)} has already been called.
      */
     public void setRequestInfo(HttpServletRequest request, IPortletWindowId portletId, PortletRequestInfo portletRequestInfo);
     

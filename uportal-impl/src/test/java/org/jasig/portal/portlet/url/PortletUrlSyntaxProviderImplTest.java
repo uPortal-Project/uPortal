@@ -18,6 +18,7 @@ import junit.framework.TestCase;
 import org.easymock.EasyMock;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.channels.portlet.IPortletAdaptor;
+import org.jasig.portal.mock.portlet.om.MockPortletEntity;
 import org.jasig.portal.mock.portlet.om.MockPortletEntityId;
 import org.jasig.portal.mock.portlet.om.MockPortletWindow;
 import org.jasig.portal.mock.portlet.om.MockPortletWindowId;
@@ -25,6 +26,7 @@ import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
+import org.jasig.portal.url.AttributeScopingHttpServletRequestWrapper;
 import org.jasig.portal.utils.Tuple;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -57,6 +59,7 @@ public class PortletUrlSyntaxProviderImplTest extends TestCase {
         final PortletUrlSyntaxProviderImpl portletUrlSyntaxProvider = new PortletUrlSyntaxProviderImpl();
         
         final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setAttribute(AttributeScopingHttpServletRequestWrapper.ATTRIBUTE__HTTP_SERVLET_REQUEST, request);
         request.setContextPath("/uPortal");
         
         final IPortletEntityId portletEntityId = new MockPortletEntityId("entityId1");
@@ -98,6 +101,19 @@ public class PortletUrlSyntaxProviderImplTest extends TestCase {
         
         request.setAttribute(IPortletAdaptor.ATTRIBUTE__RUNTIME_DATA, channelRuntimeData);
         
+        MockPortletEntity portletEntity = new MockPortletEntity();
+        portletEntity.setPortletEntityId(portletEntityId);
+        portletEntity.setChannelSubscribeId(portletEntityId.getStringId());
+        
+        final IPortletWindowRegistry portletWindowRegistry = EasyMock.createMock(IPortletWindowRegistry.class);
+        EasyMock.expect(portletWindowRegistry.getParentPortletEntity(request, portletWindowId))
+            .andReturn(portletEntity)
+            .anyTimes();
+        
+        EasyMock.replay(portletWindowRegistry);
+
+        portletUrlSyntaxProvider.setPortletWindowRegistry(portletWindowRegistry);
+        
         String urlString = portletUrlSyntaxProvider.generatePortletUrl(request, portletWindow, portletUrl);
         assertEquals("/uPortal/base/action.url?pltc_target=windowId1&pltc_type=RENDER", urlString);
         
@@ -112,13 +128,14 @@ public class PortletUrlSyntaxProviderImplTest extends TestCase {
         portletUrl.setParameters(parameters);
         
         urlString = portletUrlSyntaxProvider.generatePortletUrl(request, portletWindow, portletUrl);
-        assertEquals("/uPortal/base/action.url?pltc_target=windowId1&pltc_type=RENDER&pltc_state=minimized&pltc_mode=edit&pltp_key1=value1.1&pltp_key1=value1.2&pltp_key2=value2.1&pltp_key3=", urlString);
+        assertEquals("/uPortal/base/action.url?pltc_target=windowId1&pltc_type=RENDER&pltc_state=minimized&uP_root=root&uP_tcattr=minimized&minimized_channelId=entityId1&minimized_entityId1_value=true&pltc_mode=edit&pltp_key1=value1.1&pltp_key1=value1.2&pltp_key2=value2.1&pltp_key3=", urlString);
 
 
         portletUrl.setRequestType(RequestType.ACTION);
+        portletUrl.setWindowState(WindowState.MAXIMIZED);
         
         urlString = portletUrlSyntaxProvider.generatePortletUrl(request, portletWindow, portletUrl);
-        assertEquals("/uPortal/base/action.url?pltc_target=windowId1&pltc_type=ACTION&pltc_state=minimized&pltc_mode=edit&pltp_key1=value1.1&pltp_key1=value1.2&pltp_key2=value2.1&pltp_key3=", urlString);
+        assertEquals("/uPortal/base/action.url?pltc_target=windowId1&pltc_type=ACTION&pltc_state=maximized&uP_root=entityId1&pltc_mode=edit&pltp_key1=value1.1&pltp_key1=value1.2&pltp_key2=value2.1&pltp_key3=", urlString);
         
         portletUrl.setWindowState(new WindowState("EXCLUSIVE"));
         portletUrl.setRequestType(RequestType.RENDER);
@@ -144,9 +161,11 @@ public class PortletUrlSyntaxProviderImplTest extends TestCase {
         EasyMock.expect(portletWindowRegistry.getPortletWindowId("windowId1"))
             .andReturn(new MockPortletWindowId("windowId1"))
             .anyTimes();
-        EasyMock.replay(portletWindowRegistry);
-        portletUrlSyntaxProvider.setPortletWindowRegistry(portletWindowRegistry);
         
+        
+        EasyMock.replay(portletWindowRegistry);
+        
+        portletUrlSyntaxProvider.setPortletWindowRegistry(portletWindowRegistry);
         
         Tuple<IPortletWindowId, PortletUrl> parsedPortletUrl = portletUrlSyntaxProvider.parsePortletParameters(request);
         assertNull(parsedPortletUrl);

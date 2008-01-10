@@ -5,15 +5,14 @@
  */
 package org.jasig.portal.portlet.url;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import junit.framework.TestCase;
 
 import org.jasig.portal.mock.portlet.om.MockPortletWindowId;
 import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.jasig.portal.url.PortalHttpServletRequest;
 import org.jasig.portal.url.processing.RequestParameterProcessingIncompleteException;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -26,17 +25,9 @@ public class PortletRequestParameterManagerTest extends TestCase {
         final PortletRequestParameterManager parameterManager = new PortletRequestParameterManager();
         
         final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setAttribute(PortalHttpServletRequest.ATTRIBUTE__HTTP_SERVLET_REQUEST, request);
         
         parameterManager.setNoPortletRequest(request);
-        
-        try {
-            parameterManager.setRequestInfo(request, new MockPortletWindowId("id"), new PortletRequestInfo(RequestType.RENDER));
-            fail("An IllegalStateException should have been thrown for calling setRequestType after setNoPortletRequest");
-        }
-        catch (IllegalStateException ise) {
-            //expected
-        }
-        
         
         final IPortletWindowId targetedPortletWindowId = parameterManager.getTargetedPortletWindowId(request);
         assertNull(targetedPortletWindowId);
@@ -49,20 +40,13 @@ public class PortletRequestParameterManagerTest extends TestCase {
         final PortletRequestParameterManager parameterManager = new PortletRequestParameterManager();
         
         final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setAttribute(PortalHttpServletRequest.ATTRIBUTE__HTTP_SERVLET_REQUEST, request);
         
         final Map<String, Object[]> parameters = new HashMap<String, Object[]>();
         parameters.put("p1", new Object[] { "v1.1" });
         
         final MockPortletWindowId portletWindowId = new MockPortletWindowId("id");
         parameterManager.setRequestInfo(request, portletWindowId, new PortletRequestInfo(RequestType.RENDER));
-        
-        try {
-            parameterManager.setNoPortletRequest(request);
-            fail("An IllegalStateException should have been thrown for calling setNoPortletRequest after setRequestType");
-        }
-        catch (IllegalStateException ise) {
-            //expected
-        }
         
         final IPortletWindowId targetedPortletWindowId = parameterManager.getTargetedPortletWindowId(request);
         assertEquals(portletWindowId, targetedPortletWindowId);
@@ -75,6 +59,7 @@ public class PortletRequestParameterManagerTest extends TestCase {
         final PortletRequestParameterManager parameterManager = new PortletRequestParameterManager();
         
         final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setAttribute(PortalHttpServletRequest.ATTRIBUTE__HTTP_SERVLET_REQUEST, request);
         
         try {
             parameterManager.getTargetedPortletWindowId(request);

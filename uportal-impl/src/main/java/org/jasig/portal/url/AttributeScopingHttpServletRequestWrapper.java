@@ -22,10 +22,10 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class AttributeScopingHttpServletRequestWrapper extends AbstractHttpServletRequestWrapper {
     /**
-     * {@link javax.servlet.http.HttpServletRequest} attribute that the portal's {@link HttpServletRequest} object
+     * {@link javax.servlet.http.HttpServletRequest} attribute that this {@link HttpServletRequest} object
      * will be available.
      */
-    public static final String ATTRIBUTE__PORTAL_HTTP_SERVLET_REQUEST = "org.jasig.portal.servlet.PORTAL_HTTP_SERVLET_REQUEST";
+    public static final String ATTRIBUTE__HTTP_SERVLET_REQUEST = AttributeScopingHttpServletRequestWrapper.class.getName() + ".PORTAL_HTTP_SERVLET_REQUEST";
     
     private final Map<String, Object> attributes = new HashMap<String, Object>();
     
@@ -38,7 +38,7 @@ public class AttributeScopingHttpServletRequestWrapper extends AbstractHttpServl
 
     @Override
     public Object getAttribute(String name) {
-        if (ATTRIBUTE__PORTAL_HTTP_SERVLET_REQUEST.equals(name)) {
+        if (ATTRIBUTE__HTTP_SERVLET_REQUEST.equals(name)) {
             return this;
         }
         

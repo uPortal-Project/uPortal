@@ -857,13 +857,6 @@ public class ChannelManager implements LayoutEventListener {
                     channel=replaceWithErrorChannel(request, response, channelTarget, ErrorCode.SET_STATIC_DATA_EXCEPTION, e, null, false);
                 }
             }
-
-//            // Check if the channel is an IPrivilegedChannel, and if it is,
-//            // pass portal control structures and runtime data.
-//            if (channel instanceof IPrivilegedChannel) {
-//                channel = this.feedPortalControlStructuresToChannel(request, response, channelTarget, (IPrivilegedChannel)channel);
-//                channel = this.feedRuntimeDataToChannel(request, response, channel);
-//            }
         }
     }
 
@@ -888,19 +881,6 @@ public class ChannelManager implements LayoutEventListener {
         
         return prvChanObj;
     }
-
-//    private IChannel feedRuntimeDataToChannel(HttpServletRequest request, HttpServletResponse response, IChannel channel) {
-//        try {
-//            final ChannelRuntimeData runtimeData = this.getChannelRuntimeData(request, this.channelTarget);
-//
-//            // Finally, feed runtime data to channel
-//            channel.setRuntimeData(runtimeData);
-//        } 
-//        catch (Exception e) {
-//            channel = replaceWithErrorChannel(request, response, channelTarget, ErrorCode.SET_RUNTIME_DATA_EXCEPTION, e, null, true);
-//        }
-//        return channel;
-//    }
 
     /**
      * Obtain an instance of a channel.
@@ -989,9 +969,6 @@ public class ChannelManager implements LayoutEventListener {
         this.uPElement = uPElement;
     }
 
-    /**
-     * TODO check error handling on exception thrown during action
-     */
     public boolean doChannelAction(HttpServletRequest request, HttpServletResponse response, String channelSubscribeId, boolean noTimeout) throws PortalException {
         // see if the channel has already been instantiated
         // see if the channel is cached
@@ -1045,7 +1022,6 @@ public class ChannelManager implements LayoutEventListener {
         catch (Throwable t) {
             ch = replaceWithErrorChannel(request, response, channelSubscribeId, ErrorCode.RENDER_TIME_EXCEPTION, t, null, false);
             log.error("Failed to complete action", t);
-            //TODO what to do here?
             return false;
         }
 

@@ -9,6 +9,7 @@ import javax.portlet.PortletRequest;
 import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.portal.url.AttributeScopingHttpServletRequestWrapper;
+import org.jasig.portal.url.PortalHttpServletRequest;
 
 /**
  * Static utilities for working with the portlet container and related objects.
@@ -27,12 +28,36 @@ public final class PortletContainerUtils {
      * @param portletRequest The request targeted to the portlet
      * @return The portal's request
      */
-    public static HttpServletRequest getHttpServletRequest(PortletRequest portletRequest) {
-        final HttpServletRequest portalRequest = (HttpServletRequest)portletRequest.getAttribute(AttributeScopingHttpServletRequestWrapper.ATTRIBUTE__PORTAL_HTTP_SERVLET_REQUEST);
+    public static HttpServletRequest getOriginalPortletAdaptorRequest(PortletRequest portletRequest) {
+        final HttpServletRequest originalPortletRequest = (HttpServletRequest)portletRequest.getAttribute(AttributeScopingHttpServletRequestWrapper.ATTRIBUTE__HTTP_SERVLET_REQUEST);
+        if (originalPortletRequest != null) {
+            return originalPortletRequest;
+        }
+        
+        throw new IllegalArgumentException("The original portlet adaptor HttpServletRequest is not available from the PorteltRequest using attribute '" + AttributeScopingHttpServletRequestWrapper.ATTRIBUTE__HTTP_SERVLET_REQUEST + "'");
+    }
+    
+    /**
+     * @see #getOriginalPortletAdaptorRequest(PortletRequest)
+     */
+    public static HttpServletRequest getOriginalPortletAdaptorRequest(HttpServletRequest portletRequest) {
+        final HttpServletRequest originalPortletRequest = (HttpServletRequest)portletRequest.getAttribute(AttributeScopingHttpServletRequestWrapper.ATTRIBUTE__HTTP_SERVLET_REQUEST);
+        if (originalPortletRequest != null) {
+            return originalPortletRequest;
+        }
+        
+        throw new IllegalArgumentException("The original portlet adaptor HttpServletRequest is not available from the HttpServletRequest using attribute '" + AttributeScopingHttpServletRequestWrapper.ATTRIBUTE__HTTP_SERVLET_REQUEST + "'");
+    }
+    
+    /**
+     * Gets the original base portal request.
+     */
+    public static HttpServletRequest getOriginalPortalRequest(HttpServletRequest portletRequest) {
+        final HttpServletRequest portalRequest = (HttpServletRequest)portletRequest.getAttribute(PortalHttpServletRequest.ATTRIBUTE__HTTP_SERVLET_REQUEST);
         if (portalRequest != null) {
             return portalRequest;
         }
         
-        throw new IllegalArgumentException("The Portal's HttpServletRequest is not available from the PorteltRequest using attribute '" + AttributeScopingHttpServletRequestWrapper.ATTRIBUTE__PORTAL_HTTP_SERVLET_REQUEST + "'");
+        throw new IllegalArgumentException("The orginal portal HttpServletRequest is not available from the HttpServletRequest using attribute '" + PortalHttpServletRequest.ATTRIBUTE__HTTP_SERVLET_REQUEST + "'");
     }
 }

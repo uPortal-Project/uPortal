@@ -544,7 +544,10 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
         final IPortletWindowId portletWindowId = this.getPortletWindowId(channelStaticData);
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
         
+        portletWindow.setWindowState(WindowState.NORMAL);
+        portletWindow.setPortletMode(PortletMode.VIEW);
         portletWindow.setRequestParameters(null);
+        portletWindow.setExpirationCache(null);
         
         final HttpServletResponse httpServletResponse = portalControlStructures.getHttpServletResponse();
         try {

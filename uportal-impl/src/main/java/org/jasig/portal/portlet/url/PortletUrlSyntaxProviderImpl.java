@@ -25,6 +25,9 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.UPFileSpec;
 import org.jasig.portal.channels.portlet.IPortletAdaptor;
+import org.jasig.portal.layout.IUserLayout;
+import org.jasig.portal.portlet.container.PortletContainerUtils;
+import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
@@ -102,8 +105,8 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
         Validate.notNull(portletWindowRegistry, "portletWindowRegistry can not be null");
         this.portletWindowRegistry = portletWindowRegistry;
     }
-
-
+    
+    
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.url.IPortletUrlSyntaxProvider#parsePortletParameters(javax.servlet.http.HttpServletRequest)
      */
@@ -214,24 +217,32 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
         Validate.notNull(portletWindow, "portletWindow can not be null");
         Validate.notNull(portletUrl, "portletUrl can not be null");
         
+        //Convert the callback request to the portal request
+        request = PortletContainerUtils.getOriginalPortletAdaptorRequest(request);
+        
         //Get the channel runtime data from the request attributes, it should have been set there by the portlet adapter
         final ChannelRuntimeData channelRuntimeData = (ChannelRuntimeData)request.getAttribute(IPortletAdaptor.ATTRIBUTE__RUNTIME_DATA);
         if (channelRuntimeData == null) {
             throw new IllegalStateException("No ChannelRuntimeData was found as a request attribute for key '" + IPortletAdaptor.ATTRIBUTE__RUNTIME_DATA + "' on request '" + request + "'");
         }
+        
+        final IPortletWindowId portletWindowId = portletWindow.getPortletWindowId();
+        final IPortletEntity parentPortletEntity = this.portletWindowRegistry.getParentPortletEntity(request, portletWindowId);
+        final String channelSubscribeId = parentPortletEntity.getChannelSubscribeId();
 
         //Get the encoding to use for the URL
         final String encoding = this.getEncoding(request);
         
         //Get the string version of the portlet ID (local variable to avoid needless getStringId() calls)
-        final String portletWindowIdString = portletWindow.getPortletWindowId().getStringId();
+        final String portletWindowIdString = portletWindowId.getStringId();
         
         // TODO Need to decide how to deal with 'secure' URL requests
         // Determine the base path for the URL
         // If the next state is EXCLUSIVE or there is no state change and the current state is EXCLUSIVE use the worker URL base
         final String urlBase;
         final WindowState windowState = portletUrl.getWindowState();
-        if (IPortletAdaptor.EXCLUSIVE.equals(windowState) || (windowState == null && IPortletAdaptor.EXCLUSIVE.equals(portletWindow.getWindowState()))) {
+        final WindowState previousWindowState = portletWindow.getWindowState();
+        if (IPortletAdaptor.EXCLUSIVE.equals(windowState) || (windowState == null && IPortletAdaptor.EXCLUSIVE.equals(previousWindowState))) {
             urlBase = channelRuntimeData.getBaseWorkerURL(UPFileSpec.FILE_DOWNLOAD_WORKER);
 
             if (this.logger.isTraceEnabled()) {
@@ -260,8 +271,24 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
         this.encodeAndAppend(url.append("&"), encoding, PARAM_REQUEST_TYPE, requestTypeString);
         
         // If set add the window state
-        if (windowState != null) {
+        if (windowState != null && !previousWindowState.equals(windowState)) {
             this.encodeAndAppend(url.append("&"), encoding, PARAM_WINDOW_STATE, windowState.toString());
+            
+            if (WindowState.MAXIMIZED.equals(windowState)) {
+                this.encodeAndAppend(url.append("&"), encoding, "uP_root", channelSubscribeId);
+            }
+            else if (WindowState.NORMAL.equals(windowState)) {
+                this.encodeAndAppend(url.append("&"), encoding, "uP_root", IUserLayout.ROOT_NODE_NAME);
+                this.encodeAndAppend(url.append("&"), encoding, "uP_tcattr", "minimized");
+                this.encodeAndAppend(url.append("&"), encoding, "minimized_channelId", channelSubscribeId);
+                this.encodeAndAppend(url.append("&"), encoding, "minimized_" + channelSubscribeId + "_value", "false");
+            }
+            else if (WindowState.MINIMIZED.equals(windowState)) {
+                this.encodeAndAppend(url.append("&"), encoding, "uP_root", IUserLayout.ROOT_NODE_NAME);
+                this.encodeAndAppend(url.append("&"), encoding, "uP_tcattr", "minimized");
+                this.encodeAndAppend(url.append("&"), encoding, "minimized_channelId", channelSubscribeId);
+                this.encodeAndAppend(url.append("&"), encoding, "minimized_" + channelSubscribeId + "_value", "true");
+            }
         }
         
         //If set add the portlet mode

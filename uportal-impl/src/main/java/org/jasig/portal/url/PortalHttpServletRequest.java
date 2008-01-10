@@ -27,6 +27,13 @@ import org.jasig.portal.security.IPersonManager;
  * @version $Revision: 11911 $
  */
 public class PortalHttpServletRequest extends AbstractHttpServletRequestWrapper implements IWritableHttpServletRequest {
+    /**
+     * {@link javax.servlet.http.HttpServletRequest} attribute that this {@link HttpServletRequest} object
+     * will be available.
+     */
+    public static final String ATTRIBUTE__HTTP_SERVLET_REQUEST = PortalHttpServletRequest.class.getName() + ".PORTAL_HTTP_SERVLET_REQUEST";
+    
+    
     private final IPersonManager personManager;
     private final Map<String, String[]> parameterMap = new HashMap<String, String[]>();
 
@@ -43,6 +50,15 @@ public class PortalHttpServletRequest extends AbstractHttpServletRequestWrapper 
         this.parameterMap.putAll(request.getParameterMap());
         
         this.personManager = personManager;
+    }
+    
+    @Override
+    public Object getAttribute(String name) {
+        if (ATTRIBUTE__HTTP_SERVLET_REQUEST.equals(name)) {
+            return this;
+        }
+        
+        return super.getAttribute(name);
     }
 
     public boolean addParameterValue(String name, String value) {

@@ -81,6 +81,7 @@ public class UserLayoutParameterProcessor implements IRequestParameterProcessor 
                 }
             }
             else {
+                //Make sure that the focused channel isn't rendered minimized
                 themeStylesheetUserPreferences.setChannelAttributeValue(root, "minimized", "false");
                 
                 //Tell the channel it is being maximized
