@@ -37,9 +37,9 @@ public class XMLPersonAttributesConfiguration
          config =
             ResourceLoader.getResourceAsDocument(
                this.getClass(),
-               "/properties/groups/PAGSGroupStoreConfig.xml");
+               "/properties/groups/PAGSGroupStoreConfig.xml", true);
       } catch (Exception rme) {
-         throw new RuntimeException("PersonAttributesGroupStore: Unable to find configuration document");
+         throw new RuntimeException("PersonAttributesGroupStore: Unable to read configuration document");
       }
       groupDefinitions = new HashMap();
       config.normalize();
