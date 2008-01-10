@@ -94,8 +94,8 @@ public class ChannelRequestParameterProcessor extends CommonsFileUploadSupport i
         try {
             //If this is a portlet request don't do any channel parameter processing
             if (this.portletRequestParameterManager.getTargetedPortletWindowId(request) != null) {
-                if (this.logger.isInfoEnabled()) {
-                    this.logger.info("Request is targeting a portlet, channel parameter processing will not take place.");
+                if (this.logger.isDebugEnabled()) {
+                    this.logger.debug("Request is targeting a portlet, channel parameter processing will not take place.");
                 }
                 
                 //Mark the request as not having any channel specific parameters

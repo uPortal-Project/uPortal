@@ -7,6 +7,8 @@ package org.jasig.portal.layout.node;
 
 import java.io.PrintWriter;
 
+import javax.servlet.http.HttpServletResponse;
+
 import junit.framework.TestCase;
 
 import org.jasig.portal.ChannelCacheKey;
@@ -116,6 +118,14 @@ public class UserLayoutChannelDescriptionTest extends TestCase {
          * @see org.jasig.portal.IResetableChannel#prepareForReset()
          */
         public void prepareForReset() {
+            // TODO Auto-generated method stub
+            
+        }
+
+        /* (non-Javadoc)
+         * @see org.jasig.portal.IDirectResponse#setResponse(javax.servlet.http.HttpServletResponse)
+         */
+        public void setResponse(HttpServletResponse response) throws PortalException {
             // TODO Auto-generated method stub
             
         }

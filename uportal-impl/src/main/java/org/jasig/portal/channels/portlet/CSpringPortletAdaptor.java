@@ -5,9 +5,11 @@
  */
 package org.jasig.portal.channels.portlet;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -276,6 +278,21 @@ public class CSpringPortletAdaptor implements IPortletAdaptor {
             this.portalControlStructures = null;
             this.channelRuntimeData = null;
         }        
+    }
+    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.IDirectResponse#setResponse(javax.servlet.http.HttpServletResponse)
+     */
+    public void setResponse(HttpServletResponse response) throws PortalException {
+        final PrintWriter writer;
+        try {
+            writer = response.getWriter();
+        }
+        catch (IOException e) {
+            throw new PortalException("Failed to access PrintWriter on response to initiate rendering");
+        }
+
+        this.renderCharacters(writer);
     }
 
     /* (non-Javadoc)

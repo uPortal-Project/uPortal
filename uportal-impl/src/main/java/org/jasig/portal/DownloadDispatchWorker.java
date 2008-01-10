@@ -53,7 +53,7 @@ public class DownloadDispatchWorker implements IWorkerRequestProcessor {
         // gather parameters
         if(channelTarget!=null) {
             final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
-            final IChannelRequestParameterManager channelParameterManager = (IChannelRequestParameterManager)applicationContext.getBean("channelParameterManager", IChannelRequestParameterManager.class);
+            final IChannelRequestParameterManager channelParameterManager = (IChannelRequestParameterManager)applicationContext.getBean("channelRequestParameterManager", IChannelRequestParameterManager.class);
             
             final Map<String, Object[]> channelParameters = channelParameterManager.getChannelParameters(req, channelTarget);
             
@@ -137,7 +137,7 @@ public class DownloadDispatchWorker implements IWorkerRequestProcessor {
                             if (out != null) 
                                 out.close();
                         } catch (IOException ioe) {
-                            log.error( "DownloadDispatchWorker:processWorkerDispatch unable to close IOStream ", ioe);
+                            log.error("unable to close IOStream ", ioe);
                         }
                     }
                 } else if (ch instanceof org.jasig.portal.IDirectResponse) {
@@ -151,13 +151,13 @@ public class DownloadDispatchWorker implements IWorkerRequestProcessor {
                     
                     dirResp.setResponse(res);                    
                 } else {
-                    log.error( "DownloadDispatchWorker::processWorkerDispatch(): Channel (instanceId=\""+channelTarget+"\" needs to implement org.jasig.portal.IMimeResponse interface in order to download files.");
+                    log.error("Channel (instanceId='"+channelTarget+"' needs to implement either the '" + IMimeResponse.class + "' or '" + IDirectResponse.class + "' interface in order to download files.");
                 }
             } else {
-                log.warn("DownloadDispatchWorker::processWorkerDispatch(): unable to obtain instance a channel. instanceId=\""+channelTarget+"\".");
+                log.warn("unable to obtain instance a channel. instanceId='"+channelTarget+"'.");
             }
         } else {
-            log.error( "DownloadDispatchWorker::processWorkerDispatch(): unable to determine instance Id of the target channel. requestURL=\""+pcs.getHttpServletRequest().getRequestURI()+"\".");
+            log.error("unable to determine instance Id of the target channel. requestURL='"+pcs.getHttpServletRequest().getRequestURI()+"'.");
         }
     }
 }

@@ -684,7 +684,7 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline {
      */
     protected boolean processWorkerDispatchIfNecessary(HttpServletRequest req, HttpServletResponse res, IUserPreferencesManager uPreferencesManager, ChannelManager cm) throws PortalException {
         final HttpSession session = req.getSession(false);
-        if (session != null) {
+        if (session == null) {
             return false;
         }
 

@@ -21,5 +21,5 @@ public interface IDirectResponse {
      * 
      * @param response The HttpServletResponse for the channel to use.
      */
-    public void setResponse (HttpServletResponse response);    
+    public void setResponse (HttpServletResponse response) throws PortalException;    
 }
