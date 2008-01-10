@@ -443,7 +443,9 @@
         <plugins>
             <!-- Surefire Plugin: Exec Tests ===================================== -->
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven-surefire-plugin.version}</version>
                 <configuration>
                     <excludes>
                         <exclude>**/Abstract*Test.java</exclude>

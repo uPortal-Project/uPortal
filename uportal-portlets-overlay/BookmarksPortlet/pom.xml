@@ -22,13 +22,12 @@
         <dependency>
             <groupId>org.jasig.portlet</groupId>
             <artifactId>BookmarksPortlet</artifactId>
-            <version>1.0.7</version>
+            <version>${BookmarksPortlet.version}</version>
             <type>war</type>
         </dependency>
     </dependencies>
 
     <build>
-        <finalName>BookmarksPortlet</finalName>
         <plugins>
            <plugin>
                 <groupId>org.apache.pluto</groupId>

@@ -59,6 +59,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
+                <version>${maven-war-plugin.version}</version>
                 <configuration>
                     <webXml>${project.build.directory}/pluto-resources/web.xml</webXml>
                     <webResources>
@@ -75,7 +76,7 @@
             <plugin>
                 <groupId>org.apache.pluto</groupId>
                 <artifactId>maven-pluto-plugin</artifactId>
-                <version>1.1.5-SNAPSHOT</version>
+                <version>${pluto.version}</version>
                 <executions>
                     <execution>
                         <phase>process-resources</phase>

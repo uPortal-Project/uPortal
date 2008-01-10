@@ -60,7 +60,6 @@
     </dependencies>
 
     <build>
-        <finalName>proxyportlet</finalName>
         <plugins>
            <plugin>
                 <groupId>org.apache.pluto</groupId>

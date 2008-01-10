@@ -27,12 +27,13 @@
     </modules>
 
     <build>
+        <finalName>${pom.artifactId}</finalName>
         <pluginManagement>
             <plugins>
                 <plugin>
                     <groupId>org.apache.pluto</groupId>
                     <artifactId>maven-pluto-plugin</artifactId>
-                    <version>1.1.5-SNAPSHOT</version>
+                    <version>${pluto.version}</version>
                     <executions>
                         <execution>
                             <phase>package</phase>
