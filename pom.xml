@@ -16,7 +16,7 @@
 
     <name>uPortal</name>
     <description>The root project definition for the uPortal project.</description>
-    <version>3.0.0-M5-SNAPSHOT</version>
+    <version>3.0.0-M5</version>
 
     <licenses>
         <license>
@@ -25,12 +25,13 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
-
-    <scm>
-        <connection>scm:svn:https://www.ja-sig.org/svn/up2/trunk</connection>
-        <developerConnection>scm:svn:https://www.ja-sig.org/svn/up2/trunk</developerConnection>
-        <url>http://developer.ja-sig.org/source/browse/jasigsvn/up2/trunk</url>
-    </scm>
+    
+    <distributionManagement>
+        <site>
+            <id>developer.jasig</id>
+            <url>scp://developer.ja-sig.org/jasig/htdocs/developer/projects/uportal</url>
+        </site>
+    </distributionManagement>
 
     <repositories>
         <repository>
@@ -92,6 +93,7 @@
     <properties>
         <!-- POM Configuration Properties -->
         <issues.projectKey>UP</issues.projectKey>
+        <scm.path>/up2/trunk</scm.path>
         
         <!-- Portlet WAR Dependency Version Properties -->
         <BookmarksPortlet.version>1.0.7</BookmarksPortlet.version>
