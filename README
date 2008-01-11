@@ -66,21 +66,10 @@ to either change that configuration the build or to change it in
 file should be, or even choose a different logging approach (log via XML to a
 ChainSaw instance, say).
 
-Database configuration + Tomcat context configuration
+Database configuration
 --------------------------------------
 Database configuration is configured in /uportal-impl/src/main/resources/properties/rdbm.properties. 
-The ant build will produce a /META-INF/context.xml file which, when you deploy
-your .war, will configure the context to make the uPortal database available
-via servlet-container-managed DataSource via JNIDI.  You can choose to get your
-DataSource via JNDI in the context of a servlet container by configuring the
-relevant /uportal-impl/src/main/resources/properties/portal.properties property.
 
-The maven build transforms the context file declared in build.properties,
-replacing those @foo@ placeholders with the matching properties in
-rdbm.properties or in build.properties, to produce the context.xml file.  You
-can allow this filtering to happen, or you can remove the @placeholders@ from
-the context file (/uportal-war/src/main/webapp/META-INF/context.xml), replacing
-them with the values you would like to use.
 
 
 This README is Copyright Java Architectures Special Interest Group, 2005-2007, and is licensed for your use as per ./license.txt.
