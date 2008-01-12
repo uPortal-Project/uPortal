@@ -273,17 +273,45 @@
                         <link>http://static.springframework.org/spring-ldap/docs/1.2.0/api/spring-ldap/</link>
                         <link>http://developer.ja-sig.org/projects/person-directory/apidocs/</link>
                     </links>
-                    <doclet>gr.spinellis.umlgraph.doclet.UmlGraphDoc</doclet>
-                    <docletArtifact>
-                        <groupId>gr.spinellis</groupId>
-                        <artifactId>UmlGraph</artifactId>
-                        <version>4.6</version>
-                    </docletArtifact>
-                    <additionalparam>
-                        -inferrel -inferdep -quiet -hide java.* -collpackages java.util.* -qualify -postfixpackage -nodefontsize 9 -nodefontpackagesize 7
-                    </additionalparam>
                 </configuration>
             </plugin>
         </plugins>
     </reporting>
+    
+    <profiles>
+        <profile>
+            <id>javadoc-uml</id>
+            <reporting>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>${maven-javadoc-plugin.version}</version>
+                        <configuration>
+                            <source>1.5</source>
+                            <links>
+                                <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
+                                <link>http://java.sun.com/javaee/5/docs/api/</link>
+                                <link>http://portals.apache.org/pluto/multiproject/portlet-api/apidocs/</link>
+                                <link>http://portals.apache.org/pluto/pluto-container/apidocs/</link>
+                                <link>http://portals.apache.org/pluto/pluto-descriptor-api/apidocs/</link>
+                                <link>http://static.springframework.org/spring/docs/2.5.x/api/</link>
+                                <link>http://static.springframework.org/spring-ldap/docs/1.2.0/api/spring-ldap/</link>
+                                <link>http://developer.ja-sig.org/projects/person-directory/apidocs/</link>
+                            </links>
+                            <doclet>gr.spinellis.umlgraph.doclet.UmlGraphDoc</doclet>
+                            <docletArtifact>
+                                <groupId>gr.spinellis</groupId>
+                                <artifactId>UmlGraph</artifactId>
+                                <version>4.6</version>
+                            </docletArtifact>
+                            <additionalparam>
+                                -inferrel -inferdep -quiet -hide java.* -collpackages java.util.* -qualify -postfixpackage -nodefontsize 9 -nodefontpackagesize 7
+                            </additionalparam>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </reporting>
+        </profile>
+    </profiles>
 </project>
