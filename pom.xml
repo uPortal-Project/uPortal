@@ -29,7 +29,7 @@
     <distributionManagement>
         <site>
             <id>developer.jasig</id>
-            <url>scp://developer.ja-sig.org/jasig/htdocs/developer/projects/uportal</url>
+            <url>${distributionManagement.siteBase}/uportal/${pom.version}</url>
         </site>
     </distributionManagement>
 
