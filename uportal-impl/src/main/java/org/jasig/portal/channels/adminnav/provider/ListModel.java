@@ -21,7 +21,6 @@ import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.Constants;
 import org.jasig.portal.IChannelRegistryStore;
 import org.jasig.portal.PortalException;
-import org.jasig.portal.PortalSessionManager;
 import org.jasig.portal.UPFileSpec;
 import org.jasig.portal.channels.BaseChannel;
 import org.jasig.portal.channels.adminnav.ILabelResolver;
@@ -185,7 +184,6 @@ public class ListModel extends BaseChannel implements INavigationModel
             // next build the URL for the link
             String url =
                 UPFileSpec.buildUPFile(
-                    PortalSessionManager.IDEMPOTENT_URL_TAG,
                     UPFileSpec.RENDER_METHOD,
                     UPFileSpec.USER_LAYOUT_ROOT_NODE,
                     null,

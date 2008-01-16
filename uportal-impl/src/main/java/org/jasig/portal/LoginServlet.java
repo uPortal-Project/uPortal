@@ -48,7 +48,7 @@ public class LoginServlet extends HttpServlet {
       HashMap cHash = new HashMap(1);
       HashMap pHash = new HashMap(1);
       try {
-         upFile = UPFileSpec.buildUPFile(null,UPFileSpec.RENDER_METHOD,UPFileSpec.USER_LAYOUT_ROOT_NODE,null,null);
+         upFile = UPFileSpec.buildUPFile(UPFileSpec.RENDER_METHOD,UPFileSpec.USER_LAYOUT_ROOT_NODE,null,null);
          String key;
          // We retrieve the tokens representing the credential and principal
          // parameters from the security properties file.

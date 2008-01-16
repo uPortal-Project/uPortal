@@ -62,9 +62,6 @@ public class PortalSessionManager extends HttpServlet {
      */
     private static final String DEFAULT_SAX_DRIVER = "org.apache.xerces.parsers.SAXParser";
 
-  public static final String INTERNAL_TAG_VALUE=Long.toHexString((new Random()).nextLong());
-  public static final String IDEMPOTENT_URL_TAG="idempotent";
-
   private static boolean initialized = false;
   private static ServletContext servletContext = null;
   private static PortalSessionManager instance = null;

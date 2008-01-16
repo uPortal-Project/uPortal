@@ -120,7 +120,7 @@ public class ChannelServlet extends HttpServlet {
       }
 
       try {
-          rd.setUPFile(new UPFileSpec(null,UPFileSpec.RENDER_METHOD,"servletRoot","singlet",null));
+          rd.setUPFile(new UPFileSpec(UPFileSpec.RENDER_METHOD,"servletRoot","singlet",null));
       } catch (PortalException pe) {
     	  LOG.error("unable to construct a UPFile !",pe);
       }

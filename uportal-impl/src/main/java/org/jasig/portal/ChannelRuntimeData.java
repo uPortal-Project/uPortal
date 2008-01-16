@@ -10,10 +10,10 @@ import java.util.Hashtable;
 import java.util.Locale;
 import java.util.Map;
 
-import org.jasig.portal.car.CarResources;
-import org.jasig.portal.portlet.url.RequestType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.car.CarResources;
+import org.jasig.portal.portlet.url.RequestType;
 
 import com.oreilly.servlet.multipart.Part;
 
@@ -238,7 +238,20 @@ public class ChannelRuntimeData extends Hashtable<String, Object> implements Clo
      * @return a value of URL to which parameter sequences should be appended.
      */
     public String getBaseActionURL() {
-        return this.getBaseActionURL(false);
+        // If the base action URL was explicitly set, use it
+        // peterk: we should probably introduce idepotent version of this one as well, at some point
+        if (baseActionURL != null) {
+            return baseActionURL;
+        }
+
+        String url = null;
+        try {
+            url = channelUPFile.getUPFile();
+        }
+        catch (PortalException e) {
+            log.error("Unable to construct a base action URL!", e);
+        }
+        return url;
     }
 
     /**
@@ -247,27 +260,10 @@ public class ChannelRuntimeData extends Hashtable<String, Object> implements Clo
      *
      * @param idempotent a <code>boolean</code> value specifying if a given URL should be idepotent.
      * @return a value of URL to which parameter sequences should be appended.
+     * @deprecated All URLs are now idempotent. Use {@link #getBaseActionURL()} instead.
      */
     public String getBaseActionURL(boolean idempotent) {
-        // If the base action URL was explicitly set, use it
-        // peterk: we should probably introduce idepotent version of this one as well, at some point
-        if (baseActionURL != null) {
-          return baseActionURL;
-        }
-
-        String url=null;
-        try {
-            if(idempotent) {
-                UPFileSpec upfs=new UPFileSpec(channelUPFile);
-                upfs.setTagId(PortalSessionManager.IDEMPOTENT_URL_TAG);
-                url=upfs.getUPFile();
-            } else {
-                url=channelUPFile.getUPFile();
-            }
-        } catch (Exception e) {
-            log.error("Unable to construct a base action URL!", e);
-        }
-        return url;
+        return this.getBaseActionURL();
     }
 
     /**
@@ -283,7 +279,6 @@ public class ChannelRuntimeData extends Hashtable<String, Object> implements Clo
         String url=null;
         try {
                 UPFileSpec upfs=new UPFileSpec(channelUPFile);
-                upfs.setTagId(PortalSessionManager.IDEMPOTENT_URL_TAG);
                 url=upfs.getUPFile();
                 url = url + "?" + Constants.FNAME_PARAM + "=" + fname;
         } catch (Exception e) {
@@ -300,12 +295,16 @@ public class ChannelRuntimeData extends Hashtable<String, Object> implements Clo
      * @return URL to invoke the worker.
      */
     public String getBaseWorkerURL(String worker) {
-        // todo: propagate the exception
-        String url=null;
+        String url = null;
         try {
-            url=getBaseWorkerURL(worker,false);
-        } catch (Exception e) {
-            log.error("ChannelRuntimeData::getBaseWorkerURL() : unable to construct a worker action URL for a worker \""+worker+"\".");
+            UPFileSpec upfs = new UPFileSpec(channelUPFile);
+            upfs.setMethod(UPFileSpec.WORKER_METHOD);
+            upfs.setMethodNodeId(worker);
+
+            url = upfs.getUPFile();
+        }
+        catch (Exception e) {
+            log.error("unable to construct a worker action URL for a worker '" + worker + "'.", e);
         }
         return url;
     }
@@ -392,19 +391,10 @@ public class ChannelRuntimeData extends Hashtable<String, Object> implements Clo
      * @param idempotent a <code>boolean</code> value sepcifying if a URL should be idempotent
      * @return URL to invoke the worker.
      * @exception PortalException if an error occurs
+     * @deprecated All urls are now idempotent, use {@link #getBaseWorkerURL(String)} instead.
      */
     public String getBaseWorkerURL(String worker, boolean idempotent) throws PortalException {
-        String url=null;
-        UPFileSpec upfs=new UPFileSpec(channelUPFile);
-        upfs.setMethod(UPFileSpec.WORKER_METHOD);
-        upfs.setMethodNodeId(worker);
-        if(idempotent) {
-            upfs.setTagId(PortalSessionManager.IDEMPOTENT_URL_TAG);
-        }
-
-        url=upfs.getUPFile();
-
-        return url;
+        return this.getBaseWorkerURL(worker);
     }
 
     /**

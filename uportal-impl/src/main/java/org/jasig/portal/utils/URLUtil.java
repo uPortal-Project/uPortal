@@ -19,7 +19,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.PortalException;
-import org.jasig.portal.PortalSessionManager;
 import org.jasig.portal.UPFileSpec;
 
 /**
@@ -161,12 +160,9 @@ public class URLUtil
         UPFileSpec up = null;
 
         if (asRoot) {
-            up = new UPFileSpec(PortalSessionManager.IDEMPOTENT_URL_TAG,
-                UPFileSpec.RENDER_METHOD, targetNodeId, null, extras);
+            up = new UPFileSpec(UPFileSpec.RENDER_METHOD, targetNodeId, null, extras);
         } else {
-            up = new UPFileSpec(PortalSessionManager.IDEMPOTENT_URL_TAG,
-                UPFileSpec.RENDER_METHOD, UPFileSpec.USER_LAYOUT_ROOT_NODE,
-                targetNodeId, extras);
+            up = new UPFileSpec(UPFileSpec.RENDER_METHOD, UPFileSpec.USER_LAYOUT_ROOT_NODE, targetNodeId, extras);
         }
     
         return up;

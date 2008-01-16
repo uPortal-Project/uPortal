@@ -37,7 +37,6 @@ import org.jasig.portal.IWorkerRequestProcessor;
 import org.jasig.portal.MediaManager;
 import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalException;
-import org.jasig.portal.PortalSessionManager;
 import org.jasig.portal.StructureAttributesIncorporationFilter;
 import org.jasig.portal.StructureStylesheetDescription;
 import org.jasig.portal.ThemeAttributesIncorporationFilter;
@@ -254,8 +253,7 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline {
                 String newRootNodeId = req.getParameter("uP_detach_target");
 
                 // set optimistic uPElement value
-                UPFileSpec uPElement = new UPFileSpec(PortalSessionManager.INTERNAL_TAG_VALUE,
-                        UPFileSpec.RENDER_METHOD, rootNodeId, null, null);
+                UPFileSpec uPElement = new UPFileSpec(UPFileSpec.RENDER_METHOD, rootNodeId, null, null);
 
                 if (newRootNodeId != null) {
                     // set a new root
@@ -474,7 +472,6 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline {
                     sst.setParameter("baseActionURL", uPElement.getUPFile());
                     // construct idempotent version of the uPElement
                     UPFileSpec uPIdempotentElement = new UPFileSpec(uPElement);
-                    uPIdempotentElement.setTagId(PortalSessionManager.IDEMPOTENT_URL_TAG);
                     sst.setParameter("baseIdempotentActionURL", uPElement.getUPFile());
 
                     Hashtable<String, String> supTable = userPreferences.getStructureStylesheetUserPreferences()

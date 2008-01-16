@@ -52,7 +52,7 @@ public class LogoutServlet extends HttpServlet {
                + UPFileSpec.PORTAL_URL_SUFFIX;
          HashMap rdHash = new HashMap(1);
          try {
-            upFile = UPFileSpec.buildUPFile(null, UPFileSpec.RENDER_METHOD, UPFileSpec.USER_LAYOUT_ROOT_NODE,
+            upFile = UPFileSpec.buildUPFile(UPFileSpec.RENDER_METHOD, UPFileSpec.USER_LAYOUT_ROOT_NODE,
                   null, null);
             // We retrieve the redirect strings for each context
             // from the security properties file.

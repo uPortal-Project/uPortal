@@ -33,7 +33,6 @@ public class UPFileSpec {
     public static final String USER_LAYOUT_ROOT_NODE = "userLayoutRootNode";
     
     // some URL construction elements
-    public static final String TAG_URL_ELEMENT="tag";
     public static final String TARGET_URL_ELEMENT="target";
     public static final String WORKER_URL_ELEMENT="worker";
     public static final String DETACH_URL_ELEMENT="detach";
@@ -49,7 +48,6 @@ public class UPFileSpec {
     public static final int RENDER_METHOD=0;
     public static final int WORKER_METHOD=1;
 
-    String tagId=null;
     String method=null;
     String methodNodeId=null;
     String targetNodeId=null;
@@ -100,7 +98,6 @@ public class UPFileSpec {
      * @param up an <code>UPFileSpec</code> value to copy the values from
      */
     public UPFileSpec(UPFileSpec up) {
-        this.tagId=up.getTagId();
         this.method=up.getMethod();
         this.methodNodeId=up.getMethodNodeId();
         this.targetNodeId=up.getTargetNodeId();
@@ -111,28 +108,17 @@ public class UPFileSpec {
     /**
      * A building constructor.
      *
-     * @param tagId a tag id <code>String</code> value (can be <code>null</code>)
      * @param method a method <code>String</code> value (required, must be one of the <code>UPFileSpec.*_METHOD</code> constants, i.e.  {@link #RENDER_METHOD} or {@link #WORKER_METHOD})
      * @param methodNodeId a method node id <code>String</code> value (required value, can <b>not</b> be <code>null</code>)
      * @param targetNodeId a target id <code>String</code> value (can be <code>null</code>)
      * @param extraElements a <code>String</code> to be incorporated into the file name before the suffix (".uP"). These values will be available from the {@link #getUPFileExtras()} result when .uP file is parsed. (can be <code>null</code>)
      * @exception PortalException if an invalid method code is passed or no methodNodeId is present.
      */
-    public UPFileSpec(String tagId,int method,String methodNodeId,String targetNodeId,String extraElements) throws PortalException {
-        this.setTagId(tagId);
+    public UPFileSpec(int method,String methodNodeId,String targetNodeId,String extraElements) throws PortalException {
         this.setMethod(method);
         this.setMethodNodeId(methodNodeId);
         this.setTargetNodeId(targetNodeId);
         this.setUPFileExtras(extraElements);
-    }
-
-    /**
-     * Set a tag id
-     *
-     * @param id a <code>String</code> value
-     */
-    public void setTagId(String id) {
-        this.tagId=id;
     }
 
     /**
@@ -178,16 +164,6 @@ public class UPFileSpec {
         this.uPFile_extras=extras;
     }
 
-
-    /**
-     * Returns a tag identifier.
-     *
-     * @return a <code>String</code> tag value,  <code>null</code> if no tag was specified.
-     */
-    public String getTagId() {
-        return tagId;
-    }
-
     /**
      * Determine method name
      *
@@ -221,7 +197,7 @@ public class UPFileSpec {
      * @return a <code>String</code> value
      */
     public String getUPFile() throws PortalException {
-        return (buildUPFileBase(tagId,method,methodNodeId,targetNodeId,uPFile_extras)).concat(PORTAL_URL_SUFFIX);
+        return (buildUPFileBase(method,methodNodeId,targetNodeId,uPFile_extras)).concat(PORTAL_URL_SUFFIX);
     }
 
     /**
@@ -238,7 +214,6 @@ public class UPFileSpec {
     /**
      * Constructs a .uP file
      *
-     * @param tagId a tag id <code>String</code> value (can be <code>null</code>)
      * @param method a method <code>String</code> value (required, must be one of the <code>UPFileSpec.*_METHOD</code> constants, i.e.  {@link #RENDER_METHOD} or {@link #WORKER_METHOD})
      * @param methodNodeId a method node id <code>String</code> value (required value, can <b>not</b> be <code>null</code>)
      * @param targetNodeId a target id <code>String</code> value (can be <code>null</code>)
@@ -246,15 +221,14 @@ public class UPFileSpec {
      * @return a <code>String</code> value
      * @exception PortalException if an invalid method code is passed or no methodNodeId is present.
      */
-    public static String buildUPFile(String tagId,int method,String methodNodeId,String targetNodeId,String extraElements) throws PortalException {
-        return (buildUPFileBase(tagId,method,methodNodeId,targetNodeId,extraElements)).concat(PORTAL_URL_SUFFIX);
+    public static String buildUPFile(int method,String methodNodeId,String targetNodeId,String extraElements) throws PortalException {
+        return (buildUPFileBase(method,methodNodeId,targetNodeId,extraElements)).concat(PORTAL_URL_SUFFIX);
     }
 
 
     /**
      * Constructs a .uP file, without the suffix (actual ".uP") so it can be extended further.
      *
-     * @param tagId a tag id <code>String</code> value (can be <code>null</code>)
      * @param method a method <code>String</code> value (required, must be one of the <code>UPFileSpec.*_METHOD</code> constants, i.e.  {@link #RENDER_METHOD} or {@link #WORKER_METHOD})
      * @param methodNodeId a method node id <code>String</code> value (required value, can <b>not</b> be <code>null</code>)
      * @param targetNodeId a target id <code>String</code> value (can be <code>null</code>)
@@ -262,7 +236,7 @@ public class UPFileSpec {
      * @return a <code>String</code> value
      * @exception PortalException if an invalid method code is passed or no methodNodeId is present.
      */
-    public static String buildUPFileBase(String tagId,int method,String methodNodeId,String targetNodeId,String extraElements) throws PortalException {
+    public static String buildUPFileBase(int method,String methodNodeId,String targetNodeId,String extraElements) throws PortalException {
         String methodName=null;
 
         if(method==RENDER_METHOD) {
@@ -272,20 +246,15 @@ public class UPFileSpec {
         } else {
             throw new PortalException("Invalid method code!");
         }
-        return buildUPFileBase(tagId,methodName,methodNodeId,targetNodeId,extraElements);
+        return buildUPFileBase(methodName,methodNodeId,targetNodeId,extraElements);
     }
 
 
-    protected static String buildUPFileBase(String tagId,String method,String methodNodeId,String targetNodeId,String extraElements) throws PortalException {
+    protected static String buildUPFileBase(String method,String methodNodeId,String targetNodeId,String extraElements) throws PortalException {
         StringBuffer sb=new StringBuffer();
         if (method != null && method.equals(WORKER_URL_ELEMENT) &&
             methodNodeId != null && methodNodeId.equals(FILE_DOWNLOAD_WORKER)) {
           sb.append(method).append('/').append(methodNodeId).append('/');
-        }
-
-        if(tagId!=null) {
-            sb.append("tag").append(PORTAL_URL_SEPARATOR);
-            sb.append(tagId).append(PORTAL_URL_SEPARATOR);
         }
 
         if(method!=null) {
@@ -318,23 +287,6 @@ public class UPFileSpec {
         // determine tag or method
         if(uPTokenizer.hasMoreTokens()) {
             String currentToken=uPTokenizer.nextToken();
-            // is it a "tag" ?
-            if(currentToken.equals(TAG_URL_ELEMENT)) {
-                // yes it's, a tag
-                if(uPTokenizer.hasMoreElements()) {
-                    // we'll assume that the next toke is always an Id ...
-                    tagId=uPTokenizer.nextToken();
-                    if(uPTokenizer.hasMoreElements()) {
-                        currentToken=uPTokenizer.nextToken();
-                    } else {
-                        return;
-                    }
-                } else {
-                    // nothing after the "tag" element
-                    return;
-                }
-            }
-
             // determine method
             if(currentToken.equals(RENDER_URL_ELEMENT)) {
                 // render method
