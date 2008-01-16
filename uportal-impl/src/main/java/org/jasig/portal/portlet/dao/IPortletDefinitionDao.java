@@ -5,8 +5,6 @@
  */
 package org.jasig.portal.portlet.dao;
 
-import java.util.Set;
-
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 
