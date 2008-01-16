@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <parent>
+        <groupId>org.jasig.portal</groupId>
+        <artifactId>uportal-parent</artifactId>
+        <version>3.0.0-RC2-SNAPSHOT</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.jasig.portal</groupId>
+    <artifactId>hsqldb</artifactId>
+    <packaging>jar</packaging>
+
+    <name>uPortal 3 - HSQLDB Dependencies</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>${hsqldb.version}</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+</project>

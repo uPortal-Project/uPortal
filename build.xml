@@ -8,12 +8,14 @@
     <fail message="build.properties does not exist, please copy build.properties.sample and fill in your settings.">
         <condition>
             <not>
-                <available file="build.properties" />
+                <available file="${basedir}/build.properties" />
             </not>
         </condition>
     </fail>
 
-    <property file="build.properties" />
+    <property name="bootstrap.dir" value="${basedir}/bootstrap" />
+
+    <property file="${basedir}/build.properties" />
 
     <!--
      | Properties that describe the maven project
@@ -279,13 +281,13 @@
     </target>
     
     <target name="clean" description="Removes the deployed uPortal from the container and runs 'mvn clean'">
-        <antcall target="install-root-pom" />
-        
-        <!-- Clean out uPortal from Tomcat -->
-        <artifact:pom file="${uportal-war.dir}/pom.xml" id="uportal-war.pom" />
-        <property name="destDir" value="${server.base}/webapps/${uportal-war.pom.build.finalName}" />
-        <echo>Deleting '${destDir}'</echo>
-        <delete dir="${destDir}" />
+        <uportal-parent-macro>
+            <!-- Clean out uPortal from Tomcat -->
+            <artifact:pom file="${uportal-war.dir}/pom.xml" id="uportal-war.pom" />
+            <property name="destDir" value="${server.base}/webapps/${uportal-war.pom.build.finalName}" />
+            <echo>Deleting '${destDir}'</echo>
+            <delete dir="${destDir}" />
+        </uportal-parent-macro>
         
         <!-- Execute the mvn clean lifecycle -->
         <antcall target="mvn">
@@ -455,23 +457,25 @@
     </target>
 
     <target name="hsql" description="Start a HSQLDB instance consistent with the default RDBMS requirements of uPortal">
-        <artifact:dependencies pathId="hsql.classpath">
-            <dependency groupId="hsqldb" artifactId="hsqldb" version="1.8.0.7" />
-        </artifact:dependencies>
-
-        <property name="database" value="${basedir}/data/uP3_uPortal" />
-        <property name="port" value="8887" />
-
-        <echo message="Starting HSQL" />
-        <echo message="Using: ${basedir}/data/uP3_uPortal" />
-        <java fork="true" maxmemory="256M" dir="${basedir}" classname="org.hsqldb.Server">
-            <classpath refid="hsql.classpath" />
-
-            <arg value="-database" />
-            <arg value="${database}" />
-            <arg value="-port" />
-            <arg value="${port}" />
-        </java>
+        <uportal-parent-macro>
+            <artifact:dependencies pathid="hsql.classpath" verbose="false">
+                <pom file="${bootstrap.dir}/hsqldb-pom.xml" />
+            </artifact:dependencies>
+    
+            <property name="database" value="${basedir}/data/uP3_uPortal" />
+            <property name="port" value="8887" />
+    
+            <echo message="Starting HSQL" />
+            <echo message="Using: ${basedir}/data/uP3_uPortal" />
+            <java fork="true" maxmemory="256M" dir="${basedir}" classname="org.hsqldb.Server">
+                <classpath refid="hsql.classpath" />
+    
+                <arg value="-database" />
+                <arg value="${database}" />
+                <arg value="-port" />
+                <arg value="${port}" />
+            </java>
+        </uportal-parent-macro>
     </target>
 
     <!-- ============================== Deprecated Targets ============================== -->
@@ -499,7 +503,25 @@
 
 
     <!-- ============================== Maven Support Macros ============================== -->
+    
+    <!--
+     | Macro that simply calls the install-root-pom target using an 'ant' task instead of the
+     | 'antcall' task to ensure the Maven tasks aren't tainted by a failed loading of the parent
+     | pom.
+     +-->
+    <macrodef name="uportal-parent-macro">
+        <element name="sub-tasks" optional="false" implicit="true" />
+        <sequential>
+            <!--
+             | Call using the ant task to fork the execution, otherwise the maven ant tasks fail to find the parent pom
+             | after it is installed
+             +-->
+            <ant antfile="${basedir}/build.xml" target="install-root-pom" />
 
+            <sub-tasks />
+        </sequential>
+    </macrodef>
+    
     <!--
      | Macro for tasks involving a maven project. The macro loads the pom, creates a classpath,
      | ensures the project artifact is up-to-date, and runs the <sub-tasks> element. If the
@@ -732,22 +754,22 @@
         <element name="ear-deployer-sub-tasks" optional="false" implicit="true" />
 
         <sequential>
-            <antcall target="install-root-pom" />
-
-            <maven-artifact-macro project-name="uportal-ear-deployer" project-path="${uportal-ear-deployer.dir}">
-                <!--
-                 | Include the uportal-ear-deployer JAR in the final classpath
-                 +-->
-                <path id="uportal-ear-deployer-full.classpath">
-                    <path refid="uportal-ear-deployer.classpath" />
-                    <pathelement location="${uportal-ear-deployer.artifact}" />
-                </path>
-
-                <!--
-                 | Execute the ear-deployer-sub-tasks
-                 +-->
-                <ear-deployer-sub-tasks />
-            </maven-artifact-macro>
+            <uportal-parent-macro>
+                <maven-artifact-macro project-name="uportal-ear-deployer" project-path="${uportal-ear-deployer.dir}">
+                    <!--
+                     | Include the uportal-ear-deployer JAR in the final classpath
+                     +-->
+                    <path id="uportal-ear-deployer-full.classpath">
+                        <path refid="uportal-ear-deployer.classpath" />
+                        <pathelement location="${uportal-ear-deployer.artifact}" />
+                    </path>
+    
+                    <!--
+                     | Execute the ear-deployer-sub-tasks
+                     +-->
+                    <ear-deployer-sub-tasks />
+                </maven-artifact-macro>
+            </uportal-parent-macro>
         </sequential>
     </macrodef>
 
@@ -786,17 +808,36 @@
             </uportal-ear-deployer-macro>
         </sequential>
     </macrodef>
-
-
+    
     <!--
-     | Installs just the root uPortal pom
+     | Installs just the root uPortal pom, used by the uportal-parent-macro
      +-->
     <target name="install-root-pom">
-        <antcall target="mvn">
-            <param name="pomDir" value="${basedir}" />
-            <param name="goal" value="-N" />
-            <param name="goal1" value="install" />
-        </antcall>
+        <trycatch property="taskExceptionMessage" reference="taskExceptionId">
+            <try>
+                <artifact:pom id="dummyChild" file="${bootstrap.dir}/dummy-child-pom.xml" />
+            </try>
+            <catch>
+                <propertyregex property="matchedExceptionMessage" input="${taskExceptionMessage}" regexp="^Error downloading parent pom: Missing:.*" select="true" />
+                <if>
+                    <equals arg1="${matchedExceptionMessage}" arg2="true" />
+                    <then>
+                        <echo message="************************************************************************************************" />
+                        <echo message="********** Ignore the warning about the missing parent pom, it will be installed now. **********" />
+                        <echo message="************************************************************************************************" />
+                        
+                        <antcall target="mvn">
+                            <param name="pomDir" value="${basedir}" />
+                            <param name="goal" value="-N" />
+                            <param name="goal1" value="install" />
+                        </antcall>
+                    </then>
+                    <else>
+                        <throw refid="taskExceptionId" />
+                    </else>
+                </if>
+            </catch>
+        </trycatch>
     </target>
 
     <!--
@@ -869,26 +910,28 @@
 
     <typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="urn:maven-artifact-ant">
         <classpath>
-            <pathelement location="${basedir}/bootstrap/maven-ant-tasks-2.0.7.jar" />
+            <pathelement location="${bootstrap.dir}/maven-ant-tasks-2.0.7.jar" />
         </classpath>
     </typedef>
 
     <taskdef resource="net/sf/antcontrib/antlib.xml">
         <classpath>
-            <pathelement location="${basedir}/bootstrap/ant-contrib-1.0b3.jar" />
+            <pathelement location="${bootstrap.dir}/ant-contrib-1.0b3.jar" />
         </classpath>
     </taskdef>
 
     <target name="setup-assembler">
-        <artifact:dependencies pathid="pluto-ant" verbose="false">
-            <pom file="${basedir}/bootstrap/pluto-assembler-pom.xml" />
-        </artifact:dependencies>
-
-        <taskdef classname="org.apache.pluto.ant.AssembleTask" name="assemblePortlet">
-            <classpath>
-                <path refid="pluto-ant" />
-            </classpath>
-        </taskdef>
+        <uportal-parent-macro>
+            <artifact:dependencies pathid="pluto-ant" verbose="false">
+                <pom file="${bootstrap.dir}/pluto-assembler-pom.xml" />
+            </artifact:dependencies>
+    
+            <taskdef classname="org.apache.pluto.ant.AssembleTask" name="assemblePortlet">
+                <classpath>
+                    <path refid="pluto-ant" />
+                </classpath>
+            </taskdef>
+        </uportal-parent-macro>
     </target>
 
     <macrodef name="echo-path">
