@@ -533,12 +533,17 @@
             <property name="@{project-name}.artifact" value="${@{project-name}.pom.build.directory}/${@{project-name}.pom.build.finalName}.${@{project-name}.pom.packaging}" />
 
             <!--
+             | Parse out the target directory without the preceding project path
+             +-->
+            <length property="@{project-name}.path.length" string="@{project-path}/" />
+            <propertyregex property="@{project-name}.build.directory" input="${@{project-name}.pom.build.directory}" regexp=".{${@{project-name}.path.length}}(.*)" select="\1" />
+
+            <!--
              | Do uptodate checking for project files and dependencies
-             | TODO - parse out relative path from '${@{project-name}.build.directory}' and use that for exclude
              +-->
             <uptodate property="@{project-name}.projectFilesUTD" targetfile="${@{project-name}.artifact}">
                 <srcfiles dir="@{project-path}" defaultexcludes="true">
-                    <exclude name="target/" />
+                    <exclude name="${@{project-name}.build.directory}/" />
                 </srcfiles>
             </uptodate>
             <if>
