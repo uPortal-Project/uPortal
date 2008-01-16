@@ -45,6 +45,34 @@
         </antcall>
         <echo message="Finished initializing uPortal" />
     </target>
+    
+    <target name="db-hib">
+        <uportal-impl-macro>
+            <artifact:dependencies pathid="hibernate-tools.classpath" verbose="false">
+                <pom file="${bootstrap.dir}/hibernate-tools-pom.xml" />
+            </artifact:dependencies>
+            
+            <path id="hibernate-tools.classpath.full">
+                <path refid="hibernate-tools.classpath" />
+                <path refid="uportal-impl-full.classpath" />
+            </path>
+            
+            <taskdef classname="org.hibernate.tool.ant.HibernateToolTask" name="hibernatetool">
+                <classpath refid="hibernate-tools.classpath.full" />
+            </taskdef>
+            
+            <mkdir dir="${basedir}/target/ddl" />
+            <hibernatetool destdir="${basedir}/target/ddl">
+                <classpath refid="hibernate-tools.classpath.full" />
+                
+                <annotationconfiguration 
+                    configurationfile="${basedir}/uportal-impl/src/main/resources/properties/db/hibernate.cfg.xml"
+                    propertyfile="${basedir}/uportal-impl/src/main/resources/properties/rdbm.properties" />
+                
+                <hbm2ddl export="false" outputfilename="sql.ddl" drop="true" format="true" />
+            </hibernatetool>
+        </uportal-impl-macro>
+    </target>
 
     <target name="db" description="Loads database tables and data">
         <uportal-impl-macro>
