@@ -8,10 +8,10 @@
      +-->
 
     <bean id="PortalDb" class="org.apache.commons.dbcp.BasicDataSource">
-        <property name="driverClassName" value="${jdbcDriver}" />
-        <property name="url" value="${jdbcUrl}" />
-        <property name="username" value="${jdbcUser}" />
-        <property name="password" value="${jdbcPassword}" />
+        <property name="driverClassName" value="${hibernate.connection.driver_class}" />
+        <property name="url" value="${hibernate.connection.url}" />
+        <property name="username" value="${hibernate.connection.username}" />
+        <property name="password" value="${hibernate.connection.password}" />
         
         <property name="maxActive" value="50" />
         <property name="maxIdle" value="10" />

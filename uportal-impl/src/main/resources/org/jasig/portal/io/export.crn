@@ -1,5 +1,5 @@
 <properties location="classpath://properties/rdbm.properties">
-    <sql-connection driver="${req(jdbcDriver)}" url="${req(jdbcUrl)}" username="${req(jdbcUser)}" password="${req(jdbcPassword)}">
+    <sql-connection driver="${req(hibernate.connection.driver_class)}" url="${req(hibernate.connection.url)}" username="${req(hibernate.connection.username)}" password="${req(hibernate.connection.password)}">
         <with-attribute key="EXPORT_DIR" value="${req($1)}">
             <with-attribute key="ENTITY_TYPE" value="${req($2)}">
 

@@ -46,7 +46,7 @@
         <echo message="Finished initializing uPortal" />
     </target>
     
-    <target name="db-hib">
+    <target name="db-hibernate" description="Drops then creates Hibernate managed tables">
         <uportal-impl-macro>
             <artifact:dependencies pathid="hibernate-tools.classpath" verbose="false">
                 <pom file="${bootstrap.dir}/hibernate-tools-pom.xml" />
@@ -61,20 +61,20 @@
                 <classpath refid="hibernate-tools.classpath.full" />
             </taskdef>
             
-            <mkdir dir="${basedir}/target/ddl" />
-            <hibernatetool destdir="${basedir}/target/ddl">
+            <mkdir dir="${basedir}/target/hibernate" />
+            <hibernatetool destdir="${basedir}/target/hibernate">
                 <classpath refid="hibernate-tools.classpath.full" />
                 
                 <annotationconfiguration 
                     configurationfile="${basedir}/uportal-impl/src/main/resources/properties/db/hibernate.cfg.xml"
                     propertyfile="${basedir}/uportal-impl/src/main/resources/properties/rdbm.properties" />
                 
-                <hbm2ddl export="false" outputfilename="sql.ddl" drop="true" format="true" />
+                <hbm2ddl export="true" drop="true" />
             </hibernatetool>
         </uportal-impl-macro>
     </target>
 
-    <target name="db" description="Loads database tables and data">
+    <target name="db" description="Loads database tables and data" depends="db-hibernate">
         <uportal-impl-macro>
             <property name="usetable" value=" " />
             <property name="tablefile" value=" " />
