@@ -39,6 +39,7 @@
         <echo message="Initializing uPortal" />
         <antcall target="deploy-ear" />
         <antcall target="db" />
+        <antcall target="db-hibernate" />
         <antcall target="i18n-db" />
         <antcall target="crn-import">
             <param name="dir" value="uportal-impl/src/main/resources/properties/db/entities" />
@@ -74,7 +75,7 @@
         </uportal-impl-macro>
     </target>
 
-    <target name="db" description="Loads database tables and data" depends="db-hibernate">
+    <target name="db" description="Loads database tables and data">
         <uportal-impl-macro>
             <property name="usetable" value=" " />
             <property name="tablefile" value=" " />

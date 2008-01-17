@@ -17,6 +17,15 @@
     <description>The source code for uPortal.</description>
 
     <dependencies>
+        <!-- Portal JDBC Driver -->
+        <dependency>
+            <groupId>hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>${hsqldb.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+    
         <!-- ===== Compile Time Dependencies ============================== -->
 
         <dependency>

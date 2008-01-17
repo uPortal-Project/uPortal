@@ -9,10 +9,10 @@
     </bean>
 
     <bean id="dataSource" class="org.springframework.jdbc.datasource.SingleConnectionDataSource">
-        <property name="driverClassName" value="${jdbcDriver}" />
-        <property name="url" value="${jdbcUrl}" />
-        <property name="username" value="${jdbcUser}" />
-        <property name="password" value="${jdbcPassword}" />
+        <property name="driverClassName" value="${hibernate.connection.driver_class}" />
+        <property name="url" value="${hibernate.connection.url}" />
+        <property name="username" value="${hibernate.connection.username}" />
+        <property name="password" value="${hibernate.connection.password}" />
         <property name="suppressClose" value="true" />
         <property name="autoCommit" value="true" />
     </bean>
@@ -24,7 +24,7 @@
 
     <bean id="jpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
         <property name="generateDdl" value="true" />
-        <property name="database" value="${jdbcDatabase}" />
+        <property name="databasePlatform" value="${hibernate.dialect}" />
     </bean>
 
     <bean id="portletDefinitionDao" class="org.jasig.portal.portlet.dao.jpa.JpaPortletDefinitionDao">

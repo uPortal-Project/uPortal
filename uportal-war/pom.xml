@@ -26,15 +26,7 @@
             <scope>compile</scope>
         </dependency>
 
-        <dependency>
-            <groupId>hsqldb</groupId>
-            <artifactId>hsqldb</artifactId>
-            <version>${hsqldb.version}</version>
-            <scope>compile</scope>
-        </dependency>
-
         <!-- ===== Provided Dependencies ================================== -->
-
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>jstl</artifactId>
