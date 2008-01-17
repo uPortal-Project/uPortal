@@ -17,7 +17,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -36,10 +35,7 @@ import org.jasig.portal.portlet.om.IPortletPreference;
  * @version $Revision$
  */
 @Entity
-@Table(
-        name = "UP_PORTLET_PREF", 
-        uniqueConstraints = @UniqueConstraint(columnNames = { "NAME", "PORTLET_PREF_ID" })
-)
+@Table(name = "UP_PORTLET_PREF")
 public class PortletPreferenceImpl implements IPortletPreference {
     @SuppressWarnings("unused")
     @Id
