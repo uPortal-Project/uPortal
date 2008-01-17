@@ -17,7 +17,10 @@
     <description>The source code for uPortal.</description>
 
     <dependencies>
-        <!-- Portal JDBC Driver -->
+        <!-- ***** Portal JDBC Driver *****
+         | Add your JDBC Driver dependency here. If you are not using hsqldb you must change the scope
+         | to test instead of just removing it as the driver is required for unit tests. 
+         +-->
         <dependency>
             <groupId>hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
@@ -437,13 +440,6 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <version>${spring-framework.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>hsqldb</groupId>
-            <artifactId>hsqldb</artifactId>
-            <version>${hsqldb.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
