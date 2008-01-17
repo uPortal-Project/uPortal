@@ -10,6 +10,7 @@ import org.apache.pluto.descriptors.portlet.PortletAppDD;
 import org.apache.pluto.descriptors.portlet.PortletDD;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
+import org.jasig.portal.utils.Tuple;
 
 /**
  * Provides methods for creating and accessing {@link IPortletDefinition} and related objects.
@@ -44,21 +45,14 @@ public interface IPortletDefinitionRegistry {
      * 
      * @param channelPublishId The id of the {@link org.jasig.portal.ChannelDefinition} this portlet definition represents.
      * @return A new definition for the parameters
-     * @throws IllegalArgumentException If no ChannelDefinition exists for the id, or no portlet descriptors exists for ChannelDefinition
+     * @throws org.springframework.dao.DataIntegrityViolationException If a definition already exists for the specified
+     *         channelPublishId
+     * @throws org.springframework.dao.DataRetrievalFailureException If no {@link org.jasig.portal.ChannelDefinition} can
+     *         be found for the publish ID or the channel definition does not have the required channel parameters
+     *         {@link org.jasig.portal.channels.portlet.IPortletAdaptor#CHANNEL_PARAM__PORTLET_APPLICATION_ID} and
+     *         {@link org.jasig.portal.channels.portlet.IPortletAdaptor#CHANNEL_PARAM__PORTLET_NAME}.
      */
     public IPortletDefinition createPortletDefinition(int channelPublishId);
-    
-    /**
-     * Creates a new, persisted, portlet definition for the published channel, portlet application and portlet name. If
-     * a portlet definition already exists for the channel definition id an exception will be thrown.
-     * 
-     * @param channelPublishId The id of the {@link org.jasig.portal.ChannelDefinition} this portlet definition represents.
-     * @param portletApplicationId The name of the portlet application the definition is being created for.
-     * @param portletName The name of the portlet the definition is being created for.
-     * @return A new definition for the parameters
-     * @throws IllegalArgumentException If portletApplicationId or portletName are null.
-     */
-    public IPortletDefinition createPortletDefinition(int channelPublishId, String portletApplicationId, String portletName);
     
     /**
      * Convience for {@link #getPortletDefinition(int)} and {@link #createPortletDefinition(int)}. If
@@ -69,15 +63,6 @@ public interface IPortletDefinitionRegistry {
      */
     public IPortletDefinition getOrCreatePortletDefinition(int channelPublishId);
 
-    /**
-     * Convience for {@link #getPortletDefinition(int)} and {@link #createPortletDefinition(int, String, String)}. If
-     * the get returns null the definition will be created and returned.
-     * 
-     * @see #getPortletDefinition(int)
-     * @see #createPortletDefinition(int, String, String)
-     */
-    public IPortletDefinition getOrCreatePortletDefinition(int channelPublishId, String portletApplicationId, String portletName);
-    
     /**
      * Persists changes to a IPortletDefinition.
      * 
@@ -103,4 +88,10 @@ public interface IPortletDefinitionRegistry {
      * @throws IllegalArgumentException if portletDefinitionId is null
      */
     public PortletAppDD getParentPortletApplicationDescriptor(IPortletDefinitionId portletDefinitionId) throws PortletContainerException;
+    
+    /**
+     * Get the portletApplicationId and portletName for the specified portlet definition. The portletApplicationId
+     * will be {@link Tuple#first} and the portletName will be {@link Tuple#second}
+     */
+    public Tuple<String, String> getPortletDescriptorKeys(IPortletDefinition portletDefinition);
 }

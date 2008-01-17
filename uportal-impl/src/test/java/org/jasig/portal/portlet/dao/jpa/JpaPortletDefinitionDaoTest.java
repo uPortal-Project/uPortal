@@ -46,7 +46,7 @@ public class JpaPortletDefinitionDaoTest extends AbstractJpaTests {
 
     public void testAllMethods() throws Exception {
         //Create a definition
-        final IPortletDefinition portDef1 = this.jpaPortletDefinitionDao.createPortletDefinition(1, "appId", "portName");
+        final IPortletDefinition portDef1 = this.jpaPortletDefinitionDao.createPortletDefinition(1);
         this.checkPoint();
         
         
@@ -58,7 +58,7 @@ public class JpaPortletDefinitionDaoTest extends AbstractJpaTests {
         assertEquals(portDef1, portDef1b);
         
         //Create a secod definition with the same app/portlet
-        final IPortletDefinition portDef2 = this.jpaPortletDefinitionDao.createPortletDefinition(2, "appId", "portName");
+        final IPortletDefinition portDef2 = this.jpaPortletDefinitionDao.createPortletDefinition(2);
         this.checkPoint();
         
         

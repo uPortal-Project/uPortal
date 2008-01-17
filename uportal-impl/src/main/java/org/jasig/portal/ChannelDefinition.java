@@ -216,13 +216,21 @@ public class ChannelDefinition implements IBasicEntity {
   }
   
   /**
+   * @deprecated Use {@link #addParameter(String, String, boolean)} instead.
+   */   
+  public void addParameter(String name, String value, String override) {
+    parameters.put(name, new ChannelParameter(name, value,RDBMServices.dbFlag(override)));
+  }
+  
+  /**
    * Adds a parameter to this channel definition
    * @param name the channel parameter name
    * @param value the channel parameter value
    * @param override the channel parameter override setting
-   */   
-  public void addParameter(String name, String value, String override) {
-    parameters.put(name, new ChannelParameter(name, value,RDBMServices.dbFlag(override)));
+   * 
+   */
+  public void addParameter(String name, String value, boolean override) {
+    parameters.put(name, new ChannelParameter(name, value, override));
   }
   
   /**

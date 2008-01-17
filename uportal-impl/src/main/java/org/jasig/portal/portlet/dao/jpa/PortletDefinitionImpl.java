@@ -71,13 +71,6 @@ class PortletDefinitionImpl implements IPortletDefinition {
     @Transient
     private IPortletDefinitionId portletDefinitionId = null;
 
-    @Transient
-    private String portletApplicaitonId;
-
-    @Transient
-    private String portletName;
-
-    
     
     /**
      * Used to initialize fields after persistence actions.
@@ -99,25 +92,13 @@ class PortletDefinitionImpl implements IPortletDefinition {
     private PortletDefinitionImpl() {
         this.internalPortletDefinitionId = -1;
         this.channelDefinitionId = -1;
-        this.portletApplicaitonId = null;
-        this.portletName = null;
         this.portletPreferences = null;
     }
     
     public PortletDefinitionImpl(int channelDefinitionId) {
         this.internalPortletDefinitionId = -1;
         this.channelDefinitionId = channelDefinitionId;
-        this.portletApplicaitonId = null;
-        this.portletName = null;
         this.portletPreferences = new PortletPreferencesImpl();
-    }
-    
-    protected void setPortletApplicaitonId(String portletApplicaitonId) {
-        this.portletApplicaitonId = portletApplicaitonId;
-    }
-    
-    protected void setPortletName(String portletName) {
-        this.portletName = portletName;
     }
     
 
@@ -133,28 +114,6 @@ class PortletDefinitionImpl implements IPortletDefinition {
      */
     public int getChannelDefinitionId() {
         return this.channelDefinitionId;
-    }
-
-    /* (non-Javadoc)
-     * @see org.jasig.portal.om.portlet.IPortletDefinition#getPortletApplicationId()
-     */
-    public String getPortletApplicationId() {
-        if (this.portletApplicaitonId == null) {
-            throw new IllegalStateException("portletApplicaitonId should have been previously initialized");
-        }
-        
-        return this.portletApplicaitonId;
-    }
-
-    /* (non-Javadoc)
-     * @see org.jasig.portal.om.portlet.IPortletDefinition#getPortletName()
-     */
-    public String getPortletName() {
-        if (this.portletName == null) {
-            throw new IllegalStateException("portletName should have been previously initialized");
-        }
-        
-        return this.portletName;
     }
 
     /* (non-Javadoc)
@@ -186,8 +145,6 @@ class PortletDefinitionImpl implements IPortletDefinition {
         IPortletDefinition rhs = (IPortletDefinition) object;
         return new EqualsBuilder()
             .append(this.channelDefinitionId, rhs.getChannelDefinitionId())
-            .append(this.portletApplicaitonId, rhs.getPortletApplicationId())
-            .append(this.portletName, rhs.getPortletName())
             .isEquals();
     }
 
@@ -198,8 +155,6 @@ class PortletDefinitionImpl implements IPortletDefinition {
     public int hashCode() {
         return new HashCodeBuilder(464270933, -1074792143)
             .append(this.channelDefinitionId)
-            .append(this.portletApplicaitonId)
-            .append(this.portletName)
             .toHashCode();
     }
 
@@ -211,8 +166,6 @@ class PortletDefinitionImpl implements IPortletDefinition {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
             .append("portletDefinitionId", this.portletDefinitionId)
             .append("channelDefinitionId", this.channelDefinitionId)
-            .append("portletApplicaitonId", this.portletApplicaitonId)
-            .append("portletName", this.portletName)
             .toString();
     }
 }

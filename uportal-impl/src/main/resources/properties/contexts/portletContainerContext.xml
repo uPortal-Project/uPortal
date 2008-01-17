@@ -96,6 +96,7 @@
 
     <bean id="portletWindowRegistry" class="org.jasig.portal.portlet.registry.PortletWindowRegistryImpl">
         <property name="portletEntityRegistry" ref="portletEntityRegistry" />
+        <property name="portletDefinitionRegistry" ref="portletDefinitionRegistry" />
     </bean>
 
     <bean id="portletEntityRegistry" class="org.jasig.portal.portlet.registry.PortletEntityRegistryImpl">

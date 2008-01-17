@@ -22,6 +22,7 @@ import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.jasig.portal.utils.Tuple;
 import org.springframework.beans.factory.annotation.Required;
 
 /**
@@ -39,6 +40,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
     protected final Log logger = LogFactory.getLog(this.getClass());
     
     private IPortletEntityRegistry portletEntityRegistry;
+    private IPortletDefinitionRegistry portletDefinitionRegistry;
     
 
     /**
@@ -52,10 +54,26 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
      */
     @Required
     public void setPortletEntityRegistry(IPortletEntityRegistry portletEntityRegistry) {
+        Validate.notNull(portletEntityRegistry);
         this.portletEntityRegistry = portletEntityRegistry;
     }
-
-
+    
+    /**
+     * @return the portletDefinitionRegistry
+     */
+    public IPortletDefinitionRegistry getPortletDefinitionRegistry() {
+        return portletDefinitionRegistry;
+    }
+    /**
+     * @param portletDefinitionRegistry the portletDefinitionRegistry to set
+     */
+    @Required
+    public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
+        Validate.notNull(portletDefinitionRegistry);
+        this.portletDefinitionRegistry = portletDefinitionRegistry;
+    }
+    
+    
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.registry.IPortletWindowRegistry#convertPortletWindow(javax.servlet.http.HttpServletRequest, org.apache.pluto.PortletWindow)
      */
@@ -103,13 +121,15 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
         Validate.notNull(windowInstanceId, "windowInstanceId can not be null");
         Validate.notNull(portletEntityId, "portletEntityId can not be null");
 
-        //Get the parent definition to determine the descriptor data
-        final IPortletDefinition portletDefinition = this.portletEntityRegistry.getParentPortletDefinition(portletEntityId);
-        
         //Create the window
         final IPortletWindowId portletWindowId = this.createPortletWindowId(windowInstanceId, portletEntityId);
-        final String portletApplicationId = portletDefinition.getPortletApplicationId();
-        final String portletName = portletDefinition.getPortletName();
+        
+        //Get the parent definition to determine the descriptor data
+        final IPortletDefinition portletDefinition = this.portletEntityRegistry.getParentPortletDefinition(portletEntityId);
+        final Tuple<String, String> portletDescriptorKeys = this.portletDefinitionRegistry.getPortletDescriptorKeys(portletDefinition);
+
+        final String portletApplicationId = portletDescriptorKeys.first;
+        final String portletName = portletDescriptorKeys.second;
         final IPortletWindow portletWindow = new PortletWindowImpl(portletWindowId, portletEntityId, portletApplicationId, portletName);
         
         //Store it in the request

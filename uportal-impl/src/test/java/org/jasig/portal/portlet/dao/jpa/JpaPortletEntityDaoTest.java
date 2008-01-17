@@ -50,7 +50,7 @@ public class JpaPortletEntityDaoTest extends AbstractJpaTests {
     }
 
     public void testAllMethods() throws Exception {
-        final IPortletDefinition portDef1 = this.jpaPortletDefinitionDao.createPortletDefinition(1, "appId", "portName");
+        final IPortletDefinition portDef1 = this.jpaPortletDefinitionDao.createPortletDefinition(1);
         
         final IPortletEntity portEnt1 = this.jpaPortletEntityDao.createPortletEntity(portDef1.getPortletDefinitionId(), "chanSub1", 1);
         this.checkPoint();

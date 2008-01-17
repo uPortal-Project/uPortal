@@ -48,7 +48,10 @@ public interface IPortletEntityRegistry {
      * @param person The person the entity is for.
      * @return A new entity for the parameters
      * @throws IllegalArgumentException If portletDefinitionId, channelSubscribeId, or person are null
-     * @throws IllegalArgumentException If no IPortletDefinition exists for the id, or if an entity already exists for the subscribe id & person.
+     * @throws org.springframework.dao.DataIntegrityViolationException If an entity already exists for the channel
+     *         subscribe id and userId pair
+     * @throws org.springframework.dao.DataRetrievalFailureException If no {@link org.jasig.portal.portlet.om.IPortletDefinition}
+     *         exists for the specified {@link IPortletDefinitionId} 
      */
     public IPortletEntity createPortletEntity(IPortletDefinitionId portletDefinitionId, String channelSubscribeId, IPerson person);
     

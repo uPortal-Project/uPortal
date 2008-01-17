@@ -13,6 +13,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.apache.commons.lang.Validate;
 import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
 import org.jasig.portal.portlet.dao.IPortletEntityDao;
 import org.jasig.portal.portlet.om.IPortletDefinition;
@@ -20,6 +21,7 @@ import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -73,7 +75,13 @@ public class JpaPortletEntityDao  implements IPortletEntityDao {
      */
     @Transactional
     public IPortletEntity createPortletEntity(IPortletDefinitionId portletDefinitionId, String channelSubscribeId, int userId) {
+        Validate.notNull(portletDefinitionId, "portletDefinitionId can not be null");
+        Validate.notNull(channelSubscribeId, "channelSubscribeId can not be null");
+        
         final IPortletDefinition portletDefinition = this.portletDefinitionDao.getPortletDefinition(portletDefinitionId);
+        if (portletDefinition == null) {
+            throw new DataRetrievalFailureException("No IPortletDefinition exists for IPortletDefinitionId='" + portletDefinitionId + "'");
+        }
         
         IPortletEntity portletEntity = new PortletEntityImpl(portletDefinition, channelSubscribeId, userId);
         
@@ -91,6 +99,8 @@ public class JpaPortletEntityDao  implements IPortletEntityDao {
      */
     @Transactional
     public void deletePortletEntity(IPortletEntity portletEntity) {
+        Validate.notNull(portletEntity, "portletEntity can not be null");
+        
         final IPortletEntity persistentPortletEntity;
         if (this.entityManager.contains(portletEntity)) {
             persistentPortletEntity = portletEntity;
@@ -104,6 +114,8 @@ public class JpaPortletEntityDao  implements IPortletEntityDao {
 
     @Transactional(readOnly = true)
     public IPortletEntity getPortletEntity(IPortletEntityId portletEntityId) {
+        Validate.notNull(portletEntityId, "portletEntity can not be null");
+        
         final long internalPortletEntityId = Long.parseLong(portletEntityId.getStringId());
         final PortletEntityImpl portletEntity = this.entityManager.find(PortletEntityImpl.class, internalPortletEntityId);
         return portletEntity;
@@ -115,6 +127,8 @@ public class JpaPortletEntityDao  implements IPortletEntityDao {
     @SuppressWarnings("unchecked")
     @Transactional(readOnly = true)
     public IPortletEntity getPortletEntity(String channelSubscribeId, int userId) {
+        Validate.notNull(channelSubscribeId, "portletEntity can not be null");
+        
         final Query query = this.entityManager.createQuery(FIND_PORTLET_ENT_BY_CHAN_SUB_AND_USER);
         query.setParameter("channelSubscribeId", channelSubscribeId);
         query.setParameter("userId", userId);
@@ -131,6 +145,8 @@ public class JpaPortletEntityDao  implements IPortletEntityDao {
     @SuppressWarnings("unchecked")
     @Transactional(readOnly = true)
     public Set<IPortletEntity> getPortletEntities(IPortletDefinitionId portletDefinitionId) {
+        Validate.notNull(portletDefinitionId, "portletEntity can not be null");
+        
         final IPortletDefinition portletDefinition = this.portletDefinitionDao.getPortletDefinition(portletDefinitionId);
         
         final Query query = this.entityManager.createQuery(FIND_PORTLET_ENTS_BY_PORTLET_DEF);
@@ -145,6 +161,8 @@ public class JpaPortletEntityDao  implements IPortletEntityDao {
      */
     @Transactional
     public void updatePortletEntity(IPortletEntity portletEntity) {
+        Validate.notNull(portletEntity, "portletEntity can not be null");
+        
         portletEntity = this.entityManager.merge(portletEntity);
         this.entityManager.persist(portletEntity);
     }

@@ -20,7 +20,9 @@ import org.jasig.portal.channels.portlet.IPortletAdaptor;
 import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
+import org.jasig.portal.utils.Tuple;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.dao.DataRetrievalFailureException;
 
 /**
  * Implementation of the definition registry, pulls together the related parts of the framework for creation and access
@@ -88,33 +90,7 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
      * @see org.jasig.portal.portlet.registry.IPortletDefinitionRegistry#createPortletDefinition(int)
      */
     public IPortletDefinition createPortletDefinition(int channelPublishId) {
-        final ChannelDefinition channelDefinition = this.getChannelDefinition(channelPublishId);
-        
-        //Grab the parameters that describe the pluto descriptor objects
-        final ChannelParameter portletApplicationIdParam = channelDefinition.getParameter(IPortletAdaptor.CHANNEL_PARAM__PORTLET_APPLICATION_ID);
-        if (portletApplicationIdParam == null) {
-            throw new IllegalArgumentException("No portletApplicationId available under ChannelParameter '" + IPortletAdaptor.CHANNEL_PARAM__PORTLET_APPLICATION_ID + "' for channelId:" + channelPublishId);
-        }
-        final String portletApplicationId = portletApplicationIdParam.getValue();
-        
-        final ChannelParameter portletNameParam = channelDefinition.getParameter(IPortletAdaptor.CHANNEL_PARAM__PORTLET_NAME);
-        if (portletNameParam == null) {
-            throw new IllegalArgumentException("No portletName available under ChannelParameter '" + IPortletAdaptor.CHANNEL_PARAM__PORTLET_NAME + "' for channelId:" + channelPublishId);
-        }
-        final String portletName = portletNameParam.getValue();
-
-        return this.createPortletDefinition(channelPublishId, portletApplicationId, portletName);
-    }
-    
-    /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.registry.IPortletDefinitionRegistry#createPortletDefinition(int, java.lang.String, java.lang.String)
-     */
-    public IPortletDefinition createPortletDefinition(int channelPublishId, String portletApplicationId, String portletName) {
-        Validate.notNull(portletApplicationId, "portletApplicationId can not be null");
-        Validate.notNull(portletName, "portletName can not be null");
-        
-        //Create and return the defintion
-        return this.portletDefinitionDao.createPortletDefinition(channelPublishId, portletApplicationId, portletName);
+        return this.portletDefinitionDao.createPortletDefinition(channelPublishId);
     }
     
     /* (non-Javadoc)
@@ -134,18 +110,6 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
         }
         
         return this.createPortletDefinition(channelPublishId);
-    }
-    
-    /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.registry.IPortletDefinitionRegistry#getOrCreatePortletDefinition(int, java.lang.String, java.lang.String)
-     */
-    public IPortletDefinition getOrCreatePortletDefinition(int channelPublishId, String portletApplicationId, String portletName) {
-        final IPortletDefinition portletDefinition = this.getPortletDefinition(channelPublishId);
-        if (portletDefinition != null) {
-            return portletDefinition;
-        }
-        
-        return this.createPortletDefinition(channelPublishId, portletApplicationId, portletName);
     }
     
     /* (non-Javadoc)
@@ -174,10 +138,10 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
             return null;
         }
         
-        final PortletRegistryService portletRegistryService = this.optionalContainerServices.getPortletRegistryService();
-        final String portletApplicationId = portletDefinition.getPortletApplicationId();
+        final Tuple<String, String> portletDescriptorKeys = this.getPortletDescriptorKeys(portletDefinition);
         
-        return portletRegistryService.getPortletApplicationDescriptor(portletApplicationId);
+        final PortletRegistryService portletRegistryService = this.optionalContainerServices.getPortletRegistryService();
+        return portletRegistryService.getPortletApplicationDescriptor(portletDescriptorKeys.first);
     }
     
     /* (non-Javadoc)
@@ -189,24 +153,49 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
             return null;
         }
         
-        final PortletRegistryService portletRegistryService = this.optionalContainerServices.getPortletRegistryService();
-        final String portletApplicationId = portletDefinition.getPortletApplicationId();
-        final String portletName = portletDefinition.getPortletName();
+        final Tuple<String, String> portletDescriptorKeys = this.getPortletDescriptorKeys(portletDefinition);
         
-        return portletRegistryService.getPortletDescriptor(portletApplicationId, portletName);
+        final PortletRegistryService portletRegistryService = this.optionalContainerServices.getPortletRegistryService();
+        return portletRegistryService.getPortletDescriptor(portletDescriptorKeys.first, portletDescriptorKeys.second);
+    }
+    
+    /**
+     * Get the portletApplicationId and portletName for the specified channel definition id. The portletApplicationId
+     * will be {@link Tuple#first} and the portletName will be {@link Tuple#second}
+     */
+    public Tuple<String, String> getPortletDescriptorKeys(IPortletDefinition portletDefinition) {
+        final int channelDefinitionId = portletDefinition.getChannelDefinitionId();
+        final ChannelDefinition channelDefinition = this.getChannelDefinition(channelDefinitionId);
+        if (channelDefinition == null) {
+            throw new DataRetrievalFailureException("No ChannelDefinition exists for the specified channelDefinitionId=" + channelDefinitionId);
+        }
+
+        final ChannelParameter portletApplicaitonIdParam = channelDefinition.getParameter(IPortletAdaptor.CHANNEL_PARAM__PORTLET_APPLICATION_ID);
+        if (portletApplicaitonIdParam == null) {
+            throw new DataRetrievalFailureException("The specified ChannelDefinition does not provide the needed channel parameter '" + IPortletAdaptor.CHANNEL_PARAM__PORTLET_APPLICATION_ID + "'. ChannelDefinition=" + channelDefinition);
+        }
+        final String portletApplicationId = portletApplicaitonIdParam.getValue();
+        
+        final ChannelParameter portletNameParam = channelDefinition.getParameter(IPortletAdaptor.CHANNEL_PARAM__PORTLET_NAME);
+        if (portletNameParam == null) {
+            throw new DataRetrievalFailureException("The specified ChannelDefinition does not provide the needed channel parameter '" + IPortletAdaptor.CHANNEL_PARAM__PORTLET_NAME + "'. ChannelDefinition=" + channelDefinition);
+        }
+        final String portletName = portletNameParam.getValue();
+        
+        return new Tuple<String, String>(portletApplicationId, portletName);
     }
     
     /**
      * Get the ChannelDefinition for the specified channelPublishId
      */
-    protected ChannelDefinition getChannelDefinition(int channelPublishId) {
+    protected ChannelDefinition getChannelDefinition(int channelDefinitionId) {
         //Lookup the ChannelDefinition
         final ChannelDefinition channelDefinition;
         try {
-            channelDefinition = this.channelRegistryStore.getChannelDefinition(channelPublishId);
+            channelDefinition = this.channelRegistryStore.getChannelDefinition(channelDefinitionId);
         }
         catch (Exception e) {
-            throw new IllegalArgumentException("Failed to retrieve required ChannelDefinition for channelPublishId: " + channelPublishId, e);
+            throw new DataRetrievalFailureException("Failed to retrieve required ChannelDefinition for channelPublishId: " + channelDefinitionId, e);
         }
         return channelDefinition;
     }

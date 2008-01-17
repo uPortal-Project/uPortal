@@ -19,24 +19,18 @@ import org.jasig.portal.portlet.om.IPortletPreferences;
  */
 public class MockPortletDefinition implements IPortletDefinition {
     private int channelDefinitionId;
-    private String portletApplicaitonId;
-    private String portletName;
     private IPortletPreferences portletPreferences = null;
     private IPortletDefinitionId portletDefinitionId = null;
 
     
     public MockPortletDefinition() {
         this.channelDefinitionId = -1;
-        this.portletApplicaitonId = null;
-        this.portletName = null;
         this.portletPreferences = null;
     }
     
     public MockPortletDefinition(IPortletDefinitionId portletDefinitionId, int channelDefinitionId, String portletApplicaitonId, String portletName) {
         this.portletDefinitionId = portletDefinitionId;
         this.channelDefinitionId = channelDefinitionId;
-        this.portletApplicaitonId = portletApplicaitonId;
-        this.portletName = portletName;
     }
     
 
@@ -55,20 +49,6 @@ public class MockPortletDefinition implements IPortletDefinition {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.om.portlet.IPortletDefinition#getPortletApplicationId()
-     */
-    public String getPortletApplicationId() {
-        return this.portletApplicaitonId;
-    }
-
-    /* (non-Javadoc)
-     * @see org.jasig.portal.om.portlet.IPortletDefinition#getPortletName()
-     */
-    public String getPortletName() {
-        return this.portletName;
-    }
-
-    /* (non-Javadoc)
      * @see org.jasig.portal.om.portlet.IPortletDefinition#getPortletPreferences()
      */
     public IPortletPreferences getPortletPreferences() {
@@ -81,32 +61,12 @@ public class MockPortletDefinition implements IPortletDefinition {
     public void setPortletPreferences(IPortletPreferences portletPreferences) {
         this.portletPreferences = portletPreferences;
     }
-    /**
-     * @return the portletApplicaitonId
-     */
-    public String getPortletApplicaitonId() {
-        return this.portletApplicaitonId;
-    }
-
-    /**
-     * @param portletApplicaitonId the portletApplicaitonId to set
-     */
-    public void setPortletApplicaitonId(String portletApplicaitonId) {
-        this.portletApplicaitonId = portletApplicaitonId;
-    }
 
     /**
      * @param channelDefinitionId the channelDefinitionId to set
      */
     public void setChannelDefinitionId(int channelDefinitionId) {
         this.channelDefinitionId = channelDefinitionId;
-    }
-
-    /**
-     * @param portletName the portletName to set
-     */
-    public void setPortletName(String portletName) {
-        this.portletName = portletName;
     }
 
     /**
@@ -130,8 +90,6 @@ public class MockPortletDefinition implements IPortletDefinition {
         IPortletDefinition rhs = (IPortletDefinition) object;
         return new EqualsBuilder()
             .append(this.channelDefinitionId, rhs.getChannelDefinitionId())
-            .append(this.portletApplicaitonId, rhs.getPortletApplicationId())
-            .append(this.portletName, rhs.getPortletName())
             .isEquals();
     }
 
@@ -142,8 +100,6 @@ public class MockPortletDefinition implements IPortletDefinition {
     public int hashCode() {
         return new HashCodeBuilder(464270933, -1074792143)
             .append(this.channelDefinitionId)
-            .append(this.portletApplicaitonId)
-            .append(this.portletName)
             .toHashCode();
     }
 
@@ -155,8 +111,6 @@ public class MockPortletDefinition implements IPortletDefinition {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
             .append("portletDefinitionId", this.portletDefinitionId)
             .append("channelDefinitionId", this.channelDefinitionId)
-            .append("portletApplicaitonId", this.portletApplicaitonId)
-            .append("portletName", this.portletName)
             .toString();
     }
 }

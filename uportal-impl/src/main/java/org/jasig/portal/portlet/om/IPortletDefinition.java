@@ -24,16 +24,6 @@ public interface IPortletDefinition {
     public int getChannelDefinitionId();
     
     /**
-     * @return The portlet application ID of the {@link org.apache.pluto.descriptors.portlet.PortletAppDD} that this definition was created for.
-     */
-    public String getPortletApplicationId();
-    
-    /**
-     * @return The porltet name of the {@link org.apache.pluto.descriptors.portlet.PortletDD} that this definition was created for.
-     */
-    public String getPortletName();
-    
-    /**
      * @return The preferences for this portlet definition, will not be null.
      */
     public IPortletPreferences getPortletPreferences();

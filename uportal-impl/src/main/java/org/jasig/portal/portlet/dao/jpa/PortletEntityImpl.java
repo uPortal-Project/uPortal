@@ -100,6 +100,9 @@ class PortletEntityImpl implements IPortletEntity {
     }
     
     public PortletEntityImpl(IPortletDefinition portletDefinition, String channelSubscribeId, int userId) {
+        Validate.notNull(portletDefinition, "portletDefinition can not be null");
+        Validate.notNull(channelSubscribeId, "channelSubscribeId can not be null");
+        
         this.internalPortletEntityId = -1;
         this.portletDefinition = portletDefinition;
         this.channelSubscribeId = channelSubscribeId;

@@ -28,7 +28,6 @@
     </bean>
 
     <bean id="portletDefinitionDao" class="org.jasig.portal.portlet.dao.jpa.JpaPortletDefinitionDao">
-        <property name="channelRegistryStore" ref="channelRegistryStore" />
     </bean>
     
     <bean id="portletEntityDao" class="org.jasig.portal.portlet.dao.jpa.JpaPortletEntityDao">
@@ -37,48 +36,6 @@
     
     <util:constant id="CHANNEL_PARAM__PORTLET_APPLICATION_ID" static-field="org.jasig.portal.channels.portlet.IPortletAdaptor.CHANNEL_PARAM__PORTLET_APPLICATION_ID"/>
     <util:constant id="CHANNEL_PARAM__PORTLET_NAME" static-field="org.jasig.portal.channels.portlet.IPortletAdaptor.CHANNEL_PARAM__PORTLET_NAME"/>
-    
-    <bean id="channelRegistryStore" class="org.jasig.portal.mock.MockChannelRegistryStore">
-        <property name="channelDefinitions">
-            <set>
-                <bean class="org.jasig.portal.ChannelDefinition">
-                    <constructor-arg value="1" />
-                    <property name="parameters">
-                        <list>
-                            <bean class="org.jasig.portal.ChannelParameter">
-                                <constructor-arg index="0" ref="CHANNEL_PARAM__PORTLET_APPLICATION_ID" />
-                                <constructor-arg index="1" value="appId" />
-                                <constructor-arg index="2" value="true" />
-                            </bean>
-                            <bean class="org.jasig.portal.ChannelParameter">
-                                <constructor-arg index="0" ref="CHANNEL_PARAM__PORTLET_NAME" />
-                                <constructor-arg index="1" value="portName" />
-                                <constructor-arg index="2" value="true" />
-                            </bean>
-                        </list>
-                    </property>
-                </bean>
-                <bean class="org.jasig.portal.ChannelDefinition">
-                    <constructor-arg value="2" />
-                    <property name="parameters">
-                        <list>
-                            <bean class="org.jasig.portal.ChannelParameter">
-                                <constructor-arg index="0" ref="CHANNEL_PARAM__PORTLET_APPLICATION_ID" />
-                                <constructor-arg index="1" value="appId" />
-                                <constructor-arg index="2" value="true" />
-                            </bean>
-                            <bean class="org.jasig.portal.ChannelParameter">
-                                <constructor-arg index="0" ref="CHANNEL_PARAM__PORTLET_NAME" />
-                                <constructor-arg index="1" value="portName" />
-                                <constructor-arg index="2" value="true" />
-                            </bean>
-                        </list>
-                    </property>
-                </bean>
-            </set>
-        </property>
-    </bean>
-
 
     <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
         <property name="entityManagerFactory" ref="factoryBean" />
