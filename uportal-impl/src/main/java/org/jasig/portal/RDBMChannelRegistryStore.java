@@ -70,7 +70,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore, Initiali
      * @return the portletDefinitionRegistry
      */
     public IPortletDefinitionRegistry getPortletDefinitionRegistry() {
-        return portletDefinitionRegistry;
+        return this.portletDefinitionRegistry;
     }
     /**
      * @param portletDefinitionRegistry the portletDefinitionRegistry to set
@@ -500,7 +500,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore, Initiali
 
                 //TODO add a portletPreferences field to the ChannelDefinition object to support multivalued prefs
                 if (channelDef.isPortlet()) {
-                    final IPortletDefinition portletDefinition = portletDefinitionRegistry.getPortletDefinition(channelPublishId);
+                    final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getPortletDefinition(channelPublishId);
                     final IPortletPreferences portletPreferences = portletDefinition.getPortletPreferences();
                     
                     for (final IPortletPreference portletPreference : portletPreferences.getPortletPreferences()) {
@@ -672,47 +672,40 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore, Initiali
                         }
 					}
 				}
+                
+                if (isPortlet) {
+                    //Get or Create the portlet definition
+                    final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getOrCreatePortletDefinition(channelPublishId);
+                    
+                    //Convert the Lists into actual IPortletPreference objects
+                    final List<IPortletPreference> portletPreferencesList = new ArrayList<IPortletPreference>(portletPreferencesBuilder.size());
+                    for (final Entry<String, List<String>> prefEntry : portletPreferencesBuilder.entrySet()) {
+                        final String prefName = prefEntry.getKey();
+                        final List<String> prefValues = prefEntry.getValue();
+                        final Boolean readOnly = portletPreferencesReadOnly.get(prefName);
+                        
+                        final IPortletPreference portletPreference = new PortletPreferenceImpl(prefName, readOnly != null ? readOnly : false, prefValues.toArray(new String[prefValues.size()]));
+                        portletPreferencesList.add(portletPreference);
+                    }
+                    
+                    //Update the preferences of the portlet definition
+                    final IPortletPreferences portletPreferences = portletDefinition.getPortletPreferences();
+                    portletPreferences.setPortletPreferences(portletPreferencesList);
+                    this.portletDefinitionRegistry.updatePortletDefinition(portletDefinition);
+                }
 
 				// Commit the transaction
 				RDBMServices.commit(con);
 				
 				// Notify the cache
 				try {
-					EntityCachingService.instance().update(channelDef);
-				} catch (Exception e) {
-					log.error("Error updating cache for channel definition " + channelDef, e);
-				}
-				
-				//TODO There isn't a good way to tie the success of the portlet commit and the channel definition commit
-				//     together since the portlet definition commit needs the IChannelRegistryStore to know about the channel
-				//     the definition is for during the update.
-                if (isPortlet) {
-                    try {
-                        //Get or Create the portlet definition
-                        final IPortletDefinition portletDefinition = portletDefinitionRegistry.getOrCreatePortletDefinition(channelPublishId);
-                        
-                        //Convert the Lists into actual IPortletPreference objects
-                        final List<IPortletPreference> portletPreferencesList = new ArrayList<IPortletPreference>(portletPreferencesBuilder.size());
-                        for (final Entry<String, List<String>> prefEntry : portletPreferencesBuilder.entrySet()) {
-                            final String prefName = prefEntry.getKey();
-                            final List<String> prefValues = prefEntry.getValue();
-                            final Boolean readOnly = portletPreferencesReadOnly.get(prefName);
-                            
-                            final IPortletPreference portletPreference = new PortletPreferenceImpl(prefName, readOnly != null ? readOnly : false, prefValues.toArray(new String[prefValues.size()]));
-                            portletPreferencesList.add(portletPreference);
-                        }
-                        
-                        //Update the preferences of the portlet definition
-                        final IPortletPreferences portletPreferences = portletDefinition.getPortletPreferences();
-                        portletPreferences.setPortletPreferences(portletPreferencesList);
-                        portletDefinitionRegistry.updatePortletDefinition(portletDefinition);
-                    }
-                    catch (DataAccessException dae) {
-                        log.error("Exception persisting IPortletDefinition, the stored IPortletDefinition will not match the corresponding ChannelDefinition.", dae);
-                    }
+                    EntityCachingService.instance().update(channelDef);
+                }
+                catch (Exception e) {
+                    log.error("Error updating cache for channel definition " + channelDef, e);
                 }
 
-			} catch (SQLException sqle) {
+			} catch (Exception sqle) {
 				log.error("Exception saving channel definition " + channelDef, sqle);
 				RDBMServices.rollback(con);
 				throw sqle;
