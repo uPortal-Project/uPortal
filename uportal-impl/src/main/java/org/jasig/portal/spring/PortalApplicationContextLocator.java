@@ -11,8 +11,9 @@ import javax.servlet.ServletContextListener;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
@@ -94,11 +95,20 @@ public class PortalApplicationContextLocator implements ServletContextListener {
         
         synchronized (PortalApplicationContextLocator.class) {
             if (applicationContext == null) {
-                LOGGER.info("Creating new ClassPathXmlApplicationContext for the portal");
+                LOGGER.info("Creating new lazily initialized GenericApplicationContext for the portal");
                 
                 final long startTime = System.currentTimeMillis();
-                applicationContext = new ClassPathXmlApplicationContext("/properties/contexts/*.xml");
-                LOGGER.info("Created new ClassPathXmlApplicationContext for the portal in " + (System.currentTimeMillis() - startTime) + "ms");
+                
+                final GenericApplicationContext genericApplicationContext = new GenericApplicationContext();
+                final XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(genericApplicationContext);
+                reader.setDocumentReaderClass(LazyInitByDefaultBeanDefinitionDocumentReader.class);
+                reader.loadBeanDefinitions("/properties/contexts/*.xml");
+                
+                genericApplicationContext.refresh();
+                
+                LOGGER.info("Created new lazily initialized GenericApplicationContext for the portal in " + (System.currentTimeMillis() - startTime) + "ms");
+                
+                applicationContext = genericApplicationContext;
             }
         }
         
