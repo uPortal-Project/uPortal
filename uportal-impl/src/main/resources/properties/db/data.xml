@@ -1197,29 +1197,7 @@
           <name>SS_DESCRIPTION_TEXT</name>
           <value>Presents the layout in terms of nested categories.</value>
         </column> 
-      </row>  
-      <row> 
-        <column>
-          <name>SS_ID</name>
-          <value>3</value>
-        </column>  
-        <column>
-          <name>SS_NAME</name>
-          <value>AL Tabs and columns</value>
-        </column>  
-        <column>
-          <name>SS_URI</name>
-          <value>/org/jasig/portal/layout/AL_TabColumn/AL_TabColumn.xsl</value>
-        </column>  
-        <column>
-          <name>SS_DESCRIPTION_URI</name>
-          <value>/org/jasig/portal/layout/AL_TabColumn/AL_TabColumn.sdf</value>
-        </column>  
-        <column>
-          <name>SS_DESCRIPTION_TEXT</name>
-          <value>Presents the layout in terms of tabs and columns</value>
-        </column> 
-      </row>  
+      </row>   
       <row> 
         <column>
           <name>SS_ID</name>
