@@ -1272,7 +1272,7 @@ public class ChannelManager implements LayoutEventListener {
 		}
 
 		// obtain IChannelRenderer
-        Object channelRenderer = rendererTable.get(channelSubscribeId);
+		IChannelRenderer channelRenderer = rendererTable.get(channelSubscribeId);
 
         // default to null (no dynamic channel title.
         String channelTitle = null;
