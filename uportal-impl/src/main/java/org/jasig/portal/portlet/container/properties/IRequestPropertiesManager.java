@@ -32,32 +32,32 @@ public interface IRequestPropertiesManager {
      * method should follow the same rules as the PortletResponse method and overwrite any existing property of the same
      * name.
      * 
-     * @param request The request the setProperty call was made during
+     * @param portletRequest The request the setProperty call was made during
      * @param portletWindow The PortletWindow representing the portlet calling setProperty
      * @param property The name of the property to set, will not be null.
      * @param value The value of the property to set, may be null.
      */
-    public void setResponseProperty(HttpServletRequest request, IPortletWindow portletWindow, String property, String value);
+    public void setResponseProperty(HttpServletRequest portletRequest, IPortletWindow portletWindow, String property, String value);
     
     /**
      * Called when a portlet sets a property via {@link javax.portlet.PortletResponse#addProperty(String, String)}. This
      * method should follow the same rules as the PortletResponse method and add the value to any existing property of
      * the same name.
      * 
-     * @param request The request the addProperty call was made during
+     * @param portletRequest The request the addProperty call was made during
      * @param portletWindow The PortletWindow representing the portlet calling addProperty
      * @param property The name of the property to add, will not be null.
      * @param value The value of the property to add, may be null.
      */
-    public void addResponseProperty(HttpServletRequest request, IPortletWindow portletWindow, String property, String value);
+    public void addResponseProperty(HttpServletRequest portletRequest, IPortletWindow portletWindow, String property, String value);
 
     /**
      * Called when a portlet gets the request properties via {@link javax.portlet.PortletRequest#getProperties(String)},
      * {@link javax.portlet.PortletRequest#getProperty(String)}, or {@link javax.portlet.PortletRequest#getPropertyNames()}.
      * 
-     * @param request The request the call was made during
+     * @param portletRequest The request the call was made during
      * @param portletWindow The PortletWindow representing the portlet requesting properties.
      * @return A Map of properties to present to the portlet, must not be null.
      */
-    public Map<String, String[]> getRequestProperties(HttpServletRequest request, IPortletWindow portletWindow);
+    public Map<String, String[]> getRequestProperties(HttpServletRequest portletRequest, IPortletWindow portletWindow);
 }

@@ -49,7 +49,10 @@
         <property name="propertiesManagers">
             <list value-type="org.jasig.portal.portlet.container.properties.IRequestPropertiesManager">
                 <bean class="org.jasig.portal.portlet.container.properties.HttpRequestPropertiesManager" />
-                <bean class="org.jasig.portal.portlet.container.properties.CacheRequestPropertiesManager" />
+                <bean class="org.jasig.portal.portlet.container.properties.CacheRequestPropertiesManager">
+                    <property name="portletDefinitionRegistry" ref="portletDefinitionRegistry" />
+                    <property name="portletEntityRegistry" ref="portletEntityRegistry" />
+                </bean>
             </list>
         </property>
     </bean>

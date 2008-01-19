@@ -11,32 +11,69 @@ import java.util.Map;
 import javax.portlet.RenderResponse;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.pluto.OptionalContainerServices;
+import org.apache.commons.lang.Validate;
 import org.apache.pluto.PortletContainerException;
 import org.apache.pluto.descriptors.portlet.PortletDD;
-import org.apache.pluto.spi.optional.PortletRegistryService;
+import org.jasig.portal.PortalException;
+import org.jasig.portal.portlet.container.PortletContainerUtils;
+import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletWindow;
+import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
+import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
+import org.springframework.beans.factory.annotation.Required;
 
 /**
  * Deals with seting and retrieving the {@link RenderResponse#EXPIRATION_CACHE} property.
- * 
- * TODO this needs to be implemented to hook into the adapter's caching APIs
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
 public class CacheRequestPropertiesManager extends BaseRequestPropertiesManager {
-    private OptionalContainerServices optionalContainerServices;
+    private IPortletEntityRegistry portletEntityRegistry;
+    private IPortletDefinitionRegistry portletDefinitionRegistry;
     
+    
+    /**
+     * @return the portletEntityRegistry
+     */
+    public IPortletEntityRegistry getPortletEntityRegistry() {
+        return this.portletEntityRegistry;
+    }
+    /**
+     * @param portletEntityRegistry the portletEntityRegistry to set
+     */
+    @Required
+    public void setPortletEntityRegistry(IPortletEntityRegistry portletEntityRegistry) {
+        Validate.notNull(portletEntityRegistry);
+        this.portletEntityRegistry = portletEntityRegistry;
+    }
+
+    /**
+     * @return the portletDefinitionRegistry
+     */
+    public IPortletDefinitionRegistry getPortletDefinitionRegistry() {
+        return this.portletDefinitionRegistry;
+    }
+    /**
+     * @param portletDefinitionRegistry the portletDefinitionRegistry to set
+     */
+    @Required
+    public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
+        Validate.notNull(portletDefinitionRegistry);
+        this.portletDefinitionRegistry = portletDefinitionRegistry;
+    }
+
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.container.properties.BaseRequestPropertiesManager#getRequestProperties(javax.servlet.http.HttpServletRequest, org.jasig.portal.portlet.om.IPortletWindow)
      */
     @Override
-    public Map<String, String[]> getRequestProperties(HttpServletRequest request, IPortletWindow portletWindow) {
+    public Map<String, String[]> getRequestProperties(HttpServletRequest portletRequest, IPortletWindow portletWindow) {
+        final HttpServletRequest httpServletRequest = PortletContainerUtils.getOriginalPortletAdaptorRequest(portletRequest);
+        
         Integer expirationCache = portletWindow.getExpirationCache();
         
         if (expirationCache == null) {
-            final PortletDD portletDeployment = this.getPortletDeployment(portletWindow);
+            final PortletDD portletDeployment = this.getPortletDeployment(httpServletRequest, portletWindow);
             final int descriptorExpirationCache = portletDeployment.getExpirationCache();
             
             if (PortletDD.EXPIRATION_CACHE_UNSET != descriptorExpirationCache) {
@@ -55,9 +92,11 @@ public class CacheRequestPropertiesManager extends BaseRequestPropertiesManager 
      * @see org.jasig.portal.portlet.container.properties.BaseRequestPropertiesManager#setResponseProperty(javax.servlet.http.HttpServletRequest, org.jasig.portal.portlet.om.IPortletWindow, java.lang.String, java.lang.String)
      */
     @Override
-    public void setResponseProperty(HttpServletRequest request, IPortletWindow portletWindow, String property, String value) {
+    public void setResponseProperty(HttpServletRequest portletRequest, IPortletWindow portletWindow, String property, String value) {
+        final HttpServletRequest httpServletRequest = PortletContainerUtils.getOriginalPortletAdaptorRequest(portletRequest);
+        
         if (RenderResponse.EXPIRATION_CACHE.equals(property)) {
-            final PortletDD portletDeployment = this.getPortletDeployment(portletWindow);
+            final PortletDD portletDeployment = this.getPortletDeployment(httpServletRequest, portletWindow);
             final int descriptorExpirationCache = portletDeployment.getExpirationCache();
             
             //Only set the cache expiration if the descriptor has a cache expiration set (PLT.18.1)
@@ -77,24 +116,20 @@ public class CacheRequestPropertiesManager extends BaseRequestPropertiesManager 
 
     /**
      * Gets the Portlet Deployment for a IPortletWindow object
-     * TODO needs to get moved to a registry
      * 
-     * @param portletWindow
-     * @return
+     * @param httpServletRequest The portal's request (not the portlet context request)
+     * @param portletWindow The window to get the parent PortletDD for.
+     * @return The parent portlet descriptor for the window
+     * @throws PortalException if the PortletDD fails to load.
      */
-    protected PortletDD getPortletDeployment(IPortletWindow portletWindow) {
-        final PortletRegistryService portletRegistryService = this.optionalContainerServices.getPortletRegistryService();
+    protected PortletDD getPortletDeployment(HttpServletRequest httpServletRequest, IPortletWindow portletWindow) {
+        final IPortletDefinition portletDefinition = this.portletEntityRegistry.getParentPortletDefinition(portletWindow.getPortletEntityId());
         
-        final String contextPath = portletWindow.getContextPath();
-        final String portletName = portletWindow.getPortletName();
-        final PortletDD portletDescriptor;
         try {
-            portletDescriptor = portletRegistryService.getPortletDescriptor(contextPath, portletName);
+            return this.portletDefinitionRegistry.getParentPortletDescriptor(portletDefinition.getPortletDefinitionId());
         }
         catch (PortletContainerException pce) {
-            // TODO Auto-generated catch block
-            throw new RuntimeException(pce);
+            throw new PortalException("Failed to retrieve the PortletDD for portlet window: " + portletWindow, pce);
         }
-        return portletDescriptor;
     }
 }

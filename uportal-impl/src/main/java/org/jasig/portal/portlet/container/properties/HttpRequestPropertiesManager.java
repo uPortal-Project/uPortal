@@ -10,6 +10,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.jasig.portal.portlet.container.PortletContainerUtils;
 import org.jasig.portal.portlet.om.IPortletWindow;
 
 /**
@@ -24,11 +25,13 @@ public class HttpRequestPropertiesManager extends BaseRequestPropertiesManager {
      * @see org.jasig.portal.portlet.container.services.BaseRequestPropertiesManager#getRequestProperties(javax.servlet.http.HttpServletRequest, org.jasig.portal.portlet.om.IPortletWindow)
      */
     @Override
-    public Map<String, String[]> getRequestProperties(HttpServletRequest request, IPortletWindow portletWindow) {
+    public Map<String, String[]> getRequestProperties(HttpServletRequest portletRequest, IPortletWindow portletWindow) {
+        final HttpServletRequest httpServletRequest = PortletContainerUtils.getOriginalPortletAdaptorRequest(portletRequest);
+        
         final Map<String, String[]> properties = new HashMap<String, String[]>();
 
-        properties.put("REMOTE_ADDR", new String[] { request.getRemoteAddr() });
-        properties.put("REQUEST_METHOD", new String[] { request.getMethod() });
+        properties.put("REMOTE_ADDR", new String[] { httpServletRequest.getRemoteAddr() });
+        properties.put("REQUEST_METHOD", new String[] { httpServletRequest.getMethod() });
 
         return properties;
     }

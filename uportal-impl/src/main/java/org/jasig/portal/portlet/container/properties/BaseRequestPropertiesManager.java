@@ -27,21 +27,21 @@ public abstract class BaseRequestPropertiesManager implements IRequestProperties
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.container.services.IRequestPropertiesManager#addResponseProperty(javax.servlet.http.HttpServletRequest, org.jasig.portal.portlet.om.IPortletWindow, java.lang.String, java.lang.String)
      */
-    public void addResponseProperty(HttpServletRequest request, IPortletWindow portletWindow, String property, String value) {
+    public void addResponseProperty(HttpServletRequest portletRequest, IPortletWindow portletWindow, String property, String value) {
         //noop
     }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.container.services.IRequestPropertiesManager#getRequestProperties(javax.servlet.http.HttpServletRequest, org.jasig.portal.portlet.om.IPortletWindow)
      */
-    public Map<String, String[]> getRequestProperties(HttpServletRequest request, IPortletWindow portletWindow) {
+    public Map<String, String[]> getRequestProperties(HttpServletRequest portletRequest, IPortletWindow portletWindow) {
         return Collections.emptyMap();
     }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.container.services.IRequestPropertiesManager#setResponseProperty(javax.servlet.http.HttpServletRequest, org.jasig.portal.portlet.om.IPortletWindow, java.lang.String, java.lang.String)
      */
-    public void setResponseProperty(HttpServletRequest request, IPortletWindow portletWindow, String property, String value) {
+    public void setResponseProperty(HttpServletRequest portletRequest, IPortletWindow portletWindow, String property, String value) {
         //noop
     }
 }
