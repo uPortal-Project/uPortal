@@ -152,6 +152,7 @@
         <changelog-maven-plugin.version>2.0-beta-1</changelog-maven-plugin.version>
         <cobertura-maven-plugin.version>2.2</cobertura-maven-plugin.version>
         <findbugs-maven-plugin.version>1.1</findbugs-maven-plugin.version>
+        <jdepend-maven-plugin.version>2.0-beta-1</jdepend-maven-plugin.version>
         <jxr-maven-plugin.version>2.0-beta-1</jxr-maven-plugin.version>
         <maven-compiler-plugin.version>2.0.2</maven-compiler-plugin.version>
         <maven-ear-plugin.version>2.3.1</maven-ear-plugin.version>
@@ -275,6 +276,11 @@
                         <link>http://developer.ja-sig.org/projects/person-directory/apidocs/</link>
                     </links>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jdepend-maven-plugin</artifactId>
+                <version>${jdepend-maven-plugin.version}</version>
             </plugin>
         </plugins>
     </reporting>
