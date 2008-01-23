@@ -231,6 +231,10 @@ public final class CError extends BaseChannel implements IPrivilegedChannel, ICa
     
     public void receiveEvent(PortalEvent ev) {
         if (targetChannel != null) {
+            if (this.targetChannel instanceof IPrivilegedChannel) {
+                ((IPrivilegedChannel) this.targetChannel).setPortalControlStructures(this.portcs);
+            }
+
             // propagate the portal events to the normal channel
             targetChannel.receiveEvent(ev);
         }
