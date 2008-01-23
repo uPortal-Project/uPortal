@@ -12,6 +12,7 @@ import org.springframework.context.ApplicationContext;
  * Produces an implementation of IChannelRegistryStore
  * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
+ * @deprecated Use the bean named 'channelRegistryStore' from the Spring application context 
  */
 public class ChannelRegistryStoreFactory {
 
