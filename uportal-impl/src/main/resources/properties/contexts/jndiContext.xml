@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+    
+    <bean id="jndiManager" class="org.jasig.portal.jndi.JndiManagerImpl">
+        <property name="jndiEnvironment">
+            <props>
+                <prop key="java.naming.factory.initial">org.jasig.portal.jndi.DisposableMemoryContextFactory</prop>
+            </props>
+        </property>
+    </bean>
+    
+    <!-- Instance of the factory to ensure cleanup when the application context is destroyed -->
+    <bean class="org.jasig.portal.jndi.DisposableMemoryContextFactory" />
+</beans>

@@ -19,7 +19,6 @@ import java.util.WeakHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,6 +36,7 @@ import org.jasig.portal.events.support.ChannelInstanciatedInLayoutPortalEvent;
 import org.jasig.portal.events.support.ChannelRenderedInLayoutPortalEvent;
 import org.jasig.portal.events.support.ChannelTargetedInLayoutPortalEvent;
 import org.jasig.portal.i18n.LocaleManager;
+import org.jasig.portal.jndi.IJndiManager;
 import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.LayoutEvent;
@@ -56,6 +56,7 @@ import org.jasig.portal.utils.SAX2BufferImpl;
 import org.jasig.portal.utils.SetCheckInSemaphore;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.jndi.JndiTemplate;
 import org.xml.sax.ContentHandler;
 
 import tyrex.naming.MemoryContext;
@@ -174,20 +175,19 @@ public class ChannelManager implements LayoutEventListener {
      * @return a channel <code>InitialContext</code> value
      */
     private Context getChannelJndiContext(String sessionId, String userId, String layoutId) {
-        final Context portalContext = this.getPortalContext();
-        if (portalContext == null) {
-            return null;
-        }
+        final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
+        final IJndiManager jndiManager = (IJndiManager)applicationContext.getBean("jndiManager", IJndiManager.class);
+        final JndiTemplate jndiTemplate = jndiManager.getJndiTemplate();
         
         try {
             // create a new InitialContext
             final Context cic = new MemoryContext(new Hashtable<Object, Object>());
             // get services context
-            final Context servicesContext = (Context) portalContext.lookup("services");
+            final Context servicesContext = (Context) jndiTemplate.lookup("services", Context.class);
             // get channel-ids context
-            final Context channel_idsContext = (Context) portalContext.lookup("users/" + userId + "/layouts/" + layoutId + "/channel-ids");
+            final Context channel_idsContext = (Context) jndiTemplate.lookup("users/" + userId + "/layouts/" + layoutId + "/channel-ids", Context.class);
             // get channel-obj context
-            final Context channel_objContext = (Context) portalContext.lookup("users/" + userId + "/sessions/" + sessionId + "/channel-obj");
+            final Context channel_objContext = (Context) jndiTemplate.lookup("users/" + userId + "/sessions/" + sessionId + "/channel-obj", Context.class);
     
             cic.bind("services", servicesContext);
             cic.bind("channel-ids", channel_idsContext);
@@ -198,24 +198,6 @@ public class ChannelManager implements LayoutEventListener {
         }
         catch (NamingException ne) {
             log.error("Failed to create channel JNDI Context. No JNDI context will be available for rendering channels.", ne);
-            return null;
-        }
-    }
-
-    /**
-     * Get the uPortal JNDI context
-     * @return uPortal initial JNDI context
-     */
-    private Context getPortalContext() {
-        final Hashtable<String, String> environment = new Hashtable<String, String>(5);
-        // Set up the path
-        environment.put(Context.INITIAL_CONTEXT_FACTORY, "org.jasig.portal.jndi.PortalInitialContextFactory");
-        
-        try {
-            return new InitialContext(environment);
-        }
-        catch (NamingException ne) {
-            log.error("Failed to create portal JNDI Context with environment " + environment, ne);
             return null;
         }
     }

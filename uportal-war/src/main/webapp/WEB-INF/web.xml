@@ -51,6 +51,10 @@
     <listener>
         <listener-class>org.jasig.portal.spring.PortalApplicationContextLocator</listener-class>
     </listener>
+    
+    <listener>
+        <listener-class>org.jasig.portal.spring.web.context.support.ApplicationContextDelagatingSessionListener</listener-class>
+    </listener>
 
     <servlet>
         <servlet-name>uPortal</servlet-name>

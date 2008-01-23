@@ -23,7 +23,6 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.jndi.JNDIManager;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.rendering.IPortalRenderingPipeline;
 import org.jasig.portal.security.IPermission;
@@ -108,13 +107,6 @@ public void init() throws ServletException {
       }
 
       servletContext = sc.getServletContext();
-
-      try {
-          JNDIManager.initializePortalContext();
-      } catch (Exception pe) {
-          ExceptionHelper.genericTopHandler(initPortalContext,pe);
-          fatalError=true;
-      }
 
       // Turn off URL caching if it has been requested
       if (!PropertiesManager.getPropertyAsBoolean("org.jasig.portal.PortalSessionManager.url_caching", DEFAULT_URL_CACHING)) {
