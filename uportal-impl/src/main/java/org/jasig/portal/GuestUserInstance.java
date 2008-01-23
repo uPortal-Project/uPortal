@@ -9,7 +9,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpSessionBindingEvent;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -18,6 +17,7 @@ import org.jasig.portal.events.support.UserSessionCreatedPortalEvent;
 import org.jasig.portal.events.support.UserSessionDestroyedPortalEvent;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.user.IUserInstance;
 import org.springframework.context.ApplicationEventPublisher;
 
 /**
@@ -73,6 +73,16 @@ public class GuestUserInstance implements IUserInstance {
         
         //Create the rendering lock for the user
         this.renderingLock = new Object();
+        
+        if (log.isDebugEnabled()) {
+            log.debug("instance bound to a new session '" + request.getSession().getId() + "'");
+        }
+
+        // Record the creation of the session
+        final ApplicationEventPublisher applicationEventPublisher = EventPublisherLocator.getApplicationEventPublisher();
+        applicationEventPublisher.publishEvent(new UserSessionCreatedPortalEvent(this, person));
+        
+        guestSessions.incrementAndGet();
     }
     
     
@@ -112,34 +122,17 @@ public class GuestUserInstance implements IUserInstance {
         return this.renderingLock;
     }
 
-
     /* (non-Javadoc)
-     * @see javax.servlet.http.HttpSessionBindingListener#valueBound(javax.servlet.http.HttpSessionBindingEvent)
+     * @see org.jasig.portal.user.IUserInstance#destroySession(javax.servlet.http.HttpSession)
      */
-    public void valueBound(HttpSessionBindingEvent bindingEvent) {
-        if (log.isDebugEnabled()) {
-            log.debug("instance bound to a new session '" + bindingEvent.getSession().getId() + "'");
-        }
-
-        // Record the creation of the session
-        final ApplicationEventPublisher applicationEventPublisher = EventPublisherLocator.getApplicationEventPublisher();
-        applicationEventPublisher.publishEvent(new UserSessionCreatedPortalEvent(this, person));
-        
-        guestSessions.incrementAndGet();
-    }
-
-    /* (non-Javadoc)
-     * @see javax.servlet.http.HttpSessionBindingListener#valueUnbound(javax.servlet.http.HttpSessionBindingEvent)
-     */
-    public void valueUnbound(HttpSessionBindingEvent bindingEvent) {
-        final HttpSession session = bindingEvent.getSession();
+    public void destroySession(HttpSession session) {
         if (log.isDebugEnabled()) {
             log.debug("unbinding session '" + session.getId() + "'");
         }
         
         this.channelManager.finishedSession(session);
         
-        this.userPreferencesManager.finishedSession(bindingEvent);
+        this.userPreferencesManager.finishedSession(session);
 
         // Record the destruction of the session
         final ApplicationEventPublisher applicationEventPublisher = EventPublisherLocator.getApplicationEventPublisher();

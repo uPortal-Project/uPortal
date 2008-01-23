@@ -5,7 +5,7 @@
 
 package  org.jasig.portal;
 
-import javax.servlet.http.HttpSessionBindingEvent;
+import javax.servlet.http.HttpSession;
 
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.security.IPerson;
@@ -104,8 +104,11 @@ public class GuestUserPreferencesManagerWrapper implements IUserPreferencesManag
         return this.gulm.getUserPreferences(this.sessionId);
     }
 
-    public void finishedSession(HttpSessionBindingEvent bindingEvent) {
-        this.gulm.finishedSession(bindingEvent,this.sessionId);
+    /* (non-Javadoc)
+     * @see org.jasig.portal.IUserPreferencesManager#finishedSession(javax.servlet.http.HttpSession)
+     */
+    public void finishedSession(HttpSession session) {
+        this.gulm.finishedSession(session, this.sessionId);
     }
 
 }

@@ -16,11 +16,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.ChannelManager;
 import org.jasig.portal.ChannelRegistryManager;
-import org.jasig.portal.IUserInstance;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.StructureStylesheetUserPreferences;
 import org.jasig.portal.ThemeStylesheetUserPreferences;
-import org.jasig.portal.UserInstanceManager;
 import org.jasig.portal.UserPreferencesManager;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.IUserLayoutStore;
@@ -32,6 +30,10 @@ import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.layout.node.UserLayoutChannelDescription;
 import org.jasig.portal.layout.node.UserLayoutFolderDescription;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.user.IUserInstance;
+import org.jasig.portal.user.IUserInstanceManager;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -61,8 +63,11 @@ public class UpdatePreferencesServlet extends HttpServlet {
 		IUserLayoutManager ulm = null;
 
 		try {
+            final WebApplicationContext applicationContext = WebApplicationContextUtils.getRequiredWebApplicationContext(this.getServletContext());
+            final IUserInstanceManager userInstanceManager = (IUserInstanceManager) applicationContext.getBean("userInstanceManager", IUserInstanceManager.class);
+
 			// Retrieve the user's UserInstance object
-			ui = UserInstanceManager.getUserInstance(request);
+			ui = userInstanceManager.getUserInstance(request);
 
 			// Retrieve the user's IPerson object
 			per = ui.getPerson();

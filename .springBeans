@@ -20,6 +20,7 @@
 		<config>uportal-impl/src/main/resources/properties/contexts/statsContext.xml</config>
 		<config>uportal-impl/src/test/resources/jpaTestApplicationContext.xml</config>
 		<config>uportal-impl/src/main/resources/properties/contexts/jndiContext.xml</config>
+		<config>uportal-impl/src/main/resources/properties/contexts/userContext.xml</config>
 	</configs>
 	<configSets>
 		<configSet>
@@ -50,6 +51,7 @@
 				<config>uportal-impl/src/main/resources/properties/contexts/requestParameterProcessingContext.xml</config>
 				<config>uportal-impl/src/main/resources/properties/contexts/statsContext.xml</config>
 				<config>uportal-impl/src/main/resources/properties/contexts/jndiContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/userContext.xml</config>
 			</configs>
 		</configSet>
 	</configSets>

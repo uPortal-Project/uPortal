@@ -12,7 +12,9 @@
         </property>
     </bean>
     
-    <bean id="userLayoutParameterProcessor" class="org.jasig.portal.url.processing.UserLayoutParameterProcessor" />
+    <bean id="userLayoutParameterProcessor" class="org.jasig.portal.url.processing.UserLayoutParameterProcessor">
+        <property name="userInstanceManager" ref="userInstanceManager" />
+    </bean>
     
     <bean id="portletRequestParameterProcessor" class="org.jasig.portal.url.processing.PortletRequestParameterProcessor">
         <property name="portletRequestParameterManager" ref="portletRequestParameterManager" />
@@ -21,6 +23,7 @@
     </bean>
     
     <bean id="channelRequestParameterProcessor" class="org.jasig.portal.url.processing.ChannelRequestParameterProcessor">
+        <property name="userInstanceManager" ref="userInstanceManager" />
         <property name="portletRequestParameterManager" ref="portletRequestParameterManager" />
         <property name="channelRequestParameterManager" ref="channelRequestParameterManager" />
         <property name="maxUploadSize">

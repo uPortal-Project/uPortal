@@ -9,7 +9,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpSessionBindingEvent;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -20,6 +19,7 @@ import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.GroupService;
+import org.jasig.portal.user.IUserInstance;
 import org.springframework.context.ApplicationEventPublisher;
 
 
@@ -76,6 +76,12 @@ public class UserInstance implements IUserInstance {
         
         //Create the rendering lock for the user
         this.renderingLock = new Object();
+        
+        // Record the creation of the session
+        final ApplicationEventPublisher applicationEventPublisher = EventPublisherLocator.getApplicationEventPublisher();
+        applicationEventPublisher.publishEvent(new UserSessionCreatedPortalEvent(this, this.person));
+
+        userSessions.incrementAndGet();
     }
 
     
@@ -113,30 +119,16 @@ public class UserInstance implements IUserInstance {
     public Object getRenderingLock() {
         return this.renderingLock;
     }
-
     
-    /**
-     * Notifies UserInstance that it has been bound to a session.
-     *
-     * @param bindingEvent a <code>HttpSessionBindingEvent</code> value
-     */
-    public void valueBound (HttpSessionBindingEvent bindingEvent) {
-        // Record the creation of the session
-        final ApplicationEventPublisher applicationEventPublisher = EventPublisherLocator.getApplicationEventPublisher();
-        applicationEventPublisher.publishEvent(new UserSessionCreatedPortalEvent(this, this.person));
-
-        userSessions.incrementAndGet();
-    }
-
     /**
      * This notifies UserInstance that it has been unbound from the session.
      * Method triggers cleanup in ChannelManager.
-     *
-     * @param bindingEvent an <code>HttpSessionBindingEvent</code> value
+     * 
+     * @see org.jasig.portal.user.IUserInstance#destroySession(javax.servlet.http.HttpSession)
      */
-    public void valueUnbound(HttpSessionBindingEvent bindingEvent) {
+    public void destroySession(HttpSession session) {
         if (this.channelManager != null) {
-            this.channelManager.finishedSession(bindingEvent.getSession());
+            this.channelManager.finishedSession(session);
             
             if (this.preferencesManager != null) {
                 final IUserLayoutManager userLayoutManager = this.preferencesManager.getUserLayoutManager();
@@ -145,7 +137,7 @@ public class UserInstance implements IUserInstance {
         }
         
         if (this.preferencesManager != null) {
-            this.preferencesManager.finishedSession(bindingEvent);
+            this.preferencesManager.finishedSession(session);
         }
         
         GroupService.finishedSession(this.person);

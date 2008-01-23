@@ -5,7 +5,7 @@
 
 package  org.jasig.portal;
 
-import javax.servlet.http.HttpSessionBindingEvent;
+import javax.servlet.http.HttpSession;
 
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.security.IPerson;
@@ -79,7 +79,7 @@ public interface IUserPreferencesManager {
      */
     public UserPreferences getUserPreferences();
 
-    public void finishedSession(HttpSessionBindingEvent bindingEvent);
+    public void finishedSession(HttpSession session);
 }
 
 

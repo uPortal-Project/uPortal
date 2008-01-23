@@ -12,7 +12,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpSessionBindingEvent;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -374,16 +373,18 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
         throw new UnsupportedOperationException();
     }
 
-    public void finishedSession(HttpSessionBindingEvent bindingEvent, String sessionId) {
+    public void finishedSession(HttpSession session, String sessionId) {
         // remove session state info
         stateTable.remove(sessionId);
     }
 
+    /* (non-Javadoc)
+     * @see org.jasig.portal.UserPreferencesManager#finishedSession(javax.servlet.http.HttpSession)
+     */
     @Override
-    public void finishedSession(HttpSessionBindingEvent bindingEvent) {
-        final HttpSession session = bindingEvent.getSession();
+    public void finishedSession(HttpSession session) {
         final String sessionId = session.getId();
-        this.finishedSession(bindingEvent, sessionId);
+        this.finishedSession(session, sessionId);
     }
 
     public void setLocaleManager(LocaleManager lm) {

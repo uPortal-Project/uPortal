@@ -35,6 +35,8 @@ import org.jasig.portal.tools.versioning.VersionsManager;
 import org.jasig.portal.url.IWritableHttpServletRequest;
 import org.jasig.portal.url.PortalHttpServletRequest;
 import org.jasig.portal.url.processing.IRequestParameterProcessorController;
+import org.jasig.portal.user.IUserInstance;
+import org.jasig.portal.user.IUserInstanceManager;
 import org.jasig.portal.utils.ResourceLoader;
 import org.springframework.context.ApplicationContext;
 
@@ -235,7 +237,8 @@ public void init() throws ServletException {
             requestProcessorController.processParameters(writableRequest, res);
 
             // Retrieve the user's UserInstance object
-            final IUserInstance userInstance = UserInstanceManager.getUserInstance(writableRequest);
+            final IUserInstanceManager userInstanceManager = (IUserInstanceManager) applicationContext.getBean("userInstanceManager", IUserInstanceManager.class);
+            final IUserInstance userInstance = userInstanceManager.getUserInstance(writableRequest);
             
             // fire away
             final IPortalRenderingPipeline portalRenderingPipeline = (IPortalRenderingPipeline)applicationContext.getBean("portalRenderingPipeline", IPortalRenderingPipeline.class);

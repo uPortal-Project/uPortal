@@ -8,8 +8,8 @@ package org.jasig.portal.rendering;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jasig.portal.IUserInstance;
 import org.jasig.portal.PortalException;
+import org.jasig.portal.user.IUserInstance;
 
 /**
  * Describes the entry point into the uPortal rendering pipeline.

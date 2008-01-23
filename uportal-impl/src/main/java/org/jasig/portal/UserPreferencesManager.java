@@ -10,7 +10,6 @@ import java.io.InputStream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpSessionBindingEvent;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -280,8 +279,11 @@ public class UserPreferencesManager implements IUserPreferencesManager {
     public IUserLayoutManager getUserLayoutManager() {
         return userLayoutManager;
     }
-
-    public void finishedSession(HttpSessionBindingEvent bindingEvent) {
+    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.IUserPreferencesManager#finishedSession(javax.servlet.http.HttpSession)
+     */
+    public void finishedSession(HttpSession session) {
         // persist the layout and user preferences
         try {
             if(saveUserPreferencesAtLogout) {
