@@ -1,67 +1,69 @@
 <project name="uPortal Packaging" basedir="." xmlns:artifact="urn:maven-artifact-ant">
-    <!-- TODO this is now defined twice, here and root build.xml, find a way to resolve this -->
-    <typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="urn:maven-artifact-ant">
-        <classpath>
-            <pathelement location="${basedir}/../bootstrap/maven-ant-tasks-2.0.8.jar" />
-        </classpath>
-    </typedef>
+    <property name="uportal.source.dir" value="${basedir}/.." />
+    
+    <import file="${uportal.source.dir}/bootstrap/build_includes.xml" />
 
     <property file="${basedir}/build.properties" />
     <property name="target.dir" value="${basedir}/target" />
     <property name="download.dir" value="${target.dir}/downloads" />
 
-    <artifact:pom file="${basedir}/../pom.xml" id="uportal-parent.pom" />
+    <artifact:pom file="${uportal.source.dir}/pom.xml" id="uportal-parent.pom" />
     <property name="uportal.name" value="${uportal-parent.pom.name}" />
     <property name="uportal.version" value="${uportal-parent.pom.version}" />
     <property name="uportal.finalName" value="${uportal.name}-${uportal.version}" />
 
-    <fileset id="sourceFiles" dir="${basedir}/.." defaultexcludes="true">
+    <fileset id="sourceFiles" dir="${uportal.source.dir}" defaultexcludes="true">
         <exclude name="build.properties" />
         <exclude name="data/**" />
         <exclude name="**/target/**" />
     </fileset>
 
-    <target name="clean" description="Remove files used in packaging and generated packages.">
+    <target name="clean" description="Remove files used in packaging and generated packages and runs 'mvn clean' on the uPortal project.">
         <delete dir="${target.dir}" />
+
+        <ant target="mvn" antfile="${uportal.source.dir}/build.xml" dir="${uportal.source.dir}">
+            <property name="pomDir" value="${uportal.source.dir}" />
+            <property name="goal" value="clean" />
+        </ant>
     </target>
 
     <target name="source" depends="prepare" description="Exports and packages a buildable source distribution of the project">
-        <property name="assembly.file.zip" value="${target.dir}/${uportal.finalName}.zip" />
-        <property name="assembly.file.tar.bz2" value="${target.dir}/${uportal.finalName}.tar.bz2" />
-        <property name="assembly.file.tar.gz" value="${target.dir}/${uportal.finalName}.tar.gz" />
+        <property name="source.file.zip" value="${target.dir}/${uportal.finalName}.zip" />
+        <property name="source.file.tar.bz2" value="${target.dir}/${uportal.finalName}.tar.bz2" />
+        <property name="source.file.tar.gz" value="${target.dir}/${uportal.finalName}.tar.gz" />
 
         <!-- zip source distribution -->
-        <zip destfile="${assembly.file.zip}">
+        <zip destfile="${source.file.zip}">
             <fileset refid="sourceFiles" />
         </zip>
-        <checksum file="${assembly.file.zip}" algorithm="md5" />
-        <checksum file="${assembly.file.zip}" algorithm="sha1" />
+        <checksum file="${source.file.zip}" algorithm="md5" />
+        <checksum file="${source.file.zip}" algorithm="sha1" />
 
 
         <!-- tar.gz source distribution -->
-        <tar destfile="${assembly.file.tar.gz}" longfile="gnu" compression="gzip">
+        <tar destfile="${source.file.tar.gz}" longfile="gnu" compression="gzip">
             <!-- TODO switch to <fileset refid="sourceFiles" /> once ant 1.7.1 is out -->
-            <tarfileset dir="${basedir}/.." defaultexcludes="true">
+            <tarfileset dir="${uportal.source.dir}" defaultexcludes="true">
                 <exclude name="build.properties" />
                 <exclude name="data/**" />
                 <exclude name="**/target/**" />
             </tarfileset>
         </tar>
-        <checksum file="${assembly.file.tar.gz}" algorithm="md5" />
-        <checksum file="${assembly.file.tar.gz}" algorithm="sha1" />
+        <checksum file="${source.file.tar.gz}" algorithm="md5" />
+        <checksum file="${source.file.tar.gz}" algorithm="sha1" />
 
 
         <!-- tar.bz2 source distribution -->
-        <tar destfile="${assembly.file.tar.bz2}" longfile="gnu" compression="bzip2">
+        <tar destfile="${source.file.tar.bz2}" longfile="gnu" compression="bzip2">
             <!-- TODO switch to <fileset refid="sourceFiles" /> once ant 1.7.1 is out -->
-            <tarfileset dir="${basedir}/.." defaultexcludes="true">
+            <tarfileset dir="${uportal.source.dir}" defaultexcludes="true">
                 <exclude name="build.properties" />
                 <exclude name="data/**" />
                 <exclude name="**/target/**" />
             </tarfileset>
         </tar>
-        <checksum file="${assembly.file.tar.bz2}" algorithm="md5" />
-        <checksum file="${assembly.file.tar.bz2}" algorithm="sha1" />
+        <checksum file="${source.file.tar.bz2}" algorithm="md5" />
+        <checksum file="${source.file.tar.bz2}" algorithm="sha1" />
     </target>
 
     <target name="quickstart" depends="prepare-qs, prepare-qs-tomcat, prepare-qs-ant, prepare-qs-maven, prepare-qs-uportal" description="Generates the quick start distribution">
@@ -71,43 +73,50 @@
                 <filter token="maven.name" value="${dl.maven.finalName}" />
                 <filter token="tomcat.name" value="${dl.tomcat.finalName}" />
                 <filter token="uportal.name" value="${uportal.finalName}" />
+
+                <filter token="ant.version" value="${dl.ant.version}" />
+                <filter token="maven.version" value="${dl.maven.version}" />
+                <filter token="tomcat.version" value="${dl.tomcat.version}" />
+                <filter token="uportal.version" value="${uportal.version}" />
+
+                <filter token="quickstart.name" value="${quickstart.name}" />
             </filterset>
 
             <fileset dir="${basedir}/quickstart" />
         </copy>
 
         <chmod perm="755" dir="${quickstart.dir}" includes="ant*" verbose="true" />
-        
-        
-        <property name="assembly.file.zip" value="${target.dir}/${quickstart.name}.zip" />
-        <property name="assembly.file.tar.bz2" value="${target.dir}/${quickstart.name}.tar.bz2" />
-        <property name="assembly.file.tar.gz" value="${target.dir}/${quickstart.name}.tar.gz" />
+
+
+        <property name="quickstart.file.zip" value="${target.dir}/${quickstart.name}.zip" />
+        <property name="quickstart.file.tar.bz2" value="${target.dir}/${quickstart.name}.tar.bz2" />
+        <property name="quickstart.file.tar.gz" value="${target.dir}/${quickstart.name}.tar.gz" />
 
         <!-- TODO combine dupe compression code into single utility task once 1.7.1 is out. -->
         <!-- zip distribution -->
-        <zip destfile="${assembly.file.zip}">
+        <zip destfile="${quickstart.file.zip}">
             <fileset dir="${quickstart.dir}" />
         </zip>
-        <checksum file="${assembly.file.zip}" algorithm="md5" />
-        <checksum file="${assembly.file.zip}" algorithm="sha1" />
+        <checksum file="${quickstart.file.zip}" algorithm="md5" />
+        <checksum file="${quickstart.file.zip}" algorithm="sha1" />
 
 
         <!-- tar.gz distribution -->
-        <tar destfile="${assembly.file.tar.gz}" longfile="gnu" compression="gzip">
+        <tar destfile="${quickstart.file.tar.gz}" longfile="gnu" compression="gzip">
             <!-- TODO switch to <fileset refid="sourceFiles" /> once ant 1.7.1 is out -->
             <tarfileset dir="${quickstart.dir}" defaultexcludes="true" />
         </tar>
-        <checksum file="${assembly.file.tar.gz}" algorithm="md5" />
-        <checksum file="${assembly.file.tar.gz}" algorithm="sha1" />
+        <checksum file="${quickstart.file.tar.gz}" algorithm="md5" />
+        <checksum file="${quickstart.file.tar.gz}" algorithm="sha1" />
 
 
         <!-- tar.bz2 distribution -->
-        <tar destfile="${assembly.file.tar.bz2}" longfile="gnu" compression="bzip2">
+        <tar destfile="${quickstart.file.tar.bz2}" longfile="gnu" compression="bzip2">
             <!-- TODO switch to <fileset refid="sourceFiles" /> once ant 1.7.1 is out -->
             <tarfileset dir="${quickstart.dir}" defaultexcludes="true" />
         </tar>
-        <checksum file="${assembly.file.tar.bz2}" algorithm="md5" />
-        <checksum file="${assembly.file.tar.bz2}" algorithm="sha1" />
+        <checksum file="${quickstart.file.tar.bz2}" algorithm="md5" />
+        <checksum file="${quickstart.file.tar.bz2}" algorithm="sha1" />
     </target>
 
     <target name="prepare-qs-tomcat" depends="prepare-qs">
@@ -182,6 +191,7 @@
             <property name="dl.@{download.name}.dir" value="@{extract.dir}/${dl.@{download.name}.finalName}" />
 
             <!-- download -->
+            <mkdir dir="@{download.dir}" />
             <get src="${dl.@{download.name}.url}" dest="${dl.@{download.name}.localFile}" usetimestamp="true" verbose="true" />
 
             <!-- extract -->
@@ -190,6 +200,7 @@
             </condition>
             <property name="@{download.name}.compression" value="bzip2" />
 
+            <mkdir dir="@{extract.dir}" />
             <untar src="${dl.@{download.name}.localFile}" dest="@{extract.dir}" compression="${@{download.name}.compression}" />
 
             <!-- update permissions -->

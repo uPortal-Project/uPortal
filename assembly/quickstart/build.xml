@@ -1,4 +1,6 @@
 <project name="uPortal Quickstart" basedir=".">
+    <import file="${uportal.dir}/bootstrap/build_includes.xml" />
+    
     <property file="${basedir}/build.properties" />
 
     <property environment="env" />
@@ -9,6 +11,11 @@
         </ant>
 
         <antcall target="tomcat-start" />
+
+<echo>
+uPortal Quick-Start started, please wait 30 seconds before trying browsing to
+http://localhost:8080/uPortal
+</echo>
     </target>
 
     <target name="stop" description="Stops Tomcat and the HSQL database">
@@ -40,10 +47,4 @@
             
         <exec executable="${tomcat.dir}/bin/shutdown.${tcExecutableSuffix}" dir="${tomcat.dir}" />
     </target>
-
-    <taskdef resource="net/sf/antcontrib/antlib.xml">
-        <classpath>
-            <pathelement location="${uportal.dir}/bootstrap/ant-contrib-1.0b3.jar" />
-        </classpath>
-    </taskdef>
 </project>
