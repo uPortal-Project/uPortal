@@ -8,6 +8,7 @@
 
     <property file="${basedir}/build.properties" />
     <property name="target.dir" value="${basedir}/target" />
+    <property name="download.dir" value="${target.dir}/downloads" />
 
     <artifact:pom file="${basedir}/../pom.xml" id="uportal-parent.pom" />
     <property name="uportal.name" value="${uportal-parent.pom.name}" />
@@ -76,21 +77,52 @@
         </copy>
 
         <chmod perm="755" dir="${quickstart.dir}" includes="ant*" verbose="true" />
+        
+        
+        <property name="assembly.file.zip" value="${target.dir}/${quickstart.name}.zip" />
+        <property name="assembly.file.tar.bz2" value="${target.dir}/${quickstart.name}.tar.bz2" />
+        <property name="assembly.file.tar.gz" value="${target.dir}/${quickstart.name}.tar.gz" />
+
+        <!-- TODO combine dupe compression code into single utility task once 1.7.1 is out. -->
+        <!-- zip distribution -->
+        <zip destfile="${assembly.file.zip}">
+            <fileset dir="${quickstart.dir}" />
+        </zip>
+        <checksum file="${assembly.file.zip}" algorithm="md5" />
+        <checksum file="${assembly.file.zip}" algorithm="sha1" />
+
+
+        <!-- tar.gz distribution -->
+        <tar destfile="${assembly.file.tar.gz}" longfile="gnu" compression="gzip">
+            <!-- TODO switch to <fileset refid="sourceFiles" /> once ant 1.7.1 is out -->
+            <tarfileset dir="${quickstart.dir}" defaultexcludes="true" />
+        </tar>
+        <checksum file="${assembly.file.tar.gz}" algorithm="md5" />
+        <checksum file="${assembly.file.tar.gz}" algorithm="sha1" />
+
+
+        <!-- tar.bz2 distribution -->
+        <tar destfile="${assembly.file.tar.bz2}" longfile="gnu" compression="bzip2">
+            <!-- TODO switch to <fileset refid="sourceFiles" /> once ant 1.7.1 is out -->
+            <tarfileset dir="${quickstart.dir}" defaultexcludes="true" />
+        </tar>
+        <checksum file="${assembly.file.tar.bz2}" algorithm="md5" />
+        <checksum file="${assembly.file.tar.bz2}" algorithm="sha1" />
     </target>
 
     <target name="prepare-qs-tomcat" depends="prepare-qs">
-        <download-extract download.name="tomcat" download.dir="${target.dir}" extract.dir="${quickstart.dir}" />
+        <download-extract download.name="tomcat" download.dir="${download.dir}" extract.dir="${quickstart.dir}" />
 
         <!-- update server.xml to enable shared portlet sessions -->
         <replace file="${dl.tomcat.dir}/conf/server.xml" token="${tomcat.conf.token}" value="${tomcat.conf.replacement}" summary="true" />
     </target>
 
     <target name="prepare-qs-ant" depends="prepare-qs">
-        <download-extract download.name="ant" download.dir="${target.dir}" extract.dir="${quickstart.dir}" />
+        <download-extract download.name="ant" download.dir="${download.dir}" extract.dir="${quickstart.dir}" />
     </target>
 
     <target name="prepare-qs-maven" depends="prepare-qs">
-        <download-extract download.name="maven" download.dir="${target.dir}" extract.dir="${quickstart.dir}" />
+        <download-extract download.name="maven" download.dir="${download.dir}" extract.dir="${quickstart.dir}" />
     </target>
 
     <target name="prepare-qs-uportal" depends="prepare-qs">
@@ -120,8 +152,7 @@
 
         <!-- shutdown hsql nicely -->
         <ant target="hsql-shutdown" antfile="${uportal.dir}/build.xml" dir="${uportal.dir}" />
-    </target>
-    <target name="skip">
+
         <!-- clean up maven build files, these don't need to be packaged up -->
         <ant target="mvn" antfile="${uportal.dir}/build.xml" dir="${uportal.dir}">
             <property name="pomDir" value="${uportal.dir}" />
@@ -172,7 +203,8 @@
     </target>
 
     <target name="prepare-qs" depends="prepare">
-        <property name="quickstart.dir" value="${target.dir}/quickstart" />
+        <property name="quickstart.name" value="${uportal.finalName}-quick-start" />
+        <property name="quickstart.dir" value="${target.dir}/${quickstart.name}" />
 
         <mkdir dir="${quickstart.dir}" />
     </target>
