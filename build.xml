@@ -509,6 +509,13 @@
     </target>
 
     <target name="hsql" description="Start a HSQLDB instance consistent with the default RDBMS requirements of uPortal">
+        <property name="spawn" value="false" />
+        
+        <condition property="failonerror" value="false">
+            <equals arg1="${spawn}" arg2="true" />
+        </condition>
+        <property name="failonerror" value="true" />
+            
         <uportal-parent-macro>
             <artifact:dependencies pathid="hsql.classpath" verbose="false">
                 <pom file="${bootstrap.dir}/hsqldb-pom.xml" />
@@ -518,8 +525,8 @@
             <property name="port" value="8887" />
     
             <echo message="Starting HSQL" />
-            <echo message="Using: ${basedir}/data/uP3_uPortal" />
-            <java fork="true" maxmemory="256M" dir="${basedir}" classname="org.hsqldb.Server">
+            <echo message="Using: ${database}" />
+            <java fork="true" spawn="${spawn}"  maxmemory="16M" dir="${basedir}" classname="org.hsqldb.Server" failonerror="${failonerror}">
                 <classpath refid="hsql.classpath" />
     
                 <arg value="-database" />
@@ -527,6 +534,41 @@
                 <arg value="-port" />
                 <arg value="${port}" />
             </java>
+        </uportal-parent-macro>
+    </target>
+    
+    <target name="hsql-shutdown" description="Compacts then cleanly shuts down hsql, useful if the 'hsql' task was run with '-Dspawn=true'">
+        <uportal-parent-macro>
+            <artifact:dependencies pathid="hsql.classpath" verbose="false">
+                <pom file="${bootstrap.dir}/hsqldb-pom.xml" />
+            </artifact:dependencies>
+    
+            <echo message="Stopping HSQL" />
+            <trycatch reference="hsql-shutdown.exceptionId">
+                <try>
+                    <java fork="true" maxmemory="8M" dir="${basedir}" classname="org.hsqldb.util.SqlTool" timeout="5000" errorproperty="hsql-shutdown.err.out" failonerror="true">
+                        <classpath refid="hsql.classpath" />
+                        
+                        <arg value="--rcFile" />
+                        <arg value="${bootstrap.dir}/hsqldb.sqltool.rc" />
+                        <arg value="--sql" />
+                        <arg value="shutdown compact" />
+                        <arg value="uPortalDb" />
+                    </java>
+                </try>
+                <catch>
+                    <if>
+                        <contains string="${hsql-shutdown.err.out}" substring="java.sql.SQLException: socket creation error" />
+                        <then>
+                            <echo>HSQL is not running</echo>
+                        </then>
+                        <else>
+                            <echo>${jvm.err.out}</echo>
+                            <throw refid="hsql-shutdown.exceptionId" />
+                        </else>
+                    </if>
+                </catch>
+            </trycatch>
         </uportal-parent-macro>
     </target>
 
@@ -893,8 +935,13 @@
                 <property name="mvnExecutable" value="mvn" />
             </else>
         </if>
+        
+        <condition property="maven.bin" value="${maven.home}/bin/">
+            <isset property="maven.home"/>
+        </condition>
+        <property name="maven.bin" value="" />
 
-        <exec executable="${mvnExecutable}" dir="${pomDir}" vmlauncher="true" resolveexecutable="true" searchpath="true" failonerror="true">
+        <exec executable="${maven.bin}${mvnExecutable}" dir="${pomDir}" vmlauncher="true" resolveexecutable="true" searchpath="true" failonerror="true">
             <arg value="${goal}" />
             <arg value="${goal1}" />
             <arg value="${goal2}" />

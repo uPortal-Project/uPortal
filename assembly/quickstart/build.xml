@@ -1,0 +1,49 @@
+<project name="uPortal Quickstart" basedir=".">
+    <property file="${basedir}/build.properties" />
+
+    <property environment="env" />
+
+    <target name="start" description="Starts the HSQL database and Tomcat">
+        <ant target="hsql" antfile="${uportal.dir}/build.xml" dir="${uportal.dir}">
+            <property name="spawn" value="true" />
+        </ant>
+
+        <antcall target="tomcat-start" />
+    </target>
+
+    <target name="stop" description="Stops Tomcat and the HSQL database">
+        <antcall target="tomcat-stop" />
+
+        <ant target="hsql-shutdown" antfile="${uportal.dir}/build.xml" dir="${uportal.dir}" />
+    </target>
+
+    <target name="prepare-tomcat">
+        <if>
+            <os family="windows" />
+            <then>
+                <property name="tcExecutableSuffix" value="bat" />
+            </then>
+            <else>
+                <property name="tcExecutableSuffix" value="sh" />
+            </else>
+        </if>
+    </target>
+
+    <target name="tomcat-start" depends="prepare-tomcat">
+        <echo message="Starting Tomcat ..." />
+
+        <exec executable="${tomcat.dir}/bin/startup.${tcExecutableSuffix}" spawn="true" dir="${tomcat.dir}" />
+    </target>
+
+    <target name="tomcat-stop" depends="prepare-tomcat">
+        <echo message="Stopping Tomcat ..." />
+            
+        <exec executable="${tomcat.dir}/bin/shutdown.${tcExecutableSuffix}" dir="${tomcat.dir}" />
+    </target>
+
+    <taskdef resource="net/sf/antcontrib/antlib.xml">
+        <classpath>
+            <pathelement location="${uportal.dir}/bootstrap/ant-contrib-1.0b3.jar" />
+        </classpath>
+    </taskdef>
+</project>
