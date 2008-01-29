@@ -1,8 +1,8 @@
 <project name="uPortal Quickstart" basedir=".">
+    <property file="${basedir}/build.properties" />
+    
     <import file="${uportal.dir}/bootstrap/build_includes.xml" />
     
-    <property file="${basedir}/build.properties" />
-
     <property environment="env" />
 
     <target name="start" description="Starts the HSQL database and Tomcat">
