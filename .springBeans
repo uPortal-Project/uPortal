@@ -19,8 +19,18 @@
 		<config>uportal-impl/src/main/resources/properties/contexts/requestParameterProcessingContext.xml</config>
 		<config>uportal-impl/src/main/resources/properties/contexts/statsContext.xml</config>
 		<config>uportal-impl/src/test/resources/jpaTestApplicationContext.xml</config>
+		<config>uportal-impl/src/main/resources/properties/contexts/jndiContext.xml</config>
+		<config>uportal-impl/src/main/resources/properties/contexts/userContext.xml</config>
 	</configs>
 	<configSets>
+		<configSet>
+			<name><![CDATA[JpaTestContext]]></name>
+			<allowBeanDefinitionOverriding>true</allowBeanDefinitionOverriding>
+			<incomplete>false</incomplete>
+			<configs>
+				<config>uportal-impl/src/test/resources/jpaTestApplicationContext.xml</config>
+			</configs>
+		</configSet>
 		<configSet>
 			<name><![CDATA[PortalApplicationContext]]></name>
 			<allowBeanDefinitionOverriding>true</allowBeanDefinitionOverriding>
@@ -40,14 +50,8 @@
 				<config>uportal-impl/src/main/resources/properties/contexts/renderingPipelineContext.xml</config>
 				<config>uportal-impl/src/main/resources/properties/contexts/requestParameterProcessingContext.xml</config>
 				<config>uportal-impl/src/main/resources/properties/contexts/statsContext.xml</config>
-			</configs>
-		</configSet>
-		<configSet>
-			<name><![CDATA[JpaTestContext]]></name>
-			<allowBeanDefinitionOverriding>true</allowBeanDefinitionOverriding>
-			<incomplete>false</incomplete>
-			<configs>
-				<config>uportal-impl/src/test/resources/jpaTestApplicationContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/jndiContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/userContext.xml</config>
 			</configs>
 		</configSet>
 	</configSets>

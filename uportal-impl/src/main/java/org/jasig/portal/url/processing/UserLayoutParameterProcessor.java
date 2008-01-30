@@ -4,18 +4,17 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.ChannelManager;
 import org.jasig.portal.Constants;
-import org.jasig.portal.IUserInstance;
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.PortalEvent;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.StructureStylesheetUserPreferences;
 import org.jasig.portal.ThemeStylesheetUserPreferences;
 import org.jasig.portal.UPFileSpec;
-import org.jasig.portal.UserInstanceManager;
 import org.jasig.portal.UserPreferences;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.i18n.LocaleManager;
@@ -26,6 +25,9 @@ import org.jasig.portal.layout.TransientUserLayoutManagerWrapper;
 import org.jasig.portal.layout.UserLayoutStoreFactory;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.url.IWritableHttpServletRequest;
+import org.jasig.portal.user.IUserInstance;
+import org.jasig.portal.user.IUserInstanceManager;
+import org.springframework.beans.factory.annotation.Required;
 
 /**
  * This helper class processes HttpServletRequests for parameters relating to
@@ -38,8 +40,25 @@ import org.jasig.portal.url.IWritableHttpServletRequest;
 public class UserLayoutParameterProcessor implements IRequestParameterProcessor {
     protected final Log logger = LogFactory.getLog(getClass());
     
+    private IUserInstanceManager userInstanceManager;
+    
+    /**
+     * @return the userInstanceManager
+     */
+    public IUserInstanceManager getUserInstanceManager() {
+        return this.userInstanceManager;
+    }
+    /**
+     * @param userInstanceManager the userInstanceManager to set
+     */
+    @Required
+    public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
+        Validate.notNull(userInstanceManager);
+        this.userInstanceManager = userInstanceManager;
+    }
+
     public boolean processParameters(IWritableHttpServletRequest request, HttpServletResponse response) {
-        final IUserInstance userInstance = UserInstanceManager.getUserInstance(request);
+        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
         final ChannelManager channelManager = userInstance.getChannelManager();
         
         this.parseMultiTargetEvent(request, response, "uP_help_target", PortalEvent.HELP_BUTTON, channelManager);

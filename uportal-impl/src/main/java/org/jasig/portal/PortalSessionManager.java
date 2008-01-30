@@ -23,7 +23,6 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.jndi.JNDIManager;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.rendering.IPortalRenderingPipeline;
 import org.jasig.portal.security.IPermission;
@@ -36,6 +35,8 @@ import org.jasig.portal.tools.versioning.VersionsManager;
 import org.jasig.portal.url.IWritableHttpServletRequest;
 import org.jasig.portal.url.PortalHttpServletRequest;
 import org.jasig.portal.url.processing.IRequestParameterProcessorController;
+import org.jasig.portal.user.IUserInstance;
+import org.jasig.portal.user.IUserInstanceManager;
 import org.jasig.portal.utils.ResourceLoader;
 import org.springframework.context.ApplicationContext;
 
@@ -108,13 +109,6 @@ public void init() throws ServletException {
       }
 
       servletContext = sc.getServletContext();
-
-      try {
-          JNDIManager.initializePortalContext();
-      } catch (Exception pe) {
-          ExceptionHelper.genericTopHandler(initPortalContext,pe);
-          fatalError=true;
-      }
 
       // Turn off URL caching if it has been requested
       if (!PropertiesManager.getPropertyAsBoolean("org.jasig.portal.PortalSessionManager.url_caching", DEFAULT_URL_CACHING)) {
@@ -243,7 +237,8 @@ public void init() throws ServletException {
             requestProcessorController.processParameters(writableRequest, res);
 
             // Retrieve the user's UserInstance object
-            final IUserInstance userInstance = UserInstanceManager.getUserInstance(writableRequest);
+            final IUserInstanceManager userInstanceManager = (IUserInstanceManager) applicationContext.getBean("userInstanceManager", IUserInstanceManager.class);
+            final IUserInstance userInstance = userInstanceManager.getUserInstance(writableRequest);
             
             // fire away
             final IPortalRenderingPipeline portalRenderingPipeline = (IPortalRenderingPipeline)applicationContext.getBean("portalRenderingPipeline", IPortalRenderingPipeline.class);

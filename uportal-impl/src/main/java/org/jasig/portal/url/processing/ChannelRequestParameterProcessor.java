@@ -26,17 +26,17 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.Constants;
 import org.jasig.portal.Errors;
 import org.jasig.portal.ExceptionHelper;
-import org.jasig.portal.IUserInstance;
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.MultipartDataSource;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.UPFileSpec;
 import org.jasig.portal.UploadStatus;
-import org.jasig.portal.UserInstanceManager;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.portlet.url.IPortletRequestParameterManager;
 import org.jasig.portal.url.IWritableHttpServletRequest;
 import org.jasig.portal.url.support.IChannelRequestParameterManager;
+import org.jasig.portal.user.IUserInstance;
+import org.jasig.portal.user.IUserInstanceManager;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.web.multipart.MultipartFile;
@@ -57,6 +57,22 @@ public class ChannelRequestParameterProcessor extends CommonsFileUploadSupport i
 
     private IPortletRequestParameterManager portletRequestParameterManager;
     private IChannelRequestParameterManager channelRequestParameterManager;
+    private IUserInstanceManager userInstanceManager;
+    
+    /**
+     * @return the userInstanceManager
+     */
+    public IUserInstanceManager getUserInstanceManager() {
+        return this.userInstanceManager;
+    }
+    /**
+     * @param userInstanceManager the userInstanceManager to set
+     */
+    @Required
+    public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
+        Validate.notNull(userInstanceManager);
+        this.userInstanceManager = userInstanceManager;
+    }
     
     /**
      * @return the portletRequestParameterManager
@@ -187,7 +203,7 @@ public class ChannelRequestParameterProcessor extends CommonsFileUploadSupport i
     protected String getTargetChannelId(IWritableHttpServletRequest request) {
         String targetChannelId = null;
         
-        final IUserInstance userInstance = UserInstanceManager.getUserInstance(request);
+        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
         final IUserPreferencesManager userPreferencesManager = userInstance.getPreferencesManager();
         final IUserLayoutManager userLayoutManger = userPreferencesManager.getUserLayoutManager();
 

@@ -12,19 +12,21 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpSessionBindingEvent;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.i18n.LocaleManager;
-import org.jasig.portal.jndi.JNDIManager;
+import org.jasig.portal.jndi.IJndiManager;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.UserLayoutManagerFactory;
 import org.jasig.portal.layout.UserLayoutStoreFactory;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.spring.PortalApplicationContextLocator;
 import org.jasig.portal.utils.PropsMatcher;
+import org.springframework.context.ApplicationContext;
+import org.w3c.dom.Document;
 
 /**
  * Multithreaded version of {@link UserPreferencesManager}.
@@ -222,8 +224,15 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
                     newState.complete_up=new UserPreferences(upl);
                 }
 
+                final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
+                final IJndiManager jndiManager = (IJndiManager) applicationContext.getBean("jndiManager", IJndiManager.class);
+                
                 // Initialize the JNDI context for this user
-                JNDIManager.initializeSessionContext(req.getSession(),Integer.toString(m_person.getID()),Integer.toString(upl.getLayoutId()),newState.ulm.getUserLayoutDOM());
+                final HttpSession session = req.getSession();
+                final String userId = Integer.toString(m_person.getID());
+                final String layoutId = Integer.toString(upl.getLayoutId());
+                final Document userLayoutDom = newState.ulm.getUserLayoutDOM();
+                jndiManager.initializeSessionContext(session, userId, layoutId, userLayoutDom);
             } else {
                 // there is no user-defined mapping for this particular browser.
                 // user should be redirected to a browser-registration page.
@@ -364,16 +373,18 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
         throw new UnsupportedOperationException();
     }
 
-    public void finishedSession(HttpSessionBindingEvent bindingEvent, String sessionId) {
+    public void finishedSession(HttpSession session, String sessionId) {
         // remove session state info
         stateTable.remove(sessionId);
     }
 
+    /* (non-Javadoc)
+     * @see org.jasig.portal.UserPreferencesManager#finishedSession(javax.servlet.http.HttpSession)
+     */
     @Override
-    public void finishedSession(HttpSessionBindingEvent bindingEvent) {
-        final HttpSession session = bindingEvent.getSession();
+    public void finishedSession(HttpSession session) {
         final String sessionId = session.getId();
-        this.finishedSession(bindingEvent, sessionId);
+        this.finishedSession(session, sessionId);
     }
 
     public void setLocaleManager(LocaleManager lm) {

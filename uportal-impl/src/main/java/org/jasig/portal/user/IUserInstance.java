@@ -3,10 +3,12 @@
  * See license distributed with this file and
  * available online at http://www.uportal.org/license.html
  */
-package org.jasig.portal;
+package org.jasig.portal.user;
 
-import javax.servlet.http.HttpSessionBindingListener;
+import javax.servlet.http.HttpSession;
 
+import org.jasig.portal.ChannelManager;
+import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.security.IPerson;
 
@@ -16,7 +18,7 @@ import org.jasig.portal.security.IPerson;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface IUserInstance extends HttpSessionBindingListener {
+public interface IUserInstance {
     /**
      * @return The Person this UserInstance is for
      */
@@ -41,4 +43,11 @@ public interface IUserInstance extends HttpSessionBindingListener {
      * @return the renderingLock for the user instance
      */
     public Object getRenderingLock();
+    
+    /**
+     * Notify the instance and all its members that the user's session is being destroyed.
+     * 
+     * @param session The session that was just destroyed for this user instance.
+     */
+    public void destroySession(HttpSession session);
 }

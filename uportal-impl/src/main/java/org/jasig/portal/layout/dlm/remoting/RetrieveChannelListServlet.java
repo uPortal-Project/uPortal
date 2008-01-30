@@ -8,9 +8,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jasig.portal.ChannelRegistryManager;
-import org.jasig.portal.IUserInstance;
 import org.jasig.portal.PortalException;
-import org.jasig.portal.UserInstanceManager;
+import org.jasig.portal.user.IUserInstance;
+import org.jasig.portal.user.IUserInstanceManager;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.w3c.dom.Document;
 
 /**
@@ -24,7 +26,10 @@ public class RetrieveChannelListServlet extends HttpServlet {
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // Retrieve the user's UserInstance object
         try {
-            IUserInstance userInstance = UserInstanceManager.getUserInstance(request);
+            final WebApplicationContext applicationContext = WebApplicationContextUtils.getRequiredWebApplicationContext(this.getServletContext());
+            final IUserInstanceManager userInstanceManager = (IUserInstanceManager) applicationContext.getBean("userInstanceManager", IUserInstanceManager.class);
+            
+            IUserInstance userInstance = userInstanceManager.getUserInstance(request);
 			Document registry = ChannelRegistryManager.getChannelRegistry(userInstance.getPerson());
 			response.setContentType("text/xml");
 			response.getWriter().print("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
