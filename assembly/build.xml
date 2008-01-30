@@ -1,6 +1,6 @@
 <project name="uPortal Packaging" basedir="." xmlns:artifact="urn:maven-artifact-ant">
     <property name="uportal.source.dir" value="${basedir}/.." />
-    
+
     <import file="${uportal.source.dir}/bootstrap/build_includes.xml" />
 
     <property file="${basedir}/build.properties" />
@@ -104,7 +104,18 @@
         <!-- tar.gz distribution -->
         <tar destfile="${quickstart.file.tar.gz}" longfile="gnu" compression="gzip">
             <!-- TODO switch to <fileset refid="sourceFiles" /> once ant 1.7.1 is out -->
-            <tarfileset dir="${quickstart.dir}" defaultexcludes="true" />
+            <tarfileset dir="${quickstart.dir}" defaultexcludes="true">
+                <exclude name="**/*.sh" />
+                <exclude name="${dl.ant.finalName}/bin/*" />
+                <exclude name="${dl.maven.finalName}/bin/*" />
+                <exclude name="${dl.tomcat.finalName}/bin/*" />
+            </tarfileset>
+            <tarfileset dir="${quickstart.dir}" defaultexcludes="true" mode="755">
+                <include name="**/*.sh" />
+                <include name="${dl.ant.finalName}/bin/*" />
+                <include name="${dl.maven.finalName}/bin/*" />
+                <include name="${dl.tomcat.finalName}/bin/*" />
+            </tarfileset>
         </tar>
         <checksum file="${quickstart.file.tar.gz}" algorithm="md5" />
         <checksum file="${quickstart.file.tar.gz}" algorithm="sha1" />
@@ -113,7 +124,18 @@
         <!-- tar.bz2 distribution -->
         <tar destfile="${quickstart.file.tar.bz2}" longfile="gnu" compression="bzip2">
             <!-- TODO switch to <fileset refid="sourceFiles" /> once ant 1.7.1 is out -->
-            <tarfileset dir="${quickstart.dir}" defaultexcludes="true" />
+            <tarfileset dir="${quickstart.dir}" defaultexcludes="true">
+                <exclude name="**/*.sh" />
+                <exclude name="${dl.ant.finalName}/bin/*" />
+                <exclude name="${dl.maven.finalName}/bin/*" />
+                <exclude name="${dl.tomcat.finalName}/bin/*" />
+            </tarfileset>
+            <tarfileset dir="${quickstart.dir}" defaultexcludes="true" mode="755">
+                <include name="**/*.sh" />
+                <include name="${dl.ant.finalName}/bin/*" />
+                <include name="${dl.maven.finalName}/bin/*" />
+                <include name="${dl.tomcat.finalName}/bin/*" />
+            </tarfileset>
         </tar>
         <checksum file="${quickstart.file.tar.bz2}" algorithm="md5" />
         <checksum file="${quickstart.file.tar.bz2}" algorithm="sha1" />
