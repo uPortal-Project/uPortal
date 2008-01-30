@@ -1,0 +1,244 @@
+<project name="uPortal Packaging" basedir="." xmlns:artifact="urn:maven-artifact-ant">
+    <property name="uportal.source.dir" value="${basedir}/.." />
+
+    <import file="${uportal.source.dir}/bootstrap/build_includes.xml" />
+
+    <property file="${basedir}/build.properties" />
+    <property name="target.dir" value="${basedir}/target" />
+    <property name="download.dir" value="${target.dir}/downloads" />
+
+    <artifact:pom file="${uportal.source.dir}/pom.xml" id="uportal-parent.pom" />
+    <property name="uportal.name" value="${uportal-parent.pom.name}" />
+    <property name="uportal.version" value="${uportal-parent.pom.version}" />
+    <property name="uportal.finalName" value="${uportal.name}-${uportal.version}" />
+
+    <fileset id="sourceFiles" dir="${uportal.source.dir}" defaultexcludes="true">
+        <exclude name="build.properties" />
+        <exclude name="data/**" />
+        <exclude name="**/target/**" />
+    </fileset>
+
+    <target name="clean" description="Remove files used in packaging and generated packages and runs 'mvn clean' on the uPortal project.">
+        <delete dir="${target.dir}" />
+
+        <ant target="mvn" antfile="${uportal.source.dir}/build.xml" dir="${uportal.source.dir}">
+            <property name="pomDir" value="${uportal.source.dir}" />
+            <property name="goal" value="clean" />
+        </ant>
+    </target>
+
+    <target name="source" depends="prepare" description="Exports and packages a buildable source distribution of the project">
+        <property name="source.file.zip" value="${target.dir}/${uportal.finalName}.zip" />
+        <property name="source.file.tar.bz2" value="${target.dir}/${uportal.finalName}.tar.bz2" />
+        <property name="source.file.tar.gz" value="${target.dir}/${uportal.finalName}.tar.gz" />
+
+        <!-- zip source distribution -->
+        <zip destfile="${source.file.zip}">
+            <fileset refid="sourceFiles" />
+        </zip>
+        <checksum file="${source.file.zip}" algorithm="md5" />
+        <checksum file="${source.file.zip}" algorithm="sha1" />
+
+
+        <!-- tar.gz source distribution -->
+        <tar destfile="${source.file.tar.gz}" longfile="gnu" compression="gzip">
+            <!-- TODO switch to <fileset refid="sourceFiles" /> once ant 1.7.1 is out -->
+            <tarfileset dir="${uportal.source.dir}" defaultexcludes="true">
+                <exclude name="build.properties" />
+                <exclude name="data/**" />
+                <exclude name="**/target/**" />
+            </tarfileset>
+        </tar>
+        <checksum file="${source.file.tar.gz}" algorithm="md5" />
+        <checksum file="${source.file.tar.gz}" algorithm="sha1" />
+
+
+        <!-- tar.bz2 source distribution -->
+        <tar destfile="${source.file.tar.bz2}" longfile="gnu" compression="bzip2">
+            <!-- TODO switch to <fileset refid="sourceFiles" /> once ant 1.7.1 is out -->
+            <tarfileset dir="${uportal.source.dir}" defaultexcludes="true">
+                <exclude name="build.properties" />
+                <exclude name="data/**" />
+                <exclude name="**/target/**" />
+            </tarfileset>
+        </tar>
+        <checksum file="${source.file.tar.bz2}" algorithm="md5" />
+        <checksum file="${source.file.tar.bz2}" algorithm="sha1" />
+    </target>
+
+    <target name="quickstart" depends="prepare-qs, prepare-qs-tomcat, prepare-qs-ant, prepare-qs-maven, prepare-qs-uportal" description="Generates the quick start distribution">
+        <copy todir="${quickstart.dir}" overwrite="true">
+            <filterset>
+                <filter token="ant.name" value="${dl.ant.finalName}" />
+                <filter token="maven.name" value="${dl.maven.finalName}" />
+                <filter token="tomcat.name" value="${dl.tomcat.finalName}" />
+                <filter token="uportal.name" value="${uportal.finalName}" />
+
+                <filter token="ant.version" value="${dl.ant.version}" />
+                <filter token="maven.version" value="${dl.maven.version}" />
+                <filter token="tomcat.version" value="${dl.tomcat.version}" />
+                <filter token="uportal.version" value="${uportal.version}" />
+
+                <filter token="quickstart.name" value="${quickstart.name}" />
+            </filterset>
+
+            <fileset dir="${basedir}/quickstart" />
+        </copy>
+
+        <chmod perm="755" dir="${quickstart.dir}" includes="ant*" verbose="true" />
+
+
+        <property name="quickstart.file.zip" value="${target.dir}/${quickstart.name}.zip" />
+        <property name="quickstart.file.tar.bz2" value="${target.dir}/${quickstart.name}.tar.bz2" />
+        <property name="quickstart.file.tar.gz" value="${target.dir}/${quickstart.name}.tar.gz" />
+
+        <!-- TODO combine dupe compression code into single utility task once 1.7.1 is out. -->
+        <!-- zip distribution -->
+        <zip destfile="${quickstart.file.zip}">
+            <fileset dir="${quickstart.dir}" />
+        </zip>
+        <checksum file="${quickstart.file.zip}" algorithm="md5" />
+        <checksum file="${quickstart.file.zip}" algorithm="sha1" />
+
+
+        <!-- tar.gz distribution -->
+        <tar destfile="${quickstart.file.tar.gz}" longfile="gnu" compression="gzip">
+            <!-- TODO switch to <fileset refid="sourceFiles" /> once ant 1.7.1 is out -->
+            <tarfileset dir="${quickstart.dir}" defaultexcludes="true">
+                <exclude name="**/*.sh" />
+                <exclude name="${dl.ant.finalName}/bin/*" />
+                <exclude name="${dl.maven.finalName}/bin/*" />
+                <exclude name="${dl.tomcat.finalName}/bin/*" />
+            </tarfileset>
+            <tarfileset dir="${quickstart.dir}" defaultexcludes="true" mode="755">
+                <include name="**/*.sh" />
+                <include name="${dl.ant.finalName}/bin/*" />
+                <include name="${dl.maven.finalName}/bin/*" />
+                <include name="${dl.tomcat.finalName}/bin/*" />
+            </tarfileset>
+        </tar>
+        <checksum file="${quickstart.file.tar.gz}" algorithm="md5" />
+        <checksum file="${quickstart.file.tar.gz}" algorithm="sha1" />
+
+
+        <!-- tar.bz2 distribution -->
+        <tar destfile="${quickstart.file.tar.bz2}" longfile="gnu" compression="bzip2">
+            <!-- TODO switch to <fileset refid="sourceFiles" /> once ant 1.7.1 is out -->
+            <tarfileset dir="${quickstart.dir}" defaultexcludes="true">
+                <exclude name="**/*.sh" />
+                <exclude name="${dl.ant.finalName}/bin/*" />
+                <exclude name="${dl.maven.finalName}/bin/*" />
+                <exclude name="${dl.tomcat.finalName}/bin/*" />
+            </tarfileset>
+            <tarfileset dir="${quickstart.dir}" defaultexcludes="true" mode="755">
+                <include name="**/*.sh" />
+                <include name="${dl.ant.finalName}/bin/*" />
+                <include name="${dl.maven.finalName}/bin/*" />
+                <include name="${dl.tomcat.finalName}/bin/*" />
+            </tarfileset>
+        </tar>
+        <checksum file="${quickstart.file.tar.bz2}" algorithm="md5" />
+        <checksum file="${quickstart.file.tar.bz2}" algorithm="sha1" />
+    </target>
+
+    <target name="prepare-qs-tomcat" depends="prepare-qs">
+        <download-extract download.name="tomcat" download.dir="${download.dir}" extract.dir="${quickstart.dir}" />
+
+        <!-- update server.xml to enable shared portlet sessions -->
+        <replace file="${dl.tomcat.dir}/conf/server.xml" token="${tomcat.conf.token}" value="${tomcat.conf.replacement}" summary="true" />
+    </target>
+
+    <target name="prepare-qs-ant" depends="prepare-qs">
+        <download-extract download.name="ant" download.dir="${download.dir}" extract.dir="${quickstart.dir}" />
+    </target>
+
+    <target name="prepare-qs-maven" depends="prepare-qs">
+        <download-extract download.name="maven" download.dir="${download.dir}" extract.dir="${quickstart.dir}" />
+    </target>
+
+    <target name="prepare-qs-uportal" depends="prepare-qs">
+        <property name="uportal.dir" value="${quickstart.dir}/${uportal.finalName}" />
+
+        <!-- copy uPortal source export into quickstart folder -->
+        <mkdir dir="${uportal.dir}" />
+        <copy todir="${uportal.dir}" preservelastmodified="true">
+            <fileset refid="sourceFiles" />
+        </copy>
+
+        <!-- create uPortal build.properties pointing to quickstart tomcat -->
+        <copy file="${uportal.dir}/build.properties.sample" tofile="${uportal.dir}/build.properties" overwrite="true">
+            <filterset>
+                <filter token="server.home" value="$${basedir}/../${dl.tomcat.finalName}" />
+            </filterset>
+        </copy>
+        <replace file="${uportal.dir}/build.properties" token="#maven.home=" value="maven.home=$${basedir}/../${dl.maven.finalName}" summary="true" />
+
+        <!-- start quickstart hsql isntance -->
+        <ant target="hsql" antfile="${uportal.dir}/build.xml" dir="${uportal.dir}">
+            <property name="spawn" value="true" />
+        </ant>
+
+        <!-- run initportal to setup tomcat & database -->
+        <ant target="initportal" antfile="${uportal.dir}/build.xml" dir="${uportal.dir}" />
+
+        <!-- shutdown hsql nicely -->
+        <ant target="hsql-shutdown" antfile="${uportal.dir}/build.xml" dir="${uportal.dir}" />
+
+        <!-- clean up maven build files, these don't need to be packaged up -->
+        <ant target="mvn" antfile="${uportal.dir}/build.xml" dir="${uportal.dir}">
+            <property name="pomDir" value="${uportal.dir}" />
+            <property name="goal" value="clean" />
+        </ant>
+    </target>
+
+    <!--
+     | Expects the following properties to be available:
+     |      dl.@{download.name}.file     - final name of the file to download. ex: apache-ant-1.6.5-bin.tar.bz2
+     |      dl.@{download.name}.finalName     - name and version of the value to download. ex: apache-ant-1.6.5
+     |      dl.@{download.name}.url      - full URL to download file from.
+     |      dl.@{download.name}.format   - compression format of file. 'tar.gz' and 'tar.bz2' are currently supported.
+     |
+     | The following properties are generated and can be used later.
+     |      dl.@{download.name}.localFile   - full path and name of the downloaded file
+     |      dl.@{download.name}.dir         - Full path and name of the directory the archive is extracted to.
+     +-->
+    <macrodef name="download-extract">
+        <attribute name="download.name" description="The name to substitute into properties to download the file" />
+        <attribute name="download.dir" default="${java.io.tmpdir}" description="Directory to download the archive to" />
+        <attribute name="extract.dir" description="directory to extract the archive to" />
+
+        <sequential>
+            <!-- generated properties for the download/extract -->
+            <property name="dl.@{download.name}.localFile" value="@{download.dir}/${dl.@{download.name}.file}" />
+            <property name="dl.@{download.name}.dir" value="@{extract.dir}/${dl.@{download.name}.finalName}" />
+
+            <!-- download -->
+            <mkdir dir="@{download.dir}" />
+            <get src="${dl.@{download.name}.url}" dest="${dl.@{download.name}.localFile}" usetimestamp="true" verbose="true" />
+
+            <!-- extract -->
+            <condition property="@{download.name}.compression" value="gzip">
+                <equals arg1="${dl.@{download.name}.format}" arg2="tar.gz" />
+            </condition>
+            <property name="@{download.name}.compression" value="bzip2" />
+
+            <mkdir dir="@{extract.dir}" />
+            <untar src="${dl.@{download.name}.localFile}" dest="@{extract.dir}" compression="${@{download.name}.compression}" />
+
+            <!-- update permissions -->
+            <chmod perm="755" dir="${dl.@{download.name}.dir}/bin" includes="*" verbose="true" />
+        </sequential>
+    </macrodef>
+
+
+    <target name="prepare">
+        <mkdir dir="${target.dir}" />
+    </target>
+
+    <target name="prepare-qs" depends="prepare">
+        <property name="quickstart.name" value="${uportal.finalName}-quick-start" />
+        <property name="quickstart.dir" value="${target.dir}/${quickstart.name}" />
+
+        <mkdir dir="${quickstart.dir}" />
+    </target>
+</project>

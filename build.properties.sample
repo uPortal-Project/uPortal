@@ -4,9 +4,6 @@
 # override the values of properties of the
 # same name in the build.xml file.
 #
-# See build.xml for versions and descriptions
-# of each of the required JAR files.
-#
 # Use forward slashes for path names even if
 # you are in a Windows environment!
 #
@@ -14,8 +11,10 @@
 
 #==================== File and Directory Names ========================
 
+##### Replace server.home with the location of Tomcat 5.5 on your machine #####
 # path to tomcat binaries
-server.home=/home/edalquist/JavaClasses/tomcat/apache-tomcat-5.5.20-UP3
+server.home=@server.home@
+
 # path to tomcat servlet container (defaults to same directory as the tomcat binaries)
 server.base=${server.home}
 
@@ -25,3 +24,6 @@ webapp.path=/${webapp.docBase}
 # and webapp.path to nothing
 # (and removing the webapps/ROOT directory that came with the Tomcat distribution)
 #webapp.path=
+
+#If the mvn executable isn't on your path you can set the location here or set it on your path.
+#maven.home=

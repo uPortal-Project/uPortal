@@ -1,0 +1,6 @@
+# This is for a hsqldb Server running with default settings on your local
+# computer (and for which you have not changed the password for "sa").
+urlid uPortalDb
+url jdbc:hsqldb:hsql://localhost:8887/
+username sa
+password
