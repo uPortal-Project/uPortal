@@ -6,6 +6,7 @@
 package org.jasig.portal.rendering;
 
 import java.io.IOException;
+import java.io.Writer;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Collections;
@@ -27,9 +28,13 @@ import org.apache.commons.collections15.map.ReferenceMap;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.CacheEntry;
+import org.jasig.portal.CacheType;
+import org.jasig.portal.ChannelContentCacheEntry;
 import org.jasig.portal.ChannelManager;
 import org.jasig.portal.ChannelRenderingBuffer;
 import org.jasig.portal.ChannelSAXStreamFilter;
+import org.jasig.portal.ChannelTitleFilterPrintWriter;
 import org.jasig.portal.CharacterCachingChannelIncorporationFilter;
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.IWorkerRequestProcessor;
@@ -45,6 +50,7 @@ import org.jasig.portal.UserInstance;
 import org.jasig.portal.UserPreferences;
 import org.jasig.portal.car.CarResources;
 import org.jasig.portal.i18n.LocaleManager;
+import org.jasig.portal.io.ChannelTitleIncorporationWiterFilter;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.portlet.om.IPortletEntity;
@@ -58,6 +64,7 @@ import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.serialize.BaseMarkupSerializer;
 import org.jasig.portal.serialize.CachingSerializer;
+import org.jasig.portal.serialize.DebugCachingSerializer;
 import org.jasig.portal.serialize.OutputFormat;
 import org.jasig.portal.serialize.XMLSerializer;
 import org.jasig.portal.tools.versioning.Version;
@@ -99,7 +106,7 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline {
     
     // global rendering caches
     private static final Map<String, SAX2BufferImpl> systemCache = Collections.synchronizedMap(new ReferenceMap<String, SAX2BufferImpl>(ReferenceMap.HARD, ReferenceMap.SOFT, SYSTEM_XSLT_CACHE_MIN_SIZE, .75f, true));
-    private static final Map<String, CharacterCacheEntry> systemCharacterCache = Collections.synchronizedMap(new ReferenceMap<String, CharacterCacheEntry>(ReferenceMap.HARD, ReferenceMap.SOFT, SYSTEM_CHARACTER_BLOCK_CACHE_MIN_SIZE, .75f, true));
+    private static final Map<String, List<CacheEntry>> systemCharacterCache = Collections.synchronizedMap(new ReferenceMap<String, List<CacheEntry>>(ReferenceMap.HARD, ReferenceMap.SOFT, SYSTEM_CHARACTER_BLOCK_CACHE_MIN_SIZE, .75f, true));
 
     /**
      * Listener that exposes full causal information when exceptions occur 
@@ -335,8 +342,9 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline {
                 // obtain the writer - res.getWriter() must occur after res.setContentType()
                 PrintWriter out = res.getWriter();
                 // get a serializer appropriate for the target media
-                BaseMarkupSerializer markupSerializer = MEDIA_MANAGER.getSerializerByName(tsd.getSerializerName(),
-                        out);
+                BaseMarkupSerializer markupSerializer =
+                    MEDIA_MANAGER.getSerializerByName(tsd.getSerializerName(),
+                        new ChannelTitleIncorporationWiterFilter(out, channelManager, ulm));
                 // set up the serializer
                 markupSerializer.asContentHandler();
                 // see if we can use character caching
@@ -355,70 +363,47 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline {
                     cacheKey = constructCacheKey(uPreferencesManager, rootNodeId);
                     if (ccaching) {
                         // obtain character cache
-                        CharacterCacheEntry cCache = systemCharacterCache.get(cacheKey);
-                        if (cCache != null && cCache.channelIds != null && cCache.systemBuffers != null && cCache.systemBuffers.size() > 0) {
+                        List<CacheEntry> cacheEntries = systemCharacterCache.get(cacheKey);
+                        if(cacheEntries!=null && cacheEntries.size()>0) {
                             ccache_exists = true;
                             if (log.isDebugEnabled())
                                 log
                                         .debug("retreived transformation character block cache for a key \""
                                                 + cacheKey + "\"");
                             // start channel threads
-                            for (int i = 0; i < cCache.channelIds.size(); i++) {
-                                String channelSubscribeId = cCache.channelIds.get(i);
-                                if (channelSubscribeId != null) {
-                                    try {
-                                        channelManager.startChannelRendering(req, res, channelSubscribeId);
-                                    }
-                                    catch (PortalException e) {
-                                        log
-                                                .error("unable to start rendering channel (subscribeId=\""
-                                                        + channelSubscribeId
-                                                        + "\", user="
-                                                        + person.getID()
-                                                        + " layoutId="
-                                                        + uPreferencesManager.getCurrentProfile().getLayoutId()
-                                                        + e.getCause().toString());
-                                    }
-                                }
-                                else {
-                                    log.error("channel entry " + Integer.toString(i)
+                            for(int i=0;i<cacheEntries.size();i++) {
+                                CacheEntry ce = cacheEntries.get(i);
+                                if (ce.getCacheType().equals(CacheType.CHANNEL_CONTENT)) {
+                                    String channelSubscribeId = ((ChannelContentCacheEntry)ce).getChannelId();
+                                    if(channelSubscribeId!=null) {
+                                        try {
+                                            channelManager.startChannelRendering(req, res, channelSubscribeId);
+                                        } catch (PortalException e) {
+                                            log.error("UserInstance::renderState() : unable to start rendering channel (subscribeId=\""+channelSubscribeId+"\", user="+person.getID()+" layoutId="+uPreferencesManager.getCurrentProfile().getLayoutId()+e.getCause().toString());
+                                        }
+                                    } else {
+                                        log.error("channel entry " + Integer.toString(i)
                                             + " in character cache is invalid (user=" + person.getID() + ")!");
+                                    }
                                 }
                             }
                             channelManager.commitToRenderingChannelSet();
 
                             // go through the output loop
-                            int ccsize = cCache.systemBuffers.size();
-                            if (cCache.channelIds.size() != ccsize - 1) {
-                                log
-                                        .error("channelIds character cache has invalid size !  "
-                                                + "ccache contains "
-                                                + cCache.systemBuffers.size()
-                                                + " system buffers and "
-                                                + cCache.channelIds.size() + " channel entries");
-
-                            }
                             CachingSerializer cSerializer = (CachingSerializer) markupSerializer;
                             cSerializer.setDocumentStarted(true);
 
-                            for (int sb = 0; sb < ccsize - 1; sb++) {
-                                cSerializer.printRawCharacters(cCache.systemBuffers.get(sb));
+                            for(int sb=0; sb<cacheEntries.size();sb++) {
+                                CacheEntry ce = cacheEntries.get(sb);
                                 if (log.isDebugEnabled()) {
-                                    log.debug("----------printing frame piece " + Integer.toString(sb));
-                                    log.debug(cCache.systemBuffers.get(sb));
+                                    DebugCachingSerializer dcs = new DebugCachingSerializer();
+                                    log.debug("----------printing " + ce.getCacheType() + " cache block "+Integer.toString(sb));
+                                    ce.replayCache(dcs, channelManager, req, res);
+                                    log.debug(dcs.getCache());
                                 }
 
-                                // get channel output
-                                String channelSubscribeId = cCache.channelIds.get(sb);
-                                channelManager.outputChannel(req, res, channelSubscribeId, markupSerializer);
-                            }
-
-                            // print out the last block
-
-                            cSerializer.printRawCharacters(cCache.systemBuffers.get(ccsize - 1));
-                            if (log.isDebugEnabled()) {
-                                log.debug("----------printing frame piece " + Integer.toString(ccsize - 1));
-                                log.debug(cCache.systemBuffers.get(ccsize - 1));
+                                // get cache block output
+                                ce.replayCache(cSerializer, channelManager, req, res);
                             }
 
                             cSerializer.flush();
@@ -627,30 +612,30 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline {
 
                     if (CACHE_ENABLED && ccaching) {
                         // save character block cache
-                        CharacterCacheEntry ce = new CharacterCacheEntry();
-                        ce.systemBuffers = cif.getSystemCCacheBlocks();
-                        ce.channelIds = cif.getChannelIdBlocks();
-                        if (ce.systemBuffers == null || ce.channelIds == null) {
+                        List<CacheEntry> cacheBlocks = cif.getCacheBlocks();
+                        if(cacheBlocks == null) {
                             log
                                     .error("CharacterCachingChannelIncorporationFilter returned invalid cache entries!");
                         }
                         else {
                             // record cache
-                            systemCharacterCache.put(cacheKey, ce);
+                            systemCharacterCache.put(cacheKey, cacheBlocks);
                             if (log.isDebugEnabled()) {
                                 log
                                         .debug("recorded transformation character block cache with key \""
                                                 + cacheKey + "\"");
 
-                                log.debug("Printing transformation cache system blocks:");
-                                for (int i = 0; i < ce.systemBuffers.size(); i++) {
-                                    log.debug("----------piece " + Integer.toString(i));
-                                    log.debug(ce.systemBuffers.get(i));
-                                }
-                                log.debug("Printing transformation cache channel IDs:");
-                                for (int i = 0; i < ce.channelIds.size(); i++) {
-                                    log.debug("----------channel entry " + Integer.toString(i));
-                                    log.debug(ce.channelIds.get(i));
+                                log.debug("Printing transformation cache blocks:");
+                                for (int i=0; i<cacheBlocks.size(); i++) {
+                                    CacheEntry ce = cacheBlocks.get(i);
+                                    if (ce.getCacheType().equals(CacheType.CHARACTERS)) {
+                                        log.debug("----------piece "+Integer.toString(i));
+                                    } else if (ce.getCacheType().equals(CacheType.CHANNEL_CONTENT)) {
+                                        log.debug("----------channel content entry "+Integer.toString(i));
+                                    }
+                                    DebugCachingSerializer dcs = new DebugCachingSerializer();
+                                    ce.replayCache(dcs, channelManager, req, res);
+                                    log.debug(dcs.getCache());
                                 }
                             }
                         }

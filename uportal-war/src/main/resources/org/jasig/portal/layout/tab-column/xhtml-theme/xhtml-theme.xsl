@@ -130,14 +130,7 @@
 			
 			<div id="focused-channel-title" style="float:left;">
 				<span class="title">
-					<xsl:element name="channel-title">
-						<xsl:attribute name="defaultValue">
-							<xsl:value-of select="//focused/channel/@name"/>
-						</xsl:attribute>
-						<xsl:attribute name="channelSubscribeId">
-							<xsl:value-of select="@ID" />
-						</xsl:attribute>
-					</xsl:element>
+					UP:CHANNEL_TITLE-{<xsl:value-of select="//focused/channel/@ID" />}
 				</span>
 				<br/>
 			</div>
@@ -340,14 +333,7 @@
 				</xsl:if>
 				<a name="{@ID}" id="{@ID}"></a>
 				<h2>
-					<xsl:element name="channel-title">
-						<xsl:attribute name="defaultValue">
-							<xsl:value-of select="@name"/>
-						</xsl:attribute>
-						<xsl:attribute name="channelSubscribeId">
-							<xsl:value-of select="@ID" />
-						</xsl:attribute>
-					</xsl:element>
+					UP:CHANNEL_TITLE-{<xsl:value-of select="@ID" />}
 				</h2>
 			</div>
 			<!-- PORTLET CONTENT -->
@@ -388,7 +374,8 @@
 			<a href="{$baseActionURL}?uP_print_target={@ID}#{@ID}"><img src="{$mediaPath}/{$skin}/controls/print.gif" width="19" height="19" alt="print" title="print" /></a>
 		</xsl:if>
 		<xsl:if test="not(//focused)">
-			<a href="{$baseActionURL}?uP_root={@ID}"><img src="{$mediaPath}/{$skin}/controls/focus.gif" width="19" height="19" alt="maximize" title="maximize" /></a>
+			<!--a href="{$baseActionURL}?uP_root={@ID}"><img src="{$mediaPath}/{$skin}/controls/focus.gif" width="19" height="19" alt="maximize" title="maximize" /></a-->
+        <a href="{$baseActionURL}?uP_root={@ID}"><img src="{$mediaPath}/{$skin}/controls/focus.gif" width="19" height="19" alt="UP:CHANNEL_TITLE-{@ID}" title="UP:CHANNEL_TITLE-{@ID}" /></a>
 		</xsl:if>
 		<xsl:if test="not(@dlm:deleteAllowed='false') and not(//focused) and /layout/navigation/tab[@activeTab='true']/@immutable='false'">
 			<a id="removePortlet_{@ID}" href="{$baseActionURL}?uP_remove_target={@ID}" onClick="return confirm('Are you sure you want to remove this channel?')"><img src="{$mediaPath}/{$skin}/controls/remove.gif" width="19" height="19" alt="remove" title="remove" /></a>
