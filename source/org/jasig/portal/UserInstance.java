@@ -11,6 +11,7 @@ import java.io.StringWriter;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -33,6 +34,7 @@ import org.jasig.portal.events.EventPublisherLocator;
 import org.jasig.portal.events.support.UserSessionCreatedPortalEvent;
 import org.jasig.portal.events.support.UserSessionDestroyedPortalEvent;
 import org.jasig.portal.i18n.LocaleManager;
+import org.jasig.portal.io.ChannelTitleIncorporationWiterFilter;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.TransientUserLayoutManagerWrapper;
 import org.jasig.portal.layout.UserLayoutParameterProcessor;
@@ -44,6 +46,7 @@ import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.serialize.BaseMarkupSerializer;
 import org.jasig.portal.serialize.CachingSerializer;
+import org.jasig.portal.serialize.DebugCachingSerializer;
 import org.jasig.portal.serialize.OutputFormat;
 import org.jasig.portal.serialize.XMLSerializer;
 import org.jasig.portal.services.GroupService;
@@ -113,7 +116,7 @@ public class UserInstance implements HttpSessionBindingListener {
     private static final String CHARACTER_SET = "UTF-8";
 
     private static final Map systemCache=Collections.synchronizedMap(new SoftHashMap(SYSTEM_XSLT_CACHE_MIN_SIZE));
-    private static final Map systemCharacterCache=Collections.synchronizedMap(new SoftHashMap(SYSTEM_CHARACTER_BLOCK_CACHE_MIN_SIZE));
+    private static final Map<String, List<CacheEntry>> systemCharacterCache=Collections.synchronizedMap(new SoftHashMap(SYSTEM_CHARACTER_BLOCK_CACHE_MIN_SIZE));
 
     protected IPerson person;
 
@@ -383,7 +386,7 @@ public class UserInstance implements HttpSessionBindingListener {
                     // obtain the writer - res.getWriter() must occur after res.setContentType()
                     PrintWriter out = res.getWriter();
                     // get a serializer appropriate for the target media
-                    BaseMarkupSerializer markupSerializer = MEDIAMANAGER.getSerializerByName(tsd.getSerializerName(), out);
+                    BaseMarkupSerializer markupSerializer = MEDIAMANAGER.getSerializerByName(tsd.getSerializerName(), new ChannelTitleIncorporationWiterFilter(out, channelManager, ulm));
                     // set up the serializer
                     markupSerializer.asContentHandler();
                     // see if we can use character caching
@@ -403,55 +406,43 @@ public class UserInstance implements HttpSessionBindingListener {
                         cacheKey=constructCacheKey(this.getPerson(),rootNodeId);
                         if(ccaching) {
                             // obtain character cache
-                            CharacterCacheEntry cCache=(CharacterCacheEntry) this.systemCharacterCache.get(cacheKey);
-                            if(cCache!=null && cCache.channelIds!=null && cCache.systemBuffers!=null) {
+                            List<CacheEntry> cacheEntries = systemCharacterCache.get(cacheKey);
+                            if(cacheEntries!=null) {
                                 ccache_exists=true;
                                 if (log.isDebugEnabled())
                                     log.debug("UserInstance::renderState() : retreived transformation character block cache for a key \""+cacheKey+"\"");
                                 // start channel threads
-                                for(int i=0;i<cCache.channelIds.size();i++) {
-                                    String channelSubscribeId=(String) cCache.channelIds.get(i);
-                                    if(channelSubscribeId!=null) {
-                                        try {
-                                            channelManager.startChannelRendering(channelSubscribeId);
-                                        } catch (PortalException e) {
-                                            log.error("UserInstance::renderState() : unable to start rendering channel (subscribeId=\""+channelSubscribeId+"\", user="+person.getID()+" layoutId="+uPreferencesManager.getCurrentProfile().getLayoutId()+e.getCause().toString());
+                                for(int i=0;i<cacheEntries.size();i++) {
+                                    CacheEntry ce = cacheEntries.get(i);
+                                    if (ce.getCacheType().equals(CacheType.CHANNEL_CONTENT)) {
+                                        String channelSubscribeId = ((ChannelContentCacheEntry)ce).getChannelId();
+                                        if(channelSubscribeId!=null) {
+                                            try {
+                                                channelManager.startChannelRendering(channelSubscribeId);
+                                            } catch (PortalException e) {
+                                                log.error("UserInstance::renderState() : unable to start rendering channel (subscribeId=\""+channelSubscribeId+"\", user="+person.getID()+" layoutId="+uPreferencesManager.getCurrentProfile().getLayoutId()+e.getCause().toString());
+                                            }
+                                        } else {
+                                            log.error("UserInstance::renderState() : channel entry "+Integer.toString(i)+" in character cache is invalid (user="+person.getID()+")!");
                                         }
-                                    } else {
-                                        log.error("UserInstance::renderState() : channel entry "+Integer.toString(i)+" in character cache is invalid (user="+person.getID()+")!");
                                     }
                                 }
                                 channelManager.commitToRenderingChannelSet();
 
                                 // go through the output loop
-                                int ccsize=cCache.systemBuffers.size();
-                                if(cCache.channelIds.size()!=ccsize-1) {
-                                    log.error("UserInstance::renderState() : channelIds character cache has invalid size !  " +
-                                            "UserInstance::renderState() : ccache contains "+cCache.systemBuffers.size()+" system buffers and "+cCache.channelIds.size()+" channel entries");
-
-                                }
                                 CachingSerializer cSerializer=(CachingSerializer) markupSerializer;
                                 cSerializer.setDocumentStarted(true);
 
-                                for(int sb=0; sb<ccsize-1;sb++) {
-                                    cSerializer.printRawCharacters((String)cCache.systemBuffers.get(sb));
+                                for(int sb=0; sb<cacheEntries.size();sb++) {
+                                    CacheEntry ce = cacheEntries.get(sb);
 									if (log.isDebugEnabled()){
-	                                    log.debug("----------printing frame piece "+Integer.toString(sb));
-    	                                log.debug((String)cCache.systemBuffers.get(sb));
+									    DebugCachingSerializer dcs = new DebugCachingSerializer();
+	                                    log.debug("----------printing " + ce.getCacheType() + " cache block "+Integer.toString(sb));
+	                                    ce.replayCache(dcs, channelManager);
+    	                                log.debug(dcs.getCache());
                                     }
-
-                                    // get channel output
-                                    String channelSubscribeId=(String) cCache.channelIds.get(sb);
-                                    channelManager.outputChannel(channelSubscribeId,markupSerializer);
+                                    ce.replayCache(cSerializer, channelManager);
                                 }
-
-                                // print out the last block
-                                
-                                cSerializer.printRawCharacters((String)cCache.systemBuffers.get(ccsize-1));
-								if (log.isDebugEnabled()){
-	                                log.debug("----------printing frame piece "+Integer.toString(ccsize-1));
-    	                            log.debug((String)cCache.systemBuffers.get(ccsize-1));
-    	                        }
 
                                 cSerializer.flush();
                                 output_produced=true;
@@ -640,26 +631,27 @@ public class UserInstance implements HttpSessionBindingListener {
 
                         if(UserInstance.CACHE_ENABLED && ccaching) {
                             // save character block cache
-                            CharacterCacheEntry ce=new CharacterCacheEntry();
-                            ce.systemBuffers=cif.getSystemCCacheBlocks();
-                            ce.channelIds=cif.getChannelIdBlocks();
-                            if(ce.systemBuffers==null || ce.channelIds==null) {
+                            List<CacheEntry> cacheBlocks = cif.getCacheBlocks();
+                            if(cacheBlocks == null) {
                                 log.error("UserInstance::renderState() : CharacterCachingChannelIncorporationFilter returned invalid cache entries!");
                             } else {
                                 // record cache
-                                systemCharacterCache.put(cacheKey,ce);
+                                systemCharacterCache.put(cacheKey,cacheBlocks);
                                 if (log.isDebugEnabled()){
                                 	log.debug("UserInstance::renderState() : recorded transformation character block cache with key \""+cacheKey+"\"");
 
-	                                log.debug("Printing transformation cache system blocks:");
-	                                for(int i=0;i<ce.systemBuffers.size();i++) {
-	                                	log.debug("----------piece "+Integer.toString(i));
-	                                	log.debug((String)ce.systemBuffers.get(i));
-	                                }
-	                                log.debug("Printing transformation cache channel IDs:");
-	                                for(int i=0;i<ce.channelIds.size();i++) {
-	                                	log.debug("----------channel entry "+Integer.toString(i));
-	                                	log.debug((String)ce.channelIds.get(i));
+	                                log.debug("Printing transformation cache blocks:");
+	                                for(int i=0;i<cacheBlocks.size();i++) {
+	                                    CacheEntry ce = cacheBlocks.get(i);
+	                                    if (ce.getCacheType().equals(CacheType.CHARACTERS)) {
+    	                                	log.debug("----------piece "+Integer.toString(i));
+	                                    } else if (ce.getCacheType().equals(CacheType.CHANNEL_CONTENT)) {
+    	                                	log.debug("----------channel content entry "+Integer.toString(i));
+	                                    }
+	                                	DebugCachingSerializer dcs = new DebugCachingSerializer();
+	                                	ce.replayCache(dcs, channelManager);
+	                                	log.debug(dcs.getCache());
+	                                    i++;
 	                                }
                                 }
                             }

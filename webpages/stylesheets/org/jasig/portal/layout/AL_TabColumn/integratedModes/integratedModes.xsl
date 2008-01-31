@@ -243,14 +243,7 @@ Version $Revision$
                                         | we matched to get here, in the case where there is no
                                         | dynamic channel title.
                                         +-->
-                                    <xsl:element name="channel-title">
-                                        <xsl:attribute name="defaultValue">
-                                            <xsl:value-of select="@name"/>
-                                        </xsl:attribute>
-                                        <xsl:attribute name="channelSubscribeId">
-                                            <xsl:value-of select="@ID" />
-                                        </xsl:attribute>
-                                    </xsl:element>
+                                    UP:CHANNEL_TITLE-{<xsl:value-of select="@ID" />}
                                 </a>
                                 
                                 <xsl:text/>(selected)</span>
@@ -298,14 +291,7 @@ Version $Revision$
                                         | we matched to get here, in the case where there is no
                                         | dynamic channel title.
                                         +-->
-                                    <xsl:element name="channel-title">
-                                        <xsl:attribute name="defaultValue">
-                                            <xsl:value-of select="@name"/>
-                                        </xsl:attribute>
-                                        <xsl:attribute name="channelSubscribeId">
-                                            <xsl:value-of select="@ID" />
-                                        </xsl:attribute>
-                                    </xsl:element>
+                                    UP:CHANNEL_TITLE-{<xsl:value-of select="@ID" />}
                                 </a>
                             </span>
                         </td>

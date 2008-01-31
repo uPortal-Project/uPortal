@@ -130,14 +130,7 @@
 			
 			<div id="focused-channel-title" style="float:left;">
 				<span class="title">
-					<xsl:element name="channel-title">
-						<xsl:attribute name="defaultValue">
-							<xsl:value-of select="//focused/channel/@name"/>
-						</xsl:attribute>
-						<xsl:attribute name="channelSubscribeId">
-							<xsl:value-of select="@ID" />
-						</xsl:attribute>
-					</xsl:element>
+					UP:CHANNEL_TITLE-{<xsl:value-of select="//focused/channel/@ID" />}
 				</span>
 				<br/>
 			</div>
@@ -320,14 +313,7 @@
 				</xsl:if>
 				<a name="{@ID}" id="{@ID}"></a>
 				<h2>
-					<xsl:element name="channel-title">
-						<xsl:attribute name="defaultValue">
-							<xsl:value-of select="@name"/>
-						</xsl:attribute>
-						<xsl:attribute name="channelSubscribeId">
-							<xsl:value-of select="@ID" />
-						</xsl:attribute>
-					</xsl:element>
+					UP:CHANNEL_TITLE-{<xsl:value-of select="@ID" />}
 				</h2>
 			</div>
 			<!-- PORTLET CONTENT -->

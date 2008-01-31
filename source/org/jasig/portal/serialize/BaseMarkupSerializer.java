@@ -55,15 +55,13 @@ import org.apache.xerces.dom.DOMErrorImpl;
 import org.apache.xerces.dom.DOMLocatorImpl;
 import org.apache.xerces.dom.DOMMessageFormatter;
 import org.apache.xerces.util.XMLChar;
-import org.apache.xml.serialize.DOMSerializerImpl;
-import org.jasig.portal.IAnchoringSerializer;
 import org.jasig.portal.properties.PropertiesManager;
+import org.w3c.dom.DOMError;
+import org.w3c.dom.DOMErrorHandler;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.DocumentType;
-import org.w3c.dom.DOMError;
-import org.w3c.dom.DOMErrorHandler;
 import org.w3c.dom.Element;
 import org.w3c.dom.Entity;
 import org.w3c.dom.NamedNodeMap;
@@ -73,12 +71,9 @@ import org.w3c.dom.ls.LSException;
 import org.w3c.dom.ls.LSSerializerFilter;
 import org.w3c.dom.traversal.NodeFilter;
 import org.xml.sax.ContentHandler;
-import org.xml.sax.DTDHandler;
 import org.xml.sax.DocumentHandler;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
-import org.xml.sax.ext.DeclHandler;
-import org.xml.sax.ext.LexicalHandler;
 
 /**
  * Base class for a serializer supporting both DOM and SAX pretty
@@ -129,8 +124,7 @@ import org.xml.sax.ext.LexicalHandler;
  * @see Serializer
  */
 public abstract class BaseMarkupSerializer
-    implements ContentHandler, DocumentHandler, LexicalHandler,
-               DTDHandler, DeclHandler, DOMSerializer, Serializer, IAnchoringSerializer
+    implements MarkupSerializer
 {
 
     // DOM L3 implementation
