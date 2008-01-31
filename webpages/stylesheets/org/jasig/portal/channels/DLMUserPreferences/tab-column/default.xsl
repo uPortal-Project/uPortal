@@ -1021,6 +1021,7 @@ profile is supported for fragments and users.
 <xsl:template name="optionMenuModifyTab">
 <!-- Begin Mod Tab Options -->
 <xsl:variable name="tabName" select="/layout/folder/folder[@ID=$activeTabID]/@name"/>
+<xsl:variable name="externalId" select="/layout/folder/folder[@ID=$activeTabID]/@externalId"/>
 <span class="uportal-channel-subtitle-reversed"><xsl:value-of select="$OPTIONS_FOR_MODIFYING_THIS_TAB"/></span><br/>
 
 <table border="0" cellpadding="1" cellspacing="7" width="100%">
@@ -1091,6 +1092,11 @@ profile is supported for fragments and users.
                   <td nowrap="nowrap"><img height="9" hspace="7" width="9"><xsl:attribute name="src"><xsl:value-of select="$mediaPath"/><xsl:value-of select="$IMAGE_SRC_BULLET_GIF"/></xsl:attribute><xsl:attribute name="alt"><xsl:value-of select="$RENAME_THE_TAB"/></xsl:attribute><xsl:attribute name="title"><xsl:value-of select="$RENAME_THE_TAB"/></xsl:attribute></img><span class="uportal-channel-text"><xsl:value-of select="$HEADING_RENAME_THE_TAB"/></span><img alt="" border="0" height="10" title="" width="10"><xsl:attribute name="src"><xsl:value-of select='$mediaPath'/><xsl:value-of select="$IMAGE_SRC_TRANSPARENT_GIF"/></xsl:attribute></img></td>
                   <td>
                     <span class="uportal-text-small"><input class="uportal-input-text" maxlength="60" name="tabName" size="30" type="text" value="{$tabName}"/></span>
+                    <img alt="" height="5" title="" width="15"><xsl:attribute name="src"><xsl:value-of select='$mediaPath'/><xsl:value-of select="$IMAGE_SRC_TRANSPARENT_GIF"/></xsl:attribute></img>
+                  </td>
+                  <td nowrap="nowrap"><img height="9" hspace="7" width="9"><xsl:attribute name="src"><xsl:value-of select="$mediaPath"/><xsl:value-of select="$IMAGE_SRC_BULLET_GIF"/></xsl:attribute><xsl:attribute name="alt"><xsl:value-of select="$RENAME_TAB_IDENTIFIER"/></xsl:attribute><xsl:attribute name="title"><xsl:value-of select="$RENAME_TAB_IDENTIFIER"/></xsl:attribute></img><span class="uportal-channel-text"><xsl:value-of select="$HEADING_RENAME_TAB_IDENTIFIER"/></span><img alt="" border="0" height="10" title="" width="10"><xsl:attribute name="src"><xsl:value-of select='$mediaPath'/><xsl:value-of select="$IMAGE_SRC_TRANSPARENT_GIF"/></xsl:attribute></img></td>
+                  <td>
+                    <span class="uportal-text-small"><input class="uportal-input-text" maxlength="60" name="externalId" size="30" type="text" value="{$externalId}"/></span>
                     <img alt="" height="5" title="" width="15"><xsl:attribute name="src"><xsl:value-of select='$mediaPath'/><xsl:value-of select="$IMAGE_SRC_TRANSPARENT_GIF"/></xsl:attribute></img>
                   </td>
                   <td>
@@ -1521,6 +1527,20 @@ function validateForm()
    </tr>
    <tr>
         <td align="right" class="uportal-text12-bold">2.</td>
+        <td>
+        <table border="0" cellpadding="0" cellspacing="0">
+           <tr>
+           	<td nowrap="nowrap">
+           	<span class="uportal-channel-text"><xsl:value-of select="$IDENTIFY_THE_TAB"/></span><img alt="" border="0" height="10" title="" width="10"><xsl:attribute name="src"><xsl:value-of select='$mediaPath'/><xsl:value-of select="$IMAGE_SRC_TRANSPARENT_GIF"/></xsl:attribute></img></td>
+           	<td>
+            	  <span class="uportal-channel-text"><input class="uportal-input-text" maxlength="35" name="externalId" size="30" type="text"/></span>
+           	</td>
+          </tr>
+      </table>
+      </td>
+   </tr>
+   <tr>
+        <td align="right" class="uportal-text12-bold">3.</td>
         <td class="uportal-channel-text"><xsl:value-of select="$SELECT_A_POSITION_FOR_THE_TAB"/></td>
    </tr>
    <tr>

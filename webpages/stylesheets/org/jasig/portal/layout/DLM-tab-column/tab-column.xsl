@@ -15,8 +15,15 @@
    <xsl:when test="$focusedTabID='none'">
     <xsl:choose>
      <xsl:when test="string( number( $activeTab ) )='NaN'">
-
       <xsl:choose>
+
+       <!-- Determine if the specified activeTab is an externalId attribute -->
+	   <xsl:when test="/layout/folder/folder[@externalId=$activeTab and
+                                      @type='regular' and
+                                      @hidden='false']">
+        <xsl:value-of select="count(/layout/folder/folder[@externalId=$activeTab]/preceding-sibling::folder[@type='regular' and @hidden='false'])+1"/>
+       </xsl:when>
+
        <xsl:when test="/layout/folder/folder[@ID=$activeTab and
                                       @type='regular' and
                                       @hidden='false']">
@@ -110,6 +117,9 @@
       <tab>
           <xsl:attribute name="ID">
             <xsl:value-of select="@ID"/>
+          </xsl:attribute>
+          <xsl:attribute name="externalId">
+            <xsl:value-of select="@externalId"/>
           </xsl:attribute>
           <xsl:attribute name="immutable">
             <xsl:value-of select="@immutable"/>

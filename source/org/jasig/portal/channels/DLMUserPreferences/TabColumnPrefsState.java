@@ -247,16 +247,44 @@ public class TabColumnPrefsState extends BaseState
     ulStore.setStructureStylesheetUserPreferences(staticData.getPerson(), profileId, ssup);
   }
 
-  private final void renameTab(String tabId, String tabName) throws PortalException
-  {
+  private final void renameTab(String tabId, String tabName, String tabExternalId) throws PortalException {
       IUserLayoutFolderDescription tab=(IUserLayoutFolderDescription)ulm.getNode(tabId);
       if(ulm.canUpdateNode(ulm.getNode(tabId))) {
-          if (tabName == null || tabName.trim().length() == 0) {
+
+    	  if (tabName == null || tabName.trim().length() == 0) {
               tab.setName(BLANK_TAB_NAME);
           } else {
               tab.setName(tabName);
           }
           ulm.updateNode(tab);
+          
+          // Update the externalId...
+          StructureStylesheetUserPreferences ssup = userPrefs.getStructureStylesheetUserPreferences();
+          if (tabExternalId != null && tabExternalId.trim().length() != 0) {
+              try {
+                  ssup.setFolderAttributeValue(tab.getId(), "externalId", tabExternalId);
+                  ulStore.setStructureStylesheetUserPreferences(staticData.getPerson(), 
+                		  					editedUserProfile.getProfileId(), ssup);
+              } catch (Exception e) {
+            	  throw new PortalException("Failed to set the 'externalId' attribute of tab '" + 
+            			  				tabId + "' in StructureStylesheetUserPreferences", e);
+              }
+          } else {
+        	  // tabExternalId is not specified... need to remove it if present...
+        	  if (ssup.getDefinedFolderAttributeValue(tab.getId(), "externalId") != null) {
+        		  // It *is* previously specified, and being removed...
+                  try {
+                	  // Setting to null and saving will remove it from DB.
+                      ssup.setFolderAttributeValue(tab.getId(), "externalId", null);
+                      ulStore.setStructureStylesheetUserPreferences(staticData.getPerson(), 
+                    		  				editedUserProfile.getProfileId(), ssup);
+                  } catch (Exception e) {
+                	  throw new PortalException("Failed to remove the 'externalId' attribute of tab '" + 
+                			  				tabId + "' in StructureStylesheetUserPreferences", e);
+                  }        		  
+        	  }
+          }
+
       } else {
       	
           throw new PortalException("attempt.to.rename.immutable.tab" +tabId);
@@ -321,6 +349,7 @@ public class TabColumnPrefsState extends BaseState
    * @throws PortalException
    */
   private final void addTab(String tabName,
+		  					String tabExternalId,
                             String method,
                             String destinationTabId)
       throws PortalException
@@ -334,6 +363,19 @@ public class TabColumnPrefsState extends BaseState
     if(method.equals("insertBefore")) 
       siblingId=destinationTabId;
     ulm.addNode(newTab,ulm.getRootFolderId(),siblingId);
+
+    // Update the externalId...
+    if (tabExternalId != null) {
+        try {
+            StructureStylesheetUserPreferences ssup = userPrefs.getStructureStylesheetUserPreferences();
+            ssup.setFolderAttributeValue(newTab.getId(), "externalId", tabExternalId);
+            int profileId = editedUserProfile.getProfileId();
+            ulStore.setStructureStylesheetUserPreferences(staticData.getPerson(), profileId, ssup);
+        } catch (Exception e) {
+      	  throw new PortalException("Failed to set the 'externalId' attribute of tab '" + 
+      			  	newTab.getId() + "' in StructureStylesheetUserPreferences", e);
+        }
+    }
 
     saveLayout(false);
   }
@@ -821,8 +863,11 @@ public class TabColumnPrefsState extends BaseState
           {
             String tabId = runtimeData.getParameter("elementID");
             String tabName = runtimeData.getParameter("tabName");
+            String externalId = runtimeData.getParameter("externalId");
 
-            renameTab(tabId, tabName);
+System.out.println("externalId="+externalId);
+
+            renameTab(tabId, tabName, externalId);
           }
           catch (Exception e)
           {
@@ -863,7 +908,10 @@ public class TabColumnPrefsState extends BaseState
           try
           {
             String tabName = runtimeData.getParameter("tabName");
+            String externalId = runtimeData.getParameter("externalId");
             String methodAndID = runtimeData.getParameter("method_ID");
+            
+System.out.println("externalId="+externalId);
 
             if (methodAndID != null)
             {
@@ -871,7 +919,7 @@ public class TabColumnPrefsState extends BaseState
               String method = methodAndID.substring(0, indexOf_); // insertBefore or appendAfter
               String destinationTabId = methodAndID.substring(indexOf_ + 1);
 
-              addTab(tabName, method, destinationTabId);
+              addTab(tabName, externalId, method, destinationTabId);
             }
             else
               action = "newTab";

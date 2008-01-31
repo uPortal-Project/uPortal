@@ -1118,6 +1118,28 @@
           <value>2</value>
         </column> 
       </row> 
+      <row> 
+        <column>
+          <name>SS_ID</name>
+          <value>4</value>
+        </column>  
+        <column>
+          <name>PARAM_NAME</name>
+          <value>externalId</value>
+        </column>  
+        <column>
+          <name>PARAM_DEFAULT_VAL</name>
+          <value></value>
+        </column>  
+        <column>
+          <name>PARAM_DESCRIPT</name>
+          <value>Identifier used to reference a tab externally, such as within a URL</value>
+        </column>  
+        <column>
+          <name>TYPE</name>
+          <value>2</value>
+        </column> 
+      </row> 
     </rows> 
   </table>
   <table> 
