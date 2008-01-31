@@ -6,7 +6,6 @@
 package org.jasig.portal.rendering;
 
 import java.io.IOException;
-import java.io.Writer;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Collections;
@@ -34,7 +33,6 @@ import org.jasig.portal.ChannelContentCacheEntry;
 import org.jasig.portal.ChannelManager;
 import org.jasig.portal.ChannelRenderingBuffer;
 import org.jasig.portal.ChannelSAXStreamFilter;
-import org.jasig.portal.ChannelTitleFilterPrintWriter;
 import org.jasig.portal.CharacterCachingChannelIncorporationFilter;
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.IWorkerRequestProcessor;
