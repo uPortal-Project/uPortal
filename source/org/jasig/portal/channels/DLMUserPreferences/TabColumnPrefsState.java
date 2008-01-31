@@ -865,8 +865,6 @@ public class TabColumnPrefsState extends BaseState
             String tabName = runtimeData.getParameter("tabName");
             String externalId = runtimeData.getParameter("externalId");
 
-System.out.println("externalId="+externalId);
-
             renameTab(tabId, tabName, externalId);
           }
           catch (Exception e)
@@ -911,8 +909,6 @@ System.out.println("externalId="+externalId);
             String externalId = runtimeData.getParameter("externalId");
             String methodAndID = runtimeData.getParameter("method_ID");
             
-System.out.println("externalId="+externalId);
-
             if (methodAndID != null)
             {
               int indexOf_ = methodAndID.indexOf("_");
