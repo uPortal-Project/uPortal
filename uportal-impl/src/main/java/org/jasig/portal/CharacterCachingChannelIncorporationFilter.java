@@ -8,7 +8,7 @@ package org.jasig.portal;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
-import java.util.Vector;
+import java.util.LinkedList;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -63,6 +63,7 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
     private String channelSubscribeId = null;
     
     private String channelTitle = null;
+    private String defaultChannelTitle = null;
     
     private final HttpServletRequest request;
     private final HttpServletResponse response;
@@ -70,8 +71,7 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
     private final boolean ccaching;
     private final CachingSerializer ser;
 
-    private final List<String> systemCCacheBlocks;
-    private final List<String> channelIdBlocks;
+    private List<CacheEntry> cacheEntries;
 
     // constructors
 
@@ -84,14 +84,12 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
         if (handler instanceof CachingSerializer) {
             this.ccaching = ccaching;
             this.ser = (CachingSerializer) handler;
-            this.systemCCacheBlocks = new Vector<String>();
-            this.channelIdBlocks = new Vector<String>();
+            this.cacheEntries = new LinkedList<CacheEntry>();
         }
         else {
             this.ccaching = false;
             this.ser = null;
-            this.systemCCacheBlocks = null;
-            this.channelIdBlocks = null;
+            this.cacheEntries = null;
         }
 
         this.cm = chanm;
@@ -101,26 +99,13 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
 
 
     /**
-     * Obtain system character cache blocks.
+     * Obtain system cache blocks.
      *
-     * @return a <code>Vector</code> of system character blocks in between which channel renderings should be inserted.
+     * @return a <code>List</code> of <code>CacheEntry</code> blocks.
      */
-    public List<String> getSystemCCacheBlocks() {
+    public List<CacheEntry> getCacheBlocks() {
         if(ccaching) {
-            return systemCCacheBlocks;
-        }
-        return null;
-    }
-
-    /**
-     * Obtain a vector of channels to be inserted into a current character cache.
-     *
-     * @return a <code>Vector</code> of cache entry blocks corresponding to channel 
-     * subscribe Id(s) in an order in which they appear in the overall document.
-     */
-    public List<String> getChannelIdBlocks() {
-        if(ccaching) {
-            return channelIdBlocks;
+            return cacheEntries;
         }
         return null;
     }
@@ -150,7 +135,7 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
             try {
                 if(ser.stopCaching()) {
                     try {
-                        systemCCacheBlocks.add(ser.getCache());
+                        cacheEntries.add(new StringCacheEntry(ser.getCache()));
                     } catch (UnsupportedEncodingException e) {
                         log.error("CharacterCachingChannelIncorporationFilter::endDocument() " +
                         		": unable to obtain character cache, invalid encoding specified ! ",e);
@@ -167,6 +152,52 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
                 		": unable to stop caching!", ioe);
             }
 
+        }
+    }
+
+    private void startCaching() {
+        // start caching again
+        try {
+            if (!ser.startCaching()) {
+                log
+                    .error("CharacterCachingChannelIncorporationFilter::endElement() : unable to restart cache after a channel end!");
+            }
+        } catch (IOException ioe) {
+            log
+                .error(
+                    "CharacterCachingChannelIncorporationFilter::endElement() : unable to start caching!",
+                    ioe);
+        }
+    }
+
+    private void stopCaching() {
+        // save the old cache state
+        try {
+            if (ser.stopCaching()) {
+                if (log.isDebugEnabled()) {
+                    log
+                            .debug("CharacterCachingChannelIncorporationFilter::endElement() "
+                                    + ": obtained the following system character entry: \n"
+                                    + ser.getCache());
+                }
+                cacheEntries.add(new StringCacheEntry(ser.getCache()));
+            } else {
+                log
+                        .error("CharacterCachingChannelIncorporationFilter::startElement() "
+                                + ": unable to reset cache state ! Serializer was not caching when it should've been !");
+            }
+        } catch (UnsupportedEncodingException e) {
+            log
+                    .error(
+                            "CharacterCachingChannelIncorporationFilter::startElement() "
+                                    + ": unable to obtain character cache, invalid encoding specified ! ",
+                            e);
+        } catch (IOException ioe) {
+            log
+                    .error(
+                            "CharacterCachingChannelIncorporationFilter::startElement() "
+                                    + ": IO exception occurred while retreiving character cache ! ",
+                            ioe);
         }
     }
 
@@ -218,39 +249,16 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
                     }
                 }
 				if (ccaching) {
-					// save the old cache state
-					try {
-						if (ser.stopCaching()) {
-							if (log.isDebugEnabled()) {
-								log
-										.debug("CharacterCachingChannelIncorporationFilter::endElement() "
-												+ ": obtained the following system character entry: \n"
-												+ ser.getCache());
-							}
-							systemCCacheBlocks.add(ser.getCache());
-						} else {
-							log
-									.error("CharacterCachingChannelIncorporationFilter::startElement() "
-											+ ": unable to reset cache state ! Serializer was not caching when it should've been !");
-						}
-					} catch (UnsupportedEncodingException e) {
-						log
-								.error(
-										"CharacterCachingChannelIncorporationFilter::startElement() "
-												+ ": unable to obtain character cache, invalid encoding specified ! ",
-										e);
-					} catch (IOException ioe) {
-						log
-								.error(
-										"CharacterCachingChannelIncorporationFilter::startElement() "
-												+ ": IO exception occurred while retreiving character cache ! ",
-										ioe);
-					}
+                    stopCaching();
 				}
 			} else if (qName.equals("channel-title")) {
 				this.insideElement = "channel-title";
 				this.channelSubscribeId = atts.getValue("channelSubscribeId");
-				this.channelTitle = atts.getValue("defaultValue");
+                this.defaultChannelTitle = atts.getValue("defaultValue");
+                this.channelTitle = this.defaultChannelTitle;
+                if (ccaching) {
+                    stopCaching();
+                }
 			} else {
 				// not in an incorporation element and not starting one this class
 				// handles specially, so pass the element through this filter.
@@ -284,19 +292,11 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
             	    ContentHandler contentHandler = getContentHandler();
 					if (contentHandler != null) {
 						if (ccaching) {
-							channelIdBlocks.add(channelSubscribeId);
+							cacheEntries.add(new ChannelContentCacheEntry(channelSubscribeId));
 						}
 						cm.outputChannel(this.request, this.response, this.channelSubscribeId, contentHandler);
 						if (ccaching) {
-							// start caching again
-							try {
-                                if (!ser.startCaching()) {
-                                    log.error("unable to restart cache after a channel end!");
-                                }
-                            }
-                            catch (IOException ioe) {
-                                log.error("unable to start caching!", ioe);
-                            }
+                            startCaching();
 						}
 					} else {
 						// contentHandler was null. This is a serious problem,
@@ -308,43 +308,7 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
             	} finally {
                     endIncorporationElement();
             	}
-            } else if (qName.equals("channel-title") && this.insideElement.equals("channel-title")) {
-            	
-    			if (log.isDebugEnabled()) {
-            		log.debug("Incorporating title for channel with subscribeId=[" + this.channelSubscribeId + "]");
-            	}
-            	
-            	try {
-            		
-            		ContentHandler contentHandler = getContentHandler();
-            		if (contentHandler != null) {
-						String dynamicChannelTitle = cm
-								.getChannelTitle(channelSubscribeId);
-
-						// if there is a dynamic channel title, use that.
-						// otherwise, stick with the title that was read from
-						// the channel-title element we're replacing.
-						if (dynamicChannelTitle != null) {
-							this.channelTitle = dynamicChannelTitle;
-						}
-						
-						char[] channelTitleArray = this.channelTitle.toCharArray();
-						
-						contentHandler.characters(channelTitleArray, 0, channelTitleArray.length);
-
-					} else {
-            			// contentHandler was null. This is a serious problem,
-            			// since filtering is pointless if it's not writing back
-            			// to a contentHandler.
-            			log.error("null ContentHandler prevents outputting channel title with subcribe id = " + this.channelSubscribeId);
-            		}
-            		
-            	} finally {
-                    endIncorporationElement();
-            	}
-
             }
-            
         } else {
         	// pass non-incorporation elements through untouched.
             super.endElement (uri,localName,qName);

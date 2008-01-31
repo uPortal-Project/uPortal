@@ -12,7 +12,7 @@ import java.io.UnsupportedEncodingException;
  *
  * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  */
-public interface CachingSerializer {
+public interface CachingSerializer extends MarkupSerializer {
 
     /**
      * Commands serializer to start caching.
