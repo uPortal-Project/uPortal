@@ -62,7 +62,9 @@
 
     <target name="initportal" description="Runs all the targets necessary to deploy the portal and prepare the portal database">
         <echo message="Initializing uPortal" />
-        <antcall target="deploy-ear" />
+        <antcall target="deploy-ear">
+            <param name="removeExisting" value="true" />
+        </antcall>
         <antcall target="db" />
         <antcall target="db-hibernate" />
         <antcall target="i18n-db" />
@@ -356,8 +358,11 @@
                 <classpath refid="uportal-ant-tasks-full.classpath" />
             </typedef>
 
+            <echo message="   extractWars=${extractWars}" />
+            <echo message="removeExisting=${removeExisting}" />
+                
             <uportal-ear-macro>
-                <up:tomcatEarDeploy ear="${uportal-ear.artifact}" catalinaBase="${server.base}" extractWars="true" removeExistingDirectories="true" />
+                <up:tomcatEarDeploy ear="${uportal-ear.artifact}" catalinaBase="${server.base}" extractWars="${extractWars}" removeExistingDirectories="${removeExisting}" />
             </uportal-ear-macro>
         </uportal-ant-tasks-macro>
     </target>
@@ -365,10 +370,29 @@
     <target name="deploy-war" description="Deploy the uPortal web application to the servlet container">
         <uportal-war-macro>
             <basename property="war.contextname" file="${uportal-war.artifact}" suffix=".war" />
-            <property name="destDir" value="${server.base}/webapps/${war.contextname}" />
+            <property name="war.dest" value="${server.webapps}/${war.contextname}" />
             
-            <mkdir dir="${destDir}" />
-            <unwar dest="${destDir}" src="${uportal-war.artifact}" overwrite="true" />
+            <echo message="   extractWars=${extractWars}" />
+            <echo message="removeExisting=${removeExisting}" />
+
+            <if>
+                <istrue value="${removeExisting}" />
+                <then>
+                    <delete dir="${war.dest}" />
+                    <delete file="${war.dest}.war" />
+                </then>
+            </if>
+            
+            <if>
+                <istrue value="${extractWars}" />
+                <then>
+                    <mkdir dir="${war.dest}" />
+                    <unwar dest="${war.dest}" src="${uportal-war.artifact}" overwrite="true" />
+                </then>
+                <else>
+                    <copy file="${uportal-war.artifact}" todir="${server.webapps}" />
+                </else>
+            </if>
         </uportal-war-macro>
     </target>
 
@@ -381,54 +405,71 @@
                 </not>
             </condition>
         </fail>
-        <fail message="portletApp '${portletApp}' does not exist">
+        
+        <if>
+            <available file="${user.dir}/${portletApp}" />
+            <then>
+                <property name="portletAppPath" location="${user.dir}/${portletApp}"/>
+            </then>
+            <else>
+                <property name="portletAppPath" location="${portletApp}"/>
+            </else>
+        </if>
+        <fail message="portletApp '${portletAppPath}' does not exist">
             <condition>
                 <not>
-                    <available file="${portletApp}" />
+                    <available file="${portletAppPath}" />
                 </not>
             </condition>
         </fail>
 
-        <!-- Default extractWar to true if it isn't set -->
-        <condition property="extractWar" value="true">
-            <not>
-                <isset property="extractWar" />
-            </not>
-        </condition>
 
-        <basename property="war.filename" file="${portletApp}" />
-        <basename property="war.contextname" file="${portletApp}" suffix=".war" />
-        <property name="destDir" value="${server.base}/webapps/${war.contextname}" />
+        <basename property="war.filename" file="${portletAppPath}" />
+        <basename property="war.contextname" file="${portletAppPath}" suffix=".war" />
+        <property name="war.dest" value="${server.webapps}/${war.contextname}" />
 
-        <condition property="existingDirectory" value="${destDir}">
-            <istrue value="${removeExistingDirectory}" />
-        </condition>
-        <antcall target="deployPortletApp_removeExistingDirectory" />
 
-        <condition property="extract" value="true">
-            <istrue value="${extractWar}" />
-        </condition>
-        <antcall target="deployPortletApp_assembleAndExtract" />
-        <antcall target="deployPortletApp_assembleDirect" />
+        <echo message="   extractWars=${extractWars}" />
+        <echo message="removeExisting=${removeExisting}" />
+
+        <if>
+            <istrue value="${removeExisting}" />
+            <then>
+                <delete dir="${war.dest}" />
+                <delete file="${war.dest}.war" />
+            </then>
+        </if>
+        
+        <uportal-parent-macro>
+            <artifact:dependencies pathid="pluto-ant" verbose="false">
+                <pom file="${bootstrap.dir}/pluto-assembler-pom.xml" />
+            </artifact:dependencies>
+    
+            <taskdef classname="org.apache.pluto.ant.AssembleTask" name="assemblePortlet">
+                <classpath>
+                    <path refid="pluto-ant" />
+                </classpath>
+            </taskdef>
+        </uportal-parent-macro>
+
+        <if>
+            <istrue value="${extractWars}" />
+            <then>
+                <property name="tempWarDir" value="${java.io.tmpdir}" />
+
+                <assemblePortlet destdir="${tempWarDir}" war="${portletAppPath}" />
+
+                <mkdir dir="${war.dest}" />
+                <unwar dest="${war.dest}" src="${tempWarDir}/${war.filename}" overwrite="true" />
+
+                <delete file="${tempWarDir}/${war.filename}" />
+            </then>
+            <else>
+                <assemblePortlet destdir="${server.webapps}" war="${portletAppPath}" />
+            </else>
+        </if>
     </target>
 
-    <!-- Helper targets for the deployPortletApp target -->
-    <target name="deployPortletApp_removeExistingDirectory" if="existingDirectory">
-        <delete dir="${existingDirectory}" />
-    </target>
-    <target name="deployPortletApp_assembleAndExtract" if="extract" depends="setup-assembler">
-        <property name="tempWarDir" value="${java.io.tmpdir}" />
-
-        <assemblePortlet destdir="${tempWarDir}" war="${portletApp}" />
-
-        <mkdir dir="${destDir}" />
-        <unwar dest="${destDir}" src="${tempWarDir}/${war.filename}" overwrite="true" />
-
-        <delete file="${tempWarDir}/${war.filename}" />
-    </target>
-    <target name="deployPortletApp_assembleDirect" unless="extract" depends="setup-assembler">
-        <assemblePortlet destdir="${tomcat.webapps}" war="${portletApp}" />
-    </target>
 
     <target name="md5passwd" description="Creates a user in the UP_PERSON_DIR table">
         <uportal-impl-macro>
@@ -955,22 +996,5 @@
             <arg value="${goal8}" />
             <arg value="${goal9}" />
         </exec>
-    </target>
-
-
-    <!-- ============================== Ant Extensions ============================== -->
-
-    <target name="setup-assembler">
-        <uportal-parent-macro>
-            <artifact:dependencies pathid="pluto-ant" verbose="false">
-                <pom file="${bootstrap.dir}/pluto-assembler-pom.xml" />
-            </artifact:dependencies>
-    
-            <taskdef classname="org.apache.pluto.ant.AssembleTask" name="assemblePortlet">
-                <classpath>
-                    <path refid="pluto-ant" />
-                </classpath>
-            </taskdef>
-        </uportal-parent-macro>
     </target>
 </project>
