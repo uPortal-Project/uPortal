@@ -5,8 +5,6 @@
  */
 package org.jasig.portal.utils.cache;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.spring.PortalApplicationContextLocator;
 import org.springframework.context.ApplicationContext;
 
@@ -20,12 +18,9 @@ import org.springframework.context.ApplicationContext;
  * @since 2.5
  *
  * @see CacheFactory
- *
+ * @deprecated Code should be injected with the 'cacheFactory' wherever possible 
  */
 public class CacheFactoryLocator {
-
-    /** Instance of Commons Logging for logging purposes */
-    private static final Log log = LogFactory.getLog(CacheFactoryLocator.class);
 
     /** String name of the CacheFactory we wish to retrieve. */
     private static final String CACHE_FACTORY_BEAN = "cacheFactory";
@@ -35,14 +30,8 @@ public class CacheFactoryLocator {
      * @return the cache factory.
      */
     public static final CacheFactory getCacheFactory() {
-        try {
-            final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
-            final CacheFactory cacheFactory = (CacheFactory)applicationContext.getBean(CACHE_FACTORY_BEAN, CacheFactory.class);
-            return cacheFactory;
-        }
-        catch (Exception e) {
-            log.warn("Failed to load a CacheFactory interface from the Spring WebApplicationContext for bean name '" + CACHE_FACTORY_BEAN + "'. " + WhirlyCacheCacheFactory.class + " will be used.", e);
-            return new WhirlyCacheCacheFactory();
-        }
+        final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
+        final CacheFactory cacheFactory = (CacheFactory) applicationContext.getBean(CACHE_FACTORY_BEAN, CacheFactory.class);
+        return cacheFactory;
     }
 }

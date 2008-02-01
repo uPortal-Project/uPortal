@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://ehcache.svn.sourceforge.net/viewvc/*checkout*/ehcache/branches/ehcache-1.4.0/core/src/main/config/ehcache.xsd?revision=579">
+
+    <!--
+     | Please see http://ehcache.sourceforge.net/documentation/configuration.html for detailed information on
+     | how to configurigure caches in this file
+     +-->
+
+
+    <!-- Location of persistent caches on disk -->
+    <diskStore path="java.io.tmpdir/uPortal" />
+
+    <defaultCache eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />
+    
+    <!-- CACHE USED BY THE AUTHORIZATION IMPL -->
+    <cache name="principalCache"
+        eternal="false" maxElementsInMemory="150" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" />
+    
+    <!-- CACHE USED BY CompositeEntityIdentifier to cache Names -->
+    <cache name="nameCache"
+        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" />
+    
+    <!-- CACHE USED BY THE PERSON_ATTRIBUTE_DAO -->
+    <cache name="userInfoCache"
+        eternal="false" maxElementsInMemory="150" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />
+        
+    <!-- CACHE USED BY CWEBPROXY AND CGENERICXSLT -->
+    <cache name="contentCache"
+        eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" />
+
+</ehcache>

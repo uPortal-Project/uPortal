@@ -6,7 +6,6 @@
 <hibernate-configuration>
     <session-factory>
         <property name="current_session_context_class">thread</property>
-        <property name="cache.provider_class">org.hibernate.cache.NoCacheProvider</property>
         <property name="format_sql">true</property>
 
         <mapping class="org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl" />

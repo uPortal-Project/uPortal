@@ -29,6 +29,7 @@
         </aop:aspect>
     </aop:config>
     
+    <!-- Aspect to force the Thread.getContextClassLoader() to the correct loader on cross-context calls form portlets -->
     <bean id="threadContextClassLoaderAspect" class="org.jasig.portal.portlet.dao.jpa.ThreadContextClassLoaderAspect" />
 
     <bean id="factoryBean" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
@@ -36,13 +37,16 @@
         <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
     </bean>
 
-    <bean id="jpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+    <!-- Adapater that can inject a cacheProvider into the hibernate entity manager -->
+    <bean id="jpaVendorAdapter" class="org.jasig.portal.spring.orm.jpa.HibernateJpaVendorAdapter">
         <property name="databasePlatform" value="${hibernate.dialect}" />
+        <property name="cacheProvider" ref="cacheProvider" />
     </bean>
 
     <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
         <property name="entityManagerFactory" ref="factoryBean" />
     </bean>
+    
     
     <tx:annotation-driven transaction-manager="transactionManager" />
 
