@@ -18,12 +18,18 @@ server.home=@server.home@
 # path to tomcat servlet container (defaults to same directory as the tomcat binaries)
 server.base=${server.home}
 
-webapp.path=/${webapp.docBase}
+# path to webapps directory (defaults to /webapps under the tomcat path)
+server.webapps=${server.base}/webapps
 
-# With Tomcat (at least) you can make uPortal the default application by setting uportal-war finalName to ROOT
-# and webapp.path to nothing
-# (and removing the webapps/ROOT directory that came with the Tomcat distribution)
-#webapp.path=
-
-#If the mvn executable isn't on your path you can set the location here or set it on your path.
+# If the mvn executable isn't on your path you can set the location here or set it on your path.
 #maven.home=
+
+
+######## Deployment Configuration ##########
+# The following apply to deployPortletApp, deploy-war, and deploy-ear
+
+# Should the deployment tools extract the WARs when copying them into the servlet container 
+extractWars=true
+
+# Should the existing webapp be removed before deploying the new webapp
+removeExisting=false
