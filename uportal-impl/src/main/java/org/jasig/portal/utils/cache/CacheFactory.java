@@ -17,20 +17,17 @@ import java.util.Map;
  */
 public interface CacheFactory {
 
-    /** The cache to be used to hold user information. */
-    public static final String USER_INFO_CACHE = "userInfoCache";
-
     /** The cache to be used to hold principals. */
-    public static final String PRINCIPAL_CACHE = "principalCache";
+    public static final String PRINCIPAL_CACHE = "org.jasig.portal.security.provider.AuthorizationImpl.AUTH_PRINCIPAL_CACHE";
 
 	/** The cache to be used to hold names. */
-    public static final String NAME_CACHE = "nameCache";
+    public static final String NAME_CACHE = "org.jasig.portal.groups.CompositeEntityIdentifier.NAME_PARSE_CACHE";
 
 	/** The cache to be used to hold content. */
-    public static final String CONTENT_CACHE = "contentCache";
+    public static final String CONTENT_CACHE = "org.jasig.portal.channels.CONTENT_CACHE";
 
     /** Generic default cache that can be used for anything */
-    public static final String DEFAULT = "default";
+    public static final String DEFAULT = "org.jasig.portal.utils.cache.DEFAULT_CACHE";
     
     /**
      * Method to retrieve a cache by name.

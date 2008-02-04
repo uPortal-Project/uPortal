@@ -70,13 +70,22 @@
 	 | for simple string queries via the IPersonAttributeDao interfaces
 	 +-->
 
-   <!--<bean id="personAttributeDao" class="org.jasig.services.persondir.support.CachingPersonAttributeDaoImpl">
-       <property name="cachedPersonAttributesDao">
-           <ref bean="mergedPersonAttributeDao"/>
-       </property>
-   </bean>-->
-   
-	<bean id="personAttributeDao" class="org.jasig.services.persondir.support.MergingPersonAttributeDaoImpl">
+    <bean id="personAttributeDao" class="org.jasig.services.persondir.support.CachingPersonAttributeDaoImpl">
+        <property name="userInfoCache">
+            <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+                <property name="targetObject" ref="cacheFactory" />
+                <property name="targetMethod" value="getCache" />
+                <property name="arguments">
+                    <list>
+                        <value>org.jasig.services.persondir.USER_INFO</value>
+                    </list>
+                </property>
+            </bean>
+        </property>
+        <property name="cachedPersonAttributesDao" ref="mergedPersonAttributeDao" />
+    </bean>
+  
+	<bean id="mergedPersonAttributeDao" class="org.jasig.services.persondir.support.MergingPersonAttributeDaoImpl">
 		<property name="personAttributeDaos">
 			<list>
 				<ref bean="uPortalJdbcAttributeSource"/>

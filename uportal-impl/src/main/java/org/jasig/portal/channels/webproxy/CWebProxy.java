@@ -7,12 +7,13 @@ package org.jasig.portal.channels.webproxy;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URI;
@@ -30,14 +31,16 @@ import java.util.StringTokenizer;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.ChannelCacheKey;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ChannelRuntimeProperties;
 import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.GeneralRenderingException;
+import org.jasig.portal.ICacheable;
 import org.jasig.portal.IChannel;
 import org.jasig.portal.IMimeResponse;
-import org.jasig.portal.ICacheable;
 import org.jasig.portal.MediaManager;
 import org.jasig.portal.PortalEvent;
 import org.jasig.portal.PortalException;
@@ -45,24 +48,19 @@ import org.jasig.portal.ResourceMissingException;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.LocalConnectionContext;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.AbsoluteURLFilter;
 import org.jasig.portal.utils.CookieCutter;
 import org.jasig.portal.utils.DTDResolver;
 import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.utils.XSLT;
 import org.jasig.portal.utils.cache.CacheFactory;
+import org.jasig.portal.utils.cache.CacheFactoryLocator;
 import org.jasig.portal.utils.uri.BlockedUriException;
 import org.jasig.portal.utils.uri.IUriScrutinizer;
 import org.jasig.portal.utils.uri.PrefixUriScrutinizer;
 import org.w3c.dom.Document;
 import org.w3c.tidy.Tidy;
 import org.xml.sax.ContentHandler;
-
-import com.whirlycott.cache.Cache;
-import com.whirlycott.cache.CacheException;
-import com.whirlycott.cache.CacheManager;
 
 /**
  * <p>A channel which transforms and interacts with dynamic XML or HTML.
@@ -242,7 +240,7 @@ public class CWebProxy implements IChannel, ICacheable, IMimeResponse
   ChannelState chanState;
 
   // the content cache shared by ALL users
-  private static Cache contentCache;
+  private static Map<Serializable, Object> contentCache;
 
   static {
 
@@ -256,11 +254,7 @@ public class CWebProxy implements IChannel, ICacheable, IMimeResponse
     // tidied xml (as a String) and parsed XML (Document) Objects.
     // it is a global cache, with content shared between all
     // users who use this channel instance.
-    try {
-    	contentCache = CacheManager.getInstance().getCache(CacheFactory.CONTENT_CACHE);
-    } catch (CacheException e) {
-    	throw new RuntimeException(e);
-    }
+	contentCache = CacheFactoryLocator.getCacheFactory().getCache(CacheFactory.CONTENT_CACHE);
 
   }
 
@@ -411,7 +405,7 @@ public class CWebProxy implements IChannel, ICacheable, IMimeResponse
      * @param data our cache data as a String or Document Object
      */
     public synchronized void setCacheContent(String key, Object data) {
-    	contentCache.store(key, data, cacheTimeout * 1000);
+    	contentCache.put(key, data);
     	// we substract 2 seconds to the cache content loaded flag on purpose
     	// this is due to the framework running in a different thread and
     	// setting the validity of the content to a different time that
@@ -420,7 +414,7 @@ public class CWebProxy implements IChannel, ICacheable, IMimeResponse
     }
 
     public synchronized Object getCacheContent(String key) {
-    	return (contentCache.retrieve(key));
+    	return (contentCache.get(key));
     }
 
     public synchronized long getCacheContentLoaded() {

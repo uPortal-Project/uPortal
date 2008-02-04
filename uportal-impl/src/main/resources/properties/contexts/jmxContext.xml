@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
-    
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
+>
+    <!-- Ref to the mbean server -->
+    <bean id="mbeanServer" class="org.springframework.jmx.support.MBeanServerFactoryBean">
+        <property name="locateExistingServerIfPossible" value="true" />
+    </bean>
+
+    <!-- Exporter used to register beans with the mbean server -->
     <bean id="jmxAdapter" class="org.springframework.jmx.export.MBeanExporter">
+        <property name="server" ref="mbeanServer" />
         <property name="ensureUniqueRuntimeObjectNames" value="true" />
         <property name="beans">
             <map>
@@ -15,8 +22,26 @@
             <ref bean="metadataAssembler" />
         </property>
     </bean>
-    <bean id="metadataAssembler" class="org.springframework.jmx.export.assembler.InterfaceBasedMBeanInfoAssembler"></bean>
-    
-    
-    <bean id="framework" class="org.jasig.portal.jmx.FrameworkMBeanImpl"></bean>
+    <bean id="metadataAssembler" class="org.springframework.jmx.export.assembler.InterfaceBasedMBeanInfoAssembler" />
+
+
+    <!-- Register the framework statistics bean -->
+    <bean id="framework" class="org.jasig.portal.jmx.FrameworkMBeanImpl" />
+
+    <!-- Register the EhCache beans for management -->
+    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetClass" value="net.sf.ehcache.management.ManagementService" />
+        <property name="targetMethod" value="registerMBeans" />
+        <property name="arguments">
+            <list>
+                <ref bean="cacheManager" />
+                <ref bean="mbeanServer" />
+                <value>true</value>
+                <value>true</value>
+                <value>true</value>
+                <value>true</value>
+            </list>
+        </property>
+    </bean>
+
 </beans>
