@@ -42,13 +42,8 @@ public class AjaxPreferencesThemeParamInjector implements IParameterProcessor {
     	
         ThemeStylesheetUserPreferences themePrefs = prefs
     		.getThemeStylesheetUserPreferences();
-		themePrefs.putParameterValue("isAjaxEnabled", "true");
+		themePrefs.putParameterValue("USE_AJAX", "true");
 
-        // as long as this isn't a guest user, set the "isAjaxEnabled" flag
-        if (!person.isGuest()) {
-    		themePrefs.putParameterValue("isLoggedInUser", "true");
-        }
-        
     }
 
 }

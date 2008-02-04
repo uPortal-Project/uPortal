@@ -1,0 +1,171 @@
+/*
+ * LAYOUT STYLES
+ *
+ * Define CSS classes to create a multi-columned page layout.
+ *
+ * Only CSS that affects the layout (positioning) of major elements should be
+ * listed here.  Such as:
+ *   display, position, float, clear, width, height, min-width, min-height
+ *   margin, border, padding, overflow
+ *
+ * This CSS assumes use of the Yahoo! User Interface Library (YUI) CSS Reset, 
+ * CSS Base, and CSS Fonts to establish a common, cross-browser base rendering.
+ * Refer to [http://developer.yahoo.com/yui/] for more details.
+ * 
+ * This CSS should render well and consistently across A-grade browsers.
+ * Refer to [http://developer.yahoo.com/yui/articles/gbs/] for more details. 
+ *
+ */
+
+
+/** globals **/
+	table, table tr, table td 
+	{
+		margin: 0;
+		padding: 0;
+	}
+	
+	.portal-pipe 
+	{
+		padding: 0 0.5em;
+	}
+	
+/** body **/
+	body
+  {
+  }
+	
+/** page **/
+	#portalPageBody 
+	{
+	clear: both;
+	}
+
+
+/** header **/
+	#portalPageBar h2
+	{
+		margin: 0;
+		padding: 0.5em 0 0 1em;
+		position: absolute;
+		top: 0;
+		left: 0;
+	}
+
+	#portalPageBarLinks 
+	{
+		padding: 0.5em 1em 0.5em 0;
+	}
+
+	#portalPageBarLinks a 
+	{
+		padding: 0 0.5em;
+	}
+	
+	/* This sets the skip-to links to be completely hidden until a user tabs
+     to the link. */
+  #portalSkipNav a, #portalSkipNav a:hover, #portalSkipNav a:visited
+  {
+    position: absolute;
+    left: 0;
+    top: -500px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  #portalSkipNav a:active, #portalSkipNav a:focus
+  {
+    position: static;
+    width: auto;
+    height: auto;
+  }
+	
+	#portalLogo
+  {
+    margin: 0 10px 0 0;
+  }
+
+
+/** content **/
+	#portalPageLeftColumnInner 
+	{
+		 width: 15em;
+	}
+	
+	#portalPageBodyColumns td.single .portal-page-column-inner, #portalPageBodyColumns td.right .portal-page-column-inner 
+	{
+		padding-right: 1em;
+	}
+	
+	.portal-page-column-inner 
+	{
+		padding-left: 1em;
+	}
+	
+	#portalPageBody h1 {
+		margin: 0.5em 0.5em 0 0.5em;
+	}
+	
+	.portlet-container {
+		margin-bottom: 1em;
+	}
+	
+	.portlet-toolbar 
+	{
+		position: relative;
+	}
+	
+	.portlet-toolbar h2 
+	{
+		margin: 0;
+		padding: 0.25em 1em;
+	}
+	
+	.portlet-controls
+	{
+		position: absolute;
+		top: 0;
+		right: 0;
+	}
+	
+	.portlet-content 
+	{
+		padding:1em;
+	}
+
+/** footer **/
+
+
+/** navigation **/
+	#portalNavigation .left #portalNavigationList a 
+	{
+		display: block;
+		padding: 0.5em 1em;
+	}
+	
+	.portal-subnav-container 
+	{
+		margin: 1px 5px 5px 5px;
+	}
+	
+/** quicklinks **/	
+	#portalQuicklinks 
+	{
+		position: absolute;
+		top: 5em;
+		right: 0;
+		padding: 0 2em 0 0;
+	}
+	
+	#portalQuicklinks h2, #portalQuicklinks ul, #portalQuicklinks li 
+	{
+		display: inline;
+		margin: 0;
+		padding: 0;
+	}
+	
+	#portalQuicklinks li 
+	{
+		padding:0 0 0 2em;
+	}

@@ -1,0 +1,211 @@
+<?xml version="1.0" ?>
+<theme-messages>
+	<tokens xml:lang="en-US">
+		<!-- Institution Information -->
+		<token name="INSTITUTION_NAME">JA-SIG</token>
+		<token name="PORTAL_NAME">uPortal</token>
+		<token name="PORTAL_PAGE_TITLE">uPortal by JA-SIG</token>
+		<token name="PORTAL_META_DESCRIPTION">uPortal by JA-SIG: The academic open source portal built for higher education by higher education</token>
+		<token name="PORTAL_META_KEYWORDS">portal, uPortal, academic, higher education, open source, enterprise, JA-SIG, JASIG</token>
+		<!-- Accessibility -->
+		<token name="SKIP_TO_NAV">Skip to page navigation</token>
+		<token name="SKIP_TO_NAV_TITLE">Skip to page navigation</token>
+		<token name="SKIP_TO_CONTENT">Skip to page content</token>
+		<token name="SKIP_TO_CONTENT_TITLE">Skip to page content</token>
+		<!-- Logo -->
+		<token name="LOGO">uPortal by JA-SIG</token>
+		<token name="LOGO_TITLE">Go to Home</token>
+		<!-- Welcome Message -->
+		<token name="WELCOME_PRE">Welcome </token>
+		<token name="WELCOME_POST">.</token>
+		<token name="WELCOME_LOGIN_HEADER">Sign in to uPortal</token>
+		<token name="WELCOME_LOGIN_LEGEND">Portal Credentials:</token>
+		<token name="WELCOME_LOGIN_USERNAME_LABEL">Username: </token>
+		<token name="WELCOME_LOGIN_USERNAME_FIELD_TITLE">Enter your username here</token>
+		<token name="WELCOME_LOGIN_PASSWORD_LABEL">Password: </token>
+		<token name="WELCOME_LOGIN_PASSWORD_FIELD_TITLE">Enter your password here</token>
+		<token name="WELCOME_LOGIN_BUTTON_LABEL">Sign In</token>
+		<token name="WELCOME_LOGIN_HELP_LABEL">Forgot your username or password?</token>
+		<token name="WELCOME_LOGIN_HELP_LONG_LABEL">Get help if you forgot your username or password</token>
+		<!-- CAS LOGIN -->
+		<token name="CAS_LOGIN_LABEL">Login</token>
+		<token name="CAS_LOGIN_LONG_LABEL">Login via Central Authentication Service</token>
+		<token name="CAS_NEW_USER_LABEL">New User</token>
+		<token name="CAS_NEW_USER_LONG_LABEL">Create a new Central Authentication Service account for portal access</token>
+		<!-- Confirmation Message -->
+		<token name="PREF_EXIT_CONFIRMATION">Have you saved your changes?\nAre you sure you want to exit preferences?</token>
+		<!-- Main Links -->
+		<token name="HOME_LABEL">Home</token>
+		<token name="HOME_LONG_LABEL">Go to Home Tab</token>
+		<token name="BACK_HOME_LABEL">Back to Home</token>
+		<token name="BACK_HOME_LONG_LABEL">Go to back to the Home Tab</token>
+		<token name="BACK_HOME_TITLE_LABEL">Back to Home</token>
+		<token name="BACK_HOME_TITLE_LONG_LABEL">Go to back to the Home Tab</token>
+		<token name="HELP_LABEL">Help</token>
+		<token name="HELP_LONG_LABEL">To view help for the portal</token>
+		<token name="SITEMAP_LABEL">Site Map</token>
+		<token name="SITEMAP_LONG_LABEL">Go to Site Map</token>
+		<token name="CHANNEL_MANAGER_LABEL">Portlet Manager</token>
+		<token name="CHANNEL_MANAGER_LONG_LABEL">Go to Portlet Manager</token>
+		<token name="TURN_ON_PREFERENCES_LABEL">Customize</token>
+		<token name="TURN_ON_PREFERENCES_LONG_LABEL">Go to Customize Layout</token>
+		<token name="TURN_OFF_PREFERENCES_LABEL">Exit Customize</token>
+		<token name="TURN_OFF_PREFERENCES_LONG_LABEL">Go to View Layout</token>
+		<token name="SAVE_PREFERENCES_LABEL">Save Preferences</token>
+		<token name="SAVE_PREFERENCES_LONG_LABEL">Save Preferences and stay in Preferences</token>
+		<token name="LOGOFF_LABEL">Sign Out</token>
+		<token name="LOGOFF_LONG_LABEL">To log off and exit the portal</token>
+		<token name="FOCUSED_PORTLET_HELP_LABEL">Help</token>
+		<token name="FOCUSED_PORTLET_HELP_LONG_LABEL">To view the help for this portlet</token>
+		<token name="FOCUS_TAB_LABEL">To view the contents of this tab</token>
+		<!-- Quick Links -->
+		<token name="QUICKLINKS_LABEL">Quicklinks</token>
+		<!-- Preferences Links -->
+		<token name="PREFERENCES_LINKS_TITLE">Customize My Portal</token>
+		<token name="PREFERENCES_LINK_ADD_CONTENT_LABEL">Add Content</token>
+		<token name="PREFERENCES_LINK_ADD_CONTENT_LONG_LABEL">To add content to this tab</token>
+		<token name="PREFERENCES_LINK_LAYOUT_LABEL">Change Layout</token>
+		<token name="PREFERENCES_LINK_LAYOUT_LONG_LABEL">To change your layout</token>
+		<token name="PREFERENCES_LINK_SKINS_LABEL">Select Skin</token>
+		<token name="PREFERENCES_LINK_SKINS_LONG_LABEL">To choose a different skin</token>
+		<!-- Preferences Target Links -->
+		<token name="CANCEL_TAB_MOVE_LABEL">Cancel Tab Move</token>
+		<token name="CANCEL_TAB_MOVE_LONG_LABEL">To cancel the request to move the Tab</token>
+		<token name="TAB_MOVE_TARGET_LABEL">Move Tab Here</token>
+		<token name="TAB_MOVE_TARGET_LONG_LABEL">To move the Tab to this location</token>
+		<token name="TAB_ADD_TARGET_LABEL">Add Tab Here</token>
+		<token name="TAB_ADD_TARGET_LONG_LABEL">To add the Tab to this location</token>
+		<token name="COLUMN_MOVE_TARGET_LABEL">Move Column Here</token>
+		<token name="COLUMN_MOVE_TARGET_LONG_LABEL">To move the Column to this location</token>
+		<token name="COLUMN_ADD_TARGET_LABEL">Add Column Here</token>
+		<token name="COLUMN_ADD_TARGET_LONG_LABEL">To add the Column to this location</token>
+		<token name="CHANNEL_MOVE_TARGET_LABEL">Move Portlet Here</token>
+		<token name="CHANNEL_MOVE_TARGET_LONG_LABEL">To move the Portlet to this location</token>
+		<token name="CHANNEL_ADD_TARGET_LABEL">Add Portlet Here</token>
+		<token name="CHANNEL_ADD_TARGET_LONG_LABEL">To add the Portlet to this location</token>
+		<!-- Preferences -->
+		<token name="PREFERENCES_PAGE_TITLE">Customize My Portal</token>
+		<token name="PREFERENCES_SAVE_BUTTON">Save &amp; Exit</token>
+		<token name="PREFERENCES_SAVE_BUTTON_TITLE">To Save all changes and exit the customization mode</token>
+		<token name="PREFERENCES_CANCEL_BUTTON">Cancel</token>
+		<token name="PREFERENCES_CANCEL_BUTTON_TITLE">To discard all changes and exit the customization mode</token>
+		<token name="PREFERENCES_USER_ACTIONS">User Preferences Actions</token>
+		<token name="PREFERENCES_FRAGMENT_ACTIONS">Fragment Content Actions</token>
+		<token name="PREFERENCES_CANCEL_ACTION_LABEL_PRE">Cancel </token><!-- Precedes dynamic target action -->
+		<token name="PREFERENCES_CANCEL_ACTION_LABEL_POST"></token><!-- Follows dynamic target action -->
+		<token name="PREFERENCES_CANCEL_ACTION_LONG_LABEL">To cancel the current action</token>
+		<token name="PREFERENCES_OFF_LABEL">Turn Preferences Off</token>
+		<token name="PREFERENCES_OFF_LONG_LABEL">To turn off preferences and return to viewing portal</token>
+		<token name="PREFERENCES_ADD_TAB_LABEL">Add a Tab</token>
+		<token name="PREFERENCES_ADD_TAB_LONG_LABEL">To add a tab</token>
+		<token name="PREFERENCES_ADD_COLUMN_LABEL">Add a Column</token>
+		<token name="PREFERENCES_ADD_COLUMN_LONG_LABEL">To add a column to this tab</token>
+		<token name="PREFERENCES_ADD_CONTENT_LABEL">Add Content</token>
+		<token name="PREFERENCES_ADD_CONTENT_LONG_LABEL">To add content to this tab</token>
+		<token name="PREFERENCES_SKINS_LABEL">Select a new Skin</token>
+		<token name="PREFERENCES_SKINS_LONG_LABEL">To choose a different skin</token>
+		<token name="PREFERENCES_LANGUAGES_LABEL">Change Language</token>
+		<token name="PREFERENCES_LANGUAGES_LONG_LABEL">To choose language preferences</token>
+		<!-- Column Width Adjustments -->
+		<token name="WIDTH_INCREMENT_TITLE">Expand this column by 5%</token>
+		<token name="WIDTH_DECREMENT_TITLE">Shrink this column by 5%</token>
+		<token name="WIDTH_RESET_TITLE">Reset column widths</token>
+		<token name="WIDTH_SET">Column width:</token>
+		<token name="WIDTH_NARROW_SELECTED">Narrow Column</token>
+		<token name="WIDTH_NARROW_LABEL">Narrow</token>
+		<token name="WIDTH_NARROW_LONG_LABEL">To set the column width to a narrow fixed value</token>
+		<token name="WIDTH_WIDE_SELECTED">Wide Column</token>
+		<token name="WIDTH_WIDE_LABEL">Wide</token>
+		<token name="WIDTH_WIDE_LONG_LABEL">To set the column width to a wide variable value</token>
+		<!-- Tab Controls -->
+		<token name="RENAME_TAB_LABEL">Rename</token>
+		<token name="RENAME_TAB_LONG_LABEL">Submit new tab name</token>
+		<token name="MOVE_TAB_DISABLED_LABEL">Move</token>
+		<token name="MOVE_TAB_DISABLED_LONG_LABEL">Move tab is disabled</token>
+		<token name="MOVE_TAB_LABEL">Move</token>
+		<token name="MOVE_TAB_LONG_LABEL">Move this tab</token>
+		<token name="MOVE_TAB_LEFT_DISABLED_LABEL">Move Left</token>
+		<token name="MOVE_TAB_LEFT_DISABLED_LONG_LABEL">Move tab left is disabled</token>
+		<token name="MOVE_TAB_LEFT_LABEL">Move Left</token>
+		<token name="MOVE_TAB_LEFT_LONG_LABEL">Move this tab one position to the left (i.e. earlier in the order)</token>
+		<token name="MOVE_TAB_RIGHT_DISABLED_LABEL">Move Right</token>
+		<token name="MOVE_TAB_RIGHT_DISABLED_LONG_LABEL">Move tab right is disabled</token>
+		<token name="MOVE_TAB_RIGHT_LABEL">Move Right</token>
+		<token name="MOVE_TAB_RIGHT_LONG_LABEL">Move this tab one position to the right (i.e. later in the order)</token>
+		<token name="DELETE_TAB_DISABLED_LABEL">Remove</token>
+		<token name="DELETE_TAB_DISABLED_LONG_LABEL">Remove tab is disabled</token>
+		<token name="DELETE_TAB_LABEL">Remove</token>
+		<token name="DELETE_TAB_LONG_LABEL">Remove this tab</token>
+		<token name="DELETE_TAB_CONFIRMATION">Are you sure you want to remove this tab?</token><!-- No ' or " allowed -->
+		<!-- Column Controls -->
+		<token name="COLUMN_SELECTED">Selected Column</token>
+		<token name="CANCEL_COLUMN_MOVE_LABEL">Cancel Column Move</token>
+		<token name="CANCEL_COLUMN_MOVE_LONG_LABEL">To cancel the request to move the Column</token>
+		<token name="COLUMN_MOVE_LABEL">Move Column</token>
+		<token name="COLUMN_MOVE_LONG_LABEL">To move this Column</token>
+		<token name="COLUMN_MOVE_DISABLED_LABEL">Move Column (disabled)</token>
+		<token name="COLUMN_MOVE_DISABLED_LONG_LABEL">Move column is disabled</token>
+		<token name="COLUMN_DELETE_LABEL">Delete Column</token>
+		<token name="COLUMN_DELETE_LONG_LABEL">To delete this Column</token>
+		<token name="COLUMN_DELETE_CONFIRMATION">Are you sure you want to remove this column?</token>
+		<token name="COLUMN_DELETE_DISABLED_LABEL">Delete Column (disabled)</token>
+		<token name="COLUMN_DELETE_DISABLED_LONG_LABEL">Delete column is disabled</token>
+		<token name="COLUMN_MOVE_LEFT_DISABLED_TITLE">Move column left is disabled</token>
+		<token name="COLUMN_MOVE_LEFT_TITLE">Move this column one position to the left (i.e. earlier in the order)</token>
+		<token name="COLUMN_MOVE_RIGHT_DISABLED_TITLE">Move column right is disabled</token>
+		<token name="COLUMN_MOVE_RIGHT_TITLE">Move this column one position to the right (i.e. later in the order)</token>
+		<!-- Portlets -->
+		<token name="PORTLET_SELECTED">(Selected)</token>
+		<token name="PORTLET_ABOUT_LABEL">About</token>
+		<token name="PORTLET_ABOUT_LONG_LABEL">To view information about this portlet</token>
+		<token name="PORTLET_REMOVE_LABEL">Remove</token>
+		<token name="PORTLET_REMOVE_CONFIRMATION">Are you sure you want to remove this channel?</token>
+		<token name="PORTLET_REMOVE_LONG_LABEL">To remove the portlet from the layout</token>
+		<token name="PORTLET_REMOVE_DISABLED_LABEL">Remove (disabled)</token>
+		<token name="PORTLET_REMOVE_DISABLED_LONG_LABEL">Remove portlet is disabled</token>
+		<token name="PORTLET_MOVE_LABEL">Move</token>
+		<token name="PORTLET_MOVE_LONG_LABEL">To move the portlet</token>
+		<token name="PORTLET_MOVE_DISABLED_LABEL">Move (disabled)</token>
+		<token name="PORTLET_MOVE_DISABLED_LONG_LABEL">Move portlet is disabled</token>
+		<token name="PORTLET_MOVE_CANCEL_LABEL">Cancel Move</token>
+		<token name="PORTLET_MOVE_CANCEL_LONG_LABEL">To cancel the request to move the portlet</token>
+		<token name="PORTLET_MOVE_UP_TITLE">Move the portlet up (i.e. earlier in this column)</token>
+		<token name="PORTLET_MOVE_LEFT_TITLE">Move the portlet left (i.e. to an earlier column)</token>
+		<token name="PORTLET_MOVE_RIGHT_TITLE">Move the portlet right (i.e. to a later column)</token>
+		<token name="PORTLET_MOVE_DOWN_TITLE">Move the portlet down (i.e. later in this column)</token>
+		<token name="PORTLET_MOVE_UP_DISABLED_TITLE">Move portlet up is disabled</token>
+		<token name="PORTLET_MOVE_LEFT_DISABLED_TITLE">Move portlet left is disabled</token>
+		<token name="PORTLET_MOVE_RIGHT_DISABLED_TITLE">Move portlet right is disabled</token>
+		<token name="PORTLET_MOVE_DOWN_DISABLED_TITLE">Move portlet down is disabled</token>
+		<token name="PORTLET_RETURN_LABEL">Return</token>
+		<token name="PORTLET_RETURN_LONG_LABEL">To return to the main view</token>
+		<token name="PORTLET_HELP_LABEL">Help</token>
+		<token name="PORTLET_HELP_LONG_LABEL">To view the help for this portlet</token>
+		<token name="PORTLET_EDIT_LABEL">Edit</token>
+		<token name="PORTLET_EDIT_LONG_LABEL">To enter the edit mode for this portlet</token>
+		<token name="PORTLET_PRINT_LABEL">Print</token>
+		<token name="PORTLET_PRINT_LONG_LABEL">To enter the print mode for this portlet</token>
+		<token name="PORTLET_MAXIMIZE_LABEL">Maximize</token>
+		<token name="PORTLET_MAXIMIZE_LONG_LABEL">To enter the maximized mode for this portlet</token>
+		<token name="PORTLET_MINIMIZE_LABEL">Minimize</token>
+		<token name="PORTLET_MINIMIZE_LONG_LABEL">To enter the minimized mode for this portlet</token>
+		<token name="PORTLET_UNMINIMIZE_LABEL">Un-minimize</token>
+		<token name="PORTLET_UNMINIMIZE_LONG_LABEL">To un-minimize this portlet by returning to the normal view</token>
+		<token name="PORTLET_DETACH_LABEL">Detach</token>
+		<token name="PORTLET_DETACH_LONG_LABEL">To detach this portlet into a separate browser window</token>
+		<token name="PORTLET_ADD_LABEL">Add to my layout</token>
+		<token name="PORTLET_ADD_LONG_LABEL">Add this portlet to my layout</token>
+		<!-- Footer Links -->
+		<token name="JASIG_LABEL">JA-SIG Home</token>
+		<token name="JASIG_LONG_LABEL">To go to the Java Architectures Special Interest Group Home</token>
+		<token name="UPORTAL_LABEL">uPortal Home</token>
+		<token name="UPORTAL_LONG_LABEL">To go to the uPortal Home</token>
+		<token name="UPORTAL_DOWNLOAD_LABEL">Download</token>
+		<token name="UPORTAL_DOWNLOAD_LONG_LABEL">To go to the uPortal download page</token>
+		<token name="UPORTAL_COMMUNITY_LABEL">Community</token>
+		<token name="UPORTAL_COMMUNITY_LONG_LABEL">To go to the uPortal community page</token>
+		<!-- Message Texts -->
+		<token name="MESSAGE_CONTENT_ADD_FAILED">Unable to add portlet content to this tab.</token>
+	</tokens>
+</theme-messages>	
+	
