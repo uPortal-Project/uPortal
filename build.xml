@@ -358,10 +358,10 @@
                 <classpath refid="uportal-ant-tasks-full.classpath" />
             </typedef>
 
-            <echo message="   extractWars=${extractWars}" />
-            <echo message="removeExisting=${removeExisting}" />
-                
             <uportal-ear-macro>
+                <echo message="   extractWars=${extractWars}" />
+                <echo message="removeExisting=${removeExisting}" />
+
                 <up:tomcatEarDeploy ear="${uportal-ear.artifact}" catalinaBase="${server.base}" extractWars="${extractWars}" removeExistingDirectories="${removeExisting}" />
             </uportal-ear-macro>
         </uportal-ant-tasks-macro>
