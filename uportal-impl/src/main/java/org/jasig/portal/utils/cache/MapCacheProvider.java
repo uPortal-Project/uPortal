@@ -37,7 +37,7 @@ import org.springmodules.cache.provider.CacheProviderFacade;
  * @author Eric Dalquist
  * @version $Revision$
  */
-class MapCacheProvider<K extends Serializable, V> implements Map<K, V> {
+public class MapCacheProvider<K extends Serializable, V> implements Map<K, V> {
     private final CacheProviderFacade cacheProviderFacade;
     private final CachingModel cachingModel;
     private final FlushingModel flushModel;

@@ -2,68 +2,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
     
-	<!-- 
-		Prior to uPortal 2.5, PersonDirectory was a monolithic static service which had a lot of responsibilities.
-		It would parse PersonDirs.xml coniguration file.  It would instantiate sources of attributes, 
-		manage JDBC drivers, apply attribute merge policies, and be the static lookup mechanism whereby client
-		code gets access to PersonDirectory services.
-		
-		For uPortal 2.5, PersonDirectory was refactored to a more loosely coupled object oriented approach.
-		This change makes feasible attribute sources other than LDAP and JDBC.  This change also prepared
-		PersonDirectory to be used in other projects, such as uPortal 3.  This change also makes possible unit
-		testing of individual PersonDirectory components.
-		
-		Old model: need to change PersonDirectory to accomodate anything other than JDBC or LDAP sources? 
-		Want a different attribute merge strategy? Hack PersonDirectory.java and recompile.
-		
-		New model: need to change an aspect of PersonDirectory?  Re-use all the objects that still apply to
-		you, but wire in a changed component.
-		
-		The static PersonDirectory service we knew and loved from prior to uPortal 2.5 continues to exist.
-		Your client code can still statically access PersonDirectory services.  However, that static service
-		is now backed by a Spring-configured instance of IPersonAttributeDao, a "data access object" interface
-		which knows how to take attributes like username and access a backing store to return more attributes.
-		
-		The default Spring configuration for this IPersonAttributeDao instance is a legacy implementation 
-		which hard-codes in
-		Java the configuration of parsing and using the legacy PersonDirs.xml .
-		
-		Your options for customizing the PersonDirectory implementation for your institution:
-		
-		1) Edit this XML file to use Spring to configure an instance of IPersonAttributeDao, 
-		declaring different configurations of the distributed classes and/or using your own classes.  This
-		is the recommended approach when approach (1) will not meet your needs or you are already familiar with
-		using Spring to wire together objects.
-		
-		2) uP 2.4-style: Ignore this XML file.  Ignore the implementing Java code.  Customize PersonDirs.xml to declare your 
-		institutions attribute sources.  Rely upon the default configuration in this file, which will 
-		cause Spring to instantiate the legacy implementation which will parse PersonDirs.xml and use 
-		default configurations for such things as merge policies to replicate the behavior of uPortal 2.4 and
-		and previous.  This approach is recommended for deployers familiar with 2.4-style PersonDirectory 
-		configuration who are not familiar with Spring and do not have needs beyond what is accomodated by
-		configuration in the domain-specific language of the PersonDirs.xml file.
-		
-		3) Hack uPortal style: Ignore this XML file.  Decide that the flexibility provided by PersonDirs.xml doesn't meet your needs.
-		Edit the LegacyPersonDirectoryImpl class and/or the classes it uses to customize the Java logic
-		 that implements PersonDirectory.  This approach of hacking the provided .java files is not recommended.
-		 
-
-		
-		
-		Finally, a few words about what is happening that makes this configuration file actually have an effect on
-		the static PersonDirectory service.
-		
-		PersonDirectory in 2.5 asks the PortalApplicationContextFacade for the Spring-configured bean named
-		"personAttributeDao". The PortalApplicationContextFacade delegates to a Spring bean factory.  That
-		bean factory is configured in /properties/beanRefFactory.xml .  beanRefFactory.xml declares the 
-		Spring beans.dtd-compliant files that are to be considered in instantiating the objects to be made
-		available by the bean factory.  Among the .xml files declared by beanRefFactory.xml is this XML file.
-		This file declares the bean named "personAttributeDao".  So it is the bean that is configured here that
-		PersonDirectory acquires when it asks for the bean of that name.
-		-->
-	
-	
-	<!--
+    <!--
      | Example Person Directory configuration using the Spring implementation.
 	 |
 	 | The 'username' attribute is what is configured by default in the code
@@ -72,14 +11,9 @@
 
     <bean id="personAttributeDao" class="org.jasig.services.persondir.support.CachingPersonAttributeDaoImpl">
         <property name="userInfoCache">
-            <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-                <property name="targetObject" ref="cacheFactory" />
-                <property name="targetMethod" value="getCache" />
-                <property name="arguments">
-                    <list>
-                        <value>org.jasig.services.persondir.USER_INFO</value>
-                    </list>
-                </property>
+            <bean class="org.jasig.portal.utils.cache.MapCacheFactoryBean">
+                <property name="cacheFactory" ref="cacheFactory" />
+                <property name="cacheName" value="org.jasig.services.persondir.USER_INFO" />
             </bean>
         </property>
         <property name="cachedPersonAttributesDao" ref="mergedPersonAttributeDao" />
@@ -99,9 +33,7 @@
 
 	<!-- JDBC Person Attribute Source, using the default portal DataSource via RDBMServices -->
 	<bean id="uPortalJdbcAttributeSource" class="org.jasig.services.persondir.support.jdbc.SingleRowJdbcPersonAttributeDao">
-		<constructor-arg>
-            <ref bean="PortalDb"/>
-		</constructor-arg> 
+		<constructor-arg index="0" ref="PortalDb" />
 		<constructor-arg>
 			<list>
 				<value>username</value>
@@ -140,97 +72,4 @@
 			</map>
 		</property>
 	</bean>
-	
-	<!-- LDAP Person Attribute Source, uses the default ILdapServer via the LdapServices.getDefaultLdapServer method call -->
-	<!--
-	<bean id="uPortalLdapAttributeSource" class="org.jasig.services.persondir.support.LdapPersonAttributeDaoImpl">
-		<property name="ldapServer">
-			<ref bean="defaultLdapServer"/>
-		</property>
-		<property name="queryAttributes">
-			<list>
-				<value>username</value>
-			</list>
-		</property>
-		<property name="query">
-			<value>(cn={0})</value>
-		</property>
-		<property name="ldapAttributesToPortalAttributes">
-			<map>
-				<entry key="eduPersonPrimaryAffiliation">   <value>uPortalTemplateUserName</value></entry>
-				<entry key="eduPersonAffiliation">          <value>eduPersonAffiliation</value></entry>
-				<entry key="eduPersonNickname">
-                                                    <set>
-                                                      <value>eduPersonNickname</value>
-                                                      <value>user.name.nickName</value>
-                                                    </set>
-        </entry>
-				<entry key="eduPersonOrgDN">
-                                                    <set>
-                                                      <value>eduPersonOrgDN</value>
-                                                      <value>user.employer</value>
-                                                    </set>
-        </entry>
-				<entry key="eduPersonOrgUnitDN">
-                                                    <set>
-                                                      <value>eduPersonOrgUnitDN</value>
-                                                      <value>user.department</value>
-                                                    </set>
-        </entry>
-				<entry key="eduPersonPrimaryAffiliation">   <value>eduPersonPrimaryAffiliation</value></entry>
-				<entry key="eduPersonPrincipalName">        <value>eduPersonPrincipalName</value></entry>
-				<entry key="c">                             <value>c</value></entry>
-				<entry key="cn">                            <value>cn</value></entry>
-				<entry key="description">                   <value>description</value></entry>
-				<entry key="displayName">                   <value>displayName</value></entry>
-				<entry key="facsimileTelephoneNumber">      <value>facsimileTelephoneNumber</value></entry>
-				<entry key="givenName">
-                                                    <set>
-                                                      <value>givenName</value>
-                                                      <value>user.name.given</value>
-                                                    </set>
-        </entry>
-				<entry key="homePhone">                     <value>homePhone</value></entry>
-				<entry key="homePostalAddress">             <value>homePostalAddress</value></entry>
-				<entry key="initials">                      <value>initials</value></entry>
-				<entry key="jpegPhoto">                     <value>jpegPhoto</value></entry>
-				<entry key="l">                             <value>l</value></entry>
-				<entry key="labeledURI">                    <value>labeledURI</value></entry>
-				<entry key="mail">
-                                                    <set>
-                                                      <value>mail</value>
-                                                      <value>user.home-info.online.email</value>
-                                                    </set>
-        </entry>
-				<entry key="mobile">                        <value>mobile</value></entry>
-				<entry key="o">                             <value>o</value></entry>
-				<entry key="ou">                            <value>ou</value></entry>
-				<entry key="pager">                         <value>pager</value></entry>
-				<entry key="postalAddress">                 <value>postalAddress</value></entry>
-				<entry key="postalCode">                    <value>postalCode</value></entry>
-				<entry key="postOfficeBox">                 <value>postOfficeBox</value></entry>
-				<entry key="preferredLanguage">             <value>preferredLanguage</value></entry>
-				<entry key="seeAlso">                       <value>seeAlso</value></entry>
-				<entry key="sn">
-                                                    <set>
-                                                      <value>sn</value>
-                                                      <value>user.name.family</value>
-                                                    </set>
-        </entry>
-				<entry key="st">                            <value>st</value></entry>
-				<entry key="street">                        <value>street</value></entry>
-				<entry key="telephoneNumber">               <value>telephoneNumber</value></entry>
-				<entry key="uid">                           <value>uid</value></entry>
-				<entry key="userCertificate">               <value>userCertificate</value></entry>
-				<entry key="userSMIMECertificate">          <value>userSMIMECertificate</value></entry>
-			</map>
-		</property>
-	</bean>
-	
-	<bean id="defaultLdapServer" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-		<property name="staticMethod">
-			<value>org.jasig.portal.ldap.LdapServices.getDefaultLdapServer</value>
-		</property>
-	</bean>
-	-->
 </beans>

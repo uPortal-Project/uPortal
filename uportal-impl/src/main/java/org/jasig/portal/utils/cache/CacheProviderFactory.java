@@ -15,7 +15,9 @@ import org.springmodules.cache.FlushingModel;
 import org.springmodules.cache.provider.CacheProviderFacade;
 
 /**
- * CacheFactory impl that provides Map instances that wrap a configured {@link CacheProviderFacade}
+ * CacheFactory impl that provides Map instances that wrap a configured {@link CacheProviderFacade}. This uses the
+ * {@link MapCacheProvider} to perform the wrapping. Refer to that class for which operations on the {@link Map}
+ * interface are supported.
  * 
  * @author Eric Dalquist
  * @version $Revision$

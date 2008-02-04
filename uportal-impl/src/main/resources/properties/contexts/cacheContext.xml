@@ -31,6 +31,4 @@
         <property name="cacheManagerName" value="uPortal.cacheManager" />
         <property name="configLocation" value="classpath:/properties/ehcache.xml" />
     </bean>
-    
-    
 </beans>

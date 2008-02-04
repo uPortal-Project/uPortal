@@ -13,9 +13,8 @@
         <property name="ensureUniqueRuntimeObjectNames" value="true" />
         <property name="beans">
             <map>
-                <entry key="uPortal:name=framework">
-                    <ref local="framework" />
-                </entry>
+                <entry key="uPortal:type=Framework,name=Statistics" value-ref="portalFrameworkMBean" />
+                <entry key="uPortal:type=Persistence,name=HibernateStatistics" value-ref="hibernateStatisticsMBean"/>
             </map>
         </property>
         <property name="assembler">
@@ -25,10 +24,21 @@
     <bean id="metadataAssembler" class="org.springframework.jmx.export.assembler.InterfaceBasedMBeanInfoAssembler" />
 
 
-    <!-- Register the framework statistics bean -->
-    <bean id="framework" class="org.jasig.portal.jmx.FrameworkMBeanImpl" />
+    <!-- Hibernate perstentce statistics -->
+    <bean id="hibernateStatisticsMBean" class="org.hibernate.jmx.StatisticsService">
+        <property name="statisticsEnabled" value="true"/>
+        <property name="sessionFactory">
+            <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+                <property name="targetObject" ref="entityManagerFactory" />
+                <property name="targetMethod" value="getSessionFactory" />
+            </bean>
+        </property>
+    </bean>
 
-    <!-- Register the EhCache beans for management -->
+    <!-- uPortal framework statistics -->
+    <bean id="portalFrameworkMBean" class="org.jasig.portal.jmx.FrameworkMBeanImpl" />
+
+    <!-- EhCache management and statistics -->
     <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
         <property name="targetClass" value="net.sf.ehcache.management.ManagementService" />
         <property name="targetMethod" value="registerMBeans" />
@@ -43,5 +53,4 @@
             </list>
         </property>
     </bean>
-
 </beans>
