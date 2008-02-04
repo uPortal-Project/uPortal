@@ -1,6 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <!--
+     | Factory used by portal code to retrieve caches.
+     +-->
+    <bean id="cacheFactory" class="org.jasig.portal.utils.cache.CacheProviderFactory">
+        <property name="cacheProviderFacade" ref="cacheProviderFacade" />
+        <property name="cacheModelFactory" ref="cacheModelFactory" />
+    </bean>
     
-    <bean id="cacheFactory" class="org.jasig.portal.utils.cache.WhirlyCacheCacheFactory" />
+    <!-- 
+     | Cache Provider used by the persistence code
+     +-->
+     <bean id="cacheProvider" class="org.jasig.portal.utils.cache.hibernate.EhCacheProvider">
+        <property name="cacheManager" ref="cacheManager" />
+     </bean>
+    
+
+    <!-- Support classes for the cacheFactory and cacheProvider -->    
+
+    <bean id="cacheModelFactory" class="org.jasig.portal.utils.cache.EhCacheModelFactory" />
+
+    <bean id="cacheProviderFacade" class="org.jasig.portal.utils.cache.EhCacheFacade">
+        <property name="cacheManager" ref="cacheManager" />
+        <property name="createMissingCaches" value="true" />
+    </bean>
+
+    <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+        <property name="cacheManagerName" value="uPortal.cacheManager" />
+        <property name="configLocation" value="classpath:/properties/ehcache.xml" />
+    </bean>
 </beans>

@@ -7,6 +7,7 @@ package org.jasig.portal.channels;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -37,15 +38,12 @@ import org.jasig.portal.utils.DTDResolver;
 import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.utils.XSLT;
 import org.jasig.portal.utils.cache.CacheFactory;
+import org.jasig.portal.utils.cache.CacheFactoryLocator;
 import org.jasig.portal.utils.uri.BlockedUriException;
 import org.jasig.portal.utils.uri.IUriScrutinizer;
 import org.jasig.portal.utils.uri.PrefixUriScrutinizer;
 import org.w3c.dom.Document;
 import org.xml.sax.ContentHandler;
-
-import com.whirlycott.cache.Cache;
-import com.whirlycott.cache.CacheException;
-import com.whirlycott.cache.CacheManager;
 
 /**
  * <p>A channel which transforms XML for rendering in the portal.</p>
@@ -136,14 +134,9 @@ public class CGenericXSLT
 	/**
 	 * Added based on GCCC patch developed by Rutgers.
 	 */
-	private static Cache contentCache;
+	private static final Map<Serializable, Document> contentCache;
 	static {
-	    try {
-	        contentCache = CacheManager.getInstance().getCache(CacheFactory.CONTENT_CACHE);
-	    } catch (CacheException e) {
-	        e.printStackTrace();
-	        throw new RuntimeException(e);
-	    }
+        contentCache = CacheFactoryLocator.getCacheFactory().getCache(CacheFactory.CONTENT_CACHE);
 	}
 	private boolean cacheGlobalMode = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.channels.CGenericXSLT.cache_global_mode", false);
 	private long cacheContentLoaded;	// last time the content was loaded (instance shared by ALL users)
@@ -537,8 +530,8 @@ public class CGenericXSLT
 	 * @param key the URL key String
 	 * @param data our cache data as a String or Document Object
 	 */
-	public synchronized void setCacheContent(String key, Object data) {
-		contentCache.store(key, data, cacheTimeout * 1000);
+	public synchronized void setCacheContent(String key, Document data) {
+		contentCache.put(key, data);
 		// we substract 2 seconds to the cache content loaded flag on purpose
 		// this is due to the framework running in a different thread and
 		// setting the validity of the content to a different time that
@@ -546,8 +539,8 @@ public class CGenericXSLT
 		cacheContentLoaded = System.currentTimeMillis() - 2000;
 	}
 
-	public synchronized Object getCacheContent(String key) {
-		return (contentCache.retrieve(key));
+	public synchronized Document getCacheContent(String key) {
+		return (contentCache.get(key));
 	}
 
 	public synchronized long getCacheContentLoaded() {

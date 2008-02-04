@@ -628,7 +628,7 @@ public IAuthorizationPrincipal newPrincipal(String key, Class type) {
 
     synchronized (this.principalCache) {
         if (this.principalCache.containsKey(principalKey)) {
-            principal = (IAuthorizationPrincipal) this.principalCache.get(principalKey);
+            principal = this.principalCache.get(principalKey);
         } else {
             principal = primNewPrincipal(key, type);
             this.principalCache.put(principalKey, principal);

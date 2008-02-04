@@ -5,13 +5,25 @@
 
 <hibernate-configuration>
     <session-factory>
-        <property name="current_session_context_class">thread</property>
-        <property name="cache.provider_class">org.hibernate.cache.NoCacheProvider</property>
-        <property name="format_sql">true</property>
-
+        <property name="hibernate.format_sql">true</property>
+        <property name="hibernate.generate_statistics">true</property>
+        
+        <property name="hibernate.cache.use_query_cache">true</property>
+        <property name="hibernate.cache.use_second_level_cache">true</property>
+        
+        <property name="hibernate.current_session_context_class">thread</property>
+        
         <mapping class="org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl" />
         <mapping class="org.jasig.portal.portlet.dao.jpa.PortletEntityImpl" />
         <mapping class="org.jasig.portal.portlet.dao.jpa.PortletPreferencesImpl" />
         <mapping class="org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl" />
+        
+        <class-cache class="org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl" usage="nonstrict-read-write"/>
+        <class-cache class="org.jasig.portal.portlet.dao.jpa.PortletEntityImpl" usage="nonstrict-read-write"/>
+        <class-cache class="org.jasig.portal.portlet.dao.jpa.PortletPreferencesImpl" usage="nonstrict-read-write"/>
+        <class-cache class="org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl" usage="nonstrict-read-write"/>
+        
+        <collection-cache collection="org.jasig.portal.portlet.dao.jpa.PortletPreferencesImpl.portletPreferences" usage="nonstrict-read-write"/>
+        <collection-cache collection="org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl.values" usage="nonstrict-read-write"/>
     </session-factory>
 </hibernate-configuration>

@@ -4,6 +4,7 @@
  */
 package org.jasig.portal.utils.cache;
 
+import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -13,25 +14,21 @@ import java.util.Map;
  *
  * @author Scott Battaglia
  * @version $Revision$ $Date$
- *
  */
 public interface CacheFactory {
 
-    /** The cache to be used to hold user information. */
-    String USER_INFO_CACHE = "userInfoCache";
-
     /** The cache to be used to hold principals. */
-    String PRINCIPAL_CACHE = "principalCache";
+    public static final String PRINCIPAL_CACHE = "org.jasig.portal.security.provider.AuthorizationImpl.AUTH_PRINCIPAL_CACHE";
 
 	/** The cache to be used to hold names. */
-	String NAME_CACHE = "nameCache";
+    public static final String NAME_CACHE = "org.jasig.portal.groups.CompositeEntityIdentifier.NAME_PARSE_CACHE";
 
 	/** The cache to be used to hold content. */
-	String CONTENT_CACHE = "contentCache";
+    public static final String CONTENT_CACHE = "org.jasig.portal.channels.CONTENT_CACHE";
 
     /** Generic default cache that can be used for anything */
-    String DEFAULT = "default";
-
+    public static final String DEFAULT = "org.jasig.portal.utils.cache.DEFAULT_CACHE";
+    
     /**
      * Method to retrieve a cache by name.
      *
@@ -39,11 +36,11 @@ public interface CacheFactory {
      * @return the cache that is referenced by the cache name provided.
      * @throws IllegalArgumentException if a cache by that name cannot be retrieved.
      */
-    Map getCache(String cacheName) throws IllegalArgumentException;
+    public <K extends Serializable, V> Map<K, V> getCache(String cacheName) throws IllegalArgumentException;
 
     /**
      * Method to retrieve a default cache without a name.
      * @return the default cache for this CacheFactory
      */
-    Map getCache();
+    public <K extends Serializable, V> Map<K, V> getCache();
 }

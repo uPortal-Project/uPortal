@@ -16,6 +16,7 @@ import javax.naming.Name;
 import javax.naming.NameParser;
 import javax.naming.NamingException;
 
+import org.jasig.portal.utils.cache.CacheFactory;
 import org.jasig.portal.utils.cache.CacheFactoryLocator;
 /**
  * A composite key and type that uniquely identify a portal entity.  The composite
@@ -30,8 +31,8 @@ implements IGroupConstants
 {
     // static vars:
     protected static String separator;
-    protected static String NAME_CACHE = "nameCache";
-    private static Map nameCache = CacheFactoryLocator.getCacheFactory().getCache(NAME_CACHE);
+    
+    private static Map<String, Name> nameCache = CacheFactoryLocator.getCacheFactory().getCache(CacheFactory.NAME_CACHE);
 
     static {
         try 
@@ -94,7 +95,7 @@ protected NameParser getParser()
             int start = 0;
             int separatorLength = separator.length();
             int end = s.indexOf(separator, start);
-            List list = new ArrayList(4);
+            List<String> list = new ArrayList<String>(4);
             while (end != -1)
             {
                 list.add(s.substring(start,end));
@@ -179,7 +180,7 @@ public String toString() {
  */
 public Name parseCompoundKey(String key) throws NamingException
 {
-    Name n = (Name)nameCache.get(key);
+    Name n = nameCache.get(key);
     if ( n == null )
     { 
         n = getParser().parse(key);
@@ -190,11 +191,11 @@ public Name parseCompoundKey(String key) throws NamingException
 
 private class NameImpl implements Name
 {
-    List components;
+    List<String> components;
     public NameImpl() {
         this(new ArrayList(4));
     }
-    public NameImpl(List comps) {
+    public NameImpl(List<String> comps) {
         super();
         components = comps;
     }
@@ -218,7 +219,7 @@ private class NameImpl implements Name
         return this;
     }
     public Object clone() {
-        List comps = (List)((ArrayList)components).clone();
+        List<String> comps = (List<String>)((ArrayList<String>)components).clone();
         return new NameImpl(comps);
     }
     public int compareTo(Object obj) 
@@ -272,7 +273,7 @@ private class NameImpl implements Name
         return true;
     }
     public String get(int posn) {
-        return (String)components.get(posn);
+        return components.get(posn);
     }
     public Enumeration getAll() {
       return new NameImplEnumerator(components,0,components.size());
@@ -342,23 +343,23 @@ private class NameImpl implements Name
         }
         return hash;
     }
-    private Enumeration getComponents(int start, int limit) {
+    private Enumeration<String> getComponents(int start, int limit) {
         return new NameImplEnumerator(components,start,limit);
     }
     private Name getNameComponents(int start, int limit) {
-        List comps = new ArrayList(limit - start);
-        for (Enumeration e = getComponents(start,limit); e.hasMoreElements();)
+        List<String> comps = new ArrayList<String>(limit - start);
+        for (Enumeration<String> e = getComponents(start,limit); e.hasMoreElements();)
             { comps.add(e.nextElement()); }
         return new NameImpl(comps);
     }
     
 }
-private class NameImplEnumerator implements Enumeration {
-    List list;
+private class NameImplEnumerator implements Enumeration<String> {
+    List<String> list;
     int count;
     int limit;
 
-    NameImplEnumerator(List l, int start, int lim) {
+    NameImplEnumerator(List<String> l, int start, int lim) {
     list = l;
     count = start;
     limit = lim;
@@ -368,7 +369,7 @@ private class NameImplEnumerator implements Enumeration {
     return count < limit;
     }
 
-    public Object nextElement() {
+    public String nextElement() {
     if (count < limit) {
         return list.get(count++);
     }
