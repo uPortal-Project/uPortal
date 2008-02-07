@@ -35,7 +35,7 @@
       <!-- ****** PORTLET TOP BLOCK ****** -->
       
       <!-- ****** PORTLET TITLE AND TOOLBAR ****** -->
-      <div id="toolbar_{@ID}" class="portlet-toolbar"> <!-- Portlet toolbar. -->
+      <div id="toolbar_{@ID}" class="portlet-toolbar dojoDndHandle"> <!-- Portlet toolbar. -->
         <a name="{@ID}" id="{@ID}"></a> <!-- ?????? WHAT IS THIS FOR ??????-->
         <h2> <!-- Portlet title. -->
           <a href="{$BASE_ACTION_URL}?uP_root={@ID}">

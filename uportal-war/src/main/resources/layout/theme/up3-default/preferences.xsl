@@ -128,7 +128,7 @@
    
    
    <xsl:for-each select="/layout/content/column">
-    new dojo.dnd.Source('inner_column_<xsl:value-of select="@ID"/>');
+    new dojo.dnd.Source('inner_column_<xsl:value-of select="@ID"/>', { withHandles: true });
     <xsl:for-each select="channel">
      <xsl:if test="not(@dlm:moveAllowed='false')">
      </xsl:if>
