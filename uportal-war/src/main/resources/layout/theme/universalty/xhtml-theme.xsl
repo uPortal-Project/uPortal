@@ -96,9 +96,9 @@
    | Skin Settings can be used to change the location of skin files.
   -->
   <xsl:param name="SKIN" select="'uportal3'"/>
-  <xsl:variable name="MEDIA_PATH">media/skins/up3-default</xsl:variable>
+  <xsl:variable name="MEDIA_PATH">media/skins/universalty</xsl:variable>
   <xsl:variable name="SKIN_PATH" select="concat($MEDIA_PATH,'/',$SKIN)"/>
-  <xsl:variable name="SCRIPT_PATH">media/skins/up3-default/common/javascript</xsl:variable>
+  <xsl:variable name="SCRIPT_PATH">media/skins/universalty/common/javascript</xsl:variable>
   <xsl:variable name="PORTAL_SHORTCUT_ICON">/favicon.ico</xsl:variable>
   
   
@@ -203,8 +203,8 @@
   	<!-- uPortal print CSS -->
     <link media="print" type="text/css" href="{$SKIN_PATH}/print.css" rel="stylesheet"/>
   	<!-- Yahoo! User Interface Library (YUI) CSS to establish a common, cross-browser base rendering.  See http://developer.yahoo.com/yui/ for more details. --> 
-    <link media="all" type="text/css" href="{$MEDIA_PATH}/reset-fonts-grids.css" rel="stylesheet"/> 
-    <link media="all" type="text/css" href="{$MEDIA_PATH}/base-min.css" rel="stylesheet"/>
+    <link media="all" type="text/css" href="{$MEDIA_PATH}/common/reset-fonts-grids.css" rel="stylesheet"/> 
+    <link media="all" type="text/css" href="{$MEDIA_PATH}/common/base-min.css" rel="stylesheet"/>
     <!-- uPortal skin CSS -->
     <link media="all" type="text/css" href="{$SKIN_PATH}/layout.css" rel="stylesheet"/>
     <link media="all" type="text/css" href="{$SKIN_PATH}/{$SKIN}.css" rel="stylesheet"/>
