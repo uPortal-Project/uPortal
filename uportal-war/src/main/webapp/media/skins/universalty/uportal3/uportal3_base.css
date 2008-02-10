@@ -1,383 +1,426 @@
-/* This CSS formats the visual presentation of the portal. */
-
-/* This CSS assumes use of the Yahoo! User Interface Library (YUI) CSS Reset, CSS Base, and CSS Fonts to establish a common, cross-browser base rendering.  Refer to [http://developer.yahoo.com/yui/] for more details. */
-
-/* This CSS assumes use of Silk icon set 1.3 by Mark James [ http://www.famfamfam.com/lab/icons/silk/ ], which is licensed under a Creative Commons Attribution 2.5 License. [ http://creativecommons.org/licenses/by/2.5/ ].  This icon set is free for use under the CCA 2.5 license, so long as there is a link back to the author's site.  This reference is present in the portal footer markup of the uportal3 theme. */
-
-/* This CSS should render well and consistently across A-grade browsers [http://developer.yahoo.com/yui/articles/gbs/] */
-
-
-/*********************************** GLOBAL */
-/* These selectors set baseline formatting that should cascade downwards: once set here, they do not need to be defined elsewhere except to override.  Note that much of the baseline formatting has already been set by the YUI CSS Reset, CSS Base, and CSS Fonts. */
-
-body {
-text-align: left;
-font-family:Verdana;
-}
-
-body#portal {background-color:#cdcdf0;}
-
-h1,h2,h3,h4,h5,h6 {font-family:Arial;}
-
-table, table tr, table td {
-	border:none;
-}
-
-.hide {display:none;}
-
-.portal-icon-small {
-	display:block;
-	height:16px;
-	width:16px;
-}
-
-.portal-icon-small span {visibility:hidden;}
-
-/*********************************** GLOBAL */
-
-
-/*********************************** PAGE */
-/* This primary div exists as a direct descendant of the <body> and encompases the main page sections (header, body, and footer). It is decorative only, and can be used for things like fixed width/centered layouts or special backgrounds. */
-
-#portalPage {background-color:#fff;}
-
-#portalPage table tr
-{
-	vertical-align: top;
-}
-/*********************************** PAGE */
-
-
-/*********************************** HEADER */
-/* Formatting for the the portal header. */
-
-#portalPageHeader {
-	border-bottom:4px solid #000099;
-}
-
-/* --- Header Bar --- */
-#portalPageBar {
-	background: #000099 url("images/headerbar.png") 0 0 repeat-x;
-	color:#fff;
-	text-align:right;
-}
-
-#portalPageBar h2 {
-	font-size: 90%;
-}
-
-#portalPageBarLinks a {
-	text-decoration:none;
-}
-
-#portalPageBarLinks a:link {color:#fff;}
-#portalPageBarLinks a:visited {color:#fff;}
-#portalPageBarLinks a:hover {
-	color:#fff;
-	background-color:#4348b0;
-}
-
-/* --- Logo --- */
-
-/* --- Header Links --- */
-#portalHeaderLinks {
-   text-align:right;
-}
-
-#portalHeaderLinks a {
-	text-decoration:none;
-}
-
-#portalHeaderLinks a:link {color:#fff;}
-#portalHeaderLinks a:visited {color:#fff;}
-#portalHeaderLinks a:hover {color:#fff;}
-
-/* --- User Identification --- */
-#portalLoggedinUser {
-	position:absolute;
-	top:4em;
-	left:250px;
-}
-
-#portalWelcome {
-	font-weight:bold;
-}
-
-#portalLogout {
-}
-
-#portalLogout {text-decoration:none;}
-#portalLogout:link {color:#814DA4;}
-#portalLogout:visited {color:#814DA4;}
-#portalLogout:hover {
-	color:#0000FF;
-	border-bottom:2px solid #FF6600;
-}
-
-/* =============== FOCUSED HEADER */	
-
-/*********************************** HEADER */
-
-
-/*********************************** BODY */
-/*  */
-
-#portalPageBody {
-	text-align:left;
-	border-bottom:2px solid #b5b4e6;
-}
-   
-/* =============== COLUMNS */
-
-/* --- Left Navigation Column --- */
-#portalPageLeftNavCol {
-   background-color:#b5b4e6;
-}
-
-/* =============== TITLE ROW */
-#portalPageBody h1 {
-	font-size:250%;
-}
-
-/* --- Preference Hooks --- */
-#portalCustomizationHooks {
-	text-align:right;
-}
-
-#portalCustomizationHooks ul, #portalCustomizationHooks li {
-	list-style:none;
-	display:inline;
-}
-/*********************************** BODY */
-
-
-/*********************************** PORTLET */
-/*  */
-
-.portlet-container {
-	border:1px solid #000099;
-}
-
-/* =============== PORTLET TOOLBAR */
-.portlet-toolbar {
-	white-space:nowrap;
-	background-color:#000099;
-}
-
-.portlet-toolbar h2 {
-}
-
-.portlet-toolbar a {text-decoration:none;}
-.portlet-toolbar a:link {color:#fff}
-.portlet-toolbar a:visited {color:#fff}
-.portlet-toolbar a:hover {color:#fff}
-
-.portlet-control-remove {background:transparent url("../images/remove.png") 0 0 no-repeat;}
-
-.portlet-control-remove span {visibility:hidden;}
-
-/* =============== PORTLET CONTENT */
-.portlet-content {
-}
-/*********************************** PORTLET */
-
-
-/*********************************** FOOTER */
-#portalPageFooter {
-	text-align: center;
-	background-color:#cdcdf0;
-}
-
-#portalPageFooter a:link{color:#fff;}
-#portalPageFooter a:visited{color:#fff;}
-#portalPageFooter a:hover{color:#fff;}
-   
-/*********************************** FOOTER */
-
-
-/*********************************** LOGIN */
-/* Formats the login form or CAS login */
-#portalLogin {
-
-}
-/*********************************** LOGIN */
-
-
-/*********************************** NAVIGATION */
-/* Formatting for the main navigation.  Main navigation can be rendered in the header (as tabs), or down the left side. */
-
-/* =============== SIDE NAVIGATION */
-
-.portal-navigation-left ul, .portal-navigation-left li {
-	list-style:none;
-}
-
-.portal-navigation-left .portal-navigation, .portal-navigation-left .portal-navigation-first, .portal-navigation-left .portal-navigation-last {
-	border-bottom:1px solid #000099;
-}
-
-.portal-navigation-left .portal-navigation a, .portal-navigation-left .portal-navigation-first a, .portal-navigation-left .portal-navigation-last a {
-	text-decoration:none;
-}
-
-.portal-navigation-left a.portal-navigation-link:link {color:#000099;}
-.portal-navigation-left a.portal-navigation-link:visited {color:#000099;}
-.portal-navigation-left a.portal-navigation-link:hover {
-	background-color:#4348b0;
-	color:#fff;
-}
-
-.portal-navigation-left .active a.portal-navigation-link {background-color:#000099;}
-.portal-navigation-left .active a.portal-navigation-link:link {color:#fff;}
-.portal-navigation-left .active a.portal-navigation-link:visited {color:#fff;}
-
-.portal-subnav-container {
-	background-color:#cdcdf0;
-}
-
-/* =============== TOP NAVIGATION */
-.uP-mainnav-container {
-	margin:0;
-	padding:0;
-	width:100%;
-	clear:both;
-	position:absolute;
-	top:82px;
-	left:0;
-	background:url(../../common/institutional/header_back.gif) repeat-x 0 -82px;
-	}
-
-.uP-mainnav-list {
-	list-style:none;
-	margin:0 0 0 10px;
-	padding:0;
-	}
-
-.uP-mainnav-li, .uP-mainnav-li-first, .uP-mainnav-li-last, .uP-mainnav-li-active, .uP-mainnav-li-active-first, .uP-mainnav-li-active-last, .uP-mainnav-li-edit, .uP-mainnav-li-edit-first, .uP-mainnav-li-edit-last {
-	display:inline;
-	margin:0;
-	padding:0;
-	}
-
-.uP-mainnav-link {
-	float:left;
-	background:url(../navigation/l_tab.gif) no-repeat left top;
-	margin:0;
-	padding:0 0 0 10px;
-	text-decoration:none;
-	white-space:nowrap;
-	font-size: 12px;
-	vertical-align: baseline;
-	}
-
-.uP-mainnav-label {
-	float:left;
-	display:block;
-	background:url(../navigation/r_tab.gif) no-repeat right top;
-	padding:10px 10px 4px 0px;
-	margin: 0 2px 0 0;
-	color:#152b40;
-	font:bold 120% arial,sans-serif;
-	text-decoration:none;
-	text-transform:uppercase;
-	white-space:nowrap;
-	}
-
-/* Hides rule from IE5-Mac \*/
-.uP-mainnav-label {float:none;}
-* html .portlet {height:1%;}
-/* End IE5-Mac hack */
-
-.uP-mainnav-link:hover .uP-mainnav-label {color:#009;}
-
-.uP-mainnav-li-active .uP-mainnav-link, .uP-mainnav-li-active-first .uP-mainnav-link, .uP-mainnav-li-active-last .uP-mainnav-link, .uP-mainnav-li-edit .uP-mainnav-link, .uP-mainnav-li-edit-first .uP-mainnav-link, .uP-mainnav-li-edit-last .uP-mainnav-link, .tab-edit .uP-mainnav-link {
-	background-position:0 -56px;
-	border-width:0;
-	}
-
-.uP-mainnav-li-active .uP-mainnav-label, .uP-mainnav-li-active-first .uP-mainnav-label, .uP-mainnav-li-active-last .uP-mainnav-label, .uP-mainnav-li-edit .uP-mainnav-label, .uP-mainnav-li-edit-first .uP-mainnav-label, .uP-mainnav-li-edit-last .uP-mainnav-label {
-	background-position:100% -56px;
+ /*
+ * VISUAL STYLES
+ *
+ * Define CSS classes to visually style the uportal3 skin.
+ *
+ * This CSS assumes use of the Yahoo! User Interface Library (YUI) CSS Reset, 
+ * CSS Base, and CSS Fonts to establish a common, cross-browser base rendering.
+ * Refer to [http://developer.yahoo.com/yui/] for more details.
+ * 
+ * This CSS should render well and consistently across A-grade browsers.
+ * Refer to [http://developer.yahoo.com/yui/articles/gbs/] for more details. 
+ *
+ * This CSS assumes use of Silk icon set 1.3 by Mark James:
+ * http://www.famfamfam.com/lab/icons/silk/
+ * which is licensed under a Creative Commons Attribution 2.5 License:
+ * http://creativecommons.org/licenses/by/2.5/
+ * This icon set is free for use under the CCA 2.5 license, so long as there 
+ * is a link back to the author's site.  This reference is present in the 
+ * portal footer markup of the uportal3 theme.
+ *
+ */
+
+
+/** common **/
+/* These selectors set baseline formatting that should cascade downwards: 
+ * once set here, they do not need to be defined elsewhere except to override.
+ * Note that much of the baseline formatting has already been set by the 
+ * YUI CSS Reset, CSS Base, and CSS Fonts. 
+ */
+
+	body
+	{
+		text-align: left;
+		font-family: Verdana;
 	}
 	
-.uP-mainnav-li-active .uP-mainnav-label, .uP-mainnav-li-active-first .uP-mainnav-label, .uP-mainnav-li-active-last .uP-mainnav-label {
-	padding-bottom:4px;
+	body#portal /* This formats only the <body> of the portal and not imported html pages */
+	{
+		background-color: #ccccff;
 	}
 	
-/* .tab-edit comes into play when the tab is being edited.  The interaction and class change is in the JS rather than the XSL.
-li.tab-edit > a > span {
-    padding-top: 4px;
-	}
-*/
-.uP-mainnav-li-edit .uP-mainnav-label img {vertical-align: middle;}
-
-.uP-mainnav-li-edit .uP-mainnav-label input {
-    margin: 0;
-    padding: 0;
-	vertical-align: middle;
-	font-size: 10px;
-	line-height: 10px;
+	h1,h2,h3,h4,h5,h6
+	{
+		font-family: Arial;
 	}
 	
-#tabNameSubmit {}
+	table, table tr, table td 
+	{
+		border: none;
+	}
+	
+	.invisible
+	{
+		visibility: hidden;
+	}
+	
+	.no-display
+	{
+		display: none;
+	}
+	
+	.portal-icon-small {
+		display: block;
+		height: 16px;
+		width: 16px;
+	}
 
-.uP-mainnav-li-edit .uP-mainnav-label input#newTabName {margin-left: 4px;}
-.uP-mainnav-li-edit .uP-mainnav-label input#tabNameSubmit {margin-right: 4px;}
-.uP-mainnav-li-edit .uP-mainnav-link:hover .uP-mainnav-label {cursor: text;}    
-.uP-mainnav-li .uP-mainnav-link:hover .uP-mainnav-label {cursor:pointer;}
-/*********************************** NAVIGATION */
-
-
-/*********************************** QUICKLINKS */
-/*  */
-
-#qlinkscontainer {
-}
-
-#qlinkscontainer h2 {
-	font-size:90%;
-}
-
-#qlinkscontainer ul, #qlinkscontainer li {
-	list-style:none;
-}
-
-#qlinkscontainer li {
-	padding:0 0 0 2em;
-}
-
-#qlinkscontainer a {text-decoration:none;}
-#qlinkscontainer a:link {color:#814DA4;}
-#qlinkscontainer a:visited {color:#814DA4;}
-#qlinkscontainer a:hover {
-	color:#0000FF;
-	border-bottom:2px solid #FF6600;
-}
+	.portal-icon-small span
+	{
+		visibility: hidden;
+	}
 
 
+/** page **/
+/* This primary div exists as a direct descendant of the <body> and encompases 
+ * the main page sections (header, body, and footer). It is decorative only, 
+ * and can be used for things like fixed width/centered layouts or special 
+ * backgrounds. 
+ */
 
-/*********************************** QUICKLINKS */
+	#portalPage 
+	{
+	}
+	
+	#portalPage table tr
+	{
+		vertical-align: top;
+	}
 
 
-/*********************************** WEB SEARCH */
-/*  */
-   
-#webSearchContainer {
+/** header **/
+/* The header is a direct descendant of the "page", along with the header and footer. */
 
-}
+	#portalPageHeader 
+	{
+		background-color: #fff;
+		border-bottom: 4px solid #000099;
+	}
+	
+	#portalPageBar 
+	{
+		background: #000099 url("images/headerbar.png") 0 0 repeat-x;
+		color: #9999cc;
+		text-align: right;
+	}
+	
+	#portalPageBar h2 
+	{
+		font-size: 90%;
+	}
+	
+	#portalPageBarLinks a 
+	{
+		color: #fff;
+		text-decoration: none;
+		padding-left: 20px;
+	}
+	
+	#portalPageBarHome
+	{
+		background: url("../icons/house.png") no-repeat;
+	}
+	
+	#portalPageBarCustom
+	{
+		background: url("../icons/user.png") no-repeat;
+	}
+	
+	#portalPageBarSitemap
+	{
+		background: url("../icons/map.png") no-repeat;
+	}
+	
+	#portalPageBarHelp
+	{
+		background: url("../icons/help.png") no-repeat;
+	}
+	
+	#portalPageBarLinks a:hover 
+	{
+		background-color: #4348b0;
+	}
 
-#webSearchContainer form {
+	#portalWelcome 
+	{
+		font-weight: bold;
+	}
+	
+	#portalWelcome a
+	{
+		text-decoration: none;
+		color: #663399;
+	}
+	
+	#portalWelcome a:hover 
+	{
+		color: #ff6600;
+		text-decoration: underline;
+	}
 
-}
 
-#webSearchFormContainer {
+/** body **/
+/* The page body (not to be confused with the root <body>) is a direct descendant of the "page", along with the header and footer. */
 
-}
+	#portalPageBody 
+	{
+	}
 
-#webSearchInput {
+	#portalPageLeftColumn
+	{
+		 background-color: #9999cc;
+	}
+	
+	#portalPageLeftColumnInner
+	{
+		 border-right: 1px solid #000099;
+	}
 
-}
+	#portalPageBodyTitle 
+	{
+		font-size: 250%;
+		color: #000099;
+	}
 
-#webSearchContainer select {
+	#portalCustomizationLinks
+	{
+		position: absolute;
+		top: 0;
+		right: 0;
+		text-align: right;
+		font-size: 80%;
+		color: #000099;
+	}
+	
+	#portalCustomizationLinks li 
+	{
+		list-style: none;
+	}
 
-}
-/*********************************** WEB SEARCH */
+
+/** portlets **/
+
+	.portlet-container 
+	{
+		border: 1px solid #000099;
+	}
+
+	.portlet-toolbar 
+	{
+		white-space: nowrap;
+		background-color: #000099;
+	}
+
+	.portlet-toolbar a 
+	{
+		text-decoration: none;
+		color: #fff
+	}
+	
+	.portlet-toolbar h2
+	{
+		margin-left: 0.5em;
+		padding-left: 20px;
+		background: url("../icons/application.png") 0 5px no-repeat;
+	}
+
+	.portlet-control-remove 
+	{
+		background: url("../images/remove.png") no-repeat;
+	}
+
+	.portlet-control-remove span
+	{
+		visibility: hidden;
+	}
+
+	.portlet-content 
+	{
+		background-color: #fff;
+	}
+
+
+/** footer **/
+	#portalPageFooter 
+	{
+		text-align: center;
+		color: #3366CC;
+		font-size: 80%;
+	}
+
+	#portalPageFooter a
+	{
+		color: #3366CC;
+	}
+	
+	#silkIconsAttribution
+	{
+		visibility: hidden;
+	}
+
+
+/** login **/
+	#portalLogin 
+	{
+		background: #000099 url("images/login.png");
+		color: #fff;
+	}
+	
+	#portalLogin h2
+	{
+		color: #ff6600;
+	}
+	
+	#portalLogin label
+	{
+		color: #fff;
+		font-size: 80%;
+	}
+	
+	#portalLogin a
+	{
+		color: #ff6600;
+		font-size: 80%;
+	}
+
+
+/** navigation **/
+/* Formatting for the main navigation.  
+ * Main navigation can be rendered in the header (as tabs), or down the left side. 
+ */
+	#portalNavigation ul, #portalNavigation li 
+	{
+		list-style: none;
+	}
+
+	#portalNavigation .portal-navigation 
+	{
+		background: url("images/tab.png") repeat-x;
+		border-bottom: 1px solid #000099;
+	}
+	
+	#portalNavigation .active 
+	{
+		background-position: 0 -200px;
+	}
+		
+	#portalNavigation .portal-navigation:hover 
+	{
+		background-position: 0 -400px;
+	}
+
+	#portalNavigation .portal-navigation a 
+	{
+		text-decoration: none;
+	}
+	
+	#portalNavigation a.portal-navigation-link 
+	{
+		color: #000099;
+		font-weight: bold;
+	}
+	
+	#portalNavigation .active a.portal-navigation-link 
+	{
+		color: #fff;
+	}
+	
+	#portalNavigation a.portal-navigation-link:hover 
+	{
+		color: #fff;
+	}
+
+	.portal-subnav-container 
+	{
+		background-color: #fff;
+	}
+	
+	.portal-subnav-container li
+	{
+		border-bottom: 1px solid #9999cc;
+	}
+	
+	#portalNavigation .portal-navigation .portal-subnav-container a
+	{
+		color: #9999cc;
+		font-weight: normal;
+		border-left: 4px solid #fff;
+		background: url("../icons/application.png") 0.5em 0.5em no-repeat;
+	}
+	
+	#portalNavigation .portal-navigation .portal-subnav-container a:hover
+	{
+		color: #663399;
+		border-left: 4px solid #ff6600;
+	}
+
+	/* top navigation */
+	#portalNavigation .header li.portal-navigation
+	{
+		border: 1px solid #000099;
+		margin-right: 3px;
+	}
+	
+	/* left navigation */
+	#portalNavigation .left a.portal-navigation-link 
+	{
+		background: url("../icons/bullet_purple.png") no-repeat right;
+	}
+	
+	#portalNavigation .left .active a.portal-navigation-link 
+	{
+		background: url("../icons/bullet_orange.png") no-repeat right;
+	}
+	
+	
+/** quicklinks **/
+	
+	#portalQuicklinks 
+	{
+	}
+	
+	#portalQuicklinks h2 
+	{
+		font-size: 90%;
+	}
+	
+	#portalQuicklinks li 
+	{
+		list-style: none;
+		padding: 0 0 0 2em;
+	}
+	
+	#portalQuicklinks a 
+	{
+		text-decoration: none;
+		color: #663399;
+	}
+
+	#portalQuicklinks a:hover 
+	{
+		color: #ff6600;
+		text-decoration: underline;
+	}
+
+
+/** web search **/
+		 
+	#webSearchContainer {
+	
+	}
+	
+	#webSearchContainer form {
+	
+	}
+	
+	#webSearchFormContainer {
+	
+	}
+	
+	#webSearchInput {
+	
+	}
+	
+	#webSearchContainer select {
+	
+	}

@@ -8,8 +8,8 @@
 
 <!--
  | This file determines the presentation of UI components of the portal.
- | The file is imported by the base stylesheet xhtml-theme.xsl.
- | Parameters and templates from other XSL files may be referenced; refer to xhtml-theme.xsl for the list of parameters and imported XSL files.
+ | The file is imported by the base stylesheet universalty.xsl.
+ | Parameters and templates from other XSL files may be referenced; refer to universalty.xsl for the list of parameters and imported XSL files.
  | For more information on XSL, refer to [http://www.w3.org/Style/XSL/].
 -->
 
@@ -37,12 +37,12 @@
       <xsl:choose>
         <xsl:when test="//focused">
           <!-- ****** PORTAL PAGE BAR TITLE FOCUSED BLOCK ****** -->
-          <xsl:call-template name="portal.page.bar.title.focused.block"/> <!-- Calls a template of institution custom content from xhtml-theme.xsl. -->
+          <xsl:call-template name="portal.page.bar.title.focused.block"/> <!-- Calls a template of institution custom content from universalty.xsl. -->
           <!-- ****** PORTAL PAGE BAR TITLE FOCUSED BLOCK ****** -->
         </xsl:when>
         <xsl:otherwise>
           <!-- ****** PORTAL PAGE BAR TITLE BLOCK ****** -->
-          <xsl:call-template name="portal.page.bar.title.block"/> <!-- Calls a template of institution custom content from xhtml-theme.xsl. -->
+          <xsl:call-template name="portal.page.bar.title.block"/> <!-- Calls a template of institution custom content from universalty.xsl. -->
           <!-- ****** PORTAL PAGE BAR TITLE BLOCK ****** -->
         </xsl:otherwise>
       </xsl:choose>
@@ -50,12 +50,12 @@
       	<xsl:choose>
           <xsl:when test="//focused">
             <!-- ****** PORTAL PAGE BAR LINKS FOCUSED BLOCK ****** -->
-            <xsl:call-template name="portal.page.bar.links.focused.block"/> <!-- Calls a template of institution custom content from xhtml-theme.xsl. -->
+            <xsl:call-template name="portal.page.bar.links.focused.block"/> <!-- Calls a template of institution custom content from universalty.xsl. -->
             <!-- ****** PORTAL PAGE BAR LINKS FOCUSED BLOCK ****** -->
           </xsl:when>
           <xsl:otherwise>
             <!-- ****** PORTAL PAGE BAR LINKS BLOCK ****** -->
-            <xsl:call-template name="portal.page.bar.links.block"/> <!-- Calls a template of institution custom content from xhtml-theme.xsl. -->
+            <xsl:call-template name="portal.page.bar.links.block"/> <!-- Calls a template of institution custom content from universalty.xsl. -->
             <!-- ****** PORTAL PAGE BAR LINKS BLOCK ****** -->
           </xsl:otherwise>
         </xsl:choose>
@@ -76,12 +76,12 @@
   	<xsl:choose>
       <xsl:when test="//focused">
         <!-- ****** PORTAL PAGE BAR TITLE FOCUSED BLOCK ****** -->
-        <xsl:call-template name="portal.page.bar.title.focused.block"/> <!-- Calls a template of institution custom content from xhtml-theme.xsl. -->
+        <xsl:call-template name="portal.page.bar.title.focused.block"/> <!-- Calls a template of institution custom content from universalty.xsl. -->
         <!-- ****** PORTAL PAGE BAR TITLE FOCUSED BLOCK ****** -->
       </xsl:when>
       <xsl:otherwise>
         <!-- ****** PORTAL PAGE BAR TITLE BLOCK ****** -->
-        <xsl:call-template name="portal.page.bar.title.block"/> <!-- Calls a template of institution custom content from xhtml-theme.xsl. -->
+        <xsl:call-template name="portal.page.bar.title.block"/> <!-- Calls a template of institution custom content from universalty.xsl. -->
         <!-- ****** PORTAL PAGE BAR TITLE BLOCK ****** -->
       </xsl:otherwise>
     </xsl:choose>  
@@ -176,7 +176,7 @@
    | This template renders the help link into the portal page bar title.
   -->
   <xsl:template name="portal.page.bar.link.help">
-    <a href="{$HELP_URL}" id="portalPageBarHelp" title="{$TOKEN[@name='HELP_LONG_LABEL']}">
+    <a href="{$HELP_URL}" id="portalPageBarHelp" title="{$TOKEN[@name='HELP_LONG_LABEL']}" target="_blank">
     	<span><xsl:value-of select="$TOKEN[@name='HELP_LABEL']"/></span>
     </a>
     <xsl:call-template name="portal.pipe"/>
@@ -195,12 +195,12 @@
         <xsl:choose>
           <xsl:when test="//focused">
             <!-- ****** LOGO FOCUSED BLOCK ****** -->
-            <xsl:call-template name="logo.focused.block"/> <!-- Calls a template of institution custom content from xhtml-theme.xsl. -->
+            <xsl:call-template name="logo.focused.block"/> <!-- Calls a template of institution custom content from universalty.xsl. -->
             <!-- ****** LOGO FOCUSED BLOCK ****** -->
           </xsl:when>
           <xsl:otherwise>
             <!-- ****** LOGO BLOCK ****** -->
-            <xsl:call-template name="logo.block"/> <!-- Calls a template of institution custom content from xhtml-theme.xsl. -->
+            <xsl:call-template name="logo.block"/> <!-- Calls a template of institution custom content from universalty.xsl. -->
             <!-- ****** LOGO BLOCK ****** -->
           </xsl:otherwise>
         </xsl:choose>
@@ -286,7 +286,7 @@
       <div id="portalWelcome">
         <div id="portalWelcomeInner">
           <p><xsl:value-of select="$TOKEN[@name='WELCOME_PRE']"/><xsl:value-of select="$USER_NAME"/><xsl:value-of select="$TOKEN[@name='WELCOME_POST']"/>
-          <a href="Logout" title="{$TOKEN[@name='LOGOFF_LONG_LABEL']}"><xsl:value-of select="$TOKEN[@name='LOGOFF_LABEL']"/></a>
+          <span class="logout-label"><a href="Logout" title="{$TOKEN[@name='LOGOFF_LONG_LABEL']}"><xsl:value-of select="$TOKEN[@name='LOGOFF_LABEL']"/></a></span>
           </p>
         </div>
       </div>

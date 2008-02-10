@@ -8,8 +8,8 @@
 
 <!--
  | This file determines the presentation of the main navigation systems of the portal.
- | The file is imported by the base stylesheet xhtml-theme.xsl.
- | Parameters and templates from other XSL files may be referenced; refer to xhtml-theme.xsl for the list of parameters and imported XSL files.
+ | The file is imported by the base stylesheet universalty.xsl.
+ | Parameters and templates from other XSL files may be referenced; refer to universalty.xsl for the list of parameters and imported XSL files.
  | For more information on XSL, refer to [http://www.w3.org/Style/XSL/].
 -->
 
@@ -20,7 +20,7 @@
   <!-- ========================================== -->
   <!--
    | This template renders the main navigation.
-   | This template can be rendered into the header or the left navigation column, determined by the parameters set in xhtml-theme.xsl.
+   | This template can be rendered into the header or the left navigation column, determined by the parameters set in universalty.xsl.
   -->
   <xsl:template match="navigation">
   	<xsl:param name="CONTEXT"/>  <!-- Catches the context parameter to know how to render the navigation. -->
@@ -31,6 +31,12 @@
         <a name="startContent"><xsl:comment>Comment to keep from collapsing</xsl:comment></a>  <!-- Skip navigation target. -->
         
         <ul id="portalNavigationList">
+        	<xsl:attribute name="class"> <!-- If rendered in the header, write in the class to format as a floated list to create tabs. -->
+          	<xsl:choose>
+            	<xsl:when test="$CONTEXT='header'">horizontal-list-floated</xsl:when>
+              <xsl:otherwise></xsl:otherwise>
+            </xsl:choose>
+          </xsl:attribute>
           <xsl:for-each select="tab">
             <xsl:variable name="NAV_POSITION"> <!-- Determine the position of the navigation option within the whole navigation list and add css hooks for the first and last positions. -->
               <xsl:choose>
@@ -79,7 +85,7 @@
   <!--
    | This template renders subnavigation which may appear in different contexts.
    | The context parameter is used to know whether the subnavigation is a flyout menu, the expanded display of the selected left navigation menu item, or as a separate navigation list of the page contents when using tabs.
-   | These options are determined by the parameters set in xhtml-theme.xsl.
+   | These options are determined by the parameters set in universalty.xsl.
   -->
   <xsl:template name="subnavigation">
     <xsl:param name="CONTEXT"/>  <!-- Catches the context parameter to know how to render the subnavigation. -->

@@ -8,8 +8,8 @@
 
 <!-- 
  | This file determines the base page layout and presentation of the portal.
- | The file is imported by the base stylesheet xhtml-theme.xsl.
- | Parameters and templates from other XSL files may be referenced; refer to xhtml-theme.xsl for the list of parameters and imported XSL files.
+ | The file is imported by the base stylesheet universalty.xsl.
+ | Parameters and templates from other XSL files may be referenced; refer to universalty.xsl for the list of parameters and imported XSL files.
  | For more information on XSL, refer to [http://www.w3.org/Style/XSL/].
 -->
 
@@ -103,12 +103,12 @@
         <xsl:choose>
           <xsl:when test="//focused">
             <!-- ****** HEADER FOCUSED BLOCK ****** -->
-          <xsl:call-template name="header.focused.block"/> <!-- Calls a template of institution custom content from xhtml-theme.xsl. -->
+          <xsl:call-template name="header.focused.block"/> <!-- Calls a template of institution custom content from universalty.xsl. -->
           <!-- ****** HEADER FOCUSED BLOCK ****** -->
           </xsl:when>
           <xsl:otherwise>
             <!-- ****** HEADER BLOCK ****** -->
-          <xsl:call-template name="header.block"/> <!-- Calls a template of institution custom content from xhtml-theme.xsl. -->
+          <xsl:call-template name="header.block"/> <!-- Calls a template of institution custom content from universalty.xsl. -->
           <!-- ****** HEADER BLOCK ****** -->
           </xsl:otherwise>
         </xsl:choose>
@@ -139,14 +139,14 @@
         <a name="startContent"><xsl:comment>Comment to keep from collapsing</xsl:comment></a>  <!-- Skip navigation target. -->
         
         <!-- ****** CONTENT TOP BLOCK ****** -->
-        <xsl:call-template name="content.top.block"/> <!-- Calls a template of institution custom content from xhtml-theme.xsl. -->
+        <xsl:call-template name="content.top.block"/> <!-- Calls a template of institution custom content from universalty.xsl. -->
         <!-- ****** CONTENT TOP BLOCK ****** -->
         
         <table id="portalPageBodyLayout" width="100%">
           <tr>
           
             <!-- ****** LEFT COLUMN ****** -->
-            <!-- Useage of the left column and subsequent UI components are set by parameters in xhtml-theme.xsl. -->
+            <!-- Useage of the left column and subsequent UI components are set by parameters in universalty.xsl. -->
             <xsl:if test="$USE_LEFT_COLUMN='true'">
               <xsl:call-template name="left.column"/> <!-- Template located in columns.xsl. -->
             </xsl:if>
@@ -160,12 +160,12 @@
                 <xsl:choose>
                   <xsl:when test="//focused">
                     <!-- ****** CONTENT TITLE BLOCK ****** -->
-                    <xsl:call-template name="content.title.block"/> <!-- Calls a template of institution custom content from xhtml-theme.xsl. -->
+                    <xsl:call-template name="content.title.focused.block"/> <!-- Calls a template of institution custom content from universalty.xsl. -->
                     <!-- ****** CONTENT TITLE BLOCK ****** -->
                   </xsl:when>
                   <xsl:otherwise>
                     <!-- ****** CONTENT TITLE BLOCK ****** -->
-                    <xsl:call-template name="content.title.focused.block"/> <!-- Calls a template of institution custom content from xhtml-theme.xsl. -->
+                    <xsl:call-template name="content.title.block"/> <!-- Calls a template of institution custom content from universalty.xsl. -->
                     <!-- ****** CONTENT TITLE BLOCK ****** -->
                   </xsl:otherwise>
                 </xsl:choose>
@@ -197,7 +197,7 @@
         </table>
         
         <!-- ****** CONTENT BOTTOM BLOCK ****** -->
-        <xsl:call-template name="content.bottom.block"/> <!-- Calls a template of institution custom content from xhtml-theme.xsl. -->
+        <xsl:call-template name="content.bottom.block"/> <!-- Calls a template of institution custom content from universalty.xsl. -->
         <!-- ****** CONTENT BOTTOM BLOCK ****** -->
       
     	</div>
@@ -220,7 +220,7 @@
       -->
       
       <!-- ****** FOOTER BLOCK ****** -->
-      <xsl:call-template name="footer.block"/> <!-- Calls a template of institution custom content from xhtml-theme.xsl. -->
+      <xsl:call-template name="footer.block"/> <!-- Calls a template of institution custom content from universalty.xsl. -->
       <!-- ****** FOOTER BLOCK ****** -->
       
     </div>

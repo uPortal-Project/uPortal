@@ -18,7 +18,7 @@
  */
 
 
-/** globals **/
+/** common **/
 	table, table tr, table td 
 	{
 		margin: 0;
@@ -30,15 +30,26 @@
 		padding: 0 0.5em;
 	}
 	
-/** body **/
-	body
-  {
-  }
+	ul.horizontal-list-floated li
+	{
+		list-style: none;
+		float: left;
+		padding-left: 1em;
+	}
+	
+	ul.horizontal-list-inline li
+	{
+		list-style: none;
+		display: inline;
+		padding-left: 1em;
+	}
+	
 	
 /** page **/
 	#portalPageBody 
 	{
-	clear: both;
+		min-width: 700px;
+		clear: both;
 	}
 
 
@@ -83,11 +94,58 @@
 	
 	#portalLogo
   {
-    margin: 0 10px 0 0;
+    margin: 20px;
   }
+	
+	#portalWelcome 
+	{
+		position: absolute;
+		top: 4em;
+		left: 250px;
+	}
+	
+	#portalWelcome .logout-label
+	{
+		padding-left: 0.5em;
+	}
+	
+	.focused #portalPageBar img
+	{
+		float: left;
+	}
 
 
 /** content **/
+	
+	#portalPageBodyTitleRowContents
+	{
+		position: relative;
+	}
+		
+	#portalPageBody h1 {
+		margin: 0.5em 0.5em 0 0.5em;
+	}
+		
+	#portalCustomizationLinks 
+	{
+		margin-left: 250px;
+	}
+	
+	#portalCustomizationLinks h3, #portalCustomizationLinks ul, #portalCustomizationLinks li 
+	{
+		display: inline;
+	}
+		
+	#portalCustomizationLinks ul 
+	{
+		margin: 0;
+	}
+	
+	#portalCustomizationLinks li 
+	{
+		padding-left: 1em;
+	}
+	
 	#portalPageLeftColumnInner 
 	{
 		 width: 15em;
@@ -101,10 +159,6 @@
 	.portal-page-column-inner 
 	{
 		padding-left: 1em;
-	}
-	
-	#portalPageBody h1 {
-		margin: 0.5em 0.5em 0 0.5em;
 	}
 	
 	.portlet-container {
@@ -135,18 +189,67 @@
 	}
 
 /** footer **/
+	#portalPageFooter
+	{
+		padding-top: 5em;
+	}
+	
+	#portalProductAndVersion
+	{
+		margin-top: 1em;
+	}
 
+/** login **/
+	#portalLogin
+	{
+	 padding: 1em;
+	}
+	
+	#portalLogin h2
+	{
+	 margin: 0 0 0.5em 0;
+	}
+	
+	#portalLogin label
+	{
+		display: block;
+		margin-bottom: 0.3em;
+	}
+	
+	#portalLogin input
+	{
+		margin-bottom: 1em;
+	}
 
 /** navigation **/
-	#portalNavigation .left #portalNavigationList a 
+	.header #portalNavigationList
+	{
+		position: absolute;
+		top: 90px;
+		left: 195px;
+	}
+	
+	#portalNavigation ul, #portalNavigation li 
+	{
+		margin: 0;
+		padding: 0;
+	}
+	
+	#portalNavigation #portalNavigationList a 
 	{
 		display: block;
 		padding: 0.5em 1em;
 	}
 	
-	.portal-subnav-container 
+	#portalNavigation .header #portalNavigationList a 
 	{
-		margin: 1px 5px 5px 5px;
+		display: block;
+		padding: 0.5em 2em;
+	}
+	
+	#portalNavigation #portalNavigationList .portal-subnav-container a
+	{
+		padding: 0.5em 1em 0.5em 2.1em;
 	}
 	
 /** quicklinks **/	

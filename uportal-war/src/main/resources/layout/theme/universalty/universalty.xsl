@@ -200,14 +200,16 @@
    | Template contents can be any valid XSL or XHTML.
   -->
   <xsl:template name="page.css">
-  	<!-- uPortal print CSS -->
-    <link media="print" type="text/css" href="{$SKIN_PATH}/print.css" rel="stylesheet"/>
-  	<!-- Yahoo! User Interface Library (YUI) CSS to establish a common, cross-browser base rendering.  See http://developer.yahoo.com/yui/ for more details. --> 
-    <link media="all" type="text/css" href="{$MEDIA_PATH}/common/reset-fonts-grids.css" rel="stylesheet"/> 
+    <!-- uPortal print CSS -->
+    <link media="print" type="text/css" href="{$SKIN_PATH}/print.css" rel="stylesheet"/> 
+    <!-- Yahoo! User Interface Library (YUI) CSS to establish a common, cross-browser base rendering.  See http://developer.yahoo.com/yui/ for more details. --> 
+    <link media="all" type="text/css" href="{$MEDIA_PATH}/common/reset-fonts-grids.css" rel="stylesheet"/>
     <link media="all" type="text/css" href="{$MEDIA_PATH}/common/base-min.css" rel="stylesheet"/>
-    <!-- uPortal skin CSS -->
+    <!-- uPortal theme/layout CSS -->
     <link media="all" type="text/css" href="{$SKIN_PATH}/layout.css" rel="stylesheet"/>
+    <!-- uPortal skin CSS -->
     <link media="all" type="text/css" href="{$SKIN_PATH}/{$SKIN}.css" rel="stylesheet"/>
+    
     <xsl:if test="$USE_AJAX='true'">
      <style type="text/css">
        /* dojo.css holds basic sizing and usage, tundra.css holds specific coloring and styling
@@ -216,8 +218,8 @@
        @import "<xsl:value-of select="$SCRIPT_PATH"/>/dojo/dijit/themes/tundra/tundra.css";
       </style>
     </xsl:if>
- 
-   <!-- Add Conditional Comments for IE to load IE specific CSS -->
+    
+    <!-- Add Conditional Comments for IE to load IE specific CSS -->
 		<xsl:comment>[if IE]&gt; 
 		&lt;style type="text/css"&gt;@import url("<xsl:value-of select="$SKIN_PATH" />/ie.css");&lt;/style&gt; 
 		&lt;![endif]</xsl:comment>
@@ -314,10 +316,10 @@
     <xsl:call-template name="quicklinks"/>
     <!-- Quicklinks -->
     
-    <!-- Main Navigation, by default rendered in the left column below.
+    <!-- Main Navigation, by default rendered in the left column below. -->
     <xsl:apply-templates select="//navigation">
       <xsl:with-param name="CONTEXT" select="'header'"/>
-    </xsl:apply-templates> -->
+    </xsl:apply-templates>
     <!-- Main Navigation -->
     
     <!-- SAMPLE:
@@ -410,6 +412,10 @@
       </a>
     </div>
     <!-- Skip Navigation -->
+    
+    <!-- Logo
+    <xsl:call-template name="logo"/> -->
+    <!-- Logo -->
     
     <!-- SAMPLE:
     <div id="portalHeaderFocusedBlock">
@@ -637,18 +643,18 @@
     
     <!-- uPortal Product Version -->
     <div id="portalProductAndVersion">
-    	<p><a href="http://www.uportal.org" title="Powered by {$UP_VERSION}">Powered by <xsl:value-of select="$UP_VERSION"/></a></p>
+    	<p><a href="http://www.uportal.org" title="Powered by {$UP_VERSION}" target="_blank">Powered by <xsl:value-of select="$UP_VERSION"/></a></p>
     	<!-- It's a good idea to leave this in the markup, that way anyone who may be supporting your portal can get to this information quickly by simply using a browser.  If you don't want the statement to visibly render in the page, use CSS to make it invisible. -->
     </div>
     
     <!-- Copyright -->
     <div id="portalCopyright">
-    	<p><a href="http://www.uportal.org" title="uPortal">uPortal</a> is licensed under the <a href="http://www.opensource.org/licenses/bsd-license.php" title="New BSD License">New BSD License</a> as approved by the Open Source Initiative (OSI), an <a href="http://www.opensource.org/docs/osd" title="OSI-certified">OSI-certified</a> ("open") and <a href="http://www.gnu.org/licenses/license-list.html" title="Gnu/FSF-recognized">Gnu/FSF-recognized</a> ("free") license.</p>
+    	<p><a href="http://www.uportal.org" title="uPortal" target="_blank">uPortal</a> is licensed under the <a href="http://www.opensource.org/licenses/bsd-license.php" title="New BSD License" target="_blank">New BSD License</a> as approved by the Open Source Initiative (OSI), an <a href="http://www.opensource.org/docs/osd" title="OSI-certified" target="_blank">OSI-certified</a> ("open") and <a href="http://www.gnu.org/licenses/license-list.html" title="Gnu/FSF-recognized" target="_blank">Gnu/FSF-recognized</a> ("free") license.</p>
     </div>
     
     <!-- Icon Set Attribution -->
     <div id="silkIconsAttribution">
-      <p><a href="http://www.famfamfam.com/lab/icons/silk/" title="Silk icon set 1.3">Silk icon set 1.3</a> courtesy of Mark James.</p>
+      <p><a href="http://www.famfamfam.com/lab/icons/silk/" title="Silk icon set 1.3" target="_blank">Silk icon set 1.3</a> courtesy of Mark James.</p>
       <!-- Silk icon set 1.3 by Mark James [ http://www.famfamfam.com/lab/icons/silk/ ], which is licensed under a Creative Commons Attribution 2.5 License. [ http://creativecommons.org/licenses/by/2.5/ ].  This icon set is free for use under the CCA 2.5 license, so long as there is a link back to the author's site.  If the Silk icons are used, this reference must be present in the markup, though not necessarily visible in the rendered page.  If you don't want the statement to visibly render in the page, use CSS to make it invisible. -->
     </div>
     

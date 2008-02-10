@@ -9,8 +9,8 @@
 <!--
  | This file determines the presentation of portlet (and channel) containers.
  | Portlet content is rendered outside of the theme, handled entirely by the portlet itself.
- | The file is imported by the base stylesheet xhtml-theme.xsl.
- | Parameters and templates from other XSL files may be referenced; refer to xhtml-theme.xsl for the list of parameters and imported XSL files.
+ | The file is imported by the base stylesheet universalty.xsl.
+ | Parameters and templates from other XSL files may be referenced; refer to universalty.xsl for the list of parameters and imported XSL files.
  | For more information on XSL, refer to [http://www.w3.org/Style/XSL/].
 -->
 
@@ -31,7 +31,7 @@
       <div id="portlet_{@ID}" class="portlet-container {@fname} dojoDndItem"> <!-- Main portlet container.  The unique ID is needed for drag and drop.  The portlet fname is also written into the class attribute to allow for unique rendering of the portlet presentation. -->
     
       <!-- ****** PORTLET TOP BLOCK ****** -->
-      <xsl:call-template name="portlet.top.block"/> <!-- Calls a template of institution custom content from xhtml-theme.xsl. -->
+      <xsl:call-template name="portlet.top.block"/> <!-- Calls a template of institution custom content from universalty.xsl. -->
       <!-- ****** PORTLET TOP BLOCK ****** -->
       
       <!-- ****** PORTLET TITLE AND TOOLBAR ****** -->
@@ -55,7 +55,7 @@
       </div>
       
       <!-- ****** PORTLET BOTTOM BLOCK ****** -->
-      <xsl:call-template name="portlet.bottom.block"/> <!-- Calls a template of institution custom content from xhtml-theme.xsl. -->
+      <xsl:call-template name="portlet.bottom.block"/> <!-- Calls a template of institution custom content from universalty.xsl. -->
       <!-- ****** PORTLET BOTTOM BLOCK ****** -->
     
     </div>
@@ -76,11 +76,15 @@
   </xsl:template>
   
   <xsl:template match="channel" mode="focused">
-    <div id="portlet_{@ID}" class="portletContainer">  <!-- Portlet container. -->
+    <div id="portlet_{@ID}" class="portlet-container">  <!-- Portlet container. -->
       <div id="toolbar_{@ID}" class="portlet-toolbar">  <!-- Render the portlet toolbar. -->
       	<xsl:call-template name="controls"/> <!-- Call the portlet controls into the toolbar. -->
       </div>
-      <xsl:copy-of select="."/> <!-- Write in the contents of the portlet. -->
+      <div id="portletContent_{@ID}" class="portlet-content">
+      	<div class="portlet-conent-inner">
+      		<xsl:copy-of select="."/> <!-- Write in the contents of the portlet. -->
+    		</div>
+    	</div>
     </div>
   </xsl:template>
   <!-- ============================================== -->
