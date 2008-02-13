@@ -28,7 +28,6 @@ import org.jasig.portal.rendering.IPortalRenderingPipeline;
 import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
-import org.jasig.portal.security.PersonManagerFactory;
 import org.jasig.portal.spring.PortalApplicationContextLocator;
 import org.jasig.portal.tools.versioning.Version;
 import org.jasig.portal.tools.versioning.VersionsManager;
@@ -68,8 +67,6 @@ public class PortalSessionManager extends HttpServlet {
   private static PortalSessionManager instance = null;
   private static boolean fatalError = false;
   private static int unauthenticatedUserSessionTimeout = 0;
-  private static final IPersonManager personManager =
-      PersonManagerFactory.getPersonManagerInstance();
 
   public static final ErrorID initPortalContext = new ErrorID("config","JNDI","Cannot initialize JNDI context");
 
@@ -172,6 +169,9 @@ public void init() throws ServletException {
      */
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse res) {
+        final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
+        final IPersonManager personManager = (IPersonManager)applicationContext.getBean("personManager", IPersonManager.class);
+        
         final IWritableHttpServletRequest writableRequest = new PortalHttpServletRequest(request, personManager);
         this.doGetInternal(writableRequest, res);
     }
@@ -216,6 +216,9 @@ public void init() throws ServletException {
             
             return;
         }
+        
+        final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
+        final IPersonManager personManager = (IPersonManager)applicationContext.getBean("personManager", IPersonManager.class);
 
         // Update the session timeout for an unauthenticated user.
         final IPerson person = personManager.getPerson(writableRequest);
@@ -231,8 +234,6 @@ public void init() throws ServletException {
         }
         
         try {
-            final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
-            
             final IRequestParameterProcessorController requestProcessorController = (IRequestParameterProcessorController)applicationContext.getBean("requestParameterProcessorController", IRequestParameterProcessorController.class);
             requestProcessorController.processParameters(writableRequest, res);
 

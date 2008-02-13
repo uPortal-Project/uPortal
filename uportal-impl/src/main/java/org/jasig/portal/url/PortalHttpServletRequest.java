@@ -17,11 +17,16 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.Validate;
+import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.groups.IEntityGroup;
+import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
+import org.jasig.portal.services.GroupService;
 
 /**
- * WritableHttpServletRequestImpl description.
+ * Portal wide request wrapper. Provides portal specific information for request parameters,
+ * attributes, user and role.
  *
  * @author Peter Kharchenko: pkharchenko at unicon.net
  * @version $Revision: 11911 $
@@ -173,5 +178,34 @@ public class PortalHttpServletRequest extends AbstractHttpServletRequestWrapper 
         }
         
         return person;
+    }
+
+    /**
+     * Determines whether or not the user is in the given role. The wrapped request
+     * is consulted first then the {@link GroupService} is used to determine if a
+     * group exists for the specified role and if the user is a member of it.
+     *
+     * @see org.jasig.portal.url.AbstractHttpServletRequestWrapper#isUserInRole(java.lang.String)
+     */
+    @Override
+    public boolean isUserInRole(String role) {
+        //Check the wrapped request first
+        final boolean isUserInRole = super.isUserInRole(role);
+        if (isUserInRole) {
+            return true;
+        }
+        
+        //Find the group for the role, if not found return false
+        final IGroupMember groupForRole = GroupService.getGroupMember(role, IEntityGroup.class);
+        if (groupForRole == null) {
+            return false;
+        }
+
+        //Load the group information about the current user
+        final IPerson person = this.personManager.getPerson(this);
+        final EntityIdentifier personEntityId = person.getEntityIdentifier();
+        final IGroupMember personGroupMember = GroupService.getGroupMember(personEntityId);
+        
+        return personGroupMember.isDeepMemberOf(groupForRole);
     }
 }

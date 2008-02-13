@@ -37,7 +37,7 @@ public abstract class AbstractHttpServletRequestWrapper implements HttpServletRe
         this.httpServletRequest = httpServletRequest;
     }
     
-    public HttpServletRequest getWrappedRequest() {
+    public final HttpServletRequest getWrappedRequest() {
         return this.httpServletRequest;
     }
 
