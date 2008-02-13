@@ -116,6 +116,7 @@
     <!--********** Portlet Rendering Channel ********** -->
     
     <bean id="portletChannel" class="org.jasig.portal.channels.portlet.SpringPortletChannelImpl">
+        <property name="personManager" ref="personManager" />
         <property name="portletContainer" ref="portletContainer" />
         <property name="portletDefinitionRegistry" ref="portletDefinitionRegistry" />
         <property name="portletEntityRegistry" ref="portletEntityRegistry" />

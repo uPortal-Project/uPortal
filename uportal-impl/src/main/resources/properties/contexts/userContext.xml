@@ -2,6 +2,11 @@
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
     
+    <!-- 
+     | The concrete IPersonManager implementation to be used
+     +-->
+    <bean id="personManager" class="org.jasig.portal.security.provider.SimplePersonManager" />
+    
     <bean id="userInstanceManager" class="org.jasig.portal.user.UserInstanceManagerImpl" />
     
 </beans>

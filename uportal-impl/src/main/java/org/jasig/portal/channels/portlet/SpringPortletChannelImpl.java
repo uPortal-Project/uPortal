@@ -8,6 +8,7 @@ package org.jasig.portal.channels.portlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import javax.portlet.PortletException;
@@ -21,6 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.pluto.PortletContainer;
 import org.apache.pluto.PortletContainerException;
+import org.apache.pluto.descriptors.common.SecurityRoleRefDD;
 import org.apache.pluto.descriptors.portlet.PortletDD;
 import org.jasig.portal.ChannelCacheKey;
 import org.jasig.portal.ChannelRuntimeData;
@@ -41,6 +43,7 @@ import org.jasig.portal.portlet.url.IPortletRequestParameterManager;
 import org.jasig.portal.portlet.url.PortletRequestInfo;
 import org.jasig.portal.portlet.url.RequestType;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.url.processing.RequestParameterProcessingIncompleteException;
 import org.springframework.beans.factory.annotation.Required;
 
@@ -57,6 +60,7 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
     
     protected final Log logger = LogFactory.getLog(this.getClass());
     
+    private IPersonManager personManager;
     private IPortletDefinitionRegistry portletDefinitionRegistry;
     private IPortletEntityRegistry portletEntityRegistry;
     private IPortletWindowRegistry portletWindowRegistry;
@@ -65,7 +69,20 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
     private IPortletSessionActionManager portletSessionActionManager;
     
     
-    
+    /**
+     * @return the personManager
+     */
+    public IPersonManager getPersonManager() {
+        return this.personManager;
+    }
+    /**
+     * @param personManager the personManager to set
+     */
+    @Required
+    public void setPersonManager(IPersonManager personManager) {
+        Validate.notNull(personManager);
+        this.personManager = personManager;
+    }
     /**
      * @return the portletDefinitionRegistry
      */
@@ -197,10 +214,16 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
      * Gets the portlet window ID to use for the specified channel static data.
      * 
      * @param channelStaticData The static description data for the channel.
-     * @return The ID associated with the static data.
+     * @return The ID associated with the static data, will not be null.
      */
     protected IPortletWindowId getPortletWindowId(ChannelStaticData channelStaticData) {
-        return (IPortletWindowId)channelStaticData.get(PORTLET_WINDOW_ID_PARAM);
+        final IPortletWindowId portletWindowId = (IPortletWindowId)channelStaticData.get(PORTLET_WINDOW_ID_PARAM);
+        
+        if (portletWindowId == null) {
+            throw new InconsistentPortletModelException("No IPortletWindowId exists in the ChannelStaticData, has initSession been called? ChannelStaticData: " + channelStaticData, portletWindowId);
+        }
+        
+        return portletWindowId;
     }
     
     //***** ISpringPortletChannel methods *****//
@@ -213,7 +236,7 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
         final String channelPublishId = channelStaticData.getChannelPublishId();
         final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getPortletDefinition(Integer.parseInt(channelPublishId));
         if (portletDefinition == null) {
-            throw new IllegalStateException("No IPortletDefinition exists for channelPublishId: " + channelPublishId);
+            throw new InconsistentPortletModelException("No IPortletDefinition exists for channelPublishId: " + channelPublishId, null);
         }
         
         final IPortletDefinitionId portletDefinitionId = portletDefinition.getPortletDefinitionId();
@@ -255,9 +278,6 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
     public void action(ChannelStaticData channelStaticData, PortalControlStructures portalControlStructures, ChannelRuntimeData channelRuntimeData) {
         //Get the portlet window
         final IPortletWindowId portletWindowId = this.getPortletWindowId(channelStaticData);
-        if (portletWindowId == null) {
-            throw new IllegalStateException("No IPortletWindowId exists in the ChannelStaticData, has initSession been called? ChannelStaticData: " + channelStaticData);
-        }
 
         final HttpServletRequest httpServletRequest = portalControlStructures.getHttpServletRequest();
         
@@ -269,8 +289,21 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
             parameters = portletRequestInfo.getParameters();
         }
         
+        //Load the person the request is for
+        final IPerson person = this.personManager.getPerson(httpServletRequest);
+        
+        //Load the portlet descriptor for the request
+        final List<SecurityRoleRefDD> securityRoleRefs;
+        try {
+            final PortletDD portletDescriptor = this.getPortletDD(httpServletRequest, portletWindowId);
+            securityRoleRefs = portletDescriptor.getSecurityRoleRefs();
+        }
+        catch (PortletContainerException pce) {
+            throw new InconsistentPortletModelException("Could not retrieve PortletDD for portlet window '" + portletWindowId + "' to provide the required SecurityRoleRefDD List to the PortletHttpRequestWrapper.", portletWindowId, pce);
+        }
+        
         //Setup the request and response
-        final PortletParameterRequestWrapper parameterRequestWrapper = new PortletParameterRequestWrapper(httpServletRequest, parameters);
+        final PortletHttpRequestWrapper parameterRequestWrapper = new PortletHttpRequestWrapper(httpServletRequest, parameters, person, securityRoleRefs);
         final HttpServletResponse httpServletResponse = portalControlStructures.getHttpServletResponse();
         
         //Execute the action, 
@@ -321,17 +354,12 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
             return false;
         }
         
-        //Get the root definition
-        final IPortletEntity portletEntity = this.portletWindowRegistry.getParentPortletEntity(httpServletRequest, portletWindowId);
-        final IPortletDefinition portletDefinition = this.portletEntityRegistry.getParentPortletDefinition(portletEntity.getPortletEntityId());
-        
-        //Get the portlet deployment
         final PortletDD portletDescriptor;
         try {
-            portletDescriptor = this.portletDefinitionRegistry.getParentPortletDescriptor(portletDefinition.getPortletDefinitionId());
+            portletDescriptor = this.getPortletDD(httpServletRequest, portletWindowId);
         }
         catch (PortletContainerException pce) {
-            this.logger.warn("Could not retrieve PortletDD for portlet window '" + portletWindow + "' to determine caching configuration. Marking content cache invalid and continuing.", pce);
+            this.logger.warn("Could not retrieve PortletDD for portlet window '" + portletWindowId + "' to determine caching configuration. Marking content cache invalid and continuing.", pce);
             return false;
         }
         
@@ -376,6 +404,12 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
         return lastRenderTime + (expirationCache * 1000) >= now;
     }
 
+    protected PortletDD getPortletDD(final HttpServletRequest httpServletRequest, final IPortletWindowId portletWindowId) throws PortletContainerException {
+        final IPortletEntity portletEntity = this.portletWindowRegistry.getParentPortletEntity(httpServletRequest, portletWindowId);
+        final IPortletDefinition portletDefinition = this.portletEntityRegistry.getParentPortletDefinition(portletEntity.getPortletEntityId());
+        return this.portletDefinitionRegistry.getParentPortletDescriptor(portletDefinition.getPortletDefinitionId());
+    }
+
     /* (non-Javadoc)
      * @see org.jasig.portal.channels.portlet.ISpringPortletChannel#render(org.jasig.portal.ChannelStaticData, org.jasig.portal.PortalControlStructures, org.jasig.portal.ChannelRuntimeData, java.io.PrintWriter)
      */
@@ -404,7 +438,21 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
             portletWindow.setRequestParameters(parameters);
         }
         
-        final PortletParameterRequestWrapper parameterRequestWrapper = new PortletParameterRequestWrapper(httpServletRequest, parameters);
+        //Load the person the request is for
+        final IPerson person = this.personManager.getPerson(httpServletRequest);
+        
+        //Load the portlet descriptor for the request
+        final List<SecurityRoleRefDD> securityRoleRefs;
+        try {
+            final PortletDD portletDescriptor = this.getPortletDD(httpServletRequest, portletWindowId);
+            securityRoleRefs = portletDescriptor.getSecurityRoleRefs();
+        }
+        catch (PortletContainerException pce) {
+            throw new InconsistentPortletModelException("Could not retrieve PortletDD for portlet window '" + portletWindowId + "' to provide the required SecurityRoleRefDD List to the PortletHttpRequestWrapper.", portletWindowId, pce);
+        }
+        
+        //Setup the request and response
+        final PortletHttpRequestWrapper parameterRequestWrapper = new PortletHttpRequestWrapper(httpServletRequest, parameters, person, securityRoleRefs);
 
         //Execute the action, 
         if (this.logger.isDebugEnabled()) {
