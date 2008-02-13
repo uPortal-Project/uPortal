@@ -171,13 +171,6 @@
                 </xsl:choose>
                 
               </div>
-              <xsl:if test="$USE_AJAX='true' and $AUTHENTICATED='true'">
-                <div>
-                    <a href="javascript:;" onClick="showAddChannelDialog();">More Content</a> | 
-                    <a href="javascript:;" onClick="showPageLayoutDialog();">Page Layout</a> | 
-                    <a href="javascript:;" onClick="showChooseSkinDialog();">Skin</a>
-                </div>
-              </xsl:if>
             </td>
           </tr>
           
