@@ -13,16 +13,12 @@
         <property name="ensureUniqueRuntimeObjectNames" value="true" />
         <property name="beans">
             <map>
-                <entry key="uPortal:type=Framework,name=Statistics" value-ref="portalFrameworkMBean" />
-                <entry key="uPortal:type=Persistence,name=HibernateStatistics" value-ref="hibernateStatisticsMBean"/>
+                <entry key="uPortal:section=Framework,name=Statistics" value-ref="portalFrameworkMBean" />
+                <entry key="uPortal:section=Persistence,name=HibernateStatistics" value-ref="hibernateStatisticsMBean"/>
+                <entry key="uPortal:section=Persistence,name=PortalDB" value-ref="PortalDb"/>
             </map>
         </property>
-        <property name="assembler">
-            <ref bean="metadataAssembler" />
-        </property>
     </bean>
-    <bean id="metadataAssembler" class="org.springframework.jmx.export.assembler.InterfaceBasedMBeanInfoAssembler" />
-
 
     <!-- Hibernate perstentce statistics -->
     <bean id="hibernateStatisticsMBean" class="org.hibernate.jmx.StatisticsService">
