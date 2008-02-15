@@ -109,15 +109,9 @@
 
         <dependency>
             <groupId>org.jasig.service</groupId>
-            <artifactId>person-directory</artifactId>
+            <artifactId>person-directory-impl</artifactId>
             <version>${person-directory.version}</version>
             <scope>compile</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-dao</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         
         <dependency>
@@ -542,6 +536,13 @@
             <groupId>org.apache.pluto</groupId>
             <artifactId>pluto-taglib</artifactId>
             <version>${pluto.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasig.service</groupId>
+            <artifactId>person-directory-api</artifactId>
+            <version>${person-directory.version}</version>
             <scope>provided</scope>
         </dependency>
 

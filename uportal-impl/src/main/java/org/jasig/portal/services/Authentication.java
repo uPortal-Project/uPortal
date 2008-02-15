@@ -8,6 +8,7 @@ package  org.jasig.portal.services;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -24,9 +25,9 @@ import org.jasig.portal.security.IPrincipal;
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.PortalSecurityException;
 import org.jasig.portal.security.provider.ChainingSecurityContext;
-import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.portal.utils.MovingAverage;
 import org.jasig.portal.utils.MovingAverageSample;
+import org.jasig.services.persondir.IPersonAttributeDao;
 
 /**
  * Attempts to authenticate a user and retrieve attributes
@@ -130,22 +131,16 @@ public class Authentication {
          // Populate the person object using the PersonDirectory if applicable
          if (PropertiesManager.getPropertyAsBoolean("org.jasig.portal.services.Authentication.usePersonDirectory")) {
             // Retrieve all of the attributes associated with the person logging in
-            IPersonAttributeDao pa = PersonDirectory.getPersonAttributeDao();
-            Map attribs = pa.getUserAttributes(getUsername(person));
+            final IPersonAttributeDao pa = PersonDirectory.getPersonAttributeDao();
+            final String username = this.getUsername(person);
+            final Map<String, List<Object>> attribs = pa.getMultivaluedUserAttributes(username);
 
             if (attribs != null) {
             	// attribs may be null.  IPersonAttributeDao returns null when it does not recognize a user at all, as
             	// distinguished from returning an empty Map of attributes when it recognizes a user has having no
             	// attributes.
-
-                // Add each of the attributes to the IPerson
-                Iterator en = attribs.keySet().iterator();
-                while (en.hasNext()) {
-                   String key = (String)en.next();
-                   // String value = (String)attribs.get(key);
-                   // person.setAttribute(key, value);
-                   person.setAttribute(key, attribs.get(key));
-                }
+                
+                person.setAttributes(attribs);
             }
 
          }

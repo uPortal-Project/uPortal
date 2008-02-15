@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
@@ -3265,6 +3266,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       public Object getAttribute (String key) {return null;}
       public Object[] getAttributeValues (String key) {return null;}
       public void setAttribute (String key, Object value) {}
+      public void setAttribute(String key, List<Object> values) {}
       public void setAttributes (Map attrs) {}
 
       public Enumeration getAttributes () {return null;}

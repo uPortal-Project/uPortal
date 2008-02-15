@@ -103,7 +103,7 @@ public class PersonDirectoryUserInfoService implements UserInfoService {
      * @see org.apache.pluto.spi.optional.UserInfoService#getUserInfo(javax.portlet.PortletRequest)
      */
     @Deprecated
-    public Map<String, String> getUserInfo(PortletRequest request) throws PortletContainerException {
+    public Map<String, String> getUserInfo(final PortletRequest request) throws PortletContainerException {
         if (!(request instanceof InternalPortletRequest)) {
             throw new IllegalArgumentException("The PersonDirectoryUserInfoServices requires the PortletRequest parameter to implement the '" + InternalPortletRequest.class.getName() + "' interface.");
         }
@@ -140,7 +140,7 @@ public class PersonDirectoryUserInfoService implements UserInfoService {
      */
     protected Map<String, String> getUserInfo(String remoteUser, HttpServletRequest httpServletRequest, IPortletWindow portletWindow) throws PortletContainerException {
         //Get the list of user attributes the portal knows about the user
-        final Map<String, Object> portalUserAttributes = (Map<String, Object>)this.personAttributeDao.getUserAttributes(remoteUser);
+        final Map<String, Object> portalUserAttributes = this.personAttributeDao.getUserAttributes(remoteUser);
         if (portalUserAttributes == null) {
             return Collections.emptyMap();
         }
@@ -165,7 +165,7 @@ public class PersonDirectoryUserInfoService implements UserInfoService {
             final String attributeName = userAttributeDD.getName();
             final Object valueObj = portalUserAttributes.get(attributeName);
             
-            final String value = this.convertAttributeValue(valueObj);
+            final String value = String.valueOf(valueObj);
             portletUserAttributes.put(attributeName, value);
         }
         
@@ -186,39 +186,11 @@ public class PersonDirectoryUserInfoService implements UserInfoService {
             final String attributeName = portalUserAttributeEntry.getKey();
             final Object valueObj = portalUserAttributeEntry.getValue();
             
-            final String value = this.convertAttributeValue(valueObj);
+            final String value = String.valueOf(valueObj);
             portletUserAttributes.put(attributeName, value);
         }
         
         return portletUserAttributes;
-    }
-    
-    /**
-     * Converts a person directory value object to a String. Checks if the value is a String and
-     * does a cast, else if value is a List it uses the first value as a String, if the value type
-     * is unknown toString is used.
-     * 
-     * TODO this seems like a utility that should come with PersonDirectory
-     * 
-     * @param valueObj The person directory value
-     * @return The string version of the value
-     */
-    protected String convertAttributeValue(Object valueObj) {
-        if (valueObj instanceof String) {
-            return (String)valueObj;
-        }
-        else if (valueObj instanceof List) {
-            final Object firstValue = ((List<?>)valueObj).get(1);
-            
-            if (firstValue instanceof String) {
-                return (String)firstValue;
-            }
-
-            return firstValue + "";
-        }
-        else {
-            return valueObj + "";
-        }
     }
 
     /**
@@ -229,6 +201,7 @@ public class PersonDirectoryUserInfoService implements UserInfoService {
      * @return The List of expected user attributes for the portlet
      * @throws PortletContainerException If expected attributes cannot be determined
      */
+    @SuppressWarnings("unchecked")
     protected List<UserAttributeDD> getExpectedUserAttributes(HttpServletRequest request, final IPortletWindow portletWindow) throws PortletContainerException {
         final IPortletEntity portletEntity = this.portletWindowRegistry.getParentPortletEntity(request, portletWindow.getPortletWindowId());
         final IPortletDefinition portletDefinition = this.portletEntityRegistry.getParentPortletDefinition(portletEntity.getPortletEntityId());

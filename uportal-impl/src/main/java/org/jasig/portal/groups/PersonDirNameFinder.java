@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections15.map.ReferenceMap;
+import org.apache.commons.lang.StringUtils;
 import org.jasig.portal.security.IPerson;
 import org.jasig.services.persondir.IPersonAttributeDao;
 
@@ -76,23 +77,16 @@ public class PersonDirNameFinder
      */
     private String primGetName (String key) {
         String name = key;
-        Map userInfo = this.paDao.getUserAttributes(name);
+        final Map<String, Object> userInfo = this.paDao.getUserAttributes(name);
         if (userInfo != null)
         {
             Object displayName = userInfo.get("displayName");
             String displayNameStr = "";
-            if (displayName != null)
-            {
-                if (displayName instanceof java.util.List)
-                {
-                    List displayNameList = (List) displayName;
-                    if (! displayNameList.isEmpty() )
-                        { displayNameStr = (String)displayNameList.get(0); } 
+            if (displayName != null) {
+                displayNameStr = String.valueOf(displayName);
+                if (StringUtils.isNotEmpty(displayNameStr)) {
+                    name = displayNameStr;
                 }
-                else displayNameStr = (String)displayName;
-        
-                if (! displayNameStr.trim().equals("")) 
-                    { name = displayNameStr; }
             }
         }
         return  name;

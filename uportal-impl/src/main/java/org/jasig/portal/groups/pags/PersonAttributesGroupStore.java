@@ -134,7 +134,7 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
          IPerson person = null;
          try {
              IPersonAttributeDao pa = PersonDirectory.getPersonAttributeDao();
-             Map attrs = pa.getUserAttributes(member.getKey());
+             final Map<String, List<Object>> attrs = pa.getMultivaluedUserAttributes(member.getKey());
              RestrictedPerson rp = PersonFactory.createRestrictedPerson();
              rp.setAttributes(attrs);
              

@@ -48,17 +48,17 @@ public class CPersonAttributes extends BaseChannel implements IMimeResponse {
     Element attributesE = doc.createElement("attributes");
     
     IPersonAttributeDao pa = PersonDirectory.getPersonAttributeDao();
-    Set possibleAttrs = pa.getPossibleUserAttributeNames();
+    Set<String> possibleAttrs = pa.getPossibleUserAttributeNames();
     
     if (possibleAttrs != null)
-        possibleAttrs = new HashSet(possibleAttrs);
+        possibleAttrs = new HashSet<String>(possibleAttrs);
     else
-        possibleAttrs = new HashSet();
+        possibleAttrs = new HashSet<String>();
     
-    for (Enumeration attribs = person.getAttributeNames(); attribs.hasMoreElements(); ) {
+    for (Enumeration<String> attribs = person.getAttributeNames(); attribs.hasMoreElements(); ) {
       // Get the attribute name
-      String attName = (String) attribs.nextElement();
-      
+      String attName = attribs.nextElement();
+        
       // Remove this attr from the list of possible attrs
       possibleAttrs.remove(attName);
       
@@ -86,12 +86,12 @@ public class CPersonAttributes extends BaseChannel implements IMimeResponse {
     }
     
     //Sort the set of possible attributes
-    possibleAttrs = new TreeSet(possibleAttrs);
+    possibleAttrs = new TreeSet<String>(possibleAttrs);
     
     //Add the unknown attributes to the element list.
-    for (Iterator attribs = possibleAttrs.iterator(); attribs.hasNext(); ) {
+    for (Iterator<String> attribs = possibleAttrs.iterator(); attribs.hasNext(); ) {
         // Get the attribute name
-        String attName = (String) attribs.next();
+        String attName = attribs.next();
         
         // Set the attribute
         Element attributeE = doc.createElement("attribute");
