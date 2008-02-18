@@ -460,7 +460,7 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
         }
 
         try {
-        this.portletContainer.doRender(portletWindow, parameterRequestWrapper, contentRedirectingHttpServletResponse);
+            this.portletContainer.doRender(portletWindow, parameterRequestWrapper, contentRedirectingHttpServletResponse);
             contentRedirectingHttpServletResponse.flushBuffer();
         }
         catch (PortletException pe) {

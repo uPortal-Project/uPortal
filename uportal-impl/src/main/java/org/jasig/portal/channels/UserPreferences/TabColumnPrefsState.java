@@ -14,6 +14,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -21,6 +23,8 @@ import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.ChannelManager;
 import org.jasig.portal.ChannelRegistryManager;
 import org.jasig.portal.ChannelRuntimeData;
@@ -48,8 +52,6 @@ import org.jasig.portal.layout.node.UserLayoutChannelDescription;
 import org.jasig.portal.layout.node.UserLayoutFolderDescription;
 import org.jasig.portal.serialize.OutputFormat;
 import org.jasig.portal.serialize.XMLSerializer;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.utils.SAX2DuplicatingFilterImpl;
@@ -477,9 +479,9 @@ public class TabColumnPrefsState extends BaseState
    * Removes a channel element from the layout
    * @param channelSubscribeId the ID attribute of the channel to remove
    */
-  private final void deleteChannel(String channelSubscribeId) throws Exception
+  private final void deleteChannel(HttpServletRequest request, HttpServletResponse response, String channelSubscribeId) throws Exception
   {
-    pcs.getChannelManager().removeChannel(channelSubscribeId);
+    pcs.getChannelManager().removeChannel(request, response, channelSubscribeId);
     deleteElement(channelSubscribeId);
   }
 
@@ -953,7 +955,7 @@ public class TabColumnPrefsState extends BaseState
           {
             String channelSubscribeId = runtimeData.getParameter("elementID");
 
-            deleteChannel(channelSubscribeId);
+            deleteChannel(pcs.getHttpServletRequest(), pcs.getHttpServletResponse(), channelSubscribeId);
           }
           catch (Exception e)
           {

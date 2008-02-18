@@ -57,6 +57,9 @@ import org.jasig.portal.utils.SetCheckInSemaphore;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.jndi.JndiTemplate;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.xml.sax.ContentHandler;
 
 import tyrex.naming.MemoryContext;
@@ -890,18 +893,18 @@ public class ChannelManager implements LayoutEventListener {
      *
      * @param channelSubscribeId a <code>String</code> value
      */
-    public void removeChannel(String channelSubscribeId) {
+    public void removeChannel(HttpServletRequest request, HttpServletResponse response, String channelSubscribeId) {
         IChannel ch=channelTable.get(channelSubscribeId);
         if(ch!=null) {
             channelCacheTable.remove(ch);
-            try {
-                ch.receiveEvent(PortalEvent.UNSUBSCRIBE_EVENT);
-            } catch (Exception e) {
-                log.error(e, e);
-            }
-            channelTable.remove(ch);
-            if (log.isDebugEnabled())
+            
+            this.passPortalEvent(request, response, channelSubscribeId, PortalEvent.UNSUBSCRIBE_EVENT);
+            
+            channelTable.remove(channelSubscribeId);
+            
+            if (log.isDebugEnabled()) {
                 log.debug("removed channel with subscribe id="+channelSubscribeId);
+            }
         }
     }
 
@@ -1221,8 +1224,19 @@ public class ChannelManager implements LayoutEventListener {
     public void channelUpdated(LayoutEvent ev) {}
     public void channelMoved(LayoutMoveEvent ev) {}
     public void channelDeleted(LayoutMoveEvent ev) {
+        //No way to have the request/response passed to use. Use the holder instead
+        final RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+        final HttpServletRequest request;
+        if (requestAttributes instanceof ServletRequestAttributes) {
+            request = ((ServletRequestAttributes)requestAttributes).getRequest();
+        }
+        else {
+            log.warn("Available RequestAttributes='" + requestAttributes + "' do not implement ServletRequestAttributes");
+            request = null;
+        }
+        
         final IUserLayoutNodeDescription nodeDescription = ev.getNodeDescription();
-        this.removeChannel(nodeDescription.getId());
+        this.removeChannel(request, null, nodeDescription.getId());
     }
 
     public void folderAdded(LayoutEvent ev) {}
