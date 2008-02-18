@@ -900,7 +900,7 @@ public class ChannelManager implements LayoutEventListener {
             
             this.passPortalEvent(request, response, channelSubscribeId, PortalEvent.UNSUBSCRIBE_EVENT);
             
-            channelTable.remove(ch);
+            channelTable.remove(channelSubscribeId);
             
             if (log.isDebugEnabled()) {
                 log.debug("removed channel with subscribe id="+channelSubscribeId);
