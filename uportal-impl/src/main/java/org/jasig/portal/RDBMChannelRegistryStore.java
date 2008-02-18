@@ -23,6 +23,7 @@ import java.util.Map.Entry;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.concurrency.IEntityCachingService;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IEntity;
 import org.jasig.portal.groups.IEntityGroup;
@@ -40,13 +41,11 @@ import org.jasig.portal.rdbm.DatabaseMetaDataImpl;
 import org.jasig.portal.rdbm.IDatabaseMetadata;
 import org.jasig.portal.rdbm.IJoinQueryString;
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.services.EntityCachingService;
 import org.jasig.portal.services.GroupService;
 import org.jasig.portal.tools.versioning.VersionsManager;
 import org.jasig.portal.utils.CounterStoreFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Required;
-import org.springframework.dao.DataAccessException;
 
 /**
  * Reference implementation of IChannelRegistryStore.
@@ -64,6 +63,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore, Initiali
 	
 	private IDatabaseMetadata databaseMetadata;
 	private IPortletDefinitionRegistry portletDefinitionRegistry;
+	private IEntityCachingService entityCachingService;
 	
 
     /**
@@ -96,7 +96,22 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore, Initiali
 	    this.databaseMetadata = databaseMetadata;
 	}
 
-	/* (non-Javadoc)
+    /**
+     * @return the entityCachingService
+     */
+    public IEntityCachingService getEntityCachingService() {
+        return entityCachingService;
+    }
+    /**
+     * @param entityCachingService the entityCachingService to set
+     */
+    @Required
+    public void setEntityCachingService(IEntityCachingService entityCachingService) {
+        Validate.notNull(entityCachingService);
+        this.entityCachingService = entityCachingService;
+    }
+    
+    /* (non-Javadoc)
      * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
      */
     public void afterPropertiesSet() throws Exception {
@@ -375,7 +390,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore, Initiali
 
 		// Check the cache
 		try {
-			channelDef = (ChannelDefinition)EntityCachingService.instance().get(ChannelDefinition.class, String.valueOf(channelPublishId));
+            channelDef = (ChannelDefinition)this.entityCachingService.get(ChannelDefinition.class, String.valueOf(channelPublishId));
 		} catch (Exception e) {
 			log.error("Error checking cache for definition of channel with publish id "
 					+ channelPublishId, e);
@@ -531,12 +546,13 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore, Initiali
 
 				// Add the channel definition to the cache
 				try {
-          if (channelDef != null) {
-            EntityCachingService.instance().add(channelDef);
-          }
-				} catch (Exception e) {
-					log.error("Error caching channel definition " + channelDef, e);
-				}
+                    if (channelDef != null) {
+                        this.entityCachingService.add(channelDef);
+                    }
+                }
+                catch (Exception e) {
+                    log.error("Error caching channel definition " + channelDef, e);
+                }
 
 			} finally {
 				try { rs.close(); } catch (Exception e) {}
@@ -704,7 +720,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore, Initiali
 				
 				// Notify the cache
 				try {
-                    EntityCachingService.instance().update(channelDef);
+				    this.entityCachingService.update(channelDef);
                 }
                 catch (Exception e) {
                     log.error("Error updating cache for channel definition " + channelDef, e);
@@ -872,7 +888,8 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore, Initiali
 
 				// Notify the cache
 				try {
-					EntityCachingService.instance().remove(channelDef);
+				    final EntityIdentifier entityIdentifier = channelDef.getEntityIdentifier();
+                    this.entityCachingService.remove(entityIdentifier.getType(), entityIdentifier.getKey());
 				} catch (Exception e) {
 					log.error("Error removing channel definition "
 							+ channelDef + " from cache.", e);

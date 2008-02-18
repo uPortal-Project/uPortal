@@ -33,32 +33,35 @@ import org.jasig.portal.IBasicEntity;
 */
 public interface IEntityCachingService {
 
-/**
- * Adds the entity to the cache.
- * @param ent org.jasig.portal.concurrency.IBasicEntity
- * @exception org.jasig.portal.concurrency.CachingException
- */
-public void add(IBasicEntity ent) throws CachingException;
-/**
- * Returns the cached entity identified by type and key.
- * @param type Class
- * @param key String
- * @return IBasicEntity entity
- * @exception org.jasig.portal.concurrency.CachingException
- */
-public IBasicEntity get(Class type, String key) throws CachingException;
-/**
- * Removes the cached entity identified by type and key from the cache
- * and notifies peer caches.
- * @param type Class
- * @param key String
- * @exception CachingException
- */
-public void remove(Class type, String key) throws CachingException;
-/**
- * Updates the entity in the cache and notifies peer caches.
- * @param ent org.jasig.portal.concurrency.IBasicEntity
- * @exception org.jasig.portal.concurrency.CachingException
- */
-public void update(IBasicEntity ent) throws CachingException;
+    /**
+     * Adds the entity to the cache.
+     * @param ent org.jasig.portal.concurrency.IBasicEntity
+     * @exception org.jasig.portal.concurrency.CachingException
+     */
+    public void add(IBasicEntity ent) throws CachingException;
+
+    /**
+     * Returns the cached entity identified by type and key.
+     * @param type Class
+     * @param key String
+     * @return IBasicEntity entity
+     * @exception org.jasig.portal.concurrency.CachingException
+     */
+    public IBasicEntity get(Class<? extends IBasicEntity> type, String key) throws CachingException;
+
+    /**
+     * Removes the cached entity identified by type and key from the cache
+     * and notifies peer caches.
+     * @param type Class
+     * @param key String
+     * @exception CachingException
+     */
+    public void remove(Class<? extends IBasicEntity> type, String key) throws CachingException;
+
+    /**
+     * Updates the entity in the cache and notifies peer caches.
+     * @param ent org.jasig.portal.concurrency.IBasicEntity
+     * @exception org.jasig.portal.concurrency.CachingException
+     */
+    public void update(IBasicEntity ent) throws CachingException;
 }

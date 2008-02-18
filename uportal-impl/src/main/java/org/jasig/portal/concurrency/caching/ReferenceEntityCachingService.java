@@ -20,7 +20,9 @@ import org.jasig.portal.properties.PropertiesManager;
  * Caching service reference implementation.
  * @author Dan Ellentuck
  * @version $Revision$
+ * @deprecated In favor of using a Spring configured {@link CacheFactoryEntityCachingService} instance 
  */
+@Deprecated
 public class ReferenceEntityCachingService implements IEntityCachingService
 {
     // Singleton instance:

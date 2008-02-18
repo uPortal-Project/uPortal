@@ -16,7 +16,9 @@ import org.jasig.portal.IBasicEntity;
  *
  * @author Dan Ellentuck
  * @version $Revision$
+ * @deprecated See deprecation note for {@link ReferenceInvalidatingEntityCache}
  */
+@Deprecated
 public class CachedEntityInvalidation implements IBasicEntity {
     private final EntityIdentifier entityIdentifier;
     private final Date invalidationTime;

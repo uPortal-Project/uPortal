@@ -31,7 +31,25 @@
     <cache name="org.jasig.portal.channels.CONTENT_CACHE"
         eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" />
+        
+        
+    <!-- uPortal IBasicEntity Caches -->
 
+    <cache name="org.jasig.portal.ChannelDefinition"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="1800" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" />
+        
+    <cache name="org.jasig.portal.groups.IEntityGroup"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="1800" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" />
+        
+    <cache name="org.jasig.portal.groups.IEntity"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="1800" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" />
+        
+    <cache name="org.jasig.portal.security.IPermissionSet"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="1800" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" />
     
     <!-- Hibernate Caches -->
 

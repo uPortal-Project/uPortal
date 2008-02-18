@@ -102,7 +102,7 @@ throws AuthorizationException
 protected void cacheAdd(IPermissionSet ps) throws AuthorizationException
 {
     try
-        { EntityCachingService.instance().add(ps); }
+        { EntityCachingService.getEntityCachingService().add(ps); }
     catch (CachingException ce)
         { throw new AuthorizationException("Problem adding permissions for " + ps + " to cache", ce); }
 }
@@ -117,7 +117,7 @@ throws AuthorizationException
     try
     {
         return (IPermissionSet)
-          EntityCachingService.instance().get(this.PERMISSION_SET_TYPE, principal.getPrincipalString());
+          EntityCachingService.getEntityCachingService().get(this.PERMISSION_SET_TYPE, principal.getPrincipalString());
     }
     catch (CachingException ce)
         { throw new AuthorizationException("Problem getting permissions for " + principal + " from cache", ce); }
@@ -130,7 +130,7 @@ throws AuthorizationException
 protected void cacheRemove(IAuthorizationPrincipal ap) throws AuthorizationException
 {
     try
-        { EntityCachingService.instance().remove(this.PERMISSION_SET_TYPE, ap.getPrincipalString()); }
+        { EntityCachingService.getEntityCachingService().remove(this.PERMISSION_SET_TYPE, ap.getPrincipalString()); }
     catch (CachingException ce)
         { throw new AuthorizationException("Problem removing permissions for " + ap + " from cache", ce); }
 }
@@ -141,7 +141,7 @@ protected void cacheRemove(IAuthorizationPrincipal ap) throws AuthorizationExcep
 protected void cacheUpdate(IPermissionSet ps) throws AuthorizationException
 {
     try
-        { EntityCachingService.instance().update(ps); }
+        { EntityCachingService.getEntityCachingService().update(ps); }
     catch (CachingException ce)
         { throw new AuthorizationException("Problem updating permissions for " + ps + " in cache", ce); }
 }

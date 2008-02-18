@@ -7,6 +7,7 @@ package org.jasig.portal.utils.cache;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -160,41 +161,42 @@ public class MapCacheProvider<K extends Serializable, V> implements Map<K, V> {
      * @see java.util.Map#containsValue(java.lang.Object)
      */
     public boolean containsValue(Object value) {
-        throw new UnsupportedOperationException("Not supported when wrapping a CacheProviderFacade");
+        return false;
     }
 
     /* (non-Javadoc)
      * @see java.util.Map#entrySet()
      */
     public Set<java.util.Map.Entry<K, V>> entrySet() {
-        throw new UnsupportedOperationException("Not supported when wrapping a CacheProviderFacade");
+        return Collections.emptySet();
     }
 
     /* (non-Javadoc)
      * @see java.util.Map#isEmpty()
      */
     public boolean isEmpty() {
-        throw new UnsupportedOperationException("Not supported when wrapping a CacheProviderFacade");
+        return false;
     }
 
     /* (non-Javadoc)
      * @see java.util.Map#keySet()
      */
     public Set<K> keySet() {
-        throw new UnsupportedOperationException("Not supported when wrapping a CacheProviderFacade");
+        return Collections.emptySet();
     }
 
     /* (non-Javadoc)
      * @see java.util.Map#size()
      */
     public int size() {
-        throw new UnsupportedOperationException("Not supported when wrapping a CacheProviderFacade");
+        //Don't know what the size is
+        return 0;
     }
 
     /* (non-Javadoc)
      * @see java.util.Map#values()
      */
     public Collection<V> values() {
-        throw new UnsupportedOperationException("Not supported when wrapping a CacheProviderFacade");
+        return Collections.emptySet();
     }
 }

@@ -30,7 +30,9 @@ import java.util.HashMap;
  * @author Dan Ellentuck
  * @version $Revision$
  * @see org.jasig.portal.utils.SmartCache
+ * @deprecated See deprecation note for {@link ReferenceEntityCache}
  */
+@Deprecated
 public class LRUCache extends HashMap
 {
     // Maximum size of cache, after sweep.  Defaults to 1000.
