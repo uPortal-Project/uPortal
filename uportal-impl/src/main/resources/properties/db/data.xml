@@ -1385,7 +1385,7 @@
         </column>  
         <column>
           <name>SS_URI</name>
-          <value>/layout/theme/universalty/universalty.xsl</value>
+          <value>/layout/theme/universality/universality.xsl</value>
         </column>  
         <column>
           <name>SS_DESCRIPTION_URI</name>
