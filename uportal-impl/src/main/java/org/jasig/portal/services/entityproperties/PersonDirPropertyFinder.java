@@ -5,10 +5,12 @@
 
 package  org.jasig.portal.services.entityproperties;
 
-import java.util.Hashtable;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.collections15.map.ReferenceMap;
 import org.apache.commons.logging.Log;
@@ -32,17 +34,19 @@ public class PersonDirPropertyFinder
     
     private Class<IPerson> person = org.jasig.portal.security.IPerson.class;
     private IPersonAttributeDao pa;
-    private Map<String, Map> cache;
+    private Map<String, Map<String, List<Object>>> cache;
 
     public PersonDirPropertyFinder() {
         pa = PersonDirectory.getPersonAttributeDao();
-        cache = new ReferenceMap<String, Map>(ReferenceMap.HARD, ReferenceMap.SOFT, 120, .75f, true);
+        cache = new ReferenceMap<String, Map<String, List<Object>>>(ReferenceMap.HARD, ReferenceMap.SOFT, 120, .75f, true);
     }
 
     public String[] getPropertyNames(EntityIdentifier entityID) {
         String[] r = new String[0];
         if (entityID.getType().equals(person)) {
-            r = (String[])getPropertiesHash(entityID).keySet().toArray(r);
+            final Map<String, List<Object>> properties = getPropertiesHash(entityID);
+            final Set<String> propertyNames = properties.keySet();
+            r = propertyNames.toArray(r);
         }
         return  r;
     }
@@ -50,36 +54,34 @@ public class PersonDirPropertyFinder
     public String getProperty(EntityIdentifier entityID, String name) {
         String r = null;
         if (entityID.getType().equals(person)) {
-            Object o = getPropertiesHash(entityID).get(name);
-            if (o instanceof String) {
-                r = (String)o;
-            } else if (o instanceof List) {
-                StringBuffer sb = new StringBuffer();
-                List values = (List)o;
-                for (Iterator iter = values.iterator(); iter.hasNext();) {
-                    Object value = (Object)iter.next();
-                    sb.append(value.toString());
-                    if (iter.hasNext()) {
-                        sb.append(", ");
-                    }
+            final Map<String, List<Object>> properties = getPropertiesHash(entityID);
+            final List<Object> values = properties.get(name);
+            
+            final StringBuilder sb = new StringBuilder();
+            for (Iterator<Object> iter = values.iterator(); iter.hasNext();) {
+                Object value = iter.next();
+                sb.append(value);
+                if (iter.hasNext()) {
+                    sb.append(", ");
                 }
-                r = sb.toString();
             }
+            r = sb.toString();
         }
         return  r;
     }
-    protected Hashtable getPropertiesHash(EntityIdentifier entityID) {
-        Map ht;
-        if ((ht = cache.get(entityID.getKey())) == null) {
-            ht = new Hashtable(0);
+    protected Map<String, List<Object>> getPropertiesHash(EntityIdentifier entityID) {
+        final String entityIdKey = entityID.getKey();
+        Map<String, List<Object>> ht = cache.get(entityIdKey);
+        if (ht == null) {
             try {
-                ht = pa.getUserAttributes(entityID.getKey());
+                ht = pa.getMultivaluedUserAttributes(entityIdKey);
             } catch (Exception e) {
                 log.error("Error getting properties hash for entityID [" + entityID + "]", e);
+                ht = Collections.emptyMap();
             }
-            cache.put(entityID.getKey(), ht);
+            cache.put(entityIdKey, ht);
         }
-        return  new Hashtable(ht);
+        return  new HashMap<String, List<Object>>(ht);
     }
 
 }

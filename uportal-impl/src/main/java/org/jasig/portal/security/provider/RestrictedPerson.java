@@ -6,6 +6,7 @@
 package org.jasig.portal.security.provider;
 
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Map;
 
 import org.jasig.portal.EntityIdentifier;
@@ -20,8 +21,9 @@ import org.jasig.portal.security.ISecurityContext;
  * @version $Revision$
  */
 public class RestrictedPerson implements IPerson {
+    private static final long serialVersionUID = 1L;
 
-    private IPerson person;
+    private final IPerson person;
 
     public RestrictedPerson(IPerson person) {
         this.person = person;
@@ -35,11 +37,11 @@ public class RestrictedPerson implements IPerson {
         return this.person.getAttributeValues(key);
     }
 
-    public Enumeration getAttributeNames() {
+    public Enumeration<String> getAttributeNames() {
         return this.person.getAttributeNames();
     }
 
-    public Enumeration getAttributes() {
+    public Enumeration<List<Object>> getAttributes() {
         return this.person.getAttributes();
     }
 
@@ -58,8 +60,12 @@ public class RestrictedPerson implements IPerson {
     public void setAttribute(String key, Object value) {
         this.person.setAttribute(key, value);
     }
+    
+    public void setAttribute(String key, List<Object> values) {
+        this.person.setAttribute(key, values);
+    }
 
-    public void setAttributes(Map attrs) {
+    public void setAttributes(Map<String, List<Object>> attrs) {
         this.person.setAttributes(attrs);
     }
 

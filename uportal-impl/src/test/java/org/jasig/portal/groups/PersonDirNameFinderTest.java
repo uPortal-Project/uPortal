@@ -5,14 +5,16 @@
 
 package org.jasig.portal.groups;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import junit.framework.TestCase;
 
 import org.jasig.portal.security.IPerson;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.support.ComplexStubPersonAttributeDao;
-
-import junit.framework.TestCase;
 
 /**
  * Testcase for PersonDirNameFinder
@@ -29,19 +31,19 @@ public class PersonDirNameFinderTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         
-        Map userWithDisplayNameAttributes = new HashMap();
-        userWithDisplayNameAttributes.put("phone", "777-7777");
-        userWithDisplayNameAttributes.put("displayName", "Display Name");
+        Map<String, List<Object>> userWithDisplayNameAttributes = new HashMap<String, List<Object>>();
+        userWithDisplayNameAttributes.put("phone", Arrays.asList((Object)"777-7777"));
+        userWithDisplayNameAttributes.put("displayName", Arrays.asList((Object)"Display Name"));
         
-        Map userWithEmptyDisplayNameAttributes = new HashMap();
-        userWithEmptyDisplayNameAttributes.put("phone", "888-8888");
-        userWithEmptyDisplayNameAttributes.put("displayName", "");
+        Map<String, List<Object>> userWithEmptyDisplayNameAttributes = new HashMap<String, List<Object>>();
+        userWithEmptyDisplayNameAttributes.put("phone", Arrays.asList((Object)"888-8888"));
+        userWithEmptyDisplayNameAttributes.put("displayName", Arrays.asList((Object)""));
         
-        Map userWithoutDisplayNameAttributes = new HashMap();
-        userWithoutDisplayNameAttributes.put("phone", "666-6666");
-        userWithoutDisplayNameAttributes.put("givenName", "Howard");
+        Map<String, List<Object>> userWithoutDisplayNameAttributes = new HashMap<String, List<Object>>();
+        userWithoutDisplayNameAttributes.put("phone", Arrays.asList((Object)"666-6666"));
+        userWithoutDisplayNameAttributes.put("givenName", Arrays.asList((Object)"Howard"));
         
-        Map daoBackingMap = new HashMap();
+        Map<String, Map<String, List<Object>>> daoBackingMap = new HashMap<String, Map<String, List<Object>>>();
         
         daoBackingMap.put("userWithDisplayName", userWithDisplayNameAttributes);
         daoBackingMap.put("userWithEmptyDisplayName", userWithEmptyDisplayNameAttributes);

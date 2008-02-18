@@ -129,6 +129,13 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
+        <dependency>
+            <groupId>org.jasig.service</groupId>
+            <artifactId>person-directory-api</artifactId>
+            <version>${person-directory.version}</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <build>
