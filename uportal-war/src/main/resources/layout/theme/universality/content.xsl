@@ -9,8 +9,8 @@
 <!--
  | This file determines the presentation of portlet (and channel) containers.
  | Portlet content is rendered outside of the theme, handled entirely by the portlet itself.
- | The file is imported by the base stylesheet universalty.xsl.
- | Parameters and templates from other XSL files may be referenced; refer to universalty.xsl for the list of parameters and imported XSL files.
+ | The file is imported by the base stylesheet universality.xsl.
+ | Parameters and templates from other XSL files may be referenced; refer to universality.xsl for the list of parameters and imported XSL files.
  | For more information on XSL, refer to [http://www.w3.org/Style/XSL/].
 -->
 
@@ -31,7 +31,7 @@
       <div id="portlet_{@ID}" class="portlet-container {@fname} dojoDndItem"> <!-- Main portlet container.  The unique ID is needed for drag and drop.  The portlet fname is also written into the class attribute to allow for unique rendering of the portlet presentation. -->
     
       <!-- ****** PORTLET TOP BLOCK ****** -->
-      <xsl:call-template name="portlet.top.block"/> <!-- Calls a template of institution custom content from universalty.xsl. -->
+      <xsl:call-template name="portlet.top.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
       <!-- ****** PORTLET TOP BLOCK ****** -->
       
       <!-- ****** PORTLET TITLE AND TOOLBAR ****** -->
@@ -55,7 +55,7 @@
       </div>
       
       <!-- ****** PORTLET BOTTOM BLOCK ****** -->
-      <xsl:call-template name="portlet.bottom.block"/> <!-- Calls a template of institution custom content from universalty.xsl. -->
+      <xsl:call-template name="portlet.bottom.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
       <!-- ****** PORTLET BOTTOM BLOCK ****** -->
     
     </div>

@@ -8,8 +8,8 @@
 
 <!--
  | This file determines the presentation of the main navigation systems of the portal.
- | The file is imported by the base stylesheet universalty.xsl.
- | Parameters and templates from other XSL files may be referenced; refer to universalty.xsl for the list of parameters and imported XSL files.
+ | The file is imported by the base stylesheet universality.xsl.
+ | Parameters and templates from other XSL files may be referenced; refer to universality.xsl for the list of parameters and imported XSL files.
  | For more information on XSL, refer to [http://www.w3.org/Style/XSL/].
 -->
 
@@ -59,7 +59,7 @@
       <div id="portalPageLeftColumnInner"> <!-- Inner div for additional presentation/formatting options. -->
         
         <!-- ****** CONTENT LEFT BLOCK ****** -->
-        <xsl:call-template name="content.left.block"/> <!-- Calls a template of customizable content from universalty.xsl. -->
+        <xsl:call-template name="content.left.block"/> <!-- Calls a template of customizable content from universality.xsl. -->
         <!-- ****** CONTENT LEFT BLOCK ****** -->
       
       </div>

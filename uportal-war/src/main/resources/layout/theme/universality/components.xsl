@@ -8,8 +8,8 @@
 
 <!--
  | This file determines the presentation of UI components of the portal.
- | The file is imported by the base stylesheet universalty.xsl.
- | Parameters and templates from other XSL files may be referenced; refer to universalty.xsl for the list of parameters and imported XSL files.
+ | The file is imported by the base stylesheet universality.xsl.
+ | Parameters and templates from other XSL files may be referenced; refer to universality.xsl for the list of parameters and imported XSL files.
  | For more information on XSL, refer to [http://www.w3.org/Style/XSL/].
 -->
 
@@ -37,12 +37,12 @@
       <xsl:choose>
         <xsl:when test="//focused">
           <!-- ****** PORTAL PAGE BAR TITLE FOCUSED BLOCK ****** -->
-          <xsl:call-template name="portal.page.bar.title.focused.block"/> <!-- Calls a template of institution custom content from universalty.xsl. -->
+          <xsl:call-template name="portal.page.bar.title.focused.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
           <!-- ****** PORTAL PAGE BAR TITLE FOCUSED BLOCK ****** -->
         </xsl:when>
         <xsl:otherwise>
           <!-- ****** PORTAL PAGE BAR TITLE BLOCK ****** -->
-          <xsl:call-template name="portal.page.bar.title.block"/> <!-- Calls a template of institution custom content from universalty.xsl. -->
+          <xsl:call-template name="portal.page.bar.title.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
           <!-- ****** PORTAL PAGE BAR TITLE BLOCK ****** -->
         </xsl:otherwise>
       </xsl:choose>
@@ -50,12 +50,12 @@
       	<xsl:choose>
           <xsl:when test="//focused">
             <!-- ****** PORTAL PAGE BAR LINKS FOCUSED BLOCK ****** -->
-            <xsl:call-template name="portal.page.bar.links.focused.block"/> <!-- Calls a template of institution custom content from universalty.xsl. -->
+            <xsl:call-template name="portal.page.bar.links.focused.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
             <!-- ****** PORTAL PAGE BAR LINKS FOCUSED BLOCK ****** -->
           </xsl:when>
           <xsl:otherwise>
             <!-- ****** PORTAL PAGE BAR LINKS BLOCK ****** -->
-            <xsl:call-template name="portal.page.bar.links.block"/> <!-- Calls a template of institution custom content from universalty.xsl. -->
+            <xsl:call-template name="portal.page.bar.links.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
             <!-- ****** PORTAL PAGE BAR LINKS BLOCK ****** -->
           </xsl:otherwise>
         </xsl:choose>
@@ -76,12 +76,12 @@
   	<xsl:choose>
       <xsl:when test="//focused">
         <!-- ****** PORTAL PAGE BAR TITLE FOCUSED BLOCK ****** -->
-        <xsl:call-template name="portal.page.bar.title.focused.block"/> <!-- Calls a template of institution custom content from universalty.xsl. -->
+        <xsl:call-template name="portal.page.bar.title.focused.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
         <!-- ****** PORTAL PAGE BAR TITLE FOCUSED BLOCK ****** -->
       </xsl:when>
       <xsl:otherwise>
         <!-- ****** PORTAL PAGE BAR TITLE BLOCK ****** -->
-        <xsl:call-template name="portal.page.bar.title.block"/> <!-- Calls a template of institution custom content from universalty.xsl. -->
+        <xsl:call-template name="portal.page.bar.title.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
         <!-- ****** PORTAL PAGE BAR TITLE BLOCK ****** -->
       </xsl:otherwise>
     </xsl:choose>  
@@ -195,12 +195,12 @@
         <xsl:choose>
           <xsl:when test="//focused">
             <!-- ****** LOGO FOCUSED BLOCK ****** -->
-            <xsl:call-template name="logo.focused.block"/> <!-- Calls a template of institution custom content from universalty.xsl. -->
+            <xsl:call-template name="logo.focused.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
             <!-- ****** LOGO FOCUSED BLOCK ****** -->
           </xsl:when>
           <xsl:otherwise>
             <!-- ****** LOGO BLOCK ****** -->
-            <xsl:call-template name="logo.block"/> <!-- Calls a template of institution custom content from universalty.xsl. -->
+            <xsl:call-template name="logo.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
             <!-- ****** LOGO BLOCK ****** -->
           </xsl:otherwise>
         </xsl:choose>
