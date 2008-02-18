@@ -44,16 +44,32 @@
         <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
     </listener>
 
+    <!-- 
+     | Loads/Unloads the Spring WebApplicationContext
+     +-->
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
     
+    <!-- 
+     | uPortal utility for accessing the WebApplicationContext from code that doesn't have a reference to the ServletContext
+     +-->
     <listener>
         <listener-class>org.jasig.portal.spring.PortalApplicationContextLocator</listener-class>
     </listener>
     
+    <!-- 
+     | Passes Session init/destroy events to the WebApplicationContext
+     +-->
     <listener>
         <listener-class>org.jasig.portal.spring.web.context.support.ApplicationContextDelagatingSessionListener</listener-class>
+    </listener>
+    
+    <!-- 
+     | Exposes the current RequstAttributes object
+     +-->
+    <listener>
+        <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
     </listener>
 
     <servlet>
