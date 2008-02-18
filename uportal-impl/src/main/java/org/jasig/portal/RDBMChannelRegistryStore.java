@@ -501,22 +501,27 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore, Initiali
                 //TODO add a portletPreferences field to the ChannelDefinition object to support multivalued prefs
                 if (channelDef.isPortlet()) {
                     final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getPortletDefinition(channelPublishId);
-                    final IPortletPreferences portletPreferences = portletDefinition.getPortletPreferences();
-                    
-                    for (final IPortletPreference portletPreference : portletPreferences.getPortletPreferences()) {
-                        final String name = portletPreference.getName();
-                        final String[] values = portletPreference.getValues();
-                        final boolean readOnly = portletPreference.isReadOnly();
+                    if (portletDefinition != null) {
+                        final IPortletPreferences portletPreferences = portletDefinition.getPortletPreferences();
                         
-                        final String value;
-                        if (values == null || values.length == 0) {
-                            value = null;
+                        for (final IPortletPreference portletPreference : portletPreferences.getPortletPreferences()) {
+                            final String name = portletPreference.getName();
+                            final String[] values = portletPreference.getValues();
+                            final boolean readOnly = portletPreference.isReadOnly();
+                            
+                            final String value;
+                            if (values == null || values.length == 0) {
+                                value = null;
+                            }
+                            else {
+                                value = values[0];
+                            }
+                            
+                            channelDef.addParameter(PORTLET_CHANNEL_PARAM_PREFIX + name, value, !readOnly);
                         }
-                        else {
-                            value = values[0];
-                        }
-                        
-                        channelDef.addParameter(PORTLET_CHANNEL_PARAM_PREFIX + name, value, !readOnly);
+                    }
+                    else {
+                        log.warn("ChannelDefinition.isPortlet() reports true but no IPortletDefinition exists for channel publish id '" + channelPublishId + "'. This channel may not function correctly.");
                     }
                 }
 
