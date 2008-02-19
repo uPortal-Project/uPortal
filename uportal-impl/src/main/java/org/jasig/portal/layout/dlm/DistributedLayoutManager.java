@@ -85,12 +85,6 @@ IFolderLocalNameResolver
     protected Set<LayoutEventListener> listeners=new HashSet<LayoutEventListener>();
 
     /**
-     * Holds the classpath location of the context file for loading dlm specific
-     * configuration.
-     */
-    public static final String CONTEXT_CONFIG_FILE = "/properties/dlmContext.xml";
-
-    /**
      * Holds the bean name of the configured folder label policy if any that is 
      * defined in the dlm context configuration.  
      */

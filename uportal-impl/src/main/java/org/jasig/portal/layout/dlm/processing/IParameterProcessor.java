@@ -21,7 +21,7 @@ import org.jasig.portal.security.IPerson;
  * DistributedLayoutManager from processing needed to handle URL syntax for a
  * specific Structure and/or Theme transformation stylesheet combination. These
  * implementations are made available to the DistributedLayoutManager via
- * properties/dlmContext.xml.
+ * properties/context/layoutContext.xml.
  *
  * @author Mark Boyd
  */

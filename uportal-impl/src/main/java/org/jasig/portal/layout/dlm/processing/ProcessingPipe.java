@@ -69,7 +69,7 @@ import org.xml.sax.ContentHandler;
  * There are two types of processors supported, a fixed set which does not
  * change and an optional set from which a single processor can be added to the
  * pipe via the uP_dlmPrc parameter. All are configured via the
- * "/properties/dlmContext.xml" file.
+ * "properties/context/layoutContext.xml" file.
  *
  * The pipe provides a "front" ContentHandler to the DistributedLayoutManager
  * representing the front of the pipe for SAX events generated in the
