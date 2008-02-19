@@ -11,6 +11,8 @@ import java.util.concurrent.locks.ReadWriteLock;
 
 import org.apache.commons.collections15.map.ReferenceMap;
 import org.apache.commons.lang.Validate;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 
 /**
  * Implementation of DoubleCheckedCreator that stores what it creates in a backing Map. Subclasses need to implement
@@ -52,13 +54,23 @@ public abstract class MapCachingDoubleCheckedCreator<K, T> extends DoubleChecked
      * @return The key for the specified arguments
      */
     protected abstract K getKey(Object... args);
-    
+
     /* (non-Javadoc)
      * @see org.jasig.portal.utils.threading.DoubleCheckedCreator#retrieve(java.lang.Object[])
      */
     @Override
     protected final T retrieve(Object... args) {
         final K key = this.getKey(args);
-        return objectCache.get(key);
+        return this.objectCache.get(key);
+    }
+    
+    /**
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                .append("objectCache", this.objectCache)
+                .toString();
     }
 }

@@ -10,6 +10,8 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.commons.lang.Validate;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Implementation of double-checked locking for object creation using a {@link ReadWriteLock}
@@ -18,6 +20,8 @@ import org.apache.commons.lang.Validate;
  * @version $Revision$
  */
 public abstract class DoubleCheckedCreator<T> {
+    protected final Log logger = LogFactory.getLog(this.getClass());
+    
     private final ReadWriteLock readWriteLock;
     private final Lock readLock;
     private final Lock writeLock;
@@ -80,6 +84,13 @@ public abstract class DoubleCheckedCreator<T> {
                 
                     if (this.invalid(value, args)) {
                         value = this.create(args);
+                        
+                        if (this.logger.isDebugEnabled()) {
+                            this.logger.debug("Created new Object='" + value + "'");
+                        }
+                    }
+                    else if (this.logger.isDebugEnabled()) {
+                        this.logger.debug("Using retrieved Object='" + value + "'");
                     }
                 }
                 finally {
@@ -87,6 +98,9 @@ public abstract class DoubleCheckedCreator<T> {
                     this.readLock.lock();
                     this.writeLock.unlock();
                 }
+            }
+            else if (this.logger.isDebugEnabled()) {
+                this.logger.debug("Using retrieved Object='" + value + "'");
             }
 
             return value;
