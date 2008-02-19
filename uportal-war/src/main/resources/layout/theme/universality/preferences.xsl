@@ -126,9 +126,12 @@
    var contentAddingMenu, pageLayoutMenu, skinChoosingMenu;
    dojo.addOnLoad(initAjaxPortalPreferences);
    
+   <xsl:for-each select="/layout/navigation/tab[@activeTab='false']">
+    new dojo.dnd.Target('portalNavigation_<xsl:value-of select="@ID"/>');
+   </xsl:for-each>
    
    <xsl:for-each select="/layout/content/column">
-    new dojo.dnd.Source('inner_column_<xsl:value-of select="@ID"/>', { withHandles: true });
+    new dojo.dnd.Source('inner-column_<xsl:value-of select="@ID"/>', { withHandles: true });
     <xsl:for-each select="channel">
      <xsl:if test="not(@dlm:moveAllowed='false')">
      </xsl:if>

@@ -180,10 +180,37 @@ public class UpdatePreferencesServlet extends HttpServlet {
 		// isn't actually relevant if we're appending the source element.
 		String destinationId = request.getParameter("elementID");
 
-		// if the target is a column type node, we need to just move the portlet
-		// to the end of the column
-		if (ulm.getRootFolderId().equals(
-				ulm.getParentId(ulm.getParentId(destinationId)))) {
+		
+		IUserLayoutNodeDescription node = null;
+		if (isTab(ulm, destinationId)) {
+			// if the target is a tab type node, move the portlet to 
+			// the end of the first column
+			Enumeration columns = ulm.getChildIds(destinationId);
+			if (columns.hasMoreElements()) {
+				ulm.moveNode(sourceId, (String) columns.nextElement(), null);
+			} else {
+
+				IUserLayoutFolderDescription newColumn = new UserLayoutFolderDescription();
+				newColumn.setName("Column");
+				newColumn.setId("tbd");
+				newColumn
+						.setFolderType(IUserLayoutFolderDescription.REGULAR_TYPE);
+				newColumn.setHidden(false);
+				newColumn.setUnremovable(false);
+				newColumn.setImmutable(false);
+
+				// add the column to our layout
+				IUserLayoutNodeDescription col = ulm.addNode(newColumn,
+						destinationId, null);
+
+				// move the channel
+				ulm.moveNode(sourceId, col.getId(), null);
+			}
+
+		} else if (ulm.getRootFolderId().equals(
+			// if the target is a column type node, we need to just move the portlet
+			// to the end of the column
+			ulm.getParentId(ulm.getParentId(destinationId)))) {
 			ulm.moveNode(sourceId, destinationId, null);
 
 		} else {

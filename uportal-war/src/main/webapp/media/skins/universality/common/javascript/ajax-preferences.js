@@ -17,8 +17,11 @@ var skinXml;
 function initAjaxPortalPreferences(e) {
 
     var activeTab = dojo.byId("activeTabLink");
-    activeTab.removeAttribute('href');
-
+    //activeTab.removeAttribute('href');
+    
+	dojo.subscribe("/dnd/drop", function(source, nodes, copy, target){
+		movePortlet(nodes[0], target.node);
+	});
 }
 
 // initialize dojo menus and clean up unneeded links for the focused channel page
@@ -700,6 +703,45 @@ function addChannel() {
 		handleAs: "xml"
 	});
 
+}
+
+function movePortlet(movedNode, targetNode) {
+	var direction, targetElement;
+	// moved to a different tab
+	if (targetNode.id.indexOf('portalNavigation') == 0) {
+		movedNode.parentNode.removeChild(movedNode);
+		direction = "insertBefore";
+		targetElement = targetNode;
+	// moved within the page
+	} else if (targetNode.id.indexOf('inner-column') == 0) {
+		direction = "insertBefore";
+		targetElement = movedNode.nextSibling;
+		if (targetElement == null) {
+			direction = "appendAfter";
+			targetElement = movedNode.previousSibling;
+			if (targetElement == null) {
+				direction = "insertBefore";
+				targetElement = movedNode.parentNode;
+			}
+		}
+	}
+
+	// update the layout
+	dojo.xhrGet({
+		url: preferencesUrl,
+		handleAs: "xml",
+		content: {
+			action: 'movePortletHere',
+               sourceID: movedNode.id.split("_")[1], 
+               method: direction,
+               elementID: targetElement.id.split("_")[1]
+              },
+		load: function(response, ioArgs){
+			console.debug("move successful");
+		},
+		error: function(response, ioArgs) { alert("HTTP status code: ", ioArgs.xhr.status); }
+	});
+		
 }
 
 function showFocusedContentAddingDialog() {

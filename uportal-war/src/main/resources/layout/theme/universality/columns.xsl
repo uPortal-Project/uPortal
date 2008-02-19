@@ -40,7 +40,7 @@
             </xsl:otherwise>
           </xsl:choose>
         </xsl:attribute>
-        <div id="inner_column_{@ID}" class="portal-page-column-inner"> <!-- Column inner div for additional presentation/formatting options.  -->
+        <div id="inner-column_{@ID}" class="portal-page-column-inner"> <!-- Column inner div for additional presentation/formatting options.  -->
         	<xsl:apply-templates select="channel"/> <!-- Render the column's portlets.  -->
         </div>
       </td>

@@ -159,6 +159,7 @@
 	.portal-page-column-inner 
 	{
 		padding-left: 1em;
+		min-height: 100px;
 	}
 	
 	.portlet-container {
