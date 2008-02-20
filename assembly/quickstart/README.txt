@@ -61,13 +61,25 @@ Notes
 --------------------------------------------------------------------------------
 -The uPortal source code is included with this distribution. A seperate
  build.xml exists in the @uportal.name@ directory that provides Ant targets to
- deploy changes to the quickstart tomcat instance. Running the following command
- will list available uPortal Ant targets:
+ deploy changes made to the included uPortal source to the quickstart tomcat
+ instance. To run Ant targets for the included uPortal source code cd into the
+ @uportal.name@ directory. Running the following command from the @uportal.name@
+ directory will list available uPortal Ant targets:
 
-ant -f @uportal.name@/build.xml -p
+ant -p
 
 -Log messages for uPortal appear in @tomcat.name@/portal.log. Log files for
  Tomcat appear in @tomcat.name@/logs
+ 
+
+Developing with the Quickstart
+--------------------------------------------------------------------------------
+The developers build of the quickstart (distinguished by a -dev suffix in the
+download name) includes a copy of uPortal that is still 'attached' to subversion.
+Running svn commands in the @uportal.name@ directory will work as if you checked
+out uPortal from the JA-SIG Subversion repository.
+
+
 
 
 Contact

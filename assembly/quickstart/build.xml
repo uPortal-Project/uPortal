@@ -1,14 +1,16 @@
-<project name="uPortal Quickstart" basedir=".">
+<project name="uPortal Quickstart" basedir="." default="help">
     <property file="${basedir}/build.properties" />
     
     <import file="${uportal.dir}/bootstrap/build_includes.xml" />
     
     <property environment="env" />
+    
+    <target name="help">
+        <echo>Refer to README.txt for information on using the quickstart</echo>
+    </target>
 
     <target name="start" description="Starts the HSQL database and Tomcat">
-        <ant target="hsql" antfile="${uportal.dir}/build.xml" dir="${uportal.dir}">
-            <property name="spawn" value="true" />
-        </ant>
+        <antcall target="hsql-start" />
 
         <antcall target="tomcat-start" />
 
@@ -21,6 +23,32 @@ http://localhost:8080/uPortal
     <target name="stop" description="Stops Tomcat and the HSQL database">
         <antcall target="tomcat-stop" />
 
+        <antcall target="hsql-stop" />
+    </target>
+
+    <target name="tomcat-start" depends="prepare-tomcat">
+        <echo message="Starting Tomcat ..." />
+
+        <exec executable="${tomcat.dir}/bin/startup.${tcExecutableSuffix}" spawn="true" dir="${tomcat.dir}" />
+    </target>
+
+    <target name="tomcat-stop" depends="prepare-tomcat">
+        <echo message="Stopping Tomcat ..." />
+            
+        <exec executable="${tomcat.dir}/bin/shutdown.${tcExecutableSuffix}" dir="${tomcat.dir}" />
+    </target>
+
+    <target name="hsql-start">
+        <echo message="Starting HSQL ..." />
+
+        <ant target="hsql" antfile="${uportal.dir}/build.xml" dir="${uportal.dir}">
+            <property name="spawn" value="true" />
+        </ant>
+    </target>
+
+    <target name="hsql-stop">
+        <echo message="Stopping HSQL ..." />
+            
         <ant target="hsql-shutdown" antfile="${uportal.dir}/build.xml" dir="${uportal.dir}" />
     </target>
 
@@ -34,17 +62,5 @@ http://localhost:8080/uPortal
                 <property name="tcExecutableSuffix" value="sh" />
             </else>
         </if>
-    </target>
-
-    <target name="tomcat-start" depends="prepare-tomcat">
-        <echo message="Starting Tomcat ..." />
-
-        <exec executable="${tomcat.dir}/bin/startup.${tcExecutableSuffix}" spawn="true" dir="${tomcat.dir}" />
-    </target>
-
-    <target name="tomcat-stop" depends="prepare-tomcat">
-        <echo message="Stopping Tomcat ..." />
-            
-        <exec executable="${tomcat.dir}/bin/shutdown.${tcExecutableSuffix}" dir="${tomcat.dir}" />
     </target>
 </project>
