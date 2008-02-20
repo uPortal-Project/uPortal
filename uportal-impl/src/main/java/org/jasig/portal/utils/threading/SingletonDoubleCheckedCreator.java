@@ -5,6 +5,9 @@
  */
 package org.jasig.portal.utils.threading;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
+
 /**
  * Provides a DoubleCheckedCreator impl that tracks the singleton instance internally
  * 
@@ -14,6 +17,11 @@ package org.jasig.portal.utils.threading;
 public abstract class SingletonDoubleCheckedCreator<T> extends DoubleCheckedCreator<T> {
     private T instance;
     
+    /**
+     * Called only once
+     * 
+     * @see DoubleCheckedCreator#create(Object...)
+     */
     protected abstract T createSingleton(Object... args);
 
     /* (non-Javadoc)
@@ -33,5 +41,14 @@ public abstract class SingletonDoubleCheckedCreator<T> extends DoubleCheckedCrea
     protected final T retrieve(Object... args) {
         return this.instance;
     }
-
+    
+    /**
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                .append("instance", this.instance)
+                .toString();
+    }
 }
