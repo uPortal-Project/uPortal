@@ -28,7 +28,9 @@ import org.jasig.portal.concurrency.CachingException;
  * @version $Revision$
  * @see org.jasig.portal.concurrency.caching.CachedEntityInvalidation
  * @see org.jasig.portal.concurrency.IEntityCache
+ * @deprecated See the deprecation note for {@link ReferenceInvalidatingEntityCache}
  */
+@Deprecated
 public class RDBMCachedEntityInvalidationStore {
     private static final Log log = LogFactory.getLog(RDBMCachedEntityInvalidationStore.class);
     private static RDBMCachedEntityInvalidationStore singleton;

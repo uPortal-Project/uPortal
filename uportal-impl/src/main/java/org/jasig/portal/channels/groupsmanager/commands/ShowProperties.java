@@ -6,6 +6,7 @@
 package org.jasig.portal.channels.groupsmanager.commands;
 
 import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.IBasicEntity;
 import org.jasig.portal.channels.groupsmanager.CGroupsManagerSessionData;
 import org.jasig.portal.channels.groupsmanager.GroupsManagerXML;
 import org.jasig.portal.services.EntityPropertyRegistry;
@@ -40,7 +41,7 @@ public class ShowProperties extends GroupsManagerCommand {
       Element props = model.createElement(PROPERTIES_TAGNAME);
       EntityIdentifier ei = null;
       try{
-        ei = new EntityIdentifier(e.getAttribute("key"),Class.forName(e.getAttribute("type")));
+        ei = new EntityIdentifier(e.getAttribute("key"), (Class<IBasicEntity>)Class.forName(e.getAttribute("type")));
       }
       catch (ClassNotFoundException ce){
         throw new RuntimeException("Unable to instantiate class:  type "+e.getAttribute("type")+" unknown");

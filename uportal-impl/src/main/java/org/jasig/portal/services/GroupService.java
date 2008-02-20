@@ -251,7 +251,8 @@ protected GroupServiceConfiguration getServiceConfiguration() throws GroupsExcep
         IGroupMember gm = getGroupMember(person.getEntityIdentifier()); 
         try
         { 
-            EntityCachingService.instance().remove(gm.getEntityIdentifier()); 
+            final EntityIdentifier entityIdentifier = gm.getEntityIdentifier();
+            EntityCachingService.getEntityCachingService().remove(entityIdentifier.getType(), entityIdentifier.getKey()); 
         }
         catch (CachingException ce)
         {

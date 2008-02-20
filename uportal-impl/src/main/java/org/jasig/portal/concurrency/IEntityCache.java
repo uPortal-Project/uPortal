@@ -23,7 +23,9 @@ public interface IEntityCache {
     
     /**
      * Purge stale entries from the cache.
+     * @deprecated This is the responsibility of the cache or cache manager code
      */
+    @Deprecated
     public void cleanupCache() throws CachingException;
     
     /**
@@ -41,7 +43,7 @@ public interface IEntityCache {
      * @see org.jasig.portal.EntityTypes for known types.
      * @return java.lang.Class
      */
-    public Class getEntityType();
+    public Class<? extends IBasicEntity> getEntityType();
     
     /**
      * @param entityKey - the key of the entity to be un-cached.
@@ -49,7 +51,8 @@ public interface IEntityCache {
     public void remove(String entityKey) throws CachingException;
     
     /**
-     * Answers the number of entries in the cache.
+     * Answers the number of entries in the cache. May return -1 if the cache does not make this
+     * information avaialble
      */
     public int size();
     

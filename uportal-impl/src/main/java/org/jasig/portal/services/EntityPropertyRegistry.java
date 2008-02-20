@@ -145,7 +145,7 @@ public class EntityPropertyRegistry {
 
    public void clearCache(EntityIdentifier entityID) {
       try {
-         EntityCachingService.instance().remove(propsType, getPropKey(entityID));
+         EntityCachingService.getEntityCachingService().remove(propsType, getPropKey(entityID));
       } catch (CachingException e) {
          log.error("Error clearing cache for entity ID [" + entityID + "]", e);
       }
@@ -153,7 +153,7 @@ public class EntityPropertyRegistry {
 
    public void addToCache(EntityProperties ep) {
       try {
-         EntityCachingService.instance().add(ep);
+         EntityCachingService.getEntityCachingService().add(ep);
       } catch (CachingException e) {
          log.error("Error adding entity properties [" + ep + "] to the cache", e);
       }
@@ -162,7 +162,7 @@ public class EntityPropertyRegistry {
    public EntityProperties getCachedProperties(EntityIdentifier entityID) {
       EntityProperties ep = null;
       try {
-         ep = (EntityProperties) EntityCachingService.instance().get(propsType,
+         ep = (EntityProperties) EntityCachingService.getEntityCachingService().get(propsType,
                                                                      entityID.getKey());
       } catch (CachingException e) {
          log.error("Error getting cached properties for entity [" + entityID + "]", e);

@@ -25,7 +25,9 @@ import org.apache.commons.logging.LogFactory;
  * @author Dan Ellentuck
  * @version $Revision$
  * @see org.jasig.portal.concurrency.caching.LRUCache
+ * @deprecated See the deprecation note for {@link ReferenceEntityCachingService}
  */
+@Deprecated
 public class ReferenceEntityCache implements IEntityCache
 {
     private static final Log LOG = LogFactory.getLog(ReferenceEntityCache.class);

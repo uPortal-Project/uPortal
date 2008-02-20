@@ -5,14 +5,13 @@
 
 package org.jasig.portal.services;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.IBasicEntity;
 import org.jasig.portal.concurrency.CachingException;
 import org.jasig.portal.concurrency.IEntityCachingService;
-import org.jasig.portal.concurrency.IEntityCachingServiceFactory;
-import org.jasig.portal.properties.PropertiesManager;
+import org.jasig.portal.spring.PortalApplicationContextLocator;
+import org.jasig.portal.utils.threading.SingletonDoubleCheckedCreator;
+import org.springframework.context.ApplicationContext;
 
 /**
   * This class presents a facade for the IEntityCachingService implementation
@@ -47,129 +46,108 @@ import org.jasig.portal.properties.PropertiesManager;
   * <p>
   * @author  Dan Ellentuck
   * @version $Revision$
+  * @deprecated Where possible the Spring managed {@link IEntityCachingService} bean should be injected instead of using this lookup class.
   */
-
-public class EntityCachingService
-{
-    
-    private static final Log log = LogFactory.getLog(EntityCachingService.class);
+@Deprecated
+public class EntityCachingService implements IEntityCachingService {
     // Singleton instance of the bootstrap class:
-    private static EntityCachingService instance = null;
-    // The caching service:
-    private IEntityCachingService cache = null;
-    /** Creates new EntityLockService */
-    private EntityCachingService() throws CachingException
-    {
-        super();
-        initialize();
-    }
-/**
- * Adds the entity to the cache.
- * @param ent org.jasig.portal.IBasicEntity
- * @exception org.jasig.portal.concurrency.CachingException
- */
-public void add(IBasicEntity ent) throws CachingException
-{
-    cache.add(ent);
-}
-/**
- * Returns the cached entity identified by type and key.
- * @param type Class
- * @param key String
- * @return IBasicEntity entity
- * @exception org.jasig.portal.concurrency.CachingException
- */
-public IBasicEntity get(Class type, String key) throws CachingException
-{
-    return cache.get(type, key);
-}
-/**
- * Returns the cached entity referred to by entityID.
- * @param entityID entity identifier
- * @return IBasicEntity entity
- * @exception org.jasig.portal.concurrency.CachingException
- */
-public IBasicEntity get(EntityIdentifier entityID) throws CachingException
-{
-    return cache.get(entityID.getType(), entityID.getKey());
-}
-/**
- * @exception org.jasig.portal.concurrency.CachingException
- */
-private void initialize() throws CachingException
-{
-    String eMsg = null;
-    String factoryName =
-        PropertiesManager.getProperty("org.jasig.portal.concurrency.IEntityCachingServiceFactory");
-
-    if ( factoryName == null )
-    {
-        eMsg = "EntityCachingService.initialize(): No entry for org.jasig.portal.concurrency.caching.IEntityCachingServiceFactory in portal.properties.";
-        log.error( eMsg);
-        throw new CachingException(eMsg);
-    }
-
-    try
-    {
-        IEntityCachingServiceFactory cachingServiceFactory =
-            (IEntityCachingServiceFactory)Class.forName(factoryName).newInstance();
-        cache = cachingServiceFactory.newCachingService();
-    }
-    catch (Exception e)
-    {
-        eMsg = "EntityCachingService.initialize(): Problem creating entity caching service...";
-        log.error( eMsg, e);
-        throw new CachingException(eMsg, e);
-    }
-}
-    public static synchronized EntityCachingService instance() throws CachingException {
-        if ( instance==null ) {
-            instance = new EntityCachingService();
+    private static final SingletonDoubleCheckedCreator<EntityCachingService> instanceHolder = new SingletonDoubleCheckedCreator<EntityCachingService>() {
+        @Override
+        protected EntityCachingService createSingleton(Object... args) {
+            return new EntityCachingService();
         }
-        return instance;
+    };
+
+    /**
+     * @deprecated Use {@link #getEntityCachingService()} instead.
+     */
+    @Deprecated
+    public static EntityCachingService instance() throws CachingException {
+        return instanceHolder.get();
     }
-/**
- * Removes the entity identified by type and key from the cache and notifies
- * peer caches.
- * @param type Class
- * @param key String
- * @exception org.jasig.portal.concurrency.CachingException
- */
-public void remove(Class type, String key) throws CachingException
-{
-    cache.remove(type, key);
-}
-/**
- * Removes the entity referred to by entityID from the cache and notifies peer
- * caches.
- * @param entityID
- * @exception org.jasig.portal.concurrency.CachingException
- */
-public void remove(EntityIdentifier entityID) throws CachingException
-{
-    remove(entityID.getType(), entityID.getKey());
-}
-/**
- * Removes the <code>IBasicEntity</code> from the cache and notifies peer
- * caches.
- * @param ent org.jasig.portal.IBasicEntity
- * @exception org.jasig.portal.concurrency.CachingException
- */
-public void remove(IBasicEntity ent) throws CachingException
-{
-    remove(ent.getEntityIdentifier());
-}
-public static synchronized EntityCachingService start() throws CachingException
-{
-    return instance();
-}
-/**
- * Updates the entity in the cache and notifies peer caches.
- * @param ent org.jasig.portal.concurrency.IBasicEntity
- * @exception org.jasig.portal.concurrency.CachingException
- */
-public void update(IBasicEntity ent) throws CachingException
-{
-    cache.update(ent);
-}
+    
+    public static IEntityCachingService getEntityCachingService() {
+        return instanceHolder.get();
+    }
+
+    // The caching service:
+    private final IEntityCachingService cache;
+
+    /** Creates new EntityLockService */
+    private EntityCachingService() throws CachingException {
+        super();
+
+        final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
+        this.cache = (IEntityCachingService) applicationContext.getBean("entityCachingService", IEntityCachingService.class);
+    }
+
+    /**
+     * Adds the entity to the cache.
+     * @param ent org.jasig.portal.IBasicEntity
+     * @exception org.jasig.portal.concurrency.CachingException
+     */
+    public void add(IBasicEntity ent) throws CachingException {
+        this.cache.add(ent);
+    }
+
+    /**
+     * Returns the cached entity identified by type and key.
+     * @param type Class
+     * @param key String
+     * @return IBasicEntity entity
+     * @exception org.jasig.portal.concurrency.CachingException
+     */
+    public IBasicEntity get(Class<? extends IBasicEntity> type, String key) throws CachingException {
+        return this.cache.get(type, key);
+    }
+
+    /**
+     * Returns the cached entity referred to by entityID.
+     * @param entityID entity identifier
+     * @return IBasicEntity entity
+     * @exception org.jasig.portal.concurrency.CachingException
+     */
+    public IBasicEntity get(EntityIdentifier entityID) throws CachingException {
+        return this.cache.get(entityID.getType(), entityID.getKey());
+    }
+
+    /**
+     * Removes the entity identified by type and key from the cache and notifies
+     * peer caches.
+     * @param type Class
+     * @param key String
+     * @exception org.jasig.portal.concurrency.CachingException
+     */
+    public void remove(Class<? extends IBasicEntity> type, String key) throws CachingException {
+        this.cache.remove(type, key);
+    }
+
+    /**
+     * Removes the entity referred to by entityID from the cache and notifies peer
+     * caches.
+     * @param entityID
+     * @exception org.jasig.portal.concurrency.CachingException
+     */
+    public void remove(EntityIdentifier entityID) throws CachingException {
+        this.remove(entityID.getType(), entityID.getKey());
+    }
+
+    /**
+     * Removes the <code>IBasicEntity</code> from the cache and notifies peer
+     * caches.
+     * @param ent org.jasig.portal.IBasicEntity
+     * @exception org.jasig.portal.concurrency.CachingException
+     */
+    public void remove(IBasicEntity ent) throws CachingException {
+        this.remove(ent.getEntityIdentifier());
+    }
+
+    /**
+     * Updates the entity in the cache and notifies peer caches.
+     * @param ent org.jasig.portal.concurrency.IBasicEntity
+     * @exception org.jasig.portal.concurrency.CachingException
+     */
+    public void update(IBasicEntity ent) throws CachingException {
+        this.cache.update(ent);
+    }
 }

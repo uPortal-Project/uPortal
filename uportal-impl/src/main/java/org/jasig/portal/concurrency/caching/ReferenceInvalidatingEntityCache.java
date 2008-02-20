@@ -33,7 +33,11 @@ import org.jasig.portal.services.SequenceGenerator;
  * <p>
  * @author Dan Ellentuck
  * @version $Revision$
+ *  @deprecated In favor of using a Spring configured {@link CacheFactoryEntityCachingService} instance. The
+ *  injected {@link org.jasig.portal.utils.cache.CacheFactory} can be configured with a clustering enable cache to allow
+ *  for entity invalidation. 
  */
+@Deprecated
 public class ReferenceInvalidatingEntityCache extends ReferenceEntityCache
 {
     private static final Log LOG = LogFactory.getLog(ReferenceInvalidatingEntityCache.class);
