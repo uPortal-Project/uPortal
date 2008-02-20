@@ -20,7 +20,7 @@ import org.jasig.portal.security.IPerson;
  * If installations need more parameters added to the list than are used in this 
  * processor they are encouraged to implement their own processor and replace
  * this processor as one of the configured, fixed processors in 
- * properties/dlmContext.xml.
+ * properties/context/layoutContext.xml.
  *  
  * @author mark.boyd@sungardhe.com
  */

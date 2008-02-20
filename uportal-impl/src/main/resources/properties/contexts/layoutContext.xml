@@ -63,8 +63,7 @@
                 
                 <!-- Uncomment to enable AJAX preferences -->
 				<bean class="org.jasig.portal.layout.dlm.remoting.AjaxPreferencesThemeParamInjector" scope="prototype"/>
-                <bean class="org.jasig.portal.layout.dlm.remoting.AuthenticatedUserThemeParamInjector" scope="prototype"/>
-                
+
                 <!-- 
                 The following bean is an example of an IParameterProcessor that
                 watches for a tab with name "Sticky Tab" and if found sets that
