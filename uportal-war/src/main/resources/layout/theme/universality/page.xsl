@@ -56,7 +56,7 @@
         <!-- ****** JAVASCRIPT ****** -->
       </head>
       
-      <body id="portal" class="{$LOGIN_STATE} {$PORTAL_VIEW} tundra">
+      <body id="portal" class="{$LOGIN_STATE} {$PORTAL_VIEW}">
         <div id="portalPage">  <!-- Main div for presentation/formatting options. -->
         	<div id="portalPageInner">  <!-- Inner div for additional presentation/formatting options. -->
             <xsl:choose>

@@ -18,22 +18,13 @@
  <xsl:template name="preferences">
   <div id="dojoMenus" style="display:none;">
    <!-- Add Channel Menu -->
-   <div id="contentAddingDialog">
-    <div class="dojoTabContainer portal-dojo-container" style="width: 500px; height: 250px;">
-     <div class="dojoTabLabels-top dojoTabNoLayout">
-      <div id="contentAddingBrowseButton" onclick="chooseContentAddingMethod('browse')" class="dojoTab current">
-       <div>
-        <span>Browse Portlets</span>
-       </div>
-      </div>
-      <div id="contentAddingSearchButton" onclick="chooseContentAddingMethod('search')" class="dojoTab">
-       <div>
-        <span>Search</span>
-       </div>
-      </div>
-     </div>
-     <div class="dojoTabPaneWrapper">
-      <div id="contentAddingBrowseTab" class="portal-dojo-pane dojoTabPane" style="padding: 10px; position: relative; width:460px; height: 208px;">
+   <div id="contentAddingDialog" class="flora" title="Add Content">
+      <div id="channelAddingTabs" class="flora">
+       <ul>
+        <li><a href="#channel-tab-1"><span>Browse Channels</span></a></li>
+        <li><a href="#channel-tab-2"><span>Search</span></a></li>
+       </ul>
+       <div id="channel-tab-1">
        <h4 id="channelLoading">Loading portlet list . . . </h4>
        <table cellspacing="0" cellpadding="0" border="0">
         <tr>
@@ -45,8 +36,8 @@
          <td><select id="channelSelectMenu" onchange="selectChannel(this.value)" size="14" style="width: 300px; background: url({$SKIN_PATH}/skin/loading.gif) no-repeat center center"></select></td>
         </tr>
        </table>
-      </div>
-      <div id="contentAddingSearchTab" class="portal-dojo-pane dojoTabPane" style="overflow:auto; padding: 10px; display: none; position: relative; width:460px; height: 208px;">
+       </div>
+       <div id="channel-tab-2">
        <p>
         <label class="portlet-form-field-label" for="addChannelSearchTerm">Search for:</label>&#160;
         <input id="addChannelSearchTerm" type="text" onkeydown="searchChannels()"/>
@@ -54,52 +45,38 @@
        <br/>
        <h3>Matching portlets</h3>
        <ul id="addChannelSearchResults" style="list-style-type: none; padding: 0px; margin-left: 5px;"></ul>
+       </div>
       </div>
-     </div>
-    </div>
     <br/>
     <h3 class="portal-section-header">Portlet Details</h3>
     <h4 id="channelTitle" class="portal-section-subheader"></h4>
     <p id="channelDescription"></p>
     <p style="padding-top: 10px;">
      <input id="addChannelId" type="hidden"/>
-     <button id="addChannelLink" onclick="addChannel()" class="portlet-form-button">Add to my page</button>&#160;
+     <button id="addChannelLink" onclick="addPortlet()" class="portlet-form-button">Add to my page</button>&#160;
      <button id="previewChannelLink" class="portlet-form-button">Use it now</button>&#160;
     </p>
    </div>
-   <div id="pageLayoutDialog" class="preferences-edit-window" bgColor="#e6eefb" bgOpacity="0.7" toggle="fade" toggleDuration="250">
-    <p><label class="portlet-form-field-label">Number of columns:</label>
-     <xsl:element name="input">
-      <xsl:attribute name="onclick">changeColumns(1);</xsl:attribute>
-      <xsl:attribute name="name">columnNum</xsl:attribute>
-      <xsl:attribute name="type">radio</xsl:attribute>
-      <xsl:if test="count(/layout/content/column)=1">
-       <xsl:attribute name="checked">true</xsl:attribute>
-      </xsl:if>
-     </xsl:element> <label class="portlet-form-field-label">1</label>
-     <xsl:element name="input">
-      <xsl:attribute name="onclick">changeColumns(2);</xsl:attribute>
-      <xsl:attribute name="name">columnNum</xsl:attribute>
-      <xsl:attribute name="type">radio</xsl:attribute>
-      <xsl:if test="count(/layout/content/column)=2">
-       <xsl:attribute name="checked">true</xsl:attribute>
-      </xsl:if>
-     </xsl:element> <label class="portlet-form-field-label">2</label>
-     <xsl:element name="input">
-      <xsl:attribute name="onclick">changeColumns(3);</xsl:attribute>
-      <xsl:attribute name="name">columnNum</xsl:attribute>
-      <xsl:attribute name="type">radio</xsl:attribute>
-      <xsl:if test="count(/layout/content/column)=3">
-       <xsl:attribute name="checked">true</xsl:attribute>
-      </xsl:if>
-     </xsl:element> <label class="portlet-form-field-label">3</label>
+   
+   <div id="pageLayoutDialog" class="flora" title="Edit Page">
+    <form onsubmit="return updatePageName(this.pageName.value);">
+    <p>
+     <label class="portlet-form-field-label">Page name:</label>
+     <input name="pageName" type="text" size="20" value="{/layout/navigation/tab[@activeTab='true']/@name}"/>
+     <input type="submit" value="update"/>
     </p>
-    
-    <p><label class="portlet-form-field-label">Column widths:</label></p>
-    <br/>
-    <div id="columnWidthsAdjuster"></div>
+    </form>
+    <p id="changeColumns"><label class="portlet-form-field-label">Number of columns:</label>
+     <input type="radio" name="columnNum"/>
+     <label class="portlet-form-field-label">1</label>
+     <input type="radio" name="columnNum"/>
+     <label class="portlet-form-field-label">2</label>
+     <input type="radio" name="columnNum"/>
+     <label class="portlet-form-field-label">3</label>
+    </p>
    </div>	
-   <div id="skinChoosingDialog">
+
+   <div id="skinChoosingDialog" class="flora" title="Choose Skin">
     <h4 id="skinLoading">Loading portlet list . . . </h4>
     <form onsubmit="return chooseSkin(this);">
      <p class="portlet-form-label">
@@ -123,27 +100,20 @@
    var skinPath = '<xsl:value-of select="$SKIN_PATH"/>';
    var tabId = '<xsl:value-of select="/layout/navigation/tab[@activeTab='true']/@ID"/>';
    
-   var contentAddingMenu, pageLayoutMenu, skinChoosingMenu;
-   dojo.addOnLoad(initAjaxPortalPreferences);
-   
-   <xsl:for-each select="/layout/navigation/tab[@activeTab='false']">
-    new dojo.dnd.Target('portalNavigation_<xsl:value-of select="@ID"/>');
-   </xsl:for-each>
-   
-   <xsl:for-each select="/layout/content/column">
-    new dojo.dnd.Source('inner-column_<xsl:value-of select="@ID"/>', { withHandles: true });
-    <xsl:for-each select="channel">
-     <xsl:if test="not(@dlm:moveAllowed='false')">
-     </xsl:if>
-     <xsl:if test="not(@dlm:deleteAllowed='false')">
-      a = dojo.byId("removePortlet_" + '<xsl:value-of select="@ID"/>');
-      a.href = "javascript:;";
-      a.onclick = function(){deleteChannel('<xsl:value-of select="@ID"/>')};
-     </xsl:if>
+   $(document).ready(function(){
+
+    <xsl:for-each select="/layout/content/column">
+      <xsl:variable name="currentColumnId"><xsl:value-of select="@ID"/></xsl:variable>
+      <xsl:for-each select="channel">
+       <xsl:if test="not(@dlm:moveAllowed='false')">
+       		$('#portlet_<xsl:value-of select="@ID"/>').addClass('movable').children('.portlet-toolbar').css('cursor', 'move');
+       </xsl:if>
+      </xsl:for-each>
     </xsl:for-each>
-   </xsl:for-each>
+   initportal();
    
-   
+   });
+
   </script>
  </xsl:template>
   

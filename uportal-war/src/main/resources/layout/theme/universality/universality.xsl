@@ -211,12 +211,7 @@
     <link media="all" type="text/css" href="{$SKIN_PATH}/{$SKIN}.css" rel="stylesheet"/>
     
     <xsl:if test="$USE_AJAX='true'">
-     <style type="text/css">
-       /* dojo.css holds basic sizing and usage, tundra.css holds specific coloring and styling
-       for the tundra theme */
-       @import "<xsl:value-of select="$SCRIPT_PATH"/>/dojo/dojo/resources/dojo.css";
-       @import "<xsl:value-of select="$SCRIPT_PATH"/>/dojo/dijit/themes/tundra/tundra.css";
-      </style>
+     <link rel="stylesheet" href="{$MEDIA_PATH}/common/javascript/jquery/themes/flora/flora.all.css" type="text/css" media="screen" title="Flora (Default)"></link>
     </xsl:if>
     
     <!-- Add Conditional Comments for IE to load IE specific CSS -->
@@ -238,15 +233,17 @@
   -->
   <xsl:template name="page.js">
     <xsl:if test="$USE_AJAX='true'">
-      <script src="{$SCRIPT_PATH}/dojo/dojo/dojo.js" type="text/javascript" djConfig="parseOnLoad:false"></script>
-      <script src="{$SCRIPT_PATH}/ajax-preferences.js" type="text/javascript"/>
-      <script type="text/javascript">
-       dojo.require( "dijit.Dialog" );
-       dojo.require( "dijit.form.Button" );
-       dojo.require( "dijit.layout.ContentPane" );
-       dojo.require( "dijit.layout.SplitContainer" );
-       dojo.require( "dojo.dnd.Source" );
-      </script>
+     <script src="{$SCRIPT_PATH}/jquery/jquery-1.2.3.min.js"></script>
+     <script type="text/javascript" src="{$SCRIPT_PATH}/jquery/jquery.dimensions.js"></script>
+     <script type="text/javascript" src="{$SCRIPT_PATH}/jquery/ui.dialog.js"></script>
+     <script type="text/javascript" src="{$SCRIPT_PATH}/jquery/ui.resizable.js"></script>
+     <script type="text/javascript" src="{$SCRIPT_PATH}/jquery/ui.mouse.js"></script>
+     <script type="text/javascript" src="{$SCRIPT_PATH}/jquery/ui.draggable.js"></script>
+     <script type="text/javascript" src="{$SCRIPT_PATH}/jquery/ui.droppable.js"></script>
+     <script type="text/javascript" src="{$SCRIPT_PATH}/jquery/ui.sortable.js"></script>
+     <script type="text/javascript" src="{$SCRIPT_PATH}/jquery/ui.tabs.js"></script>
+     <script type="text/javascript" src="{$SCRIPT_PATH}/jquery/interface.js"></script>
+     <script src="{$SCRIPT_PATH}/ajax-preferences-jquery.js" type="text/javascript"/>
     </xsl:if>
   </xsl:template>
   

@@ -28,14 +28,14 @@
     <xsl:if test="not(./parameter[@name='removeFromLayout']/@value='true') and not(./parameter[@name='PORTLET.removeFromLayout']/@value='true')">
     
     <!-- ****** PORTLET CONTAINER ****** -->
-      <div id="portlet_{@ID}" class="portlet-container {@fname} dojoDndItem"> <!-- Main portlet container.  The unique ID is needed for drag and drop.  The portlet fname is also written into the class attribute to allow for unique rendering of the portlet presentation. -->
+      <div id="portlet_{@ID}" class="portlet-container {@fname}"> <!-- Main portlet container.  The unique ID is needed for drag and drop.  The portlet fname is also written into the class attribute to allow for unique rendering of the portlet presentation. -->
     
       <!-- ****** PORTLET TOP BLOCK ****** -->
       <xsl:call-template name="portlet.top.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
       <!-- ****** PORTLET TOP BLOCK ****** -->
       
       <!-- ****** PORTLET TITLE AND TOOLBAR ****** -->
-      <div id="toolbar_{@ID}" class="portlet-toolbar dojoDndHandle"> <!-- Portlet toolbar. -->
+      <div id="toolbar_{@ID}" class="portlet-toolbar"> <!-- Portlet toolbar. -->
         <a name="{@ID}" id="{@ID}"></a> <!-- ?????? WHAT IS THIS FOR ??????-->
         <h2> <!-- Portlet title. -->
           <a href="{$BASE_ACTION_URL}?uP_root={@ID}">
@@ -119,7 +119,7 @@
         </a>
       </xsl:if>
       <xsl:if test="not(@dlm:deleteAllowed='false') and not(//focused) and /layout/navigation/tab[@activeTab='true']/@immutable='false'">
-      	<a id="removePortlet_{@ID}" title="{$TOKEN[@name='PORTLET_REMOVE_LONG_LABEL']}" href="{$BASE_ACTION_URL}?uP_remove_target={@ID}" onClick="return confirm('Are you sure you want to remove this channel?')" class="portlet-control-remove">
+      	<a id="removePortlet_{@ID}" title="{$TOKEN[@name='PORTLET_REMOVE_LONG_LABEL']}" href="{$BASE_ACTION_URL}?uP_remove_target={@ID}" class="portlet-control-remove">
         	<span><xsl:copy-of select="$TOKEN[@name='PORTLET_REMOVE_LABEL']"/></span>
         </a>
       </xsl:if>

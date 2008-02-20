@@ -425,17 +425,17 @@
         	<h3><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINKS_TITLE']"/></h3>
           <ul>
             <li>
-              <a href="javascript:;" onClick="showAddChannelDialog();" title="{$TOKEN[@name='PREFERENCES_LINK_ADD_CONTENT_LONG_LABEL']}">
+              <a id="contentDialogLink" href="javascript:;" title="{$TOKEN[@name='PREFERENCES_LINK_ADD_CONTENT_LONG_LABEL']}">
               	<span><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINK_ADD_CONTENT_LABEL']"/></span>
               </a>
             </li>
             <li>
-              <a href="javascript:;" onClick="showPageLayoutDialog();" title="{$TOKEN[@name='PREFERENCES_LINK_LAYOUT_LONG_LABEL']}">
+              <a id="layoutDialogLink" href="javascript:;" title="{$TOKEN[@name='PREFERENCES_LINK_LAYOUT_LONG_LABEL']}">
               	<span><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINK_LAYOUT_LABEL']"/></span>
               </a>
             </li>
             <li>
-              <a href="javascript:;" onClick="showChooseSkinDialog();" title="{$TOKEN[@name='PREFERENCES_LINK_SKIN_LONG_LABEL']}">
+              <a id="skinDialogLink" href="javascript:;" title="{$TOKEN[@name='PREFERENCES_LINK_SKIN_LONG_LABEL']}">
               	<span><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINK_SKIN_LABEL']"/></span>
               </a>
             </li>
