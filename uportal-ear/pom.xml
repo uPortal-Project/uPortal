@@ -78,12 +78,6 @@
             <artifactId>pluto-container</artifactId>
             <version>${pluto.version}</version>
             <scope>compile</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging-api</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
