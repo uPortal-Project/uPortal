@@ -35,6 +35,46 @@
                     </if>
                 </file-iterator>
 
+                <!-- channel-types -->
+                <file-iterator dir="${req($1)}" includes="**/*.channel-type">
+                    <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
+                        <echo-ln>Import Channel Type:  ${req(Attributes.LOCATION)}</echo-ln>
+                        <with-attribute key="Attributes.NODE" value="${doc(${req($1)}/${req(Attributes.LOCATION)})}">
+                            <crn location="${valueOf(@script)}"/>
+                        </with-attribute>
+                    </if>
+                </file-iterator>
+                
+                <!-- entity-types -->
+                <file-iterator dir="${req($1)}" includes="**/*.entity-type">
+                    <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
+                        <echo-ln>Import Entity Type:  ${req(Attributes.LOCATION)}</echo-ln>
+                        <with-attribute key="Attributes.NODE" value="${doc(${req($1)}/${req(Attributes.LOCATION)})}">
+                            <crn location="${valueOf(@script)}"/>
+                        </with-attribute>
+                    </if>
+                </file-iterator>
+                
+                <!-- structures -->
+                <file-iterator dir="${req($1)}" includes="**/*.structure">
+                    <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
+                        <echo-ln>Import Structure:  ${req(Attributes.LOCATION)}</echo-ln>
+                        <with-attribute key="Attributes.NODE" value="${doc(${req($1)}/${req(Attributes.LOCATION)})}">
+                            <crn location="${valueOf(@script)}"/>
+                        </with-attribute>
+                    </if>
+                </file-iterator>
+                
+                <!-- themes -->
+                <file-iterator dir="${req($1)}" includes="**/*.theme">
+                    <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
+                        <echo-ln>Import Theme:  ${req(Attributes.LOCATION)}</echo-ln>
+                        <with-attribute key="Attributes.NODE" value="${doc(${req($1)}/${req(Attributes.LOCATION)})}">
+                            <crn location="${valueOf(@script)}"/>
+                        </with-attribute>
+                    </if>
+                </file-iterator>
+                
                 <!-- channels -->
                 <file-iterator dir="${req($1)}" includes="**/*.channel">
                     <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">

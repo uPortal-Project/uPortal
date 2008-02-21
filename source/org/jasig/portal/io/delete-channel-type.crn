@@ -1,0 +1,33 @@
+<with-attribute key="TYPE_ID"
+    value="${sql(SELECT type_id FROM up_chan_type WHERE type_name = '${req(NAME)}')}">
+    <!-- WARNING:  might be wrong type (int not string)... -->
+
+    <sql-query>
+        <sql>SELECT count(chan_id) FROM up_channel WHERE chan_type_id = ?</sql>
+        <parameter value="${req(TYPE_ID)}"/>
+        <subtasks>
+            <choose>
+                <when test="${jexl(COUNT > 0)}">
+                    <echo-ln>ERROR: The following channels reference this channel type:</echo-ln>
+                    <log level="error">Channel type '${req(NAME)}' has dependent channels;  the channel type will not be deleted.</log>
+                    <sql-query>
+                        <sql>SELECT chan_fname FROM up_channel WHERE chan_type_id = ?</sql>
+                        <parameter value="${req(TYPE_ID)}"/>
+                        <subtasks>
+                            <echo-ln>${req(CHAN_FNAME)}</echo-ln>
+                        </subtasks>
+                    </sql-query>
+                    <echo-ln>To delete this channel type, you will need to first delete the channels with the above fnames.</echo-ln>
+                </when>
+                <otherwise>
+                    <!-- Purge from the UP_CHAN_TYPE table... -->
+                    <sql-statement sql="DELETE FROM up_chan_type WHERE type_id = ?">
+                        <parameter value="${req(TYPE_ID)}"/>
+                    </sql-statement>
+                </otherwise>
+            </choose>
+        </subtasks>
+    </sql-query>
+
+
+</with-attribute>

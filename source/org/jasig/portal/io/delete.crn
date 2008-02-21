@@ -27,6 +27,22 @@
                         </with-attribute>
                     </when>
 
+                    <!-- channel-types -->
+                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('channel-type'))}">
+                        <with-attribute key="NAME" value="${req($2)}">
+                            <echo-ln>Delete channel type:  ${req(NAME)}</echo-ln>
+                            <crn location="delete-channel-type.crn"/>
+                        </with-attribute>
+                    </when>
+                    
+                    <!-- entity-types -->
+                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('entity-type'))}">
+                        <with-attribute key="NAME" value="${req($2)}">
+                            <echo-ln>Delete entity type:  ${req(NAME)}</echo-ln>
+                            <crn location="delete-entity-type.crn"/>
+                        </with-attribute>
+                    </when>
+                    
                     <!-- groups -->
                     <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('group'))}">
                         <with-attribute key="GROUP_NAME" value="${req($2)}">
@@ -38,6 +54,22 @@
 
                     </when>
 
+                    <!-- structures -->
+                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('structure'))}">
+                        <with-attribute key="NAME" value="${req($2)}">
+                            <echo-ln>Delete structure:  ${req(NAME)}</echo-ln>
+                            <crn location="delete-structure.crn"/>
+                        </with-attribute>
+                    </when>
+                    
+                    <!-- themes -->
+                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('theme'))}">
+                        <with-attribute key="NAME" value="${req($2)}">
+                            <echo-ln>Delete theme:  ${req(NAME)}</echo-ln>
+                            <crn location="delete-theme.crn"/>
+                        </with-attribute>
+                    </when>
+                    
                     <!-- users -->
                     <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('user'))}">
                         <with-attribute key="USER_NAME" value="${req($2)}">

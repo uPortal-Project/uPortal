@@ -1,0 +1,48 @@
+<with-attribute key="NAME" value="${valueOf(name)}">
+    <sql-transaction>
+        <sql-query>
+            <sql>SELECT sequence_value + 1 AS NEXT_ID FROM up_sequence WHERE sequence_name = 'UP_SS_STRUCT'</sql>
+            <subtasks>
+                
+                <!-- structure -->
+                <sql-upsert>
+                    <update-statement>UPDATE up_ss_struct SET ss_uri = ?, ss_description_uri = ?, ss_description_text = ? WHERE ss_name = ?</update-statement>
+                    <insert-statement>INSERT INTO up_ss_struct(ss_id, ss_uri, ss_description_uri, ss_description_text, ss_name) VALUES(${req(NEXT_ID)}, ?, ?, ?, ?)</insert-statement>
+                    <parameter value="${valueOf(uri)}"/>
+                    <parameter value="${valueOf(description-uri)}"/>
+                    <parameter value="${valueOf(description-text)}"/>
+                    <parameter value="${req(NAME)}"/>
+                </sql-upsert>
+                
+                <!-- structure parameters -->
+                <with-attribute key="SS_ID" value="${sql(SELECT ss_id FROM up_ss_struct WHERE ss_name = '${req(NAME)}')}">
+                    <sql-statement sql="DELETE FROM up_ss_struct_par WHERE ss_id = ?">
+                        <parameter value="${req(SS_ID)}"/>
+                    </sql-statement>
+                    <node-iterator xpath="parameters/parameter">
+                        <sql-statement sql="INSERT INTO up_ss_struct_par(ss_id, param_name, param_default_val, param_descript, type) values(?, ?, ?, ?, ?)">
+                            <parameter value="${req(SS_ID)}"/>
+                            <parameter value="${valueOf(name)}"/>
+                            <parameter value="${valueOf(value)}"/>
+                            <parameter value="${valueOf(description)}"/>
+                            <parameter value="${parseInt(${valueOf(type)})}"/>
+                        </sql-statement>
+                    </node-iterator>
+                </with-attribute>
+                
+                <!-- update up_sequence (where necessary) -->
+                <sql-query>
+                    <sql>SELECT 1 FROM up_ss_struct WHERE ss_id = ?</sql>
+                    <parameter value="${req(NEXT_ID)}"/>
+                    <subtasks>
+                        <!-- The following task will only trigger if a new user was added (i.e. inserted) -->
+                        <sql-statement sql="UPDATE up_sequence SET sequence_value = ? WHERE sequence_name = 'UP_SS_STRUCT'">
+                            <parameter value="${req(NEXT_ID)}"/>
+                        </sql-statement>
+                    </subtasks>
+                </sql-query>
+                
+            </subtasks>
+        </sql-query>
+    </sql-transaction>
+</with-attribute>

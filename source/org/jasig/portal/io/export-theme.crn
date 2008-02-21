@@ -1,0 +1,57 @@
+<with-attribute key="Attributes.NODE" value="${newDoc(theme)}">
+    <echo-ln>Export Theme:  NAME=${req(NAME)}</echo-ln>
+    <append-node node="${attributeNode(script=classpath://org/jasig/portal/io/import-theme_v2-6.crn)}"/>
+    <with-attribute key="SS_ID" value="${sql(SELECT MAX(ss_id) FROM up_ss_theme WHERE ss_name = '${req(NAME)}')}">
+        <choose>
+            <when test="${isNull(${req(SS_ID)})}">
+                <echo-ln>WARNING:  Theme '${req(NAME)}' does not exist;  no theme file will be generated.</echo-ln>
+                <log level="warn">Theme '${req(NAME)}' does not exist;  no theme file will be generated.</log>
+            </when>
+            <otherwise>
+                <sql-query>
+                    <sql>SELECT * FROM up_ss_theme WHERE ss_id = ?</sql>
+                    <parameter value="${req(SS_ID)}"/>
+                    <subtasks>
+                        <!-- Establish basic structure of the document... -->
+                        <append-node>
+                            <theme-id>${req(SS_ID)}</theme-id>
+                            <name>${req(SS_NAME)}</name>
+                            <uri>${req(SS_URI)}</uri>
+                            <description-uri>${req(SS_DESCRIPTION_URI)}</description-uri>
+                            <description-text>${req(SS_DESCRIPTION_TEXT)}</description-text>
+                            <struct-id>${req(STRUCT_SS_ID)}</struct-id>
+                            <sample-icon-uri>${req(SAMPLE_ICON_URI)}</sample-icon-uri>
+                            <sample-uri>${req(SAMPLE_URI)}</sample-uri>
+                            <mime-type>${req(MIME_TYPE)}</mime-type>
+                            <device-type>${req(DEVICE_TYPE)}</device-type>
+                            <serializer-name>${req(SERIALIZER_NAME)}</serializer-name>
+                            <module-class>${req(UP_MODULE_CLASS)}</module-class>
+                            <parameters/>
+                        </append-node>
+                    </subtasks>
+                </sql-query>
+                <!--  Theme Parameters  -->
+                <sql-query>
+                    <sql>SELECT * FROM up_ss_theme_parm WHERE ss_id = ?</sql>
+                    <parameter value="${req(SS_ID)}"/>
+                    <subtasks>
+                        <if test="${jexl(PARAM_DEFAULT_VAL != null)}">
+                            <append-node parent="${singleNode(parameters)}">
+                                <parameter>
+                                    <name>${req(PARAM_NAME)}</name>
+                                    <value>${req(PARAM_DEFAULT_VAL)}</value>
+                                    <description>${groovy(PARAM_DESCRIPT != null ? PARAM_DESCRIPT : '')}</description>
+                                    <type>${req(TYPE)}</type>
+                                </parameter>
+                            </append-node>
+                        </if>
+                    </subtasks>
+                </sql-query>
+                <with-attribute key="SS_ID" value="${valueOf(theme-id)}">
+                    <delete-node node="${singleNode(theme-id)}"/>
+                    <write-document file="${req(EXPORT_DIR)}/${req(SS_ID)}.theme"/>
+                </with-attribute>
+            </otherwise>
+        </choose>
+    </with-attribute>
+</with-attribute>
