@@ -187,64 +187,6 @@
         </uportal-impl-macro>
     </target>
 
-    <target name="pubchan" description="Publishes channels">
-        <uportal-impl-macro>
-            <!--
-             | If no file or directory is specified, set a default directory
-             +-->
-            <if>
-                <not>
-                    <or>
-                        <isset property="directory" />
-                        <isset property="channel" />
-                    </or>
-                </not>
-                <then>
-                    <fail>
-                        Either 'directory' or 'channel' must be set.
-                    </fail>
-                </then>
-            </if>
-
-            <!--
-             | Set argument prefix properties if the argument value exists
-             +-->
-            <if>
-                <isset property="directory" />
-                <then>
-                    <property name="directoryArg" value="-d" />
-                </then>
-                <else>
-                    <property name="directoryArg" value="" />
-                    <property name="directory" value="" />
-                </else>
-            </if>
-            <if>
-                <isset property="channel" />
-                <then>
-                    <property name="channelArg" value="-f" />
-                </then>
-                <else>
-                    <property name="channelArg" value="" />
-                    <property name="channel" value="" />
-                </else>
-            </if>
-
-            <echo message="Invoking Channel Publisher Tool" />
-            <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.tools.chanpub.ChannelPublisher">
-                <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
-                                
-                <classpath refid="uportal-impl-full.classpath" />
-
-                <arg value="${directoryArg}" />
-                <arg value="${directory}" />
-
-                <arg value="${channelArg}" />
-                <arg value="${channel}" />
-            </java>
-        </uportal-impl-macro>
-    </target>
-
     <target name="regchantype" description="Registers a new channel type">
         <uportal-impl-macro>
             <property name="class" value=" " />
@@ -618,25 +560,28 @@
 
     <!-- ============================== Deprecated Targets ============================== -->
     <target name="all">
-        <echo>The "all" Ant task is no supported. Run 'mvn clean compile' for the same result.</echo>
+        <echo>The "all" Ant task is no longer supported. Run 'mvn clean compile' for the same result.</echo>
     </target>
     <target name="compile">
-        <echo>The "compile" Ant task is no supported. Run 'mvn compile' for the same result.</echo>
+        <echo>The "compile" Ant task is no longer supported. Run 'mvn compile' for the same result.</echo>
     </target>
     <target name="compiletests">
-        <echo>The "compiletests" Ant task is no supported. Run 'mvn test-compile' for the same result.</echo>
+        <echo>The "compiletests" Ant task is no longer supported. Run 'mvn test-compile' for the same result.</echo>
     </target>
     <target name="deploy">
-        <echo>The "deploy" Ant task is no supported. Run 'ant deploy-war' for the same result.</echo>
+        <echo>The "deploy" Ant task is no longer supported. Run 'ant deploy-war' for the same result.</echo>
     </target>
     <target name="dist">
-        <echo>The "dist" Ant task is no supported. Run 'mvn package site' for a similar result.</echo>
+        <echo>The "dist" Ant task is no longer supported. Run 'mvn package site' for a similar result.</echo>
     </target>
     <target name="javadoc">
-        <echo>The "javadoc" Ant task is no supported. Run 'mvn javadoc:javadoc' for the same result.</echo>
+        <echo>The "javadoc" Ant task is no longer supported. Run 'mvn javadoc:javadoc' for the same result.</echo>
     </target>
     <target name="runtests">
-        <echo>The "runtests" Ant task is no supported. Run 'mvn test' for the same result.</echo>
+        <echo>The "runtests" Ant task is no longer supported. Run 'mvn test' for the same result.</echo>
+    </target>
+    <target name="pubchan">
+        <echo>The "pubchan" Ant task is no longer supported. Use 'ant crn-import' to publish channel entity XML files.</echo>
     </target>
 
 

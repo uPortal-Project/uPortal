@@ -11,6 +11,10 @@ import java.io.InputStream;
 import org.dom4j.Document;
 import org.dom4j.Element;
 
+/**
+ * @deprecated See the deprecation message on {@link ChannelPublisher}.
+ */
+@Deprecated
 public final class UrlChannelPublisher {
 
     public static void publishChannel(Element m) {

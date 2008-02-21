@@ -15,7 +15,9 @@ import org.xml.sax.InputSource;
  * Resolves the channelDefinition.dtd
  * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
+ * @deprecated See the deprecation message on {@link ChannelPublisher}.
  */
+@Deprecated
 public class ChannelDefDtdResolver implements EntityResolver {
 
     public ChannelDefDtdResolver() {

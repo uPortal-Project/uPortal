@@ -71,7 +71,9 @@ import org.xml.sax.SAXParseException;
  * @author Ken Weiner, kweiner@unicon.net
  * @author Mark Boyd, mboyd@sct.com
  * @version $Revision$
+ * @deprecated The Cernunnos import scripts should be used instead of this class
  */
+@Deprecated
 public class ChannelPublisher implements ErrorHandler
 {
     private static final Log log = LogFactory.getLog(ChannelPublisher.class);
