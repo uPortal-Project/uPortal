@@ -20,10 +20,7 @@
                                 name="${req(NAME)}"
                                 next-struct-id="${req(NEXT_STRUCT_ID)}"
                                 child-struct-id="${req(CHLD_STRUCT_ID)}"
-                                type="${org.jasig.portal.io.FolderTypePhrase(${req(TYPE)})}"
-                                hidden="${org.jasig.portal.io.FlagYorNPhrase(${req(HIDDEN)})}"
-                                immutable="${org.jasig.portal.io.FlagYorNPhrase(${req(IMMUTABLE)})}"
-                                unremovable="${org.jasig.portal.io.FlagYorNPhrase(${req(UNREMOVABLE)})}"/>
+                                type="${org.jasig.portal.io.FolderTypePhrase(${req(TYPE)})}"/>
                         </append-node>
                     </subtasks>
                 </sql-query>

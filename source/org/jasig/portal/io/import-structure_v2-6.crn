@@ -23,7 +23,7 @@
                         <sql-statement sql="INSERT INTO up_ss_struct_par(ss_id, param_name, param_default_val, param_descript, type) values(?, ?, ?, ?, ?)">
                             <parameter value="${req(SS_ID)}"/>
                             <parameter value="${valueOf(name)}"/>
-                            <parameter value="${valueOf(value)}"/>
+                            <parameter value="${groovy('${valueOf(default-value)}'.length() > 0 ? '${valueOf(default-value)}' : null)}"/>
                             <parameter value="${valueOf(description)}"/>
                             <parameter value="${parseInt(${valueOf(type)})}"/>
                         </sql-statement>
