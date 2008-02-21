@@ -7,6 +7,7 @@ function initportal() {
 	createMenu('#layoutDialogLink', '#pageLayoutDialog');
 	createMenu('#skinDialogLink', '#skinChoosingDialog');
 	$("#changeColumns > input").each(function(i, val){$(this).click(function(){changeColumns(i+1)});});
+	$("#addChannelSearchTerm").keyup(function(){searchChannels($(this).attr("value"))});
     $('div[@id*=inner-column_]').each(function(i){
 		$(this).Sortable({
 			accept : 'movable',
@@ -36,7 +37,7 @@ function createMenu(link, dialog) {
 
 function initializeContentMenu() {
 
-	$("#contentAddingDialog").dialog({height:550, width:500});
+	$("#contentAddingDialog").dialog({height:450, width:500});
 	var categorySelect = document.getElementById("categorySelectMenu");
 
 	$.get(channelListUrl, {}, function(xml) {
@@ -68,7 +69,7 @@ function browseChannelCategory() {
     matching.sort(sortChannelResults);
     
     $(matching).each(function(i, val){
-    	if ($(this).is(":first-child") || $(this).attr("ID") != $(this).prev().attr("ID")) {
+    	if (i == 0 || $(this).attr("ID") != $(this).prev().attr("ID")) {
     		channelSelect.options[i] = new Option($(this).attr("name"), $(this).attr("ID"));
     	}
     });
@@ -77,10 +78,8 @@ function browseChannelCategory() {
 	
 }
 
-function searchChannels() {
-	var search = $("#addChannelSearchTerm");
-	if (search.attr("value") == null || search.attr("value") == '') return;
-    var searchTerm = search.attr("value");
+function searchChannels(searchTerm) {
+	if (searchTerm == null || searchTerm == '') return;
     var matching = new Array();
 	$("channel[name*=" + searchTerm + "]", channelXml).each(function(){matching.push($(this))});
 	$("channel[description*=" + searchTerm + "]", channelXml).each(function(){matching.push($(this))});
@@ -89,8 +88,8 @@ function searchChannels() {
     searchResults.innerHTML = "";
 
     matching.sort(sortChannelResults);
-    $(matching).each(function(){
-		if ($(this).is(":first-child") || $(this).attr("ID") != $(this).prev().attr("ID")) {
+    $(matching).each(function(i){
+		if (i == 0 || $(this).attr("ID") != $(matching[i-1]).attr("ID")) {
 		     $("#addChannelSearchResults").append(
 		     	$(document.createElement('li')).append(
 		     		$(document.createElement('a'))

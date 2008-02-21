@@ -18,8 +18,8 @@
  <xsl:template name="preferences">
   <div id="dojoMenus" style="display:none;">
    <!-- Add Channel Menu -->
-   <div id="contentAddingDialog" class="flora" title="Add Content">
-      <div id="channelAddingTabs" class="flora">
+   <div id="contentAddingDialog" class="jqueryui" title="Add Content">
+      <div id="channelAddingTabs" class="jqueryui">
        <ul>
         <li><a href="#channel-tab-1"><span>Browse Channels</span></a></li>
         <li><a href="#channel-tab-2"><span>Search</span></a></li>
@@ -40,14 +40,12 @@
        <div id="channel-tab-2">
        <p>
         <label class="portlet-form-field-label" for="addChannelSearchTerm">Search for:</label>&#160;
-        <input id="addChannelSearchTerm" type="text" onkeydown="searchChannels()"/>
+        <input id="addChannelSearchTerm" type="text"/>
        </p>
-       <br/>
        <h3>Matching portlets</h3>
-       <ul id="addChannelSearchResults" style="list-style-type: none; padding: 0px; margin-left: 5px;"></ul>
+       <ul id="addChannelSearchResults" style="list-style-type: none; list-style-image: none; padding: 0px; margin-left: 5px; max-height: 160px; overflow: auto"></ul>
        </div>
       </div>
-    <br/>
     <h3 class="portal-section-header">Portlet Details</h3>
     <h4 id="channelTitle" class="portal-section-subheader"></h4>
     <p id="channelDescription"></p>
@@ -58,7 +56,7 @@
     </p>
    </div>
    
-   <div id="pageLayoutDialog" class="flora" title="Edit Page">
+   <div id="pageLayoutDialog" class="jqueryui" title="Edit Page">
     <form onsubmit="return updatePageName(this.pageName.value);">
     <p>
      <label class="portlet-form-field-label">Page name:</label>
@@ -76,7 +74,7 @@
     </p>
    </div>	
 
-   <div id="skinChoosingDialog" class="flora" title="Choose Skin">
+   <div id="skinChoosingDialog" class="jqueryui" title="Choose Skin">
     <h4 id="skinLoading">Loading portlet list . . . </h4>
     <form onsubmit="return chooseSkin(this);">
      <p class="portlet-form-label">

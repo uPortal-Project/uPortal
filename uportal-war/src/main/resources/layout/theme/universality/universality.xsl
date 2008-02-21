@@ -211,7 +211,7 @@
     <link media="all" type="text/css" href="{$SKIN_PATH}/{$SKIN}.css" rel="stylesheet"/>
     
     <xsl:if test="$USE_AJAX='true'">
-     <link rel="stylesheet" href="{$MEDIA_PATH}/common/javascript/jquery/themes/flora/flora.all.css" type="text/css" media="screen" title="Flora (Default)"></link>
+     <link rel="stylesheet" href="{$MEDIA_PATH}/common/javascript/jquery/themes/{$SKIN}/jqueryui.all.css" type="text/css" media="screen" title="Flora (Default)"></link>
     </xsl:if>
     
     <!-- Add Conditional Comments for IE to load IE specific CSS -->
