@@ -1,7 +1,4 @@
 <with-attribute key="Attributes.NODE" value="${newDoc(preferences)}">
-    <append-node node="${attributeNode(script=classpath://org/jasig/portal/io/import-preferences_v2-6.crn)}"/>
-    <echo-ln>Export Preferences:  USER_NAME=${USER_NAME}</echo-ln>
-    <append-node node="${attributeNode(username=${req(USER_NAME)})}"/>
     <groovy>
     	<!-- 
     	 | Values in the column CHAN_DESC_ID will follow one of the following patterns:
@@ -128,12 +125,11 @@
     </groovy>
 	<choose>
 		<when test="${isNull(${singleNode(entry)})}">
-	        <!-- This error should only happen if the USER_NAME was specified on the command line... -->
-    	    <echo-ln>WARNING:  No entity preferences are defined for user '${req(USER_NAME)}';  no preferences file will be generated.</echo-ln>
-        	<log level="warn">No entity preferences are defined for user '${req(USER_NAME)}';  no preferences file will be generated.</log>
+	        <!-- No preferences for this user, just return null... -->
+            <return value="${null()}"/>
 		</when>
 		<otherwise>
-			<write-document file="${req(EXPORT_DIR)}/${USER_NAME}.preferences"/>
+            <return value="${Attributes.NODE}"/>
 		</otherwise>
 	</choose>
 </with-attribute>

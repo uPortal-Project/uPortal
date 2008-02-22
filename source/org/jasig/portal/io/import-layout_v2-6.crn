@@ -1,22 +1,23 @@
-<xslt context="${req(Attributes.ORIGIN)}" stylesheet="import-layout.xsl">
-    <with-attribute key="USER_NAME" value="${valueOf(@username)}">
-        <sql-transaction>
+<with>
+    <attribute key="USER_NAME">${valueOf(@username)}</attribute>
+    <attribute key="USER_ID">${sql(SELECT user_id FROM up_user WHERE user_name = '${valueOf(@username)}')}</attribute>
+    <subtasks>
+        <xslt context="${Attributes.ORIGIN}" stylesheet="import-layout.xsl">
+            <sql-transaction>
 
-            <!-- Clear the way by deleting exisitng layut nodes and ancillary data -->
-            <crn location="delete-layout.crn"/>
-
-            <with-attribute key="USER_ID" value="${sql(SELECT user_id FROM up_user WHERE user_name = '${req(USER_NAME)}')}">
+                <!-- Clear the way by deleting exisitng layut nodes and ancillary data -->
+                <crn location="delete-layout.crn"/>
 
                 <!-- Layout (itself) -->
                 <sql-statement sql="INSERT INTO up_user_layout(layout_title, user_id, layout_id, init_struct_id) VALUES(?, ?, 1, 1)">
                     <parameter value="Standard Layout"/><!-- Limited to 15 characters... -->
-                    <parameter value="${req(USER_ID)}"/>
+                    <parameter value="${USER_ID}"/>
                 </sql-statement>
 
                 <!-- Layout Structures (nodes) -->
                 <node-iterator xpath="struct">
                     <sql-statement sql="INSERT INTO up_layout_struct(user_id, layout_id, struct_id, next_struct_id, chld_struct_id, name, type, hidden, immutable, unremovable) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)">
-                        <parameter value="${req(USER_ID)}"/>
+                        <parameter value="${USER_ID}"/>
                         <parameter value="${parseInt(1)}"/>
                         <parameter value="${parseInt(${valueOf(@struct-id)})}"/>
                         <parameter value="${parseInt(${valueOf(@next-struct-id)})}"/>
@@ -30,7 +31,7 @@
                 </node-iterator>
                 <node-iterator xpath="channel">
                     <sql-statement sql="INSERT INTO up_layout_struct(user_id, layout_id, struct_id, next_struct_id, chan_id) values(?, ?, ?, ?, ?)">
-                        <parameter value="${req(USER_ID)}"/>
+                        <parameter value="${USER_ID}"/>
                         <parameter value="${parseInt(1)}"/>
                         <parameter value="${parseInt(${valueOf(@struct-id)})}"/>
                         <parameter value="${parseInt(${valueOf(@next-struct-id)})}"/>
@@ -41,7 +42,7 @@
                 <!-- Layout Parameters -->
                 <node-iterator xpath="param">
                     <sql-statement sql="INSERT INTO up_layout_param(user_id, layout_id, struct_id, struct_parm_nm, struct_parm_val) values(?, ?, ?, ?, ?)">
-                        <parameter value="${req(USER_ID)}"/>
+                        <parameter value="${USER_ID}"/>
                         <parameter value="${parseInt(1)}"/>
                         <parameter value="${parseInt(${valueOf(@struct-id)})}"/>
                         <parameter value="${valueOf(name)}"/>
@@ -52,9 +53,9 @@
                 <!-- Structure Attributes -->
                 <node-iterator xpath="structure-attribute">
                     <sql-statement sql="INSERT INTO up_ss_user_atts(user_id, profile_id, ss_id, ss_type, struct_id, param_name, param_type, param_val) values(?, ?, ?, ?, ?, ?, ?, ?)">
-                        <parameter value="${req(USER_ID)}"/>
+                        <parameter value="${USER_ID}"/>
                         <parameter value="${parseInt(1)}"/>
-                        <parameter value="${sql(SELECT upup.structure_ss_id FROM up_user_profile upup, up_user upu WHERE upup.user_id = upu.user_id AND upu.user_name = '${req(USER_NAME)}' AND profile_id = 1)}"/>
+                        <parameter value="${sql(SELECT upup.structure_ss_id FROM up_user_profile upup, up_user upu WHERE upup.user_id = upu.user_id AND upu.user_name = '${USER_NAME}' AND profile_id = 1)}"/>
                         <parameter value="${parseInt(1)}"/>
                         <parameter value="${parseInt(${valueOf(@struct-id)})}"/>
                         <parameter value="${valueOf(name)}"/>
@@ -65,11 +66,20 @@
 
                 <!-- NEXT_STRUCT_ID column (UP_USER table) -->
                 <sql-statement sql="UPDATE up_user SET next_struct_id = ? WHERE user_name = ?">
-                    <parameter value="${sql(SELECT MAX(struct_id) +1 FROM up_layout_struct WHERE user_id = ${req(USER_ID)})}"/>
-                    <parameter value="${req(USER_NAME)}"/>
+                    <parameter value="${sql(SELECT MAX(struct_id) +1 FROM up_layout_struct WHERE user_id = ${USER_ID})}"/>
+                    <parameter value="${USER_NAME}"/>
                 </sql-statement>
 
-            </with-attribute>
-        </sql-transaction>
-    </with-attribute>
-</xslt>
+            </sql-transaction>
+        </xslt>
+
+        <!-- Now do portlet entity preferences -->
+        <with-attribute key="Attributes.NODE" value="${singleNode(preferences)}">
+            <if test="${not(${isNull(${Attributes.NODE})})}">
+                <crn location="import-preferences.crn"/>
+            </if>
+        </with-attribute>
+
+    </subtasks>
+</with>
+

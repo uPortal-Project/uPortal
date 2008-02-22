@@ -1,50 +1,53 @@
 <with-attribute key="Attributes.NODE" value="${newDoc(structures)}">
-    <echo-ln>Export Layout:  USER_NAME=${req(USER_NAME)}</echo-ln>
+    <echo-ln>Export Layout:  USER_NAME=${USER_NAME}</echo-ln>
     <append-node>
-        <username>${req(USER_NAME)}</username>
+        <username>${USER_NAME}</username>
     </append-node>
-    <with-attribute key="USER_ID" value="${sql(SELECT user_id FROM up_user WHERE user_name = '${req(USER_NAME)}')}">
+    <with-attribute key="USER_ID" value="${sql(SELECT user_id FROM up_user WHERE user_name = '${USER_NAME}')}">
         <choose>
-            <when test="${isNull(${req(USER_ID)})}">
-                <echo-ln>WARNING:  User '${req(USER_NAME)}' does not exist;  no layout file will be generated.</echo-ln>
-                <log level="warn">User '${req(USER_NAME)}' does not exist;  no layout file will be generated.</log>
+            <when test="${isNull(${USER_ID})}">
+                <echo-ln>WARNING:  User '${USER_NAME}' does not exist;  no layout file will be generated.</echo-ln>
+                <log level="warn">User '${USER_NAME}' does not exist;  no layout file will be generated.</log>
             </when>
             <otherwise>
                 <sql-query>
                     <sql>SELECT * FROM up_layout_struct WHERE user_id = ? AND layout_id = 1 AND chan_id IS NULL</sql>
-                    <parameter value="${req(USER_ID)}"/>
+                    <parameter value="${USER_ID}"/>
                     <subtasks>
                         <append-node>
                             <folder
-                                struct-id="${req(STRUCT_ID)}"
-                                name="${req(NAME)}"
-                                next-struct-id="${req(NEXT_STRUCT_ID)}"
-                                child-struct-id="${req(CHLD_STRUCT_ID)}"
-                                type="${org.jasig.portal.io.FolderTypePhrase(${req(TYPE)})}"/>
+                                struct-id="${STRUCT_ID}"
+                                name="${NAME}"
+                                next-struct-id="${NEXT_STRUCT_ID}"
+                                child-struct-id="${CHLD_STRUCT_ID}"
+                                type="${org.jasig.portal.io.FolderTypePhrase(${TYPE})}"
+                                hidden="${org.jasig.portal.io.FlagYorNPhrase(${req(HIDDEN)})}"
+                                immutable="${org.jasig.portal.io.FlagYorNPhrase(${req(IMMUTABLE)})}"
+                                unremovable="${org.jasig.portal.io.FlagYorNPhrase(${req(UNREMOVABLE)})}"/>
                         </append-node>
                     </subtasks>
                 </sql-query>
                 <sql-query>
                     <sql>SELECT upc.chan_fname, upls.struct_id, upls.next_struct_id, upls.hidden FROM up_channel upc, up_layout_struct upls WHERE upc.chan_id = upls.chan_id AND upls.user_id = ? AND upls.layout_id = 1</sql>
-                    <parameter value="${req(USER_ID)}"/>
+                    <parameter value="${USER_ID}"/>
                     <subtasks>
                         <append-node>
                             <channel
-                                fname="${req(CHAN_FNAME)}"
-                                struct-id="${req(STRUCT_ID)}"
-                                next-struct-id="${req(NEXT_STRUCT_ID)}"/>
+                                fname="${CHAN_FNAME}"
+                                struct-id="${STRUCT_ID}"
+                                next-struct-id="${NEXT_STRUCT_ID}"/>
                         </append-node>
                     </subtasks>
                 </sql-query>
                 <!-- Layout Parameters. -->
                 <sql-query>
                     <sql>SELECT uplp.struct_id, uplp.struct_parm_nm, uplp.struct_parm_val FROM up_layout_param uplp, up_layout_struct upls WHERE uplp.struct_id = upls.struct_id AND uplp.user_id = upls.user_id AND uplp.layout_id = upls.layout_id AND upls.user_id = ? AND upls.layout_id = 1</sql>
-                    <parameter value="${req(USER_ID)}"/>
+                    <parameter value="${USER_ID}"/>
                     <subtasks>
                         <append-node>
-                            <param struct-id="${req(STRUCT_ID)}">
-                                <name>${req(STRUCT_PARM_NM)}</name>
-                                <value>${req(STRUCT_PARM_VAL)}</value>
+                            <param struct-id="${STRUCT_ID}">
+                                <name>${STRUCT_PARM_NM}</name>
+                                <value>${STRUCT_PARM_VAL}</value>
                             </param>
                         </append-node>
                     </subtasks>
@@ -52,18 +55,25 @@
                 <!-- Structure User Attributes. -->
                 <sql-query>
                     <sql>SELECT struct_id, param_name, param_type, param_val FROM up_ss_user_atts WHERE profile_id = 1 AND ss_type = 1 AND user_id = ? AND ss_id = ?</sql>
-                    <parameter value="${req(USER_ID)}"/>
-                    <parameter value="${sql(SELECT structure_ss_id FROM up_user_profile WHERE user_id = ${req(USER_ID)} AND profile_id = 1)}"/>
+                    <parameter value="${USER_ID}"/>
+                    <parameter value="${sql(SELECT structure_ss_id FROM up_user_profile WHERE user_id = ${USER_ID} AND profile_id = 1)}"/>
                     <subtasks>
                         <append-node>
-                            <structure-attribute struct-id="${req(STRUCT_ID)}" type="${req(PARAM_TYPE)}">
-                                <name>${req(PARAM_NAME)}</name>
-                                <value>${req(PARAM_VAL)}</value>
+                            <structure-attribute struct-id="${STRUCT_ID}" type="${PARAM_TYPE}">
+                                <name>${PARAM_NAME}</name>
+                                <value>${PARAM_VAL}</value>
                             </structure-attribute>
                         </append-node>
                     </subtasks>
                 </sql-query>
-                <xslt context="${req(Attributes.ORIGIN)}" stylesheet="export-layout.xsl" to-file="${req(EXPORT_DIR)}/${req(USER_NAME)}.layout"/>
+                <xslt context="${Attributes.ORIGIN}" stylesheet="export-layout.xsl">
+                    <with-attribute key="PREFERENCES" value="${crn(export-preferences.crn)}">
+                        <if test="${groovy(PREFERENCES != null)}">
+                            <append-node node="${PREFERENCES}"/>
+                        </if>
+                    </with-attribute>
+                	<write-document file="${EXPORT_DIR}/${USER_NAME}.layout"/>
+                </xslt>
             </otherwise>
         </choose>
     </with-attribute>

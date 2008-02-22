@@ -1,16 +1,13 @@
 <properties location="../../../../properties/rdbm.properties">
-    <sql-connection driver="${req(jdbcDriver)}" url="${req(jdbcUrl)}" username="${req(jdbcUser)}" password="${req(jdbcPassword)}">
-        <with-attribute key="EXPORT_DIR" value="${req($1)}">
-            <with-attribute key="ENTITY_TYPE" value="${req($2)}">
+    <sql-connection driver="${jdbcDriver}" url="${jdbcUrl}" username="${jdbcUser}" password="${jdbcPassword}">
+        <with-attribute key="EXPORT_DIR" value="${$1}">
+            <with-attribute key="ENTITY_TYPE" value="${$2}">
 
                 <!-- Select export operation based on the specified ENTITY_TYPE -->
                 <choose>
 
                     <!-- all -->
                     <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all'))}">
-                        <with-attribute key="$2" value="all-preferences">
-                            <crn location="export.crn"/>
-                        </with-attribute>
                         <with-attribute key="$2" value="all-layouts">
                             <crn location="export.crn"/>
                         </with-attribute>
@@ -43,26 +40,9 @@
                         </with-attribute>
                     </when>
 
-                    <!-- preferences -->
-                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('preferences'))}">
-                        <with-attribute key="USER_NAME" value="${req($3)}">
-                            <crn location="export-preferences.crn"/>
-                        </with-attribute>
-                    </when>
-
-                    <!-- all-preferences -->
-                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-preferences'))}">
-                        <sql-query>
-                            <sql>SELECT DISTINCT upu.user_name FROM up_user upu, up_portlet_entity_prefs uppep WHERE upu.user_id = uppep.user_id</sql>
-                            <subtasks>
-                                <crn location="export-preferences.crn"/>
-                            </subtasks>
-                        </sql-query>
-                    </when>
-
                     <!-- layout -->
                     <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('layout'))}">
-                        <with-attribute key="USER_NAME" value="${req($3)}">
+                        <with-attribute key="USER_NAME" value="${$3}">
                             <crn location="export-layout.crn"/>
                         </with-attribute>
                     </when>
@@ -89,7 +69,7 @@
 
                     <!-- channel -->
                     <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('channel'))}">
-                        <with-attribute key="FNAME" value="${req($3)}">
+                        <with-attribute key="FNAME" value="${$3}">
                             <crn location="export-channel.crn"/>
                         </with-attribute>
                     </when>
@@ -99,7 +79,7 @@
                         <sql-query>
                             <sql>SELECT chan_fname FROM up_channel</sql>
                             <subtasks>
-                                <with-attribute key="FNAME" value="${req(CHAN_FNAME)}">
+                                <with-attribute key="FNAME" value="${CHAN_FNAME}">
                                     <crn location="export-channel.crn"/>
                                 </with-attribute>
                             </subtasks>
@@ -108,7 +88,7 @@
 
                     <!-- channel-type -->
                     <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('channel-type'))}">
-                        <with-attribute key="NAME" value="${req($3)}">
+                        <with-attribute key="NAME" value="${$3}">
                             <crn location="export-channel-type.crn"/>
                         </with-attribute>
                     </when>
@@ -118,7 +98,7 @@
                         <sql-query>
                             <sql>SELECT type_name FROM up_chan_type</sql>
                             <subtasks>
-                                <with-attribute key="NAME" value="${req(TYPE_NAME)}">
+                                <with-attribute key="NAME" value="${TYPE_NAME}">
                                     <crn location="export-channel-type.crn"/>
                                 </with-attribute>
                             </subtasks>
@@ -127,7 +107,7 @@
                                         
                     <!-- group -->
                     <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('group'))}">
-                        <with-attribute key="GROUP_NAME" value="${req($3)}">
+                        <with-attribute key="GROUP_NAME" value="${$3}">
                             <crn location="export-group.crn"/>
                         </with-attribute>
                     </when>
@@ -144,7 +124,7 @@
                                         
                     <!-- user -->
                     <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('user'))}">
-                        <with-attribute key="USER_NAME" value="${req($3)}">
+                        <with-attribute key="USER_NAME" value="${$3}">
                             <crn location="export-user.crn"/>
                         </with-attribute>
                     </when>
@@ -161,7 +141,7 @@
 
                     <!-- theme -->
                     <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('theme'))}">
-                        <with-attribute key="NAME" value="${req($3)}">
+                        <with-attribute key="NAME" value="${$3}">
                             <crn location="export-theme.crn"/>
                         </with-attribute>
                     </when>
@@ -171,7 +151,7 @@
                         <sql-query>
                             <sql>SELECT ss_name FROM up_ss_theme</sql>
                             <subtasks>
-                                <with-attribute key="NAME" value="${req(SS_NAME)}">
+                                <with-attribute key="NAME" value="${SS_NAME}">
                                     <crn location="export-theme.crn"/>
                                 </with-attribute>
                             </subtasks>
@@ -180,7 +160,7 @@
 
                     <!-- structure -->
                     <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('structure'))}">
-                        <with-attribute key="NAME" value="${req($3)}">
+                        <with-attribute key="NAME" value="${$3}">
                             <crn location="export-structure.crn"/>
                         </with-attribute>
                     </when>
@@ -190,7 +170,7 @@
                         <sql-query>
                             <sql>SELECT ss_name FROM up_ss_struct</sql>
                             <subtasks>
-                                <with-attribute key="NAME" value="${req(SS_NAME)}">
+                                <with-attribute key="NAME" value="${SS_NAME}">
                                     <crn location="export-structure.crn"/>
                                 </with-attribute>
                             </subtasks>
@@ -199,7 +179,7 @@
 
                     <!-- entity-type -->
                     <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('entity-type'))}">
-                        <with-attribute key="NAME" value="${req($3)}">
+                        <with-attribute key="NAME" value="${$3}">
                             <crn location="export-entity-type.crn"/>
                         </with-attribute>
                     </when>
@@ -209,7 +189,7 @@
                         <sql-query>
                             <sql>SELECT entity_type_name FROM up_entity_type</sql>
                             <subtasks>
-                                <with-attribute key="NAME" value="${req(ENTITY_TYPE_NAME)}">
+                                <with-attribute key="NAME" value="${ENTITY_TYPE_NAME}">
                                     <crn location="export-entity-type.crn"/>
                                 </with-attribute>
                             </subtasks>
