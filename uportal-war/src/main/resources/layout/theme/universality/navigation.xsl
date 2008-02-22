@@ -62,7 +62,7 @@
               </a>
               <xsl:if test="@activeTab='false' and $USE_FLYOUT_MENUS='true'"> <!-- If using flyout menus, call template for rendering submenus. -->
                 <xsl:call-template name="subnavigation">
-                  <xsl:with-param name="context" select="'flyout'"/>
+                  <xsl:with-param name="CONTEXT" select="'flyout'"/>
                 </xsl:call-template>
               </xsl:if>
               <xsl:if test="@activeTab='true' and $CONTEXT='left'"> <!-- If navigation is being rendered in the left column rather than as tabs, call template for rendering active menu item's submenu. -->
@@ -104,7 +104,7 @@
         </xsl:choose>
       </xsl:attribute>
       
-      <div id="portalSubnavigationInner">  <!-- Inner div for additional presentation/formatting options. -->
+      <div id="portalSubnavigationInner_{@ID}">  <!-- Inner div for additional presentation/formatting options. -->
         <ul class="portal-subnav-list"> <!-- List of the subnavigation menu items. -->
           <xsl:for-each select="tabChannel">
             <xsl:variable name="SUBNAV_POSITION"> <!-- Determine the position of the navigation option within the whole navigation list and add css hooks for the first and last positions. -->
@@ -142,30 +142,10 @@
   <xsl:template name="flyout.menu.scripts">
 		<script src="{$SCRIPT_PATH}/flyout-nav.js" type="text/javascript"></script>
     <script type="text/javascript">
-			var tabList = document.getElementById('portalNavigation');
-			var yoffset = portalNavigationList.clientHeight;
-			<!--var yoffset = findPosY(portalNavigationList) + portalNavigationList.clientHeight; removed findPosY since the tabs are absolutely positioned-->
-			var xoffset = 9;
-			<xsl:for-each select="/layout/navigation/tab">
-				<xsl:choose>
-					<xsl:when test="not(@activeTab='true')">
-						var menu = document.getElementById('navMenu_<xsl:value-of select="@ID"/>');
-						menu.style.top = yoffset + 'px';
-						menu.style.left = xoffset + 'px';
-						
-						var iframe = document.getElementById('navFrame_<xsl:value-of select="@ID"/>');
-						iframe.style.top = menu.style.top;
-						iframe.style.left = menu.style.left;
-						iframe.style.height = menu.clientHeight + 'px';
-						iframe.style.width = menu.clientWidth + 'px';
-						
-						xoffset += document.getElementById('tabLink_<xsl:value-of select="@ID"/>').clientWidth;
-					</xsl:when>
-					<xsl:otherwise>
-						xoffset += document.getElementById('activeTabLink').clientWidth;						
-					</xsl:otherwise>
-				</xsl:choose>
-			</xsl:for-each>		
+      $(document).ready(function(){
+        initFlyoutMenus();
+      });
+      
     </script>
   </xsl:template>
   <!-- =================================================== -->

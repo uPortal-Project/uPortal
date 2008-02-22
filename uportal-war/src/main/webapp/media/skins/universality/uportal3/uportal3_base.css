@@ -397,7 +397,27 @@
 		border-bottom: 1px solid #9999cc;
 	}
 	
-	#portalNavigation .portal-navigation .portal-subnav-container a
+	#portalNavigation .portal-navigation .portal-flyout-container
+	{
+		background-color: #fff;
+	}
+
+	#portalNavigation .portal-navigation .portal-flyout-container li
+	{
+		border-bottom: 1px solid #9999cc;
+		display: list-item;
+		float: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	#portalNavigation .portal-navigation .portal-flyout-container
+	{
+		border-left: 1px solid #9999cc;
+		border-right: 1px solid #9999cc;
+	}
+	
+#portalNavigation .portal-navigation .portal-subnav-container a
 	{
 		color: #9999cc;
 		font-weight: normal;
