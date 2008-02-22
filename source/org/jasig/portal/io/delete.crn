@@ -5,14 +5,6 @@
             <with-attribute key="ENTITY_TYPE" value="${$1}">
                 <choose>
 
-                    <!-- preferences -->
-                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('preferences'))}">
-                        <with-attribute key="USER_NAME" value="${$2}">
-                            <echo-ln>Delete portlet preferences for user:  ${USER_NAME}</echo-ln>
-                            <crn location="delete-preferences.crn"/>
-                        </with-attribute>
-                    </when>
-
                     <!-- layouts -->
                     <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('layout'))}">
                         <with-attribute key="USER_NAME" value="${$2}">
