@@ -408,7 +408,12 @@
       <a href="{$BASE_ACTION_URL}?uP_root=root&amp;uP_reload_layout=true&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true&amp;uP_sparam=mode&amp;mode=view" id="portalBackToHome" title="{$TOKEN[@name='BACK_HOME_LONG_LABEL']}">
         <span><xsl:value-of select="$TOKEN[@name='BACK_HOME_LABEL']"/></span>
       </a>
-    </xsl:if>
+  	  <xsl:if test="//focused[@in-user-layout='no'] and $USE_AJAX='true'">
+  	    <a href="javascript:;" id="focusedContentDialogLink" title="{$TOKEN[@name='PREFERENCES_LINK_ADD_FOCUSED_CONTENT_LONG_LABEL']}">
+  	      <span><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINK_ADD_FOCUSED_CONTENT_LABEL']"/></span>
+  	    </a>
+ 	    </xsl:if>
+  	</xsl:if>
   </xsl:template>
   <!-- ============================================ -->
   
@@ -435,8 +440,13 @@
               </a>
             </li>
             <li>
-              <a id="skinDialogLink" href="javascript:;" title="{$TOKEN[@name='PREFERENCES_LINK_SKIN_LONG_LABEL']}">
-              	<span><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINK_SKIN_LABEL']"/></span>
+              <a id="skinDialogLink" href="javascript:;" title="{$TOKEN[@name='PREFERENCES_LINK_SKINS_LONG_LABEL']}">
+              	<span><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINK_SKINS_LABEL']"/></span>
+              </a>
+            </li>
+            <li>
+              <a id="addTabLink" href="javascript:;" title="{$TOKEN[@name='PREFERENCES_LINK_ADD_TAB_LONG_LABEL']}">
+                <span><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINK_ADD_TAB_LABEL']"/></span>
               </a>
             </li>
           </ul>

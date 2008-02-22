@@ -1,13 +1,14 @@
 var channelXml,skinXml;
 
-// Editing menu initialization
+// Initialization tasks for non-focused mode
 function initportal() {
-	$("#channelAddingTabs > ul").tabs();
+
+	// initialize dialog menus
 	$("#contentDialogLink").click(function(){initializeContentMenu();$(this).click(function(){$("#contentAddingDialog").dialog('open')})});
-	createMenu('#layoutDialogLink', '#pageLayoutDialog');
-	createMenu('#skinDialogLink', '#skinChoosingDialog');
-	$("#changeColumns > input").each(function(i, val){$(this).click(function(){changeColumns(i+1)});});
-	$("#addChannelSearchTerm").keyup(function(){searchChannels($(this).attr("value"))});
+	$("#layoutDialogLink").click(function(){initializeLayouMenu();$(this).click(function(){$("#pageLayoutDialog").dialog('open')})});
+	$("#skinDialogLink").click(function(){initializeSkinMenu();$(this).click(function(){$("#skinChoosingDialog").dialog('open')})});
+
+	// initialize portlet drag and drop
     $('div[@id*=inner-column_]').each(function(i){
 		$(this).Sortable({
 			accept : 'movable',
@@ -29,15 +30,35 @@ function initportal() {
 			}
 		});
     });
+    
+    // add onclick events for portlet delete buttons
 	$('a[@id*=removePortlet_]').each(function(i){$(this).click(function(){deletePortlet(this.id.split("_")[1]);return false;});});	
+
+	$("#addTabLink").click(function(){addTab()});
 }
-function createMenu(link, dialog) {
-	$(link).click(function(){$(dialog).dialog();$(link).click(function(){$(dialog).dialog('open');});});
+
+// Initialization tasks for focus mode
+function initfocusedportal() {
+	$("#focusedContentDialogLink").click(function(){initializeFocusedContentMenu();$(this).click(function(){$("#focusedContentAddingDialog").dialog('open')})});
+}
+function initializeFocusedContentMenu() {
+	$("#focusedContentAddingDialog").dialog({height:450, width:500});
+}
+
+function initializeLayoutMenu() {
+	$("#changeColumns > input").each(function(i, val){$(this).click(function(){changeColumns(i+1)});});
+	$("#changeColumns > input").get(columnCount - 1).attr("selected", true);
+}
+
+function initializeSkinMenu() {
+	$("#skinChoosingDialog").dialog({height:450, width:500});
 }
 
 function initializeContentMenu() {
 
+	$("#channelAddingTabs > ul").tabs();
 	$("#contentAddingDialog").dialog({height:450, width:500});
+	$("#addChannelSearchTerm").keyup(function(){searchChannels($(this).attr("value"))});
 	var categorySelect = document.getElementById("categorySelectMenu");
 
 	$.get(channelListUrl, {}, function(xml) {
@@ -139,11 +160,9 @@ function selectChannel(channelId) {
     // user to input values
     var parameters = channel.children("parameter[override=yes]");
     for (var i = 0; i < parameters.length; i++) {
-        var p = document.createElement("p");
-        var input = JQuery(document.createElement("input"));
-        input.attr("type", "hidden").attr("name", parameters[i].attr("name")).attr("value", parameters[i].attr("value"));
-        p.appendChild(input);
-        channelDescription.appendChild(p);
+        var input = $(document.createElement("input")).attr("type", "hidden").attr("name", $(parameters[i]).attr("name")).attr("value", $(parameters[i]).attr("value"));
+        var p = $(document.createElement("p")).append(input);
+        $("#channelDescription").append(p);
     }
 
 }
@@ -166,7 +185,13 @@ function changeColumns(num) {
 // Tab editing persistence functions
 function addTab() {
 	$.post(preferencesUrl, {action: 'addTab'}, function(xml) { 
-
+		var tab = $(document.createElement("li")).attr("id", $("newNodeId", xml).text());
+		var a = $(document.createElement("a"))
+			.attr("href", portalUrl + "?uP_root=root&uP_sparam=activeTab&activeTab=" 
+				+ ($("portalNavigationList > li").length + 1))
+			.append($(document.createElement("span")).text("New Page"));
+		tab.append(a);
+		$("portalNavigationList").append(tab);
 	});
 }
 function movePortlet(movedNode, targetNode) {
@@ -190,4 +215,32 @@ function updatePageName(name) {
 function deleteTab(id) {
 	if (!confirm("Are you sure you want to remove this tab and all its content?")) return false;
 	$.post(preferencesUrl, {action: 'removeElement', elementID: id}, function(xml) { window.location = portalUrl + "?uP_root=root&uP_sparam=activeTab&activeTab=1"; });
+}
+
+function addFocusedChannel(form) {
+
+    var channelId = form.channelId.value;
+    var tabPosition, elementId;
+    
+    $("#focusedContentAddingDialog input[name=targetTab]").each(function(i){
+    	if ($(this).is(":checked")) {
+    		tabPosition = i+1;
+    		elementId = $(this).val();
+    	}
+    });
+    console.debug(tabPosition, elementId, channelId);
+    
+    $.post(preferencesUrl, 
+    	{
+    		action: 'addChannel',
+    		channelID: 'chan' + channelId,
+    		position: 'insertBefore',
+    		elementID: elementId
+    	},
+    	function(xml) {
+			window.location = portalUrl + "?uP_root=root&uP_sparam=activeTab&activeTab=" + tabPosition;
+    	}
+    );
+	return false;
+
 }
