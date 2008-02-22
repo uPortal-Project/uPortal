@@ -4,9 +4,9 @@ var channelXml,skinXml;
 function initportal() {
 
 	// initialize dialog menus
-	$("#contentDialogLink").click(function(){initializeContentMenu();$(this).click(function(){$("#contentAddingDialog").dialog('open')})});
-	$("#layoutDialogLink").click(function(){initializeLayouMenu();$(this).click(function(){$("#pageLayoutDialog").dialog('open')})});
-	$("#skinDialogLink").click(function(){initializeSkinMenu();$(this).click(function(){$("#skinChoosingDialog").dialog('open')})});
+	$("#contentDialogLink").click(initializeContentMenu);
+	$("#layoutDialogLink").click(initializeLayoutMenu);
+	$("#skinDialogLink").click(initializeSkinMenu);
 
 	// initialize portlet drag and drop
     $('div[@id*=inner-column_]').each(function(i){
@@ -39,19 +39,24 @@ function initportal() {
 
 // Initialization tasks for focus mode
 function initfocusedportal() {
-	$("#focusedContentDialogLink").click(function(){initializeFocusedContentMenu();$(this).click(function(){$("#focusedContentAddingDialog").dialog('open')})});
+	$("#focusedContentDialogLink").click(initializeFocusedContentMenu);
 }
 function initializeFocusedContentMenu() {
 	$("#focusedContentAddingDialog").dialog({height:450, width:500});
+	$("#focusedContentDialogLink")
+		.unbind('click', initializeFocusedContentMenu)
+		.click(function(){$("#focusedContentAddingDialog").dialog('open');});
 }
 
 function initializeLayoutMenu() {
 	$("#changeColumns > input").each(function(i, val){$(this).click(function(){changeColumns(i+1)});});
-	$("#changeColumns > input").get(columnCount - 1).attr("selected", true);
-}
+	$("#changeColumns > input").eq(columnCount - 1).attr("checked", true);
+	$("#pageLayoutDialog").dialog({height:200, width:400});
 
-function initializeSkinMenu() {
-	$("#skinChoosingDialog").dialog({height:450, width:500});
+	$("#layoutDialogLink")
+		.unbind('click', initializeLayoutMenu)
+		.click(function(){$("#pageLayoutDialog").dialog('open');});
+
 }
 
 function initializeContentMenu() {
@@ -60,6 +65,10 @@ function initializeContentMenu() {
 	$("#contentAddingDialog").dialog({height:450, width:500});
 	$("#addChannelSearchTerm").keyup(function(){searchChannels($(this).attr("value"))});
 	var categorySelect = document.getElementById("categorySelectMenu");
+
+	$("#contentDialogLink")
+		.unbind('click', initializeContentMenu)
+		.click(function(){$("#contentAddingDialog").dialog('open');});
 
 	$.get(channelListUrl, {}, function(xml) {
 		channelXml = xml;
@@ -85,7 +94,8 @@ function browseChannelCategory() {
 	$("#channelSelectMenu").html("");
 	
     var matching = new Array();
-	$("category[ID=" + $("#categorySelectMenu").attr("value") + "] > channel", channelXml)
+	$("category[ID=" + $("#categorySelectMenu").attr("value") + "]", channelXml)
+		.find("channel")
 		.each(function(){matching.push($(this))});
     matching.sort(sortChannelResults);
     
@@ -184,14 +194,9 @@ function changeColumns(num) {
 
 // Tab editing persistence functions
 function addTab() {
-	$.post(preferencesUrl, {action: 'addTab'}, function(xml) { 
-		var tab = $(document.createElement("li")).attr("id", $("newNodeId", xml).text());
-		var a = $(document.createElement("a"))
-			.attr("href", portalUrl + "?uP_root=root&uP_sparam=activeTab&activeTab=" 
-				+ ($("portalNavigationList > li").length + 1))
-			.append($(document.createElement("span")).text("New Page"));
-		tab.append(a);
-		$("portalNavigationList").append(tab);
+	$.post(preferencesUrl, {action: 'addTab'}, function(xml) {
+		window.location = portalUrl + "?uP_root=root&uP_sparam=activeTab&activeTab=" + 
+			($("#portalNavigationList > li").length + 1);
 	});
 }
 function movePortlet(movedNode, targetNode) {
@@ -244,3 +249,52 @@ function addFocusedChannel(form) {
 	return false;
 
 }
+
+function initializeSkinMenu() {
+	$("#skinChoosingDialog").dialog({height:450, width:500});
+	$("#skinDialogLink")
+		.unbind('click', initializeSkinMenu)
+		.click(function(){$("#skinChoosingDialog").dialog('open');});
+
+    var skinMenu = $("#skinList").html("");
+    $.get(mediaPath + '/skinList.xml', { },
+    	function(xml){
+			skinXml = xml;
+			$("skin", skinXml).each(function(i){
+				var key = $(this).children("skin-key").text();
+				
+				var input = $(document.createElement("input")).attr("type", "radio")
+					.val(key)
+					.attr("name", "skinChoice");
+				if (key == currentSkin)
+					input.attr("checked", true);
+					
+				var span = $(document.createElement("span"))
+					.append(input)
+					.append(document.createTextNode($(this).children("skin-name").text()))
+					.addClass("portlet-form-field-label");
+				skinMenu.append(span);
+				var div = $(document.createElement("div"))
+					.text($(this).children("skin-description").text())
+					.addClass("portlet-font-dim").css("padding-left", "20px")
+					.css("padding-bottom", "10px");
+				skinMenu.append(div);
+			});
+        	
+        	// remove the loading graphics and message
+        	$("#skinLoading").css("display", "none");
+    	}
+    );
+}
+
+function chooseSkin(form) {
+	$.post(preferencesUrl,
+		{ action: 'chooseSkin', skinName:$("#skinList > input:selected").val() },
+		function(xml) {
+			window.location = portalUrl;
+		}
+	);
+	return false;
+}
+
+
