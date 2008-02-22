@@ -100,13 +100,13 @@
 	#portalWelcome 
 	{
 		position: absolute;
-		top: 4em;
-		left: 250px;
+		top: 3em; /* Keep this value relative to the text size so that the top position remains good when the browser text size is increased. */
+		left: 250px; /* Set to the width of your logo. This margin prevents it from colliding with the logo if the browser window is shrunk down. */
 	}
 	
 	#portalWelcome .logout-label
 	{
-		padding-left: 0.5em;
+		padding-left: 0.5em; /* Gives a bit of space between the welcome statement and the logout link. */
 	}
 	
 	.focused #portalPageBar img
@@ -119,7 +119,7 @@
 	
 	#portalPageBodyTitleRowContents
 	{
-		position: relative;
+		position: relative; /* Sets this container as positioned to have other elements poisitioned relative to it. */
 	}
 		
 	#portalPageBody h1 {
@@ -128,12 +128,21 @@
 		
 	#portalCustomizationLinks 
 	{
+		position: absolute;
+		top: 0;
+		right: 0;
+		text-align: right;
 		margin-left: 250px;
 	}
 	
 	#portalCustomizationLinks h3, #portalCustomizationLinks ul, #portalCustomizationLinks li 
 	{
 		display: inline;
+	}
+
+	#portalCustomizationLinks h3
+	{
+		padding-right: 1em;
 	}
 		
 	#portalCustomizationLinks ul 
@@ -143,12 +152,17 @@
 	
 	#portalCustomizationLinks li 
 	{
-		padding-left: 1em;
+		padding-right: 5px;
+	}
+	
+	#portalCustomizationLinks a 
+	{
+		padding: 2px 5px 2px 20px;
 	}
 	
 	#portalPageLeftColumnInner 
 	{
-		 width: 15em;
+		 width: 195px;
 	}
 	
 	#portalPageBodyColumns td.single .portal-page-column-inner, #portalPageBodyColumns td.right .portal-page-column-inner 
@@ -159,6 +173,7 @@
 	.portal-page-column-inner 
 	{
 		padding-left: 1em;
+		padding-bottom: 2em;
 		min-height: 100px;
 	}
 	
@@ -180,8 +195,13 @@
 	.portlet-controls
 	{
 		position: absolute;
-		top: 0;
+		top: 4px;
 		right: 0;
+	}
+	
+	.portlet-controls .portlet-control
+	{
+		padding-left: 20px;
 	}
 	
 	.portlet-content 
@@ -195,6 +215,11 @@
 		padding-top: 5em;
 	}
 	
+	.left-column #portalPageFooter
+	{
+		margin-left: 196px;
+	}
+	
 	#portalProductAndVersion
 	{
 		margin-top: 1em;
@@ -204,6 +229,7 @@
 	#portalLogin
 	{
 	 padding: 1em;
+	 margin-bottom: 1em;
 	}
 	
 	#portalLogin h2
@@ -221,12 +247,23 @@
 	{
 		margin-bottom: 1em;
 	}
+	
+	#portalLoginMessage
+	{
+	 padding: 1em;
+	 margin-bottom: 1em;
+	}
+	
+	#portalLoginMessage h2
+	{
+		padding-left: 20px;
+	}
 
 /** navigation **/
 	.header #portalNavigationList
 	{
 		position: absolute;
-		top: 90px;
+		top: 89px;
 		left: 195px;
 	}
 	
@@ -244,7 +281,6 @@
 	
 	#portalNavigation .header #portalNavigationList a 
 	{
-		display: block;
 		padding: 0.5em 2em;
 	}
 	

@@ -55,7 +55,7 @@
    | This template renders the left navigation column of the page body.
   -->
   <xsl:template name="left.column">
-  	<td rowspan="2" width="{$LEFT_COLUMN_WIDTH}px" id="portalPageLeftColumn">
+  	<td rowspan="2" id="portalPageLeftColumn">
       <div id="portalPageLeftColumnInner"> <!-- Inner div for additional presentation/formatting options. -->
         
         <!-- ****** CONTENT LEFT BLOCK ****** -->

@@ -24,6 +24,9 @@
    | The main layout of the page has three subsections: header (TEMPLATE: PAGE HEADER), content (TEMPLATE: PAGE BODY), and footer (TEMPLATE: PAGE FOOTER), defined below.
   -->
   <xsl:template match="layout | layout_fragment">
+  	<xsl:variable name="COUNT_PORTLET_COLUMNS" select="count(content/column)"/>
+    <xsl:variable name="PAGE_COLUMN_CLASS"><xsl:value-of select="$COUNT_PORTLET_COLUMNS"/>-column</xsl:variable>
+    
     <html xml:lang="en" lang="en">
       <head>
         <title>
@@ -56,8 +59,8 @@
         <!-- ****** JAVASCRIPT ****** -->
       </head>
       
-      <body id="portal" class="{$LOGIN_STATE} {$PORTAL_VIEW}">
-        <div id="portalPage">  <!-- Main div for presentation/formatting options. -->
+      <body id="portal" class="{$LOGIN_STATE} {$PORTAL_VIEW} {$JS_LIBRARY_CLASS}">
+        <div id="portalPage" class="{$PAGE_COLUMN_CLASS} {$LEFT_COLUMN_CLASS}">  <!-- Main div for presentation/formatting options. -->
         	<div id="portalPageInner">  <!-- Inner div for additional presentation/formatting options. -->
             <xsl:choose>
               <xsl:when test="/layout_fragment"> <!-- When detached. -->

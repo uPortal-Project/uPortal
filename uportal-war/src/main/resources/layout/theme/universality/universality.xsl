@@ -127,6 +127,12 @@
     </xsl:choose>
   </xsl:param>
   <xsl:param name="USE_AJAX" select="'false'"/>
+  <xsl:param name="JS_LIBRARY_CLASS">
+  	<xsl:choose>
+  		<xsl:when test="$USE_AJAX='true'">tundra</xsl:when>
+      <xsl:otherwise></xsl:otherwise>
+    </xsl:choose>
+  </xsl:param>
   <xsl:param name="AUTHENTICATED" select="'false'"/>
   <xsl:param name="LOGIN_STATE">
   	<xsl:choose>
@@ -163,13 +169,18 @@
    | Layout Settings can be used to change the main layout.
   -->
   <xsl:param name="USE_LEFT_COLUMN" select="'true'"/> <!-- Sets the use of a left sidebar.  This sidebar can contain UI components (navigation, quicklinks, etc.) and custom institution content (blocks), but not portlets.  Values are 'true' or 'false'. -->
-  <xsl:param name="LEFT_COLUMN_WIDTH" select="180"/> <!-- Sets the pixel width of the left sidebar column, if used.  Value must be numeric. -->
+  <xsl:param name="LEFT_COLUMN_CLASS">
+  	<xsl:choose>
+  		<xsl:when test="$USE_LEFT_COLUMN='true'">left-column</xsl:when>
+      <xsl:otherwise></xsl:otherwise>
+    </xsl:choose>
+  </xsl:param>
   
   <!-- ============================================ -->
   
   <!-- Debug Template
   <xsl:template match="/">
-  	<h1>Dude!</h1>
+  	<h1>Debugging</h1>
   </xsl:template> -->
   
   <!-- =============================== -->
@@ -292,8 +303,10 @@
     <xsl:call-template name="login"/> -->
     <!-- Login -->
     
-    <!-- Login Channel
-    <xsl:copy-of select="//channel[@name='Login']"/> -->
+    <!-- Login Channel -->
+    <xsl:if test="$AUTHENTICATED='true'">
+    	<xsl:call-template name="login.channel"/>
+    </xsl:if>
     <!-- Login Channel -->
     
     <!-- CAS Login
@@ -301,8 +314,8 @@
     <!-- CAS Login -->
     <!-- ****** LOGIN ****** -->
     
-    <!-- Welcome -->
-    <xsl:call-template name="welcome"/>
+    <!-- Welcome
+    <xsl:call-template name="welcome"/> -->
     <!-- Welcome -->
     
     <!-- Web Search -->
@@ -580,7 +593,9 @@
     <!-- Login -->
     
     <!-- Login Channel -->
-    <xsl:copy-of select="//channel[@name='Login']"/>
+    <xsl:if test="$AUTHENTICATED='false'">
+    	<xsl:call-template name="login.channel"/>
+    </xsl:if>
     <!-- Login Channel -->
     
     <!-- CAS Login

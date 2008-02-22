@@ -36,7 +36,7 @@
 	
 	body#portal /* This formats only the <body> of the portal and not imported html pages */
 	{
-		background-color: #ccccff;
+		background: #ccccff url("images/page_column_back.png") repeat-y;
 	}
 	
 	h1,h2,h3,h4,h5,h6
@@ -99,7 +99,7 @@
 	
 	#portalPageBar 
 	{
-		background: #000099 url("images/headerbar.png") 0 0 repeat-x;
+		background: #180884 url("images/headerbar.png") 0 0 repeat-x;
 		color: #9999cc;
 		text-align: right;
 	}
@@ -118,22 +118,22 @@
 	
 	#portalPageBarHome
 	{
-		background: url("../icons/house.png") no-repeat;
+		background: url("../../icons/house.png") no-repeat;
 	}
 	
 	#portalPageBarCustom
 	{
-		background: url("../icons/user.png") no-repeat;
+		background: url("../../icons/user.png") no-repeat;
 	}
 	
 	#portalPageBarSitemap
 	{
-		background: url("../icons/map.png") no-repeat;
+		background: url("../../icons/map.png") no-repeat;
 	}
 	
 	#portalPageBarHelp
 	{
-		background: url("../icons/help.png") no-repeat;
+		background: url("../../icons/help.png") no-repeat;
 	}
 	
 	#portalPageBarLinks a:hover 
@@ -168,12 +168,10 @@
 
 	#portalPageLeftColumn
 	{
-		 background-color: #9999cc;
 	}
 	
 	#portalPageLeftColumnInner
 	{
-		 border-right: 1px solid #000099;
 	}
 
 	#portalPageBodyTitle 
@@ -184,10 +182,6 @@
 
 	#portalCustomizationLinks
 	{
-		position: absolute;
-		top: 0;
-		right: 0;
-		text-align: right;
 		font-size: 80%;
 		color: #000099;
 	}
@@ -196,7 +190,21 @@
 	{
 		list-style: none;
 	}
-
+	
+	#portalCustomizationLinksAddContent a
+	{
+		background: url("../../icons/application_add.png") no-repeat;
+	}
+	
+	#portalCustomizationLinksChangeLayout a
+	{
+		background: url("../../icons/layout_content.png") no-repeat;
+	}
+	
+	#portalCustomizationLinksChooseSkin a
+	{
+		background: url("../../icons/color_swatch.png") no-repeat;
+	}
 
 /** portlets **/
 
@@ -221,17 +229,52 @@
 	{
 		margin-left: 0.5em;
 		padding-left: 20px;
-		background: url("../icons/application.png") 0 5px no-repeat;
+		background: url("../../icons/application.png") 0 5px no-repeat;
 	}
 
-	.portlet-control-remove 
+	.portlet-controls .help 
 	{
-		background: url("../images/remove.png") no-repeat;
+		background: url("../../icons/help.png") no-repeat;
+	}
+	
+	.portlet-controls .about 
+	{
+		background: url("../../icons/information.png") no-repeat;
+	}
+	
+	.portlet-controls .edit 
+	{
+		background: url("../../icons/application_edit.png") no-repeat;
+	}
+	
+	.portlet-controls .print 
+	{
+		background: url("../../icons/printer.png") no-repeat;
+	}
+	
+	.portlet-controls .focus 
+	{
+		background: url("../../icons/zoom.png") no-repeat;
+	}
+	
+	.portlet-controls .remove 
+	{
+		background: url("../../icons/cross.png") no-repeat;
+	}
+	
+	.portlet-controls .add 
+	{
+		background: url("../../icons/application_add.png") no-repeat;
 	}
 
-	.portlet-control-remove span
+	.portlet-controls span
 	{
-		visibility: hidden;
+		display: none;
+	}
+	
+	.portlet-controls a:hover 
+	{
+		background-color: #4348b0;
 	}
 
 	.portlet-content 
@@ -262,7 +305,7 @@
 /** login **/
 	#portalLogin 
 	{
-		background: #000099 url("images/login.png");
+		background: #000099 url("images/login.png") no-repeat;
 		color: #fff;
 	}
 	
@@ -282,6 +325,18 @@
 		color: #ff6600;
 		font-size: 80%;
 	}
+	
+	#portalLoginMessage
+	{
+		background-color: #FFFFCC;
+	 	border: 2px solid #FF6600;
+		color: #FF3300;
+	}
+	
+	#portalLoginMessage h2
+	{
+		background: url("../../icons/error.png") no-repeat;
+	}
 
 
 /** navigation **/
@@ -295,18 +350,20 @@
 
 	#portalNavigation .portal-navigation 
 	{
-		background: url("images/tab.png") repeat-x;
+		background: #9999cc url("images/tab.png") repeat-x;
 		border-bottom: 1px solid #000099;
 	}
 	
 	#portalNavigation .active 
 	{
 		background-position: 0 -200px;
+		background-color: #000099;
 	}
 		
 	#portalNavigation .portal-navigation:hover 
 	{
 		background-position: 0 -400px;
+		background-color: #663399;
 	}
 
 	#portalNavigation .portal-navigation a 
@@ -345,7 +402,7 @@
 		color: #9999cc;
 		font-weight: normal;
 		border-left: 4px solid #fff;
-		background: url("../icons/application.png") 0.5em 0.5em no-repeat;
+		background: url("../../icons/application.png") 0.5em 0.5em no-repeat;
 	}
 	
 	#portalNavigation .portal-navigation .portal-subnav-container a:hover
@@ -364,12 +421,12 @@
 	/* left navigation */
 	#portalNavigation .left a.portal-navigation-link 
 	{
-		background: url("../icons/bullet_purple.png") no-repeat right;
+		background: url("../../icons/bullet_purple.png") no-repeat right;
 	}
 	
 	#portalNavigation .left .active a.portal-navigation-link 
 	{
-		background: url("../icons/bullet_orange.png") no-repeat right;
+		background: url("../../icons/bullet_orange.png") no-repeat right;
 	}
 	
 	
