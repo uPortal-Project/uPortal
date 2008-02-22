@@ -105,6 +105,16 @@
                     </if>
                 </file-iterator>
 
+                <!-- fragment-layouts -->
+                <file-iterator dir="${req($1)}" includes="**/*.fragment-layout">
+                    <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
+                        <echo-ln>Import DLM Fragment Layout:  ${req(Attributes.LOCATION)}</echo-ln>
+                        <with-attribute key="Attributes.NODE" value="${doc(${req($1)}/${req(Attributes.LOCATION)})}">
+                            <crn location="${valueOf(@script)}"/>
+                        </with-attribute>
+                    </if>
+                </file-iterator>
+
                 <!-- layouts -->
                 <file-iterator dir="${req($1)}" includes="**/*.layout">
                     <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">

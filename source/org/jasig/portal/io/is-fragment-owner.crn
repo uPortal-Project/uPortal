@@ -1,0 +1,10 @@
+<with-attribute key="Attributes.NODE" value="${doc(classpath://properties/dlm.xml)}">
+    <choose>
+        <when test="${isNull(${singleNode(dlm:fragment[@ownerID = '${USER_NAME}'])})}">
+            <return value="${groovy(false)}"/>
+        </when>
+        <otherwise>
+            <return value="${groovy(true)}"/>
+        </otherwise>
+    </choose>
+</with-attribute>

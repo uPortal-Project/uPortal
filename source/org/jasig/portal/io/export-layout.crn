@@ -72,7 +72,16 @@
                             <append-node node="${PREFERENCES}"/>
                         </if>
                     </with-attribute>
-                	<write-document file="${EXPORT_DIR}/${USER_NAME}.layout"/>
+                    <choose>
+                        <when test="${crn(is-fragment-owner.crn)}">
+                            <!-- This is a DLM fragment owner layout... -->
+                            <write-document file="${EXPORT_DIR}/${USER_NAME}.fragment-layout"/>
+                        </when>
+                        <otherwise>
+                            <!-- This is a normal layout... -->
+                            <write-document file="${EXPORT_DIR}/${USER_NAME}.layout"/>
+                        </otherwise>
+                    </choose>
                 </xslt>
             </otherwise>
         </choose>
