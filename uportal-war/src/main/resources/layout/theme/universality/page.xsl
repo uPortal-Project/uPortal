@@ -59,7 +59,7 @@
         <!-- ****** JAVASCRIPT ****** -->
       </head>
       
-      <body id="portal" class="{$LOGIN_STATE} {$PORTAL_VIEW} {$JS_LIBRARY_CLASS}">
+      <body id="portal" class="{$LOGIN_STATE} {$PORTAL_VIEW} {$JS_LIBRARY_SKIN}">
         <div id="portalPage" class="{$PAGE_COLUMN_CLASS} {$LEFT_COLUMN_CLASS}">  <!-- Main div for presentation/formatting options. -->
         	<div id="portalPageInner">  <!-- Inner div for additional presentation/formatting options. -->
             <xsl:choose>

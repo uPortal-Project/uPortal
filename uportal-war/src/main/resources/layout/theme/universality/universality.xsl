@@ -127,9 +127,9 @@
     </xsl:choose>
   </xsl:param>
   <xsl:param name="USE_AJAX" select="'false'"/>
-  <xsl:param name="JS_LIBRARY_CLASS">
+  <xsl:param name="JS_LIBRARY_SKIN">
   	<xsl:choose>
-  		<xsl:when test="$USE_AJAX='true'">tundra</xsl:when>
+  		<xsl:when test="$USE_AJAX='true'">jqueryui</xsl:when>
       <xsl:otherwise></xsl:otherwise>
     </xsl:choose>
   </xsl:param>
