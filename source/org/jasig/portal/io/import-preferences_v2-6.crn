@@ -86,7 +86,7 @@
                                         		    <sql-statement sql="INSERT INTO up_portlet_entity_prefs(user_id, layout_id, chan_desc_id, portlet_pref_name, pref_id) VALUES(?, 1, ?, ?, ?)">
                                 		                <parameter value="${USER_ID}"/>
                         		                        <parameter value="${groovy(getChanDescId(${USER_ID}, ${LAYOUT_USER_ID}, ${valueOf(@struct-id)}))}"/>
-                		                                <parameter value="${valueOf(@name)}"/>
+                		                                <parameter value="${groovy(ENTRY_ELEMENT.valueOf('@name'))}"/>
         		                                        <parameter value="${groovy(LAST_INDEX + PREFERENCE_COUNT[0])}"/>
 		                                            </sql-statement>
 		                                            <node-iterator source="${ENTRY_ELEMENT}" xpath="value">		                                            
