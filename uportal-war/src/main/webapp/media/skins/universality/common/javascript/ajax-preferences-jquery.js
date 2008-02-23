@@ -15,19 +15,7 @@ function initportal() {
 			helperclass : 'dropborder',
 			opacity : 0.5,
 			handle : 'div.portlet-toolbar',
-			onStop : function(){
-				var method = 'insertBefore';
-				var target = null;
-				if ($(this).next('div[@id*=portlet_]').attr('id') != undefined) {
-					target = $(this).next('div[@id*=portlet_]');
-				} else if ($(this).prev('div[@id*=portlet_]').attr('id') != undefined) {
-					target = $(this).prev('div[@id*=portlet_]');
-					method = 'appendAfter';
-				} else {
-					target = $(this).parent();
-				}
-				$.post(preferencesUrl, {action: 'movePortletHere', method: method, elementID: $(target).attr('id').split('_')[1], sourceID: $(this).attr('id').split('_')[1]}, function(xml) { });
-			}
+			onStop : movePortlet
 		});
     });
     
@@ -49,14 +37,96 @@ function initializeFocusedContentMenu() {
 }
 
 function initializeLayoutMenu() {
-	$("#changeColumns > input").each(function(i, val){$(this).click(function(){changeColumns(i+1)});});
-	$("#changeColumns > input").eq(columnCount - 1).attr("checked", true);
+	$("#changeColumns").find("img")
+		.click(function(){$(this).prev().attr("checked", true)})
+		.end().find("input[value=" + getCurrentLayoutString() + "]").attr("checked", true);
 	$("#pageLayoutDialog").dialog({height:200, width:400});
 
 	$("#layoutDialogLink")
 		.unbind('click', initializeLayoutMenu)
 		.click(function(){$("#pageLayoutDialog").dialog('open');});
 
+}
+function getCurrentLayoutString() {
+	var str = "";
+	$('#portalPageBodyColumns > td[@id*=column_]').each(function(){
+		if (str != '')
+			str += '-';
+		str += parseInt($(this).attr("width"));
+	});
+	return str;
+}
+function updatePage(form) {
+	var name = form.pageName.value;
+	var layout = $(form.layoutChoice).filter(":checked").val();
+	var columns = layout.split("-");
+	if (name != $("#portalPageBodyTitle").text())
+		updatePageName(name);
+	if (layout != getCurrentLayoutString())
+		changeColumns(columns);
+	$("#pageLayoutDialog").dialog('close');
+	return false;
+}
+function updatePageName(name) {
+	$("#tabLink_" + tabId + " > span").text(name);
+	$("#portalPageBodyTitle").text(name);
+	$.post(preferencesUrl, {action: 'renameTab', tabId: tabId, tabName: name}, function(xml){});
+	return false;
+}
+function deleteTab(id) {
+	if (!confirm("Are you sure you want to remove this tab and all its content?")) return false;
+	$.post(preferencesUrl, {action: 'removeElement', elementID: id}, function(xml) { window.location = portalUrl + "?uP_root=root&uP_sparam=activeTab&activeTab=1"; });
+}
+// Column editing persistence functions
+function changeColumns(newcolumns) {
+	$.post(preferencesUrl, {action: 'changeColumns', tabId: tabId, columns: newcolumns}, 
+		function(xml) { 
+		    var columns = $('#portalPageBodyColumns > td[@id*=column_]');
+		    if (columns.length < newcolumns.length) {
+		    	$("newColumns > id", xml).each(function(){
+		    		$("#portalPageBodyColumns")
+		    			.append(
+		    				$(document.createElement('td')).attr("id", 'column_' + $(this).text())
+		    					.addClass("portal-page-column")
+		    					.append(
+		    						$(document.createElement('div'))
+		    							.attr("id", 'inner-column_' + $(this).text())
+		    							.addClass("portal-page-column-inner")
+		    							.Sortable({
+											accept : 'movable',
+											helperclass : 'dropborder',
+											opacity : 0.5,
+											handle : 'div.portlet-toolbar',
+											onStop : movePortlet
+										})
+								)
+		    			);
+		    	});
+		    	
+		    } else if(columns.length > newcolumns.length) {
+		    	for (var i = newcolumns.length; i < columns.length; i++) {
+		    		var lastColumn = $("#inner-column_" + $(columns[newcolumns.length-1]).attr("id").split("_")[1]);
+		    		var portlets = $(columns[i]).find("div[@id*=portlet_]")
+			    		.each(function(){
+			    			$(this).appendTo(lastColumn);
+			    			lastColumn.SortableAddItem($(this));
+			    		})
+		    			.end().remove();
+		    	}
+		    	
+		    }
+
+		    $("#portalPageBodyTitleRow").attr("colspan", newcolumns.length);
+		    $('#portalPageBodyColumns > td[@id*=column_]').each(function(i){
+		    	$(this).attr("width", newcolumns[i] + "%")
+		    	.removeClass("right").removeClass("left").removeClass("single");
+		    	if (newcolumns.length == 1) $(this).addClass("single");
+		    	else if (i == 0) $(this).addClass("left");
+		    	else if (i == newcolumns.length - 1) $(this).addClass("right");
+		    });
+			
+		}
+	);
 }
 
 function initializeContentMenu() {
@@ -187,10 +257,6 @@ function deletePortlet(id) {
 	$.post(preferencesUrl, {action: 'removeElement', elementID: id}, function(xml) { });
 }
 
-// Column editing persistence functions
-function changeColumns(num) {
-	$.post(preferencesUrl, {action: 'changeColumns', tabId: tabId, columnNumber: num}, function(xml) { window.location = portalUrl; });
-}
 
 // Tab editing persistence functions
 function addTab() {
@@ -200,26 +266,17 @@ function addTab() {
 	});
 }
 function movePortlet(movedNode, targetNode) {
-	var direction, targetElement;
-	// moved to a different tab
-	if (targetNode.is('[@id*=portalNavigation]')) {
-		movedNode.remove();
-		direction = "insertBefore";
-		targetElement = targetNode;
-	// moved within the page
-	} else return;
-	
-	$.post(preferencesUrl, {action: 'movePortletHere', sourceID:movedNode.attr("id").split("_")[1], direction:direction, elementID:targetElement.attr("id").split("_")[1]});
-}
-function updatePageName(name) {
-	$("#tabLink_" + tabId + " > span").text(name);
-	$("#portalPageBodyTitle").text(name);
-	$.post(preferencesUrl, {action: 'renameTab', tabId: tabId, tabName: name}, function(xml){});
-	return false;
-}
-function deleteTab(id) {
-	if (!confirm("Are you sure you want to remove this tab and all its content?")) return false;
-	$.post(preferencesUrl, {action: 'removeElement', elementID: id}, function(xml) { window.location = portalUrl + "?uP_root=root&uP_sparam=activeTab&activeTab=1"; });
+	var method = 'insertBefore';
+	var target = null;
+	if ($(this).next('div[@id*=portlet_]').attr('id') != undefined) {
+		target = $(this).next('div[@id*=portlet_]');
+	} else if ($(this).prev('div[@id*=portlet_]').attr('id') != undefined) {
+		target = $(this).prev('div[@id*=portlet_]');
+		method = 'appendAfter';
+	} else {
+		target = $(this).parent();
+	}
+	$.post(preferencesUrl, {action: 'movePortletHere', method: method, elementID: $(target).attr('id').split('_')[1], sourceID: $(this).attr('id').split('_')[1]}, function(xml) { });
 }
 
 function addFocusedChannel(form) {

@@ -255,8 +255,8 @@ public class UpdatePreferencesServlet extends HttpServlet {
 			IUserLayoutManager ulm, HttpServletRequest request,
 			HttpServletResponse response) throws IOException, PortalException {
 
-		int columnNumber = Integer.parseInt(request
-				.getParameter("columnNumber"));
+		String[] newcolumns = request.getParameterValues("columns");
+		int columnNumber = newcolumns.length;
 		String tabId = request.getParameter("tabId");
 		Enumeration columns = ulm.getChildIds(tabId);
 		List<String> columnList = new ArrayList<String>();
@@ -302,9 +302,30 @@ public class UpdatePreferencesServlet extends HttpServlet {
 			}
 		}
 
-		// set all the columns to have equal width
-		equalizeColumnWidths(per, upm, ulm, tabId);
+		int count = 0;
+		columns = ulm.getChildIds(tabId);
+		StructureStylesheetUserPreferences ssup = upm.getUserPreferences()
+		.getStructureStylesheetUserPreferences();
+		while (columns.hasMoreElements()) {
+			String columnId = (String) columns.nextElement();
+			ssup.setFolderAttributeValue(columnId, "width", newcolumns[count] + "%");
+			Element folder = ulm.getUserLayoutDOM().getElementById(columnId);
+			try {
+				// This sets the column attribute in memory but doesn't persist it.  Comment says saves changes "prior to persisting"
+				UserPrefsHandler.setUserPreference(folder, "width", per);
+				// This is a brute force save of the new attributes.  It requires access to the layout store. -SAB
+				ulStore
+						.setStructureStylesheetUserPreferences(per, upm
+								.getUserPreferences().getProfile()
+								.getProfileId(), ssup);
+			} catch (Exception e) {
+				log.error("Error saving new column widths", e);
+			}
+			count++;
+		}
 
+
+		
 		// save the layout changes
 		ulm.saveUserLayout();
 
