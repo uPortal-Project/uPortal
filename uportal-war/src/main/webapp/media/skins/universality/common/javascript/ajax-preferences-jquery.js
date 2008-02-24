@@ -27,6 +27,8 @@ function initportal() {
 	$("#editPageLink").click(initializeLayoutMenu).click(function(){forceHideSubnav(tabId);});
 	$("#movePageLeftLink").click(function(){ moveTab('left')});
 	$("#movePageRightLink").click(function(){moveTab('right')});
+	initTabEditLinks();
+
 }
 
 // Initialization tasks for focus mode
@@ -307,6 +309,27 @@ function moveTab(direction) {
 	);
 	forceHideSubnav(tabId);
 	redoTabs();
+	initTabEditLinks();
+}
+function initTabEditLinks() {
+	var tab = $("#portalNavigation_" + tabId);
+	if (tab.not(":first-child") && tab.prev().hasClass("movable-tab"))
+		$("#movePageLeftLink").css("display", "block");
+	else 
+		$("#movePageLeftLink").css("display", "none");
+		
+	if (tab.is(":last-child")) 
+		$("#movePageRightLink").css("display", "none");
+	else
+		$("#movePageRightLink").css("display", "block");
+		
+	var links = $("#editTabInner").find(".portal-subnav").not("[display=none]")
+	links.each(function(i){
+		if (links.length == 1) $(this).removeClass("first").removeClass("last").addClass("single");
+		else if (i == 0) $(this).removeClass("single").removeClass("last").addClass("first");
+		else if (i == links.length-1) $(this).removeClass("single").removeClass("first").addClass("last");
+		else $(this).removeClass("single").removeClass("last").removeClass("first");
+	});
 }
 function redoTabs() {
 	$("[@id*=tabLink_]").each(function(i){

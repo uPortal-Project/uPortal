@@ -13,7 +13,7 @@
  | For more information on XSL, refer to [http://www.w3.org/Style/XSL/].
 -->
 
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:dlm="http://www.uportal.org/layout/dlm">
     
   
   <!-- ========== TEMPLATE: NAVIGATION ========== -->
@@ -52,7 +52,13 @@
                 <xsl:otherwise></xsl:otherwise>
               </xsl:choose>
             </xsl:variable>
-            <li id="portalNavigation_{@ID}" class="portal-navigation {$NAV_POSITION} {$NAV_ACTIVE}"> <!-- Each navigation menu item.  The unique ID can be used in the CSS to give each menu item a unique icon, color, or presentation. -->
+            <xsl:variable name="NAV_MOVABLE"> <!-- Determine whether the navigation tab is movable and add a css hook. -->
+              <xsl:choose>
+                <xsl:when test="not(@dlm:moveAllowed='false')">movable-tab</xsl:when>
+                <xsl:otherwise></xsl:otherwise>
+              </xsl:choose>
+            </xsl:variable>
+            <li id="portalNavigation_{@ID}" class="portal-navigation {$NAV_POSITION} {$NAV_ACTIVE} {$NAV_MOVABLE}"> <!-- Each navigation menu item.  The unique ID can be used in the CSS to give each menu item a unique icon, color, or presentation. -->
               <a id="tabLink_{@ID}" href="{$BASE_ACTION_URL}?uP_root=root&amp;uP_sparam=activeTab&amp;activeTab={position()}" title="{@name}" class="portal-navigation-link">  <!-- Navigation item link. -->
                 <span class="portal-navigation-label"><xsl:value-of select="@name"/></span>
               </a>
@@ -141,21 +147,31 @@
                 <span class="portal-subnav-label"><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINK_LAYOUT_LABEL']"/></span>
               </a>
             </li>
-            <li id="movePageLeftLink" class="portal-subnav">
-              <a href="javascript:;" class="portal-subnav-link" title="{$TOKEN[@name='PREFERENCES_LINK_MOVE_TAB_LEFT_LONG_LABEL']}">
-                <span class="portal-subnav-label"><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINK_MOVE_TAB_LEFT_LABEL']"/></span>
-              </a>
-            </li>
-            <li id="movePageRightLink" class="portal-subnav">
-              <a href="javascript:;" class="portal-subnav-link" title="{$TOKEN[@name='PREFERENCES_LINK_MOVE_TAB_RIGHT_LONG_LABEL']}">
-                <span class="portal-subnav-label"><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINK_MOVE_TAB_RIGHT_LABEL']"/></span>
-              </a>
-            </li>
-            <li id="deletePageLink" class="portal-subnav">
+            <xsl:if test="not(@dlm:moveAllowed='false')">
+              <li id="movePageLeftLink" class="portal-subnav">
+                <xsl:if test="position()=1">
+                  <xsl:attribute name="style">display: none;</xsl:attribute>
+                </xsl:if>
+                <a href="javascript:;" class="portal-subnav-link" title="{$TOKEN[@name='PREFERENCES_LINK_MOVE_TAB_LEFT_LONG_LABEL']}">
+                  <span class="portal-subnav-label"><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINK_MOVE_TAB_LEFT_LABEL']"/></span>
+                </a>
+              </li>
+              <li id="movePageRightLink" class="portal-subnav">
+                <xsl:if test="position()=last()">
+                  <xsl:attribute name="style">display: none;</xsl:attribute>
+                </xsl:if>
+                <a href="javascript:;" class="portal-subnav-link" title="{$TOKEN[@name='PREFERENCES_LINK_MOVE_TAB_RIGHT_LONG_LABEL']}">
+                  <span class="portal-subnav-label"><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINK_MOVE_TAB_RIGHT_LABEL']"/></span>
+                </a>
+              </li>
+            </xsl:if>
+            <xsl:if test="not(@dlm:deleteAllowed='false')">
+              <li id="deletePageLink" class="portal-subnav">
               <a href="javascript:;" class="portal-subnav-link" title="{$TOKEN[@name='PREFERENCES_LINK_DELETE_TAB_LONG_LABEL']}">
                 <span class="portal-subnav-label"><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINK_DELETE_TAB_LABEL']"/></span>
               </a>
-            </li>
+              </li>
+            </xsl:if>
           </ul>
         </div> 
       </div>
