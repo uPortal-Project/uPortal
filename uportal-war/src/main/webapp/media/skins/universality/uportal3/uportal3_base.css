@@ -415,6 +415,14 @@
 	{
 		border-left: 1px solid #9999cc;
 		border-right: 1px solid #9999cc;
+		position: absolute;
+		z-index: 10;
+	}
+	
+	#portalNavigation .portal-navigation .portal-flyout-iframe
+	{
+		position: absolute;
+		z-index: 9;
 	}
 	
 #portalNavigation .portal-navigation .portal-subnav-container a

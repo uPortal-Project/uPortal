@@ -53,10 +53,6 @@
               </xsl:choose>
             </xsl:variable>
             <li id="portalNavigation_{@ID}" class="portal-navigation {$NAV_POSITION} {$NAV_ACTIVE}"> <!-- Each navigation menu item.  The unique ID can be used in the CSS to give each menu item a unique icon, color, or presentation. -->
-              <xsl:if test="@activeTab='false' and $USE_FLYOUT_MENUS='true'"> <!-- If using flyout menus, add needed hooks for hiding and displaying submenus. -->
-                <xsl:attribute name="onmouseover">showSubnav('<xsl:value-of select="@ID"/>')</xsl:attribute>
-                <xsl:attribute name="onmouseout">hideSubnav('<xsl:value-of select="@ID"/>', event)</xsl:attribute>
-              </xsl:if>
               <a id="tabLink_{@ID}" href="{$BASE_ACTION_URL}?uP_root=root&amp;uP_sparam=activeTab&amp;activeTab={position()}" title="{@name}" class="portal-navigation-link">  <!-- Navigation item link. -->
                 <span class="portal-navigation-label"><xsl:value-of select="@name"/></span>
               </a>
@@ -64,6 +60,9 @@
                 <xsl:call-template name="subnavigation">
                   <xsl:with-param name="CONTEXT" select="'flyout'"/>
                 </xsl:call-template>
+              </xsl:if>
+              <xsl:if test="$USE_AJAX='true' and @activeTab='true' and $CONTEXT!='left'"> <!-- If navigation is being rendered in the left column rather than as tabs, call template for rendering active menu item's submenu. -->
+                <xsl:call-template name="preferences.editpage"/>
               </xsl:if>
               <xsl:if test="@activeTab='true' and $CONTEXT='left'"> <!-- If navigation is being rendered in the left column rather than as tabs, call template for rendering active menu item's submenu. -->
                 <xsl:call-template name="subnavigation">
@@ -127,9 +126,41 @@
     
     <!-- ????? NEED TO PROVIDE A TARGET FOR THE IFRAME TO BE VALID WITH SSL ????? -->
     <xsl:if test="$USE_FLYOUT_MENUS='true'">  <!-- IE fix. If using flyout menus, render an iframe behind the submenu to ensure the submenu renders on top of all other elements. -->
-    	<iframe id="navFrame_{@ID}" style="display: none;" frameborder="0"></iframe>
+    	<iframe id="navFrame_{@ID}" style="display: none;" class="portal-flyout-iframe" frameborder="0"></iframe>
     </xsl:if>
     
+  </xsl:template>
+  
+  <xsl:template name="preferences.editpage">
+      <div id="editTab" class="portal-flyout-container" style="display: none;"> <!-- Unique ID is needed for the flyout menus javascript. -->
+        
+        <div id="editTabInner">  <!-- Inner div for additional presentation/formatting options. -->
+          <ul class="portal-subnav-list"> <!-- List of the subnavigation menu items. -->
+            <li id="editPageLink" class="portal-subnav">
+              <a href="javascript:;" class="portal-subnav-link" title="{$TOKEN[@name='PREFERENCES_LINK_LAYOUT_LONG_LABEL']}">
+                <span class="portal-subnav-label"><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINK_LAYOUT_LABEL']"/></span>
+              </a>
+            </li>
+            <li id="movePageLeftLink" class="portal-subnav">
+              <a href="javascript:;" class="portal-subnav-link" title="{$TOKEN[@name='PREFERENCES_LINK_MOVE_TAB_LEFT_LONG_LABEL']}">
+                <span class="portal-subnav-label"><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINK_MOVE_TAB_LEFT_LABEL']"/></span>
+              </a>
+            </li>
+            <li id="movePageRightLink" class="portal-subnav">
+              <a href="javascript:;" class="portal-subnav-link" title="{$TOKEN[@name='PREFERENCES_LINK_MOVE_TAB_RIGHT_LONG_LABEL']}">
+                <span class="portal-subnav-label"><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINK_MOVE_TAB_RIGHT_LABEL']"/></span>
+              </a>
+            </li>
+            <li id="deletePageLink" class="portal-subnav">
+              <a href="javascript:;" class="portal-subnav-link" title="{$TOKEN[@name='PREFERENCES_LINK_DELETE_TAB_LONG_LABEL']}">
+                <span class="portal-subnav-label"><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINK_DELETE_TAB_LABEL']"/></span>
+              </a>
+            </li>
+          </ul>
+        </div> 
+      </div>
+      
+      <iframe style="display: none;" class="portal-flyout-iframe" frameborder="0"></iframe>
   </xsl:template>
   <!-- ============================================= -->
 	

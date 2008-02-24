@@ -72,6 +72,12 @@
 		<token name="PREFERENCES_LINK_SKINS_LONG_LABEL">To choose a different skin</token>
 		<token name="PREFERENCES_LINK_ADD_TAB_LABEL">Add tab</token>
 		<token name="PREFERENCES_LINK_ADD_TAB_LONG_LABEL">To add a tab to your layout</token>
+		<token name="PREFERENCES_LINK_MOVE_TAB_LEFT_LABEL">Move tab left</token>
+		<token name="PREFERENCES_LINK_MOVE_TAB_LEFT_LONG_LABEL">To move this tab to the left</token>
+		<token name="PREFERENCES_LINK_MOVE_TAB_RIGHT_LABEL">Move tab right</token>
+		<token name="PREFERENCES_LINK_MOVE_TAB_RIGHT_LONG_LABEL">To move this tab to the right</token>
+		<token name="PREFERENCES_LINK_DELETE_TAB_LABEL">Delete tab</token>
+		<token name="PREFERENCES_LINK_DELETE_TAB_LONG_LABEL">To remove this tab from your layout</token>
 		<!-- Preferences Target Links -->
 		<token name="CANCEL_TAB_MOVE_LABEL">Cancel Tab Move</token>
 		<token name="CANCEL_TAB_MOVE_LONG_LABEL">To cancel the request to move the Tab</token>

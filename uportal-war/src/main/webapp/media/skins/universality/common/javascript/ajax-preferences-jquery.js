@@ -23,6 +23,10 @@ function initportal() {
 	$('a[@id*=removePortlet_]').each(function(i){$(this).click(function(){deletePortlet(this.id.split("_")[1]);return false;});});	
 
 	$("#addTabLink").click(function(){addTab()});
+	$("#deletePageLink").click(function(){deleteTab(this.id.split("_")[1])});
+	$("#editPageLink").click(initializeLayoutMenu).click(function(){forceHideSubnav(tabId);});
+	$("#movePageLeftLink").click(function(){ moveTab('left')});
+	$("#movePageRightLink").click(function(){moveTab('right')});
 }
 
 // Initialization tasks for focus mode
@@ -43,6 +47,9 @@ function initializeLayoutMenu() {
 	$("#pageLayoutDialog").dialog({height:200, width:400});
 
 	$("#layoutDialogLink")
+		.unbind('click', initializeLayoutMenu)
+		.click(function(){$("#pageLayoutDialog").dialog('open');});
+	$("#editPageLink")
 		.unbind('click', initializeLayoutMenu)
 		.click(function(){$("#pageLayoutDialog").dialog('open');});
 
@@ -72,10 +79,6 @@ function updatePageName(name) {
 	$("#portalPageBodyTitle").text(name);
 	$.post(preferencesUrl, {action: 'renameTab', tabId: tabId, tabName: name}, function(xml){});
 	return false;
-}
-function deleteTab(id) {
-	if (!confirm("Are you sure you want to remove this tab and all its content?")) return false;
-	$.post(preferencesUrl, {action: 'removeElement', elementID: id}, function(xml) { window.location = portalUrl + "?uP_root=root&uP_sparam=activeTab&activeTab=1"; });
 }
 // Column editing persistence functions
 function changeColumns(newcolumns) {
@@ -264,6 +267,53 @@ function addTab() {
 		window.location = portalUrl + "?uP_root=root&uP_sparam=activeTab&activeTab=" + 
 			($("#portalNavigationList > li").length + 1);
 	});
+}
+function deleteTab(tabId) {
+	if (!confirm("Are you sure you want to remove this tab and all its content?")) return false;
+	$.post(preferencesUrl, {action: 'removeElement', elementID: id}, function(xml) { window.location = portalUrl + "?uP_root=root&uP_sparam=activeTab&activeTab=1"; });
+}
+function moveTab(direction) {
+	var tab = $("#portalNavigation_" + tabId);
+	var method = 'insertBefore';
+	var targetId = null;
+	var tabPosition = 1;
+
+	// move the tab node
+	if (direction == 'left') tab.insertBefore(tab.prev());
+	else tab.insertAfter(tab.next());
+	
+	// get the target node and method parameters
+	if (tab.is(":last-child")) {
+		method = 'appendAfter';
+		targetId = tab.prev().attr("id").split("_")[1];
+	} else
+		targetId = tab.next().attr("id").split("_")[1];
+
+	// figure out what the current tab's number is
+	$("[@id*=portalNavigation_]").each(function(i){
+		if ($(this).attr("id") == tab.attr("id"))
+			tabPosition = i+1;
+	});
+	
+	$.post(preferencesUrl,
+		{
+			action: 'moveTabHere',
+			sourceID: tabId,
+			method: method,
+			elementID: targetId,
+			tabPosition: tabPosition
+		},
+		function(xml){}
+	);
+	forceHideSubnav(tabId);
+	redoTabs();
+}
+function redoTabs() {
+	$("[@id*=tabLink_]").each(function(i){
+		$(this).attr("href", portalUrl + "?uP_root=root&uP_sparam=activeTab&activeTab=" + (i+1));
+	});
+	forceHideSubnav(tabId);
+	initFlyoutMenus();
 }
 function movePortlet(movedNode, targetNode) {
 	var method = 'insertBefore';
