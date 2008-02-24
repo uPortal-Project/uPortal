@@ -95,21 +95,55 @@
      </div>
      
      <div id="pageLayoutDialog" class="jqueryui" title="Change Layout">
-      <form onsubmit="return updatePageName(this.pageName.value);">
+      <form onsubmit="return updatePage(this);">
       <p>
        <label class="portlet-form-field-label">Page name:</label>
        <input name="pageName" type="text" size="20" value="{/layout/navigation/tab[@activeTab='true']/@name}"/>
+      </p>
+      <p><label class="portlet-form-field-label">Number of columns:</label></p>
+       <table id="changeColumns">
+        <tr>
+         <td>
+          <input type="radio" name="layoutChoice" value="100"/>
+          <img src="media/skins/icons/layout_content.png"/>
+         </td>
+         <td>
+          <input type="radio" name="layoutChoice" value="50-50"/>
+          <img src="media/skins/icons/layout_content.png"/>
+         </td>
+         <td>
+          <input type="radio" name="layoutChoice" value="33-34-33"/>
+          <img src="media/skins/icons/layout_content.png"/>
+         </td>
+         <td>
+          <input type="radio" name="layoutChoice" value="25-25-25-25"/>
+          <img src="media/skins/icons/layout_content.png"/>
+         </td>
+        </tr>
+        <tr>
+         <td></td>
+         <td>
+          <input type="radio" name="layoutChoice" value="30-70"/>
+          <img src="media/skins/icons/layout_content.png"/>
+         </td>
+         <td>
+          <input type="radio" name="layoutChoice" value="25-50-25"/>
+          <img src="media/skins/icons/layout_content.png"/>
+         </td>
+         <td></td>
+        </tr>
+        <tr>
+         <td></td>
+         <td>
+          <input type="radio" name="layoutChoice" value="70-30"/>
+          <img src="media/skins/icons/layout_content.png"/>
+         </td>
+         <td></td>
+         <td></td>
+        </tr>
+       </table>
        <input type="submit" value="update" class="portlet-form-button"/>
-      </p>
       </form>
-      <p id="changeColumns"><label class="portlet-form-field-label">Number of columns:</label>
-       <input type="radio" name="columnNum"/>
-       <label class="portlet-form-field-label">1</label>
-       <input type="radio" name="columnNum"/>
-       <label class="portlet-form-field-label">2</label>
-       <input type="radio" name="columnNum"/>
-       <label class="portlet-form-field-label">3</label>
-      </p>
      </div>	
   
      <div id="skinChoosingDialog" class="jqueryui" title="Choose Skin">
