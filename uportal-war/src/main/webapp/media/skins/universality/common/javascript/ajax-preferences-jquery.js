@@ -307,7 +307,7 @@ function moveTab(direction) {
 		},
 		function(xml){}
 	);
-	forceHideSubnav(tabId);
+	fly.closeSubnav("portalNavigation_" + tabId);
 	redoTabs();
 	initTabEditLinks();
 }
@@ -336,7 +336,6 @@ function redoTabs() {
 		$(this).attr("href", portalUrl + "?uP_root=root&uP_sparam=activeTab&activeTab=" + (i+1));
 	});
 	forceHideSubnav(tabId);
-	initFlyoutMenus();
 }
 function movePortlet(movedNode, targetNode) {
 	var method = 'insertBefore';

@@ -190,9 +190,13 @@
 		<script src="{$SCRIPT_PATH}/flyout-nav.js" type="text/javascript"></script>
     <script type="text/javascript">
       $(document).ready(function(){
-        initFlyoutMenus();
+        // initialize the flyout menus and add onmouseover and onmouseout events to 
+        // all the navigation elements with subnavigation flyouts
+        var fly = new UPFlyoutMenu(".portal-flyout-container", ".portal-flyout-iframe");
+        $("[@id*=portalNavigationList]:has(iframe)").children("[@id*=portalNavigation]")
+          .mouseover(function(){fly.showSubnav(this.id);})
+          .mouseout(function(event){fly.hideSubnav(this.id, event);});
       });
-      
     </script>
   </xsl:template>
   <!-- =================================================== -->
