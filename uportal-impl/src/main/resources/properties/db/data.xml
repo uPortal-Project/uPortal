@@ -539,29 +539,7 @@
           <name>TYPE_DEF_URI</name>
           <value>/org/jasig/portal/channels/webproxy/CWebProxy.cpd</value>
         </column> 
-      </row>  
-      <row> 
-        <column>
-          <name>TYPE_ID</name>
-          <value>5</value>
-        </column>  
-        <column>
-          <name>TYPE</name>
-          <value>org.jasig.portal.channels.portlet.CSpringPortletAdaptor</value>
-        </column>  
-        <column>
-          <name>TYPE_NAME</name>
-          <value>WSRP Consumer</value>
-        </column>  
-        <column>
-          <name>TYPE_DESCR</name>
-          <value>WSRP consumer implementation</value>
-        </column>  
-        <column>
-          <name>TYPE_DEF_URI</name>
-          <value>/org/jasig/portal/channels/portlet/wsrp-consumer.cpd</value>
-        </column> 
-      </row>  
+      </row> 
       <row> 
         <column>
           <name>TYPE_ID</name>

@@ -60,13 +60,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.jasig.portal.portlets-overlay</groupId>
-            <artifactId>wsrp-proxyportlet</artifactId>
-            <version>${pom.parent.version}</version>
-            <type>war</type>
-        </dependency>
-
-        <dependency>
             <groupId>javax.portlet</groupId>
             <artifactId>portlet-api</artifactId>
             <version>${portlet-api.version}</version>
@@ -176,12 +169,6 @@
                             <artifactId>FunctionalTestsPortlet</artifactId>
                             <bundleFileName>FunctionalTestsPortlet.war</bundleFileName>
                             <contextRoot>/FunctionalTestsPortlet</contextRoot>
-                        </webModule>
-                        <webModule>
-                            <groupId>org.jasig.portal.portlets-overlay</groupId>
-                            <artifactId>wsrp-proxyportlet</artifactId>
-                            <bundleFileName>proxyportlet.war</bundleFileName>
-                            <contextRoot>/proxyportlet</contextRoot>
                         </webModule>
                     </modules>
                 </configuration>

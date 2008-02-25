@@ -788,8 +788,13 @@
                         </dirset>
                     </path>
                     <sequential>
-                        <basename file="@{portlet-overlay-dir}" property="@{portlet-overlay-dir}-name" />
-                        <maven-artifact-macro project-name="${@{portlet-overlay-dir}-name}" project-path="@{portlet-overlay-dir}" />
+                        <if>
+                            <available file="@{portlet-overlay-dir}/pom.xml" />
+                            <then>
+                                <basename file="@{portlet-overlay-dir}" property="@{portlet-overlay-dir}-name" />
+                                <maven-artifact-macro project-name="${@{portlet-overlay-dir}-name}" project-path="@{portlet-overlay-dir}" />
+                            </then>
+                        </if>
                     </sequential>
                 </for>
                 
