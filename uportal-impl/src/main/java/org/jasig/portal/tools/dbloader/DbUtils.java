@@ -5,6 +5,7 @@
 
 package org.jasig.portal.tools.dbloader;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
@@ -14,7 +15,13 @@ import java.sql.Types;
 import java.util.Hashtable;
 import java.util.Map;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
+
 import org.jasig.portal.RDBMServices;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 
 /**
  * Utility class for centralizing various functions performed on the database.
@@ -23,9 +30,24 @@ import org.jasig.portal.RDBMServices;
  * @author Mark Boyd  {@link <a href="mailto:mark.boyd@engineer.com">mark.boyd@engineer.com</a>}
  * @version $Revision$
  */
-class DbUtils
+public class DbUtils
 {
- 
+    public static void loadConfiguration(Configuration config) throws ParserConfigurationException, SAXException, IOException {
+        PropertiesHandler handler = new PropertiesHandler(config);
+        config.setPropertiesURL(DbLoader.class.getResource("/properties/db/dbloader.xml"));
+        // Read in the dbloader properties
+        XMLReader parser = getXMLReader();
+        parser.setContentHandler(handler);
+        parser.setErrorHandler(handler);
+        handler.properties.getLog().print("Parsing " + handler.properties.getPropertiesURL() + "...");
+        parser.parse(new InputSource(handler.properties.getPropertiesURL().openStream()));
+    }
+
+    public static XMLReader getXMLReader() throws SAXException, ParserConfigurationException {
+        SAXParserFactory spf = SAXParserFactory.newInstance();
+        return spf.newSAXParser().getXMLReader();
+    }
+    
     static void logDbInfo (Configuration config) throws SQLException
     {
         PrintWriter out = config.getLog();

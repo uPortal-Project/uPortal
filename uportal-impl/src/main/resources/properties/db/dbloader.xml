@@ -26,32 +26,30 @@
 
   <!-- Mappings for cases where database metadata is incomplete.
        "db-name", "db-version", "driver-name", and "driver-version"
-       must match the values returned by
+       must EXACTLY match the values returned by
        java.sql.Connection.getMetaData().getDatabaseProductName(),
        java.sql.Connection.getMetaData().getDatabaseProductVersion(),
        java.sql.Connection.getMetaData().getDriverName(), and
        java.sql.Connection.getMetaData().getDriverVersion() -->
 
+  <!--
+   | HSQL Mappings
+   +-->
   <db-type-mapping>
-    <db-name>HypersonicSQL</db-name>
-    <db-version>1.4</db-version>
-    <driver-name>HypersonicSQL Driver</driver-name>
-    <driver-version>1.4</driver-version>
+    <db-name>HSQL Database Engine</db-name>
+    <db-version>1.8.0</db-version>
+    <driver-name>HSQL Database Engine Driver</driver-name>
+    <driver-version>1.8.0</driver-version>
     <type><generic>INTEGER</generic><local>INTEGER</local></type>
     <type><generic>VARCHAR</generic><local>VARCHAR</local></type>
     <type><generic>LONGVARCHAR</generic><local>LONGVARCHAR</local></type>
-    <!-- map more types here -->
   </db-type-mapping>
-
-  <db-type-mapping>
-    <db-name>InstantDB</db-name>
-    <db-version>Version 3.26</db-version>
-    <driver-name>InstantDB JDBC Driver</driver-name>
-    <driver-version>Version 3.26</driver-version>
-    <type><generic>LONGVARCHAR</generic><local>BINARY</local></type>
-    <!-- map more types here -->
-  </db-type-mapping>
-
+  
+  
+  
+  <!--
+   | Microsoft SQL Server Mappings
+   +-->
   <db-type-mapping>
     <db-name>Microsoft SQL Server</db-name>
     <db-version>08.00.0760</db-version>
@@ -117,6 +115,11 @@
     <!-- map more types here --> 
   </db-type-mapping> 
 
+  
+  
+  <!--
+   | MySQL Mappings
+   +-->
   <db-type-mapping>
     <db-name>MySQL</db-name>
     <db-version>3.23.34a</db-version>
@@ -171,6 +174,11 @@
     <!-- map more types here -->
   </db-type-mapping>
 
+  
+  
+  <!--
+   | Oracle Mappings
+   +-->
   <db-type-mapping>
     <db-name>Oracle</db-name>
     <!-- Line break has to be here -->
@@ -218,6 +226,11 @@ JServer Release 8.1.7.0.0 - Production</db-version>
     <!-- map more types here -->
   </db-type-mapping>
   
+  
+  
+  <!--
+   | PostgreSQL Mappings
+   +-->
   <db-type-mapping>
     <db-name>PostgreSQL</db-name>
     <db-version>8.1.9</db-version>
@@ -304,6 +317,11 @@ JServer Release 8.1.7.0.0 - Production</db-version>
     <type><generic>INTEGER</generic><local>integer</local></type>
   </db-type-mapping>
 
+  
+  
+  <!--
+   | Sybase SQL Server Mappings
+   +-->
   <db-type-mapping>
     <db-name>Sybase SQL Server</db-name>
     <db-version>Adaptive Server Enterprise/11.9.2.3/1159/P/SWR 9222 ESD 3/RS6000/AIX 4.2.1/FBO/Tue Sep  5 07:09:31 2000</db-version>

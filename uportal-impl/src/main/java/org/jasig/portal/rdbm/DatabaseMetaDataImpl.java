@@ -7,8 +7,6 @@ package org.jasig.portal.rdbm;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
@@ -21,7 +19,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.RDBMServices;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataAccessResourceFailureException;
+import org.springframework.jdbc.BadSqlGrammarException;
+import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 
 /**
@@ -66,12 +67,14 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata, InitializingBean
 
     /** The {@link IJoinQueryString} to use for performing outer joins */
     private IJoinQueryString joinTest = null;
+    private boolean dbmdSupportsOuterJoins = false;
 
     //Database meta information
+    private boolean portalTablesExist = false;
     private boolean useTSWrapper = false;
     private boolean useToDate = false;
     private boolean supportsTransactions = false;
-    private boolean supportsPreparedStatements = false;
+    private boolean dbmdSupportsTransactions = false;
     private String transactionTestMsg = "";
     private String databaseProductName = null;
     private String databaseProductVersion = null;
@@ -139,7 +142,8 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata, InitializingBean
      * @see org.jasig.portal.rdbm.IDatabaseMetadata#supportsPreparedStatements()
      */
     public final boolean supportsPreparedStatements() {
-        return this.supportsPreparedStatements;
+        //We never run on DBs that don't support prepared statements any more
+        return true;
     }
     
     /* (non-Javadoc)
@@ -209,7 +213,7 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata, InitializingBean
 
     @Override
     public String toString() {
-        final StringBuffer dbInfo = new StringBuffer();
+        final StringBuilder dbInfo = new StringBuilder();
 
         dbInfo.append(this.databaseProductName);
         dbInfo.append(" (");
@@ -223,23 +227,26 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata, InitializingBean
         dbInfo.append("    Connected To: ");
         dbInfo.append(this.dbUrl);
         dbInfo.append("\n");
-        dbInfo.append("    Supports:");
-        dbInfo.append("\n");
-        dbInfo.append("        Prepared Statements:  ");
-        dbInfo.append(this.supportsPreparedStatements());
-        dbInfo.append("\n");
-        dbInfo.append("        Outer Joins:          ");
-        dbInfo.append(this.supportsOuterJoins());
-        dbInfo.append("\n");
-        dbInfo.append("        Transactions:         ");
-        dbInfo.append(this.supportsTransactions());
-        dbInfo.append(this.transactionTestMsg);
-        dbInfo.append("\n");
-        dbInfo.append("        {ts metasyntax:       ");
-        dbInfo.append(this.useTSWrapper);
-        dbInfo.append("\n");
-        dbInfo.append("        TO_DATE():            ");
-        dbInfo.append(this.useToDate);
+        
+        if (this.portalTablesExist) {
+            dbInfo.append("    Supports:");
+            dbInfo.append("\n");
+            dbInfo.append("        Outer Joins:          ");
+            dbInfo.append(this.supportsOuterJoins());
+            dbInfo.append("\n");
+            dbInfo.append("        Transactions:         ");
+            dbInfo.append(this.supportsTransactions());
+            dbInfo.append(this.transactionTestMsg);
+            dbInfo.append("\n");
+            dbInfo.append("        {ts metasyntax:       ");
+            dbInfo.append(this.useTSWrapper);
+            dbInfo.append("\n");
+            dbInfo.append("        TO_DATE():            ");
+            dbInfo.append(this.useToDate);
+        }
+        else {
+            dbInfo.append("    WARNING: uPortal tables do no exist, not all meta-data tests were executed.");
+        }
 
         return dbInfo.toString();
     }
@@ -257,10 +264,14 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata, InitializingBean
     		//The order of these tests is IMPORTANT, each may depend on the
     		//results of the previous tests.
     		this.getMetaData(conn);
-    		this.testPreparedStatements(conn);
-    		this.testOuterJoins(conn);
-    		this.testTimeStamp(conn);
-    		this.testTransactions(conn);
+    		final SimpleJdbcTemplate jdbcTemplate = new SimpleJdbcTemplate(this.dataSource);
+    		
+    		this.testDatabaseInitialized(jdbcTemplate);
+    		if (this.portalTablesExist) {
+        		this.testOuterJoins(jdbcTemplate);
+        		this.testTimeStamp(jdbcTemplate);
+        		this.testTransactions(conn);
+    		}
 
     	} catch (SQLException e) {
     		LOG.error("Error during database initialization. ", e);
@@ -276,8 +287,6 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata, InitializingBean
 
     /**
      * Gets meta data about the connection.
-     *
-     * @param conn The connection to use.
      */
     private void getMetaData(final Connection conn) {
         try {
@@ -289,6 +298,8 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata, InitializingBean
             this.driverVersion = dmd.getDriverVersion();
             this.userName = dmd.getUserName();
             this.dbUrl = dmd.getURL();
+            this.dbmdSupportsOuterJoins = dmd.supportsOuterJoins();
+            this.dbmdSupportsTransactions = dmd.supportsTransactions();
         }
         catch (SQLException sqle) {
             LOG.error("Error getting database meta data.", sqle);
@@ -296,40 +307,15 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata, InitializingBean
     }
 
     /**
-     * Tests the database for prepared statement support.
-     *
-     * @param conn The connection to use.
+     * Tests if the uPortal tables exist that are needed for this test. 
      */
-    private void testPreparedStatements(final Connection conn) {
+    private void testDatabaseInitialized(final SimpleJdbcTemplate jdbcTemplate) {
         try {
-            final String pStmtTestQuery =
-                "SELECT USER_ID " +
-                "FROM UP_USER " +
-                "WHERE USER_ID=?";
-
-            final PreparedStatement pStmt = conn.prepareStatement(pStmtTestQuery);
-
-            try {
-                pStmt.clearParameters();
-                final int userId = 0;
-                pStmt.setInt(1, userId); //Set USER_ID=0
-                final ResultSet rs = pStmt.executeQuery();
-
-                try {
-                    if (rs.next() && userId == rs.getInt(1)) {
-                        this.supportsPreparedStatements = true;
-                    }
-                }
-                finally {
-                    RDBMServices.closeResultSet(rs);
-                }
-            }
-            finally {
-                RDBMServices.closeStatement(pStmt);
-            }
+            jdbcTemplate.queryForInt("SELECT COUNT(USER_ID) FROM UP_USER");
+            this.portalTablesExist = true;
         }
-        catch (SQLException sqle) {
-            LOG.error("PreparedStatements are not supported!", sqle);
+        catch (BadSqlGrammarException bsge) {
+            LOG.warn("The uPortal database is not initialized, the database tests will not be performed.");
         }
     }
 
@@ -337,51 +323,40 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata, InitializingBean
      * Test the database to see if it really supports outer joins.
      * @param conn The connection to use.
      */
-    private void testOuterJoins(final Connection conn) {
-        try {
-            if (conn.getMetaData().supportsOuterJoins()) {
-                final Statement joinTestStmt = conn.createStatement();
-
+    private void testOuterJoins(final SimpleJdbcTemplate jdbcTemplate) {
+        if (this.dbmdSupportsOuterJoins) {
+            for (final JoinQueryString joinQueryString : joinTests) {
+                final String joinTestQuery =
+                    "SELECT COUNT(UP_USER.USER_ID) " +
+                    "FROM " + joinQueryString.getTestJoin() + " UP_USER.USER_ID=0";
+                
                 try {
-                    for (int index = 0; index < joinTests.length; index++) {
-                        final String joinTestQuery =
-                            "SELECT COUNT(UP_USER.USER_ID) " +
-                            "FROM " + joinTests[index].getTestJoin() + " UP_USER.USER_ID=0";
-
-                        try {
-                            final ResultSet rs = joinTestStmt.executeQuery(joinTestQuery);
-
-                            RDBMServices.closeResultSet(rs);
-
-                            this.joinTest = joinTests[index];
-                            if (LOG.isInfoEnabled())
-                                LOG.info("Using join test: " +
-                                        this.joinTest.getClass().getName());
-                            break;
-                        }
-                        catch (SQLException sqle) {
-                            if (LOG.isInfoEnabled())
-                                LOG.info("Join test failed: " + joinTests[index].getClass().getName() +
-                                        " with sql error: '" + sqle.getLocalizedMessage() + "' on statement: '" +
-                                        joinTestQuery + "'");
-                        }
+                    jdbcTemplate.getJdbcOperations().execute(joinTestQuery);
+                    
+                    this.joinTest = joinQueryString;
+                    if (LOG.isInfoEnabled()) {
+                        LOG.info("Using join test: " + this.joinTest.getClass().getName());
+                    }
+                    break;
+                }
+                catch (DataAccessException e) {
+                    final String logMessage = "Join test failed: " +joinQueryString.getClass().getName() + " on statement: '" + joinTestQuery + "':";
+                    
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug(logMessage, e);
+                    }
+                    else {
+                        LOG.info(logMessage + "\n" + e.getMessage());
                     }
                 }
-                finally {
-                    RDBMServices.closeStatement(joinTestStmt);
-                }
             }
-        }
-        catch (SQLException sqle) {
-            LOG.warn("Error running join tests.", sqle);
         }
     }
 
     /**
      * Test the database to find the supported timestamp format
-     * @param conn The connection to use.
      */
-    private void testTimeStamp(final Connection conn) {
+    private void testTimeStamp(final SimpleJdbcTemplate jdbcTemplate) {
         try {
             //Try using {ts }
             final String timeStampTestQuery =
@@ -389,55 +364,46 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata, InitializingBean
                 "FROM UP_USER " +
                 "WHERE LST_CHAN_UPDT_DT={ts '2001-01-01 00:00:00.0'} AND USER_ID = 0";
 
-            final PreparedStatement timeStampTestPStmt = conn.prepareStatement(timeStampTestQuery);
-
-            try {
-                final ResultSet rs = timeStampTestPStmt.executeQuery();
-
-                RDBMServices.closeResultSet(rs);
-
-                this.useTSWrapper = true;
-            }
-            finally {
-                RDBMServices.closeStatement(timeStampTestPStmt);
-            }
+            jdbcTemplate.queryForList(timeStampTestQuery);
+            this.useTSWrapper = true;
         }
-        catch (SQLException sqle1) {
-            LOG.info("Error running {ts } test.", sqle1);
+        catch (DataAccessException dae1) {
+            final String logMessage1 = "Error running {ts } test.";
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(logMessage1, dae1);
+            }
+            else {
+                LOG.info(logMessage1 + "\n" + dae1.getMessage());
+            }
 
             //Try using TO_DATE()
             try {
                 final String toDateTestQuery =
                     "SELECT USER_ID " +
                     "FROM UP_USER " +
-                    "WHERE LST_CHAN_UPDT_DT=TO_DATE('2001 01 01 00:00', 'YYYY MM DD HH24:MI:SS') AND USER_ID=0";
+                    "WHERE LST_CHAN_UPDT_DT>TO_DATE('2001 01 01 00:00', 'YYYY MM DD HH24:MI:SS') AND USER_ID=0";
 
-                final PreparedStatement toDateTestPStmt = conn.prepareStatement(toDateTestQuery);
-
-                try {
-                    final ResultSet rs = toDateTestPStmt.executeQuery();
-
-                    RDBMServices.closeResultSet(rs);
-
-                    this.useToDate = true;
-                }
-                finally {
-                    RDBMServices.closeStatement(toDateTestPStmt);
-                }
+                jdbcTemplate.queryForList(toDateTestQuery);
+                this.useToDate = true;
             }
-            catch (SQLException sqle2) {
-                LOG.info("Error running TO_DATE() test.", sqle2);
+            catch (DataAccessException dae2) {
+                final String logMessage2 = "Error running TO_DATE() test.";
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(logMessage2, dae2);
+                }
+                else {
+                    LOG.info(logMessage2 + "\n" + dae2.getMessage());
+                }
             }
         }
     }
 
     /**
      * Test the database to see if it really supports transactions
-     * @param conn The connection to use.
      */
     private void testTransactions(final Connection conn) {
         try {
-            if (conn.getMetaData().supportsTransactions()) {
+            if (this.dbmdSupportsTransactions) {
                 conn.setAutoCommit(false); //Not using RDBMServices here, we want to see the exception if it happens
 
                 final Statement transTestStmt = conn.createStatement();

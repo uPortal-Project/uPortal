@@ -13,6 +13,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.tools.dbloader.Configuration;
 import org.jasig.portal.tools.dbloader.DbLoader;
+import org.jasig.portal.tools.dbloader.DbUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -206,7 +207,7 @@ public class DatabaseTagHandler
             }
             
             // load default config
-            DbLoader.loadConfiguration(config);
+            DbUtils.loadConfiguration(config);
             
             // set overrides for car table loading
             config.setCreateTables(createTables);

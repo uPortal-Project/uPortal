@@ -17,7 +17,6 @@ import java.sql.SQLException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParserFactory;
 
 import org.jasig.portal.PortalException;
 import org.jasig.portal.RDBMServices;
@@ -104,7 +103,8 @@ public class DbLoader
     try
     {
         // read dbloader.xml properties
-        loadConfiguration(config);
+        DbUtils.loadConfiguration(config);
+
         // read command line arguements to override properties in dbloader.xml
         readOverrides(config, args);
         
@@ -245,7 +245,7 @@ public class DbLoader
             if ( config.getPopulateTables() )
             {
                 config.getLog().println("Populating tables...");
-                XMLReader parser = getXMLReader();
+                XMLReader parser = DbUtils.getXMLReader();
                 DefaultHandler dataHandler =
                     DataHandlerFactory.instance().getHandler(config);
                 parser.setContentHandler(dataHandler);
@@ -255,7 +255,7 @@ public class DbLoader
             }
             else if (config.getCreateScript()) {
                 config.getLog().println("Populating tables in the script...");
-                XMLReader parser = getXMLReader();
+                XMLReader parser = DbUtils.getXMLReader();
                 DefaultHandler dataHandler =
                     DataHandlerFactory.instance().getHandler(config);
                 parser.setContentHandler(dataHandler);
@@ -282,20 +282,6 @@ public class DbLoader
         {
             RDBMServices.releaseConnection(config.getConnection());
         }          
-    }
-  
-    public static void loadConfiguration(Configuration config)
-      throws ParserConfigurationException, SAXException, IOException
-    {
-        PropertiesHandler handler = new PropertiesHandler(config);
-        config.setPropertiesURL(
-            DbLoader.class.getResource("/properties/db/dbloader.xml"));
-        // Read in the dbloader properties
-        XMLReader parser = getXMLReader();
-        parser.setContentHandler(handler);
-        parser.setErrorHandler(handler);
-        handler.properties.getLog().print("Parsing " + handler.properties.getPropertiesURL() + "...");
-        parser.parse(new InputSource(handler.properties.getPropertiesURL().openStream()));
     }
   
   /**
@@ -399,13 +385,6 @@ public class DbLoader
         }
         return url;
     }
-
-    private static XMLReader getXMLReader()
-        throws SAXException, ParserConfigurationException
-  {
-      SAXParserFactory spf=SAXParserFactory.newInstance();
-      return spf.newSAXParser().getXMLReader();
-  }
 
   private static void initScript(Configuration config) throws java.io.IOException
   {

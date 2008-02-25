@@ -5,8 +5,12 @@
 
 package org.jasig.portal.tools.dbloader;
 
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Collection;
+import java.util.Map;
+
+import org.apache.commons.collections15.map.CaseInsensitiveMap;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 
 /**
  * Holds mapping information from generic data types for table columns
@@ -16,38 +20,72 @@ import java.util.Iterator;
  * @author Mark Boyd  {@link <a href="mailto:mark.boyd@engineer.com">mark.boyd@engineer.com</a>}
  * @version $Revision$
  */
-public class DbTypeMapping
-{
-      String dbName;
-      String dbVersion;
-      String driverName;
-      String driverVersion;
-      ArrayList types = new ArrayList();
+public class DbTypeMapping {
+    String dbName;
+    String dbVersion;
+    String driverName;
+    String driverVersion;
+    Map<String, Type> typesByGenericName = new CaseInsensitiveMap<Type>(); 
 
-      public String getDbName() { return dbName; }
-      public String getDbVersion() { return dbVersion; }
-      public String getDriverName() { return driverName; }
-      public String getDriverVersion() { return driverVersion; }
-      public ArrayList getTypes() { return types; }
+    public String getDbName() {
+        return dbName;
+    }
 
-      public void setDbName(String dbName) { this.dbName = dbName; }
-      public void setDbVersion(String dbVersion) { this.dbVersion = dbVersion; }
-      public void setDriverName(String driverName) { this.driverName = driverName; }
-      public void setDriverVersion(String driverVersion) { this.driverVersion = driverVersion; }
-      public void addType(Type type) { types.add(type); }
+    public String getDbVersion() {
+        return dbVersion;
+    }
 
-      public String getMappedDataTypeName(String genericDataTypeName)
-      {
-        String mappedDataTypeName = null;
-        Iterator iterator = types.iterator();
+    public String getDriverName() {
+        return driverName;
+    }
 
-        while (iterator.hasNext())
-        {
-          Type type = (Type)iterator.next();
+    public String getDriverVersion() {
+        return driverVersion;
+    }
 
-          if (type.getGeneric().equalsIgnoreCase(genericDataTypeName))
-            mappedDataTypeName = type.getLocal();
+    public Collection<Type> getTypes() {
+        return typesByGenericName.values();
+    }
+
+    public void setDbName(String dbName) {
+        this.dbName = dbName;
+    }
+
+    public void setDbVersion(String dbVersion) {
+        this.dbVersion = dbVersion;
+    }
+
+    public void setDriverName(String driverName) {
+        this.driverName = driverName;
+    }
+
+    public void setDriverVersion(String driverVersion) {
+        this.driverVersion = driverVersion;
+    }
+
+    public void addType(Type type) {
+        typesByGenericName.put(type.getGeneric(), type);
+    }
+
+    public String getMappedDataTypeName(String genericDataTypeName) {
+        final Type typeMapping = typesByGenericName.get(genericDataTypeName);
+        if (typeMapping != null) {
+            return typeMapping.getLocal();
         }
-        return mappedDataTypeName;
-      }
+        
+        return null;
+    }
+
+    /**
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+            .append("dbName", this.dbName)
+            .append("dbVersion", this.dbVersion)
+            .append("driverName", this.driverName)
+            .append("driverVersion", this.driverVersion)
+            .append("types", this.typesByGenericName != null ? this.typesByGenericName.values() : null).toString();
+    }
 }

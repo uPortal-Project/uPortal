@@ -10,10 +10,8 @@ import java.net.URL;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
-
-import org.apache.oro.text.perl.Perl5Util;
 
 import org.jasig.portal.properties.PropertiesManager;
 import org.w3c.dom.Document;
@@ -58,7 +56,7 @@ public class Configuration
     
     private String scriptFileName;
     private String statementTerminator;
-    private ArrayList dbTypeMappings = new ArrayList();
+    private List<DbTypeMapping> dbTypeMappings = new ArrayList<DbTypeMapping>();
     private Map localDbMetaTypeMap = null;
     private Map tableColumnTypes = new Hashtable(300);
       
@@ -105,10 +103,7 @@ public class Configuration
     public String getDataUri() {
         String ret = dataUri;
         if (localeAware == true && adminLocale != null) {
-            // Switch to replaceAll when we can rely on JDK 1.4
-            // ret = ret.replaceAll("\\.xml", "_" + admin_locale + ".xml");
-            Perl5Util perl5Util = new Perl5Util();
-            ret = perl5Util.substitute("s/\\.xml/_" + adminLocale + ".xml" + "/g", ret);
+            ret = ret.replaceAll("\\.xml", "_" + adminLocale + ".xml");
         }
         return ret;
     }
@@ -116,7 +111,7 @@ public class Configuration
     public String getDataXslUri() { return dataXslUri; }
     public String getScriptFileName() { return scriptFileName; }
     public String getStatementTerminator() { return statementTerminator; }
-    public ArrayList getDbTypeMappings() { return dbTypeMappings; }
+    public List<DbTypeMapping> getDbTypeMappings() { return dbTypeMappings; }
 
     public void setDropTables(String dropTables) { this.setDropTables(toBoolean(dropTables)); }
     public void setDropTables(boolean dropTables) { this.dropTables = dropTables; }
@@ -153,27 +148,38 @@ public class Configuration
     {
         return Boolean.valueOf(booleanString).booleanValue();
     }
+    
+    public DbTypeMapping getDbTypeMapping(String dbName, String dbVersion, String driverName, String driverVersion) {
+        for (final DbTypeMapping dbTypeMapping : this.dbTypeMappings) {
+            final String dbNameProp = dbTypeMapping.getDbName();
+            final String dbVersionProp = dbTypeMapping.getDbVersion();
+            final String driverNameProp = dbTypeMapping.getDriverName();
+            final String driverVersionProp = dbTypeMapping.getDriverVersion();
 
-      public String getMappedDataTypeName(String dbName, String dbVersion, String driverName, String driverVersion, String genericDataTypeName)
-      {
-        String mappedDataTypeName = null;
-        Iterator iterator = dbTypeMappings.iterator();
+            if (dbNameProp.equalsIgnoreCase(dbName) 
+                    && dbVersionProp.equalsIgnoreCase(dbVersion)
+                    && driverNameProp.equalsIgnoreCase(driverName)
+                    && (driverVersionProp.equalsIgnoreCase(driverVersion) || driverVersion == null)) {
 
-        while (iterator.hasNext())
-        {
-          DbTypeMapping dbTypeMapping = (DbTypeMapping)iterator.next();
-          String dbNameProp = dbTypeMapping.getDbName();
-          String dbVersionProp = dbTypeMapping.getDbVersion();
-          String driverNameProp = dbTypeMapping.getDriverName();
-          String driverVersionProp = dbTypeMapping.getDriverVersion();
-
-          if (dbNameProp.equalsIgnoreCase(dbName) && dbVersionProp.equalsIgnoreCase(dbVersion) &&
-              driverNameProp.equalsIgnoreCase(driverName) && (driverVersionProp.equalsIgnoreCase(driverVersion) || driverVersion == null))
-          {
-            // Found a matching database/driver combination
-            mappedDataTypeName = dbTypeMapping.getMappedDataTypeName(genericDataTypeName);
-          }
+                // Found a matching database/driver combination
+                return dbTypeMapping;
+            }
         }
+        
+        throw new IllegalStateException("*************** No <db-type-mapping> exists for the current configuration. ********************\n" +
+                "<db-type-mapping>\n" +
+                "    <db-name>" + dbName + "</db-name>\n" +
+                "    <db-version>" + dbVersion + "</db-version>\n" +
+                "    <driver-name>" + driverName + "</driver-name>\n" +
+                "    <driver-version>" + driverVersion + "</driver-version>\n" +
+                "</db-type-mapping>\n" +
+                "Add this EXACT type mapping fragment to 'uportal-impl/src/main/resources/properties/db/dbloader.xml' along with any needed <type> mappings and re-run the command.\n" +
+                "For example <type> mappings look for existing <db-type-mapping> entries for the same database you are using.");
+    }
+
+    public String getMappedDataTypeName(String dbName, String dbVersion, String driverName, String driverVersion, String genericDataTypeName) {
+        final DbTypeMapping dbTypeMapping = this.getDbTypeMapping(dbName, dbVersion, driverName, driverVersion);
+        final String mappedDataTypeName = dbTypeMapping.getMappedDataTypeName(genericDataTypeName);
         return mappedDataTypeName;
-      }
+    }
 }
