@@ -12,9 +12,8 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 
 /**
- * @deprecated See the deprecation message on {@link ChannelPublisher}.
+ * Used by the import-channel Cernunnos script
  */
-@Deprecated
 public final class UrlChannelPublisher {
 
     public static void publishChannel(Element m) {
