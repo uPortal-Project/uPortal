@@ -97,19 +97,26 @@
         </copy>
         
         <chmod perm="755" dir="${quickstart.dir}" includes="ant*" verbose="true" />
-            
-        <antcall target="qs-package">
-            <param name="qs-file-ext" value="" />
-            <param name="exclude-svn" value="true" />
-        </antcall>
-
-        <antcall target="qs-package">
-            <param name="qs-file-ext" value="-dev" />
-            <param name="exclude-svn" value="false" />
-        </antcall>
+        
+        <if>
+            <not>
+                <equals arg1="${nopackage}" arg2="true" />
+            </not>
+            <then>
+                <antcall target="qs-package">
+                    <param name="qs-file-ext" value="" />
+                    <param name="exclude-svn" value="true" />
+                </antcall>
+        
+                <antcall target="qs-package">
+                    <param name="qs-file-ext" value="-dev" />
+                    <param name="exclude-svn" value="false" />
+                </antcall>
+            </then>
+        </if>
     </target>
             
-    <target name="qs-package">
+    <target name="qs-package" depends="prepare-qs">
         <property name="quickstart.file_base" value="${target.dir}/${quickstart.name}${qs-file-ext}" />
         <property name="quickstart.file.zip" value="${quickstart.file_base}.zip" />
         <property name="quickstart.file.tar.bz2" value="${quickstart.file_base}.tar.bz2" />
@@ -118,7 +125,19 @@
         <!-- TODO combine dupe compression code into single utility task once 1.7.1 is out. -->
         <!-- zip distribution -->
         <zip destfile="${quickstart.file.zip}">
-            <fileset dir="${quickstart.dir}" defaultexcludes="${exclude-svn}" />
+            <!-- TODO switch to <fileset refid="sourceFiles" /> once ant 1.7.1 is out -->
+            <zipfileset prefix="${quickstart.name}" dir="${quickstart.dir}" defaultexcludes="${exclude-svn}">
+                <exclude name="**/*.sh" />
+                <exclude name="${dl.ant.finalName}/bin/*" />
+                <exclude name="${dl.maven.finalName}/bin/*" />
+                <exclude name="${dl.tomcat.finalName}/bin/*" />
+            </zipfileset>
+            <zipfileset prefix="${quickstart.name}" dir="${quickstart.dir}" defaultexcludes="${exclude-svn}" filemode="755">
+                <include name="**/*.sh" />
+                <include name="${dl.ant.finalName}/bin/*" />
+                <include name="${dl.maven.finalName}/bin/*" />
+                <include name="${dl.tomcat.finalName}/bin/*" />
+            </zipfileset>
         </zip>
         <checksum file="${quickstart.file.zip}" algorithm="md5" />
         <checksum file="${quickstart.file.zip}" algorithm="sha1" />
@@ -127,13 +146,13 @@
         <!-- tar.gz distribution -->
         <tar destfile="${quickstart.file.tar.gz}" longfile="gnu" compression="gzip">
             <!-- TODO switch to <fileset refid="sourceFiles" /> once ant 1.7.1 is out -->
-            <tarfileset dir="${quickstart.dir}" defaultexcludes="${exclude-svn}">
+            <tarfileset prefix="${quickstart.name}" dir="${quickstart.dir}" defaultexcludes="${exclude-svn}">
                 <exclude name="**/*.sh" />
                 <exclude name="${dl.ant.finalName}/bin/*" />
                 <exclude name="${dl.maven.finalName}/bin/*" />
                 <exclude name="${dl.tomcat.finalName}/bin/*" />
             </tarfileset>
-            <tarfileset dir="${quickstart.dir}" defaultexcludes="${exclude-svn}" mode="755">
+            <tarfileset prefix="${quickstart.name}" dir="${quickstart.dir}" defaultexcludes="${exclude-svn}" mode="755">
                 <include name="**/*.sh" />
                 <include name="${dl.ant.finalName}/bin/*" />
                 <include name="${dl.maven.finalName}/bin/*" />
@@ -147,13 +166,13 @@
         <!-- tar.bz2 distribution -->
         <tar destfile="${quickstart.file.tar.bz2}" longfile="gnu" compression="bzip2">
             <!-- TODO switch to <fileset refid="sourceFiles" /> once ant 1.7.1 is out -->
-            <tarfileset dir="${quickstart.dir}" defaultexcludes="${exclude-svn}">
+            <tarfileset prefix="${quickstart.name}" dir="${quickstart.dir}" defaultexcludes="${exclude-svn}">
                 <exclude name="**/*.sh" />
                 <exclude name="${dl.ant.finalName}/bin/*" />
                 <exclude name="${dl.maven.finalName}/bin/*" />
                 <exclude name="${dl.tomcat.finalName}/bin/*" />
             </tarfileset>
-            <tarfileset dir="${quickstart.dir}" defaultexcludes="${exclude-svn}" mode="755">
+            <tarfileset prefix="${quickstart.name}" dir="${quickstart.dir}" defaultexcludes="${exclude-svn}" mode="755">
                 <include name="**/*.sh" />
                 <include name="${dl.ant.finalName}/bin/*" />
                 <include name="${dl.maven.finalName}/bin/*" />
