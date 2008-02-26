@@ -62,14 +62,6 @@
               <a id="tabLink_{@ID}" href="{$BASE_ACTION_URL}?uP_root=root&amp;uP_sparam=activeTab&amp;activeTab={position()}" title="{@name}" class="portal-navigation-link">  <!-- Navigation item link. -->
                 <span class="portal-navigation-label"><xsl:value-of select="@name"/></span>
               </a>
-              <xsl:if test="@activeTab='false' and $USE_FLYOUT_MENUS='true'"> <!-- If using flyout menus, call template for rendering submenus. -->
-                <xsl:call-template name="subnavigation">
-                  <xsl:with-param name="CONTEXT" select="'flyout'"/>
-                </xsl:call-template>
-              </xsl:if>
-              <xsl:if test="$USE_AJAX='true' and @activeTab='true' and $CONTEXT!='left'"> <!-- If navigation is being rendered in the left column rather than as tabs, call template for rendering active menu item's submenu. -->
-                <xsl:call-template name="preferences.editpage"/>
-              </xsl:if>
               <xsl:if test="@activeTab='true' and $CONTEXT='left'"> <!-- If navigation is being rendered in the left column rather than as tabs, call template for rendering active menu item's submenu. -->
                 <xsl:call-template name="subnavigation">
                   <xsl:with-param name="CONTEXT" select="'subnav'"/>
@@ -95,7 +87,13 @@
   <xsl:template name="subnavigation">
     <xsl:param name="CONTEXT"/>  <!-- Catches the context parameter to know how to render the subnavigation. -->
     
-    <div id="portalSubnavigation_{@ID}"> <!-- Unique ID is needed for the flyout menus javascript. -->
+    <div> <!-- Unique ID is needed for the flyout menus javascript. -->
+      <xsl:attribute name="id">
+        <xsl:choose>
+          <xsl:when test="$CONTEXT='flyout'">portalFlyoutNavigation_<xsl:value-of select="@ID"/></xsl:when>
+          <xsl:otherwise>portalSubnavigation_<xsl:value-of select="@ID"/></xsl:otherwise>
+        </xsl:choose>
+      </xsl:attribute>
       <xsl:attribute name="class"> <!-- Write in CSS classes depending on context. -->
         <xsl:choose>
         	<xsl:when test="$CONTEXT='flyout'">portal-flyout-container</xsl:when>
@@ -109,7 +107,13 @@
         </xsl:choose>
       </xsl:attribute>
       
-      <div id="portalSubnavigationInner_{@ID}">  <!-- Inner div for additional presentation/formatting options. -->
+      <div>  <!-- Inner div for additional presentation/formatting options. -->
+        <xsl:attribute name="id">
+          <xsl:choose>
+            <xsl:when test="$CONTEXT='flyout'">portalFlyoutNavigationInner_<xsl:value-of select="@ID"/></xsl:when>
+            <xsl:otherwise>portalSubnavigationInner_<xsl:value-of select="@ID"/></xsl:otherwise>
+          </xsl:choose>
+        </xsl:attribute>
         <ul class="portal-subnav-list"> <!-- List of the subnavigation menu items. -->
           <xsl:for-each select="tabChannel">
             <xsl:variable name="SUBNAV_POSITION"> <!-- Determine the position of the navigation option within the whole navigation list and add css hooks for the first and last positions. -->
@@ -138,9 +142,9 @@
   </xsl:template>
   
   <xsl:template name="preferences.editpage">
-      <div id="editTab" class="portal-flyout-container" style="display: none;"> <!-- Unique ID is needed for the flyout menus javascript. -->
+      <div id="portalFlyoutNavigation_{@ID}" class="portal-flyout-container" style="display: none;"> <!-- Unique ID is needed for the flyout menus javascript. -->
         
-        <div id="editTabInner">  <!-- Inner div for additional presentation/formatting options. -->
+        <div id="portalFlyoutNavigationInner_{@ID}">  <!-- Inner div for additional presentation/formatting options. -->
           <ul class="portal-subnav-list"> <!-- List of the subnavigation menu items. -->
             <li id="editPageLink" class="portal-subnav">
               <a href="javascript:;" class="portal-subnav-link" title="{$TOKEN[@name='PREFERENCES_LINK_LAYOUT_LONG_LABEL']}">
@@ -188,14 +192,23 @@
   -->
   <xsl:template name="flyout.menu.scripts">
 		<script src="{$SCRIPT_PATH}/flyout-nav.js" type="text/javascript"></script>
+    <xsl:for-each select="/layout/navigation/tab">
+      <xsl:if test="@activeTab='false' and $USE_FLYOUT_MENUS='true'"> <!-- If using flyout menus, call template for rendering submenus. -->
+        <xsl:call-template name="subnavigation">
+          <xsl:with-param name="CONTEXT" select="'flyout'"/>
+        </xsl:call-template>
+      </xsl:if>
+      <xsl:if test="$USE_AJAX='true' and @activeTab='true'"> <!-- If navigation is being rendered in the left column rather than as tabs, call template for rendering active menu item's submenu. -->
+        <xsl:call-template name="preferences.editpage"/>
+      </xsl:if>
+    </xsl:for-each>
     <script type="text/javascript">
+      var fly;
       $(document).ready(function(){
         // initialize the flyout menus and add onmouseover and onmouseout events to 
         // all the navigation elements with subnavigation flyouts
-        var fly = new UPFlyoutMenu(".portal-flyout-container", ".portal-flyout-iframe");
-        $("[@id*=portalNavigationList]:has(iframe)").children("[@id*=portalNavigation]")
-          .mouseover(function(){fly.showSubnav(this.id);})
-          .mouseout(function(event){fly.hideSubnav(this.id, event);});
+        fly = new UPFlyoutMenu(".portal-flyout-container", ".portal-flyout-iframe", '<xsl:choose><xsl:when test="$USE_LEFT_COLUMN='true'">left</xsl:when><xsl:otherwise>top</xsl:otherwise></xsl:choose>');
+        fly.init();
       });
     </script>
   </xsl:template>
