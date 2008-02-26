@@ -118,7 +118,8 @@
   -->
   <xsl:param name="USER_NAME">John Doe</xsl:param>
   <xsl:param name="UP_VERSION">uPortal X.X.X</xsl:param>
-  <xsl:param name="BASE_ACTION_URL">render.userLayoutRootNode.uP</xsl:param>
+  <xsl:param name="baseActionURL">render.userLayoutRootNode.uP</xsl:param>
+  <xsl:variable name="BASE_ACTION_URL"><xsl:value-of select="$baseActionURL"/></xsl:variable>
   <xsl:param name="PORTAL_VIEW">
   	<xsl:choose>
   		<xsl:when test="//layout_fragment">detached</xsl:when>
@@ -160,7 +161,7 @@
    | GREEN
    | Navigation Settings can be used to change the navigation.
   -->
-  <xsl:param name="USE_FLYOUT_MENUS" select="'false'"/> <!-- Sets the use of flyout menus.  Values are 'true' or 'false'. -->
+  <xsl:param name="USE_FLYOUT_MENUS" select="'true'"/> <!-- Sets the use of flyout menus.  Values are 'true' or 'false'. -->
   
   
   <!-- ****** LAYOUT SETTINGS ****** -->
