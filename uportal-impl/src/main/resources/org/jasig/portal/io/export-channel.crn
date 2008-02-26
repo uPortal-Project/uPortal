@@ -1,6 +1,6 @@
 <with-attribute key="Attributes.NODE" value="${newDoc(channel-definition)}">
     <echo-ln>Export Channel:  FNAME=${req(FNAME)}</echo-ln>
-    <append-node node="${attributeNode(script=classpath://org/jasig/portal/io/import-channel_v2-6.crn)}"/>
+    <append-node node="${attributeNode(script=classpath://org/jasig/portal/io/import-channel_v3-0.crn)}"/>
     <with-attribute key="CHAN_ID" value="${sql(SELECT MAX(chan_id) FROM up_channel WHERE chan_fname = '${req(FNAME)}')}">
         <choose>
             <when test="${isNull(${req(CHAN_ID)})}">

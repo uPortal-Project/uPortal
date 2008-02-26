@@ -1,5 +1,5 @@
 
-<channel-definition script="classpath://org/jasig/portal/io/import-channel_v2-6.crn">
+<channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-0.crn">
   <title>Test Portlet 1</title>
   <name>Test Portlet 1</name>
   <fname>test-portlet-1</fname>
