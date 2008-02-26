@@ -108,14 +108,14 @@
                 <!--  Portlet preferences  -->
                 <if test="${jexl(Attributes.NODE.valueOf('type').equalsIgnoreCase('Portlet'))}">
                     <sql-query>
-                        <sql>SELECT updp.*, uppv.portlet_pref_value FROM up_portlet_definition_prefs updp, up_portlet_pref_values uppv WHERE updp.pref_id = uppv.pref_id AND updp.chan_id = ?</sql>
+                        <sql>SELECT updp.*, uppv.value FROM up_portlet_definition_prefs updp, up_portlet_pref_values uppv WHERE updp.pref_id = uppv.portlet_pref_id AND updp.chan_id = ?</sql>
                         <parameter value="${parseInt(${valueOf(chan-id)})}"/>
                         <subtasks>
                             <!-- NB:  'UP_PORTLET_PREF_PREFIX__'.length()=24 -->
                             <append-node parent="${singleNode(parameters)}">
                                 <parameter>
                                     <name>PORTLET.${req(PORTLET_PREF_NAME)}</name>
-                                    <value>${jexl(PORTLET_PREF_VALUE.substring(24).trim())}</value>
+                                    <value>${jexl(VALUE.substring(24).trim())}</value>
                                     <description></description>
                                     <ovrd>${org.jasig.portal.io.PortletPreferenceOverridePhrase(${req(PORTLET_PREF_READONLY)})}</ovrd>
                                 </parameter>

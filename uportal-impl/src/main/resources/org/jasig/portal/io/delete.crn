@@ -2,13 +2,13 @@
     <sql-connection driver="${req(hibernate.connection.driver_class)}" url="${req(hibernate.connection.url)}" username="${req(hibernate.connection.username)}" password="${req(hibernate.connection.password)}">
         <sql-transaction>
             <!-- ENTITY_TYPE will be the first command line argument, SYSID the second -->
-            <with-attribute key="ENTITY_TYPE" value="${req($1)}">
+            <with-attribute key="ENTITY_TYPE" value="${$1}">
                 <choose>
 
                     <!-- layouts -->
                     <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('layout'))}">
-                        <with-attribute key="USER_NAME" value="${req($2)}">
-                            <echo-ln>Delete layout for user:  ${req(USER_NAME)}</echo-ln>
+                        <with-attribute key="USER_NAME" value="${$2}">
+                            <echo-ln>Delete layout for user:  ${USER_NAME}</echo-ln>
                             <crn location="delete-layout.crn"/>
                         </with-attribute>
                     </when>
@@ -21,33 +21,65 @@
 
                     <!-- channels -->
                     <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('channel'))}">
-                        <with-attribute key="FNAME" value="${req($2)}">
-                            <echo-ln>Delete channel:  ${req(FNAME)}</echo-ln>
+                        <with-attribute key="FNAME" value="${$2}">
+                            <echo-ln>Delete channel:  ${FNAME}</echo-ln>
                             <crn location="delete-channel.crn"/>
                         </with-attribute>
                     </when>
 
+                    <!-- channel-types -->
+                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('channel-type'))}">
+                        <with-attribute key="NAME" value="${req($2)}">
+                            <echo-ln>Delete channel type:  ${req(NAME)}</echo-ln>
+                            <crn location="delete-channel-type.crn"/>
+                        </with-attribute>
+                    </when>
+                                        
                     <!-- groups -->
                     <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('group'))}">
-                        <with-attribute key="GROUP_NAME" value="${req($2)}">
-                            <echo-ln>Delete group:  ${req(GROUP_NAME)}</echo-ln>
+                        <with-attribute key="GROUP_NAME" value="${$2}">
+                            <echo-ln>Delete group:  ${GROUP_NAME}</echo-ln>
                             <crn location="delete-group.crn"/>
                         </with-attribute>
                     </when>
                     <when test="${false()}">
 
                     </when>
-
+                                        
                     <!-- users -->
                     <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('user'))}">
-                        <with-attribute key="USER_NAME" value="${req($2)}">
-                            <echo-ln>Delete user:  ${req(USER_NAME)}</echo-ln>
+                        <with-attribute key="USER_NAME" value="${$2}">
+                            <echo-ln>Delete user:  ${USER_NAME}</echo-ln>
                             <crn location="delete-user.crn"/>
                         </with-attribute>
                     </when>
 
+                    <!-- themes -->
+                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('theme'))}">
+                        <with-attribute key="NAME" value="${req($2)}">
+                            <echo-ln>Delete theme:  ${req(NAME)}</echo-ln>
+                            <crn location="delete-theme.crn"/>
+                        </with-attribute>
+                    </when>
+
+                    <!-- structures -->
+                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('structure'))}">
+                        <with-attribute key="NAME" value="${req($2)}">
+                            <echo-ln>Delete structure:  ${req(NAME)}</echo-ln>
+                            <crn location="delete-structure.crn"/>
+                        </with-attribute>
+                    </when>
+
+                    <!-- entity-types -->
+                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('entity-type'))}">
+                        <with-attribute key="NAME" value="${req($2)}">
+                            <echo-ln>Delete entity type:  ${req(NAME)}</echo-ln>
+                            <crn location="delete-entity-type.crn"/>
+                        </with-attribute>
+                    </when>
+
                     <otherwise>
-                        <echo-ln>WARNING:  Unknown/unsupported entity type:  '${req(ENTITY_TYPE)}'</echo-ln>
+                        <echo-ln>WARNING:  Unknown/unsupported entity type:  '${ENTITY_TYPE}'</echo-ln>
                         <echo-ln>You must pass a valid entity type as the firt argument on the command line.</echo-ln>
                     </otherwise>
 

@@ -1,85 +1,145 @@
 <properties location="classpath://properties/rdbm.properties">
-    <sql-connection driver="${req(hibernate.connection.driver_class)}" url="${req(hibernate.connection.url)}" username="${req(hibernate.connection.username)}" password="${req(hibernate.connection.password)}">
-            <with-attribute key="FILE_PATTERN" value="${org.jasig.portal.io.FilePatternPhrase(${req($2)})}">
+    <sql-connection driver="${hibernate.connection.driver_class}" url="${hibernate.connection.url}" username="${hibernate.connection.username}" password="${hibernate.connection.password}">
+            <with-attribute key="FILE_PATTERN" value="${org.jasig.portal.io.FilePatternPhrase(${$2})}">
 
-                <echo-ln>Base Import Directory=${req($1)}</echo-ln>
-                <echo-ln>FILE_PATTERN=${req(FILE_PATTERN)}</echo-ln>
+                <echo-ln>Base Import Directory=${$1}</echo-ln>
+                <echo-ln>FILE_PATTERN=${FILE_PATTERN}</echo-ln>
+
+                <!-- entity-types -->
+                <file-iterator dir="${$1}" includes="**/*.entity-type">
+                    <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
+                        <echo-ln>Import Entity Type:  ${Attributes.LOCATION}</echo-ln>
+                        <with-attribute key="Attributes.NODE" value="${doc(${$1}/${Attributes.LOCATION})}">
+                            <crn location="${valueOf(@script)}"/>
+                        </with-attribute>
+                    </if>
+                </file-iterator>
+
+                <!-- structures -->
+                <file-iterator dir="${$1}" includes="**/*.structure">
+                    <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
+                        <echo-ln>Import Structure:  ${Attributes.LOCATION}</echo-ln>
+                        <with-attribute key="Attributes.NODE" value="${doc(${$1}/${Attributes.LOCATION})}">
+                            <crn location="${valueOf(@script)}"/>
+                        </with-attribute>
+                    </if>
+                </file-iterator>
+                
+                <!-- themes -->
+                <file-iterator dir="${$1}" includes="**/*.theme">
+                    <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
+                        <echo-ln>Import Theme:  ${Attributes.LOCATION}</echo-ln>
+                        <with-attribute key="Attributes.NODE" value="${doc(${$1}/${Attributes.LOCATION})}">
+                            <crn location="${valueOf(@script)}"/>
+                        </with-attribute>
+                    </if>
+                </file-iterator>
 
                 <!-- template-users -->
-                <file-iterator dir="${req($1)}" includes="**/*.template-user">
+                <file-iterator dir="${$1}" includes="**/*.template-user">
                     <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
-                        <echo-ln>Import Template User:  ${req(Attributes.LOCATION)}</echo-ln>
-                        <with-attribute key="Attributes.NODE" value="${doc(${req($1)}/${req(Attributes.LOCATION)})}">
+                        <echo-ln>Import Template User:  ${Attributes.LOCATION}</echo-ln>
+                        <with-attribute key="Attributes.NODE" value="${doc(${$1}/${Attributes.LOCATION})}">
                             <crn location="${valueOf(@script)}"/>
                         </with-attribute>
                     </if>
                 </file-iterator>
 
                 <!-- users -->
-                <file-iterator dir="${req($1)}" includes="**/*.user">
+                <file-iterator dir="${$1}" includes="**/*.user">
                     <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
-                        <echo-ln>Import User:  ${req(Attributes.LOCATION)}</echo-ln>
-                        <with-attribute key="Attributes.NODE" value="${doc(${req($1)}/${req(Attributes.LOCATION)})}">
+                        <echo-ln>Import User:  ${Attributes.LOCATION}</echo-ln>
+                        <with-attribute key="Attributes.NODE" value="${doc(${$1}/${Attributes.LOCATION})}">
                             <crn location="${valueOf(@script)}"/>
                         </with-attribute>
                     </if>
                 </file-iterator>
 
                 <!-- groups -->
-                <file-iterator dir="${req($1)}" includes="**/*.group">
+                <file-iterator dir="${$1}" includes="**/*.group">
                     <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
-                        <echo-ln>Import Group:  ${req(Attributes.LOCATION)}</echo-ln>
-                        <with-attribute key="Attributes.NODE" value="${doc(${req($1)}/${req(Attributes.LOCATION)})}">
+                        <echo-ln>Import Group:  ${Attributes.LOCATION}</echo-ln>
+                        <with-attribute key="Attributes.NODE" value="${doc(${$1}/${Attributes.LOCATION})}">
                             <crn location="${valueOf(@script)}"/>
                         </with-attribute>
                     </if>
                 </file-iterator>
 
-                <!-- channels -->
-                <file-iterator dir="${req($1)}" includes="**/*.channel">
+                <!-- channel-types -->
+                <file-iterator dir="${$1}" includes="**/*.channel-type">
                     <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
-                        <echo-ln>Import Channel:  ${req(Attributes.LOCATION)}</echo-ln>
-                        <with-attribute key="Attributes.NODE" value="${doc(${req($1)}/${req(Attributes.LOCATION)})}">
+                        <echo-ln>Import Channel Type:  ${Attributes.LOCATION}</echo-ln>
+                        <with-attribute key="Attributes.NODE" value="${doc(${$1}/${Attributes.LOCATION})}">
+                            <crn location="${valueOf(@script)}"/>
+                        </with-attribute>
+                    </if>
+                </file-iterator>
+                                                
+                <!-- channels -->
+                <file-iterator dir="${$1}" includes="**/*.channel">
+                    <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
+                        <echo-ln>Import Channel:  ${Attributes.LOCATION}</echo-ln>
+                        <with-attribute key="Attributes.NODE" value="${doc(${$1}/${Attributes.LOCATION})}">
                             <crn location="${valueOf(@script)}"/>
                         </with-attribute>
                     </if>
                 </file-iterator>
 
                 <!-- memberships -->
-                <file-iterator dir="${req($1)}" includes="**/*.membership">
+                <file-iterator dir="${$1}" includes="**/*.membership">
                     <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
-                        <echo-ln>Import Membership:  ${req(Attributes.LOCATION)}</echo-ln>
-                        <with-attribute key="Attributes.NODE" value="${doc(${req($1)}/${req(Attributes.LOCATION)})}">
+                        <echo-ln>Import Membership:  ${Attributes.LOCATION}</echo-ln>
+                        <with-attribute key="Attributes.NODE" value="${doc(${$1}/${Attributes.LOCATION})}">
                             <crn location="${valueOf(@script)}"/>
                         </with-attribute>
                     </if>
                 </file-iterator>
 
                 <!-- permissions -->
-                <file-iterator dir="${req($1)}" includes="**/*.permission">
+                <file-iterator dir="${$1}" includes="**/*.permission">
                     <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
-                        <echo-ln>Import Permission:  ${req(Attributes.LOCATION)}</echo-ln>
-                        <with-attribute key="Attributes.NODE" value="${doc(${req($1)}/${req(Attributes.LOCATION)})}">
+                        <echo-ln>Import Permission:  ${Attributes.LOCATION}</echo-ln>
+                        <with-attribute key="Attributes.NODE" value="${doc(${$1}/${Attributes.LOCATION})}">
+                            <crn location="${valueOf(@script)}"/>
+                        </with-attribute>
+                    </if>
+                </file-iterator>
+
+                <!-- fragment-layouts -->
+                <file-iterator dir="${$1}" includes="**/*.fragment-layout">
+                    <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
+                        <echo-ln>Import DLM Fragment Layout:  ${Attributes.LOCATION}</echo-ln>
+                        <with-attribute key="Attributes.NODE" value="${doc(${$1}/${Attributes.LOCATION})}">
                             <crn location="${valueOf(@script)}"/>
                         </with-attribute>
                     </if>
                 </file-iterator>
 
                 <!-- layouts -->
-                <file-iterator dir="${req($1)}" includes="**/*.layout">
+                <file-iterator dir="${$1}" includes="**/*.layout">
                     <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
-                        <echo-ln>Import Layout:  ${req(Attributes.LOCATION)}</echo-ln>
-                        <with-attribute key="Attributes.NODE" value="${doc(${req($1)}/${req(Attributes.LOCATION)})}">
+                        <echo-ln>Import Layout:  ${Attributes.LOCATION}</echo-ln>
+                        <with-attribute key="Attributes.NODE" value="${doc(${$1}/${Attributes.LOCATION})}">
+                            <crn location="${valueOf(@script)}"/>
+                        </with-attribute>
+                    </if>
+                </file-iterator>
+
+                <!-- preferences -->
+                <file-iterator dir="${$1}" includes="**/*.preferences">
+                    <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
+                        <echo-ln>Import Preferences:  ${Attributes.LOCATION}</echo-ln>
+                        <with-attribute key="Attributes.NODE" value="${doc(${$1}/${Attributes.LOCATION})}">
                             <crn location="${valueOf(@script)}"/>
                         </with-attribute>
                     </if>
                 </file-iterator>
 
                 <!-- batches -->
-                <file-iterator dir="${req($1)}" includes="**/*.batch">
+                <file-iterator dir="${$1}" includes="**/*.batch">
                     <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
-                        <echo-ln>Import Batch:  ${req(Attributes.LOCATION)}</echo-ln>
-                        <node-iterator xpath="*" source="${doc(${req($1)}/${req(Attributes.LOCATION)})}">
+                        <echo-ln>Import Batch:  ${Attributes.LOCATION}</echo-ln>
+                        <node-iterator xpath="*" source="${doc(${$1}/${Attributes.LOCATION})}">
                             <echo-ln>-- ${valueOf(name())}</echo-ln>
                             <crn location="${valueOf(@script)}"/>
                         </node-iterator>

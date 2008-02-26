@@ -1,0 +1,124 @@
+<!--
+ | NB:  This script does not end with a suffix like '_v2-6' because it happens
+ | entirely within the layout import process, and therefore won't appear in any
+ | exported documents.
+ +-->
+<with>
+    <attribute key="LAST_INDEX">${sql(SELECT sequence_value FROM up_sequence WHERE sequence_name = 'UP_PORTLET_PREFERENCE_VALUE')}</attribute>
+    <attribute key="PREFERENCE_COUNT">${groovy(new int[1])}</attribute>
+    <subtasks>
+
+        <!--
+         | Delete existing portlet preferences for this user to clear the way.
+         +-->
+        <crn location="delete-preferences.crn"/>
+
+        <!--
+         | Import the new set of portlet entity preferences.
+         +-->
+        <groovy>
+            <script>
+                def getChanDescId(usrId, lUsrId, nde) {
+                    if (usrId == lUsrId) {
+                        return 'n' + nde;
+                    } else {
+                        return 'u' + lUsrId + 'l1n' + nde;
+                    }
+                }
+            </script>
+            <subtasks>
+                <node-iterator xpath="entry">
+
+                    <groovy>
+                        <script>PREFERENCE_COUNT[0] = PREFERENCE_COUNT[0] + 1</script>
+                    </groovy>
+
+                    <!--
+                     | We have to do a limited layout export to match the entity
+                     | identified in XML.
+                     +-->
+                    <with>
+                        <attribute key="Attributes.NODE">${newDoc(structures)}</attribute>
+                        <attribute key="ENTITY_TOKENS">${groovy('${valueOf(@entity)}'.split(':'))}</attribute>
+                        <attribute key="PREFERENCE_NAME">${valueOf(@name)}</attribute>
+                        <attribute key="FNAME_OF_RECORD">${valueOf(@channel)}</attribute>
+                        <attribute key="ENTRY_ELEMENT">${Attributes.NODE}</attribute>
+                        <subtasks>
+                            <with-attribute key="LAYOUT_USER_ID" value="${sql(SELECT user_id FROM up_user WHERE user_name = '${groovy(ENTITY_TOKENS[0])}')}">
+                                <sql-query>
+                                    <sql>SELECT * FROM up_layout_struct WHERE user_id = ? AND layout_id = 1 AND chan_id IS NULL</sql>
+                                    <parameter value="${LAYOUT_USER_ID}"/>
+                                    <subtasks>
+                                        <append-node>
+                                            <folder
+                                                struct-id="${req(STRUCT_ID)}"
+                                                name="${req(NAME)}"
+                                                next-struct-id="${req(NEXT_STRUCT_ID)}"
+                                                child-struct-id="${req(CHLD_STRUCT_ID)}"
+                                                type="${org.jasig.portal.io.FolderTypePhrase(${req(TYPE)})}"/>
+                                        </append-node>
+                                    </subtasks>
+                                </sql-query>
+                                <sql-query>
+                                    <sql>SELECT upc.chan_fname, upls.struct_id, upls.next_struct_id, upls.hidden FROM up_channel upc, up_layout_struct upls WHERE upc.chan_id = upls.chan_id AND upls.user_id = ? AND upls.layout_id = 1</sql>
+                                    <parameter value="${LAYOUT_USER_ID}"/>
+                                    <subtasks>
+                                        <append-node>
+                                            <channel
+                                                fname="${req(CHAN_FNAME)}"
+                                                struct-id="${req(STRUCT_ID)}"
+                                                next-struct-id="${req(NEXT_STRUCT_ID)}"/>
+                                        </append-node>
+                                    </subtasks>
+                                </sql-query>
+                                <xslt context="${req(Attributes.ORIGIN)}" stylesheet="limited-layout.xsl">
+                                    <with-attribute key="Attributes.NODE" value="${singleNode(${groovy(ENTITY_TOKENS[1])})}">
+                                        <!--
+                                         | We're ready to go, but let's do a sanity check
+                                         | to be sure the old fname matches the new fname.
+                                         +-->
+                                        <choose>
+                                            <when test="${isNull(${Attributes.NODE})}">
+                                                <!-- Warn the user... -->
+                                                <echo-ln>WARNING:  the expression '${groovy(ENTITY_TOKENS[1])}' does not match any nodes in the '${groovy(ENTITY_TOKENS[0])}' layout;  no record will be created.</echo-ln>
+                                                <log level="warn">WARNING:  the expression '${groovy(ENTITY_TOKENS[1])}' does not match any nodes in the '${groovy(ENTITY_TOKENS[0])}' layout;  no record will be created.</log>
+                                            </when>
+                                            <when test="${groovy(FNAME_OF_RECORD.equals('${valueOf(@fname)}'))}">
+                                                <!-- We are good... -->
+                                                <sql-statement sql="INSERT INTO up_portlet_entity_prefs(user_id, layout_id, chan_desc_id, portlet_pref_name, pref_id) VALUES(?, 1, ?, ?, ?)">
+                                                    <parameter value="${USER_ID}"/>
+                                                    <parameter value="${groovy(getChanDescId(${USER_ID}, ${LAYOUT_USER_ID}, ${valueOf(@struct-id)}))}"/>
+                                                    <parameter value="${groovy(ENTRY_ELEMENT.valueOf('@name'))}"/>
+                                                    <parameter value="${groovy(LAST_INDEX + PREFERENCE_COUNT[0])}"/>
+                                                </sql-statement>
+                                                <node-iterator source="${ENTRY_ELEMENT}" xpath="value">
+                                                    <sql-statement sql="INSERT INTO up_portlet_pref_values(pref_id, portlet_pref_value) VALUES(?, ?)">
+                                                        <parameter value="${groovy(LAST_INDEX + PREFERENCE_COUNT[0])}"/>
+                                                        <parameter value="UP_PORTLET_PREF_PREFIX__${valueOf(text())}"/>
+                                                    </sql-statement>
+                                                </node-iterator>
+                                            </when>
+                                            <otherwise>
+                                                <!-- Warn the user... -->
+                                                <echo-ln>WARNING:  fname '${valueOf(@fname)}' does not match expected value '${FNAME_OF_RECORD}' for portlet preference '${PREFERENCE_NAME}';  no record will be created.</echo-ln>
+                                                <log level="warn">fname '${valueOf(@fname)}' does not match expected value '${FNAME_OF_RECORD}' for portlet preference '${PREFERENCE_NAME}';  no record will be created.</log>
+                                            </otherwise>
+                                        </choose>
+                                    </with-attribute>
+                                </xslt>
+                            </with-attribute>
+                        </subtasks>
+                    </with>
+                </node-iterator>
+            </subtasks>
+        </groovy>
+
+        <!--
+         | Now update UP_SEQUENCE to reflect the PREF_IDs we've issued.
+         +-->
+        <sql-statement sql="UPDATE up_sequence SET sequence_value = ? WHERE sequence_name = 'UP_PORTLET_PREFERENCE_VALUE'">
+            <parameter value="${groovy(LAST_INDEX + PREFERENCE_COUNT[0])}"/>
+        </sql-statement>
+
+    </subtasks>
+</with>
