@@ -203,12 +203,10 @@
       </xsl:if>
     </xsl:for-each>
     <script type="text/javascript">
-      var fly;
-      $(document).ready(function(){
+      $(function(){
         // initialize the flyout menus and add onmouseover and onmouseout events to 
         // all the navigation elements with subnavigation flyouts
-        fly = new UPFlyoutMenu(".portal-flyout-container", ".portal-flyout-iframe", '<xsl:choose><xsl:when test="$USE_LEFT_COLUMN='true'">left</xsl:when><xsl:otherwise>top</xsl:otherwise></xsl:choose>');
-        fly.init();
+        startFlyouts();
       });
     </script>
   </xsl:template>

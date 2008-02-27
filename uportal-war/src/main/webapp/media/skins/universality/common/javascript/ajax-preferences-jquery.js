@@ -46,7 +46,7 @@ function initializeLayoutMenu() {
 	$("#changeColumns").find("img")
 		.click(function(){$(this).prev().attr("checked", true)})
 		.end().find("input[value=" + getCurrentLayoutString() + "]").attr("checked", true);
-	$("#pageLayoutDialog").dialog({height:200, width:400});
+	$("#pageLayoutDialog").dialog({height:300, width:400});
 
 	$("#layoutDialogLink")
 		.unbind('click', initializeLayoutMenu)
