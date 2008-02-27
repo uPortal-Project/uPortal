@@ -49,7 +49,7 @@
       
       <!-- ****** PORTLET CONTENT ****** -->
       <div id="portletContent_{@ID}" class="portlet-content"> <!-- Portlet content container. -->
-      	<div class="portlet-conent-inner">  <!-- Inner div for additional presentation/formatting options. -->
+      	<div class="portlet-content-inner">  <!-- Inner div for additional presentation/formatting options. -->
       		<xsl:copy-of select="."/> <!-- Write in the contents of the portlet. -->
         </div>
       </div>

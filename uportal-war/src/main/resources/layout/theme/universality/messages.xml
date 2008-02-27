@@ -60,14 +60,18 @@
 		<token name="FOCUS_TAB_LABEL">To view the contents of this tab</token>
 		<!-- Quick Links -->
 		<token name="QUICKLINKS_LABEL">Quicklinks</token>
+		<!-- Web Search -->
+		<token name="WEB_SEARCH_TITLE">Web Search</token>
+		<!-- Navigation -->
+		<token name="PORTLET_NAVIGATION_TITLE">Jump to:</token>
 		<!-- Preferences Links -->
 		<token name="PREFERENCES_LINKS_TITLE">Customize My Portal</token>
 		<token name="PREFERENCES_LINK_ADD_CONTENT_LABEL">Add Content</token>
 		<token name="PREFERENCES_LINK_ADD_CONTENT_LONG_LABEL">To add content to this tab</token>
 		<token name="PREFERENCES_LINK_ADD_FOCUSED_CONTENT_LABEL">Add portlet to my layout</token>
 		<token name="PREFERENCES_LINK_ADD_FOCUSED_CONTENT_LONG_LABEL">To add this portlet to your layout</token>
-		<token name="PREFERENCES_LINK_LAYOUT_LABEL">Change Layout</token>
-		<token name="PREFERENCES_LINK_LAYOUT_LONG_LABEL">To change your layout</token>
+		<token name="PREFERENCES_LINK_LAYOUT_LABEL">Page Layout</token>
+		<token name="PREFERENCES_LINK_LAYOUT_LONG_LABEL">To change your page layout</token>
 		<token name="PREFERENCES_LINK_SKINS_LABEL">Select Skin</token>
 		<token name="PREFERENCES_LINK_SKINS_LONG_LABEL">To choose a different skin</token>
 		<token name="PREFERENCES_LINK_ADD_TAB_LABEL">Add tab</token>

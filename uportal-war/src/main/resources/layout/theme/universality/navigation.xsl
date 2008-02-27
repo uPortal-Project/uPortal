@@ -73,8 +73,37 @@
       
     	</div>  
     </div>
+    
   </xsl:template>
   <!-- ========================================== -->
+  
+  <!-- ========== TEMPLATE: PORTLET NAVIGATION ========== -->
+  <!-- ================================================== -->
+  <!--
+   | This template renders portlet navigation when a portlet is focused.
+  -->
+  <xsl:template name="portlet.navigation">
+    <div id="portletNavigation" class="block">
+    	<div class="block-inner">
+      	<h2 class="block-title"><xsl:value-of select="$TOKEN[@name='PORTLET_NAVIGATION_TITLE']"/></h2>
+        <div class="block-content">
+          <xsl:for-each select="//navigation/tab">
+            <h3><xsl:value-of select="@name"/></h3>
+            <ul>
+              <xsl:for-each select="tabChannel">
+                <li>
+                  <a href="{$BASE_ACTION_URL}?uP_root={@ID}" title="{@name}">  <!-- Navigation item link. -->
+                    <span><xsl:value-of select="@name"/></span>
+                  </a>
+                </li>
+              </xsl:for-each>
+            </ul>
+          </xsl:for-each>
+    		</div>
+      </div>  
+    </div>
+  </xsl:template>
+  <!-- ================================================== -->
 
 
   <!-- ========== TEMPLATE: SUBNAVIGATION ========== -->

@@ -120,6 +120,7 @@
   <xsl:param name="UP_VERSION">uPortal X.X.X</xsl:param>
   <xsl:param name="baseActionURL">render.userLayoutRootNode.uP</xsl:param>
   <xsl:variable name="BASE_ACTION_URL"><xsl:value-of select="$baseActionURL"/></xsl:variable>
+  <xsl:param name="HOME_ACTION_URL"><xsl:value-of select="$BASE_ACTION_URL"/>?uP_root=root&amp;uP_reload_layout=true&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true&amp;uP_sparam=mode&amp;mode=view</xsl:param>
   <xsl:param name="PORTAL_VIEW">
   	<xsl:choose>
   		<xsl:when test="//layout_fragment">detached</xsl:when>
@@ -170,12 +171,11 @@
    | Layout Settings can be used to change the main layout.
   -->
   <xsl:param name="USE_LEFT_COLUMN" select="'true'"/> <!-- Sets the use of a left sidebar.  This sidebar can contain UI components (navigation, quicklinks, etc.) and custom institution content (blocks), but not portlets.  Values are 'true' or 'false'. -->
-  <xsl:param name="LEFT_COLUMN_CLASS">
-  	<xsl:choose>
-  		<xsl:when test="$USE_LEFT_COLUMN='true'">left-column</xsl:when>
-      <xsl:otherwise></xsl:otherwise>
-    </xsl:choose>
-  </xsl:param>
+  <xsl:param name="USE_LEFT_COLUMN_FOCUSED" select="'true'"/> <!-- Sets the use of a left sidebar when a portlet is focused.  Values are 'true' or 'false'. -->
+  <xsl:param name="USE_LEFT_COLUMN_GUEST" select="'true'"/> <!-- Sets the use of a left sidebar when logged out.  Values are 'true' or 'false'. -->
+  <xsl:param name="LEFT_COLUMN_WIDTH" select="195"/> <!-- Sets the pixel width of the left sidebar column, if used.  Value must be numeric. -->
+  <xsl:param name="LEFT_COLUMN_FOCUSED_WIDTH" select="195"/> <!-- Sets the pixel width of the left sidebar column when a portlet is focused, if used.  Value must be numeric. -->
+  <xsl:param name="LEFT_COLUMN_GUEST_WIDTH" select="195"/> <!-- Sets the pixel width of the left sidebar column when logged out, if used.  Value must be numeric. -->
   
   <!-- ============================================ -->
   
@@ -211,16 +211,16 @@
    | CSS files are located in the uPortal skins directory: webpages/media/skins.
    | Template contents can be any valid XSL or XHTML.
   -->
-  <xsl:template name="page.css">
+  <xsl:template name="page.css"><link media="print" type="text/css" href="{$SKIN_PATH}/print.css" rel="stylesheet"/><link media="all" type="text/css" href="{$MEDIA_PATH}/common/reset-fonts-grids.css" rel="stylesheet"/><link media="all" type="text/css" href="{$MEDIA_PATH}/common/base-min.css" rel="stylesheet"/><link media="all" type="text/css" href="{$SKIN_PATH}/layout.css" rel="stylesheet"/><link media="all" type="text/css" href="{$SKIN_PATH}/{$SKIN}.css" rel="stylesheet"/>
     <!-- uPortal print CSS -->
-    <link media="print" type="text/css" href="{$SKIN_PATH}/print.css" rel="stylesheet"/> 
+     
     <!-- Yahoo! User Interface Library (YUI) CSS to establish a common, cross-browser base rendering.  See http://developer.yahoo.com/yui/ for more details. --> 
-    <link media="all" type="text/css" href="{$MEDIA_PATH}/common/reset-fonts-grids.css" rel="stylesheet"/>
-    <link media="all" type="text/css" href="{$MEDIA_PATH}/common/base-min.css" rel="stylesheet"/>
+    
+    
     <!-- uPortal theme/layout CSS -->
-    <link media="all" type="text/css" href="{$SKIN_PATH}/layout.css" rel="stylesheet"/>
+    
     <!-- uPortal skin CSS -->
-    <link media="all" type="text/css" href="{$SKIN_PATH}/{$SKIN}.css" rel="stylesheet"/>
+    
     
     <xsl:if test="$USE_AJAX='true'">
      <link rel="stylesheet" href="{$MEDIA_PATH}/common/javascript/jquery/themes/{$SKIN}/jqueryui.all.css" type="text/css" media="screen" title="Flora (Default)"></link>
@@ -240,12 +240,13 @@
    | YELLOW
    | This template renders the Javascript links in the page <head>.
    | Javascript provides AJAX and enhanced client-side interaction to the portal.
-   | Javascript files are located in the uPortal skins directory: webpages/media/skins/javascript.
+   | Javascript files are located in the uPortal skins directory:
+   | /media/skins/[theme_name]/common/javascript/
    | Template contents can be any valid XSL or XHTML.
   -->
   <xsl:template name="page.js">
     <xsl:if test="$USE_AJAX='true'">
-     <script src="{$SCRIPT_PATH}/jquery/jquery-1.2.3.min.js"></script>
+     <script type="text/javascript" src="{$SCRIPT_PATH}/jquery/jquery-1.2.3.min.js"></script>
      <script type="text/javascript" src="{$SCRIPT_PATH}/jquery/jquery.dimensions.js"></script>
      <script type="text/javascript" src="{$SCRIPT_PATH}/jquery/ui.dialog.js"></script>
      <script type="text/javascript" src="{$SCRIPT_PATH}/jquery/ui.resizable.js"></script>
@@ -255,7 +256,7 @@
      <script type="text/javascript" src="{$SCRIPT_PATH}/jquery/ui.sortable.js"></script>
      <script type="text/javascript" src="{$SCRIPT_PATH}/jquery/ui.tabs.js"></script>
      <script type="text/javascript" src="{$SCRIPT_PATH}/jquery/interface.js"></script>
-     <script src="{$SCRIPT_PATH}/ajax-preferences-jquery.js" type="text/javascript"/>
+     <script type="text/javascript" src="{$SCRIPT_PATH}/ajax-preferences-jquery.js"></script>
     </xsl:if>
   </xsl:template>
   
@@ -306,7 +307,7 @@
     
     <!-- Login Channel -->
     <xsl:if test="$AUTHENTICATED='true'">
-    	<xsl:call-template name="login.channel"/>
+    	<xsl:call-template name="login.channel"/> <!-- This login call is needed to render the welcome/logout statement into the header. -->
     </xsl:if>
     <!-- Login Channel -->
     
@@ -319,15 +320,15 @@
     <xsl:call-template name="welcome"/> -->
     <!-- Welcome -->
     
-    <!-- Web Search -->
-    <xsl:call-template name="web.search"/>
+    <!-- Web Search
+    <xsl:call-template name="web.search"/> -->
     <!-- Web Search -->
     
-    <!-- Quicklinks -->
-    <xsl:call-template name="quicklinks"/>
+    <!-- Quicklinks
+    <xsl:call-template name="quicklinks"/> -->
     <!-- Quicklinks -->
     
-    <!-- Main Navigation, by default rendered in the left column below. -->
+    <!-- Main Navigation -->
     <xsl:apply-templates select="//navigation">
       <xsl:with-param name="CONTEXT" select="'header'"/>
     </xsl:apply-templates>
@@ -424,9 +425,15 @@
     </div>
     <!-- Skip Navigation -->
     
-    <!-- Logo
-    <xsl:call-template name="logo"/> -->
     <!-- Logo -->
+    <xsl:call-template name="logo"/>
+    <!-- Logo -->
+    
+    <!-- Main Navigation -->
+    <xsl:apply-templates select="//navigation">
+      <xsl:with-param name="CONTEXT" select="'header'"/>
+    </xsl:apply-templates>
+    <!-- Main Navigation -->
     
     <!-- SAMPLE:
     <div id="portalHeaderFocusedBlock">
@@ -445,7 +452,8 @@
    | Template contents can be any valid XSL or XHTML.
   -->
   <xsl:template name="portal.page.bar.title.focused.block">
-  	<img src="{$SKIN_PATH}/images/logo_focused.png" alt="{$TOKEN[@name='LOGO']}"/>
+  	<!-- Text:
+    <span><xsl:value-of select="$TOKEN[@name='LOGO']"/></span> -->
   </xsl:template>
   <!-- =================================================================== -->
   
@@ -491,8 +499,8 @@
   <xsl:template name="logo.focused.block">
   	<!-- Text:
     <span><xsl:value-of select="$TOKEN[@name='LOGO']"/></span> -->
-    <!-- Image: 
-    <img src="{$SKIN_PATH}/images/portal_logo_focused.png" alt="{$TOKEN[@name='LOGO']}"/> -->
+    <!-- Image:  -->
+    <img src="{$SKIN_PATH}/images/portal_logo_slim.png" alt="{$TOKEN[@name='LOGO']}"/>
   </xsl:template>
   <!-- ================================================== -->
   
@@ -558,13 +566,13 @@
    | Template contents can be any valid XSL or XHTML.
   -->
   <xsl:template name="content.title.focused.block">
-  	<!-- PAGE TITLE -->
+  	<!-- BREADCRUMB -->
+    <xsl:call-template name="breadcrumb"/>
+    <!-- BREADCRUMB -->
+    
+    <!-- PAGE TITLE -->
     <xsl:call-template name="page.title"/>
     <!-- PAGE TITLE -->
-    
-    <!-- BACK TO HOME -->
-    <xsl:call-template name="back.to.home"/>
-    <!-- BACK TO HOME -->
   </xsl:template>
   <!-- =========================================================== -->
   
@@ -585,6 +593,76 @@
    | Template contents can be any valid XSL or XHTML.
   -->
   <xsl:template name="content.left.block">
+    <!-- Web Search -->
+    <xsl:call-template name="web.search"/>
+    <!-- Web Search -->
+    
+    <!-- Quicklinks -->
+    <xsl:call-template name="quicklinks"/>
+    <!-- Quicklinks -->
+    
+    <!-- Main Navigation
+    <xsl:apply-templates select="//navigation">
+      <xsl:with-param name="CONTEXT" select="'left'"/>
+    </xsl:apply-templates> -->
+    <!-- Main Navigation -->
+    
+    <!-- SAMPLE:
+    <div id="portalContentLeftBlock">
+    	<p>CUSTOM CONTENTS.</p>
+    </div>
+    -->
+  </xsl:template>
+  <!-- ================================================== -->
+  
+  
+  <!-- ========== TEMPLATE: CONTENT LEFT FOCUSED BLOCK ========== -->
+  <!-- ========================================================== -->
+  <!-- 
+   | GREEN
+   | This template renders content into the page body in the left column of the content layout table when a portlet is focused.
+   | The left navigation column must be enabled for this content to render.
+   | Enable the left navigation column by setting USE_LEFT_COLUMN_FOCUSED to 'true' in the Variables and Parameters section above.
+   | Reordering the template calls will change the order in the page markup.
+   | Commenting out a template call will prevent that component's markup fom being written into the page markup.
+   | Template contents can be any valid XSL or XHTML.
+  -->
+  <xsl:template name="content.left.focused.block">
+    <!-- Main Navigation
+    <xsl:apply-templates select="//navigation">
+      <xsl:with-param name="CONTEXT" select="'focused'"/>
+    </xsl:apply-templates> -->
+    <!-- Main Navigation -->
+    
+    <!-- Portlet Navigation -->
+    <xsl:call-template name="portlet.navigation"/>
+    <!-- Portlet Navigation -->
+    
+    <!-- SAMPLE:
+    <div id="portalContentLeftFocusedBlock">
+    	<p>CUSTOM CONTENTS.</p>
+    </div>
+    -->
+  </xsl:template>
+  <!-- ========================================================== -->
+  
+  
+  <!-- ========== TEMPLATE: CONTENT LEFT GUEST BLOCK ========== -->
+  <!-- ======================================================== -->
+  <!-- 
+   | GREEN
+   | This template renders content into the page body in the left column of the content layout table when not logged in.
+   | The left navigation column must be enabled for this content to render.
+   | Enable the left navigation column by setting USE_LEFT_COLUMN_GUEST to 'true' in the Variables and Parameters section above.
+   | Reordering the template calls will change the order in the page markup.
+   | Commenting out a template call will prevent that component's markup fom being written into the page markup.
+   | Thus, to not use the quicklinks, simply comment out the quicklinks template call.
+   | These components can be placed into other blocks, if desired.
+   | To place a component into another block, copy the template call from this block and paste it into another block; then comment out the template call in this block 
+   | Custom content can be inserted as desired.
+   | Template contents can be any valid XSL or XHTML.
+  -->
+  <xsl:template name="content.left.guest.block">
 		<!-- ****** LOGIN ****** -->
     <!--
      | Use one of the login options: the login template (uP3 preferred), the login channel (from uP2.6), or CAS login.
@@ -594,9 +672,7 @@
     <!-- Login -->
     
     <!-- Login Channel -->
-    <xsl:if test="$AUTHENTICATED='false'">
-    	<xsl:call-template name="login.channel"/>
-    </xsl:if>
+    <xsl:call-template name="login.channel"/>
     <!-- Login Channel -->
     
     <!-- CAS Login
@@ -612,19 +688,19 @@
     <xsl:call-template name="quicklinks"/> -->
     <!-- Quicklinks -->
     
-    <!-- Main Navigation -->
+    <!-- Main Navigation
     <xsl:apply-templates select="//navigation">
       <xsl:with-param name="CONTEXT" select="'left'"/>
-    </xsl:apply-templates>
+    </xsl:apply-templates> -->
     <!-- Main Navigation -->
     
     <!-- SAMPLE:
-    <div id="portalContentLeftBlock">
+    <div id="portalContentLeftGuestBlock">
     	<p>CUSTOM CONTENTS.</p>
     </div>
     -->
   </xsl:template>
-  <!-- ================================================== -->
+  <!-- ======================================================== -->
   
   
   <!-- ========== TEMPLATE: FOOTER BLOCK ========== -->
@@ -682,12 +758,10 @@
    | Template contents can be any valid XSL or XHTML.
   -->
   <xsl:template name="portlet.top.block">
-  	<!--
     <div class="portlet-top">
       <div class="portlet-top-inner">
       </div>
     </div>
-    -->
   </xsl:template>
   <!-- ================================================= -->
   
@@ -700,12 +774,10 @@
    | Template contents can be any valid XSL or XHTML.
   -->
   <xsl:template name="portlet.bottom.block">
-  	<!--
     <div class="portlet-bottom">
       <div class="portlet-bottom-inner">
       </div>
     </div>
-    -->
   </xsl:template>
   <!-- ==================================================== -->
 		

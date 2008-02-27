@@ -36,7 +36,7 @@
 	
 	body#portal /* This formats only the <body> of the portal and not imported html pages */
 	{
-		background: #ccccff url("images/page_column_back.png") repeat-y;
+		background: #fff url("images/page_column_back.png") repeat-y; /* Simulates the left column.  Done on the body to ensure the column fills the whole browser window. */
 	}
 	
 	h1,h2,h3,h4,h5,h6
@@ -93,8 +93,8 @@
 
 	#portalPageHeader 
 	{
-		background-color: #fff;
-		border-bottom: 4px solid #000099;
+		background-color: #000066;
+		border-bottom: 4px solid #000033;
 	}
 	
 	#portalPageBar 
@@ -102,6 +102,7 @@
 		background: #180884 url("images/headerbar.png") 0 0 repeat-x;
 		color: #9999cc;
 		text-align: right;
+		border-bottom: 2px solid #000033;
 	}
 	
 	#portalPageBar h2 
@@ -143,13 +144,13 @@
 
 	#portalWelcome 
 	{
-		font-weight: bold;
+		color: #ddd;
 	}
 	
 	#portalWelcome a
 	{
 		text-decoration: none;
-		color: #663399;
+		color: #9999FF;
 	}
 	
 	#portalWelcome a:hover 
@@ -173,17 +174,40 @@
 	#portalPageLeftColumnInner
 	{
 	}
+	
+	#portalPageLeftColumn .block
+	{
+		margin-bottom: 10px;
+	}
+	
+	#portalPageLeftColumn .block h2.block-title
+	{
+		margin: 0;
+		padding: 0.2em 0.5em;
+		background-color: #6666CC;
+		color: #000066;
+		border-bottom: 1px solid #000066;
+		font-size: 100%;
+	}
+	
+	#portalPageLeftColumn .block-content
+	{
+		background: url("images/top_light_fade.png") repeat-x;
+	}
 
 	#portalPageBodyTitle 
 	{
 		font-size: 250%;
-		color: #000099;
+		color: #FF6600;
 	}
 
 	#portalCustomizationLinks
 	{
+		padding: 0.5em 0 0.5em 1em;
 		font-size: 80%;
 		color: #000099;
+		border-left: 2px solid #ccccff;
+		border-bottom: 2px solid #ccccff;
 	}
 	
 	#portalCustomizationLinks li 
@@ -210,7 +234,18 @@
 
 	.portlet-container 
 	{
-		border: 1px solid #000099;
+	}
+	
+	.portlet-top
+	{
+		background: #000099 url("images/portlet_corner_topleft.png") top left no-repeat;
+	}
+	
+	
+	.portlet-top-inner
+	{
+		height: 3px;
+		background: url("images/portlet_corner_topright.png") top right no-repeat;
 	}
 
 	.portlet-toolbar 
@@ -229,7 +264,7 @@
 	{
 		margin-left: 0.5em;
 		padding-left: 20px;
-		background: url("../../icons/application.png") 0 5px no-repeat;
+		background: url("../../icons/application.png") 0 3px no-repeat;
 	}
 
 	.portlet-controls .help 
@@ -277,9 +312,23 @@
 		background-color: #4348b0;
 	}
 
-	.portlet-content 
+	.dashboard .portlet-content 
 	{
 		background-color: #fff;
+		border-left: 1px solid #000099;
+		border-right: 1px solid #000099;
+	}
+	
+	.portlet-bottom
+	{
+		background: #000099 url("images/portlet_corner_bottomleft.png") bottom left no-repeat;
+	}
+	
+	
+	.portlet-bottom-inner
+	{
+		height: 3px;
+		background: url("images/portlet_corner_bottomright.png") bottom right no-repeat;
 	}
 
 
@@ -343,7 +392,7 @@
 /* Formatting for the main navigation.  
  * Main navigation can be rendered in the header (as tabs), or down the left side. 
  */
-	#portalNavigation ul, #portalNavigation li 
+	#portalNavigation ul, #portalNavigation li
 	{
 		list-style: none;
 	}
@@ -351,7 +400,6 @@
 	#portalNavigation .portal-navigation 
 	{
 		background: #9999cc url("images/tab.png") repeat-x;
-		border-bottom: 1px solid #000099;
 	}
 	
 	#portalNavigation .active 
@@ -389,12 +437,11 @@
 
 	.portal-subnav-container 
 	{
-		background-color: #fff;
+		background-color: #ccccff;
 	}
 	
 	.portal-subnav-container li
 	{
-		border-bottom: 1px solid #9999cc;
 	}
 	
 	#portalNavigation .portal-navigation .portal-flyout-container
@@ -425,28 +472,44 @@
 		z-index: 9;
 	}
 	
-#portalNavigation .portal-navigation .portal-subnav-container a
+	#portalNavigation .portal-navigation .portal-subnav-container a
 	{
-		color: #9999cc;
+		color: #6633CC;
 		font-weight: normal;
-		border-left: 4px solid #fff;
+		border-left: 4px solid #ccccff;
 		background: url("../../icons/application.png") 0.5em 0.5em no-repeat;
 	}
 	
 	#portalNavigation .portal-navigation .portal-subnav-container a:hover
 	{
-		color: #663399;
-		border-left: 4px solid #ff6600;
+		color: #3300FF;
+		border-left: 4px solid #6600FF;
 	}
 
 	/* top navigation */
-	#portalNavigation .header li.portal-navigation
+	#portalNavigation .header .portal-navigation
 	{
-		border: 1px solid #000099;
-		margin-right: 3px;
+		border-left: 1px solid #000033;
+		border-right: 1px solid #000033;
+		border-top: 4px solid #000033;
+	}
+	
+	#portalNavigation .header .first
+	{
+		border-left: 4px solid #000033;
+	}
+	
+	#portalNavigation .header .last
+	{
+		border-right: 4px solid #000033;
 	}
 	
 	/* left navigation */
+	#portalNavigation .left li
+	{
+		border-bottom: 1px solid #000099;
+	}
+	
 	#portalNavigation .left a.portal-navigation-link 
 	{
 		background: url("../../icons/bullet_purple.png") no-repeat right;
@@ -457,16 +520,43 @@
 		background: url("../../icons/bullet_orange.png") no-repeat right;
 	}
 	
+	/* portlet navigation */
+	#portletNavigation
+	{
+		border-bottom: 2px solid #333399;
+	}
+	
+	#portletNavigation h3
+	{
+		margin: 0;
+		padding: 0.2em 0.5em;
+		color: #330099;
+		font-size: 90%;
+	}
+	
+	#portletNavigation ul, #portletNavigation li 
+	{
+		list-style: none;
+	}
+	
+	#portletNavigation a
+	{
+		color: #6633CC;
+		font-weight: normal;
+		background: #ccccff url("../../icons/application.png") 0.5em 0.5em no-repeat;
+		text-decoration: none;
+	}
+	
+	#portletNavigation a:hover
+	{
+		color: #fff;
+		background-color: #6633CC;
+	}
 	
 /** quicklinks **/
 	
 	#portalQuicklinks 
 	{
-	}
-	
-	#portalQuicklinks h2 
-	{
-		font-size: 90%;
 	}
 	
 	#portalQuicklinks li 
@@ -485,27 +575,4 @@
 	{
 		color: #ff6600;
 		text-decoration: underline;
-	}
-
-
-/** web search **/
-		 
-	#webSearchContainer {
-	
-	}
-	
-	#webSearchContainer form {
-	
-	}
-	
-	#webSearchFormContainer {
-	
-	}
-	
-	#webSearchInput {
-	
-	}
-	
-	#webSearchContainer select {
-	
 	}

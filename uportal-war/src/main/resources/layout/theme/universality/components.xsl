@@ -95,7 +95,7 @@
    | This template renders the home link into the portal page bar title.
   -->
   <xsl:template name="portal.page.bar.link.home">
-    	<a href="{$BASE_ACTION_URL}?uP_root=root&amp;uP_reload_layout=true&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true&amp;uP_sparam=mode&amp;mode=view" id="portalPageBarHome">
+    	<a href="{$HOME_ACTION_URL}" id="portalPageBarHome">
       	<xsl:attribute name="title">
         	<xsl:choose>
             <xsl:when test="//focused">
@@ -191,7 +191,7 @@
   -->
   <xsl:template name="logo">  
     <div id="portalLogo">
-      <a href="{$BASE_ACTION_URL}?uP_root=root&amp;uP_reload_layout=true&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true&amp;uP_sparam=mode&amp;mode=view" title="{$TOKEN[@name='LOGO_TITLE']}">
+      <a href="{$HOME_ACTION_URL}" title="{$TOKEN[@name='LOGO_TITLE']}">
         <xsl:choose>
           <xsl:when test="//focused">
             <!-- ****** LOGO FOCUSED BLOCK ****** -->
@@ -313,13 +313,17 @@
   -->
   <xsl:template name="quicklinks">
   	<xsl:if test="count(/layout/navigation/descendant::tabChannel[@quicklink > 0]) > 0"> <!-- Write out markup only if one or more quicklinks exist. -->
-      <div id="portalQuicklinks"> <!-- Outer container. -->
-        <h2><xsl:value-of select="$TOKEN[@name='QUICKLINKS_LABEL']"/></h2> <!-- Component title. -->
-        <ul>  <!-- Navigation list. -->
-          <xsl:apply-templates select="/layout/navigation/descendant::tabChannel[@quicklink > 0]" mode="quicklink"> <!-- Selects from the XML only those portlets with the matching quicklink parameter. -->
-            <xsl:sort select="@quicklink" order="ascending" /> <!-- Sorts the subsequent array in ascending order by the value of the quicklink parameter. -->
-          </xsl:apply-templates>
-        </ul>
+      <div id="portalQuicklinks" class="block">
+      	<div class="block-inner">
+        	<h2 class="block-title"><xsl:value-of select="$TOKEN[@name='QUICKLINKS_LABEL']"/></h2>
+        	<div class="block-content">
+            <ul>  <!-- Navigation list. -->
+              <xsl:apply-templates select="/layout/navigation/descendant::tabChannel[@quicklink > 0]" mode="quicklink"> <!-- Selects from the XML only those portlets with the matching quicklink parameter. -->
+                <xsl:sort select="@quicklink" order="ascending" /> <!-- Sorts the subsequent array in ascending order by the value of the quicklink parameter. -->
+              </xsl:apply-templates>
+            </ul>
+      		</div>
+        </div>
       </div>
     </xsl:if>
   </xsl:template>
@@ -366,24 +370,48 @@
    | The list of search engines may be modified in the script file "search.js", which is located in webpages/media/skins/javascript.
   -->
   <xsl:template name="web.search">
-    <div id="webSearchContainer">
-      <div id="webSearchFormContainer">
-				<script language="JavaScript" type="text/javascript">
-        	var skinPath='<xsl:value-of select="$SKIN_PATH"/>/<xsl:value-of select="$SKIN"/>/';
-        </script>
-        <script type="text/javascript" language="JavaScript" src="{$SCRIPT_PATH}/cookies.js">
-        	// Included JS file
-        </script>
-        <script type="text/javascript" language="JavaScript" src="{$SCRIPT_PATH}/search.js">
-        	// Included JS file
-        </script>
-        <noscript>
-          <form target="_parent" method="get" action="http://www.google.com/search" id="webSearchForm">
-          <input id="webSearchInput" value="" name="q" type="text" />
-          <input id="webSearchSubmit" type="submit" name="submit" value="Google Search" />
-          </form>
-        </noscript>
+    <div id="webSearchContainer" class="block">
+      <div class="block-inner">
+      	<h2 class="block-title"><xsl:value-of select="$TOKEN[@name='WEB_SEARCH_TITLE']"/></h2>
+        <div class="block-content">
+					<script language="JavaScript" type="text/javascript">
+            var skinPath='<xsl:value-of select="$SKIN_PATH"/>/<xsl:value-of select="$SKIN"/>/';
+          </script>
+          <script type="text/javascript" language="JavaScript" src="{$SCRIPT_PATH}/cookies.js">
+            // Included JS file
+          </script>
+          <script type="text/javascript" language="JavaScript" src="{$SCRIPT_PATH}/search.js">
+            // Included JS file
+          </script>
+          <noscript>
+            <form target="_parent" method="get" action="http://www.google.com/search" id="webSearchForm">
+              <input id="webSearchInput" value="" name="q" type="text" />
+              <input id="webSearchSubmit" type="submit" name="submit" value="Google Search" />
+            </form>
+          </noscript>
+        </div>
       </div>
+    </div>
+  </xsl:template>
+  <!-- ========================================== -->
+  
+  
+  <!-- ========== TEMPLATE: BREADCRUMB ========== -->
+  <!-- ========================================== -->
+  <!--
+   | This template renders the page breadcrumb.
+  -->
+  <xsl:template name="breadcrumb">
+		<div id="portalPageBodyBreadcrumb">
+    	<a href="{$BASE_ACTION_URL}?uP_root=root&amp;uP_reload_layout=true&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true&amp;uP_sparam=mode&amp;mode=view" title="{$TOKEN[@name='HOME_LONG_LABEL']}"><xsl:value-of select="$TOKEN[@name='HOME_LABEL']"/></a>
+      <span class="breadcrumb-separator">&gt;</span>
+      <a href="{$BASE_ACTION_URL}?uP_root=root&amp;uP_sparam=activeTab&amp;activeTab={position(/layout/navigation/tab[@activeTab='true'])}">
+      	<xsl:attribute name="title">
+        	<xsl:value-of select="/layout/navigation/tab[@activeTab='true']/@name"/>
+        </xsl:attribute>
+      	<xsl:value-of select="/layout/navigation/tab[@activeTab='true']/@name"/>
+      </a>
+      <span class="breadcrumb-separator">&gt;</span>
     </div>
   </xsl:template>
   <!-- ========================================== -->
@@ -416,7 +444,7 @@
   -->
   <xsl:template name="back.to.home">
   	<xsl:if test="//focused">
-      <a href="{$BASE_ACTION_URL}?uP_root=root&amp;uP_reload_layout=true&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true&amp;uP_sparam=mode&amp;mode=view" id="portalBackToHome" title="{$TOKEN[@name='BACK_HOME_LONG_LABEL']}">
+      <a href="{$HOME_ACTION_URL}" id="portalBackToHome" title="{$TOKEN[@name='BACK_HOME_LONG_LABEL']}">
         <span><xsl:value-of select="$TOKEN[@name='BACK_HOME_LABEL']"/></span>
       </a>
   	  <xsl:if test="//focused[@in-user-layout='no'] and $USE_AJAX='true'">
@@ -427,7 +455,6 @@
   	</xsl:if>
   </xsl:template>
   <!-- ============================================ -->
-  
   
   
   <!-- ========== TEMPLATE: CUSTOMIZE LINKS ========== -->

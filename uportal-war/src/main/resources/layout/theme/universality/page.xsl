@@ -26,6 +26,12 @@
   <xsl:template match="layout | layout_fragment">
   	<xsl:variable name="COUNT_PORTLET_COLUMNS" select="count(content/column)"/>
     <xsl:variable name="PAGE_COLUMN_CLASS"><xsl:value-of select="$COUNT_PORTLET_COLUMNS"/>-column</xsl:variable>
+    <xsl:variable name="LEFT_COLUMN_CLASS">
+      <xsl:choose>
+        <xsl:when test="$USE_LEFT_COLUMN='true'">left-column</xsl:when>
+        <xsl:otherwise></xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
     
     <html xml:lang="en" lang="en">
       <head>
@@ -131,7 +137,12 @@
    | This left navigation column currently cannot contain portlets or channels, but only a limited set of user interface components.
   -->
   <xsl:template match="content">
-    <xsl:variable name="columns" select="count(column)"/>
+    <xsl:variable name="COLUMNS">
+    	<xsl:choose>
+      	<xsl:when test="//focused">1</xsl:when>
+        <xsl:otherwise><xsl:value-of select="count(column)"/></xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
     
     <div id="portalPageBody">  <!-- Div for presentation/formatting options. -->
     	<div id="portalPageBodyInner">  <!-- Inner div for additional presentation/formatting options. -->
@@ -150,13 +161,45 @@
           
             <!-- ****** LEFT COLUMN ****** -->
             <!-- Useage of the left column and subsequent UI components are set by parameters in universality.xsl. -->
-            <xsl:if test="$USE_LEFT_COLUMN='true'">
-              <xsl:call-template name="left.column"/> <!-- Template located in columns.xsl. -->
-            </xsl:if>
+            <xsl:choose>
+            	<xsl:when test="$AUTHENTICATED='true'">
+              
+                <xsl:choose>
+                  <xsl:when test="$PORTAL_VIEW='focused'">
+                  
+                  	<!-- Left column when a portlet is focused. -->
+                    <xsl:if test="$USE_LEFT_COLUMN_FOCUSED='true'">
+                      <xsl:call-template name="left.column"/> <!-- Template located in columns.xsl. -->
+                    </xsl:if>
+                    
+                  </xsl:when>
+                  <xsl:otherwise>
+                  	
+                    <!-- Left column when in dashboard. -->
+    								<xsl:if test="$USE_LEFT_COLUMN='true'">
+                      <xsl:call-template name="left.column"/> <!-- Template located in columns.xsl. -->
+                    </xsl:if>
+                    
+                  </xsl:otherwise>
+                </xsl:choose>
+                
+              </xsl:when>
+              <xsl:otherwise>
+              	
+                <!-- Left column when logged out. -->
+              	<xsl:if test="$USE_LEFT_COLUMN_GUEST='true'">
+                  <xsl:call-template name="left.column"/> <!-- Template located in columns.xsl. -->
+                </xsl:if>
+                
+              </xsl:otherwise>
+            </xsl:choose>
+            
+            
+            
             <!-- ****** LEFT COLUMN ****** -->
             
             <!-- ****** TITLE ROW ****** -->
-            <td valign="top" colspan="{$columns}" id="portalPageBodyTitleRow"> <!-- This row contains the page title (label of the currently selected main navigation item), and optionally user layout customization hooks, custom institution content (blocks), or return to dashboard link (if in the focused view). -->
+            <td valign="top" colspan="{$COLUMNS}" id="portalPageBodyTitleRow"> <!-- This row contains the page title (label of the currently selected main navigation item), and optionally user layout customization hooks, custom institution content (blocks), or return to dashboard link (if in the focused view). -->
             
               <div id="portalPageBodyTitleRowContents"> <!-- Inner div for additional presentation/formatting options. -->
                 
@@ -181,8 +224,10 @@
           <tr id="portalPageBodyColumns">
             <xsl:choose>
               <xsl:when test="//focused"> <!-- If the page is focused, there is only one column and an alternate rendering of the contents. -->
-                <td valign="top" class="portal-page-column-focused">
-                  <xsl:apply-templates select="//focused"/> <!-- Templates located in content.xsl. -->
+                <td valign="top" height="100%" class="portal-page-column-focused">
+                  <div class="portal-page-column-inner"> <!-- Column inner div for additional presentation/formatting options.  -->
+                  	<xsl:apply-templates select="//focused"/> <!-- Templates located in content.xsl. -->
+                  </div>
                 </td>
               </xsl:when>
               <xsl:otherwise> <!-- Otherwise, the page is not focused and the dashboard view of columns of portlets applies. -->

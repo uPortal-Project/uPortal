@@ -31,7 +31,7 @@
           <xsl:otherwise></xsl:otherwise>
         </xsl:choose>
       </xsl:variable>
-      <td id="column_{@ID}" class="portal-page-column {$POSITION}"> <!-- Unique ID needed for drag and drop. -->
+      <td id="column_{@ID}" valign="top" height="100%" class="portal-page-column {$POSITION}"> <!-- Unique ID needed for drag and drop. -->
         <xsl:attribute name="width"> <!-- Determine column width. -->
           <xsl:choose>
             <xsl:when test="position()=1 and position()=last()">100%</xsl:when>
@@ -55,12 +55,65 @@
    | This template renders the left navigation column of the page body.
   -->
   <xsl:template name="left.column">
-  	<td rowspan="2" id="portalPageLeftColumn">
+  	<td rowspan="2" id="portalPageLeftColumn" valign="top">
+    	<xsl:attribute name="width">
+      	<xsl:choose>
+          <xsl:when test="$AUTHENTICATED='true'">
+            <xsl:choose>
+              <xsl:when test="$PORTAL_VIEW='focused'">
+              	<xsl:value-of select="$LEFT_COLUMN_FOCUSED_WIDTH"/>px <!-- width when focused -->
+              </xsl:when>
+              <xsl:otherwise>
+              	<xsl:value-of select="$LEFT_COLUMN_WIDTH"/>px <!-- width when dashboard -->
+              </xsl:otherwise>
+            </xsl:choose>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:value-of select="$LEFT_COLUMN_GUEST_WIDTH"/>px <!-- width when logged out -->
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:attribute>
+      
       <div id="portalPageLeftColumnInner"> <!-- Inner div for additional presentation/formatting options. -->
-        
-        <!-- ****** CONTENT LEFT BLOCK ****** -->
-        <xsl:call-template name="content.left.block"/> <!-- Calls a template of customizable content from universality.xsl. -->
-        <!-- ****** CONTENT LEFT BLOCK ****** -->
+      	
+        <xsl:choose>
+          <xsl:when test="$AUTHENTICATED='true'">
+          
+            <xsl:choose>
+              <xsl:when test="$PORTAL_VIEW='focused'">
+              
+                <!-- Left column when a portlet is focused. -->
+                <xsl:if test="$USE_LEFT_COLUMN_FOCUSED='true'">
+                  <!-- ****** CONTENT LEFT FOCUSED BLOCK ****** -->
+                  <xsl:call-template name="content.left.focused.block"/> <!-- Calls a template of customizable content from universality.xsl. -->
+                  <!-- ****** CONTENT LEFT FOCUSED BLOCK ****** -->
+                </xsl:if>
+                
+              </xsl:when>
+              <xsl:otherwise>
+                
+                <!-- Left column when in dashboard. -->
+                <xsl:if test="$USE_LEFT_COLUMN='true'">
+                  <!-- ****** CONTENT LEFT BLOCK ****** -->
+                  <xsl:call-template name="content.left.block"/> <!-- Calls a template of customizable content from universality.xsl. -->
+                  <!-- ****** CONTENT LEFT BLOCK ****** -->
+                </xsl:if>
+                
+              </xsl:otherwise>
+            </xsl:choose>
+            
+          </xsl:when>
+          <xsl:otherwise>
+            
+            <!-- Left column when logged out. -->
+            <xsl:if test="$USE_LEFT_COLUMN_GUEST='true'">
+              <!-- ****** CONTENT LEFT GUEST BLOCK ****** -->
+              <xsl:call-template name="content.left.guest.block"/> <!-- Calls a template of customizable content from universality.xsl. -->
+              <!-- ****** CONTENT LEFT GUEST BLOCK ****** -->
+            </xsl:if>
+            
+          </xsl:otherwise>
+        </xsl:choose>
       
       </div>
     </td>

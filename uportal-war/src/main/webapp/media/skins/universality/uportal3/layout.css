@@ -46,7 +46,7 @@
 	
 	
 /** page **/
-	#portalPageBody 
+	#portalPage 
 	{
 		min-width: 700px;
 		clear: both;
@@ -94,14 +94,14 @@
 	
 	#portalLogo
   {
-    margin: 20px;
+    margin: 10px 20px;
   }
 	
 	#portalWelcome 
 	{
 		position: absolute;
 		top: 3em; /* Keep this value relative to the text size so that the top position remains good when the browser text size is increased. */
-		left: 250px; /* Set to the width of your logo. This margin prevents it from colliding with the logo if the browser window is shrunk down. */
+		left: 195px; /* Set to the width of your logo (plus logo margins). This margin prevents it from colliding with the logo if the browser window is shrunk down. */
 	}
 	
 	#portalWelcome .logout-label
@@ -112,6 +112,7 @@
 	.focused #portalPageBar img
 	{
 		float: left;
+		margin: 3px 0 0 10px
 	}
 
 
@@ -120,10 +121,17 @@
 	#portalPageBodyTitleRowContents
 	{
 		position: relative; /* Sets this container as positioned to have other elements poisitioned relative to it. */
+		padding: 1em;
 	}
 		
-	#portalPageBody h1 {
-		margin: 0.5em 0.5em 0 0.5em;
+	.breadcrumb-separator 
+	{
+		padding: 0 0.5em;
+	}
+		
+	#portalPageBody h1 
+	{
+		margin: 0;
 	}
 		
 	#portalCustomizationLinks 
@@ -132,7 +140,7 @@
 		top: 0;
 		right: 0;
 		text-align: right;
-		margin-left: 250px;
+		margin: 0 0 0 250px;
 	}
 	
 	#portalCustomizationLinks h3, #portalCustomizationLinks ul, #portalCustomizationLinks li 
@@ -177,6 +185,11 @@
 		min-height: 100px;
 	}
 	
+	.portal-page-column-focused .portal-page-column-inner 
+	{
+		padding-right: 1em;
+	}
+	
 	.portlet-container {
 		margin-bottom: 1em;
 	}
@@ -189,7 +202,7 @@
 	.portlet-toolbar h2 
 	{
 		margin: 0;
-		padding: 0.25em 1em;
+		padding: 2px 20px 3px 20px;
 	}
 	
 	.portlet-controls
@@ -263,8 +276,13 @@
 	.header #portalNavigationList
 	{
 		position: absolute;
-		top: 89px;
-		left: 195px;
+		top: 66px;
+		left: 192px;
+	}
+	
+	.focused .header #portalNavigationList
+	{
+		top: 47px;
 	}
 	
 	#portalNavigation ul, #portalNavigation li 
@@ -289,6 +307,23 @@
 		padding: 0.5em 1em 0.5em 2.1em;
 	}
 	
+	#portletNavigation ul, #portletNavigation li 
+	{
+		margin: 0;
+		padding: 0;
+	}
+	
+	#portletNavigation li 
+	{
+		margin-bottom: 1px;
+	}
+	
+	#portletNavigation a 
+	{
+		display: block;
+		padding: 0.5em 1em 0.5em 2.1em;
+	}
+	
 /** quicklinks **/	
 	#portalQuicklinks 
 	{
@@ -308,4 +343,15 @@
 	#portalQuicklinks li 
 	{
 		padding:0 0 0 2em;
+	}
+	
+/** web search **/
+	#webSearchContainer form 
+	{
+		padding: 1em;
+	}
+	
+	#webSearchContainer input, #webSearchContainer select 
+	{
+		margin-bottom: 0.5em;
 	}

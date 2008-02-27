@@ -174,7 +174,6 @@ uPortal.ResearchObject = function () {
         }
         var HTMLText = "";
         HTMLText += '<form onsubmit="if (window.uPortal && uPortal.research) return uPortal.research.openSearchWindow(this,this.searchType.options[this.searchType.selectedIndex].value)" action="#" id="webSearchForm">';
-        HTMLText += '<label for="webSearchForm">Search:</label>';
         HTMLText += '<input type="text" name="search" value="" id="webSearchInput" title="Enter text to search for" />';
         HTMLText += '<select name="searchType" onchange="UniconCookieHandler.setCookie(\'searchDefault\',this.options[this.selectedIndex].value.split(\'|\')[1])" title="Select Search Type">';
 
@@ -189,7 +188,7 @@ uPortal.ResearchObject = function () {
             HTMLText += '</optgroup>';
         }
         HTMLText += '</select>';
-        HTMLText += '<input type="Image" value="Search" id="webSearchSubmit" src="'+mediaPath+'institutional/web_search_icon.gif" title="To apply the selected search type to the entered word and show the results in a new window." />';
+        HTMLText += '<input type="Submit" name="submit" value="Search" id="webSearchSubmit" />';
         HTMLText += '</form>';
         //prompt('',HTMLText);
         document.writeln(HTMLText);
