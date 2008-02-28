@@ -12,14 +12,13 @@ function startFlyouts() {
 	var yoffset = navcontainer.offsetTop; 
 	
 	// create flyout menus for any tabs that have them
-	$("[@id*=navFrame_]").each(function(){
+	$("#portalFlyoutNavigation").children("[@id*=navFrame_]").each(function(){
 		$("#portalNavigation_" + $(this).attr("id").split("_")[1]).upflyout(
 			{
 				iframeId: $(this).attr("id"), 
 				divId: "portalFlyoutNavigation_" + $(this).attr("id").split("_")[1],
 				xoffset: xoffset,
-				yoffset: yoffset,
-				orientation: 'vertical'
+				yoffset: yoffset
 			}
 		);
 	});
@@ -45,7 +44,7 @@ function startFlyouts() {
 				var tab = $(this).get(0);
 				var x = options.xoffset + tab.offsetLeft;
 				var y = options.yoffset + tab.offsetTop;
-				if (this.orientation == 'horizontal')
+				if (options.orientation == 'horizontal')
 					y += tab.offsetHeight;
 				else
 					x += tab.offsetWidth;

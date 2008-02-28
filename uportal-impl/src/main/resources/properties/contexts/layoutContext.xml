@@ -62,7 +62,6 @@
                 <bean class="org.jasig.portal.layout.dlm.providers.RegularViewChannelRemover" scope="prototype"/>
                 
                 <!-- Uncomment to enable AJAX preferences -->
-				<bean class="org.jasig.portal.layout.dlm.remoting.AjaxPreferencesThemeParamInjector" scope="prototype"/>
                 <bean class="org.jasig.portal.layout.dlm.remoting.AuthenticatedUserThemeParamInjector" scope="prototype"/>
                 
                 <!-- 

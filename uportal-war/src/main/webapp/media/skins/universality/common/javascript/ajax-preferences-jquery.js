@@ -4,7 +4,7 @@ var channelXml,skinXml;
 function initportal() {
 
 	// initialize dialog menus
-	$("#contentDialogLink").click(initializeContentMenu);
+	$("#contentAddingDialog").channelbrowser({handles: new Array("#contentDialogLink")});
 	$("#layoutDialogLink").click(initializeLayoutMenu);
 	$("#skinDialogLink").click(initializeSkinMenu);
 
@@ -132,124 +132,6 @@ function changeColumns(newcolumns) {
 			
 		}
 	);
-}
-
-function initializeContentMenu() {
-
-	$("#channelAddingTabs > ul").tabs();
-	$("#contentAddingDialog").dialog({height:450, width:500});
-	$("#addChannelSearchTerm").keyup(function(){searchChannels($(this).attr("value"))});
-	var categorySelect = document.getElementById("categorySelectMenu");
-
-	$("#contentDialogLink")
-		.unbind('click', initializeContentMenu)
-		.click(function(){$("#contentAddingDialog").dialog('open');});
-
-	$.get(channelListUrl, {}, function(xml) {
-		channelXml = xml;
-		var matching = new Array();
-		$("category:has(channel)", channelXml).each(function(){matching.push($(this))});
-        matching.sort(sortCategoryResults);
-        $(matching).each(function(i, val) {
-        	categorySelect.options[i] = new Option($(this).attr("name"), $(this).attr("ID"));
-        });
-		categorySelect.options[0].selected = true;
-       	browseChannelCategory();
-       	
-       	// remove the loading graphics and message
-   		$("#channelLoading").css("display", "none");
-   		$("#categorySelectMenu").css("background-image", "none");
-   		$("#channelSelectMenu").css("background-image", "none");
-	});
-	
-}
-function browseChannelCategory() {
-
-	var channelSelect = document.getElementById("channelSelectMenu");
-	$("#channelSelectMenu").html("");
-	
-    var matching = new Array();
-	$("category[ID=" + $("#categorySelectMenu").attr("value") + "]", channelXml)
-		.find("channel")
-		.each(function(){matching.push($(this))});
-    matching.sort(sortChannelResults);
-    
-    $(matching).each(function(i, val){
-    	if (i == 0 || $(this).attr("ID") != $(this).prev().attr("ID")) {
-    		channelSelect.options[i] = new Option($(this).attr("name"), $(this).attr("ID"));
-    	}
-    });
-    channelSelect.options[0].selected = true;
-	selectChannel(channelSelect.value);
-	
-}
-
-function searchChannels(searchTerm) {
-	if (searchTerm == null || searchTerm == '') return;
-    var matching = new Array();
-	$("channel[name*=" + searchTerm + "]", channelXml).each(function(){matching.push($(this))});
-	$("channel[description*=" + searchTerm + "]", channelXml).each(function(){matching.push($(this))});
-	
-    var searchResults = document.getElementById("addChannelSearchResults");
-    searchResults.innerHTML = "";
-
-    matching.sort(sortChannelResults);
-    $(matching).each(function(i){
-		if (i == 0 || $(this).attr("ID") != $(matching[i-1]).attr("ID")) {
-		     $("#addChannelSearchResults").append(
-		     	$(document.createElement('li')).append(
-		     		$(document.createElement('a'))
-		     			.attr("id", $(this).attr("ID")).attr("href", "javascript:;")
-		     			.click(function(){selectChannel(this.id);})
-		     			.text($(this).attr("name"))
-		     	)
-		     );
-	     }
-    });
-    
-}
-
-// sort a list of returned channels by name
-function sortCategoryResults(a, b) {
-    var aname = a.attr("name").toLowerCase();
-    var bname = b.attr("name").toLowerCase();
-    if (aname == 'new') return -1;
-    if (bname == 'new') return 1;
-    if (aname == 'popular') return -1;
-    if (bname == 'popular') return 1;
-    if(aname > bname) return 1;
-    if(aname < bname) return -1;
-    return 0;
-}
-
-// sort a list of returned channels by name
-function sortChannelResults(a, b) {
-    var aname = a.attr("name").toLowerCase();
-    var bname = b.attr("name").toLowerCase();
-    if(aname > bname) return 1;
-    if(aname < bname) return -1;
-    return 0;
-}
-
-function selectChannel(channelId) {
-	if (channelId.indexOf("_") > -1)
-		channelId = channelId.split("_")[1];
-	var channel = $("channel[ID=" + channelId + "]", channelXml);
-
-	$("#channelTitle").text(channel.attr("name"));
-	$("#channelDescription").text(channel.attr("description"));
-	$("#addChannelId").attr("value", channelId);
-	$("#previewChannelLink").click(function(){ window.location = portalUrl + "?uP_fname=" + channel.attr("fname"); });
-
-    // if this channel has user-overrideable parameters, present a form allowing the
-    // user to input values
-    var parameters = channel.children("parameter[override=yes]");
-    for (var i = 0; i < parameters.length; i++) {
-        var input = $(document.createElement("input")).attr("type", "hidden").attr("name", $(parameters[i]).attr("name")).attr("value", $(parameters[i]).attr("value"));
-        var p = $(document.createElement("p")).append(input);
-        $("#channelDescription").append(p);
-    }
-
 }
 
 // Portlet editing persistence functions

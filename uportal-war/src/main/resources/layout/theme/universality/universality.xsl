@@ -128,7 +128,7 @@
       <xsl:otherwise>dashboard</xsl:otherwise>
     </xsl:choose>
   </xsl:param>
-  <xsl:param name="USE_AJAX" select="'false'"/>
+  <xsl:param name="USE_AJAX" select="'true'"/>
   <xsl:param name="JS_LIBRARY_SKIN">
   	<xsl:choose>
   		<xsl:when test="$USE_AJAX='true'">jqueryui</xsl:when>
@@ -222,7 +222,7 @@
     <!-- uPortal skin CSS -->
     
     
-    <xsl:if test="$USE_AJAX='true'">
+    <xsl:if test="($USE_AJAX='true' and $AUTHENTICATED='true') or $USE_FLYOUT_MENUS='true'">
      <link rel="stylesheet" href="{$MEDIA_PATH}/common/javascript/jquery/themes/{$SKIN}/jqueryui.all.css" type="text/css" media="screen" title="Flora (Default)"></link>
     </xsl:if>
     
@@ -245,8 +245,10 @@
    | Template contents can be any valid XSL or XHTML.
   -->
   <xsl:template name="page.js">
-    <xsl:if test="$USE_AJAX='true'">
+    <xsl:if test="($USE_AJAX='true' and $AUTHENTICATED='true') or $USE_FLYOUT_MENUS='true'">
      <script type="text/javascript" src="{$SCRIPT_PATH}/jquery/jquery-1.2.3.min.js"></script>
+    </xsl:if>
+    <xsl:if test="$USE_AJAX='true' and $AUTHENTICATED='true'">
      <script type="text/javascript" src="{$SCRIPT_PATH}/jquery/jquery.dimensions.js"></script>
      <script type="text/javascript" src="{$SCRIPT_PATH}/jquery/ui.dialog.js"></script>
      <script type="text/javascript" src="{$SCRIPT_PATH}/jquery/ui.resizable.js"></script>
@@ -257,6 +259,7 @@
      <script type="text/javascript" src="{$SCRIPT_PATH}/jquery/ui.tabs.js"></script>
      <script type="text/javascript" src="{$SCRIPT_PATH}/jquery/interface.js"></script>
      <script type="text/javascript" src="{$SCRIPT_PATH}/ajax-preferences-jquery.js"></script>
+     <script type="text/javascript" src="{$SCRIPT_PATH}/up-channel-browser.js"></script>
     </xsl:if>
   </xsl:template>
   

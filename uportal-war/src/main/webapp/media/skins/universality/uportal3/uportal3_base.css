@@ -444,12 +444,12 @@
 	{
 	}
 	
-	#portalNavigation .portal-navigation .portal-flyout-container
+	#portalFlyoutNavigation .portal-flyout-container
 	{
 		background-color: #fff;
 	}
 
-	#portalNavigation .portal-navigation .portal-flyout-container li
+	#portalFlyoutNavigation .portal-flyout-container li
 	{
 		border-bottom: 1px solid #9999cc;
 		display: list-item;
@@ -458,7 +458,7 @@
 		padding: 0;
 	}
 
-	#portalNavigation .portal-navigation .portal-flyout-container
+	#portalFlyoutNavigation .portal-flyout-container
 	{
 		border-left: 1px solid #9999cc;
 		border-right: 1px solid #9999cc;
@@ -466,7 +466,7 @@
 		z-index: 10;
 	}
 	
-	#portalNavigation .portal-navigation .portal-flyout-iframe
+	#portalFlyoutNavigation .portal-flyout-iframe
 	{
 		position: absolute;
 		z-index: 9;

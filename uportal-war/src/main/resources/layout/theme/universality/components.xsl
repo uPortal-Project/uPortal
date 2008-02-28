@@ -447,7 +447,7 @@
       <a href="{$HOME_ACTION_URL}" id="portalBackToHome" title="{$TOKEN[@name='BACK_HOME_LONG_LABEL']}">
         <span><xsl:value-of select="$TOKEN[@name='BACK_HOME_LABEL']"/></span>
       </a>
-  	  <xsl:if test="//focused[@in-user-layout='no'] and $USE_AJAX='true'">
+  	  <xsl:if test="//focused[@in-user-layout='no'] and $USE_AJAX='true' and $AUTHENTICATED">
   	    <a href="javascript:;" id="focusedContentDialogLink" title="{$TOKEN[@name='PREFERENCES_LINK_ADD_FOCUSED_CONTENT_LONG_LABEL']}">
   	      <span><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINK_ADD_FOCUSED_CONTENT_LABEL']"/></span>
   	    </a>
@@ -463,7 +463,7 @@
    | This template renders customization links.
   -->
   <xsl:template name="customize.links">
-      <xsl:if test="$AUTHENTICATED='true' and $USE_AJAX='true'"> <!-- Currently, AJAX must be enabled for these links to function. -->
+      <xsl:if test="$AUTHENTICATED='true' and $USE_AJAX='true' and $AUTHENTICATED"> <!-- Currently, AJAX must be enabled for these links to function. -->
         <div id="portalCustomizationLinks">
         	<h3><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINKS_TITLE']"/></h3>
           <ul>
