@@ -4,14 +4,9 @@
  | exported documents.
  +-->
 <with>
-    <attribute key="LAST_INDEX">${sql(SELECT sequence_value FROM up_sequence WHERE sequence_name = 'UP_PORTLET_PREFERENCE_VALUE')}</attribute>
-    <attribute key="PREFERENCE_COUNT">${groovy(new int[1])}</attribute>
+    <!-- <Object, LinkedHashMap<String, List<String>>> -->
+    <attribute key="PORTLET_MAP">${groovy(new HashMap())}</attribute>
     <subtasks>
-
-        <!--
-         | Delete existing portlet preferences for this user to clear the way.
-         +-->
-        <crn location="delete-preferences.crn"/>
 
         <!--
          | Import the new set of portlet entity preferences.
@@ -28,11 +23,6 @@
             </script>
             <subtasks>
                 <node-iterator xpath="entry">
-
-                    <groovy>
-                        <script>PREFERENCE_COUNT[0] = PREFERENCE_COUNT[0] + 1</script>
-                    </groovy>
-
                     <!--
                      | We have to do a limited layout export to match the entity
                      | identified in XML.
@@ -84,19 +74,44 @@
                                                 <log level="warn">WARNING:  the expression '${groovy(ENTITY_TOKENS[1])}' does not match any nodes in the '${groovy(ENTITY_TOKENS[0])}' layout;  no record will be created.</log>
                                             </when>
                                             <when test="${groovy(FNAME_OF_RECORD.equals('${valueOf(@fname)}'))}">
-                                                <!-- We are good... -->
-                                                <sql-statement sql="INSERT INTO up_portlet_entity_prefs(user_id, layout_id, chan_desc_id, portlet_pref_name, pref_id) VALUES(?, 1, ?, ?, ?)">
-                                                    <parameter value="${USER_ID}"/>
-                                                    <parameter value="${groovy(getChanDescId(${USER_ID}, ${LAYOUT_USER_ID}, ${valueOf(@struct-id)}))}"/>
-                                                    <parameter value="${groovy(ENTRY_ELEMENT.valueOf('@name'))}"/>
-                                                    <parameter value="${groovy(LAST_INDEX + PREFERENCE_COUNT[0])}"/>
-                                                </sql-statement>
-                                                <node-iterator source="${ENTRY_ELEMENT}" xpath="value">
-                                                    <sql-statement sql="INSERT INTO up_portlet_pref_values(pref_id, portlet_pref_value) VALUES(?, ?)">
-                                                        <parameter value="${groovy(LAST_INDEX + PREFERENCE_COUNT[0])}"/>
-                                                        <parameter value="UP_PORTLET_PREF_PREFIX__${valueOf(text())}"/>
-                                                    </sql-statement>
-                                                </node-iterator>
+                                                <!--
+                                                 | Collate the preferences into a single Map. This is done so the helper
+                                                 | class can be called once ensuring the update is transactional
+                                                 +-->
+                                                <groovy>
+                                                    <script>
+                                                        def getPortletPefsMap(fName, chanSubId, userId) {
+                                                            List portletInfo = Arrays.asList(fName, chanSubId, userId);
+                                                        
+                                                            Map portletPrefs = PORTLET_MAP.get(portletInfo);
+                                                            if (portletPrefs == null) {
+                                                                portletPrefs = new LinkedHashMap();
+                                                                PORTLET_MAP.put(portletInfo, portletPrefs);
+                                                            }
+                                                            
+                                                            return portletPrefs;
+                                                        }
+                                                    </script>
+                                                    <subtasks>
+                                                        <with-attribute key="PORTLET_PREFS_MAP" value="${groovy(getPortletPefsMap('${valueOf(@fname)}', '${groovy(getChanDescId(${USER_ID}, ${LAYOUT_USER_ID}, ${valueOf(@struct-id)}))}', ${USER_ID}))}">
+                                                            <node-iterator source="${ENTRY_ELEMENT}" xpath="value">
+                                                                <groovy>
+                                                                    <script>
+                                                                        String name = "${groovy(ENTRY_ELEMENT.valueOf('@name'))}";
+                                                                        
+                                                                        List values = PORTLET_PREFS_MAP.get(name);
+                                                                        if (values == null) {
+                                                                            values = new LinkedList();
+                                                                            PORTLET_PREFS_MAP.put(name, values);
+                                                                        }
+                                                                        
+                                                                        values.add("${valueOf(text())}");
+                                                                    </script>
+                                                                </groovy>
+                                                            </node-iterator>
+                                                        </with-attribute>
+                                                    </subtasks>
+                                                </groovy>
                                             </when>
                                             <otherwise>
                                                 <!-- Warn the user... -->
@@ -112,13 +127,26 @@
                 </node-iterator>
             </subtasks>
         </groovy>
-
+        
         <!--
-         | Now update UP_SEQUENCE to reflect the PREF_IDs we've issued.
+         | Iterate over the collated Map and call the helper class to do the actual persisting
          +-->
-        <sql-statement sql="UPDATE up_sequence SET sequence_value = ? WHERE sequence_name = 'UP_PORTLET_PREFERENCE_VALUE'">
-            <parameter value="${groovy(LAST_INDEX + PREFERENCE_COUNT[0])}"/>
-        </sql-statement>
-
+        <invoke-method class="org.jasig.portal.spring.PortalApplicationContextLocator" method="getApplicationContext" attribute-name="APP_CONTEXT">
+            <subtasks>
+                <invoke-method object="${APP_CONTEXT}" method="getBean" attribute-name="portletEntityPreferenceHandler">
+                    <parameter value="portletEntityPreferenceHandler" />
+                    <subtasks>
+                        <for-each items="${groovy(PORTLET_MAP.entrySet())}" attribute-name="portletPrefsEntry">
+                            <invoke-method object="${portletEntityPreferenceHandler}" method="setEntityPreference">
+                                <parameter value="${groovy(portletPrefsEntry.getKey().get(0))}" />
+                                <parameter value="${groovy(portletPrefsEntry.getKey().get(1))}" />
+                                <parameter value="${groovy(portletPrefsEntry.getKey().get(2))}" />
+                                <parameter value="${groovy(portletPrefsEntry.getValue())}" />
+                            </invoke-method>
+                        </for-each>
+                    </subtasks>
+                </invoke-method>
+            </subtasks>
+        </invoke-method>
     </subtasks>
 </with>
