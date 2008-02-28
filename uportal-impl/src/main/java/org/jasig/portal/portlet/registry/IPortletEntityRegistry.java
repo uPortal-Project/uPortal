@@ -5,11 +5,12 @@
  */
 package org.jasig.portal.portlet.registry;
 
+import java.util.Set;
+
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
-import org.jasig.portal.security.IPerson;
 
 /**
  * Provides methods for creating and accessing {@link IPortletEntity} and related objects.
@@ -32,11 +33,11 @@ public interface IPortletEntityRegistry {
      * null will be returned.
      * 
      * @param channelSubscribeId The layout subscription id for the underlying channel.
-     * @param person The person the entity is for.
+     * @param userId The if of the person the entity is for.
      * @return The portlet entity for the subscribe id and person, null if no entity exists for the parameters.
-     * @throws IllegalArgumentException If channelSubscribeId or person are null.
+     * @throws IllegalArgumentException If channelSubscribeId is null.
      */
-    public IPortletEntity getPortletEntity(String channelSubscribeId, IPerson person);
+    public IPortletEntity getPortletEntity(String channelSubscribeId, int userId);
     
     /**
      * Creates a new, persisted, portlet entity for the published and subscribed to channel. If an existing
@@ -45,24 +46,24 @@ public interface IPortletEntityRegistry {
      * 
      * @param portletDefinitionId The definition id of the underlying {@link IPortletDefinition}
      * @param channelSubscribeId The layout subscription id for the underlying channel.
-     * @param person The person the entity is for.
+     * @param userId The id of the person the entity is for.
      * @return A new entity for the parameters
-     * @throws IllegalArgumentException If portletDefinitionId, channelSubscribeId, or person are null
+     * @throws IllegalArgumentException If portletDefinitionId or channelSubscribeId are null
      * @throws org.springframework.dao.DataIntegrityViolationException If an entity already exists for the channel
      *         subscribe id and userId pair
      * @throws org.springframework.dao.DataRetrievalFailureException If no {@link org.jasig.portal.portlet.om.IPortletDefinition}
      *         exists for the specified {@link IPortletDefinitionId} 
      */
-    public IPortletEntity createPortletEntity(IPortletDefinitionId portletDefinitionId, String channelSubscribeId, IPerson person);
+    public IPortletEntity createPortletEntity(IPortletDefinitionId portletDefinitionId, String channelSubscribeId, int userId);
     
     /**
-     * Convience for {@link #getPortletEntity(String, IPerson)} and {@link #createPortletEntity(IPortletDefinitionId, String, IPerson)}.
+     * Convience for {@link #getPortletEntity(String, int)} and {@link #createPortletEntity(IPortletDefinitionId, String, int)}.
      * If the get returns null the entity will be created and returned.
      * 
-     * @see #getPortletEntity(String, IPerson)
-     * @see #createPortletEntity(IPortletDefinitionId, String, IPerson)
+     * @see #getPortletEntity(String, int)
+     * @see #createPortletEntity(IPortletDefinitionId, String, int)
      */
-    public IPortletEntity getOrCreatePortletEntity(IPortletDefinitionId portletDefinitionId, String channelSubscribeId, IPerson person);
+    public IPortletEntity getOrCreatePortletEntity(IPortletDefinitionId portletDefinitionId, String channelSubscribeId, int userId);
     
     /**
      * Stores changes made to an existing portlet entity
@@ -71,6 +72,14 @@ public interface IPortletEntityRegistry {
      * @throws IllegalArgumentException if portletEntity is null
      */
     public void storePortletEntity(IPortletEntity portletEntity);
+    
+    /**
+     * Get all {@link IPortletEntity}s that exist for the specified user id. (From {@link org.jasig.portal.security.IPerson#getID()}.
+     * 
+     * @param userId The id of the user to get the entities for.
+     * @return A set of all entities base on the specified user id, will be empty if no entities exist for the id, will never be null.
+     */
+    public Set<IPortletEntity> getPortletEntitiesForUser(int userId);
     
     /**
      * Removes a portlet entity and all related data from the persistent store.

@@ -242,7 +242,7 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
         final IPortletDefinitionId portletDefinitionId = portletDefinition.getPortletDefinitionId();
         final String channelSubscribeId = channelStaticData.getChannelSubscribeId();
         final IPerson person = channelStaticData.getPerson();
-        final IPortletEntity portletEntity = this.portletEntityRegistry.getOrCreatePortletEntity(portletDefinitionId, channelSubscribeId, person);
+        final IPortletEntity portletEntity = this.portletEntityRegistry.getOrCreatePortletEntity(portletDefinitionId, channelSubscribeId, person.getID());
 
         //Get/create the portlet window to init
         final HttpServletRequest httpServletRequest = portalControlStructures.getHttpServletRequest();
@@ -501,7 +501,7 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
             case PortalEvent.UNSUBSCRIBE: {
                 final String channelSubscribeId = channelStaticData.getChannelSubscribeId();
                 final IPerson person = channelStaticData.getPerson();
-                final IPortletEntity portletEntity = this.portletEntityRegistry.getPortletEntity(channelSubscribeId, person);
+                final IPortletEntity portletEntity = this.portletEntityRegistry.getPortletEntity(channelSubscribeId, person.getID());
                 
                 //TODO delete portlet windows for entity from the windowRegistry since there is no cascade from entity to window?
                 

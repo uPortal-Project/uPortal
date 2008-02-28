@@ -72,6 +72,7 @@ public class SpringPortletChannelImplTest extends TestCase {
         channelStaticData.setChannelSubscribeId("sub1");
         
         final IPerson person = EasyMock.createMock(IPerson.class);
+        EasyMock.expect(person.getID()).andReturn(1);
         channelStaticData.setPerson(person);
 
         
@@ -96,7 +97,7 @@ public class SpringPortletChannelImplTest extends TestCase {
 
         
         final IPortletEntityRegistry portletEntityRegistry = EasyMock.createMock(IPortletEntityRegistry.class);
-        EasyMock.expect(portletEntityRegistry.getOrCreatePortletEntity(portDef1, "sub1", person)).andReturn(portletEntity);
+        EasyMock.expect(portletEntityRegistry.getOrCreatePortletEntity(portDef1, "sub1", 1)).andReturn(portletEntity);
 
         
         final IPortletWindowId portletWindowId = new MockPortletWindowId("win1");

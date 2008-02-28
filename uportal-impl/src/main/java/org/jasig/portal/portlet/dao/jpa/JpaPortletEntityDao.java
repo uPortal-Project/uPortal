@@ -37,6 +37,10 @@ public class JpaPortletEntityDao  implements IPortletEntityDao {
     private static final String FIND_PORTLET_ENTS_BY_PORTLET_DEF = 
         "from PortletEntityImpl portEnt " +
         "where portEnt.portletDefinition = :portletDefinition";
+    
+    private static final String FIND_PORTLET_ENTS_BY_USER_ID = 
+        "from PortletEntityImpl portEnt " +
+        "where portEnt.userId = :userId";
 
     private EntityManager entityManager;
     private IPortletDefinitionDao portletDefinitionDao;
@@ -151,6 +155,19 @@ public class JpaPortletEntityDao  implements IPortletEntityDao {
         
         final Query query = this.entityManager.createQuery(FIND_PORTLET_ENTS_BY_PORTLET_DEF);
         query.setParameter("portletDefinition", portletDefinition);
+        
+        final List<IPortletEntity> portletEntities = query.getResultList();
+        return new HashSet<IPortletEntity>(portletEntities);
+    }
+    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.portlet.dao.IPortletEntityDao#getPortletEntitiesForUser(int)
+     */
+    @SuppressWarnings("unchecked")
+    @Transactional(readOnly = true)
+    public Set<IPortletEntity> getPortletEntitiesForUser(int userId) {
+        final Query query = this.entityManager.createQuery(FIND_PORTLET_ENTS_BY_USER_ID);
+        query.setParameter("userId", userId);
         
         final List<IPortletEntity> portletEntities = query.getResultList();
         return new HashSet<IPortletEntity>(portletEntities);

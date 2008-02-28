@@ -5,6 +5,8 @@
  */
 package org.jasig.portal.portlet.registry;
 
+import java.util.Set;
+
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -13,7 +15,6 @@ import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
-import org.jasig.portal.security.IPerson;
 import org.springframework.beans.factory.annotation.Required;
 
 /**
@@ -62,14 +63,13 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
 
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.registry.IPortletEntityRegistry#createPortletEntity(org.jasig.portal.portlet.om.IPortletDefinitionId, java.lang.String, org.jasig.portal.security.IPerson)
+     * @see org.jasig.portal.portlet.registry.IPortletEntityRegistry#createPortletEntity(org.jasig.portal.portlet.om.IPortletDefinitionId, java.lang.String, int)
      */
-    public IPortletEntity createPortletEntity(IPortletDefinitionId portletDefinitionId, String channelSubscribeId, IPerson person) {
+    public IPortletEntity createPortletEntity(IPortletDefinitionId portletDefinitionId, String channelSubscribeId, int userId) {
         Validate.notNull(portletDefinitionId, "portletDefinitionId can not be null");
         Validate.notNull(channelSubscribeId, "channelSubscribeId can not be null");
-        Validate.notNull(person, "person can not be null");
         
-        return this.portletEntityDao.createPortletEntity(portletDefinitionId, channelSubscribeId, person.getID());
+        return this.portletEntityDao.createPortletEntity(portletDefinitionId, channelSubscribeId, userId);
     }
     
     /* (non-Javadoc)
@@ -82,25 +82,31 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
     }
     
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.registry.IPortletEntityRegistry#getPortletEntity(java.lang.String, org.jasig.portal.security.IPerson)
+     * @see org.jasig.portal.portlet.registry.IPortletEntityRegistry#getPortletEntity(java.lang.String, int)
      */
-    public IPortletEntity getPortletEntity(String channelSubscribeId, IPerson person) {
+    public IPortletEntity getPortletEntity(String channelSubscribeId, int userId) {
         Validate.notNull(channelSubscribeId, "channelSubscribeId can not be null");
-        Validate.notNull(person, "person can not be null");
         
-        return this.portletEntityDao.getPortletEntity(channelSubscribeId, person.getID());
+        return this.portletEntityDao.getPortletEntity(channelSubscribeId, userId);
     }
     
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.registry.IPortletEntityRegistry#getOrCreatePortletEntity(org.jasig.portal.portlet.om.IPortletDefinitionId, java.lang.String, org.jasig.portal.security.IPerson)
+     * @see org.jasig.portal.portlet.registry.IPortletEntityRegistry#getPortletEntitiesForUser(int)
      */
-    public IPortletEntity getOrCreatePortletEntity(IPortletDefinitionId portletDefinitionId, String channelSubscribeId, IPerson person) {
-        final IPortletEntity portletEntity = this.getPortletEntity(channelSubscribeId, person);
+    public Set<IPortletEntity> getPortletEntitiesForUser(int userId) {
+        return this.portletEntityDao.getPortletEntitiesForUser(userId);
+    }
+    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.portlet.registry.IPortletEntityRegistry#getOrCreatePortletEntity(org.jasig.portal.portlet.om.IPortletDefinitionId, java.lang.String, int)
+     */
+    public IPortletEntity getOrCreatePortletEntity(IPortletDefinitionId portletDefinitionId, String channelSubscribeId, int userId) {
+        final IPortletEntity portletEntity = this.getPortletEntity(channelSubscribeId, userId);
         if (portletEntity != null) {
             return portletEntity;
         }
         
-        return this.createPortletEntity(portletDefinitionId, channelSubscribeId, person);
+        return this.createPortletEntity(portletDefinitionId, channelSubscribeId, userId);
     }
 
     /* (non-Javadoc)

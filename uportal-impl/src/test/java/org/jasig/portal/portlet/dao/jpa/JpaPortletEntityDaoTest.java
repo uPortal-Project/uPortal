@@ -68,6 +68,9 @@ public class JpaPortletEntityDaoTest extends AbstractJpaTests {
         final Set<IPortletEntity> portletEntities1 = this.jpaPortletEntityDao.getPortletEntities(portDef1.getPortletDefinitionId());
         assertEquals(Collections.singleton(portEnt1), portletEntities1);
         
+        final Set<IPortletEntity> portletEntitiesByUser = this.jpaPortletEntityDao.getPortletEntitiesForUser(1);
+        assertEquals(Collections.singleton(portEnt1), portletEntitiesByUser);
+        
         
         
         
