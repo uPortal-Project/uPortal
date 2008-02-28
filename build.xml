@@ -70,7 +70,7 @@
         <antcall target="db-hibernate" />
         <antcall target="i18n-db" />
         <antcall target="crn-import">
-            <param name="dir" value="uportal-impl/src/main/resources/properties/db/entities" />
+            <param name="dir" value="${basedir}/uportal-impl/src/main/resources/properties/db/entities" />
         </antcall>
         <echo message="Finished initializing uPortal" />
     </target>
