@@ -5,6 +5,7 @@
 	<classpathentry excluding="**" kind="src" output="uportal-impl/src/main/resources" path="uportal-impl/src/main/resources"/>
 	<classpathentry excluding="**" kind="src" output="uportal-impl/src/test/resources" path="uportal-impl/src/test/resources"/>
 	<classpathentry excluding="**" kind="src" output="uportal-war/src/main/resources" path="uportal-war/src/main/resources"/>
+	<classpathentry kind="src" path="uportal-portlets-overlay/cas/src/main/java"/>
 	<classpathentry excluding="**" kind="src" output="uportal-portlets-overlay/pluto-testsuite/src/main/resources" path="uportal-portlets-overlay/pluto-testsuite/src/main/resources"/>
 	<classpathentry kind="src" path="uportal-ear-deployer/src/main/java"/>
 	<classpathentry kind="src" path="uportal-ear-deployer/src/test/java"/>

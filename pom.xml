@@ -105,6 +105,7 @@
         <activation.version>1.0.2</activation.version>
         <ant.version>1.6.5</ant.version>
         <casclient.version>2.1.1</casclient.version>
+        <cas-server.version>3.2</cas-server.version>
         <cernunnos.version>1.0.0-M6</cernunnos.version>
         <collections-generic.version>4.01</collections-generic.version>
         <commons-cli.version>1.1</commons-cli.version>
