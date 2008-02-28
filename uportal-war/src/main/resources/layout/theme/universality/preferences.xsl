@@ -123,7 +123,7 @@
         <tr>
          <td></td>
          <td>
-          <input type="radio" name="layoutChoice" value="30-70"/>
+          <input type="radio" name="layoutChoice" value="40-60"/>
           <img src="media/skins/icons/layout_content.png"/>
          </td>
          <td>
@@ -135,7 +135,7 @@
         <tr>
          <td></td>
          <td>
-          <input type="radio" name="layoutChoice" value="70-30"/>
+          <input type="radio" name="layoutChoice" value="60-40"/>
           <img src="media/skins/icons/layout_content.png"/>
          </td>
          <td></td>
