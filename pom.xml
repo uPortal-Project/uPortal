@@ -132,7 +132,7 @@
         <log4j.version>1.2.14</log4j.version>
         <oro.version>2.0.8</oro.version>
         <persistence-api.version>1.0</persistence-api.version>
-        <person-directory.version>1.1.0</person-directory.version>
+        <person-directory.version>1.1.1</person-directory.version>
         <pluto.version>1.1.5-SNAPSHOT</pluto.version>
         <portlet-api.version>1.0</portlet-api.version>
         <rome.version>0.8</rome.version>
