@@ -221,16 +221,18 @@
   -->
   <xsl:template name="flyout.menu.scripts">
 		<script src="{$SCRIPT_PATH}/flyout-nav.js" type="text/javascript"></script>
-    <xsl:for-each select="/layout/navigation/tab">
-      <xsl:if test="@activeTab='false' and $USE_FLYOUT_MENUS='true'"> <!-- If using flyout menus, call template for rendering submenus. -->
-        <xsl:call-template name="subnavigation">
-          <xsl:with-param name="CONTEXT" select="'flyout'"/>
-        </xsl:call-template>
-      </xsl:if>
-      <xsl:if test="$USE_AJAX='true' and @activeTab='true'"> <!-- If navigation is being rendered in the left column rather than as tabs, call template for rendering active menu item's submenu. -->
-        <xsl:call-template name="preferences.editpage"/>
-      </xsl:if>
-    </xsl:for-each>
+    <div id="portalFlyoutNavigation" class="portal-navigation">
+      <xsl:for-each select="/layout/navigation/tab">
+        <xsl:if test="@activeTab='false' and $USE_FLYOUT_MENUS='true'"> <!-- If using flyout menus, call template for rendering submenus. -->
+          <xsl:call-template name="subnavigation">
+            <xsl:with-param name="CONTEXT" select="'flyout'"/>
+          </xsl:call-template>
+        </xsl:if>
+        <xsl:if test="$USE_AJAX='true' and @activeTab='true'"> <!-- If navigation is being rendered in the left column rather than as tabs, call template for rendering active menu item's submenu. -->
+          <xsl:call-template name="preferences.editpage"/>
+        </xsl:if>
+      </xsl:for-each>
+    </div>
     <script type="text/javascript">
       $(function(){
         // initialize the flyout menus and add onmouseover and onmouseout events to 
