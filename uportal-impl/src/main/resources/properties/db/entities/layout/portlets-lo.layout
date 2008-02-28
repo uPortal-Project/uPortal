@@ -20,6 +20,7 @@
           <value>30%</value>
         </structure-attribute>
         <channel fname="pbookmarks"/>
+        <channel fname="jasig-test-portlet"/>
       </column>
       <column unremovable="N" immutable="N" hidden="N" name="Column">
         <structure-attribute type="folder">

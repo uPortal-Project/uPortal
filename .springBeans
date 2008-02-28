@@ -22,6 +22,7 @@
 		<config>uportal-impl/src/main/resources/properties/contexts/userContext.xml</config>
 		<config>uportal-impl/src/main/resources/properties/contexts/layoutContext.xml</config>
 		<config>uportal-impl/src/main/resources/properties/contexts/schedulerContext.xml</config>
+		<config>uportal-impl/src/main/resources/properties/contexts/importExportContext.xml</config>
 	</configs>
 	<configSets>
 		<configSet>
@@ -54,6 +55,7 @@
 				<config>uportal-impl/src/main/resources/properties/contexts/userContext.xml</config>
 				<config>uportal-impl/src/main/resources/properties/contexts/layoutContext.xml</config>
 				<config>uportal-impl/src/main/resources/properties/contexts/schedulerContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/importExportContext.xml</config>
 			</configs>
 		</configSet>
 	</configSets>
