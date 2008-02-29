@@ -327,22 +327,12 @@
 /** quicklinks **/	
 	#portalQuicklinks 
 	{
-		position: absolute;
-		top: 5em;
-		right: 0;
-		padding: 0 2em 0 0;
 	}
 	
-	#portalQuicklinks h2, #portalQuicklinks ul, #portalQuicklinks li 
+	#portalQuicklinks ul, #portalQuicklinks li 
 	{
-		display: inline;
 		margin: 0;
 		padding: 0;
-	}
-	
-	#portalQuicklinks li 
-	{
-		padding:0 0 0 2em;
 	}
 	
 /** web search **/

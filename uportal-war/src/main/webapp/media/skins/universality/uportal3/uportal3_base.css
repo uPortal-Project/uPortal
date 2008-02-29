@@ -122,6 +122,11 @@
 		background: url("../../icons/house.png") no-repeat;
 	}
 	
+	#portalPageBarAdmin
+	{
+		background: url("../../icons/application_cascade.png") no-repeat;
+	}
+	
 	#portalPageBarCustom
 	{
 		background: url("../../icons/user.png") no-repeat;
@@ -183,10 +188,9 @@
 	#portalPageLeftColumn .block h2.block-title
 	{
 		margin: 0;
-		padding: 0.2em 0.5em;
-		background-color: #6666CC;
+		padding: 0.5em 0.5em;
 		color: #000066;
-		border-bottom: 1px solid #000066;
+		border-bottom: 2px solid #6666CC;
 		font-size: 100%;
 	}
 	
@@ -562,17 +566,14 @@
 	#portalQuicklinks li 
 	{
 		list-style: none;
-		padding: 0 0 0 2em;
 	}
 	
 	#portalQuicklinks a 
 	{
 		text-decoration: none;
-		color: #663399;
 	}
 
 	#portalQuicklinks a:hover 
 	{
-		color: #ff6600;
 		text-decoration: underline;
 	}

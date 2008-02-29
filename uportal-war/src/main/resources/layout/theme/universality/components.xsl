@@ -128,16 +128,23 @@
    | This template renders the admin menu into the portal page bar title.
   -->
   <xsl:template name="portal.page.bar.link.admin">
-    <xsl:if test="$AUTHENTICATED='true' and chan-mgr-chanid">
-    	<a href="{$BASE_ACTION_URL}?uP_fname={chan-mgr-chanid}" id="portalPageBarAdmin" title="{$TOKEN[@name='CHANNEL_MANAGER_LONG_LABEL']}">
+  	<!-- !!!!! TEST ONLY, THIS NEEDS PROPER ACCESS !!!!! -->
+  	<xsl:if test="$AUTHENTICATED='true'">
+    	<a href="{$BASE_ACTION_URL}?uP_fname=admin.navigation.links" id="portalPageBarAdmin" title="{$TOKEN[@name='CHANNEL_MANAGER_LONG_LABEL']}">
       	<span><xsl:value-of select="$TOKEN[@name='CHANNEL_MANAGER_LABEL']"/></span>
       </a>
       <xsl:call-template name="portal.pipe"/>
     </xsl:if>
+    <!--<xsl:if test="$AUTHENTICATED='true' and chan-mgr-chanid">
+    	<a href="{$BASE_ACTION_URL}?uP_fname={chan-mgr-chanid}" id="portalPageBarAdmin" title="{$TOKEN[@name='CHANNEL_MANAGER_LONG_LABEL']}">
+      	<span><xsl:value-of select="$TOKEN[@name='CHANNEL_MANAGER_LABEL']"/></span>
+      </a>
+      <xsl:call-template name="portal.pipe"/>
+    </xsl:if>-->
   </xsl:template>
   <!-- ========================================================== -->
   
-  
+
   <!-- ========== TEMPLATE: PORTAL PAGE BAR LINK CUSTOMIZE ========== -->
   <!-- ============================================================== -->
   <!--
@@ -145,11 +152,17 @@
   -->
   <xsl:template name="portal.page.bar.link.customize">
     <xsl:if test="$AUTHENTICATED='true'">
-    	<a href="{$BASE_ACTION_URL}?uP_fname={preferences-chanid}" id="portalPageBarCustom" title="{$TOKEN[@name='TURN_ON_PREFERENCES_LONG_LABEL']}">
+    	<a href="{$BASE_ACTION_URL}?uP_fname=portal/userpreferences/dlm" id="portalPageBarCustom" title="{$TOKEN[@name='TURN_ON_PREFERENCES_LONG_LABEL']}">
       	<span><xsl:value-of select="$TOKEN[@name='TURN_ON_PREFERENCES_LABEL']"/></span>
       </a>
       <xsl:call-template name="portal.pipe"/>
     </xsl:if>
+    <!--<xsl:if test="$AUTHENTICATED='true'">
+    	<a href="{$BASE_ACTION_URL}?uP_fname={preferences-chanid}" id="portalPageBarCustom" title="{$TOKEN[@name='TURN_ON_PREFERENCES_LONG_LABEL']}">
+      	<span><xsl:value-of select="$TOKEN[@name='TURN_ON_PREFERENCES_LABEL']"/></span>
+      </a>
+      <xsl:call-template name="portal.pipe"/>
+    </xsl:if>-->
   </xsl:template>
   <!-- ============================================================== -->
   
@@ -347,7 +360,8 @@
     </xsl:variable>
     <li id="{$qLinkID}"> <!-- Each subnavigation menu item.  The unique ID can be used in the CSS to give each menu item a unique icon, color, or presentation. -->
       <a href="{$BASE_ACTION_URL}?uP_root={@ID}" title="{@name}">  <!-- Navigation item link. -->
-        <span>
+        <span><xsl:value-of select="@name"/>
+          <!-- ????? WRITES IN CHANNEL CONTENT ??????
           <xsl:element name="channel-title">
             <xsl:attribute name="defaultValue">
               <xsl:value-of select="@name"/>
@@ -355,7 +369,7 @@
             <xsl:attribute name="channelSubscribeId">
               <xsl:value-of select="@ID" />
             </xsl:attribute>
-          </xsl:element>
+          </xsl:element>-->
         </span>
       </a>
     </li>
