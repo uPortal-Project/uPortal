@@ -1,0 +1,174 @@
+/* - sections */
+.portlet-section-header, .uportal-channel-subtitle, .portlet h3, h3 {
+	margin:0 0 10px 0;
+	padding:0 0 5px 0;
+	border-bottom:1px #ccf solid;
+	background-color:transparent;
+	color:#009;
+	font-size:1em;
+	font-weight:bold;
+	width:100%; /* may not be needed ??? */	
+	}
+
+.portlet-section-subheader, .portlet h4 {
+	background-color:transparent;
+	color:#009;
+	font-size:1em;
+	font-weight:bold;
+	margin:1em 0;
+	padding:0;
+	}
+
+.portlet-section-footer {
+	color:#666;
+	font-size:.8em;
+	border-top:1px solid #ccf;
+	padding:5px 0 0 0;
+	text-align:left;
+	margin:10px 0 0 0;
+	}
+
+/* - forms */
+.portlet form {
+	margin-top:0;
+	margin-bottom:0;
+	}
+
+.portlet-form-field-label, .portlet form label {
+	background-color:transparent;
+	color:#333;
+	font-weight:bold;
+	line-height:23px;
+	cursor:pointer;
+	}
+
+.portlet form p label {font-size:.9em;}
+
+.portlet-form-button,.uportal-button {
+	border-style:solid;
+	border-color:#fff #336 #336 #fff;
+	border-width:1px;
+	background-color:#ccf;
+	color:#66c;
+	cursor:pointer;
+	white-space:nowrap;
+	text-align: center;
+	font:bold .9em sans-serif;
+	}
+
+a.portlet-form-button, a.uportal-button {
+	display:block;
+	background-color:#ccf;
+	text-decoration:none;
+	padding:3px 1px 3px 20px;
+	margin:2px 0 0 0;
+	}
+
+* html input.portlet-form-button, * html input.uportal-button{
+	padding:0;
+	margin:0px;
+	}
+
+/* - messages */
+p.portlet-msg-error, p.uportal-channel-error {
+	background:#fff0ff;
+	color:#f00;
+	font-size:1em;
+	font-weight: bold;
+	text-transform: uppercase;
+	border:1px solid #f00;
+	padding:5px;
+	}
+
+ul.expand, ul.collapse {list-style:none;padding:0;padding-left:25px;margin:0;}
+ul.expand li, ul.collapse li {padding:0;margin:0;}
+ul.expand li a {padding-left:15px;background:transparent url(../navigation/expand.gif) no-repeat center left scroll;}
+ul.collapse li a {padding-left:15px;background:transparent url(../navigation/collapse.gif) no-repeat center left scroll;}
+ul.collapse ul li a {background-image:none;padding:0;}
+
+/*********************************** TABLE STYLES */
+table.data {
+	width:100%;
+	border-style:solid;
+	border-color:#aaa #666 #666 #aaa;
+	border-width:1px;
+	background-color:#fff;
+	}
+
+table.data .caption, .uportal-channel-table-caption {
+	background-color:#ccc;
+	color:#333;
+	font-size:1em;
+	}
+
+table.data th, table.data td, .uportal-channel-table-header {
+	font-size:.9em;
+	padding:2px;
+	border-style:solid;
+	border-color:#ddd;
+	border-width:1px 0 0 1px;
+	line-height:16px;
+	height:16px;
+	}
+
+table.data th, table.data th a, .uportal-channel-table-header, .uportal-channel-table-header a {
+	background-color:#666;
+	color:#fff;
+	font-weight:bold;
+	white-space:nowrap;
+	}
+
+table.data tr, .uportal-channel-table-row-odd {background-color:#fff;}
+
+table.data tr.portlet-section-alternate, .portlet-section-alternate, .uportal-channel-table-row-even {background-color:#eef;}
+
+.l {text-align:left;}
+.c {text-align:center;}
+.r {text-align:right;}
+
+/* preferences */
+.uportal-background-dark{background: #999;}
+/* all of calendar of events table */
+.uportal-background-med {background: #ccc;}
+/* preferences and bus tables */
+.uportal-background-light {background: #eee;}
+.uportal-channel-text{color: #000; font-family: Arial, Helvetica, sans-serif;	font-size: 11px;	}
+/*preferences tabs*/
+.uportal-text-small{font-family: Arial, Helvetica, sans-serif;	font-size: 10px;	}
+/* labels for form elements ??? */
+.uportal-channel-strong{font-family: Arial, Helvetica, sans-serif; font-weight: bold; font-size: 12px;}
+
+.uportal-text{}
+.uportal-channel-title-reversed{}
+.uportal-background{}
+.uportal-background-dark{}
+.uportal-background-med{}
+.uportal-background-light{}
+.uportal-background-content{}
+.uportal-background-highlight{}
+.uportal-background-shadow{}
+/* - fonts - undefined properties inherited from body */
+.uportal-channel-text, .portlet-font {}
+.portlet-font-dim {}
+.uportal-channel-subtitle-reversed{}
+.portlet-section-body {}
+.portlet-section-selected {}
+.portlet-section-text {}
+.portlet-form-label {}
+.portlet-icon-label {}
+.portlet-dlg-icon-label {}
+.portlet-form-field {}
+.portlet-msg-status {}
+.portlet-msg-info {}
+.portlet-msg-alert {}
+.portlet-msg-success {}
+/* menus */
+.portlet-menu {}
+.portlet-menu-item {}
+.portlet-menu-item-selected {}
+.portlet-menu-item-hover {}
+.portlet-menu-item-hover-selected {}
+.portlet-cascade-item {}
+.portlet-menu-cascade-item-selected {}
+.portlet-menu-description {}
+.portlet-menu-caption {}

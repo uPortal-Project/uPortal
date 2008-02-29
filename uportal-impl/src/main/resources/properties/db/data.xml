@@ -1187,7 +1187,7 @@
         </column>  
         <column>
           <name>SS_URI</name>
-          <value>/org/jasig/portal/layout/DLM-tab-column/tab-column.xsl</value>
+          <value>/layout/structure/columns/columns.xsl</value>
         </column>  
         <column>
           <name>SS_DESCRIPTION_URI</name>
@@ -1363,7 +1363,7 @@
         </column>  
         <column>
           <name>SS_URI</name>
-          <value>/org/jasig/portal/layout/tab-column/xhtml-theme/xhtml-theme.xsl</value>
+          <value>/layout/theme/universality/universality.xsl</value>
         </column>  
         <column>
           <name>SS_DESCRIPTION_URI</name>

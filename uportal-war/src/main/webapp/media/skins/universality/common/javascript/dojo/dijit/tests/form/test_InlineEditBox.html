@@ -1,0 +1,194 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+	"http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<title>Inline Edit Box Test</title>
+
+		<script type="text/javascript" src="../../../dojo/dojo.js"
+			djConfig="isDebug: true, parseOnLoad: true"></script>
+		<script type="text/javascript" src="../_testCommon.js"></script>
+
+		<script type="text/javascript">
+			dojo.require("dojo.data.ItemFileReadStore");
+			dojo.require("dijit.form.InlineEditBox");
+			dojo.require("dijit.form.Textarea");
+			dojo.require("dijit.form.TextBox");
+			dojo.require("dijit.form.DateTextBox");
+			dojo.require("dijit.form.FilteringSelect");
+			dojo.require("dijit.form.NumberSpinner");
+			dojo.require("dijit.form.Slider");
+			dojo.require("dojo.parser");	  // scan page for widgets and instantiate them
+
+			function myHandler(id,newValue){
+				console.debug("onChange for id = " + id + ", value: " + newValue);
+			};
+			dojo.addOnLoad(function(){
+				dojo.subscribe("widgetFocus", function(widget){
+					console.log("focused on widget " + (widget?widget:"nothing"));
+				});
+				dojo.subscribe("widgetBlur", function(widget){
+					console.log("blurred widget " + (widget?widget:"nothing"));
+				});
+				dojo.subscribe("focusNode", function(node){ console.log("focused on node " + (node?(node.id||node.tagName):"nothing"));});
+			});
+		</script>
+		<style type="text/css">
+			@import "../../../dojo/resources/dojo.css";
+			@import "../css/dijitTests.css";
+
+			.inlineEdit { background-color: #CCC76A; }
+
+			/* some style rules on nodes just to test that style gets copied to the edit widget */
+			p { font-family: cursive; }
+			h3 { font-family: helvetica; font-style: italic; }
+		</style>
+	</head>
+	<body>
+		<h1 style="color: red; margin-bottom: 5em;">dijit.form.InlineEditBox is deprecated, use <a href="../test_InlineEditBox.html">dijit.InlineEditBox</a> instead</h1>
+		<div>
+			The following tests each show a plain element followed by an editable element.
+			The plain element and editable element should look the same (font, font-size, block vs. inline) etc.,
+			and clicking an editable element should bring up an editor with the same attributes
+			(font, font-size, block vs. inline) as the editable element.
+		</div>
+		<hr>
+
+		<h2>H3</h2>
+		<div>
+			The following two h3 tags should be look the same.  They are display:block, and the editor should take up the entire
+			width of the screen.
+		</div>
+
+		(before plain h3)
+		<h3>this is a plain h3, cannot be edited</h3>
+		(between plain and editable h3)
+		<h3 id="editable" dojoType="dijit.form.InlineEditBox" onChange="myHandler(this.id,arguments[0])">
+			<input dojoType="dijit.form.TextBox" value="this is an editable h3 - I trigger the onChange callback on save">
+		</h3>
+		(after editable h3)
+		<hr style="width:100%;">
+
+		<h2>Inline-block Text (of 400px width)</h2>
+		<div>
+			The following section uses inline block text of 400px.
+			When clicking the editable text it should bring up an editor which is also 400px wide.
+		</div>
+		(before plain inline) <fieldset class="dijitInline"><div style="width: 400px;">hello ladies and gentlemen, now is the time for all good men to come to the aid of their country</div></fieldset> (after plain inline)
+		<br>
+		(before editable inline)
+		<fieldset class="dijitInline"><div dojoType="dijit.form.InlineEditBox" onChange="myHandler(this.id,arguments[0])" style="width: 400px;">
+			<span dojoType="dijit.form.TextBox" value="hello ladies and gentlemen, now is the time for all good men to come to aid of their country"></span>
+		</div></fieldset>
+		(after editable inline)
+
+		<hr style="width:100%;">
+		<h2>Pararagraph</h2>
+		(before plain paragraph)
+		<p>
+		Aliquam vitae enim. Duis scelerisque metus auctor est venenatis
+imperdiet. Fusce dignissim porta augue. Nulla vestibulum. Integer lorem
+nunc, ullamcorper a, commodo ac, malesuada sed, dolor. Aenean id mi in
+massa bibendum suscipit. Integer eros. Nullam suscipit mauris. In
+pellentesque. Mauris ipsum est, pharetra semper, pharetra in, viverra
+quis, tellus. Etiam purus. Quisque egestas, tortor ac cursus lacinia,
+felis leo adipiscing nisi, et rhoncus elit dolor eget eros. Fusce ut
+quam. Suspendisse eleifend leo vitae ligula. Nulla facilisi. Nulla
+rutrum, erat vitae lacinia dictum, pede purus imperdiet lacus, ut
+semper velit ante id metus. Praesent massa dolor, porttitor sed,
+pulvinar in, consequat ut, leo. Nullam nec est. Aenean id risus blandit
+tortor pharetra congue. Suspendisse pulvinar.
+		</p>
+		(before editable paragraph.  the editable paragraph has Save/Cancel buttons when open.)		
+		<p id="areaEditable" dojoType="dijit.form.InlineEditBox" autoSave="false">
+			<textarea dojoType="dijit.form.Textarea">Aliquam vitae enim. Duis scelerisque metus auctor est venenatis
+imperdiet. Fusce dignissim porta augue. Nulla vestibulum. Integer lorem
+nunc, ullamcorper a, commodo ac, malesuada sed, dolor. Aenean id mi in
+massa bibendum suscipit. Integer eros. Nullam suscipit mauris. In
+pellentesque. Mauris ipsum est, pharetra semper, pharetra in, viverra
+quis, tellus. Etiam purus. Quisque egestas, tortor ac cursus lacinia,
+felis leo adipiscing nisi, et rhoncus elit dolor eget eros. Fusce ut
+quam. Suspendisse eleifend leo vitae ligula. Nulla facilisi. Nulla
+rutrum, erat vitae lacinia dictum, pede purus imperdiet lacus, ut
+semper velit ante id metus. Praesent massa dolor, porttitor sed,
+pulvinar in, consequat ut, leo. Nullam nec est. Aenean id risus blandit
+tortor pharetra congue. Suspendisse pulvinar.</textarea>
+		</p>
+		These links will
+		<a href="#" onClick="dijit.byId('areaEditable').setDisabled(true)">disable</a> /
+		<a href="#" onClick="dijit.byId('areaEditable').setDisabled(false)">enable</a>
+		the InlineEditBox above.
+		<br>
+		(The following editable paragraph does not have Save/Cancel buttons when open)
+		<p id="areaEditable_autosave" dojoType="dijit.form.InlineEditBox" autoSave="true">
+				<textarea dojoType="dijit.form.Textarea">Aliquam vitae enim. Duis scelerisque metus auctor est venenatis
+imperdiet. Fusce dignissim porta augue. Nulla vestibulum. Integer lorem
+nunc, ullamcorper a, commodo ac, malesuada sed, dolor. Aenean id mi in
+massa bibendum suscipit. Integer eros. Nullam suscipit mauris. In
+pellentesque. Mauris ipsum est, pharetra semper, pharetra in, viverra
+quis, tellus. Etiam purus. Quisque egestas, tortor ac cursus lacinia,
+felis leo adipiscing nisi, et rhoncus elit dolor eget eros. Fusce ut
+quam. Suspendisse eleifend leo vitae ligula. Nulla facilisi. Nulla
+rutrum, erat vitae lacinia dictum, pede purus imperdiet lacus, ut
+semper velit ante id metus. Praesent massa dolor, porttitor sed,
+pulvinar in, consequat ut, leo. Nullam nec est. Aenean id risus blandit
+tortor pharetra congue. Suspendisse pulvinar.</textarea>
+		</p>
+		<hr style="width:100%;">
+
+		<h2>Date text box:</h2>
+		<span id="backgroundArea" dojoType="dijit.form.InlineEditBox">
+			<input name="date" value="2005-12-30"
+					dojoType="dijit.form.DateTextBox"
+					constraints={datePattern:'MM/dd/yy'}
+					lang="en-us"
+					required="true"
+					promptMessage="mm/dd/yy"
+					invalidMessage="Invalid date. Use mm/dd/yy format.">
+		</span>
+		<hr style="width:100%;">
+
+		<h2>FilteringSelect:</h2>
+		<span dojoType="dojo.data.ItemFileReadStore" jsId="stateStore"
+			url="../_data/states.json"></span>
+		<span id="filteringSelect" dojoType="dijit.form.InlineEditBox" >
+			<input searchAttr="name" keyAttr="abbreviation" id="setvaluetest" dojoType="dijit.form.FilteringSelect" value="IA"
+					store="stateStore" name="state1" autoComplete="true" hasDownArrow="false">
+		</span>
+		<hr style="width:100%;">
+		before block<div style="display:block;" id="programmatic"></div>after
+		<script type="text/javascript">
+			// See if we can make a widget in script
+			// do it on load so Safari does not say display is none
+			dojo.addOnLoad(function(){
+				var inlineWidget = new dijit.form.InlineEditBox({renderAsHtml: true}, 'programmatic');
+	 			var editorWidget = new dijit.form.TextBox({
+										value:"Click here to edit a block programmatically created inline edit region"
+									});
+				editorWidget.domNode.style.width="100%";
+	 			inlineWidget.addChild(editorWidget);
+	 			inlineWidget.startup(); // scan for editWidget here, not on widget creation
+ 			});
+
+		</script>
+		<hr style="width:100%;">
+		<b>Spinner:</b>
+		<span dojoType="dijit.form.InlineEditBox">
+			<input dojoType="dijit.form.NumberSpinner"
+				name="spinner"
+				value="900"
+				constraints="{places:0}">
+		</span>
+<!-- InlineEditBox/Slider doesn't work on Firefox but does on IE and Safari
+		<hr style="width:100%;">
+		<b>Slider:</b>
+		<p dojoType="dijit.form.InlineEditBox">
+			<input dojoType="dijit.form.VerticalSlider"
+				value="10"
+				maximum="100"
+				minimum="0"
+				showButtons="false"
+				style="height:100px;width:20px;">
+		</p>
+-->
+	</body>
+</html>

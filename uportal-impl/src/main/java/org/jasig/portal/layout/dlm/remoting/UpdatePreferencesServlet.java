@@ -54,6 +54,11 @@ public class UpdatePreferencesServlet extends HttpServlet {
 	// default tab name
 	protected static String BLANK_TAB_NAME = "New Tab";
 
+	public void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		doGet(request, response);
+	}
+
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
@@ -180,10 +185,37 @@ public class UpdatePreferencesServlet extends HttpServlet {
 		// isn't actually relevant if we're appending the source element.
 		String destinationId = request.getParameter("elementID");
 
-		// if the target is a column type node, we need to just move the portlet
-		// to the end of the column
-		if (ulm.getRootFolderId().equals(
-				ulm.getParentId(ulm.getParentId(destinationId)))) {
+		
+		IUserLayoutNodeDescription node = null;
+		if (isTab(ulm, destinationId)) {
+			// if the target is a tab type node, move the portlet to 
+			// the end of the first column
+			Enumeration columns = ulm.getChildIds(destinationId);
+			if (columns.hasMoreElements()) {
+				ulm.moveNode(sourceId, (String) columns.nextElement(), null);
+			} else {
+
+				IUserLayoutFolderDescription newColumn = new UserLayoutFolderDescription();
+				newColumn.setName("Column");
+				newColumn.setId("tbd");
+				newColumn
+						.setFolderType(IUserLayoutFolderDescription.REGULAR_TYPE);
+				newColumn.setHidden(false);
+				newColumn.setUnremovable(false);
+				newColumn.setImmutable(false);
+
+				// add the column to our layout
+				IUserLayoutNodeDescription col = ulm.addNode(newColumn,
+						destinationId, null);
+
+				// move the channel
+				ulm.moveNode(sourceId, col.getId(), null);
+			}
+
+		} else if (ulm.getRootFolderId().equals(
+			// if the target is a column type node, we need to just move the portlet
+			// to the end of the column
+			ulm.getParentId(ulm.getParentId(destinationId)))) {
 			ulm.moveNode(sourceId, destinationId, null);
 
 		} else {
@@ -223,8 +255,8 @@ public class UpdatePreferencesServlet extends HttpServlet {
 			IUserLayoutManager ulm, HttpServletRequest request,
 			HttpServletResponse response) throws IOException, PortalException {
 
-		int columnNumber = Integer.parseInt(request
-				.getParameter("columnNumber"));
+		String[] newcolumns = request.getParameterValues("columns");
+		int columnNumber = newcolumns.length;
 		String tabId = request.getParameter("tabId");
 		Enumeration columns = ulm.getChildIds(tabId);
 		List<String> columnList = new ArrayList<String>();
@@ -270,9 +302,30 @@ public class UpdatePreferencesServlet extends HttpServlet {
 			}
 		}
 
-		// set all the columns to have equal width
-		equalizeColumnWidths(per, upm, ulm, tabId);
+		int count = 0;
+		columns = ulm.getChildIds(tabId);
+		StructureStylesheetUserPreferences ssup = upm.getUserPreferences()
+		.getStructureStylesheetUserPreferences();
+		while (columns.hasMoreElements()) {
+			String columnId = (String) columns.nextElement();
+			ssup.setFolderAttributeValue(columnId, "width", newcolumns[count] + "%");
+			Element folder = ulm.getUserLayoutDOM().getElementById(columnId);
+			try {
+				// This sets the column attribute in memory but doesn't persist it.  Comment says saves changes "prior to persisting"
+				UserPrefsHandler.setUserPreference(folder, "width", per);
+				// This is a brute force save of the new attributes.  It requires access to the layout store. -SAB
+				ulStore
+						.setStructureStylesheetUserPreferences(per, upm
+								.getUserPreferences().getProfile()
+								.getProfileId(), ssup);
+			} catch (Exception e) {
+				log.error("Error saving new column widths", e);
+			}
+			count++;
+		}
 
+
+		
 		// save the layout changes
 		ulm.saveUserLayout();
 

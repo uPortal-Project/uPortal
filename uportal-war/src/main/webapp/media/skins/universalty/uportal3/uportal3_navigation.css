@@ -1,0 +1,63 @@
+/* Revision: 2007-07-07 gthompson */
+/* NAVIGATION */
+/*--------------------------------------------------------------------------------------*/
+
+/* ((((( Dynamic menus ))))) */
+/* Flyout menus display. */
+
+.hide-flyout-menu {
+display: none;
+}
+
+.show-flyout-menu {
+display: normal;
+}
+
+/*
+#navigation .show-flyout-menu { Turn off flyout menus for IE because of the css position:relative bug and because in IE, form fields are always on top (flyout menus appear underneath form fields and relatively positioned elements). 
+_display: none;
+}
+*/
+
+/* ((((( Subavigation ))))) */
+/* Subnavigation menus, used when flyout menus are active. */
+.uP-subnav-container {
+background: #fff;
+z-index: 10;
+position: absolute; 
+}
+
+.uP-mainnav-container iframe {
+z-index: 9;
+position: absolute; 
+}
+
+.uP-subnav-list {
+margin: 0;
+padding: 1px 0;
+width: 197px;
+background: #5783c0;
+}
+
+.uP-subnav-li, .uP-subnav-li-first, .uP-subnav-li-last {
+width: 195px;
+margin: 1px;
+background: #f1f5ff;
+}
+
+.uP-subnav-link:link, .uP-subnav-link:visited {
+display: block;
+width: 175px;
+_width: 195px;
+padding: 4px 10px;
+color: #214263;
+font-size: 8pt;
+font-weight: bold;
+text-decoration: none;
+}
+
+.uP-subnav-link:hover {
+background: #5783c0;
+color: #fff;
+text-decoration: underline;
+}
