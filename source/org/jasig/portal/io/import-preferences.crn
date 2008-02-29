@@ -11,7 +11,18 @@
         <!--
          | Delete existing portlet preferences for this user to clear the way.
          +-->
-        <crn location="delete-preferences.crn"/>
+        <sql-query>
+            <sql>SELECT pref_id FROM up_portlet_entity_prefs WHERE user_id = ?</sql>
+            <parameter value="${USER_ID}"/>
+            <subtasks>
+                <sql-statement sql="DELETE FROM up_portlet_pref_values WHERE pref_id = ?">
+                    <parameter value="${PREF_ID}"/>
+                </sql-statement>
+            </subtasks>
+        </sql-query>
+        <sql-statement sql="DELETE FROM up_portlet_entity_prefs WHERE user_id = ?">
+            <parameter value="${USER_ID}"/>
+        </sql-statement>
 
         <!--
          | Import the new set of portlet entity preferences.
