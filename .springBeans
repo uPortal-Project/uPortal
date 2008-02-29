@@ -58,5 +58,12 @@
 				<config>uportal-impl/src/main/resources/properties/contexts/importExportContext.xml</config>
 			</configs>
 		</configSet>
+		<configSet>
+			<name><![CDATA[CAS]]></name>
+			<allowBeanDefinitionOverriding>true</allowBeanDefinitionOverriding>
+			<incomplete>false</incomplete>
+			<configs>
+			</configs>
+		</configSet>
 	</configSets>
 </beansProjectDescription>

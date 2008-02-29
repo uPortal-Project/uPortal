@@ -8,13 +8,13 @@ package org.jasig.portal.services;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
 import junit.framework.TestCase;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.jasig.portal.services.HttpClientManager;
 
 public class HttpClientManagerTest extends TestCase {
   private int port;
@@ -51,9 +51,9 @@ public class HttpClientManagerTest extends TestCase {
     try {
       client.executeMethod(get);
     } catch (SocketTimeoutException ste) {
-      assertTrue(true);
-    } catch (RuntimeException e) {
-      assertTrue(false);
+      //expected
+    } catch (SocketException se) {
+      //expected
     }
   }
 }

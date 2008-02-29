@@ -9,37 +9,33 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.codec.binary.Base64;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
-import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 /**
+ * Impl of the uPortal MD5 password checking algorithm
+ * 
  * @author Eric Dalquist
  * @version $Revision$
  */
 public class PersonDirAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
-    private static final String PERSON_DIR_QUERY = "SELECT ENCRPTD_PSWD FROM UP_PERSON_DIR WHERE USER_NAME = ?";
+    private static final String MD5_PREFIX = "(MD5)";
 
-    private DataSource dataSource;
-    private SimpleJdbcTemplate simpleJdbcTemplate;
-
+    private UserPasswordDao userPasswordDao;
+    
     /**
-     * @return the dataSource
+     * @return the userPasswordDao
      */
-    public DataSource getDataSource() {
-        return dataSource;
+    public UserPasswordDao getUserPasswordDao() {
+        return this.userPasswordDao;
     }
-
     /**
-     * @param dataSource the dataSource to set
+     * @param userPasswordDao the userPasswordDao to set
      */
-    public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
-        this.simpleJdbcTemplate = new SimpleJdbcTemplate(this.dataSource);
+    public void setUserPasswordDao(UserPasswordDao userPasswordDao) {
+        this.userPasswordDao = userPasswordDao;
     }
 
     /* (non-Javadoc)
@@ -48,27 +44,25 @@ public class PersonDirAuthenticationHandler extends AbstractUsernamePasswordAuth
     @Override
     protected boolean authenticateUsernamePasswordInternal(UsernamePasswordCredentials credentials) throws AuthenticationException {
         final String username = credentials.getUsername();
-        final String expectedFullHash = this.simpleJdbcTemplate.queryForObject(PERSON_DIR_QUERY, String.class, username);
+        final String expectedFullHash = this.userPasswordDao.getPasswordHash(username);
 
-        if (!expectedFullHash.substring(0, 5).equals("(MD5)")) {
-            this.log.error("Password not an MD5 hash: " + expectedFullHash.substring(0, 5));
+        if (!expectedFullHash.substring(0, 5).equals(MD5_PREFIX)) {
+            this.log.error("Existing password hash for user '" + username + "' is not a valid hash. It does not start with: '" + MD5_PREFIX + "'");
             return false;
         }
         
         final String expectedHash = expectedFullHash.substring(5);
-        final byte[] expectedHashBytes;
-        final byte[] salt = new byte[8];
-        final byte[] expectedPasswordHashBytes = new byte[16];
-  
-        expectedHashBytes = Base64.decodeBase64(expectedHash.getBytes());
-//        whole = decode(passwordHash);
+        final byte[] expectedHashBytes = Base64.decodeBase64(expectedHash.getBytes());
         if (expectedHashBytes.length != 24) {
-            this.log.info("Invalid MD5 hash length");
+            this.log.error("Existing password hash for user '" + username + "' is not a valid hash. It has a length of " + expectedHashBytes.length + " but 24 is expected.");
             return false;
         }
 
         //Split the expected bytes into the salt and actual hashed value.
+        final byte[] salt = new byte[8];
         System.arraycopy(expectedHashBytes, 0, salt, 0, 8);
+        
+        final byte[] expectedPasswordHashBytes = new byte[16];
         System.arraycopy(expectedHashBytes, 8, expectedPasswordHashBytes, 0, 16);
         
         final MessageDigest md;
@@ -76,51 +70,15 @@ public class PersonDirAuthenticationHandler extends AbstractUsernamePasswordAuth
             md = MessageDigest.getInstance("MD5");
         }
         catch (NoSuchAlgorithmException e) {
-            this.log.warn("No 'MD5' Algorithm exists");
+            this.log.error("No 'MD5' MessageDigest algorithm exists.", e);
             return false;
         }
+        
+        //Hash the salt + entered password
         md.update(salt);
         md.update(credentials.getPassword().getBytes());
         final byte[] passwordHashBytes = md.digest();
         
         return Arrays.equals(expectedPasswordHashBytes, passwordHashBytes);
     }
-//
-//    //
-//    // This was originally Jonathan B. Knudsen's Example from his book
-//    // Java Cryptography published by O'Reilly Associates (1st Edition 1998)
-//    //
-//    public static byte[] decode(String base64) {
-//        int pad = 0;
-//        for (int i = base64.length() - 1; base64.charAt(i) == '='; i--)
-//            pad++;
-//        int length = base64.length() * 6 / 8 - pad;
-//        byte[] raw = new byte[length];
-//        int rawIndex = 0;
-//        for (int i = 0; i < base64.length(); i += 4) {
-//            int block = (getValue(base64.charAt(i)) << 18) + (getValue(base64.charAt(i + 1)) << 12)
-//                    + (getValue(base64.charAt(i + 2)) << 6) + (getValue(base64.charAt(i + 3)));
-//            for (int j = 0; j < 3 && rawIndex + j < raw.length; j++)
-//                raw[rawIndex + j] = (byte) ((block >> (8 * (2 - j))) & 0xff);
-//            rawIndex += 3;
-//        }
-//        return raw;
-//    }
-//
-//    protected static int getValue(char c) {
-//        if (c >= 'A' && c <= 'Z')
-//            return c - 'A';
-//        if (c >= 'a' && c <= 'z')
-//            return c - 'a' + 26;
-//        if (c >= '0' && c <= '9')
-//            return c - '0' + 52;
-//        if (c == '+')
-//            return 62;
-//        if (c == '/')
-//            return 63;
-//        if (c == '=')
-//            return 0;
-//        return -1;
-//    }
-
 }

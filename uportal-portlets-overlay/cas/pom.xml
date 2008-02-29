@@ -20,12 +20,13 @@
     <dependencies>
         <!-- ===== Compile Time Dependencies ============================== -->
         <dependency>
-            <groupId>org.jasig.cas.</groupId>
+            <groupId>org.jasig.cas</groupId>
             <artifactId>cas-server-webapp</artifactId>
             <version>${cas-server.version}</version>
             <type>war</type>
         </dependency>
         
+        <!-- ===== Provided Dependencies ============================== -->
         <dependency>
             <groupId>org.jasig.cas.</groupId>
             <artifactId>cas-server-core</artifactId>
@@ -33,10 +34,44 @@
             <type>jar</type>
             <scope>provided</scope>
         </dependency>
+        
+        <!-- ===== Test Dependencies ============================== -->
+        <dependency>
+            <groupId>org.easymock</groupId>
+            <artifactId>easymock</artifactId>
+            <version>${easymock.version}</version>
+            <scope>test</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
         <finalName>cas</finalName>
+        <filters>
+            <filter>../../uportal-impl/src/main/resources/properties/rdbm.properties</filter>
+        </filters>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>${maven-war-plugin.version}</version>
+                <configuration>
+                    <webResources>
+                        <resource>
+                            <directory>src/main/webapp/WEB-INF</directory>
+                            <targetPath>WEB-INF</targetPath>
+                            <filtering>true</filtering>
+                        </resource>
+                    </webResources>
+                </configuration>
+            </plugin>
+        </plugins>
         <!-- No pluto assembly since this isn't a portlet -->
     </build>
 </project>
