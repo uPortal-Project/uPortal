@@ -23,14 +23,14 @@
             <version>${pom.parent.version}</version>
             <type>war</type>
         </dependency>
-        <!-- 
+
         <dependency>
             <groupId>org.jasig.portal.portlets-overlay</groupId>
             <artifactId>cas</artifactId>
             <version>${pom.parent.version}</version>
             <type>war</type>
         </dependency>
-         -->
+
         <dependency>
             <groupId>org.jasig.portal.portlets-overlay</groupId>
             <artifactId>BookmarksPortlet</artifactId>
@@ -147,14 +147,12 @@
                             <bundleFileName>uPortal.war</bundleFileName>
                             <contextRoot>/uPortal</contextRoot>
                         </webModule>
-                        <!-- 
                         <webModule>
                             <groupId>org.jasig.portal.portlets-overlay</groupId>
                             <artifactId>cas</artifactId>
                             <bundleFileName>cas.war</bundleFileName>
                             <contextRoot>/cas</contextRoot>
                         </webModule>
-                         -->
                         <webModule>
                             <groupId>org.jasig.portal.portlets-overlay</groupId>
                             <artifactId>BookmarksPortlet</artifactId>
