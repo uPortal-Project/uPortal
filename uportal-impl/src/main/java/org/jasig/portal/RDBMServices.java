@@ -11,12 +11,13 @@ import java.sql.Driver;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Arrays;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.collections15.map.ReferenceMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.rdbm.IDatabaseMetadata;
@@ -24,7 +25,7 @@ import org.jasig.portal.spring.PortalApplicationContextLocator;
 import org.jasig.portal.utils.MovingAverage;
 import org.jasig.portal.utils.MovingAverageSample;
 import org.springframework.context.ApplicationContext;
-import org.springframework.dao.DataAccessResourceFailureException;
+import org.springframework.jdbc.datasource.DataSourceUtils;
 
 
 
@@ -76,6 +77,8 @@ public class RDBMServices {
     public static MovingAverageSample lastDatabase = new MovingAverageSample();
     private static AtomicInteger activeConnections = new AtomicInteger();
     private static int maxConnections = 0;
+    
+    private static final Map<Connection, DataSource> OPEN_CONNECTIONS = new ReferenceMap<Connection, DataSource>(ReferenceMap.SOFT, ReferenceMap.WEAK);
 
 
     /**
@@ -169,20 +172,20 @@ public class RDBMServices {
     public static Connection getConnection(String dbName) {
 		final DataSource dataSource = getDataSource(dbName);
 
-        try {
-            final long start = System.currentTimeMillis();
-            final Connection c = dataSource.getConnection();
-            lastDatabase = databaseTimes.add(System.currentTimeMillis() - start); // metric
-            final int current = activeConnections.incrementAndGet();
-            if (current > maxConnections) {
-                maxConnections = current;
-            }
-            return c;
+        final long start = System.currentTimeMillis();
+        final Connection c = DataSourceUtils.getConnection(dataSource);
+        
+        //Track the connection -> datasoure for the close later
+        OPEN_CONNECTIONS.put(c, dataSource);
+        
+        //Update the statistics
+        lastDatabase = databaseTimes.add(System.currentTimeMillis() - start); // metric
+        final int current = activeConnections.incrementAndGet();
+        if (current > maxConnections) {
+            maxConnections = current;
         }
-        catch (SQLException e) {
-            throw new DataAccessResourceFailureException(
-                    "RDBMServices sql error trying to get connection to " + dbName, e);
-        }
+        
+        return c;
     }
 
     /**
@@ -195,14 +198,27 @@ public class RDBMServices {
      */
     @Deprecated
     public static void releaseConnection(final Connection con) {
-        try {
-            activeConnections.decrementAndGet();
-
-            con.close();
+        //Update statistics
+        activeConnections.decrementAndGet();
+        
+        if (con == null) {
+            return;
         }
-        catch (Exception e) {
-            if (LOG.isWarnEnabled())
-                LOG.warn("Error closing Connection: " + con, e);
+        
+        final DataSource dataSource = OPEN_CONNECTIONS.remove(con);
+        
+        if (dataSource != null) {
+            DataSourceUtils.releaseConnection(con, dataSource);
+        }
+        else {
+            LOG.warn("No DataSource found in OPEN_CONNECTIONS Map for Connection: " + con + ". Falling back to direct Connection.close() call.");
+            
+            try {
+                con.close();
+            }
+            catch (Exception e) {
+                LOG.warn("Exception while closing Connection: " + con, e);
+            }
         }
     }
 
