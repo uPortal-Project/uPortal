@@ -4,13 +4,12 @@
 >
 
     <parent>
-        <groupId>org.jasig.portal</groupId>
-        <artifactId>uportal-portlets-overlay</artifactId>
+        <groupId>org.jasig.portal.portlets-overlay</groupId>
+        <artifactId>uportal-portlets-overlay-parent</artifactId>
         <version>3.0.0-RC2-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.jasig.portal.portlets-overlay</groupId>
     <artifactId>pluto-testsuite</artifactId>
     <packaging>war</packaging>
 
