@@ -51,13 +51,7 @@ $Revision$
   end remove-->
 
   <xsl:template match="layout">
-    <!--remove for CVS
-            <html>
-      <head>
-        <title>uPortal 2.0</title>
-        <link type="text/css" rel="stylesheet" href="C:\portal\webpages\media\org\jasig\portal\layout\tab-column\nested-tables\imm\skin\imm.css"/>
-      </head>
-    end remove-->
+
 
     <xsl:for-each select="folder[@type='root']">
 

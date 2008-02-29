@@ -99,7 +99,7 @@ public class TabColumnPrefsState extends BaseState
 
   // These can be overridden in a sub-class.
   protected static String BLANK_TAB_NAME = "My Tab"; // The tab will take on this name if left blank by the user
-  protected static String SKIN_LIST_FILE = "media/org/jasig/portal/layout/tab-column/xhtml-theme/skinList.xml";
+  protected static String SKIN_LIST_FILE = "media/skins/universality/skinList.xml";
   /**
    * Configuration Object to read resource bundle property values for I18N
    */

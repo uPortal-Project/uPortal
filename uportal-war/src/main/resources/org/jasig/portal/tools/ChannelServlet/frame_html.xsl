@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
   <xsl:output method="html" indent="yes"/>
-  <xsl:variable name="mediaPath">media/org/jasig/portal/layout/tab-column/nested-tables</xsl:variable>
+  <xsl:variable name="mediaPath">media/skins/universality</xsl:variable>
   <xsl:variable name="skin">java</xsl:variable>
 
   <xsl:template match="channel">

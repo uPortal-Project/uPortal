@@ -31,7 +31,7 @@ import org.xml.sax.ContentHandler;
  * The path to the available skins is configured by the portal.properties
  * property "org.jasig.portal.layout.channels.CSkinSelector.skins_path" as
  * mediated by PropertiesManager.  If that property is not configured, the path
- * "media/org/jasig/portal/layout/tab-column/xhtml-theme" is used.
+ * "media/skins/universality/" is used.
  *
  * @author Michael Ivanov, mvi@immagic.com
  * @version $Revision$
@@ -40,7 +40,7 @@ import org.xml.sax.ContentHandler;
 
       private static final Log log = LogFactory.getLog(CSkinSelector.class);
 
-      private static final String SKINS_PATH = PropertiesManager.getProperty(CSkinSelector.class.getName() + ".skins_path", "media/org/jasig/portal/layout/tab-column/xhtml-theme");
+      private static final String SKINS_PATH = PropertiesManager.getProperty(CSkinSelector.class.getName() + ".skins_path", "media/skins/universality/");
 
     private static final String sslLocation = "/org/jasig/portal/channels/CSkinSelector/CSkinSelector.ssl";
     private PortalControlStructures controlStructures;

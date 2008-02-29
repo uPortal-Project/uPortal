@@ -2,10 +2,10 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
   <xsl:param name="baseActionURL">render.userLayoutRootNode.uP</xsl:param>
-  <xsl:param name="skinsPath">media/org/jasig/portal/layout/tab-column/xhtml-theme</xsl:param>
+  <xsl:param name="skinsPath">media/skins/universality</xsl:param>
   <xsl:param name="currentSkin">java</xsl:param>
   <xsl:param name="locale">en_US</xsl:param>
-  <xsl:variable name="mediaPath">media/org/jasig/portal/layout/tab-column/xhtml-theme</xsl:variable>
+  <xsl:variable name="mediaPath">media/skins/universality</xsl:variable>
 
   <xsl:template match="/">
     <xsl:apply-templates select="skins"/>

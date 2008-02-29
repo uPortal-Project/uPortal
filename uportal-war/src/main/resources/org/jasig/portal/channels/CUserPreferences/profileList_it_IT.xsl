@@ -10,11 +10,7 @@
   <!--<xsl:variable name="baseMediaURL">C:\portal\webpages\media\org\jasig\portal\channels\CUserPreferences</xsl:variable>-->
   <xsl:variable name="baseMediaURL">media/org/jasig/portal/channels/CUserPreferences</xsl:variable>
   <xsl:template match="profiles">
-<!--    <html>
-      <head>
-        <link rel="stylesheet" href="file:///C|/LaJolla/uPortal/webpages/media/org/jasig/portal/layout/tab-column/nested-tables/imm/skin/imm.css" type="text/css"/>
-      </head>
-      <body>-->
+
         <!--Begin Master Table -->
         <table width="100%" border="0" cellspacing="0" cellpadding="4" class="uportal-background-light">
           <form name="form_profiles" method="post" action="{$baseActionURL}">
