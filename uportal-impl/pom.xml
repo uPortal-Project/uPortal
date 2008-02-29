@@ -116,6 +116,12 @@
             <artifactId>person-directory-impl</artifactId>
             <version>${person-directory.version}</version>
             <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jasig.service</groupId>
+                    <artifactId>person-directory-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         
         <dependency>
@@ -504,7 +510,7 @@
             <version>${portlet-api.version}</version>
             <scope>provided</scope>
         </dependency>
-
+        
         <dependency>
             <groupId>org.apache.pluto</groupId>
             <artifactId>pluto-container</artifactId>
