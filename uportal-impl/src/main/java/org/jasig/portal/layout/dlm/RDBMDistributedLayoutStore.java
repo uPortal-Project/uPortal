@@ -10,7 +10,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -82,10 +81,13 @@ public class RDBMDistributedLayoutStore
     static final String TEMPLATE_USER_NAME
         = "org.jasig.portal.services.Authentication.defaultTemplateUserName";
     static final String DECORATOR_PROPERTY = "layoutDecorator";
-
+    
     private static final int THEME = 0;
     private static final int STRUCT = 1;
 
+    final static String DELETE_FROM_UP_SS_USER_ATTS_SQL = "DELETE FROM UP_SS_USER_ATTS WHERE USER_ID = ? AND PROFILE_ID = ? AND SS_ID = ? AND SS_TYPE = ?";
+    final static String DELETE_FROM_UP_USER_PARM = "DELETE FROM UP_SS_USER_PARM WHERE USER_ID=?  AND PROFILE_ID=? AND SS_ID=? AND SS_TYPE=?";
+    
     // Cache for theme stylesheet descriptors
     private static SmartCache tsdCache;
     // Cache for structure stylesheet descriptors
@@ -973,8 +975,9 @@ public class RDBMDistributedLayoutStore
         StructureStylesheetUserPreferences ssup;
         Connection con = RDBMServices.getConnection();
         try {
-            Statement stmt = con.createStatement();
-            String sQuery = null;
+            String sQuery = "SELECT USER_DFLT_USR_ID FROM UP_USER WHERE USER_ID = ?";
+            PreparedStatement pstmt = con.prepareStatement(sQuery);
+           
 
             try {
                 // get stylesheet description
@@ -991,17 +994,17 @@ public class RDBMDistributedLayoutStore
 
                 int origId = userId;
                 if (layoutId == 0) {
-                    stmt = con.createStatement();
-                    sQuery = "SELECT USER_DFLT_USR_ID FROM UP_USER WHERE USER_ID=" + userId;
+                    
+                    pstmt.setInt(1,userId);
                     if (LOG.isDebugEnabled())
-                        LOG.debug(sQuery);
-                    rs = stmt.executeQuery(sQuery);
+                        LOG.debug(sQuery + " VALUE " + userId);
+                    rs = pstmt.executeQuery();
                     try {
                         rs.next();
                         userId = rs.getInt(1);
                     } finally {
                         rs.close();
-                        stmt.close();
+                        pstmt.close();
                     }
                 }
 
@@ -1039,14 +1042,16 @@ public class RDBMDistributedLayoutStore
                     "SELECT PARAM_NAME, PARAM_VAL " +
                     "FROM UP_SS_USER_PARM " +
                     "WHERE USER_ID=?" +
-                    " AND PROFILE_ID=" + profileId +
-                    " AND SS_ID=" + stylesheetId +
+                    " AND PROFILE_ID=?"+
+                    " AND SS_ID=?" +
                     " AND SS_TYPE=1";
 
-                PreparedStatement pstmt = con.prepareStatement(pstmtQuery);
+                pstmt = con.prepareStatement(pstmtQuery);
 
                 try {
                     pstmt.setInt(1, userId);
+                    pstmt.setInt(2,profileId);
+                    pstmt.setInt(3,stylesheetId);
                     rs = pstmt.executeQuery();
 
                     while (rs.next()) {
@@ -1090,12 +1095,12 @@ public class RDBMDistributedLayoutStore
                  */
                 String structIdsWithCustomUserValues = "SELECT struct_id FROM up_ss_user_atts "
                                         + "WHERE user_id="
-                                        + userId
+                                        + "?"
                                         + " AND profile_id="
-                                        + profileId
+                                        + "?"
                                         + " AND ss_type=1"
                                         + " AND ss_id="
-                                        + stylesheetId;
+                                        + "?";
 
                 /*
                  * the list of origin Ids if any for nodes having overridden
@@ -1104,17 +1109,25 @@ public class RDBMDistributedLayoutStore
                 String originIdQuery = "SELECT struct_id, struct_parm_val "
                                                 + "FROM up_layout_param "
                                                 + "WHERE user_id="
-                                                + userId
+                                                + "?"
                                                 + " AND layout_id = 1 and "
-                                                + "(struct_parm_nm='"
-                                                + Constants.ATT_ORIGIN
-                                                + "' OR struct_parm_nm='"
-                                                + Constants.LEGACY_ATT_ORIGIN
-                                                + "') AND struct_id IN ("
+                                                + "(struct_parm_nm="
+                                                + "?"
+                                                + " OR struct_parm_nm="
+                                                + "?"
+                                                + ") AND struct_id IN ("
                                                 + structIdsWithCustomUserValues + ")";
 
-                stmt = con.createStatement();
-                rs = stmt.executeQuery(originIdQuery);
+                pstmt = con.prepareStatement(originIdQuery);
+                
+                pstmt.setInt(1,userId);
+                pstmt.setString(2,Constants.ATT_ORIGIN);
+                pstmt.setString(3,Constants.LEGACY_ATT_ORIGIN);
+                // for structIdsWithCustomUserValues select
+                pstmt.setInt(4,userId);
+                pstmt.setInt(5,profileId);
+                pstmt.setInt(6,stylesheetId);
+                rs = pstmt.executeQuery();
                 Map originIds = null;
                 try {
                     while (rs.next()) {
@@ -1130,7 +1143,7 @@ public class RDBMDistributedLayoutStore
                 finally
                 {
                     rs.close();
-                    stmt.close();
+                    pstmt.close();
                     }
 
                 /*
@@ -1141,18 +1154,21 @@ public class RDBMDistributedLayoutStore
                 " ULS.STRUCT_ID, CHAN_ID " +
                                 "FROM UP_LAYOUT_STRUCT ULS, " +
                 " UP_SS_USER_ATTS UUSA " +
-                                "WHERE UUSA.USER_ID=" + userId +
-                                " AND PROFILE_ID=" + profileId +
-                                " AND SS_ID=" + stylesheetId +
+                                "WHERE UUSA.USER_ID=?"+
+                                " AND PROFILE_ID=?" +
+                                " AND SS_ID=?" +
                                 " AND SS_TYPE=1" +
                                 " AND UUSA.STRUCT_ID = ULS.STRUCT_ID" +
                                 " AND UUSA.USER_ID = ULS.USER_ID";
 
                 if (LOG.isDebugEnabled())
-                    LOG.debug(sQuery);
+                    LOG.debug(sQuery + "VALUES ");
 
-                stmt = con.createStatement();
-                rs = stmt.executeQuery(sQuery);
+                pstmt = con.prepareStatement(sQuery);
+                pstmt.setInt(1,userId);
+                pstmt.setInt(2,profileId);
+                pstmt.setInt(3,stylesheetId);
+                rs = pstmt.executeQuery();
                 try {
                     while (rs.next()) {
                         // get the LONG column first so Oracle doesn't toss a
@@ -1200,7 +1216,7 @@ public class RDBMDistributedLayoutStore
                     }
                 } finally {
                     rs.close();
-                    stmt.close();
+                    pstmt.close();
                 }
             }
             catch(SQLException sqe)
@@ -1224,7 +1240,7 @@ public class RDBMDistributedLayoutStore
         Connection con = RDBMServices.getConnection();
         try
         {
-            Statement stmt = con.createStatement();
+            PreparedStatement pstmt = null;
             try
             {
                 // get stylesheet description
@@ -1236,11 +1252,12 @@ public class RDBMDistributedLayoutStore
 
                 if (layoutId == 0)
                 { // First time, grab the default layout for this user
-                    String sQuery = "SELECT USER_DFLT_USR_ID FROM UP_USER WHERE USER_ID="
-                            + userId;
+                    String sQuery = "SELECT USER_DFLT_USR_ID FROM UP_USER WHERE USER_ID=?";
                     if (log.isDebugEnabled())
-                        log.debug(sQuery);
-                    rs = stmt.executeQuery(sQuery);
+                        log.debug(sQuery + " VALUE = " + userId);
+                    pstmt = con.prepareStatement(sQuery);
+                    pstmt.setInt(1,userId);
+                    rs = pstmt.executeQuery();
                     try
                     {
                         rs.next();
@@ -1281,17 +1298,19 @@ public class RDBMDistributedLayoutStore
                     "SELECT PARAM_NAME, PARAM_VAL " +
                     "FROM UP_SS_USER_PARM " +
                     "WHERE USER_ID=?" +
-                    " AND PROFILE_ID=" + profileId +
-                    " AND SS_ID=" + stylesheetId +
+                    " AND PROFILE_ID=?" +
+                    " AND SS_ID=?" +
                     " AND SS_TYPE=2";
 
-                PreparedStatement pstmt = con.prepareStatement(sQuery);
+                pstmt = con.prepareStatement(sQuery);
 
                 if (log.isDebugEnabled())
-                    log.debug(sQuery);
+                    log.debug(sQuery + " VALUES " +  userId + "," + profileId + "," + stylesheetId);
                 try
                 {
                     pstmt.setInt(1, userId);
+                    pstmt.setInt(2,profileId);
+                    pstmt.setInt(3,stylesheetId);
                     rs = pstmt.executeQuery();
                     while (rs.next())
                     {
@@ -1311,16 +1330,21 @@ public class RDBMDistributedLayoutStore
                 sQuery = "SELECT PARAM_TYPE, PARAM_NAME, PARAM_VAL, " +
                         "ULS.STRUCT_ID, CHAN_ID " +
                         "FROM UP_SS_USER_ATTS UUSA, UP_LAYOUT_STRUCT ULS " +
-                        "WHERE UUSA.USER_ID=" + userId +
-                        " AND PROFILE_ID=" + profileId +
-                        " AND SS_ID=" + stylesheetId +
+                        "WHERE UUSA.USER_ID=?" +
+                        " AND PROFILE_ID=?"  +
+                        " AND SS_ID=?"  +
                         " AND SS_TYPE=2" +
                         " AND UUSA.STRUCT_ID = ULS.STRUCT_ID" +
                         " AND UUSA.USER_ID = ULS.USER_ID";
                 if (log.isDebugEnabled())
                     log.debug("SQL to load theme channel attribute prefs: "
-                                    + sQuery);
-                rs = stmt.executeQuery(sQuery);
+                                    + sQuery + " VALUES " + userId + "," + profileId + "," + stylesheetId);
+                pstmt = con.prepareStatement(sQuery);
+                pstmt.setInt(1,userId);
+                pstmt.setInt(2,profileId);
+                pstmt.setInt(3,stylesheetId);
+                
+                rs = pstmt.executeQuery();
                 try
                 {
                     while (rs.next())
@@ -1358,7 +1382,7 @@ public class RDBMDistributedLayoutStore
                 }
             } finally
             {
-                stmt.close();
+                pstmt.close();
             }
         } finally
         {
@@ -1985,12 +2009,13 @@ public class RDBMDistributedLayoutStore
         {
             // Set autocommit false for the connection
             RDBMServices.setAutoCommit(con, false);
-            Statement stmt = con.createStatement();
+            //Statement stmt = con.createStatement();
             PreparedStatement pstmt = null;
             try
             {
                 // before writing out params clean out old values
-                deleteFromUpSsUserParm(stmt, userId, profileId, stylesheetId,1);
+                pstmt = con.prepareStatement(DELETE_FROM_UP_USER_PARM);
+                deleteFromUpSsUserParm(pstmt, userId, profileId, stylesheetId,1);
 
                 // write out params only if specified in stylesheet's .sdf file
                 for (Enumeration e = ssup.getParameterValues().keys(); e.hasMoreElements();) {
@@ -1999,17 +2024,24 @@ public class RDBMDistributedLayoutStore
                         ! ssDesc.getStylesheetParameterDefaultValue(pName)
                             .equals(ssup.getParameterValue(pName)))
                     {
-                        String pNameEscaped = RDBMServices.sqlEscape(pName);
-                        String sQuery = "INSERT INTO UP_SS_USER_PARM (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,PARAM_NAME,PARAM_VAL) VALUES (" + userId
-                          + "," + profileId + "," + stylesheetId + ",1,'" + pNameEscaped + "','" + ssup.getParameterValue(pName) + "')";
+                        //String pNameEscaped = RDBMServices.sqlEscape(pName);
+                        String sQuery = "INSERT INTO UP_SS_USER_PARM (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,PARAM_NAME,PARAM_VAL) VALUES (?,?,?,1,?,?)";
+                        pstmt = con.prepareStatement(sQuery);
+                        pstmt.setInt(1,userId);
+                        pstmt.setInt(2,profileId);
+                        pstmt.setInt(3,stylesheetId);
+                        pstmt.setString(4,pName);
+                        pstmt.setString(5,ssup.getParameterValue(pName));
                         if (LOG.isDebugEnabled())
                             LOG.debug(sQuery);
-                        stmt.executeUpdate(sQuery);
+                        pstmt.executeUpdate();
                     }
                 }
 
+              
+                pstmt = con.prepareStatement(DELETE_FROM_UP_SS_USER_ATTS_SQL);
                 // now before writing out folders and channels clean out old values
-                deleteFromUpSsUserAtts(stmt, userId, profileId, stylesheetId,1);
+                deleteFromUpSsUserAtts(pstmt, userId, profileId, stylesheetId,1);
 
                 // write out folder attributes
                 pstmt = con.prepareStatement(INSERT__INTO__UP_SS_USER_ATTS);
@@ -2088,7 +2120,7 @@ public class RDBMDistributedLayoutStore
                 throw new Exception("Exception setting Structure Sylesheet " +
                         "User Preferences",e);
             } finally {
-                stmt.close();
+                
                 if (pstmt != null)
                     pstmt.close();
             }
@@ -2113,11 +2145,12 @@ public class RDBMDistributedLayoutStore
         try {
             // Set autocommit false for the connection
             RDBMServices.setAutoCommit(con, false);
-            Statement stmt = con.createStatement();
+            //Statement pstmt = null;
             PreparedStatement pstmt = null;
             try {
                 // before writing out params clean out old values
-                deleteFromUpSsUserParm(stmt, userId, profileId, stylesheetId,2);
+                pstmt = con.prepareStatement(DELETE_FROM_UP_USER_PARM);
+                deleteFromUpSsUserParm(pstmt, userId, profileId, stylesheetId,2);
 
                 // write out params only if defined in stylesheet's .sdf file
                 // and user's value differs from default
@@ -2127,16 +2160,22 @@ public class RDBMDistributedLayoutStore
                         ! tsDesc.getStylesheetParameterDefaultValue(pName)
                             .equals(tsup.getParameterValue(pName)))
                     {
-                        String pNameEscaped = RDBMServices.sqlEscape(pName);
-                        String sQuery = "INSERT INTO UP_SS_USER_PARM (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,PARAM_NAME,PARAM_VAL) VALUES (" + userId
-                        + "," + profileId + "," + stylesheetId + ",2,'" + pNameEscaped + "','" + tsup.getParameterValue(pName) + "')";
+                        //String pNameEscaped = RDBMServices.sqlEscape(pName);
+                        String sQuery = "INSERT INTO UP_SS_USER_PARM (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,PARAM_NAME,PARAM_VAL) VALUES (?,?,?,2,?,?)";
+                        pstmt = con.prepareStatement(sQuery);
+                        pstmt.setInt(1,userId);
+                        pstmt.setInt(2,profileId);
+                        pstmt.setInt(3,stylesheetId);
+                        pstmt.setString(4, pName);
+                        pstmt.setString(5,tsup.getParameterValue(pName));
                         if (LOG.isDebugEnabled())
-                            LOG.debug(sQuery);
-                        stmt.executeUpdate(sQuery);
+                            LOG.debug(sQuery + "VALUE " + userId + "," + profileId + "," + stylesheetId + "," + pName + "," + tsup.getParameterValue(pName));
+                        pstmt.executeUpdate(sQuery);
                     }
                 }
+                pstmt = con.prepareStatement(DELETE_FROM_UP_SS_USER_ATTS_SQL);
                 // now before writing out channel atts clean out old values
-                deleteFromUpSsUserAtts(stmt, userId, profileId, stylesheetId,2);
+                deleteFromUpSsUserAtts(pstmt, userId, profileId, stylesheetId,2);
 
                 // write out channel attributes
                 pstmt = con.prepareStatement(INSERT__INTO__UP_SS_USER_ATTS);
@@ -2183,7 +2222,7 @@ public class RDBMDistributedLayoutStore
                 throw new Exception("Exception setting Theme Sylesheet " +
                         "User Preferences",e);
             } finally {
-                stmt.close();
+            
                 if (pstmt != null)
                     pstmt.close();
             }
@@ -2267,16 +2306,24 @@ public class RDBMDistributedLayoutStore
      * @param stylesheetType
      * @throws SQLException
      */
-    private void deleteFromUpSsUserParm(Statement stmt, int userId,
+    private void deleteFromUpSsUserParm(PreparedStatement pstmt, int userId,
             int profileId, int stylesheetId, int stylesheetType) throws SQLException
     {
+        /*
         String sQuery = "DELETE FROM UP_SS_USER_PARM " +
         "WHERE USER_ID=" + userId + " AND " +
         "PROFILE_ID=" + profileId + " AND " +
         "SS_ID=" + stylesheetId + " AND SS_TYPE=" + stylesheetType;
+        */
+        pstmt.setInt(1,userId);
+        pstmt.setInt(2,profileId);
+        pstmt.setInt(3,stylesheetId);
+        pstmt.setInt(4,stylesheetType);
         if (LOG.isDebugEnabled())
-            LOG.debug(sQuery);
-        stmt.executeUpdate(sQuery);
+            LOG.debug(DELETE_FROM_UP_USER_PARM + "VALUES = " + userId + "," + profileId + "," + stylesheetId + "," + stylesheetType );
+       
+       
+        pstmt.executeUpdate();
     }
 
     /**
@@ -2289,17 +2336,25 @@ public class RDBMDistributedLayoutStore
      * @param stylesheetType
      * @throws SQLException
      */
-    private void deleteFromUpSsUserAtts(Statement stmt, int userId,
+    private void deleteFromUpSsUserAtts(PreparedStatement pstmt, int userId,
             int profileId, int stylesheetId, int stylesheetType) throws SQLException
     {
+        /*
         String sQuery = "DELETE FROM UP_SS_USER_ATTS " +
         "WHERE USER_ID=" + userId + " AND " +
         "PROFILE_ID=" + profileId + " AND " +
         "SS_ID=" + stylesheetId + " AND SS_TYPE=" + stylesheetType;
+        */
+       
+        pstmt.setInt(1,userId);
+        pstmt.setInt(2,profileId);
+        pstmt.setInt(3,stylesheetId);
+        pstmt.setInt(4,stylesheetType);
+       
         if (LOG.isDebugEnabled())
         {
-            LOG.debug(sQuery);
+            LOG.debug(DELETE_FROM_UP_SS_USER_ATTS_SQL + " VALUES = " + userId + "," + profileId + "," + stylesheetId + "," + stylesheetType);
         }
-        stmt.executeUpdate(sQuery);
+        pstmt.executeUpdate();
     }
 }
