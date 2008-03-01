@@ -95,35 +95,39 @@ public class FrameworkMBeanImpl implements FrameworkMBean {
      * Track framework database performance
      */
     public MovingAverageSample getLastDatabase() {
-        return RDBMServices.lastDatabase;
+        return RDBMServices.getLastDatabase();
     }
 
     public long getDatabaseAverage() {
-        return RDBMServices.lastDatabase.average;
+        return getLastDatabase().average;
     }
 
     public long getDatabaseHighMax() {
-        return RDBMServices.lastDatabase.highMax;
+        return getLastDatabase().highMax;
     }
 
     public long getDatabaseLast() {
-        return RDBMServices.lastDatabase.lastSample;
+        return getLastDatabase().lastSample;
     }
 
     public long getDatabaseMin() {
-        return RDBMServices.lastDatabase.min;
+        return getLastDatabase().min;
     }
 
     public long getDatabaseMax() {
-        return RDBMServices.lastDatabase.max;
+        return getLastDatabase().max;
     }
 
     public long getDatabaseTotalConnections() {
-        return RDBMServices.lastDatabase.totalSamples;
+        return getLastDatabase().totalSamples;
     }
 
     public int getRDBMActiveConnectionCount() {
         return RDBMServices.getActiveConnectionCount();
+    }
+    
+    public int getRDBMMapConnectionCount() {
+        return RDBMServices.getMapConnectionCount();
     }
 
     public int getRDBMMaxConnectionCount() {

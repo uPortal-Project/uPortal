@@ -11,6 +11,7 @@ import java.sql.Driver;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -74,11 +75,11 @@ public class RDBMServices {
 
     // Metric counters
     private static final MovingAverage databaseTimes = new MovingAverage();
-    public static MovingAverageSample lastDatabase = new MovingAverageSample();
+    private static MovingAverageSample lastDatabase = new MovingAverageSample();
     private static AtomicInteger activeConnections = new AtomicInteger();
     private static int maxConnections = 0;
     
-    private static final Map<Connection, DataSource> OPEN_CONNECTIONS = new ReferenceMap<Connection, DataSource>(ReferenceMap.SOFT, ReferenceMap.WEAK);
+    private static final Map<Connection, DataSource> OPEN_CONNECTIONS = Collections.synchronizedMap(new ReferenceMap<Connection, DataSource>(ReferenceMap.SOFT, ReferenceMap.WEAK));
 
 
     /**
@@ -136,12 +137,20 @@ public class RDBMServices {
     public static int getActiveConnectionCount() {
       return activeConnections.intValue();
     }
+    
+    public static int getMapConnectionCount() {
+        return OPEN_CONNECTIONS.size();
+    }
 
     /**
      * @return Return the maximum number of connections
      */
     public static int getMaxConnectionCount() {
       return maxConnections;
+    }
+    
+    public static MovingAverageSample getLastDatabase() {
+        return lastDatabase;
     }
 
     /**

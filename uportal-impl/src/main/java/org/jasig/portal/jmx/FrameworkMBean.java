@@ -25,6 +25,7 @@ public interface FrameworkMBean {
 
   /* Database information */
   public int getRDBMActiveConnectionCount();
+  public int getRDBMMapConnectionCount();
   public int getRDBMMaxConnectionCount();
   public long getDatabaseAverage();
   public long getDatabaseHighMax();
