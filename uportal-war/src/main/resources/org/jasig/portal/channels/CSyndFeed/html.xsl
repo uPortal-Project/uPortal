@@ -30,13 +30,13 @@
   </xsl:template>
   
   <xsl:template match="items">
-    <ul style="clear:right;list-style-image:url(media/org/jasig/portal/channels/CGenericXSLT/bullet.gif);margin-left: 0px;">
+    <ul style="clear:right;margin-left: 0px;">
       <xsl:apply-templates select="item"/>
     </ul>
   </xsl:template>
   
   <xsl:template match="item">
-    <li class="uportal-channel-text">
+    <li class="uportal-channel-text" style="padding-bottom:1em;list-style-type:none;">
       <a target="_blank" href="{link}" class="uportal-channel-subtitle-reversed"><xsl:value-of select="title"/></a>
       <xsl:apply-templates select="description"/>
     </li>

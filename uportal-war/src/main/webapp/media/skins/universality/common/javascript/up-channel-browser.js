@@ -48,7 +48,6 @@
     	setup: function() {
 
 			var self = this;
-			console.debug(this);
 	        for (var i = 0; i < self.options.handles.length; i++) {
 	        	$(self.options.handles[i]).click(function(){self.init();});
 	        }

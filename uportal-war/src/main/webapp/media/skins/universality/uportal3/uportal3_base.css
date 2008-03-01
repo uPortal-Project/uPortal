@@ -453,15 +453,48 @@
 		background-color: #fff;
 	}
 
-	#portalFlyoutNavigation .portal-flyout-container li
-	{
-		border-bottom: 1px solid #9999cc;
-		display: list-item;
-		float: none;
-		margin: 0;
+	#portalFlyoutNavigation .portal-flyout-container ul.portal-subnav-list {
 		padding: 0;
+		margin: 0;
 	}
 
+#portalFlyoutNavigation .portal-flyout-container li
+	{
+		border-bottom: 1px solid #9999cc;
+		display: block;
+		float: none;
+		margin: 0;
+		padding: .5em;
+	}
+
+	#portalFlyoutNavigation .portal-flyout-container li a {
+		text-decoration: none;
+	}
+
+	#editPageLink a
+	{
+		background: url("../../icons/layout_content.png") no-repeat;
+		padding-left: 20px; 
+	}
+	
+	#deletePageLink a
+	{
+		background: url("../../icons/cross.png") no-repeat;
+		padding-left: 20px; 
+	}
+	
+	#movePageLeftLink a
+	{
+		background: url("../../icons/arrow_left.png") no-repeat;
+		padding-left: 20px; 
+	}
+	
+	#movePageRightLink a
+	{
+		background: url("../../icons/arrow_right.png") no-repeat;
+		padding-left: 20px; 
+	}
+	
 	#portalFlyoutNavigation .portal-flyout-container
 	{
 		border-left: 1px solid #9999cc;
@@ -576,4 +609,8 @@
 	#portalQuicklinks a:hover 
 	{
 		text-decoration: underline;
+	}
+	
+	#changeColumns tr td {
+		padding: 5px;
 	}

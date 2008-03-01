@@ -24,7 +24,7 @@ function initportal() {
 
 	$("#addTabLink").click(function(){addTab()});
 	$("#deletePageLink").click(function(){deleteTab(this.id.split("_")[1])});
-	$("#editPageLink").click(initializeLayoutMenu).click(function(){fly.closeSubnav(tabId);});
+	$("#editPageLink").click(initializeLayoutMenu);
 	$("#movePageLeftLink").click(function(){ moveTab('left')});
 	$("#movePageRightLink").click(function(){moveTab('right')});
 	initTabEditLinks();
@@ -189,7 +189,6 @@ function moveTab(direction) {
 		},
 		function(xml){}
 	);
-	fly.closeSubnav(tabId);
 	redoTabs(tabId);
 	initTabEditLinks();
 }
@@ -217,7 +216,7 @@ function redoTabs(tabId) {
 	$("[@id*=tabLink_]").each(function(i){
 		$(this).attr("href", portalUrl + "?uP_root=root&uP_sparam=activeTab&activeTab=" + (i+1));
 	});
-	fly.closeSubnav(tabId);
+//	fly.closeSubnav(tabId);
 }
 function movePortlet(movedNode, targetNode) {
 	var method = 'insertBefore';

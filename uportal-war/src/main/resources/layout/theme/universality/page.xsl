@@ -83,13 +83,13 @@
                 <xsl:apply-templates select="header"/>
                 <xsl:apply-templates select="content"/>
                 <xsl:apply-templates select="footer"/>
-                <xsl:if test="$USE_AJAX='true' and $AUTHENTICATED='true'">
-                  <xsl:call-template name="preferences"/>
-                </xsl:if>
                 <xsl:if test="($USE_AJAX='true' and $AUTHENTICATED='true') or $USE_FLYOUT_MENUS='true'">
                   <xsl:call-template name="flyout.menu.scripts"/> <!-- If flyout menus are enabled, writes in necessary Javascript to function. -->
                 </xsl:if>
-              
+                <xsl:if test="$USE_AJAX='true' and $AUTHENTICATED='true'">
+                  <xsl:call-template name="preferences"/>
+                </xsl:if>
+                
               </xsl:otherwise>
             </xsl:choose>
           </div> 
