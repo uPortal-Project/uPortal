@@ -416,15 +416,19 @@
    | This template renders the page breadcrumb.
   -->
   <xsl:template name="breadcrumb">
-		<div id="portalPageBodyBreadcrumb">
-    	<a href="{$BASE_ACTION_URL}?uP_root=root&amp;uP_reload_layout=true&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true&amp;uP_sparam=mode&amp;mode=view" title="{$TOKEN[@name='HOME_LONG_LABEL']}"><xsl:value-of select="$TOKEN[@name='HOME_LABEL']"/></a>
+      <div id="portalPageBodyBreadcrumb">
+      <a href="{$BASE_ACTION_URL}?uP_root=root&amp;uP_reload_layout=true&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true&amp;uP_sparam=mode&amp;mode=view" title="{$TOKEN[@name='HOME_LONG_LABEL']}"><xsl:value-of select="$TOKEN[@name='HOME_LABEL']"/></a>
       <span class="breadcrumb-separator">&gt;</span>
-      <a href="{$BASE_ACTION_URL}?uP_root=root&amp;uP_sparam=activeTab&amp;activeTab={position(/layout/navigation/tab[@activeTab='true'])}">
-      	<xsl:attribute name="title">
-        	<xsl:value-of select="/layout/navigation/tab[@activeTab='true']/@name"/>
-        </xsl:attribute>
-      	<xsl:value-of select="/layout/navigation/tab[@activeTab='true']/@name"/>
-      </a>
+      <xsl:for-each select="/layout/navigation/tab">
+        <xsl:if test="@activeTab='true'">
+          <a href="{$BASE_ACTION_URL}?uP_root=root&amp;uP_sparam=activeTab&amp;activeTab={position()}">
+            <xsl:attribute name="title">
+                <xsl:value-of select="@name"/>
+            </xsl:attribute>
+            <xsl:value-of select="@name"/>
+          </a>
+        </xsl:if>
+      </xsl:for-each>
       <span class="breadcrumb-separator">&gt;</span>
     </div>
   </xsl:template>

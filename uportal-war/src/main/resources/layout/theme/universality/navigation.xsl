@@ -65,6 +65,7 @@
               <xsl:if test="@activeTab='true' and $CONTEXT='left'"> <!-- If navigation is being rendered in the left column rather than as tabs, call template for rendering active menu item's submenu. -->
                 <xsl:call-template name="subnavigation">
                   <xsl:with-param name="CONTEXT" select="'subnav'"/>
+                  <xsl:with-param name="TAB_POSITION" select="position()"/>
                 </xsl:call-template>
               </xsl:if>
             </li>
@@ -115,6 +116,7 @@
   -->
   <xsl:template name="subnavigation">
     <xsl:param name="CONTEXT"/>  <!-- Catches the context parameter to know how to render the subnavigation. -->
+    <xsl:param name="TAB_POSITION"/> <!-- Provides the position of the tab -->
     
     <div> <!-- Unique ID is needed for the flyout menus javascript. -->
       <xsl:attribute name="id">
@@ -154,7 +156,7 @@
               </xsl:choose>
             </xsl:variable>
             <li id="uPfname_{@fname}" class="portal-subnav {$SUBNAV_POSITION}"> <!-- Each subnavigation menu item.  The unique ID can be used in the CSS to give each menu item a unique icon, color, or presentation. -->
-              <a href="{$BASE_ACTION_URL}?uP_root={@ID}" title="{@name}" class="portal-subnav-link">  <!-- Navigation item link. -->
+              <a href="{$BASE_ACTION_URL}?uP_sparam=activeTab&amp;activeTab={$TAB_POSITION}&amp;uP_root={@ID}" title="{@name}" class="portal-subnav-link">  <!-- Navigation item link. -->
                 <span class="portal-subnav-label"><xsl:value-of select="@name"/></span>
               </a>
             </li>
@@ -226,6 +228,7 @@
         <xsl:if test="@activeTab='false' and $USE_FLYOUT_MENUS='true'"> <!-- If using flyout menus, call template for rendering submenus. -->
           <xsl:call-template name="subnavigation">
             <xsl:with-param name="CONTEXT" select="'flyout'"/>
+            <xsl:with-param name="TAB_POSITION" select="position()"/>
           </xsl:call-template>
         </xsl:if>
         <xsl:if test="$USE_AJAX='true' and @activeTab='true'"> <!-- If navigation is being rendered in the left column rather than as tabs, call template for rendering active menu item's submenu. -->
