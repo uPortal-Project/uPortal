@@ -231,7 +231,7 @@
             <xsl:with-param name="TAB_POSITION" select="position()"/>
           </xsl:call-template>
         </xsl:if>
-        <xsl:if test="$USE_AJAX='true' and @activeTab='true' and not($PORTAL_VIEW='focused')"> <!-- If navigation is being rendered in the left column rather than as tabs, call template for rendering active menu item's submenu. -->
+        <xsl:if test="$USE_AJAX='true' and $AUTHENTICATED='true' and @activeTab='true' and not($PORTAL_VIEW='focused')"> <!-- If navigation is being rendered in the left column rather than as tabs, call template for rendering active menu item's submenu. -->
           <xsl:call-template name="preferences.editpage"/>
         </xsl:if>
       </xsl:for-each>
