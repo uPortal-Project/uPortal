@@ -72,6 +72,38 @@
         <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
     </listener>
 
+    <filter>
+        <filter-name>CAS Validate Filter</filter-name>       
+        <filter-class>edu.yale.its.tp.cas.client.filter.CASValidateFilter</filter-class>
+        <init-param>
+            <param-name>edu.yale.its.tp.cas.client.filter.validateUrl</param-name>
+            <param-value>http://localhost:8080/cas/serviceValidate</param-value>
+        </init-param>
+        <init-param>
+            <param-name>edu.yale.its.tp.cas.client.filter.serverName</param-name>
+            <param-value>localhost:8080</param-value>
+        </init-param>
+        <init-param>
+            <param-name>BROKEN_SECURITY_ALLOW_NON_SSL</param-name>
+            <param-value>NOT_SECURE_DO_NOT_USE_THIS_SETTING_IN_PRODUCTION</param-value>
+        </init-param>
+    </filter>
+    
+    <filter>
+        <filter-name>CAS Receipt Cache Filter</filter-name>
+        <filter-class>edu.yale.its.tp.cas.client.filter.StaticCasReceiptCacherFilter</filter-class>
+    </filter>
+    
+    <filter-mapping>
+        <filter-name>CAS Validate Filter</filter-name>
+        <url-pattern>/Login</url-pattern>
+    </filter-mapping>
+    
+    <filter-mapping>
+        <filter-name>CAS Receipt Cache Filter</filter-name>
+        <url-pattern>/Login</url-pattern>
+    </filter-mapping>
+
     <servlet>
         <servlet-name>uPortal</servlet-name>
         <servlet-class>org.jasig.portal.PortalSessionManager</servlet-class>
