@@ -5,6 +5,9 @@
 
 package org.jasig.portal.channels;
 
+import java.io.IOException;
+import java.util.Properties;
+
 import javax.servlet.http.HttpSession;
 
 import org.jasig.portal.ChannelCacheKey;
@@ -16,6 +19,7 @@ import org.jasig.portal.IPrivilegedChannel;
 import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalEvent;
 import org.jasig.portal.PortalException;
+import org.jasig.portal.ResourceMissingException;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.utils.DocumentFactory;
@@ -43,6 +47,11 @@ public class CLogin implements IPrivilegedChannel, ICacheable
   private boolean bauthenticationAttemptFailed = false;
   private boolean bSecurityError = false;
   private String xslUriForKey = null;
+
+  // properties used to find the CAS login link
+  private static final String SECURITY_PROPERTIES = "/properties/security.properties";
+  private static final String CAS_LOGIN_URL_PROPERTY = "org.jasig.portal.channels.CLogin.CasLoginUrl";
+  private String casLoginUrl = null;
 
   private static final String systemCacheId="org.jasig.portal.CLogin:";
 
@@ -84,6 +93,14 @@ public class CLogin implements IPrivilegedChannel, ICacheable
   {
     this.staticData = sd;
     ic = staticData.getPerson().getSecurityContext();
+
+	try {
+		// try to find a value for the CAS login URL
+        Properties props = ResourceLoader.getResourceAsProperties(CLogin.class, SECURITY_PROPERTIES);
+        this.casLoginUrl = props.getProperty(CAS_LOGIN_URL_PROPERTY);
+    } catch (ResourceMissingException e) {
+    } catch (IOException e) {
+    }
 
     if (ic!=null && ic.isAuthenticated())
       bAuthenticated = true;
@@ -130,6 +147,10 @@ public class CLogin implements IPrivilegedChannel, ICacheable
     xslt.setXSL(sslLocation, runtimeData.getBrowserInfo());
     xslt.setTarget(out);
     xslt.setStylesheetParameter("baseActionURL", runtimeData.getBaseActionURL());
+    if (casLoginUrl != null) {
+    	// if a CAS login URL was specified, add it as a parameter
+    	xslt.setStylesheetParameter("casLoginUrl", casLoginUrl);
+    }
     xslt.setStylesheetParameter("unauthenticated", String.valueOf(!staticData.getPerson().getSecurityContext().isAuthenticated()));
     xslt.transform();
   }
