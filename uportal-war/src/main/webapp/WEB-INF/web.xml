@@ -29,6 +29,12 @@
         <param-value>classpath:/properties/contexts/*.xml</param-value>
     </context-param>
 
+    <!-- location of your cas server's proxy service -->
+    <context-param>
+        <param-name>edu.yale.its.tp.cas.proxyUrl</param-name>
+        <param-value>https://localhost:8080/cas/proxy</param-value>
+    </context-param>
+    
     <!--
         - Configures Log4J for this web app.
         - As this context specifies a context-param "log4jConfigLocation", its file path
@@ -84,6 +90,14 @@
             <param-value>localhost:8080</param-value>
         </init-param>
         <init-param>
+            <param-name>edu.yale.its.tp.cas.client.filter.proxyCallbackUrl</param-name>
+            <param-value>http://localhost:8080/CasProxyServlet</param-value>
+        </init-param>
+        <init-param>
+            <param-name>edu.yale.its.tp.cas.client.filter.gateway</param-name>
+            <param-value>true</param-value>
+        </init-param>
+        <init-param>
             <param-name>BROKEN_SECURITY_ALLOW_NON_SSL</param-name>
             <param-value>NOT_SECURE_DO_NOT_USE_THIS_SETTING_IN_PRODUCTION</param-value>
         </init-param>
@@ -122,6 +136,12 @@
         <load-on-startup>3</load-on-startup>
     </servlet>
 
+    <servlet>
+        <servlet-name>CasProxyServlet</servlet-name>
+        <servlet-class>edu.yale.its.tp.cas.proxy.ProxyTicketReceptor</servlet-class>
+        <load-on-startup>4</load-on-startup>
+    </servlet>
+    
     <servlet>
         <servlet-name>HttpProxyServlet</servlet-name>
         <servlet-class>org.jasig.portal.HttpProxyServlet</servlet-class>
@@ -164,6 +184,11 @@
         <url-pattern>/Logout</url-pattern>
     </servlet-mapping>
 
+    <servlet-mapping>
+        <servlet-name>CasProxyServlet</servlet-name>
+        <url-pattern>/CasProxyServlet</url-pattern>
+    </servlet-mapping>
+    
     <servlet-mapping>
         <servlet-name>HttpProxyServlet</servlet-name>
         <url-pattern>/servlet/ProxyServlet/*</url-pattern>
