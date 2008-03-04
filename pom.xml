@@ -96,7 +96,7 @@
         <scm.path>/up2/trunk</scm.path>
         
         <!-- Portlet WAR Dependency Version Properties -->
-        <BookmarksPortlet.version>1.0.7</BookmarksPortlet.version>
+        <BookmarksPortlet.version>1.0.8</BookmarksPortlet.version>
         <FunctionalTestsPortlet.version>1.0.0-SNAPSHOT</FunctionalTestsPortlet.version>
         <googleportlet.version>1.0.0-SNAPSHOT</googleportlet.version>
         <RssPortlet.version>1.0.0-SNAPSHOT</RssPortlet.version>
@@ -104,7 +104,7 @@
         <!-- Project Dependency Version Properties -->
         <activation.version>1.0.2</activation.version>
         <ant.version>1.6.5</ant.version>
-        <casclient.version>2.2.0-M1</casclient.version>
+        <casclient.version>2.2.0-M2</casclient.version>
         <cas-server.version>3.2</cas-server.version>
         <cernunnos.version>1.0.0-M6</cernunnos.version>
         <collections-generic.version>4.01</collections-generic.version>
