@@ -29,8 +29,8 @@ pom.xml             o Contains the maven 2 description of the uPortal project
 
 Ant Depdency
 ----------------------------------------
-The build.xml needs to be run under Ant 1.6.2 or better except Ant 1.7.0.  Some
-of our Ant tasks have been reported to fail on Ant 1.6.1 and earlier, and on
+The build.xml needs to be run under Ant 1.6.3 or better except Ant 1.7.0.  Some
+of our Ant tasks have been reported to fail on Ant 1.6.2 and earlier, and on
 Ant 1.7.0.  
 
 
