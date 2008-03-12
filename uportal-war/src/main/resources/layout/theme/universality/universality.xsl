@@ -116,7 +116,8 @@
    | YELLOW
    | Portal Settings should generally not be (and not need to be) modified.
   -->
-  <xsl:param name="USER_NAME">John Doe</xsl:param>
+  <xsl:param name="USER_ID">guest</xsl:param>
+  <xsl:param name="USER_NAME">Guest User</xsl:param>
   <xsl:param name="UP_VERSION">uPortal X.X.X</xsl:param>
   <xsl:param name="baseActionURL">render.userLayoutRootNode.uP</xsl:param>
   <xsl:variable name="BASE_ACTION_URL"><xsl:value-of select="$baseActionURL"/></xsl:variable>

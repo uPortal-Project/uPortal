@@ -23,6 +23,7 @@
 		<config>uportal-impl/src/main/resources/properties/contexts/layoutContext.xml</config>
 		<config>uportal-impl/src/main/resources/properties/contexts/schedulerContext.xml</config>
 		<config>uportal-impl/src/main/resources/properties/contexts/importExportContext.xml</config>
+		<config>uportal-impl/src/main/resources/properties/contexts/securityContext.xml</config>
 	</configs>
 	<configSets>
 		<configSet>
@@ -31,6 +32,13 @@
 			<incomplete>false</incomplete>
 			<configs>
 				<config>uportal-impl/src/test/resources/jpaTestApplicationContext.xml</config>
+			</configs>
+		</configSet>
+		<configSet>
+			<name><![CDATA[CAS]]></name>
+			<allowBeanDefinitionOverriding>true</allowBeanDefinitionOverriding>
+			<incomplete>false</incomplete>
+			<configs>
 			</configs>
 		</configSet>
 		<configSet>
@@ -56,13 +64,7 @@
 				<config>uportal-impl/src/main/resources/properties/contexts/layoutContext.xml</config>
 				<config>uportal-impl/src/main/resources/properties/contexts/schedulerContext.xml</config>
 				<config>uportal-impl/src/main/resources/properties/contexts/importExportContext.xml</config>
-			</configs>
-		</configSet>
-		<configSet>
-			<name><![CDATA[CAS]]></name>
-			<allowBeanDefinitionOverriding>true</allowBeanDefinitionOverriding>
-			<incomplete>false</incomplete>
-			<configs>
+				<config>uportal-impl/src/main/resources/properties/contexts/securityContext.xml</config>
 			</configs>
 		</configSet>
 	</configSets>

@@ -13,7 +13,7 @@
  | For more information on XSL, refer to [http://www.w3.org/Style/XSL/].
 -->
 
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:upAuth="xalan://org.jasig.portal.security.xslt.XalanAuthorizationHelper" >
 	
   
   <!-- ========== TEMPLATE: PORTAL PIPE ========== -->
@@ -129,18 +129,12 @@
   -->
   <xsl:template name="portal.page.bar.link.admin">
   	<!-- !!!!! TEST ONLY, THIS NEEDS PROPER ACCESS !!!!! -->
-  	<xsl:if test="$AUTHENTICATED='true'">
-    	<a href="{$BASE_ACTION_URL}?uP_fname=admin.navigation.links" id="portalPageBarAdmin" title="{$TOKEN[@name='CHANNEL_MANAGER_LONG_LABEL']}">
-      	<span><xsl:value-of select="$TOKEN[@name='CHANNEL_MANAGER_LABEL']"/></span>
+  	<xsl:if test="upAuth:canRender($USER_ID, 'admin.navigation.links')">
+      <a href="{$BASE_ACTION_URL}?uP_fname=admin.navigation.links" id="portalPageBarAdmin" title="{$TOKEN[@name='CHANNEL_MANAGER_LONG_LABEL']}">
+        <span><xsl:value-of select="$TOKEN[@name='CHANNEL_MANAGER_LABEL']"/></span>
       </a>
       <xsl:call-template name="portal.pipe"/>
     </xsl:if>
-    <!--<xsl:if test="$AUTHENTICATED='true' and chan-mgr-chanid">
-    	<a href="{$BASE_ACTION_URL}?uP_fname={chan-mgr-chanid}" id="portalPageBarAdmin" title="{$TOKEN[@name='CHANNEL_MANAGER_LONG_LABEL']}">
-      	<span><xsl:value-of select="$TOKEN[@name='CHANNEL_MANAGER_LABEL']"/></span>
-      </a>
-      <xsl:call-template name="portal.pipe"/>
-    </xsl:if>-->
   </xsl:template>
   <!-- ========================================================== -->
   

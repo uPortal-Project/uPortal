@@ -49,9 +49,14 @@ public class ThemeParamInjector implements IParameterProcessor
         ThemeStylesheetUserPreferences themePrefs = prefs
                 .getThemeStylesheetUserPreferences();
 
-        String userName = person.getFullName();
-        if (userName != null && userName.trim().length() > 0)
-            themePrefs.putParameterValue("userName", userName);
+        final String fullName = person.getFullName();
+        
+        if (fullName != null && fullName.trim().length() > 0) {
+            themePrefs.putParameterValue("userName", fullName);
+        }
+        
+        final String userName = (String)person.getAttribute(IPerson.USERNAME);
+        themePrefs.putParameterValue("USER_ID", userName);
     }
 
 }
