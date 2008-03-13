@@ -2,8 +2,8 @@
     <attribute key="USER_NAME">${valueOf(@username)}</attribute>
     <attribute key="USER_ID">${sql(SELECT user_id FROM up_user WHERE user_name = '${valueOf(@username)}')}</attribute>
     <subtasks>
-        <xslt context="${Attributes.ORIGIN}" stylesheet="import-layout.xsl">
-            <sql-transaction>
+        <sql-transaction>
+            <xslt context="${Attributes.ORIGIN}" stylesheet="import-layout.xsl">
 
                 <!-- Clear the way by deleting exisitng layut nodes and ancillary data -->
                 <crn location="delete-layout.crn"/>
@@ -69,17 +69,15 @@
                     <parameter value="${sql(SELECT MAX(struct_id) +1 FROM up_layout_struct WHERE user_id = ${USER_ID})}"/>
                     <parameter value="${USER_NAME}"/>
                 </sql-statement>
-
-            </sql-transaction>
-        </xslt>
-
-        <!-- Now do portlet entity preferences -->
-        <with-attribute key="Attributes.NODE" value="${singleNode(preferences)}">
-            <if test="${not(${isNull(${Attributes.NODE})})}">
-                <crn location="import-preferences.crn"/>
-            </if>
-        </with-attribute>
+            </xslt>
+    
+            <!-- Now do portlet entity preferences -->
+            <with-attribute key="Attributes.NODE" value="${singleNode(preferences)}">
+                <if test="${not(${isNull(${Attributes.NODE})})}">
+                    <crn location="import-preferences.crn"/>
+                </if>
+            </with-attribute>
+        </sql-transaction>
 
     </subtasks>
 </with>
-

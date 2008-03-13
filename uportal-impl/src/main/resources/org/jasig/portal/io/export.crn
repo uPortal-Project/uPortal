@@ -1,204 +1,214 @@
-<properties location="classpath://properties/rdbm.properties">
-    <sql-connection driver="${hibernate.connection.driver_class}" url="${hibernate.connection.url}" username="${hibernate.connection.username}" password="${hibernate.connection.password}">
-        <with-attribute key="EXPORT_DIR" value="${$1}">
-            <with-attribute key="ENTITY_TYPE" value="${$2}">
-
-                <!-- Select export operation based on the specified ENTITY_TYPE -->
-                <choose>
-
-                    <!-- all -->
-                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all'))}">
-                        <with-attribute key="$2" value="all-layouts">
-                            <crn location="export.crn"/>
+<invoke-method class="org.jasig.portal.spring.PortalApplicationContextLocator" method="getApplicationContext" attribute-name="PORTAL_CONTEXT">
+    <subtasks>
+        <invoke-method object="${PORTAL_CONTEXT}" method="getBean" attribute-name="SqlAttributes.DATA_SOURCE">
+            <parameter value="PortalDb" />
+            <subtasks>
+                <invoke-method object="${PORTAL_CONTEXT}" method="getBean" attribute-name="SqlAttributes.TRANSACTION_MANAGER">
+                    <parameter value="transactionManager" />
+                    <subtasks>
+                        <with-attribute key="EXPORT_DIR" value="${$1}">
+                        <with-attribute key="ENTITY_TYPE" value="${$2}">
+            
+                            <!-- Select export operation based on the specified ENTITY_TYPE -->
+                            <choose>
+            
+                                <!-- all -->
+                                <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all'))}">
+                                    <with-attribute key="$2" value="all-layouts">
+                                        <crn location="export.crn"/>
+                                    </with-attribute>
+                                    <with-attribute key="$2" value="all-permissions">
+                                        <crn location="export.crn"/>
+                                    </with-attribute>
+                                    <with-attribute key="$2" value="all-memberships">
+                                        <crn location="export.crn"/>
+                                    </with-attribute>
+                                    <with-attribute key="$2" value="all-channels">
+                                        <crn location="export.crn"/>
+                                    </with-attribute>
+                                    <with-attribute key="$2" value="all-channel-types">
+                                        <crn location="export.crn"/>
+                                    </with-attribute>
+                                    <with-attribute key="$2" value="all-groups">
+                                        <crn location="export.crn"/>
+                                    </with-attribute>
+                                    <with-attribute key="$2" value="all-users">
+                                        <crn location="export.crn"/>
+                                    </with-attribute>
+                                    <with-attribute key="$2" value="all-themes">
+                                        <crn location="export.crn"/>
+                                    </with-attribute>
+                                    <with-attribute key="$2" value="all-structures">
+                                        <crn location="export.crn"/>
+                                    </with-attribute>
+                                    <with-attribute key="$2" value="all-entity-types">
+                                        <crn location="export.crn"/>
+                                    </with-attribute>
+                                </when>
+            
+                                <!-- layout -->
+                                <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('layout'))}">
+                                    <with-attribute key="USER_NAME" value="${$3}">
+                                        <crn location="export-layout.crn"/>
+                                    </with-attribute>
+                                </when>
+            
+                                <!-- all-layouts -->
+                                <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-layouts'))}">
+                                    <sql-query>
+                                        <sql>SELECT DISTINCT upu.user_name FROM up_user upu, up_layout_struct upls WHERE upu.user_id = upls.user_id AND upls.layout_id = 1</sql>
+                                        <subtasks>
+                                            <crn location="export-layout.crn"/>
+                                        </subtasks>
+                                    </sql-query>
+                                </when>
+            
+                                <!-- all-permissions -->
+                                <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-permissions'))}">
+                                    <crn location="export-permissions.crn"/>
+                                </when>
+            
+                                <!-- all-memberships -->
+                                <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-memberships'))}">
+                                    <crn location="export-memberships.crn"/>
+                                </when>
+            
+                                <!-- channel -->
+                                <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('channel'))}">
+                                    <with-attribute key="FNAME" value="${$3}">
+                                        <crn location="export-channel.crn"/>
+                                    </with-attribute>
+                                </when>
+            
+                                <!-- all-channels -->
+                                <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-channels'))}">
+                                    <sql-query>
+                                        <sql>SELECT chan_fname FROM up_channel</sql>
+                                        <subtasks>
+                                            <with-attribute key="FNAME" value="${CHAN_FNAME}">
+                                                <crn location="export-channel.crn"/>
+                                            </with-attribute>
+                                        </subtasks>
+                                    </sql-query>
+                                </when>
+            
+                                <!-- channel-type -->
+                                <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('channel-type'))}">
+                                    <with-attribute key="NAME" value="${$3}">
+                                        <crn location="export-channel-type.crn"/>
+                                    </with-attribute>
+                                </when>
+                                
+                                <!-- all-channel-types -->
+                                <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-channel-types'))}">
+                                    <sql-query>
+                                        <sql>SELECT type_name FROM up_chan_type</sql>
+                                        <subtasks>
+                                            <with-attribute key="NAME" value="${TYPE_NAME}">
+                                                <crn location="export-channel-type.crn"/>
+                                            </with-attribute>
+                                        </subtasks>
+                                    </sql-query>
+                                </when>
+                                                    
+                                <!-- group -->
+                                <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('group'))}">
+                                    <with-attribute key="GROUP_NAME" value="${$3}">
+                                        <crn location="export-group.crn"/>
+                                    </with-attribute>
+                                </when>
+            
+                                <!-- all-groups -->
+                                <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-groups'))}">
+                                    <sql-query>
+                                        <sql>SELECT DISTINCT group_name FROM up_group</sql>
+                                        <subtasks>
+                                            <crn location="export-group.crn"/>
+                                        </subtasks>
+                                    </sql-query>
+                                </when>
+                                                    
+                                <!-- user -->
+                                <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('user'))}">
+                                    <with-attribute key="USER_NAME" value="${$3}">
+                                        <crn location="export-user.crn"/>
+                                    </with-attribute>
+                                </when>
+            
+                                <!-- all-users -->
+                                <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-users'))}">
+                                    <sql-query>
+                                        <sql>SELECT user_name FROM up_user</sql>
+                                        <subtasks>
+                                            <crn location="export-user.crn"/>
+                                        </subtasks>
+                                    </sql-query>
+                                </when>
+            
+                                <!-- theme -->
+                                <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('theme'))}">
+                                    <with-attribute key="NAME" value="${$3}">
+                                        <crn location="export-theme.crn"/>
+                                    </with-attribute>
+                                </when>
+                                
+                                <!-- all-themes -->
+                                <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-themes'))}">
+                                    <sql-query>
+                                        <sql>SELECT ss_name FROM up_ss_theme</sql>
+                                        <subtasks>
+                                            <with-attribute key="NAME" value="${SS_NAME}">
+                                                <crn location="export-theme.crn"/>
+                                            </with-attribute>
+                                        </subtasks>
+                                    </sql-query>
+                                </when>
+            
+                                <!-- structure -->
+                                <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('structure'))}">
+                                    <with-attribute key="NAME" value="${$3}">
+                                        <crn location="export-structure.crn"/>
+                                    </with-attribute>
+                                </when>
+                                
+                                <!-- all-structures -->
+                                <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-structures'))}">
+                                    <sql-query>
+                                        <sql>SELECT ss_name FROM up_ss_struct</sql>
+                                        <subtasks>
+                                            <with-attribute key="NAME" value="${SS_NAME}">
+                                                <crn location="export-structure.crn"/>
+                                            </with-attribute>
+                                        </subtasks>
+                                    </sql-query>
+                                </when>
+            
+                                <!-- entity-type -->
+                                <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('entity-type'))}">
+                                    <with-attribute key="NAME" value="${$3}">
+                                        <crn location="export-entity-type.crn"/>
+                                    </with-attribute>
+                                </when>
+                                
+                                <!-- all-entity-types -->
+                                <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-entity-types'))}">
+                                    <sql-query>
+                                        <sql>SELECT entity_type_name FROM up_entity_type</sql>
+                                        <subtasks>
+                                            <with-attribute key="NAME" value="${ENTITY_TYPE_NAME}">
+                                                <crn location="export-entity-type.crn"/>
+                                            </with-attribute>
+                                        </subtasks>
+                                    </sql-query>
+                                </when>
+            
+                            </choose>
+            
                         </with-attribute>
-                        <with-attribute key="$2" value="all-permissions">
-                            <crn location="export.crn"/>
                         </with-attribute>
-                        <with-attribute key="$2" value="all-memberships">
-                            <crn location="export.crn"/>
-                        </with-attribute>
-                        <with-attribute key="$2" value="all-channels">
-                            <crn location="export.crn"/>
-                        </with-attribute>
-                        <with-attribute key="$2" value="all-channel-types">
-                            <crn location="export.crn"/>
-                        </with-attribute>
-                        <with-attribute key="$2" value="all-groups">
-                            <crn location="export.crn"/>
-                        </with-attribute>
-                        <with-attribute key="$2" value="all-users">
-                            <crn location="export.crn"/>
-                        </with-attribute>
-                        <with-attribute key="$2" value="all-themes">
-                            <crn location="export.crn"/>
-                        </with-attribute>
-                        <with-attribute key="$2" value="all-structures">
-                            <crn location="export.crn"/>
-                        </with-attribute>
-                        <with-attribute key="$2" value="all-entity-types">
-                            <crn location="export.crn"/>
-                        </with-attribute>
-                    </when>
-
-                    <!-- layout -->
-                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('layout'))}">
-                        <with-attribute key="USER_NAME" value="${$3}">
-                            <crn location="export-layout.crn"/>
-                        </with-attribute>
-                    </when>
-
-                    <!-- all-layouts -->
-                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-layouts'))}">
-                        <sql-query>
-                            <sql>SELECT DISTINCT upu.user_name FROM up_user upu, up_layout_struct upls WHERE upu.user_id = upls.user_id AND upls.layout_id = 1</sql>
-                            <subtasks>
-                                <crn location="export-layout.crn"/>
-                            </subtasks>
-                        </sql-query>
-                    </when>
-
-                    <!-- all-permissions -->
-                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-permissions'))}">
-                        <crn location="export-permissions.crn"/>
-                    </when>
-
-                    <!-- all-memberships -->
-                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-memberships'))}">
-                        <crn location="export-memberships.crn"/>
-                    </when>
-
-                    <!-- channel -->
-                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('channel'))}">
-                        <with-attribute key="FNAME" value="${$3}">
-                            <crn location="export-channel.crn"/>
-                        </with-attribute>
-                    </when>
-
-                    <!-- all-channels -->
-                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-channels'))}">
-                        <sql-query>
-                            <sql>SELECT chan_fname FROM up_channel</sql>
-                            <subtasks>
-                                <with-attribute key="FNAME" value="${CHAN_FNAME}">
-                                    <crn location="export-channel.crn"/>
-                                </with-attribute>
-                            </subtasks>
-                        </sql-query>
-                    </when>
-
-                    <!-- channel-type -->
-                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('channel-type'))}">
-                        <with-attribute key="NAME" value="${$3}">
-                            <crn location="export-channel-type.crn"/>
-                        </with-attribute>
-                    </when>
-                    
-                    <!-- all-channel-types -->
-                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-channel-types'))}">
-                        <sql-query>
-                            <sql>SELECT type_name FROM up_chan_type</sql>
-                            <subtasks>
-                                <with-attribute key="NAME" value="${TYPE_NAME}">
-                                    <crn location="export-channel-type.crn"/>
-                                </with-attribute>
-                            </subtasks>
-                        </sql-query>
-                    </when>
-                                        
-                    <!-- group -->
-                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('group'))}">
-                        <with-attribute key="GROUP_NAME" value="${$3}">
-                            <crn location="export-group.crn"/>
-                        </with-attribute>
-                    </when>
-
-                    <!-- all-groups -->
-                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-groups'))}">
-                        <sql-query>
-                            <sql>SELECT DISTINCT group_name FROM up_group</sql>
-                            <subtasks>
-                                <crn location="export-group.crn"/>
-                            </subtasks>
-                        </sql-query>
-                    </when>
-                                        
-                    <!-- user -->
-                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('user'))}">
-                        <with-attribute key="USER_NAME" value="${$3}">
-                            <crn location="export-user.crn"/>
-                        </with-attribute>
-                    </when>
-
-                    <!-- all-users -->
-                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-users'))}">
-                        <sql-query>
-                            <sql>SELECT user_name FROM up_user</sql>
-                            <subtasks>
-                                <crn location="export-user.crn"/>
-                            </subtasks>
-                        </sql-query>
-                    </when>
-
-                    <!-- theme -->
-                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('theme'))}">
-                        <with-attribute key="NAME" value="${$3}">
-                            <crn location="export-theme.crn"/>
-                        </with-attribute>
-                    </when>
-                    
-                    <!-- all-themes -->
-                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-themes'))}">
-                        <sql-query>
-                            <sql>SELECT ss_name FROM up_ss_theme</sql>
-                            <subtasks>
-                                <with-attribute key="NAME" value="${SS_NAME}">
-                                    <crn location="export-theme.crn"/>
-                                </with-attribute>
-                            </subtasks>
-                        </sql-query>
-                    </when>
-
-                    <!-- structure -->
-                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('structure'))}">
-                        <with-attribute key="NAME" value="${$3}">
-                            <crn location="export-structure.crn"/>
-                        </with-attribute>
-                    </when>
-                    
-                    <!-- all-structures -->
-                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-structures'))}">
-                        <sql-query>
-                            <sql>SELECT ss_name FROM up_ss_struct</sql>
-                            <subtasks>
-                                <with-attribute key="NAME" value="${SS_NAME}">
-                                    <crn location="export-structure.crn"/>
-                                </with-attribute>
-                            </subtasks>
-                        </sql-query>
-                    </when>
-
-                    <!-- entity-type -->
-                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('entity-type'))}">
-                        <with-attribute key="NAME" value="${$3}">
-                            <crn location="export-entity-type.crn"/>
-                        </with-attribute>
-                    </when>
-                    
-                    <!-- all-entity-types -->
-                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-entity-types'))}">
-                        <sql-query>
-                            <sql>SELECT entity_type_name FROM up_entity_type</sql>
-                            <subtasks>
-                                <with-attribute key="NAME" value="${ENTITY_TYPE_NAME}">
-                                    <crn location="export-entity-type.crn"/>
-                                </with-attribute>
-                            </subtasks>
-                        </sql-query>
-                    </when>
-
-                </choose>
-
-            </with-attribute>
-        </with-attribute>
-    </sql-connection>
-</properties>
+                    </subtasks>
+                </invoke-method>
+            </subtasks>
+        </invoke-method>
+    </subtasks>
+</invoke-method>
