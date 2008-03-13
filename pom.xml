@@ -40,11 +40,6 @@
             <url>http://developer.ja-sig.org/maven2</url>
         </repository>
         <repository>
-            <name>pluto-staging</name>
-            <id>pluto-staging</id>
-            <url>http://people.apache.org/builds/portals-pluto/m2-staging-repository/</url>
-        </repository>
-        <repository>
             <id>Codehaus Snapshots</id>
             <url>http://snapshots.repository.codehaus.org/</url>
             <snapshots>
@@ -156,7 +151,6 @@
         <jxr-maven-plugin.version>2.0-beta-1</jxr-maven-plugin.version>
         <maven-compiler-plugin.version>2.0.2</maven-compiler-plugin.version>
         <maven-ear-plugin.version>2.3.1</maven-ear-plugin.version>
-        <maven-jar-plugin.version>2.1</maven-jar-plugin.version>
         <maven-javadoc-plugin.version>2.2</maven-javadoc-plugin.version>
         <maven-pmd-plugin.version>2.2</maven-pmd-plugin.version>
         <maven-project-info-reports-plugin.version>2.0.1</maven-project-info-reports-plugin.version>
@@ -205,19 +199,6 @@
                     <configuration>
                         <source>1.5</source>
                         <target>1.5</target>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-jar-plugin</artifactId>
-                    <version>${maven-jar-plugin.version}</version>
-                    <configuration>
-                        <archive>
-                            <manifest>
-                                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-                                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                            </manifest>
-                        </archive>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -337,6 +318,35 @@
                     </plugin>
                 </plugins>
             </reporting>
+        </profile>
+        <profile>
+            <id>apache-staging</id>
+            <repositories>
+                <repository>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                    <id>pluto-staging</id>
+                    <name>Apache Pluto Staging Repository</name>
+                    <url>http://people.apache.org/builds/portals-pluto/m2-staging-repository</url>
+                </repository>
+            </repositories>
+            <pluginRepositories>
+                <pluginRepository>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                    <id>pluto-staging</id>
+                    <name>Apache Pluto Staging Repository</name>
+                    <url>http://people.apache.org/builds/portals-pluto/m2-staging-repository</url>
+                </pluginRepository>
+            </pluginRepositories>
         </profile>
     </profiles>
 </project>
