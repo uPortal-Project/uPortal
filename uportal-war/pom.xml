@@ -44,9 +44,6 @@
 
     <build>
         <finalName>${uportal.docbase}</finalName>
-        <filters>
-            <filter>${basedir}/../build.properties</filter>
-        </filters>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

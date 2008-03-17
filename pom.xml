@@ -87,7 +87,7 @@
 
     <properties>
         <!-- The final name of the uPortal web-application -->
-        <uportal.docbase>portal</uportal.docbase>
+        <uportal.docbase>uPortal</uportal.docbase>
         
         <!-- The JDBC Driver used by uPortal -->
         <jdbc.groupId>hsqldb</jdbc.groupId>
