@@ -86,6 +86,15 @@
 
 
     <properties>
+        <!-- The final name of the uPortal web-application -->
+        <uportal.docbase>portal</uportal.docbase>
+        
+        <!-- The JDBC Driver used by uPortal -->
+        <jdbc.groupId>hsqldb</jdbc.groupId>
+        <jdbc.artifactId>hsqldb</jdbc.artifactId>
+        <jdbc.version>${hsqldb.version}</jdbc.version>
+    
+    
         <!-- POM Configuration Properties -->
         <issues.projectKey>UP</issues.projectKey>
         <scm.path>/up2/trunk</scm.path>

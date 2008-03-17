@@ -43,7 +43,7 @@
     </dependencies>
 
     <build>
-        <finalName>uPortal</finalName>
+        <finalName>${uportal.docbase}</finalName>
         <filters>
             <filter>${basedir}/../build.properties</filter>
         </filters>

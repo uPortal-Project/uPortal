@@ -133,7 +133,7 @@
     </dependencies>
 
     <build>
-        <finalName>uPortal</finalName>
+        <finalName>${uportal.docbase}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -144,8 +144,8 @@
                         <webModule>
                             <groupId>org.jasig.portal</groupId>
                             <artifactId>uportal-war</artifactId>
-                            <bundleFileName>uPortal.war</bundleFileName>
-                            <contextRoot>/uPortal</contextRoot>
+                            <bundleFileName>${uportal.docbase}.war</bundleFileName>
+                            <contextRoot>/${uportal.docbase}</contextRoot>
                         </webModule>
                         <webModule>
                             <groupId>org.jasig.portal.portlets-overlay</groupId>

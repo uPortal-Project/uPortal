@@ -18,13 +18,12 @@
 
     <dependencies>
         <!-- ***** Portal JDBC Driver *****
-         | Add your JDBC Driver dependency here. If you are not using hsqldb you must change the scope
-         | to test instead of just removing it as the driver is required for unit tests. 
+         | The groupId, artifactId and version are configured in the root POM.
          +-->
         <dependency>
-            <groupId>hsqldb</groupId>
-            <artifactId>hsqldb</artifactId>
-            <version>${hsqldb.version}</version>
+            <groupId>${jdbc.groupId}</groupId>
+            <artifactId>${jdbc.artifactId}</artifactId>
+            <version>${jdbc.version}</version>
             <scope>compile</scope>
         </dependency>
 
@@ -496,6 +495,13 @@
 
 
         <!-- ===== Provided Dependencies ================================== -->
+        
+        <dependency>
+            <groupId>hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>${hsqldb.version}</version>
+            <scope>test</scope>
+        </dependency>
 
         <dependency>
             <groupId>javax.servlet</groupId>
