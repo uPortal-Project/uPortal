@@ -5,6 +5,8 @@
  */
 package org.jasig.portal.utils.threading;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
@@ -15,6 +17,7 @@ import org.apache.commons.lang.builder.ToStringStyle;
  * @version $Revision$
  */
 public abstract class SingletonDoubleCheckedCreator<T> extends DoubleCheckedCreator<T> {
+    private final AtomicBoolean created = new AtomicBoolean(false);
     private T instance;
     
     /**
@@ -30,6 +33,7 @@ public abstract class SingletonDoubleCheckedCreator<T> extends DoubleCheckedCrea
     @Override
     protected final T create(Object... args) {
         final T instance = this.createSingleton(args);
+        this.created.set(true);
         this.instance = instance;
         return instance;
     }
@@ -42,6 +46,13 @@ public abstract class SingletonDoubleCheckedCreator<T> extends DoubleCheckedCrea
         return this.instance;
     }
     
+    /**
+     * @return true if the singleton has been created as of this call
+     */
+    public final boolean isCreated() {
+        return this.created.get();
+    }
+
     /**
      * @see java.lang.Object#toString()
      */
