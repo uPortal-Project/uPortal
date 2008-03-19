@@ -26,10 +26,16 @@ server.webapps=${server.base}/webapps
 
 
 ######## Deployment Configuration ##########
-# The following apply to deployPortletApp, deploy-war, and deploy-ear
+# The following apply to deployPortletApp, deploy-war, and deploy-ear targets
 
 # Should the deployment tools extract the WARs when copying them into the servlet container 
 extractWars=true
 
 # Should the existing webapp be removed before deploying the new webapp
 removeExisting=false
+
+# The following applies to the clean and deploy-ear targets.
+# Should the shared library location have all existing files removed when clean is run.
+# NOTE: Tomcat 5.5 and 6.0 do not include any libraries in shared/lib by default so as long as
+#       all required libraries are declared in the uportal-ear it is ok to set this to true.
+cleanShared=false

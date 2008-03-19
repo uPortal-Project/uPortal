@@ -23,6 +23,8 @@
             </not>
         </condition>
     </fail>
+    
+    <tempfile property="parentPomInstallMarker.file" destdir="${java.io.tmpdir}" prefix="uportal-parent.pom-" suffix="-marker" />
 
     <!--
      | Load the build properties before the next fail tests since they check properties provided
@@ -285,7 +287,24 @@
         </uportal-impl-macro>
     </target>
     
-    <target name="clean" description="Removes the deployed uPortal from the container and runs 'mvn clean'">
+    <!--
+     | Helper target to remove files in shared/lib if the cleanShared flag is set. This is likely only going to be useful
+     | for Tomcat. Both clean and deploy-ear use this target.
+     +-->
+    <target name="clean-shared">
+        <if>
+            <equals arg1="${cleanShared}" arg2="true" />
+            <then>
+                <delete>
+                    <fileset dir="${server.base}/shared/lib">
+                        <include name="*"/>
+                    </fileset>
+                </delete>
+            </then>
+        </if>
+    </target>
+    
+    <target name="clean" description="Removes the deployed uPortal from the container and runs 'mvn clean'" depends="clean-shared">
         <uportal-parent-macro>
             <!-- Clean out uPortal from Tomcat -->
             <artifact:pom file="${uportal-war.dir}/pom.xml" id="uportal-war.pom" />
@@ -301,7 +320,7 @@
         </antcall>
     </target>
 
-    <target name="deploy-ear" description="Deploy uPortal and dependent libraries and portlets to the servlet container">
+    <target name="deploy-ear" description="Deploy uPortal and dependent libraries and portlets to the servlet container" depends="clean-shared">
         <uportal-ant-tasks-macro>
             <typedef resource="org/jasig/portal/ant/antlib.xml" uri="urn:up-util-ant">
                 <classpath refid="uportal-ant-tasks-full.classpath" />
@@ -310,6 +329,7 @@
             <uportal-ear-macro>
                 <echo message="   extractWars=${extractWars}" />
                 <echo message="removeExisting=${removeExisting}" />
+                <echo message="   cleanShared=${cleanShared}" />
 
                 <up:tomcatEarDeploy ear="${uportal-ear.artifact}" catalinaBase="${server.base}" extractWars="${extractWars}" removeExistingDirectories="${removeExisting}" />
             </uportal-ear-macro>
@@ -606,7 +626,15 @@
              | is required so an initial install which is missing jasig-parent doesn't cause problems
              | later due to the failed load of jasig-parent being cached.  
              +-->
-            <ant antfile="${basedir}/build.xml" target="install-parent-pom" />
+            <if>
+                <not>
+                    <available file="${parentPomInstallMarker.file}" />
+                </not>
+                <then>
+                    <ant antfile="${basedir}/build.xml" target="install-parent-pom" />
+                    <touch file="${parentPomInstallMarker.file}" />
+                </then>
+            </if>
 
             <sub-tasks />
         </sequential>
@@ -690,6 +718,11 @@
                 <then>
                     <echo message="Artifact '${@{project-name}.artifact}' is not available or out-of-date, calling 'mvn install'" />
 
+                    <!--
+                     | Force the target artifact to be re-built by deleting it.
+                     +-->
+                    <delete file="${@{project-name}.artifact}" />
+
                     <antcall target="mvn">
                         <param name="pomDir" value="@{project-path}" />
                         <param name="goal" value="install" />
@@ -724,7 +757,9 @@
 
         <sequential>
             <uportal-parent-macro>
-                <maven-artifact-macro project-name="uportal-impl" project-path="${uportal-impl.dir}">
+                <fileset id="uportal-parent.pom.fsid" file="${basedir}/pom.xml" />
+                
+                <maven-artifact-macro project-name="uportal-impl" project-path="${uportal-impl.dir}" checkfilesid="uportal-parent.pom.fsid">
                     <!--
                      | Include the uportal-impl JAR in the final classpath
                      +-->
@@ -784,6 +819,11 @@
                 <artifact:pom file="${uportal-portlets-overlay.dir}/pom.xml" id="uportal-portlets-overlay.pom" />
                 <artifact:install file="${uportal-portlets-overlay.dir}/pom.xml" pomrefid="uportal-portlets-overlay.pom" />
                 
+                <fileset id="uportal-portlets-overlay.pom.fsid" dir="${basedir}">
+                    <filename name="${basedir}/pom.xml"/>
+                    <filename name="${uportal-portlets-overlay.dir}/pom.xml"/>
+                </fileset>
+                
                 <!--
                  | Iterate over the child projects and run the artifact macro on each of them
                  +-->
@@ -798,11 +838,15 @@
                             <available file="@{portlet-overlay-dir}/pom.xml" />
                             <then>
                                 <basename file="@{portlet-overlay-dir}" property="@{portlet-overlay-dir}-name" />
-                                <maven-artifact-macro project-name="${@{portlet-overlay-dir}-name}" project-path="@{portlet-overlay-dir}" />
+                                <maven-artifact-macro project-name="${@{portlet-overlay-dir}-name}" project-path="@{portlet-overlay-dir}" checkfilesid="uportal-portlets-overlay.pom.fsid" />
                             </then>
                         </if>
                     </sequential>
                 </for>
+                
+                <fileset id="portletWars.fsid" dir="${uportal-portlets-overlay.dir}">
+                    <include name="*/target/*.war"/>
+                </fileset>
                 
                 <!--
                  | Execute the overlay-sub-tasks
@@ -827,9 +871,9 @@
 
         <sequential>
             <uportal-war-macro>
-                <fileset id="uportal-war-artifacts" file="${uportal-war.artifact}" />
-                
                 <uportal-portlets-overlay-macro>
+                    <fileset id="uportal-war-artifacts" file="${uportal-war.artifact}" />
+                    
                     <maven-artifact-macro project-name="uportal-ear" project-path="${uportal-ear.dir}" checkfilesid="uportal-war-artifacts">
                         <!--
                          | Execute the ear-sub-tasks
@@ -857,7 +901,9 @@
 
         <sequential>
             <uportal-parent-macro>
-                <maven-artifact-macro project-name="uportal-ear-deployer" project-path="${uportal-ear-deployer.dir}">
+                <fileset id="uportal-parent.pom.fsid" file="${basedir}/pom.xml" />
+                
+                <maven-artifact-macro project-name="uportal-ear-deployer" project-path="${uportal-ear-deployer.dir}" checkfilesid="uportal-parent.pom.fsid">
                     <!--
                      | Include the uportal-ear-deployer JAR in the final classpath
                      +-->
