@@ -311,7 +311,10 @@ public class JndiManagerImpl extends JndiAccessor implements IJndiManager, Appli
             userId = (String) topSessionsContext.lookup(sessionId);
         }
         catch (NamingException ne) {
-            this.logger.warn("Session '" + sessionId + "' is not registered under /sessions context, returning immediatly.", ne);
+            if (this.logger.isDebugEnabled()) {
+                this.logger.debug("Session '" + sessionId + "' is not registered under /sessions context, returning immediatly.", ne);
+            }
+
             return;
         }
         
