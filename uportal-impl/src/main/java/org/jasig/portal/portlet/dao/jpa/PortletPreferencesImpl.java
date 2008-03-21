@@ -61,11 +61,18 @@ class PortletPreferencesImpl implements IPortletPreferences {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.om.portlet.prefs.IPortletPreferences#setPortletPreferences(java.util.List)
+     * @see org.jasig.portal.portlet.om.IPortletPreferences#replacePortletPreferences(java.util.List)
      */
     public void setPortletPreferences(List<IPortletPreference> portletPreferences) {
         Validate.notNull(portletPreferences);
-        this.portletPreferences = portletPreferences;
+        
+        if (this.portletPreferences == null) {
+            this.portletPreferences = portletPreferences;
+        }
+        else {
+            this.portletPreferences.clear();
+            this.portletPreferences.addAll(portletPreferences);
+        }
     }
 
     /**

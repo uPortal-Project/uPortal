@@ -44,7 +44,7 @@ public class PortletPreferenceImpl implements IPortletPreference {
     private final long portletPreferenceId;
     
     @Column(name = "NAME", nullable = false)
-    @Type(type = "text")
+    @Type(type = "nullSafeText")
     private String name = null;
     
     @Column(name = "READ_ONLY", nullable = false)
@@ -55,8 +55,8 @@ public class PortletPreferenceImpl implements IPortletPreference {
         name = "UP_PORTLET_PREF_VALUES",
         joinColumns = @JoinColumn(name = "PORTLET_PREF_ID")
     )
-    @IndexColumn(name="VALUE_ORDER")
-    @Type(type = "text")
+    @IndexColumn(name = "VALUE_ORDER")
+    @Type(type = "nullSafeText")
     @Column(name = "VALUE")
     @Cascade( { org.hibernate.annotations.CascadeType.DELETE_ORPHAN, org.hibernate.annotations.CascadeType.ALL })
     private List<String> values = null;
@@ -124,8 +124,12 @@ public class PortletPreferenceImpl implements IPortletPreference {
         if (values == null) {
             this.values = null;
         }
-        else {
+        else if (this.values == null) {
             this.values = new ArrayList<String>(Arrays.asList(values));
+        }
+        else {
+            this.values.clear();
+            this.values.addAll(Arrays.asList(values));
         }
     }
 

@@ -35,6 +35,7 @@
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="dataSource" ref="PortalDb" />
         <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
+        <property name="persistenceUnitName" value="uPortalPersistence" />
     </bean>
 
     <!-- Adapater that can inject a cacheProvider into the hibernate entity manager -->
