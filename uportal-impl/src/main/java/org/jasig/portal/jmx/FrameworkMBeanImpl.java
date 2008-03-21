@@ -126,10 +126,6 @@ public class FrameworkMBeanImpl implements FrameworkMBean {
         return RDBMServices.getActiveConnectionCount();
     }
     
-    public int getRDBMMapConnectionCount() {
-        return RDBMServices.getMapConnectionCount();
-    }
-
     public int getRDBMMaxConnectionCount() {
         return RDBMServices.getMaxConnectionCount();
     }

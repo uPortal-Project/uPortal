@@ -11,22 +11,21 @@ import java.sql.Driver;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Collections;
-import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.sql.DataSource;
 
-import org.apache.commons.collections15.map.ReferenceMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.rdbm.DatabaseMetaDataImpl;
 import org.jasig.portal.rdbm.IDatabaseMetadata;
 import org.jasig.portal.spring.PortalApplicationContextLocator;
 import org.jasig.portal.utils.MovingAverage;
 import org.jasig.portal.utils.MovingAverageSample;
 import org.springframework.context.ApplicationContext;
-import org.springframework.jdbc.datasource.DataSourceUtils;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataAccessResourceFailureException;
 
 
 
@@ -78,8 +77,6 @@ public class RDBMServices {
     private static MovingAverageSample lastDatabase = new MovingAverageSample();
     private static AtomicInteger activeConnections = new AtomicInteger();
     private static int maxConnections = 0;
-    
-    private static final Map<Connection, DataSource> OPEN_CONNECTIONS = Collections.synchronizedMap(new ReferenceMap<Connection, DataSource>(ReferenceMap.SOFT, ReferenceMap.WEAK));
 
 
     /**
@@ -137,10 +134,6 @@ public class RDBMServices {
     public static int getActiveConnectionCount() {
       return activeConnections.intValue();
     }
-    
-    public static int getMapConnectionCount() {
-        return OPEN_CONNECTIONS.size();
-    }
 
     /**
      * @return Return the maximum number of connections
@@ -181,20 +174,20 @@ public class RDBMServices {
     public static Connection getConnection(String dbName) {
 		final DataSource dataSource = getDataSource(dbName);
 
-        final long start = System.currentTimeMillis();
-        final Connection c = DataSourceUtils.getConnection(dataSource);
-        
-        //Track the connection -> datasoure for the close later
-        OPEN_CONNECTIONS.put(c, dataSource);
-        
-        //Update the statistics
-        lastDatabase = databaseTimes.add(System.currentTimeMillis() - start); // metric
-        final int current = activeConnections.incrementAndGet();
-        if (current > maxConnections) {
-            maxConnections = current;
+        try {
+            final long start = System.currentTimeMillis();
+            final Connection c = dataSource.getConnection();
+            lastDatabase = databaseTimes.add(System.currentTimeMillis() - start); // metric
+            final int current = activeConnections.incrementAndGet();
+            if (current > maxConnections) {
+                maxConnections = current;
+            }
+            return c;
         }
-        
-        return c;
+        catch (SQLException e) {
+            throw new DataAccessResourceFailureException(
+                    "RDBMServices sql error trying to get connection to " + dbName, e);
+        }
     }
 
     /**
@@ -207,27 +200,14 @@ public class RDBMServices {
      */
     @Deprecated
     public static void releaseConnection(final Connection con) {
-        //Update statistics
-        activeConnections.decrementAndGet();
-        
-        if (con == null) {
-            return;
+        try {
+            activeConnections.decrementAndGet();
+
+            con.close();
         }
-        
-        final DataSource dataSource = OPEN_CONNECTIONS.remove(con);
-        
-        if (dataSource != null) {
-            DataSourceUtils.releaseConnection(con, dataSource);
-        }
-        else {
-            LOG.warn("No DataSource found in OPEN_CONNECTIONS Map for Connection: " + con + ". Falling back to direct Connection.close() call.");
-            
-            try {
-                con.close();
-            }
-            catch (Exception e) {
-                LOG.warn("Exception while closing Connection: " + con, e);
-            }
+        catch (Exception e) {
+            if (LOG.isWarnEnabled())
+                LOG.warn("Error closing Connection: " + con, e);
         }
     }
 
