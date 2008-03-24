@@ -101,14 +101,15 @@
                     <groupId>cglib</groupId>
                     <artifactId>cglib-full</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>xerces</groupId>
+                    <artifactId>xercesImpl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>xerces</groupId>
+                    <artifactId>xmlParserAPIs</artifactId>
+                </exclusion>
             </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>xerces</groupId>
-            <artifactId>xercesImpl</artifactId>
-            <version>${xercesImpl.version}</version>
-            <scope>compile</scope>
         </dependency>
 
         <dependency>
