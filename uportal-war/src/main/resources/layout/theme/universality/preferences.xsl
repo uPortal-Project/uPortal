@@ -105,30 +105,30 @@
         <tr>
          <td>
           <input type="radio" name="layoutChoice" value="100" title="One big column"/>
-          <img src="media/skins/icons/layout_content.png" title="One big column"/>
+          <img src="{$SKIN_PATH}/images/layout_100.gif" title="One big column"/>
          </td>
          <td>
           <input type="radio" name="layoutChoice" value="50-50" title="Two equal columns"/>
-          <img src="media/skins/icons/layout_content.png" title="Two equal columns"/>
+          <img src="{$SKIN_PATH}/images/layout_50-50.gif" title="Two equal columns"/>
          </td>
          <td>
           <input type="radio" name="layoutChoice" value="33-34-33" title="Three equal columns"/>
-          <img src="media/skins/icons/layout_content.png" title="Three equal columns"/>
+          <img src="{$SKIN_PATH}/images/layout_33-34-33.gif" title="Three equal columns"/>
          </td>
          <td>
           <input type="radio" name="layoutChoice" value="25-25-25-25" title="Four equal columns"/>
-          <img src="media/skins/icons/layout_content.png" title="Four equal columns"/>
+          <img src="{$SKIN_PATH}/images/layout_25-25-25-25.gif" title="Four equal columns"/>
          </td>
         </tr>
         <tr>
          <td></td>
          <td>
           <input type="radio" name="layoutChoice" value="40-60" title="One narrow and one wide column"/>
-          <img src="media/skins/icons/layout_content.png" title="One narrow and one wide column"/>
+          <img src="{$SKIN_PATH}/images/layout_40-60.gif" title="One narrow and one wide column"/>
          </td>
          <td>
           <input type="radio" name="layoutChoice" value="25-50-25" title="Narrow, wide, narrow"/>
-          <img src="media/skins/icons/layout_content.png" title="Narrow, wide, narrow"/>
+          <img src="{$SKIN_PATH}/images/layout_25-50-25.gif" title="Narrow, wide, narrow"/>
          </td>
          <td></td>
         </tr>
@@ -136,7 +136,7 @@
          <td></td>
          <td>
           <input type="radio" name="layoutChoice" value="60-40" title="One wide and one narrow column"/>
-          <img src="media/skins/icons/layout_content.png" title="One wide and one narrow column"/>
+          <img src="{$SKIN_PATH}/images/layout_60-40.gif" title="One wide and one narrow column"/>
          </td>
          <td></td>
          <td></td>
