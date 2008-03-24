@@ -15,6 +15,6 @@ import org.hibernate.Hibernate;
  */
 public class EscapedTextType extends BaseEscapedStringType {
     public EscapedTextType() {
-        super(Hibernate.STRING);
+        super(Hibernate.TEXT);
     }
 }
