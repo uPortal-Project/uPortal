@@ -21,16 +21,22 @@
     <!-- ********** JPA Beans ********** -->
     
     <aop:config>
+        <aop:pointcut id="hibernateDaoExecution" 
+            expression="execution(* org.jasig.portal.portlet.dao.jpa.*.*(..))"/>
+                
         <aop:aspect ref="threadContextClassLoaderAspect">
-            <aop:pointcut id="hibernateDaoExecution" 
-                expression="execution(* org.jasig.portal.portlet.dao.jpa.*.*(..))"/>
-
             <aop:around pointcut-ref="hibernateDaoExecution" method="doThreadContextClassLoaderUpdate"/>
+        </aop:aspect>
+        
+        <aop:aspect ref="sqlNextExceptionLoggerAspect">
+            <aop:after-throwing pointcut-ref="hibernateDaoExecution" method="logBatchUpdateExceptions" throwing="t"/>
         </aop:aspect>
     </aop:config>
     
     <!-- Aspect to force the Thread.getContextClassLoader() to the correct loader on cross-context calls form portlets -->
     <bean id="threadContextClassLoaderAspect" class="org.jasig.portal.portlet.dao.jpa.ThreadContextClassLoaderAspect" />
+    
+    <bean id="sqlNextExceptionLoggerAspect" class="org.jasig.portal.portlet.dao.jpa.SQLNextExceptionLoggerAspect" />
 
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="dataSource" ref="PortalDb" />
