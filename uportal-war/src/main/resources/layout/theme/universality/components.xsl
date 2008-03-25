@@ -354,16 +354,8 @@
     </xsl:variable>
     <li id="{$qLinkID}"> <!-- Each subnavigation menu item.  The unique ID can be used in the CSS to give each menu item a unique icon, color, or presentation. -->
       <a href="{$BASE_ACTION_URL}?uP_root={@ID}" title="{@name}">  <!-- Navigation item link. -->
-        <span><xsl:value-of select="@name"/>
-          <!-- ????? WRITES IN CHANNEL CONTENT ??????
-          <xsl:element name="channel-title">
-            <xsl:attribute name="defaultValue">
-              <xsl:value-of select="@name"/>
-            </xsl:attribute>
-            <xsl:attribute name="channelSubscribeId">
-              <xsl:value-of select="@ID" />
-            </xsl:attribute>
-          </xsl:element>-->
+        <span>
+          UP:CHANNEL_TITLE-{<xsl:value-of select="@ID" />}
         </span>
       </a>
     </li>
