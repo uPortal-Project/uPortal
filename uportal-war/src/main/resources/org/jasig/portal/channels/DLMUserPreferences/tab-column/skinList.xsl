@@ -23,20 +23,20 @@
                 <tr class="uportal-channel-table-header">
                   <td nowrap="nowrap"><xsl:value-of select="$OPTION"/></td>
                   <td>
-                    <img src="{$mediaPath}/{$currentSkin}/skin/transparent.gif" width="16" height="8"><xsl:attribute name="alt"><xsl:value-of select="$IMAGE_ALT_INTERFACE_IMAGE"/></xsl:attribute></img>
+                    <img src="{$mediaPath}/{$currentSkin}/images/transparent.gif" width="16" height="8"><xsl:attribute name="alt"><xsl:value-of select="$IMAGE_ALT_INTERFACE_IMAGE"/></xsl:attribute></img>
                   </td>
                   <td nowrap="nowrap"><xsl:value-of select="$THUMBNAIL"/></td>
                   <td>
-                    <img src="{$mediaPath}/{$currentSkin}/skin/transparent.gif" width="16" height="8"><xsl:attribute name="alt"><xsl:value-of select="$IMAGE_ALT_INTERFACE_IMAGE"/></xsl:attribute></img>
+                    <img src="{$mediaPath}/{$currentSkin}/images/transparent.gif" width="16" height="8"><xsl:attribute name="alt"><xsl:value-of select="$IMAGE_ALT_INTERFACE_IMAGE"/></xsl:attribute></img>
                   </td>
-                  <td width="100%"><img src="{$mediaPath}/{$currentSkin}/skin/transparent.gif" width="1" height="1"><xsl:attribute name="alt"><xsl:value-of select="$IMAGE_ALT_INTERFACE_IMAGE"/></xsl:attribute></img></td>
+                  <td width="100%"><img src="{$mediaPath}/{$currentSkin}/images/transparent.gif" width="1" height="1"><xsl:attribute name="alt"><xsl:value-of select="$IMAGE_ALT_INTERFACE_IMAGE"/></xsl:attribute></img></td>
                 </tr>
                 <tr class="uportal-channel-table-header">
                   <td colspan="5">
                     <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                       <tr>
                         <td>
-                          <img src="{$mediaPath}/{$currentSkin}/skin/transparent.gif" width="2" height="2"><xsl:attribute name="alt"><xsl:value-of select="$IMAGE_ALT_INTERFACE_IMAGE"/></xsl:attribute></img>
+                          <img src="{$mediaPath}/{$currentSkin}/images/transparent.gif" width="2" height="2"><xsl:attribute name="alt"><xsl:value-of select="$IMAGE_ALT_INTERFACE_IMAGE"/></xsl:attribute></img>
                         </td>
                       </tr>
                     </table>
@@ -65,18 +65,18 @@
       <td align="center">
         <xsl:choose>
           <xsl:when test="$currentSkin=skin">
-            <input type="radio" name="skinName" value="{skin}" checked="checked"/>
+            <input type="radio" name="skinName" value="{skin-key}" checked="checked"/>
           </xsl:when>
           <xsl:otherwise>
-            <input type="radio" name="skinName" value="{skin}"/>
+            <input type="radio" name="skinName" value="{skin-key}"/>
           </xsl:otherwise>
         </xsl:choose>
       </td>
-      <td><img src="{$mediaPath}/{$currentSkin}/skin/transparent.gif" width="1" height="1"><xsl:attribute name="alt"><xsl:value-of select="$IMAGE_ALT_INTERFACE_IMAGE"/></xsl:attribute></img></td>
+      <td><img src="{$mediaPath}/{$currentSkin}/images/transparent.gif" width="1" height="1"><xsl:attribute name="alt"><xsl:value-of select="$IMAGE_ALT_INTERFACE_IMAGE"/></xsl:attribute></img></td>
       <td>
-        <img height="90" width="120" border="0"><xsl:attribute name="src"><xsl:value-of select="$skinsPath"/>/<xsl:value-of select="skin"/>/skin/<xsl:value-of select="skin"/><xsl:value-of select="$IMAGE_SRC_THUMB_GIF"/></xsl:attribute><xsl:attribute name="alt"><xsl:value-of select="skin-name"/><xsl:text> </xsl:text><xsl:value-of select="$SKINNAME_THUMBNAIL"/></xsl:attribute></img>
+        <img height="90" width="120" border="0"><xsl:attribute name="src"><xsl:value-of select="$skinsPath"/>/<xsl:value-of select="skin-key"/>/<xsl:value-of select="skin-key"/><xsl:value-of select="$IMAGE_SRC_THUMB_GIF"/></xsl:attribute><xsl:attribute name="alt"><xsl:value-of select="skin-name"/><xsl:text> </xsl:text><xsl:value-of select="$SKINNAME_THUMBNAIL"/></xsl:attribute></img>
       </td>
-      <td><img src="{$mediaPath}/{$currentSkin}/skin/transparent.gif" width="1" height="1"><xsl:attribute name="alt"><xsl:value-of select="$IMAGE_ALT_INTERFACE_IMAGE"/></xsl:attribute></img></td>
+      <td><img src="{$mediaPath}/{$currentSkin}/images/transparent.gif" width="1" height="1"><xsl:attribute name="alt"><xsl:value-of select="$IMAGE_ALT_INTERFACE_IMAGE"/></xsl:attribute></img></td>
       <td class="uportal-channel-table-header">
         <table width="100%" border="0" cellspacing="0" cellpadding="2">
           <tr valign="top">
@@ -88,7 +88,7 @@
             </td>
           </tr>
           <tr valign="top">
-            <td nowrap="nowrap" class="uportal-channel-table-header"><xsl:value-of select="$DESCRIPTION"/><img src="{$mediaPath}/{$currentSkin}/skin/transparent.gif" width="4" height="4"><xsl:attribute name="alt"><xsl:value-of select="$IMAGE_ALT_INTERFACE_IMAGE"/></xsl:attribute></img></td>
+            <td nowrap="nowrap" class="uportal-channel-table-header"><xsl:value-of select="$DESCRIPTION"/><img src="{$mediaPath}/{$currentSkin}/images/transparent.gif" width="4" height="4"><xsl:attribute name="alt"><xsl:value-of select="$IMAGE_ALT_INTERFACE_IMAGE"/></xsl:attribute></img></td>
             <td class="uportal-channel-text">
               <xsl:value-of select="skin-description"/>
             </td>
@@ -101,7 +101,7 @@
         <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
           <tr>
             <td>
-              <img src="{$mediaPath}/{$currentSkin}/transparent.gif" width="1" height="1"><xsl:attribute name="alt"><xsl:value-of select="$IMAGE_ALT_INTERFACE_IMAGE"/></xsl:attribute></img>
+              <img src="{$mediaPath}/{$currentSkin}/images/transparent.gif" width="1" height="1"><xsl:attribute name="alt"><xsl:value-of select="$IMAGE_ALT_INTERFACE_IMAGE"/></xsl:attribute></img>
             </td>
           </tr>
         </table>
