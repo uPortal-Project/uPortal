@@ -1335,7 +1335,7 @@
         </column>  
         <column>
           <name>PARAM_DEFAULT_VAL</name>
-          <value>spring</value>
+          <value>uportal3</value>
         </column>  
         <column>
           <name>PARAM_DESCRIPT</name>
