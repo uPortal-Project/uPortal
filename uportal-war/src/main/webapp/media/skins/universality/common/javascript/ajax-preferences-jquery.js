@@ -23,7 +23,7 @@ function initportal() {
 	$('a[@id*=removePortlet_]').each(function(i){$(this).click(function(){deletePortlet(this.id.split("_")[1]);return false;});});	
 
 	$("#addTabLink").click(function(){addTab()});
-	$("#deletePageLink").click(function(){deleteTab(this.id.split("_")[1])});
+	$("#deletePageLink").click(deleteTab);
 	$("#editPageLink").click(initializeLayoutMenu);
 	$("#movePageLeftLink").click(function(){ moveTab('left')});
 	$("#movePageRightLink").click(function(){moveTab('right')});
@@ -152,9 +152,11 @@ function addTab() {
 			($("#portalNavigationList > li").length + 1);
 	});
 }
-function deleteTab(tabId) {
+function deleteTab() {
 	if (!confirm("Are you sure you want to remove this tab and all its content?")) return false;
-	$.post(preferencesUrl, {action: 'removeElement', elementID: id}, function(xml) { window.location = portalUrl + "?uP_root=root&uP_sparam=activeTab&activeTab=1"; });
+	$.post(preferencesUrl, {action: 'removeElement', elementID: tabId}, function(xml) { 
+		window.location = portalUrl + "?uP_root=root&uP_sparam=activeTab&activeTab=1"; 
+	});
 }
 function moveTab(direction) {
 	var tab = $("#portalNavigation_" + tabId);
