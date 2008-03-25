@@ -70,16 +70,16 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
   public LDAPGroupStore() {
     Document config = null;
     try{
-      config = ResourceLoader.getResourceAsDocument(this.getClass(),"/properties/groups/LDAPGroupStoreConfig.xml");
+      config = ResourceLoader.getResourceAsDocument(this.getClass(),"/properties/groups/LDAPGroupStoreConfig.xml", true);
     }
     catch(IOException e){
         throw new RuntimeException("LDAPGroupStore: Unable to find configuration configuration document",e);
     } catch (ResourceMissingException e) {
         throw new RuntimeException("LDAPGroupStore: Unable to find configuration configuration document",e);
     } catch (ParserConfigurationException e) {
-        throw new RuntimeException("LDAPGroupStore: Unable to find configuration configuration document",e);
+        throw new RuntimeException("LDAPGroupStore: Unable to parse configuration configuration document",e);
     } catch (SAXException e) {
-        throw new RuntimeException("LDAPGroupStore: Unable to find configuration configuration document",e);
+        throw new RuntimeException("LDAPGroupStore: Unable to parse configuration configuration document",e);
     }
     init(config);
   }

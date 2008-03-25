@@ -272,22 +272,8 @@ public class ResourceLoader {
   public static Document getResourceAsDocument (Class requestingClass, String resource)
       throws ResourceMissingException, IOException, ParserConfigurationException, SAXException {
 
-	  try {
-		  // first try with validation turned on
-		  return getResourceAsDocument(requestingClass, resource, true);
-	  } catch (Exception e) {
-
-		  if (log.isDebugEnabled()) {
-			  log.debug("Problem getting resource [" + resource + "] as requested by class [" + requestingClass.getName() + "]", e);
-
-		  } else {
-			  log.warn("Problem getting resource [" + resource + "] as requested by class [" + requestingClass.getName() + "]");
-
-		  }
-
-		  // try again with validation turned off
-		  return getResourceAsDocument(requestingClass, resource, false);
-	  }
+	  // Default is non-validating...
+	  return getResourceAsDocument(requestingClass, resource, false);
 
   }
 

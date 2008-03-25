@@ -652,7 +652,7 @@ public class ChannelRegistryManager {
 
       if (cpdUri != null) {
         try {
-          cpd = ResourceLoader.getResourceAsDocument(ChannelRegistryManager.class, cpdUri);
+          cpd = ResourceLoader.getResourceAsDocument(ChannelRegistryManager.class, cpdUri, true);
         } catch (java.io.IOException ioe) {
           throw new ResourceMissingException(cpdUri, "Channel publishing document", ioe);
         } catch (org.xml.sax.SAXException se) {
