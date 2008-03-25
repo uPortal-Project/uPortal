@@ -95,7 +95,7 @@
    | YELLOW
    | Skin Settings can be used to change the location of skin files.
   -->
-  <xsl:param name="SKIN" select="'uportal3'"/>
+  <xsl:param name="SKIN">uportal3</xsl:param>
   <xsl:variable name="MEDIA_PATH">media/skins/universality</xsl:variable>
   <xsl:variable name="SKIN_PATH" select="concat($MEDIA_PATH,'/',$SKIN)"/>
   <xsl:variable name="SCRIPT_PATH">media/skins/universality/common/javascript</xsl:variable>
