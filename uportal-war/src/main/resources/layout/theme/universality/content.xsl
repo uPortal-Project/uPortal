@@ -124,7 +124,7 @@
         </a>
       </xsl:if>
       <xsl:if test="//focused[@in-user-layout='no']"> <!-- Add to layout. -->
-      	<a href="{$BASE_ACTION_URL}" title="{$TOKEN[@name='PORTLET_ADD_LONG_LABEL']}" class="portlet-control add">
+        <a id="focusedContentDialogLink" href="javascript:;" title="{$TOKEN[@name='PORTLET_ADD_LONG_LABEL']}" class="portlet-control add">
         	<span><xsl:copy-of select="$TOKEN[@name='PORTLET_ADD_LABEL']"/></span>
         </a>
       </xsl:if>
