@@ -284,9 +284,11 @@ function initializeSkinMenu() {
 					.addClass("portlet-form-field-label");
 				skinMenu.append(span);
 				var div = $(document.createElement("div"))
-					.text($(this).children("skin-description").text())
 					.addClass("portlet-font-dim").css("padding-left", "20px")
 					.css("padding-bottom", "10px");
+				div.append($(document.createElement("span")).text($(this).children("skin-description").text()));
+				div.append($(document.createElement("br")));
+				div.append($(document.createElement("img")).attr("src", mediaPath + "/" + key + "/" + key + "_icon.gif"));
 				skinMenu.append(div);
 			});
         	

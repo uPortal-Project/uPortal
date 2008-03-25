@@ -1186,11 +1186,11 @@
         </column>  
         <column>
           <name>SAMPLE_ICON_URI</name>
-          <value>media/org/jasig/portal/layout/tab-column/xhtml-theme/sample_icon.gif</value>
+          <value>media/skins/universality/universality_icon.gif</value>
         </column>  
         <column>
           <name>SAMPLE_URI</name>
-          <value>media/org/jasig/portal/layout/tab-column/xhtml-theme/sample_full.gif</value>
+          <value>media/skins/universality/universality_full.gif</value>
         </column>  
         <column>
           <name>MIME_TYPE</name>

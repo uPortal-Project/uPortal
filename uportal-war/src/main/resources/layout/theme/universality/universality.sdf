@@ -7,8 +7,8 @@
   <mimeType>text/html</mimeType>
   <serializer>XHTML</serializer>
   <deviceType>workstation</deviceType>
-  <samplePictureURI>media/org/jasig/portal/layout/tab-column/xhtml-theme/sample_full.gif</samplePictureURI>
-  <sampleIconURI>media/org/jasig/portal/layout/tab-column/xhtml-theme/sample_icon.gif</sampleIconURI>
+  <samplePictureURI>media/skins/universality/universality_full.gif</samplePictureURI>
+  <sampleIconURI>media/skins/universality/universality_icon.gif</sampleIconURI>
   <userPreferencesModuleClass>org.jasig.portal.channels.DLMUserPreferences.TabColumnPrefsState</userPreferencesModuleClass> 
  
   <parameters>
