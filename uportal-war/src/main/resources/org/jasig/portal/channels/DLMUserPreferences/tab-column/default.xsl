@@ -995,8 +995,8 @@ END DEBUG CODE -->
     </tr>
    <tr>
     <td valign="top" class="uportal-channel-text">
-      <img border="0" height="9" hspace="7" title="" width="9"><xsl:attribute name="src"><xsl:value-of select="$mediaPath"/><xsl:value-of select="$IMAGE_SRC_BULLET_GIF"/></xsl:attribute></img>
-      <a href="{$baseActionURL}?action=resetLayout" onClick="return confirm('You are about to replace your current layout with a default layout.  You cannot undo these changes.  Do you want to continue?')"><xsl:value-of select="$REVERT_TO_DEFAULT_LAYOUT"/></a>
+      <a href="{$baseActionURL}?action=resetLayout" onClick="return confirm('You are about to replace your current layout with a default layout.  You cannot undo these changes.  Do you want to continue?')">
+          <img alt="" title="" src="{$mediaPath}/bullet.gif" width="9" height="9" hspace="7" border="0"/><xsl:value-of select="$REVERT_TO_DEFAULT_LAYOUT"/></a>
     </td>
   </tr>
     <tr>
