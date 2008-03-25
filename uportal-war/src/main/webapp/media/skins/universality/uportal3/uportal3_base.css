@@ -233,6 +233,16 @@
 	{
 		background: url("../../icons/color_swatch.png") no-repeat;
 	}
+	
+	#changeColumns tr td
+	{
+	    text-align: center;
+	}
+	
+	#changeColumns img
+	{
+	    vertical-align: middle;
+	}
 
 /** portlets **/
 

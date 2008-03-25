@@ -97,11 +97,18 @@
      <div id="pageLayoutDialog" class="jqueryui" title="Change Layout">
       <form onsubmit="return updatePage(this);">
       <p>
-       <label class="portlet-form-field-label">Page name:</label>
+       <label class="portlet-form-label">Page name:</label><br/>
        <input name="pageName" type="text" size="20" value="{/layout/navigation/tab[@activeTab='true']/@name}"/>
       </p>
-      <p><label class="portlet-form-field-label">Number of columns:</label></p>
-       <table id="changeColumns">
+      <hr/>
+      <p><label class="portlet-form-label">Page layout:</label></p>
+       <table id="changeColumns" style="width: 100%">
+        <tr>
+         <td>1 Column</td>
+         <td>2 Columns</td>
+         <td>3 Columns</td>
+         <td>4 Columns</td>
+        </tr>
         <tr>
          <td>
           <input type="radio" name="layoutChoice" value="100" title="One big column"/>
