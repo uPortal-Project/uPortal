@@ -288,7 +288,7 @@ function initializeSkinMenu() {
 					.css("padding-bottom", "10px");
 				div.append($(document.createElement("span")).text($(this).children("skin-description").text()));
 				div.append($(document.createElement("br")));
-				div.append($(document.createElement("img")).attr("src", mediaPath + "/" + key + "/" + key + "_icon.gif"));
+				div.append($(document.createElement("img")).attr("src", mediaPath + "/" + key + "/" + key + "_thumb.gif"));
 				skinMenu.append(div);
 			});
         	
