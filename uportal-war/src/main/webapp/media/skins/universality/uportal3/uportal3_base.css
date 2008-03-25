@@ -36,6 +36,12 @@
 	
 	body#portal /* This formats only the <body> of the portal and not imported html pages */
 	{
+		background: #fff;
+		background-image: none;
+	}
+	
+	body#portal.left-column /* This formats only the <body> of the portal and not imported html pages */
+	{
 		background: #fff url("images/page_column_back.png") repeat-y; /* Simulates the left column.  Done on the body to ensure the column fills the whole browser window. */
 	}
 	

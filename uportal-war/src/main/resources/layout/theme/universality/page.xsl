@@ -28,7 +28,9 @@
     <xsl:variable name="PAGE_COLUMN_CLASS"><xsl:value-of select="$COUNT_PORTLET_COLUMNS"/>-column</xsl:variable>
     <xsl:variable name="LEFT_COLUMN_CLASS">
       <xsl:choose>
-        <xsl:when test="$USE_LEFT_COLUMN='true'">left-column</xsl:when>
+        <xsl:when test="$USE_LEFT_COLUMN='true' and $AUTHENTICATED='true' and not(//focused)">left-column</xsl:when>
+        <xsl:when test="$USE_LEFT_COLUMN_GUEST='true' and not($AUTHENTICATED='true')">left-column</xsl:when>
+        <xsl:when test="$USE_LEFT_COLUMN_FOCUSED='true' and //focused">left-column</xsl:when>
         <xsl:otherwise></xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
@@ -65,8 +67,8 @@
         <!-- ****** JAVASCRIPT ****** -->
       </head>
       
-      <body id="portal" class="{$LOGIN_STATE} {$PORTAL_VIEW}">
-        <div id="portalPage" class="{$PAGE_COLUMN_CLASS} {$LEFT_COLUMN_CLASS}">  <!-- Main div for presentation/formatting options. -->
+      <body id="portal" class="{$LOGIN_STATE} {$PORTAL_VIEW} {$LEFT_COLUMN_CLASS}">
+        <div id="portalPage" class="{$PAGE_COLUMN_CLASS}">  <!-- Main div for presentation/formatting options. -->
         	<div id="portalPageInner">  <!-- Inner div for additional presentation/formatting options. -->
             <xsl:choose>
               <xsl:when test="/layout_fragment"> <!-- When detached. -->
