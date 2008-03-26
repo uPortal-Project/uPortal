@@ -21,15 +21,18 @@
     <!-- ********** JPA Beans ********** -->
     
     <aop:config>
-        <aop:pointcut id="hibernateDaoExecution" 
-            expression="execution(* org.jasig.portal.portlet.dao.jpa.*.*(..))"/>
+        <aop:pointcut id="jpaDaoExecution" 
+            expression="execution(* org.jasig.portal.portlet.dao.jpa.Jpa*Dao.*(..))"/>
                 
+        <aop:pointcut id="daoExecution" 
+            expression="execution(* org.jasig.portal.portlet.dao.*.*(..))"/>
+            
         <aop:aspect ref="threadContextClassLoaderAspect">
-            <aop:around pointcut-ref="hibernateDaoExecution" method="doThreadContextClassLoaderUpdate"/>
+            <aop:around pointcut-ref="jpaDaoExecution" method="doThreadContextClassLoaderUpdate"/>
         </aop:aspect>
         
         <aop:aspect ref="sqlNextExceptionLoggerAspect">
-            <aop:after-throwing pointcut-ref="hibernateDaoExecution" method="logBatchUpdateExceptions" throwing="t"/>
+            <aop:after-throwing pointcut-ref="daoExecution" method="logBatchUpdateExceptions" throwing="t"/>
         </aop:aspect>
     </aop:config>
     
