@@ -99,11 +99,13 @@
 				.find("channel")
 				.each(function(){matching.push($(this))});
 		    matching.sort(this.sortChannelResults);
-		    
+
+			var j = 0;
 		    $(matching).each(function(i, val){
-		    	if (i == 0 || $(this).attr("ID") != $(this).prev().attr("ID")) {
-		    		channelSelect.options[i] = new Option($(this).attr("name"), $(this).attr("ID"));
-				    $(channelSelect.options[i]).click(function(){self.chooseChannel(this.value);});
+		    	if (i == 0 || $(this).attr("ID") != $(matching[i-1]).attr("ID")) {
+		    		channelSelect.options[j] = new Option($(this).attr("name"), $(this).attr("ID"));
+				    $(channelSelect.options[j]).click(function(){self.chooseChannel(this.value);});
+				    j++;
 		    	}
 		    });
 		    channelSelect.options[0].selected = true;
