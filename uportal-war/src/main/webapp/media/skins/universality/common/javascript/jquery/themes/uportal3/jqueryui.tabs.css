@@ -107,3 +107,15 @@
     display: inline-block;
 }
 
+
+div.portlet-content-inner .ui-tabs-nav {
+    margin: -13px -13px 0 -13px;
+    padding: 0 0 0 3px;
+}
+
+div.portlet-content-inner .ui-tabs-panel {
+    padding: 13px;
+    margin: 0 -13px 0 -13px;
+}
+
+

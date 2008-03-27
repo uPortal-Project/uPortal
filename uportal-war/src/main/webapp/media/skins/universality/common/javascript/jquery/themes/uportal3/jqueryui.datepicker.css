@@ -206,3 +206,28 @@ img.datepicker_trigger {
     width: 200px; /*must have*/
     height: 200px; /*must have*/
 }
+
+div#calendar-channel div.datepicker_inline {
+    width: 266px;
+    background-color: #fff;
+    border: none;
+}
+
+div#calendar-channel div.datepicker_header {
+}
+
+div#calendar-channel div.datepicker_oneMonth {
+    width: 100%;
+}
+
+div#calendar-channel table.datepicker tr td {
+    padding: 5px 10px 5px 10px;
+}
+
+div#calendar-channel .datepicker_links {
+    background:#fff none repeat scroll 0%;
+}
+
+div#calendar-channel .datepicker_links a {
+    color: #000 !important;
+}
