@@ -1,7 +1,7 @@
 
 <channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-0.crn">
-  <title>Google Portlet</title>
-  <name>Google Portlet</name>
+  <title>Google Search</title>
+  <name>Google Search</name>
   <fname>google-portlet</fname>
   <desc>Google Portlet from http://code.google.com/p/googleportlet/</desc>
   <type>Portlet</type>
@@ -13,7 +13,7 @@
   <secure>N</secure>
   <locale>en_US</locale>
   <categories>
-    <category>Development</category>
+    <category>Applications</category>
   </categories>
   <groups>
     <group>Everyone</group>

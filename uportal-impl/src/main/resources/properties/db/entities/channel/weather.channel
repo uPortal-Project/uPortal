@@ -13,7 +13,7 @@
   <secure>N</secure>
   <locale>en_US</locale>
   <categories>
-    <category>uPortal</category>
+    <category>Applications</category>
   </categories>
   <groups>
     <group>Everyone</group>

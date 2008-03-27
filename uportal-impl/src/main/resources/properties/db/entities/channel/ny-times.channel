@@ -12,7 +12,9 @@
   <hasabout>N</hasabout>
   <secure>N</secure>
   <locale>en_US</locale>
-  <categories/>
+  <categories>
+  	<category>News</category>
+  </categories>
   <groups>
     <group>Everyone</group>
   </groups>

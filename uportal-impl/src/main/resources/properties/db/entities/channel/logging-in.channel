@@ -1,9 +1,9 @@
 
 <channel-definition script="classpath://org/jasig/portal/io/import-channel_v2-6.crn">
-  <title>Who's Online</title>
-  <name>Who's Online</name>
-  <fname>whos-online</fname>
-  <desc>Mockup of a Who's Online portlet.</desc>
+  <title>Logging in</title>
+  <name>Logging in</name>
+  <fname>logging-in</fname>
+  <desc>Summary of default user accounts.</desc>
   <type>Web Proxy</type>
   <class>org.jasig.portal.channels.webproxy.CWebProxy</class>
   <timeout>10000</timeout>
@@ -13,7 +13,7 @@
   <secure>N</secure>
   <locale>en_US</locale>
   <categories>
-    <category>Applications</category>
+    <category>uPortal</category>
   </categories>
   <groups>
     <group>Everyone</group>
@@ -21,7 +21,7 @@
   <parameters>
     <parameter> 
       <name>cw_xml</name>  
-      <value>whosonline.html</value>  
+      <value>logging-in.html</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>

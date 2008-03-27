@@ -1,7 +1,7 @@
 
 <channel-definition script="classpath://org/jasig/portal/io/import-channel_v2-6.crn">
-  <title>Staff Feature</title>
-  <name>Staff Feature</name>
+  <title>Staff Welcome</title>
+  <name>Staff Welcome</name>
   <fname>staff-feature</fname>
   <desc>Staff-targeted welcome screen</desc>
   <type>Image</type>
@@ -14,6 +14,7 @@
   <locale>en_US</locale>
   <categories>
     <category>CImage</category>
+    <category>uPortal</category>
   </categories>
   <groups>
     <group>Everyone</group>

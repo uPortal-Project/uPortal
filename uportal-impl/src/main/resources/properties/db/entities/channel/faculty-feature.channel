@@ -1,8 +1,8 @@
 
 <channel-definition script="classpath://org/jasig/portal/io/import-channel_v2-6.crn">
-  <title>Faculty Feature</title>
-  <name>Faculty Feature</name>
-  <fname>Faculty-feature</fname>
+  <title>Faculty Welcome</title>
+  <name>Faculty Welcome</name>
+  <fname>faculty-feature</fname>
   <desc>Faculty-targeted welcome screen</desc>
   <type>Image</type>
   <class>org.jasig.portal.channels.CImage</class>
@@ -13,6 +13,7 @@
   <secure>N</secure>
   <locale>en_US</locale>
   <categories>
+    <category>CImage</category>
     <category>uPortal</category>
   </categories>
   <groups>

@@ -3,7 +3,7 @@
   <title>My Courses</title>
   <name>My Courses</name>
   <fname>courses</fname>
-  <desc>Mockup course info portlet.</desc>
+  <desc>Mock course info portlet.</desc>
   <type>Web Proxy</type>
   <class>org.jasig.portal.channels.webproxy.CWebProxy</class>
   <timeout>10000</timeout>
@@ -13,7 +13,7 @@
   <secure>N</secure>
   <locale>en_US</locale>
   <categories>
-    <category>uPortal</category>
+    <category>Applications</category>
   </categories>
   <groups>
     <group>Everyone</group>

@@ -16,7 +16,7 @@
           <value>60%</value>
         </structure-attribute>
       	<channel fname="what-is-uportal"/>
-      	<channel fname="please-register"/>
+        <channel fname="logging-in"/>
       </column>
       <column unremovable="N" immutable="N" hidden="N" name="Column">
         <structure-attribute type="folder">
@@ -25,6 +25,7 @@
         </structure-attribute>
       	<channel fname="google-portlet"/>
       	<channel fname="uportal-links"/>
+      	<channel fname="please-register"/>
       </column>
     </tab>
   </root>
