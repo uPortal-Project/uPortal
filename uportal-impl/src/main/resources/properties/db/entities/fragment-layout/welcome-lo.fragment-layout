@@ -11,6 +11,10 @@
     </footer>
     <tab unremovable="N" immutable="N" hidden="N" name="Welcome">
       <param>
+        <name>cp:deleteAllowed</name>
+        <value>false</value>
+      </param>
+      <param>
         <name>cp:editAllowed</name>
         <value>false</value>
       </param>
