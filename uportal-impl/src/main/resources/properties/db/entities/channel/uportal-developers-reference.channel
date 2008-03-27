@@ -1,9 +1,9 @@
 
 <channel-definition script="classpath://org/jasig/portal/io/import-channel_v2-6.crn">
-  <title>uPortal Developers Reference</title>
-  <name>uPortal Developers Reference</name>
+  <title>uPortal News</title>
+  <name>uPortal News</name>
   <fname>uportal-developers-reference</fname>
-  <desc>uPortal Developers Reference channel</desc>
+  <desc>uPortal News channel</desc>
   <type>RSS</type>
   <class>org.jasig.portal.channels.CSyndFeed</class>
   <timeout>10000</timeout>
@@ -16,7 +16,7 @@
     <category>uPortal</category>
   </categories>
   <groups>
-    <group>Developers</group>
+    <group>Everyone</group>
   </groups>
   <parameters>
     <parameter> 
@@ -24,6 +24,12 @@
       <value>http://uportal.org/rss/news/index.xml</value>  
       <description/>  
       <ovrd>N</ovrd> 
+    </parameter>
+    <parameter>
+      <name>viewNum</name>
+      <value>5</value>
+      <description/>
+      <ovrd>N</ovrd>
     </parameter>
   </parameters>
 </channel-definition>

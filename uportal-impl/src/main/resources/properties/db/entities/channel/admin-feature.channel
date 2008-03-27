@@ -1,0 +1,53 @@
+
+<channel-definition script="classpath://org/jasig/portal/io/import-channel_v2-6.crn">
+  <title>Admin Feature</title>
+  <name>Admin Feature</name>
+  <fname>admin-feature</fname>
+  <desc>Admin-targeted welcome screen</desc>
+  <type>Image</type>
+  <class>org.jasig.portal.channels.CImage</class>
+  <timeout>30000</timeout>
+  <hasedit>N</hasedit>
+  <hashelp>N</hashelp>
+  <hasabout>N</hasabout>
+  <secure>N</secure>
+  <locale>en_US</locale>
+  <categories>
+    <category>CImage</category>
+  </categories>
+  <groups>
+    <group>Everyone</group>
+  </groups>
+  <parameters>
+    <parameter> 
+      <name>img-border</name>  
+      <value>0</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+    <parameter> 
+      <name>img-height</name>  
+      <value>200</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+    <parameter> 
+      <name>img-link</name>  
+      <value>media/org/jasig/portal/channels/CImage/admin_feature.png</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+    <parameter> 
+      <name>img-uri</name>  
+      <value>media/org/jasig/portal/channels/CImage/admin_feature.png</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+    <parameter> 
+      <name>img-width</name>  
+      <value>468</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+  </parameters>
+</channel-definition>

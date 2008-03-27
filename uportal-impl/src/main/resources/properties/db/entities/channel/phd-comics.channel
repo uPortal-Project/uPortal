@@ -1,9 +1,9 @@
 
 <channel-definition script="classpath://org/jasig/portal/io/import-channel_v2-6.crn">
-  <title>Salon.com</title>
-  <name>Salon.com</name>
-  <fname>salon.com</fname>
-  <desc>Salon.com channel</desc>
+  <title>PHD Comics</title>
+  <name>PHD Comics</name>
+  <fname>phd-comics</fname>
+  <desc>Latest PHD Comics strip</desc>
   <type>RSS</type>
   <class>org.jasig.portal.channels.CSyndFeed</class>
   <timeout>10000</timeout>
@@ -12,22 +12,20 @@
   <hasabout>N</hasabout>
   <secure>N</secure>
   <locale>en_US</locale>
-  <categories>
-    <category>News</category>
-  </categories>
+  <categories/>
   <groups>
     <group>Everyone</group>
   </groups>
   <parameters>
     <parameter> 
       <name>xmlUri</name>  
-      <value>http://www.salon.com/feed/RDF/salon_use.rdf</value>  
+      <value>http://www.phdcomics.com/gradfeed.php</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>
     <parameter>
       <name>viewNum</name>
-      <value>5</value>
+      <value>1</value>
       <description/>
       <ovrd>N</ovrd>
     </parameter>

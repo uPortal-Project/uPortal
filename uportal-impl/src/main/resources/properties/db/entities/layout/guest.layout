@@ -6,29 +6,22 @@
       <channel fname="portal/login/general"/>
       <channel fname="session-locales-selector"/>
     </header>
-    <tab unremovable="N" immutable="N" hidden="N" name="Main">
+    <tab unremovable="N" immutable="N" hidden="N" name="uPortal News">
       <column unremovable="N" immutable="N" hidden="N" name="Column 1">
-        <channel fname="uportal-powered-sites"/>
+        <structure-attribute type="folder">
+          <name>width</name>
+          <value>40%</value>
+        </structure-attribute>
+        <channel fname="uportal-news"/>
+        <channel fname="uportal-developers-reference"/>
       </column>
       <column unremovable="N" immutable="N" hidden="N" name="Column 2">
-        <channel fname="uportal-home-page"/>
-      </column>
-    </tab>
-    <tab unremovable="N" immutable="N" hidden="N" name="Misc">
-      <column unremovable="N" immutable="N" hidden="N" name="Column 1">
-        <channel fname="minesweeper"/>
-      </column>
-      <column unremovable="N" immutable="N" hidden="N" name="Column 2">
-        <channel fname="word-of-the-day"/>
-      </column>
-    </tab>
-    <tab unremovable="N" immutable="N" hidden="N" name="News">
-      <column unremovable="N" immutable="N" hidden="N" name="Column 1">
-        <channel fname="salon.com"/>
-      </column>
-      <column unremovable="N" immutable="N" hidden="N" name="Column 2">
+        <structure-attribute type="folder">
+          <name>width</name>
+          <value>60%</value>
+        </structure-attribute>
+        <channel fname="jasig-news"/>
         <channel fname="unicon-news"/>
-        <channel fname="motley-fool"/>
       </column>
     </tab>
     <footer unremovable="Y" immutable="Y" hidden="N" name="Footer folder">

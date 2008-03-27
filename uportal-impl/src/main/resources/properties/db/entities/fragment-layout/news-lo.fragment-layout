@@ -9,26 +9,22 @@
     <footer unremovable="N" immutable="N" hidden="N" name="Footer folder">
       <channel fname="footer"/>
     </footer>
-    <tab unremovable="N" immutable="N" hidden="N" name="Useful News">
-      <param>
-        <name>cp:moveAllowed</name>
-        <value>false</value>
-      </param>
+    <tab unremovable="N" immutable="N" hidden="N" name="News">
       <column unremovable="N" immutable="N" hidden="N" name="Column">
         <structure-attribute type="folder">
           <name>width</name>
-          <value>30%</value>
+          <value>50%</value>
         </structure-attribute>
-        <channel fname="salon.com"/>
-        <channel fname="word-of-the-day"/>
+        <channel fname="ny-times-education"/>
+        <channel fname="chronicle-wired"/>
       </column>
       <column unremovable="N" immutable="N" hidden="N" name="Column">
         <structure-attribute type="folder">
           <name>width</name>
-          <value>70%</value>
+          <value>50%</value>
         </structure-attribute>
-        <channel fname="motley-fool"/>
-        <channel fname="unicon-news"/>
+        <channel fname="salon.com"/>
+        <channel fname="sports-illustrated"/>
       </column>
     </tab>
   </root>

@@ -7,11 +7,19 @@
     </header>
     <tab unremovable="N" immutable="N" hidden="N" name="Main Staff Tab">
       <column unremovable="N" immutable="N" hidden="N" name="Column 1">
-        <channel fname="uportal-powered-sites"/>
+        <structure-attribute type="folder">
+          <name>width</name>
+          <value>60%</value>
+        </structure-attribute>
+        <channel fname="staff-feature"/>
+        <channel fname="notifications"/>
       </column>
       <column unremovable="N" immutable="N" hidden="N" name="Column 2">
-        <channel fname="daily-business-cartoon"/>
-        <channel fname="word-of-the-day"/>
+        <structure-attribute type="folder">
+          <name>width</name>
+          <value>40%</value>
+        </structure-attribute>
+        <channel fname="whos-online"/>
       </column>
     </tab>
     <footer unremovable="N" immutable="N" hidden="N" name="Footer folder">

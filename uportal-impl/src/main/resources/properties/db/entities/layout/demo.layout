@@ -6,8 +6,12 @@
       <channel fname="portal/login/general"/>
       <channel fname="session-locales-selector"/>
     </header>
-    <tab unremovable="N" immutable="N" hidden="N" name="Main">
+    <tab unremovable="N" immutable="N" hidden="N" name="Demos">
       <column unremovable="N" immutable="N" hidden="N" name="Column 1">
+        <structure-attribute type="folder">
+          <name>width</name>
+          <value>50%</value>
+        </structure-attribute>
         <channel fname="word-of-the-day"/>
         <channel fname="number-guessing-game">
           <param>
@@ -19,39 +23,32 @@
             <value>50</value>
           </param>
         </channel>
+        <channel fname="daily-business-cartoon"/>
       </column>
       <column unremovable="N" immutable="N" hidden="N" name="Column 2">
-        <channel fname="daily-business-cartoon"/>
+        <structure-attribute type="folder">
+          <name>width</name>
+          <value>50%</value>
+        </structure-attribute>
+        <channel fname="uportal-developers-reference"/>
       </column>
     </tab>
     <tab unremovable="N" immutable="N" hidden="N" name="Development">
       <column unremovable="N" immutable="N" hidden="N" name="Column 1">
+        <structure-attribute type="folder">
+          <name>width</name>
+          <value>50%</value>
+        </structure-attribute>
         <channel fname="person-attributes"/>
         <channel fname="css-viewer"/>
       </column>
       <column unremovable="N" immutable="N" hidden="N" name="Column 2">
-        <channel fname="uportal-development-books"/>
-        <channel fname="uportal-developers-reference"/>
+        <structure-attribute type="folder">
+          <name>width</name>
+          <value>50%</value>
+        </structure-attribute>
         <channel fname="snooper"/>
         <channel fname="uportal-data-dictionary"/>
-      </column>
-    </tab>
-    <tab unremovable="N" immutable="N" hidden="N" name="CWebProxy">
-      <column unremovable="N" immutable="N" hidden="N" name="Column 1">
-        <channel fname="tomcat-number-guess"/>
-        <channel fname="tomcat-number-guess"/>
-      </column>
-      <column unremovable="N" immutable="N" hidden="N" name="Column 2">
-        <channel fname="tomcat-servlet-examples"/>
-      </column>
-    </tab>
-    <tab unremovable="N" immutable="N" hidden="N" name="ICC Demo">
-      <column unremovable="N" immutable="N" hidden="N" name="Column 1">
-        <channel fname="portal/iccdemo/urlselector"/>
-        <channel fname="portal/iccdemo/history"/>
-      </column>
-      <column unremovable="N" immutable="N" hidden="N" name="Column 2">
-        <channel fname="portal/iccdemo/viewer"/>
       </column>
     </tab>
     <footer unremovable="N" immutable="N" hidden="N" name="Footer folder">

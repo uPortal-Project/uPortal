@@ -10,41 +10,22 @@
       <channel fname="footer"/>
     </footer>
     <tab unremovable="N" immutable="N" hidden="N" name="Entertainment">
-      <param>
-        <name>cp:editAllowed</name>
-        <value>false</value>
-      </param>
       <column unremovable="N" immutable="N" hidden="N" name="Column">
         <structure-attribute type="folder">
           <name>width</name>
           <value>40%</value>
         </structure-attribute>
-        <channel fname="number-guessing-game">
-          <param>
-            <name>cp:deleteAllowed</name>
-            <value>false</value>
-          </param>
-          <param>
-            <name>cp:moveAllowed</name>
-            <value>false</value>
-          </param>
-          <param>
-            <name>maxNum</name>
-            <value>100</value>
-          </param>
-          <param>
-            <name>minNum</name>
-            <value>1</value>
-          </param>
-        </channel>
-        <channel fname="minesweeper"/>
+        <channel fname="word-of-the-day"/>
+        <channel fname="about-college-life"/>
+        <channel fname="e-online"/>
       </column>
       <column unremovable="N" immutable="N" hidden="N" name="Column">
         <structure-attribute type="folder">
           <name>width</name>
           <value>60%</value>
         </structure-attribute>
-        <channel fname="daily-business-cartoon"/>
+        <channel fname="phd-comics"/>
+        <channel fname="new-movies"/>
       </column>
     </tab>
   </root>

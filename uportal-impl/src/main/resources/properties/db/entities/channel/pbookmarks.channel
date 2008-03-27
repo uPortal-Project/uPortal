@@ -31,5 +31,11 @@
       <description/>  
       <ovrd>N</ovrd>
     </parameter>
+    <parameter>
+      <name>quicklink</name>
+      <value>1</value> 
+      <description/>  
+      <ovrd>N</ovrd>
+    </parameter>
   </parameters>
 </channel-definition>

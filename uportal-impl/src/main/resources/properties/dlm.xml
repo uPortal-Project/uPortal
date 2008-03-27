@@ -12,26 +12,22 @@
   
   <dlm:property name='org.jasig.portal.layout.dlm.RDBMDistributedLayoutStore.fragment_cache_refresh' value="5"/>
 
-  <dlm:fragment name='News' ownerID='news-lo' precedence='80'>
+  <dlm:fragment name='Welcome' ownerID='welcome-lo' precedence='80'>
+    <dlm:audience evaluatorFactory='org.jasig.portal.layout.dlm.providers.PersonEvaluatorFactory'>
+      <paren mode="NOT">
+        <attribute name="username" mode='equals' value='guest'/>
+      </paren>
+    </dlm:audience>
+  </dlm:fragment>
+
+  <dlm:fragment name='News' ownerID='news-lo' precedence='60'>
     <!--  <dlm:role>Students</dlm:role> -->
     <dlm:audience evaluatorFactory='org.jasig.portal.layout.dlm.providers.GroupMembershipEvaluatorFactory'>
       <paren mode="AND">     
         <attribute mode='memberOf' name='Students'/>
-        <paren mode="NOT">
-          <attribute mode='memberOf' name='Faculty'/>
-        </paren>
       </paren>
     </dlm:audience>
   </dlm:fragment>
-
-  <dlm:fragment name='Portlets' ownerID='portlets-lo' precedence='40'>
-    <dlm:audience evaluatorFactory='org.jasig.portal.layout.dlm.providers.PersonEvaluatorFactory'>
-      <paren mode="AND">
-        <attribute name="username" mode='equals' value='admin'/>
-      </paren>
-    </dlm:audience>
-  </dlm:fragment>
-
   
   <dlm:fragment name='Guests' ownerID='guest-lo' precedence='20'>
    <dlm:audience evaluatorFactory='org.jasig.portal.layout.dlm.providers.GuestUserEvaluatorFactory'/>
@@ -39,8 +35,13 @@
   
   <dlm:fragment name='Entertainment' ownerID='ent-lo' precedence='10'>
     <dlm:audience evaluatorFactory='org.jasig.portal.layout.dlm.providers.PersonEvaluatorFactory'>
-      <paren mode="NOT">
-        <attribute name="username" mode='equals' value='guest'/>
+      <paren mode="AND">
+        <paren mode="NOT">
+          <attribute name="username" mode='equals' value='guest'/>
+        </paren>
+        <paren mode="NOT">
+          <attribute name="username" mode='equals' value='admin'/>
+        </paren>
       </paren>
     </dlm:audience>
   </dlm:fragment>

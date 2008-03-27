@@ -1,9 +1,9 @@
 
 <channel-definition script="classpath://org/jasig/portal/io/import-channel_v2-6.crn">
-  <title>Salon.com</title>
-  <name>Salon.com</name>
-  <fname>salon.com</fname>
-  <desc>Salon.com channel</desc>
+  <title>Movies.com New This Week in Theaters</title>
+  <name>Movies.com New This Week in Theaters</name>
+  <fname>new-movies</fname>
+  <desc>New movies opening this week from Movies.com</desc>
   <type>RSS</type>
   <class>org.jasig.portal.channels.CSyndFeed</class>
   <timeout>10000</timeout>
@@ -13,7 +13,7 @@
   <secure>N</secure>
   <locale>en_US</locale>
   <categories>
-    <category>News</category>
+    <category>Entertainment</category>
   </categories>
   <groups>
     <group>Everyone</group>
@@ -21,7 +21,7 @@
   <parameters>
     <parameter> 
       <name>xmlUri</name>  
-      <value>http://www.salon.com/feed/RDF/salon_use.rdf</value>  
+      <value>http://movies.go.com/xml/rss/intheaters.xml</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>

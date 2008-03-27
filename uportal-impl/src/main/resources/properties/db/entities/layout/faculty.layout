@@ -7,10 +7,20 @@
     </header>
     <tab unremovable="N" immutable="N" hidden="N" name="Main Faculty Tab">
       <column unremovable="N" immutable="N" hidden="N" name="Column 1">
-        <channel fname="motley-fool"/>
+        <structure-attribute type="folder">
+          <name>width</name>
+          <value>50%</value>
+        </structure-attribute>
+        <channel fname="faculty-feature"/>
+        <channel fname="notifications"/>
       </column>
       <column unremovable="N" immutable="N" hidden="N" name="Column 2">
-        <channel fname="word-of-the-day"/>
+        <structure-attribute type="folder">
+          <name>width</name>
+          <value>50%</value>
+        </structure-attribute>
+        <channel fname="courses"/>
+        <channel fname="whos-online"/>
       </column>
     </tab>
     <footer unremovable="N" immutable="N" hidden="N" name="Footer folder">
