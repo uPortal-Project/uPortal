@@ -19,7 +19,7 @@
     <dependencies>
         <!-- ===== Compile Time Dependencies ============================== -->
         <dependency>
-            <groupId>org.jasig.portlet</groupId>
+            <groupId>com.google.code</groupId>
             <artifactId>googleportlet</artifactId>
             <version>${googleportlet.version}</version>
             <type>war</type>

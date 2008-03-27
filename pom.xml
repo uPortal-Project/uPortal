@@ -102,7 +102,7 @@
         <!-- Portlet WAR Dependency Version Properties -->
         <BookmarksPortlet.version>1.0.8</BookmarksPortlet.version>
         <FunctionalTestsPortlet.version>1.0.0-SNAPSHOT</FunctionalTestsPortlet.version>
-        <googleportlet.version>1.0.0-SNAPSHOT</googleportlet.version>
+        <googleportlet.version>0.3</googleportlet.version>
         <RssPortlet.version>1.0.0-SNAPSHOT</RssPortlet.version>
 
         <!-- Project Dependency Version Properties -->
