@@ -16,7 +16,7 @@
 
     <name>uPortal</name>
     <description>The root project definition for the uPortal project.</description>
-    <version>3.0.0-SNAPSHOT</version>
+    <version>3.0.0-RC3</version>
 
     <licenses>
         <license>
@@ -29,7 +29,7 @@
     <distributionManagement>
         <site>
             <id>developer.jasig</id>
-            <url>scp://developer.ja-sig.org/jasig/htdocs/developer/projects/uportal/3.0.0-SNAPSHOT/</url>
+            <url>scp://developer.ja-sig.org/jasig/htdocs/developer/projects/uportal/3.0.0-RC3/</url>
         </site>
     </distributionManagement>
 
