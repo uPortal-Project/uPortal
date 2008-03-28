@@ -13,6 +13,7 @@
     <xsl:param name="forgotLoginUrl">http://www.uportal.org/</xsl:param>
     <xsl:param name="contactAdminUrl">http://www.uportal.org/</xsl:param>
     <xsl:param name="casLoginUrl"></xsl:param>
+    <xsl:param name="casNewUserUrl"></xsl:param>
   <!-- ========== VARIABLES & PARAMETERS ========== -->
     
     <!-- ~ -->
@@ -39,7 +40,14 @@
     	  <xsl:choose>
     	    <!-- CAS Login link -->
     	    <xsl:when test="$casLoginUrl!= ''">
-    	      <a id="CASLoginLink" href="{$casLoginUrl}"><span>Sign In</span></a>
+            <div id="portalLoginInner">
+              <div id="portalCASLogin">
+                <a id="portalCASLoginLink" href="{$casLoginUrl}" title="Sign In">
+                  <span>Sign In <span class="via-cas">with CAS</span></span>
+                </a>
+                <p>New user? <a id="portalCASLoginNewLink" href="{$casNewUserUrl}" title="New User">Start here</a>.</p>
+              </div>
+            </div>
     	    </xsl:when>
     	    <!-- Username/password login form -->
     	    <xsl:otherwise>

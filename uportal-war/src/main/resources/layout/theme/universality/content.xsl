@@ -28,36 +28,37 @@
     <xsl:if test="not(./parameter[@name='removeFromLayout']/@value='true') and not(./parameter[@name='PORTLET.removeFromLayout']/@value='true')">
     
     <!-- ****** PORTLET CONTAINER ****** -->
-      <div id="portlet_{@ID}" class="portlet-container {@fname}"> <!-- Main portlet container.  The unique ID is needed for drag and drop.  The portlet fname is also written into the class attribute to allow for unique rendering of the portlet presentation. -->
+    <div id="portlet_{@ID}" class="portlet-container {@fname}"> <!-- Main portlet container.  The unique ID is needed for drag and drop.  The portlet fname is also written into the class attribute to allow for unique rendering of the portlet presentation. -->
+      <div class="portlet-container-inner">
     
-      <!-- ****** PORTLET TOP BLOCK ****** -->
-      <xsl:call-template name="portlet.top.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
-      <!-- ****** PORTLET TOP BLOCK ****** -->
-      
-      <!-- ****** PORTLET TITLE AND TOOLBAR ****** -->
-      <div id="toolbar_{@ID}" class="portlet-toolbar"> <!-- Portlet toolbar. -->
-        <a name="{@ID}" id="{@ID}"></a> <!-- ?????? WHAT IS THIS FOR ??????-->
-        <h2> <!-- Portlet title. -->
-          <a href="{$BASE_ACTION_URL}?uP_root={@ID}">
-            UP:CHANNEL_TITLE-{<xsl:value-of select="@ID" />}
-          </a>
-        </h2>
-        <xsl:if test="//layout"> <!-- As long as the portlet is not detached, render the portlet controls. -->
-        	<xsl:call-template name="controls"/>
-        </xsl:if>
-      </div>
-      
-      <!-- ****** PORTLET CONTENT ****** -->
-      <div id="portletContent_{@ID}" class="portlet-content"> <!-- Portlet content container. -->
-      	<div class="portlet-content-inner">  <!-- Inner div for additional presentation/formatting options. -->
-      		<xsl:copy-of select="."/> <!-- Write in the contents of the portlet. -->
+        <!-- ****** PORTLET TOP BLOCK ****** -->
+        <xsl:call-template name="portlet.top.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
+        <!-- ****** PORTLET TOP BLOCK ****** -->
+        
+        <!-- ****** PORTLET TITLE AND TOOLBAR ****** -->
+        <div id="toolbar_{@ID}" class="portlet-toolbar"> <!-- Portlet toolbar. -->
+          <a name="{@ID}" id="{@ID}"></a> <!-- ?????? WHAT IS THIS FOR ??????-->
+          <h2> <!-- Portlet title. -->
+            <a href="{$BASE_ACTION_URL}?uP_root={@ID}">
+              UP:CHANNEL_TITLE-{<xsl:value-of select="@ID" />}
+            </a>
+          </h2>
+          <xsl:if test="//layout"> <!-- As long as the portlet is not detached, render the portlet controls. -->
+            <xsl:call-template name="controls"/>
+          </xsl:if>
         </div>
-      </div>
-      
-      <!-- ****** PORTLET BOTTOM BLOCK ****** -->
-      <xsl:call-template name="portlet.bottom.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
-      <!-- ****** PORTLET BOTTOM BLOCK ****** -->
-    
+        
+        <!-- ****** PORTLET CONTENT ****** -->
+        <div id="portletContent_{@ID}" class="portlet-content"> <!-- Portlet content container. -->
+          <div class="portlet-content-inner">  <!-- Inner div for additional presentation/formatting options. -->
+            <xsl:copy-of select="."/> <!-- Write in the contents of the portlet. -->
+          </div>
+        </div>
+        
+        <!-- ****** PORTLET BOTTOM BLOCK ****** -->
+        <xsl:call-template name="portlet.bottom.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
+        <!-- ****** PORTLET BOTTOM BLOCK ****** -->
+    	</div>
     </div>
     
     </xsl:if>

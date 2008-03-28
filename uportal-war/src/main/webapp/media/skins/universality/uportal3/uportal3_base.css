@@ -240,6 +240,11 @@
 		background: url("../../icons/color_swatch.png") no-repeat;
 	}
 	
+	#portalCustomizationLinksAddTab a
+	{
+		background: url("../../icons/tab_add.png") no-repeat;
+	}
+	
 	#changeColumns tr td
 	{
 	    text-align: center;
@@ -254,6 +259,11 @@
 
 	.portlet-container 
 	{
+	}
+	
+	.portlet-container-inner
+	{
+		background-color: #000099;
 	}
 	
 	.portlet-top
@@ -285,6 +295,12 @@
 		margin-left: 0.5em;
 		padding-left: 20px;
 		background: url("../../icons/application.png") 0 3px no-repeat;
+	}
+	
+	.portlet-controls
+	{
+		background-color: #000099;
+		padding-left: 10px;
 	}
 
 	.portlet-controls .help 
@@ -324,7 +340,13 @@
 
 	.portlet-controls span
 	{
-		display: none;
+	/* A creative way to get the text to disappear and yet the background image (icon) to appear in both FF and IE.
+	 * The padding is necessary for IE and seems to have no affect on FF. 
+	 */
+		visibility: hidden;
+		font-size: 0;
+		padding-top: 11px;
+		padding-bottom: 3px;
 	}
 	
 	.portlet-controls a:hover 
@@ -406,6 +428,36 @@
 	{
 		background: url("../../icons/error.png") no-repeat;
 	}
+	
+	#portalCASLogin a
+	{
+		font-size: 100%;
+	}
+	
+	a#portalCASLoginLink
+	{
+		display: block;
+		padding: 0.3em 1em;
+		text-decoration: none;
+		font-weight: bold;
+		color: #fff;
+		background-color: #FF6600;
+		border-top: 1px solid #FFCA95;
+		border-left: 1px solid #FFCA95;
+		border-bottom: 1px solid #884400;
+		border-right: 1px solid #884400;
+	}
+	
+	.via-cas
+	{
+		color: #FFCC66;
+	}
+	
+	#portalCASLogin p
+	{
+		margin-top: 1em;
+		font-size: 80%;
+	}
 
 
 /** navigation **/
@@ -460,13 +512,17 @@
 		background-color: #ccccff;
 	}
 	
-	.portal-subnav-container li
-	{
-	}
+	/* flyout navigation */
 	
 	#portalFlyoutNavigation .portal-flyout-container
 	{
 		background-color: #fff;
+		width: 200px;
+		border-left: 1px solid #000099;
+		border-right: 1px solid #000099;
+		border-bottom: 2px solid #000099;
+		position: absolute;
+		z-index: 10;
 	}
 
 	#portalFlyoutNavigation .portal-flyout-container ul.portal-subnav-list {
@@ -474,49 +530,60 @@
 		margin: 0;
 	}
 
-#portalFlyoutNavigation .portal-flyout-container li
+	#portalFlyoutNavigation .portal-flyout-container li
 	{
-		border-bottom: 1px solid #9999cc;
-		display: block;
-		float: none;
-		margin: 0;
-		padding: .5em;
+		list-style: none;
+		border-bottom: 1px solid #000099;
 	}
 
-	#portalFlyoutNavigation .portal-flyout-container li a {
+	#portalFlyoutNavigation a {
+		display: block;
+		padding: 4px 10px 4px 25px;
+		color: #6633CC;
+		font-weight: normal;
+		background-color: #ccccff;
+		background-position: 5px 3px;
+		background-repeat: no-repeat;
+		background-image: url("../../icons/application.png");
 		text-decoration: none;
 	}
+	
+	#portalFlyoutNavigation a:hover
+	{
+		color: #fff;
+		background-color: #6633CC;
+	}
+	
+	#portalFlyoutNavigation #editPageLink a, #portalFlyoutNavigation #deletePageLink a, #portalFlyoutNavigation #movePageLeftLink a, #portalFlyoutNavigation #movePageRightLink a
+	{
+		background-color: #FFFFCC;
+	}
+	
+	#portalFlyoutNavigation #editPageLink a:hover, #portalFlyoutNavigation #deletePageLink a:hover, #portalFlyoutNavigation #movePageLeftLink a:hover, #portalFlyoutNavigation #movePageRightLink a:hover
+	{
+		color: #000;
+		background-color: #FFFF99;
+	}
 
-	#editPageLink a
+	#portalFlyoutNavigation #editPageLink a
 	{
-		background: url("../../icons/layout_content.png") no-repeat;
-		padding-left: 20px; 
+		background-image: url("../../icons/layout_content.png");
+		
 	}
 	
-	#deletePageLink a
+	#portalFlyoutNavigation #deletePageLink a
 	{
-		background: url("../../icons/cross.png") no-repeat;
-		padding-left: 20px; 
+		background-image: url("../../icons/cross.png");
 	}
 	
-	#movePageLeftLink a
+	#portalFlyoutNavigation #movePageLeftLink a
 	{
-		background: url("../../icons/arrow_left.png") no-repeat;
-		padding-left: 20px; 
+		background-image: url("../../icons/arrow_left.png");
 	}
 	
-	#movePageRightLink a
+	#portalFlyoutNavigation #movePageRightLink a
 	{
-		background: url("../../icons/arrow_right.png") no-repeat;
-		padding-left: 20px; 
-	}
-	
-	#portalFlyoutNavigation .portal-flyout-container
-	{
-		border-left: 1px solid #9999cc;
-		border-right: 1px solid #9999cc;
-		position: absolute;
-		z-index: 10;
+		background-image: url("../../icons/arrow_right.png"); 
 	}
 	
 	#portalFlyoutNavigation .portal-flyout-iframe

@@ -487,8 +487,9 @@
               <a id="skinDialogLink" href="javascript:;" title="{$TOKEN[@name='PREFERENCES_LINK_SKINS_LONG_LABEL']}">
               	<span><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINK_SKINS_LABEL']"/></span>
               </a>
+              <xsl:call-template name="portal.pipe"/>
             </li>
-            <li>
+            <li id="portalCustomizationLinksAddTab">
               <a id="addTabLink" href="javascript:;" title="{$TOKEN[@name='PREFERENCES_LINK_ADD_TAB_LONG_LABEL']}">
                 <span><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINK_ADD_TAB_LABEL']"/></span>
               </a>

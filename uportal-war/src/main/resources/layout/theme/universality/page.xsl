@@ -201,26 +201,22 @@
             <!-- ****** LEFT COLUMN ****** -->
             
             <!-- ****** TITLE ROW ****** -->
-            <td valign="top" colspan="{$COLUMNS}" id="portalPageBodyTitleRow"> <!-- This row contains the page title (label of the currently selected main navigation item), and optionally user layout customization hooks, custom institution content (blocks), or return to dashboard link (if in the focused view). -->
+            <!-- 
+            Title row renders in a separate table row in the dashboard view to be able to span multiple columns.
+            In focused view, the title row renders in the same row as the focused content (see COLUMNS below)
+            -->
+            <xsl:if test="$PORTAL_VIEW != 'focused'">
+              <td valign="top" colspan="{$COLUMNS}" id="portalPageBodyTitleRow"> <!-- This row contains the page title (label of the currently selected main navigation item), and optionally user layout customization hooks, custom institution content (blocks), or return to dashboard link (if in the focused view). -->
+                <div id="portalPageBodyTitleRowContents"> <!-- Inner div for additional presentation/formatting options. -->
+                  <!-- ****** CONTENT TITLE BLOCK ****** -->
+                  <xsl:call-template name="content.title.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
+                  <!-- ****** CONTENT TITLE BLOCK ****** -->
+                </div>
+              </td>
+            </xsl:if>
             
-              <div id="portalPageBodyTitleRowContents"> <!-- Inner div for additional presentation/formatting options. -->
-                
-                <xsl:choose>
-                  <xsl:when test="//focused">
-                    <!-- ****** CONTENT TITLE BLOCK ****** -->
-                    <xsl:call-template name="content.title.focused.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
-                    <!-- ****** CONTENT TITLE BLOCK ****** -->
-                  </xsl:when>
-                  <xsl:otherwise>
-                    <!-- ****** CONTENT TITLE BLOCK ****** -->
-                    <xsl:call-template name="content.title.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
-                    <!-- ****** CONTENT TITLE BLOCK ****** -->
-                  </xsl:otherwise>
-                </xsl:choose>
-                
-              </div>
-            </td>
           </tr>
+          
           
           <!-- ****** COLUMNS ****** -->
           <tr id="portalPageBodyColumns">
@@ -228,6 +224,9 @@
               <xsl:when test="//focused"> <!-- If the page is focused, there is only one column and an alternate rendering of the contents. -->
                 <td valign="top" height="100%" class="portal-page-column-focused">
                   <div class="portal-page-column-inner"> <!-- Column inner div for additional presentation/formatting options.  -->
+                  	<div id="portalPageBodyTitleRowContents"> <!-- Inner div for additional presentation/formatting options. -->
+                    	<xsl:call-template name="content.title.focused.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
+                    </div>
                   	<xsl:apply-templates select="//focused"/> <!-- Templates located in content.xsl. -->
                   </div>
                 </td>
