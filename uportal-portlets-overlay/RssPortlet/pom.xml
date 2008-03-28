@@ -19,7 +19,7 @@
     <dependencies>
         <!-- ===== Compile Time Dependencies ============================== -->
         <dependency>
-            <groupId>org.jasig.portlet</groupId>
+            <groupId>com.plumtree.portlets</groupId>
             <artifactId>RssPortlet</artifactId>
             <version>${RssPortlet.version}</version>
             <type>war</type>
