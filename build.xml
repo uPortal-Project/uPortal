@@ -287,24 +287,15 @@
         </uportal-impl-macro>
     </target>
     
-    <!--
-     | Helper target to remove files in shared/lib if the cleanShared flag is set. This is likely only going to be useful
-     | for Tomcat. Both clean and deploy-ear use this target.
-     +-->
-    <target name="clean-shared">
-        <if>
-            <equals arg1="${cleanShared}" arg2="true" />
-            <then>
-                <delete>
-                    <fileset dir="${server.base}/shared/lib">
-                        <include name="*"/>
-                    </fileset>
-                </delete>
-            </then>
-        </if>
+    <target name="clean-shared" description="Removes the ALL shared libraries from the container.">
+        <delete>
+            <fileset dir="${server.base}/shared/lib">
+                <include name="*"/>
+            </fileset>
+        </delete>
     </target>
     
-    <target name="clean" description="Removes the deployed uPortal from the container and runs 'mvn clean'" depends="clean-shared">
+    <target name="clean" description="Removes the deployed uPortal from the container and runs 'mvn clean'">
         <uportal-parent-macro>
             <!-- Clean out uPortal from Tomcat -->
             <artifact:pom file="${uportal-war.dir}/pom.xml" id="uportal-war.pom" />
@@ -320,7 +311,7 @@
         </antcall>
     </target>
 
-    <target name="deploy-ear" description="Deploy uPortal and dependent libraries and portlets to the servlet container" depends="clean-shared">
+    <target name="deploy-ear" description="Deploy uPortal and dependent libraries and portlets to the servlet container">
         <uportal-ant-tasks-macro>
             <typedef resource="org/jasig/portal/ant/antlib.xml" uri="urn:up-util-ant">
                 <classpath refid="uportal-ant-tasks-full.classpath" />
@@ -330,6 +321,13 @@
                 <echo message="   extractWars=${extractWars}" />
                 <echo message="removeExisting=${removeExisting}" />
                 <echo message="   cleanShared=${cleanShared}" />
+                    
+                <if>
+                    <equals arg1="${cleanShared}" arg2="true" />
+                    <then>
+                        <antcall target="clean-shared" />
+                    </then>
+                </if>
 
                 <up:tomcatEarDeploy ear="${uportal-ear.artifact}" catalinaBase="${server.base}" extractWars="${extractWars}" removeExistingDirectories="${removeExisting}" />
             </uportal-ear-macro>
