@@ -398,33 +398,7 @@
         <column>
           <name>LST_CHAN_UPDT_DT</name>
         </column> 
-      </row>  
-      <row> 
-        <column>
-          <name>USER_ID</name>
-          <value>14</value>
-        </column>  
-        <column>
-          <name>USER_NAME</name>
-          <value>portlets-lo</value>
-        </column>  
-        <column>
-          <name>USER_DFLT_USR_ID</name>
-          <value>2</value>
-        </column>  
-        <column>
-          <name>USER_DFLT_LAY_ID</name>
-          <value>1</value>
-        </column>  
-        <column>
-          <name>NEXT_STRUCT_ID</name>
-          <value>15</value>
-        </column>  
-        <column>
-          <name>LST_CHAN_UPDT_DT</name>
-          <value>2005-04-08 00:00:00.0</value>
-        </column> 
-      </row> 
+      </row>
       <row> 
         <column>
           <name>USER_ID</name>
@@ -2616,32 +2590,7 @@
         <column>
           <name>EMAIL</name>
         </column> 
-      </row>  
-      <row> 
-        <column>
-          <name>USER_NAME</name>
-          <value>portlets-lo</value>
-        </column>  
-        <column>
-          <name>ENCRPTD_PSWD</name>
-          <value>(MD5)d3ST813VSpkgg4g7mlVsK2T2pue7b9J6</value>
-        </column>  
-        <column>
-          <name>LST_PSWD_CGH_DT</name>
-        </column>  
-        <column>
-          <name>FIRST_NAME</name>
-          <value>Bookmarks</value>
-        </column>  
-        <column>
-          <name>LAST_NAME</name>
-          <value>Layout Owner</value>
-        </column>  
-        <column>
-          <name>EMAIL</name>
-          <value>password.that.of.news-lo@ja-sig.org</value>
-        </column> 
-      </row>  
+      </row>
       <row> 
         <column>
           <name>USER_NAME</name>

@@ -63,11 +63,6 @@
     </footer>
   </root>
   <preferences>
-    <entry entity="portlets-lo:/layout/root/tab/column[1]/channel[2]" channel="jasig-test-portlet" name="Other Frag Pref"/>
-    <entry entity="portlets-lo:/layout/root/tab/column[1]/channel[2]" channel="jasig-test-portlet" name="Frag Pref 1">
-      <value>FV11</value>
-      <value>FV12</value>
-    </entry>
     <entry entity="admin:/layout/root/tab[3]/column[1]/channel[2]" channel="jasig-test-portlet" name="">
       <value/>
       <value/>
