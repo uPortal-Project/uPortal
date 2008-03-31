@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import javax.sql.DataSource;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMResult;
@@ -53,6 +54,7 @@ import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.ICounterStore;
 
 import org.jasig.portal.utils.ResourceLoader;
+import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -106,6 +108,13 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
         throw new Exception("Unknown database driver");
       }
     }
+    
+    // Load the "system" user id from the database
+    final DataSource dataSource = RDBMServices.getDataSource();
+    final SimpleJdbcTemplate jdbcTemplate = new SimpleJdbcTemplate(dataSource);
+    final int systemUserId = jdbcTemplate.queryForInt("SELECT USER_ID FROM UP_USER WHERE USER_NAME = 'system'");
+    log.info("Found user id " + systemUserId + " for the 'system' user.");
+    this.systemUser = new SystemUser(systemUserId);
   }
 
   /**
@@ -3256,34 +3265,76 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     this.deleteUserProfile(systemUser, profileId);
   }
 
-    private class SystemUser implements IPerson {
-      public void setID(int sID) {}
-      public int getID() {return 0;}
+    private static class SystemUser implements IPerson {
+        private final int systemUserId;
 
-      public void setFullName(String sFullName) {}
-      public String getFullName() {return "uPortal System Account";}
+        public SystemUser(int systemUserId) {
+            this.systemUserId = systemUserId;
+        }
 
-      public Object getAttribute (String key) {return null;}
-      public Object[] getAttributeValues (String key) {return null;}
-      public void setAttribute (String key, Object value) {}
-      public void setAttribute(String key, List<Object> values) {}
-      public void setAttributes (Map attrs) {}
+        public void setID(int sID) {
+        }
 
-      public Enumeration getAttributes () {return null;}
-      public Enumeration getAttributeNames () {return null;}
+        public int getID() {
+            return this.systemUserId;
+        }
 
-      public boolean isGuest() {return(false);}
+        public void setFullName(String sFullName) {
+        }
 
-      public ISecurityContext getSecurityContext() { return(null); }
-      public void setSecurityContext(ISecurityContext context) {}
+        public String getFullName() {
+            return "uPortal System Account";
+        }
 
-      public EntityIdentifier getEntityIdentifier() {return null;}
-      public void setEntityIdentifier(EntityIdentifier ei) {}
+        public Object getAttribute(String key) {
+            return null;
+        }
 
-      public String getName() { return null; }
+        public Object[] getAttributeValues(String key) {
+            return null;
+        }
+
+        public void setAttribute(String key, Object value) {
+        }
+
+        public void setAttribute(String key, List<Object> values) {
+        }
+
+        public void setAttributes(Map attrs) {
+        }
+
+        public Enumeration getAttributes() {
+            return null;
+        }
+
+        public Enumeration getAttributeNames() {
+            return null;
+        }
+
+        public boolean isGuest() {
+            return (false);
+        }
+
+        public ISecurityContext getSecurityContext() {
+            return (null);
+        }
+
+        public void setSecurityContext(ISecurityContext context) {
+        }
+
+        public EntityIdentifier getEntityIdentifier() {
+            return null;
+        }
+
+        public void setEntityIdentifier(EntityIdentifier ei) {
+        }
+
+        public String getName() {
+            return null;
+        }
     }
 
-    private IPerson systemUser = new SystemUser(); // We should be getting this from the uPortal
+    private final IPerson systemUser;
 
   public UserPreferences getUserPreferences (IPerson person, int profileId) throws Exception {
     UserPreferences up = null;
