@@ -106,23 +106,34 @@
                     </subtasks>
                 </sql-query>
                 <!--  Portlet preferences  -->
-                <if test="${jexl(Attributes.NODE.valueOf('type').equalsIgnoreCase('Portlet'))}">
-                    <sql-query>
-                        <sql>SELECT updp.*, uppv.value FROM up_portlet_definition_prefs updp, up_portlet_pref_values uppv WHERE updp.pref_id = uppv.portlet_pref_id AND updp.chan_id = ?</sql>
-                        <parameter value="${parseInt(${valueOf(chan-id)})}"/>
-                        <subtasks>
-                            <!-- NB:  'UP_PORTLET_PREF_PREFIX__'.length()=24 -->
-                            <append-node parent="${singleNode(parameters)}">
-                                <parameter>
-                                    <name>PORTLET.${req(PORTLET_PREF_NAME)}</name>
-                                    <value>${jexl(VALUE.substring(24).trim())}</value>
-                                    <description></description>
-                                    <ovrd>${org.jasig.portal.io.PortletPreferenceOverridePhrase(${req(PORTLET_PREF_READONLY)})}</ovrd>
-                                </parameter>
-                            </append-node>
-                        </subtasks>
-                    </sql-query>
-                </if>
+                <invoke-method class="org.jasig.portal.spring.PortalApplicationContextLocator" method="getApplicationContext" attribute-name="APP_CONTEXT">
+                    <subtasks>
+                        <invoke-method object="${APP_CONTEXT}" method="getBean" attribute-name="portletDefinitionRegistry">
+                            <parameter value="portletDefinitionRegistry" />
+                            <subtasks>
+                                <with>
+                                    <attribute key="PORTLET_DEF">${groovy(portletDefinitionRegistry.getPortletDefinition(Integer.parseInt("${valueOf(chan-id)}")))}</attribute>
+                                    <subtasks>
+                                        <if test="${groovy(PORTLET_DEF != null)}">
+                                            <for-each items="${groovy(PORTLET_DEF.getPortletPreferences().getPortletPreferences())}" attribute-name="portletPreference">
+                                                <for-each items="${groovy(Arrays.asList(portletPreference.getValues()))}" attribute-name="preferenceValue">
+                                                    <append-node parent="${singleNode(parameters)}">
+                                                        <parameter>
+                                                            <name>PORTLET.${groovy(portletPreference.getName())}</name>
+                                                            <value>${req(preferenceValue)}</value>
+                                                            <description></description>
+                                                            <ovrd>${groovy(portletPreference.isReadOnly() ? "N" : "Y")}</ovrd>
+                                                        </parameter>
+                                                    </append-node>
+                                                </for-each>
+                                            </for-each>
+                                        </if>
+                                    </subtasks>
+                                </with>
+                            </subtasks>
+                        </invoke-method>
+                    </subtasks>
+                </invoke-method>
                 <with-attribute key="CHANNEL_ID" value="${valueOf(chan-id)}">
                     <delete-node node="${singleNode(chan-id)}"/>
                     <write-document file="${req(EXPORT_DIR)}/${req(CHANNEL_ID)}.channel"/>
