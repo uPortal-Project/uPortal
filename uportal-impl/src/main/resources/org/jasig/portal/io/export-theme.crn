@@ -47,9 +47,9 @@
                         </if>
                     </subtasks>
                 </sql-query>
-                <with-attribute key="SS_ID" value="${valueOf(theme-id)}">
+                <with-attribute key="SAFE_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${req(NAME)}-${req(SS_ID)})}">
                     <delete-node node="${singleNode(theme-id)}"/>
-                    <write-document file="${req(EXPORT_DIR)}/${req(SS_ID)}.theme"/>
+                    <write-document file="${req(EXPORT_DIR)}/theme/${req(SAFE_NAME)}.theme"/>
                 </with-attribute>
             </otherwise>
         </choose>

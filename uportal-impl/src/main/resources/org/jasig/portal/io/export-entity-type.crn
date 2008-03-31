@@ -18,12 +18,14 @@
                             <name>${req(ENTITY_TYPE_NAME)}</name>
                             <desc-name>${req(DESCRIPTIVE_NAME)}</desc-name>
                         </append-node>
+                        
+                        <with-attribute key="SAFE_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${req(NAME)})}">
+                            <write-document file="${req(EXPORT_DIR)}/entity-type/${req(SAFE_NAME)}.entity-type"/>
+                        </with-attribute>
                     </subtasks>
                 </sql-query>
-                <with-attribute key="TYPE_ID" value="${valueOf(type-id)}">
-                    <delete-node node="${singleNode(type-id)}"/>
-                    <write-document file="${req(EXPORT_DIR)}/${req(TYPE_ID)}.entity-type"/>
-                </with-attribute>
+
+                <delete-node node="${singleNode(type-id)}"/>
             </otherwise>
         </choose>
     </with-attribute>

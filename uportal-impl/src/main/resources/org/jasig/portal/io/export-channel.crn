@@ -106,37 +106,33 @@
                     </subtasks>
                 </sql-query>
                 <!--  Portlet preferences  -->
-                <invoke-method class="org.jasig.portal.spring.PortalApplicationContextLocator" method="getApplicationContext" attribute-name="APP_CONTEXT">
+                <invoke-method object="${PORTAL_CONTEXT}" method="getBean" attribute-name="portletDefinitionRegistry">
+                    <parameter value="portletDefinitionRegistry" />
                     <subtasks>
-                        <invoke-method object="${APP_CONTEXT}" method="getBean" attribute-name="portletDefinitionRegistry">
-                            <parameter value="portletDefinitionRegistry" />
+                        <with>
+                            <attribute key="PORTLET_DEF">${groovy(portletDefinitionRegistry.getPortletDefinition(Integer.parseInt("${valueOf(chan-id)}")))}</attribute>
                             <subtasks>
-                                <with>
-                                    <attribute key="PORTLET_DEF">${groovy(portletDefinitionRegistry.getPortletDefinition(Integer.parseInt("${valueOf(chan-id)}")))}</attribute>
-                                    <subtasks>
-                                        <if test="${groovy(PORTLET_DEF != null)}">
-                                            <for-each items="${groovy(PORTLET_DEF.getPortletPreferences().getPortletPreferences())}" attribute-name="portletPreference">
-                                                <for-each items="${groovy(Arrays.asList(portletPreference.getValues()))}" attribute-name="preferenceValue">
-                                                    <append-node parent="${singleNode(parameters)}">
-                                                        <parameter>
-                                                            <name>PORTLET.${groovy(portletPreference.getName())}</name>
-                                                            <value>${req(preferenceValue)}</value>
-                                                            <description></description>
-                                                            <ovrd>${groovy(portletPreference.isReadOnly() ? "N" : "Y")}</ovrd>
-                                                        </parameter>
-                                                    </append-node>
-                                                </for-each>
-                                            </for-each>
-                                        </if>
-                                    </subtasks>
-                                </with>
+                                <if test="${groovy(PORTLET_DEF != null)}">
+                                    <for-each items="${groovy(PORTLET_DEF.getPortletPreferences().getPortletPreferences())}" attribute-name="portletPreference">
+                                        <for-each items="${groovy(Arrays.asList(portletPreference.getValues()))}" attribute-name="preferenceValue">
+                                            <append-node parent="${singleNode(parameters)}">
+                                                <parameter>
+                                                    <name>PORTLET.${groovy(portletPreference.getName())}</name>
+                                                    <value>${req(preferenceValue)}</value>
+                                                    <description></description>
+                                                    <ovrd>${groovy(portletPreference.isReadOnly() ? "N" : "Y")}</ovrd>
+                                                </parameter>
+                                            </append-node>
+                                        </for-each>
+                                    </for-each>
+                                </if>
                             </subtasks>
-                        </invoke-method>
+                        </with>
                     </subtasks>
                 </invoke-method>
-                <with-attribute key="CHANNEL_ID" value="${valueOf(chan-id)}">
+                <with-attribute key="SAFE_FNAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${req(FNAME)})}">
                     <delete-node node="${singleNode(chan-id)}"/>
-                    <write-document file="${req(EXPORT_DIR)}/${req(CHANNEL_ID)}.channel"/>
+                    <write-document file="${req(EXPORT_DIR)}/channel/${req(SAFE_FNAME)}.channel"/>
                 </with-attribute>
             </otherwise>
         </choose>

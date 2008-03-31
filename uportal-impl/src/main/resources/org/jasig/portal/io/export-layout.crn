@@ -72,16 +72,19 @@
                             <append-node node="${PREFERENCES}"/>
                         </if>
                     </with-attribute>
-                    <choose>
-                        <when test="${crn(is-fragment-owner.crn)}">
-                            <!-- This is a DLM fragment owner layout... -->
-                            <write-document file="${EXPORT_DIR}/${USER_NAME}.fragment-layout"/>
-                        </when>
-                        <otherwise>
-                            <!-- This is a normal layout... -->
-                            <write-document file="${EXPORT_DIR}/${USER_NAME}.layout"/>
-                        </otherwise>
-                    </choose>
+                    
+                    <with-attribute key="SAFE_USER_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${req(USER_NAME)})}">
+                        <choose>
+                            <when test="${crn(is-fragment-owner.crn)}">
+                                <!-- This is a DLM fragment owner layout... -->
+                                <write-document file="${EXPORT_DIR}/fragment-layout/${SAFE_USER_NAME}.fragment-layout"/>
+                            </when>
+                            <otherwise>
+                                <!-- This is a normal layout... -->
+                                <write-document file="${EXPORT_DIR}/layout/${SAFE_USER_NAME}.layout"/>
+                            </otherwise>
+                        </choose>
+                    </with-attribute>
                 </xslt>
             </otherwise>
         </choose>

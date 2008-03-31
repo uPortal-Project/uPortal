@@ -93,7 +93,10 @@
 
                 <if test="${jexl(!Attributes.NODE.valueOf('@cancel').equals('true'))}">
                     <echo-ln>Export Permission:  PRINCIPAL=${valueOf(principal/*)}, TARGET=${valueOf(target/*)}, ACTIVITY=${valueOf(activity)}</echo-ln>
-                    <write-document file="${req(EXPORT_DIR)}/${jexl(COUNTER.valueOf('count(row)'))}.permission"/>
+
+                    <with-attribute key="SAFE_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${valueOf(principal/*)}__${valueOf(activity)}__${valueOf(target/*)}-${jexl(COUNTER.valueOf('count(row)'))})}">
+                        <write-document file="${req(EXPORT_DIR)}/permission/${req(SAFE_NAME)}.permission"/>
+                    </with-attribute>
                 </if>
 
             </with-attribute>

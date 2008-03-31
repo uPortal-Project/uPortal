@@ -82,8 +82,9 @@
                         </with-attribute>
                     </subtasks>
                 </sql-query>
-                <write-document file="${req(EXPORT_DIR)}/${req(USER_NAME)}.user"/>
-
+                <with-attribute key="SAFE_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${req(USER_NAME)})}">
+                    <write-document file="${req(EXPORT_DIR)}/user/${req(SAFE_NAME)}.user"/>
+                </with-attribute>
             </otherwise>
         </choose>
     </with-attribute>

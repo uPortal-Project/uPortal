@@ -75,7 +75,10 @@
                 </append-node>
                 <if test="${jexl(!Attributes.NODE.valueOf('@cancel').equals('true'))}">
                     <echo-ln>Export Membership:  PARENT=${valueOf(parent)}, CHILD=${valueOf(child/*)}</echo-ln>
-                    <write-document file="${req(EXPORT_DIR)}/${jexl(COUNTER.valueOf('count(row)'))}.membership"/>
+                    
+                    <with-attribute key="SAFE_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${valueOf(parent)}__${valueOf(child/*)}-${jexl(COUNTER.valueOf('count(row)'))})}">
+                        <write-document file="${req(EXPORT_DIR)}/membership/${req(SAFE_NAME)}.membership"/>
+                    </with-attribute>
                 </if>
             </with-attribute>
         </subtasks>

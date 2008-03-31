@@ -8,7 +8,7 @@
 	<mkdirs path="TMP-XML"/>
 
 	<!-- First unload all the data to temporary files -->
-	<for-each attribute-name="TABLE_NAME" items="${groovy(['UP_VERSIONS', 'UP_SEQUENCE', 'UP_USER,UP_CHAN_TYPE', 'UP_USER_PROFILE', 'UP_SS_STRUCT', 'UP_SS_THEME', 'UP_SS_THEME_PARM', 'UP_SS_STRUCT_PAR', 'UP_SS_MAP', 'UP_MIME_TYPE', 'UP_ENTITY_TYPE', 'UP_GROUP', 'UPC_PERM_MGR', 'UP_PERSON_DIR'])}">
+	<for-each attribute-name="TABLE_NAME" items="${groovy(['UP_VERSIONS', 'UP_SEQUENCE', 'UP_USER', 'UP_CHAN_TYPE', 'UP_USER_PROFILE', 'UP_SS_STRUCT', 'UP_SS_THEME', 'UP_SS_THEME_PARM', 'UP_SS_STRUCT_PAR', 'UP_SS_MAP', 'UP_MIME_TYPE', 'UP_ENTITY_TYPE', 'UP_GROUP', 'UPC_PERM_MGR', 'UP_PERSON_DIR'])}">
 		<echo-ln>Gathering data for:  ${req(TABLE_NAME)}</echo-ln>
 		<with-attribute key="DEFAULT_DATA_FILE" value="${file(build/WEB-INF/classes/org/jasig/portal/tools/dbloader/${req(TABLE_NAME)}.default-data.xml)}">
 			<choose>

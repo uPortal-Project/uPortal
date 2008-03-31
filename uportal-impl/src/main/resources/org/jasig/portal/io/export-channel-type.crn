@@ -22,9 +22,9 @@
                         </append-node>
                     </subtasks>
                 </sql-query>
-                <with-attribute key="TYPE_ID" value="${valueOf(type-id)}">
+                <with-attribute key="SAFE_TYPE_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${req(NAME)})}">
                     <delete-node node="${singleNode(type-id)}"/>
-                    <write-document file="${req(EXPORT_DIR)}/${req(TYPE_ID)}.channel-type"/>
+                    <write-document file="${req(EXPORT_DIR)}/channel-type/${req(SAFE_TYPE_NAME)}.channel-type"/>
                 </with-attribute>
             </otherwise>
         </choose>
