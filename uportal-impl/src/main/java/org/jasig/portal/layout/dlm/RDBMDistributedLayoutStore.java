@@ -2170,7 +2170,7 @@ public class RDBMDistributedLayoutStore
                         pstmt.setString(5,tsup.getParameterValue(pName));
                         if (LOG.isDebugEnabled())
                             LOG.debug(sQuery + "VALUE " + userId + "," + profileId + "," + stylesheetId + "," + pName + "," + tsup.getParameterValue(pName));
-                        pstmt.executeUpdate(sQuery);
+                        pstmt.executeUpdate();
                     }
                 }
                 pstmt = con.prepareStatement(DELETE_FROM_UP_SS_USER_ATTS_SQL);
