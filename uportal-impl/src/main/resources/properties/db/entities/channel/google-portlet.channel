@@ -14,22 +14,23 @@
   <locale>en_US</locale>
   <categories>
     <category>Applications</category>
+    <category>Development</category>
   </categories>
   <groups>
     <group>Everyone</group>
   </groups>
   <parameters>
-    <parameter>
-      <name>portletApplicationId</name>
-      <value>/googleportlet</value> 
+    <parameter> 
+      <name>portletApplicationId</name>  
+      <value>/googleportlet</value>  
       <description/>  
-      <ovrd>N</ovrd>
+      <ovrd>N</ovrd> 
     </parameter>
-    <parameter>
-      <name>portletName</name>
-      <value>GooglePortlet</value> 
+    <parameter> 
+      <name>portletName</name>  
+      <value>GooglePortlet</value>  
       <description/>  
-      <ovrd>N</ovrd>
+      <ovrd>N</ovrd> 
     </parameter>
   </parameters>
 </channel-definition>

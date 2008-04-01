@@ -1,5 +1,5 @@
 
-<channel-definition script="classpath://org/jasig/portal/io/import-channel_v2-6.crn">
+<channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-0.crn">
   <title>Daily Business Cartoon</title>
   <name>Daily Business Cartoon</name>
   <fname>daily-business-cartoon</fname>
@@ -21,8 +21,8 @@
   </groups>
   <parameters>
     <parameter> 
-      <name>img-border</name>  
-      <value>0</value>  
+      <name>img-width</name>  
+      <value>300</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>
@@ -39,14 +39,14 @@
       <ovrd>N</ovrd> 
     </parameter>
     <parameter> 
-      <name>img-uri</name>  
-      <value>http://www.tedgoff.com/mb/images/today.gif</value>  
+      <name>img-border</name>  
+      <value>0</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>
     <parameter> 
-      <name>img-width</name>  
-      <value>300</value>  
+      <name>img-uri</name>  
+      <value>http://www.tedgoff.com/mb/images/today.gif</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>

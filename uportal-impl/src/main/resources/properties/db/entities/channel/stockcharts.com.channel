@@ -1,5 +1,5 @@
 
-<channel-definition script="classpath://org/jasig/portal/io/import-channel_v2-6.crn">
+<channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-0.crn">
   <title>StockCharts.com</title>
   <name>StockCharts.com</name>
   <fname>stockcharts.com</fname>

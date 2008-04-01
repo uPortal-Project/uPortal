@@ -1,0 +1,28 @@
+
+<theme script="classpath://org/jasig/portal/io/import-theme_v2-6.crn">
+  <name>DLM XHTML</name>
+  <uri>/layout/theme/universality/universality.xsl</uri>
+  <description-uri>/layout/theme/universality/universality.sdf</description-uri>
+  <description-text>Renders DLM tabs and columns as xhtml</description-text>
+  <struct-id>4</struct-id>
+  <sample-icon-uri>media/skins/universality/universality_icon.gif</sample-icon-uri>
+  <sample-uri>media/skins/universality/universality_full.gif</sample-uri>
+  <mime-type>text/html</mime-type>
+  <device-type>workstation</device-type>
+  <serializer-name>XHTML</serializer-name>
+  <module-class>org.jasig.portal.channels.DLMUserPreferences.TabColumnPrefsState</module-class>
+  <parameters>
+    <parameter> 
+      <name>minimized</name>  
+      <value>false</value>  
+      <description>Flag determining if the channel is minimized or not</description>  
+      <type>3</type> 
+    </parameter>
+    <parameter> 
+      <name>skin</name>  
+      <value>uportal3</value>  
+      <description>Design skin name</description>  
+      <type>1</type> 
+    </parameter>
+  </parameters>
+</theme>

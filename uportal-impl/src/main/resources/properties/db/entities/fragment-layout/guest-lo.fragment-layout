@@ -15,7 +15,7 @@
           <name>width</name>
           <value>60%</value>
         </structure-attribute>
-      	<channel fname="what-is-uportal"/>
+        <channel fname="what-is-uportal"/>
         <channel fname="logging-in"/>
       </column>
       <column unremovable="N" immutable="N" hidden="N" name="Column">
@@ -23,9 +23,9 @@
           <name>width</name>
           <value>40%</value>
         </structure-attribute>
-      	<channel fname="google-portlet"/>
-      	<channel fname="uportal-links"/>
-      	<channel fname="please-register"/>
+        <channel fname="google-portlet"/>
+        <channel fname="uportal-links"/>
+        <channel fname="please-register"/>
       </column>
     </tab>
   </root>

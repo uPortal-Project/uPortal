@@ -5,9 +5,4 @@
     <structure name="DLM Tabs and columns"/>  
     <theme name="DLM XHTML"/> 
   </profile>
-  <profile name="WML browser profile"> 
-    <description>A system profile for WAP cell phones</description>  
-    <structure name="Tabs and columns"/>  
-    <theme name="Deck of cards"/> 
-  </profile>
 </user>

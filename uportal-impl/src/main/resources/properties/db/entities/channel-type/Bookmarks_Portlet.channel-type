@@ -1,0 +1,7 @@
+
+<channel-type script="classpath://org/jasig/portal/io/import-channel-type_v2-6.crn">
+  <name>Bookmarks Portlet</name>
+  <type>org.jasig.portal.channels.portlet.CSpringPortletAdaptor</type>
+  <desc>UWisc Bookmarks Portlet</desc>
+  <uri>/edu/wisc/my/portlets/bookmarks/BookmarksPortlet.cpd</uri>
+</channel-type>

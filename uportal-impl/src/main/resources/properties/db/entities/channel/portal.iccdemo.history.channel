@@ -1,11 +1,11 @@
 
-<channel-definition script="classpath://org/jasig/portal/io/import-channel_v2-6.crn">
-  <title>CViewer</title>
-  <name>ICC Viewer channel</name>
-  <fname>portal/iccdemo/viewer</fname>
-  <desc>Interchannel communications demo Viewer channel</desc>
+<channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-0.crn">
+  <title>CHistory</title>
+  <name>ICC History channel</name>
+  <fname>portal/iccdemo/history</fname>
+  <desc>Interchannel communications demo History channel</desc>
   <type>Custom</type>
-  <class>org.jasig.portal.channels.iccdemo.CViewer</class>
+  <class>org.jasig.portal.channels.iccdemo.CHistory</class>
   <timeout>10000</timeout>
   <hasedit>N</hasedit>
   <hashelp>N</hashelp>

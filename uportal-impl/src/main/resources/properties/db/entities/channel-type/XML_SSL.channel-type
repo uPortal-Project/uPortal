@@ -1,0 +1,7 @@
+
+<channel-type script="classpath://org/jasig/portal/io/import-channel-type_v2-6.crn">
+  <name>XML SSL</name>
+  <type>org.jasig.portal.channels.CGenericXSLT</type>
+  <desc>Transforms an XML document into a fragment of markup language given a set of XSLT stylesheets specified in a uPortal stylesheet list (SSL) file.</desc>
+  <uri>/org/jasig/portal/channels/CGenericXSLT/CGenericXSLT.cpd</uri>
+</channel-type>

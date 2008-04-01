@@ -1,0 +1,7 @@
+
+<channel-type script="classpath://org/jasig/portal/io/import-channel-type_v2-6.crn">
+  <name>XML XSLT</name>
+  <type>org.jasig.portal.channels.CGenericXSLT</type>
+  <desc>Transforms an XML document into a fragment of markup language using a single XSLT.</desc>
+  <uri>/org/jasig/portal/channels/CGenericXSLT/CGenericJustXSLT.cpd</uri>
+</channel-type>

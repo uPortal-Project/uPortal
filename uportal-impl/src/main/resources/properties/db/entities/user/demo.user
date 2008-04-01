@@ -5,9 +5,4 @@
     <structure name="DLM Tabs and columns"/>  
     <theme name="DLM XHTML"/> 
   </profile>
-  <profile name="My Cell Phone Profile"> 
-    <description>A sample profile for cell phone browsers</description>  
-    <structure name="Tabs and columns"/>  
-    <theme name="Deck of cards"/> 
-  </profile>
 </user>

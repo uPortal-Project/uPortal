@@ -19,17 +19,17 @@
     <group>Everyone</group>
   </groups>
   <parameters>
-    <parameter>
-      <name>portletApplicationId</name>
-      <value>/RssPortlet</value> 
+    <parameter> 
+      <name>portletApplicationId</name>  
+      <value>/RssPortlet</value>  
       <description/>  
-      <ovrd>N</ovrd>
+      <ovrd>N</ovrd> 
     </parameter>
-    <parameter>
-      <name>portletName</name>
-      <value>RssPortlet</value> 
+    <parameter> 
+      <name>portletName</name>  
+      <value>RssPortlet</value>  
       <description/>  
-      <ovrd>N</ovrd>
+      <ovrd>N</ovrd> 
     </parameter>
   </parameters>
 </channel-definition>

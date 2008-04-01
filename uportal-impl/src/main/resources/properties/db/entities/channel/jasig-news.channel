@@ -1,5 +1,5 @@
 
-<channel-definition script="classpath://org/jasig/portal/io/import-channel_v2-6.crn">
+<channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-0.crn">
   <title>JA-SIG News</title>
   <name>JA-SIG News</name>
   <fname>jasig-news</fname>
@@ -13,8 +13,8 @@
   <secure>N</secure>
   <locale>en_US</locale>
   <categories>
-    <category>uPortal</category>
     <category>News</category>
+    <category>uPortal</category>
   </categories>
   <groups>
     <group>Everyone</group>
@@ -26,11 +26,11 @@
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>
-    <parameter>
-      <name>viewNum</name>
-      <value>5</value>
-      <description/>
-      <ovrd>N</ovrd>
+    <parameter> 
+      <name>viewNum</name>  
+      <value>5</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
     </parameter>
   </parameters>
 </channel-definition>

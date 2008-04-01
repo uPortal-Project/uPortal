@@ -1,5 +1,5 @@
 
-<channel-definition script="classpath://org/jasig/portal/io/import-channel_v2-6.crn">
+<channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-0.crn">
   <title>Footer</title>
   <name>Footer</name>
   <fname>footer</fname>
@@ -18,8 +18,8 @@
   </groups>
   <parameters>
     <parameter> 
-      <name>sslUri</name>  
-      <value>CGenericXSLT/footer/footer.ssl</value>  
+      <name>xmlUri</name>  
+      <value>CGenericXSLT/emptyDocument.xml</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>
@@ -30,8 +30,8 @@
       <ovrd>N</ovrd> 
     </parameter>
     <parameter> 
-      <name>xmlUri</name>  
-      <value>CGenericXSLT/emptyDocument.xml</value>  
+      <name>sslUri</name>  
+      <value>CGenericXSLT/footer/footer.ssl</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>

@@ -19,23 +19,23 @@
     <group>Everyone</group>
   </groups>
   <parameters>
-    <parameter>
-      <name>portletApplicationId</name>
-      <value>/BookmarksPortlet</value> 
+    <parameter> 
+      <name>portletApplicationId</name>  
+      <value>/BookmarksPortlet</value>  
       <description/>  
-      <ovrd>N</ovrd>
+      <ovrd>N</ovrd> 
     </parameter>
-    <parameter>
-      <name>portletName</name>
-      <value>BookmarksPortlet</value> 
+    <parameter> 
+      <name>quicklink</name>  
+      <value>1</value>  
       <description/>  
-      <ovrd>N</ovrd>
+      <ovrd>N</ovrd> 
     </parameter>
-    <parameter>
-      <name>quicklink</name>
-      <value>1</value> 
+    <parameter> 
+      <name>portletName</name>  
+      <value>BookmarksPortlet</value>  
       <description/>  
-      <ovrd>N</ovrd>
+      <ovrd>N</ovrd> 
     </parameter>
   </parameters>
 </channel-definition>

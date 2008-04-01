@@ -1,0 +1,7 @@
+
+<channel-type script="classpath://org/jasig/portal/io/import-channel-type_v2-6.crn">
+  <name>Portlet</name>
+  <type>org.jasig.portal.channels.portlet.CSpringPortletAdaptor</type>
+  <desc>Adapter for JSR-168 Portlets</desc>
+  <uri>/org/jasig/portal/channels/portlet/CSpringPortletAdaptor.cpd</uri>
+</channel-type>

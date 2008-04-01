@@ -1,5 +1,5 @@
 
-<channel-definition script="classpath://org/jasig/portal/io/import-channel_v2-6.crn">
+<channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-0.crn">
   <title>Tomcat's Servlet Examples</title>
   <name>Tomcat's Servlet Examples</name>
   <fname>tomcat-servlet-examples</fname>
@@ -26,14 +26,8 @@
       <ovrd>N</ovrd> 
     </parameter>
     <parameter> 
-      <name>cw_passThrough</name>  
-      <value>all</value>  
-      <description/>  
-      <ovrd>N</ovrd> 
-    </parameter>
-    <parameter> 
-      <name>cw_info</name>  
-      <value>examples/servlet_info.html</value>  
+      <name>cw_help</name>  
+      <value>examples/servlet_help.html</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>
@@ -50,14 +44,20 @@
       <ovrd>N</ovrd> 
     </parameter>
     <parameter> 
-      <name>cw_help</name>  
-      <value>examples/servlet_help.html</value>  
+      <name>cw_tidy</name>  
+      <value>on</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>
     <parameter> 
-      <name>cw_tidy</name>  
-      <value>on</value>  
+      <name>cw_info</name>  
+      <value>examples/servlet_info.html</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+    <parameter> 
+      <name>cw_passThrough</name>  
+      <value>all</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>

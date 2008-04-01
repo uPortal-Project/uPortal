@@ -1,5 +1,5 @@
 
-<channel-definition script="classpath://org/jasig/portal/io/import-channel_v2-6.crn">
+<channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-0.crn">
   <title>uPortal Data Dictionary</title>
   <name>uPortal Data Dictionary</name>
   <fname>uportal-data-dictionary</fname>
@@ -20,14 +20,14 @@
   </groups>
   <parameters>
     <parameter> 
-      <name>sslUri</name>  
-      <value>CGenericXSLT/DataDictViewer/DataDictViewer.ssl</value>  
+      <name>xmlUri</name>  
+      <value>/properties/db/tables.xml</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>
     <parameter> 
-      <name>xmlUri</name>  
-      <value>/properties/db/tables.xml</value>  
+      <name>sslUri</name>  
+      <value>CGenericXSLT/DataDictViewer/DataDictViewer.ssl</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>

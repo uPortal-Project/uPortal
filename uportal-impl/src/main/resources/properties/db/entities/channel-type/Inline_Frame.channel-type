@@ -1,0 +1,7 @@
+
+<channel-type script="classpath://org/jasig/portal/io/import-channel-type_v2-6.crn">
+  <name>Inline Frame</name>
+  <type>org.jasig.portal.channels.CInlineFrame</type>
+  <desc>Renders an HTML page within a frame. Not supported in browsers older than Internet Explorer 5 and Netscape 6.</desc>
+  <uri>/org/jasig/portal/channels/CInlineFrame/CInlineFrame.cpd</uri>
+</channel-type>

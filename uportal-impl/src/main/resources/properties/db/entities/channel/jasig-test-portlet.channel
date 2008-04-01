@@ -1,3 +1,4 @@
+
 <channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-0.crn">
   <title>JASIG Test Portlet</title>
   <name>JASIG Test Portlet</name>
@@ -18,17 +19,17 @@
     <group>Everyone</group>
   </groups>
   <parameters>
-    <parameter>
-      <name>portletApplicationId</name>
-      <value>/FunctionalTestsPortlet</value> 
+    <parameter> 
+      <name>portletApplicationId</name>  
+      <value>/FunctionalTestsPortlet</value>  
       <description/>  
-      <ovrd>N</ovrd>
+      <ovrd>N</ovrd> 
     </parameter>
-    <parameter>
-      <name>portletName</name>
-      <value>FunctionalTestsPortlet</value> 
+    <parameter> 
+      <name>portletName</name>  
+      <value>FunctionalTestsPortlet</value>  
       <description/>  
-      <ovrd>N</ovrd>
+      <ovrd>N</ovrd> 
     </parameter>
   </parameters>
 </channel-definition>

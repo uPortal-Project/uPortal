@@ -19,17 +19,17 @@
     <group>Everyone</group>
   </groups>
   <parameters>
-    <parameter>
-      <name>portletApplicationId</name>
-      <value>/pluto-testsuite</value> 
+    <parameter> 
+      <name>portletApplicationId</name>  
+      <value>/pluto-testsuite</value>  
       <description/>  
-      <ovrd>N</ovrd>
+      <ovrd>N</ovrd> 
     </parameter>
-    <parameter>
-      <name>portletName</name>
-      <value>TestPortlet1</value> 
+    <parameter> 
+      <name>portletName</name>  
+      <value>TestPortlet1</value>  
       <description/>  
-      <ovrd>N</ovrd>
+      <ovrd>N</ovrd> 
     </parameter>
     <parameter> 
       <name>PORTLET.TestName4</name>  

@@ -26,13 +26,7 @@
       <ovrd>N</ovrd> 
     </parameter>
     <parameter> 
-      <name>cw_passThrough</name>  
-      <value>none</value>  
-      <description/>  
-      <ovrd>N</ovrd> 
-    </parameter>
-    <parameter> 
-      <name>cw_info</name>  
+      <name>cw_help</name>  
       <value></value>  
       <description/>  
       <ovrd>N</ovrd> 
@@ -50,14 +44,20 @@
       <ovrd>N</ovrd> 
     </parameter>
     <parameter> 
-      <name>cw_help</name>  
+      <name>cw_tidy</name>  
+      <value>off</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+    <parameter> 
+      <name>cw_info</name>  
       <value></value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>
     <parameter> 
-      <name>cw_tidy</name>  
-      <value>off</value>  
+      <name>cw_passThrough</name>  
+      <value>none</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>

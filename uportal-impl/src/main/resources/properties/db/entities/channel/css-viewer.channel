@@ -1,5 +1,5 @@
 
-<channel-definition script="classpath://org/jasig/portal/io/import-channel_v2-6.crn">
+<channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-0.crn">
   <title>CSS Viewer</title>
   <name>CSS Viewer</name>
   <fname>css-viewer</fname>
@@ -20,14 +20,14 @@
   </groups>
   <parameters>
     <parameter> 
-      <name>sslUri</name>  
-      <value>CGenericXSLT/CSSViewer/CSSViewer.ssl</value>  
+      <name>xmlUri</name>  
+      <value>CGenericXSLT/CSSViewer/cssViewer.xml</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>
     <parameter> 
-      <name>xmlUri</name>  
-      <value>CGenericXSLT/CSSViewer/cssViewer.xml</value>  
+      <name>sslUri</name>  
+      <value>CGenericXSLT/CSSViewer/CSSViewer.ssl</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>

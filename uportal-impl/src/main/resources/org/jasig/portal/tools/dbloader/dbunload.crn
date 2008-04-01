@@ -8,7 +8,7 @@
 	<mkdirs path="TMP-XML"/>
 
 	<!-- First unload all the data to temporary files -->
-	<for-each attribute-name="TABLE_NAME" items="${groovy(['UP_VERSIONS', 'UP_SEQUENCE', 'UP_SS_MAP', 'UP_MIME_TYPE', 'UPC_PERM_MGR', 'UP_PERSON_DIR', 'UP_GROUP'])}">
+	<for-each attribute-name="TABLE_NAME" items="${groovy(['UP_VERSIONS', 'UP_SEQUENCE', 'UP_SS_MAP', 'UP_MIME_TYPE', 'UPC_PERM_MGR', 'UP_PERSON_DIR'])}">
 		<echo-ln>Gathering data for:  ${req(TABLE_NAME)}</echo-ln>
 		<with-attribute key="DEFAULT_DATA_URL" value="${groovy(org.jasig.portal.tools.dbloader.DbLoader.class.getResource('${req(TABLE_NAME)}.default-data.xml'))}">
 			<choose>

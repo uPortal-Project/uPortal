@@ -1,25 +1,12 @@
 <sql-transaction>
-    <sql-query>
-        <sql>SELECT sequence_value + 1 AS NEXT_ID FROM up_sequence WHERE sequence_name = 'UP_CHAN_TYPE'</sql>
-        <subtasks>
-            <sql-upsert>
-                <update-statement>UPDATE up_chan_type SET type = ?, type_descr = ?, type_def_uri = ? WHERE type_name = ?</update-statement>
-                <insert-statement>INSERT INTO up_chan_type(type, type_descr, type_def_uri, type_name, type_id) VALUES(?, ?, ?, ?, '${req(NEXT_ID)}')</insert-statement>
-                <parameter value="${valueOf(type)}"/>
-                <parameter value="${valueOf(desc)}"/>
-                <parameter value="${valueOf(uri)}"/>
-                <parameter value="${valueOf(name)}"/>
-            </sql-upsert>
-            <sql-query>
-                <sql>SELECT * FROM up_chan_type WHERE type_id = ?</sql>
-                <parameter value="${jexl(NEXT_ID.toString())}"/>
-                <subtasks>
-                    <!-- The following task will only trigger if a new channeltype was added (i.e. inserted) -->
-                    <sql-statement sql="UPDATE up_sequence SET sequence_value = ? WHERE sequence_name = 'UP_CHAN_TYPE'">
-                        <parameter value="${req(NEXT_ID)}"/>
-                    </sql-statement>
-                </subtasks>
-            </sql-query>
-        </subtasks>
-    </sql-query>
+    <with-attribute key="NEXT_ID" value="${org.jasig.portal.io.SequenceGeneratorPhrase(UP_CHAN_TYPE)}">
+        <sql-upsert>
+            <update-statement>UPDATE up_chan_type SET type = ?, type_descr = ?, type_def_uri = ? WHERE type_name = ?</update-statement>
+            <insert-statement>INSERT INTO up_chan_type(type, type_descr, type_def_uri, type_name, type_id) VALUES(?, ?, ?, ?, '${req(NEXT_ID)}')</insert-statement>
+            <parameter value="${valueOf(type)}"/>
+            <parameter value="${valueOf(desc)}"/>
+            <parameter value="${valueOf(uri)}"/>
+            <parameter value="${valueOf(name)}"/>
+        </sql-upsert>
+    </with-attribute>
 </sql-transaction>

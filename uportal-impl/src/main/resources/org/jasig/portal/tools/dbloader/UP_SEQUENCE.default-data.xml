@@ -1,45 +1,9 @@
 <table>
 	<name>UP_SEQUENCE</name>
 	<rows>
-    	<row>
-			<column><name>SEQUENCE_NAME</name><value>UP_USER_PROFILE</value></column>
-			<column><name>SEQUENCE_VALUE</name><value>100</value></column>
-		</row>
-		<row>
-			<column><name>SEQUENCE_NAME</name><value>UP_CHANNEL</value></column>
-			<column><name>SEQUENCE_VALUE</name><value>200</value></column> <!-- Reserve some IDs for internal use, just in case -->
-		</row>
-		<row>
-			<column><name>SEQUENCE_NAME</name><value>UP_CHAN_TYPE</value></column>
-			<column><name>SEQUENCE_VALUE</name><value>100</value></column> <!-- Reserve some IDs for internal use, just in case -->
-		</row>
-		<row>
-			<column><name>SEQUENCE_NAME</name><value>UP_USER</value></column>
-			<column><name>SEQUENCE_VALUE</name><value>100</value></column> <!-- Reserve some IDs for internal use, just in case -->
-		</row>
-		<row>
-			<column><name>SEQUENCE_NAME</name><value>UP_SS_STRUCT</value></column>
-			<column><name>SEQUENCE_VALUE</name><value>100</value></column>
-		</row>
-		<row>
-			<column><name>SEQUENCE_NAME</name><value>UP_SS_THEME</value></column>
-			<column><name>SEQUENCE_VALUE</name><value>100</value></column>
-		</row>
-		<row>
+        <row>
 			<column><name>SEQUENCE_NAME</name><value>UP_GROUP</value></column>
-			<column><name>SEQUENCE_VALUE</name><value>100</value></column> <!-- Reserve some IDs for internal use, just in case -->
-		</row>
-		<row>
-			<column><name>SEQUENCE_NAME</name><value>UP_ENTITY_TYPE</value></column>
-			<column><name>SEQUENCE_VALUE</name><value>100</value></column> <!-- Reserve some IDs for internal use, just in case -->
-		</row>
-		<row>
-			<column><name>SEQUENCE_NAME</name><value>UP_ENTITY_CACHE</value></column>
-			<column><name>SEQUENCE_VALUE</name><value>100</value></column>
-		</row>
-		<row>
-			<column><name>SEQUENCE_NAME</name><value>UP_FRAGMENT</value></column>
-			<column><name>SEQUENCE_VALUE</name><value>100</value></column>
+			<column><name>SEQUENCE_VALUE</name><value>10</value></column> <!-- Reserve some IDs for internal use, just in case -->
 		</row>
 	</rows>
 </table>

@@ -1,5 +1,5 @@
 
-<channel-definition script="classpath://org/jasig/portal/io/import-channel_v2-6.crn">
+<channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-0.crn">
   <title>The Chronicle: Wired Campus</title>
   <name>The Chronicle: Wired Campus</name>
   <fname>chronicle-wired</fname>
@@ -25,11 +25,11 @@
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>
-    <parameter>
-      <name>viewNum</name>
-      <value>5</value>
-      <description/>
-      <ovrd>N</ovrd>
+    <parameter> 
+      <name>viewNum</name>  
+      <value>5</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
     </parameter>
   </parameters>
 </channel-definition>
