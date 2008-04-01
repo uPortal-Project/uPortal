@@ -28,15 +28,20 @@
                     </subtasks>
                 </sql-query>
                 <sql-query>
-                    <sql>SELECT upc.chan_fname, upls.struct_id, upls.next_struct_id, upls.hidden FROM up_channel upc, up_layout_struct upls WHERE upc.chan_id = upls.chan_id AND upls.user_id = ? AND upls.layout_id = 1</sql>
+                    <sql>SELECT chan_id, struct_id, next_struct_id FROM up_layout_struct WHERE user_id = ? AND layout_id = 1</sql>
                     <parameter value="${USER_ID}"/>
                     <subtasks>
-                        <append-node>
-                            <channel
-                                fname="${CHAN_FNAME}"
-                                struct-id="${STRUCT_ID}"
-                                next-struct-id="${NEXT_STRUCT_ID}"/>
-                        </append-node>
+                        <with-attribute key="CHAN_FNAME" value="${sql(SELECT chan_fname FROM up_channel WHERE chan_id = ${CHAN_ID})}">
+                            <if test="${groovy(CHAN_FNAME == null)}">
+                                <log level="warn">User ${USER_NAME}'s layout references a missing channel;  The layout document will be exported, but removing the empty reference (manually) is recommended.</log>
+                            </if>
+                            <append-node>
+                                <channel
+                                    fname="${CHAN_FNAME}"
+                                    struct-id="${STRUCT_ID}"
+                                    next-struct-id="${NEXT_STRUCT_ID}"/>
+                            </append-node>
+                        </with-attribute>
                     </subtasks>
                 </sql-query>
                 <!-- Layout Parameters. -->
@@ -72,7 +77,7 @@
                             <append-node node="${PREFERENCES}"/>
                         </if>
                     </with-attribute>
-                    
+
                     <with-attribute key="SAFE_USER_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${req(USER_NAME)})}">
                         <choose>
                             <when test="${crn(is-fragment-owner.crn)}">
