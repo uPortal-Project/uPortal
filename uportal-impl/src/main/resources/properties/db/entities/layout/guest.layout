@@ -12,8 +12,7 @@
           <name>width</name>
           <value>40%</value>
         </structure-attribute>
-        <channel fname="null"/>
-        <channel fname="uportal-developers-reference"/>
+        <channel fname="uportal-news"/>
       </column>
       <column unremovable="N" immutable="N" hidden="N" name="Column 2">
         <structure-attribute type="folder">

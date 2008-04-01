@@ -1,9 +1,9 @@
 
 <channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-0.crn">
-  <title>StockCharts.com</title>
-  <name>StockCharts.com</name>
-  <fname>stockcharts.com</fname>
-  <desc>StockCharts.com channel</desc>
+  <title>uPortal News</title>
+  <name>uPortal News</name>
+  <fname>uportal-news</fname>
+  <desc>uPortal News channel</desc>
   <type>RSS</type>
   <class>org.jasig.portal.channels.CSyndFeed</class>
   <timeout>10000</timeout>
@@ -13,15 +13,21 @@
   <secure>N</secure>
   <locale>en_US</locale>
   <categories>
-    <category>News</category>
+    <category>uPortal</category>
   </categories>
   <groups>
     <group>Everyone</group>
   </groups>
   <parameters>
     <parameter> 
-      <name>sslUri</name>  
-      <value>CGenericXSLT/RSS/RSS-0_9x.ssl</value>  
+      <name>xmlUri</name>  
+      <value>http://uportal.org/rss/news/index.xml</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+    <parameter> 
+      <name>viewNum</name>  
+      <value>5</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>

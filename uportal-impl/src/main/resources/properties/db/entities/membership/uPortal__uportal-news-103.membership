@@ -1,7 +1,7 @@
 
 <membership script="classpath://org/jasig/portal/io/import-membership_v2-6.crn">
-  <parent>News</parent>
+  <parent>uPortal</parent>
   <child> 
-    <channel>stockcharts.com</channel> 
+    <channel>uportal-news</channel> 
   </child>
 </membership>

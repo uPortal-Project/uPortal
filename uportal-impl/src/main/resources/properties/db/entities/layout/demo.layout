@@ -30,7 +30,7 @@
           <name>width</name>
           <value>50%</value>
         </structure-attribute>
-        <channel fname="uportal-developers-reference"/>
+        <channel fname="uportal-news"/>
       </column>
     </tab>
     <tab unremovable="N" immutable="N" hidden="N" name="Development">
