@@ -45,7 +45,7 @@ import org.xml.sax.ContentHandler;
 public class AdminNavChannel extends BaseChannel implements ICacheable
 {
     // Used for informational, error, and debug logging
-    private static Log LOG = null;
+    private static Log LOG = LogFactory.getLog(AdminNavChannel.class);
 
     // Internal model of channel.
     private static INavigationModel model = null;
@@ -56,10 +56,12 @@ public class AdminNavChannel extends BaseChannel implements ICacheable
     private static Throwable INSTANTIATION_PROBLEM = null;
     /********** Static initializer to load declared implementation *********/
     
-    static
+    private static synchronized INavigationModel getNavModel()
     {
-        // must instantiate log here if we want to use it in the initializer
-        LOG = LogFactory.getLog(AdminNavChannel.class);
+        if (model == null) {
+            return model;
+        }
+        
         
         try
         {
@@ -73,6 +75,8 @@ public class AdminNavChannel extends BaseChannel implements ICacheable
             LOG.error("Unable to load implementation of administrative " +
                     "navigational links.", t);
         }
+        
+        return model;
     }
     
     /********* Channel Methods ***********/
@@ -83,6 +87,7 @@ public class AdminNavChannel extends BaseChannel implements ICacheable
      */
     public void setRuntimeData(ChannelRuntimeData rd) throws PortalException
     {
+        final INavigationModel model = getNavModel();
         if (model != null)
             model.setRuntimeData(rd);
     }
@@ -94,6 +99,7 @@ public class AdminNavChannel extends BaseChannel implements ICacheable
     public void renderXML( ContentHandler out )
         throws PortalException
     {
+        final INavigationModel model = getNavModel();
         if (model != null)
             model.renderXML(out);
     }
@@ -108,6 +114,7 @@ public class AdminNavChannel extends BaseChannel implements ICacheable
      */
     public static boolean canAccess(IAuthorizationPrincipal ap)
     {
+        final INavigationModel model = getNavModel();
         if (model != null)
             return model.canAccess(ap);
         else
@@ -120,6 +127,7 @@ public class AdminNavChannel extends BaseChannel implements ICacheable
      */
     public static ILinkRegistrar getLinkRegistrar()
     {
+        final INavigationModel model = getNavModel();
         return model;
     }
     
@@ -131,6 +139,7 @@ public class AdminNavChannel extends BaseChannel implements ICacheable
      */
     public ChannelCacheKey generateKey()
     {
+        final INavigationModel model = getNavModel();
         if (model != null)
             return model.generateKey();
         else 
@@ -146,6 +155,7 @@ public class AdminNavChannel extends BaseChannel implements ICacheable
      */
     public boolean isCacheValid(Object validity)
     {
+        final INavigationModel model = getNavModel();
         if (model != null)
             return model.isCacheValid(validity);
         return false;
@@ -157,6 +167,7 @@ public class AdminNavChannel extends BaseChannel implements ICacheable
      */
     public void setStaticData(ChannelStaticData sd) throws PortalException
     {
+        final INavigationModel model = getNavModel();
         if (model != null)
             model.setStaticData(sd);
         else
