@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.IPrivileged;
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.PortalControlStructures;
@@ -45,13 +46,24 @@ import org.xml.sax.ContentHandler;
     private static final String sslLocation = "/org/jasig/portal/channels/CSkinSelector/CSkinSelector.ssl";
     private PortalControlStructures controlStructures;
     private IUserPreferencesManager upm;
-    private static IUserLayoutStore store = UserLayoutStoreFactory.getUserLayoutStoreImpl();
+    private static IUserLayoutStore store;
 
     public CSkinSelector() {
        super();
     }
+    
+     @Override
+    public void setStaticData(ChannelStaticData sd) throws PortalException {
+        super.setStaticData(sd);
+        
+        synchronized (CSkinSelector.class) {
+            if (store == null) {
+                store = UserLayoutStoreFactory.getUserLayoutStoreImpl();
+            }
+        }
+    }
 
-     /**
+    /**
      * Passes portal control structure to the channel.
      * @see PortalControlStructures
      */
