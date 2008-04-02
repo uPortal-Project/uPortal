@@ -302,7 +302,7 @@ function initializeSkinMenu() {
 
 function chooseSkin(form) {
 	$.post(preferencesUrl,
-		{ action: 'chooseSkin', skinName:$("#skinList > input:selected").val() },
+		{ action: 'chooseSkin', skinName:$("#skinList").find("input:checked").val() },
 		function(xml) {
 			window.location = portalUrl;
 		}
