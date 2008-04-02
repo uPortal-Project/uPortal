@@ -94,10 +94,6 @@
             <param-value>http://localhost:8080/CasProxyServlet</param-value>
         </init-param>
         <init-param>
-            <param-name>edu.yale.its.tp.cas.client.filter.gateway</param-name>
-            <param-value>true</param-value>
-        </init-param>
-        <init-param>
             <param-name>BROKEN_SECURITY_ALLOW_NON_SSL</param-name>
             <param-value>NOT_SECURE_DO_NOT_USE_THIS_SETTING_IN_PRODUCTION</param-value>
         </init-param>
