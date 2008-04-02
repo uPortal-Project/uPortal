@@ -84,7 +84,9 @@
 		   		$("#channelLoading").css("display", "none");
 		   		$("#categorySelectMenu").css("background-image", "none");
 		   		$("#channelSelectMenu").css("background-image", "none");
-		   		$(self.element).parent().parent().css("height", $(self.element).parent().get(0).clientHeight + 20);
+		   		$(self.element).parent().parent()
+		   	      .css("height", $(self.element).parent().get(0).clientHeight + 20)
+		   	      .css("z-index", 12);
 		   		
 			});
 			

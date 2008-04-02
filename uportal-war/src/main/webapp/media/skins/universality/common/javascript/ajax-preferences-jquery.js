@@ -36,7 +36,8 @@ function initfocusedportal() {
 	$("#focusedContentDialogLink").click(initializeFocusedContentMenu);
 }
 function initializeFocusedContentMenu() {
-	$("#focusedContentAddingDialog").dialog({height:450, width:500});
+	$("#focusedContentAddingDialog").dialog({width:500});
+    $("#focusedContentAddingDialog").parent().parent().css("z-index", 12);
 	$("#focusedContentDialogLink")
 		.unbind('click', initializeFocusedContentMenu)
 		.click(function(){$("#focusedContentAddingDialog").dialog('open');});
@@ -47,6 +48,7 @@ function initializeLayoutMenu() {
 		.click(function(){$(this).prev().attr("checked", true)})
 		.end().find("input[value=" + getCurrentLayoutString() + "]").attr("checked", true);
 	$("#pageLayoutDialog").dialog({height:300, width:400});
+	$("#pageLayoutDialog").parent().parent().css("z-index", 12);
 
 	$("#layoutDialogLink")
 		.unbind('click', initializeLayoutMenu)
@@ -263,6 +265,7 @@ function addFocusedChannel(form) {
 
 function initializeSkinMenu() {
 	$("#skinChoosingDialog").dialog({height:450, width:500});
+    $("#skinChoosingDialog").parent().parent().css("z-index", 12);
 	$("#skinDialogLink")
 		.unbind('click', initializeSkinMenu)
 		.click(function(){$("#skinChoosingDialog").dialog('open');});
@@ -292,6 +295,7 @@ function initializeSkinMenu() {
 				div.append($(document.createElement("br")));
 				div.append($(document.createElement("img")).attr("src", mediaPath + "/" + key + "/" + key + "_thumb.gif"));
 				skinMenu.append(div);
+                $("#skinChoosingDialog").parent().parent().css("height", $("#skinChoosingDialog").parent().get(0).clientHeight + 20);
 			});
         	
         	// remove the loading graphics and message
