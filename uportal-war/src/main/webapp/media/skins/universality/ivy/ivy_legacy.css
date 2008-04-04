@@ -1,0 +1,193 @@
+/* 
+------------------------------------
+  Styles for old uportal channels.
+  We really wish we were using
+  the JSR 168 classes instead.
+  Someday this file should go away!
+------------------------------------ */
+
+/* not in the Portal Viewer */
+.uportal-channel-text-white, .uportal-channel-text-white a, .uportal-channel-text-white b {
+	color: #fff;
+	display: inline;
+	font-family: Georgia, "Times New Roman", Times, serif;
+	font-size: 14px;
+	font-weight: normal;
+	line-height: 1em;
+	margin: 1px 0px 1px 8px;
+	}
+
+/* not in the Portal Viewer */
+.uportal-navigation-channel, .uportal-navigation-channel a  {
+	color: #fff;
+	display: inline;
+	font-family: Georgia, "Times New Roman", Times, serif;
+	font-size: 14px;
+	font-weight: normal;
+	line-height: 1em;
+	margin: 1px 0px 1px 8px;
+	}
+
+.uportal-channel-subtitle {
+	background-color: #fff;
+	/*border-bottom: 1px #b1c6f2 solid;*/
+	color: #344461;
+	font-weight: normal;
+	margin: 0 0 10px 0;
+	padding: 0 0 5px 0;
+	}
+	
+	/* PREFERENCES
+------------------------------------------------------------------------ */
+.uportal-background-dark{
+	background: #999;
+	}
+	
+/* all of calendar of events table */
+.uportal-background-med { background: #ccc; }
+
+/* preferences and bus tables */
+.uportal-background-light { background: #eee;}
+.uportal-channel-text, .portlet-font { color: #000; font-family: Verdana, Geneva, Arial, Helvetica, sans-serif; font-size: 1em; }
+
+/*preferences tabs*/
+.uportal-text-small { font-family: Verdana, Geneva, Arial, Helvetica, sans-serif; font-size: 1em;	}
+
+/* labels for form elements ??? */
+.uportal-channel-strong { font-family: Verdana, Geneva, Arial, Helvetica, sans-serif; font-weight: bold; font-size: 1.2em; }
+
+/* 
+-------------------- */
+	
+.uportal-channel-subtitle-reversed {
+	font-size: 1em;
+	/* color: #fff;
+	background-color: #6a7a99; */
+	background-color: #fff;
+	padding: 2px;
+	}
+
+.uportal-button {
+	border-style: solid;
+	border-color: #000;
+	border-width: 1px;
+	background-color: #d2e1fa;
+	color: #000;
+	cursor: pointer;
+	font: normal 1em verdana, arial, sans-serif;
+	text-align: center;
+	white-space: nowrap;
+	margin: 0px 5px 0px 5px;
+	padding: 1px 3px 1px 3px;
+	}
+
+/* - messages */
+p.uportal-channel-error, .uportal-channel-error {
+	background: transparent;
+	color: #c00;
+	font-size: 1em;
+	font-weight: normal;
+	/* border: 1px solid #f00; */
+	padding: 5px;
+	}
+
+
+/* TABLE STYLES
+------------------------------------------------------------------------ */
+
+.uportal-channel-table-caption {
+	background-color: transparent;
+	color: #333;
+	font-size: 1em;
+	}
+
+
+
+.uportal-channel-table-header {
+	padding: 4px 15px;
+	border: solid #ddd;
+	border-width: 1px 0 0 1px;
+	}
+
+.uportal-channel-table-header, .uportal-channel-table-header a {
+	font-family: Georgia, "Times New Roman", Times, serif;
+	color: #344461;
+	font-size: 1.4em;
+	line-height: 1.2em;
+	font-weight: normal;
+	white-space: nowrap;
+	}
+	
+	
+
+.uportal-channel-table-row-odd {
+	background-color:#fff;
+	color: #000;
+	}
+
+.uportal-channel-table-row-even {
+	background-color: #fff;
+	color: #000;
+	}
+
+
+
+/* UNMODIFIED UPORTAL CLASSES
+------------------------------------------------------------------------ */
+.uportal-text{ color: #000; font-family: Verdana, Geneva, Arial, Helvetica, sans-serif; font-size: 1em; }
+.uportal-channel-title-reversed{} /* see below */
+.uportal-background { background: #fff; }
+
+.uportal-background-dark {} /* see above */
+.uportal-background-med {} /* see above */
+.uportal-background-light {} /* see above */
+
+.uportal-background-content{ background: #fff; }
+.uportal-background-highlight{ background: #ffd; }
+.uportal-background-shadow{ background: #ccc; }
+
+/* these are defined above */
+.uportal-channel-text, .portlet-font {}
+
+/* these are listed in the css viewer but were not previously in the legacy_styles.css */
+.uportal-label { color: #344461; font-family: Verdana, Geneva, Arial, Helvetica, sans-serif; font-size: 1em; }
+.uportal-input-text {  color: #344461; font-family: Verdana, Geneva, Arial, Helvetica, sans-serif; font-size: 1.1em; }
+
+.uportal-channel-title { 
+	font-family: Georgia, "Times New Roman", Times, serif;
+	color: #344461;
+	font-size: 1.4em;
+	line-height: 1.2em;
+	font-weight: normal;
+	white-space: nowrap;
+	background-color: #fff;
+	}
+	
+.uportal-channel-title-reversed { 
+	font-family: Georgia, "Times New Roman", Times, serif;
+	color: #344461;
+	font-size: 1.4em;
+	line-height: 1.2em;
+	font-weight: normal;
+	white-space: nowrap;
+	/* background-color: #6a7a99; */
+	background-color: transparent
+	}
+
+.uportal-channel-emphasis { color: #000; font-family: Verdana, Geneva, Arial, Helvetica, sans-serif; font-size: 1em; font-style: italic; }
+
+.uportal-channel-code { 
+	font-family: "Courier New", Courier, mono;
+	color: #000;
+	font-size: 1.2em;
+	}
+
+.uportal-channel-copyright { color: #666; font-family: Verdana, Geneva, Arial, Helvetica, sans-serif; font-size: 1em; }
+
+.uportal-channel-warning { 
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif; 
+	font-size: 1em; 
+	font-weight: normal;
+	color: #f60; 
+	padding: 2px;
+	}

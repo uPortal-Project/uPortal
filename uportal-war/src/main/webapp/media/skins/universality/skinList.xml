@@ -10,5 +10,13 @@
     </skin-description>
   </skin>
 
+  <skin>
+    <skin-key>ivy</skin-key>
+    <skin-name>Ivy</skin-name>
+    <skin-description>
+      Light blue and white.
+    </skin-description>
+  </skin>
+  
 </skins>
 
