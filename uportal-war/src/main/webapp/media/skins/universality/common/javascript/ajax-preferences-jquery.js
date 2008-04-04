@@ -271,7 +271,7 @@ function initializeSkinMenu() {
 		.click(function(){$("#skinChoosingDialog").dialog('open');});
 
     var skinMenu = $("#skinList").html("");
-    $.get(mediaPath + '/skinList.xml', { },
+    $.get(mediaPath + '/skinList.xml?noCache=' + new Date().getTime(), { },
     	function(xml){
 			skinXml = xml;
 			$("skin", skinXml).each(function(i){
@@ -295,11 +295,11 @@ function initializeSkinMenu() {
 				div.append($(document.createElement("br")));
 				div.append($(document.createElement("img")).attr("src", mediaPath + "/" + key + "/" + key + "_thumb.gif"));
 				skinMenu.append(div);
-                $("#skinChoosingDialog").parent().parent().css("height", $("#skinChoosingDialog").parent().get(0).clientHeight + 20);
 			});
-        	
+
         	// remove the loading graphics and message
         	$("#skinLoading").css("display", "none");
+            $("#skinChoosingDialog").parent().parent().css("height", $("#skinChoosingDialog").parent().get(0).clientHeight + 20);
     	}
     );
 }
