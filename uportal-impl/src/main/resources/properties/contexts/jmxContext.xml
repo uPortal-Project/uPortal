@@ -11,12 +11,21 @@
     <bean id="jmxAdapter" class="org.springframework.jmx.export.MBeanExporter">
         <property name="server" ref="mbeanServer" />
         <property name="ensureUniqueRuntimeObjectNames" value="true" />
+        <property name="assembler" ref="mbeanInfoAssembler" />
         <property name="beans">
             <map>
                 <entry key="uPortal:section=Framework,name=Statistics" value-ref="portalFrameworkMBean" />
                 <entry key="uPortal:section=Persistence,name=HibernateStatistics" value-ref="hibernateStatisticsMBean"/>
                 <entry key="uPortal:section=Persistence,name=PortalDB" value-ref="PortalDb"/>
             </map>
+        </property>
+    </bean>
+    
+    <bean id="mbeanInfoAssembler" class="org.springframework.jmx.export.assembler.MethodExclusionMBeanInfoAssembler">
+        <property name="ignoredMethodMappings">
+            <props>
+                <prop key="uPortal:section=Persistence,name=PortalDB">getConnection,getLogWriter,setLogWriter</prop>
+            </props>
         </property>
     </bean>
 
