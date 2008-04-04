@@ -303,6 +303,11 @@
 		padding-left: 10px;
 	}
 
+    .portlet-controls .portlet-control
+    {
+        padding-left: 15px;
+    }
+
 	.portlet-controls .help 
 	{
 		background: url("../../icons/help.png") no-repeat;
