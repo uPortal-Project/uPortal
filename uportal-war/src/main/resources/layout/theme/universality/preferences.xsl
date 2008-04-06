@@ -154,17 +154,18 @@
      </div>	
   
      <div id="skinChoosingDialog" class="jqueryui" title="Choose Skin">
-      <h4 id="skinLoading">Loading skin list . . . </h4>
       <form onsubmit="return chooseSkin(this);">
+       <h4 id="skinLoading">Loading skin list . . . </h4>
        <p class="portlet-form-label">
         Choose a skin for your portal view:
        </p>
-       <p id="skinList"></p>
+       <div id="skinList"></div>
        <p>
         <input type="submit" value="Choose" class="portlet-form-button"/>&#160;
        </p>
       </form>
      </div>
+     
     </div>
     <script type="text/javascript">
      

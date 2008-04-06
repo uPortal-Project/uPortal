@@ -378,6 +378,9 @@
 		background: url("images/portlet_corner_bottomright.png") bottom right no-repeat;
 	}
 
+    .dropborder {
+        border: 1px dashed #999999;
+    }
 
 /** footer **/
 	#portalPageFooter 

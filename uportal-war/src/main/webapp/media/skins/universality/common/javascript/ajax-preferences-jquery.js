@@ -17,6 +17,7 @@ function initportal() {
 			handle : 'div.portlet-toolbar',
 			onStop : movePortlet
 		});
+		$(this).find(".movable div.portlet-toolbar").css("cursor", "move");
     });
     
     // add onclick events for portlet delete buttons
@@ -48,7 +49,6 @@ function initializeLayoutMenu() {
 		.click(function(){$(this).prev().attr("checked", true)})
 		.end().find("input[value=" + getCurrentLayoutString() + "]").attr("checked", true);
 	$("#pageLayoutDialog").dialog({height:300, width:400});
-	$("#pageLayoutDialog").parent().parent().css("z-index", 12);
 
 	$("#layoutDialogLink")
 		.unbind('click', initializeLayoutMenu)
@@ -56,6 +56,10 @@ function initializeLayoutMenu() {
 	$("#editPageLink")
 		.unbind('click', initializeLayoutMenu)
 		.click(function(){$("#pageLayoutDialog").dialog('open');});
+
+    $("#pageLayoutDialog").parent().parent()
+       .css("z-index", 12)
+       .css("height", $("#pageLayoutDialog").parent().get(0).clientHeight + 20);
 
 }
 function getCurrentLayoutString() {
@@ -270,7 +274,7 @@ function initializeSkinMenu() {
 		.unbind('click', initializeSkinMenu)
 		.click(function(){$("#skinChoosingDialog").dialog('open');});
 
-    var skinMenu = $("#skinList").html("");
+    var skinMenu = $("#skinList").html("").css("padding", "10px");
     $.get(mediaPath + '/skinList.xml?noCache=' + new Date().getTime(), { },
     	function(xml){
 			skinXml = xml;
@@ -283,10 +287,12 @@ function initializeSkinMenu() {
 				if (key == currentSkin)
 					input.attr("checked", true);
 					
-				var span = $(document.createElement("span"))
-					.append(input)
-					.append(document.createTextNode($(this).children("skin-name").text()))
-					.addClass("portlet-form-field-label");
+				var span = $(document.createElement("div")).append(
+				    $(document.createElement("span"))
+						.append(input)
+						.append(document.createTextNode($(this).children("skin-name").text()))
+						.addClass("portlet-form-field-label")
+					);
 				skinMenu.append(span);
 				var div = $(document.createElement("div"))
 					.addClass("portlet-font-dim").css("padding-left", "20px")
@@ -297,6 +303,8 @@ function initializeSkinMenu() {
 				skinMenu.append(div);
 			});
 
+            skinMenu.css("height", "300px").css("overflow", "auto");
+            
         	// remove the loading graphics and message
         	$("#skinLoading").css("display", "none");
             $("#skinChoosingDialog").parent().parent().css("height", $("#skinChoosingDialog").parent().get(0).clientHeight + 20);

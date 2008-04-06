@@ -333,7 +333,7 @@
 	.portlet-controls .edit 
 	{
 		background: url("images/edit.gif") no-repeat;
-		padding-right: 25px;
+		padding-right: 30px;
 	}
 	
 	.portlet-controls .print 
@@ -369,7 +369,6 @@
 	
 	.portlet-controls a:hover 
 	{
-		background-color: #4348b0;
 	}
 
 	.dashboard .portlet-content 
@@ -390,6 +389,9 @@
 		height: 0px;
 	}
 
+    .dropborder {
+        border: 1px dashed #999999;
+    }
 
 /** footer **/
 	#portalPageFooter 
@@ -548,6 +550,11 @@
 		list-style: none;
 		border-bottom: 1px solid #000099;
 	}
+
+    #portalFlyoutNavigation .portal-flyout-container li.first
+    {
+        border-top: 1px solid #000099;
+    }
 
 	#portalFlyoutNavigation a {
 		display: block;
