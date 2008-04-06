@@ -17,7 +17,6 @@ function initportal() {
 			handle : 'div.portlet-toolbar',
 			onStop : movePortlet
 		});
-		$(this).find(".movable div.portlet-toolbar").css("cursor", "move");
     });
     
     // add onclick events for portlet delete buttons
@@ -141,8 +140,17 @@ function changeColumns(newcolumns) {
 }
 
 // Portlet editing persistence functions
-function addPortlet(chandId) {
-	$.post(preferencesUrl, {action: 'addChannel', elementID: tabId, channelID: $("#addChannelId").attr("value")}, function(xml) { window.location = portalUrl; });
+function addPortlet(chanId) {
+    var options = { action: 'addChannel', channelID: $("#addChannelId").attr("value") };
+    if (firstChannelId == null || firstChannelId == '') {
+        options['elementID'] = chanId;
+    } else {
+        options['elementID'] = firstChannelId;
+        options['position'] = 'insertBefore';
+    }
+	$.post(preferencesUrl, options,
+	   function(xml) { window.location = portalUrl; }
+	);
 }
 function deletePortlet(id) {
 	if (!confirm("Are you sure you want to remove this portlet?")) return false;

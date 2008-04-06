@@ -177,14 +177,14 @@
      var columnCount = <xsl:value-of select="count(/layout/content/column)"/>;
      var skinPath = '<xsl:value-of select="$SKIN_PATH"/>';
      var tabId = '<xsl:value-of select="/layout/navigation/tab[@activeTab='true']/@ID"/>';
-     
+     var firstChannelId = '<xsl:value-of select="/layout/content/column[not(@dlm:addChildAllowed='false')]/channel[not(@dlm:moveAllowed='false')]/@ID"/>';     
      $(document).ready(function(){
   
       <xsl:for-each select="/layout/content/column">
         <xsl:variable name="currentColumnId"><xsl:value-of select="@ID"/></xsl:variable>
         <xsl:for-each select="channel">
          <xsl:if test="not(@dlm:moveAllowed='false')">
-         		$('#portlet_<xsl:value-of select="@ID"/>').addClass('movable').children('.portlet-toolbar').css('cursor', 'move');
+         		$('#portlet_<xsl:value-of select="@ID"/>').addClass('movable').find('.portlet-toolbar').css('cursor', 'move');
          </xsl:if>
         </xsl:for-each>
       </xsl:for-each>
