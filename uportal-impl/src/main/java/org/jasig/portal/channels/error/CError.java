@@ -17,6 +17,7 @@ import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.ICacheable;
 import org.jasig.portal.IChannel;
 import org.jasig.portal.ICharacterChannel;
+import org.jasig.portal.IPrivileged;
 import org.jasig.portal.IPrivilegedChannel;
 import org.jasig.portal.IResetableChannel;
 import org.jasig.portal.IUserPreferencesManager;
@@ -231,8 +232,8 @@ public final class CError extends BaseChannel implements IPrivilegedChannel, ICa
     
     public void receiveEvent(PortalEvent ev) {
         if (targetChannel != null) {
-            if (this.targetChannel instanceof IPrivilegedChannel) {
-                ((IPrivilegedChannel) this.targetChannel).setPortalControlStructures(this.portcs);
+            if (this.targetChannel instanceof IPrivileged) {
+                ((IPrivileged) this.targetChannel).setPortalControlStructures(this.portcs);
             }
 
             // propagate the portal events to the normal channel
@@ -315,8 +316,8 @@ public final class CError extends BaseChannel implements IPrivilegedChannel, ICa
                     try {
                         // clean things up for the channel
                         if (this.targetChannel instanceof IResetableChannel) {
-                            if (this.targetChannel instanceof IPrivilegedChannel) {
-                                ((IPrivilegedChannel) this.targetChannel).setPortalControlStructures(this.portcs);
+                            if (this.targetChannel instanceof IPrivileged) {
+                                ((IPrivileged) this.targetChannel).setPortalControlStructures(this.portcs);
                             }
                             
                             this.targetChannel.setRuntimeData(this.runtimeData);
@@ -327,8 +328,8 @@ public final class CError extends BaseChannel implements IPrivilegedChannel, ICa
                         ChannelRuntimeData crd = (ChannelRuntimeData) this.runtimeData.clone();
                         crd.clear(); // Remove parameters
 
-                        if (this.targetChannel instanceof IPrivilegedChannel) {
-                            ((IPrivilegedChannel) this.targetChannel).setPortalControlStructures(this.portcs);
+                        if (this.targetChannel instanceof IPrivileged) {
+                            ((IPrivileged) this.targetChannel).setPortalControlStructures(this.portcs);
                         }
                         
                         this.targetChannel.setRuntimeData(crd);
@@ -351,8 +352,8 @@ public final class CError extends BaseChannel implements IPrivilegedChannel, ICa
                     try {
                         //Clean things up for the channel
                         if (this.targetChannel instanceof IResetableChannel) {
-                            if (this.targetChannel instanceof IPrivilegedChannel) {
-                                ((IPrivilegedChannel) this.targetChannel).setPortalControlStructures(this.portcs);
+                            if (this.targetChannel instanceof IPrivileged) {
+                                ((IPrivileged) this.targetChannel).setPortalControlStructures(this.portcs);
                             }
                             
                             this.targetChannel.setRuntimeData(this.runtimeData);
@@ -368,8 +369,8 @@ public final class CError extends BaseChannel implements IPrivilegedChannel, ICa
                         }
                         else {
                             try {
-                                if (this.targetChannel instanceof IPrivilegedChannel) {
-                                    ((IPrivilegedChannel) this.targetChannel).setPortalControlStructures(this.portcs);
+                                if (this.targetChannel instanceof IPrivileged) {
+                                    ((IPrivileged) this.targetChannel).setPortalControlStructures(this.portcs);
                                 }
                                 
                                 this.targetChannel.setRuntimeData(crd);

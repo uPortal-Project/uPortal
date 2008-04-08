@@ -76,8 +76,8 @@ public class DownloadDispatchWorker implements IWorkerRequestProcessor {
 
             if(ch!=null) {
                 // set pcs
-                if(ch instanceof IPrivilegedChannel) {
-                    ((IPrivilegedChannel)ch).setPortalControlStructures(pcs);
+                if(ch instanceof IPrivileged) {
+                    ((IPrivileged)ch).setPortalControlStructures(pcs);
                 }
                 // set runtime data
                 ChannelRuntimeData rd = new ChannelRuntimeData();

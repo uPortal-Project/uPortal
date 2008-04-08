@@ -103,8 +103,8 @@ public class StandaloneChannelRenderer
      * @param req http request
      */
     public void prepare(HttpServletRequest req) throws Exception {
-        if(this instanceof IPrivilegedChannel) {
-            ((IPrivilegedChannel) this).setPortalControlStructures(pcs);
+        if(this instanceof IPrivileged) {
+            ((IPrivileged) this).setPortalControlStructures(pcs);
         }
         this.setRuntimeData(getRuntimeData(req));
         dataIsSet=true;
@@ -121,8 +121,8 @@ public class StandaloneChannelRenderer
     public void render(HttpServletRequest req, HttpServletResponse res) throws Throwable {
         ChannelRuntimeData rd=null;
         if(!dataIsSet) {
-            if(this instanceof IPrivilegedChannel) {
-                ((IPrivilegedChannel) this).setPortalControlStructures(pcs);
+            if(this instanceof IPrivileged) {
+                ((IPrivileged) this).setPortalControlStructures(pcs);
             }
             rd=getRuntimeData(req);
         } else {

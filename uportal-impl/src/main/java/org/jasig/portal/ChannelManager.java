@@ -340,8 +340,8 @@ public class ChannelManager implements LayoutEventListener {
         for (final IChannel ch : this.channelTable.values()) {
             if (ch != null) {
                 try {
-                    if (ch instanceof IPrivilegedChannel) {
-                        ((IPrivilegedChannel) ch).setPortalControlStructures(pcs);
+                    if (ch instanceof IPrivileged) {
+                        ((IPrivileged) ch).setPortalControlStructures(pcs);
                     }
 
                     ch.receiveEvent(ev);
@@ -734,8 +734,8 @@ public class ChannelManager implements LayoutEventListener {
                 channelStaticData.setSerializerName(serializerName);
                 channelStaticData.setWebApplicationContext(PortalApplicationContextLocator.getRequiredWebApplicationContext());
 
-                if (channel instanceof IPrivilegedChannel) {
-                    this.feedPortalControlStructuresToChannel(request, response, channelSubscribeId, (IPrivilegedChannel)channel);
+                if (channel instanceof IPrivileged) {
+                    this.feedPortalControlStructuresToChannel(request, response, channelSubscribeId, (IPrivileged)channel);
                 }
 
                 channel.setStaticData(channelStaticData);
@@ -761,9 +761,9 @@ public class ChannelManager implements LayoutEventListener {
         IChannel ch = channelTable.get(channelSubscribeId);
         if (ch != null) {
             try {
-                if (ch instanceof IPrivilegedChannel) {
+                if (ch instanceof IPrivileged) {
                     final PortalControlStructures pcs = this.getPortalControlStructuresForChannel(request, response, channelSubscribeId);
-                    ((IPrivilegedChannel)ch).setPortalControlStructures(pcs);
+                    ((IPrivileged)ch).setPortalControlStructures(pcs);
                 }
                 
                 ch.receiveEvent(le);
@@ -845,14 +845,14 @@ public class ChannelManager implements LayoutEventListener {
         }
     }
 
-    private IChannel feedPortalControlStructuresToChannel(HttpServletRequest request, HttpServletResponse response, String channelSubscribeId, IPrivilegedChannel prvChanObj) {
+    private IChannel feedPortalControlStructuresToChannel(HttpServletRequest request, HttpServletResponse response, String channelSubscribeId, IPrivileged prvChanObj) {
         final PortalControlStructures pcs = this.getPortalControlStructuresForChannel(request, response, channelSubscribeId);
         
         try {
             prvChanObj.setPortalControlStructures(pcs);
         }
         catch (Exception e) {
-            prvChanObj = (IPrivilegedChannel)replaceWithErrorChannel(request, response, channelSubscribeId, ErrorCode.SET_PCS_EXCEPTION, e, null, false);
+            prvChanObj = (IPrivileged)replaceWithErrorChannel(request, response, channelSubscribeId, ErrorCode.SET_PCS_EXCEPTION, e, null, false);
 
             // set portal control structures
             try {
@@ -864,7 +864,7 @@ public class ChannelManager implements LayoutEventListener {
             }
         }
         
-        return prvChanObj;
+        return (IChannel)prvChanObj;
     }
 
     /**
@@ -977,8 +977,8 @@ public class ChannelManager implements LayoutEventListener {
             }
         }
         
-        if (ch instanceof IPrivilegedChannel) {
-            ch = this.feedPortalControlStructuresToChannel(request, response, channelSubscribeId, (IPrivilegedChannel) ch);
+        if (ch instanceof IPrivileged) {
+            ch = this.feedPortalControlStructuresToChannel(request, response, channelSubscribeId, (IPrivileged) ch);
         }
         
         //If the channel object has changed (likely now an error channel) return immediatly 
@@ -1084,8 +1084,8 @@ public class ChannelManager implements LayoutEventListener {
             }
         }
 
-        if (ch instanceof IPrivilegedChannel) {
-            this.feedPortalControlStructuresToChannel(request, response, channelSubscribeId, (IPrivilegedChannel) ch);
+        if (ch instanceof IPrivileged) {
+            this.feedPortalControlStructuresToChannel(request, response, channelSubscribeId, (IPrivileged) ch);
         }
         
         final ChannelRuntimeData runtimeData;

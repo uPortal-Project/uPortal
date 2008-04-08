@@ -1592,7 +1592,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
               log.debug("RDBMUserLayoutStore::getUserLayout(): " + sQuery);
           rs = stmt.executeQuery(sQuery);
           try {
-            rs.next();
+            boolean hasRow = rs.next();
             userId = rs.getInt(1);
             layoutId = rs.getInt(2);
           } finally {
@@ -1606,7 +1606,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           int nextStructId;
           rs = stmt.executeQuery(sQuery);
           try {
-            rs.next();
+            boolean hasRow = rs.next();
             nextStructId = rs.getInt(1);
           } finally {
             rs.close();
@@ -1622,7 +1622,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
                 log.debug("RDBMUserLayoutStore::getUserLayout(): " + sQuery);
             rs = stmt.executeQuery(sQuery);
             try {
-              rs.next();
+              boolean hasRow = rs.next();
               realNextStructId = rs.getInt(1);
             } finally {
               rs.close();

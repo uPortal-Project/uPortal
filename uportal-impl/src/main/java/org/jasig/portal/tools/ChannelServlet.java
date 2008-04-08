@@ -26,7 +26,7 @@ import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ChannelSAXStreamFilter;
 import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.IChannel;
-import org.jasig.portal.IPrivilegedChannel;
+import org.jasig.portal.IPrivileged;
 import org.jasig.portal.MediaManager;
 import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalException;
@@ -125,11 +125,11 @@ public class ChannelServlet extends HttpServlet {
     	  LOG.error("unable to construct a UPFile !",pe);
       }
 
-      if (channel instanceof IPrivilegedChannel) {
+      if (channel instanceof IPrivileged) {
         // provide as much of PCS as we can
         PortalControlStructures pcs = new PortalControlStructures(req, res);
         try {
-          ((IPrivilegedChannel)channel).setPortalControlStructures(pcs);
+          ((IPrivileged)channel).setPortalControlStructures(pcs);
         } catch (Exception e) {
           // channel failed to accept portal control structures
       	  LOG.error("channel failed to accept portal control structures.",e);
