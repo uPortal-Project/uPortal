@@ -83,7 +83,14 @@
                     </subtasks>
                 </sql-query>
                 <with-attribute key="SAFE_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${req(USER_NAME)})}">
-                    <write-document file="${req(EXPORT_DIR)}/user/${req(SAFE_NAME)}.user"/>
+                    <choose>
+                        <when test="${groovy(${sql(SELECT COUNT(USER_ID) FROM UP_USER WHERE USER_DFLT_USR_ID = ${req(USER_ID)})} > 0)}">
+                            <write-document file="${req(EXPORT_DIR)}/user/${req(SAFE_NAME)}.template-user"/>
+                        </when>
+                        <otherwise>
+                            <write-document file="${req(EXPORT_DIR)}/user/${req(SAFE_NAME)}.user"/>
+                        </otherwise>
+                    </choose>
                 </with-attribute>
             </otherwise>
         </choose>
