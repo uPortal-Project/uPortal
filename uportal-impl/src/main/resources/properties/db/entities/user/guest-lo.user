@@ -1,6 +1,6 @@
 
 <user script="classpath://org/jasig/portal/io/import-user_v2-6.crn" username="guest-lo">
-  <default-user>fragmentTemplate</default-user>
+  <default-user>defaultTemplateUser</default-user>
   <profile name="HTML browser profile"> 
     <description>A sample profile for common web browsers</description>  
     <structure name="DLM Tabs and columns">

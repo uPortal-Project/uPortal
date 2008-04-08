@@ -1,5 +1,6 @@
 
 <user script="classpath://org/jasig/portal/io/import-user_v2-6.crn" username="guest">
+  <default-user>defaultTemplateUser</default-user>
   <profile name="Guest Web Browser Profile"> 
     <description>A sample profile for web browsers</description>  
     <structure name="DLM Tabs and columns"/>  
