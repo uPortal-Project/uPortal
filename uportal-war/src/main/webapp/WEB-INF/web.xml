@@ -32,7 +32,7 @@
     <!-- location of your cas server's proxy service -->
     <context-param>
         <param-name>edu.yale.its.tp.cas.proxyUrl</param-name>
-        <param-value>https://localhost:8080/cas/proxy</param-value>
+        <param-value>http://localhost:8080/cas/proxy</param-value>
     </context-param>
     
     <!--
