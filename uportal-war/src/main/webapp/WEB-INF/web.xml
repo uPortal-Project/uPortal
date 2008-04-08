@@ -91,7 +91,7 @@
         </init-param>
         <init-param>
             <param-name>edu.yale.its.tp.cas.client.filter.proxyCallbackUrl</param-name>
-            <param-value>http://localhost:8080/CasProxyServlet</param-value>
+            <param-value>http://localhost:8080/uPortal/CasProxyServlet</param-value>
         </init-param>
         <init-param>
             <param-name>BROKEN_SECURITY_ALLOW_NON_SSL</param-name>
