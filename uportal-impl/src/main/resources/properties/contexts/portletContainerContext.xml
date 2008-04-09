@@ -84,6 +84,7 @@
         <property name="portletDefinitionRegistry" ref="portletDefinitionRegistry" />
         <property name="portletEntityRegistry" ref="portletEntityRegistry" />
         <property name="portletWindowRegistry" ref="portletWindowRegistry" />
+        <property name="personManager" ref="personManager" />
     </bean>
     
     <bean id="portletUrlSyntaxProvider" class="org.jasig.portal.portlet.url.PortletUrlSyntaxProviderImpl">

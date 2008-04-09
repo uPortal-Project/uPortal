@@ -10,9 +10,11 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.portlet.PortletRequest;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.Validate;
 import org.apache.pluto.PortletContainerException;
@@ -26,12 +28,15 @@ import org.jasig.portal.portlet.container.PortletContainerUtils;
 import org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletEntity;
+import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.portlet.om.IPortletPreferences;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.IPersonManager;
 import org.springframework.beans.factory.annotation.Required;
 
 /**
@@ -41,9 +46,15 @@ import org.springframework.beans.factory.annotation.Required;
  * @version $Revision$
  */
 public class PortletPreferencesServiceImpl implements PortletPreferencesService {
+    protected static final String PORTLET_PREFERENCES_MAP_ATTRIBUTE = PortletPreferencesServiceImpl.class.getName() + ".PORTLET_PREFERENCES_MAP";
+    
+    private IPersonManager personManager;
     private IPortletWindowRegistry portletWindowRegistry;
     private IPortletEntityRegistry portletEntityRegistry;
     private IPortletDefinitionRegistry portletDefinitionRegistry;
+    
+    private boolean storeGuestPreferences = true;
+    private boolean shareGuestPreferences = false;
     
     
     /**
@@ -90,8 +101,48 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
         Validate.notNull(portletDefinitionRegistry);
         this.portletDefinitionRegistry = portletDefinitionRegistry;
     }
-
-
+    
+    /**
+     * @return the personManager
+     */
+    public IPersonManager getPersonManager() {
+        return personManager;
+    }
+    /**
+     * @param personManager the personManager to set
+     */
+    @Required
+    public void setPersonManager(IPersonManager personManager) {
+        Validate.notNull(personManager);
+        this.personManager = personManager;
+    }
+    
+    /**
+     * @return the storeGuestPreferences
+     */
+    public boolean isStoreGuestPreferences() {
+        return storeGuestPreferences;
+    }
+    /**
+     * @param storeGuestPreferences the storeGuestPreferences to set
+     */
+    public void setStoreGuestPreferences(boolean storeGuestPreferences) {
+        this.storeGuestPreferences = storeGuestPreferences;
+    }
+    /**
+     * @return the shareGuestPreferences
+     */
+    public boolean isShareGuestPreferences() {
+        return shareGuestPreferences;
+    }
+    /**
+     * @param shareGuestPreferences the shareGuestPreferences to set
+     */
+    public void setShareGuestPreferences(boolean shareGuestPreferences) {
+        this.shareGuestPreferences = shareGuestPreferences;
+    }
+    
+    
     /* (non-Javadoc)
      * @see org.apache.pluto.spi.optional.PortletPreferencesService#getStoredPreferences(org.apache.pluto.PortletWindow, javax.portlet.PortletRequest)
      */
@@ -116,10 +167,22 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
         final List<IPortletPreference> definitionPreferencesList = definitionPreferences.getPortletPreferences();
         this.addPreferencesToMap(definitionPreferencesList, preferencesMap);
         
-        //Add entity preferences
-        final IPortletPreferences entityPreferences = portletEntity.getPortletPreferences();
-        final List<IPortletPreference> entityPreferencesList = entityPreferences.getPortletPreferences();
-        this.addPreferencesToMap(entityPreferencesList, preferencesMap);
+        //Determine if the user is a guest
+        final boolean isGuest = isGuestUser(httpServletRequest);
+        
+        //If not guest or storing shared guest prefs get the prefs from the portlet entity
+        if (!isGuest || (this.storeGuestPreferences && this.shareGuestPreferences)) {
+            //Add entity preferences
+            final IPortletPreferences entityPreferences = portletEntity.getPortletPreferences();
+            final List<IPortletPreference> entityPreferencesList = entityPreferences.getPortletPreferences();
+            this.addPreferencesToMap(entityPreferencesList, preferencesMap);
+        }
+        //If a guest and storing non-shared guest prefs get the prefs from the session
+        else if (this.storeGuestPreferences && !this.shareGuestPreferences) {
+            //Add memory preferences
+            final List<IPortletPreference> entityPreferencesList = this.getSessionPreferences(portletEntity.getPortletEntityId(), httpServletRequest);
+            this.addPreferencesToMap(entityPreferencesList, preferencesMap);
+        }
 
         return preferencesMap.values().toArray(new InternalPortletPreference[preferencesMap.size()]);
     }
@@ -129,6 +192,14 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
      */
     public void store(PortletWindow plutoPortletWindow, PortletRequest portletRequest, InternalPortletPreference[] internalPreferences) throws PortletContainerException {
         final HttpServletRequest httpServletRequest = PortletContainerUtils.getOriginalPortletAdaptorRequest(portletRequest);
+        
+        //Determine if the user is a guest
+        final boolean isGuest = isGuestUser(httpServletRequest);
+        
+        //If this is a guest and no prefs are being stored just return as the rest of the method is not needed for this case
+        if (isGuest && !this.storeGuestPreferences) {
+            return;
+        }
 
         final IPortletWindow portletWindow = this.portletWindowRegistry.convertPortletWindow(httpServletRequest, plutoPortletWindow);
         final IPortletEntity portletEntity = this.portletWindowRegistry.getParentPortletEntity(httpServletRequest, portletWindow.getPortletWindowId());
@@ -169,10 +240,18 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
             portletPreferences.add(preference);
         }
 
-        
-        //Update the portlet entity with the new preferences
-        final IPortletPreferences entityPreferences = portletEntity.getPortletPreferences();
-        entityPreferences.setPortletPreferences(portletPreferences);
+        //If not a guest or if guest prefs are shared store them on the entity
+        if (!isGuest || this.shareGuestPreferences) {
+            //Update the portlet entity with the new preferences
+            final IPortletPreferences entityPreferences = portletEntity.getPortletPreferences();
+            entityPreferences.setPortletPreferences(portletPreferences);
+        }
+        //Must be a guest and share must be off so store the prefs on the session
+        else {
+            //Store memory preferences
+            this.storeSessionPreferences(portletEntity.getPortletEntityId(), httpServletRequest, portletPreferences);
+        }
+
         
         this.portletEntityRegistry.storePortletEntity(portletEntity);
     }
@@ -200,8 +279,62 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
      * Add all of the preferences in the List to the Map using the preference name as the key
      */
     protected void addPreferencesToMap(List<IPortletPreference> preferencesList, Map<String, InternalPortletPreference> preferencesMap) {
+        if (preferencesList == null) {
+            return;
+        }
+
         for (final IPortletPreference definitionPreference : preferencesList) {
             preferencesMap.put(definitionPreference.getName(), definitionPreference);
         }
+    }
+    
+    
+    /**
+     * Determine if the user for the specified request is a guest as it pertains to shared portlet preferences.
+     */
+    protected boolean isGuestUser(final HttpServletRequest httpServletRequest) {
+        final IPerson person = this.personManager.getPerson(httpServletRequest);
+        return person.isGuest();
+//        final ISecurityContext securityContext = person.getSecurityContext();
+//        return !securityContext.isAuthenticated();
+    }
+    
+    /**
+     * Gets the session-stored list of IPortletPreferences for the specified request and IPortletEntityId.
+     * 
+     * @return List of IPortletPreferences for the entity and session, may be null if no preferences have been set.
+     */
+    protected List<IPortletPreference> getSessionPreferences(IPortletEntityId portletEntityId, HttpServletRequest httpServletRequest) {
+        final HttpSession session = httpServletRequest.getSession();
+        
+        final Map<IPortletEntityId, List<IPortletPreference>> portletPreferences;
+        
+        //Sync on the session to ensure the Map isn't in the process of being created
+        synchronized (session) {
+            portletPreferences = (Map<IPortletEntityId, List<IPortletPreference>>)session.getAttribute(PORTLET_PREFERENCES_MAP_ATTRIBUTE);
+        }
+        
+        if (portletPreferences == null) {
+            return null;
+        }
+
+        return portletPreferences.get(portletEntityId);
+    }
+    
+    protected void storeSessionPreferences(IPortletEntityId portletEntityId, HttpServletRequest httpServletRequest, List<IPortletPreference> preferences) {
+        final HttpSession session = httpServletRequest.getSession();
+        
+        Map<IPortletEntityId, List<IPortletPreference>> portletPreferences;
+        
+        //Sync on the session to ensure other threads aren't creating the Map at the same time
+        synchronized (session) {
+            portletPreferences = (Map<IPortletEntityId, List<IPortletPreference>>)session.getAttribute(PORTLET_PREFERENCES_MAP_ATTRIBUTE);
+            if (portletPreferences == null) {
+                portletPreferences = new ConcurrentHashMap<IPortletEntityId, List<IPortletPreference>>();
+                session.setAttribute(PORTLET_PREFERENCES_MAP_ATTRIBUTE, portletPreferences);
+            }
+        }
+        
+        portletPreferences.put(portletEntityId, preferences);
     }
 }
