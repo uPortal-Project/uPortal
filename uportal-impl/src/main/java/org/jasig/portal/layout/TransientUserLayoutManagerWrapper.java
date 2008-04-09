@@ -144,6 +144,10 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
     public void loadUserLayout() throws PortalException {
         man.loadUserLayout();
     }
+    
+    public void loadUserLayout(boolean reload) throws PortalException {
+        man.loadUserLayout(reload);
+    }
 
     public void saveUserLayout() throws PortalException {
         man.saveUserLayout();

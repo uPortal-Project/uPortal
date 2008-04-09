@@ -202,6 +202,10 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
 
 
     public void loadUserLayout() throws PortalException {
+        this.loadUserLayout(false);
+    }
+
+    public void loadUserLayout(boolean reload) throws PortalException {
         if(this.getLayoutStore()==null) {
             throw new PortalException("Store implementation has not been set.");
         } else {

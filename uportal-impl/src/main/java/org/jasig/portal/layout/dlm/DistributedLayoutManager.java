@@ -392,6 +392,10 @@ IFolderLocalNameResolver
     }
 
     public synchronized void loadUserLayout() throws PortalException {
+        this.loadUserLayout(false);
+    }
+
+    public synchronized void loadUserLayout(boolean reload) throws PortalException {
         IUserLayoutStore layoutStore = getLayoutStore();
 
         if(layoutStore==null) {
@@ -401,6 +405,11 @@ IFolderLocalNameResolver
         }
         Document uli= null;
         try {
+            //Clear the loaded document first if this is a forced reload
+            if (reload) {
+                this.userLayoutDocument = null;
+            }
+            
             uli=getUserLayoutDOM();
         } catch (Exception e) {
             throw new PortalException("Exception encountered while " +

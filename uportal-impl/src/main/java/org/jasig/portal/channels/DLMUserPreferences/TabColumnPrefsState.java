@@ -1254,7 +1254,7 @@ public class TabColumnPrefsState extends BaseState
         editedUserProfile.setLayoutId(0);
         ulStore.updateUserProfile(user, editedUserProfile);
         user.setAttribute( Constants.PLF, null );
-        ulm.loadUserLayout();
+        ulm.loadUserLayout(true);
       } catch (Exception e) {
         throw new PortalException(e);
       }

@@ -67,11 +67,17 @@ public interface IUserLayoutManager {
     public void setLayoutStore(IUserLayoutStore ls);
 
     /**
-     * Signal manager to load a user layout from a database
-     *
-     * @exception PortalException if an error occurs
+     * Calls {@link #loadUserLayout(boolean)} passing false.
      */
     public void loadUserLayout() throws PortalException;
+    
+    /**
+     * Signal manager to load a user layout.
+     * 
+     * @param reload If true the reload will be forced, purging any cached data.
+     * @throws PortalException PortalException if an error occurs
+     */
+    public void loadUserLayout(boolean reload) throws PortalException;
 
     /**
      * Signal manager to persist user layout to a database
