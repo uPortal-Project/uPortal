@@ -31,7 +31,7 @@
 	body
 	{
 		text-align: left;
-		font-family: Verdana;
+        font-family:Verdana,Arial,Helvetica,sans-serif;
 	}
 	
 	body#portal /* This formats only the <body> of the portal and not imported html pages */
@@ -42,7 +42,7 @@
 	
 	body#portal.left-column /* This formats only the <body> of the portal and not imported html pages */
 	{
-		background: #fff url("images/page_column_back.png") repeat-y; /* Simulates the left column.  Done on the body to ensure the column fills the whole browser window. */
+		background: #E6EEFB url("images/page_column_back.png") repeat-y; /* Simulates the left column.  Done on the body to ensure the column fills the whole browser window. */
 	}
 	
 	h1,h2,h3,h4,h5,h6
@@ -75,6 +75,26 @@
 	{
 		visibility: hidden;
 	}
+	
+	a:link {
+        text-decoration: none;
+        color: #2758b3;
+        }
+            
+    a:visited {
+        text-decoration: none;
+        color: #7f510e;
+        }
+            
+    a:active {
+        text-decoration: none;
+        /*color: #000099;*/
+        }
+            
+    a:hover {
+        color: #39f;
+        text-decoration: underline;
+        }
 
 
 /** page **/
