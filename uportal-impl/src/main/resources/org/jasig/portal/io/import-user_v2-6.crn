@@ -16,7 +16,7 @@
             <node-iterator xpath="profile">
                 <with-attribute key="USER_ID" value="${sql(SELECT user_id FROM up_user WHERE user_name = '${req(USER_NAME)}')}">
                     <with-attribute key="PROFILE_ID" value="${seq(${req(USER_NAME)}-profileId)}">
-                        <sql-statement sql="INSERT INTO up_user_profile(user_id, profile_id, profile_name, description, layout_id, structure_ss_id, theme_ss_id) VALUES(?, ?, ?, ?, 1, ?, ?)">
+                        <sql-statement sql="INSERT INTO up_user_profile(user_id, profile_id, profile_name, description, layout_id, structure_ss_id, theme_ss_id) VALUES(?, ?, ?, ?, 0, ?, ?)">
                             <parameter value="${req(USER_ID)}"/>
                             <parameter value="${req(PROFILE_ID)}"/>
                             <parameter value="${valueOf(@name)}"/>
