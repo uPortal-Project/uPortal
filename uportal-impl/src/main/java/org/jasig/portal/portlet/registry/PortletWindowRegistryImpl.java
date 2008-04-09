@@ -7,6 +7,7 @@ package org.jasig.portal.portlet.registry;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -249,7 +250,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
         synchronized (session) {
             portletWindows = (Map<IPortletWindowId, IPortletWindow>)session.getAttribute(PORTLET_WINDOW_MAP_ATTRIBUTE);
             if (portletWindows == null) {
-                portletWindows = new HashMap<IPortletWindowId, IPortletWindow>();
+                portletWindows = new ConcurrentHashMap<IPortletWindowId, IPortletWindow>();
                 session.setAttribute(PORTLET_WINDOW_MAP_ATTRIBUTE, portletWindows);
             }
         }
