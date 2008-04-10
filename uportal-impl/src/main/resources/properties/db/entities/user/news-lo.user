@@ -14,7 +14,7 @@
       <!--Parameters for theme transform-->
       <parameter> 
         <name>skin</name>  
-        <value>spring</value> 
+        <value>uportal3</value> 
       </parameter>
     </theme> 
   </profile>
