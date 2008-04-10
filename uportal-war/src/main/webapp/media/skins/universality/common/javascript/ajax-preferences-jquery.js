@@ -47,6 +47,10 @@ function initializeLayoutMenu() {
 	$("#changeColumns").find("img")
 		.click(function(){$(this).prev().attr("checked", true)})
 		.end().find("input[value=" + getCurrentLayoutString() + "]").attr("checked", true);
+	if ($("#changeColumns").find("input:checked").length == 0) {
+	   $("#changeColumns").find("tr:eq(1)").find("td:eq(" + (columnCount-1) + ")").find("input").attr("checked", true);
+	}
+	
 	$("#pageLayoutDialog").dialog({height:300, width:400});
 
 	$("#layoutDialogLink")
@@ -89,6 +93,7 @@ function updatePageName(name) {
 }
 // Column editing persistence functions
 function changeColumns(newcolumns) {
+    columnCount = newcolumns.length;
 	$.post(preferencesUrl, {action: 'changeColumns', tabId: tabId, columns: newcolumns}, 
 		function(xml) { 
 		    var columns = $('#portalPageBodyColumns > td[@id*=column_]');
@@ -143,7 +148,7 @@ function changeColumns(newcolumns) {
 function addPortlet(chanId) {
     var options = { action: 'addChannel', channelID: $("#addChannelId").attr("value") };
     if (firstChannelId == null || firstChannelId == '') {
-        options['elementID'] = chanId;
+        options['elementID'] = tabId;
     } else {
         options['elementID'] = firstChannelId;
         options['position'] = 'insertBefore';
