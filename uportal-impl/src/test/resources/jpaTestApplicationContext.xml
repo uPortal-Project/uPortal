@@ -20,6 +20,7 @@
     <bean id="factoryBean" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="dataSource" ref="dataSource" />
         <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
+        <property name="persistenceUnitName" value="uPortalPersistence" />
         <property name="jpaProperties">
             <props>
                 <prop key="hibernate.cache.provider_class">org.hibernate.cache.NoCacheProvider</prop>
