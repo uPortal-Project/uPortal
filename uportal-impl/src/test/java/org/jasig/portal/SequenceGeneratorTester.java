@@ -111,6 +111,8 @@ protected void setUp()
         conn = RDBMServices.getConnection();
         stmt = conn.createStatement();
         
+        stmt.execute("CREATE TABLE UP_SEQUENCE(SEQUENCE_NAME VARCHAR(255) NOT NULL PRIMARY KEY,SEQUENCE_VALUE INTEGER)");
+        
         // Delete any left over counters that could interfere. 
         for (idx=0; idx<testCounterNames.length; idx++)
         {
@@ -134,22 +136,6 @@ protected void setUp()
     }
  }
 /**
- * @return junit.framework.Test
- */
-public static junit.framework.Test suite() {
-    TestSuite suite = new TestSuite();
-
-    suite.addTest(new SequenceGeneratorTester("testGetUniqueSequenceNumbers"));
-    suite.addTest(new SequenceGeneratorTester("testCreateNewCounters"));
-    suite.addTest(new SequenceGeneratorTester("testSetCounterValues"));
-    suite.addTest(new SequenceGeneratorTester("testConcurrentAccess"));
-
-//	Add more tests here.
-//  NB: Order of tests is not guaranteed.
-
-	return suite;
-}
-/**
  */
 protected void tearDown() 
 {
@@ -162,12 +148,8 @@ protected void tearDown()
         int idx;
         conn = RDBMServices.getConnection();
         stmt = conn.createStatement();
-        for (idx=0; idx<testCounterNames.length; idx++)
-        {
-            sql = "DELETE FROM UP_SEQUENCE WHERE SEQUENCE_NAME = " + 
-              "'" + testCounterNames[idx] + "'";
-            stmt.executeUpdate(sql);
-        }
+
+        stmt.execute("DROP TABLE UP_SEQUENCE");
     }
     catch (Exception ex) { print("SequenceGeneratorTester.tearDown(): " + ex.getMessage());}
     finally
@@ -196,7 +178,7 @@ public void testConcurrentAccess() throws Exception
     }
    
 
-    long millis = numTests * numThreads * 100;    
+    long millis = numTests * numThreads * 10;    
     print("Now sleeping for " + (millis/1000) + " seconds.");
     Thread.sleep(millis);
     

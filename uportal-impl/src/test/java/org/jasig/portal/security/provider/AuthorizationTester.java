@@ -14,7 +14,6 @@ import java.util.Properties;
 import java.util.Random;
 
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.concurrency.CachingException;
@@ -450,21 +449,6 @@ protected void setUp()
     }
     catch (Exception ex) { print("AuthorizationTester.setUp(): " + ex.getMessage());}
  }
-/**
- * @return junit.framework.Test
- */
-public static junit.framework.Test suite() {
-    TestSuite suite = new TestSuite();
-
-  suite.addTest(new AuthorizationTester("testAlternativePermissionPolicies"));
-  suite.addTest(new AuthorizationTester("testPermissionStore"));
-  suite.addTest(new AuthorizationTester("testDoesPrincipalHavePermission"));
-  suite.addTest(new AuthorizationTester("testPermissionPrincipal"));
-//	Add more tests here.
-//  NB: Order of tests is not guaranteed.
-
-    return suite;
-}
 /**
  */
 protected void tearDown()

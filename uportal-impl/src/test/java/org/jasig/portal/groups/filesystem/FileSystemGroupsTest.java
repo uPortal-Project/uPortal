@@ -368,25 +368,6 @@ protected void setUp()
 
  }
 /**
- * @return junit.framework.Test
- */
-public static junit.framework.Test suite() {
-    TestSuite suite = new TestSuite();
-
-  suite.addTest(new FileSystemGroupsTest("testFind"));
-  suite.addTest(new FileSystemGroupsTest("testFindContainingGroups"));
-  suite.addTest(new FileSystemGroupsTest("testFindEntitiesForGroup"));
-  suite.addTest(new FileSystemGroupsTest("testFindMemberGroupKeys"));
-  suite.addTest(new FileSystemGroupsTest("testFindMemberGroups"));
-  suite.addTest(new FileSystemGroupsTest("testSearchForGroups"));
-  suite.addTest(new FileSystemGroupsTest("testFindEmbeddedMemberGroups"));
-
-//	Add more tests here.
-//  NB: Order of tests is not guaranteed.
-
-    return suite;
-}
-/**
  */
 protected void tearDown()
 {

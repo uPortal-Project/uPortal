@@ -138,26 +138,6 @@ protected void setUp()
     catch (Exception ex) { print("EntityLockTester.setUp(): " + ex.getMessage());}
  }
 /**
- * @return junit.framework.Test
- */
-public static junit.framework.Test suite() {
-    TestSuite suite = new TestSuite();
-
-    suite.addTest(new EntityLockTest("testExistsInStore"));
-    suite.addTest(new EntityLockTest("testSelectFromStore"));
-    suite.addTest(new EntityLockTest("testExpirationInStore"));
-    suite.addTest(new EntityLockTest("testStoreUpdate"));
-    suite.addTest(new EntityLockTest("testServiceNewLock"));
-    suite.addTest(new EntityLockTest("testServiceLockRenewal"));
-    suite.addTest(new EntityLockTest("testServiceConvert"));
-    suite.addTest(new EntityLockTest("testService"));
-
-//	Add more tests here.
-//  NB: Order of tests is not guaranteed.
-
-    return suite;
-}
-/**
  */
 protected void tearDown()
 {

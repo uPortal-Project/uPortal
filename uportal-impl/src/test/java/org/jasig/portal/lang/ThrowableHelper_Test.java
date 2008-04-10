@@ -24,26 +24,6 @@ public class ThrowableHelper_Test
     public static final String RCS_ID = "@(#) $Header$";
 
     /**
-     * Run all the test cases defined in the class.
-     *
-     * @param args not used
-     **/
-    public static void main( String[] args )
-    {
-        junit.textui.TestRunner.run( suite() );
-    }
-
-    /**
-     * Build a test suite using reflection.
-     *
-     * @return test suite for the class
-     **/
-    public static junit.framework.TestSuite suite()
-    {
-        return new junit.framework.TestSuite( ThrowableHelper_Test.class );
-    }
-
-    /**
      * Setup for each test method.
      **/
     public void setUp() {}

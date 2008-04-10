@@ -22,28 +22,6 @@ public class StackTrace_Test
     public static final String RCS_ID = "@(#) $Header$";
 
     /**
-     * Run all the test cases defined in the class.
-     *
-     * @param args not used
-     **/
-    public static void main( String[] args )
-    {
-        junit.textui.TestRunner.run( suite() );
-    }
-
-    /**
-     * Build a test suite using reflection.
-     *
-     * @return test suite for the class
-     **/
-    public static junit.framework.TestSuite suite()
-    {
-        return new junit.framework.TestSuite( 
-            StackTrace_Test.class
-            );
-    }
-
-    /**
      * Setup for each test method.
      **/
     public void setUp() {}
@@ -133,7 +111,7 @@ public class StackTrace_Test
         StackTrace frame = StackTrace.getStackTrace( 0 );
         assertNotNull( frame );
         int lineNumber = frame.getLineNumber();
-        assertTrue( "Invalid line number: " + lineNumber, lineNumber == -1 || lineNumber == 133 );
+        assertTrue( "Invalid line number: " + lineNumber, lineNumber == -1 || lineNumber == 111 );
     }
     
     public void test_StackTrace()

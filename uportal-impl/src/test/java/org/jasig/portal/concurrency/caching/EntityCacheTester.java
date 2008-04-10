@@ -8,7 +8,6 @@ package org.jasig.portal.concurrency.caching;
 import java.util.Date;
 
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.IBasicEntity;
@@ -237,30 +236,6 @@ protected void setUp()
     }
     catch (Exception ex) { print("EntityCacheTester.setUp(): " + ex.getMessage());}
  }
-/**
- * @return junit.framework.Test
- */
-public static junit.framework.Test suite() {
-    TestSuite suite = new TestSuite();
-
-  suite.addTest(new EntityCacheTester("testIEntityCacheAddsAndDeletes"));
-  suite.addTest(new EntityCacheTester("testStoreAddsAndDeletes"));
-  suite.addTest(new EntityCacheTester("testStoreBeforeAndAfter"));
-  suite.addTest(new EntityCacheTester("testStoreUpdates"));
-  suite.addTest(new EntityCacheTester("testInvalidatingCacheAddsAndDeletes"));
-  suite.addTest(new EntityCacheTester("testInvalidatingCacheInvalidation"));
-  suite.addTest(new EntityCacheTester("testIEntityCacheSweep"));
-  suite.addTest(new EntityCacheTester("testEntityCachingServiceAddsAndDeletes"));
-  suite.addTest(new EntityCacheTester("testFudgeFactor"));
-
-
-//  suite.addTest(new EntityCacheTester("testStoreDeleteBefore"));
-
-//	Add more tests here.
-//  NB: Order of tests is not guaranteed.
-
-    return suite;
-}
 /**
  */
 protected void tearDown()

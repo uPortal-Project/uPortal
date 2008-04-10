@@ -130,28 +130,6 @@ protected void setUp()
     catch (Exception ex) { print("GroupsTester.setUp(): " + ex.getMessage());}
  }
 /**
- * @return junit.framework.Test
- */
-public static junit.framework.Test suite() {
-    TestSuite suite = new TestSuite();
-
-  suite.addTest(new PAGSTest("testStringEqualsTester"));
-  suite.addTest(new PAGSTest("testStringEqualsIgnoreCaseTester"));
-  suite.addTest(new PAGSTest("testIntegerEQTester"));
-  suite.addTest(new PAGSTest("testIntegerGTTester")); 
-  suite.addTest(new PAGSTest("testIntegerLTTester"));
-  suite.addTest(new PAGSTest("testIntegerGETester")); 
-  suite.addTest(new PAGSTest("testIntegerLETester")); 
-  suite.addTest(new PAGSTest("testRegexTester"));  
-  suite.addTest(new PAGSTest("testValueExistsTester"));
-  suite.addTest(new PAGSTest("testValueMissingTester"));
-  
-//  Add more tests here.
-//  NB: Order of tests is not guaranteed.
-
-    return suite;
-}
-/**
  */
 protected void tearDown()
 {

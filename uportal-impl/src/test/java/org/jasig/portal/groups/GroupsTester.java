@@ -326,33 +326,6 @@ protected void setUp()
     catch (Exception ex) { print("GroupsTester.setUp(): " + ex.getMessage());}
  }
 /**
- * @return junit.framework.Test
- */
-public static junit.framework.Test suite() {
-    TestSuite suite = new TestSuite();
-
-  suite.addTest(new GroupsTester("testAddAndDeleteGroups"));
-  suite.addTest(new GroupsTester("testAddAndDeleteMembers"));
-  suite.addTest(new GroupsTester("testGroupMemberValidation"));
-  suite.addTest(new GroupsTester("testGroupMemberUpdate"));
-  suite.addTest(new GroupsTester("testRetrieveParentGroups"));
-  suite.addTest(new GroupsTester("testUpdateMembersVisibility"));
-  suite.addTest(new GroupsTester("testUpdateLockableGroups"));
-  suite.addTest(new GroupsTester("testUpdateLockableGroupsWithRenewableLock"));
-  suite.addTest(new GroupsTester("testContains"));
-  suite.addTest(new GroupsTester("testDeleteChildGroup"));
-  suite.addTest(new GroupsTester("testMixLockableAndNonLockableGroups"));
-  suite.addTest(new GroupsTester("testConcurrentAccess"));
-  suite.addTest(new GroupsTester("testParseCompoundKeys")); 
-  suite.addTest(new GroupsTester("testPagsContains"));  
-  suite.addTest(new GroupsTester("testAddToALargeGroup"));
-
-//	Add more tests here.
-//  NB: Order of tests is not guaranteed.
-
-    return suite;
-}
-/**
  */
 protected void tearDown()
 {

@@ -22,25 +22,6 @@ public class Resources_Test
     extends TestCase
 {
     /**
-     * Run all the test cases defined in the class.
-     *
-     * @param args not used
-     **/
-    public static void main( String[] args )
-    {
-        junit.textui.TestRunner.run( suite() );
-    }
-    /**
-     * Build a test suite using reflection.
-     *
-     * @return test suite for the class
-     **/
-    public static junit.framework.TestSuite suite()
-    {
-        return new junit.framework.TestSuite( Resources_Test.class );
-    }
-
-    /**
      * Setup for each test method.
      **/
     public void setUp() {}
