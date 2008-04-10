@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="uportal-impl/src/main/java"/>
 	<classpathentry kind="src" path="uportal-impl/src/test/java"/>
-	<classpathentry excluding="**" kind="src" output="uportal-impl/src/main/resources" path="uportal-impl/src/main/resources"/>
 	<classpathentry excluding="**" kind="src" output="uportal-impl/src/test/resources" path="uportal-impl/src/test/resources"/>
+	<classpathentry kind="src" path="uportal-impl/src/main/java"/>
+	<classpathentry excluding="**" kind="src" output="uportal-impl/src/main/resources" path="uportal-impl/src/main/resources"/>
 	<classpathentry excluding="**" kind="src" output="uportal-war/src/main/resources" path="uportal-war/src/main/resources"/>
-	<classpathentry excluding="**" kind="src" output="uportal-portlets-overlay/pluto-testsuite/src/main/resources" path="uportal-portlets-overlay/pluto-testsuite/src/main/resources"/>
 	<classpathentry kind="src" path="uportal-ear-deployer/src/main/java"/>
 	<classpathentry kind="src" path="uportal-ear-deployer/src/test/java"/>
 	<classpathentry excluding="**" kind="src" output="uportal-ear-deployer/src/main/resources" path="uportal-ear-deployer/src/main/resources"/>
 	<classpathentry excluding="**" kind="src" output="uportal-ear-deployer/src/test/resources" path="uportal-ear-deployer/src/test/resources"/>
 	<classpathentry kind="src" path="uportal-ant-tasks/src/main/java"/>
 	<classpathentry excluding="**" kind="src" output="uportal-ant-tasks/src/main/resources" path="uportal-ant-tasks/src/main/resources"/>
+	<classpathentry excluding="**" kind="src" output="uportal-portlets-overlay/pluto-testsuite/src/main/resources" path="uportal-portlets-overlay/pluto-testsuite/src/main/resources"/>
 	<classpathentry kind="src" path="uportal-portlets-overlay/cas/src/main/java"/>
 	<classpathentry kind="src" path="uportal-portlets-overlay/cas/src/test/java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
