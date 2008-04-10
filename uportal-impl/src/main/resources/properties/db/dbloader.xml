@@ -226,7 +226,14 @@ JServer Release 8.1.7.0.0 - Production</db-version>
     <!-- map more types here -->
   </db-type-mapping>
   
-  
+  <db-type-mapping>
+    <db-name>Oracle</db-name>
+    <db-version>Oracle Database 10g Enterprise Edition Release 10.2.0.2.0 - 64bit ProductionWith the Partitioning, OLAP and Data Mining options</db-version>
+    <driver-name>Oracle JDBC driver</driver-name>
+    <driver-version>10.2.0.3.0</driver-version>
+    <type><generic>TIMESTAMP</generic><local>DATE</local></type>
+    <!-- map more types here -->
+  </db-type-mapping>
   
   <!--
    | PostgreSQL Mappings
