@@ -27,6 +27,7 @@ import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.url.AttributeScopingHttpServletRequestWrapper;
+import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.utils.Tuple;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -61,6 +62,12 @@ public class PortletUrlSyntaxProviderImplTest extends TestCase {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setAttribute(AttributeScopingHttpServletRequestWrapper.ATTRIBUTE__HTTP_SERVLET_REQUEST, request);
         request.setContextPath("/uPortal");
+        
+        final IPortalRequestUtils portalRequestUtils = EasyMock.createMock(IPortalRequestUtils.class);
+        EasyMock.expect(portalRequestUtils.getOriginalPortletAdaptorRequest(request)).andReturn(request).times(5);
+        
+        EasyMock.replay(portalRequestUtils);
+        portletUrlSyntaxProvider.setPortalRequestUtils(portalRequestUtils);
         
         final IPortletEntityId portletEntityId = new MockPortletEntityId("entityId1");
         final IPortletWindowId portletWindowId = new MockPortletWindowId("windowId1");
@@ -142,6 +149,8 @@ public class PortletUrlSyntaxProviderImplTest extends TestCase {
         
         urlString = portletUrlSyntaxProvider.generatePortletUrl(request, portletWindow, portletUrl);
         assertEquals("/uPortal/worker/download/worker.download.uP?pltc_target=windowId1&pltc_type=RENDER&pltc_state=exclusive&pltc_mode=edit&pltp_key1=value1.1&pltp_key1=value1.2&pltp_key2=value2.1&pltp_key3=", urlString);
+        
+        EasyMock.verify(portalRequestUtils);
     }
     
     public void testParsePortletParameters() throws Exception {

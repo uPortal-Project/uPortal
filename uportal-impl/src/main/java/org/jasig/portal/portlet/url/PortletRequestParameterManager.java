@@ -10,11 +10,12 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.portlet.container.PortletContainerUtils;
 import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.url.processing.RequestParameterProcessingIncompleteException;
 import org.jasig.portal.url.support.ChannelRequestParameterManager;
 import org.jasig.portal.utils.Tuple;
+import org.springframework.beans.factory.annotation.Required;
 
 /**
  * Manages access to portlet request parameters using a request attribute.
@@ -27,7 +28,24 @@ public class PortletRequestParameterManager implements IPortletRequestParameterM
     protected static final Tuple<IPortletWindowId, PortletRequestInfo> NO_PARAMETERS = new Tuple<IPortletWindowId, PortletRequestInfo>(null, null);
     
     protected final Log logger = LogFactory.getLog(this.getClass());
-
+    
+    private IPortalRequestUtils portalRequestUtils;
+    
+    
+    /**
+     * @return the portalRequestUtils
+     */
+    public IPortalRequestUtils getPortalRequestUtils() {
+        return portalRequestUtils;
+    }
+    /**
+     * @param portalRequestUtils the portalRequestUtils to set
+     */
+    @Required
+    public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
+        Validate.notNull(portalRequestUtils);
+        this.portalRequestUtils = portalRequestUtils;
+    }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.url.IPortletRequestParameterManager#getPortletRequestInfo(javax.servlet.http.HttpServletRequest)
@@ -35,7 +53,7 @@ public class PortletRequestParameterManager implements IPortletRequestParameterM
     public PortletRequestInfo getPortletRequestInfo(HttpServletRequest request) {
         Validate.notNull(request, "request can not be null");
         
-        request = PortletContainerUtils.getOriginalPortalRequest(request);
+        request = this.portalRequestUtils.getOriginalPortalRequest(request);
 
         final Tuple<IPortletWindowId, PortletRequestInfo> requestInfoMap = this.getAndCheckRequestInfoMap(request);
         
@@ -52,7 +70,7 @@ public class PortletRequestParameterManager implements IPortletRequestParameterM
     public IPortletWindowId getTargetedPortletWindowId(HttpServletRequest request) {
         Validate.notNull(request, "request can not be null");
         
-        request = PortletContainerUtils.getOriginalPortalRequest(request);
+        request = this.portalRequestUtils.getOriginalPortalRequest(request);
 
         final Tuple<IPortletWindowId, PortletRequestInfo> requestInfoMap = this.getAndCheckRequestInfoMap(request);
         
@@ -69,7 +87,7 @@ public class PortletRequestParameterManager implements IPortletRequestParameterM
     public void setNoPortletRequest(HttpServletRequest request) {
         Validate.notNull(request, "request can not be null");
         
-        request = PortletContainerUtils.getOriginalPortalRequest(request);
+        request = this.portalRequestUtils.getOriginalPortalRequest(request);
 
         final Tuple<IPortletWindowId, PortletRequestInfo> requestInfoMap = this.getRequestInfo(request);
 
@@ -88,7 +106,7 @@ public class PortletRequestParameterManager implements IPortletRequestParameterM
         Validate.notNull(portletId, "portletId can not be null");
         Validate.notNull(portletRequestInfo, "portletRequestInfo can not be null");
         
-        request = PortletContainerUtils.getOriginalPortalRequest(request);
+        request = this.portalRequestUtils.getOriginalPortalRequest(request);
 
         Tuple<IPortletWindowId, PortletRequestInfo> requestInfo = this.getRequestInfo(request);
 

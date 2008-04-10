@@ -48,10 +48,13 @@
     <bean id="requestPropertiesManager" class="org.jasig.portal.portlet.container.properties.RequestPropertiesManagerBroker">
         <property name="propertiesManagers">
             <list value-type="org.jasig.portal.portlet.container.properties.IRequestPropertiesManager">
-                <bean class="org.jasig.portal.portlet.container.properties.HttpRequestPropertiesManager" />
+                <bean class="org.jasig.portal.portlet.container.properties.HttpRequestPropertiesManager">
+                    <property name="portalRequestUtils" ref="portalRequestUtils" />
+                </bean>
                 <bean class="org.jasig.portal.portlet.container.properties.CacheRequestPropertiesManager">
                     <property name="portletDefinitionRegistry" ref="portletDefinitionRegistry" />
                     <property name="portletEntityRegistry" ref="portletEntityRegistry" />
+                    <property name="portalRequestUtils" ref="portalRequestUtils" />
                 </bean>
             </list>
         </property>
@@ -62,6 +65,7 @@
         <property name="portletEntityRegistry" ref="portletEntityRegistry" />
         <property name="portletDefinitionRegistry" ref="portletDefinitionRegistry" />
         <property name="personAttributeDao" ref="personAttributeDao" />
+        <property name="portalRequestUtils" ref="portalRequestUtils" />
     </bean>
     
     <bean id="portalAdministrationService" class="org.apache.pluto.core.DefaultPortalAdministrationService">
@@ -85,10 +89,12 @@
         <property name="portletEntityRegistry" ref="portletEntityRegistry" />
         <property name="portletWindowRegistry" ref="portletWindowRegistry" />
         <property name="personManager" ref="personManager" />
+        <property name="portalRequestUtils" ref="portalRequestUtils" />
     </bean>
     
     <bean id="portletUrlSyntaxProvider" class="org.jasig.portal.portlet.url.PortletUrlSyntaxProviderImpl">
         <property name="portletWindowRegistry" ref="portletWindowRegistry" />
+        <property name="portalRequestUtils" ref="portalRequestUtils" />
     </bean>
     
     <bean id="portletSessionActionManager" class="org.jasig.portal.portlet.session.PortletSessionActionManagerImpl">

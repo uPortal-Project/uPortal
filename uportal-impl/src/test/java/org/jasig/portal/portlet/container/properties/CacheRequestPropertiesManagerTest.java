@@ -20,6 +20,7 @@ import org.jasig.portal.mock.portlet.om.MockPortletWindow;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 import org.jasig.portal.url.AttributeScopingHttpServletRequestWrapper;
+import org.jasig.portal.url.IPortalRequestUtils;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 /**
@@ -69,11 +70,15 @@ public class CacheRequestPropertiesManagerTest extends TestCase {
         final IPortletDefinitionRegistry portletDefinitionRegistry = EasyMock.createMock(IPortletDefinitionRegistry.class);
         EasyMock.expect(portletDefinitionRegistry.getParentPortletDescriptor(portletDefinitionId)).andReturn(portletDD);
         
+        final IPortalRequestUtils portalRequestUtils = EasyMock.createMock(IPortalRequestUtils.class);
+        EasyMock.expect(portalRequestUtils.getOriginalPortletAdaptorRequest(httpServletRequest)).andReturn(httpServletRequest);
         
-        EasyMock.replay(portletEntityRegistry, portletDefinitionRegistry);
+        
+        EasyMock.replay(portletEntityRegistry, portletDefinitionRegistry, portalRequestUtils);
             
         this.cacheRequestPropertiesManager.setPortletEntityRegistry(portletEntityRegistry);
         this.cacheRequestPropertiesManager.setPortletDefinitionRegistry(portletDefinitionRegistry);
+        this.cacheRequestPropertiesManager.setPortalRequestUtils(portalRequestUtils);
         
         final Map<String, String[]> requestProperties = this.cacheRequestPropertiesManager.getRequestProperties(httpServletRequest, portletWindow);
         
@@ -106,11 +111,15 @@ public class CacheRequestPropertiesManagerTest extends TestCase {
         final IPortletDefinitionRegistry portletDefinitionRegistry = EasyMock.createMock(IPortletDefinitionRegistry.class);
         EasyMock.expect(portletDefinitionRegistry.getParentPortletDescriptor(portletDefinitionId)).andReturn(portletDD);
         
+        final IPortalRequestUtils portalRequestUtils = EasyMock.createMock(IPortalRequestUtils.class);
+        EasyMock.expect(portalRequestUtils.getOriginalPortletAdaptorRequest(httpServletRequest)).andReturn(httpServletRequest);
         
-        EasyMock.replay(portletEntityRegistry, portletDefinitionRegistry);
         
+        EasyMock.replay(portletEntityRegistry, portletDefinitionRegistry, portalRequestUtils);
+            
         this.cacheRequestPropertiesManager.setPortletEntityRegistry(portletEntityRegistry);
         this.cacheRequestPropertiesManager.setPortletDefinitionRegistry(portletDefinitionRegistry);
+        this.cacheRequestPropertiesManager.setPortalRequestUtils(portalRequestUtils);
         
         final Map<String, String[]> requestProperties = this.cacheRequestPropertiesManager.getRequestProperties(httpServletRequest, portletWindow);
         
@@ -137,11 +146,15 @@ public class CacheRequestPropertiesManagerTest extends TestCase {
         
         final IPortletDefinitionRegistry portletDefinitionRegistry = EasyMock.createMock(IPortletDefinitionRegistry.class);
         
+        final IPortalRequestUtils portalRequestUtils = EasyMock.createMock(IPortalRequestUtils.class);
+        EasyMock.expect(portalRequestUtils.getOriginalPortletAdaptorRequest(httpServletRequest)).andReturn(httpServletRequest);
         
-        EasyMock.replay(portletEntityRegistry, portletDefinitionRegistry);
         
+        EasyMock.replay(portletEntityRegistry, portletDefinitionRegistry, portalRequestUtils);
+            
         this.cacheRequestPropertiesManager.setPortletEntityRegistry(portletEntityRegistry);
         this.cacheRequestPropertiesManager.setPortletDefinitionRegistry(portletDefinitionRegistry);
+        this.cacheRequestPropertiesManager.setPortalRequestUtils(portalRequestUtils);
         
         final Map<String, String[]> requestProperties = this.cacheRequestPropertiesManager.getRequestProperties(httpServletRequest, portletWindow);
         
@@ -178,11 +191,15 @@ public class CacheRequestPropertiesManagerTest extends TestCase {
         final IPortletDefinitionRegistry portletDefinitionRegistry = EasyMock.createMock(IPortletDefinitionRegistry.class);
         EasyMock.expect(portletDefinitionRegistry.getParentPortletDescriptor(portletDefinitionId)).andReturn(portletDD);
         
+        final IPortalRequestUtils portalRequestUtils = EasyMock.createMock(IPortalRequestUtils.class);
+        EasyMock.expect(portalRequestUtils.getOriginalPortletAdaptorRequest(httpServletRequest)).andReturn(httpServletRequest);
         
-        EasyMock.replay(portletEntityRegistry, portletDefinitionRegistry);
+        
+        EasyMock.replay(portletEntityRegistry, portletDefinitionRegistry, portalRequestUtils);
             
         this.cacheRequestPropertiesManager.setPortletEntityRegistry(portletEntityRegistry);
         this.cacheRequestPropertiesManager.setPortletDefinitionRegistry(portletDefinitionRegistry);
+        this.cacheRequestPropertiesManager.setPortalRequestUtils(portalRequestUtils);
         
         this.cacheRequestPropertiesManager.setResponseProperty(httpServletRequest, portletWindow, RenderResponse.EXPIRATION_CACHE, "30");
         
@@ -215,11 +232,15 @@ public class CacheRequestPropertiesManagerTest extends TestCase {
         final IPortletDefinitionRegistry portletDefinitionRegistry = EasyMock.createMock(IPortletDefinitionRegistry.class);
         EasyMock.expect(portletDefinitionRegistry.getParentPortletDescriptor(portletDefinitionId)).andReturn(portletDD);
         
+        final IPortalRequestUtils portalRequestUtils = EasyMock.createMock(IPortalRequestUtils.class);
+        EasyMock.expect(portalRequestUtils.getOriginalPortletAdaptorRequest(httpServletRequest)).andReturn(httpServletRequest);
         
-        EasyMock.replay(portletEntityRegistry, portletDefinitionRegistry);
+        
+        EasyMock.replay(portletEntityRegistry, portletDefinitionRegistry, portalRequestUtils);
             
         this.cacheRequestPropertiesManager.setPortletEntityRegistry(portletEntityRegistry);
         this.cacheRequestPropertiesManager.setPortletDefinitionRegistry(portletDefinitionRegistry);
+        this.cacheRequestPropertiesManager.setPortalRequestUtils(portalRequestUtils);
         
         this.cacheRequestPropertiesManager.setResponseProperty(httpServletRequest, portletWindow, RenderResponse.EXPIRATION_CACHE, "30");
         

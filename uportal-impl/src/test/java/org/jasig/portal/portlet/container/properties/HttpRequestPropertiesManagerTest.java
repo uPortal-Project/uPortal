@@ -12,6 +12,7 @@ import java.util.Map;
 import org.easymock.EasyMock;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.url.AttributeScopingHttpServletRequestWrapper;
+import org.jasig.portal.url.IPortalRequestUtils;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import junit.framework.TestCase;
@@ -46,7 +47,13 @@ public class HttpRequestPropertiesManagerTest extends TestCase {
         request.setMethod("POST");
         
         final IPortletWindow portletWindow = EasyMock.createMock(IPortletWindow.class);
-        EasyMock.replay(portletWindow);
+        
+        final IPortalRequestUtils portalRequestUtils = EasyMock.createMock(IPortalRequestUtils.class);
+        EasyMock.expect(portalRequestUtils.getOriginalPortletAdaptorRequest(request)).andReturn(request);
+        
+        EasyMock.replay(portletWindow, portalRequestUtils);
+        
+        this.httpRequestPropertiesManager.setPortalRequestUtils(portalRequestUtils);
         
         final Map<String, String[]> properties = this.httpRequestPropertiesManager.getRequestProperties(request, portletWindow);
 
@@ -54,5 +61,7 @@ public class HttpRequestPropertiesManagerTest extends TestCase {
         assertEquals("properties Map should have 2 values", 2, properties.size());
         assertEquals(Collections.singletonList("1.2.3.4"), Arrays.asList(properties.get("REMOTE_ADDR")));
         assertEquals(Collections.singletonList("POST"), Arrays.asList(properties.get("REQUEST_METHOD")));
+        
+        EasyMock.verify(portletWindow, portalRequestUtils);
     }
 }

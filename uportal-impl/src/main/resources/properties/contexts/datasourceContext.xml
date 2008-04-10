@@ -25,7 +25,7 @@
     
     <alias alias="PersonDB" name="PortalDb"/>
     
-    <bean id="rdbmPropertiesPlacholder" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    <bean id="rdbmPropertiesPlacholder" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" lazy-init="false">
         <property name="location" value="classpath:/properties/rdbm.properties" />
     </bean>
 </beans>

@@ -24,7 +24,6 @@ import org.apache.pluto.descriptors.portlet.PortletPreferenceDD;
 import org.apache.pluto.descriptors.portlet.PortletPreferencesDD;
 import org.apache.pluto.internal.InternalPortletPreference;
 import org.apache.pluto.spi.optional.PortletPreferencesService;
-import org.jasig.portal.portlet.container.PortletContainerUtils;
 import org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletEntity;
@@ -37,6 +36,7 @@ import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
+import org.jasig.portal.url.IPortalRequestUtils;
 import org.springframework.beans.factory.annotation.Required;
 
 /**
@@ -52,10 +52,25 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
     private IPortletWindowRegistry portletWindowRegistry;
     private IPortletEntityRegistry portletEntityRegistry;
     private IPortletDefinitionRegistry portletDefinitionRegistry;
+    private IPortalRequestUtils portalRequestUtils;
     
     private boolean storeGuestPreferences = true;
     private boolean shareGuestPreferences = false;
     
+    /**
+     * @return the portalRequestUtils
+     */
+    public IPortalRequestUtils getPortalRequestUtils() {
+        return portalRequestUtils;
+    }
+    /**
+     * @param portalRequestUtils the portalRequestUtils to set
+     */
+    @Required
+    public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
+        Validate.notNull(portalRequestUtils);
+        this.portalRequestUtils = portalRequestUtils;
+    }
     
     /**
      * @return the portletWindowRegistry
@@ -147,7 +162,7 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
      * @see org.apache.pluto.spi.optional.PortletPreferencesService#getStoredPreferences(org.apache.pluto.PortletWindow, javax.portlet.PortletRequest)
      */
     public InternalPortletPreference[] getStoredPreferences(PortletWindow plutoPortletWindow, PortletRequest portletRequest) throws PortletContainerException {
-        final HttpServletRequest httpServletRequest = PortletContainerUtils.getOriginalPortletAdaptorRequest(portletRequest);
+        final HttpServletRequest httpServletRequest = this.portalRequestUtils.getOriginalPortletAdaptorRequest(portletRequest);
         
         final IPortletWindow portletWindow = this.portletWindowRegistry.convertPortletWindow(httpServletRequest, plutoPortletWindow);
         final IPortletEntity portletEntity = this.portletWindowRegistry.getParentPortletEntity(httpServletRequest, portletWindow.getPortletWindowId());
@@ -191,7 +206,7 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
      * @see org.apache.pluto.spi.optional.PortletPreferencesService#store(org.apache.pluto.PortletWindow, javax.portlet.PortletRequest, org.apache.pluto.internal.InternalPortletPreference[])
      */
     public void store(PortletWindow plutoPortletWindow, PortletRequest portletRequest, InternalPortletPreference[] internalPreferences) throws PortletContainerException {
-        final HttpServletRequest httpServletRequest = PortletContainerUtils.getOriginalPortletAdaptorRequest(portletRequest);
+        final HttpServletRequest httpServletRequest = this.portalRequestUtils.getOriginalPortletAdaptorRequest(portletRequest);
         
         //Determine if the user is a guest
         final boolean isGuest = isGuestUser(httpServletRequest);

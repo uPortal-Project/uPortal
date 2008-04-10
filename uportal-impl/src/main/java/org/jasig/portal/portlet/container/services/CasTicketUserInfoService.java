@@ -15,6 +15,7 @@ import java.util.Map;
 import javax.portlet.PortletRequest;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.pluto.PortletContainerException;
@@ -24,7 +25,6 @@ import org.apache.pluto.descriptors.portlet.UserAttributeDD;
 import org.apache.pluto.internal.InternalPortletRequest;
 import org.apache.pluto.internal.InternalPortletWindow;
 import org.apache.pluto.spi.optional.UserInfoService;
-import org.jasig.portal.portlet.container.PortletContainerUtils;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletWindow;
@@ -36,6 +36,7 @@ import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.provider.cas.CasProxyTicketAcquisitionException;
 import org.jasig.portal.security.provider.cas.CasSecurityContext;
 import org.jasig.portal.security.provider.cas.ICasSecurityContext;
+import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
 import org.springframework.beans.factory.annotation.Required;
@@ -53,8 +54,25 @@ public class CasTicketUserInfoService implements UserInfoService  {
     private IPortletWindowRegistry portletWindowRegistry;
     private IPortletEntityRegistry portletEntityRegistry;
     private IPortletDefinitionRegistry portletDefinitionRegistry;
-	protected final Log log = LogFactory.getLog(getClass());
-
+    private IPortalRequestUtils portalRequestUtils;
+    protected final Log log = LogFactory.getLog(getClass());
+    
+    
+    /**
+     * @return the portalRequestUtils
+     */
+    public IPortalRequestUtils getPortalRequestUtils() {
+        return portalRequestUtils;
+    }
+    /**
+     * @param portalRequestUtils the portalRequestUtils to set
+     */
+    @Required
+    public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
+        Validate.notNull(portalRequestUtils);
+        this.portalRequestUtils = portalRequestUtils;
+    }
+    
 	/**
 	 * The default name of the preferences attribute used to pass the 
 	 * PT to the portlet.
@@ -181,7 +199,7 @@ public class CasTicketUserInfoService implements UserInfoService  {
 	public boolean isCasProxyTicketRequested(PortletRequest request, PortletWindow plutoPortletWindow) throws PortletContainerException {
 
     	// get the list of requested user attributes
-        final HttpServletRequest httpServletRequest = PortletContainerUtils.getOriginalPortletAdaptorRequest(request);
+        final HttpServletRequest httpServletRequest = this.portalRequestUtils.getOriginalPortletAdaptorRequest(request);
         final IPortletWindow portletWindow = this.portletWindowRegistry.convertPortletWindow(httpServletRequest, plutoPortletWindow);
         final IPortletEntity portletEntity = this.portletWindowRegistry.getParentPortletEntity(httpServletRequest, portletWindow.getPortletWindowId());
         final IPortletDefinition portletDefinition = this.portletEntityRegistry.getParentPortletDefinition(portletEntity.getPortletEntityId());
@@ -208,7 +226,7 @@ public class CasTicketUserInfoService implements UserInfoService  {
 	 */
 	private String getProxyTicket(PortletRequest request) {
 
-        final HttpServletRequest httpServletRequest = PortletContainerUtils.getOriginalPortletAdaptorRequest(request);
+        final HttpServletRequest httpServletRequest = this.portalRequestUtils.getOriginalPortletAdaptorRequest(request);
 
         // try to determine the URL for our portlet
 		String targetService = null;

@@ -13,6 +13,7 @@ import java.util.Map;
 import javax.portlet.PortletRequest;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.Validate;
 import org.apache.pluto.PortletContainerException;
 import org.apache.pluto.PortletWindow;
 import org.apache.pluto.descriptors.portlet.PortletAppDD;
@@ -20,13 +21,13 @@ import org.apache.pluto.descriptors.portlet.UserAttributeDD;
 import org.apache.pluto.internal.InternalPortletRequest;
 import org.apache.pluto.internal.InternalPortletWindow;
 import org.apache.pluto.spi.optional.UserInfoService;
-import org.jasig.portal.portlet.container.PortletContainerUtils;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
+import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Required;
 
@@ -41,7 +42,23 @@ public class PersonDirectoryUserInfoService implements UserInfoService {
     private IPortletWindowRegistry portletWindowRegistry;
     private IPortletEntityRegistry portletEntityRegistry;
     private IPortletDefinitionRegistry portletDefinitionRegistry;
+    private IPortalRequestUtils portalRequestUtils;
     
+    
+    /**
+     * @return the portalRequestUtils
+     */
+    public IPortalRequestUtils getPortalRequestUtils() {
+        return portalRequestUtils;
+    }
+    /**
+     * @param portalRequestUtils the portalRequestUtils to set
+     */
+    @Required
+    public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
+        Validate.notNull(portalRequestUtils);
+        this.portalRequestUtils = portalRequestUtils;
+    }
     
     /**
      * @return the portletEntityRegistry
@@ -123,7 +140,7 @@ public class PersonDirectoryUserInfoService implements UserInfoService {
             return null;
         }
         
-        final HttpServletRequest httpServletRequest = PortletContainerUtils.getOriginalPortletAdaptorRequest(request);
+        final HttpServletRequest httpServletRequest = this.portalRequestUtils.getOriginalPortletAdaptorRequest(request);
         final IPortletWindow portletWindow = this.portletWindowRegistry.convertPortletWindow(httpServletRequest, plutoPortletWindow);
         
         return this.getUserInfo(remoteUser, httpServletRequest, portletWindow);

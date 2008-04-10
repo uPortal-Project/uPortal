@@ -50,5 +50,5 @@
         </property>
     </bean>
 
-    <bean class="org.springframework.beans.factory.annotation.RequiredAnnotationBeanPostProcessor" />
+    <bean class="org.springframework.beans.factory.annotation.RequiredAnnotationBeanPostProcessor" lazy-init="false" />
 </beans>

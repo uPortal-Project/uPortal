@@ -26,11 +26,11 @@ import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.UPFileSpec;
 import org.jasig.portal.channels.portlet.IPortletAdaptor;
 import org.jasig.portal.layout.IUserLayout;
-import org.jasig.portal.portlet.container.PortletContainerUtils;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
+import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.utils.Tuple;
 import org.springframework.beans.factory.annotation.Required;
 
@@ -57,8 +57,23 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
     private String defaultEncoding = "UTF-8";
     private int bufferLength = 512;
     private IPortletWindowRegistry portletWindowRegistry;
+    private IPortalRequestUtils portalRequestUtils;
     
     
+    /**
+     * @return the portalRequestUtils
+     */
+    public IPortalRequestUtils getPortalRequestUtils() {
+        return portalRequestUtils;
+    }
+    /**
+     * @param portalRequestUtils the portalRequestUtils to set
+     */
+    @Required
+    public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
+        Validate.notNull(portalRequestUtils);
+        this.portalRequestUtils = portalRequestUtils;
+    }
     
     /**
      * @return the defaultEncoding
@@ -218,7 +233,7 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
         Validate.notNull(portletUrl, "portletUrl can not be null");
         
         //Convert the callback request to the portal request
-        request = PortletContainerUtils.getOriginalPortletAdaptorRequest(request);
+        request = this.portalRequestUtils.getOriginalPortletAdaptorRequest(request);
         
         //Get the channel runtime data from the request attributes, it should have been set there by the portlet adapter
         final ChannelRuntimeData channelRuntimeData = (ChannelRuntimeData)request.getAttribute(IPortletAdaptor.ATTRIBUTE__RUNTIME_DATA);
