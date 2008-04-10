@@ -594,10 +594,21 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven-surefire-plugin.version}</version>
                 <configuration>
+                    <includes>
+                        <include>**/*Tester.java</include>
+                        <include>**/Test*.java</include>
+                        <include>**/*Test.java</include>
+                        <include>**/*TestCase.java</include>
+                    </includes>
                     <excludes>
                         <exclude>**/Abstract*Test.java</exclude>
                         <exclude>**/Abstract*TestCase.java</exclude>
                         <exclude>**/*$*</exclude>
+                        
+                        <!-- These tests do not function unless run against a fully initialized uPortal database -->
+                        <exclude>**/EntityCacheTester.java</exclude>
+                        <exclude>**/AuthorizationTester.java</exclude>
+                        <exclude>**/GroupsTester.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>
