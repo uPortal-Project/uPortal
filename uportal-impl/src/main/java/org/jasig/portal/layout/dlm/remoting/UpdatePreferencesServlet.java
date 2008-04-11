@@ -437,8 +437,15 @@ public class UpdatePreferencesServlet extends HttpServlet {
 		if (isTab(ulm, destinationId)) {
 			Enumeration columns = ulm.getChildIds(destinationId);
 			if (columns.hasMoreElements()) {
-				node = ulm.addNode(channel, (String) columns.nextElement(),
-						null);
+				while (columns.hasMoreElements()) {
+					// attempt to add this channel to the column
+					node = ulm.addNode(channel, (String) columns.nextElement(),
+							null);
+					// if it couldn't be added to this column, go on and try the next
+					// one.  otherwise, we're set.
+					if (node != null)
+						break;
+				}
 			} else {
 
 				IUserLayoutFolderDescription newColumn = new UserLayoutFolderDescription();
