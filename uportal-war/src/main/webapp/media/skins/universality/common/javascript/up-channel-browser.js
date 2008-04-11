@@ -121,11 +121,15 @@
 			if (channelId.indexOf("_") > -1)
 				channelId = channelId.split("_")[1];
 			var channel = $("channel[ID=" + channelId + "]", this.channelXml);
+			if (channel.length > 0)
+			    channel = $(channel.get(0)); 
 		
 			$("#channelTitle").text(channel.attr("name"));
 			$("#channelDescription").text(channel.attr("description"));
 			$("#addChannelId").attr("value", channelId);
-			$("#previewChannelLink").click(function(){ window.location = portalUrl + "?uP_fname=" + channel.attr("fname"); });
+			$("#previewChannelLink").unbind("click").click(function(){ 
+			    window.location = portalUrl + "?uP_fname=" + channel.attr("fname");
+			});
 		
 		    // if this channel has user-overrideable parameters, present a form allowing the
 		    // user to input values
