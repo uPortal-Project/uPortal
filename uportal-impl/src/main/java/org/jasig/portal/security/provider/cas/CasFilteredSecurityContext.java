@@ -39,9 +39,9 @@ public class CasFilteredSecurityContext extends ChainingSecurityContext implemen
     /**
      * Receipt stored here upon authenticate() invocation.
      */
-    private CASReceipt receipt;
+    protected CASReceipt receipt;
 
-    CasFilteredSecurityContext() {
+    protected CasFilteredSecurityContext() {
         super();
     }
 
