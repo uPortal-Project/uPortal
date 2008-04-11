@@ -229,7 +229,7 @@ END DEBUG CODE -->
         <xsl:choose>
             <xsl:when test="$action = 'moveColumn' or $action = 'moveChannel'">
                 <xsl:attribute name="href">
-                    <xsl:value-of select="$baseActionURL"/>?action=<xsl:value-of select="$action"/>&amp;activeTab=<xsl:value-of select="$activeTabID"/>
+                    <xsl:value-of select="$baseActionURL"/>?action=<xsl:value-of select="$action"/>&amp;activeTab=<xsl:value-of select="@ID"/>
                 </xsl:attribute>
             </xsl:when>
             <xsl:otherwise>
@@ -1389,11 +1389,12 @@ document.location = loc;
       </xsl:if>
       End of channel rename section-->
 <!-- If ancestor is immutable - the channel cannot be moved-->
-<!--
-      <xsl:if test="not(/layout/descendant::*[@ID=$elementID]/ancestor::folder[@immutable='true'])">
+      <xsl:if test="not(/layout/descendant::*[@ID=$elementID]/ancestor::folder[@immutable='true'])
+        and (not(/layout/folder/descendant::*[@ID = $elementID]/@dlm:moveAllowed)
+        or (/layout/folder/descendant::*[@ID = $elementID]/@dlm:moveAllowed != 'false'))">
    <tr><td colspan="2" width="100%" class="uportal-channel-text"><a href="{$baseActionURL}?action=moveChannel&amp;elementID={$elementID}" onMouseover="window.status=''; return true;"><img alt="Move this channel" title="Move this channel" src="{$mediaPath}/bullet.gif" hspace="7" width="9" height="9" border="0"/>Move this channel to a different location</a></td></tr>
       </xsl:if>
--->
+
       <xsl:if test="//channel[@ID=$elementID]/parameter/@override = 'yes'">
 
    <tr><td class="uportal-channel-text" colspan="2" width="100%"><a href="{$baseActionURL}?action=selectChannel&amp;subAction=modifyChannelParams&amp;elementID={$elementID}" onMouseover="window.status=''; return true;"><img alt="Modify this channels parameters" border="0" height="9" hspace="7" title="Modify this channels parameters" width="9"><xsl:attribute name="src"><xsl:value-of select="$mediaPath"/><xsl:value-of select="$IMAGE_SRC_BULLET_GIF"/></xsl:attribute></img><xsl:value-of select="$MODIFY_THIS_CHANNELS_PARAMETERS"/></a></td></tr>
