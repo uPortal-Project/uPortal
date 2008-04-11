@@ -250,6 +250,10 @@ function movePortlet(movedNode, targetNode) {
 	} else {
 		target = $(this).parent();
 	}
+    var columns = $('#portalPageBodyColumns > td[@id*=column_]');
+    for (var i = 0; i < columns.length; i++) {
+        $(columns[i]).attr("width", $(columns[i]).attr("width"));
+    }
 	$.post(preferencesUrl, {action: 'movePortletHere', method: method, elementID: $(target).attr('id').split('_')[1], sourceID: $(this).attr('id').split('_')[1]}, function(xml) { });
 }
 
