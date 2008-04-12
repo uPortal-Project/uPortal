@@ -53,9 +53,14 @@
                 </if>
                 <delete-node node="${singleNode(type-id)}"/>
                 <sql-query>
-                    <sql>SELECT upg.group_name FROM up_group upg, up_group_membership upgm WHERE upg.group_id = upgm.group_id AND member_is_group = 'F' AND upg.entity_type_id = ? AND upgm.member_key = ?</sql>
-                    <parameter value="${sql(SELECT entity_type_id FROM up_entity_type WHERE entity_type_name = 'org.jasig.portal.ChannelDefinition')}"/>
+                    <sql>
+                        SELECT upg.group_name
+                        FROM up_group upg LEFT JOIN up_group_membership upgm ON upg.group_id = upgm.group_id
+                        WHERE upgm.member_key = ? AND upg.entity_type_id = ? AND upgm.member_is_group = 'F'
+                        ORDER BY upg.group_name
+                    </sql>
                     <parameter value="${valueOf(chan-id)}"/>
+                    <parameter value="${sql(SELECT entity_type_id FROM up_entity_type WHERE entity_type_name = 'org.jasig.portal.ChannelDefinition')}"/>
                     <subtasks>
                         <append-node parent="${singleNode(categories)}">
                             <category>${req(GROUP_NAME)}</category>
@@ -63,7 +68,11 @@
                     </subtasks>
                 </sql-query>
                 <sql-query>
-                    <sql>SELECT principal_key FROM up_permission WHERE activity = 'SUBSCRIBE' AND permission_type = 'GRANT' AND target = ?</sql>
+                    <sql>
+                        SELECT principal_key 
+                        FROM up_permission 
+                        WHERE activity = 'SUBSCRIBE' AND permission_type = 'GRANT' AND target = ?
+                    </sql>
                     <parameter value="CHAN_ID.${req(CHAN_ID)}"/>
                     <subtasks>
                         <invoke-method class="org.jasig.portal.services.GroupService" method="findGroup" attribute-name="GROUP">
@@ -87,7 +96,12 @@
                 </sql-query>
                 <!--  Standard Channel Parameters  -->
                 <sql-query>
-                    <sql>SELECT * FROM up_channel_param WHERE chan_id = ?</sql>
+                    <sql>
+                        SELECT * 
+                        FROM up_channel_param 
+                        WHERE chan_id = ?
+                        ORDER BY chan_parm_nm
+                    </sql>
                     <parameter value="${req(CHAN_ID)}"/>
                     <subtasks>
                         <if test="${jexl(CHAN_PARM_VAL != null)}">
