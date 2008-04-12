@@ -32,6 +32,7 @@
 	{
 		text-align: left;
         font-family:Verdana,Arial,Helvetica,sans-serif;
+        font-size: 75%;
 	}
 	
 	body#portal /* This formats only the <body> of the portal and not imported html pages */
@@ -333,6 +334,7 @@
 	{
 		background-color: transparent;
 		padding-left: 10px;
+		font-size: 16px;
 	}
 
     .portlet-controls .portlet-control
@@ -342,12 +344,12 @@
 
 	.portlet-controls .help 
 	{
-		background: url("../../icons/help.png") no-repeat;
+		background: url("images/help.gif") no-repeat;
 	}
 	
 	.portlet-controls .about 
 	{
-		background: url("../../icons/information.png") no-repeat;
+		background: url("images/about.gif") no-repeat;
 	}
 	
 	.portlet-controls .edit 
@@ -358,7 +360,7 @@
 	
 	.portlet-controls .print 
 	{
-		background: url("../../icons/printer.png") no-repeat;
+		background: url("images/print.gif") no-repeat;
 	}
 	
 	.portlet-controls .focus 
@@ -383,8 +385,8 @@
 	 */
 		visibility: hidden;
 		font-size: 0;
-		padding-top: 11px;
-		padding-bottom: 3px;
+		padding-top: 12px;
+		padding-bottom: 4px;
 	}
 	
 	.portlet-controls a:hover 
@@ -553,9 +555,9 @@
 	{
 		background-color: #fff;
 		width: 200px;
-		border-left: 1px solid #000099;
-		border-right: 1px solid #000099;
-		border-bottom: 2px solid #000099;
+		border-left: 1px solid #344461;
+		border-right: 1px solid #344461;
+		border-bottom: 1px solid #344461;
 		position: absolute;
 		z-index: 10;
 	}
@@ -568,23 +570,20 @@
 	#portalFlyoutNavigation .portal-flyout-container li
 	{
 		list-style: none;
-		border-bottom: 1px solid #000099;
+		border-bottom: 1px solid #344461;
 	}
 
     #portalFlyoutNavigation .portal-flyout-container li.first
     {
-        border-top: 1px solid #000099;
+        border-top: 1px solid #344461;
     }
 
 	#portalFlyoutNavigation a {
 		display: block;
-		padding: 4px 10px 4px 25px;
+		padding: 4px 10px 4px 10px;
 		color: #2758B3;
 		font-weight: normal;
 		background-color: #E6EEFB;
-		background-position: 5px 3px;
-		background-repeat: no-repeat;
-		background-image: url("../../icons/application.png");
 		text-decoration: none;
 	}
 	

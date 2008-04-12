@@ -60,14 +60,15 @@
 }
 .ui-tabs-nav .ui-tabs-selected a {
     position: relative;
-    top: 1px;
+    top: 2px;
     z-index: 2;
     margin-top: 0;
     border-bottom: none;
     background: #FFFFFF url("i/tab_selected.gif") repeat-x scroll left top;
 }
 .ui-tabs-nav a span {
-    padding-top: 1px;
+    padding-top: 2px;
+    padding-bottom: 1px;
     padding-right: 0;
     height: 15px;
     background-position: 0 0;
@@ -114,11 +115,11 @@
 
 
 div.portlet-content-inner .ui-tabs-nav {
-    margin: -13px -13px 0 -13px;
-    padding: 0 0 0 3px;
+    margin: -13px -13px 0 -12px;
+    padding: 5px 0 0 3px;
 }
 
 div.portlet-content-inner .ui-tabs-panel {
     padding: 13px;
-    margin: 0 -13px 0 -13px;
+    margin: 0 -12px 0 -12px;
 }
