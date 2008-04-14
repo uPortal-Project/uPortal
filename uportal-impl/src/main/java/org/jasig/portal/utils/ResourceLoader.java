@@ -7,6 +7,7 @@ package  org.jasig.portal.utils;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -161,36 +162,23 @@ public class ResourceLoader {
 	// were selected at random; numbers selected successfully cached the
 	// values for the myRutgers portal
 	private static final Map chm = Collections.synchronizedMap(new HashMap(128));
-
-  /**
-	* Returns the requested resource as a File.
-	*
-	* @param requestingClass
-	*            the java.lang.Class object of the class that is attempting to
-	*            load the resource
-	* @param resource
-	*            a String describing the full or partial URL of the resource to
-	*            load
-	* @return the requested resource as a File
-	* @throws org.jasig.portal.ResourceMissingException
-	*/
-  public static File getResourceAsFile(Class requestingClass, String resource) throws ResourceMissingException {
-    return new File(getResourceAsFileString(requestingClass, resource));
-  }
-
-  /**
-   * Returns the requested resource as a File string.
-   * @param requestingClass the java.lang.Class object of the class that is attempting to load the resource
-   * @param resource a String describing the full or partial URL of the resource to load
-   * @return the requested resource as a File string
-   * @throws org.jasig.portal.ResourceMissingException
-   */
-  public static String getResourceAsFileString(Class requestingClass, String resource) throws ResourceMissingException {
-    try {
-        return URLDecoder.decode(getResourceAsURL(requestingClass, resource).getFile(),"UTF-8");
-    } catch (UnsupportedEncodingException e) {
-        throw new RuntimeException(e);
-    }
+	
+  public static long getResourceLastModified(Class requestingClass, String resource) {
+      final URL contentUrl = getResourceAsURL(requestingClass, resource);
+      final String contentFileName = contentUrl.getFile();
+      
+      //Use JAR modified time if the resource is in a .jar file denoted by ! delimeter
+      final int delimIndex = contentFileName.indexOf('!');
+      
+      final File contentFile;
+      if (delimIndex > 0) {
+          contentFile = new File(contentFileName.substring(0, delimIndex));
+      }
+      else {
+          contentFile = new File(contentFileName);
+      }
+      
+      return contentFile.lastModified();
   }
 
   /**

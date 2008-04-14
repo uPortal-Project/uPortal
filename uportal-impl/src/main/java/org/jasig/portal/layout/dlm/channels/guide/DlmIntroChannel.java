@@ -5,7 +5,7 @@
 
 package org.jasig.portal.layout.dlm.channels.guide;
 
-import java.io.File;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -53,12 +53,9 @@ public class DlmIntroChannel extends CAbstractXslt implements ICacheable
 
         try
         {
-            File contentFile = ResourceLoader.getResourceAsFile(this.getClass(),
-                    CONTENT_FILE);
-            long contentModified = contentFile.lastModified();
-            File stylesheetFile = ResourceLoader.getResourceAsFile(this.getClass(),
-                    STYLESHEET_FILE);
-            long stylesheetModified = stylesheetFile.lastModified();
+            long contentModified = ResourceLoader.getResourceLastModified(this.getClass(), CONTENT_FILE);
+            long stylesheetModified = ResourceLoader.getResourceLastModified(this.getClass(), STYLESHEET_FILE);
+
             if (contentModified > stylesheetModified)
                 key.setKeyValidity("" + contentModified);
             else
@@ -93,14 +90,8 @@ public class DlmIntroChannel extends CAbstractXslt implements ICacheable
         try
         {
             long lastRefreshed = Long.parseLong((String) validity);
-            File contentFile = ResourceLoader.getResourceAsFile(this.getClass(),
-                    CONTENT_FILE);
-            File stylesheetFile = ResourceLoader.getResourceAsFile(this.getClass(),
-                    STYLESHEET_FILE);
-            long contentModified = contentFile.lastModified();
-            // TODO remove stylesheet checking after development done since
-            // it gets cached and regular users can't purge the cache.
-            long stylesheetModified = stylesheetFile.lastModified();
+            long contentModified = ResourceLoader.getResourceLastModified(this.getClass(), CONTENT_FILE);
+            long stylesheetModified = ResourceLoader.getResourceLastModified(this.getClass(), STYLESHEET_FILE);
 
             if (contentModified > lastRefreshed ||
                     stylesheetModified > lastRefreshed)
@@ -156,7 +147,7 @@ public class DlmIntroChannel extends CAbstractXslt implements ICacheable
 	@Override
 	protected Document getXml() throws Exception {
 
-        File contents = ResourceLoader.getResourceAsFile(this.getClass(),
+        InputStream contents = ResourceLoader.getResourceAsStream(this.getClass(),
                 CONTENT_FILE);
 		
         DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();

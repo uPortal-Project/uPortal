@@ -5,9 +5,9 @@
 
 package org.jasig.portal.services.dom;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -34,9 +34,8 @@ public final class ResinInitServiceImpl implements IDOMInitService {
             Object[] params = new Object[1];
             Class[] paramClasses = new Class[1];
 
-            File regFile = ResourceLoader.getResourceAsFile(this.getClass(),
-                "/properties/resin.conf");
-            FileInputStream is = new FileInputStream(regFile);
+            InputStream is = ResourceLoader.getResourceAsStream(this.getClass(),
+            "/properties/resin.conf");
 
             // create the com.caucho.vfs.FileReadStream object
             params[0] = is;
