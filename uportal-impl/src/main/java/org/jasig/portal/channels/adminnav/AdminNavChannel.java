@@ -58,7 +58,7 @@ public class AdminNavChannel extends BaseChannel implements ICacheable
     
     private static synchronized INavigationModel getNavModel()
     {
-        if (model == null) {
+        if (model != null) {
             return model;
         }
         
