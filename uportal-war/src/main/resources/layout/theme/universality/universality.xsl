@@ -224,7 +224,7 @@
     <!-- uPortal skin CSS -->
     
     
-    <xsl:if test="($USE_AJAX='true' and $AUTHENTICATED='true') or $USE_FLYOUT_MENUS='true'">
+    <xsl:if test="$USE_AJAX='true' or $USE_FLYOUT_MENUS='true'">
      <link rel="stylesheet" href="{$MEDIA_PATH}/common/javascript/jquery/themes/{$SKIN}/jqueryui.all.css" type="text/css" media="screen" title="Flora (Default)"></link>
     </xsl:if>
     
@@ -247,7 +247,7 @@
    | Template contents can be any valid XSL or XHTML.
   -->
   <xsl:template name="page.js">
-    <xsl:if test="($USE_AJAX='true' and $AUTHENTICATED='true') or $USE_FLYOUT_MENUS='true'">
+    <xsl:if test="$USE_AJAX='true' or $USE_FLYOUT_MENUS='true'">
      <script type="text/javascript" src="{$SCRIPT_PATH}/jquery/jquery-1.2.3.min.js"></script>
     </xsl:if>
     <xsl:if test="$USE_AJAX='true' and $AUTHENTICATED='true'">
