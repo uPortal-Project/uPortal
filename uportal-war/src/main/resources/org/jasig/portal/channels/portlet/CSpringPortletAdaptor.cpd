@@ -103,7 +103,6 @@ Version $Revision: 1.1 $
 
   <controls>
     <control type="edit" include="no" override="yes"/>
-    <control type="about" include="no" override="yes"/>
     <control type="help" include="no" override="yes"/>
   </controls>
 
