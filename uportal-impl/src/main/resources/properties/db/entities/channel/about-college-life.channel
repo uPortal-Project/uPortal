@@ -21,14 +21,14 @@
   </groups>
   <parameters>
     <parameter> 
-      <name>xmlUri</name>  
-      <value>http://z.about.com/6/g/collegelife/b/rss2.xml</value>  
+      <name>viewNum</name>  
+      <value>5</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>
     <parameter> 
-      <name>viewNum</name>  
-      <value>5</value>  
+      <name>xmlUri</name>  
+      <value>http://z.about.com/6/g/collegelife/b/rss2.xml</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>

@@ -1,6 +1,6 @@
 <with-attribute key="Attributes.NODE" value="${newDoc(user)}">
     <echo-ln>Export User: USER_NAME=${req(USER_NAME)}</echo-ln>
-    <append-node node="${attributeNode(script=classpath://org/jasig/portal/io/import-user_v2-6.crn)}"/>
+    <append-node node="${attributeNode(script=classpath://org/jasig/portal/io/import-user_v3-0.crn)}"/>
     <append-node node="${attributeNode(username=${req(USER_NAME)})}"/>
     <with-attribute key="USER_ID" value="${sql(SELECT user_id FROM up_user WHERE user_name = '${req(USER_NAME)}')}">
         <choose>
@@ -21,65 +21,6 @@
                         <append-node>
                             <default-user>${req(DEFAULT_USER)}</default-user>
                         </append-node>
-                    </subtasks>
-                </sql-query>
-
-                <!-- user pofile(s) -->
-                <sql-query>
-                    <sql>SELECT upup.*, upss.ss_name AS structure, upst.ss_name AS theme FROM
-                        up_user_profile upup, up_ss_struct upss, up_ss_theme upst, up_user upu WHERE
-                        upup.structure_ss_id = upss.ss_id AND upup.theme_ss_id = upst.ss_id AND upup.user_id
-                        = upu.user_id AND upu.user_name = ?</sql>
-                    <parameter value="${req(USER_NAME)}"/>
-                    <subtasks>
-                        <append-node>
-                            <profile name="${req(PROFILE_NAME)}" >
-                                <description>${req(DESCRIPTION)}</description>
-                                <structure name="${req(STRUCTURE)}"/>
-                                <theme name="${req(THEME)}"/>
-
-                            </profile>
-                        </append-node>
-                        <!-- for each profile row, also create structure and theme elements
-                            WARNING: tables UP_SS_USER_ATTS and UP_SS_USER_PARM must contain unique values in the SS_NAME column -->
-                        <with-attribute key="Attributes.NODE"
-                            value="${singleNode(profile[position()=last()])}">
-                            <sql-query>
-                                <sql>select param_name, param_val , ss_type from UP_SS_USER_PARM where
-                                    profile_id=? and user_id=? and ((ss_id=? and ss_type=1) or (ss_id=? and ss_type=2)) </sql>
-                                <parameter value="${req(PROFILE_ID)}"/>
-                                <parameter value="${req(USER_ID)}"/>
-                                <parameter value="${req(STRUCTURE_SS_ID)}"/>
-                                <parameter value="${req(THEME_SS_ID)}"/>
-                                <subtasks>
-                                    <choose>
-                                        <!-- type=1 for structure parameters -->
-                                        <when test="${jexl(SS_TYPE == 1)}">
-                                            <append-node parent="${singleNode(structure)}"
-                                                node="${commentNode(Parameters for structure transform)}" />
-                                            <append-node parent="${singleNode(structure)}">
-                                                <parameter>
-                                                    <name>${req(PARAM_NAME)}</name>
-                                                    <value>${req(PARAM_VAL)}</value>
-                                                </parameter>
-                                            </append-node>
-                                        </when>
-                                        <!-- type=1 for theme parameters -->
-                                        <when test="${jexl(SS_TYPE == 2)}">
-                                        <append-node parent="${singleNode(theme)}"
-                                                node="${commentNode(Parameters for theme transform)}" />
-                                            <append-node parent="${singleNode(theme)}">
-                                                <parameter>
-                                                    <name>${req(PARAM_NAME)}</name>
-                                                    <value>${req(PARAM_VAL)}</value>
-                                                </parameter>
-                                            </append-node>
-                                        </when>
-                                    </choose>
-                                </subtasks>
-                            </sql-query>
-
-                        </with-attribute>
                     </subtasks>
                 </sql-query>
                 <with-attribute key="SAFE_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${req(USER_NAME)})}">

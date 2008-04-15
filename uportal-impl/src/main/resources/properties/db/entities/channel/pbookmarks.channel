@@ -26,14 +26,14 @@
       <ovrd>N</ovrd> 
     </parameter>
     <parameter> 
-      <name>quicklink</name>  
-      <value>1</value>  
+      <name>portletName</name>  
+      <value>BookmarksPortlet</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>
     <parameter> 
-      <name>portletName</name>  
-      <value>BookmarksPortlet</value>  
+      <name>quicklink</name>  
+      <value>1</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>

@@ -1,7 +1,7 @@
 <xsl:transform xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 
     <xsl:template match="/*">
-        <layout username="{username}" script="classpath://org/jasig/portal/io/import-layout_v2-6.crn">
+        <layout username="{username}" script="classpath://org/jasig/portal/io/import-layout_v3-0.crn">
             <xsl:apply-templates select="//folder[@type = 'root']" mode="branch"/>
         </layout>
     </xsl:template>

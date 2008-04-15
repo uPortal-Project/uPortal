@@ -21,8 +21,8 @@
   </groups>
   <parameters>
     <parameter> 
-      <name>img-width</name>  
-      <value>468</value>  
+      <name>img-border</name>  
+      <value>0</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>
@@ -39,14 +39,14 @@
       <ovrd>N</ovrd> 
     </parameter>
     <parameter> 
-      <name>img-border</name>  
-      <value>0</value>  
+      <name>img-uri</name>  
+      <value>media/org/jasig/portal/channels/CImage/faculty_feature.png</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>
     <parameter> 
-      <name>img-uri</name>  
-      <value>media/org/jasig/portal/channels/CImage/faculty_feature.png</value>  
+      <name>img-width</name>  
+      <value>468</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>

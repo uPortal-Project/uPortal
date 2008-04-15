@@ -20,14 +20,14 @@
   </groups>
   <parameters>
     <parameter> 
-      <name>minNum</name>  
-      <value>1</value>  
+      <name>maxNum</name>  
+      <value>100</value>  
       <description/>  
       <ovrd>Y</ovrd> 
     </parameter>
     <parameter> 
-      <name>maxNum</name>  
-      <value>100</value>  
+      <name>minNum</name>  
+      <value>1</value>  
       <description/>  
       <ovrd>Y</ovrd> 
     </parameter>

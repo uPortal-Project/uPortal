@@ -1,5 +1,5 @@
 
-<layout script="classpath://org/jasig/portal/io/import-layout_v2-6.crn" username="news-lo">
+<layout script="classpath://org/jasig/portal/io/import-layout_v3-0.crn" username="news-lo">
   <root unremovable="Y" immutable="N" hidden="N" name="Root folder">
     <header unremovable="Y" immutable="Y" hidden="N" name="Header folder">
       <channel fname="header"/>
@@ -28,4 +28,9 @@
       </column>
     </tab>
   </root>
+  <profile name="HTML browser profile"> 
+    <description>A system profile for common web browsers</description>  
+    <structure name="DLM Tabs and columns"/>  
+    <theme name="DLM XHTML"/> 
+  </profile>
 </layout>

@@ -18,8 +18,8 @@
   </groups>
   <parameters>
     <parameter> 
-      <name>cw_xml</name>  
-      <value>please-register.html</value>  
+      <name>cw_edit</name>  
+      <value></value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>
@@ -30,8 +30,14 @@
       <ovrd>N</ovrd> 
     </parameter>
     <parameter> 
-      <name>cw_edit</name>  
+      <name>cw_info</name>  
       <value></value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+    <parameter> 
+      <name>cw_passThrough</name>  
+      <value>none</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>
@@ -48,14 +54,8 @@
       <ovrd>N</ovrd> 
     </parameter>
     <parameter> 
-      <name>cw_info</name>  
-      <value></value>  
-      <description/>  
-      <ovrd>N</ovrd> 
-    </parameter>
-    <parameter> 
-      <name>cw_passThrough</name>  
-      <value>none</value>  
+      <name>cw_xml</name>  
+      <value>please-register.html</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>

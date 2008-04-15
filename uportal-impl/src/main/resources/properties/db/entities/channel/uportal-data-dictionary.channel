@@ -20,14 +20,14 @@
   </groups>
   <parameters>
     <parameter> 
-      <name>xmlUri</name>  
-      <value>/properties/db/tables.xml</value>  
+      <name>sslUri</name>  
+      <value>CGenericXSLT/DataDictViewer/DataDictViewer.ssl</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>
     <parameter> 
-      <name>sslUri</name>  
-      <value>CGenericXSLT/DataDictViewer/DataDictViewer.ssl</value>  
+      <name>xmlUri</name>  
+      <value>/properties/db/tables.xml</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>

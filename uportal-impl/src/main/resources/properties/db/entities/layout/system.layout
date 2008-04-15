@@ -1,0 +1,8 @@
+
+<layout script="classpath://org/jasig/portal/io/import-layout_v3-0.crn" username="system">
+  <profile name="HTML browser profile"> 
+    <description>A sample profile for common web browsers</description>  
+    <structure name="DLM Tabs and columns"/>  
+    <theme name="DLM XHTML"/> 
+  </profile>
+</layout>

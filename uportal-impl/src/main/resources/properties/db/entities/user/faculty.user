@@ -1,9 +1,4 @@
 
-<user script="classpath://org/jasig/portal/io/import-user_v2-6.crn" username="faculty">
+<user script="classpath://org/jasig/portal/io/import-user_v3-0.crn" username="faculty">
   <default-user>defaultTemplateUser</default-user>
-  <profile name="My web browser profile"> 
-    <description>A system profile for common web browsers</description>  
-    <structure name="DLM Tabs and columns"/>  
-    <theme name="DLM XHTML"/> 
-  </profile>
 </user>

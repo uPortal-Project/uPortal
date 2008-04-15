@@ -20,8 +20,8 @@
   </groups>
   <parameters>
     <parameter> 
-      <name>cw_xml</name>  
-      <value>http://localhost:8080/jsp-examples/num/numguess.jsp</value>  
+      <name>cw_edit</name>  
+      <value>examples/num_edit.html</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>
@@ -32,8 +32,14 @@
       <ovrd>N</ovrd> 
     </parameter>
     <parameter> 
-      <name>cw_edit</name>  
-      <value>examples/num_edit.html</value>  
+      <name>cw_info</name>  
+      <value>examples/num_info.html</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+    <parameter> 
+      <name>cw_passThrough</name>  
+      <value>application</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>
@@ -50,14 +56,8 @@
       <ovrd>N</ovrd> 
     </parameter>
     <parameter> 
-      <name>cw_info</name>  
-      <value>examples/num_info.html</value>  
-      <description/>  
-      <ovrd>N</ovrd> 
-    </parameter>
-    <parameter> 
-      <name>cw_passThrough</name>  
-      <value>application</value>  
+      <name>cw_xml</name>  
+      <value>http://localhost:8080/jsp-examples/num/numguess.jsp</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>

@@ -1,5 +1,5 @@
 
-<layout script="classpath://org/jasig/portal/io/import-layout_v2-6.crn" username="admin">
+<layout script="classpath://org/jasig/portal/io/import-layout_v3-0.crn" username="admin">
   <root unremovable="Y" immutable="N" hidden="N" name="Root folder">
     <header unremovable="Y" immutable="Y" hidden="N" name="Header folder">
       <channel fname="header"/>
@@ -62,6 +62,11 @@
       <channel fname="footer"/>
     </footer>
   </root>
+  <profile name="My web browser profile"> 
+    <description>A system profile for common web browsers</description>  
+    <structure name="DLM Tabs and columns"/>  
+    <theme name="DLM XHTML"/> 
+  </profile>
   <preferences>
     <entry entity="admin:/layout/root/tab[3]/column[1]/channel[2]" channel="jasig-test-portlet" name="">
       <value/>

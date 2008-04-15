@@ -20,14 +20,14 @@
   </groups>
   <parameters>
     <parameter> 
-      <name>xmlUri</name>  
-      <value>CGenericXSLT/CSSViewer/cssViewer.xml</value>  
+      <name>sslUri</name>  
+      <value>CGenericXSLT/CSSViewer/CSSViewer.ssl</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>
     <parameter> 
-      <name>sslUri</name>  
-      <value>CGenericXSLT/CSSViewer/CSSViewer.ssl</value>  
+      <name>xmlUri</name>  
+      <value>CGenericXSLT/CSSViewer/cssViewer.xml</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>

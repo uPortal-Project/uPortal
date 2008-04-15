@@ -20,6 +20,12 @@
   </groups>
   <parameters>
     <parameter> 
+      <name>APPLET.cols</name>  
+      <value>8</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+    <parameter> 
       <name>APPLET.graphics</name>  
       <value>true</value>  
       <description/>  
@@ -32,14 +38,8 @@
       <ovrd>N</ovrd> 
     </parameter>
     <parameter> 
-      <name>height</name>  
-      <value>195</value>  
-      <description/>  
-      <ovrd>N</ovrd> 
-    </parameter>
-    <parameter> 
-      <name>codeBase</name>  
-      <value>http://nrr.dnsalias.net/javamine</value>  
+      <name>APPLET.marks</name>  
+      <value>true</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>
@@ -50,26 +50,14 @@
       <ovrd>N</ovrd> 
     </parameter>
     <parameter> 
-      <name>APPLET.type</name>  
-      <value>vapplication/x-java-appletalue</value>  
-      <description/>  
-      <ovrd>N</ovrd> 
-    </parameter>
-    <parameter> 
-      <name>APPLET.cols</name>  
+      <name>APPLET.rows</name>  
       <value>8</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>
     <parameter> 
-      <name>width</name>  
-      <value>152</value>  
-      <description/>  
-      <ovrd>N</ovrd> 
-    </parameter>
-    <parameter> 
-      <name>code</name>  
-      <value>jmapplet.class</value>  
+      <name>APPLET.type</name>  
+      <value>vapplication/x-java-appletalue</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>
@@ -80,14 +68,26 @@
       <ovrd>N</ovrd> 
     </parameter>
     <parameter> 
-      <name>APPLET.marks</name>  
-      <value>true</value>  
+      <name>code</name>  
+      <value>jmapplet.class</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>
     <parameter> 
-      <name>APPLET.rows</name>  
-      <value>8</value>  
+      <name>codeBase</name>  
+      <value>http://nrr.dnsalias.net/javamine</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+    <parameter> 
+      <name>height</name>  
+      <value>195</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+    <parameter> 
+      <name>width</name>  
+      <value>152</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>

@@ -20,14 +20,14 @@
   </groups>
   <parameters>
     <parameter> 
-      <name>xmlUri</name>  
-      <value>http://www.unicon.net/publish/uniconnews.rss</value>  
+      <name>viewNum</name>  
+      <value>5</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>
     <parameter> 
-      <name>viewNum</name>  
-      <value>5</value>  
+      <name>xmlUri</name>  
+      <value>http://www.unicon.net/publish/uniconnews.rss</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>

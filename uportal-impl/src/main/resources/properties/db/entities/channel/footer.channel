@@ -18,12 +18,6 @@
   </groups>
   <parameters>
     <parameter> 
-      <name>xmlUri</name>  
-      <value>CGenericXSLT/emptyDocument.xml</value>  
-      <description/>  
-      <ovrd>N</ovrd> 
-    </parameter>
-    <parameter> 
       <name>cacheTimeout</name>  
       <value>3600</value>  
       <description/>  
@@ -32,6 +26,12 @@
     <parameter> 
       <name>sslUri</name>  
       <value>CGenericXSLT/footer/footer.ssl</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+    <parameter> 
+      <name>xmlUri</name>  
+      <value>CGenericXSLT/emptyDocument.xml</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>

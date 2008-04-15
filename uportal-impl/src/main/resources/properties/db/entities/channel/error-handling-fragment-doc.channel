@@ -21,14 +21,14 @@
   </groups>
   <parameters>
     <parameter> 
-      <name>xslUri</name>  
-      <value>webproxy/xhtml.xsl</value>  
+      <name>xmlUri</name>  
+      <value>error/errorHandlingTabDoc/errorHandlingTab.xml</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>
     <parameter> 
-      <name>xmlUri</name>  
-      <value>error/errorHandlingTabDoc/errorHandlingTab.xml</value>  
+      <name>xslUri</name>  
+      <value>webproxy/xhtml.xsl</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>
