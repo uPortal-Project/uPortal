@@ -56,7 +56,11 @@
                                 <!-- all-layouts -->
                                 <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-layouts'))}">
                                     <sql-query>
-                                        <sql>SELECT DISTINCT upu.user_name FROM up_user upu, up_layout_struct upls WHERE upu.user_id = upls.user_id AND upls.layout_id = 1</sql>
+                                        <sql>
+                                            SELECT DISTINCT upu.user_name
+                                            FROM up_user upu LEFT JOIN up_user_profile upup ON upu.user_id = upup.user_id
+                                            WHERE upup.layout_id = 1
+                                        </sql>
                                         <subtasks>
                                             <crn location="export-layout.crn"/>
                                         </subtasks>
