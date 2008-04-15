@@ -1,15 +1,5 @@
 <with-attribute key="USER_ID" value="${sql(SELECT user_id FROM up_user WHERE user_name = '${req(USER_NAME)}')}">
 
-	<!-- Purge user parameters... -->
-	<sql-statement sql="DELETE FROM up_ss_user_parm WHERE user_id = ?">
-		<parameter value="${req(USER_ID)}"/>
-	</sql-statement>
-
-	<!-- Purge user profile(s)... -->
-	<sql-statement sql="DELETE FROM up_user_profile WHERE user_id = ?">
-		<parameter value="${req(USER_ID)}"/>
-	</sql-statement>
-
 	<!-- Purge the user... -->
 	<sql-statement sql="DELETE FROM up_user WHERE user_id = ?">
 		<parameter value="${req(USER_ID)}"/>
