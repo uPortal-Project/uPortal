@@ -37,35 +37,36 @@
     <group-description>Root group for all PAGS groups.  Convenience for adding PAGS groups to a local group.</group-description>
     <members>
       <member-key>1</member-key>
-      <member-key>2</member-key>
     </members>
   </group>
 
 
 <!--
-  Group 1: "Users"
-  sn EQ (ignore case) "User"
+  Group 1: "All Users (PAGS)"
+  All IPersons are memebers of this group
 -->
   <group>
     <group-key>1</group-key>
-    <group-name>Users</group-name>
-    <group-description>Portal users whose last names equal User</group-description>
+    <group-name>All Users (PAGS)</group-name>
+    <group-description>All Portal Users</group-description>
     <selection-test>
       <test-group>
         <test>
-          <attribute-name>sn</attribute-name>
-          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsIgnoreCaseTester</tester-class>
-          <test-value>User</test-value>
+          <tester-class>org.jasig.portal.groups.pags.testers.AlwaysTrueTester</tester-class>
         </test>
       </test-group>
     </selection-test>
   </group>
+  
+  
+  <!--==================== Other Examples ====================-->
 
 
 <!--
   Group 2: "Short First Names"
   givenName has 5 or fewer characters
 -->
+<!-- 
   <group>
     <group-key>2</group-key>
     <group-name>Short First Names</group-name>
@@ -83,7 +84,7 @@
       <member-key>3</member-key>
     </members>
   </group>
-
+ -->
 
 <!--
   Group 3: "Ds and Students"
@@ -92,6 +93,7 @@
   also qualify as members of group 2, i.e., given name must have 5 or fewer characters.  As a
   result, Student User should not show up as a member.
 -->
+<!-- 
   <group>
     <group-key>3</group-key>
     <group-name>Ds and Students</group-name>
@@ -113,7 +115,7 @@
       </test-group>
     </selection-test>
   </group>
-
+ -->
 
 
 <!-- End Group declarations: -->
