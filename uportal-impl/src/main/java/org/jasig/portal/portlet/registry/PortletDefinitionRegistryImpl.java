@@ -185,6 +185,15 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
         return new Tuple<String, String>(portletApplicationId, portletName);
     }
     
+    /* (non-Javadoc)
+     * @see org.jasig.portal.portlet.registry.IPortletDefinitionRegistry#deletePortletDefinition(int)
+     */
+    public void deletePortletDefinition(int channelPublishId) {
+        final IPortletDefinition portletDefinition = this.portletDefinitionDao.getPortletDefinition(channelPublishId);
+        if (portletDefinition != null) {
+            this.portletDefinitionDao.deletePortletDefinition(portletDefinition);
+        }
+    }
     /**
      * Get the ChannelDefinition for the specified channelPublishId
      */

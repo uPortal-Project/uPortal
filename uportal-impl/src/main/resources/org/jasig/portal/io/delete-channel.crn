@@ -1,48 +1,49 @@
 <with-attribute key="CHAN_ID" value="${sql(SELECT chan_id FROM up_channel WHERE chan_fname = '${req(FNAME)}')}"><!-- WARNING:  might be wrong type (int not string)... -->
-
-	<!-- Purge memberships... -->
-	<sql-query>
-		<sql>SELECT upgm.group_id FROM up_group upg, up_group_membership upgm WHERE upg.group_id = upgm.group_id AND upg.entity_type_id = ? AND upgm.member_key = ? AND upgm.member_is_group = 'F' AND upgm.member_service = 'local'</sql>
-		<parameter value="${sql(SELECT entity_type_id FROM up_entity_type WHERE entity_type_name = 'org.jasig.portal.ChannelDefinition')}"/>
-		<parameter value="${jexl(CHAN_ID.toString())}"/>
-		<subtasks>
-			<sql-statement sql="DELETE FROM up_group_membership WHERE group_id = ? AND member_key = ? AND member_is_group = 'F' AND member_service = 'local'">
-				<parameter value="${req(GROUP_ID)}"/>
-				<parameter value="${jexl(CHAN_ID.toString())}"/>
-			</sql-statement>
-		</subtasks>
-	</sql-query>
-
-	<!-- Purge permissions... -->
-	<sql-statement sql="DELETE FROM up_permission WHERE activity = 'SUBSCRIBE' AND permission_type = 'GRANT' AND target = ?">
-		<parameter value="CHAN_ID.${req(CHAN_ID)}"/>
-	</sql-statement>
-
-	<!-- Purge channel parameters... -->
-	<sql-statement sql="DELETE FROM up_channel_param WHERE chan_id = ?">
-		<parameter value="${req(CHAN_ID)}"/>
-	</sql-statement>
-
-	<!-- Purge portlet preferences... -->
-	<sql-query>
-		<sql>SELECT pref_id FROM up_portlet_definition_prefs WHERE chan_id = ?</sql>
-		<parameter value="${req(CHAN_ID)}"/>
-		<subtasks>
-			<sql-statement sql="DELETE FROM up_portlet_entity_prefs WHERE pref_id = ?">
-				<parameter value="${req(PREF_ID)}"/>
-			</sql-statement>
-			<sql-statement sql="DELETE FROM up_portlet_pref_values WHERE pref_id = ?">
-				<parameter value="${req(PREF_ID)}"/>
-			</sql-statement>
-		</subtasks>
-	</sql-query>
-	<sql-statement sql="DELETE FROM up_portlet_definition_prefs WHERE chan_id = ?">
-		<parameter value="${req(CHAN_ID)}"/>
-	</sql-statement>
-
-	<!-- Purge from the UP_CHANNEL table... -->
-	<sql-statement sql="DELETE FROM up_channel WHERE chan_id = ?">
-		<parameter value="${req(CHAN_ID)}"/>
-	</sql-statement>
-
+    <choose>
+        <when test="${isNull(${CHAN_ID})}">
+            <echo-ln>WARNING:  Channel '${FNAME}' does not exist.</echo-ln>
+            <log level="warn">Channel '${FNAME}' does not exist.</log>
+        </when>
+        <otherwise>
+        	<!-- Purge memberships... -->
+        	<sql-query>
+        		<sql>SELECT upgm.group_id FROM up_group upg, up_group_membership upgm WHERE upg.group_id = upgm.group_id AND upg.entity_type_id = ? AND upgm.member_key = ? AND upgm.member_is_group = 'F' AND upgm.member_service = 'local'</sql>
+        		<parameter value="${sql(SELECT entity_type_id FROM up_entity_type WHERE entity_type_name = 'org.jasig.portal.ChannelDefinition')}"/>
+        		<parameter value="${jexl(CHAN_ID.toString())}"/>
+        		<subtasks>
+        			<sql-statement sql="DELETE FROM up_group_membership WHERE group_id = ? AND member_key = ? AND member_is_group = 'F' AND member_service = 'local'">
+        				<parameter value="${req(GROUP_ID)}"/>
+        				<parameter value="${jexl(CHAN_ID.toString())}"/>
+        			</sql-statement>
+        		</subtasks>
+        	</sql-query>
+        
+        	<!-- Purge permissions... -->
+        	<sql-statement sql="DELETE FROM up_permission WHERE activity = 'SUBSCRIBE' AND permission_type = 'GRANT' AND target = ?">
+        		<parameter value="CHAN_ID.${req(CHAN_ID)}"/>
+        	</sql-statement>
+        
+        	<!-- Purge channel parameters... -->
+        	<sql-statement sql="DELETE FROM up_channel_param WHERE chan_id = ?">
+        		<parameter value="${req(CHAN_ID)}"/>
+        	</sql-statement>
+        
+        	<!-- Purge portlet objects... -->
+            <invoke-method object="${PORTAL_CONTEXT}" method="getBean" attribute-name="portletDefinitionRegistry">
+                <parameter value="portletDefinitionRegistry" />
+                <subtasks>
+                    <groovy>
+                        <script>
+                            portletDefinitionRegistry.deletePortletDefinition(CHAN_ID.intValue());
+                        </script>
+                    </groovy>
+                </subtasks>
+            </invoke-method>
+        
+        	<!-- Purge from the UP_CHANNEL table... -->
+        	<sql-statement sql="DELETE FROM up_channel WHERE chan_id = ?">
+        		<parameter value="${req(CHAN_ID)}"/>
+        	</sql-statement>
+        </otherwise>
+    </choose>
 </with-attribute>

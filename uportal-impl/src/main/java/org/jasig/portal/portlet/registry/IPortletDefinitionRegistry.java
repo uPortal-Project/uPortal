@@ -94,4 +94,12 @@ public interface IPortletDefinitionRegistry {
      * will be {@link Tuple#first} and the portletName will be {@link Tuple#second}
      */
     public Tuple<String, String> getPortletDescriptorKeys(IPortletDefinition portletDefinition);
+    
+    /**
+     * Removes the {@link IPortletDefinition} specified by the channelPublishId from the persistent store. If no
+     * {@link IPortletDefinition} exists for the channelPublishId no action is taken.
+     * 
+     * @param channelPublishId The id of the ChannelDefinition to delete the IPortletDefinition for.
+     */
+    public void deletePortletDefinition(int channelPublishId);
 }
