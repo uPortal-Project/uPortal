@@ -54,4 +54,24 @@ public class PersonDirAuthenticationHandlerTest extends TestCase {
         
         assertFalse(auth);
     }
+    
+    public void testNullPassword() throws Exception {
+        final UserPasswordDao userPasswordDao = EasyMock.createMock(UserPasswordDao.class);
+        EasyMock.expect(userPasswordDao.getPasswordHash("admin")).andReturn(null);
+        
+        final PersonDirAuthenticationHandler authenticationHandler = new PersonDirAuthenticationHandler();
+        authenticationHandler.setUserPasswordDao(userPasswordDao);
+        
+        final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials();
+        credentials.setUsername("admin");
+        credentials.setPassword("admin");
+        
+        EasyMock.replay(userPasswordDao);
+        
+        final boolean auth = authenticationHandler.authenticateUsernamePasswordInternal(credentials);
+        
+        EasyMock.verify(userPasswordDao);
+        
+        assertFalse(auth);
+    }
 }

@@ -45,6 +45,10 @@ public class PersonDirAuthenticationHandler extends AbstractUsernamePasswordAuth
     protected boolean authenticateUsernamePasswordInternal(UsernamePasswordCredentials credentials) throws AuthenticationException {
         final String username = credentials.getUsername();
         final String expectedFullHash = this.userPasswordDao.getPasswordHash(username);
+        
+        if (expectedFullHash == null) {
+            return false;
+        }
 
         if (!expectedFullHash.substring(0, 5).equals(MD5_PREFIX)) {
             this.log.error("Existing password hash for user '" + username + "' is not a valid hash. It does not start with: '" + MD5_PREFIX + "'");
