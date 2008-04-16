@@ -71,11 +71,12 @@ public class PortalApplicationContextLocator implements ServletContextListener {
      */
     @Deprecated
     public static WebApplicationContext getRequiredWebApplicationContext() {
-        if (!isRunningInWebApplication()) {
+        final ServletContext context = servletContext;
+        if (context == null) {
             throw new IllegalStateException("No ServletContext is available to load a WebApplicationContext for. Is this ServletContextListener not configured or has the ServletContext been destroyed?");
         }
         
-        return WebApplicationContextUtils.getRequiredWebApplicationContext(servletContext);
+        return WebApplicationContextUtils.getRequiredWebApplicationContext(context);
     }
 
     /**
@@ -84,11 +85,12 @@ public class PortalApplicationContextLocator implements ServletContextListener {
      */
     @Deprecated
     public static WebApplicationContext getWebApplicationContext() {
-        if (!isRunningInWebApplication()) {
+        final ServletContext context = servletContext;
+        if (context == null) {
             return null;
         }
         
-        return WebApplicationContextUtils.getWebApplicationContext(servletContext);
+        return WebApplicationContextUtils.getWebApplicationContext(context);
     }
 
     /**
@@ -100,13 +102,15 @@ public class PortalApplicationContextLocator implements ServletContextListener {
      * @return The {@link ApplicationContext} for the portal. 
      */
     public static ApplicationContext getApplicationContext() {
-        if (servletContext != null) {
+        final ServletContext context = servletContext;
+
+        if (context != null) {
             LOGGER.debug("Using WebApplicationContext");
             
             if (applicationContextCreator.isCreated()) {
                 LOGGER.error("A portal managed ApplicationContext has already been created but now a ServletContext is available and a WebApplicationContext will be returned. This situation should be resolved by delaying calls to this class until after the web-application has completely initialized.");
             }
-            return WebApplicationContextUtils.getWebApplicationContext(servletContext);
+            return WebApplicationContextUtils.getWebApplicationContext(context);
         }
         
         return applicationContextCreator.get();
