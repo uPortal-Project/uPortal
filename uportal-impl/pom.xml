@@ -495,13 +495,6 @@
 
 
         <!-- ===== Provided Dependencies ================================== -->
-        
-        <dependency>
-            <groupId>hsqldb</groupId>
-            <artifactId>hsqldb</artifactId>
-            <version>${hsqldb.version}</version>
-            <scope>test</scope>
-        </dependency>
 
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -563,7 +556,14 @@
         </dependency>
 
         <!-- ===== Test Dependencies ====================================== -->
-
+        
+        <dependency>
+            <groupId>hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>${hsqldb.version}</version>
+            <scope>test</scope>
+        </dependency>
+        
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
