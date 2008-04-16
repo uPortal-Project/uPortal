@@ -7,6 +7,7 @@ package org.jasig.portal.cas.authentication.handler.support;
 
 import javax.sql.DataSource;
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 /**
@@ -41,6 +42,11 @@ public class PortalPersonDirUserPasswordDao implements UserPasswordDao {
      * @see org.jasig.portal.cas.authentication.handler.support.UserPasswordDao#getPasswordHash(java.lang.String)
      */
     public String getPasswordHash(String userName) {
-        return this.simpleJdbcTemplate.queryForObject(PERSON_DIR_QUERY, String.class, userName);
+        try {
+            return this.simpleJdbcTemplate.queryForObject(PERSON_DIR_QUERY, String.class, userName);
+        }
+        catch (EmptyResultDataAccessException e) {
+            return null;
+        }
     }
 }
