@@ -60,11 +60,28 @@
         </property>
     </bean>
     
-    <bean id="userInfoService" class="org.jasig.portal.portlet.container.services.PersonDirectoryUserInfoService">
+    <bean id="userInfoService" class="org.jasig.portal.portlet.container.services.MergingUserInfoService">
+        <property name="userInfoServices">
+            <list>
+                <ref bean="personDirectoryUserInfoService"/>
+                <ref bean="casTicketUserInfoService"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="personDirectoryUserInfoService" class="org.jasig.portal.portlet.container.services.PersonDirectoryUserInfoService">
         <property name="portletWindowRegistry" ref="portletWindowRegistry" />
         <property name="portletEntityRegistry" ref="portletEntityRegistry" />
         <property name="portletDefinitionRegistry" ref="portletDefinitionRegistry" />
         <property name="personAttributeDao" ref="personAttributeDao" />
+        <property name="portalRequestUtils" ref="portalRequestUtils" />
+    </bean>
+    
+    <bean id="casTicketUserInfoService" class="org.jasig.portal.portlet.container.services.CasTicketUserInfoService">
+        <property name="userInstanceManager" ref="userInstanceManager" />
+        <property name="portletWindowRegistry" ref="portletWindowRegistry" />
+        <property name="portletEntityRegistry" ref="portletEntityRegistry" />
+        <property name="portletDefinitionRegistry" ref="portletDefinitionRegistry" />
         <property name="portalRequestUtils" ref="portalRequestUtils" />
     </bean>
     
