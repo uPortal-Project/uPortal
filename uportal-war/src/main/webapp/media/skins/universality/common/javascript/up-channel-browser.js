@@ -85,7 +85,7 @@
 		   		$("#categorySelectMenu").css("background-image", "none");
 		   		$("#channelSelectMenu").css("background-image", "none");
 		   		$(self.element).parent().parent()
-		   	      .css("height", $(self.element).parent().get(0).clientHeight + 20)
+		   	      .css("height", $(self.element).parent().height() + 20)
 		   	      .css("z-index", 12);
 		   		
 			});

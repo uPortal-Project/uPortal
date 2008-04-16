@@ -62,7 +62,7 @@ function initializeLayoutMenu() {
 
     $("#pageLayoutDialog").parent().parent()
        .css("z-index", 12)
-       .css("height", $("#pageLayoutDialog").parent().get(0).clientHeight + 20);
+       .css("height", $("#pageLayoutDialog").parent().height() + 20);
 
 }
 function getCurrentLayoutString() {
@@ -324,7 +324,7 @@ function initializeSkinMenu() {
             
         	// remove the loading graphics and message
         	$("#skinLoading").css("display", "none");
-            $("#skinChoosingDialog").parent().parent().css("height", $("#skinChoosingDialog").parent().get(0).clientHeight + 20);
+            $("#skinChoosingDialog").parent().parent().css("height", $("#skinChoosingDialog").parent().height() + 20);
     	}
     );
 }
