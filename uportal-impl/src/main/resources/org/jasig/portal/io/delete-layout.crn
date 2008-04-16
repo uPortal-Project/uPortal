@@ -3,15 +3,6 @@
 	<sql>SELECT user_id FROM up_user WHERE user_name = ?</sql>
 	<parameter value="${req(USER_NAME)}"/>
 	<subtasks>
-        <!-- Purge user parameters... -->
-        <sql-statement sql="DELETE FROM up_ss_user_parm WHERE user_id = ?">
-            <parameter value="${req(USER_ID)}"/>
-        </sql-statement>
-        
-        <!-- Purge user profile(s)... -->
-        <sql-statement sql="DELETE FROM up_user_profile WHERE user_id = ?">
-            <parameter value="${req(USER_ID)}"/>
-        </sql-statement>
 
 		<!-- Structure Attributes -->
         <sql-statement sql="DELETE FROM up_ss_user_atts WHERE user_id = ? AND ss_id = ?">
