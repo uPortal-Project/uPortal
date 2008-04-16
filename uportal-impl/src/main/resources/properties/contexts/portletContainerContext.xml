@@ -99,6 +99,11 @@
                 </bean>
             </list>
         </property>
+        <property name="portletInvocationListeners">
+            <list>
+                <ref bean="portletSessionExpirationManager" />
+            </list>
+        </property>
     </bean>
     
     <bean id="portletPreferencesService" class="org.jasig.portal.portlet.container.services.PortletPreferencesServiceImpl">
@@ -116,6 +121,10 @@
     
     <bean id="portletSessionActionManager" class="org.jasig.portal.portlet.session.PortletSessionActionManagerImpl">
         <property name="portletContainer" ref="portletContainer" />
+    </bean>
+    
+    <bean id="portletSessionExpirationManager" class="org.jasig.portal.portlet.session.PortletSessionExpirationManager">
+        <property name="portalRequestUtils" ref="portalRequestUtils" />
     </bean>
     
     <!--********** Portlet Registries ********** -->
