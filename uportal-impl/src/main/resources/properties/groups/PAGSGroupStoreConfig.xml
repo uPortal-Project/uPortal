@@ -52,7 +52,9 @@
     <selection-test>
       <test-group>
         <test>
+          <attribute-name></attribute-name>
           <tester-class>org.jasig.portal.groups.pags.testers.AlwaysTrueTester</tester-class>
+          <test-value></test-value>
         </test>
       </test-group>
     </selection-test>
