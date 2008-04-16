@@ -256,19 +256,19 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
         final HttpServletResponse httpServletResponse = portalControlStructures.getHttpServletResponse();
         try {
             if (this.logger.isDebugEnabled()) {
-                this.logger.debug("Loading portlet window '" + portletWindow + "' with underlying channel: " + channelStaticData);
+                this.logger.debug("Loading portlet window '" + portletWindow + "' with " + this.getChannelLogInfo(channelStaticData));
             }
             
             this.portletContainer.doLoad(portletWindow, httpServletRequest, httpServletResponse);
         }
         catch (PortletException pe) {
-            throw new PortletLoadFailureException("The portlet window '" + portletWindow + "' threw an exception while being loaded. Underlying channel: " + channelStaticData, portletWindow, pe);
+            throw new PortletLoadFailureException("The portlet window '" + portletWindow + "' threw an exception while being loaded. " + this.getChannelLogInfo(channelStaticData), portletWindow, pe);
         }
         catch (PortletContainerException pce) {
-            throw new PortletLoadFailureException("The portlet container threw an exception while loading portlet window '" + portletWindow + "'. Underlying channel: " + channelStaticData, portletWindow, pce);
+            throw new PortletLoadFailureException("The portlet container threw an exception while loading portlet window '" + portletWindow + "'. " + this.getChannelLogInfo(channelStaticData), portletWindow, pce);
         }
         catch (IOException ioe) {
-            throw new PortletLoadFailureException("The portlet window '" + portletWindow + "' threw an exception while being loaded. Underlying channel: " + channelStaticData, portletWindow, ioe);
+            throw new PortletLoadFailureException("The portlet window '" + portletWindow + "' threw an exception while being loaded. " + this.getChannelLogInfo(channelStaticData), portletWindow, ioe);
         }
     }
 
@@ -310,20 +310,20 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
         
         if (this.logger.isDebugEnabled()) {
-            this.logger.debug("Executing portlet action for window '" + portletWindow + "' with underlying channel: " + channelStaticData);
+            this.logger.debug("Executing portlet action for window '" + portletWindow + "' with " + this.getChannelLogInfo(channelStaticData));
         }
         
         try {
             this.portletContainer.doAction(portletWindow, parameterRequestWrapper, httpServletResponse);
         }
         catch (PortletException pe) {
-            throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while executing action. Underlying channel: " + channelStaticData, portletWindow, pe);
+            throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while executing action. " + this.getChannelLogInfo(channelStaticData), portletWindow, pe);
         }
         catch (PortletContainerException pce) {
-            throw new PortletDispatchException("The portlet container threw an exception while executing action on portlet window '" + portletWindow + "'. Underlying channel: " + channelStaticData, portletWindow, pce);
+            throw new PortletDispatchException("The portlet container threw an exception while executing action on portlet window '" + portletWindow + "'. " + this.getChannelLogInfo(channelStaticData), portletWindow, pce);
         }
         catch (IOException ioe) {
-            throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while executing action. Underlying channel: " + channelStaticData, portletWindow, ioe);
+            throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while executing action. " + this.getChannelLogInfo(channelStaticData), portletWindow, ioe);
         }
     }
 
@@ -456,7 +456,7 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
 
         //Execute the action, 
         if (this.logger.isDebugEnabled()) {
-            this.logger.debug("Rendering portlet for window '" + portletWindow + "' with underlying channel: " + channelStaticData);
+            this.logger.debug("Rendering portlet for window '" + portletWindow + "' with " + this.getChannelLogInfo(channelStaticData));
         }
 
         try {
@@ -464,13 +464,13 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
             contentRedirectingHttpServletResponse.flushBuffer();
         }
         catch (PortletException pe) {
-            throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while executing action. Underlying channel: " + channelStaticData, portletWindow, pe);
+            throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while executing action. " + this.getChannelLogInfo(channelStaticData), portletWindow, pe);
         }
         catch (PortletContainerException pce) {
-            throw new PortletDispatchException("The portlet container threw an exception while executing action on portlet window '" + portletWindow + "'. Underlying channel: " + channelStaticData, portletWindow, pce);
+            throw new PortletDispatchException("The portlet container threw an exception while executing action on portlet window '" + portletWindow + "'. " + this.getChannelLogInfo(channelStaticData), portletWindow, pce);
         }
         catch (IOException ioe) {
-            throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while executing action. Underlying channel: " + channelStaticData, portletWindow, ioe);
+            throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while executing action. " + this.getChannelLogInfo(channelStaticData), portletWindow, ioe);
         }
     }
 
@@ -602,13 +602,22 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
             this.portletSessionActionManager.clear(portletWindow, httpServletRequest, httpServletResponse);
         }
         catch (PortletException pe) {
-            throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while executing admin command to clear session. Underlying channel: " + channelStaticData, portletWindow, pe);
+            throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while executing admin command to clear session. " + this.getChannelLogInfo(channelStaticData), portletWindow, pe);
         }
         catch (PortletContainerException pce) {
-            throw new PortletDispatchException("The portlet container threw an exception while executing admin command to clear session on portlet window '" + portletWindow + "'. Underlying channel: " + channelStaticData, portletWindow, pce);
+            throw new PortletDispatchException("The portlet container threw an exception while executing admin command to clear session on portlet window '" + portletWindow + "'. " + this.getChannelLogInfo(channelStaticData), portletWindow, pce);
         }
         catch (IOException ioe) {
-            throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while executing admin command to clear session. Underlying channel: " + channelStaticData, portletWindow, ioe);
+            throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while executing admin command to clear session. " + this.getChannelLogInfo(channelStaticData), portletWindow, ioe);
         }        
+    }
+    
+    /**
+     * Build a 'nice' summary string of relavent ChannelStaticData information
+     */
+    protected String getChannelLogInfo(ChannelStaticData channelStaticData) {
+        return  "channelPublishId=" + channelStaticData.getChannelPublishId() + ", " +
+                "channelSubscribeId=" + channelStaticData.getChannelSubscribeId() + ", " +
+                "IPerson=" + channelStaticData.getPerson();
     }
 }
