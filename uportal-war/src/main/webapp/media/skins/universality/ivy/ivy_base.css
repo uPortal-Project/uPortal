@@ -292,7 +292,7 @@
 	
 	.portlet-container-inner
 	{
-		background-color: #000099;
+		background-color: #D7E7F9;
 	}
 	
 	.portlet-top
@@ -595,6 +595,9 @@
 	
 	#portalFlyoutNavigation #editPageLink a, #portalFlyoutNavigation #deletePageLink a, #portalFlyoutNavigation #movePageLeftLink a, #portalFlyoutNavigation #movePageRightLink a
 	{
+        padding: 4px 10px 4px 25px;
+        background-position: 5px 3px;
+        background-repeat: no-repeat;
 		background-color: #FFFFCC;
 	}
 	
