@@ -66,7 +66,7 @@ Notes
  @uportal.name@ directory. Running the following command from the @uportal.name@
  directory will list available uPortal Ant targets:
 
-ant -p
+../ant -p
 
 -Log messages for uPortal appear in @tomcat.name@/portal.log. Log files for
  Tomcat appear in @tomcat.name@/logs
