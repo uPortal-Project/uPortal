@@ -38,7 +38,12 @@ public class DTDResolver implements EntityResolver {
             new PublicId("-//uPortal//Data/EN", "data.dtd"),
             new PublicId("-//uPortal//PAGSGroupStore/EN", "PAGSGroupStore.dtd"),
             new PublicId("-//uPortal//LDAPGroupStore/EN", "LDAPGroupStore.dtd"),
-            new PublicId("-//uPortal//Services/EN", "services.dtd")};
+            new PublicId("-//uPortal//Services/EN", "services.dtd"),
+            new PublicId("-//W3C//DTD XHTML 1.0 Transitional//EN", "xhtml1-transitional.dtd"),
+            new PublicId("-//W3C//DTD XHTML 1.0 Strict//EN", "xhtml1-strict.dtd"),
+            new PublicId("-//W3C//ENTITIES Latin 1 for XHTML//EN", "xhtml-lat1.ent"),
+            new PublicId("-//W3C//ENTITIES Symbols for XHTML//EN", "xhtml-symbol.ent"),
+            new PublicId("-//W3C//ENTITIES Special for XHTML//EN", "xhtml-special.ent")};
     private String dtdName = null;
 
     /**
