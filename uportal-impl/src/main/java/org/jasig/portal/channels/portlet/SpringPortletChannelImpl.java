@@ -616,8 +616,9 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
      * Build a 'nice' summary string of relavent ChannelStaticData information
      */
     protected String getChannelLogInfo(ChannelStaticData channelStaticData) {
+        final IPerson person = channelStaticData.getPerson();
         return  "channelPublishId=" + channelStaticData.getChannelPublishId() + ", " +
                 "channelSubscribeId=" + channelStaticData.getChannelSubscribeId() + ", " +
-                "IPerson=" + channelStaticData.getPerson();
+                "user=" + person.getAttribute(IPerson.USERNAME);
     }
 }
