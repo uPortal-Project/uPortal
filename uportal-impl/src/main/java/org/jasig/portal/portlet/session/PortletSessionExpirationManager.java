@@ -17,7 +17,6 @@ import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.pluto.PortletWindow;
-import org.apache.pluto.PortletWindowID;
 import org.apache.pluto.spi.optional.PortletInvocationEvent;
 import org.apache.pluto.spi.optional.PortletInvocationListener;
 import org.jasig.portal.spring.web.context.support.HttpSessionDestroyedEvent;
@@ -70,18 +69,18 @@ public class PortletSessionExpirationManager implements PortletInvocationListene
             final HttpServletRequest portalRequest = this.portalRequestUtils.getOriginalPortalRequest(portletRequest);
             final HttpSession portalSession = portalRequest.getSession();
             
-            Map<PortletWindowID, PortletSession> portletSessions;
+            Map<String, PortletSession> portletSessions;
             synchronized (portalSession) {
-                portletSessions = (Map<PortletWindowID, PortletSession>)portalSession.getAttribute(PORTLET_SESSIONS_MAP);
+                portletSessions = (Map<String, PortletSession>)portalSession.getAttribute(PORTLET_SESSIONS_MAP);
                 if (portletSessions == null) {
-                    portletSessions = new ConcurrentHashMap<PortletWindowID, PortletSession>();
+                    portletSessions = new ConcurrentHashMap<String, PortletSession>();
                     portalSession.setAttribute(PORTLET_SESSIONS_MAP, portletSessions);
                 }
             }
             
             final PortletWindow portletWindow = event.getPortletWindow();
-            final PortletWindowID portletWindowId = portletWindow.getId();
-            portletSessions.put(portletWindowId, portletSession);
+            final String contextPath = portletWindow.getContextPath();
+            portletSessions.put(contextPath, portletSession);
         }
     }
     
@@ -91,22 +90,22 @@ public class PortletSessionExpirationManager implements PortletInvocationListene
     public void onApplicationEvent(ApplicationEvent event) {
         if (event instanceof HttpSessionDestroyedEvent) {
             final HttpSession session = ((HttpSessionDestroyedEvent)event).getSession();
-            final Map<PortletWindowID, PortletSession> portletSessions = (Map<PortletWindowID, PortletSession>)session.getAttribute(PORTLET_SESSIONS_MAP);
+            final Map<String, PortletSession> portletSessions = (Map<String, PortletSession>)session.getAttribute(PORTLET_SESSIONS_MAP);
             if (portletSessions == null) {
                 return;
             }
             
-            for (final Map.Entry<PortletWindowID, PortletSession> portletSessionEntry: portletSessions.entrySet()) {
-                final PortletWindowID portletWindowId = portletSessionEntry.getKey();
+            for (final Map.Entry<String, PortletSession> portletSessionEntry: portletSessions.entrySet()) {
+                final String contextPath = portletSessionEntry.getKey();
                 final PortletSession portletSession = portletSessionEntry.getValue();
                 try {
                     portletSession.invalidate();
                 }
                 catch (IllegalStateException e) {
-                    this.logger.info("PortletSession with id '" + portletSession.getId() + "' for portletWindowId '" + portletWindowId + "' has already been invalidated.");
+                    this.logger.info("PortletSession with id '" + portletSession.getId() + "' for context '" + contextPath + "' has already been invalidated.");
                 }
                 catch (Exception e) {
-                    this.logger.warn("Failed to invalidate PortletSession with id '" + portletSession.getId() + "' for portletWindowId '" + portletWindowId + "'", e);
+                    this.logger.warn("Failed to invalidate PortletSession with id '" + portletSession.getId() + "' for context '" + contextPath + "'", e);
                 }
             }
         }
