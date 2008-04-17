@@ -16,7 +16,7 @@
 
     <name>uPortal</name>
     <description>The root project definition for the uPortal project.</description>
-    <version>3.0.0</version>
+    <version>3.0.1-SNAPSHOT</version>
 
     <licenses>
         <license>
@@ -29,7 +29,7 @@
     <distributionManagement>
         <site>
             <id>developer.jasig</id>
-            <url>scp://developer.ja-sig.org/jasig/htdocs/developer/projects/uportal/3.0.0/</url>
+            <url>scp://developer.ja-sig.org/jasig/htdocs/developer/projects/uportal/3.0.1-SNAPSHOT/</url>
         </site>
     </distributionManagement>
 
@@ -97,7 +97,7 @@
     
         <!-- POM Configuration Properties -->
         <issues.projectKey>UP</issues.projectKey>
-        <scm.path>/up2/trunk</scm.path>
+        <scm.path>/uPortal/branches/rel-3-0-patches</scm.path>
         
         <!-- Portlet WAR Dependency Version Properties -->
         <BookmarksPortlet.version>1.0.8</BookmarksPortlet.version>
