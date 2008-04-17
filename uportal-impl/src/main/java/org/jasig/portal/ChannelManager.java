@@ -773,7 +773,7 @@ public class ChannelManager implements LayoutEventListener {
             }
         }
         else {
-            log.error("trying to pass an event to a channel that is not in cache. channelSubscribeId='" + channelSubscribeId + "'");
+            log.error("Trying to pass event " + le + " to channel with subscribeId='" + channelSubscribeId + "' that is not in the channel rendering table.", new Throwable());
         }
     }
 
