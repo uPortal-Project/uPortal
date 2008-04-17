@@ -119,7 +119,7 @@
   -->
   <xsl:param name="USER_ID">guest</xsl:param>
   <xsl:param name="USER_NAME">Guest User</xsl:param>
-  <xsl:param name="UP_VERSION">uPortal 3.0.0</xsl:param>
+  <xsl:param name="UP_VERSION">uPortal 3.1.0-SNAPSHOT</xsl:param>
   <xsl:param name="baseActionURL">render.userLayoutRootNode.uP</xsl:param>
   <xsl:variable name="BASE_ACTION_URL"><xsl:value-of select="$baseActionURL"/></xsl:variable>
   <xsl:param name="HOME_ACTION_URL"><xsl:value-of select="$BASE_ACTION_URL"/>?uP_root=root&amp;uP_reload_layout=true&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true&amp;uP_sparam=mode&amp;mode=view</xsl:param>
