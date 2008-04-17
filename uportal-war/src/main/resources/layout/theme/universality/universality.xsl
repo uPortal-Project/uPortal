@@ -119,7 +119,7 @@
   -->
   <xsl:param name="USER_ID">guest</xsl:param>
   <xsl:param name="USER_NAME">Guest User</xsl:param>
-  <xsl:param name="UP_VERSION">uPortal X.X.X</xsl:param>
+  <xsl:param name="UP_VERSION">uPortal 3.0.0-SNAPSHOT</xsl:param>
   <xsl:param name="baseActionURL">render.userLayoutRootNode.uP</xsl:param>
   <xsl:variable name="BASE_ACTION_URL"><xsl:value-of select="$baseActionURL"/></xsl:variable>
   <xsl:param name="HOME_ACTION_URL"><xsl:value-of select="$BASE_ACTION_URL"/>?uP_root=root&amp;uP_reload_layout=true&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true&amp;uP_sparam=mode&amp;mode=view</xsl:param>
@@ -737,7 +737,7 @@
     
     <!-- uPortal Product Version -->
     <div id="portalProductAndVersion">
-    	<p><a href="http://www.uportal.org" title="Powered by {$UP_VERSION}" target="_blank">Powered by <xsl:value-of select="$UP_VERSION"/></a></p>
+    	<p><a href="http://www.uportal.org" title="Powered by ${UP_VERSION}" target="_blank">Powered by <xsl:value-of select="$UP_VERSION"/></a></p>
     	<!-- It's a good idea to leave this in the markup, that way anyone who may be supporting your portal can get to this information quickly by simply using a browser.  If you don't want the statement to visibly render in the page, use CSS to make it invisible. -->
     </div>
     
