@@ -30,6 +30,8 @@ import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.layout.node.UserLayoutChannelDescription;
 import org.jasig.portal.layout.node.UserLayoutFolderDescription;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.IPersonManager;
+import org.jasig.portal.url.PortalHttpServletRequest;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
 import org.springframework.web.context.WebApplicationContext;
@@ -66,10 +68,12 @@ public class UpdatePreferencesServlet extends HttpServlet {
 		IPerson per = null;
 		UserPreferencesManager upm = null;
 		IUserLayoutManager ulm = null;
+		IPersonManager personManager = null;
 
 		try {
             final WebApplicationContext applicationContext = WebApplicationContextUtils.getRequiredWebApplicationContext(this.getServletContext());
             final IUserInstanceManager userInstanceManager = (IUserInstanceManager) applicationContext.getBean("userInstanceManager", IUserInstanceManager.class);
+            personManager = (IPersonManager) applicationContext.getBean("personManager", IPersonManager.class);
 
 			// Retrieve the user's UserInstance object
 			ui = userInstanceManager.getUserInstance(request);
@@ -126,7 +130,7 @@ public class UpdatePreferencesServlet extends HttpServlet {
 
 			} else if (action.equals("addChannel")) {
 
-				addChannel(per, upm, ulm, request, response);
+				addChannel(per, upm, ulm, personManager, request, response);
 
 			} else if (action.equals("renameTab")) {
 
@@ -406,7 +410,7 @@ public class UpdatePreferencesServlet extends HttpServlet {
 	 * @throws PortalException
 	 */
 	private void addChannel(IPerson per, UserPreferencesManager upm,
-			IUserLayoutManager ulm, HttpServletRequest request,
+			IUserLayoutManager ulm, IPersonManager personManager, HttpServletRequest request,
 			HttpServletResponse response) throws IOException, PortalException {
 
 		// gather the parameters we need to move a channel
@@ -486,7 +490,7 @@ public class UpdatePreferencesServlet extends HttpServlet {
 		// instantiate the channel in the user's layout
 		final HttpSession session = request.getSession(false);
         ChannelManager cm = new ChannelManager(upm, session);
-		cm.instantiateChannel(request, response, channel.getId());
+		cm.instantiateChannel(new PortalHttpServletRequest(request, personManager), response, channel.getId());
 
 		// save the user layout
 		ulm.saveUserLayout();
