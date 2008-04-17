@@ -985,37 +985,31 @@
         </condition>
         <property name="maven.bin" value="" />
         
-        <if>
-            <equals arg1="${maven.test.skip}" arg2="true" />
-            <then>
-                <exec executable="${maven.bin}${mvnExecutable}" dir="${pomDir}" vmlauncher="true" resolveexecutable="true" searchpath="true" failonerror="true">
-                    <arg value="-Dmaven.test.skip=true" />
-                    <arg value="${goal}" />
-                    <arg value="${goal1}" />
-                    <arg value="${goal2}" />
-                    <arg value="${goal3}" />
-                    <arg value="${goal4}" />
-                    <arg value="${goal5}" />
-                    <arg value="${goal6}" />
-                    <arg value="${goal7}" />
-                    <arg value="${goal8}" />
-                    <arg value="${goal9}" />
-                </exec>
-            </then>
-            <else>
-                <exec executable="${maven.bin}${mvnExecutable}" dir="${pomDir}" vmlauncher="true" resolveexecutable="true" searchpath="true" failonerror="true">
-                    <arg value="${goal}" />
-                    <arg value="${goal1}" />
-                    <arg value="${goal2}" />
-                    <arg value="${goal3}" />
-                    <arg value="${goal4}" />
-                    <arg value="${goal5}" />
-                    <arg value="${goal6}" />
-                    <arg value="${goal7}" />
-                    <arg value="${goal8}" />
-                    <arg value="${goal9}" />
-                </exec>
-            </else>
-        </if>
+        <condition property="test.skip" value="-Dmaven.test.skip=true">
+            <isset property="maven.test.skip"/>
+        </condition>
+        <property name="test.skip" value="-Djasig" />
+        
+        <condition property="offline" value="-o">
+            <isset property="maven.offline"/>
+        </condition>
+        <property name="offline" value="-Djasig" />
+        
+
+        <exec executable="${maven.bin}${mvnExecutable}" dir="${pomDir}" vmlauncher="true" resolveexecutable="true" searchpath="true" failonerror="true">
+            <env key="MAVEN_TERMINATE_CMD" value="on" />
+            <arg value="${test.skip}" />
+            <arg value="${offline}" />
+            <arg value="${goal}" />
+            <arg value="${goal1}" />
+            <arg value="${goal2}" />
+            <arg value="${goal3}" />
+            <arg value="${goal4}" />
+            <arg value="${goal5}" />
+            <arg value="${goal6}" />
+            <arg value="${goal7}" />
+            <arg value="${goal8}" />
+            <arg value="${goal9}" />
+        </exec>
     </target>
 </project>
