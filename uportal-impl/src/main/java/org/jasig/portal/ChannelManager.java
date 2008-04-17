@@ -773,7 +773,7 @@ public class ChannelManager implements LayoutEventListener {
             }
         }
         else {
-            log.error("Trying to pass event " + le + " to channel with subscribeId='" + channelSubscribeId + "' that is not in the channel rendering table.", new Throwable());
+            log.info("Trying to pass event " + le + " to channel with subscribeId='" + channelSubscribeId + "' that is not (yet) in the channel rendering table.");
         }
     }
 
