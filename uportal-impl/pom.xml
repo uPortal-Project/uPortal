@@ -595,7 +595,6 @@
                 <version>${maven-surefire-plugin.version}</version>
                 <configuration>
                     <includes>
-                        <include>**/*Tester.java</include>
                         <include>**/Test*.java</include>
                         <include>**/*Test.java</include>
                         <include>**/*TestCase.java</include>
