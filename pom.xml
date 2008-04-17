@@ -97,7 +97,7 @@
     
         <!-- POM Configuration Properties -->
         <issues.projectKey>UP</issues.projectKey>
-        <scm.path>/up2/trunk</scm.path>
+        <scm.path>/uPortal/tags/rel-3-0-0-GA</scm.path>
         
         <!-- Portlet WAR Dependency Version Properties -->
         <BookmarksPortlet.version>1.0.8</BookmarksPortlet.version>
