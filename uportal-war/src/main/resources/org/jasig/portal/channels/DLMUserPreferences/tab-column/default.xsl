@@ -1095,11 +1095,20 @@ profile is supported for fragments and users.
                     <img alt="" height="5" title="" width="15"><xsl:attribute name="src"><xsl:value-of select='$mediaPath'/><xsl:value-of select="$IMAGE_SRC_TRANSPARENT_GIF"/></xsl:attribute></img>
                   </td>
                   <td>
+                    <span class="uportal-channel-text"><input CLASS="uportal-input-text" name="RenameTab" onClick="doNameCheck()" type="button"><xsl:attribute name="value"><xsl:value-of select="$RENAME"/></xsl:attribute></input></span>
+
+                    <input name="action" type="hidden" value="renameTab"/>
+                    <input name="elementID" type="hidden" value="{$activeTabID}"/>
+                  </td>
+                </tr>
+                <tr>
+                  <td nowrap="nowrap"><img height="9" hspace="7" width="9"><xsl:attribute name="src"><xsl:value-of select="$mediaPath"/><xsl:value-of select="$IMAGE_SRC_BULLET_GIF"/></xsl:attribute><xsl:attribute name="alt"><xsl:value-of select="TAB_LINK_NAME"/></xsl:attribute><xsl:attribute name="title"><xsl:value-of select="TAB_LINK_NAME"/></xsl:attribute></img><span class="uportal-channel-text"><xsl:value-of select="$HEADING_TAB_LINK_NAME"/></span><img alt="" border="0" height="10" title="" width="10"><xsl:attribute name="src"><xsl:value-of select='$mediaPath'/><xsl:value-of select="$IMAGE_SRC_TRANSPARENT_GIF"/></xsl:attribute></img></td>
+                  <td>
                     <span class="uportal-text-small"><input class="uportal-input-text" maxlength="60" name="externalId" size="30" type="text" value="{$externalId}"/></span>
                     <img alt="" height="5" title="" width="15"><xsl:attribute name="src"><xsl:value-of select='$mediaPath'/><xsl:value-of select="$IMAGE_SRC_TRANSPARENT_GIF"/></xsl:attribute></img>
                   </td>
                   <td>
-                    <span class="uportal-channel-text"><input CLASS="uportal-input-text" name="RenameTab" onClick="doNameCheck()" type="button"><xsl:attribute name="value"><xsl:value-of select="$RENAME"/></xsl:attribute></input></span>
+                    <span class="uportal-channel-text"><input CLASS="uportal-input-text" name="RenameTab" onClick="doNameCheck()" type="button"><xsl:attribute name="value"><xsl:value-of select="$RENAME_LINK"/></xsl:attribute></input></span>
 
                     <input name="action" type="hidden" value="renameTab"/>
                     <input name="elementID" type="hidden" value="{$activeTabID}"/>
