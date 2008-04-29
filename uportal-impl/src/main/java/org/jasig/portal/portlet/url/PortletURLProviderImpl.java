@@ -60,14 +60,16 @@ public class PortletURLProviderImpl implements PortletURLProvider {
      * @see org.apache.pluto.spi.PortletURLProvider#isSecureSupported()
      */
     public boolean isSecureSupported() {
-        return false; //TODO determine how to tie back in to the uPortal secure URL APIs, if they exist.
+        return this.httpServletRequest.isSecure();
     }
 
     /* (non-Javadoc)
      * @see org.apache.pluto.spi.PortletURLProvider#setSecure()
      */
     public void setSecure() throws PortletSecurityException {
-        throw new PortletSecurityException("Secure URLs are not supported at this time");
+        if (!this.httpServletRequest.isSecure()) {
+            throw new PortletSecurityException("Secure URLs are not supported at this time");
+        }
     }
 
     /* (non-Javadoc)
