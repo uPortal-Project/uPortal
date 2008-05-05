@@ -629,11 +629,11 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                       log.debug("RDBMUserIdentityStore::updateUser(USER_ID=" + templateUser.getUserId() + "): " + query);
                   rs = queryStmt.executeQuery();
 
+                  insert =
+                      "INSERT INTO UP_USER_PARAM (USER_ID, USER_PARAM_NAME, USER_PARAM_VALUE) " +
+                      "VALUES(?, ?, ?)";
                   insertStmt = con.prepareStatement(insert);
                   while (rs.next()) {
-                      insert =
-                          "INSERT INTO UP_USER_PARAM (USER_ID, USER_PARAM_NAME, USER_PARAM_VALUE) " +
-                          "VALUES(?, ?, ?)";
 
                       String userParamName = rs.getString("USER_PARAM_NAME");
                       String userParamValue = rs.getString("USER_PARAM_VALUE");
