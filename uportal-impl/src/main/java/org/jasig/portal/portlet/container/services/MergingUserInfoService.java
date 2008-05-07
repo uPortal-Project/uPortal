@@ -79,10 +79,12 @@ public class MergingUserInfoService implements UserInfoService {
 		for (final UserInfoService service : this.userInfoServices){
 			
     		Map<String, String> userInfo = service.getUserInfo(request, portletWindow);
-    		for (final Map.Entry<String, String> entry : userInfo.entrySet()) {
-    			final String attributeName = entry.getKey();
-    			final String valueObj = entry.getValue();
-    			mergedInfo.put(attributeName, valueObj);
+    		if (userInfo != null) {
+	    		for (final Map.Entry<String, String> entry : userInfo.entrySet()) {
+	    			final String attributeName = entry.getKey();
+	    			final String valueObj = entry.getValue();
+	    			mergedInfo.put(attributeName, valueObj);
+	    		}
     		}
     		
     	}
