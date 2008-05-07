@@ -30,6 +30,7 @@
      | Load the build properties before the next fail tests since they check properties provided
      | by the file.
      +-->
+    <property environment="env" />
     <property file="${basedir}/build.properties" />
     
     <fail message="server.base build property must be set.">
