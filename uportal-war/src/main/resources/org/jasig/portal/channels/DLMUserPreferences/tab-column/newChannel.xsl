@@ -99,9 +99,11 @@ and $errorMessage != 'Nothing is wrong!'">
                                 <select class="uportal-input-text" name="selectedCategory">
                                   <xsl:for-each select="/registry/category">
                                     <xsl:sort select="@name"/>
-                                    <option value="{@ID}">
-                                      <xsl:value-of select="@name"/>
-                                    </option>
+                                    <xsl:if test="@name!='Hidden'">
+                                      <option value="{@ID}">
+                                        <xsl:value-of select="@name"/>
+                                      </option>
+                                    </xsl:if>
                                   </xsl:for-each>
                                     <option value=" ">-------------------</option>
                                   <xsl:choose>

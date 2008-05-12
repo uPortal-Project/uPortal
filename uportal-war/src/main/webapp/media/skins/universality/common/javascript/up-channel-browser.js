@@ -71,7 +71,12 @@
 			$.get(channelListUrl, {}, function(xml) {
 				self.channelXml = xml;
 				var matching = new Array();
-				$("category:has(channel)", self.channelXml).each(function(){matching.push($(this))});
+				$("category:has(channel)", self.channelXml).each(
+				    function(){
+				        if (!self.isHidden($(this)))
+				            matching.push($(this));
+				    }
+				);
 		        matching.sort(self.sortCategoryResults);
 		        $(matching).each(function(i, val) {
 		        	categorySelect.options[i] = new Option($(this).attr("name"), $(this).attr("ID"));
@@ -155,7 +160,7 @@
 		
 		    matching.sort(this.sortChannelResults);
 		    $(matching).each(function(i){
-				if (i == 0 || $(this).attr("ID") != $(matching[i-1]).attr("ID")) {
+				if ((i == 0 || $(this).attr("ID") != $(matching[i-1]).attr("ID")) && !self.isHidden($(this))) {
 				     $("#addChannelSearchResults").append(
 				     	$(document.createElement('li')).append(
 				     		$(document.createElement('a'))
@@ -189,6 +194,15 @@
 		    if(aname > bname) return 1;
 		    if(aname < bname) return -1;
 		    return 0;
+		},
+		
+		isHidden: function(element) {
+		  if ($(element).attr("name") == 'Hidden')
+		      return true;
+		  else if ($(element).parents("category[@name='Hidden']").size() > 0)
+		      return true;
+		  else
+		      return false;
 		}
 
 	});	
