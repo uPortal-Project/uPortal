@@ -33,10 +33,6 @@ public class TomcatEarDeployerTask extends Task {
 
 
     public String getWebAppsDir() {
-        if (this.webAppsDir == null) {
-            return DEFAULT_WEBAPPS_DIR;
-        }
-
         return this.webAppsDir;
     }
     public void setWebAppsDir(String webAppsDir) {
@@ -44,10 +40,6 @@ public class TomcatEarDeployerTask extends Task {
     }
 
     public String getJarDir() {
-        if (this.jarDir == null) {
-            return DEFAULT_JAR_DIR;
-        }
-
         return this.jarDir;
     }
     public void setJarDir(String jarDir) {
@@ -90,10 +82,22 @@ public class TomcatEarDeployerTask extends Task {
 
         final File catalinaBase = this.getCatalinaBase();
         
-        final File fullJarDir = new File(catalinaBase, this.getJarDir());
+        final File fullJarDir;
+        if (this.jarDir != null) {
+        	fullJarDir = new File(this.jarDir);
+        }
+        else {
+        	fullJarDir = new File(catalinaBase, DEFAULT_JAR_DIR);
+        }
         config.setJarDir(fullJarDir);
         
-        final File fullWebAppsDir = new File(catalinaBase, this.getWebAppsDir());
+        final File fullWebAppsDir;
+        if (this.webAppsDir != null) {
+        	fullWebAppsDir = new File(this.webAppsDir);
+        }
+        else {
+        	fullWebAppsDir = new File(catalinaBase, DEFAULT_WEBAPPS_DIR);
+        }
         config.setWebAppsDir(fullWebAppsDir);
         
         config.setEarLocation(this.getEar());
