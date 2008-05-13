@@ -330,7 +330,7 @@
                     </then>
                 </if>
 
-                <up:tomcatEarDeploy ear="${uportal-ear.artifact}" catalinaBase="${server.base}" extractWars="${extractWars}" removeExistingDirectories="${removeExisting}" />
+                <up:tomcatEarDeploy ear="${uportal-ear.artifact}" catalinaBase="${server.base}" webAppsDir="${server.webapps}" extractWars="${extractWars}" removeExistingDirectories="${removeExisting}" />
             </uportal-ear-macro>
         </uportal-ant-tasks-macro>
     </target>
