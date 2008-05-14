@@ -7,6 +7,8 @@
      +-->
     <bean id="personManager" class="org.jasig.portal.security.provider.SimplePersonManager" />
     
-    <bean id="userInstanceManager" class="org.jasig.portal.user.UserInstanceManagerImpl" />
+    <bean id="userInstanceManager" class="org.jasig.portal.user.UserInstanceManagerImpl" >
+        <property name="personManager" ref="personManager" />
+    </bean>
     
 </beans>

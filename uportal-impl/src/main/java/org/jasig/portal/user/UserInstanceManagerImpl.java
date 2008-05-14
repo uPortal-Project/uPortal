@@ -12,6 +12,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.GuestUserInstance;
@@ -21,9 +22,9 @@ import org.jasig.portal.UserInstance;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.security.ISecurityContext;
-import org.jasig.portal.security.PersonManagerFactory;
 import org.jasig.portal.security.PortalSecurityException;
 import org.jasig.portal.spring.web.context.support.HttpSessionDestroyedEvent;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 
@@ -37,6 +38,23 @@ public class UserInstanceManagerImpl implements IUserInstanceManager, Applicatio
     protected final Log logger = LogFactory.getLog(UserInstanceManagerImpl.class);
     
     private Map<Integer, GuestUserPreferencesManager> guestUserPreferencesManagers = new HashMap<Integer, GuestUserPreferencesManager>();
+    
+    private IPersonManager personManager;
+    
+    /**
+     * @return the personManager
+     */
+    public IPersonManager getPersonManager() {
+        return personManager;
+    }
+    /**
+     * @param personManager the personManager to set
+     */
+    @Required
+    public void setPersonManager(IPersonManager personManager) {
+        Validate.notNull(personManager);
+        this.personManager = personManager;
+    }
 
     /**
      * Returns the UserInstance object that is associated with the given request.
@@ -47,8 +65,7 @@ public class UserInstanceManagerImpl implements IUserInstanceManager, Applicatio
         final IPerson person;
         try {
             // Retrieve the person object that is associated with the request
-            final IPersonManager personManager = PersonManagerFactory.getPersonManagerInstance();
-            person = personManager.getPerson(request);
+            person = this.personManager.getPerson(request);
         }
         catch (Exception e) {
             logger.error("Exception while retrieving IPerson!", e);
