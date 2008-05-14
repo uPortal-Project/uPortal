@@ -25,6 +25,7 @@ public class ContextSourceLdapServerImpl implements ILdapServer {
     
     private LdapContextSource ldapContextSource;
     private String uidAttribute;
+    private String baseDN;
     
     /**
      * @return the contextSource
@@ -50,7 +51,14 @@ public class ContextSourceLdapServerImpl implements ILdapServer {
      * @see org.jasig.portal.ldap.ILdapServer#getBaseDN()
      */
     public String getBaseDN() {
-        return this.ldapContextSource.getBaseLdapPathAsString();
+        return this.baseDN;
+    }
+    
+    /**
+     * @see org.jasig.portal.ldap.ILdapServer#setBaseDN()
+     */
+    public void setBaseDN(String baseDN) {
+    	this.baseDN = baseDN;
     }
 
     /**
