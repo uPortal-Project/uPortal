@@ -154,7 +154,7 @@ function addPortlet(chanId) {
         options['position'] = 'insertBefore';
     }
 	$.post(preferencesUrl, options,
-	   function(xml) { window.location = portalUrl; }
+	   function(xml) { window.location = portalUrl; }, "text"
 	);
 }
 function deletePortlet(id) {
