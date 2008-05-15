@@ -8,7 +8,7 @@
      |
      | This file contains example configurations for both LDAP authentication and
      | LDAP person directory attribute lookups.  You may use the configurations below
-     | separately together, depending on which LDAP services you're using. 
+     | separately or together, depending on which LDAP services you're using. 
      +-->
 
         
