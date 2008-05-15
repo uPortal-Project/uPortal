@@ -113,12 +113,12 @@
 		    $(matching).each(function(i, val){
 		    	if (i == 0 || $(this).attr("ID") != $(matching[i-1]).attr("ID")) {
 		    		channelSelect.options[j] = new Option($(this).attr("name"), $(this).attr("ID"));
-				    $(channelSelect.options[j]).click(function(){self.chooseChannel(this.value);});
 				    j++;
 		    	}
 		    });
 		    channelSelect.options[0].selected = true;
 			this.chooseChannel(channelSelect.value);
+            $(channelSelect).change(function(){self.chooseChannel(this.value);});
 			
 		},
 
