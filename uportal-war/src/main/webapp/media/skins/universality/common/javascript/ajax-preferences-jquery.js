@@ -159,6 +159,9 @@ function addPortlet(chanId) {
 }
 function deletePortlet(id) {
 	if (!confirm("Are you sure you want to remove this portlet?")) return false;
+	if (id == firstChannelId) {
+        firstChannelId = tabId;
+    }
 	$('#portlet_'+id).remove();
 	$.post(preferencesUrl, {action: 'removeElement', elementID: id}, function(xml) { });
 }
