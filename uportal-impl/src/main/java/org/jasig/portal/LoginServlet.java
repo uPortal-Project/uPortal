@@ -147,33 +147,30 @@ public class LoginServlet extends HttpServlet {
       request.getSession(true).setAttribute("up_authenticationError", "true");
       person = null;
     }
-    // Check to see if the person has been authenticated
-    if (person != null && person.getSecurityContext().isAuthenticated()) {
-      // Send the now authenticated user back to the PortalSessionManager servlet
-    	String redirectTarget = null;
+    
+    // create the redirect URL, adding fname and args parameters if necessary
+    String redirectTarget = null;
+	if (targetFname == null){
+		redirectTarget = request.getContextPath() + "/" + redirectString;
+	} else {
+		redirectTarget = request.getContextPath() + "/" +
+		"tag.idempotent." +  redirectString + "?uP_fname=" + targetFname;
+		if (targetArgs != null) {
+			redirectTarget = redirectTarget + "&uP_args=" + targetArgs;
+		}
+	}
 
-			if (targetFname == null){
-				redirectTarget = request.getContextPath() + "/" + redirectString;
-			} else {
-				redirectTarget = request.getContextPath() + "/" +
-				"tag.idempotent." +  redirectString + "?uP_fname=" + targetFname;
-				if (targetArgs != null) {
-				redirectTarget = redirectTarget + "&uP_args=" + targetArgs;
-				}
-			}
+	if (person == null || !person.getSecurityContext().isAuthenticated()) {
+     if ( request.getMethod().equals("POST") )
+         request.getSession(false).setAttribute("up_authenticationAttempted", "true");
+     // Preserve the attempted username so it can be redisplayed to the user by CLogin
+     String attemptedUserName = request.getParameter("userName");
+     if (attemptedUserName != null)
+     	request.getSession(false).setAttribute("up_attemptedUserName", request.getParameter("userName"));		
+	}
 
-      response.sendRedirect(redirectTarget);
-    }
-    else {
-      if ( request.getMethod().equals("POST") )
-       request.getSession(false).setAttribute("up_authenticationAttempted", "true");
-      // Preserve the attempted username so it can be redisplayed to the user by CLogin
-      String attemptedUserName = request.getParameter("userName");
-      if (attemptedUserName != null)
-        request.getSession(false).setAttribute("up_attemptedUserName", request.getParameter("userName"));
-      // Send the unauthenticated user back to the PortalSessionManager servlet
-      response.sendRedirect(request.getContextPath() + '/' + redirectString);
-    }
+    response.sendRedirect(redirectTarget);
+
   }
 
   /**
