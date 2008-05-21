@@ -70,8 +70,8 @@
            <td class="portlet-section-subheader">Portlet</td>
           </tr>
           <tr>
-           <td><select id="categorySelectMenu" size="14" style="width: 150px; background: url({$SKIN_PATH}/skin/loading.gif) no-repeat center center"></select></td>
-           <td><select id="channelSelectMenu" size="14" style="width: 300px; background: url({$SKIN_PATH}/skin/loading.gif) no-repeat center center"></select></td>
+           <td><select id="categorySelectMenu" size="14" style="width: 150px; background: url({$SKIN_PATH}/images/loading.gif) no-repeat center center"></select></td>
+           <td><select id="channelSelectMenu" size="14" style="width: 300px; background: url({$SKIN_PATH}/images/loading.gif) no-repeat center center"></select></td>
           </tr>
          </table>
          </div>
