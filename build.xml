@@ -75,13 +75,17 @@
         <antcall target="deploy-ear">
             <param name="removeExisting" value="true" />
         </antcall>
+        <antcall target="initdb" />
+        <echo message="Finished initializing uPortal" />
+    </target>
+    
+    <target name="initdb" description="Drops all tables, then runs all the targets necessary prepare the portal database">
+        <echo message="Initializing database" />
         <antcall target="db" />
         <antcall target="db-hibernate" />
         <antcall target="i18n-db" />
-        <antcall target="crn-import">
-            <param name="dir" value="${basedir}/uportal-impl/src/main/resources/properties/db/entities" />
-        </antcall>
-        <echo message="Finished initializing uPortal" />
+        <antcall target="db-import" />
+        <echo message="Finished initializing database" />
     </target>
     
     <target name="db-hibernate" description="Drops then creates Hibernate managed tables">
@@ -168,6 +172,13 @@
         </antcall>
     </target>
 
+    <target name="db-import" description="Imports the default XML files to the database">
+        <echo message="Importing data" />
+        <antcall target="crn-import">
+            <param name="dir" value="${basedir}/uportal-impl/src/main/resources/properties/db/entities" />
+        </antcall>
+    </target>
+    
     <target name="dbunload" description="Dumps a database table to a flat file in XML format">
         <uportal-impl-macro>
             <property name="tablename" value=" " />
