@@ -60,10 +60,8 @@ public class CSpringPortletAdaptor implements IPortletAdaptor {
                 throw new IllegalStateException("No PortalControlStructures is associated with this IChannel, either no valid request has started or the request is complete.");
             }
 
-            this.channelStaticData = sd;
-            
             //Determine the name of the spring bean to wrap
-            String beanName = this.channelStaticData.getParameter(SPRING_BEAN_NAME_PARAM);
+            String beanName = sd.getParameter(SPRING_BEAN_NAME_PARAM);
             if (beanName == null) {
                 beanName = DEFAULT_SPRING_BEAN_NAME;
             }
@@ -72,15 +70,19 @@ public class CSpringPortletAdaptor implements IPortletAdaptor {
                 this.logger.info("Using ISpringPortletChannel named '" + beanName + "'");
             }
             
-            final WebApplicationContext applicationContext = this.channelStaticData.getWebApplicationContext();
+            final WebApplicationContext applicationContext = sd.getWebApplicationContext();
             if (applicationContext == null) {
                 throw new IllegalStateException("No WebApplicationContext provided by ChannelStaticData");
             }
             
-            this.springPortletChannel = (ISpringPortletChannel)applicationContext.getBean(beanName, ISpringPortletChannel.class);
+            final ISpringPortletChannel springPortletChannel = (ISpringPortletChannel)applicationContext.getBean(beanName, ISpringPortletChannel.class);
             
             //Initialize the static channel immediately with the instance data
-            this.springPortletChannel.initSession(this.channelStaticData, this.portalControlStructures);
+            springPortletChannel.initSession(sd, this.portalControlStructures);
+            
+            //Only set the local variables if the initSession call completes
+            this.channelStaticData = sd;
+            this.springPortletChannel = springPortletChannel;
         }
         finally {
             this.portalControlStructures = null;
