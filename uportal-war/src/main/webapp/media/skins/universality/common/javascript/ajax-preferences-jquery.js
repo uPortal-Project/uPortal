@@ -301,11 +301,19 @@ function initializeSkinMenu() {
 			$("skin", skinXml).each(function(i){
 				var key = $(this).children("skin-key").text();
 				
-				var input = $(document.createElement("input")).attr("type", "radio")
-					.val(key)
-					.attr("name", "skinChoice");
-				if (key == currentSkin)
-					input.attr("checked", true);
+				var input
+				if (jQuery.browser.msie) {
+				    if (key == currentSkin) {
+    				    input = $(document.createElement("<input type=\"radio\" name=\"skinChoice\" value=\"" + key + "\" checked=\"true\"/>"));
+    				} else {
+                        input = $(document.createElement("<input type=\"radio\" name=\"skinChoice\" value=\"" + key + "\"/>"));    				
+    				}
+				} else {
+                    input = $(document.createElement("input")).attr("type", "radio")
+                        .attr("name", "skinChoice").val(key);
+	                if (key == currentSkin)
+	                    input.attr("checked", true);
+				}
 					
 				var span = $(document.createElement("div")).append(
 				    $(document.createElement("span"))
@@ -333,8 +341,11 @@ function initializeSkinMenu() {
 }
 
 function chooseSkin(form) {
+    var newskin = $("#skinList").find("input:checked").val();
+    if (newskin == undefined || newskin == '')
+        return false;
 	$.post(preferencesUrl,
-		{ action: 'chooseSkin', skinName:$("#skinList").find("input:checked").val() },
+		{ action: 'chooseSkin', skinName: newskin },
 		function(xml) {
 			window.location = portalUrl;
 		}
