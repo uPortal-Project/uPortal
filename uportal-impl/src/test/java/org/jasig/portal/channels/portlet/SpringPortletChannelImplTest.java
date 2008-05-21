@@ -18,6 +18,7 @@ import org.apache.pluto.PortletContainer;
 import org.apache.pluto.descriptors.portlet.PortletDD;
 import org.easymock.EasyMock;
 import org.easymock.IAnswer;
+import org.easymock.internal.matchers.InstanceOf;
 import org.jasig.portal.ChannelCacheKey;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ChannelStaticData;
@@ -110,9 +111,9 @@ public class SpringPortletChannelImplTest extends TestCase {
         final IPortletWindowRegistry portletWindowRegistry = EasyMock.createMock(IPortletWindowRegistry.class);
         EasyMock.expect(portletWindowRegistry.getOrCreatePortletWindow(pcsRequest, "sub1", portletEntityId)).andReturn(portletWindow);
         
-        
+        final PrintWriter printWriter = new PrintWriter(new NullOutputStream());
         final PortletContainer portletContainer = EasyMock.createMock(PortletContainer.class);
-        portletContainer.doLoad(portletWindow, pcsRequest, response);
+        portletContainer.doLoad(EasyMock.eq(portletWindow), EasyMock.eq(pcsRequest), instanceOfMatcher(new ContentRedirectingHttpServletResponse(response, printWriter)));
         EasyMock.expectLastCall();
         
         
@@ -126,6 +127,20 @@ public class SpringPortletChannelImplTest extends TestCase {
         this.springPortletChannel.initSession(channelStaticData, portalControlStructures);
         
         EasyMock.verify(portletDefinitionRegistry, portletContainer, portletWindow, portletWindowRegistry, portletEntity, portletEntityRegistry, person);
+    }
+    
+    public static <T> T instanceOfMatcher(final T arg) {
+        final Class<?> argClass;
+        if (arg instanceof Class<?>) {
+            argClass = (Class<?>)arg;
+        }
+        else {
+            argClass = arg.getClass();
+        }
+        
+        EasyMock.reportMatcher(new InstanceOf(argClass));
+        
+        return null;
     }
 
     public void testAction() throws Exception {

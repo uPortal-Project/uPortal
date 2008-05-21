@@ -23,6 +23,11 @@ public class PortletLoadFailureException extends PortalException {
         super(msg, cause, false, true);
         this.portletWindow = portletWindow;
     }
+    
+    public PortletLoadFailureException(String msg, IPortletWindow portletWindow) {
+        super(msg, false, true);
+        this.portletWindow = portletWindow;
+    }
 
     /**
      * @return the portletWindow
