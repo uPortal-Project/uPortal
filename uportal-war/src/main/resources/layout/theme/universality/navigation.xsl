@@ -89,11 +89,12 @@
       	<h2 class="block-title"><xsl:value-of select="$TOKEN[@name='PORTLET_NAVIGATION_TITLE']"/></h2>
         <div class="block-content">
           <xsl:for-each select="//navigation/tab">
+            <xsl:variable name="TAB_POSITION" select="position()"/>
             <h3><xsl:value-of select="@name"/></h3>
             <ul>
               <xsl:for-each select="tabChannel">
                 <li>
-                  <a href="{$BASE_ACTION_URL}?uP_root={@ID}" title="{@name}">  <!-- Navigation item link. -->
+                  <a href="{$BASE_ACTION_URL}?uP_root={@ID}&amp;uP_sparam=activeTab&amp;activeTab={position()}" title="{@name}">  <!-- Navigation item link. -->
                     <span><xsl:value-of select="@name"/></span>
                   </a>
                 </li>
