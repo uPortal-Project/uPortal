@@ -7,6 +7,7 @@ package  org.jasig.portal;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -154,9 +155,9 @@ public class LoginServlet extends HttpServlet {
 		redirectTarget = request.getContextPath() + "/" + redirectString;
 	} else {
 		redirectTarget = request.getContextPath() + "/" +
-		"tag.idempotent." +  redirectString + "?uP_fname=" + targetFname;
+		"tag.idempotent." +  redirectString + "?uP_fname=" + URLEncoder.encode(targetFname, "UTF-8");
 		if (targetArgs != null) {
-			redirectTarget = redirectTarget + "&uP_args=" + targetArgs;
+			redirectTarget = redirectTarget + "&uP_args=" + URLEncoder.encode(targetArgs, "UTF-8");
 		}
 	}
 
