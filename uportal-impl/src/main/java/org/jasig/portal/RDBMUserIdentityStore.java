@@ -314,7 +314,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                    }
 
                    // Get a new user ID for this user
-                   int newUID = CounterStoreFactory.getCounterStoreImpl().getIncrementIntegerId("UP_USER");
+                   int newUID = getNewPortalUID(person);
 
                    // Add new user to all appropriate tables
                    int newPortalUID = addNewUser(newUID, person, templateUser);
@@ -334,6 +334,10 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
 
        return portalUser.getUserId();
    }
+  
+  protected int getNewPortalUID(IPerson person) throws Exception {
+	return CounterStoreFactory.getCounterStoreImpl().getIncrementIntegerId("UP_USER");
+  }
 
   static final protected void commit (Connection connection) {
     try {
