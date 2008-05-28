@@ -237,7 +237,7 @@ public class CWebProxy implements IChannel, ICacheable, IMimeResponse
   static final String systemCacheId="org.jasig.portal.channels.webproxy.CWebProxy";
   static PrintWriter devNull;
 
-  ChannelState chanState;
+  protected ChannelState chanState;
 
   // the content cache shared by ALL users
   private static Map<Serializable, Object> contentCache;
@@ -265,7 +265,7 @@ public class CWebProxy implements IChannel, ICacheable, IMimeResponse
    * properties are only accessed via getter and setter methods that would
    * need to be added.
    */
-  private class ChannelState
+  protected class ChannelState
   {
 	private String publishId;
     private IPerson iperson;
@@ -395,6 +395,14 @@ public class CWebProxy implements IChannel, ICacheable, IMimeResponse
         // if uriArg was null do nothing.
 
     }
+    
+   /**
+     * Sets the xmlUri channel state property without applying URI acceptance
+     * logic.
+     */
+    public void setXmlUriNotRestricted(String uri) {
+    	this.xmlUri = uri;
+    }
 
     /**
      * Storing cache data is straigt-forward. We rely on the cache implementation
@@ -419,6 +427,10 @@ public class CWebProxy implements IChannel, ICacheable, IMimeResponse
 
     public synchronized long getCacheContentLoaded() {
     	return (cacheContentLoaded);
+    }
+    
+    public IPerson getIPerson() {
+    	return this.iperson;
     }
 
   }
