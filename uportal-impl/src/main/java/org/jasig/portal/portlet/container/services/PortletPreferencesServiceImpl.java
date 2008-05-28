@@ -54,8 +54,10 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
     private IPortletDefinitionRegistry portletDefinitionRegistry;
     private IPortalRequestUtils portalRequestUtils;
     
-    private boolean storeGuestPreferences = true;
-    private boolean shareGuestPreferences = false;
+    private boolean loadGuestPreferencesFromMemory = true;
+    private boolean loadGuestPreferencesFromEntity = true;
+    private boolean storeGuestPreferencesInMemory = true;
+    private boolean storeGuestPreferencesInEntity = false;
     
     /**
      * @return the portalRequestUtils
@@ -131,32 +133,67 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
         Validate.notNull(personManager);
         this.personManager = personManager;
     }
+
     
-    /**
-     * @return the storeGuestPreferences
-     */
-    public boolean isStoreGuestPreferences() {
-        return storeGuestPreferences;
-    }
-    /**
-     * @param storeGuestPreferences the storeGuestPreferences to set
-     */
-    public void setStoreGuestPreferences(boolean storeGuestPreferences) {
-        this.storeGuestPreferences = storeGuestPreferences;
-    }
-    /**
-     * @return the shareGuestPreferences
-     */
-    public boolean isShareGuestPreferences() {
-        return shareGuestPreferences;
-    }
-    /**
-     * @param shareGuestPreferences the shareGuestPreferences to set
-     */
-    public void setShareGuestPreferences(boolean shareGuestPreferences) {
-        this.shareGuestPreferences = shareGuestPreferences;
+    public boolean isLoadGuestPreferencesFromMemory() {
+		return loadGuestPreferencesFromMemory;
+	}
+	public void setLoadGuestPreferencesFromMemory(
+			boolean loadGuestPreferencesFromMemory) {
+		this.loadGuestPreferencesFromMemory = loadGuestPreferencesFromMemory;
+	}
+	public boolean isLoadGuestPreferencesFromEntity() {
+		return loadGuestPreferencesFromEntity;
+	}
+	public void setLoadGuestPreferencesFromEntity(
+			boolean loadGuestPreferencesFromEntity) {
+		this.loadGuestPreferencesFromEntity = loadGuestPreferencesFromEntity;
+	}
+	public boolean isStoreGuestPreferencesInMemory() {
+		return storeGuestPreferencesInMemory;
+	}
+	public void setStoreGuestPreferencesInMemory(
+			boolean storeGuestPreferencesInMemory) {
+		this.storeGuestPreferencesInMemory = storeGuestPreferencesInMemory;
+	}
+	public boolean isStoreGuestPreferencesInEntity() {
+		return storeGuestPreferencesInEntity;
+	}
+	public void setStoreGuestPreferencesInEntity(
+			boolean storeGuestPreferencesInEntity) {
+		this.storeGuestPreferencesInEntity = storeGuestPreferencesInEntity;
+	}
+	public boolean isStoreInEntity(PortletRequest portletRequest) { 
+        final HttpServletRequest httpServletRequest = this.portalRequestUtils.getOriginalPortletAdaptorRequest(portletRequest);
+    	if (!isGuestUser(httpServletRequest) || this.storeGuestPreferencesInEntity)
+    		return true;
+    	else
+    		return false; 
     }
     
+    public boolean isLoadFromEntity(PortletRequest portletRequest) { 
+        final HttpServletRequest httpServletRequest = this.portalRequestUtils.getOriginalPortletAdaptorRequest(portletRequest);
+    	if (!isGuestUser(httpServletRequest) || this.loadGuestPreferencesFromEntity)
+    		return true;
+    	else
+    		return false; 
+    }
+    
+    public boolean isStoreInMemory(PortletRequest portletRequest) { 
+        final HttpServletRequest httpServletRequest = this.portalRequestUtils.getOriginalPortletAdaptorRequest(portletRequest);
+    	if (isGuestUser(httpServletRequest) && this.storeGuestPreferencesInMemory)
+    		return true;
+    	else
+    		return false; 
+    }
+
+    public boolean isLoadFromMemory(PortletRequest portletRequest) { 
+        final HttpServletRequest httpServletRequest = this.portalRequestUtils.getOriginalPortletAdaptorRequest(portletRequest);
+    	if (isGuestUser(httpServletRequest) && this.loadGuestPreferencesFromMemory)
+    		return true;
+    	else
+    		return false; 
+    }
     
     /* (non-Javadoc)
      * @see org.apache.pluto.spi.optional.PortletPreferencesService#getStoredPreferences(org.apache.pluto.PortletWindow, javax.portlet.PortletRequest)
@@ -186,14 +223,18 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
         final boolean isGuest = isGuestUser(httpServletRequest);
         
         //If not guest or storing shared guest prefs get the prefs from the portlet entity
-        if (!isGuest || (this.storeGuestPreferences && this.shareGuestPreferences)) {
+        if (this.isLoadFromEntity(portletRequest)) {
             //Add entity preferences
             final IPortletPreferences entityPreferences = portletEntity.getPortletPreferences();
             final List<IPortletPreference> entityPreferencesList = entityPreferences.getPortletPreferences();
             this.addPreferencesToMap(entityPreferencesList, preferencesMap);
+
+            if (!this.isLoadFromMemory(portletRequest) && !this.isStoreInEntity(portletRequest) && this.isStoreInMemory(portletRequest)) {
+                store(plutoPortletWindow, portletRequest, preferencesMap.values().toArray(new InternalPortletPreference[preferencesMap.size()]));
+            }
         }
         //If a guest and storing non-shared guest prefs get the prefs from the session
-        else if (this.storeGuestPreferences && !this.shareGuestPreferences) {
+        if (this.isLoadFromMemory(portletRequest)) {
             //Add memory preferences
             final List<IPortletPreference> entityPreferencesList = this.getSessionPreferences(portletEntity.getPortletEntityId(), httpServletRequest);
             this.addPreferencesToMap(entityPreferencesList, preferencesMap);
@@ -212,7 +253,7 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
         final boolean isGuest = isGuestUser(httpServletRequest);
         
         //If this is a guest and no prefs are being stored just return as the rest of the method is not needed for this case
-        if (isGuest && !this.storeGuestPreferences) {
+        if (isGuest && !(this.isStoreInEntity(portletRequest) || this.isStoreInMemory(portletRequest))) {
             return;
         }
 
@@ -256,7 +297,7 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
         }
 
         //If not a guest or if guest prefs are shared store them on the entity
-        if (!isGuest || this.shareGuestPreferences) {
+        if (this.isStoreInEntity(portletRequest)) {
             //Update the portlet entity with the new preferences
             final IPortletPreferences entityPreferences = portletEntity.getPortletPreferences();
             entityPreferences.setPortletPreferences(portletPreferences);
