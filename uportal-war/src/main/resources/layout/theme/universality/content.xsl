@@ -96,37 +96,37 @@
     <div class="portlet-controls">
       <xsl:if test="not(@hasHelp='false')"> <!-- Help. -->
       	<a href="{$BASE_ACTION_URL}?uP_help_target={@ID}#{@ID}" title="{$TOKEN[@name='PORTLET_HELP_LONG_LABEL']}" class="portlet-control help">
-      	  &#160;<span><xsl:copy-of select="$TOKEN[@name='PORTLET_HELP_LABEL']"/></span>
+      	  <span><xsl:value-of select="$TOKEN[@name='PORTLET_HELP_LABEL']"/></span>
         </a>
       </xsl:if>
       <xsl:if test="not(@hasAbout='false')"> <!-- About. -->
       	<a href="{$BASE_ACTION_URL}?uP_about_target={@ID}#{@ID}" title="{$TOKEN[@name='PORTLET_ABOUT_LONG_LABEL']}" class="portlet-control about">
-      	  &#160;<span><xsl:copy-of select="$TOKEN[@name='PORTLET_ABOUT_LABEL']"/></span>
+      	  <span><xsl:value-of select="$TOKEN[@name='PORTLET_ABOUT_LABEL']"/></span>
         </a>
       </xsl:if>
       <xsl:if test="not(@editable='false')"> <!-- Edit. -->
       	<a href="{$BASE_ACTION_URL}?uP_edit_target={@ID}#{@ID}" title="{$TOKEN[@name='PORTLET_EDIT_LONG_LABEL']}" class="portlet-control edit">
-      	  &#160;<span><xsl:copy-of select="$TOKEN[@name='PORTLET_EDIT_LABEL']"/></span>
+      	  <span><xsl:value-of select="$TOKEN[@name='PORTLET_EDIT_LABEL']"/></span>
         </a>
       </xsl:if>
       <xsl:if test="@printable='true'"> <!-- Print. -->
       	<a href="{$BASE_ACTION_URL}?uP_print_target={@ID}#{@ID}" title="{$TOKEN[@name='PORTLET_PRINT_LONG_LABEL']}" class="portlet-control print">
-      	  &#160;<span><xsl:copy-of select="$TOKEN[@name='PORTLET_PRINT_LABEL']"/></span>
+      	  <span><xsl:value-of select="$TOKEN[@name='PORTLET_PRINT_LABEL']"/></span>
         </a>
       </xsl:if>
       <xsl:if test="not(//focused)"> <!-- Focus. -->
       	<a href="{$BASE_ACTION_URL}?uP_root={@ID}" title="{$TOKEN[@name='PORTLET_MAXIMIZE_LONG_LABEL']}" class="portlet-control focus">
-      	  &#160;<span><xsl:copy-of select="$TOKEN[@name='PORTLET_MAXIMIZE_LABEL']"/></span>
+      	  <span><xsl:value-of select="$TOKEN[@name='PORTLET_MAXIMIZE_LABEL']"/></span>
         </a>
       </xsl:if>
       <xsl:if test="not(@dlm:deleteAllowed='false') and not(//focused) and /layout/navigation/tab[@activeTab='true']/@immutable='false'">
       	<a id="removePortlet_{@ID}" title="{$TOKEN[@name='PORTLET_REMOVE_LONG_LABEL']}" href="{$BASE_ACTION_URL}?uP_remove_target={@ID}" class="portlet-control remove">
-      	  &#160;<span><xsl:copy-of select="$TOKEN[@name='PORTLET_REMOVE_LABEL']"/></span>
+      	  <span><xsl:value-of select="$TOKEN[@name='PORTLET_REMOVE_LABEL']"/></span>
         </a>
       </xsl:if>
       <xsl:if test="//focused[@in-user-layout='no']"> <!-- Add to layout. -->
         <a id="focusedContentDialogLink" href="javascript:;" title="{$TOKEN[@name='PORTLET_ADD_LONG_LABEL']}" class="portlet-control add">
-          &#160;<span><xsl:copy-of select="$TOKEN[@name='PORTLET_ADD_LABEL']"/></span>
+          <span><xsl:value-of select="$TOKEN[@name='PORTLET_ADD_LABEL']"/></span>
         </a>
       </xsl:if>
     </div>
