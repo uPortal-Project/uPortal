@@ -395,12 +395,19 @@ function initializeSkinSelection() {
 			    var description = skins[i].getElementsByTagName("skin-description")[0].firstChild.data;
 			    var name = skins[i].getElementsByTagName("skin-name")[0].firstChild.data;
 			    var key = skins[i].getElementsByTagName("skin")[0].firstChild.data;
-			    var input = document.createElement("input");
-			    input.type = "radio";
-			    input.value = key;
-			    input.name = "skinChoice";
-			    if (key == currentSkin)
-			        input.checked = true;
+			    if (dojo.render.html.ie) {
+			        if (key == currentSkin)
+                        var input = document.createElement("<input type=\"radio\" name=\"skinChoice\" value=\"" + key + "\" checked=\"true\"/>")
+                    else 
+                        var input = document.createElement("<input type=\"radio\" name=\"skinChoice\" value=\"" + key + "\"/>")
+			    } else {
+				    var input = document.createElement("input");
+				    input.type = "radio";
+				    input.value = key;
+				    input.name = "skinChoice";
+				    if (key == currentSkin)
+				        input.checked = true;
+			    }
 			    var span = document.createElement("span");
 			    span.appendChild(input);
 			    span.appendChild(document.createTextNode(name));
