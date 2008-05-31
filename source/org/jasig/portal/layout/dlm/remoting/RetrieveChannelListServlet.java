@@ -26,7 +26,7 @@ public class RetrieveChannelListServlet extends HttpServlet {
         try {
 			UserInstance  userInstance = UserInstanceManager.getUserInstance(request);
 			Document registry = ChannelRegistryManager.getChannelRegistry(userInstance.getPerson());
-			response.setContentType("text/xml");
+			response.setContentType("text/xml; charset=UTF-8");          
 			response.getWriter().print("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
 			response.getWriter().print(org.jasig.portal.utils.XML.serializeNode(registry));
 		} catch (PortalException e) {
