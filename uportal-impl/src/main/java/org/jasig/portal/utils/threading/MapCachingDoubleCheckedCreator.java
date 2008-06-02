@@ -54,6 +54,24 @@ public abstract class MapCachingDoubleCheckedCreator<K, T> extends DoubleChecked
      * @return The key for the specified arguments
      */
     protected abstract K getKey(Object... args);
+    
+    /**
+     * @param key The key to create the object for
+     * @param args The object retrieval arguments
+     * @return A new object instance for the key and args
+     */
+    protected abstract T createInternal(K key, Object... args);
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.utils.threading.DoubleCheckedCreator#create(java.lang.Object[])
+     */
+    @Override
+    protected final T create(Object... args) {
+        final K key = this.getKey(args);
+        final T value = this.createInternal(key, args);
+        this.objectCache.put(key, value);
+        return value;
+    }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.utils.threading.DoubleCheckedCreator#retrieve(java.lang.Object[])

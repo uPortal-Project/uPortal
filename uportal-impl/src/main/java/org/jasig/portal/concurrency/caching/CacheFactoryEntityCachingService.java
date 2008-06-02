@@ -61,16 +61,15 @@ public class CacheFactoryEntityCachingService extends AbstractEntityCachingServi
             final Class<? extends IBasicEntity> entityType = (Class<? extends IBasicEntity>) args[0];
             return entityType.getName();
         }
-
+        
         /* (non-Javadoc)
-         * @see org.jasig.portal.utils.threading.DoubleCheckedCreator#create(java.lang.Object[])
+         * @see org.jasig.portal.utils.threading.MapCachingDoubleCheckedCreator#createInternal(java.lang.Object, java.lang.Object[])
          */
         @SuppressWarnings("unchecked")
         @Override
-        protected IEntityCache create(Object... args) {
-            final Class<? extends IBasicEntity> entityType = (Class<? extends IBasicEntity>) args[0];
-            final String typeName = entityType.getName();
+        protected IEntityCache createInternal(String typeName, Object... args) {
             final Map<Serializable, IBasicEntity> cacheMap = CacheFactoryEntityCachingService.this.cacheFactory.getCache(typeName);
+            final Class<? extends IBasicEntity> entityType = (Class<? extends IBasicEntity>) args[0];
             return new MapBackedEntityCache(cacheMap, entityType);
         }
     }

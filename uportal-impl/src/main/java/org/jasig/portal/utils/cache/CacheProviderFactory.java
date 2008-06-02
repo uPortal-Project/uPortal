@@ -88,14 +88,13 @@ public class CacheProviderFactory implements CacheFactory {
             return (String) args[0];
         }
 
+        
         /* (non-Javadoc)
-         * @see org.jasig.portal.utils.threading.DoubleCheckedCreator#create(java.lang.Object[])
+         * @see org.jasig.portal.utils.threading.MapCachingDoubleCheckedCreator#createInternal(java.lang.Object, java.lang.Object[])
          */
         @SuppressWarnings("unchecked")
         @Override
-        protected Map<?, ?> create(Object... args) {
-            final String cacheName = (String) args[0];
-
+        protected Map<?, ?> createInternal(String cacheName, Object... args) {
             final FlushingModel flushingModel = CacheProviderFactory.this.cacheModelFactory.getFlushingModel(cacheName);
             final CachingModel cachingModel = CacheProviderFactory.this.cacheModelFactory.getCachingModel(cacheName);
 
