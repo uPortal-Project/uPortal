@@ -39,17 +39,7 @@
     </target>
 
     <target name="source" depends="prepare" description="Exports and packages a buildable source distribution of the project">
-        <property name="source.file.zip" value="${target.dir}/${uportal.finalName}.zip" />
-        <property name="source.file.tar.bz2" value="${target.dir}/${uportal.finalName}.tar.bz2" />
         <property name="source.file.tar.gz" value="${target.dir}/${uportal.finalName}.tar.gz" />
-
-        <!-- zip source distribution -->
-        <zip destfile="${source.file.zip}">
-            <fileset refid="sourceFiles" />
-        </zip>
-        <checksum file="${source.file.zip}" algorithm="md5" />
-        <checksum file="${source.file.zip}" algorithm="sha1" />
-
 
         <!-- tar.gz source distribution -->
         <tar destfile="${source.file.tar.gz}" longfile="gnu" compression="gzip">
@@ -62,19 +52,6 @@
         </tar>
         <checksum file="${source.file.tar.gz}" algorithm="md5" />
         <checksum file="${source.file.tar.gz}" algorithm="sha1" />
-
-
-        <!-- tar.bz2 source distribution -->
-        <tar destfile="${source.file.tar.bz2}" longfile="gnu" compression="bzip2">
-            <!-- TODO switch to <fileset refid="sourceFiles" /> once ant 1.7.1 is out -->
-            <tarfileset dir="${uportal.source.dir}" defaultexcludes="true">
-                <exclude name="build.properties" />
-                <exclude name="data/**" />
-                <exclude name="**/target/**" />
-            </tarfileset>
-        </tar>
-        <checksum file="${source.file.tar.bz2}" algorithm="md5" />
-        <checksum file="${source.file.tar.bz2}" algorithm="sha1" />
     </target>
     
     <target name="quickstart" depends="prepare-qs, prepare-qs-tomcat, prepare-qs-ant, prepare-qs-maven, prepare-qs-uportal" description="Generates the quick start distribution">
@@ -118,31 +95,8 @@
             
     <target name="qs-package" depends="prepare-qs">
         <property name="quickstart.file_base" value="${target.dir}/${quickstart.name}${qs-file-ext}" />
-        <property name="quickstart.file.zip" value="${quickstart.file_base}.zip" />
-        <property name="quickstart.file.tar.bz2" value="${quickstart.file_base}.tar.bz2" />
         <property name="quickstart.file.tar.gz" value="${quickstart.file_base}.tar.gz" />
         
-        <!-- TODO combine dupe compression code into single utility task once 1.7.1 is out. -->
-        <!-- zip distribution -->
-        <zip destfile="${quickstart.file.zip}">
-            <!-- TODO switch to <fileset refid="sourceFiles" /> once ant 1.7.1 is out -->
-            <zipfileset prefix="${quickstart.name}" dir="${quickstart.dir}" defaultexcludes="${exclude-svn}">
-                <exclude name="**/*.sh" />
-                <exclude name="${dl.ant.finalName}/bin/*" />
-                <exclude name="${dl.maven.finalName}/bin/*" />
-                <exclude name="${dl.tomcat.finalName}/bin/*" />
-            </zipfileset>
-            <zipfileset prefix="${quickstart.name}" dir="${quickstart.dir}" defaultexcludes="${exclude-svn}" filemode="755">
-                <include name="**/*.sh" />
-                <include name="${dl.ant.finalName}/bin/*" />
-                <include name="${dl.maven.finalName}/bin/*" />
-                <include name="${dl.tomcat.finalName}/bin/*" />
-            </zipfileset>
-        </zip>
-        <checksum file="${quickstart.file.zip}" algorithm="md5" />
-        <checksum file="${quickstart.file.zip}" algorithm="sha1" />
-
-
         <!-- tar.gz distribution -->
         <tar destfile="${quickstart.file.tar.gz}" longfile="gnu" compression="gzip">
             <!-- TODO switch to <fileset refid="sourceFiles" /> once ant 1.7.1 is out -->
@@ -161,26 +115,6 @@
         </tar>
         <checksum file="${quickstart.file.tar.gz}" algorithm="md5" />
         <checksum file="${quickstart.file.tar.gz}" algorithm="sha1" />
-
-
-        <!-- tar.bz2 distribution -->
-        <tar destfile="${quickstart.file.tar.bz2}" longfile="gnu" compression="bzip2">
-            <!-- TODO switch to <fileset refid="sourceFiles" /> once ant 1.7.1 is out -->
-            <tarfileset prefix="${quickstart.name}" dir="${quickstart.dir}" defaultexcludes="${exclude-svn}">
-                <exclude name="**/*.sh" />
-                <exclude name="${dl.ant.finalName}/bin/*" />
-                <exclude name="${dl.maven.finalName}/bin/*" />
-                <exclude name="${dl.tomcat.finalName}/bin/*" />
-            </tarfileset>
-            <tarfileset prefix="${quickstart.name}" dir="${quickstart.dir}" defaultexcludes="${exclude-svn}" mode="755">
-                <include name="**/*.sh" />
-                <include name="${dl.ant.finalName}/bin/*" />
-                <include name="${dl.maven.finalName}/bin/*" />
-                <include name="${dl.tomcat.finalName}/bin/*" />
-            </tarfileset>
-        </tar>
-        <checksum file="${quickstart.file.tar.bz2}" algorithm="md5" />
-        <checksum file="${quickstart.file.tar.bz2}" algorithm="sha1" />
     </target>
 
     <target name="prepare-qs-tomcat" depends="prepare-qs">
