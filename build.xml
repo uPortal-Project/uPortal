@@ -597,28 +597,44 @@
     <!-- ============================== Deprecated Targets ============================== -->
     <target name="all">
         <echo>The "all" Ant task is no longer supported. Run 'mvn clean compile' for the same result.</echo>
+        <fail message="The 'all' Ant task is no longer supported. Run 'mvn clean compile' for the same result.">
+        </fail>
     </target>
     <target name="compile">
         <echo>The "compile" Ant task is no longer supported. Run 'mvn compile' for the same result.</echo>
+        <fail message="The 'compile' Ant task is no longer supported. Run 'mvn compile' for the same result.">
+        </fail>
     </target>
     <target name="compiletests">
         <echo>The "compiletests" Ant task is no longer supported. Run 'mvn test-compile' for the same result.</echo>
+            <fail message="The 'compiletests' Ant task is no longer supported. Run 'mvn test-compile' for the same result.">
+            </fail>
     </target>
     <target name="deploy">
         <echo>The "deploy" Ant task is no longer supported. Run 'ant deploy-war' for the same result.</echo>
+        <fail message="The 'deploy' Ant task is no longer supported. Run 'ant deploy-war' for the same result.">
+        </fail>
     </target>
     <target name="dist">
         <echo>The "dist" Ant task is no longer supported. Run 'mvn package site' for a similar result.</echo>
+        <fail message="The 'dist' Ant task is no longer supported. Run 'mvn package site' for the same result.">
+        </fail>
     </target>
     <target name="javadoc">
         <echo>The "javadoc" Ant task is no longer supported. Run 'mvn javadoc:javadoc' for the same result.</echo>
+        <fail message="The 'javadoc' Ant task is no longer supported. Run 'mvn javadoc:javadoc' for the same result.">
+        </fail>
     </target>
     <target name="runtests">
         <echo>The "runtests" Ant task is no longer supported. Run 'mvn test' for the same result.</echo>
+        <fail message="The 'runtests' Ant task is no longer supported. Run 'mvn test' for the same result.">
+        </fail>
     </target>
     <target name="pubchan">
         <echo>The "pubchan" Ant task is no longer supported. Use 'ant crn-import' to publish channel entity XML files.</echo>
-    </target>
+        <fail message="The 'pubchan' Ant task is no longer supported. Run 'ant crn-import' for the same result.">
+        </fail>
+   </target>
 
 
     <!-- ============================== Maven Support Macros ============================== -->
