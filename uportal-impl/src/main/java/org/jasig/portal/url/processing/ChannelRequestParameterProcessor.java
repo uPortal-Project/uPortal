@@ -20,6 +20,7 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.servlet.ServletRequestContext;
 import org.apache.commons.io.FileCleaner;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -279,8 +280,12 @@ public class ChannelRequestParameterProcessor extends CommonsFileUploadSupport i
         
         final Map<String, MultipartDataSource[]> multipartDataSources = new HashMap<String, MultipartDataSource[]>(multipartFiles.size());
         for (final Map.Entry<String, MultipartFile> multipartFileEntry : multipartFiles.entrySet()) {
-            final MultipartDataSource multipartDataSource = new MultipartDataSource(multipartFileEntry.getValue());
-            multipartDataSources.put(multipartFileEntry.getKey(), new MultipartDataSource[] { multipartDataSource });
+            final MultipartFile multipartFile = multipartFileEntry.getValue();
+            
+            if (StringUtils.isNotEmpty(multipartFile.getOriginalFilename())) {
+                final MultipartDataSource multipartDataSource = new MultipartDataSource(multipartFile);
+                multipartDataSources.put(multipartFileEntry.getKey(), new MultipartDataSource[] { multipartDataSource });
+            }
         }
         
         return multipartDataSources;
