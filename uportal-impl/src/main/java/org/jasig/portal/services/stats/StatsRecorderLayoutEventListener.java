@@ -47,22 +47,22 @@ public class StatsRecorderLayoutEventListener implements LayoutEventListener {
   // Channels...
   public void channelAdded(LayoutEvent ev) {
     IUserLayoutChannelDescription channelDesc = (IUserLayoutChannelDescription)ev.getNodeDescription();
-    EventPublisherLocator.getApplicationEventPublisher().publishEvent(new ChannelAddedToLayoutPortalEvent(this, person, profile, channelDesc));
+    EventPublisherLocator.getApplicationEventPublisher().publishEvent(new ChannelAddedToLayoutPortalEvent(this, person, profile, channelDesc, ev.getParentNode()));
   }
   
   public void channelUpdated(LayoutEvent ev) {
     IUserLayoutChannelDescription channelDesc = (IUserLayoutChannelDescription)ev.getNodeDescription();
-    EventPublisherLocator.getApplicationEventPublisher().publishEvent(new ChannelUpdatedInLayoutPortalEvent(this, person, profile, channelDesc));
+    EventPublisherLocator.getApplicationEventPublisher().publishEvent(new ChannelUpdatedInLayoutPortalEvent(this, person, profile, channelDesc, ev.getParentNode()));
   }
   
   public void channelMoved(LayoutMoveEvent ev) {
     IUserLayoutChannelDescription channelDesc = (IUserLayoutChannelDescription)ev.getNodeDescription();
-    EventPublisherLocator.getApplicationEventPublisher().publishEvent(new ChannelMovedInLayoutPortalEvent(this, person, profile, channelDesc));
+    EventPublisherLocator.getApplicationEventPublisher().publishEvent(new ChannelMovedInLayoutPortalEvent(this, person, profile, channelDesc, ev.getOldParentNode(), ev.getParentNode()));
   }
   
   public void channelDeleted(LayoutMoveEvent ev) {
 	  IUserLayoutChannelDescription channelDesc = (IUserLayoutChannelDescription)ev.getNodeDescription();
-	  EventPublisherLocator.getApplicationEventPublisher().publishEvent(new ChannelRemovedFromLayoutPortalEvent(this, person, profile, channelDesc));
+	  EventPublisherLocator.getApplicationEventPublisher().publishEvent(new ChannelRemovedFromLayoutPortalEvent(this, person, profile, channelDesc, ev.getOldParentNode()));
   }
 
   // Folders...

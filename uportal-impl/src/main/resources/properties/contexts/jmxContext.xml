@@ -16,6 +16,7 @@
             <map>
                 <entry key="uPortal:section=Framework,name=Statistics" value-ref="portalFrameworkMBean" />
                 <entry key="uPortal:section=Persistence,name=HibernateStatistics" value-ref="hibernateStatisticsMBean"/>
+                <!-- <entry key="uPortal:section=Persistence,name=PortalStatsHibernateStatistics" value-ref="portalStatsHibernateStatisticsMBean"/> -->
                 <entry key="uPortal:section=Persistence,name=PortalDB" value-ref="PortalDb"/>
             </map>
         </property>
@@ -39,6 +40,19 @@
             </bean>
         </property>
     </bean>
+
+    <!-- Hibernate Stats perstentce statistics -->
+    <!-- Uncomment this bean here and the reference in 'jmxAdapter' if database stats logged in enabled
+    <bean id="portalStatsHibernateStatisticsMBean" class="org.hibernate.jmx.StatisticsService">
+        <property name="statisticsEnabled" value="true"/>
+        <property name="sessionFactory">
+            <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+                <property name="targetObject" ref="statsEntityManagerFactory" />
+                <property name="targetMethod" value="getSessionFactory" />
+            </bean>
+        </property>
+    </bean>
+     -->
 
     <!-- uPortal framework statistics -->
     <bean id="portalFrameworkMBean" class="org.jasig.portal.jmx.FrameworkMBeanImpl" />

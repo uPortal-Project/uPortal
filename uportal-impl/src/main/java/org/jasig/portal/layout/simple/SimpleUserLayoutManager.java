@@ -329,7 +329,7 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
             this.clearMarkings();
 
             // inform the listeners
-            LayoutEvent ev=new LayoutEvent(this,node);
+            LayoutEvent ev=new LayoutEvent(this, node, parent);
             for(Iterator i=listeners.iterator();i.hasNext();) {
                 LayoutEventListener lel=(LayoutEventListener)i.next();
                 if(isChannel) {
@@ -373,7 +373,8 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
             if(node instanceof IUserLayoutChannelDescription) {
                 isChannel=true;
             }
-            LayoutMoveEvent ev=new LayoutMoveEvent(this,node,oldParentNodeId);
+            final IUserLayoutNodeDescription oldParentNode = this.getNode(oldParentNodeId);
+            LayoutMoveEvent ev=new LayoutMoveEvent(this, parent, node, oldParentNode);
             for(Iterator i=listeners.iterator();i.hasNext();) {
                 LayoutEventListener lel=(LayoutEventListener)i.next();
                 if(isChannel) {
@@ -410,7 +411,8 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
             if(nodeDescription instanceof IUserLayoutChannelDescription) {
                 isChannel=true;
             }
-            LayoutMoveEvent ev=new LayoutMoveEvent(this,nodeDescription,parentNodeId);
+            final IUserLayoutNodeDescription parentNode = this.getNode(parentNodeId);
+            LayoutMoveEvent ev=new LayoutMoveEvent(this, null, nodeDescription, parentNode);
             for(Iterator i=listeners.iterator();i.hasNext();) {
                 LayoutEventListener lel=(LayoutEventListener)i.next();
                 if(isChannel) {
@@ -475,7 +477,9 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
                     newChannelElement.setAttribute("ID",node.getId());
 
                     // inform the listeners
-                    LayoutEvent ev=new LayoutEvent(this,node);
+                    final String parentNodeId = this.getParentId(nodeId);
+                    final IUserLayoutNodeDescription parentNode = this.getNode(parentNodeId);
+                    LayoutEvent ev = new LayoutEvent(this, parentNode, node);
                     for(Iterator i=listeners.iterator();i.hasNext();) {
                         LayoutEventListener lel=(LayoutEventListener)i.next();
                         lel.channelUpdated(ev);
@@ -511,7 +515,9 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
                      newFolderElement.setAttribute("ID",node.getId());
 
                     // inform the listeners
-                    LayoutEvent ev=new LayoutEvent(this,node);
+                     final String parentNodeId = this.getParentId(nodeId);
+                     final IUserLayoutNodeDescription parentNode = this.getNode(parentNodeId);
+                     LayoutEvent ev=new LayoutEvent(this, parentNode, node);
                     for(Iterator i=listeners.iterator();i.hasNext();) {
                         LayoutEventListener lel=(LayoutEventListener)i.next();
                         lel.folderUpdated(ev);

@@ -143,4 +143,18 @@ public interface IChannelRenderer
         ContentHandler out
         )
         throws Throwable;
+    
+    /**
+     * This may only be called after {@link #outputRendering(ContentHandler)} is called.
+     *  
+     * @return The time in milliseconds it took for the channel to render
+     */
+    long getRenderTime();
+    
+    /**
+     * This may only be called after {@link #outputRendering(ContentHandler)} is called.
+     * 
+     * @return If cached content was returned instead of actually rendering the channel
+     */
+    boolean isRenderedFromCache();
 }

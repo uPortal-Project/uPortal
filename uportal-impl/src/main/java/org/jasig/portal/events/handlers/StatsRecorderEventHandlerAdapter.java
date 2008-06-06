@@ -48,7 +48,7 @@ public final class StatsRecorderEventHandlerAdapter implements EventHandler,
 	private IStatsRecorder recorder;
 
 	public void handleEvent(final PortalEvent event) {
-		final Class eventClass = event.getClass();
+		final Class<? extends PortalEvent> eventClass = event.getClass();
 		if (eventClass.equals(ChannelAddedToLayoutPortalEvent.class)) {
 			final ChannelLayoutPortalEvent portalEvent = (ChannelLayoutPortalEvent) event;
 			this.recorder.recordChannelAddedToLayout(portalEvent.getPerson(),

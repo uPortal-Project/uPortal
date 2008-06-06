@@ -348,6 +348,21 @@ public class ChannelRenderer
 
         return null;
     }
+    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.IChannelRenderer#getRenderTime()
+     */
+    public long getRenderTime() {
+        return this.worker.getRenderTime();
+    }
+
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.IChannelRenderer#isRenderedFromCache()
+     */
+    public boolean isRenderedFromCache() {
+        return this.worker.isRenderedFromCache();
+    }
 
 
     /**
@@ -418,6 +433,9 @@ public class ChannelRenderer
         private boolean setRuntimeDataComplete;
         private SAX2BufferImpl buffer;
         private String cbuffer;
+        
+        private long renderTime;
+        private boolean renderedFromCache = false;
 
         /**
          * The dynamic title of the channel, if any.  Null otherwise.
@@ -440,6 +458,7 @@ public class ChannelRenderer
 
         //TODO review this for clarity
         public void execute () throws Exception {
+            final long startTime = System.currentTimeMillis();
             try {
                 if(rd!=null) {
                     channel.setRuntimeData(rd);
@@ -492,6 +511,8 @@ public class ChannelRenderer
                                                 log.debug("ChannelRenderer.Worker::run() : retrieved system-wide cached content based on a key \""+key.getKey()+"\"");
                                             }
                                         }
+                                        
+                                        this.renderedFromCache = true;
                                     } else {
                                         // remove it
                                         systemCache.remove(key.getKey());
@@ -520,6 +541,8 @@ public class ChannelRenderer
                                                 log.debug("ChannelRenderer.Worker::run() : retrieved instance-cached content based on a key \""+key.getKey()+"\"");
                                             }
                                         }
+                                        
+                                        this.renderedFromCache = true;
                                     } else {
                                         // remove it
                                         getChannelCache().remove(key.getKey());
@@ -607,6 +630,9 @@ public class ChannelRenderer
                     groupSemaphore.checkIn(groupRenderingKey);
                 }
                 this.setException(e);
+            }
+            finally {
+                this.renderTime = System.currentTimeMillis() - startTime;
             }
 
             /*
@@ -737,8 +763,19 @@ public class ChannelRenderer
         	    return null;
         	}
         }
+
+        /**
+         * @return the renderTime
+         */
+        public long getRenderTime() {
+            return renderTime;
+        }
+
+        /**
+         * @return the renderedFromCache
+         */
+        public boolean isRenderedFromCache() {
+            return renderedFromCache;
+        }
     }
-
-
-
 }

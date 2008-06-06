@@ -28,8 +28,14 @@ import org.apache.pluto.descriptors.portlet.PortletDD;
 import org.jasig.portal.ChannelCacheKey;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ChannelStaticData;
+import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalEvent;
+import org.jasig.portal.UserProfile;
+import org.jasig.portal.events.support.ChannelTargetedInLayoutPortalEvent;
+import org.jasig.portal.layout.IUserLayoutManager;
+import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
+import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletEntity;
@@ -46,7 +52,11 @@ import org.jasig.portal.portlet.url.RequestType;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.url.processing.RequestParameterProcessingIncompleteException;
+import org.jasig.portal.user.IUserInstance;
+import org.jasig.portal.user.IUserInstanceManager;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ApplicationEventPublisherAware;
 
 /**
  * Implementation of ISpringPortletChannel that delegates rendering a portlet to the injected {@link PortletContainer}.
@@ -56,7 +66,7 @@ import org.springframework.beans.factory.annotation.Required;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class SpringPortletChannelImpl implements ISpringPortletChannel {
+public class SpringPortletChannelImpl implements ISpringPortletChannel, ApplicationEventPublisherAware {
     protected static final String PORTLET_WINDOW_ID_PARAM = SpringPortletChannelImpl.class.getName() + ".portletWindowId";
     
     protected final Log logger = LogFactory.getLog(this.getClass());
@@ -68,6 +78,8 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
     private PortletContainer portletContainer;
     private IPortletRequestParameterManager portletRequestParameterManager;
     private IPortletSessionActionManager portletSessionActionManager;
+    private IUserInstanceManager userInstanceManager;
+    private ApplicationEventPublisher applicationEventPublisher;
     
     
     /**
@@ -172,6 +184,27 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
         this.portletSessionActionManager = portletSessionActionManager;
     }
 
+    /**
+     * @return the userInstanceManager
+     */
+    public IUserInstanceManager getUserInstanceManager() {
+        return userInstanceManager;
+    }
+    /**
+     * @param userInstanceManager the userInstanceManager to set
+     */
+    @Required
+    public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
+        Validate.notNull(userInstanceManager);
+        this.userInstanceManager = userInstanceManager;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.springframework.context.ApplicationEventPublisherAware#setApplicationEventPublisher(org.springframework.context.ApplicationEventPublisher)
+     */
+    public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+        this.applicationEventPublisher = applicationEventPublisher;
+    }
     
     //***** Helper methods for the class *****//
     
@@ -449,6 +482,26 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
         }
         else {
             portletWindow.setRequestParameters(parameters);
+            
+            
+            //Get the person the event is for
+            final IPerson person = channelStaticData.getPerson();
+            
+            //Get the user's profile
+            final IUserInstance userInstance = this.userInstanceManager.getUserInstance(httpServletRequest);
+            final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
+            final UserProfile userProfile = preferencesManager.getCurrentProfile();
+            
+            //Get the channel description
+            final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
+            final String channelSubscribeId = channelStaticData.getChannelSubscribeId();
+            final IUserLayoutChannelDescription channelDesc = (IUserLayoutChannelDescription)userLayoutManager.getNode(channelSubscribeId);
+            
+            //Get the parent node
+            final String parentNodeId = userLayoutManager.getParentId(channelSubscribeId);
+            final IUserLayoutNodeDescription parentNode = userLayoutManager.getNode(parentNodeId);
+            
+            this.applicationEventPublisher.publishEvent(new ChannelTargetedInLayoutPortalEvent(this, person, userProfile, channelDesc, parentNode));
         }
         
         //Load the person the request is for

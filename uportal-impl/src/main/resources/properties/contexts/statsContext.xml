@@ -1,28 +1,124 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
-    <!--
-     | The parent bean is the Conditional wrapper because first we want to filter down to
-     | the events we're actually going to log.
-     +-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+    http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+    http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
 
-    <bean id="eventListener" class="org.jasig.portal.events.SimpleEventListener">
-        <property name="eventHandlers">
+    <!--
+     | This bean listens for all Spring ApplicationEvents and passes just the PortalEvents on to the configured
+     | EventHandler.  
+     +-->
+    <bean id="eventListener" class="org.jasig.portal.events.PortalEventListener">
+        <property name="eventHandler" ref="portalEventMulticaster"/>
+    </bean>
+    
+    <!-- 
+     | Takes care of passing the single portal event to multiple handlers, uses a Spring TaskExecutor
+     | to call each handler allowing for asynchronous event handling if desired.
+     +-->
+    <bean id="portalEventMulticaster" class="org.jasig.portal.events.handlers.PortalEventMulticaster">
+        <property name="taskExecutor">
+            <bean class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+                <property name="corePoolSize" value="15" />
+                <property name="maxPoolSize" value="30" />
+                <property name="threadFactory">
+                    <bean class="org.springframework.scheduling.concurrent.CustomizableThreadFactory">
+                        <property name="daemon" value="true" />
+                        <property name="threadNamePrefix" value="PortalEvent-" />
+                        <property name="threadGroup">
+                            <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+                                <property name="targetClass" value="org.jasig.portal.PortalSessionManager" />
+                                <property name="targetMethod" value="getThreadGroup" />
+                            </bean>
+                        </property>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+        <property name="handlers">
             <list>
-				<bean class="org.jasig.portal.events.handlers.LoggingEventHandler">
-					<property name="supportedEvents">
-						<list>
-							<value>org.jasig.portal.events.support.UserSessionCreatedPortalEvent</value>
-							<value>org.jasig.portal.events.support.UserSessionDestroyedPortalEvent</value>
-							<value>org.jasig.portal.events.support.UserLoggedInPortalEvent</value>
-							<value>org.jasig.portal.events.support.UserLoggedOutPortalEvent</value>
-<!--							<value>org.jasig.portal.events.support.LayoutPortalEvent</value>-->
-<!--							<value>org.jasig.portal.events.support.ChannelPortalEvent</value>-->
-<!--							<value>org.jasig.portal.events.support.ChannelLayoutPortalEvent</value>-->
-						</list>
-					</property>
-				</bean>
+                <ref bean="loggingEventHandler"/>
+                <!-- <ref bean="queueingEventHandler"/> -->
             </list>
         </property>
     </bean>
+    
+    <bean id="loggingEventHandler" class="org.jasig.portal.events.handlers.LoggingEventHandler">
+        <property name="explicitMatching" value="true" />
+        <property name="supportedEvents">
+            <set value-type="java.lang.Class">
+                <value>org.jasig.portal.events.support.UserSessionCreatedPortalEvent</value>
+                <value>org.jasig.portal.events.support.UserSessionDestroyedPortalEvent</value>
+                <value>org.jasig.portal.events.support.UserLoggedInPortalEvent</value>
+                <value>org.jasig.portal.events.support.UserLoggedOutPortalEvent</value>
+            </set>
+        </property>
+    </bean>
+    
+    <!--
+     | To enable database stats logging uncomment the block below and the reference to the 'queueingEventHandler' in the
+     | 'portalEventMulticaster' bean above.
+     | 
+     | Be sure to update all occurances of - - by removing the space to enable those comments.
+     |
+     | Also in schedulerContext.xml the statsQueueFlushingTask bean needs to be uncommented along with the reference
+     | to it in the timerFactory at the top of the file.
+     |
+     | If you want to monitor the corresponding Hibernate SessionFactory via JMX uncomment the 'portalStatsHibernateStatisticsMBean'
+     | bean in jmxContext.xml
+     +-->
+    <!-- 
+    <!- - Queueing handler used to reduce database IO - ->
+    <bean id="queueingEventHandler" class="org.jasig.portal.events.handlers.QueueingEventHandler">
+        <property name="supportGuest" value="false" />
+        <property name="batchingEventHandler" ref="portalEventStore" />
+    </bean>
+    
+    <bean id="portalEventStore" class="org.jasig.portal.events.handlers.db.JpaPortalEventStore" />
+
+    <!- - Stats specific JPA peristence configurtion below - -> 
+    <aop:config>
+        <aop:pointcut id="statsJpaDaoExecution" 
+            expression="execution(* org.jasig.portal.events.handlers.db.*Jpa*.*(..))"/>
+                
+        <aop:pointcut id="statsDaoExecution" 
+            expression="execution(* org.jasig.portal.events.handlers.db.*Jpa*.*(..))"/>
+        
+        <aop:advisor advice-ref="statsTransactionAdvice" pointcut-ref="statsJpaDaoExecution"/>
+            
+        <aop:aspect ref="threadContextClassLoaderAspect">
+            <aop:around pointcut-ref="statsJpaDaoExecution" method="doThreadContextClassLoaderUpdate"/>
+        </aop:aspect>
+        
+        <aop:aspect ref="sqlNextExceptionLoggerAspect">
+            <aop:after-throwing pointcut-ref="statsDaoExecution" method="logBatchUpdateExceptions" throwing="t"/>
+        </aop:aspect>
+    </aop:config>
+    
+    <bean id="statsEntityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="StatsDB" />
+        <property name="jpaVendorAdapter" ref="statsJpaVendorAdapter" />
+        <property name="persistenceUnitName" value="uPortalStatsPersistence" />
+    </bean>
+
+    <!- - Adapater that can inject a cacheProvider into the hibernate entity manager - ->
+    <bean id="statsJpaVendorAdapter" class="org.jasig.portal.spring.orm.jpa.HibernateJpaVendorAdapter">
+        <property name="databasePlatform" value="${hibernate.dialect}" />
+        <property name="cacheProvider" ref="cacheProvider" />
+    </bean>
+
+    <bean id="statsTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="statsEntityManagerFactory" />
+    </bean>
+    
+    <tx:advice id="statsTransactionAdvice" transaction-manager="statsTransactionManager">
+        <tx:attributes>
+            <tx:method name="*"/>
+        </tx:attributes>
+    </tx:advice>
+    -->
 </beans>

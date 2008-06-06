@@ -10,6 +10,7 @@
         
         <property name="hibernate.cache.use_query_cache">true</property>
         <property name="hibernate.cache.use_second_level_cache">true</property>
+        <property name="hibernate.jdbc.batch_size">25</property>
         
         <property name="hibernate.current_session_context_class">thread</property>
         

@@ -60,9 +60,12 @@
     
     <tx:annotation-driven transaction-manager="transactionManager" />
 
-    <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" lazy-init="false" />
-    
-    <bean id="rdbmPropertiesPlacholder" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" lazy-init="false">
-        <property name="location" value="classpath:/properties/rdbm.properties" />
+    <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" lazy-init="false">
+        <property name="defaultPersistenceUnitName" value="uPortalPersistence" />
     </bean>
+    
+    <!--
+     | The 'rdbmPropertiesPlacholder' from the datasourceContext will execute on beans here and does not need to be
+     | defined again
+     +-->
 </beans>

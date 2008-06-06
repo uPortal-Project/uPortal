@@ -5,6 +5,8 @@
 
 package org.jasig.portal.layout;
 
+import java.util.EventObject;
+
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 
 /**
@@ -13,8 +15,12 @@ import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
  * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  * @version 1.0
  */
-public class LayoutEvent extends java.util.EventObject {
-    protected IUserLayoutNodeDescription node;
+public class LayoutEvent extends EventObject {
+    private static final long serialVersionUID = 1L;
+
+    protected final IUserLayoutNodeDescription parentNode;
+    protected final IUserLayoutNodeDescription node;
+    
 
 
     /**
@@ -24,11 +30,21 @@ public class LayoutEvent extends java.util.EventObject {
      * @param source an <code>Object</code> that generated the event
      * @param node an <code>UserLayoutNodeDescription</code> of the node that was involved
      */
-    public LayoutEvent(Object source,IUserLayoutNodeDescription node) {
+    public LayoutEvent(Object source, IUserLayoutNodeDescription parentNode, IUserLayoutNodeDescription node) {
         super(source);
-        this.node=node;
+        this.parentNode = parentNode;
+        this.node = node;
     }
     
+    /**
+     * Obtain a description of the parent of the node involved in the event
+     * 
+     * @return the parentNode
+     */
+    public IUserLayoutNodeDescription getParentNode() {
+        return parentNode;
+    }
+
     /**
      * Obtain a description of a node involved in the event.
      *

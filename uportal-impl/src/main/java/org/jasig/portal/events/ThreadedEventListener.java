@@ -27,8 +27,9 @@ import org.jasig.portal.utils.threading.PriorityThreadFactory;
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 2.6
- *
+ * @deprecated Use {@link PortalEventListener} and {@link org.jasig.portal.events.handlers.PortalEventMulticaster}
  */
+@Deprecated
 public final class ThreadedEventListener extends AbstractEventListener {
 
 	/** Default value for initial thread size. */

@@ -14,7 +14,9 @@ import org.springframework.context.ApplicationEventPublisher;
  * publish events.
  * 
  * @version $Revision$
+ * @deprecated Use Spring managed beans and {@link org.springframework.context.ApplicationEventPublisherAware}
  */
+@Deprecated
 public final class EventPublisherLocator {
 
 	/**

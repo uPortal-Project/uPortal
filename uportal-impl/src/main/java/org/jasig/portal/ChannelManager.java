@@ -35,6 +35,7 @@ import org.jasig.portal.events.EventPublisherLocator;
 import org.jasig.portal.events.support.ChannelInstanciatedInLayoutPortalEvent;
 import org.jasig.portal.events.support.ChannelRenderedInLayoutPortalEvent;
 import org.jasig.portal.events.support.ChannelTargetedInLayoutPortalEvent;
+import org.jasig.portal.events.support.PortletActionInLayoutPortalEvent;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.jndi.IJndiManager;
 import org.jasig.portal.layout.IUserLayout;
@@ -486,15 +487,26 @@ public class ChannelManager implements LayoutEventListener {
 
             // Obtain the channel description
             IUserLayoutChannelDescription channelDesc = null;
+            IUserLayoutNodeDescription parentNode = null;
             try {
-              channelDesc = (IUserLayoutChannelDescription)userPreferencesManager.getUserLayoutManager().getNode(channelSubscribeId);
-            } catch (PortalException pe) {
-                // Just log exception
-            	log.warn(pe,pe);
+                final IUserLayoutManager userLayoutManager = userPreferencesManager.getUserLayoutManager();
+                channelDesc = (IUserLayoutChannelDescription) userLayoutManager.getNode(channelSubscribeId);
+                
+                final String parentNodeId = userLayoutManager.getParentId(channelDesc.getId());
+                parentNode = userLayoutManager.getNode(parentNodeId);
+            }
+            catch (PortalException pe) {
+                log.warn("Failed to load IUserLayoutChannelDescription and parent IUserLayoutNodeDescription for channel with subscribe id: " + channelSubscribeId, pe);
             }
 
             // Tell the StatsRecorder that this channel has rendered
-            EventPublisherLocator.getApplicationEventPublisher().publishEvent(new ChannelRenderedInLayoutPortalEvent(this, userPreferencesManager.getPerson(), userPreferencesManager.getCurrentProfile(), channelDesc));
+            final IPerson person = userPreferencesManager.getPerson();
+            final UserProfile userProfile = userPreferencesManager.getCurrentProfile();
+            final long renderTime = cr.getRenderTime();
+            final boolean renderedFromCache = cr.isRenderedFromCache();
+            
+            final ChannelRenderedInLayoutPortalEvent channelRenderedEvent = new ChannelRenderedInLayoutPortalEvent(this, person, userProfile, channelDesc, parentNode, renderTime, renderedFromCache);
+            EventPublisherLocator.getApplicationEventPublisher().publishEvent(channelRenderedEvent);
         } else {
             handleRenderingError(request, response, channelSubscribeId,contentHandler,null,renderingStatus,"unsuccessful rendering","unsuccessful rendering",false);
             return;
@@ -721,7 +733,19 @@ public class ChannelManager implements LayoutEventListener {
                 final IPerson person = userPreferencesManager.getPerson();
                 
                 final ApplicationEventPublisher applicationEventPublisher = EventPublisherLocator.getApplicationEventPublisher();
-                applicationEventPublisher.publishEvent(new ChannelInstanciatedInLayoutPortalEvent(this, person, userPreferencesManager.getCurrentProfile(), channelDescription));
+                final UserProfile currentProfile = userPreferencesManager.getCurrentProfile();
+                
+                IUserLayoutNodeDescription parentNode = null;
+                try {
+                    final IUserLayoutManager userLayoutManager = userPreferencesManager.getUserLayoutManager();
+                    
+                    final String parentNodeId = userLayoutManager.getParentId(channelDescription.getId());
+                    parentNode = userLayoutManager.getNode(parentNodeId);
+                }
+                catch (PortalException pe) {
+                    log.warn("Failed to load parent IUserLayoutNodeDescription for channel with subscribe id: " + channelDescription.getChannelPublishId(), pe);
+                }
+                applicationEventPublisher.publishEvent(new ChannelInstanciatedInLayoutPortalEvent(this, person, currentProfile, channelDescription, parentNode));
 
                 // Create and stuff the channel static data
                 final ChannelStaticData channelStaticData = new ChannelStaticData(channelDescription.getParameterMap(), userPreferencesManager.getUserLayoutManager());
@@ -798,15 +822,23 @@ public class ChannelManager implements LayoutEventListener {
         if (channelTarget != null) {
             // Obtain the channel description
             IUserLayoutChannelDescription channelDesc = null;
+            IUserLayoutNodeDescription parentNode = null;
             try {
-              channelDesc = (IUserLayoutChannelDescription)userPreferencesManager.getUserLayoutManager().getNode(channelTarget);
-            } catch (PortalException pe) {
-              // Do nothing
+                final IUserLayoutManager userLayoutManager = userPreferencesManager.getUserLayoutManager();
+                channelDesc = (IUserLayoutChannelDescription) userLayoutManager.getNode(channelTarget);
+                
+                final String parentNodeId = userLayoutManager.getParentId(channelDesc.getId());
+                parentNode = userLayoutManager.getNode(parentNodeId);
+            }
+            catch (PortalException pe) {
+                log.warn("Failed to load IUserLayoutChannelDescription and parent IUserLayoutNodeDescription for channel with subscribe id: " + channelTarget, pe);
             }
 
             // Tell StatsRecorder that a user has interacted with the channel
             final ApplicationEventPublisher applicationEventPublisher = EventPublisherLocator.getApplicationEventPublisher();
-            applicationEventPublisher.publishEvent(new ChannelTargetedInLayoutPortalEvent(this, userPreferencesManager.getPerson(), userPreferencesManager.getCurrentProfile(), channelDesc));
+            final IPerson person = userPreferencesManager.getPerson();
+            final UserProfile currentProfile = userPreferencesManager.getCurrentProfile();
+            applicationEventPublisher.publishEvent(new ChannelTargetedInLayoutPortalEvent(this, person, currentProfile, channelDesc, parentNode));
 
             
             final Map<String, Object[]> channelParameters = channelParameterManager.getChannelParameters(request, channelTarget);
@@ -829,7 +861,7 @@ public class ChannelManager implements LayoutEventListener {
                 try {
                     channel=instantiateChannel(request, response, channelTarget);
                 } catch (Throwable e) {
-					if (userPreferencesManager.getPerson().isGuest() == true)
+					if (person.isGuest() == true)
 					{
 						// We get this alot when people's sessions have timed out and they get directed
 						// to the guest page. Changed to WARN because there might be a need to note this
@@ -837,7 +869,7 @@ public class ChannelManager implements LayoutEventListener {
 
 						log.warn("unable to pass find/create an instance of a channel. Bogus Id ? ! (id='"+channelTarget+"').");
 					}else{
-						log.error("unable to pass find/create an instance of a channel. Bogus Id ? ! (id='"+channelTarget+"' uid='"+userPreferencesManager.getPerson().getID()+"').",e);
+						log.error("unable to pass find/create an instance of a channel. Bogus Id ? ! (id='"+channelTarget+"' uid='"+person.getID()+"').",e);
 					}
                     channel=replaceWithErrorChannel(request, response, channelTarget, ErrorCode.SET_STATIC_DATA_EXCEPTION, e, null, false);
                 }
@@ -1023,6 +1055,28 @@ public class ChannelManager implements LayoutEventListener {
             log.error("Action did not compplete successefully: " + renderingStatus);
             return false;
         }
+        
+        // Obtain the channel description
+        IUserLayoutChannelDescription channelDesc = null;
+        IUserLayoutNodeDescription parentNode = null;
+        try {
+            final IUserLayoutManager userLayoutManager = userPreferencesManager.getUserLayoutManager();
+            channelDesc = (IUserLayoutChannelDescription) userLayoutManager.getNode(channelSubscribeId);
+            
+            final String parentNodeId = userLayoutManager.getParentId(channelDesc.getId());
+            parentNode = userLayoutManager.getNode(parentNodeId);
+        }
+        catch (PortalException pe) {
+            log.warn("Failed to load IUserLayoutChannelDescription and parent IUserLayoutNodeDescription for channel with subscribe id: " + channelSubscribeId, pe);
+        }
+        
+        // Tell the StatsRecorder that this channel has rendered
+        final IPerson person = userPreferencesManager.getPerson();
+        final UserProfile userProfile = userPreferencesManager.getCurrentProfile();
+        final long renderTime = channelRenderer.getRenderTime();
+        
+        final PortletActionInLayoutPortalEvent portletActionEvent = new PortletActionInLayoutPortalEvent(this, person, userProfile, channel, parentNode, renderTime);
+        EventPublisherLocator.getApplicationEventPublisher().publishEvent(portletActionEvent);
         
         return true;
     }

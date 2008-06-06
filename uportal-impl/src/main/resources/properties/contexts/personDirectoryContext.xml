@@ -33,7 +33,7 @@
 
 	<!-- JDBC Person Attribute Source, using the default portal DataSource via RDBMServices -->
 	<bean id="uPortalJdbcAttributeSource" class="org.jasig.services.persondir.support.jdbc.SingleRowJdbcPersonAttributeDao">
-		<constructor-arg index="0" ref="PortalDb" />
+		<constructor-arg index="0" ref="PersonDB" />
 		<constructor-arg>
 			<list>
 				<value>username</value>

@@ -113,6 +113,16 @@
                 
                 <hbm2ddl export="true" drop="true" />
             </hibernatetool>
+                    
+            <hibernatetool destdir="${basedir}/target/hibernate">
+                <classpath refid="hibernate-tools.classpath.full" />
+                
+                <annotationconfiguration 
+                    configurationfile="${basedir}/uportal-impl/src/main/resources/properties/db/stats/hibernate.cfg.xml"
+                    propertyfile="${basedir}/uportal-impl/src/main/resources/properties/rdbm.properties" />
+                
+                <hbm2ddl export="true" drop="true" />
+            </hibernatetool>
         </uportal-impl-macro>
     </target>
 

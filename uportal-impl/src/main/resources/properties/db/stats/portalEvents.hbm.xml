@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping default-lazy="false">
+    <class name="org.jasig.portal.events.handlers.db.StatsSession" table="STATS_SESSION" mutable="false">
+        <id name="sessionId" type="long">
+            <column name="ID" />
+            <generator class="native">
+                <param name="sequence">STATS_SESSION_SEQ</param>
+                <param name="table">STATS_UNIQUE_KEY</param>
+                <param name="column">NEXT_SESSION_HI</param>
+            </generator>
+        </id>
+
+        <property name="userName" type="string" update="false">
+            <column name="USERID" length="64" />
+        </property>
+
+        <set name="groups" table="STATS_SESSION_GROUPS" cascade="all">
+            <key column="SESSION_ID" update="false" />
+            <element type="string" column="GROUPID" not-null="true" />
+        </set>
+    </class>
+    
+    <class name="org.jasig.portal.events.EventType" table="STATS_EVENT_TYPE" mutable="false">
+        <id name="id" type="long" access="field">
+            <column name="ID" />
+            <generator class="native">
+                <param name="sequence">STATS_EVENT_TYPE_SEQ</param>
+                <param name="table">STATS_UNIQUE_KEY</param>
+                <param name="column">NEXT_EVENT_TYPE_HI</param>
+            </generator>
+        </id>
+
+        <natural-id mutable="false">
+            <property name="type" type="string" access="field">
+                <column name="TYPE" length="64" not-null="true" />
+            </property>
+        </natural-id>
+
+        <property name="description" type="string" update="false" access="field">
+            <column name="DESCRIPTION" length="1024" />
+        </property>
+    </class>
+
+    <class name="org.jasig.portal.events.PortalEvent" table="STATS_EVENT" mutable="false" abstract="true">
+        <id name="id" type="long">
+            <column name="ID" />
+            <generator class="native">
+                <param name="sequence">STATS_EVENT_SEQ</param>
+                <param name="table">STATS_UNIQUE_KEY</param>
+                <param name="column">NEXT_EVENT_HI</param>
+            </generator>
+        </id>
+        
+        <discriminator formula="(SELECT ET.TYPE FROM STATS_EVENT_TYPE ET WHERE ET.ID = TYPE_ID)" />
+        
+        <many-to-one name="eventType" access="field" update="false">
+            <column name="TYPE_ID" not-null="true"/>
+        </many-to-one>
+
+        <property name="timestampAsDate" type="timestamp" update="false">
+            <column name="ACT_DATE" not-null="true" />
+        </property>
+
+        <property name="description" type="string" update="false">
+            <column name="DESCRIPTION" length="2000" />
+        </property>
+
+        <many-to-one name="statsSession" update="false">
+            <column name="SESSION_ID" not-null="true" />
+        </many-to-one>
+        
+        <subclass name="org.jasig.portal.events.support.UserLoggedInPortalEvent" discriminator-value="LOGIN" />
+        <subclass name="org.jasig.portal.events.support.UserLoggedOutPortalEvent" discriminator-value="LOGOUT" />
+        <subclass name="org.jasig.portal.events.support.UserSessionCreatedPortalEvent" discriminator-value="SESSION_CREATED" />
+        <subclass name="org.jasig.portal.events.support.UserSessionDestroyedPortalEvent" discriminator-value="SESSION_DESTROYED" />
+        
+        <subclass name="org.jasig.portal.events.support.ChannelPortalEvent" abstract="true">
+            <join table="STATS_CHANNEL">
+                <key column="EVENT_ID" update="false" />
+                
+                <property name="channelDefinitionId" type="string">
+                    <column name="DEFINITION_ID" length="64" not-null="true" />
+                </property>
+            </join>
+            
+            <subclass name="org.jasig.portal.events.support.PublishedChannelDefinitionPortalEvent" discriminator-value="CHANNEL_DEFINITION_PUBLISHED" />
+            <subclass name="org.jasig.portal.events.support.ModifiedChannelDefinitionPortalEvent" discriminator-value="CHANNEL_DEFINITION_MODIFIED" />
+            <subclass name="org.jasig.portal.events.support.RemovedChannelDefinitionPortalEvent" discriminator-value="CHANNEL_DEFINITION_REMOVED" />
+        </subclass>
+        
+        <subclass name="org.jasig.portal.events.support.ChannelLayoutPortalEvent" abstract="true">
+            <join table="STATS_CHANNEL">
+                <key column="EVENT_ID" update="false" />
+                
+                <property name="channelDefinitionId" type="string">
+                    <column name="DEFINITION_ID" length="64" not-null="true" />
+                </property>
+                
+                <property name="channelSubscribeId" type="string">
+                    <column name="SUBSCRIBE_ID" length="64" />
+                </property>
+            </join>
+            
+            <join table="STATS_FOLDER">
+                <key column="EVENT_ID" update="false" />
+                
+                <property name="targetFolderId" type="string">
+                    <column name="FOLDER_ID" length="128" not-null="true" />
+                </property>      
+                          
+                <property name="profileId" type="int">
+                    <column name="PROFILE_ID" not-null="true" />
+                </property>
+            </join>
+            
+            <subclass name="org.jasig.portal.events.support.ChannelAddedToLayoutPortalEvent" discriminator-value="LAYOUT_CHANNEL_ADDED" />
+            <subclass name="org.jasig.portal.events.support.ChannelUpdatedInLayoutPortalEvent" discriminator-value="LAYOUT_CHANNEL_UPDATED" />
+            <subclass name="org.jasig.portal.events.support.ChannelRemovedFromLayoutPortalEvent" discriminator-value="LAYOUT_CHANNEL_REMOVED" />
+            <subclass name="org.jasig.portal.events.support.ChannelInstanciatedInLayoutPortalEvent" discriminator-value="CHANNEL_INSTANTIATED" />
+            <subclass name="org.jasig.portal.events.support.ChannelTargetedInLayoutPortalEvent" discriminator-value="CHANNEL_TARGETED" />
+            <subclass name="org.jasig.portal.events.support.ChannelRenderedInLayoutPortalEvent" discriminator-value="CHANNEL_RENDERED">
+                <join table="STATS_RENDER_TIME">
+                    <key column="EVENT_ID" update="false" />
+                    
+                    <property name="renderTime" type="long">
+                        <column name="TIME" not-null="true" />
+                    </property>      
+                              
+                    <property name="renderedFromCache" type="yes_no">
+                        <column name="CACHED" />
+                    </property>
+                </join>
+            </subclass>
+            <subclass name="org.jasig.portal.events.support.PortletActionInLayoutPortalEvent" discriminator-value="PORTLET_ACTION">
+                <join table="STATS_RENDER_TIME">
+                    <key column="EVENT_ID" update="false" />
+                    
+                    <property name="renderTime" type="long">
+                        <column name="TIME" not-null="true" />
+                    </property>
+                </join>
+            </subclass>
+        </subclass>
+        
+        <!--
+         | Has to be its own sub-class instead of under OwnedChannelLayoutPortalEvent because it uses an additional
+         | column in STATS_FOLDER
+         +-->
+        <subclass name="org.jasig.portal.events.support.ChannelMovedInLayoutPortalEvent" discriminator-value="LAYOUT_CHANNEL_MOVED">
+            <join table="STATS_CHANNEL">
+                <key column="EVENT_ID" update="false" />
+                
+                <property name="channelDefinitionId" type="string">
+                    <column name="DEFINITION_ID" length="64" not-null="true" />
+                </property>
+                
+                <property name="channelSubscribeId" type="string">
+                    <column name="SUBSCRIBE_ID" length="64" />
+                </property>
+            </join>
+            
+            <join table="STATS_FOLDER">
+                <key column="EVENT_ID" update="false" />
+            
+                <property name="targetFolderId" type="string">
+                    <column name="FOLDER_ID" length="128" not-null="true" />
+                </property>      
+                          
+                <property name="profileId" type="int">
+                    <column name="PROFILE_ID" not-null="true" />
+                </property>
+                
+                <property name="destinationFolderId" type="string">
+                    <column name="DEST_FOLDER_ID" length="128"/>
+                </property>      
+            </join>
+        </subclass>
+        
+        <subclass name="org.jasig.portal.events.support.LayoutPortalEvent" abstract="true">
+            <join table="STATS_FOLDER">
+                <key column="EVENT_ID" update="false" />
+            
+                <property name="folderId" type="string">
+                    <column name="FOLDER_ID" length="128" not-null="true" />
+                </property>      
+                          
+                <property name="profileId" type="int">
+                    <column name="PROFILE_ID" not-null="true" />
+                </property>
+            </join>
+            
+            <subclass name="org.jasig.portal.events.support.UserAddedFolderToLayoutPortalEvent" discriminator-value="LAYOUT_FOLDER_ADDED" />
+            <subclass name="org.jasig.portal.events.support.UserMovedFolderInLayoutPortalEvent" discriminator-value="LAYOUT_FOLDER_MOVED" />
+            <subclass name="org.jasig.portal.events.support.UserRemovedFolderFromLayoutPortalEvent" discriminator-value="LAYOUT_FOLDER_REMOVED" />
+            <subclass name="org.jasig.portal.events.support.UserUpdatedFolderInLayoutPortalEvent" discriminator-value="LAYOUT_FOLDER_UPDATED" />
+            
+            <subclass name="org.jasig.portal.events.support.PageRenderTimePortalEvent" discriminator-value="PAGE_RENDER_TIME">
+                <join table="STATS_RENDER_TIME">
+                    <key column="EVENT_ID" update="false" />
+                    
+                    <property name="renderTime" type="long">
+                        <column name="TIME" not-null="true" />
+                    </property>      
+                </join>
+            </subclass>
+        </subclass>
+    </class>
+</hibernate-mapping>

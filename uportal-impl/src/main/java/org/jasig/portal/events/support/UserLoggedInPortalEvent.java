@@ -5,6 +5,7 @@
  */
 package org.jasig.portal.events.support;
 
+import org.jasig.portal.events.EventType;
 import org.jasig.portal.events.PortalEvent;
 import org.jasig.portal.security.IPerson;
 
@@ -16,12 +17,17 @@ import org.jasig.portal.security.IPerson;
  *
  */
 public final class UserLoggedInPortalEvent extends PortalEvent {
-
-	public UserLoggedInPortalEvent(final Object source, final IPerson person) {
-		super(source, person);
+    private static final long serialVersionUID = 1L;
+    
+    public UserLoggedInPortalEvent(final Object source, final IPerson person) {
+		super(source, person, EventType.getEventType("LOGIN"));
 	}
-	
-	public String toString() {
+
+    /* (non-Javadoc)
+     * @see java.util.EventObject#toString()
+     */
+    @Override
+    public String toString() {
 		return getDisplayName() + " logged in successfully at " + getTimestampAsDate();
 	}
 }

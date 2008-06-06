@@ -85,5 +85,21 @@
     <cache name="org.hibernate.cache.StandardQueryCache"
         eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" />
+        
+    
+    <!-- Portal Stats Hibernate Caches -->
+    
+    <cache name="PortalStats.org.jasig.portal.events.EventType"
+        eternal="false" maxElementsInMemory="200" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" />
+
+
+    <cache name="PortalStats.org.hibernate.cache.UpdateTimestampsCache"
+        eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" />
+
+    <cache name="PortalStats.org.hibernate.cache.StandardQueryCache"
+        eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" />
 
 </ehcache>

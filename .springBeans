@@ -24,6 +24,7 @@
 		<config>uportal-impl/src/main/resources/properties/contexts/schedulerContext.xml</config>
 		<config>uportal-impl/src/main/resources/properties/contexts/importExportContext.xml</config>
 		<config>uportal-impl/src/main/resources/properties/contexts/securityContext.xml</config>
+		<config>uportal-impl/src/test/resources/jpaStatsPerformanceContext.xml</config>
 	</configs>
 	<configSets>
 		<configSet>
@@ -39,6 +40,14 @@
 			<allowBeanDefinitionOverriding>true</allowBeanDefinitionOverriding>
 			<incomplete>false</incomplete>
 			<configs>
+			</configs>
+		</configSet>
+		<configSet>
+			<name><![CDATA[JpaStatsPerformance]]></name>
+			<allowBeanDefinitionOverriding>true</allowBeanDefinitionOverriding>
+			<incomplete>false</incomplete>
+			<configs>
+				<config>uportal-impl/src/test/resources/jpaStatsPerformanceContext.xml</config>
 			</configs>
 		</configSet>
 		<configSet>

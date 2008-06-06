@@ -5,6 +5,7 @@
  */
 package org.jasig.portal.events.support;
 
+import org.jasig.portal.events.EventType;
 import org.jasig.portal.events.PortalEvent;
 import org.jasig.portal.security.IPerson;
 
@@ -16,11 +17,16 @@ import org.jasig.portal.security.IPerson;
  *
  */
 public final class UserSessionCreatedPortalEvent extends PortalEvent {
-
+    private static final long serialVersionUID = 1L;
+    
 	public UserSessionCreatedPortalEvent(final Object source, final IPerson person) {
-		super(source, person);
+		super(source, person, EventType.getEventType("SESSION_CREATED"));
 	}
-	
+
+    /* (non-Javadoc)
+     * @see java.util.EventObject#toString()
+     */
+	@Override
 	public String toString() {
 		return "Session created for " + getDisplayName() + " at " + getTimestampAsDate(); 
 	}

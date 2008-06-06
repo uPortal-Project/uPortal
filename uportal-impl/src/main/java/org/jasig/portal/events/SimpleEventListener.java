@@ -12,8 +12,9 @@ package org.jasig.portal.events;
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 2.6
- * 
+ * @deprecated Use {@link PortalEventListener}
  */
+@Deprecated
 public final class SimpleEventListener extends AbstractEventListener {
 
 	protected void onApplicationEventInternal(final PortalEvent event,

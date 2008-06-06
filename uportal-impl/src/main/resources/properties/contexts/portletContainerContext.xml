@@ -156,5 +156,6 @@
         <property name="portletWindowRegistry" ref="portletWindowRegistry" />
         <property name="portletRequestParameterManager" ref="portletRequestParameterManager" />
         <property name="portletSessionActionManager" ref="portletSessionActionManager" />
+        <property name="userInstanceManager" ref="userInstanceManager" />
     </bean>
 </beans>

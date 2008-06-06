@@ -3278,6 +3278,14 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
         public int getID() {
             return this.systemUserId;
         }
+        
+        public String getUserName() {
+            return null;
+        }
+
+        public void setUserName(String userName) {
+            
+        }
 
         public void setFullName(String sFullName) {
         }

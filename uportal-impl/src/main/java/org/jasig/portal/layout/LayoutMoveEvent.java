@@ -15,7 +15,9 @@ import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
  * @version 1.0
  */
 public class LayoutMoveEvent extends LayoutEvent {
-    protected String oldParentNodeId;
+    private static final long serialVersionUID = 1L;
+
+    protected final IUserLayoutNodeDescription oldParentNode;
 
     /**
      * Construct a <code>LayoutMoveEvent</code> from a given source,
@@ -25,9 +27,19 @@ public class LayoutMoveEvent extends LayoutEvent {
      * @param node an <code>UserLayoutNodeDescription</code> of the node that was involved
      * @param oldParentNodeId a <code>String</code> value of an old parent id
      */
-    public LayoutMoveEvent(Object source,IUserLayoutNodeDescription node, String oldParentNodeId) {
-        super(source,node);
-        this.oldParentNodeId=oldParentNodeId;
+    public LayoutMoveEvent(Object source, IUserLayoutNodeDescription parentNode,  IUserLayoutNodeDescription node, IUserLayoutNodeDescription oldParentNode) {
+        super(source, parentNode, node);
+        this.oldParentNode=oldParentNode;
+    }
+    
+    /**
+     * Obtain the OLD parent node. This is the node
+     * to which a given node used to be attached.
+     * 
+     * @return the old parent node
+     */
+    public IUserLayoutNodeDescription getOldParentNode() {
+        return this.oldParentNode;
     }
     
     /**
@@ -37,7 +49,7 @@ public class LayoutMoveEvent extends LayoutEvent {
      * @return a <code>String</code> node id
      */
     public String getOldParentNodeId() {
-        return this.oldParentNodeId;
+        return this.oldParentNode.getId();
     }
 }
 

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+    http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+    http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
+    
+    
+    <!-- ********** Stats DAO ********** -->
+
+    <bean id="jpaPortalEventStore" class="org.jasig.portal.events.handlers.db.TestableJpaPortalEventStore">
+    </bean>
+
+
+    <!-- ********** JPA Beans ********** -->
+    
+    <aop:config>
+        <aop:pointcut id="jpaDaoExecution" 
+            expression="execution(* org.jasig.portal.events.handlers.db.*Jpa*.*(..))"/>
+                
+        <aop:pointcut id="daoExecution" 
+            expression="execution(* org.jasig.portal.events.handlers.db.*Jpa*.*(..))"/>
+            
+        <aop:aspect ref="threadContextClassLoaderAspect">
+            <aop:around pointcut-ref="jpaDaoExecution" method="doThreadContextClassLoaderUpdate"/>
+        </aop:aspect>
+        
+        <aop:aspect ref="sqlNextExceptionLoggerAspect">
+            <aop:after-throwing pointcut-ref="daoExecution" method="logBatchUpdateExceptions" throwing="t"/>
+        </aop:aspect>
+    </aop:config>
+    
+    <!-- Aspect to force the Thread.getContextClassLoader() to the correct loader on cross-context calls form portlets -->
+    <bean id="threadContextClassLoaderAspect" class="org.jasig.portal.portlet.dao.jpa.ThreadContextClassLoaderAspect" />
+    
+    <bean id="sqlNextExceptionLoggerAspect" class="org.jasig.portal.portlet.dao.jpa.SQLNextExceptionLoggerAspect" />
+
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
+        <property name="persistenceUnitName" value="uPortalPersistence" />
+    </bean>
+
+    <!-- Adapater that can inject a cacheProvider into the hibernate entity manager -->
+    <bean id="jpaVendorAdapter" class="org.jasig.portal.spring.orm.jpa.HibernateJpaVendorAdapter">
+        <property name="generateDdl" value="true" />
+        <property name="databasePlatform" value="${hibernate.dialect}" />
+        <property name="cacheProvider" ref="cacheProvider" />
+    </bean>
+
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory" />
+    </bean>
+    
+    <!-- Support Beans -->
+    
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.SingleConnectionDataSource">
+        <property name="driverClassName" value="${hibernate.connection.driver_class}" />
+        <property name="url" value="${hibernate.connection.url}" />
+        <property name="username" value="${hibernate.connection.username}" />
+        <property name="password" value="${hibernate.connection.password}" />
+        <property name="suppressClose" value="true" />
+        <property name="autoCommit" value="true" />
+    </bean>
+    
+    <bean id="cacheProvider" class="org.jasig.portal.utils.cache.hibernate.EhCacheProvider">
+        <property name="cacheManager" ref="cacheManager" />
+    </bean>
+
+    <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+        <property name="cacheManagerName" value="uPortal.cacheManager" />
+        <property name="configLocation" value="classpath:/properties/ehcache.xml" />
+    </bean>
+    
+    
+    <tx:annotation-driven transaction-manager="transactionManager" />
+
+    <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" lazy-init="false" />
+    
+    <bean id="rdbmPropertiesPlacholder" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location" value="classpath:/properties/dataSource.properties" />
+    </bean>
+</beans>

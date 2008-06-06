@@ -12,8 +12,9 @@ import java.util.concurrent.ThreadFactory;
  *
  * @author Scott Battaglia
  * @version $Revision$ $Date$
- *
+ * @deprecated Use {@link org.springframework.scheduling.concurrent.CustomizableThreadFactory} instead
  */
+@Deprecated
 public class PriorityThreadFactory implements ThreadFactory {
     private final int threadPriority;
     private final ThreadGroup tg;

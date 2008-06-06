@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -41,15 +42,19 @@ import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.StructureAttributesIncorporationFilter;
 import org.jasig.portal.StructureStylesheetDescription;
+import org.jasig.portal.StructureStylesheetUserPreferences;
 import org.jasig.portal.ThemeAttributesIncorporationFilter;
 import org.jasig.portal.ThemeStylesheetDescription;
 import org.jasig.portal.UPFileSpec;
 import org.jasig.portal.UserInstance;
 import org.jasig.portal.UserPreferences;
+import org.jasig.portal.UserProfile;
 import org.jasig.portal.car.CarResources;
+import org.jasig.portal.events.support.PageRenderTimePortalEvent;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.io.ChannelTitleIncorporationWiterFilter;
 import org.jasig.portal.layout.IUserLayoutManager;
+import org.jasig.portal.layout.node.IUserLayoutFolderDescription;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletWindowId;
@@ -76,6 +81,8 @@ import org.jasig.portal.utils.SAX2DuplicatingFilterImpl;
 import org.jasig.portal.utils.URLUtil;
 import org.jasig.portal.utils.XSLT;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ApplicationEventPublisherAware;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.XMLReader;
 
@@ -85,7 +92,7 @@ import org.xml.sax.XMLReader;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class StaticRenderingPipeline implements IPortalRenderingPipeline {
+public class StaticRenderingPipeline implements IPortalRenderingPipeline, ApplicationEventPublisherAware {
     // Metric counters
     private static final MovingAverage renderTimes = new MovingAverage();
     private static volatile MovingAverageSample lastRender = new MovingAverageSample();
@@ -143,6 +150,7 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline {
     
     private IPortletRequestParameterManager portletRequestParameterManager;
     private IPortletWindowRegistry portletWindowRegistry;
+    private ApplicationEventPublisher applicationEventPublisher;
     
     /**
      * @return the portletRequestParameterManager
@@ -172,6 +180,13 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline {
     public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
         Validate.notNull(portletWindowRegistry, "portletWindowRegistry can not be null");
         this.portletWindowRegistry = portletWindowRegistry;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.springframework.context.ApplicationEventPublisherAware#setApplicationEventPublisher(org.springframework.context.ApplicationEventPublisher)
+     */
+    public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+        this.applicationEventPublisher = applicationEventPublisher;
     }
     
     /* (non-Javadoc)
@@ -420,7 +435,7 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline {
                             }
                             
                             // attach rendering buffer downstream of the cached buffer
-                            ChannelRenderingBuffer crb = new ChannelRenderingBuffer((XMLReader) cachedBuffer, channelManager, ccaching, req, res);
+                            ChannelRenderingBuffer crb = new ChannelRenderingBuffer(cachedBuffer, channelManager, ccaching, req, res);
                             
                             // attach channel incorporation filter downstream of the channel rendering buffer
                             cif.setParent(crb);
@@ -650,9 +665,46 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline {
                 throw new PortalException(e);
             }
             finally {
-                lastRender = renderTimes.add(System.currentTimeMillis() - startTime);
+                final long pageRenderTime = System.currentTimeMillis() - startTime;
+                lastRender = renderTimes.add(pageRenderTime);
+                
+                //Get the user's profile
+                final UserProfile userProfile = uPreferencesManager.getCurrentProfile();
+                
+                //Find the activeTab index
+                final UserPreferences userPreferences = uPreferencesManager.getUserPreferences();
+                final StructureStylesheetUserPreferences structureStylesheetUserPreferences = userPreferences.getStructureStylesheetUserPreferences();
+                final String activeTab = structureStylesheetUserPreferences.getParameterValue("activeTab");
+                final int activeTabIndex = org.apache.commons.lang.math.NumberUtils.toInt(activeTab, 1);
+                
+                //Get the user's layout and find the targeted folder (tab)
+                final IUserLayoutManager userLayoutManager = uPreferencesManager.getUserLayoutManager();
+                final IUserLayoutFolderDescription targetedNode = this.getActiveTab(userLayoutManager, activeTabIndex);
+                
+                //Create and publish the event.
+                final PageRenderTimePortalEvent pageRenderTimePortalEvent = new PageRenderTimePortalEvent(this, person, userProfile, targetedNode, pageRenderTime);
+                this.applicationEventPublisher.publishEvent(pageRenderTimePortalEvent);
             }
         }
+    }
+
+    protected IUserLayoutFolderDescription getActiveTab(final IUserLayoutManager userLayoutManager, final int activeTabIndex) {
+        final String rootFolderId = userLayoutManager.getRootFolderId();
+        final Enumeration<String> rootsChildren = userLayoutManager.getChildIds(rootFolderId);
+        
+        int tabIndex = 0;
+        for (String topNodeId = rootsChildren.nextElement(); rootsChildren.hasMoreElements(); topNodeId = rootsChildren.nextElement()) {
+            final IUserLayoutNodeDescription topNode = userLayoutManager.getNode(topNodeId);
+            
+            if (!topNode.isHidden() && IUserLayoutNodeDescription.FOLDER == topNode.getType() && IUserLayoutFolderDescription.REGULAR_TYPE == ((IUserLayoutFolderDescription)topNode).getFolderType()) {
+                tabIndex++;
+                if (tabIndex == activeTabIndex) {
+                    return (IUserLayoutFolderDescription)topNode;
+                }
+            }
+        }
+        
+        return null;
     }
 
 

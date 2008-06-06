@@ -4,6 +4,13 @@
     <persistence-unit name="uPortalPersistence" transaction-type="RESOURCE_LOCAL">
         <properties>
             <property name="hibernate.ejb.cfgfile" value="/properties/db/hibernate.cfg.xml" />
+            <property name="hibernate.archive.autodetection" value="" />
+        </properties>
+    </persistence-unit>
+    <persistence-unit name="uPortalStatsPersistence" transaction-type="RESOURCE_LOCAL">
+        <properties>
+            <property name="hibernate.ejb.cfgfile" value="/properties/db/stats/hibernate.cfg.xml" />
+            <property name="hibernate.archive.autodetection" value="" />
         </properties>
     </persistence-unit>
 </persistence>
