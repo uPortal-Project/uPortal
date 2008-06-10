@@ -50,7 +50,7 @@
 		font-family: Arial;
 	}
 	
-	table, table tr, table td 
+	table, table th, table tr, table td 
 	{
 		border: none;
 	}
