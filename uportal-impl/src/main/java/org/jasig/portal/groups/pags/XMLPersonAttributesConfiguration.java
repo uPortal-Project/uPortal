@@ -91,7 +91,7 @@ public class XMLPersonAttributesConfiguration
                               String nodeName = parameter.getNodeName();
                               if (parameter.getFirstChild() != null &&
                                   parameter.getFirstChild() instanceof Text) {
-                                     text = ((Text)parameter.getFirstChild()).getData();
+                                     text = ((Text)parameter.getFirstChild()).getData().trim();
                               }
                               if (nodeName.equals("attribute-name")) {
                                  attribute = text;
@@ -123,7 +123,7 @@ public class XMLPersonAttributesConfiguration
             Element member = (Element)node;
             member.normalize();
             if (member.getFirstChild() instanceof Text) {
-               groupDef.addMember(((Text)member.getFirstChild()).getData());
+               groupDef.addMember(((Text)member.getFirstChild()).getData().trim());
             }
          }
       }
