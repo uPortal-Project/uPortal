@@ -5,17 +5,6 @@
  | Comments in this file should be targeted to the maintenance of the build script.
  +-->
 <project name="uPortal" default="help" basedir="." xmlns:up="urn:up-util-ant" xmlns:artifact="urn:maven-artifact-ant">
-    <fail message="The nested macros in this build.xml do not work with '${ant.version}', the current recommended version is 1.6.5">
-        <condition>
-            <or>
-                <contains string="${ant.version}" substring="1.7.0" />
-                <contains string="${ant.version}" substring="1.6.2" />
-                <contains string="${ant.version}" substring="1.6.1" />
-                <contains string="${ant.version}" substring="1.6.0" />
-                <contains string="${ant.version}" substring="1.5." />
-            </or>
-        </condition>
-    </fail>
     <fail message="build.properties does not exist, please copy build.properties.sample and fill in your settings.">
         <condition>
             <not>
