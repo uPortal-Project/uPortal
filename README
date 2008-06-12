@@ -59,12 +59,11 @@ version of the portal is configured.
 
 Logging
 ---------------------------------------
-The /uportal-war/src/main/resources/log4j.properties Log4j configuration file
-will end up on the classpath for Commons Logging / log4j to find. You'll need
-to either change that configuration the build or to change it in
-/WEB-INF/classes/ afterwards. You can configure the logging level, where the
-file should be, or even choose a different logging approach (log via XML to a
-ChainSaw instance, say).
+The /uportal-war/src/main/webapp/WEB-INF/log4j.properties Log4j configuration
+file will end up on the classpath for Commons Logging / log4j to find. You'll
+need to either change that configuration then run deploy-war. You can configure
+the logging level, where the file should be, or even choose a different logging
+approach (log via XML to a ChainSaw instance, say).
 
 Database configuration
 --------------------------------------
