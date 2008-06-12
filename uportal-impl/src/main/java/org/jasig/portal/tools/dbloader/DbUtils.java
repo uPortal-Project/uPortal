@@ -73,19 +73,26 @@ public class DbUtils
       String genericDataTypeName)
     {
 
-
+      DatabaseMetaData dbmd;
+      String dbName, dbVersion, driverName, driverVersion;
       String localDataTypeName = null;
 
       try
       {
-        DatabaseMetaData dbmd = config.getConnection().getMetaData();
-        String dbName = dbmd.getDatabaseProductName();
-        String dbVersion = dbmd.getDatabaseProductVersion();
-        String driverName = dbmd.getDriverName();
-        String driverVersion = dbmd.getDriverVersion();
+        dbmd = config.getConnection().getMetaData();
+        dbName = dbmd.getDatabaseProductName();
+        dbVersion = dbmd.getDatabaseProductVersion();
+        driverName = dbmd.getDriverName();
+        driverVersion = dbmd.getDriverVersion();
 
         // Check for a mapping in DbLoader.xml
         localDataTypeName = config.getMappedDataTypeName(dbName, dbVersion, driverName, driverVersion, genericDataTypeName);
+      }
+      catch (SQLException e) {
+          throw new RuntimeException("Failed to retrieve database information from the configured DataSource. Is the database running and is rdbm.properties correct?");
+      }
+      
+      try {
 
         // Find the type code for this generic type name
         int dataTypeCode = DbUtils.getJavaSqlType(genericDataTypeName);
