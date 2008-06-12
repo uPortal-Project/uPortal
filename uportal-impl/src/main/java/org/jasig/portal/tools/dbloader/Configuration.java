@@ -173,7 +173,7 @@ public class Configuration
                 "    <driver-name>" + driverName + "</driver-name>\n" +
                 "    <driver-version>" + driverVersion + "</driver-version>\n" +
                 "</db-type-mapping>\n" +
-                "Add this EXACT type mapping fragment to 'uportal-impl/src/main/resources/properties/db/dbloader.xml' along with any needed <type> mappings and re-run the command.\n" +
+                "Add this EXACT (minus any '[java] ' prefix if there is one) type mapping fragment to 'uportal-impl/src/main/resources/properties/db/dbloader.xml' along with any needed <type> mappings and re-run the command.\n" +
                 "For example <type> mappings look for existing <db-type-mapping> entries for the same database you are using.");
     }
 
