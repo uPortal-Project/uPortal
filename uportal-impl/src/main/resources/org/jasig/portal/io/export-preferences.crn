@@ -1,16 +1,16 @@
 <with-attribute key="Attributes.NODE" value="${newDoc(preferences)}">
     <groovy>
-        <!-- 
+        <!--
          | Values in the column CHAN_DESC_ID will follow one of the following patterns:
          |
          |  - n53
          |  - u103l1n15
          |
-         | The first is for portlets that are in your own layout (your 'PLF');  the 
+         | The first is for portlets that are in your own layout (your 'PLF');  the
          | second is for portlets that are a part of a DLM fragment.
          |
-         | The pattern '[a-zA-Z]+' splits each of these into an array of Strings that 
-         | contain only digits.  The first position of the array will be a blank and 
+         | The pattern '[a-zA-Z]+' splits each of these into an array of Strings that
+         | contain only digits.  The first position of the array will be a blank and
          | should be discarded.
          +-->
         <script>
@@ -32,106 +32,90 @@
             }
         </script>
         <subtasks>
-            <invoke-method class="org.jasig.portal.spring.PortalApplicationContextLocator" method="getApplicationContext" attribute-name="APP_CONTEXT">
-                <subtasks>
-                    <invoke-method object="${APP_CONTEXT}" method="getBean" attribute-name="portletEntityPreferenceHandler">
-                        <parameter value="portletEntityPreferenceHandler" />
-                        <subtasks>
-                            <sql-query>
-                                <sql>SELECT user_id FROM up_user WHERE user_name = ?</sql>
-                                <parameter value="${USER_NAME}" />
+            <with-attribute key="USER_ID" value="${sql(SELECT user_id FROM up_user WHERE user_name = '${USER_NAME}')}">
+                <with-attribute key="portletEntities" value="${groovy(PORTAL_CONTEXT.getBean('portletEntityPreferenceHandler').getEntityPreferences(USER_ID.intValue()))}">
+                    <for-each items="${groovy(portletEntities)}" attribute-name="portletEntity">
+                        <with-attribute key="PORTLET_DATA" value="${groovy(parseUriTokens('${groovy(portletEntity.getChannelSubscribeId())}'))}">
+                            <!--
+                             | First we need to replace PORTLET_DATA[0] with the owner
+                             | (username) of the layout to which this entity belongs.
+                             +-->
+                            <choose>
+                                <when test="${groovy(PORTLET_DATA[0] == null)}">
+                                    <!-- The owner is the current user... -->
+                                    <groovy>
+                                        <script>PORTLET_DATA[0] = '${USER_NAME}';</script>
+                                    </groovy>
+                                </when>
+                                <otherwise>
+                                    <!-- We need a DLM fragment owner... -->
+                                    <groovy>
+                                        <script>
+                                            PORTLET_DATA[0] = '${sql(SELECT user_name FROM up_user WHERE user_id = ${groovy(PORTLET_DATA[0])})}';
+                                        </script>
+                                    </groovy>
+                                </otherwise>
+                            </choose>
+                            <!--
+                             | Next we need to replace PORTLET_DATA[1] with the path
+                             | and PORTLET_DATA[2] with the fname of the entity
+                             | targeted by this preference.  For this we will do
+                             | a limited layout export.
+                             +-->
+                            <with>
+                                <attribute key="Attributes.NODE">${newDoc(structures)}</attribute>
+                                <attribute key="LAYOUT_USER_ID">${sql(SELECT user_id FROM up_user WHERE user_name = '${groovy(PORTLET_DATA[0])}')}</attribute>
                                 <subtasks>
-                                    <invoke-method object="${portletEntityPreferenceHandler}" method="getEntityPreferences" attribute-name="portletEntities">
-                                        <parameter value="${USER_ID}" />
+                                    <sql-query>
+                                        <sql>SELECT * FROM up_layout_struct WHERE user_id = ? AND layout_id = 1 AND chan_id IS NULL</sql>
+                                        <parameter value="${LAYOUT_USER_ID}" />
                                         <subtasks>
-                                            <for-each items="${groovy(portletEntities)}" attribute-name="portletEntity">
-                                                <with-attribute key="PORTLET_DATA" value="${groovy(parseUriTokens('${groovy(portletEntity.getChannelSubscribeId())}'))}">
-                                                    <!-- 
-                                                     | First we need to replace PORTLET_DATA[0] with the owner 
-                                                     | (username) of the layout to which this entity belongs.
-                                                     +-->
-                                                    <choose>
-                                                        <when test="${groovy(PORTLET_DATA[0] == null)}">
-                                                            <!-- The owner is the current user... -->
-                                                            <groovy>
-                                                                <script>PORTLET_DATA[0] = '${USER_NAME}';</script>
-                                                            </groovy>
-                                                        </when>
-                                                        <otherwise>
-                                                            <!-- We need a DLM fragment owner... -->
-                                                            <groovy>
-                                                                <script>
-                                                                    PORTLET_DATA[0] = '${sql(SELECT user_name FROM up_user WHERE user_id = ${groovy(PORTLET_DATA[0])})}';
-                                                                </script>
-                                                            </groovy>
-                                                        </otherwise>
-                                                    </choose>
-                                                    <!-- 
-                                                     | Next we need to replace PORTLET_DATA[1] with the path 
-                                                     | and PORTLET_DATA[2] with the fname of the entity 
-                                                     | targeted by this preference.  For this we will do 
-                                                     | a limited layout export. 
-                                                     +-->
-                                                    <with>
-                                                        <attribute key="Attributes.NODE">${newDoc(structures)}</attribute>
-                                                        <attribute key="LAYOUT_USER_ID">${sql(SELECT user_id FROM up_user WHERE user_name = '${groovy(PORTLET_DATA[0])}')}</attribute>
-                                                        <subtasks>
-                                                            <sql-query>
-                                                                <sql>SELECT * FROM up_layout_struct WHERE user_id = ? AND layout_id = 1 AND chan_id IS NULL</sql>
-                                                                <parameter value="${LAYOUT_USER_ID}" />
-                                                                <subtasks>
-                                                                    <append-node>
-                                                                        <folder struct-id="${req(STRUCT_ID)}"
-                                                                            name="${req(NAME)}"
-                                                                            next-struct-id="${req(NEXT_STRUCT_ID)}"
-                                                                            child-struct-id="${req(CHLD_STRUCT_ID)}"
-                                                                            type="${org.jasig.portal.io.FolderTypePhrase(${req(TYPE)})}" />
-                                                                    </append-node>
-                                                                </subtasks>
-                                                            </sql-query>
-                                                            <sql-query>
-                                                                <sql>SELECT upc.chan_fname, upls.struct_id, upls.next_struct_id, upls.hidden FROM up_channel upc, up_layout_struct upls WHERE upc.chan_id = upls.chan_id AND upls.user_id = ? AND upls.layout_id = 1</sql>
-                                                                <parameter value="${LAYOUT_USER_ID}" />
-                                                                <subtasks>
-                                                                    <append-node>
-                                                                        <channel fname="${req(CHAN_FNAME)}"
-                                                                            struct-id="${req(STRUCT_ID)}"
-                                                                            next-struct-id="${req(NEXT_STRUCT_ID)}" />
-                                                                    </append-node>
-                                                                </subtasks>
-                                                            </sql-query>
-                                                            <xslt context="${req(Attributes.ORIGIN)}" stylesheet="limited-layout.xsl">
-                                                                <with-attribute key="Attributes.NODE" value="${singleNode(//channel[@struct-id = '${groovy(PORTLET_DATA[1])}'])}">
-                                                                    <groovy>
-                                                                        <script>
-                                                                            PORTLET_DATA[1] = '${jexl(Attributes.NODE.getUniquePath())}';
-                                                                            PORTLET_DATA[2] = '${valueOf(@fname)}';
-                                                                        </script>
-                                                                    </groovy>
-                                                                </with-attribute>
-                                                            </xslt>
-                                                        </subtasks>
-                                                    </with>
-                                                    <for-each items="${groovy(portletEntity.getPortletPreferences().getPortletPreferences())}" attribute-name="portletPreference">
-                                                        <append-node>
-                                                            <entry entity="${groovy(PORTLET_DATA[0])}:${groovy(PORTLET_DATA[1])}" channel="${groovy(PORTLET_DATA[2])}" name="${groovy(portletPreference.getName())}" />
-                                                        </append-node>
-                                                        <for-each items="${groovy(Arrays.asList(portletPreference.getValues()))}" attribute-name="preferenceValue">
-                                                            <append-node parent="${singleNode(entry[position() = last()])}">
-                                                                <value>${preferenceValue}</value>
-                                                            </append-node>
-                                                        </for-each>
-                                                    </for-each>
-                                                </with-attribute>
-                                            </for-each>
+                                            <append-node>
+                                                <folder struct-id="${req(STRUCT_ID)}"
+                                                    name="${req(NAME)}"
+                                                    next-struct-id="${req(NEXT_STRUCT_ID)}"
+                                                    child-struct-id="${req(CHLD_STRUCT_ID)}"
+                                                    type="${org.jasig.portal.io.FolderTypePhrase(${req(TYPE)})}" />
+                                            </append-node>
                                         </subtasks>
-                                    </invoke-method>
+                                    </sql-query>
+                                    <sql-query>
+                                        <sql>SELECT upc.chan_fname, upls.struct_id, upls.next_struct_id, upls.hidden FROM up_channel upc, up_layout_struct upls WHERE upc.chan_id = upls.chan_id AND upls.user_id = ? AND upls.layout_id = 1</sql>
+                                        <parameter value="${LAYOUT_USER_ID}" />
+                                        <subtasks>
+                                            <append-node>
+                                                <channel fname="${req(CHAN_FNAME)}"
+                                                    struct-id="${req(STRUCT_ID)}"
+                                                    next-struct-id="${req(NEXT_STRUCT_ID)}" />
+                                            </append-node>
+                                        </subtasks>
+                                    </sql-query>
+                                    <xslt context="${req(Attributes.ORIGIN)}" stylesheet="limited-layout.xsl">
+                                        <with-attribute key="Attributes.NODE" value="${singleNode(//channel[@struct-id = '${groovy(PORTLET_DATA[1])}'])}">
+                                            <groovy>
+                                                <script>
+                                                    PORTLET_DATA[1] = '${jexl(Attributes.NODE.getUniquePath())}';
+                                                    PORTLET_DATA[2] = '${valueOf(@fname)}';
+                                                </script>
+                                            </groovy>
+                                        </with-attribute>
+                                    </xslt>
                                 </subtasks>
-                            </sql-query>
-                        </subtasks>
-                    </invoke-method>
-                </subtasks>
-            </invoke-method>
+                            </with>
+                            <for-each items="${groovy(portletEntity.getPortletPreferences().getPortletPreferences())}" attribute-name="portletPreference">
+                                <append-node>
+                                    <entry entity="${groovy(PORTLET_DATA[0])}:${groovy(PORTLET_DATA[1])}" channel="${groovy(PORTLET_DATA[2])}" name="${groovy(portletPreference.getName())}" />
+                                </append-node>
+                                <for-each items="${groovy(Arrays.asList(portletPreference.getValues()))}" attribute-name="preferenceValue">
+                                    <append-node parent="${singleNode(entry[position() = last()])}">
+                                        <value>${preferenceValue}</value>
+                                    </append-node>
+                                </for-each>
+                            </for-each>
+                        </with-attribute>
+                    </for-each>
+                </with-attribute>
+            </with-attribute>
         </subtasks>
     </groovy>
     <choose>
