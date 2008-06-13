@@ -92,17 +92,18 @@
     
      <xsl:element name="option">
        <xsl:attribute name="value"><xsl:value-of select="user_name"/></xsl:attribute>     
-     </xsl:element>
-     <xsl:value-of select="user_name"/> - <xsl:value-of select="last_name"/>, <xsl:value-of select="first_name"/>
+       <xsl:value-of select="user_name"/> - <xsl:value-of select="last_name"/>, <xsl:value-of select="first_name"/>
+  
+       <!--
+         IF YOU IMPLEMENT YOUR OWN PASSWORD HANDLER, YOU WILL WANT TO REMOVE
+         OR ALTER THE CONDITION BELOW FOR OPERATOR READABILITY
+       -->
+  	   <xsl:if test="ENCRPTD_PSWD = 'Acc.Is.Locked' or encrptd_pswd = 'Acc.Is.Locked'">
+          (inactive)
+  	   </xsl:if>
 
-     <!--
-       IF YOU IMPLEMENT YOUR OWN PASSWORD HANDLER, YOU WILL WANT TO REMOVE
-       OR ALTER THE CONDITION BELOW FOR OPERATOR READABILITY
-     -->
-	 <xsl:if test="ENCRPTD_PSWD = 'Acc.Is.Locked' or encrptd_pswd = 'Acc.Is.Locked'">
-        (inactive)
-	 </xsl:if>
-	 
+     </xsl:element>
+   
   </xsl:template>
   
 </xsl:stylesheet>
