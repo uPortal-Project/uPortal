@@ -1,10 +1,3 @@
-<sql-transaction>
-    <with-attribute key="NEXT_ID" value="${org.jasig.portal.io.SequenceGeneratorPhrase(UP_ENTITY_TYPE)}">
-        <sql-upsert>
-            <update-statement>UPDATE up_entity_type SET descriptive_name = ? WHERE entity_type_name = ?</update-statement>
-            <insert-statement>INSERT INTO up_entity_type(descriptive_name, entity_type_name, entity_type_id) VALUES(?, ?, '${req(NEXT_ID)}')</insert-statement>
-            <parameter value="${valueOf(desc-name)}"/>
-            <parameter value="${valueOf(name)}"/>
-        </sql-upsert>
-    </with-attribute>
-</sql-transaction>
+<groovy>
+    <script>org.jasig.portal.EntityTypes.addIfNecessary(${valueOf(name)}.class, '${valueOf(desc-name)}')</script>
+</groovy>
