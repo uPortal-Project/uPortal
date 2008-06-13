@@ -88,7 +88,7 @@
                                 LEFT JOIN up_user_profile upup ON upu.user_id = upup.user_id 
                                 LEFT JOIN up_ss_struct upss ON upup.structure_ss_id = upss.ss_id
                                 LEFT JOIN up_ss_theme upst ON upup.theme_ss_id = upst.ss_id
-                            WHERE upu.user_name = ? AND upup.layout_id = 1;
+                            WHERE upu.user_name = ? AND upup.layout_id = 1
                         </sql>
                         <parameter value="${req(USER_NAME)}"/>
                         <subtasks>
