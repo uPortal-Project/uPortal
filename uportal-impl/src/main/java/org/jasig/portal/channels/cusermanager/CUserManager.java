@@ -39,7 +39,7 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
 
   private IDataHandler dataHandler;
 
-  private String mode = Constants.MODEDISPLAY;
+  private String mode = Constants.MODECHOOSE;
 
   private ChannelStaticData channelStaticData;
   private ChannelRuntimeData channelRuntimeData;
@@ -139,7 +139,7 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
       String message_to_user_about_action = "";  // these always start blank
       Document doc = null;
       IPerson[] people = null;
-      mode = Constants.MODEDISPLAY;
+      mode = Constants.MODECHOOSE;
 
       // now, b4 we get going, there may have been an event to deal with
       if( channelRuntimeData.getParameter( Constants.FORMACTION ) == null && lastEvent != null ) {
@@ -294,7 +294,7 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
             }// 11
 
             default: {
-              mode = Constants.MODEDISPLAY;
+              mode = Constants.MODECHOOSE;
               channelRuntimeData.remove( Constants.UNFIELD );
             }// default
 
@@ -306,17 +306,35 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
        mode = Constants.MODEDISPLAY;  // force a read
 
      // look up the person we are supposed to display
-     if( mode.equals( Constants.MODEDISPLAY ) || mode.equals( Constants.MODEADD ))
-        people = new IPerson[] { this.dataHandler.getUser(
-          ( channelRuntimeData.getParameter( Constants.FORMCHOSEN ) == null?
-            ( channelRuntimeData.getParameter( Constants.UNFIELD ) == null?
-             (String)channelStaticData.getPerson().getAttribute( Constants.ATTRUSERNAME )
-               : channelRuntimeData.getParameter( Constants.UNFIELD ))
-                 : channelRuntimeData.getParameter( Constants.FORMCHOSEN ) )) };
+     if (mode.equals(Constants.MODEDISPLAY) || mode.equals(Constants.MODEADD)) {
+         final String userName;
+         if (channelRuntimeData.getParameter(Constants.FORMCHOSEN) == null) {
+             if (channelRuntimeData.getParameter(Constants.UNFIELD) == null) {
+//                 userName = (String) channelStaticData.getPerson().getAttribute(Constants.ATTRUSERNAME);
+                 userName = null;
+                 mode = Constants.MODECHOOSE;
+             }
+             else {
+                 userName = channelRuntimeData.getParameter(Constants.UNFIELD);
+             }
+         }
+         else {
+             userName = channelRuntimeData.getParameter(Constants.FORMCHOSEN);
+         }
+
+         if (userName != null) {
+             final IPerson user = this.dataHandler.getUser(userName);
+             people = new IPerson[] { user };
+         }
+     }
 
 
-     if( !managerMode && !mode.equals(Constants.MODEABOUT) && !mode.equals(Constants.MODEHELP) ) // always override
+     if( !managerMode && !mode.equals(Constants.MODEABOUT) && !mode.equals(Constants.MODEHELP) ) {// always override
        mode = Constants.MODEPWDCHNG;
+       final String userName = (String) channelStaticData.getPerson().getAttribute(Constants.ATTRUSERNAME);
+       final IPerson user = this.dataHandler.getUser(userName);
+       people = new IPerson[] { user };
+     }
 
      if( (managerMode || ( !managerMode && personalDocument == null ))
              && !mode.equals(Constants.MODEABOUT) && !mode.equals(Constants.MODEHELP) ) {
@@ -326,6 +344,14 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
        Element outtermost = doc.createElement( "people" );
        Element person;
 
+       if (people == null) {
+           if (Constants.MODECHOOSE.equals(this.mode)) {
+               people = this.dataHandler.getAllUsers();
+           }
+           else {
+               people = new IPerson[0];
+           }
+       }
        for( int i = 0; i < people.length; i++ ) {
 
           person = doc.createElement( "person" );
@@ -395,8 +421,7 @@ public class CUserManager extends CUserManagerPermissions implements IChannel, I
    }catch( Exception e ){
       log.error(e,e);
 
-      throw new PortalException(
-                   (e.getMessage()!=null?e.getMessage():e.toString()));
+      throw new PortalException(e);
     }// catch
   }// renderXML
 
