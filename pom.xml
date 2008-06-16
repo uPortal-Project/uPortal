@@ -101,7 +101,7 @@
         
         <!-- Portlet WAR Dependency Version Properties -->
         <BookmarksPortlet.version>1.0.8</BookmarksPortlet.version>
-        <FunctionalTestsPortlet.version>1.0.0</FunctionalTestsPortlet.version>
+        <FunctionalTestsPortlet.version>1.0.1</FunctionalTestsPortlet.version>
         <googleportlet.version>0.3</googleportlet.version>
         <RssPortlet.version>1.0.0</RssPortlet.version>
 

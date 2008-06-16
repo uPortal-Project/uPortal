@@ -64,6 +64,7 @@ public class UpdatePreferencesServlet extends HttpServlet {
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
+	    IUserInstanceManager userInstanceManager = null;
 	    IUserInstance ui = null;
 		IPerson per = null;
 		UserPreferencesManager upm = null;
@@ -72,7 +73,7 @@ public class UpdatePreferencesServlet extends HttpServlet {
 
 		try {
             final WebApplicationContext applicationContext = WebApplicationContextUtils.getRequiredWebApplicationContext(this.getServletContext());
-            final IUserInstanceManager userInstanceManager = (IUserInstanceManager) applicationContext.getBean("userInstanceManager", IUserInstanceManager.class);
+            userInstanceManager = (IUserInstanceManager) applicationContext.getBean("userInstanceManager", IUserInstanceManager.class);
             personManager = (IPersonManager) applicationContext.getBean("personManager", IPersonManager.class);
 
 			// Retrieve the user's UserInstance object
@@ -130,7 +131,7 @@ public class UpdatePreferencesServlet extends HttpServlet {
 
 			} else if (action.equals("addChannel")) {
 
-				addChannel(per, upm, ulm, personManager, request, response);
+				addChannel(per, upm, ulm, userInstanceManager, request, response);
 
 			} else if (action.equals("renameTab")) {
 
@@ -410,7 +411,7 @@ public class UpdatePreferencesServlet extends HttpServlet {
 	 * @throws PortalException
 	 */
 	private void addChannel(IPerson per, UserPreferencesManager upm,
-			IUserLayoutManager ulm, IPersonManager personManager, HttpServletRequest request,
+			IUserLayoutManager ulm, IUserInstanceManager userInstanceManager, HttpServletRequest request,
 			HttpServletResponse response) throws IOException, PortalException {
 
 		// gather the parameters we need to move a channel
@@ -490,7 +491,7 @@ public class UpdatePreferencesServlet extends HttpServlet {
 		// instantiate the channel in the user's layout
 		final HttpSession session = request.getSession(false);
         ChannelManager cm = new ChannelManager(upm, session);
-		cm.instantiateChannel(new PortalHttpServletRequest(request, personManager), response, channel.getId());
+		cm.instantiateChannel(new PortalHttpServletRequest(request, userInstanceManager), response, channel.getId());
 
 		// save the user layout
 		ulm.saveUserLayout();
