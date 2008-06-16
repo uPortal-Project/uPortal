@@ -170,9 +170,9 @@ public void init() throws ServletException {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse res) {
         final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
-        final IPersonManager personManager = (IPersonManager)applicationContext.getBean("personManager", IPersonManager.class);
+        final IUserInstanceManager userInstanceManager = (IUserInstanceManager) applicationContext.getBean("userInstanceManager", IUserInstanceManager.class);
         
-        final IWritableHttpServletRequest writableRequest = new PortalHttpServletRequest(request, personManager);
+        final IWritableHttpServletRequest writableRequest = new PortalHttpServletRequest(request, userInstanceManager);
         this.doGetInternal(writableRequest, res);
     }
     

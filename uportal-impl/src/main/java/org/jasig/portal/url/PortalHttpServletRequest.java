@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,9 +21,12 @@ import org.apache.commons.lang.Validate;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.services.GroupService;
+import org.jasig.portal.user.IUserInstance;
+import org.jasig.portal.user.IUserInstanceManager;
+import org.jasig.portal.utils.ArrayEnumerator;
 
 /**
  * Portal wide request wrapper. Provides portal specific information for request parameters,
@@ -39,7 +43,7 @@ public class PortalHttpServletRequest extends AbstractHttpServletRequestWrapper 
     public static final String ATTRIBUTE__HTTP_SERVLET_REQUEST = PortalHttpServletRequest.class.getName() + ".PORTAL_HTTP_SERVLET_REQUEST";
     
     
-    private final IPersonManager personManager;
+    private final IUserInstanceManager userInstanceManager;
     private final Map<String, String[]> parameterMap = new HashMap<String, String[]>();
 
     /**
@@ -47,14 +51,14 @@ public class PortalHttpServletRequest extends AbstractHttpServletRequestWrapper 
      * @param this.request Request to wrap, can not be null.
      */
     @SuppressWarnings("unchecked")
-    public PortalHttpServletRequest(HttpServletRequest request, IPersonManager personManager) {
+    public PortalHttpServletRequest(HttpServletRequest request, IUserInstanceManager userInstanceManager) {
         super(request);
-        Validate.notNull(personManager);
+        Validate.notNull(userInstanceManager);
 
         // place all parameters into the map, saves run-time merging
         this.parameterMap.putAll(request.getParameterMap());
         
-        this.personManager = personManager;
+        this.userInstanceManager = userInstanceManager;
     }
     
     @Override
@@ -172,7 +176,8 @@ public class PortalHttpServletRequest extends AbstractHttpServletRequestWrapper 
      */
     @Override
     public Principal getUserPrincipal() {
-        final IPerson person = this.personManager.getPerson(this);
+        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(this);
+        final IPerson person = userInstance.getPerson();
         if (person == null || person.isGuest()) {
             return null;
         }
@@ -202,10 +207,33 @@ public class PortalHttpServletRequest extends AbstractHttpServletRequestWrapper 
         }
 
         //Load the group information about the current user
-        final IPerson person = this.personManager.getPerson(this);
+        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(this);
+        final IPerson person = userInstance.getPerson();
         final EntityIdentifier personEntityId = person.getEntityIdentifier();
         final IGroupMember personGroupMember = GroupService.getGroupMember(personEntityId);
         
         return personGroupMember.isDeepMemberOf(groupForRole);
+    }
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.url.AbstractHttpServletRequestWrapper#getLocale()
+     */
+    @Override
+    public Locale getLocale() {
+        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(this);
+        final LocaleManager localeManager = userInstance.getLocaleManager();
+        final Locale[] locales = localeManager.getLocales();
+        return locales[0];
+    }
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.url.AbstractHttpServletRequestWrapper#getLocales()
+     */
+    @Override
+    public Enumeration<Locale> getLocales() {
+        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(this);
+        final LocaleManager localeManager = userInstance.getLocaleManager();
+        final Locale[] locales = localeManager.getLocales();
+        return new ArrayEnumerator<Locale>(locales);
     }
 }
