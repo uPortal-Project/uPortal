@@ -16,7 +16,7 @@
 
     <name>uPortal</name>
     <description>The root project definition for the uPortal project.</description>
-    <version>3.0.1</version>
+    <version>3.0.2-SNAPSHOT</version>
 
     <licenses>
         <license>
@@ -29,7 +29,7 @@
     <distributionManagement>
         <site>
             <id>developer.jasig</id>
-            <url>scp://developer.ja-sig.org/jasig/htdocs/developer/projects/uportal/3.0.1/</url>
+            <url>scp://developer.ja-sig.org/jasig/htdocs/developer/projects/uportal/3.0.2-SNAPSHOT/</url>
         </site>
     </distributionManagement>
 
@@ -116,7 +116,7 @@
         <commons-codec.version>1.3</commons-codec.version>
         <commons-dbcp.version>1.2.1</commons-dbcp.version>
         <commons-fileupload>1.2.1</commons-fileupload>
-        <commons-httpclient.version>3.0.1</commons-httpclient.version>
+        <commons-httpclient.version>3.0.2-SNAPSHOT</commons-httpclient.version>
         <commons-io.version>1.3.2</commons-io.version>
         <commons-lang.version>2.3</commons-lang.version>
         <commons-logging.version>1.1.1</commons-logging.version>
