@@ -137,12 +137,12 @@
         <servlet-class>edu.yale.its.tp.cas.proxy.ProxyTicketReceptor</servlet-class>
         <load-on-startup>4</load-on-startup>
     </servlet>
-    
+    <!-- Uncomment this servlet and the corresponding servlet-mapping if ProxyWriter is enabled in portal.properties
     <servlet>
         <servlet-name>HttpProxyServlet</servlet-name>
         <servlet-class>org.jasig.portal.HttpProxyServlet</servlet-class>
     </servlet>
-
+    -->
     <servlet>
         <servlet-name>Problems</servlet-name>
         <servlet-class>org.jasig.portal.Problems</servlet-class>
@@ -184,12 +184,12 @@
         <servlet-name>CasProxyServlet</servlet-name>
         <url-pattern>/CasProxyServlet</url-pattern>
     </servlet-mapping>
-    
+    <!-- Uncomment this servlet-mapping and the corresponding servlet if ProxyWriter is enabled in portal.properties
     <servlet-mapping>
         <servlet-name>HttpProxyServlet</servlet-name>
         <url-pattern>/servlet/ProxyServlet/*</url-pattern>
     </servlet-mapping>
-
+    -->
     <servlet-mapping>
         <servlet-name>uPortal</servlet-name>
         <url-pattern>/worker/download/*</url-pattern>

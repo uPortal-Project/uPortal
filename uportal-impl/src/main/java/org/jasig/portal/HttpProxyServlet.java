@@ -120,10 +120,14 @@ public class HttpProxyServlet extends HttpServlet {
         final Header contentType = get.getResponseHeader("content-type");
         if (log.isDebugEnabled()) 
             log.debug("httpProxyServlet examining element with content type = "+contentType);
+
         if (!contentType.getValue().startsWith("image")){
             response.setStatus(404);
             log.info("httpProxyServlet returning response 404 after receiving element with contentType ="+contentType);
-        }		response.setContentType(contentType.getValue());
+            return;
+        }		
+        
+        response.setContentType(contentType.getValue());
 
 		final ServletOutputStream out = response.getOutputStream();
 		try {
