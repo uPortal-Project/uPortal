@@ -14,7 +14,7 @@
         </column>  
         <column>
           <name>MINOR</name>
-          <value>1</value>
+          <value>0</value>
         </column>  
         <column>
           <name>MICRO</name>
