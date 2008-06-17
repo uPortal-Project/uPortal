@@ -4,65 +4,11 @@
 <!-- $Revision$ -->
 
 <!--
-  This list of services is processed by org.jasig.portal.services.ExternalServices.
-  When uPortal is started, it will attempt to fire up all the services listed here.
-
-  Each specification includes a class name, an optional description of initialization
-  method and jndi binding name.
-  External services will initialize each service (by either calling a constructor or
-  an initialization method, if such is provided). If jndi binding name is provided
-  either an instance of the specified class, or an object returned by the intialization
-  method (if such method was specified) will be bound under the portal /services jndi
-  context and distributed to the uPortal channels.
+  THIS FILE IS DEPRECATED.
+  
+  The portal's Spring ApplicationContext should be used for any service startup/shutdown management.
 -->
 
 <servicelist>
-
-  <!-- Any DOM implementation specific initialization -->
-  <!--
-  <service>
-    <name>DOMInitService</name>
-    <class>org.jasig.portal.services.dom.DOMInitService</class>
-  </service>
-  -->
-
-  <!-- An example with simple static start method (no arguments),
-       that does not get bound into the jndi tree
-  -->
-  <!--
-  <service>
-    <name>Connection Pool</name>
-    <class>com.codestudio.sql.PoolMan</class>
-    <method type="static">start</method>
-  </service>
-  -->
-
- <!-- Uncomment to assemble composite group service on portal startup. -->
-  <!--
- <service>
-    <name>Composite Group Service</name>
-    <class>org.jasig.portal.services.GroupService</class>
-    <method type="static">startUp</method>
- </service>
-  -->
-
-
-  <!-- An example of a service with complicated init mehthod
-  -->
-  <!--
-  <service>
-    <name>Some other service</name>
-    <class>edu.myschool.services.MyPortalService</class>
-    <jndi_name>edu.standard.service.Name</jndi_name>
-    <method type="static">main</method>
-    <arguments>
-      <argitem>
-        <datatype array="true">java.lang.String</datatype>
-        <value>arg1</value>
-        <value>arg2</value>
-      </argitem>
-    </arguments>
-  </service>
-  -->
 
 </servicelist>

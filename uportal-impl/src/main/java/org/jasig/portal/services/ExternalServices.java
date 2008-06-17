@@ -40,7 +40,9 @@ import org.xml.sax.helpers.XMLReaderFactory;
  *
  * @author Sridhar Venkatesh <svenkatesh@interactivebusiness.com>
  * @version $Revision$
+ * @deprecated Configure services in the Spring application context.
  */
+@Deprecated
 public class ExternalServices {
 
     private static final Log log = LogFactory.getLog(ExternalServices.class);
@@ -287,6 +289,7 @@ public class ExternalServices {
     public void startElement (String namespaceURI, String localName, String qName, Attributes atts) {
       elementName = qName;
       if (qName.equals("service")) {
+        log.warn("services.xml is DEPRECATED and will be removed in a future version. Please migrate all services to Spring application context management.");
         svcItem = new ServiceItem();
       } else if (qName.equals("method")) {
         svcItem.setMethodType(atts.getValue("type"));
