@@ -123,7 +123,10 @@ public class HttpProxyServlet extends HttpServlet {
         if (!contentType.getValue().startsWith("image")){
             response.setStatus(404);
             log.info("httpProxyServlet returning response 404 after receiving element with contentType ="+contentType);
-        }		response.setContentType(contentType.getValue());
+            // returning here is important! This prevents the servlet from proxying the non-image content.
+            return;
+        }		
+        response.setContentType(contentType.getValue());
 
 		final ServletOutputStream out = response.getOutputStream();
 		try {

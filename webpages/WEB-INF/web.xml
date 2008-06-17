@@ -66,10 +66,12 @@
     <load-on-startup>3</load-on-startup>
   </servlet>
 
+<!-- Uncomment this servlet and the corresponding servlet-mapping if ProxyWriter is enabled in portal.properties
   <servlet>
     <servlet-name>HttpProxyServlet</servlet-name>
     <servlet-class>org.jasig.portal.HttpProxyServlet</servlet-class>
   </servlet>
+  -->  
   
   <servlet>
     <servlet-name>Problems</servlet-name>
@@ -106,10 +108,13 @@
     <url-pattern>/Logout</url-pattern>
   </servlet-mapping>
 
+<!-- Uncomment this servlet-mapping and the corresponding servlet if ProxyWriter is enabled in portal.properties
   <servlet-mapping>
     <servlet-name>HttpProxyServlet</servlet-name>
     <url-pattern>/servlet/ProxyServlet/*</url-pattern>
   </servlet-mapping>
+-->
+  
 
   <servlet-mapping>
     <servlet-name>uPortal</servlet-name>
