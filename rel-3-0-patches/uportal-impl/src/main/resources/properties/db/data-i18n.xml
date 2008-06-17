@@ -1,0 +1,102 @@
+<?xml version='1.0' encoding='utf-8'?>
+<data>
+  <!-- 
+   | The commented out section bellow contains an example of how to include translations for the specified tables.
+   | These tables support multiple locales simultaneously in the portal.
+   +-->
+  <!-- 
+  <table>
+    <name>UP_CHAN_TYPE_MDATA</name>
+    <rows>
+      <row>
+        <column><name>TYPE_ID</name><value>0</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
+        <column><name>TYPE_NAME</name><value>RSS</value></column>
+        <column><name>TYPE_DESCR</name><value>Renders content provided in the popular RSS (Rich Site Summary) format</value></column>
+      </row>
+    </rows>
+  </table>
+  <table>
+    <name>UP_CHANNEL_MDATA</name>
+    <rows>
+      <row>
+        <column><name>CHAN_ID</name><value>1</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
+        <column><name>CHAN_TITLE</name><value>Daily Business Cartoon</value></column>
+        <column><name>CHAN_NAME</name><value>Daily Business Cartoon</value></column>
+        <column><name>CHAN_DESC</name><value>Daily Business Cartoon by Ted Goff, www.tedgoff.com</value></column>
+      </row>
+     </rows>
+  </table>
+  <table>
+    <name>UP_USER_PROFILE_MDATA</name>
+    <rows>
+      <row>
+        <column><name>USER_ID</name><value>0</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
+        <column><name>PROFILE_NAME</name><value>HTML browser profile</value></column>
+        <column><name>DESCRIPTION</name><value>A system profile for common web browsers</value></column>
+      </row>
+    </rows>
+  </table>
+  <table>
+    <name>UP_USER_LAYOUT_MDATA</name>
+    <rows>
+      <row>
+        <column><name>USER_ID</name><value>1</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>LOCALE</name><value>en_US</value></column>
+        <column><name>LAYOUT_TITLE</name><value>Guest layout</value></column>
+      </row>
+    </rows>
+  </table>
+
+  <table>
+    <name>UP_CHAN_TYPE_MDATA</name>
+    <rows>
+      <row>
+        <column><name>TYPE_ID</name><value>0</value></column>
+        <column><name>LOCALE</name><value>ja_JP</value></column>
+        <column><name>TYPE_NAME</name><value>RSS</value></column>
+        <column><name>TYPE_DESCR</name><value>RSS(Rich Site Summary)フォーマットで提供されるコンテンツを表示．</value></column>
+      </row>
+    </rows>
+  </table>
+  <table>
+    <name>UP_CHANNEL_MDATA</name>
+    <rows>
+      <row>
+        <column><name>CHAN_ID</name><value>1</value></column>
+        <column><name>LOCALE</name><value>ja_JP</value></column>
+        <column><name>CHAN_TITLE</name><value>日刊ビジネス漫画</value></column>
+        <column><name>CHAN_NAME</name><value>日刊ビジネス漫画</value></column>
+        <column><name>CHAN_DESC</name><value>Ted Goff の日刊ビジネス漫画(www.tedgoff.com)</value></column>
+      </row>
+     </rows>
+  </table>
+  <table>
+    <name>UP_USER_PROFILE_MDATA</name>
+    <rows>
+      <row>
+        <column><name>USER_ID</name><value>0</value></column>
+        <column><name>PROFILE_ID</name><value>1</value></column>
+        <column><name>LOCALE</name><value>ja_JP</value></column>
+        <column><name>PROFILE_NAME</name><value>HTML ブラウザプロファイル</value></column>
+        <column><name>DESCRIPTION</name><value>Web ブラウザ共通のシステムプロファイル</value></column>
+      </row>
+    </rows>
+  </table>
+  <table>
+    <name>UP_USER_LAYOUT_MDATA</name>
+    <rows>
+      <row>
+        <column><name>USER_ID</name><value>1</value></column>
+        <column><name>LAYOUT_ID</name><value>1</value></column>
+        <column><name>LOCALE</name><value>ja_JP</value></column>
+        <column><name>LAYOUT_TITLE</name><value>ゲストレイアウト</value></column>
+      </row>
+    </rows>
+  </table>
+  -->
+</data>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+    http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+    http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
+    
+    <!-- ********** Portlet DAOs ********** -->
+
+    <bean id="portletDefinitionDao" class="org.jasig.portal.portlet.dao.jpa.JpaPortletDefinitionDao">
+    </bean>
+    
+    <bean id="portletEntityDao" class="org.jasig.portal.portlet.dao.jpa.JpaPortletEntityDao">
+        <property name="portletDefinitionDao" ref="portletDefinitionDao" />
+    </bean>
+
+
+    <!-- ********** JPA Beans ********** -->
+    
+    <aop:config>
+        <aop:pointcut id="jpaDaoExecution" 
+            expression="execution(* org.jasig.portal.portlet.dao.jpa.Jpa*Dao.*(..))"/>
+                
+        <aop:pointcut id="daoExecution" 
+            expression="execution(* org.jasig.portal.portlet.dao.*.*(..))"/>
+            
+        <aop:aspect ref="threadContextClassLoaderAspect">
+            <aop:around pointcut-ref="jpaDaoExecution" method="doThreadContextClassLoaderUpdate"/>
+        </aop:aspect>
+        
+        <aop:aspect ref="sqlNextExceptionLoggerAspect">
+            <aop:after-throwing pointcut-ref="daoExecution" method="logBatchUpdateExceptions" throwing="t"/>
+        </aop:aspect>
+    </aop:config>
+    
+    <!-- Aspect to force the Thread.getContextClassLoader() to the correct loader on cross-context calls form portlets -->
+    <bean id="threadContextClassLoaderAspect" class="org.jasig.portal.portlet.dao.jpa.ThreadContextClassLoaderAspect" />
+    
+    <bean id="sqlNextExceptionLoggerAspect" class="org.jasig.portal.portlet.dao.jpa.SQLNextExceptionLoggerAspect" />
+
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="PortalDb" />
+        <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
+        <property name="persistenceUnitName" value="uPortalPersistence" />
+    </bean>
+
+    <!-- Adapater that can inject a cacheProvider into the hibernate entity manager -->
+    <bean id="jpaVendorAdapter" class="org.jasig.portal.spring.orm.jpa.HibernateJpaVendorAdapter">
+        <property name="databasePlatform" value="${hibernate.dialect}" />
+        <property name="cacheProvider" ref="cacheProvider" />
+    </bean>
+
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory" />
+    </bean>
+    
+    
+    <tx:annotation-driven transaction-manager="transactionManager" />
+
+    <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" lazy-init="false" />
+    
+    <bean id="rdbmPropertiesPlacholder" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" lazy-init="false">
+        <property name="location" value="classpath:/properties/rdbm.properties" />
+    </bean>
+</beans>

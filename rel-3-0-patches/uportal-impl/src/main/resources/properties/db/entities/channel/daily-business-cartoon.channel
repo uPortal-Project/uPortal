@@ -1,0 +1,54 @@
+
+<channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-0.crn">
+  <title>Daily Business Cartoon</title>
+  <name>Daily Business Cartoon</name>
+  <fname>daily-business-cartoon</fname>
+  <desc>Daily Business Cartoon by Ted Goff, www.tedgoff.com</desc>
+  <type>Image</type>
+  <class>org.jasig.portal.channels.CImage</class>
+  <timeout>30000</timeout>
+  <hasedit>N</hasedit>
+  <hashelp>N</hashelp>
+  <hasabout>N</hasabout>
+  <secure>N</secure>
+  <locale>en_US</locale>
+  <categories>
+    <category>CImage</category>
+    <category>Entertainment</category>
+  </categories>
+  <groups>
+    <group>Everyone</group>
+  </groups>
+  <parameters>
+    <parameter> 
+      <name>img-border</name>  
+      <value>0</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+    <parameter> 
+      <name>img-height</name>  
+      <value>300</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+    <parameter> 
+      <name>img-link</name>  
+      <value>http://www.tedgoff.com</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+    <parameter> 
+      <name>img-uri</name>  
+      <value>http://www.tedgoff.com/mb/images/today.gif</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+    <parameter> 
+      <name>img-width</name>  
+      <value>300</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+  </parameters>
+</channel-definition>

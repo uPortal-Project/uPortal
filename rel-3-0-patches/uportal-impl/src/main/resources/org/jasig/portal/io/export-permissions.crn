@@ -1,0 +1,105 @@
+<with-attribute key="COUNTER" value="${newDoc(counter)}">
+    <sql-query>
+        <sql>SELECT upp.*, upet.entity_type_name FROM up_permission upp, up_entity_type upet WHERE upp.principal_type = upet.entity_type_id AND upp.activity != 'SUBSCRIBE'</sql>
+        <subtasks>
+            <with-attribute key="Attributes.NODE" value="${newDoc(permission)}">
+                <append-node node="${attributeNode(script=classpath://org/jasig/portal/io/import-permission_v2-6.crn)}"/>
+
+                <append-node>
+                    <owner>${req(OWNER)}</owner>
+                </append-node>
+                <append-node>
+                    <principal-type>${req(ENTITY_TYPE_NAME)}</principal-type>
+                </append-node>
+
+                <!-- principal -->
+                <choose>
+                    <when test="${jexl(ENTITY_TYPE_NAME.equals('org.jasig.portal.groups.IEntityGroup'))}">
+                        <invoke-method class="org.jasig.portal.services.GroupService" method="findGroup" attribute-name="GROUP">
+                            <parameter value="${req(PRINCIPAL_KEY)}"/>
+                            <subtasks>
+                                <!-- Check for group name == null (indicates an orphaned record) -->
+                                <choose>
+                                    <when test="${jexl(GROUP.getName() == null)}">
+                                        <log level="warn">Permission principal references a deleted group;  removing orphaned reference.</log>
+                                        <append-node node="${attributeNode(cancel=true)}"/>
+                                    </when>
+                                    <otherwise>
+                                        <!-- All is well... -->
+                                        <append-node>
+                                            <principal>
+                                                <group>${jexl(GROUP.getName())}</group>
+                                            </principal>
+                                        </append-node>
+                                    </otherwise>
+                                </choose>
+                            </subtasks>
+                        </invoke-method>
+                    </when>
+                    <otherwise>
+                        <append-node>
+                            <principal>
+                                <literal>${req(PRINCIPAL_KEY)}</literal>
+                            </principal>
+                        </append-node>
+                    </otherwise>
+                </choose>
+                <!-- NB:  Needs to be enhanced to work w/ principals other than groups... -->
+
+                <append-node>
+                    <activity>${req(ACTIVITY)}</activity>
+                </append-node>
+
+                <!-- target -->
+                <invoke-method class="org.jasig.portal.services.GroupService" method="findGroup" attribute-name="GROUP">
+                    <parameter value="${req(TARGET)}"/>
+                    <subtasks>
+                        <choose>
+                            <when test="${jexl(GROUP != null)}">
+                                <!-- Check for group name == null (indicates an orphaned record) -->
+                                <choose>
+                                    <when test="${jexl(GROUP.getName() == null)}">
+                                        <log level="warn">Permission target references a deleted group;  removing orphaned reference.</log>
+                                        <append-node node="${attributeNode(cancel=true)}"/>
+                                    </when>
+                                    <otherwise>
+                                        <!-- All is well... -->
+                                        <append-node>
+                                            <target>
+                                                <group>${jexl(GROUP.getName())}</group>
+                                            </target>
+                                        </append-node>
+                                    </otherwise>
+                                </choose>
+                            </when>
+                            <otherwise>
+                                <append-node>
+                                    <target>
+                                        <literal>${req(TARGET)}</literal>
+                                    </target>
+                                </append-node>
+                            </otherwise>
+                        </choose>
+                    </subtasks>
+                </invoke-method>
+
+                <append-node>
+                    <permission-type>${req(PERMISSION_TYPE)}</permission-type>
+                </append-node>
+
+                <append-node parent="${req(COUNTER)}">
+                    <row/>
+                </append-node>
+
+                <if test="${jexl(!Attributes.NODE.valueOf('@cancel').equals('true'))}">
+                    <echo-ln>Export Permission:  PRINCIPAL=${valueOf(principal/*)}, TARGET=${valueOf(target/*)}, ACTIVITY=${valueOf(activity)}</echo-ln>
+
+                    <with-attribute key="SAFE_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${valueOf(principal/*)}__${valueOf(activity)}__${valueOf(target/*)}-${jexl(COUNTER.valueOf('count(row)'))})}">
+                        <write-document file="${req(EXPORT_DIR)}/permission/${req(SAFE_NAME)}.permission"/>
+                    </with-attribute>
+                </if>
+
+            </with-attribute>
+        </subtasks>
+    </sql-query>
+</with-attribute>

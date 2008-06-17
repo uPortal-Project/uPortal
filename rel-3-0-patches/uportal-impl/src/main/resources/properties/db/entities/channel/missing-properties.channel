@@ -1,0 +1,29 @@
+
+<channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-0.crn">
+  <title>Missing Properties</title>
+  <name>Missing Properties</name>
+  <fname>missing-properties</fname>
+  <desc>Shows any properties that the properties manager looked for, but did not find.</desc>
+  <type>Custom</type>
+  <class>org.jasig.portal.properties.CMissingProperties</class>
+  <timeout>10000</timeout>
+  <hasedit>N</hasedit>
+  <hashelp>N</hashelp>
+  <hasabout>N</hasabout>
+  <secure>N</secure>
+  <locale>en_US</locale>
+  <categories>
+    <category>Development</category>
+  </categories>
+  <groups>
+    <group>Developers</group>
+  </groups>
+  <parameters>
+    <parameter> 
+      <name>xslUri</name>  
+      <value>MissingProperties.xsl</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+  </parameters>
+</channel-definition>

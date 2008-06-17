@@ -1,0 +1,13 @@
+<with-attribute key="SS_ID" value="${sql(SELECT ss_id FROM up_ss_theme WHERE ss_name = '${req(NAME)}')}"><!-- WARNING:  might be wrong type (int not string)... -->
+    
+    <!-- Purge structure parameters... -->
+    <sql-statement sql="DELETE FROM up_ss_theme_parm WHERE ss_id = ?">
+        <parameter value="${req(SS_ID)}"/>
+    </sql-statement>
+    
+    <!-- Purge from the UP_SS_STRUCT table... -->
+    <sql-statement sql="DELETE FROM up_ss_theme WHERE ss_id = ?">
+        <parameter value="${req(SS_ID)}"/>
+    </sql-statement>
+    
+</with-attribute>

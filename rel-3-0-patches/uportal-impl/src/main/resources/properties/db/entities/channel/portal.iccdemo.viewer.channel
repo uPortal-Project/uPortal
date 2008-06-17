@@ -1,0 +1,22 @@
+
+<channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-0.crn">
+  <title>CViewer</title>
+  <name>ICC Viewer channel</name>
+  <fname>portal/iccdemo/viewer</fname>
+  <desc>Interchannel communications demo Viewer channel</desc>
+  <type>Custom</type>
+  <class>org.jasig.portal.channels.iccdemo.CViewer</class>
+  <timeout>10000</timeout>
+  <hasedit>N</hasedit>
+  <hashelp>N</hashelp>
+  <hasabout>N</hasabout>
+  <secure>N</secure>
+  <locale>en_US</locale>
+  <categories>
+    <category>Development</category>
+  </categories>
+  <groups>
+    <group>Developers</group>
+  </groups>
+  <parameters/>
+</channel-definition>

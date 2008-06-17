@@ -1,0 +1,59 @@
+# This properties file defines a system profile mapping for
+# common browsers.
+# Each properties line assignes a regular expression for the
+# user agent string to a profile id.
+#
+# Note: order in which regexs are listed is important !
+# The code will evaluate each regex from top to bottom,
+# reporting a profile mapping as soon as something matches.
+# That means, that something like Netscape's user agent
+# should be matched last, since the regex for it is more
+# general then that of IE.
+#
+# Suggestions: to optimize the matching process, describe most
+# popular browsers first
+
+# Internet Explorer 6.x
+Mozilla/4.0 \(compatible; MSIE 6.*=1
+
+# Internet Explorer 5.x
+Mozilla/4.0 \(compatible; MSIE 5.*=1
+
+# Internet Explorer 4.x
+Mozilla/4.0 \(compatible; MSIE 4.*=1
+
+# Mozilla browsers and Netscape 6
+Mozilla/5.*=1
+
+# Netscape 4.x browsers
+Mozilla/4.*=1
+
+# Opera 7.x browsers
+Opera/7.*=1
+
+# Opera 6.x browsers
+Opera/6.*=1
+
+# Opera 5.x browsers
+Opera/5.*=1
+
+# Google probing bot
+Googlebot/2.*=1
+
+# W3C HTML Validator
+W3C_Validator/1.*=1
+
+# Bobby
+Bobby/4.*=1
+
+# UP WAP browsers
+UP.Browser.*=2
+
+# Nokia WAP browsers
+Nokia.*=2
+
+# Motorola phones
+MOT-.*=2
+
+# Fail through default profile
+.*=1

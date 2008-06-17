@@ -1,0 +1,44 @@
+<with-attribute key="OUTPUT_DOCUMENT" value="${newDoc(data)}">
+
+	<!-- Clear the way at the beginning (even though we do so at the end)
+	     b/c DbUnload does some silly things if the file(s) are already there -->
+	<delete-file file="TMP-XML"/>
+
+	<!-- DbUnload requires the directory to be there beforehand -->
+	<mkdirs path="TMP-XML"/>
+
+	<!-- First unload all the data to temporary files -->
+	<for-each attribute-name="TABLE_NAME" items="${groovy(['UP_VERSIONS', 'UP_SEQUENCE', 'UP_SS_MAP', 'UP_MIME_TYPE', 'UPC_PERM_MGR', 'UP_PERSON_DIR'])}">
+		<echo-ln>Gathering data for:  ${req(TABLE_NAME)}</echo-ln>
+		<with-attribute key="DEFAULT_DATA_URL" value="${groovy(org.jasig.portal.tools.dbloader.DbLoader.class.getResource('${req(TABLE_NAME)}.default-data.xml'))}">
+			<choose>
+
+				<when test="${groovy(DEFAULT_DATA_URL != null)}">
+					<!-- Use data provided w/in the framework where present -->
+					<echo-ln>-- Using default data from :  ${DEFAULT_DATA_URL}</echo-ln>
+					<append-node parent="${req(OUTPUT_DOCUMENT)}" node="${doc(${groovy(DEFAULT_DATA_URL.toExternalForm())})}"/>
+				</when>
+
+				<otherwise>
+					<!-- Use data 'dbunloaded' where not -->
+					<echo-ln>-- Using 'dbunloaded' data</echo-ln>
+					<invoke-method class="org.jasig.portal.tools.dbloader.DbUnload" method="execute">
+						<parameter value="${req(TABLE_NAME)}"/>
+						<parameter value="TMP-XML/${req(TABLE_NAME)}.xml"/>
+					</invoke-method>
+					<with-attribute key="Attributes.NODE" value="${doc(TMP-XML/${req(TABLE_NAME)}.xml)}">
+						<append-node parent="${req(OUTPUT_DOCUMENT)}" node="${singleNode(table)}"/>
+					</with-attribute>
+				</otherwise>
+
+			</choose>
+		</with-attribute>
+	</for-each>
+
+	<write-document node="${req(OUTPUT_DOCUMENT)}" file="data.xml"/>
+
+	<!-- Clear the way at the end (even though we do so at the beginning)
+	     b/c it's more elegant when all things are working properly -->
+	<delete-file file="TMP-XML"/>
+
+</with-attribute>

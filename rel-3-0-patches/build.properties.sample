@@ -1,0 +1,41 @@
+#
+# Modify this file to suit your environment.
+# The values of these properties will
+# override the values of properties of the
+# same name in the build.xml file.
+#
+# Use forward slashes for path names even if
+# you are in a Windows environment!
+#
+
+
+#==================== File and Directory Names ========================
+
+##### Replace server.home with the location of Tomcat 5.5 on your machine #####
+# path to tomcat binaries
+server.home=@server.home@
+
+# path to tomcat servlet container (defaults to same directory as the tomcat binaries)
+server.base=${server.home}
+
+# path to webapps directory (defaults to /webapps under the tomcat path)
+server.webapps=${server.base}/webapps
+
+# If the mvn executable isn't on your path you can set the location here or set it on your path.
+#maven.home=
+
+
+######## Deployment Configuration ##########
+# The following apply to deployPortletApp, deploy-war, and deploy-ear targets
+
+# Should the deployment tools extract the WARs when copying them into the servlet container 
+extractWars=true
+
+# Should the existing webapp be removed before deploying the new webapp
+removeExisting=false
+
+# The following applies to the clean and deploy-ear targets.
+# Should the shared library location have all existing files removed when clean is run.
+# NOTE: Tomcat 5.5 and 6.0 do not include any libraries in shared/lib by default so as long as
+#       all required libraries are declared in the uportal-ear it is ok to set this to true.
+cleanShared=false

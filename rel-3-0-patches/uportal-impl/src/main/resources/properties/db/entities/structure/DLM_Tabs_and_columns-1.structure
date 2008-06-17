@@ -1,0 +1,27 @@
+
+<structure script="classpath://org/jasig/portal/io/import-structure_v2-6.crn">
+  <name>DLM Tabs and columns</name>
+  <uri>/layout/structure/columns/columns.xsl</uri>
+  <description-uri>/layout/structure/columns/columns.sdf</description-uri>
+  <description-text>Presents the DLM layout in terms of tabs and columns.</description-text>
+  <parameters>
+    <parameter> 
+      <name>activeTab</name>  
+      <default-value>1</default-value>  
+      <description>The number of the DLM tab that is initially active</description>  
+      <type>1</type> 
+    </parameter>
+    <parameter> 
+      <name>externalId</name>  
+      <default-value></default-value>  
+      <description>Identifier used to reference a tab externally, such as within a URL</description>  
+      <type>2</type> 
+    </parameter>
+    <parameter> 
+      <name>width</name>  
+      <default-value>100%</default-value>  
+      <description>Width of a DLM column</description>  
+      <type>2</type> 
+    </parameter>
+  </parameters>
+</structure>

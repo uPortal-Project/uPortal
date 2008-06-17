@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root>
+	<foo ID="bogus"/>
+	<bar ID="id1" testAttribute="testValue1"/>
+	<bar ID="id2" testAttribute="testValue2">
+		<extraneous ID="id3" testAttribute="testValueBogus"/>
+	</bar>
+	<parent ID="notDeepChild" someOtherAttribute="wombat">
+		<child ID="stillNotDeepChild">
+			<grandchild ID="almostDeepChild">
+				<greatgrandchild ID="deepChild" deepChildAttribute="deepChildValue"/>
+			</grandchild>
+		</child>
+	</parent>
+</root>

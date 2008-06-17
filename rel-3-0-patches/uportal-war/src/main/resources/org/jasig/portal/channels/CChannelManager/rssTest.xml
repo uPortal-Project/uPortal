@@ -1,0 +1,547 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manageChannels>
+  <selectChannelType>
+    <params>
+      <step>
+        <ID>1</ID>
+        <name>Channel Type</name>
+        <channelTypes>
+          <channelType ID="0">
+            <class>org.jasig.portal.channels.CGenericXSLT</class>
+            <name>RSS (Rich Site Summary)</name>
+            <description>RSS or Rich Site Summary, the most common channel
+            format, is a channel which has its content defined through
+            an XML document. Anyone may publish an RSS channel as long
+            as the specification is adhered to and the file is stored on
+            a publicly accessible web server. You will need to provide a
+            URL for the RSS file.</description>
+            <definition>CGenericXSLT/RSS/RSS.cpd</definition>
+          </channelType>
+          <channelType ID="1">
+            <class>org.jasig.portal.channels.CGenericXSLT</class>
+            <name>Simple XML Transformation</name>
+            <description>XSL renders XML to a particular style, is a channel
+            which has its content defined through an XML document.
+            Anyone may publish an XSL channel as long as the
+            specification is adhered to and the file is stored on a
+            publicly accessible web server. You will need to provide a
+            URL or Path for the XML and XSL file.</description>
+            <definition>CGenericXSLT/CGenericXSLT.cpd</definition>
+          </channelType>
+          <channelType ID="2">
+            <class>org.jasig.portal.channels.CInlineFrame</class>
+            <name>Inline Frame</name>
+            <description>The Inline Frame channel can be used to render an
+            HTML page within a frame. This channel does not work
+            correctly in browsers older than Internet Explorer 5 and
+            Netscape 6.</description>
+            <definition>CInlineFrame/CInlineFrame.cpd</definition>
+          </channelType>
+          <channelType ID="3">
+            <class>org.jasig.portal.channels.CImage</class>
+            <name>Image</name>
+            <description>Simple channel to display an image with optional
+            caption and subcaption</description>
+            <definition>CImage/CImage.cpd</definition>
+          </channelType>
+          <channelType ID="4">
+            <class>org.jasig.portal.channels.webproxy.CWebProxy</class>
+            <name>Web Proxy</name>
+            <description>Incorporate a dynamic HTML or XML application</description>
+            <definition>CWebProxy.cpd</definition>
+          </channelType>
+        </channelTypes>
+        <channel typeID="1" ID="chan89" chanID="89" class="org.jasig.portal.channels.CIMAPMail" editable="false" fname="WebMail" hasAbout="false" hasHelp="false" name="WebMail (beta)" timeout="60000">
+          <parameter name="name" value="uPortal WEB Mail 2.0 beta"/>
+          <parameter name="host" value="imap.your.domain"/>
+          <parameter name="port" value="143"/>
+          <parameter name="smtphost" value="mail.your.domain"/>
+          <parameter name="smtpport" value="25"/>
+          <parameter name="caption" value="WebMail (beta)"/>
+          <parameter name="organization" value="your organization"/>
+          <parameter name="domain" value="your.domain"/>
+          <parameter name="sentName" value="Sent"/>
+          <parameter name="trashName" value="Wastebasket"/>
+          <parameter name="folderDir" value="mail"/>
+          <parameter name="loginText" value="The WebMail channel has not been configured. Please update the channel definition for your site."/>
+        </channel>
+      </step>
+    </params>
+  </selectChannelType>
+  <selectGeneralSettings>
+    <params>
+      <step>
+        <ID>1</ID>
+        <name>General Settings</name>
+        <settings>
+          <setting>
+          </setting>
+        </settings>
+        <channel typeID="1" ID="chan89" chanID="89" class="org.jasig.portal.channels.CIMAPMail" editable="false" fname="WebMail" hasAbout="false" hasHelp="false" name="WebMail (beta)" timeout="60000">
+          <parameter name="name" value="uPortal WEB Mail 2.0 beta"/>
+          <parameter name="host" value="imap.your.domain"/>
+          <parameter name="port" value="143"/>
+          <parameter name="smtphost" value="mail.your.domain"/>
+          <parameter name="smtpport" value="25"/>
+          <parameter name="caption" value="WebMail (beta)"/>
+          <parameter name="organization" value="your organization"/>
+          <parameter name="domain" value="your.domain"/>
+          <parameter name="sentName" value="Sent"/>
+          <parameter name="trashName" value="Wastebasket"/>
+          <parameter name="folderDir" value="mail"/>
+          <parameter name="loginText" value="The WebMail channel has not been configured. Please update the channel definition for your site."/>
+        </channel>
+      </step>
+    </params>
+  </selectGeneralSettings>
+  <customSettings>
+    <params>
+      <step>
+        <ID>1</ID>
+        <name>Custom Settings</name>
+        <channel typeID="1" ID="chan89" chanID="89" class="org.jasig.portal.channels.CIMAPMail" editable="false" fname="WebMail" hasAbout="false" hasHelp="false" name="WebMail (beta)" timeout="60000">
+          <parameter name="name" value="uPortal WEB Mail 2.0 beta" override="yes"/>
+          <parameter name="host" value="imap.your.domain" override="yes"/>
+          <parameter name="port" value="143" override="yes"/>
+          <parameter name="smtphost" value="mail.your.domain" override="no"/>
+          <parameter name="smtpport" value="25" override="yes"/>
+          <parameter name="caption" value="WebMail (beta)" override="yes"/>
+          <parameter name="organization" value="your organization" override="yes"/>
+          <parameter name="domain" value="your.domain" override="no"/>
+          <parameter name="sentName" value="Sent" override="yes"/>
+          <parameter name="trashName" value="Wastebasket" override="yes"/>
+          <parameter name="folderDir" value="mail" override="no"/>
+          <parameter name="loginText" value="The WebMail channel has not been configured. Please update the channel definition for your site." override="yes"/>
+        </channel>
+      </step>
+    </params>
+  </customSettings>
+  <!--  <channelDef>
+    <description>This is a channel for rendering an image with an optional title and subtitle.</description>
+    <class>org.jasig.portal.channels.CImage</class>
+    <params>
+      <step>
+        <ID>1</ID>
+        <name>
+        </name>
+        <description>
+        </description>
+
+        <parameter modify="publish-only">
+          <name>img-uri</name>
+          <label>Image URI</label>
+          <type base="string" input="text" display="text">
+            <length>40</length>
+            <maxlength>2000</maxlength>
+          </type>
+          <example>http://www.mysite.com/image.jpg</example>
+        </parameter>
+
+        <parameter modify="publish-only">
+          <name>img-width</name>
+          <label>Image width (pixels)</label>
+          <type base="integer" input="text" display="text">
+            <length>3</length>
+            <maxlength>5</maxlength>
+          </type>
+          <example>400</example>
+        </parameter>
+
+        <parameter modify="publish-only">
+          <name>img-height</name>
+          <label>Image height (pixels)</label>
+          <type base="integer" input="text" display="text">
+            <length>3</length>
+            <maxlength>5</maxlength>
+          </type>
+          <example>400</example>
+        </parameter>
+
+        <parameter modify="publish-only">
+          <name>img-border</name>
+          <label>Image border (pixels)</label>
+          <type base="integer" input="text" display="text">
+            <length>1</length>
+            <maxlength>2</maxlength>
+          </type>
+          <example>0</example>
+        </parameter>
+
+        <parameter modify="publish-only">
+          <name>img-link</name>
+          <label>Image link</label>
+          <type base="string" input="text" display="text">
+            <length>40</length>
+            <maxlength>2000</maxlength>
+          </type>
+          <example>http://www.mysite.com</example>
+        </parameter>
+        <channel ID="chan1" chanID="1" class="org.jasig.portal.channels.CImage" editable="false" fname="" hasAbout="false" hasHelp="false" name="Daily Business Cartoon" timeout="10000">
+          <parameter name="img-uri" value="http://www.tedgoff.com/mb/images/today.gif"/>
+          <parameter name="img-width" value="300"/>
+          <parameter name="img-height" value="300"/>
+          <parameter name="img-height" value="300"/>
+          <parameter name="img-link" value="http://www.tedgoff.com"/>
+          <parameter name="img-border" value=""/>
+        </channel>
+      </step>
+
+      <step>
+        <ID>2</ID>
+        <name>Image captions</name>
+        <description>Remember, the display of image captions is stylesheet dependent
+			  and may not display on all devices.</description>
+
+        <parameter modify="publish-only">
+          <name>caption</name>
+          <label>Caption</label>
+          <type base="string" input="text" display="text">
+            <length>40</length>
+            <maxlength>2000</maxlength>
+          </type>
+          <example>My Image</example>>
+        </parameter>
+
+        <parameter modify="publish-only">
+          <name>subcaption</name>
+          <label>Sub-caption</label>
+          <type base="string" input="text" display="text">
+            <length>40</length>
+            <maxlength>2000</maxlength>
+          </type>
+          <example>Refreshes every hour</example>
+        </parameter>
+      </step>
+    </params>
+    <controls/>
+  </channelDef>
+-->
+
+  <channelDef>
+    <description>RDF Site Summary (RSS) is a lightweight multipurpose extensible metadata description and syndication format. The Resource Description Framework (RDF) integrates a variety of applications from library catalogs and world-wide directories to syndication and aggregation of news, software, and content to personal collections of music, photos, and events using XML as an interchange syntax. The RDF specifications provide a lightweight ontology system to support the exchange of knowledge on the Web.</description>
+    <class>org.jasig.portal.channels.CGenericXSLT</class>
+    <params>
+      <step>
+        <ID>1</ID>
+        <name>Provide RSS URL.</name>
+        <!-- displayed at the top of the step screen -->
+        <description/>
+        <!-- intention is for documentation but could be used for other things -->
+
+        <parameter modify="publish">
+          <name>xmlUri</name>
+          <label>RSS URL</label>
+          <type base="string" input="text" display="text">
+            <length>80</length>
+            <!-- length and maxlength for text field -->
+            <maxlength>100</maxlength>
+            <restriction type="range">
+              <!-- range could be used for error checking -->
+              <min>0</min>
+              <max>40</max>
+            </restriction>
+          </type>
+          <example>webpages/rss/stockcharts.rss</example>
+          <!-- default value for text field -->
+        </parameter>
+        <!-- Choose which RSS version from a drop down list-->
+        <parameter modify="publish">
+          <name>sslUri</name>
+          <label>RSS Version</label>
+          <type base="string" input="single-choice" display="drop-down">
+            <restriction type="enumeration">
+              <value display="0.9x">webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS/RSS-0_9x.ssl</value>
+              <value display="1.0x">webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS/RSS-1_0x.ssl</value>
+              <value display="1.1x">webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS/RSS-1_1x.ssl</value>
+              <value display="1.2x">webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS/RSS-1_2x.ssl</value>
+              <defaultValue>webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS/RSS-1_1x.ssl</defaultValue>
+            </restriction>
+          </type>
+        </parameter>
+
+        <parameter modify="publish">
+          <name>cacheTimeout</name>
+          <label>Cache timeout in seconds</label>
+          <type base="integer" input="text" display="text">
+            <length>4</length>
+            <!-- length and maxlength for text field -->
+            <maxlength>10</maxlength>
+          </type>
+          <units>seconds</units>
+          <defaultValue>900</defaultValue>
+          <!-- default value for text field -->
+        </parameter>
+      </step>
+    </params>
+    <controls/>
+  </channelDef>
+
+  <selectControls>
+    <params>
+      <step>
+        <ID>1</ID>
+        <name>Channel Controls</name>
+        <channel typeID="1" ID="chan89" chanID="89" class="org.jasig.portal.channels.CIMAPMail" editable="true" fname="WebMail" hasAbout="true" hasHelp="true" name="WebMail (beta)" timeout="60000">
+          <parameter name="name" value="uPortal WEB Mail 2.0 beta"/>
+          <parameter name="host" value="imap.your.domain"/>
+          <parameter name="port" value="143"/>
+          <parameter name="smtphost" value="mail.your.domain"/>
+          <parameter name="smtpport" value="25"/>
+          <parameter name="caption" value="WebMail (beta)"/>
+          <parameter name="organization" value="your organization"/>
+          <parameter name="domain" value="your.domain"/>
+          <parameter name="sentName" value="Sent"/>
+          <parameter name="trashName" value="Wastebasket"/>
+          <parameter name="folderDir" value="mail"/>
+          <parameter name="loginText" value="The WebMail channel has not been configured. Please update the channel definition for your site."/>
+        </channel>
+      </step>
+    </params>
+  </selectControls>
+  <selectCategory>
+    <params>
+      <step>
+        <ID>1</ID>
+        <name>Categories</name>
+        <registry ID="-1">
+          <category ID="cat0" description="Applications" name="Applications">
+            <channel ID="chan3" chanID="3" class="org.jasig.portal.channels.CBookmarks" editable="false" fname="" hasAbout="false" hasHelp="false" name="@Bookmarks" timeout="10000"/>
+            <channel ID="chan89" chanID="89" class="org.jasig.portal.channels.CIMAPMail" editable="false" fname="WebMail" hasAbout="false" hasHelp="false" name="WebMail (beta)" timeout="60000">
+              <parameter name="name" value="uPortal WEB Mail 2.0 beta"/>
+              <parameter name="host" value="imap.your.domain"/>
+              <parameter name="port" value="143"/>
+              <parameter name="smtphost" value="mail.your.domain"/>
+              <parameter name="smtpport" value="25"/>
+              <parameter name="caption" value="WebMail (beta)"/>
+              <parameter name="organization" value="your organization"/>
+              <parameter name="domain" value="your.domain"/>
+              <parameter name="sentName" value="Sent"/>
+              <parameter name="trashName" value="Wastebasket"/>
+              <parameter name="folderDir" value="mail"/>
+              <parameter name="loginText" value="The WebMail channel has not been configured. Please update the channel definition for your site."/>
+            </channel>
+          </category>
+          <category ID="cat1" description="Development" name="Development">
+            <category ID="cat2" description="uPortal-related" name="uPortal">
+              <category ID="cat3" description="Java classes implementing the IChannel interface" name="Channel Types">
+                <category ID="cat4" description="Serves as HTTP Proxy to HTML or XHTML web pages" name="CWebProxy">
+                  <channel ID="chan17" chanID="17" class="org.jasig.portal.channels.webproxy.CWebProxy" editable="true" fname="" hasAbout="true" hasHelp="true" name="Tomcat's NumGuess" timeout="10000">
+                    <parameter name="cw_xml" value="http://localhost:8080/examples/jsp/num/numguess.jsp"/>
+                    <parameter name="cw_ssl" value="webpages/stylesheets/org/jasig/portal/channels/webproxy/XHTML.ssl"/>
+                    <parameter name="cw_tidy" value="on"/>
+                    <parameter name="cw_passThrough" value="application"/>
+                    <parameter name="cw_help" value="http://www.mun.ca/cc/portal/cw/num_help.html"/>
+                    <parameter name="cw_info" value="http://www.mun.ca/cc/portal/cw/num_info.html"/>
+                    <parameter name="cw_edit" value="http://www.mun.ca/cc/portal/cw/num_edit.html"/>
+                  </channel>
+                  <channel ID="chan18" chanID="18" class="org.jasig.portal.channels.webproxy.CWebProxy" editable="true" fname="" hasAbout="true" hasHelp="true" name="Tomcat's Servlet Examples" timeout="10000">
+                    <parameter name="cw_xml" value="http://localhost:8080/examples/servlets/index.html"/>
+                    <parameter name="cw_ssl" value="webpages/stylesheets/org/jasig/portal/channels/webproxy/XHTML.ssl"/>
+                    <parameter name="cw_tidy" value="on"/>
+                    <parameter name="cw_passThrough" value="all"/>
+                    <parameter name="cw_help" value="http://www.mun.ca/cc/portal/cw/servlet_help.html"/>
+                    <parameter name="cw_info" value="http://www.mun.ca/cc/portal/cw/servlet_info.html"/>
+                    <parameter name="cw_edit" value="http://www.mun.ca/cc/portal/cw/servlet_edit.html"/>
+                  </channel>
+                </category>
+                <category ID="cat5" description="Renders a java applet" name="CApplet">
+                  <channel ID="chan9" chanID="9" class="org.jasig.portal.channels.CApplet" editable="false" fname="" hasAbout="false" hasHelp="false" name="Minesweeper" timeout="10000">
+                    <parameter name="code" value="jmapplet.class"/>
+                    <parameter name="codeBase" value="http://www.nrr.co.uk/javamine"/>
+                    <parameter name="width" value="152"/>
+                    <parameter name="height" value="195"/>
+                    <parameter name="archive" value="javamine.jar"/>
+                    <parameter name="APPLET.type" value="application/x-java-applet"/>
+                    <parameter name="APPLET.level" value="beginner"/>
+                    <parameter name="APPLET.rows" value="8"/>
+                    <parameter name="APPLET.cols" value="8"/>
+                    <parameter name="APPLET.mines" value="10"/>
+                    <parameter name="APPLET.marks" value="true"/>
+                    <parameter name="APPLET.graphics" value="true"/>
+                  </channel>
+                </category>
+                <category ID="cat6" description="Performs XSLT transformations" name="CGenericXSLT">
+                  <category ID="cat7" description="Rich Site Summary, an XML standard for content feeds" name="RSS">
+                    <channel ID="chan5" chanID="5" class="org.jasig.portal.channels.CGenericXSLT" editable="false" fname="" hasAbout="false" hasHelp="false" name="uPortal-Powered Sites" timeout="10000">
+                      <parameter name="xmlUri" value="http://www.interactivebusiness.com/publish/jasigPortalDemos.rss"/>
+                      <parameter name="sslUri" value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS/RSS-0_9x.ssl"/>
+                    </channel>
+                    <channel ID="chan6" chanID="6" class="org.jasig.portal.channels.CGenericXSLT" editable="false" fname="" hasAbout="false" hasHelp="false" name="IBS News" timeout="10000">
+                      <parameter name="xmlUri" value="http://www.interactivebusiness.com/publish/ibs.rss"/>
+                      <parameter name="sslUri" value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS/RSS-0_9x.ssl"/>
+                    </channel>
+                    <channel ID="chan7" chanID="7" class="org.jasig.portal.channels.CGenericXSLT" editable="false" fname="" hasAbout="false" hasHelp="false" name="uPortal Developers Reference" timeout="10000">
+                      <parameter name="xmlUri" value="http://www.princeton.edu/~mbarton/jasigdev.rss"/>
+                      <parameter name="sslUri" value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS/RSS-0_9x.ssl"/>
+                    </channel>
+                    <channel ID="chan11" chanID="11" class="org.jasig.portal.channels.CGenericXSLT" editable="false" fname="" hasAbout="false" hasHelp="false" name="Word of the Day" timeout="10000">
+                      <parameter name="xmlUri" value="http://www.dictionary.com/wordoftheday/wotd.rss"/>
+                      <parameter name="sslUri" value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS/RSS-0_9x.ssl"/>
+                    </channel>
+                    <channel ID="chan12" chanID="12" class="org.jasig.portal.channels.CGenericXSLT" editable="false" fname="" hasAbout="false" hasHelp="false" name="Salon.com" timeout="10000">
+                      <parameter name="xmlUri" value="http://www.salon.com/feed/RDF/salon_use.rdf"/>
+                      <parameter name="sslUri" value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS/RSS-0_9x.ssl"/>
+                    </channel>
+                    <channel ID="chan13" chanID="13" class="org.jasig.portal.channels.CGenericXSLT" editable="false" fname="" hasAbout="false" hasHelp="false" name="The Motley Fool" timeout="10000">
+                      <parameter name="xmlUri" value="http://www.fool.com/xml/foolnews_rss091.xml"/>
+                      <parameter name="sslUri" value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS/RSS-0_9x.ssl"/>
+                    </channel>
+                  </category>
+                  <channel ID="chan15" chanID="15" class="org.jasig.portal.channels.CGenericXSLT" editable="false" fname="" hasAbout="false" hasHelp="true" name="CSS Viewer" timeout="5000">
+                    <parameter name="xmlUri" value="webpages/media/org/jasig/portal/channels/CGenericXSLT/CSSViewer/cssViewer.xml"/>
+                    <parameter name="sslUri" value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/CSSViewer/CSSViewer.ssl"/>
+                  </channel>
+                </category>
+                <category ID="cat8" description="Renders an image with an optional cation and subcaption." name="CImage">
+                  <channel ID="chan1" chanID="1" class="org.jasig.portal.channels.CImage" editable="false" fname="" hasAbout="false" hasHelp="false" name="Daily Business Cartoon" timeout="10000">
+                    <parameter name="img-uri" value="http://www.tedgoff.com/mb/images/today.gif"/>
+                    <parameter name="img-width" value="300"/>
+                    <parameter name="img-height" value="300"/>
+                    <parameter name="img-height" value="300"/>
+                    <parameter name="img-link" value="http://www.tedgoff.com"/>
+                  </channel>
+                </category>
+                <category ID="cat9" description="Renders a web page inside an inline frame.  Only use for IE 5 and Netscape 6 and higher." name="CInlineFrame">
+                  <channel ID="chan8" chanID="8" class="org.jasig.portal.channels.CInlineFrame" editable="false" fname="" hasAbout="false" hasHelp="false" name="uPortal Home Page" timeout="10000">
+                    <parameter name="height" value="600"/>
+                    <parameter name="url" value="http://www.udel.edu/uPortal"/>
+                  </channel>
+                </category>
+              </category>
+              <channel ID="chan5" chanID="5" class="org.jasig.portal.channels.CGenericXSLT" editable="false" fname="" hasAbout="false" hasHelp="false" name="uPortal-Powered Sites" timeout="10000">
+                <parameter name="xmlUri" value="http://www.interactivebusiness.com/publish/jasigPortalDemos.rss"/>
+                <parameter name="sslUri" value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS/RSS-0_9x.ssl"/>
+              </channel>
+              <channel ID="chan7" chanID="7" class="org.jasig.portal.channels.CGenericXSLT" editable="false" fname="" hasAbout="false" hasHelp="false" name="uPortal Developers Reference" timeout="10000">
+                <parameter name="xmlUri" value="http://www.princeton.edu/~mbarton/jasigdev.rss"/>
+                <parameter name="sslUri" value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS/RSS-0_9x.ssl"/>
+              </channel>
+              <channel ID="chan8" chanID="8" class="org.jasig.portal.channels.CInlineFrame" editable="false" fname="" hasAbout="false" hasHelp="false" name="uPortal Home Page" timeout="10000">
+                <parameter name="height" value="600"/>
+                <parameter name="url" value="http://www.udel.edu/uPortal"/>
+              </channel>
+              <channel ID="chan15" chanID="15" class="org.jasig.portal.channels.CGenericXSLT" editable="false" fname="" hasAbout="false" hasHelp="true" name="CSS Viewer" timeout="5000">
+                <parameter name="xmlUri" value="webpages/media/org/jasig/portal/channels/CGenericXSLT/CSSViewer/cssViewer.xml"/>
+                <parameter name="sslUri" value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/CSSViewer/CSSViewer.ssl"/>
+              </channel>
+            </category>
+            <channel ID="chan16" chanID="16" class="org.jasig.portal.channels.CSnoop" editable="false" fname="" hasAbout="false" hasHelp="true" name="Snooper" timeout="5000"/>
+          </category>
+          <category ID="cat12" description="Entertainment" name="Entertainment">
+            <category ID="cat13" description="Games" name="Games">
+              <channel ID="chan9" chanID="9" class="org.jasig.portal.channels.CApplet" editable="false" fname="" hasAbout="false" hasHelp="false" name="Minesweeper" timeout="10000">
+                <parameter name="code" value="jmapplet.class"/>
+                <parameter name="codeBase" value="http://www.nrr.co.uk/javamine"/>
+                <parameter name="width" value="152"/>
+                <parameter name="height" value="195"/>
+                <parameter name="archive" value="javamine.jar"/>
+                <parameter name="APPLET.type" value="application/x-java-applet"/>
+                <parameter name="APPLET.level" value="beginner"/>
+                <parameter name="APPLET.rows" value="8"/>
+                <parameter name="APPLET.cols" value="8"/>
+                <parameter name="APPLET.mines" value="10"/>
+                <parameter name="APPLET.marks" value="true"/>
+                <parameter name="APPLET.graphics" value="true"/>
+              </channel>
+              <channel ID="chan14" chanID="14" class="org.jasig.portal.channels.CNumberGuess" editable="false" fname="" hasAbout="false" hasHelp="false" name="Number Guessing Game" timeout="10000">
+                <parameter name="minNum" value="1"/>
+                <parameter name="maxNum" override="yes" value="100"/>
+              </channel>
+            </category>
+            <channel ID="chan1" chanID="1" class="org.jasig.portal.channels.CImage" editable="false" fname="" hasAbout="false" hasHelp="false" name="Daily Business Cartoon" timeout="10000">
+              <parameter name="img-uri" value="http://www.tedgoff.com/mb/images/today.gif"/>
+              <parameter name="img-width" value="300"/>
+              <parameter name="img-height" value="300"/>
+              <parameter name="img-height" value="300"/>
+              <parameter name="img-link" value="http://www.tedgoff.com"/>
+            </channel>
+            <channel ID="chan11" chanID="11" class="org.jasig.portal.channels.CGenericXSLT" editable="false" fname="" hasAbout="false" hasHelp="false" name="Word of the Day" timeout="10000">
+              <parameter name="xmlUri" value="http://www.dictionary.com/wordoftheday/wotd.rss"/>
+              <parameter name="sslUri" value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS/RSS-0_9x.ssl"/>
+            </channel>
+          </category>
+          <category ID="cat10" description="News" name="News">
+            <category ID="cat11" description="Business or company news" name="Business">
+              <channel ID="chan6" chanID="6" class="org.jasig.portal.channels.CGenericXSLT" editable="false" fname="" hasAbout="false" hasHelp="false" name="IBS News" timeout="10000">
+                <parameter name="xmlUri" value="http://www.interactivebusiness.com/publish/ibs.rss"/>
+                <parameter name="sslUri" value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS/RSS-0_9x.ssl"/>
+              </channel>
+              <channel ID="chan13" chanID="13" class="org.jasig.portal.channels.CGenericXSLT" editable="false" fname="" hasAbout="false" hasHelp="false" name="The Motley Fool" timeout="10000">
+                <parameter name="xmlUri" value="http://www.fool.com/xml/foolnews_rss091.xml"/>
+                <parameter name="sslUri" value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS/RSS-0_9x.ssl"/>
+              </channel>
+            </category>
+            <channel ID="chan12" chanID="12" class="org.jasig.portal.channels.CGenericXSLT" editable="false" fname="" hasAbout="false" hasHelp="false" name="Salon.com" timeout="10000">
+              <parameter name="xmlUri" value="http://www.salon.com/feed/RDF/salon_use.rdf"/>
+              <parameter name="sslUri" value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS/RSS-0_9x.ssl"/>
+            </channel>
+          </category>
+          <category ID="empty" description="This is an empty category" name="emptyCatgory"/>
+        </registry>
+        <userSettings>
+          <browsingCategory>top</browsingCategory>
+          <selectedCategories>
+            <selectedCategory>cat10</selectedCategory>
+            <selectedCategory>cat2</selectedCategory>
+          </selectedCategories>
+        </userSettings>
+      </step>
+    </params>
+  </selectCategory>
+  <selectRoles>
+    <params>
+      <step>
+        <ID>1</ID>
+        <name>Roles</name>
+        <roles>
+          <role>
+            <name>Everyone</name>
+            <description>Description for Everyone</description>
+          </role>
+          <role>
+            <name>Portal Administrator</name>
+            <description>Description for Portal Administrator</description>
+          </role>
+          <role>
+            <name>Channel Publisher</name>
+            <description>Description for Channel Publisher</description>
+          </role>
+          <role>
+            <name>Channel Developer</name>
+            <description>Description for Channel Developer</description>
+          </role>
+          <role>
+            <name>Student</name>
+            <description>Description for Channel Student</description>
+          </role>
+        </roles>
+        <userSettings>
+          <selectedRoles>
+            <selectedRole>Everyone</selectedRole>
+            <selectedRole>Portal Administrator</selectedRole>
+          </selectedRoles>
+        </userSettings>
+      </step>
+    </params>
+  </selectRoles>
+  <reviewChannel>
+    <params>
+      <step>
+        <ID>1</ID>
+        <name>Review</name>
+        <channel typeID="0" ID="chan6" chanID="6" class="org.jasig.portal.channels.CGenericXSLT" editable="false" fname="" hasAbout="false" hasHelp="false" name="IBS News" timeout="10000">
+          <parameter name="xmlUri" value="http://www.interactivebusiness.com/publish/ibs.rss"/>
+          <parameter name="sslUri" value="webpages/stylesheets/org/jasig/portal/channels/CGenericXSLT/RSS/RSS-0_9x.ssl"/>
+        </channel>
+        <settings>
+          <setting>
+            <name>
+            </name>
+            <value>
+            </value>
+          </setting>
+        </settings>
+      </step>
+    </params>
+  </reviewChannel>
+</manageChannels>

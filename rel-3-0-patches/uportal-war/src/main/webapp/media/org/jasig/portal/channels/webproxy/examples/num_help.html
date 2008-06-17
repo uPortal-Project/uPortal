@@ -1,0 +1,73 @@
+<html><body bgcolor="#ffffff">
+<font size=+1><b>Numguess Help</b></font>
+
+<p>
+This version of Numguess is running (or trying to run) your local Tomcat
+numguess.jsp.  It assumes the URL is http://localhost:8080/examples/jsp/num/numguess.jsp.  Note that localhost refers to the host your uPortal instance is
+running on, not the machine your browser is on.
+
+<p>
+The channel uses CWebProxy to incorporate the numguess application.
+CWebProxy is invoked with the following parameters:
+<table>
+ <tr align=left>
+  <td><b>Name</b></td>
+  <td><b>Value</b></td>
+ </tr>
+ <tr align=left>
+  <td>cw_xml</td>
+  <td>http://localhost:8080/examples/jsp/num/numguess.jsp</td>
+ </tr>
+ <tr align=left>
+  <td>cw_ssl</td>
+  <td>webpages/stylesheets/org/jasig/portal/channels/CWebProxy/XHTML.ssl</td>
+ </tr>
+ <tr align=left>
+  <td>cw_info</td>
+  <td>examples/num_info.html</td>
+ </tr>
+ <tr align=left>
+  <td>cw_help</td>
+  <td>examples/num_help.html</td>
+ </tr>
+ <tr align=left>
+  <td>cw_edit</td>
+  <td>examples/num_edit.html</td>
+ </tr>
+ <tr align=left>
+  <td>cw_passThrough</td>
+  <td>all</td>
+ </tr>
+ <tr align=left>
+  <td>cw_tidy</td>
+  <td>on</td>
+ </tr>
+</table>
+<p>
+
+This help page is a static html page on a remote server, with the URL
+indicated by the <i>cw_help</i> parameter.  CWebProxy replaces the application
+with this URL when you click on the help button, so we need to aim you
+back to the original application when you're done with help.  This is
+done by using a special runtime parameter <b>cw_reset</b> with a value
+of <b>return</b>.  It could also be done by setting cw_xml to point back
+to the original application.
+
+<p>
+Note that if the <i>cw_xml</i>URL gets set to something that doesn't work,
+there's currently no way for CWebProxy to return to the application.
+
+<!--
+Note to authors:
+try: /examples... instead of localhost.
+need to get an rendering exception thrown if problem getting at xml for
+a button.
+-->
+
+<form action="">
+<font size=2>
+<input type=hidden name="cw_reset" value="return">
+<input type=submit value="Return to NumGuess">
+</font>
+</form>
+</body></html>

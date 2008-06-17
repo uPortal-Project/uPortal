@@ -1,0 +1,31 @@
+<with-attribute key="NAME" value="${valueOf(name)}">
+    <sql-transaction>
+        <with-attribute key="NEXT_ID" value="${org.jasig.portal.io.SequenceGeneratorPhrase(UP_SS_STRUCT)}">
+            <!-- structure -->
+            <sql-upsert>
+                <update-statement>UPDATE up_ss_struct SET ss_uri = ?, ss_description_uri = ?, ss_description_text = ? WHERE ss_name = ?</update-statement>
+                <insert-statement>INSERT INTO up_ss_struct(ss_id, ss_uri, ss_description_uri, ss_description_text, ss_name) VALUES(${req(NEXT_ID)}, ?, ?, ?, ?)</insert-statement>
+                <parameter value="${valueOf(uri)}"/>
+                <parameter value="${valueOf(description-uri)}"/>
+                <parameter value="${valueOf(description-text)}"/>
+                <parameter value="${req(NAME)}"/>
+            </sql-upsert>
+            
+            <!-- structure parameters -->
+            <with-attribute key="SS_ID" value="${sql(SELECT ss_id FROM up_ss_struct WHERE ss_name = '${req(NAME)}')}">
+                <sql-statement sql="DELETE FROM up_ss_struct_par WHERE ss_id = ?">
+                    <parameter value="${req(SS_ID)}"/>
+                </sql-statement>
+                <node-iterator xpath="parameters/parameter">
+                    <sql-statement sql="INSERT INTO up_ss_struct_par(ss_id, param_name, param_default_val, param_descript, type) values(?, ?, ?, ?, ?)">
+                        <parameter value="${req(SS_ID)}"/>
+                        <parameter value="${valueOf(name)}"/>
+                        <parameter value="${groovy('${valueOf(default-value)}'.length() > 0 ? '${valueOf(default-value)}' : null)}"/>
+                        <parameter value="${valueOf(description)}"/>
+                        <parameter value="${parseInt(${valueOf(type)})}"/>
+                    </sql-statement>
+                </node-iterator>
+            </with-attribute>
+        </with-attribute>
+    </sql-transaction>
+</with-attribute>

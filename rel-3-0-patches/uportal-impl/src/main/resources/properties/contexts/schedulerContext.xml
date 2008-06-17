@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <!-- Cache Maintenance -->
+    <bean id="timerFactory" class="org.springframework.scheduling.timer.TimerFactoryBean">
+        <property name="scheduledTimerTasks">
+            <list>
+                <ref bean="cacheMaintenanceTask" />
+            </list>
+        </property>
+    </bean>
+
+    <bean id="cacheMaintenanceTask" class="org.springframework.scheduling.timer.ScheduledTimerTask">
+        <property name="runnable">
+            <bean class="org.jasig.portal.utils.cache.EhCacheExpirationManager">
+                <property name="cacheManager" ref="cacheManager" />
+            </bean>
+        </property>
+        <!-- Run every 5 minutes -->
+        <property name="delay" value="300000" />
+        <property name="period" value="300000" />
+    </bean>
+</beans>

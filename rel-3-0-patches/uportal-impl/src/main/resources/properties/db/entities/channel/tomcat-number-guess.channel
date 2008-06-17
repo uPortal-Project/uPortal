@@ -1,0 +1,65 @@
+
+<channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-0.crn">
+  <title>Tomcat's NumGuess</title>
+  <name>Tomcat's NumGuess</name>
+  <fname>tomcat-number-guess</fname>
+  <desc>Tomcat's NumGuess</desc>
+  <type>Web Proxy</type>
+  <class>org.jasig.portal.channels.webproxy.CWebProxy</class>
+  <timeout>10000</timeout>
+  <hasedit>Y</hasedit>
+  <hashelp>Y</hashelp>
+  <hasabout>Y</hasabout>
+  <secure>N</secure>
+  <locale>en_US</locale>
+  <categories>
+    <category>uPortal</category>
+  </categories>
+  <groups>
+    <group>Developers</group>
+  </groups>
+  <parameters>
+    <parameter> 
+      <name>cw_edit</name>  
+      <value>examples/num_edit.html</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+    <parameter> 
+      <name>cw_help</name>  
+      <value>examples/num_help.html</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+    <parameter> 
+      <name>cw_info</name>  
+      <value>examples/num_info.html</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+    <parameter> 
+      <name>cw_passThrough</name>  
+      <value>application</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+    <parameter> 
+      <name>cw_ssl</name>  
+      <value>XHTML.ssl</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+    <parameter> 
+      <name>cw_tidy</name>  
+      <value>on</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+    <parameter> 
+      <name>cw_xml</name>  
+      <value>http://localhost:8080/jsp-examples/num/numguess.jsp</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+  </parameters>
+</channel-definition>

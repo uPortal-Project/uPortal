@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://ehcache.svn.sourceforge.net/viewvc/*checkout*/ehcache/branches/ehcache-1.4.0/core/src/main/config/ehcache.xsd?revision=579">
+
+    <!--
+     | Please see http://ehcache.sourceforge.net/documentation/configuration.html for detailed information on
+     | how to configurigure caches in this file
+     +-->
+
+
+    <!-- Location of persistent caches on disk -->
+    <diskStore path="java.io.tmpdir/uPortal" />
+
+    <defaultCache eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />
+
+    <!-- uPortal Framework Caches -->
+    
+    <cache name="org.jasig.portal.security.provider.AuthorizationImpl.AUTH_PRINCIPAL_CACHE"
+        eternal="false" maxElementsInMemory="150" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" />
+    
+    <cache name="org.jasig.portal.groups.CompositeEntityIdentifier.NAME_PARSE_CACHE"
+        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" />
+    
+    <cache name="org.jasig.services.persondir.USER_INFO"
+        eternal="false" maxElementsInMemory="150" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />
+        
+    <cache name="org.jasig.portal.channels.CONTENT_CACHE"
+        eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" />
+        
+        
+    <!-- uPortal IBasicEntity Caches -->
+
+    <cache name="org.jasig.portal.ChannelDefinition"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="1800" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" />
+        
+    <cache name="org.jasig.portal.groups.IEntityGroup"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="1800" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" />
+        
+    <cache name="org.jasig.portal.groups.IEntity"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="1800" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" />
+        
+    <cache name="org.jasig.portal.security.IPermissionSet"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="1800" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" />
+    
+    <!-- Hibernate Caches -->
+
+    <cache name="org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl"
+        eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LFU" />
+
+    <cache name="org.jasig.portal.portlet.dao.jpa.PortletEntityImpl"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="300" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" />
+
+    <cache name="org.jasig.portal.portlet.dao.jpa.PortletPreferencesImpl"
+        eternal="false" maxElementsInMemory="1100" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" />
+
+    <cache name="org.jasig.portal.portlet.dao.jpa.PortletPreferencesImpl.portletPreferences"
+        eternal="false" maxElementsInMemory="1100" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" />
+
+    <cache name="org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl"
+        eternal="false" maxElementsInMemory="2200" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" />
+
+    <cache name="org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl.values"
+        eternal="false" maxElementsInMemory="4400" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" />
+
+
+    <cache name="org.hibernate.cache.UpdateTimestampsCache"
+        eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" />
+
+    <cache name="org.hibernate.cache.StandardQueryCache"
+        eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" />
+
+</ehcache>

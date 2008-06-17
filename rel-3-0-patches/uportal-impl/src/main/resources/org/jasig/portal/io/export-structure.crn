@@ -1,0 +1,48 @@
+<with-attribute key="Attributes.NODE" value="${newDoc(structure)}">
+    <echo-ln>Export structure:  NAME=${req(NAME)}</echo-ln>
+    <append-node node="${attributeNode(script=classpath://org/jasig/portal/io/import-structure_v2-6.crn)}"/>
+    <with-attribute key="SS_ID" value="${sql(SELECT MAX(ss_id) FROM up_ss_struct WHERE ss_name = '${req(NAME)}')}">
+        <choose>
+            <when test="${isNull(${req(SS_ID)})}">
+                <echo-ln>WARNING:  Structure '${req(NAME)}' does not exist;  no structure file will be generated.</echo-ln>
+                <log level="warn">Structure '${req(NAME)}' does not exist;  no structure file will be generated.</log>
+            </when>
+            <otherwise>
+                <sql-query>
+                    <sql>SELECT * FROM up_ss_struct WHERE ss_id = ?</sql>
+                    <parameter value="${req(SS_ID)}"/>
+                    <subtasks>
+                        <!-- Establish basic structure of the document... -->
+                        <append-node>
+                            <struct-id>${req(SS_ID)}</struct-id>
+                            <name>${req(SS_NAME)}</name>
+                            <uri>${req(SS_URI)}</uri>
+                            <description-uri>${req(SS_DESCRIPTION_URI)}</description-uri>
+                            <description-text>${req(SS_DESCRIPTION_TEXT)}</description-text>
+                            <parameters/>
+                        </append-node>
+                    </subtasks>
+                </sql-query>
+                <!--  struct Parameters  -->
+                <sql-query>
+                    <sql>SELECT * FROM up_ss_struct_par WHERE ss_id = ?</sql>
+                    <parameter value="${req(SS_ID)}"/>
+                    <subtasks>
+                        <append-node parent="${singleNode(parameters)}">
+                            <parameter>
+                                <name>${req(PARAM_NAME)}</name>
+                                <default-value>${groovy(PARAM_DEFAULT_VAL != null ? PARAM_DEFAULT_VAL : '')}</default-value>
+                                <description>${groovy(PARAM_DESCRIPT != null ? PARAM_DESCRIPT : '')}</description>
+                                <type>${req(TYPE)}</type>
+                            </parameter>
+                        </append-node>
+                    </subtasks>
+                </sql-query>
+                <with-attribute key="SAFE_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${req(NAME)}-${req(SS_ID)})}">
+                    <delete-node node="${singleNode(struct-id)}"/>
+                    <write-document file="${req(EXPORT_DIR)}/structure/${req(SAFE_NAME)}.structure"/>
+                </with-attribute>
+            </otherwise>
+        </choose>
+    </with-attribute>
+</with-attribute>

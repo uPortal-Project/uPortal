@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+    
+    <!--
+     | Here we define the IThrowableToElement that will map fom Throwables that channels throw
+     | to XML Elements that become part of the XML input to the XSLT that CError uses to render
+     | messages about failed channels.
+     +-->
+    <bean id="throwableToElement" class="org.jasig.portal.channels.error.error2xml.DelegatingThrowableToElement">
+        <property name="throwableToElements">
+            <list>
+                <!-- 
+                 | This is a list from most specific to most general handling of Throwables.  
+                 | The DelegatingThrowableToElement implementation is to iterate over this list until it finds a 
+                 | mapping that is willing to translate the Throwable we're trying to handle.
+                 | 
+                 | In order to add a custom CError message for some particular exception that requires information
+                 | from that exception, what you do is write an
+                 | IThrowableToElement implementation which produces the XML Element conveying the
+                 | exception's information and then edit the XSLTs that CError uses to render to read that
+                 | information from the Document and use it.
+                 | 
+                 | If just the classname is sufficient, you can switch in the XSLT on the classname set by
+                 | the generic ThrowableToElement handler.
+                 +-->
+                <bean class="org.jasig.portal.channels.error.error2xml.ResourceMissingExceptionToElement" />
+                <bean class="org.jasig.portal.channels.error.error2xml.InternalTimeoutExceptionToElement" />
+                <bean class="org.jasig.portal.channels.error.error2xml.AuthorizationExceptionToElement" />
+                <bean class="org.jasig.portal.channels.error.error2xml.ThrowableToElement" />
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="portalPropertyEditorRegistrar" class="org.jasig.portal.spring.properties.PortalPropertyEditorRegistrar">
+        <property name="propertyEditors">
+            <map key-type="java.lang.Class">
+                <entry key="javax.portlet.PortletMode"><bean class="org.jasig.portal.spring.properties.PortletModeEditor" /></entry>
+                <entry key="javax.portlet.WindowState"><bean class="org.jasig.portal.spring.properties.WindowStateEditor" /></entry>
+            </map>
+        </property>
+    </bean>
+
+
+    <bean class="org.springframework.beans.factory.config.CustomEditorConfigurer">
+        <property name="propertyEditorRegistrars">
+            <list>
+                <ref bean="portalPropertyEditorRegistrar"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean class="org.springframework.beans.factory.annotation.RequiredAnnotationBeanPostProcessor" lazy-init="false" />
+</beans>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fragments>
+    <category name="Fragments" expanded="true">
+        <fragment>
+            <ID>f001</ID>
+            <rootNodeID immutable='N'>frnid001</rootNodeID>
+            <type>pulled</type>
+            <fname>News</fname>
+            <name></name>
+            <description>A tab fragment with 2 columns each containing news feeds</description>
+        </fragment>
+        <fragment>
+            <ID>f005</ID>
+            <rootNodeID immutable='Y'>frnid005</rootNodeID>
+            <type>pushed</type>
+            <fname>BioDept</fname>
+            <name>Biology Department</name>
+            <description>A tab fragment with 3 columns each containing Biology Department channels</description>
+        </fragment>
+        <fragment>
+            <ID>f006</ID>
+            <rootNodeID immutable='Y'>frnid006</rootNodeID>
+            <type>pulled</type>
+            <fname>Bio180</fname>
+            <name>Biology 180</name>
+            <description>A tab fragment with 2 columns each containing Biology 180 class channels</description>
+        </fragment>
+        <fragment>
+            <ID>f004</ID>
+            <rootNodeID immutable='N'>frnid004</rootNodeID>
+            <type>pulled</type>
+            <fname>Bio101</fname>
+            <name>Biology 101</name>
+            <description>A tab fragment with 2 columns each containing Biology 101 class channels</description>
+        </fragment>
+        <fragment>
+            <ID>f002</ID>
+            <rootNodeID immutable='Y'>frnid002</rootNodeID>
+            <type>pushed</type>
+            <fname>Bio123</fname>
+            <name>Biology123</name>
+            <description>A tab fragment with 2 columns each containing Biology 123 class channels</description>
+        </fragment>
+        <fragment>
+            <ID>f003</ID>
+            <rootNodeID immutable='N'>frnid003</rootNodeID>
+            <type>pushed</type>
+            <fname>Bio322</fname>
+            <name>Biology 322</name>
+            <description>A tab fragment with 2 columns each containing Biology 322 class channels</description>
+        </fragment>
+    </category>
+</fragments>

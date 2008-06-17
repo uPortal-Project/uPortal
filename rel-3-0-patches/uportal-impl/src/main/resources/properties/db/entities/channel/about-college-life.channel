@@ -1,0 +1,36 @@
+
+<channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-0.crn">
+  <title>About.com College Life</title>
+  <name>About.com College Life</name>
+  <fname>about-college-life</fname>
+  <desc>About.com College Life RSS feed</desc>
+  <type>RSS</type>
+  <class>org.jasig.portal.channels.CSyndFeed</class>
+  <timeout>10000</timeout>
+  <hasedit>N</hasedit>
+  <hashelp>N</hashelp>
+  <hasabout>N</hasabout>
+  <secure>N</secure>
+  <locale>en_US</locale>
+  <categories>
+    <category>Entertainment</category>
+    <category>News</category>
+  </categories>
+  <groups>
+    <group>Everyone</group>
+  </groups>
+  <parameters>
+    <parameter> 
+      <name>viewNum</name>  
+      <value>5</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+    <parameter> 
+      <name>xmlUri</name>  
+      <value>http://z.about.com/6/g/collegelife/b/rss2.xml</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+  </parameters>
+</channel-definition>

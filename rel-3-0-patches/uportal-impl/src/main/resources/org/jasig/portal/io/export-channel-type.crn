@@ -1,0 +1,32 @@
+<with-attribute key="Attributes.NODE" value="${newDoc(channel-type)}">
+    <echo-ln>Export Channel Type:  NAME=${req(NAME)}</echo-ln>
+    <append-node node="${attributeNode(script=classpath://org/jasig/portal/io/import-channel-type_v2-6.crn)}"/>
+    <with-attribute key="TYPE_ID" value="${sql(SELECT MAX(type_id) FROM up_chan_type WHERE type_name = '${req(NAME)}')}">
+        <choose>
+            <when test="${isNull(${req(TYPE_ID)})}">
+                <echo-ln>WARNING:  Channel type '${req(NAME)}' does not exist;  no channel type file will be generated.</echo-ln>
+                <log level="warn">Channel type '${req(NAME)}' does not exist;  no channel type file will be generated.</log>
+            </when>
+            <otherwise>
+                <sql-query>
+                    <sql>SELECT * FROM up_chan_type WHERE type_id = ?</sql>
+                    <parameter value="${req(TYPE_ID)}"/>
+                    <subtasks>
+                        <!-- Establish basic structure of the document... -->
+                        <append-node>
+                            <type-id>${req(TYPE_ID)}</type-id>
+                            <name>${req(TYPE_NAME)}</name>
+                            <type>${req(TYPE)}</type>
+                            <desc>${req(TYPE_DESCR)}</desc>
+                            <uri>${req(TYPE_DEF_URI)}</uri>
+                        </append-node>
+                    </subtasks>
+                </sql-query>
+                <with-attribute key="SAFE_TYPE_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${req(NAME)})}">
+                    <delete-node node="${singleNode(type-id)}"/>
+                    <write-document file="${req(EXPORT_DIR)}/channel-type/${req(SAFE_TYPE_NAME)}.channel-type"/>
+                </with-attribute>
+            </otherwise>
+        </choose>
+    </with-attribute>
+</with-attribute>

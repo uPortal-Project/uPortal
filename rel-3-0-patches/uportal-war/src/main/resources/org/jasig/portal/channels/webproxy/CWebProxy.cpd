@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE channelDef PUBLIC "-//uPortal//Channel Publishing/EN" "channelPublishingDocument.dtd">
+
+<!--
+Copyright (c) 2001 The JA-SIG Collaborative.  All rights reserved.
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+1. Redistributions of source code must retain the above copyright
+   notice, this list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in
+   the documentation and/or other materials provided with the
+   distribution.
+
+3. Redistributions of any form whatsoever must retain the following
+   acknowledgment:
+   "This product includes software developed by the JA-SIG Collaborative
+   (http://www.jasig.org/)."
+
+THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
+EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE JA-SIG COLLABORATIVE OR
+ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+OF THE POSSIBILITY OF SUCH DAMAGE.
+
+Author: Andrew Draskoy, andrew@mun.ca
+Author: Ken Weiner, kweiner@unicon.net
+Version $Revision$
+-->
+
+<channelDef>
+
+  <description>
+    This is a channel for incorporating a dynamic HTML or XML application.
+  </description>
+
+  <class>org.jasig.portal.channels.webproxy.CWebProxy</class>
+
+  <params>
+    <step>
+      <ID>1</ID>
+
+      <name>Web proxy parameters</name>
+
+      <description>Enter the web proxy parameters</description>
+
+      <parameter modify="publish">
+        <name>cw_xml</name>
+        <label>Application URI (cw_xml)</label>
+        <type base="string" input="text" display="text">
+          <length>40</length>
+          <maxlength>2000</maxlength>
+        </type>
+        <example>http://localhost:8080/examples/jsp/num/numguess.jsp</example>
+        <description>Note that if you configure this parameter to be
+        configurable at subscribe time, you should also configure the XML
+        URI restrictions to apply to ChannelStaticData.</description>
+      </parameter>
+
+      <parameter modify="publish-only">
+        <name>cw_ssl</name>
+        <label>Application SSL (cw_ssl)</label>
+        <type base="string" input="text" display="text">
+          <length>40</length>
+          <maxlength>2000</maxlength>
+        </type>
+        <defaultValue>XHTML.ssl</defaultValue>
+      </parameter>
+
+      <parameter modify="publish">
+        <name>cw_xslTitle</name>
+        <label>XSL Title (cw_xslTitle)</label>
+        <type base="string" input="text" display="text">
+          <length>40</length>
+          <maxlength>2000</maxlength>
+        </type>
+      </parameter>
+
+      <parameter modify="publish-only">
+        <name>cw_xsl</name>
+        <label>Application XSL (cw_xsl)</label>
+        <type base="string" input="text" display="text">
+          <length>40</length>
+          <maxlength>2000</maxlength>
+        </type>
+      </parameter>
+
+      <parameter modify="publish-only">
+        <name>cw_help</name>
+        <label>Help URI (cw_help)</label>
+        <type base="string" input="text" display="text">
+          <length>40</length>
+          <maxlength>2000</maxlength>
+        </type>
+      </parameter>
+
+      <parameter modify="publish-only">
+        <name>cw_info</name>
+        <label>Info URI (cw_info)</label>
+        <type base="string" input="text" display="text">
+          <length>40</length>
+          <maxlength>2000</maxlength>
+        </type>
+      </parameter>
+
+      <parameter modify="publish-only">
+        <name>cw_edit</name>
+        <label>Edit URI (cw_edit)</label>
+        <type base="string" input="text" display="text">
+                <length>40</length>
+                <maxlength>2000</maxlength>
+        </type>
+      </parameter>
+
+      <parameter modify="publish-only">
+        <name>cw_tidy</name>
+        <label>Enable HTML Filter? (cw_tidy)</label>
+        <type base="string" input="single-choice" display="drop-down">
+          <restriction type="enumeration">
+            <value>off</value>
+            <value>on</value>
+          </restriction>
+        </type>
+        <defaultValue>off</defaultValue>
+      </parameter>
+
+      <parameter modify="publish-only">
+        <name>cw_passThrough</name>
+        <label>Pass-through Type (cw_passThrough)</label>
+        <type base="string" input="single-choice" display="drop-down">
+          <restriction type="enumeration">
+            <value>none</value>
+            <value>marked</value>
+            <value>application</value>
+            <value>all</value>
+          </restriction>
+        </type>
+        <defaultValue>none</defaultValue>
+      </parameter>
+
+      <!-- added for cacheable CWebProxy -->
+      <parameter modify="publish-only">
+      	<name>cw_cacheDefaultTimeout</name>
+	<label>Default Cache Timeout (in seconds) (cw_cacheDefaultTimeout)</label>
+        <type base="string" input="text" display="text">
+          <length>7</length>
+          <maxlength>10</maxlength>
+        </type>
+        <defaultValue>900</defaultValue>
+      </parameter>
+
+      <parameter modify="publish-only">
+        <name>cw_cacheDefaultMode</name>
+	<label>Default Cache Mode (cw_cacheDefaultMode)</label>
+	<type base="string" input="single-choice" display="drop-down">
+          <restriction type="enumeration">
+	    <value>none</value>
+	    <value>all</value>
+	  </restriction>
+	</type>
+    <defaultValue>none</defaultValue>
+      </parameter>
+
+      <parameter modify="publish-only">
+        <name>cw_cacheTimeout</name>
+	<label>Cache Timeout for initial request only (cw_cacheTimeout)</label>
+	<type base="string" input="text" display="text">
+	  <length>7</length>
+	  <maxlength>10</maxlength>
+	</type>
+      </parameter>
+
+      <parameter modify="publish-only">
+        <name>cw_cacheMode</name>
+	<label>Cache Mode for initial request only (cw_cacheMode)</label>
+	<type base="string" input="single-choice" display="drop-down">
+	  <restriction type="enumeration">
+	    <value></value>
+	    <value>none</value>
+	    <value>all</value>
+	  </restriction>
+	</type>
+    <defaultValue></defaultValue>
+      </parameter>
+
+	<parameter modify="publish-only">
+		<name>cw_cacheGlobalMode</name>
+		<label>Global Cache Mode (cw_cacheGlobalMode)</label>
+		<type base="string" input="single-choice" display="drop-down">
+			<restriction type="enumeration">
+				<value>false</value>
+				<value>true</value>
+			</restriction>
+		</type>
+		<defaultValue>none</defaultValue>
+	</parameter>
+
+      <parameter modify="publish-only">
+        <name>cw_person</name>
+	<label>Default IPerson Attributes to Pass (cw_person)</label>
+	<type base="string" input="text" display="text">
+	  <length>40</length>
+	  <maxlength>500</maxlength>
+	</type>
+	<example>uid,eduPersonPrimaryAffiliation</example>
+      </parameter>
+
+      <parameter modify="publish-only">
+        <name>cw_personAllow</name>
+	<label>Restrict IPerson Attributes Passing to These (cw_personAllow)</label>
+	<type base="string" input="text" display="text">
+	  <length>40</length>
+	  <maxlength>500</maxlength>
+	</type>
+	<example>uid,eduPersonNickName,cn,eduPersonPrimaryAffiliation</example>
+      </parameter>
+
+      <parameter modify="publish-only">
+        <name>upc_localConnContext</name>
+        <label>LocalConnectionContext implementation (upc_localConnContext)</label>
+        <type base="string" input="text" display="text">
+          <length>40</length>
+          <maxlength>2000</maxlength>
+        </type>
+        <example>org.jasig.portal.security.provider.CasConnectionContext</example>
+      </parameter>
+
+    </step>
+
+
+    <step>
+      <ID>2</ID>
+
+      <name>URI restriction parameters</name>
+
+      <description>Customize restrictions on the URIs CWebProxy can access.</description>
+
+      <parameter modify="publish-only">
+        <name>cw_allow_uri_prefixes</name>
+        <label>Allowed URI prefixes</label>
+        <type base="string" input="text" display="text">
+          <length>40</length>
+          <maxlength>2000</maxlength>
+        </type>
+        <example>http:// https:// file:/portal/proxied/</example>
+        <description>
+        Optional static data only parameter specifying allowable prefixes
+        for URIs accessed by this channel.  This channel will only use URIs
+        with these prefixes for obtaining XML and XSLT for use in
+        rendering.  Whitespace delimit allowed prefixes.  Effectively
+        defaults to "http:// https://"; do not allow "file:/" lightly.
+        </description>
+        <defaultValue>http:// https://</defaultValue>
+      </parameter>
+
+      <parameter modify="publish-only">
+        <name>cw_block_uri_prefixes</name>
+        <label>Blocked URI prefixes</label>
+        <type base="string" input="text" display="text">
+          <length>40</length>
+          <maxlength>2000</maxlength>
+        </type>
+        <example>http://restrictedserver.yourschool.edu/</example>
+        <description>
+        Optional static data only parameter further restricting which
+        URIs this channel will use to obtain XML and XSLT.  This channel
+        will not use URIs matching prefixes specified in this
+        whitespace-delimited parameter.  Effectively defaults to "".
+        </description>
+        <defaultValue></defaultValue>
+      </parameter>
+
+      <parameter modify="publish-only">
+        <name>cw_restrict_xmlUri_inStaticData</name>
+        <label>Restrict xmlUri as presented in ChannelStaticData.</label>
+        <type base="string" input="single-choice" display="drop-down">
+	      <restriction type="enumeration">
+	        <value>true</value>
+	        <value>false</value>
+	        <defaultValue>false</defaultValue>
+	      </restriction>
+	    </type>
+	    <description>
+        True restricts both in ChannelStaticData and in ChannelRuntimeData.
+        False restricts in only ChannelRuntimeData.  It is important to
+        restict the xmlUri when that URI is configured to be
+        subcribe-time configurable.
+	    </description>
+      </parameter>
+    </step>
+
+
+  </params>
+
+  <controls>
+    <control type="edit" include="no" override="yes"/>
+    <control type="about" include="no" override="yes"/>
+    <control type="help" include="no" override="yes"/>
+  </controls>
+
+</channelDef>

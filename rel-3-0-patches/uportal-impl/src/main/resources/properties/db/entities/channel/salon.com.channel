@@ -1,0 +1,35 @@
+
+<channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-0.crn">
+  <title>Salon.com</title>
+  <name>Salon.com</name>
+  <fname>salon.com</fname>
+  <desc>Salon.com channel</desc>
+  <type>RSS</type>
+  <class>org.jasig.portal.channels.CSyndFeed</class>
+  <timeout>10000</timeout>
+  <hasedit>N</hasedit>
+  <hashelp>N</hashelp>
+  <hasabout>N</hasabout>
+  <secure>N</secure>
+  <locale>en_US</locale>
+  <categories>
+    <category>News</category>
+  </categories>
+  <groups>
+    <group>Everyone</group>
+  </groups>
+  <parameters>
+    <parameter> 
+      <name>viewNum</name>  
+      <value>5</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+    <parameter> 
+      <name>xmlUri</name>  
+      <value>http://www.salon.com/feed/RDF/salon_use.rdf</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+  </parameters>
+</channel-definition>

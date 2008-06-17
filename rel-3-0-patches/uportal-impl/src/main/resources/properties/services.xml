@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!DOCTYPE servicelist PUBLIC "-//uPortal//Services/EN" "services.dtd">
+
+<!-- $Revision$ -->
+
+<!--
+  THIS FILE IS DEPRECATED.
+  
+  The portal's Spring ApplicationContext should be used for any service startup/shutdown management.
+-->
+
+<servicelist>
+
+</servicelist>

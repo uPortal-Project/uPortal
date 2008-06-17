@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE channelDef PUBLIC "-//uPortal//Channel Publishing/EN" "channelPublishingDocument.dtd">
+
+<!--
+Copyright (c) 2006-2007 The JA-SIG Collaborative.  All rights reserved.
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+1. Redistributions of source code must retain the above copyright
+   notice, this list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in
+   the documentation and/or other materials provided with the
+   distribution.
+
+3. Redistributions of any form whatsoever must retain the following
+   acknowledgment:
+   "This product includes software developed by the JA-SIG Collaborative
+   (http://www.jasig.org/)."
+
+THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
+EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE JA-SIG COLLABORATIVE OR
+ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+OF THE POSSIBILITY OF SUCH DAMAGE.
+
+-->
+
+
+<channelDef>
+
+  <description>
+    This channel executes a SQL query against a DataSource and renders
+    the returned ResultSet via a configurable XSLT.
+  </description>
+
+  <class>org.jasig.portal.channels.sqlquery.CSqlQuery</class>
+
+  <params>
+    <step>
+      <ID>1</ID>
+
+      <!-- displayed at the top of the step screen -->
+      <name>Query</name>
+
+      <!-- intention is for documentation but could be used for other things -->
+      <description>
+        Configure the SQL and DataSource for the query.
+      </description>
+
+      <parameter modify="publish">
+        <name>sql</name>
+        <label>SQL</label>
+        <type base="string" input="text" display="text">
+
+          <!-- length and maxlength for text field -->
+          <length>120</length>
+          <maxlength>1000</maxlength>
+
+        </type>
+
+        <example>SELECT FNAME, MAJOR, MINOR, MICRO FROM UP_VERSIONS</example>
+
+        <description>
+        SQL query you wish to execute.
+        </description>
+
+        <!-- default value for text field -->
+        <defaultValue></defaultValue>
+
+      </parameter>
+
+      <parameter modify="publish">
+        <name>dataSource</name>
+          <label>Name of JNDI DataSource</label>
+          <type base="string" input="text" display="text">
+
+            <!-- length and maxlength for text field -->
+            <length>15</length>
+            <maxlength>100</maxlength>
+
+          </type>
+
+        <description>
+        JNDI name for looking up DataSource.  This DataSource must be
+        provided by your servlet container.  In Tomcat this is configured in
+        server.xml or in the context file associated with the web application
+        context (typically, TOMCAT/conf/catalina/localhost/uPortal.xml).
+        </description>
+
+          <!-- default value for text field -->
+          <defaultValue>PortalDb</defaultValue>
+
+      </parameter>
+
+
+    </step>
+
+          <step>
+      <ID>2</ID>
+
+      <!-- displayed at the top of the step screen -->
+      <name>XSLT URI</name>
+
+      <!-- intention is for documentation but could be used for other things -->
+      <description>
+        URL of the XSLT to render the XML representation of the
+        data retrieved from the database.
+      </description>
+
+      <parameter modify="publish">
+        <name>xsltUri</name>
+        <label>URI of XSLT</label>
+        <type base="string" input="text" display="text">
+
+          <!-- length and maxlength for text field -->
+          <length>80</length>
+          <maxlength>255</maxlength>
+
+        </type>
+
+        <example>http://someschool.edu/somexslt.xsl</example>
+
+        <!-- default value for text field -->
+        <defaultValue>CSqlQuery/sqlquery.xsl</defaultValue>
+
+      </parameter>
+
+      </step>
+
+    </params>
+
+
+  <controls>
+    <control type="edit" include="no" override="no"/>
+    <control type="about" include="no" override="no"/>
+    <control type="help" include="no" override="no"/>
+  </controls>
+
+</channelDef>

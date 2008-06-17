@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<antlib>
+    <!-- Tasks -->
+    <taskdef name="tomcatEarDeploy" classname="org.jasig.portal.ant.deploy.TomcatEarDeployerTask"/>
+</antlib>

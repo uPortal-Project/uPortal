@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+    
+    <!--
+     | Example Person Directory configuration using the Spring implementation.
+	 |
+	 | The 'username' attribute is what is configured by default in the code
+	 | for simple string queries via the IPersonAttributeDao interfaces
+	 +-->
+
+    <bean id="personAttributeDao" class="org.jasig.services.persondir.support.CachingPersonAttributeDaoImpl">
+        <property name="userInfoCache">
+            <bean class="org.jasig.portal.utils.cache.MapCacheFactoryBean">
+                <property name="cacheFactory" ref="cacheFactory" />
+                <property name="cacheName" value="org.jasig.services.persondir.USER_INFO" />
+            </bean>
+        </property>
+        <property name="cachedPersonAttributesDao" ref="mergedPersonAttributeDao" />
+    </bean>
+  
+	<bean id="mergedPersonAttributeDao" class="org.jasig.services.persondir.support.MergingPersonAttributeDaoImpl">
+		<property name="personAttributeDaos">
+			<list>
+				<ref bean="uPortalJdbcAttributeSource"/>
+				<!--
+				<ref bean="uPortalLdapAttributeSource"/>
+				-->
+			</list>
+		</property>
+	</bean>
+
+
+	<!-- JDBC Person Attribute Source, using the default portal DataSource via RDBMServices -->
+	<bean id="uPortalJdbcAttributeSource" class="org.jasig.services.persondir.support.jdbc.SingleRowJdbcPersonAttributeDao">
+		<constructor-arg index="0" ref="PortalDb" />
+		<constructor-arg>
+			<list>
+				<value>username</value>
+			</list>
+		</constructor-arg>
+		<constructor-arg>
+			<value>	
+				SELECT FIRST_NAME||' '||LAST_NAME AS FIRST_LAST, FIRST_NAME, LAST_NAME, EMAIL, USER_NAME 
+				FROM UP_PERSON_DIR 
+				WHERE USER_NAME=?
+			</value>
+		</constructor-arg>
+		
+		<property name="columnsToAttributes">
+			<map>
+				<entry key="FIRST_LAST">	<value>displayName</value></entry>
+				<entry key="FIRST_NAME">
+					<set>
+						<value>givenName</value>
+						<value>user.name.given</value>
+					</set>
+				</entry>
+				<entry key="LAST_NAME">
+					<set>
+						<value>sn</value>
+						<value>user.name.family</value>
+					</set>
+				</entry>
+				<entry key="EMAIL">
+					<set>
+						<value>mail</value>
+						<value>user.home-info.online.email</value>
+					</set>
+				</entry>
+				<entry key="USER_NAME"><value>user.login.id</value></entry>
+			</map>
+		</property>
+	</bean>
+</beans>

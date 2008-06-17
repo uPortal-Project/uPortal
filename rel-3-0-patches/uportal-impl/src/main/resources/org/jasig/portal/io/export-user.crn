@@ -1,0 +1,39 @@
+<with-attribute key="Attributes.NODE" value="${newDoc(user)}">
+    <echo-ln>Export User: USER_NAME=${req(USER_NAME)}</echo-ln>
+    <append-node node="${attributeNode(script=classpath://org/jasig/portal/io/import-user_v3-0.crn)}"/>
+    <append-node node="${attributeNode(username=${req(USER_NAME)})}"/>
+    <with-attribute key="USER_ID" value="${sql(SELECT user_id FROM up_user WHERE user_name = '${req(USER_NAME)}')}">
+        <choose>
+            <when test="${isNull(${req(USER_ID)})}">
+                <echo-ln>WARNING:  User '${req(USER_NAME)}' does not exist;  no user file will be generated.</echo-ln>
+                <log level="warn">User '${req(USER_NAME)}' does not exist;  no user file will be generated.</log>
+            </when>
+            <otherwise>
+
+                <!-- default user -->
+                <sql-query>
+                    <sql>SELECT upu2.user_name as default_user FROM up_user upu1, up_user upu2 WHERE
+                        upu1.user_dflt_usr_id = upu2.user_id AND upu1.user_name = ?</sql>
+                    <parameter value="${req(USER_NAME)}"/>
+                    <subtasks>
+                        <!-- NB:  The default-user element will not appear for those who
+                        have no default user.  This is intentional and appropriate. -->
+                        <append-node>
+                            <default-user>${req(DEFAULT_USER)}</default-user>
+                        </append-node>
+                    </subtasks>
+                </sql-query>
+                <with-attribute key="SAFE_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${req(USER_NAME)})}">
+                    <choose>
+                        <when test="${groovy(${sql(SELECT COUNT(USER_ID) FROM UP_USER WHERE USER_DFLT_USR_ID = ${req(USER_ID)})} > 0)}">
+                            <write-document file="${req(EXPORT_DIR)}/user/${req(SAFE_NAME)}.template-user"/>
+                        </when>
+                        <otherwise>
+                            <write-document file="${req(EXPORT_DIR)}/user/${req(SAFE_NAME)}.user"/>
+                        </otherwise>
+                    </choose>
+                </with-attribute>
+            </otherwise>
+        </choose>
+    </with-attribute>
+</with-attribute>

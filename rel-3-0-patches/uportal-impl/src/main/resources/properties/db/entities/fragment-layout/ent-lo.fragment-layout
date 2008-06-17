@@ -1,0 +1,37 @@
+
+<layout script="classpath://org/jasig/portal/io/import-layout_v3-0.crn" username="ent-lo">
+  <root unremovable="Y" immutable="N" hidden="N" name="Root folder">
+    <header unremovable="Y" immutable="Y" hidden="N" name="Header folder">
+      <channel fname="header"/>
+      <channel fname="portal/login/general"/>
+      <channel fname="session-locales-selector"/>
+    </header>
+    <footer unremovable="N" immutable="N" hidden="N" name="Footer folder">
+      <channel fname="footer"/>
+    </footer>
+    <tab unremovable="N" immutable="N" hidden="N" name="Entertainment">
+      <column unremovable="N" immutable="N" hidden="N" name="Column">
+        <structure-attribute type="folder">
+          <name>width</name>
+          <value>40%</value>
+        </structure-attribute>
+        <channel fname="word-of-the-day"/>
+        <channel fname="about-college-life"/>
+        <channel fname="e-online"/>
+      </column>
+      <column unremovable="N" immutable="N" hidden="N" name="Column">
+        <structure-attribute type="folder">
+          <name>width</name>
+          <value>60%</value>
+        </structure-attribute>
+        <channel fname="phd-comics"/>
+        <channel fname="new-movies"/>
+      </column>
+    </tab>
+  </root>
+  <profile name="HTML browser profile"> 
+    <description>A system profile for common web browsers</description>  
+    <structure name="DLM Tabs and columns"/>  
+    <theme name="DLM XHTML"/> 
+  </profile>
+</layout>

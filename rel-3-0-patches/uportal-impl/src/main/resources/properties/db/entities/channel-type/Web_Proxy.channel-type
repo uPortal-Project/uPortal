@@ -1,0 +1,7 @@
+
+<channel-type script="classpath://org/jasig/portal/io/import-channel-type_v2-6.crn">
+  <name>Web Proxy</name>
+  <type>org.jasig.portal.channels.webproxy.CWebProxy</type>
+  <desc>Incorporates a dynamic HTML or XML application</desc>
+  <uri>/org/jasig/portal/channels/webproxy/CWebProxy.cpd</uri>
+</channel-type>

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE channelDef PUBLIC "-//uPortal//Channel Publishing/EN" "channelPublishingDocument.dtd">
+
+<!--
+Copyright (c) 2004 The JA-SIG Collaborative.  All rights reserved.
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+1. Redistributions of source code must retain the above copyright
+   notice, this list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in
+   the documentation and/or other materials provided with the
+   distribution.
+
+3. Redistributions of any form whatsoever must retain the following
+   acknowledgment:
+   "This product includes software developed by the JA-SIG Collaborative
+   (http://www.jasig.org/)."
+
+THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
+EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE JA-SIG COLLABORATIVE OR
+ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+OF THE POSSIBILITY OF SUCH DAMAGE.
+
+Author: Ken Weiner, kweiner@unicon.net
+Version $Revision: 1.1 $
+-->
+
+<channelDef>
+
+  <description>
+    This is an adapter that makes a Portlet look like a Channel.
+  </description>
+
+  <class>org.jasig.portal.channels.portlet.CSpringPortletAdaptor</class>
+
+  <params>
+    <step>
+      <ID>1</ID>
+
+      <name>Portlet Descriptor</name>
+
+      <description>
+        Enter the Portlet web-application path and portlet name.
+      </description>
+
+      <parameter modify="publish-only">
+        <name>portletApplicationId</name>
+        <label>Portlet Web Application Path</label>
+        <type base="string" input="text" display="text">
+          <length>40</length>
+          <maxlength>2000</maxlength>
+        </type>
+        <example>/pluto-testsuite</example>
+        <description>
+          This is the name of the web application the portlet resides in including a preceding /.
+        </description>
+      </parameter>
+      
+      <parameter modify="publish-only">
+        <name>portletName</name>
+        <label>Portlet Name</label>
+        <type base="string" input="text" display="text">
+          <length>40</length>
+          <maxlength>2000</maxlength>
+        </type>
+        <example>test-port-et-1</example>
+        <description>
+          This is the name of the portlet as defined in the portlet.xml descriptor.
+        </description>
+      </parameter>
+
+    </step>
+
+    <step>
+      <ID>2</ID>
+
+      <name>Portlet Preferences</name>
+
+      <description>
+        These are the preferences of the portlet itself.  There may
+        be zero or more preferences.
+      </description>
+
+      <arbitrary-parameters>
+        <paramName-prefix>PORTLET.</paramName-prefix>
+      </arbitrary-parameters>
+
+    </step>
+
+  </params>
+
+  <controls>
+    <control type="edit" include="no" override="yes"/>
+    <control type="help" include="no" override="yes"/>
+  </controls>
+
+</channelDef>

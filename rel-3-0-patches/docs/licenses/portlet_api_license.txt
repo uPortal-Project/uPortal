@@ -1,0 +1,46 @@
+Copyright © 2003 Sun Microsystems, Inc. and IBM Corporation. All rights 
+reserved.U.S. Government Rights - Commercial software.  Government 
+users are subject to the Sun Microsystems, Inc. standard license 
+agreement and applicable provisions of the FAR and its supplements.  
+Sun,  Sun Microsystems,  the Sun logo,  Java and  Jini are trademarks 
+or registered trademarks of Sun Microsystems, Inc. in the U.S. and 
+other countries.Products covered by and information contained in this 
+service manual are controlled by U.S. Export Control laws and may be 
+subject to the export or import laws in other countries.  Nuclear, 
+missile, chemical biological weapons or nuclear maritime end uses or 
+end users, whether direct or indirect, are strictly prohibited.  Export 
+or reexport to countries subject to U.S. embargo or to entities 
+identified on U.S. export exclusion lists, including, but not limited 
+to, the denied persons and specially designated nationals lists is 
+strictly prohibited.DOCUMENTATION IS PROVIDED "AS IS" AND ALL EXPRESS 
+OR IMPLIED CONDITIONS, REPRESENTATIONS AND WARRANTIES, INCLUDING ANY 
+IMPLIED WARRANTY OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE 
+OR NON-INFRINGEMENT, ARE DISCLAIMED, EXCEPT TO THE EXTENT THAT SUCH 
+DISCLAIMERS ARE HELD TO BE LEGALLY INVALID.
+
+
+
+Copyright © 2003 Sun Microsystems, Inc. et IBM Corporation. Tous droits 
+réservés.Sun,  Sun Microsystems,  le logo Sun,  Java et  Jini sont des 
+marques de fabrique ou des marques déposées de Sun Microsystems, Inc. 
+aux Etats-Unis et dans d'autres pays.
+Les produits qui font l'objet de ce manuel d'entretien et les 
+informations qu'il contient sont regis par la legislation americaine en 
+matiere de controle des exportations et peuvent etre soumis au droit 
+d'autres pays dans le domaine des exportations et importations. Les 
+utilisations finales, ou utilisateurs finaux, pour des armes 
+nucleaires, des missiles, des armes biologiques et chimiques ou du 
+nucleaire maritime, directement ou indirectement, sont strictement 
+interdites. Les exportations ou reexportations vers des pays sous 
+embargo des Etats-Unis, ou vers des entites figurant sur les listes 
+d'exclusion d'exportation americaines, y compris, mais de maniere non 
+exclusive, la liste de personnes qui font objet d'un ordre de ne pas 
+participer, d'une facon directe ou indirecte, aux exportations des 
+produits ou des services qui sont regi par la legislation americaine en 
+matiere de controle des exportations et la liste de ressortissants 
+specifiquement designes, sont rigoureusement interdites.LA 
+DOCUMENTATION EST FOURNIE "EN L'ETAT" ET TOUTES AUTRES CONDITIONS, 
+DECLARATIONS ET GARANTIES EXPRESSES OU TACITES SONT FORMELLEMENT 
+EXCLUES, DANS LA MESURE AUTORISEE PAR LA LOI APPLICABLE, Y COMPRIS 
+NOTAMMENT TOUTE GARANTIE IMPLICITE RELATIVE A LA QUALITE MARCHANDE, A 
+L'APTITUDE A UNE UTILISATION PARTICULIERE OU A L'ABSENCE DE CONTREFACON.

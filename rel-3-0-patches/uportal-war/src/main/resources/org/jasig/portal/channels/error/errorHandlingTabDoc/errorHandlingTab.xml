@@ -1,0 +1,56 @@
+<!--+
+      | Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
+      |  See license distributed with this file and
+      |  available online at http://www.uportal.org/license.html
+      +-->
+   
+<!--+
+	  | This file contains the static HTML that we render in the 
+	  | Error Handling Fragment Documentation channel in the
+	  | Error Handling fragmnet.  It provides context for the
+	  | Thrower and Timeout demonstation channels also in that fragment.
+	  +-->
+	
+<html>
+	<head>
+		<title>Error handling tab documentation</title>
+	</head>
+	<body>
+		<div class="portlet-section-header">
+			About this fragment
+		</div>
+		<div class="portlet-font">
+			The Error Handling fragment demonstrates uPortal's robust and informative channel error handling.
+		</div>
+		<div class="portlet-section-subheader">
+			Thrower
+		</div>
+		<div class="portlet-font">
+			CThrower throws a nested exception during channel rendering.  It demonstrates CError.
+			For an administrative user, CError will present a UI allowing the admin to view the stack trace.
+			For a regular user, CError shows the monkey wrench icon and an error message.
+		</div>
+		<div class="portlet-font">
+			It is normal for CThrower to fail to render with error code 1 (channel rendering error).  
+			Regular users will see the message "This channel failed to render".
+		</div>
+		<div class="portlet-section-subheader">
+			Timeout
+		</div>
+		<div class="portlet-font">
+			CTimeout blocks for a long time, longer than its configured channel timeout.
+			It will time out when rendering and be replaced by CError to notify that it has timed out.
+			Timeout exists in this layout to demonstrate both the user experience and the 
+			behavior of the underlying code - CTimeout logs when it is interrupted by
+			the channel rendering thread management.
+		</div>
+		<div class="portlet-font">
+			It is normal for CTimeout to fail to render with error code 4 (channel timed out).
+			Regular users will see the message "This channel failed to render".
+		</div>
+	</body>
+</html>
+
+<!-- CVS Metadata:
+   $Revision$ $Date$
+ -->

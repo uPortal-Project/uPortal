@@ -1,0 +1,707 @@
+ /*
+ * VISUAL STYLES
+ *
+ * Define CSS classes to visually style the uportal3 skin.
+ *
+ * This CSS assumes use of the Yahoo! User Interface Library (YUI) CSS Reset, 
+ * CSS Base, and CSS Fonts to establish a common, cross-browser base rendering.
+ * Refer to [http://developer.yahoo.com/yui/] for more details.
+ * 
+ * This CSS should render well and consistently across A-grade browsers.
+ * Refer to [http://developer.yahoo.com/yui/articles/gbs/] for more details. 
+ *
+ * This CSS assumes use of Silk icon set 1.3 by Mark James:
+ * http://www.famfamfam.com/lab/icons/silk/
+ * which is licensed under a Creative Commons Attribution 2.5 License:
+ * http://creativecommons.org/licenses/by/2.5/
+ * This icon set is free for use under the CCA 2.5 license, so long as there 
+ * is a link back to the author's site.  This reference is present in the 
+ * portal footer markup of the uportal3 theme.
+ *
+ */
+
+
+/** common **/
+/* These selectors set baseline formatting that should cascade downwards: 
+ * once set here, they do not need to be defined elsewhere except to override.
+ * Note that much of the baseline formatting has already been set by the 
+ * YUI CSS Reset, CSS Base, and CSS Fonts. 
+ */
+
+	body
+	{
+		text-align: left;
+		font-family: Verdana;
+	}
+	
+	body#portal /* This formats only the <body> of the portal and not imported html pages */
+	{
+		background: #fff;
+		background-image: none;
+	}
+	
+	body#portal.left-column /* This formats only the <body> of the portal and not imported html pages */
+	{
+		background: #fff url("images/page_column_back.png") repeat-y; /* Simulates the left column.  Done on the body to ensure the column fills the whole browser window. */
+	}
+	
+	h1,h2,h3,h4,h5,h6
+	{
+		font-family: Arial;
+	}
+	
+	table, table th, table tr, table td 
+	{
+		border: none;
+	}
+	
+	.invisible
+	{
+		visibility: hidden;
+	}
+	
+	.no-display
+	{
+		display: none;
+	}
+	
+	.portal-icon-small {
+		display: block;
+		height: 16px;
+		width: 16px;
+	}
+
+	.portal-icon-small span
+	{
+		visibility: hidden;
+	}
+
+
+/** page **/
+/* This primary div exists as a direct descendant of the <body> and encompases 
+ * the main page sections (header, body, and footer). It is decorative only, 
+ * and can be used for things like fixed width/centered layouts or special 
+ * backgrounds. 
+ */
+
+	#portalPage 
+	{
+	}
+	
+	#portalPage table tr
+	{
+		vertical-align: top;
+	}
+
+
+/** header **/
+/* The header is a direct descendant of the "page", along with the header and footer. */
+
+	#portalPageHeader 
+	{
+		background-color: #000066;
+		border-bottom: 4px solid #000033;
+	}
+	
+	#portalPageBar 
+	{
+		background: #180884 url("images/headerbar.png") 0 0 repeat-x;
+		color: #9999cc;
+		text-align: right;
+		border-bottom: 2px solid #000033;
+	}
+	
+	#portalPageBar h2 
+	{
+		font-size: 90%;
+	}
+	
+	#portalPageBarLinks a 
+	{
+		color: #fff;
+		text-decoration: none;
+		padding-left: 20px;
+	}
+	
+	#portalPageBarHome
+	{
+		background: url("../../icons/house.png") no-repeat;
+	}
+	
+	#portalPageBarAdmin
+	{
+		background: url("../../icons/application_cascade.png") no-repeat;
+	}
+	
+	#portalPageBarCustom
+	{
+		background: url("../../icons/user.png") no-repeat;
+	}
+	
+	#portalPageBarSitemap
+	{
+		background: url("../../icons/map.png") no-repeat;
+	}
+	
+	#portalPageBarHelp
+	{
+		background: url("../../icons/help.png") no-repeat;
+	}
+	
+	#portalPageBarLinks a:hover 
+	{
+		background-color: #4348b0;
+	}
+
+	#portalWelcome 
+	{
+		color: #ddd;
+	}
+	
+	#portalWelcome a
+	{
+		text-decoration: none;
+		color: #9999FF;
+	}
+	
+	#portalWelcome a:hover 
+	{
+		color: #ff6600;
+		text-decoration: underline;
+	}
+
+
+/** body **/
+/* The page body (not to be confused with the root <body>) is a direct descendant of the "page", along with the header and footer. */
+
+	#portalPageBody 
+	{
+	}
+
+	#portalPageLeftColumn
+	{
+	}
+	
+	#portalPageLeftColumnInner
+	{
+	}
+	
+	#portalPageLeftColumn .block
+	{
+		margin-bottom: 10px;
+	}
+	
+	#portalPageLeftColumn .block h2.block-title
+	{
+		margin: 0;
+		padding: 0.5em 0.5em;
+		color: #000066;
+		border-bottom: 2px solid #6666CC;
+		font-size: 100%;
+	}
+	
+	#portalPageLeftColumn .block-content
+	{
+		background: url("images/top_light_fade.png") repeat-x;
+	}
+
+	#portalPageBodyTitle 
+	{
+		font-size: 250%;
+		color: #FF6600;
+	}
+
+	#portalCustomizationLinks
+	{
+		padding: 0.5em 0 0.5em 1em;
+		font-size: 80%;
+		color: #000099;
+		border-left: 2px solid #ccccff;
+		border-bottom: 2px solid #ccccff;
+	}
+	
+	#portalCustomizationLinks li 
+	{
+		list-style: none;
+	}
+	
+	#portalCustomizationLinksAddContent a
+	{
+		background: url("../../icons/application_add.png") no-repeat;
+	}
+	
+	#portalCustomizationLinksChangeLayout a
+	{
+		background: url("../../icons/layout_content.png") no-repeat;
+	}
+	
+	#portalCustomizationLinksChooseSkin a
+	{
+		background: url("../../icons/color_swatch.png") no-repeat;
+	}
+	
+	#portalCustomizationLinksAddTab a
+	{
+		background: url("../../icons/tab_add.png") no-repeat;
+	}
+	
+	#changeColumns tr td
+	{
+	    text-align: center;
+	}
+	
+	#changeColumns img
+	{
+	    vertical-align: middle;
+	}
+
+/** portlets **/
+
+	.portlet-container 
+	{
+	}
+	
+	.portlet-container-inner
+	{
+		background-color: #000099;
+	}
+	
+	.portlet-top
+	{
+		background: #000099 url("images/portlet_corner_topleft.png") top left no-repeat;
+	}
+	
+	
+	.portlet-top-inner
+	{
+		height: 3px;
+		background: url("images/portlet_corner_topright.png") top right no-repeat;
+	}
+
+	.portlet-toolbar 
+	{
+		white-space: nowrap;
+		background-color: #000099;
+	}
+
+	.portlet-toolbar a 
+	{
+		text-decoration: none;
+		color: #fff
+	}
+	
+	.portlet-toolbar h2
+	{
+		margin-left: 0.5em;
+		padding-left: 20px;
+		background: url("../../icons/application.png") 0 3px no-repeat;
+	}
+	
+	.portlet-controls
+	{
+		background-color: #000099;
+		padding-left: 10px;
+	}
+
+    .portlet-controls .portlet-control
+    {
+        padding-left: 15px;
+    }
+
+	.portlet-controls .help 
+	{
+		background: url("../../icons/help.png") no-repeat;
+	}
+	
+	.portlet-controls .about 
+	{
+		background: url("../../icons/information.png") no-repeat;
+	}
+	
+	.portlet-controls .edit 
+	{
+		background: url("../../icons/application_edit.png") no-repeat;
+	}
+	
+	.portlet-controls .print 
+	{
+		background: url("../../icons/printer.png") no-repeat;
+	}
+	
+	.portlet-controls .focus 
+	{
+		background: url("../../icons/zoom.png") no-repeat;
+	}
+	
+	.portlet-controls .remove 
+	{
+		background: url("../../icons/cross.png") no-repeat;
+	}
+	
+	.portlet-controls .add 
+	{
+		background: url("../../icons/application_add.png") no-repeat;
+	}
+
+	.portlet-controls span
+	{
+	/* A creative way to get the text to disappear and yet the background image (icon) to appear in both FF and IE.
+	 * The padding is necessary for IE and seems to have no affect on FF. 
+	 */
+		visibility: hidden;
+		font-size: 0;
+		padding-top: 11px;
+		padding-bottom: 3px;
+	}
+	
+	.portlet-controls a:hover 
+	{
+		background-color: #4348b0;
+	}
+
+	.dashboard .portlet-content 
+	{
+		background-color: #fff;
+		border-left: 1px solid #000099;
+		border-right: 1px solid #000099;
+	}
+	
+	.portlet-bottom
+	{
+		background: #000099 url("images/portlet_corner_bottomleft.png") bottom left no-repeat;
+	}
+	
+	
+	.portlet-bottom-inner
+	{
+		height: 3px;
+		background: url("images/portlet_corner_bottomright.png") bottom right no-repeat;
+	}
+
+    .dropborder {
+        border: 1px dashed #999999;
+    }
+
+/** footer **/
+	#portalPageFooter 
+	{
+		text-align: center;
+		color: #3366CC;
+		font-size: 80%;
+	}
+
+	#portalPageFooter a
+	{
+		color: #3366CC;
+	}
+	
+	#silkIconsAttribution
+	{
+		visibility: hidden;
+	}
+
+
+/** login **/
+	#portalLogin 
+	{
+		background: #000099 url("images/login.png") no-repeat;
+		color: #fff;
+	}
+	
+	#portalLogin h2
+	{
+		color: #ff6600;
+	}
+	
+	#portalLogin label
+	{
+		color: #fff;
+		font-size: 80%;
+	}
+	
+	#portalLogin a
+	{
+		color: #ff6600;
+		font-size: 80%;
+	}
+	
+	#portalLoginMessage
+	{
+		background-color: #FFFFCC;
+	 	border: 2px solid #FF6600;
+		color: #FF3300;
+	}
+	
+	#portalLoginMessage h2
+	{
+		background: url("../../icons/error.png") no-repeat;
+	}
+	
+	#portalCASLogin a
+	{
+		font-size: 100%;
+	}
+	
+	a#portalCASLoginLink
+	{
+		display: block;
+		padding: 0.3em 1em;
+		text-decoration: none;
+		font-weight: bold;
+		color: #fff;
+		background-color: #FF6600;
+		border-top: 1px solid #FFCA95;
+		border-left: 1px solid #FFCA95;
+		border-bottom: 1px solid #884400;
+		border-right: 1px solid #884400;
+	}
+	
+	.via-cas
+	{
+		color: #FFCC66;
+	}
+	
+	#portalCASLogin p
+	{
+		margin-top: 1em;
+		font-size: 80%;
+	}
+
+
+/** navigation **/
+/* Formatting for the main navigation.  
+ * Main navigation can be rendered in the header (as tabs), or down the left side. 
+ */
+	#portalNavigation ul, #portalNavigation li
+	{
+		list-style: none;
+	}
+
+	#portalNavigation .portal-navigation 
+	{
+		background: #9999cc url("images/tab.png") repeat-x;
+	}
+	
+	#portalNavigation .active 
+	{
+		background-position: 0 -200px;
+		background-color: #000099;
+	}
+		
+	#portalNavigation .portal-navigation:hover 
+	{
+		background-position: 0 -400px;
+		background-color: #663399;
+	}
+
+	#portalNavigation .portal-navigation a 
+	{
+		text-decoration: none;
+	}
+	
+	#portalNavigation a.portal-navigation-link 
+	{
+		color: #000099;
+		font-weight: bold;
+	}
+	
+	#portalNavigation .active a.portal-navigation-link 
+	{
+		color: #fff;
+	}
+	
+	#portalNavigation a.portal-navigation-link:hover 
+	{
+		color: #fff;
+	}
+
+	.portal-subnav-container 
+	{
+		background-color: #ccccff;
+	}
+	
+	/* flyout navigation */
+	
+	#portalFlyoutNavigation .portal-flyout-container
+	{
+		background-color: #fff;
+		width: 200px;
+		border-left: 1px solid #000099;
+		border-right: 1px solid #000099;
+		border-bottom: 2px solid #000099;
+		position: absolute;
+		z-index: 10;
+	}
+
+	#portalFlyoutNavigation .portal-flyout-container ul.portal-subnav-list {
+		padding: 0;
+		margin: 0;
+	}
+
+	#portalFlyoutNavigation .portal-flyout-container li
+	{
+		list-style: none;
+		border-bottom: 1px solid #000099;
+	}
+
+	#portalFlyoutNavigation a {
+		display: block;
+		padding: 4px 10px 4px 25px;
+		color: #6633CC;
+		font-weight: normal;
+		background-color: #ccccff;
+		background-position: 5px 3px;
+		background-repeat: no-repeat;
+		background-image: url("../../icons/application.png");
+		text-decoration: none;
+	}
+	
+	#portalFlyoutNavigation a:hover
+	{
+		color: #fff;
+		background-color: #6633CC;
+	}
+	
+	#portalFlyoutNavigation #editPageLink a, #portalFlyoutNavigation #deletePageLink a, #portalFlyoutNavigation #movePageLeftLink a, #portalFlyoutNavigation #movePageRightLink a
+	{
+		background-color: #FFFFCC;
+	}
+	
+	#portalFlyoutNavigation #editPageLink a:hover, #portalFlyoutNavigation #deletePageLink a:hover, #portalFlyoutNavigation #movePageLeftLink a:hover, #portalFlyoutNavigation #movePageRightLink a:hover
+	{
+		color: #000;
+		background-color: #FFFF99;
+	}
+
+	#portalFlyoutNavigation #editPageLink a
+	{
+		background-image: url("../../icons/layout_content.png");
+		
+	}
+	
+	#portalFlyoutNavigation #deletePageLink a
+	{
+		background-image: url("../../icons/cross.png");
+	}
+	
+	#portalFlyoutNavigation #movePageLeftLink a
+	{
+		background-image: url("../../icons/arrow_left.png");
+	}
+	
+	#portalFlyoutNavigation #movePageRightLink a
+	{
+		background-image: url("../../icons/arrow_right.png"); 
+	}
+	
+	#portalFlyoutNavigation .portal-flyout-iframe
+	{
+		position: absolute;
+		z-index: 9;
+	}
+	
+	#portalNavigation .portal-navigation .portal-subnav-container a
+	{
+		color: #6633CC;
+		font-weight: normal;
+		border-left: 4px solid #ccccff;
+		background: url("../../icons/application.png") 0.5em 0.5em no-repeat;
+	}
+	
+	#portalNavigation .portal-navigation .portal-subnav-container a:hover
+	{
+		color: #3300FF;
+		border-left: 4px solid #6600FF;
+	}
+
+	/* top navigation */
+	#portalNavigation .header .portal-navigation
+	{
+		border-left: 1px solid #000033;
+		border-right: 1px solid #000033;
+		border-top: 4px solid #000033;
+	}
+	
+	#portalNavigation .header .first
+	{
+		border-left: 4px solid #000033;
+	}
+	
+	#portalNavigation .header .last
+	{
+		border-right: 4px solid #000033;
+	}
+	
+	/* left navigation */
+	#portalNavigation .left li
+	{
+		border-bottom: 1px solid #000099;
+	}
+	
+	#portalNavigation .left a.portal-navigation-link 
+	{
+		background: url("../../icons/bullet_purple.png") no-repeat right;
+	}
+	
+	#portalNavigation .left .active a.portal-navigation-link 
+	{
+		background: url("../../icons/bullet_orange.png") no-repeat right;
+	}
+	
+	/* portlet navigation */
+	#portletNavigation
+	{
+		border-bottom: 2px solid #333399;
+	}
+	
+	#portletNavigation h3
+	{
+		margin: 0;
+		padding: 0.2em 0.5em;
+		color: #330099;
+		font-size: 90%;
+	}
+	
+	#portletNavigation ul, #portletNavigation li 
+	{
+		list-style: none;
+	}
+	
+	#portletNavigation a
+	{
+		color: #6633CC;
+		font-weight: normal;
+		background: #ccccff url("../../icons/application.png") 0.5em 0.5em no-repeat;
+		text-decoration: none;
+	}
+	
+	#portletNavigation a:hover
+	{
+		color: #fff;
+		background-color: #6633CC;
+	}
+	
+/** quicklinks **/
+	
+	#portalQuicklinks 
+	{
+	}
+	
+	#portalQuicklinks li 
+	{
+		list-style: none;
+	}
+	
+	#portalQuicklinks a 
+	{
+		text-decoration: none;
+	}
+
+	#portalQuicklinks a:hover 
+	{
+		text-decoration: underline;
+	}
+	
+	#changeColumns tr td {
+		padding: 5px;
+	}

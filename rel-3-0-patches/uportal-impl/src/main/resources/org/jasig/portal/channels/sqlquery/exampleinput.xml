@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <rows>
+        <row>
+            <column><name>TYPE_ID</name><value>0</value></column>
+            <column><name>TYPE_NAME</name><value>RSS</value></column>
+            <column><name>TYPE</name><value>org.jasig.portal.channels.CSyndFeed</value></column>
+            <column><name>TYPE_DESCR</name><value>Renders content provided in the popular RSS (Rich Site Summary) format</value></column>
+            <column><name>TYPE_DEF_URI</name><value>/org/jasig/portal/channels/CSyndFeed/CSyndFeed.cpd</value></column>
+        </row>
+        
+        <row>
+            <column><name>TYPE_ID</name><value>1</value></column>
+            <column><name>TYPE_NAME</name><value>XML SSL</value></column>
+            <column><name>TYPE</name><value>org.jasig.portal.channels.CGenericXSLT</value></column>
+            <column><name>TYPE_DESCR</name><value>Transforms an XML document into a fragment of markup language given a set of XSLT stylesheets specified in a uPortal stylesheet list (SSL) file.</value></column>
+            <column><name>TYPE_DEF_URI</name><value>/org/jasig/portal/channels/CGenericXSLT/CGenericXSLT.cpd</value></column>
+        </row>
+        
+        <row>
+            <column><name>TYPE_ID</name><value>2</value></column>
+            <column><name>TYPE_NAME</name><value>Inline Frame</value></column>
+            <column><name>TYPE</name><value>org.jasig.portal.channels.CInlineFrame</value></column>
+            <column><name>TYPE_DESCR</name><value>Renders an HTML page within a frame. Not supported in browsers older than Internet Explorer 5 and Netscape 6.</value></column>
+            <column><name>TYPE_DEF_URI</name><value>/org/jasig/portal/channels/CInlineFrame/CInlineFrame.cpd</value></column>
+        </row>
+        
+        <row>
+            <column><name>TYPE_ID</name><value>3</value></column>
+            <column><name>TYPE_NAME</name><value>Image</value></column>
+            <column><name>TYPE</name><value>org.jasig.portal.channels.CImage</value></column>
+            <column><name>TYPE_DESCR</name><value>Displays an image with optional caption and subcaption</value></column>
+            <column><name>TYPE_DEF_URI</name><value>/org/jasig/portal/channels/CImage/CImage.cpd</value></column>
+        </row>
+        
+        <row>
+            <column><name>TYPE_ID</name><value>4</value></column>
+            <column><name>TYPE_NAME</name><value>Web Proxy</value></column>
+            <column><name>TYPE</name><value>org.jasig.portal.channels.webproxy.CWebProxy</value></column>
+            <column><name>TYPE_DESCR</name><value>Incorporates a dynamic HTML or XML application</value></column>
+            <column><name>TYPE_DEF_URI</name><value>/org/jasig/portal/channels/webproxy/CWebProxy.cpd</value></column>
+        </row>
+        
+        <row>
+            <column><name>TYPE_ID</name><value>5</value></column>
+            <column><name>TYPE_NAME</name><value>WSRP Consumer</value></column>
+            <column><name>TYPE</name><value>org.jasig.portal.channels.portlet.CSpringPortletAdaptor</value></column>
+            <column><name>TYPE_DESCR</name><value>WSRP consumer implementation</value></column>
+            <column><name>TYPE_DEF_URI</name><value>/org/jasig/portal/channels/portlet/wsrp-consumer.cpd</value></column>
+        </row>
+        
+        <row>
+            <column><name>TYPE_ID</name><value>6</value></column>
+            <column><name>TYPE_NAME</name><value>Applet</value></column>
+            <column><name>TYPE</name><value>org.jasig.portal.channels.CApplet</value></column>
+            <column><name>TYPE_DESCR</name><value>Displays a java applet</value></column>
+            <column><name>TYPE_DEF_URI</name><value>/org/jasig/portal/channels/CApplet/CApplet.cpd</value></column>
+        </row>
+        
+        <row sinceMajor="2" sinceMinor="2">
+            <column><name>TYPE_ID</name><value><sequence id="UP_CHAN_TYPE">portlet</sequence></value></column>
+            <column><name>TYPE_NAME</name><value>Portlet</value></column>
+            <column><name>TYPE</name><value>org.jasig.portal.channels.portlet.CSpringPortletAdaptor</value></column>
+            <column><name>TYPE_DESCR</name><value>Adapter for JSR-168 Portlets</value></column>
+            <column><name>TYPE_DEF_URI</name><value>/org/jasig/portal/channels/portlet/CSpringPortletAdaptor.cpd</value></column>
+        </row>
+        
+        
+        <row sinceMajor="2" sinceMinor="5">
+            <column><name>TYPE_ID</name><value>8</value></column>
+            <column><name>TYPE_NAME</name><value>XML XSLT</value></column>
+            <column><name>TYPE</name><value>org.jasig.portal.channels.CGenericXSLT</value></column>
+            <column><name>TYPE_DESCR</name><value>Transforms an XML document into a fragment of markup language using a single XSLT.</value></column>
+            <column><name>TYPE_DEF_URI</name><value>/org/jasig/portal/channels/CGenericXSLT/CGenericJustXSLT.cpd</value></column>
+        </row>
+        
+        <row sinceMajor="2" sinceMinor="6">
+            <column><name>TYPE_ID</name><value>9</value></column>
+            <column><name>TYPE_NAME</name><value>SQL</value></column>
+            <column><name>TYPE</name><value>org.jasig.portal.channels.sqlquery.CSqlQuery</value></column>
+            <column><name>TYPE_DESCR</name><value>Executes a SQL query against a selected DataSource.</value></column>
+            <column><name>TYPE_DEF_URI</name><value>/org/jasig/portal/channels/sqlquery/CSqlQuery.cpd</value></column>
+        </row>
+        
+    </rows>

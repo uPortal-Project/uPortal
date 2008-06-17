@@ -1,0 +1,7 @@
+
+<channel-type script="classpath://org/jasig/portal/io/import-channel-type_v2-6.crn">
+  <name>RSS</name>
+  <type>org.jasig.portal.channels.CSyndFeed</type>
+  <desc>Renders content provided in the popular RSS (Rich Site Summary) format</desc>
+  <uri>/org/jasig/portal/channels/CSyndFeed/CSyndFeed.cpd</uri>
+</channel-type>

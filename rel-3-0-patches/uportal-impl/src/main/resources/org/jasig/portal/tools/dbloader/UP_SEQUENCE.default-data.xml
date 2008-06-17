@@ -1,0 +1,9 @@
+<table>
+	<name>UP_SEQUENCE</name>
+	<rows>
+        <row>
+			<column><name>SEQUENCE_NAME</name><value>UP_GROUP</value></column>
+			<column><name>SEQUENCE_VALUE</name><value>10</value></column> <!-- Reserve some IDs for internal use, just in case -->
+		</row>
+	</rows>
+</table>

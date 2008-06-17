@@ -1,0 +1,20 @@
+
+<channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-0.crn">
+  <title>User Preferences</title>
+  <name>User Preferences</name>
+  <fname>portal/userpreferences/general</fname>
+  <desc>User Preferences channel</desc>
+  <type>Custom</type>
+  <class>org.jasig.portal.channels.UserPreferences.CUserPreferences</class>
+  <timeout>10000</timeout>
+  <hasedit>N</hasedit>
+  <hashelp>N</hashelp>
+  <hasabout>N</hasabout>
+  <secure>N</secure>
+  <locale>en_US</locale>
+  <categories/>
+  <groups>
+    <group>Everyone</group>
+  </groups>
+  <parameters/>
+</channel-definition>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    
+    <!--
+     | Example LDAP Server Configurations
+     |
+     | This file contains example configurations for both LDAP authentication and
+     | LDAP person directory attribute lookups.  You may use the configurations below
+     | separately or together, depending on which LDAP services you're using. 
+     +-->
+
+        
+    <!--
+     | Example LDAP Server Configuration for the SimpleLdapSecurityContext
+     +-->
+
+    <!-- Delcare the legacy support bean to make LdapServices still work -->
+    <!--
+    <bean id="defaultLdapServer" class="org.jasig.portal.ldap.ContextSourceLdapServerImpl">
+        <property name="ldapContextSource" ref="legacyLdapContext"/>
+        <property name="uidAttribute" value="uid"/>
+        <property name="baseDN" value="ou=People, dc=myuniv, dc=edu"/>
+    </bean>
+    -->
+    
+    <!-- Declare a spring-ldap ContextSource that will work with the legacy LdapServer -->
+    <!--
+    <bean id="legacyLdapContext" class="org.springframework.ldap.core.support.LdapContextSource">    
+        <property name="url" value="ldap://ldap.myuniv.edu:389"/>
+        <property name="userName" value="cn=AuthUser, ou=People, dc=myuniv, dc=edu"/>
+        <property name="password" value="foobar"/>
+        <property name="pooled" value="false"/>
+    </bean>
+    -->
+
+    
+    <!--
+     | Example LDAP Server Configuration for LDAP person attribute lookups
+     +-->
+    
+    <!-- Declare the standard spring-ldap ContextSource objects to define LDAP server connections -->
+    <!--
+    <bean id="defaultLdapContext" class="org.springframework.ldap.core.support.LdapContextSource">
+        <property name="url" value="ldap://ldap.myuniv.edu:389"/>
+        <property name="base" value="ou=People, dc=myuniv, dc=edu"/>
+        <property name="userName" value="cn=AuthUser, ou=People, dc=myuniv, dc=edu"/>
+        <property name="password" value="foobar"/>
+        <property name="pooled" value="false"/>
+    </bean>
+    -->
+    
+</beans>

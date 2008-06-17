@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+<!DOCTYPE LDAPGroupStore PUBLIC "-//uPortal//LDAPGroupStore/EN" "LDAPGroupStore.dtd">
+
+<!--
+	LDAPGroupStoreConfig.xml is used to configure the default LDAP group store.
+	Additional LDAP group stores can be configured by creating additional configuration
+	documents, and cerating an IGroupServiceFactory implementation that instantiates
+	a new LDAPGroupStore with the other configuration document as an argument to
+	the constructor.
+
+	See LDAPGroupStore.dtd for xml grammar.
+
+	NOTE: For demonstration purposes, this document contains Columbia-specific
+        configuration information.  This should be replaced with a configuration
+        suitable to your institution
+
+     Author: Alex Vigdor, av317@columbia.edu
+     Version $Revision$
+-->
+
+<LDAPGroupStore>
+	<config>
+		<url>ldap://ldap.columbia.edu:389/o=Columbia%20University,c=US</url>
+		<logonid></logonid>
+		<logonpassword></logonpassword>
+		<keyfield>uni</keyfield>
+		<namefield>cn</namefield>
+		<usercontext></usercontext>
+		<refresh-minutes>120</refresh-minutes>
+	</config>
+        <group name="All LDAP Groups" key = "all">
+          <description>The root of all LDAP-derived groups</description>
+          <group name="Vigdors" key="1">
+                  <description>All people with the last name Vigdor</description>
+                  <entity-set>
+                          <filter string="cn=*vigdor"/>
+                  </entity-set>
+          </group>
+          <group name="Fracapanes and Ellentucks" key="2">
+                  <description>All Fracapanes and Ellentucks out there</description>
+                  <entity-set>
+                          <union>
+                                  <entity-set>
+                                          <filter string="cn=*fracapane"/>
+                                  </entity-set>
+                                  <entity-set>
+                                          <filter string="cn=*ellentuck"/>
+                                  </entity-set>
+                          </union>
+                  </entity-set>
+          </group>
+          <group name="Union test" key="3">
+                  <entity-set>
+                          <union>
+                                  <entity-set>
+                                          <filter string="cn=donald f*"/>
+                                  </entity-set>
+                                  <entity-set>
+                                          <filter string="cn=*frac*"/>
+                                  </entity-set>
+                          </union>
+                  </entity-set>
+          </group>
+          <group name="Intersection test" key="4">
+                  <entity-set>
+                          <intersection>
+                                  <entity-set>
+                                          <filter string="cn=donald f*"/>
+                                  </entity-set>
+                                  <entity-set>
+                                          <filter string="cn=*frac*"/>
+                                  </entity-set>
+                          </intersection>
+                  </entity-set>
+          </group>
+          <group name="Difference test" key="5">
+                  <entity-set>
+                          <difference>
+                                  <entity-set>
+                                          <filter string="cn=donald f*"/>
+                                  </entity-set>
+                                  <entity-set>
+                                          <filter string="cn=*frac*"/>
+                                  </entity-set>
+                          </difference>
+                  </entity-set>
+          </group>
+          <group name="Subtract test" key="6">
+                  <entity-set>
+                          <subtract>
+                                  <entity-set>
+                                          <filter string="cn=donald f*"/>
+                                  </entity-set>
+                                  <entity-set>
+                                          <filter string="cn=*frac*"/>
+                                  </entity-set>
+                          </subtract>
+                  </entity-set>
+          </group>
+      </group>
+</LDAPGroupStore>

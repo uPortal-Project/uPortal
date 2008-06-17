@@ -1,0 +1,6 @@
+
+<entity-type script="classpath://org/jasig/portal/io/import-entity-type_v2-6.crn">
+  <type-id>4</type-id>
+  <name>org.jasig.portal.groups.IEntityGroup</name>
+  <desc-name>Group</desc-name>
+</entity-type>

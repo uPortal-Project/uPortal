@@ -1,0 +1,12 @@
+<with-attribute key="NEXT_ID" value="${crn(determine-group-id.crn)}">
+    <sql-transaction>
+        <sql-upsert>
+            <update-statement>UPDATE up_group SET creator_id = ?, description = ? WHERE entity_type_id = ? AND group_name = ?</update-statement>
+            <insert-statement>INSERT INTO up_group(creator_id, description, entity_type_id, group_name, group_id) VALUES(?, ?, ?, ?, '${NEXT_ID}')</insert-statement>
+            <parameter value="${valueOf(creator)}"/>
+            <parameter value="${valueOf(description)}"/>
+            <parameter value="${sql(SELECT entity_type_id FROM up_entity_type WHERE entity_type_name = '${valueOf(entity-type)}')}"/>
+            <parameter value="${valueOf(name)}"/>
+        </sql-upsert>
+    </sql-transaction>
+</with-attribute>

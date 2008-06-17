@@ -1,0 +1,237 @@
+/* 
+------------------------------------
+  Styles for JSR-168 portlets.
+------------------------------------ */
+
+/* FONTS */
+
+p.portlet-font,
+.portlet-font,
+.portlet-font-dim {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 1.0em;
+	font-variant: normal;
+	font-weight: normal;
+	line-height: 1.3em;
+	}
+
+.portlet-font-dim {
+	color: #808080;
+	}
+
+
+/* MESSAGES */
+
+.portlet-msg-status {
+	color: #293b5a;
+	}
+	
+.portlet-msg-info {
+	color: #293b5a;
+	}
+	
+.portlet-msg-error { 
+	color: #f00;
+	font-size: 1em;
+	font-weight: bold;
+	}
+	
+.portlet-msg-alert {
+	background: transparent;
+	color: #f60;
+	font-size: 1em;
+	font-weight: normal;
+	padding: 4px;
+	}
+	
+.portlet-msg-success {
+	color: #293b5a;
+	font-size: 1em;
+	font-weight: bold;
+	}
+
+p.portlet-msg-error, .portlet-msg-error {
+	background: transparent;
+	color: #c00;
+	font-size: 1em;
+	font-weight: normal;
+	padding: 4px;
+	}
+
+
+/* SECTIONS */
+
+.portlet-section-header, .portlet h3, h3 { 
+	/* defined in yale_standard.css */
+	font-family: Georgia, "Times New Roman", Times, serif;
+	font-size: 1.3em;
+	font-variant: italic;
+	font-weight: bold;
+	
+	background-color:transparent;
+	color: #344461;
+	font-weight: normal;
+	margin: 0 0 10px 0;
+	padding: 0 0 5px 0;
+	}
+	
+.portlet-section-body { /* from .portlet p in yale_standard, not sure about this */
+	color: #000066;
+	font-size: 1.1em;
+	font-variant: normal;
+	font-weight: normal;
+	line-height: 1.3em;
+	margin: .4em 0em 0em 0em;
+	}
+
+.portlet-section-alternate {
+	background-color: transparent;
+	}
+	
+.portlet-section-selected { 
+	background-color: transparent;
+	}
+
+.portlet-section-subheader, .portlet h4 {
+	background-color: transparent;
+	color: #344461;
+	font-weight: normal;
+	margin: 1em 0;
+	padding: 0;
+	}
+	
+.portlet-section-footer {
+	color: #666;
+	border-top: 1px solid #ccf;
+	padding: 5px 0 0 0;
+	text-align: left;
+	margin: 10px 0 0 0;
+	}
+	
+.portlet-section-text { /* same as portlet-font */
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 1.0em;
+	font-variant: normal;
+	font-weight: normal;
+	line-height: 1.3em;
+	}
+
+
+/* FORMS */
+
+/* styles the label for the whole form */
+.portlet-form-label,
+.portlet p.portlet-form-label { /* need this class to override yale_standard  */
+	background: transparent;
+	color: #344461;
+	/* display: inline;
+	float: left; */
+	font-family: Georgia, "Times New Roman", Times, serif;
+	font-size: 1.3em;
+	font-weight: normal;
+	line-height: 1.2em;
+	margin: 0;
+	padding: 0;
+}
+
+/* for the text that a user enters into an input field */
+.portlet-form-input-field { 
+font-family: Verdana, Arial, Helvetica, sans-serif;
+font-size: 1.1em;
+color: #000;
+}
+
+/* for the text that appears on the face of a button,
+   also styles the button appearance in most browsers */
+.portlet-form-button {
+	border-style: solid;
+	border-color: #000;
+	border-width: 1px;
+	background-color: #d2e1fa;
+	color: #000;
+	cursor: pointer;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: normal;
+	font-size: 1em;
+	text-align: center;
+	white-space: nowrap;
+	vertical-align: middle;
+	padding: 1px 3px 1px 3px;
+	}
+
+/* styles text next to an application-specific icon (e.g. Export) */
+.portlet-icon-label,
+/* styles text next to a standard icon (e.g. Cancel) */
+.portlet-dlg-icon-label { 
+	vertical-align: middle;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 1.1em;
+	color: #000;
+	}
+
+/* styles text (e.g. label) that identifies unique form fields */
+.portlet-form-field-label,
+.portlet form label {
+	background-color: transparent;
+	color: #344461;
+	font-weight: normal;
+	cursor: pointer;
+	}
+
+/* for labeling fields, but not for input fields */
+.portlet-form-field { 
+	background-color: transparent;
+	color: #344461;
+	font-weight: normal;
+	cursor: pointer;
+	}
+
+
+/* MENUS */
+
+.portlet-menu { 
+	background-color: transparent;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 1.0em;
+	font-variant: normal;
+	font-weight: normal;
+	line-height: 1.2em;
+ 	}
+ 	
+.portlet-menu-item { 
+	text-decoration: none;
+	color: #293b5a;
+	}
+	
+.portlet-menu-item-selected { 
+	text-decoration: none;
+	color: #000;
+	}
+	
+.portlet-menu-item-hover { 
+	text-decoration: underline;
+	color: #ef2d00;
+	}
+	
+.portlet-menu-item-hover-selected { 
+	text-decoration: underline;
+	color: #ef2d00;
+	}
+	
+.portlet-menu-cascade-item { 
+	text-decoration: none;
+	color: #293b5a;
+	}
+	
+.portlet-menu-cascade-item-selected { 
+	text-decoration: none;
+	color: #000;
+	}
+	
+.portlet-menu-description { 
+	color: #000;
+	}
+	
+.portlet-menu-caption { 
+	color: #000;
+	}

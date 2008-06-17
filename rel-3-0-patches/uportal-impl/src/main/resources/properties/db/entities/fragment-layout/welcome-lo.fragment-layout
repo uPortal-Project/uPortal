@@ -1,0 +1,58 @@
+
+<layout script="classpath://org/jasig/portal/io/import-layout_v3-0.crn" username="welcome-lo">
+  <root unremovable="Y" immutable="N" hidden="N" name="Root folder">
+    <header unremovable="Y" immutable="Y" hidden="N" name="Header folder">
+      <channel fname="header"/>
+      <channel fname="portal/login/general"/>
+      <channel fname="session-locales-selector"/>
+    </header>
+    <footer unremovable="N" immutable="N" hidden="N" name="Footer folder">
+      <channel fname="footer"/>
+    </footer>
+    <tab unremovable="N" immutable="N" hidden="N" name="Welcome">
+      <param>
+        <name>cp:deleteAllowed</name>
+        <value>false</value>
+      </param>
+      <param>
+        <name>cp:editAllowed</name>
+        <value>false</value>
+      </param>
+      <param>
+        <name>cp:moveAllowed</name>
+        <value>false</value>
+      </param>
+      <column unremovable="N" immutable="N" hidden="N" name="Column">
+        <structure-attribute type="folder">
+          <name>width</name>
+          <value>60%</value>
+        </structure-attribute>
+        <channel fname="snappy">
+          <param>
+            <name>cp:deleteAllowed</name>
+            <value>false</value>
+          </param>
+          <param>
+            <name>cp:moveAllowed</name>
+            <value>false</value>
+          </param>
+        </channel>
+        <channel fname="google-portlet"/>
+      </column>
+      <column unremovable="N" immutable="N" hidden="N" name="Column">
+        <structure-attribute type="folder">
+          <name>width</name>
+          <value>40%</value>
+        </structure-attribute>
+        <channel fname="pbookmarks"/>
+        <channel fname="calendar"/>
+        <channel fname="weather"/>
+      </column>
+    </tab>
+  </root>
+  <profile name="HTML browser profile"> 
+    <description>A system profile for common web browsers</description>  
+    <structure name="DLM Tabs and columns"/>  
+    <theme name="DLM XHTML"/> 
+  </profile>
+</layout>

@@ -1,0 +1,237 @@
+<registry>
+  <category id="catlocal.52" description="Development" name="Development" view="expanded">
+    <category id="catlocal.53" description="uPortal-related" name="uPortal" view="expanded">
+      <category id="catlocal.54" description="Java classes implementing the IChannel interface" name="Channel Types" view="condensed">
+        <category id="catlocal.56" description="Renders a java applet" name="CApplet" view="condensed">
+          <channel id="chan9" view="condensed" chanid="9" class="org.jasig.portal.channels.CApplet" description="Minesweeper applet" editable="false" fname="minesweeper" hasabout="false" hashelp="false" name="Minesweeper" secure="false" timeout="10000" title="Minesweeper" typeid="6">
+            <parameter name="code" value="jmapplet.class"/>
+            <parameter name="APPLET.cols" value="8"/>
+            <parameter name="archive" value="javamine.jar"/>
+            <parameter name="width" value="152"/>
+            <parameter name="APPLET.marks" value="true"/>
+            <parameter name="height" value="195"/>
+            <parameter name="codeBase" value="http://www.nrr.co.uk/javamine"/>
+            <parameter name="APPLET.graphics" value="true"/>
+            <parameter name="APPLET.rows" value="8"/>
+            <parameter name="APPLET.level" value="beginner"/>
+            <parameter name="APPLET.type" value="application/x-java-applet"/>
+            <parameter name="APPLET.mines" value="10"/>
+          </channel>
+        </category>
+        <category id="catlocal.57" description="Performs XSLT transformations" name="CGenericXSLT" view="condensed">
+          <category id="catlocal.58" description="Rich Site Summary, an XML standard for content feeds" name="RSS" view="condensed">
+            <channel id="chan13" view="condensed" chanid="13" class="org.jasig.portal.channels.CGenericXSLT" description="Motley Fool channel" editable="false" fname="motley-fool" hasabout="false" hashelp="false" name="The Motley Fool" secure="false" timeout="10000" title="Motley Fool" typeid="0">
+              <parameter name="sslUri" value="CGenericXSLT/RSS/RSS-0_9x.ssl"/>
+              <parameter name="xmlUri" value="http://www.fool.com/xml/foolnews_rss091.xml"/>
+            </channel>
+            <channel id="chan6" view="condensed" chanid="6" class="org.jasig.portal.channels.CGenericXSLT" description="UNICON News channel" editable="false" fname="unicon-news" hasabout="false" hashelp="false" name="UNICON News" secure="false" timeout="10000" title="UNICON News" typeid="0">
+              <parameter name="sslUri" value="CGenericXSLT/RSS/RSS-0_9x.ssl"/>
+              <parameter name="xmlUri" value="http://www.unicon.net/publish/uniconnews.rss"/>
+            </channel>
+            <channel id="chan5" view="condensed" chanid="5" class="org.jasig.portal.channels.CGenericXSLT" description="uPortal Demos channel" editable="false" fname="uportal-powered-sites" hasabout="false" hashelp="false" name="uPortal-Powered Sites" secure="false" timeout="10000" title="uPortal-Powered Sites" typeid="0">
+              <parameter name="sslUri" value="CGenericXSLT/RSS/RSS-0_9x.ssl"/>
+              <parameter name="xmlUri" value="http://www.unicon.net/publish/jasigPortalDemos.rss"/>
+            </channel>
+            <channel id="chan11" view="condensed" chanid="11" class="org.jasig.portal.channels.CGenericXSLT" description="Word of the Day channel" editable="false" fname="word-of-the-day" hasabout="false" hashelp="false" name="Word of the Day" secure="false" timeout="10000" title="Word of the Day" typeid="0">
+              <parameter name="sslUri" value="CGenericXSLT/RSS/RSS-0_9x.ssl"/>
+              <parameter name="xmlUri" value="http://www.dictionary.com/wordoftheday/wotd.rss"/>
+            </channel>
+            <channel id="chan12" view="condensed" chanid="12" class="org.jasig.portal.channels.CGenericXSLT" description="Salon.com channel" editable="false" fname="salon.com" hasabout="false" hashelp="false" name="Salon.com" secure="false" timeout="10000" title="Salon.com" typeid="0">
+              <parameter name="sslUri" value="CGenericXSLT/RSS/RSS-0_9x.ssl"/>
+              <parameter name="xmlUri" value="http://www.salon.com/feed/RDF/salon_use.rdf"/>
+            </channel>
+            <channel id="chan7" view="condensed" chanid="7" class="org.jasig.portal.channels.CGenericXSLT" description="uPortal Developers Reference channel" editable="false" fname="uportal-developers-reference" hasabout="false" hashelp="false" name="uPortal Developers Reference" secure="false" timeout="10000" title="uPortal Developers Reference" typeid="0">
+              <parameter name="sslUri" value="CGenericXSLT/RSS/RSS-0_9x.ssl"/>
+              <parameter name="xmlUri" value="http://www.princeton.edu/~mbarton/jasigdev.rss"/>
+            </channel>
+          </category>
+          <channel id="chan20" view="condensed" chanid="20" class="org.jasig.portal.channels.CGenericXSLT" description="A list of books useful to uPortal developers" editable="false" fname="uportal-development-books" hasabout="false" hashelp="false" name="uPortal Development Books" secure="false" timeout="20000" title="uPortal Development Books" typeid="1">
+            <parameter name="sslUri" value="CGenericXSLT/uPortalDevBooks/uPortalDevBooks.ssl"/>
+            <parameter name="xmlUri" value="http://www.unicon.net/publish/uPortalDevBooks/uPortalDevBooks.xml"/>
+          </channel>
+          <channel id="chan15" view="condensed" chanid="15" class="org.jasig.portal.channels.CGenericXSLT" description="CSS Viewer channel" editable="false" fname="css-viewer" hasabout="false" hashelp="true" name="CSS Viewer" secure="false" timeout="5000" title="CSS Viewer" typeid="1">
+            <parameter name="sslUri" value="CGenericXSLT/CSSViewer/CSSViewer.ssl"/>
+            <parameter name="xmlUri" value="CGenericXSLT/CSSViewer/cssViewer.xml"/>
+          </channel>
+        </category>
+        <category id="catlocal.59" description="Renders and image with an optional caption and subcaption" name="CImage" view="condensed">
+          <channel id="chan1" view="condensed" chanid="1" class="org.jasig.portal.channels.CImage" description="Daily Business Cartoon by Ted Goff, www.tedgoff.com" editable="false" fname="daily-business-cartoon" hasabout="false" hashelp="false" name="Daily Business Cartoon" secure="false" timeout="30000" title="Daily Business Cartoon" typeid="3">
+            <parameter name="img-height" value="300"/>
+            <parameter name="img-border" value="0"/>
+            <parameter name="img-link" value="http://www.tedgoff.com"/>
+            <parameter name="img-uri" value="http://www.tedgoff.com/mb/images/today.gif"/>
+            <parameter name="img-width" value="300"/>
+          </channel>
+        </category>
+        <category id="catlocal.55" description="Serves as HTTP Proxy to HTML or XHTML web pages" name="CWebProxy" view="condensed">
+          <channel id="chan18" view="condensed" chanid="18" class="org.jasig.portal.channels.webproxy.CWebProxy" description="Tomcat's Servlet Examples" editable="true" fname="tomcat-servlet-examples" hasabout="true" hashelp="true" name="Tomcat's Servlet Examples" secure="false" timeout="10000" title="Tomcat's Servlet Examples" typeid="4">
+            <parameter name="cw_xml" value="http://localhost:8080/servlets-examples/index.html"/>
+            <parameter name="cw_passThrough" value="all"/>
+            <parameter name="cw_info" value="examples/servlet_info.html"/>
+            <parameter name="cw_edit" value="examples/servlet_edit.html"/>
+            <parameter name="cw_ssl" value="XHTML.ssl"/>
+            <parameter name="cw_help" value="examples/servlet_help.html"/>
+            <parameter name="cw_tidy" value="on"/>
+          </channel>
+          <channel id="chan17" view="condensed" chanid="17" class="org.jasig.portal.channels.webproxy.CWebProxy" description="Tomcat's NumGuess" editable="true" fname="tomcat-number-guess" hasabout="true" hashelp="true" name="Tomcat's NumGuess" secure="false" timeout="10000" title="Tomcat's NumGuess" typeid="4">
+            <parameter name="cw_xml" value="http://localhost:8080/jsp-examples/num/numguess.jsp"/>
+            <parameter name="cw_passThrough" value="application"/>
+            <parameter name="cw_info" value="examples/num_info.html"/>
+            <parameter name="cw_edit" value="examples/num_edit.html"/>
+            <parameter name="cw_ssl" value="XHTML.ssl"/>
+            <parameter name="cw_help" value="examples/num_help.html"/>
+            <parameter name="cw_tidy" value="on"/>
+          </channel>
+        </category>
+        <category id="catlocal.60" description="Renders a web page inside and inline frame. Only use for IE 5 and Netscape 6 and higher." name="CInlineFrame" view="condensed">
+          <category id="catlocal.62" description="Business or company news" name="Business" view="condensed">
+            <channel id="chan13" chanid="13" class="org.jasig.portal.channels.CGenericXSLT" description="Motley Fool channel" editable="false" fname="motley-fool" hasabout="false" hashelp="false" name="The Motley Fool" secure="false" timeout="10000" title="Motley Fool" typeid="0">
+              <parameter name="sslUri" value="CGenericXSLT/RSS/RSS-0_9x.ssl"/>
+              <parameter name="xmlUri" value="http://www.fool.com/xml/foolnews_rss091.xml"/>
+            </channel>
+            <channel id="chan6" view="condensed" chanid="6" class="org.jasig.portal.channels.CGenericXSLT" description="UNICON News channel" editable="false" fname="unicon-news" hasabout="false" hashelp="false" name="UNICON News" secure="false" timeout="10000" title="UNICON News" typeid="0">
+              <parameter name="sslUri" value="CGenericXSLT/RSS/RSS-0_9x.ssl"/>
+              <parameter name="xmlUri" value="http://www.unicon.net/publish/uniconnews.rss"/>
+            </channel>
+          </category>
+          <channel id="chan8" view="condensed" chanid="8" class="org.jasig.portal.channels.CInlineFrame" description="uPortal Home Page channel" editable="false" fname="uportal-home-page" hasabout="false" hashelp="false" name="uPortal Home Page" secure="false" timeout="20000" title="uPortal Home Page" typeid="2">
+            <parameter name="height" value="800"/>
+            <parameter name="url" value="http://mis105.mis.udel.edu/ja-sig/uportal/"/>
+          </channel>
+        </category>
+      </category>
+      <channel id="chan5" view="condensed" chanid="5" class="org.jasig.portal.channels.CGenericXSLT" description="uPortal Demos channel" editable="false" fname="uportal-powered-sites" hasabout="false" hashelp="false" name="uPortal-Powered Sites" secure="false" timeout="10000" title="uPortal-Powered Sites" typeid="0">
+        <parameter name="sslUri" value="CGenericXSLT/RSS/RSS-0_9x.ssl"/>
+        <parameter name="xmlUri" value="http://www.unicon.net/publish/jasigPortalDemos.rss"/>
+      </channel>
+      <channel id="chan15" view="condensed" chanid="15" class="org.jasig.portal.channels.CGenericXSLT" description="CSS Viewer channel" editable="false" fname="css-viewer" hasabout="false" hashelp="true" name="CSS Viewer" secure="false" timeout="5000" title="CSS Viewer" typeid="1">
+        <parameter name="sslUri" value="CGenericXSLT/CSSViewer/CSSViewer.ssl"/>
+        <parameter name="xmlUri" value="CGenericXSLT/CSSViewer/cssViewer.xml"/>
+      </channel>
+      <channel id="chan7" view="condensed" chanid="7" class="org.jasig.portal.channels.CGenericXSLT" description="uPortal Developers Reference channel" editable="false" fname="uportal-developers-reference" hasabout="false" hashelp="false" name="uPortal Developers Reference" secure="false" timeout="10000" title="uPortal Developers Reference" typeid="0">
+        <parameter name="sslUri" value="CGenericXSLT/RSS/RSS-0_9x.ssl"/>
+        <parameter name="xmlUri" value="http://www.princeton.edu/~mbarton/jasigdev.rss"/>
+      </channel>
+      <channel id="chan22" view="condensed" chanid="22" class="org.jasig.portal.channels.CGenericXSLT" description="uPortal Data Dictionary - descriptions for tables and attributes used in uPortal" editable="false" fname="uportal-data-dictionary" hasabout="false" hashelp="false" name="uPortal Data Dictionary" secure="false" timeout="10000" title="uPortal Data Dictionary" typeid="1">
+        <parameter name="sslUri" value="CGenericXSLT/DataDictViewer/DataDictViewer.ssl"/>
+        <parameter name="xmlUri" value="/properties/db/tables.xml"/>
+      </channel>
+      <channel id="chan8" view="condensed" chanid="8" class="org.jasig.portal.channels.CInlineFrame" description="uPortal Home Page channel" editable="false" fname="uportal-home-page" hasabout="false" hashelp="false" name="uPortal Home Page" secure="false" timeout="20000" title="uPortal Home Page" typeid="2">
+        <parameter name="height" value="800"/>
+        <parameter name="url" value="http://mis105.mis.udel.edu/ja-sig/uportal/"/>
+      </channel>
+    </category>
+    <channel id="chan102" view="condensed" chanid="102" class="org.jasig.portal.channels.portlet.CSpringPortletAdaptor" description="Test portlet 1 from Apache Pluto" editable="false" fname="test-portlet-1" hasabout="false" hashelp="false" name="Test Portlet 1" secure="false" timeout="60000" title="Test Portlet 1" typeid="7">
+      <parameter name="portletDefinitionId" value="testsuite.TestPortlet1"/>
+      <parameter name="PORTLET.TestName4" value="TestValue4"/>
+    </channel>
+    <channel id="chan24" view="condensed" chanid="24" class="org.jasig.portal.channels.iccdemo.CViewer" description="Interchannel communications demo Viewer channel" editable="false" fname="portal/iccdemo/viewer" hasabout="false" hashelp="false" name="ICC Viewer channel" secure="false" timeout="10000" title="CViewer" typeid="-1"/>
+    <channel id="chan23" view="condensed" chanid="23" class="org.jasig.portal.channels.iccdemo.CURLSelector" description="Interchannel communications demo URL selector channel" editable="false" fname="portal/iccdemo/urlselector" hasabout="false" hashelp="false" name="ICC URL selector channel" secure="false" timeout="10000" title="CURLSelector" typeid="-1"/>
+    <channel id="chan20" view="condensed" chanid="20" class="org.jasig.portal.channels.CGenericXSLT" description="A list of books useful to uPortal developers" editable="false" fname="uportal-development-books" hasabout="false" hashelp="false" name="uPortal Development Books" secure="false" timeout="20000" title="uPortal Development Books" typeid="1">
+      <parameter name="sslUri" value="CGenericXSLT/uPortalDevBooks/uPortalDevBooks.ssl"/>
+      <parameter name="xmlUri" value="http://www.unicon.net/publish/uPortalDevBooks/uPortalDevBooks.xml"/>
+    </channel>
+    <channel id="chan25" view="condensed" chanid="25" class="org.jasig.portal.channels.iccdemo.CHistory" description="Interchannel communications demo History channel" editable="false" fname="portal/iccdemo/history" hasabout="false" hashelp="false" name="ICC History channel" secure="false" timeout="10000" title="CHistory" typeid="-1"/>
+    <channel id="chan105" view="condensed" chanid="105" class="org.jasig.portal.channels.portlet.CSpringPortletAdaptor" description="RSS Portlet from Portlet Open Source Trading site" editable="false" fname="rss-portlet" hasabout="false" hashelp="true" name="RSS Portlet" secure="false" timeout="60000" title="RSS Portlet" typeid="7">
+      <parameter name="portletDefinitionId" value="RssPortlet.RssPortlet"/>
+    </channel>
+    <channel id="chan16" view="condensed" chanid="16" class="org.jasig.portal.channels.CSnoop" description="Snooper channel" editable="false" fname="snooper" hasabout="false" hashelp="false" name="Snooper" secure="false" timeout="5000" title="Snooper" typeid="-1"/>
+    <channel id="chan104" view="condensed" chanid="104" class="org.jasig.portal.channels.portlet.CSpringPortletAdaptor" description="Test portlet 2 from Apache Pluto" editable="false" fname="test-portlet-2" hasabout="false" hashelp="false" name="Test Portlet 2" secure="false" timeout="60000" title="Test Portlet 2" typeid="7">
+      <parameter name="portletDefinitionId" value="testsuite.TestPortlet2"/>
+      <parameter name="PORTLET.TestName4" value="TestValue4"/>
+    </channel>
+    <channel id="chan4" view="condensed" chanid="4" class="org.jasig.portal.channels.CPersonAttributes" description="A display of person attributes available to channels" editable="false" fname="person-attributes" hasabout="false" hashelp="false" name="Person Attributes" secure="false" timeout="20000" title="Person Attributes" typeid="-1"/>
+    <channel id="chan107" view="condensed" chanid="107" class="org.jasig.portal.channels.portlet.CSpringPortletAdaptor" description="Google Portlet from Portlet Open Source Trading site" editable="false" fname="google-portlet" hasabout="false" hashelp="true" name="Google Portlet" secure="false" timeout="60000" title="Google Portlet" typeid="7">
+      <parameter name="portletDefinitionId" value="GooglePortlet.GooglePortlet"/>
+    </channel>
+  </category>
+  <category id="catlocal.61" description="News" name="News" view="condensed">
+    <channel id="chan12" view="condensed" chanid="12" class="org.jasig.portal.channels.CGenericXSLT" description="Salon.com channel" editable="false" fname="salon.com" hasabout="false" hashelp="false" name="Salon.com" secure="false" timeout="10000" title="Salon.com" typeid="0">
+      <parameter name="sslUri" value="CGenericXSLT/RSS/RSS-0_9x.ssl"/>
+      <parameter name="xmlUri" value="http://www.salon.com/feed/RDF/salon_use.rdf"/>
+    </channel>
+  </category>
+  <category id="catlocal.63" description="Entertainment" name="Entertainment" view="expanded">
+    <category id="catlocal.64" description="Games" name="Games" view="expanded">
+      <channel id="chan9" view="condensed" chanid="9" class="org.jasig.portal.channels.CApplet" description="Minesweeper applet" editable="false" fname="minesweeper" hasabout="false" hashelp="false" name="Minesweeper" secure="false" timeout="10000" title="Minesweeper" typeid="6">
+        <parameter name="code" value="jmapplet.class"/>
+        <parameter name="APPLET.cols" value="8"/>
+        <parameter name="archive" value="javamine.jar"/>
+        <parameter name="width" value="152"/>
+        <parameter name="APPLET.marks" value="true"/>
+        <parameter name="height" value="195"/>
+        <parameter name="codeBase" value="http://www.nrr.co.uk/javamine"/>
+        <parameter name="APPLET.graphics" value="true"/>
+        <parameter name="APPLET.rows" value="8"/>
+        <parameter name="APPLET.level" value="beginner"/>
+        <parameter name="APPLET.type" value="application/x-java-applet"/>
+        <parameter name="APPLET.mines" value="10"/>
+      </channel>
+      <channel id="chan14" view="expanded" chanid="14" class="org.jasig.portal.channels.CNumberGuess" description="Number Guessing Game channel" editable="false" fname="number-guessing-game" hasabout="false" hashelp="false" name="Number Guessing Game" secure="false" timeout="10000" title="Number Guessing Game" typeid="-1">
+        <parameter name="minNum" override="yes" value="1"/>
+        <parameter name="maxNum" override="yes" value="100"/>
+      </channel>
+    </category>
+    <channel id="chan1" view="condensed" chanid="1" class="org.jasig.portal.channels.CImage" description="Daily Business Cartoon by Ted Goff, www.tedgoff.com" editable="false" fname="daily-business-cartoon" hasabout="false" hashelp="false" name="Daily Business Cartoon" secure="false" timeout="30000" title="Daily Business Cartoon" typeid="3">
+      <parameter name="img-height" value="300"/>
+      <parameter name="img-border" value="0"/>
+      <parameter name="img-link" value="http://www.tedgoff.com"/>
+      <parameter name="img-uri" value="http://www.tedgoff.com/mb/images/today.gif"/>
+      <parameter name="img-width" value="300"/>
+    </channel>
+    <channel id="chan11" view="condensed" chanid="11" class="org.jasig.portal.channels.CGenericXSLT" description="Word of the Day channel" editable="false" fname="word-of-the-day" hasabout="false" hashelp="false" name="Word of the Day" secure="false" timeout="10000" title="Word of the Day" typeid="0">
+      <parameter name="sslUri" value="CGenericXSLT/RSS/RSS-0_9x.ssl"/>
+      <parameter name="xmlUri" value="http://www.dictionary.com/wordoftheday/wotd.rss"/>
+    </channel>
+  </category>
+  <category id="catlocal.51" description="Applications" name="Applications" view="condensed">
+    <channel id="chan94" view="condensed" chanid="94" class="org.jasig.portal.channels.groupsmanager.CGroupsManager" description="An administrative tool for creating and managing groups and memberships" editable="false" fname="groupsmanager" hasabout="false" hashelp="false" name="Groups Manager" secure="false" timeout="40000" title="Groups Manager" typeid="-1"/>
+  </category>
+<fragments>
+    <category name="Fragments" ID="fragments" view="expanded">
+        <fragment ID="f001">
+            <rootNodeID immutable='N'>frnid001</rootNodeID>
+            <type>pulled</type>
+            <fname>News</fname>
+            <name></name>
+            <description>A tab fragment with 2 columns each containing news feeds</description>
+        </fragment>
+        <fragment ID="f005">
+            <rootNodeID immutable='Y'>frnid005</rootNodeID>
+            <type>pushed</type>
+            <fname>BioDept</fname>
+            <name>Biology Department</name>
+            <description>A tab fragment with 3 columns each containing Biology Department channels</description>
+        </fragment>
+        <fragment ID="f006">
+            <rootNodeID immutable='Y'>frnid006</rootNodeID>
+            <type>pulled</type>
+            <fname>Bio180</fname>
+            <name>Biology 180</name>
+            <description>A tab fragment with 2 columns each containing Biology 180 class channels</description>
+        </fragment>
+        <fragment>
+            <ID>f004</ID>
+            <rootNodeID immutable='N'>frnid004</rootNodeID>
+            <type>pulled</type>
+            <fname>Bio101</fname>
+            <name>Biology 101</name>
+            <description>A tab fragment with 2 columns each containing Biology 101 class channels</description>
+        </fragment>
+        <fragment ID="f002">
+            <rootNodeID immutable='Y'>frnid002</rootNodeID>
+            <type>pushed</type>
+            <fname>Bio123</fname>
+            <name>Biology123</name>
+            <description>A tab fragment with 2 columns each containing Biology 123 class channels</description>
+        </fragment>
+        <fragment ID="f003">
+            <rootNodeID immutable='N'>frnid003</rootNodeID>
+            <type>pushed</type>
+            <fname>Bio322</fname>
+            <name>Biology 322</name>
+            <description>A tab fragment with 2 columns each containing Biology 322 class channels</description>
+        </fragment>
+    </category>
+</fragments>
+</registry>

@@ -1,0 +1,13 @@
+
+<permission script="classpath://org/jasig/portal/io/import-permission_v2-6.crn">
+  <owner>org.jasig.portal.channels.groupsmanager.CGroupsManager</owner>
+  <principal-type>org.jasig.portal.groups.IEntityGroup</principal-type>
+  <principal> 
+    <group>Developers</group> 
+  </principal>
+  <activity>VIEW</activity>
+  <target> 
+    <group>CInlineFrame</group> 
+  </target>
+  <permission-type>GRANT</permission-type>
+</permission>

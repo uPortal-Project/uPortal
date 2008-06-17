@@ -1,0 +1,4 @@
+
+<user script="classpath://org/jasig/portal/io/import-user_v3-0.crn" username="staff">
+  <default-user>defaultTemplateUser</default-user>
+</user>

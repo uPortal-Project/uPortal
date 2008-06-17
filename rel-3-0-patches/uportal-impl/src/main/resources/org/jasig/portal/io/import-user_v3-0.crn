@@ -1,0 +1,21 @@
+<with-attribute key="USER_NAME" value="${valueOf(@username)}">
+    <sql-transaction>
+        <with-attribute key="NEXT_ID" value="${org.jasig.portal.io.SequenceGeneratorPhrase(UP_USER)}">
+            <!-- user -->
+            <sql-upsert>
+                <update-statement>UPDATE up_user SET user_dflt_usr_id = ?, user_dflt_lay_id=1, next_struct_id=? WHERE user_name = ?</update-statement>
+                <insert-statement>INSERT INTO up_user(user_id, user_dflt_usr_id, user_dflt_lay_id, next_struct_id, user_name) VALUES(${req(NEXT_ID)}, ?, 1, ?, ?)</insert-statement>
+                <parameter value="${sql(SELECT user_id FROM up_user WHERE user_name ${org.jasig.portal.io.SqlStringEqualsPhrase(${org.jasig.portal.io.DefaultUsernamePhrase(${singleNode(default-user)})})})}"/>
+                <parameter value="${sql(SELECT next_struct_id FROM up_user WHERE user_name ${org.jasig.portal.io.SqlStringEqualsPhrase(${org.jasig.portal.io.DefaultUsernamePhrase(${singleNode(default-user)})})})}"/>
+                <parameter value="${req(USER_NAME)}"/>
+            </sql-upsert>
+
+            <!-- default user profile -->
+            <if test="${groovy(0 == ${sql(SELECT COUNT(UPUP.USER_ID) FROM UP_USER_PROFILE UPUP LEFT JOIN UP_USER UPU ON UPUP.USER_ID = UPU.USER_ID WHERE UPU.USER_NAME='${req(USER_NAME)}')})}">
+                <sql-statement sql="INSERT INTO up_user_profile(user_id, profile_id) VALUES(?, 1)">
+                    <parameter value="${sql(SELECT user_id FROM up_user WHERE user_name = '${req(USER_NAME)}')}"/>
+                </sql-statement>
+            </if>
+        </with-attribute>
+    </sql-transaction>
+</with-attribute>

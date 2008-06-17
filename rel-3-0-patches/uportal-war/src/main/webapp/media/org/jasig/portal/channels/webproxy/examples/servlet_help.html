@@ -1,0 +1,68 @@
+<html><body bgcolor="#ffffff">
+<font size=+1><b>Servlet Examples Help</b></font>
+
+<p>
+This channel is running (or trying to run) your local Tomcat
+servlet examples.  It assumes the URL is http://localhost:8080/examples/servlets/index.html.  Note that localhost refers to the host your uPortal instance is
+running on, not the machine your browser is on.  Because of this, images will
+not be found.  You should change localhost
+to the host of the machine that your uPortal instance is running on (data.xml).
+
+<p>
+The channel uses CWebProxy to incorporate the servlets.
+CWebProxy is invoked with the following parameters:
+<table>
+ <tr align=left>
+  <td><b>Name</b></td>
+  <td><b>Value</b></td>
+ </tr>
+ <tr align=left>
+  <td>cw_xml</td>
+  <td>http://localhost:8080/examples/servlets/index.html</td>
+ </tr>
+ <tr align=left>
+  <td>cw_ssl</td>
+  <td>webpages/stylesheets/org/jasig/portal/channels/CWebProxy/XHTML.ssl</td>
+ </tr>
+ <tr align=left>
+  <td>cw_info</td>
+  <td>examples/servlet_info.html</td>
+ </tr>
+ <tr align=left>
+  <td>cw_help</td>
+  <td>examples/servlet_help.html</td>
+ </tr>
+ <tr align=left>
+  <td>cw_edit</td>
+  <td>examples/servlet_edit.html</td>
+ </tr>
+ <tr align=left>
+  <td>cw_passThrough</td>
+  <td>application</td>
+ </tr>
+ <tr align=left>
+  <td>cw_tidy</td>
+  <td>on</td>
+ </tr>
+</table>
+<p>
+
+This help page is a static html page on a remote server, with the URL
+indicated by the <i>cw_help</i> parameter.  CWebProxy replaces the application
+with this URL when you click on the help button, so we need to aim you
+back to the original application when you're done with help.  This is
+done by using a special runtime parameter <b>cw_reset</b> with a value
+of <b>return</b>.  It could also be done by setting cw_xml to point back
+to the original application.
+
+<p>
+Note that if the <i>cw_xml</i>URL gets set to something that doesn't work,
+there's currently no way for CWebProxy to return to the application.
+
+<form action="">
+<font size=2>
+<input type=hidden name="cw_reset" value="return">
+<input type=submit value="Return to Channel">
+</font>
+</form>
+</body></html>

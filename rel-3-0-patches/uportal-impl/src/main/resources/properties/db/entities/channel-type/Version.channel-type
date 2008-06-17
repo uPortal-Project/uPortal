@@ -1,0 +1,7 @@
+
+<channel-type script="classpath://org/jasig/portal/io/import-channel-type_v2-6.crn">
+  <name>Version</name>
+  <type>org.jasig.portal.channels.version.CVersion</type>
+  <desc>Displays the version number of a specified portal component.</desc>
+  <uri>/org/jasig/portal/channels/version/CVersion.cpd</uri>
+</channel-type>

@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="CGenericXSLT/RSS/rss-universal.xsl"  type="text/xsl" media="netscape"?>
+<?xml-stylesheet href="CGenericXSLT/RSS/rss-universal.xsl"  type="text/xsl" media="explorer"?>
+<?xml-stylesheet href="CGenericXSLT/RSS/rss-universal.xsl"  type="text/xsl" media="opera"?>
+<?xml-stylesheet href="CGenericXSLT/RSS/rss-universal.xsl"  type="text/xsl" media="avantgo"?>
+<?xml-stylesheet href="CGenericXSLT/RSS/rss-universal.xsl"  type="text/xsl" media="WAP"?>
+<?xml-stylesheet href="CGenericXSLT/RSS/rss-universal.xsl"  type="text/xsl" media="up"?>
+
+<document/>
+

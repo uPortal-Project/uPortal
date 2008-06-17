@@ -1,0 +1,129 @@
+<with>
+    <attribute key="USER_NAME">${valueOf(@username)}</attribute>
+    <attribute key="USER_ID">${sql(SELECT user_id FROM up_user WHERE user_name = '${valueOf(@username)}')}</attribute>
+    <subtasks>
+        <sql-transaction>
+            <!-- Setup the layout's profile -->
+            <with-attribute key="Attributes.NODE" value="${singleNode(profile)}">
+                <sql-statement sql="DELETE FROM up_user_profile WHERE user_id = ?">
+                    <parameter value="${req(USER_ID)}"/>
+                </sql-statement>
+                <with-attribute key="PROFILE_ID" value="${seq(${req(USER_ID)}-profileId)}">
+                    <sql-statement sql="INSERT INTO up_user_profile(user_id, profile_id, profile_name, description, layout_id, structure_ss_id, theme_ss_id) VALUES(?, ?, ?, ?, 0, ?, ?)">
+                        <parameter value="${req(USER_ID)}"/>
+                        <parameter value="${req(PROFILE_ID)}"/>
+                        <parameter value="${valueOf(@name)}"/>
+                        <parameter value="${valueOf(description)}"/>
+                        <parameter value="${sql(SELECT ss_id FROM up_ss_struct WHERE ss_name = '${valueOf(structure/@name)}')}"/>
+                        <parameter value="${sql(SELECT ss_id FROM up_ss_theme WHERE ss_name = '${valueOf(theme/@name)}')}"/>
+                    </sql-statement>
+                    <!-- User (Profile) Parameters:  structure... -->
+                    <node-iterator xpath="structure/parameter">
+                        <sql-upsert>
+                            <update-statement>UPDATE up_ss_user_parm SET param_val = ? WHERE user_id = ? AND profile_id = ? AND ss_id = ? AND ss_type = 1 AND param_name = ?</update-statement>
+                            <insert-statement>INSERT INTO up_ss_user_parm(param_val, user_id, profile_id, ss_id, ss_type, param_name) values(?, ?, ?, ?, 1, ?)</insert-statement>
+                            <parameter value="${valueOf(value)}"/>
+                            <parameter value="${req(USER_ID)}"/>
+                            <parameter value="${req(PROFILE_ID)}"/>
+                            <parameter value="${sql(SELECT ss_id FROM up_ss_struct WHERE ss_name = '${valueOf(../@name)}')}"/>
+                            <parameter value="${valueOf(name)}"/>
+                        </sql-upsert>
+                    </node-iterator>
+                    <!-- User (Profile) Parameters:  theme... -->
+                    <node-iterator xpath="theme/parameter">
+                        <sql-upsert sql="">
+                            <update-statement>UPDATE up_ss_user_parm SET param_val = ? WHERE user_id = ? AND profile_id = ? AND ss_id = ? AND ss_type = 2 AND param_name = ?</update-statement>
+                            <insert-statement>INSERT INTO up_ss_user_parm(param_val, user_id, profile_id, ss_id, ss_type, param_name) values(?, ?, ?, ?, 2, ?)</insert-statement>
+                            <parameter value="${valueOf(value)}"/>
+                            <parameter value="${req(USER_ID)}"/>
+                            <parameter value="${req(PROFILE_ID)}"/>
+                            <parameter value="${sql(SELECT ss_id FROM up_ss_theme WHERE ss_name = '${valueOf(../@name)}')}"/>
+                            <parameter value="${valueOf(name)}"/>
+                        </sql-upsert>
+                    </node-iterator>
+                </with-attribute>
+            </with-attribute>
+        
+            <xslt context="${Attributes.ORIGIN}" stylesheet="import-layout.xsl">
+
+                <!-- Clear the way by deleting existing layout nodes and ancillary data -->
+                <crn location="delete-layout.crn"/>
+                
+                <!-- Set the profile id -->
+                <sql-statement sql="UPDATE UP_USER_PROFILE SET LAYOUT_ID=1 WHERE PROFILE_ID=1 AND USER_ID=?">
+                    <parameter value="${USER_ID}"/>
+                </sql-statement>
+
+                <!-- Layout (itself) -->
+                <sql-statement sql="INSERT INTO up_user_layout(layout_title, user_id, layout_id, init_struct_id) VALUES(?, ?, 1, 1)">
+                    <parameter value="Standard Layout"/><!-- Limited to 15 characters... -->
+                    <parameter value="${USER_ID}"/>
+                </sql-statement>
+
+                <!-- Layout Structures (nodes) -->
+                <node-iterator xpath="struct">
+                    <sql-statement sql="INSERT INTO up_layout_struct(user_id, layout_id, struct_id, next_struct_id, chld_struct_id, name, type, hidden, immutable, unremovable) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)">
+                        <parameter value="${USER_ID}"/>
+                        <parameter value="${parseInt(1)}"/>
+                        <parameter value="${parseInt(${valueOf(@struct-id)})}"/>
+                        <parameter value="${parseInt(${valueOf(@next-struct-id)})}"/>
+                        <parameter value="${parseInt(${valueOf(@child-struct-id)})}"/>
+                        <parameter value="${valueOf(@name)}"/>
+                        <parameter value="${valueOf(@type)}"/>
+                        <parameter value="${valueOf(@hidden)}"/>
+                        <parameter value="${valueOf(@immutable)}"/>
+                        <parameter value="${valueOf(@unremovable)}"/>
+                    </sql-statement>
+                </node-iterator>
+                <node-iterator xpath="channel">
+                    <sql-statement sql="INSERT INTO up_layout_struct(user_id, layout_id, struct_id, next_struct_id, chan_id) values(?, ?, ?, ?, ?)">
+                        <parameter value="${USER_ID}"/>
+                        <parameter value="${parseInt(1)}"/>
+                        <parameter value="${parseInt(${valueOf(@struct-id)})}"/>
+                        <parameter value="${parseInt(${valueOf(@next-struct-id)})}"/>
+                        <parameter value="${sql(SELECT chan_id FROM up_channel WHERE chan_fname = '${valueOf(@fname)}')}"/>
+                    </sql-statement>
+                </node-iterator>
+
+                <!-- Layout Parameters -->
+                <node-iterator xpath="param">
+                    <sql-statement sql="INSERT INTO up_layout_param(user_id, layout_id, struct_id, struct_parm_nm, struct_parm_val) values(?, ?, ?, ?, ?)">
+                        <parameter value="${USER_ID}"/>
+                        <parameter value="${parseInt(1)}"/>
+                        <parameter value="${parseInt(${valueOf(@struct-id)})}"/>
+                        <parameter value="${valueOf(name)}"/>
+                        <parameter value="${valueOf(value)}"/>
+                    </sql-statement>
+                </node-iterator>
+
+                <!-- Structure Attributes -->
+                <node-iterator xpath="structure-attribute">
+                    <sql-statement sql="INSERT INTO up_ss_user_atts(user_id, profile_id, ss_id, ss_type, struct_id, param_name, param_type, param_val) values(?, ?, ?, ?, ?, ?, ?, ?)">
+                        <parameter value="${USER_ID}"/>
+                        <parameter value="${parseInt(1)}"/>
+                        <parameter value="${sql(SELECT upup.structure_ss_id FROM up_user_profile upup, up_user upu WHERE upup.user_id = upu.user_id AND upu.user_name = '${USER_NAME}' AND profile_id = 1)}"/>
+                        <parameter value="${parseInt(1)}"/>
+                        <parameter value="${parseInt(${valueOf(@struct-id)})}"/>
+                        <parameter value="${valueOf(name)}"/>
+                        <parameter value="${parseInt(${valueOf(@type)})}"/>
+                        <parameter value="${valueOf(value)}"/>
+                    </sql-statement>
+                </node-iterator>
+
+                <!-- NEXT_STRUCT_ID column (UP_USER table) -->
+                <sql-statement sql="UPDATE up_user SET next_struct_id = ? WHERE user_name = ?">
+                    <parameter value="${sql(SELECT MAX(struct_id) +1 FROM up_layout_struct WHERE user_id = ${USER_ID})}"/>
+                    <parameter value="${USER_NAME}"/>
+                </sql-statement>
+            </xslt>
+    
+            <!-- Now do portlet entity preferences -->
+            <with-attribute key="Attributes.NODE" value="${singleNode(preferences)}">
+                <if test="${not(${isNull(${Attributes.NODE})})}">
+                    <crn location="import-preferences.crn"/>
+                </if>
+            </with-attribute>
+        </sql-transaction>
+
+    </subtasks>
+</with>

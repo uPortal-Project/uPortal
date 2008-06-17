@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='utf-8'?>
+<data>
+  <!-- 
+   | The commented out section bellow contains an example of how to use a translation for the specified tables,
+   | this will overlay the existing data in the tables as this information can only be in one locale for all
+   | users of the framework.
+   +-->
+  <!-- 
+  <table>
+    <name>UP_GROUP</name>
+    <rows>
+     <row>
+        <column><name>GROUP_ID</name><value>0</value></column>
+        <column><name>CREATOR_ID</name><value>system</value></column>
+        <column><name>ENTITY_TYPE_ID</name><value>2</value></column>
+        <column><name>GROUP_NAME</name><value>Everyone</value></column>
+        <column><name>DESCRIPTION</name><value>All persons</value></column>
+      </row>
+    </rows>
+  </table>
+
+  <table>
+    <name>UP_PERSON_DIR</name>
+    <rows>
+      <row>
+        <column><name>USER_NAME</name><value>guest</value></column>
+        <column><name>ENCRPTD_PSWD</name><value>(MD5)IAnYXaWGdqTkifNNwo0bfIIphj2NPvSG</value></column>
+        <column><name>FIRST_NAME</name><value>Guest</value></column>
+        <column><name>LAST_NAME</name><value>User</value></column>
+        <column><name>EMAIL</name><value>guest.user@jasig.org</value></column>
+      </row>
+    </rows>
+  </table>
+   -->
+</data>

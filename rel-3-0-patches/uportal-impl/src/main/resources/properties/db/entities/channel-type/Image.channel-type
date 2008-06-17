@@ -1,0 +1,7 @@
+
+<channel-type script="classpath://org/jasig/portal/io/import-channel-type_v2-6.crn">
+  <name>Image</name>
+  <type>org.jasig.portal.channels.CImage</type>
+  <desc>Displays an image with optional caption and subcaption</desc>
+  <uri>/org/jasig/portal/channels/CImage/CImage.cpd</uri>
+</channel-type>

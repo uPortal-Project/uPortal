@@ -1,0 +1,34 @@
+<!-- Use sql-query to select the USER_ID (not with-attribute) b/c deleting a non-existant user should be a no-op  -->
+<sql-query>
+	<sql>SELECT user_id FROM up_user WHERE user_name = ?</sql>
+	<parameter value="${req(USER_NAME)}"/>
+	<subtasks>
+
+		<!-- Structure Attributes -->
+        <sql-statement sql="DELETE FROM up_ss_user_atts WHERE user_id = ? AND ss_id = ?">
+            <parameter value="${req(USER_ID)}"/>
+            <parameter value="${sql(SELECT structure_ss_id FROM up_user_profile WHERE user_id = ${req(USER_ID)} AND profile_id = 1)}"/>
+        </sql-statement>
+
+		<!-- Layout Parameters -->
+        <sql-statement sql="DELETE FROM up_layout_param WHERE user_id = ?">
+            <parameter value="${req(USER_ID)}"/>
+        </sql-statement>
+
+		<!-- Layout Structures (nodes) -->
+        <sql-statement sql="DELETE FROM up_layout_struct WHERE user_id = ?">
+            <parameter value="${req(USER_ID)}"/>
+        </sql-statement>
+
+		<!-- Layout (itself) -->
+        <sql-statement sql="DELETE FROM up_user_layout WHERE user_id = ?">
+            <parameter value="${req(USER_ID)}"/>
+        </sql-statement>
+
+		<!-- NEXT_STRUCT_ID column (UP_USER table) -->
+        <sql-statement sql="UPDATE up_user SET next_struct_id = 1 WHERE user_id = ?">
+            <parameter value="${req(USER_ID)}"/>
+        </sql-statement>
+
+	</subtasks>
+</sql-query>

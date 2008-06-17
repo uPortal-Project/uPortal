@@ -1,0 +1,7 @@
+
+<channel-type script="classpath://org/jasig/portal/io/import-channel-type_v2-6.crn">
+  <name>SQL</name>
+  <type>org.jasig.portal.channels.sqlquery.CSqlQuery</type>
+  <desc>Executes a SQL query against a selected DataSource.</desc>
+  <uri>/org/jasig/portal/channels/sqlquery/CSqlQuery/CSqlQuery.cpd</uri>
+</channel-type>

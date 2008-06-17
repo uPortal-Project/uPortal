@@ -1,0 +1,154 @@
+<with-attribute key="Attributes.NODE" value="${newDoc(channel-definition)}">
+    <echo-ln>Export Channel:  FNAME=${req(FNAME)}</echo-ln>
+    <append-node node="${attributeNode(script=classpath://org/jasig/portal/io/import-channel_v3-0.crn)}"/>
+    <with-attribute key="CHAN_ID" value="${sql(SELECT MAX(chan_id) FROM up_channel WHERE chan_fname = '${req(FNAME)}')}">
+        <choose>
+            <when test="${isNull(${req(CHAN_ID)})}">
+                <echo-ln>WARNING:  Channel '${req(FNAME)}' does not exist;  no channel file will be generated.</echo-ln>
+                <log level="warn">Channel '${req(FNAME)}' does not exist;  no channel file will be generated.</log>
+            </when>
+            <otherwise>
+                <sql-query>
+                    <sql>SELECT * FROM up_channel WHERE chan_id = ?</sql>
+                    <parameter value="${req(CHAN_ID)}"/>
+                    <subtasks>
+                        <!-- Establish basic structure of the document... -->
+                        <append-node>
+                            <chan-id>${req(CHAN_ID)}</chan-id>
+                            <title>${req(CHAN_TITLE)}</title>
+                            <name>${req(CHAN_NAME)}</name>
+                            <fname>${req(FNAME)}</fname>
+                            <desc>${req(CHAN_DESC)}</desc>
+                            <type-id>${req(CHAN_TYPE_ID)}</type-id>
+                            <class>${req(CHAN_CLASS)}</class>
+                            <timeout>${req(CHAN_TIMEOUT)}</timeout>
+                            <hasedit>${req(CHAN_EDITABLE)}</hasedit>
+                            <hashelp>${req(CHAN_HAS_HELP)}</hashelp>
+                            <hasabout>${req(CHAN_HAS_ABOUT)}</hasabout>
+                            <secure>${req(CHAN_SECURE)}</secure>
+                            <locale>en_US</locale>
+                            <categories/>
+                            <groups/>
+                            <parameters/>
+                        </append-node>
+                    </subtasks>
+                </sql-query>
+                <if test="${jexl(Attributes.NODE.valueOf('type-id').equals('-1'))}">
+                    <!-- Custom Channel -->
+                    <append-node sibling="${singleNode(desc)}">
+                        <type>Custom</type>
+                    </append-node>
+                </if>
+                <if test="${jexl(!Attributes.NODE.valueOf('type-id').equals('-1'))}">
+                    <!-- Standard Channel Type -->
+                    <sql-query>
+                        <sql>SELECT type_name FROM up_chan_type WHERE type_id = ?</sql>
+                        <parameter value="${parseInt(${valueOf(type-id)})}"/>
+                        <subtasks>
+                            <append-node sibling="${singleNode(desc)}">
+                                <type>${req(TYPE_NAME)}</type>
+                            </append-node>
+                        </subtasks>
+                    </sql-query>
+                </if>
+                <delete-node node="${singleNode(type-id)}"/>
+                <sql-query>
+                    <sql>
+                        SELECT upg.group_name
+                        FROM up_group upg LEFT JOIN up_group_membership upgm ON upg.group_id = upgm.group_id
+                        WHERE upgm.member_key = ? AND upg.entity_type_id = ? AND upgm.member_is_group = 'F'
+                        ORDER BY upg.group_name
+                    </sql>
+                    <parameter value="${valueOf(chan-id)}"/>
+                    <parameter value="${sql(SELECT entity_type_id FROM up_entity_type WHERE entity_type_name = 'org.jasig.portal.ChannelDefinition')}"/>
+                    <subtasks>
+                        <append-node parent="${singleNode(categories)}">
+                            <category>${req(GROUP_NAME)}</category>
+                        </append-node>
+                    </subtasks>
+                </sql-query>
+                <sql-query>
+                    <sql>
+                        SELECT principal_key 
+                        FROM up_permission 
+                        WHERE activity = 'SUBSCRIBE' AND permission_type = 'GRANT' AND target = ?
+                    </sql>
+                    <parameter value="CHAN_ID.${req(CHAN_ID)}"/>
+                    <subtasks>
+                        <invoke-method class="org.jasig.portal.services.GroupService" method="findGroup" attribute-name="GROUP">
+                            <parameter value="${req(PRINCIPAL_KEY)}"/>
+                            <subtasks>
+                                <!-- Check for group name == null (indicates an orphaned record) -->
+                                <choose>
+                                    <when test="${jexl(GROUP.getName() == null)}">
+                                        <log level="warn">Channel '${req(FNAME)}' is a member of a deleted group;  removing orphaned reference.</log>
+                                    </when>
+                                    <otherwise>
+                                        <!-- All is well... -->
+                                        <append-node parent="${singleNode(groups)}">
+                                            <group>${jexl(GROUP.getName())}</group>
+                                        </append-node>
+                                    </otherwise>
+                                </choose>
+                            </subtasks>
+                        </invoke-method>
+                    </subtasks>
+                </sql-query>
+                <!--  Standard Channel Parameters  -->
+                <sql-query>
+                    <sql>
+                        SELECT * 
+                        FROM up_channel_param 
+                        WHERE chan_id = ?
+                        ORDER BY chan_parm_nm
+                    </sql>
+                    <parameter value="${req(CHAN_ID)}"/>
+                    <subtasks>
+                        <if test="${jexl(CHAN_PARM_VAL != null)}">
+                            <append-node parent="${singleNode(parameters)}">
+                                <parameter>
+                                    <name>${req(CHAN_PARM_NM)}</name>
+                                    <value>${req(CHAN_PARM_VAL)}</value>
+                                    <description></description>
+                                    <ovrd>${req(CHAN_PARM_OVRD)}</ovrd>
+                                </parameter>
+                            </append-node>
+                            <if test="${jexl(CHAN_PARM_DESC != null)}">
+                                <append-node parent="${singleNode(parameters/parameter[position() = last()]/description)}" node="${textNode(${req(CHAN_PARM_DESC)})}"/>
+                            </if>
+                        </if>
+                    </subtasks>
+                </sql-query>
+                <!--  Portlet preferences  -->
+                <invoke-method object="${PORTAL_CONTEXT}" method="getBean" attribute-name="portletDefinitionRegistry">
+                    <parameter value="portletDefinitionRegistry" />
+                    <subtasks>
+                        <with>
+                            <attribute key="PORTLET_DEF">${groovy(portletDefinitionRegistry.getPortletDefinition(Integer.parseInt("${valueOf(chan-id)}")))}</attribute>
+                            <subtasks>
+                                <if test="${groovy(PORTLET_DEF != null)}">
+                                    <for-each items="${groovy(PORTLET_DEF.getPortletPreferences().getPortletPreferences())}" attribute-name="portletPreference">
+                                        <for-each items="${groovy(Arrays.asList(portletPreference.getValues()))}" attribute-name="preferenceValue">
+                                            <append-node parent="${singleNode(parameters)}">
+                                                <parameter>
+                                                    <name>PORTLET.${groovy(portletPreference.getName())}</name>
+                                                    <value>${req(preferenceValue)}</value>
+                                                    <description></description>
+                                                    <ovrd>${groovy(portletPreference.isReadOnly() ? "N" : "Y")}</ovrd>
+                                                </parameter>
+                                            </append-node>
+                                        </for-each>
+                                    </for-each>
+                                </if>
+                            </subtasks>
+                        </with>
+                    </subtasks>
+                </invoke-method>
+                <with-attribute key="SAFE_FNAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${req(FNAME)})}">
+                    <delete-node node="${singleNode(chan-id)}"/>
+                    <write-document file="${req(EXPORT_DIR)}/channel/${req(SAFE_FNAME)}.channel"/>
+                </with-attribute>
+            </otherwise>
+        </choose>
+    </with-attribute>
+</with-attribute>

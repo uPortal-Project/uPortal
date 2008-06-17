@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <bean id="portletContainer" class="org.jasig.portal.portlet.container.PortletContainerFactoryBean">
+        <property name="requiredContainerServices" ref="requiredContainerServices" />
+        <property name="optionalContainerServices" ref="optionalContainerServices" />
+    </bean>
+    
+    <!--********** Container Services ********** -->
+
+    <bean id="requiredContainerServices" class="org.jasig.portal.portlet.container.services.RequiredContainerServicesImpl">
+        <property name="portalContext" ref="portalContext" />
+        <property name="portalCallbackService" ref="portalCallbackService" />
+    </bean>
+
+    <bean id="optionalContainerServices" class="org.jasig.portal.portlet.container.services.OptionalContainerServicesImpl">
+        <property name="userInfoService" ref="userInfoService" />
+        <property name="portalAdministrationService" ref="portalAdministrationService" />
+        <property name="portletPreferencesService" ref="portletPreferencesService" />
+    </bean>
+
+    <bean id="portalContext" class="org.jasig.portal.portlet.container.PortalContextImpl">
+        <property name="windowStates">
+            <set value-type="javax.portlet.WindowState">
+                <value>MINIMIZED</value>
+                <value>NORMAL</value>
+                <value>MAXIMIZED</value>
+                <value>EXCLUSIVE</value>
+            </set>
+        </property>
+        <property name="portletModes">
+            <set value-type="javax.portlet.PortletMode">
+                <value>VIEW</value>
+                <value>EDIT</value>
+                <value>HELP</value>
+                <value>ABOUT</value>
+            </set>
+        </property>
+    </bean>
+
+    <bean id="portalCallbackService" class="org.jasig.portal.portlet.container.services.PortalCallbackServiceImpl">
+        <property name="requestPropertiesManager" ref="requestPropertiesManager" />
+        <property name="portletWindowRegistry" ref="portletWindowRegistry" />
+        <property name="portletUrlSyntaxProvider" ref="portletUrlSyntaxProvider" />
+    </bean>
+
+    <bean id="requestPropertiesManager" class="org.jasig.portal.portlet.container.properties.RequestPropertiesManagerBroker">
+        <property name="propertiesManagers">
+            <list value-type="org.jasig.portal.portlet.container.properties.IRequestPropertiesManager">
+                <bean class="org.jasig.portal.portlet.container.properties.HttpRequestPropertiesManager">
+                    <property name="portalRequestUtils" ref="portalRequestUtils" />
+                </bean>
+                <bean class="org.jasig.portal.portlet.container.properties.CacheRequestPropertiesManager">
+                    <property name="portletDefinitionRegistry" ref="portletDefinitionRegistry" />
+                    <property name="portletEntityRegistry" ref="portletEntityRegistry" />
+                    <property name="portalRequestUtils" ref="portalRequestUtils" />
+                </bean>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="userInfoService" class="org.jasig.portal.portlet.container.services.MergingUserInfoService">
+        <property name="userInfoServices">
+            <list>
+                <ref bean="personDirectoryUserInfoService"/>
+                <ref bean="casTicketUserInfoService"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="personDirectoryUserInfoService" class="org.jasig.portal.portlet.container.services.PersonDirectoryUserInfoService">
+        <property name="portletWindowRegistry" ref="portletWindowRegistry" />
+        <property name="portletEntityRegistry" ref="portletEntityRegistry" />
+        <property name="portletDefinitionRegistry" ref="portletDefinitionRegistry" />
+        <property name="personAttributeDao" ref="personAttributeDao" />
+        <property name="portalRequestUtils" ref="portalRequestUtils" />
+    </bean>
+    
+    <bean id="casTicketUserInfoService" class="org.jasig.portal.portlet.container.services.CasTicketUserInfoService">
+        <property name="userInstanceManager" ref="userInstanceManager" />
+        <property name="portletWindowRegistry" ref="portletWindowRegistry" />
+        <property name="portletEntityRegistry" ref="portletEntityRegistry" />
+        <property name="portletDefinitionRegistry" ref="portletDefinitionRegistry" />
+        <property name="portalRequestUtils" ref="portalRequestUtils" />
+    </bean>
+    
+    <bean id="portalAdministrationService" class="org.apache.pluto.core.DefaultPortalAdministrationService">
+        <property name="administrativeRequestListeners">
+            <list>
+                <bean class="org.jasig.portal.portlet.container.services.AdministrativeRequestListenerController">
+                    <property name="listeners">
+                        <map>
+                            <entry key="sessionActionListener">
+                                <bean class="org.jasig.portal.portlet.session.PortletSessionAdministrativeRequestListener" />
+                            </entry>
+                        </map>
+                    </property>
+                </bean>
+            </list>
+        </property>
+        <property name="portletInvocationListeners">
+            <list>
+                <ref bean="portletSessionExpirationManager" />
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="portletPreferencesService" class="org.jasig.portal.portlet.container.services.PortletPreferencesServiceImpl">
+        <property name="portletDefinitionRegistry" ref="portletDefinitionRegistry" />
+        <property name="portletEntityRegistry" ref="portletEntityRegistry" />
+        <property name="portletWindowRegistry" ref="portletWindowRegistry" />
+        <property name="personManager" ref="personManager" />
+        <property name="portalRequestUtils" ref="portalRequestUtils" />
+    </bean>
+    
+    <bean id="portletUrlSyntaxProvider" class="org.jasig.portal.portlet.url.PortletUrlSyntaxProviderImpl">
+        <property name="portletWindowRegistry" ref="portletWindowRegistry" />
+        <property name="portalRequestUtils" ref="portalRequestUtils" />
+    </bean>
+    
+    <bean id="portletSessionActionManager" class="org.jasig.portal.portlet.session.PortletSessionActionManagerImpl">
+        <property name="portletContainer" ref="portletContainer" />
+    </bean>
+    
+    <bean id="portletSessionExpirationManager" class="org.jasig.portal.portlet.session.PortletSessionExpirationManager">
+        <property name="portalRequestUtils" ref="portalRequestUtils" />
+    </bean>
+    
+    <!--********** Portlet Registries ********** -->
+
+    <bean id="portletWindowRegistry" class="org.jasig.portal.portlet.registry.PortletWindowRegistryImpl">
+        <property name="portletEntityRegistry" ref="portletEntityRegistry" />
+        <property name="portletDefinitionRegistry" ref="portletDefinitionRegistry" />
+    </bean>
+
+    <bean id="portletEntityRegistry" class="org.jasig.portal.portlet.registry.PortletEntityRegistryImpl">
+        <property name="portletDefinitionRegistry" ref="portletDefinitionRegistry" />
+        <property name="portletEntityDao" ref="portletEntityDao" />
+    </bean>
+    
+    <bean id="portletDefinitionRegistry" class="org.jasig.portal.portlet.registry.PortletDefinitionRegistryImpl">
+        <property name="portletDefinitionDao" ref="portletDefinitionDao" />
+        <property name="optionalContainerServices" ref="optionalContainerServices" />
+        <property name="channelRegistryStore" ref="channelRegistryStore" /> 
+    </bean>
+    
+    
+    <!--********** Portlet Rendering Channel ********** -->
+    
+    <bean id="portletChannel" class="org.jasig.portal.channels.portlet.SpringPortletChannelImpl">
+        <property name="personManager" ref="personManager" />
+        <property name="portletContainer" ref="portletContainer" />
+        <property name="portletDefinitionRegistry" ref="portletDefinitionRegistry" />
+        <property name="portletEntityRegistry" ref="portletEntityRegistry" />
+        <property name="portletWindowRegistry" ref="portletWindowRegistry" />
+        <property name="portletRequestParameterManager" ref="portletRequestParameterManager" />
+        <property name="portletSessionActionManager" ref="portletSessionActionManager" />
+    </bean>
+</beans>

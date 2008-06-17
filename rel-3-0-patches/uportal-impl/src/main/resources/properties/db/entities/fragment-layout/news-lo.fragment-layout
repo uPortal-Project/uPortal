@@ -1,0 +1,36 @@
+
+<layout script="classpath://org/jasig/portal/io/import-layout_v3-0.crn" username="news-lo">
+  <root unremovable="Y" immutable="N" hidden="N" name="Root folder">
+    <header unremovable="Y" immutable="Y" hidden="N" name="Header folder">
+      <channel fname="header"/>
+      <channel fname="portal/login/general"/>
+      <channel fname="session-locales-selector"/>
+    </header>
+    <footer unremovable="N" immutable="N" hidden="N" name="Footer folder">
+      <channel fname="footer"/>
+    </footer>
+    <tab unremovable="N" immutable="N" hidden="N" name="News">
+      <column unremovable="N" immutable="N" hidden="N" name="Column">
+        <structure-attribute type="folder">
+          <name>width</name>
+          <value>50%</value>
+        </structure-attribute>
+        <channel fname="ny-times-education"/>
+        <channel fname="chronicle-wired"/>
+      </column>
+      <column unremovable="N" immutable="N" hidden="N" name="Column">
+        <structure-attribute type="folder">
+          <name>width</name>
+          <value>50%</value>
+        </structure-attribute>
+        <channel fname="salon.com"/>
+        <channel fname="sports-illustrated"/>
+      </column>
+    </tab>
+  </root>
+  <profile name="HTML browser profile"> 
+    <description>A system profile for common web browsers</description>  
+    <structure name="DLM Tabs and columns"/>  
+    <theme name="DLM XHTML"/> 
+  </profile>
+</layout>

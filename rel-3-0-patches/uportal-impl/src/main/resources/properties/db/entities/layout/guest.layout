@@ -1,0 +1,35 @@
+
+<layout script="classpath://org/jasig/portal/io/import-layout_v3-0.crn" username="guest">
+  <root unremovable="Y" immutable="N" hidden="N" name="Root folder">
+    <header unremovable="Y" immutable="Y" hidden="N" name="Header folder">
+      <channel fname="header"/>
+      <channel fname="portal/login/general"/>
+      <channel fname="session-locales-selector"/>
+    </header>
+    <tab unremovable="N" immutable="N" hidden="N" name="uPortal News">
+      <column unremovable="N" immutable="N" hidden="N" name="Column 1">
+        <structure-attribute type="folder">
+          <name>width</name>
+          <value>40%</value>
+        </structure-attribute>
+        <channel fname="uportal-news"/>
+      </column>
+      <column unremovable="N" immutable="N" hidden="N" name="Column 2">
+        <structure-attribute type="folder">
+          <name>width</name>
+          <value>60%</value>
+        </structure-attribute>
+        <channel fname="jasig-news"/>
+        <channel fname="unicon-news"/>
+      </column>
+    </tab>
+    <footer unremovable="Y" immutable="Y" hidden="N" name="Footer folder">
+      <channel fname="footer"/>
+    </footer>
+  </root>
+  <profile name="Guest Web Browser Profile"> 
+    <description>A sample profile for web browsers</description>  
+    <structure name="DLM Tabs and columns"/>  
+    <theme name="DLM XHTML"/> 
+  </profile>
+</layout>

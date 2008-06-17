@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="uPortal 3.0.1">
+    <bannerLeft>
+        <name>uPortal</name>
+        <src>http://uportal.org/images/uportal-head.gif</src>
+        <href>http://uportal.org</href>
+    </bannerLeft>
+    <bannerRight>
+        <name>JA-SIG</name>
+        <src>http://www.ja-sig.org/images/jasig-head.gif</src>
+        <href>http://www.ja-sig.org</href>
+    </bannerRight>
+
+    <body>
+        <menu ref="modules" />
+        <menu ref="reports" />
+    </body>
+</project>
