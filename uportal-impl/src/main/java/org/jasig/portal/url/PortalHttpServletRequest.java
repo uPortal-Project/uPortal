@@ -176,7 +176,7 @@ public class PortalHttpServletRequest extends AbstractHttpServletRequestWrapper 
      */
     @Override
     public Principal getUserPrincipal() {
-        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(this);
+        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(this.getWrappedRequest());
         final IPerson person = userInstance.getPerson();
         if (person == null || person.isGuest()) {
             return null;
@@ -207,7 +207,7 @@ public class PortalHttpServletRequest extends AbstractHttpServletRequestWrapper 
         }
 
         //Load the group information about the current user
-        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(this);
+        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(this.getWrappedRequest());
         final IPerson person = userInstance.getPerson();
         final EntityIdentifier personEntityId = person.getEntityIdentifier();
         final IGroupMember personGroupMember = GroupService.getGroupMember(personEntityId);
@@ -220,7 +220,7 @@ public class PortalHttpServletRequest extends AbstractHttpServletRequestWrapper 
      */
     @Override
     public Locale getLocale() {
-        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(this);
+        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(this.getWrappedRequest());
         final LocaleManager localeManager = userInstance.getLocaleManager();
         final Locale[] locales = localeManager.getLocales();
         return locales[0];
@@ -231,7 +231,7 @@ public class PortalHttpServletRequest extends AbstractHttpServletRequestWrapper 
      */
     @Override
     public Enumeration<Locale> getLocales() {
-        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(this);
+        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(this.getWrappedRequest());
         final LocaleManager localeManager = userInstance.getLocaleManager();
         final Locale[] locales = localeManager.getLocales();
         return new ArrayEnumerator<Locale>(locales);
