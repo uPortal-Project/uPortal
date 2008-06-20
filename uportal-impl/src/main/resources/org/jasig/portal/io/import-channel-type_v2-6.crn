@@ -1,12 +1,21 @@
-<sql-transaction>
-    <with-attribute key="NEXT_ID" value="${org.jasig.portal.io.SequenceGeneratorPhrase(UP_CHAN_TYPE)}">
-        <sql-upsert>
-            <update-statement>UPDATE up_chan_type SET type = ?, type_descr = ?, type_def_uri = ? WHERE type_name = ?</update-statement>
-            <insert-statement>INSERT INTO up_chan_type(type, type_descr, type_def_uri, type_name, type_id) VALUES(?, ?, ?, ?, '${req(NEXT_ID)}')</insert-statement>
-            <parameter value="${valueOf(type)}"/>
-            <parameter value="${valueOf(desc)}"/>
-            <parameter value="${valueOf(uri)}"/>
-            <parameter value="${valueOf(name)}"/>
-        </sql-upsert>
-    </with-attribute>
-</sql-transaction>
+<with-attribute key="UPDATE_PORTLET_ADAPTOR" value="${groovy('${valueOf(type)}'.equals('org.jasig.portal.channels.portlet.CPortletAdaptor'))}">
+
+    <if test="${UPDATE_PORTLET_ADAPTOR}">
+        <!--
+         | For uP3, the PortletAdaptor (channel) class changed
+         |   from -> org.jasig.portal.channels.portlet.CPortletAdaptor
+         |   to -> org.jasig.portal.channels.portlet.CSpringPortletAdaptor
+         |
+         | We want to recognize when someone's importing a v2-6 channel-type 
+         | with the old class and update it to the new one.
+         +-->
+        <delete-node node="${singleNode(type)}"/>
+        <append-node sibling="${singleNode(name)}">
+            <type>org.jasig.portal.channels.portlet.CSpringPortletAdaptor</type>
+        </append-node>
+    </if>
+
+    <crn location="import-channel-type_v3-0.crn"/>
+
+</with-attribute>
+

@@ -1,6 +1,6 @@
 <with-attribute key="Attributes.NODE" value="${newDoc(channel-type)}">
     <echo-ln>Export Channel Type:  NAME=${req(NAME)}</echo-ln>
-    <append-node node="${attributeNode(script=classpath://org/jasig/portal/io/import-channel-type_v2-6.crn)}"/>
+    <append-node node="${attributeNode(script=classpath://org/jasig/portal/io/import-channel-type_v3-0.crn)}"/>
     <with-attribute key="TYPE_ID" value="${sql(SELECT MAX(type_id) FROM up_chan_type WHERE type_name = '${req(NAME)}')}">
         <choose>
             <when test="${isNull(${req(TYPE_ID)})}">
