@@ -1,9 +1,9 @@
-<with-attribute key="UPDATE_PORTLET_ADAPTOR" value="${groovy('${valueOf(type)}'.equals('org.jasig.portal.channels.portlet.CPortletAdaptor'))}">
+<with-attribute key="UPDATE_PORTLET_ADAPTOR" value="${groovy('${valueOf(type)}'.equals('org.jasig.portal.channels.portlet.CPortletAdapter'))}">
 
     <if test="${UPDATE_PORTLET_ADAPTOR}">
         <!--
-         | For uP3, the PortletAdaptor (channel) class changed
-         |   from -> org.jasig.portal.channels.portlet.CPortletAdaptor
+         | For uP3, the Portlet Adaptor (channel) class changed
+         |   from -> org.jasig.portal.channels.portlet.CPortletAdapter
          |   to -> org.jasig.portal.channels.portlet.CSpringPortletAdaptor
          |
          | We want to recognize when someone's importing a v2-6 channel-type 
@@ -18,4 +18,3 @@
     <crn location="import-channel-type_v3-0.crn"/>
 
 </with-attribute>
-
