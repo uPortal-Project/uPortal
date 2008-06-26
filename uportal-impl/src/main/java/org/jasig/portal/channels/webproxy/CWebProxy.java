@@ -588,6 +588,25 @@ public class CWebProxy implements IChannel, ICacheable, IMimeResponse
            if ( state.refresh == 0 )
              state.key = state.fullxmlUri;
            state.fullxmlUri = state.xmlUri;
+
+           // here add in attributes according to cw_person
+           if (state.person != null && state.personAllow_set != null)
+           {
+	           StringBuffer newXML = new StringBuffer();
+	           String appendchar = "";
+	           addPersonAttributeParameters(state, newXML, appendchar);
+	           state.reqParameters = newXML.toString();
+	           if (!state.runtimeData.getHttpRequestMethod().equals("POST"))
+	           {
+	             if ((state.reqParameters!=null) && (!state.reqParameters.trim().equals("")))
+	             {
+	               appendchar = (state.xmlUri.indexOf('?') == -1) ? "?" : "&";
+	               state.fullxmlUri = state.fullxmlUri+appendchar+state.reqParameters;
+	             }
+	             state.reqParameters = null;
+	           }           
+           }
+           
            state.refresh = 1;
          }
        } else {
@@ -657,39 +676,7 @@ public class CWebProxy implements IChannel, ICacheable, IMimeResponse
          // here add in attributes according to cw_person
          if (state.person != null && state.personAllow_set != null)
          {
-           StringTokenizer st = new StringTokenizer(state.person,",");
-           if (st != null)
-           {
-             while (st.hasMoreElements ())
-             {
-               String pName = st.nextToken();
-               if ((pName!=null)&&(!pName.trim().equals("")))
-               {
-                 if ( state.personAllow.trim().equals("*") ||
-                      state.personAllow_set.contains(pName) )
-                 {
-                   newXML.append(appendchar);
-                   appendchar = "&";
-                   newXML.append(pName);
-                   newXML.append("=");
-                   // note, this only gets the first one if it's a
-                   // java.util.Vector.  Should check
-                   String pVal = (String)state.iperson.getAttribute(pName);
-                   if (pVal != null)
-                    try {
-                        newXML.append(URLEncoder.encode(pVal,"UTF-8"));
-                    } catch (UnsupportedEncodingException e) {
-                        throw new RuntimeException(e);
-                    }
-                 }
-                 else {
-                     if (log.isInfoEnabled())
-                         log.info(
-                                 "CWebProxy: request to pass " + pName + " denied.");
-                 }
-               }
-             }
-           }
+        	 addPersonAttributeParameters(state, newXML, appendchar);
          }
          // end cw_person code
 
@@ -767,6 +754,50 @@ public class CWebProxy implements IChannel, ICacheable, IMimeResponse
 
       }
     }
+  }
+  
+  /**
+   * Add person attribute parameters to the parameters string buffer. 
+   * 
+   * @param state		channel state
+   * @param newXML		StringBuffer of parameters to add to
+   * @param appendchar	current character to use to append the parameter
+   */
+  public void addPersonAttributeParameters(ChannelState state, StringBuffer newXML, String appendchar) {
+      // here add in attributes according to cw_person
+        StringTokenizer st = new StringTokenizer(state.person,",");
+        if (st != null)
+        {
+          while (st.hasMoreElements ())
+          {
+            String pName = st.nextToken();
+            if ((pName!=null)&&(!pName.trim().equals("")))
+            {
+              if ( state.personAllow.trim().equals("*") ||
+                   state.personAllow_set.contains(pName) )
+              {
+                newXML.append(appendchar);
+                appendchar = "&";
+                newXML.append(pName);
+                newXML.append("=");
+                // note, this only gets the first one if it's a
+                // java.util.Vector.  Should check
+                String pVal = (String)state.iperson.getAttribute(pName);
+                if (pVal != null)
+                 try {
+                     newXML.append(URLEncoder.encode(pVal,"UTF-8"));
+                 } catch (UnsupportedEncodingException e) {
+                     throw new RuntimeException(e);
+                 }
+              }
+              else {
+                  if (log.isInfoEnabled())
+                      log.info(
+                              "CWebProxy: request to pass " + pName + " denied.");
+              }
+            }
+          }
+        }
   }
 
   /**
