@@ -32,6 +32,9 @@
         eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" />
         
+    <cache name="org.jasig.portal.layout.dlm.LAYOUT_CACHE"
+        eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" />
         
     <!-- uPortal IBasicEntity Caches -->
 

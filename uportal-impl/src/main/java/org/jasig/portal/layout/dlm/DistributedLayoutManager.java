@@ -90,7 +90,7 @@ IFolderLocalNameResolver
      */
     static final String FOLDER_LABEL_POLICY = "FolderLabelPolicy";
     
-    protected Document userLayoutDocument=null;
+    private final Map<String,Document> layoutCache = LayoutCachingService.getInstance().getLayoutCache();
     
     protected static Random rnd=new Random();
     protected String cacheKey="initialKey";
@@ -226,7 +226,8 @@ IFolderLocalNameResolver
     }
 
     private void setUserLayoutDOM(Document doc) {
-        this.userLayoutDocument = doc;
+
+    	layoutCache.put(getLayoutCacheKey(), doc);
         this.updateCacheKey();
 
         // determine if this is a layout fragment by looking at the root node
@@ -243,6 +244,7 @@ IFolderLocalNameResolver
         if (labelPolicy != null) {
             labelPolicy.coordinateFolderLabels(owner.getID(), isFragmentOwner, doc);
         }
+        
     }
     private int domRequests = 0;
 
@@ -261,7 +263,7 @@ IFolderLocalNameResolver
             {
                 LOG.debug("domRequest: " + (domRequests++));
             }
-            Document userLayoutDocument = this.userLayoutDocument;
+            Document userLayoutDocument = layoutCache.get(getLayoutCacheKey());
             if ( null == userLayoutDocument )
             {
                 IUserLayoutStore layoutStore = getLayoutStore();
@@ -407,7 +409,7 @@ IFolderLocalNameResolver
         try {
             //Clear the loaded document first if this is a forced reload
             if (reload) {
-                this.userLayoutDocument = null;
+            	layoutCache.remove(getLayoutCacheKey());
             }
             
             uli=getUserLayoutDOM();
@@ -1507,7 +1509,7 @@ IFolderLocalNameResolver
         }
         //this.markedUserLayout=null;
         this.updateCacheKey();
-        this.userLayoutDocument=doc;
+        layoutCache.put(getLayoutCacheKey(), doc);
     }
 
     /* Returns the ID attribute of the root folder of the layout. This folder 
@@ -1689,7 +1691,7 @@ IFolderLocalNameResolver
             // so we need to refresh our local copy of their layout
             if (person == owner)
             {
-                this.userLayoutDocument = null;
+            	layoutCache.remove(getLayoutCacheKey());
                 updateCacheKey();
                 getUserLayoutDOM();
             }
@@ -1819,5 +1821,9 @@ IFolderLocalNameResolver
                     label);
         }
         return label;
+    }
+    
+    private String getLayoutCacheKey() {
+    	return owner.getUserName() + "-" + profile.getLayoutId();
     }
 }
