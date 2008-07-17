@@ -11,7 +11,7 @@
     
     <!-- ********** Stats DAO ********** -->
 
-    <bean id="jpaPortalEventStore" class="org.jasig.portal.events.handlers.db.TestableJpaPortalEventStore">
+    <bean id="jpaPortalEventStore" class="org.jasig.portal.events.handlers.db.GroupsStubJpaPortalEventStore">
     </bean>
 
 

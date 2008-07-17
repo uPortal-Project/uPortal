@@ -18,7 +18,7 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import junit.textui.TestRunner;
 
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.EntityTypes;
@@ -229,7 +229,7 @@ public static void main(java.lang.String[] args) throws Exception
 {
     String[] mainArgs = {"org.jasig.portal.groups.filesystem.FileSystemGroupsTest"};
     print("START TESTING FILESYSTEM GROUP STORE" + CR);
-    junit.swingui.TestRunner.main(mainArgs);
+    TestRunner.main(mainArgs);
     print(CR + "END TESTING FILESYSTEM GROUP STORE");
 }
 /**

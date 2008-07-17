@@ -19,14 +19,12 @@
     <dependencies>
         <dependency>
             <groupId>org.apache.pluto</groupId>
-            <artifactId>pluto-util</artifactId>
-            <version>${pluto.version}</version>
+            <artifactId>pluto-ant-tasks</artifactId>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.pluto</groupId>
-            <artifactId>pluto-ant-tasks</artifactId>
-            <version>${pluto.version}</version>
+            <artifactId>pluto-util</artifactId>
             <scope>compile</scope>
         </dependency>
     </dependencies>

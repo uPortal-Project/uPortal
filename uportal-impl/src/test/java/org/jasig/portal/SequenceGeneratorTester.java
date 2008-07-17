@@ -5,10 +5,14 @@
 
 package org.jasig.portal;
 
-import junit.framework.*;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashSet;
 import java.util.Set;
+
+import junit.framework.TestCase;
+import junit.textui.TestRunner;
 
 
 /**
@@ -71,7 +75,7 @@ public static void main(java.lang.String[] args) throws Exception
 	String[] mainArgs = {"org.jasig.portal.SequenceGeneratorTester"};
     print("START TESTING SEQUENCE GENERATOR");
     printBlankLine();
-    junit.swingui.TestRunner.main(mainArgs);
+    TestRunner.main(mainArgs);
     printBlankLine();    
     print("END TESTING SEQUENCE GENERATOR");
     

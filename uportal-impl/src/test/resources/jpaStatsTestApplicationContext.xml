@@ -35,7 +35,7 @@
         <property name="databasePlatform" value="${hibernate.dialect}" />
     </bean>
 
-    <bean id="portalEventStore" class="org.jasig.portal.events.handlers.db.TestableJpaPortalEventStore" />
+    <bean id="portalEventStore" class="org.jasig.portal.events.handlers.db.GroupsStubJpaPortalEventStore" />
     
     <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
         <property name="entityManagerFactory" ref="factoryBean" />

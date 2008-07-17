@@ -16,7 +16,7 @@ import org.jasig.portal.security.IPerson;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class TestableJpaPortalEventStore extends JpaPortalEventStore implements ITestablePortalEventStore {
+public class GroupsStubJpaPortalEventStore extends JpaPortalEventStore implements ITestablePortalEventStore {
     private Map<IPerson, Set<String>> personGroups = new HashMap<IPerson, Set<String>>();
     
     /**

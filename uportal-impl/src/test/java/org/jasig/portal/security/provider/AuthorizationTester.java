@@ -14,6 +14,7 @@ import java.util.Properties;
 import java.util.Random;
 
 import junit.framework.TestCase;
+import junit.textui.TestRunner;
 
 import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.concurrency.CachingException;
@@ -335,7 +336,7 @@ public static void main(java.lang.String[] args) throws Exception
     String[] mainArgs = {"org.jasig.portal.security.provider.AuthorizationTester"};
     print("START TESTING AUTHORIZATION SERVICE");
     printBlankLine();
-    junit.swingui.TestRunner.main(mainArgs);
+    TestRunner.main(mainArgs);
     printBlankLine();
     print("END TESTING AUTHORIZATION SERVICE");
 

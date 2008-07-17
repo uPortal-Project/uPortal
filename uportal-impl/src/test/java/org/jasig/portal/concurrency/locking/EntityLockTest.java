@@ -6,7 +6,7 @@
 package org.jasig.portal.concurrency.locking;
 
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import junit.textui.TestRunner;
 
 import org.jasig.portal.concurrency.IEntityLock;
 import org.jasig.portal.concurrency.IEntityLockService;
@@ -56,7 +56,7 @@ public static void main(java.lang.String[] args) throws Exception
     String[] mainArgs = {"org.jasig.portal.concurrency.locking.EntityLockTester"};
     print("START TESTING LOCK STORE");
     printBlankLine();
-    junit.swingui.TestRunner.main(mainArgs);
+    TestRunner.main(mainArgs);
     printBlankLine();
     print("END TESTING LOCK STORE");
 

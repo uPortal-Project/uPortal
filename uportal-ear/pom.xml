@@ -69,53 +69,46 @@
         <dependency>
             <groupId>javax.portlet</groupId>
             <artifactId>portlet-api</artifactId>
-            <version>${portlet-api.version}</version>
             <scope>compile</scope>
         </dependency>
-
+        
         <dependency>
             <groupId>org.apache.pluto</groupId>
             <artifactId>pluto-container</artifactId>
-            <version>${pluto.version}</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.pluto</groupId>
-            <artifactId>pluto-descriptor-api</artifactId>
-            <version>${pluto.version}</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.pluto</groupId>
-            <artifactId>pluto-descriptor-impl</artifactId>
-            <version>${pluto.version}</version>
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
                     <groupId>commons-logging</groupId>
                     <artifactId>commons-logging-api</artifactId>
                 </exclusion>
+            </exclusions>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.apache.pluto</groupId>
+            <artifactId>pluto-descriptor-api</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.apache.pluto</groupId>
+            <artifactId>pluto-descriptor-impl</artifactId>
+            <scope>compile</scope>
+            <exclusions>
                 <exclusion>
-                    <groupId>cglib</groupId>
-                    <artifactId>cglib-full</artifactId>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging-api</artifactId>
                 </exclusion>
                 <exclusion>
                     <groupId>xerces</groupId>
                     <artifactId>xercesImpl</artifactId>
                 </exclusion>
-                <exclusion>
-                    <groupId>xerces</groupId>
-                    <artifactId>xmlParserAPIs</artifactId>
-                </exclusion>
             </exclusions>
         </dependency>
-
+        
         <dependency>
             <groupId>org.apache.pluto</groupId>
             <artifactId>pluto-taglib</artifactId>
-            <version>${pluto.version}</version>
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
@@ -124,11 +117,10 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
+        
         <dependency>
             <groupId>org.jasig.service</groupId>
             <artifactId>person-directory-api</artifactId>
-            <version>${person-directory.version}</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
@@ -139,7 +131,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-ear-plugin</artifactId>
-                <version>${maven-ear-plugin.version}</version>
                 <configuration>
                     <modules>
                         <webModule>

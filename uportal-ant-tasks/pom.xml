@@ -18,18 +18,26 @@
     <description>Utility Ant tasks for uPortal specific tools.</description>
 
     <dependencies>
+        <!-- ===== Compile Dependencies ======================================= -->
         <dependency>
             <groupId>org.jasig.portal</groupId>
             <artifactId>uportal-ear-deployer</artifactId>
-            <version>${pom.version}</version>
             <scope>compile</scope>
         </dependency>
+        
+        
+        <!-- ===== Provided Dependencies ====================================== -->
         <dependency>
-            <groupId>ant</groupId>
+            <groupId>org.apache.ant</groupId>
             <artifactId>ant</artifactId>
-            <version>${ant.version}</version>
             <scope>provided</scope>
         </dependency>
+        
+        
+        <!-- ===== Runtime Dependencies ======================================= -->
+        
+        
+        <!-- ===== Test Dependencies ========================================== -->
     </dependencies>
 
 </project>

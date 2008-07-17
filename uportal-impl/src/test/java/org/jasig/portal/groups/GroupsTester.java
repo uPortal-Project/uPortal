@@ -14,7 +14,7 @@ import java.util.Iterator;
 import java.util.Random;
 
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import junit.textui.TestRunner;
 
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.EntityTypes;
@@ -270,7 +270,7 @@ public static void main(java.lang.String[] args) throws Exception
     String[] mainArgs = {"org.jasig.portal.concurrency.caching.EntityCacheTester"};
     print("START TESTING CACHE");
     printBlankLine();
-    junit.swingui.TestRunner.main(mainArgs);
+    TestRunner.main(mainArgs);
     printBlankLine();
     print("END TESTING CACHE");
 

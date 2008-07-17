@@ -8,6 +8,7 @@ package org.jasig.portal.concurrency.caching;
 import java.util.Date;
 
 import junit.framework.TestCase;
+import junit.textui.TestRunner;
 
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.IBasicEntity;
@@ -176,7 +177,7 @@ public static void main(java.lang.String[] args) throws Exception
     String[] mainArgs = {"org.jasig.portal.concurrency.caching.EntityCacheTester"};
     print("START TESTING CACHE");
     printBlankLine();
-    junit.swingui.TestRunner.main(mainArgs);
+    TestRunner.main(mainArgs);
     printBlankLine();
     print("END TESTING CACHE");
 
