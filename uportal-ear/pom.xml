@@ -76,12 +76,6 @@
             <groupId>org.apache.pluto</groupId>
             <artifactId>pluto-container</artifactId>
             <scope>compile</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging-api</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         
         <dependency>
@@ -96,10 +90,6 @@
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging-api</artifactId>
-                </exclusion>
-                <exclusion>
                     <groupId>xerces</groupId>
                     <artifactId>xercesImpl</artifactId>
                 </exclusion>
@@ -110,12 +100,6 @@
             <groupId>org.apache.pluto</groupId>
             <artifactId>pluto-taglib</artifactId>
             <scope>compile</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging-api</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         
         <dependency>
