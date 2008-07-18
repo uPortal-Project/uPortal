@@ -23,33 +23,35 @@
 		<property name="personAttributeDaos">
 			<list>
 				<ref bean="uPortalJdbcAttributeSource"/>
-				<!--
-				<ref bean="uPortalLdapAttributeSource"/>
-				-->
 			</list>
 		</property>
 	</bean>
 
 
-	<!-- JDBC Person Attribute Source, using the default portal DataSource via RDBMServices -->
+	<!-- JDBC Person Attribute Source, using the default portal DataSource -->
 	<bean id="uPortalJdbcAttributeSource" class="org.jasig.services.persondir.support.jdbc.SingleRowJdbcPersonAttributeDao">
 		<constructor-arg index="0" ref="PersonDB" />
 		<constructor-arg>
-			<list>
-				<value>username</value>
-			</list>
-		</constructor-arg>
-		<constructor-arg>
+            <!-- Double single quotes required since SQL is run through a MessageFormat when adding in the generated portion of the where clause -->
 			<value>	
 				SELECT FIRST_NAME||' '||LAST_NAME AS FIRST_LAST, FIRST_NAME, LAST_NAME, EMAIL, USER_NAME 
 				FROM UP_PERSON_DIR 
-				WHERE USER_NAME=?
+				WHERE {0}
 			</value>
 		</constructor-arg>
-		
-		<property name="columnsToAttributes">
+        <!-- Allow for querying using any field in the table -->
+        <property name="queryAttributeMapping">
+            <map>
+                <entry key="username" value="USER_NAME" />
+                <entry key="user.name.family" value="LAST_NAME" />
+                <entry key="user.name.given" value="FIRST_NAME" />
+                <entry key="user.home-info.online.email" value="EMAIL" />
+            </map>
+        </property>
+        <!-- Map the table fields to P3P and LDAP attribute names -->
+		<property name="resultAttributeMapping">
 			<map>
-				<entry key="FIRST_LAST">	<value>displayName</value></entry>
+				<entry key="FIRST_LAST" value="displayName" />
 				<entry key="FIRST_NAME">
 					<set>
 						<value>givenName</value>
@@ -68,7 +70,7 @@
 						<value>user.home-info.online.email</value>
 					</set>
 				</entry>
-				<entry key="USER_NAME"><value>user.login.id</value></entry>
+				<entry key="USER_NAME" value="user.login.id" />
 			</map>
 		</property>
 	</bean>

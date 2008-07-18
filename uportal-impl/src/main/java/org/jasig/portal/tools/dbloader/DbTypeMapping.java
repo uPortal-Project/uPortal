@@ -8,7 +8,7 @@ package org.jasig.portal.tools.dbloader;
 import java.util.Collection;
 import java.util.Map;
 
-import org.apache.commons.collections15.map.CaseInsensitiveMap;
+import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
@@ -25,7 +25,7 @@ public class DbTypeMapping {
     String dbVersion;
     String driverName;
     String driverVersion;
-    Map<String, Type> typesByGenericName = new CaseInsensitiveMap<Type>(); 
+    Map<String, Type> typesByGenericName = new CaseInsensitiveMap(); 
 
     public String getDbName() {
         return dbName;

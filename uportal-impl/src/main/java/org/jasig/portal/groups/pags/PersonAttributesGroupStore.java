@@ -37,6 +37,7 @@ import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.security.provider.RestrictedPerson;
 import org.jasig.portal.services.PersonDirectory;
 import org.jasig.services.persondir.IPersonAttributeDao;
+import org.jasig.services.persondir.IPersonAttributes;
 
 /**
  * The Person Attributes Group Store uses attributes stored in the IPerson object to determine
@@ -134,9 +135,10 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
          IPerson person = null;
          try {
              IPersonAttributeDao pa = PersonDirectory.getPersonAttributeDao();
-             final Map<String, List<Object>> attrs = pa.getMultivaluedUserAttributes(member.getKey());
+             final IPersonAttributes personAttributes = pa.getPerson(member.getKey());
+
              RestrictedPerson rp = PersonFactory.createRestrictedPerson();
-             rp.setAttributes(attrs);
+             rp.setAttributes(personAttributes.getAttributes());
              
              person = rp;
          }

@@ -7,13 +7,13 @@
 package  org.jasig.portal.groups;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections15.map.ReferenceMap;
+import org.apache.commons.collections.map.ReferenceMap;
 import org.apache.commons.lang.StringUtils;
 import org.jasig.portal.security.IPerson;
 import org.jasig.services.persondir.IPersonAttributeDao;
+import org.jasig.services.persondir.IPersonAttributes;
 
 
 /**
@@ -31,7 +31,7 @@ public class PersonDirNameFinder
     private IPersonAttributeDao paDao;
     
     /** Our cache of entity names: */
-    private Map<String, String> names = new ReferenceMap<String, String>(ReferenceMap.HARD, ReferenceMap.SOFT, true);
+    private Map<String, String> names = new ReferenceMap(ReferenceMap.HARD, ReferenceMap.SOFT, true);
 
     /**
      * Instantiate a PersonDirNameFinder backed by the given
@@ -77,10 +77,10 @@ public class PersonDirNameFinder
      */
     private String primGetName (String key) {
         String name = key;
-        final Map<String, Object> userInfo = this.paDao.getUserAttributes(name);
-        if (userInfo != null)
+        final IPersonAttributes personAttributes = this.paDao.getPerson(name);
+        if (personAttributes != null)
         {
-            Object displayName = userInfo.get("displayName");
+            Object displayName = personAttributes.getAttributeValue("displayName");
             String displayNameStr = "";
             if (displayName != null) {
                 displayNameStr = String.valueOf(displayName);

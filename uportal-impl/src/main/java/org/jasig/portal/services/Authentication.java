@@ -28,6 +28,7 @@ import org.jasig.portal.security.provider.ChainingSecurityContext;
 import org.jasig.portal.utils.MovingAverage;
 import org.jasig.portal.utils.MovingAverageSample;
 import org.jasig.services.persondir.IPersonAttributeDao;
+import org.jasig.services.persondir.IPersonAttributes;
 
 /**
  * Attempts to authenticate a user and retrieve attributes
@@ -133,14 +134,14 @@ public class Authentication {
             // Retrieve all of the attributes associated with the person logging in
             final IPersonAttributeDao pa = PersonDirectory.getPersonAttributeDao();
             final String username = this.getUsername(person);
-            final Map<String, List<Object>> attribs = pa.getMultivaluedUserAttributes(username);
+            final IPersonAttributes personAttributes = pa.getPerson(username);
 
-            if (attribs != null) {
+            if (personAttributes != null) {
             	// attribs may be null.  IPersonAttributeDao returns null when it does not recognize a user at all, as
             	// distinguished from returning an empty Map of attributes when it recognizes a user has having no
             	// attributes.
                 
-                person.setAttributes(attribs);
+                person.setAttributes(personAttributes.getAttributes());
             }
 
          }

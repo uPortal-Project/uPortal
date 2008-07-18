@@ -29,6 +29,7 @@ import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.services.persondir.IPersonAttributeDao;
+import org.jasig.services.persondir.IPersonAttributes;
 import org.springframework.beans.factory.annotation.Required;
 
 /**
@@ -119,6 +120,7 @@ public class PersonDirectoryUserInfoService implements UserInfoService {
     /* (non-Javadoc)
      * @see org.apache.pluto.spi.optional.UserInfoService#getUserInfo(javax.portlet.PortletRequest)
      */
+    @SuppressWarnings("deprecation")
     @Deprecated
     public Map<String, String> getUserInfo(final PortletRequest request) throws PortletContainerException {
         if (!(request instanceof InternalPortletRequest)) {
@@ -157,13 +159,13 @@ public class PersonDirectoryUserInfoService implements UserInfoService {
      */
     protected Map<String, String> getUserInfo(String remoteUser, HttpServletRequest httpServletRequest, IPortletWindow portletWindow) throws PortletContainerException {
         //Get the list of user attributes the portal knows about the user
-        final Map<String, Object> portalUserAttributes = this.personAttributeDao.getUserAttributes(remoteUser);
-        if (portalUserAttributes == null) {
+        final IPersonAttributes personAttributes = this.personAttributeDao.getPerson(remoteUser);
+        if (personAttributes == null) {
             return Collections.emptyMap();
         }
         final List<UserAttributeDD> expectedUserAttributes = this.getExpectedUserAttributes(httpServletRequest, portletWindow);
         
-        final Map<String, String> portletUserAttributes = this.generateUserInfo(portalUserAttributes, expectedUserAttributes);
+        final Map<String, String> portletUserAttributes = this.generateUserInfo(personAttributes, expectedUserAttributes);
         return portletUserAttributes;
     }
 
@@ -174,13 +176,13 @@ public class PersonDirectoryUserInfoService implements UserInfoService {
      * @param expectedUserAttributes The attributes the portlet expects to get
      * @return The Map to use for the USER_INFO attribute
      */
-    protected Map<String, String> generateUserInfo(final Map<String, Object> portalUserAttributes, final List<UserAttributeDD> expectedUserAttributes) {
+    protected Map<String, String> generateUserInfo(final IPersonAttributes personAttributes, final List<UserAttributeDD> expectedUserAttributes) {
         final Map<String, String> portletUserAttributes = new HashMap<String, String>(expectedUserAttributes.size());
         
         //Copy expected attributes to the USER_INFO Map
         for (final UserAttributeDD userAttributeDD : expectedUserAttributes) {
             final String attributeName = userAttributeDD.getName();
-            final Object valueObj = portalUserAttributes.get(attributeName);
+            final Object valueObj = personAttributes.getAttributeValue(attributeName);
             
             final String value = String.valueOf(valueObj);
             portletUserAttributes.put(attributeName, value);
@@ -224,6 +226,6 @@ public class PersonDirectoryUserInfoService implements UserInfoService {
         final IPortletDefinition portletDefinition = this.portletEntityRegistry.getParentPortletDefinition(portletEntity.getPortletEntityId());
         final PortletAppDD portletApplicationDescriptor = this.portletDefinitionRegistry.getParentPortletApplicationDescriptor(portletDefinition.getPortletDefinitionId());
         
-        return (List<UserAttributeDD>)portletApplicationDescriptor.getUserAttributes();
+        return portletApplicationDescriptor.getUserAttributes();
     }
 }

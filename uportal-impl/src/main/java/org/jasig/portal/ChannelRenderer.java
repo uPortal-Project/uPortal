@@ -14,7 +14,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.apache.commons.collections15.map.ReferenceMap;
+import org.apache.commons.collections.map.ReferenceMap;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -124,7 +124,7 @@ public class ChannelRenderer
     Map<String, ChannelCacheEntry> getChannelCache() {
         if (this.channelCache == null) {
             if ((this.channelCache = this.cacheTables.get(this.channel)) == null) {
-                this.channelCache = new ReferenceMap<String, ChannelCacheEntry>(ReferenceMap.HARD, ReferenceMap.SOFT, 2, .75f, true);
+                this.channelCache = new ReferenceMap(ReferenceMap.HARD, ReferenceMap.SOFT, 2, .75f, true);
                 this.cacheTables.put(this.channel, this.channelCache);
             }
         }

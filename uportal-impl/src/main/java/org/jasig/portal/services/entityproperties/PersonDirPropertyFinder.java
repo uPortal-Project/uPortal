@@ -12,13 +12,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.collections15.map.ReferenceMap;
+import org.apache.commons.collections.map.ReferenceMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.PersonDirectory;
 import org.jasig.services.persondir.IPersonAttributeDao;
+import org.jasig.services.persondir.IPersonAttributes;
 
 /**
  * A finder implementation to provide IPerson properties derived from the
@@ -38,7 +39,7 @@ public class PersonDirPropertyFinder
 
     public PersonDirPropertyFinder() {
         pa = PersonDirectory.getPersonAttributeDao();
-        cache = new ReferenceMap<String, Map<String, List<Object>>>(ReferenceMap.HARD, ReferenceMap.SOFT, 120, .75f, true);
+        cache = new ReferenceMap(ReferenceMap.HARD, ReferenceMap.SOFT, 120, .75f, true);
     }
 
     public String[] getPropertyNames(EntityIdentifier entityID) {
@@ -74,7 +75,8 @@ public class PersonDirPropertyFinder
         Map<String, List<Object>> ht = cache.get(entityIdKey);
         if (ht == null) {
             try {
-                ht = pa.getMultivaluedUserAttributes(entityIdKey);
+                final IPersonAttributes personAttributes = pa.getPerson(entityIdKey);
+                ht = personAttributes.getAttributes();
             } catch (Exception e) {
                 log.error("Error getting properties hash for entityID [" + entityID + "]", e);
                 ht = Collections.emptyMap();

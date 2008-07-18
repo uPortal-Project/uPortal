@@ -129,12 +129,6 @@
             <artifactId>ehcache</artifactId>
             <scope>compile</scope>
         </dependency>
-
-        <dependency>
-            <groupId>net.sourceforge.collections</groupId>
-            <artifactId>collections-generic</artifactId>
-            <scope>compile</scope>
-        </dependency>
         
         <dependency>
             <groupId>org.aspectj</groupId>

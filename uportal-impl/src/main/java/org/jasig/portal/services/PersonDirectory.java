@@ -36,6 +36,7 @@ import org.springframework.context.ApplicationContext;
  * @deprecated If possible classes that need access to the {@link IPersonAttributeDao} should be Spring managed beans
  * themselves and just have the dependency injected directly. This class should only be used by non Spring managed code.
  */
+@Deprecated
 public class PersonDirectory {
 
     private static final String PADAO_BEAN_NAME = "personAttributeDao";

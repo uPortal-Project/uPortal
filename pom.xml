@@ -112,7 +112,6 @@
         <casclient.version>2.2.0-M2</casclient.version>
         <cas-server.version>3.2</cas-server.version>
         <cernunnos.version>1.0.0-M8</cernunnos.version>
-        <collections-generic.version>4.01</collections-generic.version>
         <commons-cli.version>1.1</commons-cli.version>
         <commons-codec.version>1.3</commons-codec.version>
         <commons-collections.version>3.2.1</commons-collections.version>
@@ -139,9 +138,11 @@
         <jtidy.version>4aug2000r7-dev</jtidy.version>
         <junit.version>4.4</junit.version>
         <log4j.version>1.2.15</log4j.version>
+        <ognl.version>2.7.3</ognl.version>
+        <org.springframework.webflow.version>2.0.2.RELEASE</org.springframework.webflow.version>
         <oro.version>2.0.8</oro.version>
         <persistence-api.version>1.0</persistence-api.version>
-        <person-directory.version>1.1.2</person-directory.version>
+        <person-directory.version>1.5.0-SNAPSHOT</person-directory.version>
         <pluto.version>1.1.5</pluto.version>
         <portlet-api.version>1.0</portlet-api.version>
         <rome.version>0.9</rome.version>
@@ -351,9 +352,9 @@
                 <version>${ehcache.version}</version>
             </dependency>
             <dependency>
-                <groupId>net.sourceforge.collections</groupId>
-                <artifactId>collections-generic</artifactId>
-                <version>${collections-generic.version}</version>
+                <groupId>ognl</groupId>
+                <artifactId>ognl</artifactId>
+                <version>${ognl.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.ant</groupId>
@@ -524,6 +525,11 @@
                 <groupId>org.springframework.ldap</groupId>
                 <artifactId>spring-ldap</artifactId>
                 <version>${spring-ldap.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.webflow</groupId>
+                <artifactId>org.springframework.webflow</artifactId>
+                <version>${org.springframework.webflow.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springmodules</groupId>

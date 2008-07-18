@@ -9,7 +9,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.locks.ReadWriteLock;
 
-import org.apache.commons.collections15.map.ReferenceMap;
+import org.apache.commons.collections.map.ReferenceMap;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
@@ -28,7 +28,7 @@ public abstract class MapCachingDoubleCheckedCreator<K, T> extends DoubleChecked
     private final Map<K, T> objectCache;
     
     public MapCachingDoubleCheckedCreator() {
-        this.objectCache = new ReferenceMap<K, T>(ReferenceMap.HARD, ReferenceMap.SOFT);
+        this.objectCache = new ReferenceMap(ReferenceMap.HARD, ReferenceMap.SOFT);
     }
     
     /**

@@ -24,7 +24,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.sax.TransformerHandler;
 
-import org.apache.commons.collections15.map.ReferenceMap;
+import org.apache.commons.collections.map.ReferenceMap;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -110,8 +110,8 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
     private static final int SYSTEM_CHARACTER_BLOCK_CACHE_MIN_SIZE = PropertiesManager.getPropertyAsInt("org.jasig.portal.UserInstance.system_character_block_cache_min_size");
     
     // global rendering caches
-    private static final Map<String, SAX2BufferImpl> systemCache = Collections.synchronizedMap(new ReferenceMap<String, SAX2BufferImpl>(ReferenceMap.HARD, ReferenceMap.SOFT, SYSTEM_XSLT_CACHE_MIN_SIZE, .75f, true));
-    private static final Map<String, List<CacheEntry>> systemCharacterCache = Collections.synchronizedMap(new ReferenceMap<String, List<CacheEntry>>(ReferenceMap.HARD, ReferenceMap.SOFT, SYSTEM_CHARACTER_BLOCK_CACHE_MIN_SIZE, .75f, true));
+    private static final Map<String, SAX2BufferImpl> systemCache = Collections.synchronizedMap(new ReferenceMap(ReferenceMap.HARD, ReferenceMap.SOFT, SYSTEM_XSLT_CACHE_MIN_SIZE, .75f, true));
+    private static final Map<String, List<CacheEntry>> systemCharacterCache = Collections.synchronizedMap(new ReferenceMap(ReferenceMap.HARD, ReferenceMap.SOFT, SYSTEM_CHARACTER_BLOCK_CACHE_MIN_SIZE, .75f, true));
 
     /**
      * Listener that exposes full causal information when exceptions occur 
