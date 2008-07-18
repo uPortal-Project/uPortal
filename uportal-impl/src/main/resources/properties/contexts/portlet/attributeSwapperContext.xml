@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+           http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+           
+    <!-- Enables FlowHandlers -->
+    <bean class="org.springframework.webflow.mvc.portlet.FlowHandlerAdapter">
+        <property name="flowExecutor" ref="flowExecutor"/>
+    </bean>
+
+    <!-- Maps portlet modes to handlers --> 
+    <bean id="portletModeHandlerMapping" class="org.springframework.web.portlet.handler.PortletModeHandlerMapping">
+        <property name="portletModeMap">
+            <map>
+                <entry key="view">
+                    <bean class="org.jasig.portal.portlets.flow.ParamaterizableFlowHandler">
+                        <property name="flowId" value="attribute-swapper" />
+                    </bean>
+                </entry>
+            </map>
+        </property>
+    </bean>
+</beans>

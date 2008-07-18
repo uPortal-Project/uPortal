@@ -25,6 +25,10 @@
 		<config>uportal-impl/src/main/resources/properties/contexts/importExportContext.xml</config>
 		<config>uportal-impl/src/main/resources/properties/contexts/securityContext.xml</config>
 		<config>uportal-impl/src/test/resources/jpaStatsPerformanceContext.xml</config>
+		<config>uportal-impl/src/main/resources/properties/contexts/flowsContext.xml</config>
+		<config>uportal-impl/src/main/resources/properties/contexts/mvcContext.xml</config>
+		<config>uportal-impl/src/main/resources/properties/contexts/portlet/attributeSwapperContext.xml</config>
+		<config>uportal-impl/src/main/resources/properties/contexts/portlet/identitySwapperContext.xml</config>
 	</configs>
 	<configSets>
 		<configSet>
@@ -33,13 +37,6 @@
 			<incomplete>false</incomplete>
 			<configs>
 				<config>uportal-impl/src/test/resources/jpaTestApplicationContext.xml</config>
-			</configs>
-		</configSet>
-		<configSet>
-			<name><![CDATA[CAS]]></name>
-			<allowBeanDefinitionOverriding>true</allowBeanDefinitionOverriding>
-			<incomplete>false</incomplete>
-			<configs>
 			</configs>
 		</configSet>
 		<configSet>
@@ -74,6 +71,66 @@
 				<config>uportal-impl/src/main/resources/properties/contexts/schedulerContext.xml</config>
 				<config>uportal-impl/src/main/resources/properties/contexts/importExportContext.xml</config>
 				<config>uportal-impl/src/main/resources/properties/contexts/securityContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/flowsContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/mvcContext.xml</config>
+			</configs>
+		</configSet>
+		<configSet>
+			<name><![CDATA[AttributeSwapperPortletContext]]></name>
+			<allowBeanDefinitionOverriding>true</allowBeanDefinitionOverriding>
+			<incomplete>false</incomplete>
+			<configs>
+				<config>uportal-impl/src/main/resources/properties/contexts/applicationContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/cacheContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/channelContainerContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/checksContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/datasourceContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/flowsContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/importExportContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/jmxContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/jndiContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/layoutContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/ldapContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/mvcContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/persistenceContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/personDirectoryContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/portlet/attributeSwapperContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/portletContainerContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/renderingPipelineContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/requestParameterProcessingContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/schedulerContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/securityContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/statsContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/userContext.xml</config>
+			</configs>
+		</configSet>
+		<configSet>
+			<name><![CDATA[IdentitySwapperPortletContext]]></name>
+			<allowBeanDefinitionOverriding>true</allowBeanDefinitionOverriding>
+			<incomplete>false</incomplete>
+			<configs>
+				<config>uportal-impl/src/main/resources/properties/contexts/applicationContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/cacheContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/channelContainerContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/checksContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/datasourceContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/flowsContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/importExportContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/jmxContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/jndiContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/layoutContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/ldapContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/mvcContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/persistenceContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/personDirectoryContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/portlet/identitySwapperContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/portletContainerContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/renderingPipelineContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/requestParameterProcessingContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/schedulerContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/securityContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/statsContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/userContext.xml</config>
 			</configs>
 		</configSet>
 	</configSets>

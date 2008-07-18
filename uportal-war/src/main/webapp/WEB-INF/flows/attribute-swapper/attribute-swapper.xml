@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow
+                          http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+    
+    <var name="attributeSwapRequest" class="org.jasig.portal.portlets.swapper.AttributeSwapRequest" /> 
+    
+    <!-- TODO support for multivalued attributes eventually -->
+    
+    <view-state id="attributesForm" model="attributeSwapRequest">
+        <on-entry>
+            <set name="attributeSwapRequest" value="new org.jasig.portal.portlets.swapper.AttributeSwapRequest()" />
+            <evaluate expression="attributeSwapperHelper.getSwappableAttributes(externalContext)" result="viewScope.swappableAttributes" />
+            <evaluate expression="attributeSwapperHelper.getOriginalUserAttributes(currentUser.name)" result="viewScope.baseUserDetails" />
+            <evaluate expression="attributeSwapperHelper.populateSwapRequest(currentUser.name, attributeSwapRequest)" />
+        </on-entry>
+
+        <transition to="updateAttributes" on="updateAttributes" />
+        <transition to="resetAttributes" on="resetAttributes" />
+        <transition to="personLookup" on="personLookup" />
+    </view-state>
+    
+    <action-state id="updateAttributes">
+        <evaluate expression="attributeSwapperHelper.swapAttributes(currentUser.name, attributeSwapRequest)" />
+        
+        <transition to="attributesForm" />
+    </action-state>
+    
+    <action-state id="resetAttributes">
+        <evaluate expression="attributeSwapperHelper.resetAttributes(currentUser.name)" />
+        
+        <transition to="attributesForm">
+            <set name="flowScope.targetUserDetails" value="null" />
+        </transition>
+    </action-state>
+    
+    <subflow-state id="personLookup" subflow="person-lookup">
+        <input name="showCancelButton" value="'true'" />
+        <input name="personSearchResults_selectAndGoButtonTextKey" value="'personSearchResults.selectAttributesButton'" />
+        <input name="personDetails_selectAndGoButtonTextKey" value="'personDetails.selectAttributesButton'" />
+        
+        <output name="uid" />
+
+        <transition to="attributesForm" on="cancelPersonLookup">
+            <set name="flowScope.targetUserDetails" value="null" />
+        </transition>
+        <transition to="loadPersonAttributes" on="returnSelectedPerson" />
+    </subflow-state>
+    
+    <action-state id="loadPersonAttributes">
+        <evaluate expression="personAttributeDao.getPerson(uid)" result="flowScope.targetUserDetails" />
+        
+        <transition to="attributesForm" />
+    </action-state>
+</flow>

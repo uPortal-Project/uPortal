@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow
+                          http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+            
+    <var name="flowScope.personQuery" class="org.jasig.portal.portlets.swapper.PersonQuery" />
+    
+    <input name="showCancelButton" type="boolean" required="false" />
+    <input name="personSearchResults_selectAndGoButtonTextKey" type="string" required="false" />
+    <input name="personDetails_selectAndGoButtonTextKey" type="string" required="false" />
+    
+    <!-- Used to set default values for inputs -->
+    <action-state id="initVariables">
+        <set name="flowScope.personSearchResults_selectAndGoButtonTextKey" value="personSearchResults_selectAndGoButtonTextKey != null ? personSearchResults_selectAndGoButtonTextKey : 'personSearchResults.selectAndGoButton'" />
+        <set name="flowScope.personDetails_selectAndGoButton" value="personDetails_selectAndGoButton != null ? personDetails_selectAndGoButton : 'personDetails.selectAndGoButton'" />
+
+        <transition to="personLookup" />
+    </action-state>
+
+    <view-state id="personLookup" model="personQuery">
+        <on-entry>
+            <set name="flowScope.personQuery" value="new org.jasig.portal.portlets.swapper.PersonQuery()" />
+            <evaluate expression="personLookupHelper.getQueryAttributes(externalContext)" result="viewScope.queryAttributes" />
+        </on-entry>
+        <transition on="cancel" to="cancelPersonLookup" bind="false" />
+        <transition on="newSearch" to="personLookup" bind="false" />
+        <transition on="search" to="doPersonLookup" />
+    </view-state>
+    
+    <action-state id="doPersonLookup">
+        <evaluate expression="personLookupHelper.doPersonQuery(personQuery)" result="flowScope.personQueryResults" />
+        
+        <transition to="personLookup" on="${flowScope.personQueryResults == null or flowScope.personQueryResults.size == 0}">
+            <set name="requestScope.emptyQueryResults" value="'true'" />
+        </transition>
+        <transition to="personDetails" on="${flowScope.personQueryResults.size == 1}">
+            <set name="flowScope.uid" value="flowScope.personQueryResults.iterator.next.name" />
+        </transition>
+        <transition to="personSearchResults" /> 
+    </action-state>
+
+    <view-state id="personSearchResults">
+        <transition on="newSearch" to="personLookup" />
+        <transition on="select" to="selectPerson">
+            <set name="flowScope.uid" value="requestParameters.uid"/>
+        </transition>
+        <transition on="selectAndGo" to="selectPersonAndGo">
+            <set name="flowScope.uid" value="requestParameters.uid"/>
+        </transition>
+    </view-state>
+    
+    <decision-state id="selectPerson">
+        <if test="flowScope.uid == null" then="personSearchResults" else="personDetails" />    
+    </decision-state>
+    
+    <decision-state id="selectPersonAndGo">
+        <if test="flowScope.uid == null" then="personSearchResults" else="returnSelectedPerson" />    
+    </decision-state>
+
+    <view-state id="personDetails">
+        <on-entry>
+            <evaluate expression="personAttributeDao.getPerson(uid)" result="viewScope.person" />
+        </on-entry>
+    
+        <transition on="searchResults" to="personSearchResults" />
+        <transition on="newSearch" to="personLookup" />
+        <transition on="selectAndGo" to="returnSelectedPerson" />
+    </view-state>
+
+    <end-state id="returnSelectedPerson">
+        <output name="uid" />
+    </end-state>
+
+    <end-state id="cancelPersonLookup">
+    </end-state>
+</flow>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:webflow="http://www.springframework.org/schema/webflow-config"
+       xmlns:util="http://www.springframework.org/schema/util"       
+       xsi:schemaLocation="
+           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://www.springframework.org/schema/webflow-config http://www.springframework.org/schema/webflow-config/spring-webflow-config-2.0.xsd
+           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">           
+           
+    <bean id="personLookupHelper" class="org.jasig.portal.portlets.swapper.PersonLookupHelperImpl">
+        <property name="personAttributeDao" ref="personAttributeDao" />
+    </bean>
+    
+    <bean id="attributeSwapperHelper" class="org.jasig.portal.portlets.swapper.AttributeSwapperHelperImpl">
+        <property name="personAttributeDao" ref="personAttributeDao" />
+    </bean>
+    <!-- Executes flows: the central entry point into the Spring Web Flow system -->
+    <webflow:flow-executor id="flowExecutor">
+        <webflow:flow-execution-attributes>
+            <webflow:always-redirect-on-pause value="false" />
+        </webflow:flow-execution-attributes>
+    </webflow:flow-executor>
+    
+    <!-- The registry of executable flow definitions -->
+    <webflow:flow-registry id="flowRegistry">
+        <webflow:flow-location-pattern value="WEB-INF/flows/**/*.xml" />
+    </webflow:flow-registry>    
+</beans>

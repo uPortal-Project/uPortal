@@ -20,24 +20,23 @@
     <dependencies>
         <!-- ===== Compile Time Dependencies ============================== -->
         <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.jasig.portal</groupId>
             <artifactId>uportal-impl</artifactId>
             <scope>compile</scope>
         </dependency>
 
-
-        <!-- ===== Provided Dependencies ================================== -->
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>jstl</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
         <dependency>
             <groupId>taglibs</groupId>
             <artifactId>standard</artifactId>
-            <scope>provided</scope>
+            <scope>compile</scope>
         </dependency>
+
     </dependencies>
 
     <build>

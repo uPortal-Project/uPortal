@@ -8,8 +8,12 @@
 	 | The 'username' attribute is what is configured by default in the code
 	 | for simple string queries via the IPersonAttributeDao interfaces
 	 +-->
+     
+    <bean id="personAttributeDao" class="org.jasig.portal.portlets.swapper.OverwritingPersonAttributeDao">
+        <property name="delegatePersonAttributeDao" ref="cachingPersonAttributeDao" />
+    </bean>
 
-    <bean id="personAttributeDao" class="org.jasig.services.persondir.support.CachingPersonAttributeDaoImpl">
+    <bean id="cachingPersonAttributeDao" class="org.jasig.services.persondir.support.CachingPersonAttributeDaoImpl">
         <property name="userInfoCache">
             <bean class="org.jasig.portal.utils.cache.MapCacheFactoryBean">
                 <property name="cacheFactory" ref="cacheFactory" />
@@ -70,7 +74,12 @@
 						<value>user.home-info.online.email</value>
 					</set>
 				</entry>
-				<entry key="USER_NAME" value="user.login.id" />
+				<entry key="USER_NAME">
+                    <set>
+                        <value>username</value>
+                        <value>user.login.id</value>
+                    </set>
+                </entry>
 			</map>
 		</property>
 	</bean>

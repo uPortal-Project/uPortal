@@ -138,7 +138,9 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
              final IPersonAttributes personAttributes = pa.getPerson(member.getKey());
 
              RestrictedPerson rp = PersonFactory.createRestrictedPerson();
-             rp.setAttributes(personAttributes.getAttributes());
+             if (personAttributes != null) {
+                 rp.setAttributes(personAttributes.getAttributes());
+             }
              
              person = rp;
          }

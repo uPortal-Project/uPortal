@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow
+                          http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+    <subflow-state id="personLookup" subflow="person-lookup">
+        <input name="showCancelButton" value="'false'" />
+        <input name="personSearchResults_selectAndGoButtonTextKey" value="'personSearchResults.swapButton'" />
+        <input name="personDetails_selectAndGoButtonTextKey" value="'personDetails.swapButton'" />
+        
+        <output name="uid" />
+
+        <transition to="personLookup" on="cancelPersonLookup" />
+        <transition to="swapIdentity" on="returnSelectedPerson" />
+    </subflow-state>
+    
+    <view-state id="swapIdentity">
+        <transition to="personLookup" on="personLookup" />
+    </view-state>
+</flow>
