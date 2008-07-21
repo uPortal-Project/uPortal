@@ -39,17 +39,13 @@
         <input name="personSearchResults_selectAndGoButtonTextKey" value="'personSearchResults.selectAttributesButton'" />
         <input name="personDetails_selectAndGoButtonTextKey" value="'personDetails.selectAttributesButton'" />
         
-        <output name="uid" />
+        <output name="person" />
 
         <transition to="attributesForm" on="cancelPersonLookup">
             <set name="flowScope.targetUserDetails" value="null" />
         </transition>
-        <transition to="loadPersonAttributes" on="returnSelectedPerson" />
+        <transition to="attributesForm" on="returnSelectedPerson">
+            <set name="flowScope.targetUserDetails" value="person" />
+        </transition> 
     </subflow-state>
-    
-    <action-state id="loadPersonAttributes">
-        <evaluate expression="personAttributeDao.getPerson(uid)" result="flowScope.targetUserDetails" />
-        
-        <transition to="attributesForm" />
-    </action-state>
 </flow>

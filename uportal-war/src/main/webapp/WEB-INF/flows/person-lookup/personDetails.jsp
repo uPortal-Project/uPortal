@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
 
-<div><spring:message code="personDetails.detailsTitle" arguments="${uid}" /></div>
+<div><spring:message code="personDetails.detailsTitle" arguments="${person.name}" /></div>
 
 <table>
     <thead>

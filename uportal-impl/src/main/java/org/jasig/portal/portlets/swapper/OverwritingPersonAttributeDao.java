@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.lang.Validate;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
-import org.jasig.services.persondir.support.AbstractDefaultAttributePersonAttributeDao;
+import org.jasig.services.persondir.support.AbstractFlatteningPersonAttributeDao;
 import org.jasig.services.persondir.support.MultivaluedPersonAttributeUtils;
 import org.jasig.services.persondir.support.NamedPersonImpl;
 import org.jasig.services.persondir.support.merger.IAttributeMerger;
@@ -23,15 +23,13 @@ import org.jasig.services.persondir.support.merger.ReplacingAttributeAdder;
 import org.springframework.beans.factory.annotation.Required;
 
 /**
- * Provides for overriding certain attributes for certain users
- * 
- * TODO attribute overrides need to be scoped to the current user session
- * TODO implement logout portal event listener to clear overrides map 
+ * Provides for overriding certain attributes for certain users. By default uses a concurrent hash
+ * map to store the attributes
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class OverwritingPersonAttributeDao extends AbstractDefaultAttributePersonAttributeDao {
+public class OverwritingPersonAttributeDao extends AbstractFlatteningPersonAttributeDao {
     private final IAttributeMerger attributeMerger = new ReplacingAttributeAdder();
     private Map<String, Map<String, List<Object>>> attributeOverridesMap = new ConcurrentHashMap<String, Map<String,List<Object>>>();
     
@@ -80,6 +78,17 @@ public class OverwritingPersonAttributeDao extends AbstractDefaultAttributePerso
         this.attributeOverridesMap.remove(uid);
     }
 
+    /* (non-Javadoc)
+     * @see org.jasig.services.persondir.IPersonAttributeDao#getPerson(java.lang.String)
+     */
+    public IPersonAttributes getPerson(String uid) {
+        final IPersonAttributes person = this.delegatePersonAttributeDao.getPerson(uid);
+        if (person == null) {
+            return person;
+        }
+        
+        return this.getOverriddenPerson(person);
+    }
     
     /* (non-Javadoc)
      * @see org.jasig.services.persondir.IPersonAttributeDao#getPeopleWithMultivaluedAttributes(java.util.Map)
@@ -90,24 +99,8 @@ public class OverwritingPersonAttributeDao extends AbstractDefaultAttributePerso
         final Set<IPersonAttributes> modifiedPeople = new LinkedHashSet<IPersonAttributes>();
         
         for (final IPersonAttributes person : people) {
-            final String name = person.getName();
-            
-            if (name == null) {
-                this.logger.warn("IPerson '" + person + "' has no name and cannot have attributes overriden");
-                modifiedPeople.add(person);
-            }
-            else {
-                final Map<String, List<Object>> attributeOverrides = this.attributeOverridesMap.get(name);
-                
-                if (attributeOverrides == null) {
-                    modifiedPeople.add(person);
-                }
-                else {
-                    final Map<String, List<Object>> mergedAttributes = this.attributeMerger.mergeAttributes(new LinkedHashMap<String, List<Object>>(person.getAttributes()), attributeOverrides);
-                    final IPersonAttributes mergedPerson = new NamedPersonImpl(name, mergedAttributes);
-                    modifiedPeople.add(mergedPerson);
-                }
-            }
+            final IPersonAttributes mergedPerson = this.getOverriddenPerson(person);
+            modifiedPeople.add(mergedPerson);
         }
         
         return modifiedPeople;
@@ -125,5 +118,26 @@ public class OverwritingPersonAttributeDao extends AbstractDefaultAttributePerso
      */
     public Set<String> getAvailableQueryAttributes() {
         return this.delegatePersonAttributeDao.getAvailableQueryAttributes();
+    }
+
+    /**
+     * Gets the overridden version of the IPersonAttributes if attribute overrides exist
+     */
+    protected IPersonAttributes getOverriddenPerson(final IPersonAttributes person) {
+        final String name = person.getName();
+        if (name == null) {
+            this.logger.info("IPerson '" + person + "' has no name and cannot have attributes overriden");
+            return person;
+        }
+        
+        final Map<String, List<Object>> attributeOverrides = this.attributeOverridesMap.get(name);
+        if (attributeOverrides == null) {
+            return person;
+        }
+        
+        final Map<String, List<Object>> personAttributes = person.getAttributes();
+        final Map<String, List<Object>> mutablePersonAttributes = new LinkedHashMap<String, List<Object>>(personAttributes);
+        final Map<String, List<Object>> mergedAttributes = this.attributeMerger.mergeAttributes(mutablePersonAttributes, attributeOverrides);
+        return new NamedPersonImpl(name, mergedAttributes);
     }
 }

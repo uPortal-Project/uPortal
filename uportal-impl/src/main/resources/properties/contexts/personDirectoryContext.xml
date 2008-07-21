@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xsi:schemaLocation="
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+    http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
     
     <!--
      | Example Person Directory configuration using the Spring implementation.
@@ -11,6 +15,15 @@
      
     <bean id="personAttributeDao" class="org.jasig.portal.portlets.swapper.OverwritingPersonAttributeDao">
         <property name="delegatePersonAttributeDao" ref="cachingPersonAttributeDao" />
+        <property name="attributeOverridesMap" ref="sessionAttributesOverridesMap" />
+    </bean>
+    
+    <!--
+     | Store attribute overrides in a session scoped map to ensure overrides don't show up for
+     | other users and swapped attributes will be cleaned up on user logout.
+     +-->
+    <bean id="sessionAttributesOverridesMap" class="java.util.concurrent.ConcurrentHashMap" scope="globalSession">
+        <aop:scoped-proxy />
     </bean>
 
     <bean id="cachingPersonAttributeDao" class="org.jasig.services.persondir.support.CachingPersonAttributeDaoImpl">

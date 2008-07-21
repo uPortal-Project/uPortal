@@ -12,7 +12,7 @@
     <!-- Used to set default values for inputs -->
     <action-state id="initVariables">
         <set name="flowScope.personSearchResults_selectAndGoButtonTextKey" value="personSearchResults_selectAndGoButtonTextKey != null ? personSearchResults_selectAndGoButtonTextKey : 'personSearchResults.selectAndGoButton'" />
-        <set name="flowScope.personDetails_selectAndGoButton" value="personDetails_selectAndGoButton != null ? personDetails_selectAndGoButton : 'personDetails.selectAndGoButton'" />
+        <set name="flowScope.personDetails_selectAndGoButtonTextKey" value="personDetails_selectAndGoButtonTextKey != null ? personDetails_personDetails_selectAndGoButtonTextKey : 'personDetails.selectAndGoButton'" />
 
         <transition to="personLookup" />
     </action-state>
@@ -34,41 +34,41 @@
             <set name="requestScope.emptyQueryResults" value="'true'" />
         </transition>
         <transition to="personDetails" on="${flowScope.personQueryResults.size == 1}">
-            <set name="flowScope.uid" value="flowScope.personQueryResults.iterator.next.name" />
+            <set name="flowScope.person" value="flowScope.personQueryResults[flowScope.personQueryResults.keys.iterator.next]" />
         </transition>
         <transition to="personSearchResults" /> 
     </action-state>
 
     <view-state id="personSearchResults">
+        <on-entry>
+            <evaluate expression="personLookupHelper.getQueryDisplayResults(externalContext, personQueryResults)" result="viewScope.queryDisplayResults" />
+        </on-entry>
+    
         <transition on="newSearch" to="personLookup" />
         <transition on="select" to="selectPerson">
-            <set name="flowScope.uid" value="requestParameters.uid"/>
+            <set name="flowScope.person" value="flowScope.personQueryResults[requestParameters.uid]"/>
         </transition>
         <transition on="selectAndGo" to="selectPersonAndGo">
-            <set name="flowScope.uid" value="requestParameters.uid"/>
+            <set name="flowScope.person" value="flowScope.personQueryResults[requestParameters.uid]"/>
         </transition>
     </view-state>
     
     <decision-state id="selectPerson">
-        <if test="flowScope.uid == null" then="personSearchResults" else="personDetails" />    
+        <if test="flowScope.person == null" then="personSearchResults" else="personDetails" />    
     </decision-state>
     
     <decision-state id="selectPersonAndGo">
-        <if test="flowScope.uid == null" then="personSearchResults" else="returnSelectedPerson" />    
+        <if test="flowScope.person == null" then="personSearchResults" else="returnSelectedPerson" />    
     </decision-state>
 
     <view-state id="personDetails">
-        <on-entry>
-            <evaluate expression="personAttributeDao.getPerson(uid)" result="viewScope.person" />
-        </on-entry>
-    
         <transition on="searchResults" to="personSearchResults" />
         <transition on="newSearch" to="personLookup" />
         <transition on="selectAndGo" to="returnSelectedPerson" />
     </view-state>
 
     <end-state id="returnSelectedPerson">
-        <output name="uid" />
+        <output name="person" />
     </end-state>
 
     <end-state id="cancelPersonLookup">

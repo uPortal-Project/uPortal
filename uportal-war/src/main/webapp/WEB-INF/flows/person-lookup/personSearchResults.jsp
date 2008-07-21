@@ -7,8 +7,11 @@
 </portlet:actionURL>
 <form action="${selectPersonUrl}" method="post">
     <ul>
-        <c:forEach var="person" items="${personQueryResults}">
-            <li><input id="uid.${fn:escapeXml(person.name)}" type="radio" name="uid" value="${fn:escapeXml(person.name)}" /><label for="uid.${fn:escapeXml(person.name)}"> ${fn:escapeXml(person.name)}</label></li>
+        <c:forEach var="displayResultsEntry" items="${queryDisplayResults}">
+            <li>
+                <input id="uid.${fn:escapeXml(displayResultsEntry.key)}" type="radio" name="uid" value="${fn:escapeXml(displayResultsEntry.key)}" />
+                <label for="uid.${fn:escapeXml(displayResultsEntry.key)}"> ${fn:escapeXml(displayResultsEntry.value)}</label>
+            </li>
         </c:forEach>
     </ul>
     

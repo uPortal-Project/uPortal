@@ -18,7 +18,7 @@
                 <th><spring:message code="attributesForm.currentValueHeader" /></th>
                 <c:if test="${targetUserDetails != null}">
                     <th><spring:message code="attributesForm.copyAttributeHeader" /></th>
-                    <th><spring:message code="attributesForm.valueForHeader" arguments="${uid}" /></th>
+                    <th><spring:message code="attributesForm.valueForHeader" arguments="${targetUserDetails.name}" /></th>
                 </c:if>
             </tr>
         </thead>
@@ -26,11 +26,21 @@
             <c:forEach var="swappableAttribute" items="${swappableAttributes}">
                 <tr>
                     <td><spring:message code="${swappableAttribute}" text="${swappableAttribute}" /></td>
-                    <td>${fn:escapeXml(baseUserDetails.attributes[swappableAttribute])}</td>
+                    <td>${fn:escapeXml(baseUserDetails.attributes[swappableAttribute][0])}</td>
                     <td><form:input path="currentAttributes['${swappableAttribute}'].value" /></td>
                     <c:if test="${targetUserDetails != null}">
-                        <td><form:checkbox path="attributesToCopy['${swappableAttribute}'].value" value="${targetUserDetails.attributes[swappableAttribute]}" /></td>
-                        <td>${fn:escapeXml(targetUserDetails.attributes[swappableAttribute])}</td>
+                        <c:choose>
+                            <c:when test="empty targetUserDetails.attributes[swappableAttribute]">
+                                <c:set var="attributeToCopy" scope="page" value="${targetUserDetails.attributes[swappableAttribute][0]}" />
+                            </c:when>
+                            <c:otherwise>
+                                <c:set var="attributeToCopy" scope="page" value="" />
+                            </c:otherwise>
+                        </c:choose>
+                        <td><form:checkbox path="attributesToCopy['${swappableAttribute}'].value" value="${attributeToCopy}" /></td>
+                        <td>
+                            <label for="attributesToCopy['${fn:escapeXml(swappableAttribute)}'].value1">fn:escapeXml(targetUserDetails.attributes[swappableAttribute][0])</label>
+                        </td>
                     </c:if>
                 </tr>
             </c:forEach>

@@ -27,6 +27,7 @@ public class AttributeSwapRequest implements Serializable {
     /**
      * @return the currentAttributes
      */
+    @SuppressWarnings("unchecked")
     public Map<String, Attribute> getCurrentAttributes() {
         return LazyMap.decorate(this.currentAttributes, new Factory() {
             public Attribute create() {
@@ -49,6 +50,7 @@ public class AttributeSwapRequest implements Serializable {
     /**
      * @return the attributesToCopy
      */
+    @SuppressWarnings("unchecked")
     public Map<String, Attribute> getAttributesToCopy() {
         return LazyMap.decorate(this.attributesToCopy, new Factory() {
             public Attribute create() {

@@ -5,18 +5,19 @@
  */
 package org.jasig.portal.portlets.swapper;
 
-import java.io.Serializable;
-import java.util.Comparator;
+import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
 
-import org.apache.commons.lang.builder.CompareToBuilder;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
 import org.springframework.webflow.context.ExternalContext;
@@ -26,10 +27,7 @@ import org.springframework.webflow.context.ExternalContext;
  * @version $Revision$
  */
 public class PersonLookupHelperImpl {
-    private static final Comparator<IPersonAttributes> PERSON_ATTRIBUTES_COMPARATOR = new PersonAttributesNameComparator();
-    
     private IPersonAttributeDao personAttributeDao;
-    private boolean onlyUseConfiguredAttributes = false;
     
     /**
      * @return the personAttributeDao
@@ -43,45 +41,27 @@ public class PersonLookupHelperImpl {
     public void setPersonAttributeDao(IPersonAttributeDao personLookupDao) {
         this.personAttributeDao = personLookupDao;
     }
-    /**
-     * @return the onlyUseConfiguredAttributes
-     */
-    public boolean isOnlyUseConfiguredAttributes() {
-        return onlyUseConfiguredAttributes;
-    }
-    /**
-     * @param onlyUseConfiguredAttributes the onlyUseConfiguredAttributes to set
-     */
-    public void setOnlyUseConfiguredAttributes(boolean onlyUseConfiguredAttributes) {
-        this.onlyUseConfiguredAttributes = onlyUseConfiguredAttributes;
-    }
 
 
     public Set<String> getQueryAttributes(ExternalContext externalContext) {
         final PortletRequest portletRequest = (PortletRequest)externalContext.getNativeRequest();
         final PortletPreferences preferences = portletRequest.getPreferences();
         
-        final Set<String> queryAttributes = new LinkedHashSet<String>();
+        final Set<String> queryAttributes;
         
-        final String[] configuredAttributes = preferences.getValues("personLookupAttributes", new String[0]);
-        for (final String configuredAttribute : configuredAttributes) {
-            queryAttributes.add(configuredAttribute);
+        final String[] configuredAttributes = preferences.getValues("person-lookup.personLookup.queryAttributes", null);
+        if (configuredAttributes != null) {
+            queryAttributes = new LinkedHashSet<String>(Arrays.asList(configuredAttributes));
         }
-        
-        if (queryAttributes.size() == 0 || !this.onlyUseConfiguredAttributes) {
+        else {
             final Set<String> availableAttributes = this.personAttributeDao.getAvailableQueryAttributes();
-            
-            if (availableAttributes != null) {
-                for (final String availableAttribute : new TreeSet<String>(availableAttributes)) {
-                    queryAttributes.add(availableAttribute);
-                }
-            }
+            queryAttributes = new TreeSet<String>(availableAttributes);
         }
         
         return queryAttributes;
     }
 
-    public Set<IPersonAttributes> doPersonQuery(PersonQuery query) {
+    public Map<String, IPersonAttributes> doPersonQuery(PersonQuery query) {
         final Map<String, Attribute> attributes = query.getAttributes();
         
         final Map<String, Object> queryAttributes = new HashMap<String, Object>();
@@ -94,21 +74,46 @@ public class PersonLookupHelperImpl {
         if (people == null) {
             return null;
         }
-
-        final TreeSet<IPersonAttributes> sortedPeople = new TreeSet<IPersonAttributes>(PERSON_ATTRIBUTES_COMPARATOR);
-        sortedPeople.addAll(people);
+        
+        final Map<String, IPersonAttributes> sortedPeople = new TreeMap<String, IPersonAttributes>();
+        for (final IPersonAttributes personAttributes : people) {
+            sortedPeople.put(personAttributes.getName(), personAttributes);
+        }
         return sortedPeople;
     }
     
-    
-    private static class PersonAttributesNameComparator implements Comparator<IPersonAttributes>, Serializable {
-        private static final long serialVersionUID = 1L;
+    public Map<String, String> getQueryDisplayResults(ExternalContext externalContext, Map<String, IPersonAttributes> queryResults) {
+        final PortletRequest portletRequest = (PortletRequest)externalContext.getNativeRequest();
+        final PortletPreferences preferences = portletRequest.getPreferences();
+        
+        final String[] resultsAttributes = preferences.getValues("person-lookup.personSearchResults.resultsAttributes", null);
+        final String resultsMessage = preferences.getValue("person-lookup.personSearchResults.resultsMessage", null);
+        
+        final Map<String, String> displayResults = new LinkedHashMap<String, String>();
 
-        /* (non-Javadoc)
-         * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-         */
-        public int compare(IPersonAttributes o1, IPersonAttributes o2) {
-            return new CompareToBuilder().append(o1.getName(), o2.getName()).toComparison();
+        //No result string attributes or message string, just use the person's name
+        if (resultsAttributes == null || resultsMessage == null) {
+            for (final IPersonAttributes personAttributes : queryResults.values()) {
+                final String name = personAttributes.getName();
+                displayResults.put(name, name);
+            }
         }
+        //There is configured message info, generate formated strings for each person 
+        else {
+            for (final IPersonAttributes personAttributes : queryResults.values()) {
+                final Object[] resultValues = new Object[resultsAttributes.length];
+                for (int index = 0; index < resultsAttributes.length; index++) {
+                    final Object attributeValue = personAttributes.getAttributeValue(resultsAttributes[index]);
+                    resultValues[index] = attributeValue;
+                }
+                
+                final String name = personAttributes.getName();
+                final String displayResult = MessageFormat.format(resultsMessage, resultValues);
+                
+                displayResults.put(name, displayResult);
+            }
+        }
+        
+        return displayResults;
     }
 }

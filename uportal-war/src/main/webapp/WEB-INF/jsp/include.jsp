@@ -6,4 +6,6 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
+<%@ taglib prefix="uwfn" uri="http://www.uportal.org/jsp/jstl/functions/1.1" %>
+
 <portlet:defineObjects/>
