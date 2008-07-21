@@ -9,18 +9,26 @@ import java.security.Principal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.Map.Entry;
 
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.IPersonManager;
+import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
+import org.jasig.services.persondir.support.MultivaluedPersonAttributeUtils;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.webflow.context.ExternalContext;
 
 /**
@@ -28,21 +36,46 @@ import org.springframework.webflow.context.ExternalContext;
  * @version $Revision$
  */
 public class AttributeSwapperHelperImpl implements IAttributeSwapperHelper {
+    private static final String OVERRIDDEN_ATTRIBUTES = AttributeSwapperHelperImpl.class.getName() + ".OVERRIDDEN_ATTRIBUTES";
+
     private OverwritingPersonAttributeDao overwritingPersonAttributeDao;
+    private IPersonManager personManager;
+    private IPortalRequestUtils portalRequestUtils;
     
-    /**
-     * @return the personAttributeDao
-     */
     public OverwritingPersonAttributeDao getPersonAttributeDao() {
         return overwritingPersonAttributeDao;
     }
     /**
-     * @param personAttributeDao the personAttributeDao to set
+     * The {@link OverwritingPersonAttributeDao} instance to use to override attributes
      */
+    @Required
     public void setPersonAttributeDao(OverwritingPersonAttributeDao personAttributeDao) {
         this.overwritingPersonAttributeDao = personAttributeDao;
     }
-
+    
+    public IPersonManager getPersonManager() {
+        return personManager;
+    }
+    /**
+     * The {@link IPersonManager} to use to access the current IPerson
+     */
+    @Required
+    public void setPersonManager(IPersonManager personManager) {
+        this.personManager = personManager;
+    }
+    
+    public IPortalRequestUtils getPortalRequestUtils() {
+        return portalRequestUtils;
+    }
+    /**
+     * Utility class to access the original portal request
+     */
+    @Required
+    public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
+        this.portalRequestUtils = portalRequestUtils;
+    }
+    
+    
     /* (non-Javadoc)
      * @see org.jasig.portal.portlets.swapper.IAttributeSwapperHelper#getSwappableAttributes(org.springframework.webflow.context.ExternalContext)
      */
@@ -108,9 +141,10 @@ public class AttributeSwapperHelperImpl implements IAttributeSwapperHelper {
     }
     
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlets.swapper.IAttributeSwapperHelper#swapAttributes(java.lang.String, org.jasig.portal.portlets.swapper.AttributeSwapRequest)
+     * @see org.jasig.portal.portlets.swapper.IAttributeSwapperHelper#swapAttributes(org.springframework.webflow.context.ExternalContext, org.jasig.portal.portlets.swapper.AttributeSwapRequest)
      */
-    public void swapAttributes(String uid, AttributeSwapRequest attributeSwapRequest) {
+    public void swapAttributes(ExternalContext externalContext, AttributeSwapRequest attributeSwapRequest) {
+        //Collate the swap request into a single overrides map
         final Map<String, Object> attributes = new HashMap<String, Object>();
         
         final Map<String, Attribute> currentAttributes = attributeSwapRequest.getCurrentAttributes();
@@ -119,14 +153,65 @@ public class AttributeSwapperHelperImpl implements IAttributeSwapperHelper {
         final Map<String, Attribute> attributesToCopy = attributeSwapRequest.getAttributesToCopy();
         this.copyAttributes(attributes, attributesToCopy);
         
+        final Principal currentUser = externalContext.getCurrentUser();
+        final String uid = currentUser.getName();
+        final IPersonAttributes originalUserAttributes = this.getOriginalUserAttributes(uid);
+        
+        //Filter out unchanged attributes
+        for (final Iterator<Map.Entry<String, Object>> overrideAttrEntryItr = attributes.entrySet().iterator(); overrideAttrEntryItr.hasNext();) {
+            final Entry<String, Object> overrideAttrEntry = overrideAttrEntryItr.next();
+            final String attribute = overrideAttrEntry.getKey();
+            
+            final Object originalValue = originalUserAttributes.getAttributeValue(attribute);
+            final Object overrideValue = overrideAttrEntry.getValue();
+            if (originalValue == overrideValue || (originalValue != null && originalValue.equals(overrideValue))) {
+                overrideAttrEntryItr.remove();
+            }
+        }
+        
+        
+        //Override attributes retrieved the person directory
         this.overwritingPersonAttributeDao.setUserAttributeOverride(uid, attributes);
+
+        //Update the IPerson, setting the overridden attributes
+        final PortletRequest portletRequest = (PortletRequest)externalContext.getNativeRequest();
+        final HttpServletRequest portalRequest = this.portalRequestUtils.getOriginalPortalRequest(portletRequest);
+        
+        final IPerson person = this.personManager.getPerson(portalRequest);
+        final Map<String, List<Object>> multivaluedAttributes = MultivaluedPersonAttributeUtils.toMultivaluedMap(attributes);
+        person.setAttributes(multivaluedAttributes);
+        person.setAttribute(OVERRIDDEN_ATTRIBUTES, multivaluedAttributes.keySet());
     }
     
     /* (non-Javadoc)
      * @see org.jasig.portal.portlets.swapper.IAttributeSwapperHelper#resetAttributes(java.lang.String)
      */
-    public void resetAttributes(String uid) {
+    public void resetAttributes(ExternalContext externalContext) {
+        final Principal currentUser = externalContext.getCurrentUser();
+        final String uid = currentUser.getName();
+        
+        //Remove the person directory override
         this.overwritingPersonAttributeDao.removeUserAttributeOverride(uid);
+        
+        //Remove the IPerson attribute override, bit of a hack as we really just remove all overrides
+        //then re-add all attributes from person directory
+        final PortletRequest portletRequest = (PortletRequest)externalContext.getNativeRequest();
+        final HttpServletRequest portalRequest = this.portalRequestUtils.getOriginalPortalRequest(portletRequest);
+        
+        final IPerson person = this.personManager.getPerson(portalRequest);
+
+        final Set<String> overriddenAttributes = (Set)person.getAttribute(OVERRIDDEN_ATTRIBUTES);
+        if (overriddenAttributes != null) {
+            person.setAttribute(OVERRIDDEN_ATTRIBUTES, null);
+            
+            for (final String attribute : overriddenAttributes) {
+                person.setAttribute(attribute, null);
+            }
+        }
+        
+        final IPersonAttributes originalUserAttributes = this.getOriginalUserAttributes(uid);
+        final Map<String, List<Object>> attributes = originalUserAttributes.getAttributes();
+        person.setAttributes(attributes);
     }
 
     protected void copyAttributes(final Map<String, Object> destination, final Map<String, Attribute> source) {

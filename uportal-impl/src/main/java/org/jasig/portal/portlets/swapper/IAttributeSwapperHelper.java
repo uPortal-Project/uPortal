@@ -50,16 +50,16 @@ public interface IAttributeSwapperHelper {
     /**
      * Perform the attribute swap request.
      * 
-     * @param uid The user name of the user to override attributes for
+     * @param externalContext The {@link ExternalContext} to get the current user from
      * @param attributeSwapRequest The swap request with the new attributes
      */
-    public void swapAttributes(String uid, AttributeSwapRequest attributeSwapRequest);
+    public void swapAttributes(ExternalContext externalContext, AttributeSwapRequest attributeSwapRequest);
 
     /**
      * Removes the swapped attributes for the specified user
      * 
-     * @param uid The user name of the user to remove the attribute override for
+     * @param externalContext The {@link ExternalContext} to get the current user from
      */
-    public void resetAttributes(String uid);
+    public void resetAttributes(ExternalContext externalContext);
 
 }

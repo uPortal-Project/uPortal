@@ -21,6 +21,8 @@
     <!-- Beans for the attribute-swapper flow -->       
     <bean id="attributeSwapperHelper" class="org.jasig.portal.portlets.swapper.AttributeSwapperHelperImpl">
         <property name="personAttributeDao" ref="personAttributeDao" />
+        <property name="portalRequestUtils" ref="portalRequestUtils" />
+        <property name="personManager" ref="personManager" />
     </bean>
     
     <bean id="attributeSwapRequestValidator" class="org.jasig.portal.portlets.swapper.AttributeSwapRequestValidator">

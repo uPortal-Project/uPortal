@@ -19,13 +19,13 @@
     </view-state>
     
     <action-state id="updateAttributes">
-        <evaluate expression="attributeSwapperHelper.swapAttributes(currentUser.name, attributeSwapRequest)" />
+        <evaluate expression="attributeSwapperHelper.swapAttributes(externalContext, attributeSwapRequest)" />
         
         <transition to="attributesForm" />
     </action-state>
     
     <action-state id="resetAttributes">
-        <evaluate expression="attributeSwapperHelper.resetAttributes(currentUser.name)" />
+        <evaluate expression="attributeSwapperHelper.resetAttributes(externalContext)" />
         
         <transition to="attributesForm">
             <set name="flowScope.targetUserDetails" value="null" />
