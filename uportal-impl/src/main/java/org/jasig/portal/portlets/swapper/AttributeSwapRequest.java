@@ -9,31 +9,29 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.collections.Factory;
 import org.apache.commons.collections.map.LazyMap;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
 /**
+ * Request to change the specified attributes
+ * 
  * @author Eric Dalquist
  * @version $Revision$
  */
 public class AttributeSwapRequest implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private Map<String, Attribute> currentAttributes = new HashMap<String, Attribute>();
-    private Map<String, Attribute> attributesToCopy = new HashMap<String, Attribute>();
+    @SuppressWarnings("unchecked")
+    private Map<String, Attribute> currentAttributes = LazyMap.decorate(new HashMap<String, Attribute>(), new AttributeFactory());
+    @SuppressWarnings("unchecked")
+    private Map<String, Attribute> attributesToCopy = LazyMap.decorate(new HashMap<String, Attribute>(), new AttributeFactory());
 
     /**
      * @return the currentAttributes
      */
-    @SuppressWarnings("unchecked")
     public Map<String, Attribute> getCurrentAttributes() {
-        return LazyMap.decorate(this.currentAttributes, new Factory() {
-            public Attribute create() {
-                return new Attribute();
-            }
-        });
+        return this.currentAttributes;
     }
     /**
      * @param currentAttributes the currentAttributes to set
@@ -50,13 +48,8 @@ public class AttributeSwapRequest implements Serializable {
     /**
      * @return the attributesToCopy
      */
-    @SuppressWarnings("unchecked")
     public Map<String, Attribute> getAttributesToCopy() {
-        return LazyMap.decorate(this.attributesToCopy, new Factory() {
-            public Attribute create() {
-                return new Attribute();
-            }
-        });
+        return this.attributesToCopy;
     }
     /**
      * @param attributesToCopy the attributesToCopy to set

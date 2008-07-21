@@ -31,10 +31,10 @@
                     <c:if test="${targetUserDetails != null}">
                         <c:choose>
                             <c:when test="empty targetUserDetails.attributes[swappableAttribute]">
-                                <c:set var="attributeToCopy" scope="page" value="${targetUserDetails.attributes[swappableAttribute][0]}" />
+                                <c:set var="attributeToCopy" scope="page" value="" />
                             </c:when>
                             <c:otherwise>
-                                <c:set var="attributeToCopy" scope="page" value="" />
+                                <c:set var="attributeToCopy" scope="page" value="${targetUserDetails.attributes[swappableAttribute][0]}" />
                             </c:otherwise>
                         </c:choose>
                         <td><form:checkbox path="attributesToCopy['${swappableAttribute}'].value" value="${attributeToCopy}" /></td>

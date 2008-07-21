@@ -11,7 +11,6 @@ import java.util.Set;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.binding.message.MessageResolver;
-import org.springframework.stereotype.Component;
 import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;

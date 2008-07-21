@@ -30,11 +30,6 @@ import org.springframework.webflow.context.ExternalContext;
  * @version $Revision$
  */
 public class PersonLookupHelperImpl implements IPersonLookupHelper {
-    public static final String PERSON_LOOKUP_PERSON_LOOKUP_QUERY_ATTRIBUTES = "person-lookup.personLookup.queryAttributes";
-    public static final String PERSON_LOOKUP_PERSON_SEARCH_RESULTS_RESULTS_MESSAGE = "person-lookup.personSearchResults.resultsMessage";
-    public static final String PERSON_LOOKUP_PERSON_SEARCH_RESULTS_RESULTS_ATTRIBUTES = "person-lookup.personSearchResults.resultsAttributes";
-    public static final String PERSON_LOOKUP_PERSON_DETAILS_DETAILS_ATTRIBUTES = "person-lookup.personDetails.detailsAttributes";
-    
     private IPersonAttributeDao personAttributeDao;
     
     public IPersonAttributeDao getPersonAttributeDao() {

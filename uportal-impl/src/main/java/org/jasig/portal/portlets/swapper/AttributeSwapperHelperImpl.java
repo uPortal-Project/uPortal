@@ -5,6 +5,9 @@
  */
 package org.jasig.portal.portlets.swapper;
 
+import java.security.Principal;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -24,9 +27,8 @@ import org.springframework.webflow.context.ExternalContext;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class AttributeSwapperHelperImpl {
+public class AttributeSwapperHelperImpl implements IAttributeSwapperHelper {
     private OverwritingPersonAttributeDao overwritingPersonAttributeDao;
-    private boolean onlyUseConfiguredAttributes = false;
     
     /**
      * @return the personAttributeDao
@@ -40,37 +42,38 @@ public class AttributeSwapperHelperImpl {
     public void setPersonAttributeDao(OverwritingPersonAttributeDao personAttributeDao) {
         this.overwritingPersonAttributeDao = personAttributeDao;
     }
-    
-    /**
-     * @return the onlyUseConfiguredAttributes
-     */
-    public boolean isOnlyUseConfiguredAttributes() {
-        return onlyUseConfiguredAttributes;
-    }
-    /**
-     * @param onlyUseConfiguredAttributes the onlyUseConfiguredAttributes to set
-     */
-    public void setOnlyUseConfiguredAttributes(boolean onlyUseConfiguredAttributes) {
-        this.onlyUseConfiguredAttributes = onlyUseConfiguredAttributes;
-    }
 
+    /* (non-Javadoc)
+     * @see org.jasig.portal.portlets.swapper.IAttributeSwapperHelper#getSwappableAttributes(org.springframework.webflow.context.ExternalContext)
+     */
     public Set<String> getSwappableAttributes(ExternalContext externalContext) {
         final PortletRequest portletRequest = (PortletRequest)externalContext.getNativeRequest();
         final PortletPreferences preferences = portletRequest.getPreferences();
         
-        final Set<String> swappableAttributes = new LinkedHashSet<String>();
+        final Set<String> swappableAttributes;
         
-        final String[] configuredAttributes = preferences.getValues("swappableAttributes", new String[0]);
-        for (final String configuredAttribute : configuredAttributes) {
-            swappableAttributes.add(configuredAttribute);
+        //Use prefs configured list if available
+        final String[] configuredAttributes = preferences.getValues(ATTRIBUTE_SWAPPER_ATTRIBUTES_FORM_SWAPPABLE_ATTRIBUTES, null);
+        if (configuredAttributes != null) {
+            swappableAttributes = new LinkedHashSet<String>(Arrays.asList(configuredAttributes));
         }
-        
-        if (swappableAttributes.size() == 0 || !this.onlyUseConfiguredAttributes) {
+        else {
+            //If no prefs try the 'possibleUserAttributeNames' from the IPersonAttributeDao
             final Set<String> possibleAttributes = this.overwritingPersonAttributeDao.getPossibleUserAttributeNames();
-            
             if (possibleAttributes != null) {
-                for (final String availableAttribute : new TreeSet<String>(possibleAttributes)) {
-                    swappableAttributes.add(availableAttribute);
+                swappableAttributes = new TreeSet<String>(possibleAttributes);
+            }
+            //If no possible names try getting the current user's attributes and use the key set
+            else {
+                final Principal currentUser = externalContext.getCurrentUser();
+                final IPersonAttributes baseUserAttributes = this.getOriginalUserAttributes(currentUser.getName());
+                
+                if (baseUserAttributes != null) {
+                    final Map<String, List<Object>> attributes = baseUserAttributes.getAttributes();
+                    swappableAttributes = new LinkedHashSet<String>(attributes.keySet());
+                }
+                else {
+                    swappableAttributes = Collections.emptySet();
                 }
             }
         }
@@ -78,25 +81,35 @@ public class AttributeSwapperHelperImpl {
         return swappableAttributes;
     }
     
+    /* (non-Javadoc)
+     * @see org.jasig.portal.portlets.swapper.IAttributeSwapperHelper#getOriginalUserAttributes(java.lang.String)
+     */
     public IPersonAttributes getOriginalUserAttributes(String uid) {
         final IPersonAttributeDao delegatePersonAttributeDao = this.overwritingPersonAttributeDao.getDelegatePersonAttributeDao();
-        final IPersonAttributes person = delegatePersonAttributeDao.getPerson(uid);
-        return person;
+        return delegatePersonAttributeDao.getPerson(uid);
     }
     
-    public void populateSwapRequest(String uid, AttributeSwapRequest attributeSwapRequest) {
+    /* (non-Javadoc)
+     * @see org.jasig.portal.portlets.swapper.IAttributeSwapperHelper#populateSwapRequest(org.springframework.webflow.context.ExternalContext, org.jasig.portal.portlets.swapper.AttributeSwapRequest)
+     */
+    public void populateSwapRequest(ExternalContext externalContext, AttributeSwapRequest attributeSwapRequest) {
+        final Principal currentUser = externalContext.getCurrentUser();
+        final String uid = currentUser.getName();
         final IPersonAttributes person = this.overwritingPersonAttributeDao.getPerson(uid);
         
         final Map<String, Attribute> currentAttributes = attributeSwapRequest.getCurrentAttributes();
         currentAttributes.clear();
-        for (final Map.Entry<String, List<Object>> userAttributeEntry : person.getAttributes().entrySet()) {
-            final String attribute = userAttributeEntry.getKey();
-            final List<Object> values = userAttributeEntry.getValue();
-            final Object value = (values != null && values.size() > 0 ? values.get(0) : null);
+        
+        final Set<String> swappableAttributes = this.getSwappableAttributes(externalContext);
+        for (final String attribute : swappableAttributes) {
+            final Object value = person.getAttributeValue(attribute);
             currentAttributes.put(attribute, new Attribute(String.valueOf(value)));
         }
     }
     
+    /* (non-Javadoc)
+     * @see org.jasig.portal.portlets.swapper.IAttributeSwapperHelper#swapAttributes(java.lang.String, org.jasig.portal.portlets.swapper.AttributeSwapRequest)
+     */
     public void swapAttributes(String uid, AttributeSwapRequest attributeSwapRequest) {
         final Map<String, Object> attributes = new HashMap<String, Object>();
         
@@ -109,6 +122,9 @@ public class AttributeSwapperHelperImpl {
         this.overwritingPersonAttributeDao.setUserAttributeOverride(uid, attributes);
     }
     
+    /* (non-Javadoc)
+     * @see org.jasig.portal.portlets.swapper.IAttributeSwapperHelper#resetAttributes(java.lang.String)
+     */
     public void resetAttributes(String uid) {
         this.overwritingPersonAttributeDao.removeUserAttributeOverride(uid);
     }

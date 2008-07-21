@@ -16,7 +16,23 @@ import org.springframework.webflow.context.ExternalContext;
  * @version $Revision$
  */
 public interface IPersonLookupHelper {
-
+    /**
+     * Portlet preference name to use to specify a List of attributes displayed in query UI
+     */
+    public static final String PERSON_LOOKUP_PERSON_LOOKUP_QUERY_ATTRIBUTES = "person-lookup.personLookup.queryAttributes";
+    /**
+     * Portlet preference name to use to specify a MessageFormat string for search results list
+     */
+    public static final String PERSON_LOOKUP_PERSON_SEARCH_RESULTS_RESULTS_MESSAGE = "person-lookup.personSearchResults.resultsMessage";
+    /**
+     * Portlet preference name to use to specify a list of attributes who's values should be passed to the MessageFormat for the resultsMessage string
+     */
+    public static final String PERSON_LOOKUP_PERSON_SEARCH_RESULTS_RESULTS_ATTRIBUTES = "person-lookup.personSearchResults.resultsAttributes";
+    /**
+     * Portlet preference name to use to specify a attributes to display in the user details view
+     */
+    public static final String PERSON_LOOKUP_PERSON_DETAILS_DETAILS_ATTRIBUTES = "person-lookup.personDetails.detailsAttributes";
+    
     /**
      * Gets the Set of attributes to allow the user to query with.
      * 

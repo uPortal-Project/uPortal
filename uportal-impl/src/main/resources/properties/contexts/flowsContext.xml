@@ -23,6 +23,10 @@
         <property name="personAttributeDao" ref="personAttributeDao" />
     </bean>
     
+    <bean id="attributeSwapRequestValidator" class="org.jasig.portal.portlets.swapper.AttributeSwapRequestValidator">
+        <property name="attributeSwapperHelper" ref="attributeSwapperHelper" />
+    </bean>
+    
     
     <!-- Executes flows: the central entry point into the Spring Web Flow system -->
     <webflow:flow-executor id="flowExecutor">
