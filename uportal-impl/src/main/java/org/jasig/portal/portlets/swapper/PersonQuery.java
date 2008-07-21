@@ -9,41 +9,41 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.collections.Factory;
 import org.apache.commons.collections.map.LazyMap;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
 /**
+ * Represents a query for a person using attributes submitted by the user.
+ * 
  * @author Eric Dalquist
  * @version $Revision$
  */
 public class PersonQuery implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private Map<String, Attribute> attributes = new HashMap<String, Attribute>();
+    @SuppressWarnings("unchecked")
+    private Map<String, Attribute> attributes = LazyMap.decorate(new HashMap<String, Attribute>(), new AttributeFactory());
 
     /**
      * @return the attributes
      */
     public Map<String, Attribute> getAttributes() {
-        return LazyMap.decorate(this.attributes, new Factory() {
-            public Attribute create() {
-                return new Attribute();
-            }
-        });
+        return this.attributes;
     }
     /**
      * @param attributes the attributes to set
      */
+    @SuppressWarnings("unchecked")
     public void setAttributes(Map<String, Attribute> attributes) {
         if (attributes == null) {
-            this.attributes = new HashMap<String, Attribute>();
+            this.attributes = LazyMap.decorate(new HashMap<String, Attribute>(), new AttributeFactory());
         }
         else {
             this.attributes = attributes;
         }
     }
+
 
     /**
      * @see java.lang.Object#toString()

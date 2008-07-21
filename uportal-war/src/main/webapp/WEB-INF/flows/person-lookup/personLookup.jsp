@@ -20,6 +20,9 @@
                     <td>
                         <form:input path="attributes['${queryAttribute}'].value"/>
                     </td>
+                    <td>
+                        <form:errors path="attributes['${queryAttribute}'].value"/>
+                    </td>
                 </tr>
             </c:forEach>
         </tbody>            

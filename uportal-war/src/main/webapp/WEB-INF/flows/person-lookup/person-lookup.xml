@@ -11,8 +11,8 @@
     
     <!-- Used to set default values for inputs -->
     <action-state id="initVariables">
-        <set name="flowScope.personSearchResults_selectAndGoButtonTextKey" value="personSearchResults_selectAndGoButtonTextKey != null ? personSearchResults_selectAndGoButtonTextKey : 'personSearchResults.selectAndGoButton'" />
-        <set name="flowScope.personDetails_selectAndGoButtonTextKey" value="personDetails_selectAndGoButtonTextKey != null ? personDetails_personDetails_selectAndGoButtonTextKey : 'personDetails.selectAndGoButton'" />
+        <set name="flowScope.personSearchResults_selectAndGoButtonTextKey" value="personSearchResults_selectAndGoButtonTextKey == null ? 'personSearchResults.selectAndGoButton' : personSearchResults_selectAndGoButtonTextKey" />
+        <set name="flowScope.personDetails_selectAndGoButtonTextKey" value="personDetails_selectAndGoButtonTextKey != null ? 'personDetails.selectAndGoButton' : personDetails_personDetails_selectAndGoButtonTextKey" />
 
         <transition to="personLookup" />
     </action-state>
@@ -27,6 +27,7 @@
         <transition on="search" to="doPersonLookup" />
     </view-state>
     
+    <!-- Execute the lookup query and transition to the appropriate state based on the number of results -->
     <action-state id="doPersonLookup">
         <evaluate expression="personLookupHelper.doPersonQuery(personQuery)" result="flowScope.personQueryResults" />
         
@@ -43,7 +44,7 @@
         <on-entry>
             <evaluate expression="personLookupHelper.getQueryDisplayResults(externalContext, personQueryResults)" result="viewScope.queryDisplayResults" />
         </on-entry>
-    
+        
         <transition on="newSearch" to="personLookup" />
         <transition on="select" to="selectPerson">
             <set name="flowScope.person" value="flowScope.personQueryResults[requestParameters.uid]"/>
@@ -53,24 +54,27 @@
         </transition>
     </view-state>
     
+    <!-- Use a decision state to ensure a person was actually selected -->
     <decision-state id="selectPerson">
         <if test="flowScope.person == null" then="personSearchResults" else="personDetails" />    
     </decision-state>
-    
-    <decision-state id="selectPersonAndGo">
-        <if test="flowScope.person == null" then="personSearchResults" else="returnSelectedPerson" />    
-    </decision-state>
-
     <view-state id="personDetails">
+        <on-entry>
+            <evaluate expression="personLookupHelper.getDisplayAttributes(externalContext, person)" result="viewScope.displayAttributes" />
+        </on-entry>
+    
         <transition on="searchResults" to="personSearchResults" />
         <transition on="newSearch" to="personLookup" />
         <transition on="selectAndGo" to="returnSelectedPerson" />
     </view-state>
 
+    <!-- Use a decision state to ensure a person was actually selected -->
+    <decision-state id="selectPersonAndGo">
+        <if test="flowScope.person == null" then="personSearchResults" else="returnSelectedPerson" />    
+    </decision-state>
     <end-state id="returnSelectedPerson">
         <output name="person" />
     </end-state>
 
-    <end-state id="cancelPersonLookup">
-    </end-state>
+    <end-state id="cancelPersonLookup" />
 </flow>

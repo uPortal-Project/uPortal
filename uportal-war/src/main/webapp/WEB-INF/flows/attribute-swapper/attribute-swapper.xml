@@ -16,8 +16,8 @@
         </on-entry>
 
         <transition to="updateAttributes" on="updateAttributes" />
-        <transition to="resetAttributes" on="resetAttributes" />
-        <transition to="personLookup" on="personLookup" />
+        <transition to="resetAttributes" on="resetAttributes" bind="false" />
+        <transition to="personLookup" on="personLookup" bind="false" />
     </view-state>
     
     <action-state id="updateAttributes">

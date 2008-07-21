@@ -10,36 +10,26 @@
         </tr>
     </thead>
     <tbody>
-        <c:forEach var="attrEntry" items="${person.attributes}">
-            <c:choose>
-                <c:when test="${fn:length(attrEntry.value) > 1}">
-                    <c:forEach var="attrValue" items="attrEntry.value" varStatus="attrValueStatus">
-                        <tr>
-                            <c:choose>
-                                <c:when test="${attrValueStatus.first}">
-                                    <td><spring:message code="${attrEntry.key}" text="${attrEntry.key}" /></td>
-                                </c:when>
-                                <c:otherwise>
-                                    <td/>
-                                </c:otherwise>
-                            </c:choose>
+        <c:forEach var="attrName" items="${displayAttributes}">
+            <tr>
+                <td><spring:message code="${attrName}" text="${attrName}" /></td>
+                <c:set var="attrValues" value="${person.attributes[attrName]}" />
+                <c:choose>
+                    <c:when test="${fn:length(attrValues) >= 1}">
+                        <c:forEach var="attrValue" items="${attrValues}" varStatus="attrValueStatus">
                             <td>${fn:escapeXml(attrValue)}</td>
-                        </tr>
-                    </c:forEach>
-                </c:when>
-                <c:when test="${fn:length(attrEntry.value) == 1}">
-                    <tr>
-                        <td><spring:message code="${attrEntry.key}" text="${attrEntry.key}" /></td>
-                        <td>${fn:escapeXml(attrEntry.value[0])}</td>
-                    </tr>
-                </c:when>
-                <c:otherwise>
-                    <tr>
-                        <td><spring:message code="${attrEntry.key}" text="${attrEntry.key}" /></td>
+                            <c:if test="not attrValueStatus.last">
+                                </tr>
+                                <tr>
+                                    <td/>
+                            </c:if>
+                        </c:forEach>
+                    </c:when>
+                    <c:otherwise>
                         <td/>
-                    </tr>
-                </c:otherwise>
-            </c:choose>
+                    </c:otherwise>
+                </c:choose>
+            </tr>
         </c:forEach>
     </tbody>
 </table>

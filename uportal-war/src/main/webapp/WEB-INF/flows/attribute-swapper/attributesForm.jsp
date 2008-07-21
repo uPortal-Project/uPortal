@@ -39,7 +39,7 @@
                         </c:choose>
                         <td><form:checkbox path="attributesToCopy['${swappableAttribute}'].value" value="${attributeToCopy}" /></td>
                         <td>
-                            <label for="attributesToCopy['${fn:escapeXml(swappableAttribute)}'].value1">fn:escapeXml(targetUserDetails.attributes[swappableAttribute][0])</label>
+                            <label for="attributesToCopy['${fn:escapeXml(swappableAttribute)}'].value1">${fn:escapeXml(targetUserDetails.attributes[swappableAttribute][0])}</label>
                         </td>
                     </c:if>
                 </tr>

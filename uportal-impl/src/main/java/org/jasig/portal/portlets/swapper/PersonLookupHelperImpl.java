@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -23,36 +24,45 @@ import org.jasig.services.persondir.IPersonAttributes;
 import org.springframework.webflow.context.ExternalContext;
 
 /**
+ * Implements logic and helper methods for the person-lookup web flow.
+ * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class PersonLookupHelperImpl {
+public class PersonLookupHelperImpl implements IPersonLookupHelper {
+    public static final String PERSON_LOOKUP_PERSON_LOOKUP_QUERY_ATTRIBUTES = "person-lookup.personLookup.queryAttributes";
+    public static final String PERSON_LOOKUP_PERSON_SEARCH_RESULTS_RESULTS_MESSAGE = "person-lookup.personSearchResults.resultsMessage";
+    public static final String PERSON_LOOKUP_PERSON_SEARCH_RESULTS_RESULTS_ATTRIBUTES = "person-lookup.personSearchResults.resultsAttributes";
+    public static final String PERSON_LOOKUP_PERSON_DETAILS_DETAILS_ATTRIBUTES = "person-lookup.personDetails.detailsAttributes";
+    
     private IPersonAttributeDao personAttributeDao;
     
-    /**
-     * @return the personAttributeDao
-     */
     public IPersonAttributeDao getPersonAttributeDao() {
         return personAttributeDao;
     }
     /**
-     * @param personAttributeDao the personAttributeDao to set
+     * The {@link IPersonAttributeDao} used to perform lookups.
      */
     public void setPersonAttributeDao(IPersonAttributeDao personLookupDao) {
         this.personAttributeDao = personLookupDao;
     }
 
 
+    /* (non-Javadoc)
+     * @see org.jasig.portal.portlets.swapper.IPersonLookupHelper#getQueryAttributes(org.springframework.webflow.context.ExternalContext)
+     */
     public Set<String> getQueryAttributes(ExternalContext externalContext) {
         final PortletRequest portletRequest = (PortletRequest)externalContext.getNativeRequest();
         final PortletPreferences preferences = portletRequest.getPreferences();
         
         final Set<String> queryAttributes;
-        
-        final String[] configuredAttributes = preferences.getValues("person-lookup.personLookup.queryAttributes", null);
+        final String[] configuredAttributes = preferences.getValues(PERSON_LOOKUP_PERSON_LOOKUP_QUERY_ATTRIBUTES, null);
+
+        //If attributes are configured in portlet prefs just use them 
         if (configuredAttributes != null) {
             queryAttributes = new LinkedHashSet<String>(Arrays.asList(configuredAttributes));
         }
+        //Otherwise provide all available attributes from the IPersonAttributeDao
         else {
             final Set<String> availableAttributes = this.personAttributeDao.getAvailableQueryAttributes();
             queryAttributes = new TreeSet<String>(availableAttributes);
@@ -61,6 +71,9 @@ public class PersonLookupHelperImpl {
         return queryAttributes;
     }
 
+    /* (non-Javadoc)
+     * @see org.jasig.portal.portlets.swapper.IPersonLookupHelper#doPersonQuery(org.jasig.portal.portlets.swapper.PersonQuery)
+     */
     public Map<String, IPersonAttributes> doPersonQuery(PersonQuery query) {
         final Map<String, Attribute> attributes = query.getAttributes();
         
@@ -82,12 +95,15 @@ public class PersonLookupHelperImpl {
         return sortedPeople;
     }
     
+    /* (non-Javadoc)
+     * @see org.jasig.portal.portlets.swapper.IPersonLookupHelper#getQueryDisplayResults(org.springframework.webflow.context.ExternalContext, java.util.Map)
+     */
     public Map<String, String> getQueryDisplayResults(ExternalContext externalContext, Map<String, IPersonAttributes> queryResults) {
         final PortletRequest portletRequest = (PortletRequest)externalContext.getNativeRequest();
         final PortletPreferences preferences = portletRequest.getPreferences();
         
-        final String[] resultsAttributes = preferences.getValues("person-lookup.personSearchResults.resultsAttributes", null);
-        final String resultsMessage = preferences.getValue("person-lookup.personSearchResults.resultsMessage", null);
+        final String[] resultsAttributes = preferences.getValues(PERSON_LOOKUP_PERSON_SEARCH_RESULTS_RESULTS_ATTRIBUTES, null);
+        final String resultsMessage = preferences.getValue(PERSON_LOOKUP_PERSON_SEARCH_RESULTS_RESULTS_MESSAGE, null);
         
         final Map<String, String> displayResults = new LinkedHashMap<String, String>();
 
@@ -115,5 +131,35 @@ public class PersonLookupHelperImpl {
         }
         
         return displayResults;
+    }
+
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.portlets.swapper.IPersonLookupHelper#getDisplayAttributes(org.springframework.webflow.context.ExternalContext)
+     */
+    public Set<String> getDisplayAttributes(ExternalContext externalContext, IPersonAttributes person) {
+        final PortletRequest portletRequest = (PortletRequest)externalContext.getNativeRequest();
+        final PortletPreferences preferences = portletRequest.getPreferences();
+        
+        final Set<String> displayAttributes;
+        final String[] configuredAttributes = preferences.getValues(PERSON_LOOKUP_PERSON_DETAILS_DETAILS_ATTRIBUTES, null);
+        final Map<String, List<Object>> attributes = person.getAttributes();
+        
+        //If attributes are configured in portlet prefs use those the user has 
+        if (configuredAttributes != null) {
+            displayAttributes = new LinkedHashSet<String>();
+
+            for (final String configuredAttribute : configuredAttributes) {
+                if (attributes.containsKey(configuredAttribute)) {
+                    displayAttributes.add(configuredAttribute);
+                }
+            }
+        }
+        //Otherwise provide all available attributes from the IPersonAttributes
+        else {
+            displayAttributes = new TreeSet<String>(attributes.keySet());
+        }
+        
+        return displayAttributes;
     }
 }
