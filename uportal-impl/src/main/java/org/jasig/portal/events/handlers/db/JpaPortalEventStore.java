@@ -26,6 +26,7 @@ import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.GroupService;
+import org.springframework.stereotype.Repository;
 
 /**
  * Stores portal events using JPA/Hibenate no internall batch segementation is done to the passed list
@@ -35,6 +36,7 @@ import org.jasig.portal.services.GroupService;
  * @author Eric Dalquist
  * @version $Revision$
  */
+@Repository
 public class JpaPortalEventStore extends AbstractLimitedSupportEventHandler implements BatchingEventHandler, IPortalEventStore {
     protected final Log logger = LogFactory.getLog(this.getClass());
     

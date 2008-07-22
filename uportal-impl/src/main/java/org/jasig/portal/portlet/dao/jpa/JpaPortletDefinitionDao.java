@@ -16,6 +16,7 @@ import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.springframework.dao.support.DataAccessUtils;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -24,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Eric Dalquist
  * @version $Revision$
  */
+@Repository
 public class JpaPortletDefinitionDao  implements IPortletDefinitionDao {
     private static final String FIND_PORTLET_DEF_BY_CHAN_DEF = 
         "from PortletDefinitionImpl portDef " +
