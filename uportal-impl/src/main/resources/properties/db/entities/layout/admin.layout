@@ -12,6 +12,7 @@
           <value>50%</value>
         </structure-attribute>
         <channel fname="admin-feature"/>
+        <channel fname="AttributeSwapper"/>
         <channel fname="groupsmanager"/>
       </column>
       <column unremovable="N" immutable="N" hidden="N" name="Column">
@@ -19,6 +20,7 @@
           <name>width</name>
           <value>50%</value>
         </structure-attribute>
+        <channel fname="IdentitySwapper"/>
         <channel fname="permissionsmanager"/>
         <channel fname="passwordmgr"/>
       </column>

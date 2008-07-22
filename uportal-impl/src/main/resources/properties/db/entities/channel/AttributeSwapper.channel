@@ -1,0 +1,35 @@
+
+<channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-0.crn">
+  <title>Attribute Swapper</title>
+  <name>Attribute Swapper</name>
+  <fname>AttributeSwapper</fname>
+  <desc></desc>
+  <type>Portlet</type>
+  <class>org.jasig.portal.channels.portlet.CSpringPortletAdaptor</class>
+  <timeout>600000</timeout>
+  <hasedit>N</hasedit>
+  <hashelp>N</hashelp>
+  <hasabout>N</hasabout>
+  <secure>N</secure>
+  <locale>en_US</locale>
+  <categories>
+    <category>Applications</category>
+  </categories>
+  <groups>
+    <group>Portal Administrators</group>
+  </groups>
+  <parameters>
+    <parameter> 
+      <name>portletApplicationId</name>  
+      <value>/uPortal</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+    <parameter> 
+      <name>portletName</name>  
+      <value>AttributeSwapperPortlet</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+  </parameters>
+</channel-definition>
