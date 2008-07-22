@@ -8,6 +8,7 @@ package  org.jasig.portal;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -21,7 +22,11 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.portlets.swapper.IdentitySwapperPrincipal;
+import org.jasig.portal.portlets.swapper.IdentitySwapperSecurityContext;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.IPersonManager;
+import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.security.PersonManagerFactory;
 import org.jasig.portal.services.Authentication;
 import org.jasig.portal.utils.CommonUtils;
@@ -38,6 +43,9 @@ import org.jasig.portal.utils.ResourceLoader;
  * represent the principal and credential for each security context.
  */
 public class LoginServlet extends HttpServlet {
+    public static final String SWAP_TARGET_UID = LoginServlet.class.getName() + ".SWAP_TARGET_UID";
+    public static final String SWAP_ORIGINAL_UID = LoginServlet.class.getName() + ".SWAP_ORIGINAL_UID";
+    
     private static final Log log = LogFactory.getLog(LoginServlet.class);
   private static final String redirectString;
   private static HashMap credentialTokens;
@@ -104,17 +112,20 @@ public class LoginServlet extends HttpServlet {
         log.error("Unable to set UTF-8 character encoding!", uee);
     }
 
-  	/* Grab the target functional name, if any, off the login request.
-	 * Also any arguments for the target
-  	 * We will pass them  along after authentication.
-  	 */
-  	String targetFname = request.getParameter("uP_fname");
-  	String targetArgs = request.getParameter("uP_args");
-
+    final IPersonManager personManager = PersonManagerFactory.getPersonManagerInstance();
+    
     // Clear out the existing session for the user if they have one
-    final HttpSession s = request.getSession(false);
+    HttpSession s = request.getSession(false);
+    String targetUid = null;
+    String originalUid = null;
     if (s != null) {
     	try {
+    	    targetUid = (String)s.getAttribute(SWAP_TARGET_UID);
+    	    if (targetUid != null) {
+    	        final IPerson person = personManager.getPerson(request);
+    	        originalUid = person.getName();
+    	    }
+
             s.invalidate();
     	} catch (IllegalStateException ise) {
     		// ISE indicates session was already invalidated.
@@ -127,15 +138,41 @@ public class LoginServlet extends HttpServlet {
     }
 
   	//  Create the user's session
-    request.getSession(true);
+    s = request.getSession(true);
+    
   	IPerson person = null;
     try {
-      // Get the person object associated with the request
-      person = PersonManagerFactory.getPersonManagerInstance().getPerson(request);
-      // WE grab all of the principals and credentials from the request and load
-      // them into their respective HashMaps.
-      HashMap principals = getPropertyFromRequest (principalTokens, request);
-      HashMap credentials = getPropertyFromRequest (credentialTokens, request);
+        final HashMap principals;
+        final HashMap credentials;
+        
+        // Get the person object associated with the request
+        person = personManager.getPerson(request);
+        
+        //If doing an identity swap
+        if (targetUid != null && originalUid != null) {
+            log.warn("Swapping identity for '" + originalUid + "' to '" + targetUid + "'");
+            
+            //Track the originating user
+            s.setAttribute(SWAP_ORIGINAL_UID, originalUid);
+            
+            //Setup the swapped person
+            person.setUserName(targetUid);
+            
+            //Setup the custom security context
+            final IdentitySwapperPrincipal identitySwapperPrincipal = new IdentitySwapperPrincipal(person);
+            final IdentitySwapperSecurityContext identitySwapperSecurityContext = new IdentitySwapperSecurityContext(identitySwapperPrincipal);
+            person.setSecurityContext(identitySwapperSecurityContext);
+            
+            principals = new HashMap();
+            credentials = new HashMap();
+        }
+        //Norm authN path
+        else {
+          // WE grab all of the principals and credentials from the request and load
+          // them into their respective HashMaps.
+          principals = getPropertyFromRequest (principalTokens, request);
+          credentials = getPropertyFromRequest (credentialTokens, request);
+        }
 
       // Attempt to authenticate using the incoming request
       m_authenticationService.authenticate(principals, credentials, person);
@@ -148,6 +185,13 @@ public class LoginServlet extends HttpServlet {
       request.getSession(true).setAttribute("up_authenticationError", "true");
       person = null;
     }
+    
+    /* Grab the target functional name, if any, off the login request.
+     * Also any arguments for the target
+     * We will pass them  along after authentication.
+     */
+    String targetFname = request.getParameter("uP_fname");
+    String targetArgs = request.getParameter("uP_args");
     
     // create the redirect URL, adding fname and args parameters if necessary
     String redirectTarget = null;

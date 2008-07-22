@@ -255,7 +255,9 @@ public class Authentication {
       }
       // Retrieve and populate an instance of the credentials object
       IOpaqueCredentials credentialsInstance = securityContext.getOpaqueCredentialsInstance();
-      credentialsInstance.setCredentials(credential);
+      if (credentialsInstance != null) {
+          credentialsInstance.setCredentials(credential);
+      }
    }
 
    /**

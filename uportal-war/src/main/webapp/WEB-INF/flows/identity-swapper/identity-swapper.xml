@@ -8,13 +8,15 @@
         <input name="personSearchResults_selectAndGoButtonTextKey" value="'personSearchResults.swapButton'" />
         <input name="personDetails_selectAndGoButtonTextKey" value="'personDetails.swapButton'" />
         
-        <output name="uid" />
+        <output name="person" />
 
         <transition to="personLookup" on="cancelPersonLookup" />
         <transition to="swapIdentity" on="returnSelectedPerson" />
     </subflow-state>
     
-    <view-state id="swapIdentity">
-        <transition to="personLookup" on="personLookup" />
-    </view-state>
+    <end-state id="swapIdentity" view="contextRelative:/Login">
+        <on-entry>
+            <evaluate expression="identitySwapperHelper.swapAttributes(externalContext, person)" />
+        </on-entry>
+    </end-state>
 </flow>

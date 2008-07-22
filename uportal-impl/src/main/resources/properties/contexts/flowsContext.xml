@@ -29,6 +29,9 @@
         <property name="attributeSwapperHelper" ref="attributeSwapperHelper" />
     </bean>
     
+    <!-- Beans for the identity-swapper flow -->
+    <bean id="identitySwapperHelper" class="org.jasig.portal.portlets.swapper.IdentitySwapperHelperImpl" />
+    
     
     <!-- Executes flows: the central entry point into the Spring Web Flow system -->
     <webflow:flow-executor id="flowExecutor">

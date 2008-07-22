@@ -17,6 +17,7 @@
                 <entry key="view">
                     <bean class="org.jasig.portal.portlets.flow.ParamaterizableFlowHandler">
                         <property name="flowId" value="identity-swapper" />
+                        <property name="redirectOnEnd" value="/Login" />
                     </bean>
                 </entry>
             </map>
