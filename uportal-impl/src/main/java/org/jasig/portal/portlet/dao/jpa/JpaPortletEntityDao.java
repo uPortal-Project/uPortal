@@ -23,12 +23,14 @@ import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.dao.support.DataAccessUtils;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Eric Dalquist
  * @version $Revision$
  */
+@Repository
 public class JpaPortletEntityDao  implements IPortletEntityDao {
     private static final String FIND_PORTLET_ENT_BY_CHAN_SUB_AND_USER = 
         "from PortletEntityImpl portEnt " +
