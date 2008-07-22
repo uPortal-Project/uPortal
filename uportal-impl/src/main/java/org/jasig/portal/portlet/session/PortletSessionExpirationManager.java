@@ -61,14 +61,18 @@ public class PortletSessionExpirationManager implements PortletInvocationListene
     /* (non-Javadoc)
      * @see org.apache.pluto.spi.optional.PortletInvocationListener#onEnd(org.apache.pluto.spi.optional.PortletInvocationEvent)
      */
+    @SuppressWarnings("unchecked")
     public void onEnd(PortletInvocationEvent event) {
         final PortletRequest portletRequest = event.getPortletRequest();
         final PortletSession portletSession = portletRequest.getPortletSession(false);
+        if (portletSession == null) {
+            return;
+        }
 
-        if (portletSession != null) {
-            final HttpServletRequest portalRequest = this.portalRequestUtils.getOriginalPortalRequest(portletRequest);
-            final HttpSession portalSession = portalRequest.getSession();
-            
+        final HttpServletRequest portalRequest = this.portalRequestUtils.getOriginalPortalRequest(portletRequest);
+        final HttpSession portalSession = portalRequest.getSession();
+        
+        if (portalSession != null) {
             Map<String, PortletSession> portletSessions;
             synchronized (portalSession) {
                 portletSessions = (Map<String, PortletSession>)portalSession.getAttribute(PORTLET_SESSIONS_MAP);
@@ -87,6 +91,7 @@ public class PortletSessionExpirationManager implements PortletInvocationListene
     /* (non-Javadoc)
      * @see org.springframework.context.ApplicationListener#onApplicationEvent(org.springframework.context.ApplicationEvent)
      */
+    @SuppressWarnings("unchecked")
     public void onApplicationEvent(ApplicationEvent event) {
         if (event instanceof HttpSessionDestroyedEvent) {
             final HttpSession session = ((HttpSessionDestroyedEvent)event).getSession();
