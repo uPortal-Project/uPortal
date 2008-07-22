@@ -3,7 +3,7 @@
  * See license distributed with this file and
  * available online at http://www.uportal.org/license.html
  */
-package org.jasig.portal.portlets.swapper;
+package org.jasig.portal.portlets;
 
 import java.io.Serializable;
 

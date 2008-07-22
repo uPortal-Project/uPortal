@@ -8,7 +8,6 @@ package  org.jasig.portal;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -26,7 +25,6 @@ import org.jasig.portal.portlets.swapper.IdentitySwapperPrincipal;
 import org.jasig.portal.portlets.swapper.IdentitySwapperSecurityContext;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
-import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.security.PersonManagerFactory;
 import org.jasig.portal.services.Authentication;
 import org.jasig.portal.utils.CommonUtils;
@@ -118,12 +116,24 @@ public class LoginServlet extends HttpServlet {
     HttpSession s = request.getSession(false);
     String targetUid = null;
     String originalUid = null;
+    boolean swap = false;
     if (s != null) {
     	try {
-    	    targetUid = (String)s.getAttribute(SWAP_TARGET_UID);
-    	    if (targetUid != null) {
+    	    //Check if this is a swapped user hitting the Login servlet
+    	    originalUid = (String)s.getAttribute(SWAP_ORIGINAL_UID);
+
+    	    //No original person in session so check for swap request
+    	    if (originalUid == null) {
+        	    targetUid = (String)s.getAttribute(SWAP_TARGET_UID);
+        	    if (targetUid != null) {
+        	        final IPerson person = personManager.getPerson(request);
+        	        originalUid = person.getName();
+        	        swap = true;
+        	    }
+    	    }
+    	    else {
     	        final IPerson person = personManager.getPerson(request);
-    	        originalUid = person.getName();
+    	        targetUid = person.getName();
     	    }
 
             s.invalidate();
@@ -150,13 +160,20 @@ public class LoginServlet extends HttpServlet {
         
         //If doing an identity swap
         if (targetUid != null && originalUid != null) {
-            log.warn("Swapping identity for '" + originalUid + "' to '" + targetUid + "'");
-            
-            //Track the originating user
-            s.setAttribute(SWAP_ORIGINAL_UID, originalUid);
-            
-            //Setup the swapped person
-            person.setUserName(targetUid);
+            if (swap) {
+                log.warn("Swapping identity for '" + originalUid + "' to '" + targetUid + "'");
+
+                //Track the originating user
+                s.setAttribute(SWAP_ORIGINAL_UID, originalUid);
+                
+                //Setup the swapped person
+                person.setUserName(targetUid);
+            }
+            else {
+                log.warn("Reverting swapped identity from '" + targetUid + "' to '" + originalUid + "'");
+                
+                person.setUserName(originalUid);
+            }
             
             //Setup the custom security context
             final IdentitySwapperPrincipal identitySwapperPrincipal = new IdentitySwapperPrincipal(person);

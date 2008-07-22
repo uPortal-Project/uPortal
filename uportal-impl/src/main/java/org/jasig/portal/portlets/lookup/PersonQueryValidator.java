@@ -3,11 +3,12 @@
  * See license distributed with this file and
  * available online at http://www.uportal.org/license.html
  */
-package org.jasig.portal.portlets.swapper;
+package org.jasig.portal.portlets.lookup;
 
 import java.util.Map;
 import java.util.Set;
 
+import org.jasig.portal.portlets.Attribute;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.binding.message.MessageResolver;

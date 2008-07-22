@@ -9,11 +9,11 @@
            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">           
     
     <!-- Beans for the person-lookup flow -->       
-    <bean id="personLookupHelper" class="org.jasig.portal.portlets.swapper.PersonLookupHelperImpl">
+    <bean id="personLookupHelper" class="org.jasig.portal.portlets.lookup.PersonLookupHelperImpl">
         <property name="personAttributeDao" ref="personAttributeDao" />
     </bean>
     
-    <bean id="personQueryValidator" class="org.jasig.portal.portlets.swapper.PersonQueryValidator">
+    <bean id="personQueryValidator" class="org.jasig.portal.portlets.lookup.PersonQueryValidator">
         <property name="personLookupHelper" ref="personLookupHelper" />
     </bean>
     

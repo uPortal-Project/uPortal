@@ -3,7 +3,7 @@
     xsi:schemaLocation="http://www.springframework.org/schema/webflow
                           http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
             
-    <var name="flowScope.personQuery" class="org.jasig.portal.portlets.swapper.PersonQuery" />
+    <var name="flowScope.personQuery" class="org.jasig.portal.portlets.lookup.PersonQuery" />
     
     <input name="showCancelButton" type="boolean" required="false" />
     <input name="personSearchResults_selectAndGoButtonTextKey" type="string" required="false" />
@@ -19,7 +19,7 @@
 
     <view-state id="personLookup" model="personQuery">
         <on-entry>
-            <set name="flowScope.personQuery" value="new org.jasig.portal.portlets.swapper.PersonQuery()" />
+            <set name="flowScope.personQuery" value="new org.jasig.portal.portlets.lookup.PersonQuery()" />
             <evaluate expression="personLookupHelper.getQueryAttributes(externalContext)" result="viewScope.queryAttributes" />
         </on-entry>
         <transition on="cancel" to="cancelPersonLookup" bind="false" />

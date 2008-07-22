@@ -3,7 +3,7 @@
  * See license distributed with this file and
  * available online at http://www.uportal.org/license.html
  */
-package org.jasig.portal.portlets.swapper;
+package org.jasig.portal.portlets.lookup;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -12,6 +12,8 @@ import java.util.Map;
 import org.apache.commons.collections.map.LazyMap;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
+import org.jasig.portal.portlets.Attribute;
+import org.jasig.portal.portlets.AttributeFactory;
 
 /**
  * Represents a query for a person using attributes submitted by the user.

@@ -112,16 +112,23 @@ public class LogoutServlet extends HttpServlet {
                     "associated with request " + request, e);
         }
         
-        // Clear out the existing session for the user
-        try {
-            session.invalidate();
-        } catch (IllegalStateException ise) {
-        	// IllegalStateException indicates session was already invalidated.
-        	// This is fine.  LogoutServlet is looking to guarantee the logged out session is invalid;
-        	// it need not insist that it be the one to perform the invalidating.
-        	if (log.isTraceEnabled()) {
-        		log.trace("LogoutServlet encountered IllegalStateException invalidating a presumably already-invalidated session.", ise);
-        	}
+        final String originalUid = (String)session.getAttribute(LoginServlet.SWAP_ORIGINAL_UID);
+        //Logging out from a swapped user, just redirect to the Login servlet
+        if (originalUid != null) {
+            redirect = request.getContextPath() + "/Login";
+        }
+        else {
+            // Clear out the existing session for the user
+            try {
+                session.invalidate();
+            } catch (IllegalStateException ise) {
+            	// IllegalStateException indicates session was already invalidated.
+            	// This is fine.  LogoutServlet is looking to guarantee the logged out session is invalid;
+            	// it need not insist that it be the one to perform the invalidating.
+            	if (log.isTraceEnabled()) {
+            		log.trace("LogoutServlet encountered IllegalStateException invalidating a presumably already-invalidated session.", ise);
+            	}
+            }
         }
     }
 

@@ -12,6 +12,8 @@ import java.util.Map;
 import org.apache.commons.collections.map.LazyMap;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
+import org.jasig.portal.portlets.Attribute;
+import org.jasig.portal.portlets.AttributeFactory;
 
 /**
  * Request to change the specified attributes

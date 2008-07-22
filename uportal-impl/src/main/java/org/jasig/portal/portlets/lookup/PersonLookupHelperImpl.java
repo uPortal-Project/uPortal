@@ -3,7 +3,7 @@
  * See license distributed with this file and
  * available online at http://www.uportal.org/license.html
  */
-package org.jasig.portal.portlets.swapper;
+package org.jasig.portal.portlets.lookup;
 
 import java.text.MessageFormat;
 import java.util.Arrays;
@@ -19,6 +19,7 @@ import java.util.TreeSet;
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
 
+import org.jasig.portal.portlets.Attribute;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
 import org.springframework.webflow.context.ExternalContext;
