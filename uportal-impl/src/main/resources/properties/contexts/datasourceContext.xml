@@ -18,6 +18,7 @@
         <property name="removeAbandoned" value="true" />
         <property name="removeAbandonedTimeout" value="300" />
         <property name="logAbandoned" value="true" />
+        <property name="poolPreparedStatements" value="true" />
     </bean>
     <bean id="PortalDB.metadata" class="org.jasig.portal.rdbm.DatabaseMetaDataImpl">
         <constructor-arg index="0" ref="PortalDb" />
