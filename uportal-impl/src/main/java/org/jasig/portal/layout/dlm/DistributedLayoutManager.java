@@ -280,7 +280,7 @@ IFolderLocalNameResolver
                 // that the user isn't authorized to render from folders of type 
                 // 'header' and 'footer'.
                 IAuthorizationService authServ = AuthorizationImpl.singleton();
-                IAuthorizationPrincipal principal = authServ.newPrincipal(owner.getUserName(), IPerson.class);
+                IAuthorizationPrincipal principal = authServ.newPrincipal((String) owner.getAttribute(IPerson.USERNAME), IPerson.class);
                 NodeList nodes = userLayoutDocument.getElementsByTagName("folder");
                 for (int i=0; i < nodes.getLength(); i++) {
               	  Element fd = (Element) nodes.item(i);
@@ -291,7 +291,7 @@ IFolderLocalNameResolver
               			  LOG.debug("RDBMUserLayoutStore examining the '" 
       							  	+ type 
       							  	+ "' folder of user '" 
-      							  	+ owner.getUserName() 
+      							  	+ owner.getAttribute(IPerson.USERNAME) 
       							  	+ "' for non-authorized channels.");
               		  }
               		  NodeList channels = fd.getElementsByTagName("channel");
@@ -305,7 +305,7 @@ IFolderLocalNameResolver
               						  LOG.debug("RDBMUserLayoutStore removing channel '" 
                 							  	+ ch.getAttribute("fname") 
                 							  	+ "' from the header or footer of user '" 
-                							  	+ owner.getUserName() 
+                							  	+ owner.getAttribute(IPerson.USERNAME) 
                 							  	+ "' because he/she isn't authorized to render it.");
               					  }
               				  }
