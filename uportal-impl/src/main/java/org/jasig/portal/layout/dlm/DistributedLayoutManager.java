@@ -53,8 +53,11 @@ import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.layout.node.UserLayoutFolderDescription;
 import org.jasig.portal.layout.simple.SimpleLayout;
 import org.jasig.portal.security.AdminEvaluator;
+import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.security.IAuthorizationService;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
+import org.jasig.portal.security.provider.AuthorizationImpl;
 import org.jasig.portal.spring.PortalApplicationContextLocator;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.XML;
@@ -271,8 +274,49 @@ IFolderLocalNameResolver
                     LOG.debug("Load from store for " +
                         owner.getAttribute(IPerson.USERNAME));
                 }
-                userLayoutDocument = layoutStore.getUserLayout(
-                    this.owner,this.profile);
+                userLayoutDocument = layoutStore.getUserLayout(this.owner,this.profile);
+
+                // DistributedLayoutManager shall gracefully remove channels 
+                // that the user isn't authorized to render from folders of type 
+                // 'header' and 'footer'.
+                IAuthorizationService authServ = AuthorizationImpl.singleton();
+                IAuthorizationPrincipal principal = authServ.newPrincipal(owner.getUserName(), IPerson.class);
+                NodeList nodes = userLayoutDocument.getElementsByTagName("folder");
+                for (int i=0; i < nodes.getLength(); i++) {
+              	  Element fd = (Element) nodes.item(i);
+              	  String type = fd.getAttribute("type");
+              	  if (type != null && (type.equals("header") || type.equals("footer"))) {
+              		  // Here's where we do the work...
+              		  if (LOG.isDebugEnabled()) {
+              			  LOG.debug("RDBMUserLayoutStore examining the '" 
+      							  	+ type 
+      							  	+ "' folder of user '" 
+      							  	+ owner.getUserName() 
+      							  	+ "' for non-authorized channels.");
+              		  }
+              		  NodeList channels = fd.getElementsByTagName("channel");
+              		  for (int j=0; j < channels.getLength(); j++) {
+              			  Element ch = (Element) channels.item(j);
+              			  try {
+              				  int chanId = Integer.parseInt(ch.getAttribute("chanID"));
+              				  if (!principal.canRender(chanId)) {
+              					  fd.removeChild(ch);
+              					  if (LOG.isDebugEnabled()) {
+              						  LOG.debug("RDBMUserLayoutStore removing channel '" 
+                							  	+ ch.getAttribute("fname") 
+                							  	+ "' from the header or footer of user '" 
+                							  	+ owner.getUserName() 
+                							  	+ "' because he/she isn't authorized to render it.");
+              					  }
+              				  }
+              			  } catch (Throwable t) {
+              				  // Log this...
+              				  LOG.warn("RDBMUserLayoutStore was unable to analyze channel element with Id=" 
+              						  									+ch.getAttribute("chanID"), t);
+              			  }
+              		  }
+              	  }
+                }
                 
                 setUserLayoutDOM( userLayoutDocument );
             }
