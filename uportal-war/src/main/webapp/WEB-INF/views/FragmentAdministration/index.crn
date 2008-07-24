@@ -1,0 +1,37 @@
+<with>
+    <attribute key="loginUrl">${jexl(WebAttributes.REQUEST.getPreferences().getValue('loginUrl', 'Login'))}</attribute>
+    <attribute key="DLM_XML_PATH">${groovy(org.jasig.portal.LoginServlet.class.getResource('/properties/dlm.xml').toExternalForm())}</attribute>
+    <subtasks>
+        <with>
+            <attribute key="Attributes.NODE">${doc(${DLM_XML_PATH})}</attribute>
+            <attribute key="USERNAME">${jexl(WebAttributes.REQUEST.getAttribute('${const(javax.portlet.PortletRequest.USER_INFO)}').get('username'))}</attribute>
+            <attribute key="PERMISSIONS">${groovy([])}</attribute>
+            <subtasks>
+                <groovy>
+                    <script>
+                        def authServ = org.jasig.portal.security.provider.AuthorizationImpl.singleton();
+                        def principal = authServ.newPrincipal('${USERNAME}', org.jasig.portal.security.IPerson.class);
+                        def grants = authServ.getAllPermissionsForPrincipal(principal, null, 'IMPERSONATE', null);
+                        for (g in grants) {
+                            PERMISSIONS.add(g);
+                        }
+                    </script>
+                </groovy>
+                <with-attribute key="FRAGMENTS" value="${groovy(new TreeMap())}">
+                    <node-iterator xpath="dlm:fragment">
+                        <groovy>
+                            <script>
+                                for (p in PERMISSIONS) {
+                                    if (p.getType().equals(org.jasig.portal.security.IPermission.PERMISSION_TYPE_GRANT) &amp;&amp; '${valueOf(@ownerID)}'.matches(p.getTarget())) {
+                                        FRAGMENTS.put('${valueOf(@ownerID)}', '${valueOf(@name)}');
+                                    }
+                                }
+                            </script>
+                        </groovy>
+                    </node-iterator>
+                    <request-dispatcher resource="/WEB-INF/jsp/FragmentAdministration/index.jsp"/>
+                </with-attribute>
+            </subtasks>
+        </with>
+    </subtasks>
+</with>

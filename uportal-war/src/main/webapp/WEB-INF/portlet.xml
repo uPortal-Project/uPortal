@@ -6,4 +6,46 @@
     xsi:schemaLocation="http://java.sun.com/xml/ns/portlet/portlet-app_1_0.xsd
                         http://java.sun.com/xml/ns/portlet/portlet-app_1_0.xsd">
 
+  <portlet> 
+    <portlet-name>ExitFragmentAdministration</portlet-name>  
+    <portlet-class>org.danann.cernunnos.runtime.web.CernunnosPortlet</portlet-class>
+    <expiration-cache>-1</expiration-cache>
+    <supports> 
+      <mime-type>text/html</mime-type>  
+      <portlet-mode>view</portlet-mode> 
+    </supports>  
+    <portlet-info> 
+      <title>ExitFragmentAdministration</title> 
+    </portlet-info> 
+    <portlet-preferences> 
+      <preference> 
+        <name>loginUrl</name>  
+        <value>Login</value> 
+      </preference> 
+    </portlet-preferences> 
+  </portlet>
+  
+  <portlet> 
+    <portlet-name>FragmentAdministration</portlet-name>  
+    <portlet-class>org.danann.cernunnos.runtime.web.CernunnosPortlet</portlet-class>
+    <expiration-cache>-1</expiration-cache>
+    <supports> 
+      <mime-type>text/html</mime-type>  
+      <portlet-mode>view</portlet-mode> 
+    </supports>  
+    <portlet-info> 
+      <title>FragmentAdministration</title> 
+    </portlet-info>  
+    <portlet-preferences> 
+      <preference> 
+        <name>loginUrl</name>  
+        <value>Login</value> 
+      </preference> 
+    </portlet-preferences> 
+  </portlet>
+  
+  <user-attribute> 
+    <name>username</name> 
+  </user-attribute> 
+
 </portlet-app>

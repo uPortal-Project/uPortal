@@ -104,6 +104,11 @@
         <filter-class>edu.yale.its.tp.cas.client.filter.StaticCasReceiptCacherFilter</filter-class>
     </filter>
     
+    <filter>
+        <filter-name>Impersonation Filter</filter-name>
+        <filter-class>org.jasig.portal.security.provider.ImpersonationFilter</filter-class>
+    </filter>
+    
     <filter-mapping>
         <filter-name>CAS Validate Filter</filter-name>
         <url-pattern>/Login</url-pattern>
@@ -111,6 +116,11 @@
     
     <filter-mapping>
         <filter-name>CAS Receipt Cache Filter</filter-name>
+        <url-pattern>/Login</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>Impersonation Filter</filter-name>
         <url-pattern>/Login</url-pattern>
     </filter-mapping>
 

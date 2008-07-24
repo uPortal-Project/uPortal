@@ -5,6 +5,7 @@
       <channel fname="header"/>
       <channel fname="portal/login/general"/>
       <channel fname="session-locales-selector"/>
+      <channel fname="fragment-admin"/>
     </header>
     <tab unremovable="N" immutable="N" hidden="N" name="uPortal News">
       <column unremovable="N" immutable="N" hidden="N" name="Column 1">
