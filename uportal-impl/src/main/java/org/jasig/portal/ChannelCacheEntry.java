@@ -14,13 +14,12 @@ package org.jasig.portal;
  */
 public class ChannelCacheEntry {
     protected Object buffer;
+    protected String title;
     protected final Object validity;
-    public ChannelCacheEntry() {
-        buffer = null;
-        validity = null;
-    }
-    public ChannelCacheEntry(Object buffer, Object validity) {
+
+    public ChannelCacheEntry(Object buffer, String title, Object validity) {
         this.buffer = buffer;
+        this.title = title;
         this.validity = validity;
     }
 }
