@@ -3,6 +3,13 @@ README for basic uPortal deployment
 For further help please refer to the uPortal home page http://www.uportal.org or
 the uPortal Confluence site http://www.ja-sig.org/wiki/display/UPC/Home
 
+Servlet Container
+----------------------------------------
+uPortal requires Servlet API 2.5 or later. If you are using Tomcat this means
+Tomcat 6.0 or later. See the notes for Tomcat 6.0 on the wiki for instructions
+on deploying uPortal to Tomcat 6 http://jasig.org/wiki/display/UPM30/01+Tomcat
+
+
 WARNINGS:
 ----------------------------------------
 Do not blindly run the ant build against a production database.  There are Ant
@@ -31,7 +38,7 @@ Ant Depdency
 ----------------------------------------
 The build.xml needs to be run under Ant 1.6.3 or better except Ant 1.7.0.  Some
 of our Ant tasks have been reported to fail on Ant 1.6.2 and earlier, and on
-Ant 1.7.0.  
+Ant 1.7.0.  Ant 1.7.1 works.
 
 
 Initial Configuration
