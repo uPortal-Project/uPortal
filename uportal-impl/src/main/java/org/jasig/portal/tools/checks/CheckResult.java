@@ -5,6 +5,9 @@
 
 package org.jasig.portal.tools.checks;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
+
 /**
  * Object representing the result of a check.  All CheckResults convey the result
  * of a check.
@@ -21,6 +24,13 @@ public class CheckResult {
      */
     private final boolean success;
     
+    
+    /**
+     * True if this CheckResult represents a failed result that should stop the portal from starting
+     * False if the failure should just be logged. 
+     */
+    private final boolean fatal;
+    
     /**
      * A message describing the result of the check.
      */
@@ -32,12 +42,13 @@ public class CheckResult {
      */
     private final String remediationAdvice;
     
-    private CheckResult(boolean success, String message, String remediationAdvice) {
+    private CheckResult(boolean success, boolean fatal, String message, String remediationAdvice) {
         // constructor is private in order to
         // require usage of the static factory methods
         // which document the difference between a success and a failure.
         
         this.success = success;
+        this.fatal = fatal;
         this.message = message;
         this.remediationAdvice = remediationAdvice;
         
@@ -51,7 +62,7 @@ public class CheckResult {
      * @return a CheckResult representing the success
      */
     public static CheckResult createSuccess(String message){
-        return new CheckResult(true, message, null);
+        return new CheckResult(true, false, message, null);
     }
     
     /**
@@ -62,7 +73,20 @@ public class CheckResult {
      * @return a CheckResult representing this failure
      */
     public static CheckResult createFailure(String message, String remediationAdvice) {
-        return new CheckResult(false, message, remediationAdvice);
+        return new CheckResult(false, false, message, remediationAdvice);
+    }
+    
+    /**
+     * Obtain a CheckResult representing a check that failed and should stop the portal
+     * from initializaing -- dependency for which you were checking was not present,
+     * thing you asserted to be true wasn't, etc.
+     * 
+     * @param message - a message describing the failure of the check
+     * @param remediationAdvice - advice for the uPortal deployer about how to resolve this failure
+     * @return a CheckResult representing this failure
+     */
+    public static CheckResult createFatalFailure(String message, String remediationAdvice) {
+        return new CheckResult(false, true, message, remediationAdvice);
     }
 
     /**
@@ -82,5 +106,24 @@ public class CheckResult {
      */
     public boolean isSuccess() {
         return this.success;
+    }
+    
+    /**
+     * @return If the failure was fatal, can only be true if {@link #isSuccess()} is false
+     */
+    public boolean isFatal() {
+        return fatal;
+    }
+
+    /**
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+            .append("success", this.success)
+            .append("message", this.message)
+            .append("remediationAdvice", this.remediationAdvice)
+            .toString();
     }
 }

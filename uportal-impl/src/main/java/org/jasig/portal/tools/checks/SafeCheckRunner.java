@@ -79,12 +79,6 @@ public class SafeCheckRunner implements ICheckRunner {
         return results;
     }
 
-    /* (non-Javadoc)
-     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
-     */
-    public void afterPropertiesSet() throws Exception {
-    }
-
     /**
      * Helper method to safely execute a given check.
      * @param check

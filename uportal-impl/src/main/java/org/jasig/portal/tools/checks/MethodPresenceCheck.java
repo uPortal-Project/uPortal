@@ -18,23 +18,6 @@ import org.apache.commons.lang.Validate;
 public class MethodPresenceCheck extends ClassPresenceCheck {
     private final String targetMethod;
     private final Class<?>[] arguments;
-    
-    private String remediationAdvice;
-    
-    /**
-     * @return the remediationAdvice
-     */
-    public String getRemediationAdvice() {
-        return remediationAdvice;
-    }
-    /**
-     * The advice to provide to resolve a failed check
-     * 
-     * @param remediationAdvice the remediationAdvice to set
-     */
-    public void setRemediationAdvice(String remediationAdvice) {
-        this.remediationAdvice = remediationAdvice;
-    }
 
     public MethodPresenceCheck(String targetClass, String targetMethod) {
         super(targetClass);
@@ -56,12 +39,13 @@ public class MethodPresenceCheck extends ClassPresenceCheck {
         this.arguments = arguments;
     }
 
+    
     /* (non-Javadoc)
-     * @see org.jasig.portal.tools.checks.ClassPresenceCheck#doCheck()
+     * @see org.jasig.portal.tools.checks.ClassPresenceCheck#doCheckInternal()
      */
     @Override
-    public CheckResult doCheck() {
-        final CheckResult classCheckResult = super.doCheck();
+    protected CheckResult doCheckInternal() {
+        final CheckResult classCheckResult = super.doCheckInternal();
         if (!classCheckResult.isSuccess()) {
             return classCheckResult;
         }
@@ -81,13 +65,13 @@ public class MethodPresenceCheck extends ClassPresenceCheck {
             return CheckResult.createFailure(
                     "Could not access method '" + this.targetMethod + "' " +
             		"with arguments " + Arrays.asList(this.arguments) + " " +
-    				"on class '" + this.getTargetClass() + "'", this.remediationAdvice);
+    				"on class '" + this.getTargetClass() + "'", this.getRemediationAdvice());
         }
         catch (NoSuchMethodException e) {
             return CheckResult.createFailure(
                     "Method '" + this.targetMethod + "' " +
                     "with arguments " + Arrays.asList(this.arguments) + " " +
-                    "does not exist on class '" + this.getTargetClass() + "'", this.remediationAdvice);
+                    "does not exist on class '" + this.getTargetClass() + "'", this.getRemediationAdvice());
         }
         
         return CheckResult.createSuccess(

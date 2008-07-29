@@ -11,8 +11,7 @@ package org.jasig.portal.tools.checks;
  * @version $Revision$ $Date$
  * @since uPortal 2.5
  */
-public class XalanVersionCheck 
-    implements ICheck {
+public class XalanVersionCheck extends BaseCheck {
 
     /**
      * The version for which we will check.
@@ -24,10 +23,15 @@ public class XalanVersionCheck
             throw new IllegalArgumentException("XalanVersionCheck requires a particular version String to check for.");
         }
         this.desiredVersion = desiredVersion;
+        
+        this.setDescription("Check that the version of Xalan present is [" + this.desiredVersion + "]");
     }
     
-    public CheckResult doCheck() {
-        
+    /* (non-Javadoc)
+     * @see org.jasig.portal.tools.checks.BaseCheck#doCheckInternal()
+     */
+    @Override
+    protected CheckResult doCheckInternal() {
         CheckResult result;
         
         try {
@@ -43,9 +47,4 @@ public class XalanVersionCheck
         
         return result;
     }
-
-    public String getDescription() {
-        return "Check that the version of Xalan present is [" + this.desiredVersion + "]";
-    }
-
 }
