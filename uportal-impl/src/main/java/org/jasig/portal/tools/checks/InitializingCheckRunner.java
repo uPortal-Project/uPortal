@@ -12,6 +12,7 @@ import javax.servlet.ServletContext;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.web.context.ServletContextAware;
@@ -89,6 +90,8 @@ public class InitializingCheckRunner implements InitializingBean, ServletContext
             logger.error("Cannot log null results.");
             return;
         }
+        
+        final StringBuilder fatalErrorMsg = new StringBuilder();
 
         for (final CheckAndResult checkAndResult : results) {
             try {
@@ -103,6 +106,10 @@ public class InitializingCheckRunner implements InitializingBean, ServletContext
                     final String logMessage = "Check [" + checkAndResult.getCheckDescription() + "] failed with message ["
                             + checkAndResult.getResult().getMessage() + "] and remediation advice ["
                             + checkAndResult.getResult().getRemediationAdvice() + "]";
+                    
+                    if (checkAndResult.isFatal()) {
+                        fatalErrorMsg.append(logMessage).append('\n');
+                    }
 
                     logger.fatal(logMessage);
                     System.err.println(logMessage);
@@ -114,7 +121,10 @@ public class InitializingCheckRunner implements InitializingBean, ServletContext
 
                 logger.error("Error in logging results of check: " + checkAndResult, t);
             }
-
+            
+            if (fatalErrorMsg.length() > 0) {
+                throw new BeanInitializationException(fatalErrorMsg.toString());
+            }
         }
 
     }

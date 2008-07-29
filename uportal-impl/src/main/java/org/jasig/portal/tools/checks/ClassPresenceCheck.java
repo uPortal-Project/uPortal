@@ -5,8 +5,6 @@
 
 package org.jasig.portal.tools.checks;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * Checks that a class named as a constructor argument is present.
@@ -14,36 +12,29 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$ $Date$
  * @since uPortal 2.5
  */
-public class ClassPresenceCheck 
-    implements ICheck {
-    
-    protected final Log log = LogFactory.getLog(getClass());
+public class ClassPresenceCheck extends BaseCheck {
 
     /**
      * The class we will be looking for.
      */
     private final String targetClass;
     
-    /**
-     * The CheckResult we will return if our target class is present.
-     * We populate this field with a default at construction and allow it to be
-     * overridden via a setter method.
-     */
-    private CheckResult successResult;
+    private String remediationAdvice;
     
     /**
-     * The CheckResult we will return if our target class is not present.
-     * We populate this field with a default at costruction and allow it to be
-     * overridden via a setter method.
+     * @return the remediationAdvice
      */
-    private CheckResult failureResult;
-    
+    public String getRemediationAdvice() {
+        return remediationAdvice;
+    }
     /**
-     * A String describing this check.
-     * We populate this field with a default at construction and allow it to be
-     * overridden via a setter method.
+     * The advice to provide to resolve a failed check
+     * 
+     * @param remediationAdvice the remediationAdvice to set
      */
-    private String checkDescription;
+    public void setRemediationAdvice(String remediationAdvice) {
+        this.remediationAdvice = remediationAdvice;
+    }
     
     /**
      * Each instance of ClassPresenceCheck exists to test for the presence of
@@ -61,64 +52,35 @@ public class ClassPresenceCheck
         }
         this.targetClass = targetClass;
         
+        
         // generate default description success and failure results
         
-        this.checkDescription = "Checks for the presence of class "
-            + targetClass;
-        
-        this.successResult = CheckResult.createSuccess("Successfully touched class "
-                + targetClass);
-        
-        this.failureResult = CheckResult.createFailure(
-                "Failed to touch class " + targetClass,
-                "Is a required .jar missing from the /WEB-INF/lib directory or from "
+        this.setDescription("Checks for the presence of class " + targetClass);
+        this.setRemediationAdvice("Is a required .jar missing from the /WEB-INF/lib directory or from "
                 + "the JRE endorsed directory or from "
                 + "the Tomcat endorsed directory?");
-        
     }
 
-    public CheckResult doCheck() {
+    /* (non-Javadoc)
+     * @see org.jasig.portal.tools.checks.BaseCheck#doCheckInternal()
+     */
+    @Override
+    protected CheckResult doCheckInternal() {
         try {
             getClass().getClassLoader().loadClass(this.targetClass);
         } catch (ClassNotFoundException e) {
-            return this.failureResult;
+            return this.getFailureResult();
         } 
-        return this.successResult;
+        return this.getSuccessResult();
     }
 
-    public String getDescription() {
-        return this.checkDescription;
-    }
-    
-    /**
-     * Set the check description which we will return for on calls to 
-     * the getDescription() method we're implementing as part of being an 
-     * {@link ICheck}.
-     * @param description
-     */
-    public void setDescription(String description) {
-        if (description == null) {
-            throw new IllegalArgumentException("Cannot set description to null.");
-        }
-        this.checkDescription = description;
-    }
-    
     /**
      * Get the CheckResult we will return when we fail to touch our
      * configured targetClass.
      * @return CheckResult we will return on failure
      */
     CheckResult getFailureResult() {
-        return this.failureResult;
-    }
-    
-    /**
-     * Set the CheckResult we will return when we fail to touch our
-     * configured targetClass.
-     * @param failureResult desired CheckResult on failure
-     */
-    void setFailureResult(CheckResult failureResult) {
-        this.failureResult = failureResult;
+        return CheckResult.createFailure("Failed to touch class " + targetClass, this.remediationAdvice);
     }
     
     /**
@@ -127,16 +89,7 @@ public class ClassPresenceCheck
      * @return CheckResult we will return on success.
      */
     CheckResult getSuccessResult() {
-        return this.successResult;
-    }
-    
-    /**
-     * Set the CheckResult we will return when we succeed in touching 
-     * our configured targetClass.
-     * @param successResult desired CheckResult on success.
-     */
-    void setSuccessResult(CheckResult successResult) {
-        this.successResult = successResult;
+        return CheckResult.createSuccess("Successfully touched class " + targetClass);
     }
     
     /**

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
+    default-lazy-init="false">
     
     <bean id="initializingCheckRunning" class="org.jasig.portal.tools.checks.InitializingCheckRunner">
         <property name="checkRunner" ref="checkRunner" />
@@ -10,19 +11,40 @@
      | Here we define additional startup checks.  These are in addition to hard-coded checks that
      | are intended to detect problems that would prevent us from reading in and using these 
      | configurable checks.
-     |
-     | This bean is lazy-init so that it will not be instantiated by Spring
-     | unless actually needed.  This reduces the chance that a broken checks
-     | configuration, or one that depends on resources that are unavailable
-     | (such as JNDI resources outside the context of a JNDI container) 
-     | will not break the use of a uPortal administrative tool / break a 
-     | uPortal deployment.
-     |
      +-->
-    <bean id='checkRunner' class="org.jasig.portal.tools.checks.SafeCheckRunner" lazy-init="true">
+    <bean id='checkRunner' class="org.jasig.portal.tools.checks.SafeCheckRunner">
         <property name="checks">
             <list value-type="org.jasig.portal.tools.checks.ICheck">
-
+            
+                <!--
+                 | Check that we're running in JDK 1.5 or newer
+                 +-->
+                <bean id="jdk15Check" class="org.jasig.portal.tools.checks.SystemPropertyCheck">
+                    <constructor-arg value="java.specification.version" />
+                    <constructor-arg value="1.5" />
+                    <constructor-arg>
+                        <bean class="org.jasig.portal.utils.compare.OrComparator">
+                            <constructor-arg>
+                                <list>
+                                    <bean class="org.jasig.portal.utils.compare.EqualsComparator" />
+                                    <bean class="org.jasig.portal.utils.compare.GreaterThanComparator" />
+                                </list>
+                            </constructor-arg>
+                        </bean>
+                    </constructor-arg>
+                    <property name="remediation" value="uPortal must be run in JDK 1.5 or newer" />
+                    <property name="fatal" value="true" />
+                </bean>
+            
+                <!--
+                 | Check that we're running in a Servlet 2.5 capable container
+                 +-->
+                <bean id="servlet25Check" class="org.jasig.portal.tools.checks.ClassPresenceCheck">
+                    <constructor-arg value="javax.servlet.ServletRequestAttributeListener" />
+                    <property name="remediationAdvice" value="uPortal must be run in a Servlet 2.4 compliant container such as Tomcat 5.5" />
+                    <property name="fatal" value="true" />
+                </bean>
+            
                 <!--
                  | Check that a bean named personAttributeDao of type
                  | IPersonAttributeDao is available via the PortalApplicationContextFacade.
@@ -36,6 +58,7 @@
                     <constructor-arg index="1" type="java.lang.String">
                         <value>org.jasig.services.persondir.IPersonAttributeDao</value>
                     </constructor-arg>
+                    <property name="fatal" value="true" />
                 </bean>
 
                 <!--
@@ -56,8 +79,12 @@
                  | make the JAXP 1.3 jars available in a JDK 1.4 environment.
                  | This is the runtime equivalent of the Ant-build-time invocation of LibCheck.
                  +-->
-                <bean class="org.jasig.portal.tools.checks.JaxpCheck" />
-
+                <bean id="jaxpCheck" class="org.jasig.portal.tools.checks.ClassPresenceCheck">
+                    <constructor-arg value="javax.xml.xpath.XPathConstants" />
+                    <property name="remediationAdvice" value="uPortal requires the JAXP API which should be part of your JDK" />
+                    <property name="fatal" value="true" />
+                </bean>
+                
                 <!--
                  | Check for a method that will only be present if the org.w3c.dom API that is is present
                  | is DOM level 3.
@@ -66,8 +93,14 @@
                  | 
                  | This check is largely redundant with the JaxpCheck.
                  +-->
-                <bean class="org.jasig.portal.tools.checks.Dom3Check" />
-
+                <bean id="dom3check" class="org.jasig.portal.tools.checks.MethodPresenceCheck">
+                    <constructor-arg value="org.w3c.dom.Document" />
+                    <constructor-arg value="normalizeDocument" />
+                    <property name="description" value="Attempts to execute a DOM3 method to verify that DOM3 is present." />
+                    <property name="remediationAdvice" value="uPortal requires the DOM3 API which should be part of your JDK" />
+                    <property name="fatal" value="true" />
+                </bean>
+                
                 <!--
                  | Include the time at which the checks were run in the check result reporting.
                  +-->

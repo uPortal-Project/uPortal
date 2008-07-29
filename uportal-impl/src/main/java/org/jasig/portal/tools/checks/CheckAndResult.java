@@ -44,4 +44,8 @@ public class CheckAndResult {
     public boolean isSuccess() {
         return this.result.isSuccess();
     }
+
+    public boolean isFatal() {
+        return this.result.isFatal();
+    }
 }

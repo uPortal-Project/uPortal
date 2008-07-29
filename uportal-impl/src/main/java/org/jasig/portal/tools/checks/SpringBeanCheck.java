@@ -5,8 +5,6 @@
 
 package org.jasig.portal.tools.checks;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanNotOfRequiredTypeException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
@@ -19,9 +17,7 @@ import org.springframework.context.ApplicationContextAware;
  * @version $Revision$ $Date$
  * @since uPortal 2.5
  */
-public class SpringBeanCheck implements ICheck, ApplicationContextAware {
-
-    protected final Log log = LogFactory.getLog(getClass());
+public class SpringBeanCheck extends BaseCheck implements ApplicationContextAware {
 
     private final String beanName;
     private final String requiredBeanTypeClassName;
@@ -34,11 +30,20 @@ public class SpringBeanCheck implements ICheck, ApplicationContextAware {
     public SpringBeanCheck(String beanName, String requiredBeanTypeClassName) {
         this.beanName = beanName;
         this.requiredBeanTypeClassName = requiredBeanTypeClassName;
+        
+        if (this.beanName == null) {
+            this.setDescription("Fatally misconfigured check doesn't do anything because it hasn't been given a bean name to check.");
+        }
+        else if (this.requiredBeanTypeClassName == null) {
+            this.setDescription("Checks for the presence of the Spring bean named [" + this.beanName + "].");
+        }
+        else {
+            this.setDescription("Checks for the presence of the Spring bean named [" + this.beanName + "] and that it is an instance of class [" + this.requiredBeanTypeClassName + "]");
+        }
     }
 
     public SpringBeanCheck(String beanName) {
-        this.beanName = beanName;
-        this.requiredBeanTypeClassName = null;
+        this(beanName, null);
     }
 
     /* (non-Javadoc)
@@ -48,10 +53,12 @@ public class SpringBeanCheck implements ICheck, ApplicationContextAware {
         this.applicationContext = applicationContext;
     }
 
+    
     /* (non-Javadoc)
-     * @see org.jasig.portal.tools.checks.ICheck#doCheck()
+     * @see org.jasig.portal.tools.checks.BaseCheck#doCheckInternal()
      */
-    public CheckResult doCheck() {
+    @Override
+    protected CheckResult doCheckInternal() {
         if (this.beanName == null) {
             return this.nullBeanNameResult;
         }
@@ -105,18 +112,4 @@ public class SpringBeanCheck implements ICheck, ApplicationContextAware {
         }
 
     }
-
-    public String getDescription() {
-        if (this.beanName == null) {
-            return "Fatally misconfigured check doesn't do anything because it hasn't been given a bean name to check.";
-        }
-
-        if (this.requiredBeanTypeClassName == null) {
-            return "Checks for the presence of the Spring bean named [" + this.beanName + "].";
-        }
-
-        return "Checks for the presence of the Spring bean named [" + this.beanName
-                + "] and that it is an instance of class [" + this.requiredBeanTypeClassName + "]";
-    }
-
 }
