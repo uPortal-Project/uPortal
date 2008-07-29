@@ -130,6 +130,6 @@ public class PortletContainerFactoryBean extends AbstractFactoryBean implements 
             return this.portletContainerName;
         }
         
-        return this.servletContext.getServletContextName() + "-PlutoPortletContainer";
+        return this.servletContext.getContextPath() + "-PlutoPortletContainer";
     }
 }

@@ -22,7 +22,15 @@
     <bean id='checkRunner' class="org.jasig.portal.tools.checks.SafeCheckRunner" lazy-init="true">
         <property name="checks">
             <list value-type="org.jasig.portal.tools.checks.ICheck">
-
+                <!--
+                 | Check that we're running in a Servlet 2.5 capable container
+                 +-->
+                <bean class="org.jasig.portal.tools.checks.MethodPresenceCheck">
+                    <constructor-arg value="javax.servlet.ServletContext" />
+                    <constructor-arg value="getContextPath" />
+                    <property name="remediationAdvice" value="uPortal must be run in a Servlet 2.5 compliant container such as Tomcat 6" />
+                </bean>
+            
                 <!--
                  | Check that a bean named personAttributeDao of type
                  | IPersonAttributeDao is available via the PortalApplicationContextFacade.

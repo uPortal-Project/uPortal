@@ -57,6 +57,12 @@ public interface IPortletAdaptor extends IResetableChannel, IPrivilegedChannel, 
      */
     public static final String CHANNEL_PARAM__PORTLET_NAME = "portletName";
     
+    /**
+     * Name of the {@link org.jasig.portal.ChannelDefinition} parameter used to determine
+     * if the portlet application ID should be set to the context path of the portal.
+     */
+    public static final String CHANNEL_PARAM__IS_FRAMEWORK_PORTLET = "isFrameworkPortlet";
+    
     
     /**
      * {@link org.jasig.portal.IChannel#setStaticData(org.jasig.portal.ChannelStaticData)},

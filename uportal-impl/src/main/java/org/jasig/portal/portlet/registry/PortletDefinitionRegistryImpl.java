@@ -5,6 +5,8 @@
  */
 package org.jasig.portal.portlet.registry;
 
+import javax.servlet.ServletContext;
+
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -23,6 +25,7 @@ import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.utils.Tuple;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.dao.DataRetrievalFailureException;
+import org.springframework.web.context.ServletContextAware;
 
 /**
  * Implementation of the definition registry, pulls together the related parts of the framework for creation and access
@@ -33,12 +36,13 @@ import org.springframework.dao.DataRetrievalFailureException;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry {
+public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry, ServletContextAware {
     protected final Log logger = LogFactory.getLog(this.getClass());
     
     private IChannelRegistryStore channelRegistryStore;
     private IPortletDefinitionDao portletDefinitionDao;
     private OptionalContainerServices optionalContainerServices;
+    private ServletContext servletContext;
     
     /**
      * @return the portletDefinitionDao
@@ -85,6 +89,12 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
         this.channelRegistryStore = channelRegistryStore;
     }
     
+    /* (non-Javadoc)
+     * @see org.springframework.web.context.ServletContextAware#setServletContext(javax.servlet.ServletContext)
+     */
+    public void setServletContext(ServletContext servletContext) {
+        this.servletContext = servletContext;
+    }
     
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.registry.IPortletDefinitionRegistry#createPortletDefinition(int)
@@ -169,12 +179,20 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
         if (channelDefinition == null) {
             throw new DataRetrievalFailureException("No ChannelDefinition exists for the specified channelDefinitionId=" + channelDefinitionId);
         }
-
-        final ChannelParameter portletApplicaitonIdParam = channelDefinition.getParameter(IPortletAdaptor.CHANNEL_PARAM__PORTLET_APPLICATION_ID);
-        if (portletApplicaitonIdParam == null) {
-            throw new DataRetrievalFailureException("The specified ChannelDefinition does not provide the needed channel parameter '" + IPortletAdaptor.CHANNEL_PARAM__PORTLET_APPLICATION_ID + "'. ChannelDefinition=" + channelDefinition);
+        
+        final String portletApplicationId;
+        final ChannelParameter isFrameworkPortletParam = channelDefinition.getParameter(IPortletAdaptor.CHANNEL_PARAM__IS_FRAMEWORK_PORTLET);
+        if (isFrameworkPortletParam != null && Boolean.valueOf(isFrameworkPortletParam.getValue())) {
+            portletApplicationId = this.servletContext.getContextPath();
         }
-        final String portletApplicationId = portletApplicaitonIdParam.getValue();
+        else {
+            final ChannelParameter portletApplicaitonIdParam = channelDefinition.getParameter(IPortletAdaptor.CHANNEL_PARAM__PORTLET_APPLICATION_ID);
+            if (portletApplicaitonIdParam == null) {
+                throw new DataRetrievalFailureException("The specified ChannelDefinition does not provide the needed channel parameter '" + IPortletAdaptor.CHANNEL_PARAM__PORTLET_APPLICATION_ID + "'. ChannelDefinition=" + channelDefinition);
+            }
+            
+            portletApplicationId = portletApplicaitonIdParam.getValue();
+        }
         
         final ChannelParameter portletNameParam = channelDefinition.getParameter(IPortletAdaptor.CHANNEL_PARAM__PORTLET_NAME);
         if (portletNameParam == null) {

@@ -56,6 +56,23 @@ Version $Revision: 1.1 $
       </description>
 
       <parameter modify="publish-only">
+        <name>isFrameworkPortlet</name>
+        <label>Framework Portlet</label>
+        <type base="string" input="single-choice" display="drop-down">
+            <restriction>
+                <defaultValue>false</defaultValue>
+                <value>true</value>
+                <value>false</value>
+            </restriction>
+        </type>
+        <example>false</example>
+        <description>
+          Portlet is deployed in the same web-application as uPortal. If checked "Portlet Web Application Path"
+          is ignored.
+        </description>
+      </parameter>
+
+      <parameter modify="publish-only">
         <name>portletApplicationId</name>
         <label>Portlet Web Application Path</label>
         <type base="string" input="text" display="text">
