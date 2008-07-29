@@ -1360,10 +1360,11 @@
         <td class="uportal-text-small">
           <xsl:apply-templates select="label"/>
           <xsl:apply-templates select="example"/>
+          <xsl:variable name="name"><xsl:value-of select="name"/></xsl:variable>
           <br/>
           <xsl:for-each select="type/restriction/value">
-            <input type="checkbox" name="{name}" value="{.}">
-              <xsl:if test=". = ../defaultValue[1]">
+            <input type="checkbox" name="{../../../name}" value="{.}">
+              <xsl:if test=". = ../defaultValue[1] or 'true' = /manageChannels/channelDef/params/step[$stepID]/channel/parameter[@name = $name]/@value">
                 <xsl:attribute name="checked">checked</xsl:attribute>
               </xsl:if>
             </input>
