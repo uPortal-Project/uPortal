@@ -17,7 +17,10 @@ import org.apache.commons.logging.LogFactory;
 /**
  * @author Dan Ellentuck
  * @version $Revision$
+
+ * @deprecated Use {@link org.jasig.portal.utils.PooledCounterStore} instead
  */
+@Deprecated
 public class ReferenceSequenceGenerator implements ISequenceGenerator
 {
 

@@ -25,7 +25,9 @@ package org.jasig.portal;
  *
  * @author Dan Ellentuck
  * @version $Revision$
+ * @deprecated use {@link org.jasig.portal.utils.ICounterStore} instead
  */
+@Deprecated
 public interface ISequenceGenerator extends IOIDGenerator {
 /**
  * @param name java.lang.String

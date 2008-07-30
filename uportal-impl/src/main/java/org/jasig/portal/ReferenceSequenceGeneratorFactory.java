@@ -8,7 +8,9 @@ package org.jasig.portal;
 /**
   * @author Dan Ellentuck
   * @version $Revision$
+ * @deprecated Use {@link org.jasig.portal.utils.ICounterStore} instead
  */
+@Deprecated
 public class ReferenceSequenceGeneratorFactory implements ISequenceGeneratorFactory {
 /**
  * ReferenceOIDGeneratorFactory constructor comment.
