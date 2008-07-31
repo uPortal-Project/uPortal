@@ -36,6 +36,14 @@
         eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="1800" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" />
         
+    <cache name="org.jasig.portal.utils.ResourceLoader.RESOURCE_URL_CACHE"
+        eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="300" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />
+        
+    <cache name="org.jasig.portal.utils.ResourceLoader.RESOURCE_URL_NOT_FOUND_CACHE"
+        eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="300" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />
+        
     <!-- uPortal IBasicEntity Caches -->
 
     <cache name="org.jasig.portal.ChannelDefinition"
