@@ -7,8 +7,6 @@ package org.jasig.portal.utils;
 
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.sql.DataSource;
 
@@ -137,7 +135,7 @@ public class PooledCounterStore implements ICounterStore {
         final CounterPool counterPool = this.getCounterPool(counterName);
         
         synchronized (counterPool) {
-            if (!counterPool.initialized.get()) {
+            if (!counterPool.initialized) {
                 for (int attempt = 0; attempt < this.retryCount; attempt++) {
                     final boolean counterCreated = (Boolean)this.transactionTemplate.execute(counterPool.createCounterCallback);
                     if (counterCreated) {
@@ -176,8 +174,8 @@ public class PooledCounterStore implements ICounterStore {
                     this.waitToRetry();
                 }
             }
-            
-            return counterPool.nextValue.getAndIncrement();
+
+            return counterPool.nextValue++;
         }
     }
 
@@ -260,9 +258,9 @@ public class PooledCounterStore implements ICounterStore {
      */
     private static class CounterPool {
         public final String name;
-        public final AtomicInteger nextValue = new AtomicInteger(0);
-        public final AtomicInteger maxValue = new AtomicInteger(0);
-        public final AtomicBoolean initialized = new AtomicBoolean(false);
+        public int nextValue = 0;
+        public int maxValue = 0;
+        public boolean initialized = false;
         
         public final IncrementCounterCallback incrementCounterCallback;
         public final CreateCounterCallback createCounterCallback;
@@ -274,7 +272,7 @@ public class PooledCounterStore implements ICounterStore {
         }
         
         public boolean needsUpdate() {
-            return !this.initialized.get() || this.nextValue.get() > this.maxValue.get();
+            return !this.initialized || this.nextValue > this.maxValue;
         }
     }
     
@@ -320,9 +318,9 @@ public class PooledCounterStore implements ICounterStore {
             
             //Counter updated, update the counterPool and return true
             if (updateCount == 1) {
-                this.counterPool.initialized.set(true);
-                this.counterPool.nextValue.set(lastValue + 1);
-                this.counterPool.maxValue.set(nextEndValue);
+                this.counterPool.initialized = true;
+                this.counterPool.nextValue = lastValue + 1;
+                this.counterPool.maxValue = nextEndValue;
                 return true;
             }
             
@@ -398,9 +396,9 @@ public class PooledCounterStore implements ICounterStore {
             
             //Counter set, update the counterPool and return true
             if (updateCount == 1) {
-                this.counterPool.initialized.set(true);
-                this.counterPool.nextValue.set(this.forcedValue);
-                this.counterPool.maxValue.set(maxValue);
+                this.counterPool.initialized = true;
+                this.counterPool.nextValue = this.forcedValue;
+                this.counterPool.maxValue = maxValue;
                 return true;
             }
             
@@ -435,9 +433,9 @@ public class PooledCounterStore implements ICounterStore {
         
             //Counter created, update the counterPool and return true
             if (updateCount == 1) {
-                this.counterPool.initialized.set(true);
-                this.counterPool.nextValue.set(this.initialValue);
-                this.counterPool.maxValue.set(maxValue);
+                this.counterPool.initialized = true;
+                this.counterPool.nextValue = this.initialValue;
+                this.counterPool.maxValue = maxValue;
                 return true;
             }
             

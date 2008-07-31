@@ -157,6 +157,7 @@ public class PooledCounterStoreTest extends AbstractTransactionalDataSourceSprin
         final long start = System.currentTimeMillis() + 50;
         
         for (int thread = 0; thread < threads; thread++) {
+            final int tid = thread;
             executorService.submit(new Runnable() {
                 public void run() {
                     try {
@@ -165,11 +166,11 @@ public class PooledCounterStoreTest extends AbstractTransactionalDataSourceSprin
                     catch (InterruptedException e) {
                         //Ignore
                     }
-    
+                    
                     for (int i = 0; i < 20; i++) {
                         final int v;
                         final String pool;
-                        if (i % 2 == 0) {
+                        if (i % 2 == tid % 2) {
                             v = pooledCounterStore.getIncrementIntegerId("Test1");
                             pool = "one";
                         }
