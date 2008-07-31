@@ -21,6 +21,9 @@
         <property name="dataSource" ref="PortalDb" />
         <property name="transactionManager" ref="transactionManager" />
     </bean>
+    <bean id="counterStoreFactory" class="org.jasig.portal.utils.CounterStoreFactory">
+        <property name="counterStore" ref="counterStore" />
+    </bean>
 
     <!-- ********** JPA Beans ********** -->
     
