@@ -6,13 +6,13 @@
 
 package org.jasig.portal.security.provider;
 
+import java.net.HttpURLConnection;
+import java.text.MessageFormat;
+
+import org.apache.commons.codec.binary.Base64;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.security.LocalConnectionContext;
-
-import sun.misc.BASE64Encoder;
-import java.text.MessageFormat;
-import java.net.HttpURLConnection;
 
 /**
  * <p>
@@ -80,10 +80,8 @@ public class BasicLocalConnectionContext extends LocalConnectionContext {
         HttpURLConnection modified_connection = (HttpURLConnection) connection;
 
         // encode and set the authentication credentials
-        modified_connection.setRequestProperty(AUTHORIZATIONHDR,
-                AUTHORIZATIONTYPE
-                        + (new BASE64Encoder()).encode(usernameandpassword
-                                .getBytes()));
+        modified_connection.setRequestProperty(AUTHORIZATIONHDR, AUTHORIZATIONTYPE
+                + new String(Base64.encodeBase64(usernameandpassword.getBytes())));
 
         // all done. This will be sent with the request now.
     }
