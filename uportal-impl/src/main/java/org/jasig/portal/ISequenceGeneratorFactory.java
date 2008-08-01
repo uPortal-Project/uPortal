@@ -9,7 +9,9 @@ package org.jasig.portal;
  * A factory for ISequenceGenerators.
  * @author Dan Ellentuck
  * @version $Revision$
+ * @deprecated Use {@link org.jasig.portal.utils.ICounterStore} instead
  */
+@Deprecated
 public interface ISequenceGeneratorFactory {
 /**
  * @return org.jasig.portal.ISequenceGenerator

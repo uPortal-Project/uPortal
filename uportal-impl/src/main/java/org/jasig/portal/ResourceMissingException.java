@@ -24,7 +24,12 @@ public class ResourceMissingException extends PortalException {
      * Description of the missing resource.
      */
     private String description = null;
-
+    
+    public ResourceMissingException(ResourceMissingException exception) {
+        super(exception.getMessage());
+        this.resourceURI = exception.getResourceURI();
+        this.description = exception.getResourceDescription();
+    }
     /**
      * Instantiate a ResourceMissingException providing the URI of the missing resource,
      * a description of the missing resource, and a message.

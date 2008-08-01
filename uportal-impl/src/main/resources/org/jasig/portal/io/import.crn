@@ -1,5 +1,15 @@
 <invoke-method class="org.jasig.portal.spring.PortalApplicationContextLocator" method="getApplicationContext" attribute-name="PORTAL_CONTEXT">
     <subtasks>
+        <invoke-method object="${PORTAL_CONTEXT}" method="getBean" attribute-name="COUNTER_STORE">
+            <parameter value="counterStore" />
+            <subtasks>
+                <groovy>
+                    <script>
+                        COUNTER_STORE.setIncrement(5);
+                    </script>
+                </groovy>
+            </subtasks>
+        </invoke-method>
         <invoke-method object="${PORTAL_CONTEXT}" method="getBean" attribute-name="SqlAttributes.DATA_SOURCE">
             <parameter value="PortalDb" />
             <subtasks>

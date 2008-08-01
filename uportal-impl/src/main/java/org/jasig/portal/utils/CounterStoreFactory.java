@@ -6,45 +6,36 @@
 package org.jasig.portal.utils;
 
 import org.jasig.portal.PortalException;
-import org.jasig.portal.properties.PropertiesManager;
+import org.jasig.portal.spring.PortalApplicationContextLocator;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.context.ApplicationContext;
 
 /**
  * Produces an implementation of ICounterStore
  * @author <a href="mailto:pkharchenko@unicon.net">Peter Kharchenko</a>
  * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
+ * @deprecated Use the Spring managed 'counterStore' bean via injection instead
  */
-public class CounterStoreFactory {
-    private static ICounterStore counterStoreImpl = null;
-
-    /**
-     * Returns an instance of the ICounterStore specified in portal.properties
-     * @return an ICounterStore implementation
-     * @exception PortalException if an error occurs
-     */
+@Deprecated
+public class CounterStoreFactory implements DisposableBean {
+    private static ICounterStore counterStore;
+    
     public static ICounterStore getCounterStoreImpl() throws PortalException {
-        if(counterStoreImpl==null) {
-            initialize();
+        if (counterStore == null) {
+            final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
+            counterStore = (ICounterStore)applicationContext.getBean("counterStore", ICounterStore.class);
         }
-        return counterStoreImpl;
+
+        return counterStore;
     }
     
-    private static void initialize() throws PortalException {
-        // Retrieve the class name of the concrete ICounterStore implementation
-        String className = PropertiesManager.getProperty("org.jasig.portal.utils.CounterStoreFactory.implementation");
-        // Fail if this is not found
-        if (className == null)
-            throw new PortalException("CounterStoreFactory: org.jasig.portal.utils.CounterStoreFactory.implementation must be specified in portal.properties");
-        try {
-            // Create an instance of the ICounterStore as specified in portal.properties
-            counterStoreImpl = (ICounterStore)Class.forName(className).newInstance();
-        } catch (Exception e) {
-            throw new PortalException("CounterStoreFactory: Could not instantiate " + className, e);
-        }
+
+    public void setCounterStore(ICounterStore counterStore) {
+        CounterStoreFactory.counterStore = counterStore;
     }
 
-
+    public void destroy() throws Exception {
+        counterStore = null;
+    }
 }
-
-
-

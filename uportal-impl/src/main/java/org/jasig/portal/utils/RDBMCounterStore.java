@@ -10,10 +10,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.jasig.portal.PortalException;
-import org.jasig.portal.RDBMServices;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.PortalException;
+import org.jasig.portal.RDBMServices;
 
 /**
  * A reference implementation for the counter store
@@ -22,7 +22,9 @@ import org.apache.commons.logging.LogFactory;
  * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
  * @version $Revision$
+ * @deprecated Use {@link PooledCounterStore} instead
  */
+@Deprecated
 public class RDBMCounterStore implements ICounterStore {
     
     private static final Log log = LogFactory.getLog(RDBMCounterStore.class);

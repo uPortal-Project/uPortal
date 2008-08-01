@@ -16,7 +16,14 @@
     <bean id="portletEntityDao" class="org.jasig.portal.portlet.dao.jpa.JpaPortletEntityDao">
         <property name="portletDefinitionDao" ref="portletDefinitionDao" />
     </bean>
-
+    
+    <bean id="counterStore" class="org.jasig.portal.utils.PooledCounterStore">
+        <property name="dataSource" ref="PortalDb" />
+        <property name="transactionManager" ref="transactionManager" />
+    </bean>
+    <bean id="counterStoreFactory" class="org.jasig.portal.utils.CounterStoreFactory">
+        <property name="counterStore" ref="counterStore" />
+    </bean>
 
     <!-- ********** JPA Beans ********** -->
     
