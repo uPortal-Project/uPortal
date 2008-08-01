@@ -296,7 +296,8 @@ public class CChannelManager extends BaseChannel {
                 String title = runtimeData.getParameter("title");
                 String timeout = runtimeData.getParameter("timeout");
                 String javaClass = runtimeData.getParameter("class");
-                String secure = runtimeData.getParameter("secure");                
+                String secure = runtimeData.getParameter("secure");    
+                boolean disableDynamicTitle = Boolean.valueOf(runtimeData.getParameter("disableDynamicTitle"));
                 if (name != null)
                     channelDef.setName(name.trim());
                 if (fname != null)
@@ -309,6 +310,8 @@ public class CChannelManager extends BaseChannel {
                     channelDef.setTimeout(timeout.trim());
                 if (javaClass != null)
                     channelDef.setJavaClass(javaClass.trim());
+
+                channelDef.addParameter("disableDynamicTitle", Boolean.toString(!disableDynamicTitle), "N");
 
                 channelDef.setIsSecure(secure != null ? "true" : "false");                
                 // Custom parameters

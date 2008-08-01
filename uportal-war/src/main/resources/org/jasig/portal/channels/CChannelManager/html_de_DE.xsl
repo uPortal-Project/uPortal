@@ -635,7 +635,32 @@
                      <xsl:attribute name="value"><xsl:value-of select="manageChannels/selectGeneralSettings/params/step/channel/@title"/></xsl:attribute></xsl:if></input>
                   </span> </td>
               </tr>
+              <tr class="uportal-channel-text">
+                <td align="center" valign="top" colspan="3">
+                  <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
+                    <tr>
+                      <td>
+                        <img alt="" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
               
+              <tr>
+                <td align="center" valign="top">
+                  <a href="javascript:alert('Name: Allow Dynamic Title\n\nDescription: If the channel should be able to set its title dynamicaly at runtime.')">
+                  <img src="{$mediaPath}/help.gif" width="16" height="16" border="0" alt="Display help information"/>
+                  </a></td>
+                <td>
+                </td>
+                <td>
+                  <span class="uportal-label">Dynamic Title:</span> <span class="uportal-text-small">
+                  <input type="checkbox" name="disableDynamicTitle" value="true" class="uportal-input-text">
+                    <xsl:if test="not(manageChannels/selectGeneralSettings/params/step/channel/parameter[@name='disableDynamicTitle']/@value = 'true')"><xsl:attribute name="checked">checked</xsl:attribute></xsl:if>
+                  </input>
+                  </span> </td>
+              </tr>
               <tr class="uportal-channel-text">
                 <td align="center" valign="top" colspan="3">
                   <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
@@ -1861,6 +1886,28 @@
                <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
                  <tr>
                    <td><img alt="Bildschnittstelle" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
+                 </tr>
+               </table>
+             </td>
+           </tr>
+           
+           <tr class="uportal-channel-text">
+             <td nowrap="nowrap" align="center"><img alt="" src="{$mediaPath}/transparent.gif" width="1" height="1" /> </td>
+             <td nowrap="nowrap"><img alt="" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+             <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel">Dynamic Title:</a></strong></td>
+             <td><img alt="" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+             <td width="100%"><a href="{$baseActionURL}?uPCM_action=selectGeneralSettings&amp;uPCM_capture=reviewChannel">
+                <xsl:choose>
+                    <xsl:when test="/manageChannels/reviewChannel/params/step/channel/parameter[@name='disableDynamicTitle']/@value = 'true'">Disabled</xsl:when>
+                    <xsl:otherwise>Enabled</xsl:otherwise>
+                </xsl:choose>
+             </a></td>
+           </tr>
+           <tr class="uportal-channel-text">
+             <td nowrap="nowrap" colspan="5">
+               <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
+                 <tr>
+                   <td><img alt="" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
                  </tr>
                </table>
              </td>
