@@ -9,6 +9,7 @@ import java.io.Writer;
 
 import org.jasig.portal.ChannelManager;
 import org.jasig.portal.layout.IUserLayoutManager;
+import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 
 /**
  * Provides for streaming token replacement with a character stream.
@@ -40,10 +41,16 @@ public class ChannelTitleIncorporationWiterFilter extends AbstractTokenReplaceme
      */
     @Override
     protected String replaceToken(String channelId) {
-        String title = this.channelManager.getChannelTitle(channelId);
+        final IUserLayoutChannelDescription channelNode = (IUserLayoutChannelDescription)this.userLayoutManager.getNode(channelId);
+        final boolean disableDynamicTitle = Boolean.valueOf(channelNode.getParameterValue("disableDynamicTitle"));
+        
+        String title = null;
+        if (!disableDynamicTitle) {
+            title = this.channelManager.getChannelTitle(channelId);
+        }
         
         if (title == null) {
-            title = this.userLayoutManager.getNode(channelId).getName();
+            title = channelNode.getTitle();
         }
         
         return title;
