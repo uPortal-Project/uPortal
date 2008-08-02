@@ -48,6 +48,21 @@
             </list>
         </property>
     </bean>
+    
+    <bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
+        <property name="scopes">
+            <map>
+                <entry key="globalSession">
+                    <bean class="org.jasig.portal.spring.web.context.support.FailsafeSessionScope">
+                        <constructor-arg value="true"/>
+                    </bean>
+                </entry>
+                <entry key="session">
+                    <bean class="org.jasig.portal.spring.web.context.support.FailsafeSessionScope" />
+                </entry>
+            </map>
+        </property>
+    </bean>
 
     <bean class="org.springframework.beans.factory.annotation.RequiredAnnotationBeanPostProcessor" lazy-init="false" />
 </beans>
