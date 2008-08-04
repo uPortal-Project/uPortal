@@ -22,7 +22,6 @@ import org.springframework.beans.factory.config.Scope;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import org.springframework.web.context.request.SessionScope;
 import org.springframework.web.portlet.context.PortletRequestAttributes;
 import org.springframework.web.util.WebUtils;
 
