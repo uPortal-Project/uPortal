@@ -98,6 +98,7 @@ public class JpaPortletDefinitionDao  implements IPortletDefinitionDao {
     public IPortletDefinition getPortletDefinition(int channelDefinitionId) {
         final Query query = this.entityManager.createQuery(FIND_PORTLET_DEF_BY_CHAN_DEF);
         query.setParameter("channelDefinitionId", channelDefinitionId);
+        query.setHint("org.hibernate.cacheable", true);
         query.setMaxResults(1);
         
         final List<PortletDefinitionImpl> portletDefinitions = query.getResultList();
