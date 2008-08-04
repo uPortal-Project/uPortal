@@ -45,8 +45,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
+                <version>2.0.1</version>
                 <configuration>
                     <webXml>${project.build.directory}/pluto-resources/web.xml</webXml>
+                    <warSourceExcludes>WEB-INF/lib/uportal-impl-${project.version}.jar</warSourceExcludes>
                     <webResources>
                         <resource>
                             <filtering>true</filtering>
@@ -57,6 +59,29 @@
                         </resource>
                     </webResources>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unpack</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.jasig.portal</groupId>
+                                    <artifactId>uportal-impl</artifactId>
+                                    <type>jar</type>
+                                    <outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/classes</outputDirectory>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.pluto</groupId>
