@@ -6,10 +6,10 @@
 package org.jasig.portal.utils.threading;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.ReadWriteLock;
 
-import org.apache.commons.collections.map.ReferenceMap;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
@@ -28,7 +28,15 @@ public abstract class MapCachingDoubleCheckedCreator<K, T> extends DoubleChecked
     private final Map<K, T> objectCache;
     
     public MapCachingDoubleCheckedCreator() {
-        this.objectCache = new ReferenceMap(ReferenceMap.HARD, ReferenceMap.SOFT);
+        this.objectCache = new HashMap<K, T>();
+    }
+    
+    /**
+     * @param cache The Map to store created isntances in
+     */
+    public MapCachingDoubleCheckedCreator(Map<K, T> cache) {
+        Validate.notNull(cache, "cache can not be null");
+        this.objectCache = cache;
     }
     
     /**
@@ -47,6 +55,19 @@ public abstract class MapCachingDoubleCheckedCreator<K, T> extends DoubleChecked
      */
     public final Map<K, T> getCacheMap() {
         return Collections.unmodifiableMap(this.objectCache);
+    }
+    
+    /**
+     * Allows the object cache map to be cleared of entries
+     */
+    public final void clear() {
+        this.writeLock.lock();
+        try {
+            this.objectCache.clear();
+        }
+        finally {
+            this.writeLock.unlock();
+        }
     }
     
     /**

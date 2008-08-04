@@ -23,8 +23,8 @@ public abstract class DoubleCheckedCreator<T> {
     protected final Log logger = LogFactory.getLog(this.getClass());
     
     private final ReadWriteLock readWriteLock;
-    private final Lock readLock;
-    private final Lock writeLock;
+    protected final Lock readLock;
+    protected final Lock writeLock;
 
     public DoubleCheckedCreator() {
         this(new ReentrantReadWriteLock());
