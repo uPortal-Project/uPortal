@@ -43,4 +43,19 @@
         <property name="cacheManagerName" value="uPortal.cacheManager" />
         <property name="configLocation" value="classpath:/properties/ehcache.xml" />
     </bean>
+
+    <bean class="org.jasig.portal.utils.ResourceLoader">
+        <property name="resourceUrlCache">
+            <bean class="org.jasig.portal.utils.cache.MapCacheFactoryBean">
+                <property name="cacheFactory" ref="cacheFactory" />
+                <property name="cacheName" value="org.jasig.portal.utils.ResourceLoader.RESOURCE_URL_CACHE" />
+            </bean>
+        </property>
+        <property name="resourceUrlNotFoundCache">
+            <bean class="org.jasig.portal.utils.cache.MapCacheFactoryBean">
+                <property name="cacheFactory" ref="cacheFactory" />
+                <property name="cacheName" value="org.jasig.portal.utils.ResourceLoader.RESOURCE_URL_NOT_FOUND_CACHE" />
+            </bean>
+        </property>
+    </bean>
 </beans>

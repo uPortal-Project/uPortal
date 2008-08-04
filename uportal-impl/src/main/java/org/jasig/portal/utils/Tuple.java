@@ -5,6 +5,8 @@
  */
 package org.jasig.portal.utils;
 
+import java.io.Serializable;
+
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -16,7 +18,9 @@ import org.apache.commons.lang.builder.ToStringStyle;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class Tuple<A, B> {
+public class Tuple<A, B> implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     public final A first;
     public final B second;
 
