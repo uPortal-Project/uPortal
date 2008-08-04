@@ -34,6 +34,8 @@
         <aop:pointcut id="daoExecution" 
             expression="execution(* org.jasig.portal.portlet.dao.*.*(..))"/>
             
+        <aop:advisor advice-ref="jpaInterceptor" pointcut-ref="jpaDaoExecution"/>
+            
         <aop:aspect ref="threadContextClassLoaderAspect">
             <aop:around pointcut-ref="jpaDaoExecution" method="doThreadContextClassLoaderUpdate"/>
         </aop:aspect>
@@ -42,6 +44,7 @@
             <aop:after-throwing pointcut-ref="daoExecution" method="logBatchUpdateExceptions" throwing="t"/>
         </aop:aspect>
     </aop:config>
+    
     
     <!-- Aspect to force the Thread.getContextClassLoader() to the correct loader on cross-context calls form portlets -->
     <bean id="threadContextClassLoaderAspect" class="org.jasig.portal.portlet.dao.jpa.ThreadContextClassLoaderAspect" />
@@ -58,6 +61,10 @@
     <bean id="jpaVendorAdapter" class="org.jasig.portal.spring.orm.jpa.HibernateJpaVendorAdapter">
         <property name="databasePlatform" value="${hibernate.dialect}" />
         <property name="cacheProvider" ref="cacheProvider" />
+    </bean>
+    
+    <bean id="jpaInterceptor" class="org.springframework.orm.jpa.JpaInterceptor">
+        <property name="entityManagerFactory" ref="entityManagerFactory" />
     </bean>
 
     <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">

@@ -80,7 +80,6 @@ public class JpaPortletDefinitionDao  implements IPortletDefinitionDao {
         this.entityManager.remove(persistentPortletDefinition);
     }
 
-    @Transactional(readOnly = true)
     public IPortletDefinition getPortletDefinition(IPortletDefinitionId portletDefinitionId) {
         Validate.notNull(portletDefinitionId, "portletDefinitionId can not be null");
         
@@ -94,7 +93,6 @@ public class JpaPortletDefinitionDao  implements IPortletDefinitionDao {
      * @see org.jasig.portal.dao.portlet.IPortletDefinitionDao#getPortletDefinition(int)
      */
     @SuppressWarnings("unchecked")
-    @Transactional(readOnly = true)
     public IPortletDefinition getPortletDefinition(int channelDefinitionId) {
         final Query query = this.entityManager.createQuery(FIND_PORTLET_DEF_BY_CHAN_DEF);
         query.setParameter("channelDefinitionId", channelDefinitionId);
