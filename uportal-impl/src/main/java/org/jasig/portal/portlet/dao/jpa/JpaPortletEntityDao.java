@@ -118,7 +118,6 @@ public class JpaPortletEntityDao  implements IPortletEntityDao {
         this.entityManager.remove(persistentPortletEntity);
     }
 
-    @Transactional(readOnly = true)
     public IPortletEntity getPortletEntity(IPortletEntityId portletEntityId) {
         Validate.notNull(portletEntityId, "portletEntity can not be null");
         
@@ -131,7 +130,6 @@ public class JpaPortletEntityDao  implements IPortletEntityDao {
      * @see org.jasig.portal.dao.portlet.IPortletEntityDao#getPortletEntity(java.lang.String, int)
      */
     @SuppressWarnings("unchecked")
-    @Transactional(readOnly = true)
     public IPortletEntity getPortletEntity(String channelSubscribeId, int userId) {
         Validate.notNull(channelSubscribeId, "portletEntity can not be null");
         
@@ -150,7 +148,6 @@ public class JpaPortletEntityDao  implements IPortletEntityDao {
      * @see org.jasig.portal.dao.portlet.IPortletEntityDao#getPortletEntities(org.jasig.portal.om.portlet.IPortletDefinitionId)
      */
     @SuppressWarnings("unchecked")
-    @Transactional(readOnly = true)
     public Set<IPortletEntity> getPortletEntities(IPortletDefinitionId portletDefinitionId) {
         Validate.notNull(portletDefinitionId, "portletEntity can not be null");
         
@@ -168,7 +165,6 @@ public class JpaPortletEntityDao  implements IPortletEntityDao {
      * @see org.jasig.portal.portlet.dao.IPortletEntityDao#getPortletEntitiesForUser(int)
      */
     @SuppressWarnings("unchecked")
-    @Transactional(readOnly = true)
     public Set<IPortletEntity> getPortletEntitiesForUser(int userId) {
         final Query query = this.entityManager.createQuery(FIND_PORTLET_ENTS_BY_USER_ID);
         query.setHint("org.hibernate.cacheable", true);

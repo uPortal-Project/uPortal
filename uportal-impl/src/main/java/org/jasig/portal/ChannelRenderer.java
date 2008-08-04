@@ -23,9 +23,14 @@ import org.jasig.portal.channels.support.IChannelTitle;
 import org.jasig.portal.channels.support.IDynamicChannelTitleRenderer;
 import org.jasig.portal.portlet.url.RequestType;
 import org.jasig.portal.properties.PropertiesManager;
+import org.jasig.portal.spring.PortalApplicationContextLocator;
 import org.jasig.portal.utils.SAX2BufferImpl;
 import org.jasig.portal.utils.SetCheckInSemaphore;
 import org.jasig.portal.utils.threading.BaseTask;
+import org.jasig.portal.utils.threading.Task;
+import org.springframework.aop.framework.ProxyFactoryBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.orm.jpa.JpaInterceptor;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
@@ -62,7 +67,7 @@ public class ChannelRenderer
 
     protected Thread workerThread;
 
-    protected Worker worker;
+    protected IWorker worker;
     protected Future<?> workTracker;
 
     protected long startTime;
@@ -163,7 +168,19 @@ public class ChannelRenderer
   {
     // start the rendering thread
 
-    this.worker = new Worker(this.channel, this.rd);
+    final IWorker targetWorker = new Worker(this.channel, this.rd);
+    
+    // Obtain JcrInterceptor bean
+    final ApplicationContext ac = PortalApplicationContextLocator.getApplicationContext();
+    final JpaInterceptor jpaInterceptor = (JpaInterceptor)ac.getBean("jpaInterceptor", JpaInterceptor.class);
+
+    // Proxy worker so that Jpa EntityManager will be properly handled
+    final ProxyFactoryBean pfb = new ProxyFactoryBean();
+    pfb.setTarget(targetWorker);
+    pfb.setInterfaces(targetWorker.getClass().getInterfaces());
+    pfb.addAdvice(jpaInterceptor);
+   
+    this.worker = (IWorker)pfb.getObject();
 
     this.workTracker = tp.submit(this.worker); // XXX is execute okay?
     this.rendering = true;
@@ -299,7 +316,7 @@ public class ChannelRenderer
         }
 
         if (!abandoned && this.worker.done ()) {
-            if (this.worker.successful() && (this.worker.getBuffer() != null || (this.ccacheable && this.worker.cbuffer != null) || (this.rd != null && RequestType.ACTION.equals(this.rd.getRequestType())))) {
+            if (this.worker.successful() && (this.worker.getBuffer() != null || this.worker.getCharacters() != null || (this.rd != null && RequestType.ACTION.equals(this.rd.getRequestType())))) {
                 return RENDERING_SUCCESSFUL;
             }
          
@@ -409,7 +426,7 @@ public class ChannelRenderer
 	}
 
 
-    protected class Worker extends BaseTask {
+    protected class Worker extends BaseTask implements IWorker {
         private final IChannel channel;
         private final ChannelRuntimeData rd;
         
@@ -730,7 +747,7 @@ public class ChannelRenderer
          *
          * @return dynamic channel title, or null if no title available.
          */
-        String getChannelTitle() {
+        public String getChannelTitle() {
 
         	if (log.isTraceEnabled()) {
         		log.trace("Getting channel title (" + this.channelTitle + "] for " + this);
@@ -747,4 +764,37 @@ public class ChannelRenderer
 
 
 
+    
+    protected interface IWorker extends Task {
+
+        public boolean isSetRuntimeDataComplete();
+
+        //TODO review this for clarity
+        public void execute() throws Exception;
+
+        public boolean successful();
+
+        public SAX2BufferImpl getBuffer();
+
+        /**
+         * Returns a character output of a channel rendering.
+         */
+        public String getCharacters();
+
+        /**
+         * Sets a character cache for the current rendering.
+         */
+        public void setCharacterCache(String chars);
+
+        public boolean done();
+
+        /**
+         * Get a Sring representing the dynamic channel title reported by the
+         * IChannel this ChannelRenderer rendered.  Returns null if the channel
+         * reported no such title or the channel isn't done rendering.
+         *
+         * @return dynamic channel title, or null if no title available.
+         */
+        public String getChannelTitle();
+    }
 }
