@@ -5,6 +5,7 @@
  */
 package org.jasig.portal.utils;
 
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -198,7 +199,13 @@ public class PooledCounterStoreTest extends AbstractTransactionalDataSourceSprin
         executorService.awaitTermination(30, TimeUnit.SECONDS);
         
         
-        assertEquals(1, this.countRowsInTable("UP_SEQUENCE"));
+        final int rowCount = this.countRowsInTable("UP_SEQUENCE");
+        if (rowCount > 1) {
+            
+            final List contents = this.getJdbcTemplate().queryForList("SELECT * FROM UP_SEQUENCE");
+            
+            fail(rowCount + " rows in UP_SEQUENCE, there should be 1. Contents:\n" + contents);
+        }
         assertEquals(399, this.getJdbcTemplate().queryForInt("SELECT SEQUENCE_VALUE FROM UP_SEQUENCE WHERE SEQUENCE_NAME=?", new Object[] { "Test1" }));
     }
     
