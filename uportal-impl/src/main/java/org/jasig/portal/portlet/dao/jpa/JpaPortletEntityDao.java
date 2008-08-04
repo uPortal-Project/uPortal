@@ -138,6 +138,7 @@ public class JpaPortletEntityDao  implements IPortletEntityDao {
         final Query query = this.entityManager.createQuery(FIND_PORTLET_ENT_BY_CHAN_SUB_AND_USER);
         query.setParameter("channelSubscribeId", channelSubscribeId);
         query.setParameter("userId", userId);
+        query.setHint("org.hibernate.cacheable", true);
         query.setMaxResults(1);
         
         final List<IPortletEntity> portletEntities = query.getResultList();
@@ -156,6 +157,7 @@ public class JpaPortletEntityDao  implements IPortletEntityDao {
         final IPortletDefinition portletDefinition = this.portletDefinitionDao.getPortletDefinition(portletDefinitionId);
         
         final Query query = this.entityManager.createQuery(FIND_PORTLET_ENTS_BY_PORTLET_DEF);
+        query.setHint("org.hibernate.cacheable", true);
         query.setParameter("portletDefinition", portletDefinition);
         
         final List<IPortletEntity> portletEntities = query.getResultList();
@@ -169,6 +171,7 @@ public class JpaPortletEntityDao  implements IPortletEntityDao {
     @Transactional(readOnly = true)
     public Set<IPortletEntity> getPortletEntitiesForUser(int userId) {
         final Query query = this.entityManager.createQuery(FIND_PORTLET_ENTS_BY_USER_ID);
+        query.setHint("org.hibernate.cacheable", true);
         query.setParameter("userId", userId);
         
         final List<IPortletEntity> portletEntities = query.getResultList();
