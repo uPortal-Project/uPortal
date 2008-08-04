@@ -17,30 +17,24 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.config.Scope;
-import org.springframework.web.context.request.SessionScope;
 
 /**
- * Wraps {@link SessionScope} to provide functionality when no session is available by using
- * a singleton instance.
+ * Wraps a {@link Scope} to provide functionality when the wrapped scope can't function
+ * due to an illegal state (no current session, request, ...)
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class FailsafeSessionScope implements Scope, DisposableBean {
+public class FailsafeSingletonScope implements Scope, DisposableBean {
     protected final Log logger = LogFactory.getLog(this.getClass());
 
     private final Map<String, InstanceHolder> instances = new HashMap<String, InstanceHolder>();
-    private final SessionScope sessionScope;
+    private final Scope delegateScope;
     
-    
-    public FailsafeSessionScope() {
-        this.sessionScope = new SessionScope();
+    public FailsafeSingletonScope(Scope delegateScope) {
+        this.delegateScope = delegateScope;
     }
 
-    public FailsafeSessionScope(boolean globalSession) {
-        this.sessionScope = new SessionScope(globalSession);
-    }
-    
     /* (non-Javadoc)
      * @see org.springframework.beans.factory.DisposableBean#destroy()
      */
@@ -64,22 +58,24 @@ public class FailsafeSessionScope implements Scope, DisposableBean {
      */
     public Object get(String name, ObjectFactory objectFactory) {
         try {
-            return this.sessionScope.get(name, objectFactory);
+            return this.delegateScope.get(name, objectFactory);
         }
         catch (IllegalStateException ise) {
             synchronized (this.instances) {
                 InstanceHolder instanceHolder = this.instances.get(name);
                 if (instanceHolder == null) {
                     if (this.logger.isInfoEnabled()) {
-                        this.logger.info("No session available, creating singleton instance for bean '" + name + "'");
+                        this.logger.info("Creating singleton instance for bean '" + name + "'");
                     }
-                    
-                    final Object instance = objectFactory.getObject();
-                    instanceHolder = new InstanceHolder(name, instance);
+
+                    //Add to instances map before creating to ensure if a destruction callback is added it is caught
+                    instanceHolder = new InstanceHolder(name);
                     this.instances.put(name, instanceHolder);
+
+                    instanceHolder.instance = objectFactory.getObject();
                 }
                 else if (this.logger.isInfoEnabled()) {
-                    this.logger.info("No session available, using existing singleton instance for bean '" + name + "'");
+                    this.logger.info("Using existing singleton instance for bean '" + name + "'");
                 }
 
                 return instanceHolder.instance;
@@ -92,7 +88,7 @@ public class FailsafeSessionScope implements Scope, DisposableBean {
      */
     public String getConversationId() {
         try {
-            return this.sessionScope.getConversationId();
+            return this.delegateScope.getConversationId();
         }
         catch (IllegalStateException ise) {
             return "NO_SESSION_SINGLETON";
@@ -104,7 +100,7 @@ public class FailsafeSessionScope implements Scope, DisposableBean {
      */
     public void registerDestructionCallback(String name, Runnable callback) {
         try {
-            this.sessionScope.registerDestructionCallback(name, callback);
+            this.delegateScope.registerDestructionCallback(name, callback);
         }
         catch (IllegalStateException ise) {
             final InstanceHolder instanceHolder;
@@ -131,7 +127,7 @@ public class FailsafeSessionScope implements Scope, DisposableBean {
      */
     public Object remove(String name) {
         try {
-            return this.sessionScope.remove(name);
+            return this.delegateScope.remove(name);
         }
         catch (IllegalStateException ise) {
             final InstanceHolder instanceHolder;
@@ -156,12 +152,11 @@ public class FailsafeSessionScope implements Scope, DisposableBean {
      */
     private static class InstanceHolder {
         public final String name;
-        public final Object instance;
+        public Object instance;
         public Runnable destructionCallback;
 
-        public InstanceHolder(String name, Object instance) {
+        public InstanceHolder(String name) {
             this.name = name;
-            this.instance = instance;
         }
 
         /**
@@ -178,8 +173,6 @@ public class FailsafeSessionScope implements Scope, DisposableBean {
             InstanceHolder rhs = (InstanceHolder) object;
             return new EqualsBuilder()
                 .append(this.name, rhs.name)
-                .append(this.instance, rhs.instance)
-                .append(this.destructionCallback, rhs.destructionCallback)
                 .isEquals();
         }
 
@@ -190,8 +183,6 @@ public class FailsafeSessionScope implements Scope, DisposableBean {
         public int hashCode() {
             return new HashCodeBuilder(217891979, 1307635269)
                 .append(this.name)
-                .append(this.instance)
-                .append(this.destructionCallback)
                 .toHashCode();
         }
 

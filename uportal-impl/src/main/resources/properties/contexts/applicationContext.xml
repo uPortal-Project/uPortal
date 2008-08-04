@@ -53,12 +53,20 @@
         <property name="scopes">
             <map>
                 <entry key="globalSession">
-                    <bean class="org.jasig.portal.spring.web.context.support.FailsafeSessionScope">
-                        <constructor-arg value="true"/>
+                    <bean class="org.jasig.portal.spring.web.context.support.FailsafeSingletonScope">
+                        <constructor-arg>
+                            <bean class="org.jasig.portal.spring.web.context.support.PortalSessionScope">
+                                <property name="portalRequestUtils" ref="portalRequestUtils" />
+                            </bean>
+                        </constructor-arg>
                     </bean>
                 </entry>
                 <entry key="session">
-                    <bean class="org.jasig.portal.spring.web.context.support.FailsafeSessionScope" />
+                    <bean class="org.jasig.portal.spring.web.context.support.FailsafeSingletonScope">
+                        <constructor-arg>
+                            <bean class="org.springframework.web.context.request.SessionScope" />
+                        </constructor-arg>
+                    </bean>
                 </entry>
             </map>
         </property>
