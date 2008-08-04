@@ -5,6 +5,10 @@
 
 package org.jasig.portal.tools.checks;
 
+import java.net.URL;
+import java.security.CodeSource;
+import java.security.ProtectionDomain;
+
 /**
  * Checks the Xalan version against a configured value.
  * 
@@ -39,7 +43,17 @@ public class XalanVersionCheck extends BaseCheck {
             if (this.desiredVersion.equals(versionFound)){
                 result = CheckResult.createSuccess("Xalan version [" + versionFound + "] is present.");
             } else {
-                result = CheckResult.createFailure("Xalan version [" + versionFound + "] is present, rather than the desired version [" + this.desiredVersion + "]", "Install the Xalan jar corresponding to [" + this.desiredVersion + "] in the /endorsed/lib/ directory of the JRE.");
+                String locationInfo = "";
+                final ProtectionDomain protectionDomain = org.apache.xalan.Version.class.getProtectionDomain();
+                if (protectionDomain != null) {
+                    final CodeSource codeSource = protectionDomain.getCodeSource();
+                    if (codeSource != null) {
+                        final URL location = codeSource.getLocation();
+                        locationInfo = " loaded from '" + location + "'";
+                    }
+                }
+                
+                result = CheckResult.createFailure("Xalan version [" + versionFound + "]" + locationInfo + " is present, rather than the desired version [" + this.desiredVersion + "]", "Install the Xalan jar corresponding to [" + this.desiredVersion + "] in the /endorsed/lib/ directory of the JRE.");
             }
         } catch (NoClassDefFoundError ncdfe) {
             result = CheckResult.createFailure("Class org.apache.xalan.Version could not be found.", "Install the xalan jar corresponding to [" + this.desiredVersion + "] in the /lib/endorsed directory of the JRE.");
