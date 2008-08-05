@@ -33,23 +33,15 @@ public class CarClassLoader
 
     private static final Log log = LogFactory.getLog(CarClassLoader.class);
     
-    /**
-       Create a CarClassLoader. This method has package scope so that
-       CarResources can instantiate it and hold the single instance to be
-       aquired via its getClassLoader() method.
-     */
-    CarClassLoader()
-    {
-        super();
-    }
-
+    private final CarResources carResources;
     /**
        Create a CarClassloader with the indicated parent class loader. See
        comment for zero parameter constructor for description of package scoping.
      */
-    CarClassLoader( ClassLoader cl )
+    CarClassLoader( CarResources carResources )
     {
-        super( cl );
+        super( carResources.getClass().getClassLoader() );
+        this.carResources = carResources;
     }
 
     /**
@@ -206,6 +198,6 @@ public class CarClassLoader
      */
     public URL findResource( String res )
     {
-        return CarResources.getInstance().findResource( res );
+        return this.carResources.findResource( res );
     }
 }

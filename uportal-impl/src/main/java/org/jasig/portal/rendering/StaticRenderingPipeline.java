@@ -764,8 +764,7 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
             
             // try to instantiate a worker class
             try {
-                final CarResources carResources = CarResources.getInstance();
-                final ClassLoader carClassLoader = carResources.getClassLoader();
+                final ClassLoader carClassLoader = this.carResources.getClassLoader();
                 final Class<? extends IWorkerRequestProcessor> dispatcherClass = (Class<IWorkerRequestProcessor>)carClassLoader.loadClass(dispatchClassName);
                 final IWorkerRequestProcessor wrp = dispatcherClass.newInstance();
 

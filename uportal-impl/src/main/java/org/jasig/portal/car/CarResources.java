@@ -28,8 +28,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.properties.PropertiesManager;
+import org.jasig.portal.spring.PortalApplicationContextLocator;
 import org.jasig.portal.utils.SAX2BufferImpl;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.ServletContextAware;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
@@ -95,7 +97,7 @@ public class CarResources implements ServletContextAware, InitializingBean {
        and their contained resources.
      */
     public void afterPropertiesSet() throws Exception {
-        loader = new CarClassLoader(this.getClass().getClassLoader());
+        loader = new CarClassLoader(this);
         this.processDescriptors();
         
         try {
@@ -139,21 +141,17 @@ public class CarResources implements ServletContextAware, InitializingBean {
     }
 
     /**
-       Return the single instance of CarResources.
+     * Return the single instance of CarResources.
+     * @deprecated Use the Spring managed 'carResources' bean instead
      */
+    @Deprecated
     public static CarResources getInstance() {
-        synchronized (CarResources.class) {
-            while (instance == null) {
-                try {
-                    CarResources.class.wait();
-                }
-                catch (InterruptedException e) {
-                    log.warn("Interrupted while waiting for CarResources instance", e);
-                }
-            }
-            
-            return instance;
+        if (instance == null) {
+            final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
+            instance = (CarResources)applicationContext.getBean("carResources", CarResources.class);
         }
+        
+        return instance;
     }
 
     /**

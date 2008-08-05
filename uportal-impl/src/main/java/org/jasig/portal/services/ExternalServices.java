@@ -5,6 +5,8 @@
 
 package org.jasig.portal.services;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -20,10 +22,15 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.car.CarResources;
 import org.jasig.portal.jndi.IJndiManager;
+import org.jasig.portal.utils.DTDResolver;
+import org.jasig.portal.utils.ResourceLoader;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.jndi.JndiTemplate;
 import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
  * ExternalServices starts up all the runtime services for the uPortal.
@@ -83,12 +90,41 @@ public class ExternalServices implements InitializingBean {
         this.servicesContext = (Context)jndiTemplate.lookup("/services", Context.class);
         this.svcHandler = new ServiceHandler();
         
+        
         if (this.carResources.hasDescriptors()) {
             try {
                 this.carResources.getServices(this.svcHandler);
             }
             catch (final Exception ex) {
                 throw new PortalException("Failed to start external portal " + "services in CAR descriptors.", ex);
+            }
+        }
+        
+        
+        InputStream svcDescriptor = null;
+        try {
+            svcDescriptor = ResourceLoader.getResourceAsStream(ExternalServices.class, "/properties/services.xml");
+        }
+        catch (Exception ex) {
+            log.error("Failed to load services.xml. External portal services will not be started", ex);
+        }
+        if (svcDescriptor != null) {
+            try {
+                XMLReader parser = XMLReaderFactory.createXMLReader();
+                parser.setEntityResolver(new DTDResolver());
+                parser.setContentHandler(this.svcHandler);
+                parser.parse(new InputSource(svcDescriptor));
+            }
+            catch (Exception ex) {
+                throw new PortalException("Failed to start external portal " + "services defined in services.xml.", ex);
+            }
+            finally {
+                try {
+                    svcDescriptor.close(); //do not need to check for null.
+                }
+                catch (IOException exception) {
+                    log.error("ExternalServices:startServices()::could not close InputStream " + exception);
+                }
             }
         }
     }
@@ -113,7 +149,7 @@ public class ExternalServices implements InitializingBean {
      * @param className - Name of the class. Primitive datatypes must be specified
      *                    as xxx.class or Xxxx.TYPE. (e.g. int.class or Integer.TYPE).
      */
-    public static Class<?> getClassObject(String className) throws Exception {
+    public Class<?> getClassObject(String className) throws Exception {
         if (className.indexOf("TYPE") != -1 || className.indexOf("class") != -1) {
             if (className.equals("boolean.class") || className.equals("Boolean.TYPE")) {
                 return Boolean.TYPE;
@@ -141,7 +177,7 @@ public class ExternalServices implements InitializingBean {
             }
         }
         else {
-            return CarResources.getInstance().getClassLoader().loadClass(className);
+            return carResources.getClassLoader().loadClass(className);
         }
         return null;
     }
@@ -360,7 +396,7 @@ public class ExternalServices implements InitializingBean {
                 Class<?> svcClass = null;
 
                 try {
-                    svcClass = CarResources.getInstance().getClassLoader().loadClass(javaClass);
+                    svcClass = carResources.getClassLoader().loadClass(javaClass);
                     args = this.svcItem.getArguments();
                     classNames = this.svcItem.getArgumentClasses();
                 }
