@@ -122,6 +122,9 @@
 
         <!-- update server.xml to enable shared portlet sessions -->
         <replace file="${dl.tomcat.dir}/conf/server.xml" token="${tomcat.conf.token}" value="${tomcat.conf.replacement}" summary="true" />
+        
+        <!-- update catalina.properties tp emable shared/lib classloader -->
+        <replace file="${dl.tomcat.dir}/conf/catalina.properties" token="${tomcat.shared-lib.token}" value="${tomcat.shared-lib.replacement}" summary="true" />
     </target>
 
     <target name="prepare-qs-ant" depends="prepare-qs">
@@ -149,6 +152,9 @@
         </copy>
         <replace file="${uportal.dir}/build.properties" token="#maven.home=" value="maven.home=$${basedir}/../${dl.maven.finalName}" summary="true" />
 
+        <!-- Ensure a HSQL isntance isn't already running -->
+        <ant target="hsql-shutdown" antfile="${uportal.dir}/build.xml" dir="${uportal.dir}" />
+            
         <!-- start quickstart hsql isntance -->
         <ant target="hsql" antfile="${uportal.dir}/build.xml" dir="${uportal.dir}">
             <property name="spawn" value="true" />
