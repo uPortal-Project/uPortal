@@ -75,6 +75,7 @@ import org.jasig.portal.utils.SAX2BufferImpl;
 import org.jasig.portal.utils.SAX2DuplicatingFilterImpl;
 import org.jasig.portal.utils.URLUtil;
 import org.jasig.portal.utils.XSLT;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Required;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.XMLReader;
@@ -85,7 +86,7 @@ import org.xml.sax.XMLReader;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class StaticRenderingPipeline implements IPortalRenderingPipeline {
+public class StaticRenderingPipeline implements IPortalRenderingPipeline, InitializingBean {
     // Metric counters
     private static final MovingAverage renderTimes = new MovingAverage();
     private static volatile MovingAverageSample lastRender = new MovingAverageSample();
@@ -130,9 +131,6 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline {
         catch (IOException ioe) {
             throw new PortalException("Unable to load worker.properties file. ", ioe);
         }
-        // now add in component archive declared workers
-        CarResources cRes = CarResources.getInstance();
-        cRes.getWorkers(workerProperties);
     }
     
     public static MovingAverageSample getLastRenderSample() {
@@ -143,6 +141,7 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline {
     
     private IPortletRequestParameterManager portletRequestParameterManager;
     private IPortletWindowRegistry portletWindowRegistry;
+    private CarResources carResources;
     
     /**
      * @return the portletRequestParameterManager
@@ -172,6 +171,24 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline {
     public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
         Validate.notNull(portletWindowRegistry, "portletWindowRegistry can not be null");
         this.portletWindowRegistry = portletWindowRegistry;
+    }
+    
+    public CarResources getCarResources() {
+        return this.carResources;
+    }
+    /**
+     * @param carResources the carResources to set
+     */
+    @Required
+    public void setCarResources(CarResources carResources) {
+        this.carResources = carResources;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+     */
+    public void afterPropertiesSet() throws Exception {
+        this.carResources.getWorkers(workerProperties);        
     }
     
     /* (non-Javadoc)
@@ -695,8 +712,7 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline {
             
             // try to instantiate a worker class
             try {
-                final CarResources carResources = CarResources.getInstance();
-                final ClassLoader carClassLoader = carResources.getClassLoader();
+                final ClassLoader carClassLoader = this.carResources.getClassLoader();
                 final Class<? extends IWorkerRequestProcessor> dispatcherClass = (Class<IWorkerRequestProcessor>)carClassLoader.loadClass(dispatchClassName);
                 final IWorkerRequestProcessor wrp = dispatcherClass.newInstance();
 
