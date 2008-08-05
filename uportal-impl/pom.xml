@@ -293,12 +293,6 @@
         </dependency>
 
         <dependency>
-            <groupId>servlets.com</groupId>
-            <artifactId>cos</artifactId>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
             <groupId>tyrex</groupId>
             <artifactId>tyrex</artifactId>
             <scope>compile</scope>

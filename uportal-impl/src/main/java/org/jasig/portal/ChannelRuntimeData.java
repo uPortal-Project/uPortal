@@ -15,8 +15,6 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.car.CarResources;
 import org.jasig.portal.portlet.url.RequestType;
 
-import com.oreilly.servlet.multipart.Part;
-
 /**
  * A set of runtime data accessible by a channel.
  *
@@ -192,8 +190,6 @@ public class ChannelRuntimeData extends Hashtable<String, Object> implements Clo
                 Object value = params.get(key);
                 if (value instanceof String)
                     setParameter(key, (String)value);
-                else if (value instanceof Part)
-                    setParameter(key, (Part)value);
             }
         }
     }
@@ -219,16 +215,6 @@ public class ChannelRuntimeData extends Hashtable<String, Object> implements Clo
         String[] valueArray = new String[1];
         valueArray[0] = value;
         super.put(pName, valueArray);
-    }
-
-    public  com.oreilly.servlet.multipart.Part[] setParameterValues(String pName, com.oreilly.servlet.multipart.Part[] values) {
-        return  (com.oreilly.servlet.multipart.Part[])super.put(pName, values);
-    }
-
-    public synchronized void setParameter(String key, Part value) {
-        Part[] valueArray = new Part[1];
-        valueArray[0] = value;
-        super.put(key, valueArray);
     }
 
     /**

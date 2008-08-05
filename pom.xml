@@ -124,7 +124,6 @@
         <commons-logging.version>1.1.1</commons-logging.version>
         <commons-logging-api.version>1.1</commons-logging-api.version>
         <commons-pool.version>1.4</commons-pool.version>
-        <cos.version>05Nov2002</cos.version>
         <dom4j.version>1.6.1</dom4j.version>
         <easymock.version>2.4</easymock.version>
         <ejb3-persistence.version>1.0.1.GA</ejb3-persistence.version>
@@ -654,11 +653,6 @@
                 <groupId>rome</groupId>
                 <artifactId>rome</artifactId>
                 <version>${rome.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>servlets.com</groupId>
-                <artifactId>cos</artifactId>
-                <version>${cos.version}</version>
             </dependency>
             <dependency>
                 <groupId>taglibs</groupId>
