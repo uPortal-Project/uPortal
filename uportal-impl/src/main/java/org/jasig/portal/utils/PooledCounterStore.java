@@ -6,13 +6,13 @@
 package org.jasig.portal.utils;
 
 import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
 
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.utils.threading.MapCachingDoubleCheckedCreator;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
@@ -47,7 +47,7 @@ public class PooledCounterStore implements ICounterStore {
 
     protected final Log logger = LogFactory.getLog(this.getClass());
     
-    private final ConcurrentHashMap<String, CounterPool> counterPools = new ConcurrentHashMap<String, CounterPool>();
+    private final MapCachingDoubleCheckedCreator<String, CounterPool> counterPools = new CounterPoolHolder();
     private final Random random = new Random();
 
     private TransactionTemplate transactionTemplate;
@@ -132,7 +132,7 @@ public class PooledCounterStore implements ICounterStore {
      * @see org.jasig.portal.utils.ICounterStore#createCounter(java.lang.String)
      */
     public void createCounter(final String counterName) {
-        final CounterPool counterPool = this.getCounterPool(counterName);
+        final CounterPool counterPool = this.counterPools.get(counterName);
         
         synchronized (counterPool) {
             if (!counterPool.initialized) {
@@ -158,7 +158,7 @@ public class PooledCounterStore implements ICounterStore {
      * @see org.jasig.portal.utils.ICounterStore#getIncrementIntegerId(java.lang.String)
      */
     public int getIncrementIntegerId(final String counterName) {
-        final CounterPool counterPool = this.getCounterPool(counterName);
+        final CounterPool counterPool = this.counterPools.get(counterName);
         
         synchronized (counterPool) {
             if (counterPool.needsUpdate()) {
@@ -183,7 +183,7 @@ public class PooledCounterStore implements ICounterStore {
      * @see org.jasig.portal.utils.ICounterStore#setCounter(java.lang.String, int)
      */
     public void setCounter(String counterName, int value) {
-        final CounterPool counterPool = this.getCounterPool(counterName);
+        final CounterPool counterPool = this.counterPools.get(counterName);
         
         synchronized (counterPool) {
             final ForceUpdateCounterCallback forceUpdateCounterCallback = new ForceUpdateCounterCallback(counterPool, this.increment, value, this.simpleJdbcTemplate);
@@ -204,23 +204,6 @@ public class PooledCounterStore implements ICounterStore {
     
     public void reset() {
         this.counterPools.clear();
-    }
-
-    /**
-     * Get the unique CounterPool instance for the specified counterName
-     */
-    protected CounterPool getCounterPool(String counterName) {
-        CounterPool counterPool = this.counterPools.get(counterName);
-        if (counterPool == null) {
-            final CounterPool newCounterPool = new CounterPool(counterName, this.increment, this.initialValue, this.simpleJdbcTemplate);
-            counterPool = this.counterPools.putIfAbsent(counterName, newCounterPool);
-            
-            if (counterPool == null) {
-                counterPool = newCounterPool;
-            }
-        }
-
-        return counterPool;
     }
     
     /**
@@ -252,6 +235,23 @@ public class PooledCounterStore implements ICounterStore {
     }
 
 
+    private final class CounterPoolHolder extends MapCachingDoubleCheckedCreator<String, CounterPool> {
+        /* (non-Javadoc)
+         * @see org.jasig.portal.utils.threading.MapCachingDoubleCheckedCreator#createInternal(java.lang.Object, java.lang.Object[])
+         */
+        @Override
+        protected CounterPool createInternal(String counterName, Object... args) {
+            return new CounterPool(counterName, PooledCounterStore.this.increment, PooledCounterStore.this.initialValue, PooledCounterStore.this.simpleJdbcTemplate);
+        }
+
+        /* (non-Javadoc)
+         * @see org.jasig.portal.utils.threading.MapCachingDoubleCheckedCreator#getKey(java.lang.Object[])
+         */
+        @Override
+        protected String getKey(Object... args) {
+            return (String)args[0];
+        }
+    }
 
     /**
      * Represents a named counter, used to track the in-memory pool of values

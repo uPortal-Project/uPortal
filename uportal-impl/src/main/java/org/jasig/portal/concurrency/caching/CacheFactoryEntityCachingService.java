@@ -8,6 +8,7 @@ package org.jasig.portal.concurrency.caching;
 import java.io.Serializable;
 import java.util.Map;
 
+import org.apache.commons.collections.map.ReferenceMap;
 import org.apache.commons.lang.Validate;
 import org.jasig.portal.IBasicEntity;
 import org.jasig.portal.concurrency.CachingException;
@@ -52,6 +53,10 @@ public class CacheFactoryEntityCachingService extends AbstractEntityCachingServi
     }
 
     private class EntityCacheCreator extends MapCachingDoubleCheckedCreator<String, IEntityCache> {
+        public EntityCacheCreator() {
+            super(new ReferenceMap(ReferenceMap.HARD, ReferenceMap.SOFT));
+        }
+        
         /* (non-Javadoc)
          * @see org.jasig.portal.utils.threading.MapCachingDoubleCheckedCreator#getKey(java.lang.Object[])
          */

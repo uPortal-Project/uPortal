@@ -8,6 +8,7 @@ package org.jasig.portal.utils.cache;
 import java.io.Serializable;
 import java.util.Map;
 
+import org.apache.commons.collections.map.ReferenceMap;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -80,6 +81,10 @@ public class CacheProviderFactory implements CacheFactory {
     }
 
     private class MapCacheCreator extends MapCachingDoubleCheckedCreator<String, Map<?, ?>> {
+        public MapCacheCreator() {
+            super(new ReferenceMap(ReferenceMap.HARD, ReferenceMap.SOFT));
+        }
+        
         /* (non-Javadoc)
          * @see org.jasig.portal.utils.threading.MapCachingDoubleCheckedCreator#getKey(java.lang.Object[])
          */

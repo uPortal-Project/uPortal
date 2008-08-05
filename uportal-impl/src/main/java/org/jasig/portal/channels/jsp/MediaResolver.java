@@ -9,8 +9,6 @@ import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.UPFileSpec;
 
-import com.oreilly.servlet.multipart.Part;
-
 /**
  * Handles resolving base media URL for jsp channel types since the controller
  * class can't be used to tell if the channel was loaded via CAR or 
@@ -156,10 +154,6 @@ public class MediaResolver extends ChannelRuntimeData
     {
         runtimedata.setLocales(locales);
     }
-    public synchronized void setParameter(String key, Part value)
-    {
-        runtimedata.setParameter(key, value);
-    }
     public void setParameter(String pName, String value)
     {
         runtimedata.setParameter(pName, value);
@@ -171,10 +165,6 @@ public class MediaResolver extends ChannelRuntimeData
     public void setParametersSingleValued(Map params)
     {
         runtimedata.setParametersSingleValued(params);
-    }
-    public Part[] setParameterValues(String pName, Part[] values)
-    {
-        return runtimedata.setParameterValues(pName, values);
     }
     public String[] setParameterValues(String pName, String[] values)
     {
