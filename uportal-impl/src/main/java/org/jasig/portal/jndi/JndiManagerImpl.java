@@ -16,7 +16,6 @@ import javax.naming.NamingException;
 import javax.servlet.http.HttpSession;
 
 import org.jasig.portal.PortalException;
-import org.jasig.portal.services.ExternalServices;
 import org.jasig.portal.spring.web.context.support.HttpSessionDestroyedEvent;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationEvent;
@@ -451,8 +450,7 @@ public class JndiManagerImpl extends JndiAccessor implements IJndiManager, Appli
 
         // Create a subcontext for portal-wide services, initialize services 
         // Start any portal services configured in services.xml
-        final Context servicesContext = (Context)jndiTemplate.execute(new CreateSubContextCallback("services"));
-        ExternalServices.startServices(servicesContext);
+        jndiTemplate.execute(new CreateSubContextCallback("services"));
 
         // Create a subcontext for user specific bindings
         jndiTemplate.execute(new CreateSubContextCallback("users"));

@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+    
+    <bean id="carResources" class="org.jasig.portal.car.CarResources" />
 
-    <bean id="portalRenderingPipeline" class="org.jasig.portal.rendering.StaticRenderingPipeline">
-        <property name="portletRequestParameterManager"  ref="portletRequestParameterManager" />
-        <property name="portletWindowRegistry" ref="portletWindowRegistry" />
+    <bean id="externalServices" class="org.jasig.portal.services.ExternalServices">
         <property name="carResources" ref="carResources" />
-    </bean>
+        <property name="jndiManager" ref="jndiManager" />
+    </bean>    
 </beans>

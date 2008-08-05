@@ -80,6 +80,7 @@ import org.jasig.portal.utils.SAX2BufferImpl;
 import org.jasig.portal.utils.SAX2DuplicatingFilterImpl;
 import org.jasig.portal.utils.URLUtil;
 import org.jasig.portal.utils.XSLT;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
@@ -92,7 +93,7 @@ import org.xml.sax.XMLReader;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class StaticRenderingPipeline implements IPortalRenderingPipeline, ApplicationEventPublisherAware {
+public class StaticRenderingPipeline implements IPortalRenderingPipeline, ApplicationEventPublisherAware, InitializingBean {
     // Metric counters
     private static final MovingAverage renderTimes = new MovingAverage();
     private static volatile MovingAverageSample lastRender = new MovingAverageSample();
@@ -137,9 +138,6 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
         catch (IOException ioe) {
             throw new PortalException("Unable to load worker.properties file. ", ioe);
         }
-        // now add in component archive declared workers
-        CarResources cRes = CarResources.getInstance();
-        cRes.getWorkers(workerProperties);
     }
     
     public static MovingAverageSample getLastRenderSample() {
@@ -151,6 +149,7 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
     private IPortletRequestParameterManager portletRequestParameterManager;
     private IPortletWindowRegistry portletWindowRegistry;
     private ApplicationEventPublisher applicationEventPublisher;
+    private CarResources carResources;
     
     /**
      * @return the portletRequestParameterManager
@@ -180,6 +179,24 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
     public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
         Validate.notNull(portletWindowRegistry, "portletWindowRegistry can not be null");
         this.portletWindowRegistry = portletWindowRegistry;
+    }
+    
+    public CarResources getCarResources() {
+        return this.carResources;
+    }
+    /**
+     * @param carResources the carResources to set
+     */
+    @Required
+    public void setCarResources(CarResources carResources) {
+        this.carResources = carResources;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+     */
+    public void afterPropertiesSet() throws Exception {
+        this.carResources.getWorkers(workerProperties);        
     }
     
     /* (non-Javadoc)

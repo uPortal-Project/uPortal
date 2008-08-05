@@ -3,10 +3,8 @@
 *  available online at http://www.uportal.org/license.html
 */
 
-package  org.jasig.portal.services;
+package org.jasig.portal.services;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -21,13 +19,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.car.CarResources;
-import org.jasig.portal.utils.DTDResolver;
-import org.jasig.portal.utils.ResourceLoader;
+import org.jasig.portal.jndi.IJndiManager;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Required;
+import org.springframework.jndi.JndiTemplate;
 import org.xml.sax.Attributes;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
  * ExternalServices starts up all the runtime services for the uPortal.
@@ -40,365 +36,432 @@ import org.xml.sax.helpers.XMLReaderFactory;
  *
  * @author Sridhar Venkatesh <svenkatesh@interactivebusiness.com>
  * @version $Revision$
+ * @deprecated Configure services as Spring beans, this class only remains to support CARs 
  */
-public class ExternalServices {
+@Deprecated
+public class ExternalServices implements InitializingBean {
 
     private static final Log log = LogFactory.getLog(ExternalServices.class);
 
-  private ServiceHandler svcHandler;
-  private Context servicesContext;
-
-  public ExternalServices(Context servicesContext) {
-    this.servicesContext=servicesContext;
-    svcHandler = new ServiceHandler();
-  }
-
-    public static void startServices(Context servicesContext)
-      throws PortalException
-    {
-
-    InputStream svcDescriptor = null;
-
-    try
-    {
-        svcDescriptor = ResourceLoader
-            .getResourceAsStream( ExternalServices.class,
-                                  "/properties/services.xml" );
+    private IJndiManager jndiManager;
+    private CarResources carResources;
+    private ServiceHandler svcHandler;
+    private Context servicesContext;
+    
+    public static void startServices(Context servicesContext) throws PortalException {
+        log.warn("Method 'public static void startServices(Context)' is no longer supported. ExternalServices will be initialized by Spring");
     }
-    catch (Exception ex)
-    {
-        throw new PortalException ("Failed to load services.xml. External " +
-                                   "portal services will not be started", ex);
+    
+    public IJndiManager getJndiManager() {
+        return this.jndiManager;
+    }
+    /**
+     * @param jndiManager the jndiManager to set
+     */
+    @Required
+    public void setJndiManager(IJndiManager jndiManager) {
+        this.jndiManager = jndiManager;
     }
 
-    CarResources cRes = CarResources.getInstance();
+    public CarResources getCarResources() {
+        return this.carResources;
+    }
+    /**
+     * @param carResources the carResources to set
+     */
+    @Required
+    public void setCarResources(CarResources carResources) {
+        this.carResources = carResources;
+    }
 
-    if ( svcDescriptor != null ||
-         cRes.hasDescriptors() )
-    {
-      ExternalServices svcMgr = new ExternalServices(servicesContext);
 
-      if ( cRes.hasDescriptors() )
-      {
-          try {
-              cRes.getServices( (ContentHandler) svcMgr.svcHandler );
-          } catch (Exception ex) {
-              throw new PortalException ("Failed to start external portal " +
-                                         "services in CAR descriptors.", ex);
-          }
-      }
-      if ( svcDescriptor != null )
-      {
-          try {
-        	  XMLReader parser = XMLReaderFactory.createXMLReader();
-        	  parser.setEntityResolver(new DTDResolver());
-        	  parser.setContentHandler(svcMgr.svcHandler);
-        	  parser.parse(new InputSource(svcDescriptor));
-          } catch (Exception ex) {
-              throw new PortalException ("Failed to start external portal " +
-                                         "services defined in services.xml.",
-                                         ex);
-          } finally {
-            try{
-                svcDescriptor.close(); //do not need to check for null.
-           } catch(IOException exception) {
-                log.error( "ExternalServices:startServices()::could not close InputStream "+ exception);
+    /* (non-Javadoc)
+     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+     */
+    public void afterPropertiesSet() throws Exception {
+        final JndiTemplate jndiTemplate = this.jndiManager.getJndiTemplate();
+        this.servicesContext = (Context)jndiTemplate.lookup("/services", Context.class);
+        this.svcHandler = new ServiceHandler();
+        
+        if (this.carResources.hasDescriptors()) {
+            try {
+                this.carResources.getServices(this.svcHandler);
             }
-         }
-      }
-    }
-  }
-
-  protected SAXParser createParser() throws Exception {
-    SAXParserFactory factory = SAXParserFactory.newInstance();
-    return factory.newSAXParser();
-  }
-
-  /**
-   * Controls output of ExternalServices.
-   * @param msg a string to output
-   */
-  protected void outputMessage(String msg) {
-    System.out.println("External services: " + msg);
-    log.info( "External services: " + msg);
-  }
-
-  /**
-   * Returns the appropriate class for the given class name.  Checks to see
-   * whether the class belongs to a primitive data type or a Java Object.
-   * @param className - Name of the class. Primitive datatypes must be specified
-   *                    as xxx.class or Xxxx.TYPE. (e.g. int.class or Integer.TYPE).
-   */
-  public static Class getClassObject (String className) throws Exception {
-    if ((className.indexOf("TYPE") != -1) || (className.indexOf("class") != -1)) {
-      if (className.equals("boolean.class") || className.equals("Boolean.TYPE")) {
-        return Boolean.TYPE;
-      } else if (className.equals("byte.class") || className.equals("Byte.TYPE")) {
-        return Byte.TYPE;
-      } else if (className.equals("short.class") || className.equals("Short.TYPE")) {
-        return Short.TYPE;
-      } else if (className.equals("char.class") || className.equals("Char.TYPE")) {
-        return java.lang.Character.TYPE;
-      } else if (className.equals("int.class") || className.equals("Integer.TYPE")) {
-        return Integer.TYPE;
-      } else if (className.equals("long.class") || className.equals("Long.TYPE")) {
-        return Long.TYPE;
-      } else if (className.equals("float.class") || className.equals("Float.TYPE")) {
-        return Float.TYPE;
-      } else if (className.equals("double.class") || className.equals("Double.TYPE")) {
-        return Double.TYPE;
-      }
-    } else {
-     return CarResources.getInstance().getClassLoader().loadClass(className);
-    }
-    return null;
-  }
-
-  class ServiceItem {
-    StringBuffer name = new StringBuffer("");
-    StringBuffer javaClass = new StringBuffer("");
-    StringBuffer jndiName = new StringBuffer("");
-    StringBuffer startMethod = new StringBuffer("");
-    StringBuffer methodType = new StringBuffer("");
-    List argList;
-
-    public void setName (String svcName) { name.append(svcName); }
-    public String getName () { return name.toString(); }
-
-    public void setJavaClass (String svcClass) { javaClass.append(svcClass); }
-    public String getJavaClass () { return javaClass.toString(); }
-
-    public void setStartMethod (String methodName) { startMethod.append(methodName); }
-    public String getStartMethod () { return startMethod.toString(); }
-
-    public void setJndiName (String name) { this.jndiName.append(name); }
-    public String getJndiName () { return jndiName.toString(); }
-
-    public void setMethodType(String type) { methodType.append(type); }
-
-    public boolean isStatic() { return (methodType.length() > 0); }
-
-    public void addArgument (Argument argItem) {
-     if (argList == null)
-       argList = new ArrayList();
-
-     argList.add(argItem);
-    }
-
-    public Object[] getArguments() throws Exception {
-     Object[] args;
-
-     if (argList != null) {
-       args = new Object[argList.size()];
-       for (int i=0; i < argList.size(); i++) {
-         Argument argItem = (Argument)argList.get(i);
-         args[i] = argItem.getValue();
-       }
-     }
-     else
-       args = new Object[0];
-
-     return args;
-    }
-
-    public Class[] getArgumentClasses() throws Exception {
-     Class[] classNames = null;
-
-     if (argList != null) {
-       classNames = new Class[argList.size()];
-
-       for (int i=0; i < argList.size(); i++) {
-         Argument argItem = (Argument)argList.get(i);
-         String className = argItem.getDataType();
-
-         if (argItem.getArray()) {
-           classNames[i] = Array.newInstance(getClassObject(className), 1).getClass();
-         } else {
-           classNames[i] = getClassObject(className);
-         }
-       }
-     }
-
-     return classNames;
-    }
-  }
-
-  class Argument {
-    String datatype;
-    boolean array;
-    ArrayList values = new ArrayList(); // when array=true, there may be more than one value
-
-    public void addValue (String argValue) { values.add(argValue); }
-    public String getDataType() { return datatype; }
-    public void setDataType(String argDataType) { datatype = argDataType; }
-    public boolean getArray() { return array; }
-    public void setArray(boolean b) {array = b; }
-
-    public Object getValue() throws Exception {
-      Object value = null;
-      if (array) {
-        value = Array.newInstance(getClassObject(datatype), values.size());
-        for (int i = 0; i < values.size(); i++) {
-          Array.set(value, i, values.get(i));
+            catch (final Exception ex) {
+                throw new PortalException("Failed to start external portal " + "services in CAR descriptors.", ex);
+            }
         }
-      } else {
-        value = getValue (datatype, (String)values.get(0));
-      }
-      return value;
     }
 
-    private Object getValue (String className, String value) throws Exception {
-      if ((className.indexOf("TYPE") != -1) || (className.indexOf("class") != -1)) {
-        try {
-          if (className.equals("boolean.class") || className.equals("BOOLEAN.TYPE")) {
-            return new Boolean(value);
-          } else if (className.equals("byte.class") || className.equals("Byte.TYPE")) {
-            return new Byte(value);
-          } else if (className.equals("short.class") || className.equals("Short.TYPE")) {
-            return new Short(value);
-          } else if (className.equals("char.class") || className.equals("Char.TYPE")) {
-            return new java.lang.Character(value.charAt(0));
-          } else if (className.equals("int.class") || className.equals("Integer.TYPE")) {
-            return new Integer(value);
-          } else if (className.equals("long.class") || className.equals("Long.TYPE")) {
-            return new Long(value);
-          } else if (className.equals("float.class") || className.equals("Float.TYPE")) {
-            return new Float(value);
-          } else if (className.equals("double.class") || className.equals("Double.TYPE")) {
-            return new Double(value);
-          }
-        } catch (NumberFormatException nfe) {
-          outputMessage("Cannot convert " + value + " to declared datatype class " + className);
+    protected SAXParser createParser() throws Exception {
+        final SAXParserFactory factory = SAXParserFactory.newInstance();
+        return factory.newSAXParser();
+    }
+
+    /**
+     * Controls output of ExternalServices.
+     * @param msg a string to output
+     */
+    protected void outputMessage(String msg) {
+        System.out.println("External services: " + msg);
+        log.info("External services: " + msg);
+    }
+
+    /**
+     * Returns the appropriate class for the given class name.  Checks to see
+     * whether the class belongs to a primitive data type or a Java Object.
+     * @param className - Name of the class. Primitive datatypes must be specified
+     *                    as xxx.class or Xxxx.TYPE. (e.g. int.class or Integer.TYPE).
+     */
+    public static Class<?> getClassObject(String className) throws Exception {
+        if (className.indexOf("TYPE") != -1 || className.indexOf("class") != -1) {
+            if (className.equals("boolean.class") || className.equals("Boolean.TYPE")) {
+                return Boolean.TYPE;
+            }
+            else if (className.equals("byte.class") || className.equals("Byte.TYPE")) {
+                return Byte.TYPE;
+            }
+            else if (className.equals("short.class") || className.equals("Short.TYPE")) {
+                return Short.TYPE;
+            }
+            else if (className.equals("char.class") || className.equals("Char.TYPE")) {
+                return java.lang.Character.TYPE;
+            }
+            else if (className.equals("int.class") || className.equals("Integer.TYPE")) {
+                return Integer.TYPE;
+            }
+            else if (className.equals("long.class") || className.equals("Long.TYPE")) {
+                return Long.TYPE;
+            }
+            else if (className.equals("float.class") || className.equals("Float.TYPE")) {
+                return Float.TYPE;
+            }
+            else if (className.equals("double.class") || className.equals("Double.TYPE")) {
+                return Double.TYPE;
+            }
         }
-      } else {
-        return value;
-      }
-      return null;
-    }
-  }
-
-  class ServiceHandler extends org.xml.sax.helpers.DefaultHandler {
-    ServiceItem svcItem;
-    String elementName;
-    Argument argItem;
-    boolean argProcessing = false;
-    boolean jndiNameporcessing=false;
-
-    public void startElement (String namespaceURI, String localName, String qName, Attributes atts) {
-      elementName = qName;
-      if (qName.equals("service")) {
-        svcItem = new ServiceItem();
-      } else if (qName.equals("method")) {
-        svcItem.setMethodType(atts.getValue("type"));
-      } else if (qName.equals("arguments")) {
-        argProcessing = true;
-      } else if (qName.equals("argitem")) {
-        argItem = new Argument();
-      } else if (qName.equals("datatype")) {
-        String array = atts.getValue("array");
-        argItem.setArray(array != null && array.equals("true"));
-      }
+        else {
+            return CarResources.getInstance().getClassLoader().loadClass(className);
+        }
+        return null;
     }
 
-    public void endElement (String namespaceURI, String localName, String qName) {
-      elementName = null;  // The element has ended.  Null it.
+    class ServiceItem {
+        StringBuffer name = new StringBuffer("");
+        StringBuffer javaClass = new StringBuffer("");
+        StringBuffer jndiName = new StringBuffer("");
+        StringBuffer startMethod = new StringBuffer("");
+        StringBuffer methodType = new StringBuffer("");
+        List<Argument> argList;
 
-      if (qName.equals("service")) {
-        String javaClass = svcItem.getJavaClass();
-        Class[] classNames = null;
-        Object[] args = null;
-        Class svcClass = null;
-
-        try {
-          svcClass   = CarResources.getInstance()
-              .getClassLoader().loadClass(javaClass);
-          args       = svcItem.getArguments();
-          classNames = svcItem.getArgumentClasses();
-        } catch (java.lang.ClassNotFoundException cnfe) {
-          outputMessage("Class not found - " + cnfe.getMessage());
-          return;
-        } catch (Exception e) {
-          outputMessage("The service \"" + svcItem.getName() + "\" FAILED TO START.");
-          return;
+        public void setName(String svcName) {
+            this.name.append(svcName);
         }
 
-        try {
-            Object obj=null;
-            Object returnObject=null;
-
-          // check if any method is specified
-          if(svcItem.getStartMethod().length() > 0) {
-              Method startMethod = svcClass.getMethod(svcItem.getStartMethod(), classNames);
-              if(Modifier.isStatic(startMethod.getModifiers())) {
-                  // no need to instantiate an object
-                  returnObject=startMethod.invoke(null,args);
-              } else {
-                  // instantiate
-                  obj = svcClass.newInstance();
-                  returnObject=startMethod.invoke(obj,args);
-              }
-              outputMessage("initialized \"" + svcItem.getName() + "\"");
-          }
-
-          // check if jndi binding needed
-          if(svcItem.getJndiName().length() > 0) {
-              if(returnObject!=null) {
-                  // a non-void method was specified
-                  // in the service description, bind
-                  // returned object
-                  servicesContext.bind(svcItem.getJndiName(), returnObject);
-                  outputMessage("bound intialization result for service \"" + svcItem.getName() + "\"");
-              } else {
-                  if(obj==null) {
-                      // instantiate
-                      obj = svcClass.newInstance();
-                  }
-                  servicesContext.bind(svcItem.getJndiName(), obj);
-                  outputMessage("bound class instance for service \"" + svcItem.getName() + "\"");
-              }
-          }
-          return;
-        } catch (java.lang.NoSuchMethodException nsme) {
-          outputMessage("Method not found - " + nsme.getMessage());
-        } catch (java.lang.Exception ex) {
-          outputMessage("General Exception - " + ex.getMessage());
-          ex.printStackTrace();
+        public String getName() {
+            return this.name.toString();
         }
-        outputMessage("The service \"" + svcItem.getName() + "\" FAILED TO START.");
 
-      } else if (qName.equals("arguments")) {
-        argProcessing = false;
-      } else if (qName.equals("argitem")) {
-        svcItem.addArgument(argItem);
-        argItem = null;
-      }
+        public void setJavaClass(String svcClass) {
+            this.javaClass.append(svcClass);
+        }
+
+        public String getJavaClass() {
+            return this.javaClass.toString();
+        }
+
+        public void setStartMethod(String methodName) {
+            this.startMethod.append(methodName);
+        }
+
+        public String getStartMethod() {
+            return this.startMethod.toString();
+        }
+
+        public void setJndiName(String name) {
+            this.jndiName.append(name);
+        }
+
+        public String getJndiName() {
+            return this.jndiName.toString();
+        }
+
+        public void setMethodType(String type) {
+            this.methodType.append(type);
+        }
+
+        public boolean isStatic() {
+            return this.methodType.length() > 0;
+        }
+
+        public void addArgument(Argument argItem) {
+            if (this.argList == null) {
+                this.argList = new ArrayList<Argument>();
+            }
+
+            this.argList.add(argItem);
+        }
+
+        public Object[] getArguments() throws Exception {
+            Object[] args;
+
+            if (this.argList != null) {
+                args = new Object[this.argList.size()];
+                for (int i = 0; i < this.argList.size(); i++) {
+                    final Argument argItem = this.argList.get(i);
+                    args[i] = argItem.getValue();
+                }
+            }
+            else {
+                args = new Object[0];
+            }
+
+            return args;
+        }
+
+        public Class<?>[] getArgumentClasses() throws Exception {
+            Class<?>[] classNames = null;
+
+            if (this.argList != null) {
+                classNames = new Class[this.argList.size()];
+
+                for (int i = 0; i < this.argList.size(); i++) {
+                    final Argument argItem = this.argList.get(i);
+                    final String className = argItem.getDataType();
+
+                    if (argItem.getArray()) {
+                        classNames[i] = Array.newInstance(getClassObject(className), 1).getClass();
+                    }
+                    else {
+                        classNames[i] = getClassObject(className);
+                    }
+                }
+            }
+
+            return classNames;
+        }
     }
 
-    public void characters (char ch[], int start, int length) {
-      if (elementName == null)
-        return;
+    class Argument {
+        String datatype;
+        boolean array;
+        ArrayList<String> values = new ArrayList<String>(); // when array=true, there may be more than one value
 
-      String chValue = new String(ch, start, length);
-
-      if (elementName.equals("name")) {
-        svcItem.setName(chValue);
-      } else if (elementName.equals("class")) {
-        svcItem.setJavaClass(chValue);
-      } else if (elementName.equals("jndi_name")) {
-        svcItem.setJndiName(chValue);
-      } else if (elementName.equals("method")) {
-        svcItem.setStartMethod(chValue);
-      } else if (elementName.equals("datatype") && argProcessing) {
-          argItem.setDataType(chValue);
-      } else if (elementName.equals("value")) {
-        if (argProcessing) {
-          argItem.addValue(chValue);
+        public void addValue(String argValue) {
+            this.values.add(argValue);
         }
-      }
+
+        public String getDataType() {
+            return this.datatype;
+        }
+
+        public void setDataType(String argDataType) {
+            this.datatype = argDataType;
+        }
+
+        public boolean getArray() {
+            return this.array;
+        }
+
+        public void setArray(boolean b) {
+            this.array = b;
+        }
+
+        public Object getValue() throws Exception {
+            Object value = null;
+            if (this.array) {
+                value = Array.newInstance(getClassObject(this.datatype), this.values.size());
+                for (int i = 0; i < this.values.size(); i++) {
+                    Array.set(value, i, this.values.get(i));
+                }
+            }
+            else {
+                value = this.getValue(this.datatype, this.values.get(0));
+            }
+            return value;
+        }
+
+        private Object getValue(String className, String value) throws Exception {
+            if (className.indexOf("TYPE") != -1 || className.indexOf("class") != -1) {
+                try {
+                    if (className.equals("boolean.class") || className.equals("BOOLEAN.TYPE")) {
+                        return new Boolean(value);
+                    }
+                    else if (className.equals("byte.class") || className.equals("Byte.TYPE")) {
+                        return new Byte(value);
+                    }
+                    else if (className.equals("short.class") || className.equals("Short.TYPE")) {
+                        return new Short(value);
+                    }
+                    else if (className.equals("char.class") || className.equals("Char.TYPE")) {
+                        return new java.lang.Character(value.charAt(0));
+                    }
+                    else if (className.equals("int.class") || className.equals("Integer.TYPE")) {
+                        return new Integer(value);
+                    }
+                    else if (className.equals("long.class") || className.equals("Long.TYPE")) {
+                        return new Long(value);
+                    }
+                    else if (className.equals("float.class") || className.equals("Float.TYPE")) {
+                        return new Float(value);
+                    }
+                    else if (className.equals("double.class") || className.equals("Double.TYPE")) {
+                        return new Double(value);
+                    }
+                }
+                catch (final NumberFormatException nfe) {
+                    ExternalServices.this.outputMessage("Cannot convert " + value + " to declared datatype class "
+                            + className);
+                }
+            }
+            else {
+                return value;
+            }
+            return null;
+        }
     }
-  }
+
+    class ServiceHandler extends org.xml.sax.helpers.DefaultHandler {
+        ServiceItem svcItem;
+        String elementName;
+        Argument argItem;
+        boolean argProcessing = false;
+        boolean jndiNameporcessing = false;
+
+        @Override
+        public void startElement(String namespaceURI, String localName, String qName, Attributes atts) {
+            this.elementName = qName;
+            if (qName.equals("service")) {
+                this.svcItem = new ServiceItem();
+            }
+            else if (qName.equals("method")) {
+                this.svcItem.setMethodType(atts.getValue("type"));
+            }
+            else if (qName.equals("arguments")) {
+                this.argProcessing = true;
+            }
+            else if (qName.equals("argitem")) {
+                this.argItem = new Argument();
+            }
+            else if (qName.equals("datatype")) {
+                final String array = atts.getValue("array");
+                this.argItem.setArray(array != null && array.equals("true"));
+            }
+        }
+
+        @Override
+        public void endElement(String namespaceURI, String localName, String qName) {
+            this.elementName = null; // The element has ended.  Null it.
+
+            if (qName.equals("service")) {
+                final String javaClass = this.svcItem.getJavaClass();
+                Class<?>[] classNames = null;
+                Object[] args = null;
+                Class<?> svcClass = null;
+
+                try {
+                    svcClass = CarResources.getInstance().getClassLoader().loadClass(javaClass);
+                    args = this.svcItem.getArguments();
+                    classNames = this.svcItem.getArgumentClasses();
+                }
+                catch (final java.lang.ClassNotFoundException cnfe) {
+                    ExternalServices.this.outputMessage("Class not found - " + cnfe.getMessage());
+                    return;
+                }
+                catch (final Exception e) {
+                    ExternalServices.this.outputMessage("The service \"" + this.svcItem.getName()
+                            + "\" FAILED TO START.");
+                    return;
+                }
+
+                try {
+                    Object obj = null;
+                    Object returnObject = null;
+
+                    // check if any method is specified
+                    if (this.svcItem.getStartMethod().length() > 0) {
+                        final Method startMethod = svcClass.getMethod(this.svcItem.getStartMethod(), classNames);
+                        if (Modifier.isStatic(startMethod.getModifiers())) {
+                            // no need to instantiate an object
+                            returnObject = startMethod.invoke(null, args);
+                        }
+                        else {
+                            // instantiate
+                            obj = svcClass.newInstance();
+                            returnObject = startMethod.invoke(obj, args);
+                        }
+                        ExternalServices.this.outputMessage("initialized \"" + this.svcItem.getName() + "\"");
+                    }
+
+                    // check if jndi binding needed
+                    if (this.svcItem.getJndiName().length() > 0) {
+                        if (returnObject != null) {
+                            // a non-void method was specified
+                            // in the service description, bind
+                            // returned object
+                            ExternalServices.this.servicesContext.bind(this.svcItem.getJndiName(), returnObject);
+                            ExternalServices.this.outputMessage("bound intialization result for service \""
+                                    + this.svcItem.getName() + "\"");
+                        }
+                        else {
+                            if (obj == null) {
+                                // instantiate
+                                obj = svcClass.newInstance();
+                            }
+                            ExternalServices.this.servicesContext.bind(this.svcItem.getJndiName(), obj);
+                            ExternalServices.this.outputMessage("bound class instance for service \""
+                                    + this.svcItem.getName() + "\"");
+                        }
+                    }
+                    return;
+                }
+                catch (final java.lang.NoSuchMethodException nsme) {
+                    ExternalServices.this.outputMessage("Method not found - " + nsme.getMessage());
+                }
+                catch (final java.lang.Exception ex) {
+                    ExternalServices.this.outputMessage("General Exception - " + ex.getMessage());
+                    ex.printStackTrace();
+                }
+                ExternalServices.this.outputMessage("The service \"" + this.svcItem.getName() + "\" FAILED TO START.");
+
+            }
+            else if (qName.equals("arguments")) {
+                this.argProcessing = false;
+            }
+            else if (qName.equals("argitem")) {
+                this.svcItem.addArgument(this.argItem);
+                this.argItem = null;
+            }
+        }
+
+        @Override
+        public void characters(char ch[], int start, int length) {
+            if (this.elementName == null) {
+                return;
+            }
+
+            final String chValue = new String(ch, start, length);
+
+            if (this.elementName.equals("name")) {
+                this.svcItem.setName(chValue);
+            }
+            else if (this.elementName.equals("class")) {
+                this.svcItem.setJavaClass(chValue);
+            }
+            else if (this.elementName.equals("jndi_name")) {
+                this.svcItem.setJndiName(chValue);
+            }
+            else if (this.elementName.equals("method")) {
+                this.svcItem.setStartMethod(chValue);
+            }
+            else if (this.elementName.equals("datatype") && this.argProcessing) {
+                this.argItem.setDataType(chValue);
+            }
+            else if (this.elementName.equals("value")) {
+                if (this.argProcessing) {
+                    this.argItem.addValue(chValue);
+                }
+            }
+        }
+    }
 }
-
-
-
-
