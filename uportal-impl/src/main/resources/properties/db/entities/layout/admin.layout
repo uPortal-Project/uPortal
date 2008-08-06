@@ -4,6 +4,7 @@
     <header unremovable="Y" immutable="Y" hidden="N" name="Header folder">
       <channel fname="header"/>
       <channel fname="portal/login/general"/>
+      <channel fname="fragment-admin"/>
     </header>
     <tab unremovable="N" immutable="N" hidden="N" name="Admin Tools">
       <column unremovable="N" immutable="N" hidden="N" name="Column">

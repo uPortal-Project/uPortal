@@ -1,0 +1,13 @@
+
+<permission script="classpath://org/jasig/portal/io/import-permission_v2-6.crn">
+  <owner>system</owner>
+  <principal-type>org.jasig.portal.groups.IEntityGroup</principal-type>
+  <principal> 
+    <group>Portal Administrators</group> 
+  </principal>
+  <activity>IMPERSONATE</activity>
+  <target> 
+    <literal>.*</literal> 
+  </target>
+  <permission-type>GRANT</permission-type>
+</permission>

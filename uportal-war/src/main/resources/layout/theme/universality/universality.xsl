@@ -609,6 +609,11 @@
     <xsl:call-template name="web.search"/>
     <!-- Web Search -->
     
+    <!-- Fragment Administration -->
+    <xsl:copy-of select="//channel[@fname = 'fragment-admin']"/>
+    <xsl:copy-of select="//channel[@fname = 'fragment-admin-exit']"/>
+    <!-- Login Channel -->
+
     <!-- Quicklinks -->
     <xsl:call-template name="quicklinks"/>
     <!-- Quicklinks -->

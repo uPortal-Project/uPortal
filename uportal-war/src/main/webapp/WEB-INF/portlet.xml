@@ -43,4 +43,51 @@
             <title>Attribute Swapper Portlet</title>
         </portlet-info>
     </portlet>
+    
+    <portlet> 
+        <portlet-name>ExitFragmentAdministration</portlet-name>  
+        <portlet-class>org.danann.cernunnos.runtime.web.CernunnosPortlet</portlet-class>
+        <init-param>
+            <name>contextConfigLocation</name>
+            <value>/WEB-INF/classes/properties/contexts/portlet/ExitFragmentAdministration-portlet.xml</value>
+        </init-param>
+        <expiration-cache>-1</expiration-cache>
+        <supports> 
+            <mime-type>text/html</mime-type>  
+            <portlet-mode>view</portlet-mode> 
+        </supports>  
+        <portlet-info> 
+            <title>ExitFragmentAdministration</title> 
+        </portlet-info> 
+        <portlet-preferences> 
+            <preference> 
+                <name>loginUrl</name>  
+                <value>Login</value> 
+            </preference> 
+        </portlet-preferences> 
+    </portlet>
+
+    <portlet> 
+        <portlet-name>FragmentAdministration</portlet-name>  
+        <portlet-class>org.danann.cernunnos.runtime.web.CernunnosPortlet</portlet-class>
+        <init-param>
+            <name>contextConfigLocation</name>
+            <value>/WEB-INF/classes/properties/contexts/portlet/FragmentAdministration-portlet.xml</value>
+        </init-param>
+        <expiration-cache>-1</expiration-cache>
+        <supports> 
+            <mime-type>text/html</mime-type>
+            <portlet-mode>view</portlet-mode>
+        </supports>
+        <portlet-info>
+            <title>FragmentAdministration</title> 
+        </portlet-info>
+        <portlet-preferences> 
+            <preference>
+                <name>loginUrl</name>  
+                <value>Login</value>
+            </preference>
+        </portlet-preferences> 
+    </portlet>
+
 </portlet-app>

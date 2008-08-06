@@ -1,0 +1,7 @@
+<with>
+    <attribute key="loginUrl">${jexl(WebAttributes.REQUEST.getPreferences().getValue('loginUrl', 'Login'))}</attribute>
+    <attribute key="USERNAME">${jexl(WebAttributes.REQUEST.getRemoteUser())}</attribute>
+    <subtasks>
+        <request-dispatcher resource="/WEB-INF/jsp/ExitFragmentAdministration/index.jsp"/>
+    </subtasks>
+</with>

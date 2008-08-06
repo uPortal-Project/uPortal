@@ -1,0 +1,23 @@
+<with>
+    <attribute key="loginUrl">${jexl(WebAttributes.REQUEST.getPreferences().getValue('loginUrl', 'Login'))}</attribute>
+    <attribute key="USERNAME">${jexl(WebAttributes.REQUEST.getRemoteUser())}</attribute>
+    <attribute key="TARGET_USER">${jexl(WebAttributes.REQUEST.getParameter('impersonateUser'))}</attribute>
+    <attribute key="REQ">${WebAttributes.REQUEST}</attribute>
+    <attribute key="RESP">${WebAttributes.RESPONSE}</attribute>
+    <subtasks>
+        <groovy>
+            <script>
+                def authServ = org.jasig.portal.security.provider.AuthorizationImpl.singleton();
+                def principal = authServ.newPrincipal('${USERNAME}', org.jasig.portal.security.IPerson.class);
+                def grants = authServ.getAllPermissionsForPrincipal(principal, null, 'IMPERSONATE', null);
+                for (g in grants) {
+                    if (g.getType().equals(org.jasig.portal.security.IPermission.PERMISSION_TYPE_GRANT) &amp;&amp; '${TARGET_USER}'.matches(g.getTarget())) {
+                        REQ.getPortletSession().setAttribute(org.jasig.portal.LoginServlet.SWAP_TARGET_UID, '${TARGET_USER}', javax.portlet.PortletSession.APPLICATION_SCOPE);
+                        RESP.sendRedirect('${loginUrl}');
+                        break;
+                    }
+                }
+            </script>
+        </groovy>
+    </subtasks>
+</with>

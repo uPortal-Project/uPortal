@@ -1,0 +1,35 @@
+
+<channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-0.crn">
+  <title>Fragment Administration</title>
+  <name>Fragment Administration</name>
+  <fname>fragment-admin</fname>
+  <desc>Portlet for Fragment Administration in the header</desc>
+  <type>Portlet</type>
+  <class>org.jasig.portal.channels.portlet.CSpringPortletAdaptor</class>
+  <timeout>50000</timeout>
+  <hasedit>N</hasedit>
+  <hashelp>N</hashelp>
+  <hasabout>N</hasabout>
+  <secure>N</secure>
+  <locale>en_US</locale>
+  <categories>
+    <category>Applications</category>
+  </categories>
+  <groups>
+    <group>Portal Administrators</group>
+  </groups>
+  <parameters>
+    <parameter> 
+      <name>portletApplicationId</name>  
+      <value>/uPortal</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+    <parameter> 
+      <name>portletName</name>  
+      <value>FragmentAdministration</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+  </parameters>
+</channel-definition>
