@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.jasig.portal.portlets-overlay</groupId>
         <artifactId>uportal-portlets-overlay-parent</artifactId>
-        <version>3.1.0-M1</version>
+        <version>3.1.0-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -199,7 +199,7 @@
                 <configuration>
                     <webResources>
                         <resource>
-                            <directory>src/main/webapp/WEB-INF</directory>
+                            <directory>{basedir}/src/main/webapp/WEB-INF</directory>
                             <targetPath>WEB-INF</targetPath>
                             <filtering>true</filtering>
                         </resource>
