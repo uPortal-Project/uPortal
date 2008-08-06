@@ -801,7 +801,6 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>jdepend-maven-plugin</artifactId>
-                <version>${jdepend-maven-plugin.version}</version>
             </plugin>
         </plugins>
     </reporting>
