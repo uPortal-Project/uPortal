@@ -50,7 +50,7 @@
 		font-family: Arial;
 	}
 	
-	table, table th, table tr, table td 
+	table, table tr, table td
 	{
 		border: none;
 	}
@@ -359,6 +359,16 @@
 		background-color: #4348b0;
 	}
 
+   .portal-page-column-focused .portlet-controls
+   {
+       background-color:transparent;
+   }
+   
+   .portal-page-column-focused .portlet-control:hover
+   {
+       background-color:transparent;
+   }
+   
 	.dashboard .portlet-content 
 	{
 		background-color: #fff;

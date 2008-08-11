@@ -215,30 +215,18 @@
    | Template contents can be any valid XSL or XHTML.
   -->
   <xsl:template name="page.css">
-    <link media="print" type="text/css" href="{$SKIN_PATH}/print.css" rel="stylesheet"/>
     <link media="all" type="text/css" href="{$MEDIA_PATH}/common/reset-fonts-grids.css" rel="stylesheet"/>
     <link media="all" type="text/css" href="{$MEDIA_PATH}/common/base-min.css" rel="stylesheet"/>
-    <link media="all" type="text/css" href="{$SKIN_PATH}/layout.css" rel="stylesheet"/>
-    <link media="all" type="text/css" href="{$SKIN_PATH}/jsr168_portlet_spec.css" rel="stylesheet"/>
     <link media="all" type="text/css" href="{$SKIN_PATH}/{$SKIN}.css" rel="stylesheet"/>
-    <!-- uPortal print CSS -->
      
     <!-- Yahoo! User Interface Library (YUI) CSS to establish a common, cross-browser base rendering.  See http://developer.yahoo.com/yui/ for more details. --> 
     
-    
-    <!-- uPortal theme/layout CSS -->
-    
     <!-- uPortal skin CSS -->
-    
     
     <xsl:if test="$USE_AJAX='true' or $USE_FLYOUT_MENUS='true'">
      <link rel="stylesheet" href="{$MEDIA_PATH}/common/javascript/jquery/themes/{$SKIN}/jqueryui.all.css" type="text/css" media="screen" title="Flora (Default)"></link>
     </xsl:if>
     
-    <!-- Add Conditional Comments for IE to load IE specific CSS -->
-		<xsl:comment>[if IE]&gt; 
-		&lt;style type="text/css"&gt;@import url("<xsl:value-of select="$SKIN_PATH" />/ie.css");&lt;/style&gt; 
-		&lt;![endif]</xsl:comment>
   </xsl:template>
   <!-- ======================================== -->
   
