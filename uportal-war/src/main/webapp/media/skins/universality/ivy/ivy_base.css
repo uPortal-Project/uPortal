@@ -740,3 +740,41 @@
 	#changeColumns tr td {
 		padding: 5px;
 	}
+
+		portal-page-column-inner {height:100%;}
+/* Locked portlet styles */
+.portal-page-column-inner .locked .portlet-top {display:none;}
+.portal-page-column-inner .locked .portlet-bottom {display:none;}
+.portal-page-column-inner .locked .portlet-toolbar {background-color:#ddd;background-image:none;border:1px solid #999;}
+.portal-page-column-inner .locked .portlet-toolbar a {color:#333;}
+.portal-page-column-inner .locked .portlet-toolbar h2 {background:transparent url("../../icons/lock.png") 0 3px no-repeat;padding-left:20px;}
+.portal-page-column-inner .locked .portlet-controls {background-color:transparent;}
+.dashboard .portal-page-column-inner .locked .portlet-content {border:1px solid #999;}
+
+
+/* Fluid Layout Customizer styles */
+.orderable-hover{cursor:move;}
+.orderable-dragging{filter:alpha(opacity=50); opacity:.5;}
+.orderable-dragging-mouse{display:none;}
+.orderable-selected{}
+.orderable-avatar {width:auto; filter:alpha(opacity=50); opacity:.5;}
+div .orderable-drop-marker{height:200px !important; background-color: #99FF99; border:1px dashed #00CC00; margin:1em 0em;}
+.orderable-avatar-clone {height:200px; width:400px; filter:alpha(opacity=60); opacity:.6;}
+.drop-warning {position:absolute; top:50px; left:10px; border:2px solid red; background-color:#ffd7d7; display:none; padding:10px; margin:5px; z-index:65535;}
+.orderable-drop-marker-box {height:200px !important; width:100%; border:2px dashed red; margin-bottom:1em; background-color:#ffd7d7;}
+.orderable-mouse-drag {display: none;}
+#portalDropWarning{background-color:#FFCCCC; border:2px solid #FF0000; color:#FF0000; display:none; position:absolute; top:50px; left:10px;}
+#portalDropWarning p{margin:0em; padding:0.5em 1em;}
+
+
+/* Fluid Layout Customizer styles
+.orderable-hover{cursor:move;}
+.orderable-dragging{width:auto; opacity:.2; filter:alpha(opacity=20);}
+.orderable-selected{border:2px dashed #000;}
+.orderable-avatar {height:25px; width:50px; border:1px solid #666; background-color:#666; z-index:65535;}
+div .orderable-drop-marker{height:10px !important; background-color:#fa7019;}
+.orderable-avatar-clone {height:200px; width:400px; filter:alpha(opacity=60); opacity:.6;}
+.drop-warning {position:absolute; top:50px; left:10px; border:2px solid red; background-color:#ffd7d7; display:none; padding:10px; margin:5px; z-index:65535;}
+.orderable-drop-marker-box {height:200px !important; width:100%; border:2px dashed red; margin-bottom:1em; background-color:#ffd7d7;}
+.orderable-mouse-drag {display: none;} */
+

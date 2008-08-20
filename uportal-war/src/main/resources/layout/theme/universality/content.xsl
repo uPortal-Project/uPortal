@@ -28,7 +28,10 @@
     <xsl:if test="not(./parameter[@name='removeFromLayout']/@value='true') and not(./parameter[@name='PORTLET.removeFromLayout']/@value='true')">
     
     <!-- ****** PORTLET CONTAINER ****** -->
-    <div id="portlet_{@ID}" class="portlet-container {@fname}"> <!-- Main portlet container.  The unique ID is needed for drag and drop.  The portlet fname is also written into the class attribute to allow for unique rendering of the portlet presentation. -->
+    <xsl:variable name="portletClassName">
+      portlet-container <xsl:value-of select="@fname"/><xsl:if test="@dlm:moveAllowed='false'"> locked</xsl:if> 
+    </xsl:variable>
+    <div id="portlet_{@ID}" class="{$portletClassName}"> <!-- Main portlet container.  The unique ID is needed for drag and drop.  The portlet fname is also written into the class attribute to allow for unique rendering of the portlet presentation. -->
       <div class="portlet-container-inner">
     
         <!-- ****** PORTLET TOP BLOCK ****** -->

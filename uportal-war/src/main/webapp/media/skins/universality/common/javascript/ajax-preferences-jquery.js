@@ -1,5 +1,10 @@
 var channelXml,skinXml;
-
+var grabHandle = function (item) {
+    // the handle is the toolbar. The toolbar id is the same as the portlet id, with the
+    // "portlet_" prefix replaced by "toolbar_".
+    return jQuery("[id=toolbar_" + item.id.split ("_")[1] + "]");
+};
+               
 // Initialization tasks for non-focused mode
 function initportal() {
 
@@ -8,17 +13,19 @@ function initportal() {
 	$("#layoutDialogLink").click(initializeLayoutMenu);
 	$("#skinDialogLink").click(initializeSkinMenu);
 
-	// initialize portlet drag and drop
-    $('div[@id*=inner-column_]').each(function(i){
-		$(this).Sortable({
-			accept : 'movable',
-			helperclass : 'dropborder',
-			opacity : 0.5,
-			handle : 'div.portlet-toolbar',
-			onStop : movePortlet
-		});
-    });
-    
+    var options = {
+         cssClassNames: {
+             mouseDrag: "orderable-dragging-mouse"
+         },
+         grabHandle: grabHandle,
+         dropWarningId: "#portalDropWarning"
+     };
+     fluid.reorderLayout ("#portalPageBodyColumns", {
+         columns: ".portal-page-column-inner",
+         modules: ".portlet-container ",
+         lockedModules: ".locked"
+     }, movePortlet, options); 
+
     // add onclick events for portlet delete buttons
 	$('a[@id*=removePortlet_]').each(function(i){$(this).click(function(){deletePortlet(this.id.split("_")[1]);return false;});});	
 
@@ -242,22 +249,22 @@ function redoTabs(tabId) {
 	});
 //	fly.closeSubnav(tabId);
 }
-function movePortlet(movedNode, targetNode) {
-	var method = 'insertBefore';
-	var target = null;
-	if ($(this).next('div[@id*=portlet_]').attr('id') != undefined) {
-		target = $(this).next('div[@id*=portlet_]');
-	} else if ($(this).prev('div[@id*=portlet_]').attr('id') != undefined) {
-		target = $(this).prev('div[@id*=portlet_]');
-		method = 'appendAfter';
-	} else {
-		target = $(this).parent();
-	}
-    var columns = $('#portalPageBodyColumns > td[@id*=column_]');
-    for (var i = 0; i < columns.length; i++) {
-        $(columns[i]).attr("width", $(columns[i]).attr("width"));
-    }
-	$.post(preferencesUrl, {action: 'movePortletHere', method: method, elementID: $(target).attr('id').split('_')[1], sourceID: $(this).attr('id').split('_')[1]}, function(xml) { });
+function movePortlet(movedNode) {
+   var method = 'insertBefore';
+   var target = null;
+   if ($(movedNode).nextAll('div[@id*=portlet_]').size() > 0) {
+       target = $(movedNode).nextAll('div[@id*=portlet_]').get(0);
+   } else if ($(movedNode).prevAll('div[@id*=portlet_]').size() > 0) {
+       target = $(movedNode).prevAll('div[@id*=portlet_]').get(0);
+       method = 'appendAfter';
+   } else {
+       target = $(movedNode).parent();
+   }
+   var columns = $('#portalPageBodyColumns > td[@id*=column_]');
+   for (var i = 0; i < columns.length; i++) {
+       $(columns[i]).attr("width", $(columns[i]).attr("width"));
+   }
+   $.post(preferencesUrl, {action: 'movePortletHere', method: method, elementID: $(target).attr('id').split('_')[1], sourceID: $(movedNode).attr('id').split('_')[1]}, function(xml) { });
 }
 
 function addFocusedChannel(form) {

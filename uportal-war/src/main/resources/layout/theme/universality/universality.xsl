@@ -243,20 +243,13 @@
   -->
   <xsl:template name="page.js">
     <xsl:if test="$USE_AJAX='true' or $USE_FLYOUT_MENUS='true'">
-     <script type="text/javascript" src="{$SCRIPT_PATH}/jquery/jquery-1.2.3.min.js"></script>
+      <script type="text/javascript" src="{$SCRIPT_PATH}/jquery/jquery-1.2.6.min.js"></script>
     </xsl:if>
     <xsl:if test="$USE_AJAX='true' and $AUTHENTICATED='true'">
-     <script type="text/javascript" src="{$SCRIPT_PATH}/jquery/jquery.dimensions.js"></script>
-     <script type="text/javascript" src="{$SCRIPT_PATH}/jquery/ui.dialog.js"></script>
-     <script type="text/javascript" src="{$SCRIPT_PATH}/jquery/ui.resizable.js"></script>
-     <script type="text/javascript" src="{$SCRIPT_PATH}/jquery/ui.mouse.js"></script>
-     <script type="text/javascript" src="{$SCRIPT_PATH}/jquery/ui.draggable.js"></script>
-     <script type="text/javascript" src="{$SCRIPT_PATH}/jquery/ui.droppable.js"></script>
-     <script type="text/javascript" src="{$SCRIPT_PATH}/jquery/ui.sortable.js"></script>
-     <script type="text/javascript" src="{$SCRIPT_PATH}/jquery/ui.tabs.js"></script>
-     <script type="text/javascript" src="{$SCRIPT_PATH}/jquery/interface.js"></script>
-     <script type="text/javascript" src="{$SCRIPT_PATH}/ajax-preferences-jquery.js"></script>
-     <script type="text/javascript" src="{$SCRIPT_PATH}/up-channel-browser.js"></script>
+      <script type="text/javascript" src="{$SCRIPT_PATH}/jquery/jquery-ui-portal-1.6b-v1.min.js"></script>
+      <script type="text/javascript" src="{$SCRIPT_PATH}/fluid/Fluid-reorderer-r5393-v1.min.js"></script>
+      <script type="text/javascript" src="{$SCRIPT_PATH}/ajax-preferences-jquery.js"></script>
+      <script type="text/javascript" src="{$SCRIPT_PATH}/up-channel-browser.js"></script>
     </xsl:if>
   </xsl:template>
   
