@@ -70,7 +70,7 @@ public class LPAResetAttribute implements ILayoutProcessingAction
          * name element the locale specific value will be injected during
          * layout rendering.
          */
-        if (! name.equals(Constants.ATT_NAME))
+        if (DistributedLayoutManager.ContextHolder.getLabelPolicy() == null || !name.equals(Constants.ATT_NAME))
         {
             ilfNode.setAttribute(name, fragmentValue);
         }
