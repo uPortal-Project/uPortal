@@ -1,0 +1,158 @@
+ /*
+ * Modfied By: Matt Polizzotti (Unicon)
+ * Date: 06/12/2008
+ *
+ * IE6 VISUAL FIX
+ *
+ * This stylesheet, uportal3_ie6override, is utilized only when IE6 is used
+ * to view uPortal. Primarily, it addresses IE6's rendering of uPortal's 
+ * portlet container, portlet toolbar and icon display. It is important to 
+ * note that IE6 does not support .png transparency. All icons in this 
+ * skin use the .png format. The .png format offers many advantages in terms 
+ * of development time. If an institution or organization wishes to support 
+ * IE6, they will need to convert all .pngs used to a .gif format. All IE6 
+ * specific .gifs should be stored in the media/skins/universality/yourskinname/images 
+ * directory. In short, IE6 specific .gifs should be stored with their associated skin.
+ *
+ * This file overrides style definitions made within uportal3_base.css. 
+ *
+ */
+
+/** portlets **/
+	.portlet-container
+	{
+		_background:#FFF;
+	}
+	
+	.portlet-container-inner{}
+	
+	/* rounded top corners */
+	.portlet-top
+	{
+		_background: #000099 url("images/portlet_corner_topleft_ie6.gif") top left no-repeat;
+	}
+	
+	.portlet-top-inner
+	{
+		_height:3px; 
+		_font-size:0%; 
+		_background: url("images/portlet_corner_topright_ie6.gif") top right no-repeat;
+	}
+	
+	/* toolbar */
+	.portlet-toolbar
+	{
+		_background:none;
+	}
+	
+	.portlet-toolbar a 
+	{
+		_text-decoration: none; 
+		_color: #fff;
+	}
+	
+	.portlet-toolbar h2
+	{
+		_float:left; 
+		_margin:0em 0em .1em .25em; 
+		_background: url("../../icons/application.png") 0 3px no-repeat;
+	}
+	
+	/* toolbar controls */
+	.portlet-controls
+	{
+		_float:right;
+		_padding:0em;
+		_margin:0em;
+	}
+	
+	.portlet-controls .portlet-control
+	{
+		_display:block; 
+		_float:left; 
+		_margin:.2em .3em 0em 0em;
+		_width:16px;
+		_height:16px;
+		_padding:0em;
+	}
+	
+	.portlet-controls .portlet-control span
+	{
+		_font-size:0%;
+		_visibility:hidden;
+		_width:16px;
+		_height:16px;
+	}
+	
+	/* overrides layout.css */
+	.portlet-controls 
+	{
+		_position:relative !important;
+		_top: 0em !important;
+		_right: 0em !important;
+	}
+	
+	/* toolbar icons */
+	.portlet-controls .help 
+	{
+		_background: url("../../icons/help.png") no-repeat;
+	}
+	
+	.portlet-controls .about 
+	{
+		_background: url("../../icons/information.png") no-repeat;
+	}
+	
+	.portlet-controls .edit 
+	{
+		_background: url("../../icons/application_edit.png") no-repeat;
+	}
+	
+	.portlet-controls .print 
+	{
+		_background: url("../../icons/printer.png") no-repeat;
+	}
+	
+	.portlet-controls .focus 
+	{
+		_background: url("../../icons/zoom.png") no-repeat;
+	}
+	
+	.portlet-controls .remove 
+	{
+		_background: url("../../icons/cross.png") no-repeat;
+	}
+	
+	.portlet-controls .add 
+	{
+		_background: url("../../icons/application_add.png") no-repeat;
+	}
+	
+	/* portlet content */
+	.dashboard .portlet-content
+	{
+		_background:#fff; 
+		_border:1px solid #000099;
+	}
+	
+	/* rounded bottom corners */
+	.portlet-bottom
+	{
+		_background: #000099 url("images/portlet_corner_bottomleft_ie6.gif") bottom left no-repeat;
+	}
+	
+	.portlet-bottom-inner
+	{
+		_height: 3px; 
+		_font-size:0%; 
+		_background: url("images/portlet_corner_bottomright_ie6.gif") bottom right no-repeat;
+	}
+	
+/* boxmodel */
+	/* Forces IE6 to correctly clear floats. For more information on this technique please see the article, "How To Clear Floats Without Structural Markup"
+	* located at http://www.positioniseverything.net/easyclearing.html
+	*/
+	.portlet-toolbar:after,.portlet-controls:after{_content:"."; _display:block; _height:0em; _clear:both; _visibility:hidden;}
+	.portlet-toolbar,.portlet-controls{_display:inline-block;}
+	* html .portlet-toolbar,* html .portlet-controls{_height:1%;}
+	.portlet-toolbar,.portlet-controls{_display:block;}

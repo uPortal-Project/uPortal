@@ -1,24 +1,24 @@
-(function($){
+(function(jQuery){
 
     // if the uPortal scope is not availalable, add it
-    $.up = $.up || {};
+    jQuery.up = jQuery.up || {};
 
     // tabs API methods
-    $.fn.channelbrowser = function() {
+    jQuery.fn.channelbrowser = function() {
         var method = typeof arguments[0] == 'string' && arguments[0];
         var args = method && Array.prototype.slice.call(arguments, 1) || arguments;
 
         return this.each(function() {
             if (method) {
-                var channelbrowser = $.data(this, 'up-channelbrowser');
+                var channelbrowser = jQuery.data(this, 'up-channelbrowser');
                 tabs[method].apply(channelbrowser, args);
             } else
-                new $.up.channelbrowser(this, args[0] || {});
+                new jQuery.up.channelbrowser(this, args[0] || {});
         });
     };
 
 
-	$.up.channelbrowser = function(el, options) {
+	jQuery.up.channelbrowser = function(el, options) {
         var self = this;
 
         this.element = el;
@@ -27,29 +27,29 @@
 			handles: new Array()
 		};
 		
-		this.options = $.extend(defaults, options);
+		this.options = jQuery.extend(defaults, options);
 		
-        $(el).bind('setData.up-channelbrowser', function(event, key, value) {
+        jQuery(el).bind('setData.up-channelbrowser', function(event, key, value) {
             self.options[key] = value;
         }).bind('getData.up-channelbrowser', function(event, key) {
             return self.options[key];
         });
 
         // save instance for later
-        $.data(el, 'up-channelbrowser', this);
+        jQuery.data(el, 'up-channelbrowser', this);
         
         this.setup();
         
 	}
 
     // instance methods
-    $.extend($.up.channelbrowser.prototype, {
+    jQuery.extend(jQuery.up.channelbrowser.prototype, {
     	
     	setup: function() {
 
 			var self = this;
 	        for (var i = 0; i < self.options.handles.length; i++) {
-	        	$(self.options.handles[i]).click(function(){self.init();});
+	        	jQuery(self.options.handles[i]).click(function(){self.init();});
 	        }
             	
     	},
@@ -58,39 +58,39 @@
     		var self = this;
 
 	        for (var i = 0; i < self.options.handles.length; i++) {
-	        	$(self.options.handles[i]).unbind('click').click(function(){$(self.element).dialog('open');});
+	        	jQuery(self.options.handles[i]).unbind('click').click(function(){jQuery(self.element).dialog('open');});
 	        }
     		
-			$("#channelAddingTabs > ul").tabs();
-			$(self.element).dialog({height:450, width:500});
-			$("#addChannelSearchTerm").keyup(function(){
-				self.search($(this).attr("value"))
+			jQuery("#channelAddingTabs > ul").tabs();
+			jQuery(self.element).dialog({height:450, width:500});
+			jQuery("#addChannelSearchTerm").keyup(function(){
+				self.search(jQuery(this).attr("value"))
 			});
 			var categorySelect = document.getElementById("categorySelectMenu");
 		
-			$.get(channelListUrl, {}, function(xml) {
+			jQuery.get(channelListUrl, {}, function(xml) {
 				self.channelXml = xml;
 				var matching = new Array();
-				$("category:has(channel)", self.channelXml).each(
+				jQuery("category:has(channel)", self.channelXml).each(
 				    function(){
-				        if (!self.isHidden($(this)))
-				            matching.push($(this));
+				        if (!self.isHidden(jQuery(this)))
+				            matching.push(jQuery(this));
 				    }
 				);
 		        matching.sort(self.sortCategoryResults);
-		        $(matching).each(function(i, val) {
-		        	categorySelect.options[i] = new Option($(this).attr("name"), $(this).attr("ID"));
+		        jQuery(matching).each(function(i, val) {
+		        	categorySelect.options[i] = new Option(jQuery(this).attr("name"), jQuery(this).attr("ID"));
 		        });
 				categorySelect.options[0].selected = true;
 		       	self.chooseCategory(categorySelect.value);
-		       	$(categorySelect).change(function(){self.chooseCategory(this.value)});
+		       	jQuery(categorySelect).change(function(){self.chooseCategory(this.value)});
 		       	
 		       	// remove the loading graphics and message
-		   		$("#channelLoading").css("display", "none");
-		   		$("#categorySelectMenu").css("background-image", "none");
-		   		$("#channelSelectMenu").css("background-image", "none");
-		   		$(self.element).parent().parent()
-		   	      .css("height", $(self.element).parent().height() + 20)
+		   		jQuery("#channelLoading").css("display", "none");
+		   		jQuery("#categorySelectMenu").css("background-image", "none");
+		   		jQuery("#channelSelectMenu").css("background-image", "none");
+		   		jQuery(self.element).parent().parent()
+		   	      .css("height", jQuery(self.element).parent().height() + 20)
 		   	      .css("z-index", 12);
 		   		
 			});
@@ -101,38 +101,38 @@
 		
 			var self = this;
 			var channelSelect = document.getElementById("channelSelectMenu");
-			$("#channelSelectMenu").html("");
+			jQuery("#channelSelectMenu").html("");
 			
 		    var matching = new Array();
-			$("category[ID=" + categoryId + "]", this.channelXml)
+			jQuery("category[ID=" + categoryId + "]", this.channelXml)
 				.find("channel")
-				.each(function(){matching.push($(this))});
+				.each(function(){matching.push(jQuery(this))});
 		    matching.sort(this.sortChannelResults);
 
 			var j = 0;
-		    $(matching).each(function(i, val){
-		    	if (i == 0 || $(this).attr("ID") != $(matching[i-1]).attr("ID")) {
-		    		channelSelect.options[j] = new Option($(this).attr("name"), $(this).attr("ID"));
+		    jQuery(matching).each(function(i, val){
+		    	if (i == 0 || jQuery(this).attr("ID") != jQuery(matching[i-1]).attr("ID")) {
+		    		channelSelect.options[j] = new Option(jQuery(this).attr("name"), jQuery(this).attr("ID"));
 				    j++;
 		    	}
 		    });
 		    channelSelect.options[0].selected = true;
 			this.chooseChannel(channelSelect.value);
-            $(channelSelect).change(function(){self.chooseChannel(this.value);});
+            jQuery(channelSelect).change(function(){self.chooseChannel(this.value);});
 			
 		},
 
 		chooseChannel : function(channelId) {
 			if (channelId.indexOf("_") > -1)
 				channelId = channelId.split("_")[1];
-			var channel = $("channel[ID=" + channelId + "]", this.channelXml);
+			var channel = jQuery("channel[ID=" + channelId + "]", this.channelXml);
 			if (channel.length > 0)
-			    channel = $(channel.get(0)); 
+			    channel = jQuery(channel.get(0)); 
 		
-			$("#channelTitle").text(channel.attr("name"));
-			$("#channelDescription").text(channel.attr("description"));
-			$("#addChannelId").attr("value", channelId);
-			$("#previewChannelLink").unbind("click").click(function(){ 
+			jQuery("#channelTitle").text(channel.attr("name"));
+			jQuery("#channelDescription").text(channel.attr("description"));
+			jQuery("#addChannelId").attr("value", channelId);
+			jQuery("#previewChannelLink").unbind("click").click(function(){ 
 			    window.location = portalUrl + "?uP_fname=" + channel.attr("fname");
 			});
 		
@@ -140,9 +140,9 @@
 		    // user to input values
 		    var parameters = channel.children("parameter[override=yes]");
 		    for (var i = 0; i < parameters.length; i++) {
-		        var input = $(document.createElement("input")).attr("type", "hidden").attr("name", $(parameters[i]).attr("name")).attr("value", $(parameters[i]).attr("value"));
-		        var p = $(document.createElement("p")).append(input);
-		        $("#channelDescription").append(p);
+		        var input = jQuery(document.createElement("input")).attr("type", "hidden").attr("name", jQuery(parameters[i]).attr("name")).attr("value", jQuery(parameters[i]).attr("value"));
+		        var p = jQuery(document.createElement("p")).append(input);
+		        jQuery("#channelDescription").append(p);
 		    }
 		
 		},
@@ -152,21 +152,21 @@
 			if (searchTerm == null || searchTerm == '') return;
 			var self = this;
 		    var matching = new Array();
-			$("channel[name*=" + searchTerm + "]", this.channelXml).each(function(){matching.push($(this))});
-			$("channel[description*=" + searchTerm + "]", this.channelXml).each(function(){matching.push($(this))});
+			jQuery("channel[name*=" + searchTerm + "]", this.channelXml).each(function(){matching.push(jQuery(this))});
+			jQuery("channel[description*=" + searchTerm + "]", this.channelXml).each(function(){matching.push(jQuery(this))});
 			
 		    var searchResults = document.getElementById("addChannelSearchResults");
 		    searchResults.innerHTML = "";
 		
 		    matching.sort(this.sortChannelResults);
-		    $(matching).each(function(i){
-				if ((i == 0 || $(this).attr("ID") != $(matching[i-1]).attr("ID")) && !self.isHidden($(this))) {
-				     $("#addChannelSearchResults").append(
-				     	$(document.createElement('li')).append(
-				     		$(document.createElement('a'))
-				     			.attr("id", $(this).attr("ID")).attr("href", "javascript:;")
+		    jQuery(matching).each(function(i){
+				if ((i == 0 || jQuery(this).attr("ID") != jQuery(matching[i-1]).attr("ID")) && !self.isHidden(jQuery(this))) {
+				     jQuery("#addChannelSearchResults").append(
+				     	jQuery(document.createElement('li')).append(
+				     		jQuery(document.createElement('a'))
+				     			.attr("id", jQuery(this).attr("ID")).attr("href", "javascript:;")
 				     			.click(function(){self.chooseChannel(this.id);})
-				     			.text($(this).attr("name"))
+				     			.text(jQuery(this).attr("name"))
 				     	)
 				     );
 			     }
@@ -197,9 +197,9 @@
 		},
 		
 		isHidden: function(element) {
-		  if ($(element).attr("name") == 'Hidden')
+		  if (jQuery(element).attr("name") == 'Hidden')
 		      return true;
-		  else if ($(element).parents("category[@name='Hidden']").size() > 0)
+		  else if (jQuery(element).parents("category[@name='Hidden']").size() > 0)
 		      return true;
 		  else
 		      return false;
