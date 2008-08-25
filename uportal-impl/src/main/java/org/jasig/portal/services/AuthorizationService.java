@@ -52,7 +52,11 @@ public class AuthorizationService
         try {
           m_Factory = (IAuthorizationServiceFactory)Class.forName(s_factoryName).newInstance();
         } catch (Exception e) {
-          log.error("Failed to instantiate " + s_factoryName,  new PortalSecurityException("Failed to instantiate " + s_factoryName));
+          log.error("Failed to instantiate AuthorizationProvider " + s_factoryName,  new PortalSecurityException("Failed to instantiate AuthorizationProvider " + s_factoryName));
+        }
+        
+        if (m_Factory == null) {
+            log.error("AuthorizationProvider not specified or incorrect in security.properties", new PortalSecurityException("AuthorizationProvider not specified or incorrect in security.properties"));
         }
       }
     } catch (IOException e) {
