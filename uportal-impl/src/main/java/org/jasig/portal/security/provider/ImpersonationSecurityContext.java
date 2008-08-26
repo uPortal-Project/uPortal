@@ -28,7 +28,7 @@ import org.jasig.portal.security.provider.ChainingSecurityContext.ChainingPrinci
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-class ImpersonationSecurityContext implements ISecurityContext {
+public class ImpersonationSecurityContext implements ISecurityContext {
     
 	// Static Members.
 	private static final Vector EMPTY_VECTOR = new Vector();
@@ -91,19 +91,22 @@ class ImpersonationSecurityContext implements ISecurityContext {
 			log.debug("Attempting to authenticate() with the following ticket:  " + ticket);
 		}
 		
-		String username = ImpersonationFilter.getUsername(ticket);
-		
-		if (username != null) {
-			
-			// This is a valid impersonation request...
-			authenticated = true;
-			principal.setUsername(username);
-			
-			if (log.isDebugEnabled()) {
-				log.debug("Successfully impersonating the following user:  " + username);
-			}
-			
-		}
+		if (ticket != null && ticket.trim().length() > 0) {
+		    
+	        String username = ImpersonationFilter.getUsername(ticket);
+	        if (username != null) {
+	            
+	            // This is a valid impersonation request...
+	            authenticated = true;
+	            principal.setUsername(username);
+	            
+	            if (log.isDebugEnabled()) {
+	                log.debug("Successfully impersonating the following user:  " + username);
+	            }
+	            
+	        }
+
+		}		
 
 	}
 		
