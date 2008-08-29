@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+
+    <!--
+     | This bean is the ContextSource instance that will be used to connect to LDAP.
+     +-->
+    <bean id="ldapContext" class="org.springframework.ldap.core.support.LdapContextSource">
+        <property name="url" value="changeme"/>
+        <property name="userDn" value="changeme"/>
+        <property name="password" value="changeme"/>
+    </bean>
+
+    <!--
+     | BaseDn that will be passed to the search (not to the context).
+     |
+     | WARNING:  If you get an error like this...
+     |   ...PartialResultException: [LDAP: error code 10...
+     | it probably means your baseDn isn't correct!
+     +-->
+    <bean id="baseDn" class="java.lang.String">
+        <constructor-arg><value>changeme</value></constructor-arg>
+    </bean>
+
+    <!--
+     | NOTE:  The remaining examples in this file are configured correctly for 
+     | Active Directory servers.
+     +-->
+
+    <!--
+     | LDAP query string that will be passed to the search.
+     +-->
+    <bean id="filter" class="java.lang.String">
+        <constructor-arg><value>(objectCategory=group)</value></constructor-arg>
+    </bean>
+
+    <!--
+     | This bean identifies the name of the Person Attribute that
+     | lists the SmartLdap groups each person is a member of.
+     +-->
+    <bean id="memberOfAttributeName" class="java.lang.String">
+        <constructor-arg><value>memberOf</value></constructor-arg>
+    </bean>
+
+    <!--
+     | This bean identifies the org.springframework.ldap.core.AttributesMapper
+     | implementation used in reading the groups records from LDAP.
+     +-->
+    <bean id="attributesMapper" class="org.jasig.portal.groups.smartldap.SimpleAttributesMapper">
+        <!--
+         | Name of the group attribute that tells you its key.
+         +-->
+        <property name="keyAttributeName">
+            <value>distinguishedName</value>
+        </property>
+        <!--
+         | Name of the group attribute that tells you its name.
+         +-->
+        <property name="groupNameAttributeName">
+            <value>cn</value>
+        </property>
+        <!--
+         | Name of the group attribute that lists its members.
+         +-->
+        <property name="membershipAttributeName">
+            <value>member</value>
+        </property>
+    </bean>
+
+</beans>

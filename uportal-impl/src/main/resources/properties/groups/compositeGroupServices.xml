@@ -54,5 +54,24 @@ This list of component group services is processed by the composite, or "root" s
   </service>
 -->
 
+<!--  
+ | Uncomment to configure a SmartLdap group service component.  Be sure to edit 
+ | SmartLdapGroupStoreConfig.xml to apply your settings.
+ |
+ | SmartLdapGroupStore is a GaP implementation that recognizes groups defined in 
+ | an LDAP directory and makes them available in the portal.  You can read about 
+ | this technology here:  http://www.ja-sig.org/wiki/x/3QPI   
+ +-->
+<!--
+  <service>
+    <name>smartldap</name>
+    <service_factory>org.jasig.portal.groups.ReferenceIndividualGroupServiceFactory</service_factory>
+    <entity_store_factory>org.jasig.portal.groups.smartldap.SmartLdapEntityStore$Factory</entity_store_factory>
+    <group_store_factory>org.jasig.portal.groups.smartldap.SmartLdapGroupStore$Factory</group_store_factory>
+    <entity_searcher_factory>org.jasig.portal.groups.smartldap.SmartLdapEntitySearcher$Factory</entity_searcher_factory>
+    <internally_managed>false</internally_managed>
+    <caching_enabled>true</caching_enabled>
+  </service>
+-->
 
 </servicelist>
