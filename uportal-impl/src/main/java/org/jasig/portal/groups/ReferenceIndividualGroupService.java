@@ -516,7 +516,7 @@ private void initialize() throws GroupsException
         {
             eMsg = "ReferenceIndividualGroupService.initialize(): Failed to instantiate group store (" + svcName +"): " + e;
             log.error( eMsg);
-            throw new GroupsException(eMsg);
+            throw new GroupsException(eMsg, e);
         }
     }
 
@@ -538,7 +538,7 @@ private void initialize() throws GroupsException
         {
             eMsg = "ReferenceIndividualGroupService.initialize(): Failed to instantiate entity store " + e;
             log.error( eMsg);
-            throw new GroupsException(eMsg);
+            throw new GroupsException(eMsg, e);
         }
     }
 
@@ -560,7 +560,7 @@ private void initialize() throws GroupsException
         {
             eMsg = "ReferenceIndividualGroupService.initialize(): Failed to instantiate entity searcher " + e;
             log.error( eMsg);
-            throw new GroupsException(eMsg);
+            throw new GroupsException(eMsg, e);
         }
     }
 

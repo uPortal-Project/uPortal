@@ -16,6 +16,9 @@ import java.util.NoSuchElementException;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * The <code>ThrowableHelper</code> class defines a set of utility
  * methods for handling common error management operations in a
@@ -28,6 +31,8 @@ import java.util.StringTokenizer;
  **/
 public final class ThrowableHelper
 {
+    private static final Log LOG = LogFactory.getLog(ThrowableHelper.class);
+    
     /** Statically configured internationalization token. */
     private static final String I18N_TOKEN = Resources.getString(
         ThrowableHelper.class,
@@ -95,14 +100,14 @@ public final class ThrowableHelper
                             objects
                             );
 
-                        System.err.println( 
+                        LOG.warn( 
                             errorMessage 
                             );
                     }
                 
                     if( null != cause )
                     {
-                        cause.printStackTrace();
+                        LOG.warn(cause, cause);
                     }
                 }
             };            

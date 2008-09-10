@@ -20,6 +20,8 @@ import javax.sql.DataSource;
 import junit.framework.TestCase;
 import junit.textui.TestRunner;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.EntityTypes;
 import org.jasig.portal.groups.EntityImpl;
@@ -51,6 +53,8 @@ import org.jasig.portal.rdbm.TransientDatasource;
  * @version $Revision$
  */
 public class FileSystemGroupsTest extends TestCase {
+    protected static final Log LOG = LogFactory.getLog(FileSystemGroupsTest.class);
+    
     private static Class GROUP_CLASS;
     private static Class IPERSON_CLASS;
     private static String CR = "\n";
@@ -237,8 +241,7 @@ public static void main(java.lang.String[] args) throws Exception
  */
 private static void print(String msg)
 {
-    java.sql.Timestamp ts = new java.sql.Timestamp(System.currentTimeMillis());
-    System.out.println(ts + " : " + msg);
+    LOG.debug(msg);
 }
 /**
  */

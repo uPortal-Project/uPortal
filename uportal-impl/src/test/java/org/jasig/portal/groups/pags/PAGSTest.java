@@ -9,8 +9,9 @@ import java.util.Random;
 import java.util.Vector;
 
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.groups.pags.testers.IntegerEQTester;
 import org.jasig.portal.groups.pags.testers.IntegerGETester;
 import org.jasig.portal.groups.pags.testers.IntegerGTTester;
@@ -29,6 +30,8 @@ import org.jasig.portal.security.provider.PersonImpl;
  * @author: Dan Ellentuck
  */
 public class PAGSTest extends TestCase {
+    private static final Log LOG = LogFactory.getLog(PAGSTest.class);
+    
     private static Class IPERSON_CLASS;
     private static String CR = "\n";
     private Random random = new Random();
@@ -84,12 +87,7 @@ private String getRandomString(java.util.Random r, int length) {
  */
 private static void print(String msg)
 {
-    java.sql.Timestamp ts = new java.sql.Timestamp(System.currentTimeMillis());
-    System.out.println(ts + " : " + msg);
-}
-private static void printBlankLine()
-{
-    System.out.println("");
+    LOG.debug(msg);
 }
 /**
  */

@@ -13,12 +13,6 @@ import junit.framework.TestCase;
  */
 public class LazyPortalApplicationContextTest extends TestCase {
     public void testLazyLoadingPortalApplicationContext() throws Exception {
-        try {
-            PortalApplicationContextLocator.getApplicationContext();
-        }
-        catch (RuntimeException e) {
-            fail("The Portal's ApplicationContext failed to load in lazy-init mode");
-            throw e;
-        }
+        PortalApplicationContextLocator.getApplicationContext();
     }
 }

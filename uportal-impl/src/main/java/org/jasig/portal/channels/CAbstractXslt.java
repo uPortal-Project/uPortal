@@ -142,16 +142,14 @@ public abstract class CAbstractXslt implements IChannel {
             
             Document xml = getXml();
             
+            if (xml == null) {
+                throw new IllegalStateException("The Document we would transform, as returned by getXml(), was illegally null.");
+            }
+            
             if (log.isTraceEnabled()) {
                 log.trace("getXml() returned Document: [" + xml  + "]");
                 String xmlAsString = XML.serializeNode(xml);
                 log.trace("XML DOM was: [" + xmlAsString + "]");
-            }
-            
-            
-            
-            if (xml == null) {
-                throw new IllegalStateException("The Document we would transform, as returned by getXml(), was illegally null.");
             }
             
             xslt.setXML(xml);

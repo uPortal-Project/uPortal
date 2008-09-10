@@ -31,7 +31,10 @@ public class HttpClientManagerTest extends TestCase {
                 try {
                     serverSocket.bind(null);
                     serverSocket.accept();
-                    serverSocket.notifyAll();
+                    
+                    synchronized (serverSocket) {
+                        serverSocket.notifyAll();
+                    }
                 }
                 catch (IOException e) {
                     // TODO Auto-generated catch block
