@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beansProjectDescription>
 	<version>1</version>
-	<pluginVersion><![CDATA[2.0.6.v200806241357]]></pluginVersion>
+	<pluginVersion><![CDATA[2.1.0.v200808011800]]></pluginVersion>
 	<configSuffixes>
 		<configSuffix><![CDATA[xml]]></configSuffix>
 	</configSuffixes>
@@ -27,6 +27,8 @@
 		<config>uportal-impl/src/main/resources/properties/contexts/schedulerContext.xml</config>
 		<config>uportal-impl/src/main/resources/properties/contexts/importExportContext.xml</config>
 		<config>uportal-impl/src/main/resources/properties/contexts/securityContext.xml</config>
+		<config>uportal-impl/src/test/resources/pooledCounterStoreTestApplicationContext.xml</config>
+		<config>uportal-impl/src/main/resources/properties/contexts/servicesContext.xml</config>
 	</configs>
 	<configSets>
 		<configSet>
@@ -68,6 +70,7 @@
 				<config>uportal-impl/src/main/resources/properties/contexts/schedulerContext.xml</config>
 				<config>uportal-impl/src/main/resources/properties/contexts/importExportContext.xml</config>
 				<config>uportal-impl/src/main/resources/properties/contexts/securityContext.xml</config>
+				<config>uportal-impl/src/main/resources/properties/contexts/servicesContext.xml</config>
 			</configs>
 		</configSet>
 	</configSets>
