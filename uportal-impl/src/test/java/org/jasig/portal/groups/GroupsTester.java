@@ -19,8 +19,6 @@ import junit.textui.TestRunner;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.EntityTypes;
 import org.jasig.portal.IBasicEntity;
-import org.jasig.portal.concurrency.CachingException;
-import org.jasig.portal.concurrency.caching.ReferenceEntityCachingService;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.GroupService;
 
@@ -121,14 +119,6 @@ protected void addTestEntityType()
     }
     catch (Exception ex) { print("GroupsTester.addTestEntityType(): " + ex.getMessage());}
  }
-/**
- * 
- */
-private void clearGroupCache() throws CachingException
-{
-    ((ReferenceEntityCachingService) ReferenceEntityCachingService.singleton())
-        .getCache(GROUP_CLASS).clearCache();
-}
 /**
  */
 protected void deleteTestEntityType()
@@ -335,9 +325,6 @@ protected void tearDown()
         testEntities = null;
         deleteTestGroups();
         deleteTestEntityType();
- 
-        clearGroupCache();
-
     }
     catch (Exception ex) { print("GroupTester.tearDown(): " + ex.getMessage());}
 }
@@ -415,8 +402,6 @@ public void testAddToALargeGroup() throws Exception
     print("Finished updating.");
     
     print ("Will un-cache " + bigGroup);
-    clearGroupCache();
-    
     
     msg = "Finding duplicate group.";
     print(msg);
@@ -447,7 +432,6 @@ public void testAddToALargeGroup() throws Exception
     print("Done adding additional entities");
     
     print ("Will un-cache " + dupBigGroup);
-    clearGroupCache();    
     
     msg = "Retrieving duplicate group a 2nd time.";
     print(msg);
