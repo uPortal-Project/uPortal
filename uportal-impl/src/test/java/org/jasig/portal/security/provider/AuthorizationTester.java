@@ -17,7 +17,6 @@ import junit.framework.TestCase;
 
 import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.concurrency.CachingException;
-import org.jasig.portal.concurrency.caching.ReferenceEntityCachingService;
 import org.jasig.portal.groups.GroupServiceConfiguration;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IGroupMember;
@@ -164,14 +163,6 @@ public class AuthorizationTester extends TestCase
  */
 public AuthorizationTester(String name) {
     super(name);
-}
-/**
- *
- */
-private void clearGroupCache() throws CachingException
-{
-    ((ReferenceEntityCachingService) ReferenceEntityCachingService.singleton())
-        .getCache(GROUP_CLASS).clearCache();
 }
 /**
  * @return org.jasig.portal.security.IPermissionPolicy
@@ -455,8 +446,6 @@ protected void tearDown()
 {
     try
     {
-        clearGroupCache();
-
         IPermission[] permissions = (IPermission[])testPermissions.toArray(new IPermission[testPermissions.size()]);
         getPermissionStore().delete(permissions);
         testPermissions.clear();
