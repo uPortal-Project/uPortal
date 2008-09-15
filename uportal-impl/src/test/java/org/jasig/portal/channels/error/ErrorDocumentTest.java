@@ -6,13 +6,15 @@
 package org.jasig.portal.channels.error;
 
 
+import junit.framework.TestCase;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.XML;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import junit.framework.TestCase;
 
 /**
  * Testcase for ErrorDocument.
@@ -20,6 +22,7 @@ import junit.framework.TestCase;
  * @version $Revision$ $Date$
  */
 public class ErrorDocumentTest extends TestCase {
+    protected final Log logger = LogFactory.getLog(this.getClass());
 
     /*
      * @see TestCase#setUp()
@@ -55,7 +58,7 @@ public class ErrorDocumentTest extends TestCase {
         
         Document doc = errorDocument.getDocument();
         
-        System.out.println(XML.serializeNode(doc));
+        logger.info(XML.serializeNode(doc));
         
         Element docElement = doc.getDocumentElement();
 
@@ -90,7 +93,7 @@ public class ErrorDocumentTest extends TestCase {
         
         Document doc = errorDocument.getDocument();
         
-        System.out.println(XML.serializeNode(doc));
+        logger.info(XML.serializeNode(doc));
         
         Element docElement = doc.getDocumentElement();
 

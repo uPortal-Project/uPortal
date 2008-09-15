@@ -8,6 +8,8 @@ package org.jasig.portal.concurrency.locking;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.concurrency.IEntityLock;
 import org.jasig.portal.concurrency.IEntityLockService;
 import org.jasig.portal.concurrency.LockingException;
@@ -19,6 +21,8 @@ import org.jasig.portal.services.EntityLockService;
  * @author: Dan Ellentuck
  */
 public class EntityLockTest extends TestCase {
+    private static final Log LOG = LogFactory.getLog(EntityLockTest.class);
+    
     private static Class GROUP_CLASS;
     private static Class IPERSON_CLASS;
     private IEntityLock[] testLocks;
@@ -76,8 +80,7 @@ private static void print (IEntityLock[] locks)
  */
 private static void print(String msg)
 {
-    java.sql.Timestamp ts = new java.sql.Timestamp(System.currentTimeMillis());
-    System.out.println(ts + " : " + msg);
+    LOG.debug(msg);
 }
 /**
  */

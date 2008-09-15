@@ -74,6 +74,7 @@ public class SpringPortletChannelImplTest extends TestCase {
         
         final IPerson person = EasyMock.createMock(IPerson.class);
         EasyMock.expect(person.getID()).andReturn(1);
+        EasyMock.expect(person.getAttribute("username")).andReturn("testuser");
         channelStaticData.setPerson(person);
 
         
@@ -106,6 +107,8 @@ public class SpringPortletChannelImplTest extends TestCase {
         
         final IPortletWindow portletWindow = EasyMock.createMock(IPortletWindow.class);
         EasyMock.expect(portletWindow.getPortletWindowId()).andReturn(portletWindowId);
+        EasyMock.expect(portletWindow.getContextPath()).andReturn("portApp1");
+        EasyMock.expect(portletWindow.getPortletName()).andReturn("port1");
         
 
         final IPortletWindowRegistry portletWindowRegistry = EasyMock.createMock(IPortletWindowRegistry.class);
@@ -145,6 +148,7 @@ public class SpringPortletChannelImplTest extends TestCase {
 
     public void testAction() throws Exception {
         final IPerson person = EasyMock.createMock(IPerson.class);
+        EasyMock.expect(person.getAttribute("username")).andReturn("testuser");
 
         
         final ChannelStaticData channelStaticData = new ChannelStaticData();
@@ -192,6 +196,8 @@ public class SpringPortletChannelImplTest extends TestCase {
         
         
         final IPortletWindow portletWindow = EasyMock.createMock(IPortletWindow.class);
+        EasyMock.expect(portletWindow.getContextPath()).andReturn("portApp1");
+        EasyMock.expect(portletWindow.getPortletName()).andReturn("port1");
         
 
         final IPortletWindowRegistry portletWindowRegistry = EasyMock.createMock(IPortletWindowRegistry.class);
@@ -817,6 +823,7 @@ public class SpringPortletChannelImplTest extends TestCase {
     
     public void testRender() throws Exception {
         final IPerson person = EasyMock.createMock(IPerson.class);
+        EasyMock.expect(person.getAttribute("username")).andReturn("testuser");
 
         
         final ChannelStaticData channelStaticData = new ChannelStaticData();
@@ -865,6 +872,8 @@ public class SpringPortletChannelImplTest extends TestCase {
         
         final IPortletWindow portletWindow = EasyMock.createMock(IPortletWindow.class);
         EasyMock.expect(portletWindow.getRequestParameers()).andReturn(null);
+        EasyMock.expect(portletWindow.getContextPath()).andReturn("portApp1");
+        EasyMock.expect(portletWindow.getPortletName()).andReturn("port1");
         
 
         final IPortletWindowRegistry portletWindowRegistry = EasyMock.createMock(IPortletWindowRegistry.class);
