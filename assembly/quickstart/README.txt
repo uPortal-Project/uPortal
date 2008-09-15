@@ -34,13 +34,9 @@ For the commands below, the 'ant' command depends on your operating system:
 Windows: ant.bat
 UNIX:    ant.sh
 
-ant start
-----------
-Starts HSQL and then Tomcat, both are started in the background.
+'ant start' - Starts HSQL and then Tomcat, both are started in the background.
 
-ant stop
-----------
-Stops Tomcat then stops HSQL. 
+'ant stop' - Stops Tomcat then stops HSQL. 
 
 
 Using uPortal
