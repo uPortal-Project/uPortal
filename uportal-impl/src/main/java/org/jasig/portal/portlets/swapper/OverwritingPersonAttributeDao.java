@@ -95,6 +95,9 @@ public class OverwritingPersonAttributeDao extends AbstractFlatteningPersonAttri
      */
     public Set<IPersonAttributes> getPeopleWithMultivaluedAttributes(Map<String, List<Object>> query) {
         final Set<IPersonAttributes> people = this.delegatePersonAttributeDao.getPeopleWithMultivaluedAttributes(query);
+        if (people == null) {
+            return null;
+        }
         
         final Set<IPersonAttributes> modifiedPeople = new LinkedHashSet<IPersonAttributes>();
         
