@@ -11,6 +11,7 @@ import org.jasig.portal.ChannelDefinition;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.tools.chanpub.ChannelPublisher;
+import org.jasig.portal.tools.chanpub.IChannelPublisher;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -96,7 +97,7 @@ public class DefaultChanPubInnerHandler
                             + "' ready to publish.");
 
                 final ByteArrayInputStream is = new ByteArrayInputStream(bytes);
-                final ChannelPublisher publisher =
+                final IChannelPublisher publisher =
                     ChannelPublisher.getChannelArchiveInstance();
 
                 ChannelDefinition chanDef = null;

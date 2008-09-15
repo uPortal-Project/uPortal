@@ -13,6 +13,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -48,7 +50,11 @@ import org.jasig.portal.security.IUpdatingPermissionManager;
 import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.GroupService;
+import org.jasig.portal.spring.PortalApplicationContextLocator;
 import org.jasig.portal.utils.XML;
+import org.springframework.aop.framework.ProxyFactoryBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.orm.jpa.JpaInterceptor;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -74,7 +80,7 @@ import org.xml.sax.SAXParseException;
  * @deprecated The Cernunnos import scripts should be used instead of this class
  */
 @Deprecated
-public class ChannelPublisher implements ErrorHandler
+public class ChannelPublisher implements ErrorHandler, IChannelPublisher
 {
     private static final Log log = LogFactory.getLog(ChannelPublisher.class);
 
@@ -100,7 +106,7 @@ public class ChannelPublisher implements ErrorHandler
      */
     public static void main(String[] args)throws Exception{
         try{
-            final ChannelPublisher publisher = getCommandLineInstance();
+            final IChannelPublisher publisher = getCommandLineInstance();
             
             final File[] files;
             try {
@@ -132,7 +138,7 @@ public class ChannelPublisher implements ErrorHandler
         }
     }
 
-    protected File[] parseCommandLine(String[] args) throws ParseException {
+    public File[] parseCommandLine(String[] args) throws ParseException {
         final Option fileOpt = new Option("f", "file", true, "A single chanpub file to publish.");
         final Option dirOpt = new Option("d", "dir", true, "A directory of chanpub files to publish. (all .xml files in the directory will be processed)");
 
@@ -771,16 +777,30 @@ public class ChannelPublisher implements ErrorHandler
         mOverrideExisting = b;
     }
 
-    public static ChannelPublisher getCommandLineInstance() throws Exception
+    public static IChannelPublisher getCommandLineInstance() throws Exception
     {
-        ChannelPublisher publisher = new ChannelPublisher(true);
+        final ChannelPublisher publisher = new ChannelPublisher(true);
         publisher.setOverride(true);
-        return publisher;
+        return wrapChannelPublisher(publisher);
     }
 
-    public static ChannelPublisher getChannelArchiveInstance() throws Exception
+    public static IChannelPublisher getChannelArchiveInstance() throws Exception
     {
-        return new ChannelPublisher(false);
+        final ChannelPublisher publisher = new ChannelPublisher(false);
+        return wrapChannelPublisher(publisher);
+    }
+    
+    private static IChannelPublisher wrapChannelPublisher(IChannelPublisher channelPublisher) {
+        final ApplicationContext ac = PortalApplicationContextLocator.getApplicationContext();
+        final JpaInterceptor jpaInterceptor = (JpaInterceptor)ac.getBean("jpaInterceptor", JpaInterceptor.class);
+
+        // Proxy worker so that Jpa EntityManager will be properly handled
+        final ProxyFactoryBean pfb = new ProxyFactoryBean();
+        pfb.setTarget(channelPublisher);
+        pfb.setInterfaces(channelPublisher.getClass().getInterfaces());
+        pfb.addAdvice(jpaInterceptor);
+        
+        return (IChannelPublisher)pfb.getObject();
     }
 
     /*

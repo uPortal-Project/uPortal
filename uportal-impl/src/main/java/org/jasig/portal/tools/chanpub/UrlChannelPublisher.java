@@ -26,7 +26,7 @@ public final class UrlChannelPublisher {
 
             String xml = d.asXML();
             InputStream inpt = new ByteArrayInputStream(xml.getBytes());
-            ChannelPublisher pub = ChannelPublisher.getCommandLineInstance();
+            IChannelPublisher pub = ChannelPublisher.getCommandLineInstance();
             pub.publishChannel(inpt);
 
         } catch (Throwable t) {
