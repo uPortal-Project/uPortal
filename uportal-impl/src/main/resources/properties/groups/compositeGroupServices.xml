@@ -7,6 +7,7 @@ This list of component group services is processed by the composite, or "root" s
 <servicelist defaultService="local"
              compositeFactory="org.jasig.portal.groups.ReferenceCompositeGroupServiceFactory"
              nodeSeparator=".">
+  <!-- IMPORTANT: The local service is REQUIRED for uPortal to correctly function, do not comment this service out -->
   <service>
     <name>local</name>
     <service_factory>org.jasig.portal.groups.ReferenceIndividualGroupServiceFactory</service_factory>
@@ -17,7 +18,8 @@ This list of component group services is processed by the composite, or "root" s
     <caching_enabled>true</caching_enabled>
   </service>
 
-<!-- Configure your person attributes groups in PAGSGroupStoreConfig.xml. -->
+  <!-- Configure your person attributes groups in PAGSGroupStoreConfig.xml. -->
+  <!-- IMPORTANT: The pags service is REQUIRED for uPortal to correctly function, do not comment this service out -->
   <service>
     <name>pags</name>
     <service_factory>org.jasig.portal.groups.ReferenceIndividualGroupServiceFactory</service_factory>
