@@ -3,43 +3,67 @@ README for basic uPortal deployment
 For further help please refer to the uPortal home page http://www.uportal.org or
 the uPortal Confluence site http://www.ja-sig.org/wiki/display/UPC/Home
 
-Servlet Container
-----------------------------------------
-uPortal requires Servlet API 2.5 or later. If you are using Tomcat this means
-Tomcat 6.0 or later. See the notes for Tomcat 6.0 on the wiki for instructions
-on deploying uPortal to Tomcat 6 http://jasig.org/wiki/display/UPM30/01+Tomcat
 
++------------------------------------------------------------------------------+
+| Requirements                                                                 |
++------------------------------------------------------------------------------+
+JDK 1.5 - Just a JRE is not sufficent, a full JDK is required
+Servlet 2.5 Container - Tomcat 6.0 is recommended, there some configuration
+    changes that must be made for Tomcat 6.0 which are documented in the uPortal
+    manual. http://jasig.org/wiki/display/UPM30/01+Tomcat
+Maven 2.0.8 or later
+Ant 1.7.1 or 1.6.5 - Ant 1.7.0 has a SERIOUS bug and will NOT work with uPortal
+    
+    
++------------------------------------------------------------------------------+
+| Building and Deploying                                                       |
++------------------------------------------------------------------------------+
+uPortal uses Maven for its project configuration and build system. An Ant
+build.xml is also provided which handles the initialization and deployment
+related tasks. As a uPortal deployer you will likely only ever need to use the
+Ant tasks. Note that Ant 1.7.0 has a SERIOUS bug and will NOT work with uPortal,
+use Ant 1.7.1 or 1.6.5 instead.
 
-WARNINGS:
-----------------------------------------
-Do not blindly run the ant build against a production database.  There are Ant
-targets in this build which will initialize the database for uPortal.  Before
-running the ant build, take care that the 
-/uportal-impl/src/main/resources/properties/rdbm.properties actually describes
-the database against which you intend to be working.
+Ant tasks:
+    hsql - Starts a HSQL database instance. The default uPortal configuration
+        points to this database and it can be used for portal development.
 
-Do not blindly run the ant build on a production system.  There are Ant targets
-in this build which clean build directories and publish the uPortal build into
-a configured Tomcat instance.  Take care not to accidentally run the build such
-that it overwrites a uPortal instance you care about.  Locations affected by
-the build are declared in build.properties.
+    initportal - Runs the 'deploy-ear' and 'init-db' ant targets, should be the
+        first and only task run when setting up a new uPortal instance
+        WARNING: This runs 'init-db' which DROPS and re-creates the uPortal
+        database
+    
+    deploy-ear - Ensures the latest changes have been compiled and packaged then
+        deploys uPortal, shared libraries and all packaged portlets to the
+        container
+   
+    init-db - Sets up the uPortal database. DROPS ALL EXISTING uPortal tables
+        re-creates them and populates them with the default uPortal data
+        WARNING: This DROPS and re-creates the uPortal database
+    
+    deploy-war - Ensures the latest uPortal changes have been compiled and
+        packaged then deploys the uPortal WAR to the container.
+    
+    deployPortletApp - Deploys the specified portlet application to the
+        container. This is the required process to deploy any portlet to a
+        uPortal instance.
+        ex: ant deployPortletApp -DportletApp=/path/to/portlet.war
+    
+    
++------------------------------------------------------------------------------+
+| Help and Support                                                             |
++------------------------------------------------------------------------------+
+The uportal-user@lists.ja-sig.org email address is the best place to go with 
+questions related to configuring or deploying uPortal. Information about joining
+the list is available on the JA-SIG wiki: 
+    http://www.ja-sig.org/wiki/display/JSG/uportal-user
 
+Additionaly there is a collaborative manual in progress on the wiki which has
+some HOWTO and related documentation: http://jasig.org/wiki/display/UPM30
 
-
-Manifest
-----------------------------------------
-build.properties    o Contains configuration for the build file that needs to
-                      be customized for your environment.
-build.xml           o Contains the ant build targets for working with uPortal.
-pom.xml             o Contains the maven 2 description of the uPortal project
-
-
-Ant Depdency
-----------------------------------------
-The build.xml needs to be run under Ant 1.6.3 or better except Ant 1.7.0.  Some
-of our Ant tasks have been reported to fail on Ant 1.6.2 and earlier, and on
-Ant 1.7.0.  Ant 1.7.1 works.
-
++------------------------------------------------------------------------------+
+| Other Notes                                                                  |
++------------------------------------------------------------------------------+
 
 Initial Configuration
 ----------------------------------------
