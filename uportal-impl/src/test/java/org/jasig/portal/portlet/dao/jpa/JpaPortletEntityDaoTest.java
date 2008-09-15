@@ -50,9 +50,9 @@ public class JpaPortletEntityDaoTest extends AbstractJpaTests {
     }
 
     public void testAllMethods() throws Exception {
-        final IPortletDefinition portDef1 = this.jpaPortletDefinitionDao.createPortletDefinition(1);
+        IPortletDefinition portDef1 = this.jpaPortletDefinitionDao.createPortletDefinition(1);
         
-        final IPortletEntity portEnt1 = this.jpaPortletEntityDao.createPortletEntity(portDef1.getPortletDefinitionId(), "chanSub1", 1);
+        IPortletEntity portEnt1 = this.jpaPortletEntityDao.createPortletEntity(portDef1.getPortletDefinitionId(), "chanSub1", 1);
         this.checkPoint();
         
         
@@ -75,11 +75,13 @@ public class JpaPortletEntityDaoTest extends AbstractJpaTests {
         
         
         //Try deleting whole tree
+        portDef1 = this.jpaPortletDefinitionDao.getPortletDefinition(portDef1.getPortletDefinitionId());
         portDef1.getPortletPreferences().getPortletPreferences().add(new PortletPreferenceImpl("defpref1", false, "dpv1", "dpv2"));
         this.jpaPortletDefinitionDao.updatePortletDefinition(portDef1);
         this.checkPoint();
         
         
+        portEnt1 = this.jpaPortletEntityDao.getPortletEntity(portEnt1.getPortletEntityId());
         portEnt1.getPortletPreferences().getPortletPreferences().add(new PortletPreferenceImpl("entpref1", false, "epv1", "epv2"));
         this.jpaPortletEntityDao.updatePortletEntity(portEnt1);
         this.checkPoint();

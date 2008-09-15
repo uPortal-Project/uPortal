@@ -91,12 +91,8 @@ public class JpaPortletEntityDao  implements IPortletEntityDao {
         
         IPortletEntity portletEntity = new PortletEntityImpl(portletDefinition, channelSubscribeId, userId);
         
-        portletEntity = this.entityManager.merge(portletEntity);
         this.entityManager.persist(portletEntity);
 
-        //Refresh the definition as it's internall collection of IPortletEntities may need to be updated
-        this.entityManager.refresh(portletDefinition);
-        
         return portletEntity;
     }
 
@@ -181,7 +177,6 @@ public class JpaPortletEntityDao  implements IPortletEntityDao {
     public void updatePortletEntity(IPortletEntity portletEntity) {
         Validate.notNull(portletEntity, "portletEntity can not be null");
         
-        portletEntity = this.entityManager.merge(portletEntity);
         this.entityManager.persist(portletEntity);
     }
 

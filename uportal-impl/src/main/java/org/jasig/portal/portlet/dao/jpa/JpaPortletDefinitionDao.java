@@ -55,8 +55,6 @@ public class JpaPortletDefinitionDao  implements IPortletDefinitionDao {
     public IPortletDefinition createPortletDefinition(int channelDefinitionId) {
         PortletDefinitionImpl portletDefinition = new PortletDefinitionImpl(channelDefinitionId);
         
-        portletDefinition = this.entityManager.merge(portletDefinition);
-        
         this.entityManager.persist(portletDefinition);
         
         return portletDefinition;
@@ -111,8 +109,6 @@ public class JpaPortletDefinitionDao  implements IPortletDefinitionDao {
     @Transactional
     public void updatePortletDefinition(IPortletDefinition portletDefinition) {
         Validate.notNull(portletDefinition, "portletDefinition can not be null");
-        
-        portletDefinition = this.entityManager.merge(portletDefinition);
         
         this.entityManager.persist(portletDefinition);
     }
