@@ -36,6 +36,15 @@
             <artifactId>standard</artifactId>
             <scope>compile</scope>
         </dependency>
+        
+        
+        <!-- ===== Provided Dependencies ====================================== -->
+
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
     </dependencies>
 
