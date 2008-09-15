@@ -30,6 +30,8 @@
 
 <!--
   Group 0: "PAGS Root"
+  IMPORTANT: The PAGS Root group is REQUIRED for uPortal to function. It Must be a member of the Everyone group in the
+  local group store
 -->
   <group>
     <group-key>0</group-key>
@@ -44,6 +46,7 @@
 <!--
   Group 1: "All Users (PAGS)"
   All IPersons are memebers of this group
+  IMPORTANT: The All Users group is REQUIRED for uPortal to function. It Must be a member of the PAGS Root group
 -->
   <group>
     <group-key>1</group-key>
