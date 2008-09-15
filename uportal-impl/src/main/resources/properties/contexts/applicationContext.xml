@@ -71,6 +71,14 @@
             </map>
         </property>
     </bean>
+    
+    <bean id="propertiesPlacholder" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" lazy-init="false">
+        <property name="locations">
+            <list>
+                <value>classpath:/properties/rdbm.properties</value>
+            </list>
+        </property>
+    </bean>
 
     <bean class="org.springframework.beans.factory.annotation.RequiredAnnotationBeanPostProcessor" lazy-init="false" />
 </beans>
