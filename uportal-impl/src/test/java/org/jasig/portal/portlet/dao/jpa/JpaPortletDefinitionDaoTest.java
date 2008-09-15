@@ -57,8 +57,8 @@ public class JpaPortletDefinitionDaoTest extends AbstractJpaTests {
         final IPortletDefinition portDef1b = this.jpaPortletDefinitionDao.getPortletDefinition(1);
         assertEquals(portDef1, portDef1b);
         
-        //Create a secod definition with the same app/portlet
-        final IPortletDefinition portDef2 = this.jpaPortletDefinitionDao.createPortletDefinition(2);
+        //Create a second definition with the same app/portlet
+        IPortletDefinition portDef2 = this.jpaPortletDefinitionDao.createPortletDefinition(2);
         this.checkPoint();
         
         
@@ -68,6 +68,7 @@ public class JpaPortletDefinitionDaoTest extends AbstractJpaTests {
         
         
         // Add some preferences
+        portDef2 = this.jpaPortletDefinitionDao.getPortletDefinition(portDef2.getPortletDefinitionId());
         final IPortletPreferences prefs2 = portDef2.getPortletPreferences();
         final List<IPortletPreference> prefsList2 = prefs2.getPortletPreferences();
         prefsList2.add(new PortletPreferenceImpl("prefName1", false, "val1", "val2"));
