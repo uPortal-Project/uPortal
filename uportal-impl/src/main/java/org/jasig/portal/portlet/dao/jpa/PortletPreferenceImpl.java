@@ -26,7 +26,9 @@ import org.apache.pluto.descriptors.portlet.PortletPreferenceDD;
 import org.apache.pluto.internal.InternalPortletPreference;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CollectionOfElements;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.IndexColumn;
+import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.jasig.portal.portlet.om.IPortletPreference;
 
@@ -36,10 +38,19 @@ import org.jasig.portal.portlet.om.IPortletPreference;
  */
 @Entity
 @Table(name = "UP_PORTLET_PREF")
+@GenericGenerator(
+        name = "UP_PORTLET_PREF_GEN", 
+        strategy = "native", 
+        parameters = {
+            @Parameter(name = "sequence", value = "UP_PORTLET_PREF_SEQ"),
+            @Parameter(name = "table", value = "UP_JPA_UNIQUE_KEY"),
+            @Parameter(name = "column", value = "NEXT_UP_PORTLET_PREF_HI")
+        }
+    )
 public class PortletPreferenceImpl implements IPortletPreference {
     @SuppressWarnings("unused")
     @Id
-    @GeneratedValue
+    @GeneratedValue(generator = "UP_PORTLET_PREF_GEN")
     @Column(name = "PORTLET_PREF_ID")
     private final long portletPreferenceId;
     

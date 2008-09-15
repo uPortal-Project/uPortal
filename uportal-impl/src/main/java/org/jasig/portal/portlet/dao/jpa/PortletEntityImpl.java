@@ -27,7 +27,9 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletEntity;
@@ -47,10 +49,19 @@ import org.jasig.portal.portlet.om.IPortletPreferences;
         appliesTo = "UP_PORTLET_ENT", 
         indexes = @Index(name = "IDX_PORT_END__USR_CHAN_SUB", columnNames = { "CHANNEL_SUB_ID", "USER_ID" })
     )
+@GenericGenerator(
+        name = "UP_PORTLET_ENT_GEN", 
+        strategy = "native", 
+        parameters = {
+            @Parameter(name = "sequence", value = "UP_PORTLET_ENT_SEQ"),
+            @Parameter(name = "table", value = "UP_JPA_UNIQUE_KEY"),
+            @Parameter(name = "column", value = "NEXT_UP_PORTLET_ENT_HI")
+        }
+    )
 class PortletEntityImpl implements IPortletEntity {
     //Properties are final to stop changes in code, hibernate overrides the final via reflection to set their values
     @Id
-    @GeneratedValue
+    @GeneratedValue(generator = "UP_PORTLET_ENT_GEN")
     @Column(name = "PORTLET_ENT_ID")
     private final long internalPortletEntityId;
 

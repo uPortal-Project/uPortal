@@ -24,7 +24,9 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.IndexColumn;
+import org.hibernate.annotations.Parameter;
 import org.jasig.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.portlet.om.IPortletPreferences;
 
@@ -34,10 +36,19 @@ import org.jasig.portal.portlet.om.IPortletPreferences;
  */
 @Entity
 @Table(name = "UP_PORTLET_PREFS")
+@GenericGenerator(
+        name = "UP_PORTLET_PREFS_GEN", 
+        strategy = "native", 
+        parameters = {
+            @Parameter(name = "sequence", value = "UP_PORTLET_PREFS_SEQ"),
+            @Parameter(name = "table", value = "UP_JPA_UNIQUE_KEY"),
+            @Parameter(name = "column", value = "NEXT_UP_PORTLET_PREFS_HI")
+        }
+    )
 class PortletPreferencesImpl implements IPortletPreferences {
     @SuppressWarnings("unused")
     @Id
-    @GeneratedValue
+    @GeneratedValue(generator = "UP_PORTLET_PREFS_GEN")
     @Column(name = "PORTLET_PREFS_ID")
     private final long portletPreferencesId;
     
