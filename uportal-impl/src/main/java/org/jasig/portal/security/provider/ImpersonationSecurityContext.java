@@ -34,7 +34,7 @@ public class ImpersonationSecurityContext implements ISecurityContext {
 	private static final Vector EMPTY_VECTOR = new Vector();
 	
 	// Instance Members.
-	private boolean authenticated;
+	private boolean authenticated = false;
 	private PrincipalImpl principal = new PrincipalImpl();
 	private final OpaqueCredentialsImpl credentials = new OpaqueCredentialsImpl();
 	private final Log log = LogFactory.getLog(ImpersonationSecurityContext.class);
@@ -115,7 +115,7 @@ public class ImpersonationSecurityContext implements ISecurityContext {
 	}
 	
 	public boolean isAuthenticated() {
-		return principal != null;
+		return authenticated;
 	}
 	
 	public ISecurityContext getSubContext(String ctx) throws PortalSecurityException {
