@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" output="uportal-impl/target/classes" path="uportal-impl/src/main/java"/>
-	<classpathentry kind="src" output="uportal-impl/target/test-classes" path="uportal-impl/src/test/java"/>
 	<classpathentry excluding="**" kind="src" output="uportal-impl/target/classes" path="uportal-impl/src/main/resources"/>
+	<classpathentry kind="src" output="uportal-impl/target/test-classes" path="uportal-impl/src/test/java"/>
 	<classpathentry excluding="**" kind="src" output="uportal-impl/target/test-classes" path="uportal-impl/src/test/resources"/>
 	<classpathentry excluding="**" kind="src" output="uportal-war/target/classes" path="uportal-war/src/main/resources"/>
 	<classpathentry kind="src" output="uportal-portlets-overlay/cas/target/classes" path="uportal-portlets-overlay/cas/src/main/java"/>
 	<classpathentry kind="src" output="uportal-portlets-overlay/cas/target/test-classes" path="uportal-portlets-overlay/cas/src/test/java"/>
 	<classpathentry excluding="**" kind="src" output="uportal-portlets-overlay/pluto-testsuite/target/classes" path="uportal-portlets-overlay/pluto-testsuite/src/main/resources"/>
 	<classpathentry kind="src" output="uportal-ear-deployer/target/classes" path="uportal-ear-deployer/src/main/java"/>
-	<classpathentry kind="src" output="uportal-ear-deployer/target/test-classes" path="uportal-ear-deployer/src/test/java"/>
 	<classpathentry excluding="**" kind="src" output="uportal-ear-deployer/target/classes" path="uportal-ear-deployer/src/main/resources"/>
+	<classpathentry kind="src" output="uportal-ear-deployer/target/test-classes" path="uportal-ear-deployer/src/test/java"/>
 	<classpathentry excluding="**" kind="src" output="uportal-ear-deployer/target/test-classes" path="uportal-ear-deployer/src/test/resources"/>
 	<classpathentry kind="src" output="uportal-ant-tasks/target/classes" path="uportal-ant-tasks/src/main/java"/>
 	<classpathentry excluding="**" kind="src" output="uportal-ant-tasks/target/classes" path="uportal-ant-tasks/src/main/resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
-	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER/modules/noworkspace"/>
+	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
