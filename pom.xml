@@ -721,6 +721,28 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>enforce-versions</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                            <requireMavenVersion>
+                              <version>2.0.6</version>
+                            </requireMavenVersion>
+                            <requireJavaVersion>
+                              <version>1.5</version>
+                            </requireJavaVersion>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
         <pluginManagement>
             <plugins>
@@ -731,10 +753,6 @@
                         <source>1.5</source>
                         <target>1.5</target>
                     </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-site-plugin</artifactId>
                 </plugin>
             </plugins>
         </pluginManagement>
