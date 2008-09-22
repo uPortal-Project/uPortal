@@ -8,7 +8,7 @@
                 <sql-statement sql="DELETE FROM up_user_profile WHERE user_id = ?">
                     <parameter value="${req(USER_ID)}"/>
                 </sql-statement>
-                <with-attribute key="PROFILE_ID" value="${seq(${req(USER_ID)}-profileId)}">
+                <with-attribute key="PROFILE_ID" value="1">
                     <sql-statement sql="INSERT INTO up_user_profile(user_id, profile_id, profile_name, description, layout_id, structure_ss_id, theme_ss_id) VALUES(?, ?, ?, ?, 0, ?, ?)">
                         <parameter value="${req(USER_ID)}"/>
                         <parameter value="${req(PROFILE_ID)}"/>
