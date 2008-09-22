@@ -78,40 +78,38 @@
     </target>
     
     <target name="db-hibernate" description="Drops then creates Hibernate managed tables">
+        <antcall target="db-hibernate-portal" />
+        <antcall target="db-hibernate-stats" />
+    </target>
+    
+    <target name="db-hibernate-portal" description="Drops then creates Hibernate managed tables for the portal">
         <uportal-impl-macro>
-            <artifact:dependencies pathid="hibernate-tools.classpath" verbose="false">
-                <pom file="${bootstrap-pom.dir}/hibernate-tools-pom.xml" />
-            </artifact:dependencies>
-            
-            <path id="hibernate-tools.classpath.full">
-                <path refid="hibernate-tools.classpath" />
-                <path refid="uportal-impl-full.classpath" />
-            </path>
-            
-            <taskdef classname="org.hibernate.tool.ant.HibernateToolTask" name="hibernatetool">
-                <classpath refid="hibernate-tools.classpath.full" />
-            </taskdef>
-            
-            <mkdir dir="${basedir}/target/hibernate" />
-            <hibernatetool destdir="${basedir}/target/hibernate">
-                <classpath refid="hibernate-tools.classpath.full" />
+            <java fork="true" failonerror="true" dir="${uportal-impl.dir}" classname="org.jasig.portal.tools.dbloader.DataSourceSchemaExportRunner">
+                <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
                 
-                <annotationconfiguration 
-                    configurationfile="${basedir}/uportal-impl/src/main/resources/properties/db/hibernate.cfg.xml"
-                    propertyfile="${basedir}/uportal-impl/src/main/resources/properties/rdbm.properties" />
+                <classpath refid="uportal-impl-full.classpath" />
+
+                <arg value="-b" />
+                <arg value="portalDbHibernateExport" />
+                <arg value="-e" />
+                <arg value="-d" />
+            </java>
+        </uportal-impl-macro>
+    </target>
+    
+    <target name="db-hibernate-stats" description="Drops then creates Hibernate managed tables used for the database backed portal statistics">
+        <uportal-impl-macro>
+            <java fork="true" failonerror="true" dir="${uportal-impl.dir}" classname="org.jasig.portal.tools.dbloader.DataSourceSchemaExportRunner">
+                <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
                 
-                <hbm2ddl export="true" drop="true" />
-            </hibernatetool>
-                    
-            <hibernatetool destdir="${basedir}/target/hibernate">
-                <classpath refid="hibernate-tools.classpath.full" />
-                
-                <annotationconfiguration 
-                    configurationfile="${basedir}/uportal-impl/src/main/resources/properties/db/stats/hibernate.cfg.xml"
-                    propertyfile="${basedir}/uportal-impl/src/main/resources/properties/rdbm.properties" />
-                
-                <hbm2ddl export="true" drop="true" />
-            </hibernatetool>
+                <classpath refid="uportal-impl-full.classpath" />
+
+                <arg value="-b" />
+                <arg value="statsDbHibernateExport" />
+                <arg value="-e" />
+                <arg value="-d" />
+                <arg value="-i" />
+            </java>
         </uportal-impl-macro>
     </target>
 
@@ -155,19 +153,9 @@
             <param name="tablefile" value="/properties/db/tables-i18n.xml" />
             <param name="usedata" value="-d" />
             <param name="datafile" value="/properties/db/data-i18n.xml" />
-        </antcall>
-    </target>
-
-    <target name="l10n-db" description="Loads localized data">
-        <echo message="Invoking DbLoader for localizationed database setting" />
-        <antcall target="db">
-            <param name="locale" value="en_US" />
-            <param name="usetable" value="-t" />
-            <param name="tablefile" value="/properties/db/tables-l10n.xml" />
-            <param name="usedata" value="-d" />
-            <param name="datafile" value="/properties/db/data-l10n.xml" />
-            <param name="localeaware" value="-l" />
-            <param name="adminlocale" value="en_US" />
+            <param name="droptables" value="-D" />
+            <param name="createtables" value="-C" />
+            <param name="populatetables" value="-P" />
         </antcall>
     </target>
 
@@ -950,7 +938,7 @@
      | Provides a wrapper for tasks that need a classpath that includes all of the uPortal WAR
      | dependencies. The task also ensures the uportal-war WAR exists and is up to date.
      |
-     | The following are available in the war-sub-tasks element:
+     | The following are available in the ant-tasks-sub-tasks element:
      | properties from the uportal-ear-deployer-macro macrodef
      | pom object   - uportal-ant-tasks.pom                 - The Maven POM object for the uportal-ant-tasks pom
      | property     - uportal-ant-tasks.artifact            - The full path to the uportal-ant-tasks JAR

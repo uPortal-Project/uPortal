@@ -121,4 +121,12 @@
         </tx:attributes>
     </tx:advice>
     -->
+    
+    <!-- ********** Database Utilities ********** -->
+    
+    <bean name="statsDbHibernateExport" class="org.jasig.portal.tools.dbloader.DataSourceSchemaExport">
+        <property name="configuration" value="classpath:/properties/db/stats/hibernate.cfg.xml" />
+        <property name="dataSource" ref="StatsDB" />
+        <property name="dialect" value="${hibernate.dialect}" />
+    </bean>
 </beans>

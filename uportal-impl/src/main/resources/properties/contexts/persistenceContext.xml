@@ -78,8 +78,19 @@
         <property name="defaultPersistenceUnitName" value="uPortalPersistence" />
     </bean>
     
-    <!--
-     | The 'rdbmPropertiesPlacholder' from the datasourceContext will execute on beans here and does not need to be
-     | defined again
-     +-->
+    <!-- ********** Database Utilities ********** -->
+    
+    <bean name="dbLoader" class="org.jasig.portal.tools.dbloader.HibernateDbLoader">
+        <property name="dataSource" ref="PortalDb" />
+        <property name="transactionManager" ref="transactionManager" />
+        <property name="dialect">
+            <bean class="${hibernate.dialect}" />
+        </property>
+    </bean>
+    
+    <bean name="portalDbHibernateExport" class="org.jasig.portal.tools.dbloader.DataSourceSchemaExport">
+        <property name="configuration" value="classpath:/properties/db/hibernate.cfg.xml" />
+        <property name="dataSource" ref="PortalDb" />
+        <property name="dialect" value="${hibernate.dialect}" />
+    </bean>
 </beans>
