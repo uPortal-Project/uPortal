@@ -33,7 +33,6 @@
                 <plugin>
                     <groupId>org.apache.pluto</groupId>
                     <artifactId>maven-pluto-plugin</artifactId>
-                    <version>${pluto.version}</version>
                     <executions>
                         <execution>
                             <phase>package</phase>
