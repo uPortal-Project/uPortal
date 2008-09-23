@@ -168,7 +168,7 @@
     
     <!-- ????? NEED TO PROVIDE A TARGET FOR THE IFRAME TO BE VALID WITH SSL ????? -->
     <xsl:if test="$USE_FLYOUT_MENUS='true'">  <!-- IE fix. If using flyout menus, render an iframe behind the submenu to ensure the submenu renders on top of all other elements. -->
-    	<iframe id="navFrame_{@ID}" style="display: none;" class="portal-flyout-iframe" frameborder="0"></iframe>
+    	<iframe id="navFrame_{@ID}" src="javascript:false;" style="display: none;" class="portal-flyout-iframe" frameborder="0"></iframe>
     </xsl:if>
     
   </xsl:template>
@@ -212,7 +212,7 @@
         </div> 
       </div>
       
-      <iframe id="navFrame_{@ID}" style="display: none;" class="portal-flyout-iframe" frameborder="0"></iframe>
+      <iframe id="navFrame_{@ID}" src="javascript:false;" style="display: none;" class="portal-flyout-iframe" frameborder="0"></iframe>
   </xsl:template>
   <!-- ============================================= -->
 	
