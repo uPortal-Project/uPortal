@@ -115,19 +115,17 @@
 
     <target name="db" description="Loads database tables and data">
         <uportal-impl-macro>
-            <property name="usetable" value=" " />
-            <property name="tablefile" value=" " />
-            <property name="usedata" value=" " />
-            <property name="datafile" value=" " />
+            <property name="usetable" value="-t" />
+            <property name="tablefile" value="/properties/db/tables.xml" />
+            <property name="usedata" value="-d" />
+            <property name="datafile" value="/properties/db/data.xml" />
             <property name="createscript" value=" " />
-            <property name="droptables" value=" " />
-            <property name="createtables" value=" " />
-            <property name="populatetables" value=" " />
-            <property name="localeaware" value=" " />
-            <property name="adminlocale" value=" " />
+            <property name="droptables" value="-D" />
+            <property name="createtables" value="-C" />
+            <property name="populatetables" value="-P" />
 
             <echo message="Invoking DbLoader" />
-            <java fork="true" failonerror="true" dir="${uportal-impl.dir}" classname="org.jasig.portal.tools.dbloader.DbLoader">
+            <java fork="true" failonerror="true" dir="${uportal-impl.dir}" classname="org.jasig.portal.tools.dbloader.DbLoaderRunner">
                 <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
                 
                 <classpath refid="uportal-impl-full.classpath" />
@@ -140,8 +138,6 @@
                 <arg value="${droptables}" />
                 <arg value="${createtables}" />
                 <arg value="${populatetables}" />
-                <arg value="${localeaware}" />
-                <arg value="${adminlocale}" />
             </java>
         </uportal-impl-macro>
     </target>

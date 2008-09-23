@@ -5,15 +5,16 @@
 
 package org.jasig.portal.car;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.net.URL;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.tools.dbloader.Configuration;
-import org.jasig.portal.tools.dbloader.DbLoader;
-import org.jasig.portal.tools.dbloader.DbUtils;
+import org.jasig.portal.spring.PortalApplicationContextLocator;
+import org.jasig.portal.tools.dbloader.DbLoaderConfiguration;
+import org.jasig.portal.tools.dbloader.HibernateDbLoader;
+import org.jasig.portal.tools.dbloader.IDbLoader;
+import org.springframework.context.ApplicationContext;
+import org.springframework.core.io.UrlResource;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -192,55 +193,32 @@ public class DatabaseTagHandler
                 
             // set up log buffers for capturing DbLoader output.
             
-            Configuration config = new Configuration();
-            StringWriter logBfr = new StringWriter();
-            PrintWriter logWriter = new PrintWriter(logBfr);
-            config.setLog(logWriter);
+            DbLoaderConfiguration config = new DbLoaderConfiguration(
+                    this.dropTables,
+                    this.createTables,
+                    this.populateTables,
+                    new UrlResource(this.tables),
+                    new UrlResource(this.data),
+                    null)
+            ;
 
-            StringWriter scriptLog = null;
-            
-            if (createScript)
-            {
-                scriptLog = new StringWriter();
-                PrintWriter scriptWriter = new PrintWriter(scriptLog);
-                config.setScriptWriter(scriptWriter);
-            }
-            
-            // load default config
-            DbUtils.loadConfiguration(config);
-            
-            // set overrides for car table loading
-            config.setCreateTables(createTables);
-            config.setDropTables(dropTables);
-            config.setPopulateTables(populateTables);
-            config.setTablesURL(tablesURL);
-            config.setDataURL(dataURL);
-            
-            DbLoader loader = new DbLoader(config);
-            
             String dataString = "(no data definition)";
             if (dataURL != null) {
                 dataString = dataURL.toString();
             }
             
+            final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
+            final IDbLoader dbLoader = (IDbLoader) applicationContext.getBean("dbLoader", HibernateDbLoader.class);
+
             try
             {
-                loader.process();
-                logWriter.flush();
-                if (config.getScriptWriter() != null )
-                    config.getScriptWriter().flush();
+                dbLoader.process(config);
                 if (log.isInfoEnabled())
                     log.info(
                     "***** Successfully processed *****\n"
                         + tablesURL
                         + " and \n"
-                        + dataString
-                        + ".\nLogged Output:\n---------------------\n"
-                        + logBfr
-                        + (createScript
-                            ? "\nDatabase Script:\n---------------------\n"
-                                + scriptLog
-                            : ""));
+                        + dataString);
             }
             catch(Exception e)
             {            
@@ -248,13 +226,7 @@ public class DatabaseTagHandler
                     "***** Failure during processing ***** \n"
                         + tablesURL
                         + " and \n"
-                        + dataString
-                        + ".\nLogged Output:\n---------------------\n"
-                        + logBfr
-                        + (createScript
-                            ? "\nDatabase Script:\n---------------------\n"
-                                + scriptLog
-                            : ""),e);
+                        + dataString,e);
             }
         }
         catch(Exception e)

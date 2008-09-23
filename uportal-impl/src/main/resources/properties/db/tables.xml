@@ -13,7 +13,6 @@
         <type>VARCHAR</type>
         <param>255</param>
         <desc>The functional name of the entity.</desc>
-        <key>PK</key>
      </column>
       <column>
         <name>MAJOR</name>
@@ -38,6 +37,13 @@
       </column>
     </columns>
     <primary-key>FNAME</primary-key>
+    <unique>
+        <name>UPV_VERSION_UNQ</name>
+        <column-ref>FNAME</column-ref>
+        <column-ref>MAJOR</column-ref>
+        <column-ref>MINOR</column-ref>
+        <column-ref>MICRO</column-ref>
+    </unique>
   </table>
 
   <table sinceMajor="2" sinceMinor="0">
@@ -46,7 +52,6 @@
     <columns>
       <column> <name>USER_ID</name>          <type>INTEGER</type>
         <desc>Internal sequence id of a user's portal information - unique user identifier - primary key, see UP_SEQUENCE</desc>
-        <key>PK</key>
       </column>
       <column> <name>USER_NAME</name>        <type>VARCHAR</type>   <param>35</param>
         <desc>Authentication prinicipal - Foreign key to up_person_dir</desc>
@@ -65,6 +70,18 @@
       </column>
     </columns>
     <primary-key>USER_ID</primary-key>
+    <unique>
+        <name>UPU_NAME_UNQ</name>
+        <column-ref>USER_NAME</column-ref>
+    </unique>
+    <index>
+        <name>UPU_NAME_IDX</name>
+        <column-ref>USER_NAME</column-ref>
+    </index>
+    <index>
+        <name>UPU_DFLT_ID_IDX</name>
+        <column-ref>USER_DFLT_USR_ID</column-ref>
+    </index>
   </table>
 
   <table sinceMajor="2" sinceMinor="0">
@@ -78,6 +95,8 @@
       <column> <name>USER_PARAM_VALUE</name> <type>VARCHAR</type> <param>255</param>
       </column>
     </columns>
+    <primary-key>USER_ID</primary-key>
+    <primary-key>USER_PARAM_NAME</primary-key>
     <not-null>USER_ID</not-null>
   </table>
 
@@ -87,11 +106,9 @@
     <columns>
       <column> <name>USER_ID</name>         <type>INTEGER</type>
         <desc>Internal sequence id of a user's portal information - unique user identifier - primary key, see UP_SEQUENCE</desc>
-        <key>PK</key>
       </column>
       <column> <name>LOCALE</name>          <type>VARCHAR</type>   <param>64</param>
         <desc>User's locale preference</desc>
-        <key>PK</key>
       </column>
       <column> <name>PRIORITY</name>        <type>INTEGER</type>
         <desc>The order of preference for this locale</desc>
@@ -107,7 +124,6 @@
     <columns>
       <column> <name>USER_NAME</name>       <type>VARCHAR</type>   <param>35</param>
         <desc>Authentication prinicipal - Primary key and foreign key foreign key to external authentication system (which is what up_person_dir emulates)</desc>
-        <key>PK</key>
       </column>
       <column> <name>ENCRPTD_PSWD</name>    <type>VARCHAR</type>   <param>64</param>
         <desc>MD5 authentication credential - or user's password</desc>
@@ -126,6 +142,11 @@
       </column>
     </columns>
     <primary-key>USER_NAME</primary-key>
+    <index>
+        <name>UPPD_NAME_PSWD_IDX</name>
+        <column-ref>USER_NAME</column-ref>
+        <column-ref>ENCRPTD_PSWD</column-ref>
+    </index>
   </table>
 
   <table sinceMajor="2" sinceMinor="1">
@@ -157,6 +178,15 @@
       <desc></desc>
       </column>
     </columns>
+    <index>
+        <name>UPPERM_IDX</name>
+        <column-ref>OWNER</column-ref>
+        <column-ref>PRINCIPAL_TYPE</column-ref>
+        <column-ref>PRINCIPAL_KEY</column-ref>
+        <column-ref>ACTIVITY</column-ref>
+        <column-ref>TARGET</column-ref>
+        <column-ref>PERMISSION_TYPE</column-ref>
+    </index>
   </table>
 
   <table sinceMajor="2" sinceMinor="1">
@@ -165,18 +195,15 @@
     <columns>
       <column> <name>LAYOUT_ID</name>      <type>INTEGER</type>
         <desc>Layout ID is not unique to the portal but unique for a given user. It links to up_layout_struct</desc>
-        <key>CK</key>
       </column>
       <column> <name>USER_ID</name>        <type>INTEGER</type>
         <desc>Foreign key user_id of table up_user</desc>
-        <key>CK</key>
       </column>
       <column> <name>LAYOUT_TITLE</name>   <type>VARCHAR</type> <param>15</param>
         <desc>Layout title - the name of the layout in text</desc>
       </column>
       <column> <name>INIT_STRUCT_ID</name> <type>INTEGER</type>
         <desc>Initial structure ID - Points to the first channel/folder in the users layout and sets the start of the document tree</desc>
-        <key>FK</key>
       </column>
     </columns>
     <primary-key>LAYOUT_ID</primary-key>
@@ -189,15 +216,12 @@
     <columns>
       <column> <name>USER_ID</name>        <type>INTEGER</type>
         <desc>Foreign key user_id of table up_user</desc>
-        <key>CK</key>
       </column>
       <column> <name>LAYOUT_ID</name>      <type>INTEGER</type>
         <desc>Foreign key layout_id of table up_user_layout and compound key</desc>
-        <key>CK</key>
       </column>
       <column> <name>STRUCT_ID</name>      <type>INTEGER</type>
         <desc>Struct ID is a unique number for a given user and is used by the portal for a given component (channel, column, etc) - primary key  Given by next_struct_id in table up_user</desc>
-        <key>CK</key>
       </column>
       <column> <name>NEXT_STRUCT_ID</name> <type>INTEGER</type>
         <desc>Struct ID that follows this ID in a list</desc>
@@ -238,19 +262,15 @@
     <columns>
       <column> <name>USER_ID</name>         <type>INTEGER</type>
         <desc>Internal sequence id of a user's portal information - unique user identifier - primary key, see UP_SEQUENCE</desc>
-        <key>PK</key>
       </column>
       <column> <name>LAYOUT_ID</name>       <type>INTEGER</type>
         <desc>Identifies a user's layout</desc>
-        <key>PK</key>
       </column>
       <column> <name>NODE_ID</name>        <type>INTEGER</type>
         <desc>Identifies a node in a user's layout</desc>
-        <key>PK</key>
       </column>
       <column> <name>LOCALE</name>          <type>VARCHAR</type>   <param>64</param>
         <desc>User's locale preference</desc>
-        <key>PK</key>
       </column>
       <column> <name>PRIORITY</name>        <type>INTEGER</type>
         <desc>The order of preference for this locale</desc>
@@ -268,25 +288,25 @@
     <columns>
       <column> <name>USER_ID</name>         <type>INTEGER</type>
         <desc>Foreign key user_id of table up_user</desc>
-        <key>CK</key>
       </column>
       <column> <name>LAYOUT_ID</name>       <type>INTEGER</type>
         <desc>Foreign key layout_id of table up_user_layout and compound key</desc>
-        <key>CK</key>
       </column>
       <column> <name>STRUCT_ID</name>       <type>INTEGER</type>
         <desc>Foreign key of table UP_LAYOUT_STRUCT and compound key</desc>
-        <key>CK</key>
       </column>
       <column> <name>STRUCT_PARM_NM</name>  <type>VARCHAR</type> <param>35</param>
       <desc>Struct parameter name - holds the parameter name as given in the CPD - foreign key of table UP_CHANNEL_PARAM</desc>
-      <key>CK</key>
 
       </column>
-      <column> <name>STRUCT_PARM_VAL</name> <type>LONGVARCHAR</type>
+      <column> <name>STRUCT_PARM_VAL</name> <type>VARCHAR</type> <param>2000</param>
         <desc>Struct parameter value - holds the parameter value as entered by the user</desc>
       </column>
     </columns>
+    <primary-key>USER_ID</primary-key>
+    <primary-key>LAYOUT_ID</primary-key>
+    <primary-key>STRUCT_ID</primary-key>
+    <primary-key>STRUCT_PARM_NM</primary-key>
     <not-null>LAYOUT_ID</not-null>
     <not-null>USER_ID</not-null>
     <not-null>STRUCT_ID</not-null>
@@ -300,7 +320,6 @@
     <columns>
       <column> <name>CHAN_ID</name>          <type>INTEGER</type>
         <desc>Channel ID is a unique sequence number generated by the portal - primary key, see UP_SEQUENCE</desc>
-        <key>PK</key>
       </column>
       <column> <name>CHAN_TITLE</name>       <type>VARCHAR</type>   <param>128</param>
         <desc>Channel title - it appears at the top title bar of the channel</desc>
@@ -313,15 +332,12 @@
       </column>
       <column> <name>CHAN_CLASS</name>       <type>VARCHAR</type>   <param>100</param>
         <desc>Channel class - the java class used to render this type of channel - foreign key to type in table up_chan_types</desc>
-        <key>FK</key>
       </column>
       <column> <name>CHAN_TYPE_ID</name>     <type>INTEGER</type>
       <desc>Channel type id - the id of the java class used to render this type of channel - entity type_id from table up_chan_types</desc>
-      <key>FK</key>
       </column>
       <column> <name>CHAN_PUBL_ID</name>     <type>INTEGER</type>
         <desc>Channel publisher id - user_id of channel publisher - foreign key user_id of up_user</desc>
-        <key>FK</key>
       </column>
       <column> <name>CHAN_PUBL_DT</name>     <type>TIMESTAMP</type>
         <desc>Date channel published</desc>
@@ -352,6 +368,10 @@
       </column>
     </columns>
     <primary-key>CHAN_ID</primary-key>
+    <index>
+        <name>UPCHAN_FNAME_IDX</name>
+        <column-ref>CHAN_FNAME</column-ref>
+    </index>
   </table>
 
   <table sinceMajor="2" sinceMinor="1">
@@ -360,7 +380,6 @@
     <columns>
       <column> <name>CHAN_ID</name>        <type>INTEGER</type>
         <desc>Foreign key from up_channel</desc>
-        <key>FK</key>
       </column>
       <column> <name>CHAN_PARM_NM</name>   <type>VARCHAR</type> <param>35</param>
         <desc>Channel parameter name - a short name for a particular channel ID</desc>
@@ -375,6 +394,8 @@
         <desc>Channel parameter override - Either "Y" or "N". "Y" or yes allows a user to override default channel parameters with his/her own</desc>
       </column>
     </columns>
+    <primary-key>CHAN_ID</primary-key>
+    <primary-key>CHAN_PARM_NM</primary-key>
     <not-null>CHAN_ID</not-null>
     <not-null>CHAN_PARM_NM</not-null>
   </table>
@@ -385,7 +406,6 @@
     <columns>
       <column> <name>TYPE_ID</name>      <type>INTEGER</type>
         <desc>Type ID is a unique sequence number generated by the portal - primary key</desc>
-        <key>PK</key>
       </column>
       <column> <name>TYPE</name>         <type>VARCHAR</type>     <param>128</param>
         <desc>Type holds the name of the java class - eg, org.jasig.portal.channels.CImage</desc>
@@ -393,7 +413,7 @@
       <column> <name>TYPE_NAME</name>    <type>VARCHAR</type>     <param>70</param>
         <desc>Type name is a short description of the java class displayed during publish</desc>
       </column>
-      <column> <name>TYPE_DESCR</name>   <type>LONGVARCHAR</type>
+      <column> <name>TYPE_DESCR</name>   <type>VARCHAR</type> <param>2000</param>
         <desc>Type description of the java class</desc>
       </column>
       <column> <name>TYPE_DEF_URI</name> <type>VARCHAR</type>     <param>255</param>
@@ -401,6 +421,7 @@
       </column>
     </columns>
     <primary-key>TYPE_ID</primary-key>
+    <not-null>TYPE</not-null>
   </table>
 
   <table sinceMajor="2" sinceMinor="1">
@@ -409,7 +430,6 @@
     <columns>
       <column> <name>SEQUENCE_NAME</name>  <type>VARCHAR</type> <param>255</param>
         <desc>Name of sequence, corresponds to table name</desc>
-        <key>PK</key>
       </column>
       <column> <name>SEQUENCE_VALUE</name> <type>INTEGER</type>
         <desc>Next available number</desc>
@@ -424,14 +444,12 @@
     <columns>
       <column> <name>USER_ID</name>    <type>INTEGER</type>
         <desc>Foreign key user_id of table up_user</desc>
-        <key>CK</key>
       </column>
       <column> <name>USER_AGENT</name> <type>VARCHAR</type> <param>255</param>
         <desc>User agent string identifying a particular browser and version</desc>
       </column>
       <column> <name>PROFILE_ID</name> <type>INTEGER</type>
         <desc>Foreign key of table UP_USER_PROFILE and compound key</desc>
-        <key>CK</key>
       </column>
     </columns>
   </table>
@@ -442,11 +460,9 @@
     <columns>
       <column> <name>USER_ID</name>           <type>INTEGER</type>
         <desc>Foreign key USER_ID of table up_user</desc>
-        <key>CK</key>
       </column>
       <column> <name>PROFILE_ID</name>        <type>INTEGER</type>
         <desc>Internal sequence id of a profile id - primary key, see UP_SEQUENCE</desc>
-        <key>PK</key>
       </column>
       <column> <name>PROFILE_NAME</name>      <type>VARCHAR</type> <param>50</param>
         <desc>Short name of profile</desc>
@@ -471,15 +487,12 @@
     <columns>
       <column> <name>USER_ID</name>         <type>INTEGER</type>
         <desc>Internal sequence id of a user's portal information - unique user identifier - primary key, see UP_SEQUENCE</desc>
-        <key>PK</key>
       </column>
       <column> <name>PROFILE_ID</name> <type>INTEGER</type>
         <desc>Internal sequence id of a user's profile</desc>
-        <key>PK</key>
       </column>
       <column> <name>LOCALE</name>          <type>VARCHAR</type>   <param>64</param>
         <desc>User's locale preference</desc>
-        <key>PK</key>
       </column>
       <column> <name>PRIORITY</name>        <type>INTEGER</type>
         <desc>The order of preference for this locale</desc>
@@ -496,15 +509,12 @@
     <columns>
       <column> <name>USER_ID</name>              <type>INTEGER</type>
         <desc>Foreign key USER_ID of table UP_USER</desc>
-        <key>CK</key>
       </column>
       <column> <name>PROFILE_ID</name>           <type>INTEGER</type>
         <desc>Foreign key of table UP_USER_PROFILE and compound key</desc>
-        <key>CK</key>
       </column>
       <column> <name>SS_ID</name>      <type>INTEGER</type>
         <desc>Foreign key of table UP_SS_STRUCT_PARM and compound key</desc>
-        <key>CK</key>
       </column>
       <column> <name>SS_TYPE</name> <type>INTEGER</type>
         <desc>Foreign key TYPE of table UP_SS_STRUCT_PARM</desc>
@@ -516,6 +526,11 @@
         <desc>Parameter value (ex. 1 for active tab)</desc>
       </column>
     </columns>
+    <primary-key>USER_ID</primary-key>
+    <primary-key>PROFILE_ID</primary-key>
+    <primary-key>SS_ID</primary-key>
+    <primary-key>SS_TYPE</primary-key>
+    <primary-key>PARAM_NAME</primary-key>
   </table>
 
   <table sinceMajor="2" sinceMinor="1">
@@ -527,11 +542,9 @@
       </column>
       <column> <name>PROFILE_ID</name>           <type>INTEGER</type>
         <desc>Foreign key of table UP_USER_PROFILE and compound key</desc>
-        <key>CK</key>
       </column>
       <column> <name>SS_ID</name>      <type>INTEGER</type>
         <desc>Foreign key of table UP_SS_STRUCT_PARM and compound key</desc>
-        <key>CK</key>
       </column>
       <column> <name>SS_TYPE</name> <type>INTEGER</type>
         <desc>Foreign key TYPE of table UP_SS_STRUCT_PARM</desc>
@@ -549,6 +562,13 @@
         <desc>Parameter value (ex. 100% for column width)</desc>
       </column>
     </columns>
+    <primary-key>USER_ID</primary-key>
+    <primary-key>PROFILE_ID</primary-key>
+    <primary-key>SS_ID</primary-key>
+    <primary-key>SS_TYPE</primary-key>
+    <primary-key>STRUCT_ID</primary-key>
+    <primary-key>PARAM_NAME</primary-key>
+    <primary-key>PARAM_TYPE</primary-key>
   </table>
 
   <table sinceMajor="2" sinceMinor="1">
@@ -557,7 +577,6 @@
     <columns>
       <column> <name>SS_ID</name> <type>INTEGER</type>
         <desc>Style sheet ID is a unique sequence number used by the portal - primary key, see UP_SEQUENCE</desc>
-        <key>PK</key>
       </column>
       <column> <name>SS_NAME</name>             <type>VARCHAR</type>     <param>255</param>
         <desc>Theme style sheet name, displayed to the user - (ex. Nested tables or Deck of cards)</desc>
@@ -568,12 +587,11 @@
       <column> <name>SS_DESCRIPTION_URI</name>  <type>VARCHAR</type>     <param>255</param>
         <desc>URI to locate style sheet description file</desc>
       </column>
-      <column> <name>SS_DESCRIPTION_TEXT</name> <type>LONGVARCHAR</type>
+      <column> <name>SS_DESCRIPTION_TEXT</name> <type>VARCHAR</type> <param>2000</param>
         <desc>Long description of the results of this rendering for a device</desc>
       </column>
       <column> <name>STRUCT_SS_ID</name>        <type>INTEGER</type>
         <desc>Foreign key SS_ID of UP_SS_STRUCT - indicates a corresponding structure style sheet for this device</desc>
-        <key>FK</key>
       </column>
       <column> <name>SAMPLE_ICON_URI</name>      <type>VARCHAR</type> <param>255</param>
         <desc>URI locating the graphic for a sample icon representation of this theme</desc>
@@ -603,11 +621,9 @@
     <columns>
       <column> <name>SS_ID</name> <type>INTEGER</type>
         <desc>Foreign key SS_ID of UP_SS_THEME</desc>
-        <key>FK</key>
       </column>
       <column> <name>PARAM_NAME</name>             <type>VARCHAR</type>     <param>100</param>
         <desc>Short description of parameter</desc>
-        <key>CK</key>
       </column>
       <column> <name>PARAM_DEFAULT_VAL</name>              <type>VARCHAR</type>     <param>255</param>
       <desc>When first assigning this to a new theme style sheet, parameter is set to this default value</desc>
@@ -630,7 +646,6 @@
     <columns>
       <column> <name>SS_ID</name> <type>INTEGER</type>
         <desc>Style sheet ID is a unique sequence number used by the portal - primary key, see UP_SEQUENCE</desc>
-        <key>PK</key>
       </column>
       <column> <name>SS_NAME</name>             <type>VARCHAR</type>     <param>255</param>
         <desc>Structured style sheet name, displayed to the user - (ex. Tabs and columns, Nested categories)</desc>
@@ -641,7 +656,7 @@
       <column> <name>SS_DESCRIPTION_URI</name>  <type>VARCHAR</type>     <param>255</param>
         <desc>URI to locate style sheet description file</desc>
       </column>
-      <column> <name>SS_DESCRIPTION_TEXT</name> <type>LONGVARCHAR</type>
+      <column> <name>SS_DESCRIPTION_TEXT</name> <type>VARCHAR</type> <param>2000</param>
         <desc>Long description of the results of this transformation</desc>
       </column>
     </columns>
@@ -654,11 +669,9 @@
     <columns>
       <column> <name>SS_ID</name> <type>INTEGER</type>
         <desc>Foreign key SS_ID of table UP_SS_STRUCT</desc>
-        <key>CK</key>
       </column>
       <column> <name>PARAM_NAME</name>             <type>VARCHAR</type>     <param>100</param>
         <desc>Short description of parameter</desc>
-        <key>CK</key>
       </column>
       <column> <name>PARAM_DEFAULT_VAL</name>              <type>VARCHAR</type>     <param>255</param>                   <desc>When first assigning this style sheet parameter is set to this default value</desc>
       </column>
@@ -666,7 +679,6 @@
       </column>
       <column> <name>TYPE</name> <type>INTEGER</type>
       <desc>Used by portal to distinguishes between structure components like width and active tab. 1 - parameter, 2 - folder attribute, 3 - channel attribute</desc>
-      <key>CK</key>
       </column>
     </columns>
     <primary-key>SS_ID</primary-key>
@@ -680,11 +692,9 @@
     <columns>
       <column> <name>THEME_SS_ID</name>    <type>INTEGER</type>
         <desc>Foreign key SS_ID of table UP_SS_THEME</desc>
-        <key>FK</key>
       </column>
       <column> <name>STRUCT_SS_ID</name>   <type>INTEGER</type>
         <desc>Foreign key SS_ID of table UP_SS_STRUCT</desc>
-        <key>FK</key>
       </column>
       <column> <name>MIME_TYPE</name>      <type>VARCHAR</type> <param>30</param>
         <desc>Foreign key MIME_TYPE of table UP_MIME-TYPE - copied from MIME_TYPE of UP_MIME_TYPE</desc>
@@ -698,9 +708,8 @@
     <columns>
       <column> <name>MIME_TYPE</name>             <type>VARCHAR</type>     <param>30</param>
         <desc>A known mime type (ex. text/html)</desc>
-        <key>PK</key>
       </column>
-      <column> <name>MIME_TYPE_DESCRIPTION</name> <type>LONGVARCHAR</type>
+      <column> <name>MIME_TYPE_DESCRIPTION</name> <type>VARCHAR</type> <param>2000</param>
         <desc>Mime type description (ex. HTML mime type is the one that most desktop browsers use for text)</desc>
       </column>
     </columns>
@@ -713,15 +722,12 @@
     <columns>
       <column> <name>GROUP_ID</name>        <type>VARCHAR</type>     <param>240</param>
         <desc>Group ID is a unique sequence number used by the portal - primary key, see UP_SEQUENCE</desc>
-        <key>PK</key>
       </column>
       <column> <name>CREATOR_ID</name>      <type>VARCHAR</type>     <param>240</param>
         <desc>Who created this group, foreign key USER_ID of table UP_USER</desc>
-        <key>FK</key>
       </column>
       <column> <name>ENTITY_TYPE_ID</name>  <type>INTEGER</type>
         <desc>The entity to be called when a member of this group, foreign key ENTITY_TYPE_ID of table UP_ENTITY_TYPE</desc>
-        <key>FK</key>
       </column>
       <column> <name>GROUP_NAME</name>      <type>VARCHAR</type>     <param>255</param>
         <desc>Short textual name of the group for finding group</desc>
@@ -734,6 +740,10 @@
     <not-null>CREATOR_ID</not-null>
     <not-null>ENTITY_TYPE_ID</not-null>
     <not-null>GROUP_NAME</not-null>
+    <index>
+        <name>UPG_GROUP_NAME_IDX</name>
+        <column-ref>GROUP_NAME</column-ref>
+    </index>
   </table>
 
   <table sinceMajor="2" sinceMinor="1">
@@ -745,13 +755,20 @@
       </column>
       <column> <name>ENTITY_TYPE_NAME</name>  <type>VARCHAR</type>  <param>255</param>
         <desc>Class name of entity (ex. org.jasig.portal.security.IPerson)</desc>
-        <key>PK</key>
       </column>
       <column> <name>DESCRIPTIVE_NAME</name>  <type>VARCHAR</type>  <param>255</param>
         <desc>A name for display to end users (ex. Person)</desc>
       </column>
     </columns>
-    <primary-key>ENTITY_TYPE_NAME</primary-key>
+    <primary-key>ENTITY_TYPE_ID</primary-key>
+    <index>
+        <name>UPET_NAME_IDX</name>
+        <column-ref>ENTITY_TYPE_NAME</column-ref>
+    </index>
+    <unique>
+        <name>UPET_NAME_UNQ</name>
+        <column-ref>ENTITY_TYPE_NAME</column-ref>
+    </unique>
     <not-null>ENTITY_TYPE_ID</not-null>
   </table>
 
@@ -761,15 +778,12 @@
     <columns>
       <column> <name>GROUP_ID</name>         <type>VARCHAR</type>     <param>200</param>
         <desc>Unique group id number, key to GROUP_ID in UP_GROUP</desc>
-        <key>CK</key>
       </column>
       <column> <name>MEMBER_SERVICE</name>       <type>VARCHAR</type>     <param>80</param>
         <desc>For a group, the name of the service of origin.  For an entity, the name of this service.</desc>
-        <key>CK</key>
       </column>
       <column> <name>MEMBER_KEY</name>       <type>VARCHAR</type>     <param>200</param>
         <desc>Key to either the entity or group, e.g., GROUP_ID in UP_GROUP, USER_NAME in UP_USER, etc.</desc>
-        <key>CK</key>
       </column>
       <column> <name>MEMBER_IS_GROUP</name>  <type>VARCHAR</type>     <param>1</param>
         <desc>Is this member a group?  T for true, F for false</desc>
@@ -786,10 +800,11 @@
     <name>UPC_PERM_MGR</name>
     <desc>A table that is used by CPermissionsManager, distributed from the JA-SIG Clearinghouse</desc>
     <columns>
-      <column> <name>IPERMISSIBLE_CLASS</name> <type>LONGVARCHAR</type>
+      <column> <name>IPERMISSIBLE_CLASS</name> <type>VARCHAR</type> <param>2000</param>
         <desc>Holds name of permissions manager class that permits channels to be available for publish/subscribe</desc>
       </column>
     </columns>
+    <primary-key>IPERMISSIBLE_CLASS</primary-key>
     <not-null>IPERMISSIBLE_CLASS</not-null>
   </table>
 
@@ -800,11 +815,9 @@
     <columns>
       <column> <name>ENTITY_TYPE_ID</name>  <type>INTEGER</type>
         <desc>The ID indicating the class of entity, foreign key ENTITY_TYPE_ID of table UP_ENTITY_TYPE</desc>
-        <key>CK</key>
       </column>
       <column> <name>ENTITY_KEY</name>       <type>VARCHAR</type>     <param>240</param>
         <desc>The unique key of the entity.</desc>
-        <key>CK</key>
       </column>
       <column> <name>INVALIDATION_TIME</name>  <type>TIMESTAMP</type>
         <desc>The time the entity was invalidated.</desc>
@@ -826,11 +839,9 @@
     <columns>
       <column> <name>ENTITY_TYPE_ID</name>  <type>INTEGER</type>
         <desc>The ID indicating the class of entity, foreign key ENTITY_TYPE_ID of table UP_ENTITY_TYPE</desc>
-        <key>CK</key>
       </column>
       <column> <name>ENTITY_KEY</name>       <type>VARCHAR</type>     <param>240</param>
         <desc>The unique key of the entity being locked.</desc>
-        <key>CK</key>
       </column>
       <column> <name>LOCK_TYPE</name>  <type>INTEGER</type>
         <desc>Either READ (0) or WRITE (1)</desc>
@@ -840,7 +851,6 @@
       </column>
      <column> <name>LOCK_OWNER</name>       <type>VARCHAR</type>     <param>240</param>
         <desc>The owner of the lock.</desc>
-        <key>CK</key>
       </column>
      </columns>
     <primary-key>ENTITY_TYPE_ID</primary-key>

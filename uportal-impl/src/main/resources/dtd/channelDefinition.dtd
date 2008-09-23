@@ -35,7 +35,8 @@ Author: Ken Weiner, kweiner@unicon.net
 $Revision$
 -->
 
-<!ELEMENT channel-definition (channelId?,title, name, fname, desc, type, class, timeout, hasedit, hashelp, hasabout, secure, locale, categories, groups, users?, parameters?, makeFNameAccessibleOnly? )>
+<!ELEMENT channel-definition (channelId?,title, name, fname, desc, type, class, timeout, hasedit, hashelp, hasabout, secure, locale, categories, groups, users?, parameters?, portletPreferences?, makeFNameAccessibleOnly? )>
+<!ATTLIST channel-definition script CDATA #IMPLIED>
 
 <!ELEMENT categories (category)*>
 
@@ -44,8 +45,11 @@ $Revision$
 <!ELEMENT users (user)*>
 
 <!ELEMENT parameters (parameter)*>
-
 <!ELEMENT parameter (name, value, description, ovrd)>
+
+<!ELEMENT portletPreferences (portletPreference)*>
+<!ELEMENT portletPreference (name, read-only?, values?)>
+<!ELEMENT values (value)*>
 
 <!ELEMENT makeFNameAccessibleOnly EMPTY>
 <!ELEMENT channelId (#PCDATA)>
@@ -69,5 +73,6 @@ $Revision$
 <!ELEMENT value (#PCDATA)>
 <!ELEMENT description (#PCDATA)>
 <!ELEMENT ovrd (#PCDATA)>
+<!ELEMENT read-only (#PCDATA)>
 
 

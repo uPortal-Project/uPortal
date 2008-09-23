@@ -60,34 +60,6 @@
           <value>text/html</value>
         </column> 
       </row>  
-      <row> 
-        <column>
-          <name>THEME_SS_ID</name>
-          <value>4</value>
-        </column>  
-        <column>
-          <name>STRUCT_SS_ID</name>
-          <value>4</value>
-        </column>  
-        <column>
-          <name>MIME_TYPE</name>
-          <value>text/html</value>
-        </column> 
-      </row>  
-      <row> 
-        <column>
-          <name>THEME_SS_ID</name>
-          <value>2</value>
-        </column>  
-        <column>
-          <name>STRUCT_SS_ID</name>
-          <value>1</value>
-        </column>  
-        <column>
-          <name>MIME_TYPE</name>
-          <value>text/vnd.wap.wml</value>
-        </column> 
-      </row> 
     </rows> 
   </table>
   <table> 
@@ -103,16 +75,6 @@
           <value>HTML mime type is the one that most desktop browsers use</value>
         </column> 
       </row>  
-      <row> 
-        <column>
-          <name>MIME_TYPE</name>
-          <value>text/vnd.wap.wml</value>
-        </column>  
-        <column>
-          <name>MIME_TYPE_DESCRIPTION</name>
-          <value>WML mime type is mostly used by the cell phone WAP browsers.</value>
-        </column> 
-      </row> 
     </rows> 
   </table>
   <table> 

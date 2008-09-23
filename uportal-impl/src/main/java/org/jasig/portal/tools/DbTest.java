@@ -11,9 +11,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import org.jasig.portal.RDBMServices;
-import org.jasig.portal.tools.dbloader.Configuration;
-import org.jasig.portal.tools.dbloader.DbTypeMapping;
-import org.jasig.portal.tools.dbloader.DbUtils;
 
 /**
  * Title:        DbTest
@@ -50,11 +47,6 @@ public class DbTest {
     String dbVersion = dbMetaData.getDatabaseProductVersion();
     String driverName = dbMetaData.getDriverName();
     String driverVersion = dbMetaData.getDriverVersion();
-    
-    final Configuration config = new Configuration();
-    DbUtils.loadConfiguration(config);
-
-    final DbTypeMapping dbTypeMapping = config.getDbTypeMapping(dbName, dbVersion, driverName, driverVersion);
     
     String driverClass = RDBMServices.getJdbcDriver();
     String url = RDBMServices.getJdbcUrl();
@@ -118,9 +110,6 @@ public class DbTest {
     System.out.println("User:             '" + user + "'");
     System.out.println();
     
-    System.out.println("Type Mappings: " + dbTypeMapping.getTypes());
-    System.out.println();
-
     System.out.println("supportsANSI92EntryLevelSQL: "+supportsANSI92EntryLevelSQL); 
     System.out.println("supportsANSI92FullSQL:       "+supportsANSI92FullSQL); 
     System.out.println("supportsCoreSQLGrammar:     "+supportsCoreSQLGrammar); 

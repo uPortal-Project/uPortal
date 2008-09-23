@@ -41,7 +41,7 @@ $Revision$
 <!ATTLIST table
    sinceMajor  CDATA #REQUIRED
    sinceMinor  CDATA #REQUIRED>
-<!ELEMENT table (name, desc, columns, primary-key*,not-null*) >
+<!ELEMENT table (name, desc, columns, primary-key*,not-null*,unique*,index*) >
 <!ELEMENT columns (column+)>
 <!ELEMENT column (name, type, param?, desc?, key?)>
 <!ATTLIST column
@@ -53,4 +53,7 @@ $Revision$
 <!ELEMENT desc (#PCDATA)>
 <!ELEMENT key (#PCDATA)>
 <!ELEMENT primary-key (#PCDATA)>
+<!ELEMENT unique (name, column-ref*)>
 <!ELEMENT not-null (#PCDATA)>
+<!ELEMENT index (name, column-ref*)>
+<!ELEMENT column-ref (#PCDATA)>
