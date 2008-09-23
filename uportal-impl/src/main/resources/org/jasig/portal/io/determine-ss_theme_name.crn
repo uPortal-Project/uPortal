@@ -1,0 +1,14 @@
+<!-- 
+ | Parameters:
+ |     SS_THEME_NAME - The requested name of a theme style sheet
+ |
+ | Returns the computed theme style sheet name based on the layout_theme_* properties
+ +-->
+<choose>
+    <when test="${jexl(user_profile_theme_force == 'true' or SS_THEME_NAME == null)}">
+        <return value="${user_profile_theme_name_default}" />
+    </when>
+    <otherwise>
+        <return value="${SS_THEME_NAME}" />
+    </otherwise>
+</choose>

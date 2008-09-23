@@ -1,0 +1,14 @@
+<!-- 
+ | Parameters:
+ |     SS_STRUCTURE_NAME - The requested name of a structure style sheet
+ |
+ | Returns the default structure name if force is true or the passed SS_STRUCTURE_NAME is null
+ +-->
+<choose>
+    <when test="${jexl(user_profile_structure_force == 'true' or SS_STRUCTURE_NAME == null)}">
+        <return value="${user_profile_structure_name_default}" />
+    </when>
+    <otherwise>
+        <return value="${SS_STRUCTURE_NAME}" />
+    </otherwise>
+</choose>

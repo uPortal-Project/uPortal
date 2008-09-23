@@ -1,0 +1,25 @@
+<!-- 
+ | Parameters:
+ |     STRUCTURE_STYLESHEET_NAME - The name of a structure stylesheet
+ |
+ | Returns the ID of the structure stylesheet, null if no structure stylesheet with that name is found
+ +-->
+<cache key="STRUCTURE_STYLESHEET_ID" cache-key="STRUCTURE_STYLESHEET_ID.${STRUCTURE_STYLESHEET_NAME}">
+    <factory>
+        <sql-query>
+            <sql>
+                SELECT SS_ID AS STRUCTURE_STYLESHEET_ID
+                FROM UP_SS_STRUCT 
+                WHERE SS_NAME = ?
+            </sql>
+            <parameter value="${STRUCTURE_STYLESHEET_NAME}"/>
+            <subtasks>
+                <return value="${STRUCTURE_STYLESHEET_ID}" />
+            </subtasks>
+        </sql-query>    
+    </factory>
+    <subtasks>
+        <return value="${STRUCTURE_STYLESHEET_ID}" />
+    </subtasks>
+</cache>
+       

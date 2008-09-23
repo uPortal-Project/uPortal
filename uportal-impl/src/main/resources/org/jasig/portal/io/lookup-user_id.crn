@@ -1,0 +1,20 @@
+<!-- 
+ | Parameters:
+ |   USER_NAME - the name of the user to look up a id for
+ |
+ | Returns the USER_ID for the specified USER_NAME
+ +-->
+<cache key="USER_ID" cache-key="${groovy('USER_ID_for_USER_NAME.' + USER_NAME)}">
+    <factory>
+        <sql-query>
+            <sql>SELECT USER_ID FROM UP_USER WHERE USER_NAME = ?</sql>
+            <parameter value="${USER_NAME}"/>
+            <subtasks>
+                <return value="${USER_ID}" />
+            </subtasks>
+        </sql-query>
+    </factory>
+    <subtasks>
+        <return value="${USER_ID}" />
+    </subtasks>
+</cache>

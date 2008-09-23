@@ -7,6 +7,8 @@ package  org.jasig.portal;
 
 import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
@@ -14,7 +16,8 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.events.EventPublisherLocator;
 import org.jasig.portal.events.support.ModifiedChannelDefinitionPortalEvent;
 import org.jasig.portal.events.support.PublishedChannelDefinitionPortalEvent;
@@ -22,6 +25,8 @@ import org.jasig.portal.events.support.RemovedChannelDefinitionPortalEvent;
 import org.jasig.portal.groups.IEntity;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl;
+import org.jasig.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPermission;
@@ -29,8 +34,6 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IUpdatingPermissionManager;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.GroupService;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.CommonUtils;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.ResourceLoader;
@@ -381,6 +384,50 @@ public class ChannelRegistryManager {
         }
       }
     }
+    
+    final List<IPortletPreference> portletPreferences = new LinkedList<IPortletPreference>();
+    final NodeList definitionPrefsNodes = channelE.getElementsByTagName("definitionPreferences");
+    if (definitionPrefsNodes.getLength() > 2) {
+        throw new IllegalArgumentException("There should be only one 'definitionPreferences' element in a ChannelDefinition element");
+    }
+    else if (definitionPrefsNodes.getLength() == 1) {
+        final Node definitionPrefsNode = definitionPrefsNodes.item(0);
+        final NodeList prefNodes = definitionPrefsNode.getChildNodes();
+        for (int prefIndex = 0; prefIndex < prefNodes.getLength(); prefIndex++) {
+            final Node prefNode = prefNodes.item(prefIndex);
+            final NamedNodeMap attributes = prefNode.getAttributes();
+            
+            final Node nameNode = attributes.getNamedItem("name");
+            if (nameNode == null) {
+                throw new IllegalArgumentException("ChannelDefinition preference nodes must have a 'name' attribute");
+            }
+            final String name = nameNode.getNodeValue();
+            
+            final Node readOnlyNode = attributes.getNamedItem("read-only");
+            final boolean readOnly = readOnlyNode != null && Boolean.valueOf(readOnlyNode.getNodeValue());
+            
+            final NodeList valuesNodes = prefNode.getChildNodes();
+            if (valuesNodes.getLength() == 0) {
+                final IPortletPreference portletPreference = new PortletPreferenceImpl(name, readOnly);
+                portletPreferences.add(portletPreference);
+            }
+            else {
+                final NodeList valueNodes = valuesNodes.item(0).getChildNodes();
+                final List<String> values = new LinkedList<String>();
+                
+                for (int valueIndex = 0; valueIndex < valueNodes.getLength(); valueIndex++) {
+                    final Node valueNode = valueNodes.item(valueIndex);
+                    final String value = valueNode.getTextContent();
+                    values.add(value);
+                }
+
+                final IPortletPreference portletPreference = new PortletPreferenceImpl(name, readOnly, values.toArray(new String[values.size()]));
+                portletPreferences.add(portletPreference);
+            }
+        }
+    }
+    
+    channelDef.replacePortletPreference(portletPreferences);
   }
 
   /**

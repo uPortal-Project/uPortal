@@ -1056,6 +1056,138 @@
 
       <tr>
         <td>
+          <xsl:choose>
+            <xsl:when test="params/step[ID=$stepID]/channel/parameter[@name='portletName']">
+              <table width="100%" border="0" cellspacing="0" cellpadding="2" class="uportal-background-content">
+                <tr valign="top">
+                  <td class="uportal-label">
+                    
+                    <form name="addParameter" method="post" action="{$baseActionURL}">
+                      <input type="hidden" name="uPCM_action" value="customSettings"/>
+                      <input type="hidden" name="uPCM_capture" value="customSettings"/>
+                      <input type="hidden" name="uPCM_subAction" value="addPreference"/>
+                      <input type="hidden" name="uPCM_step" value="{$stepID}"/>
+                      <input type="hidden" name="uPCM_namePrefix"
+                        value="{params/step[position()=$stepID]/arbitrary-parameters[1]/paramName-prefix[1]}"/>
+                      <input type="hidden" name="isPref" value="true"/>
+                      
+                      <table width="100%" border="0" cellspacing="0" cellpadding="4">
+                        <tr class="uportal-label">
+                          <td>Name:<br/>
+                            <input type="text" name="name" class="uportal-input-text"/>
+                          </td>
+                        </tr>
+                        
+                        <tr class="uportal-label">
+                          <td>Value:<br/>
+                            <input type="text" name="value" class="uportal-input-text"/>
+                          </td>
+                        </tr>
+                        
+                        <tr class="uportal-label">
+                          <td>
+                            <input type="checkbox" name="appendValue" value="true" checked="checked"/>
+                            <img alt="" src="{$mediaPath}/transparent.gif" width="4" height="4"/> Additional Value</td>
+                        </tr>
+                        
+                        <tr class="uportal-label">
+                          <td>
+                            <input type="checkbox" name="read-only" value="true"/>
+                            <img alt="" src="{$mediaPath}/transparent.gif" width="4" height="4"/> Read Only</td>
+                        </tr>
+                        
+                        <tr class="uportal-label">
+                          <td align="right">
+                            <input type="submit" name="uPCM_submit" value="add" class="uportal-button"/>
+                          </td>
+                        </tr>
+                      </table>
+                    </form>
+                  </td>
+                  
+                  <td>
+                    <img alt="" src="{$mediaPath}/transparent.gif" width="16" height="16"/>
+                  </td>
+                  <td class="uportal-background-light">
+                    <img alt="" src="transparent.gif" width="2" height="2"/>
+                  </td>
+                  <td width="100%">
+                    
+                    <h4>Definition Preferences</h4>
+                    <table width="100%" border="0" cellpadding="2" class="uportal-background-content" cellspacing="0">
+                      <tr>
+                        <td/>
+                        <td nowrap="nowrap" class="uportal-channel-table-header">Read<br/>Only</td>
+                        <td nowrap="nowrap" class="uportal-channel-table-header">Name</td>
+                        <td width="100%" class="uportal-channel-table-header">Value</td>
+                      </tr>
+                      <xsl:for-each select="params/step[ID=$stepID]/channel/definitionPreferences/preference">
+                        <tr>
+                          <td nowrap="nowrap" align="center">
+                            <a href="{$baseActionURL}?uPCM_action=customSettings&amp;uPCM_capture=customSettings&amp;uPCM_subAction=deletePreference&amp;isPref=true&amp;name={@name}&amp;uPCM_step={$stepID}"><img src="{$mediaPath}/remove.gif" width="16" height="16" border="0" alt="Remove this preference"/></a>
+                          </td>
+                          <td>
+                            <xsl:choose>
+                              <xsl:when test="@read-only = 'true'">
+                                <img alt="Read Only" src="{$mediaPath}/checked.gif" width="16" height="16"/>
+                              </xsl:when>
+                              <xsl:otherwise>
+                                <img alt="Modifiable" src="{$mediaPath}/check.gif" width="16" height="16"/>
+                              </xsl:otherwise>
+                            </xsl:choose>
+                          </td>
+                          <td><xsl:value-of select="@name"/></td>
+                          <td><xsl:value-of select="values/value[position() = 1]"/></td>
+                        </tr>
+                        <xsl:for-each select="values/value[position() > 1]">
+                          <tr>
+                            <td colspan="3"/>
+                            <td><xsl:value-of select="."/></td>
+                          </tr>
+                        </xsl:for-each>
+                      </xsl:for-each>
+                    </table>
+                    
+                    <h4>portlet.xml Preferences</h4>
+                    <xsl:choose>
+                      <xsl:when test="params/step[ID=$stepID]/channel/portletXmlPreferences/preference">
+                        <table width="100%" border="0" cellpadding="2" class="uportal-background-content" cellspacing="0">
+                          <tr>
+                            <td nowrap="nowrap" class="uportal-channel-table-header">Read<br/>Only</td>
+                            <td nowrap="nowrap" class="uportal-channel-table-header">Name</td>
+                            <td width="100%" class="uportal-channel-table-header">Value</td>
+                          </tr>
+                          <xsl:for-each select="params/step[ID=$stepID]/channel/portletXmlPreferences/preference">
+                            <tr>
+                              <td>
+                                <xsl:choose>
+                                  <xsl:when test="@read-only = 'true'">
+                                    <img alt="Read Only" src="{$mediaPath}/checked.gif" width="16" height="16"/>
+                                  </xsl:when>
+                                  <xsl:otherwise>
+                                    <img alt="Modifiable" src="{$mediaPath}/check.gif" width="16" height="16"/>
+                                  </xsl:otherwise>
+                                </xsl:choose>
+                              </td>
+                              <td><xsl:value-of select="@name"/></td>
+                              <td><xsl:value-of select="values/value[position() = 1]"/></td>
+                            </tr>
+                            <xsl:for-each select="values/value[position() > 1]">
+                              <tr>
+                                <td colspan="2"/>
+                                <td><xsl:value-of select="."/></td>
+                              </tr>
+                            </xsl:for-each>
+                          </xsl:for-each>
+                          </table>
+                      </xsl:when>
+                      <xsl:otherwise>There are no portlet.xml preferences</xsl:otherwise>
+                    </xsl:choose>
+                  </td>
+                </tr>
+              </table>
+            </xsl:when>
+            <xsl:otherwise>
           <table width="100%" border="0" cellspacing="0" cellpadding="2" class="uportal-background-content">
             <tr valign="top">
               <td class="uportal-label">
@@ -1161,6 +1293,8 @@
               </td>
             </tr>
           </table>
+            </xsl:otherwise>
+          </xsl:choose>
         </td>
       </tr>
 <!--      <tr>
@@ -1449,7 +1583,6 @@
           <xsl:for-each select="type/restriction/value">
             <input type="checkbox" name="{../../../name}" value="{.}">
               <xsl:if test=". = ../defaultValue[1] or 'true' = /manageChannels/channelDef/params/step[$stepID]/channel/parameter[@name = $name]/@value">
-              <xsl:if test=". = ../defaultValue[1]">
                 <xsl:attribute name="checked">checked</xsl:attribute>
               </xsl:if>
             </input>
@@ -2209,6 +2342,47 @@
 
 </xsl:choose>
 
+            <!-- Portlet Preferences -->
+            <xsl:if test="/manageChannels/reviewChannel/params/step/channel/parameter[@name='portletName']">
+              <tr class="uportal-channel-text">
+                <td nowrap="nowrap" align="center"><img alt="" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>
+                <td nowrap="nowrap"><img alt="" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+                <td nowrap="nowrap" valign="top"><strong><a href="{$baseActionURL}?uPCM_action=channelDef&amp;uPCM_capture=reviewChannel&amp;uPCM_step=2">Portlet Preferences</a></strong></td>
+                <td><img alt="" src="{$mediaPath}/transparent.gif" width="16" height="16" /></td>
+                <td>
+                  <table width="100%" border="0" cellpadding="2" class="uportal-background-content" cellspacing="0">
+                    <tr>
+                      <td nowrap="nowrap" class="uportal-channel-table-header">Read<br/>Only</td>
+                      <td nowrap="nowrap" class="uportal-channel-table-header">Name</td>
+                      <td width="100%" class="uportal-channel-table-header">Value</td>
+                    </tr>
+                    <xsl:for-each select="/manageChannels/reviewChannel/params/step/channel/definitionPreferences/preference">
+                      <tr>
+                        <td>
+                          <xsl:choose>
+                            <xsl:when test="@read-only = 'true'">
+                              <img alt="Read Only" src="{$mediaPath}/checked.gif" width="16" height="16"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                              <img alt="Modifiable" src="{$mediaPath}/check.gif" width="16" height="16"/>
+                            </xsl:otherwise>
+                          </xsl:choose>
+                        </td>
+                        <td><a href="{$baseActionURL}?uPCM_action=channelDef&amp;uPCM_capture=reviewChannel&amp;uPCM_step=2"><xsl:value-of select="@name"/></a></td>
+                        <td><a href="{$baseActionURL}?uPCM_action=channelDef&amp;uPCM_capture=reviewChannel&amp;uPCM_step=2"><xsl:value-of select="values/value[position() = 1]"/></a></td>
+                      </tr>
+                      <xsl:for-each select="values/value[position() > 1]">
+                        <tr>
+                          <td colspan="2"/>
+                          <td><a href="{$baseActionURL}?uPCM_action=channelDef&amp;uPCM_capture=reviewChannel&amp;uPCM_step=2"><xsl:value-of select="."/></a></td>
+                        </tr>
+                      </xsl:for-each>
+                    </xsl:for-each>
+                  </table>
+                  <br/>
+                </td>
+              </tr>
+            </xsl:if>
       <tr class="uportal-channel-text">
 
         <td nowrap="nowrap" align="center"><img alt="" src="{$mediaPath}/transparent.gif" width="1" height="1" /></td>

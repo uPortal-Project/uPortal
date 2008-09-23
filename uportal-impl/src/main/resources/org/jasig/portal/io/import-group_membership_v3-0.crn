@@ -1,0 +1,76 @@
+<choose>
+    <when test="${jexl(IMPORT_ACTION.equals('GROUP'))}">
+        <with>
+            <attribute key="CREATOR">${valueOf(creator)}</attribute>
+            <attribute key="DESCRIPTION">${valueOf(description)}</attribute>
+            <attribute key="ENTITY_TYPE_NAME">${valueOf(entity-type)}</attribute>
+            <attribute key="GROUP_NAME">${valueOf(name)}</attribute>
+            <subtasks>
+                <with-attribute key="ENTITY_TYPE_ID" value="${crn(lookup-entity_type_id.crn)}">
+                    <sql-transaction>
+                        <sql-upsert>
+                            <update-statement>
+                                UPDATE up_group 
+                                SET creator_id = ?, description = ? 
+                                WHERE entity_type_id = ? AND group_name = ?
+                            </update-statement>
+                            <insert-statement>
+                                INSERT INTO up_group(creator_id, description, entity_type_id, group_name, group_id) 
+                                VALUES(?, ?, ?, ?, ?)
+                            </insert-statement>
+                            
+                            <update-parameter value="${CREATOR}"/>
+                            <update-parameter value="${DESCRIPTION}"/>
+                            <update-parameter value="${ENTITY_TYPE_ID}"/>
+                            <update-parameter value="${GROUP_NAME}"/>
+                            
+                            <insert-parameter value="${CREATOR}"/>
+                            <insert-parameter value="${DESCRIPTION}"/>
+                            <insert-parameter value="${ENTITY_TYPE_ID}"/>
+                            <insert-parameter value="${GROUP_NAME}"/>
+                            <insert-parameter value="${crn(generate-group-id.crn)}"/>
+                        </sql-upsert>
+                    </sql-transaction>
+                </with-attribute>
+            </subtasks>
+        </with>
+    </when>
+    <when test="${jexl(IMPORT_ACTION.equals('MEMBERS'))}">
+        <sql-query>
+            <sql>
+                SELECT group_id, group_name
+                FROM up_group
+                WHERE group_name = ?
+            </sql>
+            <parameter value="${valueOf(name)}"/>
+            <subtasks>
+                <sql-transaction>
+                    <sql-statement sql="DELETE FROM UP_GROUP_MEMBERSHIP WHERE GROUP_ID = ?">
+                        <parameter value="${GROUP_ID}" />
+                    </sql-statement>
+                    <node-iterator xpath="children/*">
+                        <with>
+                            <attribute key="MEMEBER_SERVICE">${org.jasig.portal.io.GetMemberServicePhrase(${Attributes.NODE})}</attribute>
+                            <attribute key="MEMEBER_KEY">${org.jasig.portal.io.GetMemberKeyPhrase(${Attributes.NODE})}</attribute>
+                            <subtasks>
+                                <choose>
+                                    <when test="${jexl(MEMEBER_SERVICE != null and MEMEBER_KEY != null)}">
+                                        <sql-statement sql="INSERT INTO up_group_membership(member_is_group, group_id, member_service, member_key) VALUES(?, ?, ?, ?)">
+                                            <parameter value="${org.jasig.portal.io.GetMemberIsGroupPhrase(${Attributes.NODE})}"/>
+                                            <parameter value="${GROUP_ID}"/>
+                                            <parameter value="${MEMEBER_SERVICE}"/>
+                                            <parameter value="${MEMEBER_KEY}"/>
+                                        </sql-statement>
+                                    </when>
+                                    <otherwise>
+                                        <echo-ln>WARNING: ${groovy(Attributes.NODE.getName())} member '${valueOf(.)}' of group '${GROUP_NAME}' could not be found and will not be added to the group.</echo-ln>
+                                    </otherwise>
+                                </choose>
+                            </subtasks>
+                        </with>
+                    </node-iterator>
+                </sql-transaction>
+            </subtasks>
+        </sql-query>
+    </when>
+</choose>

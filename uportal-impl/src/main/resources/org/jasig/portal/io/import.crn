@@ -1,170 +1,186 @@
-<invoke-method class="org.jasig.portal.spring.PortalApplicationContextLocator" method="getApplicationContext" attribute-name="PORTAL_CONTEXT">
-    <subtasks>
-        <invoke-method object="${PORTAL_CONTEXT}" method="getBean" attribute-name="COUNTER_STORE">
-            <parameter value="counterStore" />
-            <subtasks>
-                <groovy>
-                    <script>
-                        COUNTER_STORE.setIncrement(5);
-                    </script>
-                </groovy>
-            </subtasks>
-        </invoke-method>
-        <invoke-method object="${PORTAL_CONTEXT}" method="getBean" attribute-name="SqlAttributes.DATA_SOURCE">
-            <parameter value="PortalDb" />
-            <subtasks>
-                <invoke-method object="${PORTAL_CONTEXT}" method="getBean" attribute-name="SqlAttributes.TRANSACTION_MANAGER">
-                    <parameter value="transactionManager" />
-                    <subtasks>
-                        <with-attribute key="FILE_PATTERN" value="${org.jasig.portal.io.FilePatternPhrase(${$2})}">
-            
-                            <echo-ln>Base Import Directory=${$1}</echo-ln>
-                            <echo-ln>FILE_PATTERN=${FILE_PATTERN}</echo-ln>
-            
-                            <!-- entity-types -->
-                            <file-iterator dir="${$1}" includes="**/*.entity-type">
-                                <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
-                                    <echo-ln>Import Entity Type:  ${Attributes.LOCATION}</echo-ln>
-                                    <with-attribute key="Attributes.NODE" value="${doc(${$1}/${Attributes.LOCATION})}">
+<properties location="//properties/db/entities/import.properties"> 
+    <with>
+        <attribute key="THREAD_COUNT">8</attribute>
+        <attribute key="Attributes.CACHE_MODEL">ALL</attribute>
+        <attribute key="IMPORT_START_TIME">${groovy(System.currentTimeMillis())}</attribute>
+        <attribute key="Attributes.CACHE">${groovy(new org.jasig.portal.io.LoggingLRUMap(500))}</attribute>
+        <attribute key="PORTAL_CONTEXT">${groovy(org.jasig.portal.spring.PortalApplicationContextLocator.getApplicationContext())}</attribute>
+        <subtasks>
+            <groovy>
+                <script>
+                    PORTAL_CONTEXT.getBean('counterStore').setIncrement(5);
+                </script>
+            </groovy>
+            <with>
+                <attribute key="SqlAttributes.DATA_SOURCE">${groovy(PORTAL_CONTEXT.getBean('PortalDb'))}</attribute>
+                <attribute key="SqlAttributes.TRANSACTION_MANAGER">${groovy(PORTAL_CONTEXT.getBean('transactionManager'))}</attribute>
+                <subtasks>
+                    <with-attribute key="FILE_PATTERN" value="${org.jasig.portal.io.FilePatternPhrase(${$2})}">
+        
+                        <echo-ln>Base Import Directory=${$1}</echo-ln>
+                        <echo-ln>FILE_PATTERN=${FILE_PATTERN}</echo-ln>
+        
+                        <!-- entity-types -->
+                        <file-iterator dir="${$1}" includes="**/*.entity-type">
+                            <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
+                                <echo-ln>Import Entity Type:  ${Attributes.LOCATION}</echo-ln>
+                                <with-attribute key="Attributes.NODE" value="${doc(${$1}/${Attributes.LOCATION})}">
+                                    <crn location="${valueOf(@script)}"/>
+                                </with-attribute>
+                            </if>
+                        </file-iterator>
+        
+                        <!-- structures -->
+                        <file-iterator dir="${$1}" includes="**/*.structure">
+                            <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
+                                <echo-ln>Import Structure:  ${Attributes.LOCATION}</echo-ln>
+                                <with-attribute key="Attributes.NODE" value="${doc(${$1}/${Attributes.LOCATION})}">
+                                    <crn location="${valueOf(@script)}"/>
+                                </with-attribute>
+                            </if>
+                        </file-iterator>
+                        
+                        <!-- themes -->
+                        <file-iterator dir="${$1}" includes="**/*.theme">
+                            <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
+                                <echo-ln>Import Theme:  ${Attributes.LOCATION}</echo-ln>
+                                <with-attribute key="Attributes.NODE" value="${doc(${$1}/${Attributes.LOCATION})}">
+                                    <crn location="${valueOf(@script)}"/>
+                                </with-attribute>
+                            </if>
+                        </file-iterator>
+        
+                        <!-- template-users -->
+                        <file-iterator dir="${$1}" includes="**/*.template-user">
+                            <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
+                                <echo-ln>Import Template User:  ${Attributes.LOCATION}</echo-ln>
+                                <with-attribute key="Attributes.NODE" value="${doc(${$1}/${Attributes.LOCATION})}">
+                                    <crn location="${valueOf(@script)}"/>
+                                </with-attribute>
+                            </if>
+                        </file-iterator>
+        
+                        <!-- users -->
+                        <file-iterator dir="${$1}" includes="**/*.user">
+                            <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
+                                <echo-ln>Import User:  ${Attributes.LOCATION}</echo-ln>
+                                <with-attribute key="Attributes.NODE" value="${doc(${$1}/${Attributes.LOCATION})}">
+                                    <crn location="${valueOf(@script)}"/>
+                                </with-attribute>
+                            </if>
+                        </file-iterator>
+        
+                        <!-- groups -->
+                        <file-iterator dir="${$1}" includes="**/*.group">
+                            <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
+                                <echo-ln>Import Group:  ${Attributes.LOCATION}</echo-ln>
+                                <with-attribute key="Attributes.NODE" value="${doc(${$1}/${Attributes.LOCATION})}">
+                                    <crn location="${valueOf(@script)}"/>
+                                </with-attribute>
+                            </if>
+                        </file-iterator>
+        
+                        <!-- group_memberships -->
+                        <!-- this is a two pass import -->
+                        <file-iterator dir="${$1}" includes="**/*.group_membership">
+                            <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
+                                <echo-ln>Import Group:  ${Attributes.LOCATION}</echo-ln>
+                                <with>
+                                    <attribute key="Attributes.NODE">${doc(${$1}/${Attributes.LOCATION})}</attribute>
+                                    <attribute key="IMPORT_ACTION">GROUP</attribute>
+                                    <subtasks>
                                         <crn location="${valueOf(@script)}"/>
-                                    </with-attribute>
-                                </if>
-                            </file-iterator>
-            
-                            <!-- structures -->
-                            <file-iterator dir="${$1}" includes="**/*.structure">
-                                <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
-                                    <echo-ln>Import Structure:  ${Attributes.LOCATION}</echo-ln>
-                                    <with-attribute key="Attributes.NODE" value="${doc(${$1}/${Attributes.LOCATION})}">
+                                    </subtasks>
+                                </with>
+                            </if>
+                        </file-iterator>
+                        <file-iterator dir="${$1}" includes="**/*.group_membership">
+                            <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
+                                <echo-ln>Import Memberships:  ${Attributes.LOCATION}</echo-ln>
+                                <with>
+                                    <attribute key="Attributes.NODE">${doc(${$1}/${Attributes.LOCATION})}</attribute>
+                                    <attribute key="IMPORT_ACTION">MEMBERS</attribute>
+                                    <subtasks>
                                         <crn location="${valueOf(@script)}"/>
-                                    </with-attribute>
-                                </if>
-                            </file-iterator>
-                            
-                            <!-- themes -->
-                            <file-iterator dir="${$1}" includes="**/*.theme">
-                                <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
-                                    <echo-ln>Import Theme:  ${Attributes.LOCATION}</echo-ln>
-                                    <with-attribute key="Attributes.NODE" value="${doc(${$1}/${Attributes.LOCATION})}">
-                                        <crn location="${valueOf(@script)}"/>
-                                    </with-attribute>
-                                </if>
-                            </file-iterator>
-            
-                            <!-- template-users -->
-                            <file-iterator dir="${$1}" includes="**/*.template-user">
-                                <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
-                                    <echo-ln>Import Template User:  ${Attributes.LOCATION}</echo-ln>
-                                    <with-attribute key="Attributes.NODE" value="${doc(${$1}/${Attributes.LOCATION})}">
-                                        <crn location="${valueOf(@script)}"/>
-                                    </with-attribute>
-                                </if>
-                            </file-iterator>
-            
-                            <!-- users -->
-                            <file-iterator dir="${$1}" includes="**/*.user">
-                                <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
-                                    <echo-ln>Import User:  ${Attributes.LOCATION}</echo-ln>
-                                    <with-attribute key="Attributes.NODE" value="${doc(${$1}/${Attributes.LOCATION})}">
-                                        <crn location="${valueOf(@script)}"/>
-                                    </with-attribute>
-                                </if>
-                            </file-iterator>
-            
-                            <!-- groups -->
-                            <file-iterator dir="${$1}" includes="**/*.group">
-                                <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
-                                    <echo-ln>Import Group:  ${Attributes.LOCATION}</echo-ln>
-                                    <with-attribute key="Attributes.NODE" value="${doc(${$1}/${Attributes.LOCATION})}">
-                                        <crn location="${valueOf(@script)}"/>
-                                    </with-attribute>
-                                </if>
-                            </file-iterator>
-            
-                            <!-- channel-types -->
-                            <file-iterator dir="${$1}" includes="**/*.channel-type">
-                                <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
-                                    <echo-ln>Import Channel Type:  ${Attributes.LOCATION}</echo-ln>
-                                    <with-attribute key="Attributes.NODE" value="${doc(${$1}/${Attributes.LOCATION})}">
-                                        <crn location="${valueOf(@script)}"/>
-                                    </with-attribute>
-                                </if>
-                            </file-iterator>
-                                                            
-                            <!-- channels -->
-                            <file-iterator dir="${$1}" includes="**/*.channel">
-                                <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
-                                    <echo-ln>Import Channel:  ${Attributes.LOCATION}</echo-ln>
-                                    <with-attribute key="Attributes.NODE" value="${doc(${$1}/${Attributes.LOCATION})}">
-                                        <crn location="${valueOf(@script)}"/>
-                                    </with-attribute>
-                                </if>
-                            </file-iterator>
-            
-                            <!-- memberships -->
-                            <file-iterator dir="${$1}" includes="**/*.membership">
-                                <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
-                                    <echo-ln>Import Membership:  ${Attributes.LOCATION}</echo-ln>
-                                    <with-attribute key="Attributes.NODE" value="${doc(${$1}/${Attributes.LOCATION})}">
-                                        <crn location="${valueOf(@script)}"/>
-                                    </with-attribute>
-                                </if>
-                            </file-iterator>
-            
-                            <!-- permissions -->
-                            <file-iterator dir="${$1}" includes="**/*.permission">
-                                <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
-                                    <echo-ln>Import Permission:  ${Attributes.LOCATION}</echo-ln>
-                                    <with-attribute key="Attributes.NODE" value="${doc(${$1}/${Attributes.LOCATION})}">
-                                        <crn location="${valueOf(@script)}"/>
-                                    </with-attribute>
-                                </if>
-                            </file-iterator>
-            
-                            <!-- fragment-layouts -->
-                            <file-iterator dir="${$1}" includes="**/*.fragment-layout">
-                                <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
-                                    <echo-ln>Import DLM Fragment Layout:  ${Attributes.LOCATION}</echo-ln>
-                                    <with-attribute key="Attributes.NODE" value="${doc(${$1}/${Attributes.LOCATION})}">
-                                        <crn location="${valueOf(@script)}"/>
-                                    </with-attribute>
-                                </if>
-                            </file-iterator>
-            
-                            <!-- layouts -->
-                            <file-iterator dir="${$1}" includes="**/*.layout">
-                                <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
-                                    <echo-ln>Import Layout:  ${Attributes.LOCATION}</echo-ln>
-                                    <with-attribute key="Attributes.NODE" value="${doc(${$1}/${Attributes.LOCATION})}">
-                                        <crn location="${valueOf(@script)}"/>
-                                    </with-attribute>
-                                </if>
-                            </file-iterator>
-            
-                            <!-- preferences -->
-                            <file-iterator dir="${$1}" includes="**/*.preferences">
-                                <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
-                                    <echo-ln>Import Preferences:  ${Attributes.LOCATION}</echo-ln>
-                                    <with-attribute key="Attributes.NODE" value="${doc(${$1}/${Attributes.LOCATION})}">
-                                        <crn location="${valueOf(@script)}"/>
-                                    </with-attribute>
-                                </if>
-                            </file-iterator>
-            
-                            <!-- batches -->
-                            <file-iterator dir="${$1}" includes="**/*.batch">
-                                <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
-                                    <echo-ln>Import Batch:  ${Attributes.LOCATION}</echo-ln>
-                                    <node-iterator xpath="*" source="${doc(${$1}/${Attributes.LOCATION})}">
-                                        <echo-ln>-- ${valueOf(name())}</echo-ln>
-                                        <crn location="${valueOf(@script)}"/>
-                                    </node-iterator>
-                                </if>
-                            </file-iterator>
-                        </with-attribute>
-                    </subtasks>
-                </invoke-method>
-            </subtasks>
-        </invoke-method>
-    </subtasks>
-</invoke-method>
+                                    </subtasks>
+                                </with>
+                            </if>
+                        </file-iterator>
+        
+                        <!-- channel-types -->
+                        <file-iterator dir="${$1}" includes="**/*.channel-type">
+                            <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
+                                <echo-ln>Import Channel Type:  ${Attributes.LOCATION}</echo-ln>
+                                <with-attribute key="Attributes.NODE" value="${doc(${$1}/${Attributes.LOCATION})}">
+                                    <crn location="${valueOf(@script)}"/>
+                                </with-attribute>
+                            </if>
+                        </file-iterator>
+                                                        
+                        <!-- channels -->
+                        <file-iterator dir="${$1}" includes="**/*.channel">
+                            <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
+                                <echo-ln>Import Channel:  ${Attributes.LOCATION}</echo-ln>
+                                <with-attribute key="Attributes.NODE" value="${doc(${$1}/${Attributes.LOCATION})}">
+                                    <crn location="${valueOf(@script)}"/>
+                                </with-attribute>
+                            </if>
+                        </file-iterator>
+        
+                        <!-- memberships -->
+                        <file-iterator dir="${$1}" includes="**/*.membership">
+                            <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
+                                <echo-ln>Import Membership:  ${Attributes.LOCATION}</echo-ln>
+                                <with-attribute key="Attributes.NODE" value="${doc(${$1}/${Attributes.LOCATION})}">
+                                    <crn location="${valueOf(@script)}"/>
+                                </with-attribute>
+                            </if>
+                        </file-iterator>
+        
+                        <!-- permissions -->
+                        <file-iterator dir="${$1}" includes="**/*.permission">
+                            <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
+                                <echo-ln>Import Permission:  ${Attributes.LOCATION}</echo-ln>
+                                <with-attribute key="Attributes.NODE" value="${doc(${$1}/${Attributes.LOCATION})}">
+                                    <crn location="${valueOf(@script)}"/>
+                                </with-attribute>
+                            </if>
+                        </file-iterator>
+        
+                        <!-- fragment-layouts -->
+                        <file-iterator dir="${$1}" includes="**/*.fragment-layout">
+                            <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
+                                <echo-ln>Import DLM Fragment Layout:  ${Attributes.LOCATION}</echo-ln>
+                                <with-attribute key="Attributes.NODE" value="${doc(${$1}/${Attributes.LOCATION})}">
+                                    <crn location="${valueOf(@script)}"/>
+                                </with-attribute>
+                            </if>
+                        </file-iterator>
+        
+                        <!-- layouts -->
+                        <file-iterator dir="${$1}" includes="**/*.layout">
+                            <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
+                                <echo-ln>Import Layout:  ${Attributes.LOCATION}</echo-ln>
+                                <with-attribute key="Attributes.NODE" value="${doc(${$1}/${Attributes.LOCATION})}">
+                                    <crn location="${valueOf(@script)}"/>
+                                </with-attribute>
+                            </if>
+                        </file-iterator>
+        
+                        <!-- batches -->
+                        <file-iterator dir="${$1}" includes="**/*.batch">
+                            <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
+                                <echo-ln>Import Batch:  ${Attributes.LOCATION}</echo-ln>
+                                <node-iterator xpath="*" source="${doc(${$1}/${Attributes.LOCATION})}">
+                                    <echo-ln>-- ${valueOf(name())}</echo-ln>
+                                    <crn location="${valueOf(@script)}"/>
+                                </node-iterator>
+                            </if>
+                        </file-iterator>
+                    </with-attribute>
+                </subtasks>
+            </with>
+            <echo-ln>Import of ${$1} Complete: ${groovy(System.currentTimeMillis() - IMPORT_START_TIME)}</echo-ln>
+        </subtasks>
+    </with>
+</properties>

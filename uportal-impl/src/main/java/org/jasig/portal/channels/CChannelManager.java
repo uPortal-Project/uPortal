@@ -6,11 +6,17 @@
 package  org.jasig.portal.channels;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.pluto.PortletContainerException;
+import org.apache.pluto.descriptors.portlet.PortletDD;
+import org.apache.pluto.descriptors.portlet.PortletPreferenceDD;
+import org.apache.pluto.descriptors.portlet.PortletPreferencesDD;
 import org.jasig.portal.ChannelRegistryManager;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ChannelStaticData;
@@ -18,16 +24,25 @@ import org.jasig.portal.GeneralRenderingException;
 import org.jasig.portal.IChannel;
 import org.jasig.portal.IServant;
 import org.jasig.portal.PortalException;
+import org.jasig.portal.channels.CChannelManager.ChannelDefinition.Preference;
 import org.jasig.portal.channels.groupsmanager.CGroupsManagerServantFactory;
 import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.jasig.portal.portlet.om.IPortletPreference;
+import org.jasig.portal.portlet.om.IPortletPreferences;
+import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPermissionManager;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.serialize.OutputFormat;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.EntityNameFinderService;
 import org.jasig.portal.services.GroupService;
+import org.jasig.portal.spring.PortalApplicationContextLocator;
 import org.jasig.portal.utils.DocumentFactory;
+import org.jasig.portal.utils.XML;
 import org.jasig.portal.utils.XSLT;
+import org.springframework.context.ApplicationContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -319,26 +334,51 @@ public class CChannelManager extends BaseChannel {
             else if (capture.equals("customSettings")) {
                 String subAction = runtimeData.getParameter("uPCM_subAction");
                 if (subAction != null) {
+                    final boolean isPref = Boolean.valueOf(runtimeData.getParameter("isPref"));
                     String name = runtimeData.getParameter("name");
                     if (name != null)
                         name = name.trim();
-                    // The name prefix appears when there are arbitrary parameters
-                    // that need the prefix to differentiate the arbitrary ones
-                    // from the non-arbitrary ones.  For example, applet parameters
-                    // in CApplet get prefixed with "APPLET."
-                    String namePrefix = runtimeData.getParameter("uPCM_namePrefix");
-                    if (namePrefix != null)
-                        name = namePrefix + name;
-                    if (subAction.equals("addParameter")) {
-                        String value = runtimeData.getParameter("value");
-                        if (value != null)
-                            value = value.trim();
-                        String override = runtimeData.getParameter("override");
-                        channelDef.addParameter(name, value, (override != null ?
-                                "yes" : "no"));
+                    
+                    if (!isPref) {
+                        // The name prefix appears when there are arbitrary parameters
+                        // that need the prefix to differentiate the arbitrary ones
+                        // from the non-arbitrary ones.  For example, applet parameters
+                        // in CApplet get prefixed with "APPLET."
+                        String namePrefix = runtimeData.getParameter("uPCM_namePrefix");
+                        if (namePrefix != null)
+                            name = namePrefix + name;
+                        if (subAction.equals("addParameter")) {
+                            String value = runtimeData.getParameter("value");
+                            if (value != null)
+                                value = value.trim();
+                            String override = runtimeData.getParameter("override");
+                            channelDef.addParameter(name, value, (override != null ?
+                                    "yes" : "no"));
+                        }
+                        else if (subAction.equals("deleteParameter")) {
+                            channelDef.removeParameter(name);
+                        }
                     }
-                    else if (subAction.equals("deleteParameter")) {
-                        channelDef.removeParameter(name);
+                    else {
+                        if (subAction.equals("addPreference")) {
+                            final boolean append = Boolean.valueOf(runtimeData.getParameter("appendValue"));
+                            final boolean readOnly = Boolean.valueOf(runtimeData.getParameter("read-only"));
+                            String value = runtimeData.getParameter("value");
+                            if (value != null) {
+                                value = value.trim();
+                            }
+                            
+                            if (append && channelDef.definitionPreferences.containsKey(name)) {
+                                final Preference preference = channelDef.definitionPreferences.get(name);
+                                preference.getValues().add(value);
+                            }
+                            else {
+                                channelDef.addDefinitionPreference(name, readOnly, value);
+                            }
+                        }
+                        else if (subAction.equals("deletePreference")) {
+                            channelDef.removeDefinitionPreference(name);
+                        }
                     }
                 }
                 // CPD parameters
@@ -821,14 +861,14 @@ public class CChannelManager extends BaseChannel {
 
     protected class WorkflowSection {
         protected String name;
-        protected List steps;
+        protected List<WorkflowStep> steps;
 
         protected WorkflowSection () {
         }
 
         protected WorkflowSection (String name) {
             this.name = name;
-            steps = new ArrayList();
+            steps = new ArrayList<WorkflowStep>();
         }
 
         protected void setName (String name) {
@@ -846,9 +886,9 @@ public class CChannelManager extends BaseChannel {
             Element paramsE = doc.createElement("params");
             sectionE.appendChild(paramsE);
             // Add all the <step> elements
-            Iterator iter = steps.iterator();
+            Iterator<WorkflowStep> iter = steps.iterator();
             while (iter.hasNext()) {
-                WorkflowStep step = (WorkflowStep)iter.next();
+                WorkflowStep step = iter.next();
                 paramsE.appendChild(step.toXML(doc));
             }
             return  sectionE;
@@ -897,12 +937,12 @@ public class CChannelManager extends BaseChannel {
     protected class WorkflowStep {
         protected String ID;
         protected String name;
-        protected List dataElements;
+        protected List<Element> dataElements;
 
         protected WorkflowStep (String ID, String name) {
             this.ID = ID;
             this.name = name;
-            this.dataElements = new ArrayList();
+            this.dataElements = new ArrayList<Element>();
         }
 
         // Accessor methods
@@ -934,9 +974,9 @@ public class CChannelManager extends BaseChannel {
             Element nameE = doc.createElement("name");
             nameE.appendChild(doc.createTextNode(name));
             stepE.appendChild(nameE);
-            Iterator iter = dataElements.iterator();
+            Iterator<Element> iter = dataElements.iterator();
             while (iter.hasNext()) {
-                stepE.appendChild(doc.importNode((Element)iter.next(), true));
+                stepE.appendChild(doc.importNode(iter.next(), true));
             }
             return  stepE;
         }
@@ -957,7 +997,9 @@ public class CChannelManager extends BaseChannel {
         protected String hasHelp;
         protected String hasAbout;
         protected String secure;        
-        protected Map parameters;
+        protected Map<String, Parameter> parameters;
+        protected Map<String, Preference> portletXmlPreferences;
+        protected Map<String, Preference> definitionPreferences;
 
         protected class Parameter {
             protected String name;
@@ -995,8 +1037,46 @@ public class CChannelManager extends BaseChannel {
             }
         }
 
+        protected class Preference {
+            protected String name;
+            protected List<String> values;
+            protected boolean readOnly;
+
+            protected Preference (String name, List<String> value, boolean readOnly) {
+                this.name = name;
+                this.values = value;
+                this.readOnly = readOnly;
+            }
+
+            protected String getName() {
+                return name;
+            }
+
+            protected void setName(String name) {
+                this.name = name;
+            }
+
+            protected List<String> getValues() {
+                return values;
+            }
+
+            protected void setValues(List<String> value) {
+                this.values = value;
+            }
+
+            protected boolean isReadOnly() {
+                return readOnly;
+            }
+
+            protected void setReadOnly(boolean readOnly) {
+                this.readOnly = readOnly;
+            }
+        }
+        
         protected ChannelDefinition () {
-            parameters = new HashMap();
+            parameters = new HashMap<String, Parameter>();
+            portletXmlPreferences = new LinkedHashMap<String, Preference>();
+            definitionPreferences = new LinkedHashMap<String, Preference>();
         }
 
         protected String getTypeID () {
@@ -1105,7 +1185,16 @@ public class CChannelManager extends BaseChannel {
         }
 
         protected void removeParameters () {
-            parameters = new HashMap();
+            parameters = new HashMap<String, Parameter>();
+        }
+        
+        protected void addDefinitionPreference(String name, boolean readOnly, String... values) {
+            final Preference preference = new ChannelDefinition.Preference(name, new ArrayList(Arrays.asList(values)), readOnly);
+            definitionPreferences.put(preference.getName(), preference);
+        }
+
+        protected void removeDefinitionPreference(String name) {
+            definitionPreferences.remove(name);
         }
 
         protected void resetChannelControls () {
@@ -1170,6 +1259,44 @@ public class CChannelManager extends BaseChannel {
                     parameters.put(name, new Parameter(name, value, override));
                 }
             }
+            
+            
+            
+            final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
+            final IPortletDefinitionRegistry portletDefinitionRegistry = (IPortletDefinitionRegistry) applicationContext.getBean("portletDefinitionRegistry", IPortletDefinitionRegistry.class);
+            final Integer chanDefId = Integer.valueOf(ID.startsWith("chan") ? ID.substring(4) : ID);
+            final IPortletDefinition portletDefinition = portletDefinitionRegistry.getPortletDefinition(chanDefId);
+            
+            if (portletDefinition != null) {
+                try {
+                    final PortletDD portletDescriptor = portletDefinitionRegistry.getParentPortletDescriptor(portletDefinition.getPortletDefinitionId());
+                    
+                    this.portletXmlPreferences.clear();
+                    final PortletPreferencesDD portletPreferences = portletDescriptor.getPortletPreferences();
+                    for (final PortletPreferenceDD portletPreference : (List<PortletPreferenceDD>)portletPreferences.getPortletPreferences()) {
+                        final String name = portletPreference.getName();
+                        final boolean readOnly = portletPreference.isReadOnly();
+                        final List<String> values = portletPreference.getValues();
+                        
+                        final Preference preference = new Preference(name, values != null ? new ArrayList<String>(values): null, readOnly);
+                        this.portletXmlPreferences.put(preference.getName(), preference);
+                    }
+                }
+                catch (PortletContainerException e) {
+                    log.warn("Could not load PortletDD for '" + portletDefinition + "'. No portletXmlPreferences will be displayed in CChannelManager UI", e);
+                }
+                
+                this.definitionPreferences.clear();
+                final IPortletPreferences portletPreferences = portletDefinition.getPortletPreferences();
+                for (IPortletPreference portletPreference : portletPreferences.getPortletPreferences()) {
+                    final String name = portletPreference.getName();
+                    final boolean readOnly = portletPreference.isReadOnly();
+                    final String[] values = portletPreference.getValues();
+                    
+                    final Preference preference = new Preference(name, values != null ? new ArrayList<String>(Arrays.asList(values)): null, readOnly);
+                    this.definitionPreferences.put(preference.getName(), preference);
+                }
+            }
         }
 
         protected Element toXML () {
@@ -1186,17 +1313,50 @@ public class CChannelManager extends BaseChannel {
             setAttribute(channelE, "hasAbout", hasAbout);
             setAttribute(channelE, "hasHelp", hasHelp);
             setAttribute(channelE, "secure", secure);            
-            Iterator iter = parameters.keySet().iterator();
+            Iterator<String> iter = parameters.keySet().iterator();
             while (iter.hasNext()) {
-                String name = (String)iter.next();
-                Parameter param = (Parameter)parameters.get(name);
+                String name = iter.next();
+                Parameter param = parameters.get(name);
                 Element parameterE = emptyDoc.createElement("parameter");
                 parameterE.setAttribute("name", param.getName());
                 parameterE.setAttribute("value", param.getValue());
                 parameterE.setAttribute("override", param.getOverride());
                 channelE.appendChild(parameterE);
             }
+            if (portletXmlPreferences != null && portletXmlPreferences.size() > 0) {
+                final Element portletXmlPreferencesElement = emptyDoc.createElement("portletXmlPreferences");
+                appendPortletPreferences(portletXmlPreferencesElement, portletXmlPreferences);
+                channelE.appendChild(portletXmlPreferencesElement);
+            }
+            if (definitionPreferences != null && definitionPreferences.size() > 0) {
+                final Element definitionPreferencesElement = emptyDoc.createElement("definitionPreferences");
+                appendPortletPreferences(definitionPreferencesElement, definitionPreferences);
+                channelE.appendChild(definitionPreferencesElement);
+            }
             return  channelE;
+        }
+
+        private void appendPortletPreferences(Element portletPreferencesElement, Map<String, Preference> portletPreferences) {
+            for (final Preference preference : portletPreferences.values()) {
+                final Element preferenceElement = emptyDoc.createElement("preference");
+                preferenceElement.setAttribute("name", preference.getName());
+                preferenceElement.setAttribute("read-only", Boolean.toString(preference.isReadOnly()));
+                
+                final List<String> values = preference.getValues();
+                if (values != null && values.size() > 0) {
+                    final Element valuesElement = emptyDoc.createElement("values");
+                    
+                    for (final String value : values) {
+                        final Element valueElement = emptyDoc.createElement("value");
+                        valueElement.appendChild(emptyDoc.createTextNode(value));
+                        valuesElement.appendChild(valueElement);
+                    }
+                    
+                    preferenceElement.appendChild(valuesElement);
+                }
+                
+                portletPreferencesElement.appendChild(preferenceElement);
+            }
         }
     }
 }

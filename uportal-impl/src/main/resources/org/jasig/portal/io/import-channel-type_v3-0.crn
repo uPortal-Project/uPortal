@@ -1,22 +1,36 @@
-<groovy>
-    <!-- 
-     | We want to be sure that the specified Java class (i.e. ${valueOf(type)}) is 
-     | present in the classpath.  This implementation will yield a simple stack 
-     | trace if the test fails. 
-     +-->
-    <script>Class.forName('${valueOf(type)}');</script>
-    <subtasks>
-        <sql-transaction>
-            <with-attribute key="NEXT_ID" value="${org.jasig.portal.io.SequenceGeneratorPhrase(UP_CHAN_TYPE)}">
+<with-attribute key="CHANNEL_TYPE" value="${valueOf(type)}">
+    <groovy>
+        <!-- 
+         | We want to be sure that the specified Java class (i.e. ${valueOf(type)}) is 
+         | present in the classpath.  This implementation will yield a simple stack 
+         | trace if the test fails. 
+         +-->
+        <script>Class.forName(CHANNEL_TYPE);</script>
+        <subtasks>
+            <sql-transaction>
                 <sql-upsert>
-                    <update-statement>UPDATE up_chan_type SET type = ?, type_descr = ?, type_def_uri = ? WHERE type_name = ?</update-statement>
-                    <insert-statement>INSERT INTO up_chan_type(type, type_descr, type_def_uri, type_name, type_id) VALUES(?, ?, ?, ?, '${req(NEXT_ID)}')</insert-statement>
-                    <parameter value="${valueOf(type)}"/>
-                    <parameter value="${valueOf(desc)}"/>
-                    <parameter value="${valueOf(uri)}"/>
-                    <parameter value="${valueOf(name)}"/>
+                    <update-statement>
+                        UPDATE up_chan_type 
+                        SET type = ?, type_descr = ?, type_def_uri = ? 
+                        WHERE type_name = ?
+                    </update-statement>
+                    <insert-statement>
+                        INSERT INTO up_chan_type(type, type_descr, type_def_uri, type_name, type_id) 
+                        VALUES(?, ?, ?, ?, ?)
+                    </insert-statement>
+                    
+                    <update-parameter value="${valueOf(type)}"/>
+                    <update-parameter value="${valueOf(desc)}"/>
+                    <update-parameter value="${valueOf(uri)}"/>
+                    <update-parameter value="${valueOf(name)}"/>
+                    
+                    <insert-parameter value="${valueOf(type)}"/>
+                    <insert-parameter value="${valueOf(desc)}"/>
+                    <insert-parameter value="${valueOf(uri)}"/>
+                    <insert-parameter value="${valueOf(name)}"/>
+                    <insert-parameter value="${org.jasig.portal.io.SequenceGeneratorPhrase(UP_CHAN_TYPE)}"/>
                 </sql-upsert>
-            </with-attribute>
-        </sql-transaction>
-    </subtasks>
-</groovy>
+            </sql-transaction>
+        </subtasks>
+    </groovy>
+</with-attribute>

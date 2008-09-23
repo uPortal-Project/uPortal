@@ -1,0 +1,62 @@
+<!-- 
+ | Parameters:
+ |   DLM_PATHREF - The compound path to a DLM node. ex: mum-lo-home:/layout/root/tab/column[2]/channel[1]
+ |   FNAME - optional - The fname of the referenced node if it is a channel 
+ |
+ | Returns a single value which is the constructed DLM node-ref. ex u3l1n123
+ +-->
+<choose>
+    <when test="${jexl(DLM_PATHREF == null or DLM_PATHREF.length() == 0)}">
+        <return value="" />
+    </when>
+    <otherwise>
+        <cache key="DLM_NODEREF" cache-key="${jexl('DLM_NODEREF.' + DLM_PATHREF)}">
+            <factory>
+                <with-attribute key="PATHREF_TOKENS" value="${groovy(DLM_PATHREF.split(':'))}">
+                    <with>
+                        <attribute key="LAYOUT_USER_NAME">${jexl(PATHREF_TOKENS[0])}</attribute>
+                        <attribute key="USER_NAME">${jexl(PATHREF_TOKENS[0])}</attribute>
+                        <attribute key="LAYOUT_PATH">${jexl(PATHREF_TOKENS[1])}</attribute>
+                        <subtasks>
+                            <with-attribute key="Attributes.NODE" value="${crn(load-limited-layout.crn)}">
+                                <with-attribute key="Attributes.NODE" value="${singleNode(${LAYOUT_PATH})}">
+                                    <with-attribute key="FOUND_FNAME" value="${valueOf(@fname)}">
+                                        <!--
+                                         | We're ready to go, but let's do a sanity check
+                                         | to be sure the old fname matches the new fname.
+                                         +-->
+                                        <choose>
+                                            <when test="${isNull(${Attributes.NODE})}">
+                                                <!-- Warn the user... -->
+                                                <echo-ln>WARNING:  the expression '${LAYOUT_PATH}' does not match any nodes in the '${LAYOUT_USER_NAME}' layout;  no record will be created.</echo-ln>
+                                                <log level="warn">WARNING:  the expression '${LAYOUT_PATH}' does not match any nodes in the '${LAYOUT_USER_NAME}' layout;  no record will be created.</log>
+                                            </when>
+                                            <when test="${jexl(FNAME == null or FNAME.equals(FOUND_FNAME))}">
+                                                <with>
+                                                    <attribute key="STRUCT_ID">${valueOf(@struct-id)}</attribute>
+                                                    <attribute key="USER_ID">${crn(lookup-user_id.crn)}</attribute>
+                                                    <subtasks>
+                                                        <!-- TODO support for not hardcoding layout-id = 1 -->
+                                                        <return value="${jexl('u' + USER_ID + 'l1n' + STRUCT_ID)}" />
+                                                    </subtasks>
+                                                </with>
+                                            </when>
+                                            <otherwise>
+                                                <!-- Warn the user... -->
+                                                <echo-ln>WARNING:  fname '${valueOf(@fname)}' does not match expected value '${FNAME_OF_RECORD}' for portlet preference '${PREFERENCE_NAME}';  no record will be created.</echo-ln>
+                                                <log level="warn">fname '${valueOf(@fname)}' does not match expected value '${FNAME_OF_RECORD}' for portlet preference '${PREFERENCE_NAME}';  no record will be created.</log>
+                                            </otherwise>
+                                        </choose>
+                                    </with-attribute>
+                                </with-attribute>
+                            </with-attribute>
+                        </subtasks>
+                    </with>
+                </with-attribute>
+            </factory>
+            <subtasks>
+                <return value="${DLM_NODEREF}" />
+            </subtasks>
+        </cache>
+    </otherwise>
+</choose>

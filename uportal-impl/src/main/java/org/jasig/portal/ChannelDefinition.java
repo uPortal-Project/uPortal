@@ -10,14 +10,18 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.channels.portlet.IPortletAdaptor;
+import org.jasig.portal.portlet.om.IPortletPreference;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Text;
 
 /**
  * Describes a published channel.
@@ -44,6 +48,7 @@ public class ChannelDefinition implements IBasicEntity {
   private boolean chanHasAbout;
   private boolean chanIsSecure;    
   private Map<String, ChannelParameter> parameters; // Consider implementing as a Set
+  private Map<String, IPortletPreference> portletPreferences;
   private String chanLocale;
   private Map<String, String> chanDescs;
   private Map<String, String> chanTitles;
@@ -59,6 +64,7 @@ public class ChannelDefinition implements IBasicEntity {
     this.chanDesc = "";
     this.setJavaClass("");
     this.parameters = new HashMap<String, ChannelParameter>();
+    this.portletPreferences = new LinkedHashMap<String, IPortletPreference>(); //Preserve preference order
     this.chanLocale = null;
     this.chanTitles = new Hashtable<String, String>();
     this.chanNames = new Hashtable<String, String>();
@@ -197,6 +203,15 @@ public class ChannelDefinition implements IBasicEntity {
   }
   public void putChanDescs(String locale, String chanDesc) {
       chanDescs.put(locale, chanDesc);
+  }
+  public IPortletPreference[] getPortletPreferences() {
+      return this.portletPreferences.values().toArray(new IPortletPreference[this.portletPreferences.size()]);
+  }
+  public void replacePortletPreference(List<IPortletPreference> portletPreferences) {
+      this.portletPreferences.clear();
+      for (final IPortletPreference portletPreference : portletPreferences) {
+          this.portletPreferences.put(portletPreference.getName(), portletPreference);
+      }
   }
   
   /**

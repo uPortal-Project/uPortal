@@ -1,0 +1,58 @@
+<!-- 
+ | Expects a parameter named LAYOUT_USER_NAME
+ |
+ | Returns a Document that is the limitied-layout of the user
+ +-->
+<cache key="Attributes.NODE" cache-key="${groovy('LIMITED-LAYOUT.' + LAYOUT_USER_NAME)}">
+    <factory> 
+        <with-attribute key="Attributes.NODE" value="${newDoc(structures)}">
+            <append-node>
+                <username>${LAYOUT_USER_NAME}</username>
+            </append-node>
+            <!-- TODO use the usr_dflt_lay_id for the layout id -->
+            <sql-query>
+                <sql>SELECT user_id AS LAYOUT_USER_ID FROM up_user WHERE user_name = ?</sql>
+                <parameter value="${LAYOUT_USER_NAME}"/>
+                <subtasks>
+                    <sql-query>
+                        <sql>SELECT * FROM up_layout_struct WHERE user_id = ? AND layout_id = 1 AND chan_id IS NULL</sql>
+                        <parameter value="${LAYOUT_USER_ID}"/>
+                        <subtasks>
+                            <append-node>
+                                <folder
+                                    struct-id="${req(STRUCT_ID)}"
+                                    name="${req(NAME)}"
+                                    next-struct-id="${req(NEXT_STRUCT_ID)}"
+                                    child-struct-id="${req(CHLD_STRUCT_ID)}"
+                                    type="${org.jasig.portal.io.FolderTypePhrase(${req(TYPE)})}"/>
+                            </append-node>
+                        </subtasks>
+                    </sql-query>
+                    <sql-query>
+                        <sql>
+                            SELECT upc.chan_fname, upls.struct_id, upls.next_struct_id, upls.hidden 
+                            FROM up_layout_struct upls 
+                                LEFT JOIN up_channel upc ON upls.chan_id = upc.chan_id 
+                            WHERE upls.user_id = ? AND upls.layout_id = 1
+                        </sql>
+                        <parameter value="${LAYOUT_USER_ID}"/>
+                        <subtasks>
+                            <append-node>
+                                <channel
+                                    fname="${req(CHAN_FNAME)}"
+                                    struct-id="${req(STRUCT_ID)}"
+                                    next-struct-id="${req(NEXT_STRUCT_ID)}"/>
+                            </append-node>
+                        </subtasks>
+                    </sql-query>
+                    <xslt context="${req(Attributes.ORIGIN)}" stylesheet="limited-layout.xsl">
+                        <return value="${Attributes.NODE}"/>
+                    </xslt>
+                </subtasks>
+            </sql-query>
+        </with-attribute>
+    </factory>
+    <subtasks>
+        <return value="${Attributes.NODE}"/>
+    </subtasks>
+</cache>

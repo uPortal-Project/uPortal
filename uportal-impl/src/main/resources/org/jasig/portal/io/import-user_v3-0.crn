@@ -1,21 +1,49 @@
-<with-attribute key="USER_NAME" value="${valueOf(@username)}">
-    <sql-transaction>
-        <with-attribute key="NEXT_ID" value="${org.jasig.portal.io.SequenceGeneratorPhrase(UP_USER)}">
-            <!-- user -->
-            <sql-upsert>
-                <update-statement>UPDATE up_user SET user_dflt_usr_id = ?, user_dflt_lay_id=1, next_struct_id=? WHERE user_name = ?</update-statement>
-                <insert-statement>INSERT INTO up_user(user_id, user_dflt_usr_id, user_dflt_lay_id, next_struct_id, user_name) VALUES(${req(NEXT_ID)}, ?, 1, ?, ?)</insert-statement>
-                <parameter value="${sql(SELECT user_id FROM up_user WHERE user_name ${org.jasig.portal.io.SqlStringEqualsPhrase(${org.jasig.portal.io.DefaultUsernamePhrase(${singleNode(default-user)})})})}"/>
-                <parameter value="${sql(SELECT next_struct_id FROM up_user WHERE user_name ${org.jasig.portal.io.SqlStringEqualsPhrase(${org.jasig.portal.io.DefaultUsernamePhrase(${singleNode(default-user)})})})}"/>
-                <parameter value="${req(USER_NAME)}"/>
-            </sql-upsert>
-
-            <!-- default user profile -->
-            <if test="${groovy(0 == ${sql(SELECT COUNT(UPUP.USER_ID) FROM UP_USER_PROFILE UPUP LEFT JOIN UP_USER UPU ON UPUP.USER_ID = UPU.USER_ID WHERE UPU.USER_NAME='${req(USER_NAME)}')})}">
-                <sql-statement sql="INSERT INTO up_user_profile(user_id, profile_id) VALUES(?, 1)">
-                    <parameter value="${sql(SELECT user_id FROM up_user WHERE user_name = '${req(USER_NAME)}')}"/>
-                </sql-statement>
-            </if>
+<with>
+    <attribute key="USER_NAME">${valueOf(@username)}</attribute>
+    <attribute key="DEFAULT_USER_NAME">${org.jasig.portal.io.DefaultUsernamePhrase(${singleNode(default-user)})}</attribute>
+    <subtasks>
+        <with-attribute key="DEFAULT_USER_NAME" value="${crn(determine-defaultUserName.crn)}">
+            <with-attribute key="DEFAULT_USER_INFO" value="${crn(lookup-default_user_info.crn)}">
+                <sql-upsert>
+                    <update-statement>
+                        UPDATE UP_USER 
+                        SET USER_DFLT_USR_ID = ?, USER_DFLT_LAY_ID=1, NEXT_STRUCT_ID=? 
+                        WHERE USER_NAME = ?
+                    </update-statement>
+                    <insert-statement>
+                        INSERT INTO UP_USER(USER_ID, USER_DFLT_USR_ID, USER_DFLT_LAY_ID, NEXT_STRUCT_ID, USER_NAME) 
+                        VALUES(?, ?, 1, ?, ?)
+                    </insert-statement>
+                    
+                    <update-parameter value="${groovy(DEFAULT_USER_INFO == null ? null : DEFAULT_USER_INFO[0])}"/>
+                    <update-parameter value="${groovy(DEFAULT_USER_INFO == null ? null : DEFAULT_USER_INFO[1])}"/>
+                    <update-parameter value="${USER_NAME}"/>
+                    
+                    <insert-parameter value="${org.jasig.portal.io.SequenceGeneratorPhrase(UP_USER)}"/>
+                    <insert-parameter value="${groovy(DEFAULT_USER_INFO == null ? null : DEFAULT_USER_INFO[0])}"/>
+                    <insert-parameter value="${groovy(DEFAULT_USER_INFO == null ? null : DEFAULT_USER_INFO[1])}"/>
+                    <insert-parameter value="${USER_NAME}"/>
+                </sql-upsert>
+        
+                <!-- default user profile -->
+                <sql-query>
+                    <sql>
+                        SELECT COUNT(UPUP.USER_ID) AS USER_PROFILE_COUNT, UPU.USER_ID
+                        FROM UP_USER UPU
+                            LEFT JOIN UP_USER_PROFILE UPUP ON UPU.USER_ID = UPUP.USER_ID 
+                        WHERE UPU.USER_NAME = ?
+                        GROUP BY UPU.USER_ID
+                    </sql>
+                    <parameter value="${USER_NAME}" />
+                    <subtasks>
+                        <if test="${jexl(USER_PROFILE_COUNT == 0)}">
+                            <sql-statement sql="INSERT INTO up_user_profile(user_id, profile_id) VALUES(?, 1)">
+                                <parameter value="${USER_ID}"/>
+                            </sql-statement>
+                        </if>
+                    </subtasks>
+                </sql-query>
+            </with-attribute>
         </with-attribute>
-    </sql-transaction>
-</with-attribute>
+    </subtasks>
+</with>

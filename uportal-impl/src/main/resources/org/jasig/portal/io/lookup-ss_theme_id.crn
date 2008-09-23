@@ -1,0 +1,40 @@
+<!-- 
+ | Parameters:
+ |     SS_THEME_NAME - The requested name of a theme style sheet
+ |
+ | Returns the default theme name if force is true or the passed SS_THEME_NAME is null
+ +-->
+<with-attribute key="SS_THEME_NAME" value="${crn(determine-ss_struct_name.crn)}">
+    <cache key="THEME_STYLESHEET_ID" cache-key="${jexl('THEME_STYLESHEET_ID.' + SS_THEME_NAME)}">
+        <factory>
+            <sql-query>
+                <sql>
+                    SELECT ss_id as THEME_STYLESHEET_ID
+                    FROM up_ss_theme 
+                    WHERE ss_name = ?
+                </sql>
+                <parameter value="${SS_THEME_NAME}" />
+                <subtasks>
+                    <return value="${THEME_STYLESHEET_ID}" />
+                </subtasks>
+                <empty-result>
+                    <!-- No theme stylsheet by that name, try the default name from the properties -->
+                    <sql-query>
+                        <sql>
+                            SELECT ss_id as THEME_STYLESHEET_ID
+                            FROM up_ss_theme 
+                            WHERE ss_name = ?
+                        </sql>
+                        <parameter value="${user_profile_theme_name_default}" />
+                        <subtasks>
+                            <return value="${THEME_STYLESHEET_ID}" />
+                        </subtasks>
+                    </sql-query>
+                </empty-result>
+            </sql-query>
+        </factory>
+        <subtasks>
+            <return value="${THEME_STYLESHEET_ID}" />
+        </subtasks>
+    </cache>
+</with-attribute>

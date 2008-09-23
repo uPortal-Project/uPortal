@@ -11,14 +11,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
@@ -31,7 +27,6 @@ import org.jasig.portal.groups.IGroupConstants;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.groups.ILockableEntityGroup;
 import org.jasig.portal.i18n.LocaleManager;
-import org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.portlet.om.IPortletPreferences;
@@ -54,8 +49,6 @@ import org.springframework.beans.factory.annotation.Required;
  */
 public class RDBMChannelRegistryStore implements IChannelRegistryStore, InitializingBean {
     
-    public static final String PORTLET_CHANNEL_PARAM_PREFIX = "PORTLET.";
-
 	private static final Log log = LogFactory.getLog(RDBMChannelRegistryStore.class);
 
 	// I18n property
@@ -513,27 +506,12 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore, Initiali
 					}
 				}
 
-                //TODO add a portletPreferences field to the ChannelDefinition object to support multivalued prefs
                 if (channelDef.isPortlet()) {
                     final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getPortletDefinition(channelPublishId);
                     if (portletDefinition != null) {
                         final IPortletPreferences portletPreferences = portletDefinition.getPortletPreferences();
-                        
-                        for (final IPortletPreference portletPreference : portletPreferences.getPortletPreferences()) {
-                            final String name = portletPreference.getName();
-                            final String[] values = portletPreference.getValues();
-                            final boolean readOnly = portletPreference.isReadOnly();
-                            
-                            final String value;
-                            if (values == null || values.length == 0) {
-                                value = null;
-                            }
-                            else {
-                                value = values[0];
-                            }
-                            
-                            channelDef.addParameter(PORTLET_CHANNEL_PARAM_PREFIX + name, value, !readOnly);
-                        }
+                        final List<IPortletPreference> portletPreferencesList = portletPreferences.getPortletPreferences();
+                        channelDef.replacePortletPreference(portletPreferencesList);
                     }
                     else {
                         log.warn("ChannelDefinition.isPortlet() reports true but no IPortletDefinition exists for channel publish id '" + channelPublishId + "'. This channel may not function correctly.");
@@ -659,8 +637,6 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore, Initiali
 
                 // Keep track of any portlet preferences
                 final boolean isPortlet = channelDef.isPortlet();
-                final LinkedHashMap<String, List<String>> portletPreferencesBuilder = new LinkedHashMap<String, List<String>>();
-                final Map<String, Boolean> portletPreferencesReadOnly = new HashMap<String, Boolean>();
 				
 				if (parameters != null) {
 					for (int i = 0; i < parameters.length; i++) {
@@ -672,25 +648,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore, Initiali
 							throw new RuntimeException("Invalid parameter node");
 						}
 
-						//TODO Add a ChannelDefinition.getPortletPreferences() API to store/track definition level portlet preferences
-						if (isPortlet && paramName.startsWith(PORTLET_CHANNEL_PARAM_PREFIX)) {
-                            // We have a portlet preference
-                            final String prefName = paramName.substring(PORTLET_CHANNEL_PARAM_PREFIX.length());
-                            final String prefValue = paramValue;
-                            
-                            List<String> prefValues = portletPreferencesBuilder.get(prefName);
-                            if (prefValues == null) {
-                                prefValues = new LinkedList<String>();
-                                portletPreferencesBuilder.put(prefName, prefValues);
-                                
-                                portletPreferencesReadOnly.put(prefName, !paramOverride);
-                            }
-                            
-                            prefValues.add(prefValue);
-                        }
-                        else {
-                            insertChannelParam(con, channelPublishId, paramName, paramValue, paramOverride);
-                        }
+                        insertChannelParam(con, channelPublishId, paramName, paramValue, paramOverride);
 					}
 				}
                 
@@ -698,20 +656,9 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore, Initiali
                     //Get or Create the portlet definition
                     final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getOrCreatePortletDefinition(channelPublishId);
                     
-                    //Convert the Lists into actual IPortletPreference objects
-                    final List<IPortletPreference> portletPreferencesList = new ArrayList<IPortletPreference>(portletPreferencesBuilder.size());
-                    for (final Entry<String, List<String>> prefEntry : portletPreferencesBuilder.entrySet()) {
-                        final String prefName = prefEntry.getKey();
-                        final List<String> prefValues = prefEntry.getValue();
-                        final Boolean readOnly = portletPreferencesReadOnly.get(prefName);
-                        
-                        final IPortletPreference portletPreference = new PortletPreferenceImpl(prefName, readOnly != null ? readOnly : false, prefValues.toArray(new String[prefValues.size()]));
-                        portletPreferencesList.add(portletPreference);
-                    }
-                    
                     //Update the preferences of the portlet definition
                     final IPortletPreferences portletPreferences = portletDefinition.getPortletPreferences();
-                    portletPreferences.setPortletPreferences(portletPreferencesList);
+                    portletPreferences.setPortletPreferences(Arrays.asList(channelDef.getPortletPreferences()));
                     this.portletDefinitionRegistry.updatePortletDefinition(portletDefinition);
                 }
 

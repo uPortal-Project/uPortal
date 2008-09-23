@@ -1,0 +1,149 @@
+<with>
+    <attribute key="NODE_NAME">${valueOf(name())}</attribute>
+    <attribute key="STRUCT_ID">${sequence(STRUCT_ID_SEQ)}</attribute>
+    <attribute key="RETURNED_IDS">${groovy(new String[2])}</attribute> <!-- 0 is next sibling id, 1 is first child id -->
+    <subtasks>
+        <with-attribute key="NODE_TYPE" value="${crn(determine-layout-node_type.crn)}">
+            <!-- Step into the next sibling, special handling here for the root node and 'dlm:hiddenSet' which is the last node at the top level -->
+            <!-- The recursive calls capture the ID of the sibling for use in the sql insert -->
+            <choose>
+                <when test="${jexl(NODE_TYPE == 'root')}">
+                    <with-attribute key="Attributes.NODE" value="${singleNode(../dlm-hiddenSet)}">
+                        <if test="${groovy(Attributes.NODE != null)}">
+                            <with-attribute key="RETURNED_STRUCT_ID" value="${crn(import-layout-node.crn)}">
+                                <groovy>
+                                    <script>RETURNED_IDS[0]=RETURNED_STRUCT_ID;</script>
+                                </groovy>
+                            </with-attribute>
+                        </if>
+                    </with-attribute>
+                </when>
+                <when test="${jexl(NODE_TYPE != 'dlm:hiddenSet')}">
+                    <with-attribute key="Attributes.NODE" value="${singleNode(following-sibling::*)}">
+                        <if test="${groovy(Attributes.NODE != null)}">
+                            <with-attribute key="RETURNED_STRUCT_ID" value="${crn(import-layout-node.crn)}">
+                                <groovy>
+                                    <script>RETURNED_IDS[0]=RETURNED_STRUCT_ID;</script>
+                                </groovy>
+                            </with-attribute>
+                        </if>
+                    </with-attribute>
+                </when>
+            </choose>
+                    
+            <choose>
+                <!-- structure nodes in the tree, these can have siblings and children -->
+                <when test="${jexl(NODE_TYPE == 'root' or NODE_TYPE == 'header' or NODE_TYPE == 'footer' or NODE_TYPE == 'regular' or NODE_TYPE.startsWith('dlm:'))}">
+                    <!-- Step into the first child and capture the ID of the child for use in the sql insert -->
+                    <with-attribute key="Attributes.NODE" value="${singleNode(child::*[name() != 'param' and name() != 'structure-attribute'])}">
+                        <if test="${groovy(Attributes.NODE != null)}">
+                            <with-attribute key="RETURNED_STRUCT_ID" value="${crn(import-layout-node.crn)}">
+                                <groovy>
+                                    <script>RETURNED_IDS[1]=RETURNED_STRUCT_ID;</script>
+                                </groovy>
+                            </with-attribute>
+                        </if>
+                    </with-attribute>
+
+                    <with>
+                        <attribute key="ATTRIBUTE_NAME">${NODE_TYPE}</attribute>
+                        <attribute key="ATTRIBUTE_VALUE">${valueOf(@name)}</attribute>
+                        <attribute key="ORIGINAL_ATTRIBUTE_VALUE">${valueOf(@name)}</attribute>
+                        <subtasks>
+                            <with-attribute key="ATTRIBUTE_VALUE" value="${crn(determine-layout-attribute_value.crn)}">
+                                <choose>
+                                    <when test="${groovy(ATTRIBUTE_VALUE != null)}">
+                                        <sql-statement sql="INSERT INTO UP_LAYOUT_STRUCT(USER_ID, LAYOUT_ID, STRUCT_ID, NEXT_STRUCT_ID, CHLD_STRUCT_ID, NAME, TYPE, HIDDEN, IMMUTABLE, UNREMOVABLE) 
+                                                            VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)">
+                                            <parameter value="${USER_ID}"/>
+                                            <parameter value="${LAYOUT_ID}"/>
+                                            <parameter value="${STRUCT_ID}"/>
+                                            <parameter value="${groovy(RETURNED_IDS[0])}"/>
+                                            <parameter value="${groovy(RETURNED_IDS[1])}"/>
+                                            <parameter value="${ATTRIBUTE_VALUE}"/>
+                                            <parameter value="${NODE_TYPE}"/>
+                                            <parameter value="${valueOf(@hidden)}"/>
+                                            <parameter value="${valueOf(@immutable)}"/>
+                                            <parameter value="${valueOf(@unremovable)}"/>
+                                        </sql-statement>
+                                    </when>
+                                    <otherwise>
+                                        <echo-ln>WARNING: Name '${ORIGINAL_ATTRIBUTE_VALUE}' of layout node '${ATTRIBUTE_NAME}' for user ${USER_NAME} resolved to NULL and will be ignored.</echo-ln>
+                                        <log level="warn">WARNING: Name '${ORIGINAL_ATTRIBUTE_VALUE}' of layout node '${ATTRIBUTE_NAME}' for user ${USER_NAME} resolved to NULL and will be ignored.</log>
+                                    </otherwise>
+                                </choose>
+                            </with-attribute>
+                        </subtasks>
+                    </with>
+                    
+                    <node-iterator xpath="child::param">
+                        <with>
+                            <attribute key="ATTRIBUTE_NAME">${valueOf(name)}</attribute>
+                            <attribute key="ATTRIBUTE_VALUE">${valueOf(value)}</attribute>
+                            <attribute key="ORIGINAL_ATTRIBUTE_VALUE">${valueOf(value)}</attribute>
+                            <subtasks>
+                                <with-attribute key="ATTRIBUTE_VALUE" value="${crn(determine-layout-attribute_value.crn)}">
+                                    <choose>
+                                        <when test="${groovy(ATTRIBUTE_VALUE != null)}">
+                                            <sql-statement sql="INSERT INTO UP_LAYOUT_PARAM(USER_ID, LAYOUT_ID, STRUCT_ID, STRUCT_PARM_NM, STRUCT_PARM_VAL) 
+                                                                VALUES(?, ?, ?, ?, ?)">
+                                                <parameter value="${USER_ID}"/>
+                                                <parameter value="${LAYOUT_ID}"/>
+                                                <parameter value="${STRUCT_ID}"/>
+                                                <parameter value="${ATTRIBUTE_NAME}"/>
+                                                <parameter value="${ATTRIBUTE_VALUE}"/>
+                                            </sql-statement>
+                                        </when>
+                                        <otherwise>
+                                            <echo-ln>WARNING: Value '${ORIGINAL_ATTRIBUTE_VALUE}' of layout attribute '${ATTRIBUTE_NAME}' for user ${USER_NAME} resolved to NULL and will be ignored.</echo-ln>
+                                            <log level="warn">WARNING: Value '${ORIGINAL_ATTRIBUTE_VALUE}' of layout attribute '${ATTRIBUTE_NAME}' for user ${USER_NAME} resolved to NULL and will be ignored.</log>
+                                        </otherwise>
+                                    </choose>
+                                </with-attribute>
+                            </subtasks>
+                        </with>
+                    </node-iterator>
+                    
+                    <node-iterator xpath="child::structure-attribute">
+                        <with-attribute key="STRUCT_ATTR_TYPE" value="${valueOf(@type)}">
+                            <with-attribute key="STRUCT_ATTR_TYPE" value="${crn(determine-structure_attribute-type.crn)}">
+                                <sql-statement sql="INSERT INTO UP_SS_USER_ATTS(USER_ID, PROFILE_ID, SS_ID, SS_TYPE, STRUCT_ID, PARAM_NAME, PARAM_TYPE, PARAM_VAL) 
+                                                    VALUES(?, ?, ?, 1, ?, ?, ?, ?)">
+                                    <parameter value="${USER_ID}"/>
+                                    <parameter value="${PROFILE_ID}"/>
+                                    <parameter value="${STRUCTURE_STYLESHEET_ID}"/>
+                                    <parameter value="${STRUCT_ID}"/>
+                                    <parameter value="${valueOf(name)}"/>
+                                    <parameter value="${STRUCT_ATTR_TYPE}"/>
+                                    <parameter value="${valueOf(value)}"/>
+                                </sql-statement>
+                            </with-attribute>
+                        </with-attribute>
+                    </node-iterator>
+                    
+                    <return value="${STRUCT_ID}" />
+                </when>
+                <!-- leaf node in the tree, this can only have siblings -->
+                <when test="${jexl(NODE_TYPE == 'channel')}">
+                    <cache key="CHAN_ID" cache-key="CHAN_ID.${valueOf(@fname)}" factory="${sql(SELECT chan_id FROM up_channel WHERE chan_fname = '${valueOf(@fname)}')}">
+                        <subtasks>
+                            <sql-statement sql="INSERT INTO UP_LAYOUT_STRUCT(USER_ID, LAYOUT_ID, STRUCT_ID, NEXT_STRUCT_ID, CHAN_ID) 
+                                                VALUES(?, ?, ?, ?, ?)">
+                                <parameter value="${USER_ID}"/>
+                                <parameter value="${LAYOUT_ID}"/>
+                                <parameter value="${STRUCT_ID}"/>
+                                <parameter value="${groovy(RETURNED_IDS[0])}"/>
+                                <parameter value="${CHAN_ID}"/>
+                            </sql-statement>
+                        </subtasks>
+                    </cache>
+                        
+                    <return value="${STRUCT_ID}" />
+                </when>
+                <otherwise>
+                    <echo-ln>WARNING: UKNOWN NODE TYPE=${NODE_TYPE}</echo-ln>
+                </otherwise>
+            </choose>
+        </with-attribute>
+    </subtasks>
+</with>

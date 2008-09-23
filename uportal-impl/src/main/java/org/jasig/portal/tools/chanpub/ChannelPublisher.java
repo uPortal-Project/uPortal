@@ -11,8 +11,12 @@ import java.io.FilenameFilter;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -41,6 +45,8 @@ import org.jasig.portal.RDBMServices;
 import org.jasig.portal.groups.IEntity;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupConstants;
+import org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl;
+import org.jasig.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPerson;
@@ -417,6 +423,8 @@ public class ChannelPublisher implements ErrorHandler, IChannelPublisher
                 getUsers(ci, pele);
             else if (tagname.equals("parameters"))
                 getParameters(ci, pele);
+            else if (tagname.equals("portletPreferences"))
+                getPreferences(ci, pele);
 
             ci.chanDef.setPublisherId(0); // system user
             ci.chanDef.setPublishDate(new Date());
@@ -566,6 +574,8 @@ public class ChannelPublisher implements ErrorHandler, IChannelPublisher
      */
     private void getParameters(ChannelInfo ci, Element pele)
     {
+        final List<ChannelParameter> parameters = new LinkedList<ChannelParameter>();
+        
         NodeList anodes = pele.getElementsByTagName("parameter");
         if (anodes.getLength() > 0)
         {
@@ -599,9 +609,70 @@ public class ChannelPublisher implements ErrorHandler, IChannelPublisher
                 ChannelParameter chanParam =
                     new ChannelParameter(pname, pvalue, RDBMServices.dbFlag(povrd));
                 chanParam.setDescription(pdescr);
-                ci.chanDef.addParameter(chanParam);
+                parameters.add(chanParam);
             }
         }
+        
+        ci.chanDef.replaceParameters(parameters.toArray(new ChannelParameter[parameters.size()]));
+    }
+
+
+    /**
+     * Load the declared parameters.
+     *
+     * @param ci The ChannelInfo object being populated.
+     * @param pele The Element containing the parameter elements.
+     */
+    private void getPreferences(ChannelInfo ci, Element pele)
+    {
+        final List<IPortletPreference> preferences = new LinkedList<IPortletPreference>();
+        
+        final NodeList portletPreferenceNodes = pele.getElementsByTagName("portletPreference");
+        if (portletPreferenceNodes.getLength() > 0) {
+            for (int preferenceNodeIndex = 0; preferenceNodeIndex < portletPreferenceNodes.getLength(); preferenceNodeIndex++) {
+                String name;
+                boolean readOnly = false;
+                List<String> values = Collections.emptyList();
+
+                final Element portletPreferenceNode = (Element) portletPreferenceNodes.item(preferenceNodeIndex);
+                
+                //Load the name
+                final NodeList nameNodes = portletPreferenceNode.getElementsByTagName("name");
+                if (nameNodes.getLength() != 1) {
+                    throw new IllegalArgumentException("Illegal number of 'name' elements under a 'portletPreference' element: was " + nameNodes.getLength() + " expected 1");
+                }
+                name = XML.getElementText((Element) nameNodes.item(0)).trim();
+                
+                //Load the readOnly flag
+                final NodeList readOnlyNodes = portletPreferenceNode.getElementsByTagName("read-only");
+                if (readOnlyNodes.getLength() > 1) {
+                    throw new IllegalArgumentException("Illegal number of 'read-only' elements under a 'portletPreference' element: was " + nameNodes.getLength() + " expected 0 or 1");
+                }
+                else if (readOnlyNodes.getLength() == 1) {
+                    readOnly = Boolean.parseBoolean(XML.getElementText((Element) nameNodes.item(0)).trim());
+                }
+                
+                //Load the values
+                final NodeList valuesNodes = portletPreferenceNode.getElementsByTagName("values");
+                if (valuesNodes.getLength() > 1) {
+                    throw new IllegalArgumentException("Illegal number of 'values' elements under a 'portletPreference' element: was " + nameNodes.getLength() + " expected 0 or 1");
+                }
+                else if (valuesNodes.getLength() == 1) {
+                    final Element valuesNode = (Element) valuesNodes.item(0);
+                    final NodeList valueNodes = valuesNode.getElementsByTagName("value");
+                    values = new ArrayList<String>(valueNodes.getLength());
+                    for (int valueNodeIndex = 0; valueNodeIndex < valueNodes.getLength(); valueNodeIndex++) {
+                        final Element valueNode = (Element) valueNodes.item(valueNodeIndex);
+                        values.add(XML.getElementText(valueNode).trim());
+                    }
+                }
+                
+                final PortletPreferenceImpl portletPreference = new PortletPreferenceImpl(name, readOnly, values.toArray(new String[values.size()]));
+                preferences.add(portletPreference);
+            }
+        }
+        
+        ci.chanDef.replacePortletPreference(preferences);
     }
 
     /**

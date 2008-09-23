@@ -1,37 +1,39 @@
-<choose>
-    <when test="${groovy('${valueOf(type)}'.contains('Portlet'))}">
-        <!-- 
-         | As expected, Portlet support in uP3 received a solid overhaul.  Given 
-         | v2-6 XML that represents a published portlet, we need to:
-         |   - (1) change the <class> to 'org.jasig.portal.channels.portlet.CSpringPortletAdaptor'
-         |   - (2) split the (single) 'portletDefinitionId' parameter into 'portletApplicationId' and 'portletName' 
-         +-->
-        <delete-node node="${singleNode(class)}"/>
-        <append-node sibling="${singleNode(type)}">
-            <class>org.jasig.portal.channels.portlet.CSpringPortletAdaptor</class>
-        </append-node>
-        <with-attribute key="PORTLET_DEF_ELEMENT" value="${singleNode(parameters/parameter[name/text() = 'portletDefinitionId'])}">
-            <with-attribute key="PORTLET_DEF_TOKENS" value="${groovy(PORTLET_DEF_ELEMENT.valueOf('value').split('\\.'))}">
-                <append-node parent="${singleNode(parameters)}">
-                    <parameter>
-                        <name>portletApplicationId</name>
-                        <value>/${groovy(PORTLET_DEF_TOKENS[0])}</value>
-                        <description/>
-                        <ovrd>N</ovrd>
-                    </parameter>
-                    <parameter>
-                        <name>portletName</name>
-                        <value>${groovy(PORTLET_DEF_TOKENS[1])}</value>
-                        <description/>
-                        <ovrd>N</ovrd>
-                    </parameter> 
-                </append-node>
+<with-attribute key="CHANNEL_TYPE" value="${valueOf(type)}">
+    <choose>
+        <when test="${groovy(CHANNEL_TYPE.contains('Portlet'))}">
+            <!-- 
+             | As expected, Portlet support in uP3 received a solid overhaul.  Given 
+             | v2-6 XML that represents a published portlet, we need to:
+             |   - (1) change the <class> to 'org.jasig.portal.channels.portlet.CSpringPortletAdaptor'
+             |   - (2) split the (single) 'portletDefinitionId' parameter into 'portletApplicationId' and 'portletName' 
+             +-->
+            <delete-node node="${singleNode(class)}"/>
+            <append-node sibling="${singleNode(type)}">
+                <class>org.jasig.portal.channels.portlet.CSpringPortletAdaptor</class>
+            </append-node>
+            <with-attribute key="PORTLET_DEF_ELEMENT" value="${singleNode(parameters/parameter[name/text() = 'portletDefinitionId'])}">
+                <with-attribute key="PORTLET_DEF_TOKENS" value="${groovy(PORTLET_DEF_ELEMENT.valueOf('value').split('\\.'))}">
+                    <append-node parent="${singleNode(parameters)}">
+                        <parameter>
+                            <name>portletApplicationId</name>
+                            <value>/${groovy(PORTLET_DEF_TOKENS[0])}</value>
+                            <description/>
+                            <ovrd>N</ovrd>
+                        </parameter>
+                        <parameter>
+                            <name>portletName</name>
+                            <value>${groovy(PORTLET_DEF_TOKENS[1])}</value>
+                            <description/>
+                            <ovrd>N</ovrd>
+                        </parameter> 
+                    </append-node>
+                </with-attribute>
+                <delete-node node="${PORTLET_DEF_ELEMENT}"/>
             </with-attribute>
-            <delete-node node="${PORTLET_DEF_ELEMENT}"/>
-        </with-attribute>
-        <crn location="import-channel_v3-0.crn"/>
-    </when>
-    <otherwise>
-        <crn location="import-channel_v3-0.crn"/>
-    </otherwise>
-</choose>
+            <crn location="import-channel_v3-0.crn"/>
+        </when>
+        <otherwise>
+            <crn location="import-channel_v3-0.crn"/>
+        </otherwise>
+    </choose>
+</with-attribute>

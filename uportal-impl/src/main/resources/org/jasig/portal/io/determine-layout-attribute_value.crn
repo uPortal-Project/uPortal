@@ -1,0 +1,18 @@
+<!-- 
+ | Parameters:
+ |     ATTRIBUTE_NAME - The name of the layout node parameter
+ |     ATTRIBUTE_VALUE - The value of the layout node parameter
+ |
+ | A decoded version of the value that accounts for DLM node references if the ATTRIBUTE_NAME
+ | starts with dlm:
+ +-->
+ <choose>
+    <when test="${jexl(ATTRIBUTE_NAME == 'dlm:origin' or ATTRIBUTE_NAME == 'dlm:position' or ATTRIBUTE_NAME == 'dlm:hidden')}">
+        <with-attribute key="DLM_PATHREF" value="${ATTRIBUTE_VALUE}">
+            <return value="${crn(lookup-dlm-pathref.crn)}" />
+        </with-attribute>
+    </when>
+    <otherwise>
+        <return value="${ATTRIBUTE_VALUE}" />
+    </otherwise>
+</choose>
