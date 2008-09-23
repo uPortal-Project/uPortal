@@ -1,5 +1,6 @@
 <!-- 
  | Parameters:
+ |   USER_NAME - The name of the user that owns the layout the DLM noderef is from
  |   DLM_PATHREF - The compound path to a DLM node. ex: mum-lo-home:/layout/root/tab/column[2]/channel[1]
  |   FNAME - optional - The fname of the referenced node if it is a channel 
  |
@@ -15,7 +16,6 @@
                 <with-attribute key="PATHREF_TOKENS" value="${groovy(DLM_PATHREF.split(':'))}">
                     <with>
                         <attribute key="LAYOUT_USER_NAME">${jexl(PATHREF_TOKENS[0])}</attribute>
-                        <attribute key="USER_NAME">${jexl(PATHREF_TOKENS[0])}</attribute>
                         <attribute key="LAYOUT_PATH">${jexl(PATHREF_TOKENS[1])}</attribute>
                         <subtasks>
                             <with-attribute key="Attributes.NODE" value="${crn(load-limited-layout.crn)}">
@@ -32,14 +32,28 @@
                                                 <log level="warn">WARNING:  the expression '${LAYOUT_PATH}' does not match any nodes in the '${LAYOUT_USER_NAME}' layout;  no record will be created.</log>
                                             </when>
                                             <when test="${jexl(FNAME == null or FNAME.equals(FOUND_FNAME))}">
-                                                <with>
-                                                    <attribute key="STRUCT_ID">${valueOf(@struct-id)}</attribute>
-                                                    <attribute key="USER_ID">${crn(lookup-user_id.crn)}</attribute>
-                                                    <subtasks>
-                                                        <!-- TODO support for not hardcoding layout-id = 1 -->
-                                                        <return value="${jexl('u' + USER_ID + 'l1n' + STRUCT_ID)}" />
-                                                    </subtasks>
-                                                </with>
+                                                <choose>
+                                                    <when test="${jexl(USER_NAME == LAYOUT_USER_NAME)}">
+                                                        <with>
+                                                            <attribute key="STRUCT_ID">${valueOf(@struct-id)}</attribute>
+                                                            <subtasks>
+                                                                <return value="${jexl('n' + STRUCT_ID)}" />
+                                                            </subtasks>
+                                                        </with>
+                                                    </when>
+                                                    <otherwise>
+                                                        <with-attribute key="USER_NAME" value="${LAYOUT_USER_NAME}">
+                                                            <with>
+                                                                <attribute key="STRUCT_ID">${valueOf(@struct-id)}</attribute>
+                                                                <attribute key="USER_ID">${crn(lookup-user_id.crn)}</attribute>
+                                                                <subtasks>
+                                                                    <!-- TODO support for not hardcoding layout-id = 1 -->
+                                                                    <return value="${jexl('u' + USER_ID + 'l1n' + STRUCT_ID)}" />
+                                                                </subtasks>
+                                                            </with>
+                                                        </with-attribute>
+                                                    </otherwise>
+                                                </choose>
                                             </when>
                                             <otherwise>
                                                 <!-- Warn the user... -->
