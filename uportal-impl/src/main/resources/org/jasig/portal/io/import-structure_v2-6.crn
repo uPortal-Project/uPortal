@@ -36,15 +36,19 @@
                     <parameter value="${SS_ID}"/>
                 </sql-statement>
                 <node-iterator xpath="parameters/parameter">
-                    <with-attribute key="DEFAULT_VALUE" value="${valueOf(default-value)}">
-                        <sql-statement sql="INSERT INTO up_ss_struct_par(ss_id, param_name, param_default_val, param_descript, type) values(?, ?, ?, ?, ?)">
-                            <parameter value="${SS_ID}"/>
-                            <parameter value="${valueOf(name)}"/>
-                            <parameter value="${groovy(DEFAULT_VALUE.length() > 0 ? DEFAULT_VALUE : null)}"/>
-                            <parameter value="${valueOf(description)}"/>
-                            <parameter value="${valueOf(type)}"/>
-                        </sql-statement>
-                    </with-attribute>
+                    <with>
+                        <attribute key="DEFAULT_VALUE">${valueOf(default-value)}</attribute>
+                        <attribute key="TYPE">${valueOf(type)}</attribute>
+                        <subtasks>
+                            <sql-statement sql="INSERT INTO up_ss_struct_par(ss_id, param_name, param_default_val, param_descript, type) values(?, ?, ?, ?, ?)">
+                                <parameter value="${SS_ID}"/>
+                                <parameter value="${valueOf(name)}"/>
+                                <parameter value="${groovy(DEFAULT_VALUE.length() > 0 ? DEFAULT_VALUE : null)}"/>
+                                <parameter value="${valueOf(description)}"/>
+                                <parameter value="${groovy(Integer.valueOf(TYPE))}"/>
+                            </sql-statement>
+                        </subtasks>
+                    </with>
                 </node-iterator>
             </subtasks>
         </sql-query>
