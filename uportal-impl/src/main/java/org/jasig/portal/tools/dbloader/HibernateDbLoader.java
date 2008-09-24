@@ -235,9 +235,6 @@ public class HibernateDbLoader implements IDbLoader {
         for (final Table table : tables) {
             if (table.isPhysicalTable()) {
                 script.add(table.sqlCreateString(dialect, mapping, defaultCatalog, defaultSchema));
-                for (final Iterator<String> comments = table.sqlCommentStrings(dialect, defaultCatalog, defaultSchema); comments.hasNext(); ) {
-                    script.add(comments.next());
-                }
             }
         }
 

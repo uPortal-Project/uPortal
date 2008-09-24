@@ -154,6 +154,7 @@ public class DataXmlHandler extends BaseDbXmlHandler {
         synchronized (this.tableColumnInfo) {
             if (this.tableColumnInfo.containsKey(tableName)) {
                 columnInfo = this.tableColumnInfo.get(tableName);
+                this.logger.info("Using pre-populated " + columnInfo + " for " + tableName + "'.");
             }
             else {
                 columnInfo = new CaseInsensitiveMap();
@@ -163,10 +164,12 @@ public class DataXmlHandler extends BaseDbXmlHandler {
                 try {
                     final DatabaseMetaData metaData = connection.getMetaData();
                     final ResultSet columns = metaData.getColumns(null, null, tableName, null);
+                    this.logger.info("Have columns ResultSet for table '" + tableName + "'.");
                     try {
                         while (columns.next()) {
                             final String name = columns.getString("COLUMN_NAME");
                             final int type = columns.getInt("DATA_TYPE");
+                            this.logger.info("Getting column info [name=" + name + ", type=" + type + "] for '" + tableName + "'.");
                             columnInfo.put(name, type);
                         }
                     }
@@ -180,6 +183,8 @@ public class DataXmlHandler extends BaseDbXmlHandler {
                 finally {
                     DataSourceUtils.releaseConnection(connection, dataSource);
                 }
+                
+                this.logger.info("Loaded " + columnInfo + " for " + tableName + "'.");
             }
         }
         
