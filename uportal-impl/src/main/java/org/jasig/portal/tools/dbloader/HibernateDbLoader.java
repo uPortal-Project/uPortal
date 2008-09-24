@@ -87,10 +87,12 @@ public class HibernateDbLoader implements IDbLoader {
     public void process(DbLoaderConfiguration configuration) throws ParserConfigurationException, SAXException, IOException {
         final List<String> script = new ArrayList<String>();
         
+        final ITableDataProvider tableData = this.loadTables(configuration);
+        
         //Handle table drop/create
         if (configuration.isDropTables() || configuration.isCreateTables()) {
             //Load Table object model
-            final Map<String, Table> tables = this.loadTables(configuration);
+            final Map<String, Table> tables = tableData.getTables();
             
             //TODO don't know if this data can be pulled from somewhere?
             final Mapping mapping = null;
@@ -144,7 +146,8 @@ public class HibernateDbLoader implements IDbLoader {
         //Perform database population
         if (configuration.isPopulateTables()) {
             this.logger.info("Populating database");
-            this.populateTables(configuration);
+            final Map<String, Map<String, Integer>> tableColumnTypes = tableData.getTableColumnTypes();
+            this.populateTables(configuration, tableColumnTypes);
         }
         
         //Write out the script file
@@ -159,7 +162,7 @@ public class HibernateDbLoader implements IDbLoader {
         }
     }
     
-    protected Map<String, Table> loadTables(DbLoaderConfiguration configuration) throws ParserConfigurationException, SAXException, IOException {
+    protected ITableDataProvider loadTables(DbLoaderConfiguration configuration) throws ParserConfigurationException, SAXException, IOException {
         //Locate tables.xml
         final Resource tablesFile = configuration.getTablesFile();
         if (!tablesFile.exists()) {
@@ -171,7 +174,7 @@ public class HibernateDbLoader implements IDbLoader {
         final TableXmlHandler dh = new TableXmlHandler(dialect);
         saxParser.parse(new InputSource(tablesFile.getInputStream()), dh);
 
-        return dh.getTables();
+        return dh;
     }
 
     /**
@@ -269,7 +272,7 @@ public class HibernateDbLoader implements IDbLoader {
         return script;
     }
     
-    protected void populateTables(DbLoaderConfiguration configuration) throws ParserConfigurationException, SAXException, IOException {
+    protected void populateTables(DbLoaderConfiguration configuration, Map<String, Map<String, Integer>> tableColumnTypes) throws ParserConfigurationException, SAXException, IOException {
         //Locate tables.xml
         final Resource dataFile = configuration.getDataFile();
         if (!dataFile.exists()) {
@@ -278,7 +281,7 @@ public class HibernateDbLoader implements IDbLoader {
 
         //Setup parser with custom handler to generate Table model and parse
         final SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
-        final DataXmlHandler dh = new DataXmlHandler(jdbcTemplate, transactionTemplate);
+        final DataXmlHandler dh = new DataXmlHandler(jdbcTemplate, transactionTemplate, tableColumnTypes);
         saxParser.parse(new InputSource(dataFile.getInputStream()), dh);
     }
 }

@@ -10,6 +10,7 @@ import java.sql.Types;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.hibernate.MappingException;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.mapping.Column;
@@ -29,7 +30,7 @@ import org.xml.sax.SAXException;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class TableXmlHandler extends BaseDbXmlHandler {
+public class TableXmlHandler extends BaseDbXmlHandler implements ITableDataProvider {
     private final Dialect dialect;
     
     public TableXmlHandler(Dialect dialect) {
@@ -40,9 +41,17 @@ public class TableXmlHandler extends BaseDbXmlHandler {
         return this.tables;
     }
     
+    public Map<String, Map<String, Integer>> getTableColumnTypes() {
+        return tableColumnTypes;
+    }
+
+
     private Map<String, Table> tables = new LinkedHashMap<String, Table>();
+    private Map<String, Map<String, Integer>> tableColumnTypes = new CaseInsensitiveMap();
+    
     private Table currentTable = null;
     private Map<String, Column> currentColumns = null;
+    private Map<String, Integer> currentColumnTypes = null;
     private Column currentColumn = null;
     private PrimaryKey primaryKey = null;
     private Index currentIndex = null;
@@ -55,6 +64,7 @@ public class TableXmlHandler extends BaseDbXmlHandler {
     public void startElement(String uri, String localName, String name, Attributes attributes) throws SAXException {
         if ("table".equals(name)) {
             this.currentColumns = new LinkedHashMap<String, Column>();
+            this.currentColumnTypes = new CaseInsensitiveMap();
         }
         else if ("index".equals(name)) {
             this.currentIndex = new Index();
@@ -83,8 +93,10 @@ public class TableXmlHandler extends BaseDbXmlHandler {
             }
             
             this.tables.put(this.currentTable.getName(), this.currentTable);
+            this.tableColumnTypes.put(this.currentTable.getName(), this.currentColumnTypes);
             this.primaryKey = null;
             this.currentColumns = null;
+            this.currentColumnTypes = null;
             this.currentTable = null;
         }
         else if ("column".equals(name)) {
@@ -120,7 +132,10 @@ public class TableXmlHandler extends BaseDbXmlHandler {
         else if ("type".equals(name)) {
             final String sqlTypeName = this.chars.toString().trim();
             
-            final String hibType = this.getHibernateType(sqlTypeName);
+            final int sqlType = this.getSqlType(sqlTypeName);
+            this.currentColumnTypes.put(this.currentColumn.getName(), sqlType);
+            
+            final String hibType = this.getHibernateType(sqlType);
 
             final SimpleValue value = new SimpleValue(this.currentTable);
             value.setTypeName(hibType);
@@ -173,12 +188,11 @@ public class TableXmlHandler extends BaseDbXmlHandler {
         
         this.chars = null;
     }
-
-    protected String getHibernateType(final String sqlTypeName) {
-        final int sqlType;
+    
+    protected int getSqlType(final String sqlTypeName) {
         try {
             final Field sqlTypeField = Types.class.getField(sqlTypeName);
-            sqlType = sqlTypeField.getInt(null);
+            return sqlTypeField.getInt(null);
         }
         catch (SecurityException e) {
             throw new RuntimeException("Cannot access field '" + sqlTypeName + "' on " + Types.class + " for column '" + this.currentColumn.getName() + "'", e);
@@ -192,13 +206,15 @@ public class TableXmlHandler extends BaseDbXmlHandler {
         catch (IllegalAccessException e) {
             throw new RuntimeException("Cannot access field '" + sqlTypeName + "' on " + Types.class + " for column '" + this.currentColumn.getName() + "'", e);
         }
-        
+    }
+
+    protected String getHibernateType(final int sqlType) {
         final String hibType;
         try {
             hibType = this.dialect.getHibernateTypeName(sqlType);
         }
         catch (MappingException e) {
-            throw new IllegalArgumentException("No mapped hibernate type found for '" + sqlTypeName + "' Types value=" + sqlType + " for column '" + this.currentColumn.getName() + "'", e);
+            throw new IllegalArgumentException("No mapped hibernate type found for '" + sqlType + "' Types value=" + sqlType + " for column '" + this.currentColumn.getName() + "'", e);
         }
 
         return hibType;

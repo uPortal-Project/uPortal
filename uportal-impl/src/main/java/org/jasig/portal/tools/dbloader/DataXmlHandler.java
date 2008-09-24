@@ -5,9 +5,6 @@
  */
 package org.jasig.portal.tools.dbloader;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -15,12 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.sql.DataSource;
-
-import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.apache.commons.lang.ArrayUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -39,12 +32,13 @@ import edu.emory.mathcs.backport.java.util.Arrays;
 public class DataXmlHandler extends BaseDbXmlHandler {
     private final JdbcTemplate jdbcTemplate;
     private final TransactionTemplate transactionTemplate;
-    private final Map<String, Map<String, Integer>> tableColumnInfo = new CaseInsensitiveMap();
+    private final Map<String, Map<String, Integer>> tableColumnInfo;
     private final List<String> script = new LinkedList<String>();
     
-    public DataXmlHandler(JdbcTemplate jdbcTemplate, TransactionTemplate transactionTemplate) {
+    public DataXmlHandler(JdbcTemplate jdbcTemplate, TransactionTemplate transactionTemplate, Map<String, Map<String, Integer>> tableColumnTypes) {
         this.jdbcTemplate = jdbcTemplate;
         this.transactionTemplate = transactionTemplate;
+        this.tableColumnInfo = tableColumnTypes;
     }
     
     public List<String> getScript() {
@@ -151,42 +145,42 @@ public class DataXmlHandler extends BaseDbXmlHandler {
     
     protected Map<String, Integer> getTableColumnTypes(String tableName) {
         final Map<String, Integer> columnInfo;
-        synchronized (this.tableColumnInfo) {
-            if (this.tableColumnInfo.containsKey(tableName)) {
+//        synchronized (this.tableColumnInfo) {
+//            if (this.tableColumnInfo.containsKey(tableName)) {
                 columnInfo = this.tableColumnInfo.get(tableName);
                 this.logger.info("Using pre-populated " + columnInfo + " for " + tableName + "'.");
-            }
-            else {
-                columnInfo = new CaseInsensitiveMap();
-                
-                final DataSource dataSource = jdbcTemplate.getDataSource();
-                final Connection connection = DataSourceUtils.getConnection(dataSource);
-                try {
-                    final DatabaseMetaData metaData = connection.getMetaData();
-                    final ResultSet columns = metaData.getColumns(null, null, tableName, null);
-                    this.logger.info("Have columns ResultSet for table '" + tableName + "'.");
-                    try {
-                        while (columns.next()) {
-                            final String name = columns.getString("COLUMN_NAME");
-                            final int type = columns.getInt("DATA_TYPE");
-                            this.logger.info("Getting column info [name=" + name + ", type=" + type + "] for '" + tableName + "'.");
-                            columnInfo.put(name, type);
-                        }
-                    }
-                    finally {
-                        columns.close();
-                    }
-                }
-                catch (Exception e) {
-                    throw new RuntimeException("Could not determine database table information for populating tables", e);
-                }
-                finally {
-                    DataSourceUtils.releaseConnection(connection, dataSource);
-                }
-                
-                this.logger.info("Loaded " + columnInfo + " for " + tableName + "'.");
-            }
-        }
+//            }
+//            else {
+//                columnInfo = new CaseInsensitiveMap();
+//                
+//                final DataSource dataSource = jdbcTemplate.getDataSource();
+//                final Connection connection = DataSourceUtils.getConnection(dataSource);
+//                try {
+//                    final DatabaseMetaData metaData = connection.getMetaData();
+//                    final ResultSet columns = metaData.getColumns(null, null, tableName, null);
+//                    this.logger.info("Have columns ResultSet for table '" + tableName + "'.");
+//                    try {
+//                        while (columns.next()) {
+//                            final String name = columns.getString("COLUMN_NAME");
+//                            final int type = columns.getInt("DATA_TYPE");
+//                            this.logger.info("Getting column info [name=" + name + ", type=" + type + "] for '" + tableName + "'.");
+//                            columnInfo.put(name, type);
+//                        }
+//                    }
+//                    finally {
+//                        columns.close();
+//                    }
+//                }
+//                catch (Exception e) {
+//                    throw new RuntimeException("Could not determine database table information for populating tables", e);
+//                }
+//                finally {
+//                    DataSourceUtils.releaseConnection(connection, dataSource);
+//                }
+//                
+//                this.logger.info("Loaded " + columnInfo + " for " + tableName + "'.");
+//            }
+//        }
         
         return columnInfo;
     }
