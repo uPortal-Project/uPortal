@@ -1,7 +1,7 @@
 <with>
     <attribute key="NODE_NAME">${valueOf(name())}</attribute>
     <attribute key="STRUCT_ID">${sequence(STRUCT_ID_SEQ)}</attribute>
-    <attribute key="RETURNED_IDS">${groovy(new String[2])}</attribute> <!-- 0 is next sibling id, 1 is first child id -->
+    <attribute key="RETURNED_IDS">${groovy(new Integer[2])}</attribute> <!-- 0 is next sibling id, 1 is first child id -->
     <subtasks>
         <with-attribute key="NODE_TYPE" value="${crn(determine-layout-node_type.crn)}">
             <!-- Step into the next sibling, special handling here for the root node and 'dlm:hiddenSet' which is the last node at the top level -->
@@ -125,7 +125,20 @@
                 </when>
                 <!-- leaf node in the tree, this can only have siblings -->
                 <when test="${jexl(NODE_TYPE == 'channel')}">
-                    <cache key="CHAN_ID" cache-key="CHAN_ID.${valueOf(@fname)}" factory="${sql(SELECT chan_id FROM up_channel WHERE chan_fname = '${valueOf(@fname)}')}">
+                    <cache key="CHAN_ID" cache-key="CHAN_ID.${valueOf(@fname)}">
+                        <factory>
+                            <sql-query>
+                                <sql>
+                                    SELECT chan_id 
+                                    FROM up_channel 
+                                    WHERE chan_fname = ?
+                                </sql>
+                                <parameter value="${valueOf(@fname)}" />
+                                <subtasks>
+                                    <return value="${CHAN_ID}" />
+                                </subtasks>
+                            </sql-query>
+                        </factory>
                         <subtasks>
                             <sql-statement sql="INSERT INTO UP_LAYOUT_STRUCT(USER_ID, LAYOUT_ID, STRUCT_ID, NEXT_STRUCT_ID, CHAN_ID) 
                                                 VALUES(?, ?, ?, ?, ?)">

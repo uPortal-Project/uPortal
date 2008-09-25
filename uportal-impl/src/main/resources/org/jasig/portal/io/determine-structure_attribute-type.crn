@@ -6,13 +6,13 @@
  +-->
 <choose>
     <when test="${jexl(STRUCT_ATTR_TYPE == 'stylesheet')}">
-        <return value="1" />
+        <return value="${groovy(1)}" />
     </when>
     <when test="${jexl(STRUCT_ATTR_TYPE == 'folder')}">
-        <return value="2" />
+        <return value="${groovy(2)}" />
     </when>
     <when test="${jexl(STRUCT_ATTR_TYPE == 'channel')}">
-        <return value="3" />
+        <return value="${groovy(3)}" />
     </when>
     <otherwise>
         <return value="${STRUCT_ATTR_TYPE}" />

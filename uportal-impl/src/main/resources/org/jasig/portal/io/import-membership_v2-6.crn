@@ -1,15 +1,43 @@
-<sql-transaction>
-    <sql-upsert>
-        <update-statement>UPDATE up_group_membership SET member_is_group = ? WHERE group_id = ? AND member_service = ? AND member_key = ? AND member_is_group = ?</update-statement>
-        <insert-statement>INSERT INTO up_group_membership(member_is_group, group_id, member_service, member_key) VALUES(?, ?, ?, ?)</insert-statement>
-        <update-parameter value="${org.jasig.portal.io.GetMemberIsGroupPhrase(${singleNode(child/*)})}"/>
-        <update-parameter value="${sql(SELECT group_id FROM up_group WHERE group_name = '${valueOf(parent)}')}"/><!-- DB schema assumes the parent is always a 'local' group... -->
-        <update-parameter value="${org.jasig.portal.io.GetMemberServicePhrase(${singleNode(child/*)})}"/>
-        <update-parameter value="${org.jasig.portal.io.GetMemberKeyPhrase(${singleNode(child/*)})}"/>
-        <update-parameter value="${org.jasig.portal.io.GetMemberIsGroupPhrase(${singleNode(child/*)})}"/>
-        <insert-parameter value="${org.jasig.portal.io.GetMemberIsGroupPhrase(${singleNode(child/*)})}"/>
-        <insert-parameter value="${sql(SELECT group_id FROM up_group WHERE group_name = '${valueOf(parent)}')}"/><!-- DB schema assumes the parent is always a 'local' group... -->
-        <insert-parameter value="${org.jasig.portal.io.GetMemberServicePhrase(${singleNode(child/*)})}"/>
-        <insert-parameter value="${org.jasig.portal.io.GetMemberKeyPhrase(${singleNode(child/*)})}"/>
-    </sql-upsert>
-</sql-transaction>
+<with-attribute key="PARENT_GROUP_NAME" value="${valueOf(parent)}">
+    <cache key="PARENT_GROUP_ID" cache-key="${groovy('GROUP_ID.' + PARENT_GROUP_NAME)}">
+        <factory>
+            <sql-query>
+                <sql>
+                    SELECT group_id 
+                    FROM up_group 
+                    WHERE group_name = ?
+                </sql>
+                <parameter value="${PARENT_GROUP_NAME}" />
+                <subtasks>
+                    <return value="${GROUP_ID}" />
+                </subtasks>
+            </sql-query>
+        </factory>
+        <subtasks>
+            <sql-transaction>
+                <sql-upsert>
+                    <update-statement>
+                        UPDATE up_group_membership 
+                        SET member_is_group = ? 
+                        WHERE group_id = ? AND member_service = ? AND member_key = ? AND member_is_group = ?
+                    </update-statement>
+                    <insert-statement>
+                        INSERT INTO up_group_membership(member_is_group, group_id, member_service, member_key) 
+                        VALUES(?, ?, ?, ?)
+                    </insert-statement>
+                    
+                    <update-parameter value="${org.jasig.portal.io.GetMemberIsGroupPhrase(${singleNode(child/*)})}"/>
+                    <update-parameter value="${PARENT_GROUP_ID}"/><!-- DB schema assumes the parent is always a 'local' group... -->
+                    <update-parameter value="${org.jasig.portal.io.GetMemberServicePhrase(${singleNode(child/*)})}"/>
+                    <update-parameter value="${org.jasig.portal.io.GetMemberKeyPhrase(${singleNode(child/*)})}"/>
+                    <update-parameter value="${org.jasig.portal.io.GetMemberIsGroupPhrase(${singleNode(child/*)})}"/>
+                    
+                    <insert-parameter value="${org.jasig.portal.io.GetMemberIsGroupPhrase(${singleNode(child/*)})}"/>
+                    <insert-parameter value="${PARENT_GROUP_ID}"/><!-- DB schema assumes the parent is always a 'local' group... -->
+                    <insert-parameter value="${org.jasig.portal.io.GetMemberServicePhrase(${singleNode(child/*)})}"/>
+                    <insert-parameter value="${org.jasig.portal.io.GetMemberKeyPhrase(${singleNode(child/*)})}"/>
+                </sql-upsert>
+            </sql-transaction>
+        </subtasks>
+    </cache>
+</with-attribute>

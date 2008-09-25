@@ -7,8 +7,8 @@
     <parameter value="${valueOf(@username)}" />
     <subtasks>
         <with>
-            <attribute key="LAYOUT_ID">1</attribute> <!-- TODO eventually support more than just one layout for a user -->
-            <attribute key="PROFILE_ID">1</attribute> <!-- TODO should this be loaded from the template user? -->
+            <attribute key="LAYOUT_ID">${groovy(1)}</attribute> <!-- TODO eventually support more than just one layout for a user -->
+            <attribute key="PROFILE_ID">${groovy(1)}</attribute> <!-- TODO should this be loaded from the template user? -->
             <attribute key="STRUCTURE_STYLESHEET_NAME">${valueOf(structure/@name)}</attribute>
             <attribute key="THEME_STYLESHEET_NAME">${valueOf(theme/@name)}</attribute>
             <subtasks>
@@ -23,13 +23,14 @@
                                     <sql-statement sql="DELETE FROM up_user_profile WHERE user_id = ?">
                                         <parameter value="${USER_ID}"/>
                                     </sql-statement>
-                                    <sql-statement sql="INSERT INTO up_user_profile(user_id, profile_id, profile_name, description, layout_id, structure_ss_id, theme_ss_id) VALUES(?, ?, ?, ?, 0, ?, ?)">
+                                    <sql-statement sql="INSERT INTO up_user_profile(user_id, profile_id, profile_name, description, layout_id, structure_ss_id, theme_ss_id) VALUES(?, ?, ?, ?, ?, ?, ?)">
                                         <parameter value="${USER_ID}"/>
                                         <parameter value="${PROFILE_ID}"/>
                                         <parameter value="${valueOf(@name)}"/>
                                         <parameter value="${valueOf(description)}"/>
-                                        <parameter value="${STRUCTURE_STYLESHEET_ID}"/>
-                                        <parameter value="${THEME_STYLESHEET_ID}"/>
+                                        <parameter value="${LAYOUT_ID}"/>
+                                        <parameter value="${groovy(Integer.valueOf(STRUCTURE_STYLESHEET_ID))}"/>
+                                        <parameter value="${groovy(Integer.valueOf(THEME_STYLESHEET_ID))}"/>
                                     </sql-statement>
                                     <!-- User (Profile) Parameters:  structure... -->
                                     <node-iterator xpath="structure/parameter">
@@ -46,7 +47,7 @@
                                             <parameter value="${valueOf(value)}"/>
                                             <parameter value="${USER_ID}"/>
                                             <parameter value="${PROFILE_ID}"/>
-                                            <parameter value="${STRUCTURE_STYLESHEET_ID}"/>
+                                            <parameter value="${groovy(Integer.valueOf(STRUCTURE_STYLESHEET_ID))}"/>
                                             <parameter value="${valueOf(name)}"/>
                                         </sql-upsert>
                                     </node-iterator>
@@ -65,7 +66,7 @@
                                             <parameter value="${valueOf(value)}"/>
                                             <parameter value="${USER_ID}"/>
                                             <parameter value="${PROFILE_ID}"/>
-                                            <parameter value="${THEME_STYLESHEET_ID}"/>
+                                            <parameter value="${groovy(Integer.valueOf(THEME_STYLESHEET_ID))}"/>
                                             <parameter value="${valueOf(name)}"/>
                                         </sql-upsert>
                                     </node-iterator>

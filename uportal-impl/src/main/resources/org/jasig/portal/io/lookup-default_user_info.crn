@@ -12,7 +12,7 @@
                 <return value="${jexl(null)}" />
             </when>
             <otherwise>
-                <with-attribute key="DEFAULT_USER_INFO" value="${groovy(new String[2])}">
+                <with-attribute key="DEFAULT_USER_INFO" value="${groovy(new Integer[2])}">
                     <sql-query>
                         <sql>
                             SELECT USER_ID, NEXT_STRUCT_ID
@@ -23,8 +23,8 @@
                         <subtasks>
                             <groovy>
                                 <script>
-                                    DEFAULT_USER_INFO[0] = ${USER_ID};
-                                    DEFAULT_USER_INFO[1] = ${NEXT_STRUCT_ID};
+                                    DEFAULT_USER_INFO[0] = USER_ID;
+                                    DEFAULT_USER_INFO[1] = NEXT_STRUCT_ID;
                                 </script>
                             </groovy>
                             

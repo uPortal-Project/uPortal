@@ -1,65 +1,71 @@
-<with-attribute key="NAME" value="${valueOf(name)}">
-    <sql-transaction>
-        <!-- theme -->
-        <sql-upsert>
-            <update-statement>
-                UPDATE up_ss_theme 
-                SET ss_uri = ?, ss_description_uri = ?, ss_description_text = ?, struct_ss_id = ?, sample_icon_uri = ?, sample_uri = ?, mime_type = ?, device_type = ?, serializer_name = ?, up_module_class = ? 
-                WHERE ss_name = ?
-            </update-statement>
-            <insert-statement>
-                INSERT INTO up_ss_theme(ss_id, ss_uri, ss_description_uri, ss_description_text, struct_ss_id, sample_icon_uri, sample_uri, mime_type, device_type, serializer_name, up_module_class, ss_name) 
-                VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            </insert-statement>
+<with>
+    <attribute key="NAME">${valueOf(name)}</attribute>
+    <attribute key="STRUCT_ID">${valueOf(struct-id)}</attribute>
+    <subtasks>
+        <sql-transaction>
+            <!-- theme -->
+            <sql-upsert>
+                <update-statement>
+                    UPDATE up_ss_theme 
+                    SET ss_uri = ?, ss_description_uri = ?, ss_description_text = ?, struct_ss_id = ?, sample_icon_uri = ?, sample_uri = ?, mime_type = ?, device_type = ?, serializer_name = ?, up_module_class = ? 
+                    WHERE ss_name = ?
+                </update-statement>
+                <insert-statement>
+                    INSERT INTO up_ss_theme(ss_id, ss_uri, ss_description_uri, ss_description_text, struct_ss_id, sample_icon_uri, sample_uri, mime_type, device_type, serializer_name, up_module_class, ss_name) 
+                    VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                </insert-statement>
+                
+                <update-parameter value="${valueOf(uri)}"/>
+                <update-parameter value="${valueOf(description-uri)}"/>
+                <update-parameter value="${valueOf(description-text)}"/>
+                <update-parameter value="${groovy(Integer.valueOf(STRUCT_ID))}"/>
+                <update-parameter value="${valueOf(sample-icon-uri)}"/>
+                <update-parameter value="${valueOf(sample-uri)}"/>
+                <update-parameter value="${valueOf(mime-type)}"/>
+                <update-parameter value="${valueOf(device-type)}"/>
+                <update-parameter value="${valueOf(serializer-name)}"/>
+                <update-parameter value="${valueOf(module-class)}"/>
+                <update-parameter value="${NAME}"/>
+                
+                <insert-parameter value="${org.jasig.portal.io.SequenceGeneratorPhrase(UP_SS_THEME)}"/>
+                <insert-parameter value="${valueOf(uri)}"/>
+                <insert-parameter value="${valueOf(description-uri)}"/>
+                <insert-parameter value="${valueOf(description-text)}"/>
+                <insert-parameter value="${groovy(Integer.valueOf(STRUCT_ID))}"/>
+                <insert-parameter value="${valueOf(sample-icon-uri)}"/>
+                <insert-parameter value="${valueOf(sample-uri)}"/>
+                <insert-parameter value="${valueOf(mime-type)}"/>
+                <insert-parameter value="${valueOf(device-type)}"/>
+                <insert-parameter value="${valueOf(serializer-name)}"/>
+                <insert-parameter value="${valueOf(module-class)}"/>
+                <insert-parameter value="${NAME}"/>
+            </sql-upsert>
             
-            <update-parameter value="${valueOf(uri)}"/>
-            <update-parameter value="${valueOf(description-uri)}"/>
-            <update-parameter value="${valueOf(description-text)}"/>
-            <update-parameter value="${valueOf(struct-id)}"/>
-            <update-parameter value="${valueOf(sample-icon-uri)}"/>
-            <update-parameter value="${valueOf(sample-uri)}"/>
-            <update-parameter value="${valueOf(mime-type)}"/>
-            <update-parameter value="${valueOf(device-type)}"/>
-            <update-parameter value="${valueOf(serializer-name)}"/>
-            <update-parameter value="${valueOf(module-class)}"/>
-            <update-parameter value="${NAME}"/>
-            
-            <insert-parameter value="${org.jasig.portal.io.SequenceGeneratorPhrase(UP_SS_THEME)}"/>
-            <insert-parameter value="${valueOf(uri)}"/>
-            <insert-parameter value="${valueOf(description-uri)}"/>
-            <insert-parameter value="${valueOf(description-text)}"/>
-            <insert-parameter value="${valueOf(struct-id)}"/>
-            <insert-parameter value="${valueOf(sample-icon-uri)}"/>
-            <insert-parameter value="${valueOf(sample-uri)}"/>
-            <insert-parameter value="${valueOf(mime-type)}"/>
-            <insert-parameter value="${valueOf(device-type)}"/>
-            <insert-parameter value="${valueOf(serializer-name)}"/>
-            <insert-parameter value="${valueOf(module-class)}"/>
-            <insert-parameter value="${NAME}"/>
-        </sql-upsert>
-        
-        <!-- theme parameters -->
-        <sql-query>
-            <sql>
-                SELECT ss_id 
-                FROM up_ss_theme 
-                WHERE ss_name = ?
-            </sql>
-            <parameter value="${NAME}" />
-            <subtasks>
-                <sql-statement sql="DELETE FROM up_ss_theme_parm WHERE ss_id = ?">
-                    <parameter value="${SS_ID}"/>
-                </sql-statement>
-                <node-iterator xpath="parameters/parameter">
-                    <sql-statement sql="INSERT INTO up_ss_theme_parm(ss_id, param_name, param_default_val, param_descript, type) values(?, ?, ?, ?, ?)">
+            <!-- theme parameters -->
+            <sql-query>
+                <sql>
+                    SELECT ss_id 
+                    FROM up_ss_theme 
+                    WHERE ss_name = ?
+                </sql>
+                <parameter value="${NAME}" />
+                <subtasks>
+                    <sql-statement sql="DELETE FROM up_ss_theme_parm WHERE ss_id = ?">
                         <parameter value="${SS_ID}"/>
-                        <parameter value="${valueOf(name)}"/>
-                        <parameter value="${valueOf(value)}"/>
-                        <parameter value="${valueOf(description)}"/>
-                        <parameter value="${valueOf(type)}"/>
                     </sql-statement>
-                </node-iterator>
-            </subtasks>
-        </sql-query>
-    </sql-transaction>
-</with-attribute>
+                    <node-iterator xpath="parameters/parameter">
+                        <with-attribute key="TYPE" value="${valueOf(type)}">
+                            <sql-statement sql="INSERT INTO up_ss_theme_parm(ss_id, param_name, param_default_val, param_descript, type) values(?, ?, ?, ?, ?)">
+                                <parameter value="${SS_ID}"/>
+                                <parameter value="${valueOf(name)}"/>
+                                <parameter value="${valueOf(value)}"/>
+                                <parameter value="${valueOf(description)}"/>
+                                <parameter value="${groovy(Integer.valueOf(TYPE))}"/>
+                            </sql-statement>
+                        </with-attribute>
+                    </node-iterator>
+                </subtasks>
+            </sql-query>
+        </sql-transaction>
+    </subtasks>
+</with>
