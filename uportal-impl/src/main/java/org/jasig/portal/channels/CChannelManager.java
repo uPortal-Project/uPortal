@@ -13,10 +13,14 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletContext;
+
+import org.apache.pluto.OptionalContainerServices;
 import org.apache.pluto.PortletContainerException;
 import org.apache.pluto.descriptors.portlet.PortletDD;
 import org.apache.pluto.descriptors.portlet.PortletPreferenceDD;
 import org.apache.pluto.descriptors.portlet.PortletPreferencesDD;
+import org.apache.pluto.spi.optional.PortletRegistryService;
 import org.jasig.portal.ChannelRegistryManager;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ChannelStaticData;
@@ -26,6 +30,7 @@ import org.jasig.portal.IServant;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.channels.CChannelManager.ChannelDefinition.Preference;
 import org.jasig.portal.channels.groupsmanager.CGroupsManagerServantFactory;
+import org.jasig.portal.channels.portlet.IPortletAdaptor;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletPreference;
@@ -34,15 +39,14 @@ import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPermissionManager;
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.serialize.OutputFormat;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.EntityNameFinderService;
 import org.jasig.portal.services.GroupService;
 import org.jasig.portal.spring.PortalApplicationContextLocator;
 import org.jasig.portal.utils.DocumentFactory;
-import org.jasig.portal.utils.XML;
 import org.jasig.portal.utils.XSLT;
 import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.WebApplicationContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -1075,7 +1079,6 @@ public class CChannelManager extends BaseChannel {
         
         protected ChannelDefinition () {
             parameters = new HashMap<String, Parameter>();
-            portletXmlPreferences = new LinkedHashMap<String, Preference>();
             definitionPreferences = new LinkedHashMap<String, Preference>();
         }
 
@@ -1268,24 +1271,6 @@ public class CChannelManager extends BaseChannel {
             final IPortletDefinition portletDefinition = portletDefinitionRegistry.getPortletDefinition(chanDefId);
             
             if (portletDefinition != null) {
-                try {
-                    final PortletDD portletDescriptor = portletDefinitionRegistry.getParentPortletDescriptor(portletDefinition.getPortletDefinitionId());
-                    
-                    this.portletXmlPreferences.clear();
-                    final PortletPreferencesDD portletPreferences = portletDescriptor.getPortletPreferences();
-                    for (final PortletPreferenceDD portletPreference : (List<PortletPreferenceDD>)portletPreferences.getPortletPreferences()) {
-                        final String name = portletPreference.getName();
-                        final boolean readOnly = portletPreference.isReadOnly();
-                        final List<String> values = portletPreference.getValues();
-                        
-                        final Preference preference = new Preference(name, values != null ? new ArrayList<String>(values): null, readOnly);
-                        this.portletXmlPreferences.put(preference.getName(), preference);
-                    }
-                }
-                catch (PortletContainerException e) {
-                    log.warn("Could not load PortletDD for '" + portletDefinition + "'. No portletXmlPreferences will be displayed in CChannelManager UI", e);
-                }
-                
                 this.definitionPreferences.clear();
                 final IPortletPreferences portletPreferences = portletDefinition.getPortletPreferences();
                 for (IPortletPreference portletPreference : portletPreferences.getPortletPreferences()) {
@@ -1323,10 +1308,13 @@ public class CChannelManager extends BaseChannel {
                 parameterE.setAttribute("override", param.getOverride());
                 channelE.appendChild(parameterE);
             }
-            if (portletXmlPreferences != null && portletXmlPreferences.size() > 0) {
-                final Element portletXmlPreferencesElement = emptyDoc.createElement("portletXmlPreferences");
-                appendPortletPreferences(portletXmlPreferencesElement, portletXmlPreferences);
-                channelE.appendChild(portletXmlPreferencesElement);
+            if (parameters.containsKey(IPortletAdaptor.CHANNEL_PARAM__PORTLET_NAME)) {
+                final Map<String, Preference> portletXmlPreferences = loadPortletXmlPreferences();
+                if (portletXmlPreferences  != null) {
+                    final Element portletXmlPreferencesElement = emptyDoc.createElement("portletXmlPreferences");
+                    appendPortletPreferences(portletXmlPreferencesElement, portletXmlPreferences);
+                    channelE.appendChild(portletXmlPreferencesElement);
+                }
             }
             if (definitionPreferences != null && definitionPreferences.size() > 0) {
                 final Element definitionPreferencesElement = emptyDoc.createElement("definitionPreferences");
@@ -1334,6 +1322,63 @@ public class CChannelManager extends BaseChannel {
                 channelE.appendChild(definitionPreferencesElement);
             }
             return  channelE;
+        }
+
+        @SuppressWarnings("unchecked")
+        protected Map<String, Preference> loadPortletXmlPreferences() {
+            if (this.portletXmlPreferences != null) {
+                return this.portletXmlPreferences;
+            }
+            
+            //TODO this logic duplicates code in PortletDefinitionRegistryImpl
+            final WebApplicationContext applicationContext = PortalApplicationContextLocator.getWebApplicationContext();
+            
+            final String portletApplicationId;
+            final Parameter isFrameworkPortletParam = parameters.get(IPortletAdaptor.CHANNEL_PARAM__IS_FRAMEWORK_PORTLET);
+            if (isFrameworkPortletParam != null && Boolean.valueOf(isFrameworkPortletParam.getValue())) {
+                final ServletContext servletContext = applicationContext.getServletContext();
+                portletApplicationId = servletContext.getContextPath();
+            }
+            else {
+                final Parameter portletApplicaitonIdParam = parameters.get(IPortletAdaptor.CHANNEL_PARAM__PORTLET_APPLICATION_ID);
+                if (portletApplicaitonIdParam == null) {
+                    return null;
+                }
+                portletApplicationId = portletApplicaitonIdParam.getValue();
+            }
+            
+            final Parameter portletNameParam = parameters.get(IPortletAdaptor.CHANNEL_PARAM__PORTLET_NAME);
+            if (portletNameParam == null) {
+                return null;
+            }
+            final String portletName = portletNameParam.getValue();
+            
+            if (portletApplicationId != null && portletName != null) {
+                final OptionalContainerServices optionalContainerServices = (OptionalContainerServices) applicationContext.getBean("optionalContainerServices", OptionalContainerServices.class);
+                final PortletRegistryService portletRegistryService = optionalContainerServices.getPortletRegistryService();
+                try {
+                    final PortletDD portletDescriptor = portletRegistryService.getPortletDescriptor(portletApplicationId, portletName);
+                    
+                    final Map<String, Preference> portletXmlPreferences = new LinkedHashMap<String, Preference>();
+                    final PortletPreferencesDD portletPreferences = portletDescriptor.getPortletPreferences();
+                    for (final PortletPreferenceDD portletPreference : (List<PortletPreferenceDD>)portletPreferences.getPortletPreferences()) {
+                        final String name = portletPreference.getName();
+                        final boolean readOnly = portletPreference.isReadOnly();
+                        final List<String> values = portletPreference.getValues();
+                        
+                        final Preference preference = new Preference(name, values != null ? new ArrayList<String>(values): null, readOnly);
+                        portletXmlPreferences.put(preference.getName(), preference);
+                    }
+                    
+                    this.portletXmlPreferences = portletXmlPreferences;
+                    return portletXmlPreferences;
+                }
+                catch (PortletContainerException e) {
+                    log.warn("Could not load PortletDD for portletApplicationId-'" + portletApplicationId + "', portletName='" + portletName + "'. No portletXmlPreferences will be displayed in CChannelManager UI", e);
+                }
+            }
+            
+            return null;
         }
 
         private void appendPortletPreferences(Element portletPreferencesElement, Map<String, Preference> portletPreferences) {
