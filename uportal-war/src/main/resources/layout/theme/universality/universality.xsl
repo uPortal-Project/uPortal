@@ -246,8 +246,8 @@
       <script type="text/javascript" src="{$SCRIPT_PATH}/jquery/jquery-1.2.6.min.js"></script>
     </xsl:if>
     <xsl:if test="$USE_AJAX='true' and $AUTHENTICATED='true'">
-      <script type="text/javascript" src="{$SCRIPT_PATH}/jquery/jquery-ui-portal-1.6b-v1.min.js"></script>
-      <script type="text/javascript" src="{$SCRIPT_PATH}/fluid/Fluid-reorderer-r5393-v1.min.js"></script>
+      <script type="text/javascript" src="{$SCRIPT_PATH}/jquery/jquery-ui-portal-1.5.2-v1.min.js"></script>
+      <script type="text/javascript" src="{$SCRIPT_PATH}/fluid/Fluid-reorderer-0.5-v1.min.js"></script>
       <script type="text/javascript" src="{$SCRIPT_PATH}/ajax-preferences-jquery.js"></script>
       <script type="text/javascript" src="{$SCRIPT_PATH}/up-channel-browser.js"></script>
     </xsl:if>

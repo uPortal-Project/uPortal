@@ -29,9 +29,15 @@
     
     <!-- ****** PORTLET CONTAINER ****** -->
     <xsl:variable name="portletClassName">
-      portlet-container <xsl:value-of select="@fname"/><xsl:if test="@dlm:moveAllowed='false'"> locked</xsl:if> 
+      portlet-container <xsl:value-of select="@fname"/> 
     </xsl:variable>
-    <div id="portlet_{@ID}" class="{$portletClassName}"> <!-- Main portlet container.  The unique ID is needed for drag and drop.  The portlet fname is also written into the class attribute to allow for unique rendering of the portlet presentation. -->
+    <xsl:variable name="PORTLET_LOCKED"> 
+      <xsl:choose> 
+        <xsl:when test="@dlm:moveAllowed='false'">locked</xsl:when> 
+        <xsl:otherwise>moveable</xsl:otherwise> 
+      </xsl:choose> 
+    </xsl:variable>
+    <div id="portlet_{@ID}" class="portlet-container {@fname} {$PORTLET_LOCKED}"> <!-- Main portlet container.  The unique ID is needed for drag and drop.  The portlet fname is also written into the class attribute to allow for unique rendering of the portlet presentation. -->
       <div class="portlet-container-inner">
     
         <!-- ****** PORTLET TOP BLOCK ****** -->

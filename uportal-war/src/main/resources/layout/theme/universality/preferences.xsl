@@ -45,7 +45,7 @@
      var preferencesUrl = 'ajax/preferences';
      var skinPath = '<xsl:value-of select="$SKIN_PATH"/>';
      
-     $(document).ready(function(){
+     jQuery(document).ready(function(){
      initfocusedportal();
      });
      
@@ -182,7 +182,7 @@
      var skinPath = '<xsl:value-of select="$SKIN_PATH"/>';
      var tabId = '<xsl:value-of select="/layout/navigation/tab[@activeTab='true']/@ID"/>';
      var firstChannelId = '<xsl:value-of select="/layout/content/column[not(@dlm:addChildAllowed='false')]/channel[not(@dlm:moveAllowed='false')]/@ID"/>';     
-     $(document).ready(function(){
+     jQuery(document).ready(function(){
        initportal();
      });
   
