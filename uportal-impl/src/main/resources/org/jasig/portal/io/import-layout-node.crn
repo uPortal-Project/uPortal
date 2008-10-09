@@ -76,50 +76,7 @@
                         </subtasks>
                     </with>
                     
-                    <node-iterator xpath="child::param">
-                        <with>
-                            <attribute key="ATTRIBUTE_NAME">${valueOf(name)}</attribute>
-                            <attribute key="ATTRIBUTE_VALUE">${valueOf(value)}</attribute>
-                            <attribute key="ORIGINAL_ATTRIBUTE_VALUE">${valueOf(value)}</attribute>
-                            <subtasks>
-                                <with-attribute key="ATTRIBUTE_VALUE" value="${crn(determine-layout-attribute_value.crn)}">
-                                    <choose>
-                                        <when test="${groovy(ATTRIBUTE_VALUE != null)}">
-                                            <sql-statement sql="INSERT INTO UP_LAYOUT_PARAM(USER_ID, LAYOUT_ID, STRUCT_ID, STRUCT_PARM_NM, STRUCT_PARM_VAL) 
-                                                                VALUES(?, ?, ?, ?, ?)">
-                                                <parameter value="${USER_ID}"/>
-                                                <parameter value="${LAYOUT_ID}"/>
-                                                <parameter value="${STRUCT_ID}"/>
-                                                <parameter value="${ATTRIBUTE_NAME}"/>
-                                                <parameter value="${ATTRIBUTE_VALUE}"/>
-                                            </sql-statement>
-                                        </when>
-                                        <otherwise>
-                                            <echo-ln>WARNING: Value '${ORIGINAL_ATTRIBUTE_VALUE}' of layout attribute '${ATTRIBUTE_NAME}' for user ${USER_NAME} resolved to NULL and will be ignored.</echo-ln>
-                                            <log level="warn">WARNING: Value '${ORIGINAL_ATTRIBUTE_VALUE}' of layout attribute '${ATTRIBUTE_NAME}' for user ${USER_NAME} resolved to NULL and will be ignored.</log>
-                                        </otherwise>
-                                    </choose>
-                                </with-attribute>
-                            </subtasks>
-                        </with>
-                    </node-iterator>
-                    
-                    <node-iterator xpath="child::structure-attribute">
-                        <with-attribute key="STRUCT_ATTR_TYPE" value="${valueOf(@type)}">
-                            <with-attribute key="STRUCT_ATTR_TYPE" value="${crn(determine-structure_attribute-type.crn)}">
-                                <sql-statement sql="INSERT INTO UP_SS_USER_ATTS(USER_ID, PROFILE_ID, SS_ID, SS_TYPE, STRUCT_ID, PARAM_NAME, PARAM_TYPE, PARAM_VAL) 
-                                                    VALUES(?, ?, ?, 1, ?, ?, ?, ?)">
-                                    <parameter value="${USER_ID}"/>
-                                    <parameter value="${PROFILE_ID}"/>
-                                    <parameter value="${STRUCTURE_STYLESHEET_ID}"/>
-                                    <parameter value="${STRUCT_ID}"/>
-                                    <parameter value="${valueOf(name)}"/>
-                                    <parameter value="${STRUCT_ATTR_TYPE}"/>
-                                    <parameter value="${valueOf(value)}"/>
-                                </sql-statement>
-                            </with-attribute>
-                        </with-attribute>
-                    </node-iterator>
+                    <crn location="import-layout-params.crn"/>
                     
                     <return value="${STRUCT_ID}" />
                 </when>
@@ -150,6 +107,8 @@
                             </sql-statement>
                         </subtasks>
                     </cache>
+                    
+                    <crn location="import-layout-params.crn"/>
                         
                     <return value="${STRUCT_ID}" />
                 </when>
