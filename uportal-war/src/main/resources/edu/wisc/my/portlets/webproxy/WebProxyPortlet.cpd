@@ -1,0 +1,640 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE channelDef PUBLIC "-//uPortal//Channel Publishing/EN" "channelPublishingDocument.dtd">
+
+<!--
+Copyright (c) 2007 JA-SIG.  All rights reserved.
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+1. Redistributions of source code must retain the above copyright
+   notice, this list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in
+   the documentation and/or other materials provided with the
+   distribution.
+
+3. Redistributions of any form whatsoever must retain the following
+   acknowledgment:
+   "This product includes software developed by the JA-SIG Collaborative
+   (http://www.jasig.org/)."
+
+THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
+EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE JA-SIG COLLABORATIVE OR
+ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+OF THE POSSIBILITY OF SUCH DAMAGE.
+
+Author: Andrew Petro, apetro@unicon.net
+-->
+
+<channelDef>
+
+  <description>
+    Specialized configuration workflow for the UW Web Proxy Portlet
+  </description>
+
+  <class>org.jasig.portal.channels.portlet.CSpringPortletAdaptor</class>
+
+  <params>
+    <step>
+      <ID>1</ID>
+
+      <name>General Configuration</name>
+      <description>Address of the Web appliaction to be proxied and options for which resources should be proxied and which sould be accessed directly by the browser.</description>
+
+      <parameter modify="publish">
+        <name>PORTLET.edu.wisc.my.webproxy.webproxy.general.config.sBaseUrl</name>
+        <label>Base URL (required)</label>
+        <type base="string" input="text" display="text">
+          <!-- length and maxlength for text field -->
+          <length>80</length>
+          <maxlength>1024</maxlength>
+        </type>
+        <example>http://www.google.com</example>
+        <description>The Base URL is the starting point of the proxied application and will be the first page proxied for the end user after authentication. This value must contain the protocol of the URL. (e.g., http://www.foo.bar/, http://foo.bar/example.html)</description>
+      </parameter>
+
+      <parameter modify="publish">
+        <name>PORTLET.edu.wisc.my.webproxy.webproxy.general.config.sEditUrl</name>
+        <label>Edit URL (optional)</label>
+        <type base="string" input="text" display="text">
+          <!-- length and maxlength for text field -->
+          <length>80</length>
+          <maxlength>1024</maxlength>
+        </type>
+        <example>http://www.google.com/edit</example>
+        <description>This URL will provide a link that will allow the end user to configure the proxied web-application for their own personal needs. This value must also contain the protocol. (e.g., http://foo.bar/edit.html)</description>
+      </parameter>
+
+      <parameter modify="publish">
+        <name>PORTLET.edu.wisc.my.webproxy.webproxy.general.config.sPortletUrl</name>
+        <label>Portlet URL List (optional)</label>
+        <type base="string" input="text" display="text">
+          <!-- length and maxlength for text field -->
+          <length>80</length>
+          <maxlength>1024</maxlength>
+        </type>
+        <example>http\:\/\/www\.google\.com.</example>
+        <description>Must contain the URLs of the web application you would like or would not like to be proxied, depending on the URL List Type (see below). The portlet URL list uses regular expressions for matching. (e.g., .foo.)</description>
+      </parameter>
+
+      <parameter modify="publish">
+        <name>PORTLET.edu.wisc.my.webproxy.webproxy.general.config.sListType</name>
+        <label>Portlet URL List Type (optional)</label>
+        <type base="string" input="single-choice" display="drop-down">
+          <restriction type="enumeration">
+            <value>Include</value>
+            <value>Exclude</value>
+          </restriction>
+        </type>
+        <defaultValue>Include</defaultValue>
+        <!-- example>http\:\/\/www\.google\.com.</example-->
+        <description>This value is set to Include by default. This value will designate how the portlet will read the Portlet Url list. If this value is set to Include,the portlet will rewrite and proxy all matching URL expressions in the list. If set to Exclude, the portlet will proxy all the sites that do not match the URL expressions listed.</description>
+      </parameter>
+
+      <parameter modify="publish">
+        <name>PORTLET.edu.wisc.my.webproxy.webproxy.general.config.sPreInterceptor</name>
+        <label>Pre-Interceptor class (optional)</label>
+        <type base="string" input="text" display="text">
+          <!-- length and maxlength for text field -->
+          <length>80</length>
+          <maxlength>1024</maxlength>
+        </type>
+        <example>edu.wisc.my.webproxy.CPreInterceptor</example>
+        <description>This is an optional configuration that can be used to manipulate the http request before it is sent to the web-application. This will require a custom class file to use. (e.g. edu.wisc.my.webproxy.CPreInterceptor)</description>
+      </parameter>
+
+      <parameter modify="publish">
+        <name>PORTLET.edu.wisc.my.webproxy.webproxy.general.config.sPostInterceptor</name>
+        <label>Post-Interceptor class (optional)</label>
+        <type base="string" input="text" display="text">
+          <!-- length and maxlength for text field -->
+          <length>80</length>
+          <maxlength>1024</maxlength>
+        </type>
+        <example>edu.wisc.my.webproxy.CPostInterceptor</example>
+        <description>This is an optional configuration that can be used to manipulate the http response after it is received from the web-application. This will require a custom class file to use. (e.g. edu.wisc.my.webproxy.CPostInterceptor)</description>
+      </parameter>
+
+      <parameter modify="publish-only">
+        <name>portletApplicationId</name>
+        <label>Portlet Web Application Path</label>
+        <type base="string" input="text" display="hidden">
+          <length>40</length>
+          <maxlength>2000</maxlength>
+        </type>
+        <example>/pluto-testsuite</example>
+        <description>
+          This is the name of the web application the portlet resides in including a preceding /.
+        </description>
+        <defaultValue>/WebProxyPortlet</defaultValue>
+      </parameter>
+      
+      <parameter modify="publish-only">
+        <name>portletName</name>
+        <label>Portlet Name</label>
+        <type base="string" input="text" display="hidden">
+          <length>40</length>
+          <maxlength>2000</maxlength>
+        </type>
+        <example>test-port-et-1</example>
+        <description>
+          This is the name of the portlet as defined in the portlet.xml descriptor.
+        </description>
+        <defaultValue>WebProxyPortlet</defaultValue>
+      </parameter>
+
+    </step>
+    <step>
+      <ID>2</ID>
+
+      <name>Cache Configuration</name>
+      <description>Enabling cache and its various options.</description>
+
+      <parameter modify="publish">
+        <name>PORTLET.edu.wisc.my.webproxy.webproxy.cache.useCache</name>
+        <label>Use Cache</label>
+        <type base="boolean" input="single-choice" display="drop-down">
+          <restriction type="enumeration">
+            <value>false</value>
+            <value>true</value>
+          </restriction>
+        </type>
+        <description>Select this if you would like to enable caching.  If not selected, the remaining options on this page have no effect.</description>
+      </parameter>
+
+      <parameter modify="publish">
+        <name>PORTLET.edu.wisc.my.webproxy.webproxy.cache.cacheTimeOut</name>
+        <label>Cache Timeout (in seconds)</label>
+        <type base="integer" input="text" display="text">
+          <!-- length and maxlength for text field -->
+          <length>10</length>
+          <maxlength>20</maxlength>
+        </type>
+        <description>The amount of seconds you would like the cache to be valid for.</description>
+      </parameter>
+
+      <parameter modify="publish">
+        <name>PORTLET.edu.wisc.my.webproxy.webproxy.cache.useCExpired</name>
+        <label>Use expired data if the remote server is not responding</label>
+        <type base="boolean" input="single-choice" display="drop-down">
+          <restriction type="enumeration">
+            <value>false</value>
+            <value>true</value>
+          </restriction>
+        </type>
+        <description>If selected the portal will use expired data if the remote server stops responding. If selected, you must designate the amount of seconds Web Proxy will wait before trying to contact the non-responding servers.</description>
+      </parameter>
+
+      <parameter modify="publish">
+        <name>PORTLET.edu.wisc.my.webproxy.webproxy.cache.persistCache</name>
+        <label>Persist Cache</label>
+        <type base="boolean" input="single-choice" display="drop-down">
+          <restriction type="enumeration">
+            <value>false</value>
+            <value>true</value>
+          </restriction>
+        </type>
+        <description>Select this if you would like to keep the cache beyond the user's session.</description>
+      </parameter>
+
+    </step>
+    <step>
+      <ID>3</ID>
+
+      <name>HTTP Configuration</name>
+      <description>This section also allows to configure authentication and parameter passing.</description>
+
+      <parameter modify="publish">
+        <name>PORTLET.edu.wisc.my.webproxy.webproxy.httpclient.httpTimeout</name>
+        <label>HTTP request timeout in seconds (required)</label>
+        <type base="integer" input="text" display="text">
+          <!-- length and maxlength for text field -->
+          <length>10</length>
+          <maxlength>10</maxlength>
+        </type>
+        <description>The number of seconds you would like Web Proxy to wait before determining the remote server is non-responsive.</description>
+      </parameter>
+
+      <parameter modify="publish">
+        <name>PORTLET.edu.wisc.my.webproxy.webproxy.httpheader.sHeaderName</name>
+        <label>HTTP header name (optional)</label>
+        <type base="string" input="text" display="text">
+          <!-- length and maxlength for text field -->
+          <length>80</length>
+          <maxlength>1024</maxlength>
+        </type>
+        <description>The name of HTTP header that Web Proxy portlet should add to every HTTP request it makes.</description>
+      </parameter>
+
+      <parameter modify="publish">
+        <name>PORTLET.edu.wisc.my.webproxy.webproxy.httpheader.sHeaderValue</name>
+        <label>HTTP header value (optional)</label>
+        <type base="string" input="text" display="text">
+          <!-- length and maxlength for text field -->
+          <length>80</length>
+          <maxlength>1024</maxlength>
+        </type>
+        <description>The value of HTTP header that Web Proxy should add to every HTTP request it makes.</description>
+      </parameter>
+
+      <parameter modify="publish">
+        <name>PORTLET.edu.wisc.my.webproxy.webproxy.httpclient.redirects</name>
+        <label>Maximum redirects (optional)</label>
+        <type base="integer" input="text" display="text">
+          <!-- length and maxlength for text field -->
+          <length>10</length>
+          <maxlength>10</maxlength>
+        </type>
+        <description>This configurable option has a default value of 5 and will determine the maximum number of times the proxied site is able to redirect the end user.</description>
+      </parameter>
+
+      <parameter modify="publish">
+        <name>PORTLET.edu.wisc.my.webproxy.webproxy.httpclient.authEnable</name>
+        <label>Enable authentication (optional)</label>
+        <type base="boolean" input="single-choice" display="drop-down">
+          <restriction type="enumeration">
+            <value>false</value>
+            <value>true</value>
+          </restriction>
+        </type>
+        <defaultValue>false</defaultValue>
+        <description>Set to true if you would like to enable any type of authentication.</description>
+      </parameter>
+
+      <parameter modify="publish">
+        <name>PORTLET.edu.wisc.my.webproxy.webproxy.httpclient.sAuthType</name>
+        <label>Type of authentication (optional)</label>
+        <type base="string" input="single-choice" display="drop-down">
+          <restriction type="enumeration">
+            <value></value>
+            <value>FORM</value>
+            <value>BASIC</value>
+            <value>NTLM</value>
+          </restriction>
+        </type>
+        <defaultValue></defaultValue>
+        <description>Select the type of authentication the web-based application requires.</description>
+      </parameter>
+
+      <parameter modify="publish">
+        <name>PORTLET.edu.wisc.my.webproxy.webproxy.httpclient.sessionPersistenceEnable</name>
+        <label>Enable session persistence (optional)</label>
+        <type base="boolean" input="single-choice" display="drop-down">
+          <restriction type="enumeration">
+            <value>false</value>
+            <value>true</value>
+          </restriction>
+        </type>
+        <defaultValue>false</defaultValue>
+        <description>Set to true to have the session of the end user persisted after the user logs out.</description>
+      </parameter>
+
+      <parameter modify="publish">
+        <name>PORTLET.edu.wisc.my.webproxy.webproxy.httpclient.sessionKey</name>
+        <label>Shared session key (optional)</label>
+        <type base="string" input="text" display="text">
+          <!-- length and maxlength for text field -->
+          <length>80</length>
+          <maxlength>255</maxlength>
+        </type>
+        <description>A key for storing session to be shared between other Web Proxy portlets for user. If left blank, shared sessions will be disabled. It is recommended that this variable be unique so that only the intended proxied web applications share the session.</description>
+      </parameter>
+
+      <parameter modify="publish">
+        <name>PORTLET.edu.wisc.my.webproxy.webproxy.httpclient.userName</name>
+        <label>User name (for Basic auth ONLY) (optional)</label>
+        <type base="string" input="text" display="text">
+          <!-- length and maxlength for text field -->
+          <length>80</length>
+          <maxlength>255</maxlength>
+        </type>
+        <description>The username or LDAP value with the option to prompt the end user for individual username and persist this value beyond the end user's session. (e.g., photo_id, or 1234556789)</description>
+      </parameter>
+
+      <parameter modify="publish">
+        <name>PORTLET.edu.wisc.my.webproxy.webproxy.httpclient.password</name>
+        <label>User password (for Basic auth ONLY) (optional)</label>
+        <type base="string" input="text" display="text">
+          <!-- length and maxlength for text field -->
+          <length>80</length>
+          <maxlength>255</maxlength>
+        </type>
+        <description>The password or LDAP value with the option to prompt the end user for individual password and persist this value beyond the end user's session. If using the LDAP value, you must wrap the value within ???? for the user specific substitution to occur (e.g., ????). Use must also add this user-attribute to your portlet.xml.</description>
+      </parameter>
+
+      <parameter modify="publish">
+        <name>PORTLET.edu.wisc.my.webproxy.webproxy.httpclient.sessionTimeout</name>
+        <label>Session timeout (for form auth ONLY) (optional)</label>
+        <type base="integer" input="text" display="text">
+          <!-- length and maxlength for text field -->
+          <length>10</length>
+          <maxlength>10</maxlength>
+        </type>
+        <description>The number of minutes until the user's credentials must be posted again.</description>
+      </parameter>
+
+      <parameter modify="publish">
+        <name>PORTLET.edu.wisc.my.webproxy.webproxy.httpclient.sAuthenticationUrl</name>
+        <label>Authentication URL (for form auth ONLY) (optional)</label>
+        <type base="string" input="text" display="text">
+          <!-- length and maxlength for text field -->
+          <length>80</length>
+          <maxlength>1024</maxlength>
+        </type>
+        <description>The URL the credentials will be posted to.</description>
+      </parameter>
+
+      <parameter modify="publish">
+        <name>PORTLET.edu.wisc.my.webproxy.webproxy.httpclient.sDynamicParameterNames</name>
+        <label>Dynamic authentication parameter names (for form Auth ONLY) (optional) [example: userName,password]</label>
+        <type base="string" input="text" display="text">
+          <!-- length and maxlength for text field -->
+          <length>80</length>
+          <maxlength>1024</maxlength>
+        </type>
+        <description>Dynamic parameters are parameters that must be posted for authentication and are not the same for every portal user. You can enter the parameter name, whether or not you would like to persist the value beyond the user's session, and whether the value is sensitive to the end user. (e.g., userName, password).</description>
+      </parameter>
+
+      <parameter modify="publish">
+        <name>PORTLET.edu.wisc.my.webproxy.webproxy.httpclient.sDynamicParameterValues</name>
+        <label>Dynamic authentication parameter values (for form Auth ONLY) (optional)</label>
+        <type base="string" input="text" display="text">
+          <!-- length and maxlength for text field -->
+          <length>80</length>
+          <maxlength>1024</maxlength>
+        </type>
+        <description>Dynamic parameters are parameters that must be posted for authentication and are not the same for every portal user. You can enter the parameter name, whether or not you would like to persist the value beyond the user's session, and whether the value is sensitive to the end user. (e.g., userName, password).</description>
+      </parameter>
+
+      <parameter modify="publish">
+        <name>PORTLET.edu.wisc.my.webproxy.webproxy.httpclient.sDynamicParameterPersist</name>
+        <label>Dynamic authentication parameter names to persist (for form Auth ONLY) (optional) [example: userName,password]</label>
+        <type base="string" input="text" display="text">
+          <!-- length and maxlength for text field -->
+          <length>80</length>
+          <maxlength>1024</maxlength>
+        </type>
+        <description>Dynamic parameters are parameters that must be posted for authentication and are not the same for every portal user. You can enter the parameter name, whether or not you would like to persist the value beyond the user's session, and whether the value is sensitive to the end user. (e.g., userName, password).</description>
+      </parameter>
+
+      <parameter modify="publish">
+        <name>PORTLET.edu.wisc.my.webproxy.webproxy.httpclient.sDynamicParameterSensitive</name>
+        <label>Dynamic authentication parameter names that are sensitive, like passwords (for form Auth ONLY) (optional) [example: userName,password]</label>
+        <type base="string" input="text" display="text">
+          <!-- length and maxlength for text field -->
+          <length>80</length>
+          <maxlength>1024</maxlength>
+        </type>
+        <description>Dynamic parameters are parameters that must be posted for authentication and are not the same for every portal user. You can enter the parameter name, whether or not you would like to persist the value beyond the user's session, and whether the value is sensitive to the end user. (e.g., userName, password).</description>
+      </parameter>
+
+      <parameter modify="publish">
+        <name>PORTLET.edu.wisc.my.webproxy.webproxy.httpclient.sStaticicParameterNames</name>
+        <label>Static authentication parameter names (for form Auth ONLY) (optional)</label>
+        <type base="string" input="text" display="text">
+          <!-- length and maxlength for text field -->
+          <length>80</length>
+          <maxlength>1024</maxlength>
+        </type>
+        <description>These parameters will be the same for every user that has permission to use the Authenticated WebProxy portlet. If the parameter name does not have a corresponding value, leave blank.</description>
+      </parameter>
+
+      <parameter modify="publish">
+        <name>PORTLET.edu.wisc.my.webproxy.webproxy.httpclient.sStaticicParameterValues</name>
+        <label>Static authentication parameter values (for form Auth ONLY) (optional)</label>
+        <type base="string" input="text" display="text">
+          <!-- length and maxlength for text field -->
+          <length>80</length>
+          <maxlength>1024</maxlength>
+        </type>
+        <description>These parameters will be the same for every user that has permission to use the Authenticated WebProxy portlet. If the parameter name does not have a corresponding value, leave blank.</description>
+      </parameter>
+
+    </step>
+
+    <step>
+      <ID>4</ID>
+
+      <name>HTML Configuration</name>
+      <description>In the clipping section, if enabled, it is possible to enter more than one type of clipping fiter.</description>
+
+      <parameter modify="publish">
+        <name>PORTLET.edu.wisc.my.webproxy.webproxy.statichtml.sStaticHeader</name>
+        <label>Static header (optional)</label>
+        <type base="string" input="text" display="text">
+          <!-- length and maxlength for text field -->
+          <length>80</length>
+          <maxlength>1024</maxlength>
+        </type>
+        <description>Any HTML you would like prepended to the displayable parsed content.</description>
+      </parameter>
+
+      <parameter modify="publish">
+        <name>PORTLET.edu.wisc.my.webproxy.webproxy.statichtml.sStaticFooter</name>
+        <label>Static footer (optional)</label>
+        <type base="string" input="text" display="text">
+          <!-- length and maxlength for text field -->
+          <length>80</length>
+          <maxlength>1024</maxlength>
+        </type>
+        <description>Any HTML you would like appended to the displayable parsed content.</description>
+      </parameter>
+
+      <parameter modify="publish">
+        <name>PORTLET.edu.wisc.my.webproxy.webproxy.clipping.sClippingDisable</name>
+        <label>Disable clipping (optional)</label>
+        <type base="boolean" input="single-choice" display="drop-down">
+          <restriction type="enumeration">
+            <value>true</value>
+            <value>false</value>
+          </restriction>
+        </type>
+        <defaultValue>true</defaultValue>
+        <description>Set to false if you would like to configure the Web Proxy portlet for HTML clipping. HTML clipping can be used to only display content within certain absolute alement paths (e.g., /html/body/), comments(e.g., &lt;!--clipping--&gt;), and clement (e.g., &lt;script&gt;). Please keep in mind that once clipping is enabled the end user will only see the content that has been clipped, all other content will be dropped.</description>
+      </parameter>
+
+      <parameter modify="publish">
+        <name>PORTLET.edu.wisc.my.webproxy.webproxy.clipping.sXPath</name>
+        <label>XPath expression (optional) [example: /html/body/]</label>
+        <type base="string" input="text" display="text">
+          <!-- length and maxlength for text field -->
+          <length>80</length>
+          <maxlength>1024</maxlength>
+        </type>
+        <description>XPath expression for clipping.</description>
+      </parameter>
+
+      <parameter modify="publish">
+        <name>PORTLET.edu.wisc.my.webproxy.webproxy.clipping.sComment</name>
+        <label>HTML comment (optional)  [example: &lt;!-- clip here --&gt;]</label>
+        <type base="string" input="text" display="text">
+          <!-- length and maxlength for text field -->
+          <length>80</length>
+          <maxlength>1024</maxlength>
+        </type>
+        <description>HTML comment expression for clipping.</description>
+      </parameter>
+
+      <parameter modify="publish">
+        <name>PORTLET.edu.wisc.my.webproxy.webproxy.clipping.sElement</name>
+        <label>HTML element (optional)  [example: &lt;body&gt;]</label>
+        <type base="string" input="text" display="text">
+          <!-- length and maxlength for text field -->
+          <length>80</length>
+          <maxlength>1024</maxlength>
+        </type>
+        <description>HTML element for clipping.</description>
+      </parameter>
+
+    </step>
+
+    <step>
+      <ID>5</ID>
+
+      <name>HTML Parser Configuration</name>
+      <description>Various HTML parsing options.</description>
+
+      <parameter modify="publish">
+        <name>PORTLET.edu.wisc.my.webproxy.webproxy.htmlparser.sInsertDocType</name>
+        <label>Insert DOCTYPE (optional)</label>
+        <type base="boolean" input="single-choice" display="drop-down">
+          <restriction type="enumeration">
+            <value>false</value>
+            <value>true</value>
+          </restriction>
+        </type>
+        <defaultValue>false</defaultValue>
+        <description>Specifies whether the HTML parser should override the public and system identifier values specified in the document type declaration.</description>
+      </parameter>
+
+      <parameter modify="publish">
+        <name>PORTLET.edu.wisc.my.webproxy.webproxy.htmlparser.????</name>
+        <label>Notify references (optional)</label>
+        <type base="boolean" input="single-choice" display="drop-down">
+          <restriction type="enumeration">
+            <value>false</value>
+            <value>true</value>
+          </restriction>
+        </type>
+        <defaultValue>false</defaultValue>
+        <description>Specifies whether the XML built-in entity references (e.g. &amp;, &lt;, etc) should be reported to the registered document handler. This only applies to the five pre-defined XML general entities -- specifically, "amp", "lt", "gt", "quot", and "apos". This is done for compatibility with the Xerces feature.</description>
+      </parameter>
+
+      <parameter modify="publish">
+        <name>PORTLET.edu.wisc.my.webproxy.webproxy.htmlparser.sBalanceTags</name>
+        <label>Balance tags (optional)</label>
+        <type base="boolean" input="single-choice" display="drop-down">
+          <restriction type="enumeration">
+            <value>false</value>
+            <value>true</value>
+          </restriction>
+        </type>
+        <defaultValue>false</defaultValue>
+        <description>This is only recommended for non-malformed HTML.  Specifies if the HTML parser should attempt to balance the tags in the parsed document. Balancing the tags fixes up many common mistakes by adding missing parent elements, automatically closing elements with optional end tags, and correcting unbalanced inline element tags.</description>
+      </parameter>
+
+      <parameter modify="publish">
+        <name>PORTLET.edu.wisc.my.webproxy.webproxy.htmlparser.sScriptStripComment</name>
+        <label>Strip JavaScript commenting (optional)</label>
+        <type base="boolean" input="single-choice" display="drop-down">
+          <restriction type="enumeration">
+            <value>false</value>
+            <value>true</value>
+          </restriction>
+        </type>
+        <defaultValue>false</defaultValue>
+        <description>Specifies whether the scanner should strip HTML comment delimiters (i.e. "&lt;!-" and "-&gt;") from &lt;script&gt; element content.</description>
+      </parameter>
+
+      <parameter modify="publish">
+        <name>PORTLET.edu.wisc.my.webproxy.webproxy.htmlparser.sStripComments</name>
+        <label>Strip comments (optional)</label>
+        <type base="boolean" input="single-choice" display="drop-down">
+          <restriction type="enumeration">
+            <value>false</value>
+            <value>true</value>
+          </restriction>
+        </type>
+        <defaultValue>false</defaultValue>
+        <description>Specifies whether the scanner should strip HTML comments (i.e. "&lt;!-" and "-&gt;").</description>
+      </parameter>
+
+      <parameter modify="publish">
+        <name>PORTLET.edu.wisc.my.webproxy.webproxy.htmlparser.sReportErrors</name>
+        <label>Report errors (optional)</label>
+        <type base="boolean" input="single-choice" display="drop-down">
+          <restriction type="enumeration">
+            <value>false</value>
+            <value>true</value>
+          </restriction>
+        </type>
+        <defaultValue>false</defaultValue>
+        <description>This should only be used when debugging.  Specifies whether errors should be reported to the registered error handler.</description>
+      </parameter>
+
+    </step>
+
+    <step>
+      <ID>6</ID>
+      <name>Display Settings</name>
+      <description>
+        These options influence how your Portlet is displayed within the portal
+      </description>
+
+        <parameter modify="publish-only">
+            <name>showChrome</name>
+            <label>Show Portlet Window Chrome</label>
+            <type base="string" input="single-choice" display="drop-down">
+                <restriction type="enumeration">
+                    <value>true</value>
+                    <value>false</value>
+                </restriction>
+            </type>
+            <defaultValue>true</defaultValue>
+        </parameter>
+
+        <parameter modify="publish-only">
+            <name>alternate</name>
+            <label>Use 'Alternate' Appearance (Theme Dependent)</label>
+            <type base="string" input="single-choice" display="drop-down">
+                <restriction type="enumeration">
+                    <value>false</value>
+                    <value>true</value>
+                </restriction>
+            </type>
+            <defaultValue>false</defaultValue>
+        </parameter>
+
+        <parameter modify="publish-only">
+            <name>highlight</name>
+            <label>Use Highlighted Appearance</label>
+            <type base="string" input="single-choice" display="drop-down">
+                <restriction type="enumeration">
+                    <value>false</value>
+                    <value>true</value>
+                </restriction>
+            </type>
+            <defaultValue>false</defaultValue>
+        </parameter>
+
+    </step>
+
+  </params>
+
+  <controls>
+    <control type="edit" include="no" override="no"/>
+    <control type="about" include="no" override="no"/>
+    <control type="help" include="no" override="no"/>
+  </controls>
+
+</channelDef>

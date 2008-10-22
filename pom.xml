@@ -104,6 +104,7 @@
         <FunctionalTestsPortlet.version>1.0.1</FunctionalTestsPortlet.version>
         <googleportlet.version>0.3</googleportlet.version>
         <RssPortlet.version>1.0.0</RssPortlet.version>
+        <WebProxyPortlet.version>1.0.0</WebProxyPortlet.version>
 
         <!-- Project Dependency Version Properties -->
         <activation.version>1.1</activation.version>

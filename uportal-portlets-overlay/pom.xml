@@ -24,6 +24,7 @@
         <module>pluto-testsuite</module>
         <module>FunctionalTestsPortlet</module>
         <module>cas</module>
+        <module>WebProxyPortlet</module>
     </modules>
 
     <build>

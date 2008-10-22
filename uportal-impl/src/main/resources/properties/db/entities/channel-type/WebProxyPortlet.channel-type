@@ -1,0 +1,7 @@
+
+<channel-type script="classpath://org/jasig/portal/io/import-channel-type_v2-6.crn">
+  <name>Web Proxy Portlet</name>
+  <type>org.jasig.portal.channels.portlet.CPortletAdapter</type>
+  <desc>Web Proxy Portlet</desc>
+  <uri>/edu/wisc/my/portlets/webproxy/WebProxyPortlet.cpd</uri>
+</channel-type>

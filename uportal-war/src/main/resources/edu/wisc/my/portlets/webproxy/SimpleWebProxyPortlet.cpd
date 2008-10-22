@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE channelDef PUBLIC "-//uPortal//Channel Publishing/EN" "channelPublishingDocument.dtd">
+
+<!--
+Copyright (c) 2007 JA-SIG.  All rights reserved.
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+1. Redistributions of source code must retain the above copyright
+   notice, this list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in
+   the documentation and/or other materials provided with the
+   distribution.
+
+3. Redistributions of any form whatsoever must retain the following
+   acknowledgment:
+   "This product includes software developed by the JA-SIG Collaborative
+   (http://www.jasig.org/)."
+
+THIS SOFTWARE IS PROVIDED BY THE JA-SIG COLLABORATIVE "AS IS" AND ANY
+EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE JA-SIG COLLABORATIVE OR
+ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+OF THE POSSIBILITY OF SUCH DAMAGE.
+
+Author: Andrew Petro, apetro@unicon.net
+-->
+
+<channelDef>
+
+  <description>
+    Simple configuration workflow for the UW Web Proxy Portlet
+  </description>
+
+  <class>org.jasig.portal.channels.portlet.CSpringPortletAdaptor</class>
+
+  <params>
+    <step>
+      <ID>1</ID>
+
+      <name>Simple Configuration</name>
+      <description>Address of the Web appliaction to be proxied and options for which resources should be proxied and which sould be accessed directly by the browser.</description>
+
+      <parameter modify="publish">
+        <name>PORTLET.edu.wisc.my.webproxy.webproxy.general.config.sBaseUrl</name>
+        <label>Base URL (required)</label>
+        <type base="string" input="text" display="text">
+          <!-- length and maxlength for text field -->
+          <length>80</length>
+          <maxlength>1024</maxlength>
+        </type>
+        <example>http://www.google.com</example>
+        <description>The Base URL is the starting point of the proxied application and will be the first page proxied for the end user after authentication. This value must contain the protocol of the URL. (e.g., http://www.foo.bar/, http://foo.bar/example.html)</description>
+      </parameter>
+
+      <parameter modify="publish">
+        <name>PORTLET.edu.wisc.my.webproxy.webproxy.general.config.sPortletUrl</name>
+        <label>Portlet URL List (optional)</label>
+        <type base="string" input="text" display="hidden">
+          <!-- length and maxlength for text field -->
+          <length>80</length>
+          <maxlength>1024</maxlength>
+        </type>
+        <example>http\:\/\/www\.google\.com.</example>
+        <description>Must contain the URLs of the web application you would like or would not like to be proxied, depending on the URL List Type (see below). The portlet URL list uses regular expressions for matching. (e.g., .foo.)</description>
+        <defaultValue></defaultValue>
+      </parameter>
+
+      <parameter modify="publish">
+        <name>PORTLET.edu.wisc.my.webproxy.webproxy.general.config.sListType</name>
+        <label>Portlet URL List Type (optional)</label>
+        <type base="string" input="text" display="hidden">
+          <length>10</length>
+          <maxlength>10</maxlength>
+        </type>
+        <!-- example>http\:\/\/www\.google\.com.</example-->
+        <description>This value is set to Include by default. This value will designate how the portlet will read the Portlet Url list. If this value is set to Include,the portlet will rewrite and proxy all matching URL expressions in the list. If set to Exclude, the portlet will proxy all the sites that do not match the URL expressions listed.</description>
+        <defaultValue>Include</defaultValue>
+      </parameter>
+
+      <parameter modify="publish-only">
+        <name>portletApplicationId</name>
+        <label>Portlet Web Application Path</label>
+        <type base="string" input="text" display="hidden">
+          <length>40</length>
+          <maxlength>2000</maxlength>
+        </type>
+        <example>/pluto-testsuite</example>
+        <description>
+          This is the name of the web application the portlet resides in including a preceding /.
+        </description>
+        <defaultValue>/WebProxyPortlet</defaultValue>
+      </parameter>
+      
+      <parameter modify="publish-only">
+        <name>portletName</name>
+        <label>Portlet Name</label>
+        <type base="string" input="text" display="hidden">
+          <length>40</length>
+          <maxlength>2000</maxlength>
+        </type>
+        <example>test-port-et-1</example>
+        <description>
+          This is the name of the portlet as defined in the portlet.xml descriptor.
+        </description>
+        <defaultValue>WebProxyPortlet</defaultValue>
+      </parameter>
+
+      <parameter modify="publish">
+        <name>PORTLET.edu.wisc.my.webproxy.webproxy.httpclient.httpTimeout</name>
+        <label>HTTP request timeout in seconds (required)</label>
+        <type base="integer" input="text" display="hidden">
+          <!-- length and maxlength for text field -->
+          <length>10</length>
+          <maxlength>10</maxlength>
+        </type>
+        <description>The number of seconds you would like Web Proxy to wait before determining the remote server is non-responsive.</description>
+        <defaultValue>60</defaultValue>
+      </parameter>
+
+      <parameter modify="publish">
+        <name>PORTLET.edu.wisc.my.webproxy.webproxy.clipping.sClippingDisable</name>
+        <label>Disable clipping (optional)</label>
+        <type base="boolean" input="text" display="hidden">
+          <length>10</length>
+          <maxlength>10</maxlength>
+        </type>
+        <description>Set to false if you would like to configure the Web Proxy portlet for HTML clipping. HTML clipping can be used to only display content within certain absolute alement paths (e.g., /html/body/), comments(e.g., &lt;!--clipping--&gt;), and clement (e.g., &lt;script&gt;). Please keep in mind that once clipping is enabled the end user will only see the content that has been clipped, all other content will be dropped.</description>
+        <defaultValue>false</defaultValue>
+      </parameter>
+
+      <parameter modify="publish">
+        <name>PORTLET.edu.wisc.my.webproxy.webproxy.clipping.sElement</name>
+        <label>HTML element (optional)  [example: body]</label>
+        <type base="string" input="text" display="hidden">
+          <!-- length and maxlength for text field -->
+          <length>80</length>
+          <maxlength>1024</maxlength>
+        </type>
+        <description>HTML element for clipping.</description>
+        <defaultValue>body</defaultValue>
+      </parameter>
+
+    </step>
+
+    <step>
+      <ID>2</ID>
+      <name>Display Settings</name>
+      <description>
+        These options influence how your Portlet is displayed within the portal
+      </description>
+
+        <parameter modify="publish-only">
+            <name>showChrome</name>
+            <label>Show Portlet Window Chrome</label>
+            <type base="string" input="single-choice" display="drop-down">
+                <restriction type="enumeration">
+                    <value>true</value>
+                    <value>false</value>
+                </restriction>
+            </type>
+            <defaultValue>true</defaultValue>
+        </parameter>
+
+        <parameter modify="publish-only">
+            <name>alternate</name>
+            <label>Use 'Alternate' Appearance (Theme Dependent)</label>
+            <type base="string" input="single-choice" display="drop-down">
+                <restriction type="enumeration">
+                    <value>false</value>
+                    <value>true</value>
+                </restriction>
+            </type>
+            <defaultValue>false</defaultValue>
+        </parameter>
+
+        <parameter modify="publish-only">
+            <name>highlight</name>
+            <label>Use Highlighted Appearance</label>
+            <type base="string" input="single-choice" display="drop-down">
+                <restriction type="enumeration">
+                    <value>false</value>
+                    <value>true</value>
+                </restriction>
+            </type>
+            <defaultValue>false</defaultValue>
+        </parameter>
+
+    </step>
+
+  </params>
+
+  <controls>
+    <control type="edit" include="no" override="no"/>
+    <control type="about" include="no" override="no"/>
+    <control type="help" include="no" override="no"/>
+  </controls>
+
+</channelDef>
