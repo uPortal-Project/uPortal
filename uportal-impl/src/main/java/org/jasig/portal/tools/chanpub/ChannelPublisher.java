@@ -649,7 +649,7 @@ public class ChannelPublisher implements ErrorHandler, IChannelPublisher
                     throw new IllegalArgumentException("Illegal number of 'read-only' elements under a 'portletPreference' element: was " + nameNodes.getLength() + " expected 0 or 1");
                 }
                 else if (readOnlyNodes.getLength() == 1) {
-                    readOnly = Boolean.parseBoolean(XML.getElementText((Element) nameNodes.item(0)).trim());
+                    readOnly = Boolean.parseBoolean(XML.getElementText((Element) readOnlyNodes.item(0)).trim());
                 }
                 
                 //Load the values
