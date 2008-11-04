@@ -21,9 +21,9 @@
                                 next-struct-id="${NEXT_STRUCT_ID}"
                                 child-struct-id="${CHLD_STRUCT_ID}"
                                 type="${org.jasig.portal.io.FolderTypePhrase(${TYPE})}"
-                                hidden="${org.jasig.portal.io.FlagYorNPhrase(${req(HIDDEN)})}"
-                                immutable="${org.jasig.portal.io.FlagYorNPhrase(${req(IMMUTABLE)})}"
-                                unremovable="${org.jasig.portal.io.FlagYorNPhrase(${req(UNREMOVABLE)})}"/>
+                                hidden="${org.jasig.portal.io.FlagYorNPhrase(${HIDDEN})}"
+                                immutable="${org.jasig.portal.io.FlagYorNPhrase(${IMMUTABLE})}"
+                                unremovable="${org.jasig.portal.io.FlagYorNPhrase(${UNREMOVABLE})}"/>
                         </append-node>
                     </subtasks>
                 </sql-query>
@@ -90,13 +90,13 @@
                                 LEFT JOIN up_ss_theme upst ON upup.theme_ss_id = upst.ss_id
                             WHERE upu.user_name = ? AND upup.layout_id = 1
                         </sql>
-                        <parameter value="${req(USER_NAME)}"/>
+                        <parameter value="${USER_NAME}"/>
                         <subtasks>
                             <append-node>
-                                <profile name="${req(PROFILE_NAME)}" >
-                                    <description>${req(DESCRIPTION)}</description>
-                                    <structure name="${req(STRUCTURE)}"/>
-                                    <theme name="${req(THEME)}"/>
+                                <profile name="${PROFILE_NAME}" >
+                                    <description>${DESCRIPTION}</description>
+                                    <structure name="${STRUCTURE}"/>
+                                    <theme name="${THEME}"/>
                                 </profile>
                             </append-node>
                             <!-- for each profile row, also create structure and theme elements
@@ -109,10 +109,10 @@
                                         from UP_SS_USER_PARM
                                         where user_id=? and profile_id=? and ((ss_id=? and ss_type=1) or (ss_id=? and ss_type=2))
                                     </sql>
-                                    <parameter value="${req(PROFILE_ID)}"/>
-                                    <parameter value="${req(USER_ID)}"/>
-                                    <parameter value="${req(STRUCTURE_SS_ID)}"/>
-                                    <parameter value="${req(THEME_SS_ID)}"/>
+                                    <parameter value="${PROFILE_ID}"/>
+                                    <parameter value="${USER_ID}"/>
+                                    <parameter value="${STRUCTURE_SS_ID}"/>
+                                    <parameter value="${THEME_SS_ID}"/>
                                     <subtasks>
                                         <choose>
                                             <!-- type=1 for structure parameters -->
@@ -121,8 +121,8 @@
                                                     node="${commentNode(Parameters for structure transform)}" />
                                                 <append-node parent="${singleNode(structure)}">
                                                     <parameter>
-                                                        <name>${req(PARAM_NAME)}</name>
-                                                        <value>${req(PARAM_VAL)}</value>
+                                                        <name>${PARAM_NAME}</name>
+                                                        <value>${PARAM_VAL}</value>
                                                     </parameter>
                                                 </append-node>
                                             </when>
@@ -132,8 +132,8 @@
                                                     node="${commentNode(Parameters for theme transform)}" />
                                                 <append-node parent="${singleNode(theme)}">
                                                     <parameter>
-                                                        <name>${req(PARAM_NAME)}</name>
-                                                        <value>${req(PARAM_VAL)}</value>
+                                                        <name>${PARAM_NAME}</name>
+                                                        <value>${PARAM_VAL}</value>
                                                     </parameter>
                                                 </append-node>
                                             </when>
@@ -151,18 +151,7 @@
                         </if>
                     </with-attribute>
 
-                    <with-attribute key="SAFE_USER_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${req(USER_NAME)})}">
-                        <choose>
-                            <when test="${crn(is-fragment-owner.crn)}">
-                                <!-- This is a DLM fragment owner layout... -->
-                                <write-document file="${EXPORT_DIR}/fragment-layout/${SAFE_USER_NAME}.fragment-layout"/>
-                            </when>
-                            <otherwise>
-                                <!-- This is a normal layout... -->
-                                <write-document file="${EXPORT_DIR}/layout/${SAFE_USER_NAME}.layout"/>
-                            </otherwise>
-                        </choose>
-                    </with-attribute>
+                    <return value="${Attributes.NODE}"/>
                 </xslt>
             </otherwise>
         </choose>
