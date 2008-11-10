@@ -32,7 +32,6 @@ import org.jasig.portal.groups.IEntityGroupStoreFactory;
 import org.jasig.portal.groups.IGroupConstants;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.groups.ILockableEntityGroup;
-import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.services.PersonDirectory;
@@ -101,24 +100,6 @@ public class SmartLdapGroupStore implements IEntityGroupStore {
             throw new RuntimeException(t);
 	    }
 
-    }
-
-	public static final class Factory implements IEntityGroupStoreFactory {
-        
-		private static final IEntityGroupStore INSTANCE = new SmartLdapGroupStore();
-		
-        /*
-         * Public API.
-         */
-
-        public IEntityGroupStore newGroupStore() throws GroupsException {
-            return INSTANCE;
-        }
-    
-        public IEntityGroupStore newGroupStore(ComponentGroupServiceDescriptor svcDescriptor) throws GroupsException {
-            return INSTANCE;
-        }
-    
     }
 
     public boolean contains(IEntityGroup group, IGroupMember member) throws GroupsException {
@@ -333,6 +314,28 @@ public class SmartLdapGroupStore implements IEntityGroupStore {
     		return new EntityIdentifier[0];
     	}
     	
+    	// We need to escape regex special characters that appear in the query string...
+    	final String[][] specials = new String[][] {
+    	                    /* backslash must come first! */
+    	                    new String[] { "\\", "\\\\"}, 
+    	                    new String[] { "[", "\\[" }, 
+                            /* closing ']' isn't needed b/c it's a normal character w/o a preceding '[' */
+    	                    new String[] { "{", "\\{" }, 
+                            /* closing '}' isn't needed b/c it's a normal character w/o a preceding '{' */
+    	                    new String[] { "^", "\\^" },
+    	                    new String[] { "$", "\\$" },
+    	                    new String[] { ".", "\\." },
+    	                    new String[] { "|", "\\|" },
+    	                    new String[] { "?", "\\?" },
+    	                    new String[] { "*", "\\*" },
+    	                    new String[] { "+", "\\+" },
+    	                    new String[] { "(", "\\(" },
+    	                    new String[] { ")", "\\)" }
+    	                };
+    	for (String[] s : specials) {
+    	    query = query.replace(s[0], s[1]);
+    	}
+    	
     	// Establish the regex pattern to match on...
     	String regex = null;
     	switch (method) {
@@ -383,176 +386,187 @@ public class SmartLdapGroupStore implements IEntityGroupStore {
     		return;
     	}
     	
-    	// Prepare the new local indeces...
+    	// Replace the old with the new...
+        InitBundle bundle = prepareInitBundle();
+        this.groups = bundle.getGroups();
+        this.parents = bundle.getParents();
+        this.children = bundle.getChildren();
+        this.keysByUpperCaseName = bundle.getKeysByUpperCaseName();
+        
+        // Set the 'initialized' flag...
+        this.initialized = true;
+
+    }
+
+    /*
+     * Package API.
+     */
+    
+    InitBundle prepareInitBundle() {
+        
+        // Prepare the new local indeces...
         Map<String,IEntityGroup> new_groups = Collections.synchronizedMap(new HashMap<String,IEntityGroup>());
         Map<String,List<String>> new_parents = Collections.synchronizedMap(new HashMap<String,List<String>>());
         Map<String,List<String>> new_children = Collections.synchronizedMap(new HashMap<String,List<String>>());
         Map<String,List<String>> new_keysByUpperCaseName = Collections.synchronizedMap(new HashMap<String,List<String>>());
 
         // Gather IEntityGroup objects from LDAP...
-    	RuntimeRequestResponse req = new RuntimeRequestResponse();
-    	List<LdapRecord> list = new LinkedList<LdapRecord>();
-    	req.setAttribute("GROUPS", list);
-    	for (String name : spring_context.getBeanDefinitionNames()) {
-    		req.setAttribute(name, spring_context.getBean(name));
-    	}
-    	runner.run(initTask, req);
-    	
-    	if (log.isInfoEnabled()) {
-    		String msg = "init() found " + list.size() + " records.";
-    		log.info(msg);
-    	}
-    	
-    	// Do a first loop to build the main catalog (new_groups)...
-    	for (LdapRecord r : list) {
-    		
-    		// new_groups (me)...
-    		IEntityGroup g = r.getGroup();
-    		new_groups.put(g.getLocalKey(), g);
-
-    	}
-    	
-    	// Do a second loop to build local indeces...
-    	for (LdapRecord r : list) {
-
-    		IEntityGroup g = r.getGroup();
-
-    		// new_parents (I am a parent for all my children)...
-    		for (String childKey : r.getKeysOfChildren()) {
-    			
-    			// NB:  We're only interested in relationships between 
-    			// objects in the main catalog (i.e. new_groups);  
-    			// discard everything else...
-    			if (!new_groups.containsKey(childKey)) {
-    				break;
-    			}
-
-    			List<String> parentsList = new_parents.get(childKey);
-    			if (parentsList == null) {
-    				// first parent for this child...
-    				parentsList = Collections.synchronizedList(new LinkedList<String>());
-    				new_parents.put(childKey, parentsList);
-    			}
-    			parentsList.add(g.getLocalKey());
-
-    		}
-    		
-    		// new_children...
-    		List<String> childrenList = Collections.synchronizedList(new LinkedList<String>());
-    		for (String childKey : r.getKeysOfChildren()) {
-    			// NB:  We're only interested in relationships between 
-    			// objects in the main catalog (i.e. new_groups);  
-    			// discard everything else...
-    			if (new_groups.containsKey(childKey)) {
-    				childrenList.add(childKey);
-    			}
-    		}
-    		new_children.put(g.getLocalKey(), childrenList);
-    		
-    		// new_keysByUpperCaseName...
-    		List<String> groupsWithMyName = new_keysByUpperCaseName.get(g.getName().toUpperCase());
-    		if (groupsWithMyName == null) {
-    			// I am the first group with my name (pretty likely)...
-    			groupsWithMyName = Collections.synchronizedList(new LinkedList<String>());
-    			new_keysByUpperCaseName.put(g.getName().toUpperCase(), groupsWithMyName);
-    		}
-    		groupsWithMyName.add(g.getLocalKey());
-    		
-    	}    	
-    	
-    	/*
-    	 * Now load the ROOT_GROUP into the collections...
-    	 */
-
-    	// new_groups (me)...
-		new_groups.put(ROOT_GROUP.getLocalKey(), ROOT_GROUP);
-
-		// new_parents (I am a parent for all groups that have no other parent)...
-		List<String> childrenOfRoot = Collections.synchronizedList(new LinkedList<String>());	// for later...
-		for (String possibleChildKey : new_groups.keySet()) {
-			if (!possibleChildKey.equals(ROOT_GROUP.getLocalKey()) && !new_parents.containsKey(possibleChildKey)) {
-				List<String> p = Collections.synchronizedList(new LinkedList<String>());
-				p.add(ROOT_GROUP.getLocalKey());
-				new_parents.put(possibleChildKey, p);
-				childrenOfRoot.add(possibleChildKey);	// for later...
-			}
-		}
-		
-		// new_children...
-		new_children.put(ROOT_GROUP.getLocalKey(), childrenOfRoot);
-		
-		// new_keysByUpperCaseName...
-		List<String> groupsWithMyName = new_keysByUpperCaseName.get(ROOT_GROUP.getName().toUpperCase());
-		if (groupsWithMyName == null) {
-			// I am the first group with my name (pretty likely)...
-			groupsWithMyName = Collections.synchronizedList(new LinkedList<String>());
-			new_keysByUpperCaseName.put(ROOT_GROUP.getName().toUpperCase(), groupsWithMyName);
-		}
-		groupsWithMyName.add(ROOT_GROUP.getLocalKey());
-
-    	if (log.isInfoEnabled()) {
-    		String msg = "init() :: final size of each collection is as follows..."
-    						+ "\n\tgroups=" + new_groups.size()
-    						+ "\n\tparents=" + new_parents.size()
-    						+ "\n\tchildren=" + new_children.size()
-    						+ "\n\tkeysByUpperCaseName=" + new_keysByUpperCaseName.size();
-    		log.info(msg);
-    	}
-    	
-    	if (log.isTraceEnabled()) {
-    		
-    		StringBuilder msg = new StringBuilder();
-
-    		// new_groups...
-    		msg.setLength(0);
-    		msg.append("Here are the keys of the new_groups collection:");
-    		for (String s : new_groups.keySet()) {
-    			msg.append("\n\t").append(s);
-    		}
-    		log.trace(msg.toString());
-    		
-    		// new_parents...
-    		msg.setLength(0);
-    		msg.append("Here are the parents of each child in the new_parents collection:");
-    		for (Map.Entry<String,List<String>> y : new_parents.entrySet()) {
-    			msg.append("\n\tchild=").append(y.getKey());
-    			for (String s : y.getValue()) {
-        			msg.append("\n\t\tparent=").append(s);
-    			}
-    		}
-    		log.trace(msg.toString());
-    		
-    		// new_children...
-    		msg.setLength(0);
-    		msg.append("Here are the children of each parent in the new_children collection:");
-    		for (Map.Entry<String,List<String>> y : new_children.entrySet()) {
-    			msg.append("\n\tparent=").append(y.getKey());
-    			for (String s : y.getValue()) {
-        			msg.append("\n\t\tchild=").append(s);
-    			}
-    		}
-    		log.trace(msg.toString());
-    		
-    		// new_keysByUpperCaseName...
-    		msg.append("Here are the groups that have each name in the new_keysByUpperCaseName collection:");
-    		for (Map.Entry<String,List<String>> y : new_keysByUpperCaseName.entrySet()) {
-    			msg.append("\n\tname=").append(y.getKey());
-    			for (String s : y.getValue()) {
-        			msg.append("\n\t\tgroup=").append(s);
-    			}
-    		}
-    		log.trace(msg.toString());
-    		
-    	}
-
-    	// Replace the old with the new...
-        this.groups = new_groups;
-        this.parents = new_parents;
-        this.children = new_children;
-        this.keysByUpperCaseName = new_keysByUpperCaseName;
+        RuntimeRequestResponse req = new RuntimeRequestResponse();
+        List<LdapRecord> list = new LinkedList<LdapRecord>();
+        req.setAttribute("GROUPS", list);
+        for (String name : spring_context.getBeanDefinitionNames()) {
+            req.setAttribute(name, spring_context.getBean(name));
+        }
+        runner.run(initTask, req);
         
-        // Set the 'initialized' flag...
-        this.initialized = true;
+        if (log.isInfoEnabled()) {
+            String msg = "init() found " + list.size() + " records.";
+            log.info(msg);
+        }
+        
+        // Do a first loop to build the main catalog (new_groups)...
+        for (LdapRecord r : list) {
+            
+            // new_groups (me)...
+            IEntityGroup g = r.getGroup();
+            new_groups.put(g.getLocalKey(), g);
+
+        }
+        
+        // Do a second loop to build local indeces...
+        for (LdapRecord r : list) {
+
+            IEntityGroup g = r.getGroup();
+
+            // new_parents (I am a parent for all my children)...
+            for (String childKey : r.getKeysOfChildren()) {
+                
+                // NB:  We're only interested in relationships between 
+                // objects in the main catalog (i.e. new_groups);  
+                // discard everything else...
+                if (!new_groups.containsKey(childKey)) {
+                    break;
+                }
+
+                List<String> parentsList = new_parents.get(childKey);
+                if (parentsList == null) {
+                    // first parent for this child...
+                    parentsList = Collections.synchronizedList(new LinkedList<String>());
+                    new_parents.put(childKey, parentsList);
+                }
+                parentsList.add(g.getLocalKey());
+
+            }
+            
+            // new_children...
+            List<String> childrenList = Collections.synchronizedList(new LinkedList<String>());
+            for (String childKey : r.getKeysOfChildren()) {
+                // NB:  We're only interested in relationships between 
+                // objects in the main catalog (i.e. new_groups);  
+                // discard everything else...
+                if (new_groups.containsKey(childKey)) {
+                    childrenList.add(childKey);
+                }
+            }
+            new_children.put(g.getLocalKey(), childrenList);
+            
+            // new_keysByUpperCaseName...
+            List<String> groupsWithMyName = new_keysByUpperCaseName.get(g.getName().toUpperCase());
+            if (groupsWithMyName == null) {
+                // I am the first group with my name (pretty likely)...
+                groupsWithMyName = Collections.synchronizedList(new LinkedList<String>());
+                new_keysByUpperCaseName.put(g.getName().toUpperCase(), groupsWithMyName);
+            }
+            groupsWithMyName.add(g.getLocalKey());
+            
+        }       
+        
+        /*
+         * Now load the ROOT_GROUP into the collections...
+         */
+
+        // new_groups (me)...
+        new_groups.put(ROOT_GROUP.getLocalKey(), ROOT_GROUP);
+
+        // new_parents (I am a parent for all groups that have no other parent)...
+        List<String> childrenOfRoot = Collections.synchronizedList(new LinkedList<String>());   // for later...
+        for (String possibleChildKey : new_groups.keySet()) {
+            if (!possibleChildKey.equals(ROOT_GROUP.getLocalKey()) && !new_parents.containsKey(possibleChildKey)) {
+                List<String> p = Collections.synchronizedList(new LinkedList<String>());
+                p.add(ROOT_GROUP.getLocalKey());
+                new_parents.put(possibleChildKey, p);
+                childrenOfRoot.add(possibleChildKey);   // for later...
+            }
+        }
+        
+        // new_children...
+        new_children.put(ROOT_GROUP.getLocalKey(), childrenOfRoot);
+        
+        // new_keysByUpperCaseName...
+        List<String> groupsWithMyName = new_keysByUpperCaseName.get(ROOT_GROUP.getName().toUpperCase());
+        if (groupsWithMyName == null) {
+            // I am the first group with my name (pretty likely)...
+            groupsWithMyName = Collections.synchronizedList(new LinkedList<String>());
+            new_keysByUpperCaseName.put(ROOT_GROUP.getName().toUpperCase(), groupsWithMyName);
+        }
+        groupsWithMyName.add(ROOT_GROUP.getLocalKey());
+
+        if (log.isInfoEnabled()) {
+            String msg = "init() :: final size of each collection is as follows..."
+                            + "\n\tgroups=" + new_groups.size()
+                            + "\n\tparents=" + new_parents.size()
+                            + "\n\tchildren=" + new_children.size()
+                            + "\n\tkeysByUpperCaseName=" + new_keysByUpperCaseName.size();
+            log.info(msg);
+        }
+        
+        if (log.isTraceEnabled()) {
+            
+            StringBuilder msg = new StringBuilder();
+
+            // new_groups...
+            msg.setLength(0);
+            msg.append("Here are the keys of the new_groups collection:");
+            for (String s : new_groups.keySet()) {
+                msg.append("\n\t").append(s);
+            }
+            log.trace(msg.toString());
+            
+            // new_parents...
+            msg.setLength(0);
+            msg.append("Here are the parents of each child in the new_parents collection:");
+            for (Map.Entry<String,List<String>> y : new_parents.entrySet()) {
+                msg.append("\n\tchild=").append(y.getKey());
+                for (String s : y.getValue()) {
+                    msg.append("\n\t\tparent=").append(s);
+                }
+            }
+            log.trace(msg.toString());
+            
+            // new_children...
+            msg.setLength(0);
+            msg.append("Here are the children of each parent in the new_children collection:");
+            for (Map.Entry<String,List<String>> y : new_children.entrySet()) {
+                msg.append("\n\tparent=").append(y.getKey());
+                for (String s : y.getValue()) {
+                    msg.append("\n\t\tchild=").append(s);
+                }
+            }
+            log.trace(msg.toString());
+            
+            // new_keysByUpperCaseName...
+            msg.append("Here are the groups that have each name in the new_keysByUpperCaseName collection:");
+            for (Map.Entry<String,List<String>> y : new_keysByUpperCaseName.entrySet()) {
+                msg.append("\n\tname=").append(y.getKey());
+                for (String s : y.getValue()) {
+                    msg.append("\n\t\tgroup=").append(s);
+                }
+            }
+            log.trace(msg.toString());
+            
+        }
+
+        return new InitBundle(new_groups, new_parents, new_children, new_keysByUpperCaseName);
 
     }
 
@@ -572,6 +586,88 @@ public class SmartLdapGroupStore implements IEntityGroupStore {
         
         // SmartLdapGroupStore will be initialized on first use...
         initialized = false;
+
+    }
+
+    /*
+     * Nested Types.
+     */
+
+    public static final class Factory implements IEntityGroupStoreFactory {
+        
+        private static final IEntityGroupStore INSTANCE = new SmartLdapGroupStore();
+        
+        /*
+         * Public API.
+         */
+
+        public IEntityGroupStore newGroupStore() throws GroupsException {
+            return INSTANCE;
+        }
+    
+        public IEntityGroupStore newGroupStore(ComponentGroupServiceDescriptor svcDescriptor) throws GroupsException {
+            return INSTANCE;
+        }
+    
+    }
+    
+    private static final class InitBundle {
+        
+        // Instance Members.
+        private final Map<String,IEntityGroup> groups;
+        private final Map<String,List<String>> parents;
+        private final Map<String,List<String>> children;
+        private final Map<String,List<String>> keysByUpperCaseName;
+        
+        /*
+         * Public API.
+         */
+        
+        public InitBundle(Map<String,IEntityGroup> groups, Map<String,List<String>> parents, 
+                                Map<String,List<String>> children, 
+                                Map<String,List<String>> keysByUpperCaseName) {
+            
+            // Assertions.
+            if (groups == null) {
+                String msg = "Argument 'groups' cannot be null.";
+                throw new IllegalArgumentException(msg);
+            }
+            if (parents == null) {
+                String msg = "Argument 'parents' cannot be null.";
+                throw new IllegalArgumentException(msg);
+            }
+            if (children == null) {
+                String msg = "Argument 'children' cannot be null.";
+                throw new IllegalArgumentException(msg);
+            }
+            if (keysByUpperCaseName == null) {
+                String msg = "Argument 'keysByUpperCaseName' cannot be null.";
+                throw new IllegalArgumentException(msg);
+            }
+            
+            // Instance Members.
+            this.groups = groups;
+            this.parents = parents;
+            this.children = children;
+            this.keysByUpperCaseName = keysByUpperCaseName;
+
+        }
+        
+        public Map<String,IEntityGroup> getGroups() {
+            return groups;
+        }
+
+        public Map<String,List<String>> getParents() {
+            return parents;
+        }
+
+        public Map<String,List<String>> getChildren() {
+            return children;
+        }
+
+        public Map<String,List<String>> getKeysByUpperCaseName() {
+            return keysByUpperCaseName;
+        }
 
     }
 
