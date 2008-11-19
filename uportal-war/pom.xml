@@ -52,6 +52,23 @@
         <finalName>${uportal.docbase}</finalName>
         <plugins>
             <plugin>
+                <groupId>net.sf.alchim</groupId>
+                <artifactId>yuicompressor-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compress</goal>
+                        </goals>
+                    </execution>
+                </executions>        
+                <configuration>
+                    <excludes>
+                        <exclude>**/*.min.js</exclude>
+                    </excludes>
+                    <suffix>.min</suffix>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>2.0.1</version>
