@@ -5,4 +5,8 @@
     <bean id="xalanAuthorizationHelper" class="org.jasig.portal.security.xslt.XalanAuthorizationHelperBean">
         <property name="channelRegistryStore" ref="channelRegistryStore" />
     </bean>
+    
+    <bean id="maxInactiveFilter" class="org.jasig.portal.security.MaxInactiveFilter">
+        <property name="personManager" ref="personManager" />
+    </bean>
 </beans>

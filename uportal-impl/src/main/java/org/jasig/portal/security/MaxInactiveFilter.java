@@ -14,6 +14,8 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.security.provider.AuthorizationImpl;
+import org.springframework.beans.factory.annotation.Required;
+import org.springframework.util.Assert;
 
 /**
  * This <code>Filter</code> sets the HttpSession MaxInactiveInterval based on 
@@ -22,13 +24,29 @@ import org.jasig.portal.security.provider.AuthorizationImpl;
  * @author awills
  */
 public class MaxInactiveFilter implements Filter {
-
     // Instance Members.
-    private final Log log = LogFactory.getLog(getClass());
+    protected final Log log = LogFactory.getLog(getClass());
+    
+    private IPersonManager personManager;
     
     /*
      * Public API.
      */
+
+    /**
+     * @return the personManager
+     */
+    public IPersonManager getPersonManager() {
+        return personManager;
+    }
+    /**
+     * @param personManager the personManager to set
+     */
+    @Required
+    public void setPersonManager(IPersonManager personManager) {
+        Assert.notNull(personManager);
+        this.personManager = personManager;
+    }
 
     public void init(FilterConfig filterConfig) { /* Nothing to do...*/ }
     
@@ -40,10 +58,13 @@ public class MaxInactiveFilter implements Filter {
         chain.doFilter(req, res);
         
         // Now see if authentication was successful...
-        final IPersonManager personManager = PersonManagerFactory.getPersonManagerInstance();
-        final IPerson person = personManager.getPerson((HttpServletRequest) req);
-        if (person.getSecurityContext().isAuthenticated()) {
-            
+        final IPerson person = this.personManager.getPerson((HttpServletRequest) req);
+        if (person == null) {
+            return;
+        }
+        
+        final ISecurityContext securityContext = person.getSecurityContext();
+        if (securityContext != null && securityContext.isAuthenticated()) {
             // We have an authenticated user... let's see if any MAX_INACTIVE settings apply...
             IAuthorizationService authServ = AuthorizationImpl.singleton();
             IAuthorizationPrincipal principal = authServ.newPrincipal((String) person.getAttribute(IPerson.USERNAME), IPerson.class);

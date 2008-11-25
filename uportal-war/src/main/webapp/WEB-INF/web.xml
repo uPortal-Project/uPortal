@@ -105,8 +105,8 @@
     </filter>
     
     <filter>
-        <filter-name>MaxInactiveFilter</filter-name>
-        <filter-class>org.jasig.portal.security.MaxInactiveFilter</filter-class>
+        <filter-name>maxInactiveFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
     </filter>
 
     <filter>
@@ -125,7 +125,7 @@
     </filter-mapping>
     
     <filter-mapping>
-        <filter-name>MaxInactiveFilter</filter-name>
+        <filter-name>maxInactiveFilter</filter-name>
         <url-pattern>/Login</url-pattern>
     </filter-mapping>
 
