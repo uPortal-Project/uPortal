@@ -189,14 +189,14 @@
 
     <build>
         <finalName>cas</finalName>
-        <filters>
-            <filter>../../uportal-impl/src/main/resources/properties/rdbm.properties</filter>
-        </filters>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
+                    <filters>
+                        <filter>../../uportal-impl/src/main/resources/properties/rdbm.properties</filter>
+                    </filters>
                     <webResources>
                         <resource>
                             <directory>${basedir}/src/main/webapp/WEB-INF</directory>
