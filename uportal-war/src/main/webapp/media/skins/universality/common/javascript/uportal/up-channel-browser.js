@@ -62,7 +62,7 @@
 	        }
     		
 			jQuery("#channelAddingTabs > ul").tabs();
-			jQuery(self.element).dialog({height:450, width:500});
+			jQuery(self.element).dialog({height:450, width:500, modal:true});
 			jQuery("#addChannelSearchTerm").keyup(function(){
 				self.search(jQuery(this).attr("value"))
 			});
@@ -90,8 +90,7 @@
 		   		jQuery("#categorySelectMenu").css("background-image", "none");
 		   		jQuery("#channelSelectMenu").css("background-image", "none");
 		   		jQuery(self.element).parent().parent()
-		   	      .css("height", jQuery(self.element).parent().height() + 20)
-		   	      .css("z-index", 12);
+		   	      .css("height", jQuery(self.element).parent().height() + 20);
 		   		
 			});
 			
