@@ -1,4 +1,5 @@
 var channelXml,skinXml;
+var myReorderer;
                
 // Initialization tasks for non-focused mode
 function initportal() {
@@ -23,7 +24,7 @@ function initportal() {
          	mouseDrag: "orderable-dragging-mouse"
          }
      };
-     fluid.reorderLayout ("#portalPageBodyColumns",options); 
+     myReorderer = fluid.reorderLayout ("#portalPageBodyColumns",options);
 
     // add onclick events for portlet delete buttons
 	jQuery('a[@id*=removePortlet_]').each(function(i){jQuery(this).click(function(){deletePortlet(this.id.split("_")[1]);return false;});});	
@@ -42,8 +43,7 @@ function initfocusedportal() {
 	jQuery("#focusedContentDialogLink").click(initializeFocusedContentMenu);
 }
 function initializeFocusedContentMenu() {
-	jQuery("#focusedContentAddingDialog").dialog({width:500});
-    jQuery("#focusedContentAddingDialog").parent().parent().css("z-index", 12);
+	jQuery("#focusedContentAddingDialog").dialog({width:500, modal:true});
 	jQuery("#focusedContentDialogLink")
 		.unbind('click', initializeFocusedContentMenu)
 		.click(function(){jQuery("#focusedContentAddingDialog").dialog('open');});
@@ -56,7 +56,7 @@ function initializeLayoutMenu() {
 	if (jQuery("#changeColumns").find("input:checked").length == 0) {
 	   jQuery("#changeColumns").find("tr:eq(1)").find("td:eq(" + (columnCount-1) + ")").find("input").attr("checked", true);
 	}
-	jQuery("#pageLayoutDialog").dialog({height:300, width:400 });
+	jQuery("#pageLayoutDialog").dialog({height:300, width:400, modal:true });
 
 	jQuery("#layoutDialogLink")
 		.unbind('click', initializeLayoutMenu)
@@ -66,7 +66,6 @@ function initializeLayoutMenu() {
 		.click(function(){jQuery("#pageLayoutDialog").dialog('open');});
 
     jQuery("#pageLayoutDialog").parent().parent()
-       .css("z-index", 12)
        .css("height", jQuery("#pageLayoutDialog").parent().height() + 20);
 
 }
@@ -112,16 +111,10 @@ function changeColumns(newcolumns) {
 		    						jQuery(document.createElement('div'))
 		    							.attr("id", 'inner-column_' + jQuery(this).text())
 		    							.addClass("portal-page-column-inner")
-		    							.Sortable({
-											accept : 'movable',
-											helperclass : 'dropborder',
-											opacity : 0.5,
-											handle : 'div.portlet-toolbar',
-											onStop : movePortlet
-										})
 								)
 		    			);
 		    	});
+	    		myReorderer.refresh();
 		    	
 		    } else if(columns.length > newcolumns.length) {
 		    	for (var i = newcolumns.length; i < columns.length; i++) {
@@ -129,11 +122,11 @@ function changeColumns(newcolumns) {
 		    		var portlets = jQuery(columns[i]).find("div[@id*=portlet_]")
 			    		.each(function(){
 			    			jQuery(this).appendTo(lastColumn);
-			    			lastColumn.SortableAddItem(jQuery(this));
+	    					myReorderer.refresh();		    	
 			    		})
 		    			.end().remove();
 		    	}
-		    	
+	    		myReorderer.refresh();		    	
 		    }
 
 		    jQuery("#portalPageBodyTitleRow").attr("colspan", newcolumns.length);
@@ -293,8 +286,7 @@ function addFocusedChannel(form) {
 }
 
 function initializeSkinMenu() {
-	jQuery("#skinChoosingDialog").dialog({height:450, width:500});
-    jQuery("#skinChoosingDialog").parent().parent().css("z-index", 12);
+	jQuery("#skinChoosingDialog").dialog({height:450, width:500, modal:true});
 	jQuery("#skinDialogLink")
 		.unbind('click', initializeSkinMenu)
 		.click(function(){jQuery("#skinChoosingDialog").dialog('open');});
