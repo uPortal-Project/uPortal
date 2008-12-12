@@ -114,7 +114,6 @@ function changeColumns(newcolumns) {
 								)
 		    			);
 		    	});
-	    		myReorderer.refresh();
 		    	
 		    } else if(columns.length > newcolumns.length) {
 		    	for (var i = newcolumns.length; i < columns.length; i++) {
@@ -126,7 +125,7 @@ function changeColumns(newcolumns) {
 			    		})
 		    			.end().remove();
 		    	}
-	    		myReorderer.refresh();		    	
+
 		    }
 
 		    jQuery("#portalPageBodyTitleRow").attr("colspan", newcolumns.length);
@@ -137,6 +136,8 @@ function changeColumns(newcolumns) {
 		    	else if (i == 0) jQuery(this).addClass("left");
 		    	else if (i == newcolumns.length - 1) jQuery(this).addClass("right");
 		    });
+		    
+	    	myReorderer.refresh();
 			
 		}
 	);
