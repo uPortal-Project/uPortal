@@ -29,8 +29,8 @@
                                         <parameter value="${valueOf(@name)}"/>
                                         <parameter value="${valueOf(description)}"/>
                                         <parameter value="${LAYOUT_ID}"/>
-                                        <parameter value="${groovy(Integer.valueOf(STRUCTURE_STYLESHEET_ID))}"/>
-                                        <parameter value="${groovy(Integer.valueOf(THEME_STYLESHEET_ID))}"/>
+                                        <parameter value="${groovy(STRUCTURE_STYLESHEET_ID.intValue())}"/>
+                                        <parameter value="${groovy(THEME_STYLESHEET_ID.intValue())}"/>
                                     </sql-statement>
                                     <!-- User (Profile) Parameters:  structure... -->
                                     <node-iterator xpath="structure/parameter">
