@@ -47,7 +47,7 @@
                                             <parameter value="${valueOf(value)}"/>
                                             <parameter value="${USER_ID}"/>
                                             <parameter value="${PROFILE_ID}"/>
-                                            <parameter value="${groovy(Integer.valueOf(STRUCTURE_STYLESHEET_ID))}"/>
+                                            <parameter value="${groovy(STRUCTURE_STYLESHEET_ID.intValue())}"/>
                                             <parameter value="${valueOf(name)}"/>
                                         </sql-upsert>
                                     </node-iterator>
@@ -66,7 +66,7 @@
                                             <parameter value="${valueOf(value)}"/>
                                             <parameter value="${USER_ID}"/>
                                             <parameter value="${PROFILE_ID}"/>
-                                            <parameter value="${groovy(Integer.valueOf(THEME_STYLESHEET_ID))}"/>
+                                            <parameter value="${groovy(THEME_STYLESHEET_ID.intValue())}"/>
                                             <parameter value="${valueOf(name)}"/>
                                         </sql-upsert>
                                     </node-iterator>

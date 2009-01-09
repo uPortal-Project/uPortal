@@ -66,10 +66,13 @@
                                             <parameter value="${valueOf(@immutable)}"/>
                                             <parameter value="${valueOf(@unremovable)}"/>
                                         </sql-statement>
+                                        
+                                        <return value="${STRUCT_ID}" />
                                     </when>
                                     <otherwise>
                                         <echo-ln>WARNING: Name '${ORIGINAL_ATTRIBUTE_VALUE}' of layout node '${ATTRIBUTE_NAME}' for user ${USER_NAME} resolved to NULL and will be ignored.</echo-ln>
                                         <log level="warn">WARNING: Name '${ORIGINAL_ATTRIBUTE_VALUE}' of layout node '${ATTRIBUTE_NAME}' for user ${USER_NAME} resolved to NULL and will be ignored.</log>
+                                        <return value="${groovy(RETURNED_IDS[0])}" />
                                     </otherwise>
                                 </choose>
                             </with-attribute>
@@ -77,8 +80,6 @@
                     </with>
                     
                     <crn location="import-layout-params.crn"/>
-                    
-                    <return value="${STRUCT_ID}" />
                 </when>
                 <!-- leaf node in the tree, this can only have siblings -->
                 <when test="${jexl(NODE_TYPE == 'channel')}">
@@ -97,14 +98,24 @@
                             </sql-query>
                         </factory>
                         <subtasks>
-                            <sql-statement sql="INSERT INTO UP_LAYOUT_STRUCT(USER_ID, LAYOUT_ID, STRUCT_ID, NEXT_STRUCT_ID, CHAN_ID) 
-                                                VALUES(?, ?, ?, ?, ?)">
-                                <parameter value="${USER_ID}"/>
-                                <parameter value="${LAYOUT_ID}"/>
-                                <parameter value="${STRUCT_ID}"/>
-                                <parameter value="${groovy(RETURNED_IDS[0])}"/>
-                                <parameter value="${CHAN_ID}"/>
-                            </sql-statement>
+                            <with>
+                                <attribute key="HIDDEN">${valueOf(@hidden)}</attribute>
+                                <attribute key="IMMUTABLE">${valueOf(@immutable)}</attribute>
+                                <attribute key="UNREMOVABLE">${valueOf(@unremovable)}</attribute>
+                                <subtasks>
+                                    <sql-statement sql="INSERT INTO UP_LAYOUT_STRUCT(USER_ID, LAYOUT_ID, STRUCT_ID, NEXT_STRUCT_ID, CHAN_ID, HIDDEN, IMMUTABLE, UNREMOVABLE) 
+                                                        VALUES(?, ?, ?, ?, ?, ?, ?, ?)">
+                                        <parameter value="${USER_ID}"/>
+                                        <parameter value="${LAYOUT_ID}"/>
+                                        <parameter value="${STRUCT_ID}"/>
+                                        <parameter value="${groovy(RETURNED_IDS[0])}"/>
+                                        <parameter value="${CHAN_ID}"/>
+                                        <parameter value="${groovy(HIDDEN != null ? HIDDEN : 'N')}"/>
+                                        <parameter value="${groovy(IMMUTABLE != null ? IMMUTABLE : 'N')}"/>
+                                        <parameter value="${groovy(UNREMOVABLE != null ? UNREMOVABLE : 'N')}"/>
+                                    </sql-statement>
+                                </subtasks>
+                            </with>
                         </subtasks>
                     </cache>
                     
@@ -114,6 +125,7 @@
                 </when>
                 <otherwise>
                     <echo-ln>WARNING: UKNOWN NODE TYPE=${NODE_TYPE}</echo-ln>
+                    <return value="${groovy(RETURNED_IDS[0])}" />
                 </otherwise>
             </choose>
         </with-attribute>

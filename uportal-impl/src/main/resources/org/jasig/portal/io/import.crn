@@ -1,6 +1,6 @@
-<properties location="//properties/db/entities/import.properties"> 
+<properties location="classpath://properties/db/entities/import.properties"> 
     <with>
-        <attribute key="THREAD_COUNT">8</attribute>
+        <attribute key="THREAD_COUNT">1</attribute>
         <attribute key="Attributes.CACHE_MODEL">ALL</attribute>
         <attribute key="IMPORT_START_TIME">${groovy(System.currentTimeMillis())}</attribute>
         <attribute key="Attributes.CACHE">${groovy(new org.jasig.portal.io.LoggingLRUMap(500))}</attribute>
@@ -61,14 +61,18 @@
                         </file-iterator>
         
                         <!-- users -->
-                        <file-iterator dir="${$1}" includes="**/*.user">
-                            <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
-                                <echo-ln>Import User:  ${Attributes.LOCATION}</echo-ln>
-                                <with-attribute key="Attributes.NODE" value="${doc(${$1}/${Attributes.LOCATION})}">
-                                    <crn location="${valueOf(@script)}"/>
-                                </with-attribute>
-                            </if>
-                        </file-iterator>
+                        <thread-pool threads="${req(THREAD_COUNT)}">
+                            <file-iterator dir="${$1}" includes="**/*.user">
+                                <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
+                                    <concurrent>
+                                        <echo-ln>Import User:  ${Attributes.LOCATION}</echo-ln>
+                                        <with-attribute key="Attributes.NODE" value="${doc(${$1}/${Attributes.LOCATION})}">
+                                            <crn location="${valueOf(@script)}"/>
+                                        </with-attribute>
+                                    </concurrent>
+                                </if>
+                            </file-iterator>
+                        </thread-pool>
         
                         <!-- groups -->
                         <file-iterator dir="${$1}" includes="**/*.group">
@@ -148,14 +152,18 @@
                         </file-iterator>
         
                         <!-- fragment-layouts -->
-                        <file-iterator dir="${$1}" includes="**/*.fragment-layout">
-                            <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
-                                <echo-ln>Import DLM Fragment Layout:  ${Attributes.LOCATION}</echo-ln>
-                                <with-attribute key="Attributes.NODE" value="${doc(${$1}/${Attributes.LOCATION})}">
-                                    <crn location="${valueOf(@script)}"/>
-                                </with-attribute>
-                            </if>
-                        </file-iterator>
+                        <thread-pool threads="${req(THREAD_COUNT)}">
+                            <file-iterator dir="${$1}" includes="**/*.fragment-layout">
+                                <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
+                                    <concurrent>
+                                        <echo-ln>Import DLM Fragment Layout:  ${Attributes.LOCATION}</echo-ln>
+                                        <with-attribute key="Attributes.NODE" value="${doc(${$1}/${Attributes.LOCATION})}">
+                                            <crn location="${valueOf(@script)}"/>
+                                        </with-attribute>
+                                    </concurrent>
+                                </if>
+                            </file-iterator>
+                        </thread-pool>
         
                         <!-- layouts -->
                         <file-iterator dir="${$1}" includes="**/*.layout">

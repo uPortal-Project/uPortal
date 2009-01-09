@@ -4,9 +4,9 @@
             <attribute key="ATTRIBUTE_NAME">${valueOf(name)}</attribute>
             <attribute key="ATTRIBUTE_VALUE">${valueOf(value)}</attribute>
             <attribute key="ORIGINAL_ATTRIBUTE_VALUE">${valueOf(value)}</attribute>
+            <attribute key="IS_STRUCT_REF">true</attribute>
             <subtasks>
                 <with-attribute key="ATTRIBUTE_VALUE" value="${crn(determine-layout-attribute_value.crn)}">
-                    <echo-ln>Adding layout param ${ATTRIBUTE_NAME}=${ATTRIBUTE_VALUE} for node ${STRUCT_ID}</echo-ln>
                     <choose>
                         <when test="${groovy(ATTRIBUTE_VALUE != null)}">
                             <sql-statement sql="INSERT INTO UP_LAYOUT_PARAM(USER_ID, LAYOUT_ID, STRUCT_ID, STRUCT_PARM_NM, STRUCT_PARM_VAL) 

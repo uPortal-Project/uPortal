@@ -12,23 +12,37 @@
                 <class>org.jasig.portal.channels.portlet.CSpringPortletAdaptor</class>
             </append-node>
             <with-attribute key="PORTLET_DEF_ELEMENT" value="${singleNode(parameters/parameter[name/text() = 'portletDefinitionId'])}">
-                <with-attribute key="PORTLET_DEF_TOKENS" value="${groovy(PORTLET_DEF_ELEMENT.valueOf('value').split('\\.'))}">
-                    <append-node parent="${singleNode(parameters)}">
-                        <parameter>
-                            <name>portletApplicationId</name>
-                            <value>/${groovy(PORTLET_DEF_TOKENS[0])}</value>
-                            <description/>
-                            <ovrd>N</ovrd>
-                        </parameter>
-                        <parameter>
-                            <name>portletName</name>
-                            <value>${groovy(PORTLET_DEF_TOKENS[1])}</value>
-                            <description/>
-                            <ovrd>N</ovrd>
-                        </parameter> 
-                    </append-node>
-                </with-attribute>
-                <delete-node node="${PORTLET_DEF_ELEMENT}"/>
+                <choose>
+                    <when test="${jexl(PORTLET_DEF_ELEMENT != null)}">
+                        <with-attribute key="PORTLET_DEF_TOKENS" value="${groovy(PORTLET_DEF_ELEMENT.valueOf('value').split('\\.'))}">
+                            <choose>
+                                <when test="${groovy(PORTLET_DEF_TOKENS.length == 2)}">
+                                    <append-node parent="${singleNode(parameters)}">
+                                        <parameter>
+                                            <name>portletApplicationId</name>
+                                            <value>/${groovy(PORTLET_DEF_TOKENS[0])}</value>
+                                            <description/>
+                                            <ovrd>N</ovrd>
+                                        </parameter>
+                                        <parameter>
+                                            <name>portletName</name>
+                                            <value>${groovy(PORTLET_DEF_TOKENS[1])}</value>
+                                            <description/>
+                                            <ovrd>N</ovrd>
+                                        </parameter> 
+                                    </append-node>
+                                    <delete-node node="${PORTLET_DEF_ELEMENT}"/>
+                                </when>
+                                <otherwise>
+                                    <echo-ln>WARNING: ${Attributes.LOCATION} does not have a well formatted 'portletDefinitionId' parameter: '${groovy(PORTLET_DEF_ELEMENT.valueOf('value'))}'. This channel may not work correctly.</echo-ln>
+                                </otherwise>
+                            </choose>
+                        </with-attribute>
+                    </when>
+                    <otherwise>
+                        <echo-ln>WARNING: ${Attributes.LOCATION} claims to be a portlet but doesn't have a 'portletDefinitionId' parameter. This channel may not work correctly.</echo-ln>
+                    </otherwise>
+                </choose>
             </with-attribute>
             <crn location="import-channel_v3-0.crn"/>
         </when>

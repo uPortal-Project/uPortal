@@ -3,16 +3,15 @@
  |   USER_NAME - The name of the user that owns the layout the DLM noderef is from
  |   DLM_PATHREF - The compound path to a DLM node. ex: mum-lo-home:/layout/root/tab/column[2]/channel[1]
  |   FNAME - optional - The fname of the referenced node if it is a channel 
+ |   IS_STRUCT_REF - optional - If set the generated node reference is for a structure node
  |
  | Returns a single value which is the constructed DLM node-ref. ex u3l1n123
  +-->
 <choose>
-    <when test="${jexl(DLM_PATHREF == null or DLM_PATHREF.length() == 0)}">
+    <when test="${jexl(DLM_PATHREF == null or DLM_PATHREF.length() == 0 or !DLM_PATHREF.contains(':'))}">
         <return value="" />
     </when>
     <otherwise>
-        <cache key="DLM_NODEREF" cache-key="${jexl('DLM_NODEREF.' + DLM_PATHREF)}">
-            <factory>
                 <with-attribute key="PATHREF_TOKENS" value="${groovy(DLM_PATHREF.split(':'))}">
                     <with>
                         <attribute key="LAYOUT_USER_NAME">${jexl(PATHREF_TOKENS[0])}</attribute>
@@ -48,7 +47,14 @@
                                                                 <attribute key="USER_ID">${crn(lookup-user_id.crn)}</attribute>
                                                                 <subtasks>
                                                                     <!-- TODO support for not hardcoding layout-id = 1 -->
-                                                                    <return value="${jexl('u' + USER_ID + 'l1n' + STRUCT_ID)}" />
+                                                                    <choose>
+                                                                        <when test="${jexl(IS_STRUCT_REF != null)}">
+                                                                            <return value="${jexl('u' + USER_ID + 'l1s' + STRUCT_ID)}" />
+                                                                        </when>
+                                                                        <otherwise>
+                                                                            <return value="${jexl('u' + USER_ID + 'l1n' + STRUCT_ID)}" />
+                                                                        </otherwise>
+                                                                    </choose>
                                                                 </subtasks>
                                                             </with>
                                                         </with-attribute>
@@ -57,8 +63,8 @@
                                             </when>
                                             <otherwise>
                                                 <!-- Warn the user... -->
-                                                <echo-ln>WARNING:  fname '${valueOf(@fname)}' does not match expected value '${FNAME_OF_RECORD}' for portlet preference '${PREFERENCE_NAME}';  no record will be created.</echo-ln>
-                                                <log level="warn">fname '${valueOf(@fname)}' does not match expected value '${FNAME_OF_RECORD}' for portlet preference '${PREFERENCE_NAME}';  no record will be created.</log>
+                                                <echo-ln>WARNING:  fname '${FOUND_FNAME}' does not match expected value '${FNAME}'.</echo-ln>
+                                                <log level="warn">fname '${FOUND_FNAME}' does not match expected value '${FNAME}'.</log>
                                             </otherwise>
                                         </choose>
                                     </with-attribute>
@@ -67,10 +73,5 @@
                         </subtasks>
                     </with>
                 </with-attribute>
-            </factory>
-            <subtasks>
-                <return value="${DLM_NODEREF}" />
-            </subtasks>
-        </cache>
     </otherwise>
 </choose>
