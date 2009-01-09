@@ -4,7 +4,7 @@
  |
  | Returns the default theme name if force is true or the passed SS_THEME_NAME is null
  +-->
-<with-attribute key="SS_THEME_NAME" value="${crn(determine-ss_struct_name.crn)}">
+<with-attribute key="SS_THEME_NAME" value="${crn(determine-ss_theme_name.crn)}">
     <cache key="THEME_STYLESHEET_ID" cache-key="${jexl('THEME_STYLESHEET_ID.' + SS_THEME_NAME)}">
         <factory>
             <sql-query>
