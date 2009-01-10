@@ -1,4 +1,4 @@
-The Fluid-reorderer file in this folder contains the following files from the 0.6 beta 
+The Fluid-reorderer file in this folder contains the following files from the 0.6 final 
 release, compressed with the YUI compression tool:
 
 jquery/jARIA.js

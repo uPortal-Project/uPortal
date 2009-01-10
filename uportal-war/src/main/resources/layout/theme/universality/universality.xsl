@@ -247,7 +247,7 @@
     </xsl:if>
     <xsl:if test="$USE_AJAX='true' and $AUTHENTICATED='true'">
       <script type="text/javascript" src="{$SCRIPT_PATH}/jquery/jquery-ui-portal-1.5.2-v1.min.js"></script>
-      <script type="text/javascript" src="{$SCRIPT_PATH}/fluid/Fluid-reorderer-0.6-r6203-v1.min.js"></script>
+      <script type="text/javascript" src="{$SCRIPT_PATH}/fluid/Fluid-reorderer-0.6-v1.min.js"></script>
       <script type="text/javascript" src="{$SCRIPT_PATH}/uportal/ajax-preferences-jquery.min.js"></script>
       <script type="text/javascript" src="{$SCRIPT_PATH}/uportal/up-channel-browser.min.js"></script>
     </xsl:if>
