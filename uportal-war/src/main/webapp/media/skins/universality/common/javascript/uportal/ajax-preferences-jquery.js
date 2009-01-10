@@ -50,11 +50,15 @@ function initializeFocusedContentMenu() {
 }
 
 function initializeLayoutMenu() {
+	// using defaultChecked attribute to compensate for IE radio button bug
 	jQuery("#changeColumns").find("img")
-		.click(function(){jQuery(this).prev().attr("checked", true)})
-		.end().find("input[value=" + getCurrentLayoutString() + "]").attr("checked", true);
+		.click(function(){
+			jQuery("#changeColumns").find("input").removeAttr("checked").attr("defaultChecked");
+			jQuery(this).prev().attr("checked", "checked").attr("defaultChecked","defaultChecked");
+		})
+		.end().find("input[value=" + getCurrentLayoutString() + "]").attr("checked", "checked").attr("defaultChecked","defaultChecked");
 	if (jQuery("#changeColumns").find("input:checked").length == 0) {
-	   jQuery("#changeColumns").find("tr:eq(1)").find("td:eq(" + (columnCount-1) + ")").find("input").attr("checked", true);
+	   jQuery("#changeColumns").find("tr:eq(1)").find("td:eq(" + (columnCount-1) + ")").find("input").attr("checked", true).attr("defaultChecked","defaultChecked");
 	}
 	jQuery("#pageLayoutDialog").dialog({height:300, width:400, modal:true });
 
@@ -138,6 +142,12 @@ function changeColumns(newcolumns) {
 		    });
 		    
 	    	myReorderer.refresh();
+	    	
+	    	// remove the checked and default checked attributes from all radio
+	    	// buttons and re-apply them to the current value to compensate
+	    	// for IE radio button bug
+	    	jQuery("#changeColumns").find("input").removeAttr("checked").removeAttr("defaultChecked");
+	    	jQuery("#changeColumns").find("input[value=" + getCurrentLayoutString() + "]").attr("checked", "checked").attr("defaultChecked","defaultChecked");
 			
 		}
 	);
