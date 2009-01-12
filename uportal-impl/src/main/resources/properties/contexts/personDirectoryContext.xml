@@ -7,14 +7,18 @@
     http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
     
     <!--
-     | Example Person Directory configuration using the Spring implementation.
-	 |
-	 | The 'username' attribute is what is configured by default in the code
-	 | for simple string queries via the IPersonAttributeDao interfaces
-	 +-->
+     | Provides the default username attribute to use to the rest of the DAOs
+     +-->
+    <bean id="usernameAttributeProvider" class="org.jasig.services.persondir.support.SimpleUsernameAttributeProvider">
+        <property name="usernameAttribute" value="username" />
+    </bean>
      
+    <!-- 
+     | Overrides DAO acts as the root, it handles incorperating attributes from the attribute swapper utility, wra[s
+     | the caching DAO
+     +-->
     <bean id="personAttributeDao" class="org.jasig.portal.portlets.swapper.OverwritingPersonAttributeDao">
-        <property name="delegatePersonAttributeDao" ref="cachingPersonAttributeDao" />
+        <property name="delegatePersonAttributeDao" ref="cachingMergedPersonAttributeDao" />
         <property name="attributeOverridesMap" ref="sessionAttributesOverridesMap" />
     </bean>
     
@@ -26,86 +30,137 @@
         <aop:scoped-proxy />
     </bean>
 
-    <bean id="cachingPersonAttributeDao" class="org.jasig.services.persondir.support.CachingPersonAttributeDaoImpl">
+    <!-- 
+     | Merging DAOs that define the order that the data providing DAOs are called, results are cached by the outer
+     | caching DAO
+     +-->
+    <bean id="cachingMergedPersonAttributeDao" class="org.jasig.services.persondir.support.CachingPersonAttributeDaoImpl">
+        <property name="usernameAttributeProvider" ref="usernameAttributeProvider" />
+        <property name="cacheNullResults" value="true" />
         <property name="userInfoCache">
             <bean class="org.jasig.portal.utils.cache.MapCacheFactoryBean">
                 <property name="cacheFactory" ref="cacheFactory" />
-                <property name="cacheName" value="org.jasig.services.persondir.USER_INFO" />
+                <property name="cacheName" value="org.jasig.services.persondir.USER_INFO.merged" />
             </bean>
         </property>
-        <property name="cachedPersonAttributesDao" ref="mergedPersonAttributeDao" />
+        <property name="cacheKeyGenerator" ref="userAttributeCacheKeyGenerator" />
+        <property name="cachedPersonAttributesDao" >
+            <bean class="org.jasig.services.persondir.support.MergingPersonAttributeDaoImpl">
+                <property name="usernameAttributeProvider" ref="usernameAttributeProvider" />
+                <property name="merger">
+                    <bean class="org.jasig.services.persondir.support.merger.ReplacingAttributeAdder" />
+                </property>
+                <property name="personAttributeDaos">
+                    <list>
+                        <ref bean="cachinguPortalJdbcAttributeSource"/>
+                        <ref bean="cachinguPortalJdbcUserSource"/>
+                    </list>
+                </property>
+            </bean>
+        </property>
     </bean>
-  
-	<bean id="mergedPersonAttributeDao" class="org.jasig.services.persondir.support.MergingPersonAttributeDaoImpl">
-		<property name="personAttributeDaos">
-			<list>
-				<ref bean="uPortalJdbcAttributeSource"/>
-                <ref bean="uPortalJdbcUserSource"/>
-			</list>
-		</property>
-	</bean>
-
-
-	<!-- JDBC Person Attribute Source, using the default portal DataSource -->
-	<bean id="uPortalJdbcAttributeSource" class="org.jasig.services.persondir.support.jdbc.SingleRowJdbcPersonAttributeDao">
-		<constructor-arg index="0" ref="PersonDB" />
-		<constructor-arg>
-			<value>	
-				SELECT FIRST_NAME||' '||LAST_NAME AS FIRST_LAST, FIRST_NAME, LAST_NAME, EMAIL, USER_NAME 
-				FROM UP_PERSON_DIR 
-				WHERE {0}
-			</value>
-		</constructor-arg>
-        <!-- Allow for querying using any field in the table -->
-        <property name="queryAttributeMapping">
-            <map>
-                <entry key="username" value="USER_NAME" />
-                <entry key="user.name.family" value="LAST_NAME" />
-                <entry key="user.name.given" value="FIRST_NAME" />
-                <entry key="user.home-info.online.email" value="EMAIL" />
-            </map>
-        </property>
-        <!-- Map the table fields to P3P attribute names -->
-		<property name="resultAttributeMapping">
-			<map>
-				<entry key="FIRST_LAST" value="displayName" />
-				<entry key="FIRST_NAME" value="user.name.given" />
-				<entry key="LAST_NAME" value="user.name.family" />
-				<entry key="EMAIL" value="user.home-info.online.email" />
-				<entry key="USER_NAME">
-                    <set>
-                        <value>username</value>
-                        <value>user.login.id</value>
-                    </set>
-                </entry>
-			</map>
-		</property>
-	</bean>
     
-    <!-- JDBC User Source, using the default portal DataSource -->
-    <bean id="uPortalJdbcUserSource" class="org.jasig.services.persondir.support.jdbc.SingleRowJdbcPersonAttributeDao">
-        <constructor-arg index="0" ref="PersonDB" />
-        <constructor-arg>
-            <value> 
-                SELECT USER_NAME
-                FROM UP_USER
-                WHERE {0}
-            </value>
-        </constructor-arg>
-        <property name="queryAttributeMapping">
-            <map>
-                <entry key="username" value="USER_NAME" />
-            </map>
+    <!--
+     | Looks in the base UP_USER table, doesn't find attributes but will ensure a result if it the user exists in the
+     | portal database and is searched for by username, results are cached by the outer caching DAO
+     +-->
+    <bean id="cachinguPortalJdbcUserSource" class="org.jasig.services.persondir.support.CachingPersonAttributeDaoImpl">
+        <property name="usernameAttributeProvider" ref="usernameAttributeProvider" />
+        <property name="cacheNullResults" value="true" />
+        <property name="userInfoCache">
+            <bean class="org.jasig.portal.utils.cache.MapCacheFactoryBean">
+                <property name="cacheFactory" ref="cacheFactory" />
+                <property name="cacheName" value="org.jasig.services.persondir.USER_INFO.up_user" />
+            </bean>
         </property>
-        <property name="resultAttributeMapping">
-            <map>
-                <entry key="USER_NAME">
-                    <set>
-                        <value>username</value>
-                        <value>user.login.id</value>
-                    </set>
-                </entry>
-            </map>
+        <property name="cacheKeyGenerator" ref="userAttributeCacheKeyGenerator" />
+        <property name="cachedPersonAttributesDao" >
+            <bean class="org.jasig.services.persondir.support.jdbc.SingleRowJdbcPersonAttributeDao">
+                <constructor-arg index="0" ref="PersonDB" />
+                <constructor-arg>
+                    <value> 
+                        SELECT USER_NAME
+                        FROM UP_USER
+                        WHERE {0}
+                    </value>
+                </constructor-arg>
+                <property name="usernameAttributeProvider" ref="usernameAttributeProvider" />
+                <property name="queryAttributeMapping">
+                    <map>
+                        <entry key="username" value="USER_NAME" />
+                    </map>
+                </property>
+                <property name="resultAttributeMapping">
+                    <map>
+                        <entry key="USER_NAME">
+                            <set>
+                                <value>uid</value>
+                                <value>username</value>
+                                <value>user.login.id</value>
+                            </set>
+                        </entry>
+                    </map>
+                </property>
+            </bean>
         </property>
+    </bean>
+
+    <!--
+     | Looks in the local person-directory table. This table is only used for portal-local users such as fragment owners
+     | All attributes are searchable via this configuration, results are cached by the outer caching DAO
+     +-->
+    <bean id="cachinguPortalJdbcAttributeSource" class="org.jasig.services.persondir.support.CachingPersonAttributeDaoImpl">
+        <property name="usernameAttributeProvider" ref="usernameAttributeProvider" />
+        <property name="cacheNullResults" value="true" />
+        <property name="userInfoCache">
+            <bean class="org.jasig.portal.utils.cache.MapCacheFactoryBean">
+                <property name="cacheFactory" ref="cacheFactory" />
+                <property name="cacheName" value="org.jasig.services.persondir.USER_INFO.up_person_dir" />
+            </bean>
+        </property>
+        <property name="cacheKeyGenerator" ref="userAttributeCacheKeyGenerator" />
+        <property name="cachedPersonAttributesDao" >
+            <bean class="org.jasig.services.persondir.support.jdbc.SingleRowJdbcPersonAttributeDao">
+                <constructor-arg index="0" ref="PersonDB" />
+                <constructor-arg>
+                    <value> 
+                        SELECT FIRST_NAME||' '||LAST_NAME AS FIRST_LAST, FIRST_NAME, LAST_NAME, EMAIL, USER_NAME 
+                        FROM UP_PERSON_DIR 
+                        WHERE {0}
+                    </value>
+                </constructor-arg>
+                <property name="usernameAttributeProvider" ref="usernameAttributeProvider" />
+                <!-- Allow for querying using any field in the table -->
+                <property name="queryAttributeMapping">
+                    <map>
+                        <entry key="username"   value="USER_NAME" />
+                        <entry key="givenName"  value="FIRST_NAME" />
+                        <entry key="sn"         value="LAST_NAME" />
+                        <entry key="mail"       value="EMAIL" />
+                    </map>
+                </property>
+                <!-- Map the table fields to P3P attribute names -->
+                <property name="resultAttributeMapping">
+                    <map>
+                        <entry key="FIRST_LAST" value="displayName" />
+                        <entry key="FIRST_NAME" value="givenName" />
+                        <entry key="LAST_NAME"  value="sn" />
+                        <entry key="EMAIL"      value="mail" />
+                        <entry key="USER_NAME">
+                            <set>
+                                <value>uid</value>
+                                <value>username</value>
+                                <value>user.login.id</value>
+                            </set>
+                        </entry>
+                    </map>
+                </property>
+            </bean>
+        </property>
+    </bean>
+    
+    <bean id="userAttributeCacheKeyGenerator" class="org.jasig.services.persondir.support.AttributeBasedCacheKeyGenerator">
+        <property name="useAllAttributes" value="true" />
+        <property name="ignoreEmptyAttributes" value="true" />
     </bean>
 </beans>
