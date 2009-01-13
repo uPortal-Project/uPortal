@@ -24,7 +24,15 @@
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" />
     
-    <cache name="org.jasig.services.persondir.USER_INFO"
+    <cache name="org.jasig.services.persondir.USER_INFO.merged"
+        eternal="false" maxElementsInMemory="150" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="10" memoryStoreEvictionPolicy="LRU" />
+        
+    <cache name="org.jasig.services.persondir.USER_INFO.up_user"
+        eternal="false" maxElementsInMemory="150" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />
+        
+    <cache name="org.jasig.services.persondir.USER_INFO.up_person_dir"
         eternal="false" maxElementsInMemory="150" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />
         
