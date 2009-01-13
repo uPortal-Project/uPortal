@@ -1,0 +1,13 @@
+
+<group script="classpath://org/jasig/portal/io/import-group_membership_v3-0.crn">
+  <name>All categories</name>
+  <entity-type>org.jasig.portal.ChannelDefinition</entity-type>
+  <creator>system</creator>
+  <description>All channel categories</description>
+  <children>
+    <group>Applications</group>
+    <group>Development</group>
+    <group>Entertainment</group>
+    <group>News</group>
+  </children>
+</group>

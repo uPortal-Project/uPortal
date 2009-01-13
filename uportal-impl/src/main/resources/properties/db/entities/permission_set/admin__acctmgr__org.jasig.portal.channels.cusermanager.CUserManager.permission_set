@@ -1,0 +1,12 @@
+
+<permission-set script="classpath://org/jasig/portal/io/import-permission_set_v3-1.crn">
+  <owner>org.jasig.portal.channels.cusermanager.CUserManager</owner>
+  <principal-type>org.jasig.portal.security.IPerson</principal-type>
+  <principal> 
+    <literal>admin</literal> 
+  </principal>
+  <activity>acctmgr</activity>
+  <target permission-type="GRANT"> 
+    <literal>Account Manager</literal> 
+  </target>
+</permission-set>

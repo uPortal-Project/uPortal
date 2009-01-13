@@ -1,0 +1,10 @@
+
+<group script="classpath://org/jasig/portal/io/import-group_membership_v3-0.crn">
+  <name>Portal Administrators</name>
+  <entity-type>org.jasig.portal.security.IPerson</entity-type>
+  <creator>system</creator>
+  <description>A group of system administrators with superuser capabilities</description>
+  <children>
+    <literal>admin</literal>
+  </children>
+</group>

@@ -1,7 +1,0 @@
-
-<group script="classpath://org/jasig/portal/io/import-group_v2-6.crn">
-  <name>CInlineFrame</name>
-  <entity-type>org.jasig.portal.ChannelDefinition</entity-type>
-  <creator>system</creator>
-  <description>Renders a web page inside and inline frame. Only use for IE 5 and Netscape 6 and higher.</description>
-</group>

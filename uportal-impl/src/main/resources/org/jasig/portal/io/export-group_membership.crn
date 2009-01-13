@@ -1,0 +1,53 @@
+<with-attribute key="Attributes.NODE" value="${newDoc(group)}">
+    <append-node node="${attributeNode(script=classpath://org/jasig/portal/io/import-group_membership_v3-0.crn)}"/>
+    <echo-ln>Export Group and Members:  GROUP_NAME=${GROUP_NAME}</echo-ln>
+    <append-node>
+        <name>${GROUP_NAME}</name>
+        <entity-type>${ENTITY_TYPE_NAME}</entity-type>
+        <creator>${CREATOR_ID}</creator>
+        <description>${DESCRIPTION}</description>
+        <children/>
+    </append-node>
+    
+    <sql-query>
+        <sql>
+            SELECT UPGM.MEMBER_SERVICE, UPGM.MEMBER_KEY, UPGM.MEMBER_IS_GROUP
+            FROM UP_GROUP_MEMBERSHIP UPGM
+            WHERE UPGM.GROUP_ID = ?
+        </sql>
+        <parameter value="${GROUP_ID}"/>
+        <subtasks>
+            <choose>
+                <when test="${jexl(MEMBER_IS_GROUP.equals('T'))}">
+                    <with-attribute key="GROUP" value="${groovy(org.jasig.portal.services.GroupService.findGroup(MEMBER_SERVICE + '.' + MEMBER_KEY))}">
+                        <!-- Check for group name == null (indicates an orphaned record) -->
+                        <choose>
+                            <when test="${jexl(GROUP.getName() == null)}">
+                                <log logger-name="org.jasig.portal.io.export-group_membership" level="warn">Membership child references a deleted group;  removing orphaned reference.</log>
+                                <append-node node="${attributeNode(cancel=true)}"/>
+                            </when>
+                            <otherwise>
+                                <!-- All is well... -->
+                                <append-node parent="${singleNode(children)}">
+                                    <group>${jexl(GROUP.getName())}</group>
+                                </append-node>
+                            </otherwise>
+                        </choose>
+                    </with-attribute>
+                </when>
+                <when test="${jexl(ENTITY_TYPE_NAME.equals('org.jasig.portal.ChannelDefinition'))}">
+                    <!-- Ignore channels, their group membership information is handled by the chanpub files -->
+                </when>
+                <otherwise>
+                    <append-node parent="${singleNode(children)}">
+                            <literal>${req(MEMBER_KEY)}</literal>
+                    </append-node>
+                </otherwise>
+            </choose>
+        </subtasks>
+    </sql-query>
+    
+    <with-attribute key="SAFE_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${GROUP_NAME}-${GROUP_ID})}">
+        <write-document file="${EXPORT_DIR}/group_membership/${SAFE_NAME}.group_membership"/>
+    </with-attribute>
+</with-attribute>

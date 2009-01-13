@@ -1,0 +1,8 @@
+
+<group script="classpath://org/jasig/portal/io/import-group_membership_v3-0.crn">
+  <name>CApplet</name>
+  <entity-type>org.jasig.portal.ChannelDefinition</entity-type>
+  <creator>system</creator>
+  <description>Renders a java applet</description>
+  <children/>
+</group>

@@ -1,5 +1,5 @@
 
-<channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-0.crn">
+<channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-1.crn">
   <title>CViewer</title>
   <name>ICC Viewer channel</name>
   <fname>portal/iccdemo/viewer</fname>
@@ -19,4 +19,5 @@
     <group>Developers</group>
   </groups>
   <parameters/>
+  <portletPreferences/>
 </channel-definition>

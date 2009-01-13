@@ -1,0 +1,10 @@
+
+<group script="classpath://org/jasig/portal/io/import-group_membership_v3-0.crn">
+  <name>CGenericXSLT</name>
+  <entity-type>org.jasig.portal.ChannelDefinition</entity-type>
+  <creator>system</creator>
+  <description>Performs XSLT transformations</description>
+  <children>
+    <group>RSS</group>
+  </children>
+</group>

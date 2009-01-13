@@ -1,5 +1,5 @@
 
-<channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-0.crn">
+<channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-1.crn">
   <title>Faculty Welcome</title>
   <name>Faculty Welcome</name>
   <fname>faculty-feature</fname>
@@ -51,4 +51,5 @@
       <ovrd>N</ovrd> 
     </parameter>
   </parameters>
+  <portletPreferences/>
 </channel-definition>

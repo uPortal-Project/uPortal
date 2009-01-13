@@ -20,7 +20,7 @@
                         </when>
                         <otherwise>
                             <echo-ln>WARNING: Value '${ORIGINAL_ATTRIBUTE_VALUE}' of layout attribute '${ATTRIBUTE_NAME}' for user ${USER_NAME} resolved to NULL and will be ignored.</echo-ln>
-                            <log level="warn">WARNING: Value '${ORIGINAL_ATTRIBUTE_VALUE}' of layout attribute '${ATTRIBUTE_NAME}' for user ${USER_NAME} resolved to NULL and will be ignored.</log>
+                            <log logger-name="org.jasig.portal.io.import-layout-params" level="warn">WARNING: Value '${ORIGINAL_ATTRIBUTE_VALUE}' of layout attribute '${ATTRIBUTE_NAME}' for user ${USER_NAME} resolved to NULL and will be ignored.</log>
                         </otherwise>
                     </choose>
                 </with-attribute>

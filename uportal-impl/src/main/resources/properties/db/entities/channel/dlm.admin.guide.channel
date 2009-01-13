@@ -1,5 +1,5 @@
 
-<channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-0.crn">
+<channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-1.crn">
   <title>DLM Administrator's Guide</title>
   <name>DLM Administrator's Guide</name>
   <fname>dlm.admin.guide</fname>
@@ -19,4 +19,5 @@
     <group>Everyone</group>
   </groups>
   <parameters/>
+  <portletPreferences/>
 </channel-definition>

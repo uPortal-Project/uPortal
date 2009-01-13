@@ -25,10 +25,10 @@
                                          | to be sure the old fname matches the new fname.
                                          +-->
                                         <choose>
-                                            <when test="${isNull(${Attributes.NODE})}">
+                                            <when test="${jexl(Attributes.NODE == null)}">
                                                 <!-- Warn the user... -->
                                                 <echo-ln>WARNING:  the expression '${LAYOUT_PATH}' does not match any nodes in the '${LAYOUT_USER_NAME}' layout;  no record will be created.</echo-ln>
-                                                <log level="warn">WARNING:  the expression '${LAYOUT_PATH}' does not match any nodes in the '${LAYOUT_USER_NAME}' layout;  no record will be created.</log>
+                                                <log logger-name="org.jasig.portal.io.lookup-dlm-pathref" level="warn">WARNING:  the expression '${LAYOUT_PATH}' does not match any nodes in the '${LAYOUT_USER_NAME}' layout;  no record will be created.</log>
                                             </when>
                                             <when test="${jexl(FNAME == null or FNAME.equals(FOUND_FNAME))}">
                                                 <choose>
@@ -64,7 +64,7 @@
                                             <otherwise>
                                                 <!-- Warn the user... -->
                                                 <echo-ln>WARNING:  fname '${FOUND_FNAME}' does not match expected value '${FNAME}'.</echo-ln>
-                                                <log level="warn">fname '${FOUND_FNAME}' does not match expected value '${FNAME}'.</log>
+                                                <log logger-name="org.jasig.portal.io.lookup-dlm-pathref" level="warn">fname '${FOUND_FNAME}' does not match expected value '${FNAME}'.</log>
                                             </otherwise>
                                         </choose>
                                     </with-attribute>

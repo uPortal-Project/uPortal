@@ -9,7 +9,6 @@
             <append-node>
                 <username>${LAYOUT_USER_NAME}</username>
             </append-node>
-            <!-- TODO use the usr_dflt_lay_id for the layout id -->
             <sql-query>
                 <sql>SELECT user_id AS LAYOUT_USER_ID FROM up_user WHERE user_name = ?</sql>
                 <parameter value="${LAYOUT_USER_NAME}"/>

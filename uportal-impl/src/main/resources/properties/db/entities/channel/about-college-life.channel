@@ -1,5 +1,5 @@
 
-<channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-0.crn">
+<channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-1.crn">
   <title>About.com College Life</title>
   <name>About.com College Life</name>
   <fname>about-college-life</fname>
@@ -33,4 +33,5 @@
       <ovrd>N</ovrd> 
     </parameter>
   </parameters>
+  <portletPreferences/>
 </channel-definition>

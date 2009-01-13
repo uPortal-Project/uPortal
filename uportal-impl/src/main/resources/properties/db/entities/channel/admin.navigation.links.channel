@@ -1,5 +1,5 @@
 
-<channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-0.crn">
+<channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-1.crn">
   <title>Administration</title>
   <name>Administration</name>
   <fname>admin.navigation.links</fname>
@@ -17,4 +17,5 @@
     <group>Portal Administrators</group>
   </groups>
   <parameters/>
+  <portletPreferences/>
 </channel-definition>

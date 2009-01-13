@@ -2,10 +2,10 @@
 <layout script="classpath://org/jasig/portal/io/import-layout_v3-0.crn" username="demo">
   <root unremovable="Y" immutable="N" hidden="N" name="Root folder">
     <header unremovable="Y" immutable="Y" hidden="N" name="Header folder">
-      <channel fname="header"/>
-      <channel fname="portal/login/general"/>
-      <channel fname="session-locales-selector"/>
-      <channel fname="fragment-admin"/>
+      <channel unremovable="" immutable="" hidden="" fname="header"/>
+      <channel unremovable="" immutable="" hidden="" fname="portal/login/general"/>
+      <channel unremovable="" immutable="" hidden="" fname="session-locales-selector"/>
+      <channel unremovable="" immutable="" hidden="" fname="fragment-admin"/>
     </header>
     <tab unremovable="N" immutable="N" hidden="N" name="Demos">
       <column unremovable="N" immutable="N" hidden="N" name="Column 1">
@@ -13,8 +13,8 @@
           <name>width</name>
           <value>50%</value>
         </structure-attribute>
-        <channel fname="word-of-the-day"/>
-        <channel fname="number-guessing-game">
+        <channel unremovable="" immutable="" hidden="" fname="word-of-the-day"/>
+        <channel unremovable="" immutable="" hidden="" fname="number-guessing-game">
           <param>
             <name>maxNum</name>
             <value>150</value>
@@ -24,14 +24,14 @@
             <value>50</value>
           </param>
         </channel>
-        <channel fname="daily-business-cartoon"/>
+        <channel unremovable="" immutable="" hidden="" fname="daily-business-cartoon"/>
       </column>
       <column unremovable="N" immutable="N" hidden="N" name="Column 2">
         <structure-attribute type="folder">
           <name>width</name>
           <value>50%</value>
         </structure-attribute>
-        <channel fname="uportal-news"/>
+        <channel unremovable="" immutable="" hidden="" fname="uportal-news"/>
       </column>
     </tab>
     <tab unremovable="N" immutable="N" hidden="N" name="Development">
@@ -40,20 +40,20 @@
           <name>width</name>
           <value>50%</value>
         </structure-attribute>
-        <channel fname="person-attributes"/>
-        <channel fname="css-viewer"/>
+        <channel unremovable="" immutable="" hidden="" fname="person-attributes"/>
+        <channel unremovable="" immutable="" hidden="" fname="css-viewer"/>
       </column>
       <column unremovable="N" immutable="N" hidden="N" name="Column 2">
         <structure-attribute type="folder">
           <name>width</name>
           <value>50%</value>
         </structure-attribute>
-        <channel fname="snooper"/>
-        <channel fname="uportal-data-dictionary"/>
+        <channel unremovable="" immutable="" hidden="" fname="snooper"/>
+        <channel unremovable="" immutable="" hidden="" fname="uportal-data-dictionary"/>
       </column>
     </tab>
     <footer unremovable="N" immutable="N" hidden="N" name="Footer folder">
-      <channel fname="footer"/>
+      <channel unremovable="" immutable="" hidden="" fname="footer"/>
     </footer>
   </root>
   <profile name="My web browser profile"> 

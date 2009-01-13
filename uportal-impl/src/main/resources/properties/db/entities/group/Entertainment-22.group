@@ -1,7 +1,0 @@
-
-<group script="classpath://org/jasig/portal/io/import-group_v2-6.crn">
-  <name>Entertainment</name>
-  <entity-type>org.jasig.portal.ChannelDefinition</entity-type>
-  <creator>system</creator>
-  <description>Entertainment</description>
-</group>

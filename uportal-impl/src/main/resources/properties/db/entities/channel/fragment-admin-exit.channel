@@ -1,5 +1,5 @@
 
-<channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-0.crn">
+<channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-1.crn">
   <title>Exit Fragment Administration</title>
   <name>Exit Fragment Administration</name>
   <fname>fragment-admin-exit</fname>
@@ -12,8 +12,7 @@
   <hasabout>N</hasabout>
   <secure>N</secure>
   <locale>en_US</locale>
-  <categories>
-  </categories>
+  <categories/>
   <groups>
     <group>Everyone</group>
   </groups>
@@ -31,4 +30,5 @@
       <ovrd>N</ovrd> 
     </parameter>
   </parameters>
+  <portletPreferences/>
 </channel-definition>

@@ -112,7 +112,7 @@
                             
                             <!-- Now do portlet entity preferences -->
                             <with-attribute key="Attributes.NODE" value="${singleNode(preferences)}">
-                                <if test="${not(${isNull(${Attributes.NODE})})}">
+                                <if test="${jexl(Attributes.NODE != null)}">
                                     <crn location="import-preferences.crn"/>
                                 </if>
                             </with-attribute>
@@ -125,6 +125,6 @@
     </subtasks>
     <empty-result>
         <echo-ln>WARNING: No user ${valueOf(@username)} exists for corresponding layout. The layout will NOT be imported.</echo-ln>
-        <log level="warn">WARNING: No user ${valueOf(@username)} exists for corresponding layout. The layout will NOT be imported.</log>
+        <log logger-name="org.jasig.portal.io.import-layout" level="warn">WARNING: No user ${valueOf(@username)} exists for corresponding layout. The layout will NOT be imported.</log>
     </empty-result>
 </sql-query>

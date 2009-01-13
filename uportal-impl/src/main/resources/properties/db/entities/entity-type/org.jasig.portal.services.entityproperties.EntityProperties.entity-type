@@ -1,6 +1,5 @@
 
 <entity-type script="classpath://org/jasig/portal/io/import-entity-type_v2-6.crn">
-  <type-id>7</type-id>
   <name>org.jasig.portal.services.entityproperties.EntityProperties</name>
   <desc-name>Property Lookup Results</desc-name>
 </entity-type>

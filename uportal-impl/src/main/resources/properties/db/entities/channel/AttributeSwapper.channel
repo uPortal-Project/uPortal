@@ -1,5 +1,5 @@
 
-<channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-0.crn">
+<channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-1.crn">
   <title>Attribute Swapper</title>
   <name>Attribute Swapper</name>
   <fname>AttributeSwapper</fname>
@@ -32,4 +32,5 @@
       <ovrd>N</ovrd> 
     </parameter>
   </parameters>
+  <portletPreferences/>
 </channel-definition>

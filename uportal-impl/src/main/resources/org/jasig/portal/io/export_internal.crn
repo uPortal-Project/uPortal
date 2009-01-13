@@ -1,0 +1,358 @@
+<with>
+    <attribute key="EXPORT_START_TIME">${groovy(System.currentTimeMillis())}</attribute>
+    <subtasks>
+        <echo-ln>Begin Export of ${ENTITY_TYPE}: ${EXPORT_START_TIME}</echo-ln>
+        <!-- Select export operation based on the specified ENTITY_TYPE -->
+        <choose>
+            <!-- layout -->
+            <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('layout'))}">
+                <sql-query>
+                    <sql>SELECT user_id, user_name FROM up_user WHERE user_name=?</sql>
+                    <parameter value="${req($3)}"/>
+                    <subtasks>
+                        <crn location="export-layout.crn"/>
+                    </subtasks>
+                    <empty-result>
+                        <echo-ln>No user '${$3}' found to export ${ENTITY_TYPE} for.</echo-ln>
+                    </empty-result>
+                </sql-query>
+            </when>
+    
+            <!-- all-layouts -->
+            <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-layouts'))}">
+                <thread-pool threads="${THREAD_COUNT}">
+                    <sql-query>
+                        <sql>
+                            SELECT user_id, user_name FROM up_user
+                        </sql>
+                        <subtasks>
+                            <choose>
+                                <when test="${crn(is-user-included.crn)}">
+                                    <concurrent>
+                                        <handle-error>
+                                            <try>
+                                                <crn location="export-layout.crn"/>
+                                            </try>
+                                            <catch>
+                                                <echo-ln>ERROR Failed to export layout for user ${USER_NAME} due to exception: ${Attributes.EXCEPTION}</echo-ln>
+                                                <log logger-name="org.jasig.portal.io.export_internal" level="error" exception="${Attributes.EXCEPTION}">Failed to export layout for user ${USER_NAME} due to exception</log>
+                                            </catch>
+                                        </handle-error>
+                                    </concurrent>
+                                </when>
+                                <otherwise>
+                                    <log logger-name="org.jasig.portal.io.export_internal" level="warn">layout, ${USER_NAME}: Not on included user list, skipping export</log>
+                                </otherwise>
+                            </choose>
+                        </subtasks>
+                    </sql-query>
+                </thread-pool>
+            </when>
+    
+            <!-- all-permissions -->
+            <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-permissions'))}">
+                <crn location="export-permissions.crn"/>
+            </when>
+    
+            <!-- all-permission_sets -->
+            <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-permission_sets'))}">
+                <crn location="export-permission_sets.crn"/>
+            </when>
+    
+            <!-- all-memberships -->
+            <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-memberships'))}">
+                <crn location="export-memberships.crn"/>
+            </when>
+    
+            <!-- channel -->
+            <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('channel'))}">
+                <with-attribute key="FNAME" value="${$3}">
+                    <crn location="export-channel.crn"/>
+                </with-attribute>
+            </when>
+    
+            <!-- all-channels -->
+            <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-channels'))}">
+                <thread-pool threads="${THREAD_COUNT}">
+                    <sql-query>
+                        <sql>SELECT chan_fname FROM up_channel</sql>
+                        <subtasks>
+                            <concurrent>
+                                <handle-error> 
+                                    <try> 
+                                        <with-attribute key="FNAME" value="${CHAN_FNAME}">
+                                            <crn location="export-channel.crn"/>
+                                        </with-attribute>
+                                    </try>
+                                    <catch>
+                                        <echo-ln>ERROR Failed to export channel ${CHAN_FNAME} due to exception: ${Attributes.EXCEPTION}</echo-ln>
+                                        <log logger-name="org.jasig.portal.io.export_internal" level="error" exception="${Attributes.EXCEPTION}">Failed to export channel ${CHAN_FNAME} due to exception</log>
+                                    </catch>
+                                </handle-error>
+                            </concurrent>
+                        </subtasks>
+                    </sql-query>
+                </thread-pool>
+            </when>
+    
+            <!-- channel-type -->
+            <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('channel-type'))}">
+                <with-attribute key="NAME" value="${$3}">
+                    <crn location="export-channel-type.crn"/>
+                </with-attribute>
+            </when>
+            
+            <!-- all-channel-types -->
+            <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-channel-types'))}">
+                <thread-pool threads="${THREAD_COUNT}">
+                    <sql-query>
+                        <sql>SELECT type_name FROM up_chan_type</sql>
+                        <subtasks>
+                            <concurrent>
+                                <handle-error>
+                                    <try>
+                                        <with-attribute key="NAME" value="${TYPE_NAME}">
+                                            <crn location="export-channel-type.crn"/>
+                                        </with-attribute>
+                                    </try>
+                                    <catch>
+                                        <echo-ln>ERROR Failed to export channel type ${TYPE_NAME} due to exception: ${Attributes.EXCEPTION}</echo-ln>
+                                        <log logger-name="org.jasig.portal.io.export_internal" level="error" exception="${Attributes.EXCEPTION}">Failed to export channel type ${TYPE_NAME} due to exception</log>
+                                    </catch>
+                                </handle-error>
+                            </concurrent>
+                        </subtasks>
+                    </sql-query>
+                </thread-pool>
+            </when>
+                                
+            <!-- group -->
+            <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('group'))}">
+                <sql-query>
+                    <sql>
+                        SELECT UPG.*, UPET.ENTITY_TYPE_NAME
+                        FROM UP_GROUP UPG
+                            LEFT JOIN UP_ENTITY_TYPE UPET ON UPG.ENTITY_TYPE_ID = UPET.ENTITY_TYPE_ID
+                        WHERE UPG.GROUP_NAME = ?
+                    </sql>
+                    <parameter value="${$3}"/>
+                    <subtasks>
+                        <crn location="export-group.crn"/>
+                    </subtasks>
+                    <empty-result>
+                        <echo-ln>No group '${$3}' found to export ${ENTITY_TYPE} for.</echo-ln>
+                    </empty-result>
+                </sql-query>
+            </when>
+    
+            <!-- all-groups -->
+            <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-groups'))}">
+                <thread-pool threads="${THREAD_COUNT}">
+                    <sql-query>
+                        <sql>
+                            SELECT UPG.*, UPET.ENTITY_TYPE_NAME
+                            FROM UP_GROUP UPG
+                                LEFT JOIN UP_ENTITY_TYPE UPET ON UPG.ENTITY_TYPE_ID = UPET.ENTITY_TYPE_ID
+                        </sql>
+                        <subtasks>
+                            <concurrent>
+                                <handle-error>
+                                    <try>
+                                        <crn location="export-group.crn"/>
+                                    </try>
+                                    <catch>
+                                        <echo-ln>ERROR Failed to export group ${GROUP_NAME} due to exception: ${Attributes.EXCEPTION}</echo-ln>
+                                        <log logger-name="org.jasig.portal.io.export_internal" level="error" exception="${Attributes.EXCEPTION}">Failed to export channel type ${TYPE_NAME} due to exception</log>
+                                    </catch>
+                                </handle-error>
+                            </concurrent>
+                        </subtasks>
+                    </sql-query>
+                </thread-pool>
+            </when>
+                                
+            <!-- group_membership -->
+            <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('group_membership'))}">
+                <sql-query>
+                    <sql>
+                        SELECT UPG.*, UPET.ENTITY_TYPE_NAME
+                        FROM UP_GROUP UPG
+                            LEFT JOIN UP_ENTITY_TYPE UPET ON UPG.ENTITY_TYPE_ID = UPET.ENTITY_TYPE_ID
+                        WHERE UPG.GROUP_NAME = ?
+                    </sql>
+                    <parameter value="${$3}"/>
+                    <subtasks>
+                        <crn location="export-group_membership.crn"/>
+                    </subtasks>
+                    <empty-result>
+                        <echo-ln>No group '${$3}' found to export ${ENTITY_TYPE} for.</echo-ln>
+                    </empty-result>
+                </sql-query>
+            </when>
+    
+            <!-- all-group_membership -->
+            <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-group_membership'))}">
+                <thread-pool threads="${THREAD_COUNT}">
+                    <sql-query>
+                        <sql>
+                            SELECT UPG.*, UPET.ENTITY_TYPE_NAME
+                            FROM UP_GROUP UPG
+                                LEFT JOIN UP_ENTITY_TYPE UPET ON UPG.ENTITY_TYPE_ID = UPET.ENTITY_TYPE_ID
+                        </sql>
+                        <subtasks>
+                            <concurrent>
+                                <handle-error>
+                                    <try>
+                                        <crn location="export-group_membership.crn"/>
+                                    </try>
+                                    <catch>
+                                        <echo-ln>ERROR Failed to export group and membership for ${GROUP_NAME} due to exception: ${Attributes.EXCEPTION}</echo-ln>
+                                        <log logger-name="org.jasig.portal.io.export_internal" level="error" exception="${Attributes.EXCEPTION}">Failed to export group and membership for ${GROUP_NAME} due to exception</log>
+                                    </catch>
+                                </handle-error>
+                            </concurrent>
+                        </subtasks>
+                    </sql-query>
+                </thread-pool>
+            </when>
+                                
+            <!-- user -->
+            <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('user'))}">
+                <sql-query>
+                    <sql>SELECT user_id, user_name, user_dflt_usr_id FROM up_user WHERE user_name=?</sql>
+                    <parameter value="${req($3)}"/>
+                    <subtasks>
+                        <crn location="export-user.crn"/>
+                    </subtasks>
+                    <empty-result>
+                        <echo-ln>No user '${$3}' found to export ${ENTITY_TYPE} for.</echo-ln>
+                    </empty-result>
+                </sql-query>
+            </when>
+    
+            <!-- all-users -->
+            <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-users'))}">
+                <thread-pool threads="${THREAD_COUNT}">
+                    <sql-query>
+                        <sql>SELECT user_id, user_name, user_dflt_usr_id FROM up_user</sql>
+                        <subtasks>
+                            <choose>
+                                <when test="${crn(is-user-included.crn)}">
+                                    <concurrent>
+                                        <handle-error>
+                                            <try>
+                                                <crn location="export-user.crn"/>
+                                            </try>
+                                            <catch>
+                                                <echo-ln>ERROR Failed to export user ${USER_NAME} due to exception: ${Attributes.EXCEPTION}</echo-ln>
+                                                <log logger-name="org.jasig.portal.io.export_internal" level="error" exception="${Attributes.EXCEPTION}">Failed to export user ${USER_NAME} due to exception</log>
+                                            </catch>
+                                        </handle-error>
+                                    </concurrent>
+                                </when>
+                                <otherwise>
+                                    <log logger-name="org.jasig.portal.io.export_internal" level="warn">user, ${USER_NAME}: Not on included user list, skipping export</log>
+                                </otherwise>
+                            </choose>
+                        </subtasks>
+                    </sql-query>
+                </thread-pool>
+            </when>
+    
+            <!-- theme -->
+            <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('theme'))}">
+                <with-attribute key="NAME" value="${$3}">
+                    <crn location="export-theme.crn"/>
+                </with-attribute>
+            </when>
+            
+            <!-- all-themes -->
+            <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-themes'))}">
+                <thread-pool threads="${THREAD_COUNT}">
+                    <sql-query>
+                        <sql>SELECT ss_name FROM up_ss_theme</sql>
+                        <subtasks>
+                            <concurrent>
+                                <handle-error>
+                                    <try>
+                                        <with-attribute key="NAME" value="${SS_NAME}">
+                                            <crn location="export-theme.crn"/>
+                                        </with-attribute>
+                                    </try>
+                                    <catch>
+                                        <echo-ln>ERROR Failed to export theme ${SS_NAME} due to exception: ${Attributes.EXCEPTION}</echo-ln>
+                                        <log logger-name="org.jasig.portal.io.export_internal" level="error" exception="${Attributes.EXCEPTION}">Failed to export theme ${SS_NAME} due to exception</log>
+                                    </catch>
+                                </handle-error>
+                            </concurrent>
+                        </subtasks>
+                    </sql-query>
+                </thread-pool>
+            </when>
+    
+            <!-- structure -->
+            <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('structure'))}">
+                <with-attribute key="NAME" value="${$3}">
+                    <crn location="export-structure.crn"/>
+                </with-attribute>
+            </when>
+            
+            <!-- all-structures -->
+            <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-structures'))}">
+                <thread-pool threads="${THREAD_COUNT}">
+                    <sql-query>
+                        <sql>SELECT ss_name FROM up_ss_struct</sql>
+                        <subtasks>
+                            <concurrent>
+                                <handle-error>
+                                    <try>
+                                        <with-attribute key="NAME" value="${SS_NAME}">
+                                            <crn location="export-structure.crn"/>
+                                        </with-attribute>
+                                    </try>
+                                    <catch>
+                                        <echo-ln>ERROR Failed to export structure ${SS_NAME} due to exception: ${Attributes.EXCEPTION}</echo-ln>
+                                        <log logger-name="org.jasig.portal.io.export_internal" level="error" exception="${Attributes.EXCEPTION}">Failed to export structure ${SS_NAME} due to exception</log>
+                                    </catch>
+                                </handle-error>
+                            </concurrent>
+                        </subtasks>
+                    </sql-query>
+                </thread-pool>
+            </when>
+    
+            <!-- entity-type -->
+            <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('entity-type'))}">
+                <with-attribute key="NAME" value="${$3}">
+                    <crn location="export-entity-type.crn"/>
+                </with-attribute>
+            </when>
+            
+            <!-- all-entity-types -->
+            <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-entity-types'))}">
+                <thread-pool threads="${THREAD_COUNT}">
+                    <sql-query>
+                        <sql>SELECT entity_type_name FROM up_entity_type</sql>
+                        <subtasks>
+                            <concurrent>
+                                <handle-error>
+                                    <try>
+                                        <with-attribute key="NAME" value="${ENTITY_TYPE_NAME}">
+                                            <crn location="export-entity-type.crn"/>
+                                        </with-attribute>
+                                    </try>
+                                    <catch>
+                                        <echo-ln>ERROR Failed to export entity type ${ENTITY_TYPE_NAME} due to exception: ${Attributes.EXCEPTION}</echo-ln>
+                                        <log logger-name="org.jasig.portal.io.export_internal" level="error" exception="${Attributes.EXCEPTION}">Failed to export entity type ${ENTITY_TYPE_NAME} due to exception</log>
+                                    </catch>
+                                </handle-error>
+                            </concurrent>
+                        </subtasks>
+                    </sql-query>
+                </thread-pool>
+            </when>
+    
+        </choose>
+        <echo-ln>Export of ${ENTITY_TYPE} Complete: ${groovy(System.currentTimeMillis() - EXPORT_START_TIME)}</echo-ln>
+    </subtasks>
+</with>

@@ -1,0 +1,36 @@
+
+<permission-set script="classpath://org/jasig/portal/io/import-permission_set_v3-1.crn">
+  <owner>org.jasig.portal.channels.groupsmanager.CGroupsManager</owner>
+  <principal-type>org.jasig.portal.groups.IEntityGroup</principal-type>
+  <principal> 
+    <group>Faculty</group> 
+  </principal>
+  <activity>VIEW</activity>
+  <target permission-type="GRANT"> 
+    <group>Associate Professors</group> 
+  </target>
+  <target permission-type="GRANT"> 
+    <group>Faculty</group> 
+  </target>
+  <target permission-type="GRANT"> 
+    <group>Full Time</group> 
+  </target>
+  <target permission-type="GRANT"> 
+    <group>Graduate Students</group> 
+  </target>
+  <target permission-type="GRANT"> 
+    <group>Part Time</group> 
+  </target>
+  <target permission-type="GRANT"> 
+    <group>Prospective Students</group> 
+  </target>
+  <target permission-type="GRANT"> 
+    <group>Students</group> 
+  </target>
+  <target permission-type="GRANT"> 
+    <group>Tenured Professors</group> 
+  </target>
+  <target permission-type="GRANT"> 
+    <group>Undergraduate Students</group> 
+  </target>
+</permission-set>

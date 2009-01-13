@@ -1,0 +1,11 @@
+
+<group script="classpath://org/jasig/portal/io/import-group_membership_v3-0.crn">
+  <name>Guests</name>
+  <entity-type>org.jasig.portal.security.IPerson</entity-type>
+  <creator>system</creator>
+  <description>A group of people representing un-authenticated users</description>
+  <children>
+    <literal>guest</literal>
+    <literal>guest-lo</literal>
+  </children>
+</group>

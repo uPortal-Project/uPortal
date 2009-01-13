@@ -1,0 +1,10 @@
+
+<group script="classpath://org/jasig/portal/io/import-group_membership_v3-0.crn">
+  <name>uPortal</name>
+  <entity-type>org.jasig.portal.ChannelDefinition</entity-type>
+  <creator>system</creator>
+  <description>uPortal-related</description>
+  <children>
+    <group>Channel Types</group>
+  </children>
+</group>

@@ -2,13 +2,13 @@
 <layout script="classpath://org/jasig/portal/io/import-layout_v3-0.crn" username="guest-lo">
   <root unremovable="Y" immutable="N" hidden="N" name="Root folder">
     <header unremovable="Y" immutable="Y" hidden="N" name="Header folder">
-      <channel fname="header"/>
-      <channel fname="portal/login/general"/>
-      <channel fname="session-locales-selector"/>
-      <channel fname="fragment-admin-exit"/>
+      <channel unremovable="" immutable="" hidden="" fname="header"/>
+      <channel unremovable="" immutable="" hidden="" fname="portal/login/general"/>
+      <channel unremovable="" immutable="" hidden="" fname="session-locales-selector"/>
+      <channel unremovable="" immutable="" hidden="" fname="fragment-admin-exit"/>
     </header>
     <footer unremovable="N" immutable="N" hidden="N" name="Footer folder">
-      <channel fname="footer"/>
+      <channel unremovable="" immutable="" hidden="" fname="footer"/>
     </footer>
     <tab unremovable="N" immutable="N" hidden="N" name="Welcome">
       <column unremovable="N" immutable="N" hidden="N" name="Column">
@@ -16,17 +16,17 @@
           <name>width</name>
           <value>60%</value>
         </structure-attribute>
-        <channel fname="what-is-uportal"/>
-        <channel fname="logging-in"/>
+        <channel unremovable="" immutable="" hidden="" fname="what-is-uportal"/>
+        <channel unremovable="" immutable="" hidden="" fname="logging-in"/>
       </column>
       <column unremovable="N" immutable="N" hidden="N" name="Column">
         <structure-attribute type="folder">
           <name>width</name>
           <value>40%</value>
         </structure-attribute>
-        <channel fname="google-portlet"/>
-        <channel fname="uportal-links"/>
-        <channel fname="please-register"/>
+        <channel unremovable="" immutable="" hidden="" fname="google-portlet"/>
+        <channel unremovable="" immutable="" hidden="" fname="uportal-links"/>
+        <channel unremovable="" immutable="" hidden="" fname="please-register"/>
       </column>
     </tab>
   </root>

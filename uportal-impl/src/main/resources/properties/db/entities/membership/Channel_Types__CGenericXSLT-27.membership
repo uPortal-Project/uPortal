@@ -1,7 +1,0 @@
-
-<membership script="classpath://org/jasig/portal/io/import-membership_v2-6.crn">
-  <parent>Channel Types</parent>
-  <child> 
-    <group>CGenericXSLT</group> 
-  </child>
-</membership>

@@ -10,7 +10,7 @@
 		<groovy>
 			<script>GROUPS.add(record);</script>
 			<subtasks>
-                <log>SmartLdap adding record for group:  ${groovy(record.getGroup().getName())}</log>
+                <log logger-name="org.jasig.portal.groups.smartldap.init" >SmartLdap adding record for group:  ${groovy(record.getGroup().getName())}</log>
 			</subtasks>
 		</groovy>
 	</subtasks>

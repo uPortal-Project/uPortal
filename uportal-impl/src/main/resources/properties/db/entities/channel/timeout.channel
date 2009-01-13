@@ -1,5 +1,5 @@
 
-<channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-0.crn">
+<channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-1.crn">
   <title>Timeout</title>
   <name>Timeout</name>
   <fname>timeout</fname>
@@ -20,4 +20,5 @@
     <group>Guests</group>
   </groups>
   <parameters/>
+  <portletPreferences/>
 </channel-definition>

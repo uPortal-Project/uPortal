@@ -1,9 +1,7 @@
 <properties location="classpath://properties/db/entities/import.properties"> 
     <with>
-        <attribute key="THREAD_COUNT">1</attribute>
-        <attribute key="Attributes.CACHE_MODEL">ALL</attribute>
         <attribute key="IMPORT_START_TIME">${groovy(System.currentTimeMillis())}</attribute>
-        <attribute key="Attributes.CACHE">${groovy(new org.jasig.portal.io.LoggingLRUMap(500))}</attribute>
+        <attribute key="Attributes.CACHE">${groovy(new org.jasig.portal.io.LoggingLRUMap(${CACHE_SIZE}))}</attribute>
         <attribute key="PORTAL_CONTEXT">${groovy(org.jasig.portal.spring.PortalApplicationContextLocator.getApplicationContext())}</attribute>
         <subtasks>
             <groovy>
@@ -12,8 +10,8 @@
                 </script>
             </groovy>
             <with>
-                <attribute key="SqlAttributes.DATA_SOURCE">${groovy(PORTAL_CONTEXT.getBean('PortalDb'))}</attribute>
-                <attribute key="SqlAttributes.TRANSACTION_MANAGER">${groovy(PORTAL_CONTEXT.getBean('transactionManager'))}</attribute>
+                <attribute key="${groovy(org.danann.cernunnos.sql.SqlAttributes.DATA_SOURCE)}">${groovy(PORTAL_CONTEXT.getBean('PortalDb'))}</attribute>
+                <attribute key="${groovy(org.danann.cernunnos.sql.SqlAttributes.TRANSACTION_MANAGER)}">${groovy(PORTAL_CONTEXT.getBean('transactionManager'))}</attribute>
                 <subtasks>
                     <with-attribute key="FILE_PATTERN" value="${org.jasig.portal.io.FilePatternPhrase(${$2})}">
         
@@ -21,165 +19,347 @@
                         <echo-ln>FILE_PATTERN=${FILE_PATTERN}</echo-ln>
         
                         <!-- entity-types -->
-                        <file-iterator dir="${$1}" includes="**/*.entity-type">
-                            <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
-                                <echo-ln>Import Entity Type:  ${Attributes.LOCATION}</echo-ln>
-                                <with-attribute key="Attributes.NODE" value="${doc(${$1}/${Attributes.LOCATION})}">
-                                    <crn location="${valueOf(@script)}"/>
-                                </with-attribute>
-                            </if>
-                        </file-iterator>
+                        <thread-pool threads="${req(THREAD_COUNT)}">
+                            <file-iterator dir="${$1}" includes="**/*.entity-type">
+                                <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
+                                    <concurrent>
+                                        <handle-error>
+                                            <try>
+                                                <echo-ln>Import Entity Type:  ${Attributes.LOCATION}</echo-ln>
+                                                <with-attribute key="Attributes.NODE" value="${parseXml(${Attributes.LOCATION})}">
+                                                    <crn location="${valueOf(@script)}"/>
+                                                </with-attribute>
+                                            </try>
+                                            <catch>
+                                                <echo-ln>ERROR Failed to import Entity Type from:  ${Attributes.LOCATION} due to exception: ${Attributes.EXCEPTION}</echo-ln>
+                                                <log logger-name="org.jasig.portal.io.import" level="error" exception="${Attributes.EXCEPTION}">Failed to import Entity Type from:  ${Attributes.LOCATION} due to exception</log>
+                                            </catch>
+                                        </handle-error>
+                                    </concurrent>
+                                </if>
+                            </file-iterator>
+                        </thread-pool>
         
                         <!-- structures -->
-                        <file-iterator dir="${$1}" includes="**/*.structure">
-                            <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
-                                <echo-ln>Import Structure:  ${Attributes.LOCATION}</echo-ln>
-                                <with-attribute key="Attributes.NODE" value="${doc(${$1}/${Attributes.LOCATION})}">
-                                    <crn location="${valueOf(@script)}"/>
-                                </with-attribute>
-                            </if>
-                        </file-iterator>
+                        <thread-pool threads="${req(THREAD_COUNT)}">
+                            <file-iterator dir="${$1}" includes="**/*.structure">
+                                <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
+                                    <concurrent>
+                                        <handle-error>
+                                            <try>
+                                                <echo-ln>Import Structure:  ${Attributes.LOCATION}</echo-ln>
+                                                <with-attribute key="Attributes.NODE" value="${parseXml(${Attributes.LOCATION})}">
+                                                    <crn location="${valueOf(@script)}"/>
+                                                </with-attribute>
+                                            </try>
+                                            <catch>
+                                                <echo-ln>ERROR Failed to import Structure from:  ${Attributes.LOCATION} due to exception: ${Attributes.EXCEPTION}</echo-ln>
+                                                <log logger-name="org.jasig.portal.io.import" level="error" exception="${Attributes.EXCEPTION}">Failed to import Structure from:  ${Attributes.LOCATION} due to exception</log>
+                                            </catch>
+                                        </handle-error>
+                                    </concurrent>
+                                </if>
+                            </file-iterator>
+                        </thread-pool>
                         
                         <!-- themes -->
-                        <file-iterator dir="${$1}" includes="**/*.theme">
-                            <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
-                                <echo-ln>Import Theme:  ${Attributes.LOCATION}</echo-ln>
-                                <with-attribute key="Attributes.NODE" value="${doc(${$1}/${Attributes.LOCATION})}">
-                                    <crn location="${valueOf(@script)}"/>
-                                </with-attribute>
-                            </if>
-                        </file-iterator>
+                        <thread-pool threads="${req(THREAD_COUNT)}">
+                            <file-iterator dir="${$1}" includes="**/*.theme">
+                                <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
+                                    <concurrent>
+                                        <handle-error>
+                                            <try>
+                                                <echo-ln>Import Theme:  ${Attributes.LOCATION}</echo-ln>
+                                                <with-attribute key="Attributes.NODE" value="${parseXml(${Attributes.LOCATION})}">
+                                                    <crn location="${valueOf(@script)}"/>
+                                                </with-attribute>
+                                            </try>
+                                            <catch>
+                                                <echo-ln>ERROR Failed to import Theme from:  ${Attributes.LOCATION} due to exception: ${Attributes.EXCEPTION}</echo-ln>
+                                                <log logger-name="org.jasig.portal.io.import" level="error" exception="${Attributes.EXCEPTION}">Failed to import Theme from:  ${Attributes.LOCATION} due to exception</log>
+                                            </catch>
+                                        </handle-error>
+                                    </concurrent>
+                                </if>
+                            </file-iterator>
+                        </thread-pool>
         
                         <!-- template-users -->
-                        <file-iterator dir="${$1}" includes="**/*.template-user">
-                            <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
-                                <echo-ln>Import Template User:  ${Attributes.LOCATION}</echo-ln>
-                                <with-attribute key="Attributes.NODE" value="${doc(${$1}/${Attributes.LOCATION})}">
-                                    <crn location="${valueOf(@script)}"/>
-                                </with-attribute>
-                            </if>
-                        </file-iterator>
+                        <thread-pool threads="${req(THREAD_COUNT)}">
+                            <file-iterator dir="${$1}" includes="**/*.template-user">
+                                <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
+                                    <concurrent>
+                                        <handle-error>
+                                            <try>
+                                                <echo-ln>Import Template User:  ${Attributes.LOCATION}</echo-ln>
+                                                <with-attribute key="Attributes.NODE" value="${parseXml(${Attributes.LOCATION})}">
+                                                    <crn location="${valueOf(@script)}"/>
+                                                </with-attribute>
+                                            </try>
+                                            <catch>
+                                                <echo-ln>ERROR Failed to import Template User from:  ${Attributes.LOCATION} due to exception: ${Attributes.EXCEPTION}</echo-ln>
+                                                <log logger-name="org.jasig.portal.io.import" level="error" exception="${Attributes.EXCEPTION}">Failed to import Template User from:  ${Attributes.LOCATION} due to exception</log>
+                                            </catch>
+                                        </handle-error>
+                                    </concurrent>
+                                </if>
+                            </file-iterator>
+                        </thread-pool>
         
                         <!-- users -->
                         <thread-pool threads="${req(THREAD_COUNT)}">
                             <file-iterator dir="${$1}" includes="**/*.user">
                                 <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
                                     <concurrent>
-                                        <echo-ln>Import User:  ${Attributes.LOCATION}</echo-ln>
-                                        <with-attribute key="Attributes.NODE" value="${doc(${$1}/${Attributes.LOCATION})}">
-                                            <crn location="${valueOf(@script)}"/>
-                                        </with-attribute>
+                                        <handle-error>
+                                            <try>
+                                                <echo-ln>Import User:  ${Attributes.LOCATION}</echo-ln>
+                                                <with-attribute key="Attributes.NODE" value="${parseXml(${Attributes.LOCATION})}">
+                                                    <crn location="${valueOf(@script)}"/>
+                                                </with-attribute>
+                                            </try>
+                                            <catch>
+                                                <echo-ln>ERROR Failed to import User from:  ${Attributes.LOCATION} due to exception: ${Attributes.EXCEPTION}</echo-ln>
+                                                <log logger-name="org.jasig.portal.io.import" level="error" exception="${Attributes.EXCEPTION}">Failed to import User from:  ${Attributes.LOCATION} due to exception</log>
+                                            </catch>
+                                        </handle-error>
                                     </concurrent>
                                 </if>
                             </file-iterator>
                         </thread-pool>
         
                         <!-- groups -->
-                        <file-iterator dir="${$1}" includes="**/*.group">
-                            <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
-                                <echo-ln>Import Group:  ${Attributes.LOCATION}</echo-ln>
-                                <with-attribute key="Attributes.NODE" value="${doc(${$1}/${Attributes.LOCATION})}">
-                                    <crn location="${valueOf(@script)}"/>
-                                </with-attribute>
-                            </if>
-                        </file-iterator>
+                        <thread-pool threads="${req(THREAD_COUNT)}">
+                            <file-iterator dir="${$1}" includes="**/*.group">
+                                <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
+                                    <concurrent>
+                                        <handle-error>
+                                            <try>
+                                                <echo-ln>Import Group:  ${Attributes.LOCATION}</echo-ln>
+                                                <with-attribute key="Attributes.NODE" value="${parseXml(${Attributes.LOCATION})}">
+                                                    <crn location="${valueOf(@script)}"/>
+                                                </with-attribute>
+                                            </try>
+                                            <catch>
+                                                <echo-ln>ERROR Failed to import Group from:  ${Attributes.LOCATION} due to exception: ${Attributes.EXCEPTION}</echo-ln>
+                                                <log logger-name="org.jasig.portal.io.import" level="error" exception="${Attributes.EXCEPTION}">Failed to import Group from:  ${Attributes.LOCATION} due to exception</log>
+                                            </catch>
+                                        </handle-error>
+                                    </concurrent>
+                                </if>
+                            </file-iterator>
+                        </thread-pool>
         
                         <!-- group_memberships -->
                         <!-- this is a two pass import -->
-                        <file-iterator dir="${$1}" includes="**/*.group_membership">
-                            <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
-                                <echo-ln>Import Group:  ${Attributes.LOCATION}</echo-ln>
-                                <with>
-                                    <attribute key="Attributes.NODE">${doc(${$1}/${Attributes.LOCATION})}</attribute>
-                                    <attribute key="IMPORT_ACTION">GROUP</attribute>
-                                    <subtasks>
-                                        <crn location="${valueOf(@script)}"/>
-                                    </subtasks>
-                                </with>
-                            </if>
-                        </file-iterator>
-                        <file-iterator dir="${$1}" includes="**/*.group_membership">
-                            <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
-                                <echo-ln>Import Memberships:  ${Attributes.LOCATION}</echo-ln>
-                                <with>
-                                    <attribute key="Attributes.NODE">${doc(${$1}/${Attributes.LOCATION})}</attribute>
-                                    <attribute key="IMPORT_ACTION">MEMBERS</attribute>
-                                    <subtasks>
-                                        <crn location="${valueOf(@script)}"/>
-                                    </subtasks>
-                                </with>
-                            </if>
-                        </file-iterator>
+                        <thread-pool threads="${req(THREAD_COUNT)}">
+                            <file-iterator dir="${$1}" includes="**/*.group_membership">
+                                <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
+                                    <concurrent>
+                                        <handle-error>
+                                            <try>
+                                                <echo-ln>Import Group:  ${Attributes.LOCATION}</echo-ln>
+                                                <with>
+                                                    <attribute key="Attributes.NODE">${parseXml(${Attributes.LOCATION})}</attribute>
+                                                    <attribute key="IMPORT_ACTION">GROUP</attribute>
+                                                    <subtasks>
+                                                        <crn location="${valueOf(@script)}"/>
+                                                    </subtasks>
+                                                </with>
+                                            </try>
+                                            <catch>
+                                                <echo-ln>ERROR Failed to import Group from:  ${Attributes.LOCATION} due to exception: ${Attributes.EXCEPTION}</echo-ln>
+                                                <log logger-name="org.jasig.portal.io.import" level="error" exception="${Attributes.EXCEPTION}">Failed to import Group from:  ${Attributes.LOCATION} due to exception</log>
+                                            </catch>
+                                        </handle-error>
+                                    </concurrent>
+                                </if>
+                            </file-iterator>
+                        </thread-pool>
+                        <thread-pool threads="${req(THREAD_COUNT)}">
+                            <file-iterator dir="${$1}" includes="**/*.group_membership">
+                                <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
+                                    <concurrent>
+                                        <handle-error>
+                                            <try>
+                                                <echo-ln>Import Memberships:  ${Attributes.LOCATION}</echo-ln>
+                                                <with>
+                                                    <attribute key="Attributes.NODE">${parseXml(${Attributes.LOCATION})}</attribute>
+                                                    <attribute key="IMPORT_ACTION">MEMBERS</attribute>
+                                                    <subtasks>
+                                                        <crn location="${valueOf(@script)}"/>
+                                                    </subtasks>
+                                                </with>
+                                            </try>
+                                            <catch>
+                                                <echo-ln>ERROR Failed to import Memberships from:  ${Attributes.LOCATION} due to exception: ${Attributes.EXCEPTION}</echo-ln>
+                                                <log logger-name="org.jasig.portal.io.import" level="error" exception="${Attributes.EXCEPTION}">Failed to import Memberships from:  ${Attributes.LOCATION} due to exception</log>
+                                            </catch>
+                                        </handle-error>
+                                    </concurrent>
+                                </if>
+                            </file-iterator>
+                        </thread-pool>
         
                         <!-- channel-types -->
-                        <file-iterator dir="${$1}" includes="**/*.channel-type">
-                            <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
-                                <echo-ln>Import Channel Type:  ${Attributes.LOCATION}</echo-ln>
-                                <with-attribute key="Attributes.NODE" value="${doc(${$1}/${Attributes.LOCATION})}">
-                                    <crn location="${valueOf(@script)}"/>
-                                </with-attribute>
-                            </if>
-                        </file-iterator>
+                        <thread-pool threads="${req(THREAD_COUNT)}">
+                            <file-iterator dir="${$1}" includes="**/*.channel-type">
+                                <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
+                                    <concurrent>
+                                        <handle-error>
+                                            <try>
+                                                <echo-ln>Import Channel Type:  ${Attributes.LOCATION}</echo-ln>
+                                                <with-attribute key="Attributes.NODE" value="${parseXml(${Attributes.LOCATION})}">
+                                                    <crn location="${valueOf(@script)}"/>
+                                                </with-attribute>
+                                            </try>
+                                            <catch>
+                                                <echo-ln>ERROR Failed to import Channel Type from:  ${Attributes.LOCATION} due to exception: ${Attributes.EXCEPTION}</echo-ln>
+                                                <log logger-name="org.jasig.portal.io.import" level="error" exception="${Attributes.EXCEPTION}">Failed to import Channel Type from:  ${Attributes.LOCATION} due to exception</log>
+                                            </catch>
+                                        </handle-error>
+                                    </concurrent>
+                                </if>
+                            </file-iterator>
+                        </thread-pool>
                                                         
                         <!-- channels -->
-                        <file-iterator dir="${$1}" includes="**/*.channel">
-                            <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
-                                <echo-ln>Import Channel:  ${Attributes.LOCATION}</echo-ln>
-                                <with-attribute key="Attributes.NODE" value="${doc(${$1}/${Attributes.LOCATION})}">
-                                    <crn location="${valueOf(@script)}"/>
-                                </with-attribute>
-                            </if>
-                        </file-iterator>
+                        <thread-pool threads="${req(THREAD_COUNT)}">
+                            <file-iterator dir="${$1}" includes="**/*.channel">
+                                <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
+                                    <concurrent>
+                                        <handle-error>
+                                            <try>
+                                                <echo-ln>Import Channel:  ${Attributes.LOCATION}</echo-ln>
+                                                <with-attribute key="Attributes.NODE" value="${parseXml(${Attributes.LOCATION})}">
+                                                    <crn location="${valueOf(@script)}"/>
+                                                </with-attribute>
+                                            </try>
+                                            <catch>
+                                                <echo-ln>ERROR Failed to import Channel from:  ${Attributes.LOCATION} due to exception: ${Attributes.EXCEPTION}</echo-ln>
+                                                <log logger-name="org.jasig.portal.io.import" level="error" exception="${Attributes.EXCEPTION}">Failed to import Channel from:  ${Attributes.LOCATION} due to exception</log>
+                                            </catch>
+                                        </handle-error>
+                                    </concurrent>
+                                </if>
+                            </file-iterator>
+                        </thread-pool>
         
                         <!-- memberships -->
-                        <file-iterator dir="${$1}" includes="**/*.membership">
-                            <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
-                                <echo-ln>Import Membership:  ${Attributes.LOCATION}</echo-ln>
-                                <with-attribute key="Attributes.NODE" value="${doc(${$1}/${Attributes.LOCATION})}">
-                                    <crn location="${valueOf(@script)}"/>
-                                </with-attribute>
-                            </if>
-                        </file-iterator>
+                        <thread-pool threads="${req(THREAD_COUNT)}">
+                            <file-iterator dir="${$1}" includes="**/*.membership">
+                                <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
+                                    <concurrent>
+                                        <handle-error>
+                                            <try>
+                                                <echo-ln>Import Membership:  ${Attributes.LOCATION}</echo-ln>
+                                                <with-attribute key="Attributes.NODE" value="${parseXml(${Attributes.LOCATION})}">
+                                                    <crn location="${valueOf(@script)}"/>
+                                                </with-attribute>
+                                            </try>
+                                            <catch>
+                                                <echo-ln>ERROR Failed to import Membership from:  ${Attributes.LOCATION} due to exception: ${Attributes.EXCEPTION}</echo-ln>
+                                                <log logger-name="org.jasig.portal.io.import" level="error" exception="${Attributes.EXCEPTION}">Failed to import Membership from:  ${Attributes.LOCATION} due to exception</log>
+                                            </catch>
+                                        </handle-error>
+                                    </concurrent>
+                                </if>
+                            </file-iterator>
+                        </thread-pool>
         
                         <!-- permissions -->
-                        <file-iterator dir="${$1}" includes="**/*.permission">
-                            <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
-                                <echo-ln>Import Permission:  ${Attributes.LOCATION}</echo-ln>
-                                <with-attribute key="Attributes.NODE" value="${doc(${$1}/${Attributes.LOCATION})}">
-                                    <crn location="${valueOf(@script)}"/>
-                                </with-attribute>
-                            </if>
-                        </file-iterator>
+                        <thread-pool threads="${req(THREAD_COUNT)}">
+                            <file-iterator dir="${$1}" includes="**/*.permission">
+                                <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
+                                    <concurrent>
+                                        <handle-error>
+                                            <try>
+                                                <echo-ln>Import Permission:  ${Attributes.LOCATION}</echo-ln>
+                                                <with-attribute key="Attributes.NODE" value="${parseXml(${Attributes.LOCATION})}">
+                                                    <crn location="${valueOf(@script)}"/>
+                                                </with-attribute>
+                                            </try>
+                                            <catch>
+                                                <echo-ln>ERROR Failed to import Permission from:  ${Attributes.LOCATION} due to exception: ${Attributes.EXCEPTION}</echo-ln>
+                                                <log logger-name="org.jasig.portal.io.import" level="error" exception="${Attributes.EXCEPTION}">Failed to import Permission from:  ${Attributes.LOCATION} due to exception</log>
+                                            </catch>
+                                        </handle-error>
+                                    </concurrent>
+                                </if>
+                            </file-iterator>
+                        </thread-pool>
+        
+                        <!-- permission_sets -->
+                        <thread-pool threads="${req(THREAD_COUNT)}">
+                            <file-iterator dir="${$1}" includes="**/*.permission_set">
+                                <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
+                                    <concurrent>
+                                        <handle-error>
+                                            <try>
+                                                <echo-ln>Import Permission Set: ${Attributes.LOCATION}</echo-ln>
+                                                <with-attribute key="Attributes.NODE" value="${parseXml(${Attributes.LOCATION})}">
+                                                    <crn location="${valueOf(@script)}"/>
+                                                </with-attribute>
+                                            </try>
+                                            <catch>
+                                                <echo-ln>ERROR Failed to import Permission Set from:  ${Attributes.LOCATION} due to exception: ${Attributes.EXCEPTION}</echo-ln>
+                                                <log logger-name="org.jasig.portal.io.import" level="error" exception="${Attributes.EXCEPTION}">Failed to import Permission Set from:  ${Attributes.LOCATION} due to exception</log>
+                                            </catch>
+                                        </handle-error>
+                                    </concurrent>
+                                </if>
+                            </file-iterator>
+                        </thread-pool>
         
                         <!-- fragment-layouts -->
                         <thread-pool threads="${req(THREAD_COUNT)}">
                             <file-iterator dir="${$1}" includes="**/*.fragment-layout">
                                 <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
                                     <concurrent>
-                                        <echo-ln>Import DLM Fragment Layout:  ${Attributes.LOCATION}</echo-ln>
-                                        <with-attribute key="Attributes.NODE" value="${doc(${$1}/${Attributes.LOCATION})}">
-                                            <crn location="${valueOf(@script)}"/>
-                                        </with-attribute>
+                                        <handle-error>
+                                            <try>
+                                                <echo-ln>Import DLM Fragment Layout:  ${Attributes.LOCATION}</echo-ln>
+                                                <with-attribute key="Attributes.NODE" value="${parseXml(${Attributes.LOCATION})}">
+                                                    <crn location="${valueOf(@script)}"/>
+                                                </with-attribute>
+                                            </try>
+                                            <catch>
+                                                <echo-ln>ERROR Failed to import DLM Fragment Layout from:  ${Attributes.LOCATION} due to exception: ${Attributes.EXCEPTION}</echo-ln>
+                                                <log logger-name="org.jasig.portal.io.import" level="error" exception="${Attributes.EXCEPTION}">Failed to import DLM Fragment Layout from:  ${Attributes.LOCATION} due to exception</log>
+                                            </catch>
+                                        </handle-error>
                                     </concurrent>
                                 </if>
                             </file-iterator>
                         </thread-pool>
         
                         <!-- layouts -->
-                        <file-iterator dir="${$1}" includes="**/*.layout">
-                            <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
-                                <echo-ln>Import Layout:  ${Attributes.LOCATION}</echo-ln>
-                                <with-attribute key="Attributes.NODE" value="${doc(${$1}/${Attributes.LOCATION})}">
-                                    <crn location="${valueOf(@script)}"/>
-                                </with-attribute>
-                            </if>
-                        </file-iterator>
+                        <thread-pool threads="${req(THREAD_COUNT)}">
+                            <file-iterator dir="${$1}" includes="**/*.layout">
+                                <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
+                                    <concurrent>
+                                        <handle-error>
+                                            <try>
+                                                <echo-ln>Import Layout:  ${Attributes.LOCATION}</echo-ln>
+                                                <with-attribute key="Attributes.NODE" value="${parseXml(${Attributes.LOCATION})}">
+                                                    <crn location="${valueOf(@script)}"/>
+                                                </with-attribute>
+                                            </try>
+                                            <catch>
+                                                <echo-ln>ERROR Failed to import Layout from:  ${Attributes.LOCATION} due to exception: ${Attributes.EXCEPTION}</echo-ln>
+                                                <log logger-name="org.jasig.portal.io.import" level="error" exception="${Attributes.EXCEPTION}">Failed to import Layout from:  ${Attributes.LOCATION} due to exception</log>
+                                            </catch>
+                                        </handle-error>
+                                    </concurrent>
+                                </if>
+                            </file-iterator>
+                        </thread-pool>
         
                         <!-- batches -->
                         <file-iterator dir="${$1}" includes="**/*.batch">
                             <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
                                 <echo-ln>Import Batch:  ${Attributes.LOCATION}</echo-ln>
-                                <node-iterator xpath="*" source="${doc(${$1}/${Attributes.LOCATION})}">
+                                <node-iterator xpath="*" source="${parseXml(${Attributes.LOCATION})}">
                                     <echo-ln>-- ${valueOf(name())}</echo-ln>
                                     <crn location="${valueOf(@script)}"/>
                                 </node-iterator>

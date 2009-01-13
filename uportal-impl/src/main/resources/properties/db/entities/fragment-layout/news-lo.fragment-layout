@@ -2,13 +2,13 @@
 <layout script="classpath://org/jasig/portal/io/import-layout_v3-0.crn" username="news-lo">
   <root unremovable="Y" immutable="N" hidden="N" name="Root folder">
     <header unremovable="Y" immutable="Y" hidden="N" name="Header folder">
-      <channel fname="header"/>
-      <channel fname="portal/login/general"/>
-      <channel fname="session-locales-selector"/>
-      <channel fname="fragment-admin-exit"/>
+      <channel unremovable="" immutable="" hidden="" fname="header"/>
+      <channel unremovable="" immutable="" hidden="" fname="portal/login/general"/>
+      <channel unremovable="" immutable="" hidden="" fname="session-locales-selector"/>
+      <channel unremovable="" immutable="" hidden="" fname="fragment-admin-exit"/>
     </header>
     <footer unremovable="N" immutable="N" hidden="N" name="Footer folder">
-      <channel fname="footer"/>
+      <channel unremovable="" immutable="" hidden="" fname="footer"/>
     </footer>
     <tab unremovable="N" immutable="N" hidden="N" name="News">
       <column unremovable="N" immutable="N" hidden="N" name="Column">
@@ -16,16 +16,16 @@
           <name>width</name>
           <value>50%</value>
         </structure-attribute>
-        <channel fname="ny-times-education"/>
-        <channel fname="chronicle-wired"/>
+        <channel unremovable="" immutable="" hidden="" fname="ny-times-education"/>
+        <channel unremovable="" immutable="" hidden="" fname="chronicle-wired"/>
       </column>
       <column unremovable="N" immutable="N" hidden="N" name="Column">
         <structure-attribute type="folder">
           <name>width</name>
           <value>50%</value>
         </structure-attribute>
-        <channel fname="salon.com"/>
-        <channel fname="sports-illustrated"/>
+        <channel unremovable="" immutable="" hidden="" fname="salon.com"/>
+        <channel unremovable="" immutable="" hidden="" fname="sports-illustrated"/>
       </column>
     </tab>
   </root>

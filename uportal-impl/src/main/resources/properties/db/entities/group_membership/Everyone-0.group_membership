@@ -1,0 +1,14 @@
+
+<group script="classpath://org/jasig/portal/io/import-group_membership_v3-0.crn">
+  <name>Everyone</name>
+  <entity-type>org.jasig.portal.security.IPerson</entity-type>
+  <creator>system</creator>
+  <description>All persons</description>
+  <children>
+    <group>Faculty</group>
+    <group>Guests</group>
+    <group>Staff</group>
+    <group>Students</group>
+    <group>PAGS Root</group>
+  </children>
+</group>

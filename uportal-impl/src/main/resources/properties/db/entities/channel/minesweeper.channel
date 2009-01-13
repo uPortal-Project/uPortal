@@ -1,5 +1,5 @@
 
-<channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-0.crn">
+<channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-1.crn">
   <title>Minesweeper</title>
   <name>Minesweeper</name>
   <fname>minesweeper</fname>
@@ -92,4 +92,5 @@
       <ovrd>N</ovrd> 
     </parameter>
   </parameters>
+  <portletPreferences/>
 </channel-definition>

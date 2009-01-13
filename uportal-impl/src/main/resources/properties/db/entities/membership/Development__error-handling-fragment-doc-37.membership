@@ -1,7 +1,0 @@
-
-<membership script="classpath://org/jasig/portal/io/import-membership_v2-6.crn">
-  <parent>Development</parent>
-  <child> 
-    <channel>error-handling-fragment-doc</channel> 
-  </child>
-</membership>

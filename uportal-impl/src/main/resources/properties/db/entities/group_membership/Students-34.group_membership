@@ -1,0 +1,13 @@
+
+<group script="classpath://org/jasig/portal/io/import-group_membership_v3-0.crn">
+  <name>Students</name>
+  <entity-type>org.jasig.portal.security.IPerson</entity-type>
+  <creator>system</creator>
+  <description>All enrolled university students</description>
+  <children>
+    <group>Graduate Students</group>
+    <group>Prospective Students</group>
+    <group>Undergraduate Students</group>
+    <literal>student</literal>
+  </children>
+</group>

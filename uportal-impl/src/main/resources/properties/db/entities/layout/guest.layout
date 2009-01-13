@@ -2,10 +2,10 @@
 <layout script="classpath://org/jasig/portal/io/import-layout_v3-0.crn" username="guest">
   <root unremovable="Y" immutable="N" hidden="N" name="Root folder">
     <header unremovable="Y" immutable="Y" hidden="N" name="Header folder">
-      <channel fname="header"/>
-      <channel fname="portal/login/general"/>
-      <channel fname="session-locales-selector"/>
-      <channel fname="fragment-admin"/>
+      <channel unremovable="" immutable="" hidden="" fname="header"/>
+      <channel unremovable="" immutable="" hidden="" fname="portal/login/general"/>
+      <channel unremovable="" immutable="" hidden="" fname="session-locales-selector"/>
+      <channel unremovable="" immutable="" hidden="" fname="fragment-admin"/>
     </header>
     <tab unremovable="N" immutable="N" hidden="N" name="uPortal News">
       <column unremovable="N" immutable="N" hidden="N" name="Column 1">
@@ -13,19 +13,19 @@
           <name>width</name>
           <value>40%</value>
         </structure-attribute>
-        <channel fname="uportal-news"/>
+        <channel unremovable="" immutable="" hidden="" fname="uportal-news"/>
       </column>
       <column unremovable="N" immutable="N" hidden="N" name="Column 2">
         <structure-attribute type="folder">
           <name>width</name>
           <value>60%</value>
         </structure-attribute>
-        <channel fname="jasig-news"/>
-        <channel fname="unicon-news"/>
+        <channel unremovable="" immutable="" hidden="" fname="jasig-news"/>
+        <channel unremovable="" immutable="" hidden="" fname="unicon-news"/>
       </column>
     </tab>
     <footer unremovable="Y" immutable="Y" hidden="N" name="Footer folder">
-      <channel fname="footer"/>
+      <channel unremovable="" immutable="" hidden="" fname="footer"/>
     </footer>
   </root>
   <profile name="Guest Web Browser Profile"> 

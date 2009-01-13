@@ -1,10 +1,20 @@
-<with-attribute key="Attributes.NODE" value="${doc(classpath://properties/dlm.xml)}">
-    <choose>
-        <when test="${isNull(${singleNode(dlm:fragment[@ownerID = '${USER_NAME}'])})}">
-            <return value="${groovy(false)}"/>
-        </when>
-        <otherwise>
-            <return value="${groovy(true)}"/>
-        </otherwise>
-    </choose>
-</with-attribute>
+<!-- 
+ | Parameters:
+ |      USER_NAME - The name of the user to test to see if it should be included
+ |
+ | Returns true or false based on if the USER_NAME is a layout owner 
+ +-->
+<cache key="IS_FRAG_OWNER" cache-key="${groovy('IS_FRAG_OWNER.' + USER_ID)}">
+    <factory>
+        <with-attribute key="Attributes.NODE" value="${parseXml(classpath://properties/dlm.xml)}">
+            <with-attribute key="OWNER_NODE" value="${singleNode(dlm:fragment[@ownerID = $USER_NAME])}">
+                <return value="${jexl(OWNER_NODE != null)}" />
+            </with-attribute>
+        </with-attribute>
+    </factory>
+    <subtasks>
+        <return value="${IS_FRAG_OWNER}" />
+    </subtasks>
+</cache>
+
+

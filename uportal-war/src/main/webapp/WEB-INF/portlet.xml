@@ -49,7 +49,7 @@
         <portlet-class>org.danann.cernunnos.runtime.web.CernunnosPortlet</portlet-class>
         <init-param>
             <name>contextConfigLocation</name>
-            <value>/WEB-INF/classes/properties/contexts/portlet/ExitFragmentAdministration-portlet.xml</value>
+            <value>classpath:/properties/contexts/portlet/ExitFragmentAdministration-portlet.xml</value>
         </init-param>
         <expiration-cache>-1</expiration-cache>
         <supports> 
@@ -72,7 +72,7 @@
         <portlet-class>org.danann.cernunnos.runtime.web.CernunnosPortlet</portlet-class>
         <init-param>
             <name>contextConfigLocation</name>
-            <value>/WEB-INF/classes/properties/contexts/portlet/FragmentAdministration-portlet.xml</value>
+            <value>classpath:/properties/contexts/portlet/FragmentAdministration-portlet.xml</value>
         </init-param>
         <expiration-cache>-1</expiration-cache>
         <supports> 

@@ -1,0 +1,12 @@
+
+<group script="classpath://org/jasig/portal/io/import-group_membership_v3-0.crn">
+  <name>Faculty</name>
+  <entity-type>org.jasig.portal.security.IPerson</entity-type>
+  <creator>system</creator>
+  <description>All university faculty</description>
+  <children>
+    <group>Associate Professors</group>
+    <group>Tenured Professors</group>
+    <literal>faculty</literal>
+  </children>
+</group>

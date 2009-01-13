@@ -9,7 +9,7 @@
             <choose>
                 <when test="${jexl(COUNT > 0)}">
                     <echo-ln>ERROR: The following groups reference this entity type:</echo-ln>
-                    <log level="error">Entity type '${req(NAME)}' has dependent groups;  the entity type will not be deleted.</log>
+                    <log logger-name="org.jasig.portal.io.delete-entity-type" level="error">Entity type '${req(NAME)}' has dependent groups;  the entity type will not be deleted.</log>
                     <sql-query>
                         <sql>SELECT group_name FROM up_group WHERE entity_type_id = ?</sql>
                         <parameter value="${req(TYPE_ID)}"/>
@@ -27,7 +27,7 @@
                                 <choose>
                             <when test="${jexl(COUNT > 0)}">
                                 <echo-ln>ERROR: Permissions reference this entity type</echo-ln>
-                                <log level="error">Entity type '${req(NAME)}' has dependent permissions;  the entity type will not be deleted.</log>
+                                <log logger-name="org.jasig.portal.io.delete-entity-type" level="error">Entity type '${req(NAME)}' has dependent permissions;  the entity type will not be deleted.</log>
                             </when>
                             <otherwise>
                                 <!-- Purge from the UP_ENTITY_TYPE table... -->

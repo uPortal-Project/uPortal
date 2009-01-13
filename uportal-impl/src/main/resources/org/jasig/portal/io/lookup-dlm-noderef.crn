@@ -1,0 +1,140 @@
+<!-- 
+ | Parameters:
+ |   USER_NAME - name of the user the node reference is for
+ |   DLM_NODEREF - DLM node reference 
+ |
+ | Returns a 3 index array with the first value being the fragment owner name,
+ | the second is a simple path to the refrenced node and if the node is a channel
+ | the third value will be the fname  
+ +-->
+<choose>
+    <when test="${jexl(DLM_NODEREF == null)}">
+        <return value="${jexl(null)}"/>
+    </when>
+    <otherwise>
+        <groovy>
+            <!-- 
+             | Valid DLM node references will follow one of the following patterns:
+             |
+             |  - n53
+             |  - u103l1n15
+             |
+             | The first is for nodes in your own layout (your 'PLF'), the second is for
+             | nodes that are part of a DLM fragment.
+             |
+             | The pattern below uses capture groups to parse the one or three values from the
+             | DLM node reference. For a PLF reference values 0 is null and value 1 is the id
+             | of the layout node. For a DLM reference value 0 is the fragment owner id, value
+             | 1 is the node id.
+             +-->
+            <script>
+                def parseUriTokens(descId) {
+                    def userNodeRef = ~/n([0-9]+)/
+                    def dlmNodeRef = ~/u([0-9]+)l[0-9]+n([0-9]+)/
+                    def dlmStructRef = ~/u([0-9]+)l[0-9]+s([0-9]+)/
+                    
+                    rslt = new String[3];
+                    
+                    matcher = userNodeRef.matcher(descId)
+                    if (matcher.matches()) {
+                        rslt[0] = null; // signals that we don't need to query for the username...
+                        rslt[1] = String.valueOf(matcher[0][1]);
+                        rslt[2] = null;
+                        return rslt;
+                    }
+                    
+                    matcher = dlmNodeRef.matcher(descId)
+                    if (matcher.matches()) {
+                        rslt[0] = String.valueOf(matcher[0][1]);
+                        rslt[1] = String.valueOf(matcher[0][2]);
+                        rslt[2] = null;
+                        return rslt;
+                    }
+                    
+                    matcher = dlmStructRef.matcher(descId)
+                    if (matcher.matches()) {
+                        rslt[0] = String.valueOf(matcher[0][1]);
+                        rslt[1] = String.valueOf(matcher[0][2]);
+                        rslt[2] = null;
+                        return rslt;
+                    }
+                    
+                    return null;
+                }
+            </script>
+            <subtasks>
+                <with-attribute key="NODEREF_DATA" value="${groovy(parseUriTokens(DLM_NODEREF))}">
+                    <choose>
+                        <when test="${jexl(NODEREF_DATA != null)}">
+                            <!-- 
+                             | First we need to replace NODEREF_DATA[0] with the owner 
+                             | (username) of the layout to which this node belongs.
+                             +-->
+                            <choose>
+                                <when test="${groovy(NODEREF_DATA[0] == null)}">
+                                    <!-- The owner is the current user... -->
+                                    <groovy>
+                                        <script>NODEREF_DATA[0] = USER_NAME;</script>
+                                    </groovy>
+                                </when>
+                                <otherwise>
+                                    <!-- We need a DLM fragment owner... -->
+                                    <with-attribute key="USER_ID" value="${jexl(NODEREF_DATA[0])}">
+                                        <with-attribute key="FRAGMENT_USER" value="${crn(lookup-user_name.crn)}">
+                                            <groovy>
+                                                <script>NODEREF_DATA[0] = FRAGMENT_USER;</script>
+                                            </groovy>
+                                        </with-attribute>
+                                    </with-attribute>
+                                </otherwise>
+                            </choose>
+                            <with>
+                                <attribute key="LAYOUT_USER_NAME">${jexl(NODEREF_DATA[0])}</attribute>
+                                <attribute key="LAYOUT_STRUCT_ID">${jexl(NODEREF_DATA[1])}</attribute>
+                                <subtasks>
+                                    <cache key="LAYOUT_NODE_INFO" cache-key="${groovy('LAYOUT_USER_NAME.' + LAYOUT_USER_NAME + ',LAYOUT_STRUCT_ID.' + LAYOUT_STRUCT_ID)}">
+                                        <factory>
+                                            <with>
+                                                <attribute key="LAYOUT_NODE_INFO">${groovy(new String[2])}</attribute>
+                                                <attribute key="Attributes.NODE">${crn(load-limited-layout.crn)}</attribute>
+                                                <subtasks>
+                                                    <with-attribute key="Attributes.NODE" value="${singleNode(//*[@struct-id = $LAYOUT_STRUCT_ID])}">
+                                                        <with>
+                                                            <attribute key="CHANNEL_PATH">${jexl(Attributes.NODE.getUniquePath())}</attribute>
+                                                            <attribute key="CHANNEL_FNAME">${valueOf(@fname)}</attribute>
+                                                            <subtasks>
+                                                                <groovy>
+                                                                    <script>
+                                                                        LAYOUT_NODE_INFO[0] = CHANNEL_PATH;
+                                                                        LAYOUT_NODE_INFO[1] = CHANNEL_FNAME;
+                                                                    </script>
+                                                                </groovy>
+                                                                <return value="${LAYOUT_NODE_INFO}" />
+                                                            </subtasks>
+                                                        </with>
+                                                    </with-attribute>
+                                                </subtasks>
+                                            </with>
+                                        </factory>
+                                        <subtasks>
+                                            <groovy>
+                                                <script>
+                                                    NODEREF_DATA[1] = LAYOUT_NODE_INFO[0];
+                                                    NODEREF_DATA[2] = LAYOUT_NODE_INFO[1];
+                                                </script>
+                                            </groovy>
+                                        </subtasks>
+                                    </cache>
+                                </subtasks>
+                            </with>
+                            <return value="${NODEREF_DATA}"/>
+                        </when>
+                        <otherwise>
+                            <return value="${jexl(null)}"/>
+                        </otherwise>
+                    </choose>
+                </with-attribute>
+            </subtasks>
+        </groovy>
+    </otherwise>
+</choose>

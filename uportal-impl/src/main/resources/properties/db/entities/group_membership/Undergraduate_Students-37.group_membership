@@ -1,0 +1,11 @@
+
+<group script="classpath://org/jasig/portal/io/import-group_membership_v3-0.crn">
+  <name>Undergraduate Students</name>
+  <entity-type>org.jasig.portal.security.IPerson</entity-type>
+  <creator>system</creator>
+  <description>All enrolled undergraduate students</description>
+  <children>
+    <group>Full Time</group>
+    <group>Part Time</group>
+  </children>
+</group>

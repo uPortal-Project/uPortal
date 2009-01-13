@@ -2,13 +2,13 @@
 <layout script="classpath://org/jasig/portal/io/import-layout_v3-0.crn" username="fragmentTemplate">
   <root unremovable="Y" immutable="N" hidden="N" name="Root folder">
     <header unremovable="Y" immutable="Y" hidden="N" name="Header folder">
-      <channel fname="header"/>
-      <channel fname="portal/login/general"/>
-      <channel fname="session-locales-selector"/>
-      <channel fname="fragment-admin-exit"/>
+      <channel unremovable="" immutable="" hidden="" fname="header"/>
+      <channel unremovable="" immutable="" hidden="" fname="portal/login/general"/>
+      <channel unremovable="" immutable="" hidden="" fname="session-locales-selector"/>
+      <channel unremovable="" immutable="" hidden="" fname="fragment-admin-exit"/>
     </header>
     <footer unremovable="N" immutable="N" hidden="N" name="Footer folder">
-      <channel fname="footer"/>
+      <channel unremovable="" immutable="" hidden="" fname="footer"/>
     </footer>
   </root>
   <profile name="HTML browser profile"> 

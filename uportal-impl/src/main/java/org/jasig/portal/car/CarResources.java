@@ -105,7 +105,7 @@ public class CarResources implements ServletContextAware, InitializingBean {
         }
         catch (final Exception e) {
             log.error("An Exception occurred while loading channel archives. Any channels "
-                    + "deployed via CARs will not be " + "available.", e);
+                    + "deployed via CARs will not be available.", e);
         }
         
         synchronized (CarResources.class) {
@@ -133,7 +133,7 @@ public class CarResources implements ServletContextAware, InitializingBean {
                     handler.getServices(this.services);
                 }
                 catch (final Exception e) {
-                    log.error("An Exception occurred while processing deployment " + "descriptor "
+                    log.error("An Exception occurred while processing deployment descriptor "
                             + DEPLOYMENT_DESCRIPTOR + " in " + jarFile.getName() + ". ", e);
                 }
             }
@@ -167,13 +167,21 @@ public class CarResources implements ServletContextAware, InitializingBean {
      */
     private File getWellKnownDir() {
 
-        final String carDirRealPath = this.servletContext.getRealPath(WELL_KNOWN_DIR);
+        if (this.servletContext == null) {
+            log.error("Channel Archives will not be  loaded. Unable to aquire the real path to '"
+                    + WELL_KNOWN_DIR + "' due to no ServletCotnext being available. Alternatively, "
+                    + "you can specify a fully qualified path as the value of a '"
+                    + CAR_DIR_PROP_NAME + "' property in portal.properties.");
+            return null;
+        }
 
+        final String carDirRealPath = this.servletContext.getRealPath(WELL_KNOWN_DIR);
+        
         if (carDirRealPath == null) {
-            log.error("Channel Archives will not be " + " loaded. Unable to aquire the real " + "path to '"
-                    + WELL_KNOWN_DIR + "'. This " + "can occur if the portal is deployed "
-                    + "as a WAR and directories can not be " + "created within its directory "
-                    + "structure. Alternatively, you can " + "specify a fully qualified path as " + "the value of a '"
+            log.error("Channel Archives will not be  loaded. Unable to aquire the real path to '"
+                    + WELL_KNOWN_DIR + "'. This can occur if the portal is deployed "
+                    + "as a WAR and directories can not be created within its directory "
+                    + "structure. Alternatively, you can specify a fully qualified path as the value of a '"
                     + CAR_DIR_PROP_NAME + "' property in portal.properties.");
             return null;
         }
@@ -182,7 +190,7 @@ public class CarResources implements ServletContextAware, InitializingBean {
 
         if (!carDir.exists()) {
             if (log.isInfoEnabled()) {
-                log.info("Channel Archives can not be " + " loaded. CAR directory '" + carDirRealPath
+                log.info("Channel Archives can not be  loaded. CAR directory '" + carDirRealPath
                         + "' does not exist.");
             }
             return null;
@@ -215,7 +223,7 @@ public class CarResources implements ServletContextAware, InitializingBean {
 
         if (!carDir.exists()) {
             log.error("CAR directory '" + carDirPath + "' specified by property '" + CAR_DIR_PROP_NAME
-                    + "' does not exist. " + "Channel Archives can not be " + "loaded from this directory.");
+                    + "' does not exist. Channel Archives can not be loaded from this directory.");
             return null;
         }
         this.carDirPath = carDirPath;
@@ -572,7 +580,7 @@ public class CarResources implements ServletContextAware, InitializingBean {
             final StringBuffer sb = new StringBuffer();
 
             if (log.isDebugEnabled()) {
-                log.debug("CarResources resolveRegExpr() - " + " Parsing resource name: " + entry);
+                log.debug("CarResources resolveRegExpr() -  Parsing resource name: " + entry);
             }
 
             final StringTokenizer st = new StringTokenizer(entry, replacement);
@@ -585,7 +593,7 @@ public class CarResources implements ServletContextAware, InitializingBean {
                 final String token = st.nextToken();
 
                 if (log.isDebugEnabled()) {
-                    log.debug("CarResources resolveRegExpr() - " + "Token is now: " + token);
+                    log.debug("CarResources resolveRegExpr() - Token is now: " + token);
                 }
 
                 final StringTokenizer st1 = new StringTokenizer(token, delim);
@@ -596,7 +604,7 @@ public class CarResources implements ServletContextAware, InitializingBean {
                     final String childToken = st1.nextToken();
 
                     if (log.isDebugEnabled()) {
-                        log.debug("CarResources resolveRegExpr() - " + "Child token is: " + childToken);
+                        log.debug("CarResources resolveRegExpr() - Child token is: " + childToken);
                     }
 
                     // if there are more child tokens, then add the most
@@ -624,7 +632,7 @@ public class CarResources implements ServletContextAware, InitializingBean {
         }
 
         if (log.isDebugEnabled()) {
-            log.debug("CarResources resolveRegExpr() - " + "resolved entry is: " + entry);
+            log.debug("CarResources resolveRegExpr() - resolved entry is: " + entry);
         }
         return entry;
     }

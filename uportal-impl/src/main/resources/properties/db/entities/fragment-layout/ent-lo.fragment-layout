@@ -2,13 +2,13 @@
 <layout script="classpath://org/jasig/portal/io/import-layout_v3-0.crn" username="ent-lo">
   <root unremovable="Y" immutable="N" hidden="N" name="Root folder">
     <header unremovable="Y" immutable="Y" hidden="N" name="Header folder">
-      <channel fname="header"/>
-      <channel fname="portal/login/general"/>
-      <channel fname="session-locales-selector"/>
-      <channel fname="fragment-admin-exit"/>
+      <channel unremovable="" immutable="" hidden="" fname="header"/>
+      <channel unremovable="" immutable="" hidden="" fname="portal/login/general"/>
+      <channel unremovable="" immutable="" hidden="" fname="session-locales-selector"/>
+      <channel unremovable="" immutable="" hidden="" fname="fragment-admin-exit"/>
     </header>
     <footer unremovable="N" immutable="N" hidden="N" name="Footer folder">
-      <channel fname="footer"/>
+      <channel unremovable="" immutable="" hidden="" fname="footer"/>
     </footer>
     <tab unremovable="N" immutable="N" hidden="N" name="Entertainment">
       <column unremovable="N" immutable="N" hidden="N" name="Column">
@@ -16,17 +16,17 @@
           <name>width</name>
           <value>40%</value>
         </structure-attribute>
-        <channel fname="word-of-the-day"/>
-        <channel fname="about-college-life"/>
-        <channel fname="e-online"/>
+        <channel unremovable="" immutable="" hidden="" fname="word-of-the-day"/>
+        <channel unremovable="" immutable="" hidden="" fname="about-college-life"/>
+        <channel unremovable="" immutable="" hidden="" fname="e-online"/>
       </column>
       <column unremovable="N" immutable="N" hidden="N" name="Column">
         <structure-attribute type="folder">
           <name>width</name>
           <value>60%</value>
         </structure-attribute>
-        <channel fname="phd-comics"/>
-        <channel fname="new-movies"/>
+        <channel unremovable="" immutable="" hidden="" fname="phd-comics"/>
+        <channel unremovable="" immutable="" hidden="" fname="new-movies"/>
       </column>
     </tab>
   </root>

@@ -1,0 +1,13 @@
+
+<group script="classpath://org/jasig/portal/io/import-group_membership_v3-0.crn">
+  <name>Staff</name>
+  <entity-type>org.jasig.portal.security.IPerson</entity-type>
+  <creator>system</creator>
+  <description>All university staff members</description>
+  <children>
+    <group>Developers</group>
+    <group>Officers</group>
+    <group>Support Staff</group>
+    <literal>staff</literal>
+  </children>
+</group>

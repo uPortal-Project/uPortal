@@ -1,7 +1,0 @@
-
-<group script="classpath://org/jasig/portal/io/import-group_v2-6.crn">
-  <name>RSS</name>
-  <entity-type>org.jasig.portal.ChannelDefinition</entity-type>
-  <creator>system</creator>
-  <description>Rich Site Summary, an XML standard for content feeds</description>
-</group>

@@ -1,5 +1,5 @@
 
-<channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-0.crn">
+<channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-1.crn">
   <title>Test Portlet 2</title>
   <name>Test Portlet 2</name>
   <fname>test-portlet-2</fname>
@@ -31,11 +31,14 @@
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>
-    <parameter> 
-      <name>PORTLET.TestName4</name>  
-      <value>TestValue4</value>  
-      <description/>  
-      <ovrd>N</ovrd> 
-    </parameter>
   </parameters>
+  <portletPreferences>
+    <portletPreference> 
+      <name>TestName4</name>  
+      <read-only>true</read-only>  
+      <values>
+        <value>TestValue4</value>
+      </values> 
+    </portletPreference>
+  </portletPreferences>
 </channel-definition>

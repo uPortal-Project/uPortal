@@ -1,0 +1,14 @@
+
+<group script="classpath://org/jasig/portal/io/import-group_membership_v3-0.crn">
+  <name>Channel Types</name>
+  <entity-type>org.jasig.portal.ChannelDefinition</entity-type>
+  <creator>system</creator>
+  <description>Java classes implementing the IChannel interface</description>
+  <children>
+    <group>CApplet</group>
+    <group>CGenericXSLT</group>
+    <group>CImage</group>
+    <group>CInlineFrame</group>
+    <group>CWebProxy</group>
+  </children>
+</group>

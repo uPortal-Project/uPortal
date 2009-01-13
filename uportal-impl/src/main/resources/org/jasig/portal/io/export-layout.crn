@@ -1,43 +1,76 @@
 <with-attribute key="Attributes.NODE" value="${newDoc(structures)}">
-    <echo-ln>Export Layout:  USER_NAME=${USER_NAME}</echo-ln>
     <append-node>
         <username>${USER_NAME}</username>
     </append-node>
-    <with-attribute key="USER_ID" value="${sql(SELECT user_id FROM up_user WHERE user_name = '${USER_NAME}')}">
+    <sql-query>
+        <sql>SELECT * FROM up_layout_struct WHERE user_id = ? AND layout_id = 1 AND chan_id IS NULL</sql>
+        <parameter value="${USER_ID}"/>
+        <subtasks>
+            <choose>
+                <when test="${jexl(TYPE != null and TYPE.startsWith('dlm:'))}">
+                    <with-attribute key="DLM_NODEREF" value="${NAME}">
+                        <with-attribute key="PARSED_NODE" value="${crn(lookup-dlm-noderef.crn)}">
+                            <choose>
+                                <when test="${jexl(PARSED_NODE == null or (PARSED_NODE[0] != null and PARSED_NODE[1] != null and PARSED_NODE[2] != null))}">
+                                    <append-node>
+                                        <dlm-node
+                                            struct-id="${STRUCT_ID}"
+                                            name="${groovy(PARSED_NODE == null ? NAME : PARSED_NODE[0] + ':' + PARSED_NODE[1])}"
+                                            fname="${groovy(PARSED_NODE == null ? null : PARSED_NODE[2])}"
+                                            next-struct-id="${NEXT_STRUCT_ID}"
+                                            child-struct-id="${CHLD_STRUCT_ID}"
+                                            type="${org.jasig.portal.io.FolderTypePhrase(${TYPE})}"
+                                            hidden="${org.jasig.portal.io.FlagYorNPhrase(${req(HIDDEN)})}"
+                                            immutable="${org.jasig.portal.io.FlagYorNPhrase(${req(IMMUTABLE)})}"
+                                            unremovable="${org.jasig.portal.io.FlagYorNPhrase(${req(UNREMOVABLE)})}"/>
+                                    </append-node>
+                                </when>
+                                <otherwise>
+                                    <echo-ln>WARNING: DLM Node Reference ${DLM_NODEREF} could not be completely resolved and will be ignored: ${groovy(PARSED_NODE == null ? null : Arrays.asList(PARSED_NODE))}</echo-ln>
+                                    <append-node>
+                                        <placeholder-node
+                                            struct-id="${STRUCT_ID}"
+                                            next-struct-id="${NEXT_STRUCT_ID}"
+                                            child-struct-id="${CHLD_STRUCT_ID}"/>
+                                    </append-node>
+                                </otherwise>
+                            </choose>
+                        </with-attribute>
+                    </with-attribute>
+                </when>
+                <otherwise>
+                    <append-node>
+                        <folder
+                            struct-id="${STRUCT_ID}"
+                            name="${NAME}"
+                            next-struct-id="${NEXT_STRUCT_ID}"
+                            child-struct-id="${CHLD_STRUCT_ID}"
+                            type="${org.jasig.portal.io.FolderTypePhrase(${TYPE})}"
+                            hidden="${org.jasig.portal.io.FlagYorNPhrase(${req(HIDDEN)})}"
+                            immutable="${org.jasig.portal.io.FlagYorNPhrase(${req(IMMUTABLE)})}"
+                            unremovable="${org.jasig.portal.io.FlagYorNPhrase(${req(UNREMOVABLE)})}"/>
+                    </append-node>
+                </otherwise>
+            </choose>
+        </subtasks>
+    </sql-query>
+    <with-attribute key="STRUCTURE_NODE_COUNT" value="${valueOf(count(/structures/*[@type != 'root']))}">
         <choose>
-            <when test="${isNull(${USER_ID})}">
-                <echo-ln>WARNING:  User '${USER_NAME}' does not exist;  no layout file will be generated.</echo-ln>
-                <log level="warn">User '${USER_NAME}' does not exist;  no layout file will be generated.</log>
-            </when>
-            <otherwise>
+            <when test="${jexl(STRUCTURE_NODE_COUNT gt 0)}">
                 <sql-query>
-                    <sql>SELECT * FROM up_layout_struct WHERE user_id = ? AND layout_id = 1 AND chan_id IS NULL</sql>
-                    <parameter value="${USER_ID}"/>
-                    <subtasks>
-                        <append-node>
-                            <folder
-                                struct-id="${STRUCT_ID}"
-                                name="${NAME}"
-                                next-struct-id="${NEXT_STRUCT_ID}"
-                                child-struct-id="${CHLD_STRUCT_ID}"
-                                type="${org.jasig.portal.io.FolderTypePhrase(${TYPE})}"
-                                hidden="${org.jasig.portal.io.FlagYorNPhrase(${HIDDEN})}"
-                                immutable="${org.jasig.portal.io.FlagYorNPhrase(${IMMUTABLE})}"
-                                unremovable="${org.jasig.portal.io.FlagYorNPhrase(${UNREMOVABLE})}"/>
-                        </append-node>
-                    </subtasks>
-                </sql-query>
-                <sql-query>
-                    <sql>SELECT chan_id, struct_id, next_struct_id FROM up_layout_struct WHERE user_id = ? AND layout_id = 1</sql>
+                    <sql>SELECT chan_id, struct_id, next_struct_id, hidden, immutable, unremovable FROM up_layout_struct WHERE user_id = ? AND layout_id = 1 AND type IS NULL</sql>
                     <parameter value="${USER_ID}"/>
                     <subtasks>
                         <with-attribute key="CHAN_FNAME" value="${sql(SELECT chan_fname FROM up_channel WHERE chan_id = ${CHAN_ID})}">
                             <if test="${groovy(CHAN_FNAME == null)}">
-                                <log level="warn">User ${USER_NAME}'s layout references a missing channel;  The layout document will be exported, but removing the empty reference (manually) is recommended.</log>
+                                <log logger-name="org.jasig.portal.io.export-layout" level="warn">User ${USER_NAME}'s layout references a missing channel;  The layout document will be exported, but removing the empty reference (manually) is recommended.</log>
                             </if>
                             <append-node>
                                 <channel
                                     fname="${CHAN_FNAME}"
+                                    hidden="${org.jasig.portal.io.FlagYorNPhrase(${req(HIDDEN)})}"
+                                    immutable="${org.jasig.portal.io.FlagYorNPhrase(${req(IMMUTABLE)})}"
+                                    unremovable="${org.jasig.portal.io.FlagYorNPhrase(${req(UNREMOVABLE)})}"
                                     struct-id="${STRUCT_ID}"
                                     next-struct-id="${NEXT_STRUCT_ID}"/>
                             </append-node>
@@ -48,17 +81,40 @@
                 <sql-query>
                     <sql>
                         SELECT uplp.struct_id, uplp.struct_parm_nm, uplp.struct_parm_val 
-                        FROM up_layout_param uplp LEFT JOIN up_layout_struct upls ON uplp.struct_id = upls.struct_id AND uplp.user_id = upls.user_id AND uplp.layout_id = upls.layout_id
+                        FROM up_layout_param uplp LEFT JOIN up_layout_struct upls ON uplp.layout_id = upls.layout_id AND uplp.user_id = upls.user_id AND uplp.struct_id = upls.struct_id
                         WHERE upls.user_id = ? AND upls.layout_id = 1
                     </sql>
                     <parameter value="${USER_ID}"/>
                     <subtasks>
-                        <append-node>
-                            <param struct-id="${STRUCT_ID}">
-                                <name>${STRUCT_PARM_NM}</name>
-                                <value>${STRUCT_PARM_VAL}</value>
-                            </param>
-                        </append-node>
+                        <choose>
+                            <when test="${jexl('dlm:origin' == STRUCT_PARM_NM)}">
+                                <with-attribute key="DLM_NODEREF" value="${STRUCT_PARM_VAL}">
+                                    <with-attribute key="PARSED_NODE" value="${crn(lookup-dlm-noderef.crn)}">
+                                        <choose>
+                                            <when test="${jexl(PARSED_NODE != null and PARSED_NODE[0] != null and PARSED_NODE[1] != null)}">
+                                                <append-node>
+                                                    <param struct-id="${STRUCT_ID}">
+                                                        <name>${STRUCT_PARM_NM}</name>
+                                                        <value>${groovy(PARSED_NODE[0] + ':' + PARSED_NODE[1])}</value>
+                                                    </param>
+                                                </append-node>
+                                            </when>
+                                            <otherwise>
+                                                <echo-ln>WARNING: DLM Node Reference ${DLM_NODEREF} could not be completely resolved structure parameter ${STRUCT_PARM_NM}=${STRUCT_PARM_VAL} will be ignored: ${groovy(PARSED_NODE == null ? null : Arrays.asList(PARSED_NODE))}</echo-ln>
+                                            </otherwise>
+                                        </choose>
+                                    </with-attribute>
+                                </with-attribute>
+                            </when>
+                            <otherwise>
+                                <append-node>
+                                    <param struct-id="${STRUCT_ID}">
+                                        <name>${STRUCT_PARM_NM}</name>
+                                        <value>${STRUCT_PARM_VAL}</value>
+                                    </param>
+                                </append-node>
+                            </otherwise>
+                        </choose>
                     </subtasks>
                 </sql-query>
                 <!-- Structure User Attributes. -->
@@ -79,81 +135,105 @@
                         </append-node>
                     </subtasks>
                 </sql-query>
-                <xslt context="${Attributes.ORIGIN}" stylesheet="export-layout.xsl">
-                    <!-- user pofile(s) -->
-                    <sql-query>
-                        <sql>
-                            SELECT upup.*, upss.ss_name AS structure, upst.ss_name AS theme
-                            FROM up_user upu 
-                                LEFT JOIN up_user_profile upup ON upu.user_id = upup.user_id 
-                                LEFT JOIN up_ss_struct upss ON upup.structure_ss_id = upss.ss_id
-                                LEFT JOIN up_ss_theme upst ON upup.theme_ss_id = upst.ss_id
-                            WHERE upu.user_name = ? AND upup.layout_id = 1
-                        </sql>
-                        <parameter value="${USER_NAME}"/>
-                        <subtasks>
-                            <append-node>
-                                <profile name="${PROFILE_NAME}" >
-                                    <description>${DESCRIPTION}</description>
-                                    <structure name="${STRUCTURE}"/>
-                                    <theme name="${THEME}"/>
-                                </profile>
-                            </append-node>
-                            <!-- for each profile row, also create structure and theme elements
-                                WARNING: tables UP_SS_USER_ATTS and UP_SS_USER_PARM must contain unique values in the SS_NAME column -->
-                            <with-attribute key="Attributes.NODE"
-                                value="${singleNode(profile[position()=last()])}">
-                                <sql-query>
-                                    <sql>
-                                        select param_name, param_val, ss_type
-                                        from UP_SS_USER_PARM
-                                        where user_id=? and profile_id=? and ((ss_id=? and ss_type=1) or (ss_id=? and ss_type=2))
-                                    </sql>
-                                    <parameter value="${PROFILE_ID}"/>
-                                    <parameter value="${USER_ID}"/>
-                                    <parameter value="${STRUCTURE_SS_ID}"/>
-                                    <parameter value="${THEME_SS_ID}"/>
-                                    <subtasks>
-                                        <choose>
-                                            <!-- type=1 for structure parameters -->
-                                            <when test="${jexl(SS_TYPE == 1)}">
-                                                <append-node parent="${singleNode(structure)}"
-                                                    node="${commentNode(Parameters for structure transform)}" />
-                                                <append-node parent="${singleNode(structure)}">
-                                                    <parameter>
-                                                        <name>${PARAM_NAME}</name>
-                                                        <value>${PARAM_VAL}</value>
-                                                    </parameter>
-                                                </append-node>
-                                            </when>
-                                            <!-- type=1 for theme parameters -->
-                                            <when test="${jexl(SS_TYPE == 2)}">
-                                            <append-node parent="${singleNode(theme)}"
-                                                    node="${commentNode(Parameters for theme transform)}" />
-                                                <append-node parent="${singleNode(theme)}">
-                                                    <parameter>
-                                                        <name>${PARAM_NAME}</name>
-                                                        <value>${PARAM_VAL}</value>
-                                                    </parameter>
-                                                </append-node>
-                                            </when>
-                                        </choose>
-                                    </subtasks>
-                                </sql-query>
-    
-                            </with-attribute>
-                        </subtasks>
-                    </sql-query>
-                
-                    <with-attribute key="PREFERENCES" value="${crn(export-preferences.crn)}">
-                        <if test="${groovy(PREFERENCES != null)}">
-                            <append-node node="${PREFERENCES}"/>
-                        </if>
-                    </with-attribute>
-
-                    <return value="${Attributes.NODE}"/>
-                </xslt>
+            </when>
+            <otherwise>
+                <!-- remove any base structure nodes -->
+                <node-iterator xpath="/structures/*[name() != 'username']">
+                    <delete-node/>
+                </node-iterator>
+                <log logger-name="org.jasig.portal.io.export-layout" level="info">User '${USER_NAME}' has no non-header/footer structure nodes in their layout.</log>
             </otherwise>
         </choose>
+        <xslt context="${Attributes.ORIGIN}" stylesheet="export-layout.xsl">
+            <if test="${jexl(STRUCTURE_NODE_COUNT gt 0)}">
+                <!-- if there is a layout load the user pofile(s) -->
+                <sql-query>
+                    <sql>
+                        SELECT upup.*, upss.ss_name AS structure, upst.ss_name AS theme 
+                        FROM up_user_profile upup
+                            LEFT JOIN up_ss_struct upss ON upup.structure_ss_id = upss.ss_id
+                            LEFT JOIN up_ss_theme upst ON upup.theme_ss_id = upst.ss_id
+                        WHERE UPUP.USER_ID = ?
+                    </sql>
+                    <parameter value="${USER_ID}"/>
+                    <subtasks>
+                        <append-node>
+                            <profile name="${PROFILE_NAME}" >
+                                <description>${DESCRIPTION}</description>
+                                <structure name="${STRUCTURE}"/>
+                                <theme name="${THEME}"/>
+                            </profile>
+                        </append-node>
+                        <!-- for each profile row, also create structure and theme elements
+                            WARNING: tables UP_SS_USER_ATTS and UP_SS_USER_PARM must contain unique values in the SS_NAME column -->
+                        <with-attribute key="Attributes.NODE"
+                            value="${singleNode(profile[position()=last()])}">
+                            <sql-query>
+                                <sql>
+                                    select param_name, param_val, ss_type
+                                    from UP_SS_USER_PARM 
+                                    where user_id=? and profile_id=? and ((ss_id=? and ss_type=1) or (ss_id=? and ss_type=2))
+                                </sql>
+                                <parameter value="${PROFILE_ID}"/>
+                                <parameter value="${USER_ID}"/>
+                                <parameter value="${STRUCTURE_SS_ID}"/>
+                                <parameter value="${THEME_SS_ID}"/>
+                                <subtasks>
+                                    <choose>
+                                        <!-- type=1 for structure parameters -->
+                                        <when test="${jexl(SS_TYPE == 1)}">
+                                            <append-node parent="${singleNode(structure)}"
+                                                node="${commentNode(Parameters for structure transform)}" />
+                                            <append-node parent="${singleNode(structure)}">
+                                                <parameter>
+                                                    <name>${PARAM_NAME}</name>
+                                                    <value>${PARAM_VAL}</value>
+                                                </parameter>
+                                            </append-node>
+                                        </when>
+                                        <!-- type=1 for theme parameters -->
+                                        <when test="${jexl(SS_TYPE == 2)}">
+                                        <append-node parent="${singleNode(theme)}"
+                                                node="${commentNode(Parameters for theme transform)}" />
+                                            <append-node parent="${singleNode(theme)}">
+                                                <parameter>
+                                                    <name>${PARAM_NAME}</name>
+                                                    <value>${PARAM_VAL}</value>
+                                                </parameter>
+                                            </append-node>
+                                        </when>
+                                    </choose>
+                                </subtasks>
+                            </sql-query>
+                        </with-attribute>
+                    </subtasks>
+                </sql-query>
+            </if>
+            <with-attribute key="PREFERENCES" value="${crn(export-preferences.crn)}">
+                <if test="${jexl(PREFERENCES ne null)}">
+                    <append-node node="${PREFERENCES}"/>
+                </if>
+                <choose>
+                    <when test="${jexl(STRUCTURE_NODE_COUNT gt 0 or PREFERENCES ne null)}">
+                        <echo-ln>Export Layout: USER_ID=${USER_ID} USER_NAME=${USER_NAME}</echo-ln>
+                        <with-attribute key="SAFE_USER_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${req(USER_NAME)})}">
+                            <choose>
+                                <when test="${crn(is-fragment-owner.crn)}">
+                                    <!-- This is a DLM fragment owner layout... -->
+                                    <write-document file="${EXPORT_DIR}/fragment-layout/${SAFE_USER_NAME}.fragment-layout"/>
+                                </when>
+                                <otherwise>
+                                    <!-- This is a normal layout... -->
+                                    <write-document file="${EXPORT_DIR}/layout/${SAFE_USER_NAME}.layout"/>
+                                </otherwise>
+                            </choose>
+                        </with-attribute>
+                    </when>
+                    <otherwise>
+                        <echo-ln>Export Layout: Nothing to export for USER_ID=${USER_ID} USER_NAME=${USER_NAME}: STRUCTURE_NODE_COUNT=${STRUCTURE_NODE_COUNT}, PREFERENCES=${PREFERENCES}</echo-ln>
+                    </otherwise>
+                </choose>
+            </with-attribute>
+        </xslt>
     </with-attribute>
 </with-attribute>

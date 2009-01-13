@@ -1,0 +1,126 @@
+<thread-pool threads="${req(THREAD_COUNT)}">
+    <sql-query>
+        <sql>
+            SELECT DISTINCT UPP.OWNER, UPET.ENTITY_TYPE_NAME, UPP.PRINCIPAL_TYPE, UPP.PRINCIPAL_KEY, UPP.ACTIVITY
+            FROM UP_PERMISSION UPP
+                LEFT JOIN UP_ENTITY_TYPE UPET ON UPP.PRINCIPAL_TYPE = UPET.ENTITY_TYPE_ID 
+            WHERE UPP.ACTIVITY != 'SUBSCRIBE'
+            ORDER BY UPP.PRINCIPAL_KEY, UPP.ACTIVITY, UPP.OWNER, UPET.ENTITY_TYPE_NAME, UPP.PRINCIPAL_TYPE
+        </sql>
+        <subtasks>
+            <concurrent>
+                <handle-error>
+                    <try>
+                        <with-attribute key="Attributes.NODE" value="${newDoc(permission-set)}">
+                            <append-node node="${attributeNode(script=classpath://org/jasig/portal/io/import-permission_set_v3-1.crn)}"/>
+            
+                            <append-node>
+                                <owner>${OWNER}</owner>
+                            </append-node>
+                            <append-node>
+                                <principal-type>${ENTITY_TYPE_NAME}</principal-type>
+                            </append-node>
+            
+                            <!-- principal -->
+                            <choose>
+                                <when test="${jexl(ENTITY_TYPE_NAME.equals('org.jasig.portal.groups.IEntityGroup'))}">
+                                    <with-attribute key="GROUP" value="${groovy(org.jasig.portal.services.GroupService.findGroup(PRINCIPAL_KEY))}">
+                                        <!-- Check for group name == null (indicates an orphaned record) -->
+                                        <choose>
+                                            <when test="${jexl(GROUP.getName() == null)}">
+                                                <log logger-name="org.jasig.portal.io.export-permissions" level="warn">Permission principal references a deleted group;  removing orphaned reference.</log>
+                                                <append-node node="${attributeNode(cancel=true)}"/>
+                                            </when>
+                                            <otherwise>
+                                                <!-- All is well... -->
+                                                <append-node>
+                                                    <principal>
+                                                        <group>${jexl(GROUP.getName())}</group>
+                                                    </principal>
+                                                </append-node>
+                                            </otherwise>
+                                        </choose>
+                                    </with-attribute>
+                                </when>
+                                <otherwise>
+                                    <append-node>
+                                        <principal>
+                                            <literal>${PRINCIPAL_KEY}</literal>
+                                        </principal>
+                                    </append-node>
+                                </otherwise>
+                            </choose>
+                            <!-- NB:  Needs to be enhanced to work w/ principals other than groups... -->
+            
+                            <append-node>
+                                <activity>${ACTIVITY}</activity>
+                            </append-node>
+                            
+                            <!-- targets -->
+                            <sql-query>
+                                <sql> 
+                                    SELECT UPP.TARGET, UPP.PERMISSION_TYPE
+                                    FROM UP_PERMISSION UPP
+                                    WHERE UPP.ACTIVITY != 'SUBSCRIBE'
+                                        AND UPP.OWNER = ?
+                                        AND UPP.PRINCIPAL_TYPE = ? 
+                                        AND UPP.PRINCIPAL_KEY = ?
+                                        AND UPP.ACTIVITY = ?
+                                    ORDER BY UPP.TARGET, UPP.PERMISSION_TYPE
+                                </sql>
+                                <parameter value="${OWNER}"/>
+                                <parameter value="${PRINCIPAL_TYPE}"/>
+                                <parameter value="${PRINCIPAL_KEY}"/>
+                                <parameter value="${ACTIVITY}"/>
+                                <subtasks>
+                                    <!-- target -->
+                                    <with-attribute key="GROUP" value="${groovy(org.jasig.portal.services.GroupService.findGroup(TARGET))}">
+                                        <choose>
+                                            <when test="${jexl(GROUP != null)}">
+                                                <!-- Check for group name == null (indicates an orphaned record) -->
+                                                <choose>
+                                                    <when test="${jexl(GROUP.getName() == null)}">
+                                                        <log logger-name="org.jasig.portal.io.export-permissions" level="warn">Permission target references a deleted group;  removing orphaned reference.</log>
+                                                        <append-node node="${attributeNode(cancel=true)}"/>
+                                                    </when>
+                                                    <otherwise>
+                                                        <!-- All is well... -->
+                                                        <append-node>
+                                                            <target permission-type="${PERMISSION_TYPE}">
+                                                                <group>${jexl(GROUP.getName())}</group>
+                                                            </target>
+                                                        </append-node>
+                                                    </otherwise>
+                                                </choose>
+                                            </when>
+                                            <otherwise>
+                                                <append-node>
+                                                    <target permission-type="${PERMISSION_TYPE}">
+                                                        <literal>${TARGET}</literal>
+                                                    </target>
+                                                </append-node>
+                                            </otherwise>
+                                        </choose>
+                                    </with-attribute>
+                                </subtasks>
+                            </sql-query>
+            
+                            <if test="${jexl(!Attributes.NODE.valueOf('@cancel').equals('true'))}">
+                                <echo-ln>Export Permission Set:  PRINCIPAL=${valueOf(principal/*)}, ACTIVITY=${valueOf(activity)}, OWNER=${valueOf(owner)}</echo-ln>
+                                
+                                <with-attribute key="SAFE_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${valueOf(principal/*)}__${valueOf(activity)}__${valueOf(owner)})}">
+                                    <write-document file="${req(EXPORT_DIR)}/permission_set/${req(SAFE_NAME)}.permission_set"/>
+                                </with-attribute>
+                            </if>
+            
+                        </with-attribute>
+                    </try>
+                    <catch>
+                        <echo-ln>ERROR Failed to export permission set for owner=${OWNER}, principalType=${ENTITY_TYPE_NAME}, target=${TARGET} due to exception: ${Attributes.EXCEPTION}</echo-ln>
+                        <log logger-name="org.jasig.portal.io.export_internal" level="error" exception="${Attributes.EXCEPTION}">Failed to export permission set for owner=${OWNER}, principalType=${ENTITY_TYPE_NAME}, target=${TARGET} due to exception</log>
+                    </catch>
+                </handle-error>
+            </concurrent>
+        </subtasks>
+    </sql-query>
+</thread-pool>

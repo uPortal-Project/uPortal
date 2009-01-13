@@ -1,219 +1,66 @@
-<with-attribute key="PORTAL_CONTEXT" value="${groovy(org.jasig.portal.spring.PortalApplicationContextLocator.getApplicationContext())}">
+<properties location="classpath://properties/db/entities/export.properties"> 
     <with>
-        <attribute key="SqlAttributes.DATA_SOURCE">${groovy(PORTAL_CONTEXT.getBean('PortalDb'))}</attribute>
-        <attribute key="SqlAttributes.TRANSACTION_MANAGER">${groovy(PORTAL_CONTEXT.getBean('transactionManager'))}</attribute>
-        <attribute key="EXPORT_DIR">${$1}</attribute>
-        <attribute key="ENTITY_TYPE">${$2}</attribute>
+        <attribute key="EXPORT_START_TIME">${groovy(System.currentTimeMillis())}</attribute>
+        <attribute key="Attributes.CACHE">${groovy(new org.jasig.portal.io.LoggingLRUMap(${CACHE_SIZE}))}</attribute>
+        <attribute key="PORTAL_CONTEXT">${groovy(org.jasig.portal.spring.PortalApplicationContextLocator.getApplicationContext())}</attribute>
         <subtasks>
-
-            <!-- Select export operation based on the specified ENTITY_TYPE -->
-            <choose>
-
-                <!-- all -->
-                <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all'))}">
-                    <for-each items="${groovy(['all-layouts', 'all-permissions', 'all-memberships', 'all-channels', 
-                                                'all-channel-types', 'all-groups', 'all-users', 'all-themes', 
-                                                'all-structures', 'all-entity-types'])}">
-                        <with-attribute key="$2" value="${Attributes.OBJECT}">
-                            <crn location="export.crn"/>
-                        </with-attribute>
-                    </for-each>
-                </when>
-
-                <!-- layout -->
-                <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('layout'))}">
-                    <with-attribute key="USER_NAME" value="${$3}">
-                        <choose>
-                            <when test="${crn(is-fragment-owner.crn)}">
-                                <!-- This is a DLM fragment owner layout... -->
-                                <write-document node="${crn(export-layout.crn)}" file="${EXPORT_DIR}/fragment-layout/${org.jasig.portal.io.SafeFileNamePhrase(${USER_NAME})}.fragment-layout"/>
-                            </when>
-                            <otherwise>
-                                <!-- This is a normal layout... -->
-                                <write-document node="${crn(export-layout.crn)}" file="${EXPORT_DIR}/layout/${org.jasig.portal.io.SafeFileNamePhrase(${USER_NAME})}.layout"/>
-                            </otherwise>
-                        </choose>
-                    </with-attribute>
-                </when>
-
-                <!-- all-layouts -->
-                <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-layouts'))}">
-                    <sql-query>
-                        <sql>
-                            SELECT DISTINCT upu.user_name
-                            FROM up_user upu LEFT JOIN up_user_profile upup ON upu.user_id = upup.user_id
-                            WHERE upup.layout_id = 1
-                        </sql>
-                        <subtasks>
-                            <choose>
-                                <when test="${crn(is-fragment-owner.crn)}">
-                                    <!-- This is a DLM fragment owner layout... -->
-                                    <write-document node="${crn(export-layout.crn)}" file="${EXPORT_DIR}/fragment-layout/${org.jasig.portal.io.SafeFileNamePhrase(${USER_NAME})}.fragment-layout"/>
-                                </when>
-                                <otherwise>
-                                    <!-- This is a normal layout... -->
-                                    <write-document node="${crn(export-layout.crn)}" file="${EXPORT_DIR}/layout/${org.jasig.portal.io.SafeFileNamePhrase(${USER_NAME})}.layout"/>
-                                </otherwise>
-                            </choose>
-                        </subtasks>
-                    </sql-query>
-                </when>
-
-                <!-- all-permissions -->
-                <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-permissions'))}">
-                    <crn location="export-permissions.crn"/>
-                </when>
-
-                <!-- all-memberships -->
-                <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-memberships'))}">
-                    <crn location="export-memberships.crn"/>
-                </when>
-
-                <!-- channel -->
-                <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('channel'))}">
-                    <with-attribute key="FNAME" value="${$3}">
-                        <write-document node="${crn(export-channel.crn)}" file="${EXPORT_DIR}/channel/${org.jasig.portal.io.SafeFileNamePhrase(${FNAME})}.channel"/>
-                    </with-attribute>
-                </when>
-
-                <!-- all-channels -->
-                <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-channels'))}">
-                    <sql-query>
-                        <sql>SELECT chan_fname FROM up_channel</sql>
-                        <subtasks>
-                            <with-attribute key="FNAME" value="${CHAN_FNAME}">
-                                <write-document node="${crn(export-channel.crn)}" file="${EXPORT_DIR}/channel/${org.jasig.portal.io.SafeFileNamePhrase(${FNAME})}.channel"/>
-                            </with-attribute>
-                        </subtasks>
-                    </sql-query>
-                </when>
-
-                <!-- channel-type -->
-                <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('channel-type'))}">
-                    <with-attribute key="NAME" value="${$3}">
-                        <write-document node="${crn(export-channel-type.crn)}" file="${EXPORT_DIR}/channel-type/${org.jasig.portal.io.SafeFileNamePhrase(${NAME})}.channel-type"/>
-                    </with-attribute>
-                </when>
-
-                <!-- all-channel-types -->
-                <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-channel-types'))}">
-                    <sql-query>
-                        <sql>SELECT type_name FROM up_chan_type</sql>
-                        <subtasks>
-                            <with-attribute key="NAME" value="${TYPE_NAME}">
-                                <write-document node="${crn(export-channel-type.crn)}" file="${EXPORT_DIR}/channel-type/${org.jasig.portal.io.SafeFileNamePhrase(${NAME})}.channel-type"/>
-                            </with-attribute>
-                        </subtasks>
-                    </sql-query>
-                </when>
-
-                <!-- group -->
-                <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('group'))}">
-                    <with-attribute key="GROUP_NAME" value="${$3}">
-                        <write-document node="${crn(export-group.crn)}" file="${EXPORT_DIR}/group/${org.jasig.portal.io.SafeFileNamePhrase(${GROUP_NAME})}.group"/>
-                    </with-attribute>
-                </when>
-
-                <!-- all-groups -->
-                <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-groups'))}">
-                    <sql-query>
-                        <sql>SELECT DISTINCT group_name FROM up_group</sql>
-                        <subtasks>
-                            <write-document node="${crn(export-group.crn)}" file="${EXPORT_DIR}/group/${org.jasig.portal.io.SafeFileNamePhrase(${GROUP_NAME})}.group"/>
-                        </subtasks>
-                    </sql-query>
-                </when>
-
-                <!-- user -->
-                <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('user'))}">
-                    <with-attribute key="USER_NAME" value="${$3}">
-                        <choose>
-                            <when test="${groovy(${sql(SELECT COUNT(USER_ID) FROM UP_USER WHERE USER_DFLT_USR_ID = ${sql(SELECT USER_ID FROM UP_USER WHERE USER_NAME = '${USER_NAME}')})} > 0)}">
-                                <write-document node="${crn(export-user.crn)}" file="${EXPORT_DIR}/user/${org.jasig.portal.io.SafeFileNamePhrase(${USER_NAME})}.template-user"/>
-                            </when>
-                            <otherwise>
-                                <write-document node="${crn(export-user.crn)}" file="${EXPORT_DIR}/user/${org.jasig.portal.io.SafeFileNamePhrase(${USER_NAME})}.user"/>
-                            </otherwise>
-                        </choose>
-                    </with-attribute>
-                </when>
-
-                <!-- all-users -->
-                <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-users'))}">
-                    <sql-query>
-                        <sql>SELECT user_id, user_name FROM up_user</sql>
-                        <subtasks>
-                            <choose>
-                                <when test="${groovy(${sql(SELECT COUNT(USER_ID) FROM UP_USER WHERE USER_DFLT_USR_ID = ${USER_ID})} > 0)}">
-                                    <write-document node="${crn(export-user.crn)}" file="${EXPORT_DIR}/user/${org.jasig.portal.io.SafeFileNamePhrase(${USER_NAME})}.template-user"/>
-                                </when>
-                                <otherwise>
-                                    <write-document node="${crn(export-user.crn)}" file="${EXPORT_DIR}/user/${org.jasig.portal.io.SafeFileNamePhrase(${USER_NAME})}.user"/>
-                                </otherwise>
-                            </choose>
-                        </subtasks>
-                    </sql-query>
-                </when>
-
-                <!-- theme -->
-                <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('theme'))}">
-                    <with-attribute key="NAME" value="${$3}">
-                        <write-document node="${crn(export-theme.crn)}" file="${EXPORT_DIR}/theme/${org.jasig.portal.io.SafeFileNamePhrase(${NAME})}.theme"/>
-                    </with-attribute>
-                </when>
-
-                <!-- all-themes -->
-                <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-themes'))}">
-                    <sql-query>
-                        <sql>SELECT ss_name FROM up_ss_theme</sql>
-                        <subtasks>
-                            <with-attribute key="NAME" value="${SS_NAME}">
-                                <write-document node="${crn(export-theme.crn)}" file="${EXPORT_DIR}/theme/${org.jasig.portal.io.SafeFileNamePhrase(${NAME})}.theme"/>
-                            </with-attribute>
-                        </subtasks>
-                    </sql-query>
-                </when>
-
-                <!-- structure -->
-                <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('structure'))}">
-                    <with-attribute key="NAME" value="${$3}">
-                        <write-document node="${crn(export-structure.crn)}" file="${EXPORT_DIR}/structure/${org.jasig.portal.io.SafeFileNamePhrase(${NAME})}.structure"/>
-                    </with-attribute>
-                </when>
-
-                <!-- all-structures -->
-                <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-structures'))}">
-                    <sql-query>
-                        <sql>SELECT ss_name FROM up_ss_struct</sql>
-                        <subtasks>
-                            <with-attribute key="NAME" value="${SS_NAME}">
-                                <write-document node="${crn(export-structure.crn)}" file="${EXPORT_DIR}/structure/${org.jasig.portal.io.SafeFileNamePhrase(${NAME})}.structure"/>
-                            </with-attribute>
-                        </subtasks>
-                    </sql-query>
-                </when>
-
-                <!-- entity-type -->
-                <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('entity-type'))}">
-                    <with-attribute key="NAME" value="${$3}">
-                        <write-document node="${crn(export-entity-type.crn)}" file="${EXPORT_DIR}/entity-type/${org.jasig.portal.io.SafeFileNamePhrase(${NAME})}.entity-type"/>
-                    </with-attribute>
-                </when>
-
-                <!-- all-entity-types -->
-                <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-entity-types'))}">
-                    <sql-query>
-                        <sql>SELECT entity_type_name FROM up_entity_type</sql>
-                        <subtasks>
-                            <with-attribute key="NAME" value="${ENTITY_TYPE_NAME}">
-                                <write-document node="${crn(export-entity-type.crn)}" file="${EXPORT_DIR}/entity-type/${org.jasig.portal.io.SafeFileNamePhrase(${NAME})}.entity-type"/>
-                            </with-attribute>
-                        </subtasks>
-                    </sql-query>
-                </when>
-
-            </choose>
+            <with>
+                <attribute key="${groovy(org.danann.cernunnos.sql.SqlAttributes.DATA_SOURCE)}">${groovy(PORTAL_CONTEXT.getBean('PortalDb'))}</attribute>
+                <attribute key="${groovy(org.danann.cernunnos.sql.SqlAttributes.TRANSACTION_MANAGER)}">${groovy(PORTAL_CONTEXT.getBean('transactionManager'))}</attribute>
+                <subtasks>
+                    <with-attribute key="EXPORT_DIR" value="${$1}">
+                        <with-attribute key="ENTITY_TYPE" value="${$2}">
             
+                            <!-- Select export operation based on the specified ENTITY_TYPE -->
+                            <choose>
+            
+                                <!-- all -->
+                                <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all'))}">
+                                    <echo-ln>Begin Export of ${ENTITY_TYPE}: ${EXPORT_START_TIME}</echo-ln>
+                                    
+                                    <with-attribute key="ENTITY_TYPE" value="all-layouts">
+                                        <crn location="export_internal.crn"/>
+                                    </with-attribute>
+                                    <with-attribute key="ENTITY_TYPE" value="all-permission_sets">
+                                        <crn location="export_internal.crn"/>
+                                    </with-attribute>
+                                    <with-attribute key="ENTITY_TYPE" value="all-channels">
+                                        <crn location="export_internal.crn"/>
+                                    </with-attribute>
+                                    <with-attribute key="ENTITY_TYPE" value="all-channel-types">
+                                        <crn location="export_internal.crn"/>
+                                    </with-attribute>
+                                    <with-attribute key="ENTITY_TYPE" value="all-users">
+                                        <crn location="export_internal.crn"/>
+                                    </with-attribute>
+                                    <with-attribute key="ENTITY_TYPE" value="all-themes">
+                                        <crn location="export_internal.crn"/>
+                                    </with-attribute>
+                                    <with-attribute key="ENTITY_TYPE" value="all-structures">
+                                        <crn location="export_internal.crn"/>
+                                    </with-attribute>
+                                    <with-attribute key="ENTITY_TYPE" value="all-entity-types">
+                                        <crn location="export_internal.crn"/>
+                                    </with-attribute> 
+                                    <with-attribute key="ENTITY_TYPE" value="all-group_membership">
+                                        <crn location="export_internal.crn"/>
+                                    </with-attribute>
+                                    
+                                    <echo-ln>Export of ${ENTITY_TYPE} Complete: ${groovy(System.currentTimeMillis() - EXPORT_START_TIME)}</echo-ln>
+                                </when>
+            
+                                <otherwise>
+                                    <with-attribute key="ENTITY_TYPE" value="${ENTITY_TYPE}">
+                                        <crn location="export_internal.crn"/>
+                                    </with-attribute>
+                                </otherwise>
+            
+                            </choose>
+            
+                        </with-attribute>
+                    </with-attribute>
+                </subtasks>
+            </with>
         </subtasks>
     </with>
-</with-attribute>
+</properties>

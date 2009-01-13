@@ -71,7 +71,7 @@
                                     </when>
                                     <otherwise>
                                         <echo-ln>WARNING: Name '${ORIGINAL_ATTRIBUTE_VALUE}' of layout node '${ATTRIBUTE_NAME}' for user ${USER_NAME} resolved to NULL and will be ignored.</echo-ln>
-                                        <log level="warn">WARNING: Name '${ORIGINAL_ATTRIBUTE_VALUE}' of layout node '${ATTRIBUTE_NAME}' for user ${USER_NAME} resolved to NULL and will be ignored.</log>
+                                        <log logger-name="org.jasig.portal.io.import-layout-node" level="warn">WARNING: Name '${ORIGINAL_ATTRIBUTE_VALUE}' of layout node '${ATTRIBUTE_NAME}' for user ${USER_NAME} resolved to NULL and will be ignored.</log>
                                         <return value="${groovy(RETURNED_IDS[0])}" />
                                     </otherwise>
                                 </choose>

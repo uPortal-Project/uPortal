@@ -1,11 +1,11 @@
 <with-attribute key="Attributes.NODE" value="${newDoc(channel-definition)}">
     <echo-ln>Export Channel:  FNAME=${FNAME}</echo-ln>
-    <append-node node="${attributeNode(script=classpath://org/jasig/portal/io/import-channel_v3-0.crn)}"/>
+    <append-node node="${attributeNode(script=classpath://org/jasig/portal/io/import-channel_v3-1.crn)}"/>
     <with-attribute key="CHAN_ID" value="${sql(SELECT MAX(chan_id) FROM up_channel WHERE chan_fname = '${FNAME}')}">
         <choose>
-            <when test="${isNull(${CHAN_ID})}">
+            <when test="${jexl(CHAN_ID == null)}">
                 <echo-ln>WARNING:  Channel '${FNAME}' does not exist;  no channel file will be generated.</echo-ln>
-                <log level="warn">Channel '${FNAME}' does not exist;  no channel file will be generated.</log>
+                <log logger-name="org.jasig.portal.io.export-channel" level="warn">Channel '${FNAME}' does not exist;  no channel file will be generated.</log>
             </when>
             <otherwise>
                 <sql-query>
@@ -29,6 +29,7 @@
                             <categories/>
                             <groups/>
                             <parameters/>
+                            <portletPreferences/>
                         </append-node>
                         <choose>
                             <when test="${jexl(CHAN_TYPE_ID == -1)}">
@@ -39,9 +40,15 @@
                             </when>
                             <otherwise>
                                 <!-- Standard Channel Type -->
-                                <append-node sibling="${singleNode(desc)}">
-                                    <type>${sql(SELECT type_name FROM up_chan_type WHERE type_id = ${CHAN_TYPE_ID})}</type>
-                                </append-node>
+                                <sql-query>
+                                    <sql>SELECT type_name FROM up_chan_type WHERE type_id = ?</sql>
+                                    <parameter value="${CHAN_TYPE_ID}"/>
+                                    <subtasks>
+                                        <append-node sibling="${singleNode(desc)}">
+                                            <type>${TYPE_NAME}</type>
+                                        </append-node>
+                                    </subtasks>
+                                </sql-query>
                             </otherwise>
                         </choose>
                     </subtasks>
@@ -69,23 +76,20 @@
                     </sql>
                     <parameter value="CHAN_ID.${CHAN_ID}"/>
                     <subtasks>
-                        <invoke-method class="org.jasig.portal.services.GroupService" method="findGroup" attribute-name="GROUP">
-                            <parameter value="${PRINCIPAL_KEY}"/>
-                            <subtasks>
-                                <!-- Check for group name == null (indicates an orphaned record) -->
-                                <choose>
-                                    <when test="${jexl(GROUP.getName() == null)}">
-                                        <log level="warn">Channel '${FNAME}' is a member of a deleted group;  removing orphaned reference.</log>
-                                    </when>
-                                    <otherwise>
-                                        <!-- All is well... -->
-                                        <append-node parent="${singleNode(groups)}">
-                                            <group>${jexl(GROUP.getName())}</group>
-                                        </append-node>
-                                    </otherwise>
-                                </choose>
-                            </subtasks>
-                        </invoke-method>
+                        <with-attribute key="GROUP" value="${groovy(org.jasig.portal.services.GroupService.findGroup(PRINCIPAL_KEY))}">
+                            <!-- Check for group name == null (indicates an orphaned record) -->
+                            <choose>
+                                <when test="${jexl(GROUP.getName() == null)}">
+                                    <log logger-name="org.jasig.portal.io.export-channel" level="warn">Channel '${FNAME}' is a member of a deleted group;  removing orphaned reference.</log>
+                                </when>
+                                <otherwise>
+                                    <!-- All is well... -->
+                                    <append-node parent="${singleNode(groups)}">
+                                        <group>${jexl(GROUP.getName())}</group>
+                                    </append-node>
+                                </otherwise>
+                            </choose>
+                        </with-attribute>
                     </subtasks>
                 </sql-query>
                 <!--  Standard Channel Parameters  -->
@@ -114,32 +118,33 @@
                     </subtasks>
                 </sql-query>
                 <!--  Portlet preferences  -->
-                <invoke-method object="${PORTAL_CONTEXT}" method="getBean" attribute-name="portletDefinitionRegistry">
-                    <parameter value="portletDefinitionRegistry" />
-                    <subtasks>
-                        <with>
-                            <attribute key="PORTLET_DEF">${groovy(portletDefinitionRegistry.getPortletDefinition(Integer.parseInt("${valueOf(chan-id)}")))}</attribute>
-                            <subtasks>
-                                <if test="${groovy(PORTLET_DEF != null)}">
-                                    <for-each items="${groovy(PORTLET_DEF.getPortletPreferences().getPortletPreferences())}" attribute-name="portletPreference">
-                                        <for-each items="${groovy(Arrays.asList(portletPreference.getValues()))}" attribute-name="preferenceValue">
-                                            <append-node parent="${singleNode(parameters)}">
-                                                <parameter>
-                                                    <name>PORTLET.${groovy(portletPreference.getName())}</name>
-                                                    <value>${preferenceValue}</value>
-                                                    <description></description>
-                                                    <ovrd>${groovy(portletPreference.isReadOnly() ? "N" : "Y")}</ovrd>
-                                                </parameter>
-                                            </append-node>
-                                        </for-each>
+                <with-attribute key="PORTLET_DEF" value="${groovy(PORTAL_CONTEXT.getBean('portletDefinitionRegistry').getPortletDefinition(CHAN_ID.intValue()))}">
+                    <if test="${groovy(PORTLET_DEF != null)}">
+                        <for-each items="${groovy(PORTLET_DEF.getPortletPreferences().getPortletPreferences())}" attribute-name="portletPreference">
+                            <with-attribute key="PORTLET_PREF_NAME" value="${groovy(portletPreference.getName())}">
+                                <append-node parent="${singleNode(portletPreferences)}">
+                                    <portletPreference>
+                                        <name>${PORTLET_PREF_NAME}</name>
+                                        <read-only>${groovy(portletPreference.isReadOnly())}</read-only>
+                                        <values/>
+                                    </portletPreference>
+                                </append-node>
+                                
+                                <with-attribute key="Attributes.NODE" value="${singleNode(portletPreferences/portletPreference[name=$PORTLET_PREF_NAME]/values)}">
+                                    <for-each items="${groovy(portletPreference.getValues())}" attribute-name="preferenceValue">
+                                        <append-node>
+                                            <value>${preferenceValue}</value>
+                                        </append-node>
                                     </for-each>
-                                </if>
-                            </subtasks>
-                        </with>
-                    </subtasks>
-                </invoke-method>
-                <delete-node node="${singleNode(chan-id)}"/>
-                <return value="${Attributes.NODE}"/>
+                                </with-attribute>
+                            </with-attribute>
+                        </for-each>
+                    </if>
+                </with-attribute>
+                <with-attribute key="SAFE_FNAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${req(FNAME)})}">
+                    <delete-node node="${singleNode(chan-id)}"/>
+                    <write-document file="${req(EXPORT_DIR)}/channel/${req(SAFE_FNAME)}.channel"/>
+                </with-attribute>
             </otherwise>
         </choose>
     </with-attribute>
