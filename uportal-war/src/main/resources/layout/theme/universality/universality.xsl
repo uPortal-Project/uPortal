@@ -223,10 +223,6 @@
     
     <!-- uPortal skin CSS -->
     
-    <xsl:if test="$USE_AJAX='true' or $USE_FLYOUT_MENUS='true'">
-     <link rel="stylesheet" href="{$MEDIA_PATH}/common/javascript/jquery/themes/{$SKIN}/jqueryui.all.css" type="text/css" media="screen" title="Flora (Default)"></link>
-    </xsl:if>
-    
   </xsl:template>
   <!-- ======================================== -->
   
@@ -246,7 +242,7 @@
       <script type="text/javascript" src="{$SCRIPT_PATH}/jquery/jquery-1.2.6.min.js"></script>
     </xsl:if>
     <xsl:if test="$USE_AJAX='true' and $AUTHENTICATED='true'">
-      <script type="text/javascript" src="{$SCRIPT_PATH}/jquery/jquery-ui-portal-1.5.2-v1.min.js"></script>
+      <script type="text/javascript" src="{$SCRIPT_PATH}/jquery/jquery-ui-portal-1.6rc4-v1.min.js"></script>
       <script type="text/javascript" src="{$SCRIPT_PATH}/fluid/Fluid-reorderer-0.6-v1.min.js"></script>
       <script type="text/javascript" src="{$SCRIPT_PATH}/uportal/ajax-preferences-jquery.min.js"></script>
       <script type="text/javascript" src="{$SCRIPT_PATH}/uportal/up-channel-browser.min.js"></script>

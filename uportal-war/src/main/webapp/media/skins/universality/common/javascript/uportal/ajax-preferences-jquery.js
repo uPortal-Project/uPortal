@@ -149,8 +149,7 @@ function changeColumns(newcolumns) {
 	    	jQuery("#changeColumns").find("input").removeAttr("checked").removeAttr("defaultChecked");
 	    	jQuery("#changeColumns").find("input[value=" + getCurrentLayoutString() + "]").attr("checked", "checked").attr("defaultChecked","defaultChecked");
 			
-		}
-	);
+		}, "xml");
 }
 
 // Portlet editing persistence functions
