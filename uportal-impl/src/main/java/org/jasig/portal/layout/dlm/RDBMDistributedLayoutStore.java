@@ -1249,7 +1249,9 @@ public class RDBMDistributedLayoutStore
 
                 int layoutId = this.getLayoutID(userId, profileId);
                 ResultSet rs = null;
-
+                
+                // if no layout then get the default user id for this user
+                int origId = userId;
                 if (layoutId == 0)
                 { // First time, grab the default layout for this user
                     String sQuery = "SELECT USER_DFLT_USR_ID FROM UP_USER WHERE USER_ID=?";
@@ -1292,7 +1294,12 @@ public class RDBMDistributedLayoutStore
                 // Now load in the stylesheet parameter preferences
                 // from the up_ss_user_param but only if they are defined
                 // parameters in the stylesheet's .sdf file.
-                //
+                // 
+                // First, get the parameters for the effective user ID,
+                // then for the original user ID.  These will differ if
+                // the user has no layout in the database and is using
+                // the default user layout.  The params from the original
+                // user ID take precedence.
 
                 String sQuery =
                     "SELECT PARAM_NAME, PARAM_VAL " +
@@ -1317,7 +1324,16 @@ public class RDBMDistributedLayoutStore
                         // stylesheet param
                         String pName = rs.getString(1);
                         if (tsd.containsParameterName(pName))
-                            tsup.putParameterValue(pName, rs.getString(2));
+                        	tsup.putParameterValue(pName, rs.getString(2));
+                    }
+                    if (userId != origId) {
+                        pstmt.setInt(1, origId);
+                        rs = pstmt.executeQuery();
+                        while (rs.next()) {
+                            String pName = rs.getString(1);
+                            if (tsd.containsParameterName(pName))
+                            	tsup.putParameterValue(pName, rs.getString(2));
+                        }
                     }
                 } finally
                 {
