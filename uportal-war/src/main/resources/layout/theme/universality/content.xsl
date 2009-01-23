@@ -91,7 +91,7 @@
       	<xsl:call-template name="controls"/> <!-- Call the portlet controls into the toolbar. -->
       </div>
       <div id="portletContent_{@ID}" class="portlet-content">
-      	<div class="portlet-conent-inner">
+      	<div class="portlet-content-inner">
       		<xsl:copy-of select="."/> <!-- Write in the contents of the portlet. -->
     		</div>
     	</div>
