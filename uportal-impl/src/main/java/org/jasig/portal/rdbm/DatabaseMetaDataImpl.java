@@ -8,7 +8,6 @@ package org.jasig.portal.rdbm;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -17,12 +16,15 @@ import javax.sql.DataSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.RDBMServices;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 
 /**
@@ -64,6 +66,8 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata, InitializingBean
 
     /** The {@link DataSource} that represents the server */
     private final DataSource dataSource;
+    private final PlatformTransactionManager transactionManager;
+    private TransactionTemplate transactionTemplate;
 
     /** The {@link IJoinQueryString} to use for performing outer joins */
     private IJoinQueryString joinTest = null;
@@ -73,9 +77,6 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata, InitializingBean
     private boolean portalTablesExist = false;
     private boolean useTSWrapper = false;
     private boolean useToDate = false;
-    private boolean supportsTransactions = false;
-    private boolean dbmdSupportsTransactions = false;
-    private String transactionTestMsg = "";
     private String databaseProductName = null;
     private String databaseProductVersion = null;
     private String driverName = null;
@@ -90,18 +91,24 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata, InitializingBean
      *
      * @param ds The {@link DataSource} to use as the base for this server interface.
      */
-    public DatabaseMetaDataImpl(final DataSource ds) {
+    public DatabaseMetaDataImpl(final DataSource ds, final PlatformTransactionManager transactionManager) {
         if (ds == null)
             throw new IllegalArgumentException("DataSource cannot be null");
 
-        this.dataSource = ds;    
+        this.dataSource = ds;
+        this.transactionManager = transactionManager;
     }
 
     /* (non-Javadoc)
      * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
      */
     public void afterPropertiesSet() throws Exception {
-        this.runDatabaseTests();
+    	this.transactionTemplate = new TransactionTemplate(this.transactionManager);
+    	this.transactionTemplate.setPropagationBehavior(TransactionTemplate.PROPAGATION_REQUIRES_NEW);
+    	this.transactionTemplate.setReadOnly(true);
+    	this.transactionTemplate.afterPropertiesSet();    	
+    	
+    	this.runDatabaseTests();
         if (LOG.isInfoEnabled())
             LOG.info(this.toString());            
     }
@@ -135,7 +142,8 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata, InitializingBean
      * @see org.jasig.portal.rdbm.IDatabaseMetadata#supportsTransactions()
      */
     public final boolean supportsTransactions() {
-        return this.supportsTransactions;
+    	//We never run on DBs that don't support transactions any more
+        return true;
     }
 
     /**
@@ -234,10 +242,6 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata, InitializingBean
             dbInfo.append("        Outer Joins:          ");
             dbInfo.append(this.supportsOuterJoins());
             dbInfo.append("\n");
-            dbInfo.append("        Transactions:         ");
-            dbInfo.append(this.supportsTransactions());
-            dbInfo.append(this.transactionTestMsg);
-            dbInfo.append("\n");
             dbInfo.append("        {ts metasyntax:       ");
             dbInfo.append(this.useTSWrapper);
             dbInfo.append("\n");
@@ -270,7 +274,6 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata, InitializingBean
     		if (this.portalTablesExist) {
         		this.testOuterJoins(jdbcTemplate);
         		this.testTimeStamp(jdbcTemplate);
-        		this.testTransactions(conn);
     		}
 
     	} catch (SQLException e) {
@@ -299,7 +302,6 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata, InitializingBean
             this.userName = dmd.getUserName();
             this.dbUrl = dmd.getURL();
             this.dbmdSupportsOuterJoins = dmd.supportsOuterJoins();
-            this.dbmdSupportsTransactions = dmd.supportsTransactions();
         }
         catch (SQLException sqle) {
             LOG.error("Error getting database meta data.", sqle);
@@ -331,7 +333,14 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata, InitializingBean
                     "FROM " + joinQueryString.getTestJoin() + " UP_USER.USER_ID=0";
                 
                 try {
-                    jdbcTemplate.getJdbcOperations().execute(joinTestQuery);
+                	transactionTemplate
+							.execute(new TransactionCallbackWithoutResult() {
+								public void doInTransactionWithoutResult(
+										TransactionStatus status) {
+									jdbcTemplate.getJdbcOperations().execute(
+											joinTestQuery);
+								}
+							});
                     
                     this.joinTest = joinQueryString;
                     if (LOG.isInfoEnabled()) {
@@ -398,34 +407,4 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata, InitializingBean
         }
     }
 
-    /**
-     * Test the database to see if it really supports transactions
-     */
-    private void testTransactions(final Connection conn) {
-        try {
-            if (this.dbmdSupportsTransactions) {
-                conn.setAutoCommit(false); //Not using RDBMServices here, we want to see the exception if it happens
-
-                final Statement transTestStmt = conn.createStatement();
-
-                try {
-                    final String transTestUpdate =
-                        "UPDATE UP_USER " +
-                        "SET LST_CHAN_UPDT_DT=" + this.sqlTimeStamp() + " " +
-                        "WHERE USER_ID=0";
-
-                    transTestStmt.executeUpdate(transTestUpdate);
-                    conn.rollback();
-                    this.supportsTransactions = true;
-                }
-                finally {
-                    RDBMServices.closeStatement(transTestStmt);
-                }
-            }
-        }
-        catch (SQLException sqle) {
-            LOG.warn("Error running transaction test (Transactions are not supported).", sqle);
-            this.transactionTestMsg = " (driver lies)";
-        }
-    }
 }

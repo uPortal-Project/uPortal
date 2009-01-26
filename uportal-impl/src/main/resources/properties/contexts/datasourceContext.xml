@@ -22,6 +22,7 @@
     </bean>
     <bean id="PortalDB.metadata" class="org.jasig.portal.rdbm.DatabaseMetaDataImpl">
         <constructor-arg index="0" ref="PortalDb" />
+        <constructor-arg index="1" ref="transactionManager"/>
     </bean>
     
     <alias alias="PersonDB" name="PortalDb"/>
