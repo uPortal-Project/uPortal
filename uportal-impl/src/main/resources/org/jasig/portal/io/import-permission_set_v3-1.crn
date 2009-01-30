@@ -6,7 +6,7 @@
     <subtasks>
         <with-attribute key="ENTITY_TYPE_ID" value="${crn(lookup-entity_type_id.crn)}">
             <sql-transaction>
-                <node-iterator xpath="target/*">
+                <node-iterator xpath="target">
                     <sql-upsert>
                         <update-statement>
                             UPDATE up_permission 
@@ -22,7 +22,7 @@
                         <parameter value="${ENTITY_TYPE_ID}"/>
                         <parameter value="${PRINCIPAL}"/>
                         <parameter value="${ACTIVITY}"/>
-                        <parameter value="${org.jasig.portal.io.GroupKeyOrLiteralPhrase(${singleNode(.)})}"/>
+                        <parameter value="${org.jasig.portal.io.GroupKeyOrLiteralPhrase(${singleNode(*)})}"/>
                     </sql-upsert>
                 </node-iterator>
             </sql-transaction>
