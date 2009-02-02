@@ -372,7 +372,7 @@
   <xsl:template name="web.search">
     <div id="webSearchContainer" class="block">
       <div class="block-inner">
-      	<h2 class="block-title"><xsl:value-of select="$TOKEN[@name='WEB_SEARCH_TITLE']"/></h2>
+      	<h2 class="block-title"><label for="webSearchInput"><xsl:value-of select="$TOKEN[@name='WEB_SEARCH_TITLE']"/></label></h2>
         <div class="block-content">
 					<script language="JavaScript" type="text/javascript">
             var skinPath='<xsl:value-of select="$SKIN_PATH"/>/<xsl:value-of select="$SKIN"/>/';
