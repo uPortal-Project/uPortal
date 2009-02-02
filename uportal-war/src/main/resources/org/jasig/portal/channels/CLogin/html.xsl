@@ -57,10 +57,10 @@
     	      <form id="portalLoginForm" action="Login" method="post">
     	        <input type="hidden" name="action" value="login"/>
     	        <label for="userName">Username:</label>
-    	        <input style="vertical-align:middle;" type="text" name="userName" size="15" value="{failure/@attemptedUserName}"/>
+    	        <input type="text" name="userName" size="15" value="{failure/@attemptedUserName}"/>
     	        <label for="password">Password:</label>
-    	        <input style="vertical-align:middle;" type="password" name="password" size="15"/>
-    	        <input type="submit" style="vertical-align:middle;" value="Sign In" name="Login" id="portalLoginButton" class="portlet-form-button"/>
+    	        <input type="password" name="password" size="15"/>
+    	        <input type="submit" value="Sign In" name="Login" id="portalLoginButton" class="portlet-form-button"/>
     	      </form>
     	      <p><a href="{$forgotLoginUrl}">Forgot your username or password?</a></p>
       		</xsl:otherwise>
