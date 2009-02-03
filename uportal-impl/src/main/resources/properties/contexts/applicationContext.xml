@@ -76,6 +76,7 @@
         <property name="locations">
             <list>
                 <value>classpath:/properties/rdbm.properties</value>
+                <value>classpath:/properties/portal.properties</value>
             </list>
         </property>
     </bean>

@@ -26,6 +26,7 @@ import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
+import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.url.AttributeScopingHttpServletRequestWrapper;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.utils.Tuple;
@@ -72,7 +73,9 @@ public class PortletUrlSyntaxProviderImplTest extends TestCase {
         final IPortletEntityId portletEntityId = new MockPortletEntityId("entityId1");
         final IPortletWindowId portletWindowId = new MockPortletWindowId("windowId1");
         final IPortletWindow portletWindow = new MockPortletWindow(portletWindowId, portletEntityId, "portletApp", "portletName");
-        
+       
+        final boolean useAnchors = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.ChannelManager.use_anchors", false);
+ 
         final PortletUrl portletUrl = new PortletUrl();
         
         try {
@@ -121,10 +124,19 @@ public class PortletUrlSyntaxProviderImplTest extends TestCase {
 
         portletUrlSyntaxProvider.setPortletWindowRegistry(portletWindowRegistry);
         
-        String urlString = portletUrlSyntaxProvider.generatePortletUrl(request, portletWindow, portletUrl);
-        assertEquals("/uPortal/base/action.url?pltc_target=windowId1&pltc_type=RENDER", urlString);
-        
-        
+        //String urlString = portletUrlSyntaxProvider.generatePortletUrl(request, portletWindow, portletUrl);
+        //assertEquals("/uPortal/base/action.url?pltc_target=windowId1&pltc_type=RENDER", urlString);
+        String urlString = "";       
+ 
+        if(useAnchors) {
+        	urlString = portletUrlSyntaxProvider.generatePortletUrl(request, portletWindow, portletUrl);
+           	assertEquals("/uPortal/base/action.url?pltc_target=windowId1&pltc_type=RENDER#entityId1", urlString);
+        }
+        else {
+        	urlString = portletUrlSyntaxProvider.generatePortletUrl(request, portletWindow, portletUrl);
+        	assertEquals("/uPortal/base/action.url?pltc_target=windowId1&pltc_type=RENDER", urlString);
+        }      
+ 
         final Map<String, String[]> parameters = new TreeMap<String, String[]>(); //Use a treemap so the output string is deterministic
         parameters.put("key1", new String[] { "value1.1", "value1.2" } );
         parameters.put("key2", new String[] { "value2.1" } );
@@ -135,21 +147,33 @@ public class PortletUrlSyntaxProviderImplTest extends TestCase {
         portletUrl.setParameters(parameters);
         
         urlString = portletUrlSyntaxProvider.generatePortletUrl(request, portletWindow, portletUrl);
-        assertEquals("/uPortal/base/action.url?pltc_target=windowId1&pltc_type=RENDER&pltc_state=minimized&uP_root=root&uP_tcattr=minimized&minimized_channelId=entityId1&minimized_entityId1_value=true&pltc_mode=edit&pltp_key1=value1.1&pltp_key1=value1.2&pltp_key2=value2.1&pltp_key3=", urlString);
-
+        if(useAnchors) {
+        	assertEquals("/uPortal/base/action.url?pltc_target=windowId1&pltc_type=RENDER&pltc_state=minimized&uP_root=root&uP_tcattr=minimized&minimized_channelId=entityId1&minimized_entityId1_value=true&pltc_mode=edit&pltp_key1=value1.1&pltp_key1=value1.2&pltp_key2=value2.1&pltp_key3=#entityId1", urlString);
+        }
+        else {
+        	assertEquals("/uPortal/base/action.url?pltc_target=windowId1&pltc_type=RENDER&pltc_state=minimized&uP_root=root&uP_tcattr=minimized&minimized_channelId=entityId1&minimized_entityId1_value=true&pltc_mode=edit&pltp_key1=value1.1&pltp_key1=value1.2&pltp_key2=value2.1&pltp_key3=", urlString);
+        }
 
         portletUrl.setRequestType(RequestType.ACTION);
         portletUrl.setWindowState(WindowState.MAXIMIZED);
         
         urlString = portletUrlSyntaxProvider.generatePortletUrl(request, portletWindow, portletUrl);
-        assertEquals("/uPortal/base/action.url?pltc_target=windowId1&pltc_type=ACTION&pltc_state=maximized&uP_root=entityId1&pltc_mode=edit&pltp_key1=value1.1&pltp_key1=value1.2&pltp_key2=value2.1&pltp_key3=", urlString);
-        
+        if(useAnchors) {
+        	assertEquals("/uPortal/base/action.url?pltc_target=windowId1&pltc_type=ACTION&pltc_state=maximized&uP_root=entityId1&pltc_mode=edit&pltp_key1=value1.1&pltp_key1=value1.2&pltp_key2=value2.1&pltp_key3=", urlString);
+        }
+        else {
+        	assertEquals("/uPortal/base/action.url?pltc_target=windowId1&pltc_type=ACTION&pltc_state=maximized&uP_root=entityId1&pltc_mode=edit&pltp_key1=value1.1&pltp_key1=value1.2&pltp_key2=value2.1&pltp_key3=", urlString);
+        }
         portletUrl.setWindowState(new WindowState("EXCLUSIVE"));
         portletUrl.setRequestType(RequestType.RENDER);
         
         urlString = portletUrlSyntaxProvider.generatePortletUrl(request, portletWindow, portletUrl);
-        assertEquals("/uPortal/worker/download/worker.download.uP?pltc_target=windowId1&pltc_type=RENDER&pltc_state=exclusive&pltc_mode=edit&pltp_key1=value1.1&pltp_key1=value1.2&pltp_key2=value2.1&pltp_key3=", urlString);
-        
+        if(useAnchors) {
+       		assertEquals("/uPortal/worker/download/worker.download.uP?pltc_target=windowId1&pltc_type=RENDER&pltc_state=exclusive&pltc_mode=edit&pltp_key1=value1.1&pltp_key1=value1.2&pltp_key2=value2.1&pltp_key3=#entityId1", urlString);
+        }
+        else {
+        	assertEquals("/uPortal/worker/download/worker.download.uP?pltc_target=windowId1&pltc_type=RENDER&pltc_state=exclusive&pltc_mode=edit&pltp_key1=value1.1&pltp_key1=value1.2&pltp_key2=value2.1&pltp_key3=", urlString);
+        }
         EasyMock.verify(portalRequestUtils);
     }
     

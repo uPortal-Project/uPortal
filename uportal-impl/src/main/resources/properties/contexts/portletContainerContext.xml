@@ -117,6 +117,7 @@
     <bean id="portletUrlSyntaxProvider" class="org.jasig.portal.portlet.url.PortletUrlSyntaxProviderImpl">
         <property name="portletWindowRegistry" ref="portletWindowRegistry" />
         <property name="portalRequestUtils" ref="portalRequestUtils" />
+        <property name="useAnchors" value="${org.jasig.portal.ChannelManager.use_anchors}"/>
     </bean>
     
     <bean id="portletSessionActionManager" class="org.jasig.portal.portlet.session.PortletSessionActionManagerImpl">
