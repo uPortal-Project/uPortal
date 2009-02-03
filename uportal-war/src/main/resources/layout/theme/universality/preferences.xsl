@@ -22,8 +22,8 @@
    <xsl:when test="//focused">
     <div id="dojoMenus" style="display:none;">
      <!-- Add Channel Menu -->
-     <div id="focusedContentAddingDialog" class="jqueryui" title="Add Portlet to My Layout">
-      <form onsubmit="return addFocusedChannel(this);">
+     <div id="focusedContentAddingDialog" title="Add Portlet to My Layout">
+      <form>
        <p class="portlet-form-label">
         Choose a page in which to add this portlet:
        </p>
@@ -41,12 +41,14 @@
     </div>
     <script type="text/javascript">
      
-     var portalUrl = '<xsl:value-of select="$BASE_ACTION_URL"/>';
-     var preferencesUrl = 'ajax/preferences';
-     var skinPath = '<xsl:value-of select="$SKIN_PATH"/>';
-     
-     jQuery(document).ready(function(){
-     initfocusedportal();
+     up(document).ready(function(){
+       up.uportal.UportalLayoutManager(
+       {
+          portalUrl: '<xsl:value-of select="$BASE_ACTION_URL"/>',
+          mediaPath: '<xsl:value-of select="$MEDIA_PATH"/>',
+          currentSkin: '<xsl:value-of select="$SKIN"/>',
+          isFocusMode: true
+       });
      });
      
     </script>
@@ -56,9 +58,9 @@
   
     <div id="dojoMenus" style="display:none;">
      <!-- Add Channel Menu -->
-     <div id="contentAddingDialog" class="jqueryui" title="Add Content">
-        <div id="channelAddingTabs" class="jqueryui">
-         <ul>
+     <div id="contentAddingDialog" title="Add Content">
+        <div id="channelAddingTabs">
+         <ul style="height: 30px;">
           <li><a href="#channel-tab-1"><span>Browse Channels</span></a></li>
           <li><a href="#channel-tab-2"><span>Search</span></a></li>
          </ul>
@@ -89,13 +91,13 @@
       <p id="channelDescription"></p>
       <p style="padding-top: 10px;">
        <input id="addChannelId" type="hidden"/>
-       <button id="addChannelLink" onclick="addPortlet()" class="portlet-form-button">Add to my page</button>&#160;
+       <button id="addChannelLink" class="portlet-form-button">Add to my page</button>&#160;
        <button id="previewChannelLink" class="portlet-form-button">Use it now</button>&#160;
       </p>
      </div>
      
-     <div id="pageLayoutDialog" class="jqueryui" title="Change Layout">
-      <form onsubmit="return updatePage(this);">
+     <div id="pageLayoutDialog" title="Change Layout">
+      <form>
       <p>
        <label class="portlet-form-label">Page name:</label><br/>
        <input name="pageName" type="text" size="20" value="{/layout/navigation/tab[@activeTab='true']/@name}"/>
@@ -153,8 +155,8 @@
       </form>
      </div>	
   
-     <div id="skinChoosingDialog" class="jqueryui" title="Choose Skin">
-      <form onsubmit="return chooseSkin(this);">
+     <div id="skinChoosingDialog" title="Choose Skin">
+      <form>
        <h4 id="skinLoading">Loading skin list . . . </h4>
        <p class="portlet-form-label">
         Choose a skin for your portal view:
@@ -172,20 +174,15 @@
      
     </div>
     <script type="text/javascript">
-     
-     var portalUrl = '<xsl:value-of select="$BASE_ACTION_URL"/>';
-     var preferencesUrl = 'ajax/preferences';
-     var channelListUrl = 'ajax/channelList';
-     var mediaPath = '<xsl:value-of select="$MEDIA_PATH"/>';
-     var currentSkin = '<xsl:value-of select="$SKIN"/>';
-     var columnCount = <xsl:value-of select="count(/layout/content/column)"/>;
-     var skinPath = '<xsl:value-of select="$SKIN_PATH"/>';
-     var tabId = '<xsl:value-of select="/layout/navigation/tab[@activeTab='true']/@ID"/>';
-     var firstChannelId = '<xsl:value-of select="/layout/content/column[not(@dlm:addChildAllowed='false')]/channel[not(@dlm:moveAllowed='false')]/@ID"/>';     
-     jQuery(document).ready(function(){
-       initportal();
-     });
-  
+       up(document).ready(function(){
+          up.uportal.UportalLayoutManager(
+            {
+              portalUrl: '<xsl:value-of select="$BASE_ACTION_URL"/>',
+              mediaPath: '<xsl:value-of select="$MEDIA_PATH"/>',
+              currentSkin: '<xsl:value-of select="$SKIN"/>'
+            }
+          );
+       });
     </script>
       
    </xsl:otherwise>

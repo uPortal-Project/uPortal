@@ -1,209 +1,161 @@
-(function(jQuery){
+/*
+	CONFIGURATION PARAMETERS
+	
+	channelXmlUrl: source of XML data
+	onDataLoad: function to execute when XML data has been successfully
+		loaded and processed
+	onChannelSelect: function to execute on channel selection
+		returns a channel object with properties id, name, fname, description,
+			and a "userInputs" array containing any user-configurable parameters
 
-    // if the uPortal scope is not availalable, add it
-    jQuery.up = jQuery.up || {};
+*/
+(function($){
+  $.fn.channelbrowser = function(callerSettings) {
+    var settings = $.extend({
+      channelXmlUrl: "ajax/channelList",
+      categorySelect: null,
+	  channelSelect: null,
+	  channelSearchInput: null,
+	  channelSearchResults: null,
+      onDataLoad: null,
+	  onChannelSelect: null
+    }, callerSettings||{});
 
-    // tabs API methods
-    jQuery.fn.channelbrowser = function() {
-        var method = typeof arguments[0] == 'string' && arguments[0];
-        var args = method && Array.prototype.slice.call(arguments, 1) || arguments;
+	settings.categorySelect = $(settings.categorySelect);
+	settings.channelSelect = $(settings.channelSelect);
+	settings.channelSearchInput = $(settings.channelSearchInput);
+	settings.channelSearchResults = $(settings.channelSearchResults);
 
-        return this.each(function() {
-            if (method) {
-                var channelbrowser = jQuery.data(this, 'up-channelbrowser');
-                tabs[method].apply(channelbrowser, args);
-            } else
-                new jQuery.up.channelbrowser(this, args[0] || {});
-        });
-    };
-
-
-	jQuery.up.channelbrowser = function(el, options) {
-        var self = this;
-
-        this.element = el;
+	var chooseCategory = function(categoryId) {
+	
+		settings.channelSelect.html("");
 		
-		var defaults = {
-			handles: new Array()
+		var matching = new Array();
+		$("category[ID=" + categoryId + "]", settings.channelXml)
+			.find("channel")
+			.each(function(){matching.push($(this))});
+		matching.sort(sortChannelResults);
+
+		var j = 0;
+		$(matching).each(function(i, val){
+			if (i == 0 || $(this).attr("ID") != $(matching[i-1]).attr("ID")) {
+				settings.channelSelect.get(0).options[j] = new Option($(this).attr("name"), $(this).attr("ID"));
+				j++;
+			}
+		});
+		settings.channelSelect
+			.change(function(){ chooseChannel(this.value);})
+			.children("option:first").attr("selected", true);
+		chooseChannel(settings.channelSelect.val());
+		
+	};
+
+	var chooseChannel = function(channelId) {
+		if (channelId.indexOf("_") > -1)
+			channelId = channelId.split("_")[1];
+		var channelEl = $("channel[ID=" + channelId + "]", settings.channelXml);
+		if (channelEl.length > 0)
+			channelEl = $(channelEl.get(0)); 
+		var channel = { 
+			id: channelId, 
+			fname: channelEl.attr("fname"),
+			name: channelEl.attr("name"), 
+			description: channelEl.attr("description"),
+			userInputs: new Array()
 		};
 		
-		this.options = jQuery.extend(defaults, options);
+	    var parameters = channelEl.children("parameter[override=yes]");
+	    for (var i = 0; i < parameters.length; i++) {
+			channel.userInputs.push({ name: $(parameters[i]).attr("name"), value: $(parameters[i]).attr("value") });
+	    }
 		
-        jQuery(el).bind('setData.up-channelbrowser', function(event, key, value) {
-            self.options[key] = value;
-        }).bind('getData.up-channelbrowser', function(event, key) {
-            return self.options[key];
-        });
+		settings.onChannelSelect(channel);
+	};
 
-        // save instance for later
-        jQuery.data(el, 'up-channelbrowser', this);
-        
-        this.setup();
-        
-	}
+	var search = function(searchTerm) {
+		settings.channelSearchResults.html("");
+		if (searchTerm == null || searchTerm == '') return;
 
-    // instance methods
-    jQuery.extend(jQuery.up.channelbrowser.prototype, {
-    	
-    	setup: function() {
+		var matching = new Array();
+		$("channel[name*=" + searchTerm + "]", settings.channelXml).each(function(){matching.push($(this))});
+		$("channel[description*=" + searchTerm + "]", settings.channelXml).each(function(){matching.push($(this))});
+	
+		matching.sort(sortChannelResults);
+		$(matching).each(function(i){
+			if ((i == 0 || $(this).attr("ID") != $(matching[i-1]).attr("ID")) && !isHidden($(this))) {
+				settings.channelSearchResults.append(
+					$(document.createElement('li')).append(
+						$(document.createElement('a'))
+							.attr("id", $(this).attr("ID")).attr("href", "javascript:;")
+							.click(function(){chooseChannel(this.id);})
+							.text($(this).attr("name"))
+					)
+				 );
+			 }
+		});
+		
+	};
 
-			var self = this;
-	        for (var i = 0; i < self.options.handles.length; i++) {
-	        	jQuery(self.options.handles[i]).click(function(){self.init();});
-	        }
-            	
-    	},
-    	
-    	init: function() {
-    		var self = this;
+	// sort a list of returned channels by name
+	var sortCategoryResults = function(a, b) {
+		var aname = a.attr("name").toLowerCase();
+		var bname = b.attr("name").toLowerCase();
+		if (aname == 'new') return -1;
+		if (bname == 'new') return 1;
+		if (aname == 'popular') return -1;
+		if (bname == 'popular') return 1;
+		if(aname > bname) return 1;
+		if(aname < bname) return -1;
+		return 0;
+	};
+	
+	// sort a list of returned channels by name
+	var sortChannelResults = function(a, b) {
+		var aname = a.attr("name").toLowerCase();
+		var bname = b.attr("name").toLowerCase();
+		if(aname > bname) return 1;
+		if(aname < bname) return -1;
+		return 0;
+	};
 
-	        for (var i = 0; i < self.options.handles.length; i++) {
-	        	jQuery(self.options.handles[i]).unbind('click').click(function(){jQuery(self.element).dialog('open');});
-	        }
-    		
-			jQuery("#channelAddingTabs > ul").tabs();
-			jQuery(self.element).dialog({height:450, width:500, modal:true});
-			jQuery("#addChannelSearchTerm").keyup(function(){
-				self.search(jQuery(this).attr("value"))
+	var isHidden = function(element) {
+	  if ($(element).attr("name") == 'Hidden')
+		  return true;
+	  else if ($(element).parents("category[@name='Hidden']").size() > 0)
+		  return true;
+	  else
+		  return false;
+	};
+
+	$.get(settings.channelXmlUrl, {}, function(xml) {
+		settings.channelXml = xml;
+		// initialize channel browsing
+		if (settings.categorySelect.length > 0 && settings.channelSelect.length > 0) {
+			var matching = new Array();
+			$("category:has(channel)", settings.channelXml).each(
+				function(){
+					if (!isHidden($(this)))
+						matching.push($(this));
+				}
+			);
+			matching.sort(sortCategoryResults);
+			$(matching).each(function(i, val) {
+				settings.categorySelect.get(0).options[i] = new Option($(this).attr("name"), $(this).attr("ID"));
 			});
-			var categorySelect = document.getElementById("categorySelectMenu");
-		
-			jQuery.get(channelListUrl, {}, function(xml) {
-				self.channelXml = xml;
-				var matching = new Array();
-				jQuery("category:has(channel)", self.channelXml).each(
-				    function(){
-				        if (!self.isHidden(jQuery(this)))
-				            matching.push(jQuery(this));
-				    }
-				);
-		        matching.sort(self.sortCategoryResults);
-		        jQuery(matching).each(function(i, val) {
-		        	categorySelect.options[i] = new Option(jQuery(this).attr("name"), jQuery(this).attr("ID"));
-		        });
-				categorySelect.options[0].selected = true;
-		       	self.chooseCategory(categorySelect.value);
-		       	jQuery(categorySelect).change(function(){self.chooseCategory(this.value)});
-		       	
-		       	// remove the loading graphics and message
-		   		jQuery("#channelLoading").css("display", "none");
-		   		jQuery("#categorySelectMenu").css("background-image", "none");
-		   		jQuery("#channelSelectMenu").css("background-image", "none");
-		   		jQuery(self.element).parent().parent()
-		   	      .css("height", jQuery(self.element).parent().height() + 20);
-		   		
-			});
-			
-    	},
-    	
-		chooseCategory: function(categoryId) {
-		
-			var self = this;
-			var channelSelect = document.getElementById("channelSelectMenu");
-			jQuery("#channelSelectMenu").html("");
-			
-		    var matching = new Array();
-			jQuery("category[ID=" + categoryId + "]", this.channelXml)
-				.find("channel")
-				.each(function(){matching.push(jQuery(this))});
-		    matching.sort(this.sortChannelResults);
-
-			var j = 0;
-		    jQuery(matching).each(function(i, val){
-		    	if (i == 0 || jQuery(this).attr("ID") != jQuery(matching[i-1]).attr("ID")) {
-		    		channelSelect.options[j] = new Option(jQuery(this).attr("name"), jQuery(this).attr("ID"));
-				    j++;
-		    	}
-		    });
-		    channelSelect.options[0].selected = true;
-			this.chooseChannel(channelSelect.value);
-            jQuery(channelSelect).change(function(){self.chooseChannel(this.value);});
-			
-		},
-
-		chooseChannel : function(channelId) {
-			if (channelId.indexOf("_") > -1)
-				channelId = channelId.split("_")[1];
-			var channel = jQuery("channel[ID=" + channelId + "]", this.channelXml);
-			if (channel.length > 0)
-			    channel = jQuery(channel.get(0)); 
-		
-			jQuery("#channelTitle").text(channel.attr("name"));
-			jQuery("#channelDescription").text(channel.attr("description"));
-			jQuery("#addChannelId").attr("value", channelId);
-			jQuery("#previewChannelLink").unbind("click").click(function(){ 
-			    window.location = portalUrl + "?uP_fname=" + channel.attr("fname");
-			});
-		
-		    // if this channel has user-overrideable parameters, present a form allowing the
-		    // user to input values
-		    var parameters = channel.children("parameter[override=yes]");
-		    for (var i = 0; i < parameters.length; i++) {
-		        var input = jQuery(document.createElement("input")).attr("type", "hidden").attr("name", jQuery(parameters[i]).attr("name")).attr("value", jQuery(parameters[i]).attr("value"));
-		        var p = jQuery(document.createElement("p")).append(input);
-		        jQuery("#channelDescription").append(p);
-		    }
-		
-		},
-		
-    
-		search: function(searchTerm) {
-			if (searchTerm == null || searchTerm == '') return;
-			var self = this;
-		    var matching = new Array();
-			jQuery("channel[name*=" + searchTerm + "]", this.channelXml).each(function(){matching.push(jQuery(this))});
-			jQuery("channel[description*=" + searchTerm + "]", this.channelXml).each(function(){matching.push(jQuery(this))});
-			
-		    var searchResults = document.getElementById("addChannelSearchResults");
-		    searchResults.innerHTML = "";
-		
-		    matching.sort(this.sortChannelResults);
-		    jQuery(matching).each(function(i){
-				if ((i == 0 || jQuery(this).attr("ID") != jQuery(matching[i-1]).attr("ID")) && !self.isHidden(jQuery(this))) {
-				     jQuery("#addChannelSearchResults").append(
-				     	jQuery(document.createElement('li')).append(
-				     		jQuery(document.createElement('a'))
-				     			.attr("id", jQuery(this).attr("ID")).attr("href", "javascript:;")
-				     			.click(function(){self.chooseChannel(this.id);})
-				     			.text(jQuery(this).attr("name"))
-				     	)
-				     );
-			     }
-		    });
-		    
-		},
-		
-		// sort a list of returned channels by name
-		sortCategoryResults: function(a, b) {
-		    var aname = a.attr("name").toLowerCase();
-		    var bname = b.attr("name").toLowerCase();
-		    if (aname == 'new') return -1;
-		    if (bname == 'new') return 1;
-		    if (aname == 'popular') return -1;
-		    if (bname == 'popular') return 1;
-		    if(aname > bname) return 1;
-		    if(aname < bname) return -1;
-		    return 0;
-		},
-		
-		// sort a list of returned channels by name
-		sortChannelResults: function(a, b) {
-		    var aname = a.attr("name").toLowerCase();
-		    var bname = b.attr("name").toLowerCase();
-		    if(aname > bname) return 1;
-		    if(aname < bname) return -1;
-		    return 0;
-		},
-		
-		isHidden: function(element) {
-		  if (jQuery(element).attr("name") == 'Hidden')
-		      return true;
-		  else if (jQuery(element).parents("category[@name='Hidden']").size() > 0)
-		      return true;
-		  else
-		      return false;
+			settings.categorySelect.change(function(){chooseCategory(this.value)})
+				.children("option:first").attr("selected", true);
+			chooseCategory(settings.categorySelect.val());
+			settings.onDataLoad(xml);
 		}
-
-	});	
+		// initialize channel search
+		if (settings.channelSearchInput.length > 0 && settings.channelSearchResults.length > 0) {
+			settings.channelSearchInput.keyup(function(){
+				search($(this).val());
+			});
+		}
+	});
+	
+	return this;
+  };
 
 })(jQuery);

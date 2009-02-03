@@ -1,363 +1,433 @@
-var channelXml,skinXml;
-var myReorderer;
-               
-// Initialization tasks for non-focused mode
-function initportal() {
+/*
+	CONFIGURATION PARAMETERS
+	
 
-	// initialize dialog menus
-	jQuery("#contentAddingDialog").channelbrowser({handles: new Array("#contentDialogLink")});
-	jQuery("#layoutDialogLink").click(initializeLayoutMenu);
-	jQuery("#skinDialogLink").click(initializeSkinMenu);
+*/
+(function($){
+	
+    // if the uPortal scope is not availalable, add it
+    $.uportal = $.uportal || {};
+    
+    $.uportal.UportalLayoutManager = function(callerSettings) {
+		var settings = $.extend({
+		    preferencesUrl: 'ajax/preferences',
+		    channelListUrl: 'ajax/channelList',
+		    portalUrl: null,
+		    mediaPath: null,
+		    currentSkin: null,
+		    isFocusMode: false
+	    }, callerSettings||{});
 
-    var options = {
-         selectors: {
-	        columns: ".portal-page-column-inner",
-	        modules: ".portlet-container",
-	        lockedModules: ".locked",
-	        dropWarning: "#portalDropWarning",
-	        grabHandle: "[id*=toolbar_]"
-         },
-         listeners: {
-         	afterMove: movePortlet
-         },
-         styles: {
-         	mouseDrag: "orderable-dragging-mouse"
-         }
-     };
-     myReorderer = fluid.reorderLayout ("#portalPageBodyColumns",options);
 
-    // add onclick events for portlet delete buttons
-	jQuery('a[@id*=removePortlet_]').each(function(i){jQuery(this).click(function(){deletePortlet(this.id.split("_")[1]);return false;});});	
+		/*
+			INTERNAL METHODS
+		*/
 
-	jQuery("#addTabLink").click(function(){addTab()});
-	jQuery("#deletePageLink").click(deleteTab);
-	jQuery("#editPageLink").click(initializeLayoutMenu);
-	jQuery("#movePageLeftLink").click(function(){ moveTab('left')});
-	jQuery("#movePageRightLink").click(function(){moveTab('right')});
-	initTabEditLinks();
-
-}
-
-// Initialization tasks for focus mode
-function initfocusedportal() {
-	jQuery("#focusedContentDialogLink").click(initializeFocusedContentMenu);
-}
-function initializeFocusedContentMenu() {
-	jQuery("#focusedContentAddingDialog").dialog({width:500, modal:true});
-	jQuery("#focusedContentDialogLink")
-		.unbind('click', initializeFocusedContentMenu)
-		.click(function(){jQuery("#focusedContentAddingDialog").dialog('open');});
-}
-
-function initializeLayoutMenu() {
-	// using defaultChecked attribute to compensate for IE radio button bug
-	jQuery("#changeColumns").find("img")
-		.click(function(){
-			jQuery("#changeColumns").find("input").removeAttr("checked").attr("defaultChecked");
-			jQuery(this).prev().attr("checked", "checked").attr("defaultChecked","defaultChecked");
-		})
-		.end().find("input[value=" + getCurrentLayoutString() + "]").attr("checked", "checked").attr("defaultChecked","defaultChecked");
-	if (jQuery("#changeColumns").find("input:checked").length == 0) {
-	   jQuery("#changeColumns").find("tr:eq(1)").find("td:eq(" + (columnCount-1) + ")").find("input").attr("checked", true).attr("defaultChecked","defaultChecked");
-	}
-	jQuery("#pageLayoutDialog").dialog({height:300, width:400, modal:true });
-
-	jQuery("#layoutDialogLink")
-		.unbind('click', initializeLayoutMenu)
-		.click(function(){jQuery("#pageLayoutDialog").dialog('open');});
-	jQuery("#editPageLink")
-		.unbind('click', initializeLayoutMenu)
-		.click(function(){jQuery("#pageLayoutDialog").dialog('open');});
-
-    jQuery("#pageLayoutDialog").parent().parent()
-       .css("height", jQuery("#pageLayoutDialog").parent().height() + 20);
-
-}
-function getCurrentLayoutString() {
-	var str = "";
-	jQuery('#portalPageBodyColumns > td[@id*=column_]').each(function(){
-		if (str != '')
-			str += '-';
-		str += parseInt(jQuery(this).attr("width"));
-	});
-	return str;
-}
-function updatePage(form) {
-	var name = form.pageName.value;
-	var layout = jQuery(form.layoutChoice).filter(":checked").val();
-	var columns = layout.split("-");
-	if (name != jQuery("#portalPageBodyTitle").text())
-		updatePageName(name);
-	if (layout != getCurrentLayoutString())
-		changeColumns(columns);
-	jQuery("#pageLayoutDialog").dialog('close');
-	return false;
-}
-function updatePageName(name) {
-	jQuery("#tabLink_" + tabId + " > span").text(name);
-	jQuery("#portalPageBodyTitle").text(name);
-	jQuery.post(preferencesUrl, {action: 'renameTab', tabId: tabId, tabName: name}, function(xml){});
-	return false;
-}
-// Column editing persistence functions
-function changeColumns(newcolumns) {
-    columnCount = newcolumns.length;
-	jQuery.post(preferencesUrl, {action: 'changeColumns', tabId: tabId, columns: newcolumns}, 
-		function(xml) { 
-		    var columns = jQuery('#portalPageBodyColumns > td[@id*=column_]');
-		    if (columns.length < newcolumns.length) {
-		    	jQuery("newColumns > id", xml).each(function(){
-		    		jQuery("#portalPageBodyColumns")
-		    			.append(
-		    				jQuery(document.createElement('td')).attr("id", 'column_' + jQuery(this).text())
-		    					.addClass("portal-page-column")
-		    					.append(
-		    						jQuery(document.createElement('div'))
-		    							.attr("id", 'inner-column_' + jQuery(this).text())
-		    							.addClass("portal-page-column-inner")
-								)
-		    			);
-		    	});
-		    	
-		    } else if(columns.length > newcolumns.length) {
-		    	for (var i = newcolumns.length; i < columns.length; i++) {
-		    		var lastColumn = jQuery("#inner-column_" + jQuery(columns[newcolumns.length-1]).attr("id").split("_")[1]);
-		    		var portlets = jQuery(columns[i]).find("div[@id*=portlet_]")
-			    		.each(function(){
-			    			jQuery(this).appendTo(lastColumn);
-	    					myReorderer.refresh();		    	
-			    		})
-		    			.end().remove();
-		    	}
-
+		// Initialization tasks for non-focused mode
+		var initportal = function() {
+		
+		    settings.columnCount = $("#portalPageBodyColumns td[id*=column_]").size(); 
+		    settings.tabId = $("#portalNavigationList li.active").attr("id").split("_")[1];
+		
+			// initialize dialog menus
+			$("#contentDialogLink").click(initializeContentAddingMenu);
+			$("#layoutDialogLink").click(initializeLayoutMenu);
+			$("#skinDialogLink").click(initializeSkinMenu);
+		
+			// set up the Fluid reorderer to control portlet drag and drop
+		    var options = {
+		         selectors: {
+			        columns: ".portal-page-column-inner",
+			        modules: ".portlet-container",
+			        lockedModules: ".locked",
+			        dropWarning: "#portalDropWarning",
+			        grabHandle: "[id*=toolbar_]"
+		         },
+		         listeners: {
+		         	afterMove: movePortlet
+		         },
+		         styles: {
+		         	mouseDrag: "orderable-dragging-mouse"
+		         }
+		    };
+		    settings.myReorderer = fluid.reorderLayout ("#portalPageBodyColumns",options);
+		
+		    // add onclick events for portlet delete buttons
+			$('a[@id*=removePortlet_]').each(function(i){$(this).click(function(){deletePortlet(this.id.split("_")[1]);return false;});});	
+		
+			// set click handlers for tab moving and editing links
+			$("#addTabLink").click(function(){addTab()});
+			$("#deletePageLink").click(function(){deleteTab()});
+			$("#editPageLink").click(initializeLayoutMenu);
+			$("#movePageLeftLink").click(function(){moveTab('left')});
+			$("#movePageRightLink").click(function(){moveTab('right')});
+			initTabEditLinks();
+		
+		};
+			
+		// Initialization tasks for focus mode
+		var initfocusedportal = function() {
+			$("#focusedContentDialogLink").click(initializeFocusedContentMenu);
+		};
+		
+		var initializeContentAddingMenu = function() {
+			$("#contentAddingDialog").dialog({height:450, width:500, modal:true});
+			$("#contentDialogLink")
+				.unbind('click', initializeContentAddingMenu)
+				.click(function(){$("#contentAddingDialog").dialog('open');});
+			$("#channelAddingTabs > ul").tabs();
+			$("#channelAddingTabs").channelbrowser({
+				onDataLoad: function() {
+			   		$("#channelLoading").css("display", "none");
+			   		$("#categorySelectMenu").css("background-image", "none");
+			   		$("#channelSelectMenu").css("background-image", "none");
+				},
+				categorySelect: "#categorySelectMenu", 
+				channelSelect: "#channelSelectMenu",
+				channelSearchInput: "#addChannelSearchTerm",
+				channelSearchResults: "#addChannelSearchResults",
+				onChannelSelect: function(channel) {
+					$("#channelTitle").text(channel.name);
+					$("#channelDescription").text(channel.description);
+					$("#addChannelId").attr("value", channel.id);
+					$("#previewChannelLink").unbind("click").click(function(){ 
+						window.location = settings.portalUrl + "?uP_fname=" + channel.fname;
+					});
+				}
+			});
+			$("#addChannelLink").click(function(){addPortlet()});
+		};
+		
+		var initializeFocusedContentMenu = function() {
+			$("#focusedContentAddingDialog").dialog({width:500, modal:true});
+			$("#focusedContentDialogLink")
+				.unbind('click', initializeFocusedContentMenu)
+				.click(function(){$("#focusedContentAddingDialog").dialog('open');});
+		    $("#focusedContentAddingDialog form").submit(function(){return addFocusedChannel(this);});
+		};
+		
+		var initializeLayoutMenu = function() {
+			// using defaultChecked attribute to compensate for IE radio button bug
+			$("#changeColumns").find("img")
+				.click(function(){
+					$("#changeColumns").find("input").removeAttr("checked").attr("defaultChecked");
+					$(this).prev().attr("checked", "checked").attr("defaultChecked","defaultChecked");
+				})
+				.end().find("input[value=" + getCurrentLayoutString() + "]").attr("checked", "checked").attr("defaultChecked","defaultChecked");
+			if ($("#changeColumns").find("input:checked").length == 0) {
+			   $("#changeColumns").find("tr:eq(1)").find("td:eq(" + (settings.columnCount-1) + ")").find("input").attr("checked", true).attr("defaultChecked","defaultChecked");
+			}
+			$("#pageLayoutDialog").dialog({height:300, width:400, modal:true });
+		
+			$("#layoutDialogLink")
+				.unbind('click', initializeLayoutMenu)
+				.click(function(){$("#pageLayoutDialog").dialog('open');});
+			$("#editPageLink")
+				.unbind('click', initializeLayoutMenu)
+				.click(function(){$("#pageLayoutDialog").dialog('open');});
+				
+		    $("#pageLayoutDialog").parent().parent()
+		       .css("height", $("#pageLayoutDialog").parent().height() + 20);
+		    $("#pageLayoutDialog form").submit(function(){return updatePage(this);});
+		
+		};
+		var getCurrentLayoutString = function() {
+			var str = "";
+			$('#portalPageBodyColumns > td[@id*=column_]').each(function(){
+				if (str != '')
+					str += '-';
+				str += parseInt($(this).attr("width"));
+			});
+			return str;
+		};
+		var updatePage = function(form) {
+			var name = form.pageName.value;
+			var layout = $(form.layoutChoice).filter(":checked").val();
+			var columns = layout.split("-");
+			if (name != $("#portalPageBodyTitle").text())
+				updatePageName(name);
+			if (layout != getCurrentLayoutString())
+				changeColumns(columns);
+			$("#pageLayoutDialog").dialog('close');
+			return false;
+		};
+		var updatePageName = function(name) {
+			$("#tabLink_" + settings.tabId + " > span").text(name);
+			$("#portalPageBodyTitle").text(name);
+			$.post(settings.preferencesUrl, {action: 'renameTab', tabId: settings.tabId, tabName: name}, function(xml){});
+			return false;
+		};
+		// Column editing persistence functions
+		var changeColumns = function(newcolumns) {
+		    settings.columnCount = newcolumns.length;
+			$.post(settings.preferencesUrl, {action: 'changeColumns', tabId: settings.tabId, columns: newcolumns}, 
+				function(xml) { 
+				    var columns = $('#portalPageBodyColumns > td[@id*=column_]');
+				    if (columns.length < newcolumns.length) {
+				    	$("newColumns > id", xml).each(function(){
+				    		$("#portalPageBodyColumns")
+				    			.append(
+				    				$(document.createElement('td')).attr("id", 'column_' + $(this).text())
+				    					.addClass("portal-page-column")
+				    					.append(
+				    						$(document.createElement('div'))
+				    							.attr("id", 'inner-column_' + $(this).text())
+				    							.addClass("portal-page-column-inner")
+										)
+				    			);
+				    	});
+				    	
+				    } else if(columns.length > newcolumns.length) {
+				    	for (var i = newcolumns.length; i < columns.length; i++) {
+				    		var lastColumn = $("#inner-column_" + $(columns[newcolumns.length-1]).attr("id").split("_")[1]);
+				    		var portlets = $(columns[i]).find("div[@id*=portlet_]")
+					    		.each(function(){
+					    			$(this).appendTo(lastColumn);
+					    		})
+				    			.end().remove();
+				    	}
+		
+				    }
+				    
+				    $("#portalPageBodyTitleRow").attr("colspan", newcolumns.length);
+				    $('#portalPageBodyColumns > td[@id*=column_]').each(function(i){
+				    	$(this).attr("width", newcolumns[i] + "%")
+				    	.removeClass("right").removeClass("left").removeClass("single");
+				    	if (newcolumns.length == 1) $(this).addClass("single");
+				    	else if (i == 0) $(this).addClass("left");
+				    	else if (i == newcolumns.length - 1) $(this).addClass("right");
+				    });
+				    
+			    	settings.myReorderer.refresh();
+			    	
+			    	// remove the checked and default checked attributes from all radio
+			    	// buttons and re-apply them to the current value to compensate
+			    	// for IE radio button bug
+			    	$("#changeColumns").find("input").removeAttr("checked").removeAttr("defaultChecked");
+			    	$("#changeColumns").find("input[value=" + getCurrentLayoutString() + "]").attr("checked", "checked").attr("defaultChecked","defaultChecked");
+					
+				});
+		};
+		
+		// Portlet editing persistence functions
+		var addPortlet = function(chanId) {
+		    var options = { action: 'addChannel', channelID: $("#addChannelId").attr("value") };
+		    var firstChannel = $("div[id*=portlet_]:not(.locked)");
+		    if (firstChannel.size() == 0) {
+		        options['elementID'] = settings.tabId;
+		    } else {
+		        options['elementID'] = firstChannel.attr("id").split("_")[1];
+		        options['position'] = 'insertBefore';
 		    }
-
-		    jQuery("#portalPageBodyTitleRow").attr("colspan", newcolumns.length);
-		    jQuery('#portalPageBodyColumns > td[@id*=column_]').each(function(i){
-		    	jQuery(this).attr("width", newcolumns[i] + "%")
-		    	.removeClass("right").removeClass("left").removeClass("single");
-		    	if (newcolumns.length == 1) jQuery(this).addClass("single");
-		    	else if (i == 0) jQuery(this).addClass("left");
-		    	else if (i == newcolumns.length - 1) jQuery(this).addClass("right");
+			$.post(settings.preferencesUrl, options,
+			   function(xml) { window.location = settings.portalUrl; }, 
+			   "text"
+			);
+		};
+		var deletePortlet = function(id) {
+			if (!confirm("Are you sure you want to remove this portlet?")) return false;
+			$('#portlet_'+id).remove();
+			$.post(settings.preferencesUrl, {action: 'removeElement', elementID: id}, null);
+		};
+		
+		
+		// Tab editing persistence functions
+		var addTab = function() {
+			$.post(settings.preferencesUrl, {action: 'addTab'}, function(xml) {
+				window.location = settings.portalUrl + "?uP_root=root&uP_sparam=activeTab&activeTab=" + 
+					($("#portalNavigationList > li").length + 1);
+			});
+		};
+		var deleteTab = function() {
+			if (!confirm("Are you sure you want to remove this tab and all its content?")) return false;
+			$.post(settings.preferencesUrl, {action: 'removeElement', elementID: settings.tabId}, function(xml) { 
+				window.location = settings.portalUrl + "?uP_root=root&uP_sparam=activeTab&activeTab=1"; 
+			});
+		};
+		var moveTab = function(direction) {
+			var tab = $("#portalNavigation_" + settings.tabId);
+			var method = 'insertBefore';
+			var targetId = null;
+			var tabPosition = 1;
+		
+			// move the tab node
+			if (direction == 'left') tab.insertBefore(tab.prev());
+			else tab.insertAfter(tab.next());
+			
+			// get the target node and method parameters
+			if (tab.is(":last-child")) {
+				method = 'appendAfter';
+				targetId = tab.prev().attr("id").split("_")[1];
+			} else
+				targetId = tab.next().attr("id").split("_")[1];
+		
+			// figure out what the current tab's number is
+			$("[@id*=portalNavigation_]").each(function(i){
+				if ($(this).attr("id") == tab.attr("id"))
+					tabPosition = i+1;
+			});
+			
+			$.post(settings.preferencesUrl,
+				{
+					action: 'moveTabHere',
+					sourceID: settings.tabId,
+					method: method,
+					elementID: targetId,
+					tabPosition: tabPosition
+				},
+				function(xml){}
+			);
+			redoTabs(settings.tabId);
+			initTabEditLinks();
+		};
+		var initTabEditLinks = function() {
+			var tab = $("#portalNavigation_" + settings.tabId);
+			if (tab.not(":first-child") && tab.prev().hasClass("movable-tab"))
+				$("#movePageLeftLink").css("display", "block");
+			else 
+				$("#movePageLeftLink").css("display", "none");
+				
+			if (tab.is(":last-child")) 
+				$("#movePageRightLink").css("display", "none");
+			else
+				$("#movePageRightLink").css("display", "block");
+				
+			var links = $("#portalNavigationList .portal-navigation");
+			links.each(function(i){
+				if (links.length == 1) $(this).removeClass("first").removeClass("last").addClass("single");
+				else if (i == 0) $(this).removeClass("single").removeClass("last").addClass("first");
+				else if (i == links.length-1) $(this).removeClass("single").removeClass("first").addClass("last");
+				else $(this).removeClass("single").removeClass("last").removeClass("first");
+			});
+				
+			links = $("#portalFlyoutNavigationInner_" + settings.tabId).find(".portal-subnav").not("[display=none]");
+			links.each(function(i){
+				if (links.length == 1) $(this).removeClass("first").removeClass("last").addClass("single");
+				else if (i == 0) $(this).removeClass("single").removeClass("last").addClass("first");
+				else if (i == links.length-1) $(this).removeClass("single").removeClass("first").addClass("last");
+				else $(this).removeClass("single").removeClass("last").removeClass("first");
+			});
+		};
+		var redoTabs = function(tabId) {
+			$("[@id*=tabLink_]").each(function(i){
+				$(this).attr("href", settings.portalUrl + "?uP_root=root&uP_sparam=activeTab&activeTab=" + (i+1));
+			});
+		//	fly.closeSubnav(tabId);
+		};
+		var movePortlet = function(movedNode) {
+		   var method = 'insertBefore';
+		   var target = null;
+		   if ($(movedNode).nextAll('div[@id*=portlet_]').size() > 0) {
+		       target = $(movedNode).nextAll('div[@id*=portlet_]').get(0);
+		   } else if ($(movedNode).prevAll('div[@id*=portlet_]').size() > 0) {
+		       target = $(movedNode).prevAll('div[@id*=portlet_]').get(0);
+		       method = 'appendAfter';
+		   } else {
+		       target = $(movedNode).parent();
+		   }
+		   var columns = $('#portalPageBodyColumns > td[@id*=column_]');
+		   for (var i = 0; i < columns.length; i++) {
+		       $(columns[i]).attr("width", $(columns[i]).attr("width"));
+		   }
+		   $.post(settings.preferencesUrl, {action: 'movePortletHere', method: method, elementID: $(target).attr('id').split('_')[1], sourceID: $(movedNode).attr('id').split('_')[1]}, function(xml) { });
+		};
+		
+		var addFocusedChannel = function(form) {
+		
+		    var channelId = form.channelId.value;
+		    var tabPosition, elementId;
+		    
+		    $("#focusedContentAddingDialog input[name=targetTab]").each(function(i){
+		    	if ($(this).is(":checked")) {
+		    		tabPosition = i+1;
+		    		elementId = $(this).val();
+		    	}
 		    });
 		    
-	    	myReorderer.refresh();
-	    	
-	    	// remove the checked and default checked attributes from all radio
-	    	// buttons and re-apply them to the current value to compensate
-	    	// for IE radio button bug
-	    	jQuery("#changeColumns").find("input").removeAttr("checked").removeAttr("defaultChecked");
-	    	jQuery("#changeColumns").find("input[value=" + getCurrentLayoutString() + "]").attr("checked", "checked").attr("defaultChecked","defaultChecked");
-			
-		}, "xml");
-}
-
-// Portlet editing persistence functions
-function addPortlet(chanId) {
-    var options = { action: 'addChannel', channelID: jQuery("#addChannelId").attr("value") };
-    if (firstChannelId == null || firstChannelId == '') {
-        options['elementID'] = tabId;
-    } else {
-        options['elementID'] = firstChannelId;
-        options['position'] = 'insertBefore';
-    }
-	jQuery.post(preferencesUrl, options,
-	   function(xml) { window.location = portalUrl; }, "text"
-	);
-}
-function deletePortlet(id) {
-	if (!confirm("Are you sure you want to remove this portlet?")) return false;
-	if (id == firstChannelId) {
-        firstChannelId = tabId;
-    }
-	jQuery('#portlet_'+id).remove();
-	jQuery.post(preferencesUrl, {action: 'removeElement', elementID: id}, function(xml) { });
-}
-
-
-// Tab editing persistence functions
-function addTab() {
-	jQuery.post(preferencesUrl, {action: 'addTab'}, function(xml) {
-		window.location = portalUrl + "?uP_root=root&uP_sparam=activeTab&activeTab=" + 
-			(jQuery("#portalNavigationList > li").length + 1);
-	});
-}
-function deleteTab() {
-	if (!confirm("Are you sure you want to remove this tab and all its content?")) return false;
-	jQuery.post(preferencesUrl, {action: 'removeElement', elementID: tabId}, function(xml) { 
-		window.location = portalUrl + "?uP_root=root&uP_sparam=activeTab&activeTab=1"; 
-	});
-}
-function moveTab(direction) {
-	var tab = jQuery("#portalNavigation_" + tabId);
-	var method = 'insertBefore';
-	var targetId = null;
-	var tabPosition = 1;
-
-	// move the tab node
-	if (direction == 'left') tab.insertBefore(tab.prev());
-	else tab.insertAfter(tab.next());
-	
-	// get the target node and method parameters
-	if (tab.is(":last-child")) {
-		method = 'appendAfter';
-		targetId = tab.prev().attr("id").split("_")[1];
-	} else
-		targetId = tab.next().attr("id").split("_")[1];
-
-	// figure out what the current tab's number is
-	jQuery("[@id*=portalNavigation_]").each(function(i){
-		if (jQuery(this).attr("id") == tab.attr("id"))
-			tabPosition = i+1;
-	});
-	
-	jQuery.post(preferencesUrl,
-		{
-			action: 'moveTabHere',
-			sourceID: tabId,
-			method: method,
-			elementID: targetId,
-			tabPosition: tabPosition
-		},
-		function(xml){}
-	);
-	redoTabs(tabId);
-	initTabEditLinks();
-}
-function initTabEditLinks() {
-	var tab = jQuery("#portalNavigation_" + tabId);
-	if (tab.not(":first-child") && tab.prev().hasClass("movable-tab"))
-		jQuery("#movePageLeftLink").css("display", "block");
-	else 
-		jQuery("#movePageLeftLink").css("display", "none");
+		    $.post(settings.preferencesUrl, 
+		    	{
+		    		action: 'addChannel',
+		    		channelID: 'chan' + channelId,
+		    		position: 'insertBefore',
+		    		elementID: elementId
+		    	},
+		    	function(xml) {
+					window.location = settings.portalUrl + "?uP_root=root&uP_sparam=activeTab&activeTab=" + tabPosition;
+		    	}
+		    );
+			return false;
 		
-	if (tab.is(":last-child")) 
-		jQuery("#movePageRightLink").css("display", "none");
-	else
-		jQuery("#movePageRightLink").css("display", "block");
+		};
 		
-	var links = jQuery("#editTabInner").find(".portal-subnav").not("[display=none]")
-	links.each(function(i){
-		if (links.length == 1) jQuery(this).removeClass("first").removeClass("last").addClass("single");
-		else if (i == 0) jQuery(this).removeClass("single").removeClass("last").addClass("first");
-		else if (i == links.length-1) jQuery(this).removeClass("single").removeClass("first").addClass("last");
-		else jQuery(this).removeClass("single").removeClass("last").removeClass("first");
-	});
-}
-function redoTabs(tabId) {
-	jQuery("[@id*=tabLink_]").each(function(i){
-		jQuery(this).attr("href", portalUrl + "?uP_root=root&uP_sparam=activeTab&activeTab=" + (i+1));
-	});
-//	fly.closeSubnav(tabId);
-}
-function movePortlet(movedNode) {
-   var method = 'insertBefore';
-   var target = null;
-   if (jQuery(movedNode).nextAll('div[@id*=portlet_]').size() > 0) {
-       target = jQuery(movedNode).nextAll('div[@id*=portlet_]').get(0);
-   } else if (jQuery(movedNode).prevAll('div[@id*=portlet_]').size() > 0) {
-       target = jQuery(movedNode).prevAll('div[@id*=portlet_]').get(0);
-       method = 'appendAfter';
-   } else {
-       target = jQuery(movedNode).parent();
-   }
-   var columns = jQuery('#portalPageBodyColumns > td[@id*=column_]');
-   for (var i = 0; i < columns.length; i++) {
-       jQuery(columns[i]).attr("width", jQuery(columns[i]).attr("width"));
-   }
-   jQuery.post(preferencesUrl, {action: 'movePortletHere', method: method, elementID: jQuery(target).attr('id').split('_')[1], sourceID: jQuery(movedNode).attr('id').split('_')[1]}, function(xml) { });
-}
-
-function addFocusedChannel(form) {
-
-    var channelId = form.channelId.value;
-    var tabPosition, elementId;
-    
-    jQuery("#focusedContentAddingDialog input[name=targetTab]").each(function(i){
-    	if (jQuery(this).is(":checked")) {
-    		tabPosition = i+1;
-    		elementId = jQuery(this).val();
-    	}
-    });
-    
-    jQuery.post(preferencesUrl, 
-    	{
-    		action: 'addChannel',
-    		channelID: 'chan' + channelId,
-    		position: 'insertBefore',
-    		elementID: elementId
-    	},
-    	function(xml) {
-			window.location = portalUrl + "?uP_root=root&uP_sparam=activeTab&activeTab=" + tabPosition;
-    	}
-    );
-	return false;
-
-}
-
-function initializeSkinMenu() {
-	jQuery("#skinChoosingDialog").dialog({height:450, width:500, modal:true});
-	jQuery("#skinDialogLink")
-		.unbind('click', initializeSkinMenu)
-		.click(function(){jQuery("#skinChoosingDialog").dialog('open');});
-
-    var skinMenu = jQuery("#skinList").html("").css("padding", "10px");
-    jQuery.get(mediaPath + '/skinList.xml?noCache=' + new Date().getTime(), { },
-    	function(xml){
-			skinXml = xml;
-			jQuery("skin", skinXml).each(function(i){
-				var key = jQuery(this).children("skin-key").text();
-				
-				var input
-				if (jQuery.browser.msie) {
-				    if (key == currentSkin) {
-    				    input = jQuery(document.createElement("<input type=\"radio\" name=\"skinChoice\" value=\"" + key + "\" checked=\"true\"/>"));
-    				} else {
-                        input = jQuery(document.createElement("<input type=\"radio\" name=\"skinChoice\" value=\"" + key + "\"/>"));    				
-    				}
-				} else {
-                    input = jQuery(document.createElement("input")).attr("type", "radio")
-                        .attr("name", "skinChoice").val(key);
-	                if (key == currentSkin)
-	                    input.attr("checked", true);
+		var initializeSkinMenu = function() {
+			$("#skinChoosingDialog").dialog({height:450, width:500, modal:true});
+			$("#skinDialogLink")
+				.unbind('click', initializeSkinMenu)
+				.click(function(){$("#skinChoosingDialog").dialog('open');});
+		
+		    var skinMenu = $("#skinList").html("").css("padding", "10px");
+		    $("#skinChoosingDialog form").submit(function(){return chooseSkin(this);});
+		    $.get(settings.mediaPath + '/skinList.xml?noCache=' + new Date().getTime(), { },
+		    	function(xml){
+					settings.skinXml = xml;
+					$("skin", settings.skinXml).each(function(i){
+						var key = $(this).children("skin-key").text();
+						
+						var input
+						if ($.browser.msie) {
+						    if (key == settings.currentSkin) {
+		    				    input = $(document.createElement("<input type=\"radio\" name=\"skinChoice\" value=\"" + key + "\" checked=\"true\"/>"));
+		    				} else {
+		                        input = $(document.createElement("<input type=\"radio\" name=\"skinChoice\" value=\"" + key + "\"/>"));    				
+		    				}
+						} else {
+		                    input = $(document.createElement("input")).attr("type", "radio")
+		                        .attr("name", "skinChoice").val(key);
+			                if (key == settings.currentSkin)
+			                    input.attr("checked", true);
+						}
+							
+						var span = $(document.createElement("div")).append(
+						    $(document.createElement("span"))
+								.append(input)
+								.append(document.createTextNode($(this).children("skin-name").text()))
+								.addClass("portlet-form-field-label")
+							);
+						skinMenu.append(span);
+						var div = $(document.createElement("div"))
+							.addClass("portlet-font-dim").css("padding-left", "20px")
+							.css("padding-bottom", "10px");
+						div.append($(document.createElement("span")).text($(this).children("skin-description").text()));
+						div.append($(document.createElement("br")));
+						div.append($(document.createElement("img")).attr("src", settings.mediaPath + "/" + key + "/" + key + "_thumb.gif"));
+						skinMenu.append(div);
+					});
+		
+		            skinMenu.css("height", "300px").css("overflow", "auto");
+		            
+		        	// remove the loading graphics and message
+		        	$("#skinLoading").css("display", "none");
+		            $("#skinChoosingDialog").parent().parent().css("height", $("#skinChoosingDialog").parent().height() + 20);
+		    	}
+		    );
+		};
+		
+		var chooseSkin = function(form) {
+		    var newskin = $("#skinList").find("input:checked").val();
+		    if (newskin == undefined || newskin == '')
+		        return false;
+			$.post(settings.preferencesUrl,
+				{ action: 'chooseSkin', skinName: newskin },
+				function(xml) {
+					window.location = settings.portalUrl;
 				}
-					
-				var span = jQuery(document.createElement("div")).append(
-				    jQuery(document.createElement("span"))
-						.append(input)
-						.append(document.createTextNode(jQuery(this).children("skin-name").text()))
-						.addClass("portlet-form-field-label")
-					);
-				skinMenu.append(span);
-				var div = jQuery(document.createElement("div"))
-					.addClass("portlet-font-dim").css("padding-left", "20px")
-					.css("padding-bottom", "10px");
-				div.append(jQuery(document.createElement("span")).text(jQuery(this).children("skin-description").text()));
-				div.append(jQuery(document.createElement("br")));
-				div.append(jQuery(document.createElement("img")).attr("src", mediaPath + "/" + key + "/" + key + "_thumb.gif"));
-				skinMenu.append(div);
-			});
+			);
+			return false;
+		};
 
-            skinMenu.css("height", "300px").css("overflow", "auto");
-            
-        	// remove the loading graphics and message
-        	jQuery("#skinLoading").css("display", "none");
-            jQuery("#skinChoosingDialog").parent().parent().css("height", jQuery("#skinChoosingDialog").parent().height() + 20);
-    	}
-    );
-}
+		// initialize our portal code
+		if (settings.isFocusMode) initfocusedportal(); else initportal();
 
-function chooseSkin(form) {
-    var newskin = jQuery("#skinList").find("input:checked").val();
-    if (newskin == undefined || newskin == '')
-        return false;
-	jQuery.post(preferencesUrl,
-		{ action: 'chooseSkin', skinName: newskin },
-		function(xml) {
-			window.location = portalUrl;
-		}
-	);
-	return false;
-}
+	};
 
-
+})(jQuery);

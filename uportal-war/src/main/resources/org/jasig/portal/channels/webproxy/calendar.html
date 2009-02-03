@@ -5,14 +5,15 @@
 <title>Date Picker</title>
 
 <!--JQUERY: JAVASCRIPT-->
-<script type="text/javascript" src="media/skins/universality/common/javascript/jquery/jquery-ui-datepicker-1.5.2-v1.min.js"></script>
+<script type="text/javascript" src="media/skins/universality/common/javascript/jquery/jquery-ui-datepicker-1.6rc4-fixed.js"></script>
 </head>
 
 <body>
-	<div id="calendar-channel" class="jqueryui calendar-channel"></div>
+	<div id="calendar-channel" class="calendar-channel"></div>
+	<div style="clear:both">&nbsp;</div>
 	<script type="text/javascript">
-		$(document).ready(function(){
-			$('#calendar-channel').datepicker({
+		up(document).ready(function(){
+			up('#calendar-channel').datepicker({
 			    inline:true,
 				changeMonth: false,
 				changeYear: false

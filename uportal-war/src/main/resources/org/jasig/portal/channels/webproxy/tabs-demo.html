@@ -16,14 +16,14 @@
 
 <!--BEGIN SOURCE CODE FOR EXAMPLE =============================== -->
 <div id="tabs-demo" class="jqueryui">
-    <ul class="ui-tabs-nav">
-        <li class="ui-tabs-selected"><a shape="rect" href="#tab1"><span>Lorem Ipsum 1</span></a></li>
-        <li><a shape="rect" href="#tab2"><span>Lorem Ipsum 2</span></a></li>
-        <li><a shape="rect" href="#tab3"><span>Lorem Ipsum 3</span></a></li>
+    <ul>
+        <li><a href="#tab1"><span>Lorem Ipsum 1</span></a></li>
+        <li><a href="#tab2"><span>Lorem Ipsum 2</span></a></li>
+        <li><a href="#tab3"><span>Lorem Ipsum 3</span></a></li>
     </ul>
     
     <!--TAB 1-->
-    <div id="tab1" class="ui-tabs-panel" style="display: block;">
+    <div id="tab1">
         <img class="tab-image" src="media/org/jasig/portal/channels/webproxy/tab1.jpg" alt="Basketball Photo" align="left" />
         <h1>Lorem Ipsum 1</h1>
         <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Sed eget neque consequat sapien commodo ultricies. Mauris commodo lobortis elit. Mauris euismod. Fusce ac dui. Nullam in arcu. Morbi pulvinar. Vivamus lacinia ligula et dolor. Phasellus hendrerit nulla. Aliquam feugiat eleifend tellus. Nullam tristique nisi et est. Sed luctus magna ut dui. Nam aliquet metus laoreet tortor.</p>
@@ -32,7 +32,7 @@
     </div>
     
     <!--TAB 2-->
-    <div id="tab2" class="ui-tabs-panel ui-tabs-hide">
+    <div id="tab2">
         <img class="tab-image" src="media/org/jasig/portal/channels/webproxy/tab2.jpg" alt="Basketball Photo" align="left" />
         <h1>Lorem Ipsum 2</h1>
         <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Sed eget neque consequat sapien commodo ultricies. Mauris commodo lobortis elit. Mauris euismod. Fusce ac dui. Nullam in arcu. Morbi pulvinar. Vivamus lacinia ligula et dolor. Phasellus hendrerit nulla. Aliquam feugiat eleifend tellus. Nullam tristique nisi et est. Sed luctus magna ut dui. Nam aliquet metus laoreet tortor.</p>
@@ -42,7 +42,7 @@
    </div>
     
     <!--TAB 3-->
-    <div id="tab3" class="ui-tabs-panel ui-tabs-hide">
+    <div id="tab3">
         <img class="tab-image" src="media/org/jasig/portal/channels/webproxy/tab3.jpg" alt="Basketball Photo" align="left" />
         <h1>Lorem Ipsum 3</h1>
         <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Sed eget neque consequat sapien commodo ultricies. Mauris commodo lobortis elit. Mauris euismod. Fusce ac dui. Nullam in arcu. Morbi pulvinar. Vivamus lacinia ligula et dolor. Phasellus hendrerit nulla. Aliquam feugiat eleifend tellus. Nullam tristique nisi et est. Sed luctus magna ut dui. Nam aliquet metus laoreet tortor.</p>
@@ -54,8 +54,8 @@
     
 </div>
 <script>
-    $(document).ready(function(){
-        $("#tabs-demo > ul").tabs();
+    up(document).ready(function(){
+        up("#tabs-demo > ul").tabs();
     });
 </script>
 
