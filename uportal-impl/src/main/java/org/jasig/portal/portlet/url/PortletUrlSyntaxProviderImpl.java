@@ -51,15 +51,28 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
     private static final String PARAM_PORTLET_MODE = PORTLET_CONTROL_PREFIX + "mode";
     
     private static final Pattern URL_PARAM_NAME = Pattern.compile("&([^&?=\n]*)");
-    
+   
     protected final Log logger = LogFactory.getLog(this.getClass());
     
     private String defaultEncoding = "UTF-8";
     private int bufferLength = 512;
     private IPortletWindowRegistry portletWindowRegistry;
     private IPortalRequestUtils portalRequestUtils;
+    private boolean useAnchors = true;
     
     
+    /**
+     * @return the useAnchors
+     */
+    public boolean isUseAnchors() {
+        return this.useAnchors;
+    }
+    /**
+     * If anchors should be added to generated URLs
+     */
+    public void setUseAnchors(boolean useAnchors) {
+        this.useAnchors = useAnchors;
+    }
     /**
      * @return the portalRequestUtils
      */
@@ -322,7 +335,11 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
                 this.encodeAndAppend(url.append("&"), encoding, PORTLET_PARAM_PREFIX + name, values);
             }
         }
-        
+       
+        if (this.useAnchors && !RequestType.ACTION.equals(requestType)) {
+        	url.append("#").append(channelSubscribeId);
+        }
+ 
         if (this.logger.isDebugEnabled()) {
             this.logger.debug("Generated portlet URL '" + url + "' for IPortletWindow='" + portletWindow + "' and PortletUrl='" + portletUrl + "'. StringBuilder started with length " + this.bufferLength + " and ended with length " + url.capacity() + ".");
         }

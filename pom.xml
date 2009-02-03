@@ -142,7 +142,7 @@
         <portlet-api.version>1.0</portlet-api.version>
         <rome.version>0.8</rome.version>
         <servlet-api.version>2.4</servlet-api.version>
-        <spring-framework.version>2.5.1</spring-framework.version>
+        <spring-framework.version>2.5.5</spring-framework.version>
         <spring-ldap.version>1.2.1</spring-ldap.version>
         <spring-modules.version>0.8a</spring-modules.version>
         <standard.version>1.1.2</standard.version>
