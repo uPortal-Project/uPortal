@@ -130,7 +130,7 @@
 	var isHidden = function(element) {
 	  if ($(element).attr("name") == 'Hidden')
 		  return true;
-	  else if ($(element).parents("category[@name='Hidden']").size() > 0)
+	  else if ($(element).parents("category[name='Hidden']").size() > 0)
 		  return true;
 	  else
 		  return false;

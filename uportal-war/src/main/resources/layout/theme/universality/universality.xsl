@@ -239,15 +239,20 @@
   -->
   <xsl:template name="page.js">
     <xsl:if test="$USE_AJAX='true' or $USE_FLYOUT_MENUS='true'">
-      <script type="text/javascript" src="{$SCRIPT_PATH}/jquery/jquery-1.2.6.min.js"></script>
+      <script type="text/javascript" src="{$SCRIPT_PATH}/jquery/jquery-1.3.1.min.js"></script>
     </xsl:if>
     <xsl:if test="$USE_AJAX='true' and $AUTHENTICATED='true'">
-      <script type="text/javascript" src="{$SCRIPT_PATH}/fluid/Fluid-reorderer-0.8-r6333-v1.min.js"></script>
-      <script type="text/javascript" src="{$SCRIPT_PATH}/jquery/jquery-ui-portal-1.6rc4-v1.min.js"></script>
+      <script type="text/javascript" src="{$SCRIPT_PATH}/fluid/Fluid-reorderer-0.8-r6401-v1.min.js"></script>
+      <script type="text/javascript" src="{$SCRIPT_PATH}/jquery/jquery-ui-portal-1.6rc6-v1.min.js"></script>
       <script type="text/javascript" src="{$SCRIPT_PATH}/uportal/ajax-preferences-jquery.min.js"></script>
       <script type="text/javascript" src="{$SCRIPT_PATH}/uportal/up-channel-browser.min.js"></script>
+    </xsl:if>
+    <xsl:if test="$USE_FLYOUT_MENUS='true'">
+      <script src="{$SCRIPT_PATH}/uportal/flyout-nav.min.js" type="text/javascript"></script>
+    </xsl:if>
+    <xsl:if test="$USE_FLYOUT_MENUS or $USE_AJAX">
       <script type="text/javascript">
-        var up = jQuery.noConflict();
+        var up = jQuery.noConflict(true);
       </script>
     </xsl:if>
   </xsl:template>

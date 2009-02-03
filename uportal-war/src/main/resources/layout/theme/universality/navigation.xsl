@@ -223,7 +223,6 @@
    | This template renders scripts specific to the flyout menus.
   -->
   <xsl:template name="flyout.menu.scripts">
-		<script src="{$SCRIPT_PATH}/uportal/flyout-nav.min.js" type="text/javascript"></script>
     <div id="portalFlyoutNavigation" class="portal-navigation">
       <xsl:for-each select="/layout/navigation/tab">
         <xsl:if test="@activeTab='false' and $USE_FLYOUT_MENUS='true'"> <!-- If using flyout menus, call template for rendering submenus. -->

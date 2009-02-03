@@ -53,7 +53,7 @@
 		    settings.myReorderer = fluid.reorderLayout ("#portalPageBodyColumns",options);
 		
 		    // add onclick events for portlet delete buttons
-			$('a[@id*=removePortlet_]').each(function(i){$(this).click(function(){deletePortlet(this.id.split("_")[1]);return false;});});	
+			$('a[id*=removePortlet_]').each(function(i){$(this).click(function(){deletePortlet(this.id.split("_")[1]);return false;});});	
 		
 			// set click handlers for tab moving and editing links
 			$("#addTabLink").click(function(){addTab()});
@@ -133,7 +133,7 @@
 		};
 		var getCurrentLayoutString = function() {
 			var str = "";
-			$('#portalPageBodyColumns > td[@id*=column_]').each(function(){
+			$('#portalPageBodyColumns > td[id*=column_]').each(function(){
 				if (str != '')
 					str += '-';
 				str += parseInt($(this).attr("width"));
@@ -162,7 +162,7 @@
 		    settings.columnCount = newcolumns.length;
 			$.post(settings.preferencesUrl, {action: 'changeColumns', tabId: settings.tabId, columns: newcolumns}, 
 				function(xml) { 
-				    var columns = $('#portalPageBodyColumns > td[@id*=column_]');
+				    var columns = $('#portalPageBodyColumns > td[id*=column_]');
 				    if (columns.length < newcolumns.length) {
 				    	$("newColumns > id", xml).each(function(){
 				    		$("#portalPageBodyColumns")
@@ -180,7 +180,7 @@
 				    } else if(columns.length > newcolumns.length) {
 				    	for (var i = newcolumns.length; i < columns.length; i++) {
 				    		var lastColumn = $("#inner-column_" + $(columns[newcolumns.length-1]).attr("id").split("_")[1]);
-				    		var portlets = $(columns[i]).find("div[@id*=portlet_]")
+				    		var portlets = $(columns[i]).find("div[id*=portlet_]")
 					    		.each(function(){
 					    			$(this).appendTo(lastColumn);
 					    		})
@@ -190,7 +190,7 @@
 				    }
 				    
 				    $("#portalPageBodyTitleRow").attr("colspan", newcolumns.length);
-				    $('#portalPageBodyColumns > td[@id*=column_]').each(function(i){
+				    $('#portalPageBodyColumns > td[id*=column_]').each(function(i){
 				    	$(this).attr("width", newcolumns[i] + "%")
 				    	.removeClass("right").removeClass("left").removeClass("single");
 				    	if (newcolumns.length == 1) $(this).addClass("single");
@@ -262,7 +262,7 @@
 				targetId = tab.next().attr("id").split("_")[1];
 		
 			// figure out what the current tab's number is
-			$("[@id*=portalNavigation_]").each(function(i){
+			$("[id*=portalNavigation_]").each(function(i){
 				if ($(this).attr("id") == tab.attr("id"))
 					tabPosition = i+1;
 			});
@@ -309,7 +309,7 @@
 			});
 		};
 		var redoTabs = function(tabId) {
-			$("[@id*=tabLink_]").each(function(i){
+			$("[id*=tabLink_]").each(function(i){
 				$(this).attr("href", settings.portalUrl + "?uP_root=root&uP_sparam=activeTab&activeTab=" + (i+1));
 			});
 		//	fly.closeSubnav(tabId);
@@ -317,15 +317,15 @@
 		var movePortlet = function(movedNode) {
 		   var method = 'insertBefore';
 		   var target = null;
-		   if ($(movedNode).nextAll('div[@id*=portlet_]').size() > 0) {
-		       target = $(movedNode).nextAll('div[@id*=portlet_]').get(0);
-		   } else if ($(movedNode).prevAll('div[@id*=portlet_]').size() > 0) {
-		       target = $(movedNode).prevAll('div[@id*=portlet_]').get(0);
+		   if ($(movedNode).nextAll('div[id*=portlet_]').size() > 0) {
+		       target = $(movedNode).nextAll('div[id*=portlet_]').get(0);
+		   } else if ($(movedNode).prevAll('div[id*=portlet_]').size() > 0) {
+		       target = $(movedNode).prevAll('div[id*=portlet_]').get(0);
 		       method = 'appendAfter';
 		   } else {
 		       target = $(movedNode).parent();
 		   }
-		   var columns = $('#portalPageBodyColumns > td[@id*=column_]');
+		   var columns = $('#portalPageBodyColumns > td[id*=column_]');
 		   for (var i = 0; i < columns.length; i++) {
 		       $(columns[i]).attr("width", $(columns[i]).attr("width"));
 		   }
