@@ -77,8 +77,12 @@
 		if (searchTerm == null || searchTerm == '') return;
 
 		var matching = new Array();
-		$("channel[name*=" + searchTerm + "]", settings.channelXml).each(function(){matching.push($(this))});
-		$("channel[description*=" + searchTerm + "]", settings.channelXml).each(function(){matching.push($(this))});
+
+		var regex = new RegExp(escapeSpecialChars(searchTerm), "i");
+        $("channel", settings.channelXml).filter(function(){
+             return regex.test($(this).attr('name'))
+                 || regex.test($(this).attr('description'));
+        }).each(function(){matching.push($(this))});
 	
 		matching.sort(sortChannelResults);
 		$(matching).each(function(i){
@@ -95,6 +99,11 @@
 		});
 		
 	};
+
+    var escapeSpecialChars = function(str){
+        var specials = new RegExp("[.*+?|()\\[\\]{}\\\\]", "g"); // .*+?|()[]{}\
+        return str.replace(specials, "\\$&");
+    };
 
 	// sort a list of returned channels by name
 	var sortCategoryResults = function(a, b) {
