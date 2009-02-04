@@ -28,7 +28,7 @@
     <div id="portalNavigation">  <!-- Div for presentation/formatting options. -->
     	<div id="portalNavigationInner" class="{$CONTEXT}">  <!-- Inner div for additional presentation/formatting options. -->
       
-        <a name="startContent"><xsl:comment>Comment to keep from collapsing</xsl:comment></a>  <!-- Skip navigation target. -->
+        <a name="mainNavigation" title="Reference anchor: main nagivation"><xsl:comment>Comment to keep from collapsing</xsl:comment></a>  <!-- Skip navigation target. -->
         
         <ul id="portalNavigationList">
         	<xsl:attribute name="class"> <!-- If rendered in the header, write in the class to format as a floated list to create tabs. -->

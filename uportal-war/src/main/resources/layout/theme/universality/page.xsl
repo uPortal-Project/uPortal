@@ -152,7 +152,7 @@
         <!-- ****** BODY LAYOUT ****** -->
         <!-- Use of a table for layout is technically incorrect, however, the portal is a representation of lists of data within columns, and is therefore perhaps technically a table.  Regardless of the proper use of the table element here, the table element is the only consistent means of producing cross-browser columns given the complexity of the portal, and is the lesser of two evils; either a (perhaps) incorrect use of a table for layout or significant hacks and headaches in the CSS/browser testing to achieve the same thing with divs and floats (which are also incorrectly used for layout) and browser-specific css (also a frowned-upon practice). -->
         
-        <a name="startContent"><xsl:comment>Comment to keep from collapsing</xsl:comment></a>  <!-- Skip navigation target. -->
+        <a name="startContent" title="Reference anchor: the starting point of the page content"><xsl:comment>Comment to keep from collapsing</xsl:comment></a>  <!-- Skip navigation target. -->
         
         <!-- ****** CONTENT TOP BLOCK ****** -->
         <xsl:call-template name="content.top.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
