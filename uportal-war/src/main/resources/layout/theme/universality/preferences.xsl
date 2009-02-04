@@ -29,7 +29,7 @@
        </p>
        <p>
         <xsl:for-each select="/layout/navigation/tab">
-         <input name="targetTab" value="{@ID}" type="radio"/> <label class="portlet-form-field-label"><xsl:value-of select="@name"/></label><br/>
+         <input name="targetTab" id="targetTab{@ID}" value="{@ID}" type="radio"/> <label for="targetTab{@ID}" class="portlet-form-field-label"><xsl:value-of select="@name"/></label><br/>
         </xsl:for-each>
        </p>
        <p>
@@ -68,8 +68,8 @@
          <h4 id="channelLoading">Loading portlet list . . . </h4>
          <table cellspacing="0" cellpadding="0" border="0">
           <tr>
-           <td class="portlet-section-subheader">Category</td>
-           <td class="portlet-section-subheader">Portlet</td>
+           <td class="portlet-section-subheader"><label for="categorySelectMenu">Category</label></td>
+           <td class="portlet-section-subheader"><label for="channelSelectMenu">Portlet</label></td>
           </tr>
           <tr>
            <td><select id="categorySelectMenu" size="14" style="width: 150px; background: url({$SKIN_PATH}/images/loading.gif) no-repeat center center"></select></td>
@@ -99,11 +99,12 @@
      <div id="pageLayoutDialog" title="Change Layout">
       <form>
       <p>
-       <label class="portlet-form-label">Page name:</label><br/>
-       <input name="pageName" type="text" size="20" value="{/layout/navigation/tab[@activeTab='true']/@name}"/>
+       <label for="pageName" class="portlet-form-label">Page name:</label><br/>
+       <input id="pageName" name="pageName" type="text" size="20" value="{/layout/navigation/tab[@activeTab='true']/@name}"/>
       </p>
       <hr/>
-      <p><label class="portlet-form-label">Page layout:</label></p>
+      <fieldset>
+      	<legend>Page layout:</legend>
        <table id="changeColumns" style="width: 100%">
         <tr>
          <td>1 Column</td>
@@ -151,6 +152,7 @@
          <td></td>
         </tr>
        </table>
+       </fieldset>
        <input type="submit" value="update" class="portlet-form-button"/>
       </form>
      </div>	
