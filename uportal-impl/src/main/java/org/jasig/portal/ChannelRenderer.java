@@ -7,6 +7,7 @@ package org.jasig.portal;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutorService;
@@ -30,7 +31,10 @@ import org.jasig.portal.utils.threading.BaseTask;
 import org.jasig.portal.utils.threading.Task;
 import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.orm.jpa.JpaInterceptor;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
@@ -444,6 +448,8 @@ public class ChannelRenderer
     protected class Worker extends BaseTask implements IWorker {
         private final IChannel channel;
         private final ChannelRuntimeData rd;
+        private final RequestAttributes requestAttributes;
+        private final Locale locale;
         
         private boolean successful;
         private boolean done;
@@ -462,6 +468,9 @@ public class ChannelRenderer
         public Worker(IChannel ch, ChannelRuntimeData runtimeData) {
             this.channel = ch;
             this.rd = runtimeData;
+            this.requestAttributes = RequestContextHolder.getRequestAttributes();
+            this.locale = LocaleContextHolder.getLocale();
+
             successful = false;
             done = false;
             setRuntimeDataComplete = false;
@@ -477,6 +486,12 @@ public class ChannelRenderer
         public void execute () throws Exception {
             final long startTime = System.currentTimeMillis();
             try {
+                RequestContextHolder.setRequestAttributes(this.requestAttributes);
+                LocaleContextHolder.setLocale(this.locale);
+                if (log.isDebugEnabled()) {
+                    log.debug("Bound request attributes to thread: " + this.requestAttributes);
+                }
+                
                 if(rd!=null) {
                     channel.setRuntimeData(rd);
                     
@@ -656,6 +671,9 @@ public class ChannelRenderer
                 this.setException(e);
             }
             finally {
+                RequestContextHolder.resetRequestAttributes();
+                LocaleContextHolder.resetLocaleContext();
+                
                 this.renderTime = System.currentTimeMillis() - startTime;
             }
 
