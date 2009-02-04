@@ -22,16 +22,14 @@
    <xsl:when test="//focused">
     <div id="dojoMenus" style="display:none;">
      <!-- Add Channel Menu -->
-     <div id="focusedContentAddingDialog" title="Add Portlet to My Layout">
+     <div id="focusedContentAddingDialog" title="Add Content">
       <form>
-       <p class="portlet-form-label">
-        Choose a page in which to add this portlet:
-       </p>
-       <p>
+       <fieldset>
+       <legend>Add to page:</legend>
         <xsl:for-each select="/layout/navigation/tab">
          <input name="targetTab" id="targetTab{@ID}" value="{@ID}" type="radio"/> <label for="targetTab{@ID}" class="portlet-form-field-label"><xsl:value-of select="@name"/></label><br/>
         </xsl:for-each>
-       </p>
+       </fieldset>
        <p>
         <input name="channelId" type="hidden" value="{//focused/channel/@chanID}"/>
         <input type="submit" value="Add" class="portlet-form-button"/>&#160;
