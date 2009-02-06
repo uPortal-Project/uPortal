@@ -19,7 +19,14 @@ import org.jasig.portal.AuthorizationException;
  */
 public interface IAuthorizationPrincipal {
 /**
- * Answers if this <code>IAuthorizationPrincipal</code> has permission to publish.
+ * Answers if this <code>IAuthorizationPrincipal</code> has permission to manage this channel.
+ * @return boolean
+ * @param channelPublishId int - the Channel Id
+ * @exception AuthorizationException thrown when authorization information could not be retrieved.
+ */
+    boolean canManage(int channelPublishId) throws AuthorizationException;
+/**
+ * Answers if this <code>IAuthorizationPrincipal</code> has permission to publish (used only by SLM).
  * @return boolean
  * @exception AuthorizationException thrown when authorization information could not be retrieved.
  */

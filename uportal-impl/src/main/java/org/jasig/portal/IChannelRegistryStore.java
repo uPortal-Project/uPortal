@@ -164,6 +164,20 @@ public interface IChannelRegistryStore {
   public ChannelCategory getTopLevelChannelCategory() throws Exception;
 
   /**
+   * Recursively gets all child channel categories for a parent category.
+   * @return channelCategories the children categories
+   * @throws java.lang.Exception
+   */
+  public ChannelCategory[] getAllChildCategories(ChannelCategory parent) throws Exception;
+
+  /**
+   * Recursively gets all child channel definitions for a parent category.
+   * @return channelDefinitions the children channel definitions
+   * @throws java.lang.Exception
+   */
+  public ChannelDefinition[] getAllChildChannels(ChannelCategory parent) throws Exception;
+
+  /**
    * Gets all child channel categories for a parent category.
    * @return channelCategories the children categories
    * @throws java.lang.Exception

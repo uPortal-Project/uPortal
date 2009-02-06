@@ -15,7 +15,11 @@ import java.util.Set;
 import java.util.Vector;
 
 import org.jasig.portal.AuthorizationException;
+import org.jasig.portal.ChannelCategory;
+import org.jasig.portal.ChannelDefinition;
+import org.jasig.portal.ChannelRegistryStoreFactory;
 import org.jasig.portal.EntityTypes;
+import org.jasig.portal.IChannelRegistryStore;
 import org.jasig.portal.concurrency.CachingException;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IEntityGroup;
@@ -144,6 +148,22 @@ protected void cacheUpdate(IPermissionSet ps) throws AuthorizationException
         { EntityCachingService.getEntityCachingService().update(ps); }
     catch (CachingException ce)
         { throw new AuthorizationException("Problem updating permissions for " + ps + " in cache", ce); }
+}
+
+/**
+ * Answers if the principal has permission to MANAGE this Channel.
+ * @return boolean
+ * @param principal IAuthorizationPrincipal
+ * @param channelPublishId int
+ * @exception AuthorizationException indicates authorization information could not be retrieved.
+ */
+public boolean canPrincipalManage(IAuthorizationPrincipal principal, int channelPublishId)
+throws AuthorizationException
+{
+    String owner = IPermission.PORTAL_FRAMEWORK;
+    String target = IPermission.CHANNEL_PREFIX + channelPublishId;
+    return doesPrincipalHavePermission
+      (principal, owner, IPermission.CHANNEL_MANAGER_ACTIVITY, target);
 }
 
 /**
@@ -724,14 +744,51 @@ throws AuthorizationException
     
     List<IPermission> al = new ArrayList<IPermission>(perms.length);
     
-    for ( int i=0; i<perms.length; i++ )
-    {
-        if (
-            (owner == null || owner.equals(perms[i].getOwner())) &&
-            (activity == null || activity.equals(perms[i].getActivity())) &&
-            (target == null || target.equals(perms[i].getTarget()))
-           )
-            { al.add(perms[i]); }
+    for ( int i=0; i<perms.length; i++ ) {
+        String permissionTarget = perms[i].getTarget();
+        if (    (activity != null) &&
+                (activity.equals("MANAGE"))    ) {            
+            if (    (owner == null || owner.equals(perms[i].getOwner())) &&
+                    (activity == null || activity.equals(perms[i].getActivity()))    ) {
+                if (permissionTarget.startsWith(IPermission.CHANNEL_PREFIX)) {
+                    // perform a regex comparision against the channel
+                    if (target == null || target.matches(permissionTarget)) {
+                        al.add(perms[i]);
+                    }
+                }
+                else {
+                    try {
+                        final IChannelRegistryStore crs = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl();
+                        boolean bFound = false;
+
+                        ChannelCategory category = crs.getChannelCategory(permissionTarget);
+                        if (category != null) {
+                            // determine if the target channel is a deepMemberOf the returned categories
+                            for (ChannelDefinition channel : crs.getAllChildChannels(category)) {
+                                if (target.equals(IPermission.CHANNEL_PREFIX + channel.getId())) {
+                                    al.add(perms[i]);
+                                    bFound = true;
+                                    break;
+                                }
+                                if (bFound) {
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex) {
+                        throw new AuthorizationException(ex);
+                    }
+                }
+            }
+        }
+        else {
+            if (    (owner == null || owner.equals(perms[i].getOwner())) &&
+                    (activity == null || activity.equals(perms[i].getActivity())) &&
+                    (target == null || target.equals(permissionTarget))    ) {
+                al.add(perms[i]);
+            }
+        }
     }
 
 

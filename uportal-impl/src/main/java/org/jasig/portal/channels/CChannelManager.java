@@ -644,8 +644,10 @@ public class CChannelManager extends BaseChannel {
         // Add the top level <manageChannels> to the document
         Element channelManager = channelManagerDoc.createElement("manageChannels");
         channelManagerDoc.appendChild(channelManager);
-        // Get the channel registry
-        Document channelRegistryDoc = ChannelRegistryManager.getChannelRegistry();
+
+        // Get the MANAGEABLE channel registry
+        Document channelRegistryDoc = ChannelRegistryManager.getManageableChannelRegistry(person);
+
         // Set the registry ID attribute to "-1"
         Element registry = channelRegistryDoc.getDocumentElement();
         registry.setAttribute("ID", "-1");

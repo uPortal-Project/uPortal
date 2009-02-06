@@ -178,6 +178,33 @@ public class ChannelRegistryManager {
   }
 
   /**
+   * Returns the channel registry as a Document.  This document is filtered
+   * according to a user's channel permissions.
+   * @return the filtered channel registry as a Document
+   */
+  public static Document getManageableChannelRegistry(IPerson person) throws PortalException {
+    Document channelRegistry = getChannelRegistry();
+
+    // Filter the channel registry according to permissions
+    EntityIdentifier ei = person.getEntityIdentifier();
+    IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+
+    // Cycle through all the channels, looking for restricted channels
+    NodeList nl = channelRegistry.getElementsByTagName("channel");
+    for (int i = (nl.getLength()-1); i >=0; i--) {
+      Element channel = (Element)nl.item(i);
+      String channelPublishId = channel.getAttribute("chanID");
+      channelPublishId = channelPublishId.startsWith("chan") ? channelPublishId.substring(4) : channelPublishId;
+
+      // Take out channels which user doesn't have access to
+      if (!ap.canManage(Integer.parseInt(channelPublishId)))
+        channel.getParentNode().removeChild(channel);
+    }
+
+    return channelRegistry;
+  }
+
+  /**
    * Returns an XML document which describes the channel registry.
    * See uPortal's <code>channelRegistry.dtd</code>
    * @return doc the channel registry document
@@ -581,7 +608,7 @@ public class ChannelRegistryManager {
 
     // Set groups
     AuthorizationService authService = AuthorizationService.instance();
-    String target = "CHAN_ID." + ID;
+    String target = IPermission.CHANNEL_PREFIX + ID;
     IUpdatingPermissionManager upm = authService.newUpdatingPermissionManager(FRAMEWORK_OWNER);
     IPermission[] permissions = new IPermission[groupMembers.length];
     for (int i = 0; i < groupMembers.length; i++) {

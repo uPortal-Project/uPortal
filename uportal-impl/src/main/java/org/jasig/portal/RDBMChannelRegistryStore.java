@@ -954,6 +954,52 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore, Initiali
 	 * @return channelCategories the children categories
 	 * @throws org.jasig.portal.groups.GroupsException
 	 */
+	public ChannelCategory[] getAllChildCategories(ChannelCategory parent) throws GroupsException {
+		List categories = new ArrayList();
+
+		for (ChannelCategory category : getChildCategories(parent)) {
+			// recurse
+			for (ChannelCategory subCategory : getAllChildCategories(category)) {
+				// append channels to list for each child category in the tree
+				if (!categories.contains(subCategory)) {
+					categories.add(subCategory);
+				}
+			}
+		}
+
+		return (ChannelCategory[])categories.toArray(new ChannelCategory[0]);
+	}
+
+	/**
+	 * Gets all child channel definitions for a parent category.
+	 * @return channelDefinitions the children channel definitions
+	 * @throws java.sql.SQLException
+	 * @throws org.jasig.portal.groups.GroupsException
+	 */
+	public ChannelDefinition[] getAllChildChannels(ChannelCategory parent) throws SQLException, GroupsException {
+		List channelDefs = new ArrayList();
+
+		for (ChannelDefinition channel : getChildChannels(parent)) {
+			channelDefs.add(channel);
+		}
+
+		for (ChannelCategory category : getAllChildCategories(parent)) {
+			// append channels to list for each child category in the tree
+			for (ChannelDefinition channel : getChildChannels(category)) {
+				if (!channelDefs.contains(channel)) {
+					channelDefs.add(channel);
+				}
+			}
+		}
+
+		return (ChannelDefinition[])channelDefs.toArray(new ChannelDefinition[0]);
+	}
+
+	/**
+	 * Gets all child channel categories for a parent category.
+	 * @return channelCategories the children categories
+	 * @throws org.jasig.portal.groups.GroupsException
+	 */
 	public ChannelCategory[] getChildCategories(ChannelCategory parent) throws GroupsException {
 		String parentKey = String.valueOf(parent.getId());
 		IEntityGroup parentGroup = GroupService.findGroup(parentKey);

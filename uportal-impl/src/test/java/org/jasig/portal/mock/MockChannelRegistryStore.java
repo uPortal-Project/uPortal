@@ -108,6 +108,20 @@ public class MockChannelRegistryStore implements IChannelRegistryStore {
     }
 
     /* (non-Javadoc)
+     * @see org.jasig.portal.IChannelRegistryStore#getAllChildCategories(org.jasig.portal.ChannelCategory)
+     */
+    public ChannelCategory[] getAllChildCategories(ChannelCategory parent) throws Exception {
+        throw new UnsupportedOperationException("Not Implemented");
+    }
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.IChannelRegistryStore#getAllChildChannels(org.jasig.portal.ChannelCategory)
+     */
+    public ChannelDefinition[] getAllChildChannels(ChannelCategory parent) throws Exception {
+        throw new UnsupportedOperationException("Not Implemented");
+    }
+
+    /* (non-Javadoc)
      * @see org.jasig.portal.IChannelRegistryStore#getChannelCategory(java.lang.String)
      */
     public ChannelCategory getChannelCategory(String channelCategoryId) throws Exception {

@@ -39,6 +39,15 @@ public AuthorizationPrincipalImpl(String newKey, Class newType, IAuthorizationSe
     initialize();
 }
 /**
+ * Answers if this <code>IAuthorizationPrincipal</code> has permission to manage this channel.
+ * @return boolean
+ * @param  channelPublishId int - the Channel publish ID
+ * @exception AuthorizationException thrown when authorization information could not be retrieved.
+ */
+public boolean canManage(int channelPublishId) throws org.jasig.portal.AuthorizationException {
+    return getAuthorizationService().canPrincipalManage(this, channelPublishId);
+}
+/**
  * Answers if this <code>IAuthorizationPrincipal</code> has permission to publish.
  * @return boolean
  * @exception AuthorizationException thrown when authorization information could not be retrieved.

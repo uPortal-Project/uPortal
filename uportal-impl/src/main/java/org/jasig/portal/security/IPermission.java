@@ -14,8 +14,9 @@ import java.util.Date;
  */
 public interface IPermission {
   /*
-    Activity names for Permisisons whose targets are Channels.
+    Activity names for Permissions whose targets are Channels.
   */
+  public String CHANNEL_MANAGER_ACTIVITY = "MANAGE";
   public String CHANNEL_PUBLISHER_ACTIVITY = "PUBLISH";
   public String CHANNEL_SUBSCRIBER_ACTIVITY = "SUBSCRIBE";
   /*
