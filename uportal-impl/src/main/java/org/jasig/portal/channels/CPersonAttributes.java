@@ -7,7 +7,6 @@ package org.jasig.portal.channels;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -20,9 +19,9 @@ import org.jasig.portal.PortalException;
 import org.jasig.portal.UPFileSpec;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.PersonDirectory;
-import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.XSLT;
+import org.jasig.services.persondir.IPersonAttributeDao;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
@@ -56,7 +55,8 @@ public class CPersonAttributes extends BaseChannel implements IMimeResponse {
     else
         possibleAttrs = new HashSet<String>();
         
-    for (Map.Entry<String,List<Object>> y : pa.getPerson(person.getUserName()).getAttributes().entrySet()) {
+    final String userName = person.getAttribute(IPerson.USERNAME).toString();
+    for (Map.Entry<String,List<Object>> y : pa.getMultivaluedUserAttributes(userName).entrySet()) {
         
       // Remove this attr from the list of possible attrs
       possibleAttrs.remove(y.getKey());
