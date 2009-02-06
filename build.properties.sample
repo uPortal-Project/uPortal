@@ -32,7 +32,7 @@ server.webapps=${server.base}/webapps
 extractWars=true
 
 # Should the existing webapp be removed before deploying the new webapp
-removeExisting=false
+removeExisting=true
 
 # The following applies to the clean and deploy-ear targets.
 # Should the shared library location have all existing files removed when clean is run.

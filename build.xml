@@ -292,7 +292,7 @@
         </delete>
     </target>
     
-    <target name="clean" description="Removes the deployed uPortal from the container and runs 'mvn clean'">
+    <target name="clean-tomcat" description="Removes the deployed uPortal from the container">
         <uportal-parent-macro>
             <!-- Clean out uPortal from Tomcat -->
             <artifact:pom file="${uportal-war.dir}/pom.xml" id="uportal-war.pom" />
@@ -300,7 +300,9 @@
             <echo>Deleting '${destDir}'</echo>
             <delete dir="${destDir}" />
         </uportal-parent-macro>
-        
+    </target>
+    
+    <target name="clean" description="Runs 'mvn clean'">
         <!-- Execute the mvn clean lifecycle -->
         <antcall target="mvn">
             <param name="pomDir" value="${basedir}" />
