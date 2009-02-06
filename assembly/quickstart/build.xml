@@ -29,7 +29,9 @@ http://localhost:8080/uPortal
     <target name="tomcat-start" depends="prepare-tomcat">
         <echo message="Starting Tomcat ..." />
 
-        <exec executable="${tomcat.dir}/bin/startup.${tcExecutableSuffix}" spawn="true" dir="${tomcat.dir}" />
+        <exec executable="${tomcat.dir}/bin/startup.${tcExecutableSuffix}" spawn="true" dir="${tomcat.dir}">
+            <env key="CATALINA_OPTS" value="-XX:MaxPermSize=384m"/>
+        </exec>
     </target>
 
     <target name="tomcat-stop" depends="prepare-tomcat">
