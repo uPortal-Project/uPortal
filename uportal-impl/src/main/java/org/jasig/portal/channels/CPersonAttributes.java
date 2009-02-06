@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -54,24 +55,22 @@ public class CPersonAttributes extends BaseChannel implements IMimeResponse {
         possibleAttrs = new HashSet<String>(possibleAttrs);
     else
         possibleAttrs = new HashSet<String>();
-    
-    for (Enumeration<String> attribs = person.getAttributeNames(); attribs.hasMoreElements(); ) {
-      // Get the attribute name
-      String attName = attribs.nextElement();
+        
+    for (Map.Entry<String,List<Object>> y : pa.getPerson(person.getUserName()).getAttributes().entrySet()) {
         
       // Remove this attr from the list of possible attrs
-      possibleAttrs.remove(attName);
+      possibleAttrs.remove(y.getKey());
       
       // Set the attribute
       Element attributeE = doc.createElement("attribute");
 
       Element nameE = doc.createElement("name");
-      nameE.appendChild(doc.createTextNode(attName));
+      nameE.appendChild(doc.createTextNode(y.getKey()));
       attributeE.appendChild(nameE);
 
       // Get the IPerson attribute value for this eduPerson attribute name
-      if (person.getAttributeValues(attName) != null) {
-        Object[] values = person.getAttributeValues(attName);
+      if (y.getValue() != null) {
+        Object[] values = y.getValue().toArray();
         for (int i = 0; i < values.length; i++) {
            if (log.isTraceEnabled())
                log.trace("type of value["+i+"] is " + values[i].getClass().getName());
