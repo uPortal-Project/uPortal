@@ -119,16 +119,6 @@ public class TableXmlHandler extends BaseDbXmlHandler implements ITableDataProvi
                 this.currentColumn = new Column(itemName);
             }
         }
-        else if ("desc".equals(name)) {
-            final String description = this.chars.toString().trim();
-            
-            if (this.currentColumn != null) {
-                this.currentColumn.setComment(description);
-            }
-            else if (this.currentTable != null) {
-                this.currentTable.setComment(description);
-            }
-        }
         else if ("type".equals(name)) {
             final String sqlTypeName = this.chars.toString().trim();
             
