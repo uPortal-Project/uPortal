@@ -1219,7 +1219,7 @@ public class ChannelManager implements LayoutEventListener {
         final UserPreferences userPreferences = this.userPreferencesManager.getUserPreferences();
         final StructureStylesheetUserPreferences structureStylesheetUserPreferences = userPreferences.getStructureStylesheetUserPreferences();
         final String userLayoutRoot = structureStylesheetUserPreferences.getParameterValue("userLayoutRoot");
-        if (!IUserLayout.ROOT_NODE_NAME.equals(userLayoutRoot)) {
+        if (userLayoutRoot != null && !IUserLayout.ROOT_NODE_NAME.equals(userLayoutRoot)) {
             runtimeData.setRenderingAsRoot(true);
         }
         
