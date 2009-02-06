@@ -168,7 +168,7 @@ public final class ChannelRendererFactoryImpl
     	        	int queueSize = cSharedThreadPool.getQueue().size();
     	        	
     	        	if (queueSize > 50 || activeCount > 40){
-    	        		log.warn("queueSize: "+queueSize+" activeCount: "+activeCount+" "+
+    	        		log.error("queueSize: "+queueSize+" activeCount: "+activeCount+" "+
     	        				"largestPoolSize: "+cSharedThreadPool.getLargestPoolSize());
     	        	}
     	        	
