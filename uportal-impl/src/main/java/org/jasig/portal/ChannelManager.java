@@ -54,6 +54,7 @@ import org.jasig.portal.spring.PortalApplicationContextLocator;
 import org.jasig.portal.url.support.IChannelRequestParameterManager;
 import org.jasig.portal.utils.SAX2BufferImpl;
 import org.jasig.portal.utils.SetCheckInSemaphore;
+import org.jasig.portal.utils.web.PortalWebUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.jndi.JndiTemplate;
@@ -206,18 +207,23 @@ public class ChannelManager implements LayoutEventListener {
     }
     
     private PortalControlStructures getPortalControlStructuresForChannel(HttpServletRequest request, HttpServletResponse response, String channelSubscribeId) {
-        Map<String, PortalControlStructures> existingPortalControlStructures = (Map<String, PortalControlStructures>)request.getAttribute(PORTAL_CONTROL_STRUCTURES_MAP_ATTR);
-        if (existingPortalControlStructures == null) {
-            existingPortalControlStructures = new HashMap<String, PortalControlStructures>();
-            request.setAttribute(PORTAL_CONTROL_STRUCTURES_MAP_ATTR, existingPortalControlStructures);
+        Map<String, PortalControlStructures> existingPortalControlStructures;
+        synchronized (PortalWebUtils.getRequestAttributeMutex(request)) {
+            existingPortalControlStructures = (Map<String, PortalControlStructures>)request.getAttribute(PORTAL_CONTROL_STRUCTURES_MAP_ATTR);
+            if (existingPortalControlStructures == null) {
+                existingPortalControlStructures = new HashMap<String, PortalControlStructures>();
+                request.setAttribute(PORTAL_CONTROL_STRUCTURES_MAP_ATTR, existingPortalControlStructures);
+            }
         }
         
-        PortalControlStructures pcs = existingPortalControlStructures.get(channelSubscribeId);
-        if (pcs == null) {
-            pcs = new PortalControlStructures(request, response, this, this.userPreferencesManager);
-            existingPortalControlStructures.put(channelSubscribeId, pcs);
+        synchronized (existingPortalControlStructures) {
+            PortalControlStructures pcs = existingPortalControlStructures.get(channelSubscribeId);
+            if (pcs == null) {
+                pcs = new PortalControlStructures(request, response, this, this.userPreferencesManager);
+                existingPortalControlStructures.put(channelSubscribeId, pcs);
+            }
+            return pcs;
         }
-        return pcs;
     }
     
     /**

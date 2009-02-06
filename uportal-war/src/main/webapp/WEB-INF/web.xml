@@ -77,6 +77,16 @@
     <listener>
         <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
     </listener>
+    
+    <!-- 
+     | Add Session and Request MUTEX objects
+     +-->
+    <listener>
+        <listener-class>org.springframework.web.util.HttpSessionMutexListener</listener-class>
+    </listener>
+    <listener>
+        <listener-class>org.jasig.portal.utils.web.RequestAttributeMutexListener</listener-class>
+    </listener>
 
     <filter>
         <filter-name>CAS Validate Filter</filter-name>       
