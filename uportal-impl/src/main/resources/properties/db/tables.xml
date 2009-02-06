@@ -800,7 +800,7 @@
     <name>UPC_PERM_MGR</name>
     <desc>A table that is used by CPermissionsManager, distributed from the JA-SIG Clearinghouse</desc>
     <columns>
-      <column> <name>IPERMISSIBLE_CLASS</name> <type>VARCHAR</type> <param>2000</param>
+      <column> <name>IPERMISSIBLE_CLASS</name> <type>VARCHAR</type> <param>767</param>
         <desc>Holds name of permissions manager class that permits channels to be available for publish/subscribe</desc>
       </column>
     </columns>
