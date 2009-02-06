@@ -505,6 +505,13 @@
         </dependency>
 
         <dependency>
+            <groupId>xalan</groupId>
+            <artifactId>xalan</artifactId>
+            <version>${xalan.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
             <groupId>xml-resolver</groupId>
             <artifactId>xml-resolver</artifactId>
             <version>${xml-resolver.version}</version>
