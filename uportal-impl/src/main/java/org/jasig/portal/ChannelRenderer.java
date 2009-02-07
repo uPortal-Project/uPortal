@@ -320,7 +320,7 @@ public class ChannelRenderer
         }
 
         if (!abandoned && this.worker.done ()) {
-            if (this.worker.successful() && (this.worker.getBuffer() != null || this.worker.getCharacters() != null || (this.rd != null && RequestType.ACTION.equals(this.rd.getRequestType())))) {
+            if (this.worker.successful() && ((this.rd != null && RequestType.ACTION.equals(this.rd.getRequestType())) || this.worker.getBuffer() != null || this.worker.getCharacters() != null)) {
                 return RENDERING_SUCCESSFUL;
             }
          
@@ -720,12 +720,12 @@ public class ChannelRenderer
          * Returns a character output of a channel rendering.
          */
         public String getCharacters() {
-            if(ccacheable) {
-                return this.cbuffer;
-            } else {
-                log.error("ChannelRenderer.Worker::getCharacters() : attempting to obtain character data while character caching is not enabled !");
+            if(!ccacheable) {
+                log.error("Attempting to obtain character data for '" + channel + "' while character caching is not enabled !", new Throwable());
                 return null;
             }
+            
+            return this.cbuffer;
         }
 
 

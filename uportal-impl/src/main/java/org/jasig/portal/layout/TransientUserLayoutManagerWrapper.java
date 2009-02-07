@@ -252,6 +252,10 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
     }
 
     public String getParentId(String nodeId) throws PortalException {
+        if (mChanMap.containsKey(nodeId) || TRANSIENT_FOLDER_ID.equals(nodeId)) {
+            return null;
+        }
+
         return man.getParentId(nodeId);
     }
 

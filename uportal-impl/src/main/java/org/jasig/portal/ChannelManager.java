@@ -499,7 +499,9 @@ public class ChannelManager implements LayoutEventListener {
                 channelDesc = (IUserLayoutChannelDescription) userLayoutManager.getNode(channelSubscribeId);
                 
                 final String parentNodeId = userLayoutManager.getParentId(channelDesc.getId());
-                parentNode = userLayoutManager.getNode(parentNodeId);
+                if (parentNodeId != null) {
+                    parentNode = userLayoutManager.getNode(parentNodeId);
+                }
             }
             catch (PortalException pe) {
                 log.warn("Failed to load IUserLayoutChannelDescription and parent IUserLayoutNodeDescription for channel with subscribe id: " + channelSubscribeId, pe);
@@ -746,7 +748,9 @@ public class ChannelManager implements LayoutEventListener {
                     final IUserLayoutManager userLayoutManager = userPreferencesManager.getUserLayoutManager();
                     
                     final String parentNodeId = userLayoutManager.getParentId(channelDescription.getId());
-                    parentNode = userLayoutManager.getNode(parentNodeId);
+                    if (parentNodeId != null) {
+                        parentNode = userLayoutManager.getNode(parentNodeId);
+                    }
                 }
                 catch (PortalException pe) {
                     log.warn("Failed to load parent IUserLayoutNodeDescription for channel with subscribe id: " + channelDescription.getChannelPublishId(), pe);
@@ -834,7 +838,9 @@ public class ChannelManager implements LayoutEventListener {
                 channelDesc = (IUserLayoutChannelDescription) userLayoutManager.getNode(channelTarget);
                 
                 final String parentNodeId = userLayoutManager.getParentId(channelDesc.getId());
-                parentNode = userLayoutManager.getNode(parentNodeId);
+                if (parentNodeId != null) {
+                    parentNode = userLayoutManager.getNode(parentNodeId);
+                }
             }
             catch (PortalException pe) {
                 log.warn("Failed to load IUserLayoutChannelDescription and parent IUserLayoutNodeDescription for channel with subscribe id: " + channelTarget, pe);
