@@ -13,14 +13,16 @@
         </condition>
     </fail>
     
-    <tempfile property="parentPomInstallMarker.file" destdir="${java.io.tmpdir}" prefix="uportal-parent.pom-" suffix="-marker" />
-
     <!--
      | Load the build properties before the next fail tests since they check properties provided
      | by the file.
      +-->
     <property environment="env" />
     <property file="${basedir}/build.properties" />
+    <property name="jasig.tmpdir" value="${java.io.tmpdir}/jasig" />
+    <mkdir dir="${jasig.tmpdir}" />
+        
+    <tempfile property="parentPomInstallMarker.file" destdir="${jasig.tmpdir}" prefix="uportal-parent.pom-" suffix="-marker" />
     
     <fail message="server.base build property must be set.">
         <condition>
@@ -335,30 +337,9 @@
 
     <target name="deploy-war" description="Deploy the uPortal web application to the servlet container">
         <uportal-war-macro>
-            <basename property="war.contextname" file="${uportal-war.artifact}" suffix=".war" />
-            <property name="war.dest" value="${server.webapps}/${war.contextname}" />
-            
-            <echo message="   extractWars=${extractWars}" />
-            <echo message="removeExisting=${removeExisting}" />
-
-            <if>
-                <istrue value="${removeExisting}" />
-                <then>
-                    <delete dir="${war.dest}" />
-                    <delete file="${war.dest}.war" />
-                </then>
-            </if>
-            
-            <if>
-                <istrue value="${extractWars}" />
-                <then>
-                    <mkdir dir="${war.dest}" />
-                    <unwar dest="${war.dest}" src="${uportal-war.artifact}" overwrite="true" />
-                </then>
-                <else>
-                    <copy file="${uportal-war.artifact}" todir="${server.webapps}" />
-                </else>
-            </if>
+            <antcall target="fastWarDeploy">
+                <param name="warPath" value="${uportal-war.artifact}"/>
+            </antcall>
         </uportal-war-macro>
     </target>
 
@@ -391,21 +372,7 @@
 
 
         <basename property="war.filename" file="${portletAppPath}" />
-        <basename property="war.contextname" file="${portletAppPath}" suffix=".war" />
-        <property name="war.dest" value="${server.webapps}/${war.contextname}" />
 
-
-        <echo message="   extractWars=${extractWars}" />
-        <echo message="removeExisting=${removeExisting}" />
-
-        <if>
-            <istrue value="${removeExisting}" />
-            <then>
-                <delete dir="${war.dest}" />
-                <delete file="${war.dest}.war" />
-            </then>
-        </if>
-        
         <uportal-parent-macro>
             <artifact:dependencies pathid="pluto-ant" verbose="false">
                 <pom file="${bootstrap-pom.dir}/pluto-assembler-pom.xml" />
@@ -418,22 +385,13 @@
             </taskdef>
         </uportal-parent-macro>
 
-        <if>
-            <istrue value="${extractWars}" />
-            <then>
-                <property name="tempWarDir" value="${java.io.tmpdir}" />
-
-                <assemblePortlet destdir="${tempWarDir}" war="${portletAppPath}" />
-
-                <mkdir dir="${war.dest}" />
-                <unwar dest="${war.dest}" src="${tempWarDir}/${war.filename}" overwrite="true" />
-
-                <delete file="${tempWarDir}/${war.filename}" />
-            </then>
-            <else>
-                <assemblePortlet destdir="${server.webapps}" war="${portletAppPath}" />
-            </else>
-        </if>
+        <assemblePortlet destdir="${jasig.tmpdir}" war="${portletAppPath}" />
+            
+        <antcall target="fastWarDeploy">
+            <param name="warPath" value="${jasig.tmpdir}/${war.filename}"/>
+        </antcall>
+        
+        <delete file="${jasig.tmpdir}/${war.filename}" />
     </target>
 
 
@@ -579,6 +537,60 @@
                 </catch>
             </trycatch>
         </uportal-parent-macro>
+    </target>
+
+    <!-- ============================== Utility Targets ============================== -->
+    <!--
+     | Utility to deploy a WAR to the container where the delete and the replacement happen
+     | as close together as possible.
+     +-->
+    <target name="fastWarDeploy">
+        <fail message="'-DwarPath=[WAR File]' must be specified">
+            <condition>
+                <not>
+                    <isset property="warPath" />
+                </not>
+            </condition>
+        </fail>
+
+        <basename property="war.contextname" file="${warPath}" suffix=".war" />
+        <property name="war.dest" value="${server.webapps}/${war.contextname}" />
+        
+        <echo message="   extractWars=${extractWars}" />
+        <echo message="removeExisting=${removeExisting}" />
+
+        <if>
+            <istrue value="${extractWars}" />
+            <then>
+                <property name="tempWarDir" value="${jasig.tmpdir}/${war.contextname}" />
+                
+                <delete dir="${tempWarDir}" />
+                <mkdir dir="${tempWarDir}" />
+                <unwar dest="${tempWarDir}" src="${warPath}" overwrite="true" />
+                
+                <if>
+                    <istrue value="${removeExisting}" />
+                    <then>
+                        <delete dir="${war.dest}" />
+                        <delete file="${war.dest}.war" />
+                    </then>
+                </if>
+        
+                <echo message="Moving ${tempWarDir} to ${server.webapps}" />
+                <move todir="${server.webapps}" file="${tempWarDir}" />
+            </then>
+            <else>
+                <if>
+                    <istrue value="${removeExisting}" />
+                    <then>
+                        <delete dir="${war.dest}" />
+                        <delete file="${war.dest}.war" />
+                    </then>
+                </if>
+            
+                <copy file="${warPath}" todir="${server.webapps}" />
+            </else>
+        </if>
     </target>
 
     <!-- ============================== Deprecated Targets ============================== -->
