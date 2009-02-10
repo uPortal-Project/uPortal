@@ -69,7 +69,7 @@
                  +-->
                 <bean class="org.jasig.portal.tools.checks.XalanVersionCheck">
                     <constructor-arg index="0" type="java.lang.String">
-                        <value>Xalan Java 2.7.0</value>
+                        <value>Xalan Java 2.7.1</value>
                     </constructor-arg>
                 </bean>
 
