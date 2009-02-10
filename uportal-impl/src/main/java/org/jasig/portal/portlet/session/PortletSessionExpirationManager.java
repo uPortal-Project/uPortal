@@ -5,7 +5,10 @@
  */
 package org.jasig.portal.portlet.session;
 
+import java.io.Serializable;
+import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.portlet.PortletRequest;
@@ -24,6 +27,7 @@ import org.jasig.portal.url.IPortalRequestUtils;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
+import org.springframework.web.util.WebUtils;
 
 /**
  * After each request processed by a portlet the portlets session (if one exists) is stored in a Map in the Portal's
@@ -73,11 +77,11 @@ public class PortletSessionExpirationManager implements PortletInvocationListene
         final HttpSession portalSession = portalRequest.getSession();
         
         if (portalSession != null) {
-            Map<String, PortletSession> portletSessions;
-            synchronized (portalSession) {
-                portletSessions = (Map<String, PortletSession>)portalSession.getAttribute(PORTLET_SESSIONS_MAP);
-                if (portletSessions == null) {
-                    portletSessions = new ConcurrentHashMap<String, PortletSession>();
+            NonSerializableMapHolder<String, PortletSession> portletSessions;
+            synchronized (WebUtils.getSessionMutex(portalSession)) {
+                portletSessions = (NonSerializableMapHolder<String, PortletSession>)portalSession.getAttribute(PORTLET_SESSIONS_MAP);
+                if (portletSessions == null || !portletSessions.isValid()) {
+                    portletSessions = new NonSerializableMapHolder(new ConcurrentHashMap<String, PortletSession>());
                     portalSession.setAttribute(PORTLET_SESSIONS_MAP, portletSessions);
                 }
             }
@@ -128,5 +132,86 @@ public class PortletSessionExpirationManager implements PortletInvocationListene
      */
     public void onError(PortletInvocationEvent event, Throwable t) {
         // Ignore
+    }
+    
+    /**
+     * Map implementation that holds the Map reference passed into the constructor in a transient field. This allows a
+     * Map of non-serializable objects to be stored in the session but skipped during session persistence.
+     */
+    private static final class NonSerializableMapHolder<K, V> implements Map<K, V>, Serializable {
+        private static final long serialVersionUID = 1L;
+
+        private final transient Map<K, V> delegate;
+
+        public NonSerializableMapHolder(Map<K, V> delegate) {
+            this.delegate = delegate;
+        }
+        
+        public boolean isValid() {
+            return this.delegate != null;
+        }
+
+        public void clear() {
+            delegate.clear();
+        }
+
+        public boolean containsKey(Object key) {
+            return delegate.containsKey(key);
+        }
+
+        public boolean containsValue(Object value) {
+            return delegate.containsValue(value);
+        }
+
+        public Set<java.util.Map.Entry<K, V>> entrySet() {
+            return delegate.entrySet();
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return delegate.equals(o);
+        }
+
+        public V get(Object key) {
+            return delegate.get(key);
+        }
+
+        @Override
+        public int hashCode() {
+            return delegate.hashCode();
+        }
+
+        public boolean isEmpty() {
+            return delegate.isEmpty();
+        }
+
+        public Set<K> keySet() {
+            return delegate.keySet();
+        }
+
+        public V put(K key, V value) {
+            return delegate.put(key, value);
+        }
+
+        public void putAll(Map<? extends K, ? extends V> t) {
+            delegate.putAll(t);
+        }
+
+        public V remove(Object key) {
+            return delegate.remove(key);
+        }
+
+        public int size() {
+            return delegate.size();
+        }
+
+        public Collection<V> values() {
+            return delegate.values();
+        }
+
+        @Override
+        public String toString() {
+            return delegate.toString();
+        }
     }
 }
