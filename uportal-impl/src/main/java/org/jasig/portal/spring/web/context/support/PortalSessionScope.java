@@ -140,7 +140,7 @@ public class PortalSessionScope implements Scope {
     private static class DestructionCallbackBindingListener implements HttpSessionBindingListener, Serializable {
         private static final long serialVersionUID = 1L;
 
-        private final Runnable destructionCallback;
+        private transient final Runnable destructionCallback;
 
         public DestructionCallbackBindingListener(Runnable destructionCallback) {
             this.destructionCallback = destructionCallback;
