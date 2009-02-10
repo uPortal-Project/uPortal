@@ -66,8 +66,8 @@ public class CSpringPortletAdaptor implements IPortletAdaptor {
                 beanName = DEFAULT_SPRING_BEAN_NAME;
             }
             
-            if (this.logger.isInfoEnabled()) {
-                this.logger.info("Using ISpringPortletChannel named '" + beanName + "'");
+            if (this.logger.isDebugEnabled()) {
+                this.logger.debug("Using ISpringPortletChannel named '" + beanName + "'");
             }
             
             final WebApplicationContext applicationContext = sd.getWebApplicationContext();
