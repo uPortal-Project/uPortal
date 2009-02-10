@@ -1,0 +1,17 @@
+<!-- 
+ | Parameters:
+ |     NODE_NAME - The element name of the layout node in the .layout document
+ |
+ | Returns the node TYPE stored into the UP_LAYOUT_STRUCT database table
+ +-->
+<choose>
+    <when test="${jexl(NODE_NAME.startsWith('dlm-'))}">
+        <return value="${jexl('dlm:' + NODE_NAME.substring(4))}" />
+    </when>
+    <when test="${jexl(NODE_NAME == 'tab' or NODE_NAME == 'column')}">
+        <return value="regular" />
+    </when>
+    <otherwise>
+        <return value="${NODE_NAME}" />
+    </otherwise>
+</choose>

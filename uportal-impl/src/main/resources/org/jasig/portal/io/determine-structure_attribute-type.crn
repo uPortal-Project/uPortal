@@ -1,0 +1,20 @@
+<!-- 
+ | Parameters:
+ |     STRUCT_ATTR_TYPE - The requested name of a theme style sheet
+ |
+ | Returns the numeric type value for the string structure type
+ +-->
+<choose>
+    <when test="${jexl(STRUCT_ATTR_TYPE == 'stylesheet')}">
+        <return value="${groovy(1)}" />
+    </when>
+    <when test="${jexl(STRUCT_ATTR_TYPE == 'folder')}">
+        <return value="${groovy(2)}" />
+    </when>
+    <when test="${jexl(STRUCT_ATTR_TYPE == 'channel')}">
+        <return value="${groovy(3)}" />
+    </when>
+    <otherwise>
+        <return value="${STRUCT_ATTR_TYPE}" />
+    </otherwise>
+</choose>

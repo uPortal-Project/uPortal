@@ -1,0 +1,15 @@
+<!-- 
+ | Parameters:
+ |     DEFAULT_USER_NAME - The current default user name
+ |
+ | If the DEFAULT_USER_NAME is not null and the user_defaultUserName_force property is true the value of the
+ | user_defaultUserName property is returned as the default user name, if not the DEFAULT_USER_NAME value is returned.
+ +-->
+<choose>
+    <when test="${jexl(user_defaultUserName_force == 'true' and DEFAULT_USER_NAME != null)}">
+        <return value="${user_defaultUserName}" />
+    </when>
+    <otherwise>
+        <return value="${DEFAULT_USER_NAME}" />
+    </otherwise>
+</choose>

@@ -1,0 +1,41 @@
+<!-- 
+ | Parameters:
+ |     DEFAULT_USER_NAME - The default user name to look up information for
+ |
+ | Returns a two element String array, the first element is the USER_ID and the second
+ | is the NEXT_STRUCT_ID of the default user
+ +-->
+<cache key="DEFAULT_USER_INFO" cache-key="${groovy('DEFAULT_USER_INFO.' + DEFAULT_USER_NAME)}">
+    <factory>
+        <choose>
+            <when test="${jexl(DEFAULT_USER_NAME == null)}">
+                <return value="${jexl(null)}" />
+            </when>
+            <otherwise>
+                <with-attribute key="DEFAULT_USER_INFO" value="${groovy(new Integer[2])}">
+                    <sql-query>
+                        <sql>
+                            SELECT USER_ID, NEXT_STRUCT_ID
+                            FROM UP_USER
+                            WHERE USER_NAME = ?
+                        </sql>
+                        <parameter value="${DEFAULT_USER_NAME}" />
+                        <subtasks>
+                            <groovy>
+                                <script>
+                                    DEFAULT_USER_INFO[0] = USER_ID;
+                                    DEFAULT_USER_INFO[1] = NEXT_STRUCT_ID;
+                                </script>
+                            </groovy>
+                            
+                            <return value="${DEFAULT_USER_INFO}" />
+                        </subtasks>
+                    </sql-query>
+                </with-attribute>
+            </otherwise>
+        </choose>
+    </factory>
+    <subtasks>
+        <return value="${DEFAULT_USER_INFO}" />
+    </subtasks>
+</cache>

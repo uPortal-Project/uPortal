@@ -1,0 +1,20 @@
+<!-- 
+ | Parameters:
+ |     GROUP_NAME - The name of the group to generate an ID for
+ |
+ | Returns a numeric id value for the group
+ +-->
+<choose>
+    <when test="${jexl(GROUP_NAME == 'Everyone')}">
+        <return value="0" />
+    </when>
+    <when test="${jexl(GROUP_NAME == 'All categories')}">
+        <return value="1" />
+    </when>
+    <when test="${jexl(GROUP_NAME == 'Portal Administrators')}">
+        <return value="2" />
+    </when>
+    <otherwise>
+        <return value="${org.jasig.portal.io.SequenceGeneratorPhrase(UP_GROUP)}" />
+    </otherwise>
+</choose>

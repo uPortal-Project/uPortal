@@ -1,0 +1,48 @@
+<!-- 
+ | Parameters:
+ |      USER_NAME - The name of the user to test to see if it should be included
+ |
+ | Returns true or false based on if the USER_NAME is found in the set of included users 
+ +-->
+<cache key="VALID_USERS" cache-key="VALID_USERS" thread-safe="true">
+    <factory>
+        <with-attribute key="LOAD_START_TIME" value="${groovy(System.currentTimeMillis())}">
+            <echo-ln>Loading included users ...</echo-ln>
+            <with>
+                <attribute key="VALID_USERS">${groovy(new java.util.concurrent.ConcurrentHashMap())}</attribute>
+                <subtasks>
+                    <choose>
+                        <when test="${groovy(new java.io.File(included_users_file).exists())}">
+                            <line-iterator string="${contentsOf(${included_users_file})}">
+                                <groovy>
+                                    <script>
+                                        if (org.apache.commons.lang.StringUtils.trimToNull(Attributes.STRING) != null) {
+                                            VALID_USERS.put(Attributes.STRING, "");
+                                        }
+                                    </script>
+                                </groovy>
+                            </line-iterator>
+                            
+                            <echo-ln>Loaded ${groovy(VALID_USERS.size())} included users in ${groovy(System.currentTimeMillis() - LOAD_START_TIME)}ms</echo-ln>
+                        </when>
+                        <otherwise>
+                            <echo-ln>Includes file '${included_users_file}' does not exist, all users will be exported</echo-ln>
+                        </otherwise>
+                    </choose>
+                    <return value="${groovy(VALID_USERS.keySet())}" />
+                </subtasks>
+            </with>
+        </with-attribute>
+    </factory>
+    <subtasks>
+        <choose>
+            <when test="${crn(is-fragment-owner.crn)}">
+                <return value="${groovy(true)}"/>
+            </when>
+            <otherwise>
+                <!-- If no incudeds list loaded all users are included -->
+                <return value="${groovy(VALID_USERS.size() == 0 || VALID_USERS.contains(USER_NAME))}" />
+            </otherwise>
+        </choose>
+    </subtasks>
+</cache>

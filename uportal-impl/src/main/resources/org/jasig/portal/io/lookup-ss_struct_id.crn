@@ -1,0 +1,40 @@
+<!-- 
+ | Parameters:
+ |     SS_STRUCTURE_NAME - The requested name of a structure style sheet
+ |
+ | Returns the default structure name if force is true or the passed SS_STRUCTURE_NAME is null
+ +-->
+<with-attribute key="SS_STRUCTURE_NAME" value="${crn(determine-ss_struct_name.crn)}">
+    <cache key="STRUCTURE_STYLESHEET_ID" cache-key="${jexl('STRUCTURE_STYLESHEET_ID.' + SS_STRUCTURE_NAME)}">
+        <factory>
+            <sql-query>
+                <sql>
+                    SELECT ss_id as STRUCTURE_STYLESHEET_ID
+                    FROM up_ss_struct 
+                    WHERE ss_name = ?
+                </sql>
+                <parameter value="${SS_STRUCTURE_NAME}" />
+                <subtasks>
+                    <return value="${STRUCTURE_STYLESHEET_ID}" />
+                </subtasks>
+                <empty-result>
+                    <!-- No structure stylsheet by that name, try the default name from the properties -->
+                    <sql-query>
+                        <sql>
+                            SELECT ss_id as STRUCTURE_STYLESHEET_ID
+                            FROM up_ss_struct 
+                            WHERE ss_name = ?
+                        </sql>
+                        <parameter value="${user_profile_structure_name_default}" />
+                        <subtasks>
+                            <return value="${STRUCTURE_STYLESHEET_ID}" />
+                        </subtasks>
+                    </sql-query>
+                </empty-result>
+            </sql-query>
+        </factory>
+        <subtasks>
+            <return value="${STRUCTURE_STYLESHEET_ID}" />
+        </subtasks>
+    </cache>
+</with-attribute>
