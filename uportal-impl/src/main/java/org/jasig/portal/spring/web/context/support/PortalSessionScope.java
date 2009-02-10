@@ -150,7 +150,9 @@ public class PortalSessionScope implements Scope {
         }
 
         public void valueUnbound(HttpSessionBindingEvent event) {
-            this.destructionCallback.run();
+            if (this.destructionCallback != null) {
+                this.destructionCallback.run();
+            }
         }
     }
 }
