@@ -1,7 +1,7 @@
 <properties location="classpath://properties/db/entities/export.properties"> 
     <with>
         <attribute key="EXPORT_START_TIME">${groovy(System.currentTimeMillis())}</attribute>
-        <attribute key="Attributes.CACHE">${groovy(new org.jasig.portal.io.LoggingLRUMap(${CACHE_SIZE}))}</attribute>
+        <attribute key="Attributes.CACHE">${groovy(java.util.Collections.synchronizedMap(new org.jasig.portal.io.LoggingLRUMap(${CACHE_SIZE})))}</attribute>
         <attribute key="PORTAL_CONTEXT">${groovy(org.jasig.portal.spring.PortalApplicationContextLocator.getApplicationContext())}</attribute>
         <subtasks>
             <with>
