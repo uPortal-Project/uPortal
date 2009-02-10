@@ -20,6 +20,7 @@ import org.jasig.portal.PortalException;
 import org.jasig.portal.StructureStylesheetUserPreferences;
 import org.jasig.portal.ThemeStylesheetUserPreferences;
 import org.jasig.portal.UserPreferencesManager;
+import org.jasig.portal.UserProfile;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.layout.UserLayoutStoreFactory;
@@ -381,16 +382,28 @@ public class UpdatePreferencesServlet extends HttpServlet {
 
 		StructureStylesheetUserPreferences ssup = upm.getUserPreferences()
 				.getStructureStylesheetUserPreferences();
-		ssup.putParameterValue("activeTab", "1");
 
 		try {
-			// This is a brute force save of the new attributes.  It requires access to the layout store. -SAB
-			ulStore.setStructureStylesheetUserPreferences(per, upm
-					.getUserPreferences().getProfile().getProfileId(), ssup);
+            String currentTab = ssup.getParameterValue("activeTab");
+            UserProfile currentProfile = upm.getUserPreferences().getProfile();
+            int profileID = currentProfile.getProfileId();
+            int structID = currentProfile.getStructureStylesheetId();
+            // get the active tab number from the store so that we can preserve it
+            String defaultTab = ulStore.getStructureStylesheetUserPreferences(per, profileID, structID).getParameterValue("activeTab");
+            // set the active tab to previously recorded value
+            if (defaultTab.equals(currentTab)) {
+                ssup.putParameterValue("activeTab", tabPosition);
+            }
+            else {
+                ssup.putParameterValue("activeTab", defaultTab);
+            }
+            // This is a brute force save of the new attributes.  It requires access to the layout store. -SAB
+            ulStore.setStructureStylesheetUserPreferences(per, profileID, ssup);
 		} catch (Exception e) {
 			log.error(e);
 		}
 
+        // reset the active tab for viewing (not default)
 		ssup.putParameterValue("activeTab", tabPosition);
 
 		ulm.saveUserLayout();
@@ -552,8 +565,10 @@ public class UpdatePreferencesServlet extends HttpServlet {
 		int width = 100 / count;
 		String widthString = width + "%";
 
-		StructureStylesheetUserPreferences ssup = upm.getUserPreferences()
-				.getStructureStylesheetUserPreferences();
+		StructureStylesheetUserPreferences ssup = upm.getUserPreferences().getStructureStylesheetUserPreferences();
+        UserProfile currentProfile = upm.getUserPreferences().getProfile();
+        int profileID = currentProfile.getProfileId();
+        int structID = currentProfile.getStructureStylesheetId();
 		columns = ulm.getChildIds(tabId);
 		while (columns.hasMoreElements()) {
 			String columnId = (String) columns.nextElement();
@@ -562,11 +577,17 @@ public class UpdatePreferencesServlet extends HttpServlet {
 			try {
 				// This sets the column attribute in memory but doesn't persist it.  Comment says saves changes "prior to persisting"
 				UserPrefsHandler.setUserPreference(folder, "width", per);
+                
+				String currentTab = ssup.getParameterValue( "activeTab" );
+                // get the active tab number from the store so that we can preserve it
+                String defaultTab = ulStore.getStructureStylesheetUserPreferences(per, profileID, structID)
+                                          .getParameterValue( "activeTab" );
+                // set the active tab to previously recorded value
+                ssup.putParameterValue( "activeTab", defaultTab );
 				// This is a brute force save of the new attributes.  It requires access to the layout store. -SAB
-				ulStore
-						.setStructureStylesheetUserPreferences(per, upm
-								.getUserPreferences().getProfile()
-								.getProfileId(), ssup);
+				ulStore.setStructureStylesheetUserPreferences(per, profileID, ssup);
+                // set active tab in current preferences back to "current" tab
+                ssup.putParameterValue( "activeTab", currentTab );
 			} catch (Exception e) {
 				log.error("Error saving new column widths", e);
 			}
