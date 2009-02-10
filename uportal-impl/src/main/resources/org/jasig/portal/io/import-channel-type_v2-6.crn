@@ -1,40 +1,46 @@
 <with>
-    <attribute key="UPDATE_PORTLET_ADAPTOR">${groovy('${valueOf(type)}'.equals('org.jasig.portal.channels.portlet.CPortletAdapter'))}</attribute>
-    <attribute key="UPDATE_PORTLET_CPD">${groovy('${valueOf(uri)}'.equals('/org/jasig/portal/channels/portlet/CPortletAdapter.cpd'))}</attribute>
-
+    <attribute key="CHANNEL_TYPE">${valueOf(type)}</attribute>
+    <attribute key="CPD_URI">${valueOf(uri)}</attribute>
     <subtasks>
-
-        <if test="${UPDATE_PORTLET_ADAPTOR}">
-            <!--
-             | For uP3, the Portlet Adaptor (channel) class changed
-             |   from -> org.jasig.portal.channels.portlet.CPortletAdapter
-             |   to -> org.jasig.portal.channels.portlet.CSpringPortletAdaptor
-             |
-             | We want to recognize when someone's importing a v2-6 channel-type 
-             | with the old class and update it to the new one.
-             +-->
-            <delete-node node="${singleNode(type)}"/>
-            <append-node sibling="${singleNode(name)}">
-                <type>org.jasig.portal.channels.portlet.CSpringPortletAdaptor</type>
-            </append-node>
-        </if>
-
-        <if test="${UPDATE_PORTLET_CPD}">
-            <!--
-             | The location of the CPD also changed
-             |   from -> /org/jasig/portal/channels/portlet/CPortletAdapter.cpd
-             |   to -> /org/jasig/portal/channels/portlet/CSpringPortletAdaptor.cpd
-             |
-             | We will also detect and replace this value.
-             +-->
-            <delete-node node="${singleNode(uri)}"/>
-            <append-node>
-                <uri>/org/jasig/portal/channels/portlet/CSpringPortletAdaptor.cpd</uri>
-            </append-node>
-        </if>
-
-        <crn location="import-channel-type_v3-0.crn"/>
+        <with>
+            <attribute key="UPDATE_PORTLET_ADAPTOR">${groovy('${valueOf(type)}'.equals('org.jasig.portal.channels.portlet.CPortletAdapter'))}</attribute>
+            <attribute key="UPDATE_PORTLET_CPD">${groovy('${valueOf(uri)}'.equals('/org/jasig/portal/channels/portlet/CPortletAdapter.cpd'))}</attribute>
         
+            <subtasks>
+        
+                <if test="${UPDATE_PORTLET_ADAPTOR}">
+                    <!--
+                     | For uP3, the Portlet Adaptor (channel) class changed
+                     |   from -> org.jasig.portal.channels.portlet.CPortletAdapter
+                     |   to -> org.jasig.portal.channels.portlet.CSpringPortletAdaptor
+                     |
+                     | We want to recognize when someone's importing a v2-6 channel-type 
+                     | with the old class and update it to the new one.
+                     +-->
+                    <delete-node node="${singleNode(type)}"/>
+                    <append-node sibling="${singleNode(name)}">
+                        <type>org.jasig.portal.channels.portlet.CSpringPortletAdaptor</type>
+                    </append-node>
+                </if>
+        
+                <if test="${UPDATE_PORTLET_CPD}">
+                    <!--
+                     | The location of the CPD also changed
+                     |   from -> /org/jasig/portal/channels/portlet/CPortletAdapter.cpd
+                     |   to -> /org/jasig/portal/channels/portlet/CSpringPortletAdaptor.cpd
+                     |
+                     | We will also detect and replace this value.
+                     +-->
+                    <delete-node node="${singleNode(uri)}"/>
+                    <append-node>
+                        <uri>/org/jasig/portal/channels/portlet/CSpringPortletAdaptor.cpd</uri>
+                    </append-node>
+                </if>
+        
+                <crn location="import-channel-type_v3-0.crn"/>
+                
+            </subtasks>
+        
+        </with>
     </subtasks>
-
 </with>

@@ -3,9 +3,9 @@
     <append-node node="${attributeNode(script=classpath://org/jasig/portal/io/import-theme_v2-6.crn)}"/>
     <with-attribute key="SS_ID" value="${sql(SELECT MAX(ss_id) FROM up_ss_theme WHERE ss_name = '${req(NAME)}')}">
         <choose>
-            <when test="${isNull(${req(SS_ID)})}">
+            <when test="${jexl(SS_ID == null)}">
                 <echo-ln>WARNING:  Theme '${req(NAME)}' does not exist;  no theme file will be generated.</echo-ln>
-                <log level="warn">Theme '${req(NAME)}' does not exist;  no theme file will be generated.</log>
+                <log logger-name="org.jasig.portal.io.export-theme" level="warn">Theme '${req(NAME)}' does not exist;  no theme file will be generated.</log>
             </when>
             <otherwise>
                 <sql-query>

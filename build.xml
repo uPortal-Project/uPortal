@@ -229,6 +229,7 @@
 
             <!-- Invoke Cernunnos specifying script and parameters -->
             <java fork="true" failonerror="true" dir="${basedir}" classname="org.danann.cernunnos.runtime.Main">
+                <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
                 <classpath refid="uportal-impl-full.classpath" />
                 <arg value="classpath://org/jasig/portal/io/export.crn" />
                 <arg value="${dir}" />
@@ -246,6 +247,7 @@
 
             <!-- Invoke Cernunnos specifying script and parameters -->
             <java fork="true" failonerror="true" dir="${basedir}" classname="org.danann.cernunnos.runtime.Main">
+                <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
                 <classpath refid="uportal-impl-full.classpath" />
                 <arg value="classpath://org/jasig/portal/io/import.crn" />
                 <arg value="${dir}" />
@@ -268,6 +270,7 @@
 
             <!-- Invoke Cernunnos specifying script and parameters -->
             <java fork="true" failonerror="true" dir="${basedir}" classname="org.danann.cernunnos.runtime.Main">
+                <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
                 <classpath refid="uportal-impl-full.classpath" />
                 <arg value="classpath://org/jasig/portal/io/delete.crn" />
                 <arg value="${type}" />
@@ -282,6 +285,7 @@
 
             <!-- Invoke Cernunnos specifying script and parameters -->
             <java fork="true" failonerror="true" dir="${basedir}" classname="org.danann.cernunnos.runtime.Main">
+                <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
                 <classpath refid="uportal-impl-full.classpath" />
                 <arg value="classpath://org/jasig/portal/tools/dbloader/dbunload.crn" />
             </java>

@@ -3,9 +3,9 @@
     <append-node node="${attributeNode(script=classpath://org/jasig/portal/io/import-entity-type_v2-6.crn)}"/>
     <with-attribute key="TYPE_ID" value="${sql(SELECT MAX(entity_type_id) FROM up_entity_type WHERE entity_type_name = '${req(NAME)}')}">
         <choose>
-            <when test="${isNull(${req(TYPE_ID)})}">
+            <when test="${jexl(TYPE_ID == null)}">
                 <echo-ln>WARNING:  Entity type '${req(NAME)}' does not exist;  no entity type file will be generated.</echo-ln>
-                <log level="warn">Entity type '${req(NAME)}' does not exist;  no entity type file will be generated.</log>
+                <log logger-name="org.jasig.portal.io.export-entity-type" level="warn">Entity type '${req(NAME)}' does not exist;  no entity type file will be generated.</log>
             </when>
             <otherwise>
                 <sql-query>
@@ -18,14 +18,15 @@
                             <name>${req(ENTITY_TYPE_NAME)}</name>
                             <desc-name>${req(DESCRIPTIVE_NAME)}</desc-name>
                         </append-node>
-                        
-                        <with-attribute key="SAFE_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${req(NAME)})}">
-                            <write-document file="${req(EXPORT_DIR)}/entity-type/${req(SAFE_NAME)}.entity-type"/>
-                        </with-attribute>
                     </subtasks>
                 </sql-query>
-
-                <delete-node node="${singleNode(type-id)}"/>
+                <with-attribute key="TYPE_ID" value="${valueOf(type-id)}">
+                    <delete-node node="${singleNode(type-id)}"/>
+                    
+                    <with-attribute key="SAFE_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${req(NAME)})}">
+                        <write-document file="${req(EXPORT_DIR)}/entity-type/${req(SAFE_NAME)}.entity-type"/>
+                    </with-attribute>
+                </with-attribute>
             </otherwise>
         </choose>
     </with-attribute>

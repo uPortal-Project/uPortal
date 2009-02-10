@@ -1,25 +1,21 @@
 <with-attribute key="Attributes.NODE" value="${newDoc(group)}">
     <append-node node="${attributeNode(script=classpath://org/jasig/portal/io/import-group_v2-6.crn)}"/>
     <echo-ln>Export Group:  GROUP_NAME=${req(GROUP_NAME)}</echo-ln>
-    <sql-query>
-        <sql>SELECT upg.*, upet.entity_type_name FROM up_group upg, up_entity_type upet WHERE upg.entity_type_id = upet.entity_type_id AND upg.group_name = ?</sql>
-        <parameter value="${req(GROUP_NAME)}"/>
-        <subtasks>
-            <append-node>
-                <name>${req(GROUP_NAME)}</name>
-                <entity-type>${req(ENTITY_TYPE_NAME)}</entity-type>
-                <creator>${req(CREATOR_ID)}</creator>
-                <description>${req(DESCRIPTION)}</description>
-            </append-node>
-            
-            <with-attribute key="SAFE_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${req(GROUP_NAME)}-${req(GROUP_ID)})}">
-                <write-document file="${req(EXPORT_DIR)}/group/${req(SAFE_NAME)}.group"/>
-            </with-attribute>
-        </subtasks>
-    </sql-query>
-    <if test="${isNull(${singleNode(name)})}">
-        <!-- The group element will be empty if the name didn't match a record... -->
-        <echo-ln>WARNING:  Group '${req(GROUP_ID)}' does not exist;  no group file will be generated.</echo-ln>
-        <log level="warn">Group '${req(GROUP_ID)}' does not exist;  no group file will be generated.</log>
-    </if>
+    <append-node>
+        <name>${req(GROUP_NAME)}</name>
+        <entity-type>${req(ENTITY_TYPE_NAME)}</entity-type>
+        <creator>${req(CREATOR_ID)}</creator>
+        <description>${req(DESCRIPTION)}</description>
+    </append-node>
+    
+    <with-attribute key="SAFE_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${req(GROUP_NAME)}-${req(GROUP_ID)})}">
+        <write-document file="${req(EXPORT_DIR)}/group/${req(SAFE_NAME)}.group"/>
+    </with-attribute>
+    <with-attribute key="NODE_NAME" value="${singleNode(name)}">
+        <if test="${jexl(NODE_NAME == null)}">
+            <!-- The group element will be empty if the name didn't match a record... -->
+            <echo-ln>WARNING:  Group '${req(GROUP_ID)}' does not exist;  no group file will be generated.</echo-ln>
+            <log logger-name="org.jasig.portal.io.export-group" level="warn">Group '${req(GROUP_ID)}' does not exist;  no group file will be generated.</log>
+        </if>
+    </with-attribute>
 </with-attribute>

@@ -2,7 +2,7 @@
     <choose>
         <when test="${isNull(${CHAN_ID})}">
             <echo-ln>WARNING:  Channel '${FNAME}' does not exist.</echo-ln>
-            <log level="warn">Channel '${FNAME}' does not exist.</log>
+            <log logger-name="org.jasig.portal.io.delete-channel" level="warn">Channel '${FNAME}' does not exist.</log>
         </when>
         <otherwise>
         	<!-- Purge memberships... -->

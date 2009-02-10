@@ -3,9 +3,9 @@
     <append-node node="${attributeNode(script=classpath://org/jasig/portal/io/import-structure_v2-6.crn)}"/>
     <with-attribute key="SS_ID" value="${sql(SELECT MAX(ss_id) FROM up_ss_struct WHERE ss_name = '${req(NAME)}')}">
         <choose>
-            <when test="${isNull(${req(SS_ID)})}">
+            <when test="${jexl(SS_ID == null)}">
                 <echo-ln>WARNING:  Structure '${req(NAME)}' does not exist;  no structure file will be generated.</echo-ln>
-                <log level="warn">Structure '${req(NAME)}' does not exist;  no structure file will be generated.</log>
+                <log logger-name="org.jasig.portal.io.export-structure" level="warn">Structure '${req(NAME)}' does not exist;  no structure file will be generated.</log>
             </when>
             <otherwise>
                 <sql-query>

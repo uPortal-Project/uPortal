@@ -3,150 +3,76 @@
  | entirely within the layout import process, and therefore won't appear in any
  | exported documents.
  +-->
-<with>
-    <!-- <Object, LinkedHashMap<String, List<String>>> -->
-    <attribute key="PORTLET_MAP">${groovy(new HashMap())}</attribute>
-    <subtasks>
-
-        <!--
-         | Import the new set of portlet entity preferences.
-         +-->
-        <groovy>
-            <script>
-                def getChanDescId(usrId, lUsrId, nde) {
-                    if (usrId == lUsrId) {
-                        return 'n' + nde;
-                    } else {
-                        return 'u' + lUsrId + 'l1n' + nde;
-                    }
+<!-- <Object, LinkedHashMap<String, List<String>>> -->
+<with-attribute key="PORTLET_MAP" value="${groovy(new HashMap())}">
+    <groovy>
+        <script>
+            def getPortletPefsMap(fName, chanSubId, userId) {
+                List portletInfo = Arrays.asList(fName, chanSubId, userId);
+            
+                Map portletPrefs = PORTLET_MAP.get(portletInfo);
+                if (portletPrefs == null) {
+                    portletPrefs = new LinkedHashMap();
+                    PORTLET_MAP.put(portletInfo, portletPrefs);
                 }
-            </script>
-            <subtasks>
-                <node-iterator xpath="entry">
-                    <!--
-                     | We have to do a limited layout export to match the entity
-                     | identified in XML.
-                     +-->
+                
+                return portletPrefs;
+            }
+            
+            def getPrefValues(prefsMap, prefName) {
+                List values = prefsMap.get(prefName);
+                if (values == null) {
+                    values = new LinkedList();
+                    prefsMap.put(prefName, values);
+                }
+                
+                return values;
+            }
+        </script>
+        <subtasks>
+            <node-iterator xpath="entry">
+                <with-attribute key="DLM_PATHREF" value="${valueOf(@entity)}">
                     <with>
-                        <attribute key="Attributes.NODE">${newDoc(structures)}</attribute>
-                        <attribute key="ENTITY_TOKENS">${groovy('${valueOf(@entity)}'.split(':'))}</attribute>
-                        <attribute key="PREFERENCE_NAME">${valueOf(@name)}</attribute>
-                        <attribute key="FNAME_OF_RECORD">${valueOf(@channel)}</attribute>
-                        <attribute key="ENTRY_ELEMENT">${Attributes.NODE}</attribute>
+                        <attribute key="DLM_NODEREF">${crn(lookup-dlm-pathref.crn)}</attribute>
+                        <attribute key="PREF_NAME">${valueOf(@name)}</attribute>
+                        <attribute key="FNAME">${valueOf(@channel)}</attribute>
                         <subtasks>
-                            <with-attribute key="LAYOUT_USER_ID" value="${sql(SELECT user_id FROM up_user WHERE user_name = '${groovy(ENTITY_TOKENS[0])}')}">
-                                <sql-query>
-                                    <sql>SELECT * FROM up_layout_struct WHERE user_id = ? AND layout_id = 1 AND chan_id IS NULL</sql>
-                                    <parameter value="${LAYOUT_USER_ID}"/>
-                                    <subtasks>
-                                        <append-node>
-                                            <folder
-                                                struct-id="${req(STRUCT_ID)}"
-                                                name="${req(NAME)}"
-                                                next-struct-id="${req(NEXT_STRUCT_ID)}"
-                                                child-struct-id="${req(CHLD_STRUCT_ID)}"
-                                                type="${org.jasig.portal.io.FolderTypePhrase(${req(TYPE)})}"/>
-                                        </append-node>
-                                    </subtasks>
-                                </sql-query>
-                                <sql-query>
-                                    <sql>SELECT upc.chan_fname, upls.struct_id, upls.next_struct_id, upls.hidden FROM up_channel upc, up_layout_struct upls WHERE upc.chan_id = upls.chan_id AND upls.user_id = ? AND upls.layout_id = 1</sql>
-                                    <parameter value="${LAYOUT_USER_ID}"/>
-                                    <subtasks>
-                                        <append-node>
-                                            <channel
-                                                fname="${req(CHAN_FNAME)}"
-                                                struct-id="${req(STRUCT_ID)}"
-                                                next-struct-id="${req(NEXT_STRUCT_ID)}"/>
-                                        </append-node>
-                                    </subtasks>
-                                </sql-query>
-                                <xslt context="${req(Attributes.ORIGIN)}" stylesheet="limited-layout.xsl">
-                                    <with-attribute key="Attributes.NODE" value="${singleNode(${groovy(ENTITY_TOKENS[1])})}">
-                                        <!--
-                                         | We're ready to go, but let's do a sanity check
-                                         | to be sure the old fname matches the new fname.
-                                         +-->
-                                        <choose>
-                                            <when test="${isNull(${Attributes.NODE})}">
-                                                <!-- Warn the user... -->
-                                                <echo-ln>WARNING:  the expression '${groovy(ENTITY_TOKENS[1])}' does not match any nodes in the '${groovy(ENTITY_TOKENS[0])}' layout;  no record will be created.</echo-ln>
-                                                <log level="warn">WARNING:  the expression '${groovy(ENTITY_TOKENS[1])}' does not match any nodes in the '${groovy(ENTITY_TOKENS[0])}' layout;  no record will be created.</log>
-                                            </when>
-                                            <when test="${groovy(FNAME_OF_RECORD.equals('${valueOf(@fname)}'))}">
-                                                <!--
-                                                 | Collate the preferences into a single Map. This is done so the helper
-                                                 | class can be called once ensuring the update is transactional
-                                                 +-->
+                            <if test="${jexl(FNAME != null and FNAME != 'null')}">
+                                <with-attribute key="PORTLET_PREFS_MAP" value="${groovy(getPortletPefsMap(FNAME, DLM_NODEREF, USER_ID))}">
+                                    <with-attribute key="PORTLET_PREF_VALUES" value="${groovy(getPrefValues(PORTLET_PREFS_MAP, PREF_NAME))}">
+                                        <node-iterator xpath="value">
+                                            <with-attribute key="PREF_VALUE" value="${valueOf(text())}">
                                                 <groovy>
                                                     <script>
-                                                        def getPortletPefsMap(fName, chanSubId, userId) {
-                                                            List portletInfo = Arrays.asList(fName, chanSubId, userId);
-                                                        
-                                                            Map portletPrefs = PORTLET_MAP.get(portletInfo);
-                                                            if (portletPrefs == null) {
-                                                                portletPrefs = new LinkedHashMap();
-                                                                PORTLET_MAP.put(portletInfo, portletPrefs);
-                                                            }
-                                                            
-                                                            return portletPrefs;
-                                                        }
+                                                        PORTLET_PREF_VALUES.add(PREF_VALUE);
                                                     </script>
-                                                    <subtasks>
-                                                        <with-attribute key="PORTLET_PREFS_MAP" value="${groovy(getPortletPefsMap('${valueOf(@fname)}', '${groovy(getChanDescId(${USER_ID}, ${LAYOUT_USER_ID}, ${valueOf(@struct-id)}))}', ${USER_ID}))}">
-                                                            <node-iterator source="${ENTRY_ELEMENT}" xpath="value">
-                                                                <groovy>
-                                                                    <script>
-                                                                        String name = "${groovy(ENTRY_ELEMENT.valueOf('@name'))}";
-                                                                        
-                                                                        List values = PORTLET_PREFS_MAP.get(name);
-                                                                        if (values == null) {
-                                                                            values = new LinkedList();
-                                                                            PORTLET_PREFS_MAP.put(name, values);
-                                                                        }
-                                                                        
-                                                                        values.add("${valueOf(text())}");
-                                                                    </script>
-                                                                </groovy>
-                                                            </node-iterator>
-                                                        </with-attribute>
-                                                    </subtasks>
                                                 </groovy>
-                                            </when>
-                                            <otherwise>
-                                                <!-- Warn the user... -->
-                                                <echo-ln>WARNING:  fname '${valueOf(@fname)}' does not match expected value '${FNAME_OF_RECORD}' for portlet preference '${PREFERENCE_NAME}';  no record will be created.</echo-ln>
-                                                <log level="warn">fname '${valueOf(@fname)}' does not match expected value '${FNAME_OF_RECORD}' for portlet preference '${PREFERENCE_NAME}';  no record will be created.</log>
-                                            </otherwise>
-                                        </choose>
+                                            </with-attribute>
+                                        </node-iterator>
                                     </with-attribute>
-                                </xslt>
-                            </with-attribute>
+                                </with-attribute>
+                            </if>
                         </subtasks>
                     </with>
-                </node-iterator>
-            </subtasks>
-        </groovy>
+                </with-attribute>
+            </node-iterator>
+        </subtasks>
+    </groovy>
         
-        <!--
-         | Iterate over the collated Map and call the helper class to do the actual persisting
-         +-->
-        <invoke-method class="org.jasig.portal.spring.PortalApplicationContextLocator" method="getApplicationContext" attribute-name="APP_CONTEXT">
-            <subtasks>
-                <invoke-method object="${APP_CONTEXT}" method="getBean" attribute-name="portletEntityPreferenceHandler">
-                    <parameter value="portletEntityPreferenceHandler" />
-                    <subtasks>
-                        <for-each items="${groovy(PORTLET_MAP.entrySet())}" attribute-name="portletPrefsEntry">
-                            <invoke-method object="${portletEntityPreferenceHandler}" method="setEntityPreference">
-                                <parameter value="${groovy(portletPrefsEntry.getKey().get(0))}" />
-                                <parameter value="${groovy(portletPrefsEntry.getKey().get(1))}" />
-                                <parameter value="${groovy(portletPrefsEntry.getKey().get(2))}" />
-                                <parameter value="${groovy(portletPrefsEntry.getValue())}" />
-                            </invoke-method>
-                        </for-each>
-                    </subtasks>
-                </invoke-method>
-            </subtasks>
-        </invoke-method>
-    </subtasks>
-</with>
+    <!--
+     | Iterate over the collated Map and call the helper class to do the actual persisting
+     +-->
+    <with-attribute key="portletEntityPreferenceHandler" value="${groovy(PORTAL_CONTEXT.getBean('portletEntityPreferenceHandler'))}">
+        <for-each items="${groovy(PORTLET_MAP.entrySet())}" attribute-name="portletPrefsEntry">
+            <groovy>
+                <script>
+                    portletEntityPreferenceHandler.setEntityPreference(
+                        portletPrefsEntry.getKey().get(0),
+                        portletPrefsEntry.getKey().get(1),
+                        portletPrefsEntry.getKey().get(2).intValue(),
+                        portletPrefsEntry.getValue());
+                </script>
+            </groovy>
+        </for-each>
+    </with-attribute>
+</with-attribute>

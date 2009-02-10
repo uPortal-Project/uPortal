@@ -1,12 +1,34 @@
-<with-attribute key="NEXT_ID" value="${crn(determine-group-id.crn)}">
-    <sql-transaction>
-        <sql-upsert>
-            <update-statement>UPDATE up_group SET creator_id = ?, description = ? WHERE entity_type_id = ? AND group_name = ?</update-statement>
-            <insert-statement>INSERT INTO up_group(creator_id, description, entity_type_id, group_name, group_id) VALUES(?, ?, ?, ?, '${NEXT_ID}')</insert-statement>
-            <parameter value="${valueOf(creator)}"/>
-            <parameter value="${valueOf(description)}"/>
-            <parameter value="${sql(SELECT entity_type_id FROM up_entity_type WHERE entity_type_name = '${valueOf(entity-type)}')}"/>
-            <parameter value="${valueOf(name)}"/>
-        </sql-upsert>
-    </sql-transaction>
-</with-attribute>
+<with>
+    <attribute key="CREATOR">${valueOf(creator)}</attribute>
+    <attribute key="DESCRIPTION">${valueOf(description)}</attribute>
+    <attribute key="ENTITY_TYPE_NAME">${valueOf(entity-type)}</attribute>
+    <attribute key="GROUP_NAME">${valueOf(name)}</attribute>
+    <subtasks>
+        <with-attribute key="ENTITY_TYPE_ID" value="${crn(lookup-entity_type_id.crn)}">
+            <sql-transaction>
+                <sql-upsert>
+                    <update-statement>
+                        UPDATE up_group 
+                        SET creator_id = ?, description = ? 
+                        WHERE entity_type_id = ? AND group_name = ?
+                    </update-statement>
+                    <insert-statement>
+                        INSERT INTO up_group(creator_id, description, entity_type_id, group_name, group_id) 
+                        VALUES(?, ?, ?, ?, ?)
+                    </insert-statement>
+                    
+                    <update-parameter value="${CREATOR}"/>
+                    <update-parameter value="${DESCRIPTION}"/>
+                    <update-parameter value="${ENTITY_TYPE_ID}"/>
+                    <update-parameter value="${GROUP_NAME}"/>
+                    
+                    <insert-parameter value="${CREATOR}"/>
+                    <insert-parameter value="${DESCRIPTION}"/>
+                    <insert-parameter value="${ENTITY_TYPE_ID}"/>
+                    <insert-parameter value="${GROUP_NAME}"/>
+                    <insert-parameter value="${crn(generate-group-id.crn)}"/>
+                </sql-upsert>
+            </sql-transaction>
+        </with-attribute>
+    </subtasks>
+</with>
