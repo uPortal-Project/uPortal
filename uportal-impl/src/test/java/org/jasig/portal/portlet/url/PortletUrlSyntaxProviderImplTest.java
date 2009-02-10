@@ -74,7 +74,7 @@ public class PortletUrlSyntaxProviderImplTest extends TestCase {
         final IPortletWindowId portletWindowId = new MockPortletWindowId("windowId1");
         final IPortletWindow portletWindow = new MockPortletWindow(portletWindowId, portletEntityId, "portletApp", "portletName");
        
-        final boolean useAnchors = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.ChannelManager.use_anchors", false);
+        final boolean useAnchors = portletUrlSyntaxProvider.isUseAnchors();
  
         final PortletUrl portletUrl = new PortletUrl();
         
