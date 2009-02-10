@@ -138,7 +138,7 @@
         <oro.version>2.0.8</oro.version>
         <persistence-api.version>1.0</persistence-api.version>
         <person-directory.version>1.1.2</person-directory.version>
-        <pluto.version>1.1.6</pluto.version>
+        <pluto.version>1.1.7</pluto.version>
         <portlet-api.version>1.0</portlet-api.version>
         <rome.version>0.8</rome.version>
         <servlet-api.version>2.4</servlet-api.version>
