@@ -3,8 +3,3 @@
         org.jasig.portal.tools.chanpub.UrlChannelPublisher.publishChannel(Attributes.NODE);
     </script>
 </groovy>
-<!-- 
-<invoke-method class="org.jasig.portal.tools.chanpub.UrlChannelPublisher" method="publishChannel">
-    <parameter value="${req(Attributes.NODE)}"/>
-</invoke-method>
- -->
