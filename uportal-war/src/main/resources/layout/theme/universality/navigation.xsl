@@ -94,7 +94,7 @@
             <ul>
               <xsl:for-each select="tabChannel">
                 <li>
-                  <a href="{$BASE_ACTION_URL}?uP_root={@ID}&amp;uP_sparam=activeTab&amp;activeTab={position()}" title="{@name}">  <!-- Navigation item link. -->
+                    <a href="{$BASE_ACTION_URL}?uP_root={@ID}&amp;uP_sparam=activeTab&amp;activeTab={$TAB_POSITION}" title="{@name}">  <!-- Navigation item link. -->
                     <span><xsl:value-of select="@name"/></span>
                   </a>
                 </li>
