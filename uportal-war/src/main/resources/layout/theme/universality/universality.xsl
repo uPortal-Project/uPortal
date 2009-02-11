@@ -258,6 +258,14 @@
      <script type="text/javascript" src="{$SCRIPT_PATH}/ajax-preferences-jquery.js"></script>
      <script type="text/javascript" src="{$SCRIPT_PATH}/up-channel-browser.js"></script>
     </xsl:if>
+    <xsl:if test="$USE_FLYOUT_MENUS='true'">
+      <script src="{$SCRIPT_PATH}/flyout-nav.min.js" type="text/javascript"></script>
+    </xsl:if>
+    <xsl:if test="$USE_AJAX='true' or $USE_FLYOUT_MENUS='true'">
+      <script type="text/javascript">
+        var up = jQuery;
+      </script>
+    </xsl:if>
   </xsl:template>
   
   <!-- =============================================== -->

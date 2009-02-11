@@ -23,7 +23,7 @@
     <div id="dojoMenus" style="display:none;">
      <!-- Add Channel Menu -->
      <div id="focusedContentAddingDialog" class="jqueryui" title="Add Portlet to My Layout">
-      <form onsubmit="return addFocusedChannel(this);">
+      <form>
        <p class="portlet-form-label">
         Choose a page in which to add this portlet:
        </p>
@@ -41,12 +41,14 @@
     </div>
     <script type="text/javascript">
      
-     var portalUrl = '<xsl:value-of select="$BASE_ACTION_URL"/>';
-     var preferencesUrl = 'ajax/preferences';
-     var skinPath = '<xsl:value-of select="$SKIN_PATH"/>';
-     
-     $(document).ready(function(){
-     initfocusedportal();
+     up(document).ready(function(){
+       up.uportal.UportalLayoutManager(
+       {
+         portalUrl: '<xsl:value-of select="$BASE_ACTION_URL"/>',
+         mediaPath: '<xsl:value-of select="$MEDIA_PATH"/>',
+         currentSkin: '<xsl:value-of select="$SKIN"/>',
+         isFocusMode: true
+       });
      });
      
     </script>
@@ -89,13 +91,13 @@
       <p id="channelDescription"></p>
       <p style="padding-top: 10px;">
        <input id="addChannelId" type="hidden"/>
-       <button id="addChannelLink" onclick="addPortlet()" class="portlet-form-button">Add to my page</button>&#160;
+       <button id="addChannelLink" class="portlet-form-button">Add to my page</button>&#160;
        <button id="previewChannelLink" class="portlet-form-button">Use it now</button>&#160;
       </p>
      </div>
      
      <div id="pageLayoutDialog" class="jqueryui" title="Change Layout">
-      <form onsubmit="return updatePage(this);">
+      <form>
       <p>
        <label class="portlet-form-label">Page name:</label><br/>
        <input name="pageName" type="text" size="20" value="{/layout/navigation/tab[@activeTab='true']/@name}"/>
@@ -154,7 +156,7 @@
      </div>	
   
      <div id="skinChoosingDialog" class="jqueryui" title="Choose Skin">
-      <form onsubmit="return chooseSkin(this);">
+      <form>
        <h4 id="skinLoading">Loading skin list . . . </h4>
        <p class="portlet-form-label">
         Choose a skin for your portal view:
@@ -168,30 +170,25 @@
      
     </div>
     <script type="text/javascript">
+     up(document).ready(function(){
      
-     var portalUrl = '<xsl:value-of select="$BASE_ACTION_URL"/>';
-     var preferencesUrl = 'ajax/preferences';
-     var channelListUrl = 'ajax/channelList';
-     var mediaPath = '<xsl:value-of select="$MEDIA_PATH"/>';
-     var currentSkin = '<xsl:value-of select="$SKIN"/>';
-     var columnCount = <xsl:value-of select="count(/layout/content/column)"/>;
-     var skinPath = '<xsl:value-of select="$SKIN_PATH"/>';
-     var tabId = '<xsl:value-of select="/layout/navigation/tab[@activeTab='true']/@ID"/>';
-     var firstChannelId = '<xsl:value-of select="/layout/content/column[not(@dlm:addChildAllowed='false')]/channel[not(@dlm:moveAllowed='false')]/@ID"/>';     
-     $(document).ready(function(){
-  
-      <xsl:for-each select="/layout/content/column">
+       <xsl:for-each select="/layout/content/column">
         <xsl:variable name="currentColumnId"><xsl:value-of select="@ID"/></xsl:variable>
         <xsl:for-each select="channel">
          <xsl:if test="not(@dlm:moveAllowed='false')">
-         		$('#portlet_<xsl:value-of select="@ID"/>').addClass('movable').find('.portlet-toolbar').css('cursor', 'move');
+          $('#portlet_<xsl:value-of select="@ID"/>').addClass('movable').find('.portlet-toolbar').css('cursor', 'move');
          </xsl:if>
         </xsl:for-each>
-      </xsl:for-each>
-     initportal();
+       </xsl:for-each>
      
+       up.uportal.UportalLayoutManager(
+         {
+           portalUrl: '<xsl:value-of select="$BASE_ACTION_URL"/>',
+           mediaPath: '<xsl:value-of select="$MEDIA_PATH"/>',
+           currentSkin: '<xsl:value-of select="$SKIN"/>'
+         }
+       );
      });
-  
     </script>
       
    </xsl:otherwise>
