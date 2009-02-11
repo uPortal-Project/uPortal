@@ -197,24 +197,48 @@
 	
 	.portlet-toolbar 
 	{
-		position: relative;
+        padding-bottom: 2px;
+        /* Tricks IE into calling hasLayout, see clearfix hack */
+        zoom: 1;
 	}
 	
 	.portlet-toolbar h2 
 	{
+	    float: left;
 		margin: 0;
-		padding: 2px 20px 3px 20px;
+		padding: 0;
 	}
 	
 	.portlet-controls
 	{
-		position: absolute;
-		top: 4px;
-		right: 0;
-	}
+        margin: 4px 5px 0px 0px;
+        padding: 0;
+        float: right;
+    }
+   
+    .portlet-controls .portlet-control{
+        display: block;
+        float: left;
+        margin: 0;
+        padding: 0;
+    }
+   
+    /* 
+    clearfix hack to give div.portlet-toolbar dimension, see:
+    http://perishablepress.com/press/2008/02/05/lessons-learned-concerning-the-clearfix-css-hack/
+    */
+    .portlet-toolbar:after{
+        visibility: hidden;
+        display: block;
+        font-size: 0;
+        content: " ";
+        clear: both;
+        height: 0;
+ 	}
 	
 	.portlet-content 
 	{
+	    clear: both;
 		padding:1em;
 	}
 
