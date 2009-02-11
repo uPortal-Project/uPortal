@@ -217,14 +217,14 @@
   <xsl:template name="page.css">
     <link media="all" type="text/css" href="{$MEDIA_PATH}/common/reset-fonts-grids.css" rel="stylesheet"/>
     <link media="all" type="text/css" href="{$MEDIA_PATH}/common/base-min.css" rel="stylesheet"/>
-    <link media="all" type="text/css" href="{$SKIN_PATH}/{$SKIN}.css" rel="stylesheet"/>
+    <link media="all" type="text/css" href="{$SKIN_PATH}/{$SKIN}.min.css" rel="stylesheet"/>
      
     <!-- Yahoo! User Interface Library (YUI) CSS to establish a common, cross-browser base rendering.  See http://developer.yahoo.com/yui/ for more details. --> 
     
     <!-- uPortal skin CSS -->
     
     <xsl:if test="$USE_AJAX='true' or $USE_FLYOUT_MENUS='true'">
-     <link rel="stylesheet" href="{$MEDIA_PATH}/common/javascript/jquery/themes/{$SKIN}/jqueryui.all.css" type="text/css" media="screen" title="Flora (Default)"></link>
+     <link rel="stylesheet" href="{$MEDIA_PATH}/common/javascript/jquery/themes/{$SKIN}/jqueryui.all.min.css" type="text/css" media="screen" title="Flora (Default)"></link>
     </xsl:if>
     
   </xsl:template>
@@ -255,8 +255,8 @@
      <script type="text/javascript" src="{$SCRIPT_PATH}/jquery/ui.sortable.js"></script>
      <script type="text/javascript" src="{$SCRIPT_PATH}/jquery/ui.tabs.js"></script>
      <script type="text/javascript" src="{$SCRIPT_PATH}/jquery/interface.js"></script>
-     <script type="text/javascript" src="{$SCRIPT_PATH}/ajax-preferences-jquery.js"></script>
-     <script type="text/javascript" src="{$SCRIPT_PATH}/up-channel-browser.js"></script>
+     <script type="text/javascript" src="{$SCRIPT_PATH}/ajax-preferences-jquery.min.js"></script>
+     <script type="text/javascript" src="{$SCRIPT_PATH}/up-channel-browser.min.js"></script>
     </xsl:if>
     <xsl:if test="$USE_FLYOUT_MENUS='true'">
       <script src="{$SCRIPT_PATH}/flyout-nav.min.js" type="text/javascript"></script>

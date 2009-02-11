@@ -377,10 +377,10 @@
 					<script language="JavaScript" type="text/javascript">
             var skinPath='<xsl:value-of select="$SKIN_PATH"/>/<xsl:value-of select="$SKIN"/>/';
           </script>
-          <script type="text/javascript" language="JavaScript" src="{$SCRIPT_PATH}/cookies.js">
+          <script type="text/javascript" language="JavaScript" src="{$SCRIPT_PATH}/cookies.min.js">
             // Included JS file
           </script>
-          <script type="text/javascript" language="JavaScript" src="{$SCRIPT_PATH}/search.js">
+          <script type="text/javascript" language="JavaScript" src="{$SCRIPT_PATH}/search.min.js">
             // Included JS file
           </script>
           <noscript>
