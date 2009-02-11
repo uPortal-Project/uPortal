@@ -54,17 +54,17 @@
             <plugin>
                 <groupId>net.sf.alchim</groupId>
                 <artifactId>yuicompressor-maven-plugin</artifactId>
+                <version>0.7.1</version>
                 <executions>
                     <execution>
-                        <goals>
-                            <goal>compress</goal>
-                        </goals>
+                        <goals><goal>compress</goal></goals>
                     </execution>
                 </executions>        
                 <configuration>
                     <excludes>
                         <exclude>**/*.min.js</exclude>
                     </excludes>
+                    <linebreakpos>10000</linebreakpos>
                     <suffix>.min</suffix>
                 </configuration>
             </plugin>
