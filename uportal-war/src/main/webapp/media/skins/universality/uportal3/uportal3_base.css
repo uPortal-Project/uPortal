@@ -305,7 +305,9 @@
 
     .portlet-controls .portlet-control
     {
-        padding-left: 15px;
+        margin-left: 4px;
+        height: 16px;
+        width: 16px;
     }
 
 	.portlet-controls .help 
