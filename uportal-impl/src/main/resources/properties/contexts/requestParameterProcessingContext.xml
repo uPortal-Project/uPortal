@@ -7,6 +7,7 @@
     <bean id="requestParameterProcessorController" class="org.jasig.portal.url.processing.RequestParameterProcessorListController">
         <property name="dynamicRequestParameterProcessors">
             <list value-type="org.jasig.portal.url.processing.IRequestParameterProcessor">
+                <!-- <ref local="urlParameterProcessor" />  -->
                 <ref local="userLayoutParameterProcessor" />
                 <ref local="portletRequestParameterProcessor" />
                 <ref local="channelRequestParameterProcessor" />
@@ -14,6 +15,30 @@
         </property>
     </bean>
     
+    <!-- 
+     | Use UrlRequestParameterProcessor to pull structure and theme parameters 
+     | from arbitrary elements of the request URL.  The following example sets 
+     | the 'activeTab' structure parameter based on the first logical directory 
+     |  after 'uPortal/'
+     |
+     | E.g. given a request URL of
+     |   - http://localhost:8080/uPortal/foo/render.userLayoutRootNode.uP
+     | The value of 'activeTab' would be 
+     |   - foo
+     +-->
+    <!-- 
+    <bean id="urlParameterProcessor" class="org.jasig.portal.url.processing.UrlRequestParameterProcessor">
+        <property name="userInstanceManager" ref="userInstanceManager" />
+        <property name="structureParameters">
+            <map>
+                <entry key="activeTab">
+                    <value>[^/]*//[^/]*/uPortal/([^/]*)/</value>
+                </entry>
+            </map>
+        </property>
+    </bean>
+     -->
+
     <bean id="userLayoutParameterProcessor" class="org.jasig.portal.url.processing.UserLayoutParameterProcessor">
         <property name="userInstanceManager" ref="userInstanceManager" />
     </bean>
