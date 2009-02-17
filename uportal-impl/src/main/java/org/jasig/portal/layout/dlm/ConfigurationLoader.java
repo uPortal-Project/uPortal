@@ -17,7 +17,6 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.XML;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -26,7 +25,7 @@ import org.w3c.dom.NodeList;
  * @version $Revision$ $Date$
  * @since uPortal 2.5
  */
-public class ConfigurationLoader
+public abstract class ConfigurationLoader
 {
     public static final String RCS_ID = "@(#) $Header$";
 
@@ -34,15 +33,22 @@ public class ConfigurationLoader
     private static URL configFileURL = null;
     private static final Log LOG = LogFactory.getLog(ConfigurationLoader.class);
     
+    // Instance Members.
+    private Properties props;
+        
+    /*
+     * Public API.
+     */
+        
     /**
      * Load the distributed layout configuration.
      */
-    public static void load ( RDBMDistributedLayoutStore dlManager )
-    {
-        try
-        {
-            Class c = ConfigurationLoader.class;
-            configFileURL = c.getResource(CONFIG_FILE_NAME);
+    public static ConfigurationLoader load(RDBMDistributedLayoutStore dlManager) {
+        
+        ConfigurationLoader rslt = null;
+        
+        try {
+            configFileURL = ConfigurationLoader.class.getResource(CONFIG_FILE_NAME);
             logConfigFileInfo();
 
             InputStream inputStream = configFileURL.openStream();
@@ -50,19 +56,46 @@ public class ConfigurationLoader
                     configFileURL.toExternalForm());
 
             NodeList properties = doc.getElementsByTagName( "dlm:property" );
-            NodeList definitions = doc.getElementsByTagName( "dlm:fragment" );
+            Properties props = getProperties(properties);
+            
+            String impl = props.getProperty("ConfigurationLoader.impl");
+            Class<? extends ConfigurationLoader> c = null;
+            if (impl == null) {
+                c = LegacyConfigurationLoader.class; 
+            } else {
+                c = (Class<? extends ConfigurationLoader>) Class.forName(impl);
+            }
 
-            dlManager.setProperties( getProperties( properties ) );
-            dlManager.setDefinitions( getFragments( definitions ) );
-        }
-        catch( Exception e )
-        {
+            rslt = c.newInstance();
+            rslt.init(doc);
+            rslt.setProperties(props);
+            
+        } catch( Exception e ) {
             throw new RuntimeException(ConfigurationLoader.class.getName() +
                            " could not load distributed layout " +
                            "configuration.", e);
         }
+        
+        return rslt;
+        
     }
-
+    
+    public abstract void init(Document doc);
+    
+    public final String getProperty(String name) {
+        return props.getProperty(name);
+    }
+    
+    public final int getPropertyCount() {
+        return props.size();
+    }
+    
+    public abstract FragmentDefinition[] getFragments();
+    
+    /*
+     * Implementation.
+     */
+    
     private static void logConfigFileInfo()
     {
         if (LOG.isInfoEnabled())
@@ -126,61 +159,16 @@ public class ConfigurationLoader
         return properties;
     }
 
-    private static FragmentDefinition[] getFragments( NodeList frags )
-    {
-        if ( frags == null || frags.getLength() == 0 )
-            return null;
-
-        FragmentDefinition[] fragments = null;
-
-        for( int i=0; i<frags.getLength(); i++ )
-        {
-            try
-            {
-                FragmentDefinition f = new FragmentDefinition( (Element) frags.item(i) );
-                fragments = appendDef( f, fragments);
-
-                if (LOG.isInfoEnabled())
-                    LOG.info("\n\nDLM loaded fragment definition '" + f.name +
-                            "' owned by '" + f.ownerID +
-                            "' with precedence " + f.precedence + 
-                            ( f.noAudienceIncluded ? " and no specified audience" +
-                              ". It will be editable by '" +
-                                f.ownerID + "' but " +
-                                "not included in any user's layout." :
-                              ( f.evaluators == null ?
-                                " with no audience. It will be editable by '" +
-                                f.ownerID + "' but " +
-                                "not included in any user's layout." :
-                                " with " + f.evaluators.length + " audiences" ) ));
-            }
-            catch( Exception e ) 
-            {
-                LOG.error("\n\n---------- Warning ---------\nUnable to load " +
-                      "distributed layout fragment " +
-                      "definition from configuration file\n" +
-                      configFileURL.toString() +
-                      "\n Details: " + e.getMessage() +
-                      "  \n----------------------------\n", e );
-            }
-        }   
-        return fragments;
-    }
-
-    private static FragmentDefinition[] appendDef(
-        FragmentDefinition f,
-        FragmentDefinition[] frags
-        )
-    {
-        if ( frags == null )
-        {
-            f.index = 0;
-            return new FragmentDefinition[] { f };
+    private final void setProperties(Properties props) {
+        
+        // Assertions.
+        if (props == null) {
+            String msg = "Argument 'props' cannot be null.";
+            throw new IllegalArgumentException(msg);
         }
-        f.index = frags.length;
-        FragmentDefinition[] newArr = new FragmentDefinition[frags.length + 1];
-        System.arraycopy( frags, 0, newArr, 0, frags.length );
-        newArr[frags.length] = f;
-        return newArr;
+        
+        this.props = props;
+        
     }
+
 }

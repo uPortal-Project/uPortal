@@ -12,6 +12,21 @@
   
   <dlm:property name='org.jasig.portal.layout.dlm.RDBMDistributedLayoutStore.fragment_cache_refresh' value="5"/>
 
+  <!--
+   | Uncomment this property to turn on the 'RDBMConfigurationLoader' implementation, 
+   | which stores FragmentDefinition instances in the database via JPA and Hibernate.  
+   | The advantage of this approach is that fragment definitions can be 
+   | added/removed/modified without a portal restart.  Without this property, DLM 
+   | will behave exactly as it always has.
+   |
+   | If you decide to enable this functionality, you should also:
+   |   - Uncomment the "fragmentDefinitionDao" bean in persistenceContext.xml
+   |   - Uncomment the "org.jasig.portal.layout.dlm.Evaluator" cache in ehcache.xml
+   +-->
+  <!--
+  <dlm:property name="ConfigurationLoader.impl" value="org.jasig.portal.layout.dlm.RDBMConfigurationLoader"/>
+  -->
+
   <dlm:fragment name='Welcome' ownerID='welcome-lo' precedence='80'>
     <dlm:audience evaluatorFactory='org.jasig.portal.layout.dlm.providers.PersonEvaluatorFactory'>
       <paren mode="NOT">

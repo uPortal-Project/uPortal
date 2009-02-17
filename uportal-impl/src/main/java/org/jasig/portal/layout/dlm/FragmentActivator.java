@@ -87,17 +87,17 @@ public class FragmentActivator
         else
         {
             for ( int i=0; i<fragments.length; i++ )
-                if ( fragments[i].evaluators == null )
+                if ( fragments[i].noAudienceIncluded)
                 {
                     if (LOG.isDebugEnabled())
                         LOG.debug("\n\n------ skipping " + i + " - " +
-                        fragments[i].name + ", no evaluators found" );
+                        fragments[i].getName() + ", no evaluators found" );
                 }
                 else
                 {
                     if (LOG.isDebugEnabled())
                         LOG.debug("\n\n------ activating " + i + " - " +
-                        fragments[i].name );
+                        fragments[i].getName() );
 
                     try
                     {
@@ -122,7 +122,7 @@ public class FragmentActivator
                         fragments[i].view = view;
                         if (LOG.isDebugEnabled())
                             LOG.debug("\n\n------ done activating " +
-                                fragments[i].name );
+                                fragments[i].getName() );
                     }
                     catch( Exception e )
                     {
@@ -133,7 +133,7 @@ public class FragmentActivator
                         e.printStackTrace( pw );
                         pw.flush();
                         LOG.error("\n\n------ Problem occurred activating " +
-                                fragments[i].name + "------\n" +
+                                fragments[i].getName() + "------\n" +
                                 (e.getMessage() != null ?
                                  e.getMessage() + "\n\n" : "" ) +
                                 sw.toString() );
@@ -146,17 +146,17 @@ public class FragmentActivator
             // show sort order in log file if debug is on. (Could check and
             // only build of on but do later.)
             StringBuffer bfr = new StringBuffer();
-            bfr.append( fragments[0].name );
+            bfr.append( fragments[0].getName() );
             bfr.append( "[" );
-            bfr.append( fragments[0].precedence );
+            bfr.append( fragments[0].getPrecedence() );
             bfr.append( "]" );
         
             for (int i=1; i<fragments.length; i++ )
             {
                 bfr.append( ",\n" );
-                bfr.append( fragments[i].name );
+                bfr.append( fragments[i].getName() );
                 bfr.append( "[" );
-                bfr.append( fragments[i].precedence );
+                bfr.append( fragments[i].getPrecedence() );
                 bfr.append( "]" );
             }
             if (LOG.isDebugEnabled())
@@ -193,7 +193,7 @@ public class FragmentActivator
         if (mRoleUpdater != null)
         {
             mRoleUpdater.setFragmentOwnerRoles(
-                definition.ownerID,
+                definition.getOwnerId(),
                 new ArrayList(definition.roles));
         }
     }
@@ -201,7 +201,7 @@ public class FragmentActivator
     private IPerson bindToOwner( FragmentDefinition fragment )
     {
         IPerson owner = new PersonImpl();
-        owner.setAttribute( "username", fragment.ownerID );
+        owner.setAttribute( "username", fragment.getOwnerId() );
         int userID = -1;
         
         try
@@ -222,7 +222,7 @@ public class FragmentActivator
             userID = createOwner( owner, fragment );
             owner.setAttribute("newlyCreated", "" + (userID != -1));
         }
-        fragment.userID = userID;
+        fragment.setUserId(userID);
         owner.setID(userID);
         return owner;
     }
@@ -247,15 +247,15 @@ public class FragmentActivator
                 throw new RuntimeException(
                         "\n\n WARNING: defaultLayoutOwner is not specified" +
                         " in dlm.xml and no default user is configured for " +
-                        "the system. Owner '" + fragment.ownerID + "' for " +
-                        "fragment '" + fragment.name + "' can not be " +
+                        "the system. Owner '" + fragment.getOwnerId() + "' for " +
+                        "fragment '" + fragment.getName() + "' can not be " +
                         "created. The fragment will not be available for " +
                         "inclusion into user layouts.\n", re );
             }
 
             if (LOG.isDebugEnabled())
-                LOG.debug("\n\nOwner '" + fragment.ownerID +
-                "' of fragment '" + fragment.name +
+                LOG.debug("\n\nOwner '" + fragment.getOwnerId() +
+                "' of fragment '" + fragment.getName() +
                 "' not found. Creating as copy of '" +
                 defaultUser + "'\n" );
 
@@ -270,7 +270,7 @@ public class FragmentActivator
         {
             throw new RuntimeException(
                   "\n\nWARNING: Anomaly occurred while creating owner '" +
-                  fragment.ownerID + "' of fragment '" + fragment.name +
+                  fragment.getOwnerId() + "' of fragment '" + fragment.getName() +
                   "'. The fragment will not be " +
                   "available for inclusion into user layouts.", ae );
         }
@@ -281,7 +281,7 @@ public class FragmentActivator
                              IPerson owner )
     {
         // if fragment not bound to user can't return any layouts.
-        if ( fragment.userID == -1 )
+        if ( fragment.getUserId() == -1 )
             return;
 
         // this area is hacked right now. Time won't permit how to handle
@@ -314,7 +314,7 @@ public class FragmentActivator
             layout = dls.getFragmentLayout( owner, profile ); 
             Element root = layout.getDocumentElement();
             root.setAttribute( Constants.ATT_ID, 
-                    Constants.FRAGMENT_ID_USER_PREFIX + fragment.userID +
+                    Constants.FRAGMENT_ID_USER_PREFIX + fragment.getUserId() +
                     Constants.FRAGMENT_ID_LAYOUT_PREFIX + view.layoutId );
             view.layout = layout;
         }
@@ -322,7 +322,7 @@ public class FragmentActivator
         {
             throw new RuntimeException(
                   "Anomaly occurred while loading layout for fragment '" +
-                  fragment.name +
+                  fragment.getName() +
                   "'. The fragment will not be " +
                   "available for inclusion into user layouts.", e );
         }
@@ -332,12 +332,12 @@ public class FragmentActivator
                                   FragmentDefinition fragment )
     {
         // if fragment not bound to user can't return any preferences.
-        if ( fragment.userID == -1 )
+        if ( fragment.getUserId() == -1 )
             return;
 
         IPerson p = new PersonImpl();
-        p.setID( fragment.userID );
-        p.setAttribute( "username", fragment.ownerID );
+        p.setID( fragment.getUserId() );
+        p.setAttribute( "username", fragment.getOwnerId() );
 
         try
         {
@@ -351,7 +351,7 @@ public class FragmentActivator
             throw new RuntimeException(
                   "Anomaly occurred while loading structure or theme " +
                     "stylesheet user preferences for fragment '" +
-                  fragment.name +
+                  fragment.getName() +
                   "'. The fragment will not be " +
                   "available for inclusion into user layouts.", e );
         }
@@ -433,7 +433,7 @@ public class FragmentActivator
                             FragmentDefinition fragment )
     {
         // if fragment not bound to user or layout empty due to error, return
-        if ( fragment.userID == -1 ||
+        if ( fragment.getUserId() == -1 ||
              view.layout == null )
             return;
 
@@ -466,7 +466,7 @@ public class FragmentActivator
                         throw new RuntimeException(
                               "Anomaly occurred while stripping out " +
                               " portions of layout for fragment '" +
-                              fragment.name +
+                              fragment.getName() +
                               "'. The fragment will not be available for " +
                               "inclusion into user layouts.", e );
                     }
@@ -477,7 +477,7 @@ public class FragmentActivator
 
         setIdsAndAttribs( layout, layout.getAttribute( Constants.ATT_ID ),
                           "" + fragment.index,
-                          "" + fragment.precedence );
+                          "" + fragment.getPrecedence() );
     }
 
     /**

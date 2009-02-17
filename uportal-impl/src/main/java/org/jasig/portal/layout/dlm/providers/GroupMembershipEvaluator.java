@@ -5,12 +5,18 @@
 
 package org.jasig.portal.layout.dlm.providers;
 
+import javax.persistence.Entity;
+
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
+
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupConstants;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.layout.dlm.Evaluator;
+import org.jasig.portal.layout.dlm.EvaluatorFactory;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.GroupService;
 
@@ -28,7 +34,8 @@ import org.jasig.portal.services.GroupService;
  * @version $Revision$ $Date$
  * @since uPortal 2.5
  */
-public class GroupMembershipEvaluator implements Evaluator
+@Entity
+public class GroupMembershipEvaluator extends Evaluator
 {
     private static final int MEMBER_OF_MODE = 0;
     
@@ -38,8 +45,13 @@ public class GroupMembershipEvaluator implements Evaluator
 
     private String groupKey = null;
 
-    private final int evaluatorMode;
+    private int evaluatorMode;
 
+    /**
+     * Zero-arg constructor required by JPA.  Other Java code should not use it.
+     */
+    public GroupMembershipEvaluator() {}
+    
     public GroupMembershipEvaluator(String mode, String name)
     {
         if (mode.equals("memberOf"))
@@ -120,4 +132,38 @@ public class GroupMembershipEvaluator implements Evaluator
                       + p.getFullName() + " is in group " + groupName + ".", e);
           }
       }
+
+    @Override
+    public void toElement(Element parent) {
+
+        // Assertions.
+        if (parent == null) {
+            String msg = "Argument 'parent' cannot be null.";
+            throw new IllegalArgumentException(msg);
+        }
+        
+        String mde = null;
+        switch (this.evaluatorMode) {
+            case MEMBER_OF_MODE:
+                mde = "memberOf";
+                break;
+            case DEEP_MEMBER_OF_MODE:
+                mde = "deepMemberOf";
+                break;
+            default:
+                throw new IllegalStateException("Unrecognized evaluatorMode constant:  " + this.evaluatorMode);
+        }
+        
+        Element rslt = DocumentHelper.createElement("attribute");
+        rslt.addAttribute("mode", mde);
+        rslt.addAttribute("name", this.groupName);
+        parent.add(rslt);
+        
+    }
+    
+    @Override
+    public Class<? extends EvaluatorFactory> getFactoryClass() {
+        return GroupMembershipEvaluatorFactory.class;
+    }
+
 }

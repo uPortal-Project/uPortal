@@ -71,9 +71,10 @@ public class RDBMDistributedLayoutStore
 
     private String systemDefaultUser = null;
     private boolean systemDefaultUserLoaded = false;
-    private Properties properties = null;
-    private FragmentDefinition[] definitions = null;
-    private Map fragmentInfoCache = null;
+    private final ConfigurationLoader configLoader;
+//    private Properties properties = null;
+//    private FragmentDefinition[] definitions = null;
+    private Map fragmentInfoCache = new HashMap();
     private LayoutDecorator decorator = null;
     private FragmentActivator activator = null;
     private Object initializationLock = new Object();
@@ -117,13 +118,14 @@ public class RDBMDistributedLayoutStore
         }
         Map layouts = new HashMap();
 
+        FragmentDefinition[] definitions = configLoader.getFragments();
         for(int i=0; definitions != null && i<definitions.length; i++)
         {
             Document layout = DocumentFactory.getNewDocument();
             Node copy = layout.importNode(definitions[i].view.layout
                     .getDocumentElement(), true);
             layout.appendChild(copy);
-            layouts.put(definitions[i].ownerID, layout);
+            layouts.put(definitions[i].getOwnerId(), layout);
         }
         return layouts;
     }
@@ -160,14 +162,12 @@ public class RDBMDistributedLayoutStore
         tsdCache = new SmartCache();
         ssdCache = new SmartCache();
 
-        ConfigurationLoader.load( this );
+        configLoader = ConfigurationLoader.load( this );
 
         try
         {
 
-            String decoratorClass = null;
-            if ( properties != null )
-                decoratorClass = properties.getProperty( DECORATOR_PROPERTY );
+            String decoratorClass = configLoader.getProperty( DECORATOR_PROPERTY );
 
             if ( decoratorClass != null )
                 decorator = DecoratorLoader.load( decoratorClass );
@@ -176,7 +176,7 @@ public class RDBMDistributedLayoutStore
         {
             LOG.error("\n\n---------- Warning ---------\nUnable to load "
                         + "layout decorator '"
-                        + properties.getProperty(DECORATOR_PROPERTY)
+                        + configLoader.getProperty(DECORATOR_PROPERTY)
                         + "' specified in dlm.xml. It will not be used.", e);
         }
 
@@ -189,7 +189,7 @@ public class RDBMDistributedLayoutStore
         // class and hence reentrance into an instance still being activated is
         // ok.
 
-        activator = new FragmentActivator( this, definitions );
+        activator = new FragmentActivator(this, configLoader.getFragments());
         Thread t = new Thread(PortalSessionManager.getThreadGroup(), "dlm activator")
             {
                 public void run()
@@ -406,14 +406,15 @@ public class RDBMDistributedLayoutStore
                             sleep( wait_time );
 
                             //get each layout owner
+                            FragmentDefinition[] definitions = configLoader.getFragments();
                             if ( null != definitions )
                             {
                                 if ( null != owners && owners.size() == 0 )
                                 {
                                     for( int i=0; i<definitions.length; i++ )
                                     {
-                                        String ownerId = definitions[i].ownerID;
-                                        int userId  = definitions[i].userID;
+                                        String ownerId = definitions[i].getOwnerId();
+                                        int userId  = definitions[i].getUserId();
 
                                         if ( null != ownerId )
                                         {
@@ -462,6 +463,7 @@ public class RDBMDistributedLayoutStore
      */
     public double getFragmentPrecedence( int index )
     {
+        FragmentDefinition[] definitions = configLoader.getFragments();
         if ( index < 0 ||
              index > definitions.length-1 )
             return 0;
@@ -471,7 +473,7 @@ public class RDBMDistributedLayoutStore
         // within precedence.
         for ( int i=0; i<definitions.length; i++ )
             if ( definitions[i].index == index )
-                return definitions[i].precedence;
+                return definitions[i].getPrecedence();
         return 0; // should never get here.
     }
 
@@ -574,10 +576,10 @@ public class RDBMDistributedLayoutStore
             {
                 layoutNode.setAttributeNS( Constants.NS_URI,
                                            Constants.ATT_FRAGMENT_NAME,
-                                           ownedFragment.name );
+                                           ownedFragment.getName() );
                 if (LOG.isDebugEnabled())
                     LOG.debug("User '" + userName + "' is owner of '"
-                            + ownedFragment.name + "' fragment.");
+                            + ownedFragment.getName() + "' fragment.");
             }
             else if ( isLayoutOwnerDefault )
             {
@@ -646,7 +648,7 @@ public class RDBMDistributedLayoutStore
         Element root = layout.getDocumentElement();
         root.setAttribute( Constants.ATT_ID,
                            Constants.FRAGMENT_ID_USER_PREFIX +
-                           fragment.userID +
+                           fragment.getUserId() +
                            Constants.FRAGMENT_ID_LAYOUT_PREFIX + "1" );
         UserView view = new UserView( profile,
                                       layout,
@@ -672,6 +674,7 @@ public class RDBMDistributedLayoutStore
     {
         String userName = (String) person.getAttribute( "username" );
 
+        FragmentDefinition[] definitions = configLoader.getFragments();
         if ( userName != null && definitions != null )
         {
             for( int i=0; i<definitions.length; i++ )
@@ -721,10 +724,11 @@ public class RDBMDistributedLayoutStore
     {
         int userId = person.getID();
 
+        FragmentDefinition[] definitions = configLoader.getFragments();
         if ( definitions != null )
         {
             for( int i=0; i<definitions.length; i++ )
-                if ( definitions[i].userID == userId )
+                if ( definitions[i].getUserId() == userId )
                     return definitions[i];
         }
         return null;
@@ -743,6 +747,7 @@ public class RDBMDistributedLayoutStore
     {
         Vector applicables = new Vector();
 
+        FragmentDefinition[] definitions = configLoader.getFragments();
         if ( definitions != null )
         {
             for( int i=0; i<definitions.length; i++ )
@@ -831,57 +836,55 @@ public class RDBMDistributedLayoutStore
      */
     public int getPropertyCount()
     {
-        return properties.size();
+        return configLoader.getPropertyCount();
     }
 
     /**
        Returns an enumerator of the property names loaded from dlm.xml.
      */
-    public Enumeration getPropertyNames()
-    {
-        if ( properties == null )
-        {
-            return new Enumeration()
-                {
-                    public boolean hasMoreElements()
-                    {
-                        return false;
-                    }
-                    public Object nextElement()
-                    {
-                        throw new NoSuchElementException();
-                    }
-                };
-        }
-        return properties.propertyNames();
-    }
+//    public Enumeration getPropertyNames()
+//    {
+//        if ( properties == null )
+//        {
+//            return new Enumeration()
+//                {
+//                    public boolean hasMoreElements()
+//                    {
+//                        return false;
+//                    }
+//                    public Object nextElement()
+//                    {
+//                        throw new NoSuchElementException();
+//                    }
+//                };
+//        }
+//        return properties.propertyNames();
+//    }
 
     /**
        Returns the specified property loaded from dlm.xml or null if not found.
      */
     public String getProperty( String name )
     {
-        if ( properties == null )
-            return null;
-        return properties.getProperty( name );
+        return configLoader.getProperty( name );
     }
 
-    /**
-       Sets the dlm propertys. Called by ConfigurationLoaded.
-     */
-    void setProperties( Properties props )
-    {
-        this.properties = props;
-    }
-
-    /**
-       Sets the dlm fragment definitions. Called by ConfigurationLoader.
-     */
-    void setDefinitions( FragmentDefinition[] frags )
-    {
-        this.definitions = frags;
-        this.fragmentInfoCache = new HashMap();
-    }
+//    /**
+//       Sets the dlm propertys. Called by ConfigurationLoaded.
+//     */
+//    void setProperties( Properties props )
+//    {
+//        this.properties = props;
+//    }
+//
+//    /**
+//       Sets the dlm fragment definitions. Called by ConfigurationLoader.
+//     */
+//    void setDefinitions( FragmentDefinition[] frags )
+//    {
+//        this.definitions = frags;
+//        this.fragmentInfoCache = new HashMap();
+//    }
 
     /**
      * Returns an object suitable for identifying channel attribute and
@@ -913,7 +916,7 @@ public class RDBMDistributedLayoutStore
     {
         // grab local pointers to variables subject to change at any time
         Map infoCache = fragmentInfoCache;
-        FragmentDefinition[] defs = definitions;
+        FragmentDefinition[] defs = configLoader.getFragments();
 
         FragmentNodeInfo info = (FragmentNodeInfo) infoCache.get(sId);
 
@@ -940,10 +943,10 @@ public class RDBMDistributedLayoutStore
     /**
      * Gets the configured dlm fragment definitions.
      */
-    FragmentDefinition[] getDefinitions()
-    {
-        return this.definitions;
-    }
+//    FragmentDefinition[] getDefinitions()
+//    {
+//        return this.definitions;
+//    }
 
 
     //////// User Preferences handling methods. //////////
@@ -1436,7 +1439,7 @@ public class RDBMDistributedLayoutStore
             return ssup;
 
         // regular user, find which layouts apply and include their set prefs
-
+        FragmentDefinition[] definitions = configLoader.getFragments();
         if ( definitions != null )
         {
             for( int i=0; i<definitions.length; i++ )
@@ -1482,7 +1485,7 @@ public class RDBMDistributedLayoutStore
             return tsup;
 
         // regular user, find which layouts apply and include their set prefs
-
+        FragmentDefinition[] definitions = configLoader.getFragments();
         if ( definitions != null )
         {
             for( int i=0; i<definitions.length; i++ )

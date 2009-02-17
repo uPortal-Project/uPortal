@@ -1,0 +1,25 @@
+<with>
+    <attribute key="Attributes.NODE">${newDoc(fragment-definition)}</attribute>
+    <attribute key="fragmentDefinitionDao">${groovy(PORTAL_CONTEXT.getBean('fragmentDefinitionDao'))}</attribute>
+    <subtasks>
+	    <echo-ln>Export Fragment Definition:  NAME=${NAME}</echo-ln>	    
+	    <with-attribute key="fragment" value="${groovy(fragmentDefinitionDao.getFragmentDefinition(NAME))}">
+	        <choose>
+	            <when test="${jexl(fragment == null)}">
+	                <echo-ln>WARNING:  Fragment Definition '${NAME}' does not exist;  no file will be generated.</echo-ln>
+	                <log logger-name="org.jasig.portal.io.export-fragment-definition" level="warn">Fragment Definition '${NAME}' does not exist;  no file will be generated.</log>
+	            </when>
+	            <otherwise>
+			        <append-node node="${attributeNode(script=classpath://org/jasig/portal/io/import-fragment-definition_v3-1.crn)}"/>
+			        <append-node node="${groovy(org.jasig.portal.layout.dlm.FragmentDefinition.NAMESPACE)}"/>
+			        <groovy>
+			            <script>fragment.toElement(Attributes.NODE)</script>
+			        </groovy>
+                    <with-attribute key="SAFE_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${NAME})}">
+                        <write-document file="${EXPORT_DIR}/fragment-definition/${SAFE_NAME}.fragment-definition"/>
+                    </with-attribute>
+	            </otherwise>
+	        </choose>
+	    </with-attribute>
+    </subtasks>
+</with>

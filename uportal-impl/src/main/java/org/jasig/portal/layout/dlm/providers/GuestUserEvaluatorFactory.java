@@ -5,8 +5,15 @@
 
 package org.jasig.portal.layout.dlm.providers;
 
+import javax.persistence.Entity;
+
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
+import org.dom4j.QName;
+
 import org.jasig.portal.layout.dlm.Evaluator;
 import org.jasig.portal.layout.dlm.EvaluatorFactory;
+import org.jasig.portal.layout.dlm.FragmentDefinition;
 import org.jasig.portal.security.IPerson;
 import org.w3c.dom.Node;
 
@@ -17,8 +24,9 @@ import org.w3c.dom.Node;
  * @version $Revision$ $Date$
  * @since uPortal 2.5
  */
-public class GuestUserEvaluatorFactory implements EvaluatorFactory, Evaluator
-{
+@Entity
+public class GuestUserEvaluatorFactory extends Evaluator implements EvaluatorFactory {
+    
     public static final String RCS_ID = "@(#) $Header$";
 
     public Evaluator getEvaluator( Node audience )
@@ -29,4 +37,28 @@ public class GuestUserEvaluatorFactory implements EvaluatorFactory, Evaluator
     {
         return p.isGuest();
     }
+
+    @Override
+    public void toElement(Element parent) {
+        
+        // Assertions.
+        if (parent == null) {
+            String msg = "Argument 'parent' cannot be null.";
+            throw new IllegalArgumentException(msg);
+        }
+
+        Element rslt = null;
+        QName q = new QName("audience", FragmentDefinition.NAMESPACE);
+        rslt = DocumentHelper.createElement(q);
+        rslt.addAttribute("evaluatorFactory", this.getFactoryClass().getName());
+        parent.add(rslt);
+
+    }
+    
+    @Override
+    public Class<? extends EvaluatorFactory> getFactoryClass() {
+        return this.getClass();
+    }
+
+
 }

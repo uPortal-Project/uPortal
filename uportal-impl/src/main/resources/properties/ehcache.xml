@@ -72,6 +72,15 @@
     
     <!-- Hibernate Caches -->
 
+    <!--
+     | This cache is used by the 'RDBMConfigurationLoader' implementation in dlm.xml.  
+     +-->
+    <!--
+    <cache name="org.jasig.portal.layout.dlm.Evaluator"
+        eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" />
+    -->
+
     <cache name="org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl"
         eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LFU" />

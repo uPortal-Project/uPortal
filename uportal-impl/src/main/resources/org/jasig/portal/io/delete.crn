@@ -84,6 +84,14 @@
                                         </with-attribute>
                                     </when>
                 
+                                    <!-- fragment-definitions -->
+                                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('fragment-definition'))}">
+                                        <with-attribute key="NAME" value="${req($2)}">
+                                            <echo-ln>Delete fragment definition:  ${req(NAME)}</echo-ln>
+                                            <crn location="delete-fragment-definition.crn"/>
+                                        </with-attribute>
+                                    </when>
+
                                     <otherwise>
                                         <echo-ln>WARNING:  Unknown/unsupported entity type:  '${ENTITY_TYPE}'</echo-ln>
                                         <echo-ln>You must pass a valid entity type as the firt argument on the command line.</echo-ln>

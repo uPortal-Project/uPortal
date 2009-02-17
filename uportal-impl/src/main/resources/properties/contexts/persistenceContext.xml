@@ -10,6 +10,14 @@
     
     <!-- ********** Portlet DAOs ********** -->
 
+    <!--
+     | This bean is used by the 'RDBMConfigurationLoader' implementation in dlm.xml.  
+     +-->
+    <!--
+    <bean id="fragmentDefinitionDao" class="org.jasig.portal.layout.dlm.FragmentDefinitionDao">
+    </bean>
+    -->
+    
     <bean id="portletDefinitionDao" class="org.jasig.portal.portlet.dao.jpa.JpaPortletDefinitionDao">
     </bean>
     

@@ -1,0 +1,19 @@
+<with>
+    <attribute key="fragmentDefinitionDao">${groovy(PORTAL_CONTEXT.getBean('fragmentDefinitionDao'))}</attribute>
+    <subtasks>
+		<groovy>
+		    <script>
+                import org.jasig.portal.layout.dlm.FragmentDefinition; 
+                
+                FragmentDefinition fd = fragmentDefinitionDao.getFragmentDefinition(NAME);
+                if (fd != null) {
+                    fragmentDefinitionDao.removeFragmentDefinition(fd); 
+                }
+                
+                // NB:  Perhaps we should indicate if the specified entity don't 
+                // exist;  I'll leave it this way (for now) b/c the other delete 
+                // operations doen't appear to say anything.
+		    </script>
+		</groovy>
+    </subtasks>
+</with>

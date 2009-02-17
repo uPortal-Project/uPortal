@@ -15,11 +15,19 @@
         <property name="hibernate.current_session_context_class">thread</property>
         
         <mapping resource="properties/db/global.hbm.xml"/> 
+        <mapping class="org.jasig.portal.layout.dlm.Evaluator" />
+        <mapping class="org.jasig.portal.layout.dlm.FragmentDefinition" />
+        <mapping class="org.jasig.portal.layout.dlm.providers.AllUsersEvaluatorFactory" />
+        <mapping class="org.jasig.portal.layout.dlm.providers.AttributeEvaluator" />
+        <mapping class="org.jasig.portal.layout.dlm.providers.GroupMembershipEvaluator" />
+        <mapping class="org.jasig.portal.layout.dlm.providers.GuestUserEvaluatorFactory" />
+        <mapping class="org.jasig.portal.layout.dlm.providers.Paren" />
         <mapping class="org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl" />
         <mapping class="org.jasig.portal.portlet.dao.jpa.PortletEntityImpl" />
         <mapping class="org.jasig.portal.portlet.dao.jpa.PortletPreferencesImpl" />
         <mapping class="org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl" />
         
+        <class-cache class="org.jasig.portal.layout.dlm.Evaluator" usage="nonstrict-read-write"/>
         <class-cache class="org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl" usage="nonstrict-read-write"/>
         <class-cache class="org.jasig.portal.portlet.dao.jpa.PortletEntityImpl" usage="nonstrict-read-write"/>
         <class-cache class="org.jasig.portal.portlet.dao.jpa.PortletPreferencesImpl" usage="nonstrict-read-write"/>

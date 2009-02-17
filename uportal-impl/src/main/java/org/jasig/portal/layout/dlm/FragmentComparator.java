@@ -28,13 +28,13 @@ public class FragmentComparator
         FragmentDefinition frag1 = (FragmentDefinition) obj1;
         FragmentDefinition frag2 = (FragmentDefinition) obj2;
         
-        if( frag1.precedence == frag2.precedence )
+        if( frag1.getPrecedence() == frag2.getPrecedence() )
         {
             return frag1.index - frag2.index;
         }
         else
         {
-            return (int)(frag2.precedence - frag1.precedence);
+            return (int)(frag2.getPrecedence() - frag1.getPrecedence());
         }
     }
     public boolean equals(Object obj)

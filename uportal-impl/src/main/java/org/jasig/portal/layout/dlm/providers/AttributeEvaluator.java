@@ -5,15 +5,22 @@
 
 package org.jasig.portal.layout.dlm.providers;
 
+import javax.persistence.Entity;
+
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
+
 import org.jasig.portal.layout.dlm.Evaluator;
+import org.jasig.portal.layout.dlm.EvaluatorFactory;
 import org.jasig.portal.security.IPerson;
 
 /**
  * @version $Revision$ $Date$
  * @since uPortal 2.5
  */
+@Entity
 public class AttributeEvaluator
-    implements Evaluator
+    extends Evaluator
 {
     public static final String RCS_ID = "@(#) $Header$";
 
@@ -27,6 +34,11 @@ public class AttributeEvaluator
     protected String name = null;
     protected String value = null;
 
+    /**
+     * Zero-arg constructor required by JPA.  Other Java code should not use it.
+     */
+    public AttributeEvaluator() {}
+    
     public AttributeEvaluator( String name, String mode, String value )
     {
         if ( mode.equals( "equals" ) )
@@ -72,6 +84,7 @@ public class AttributeEvaluator
         this.name = name;
         this.value = value;
     }
+    
     public boolean isApplicable( IPerson p )
     {
         String attrib = (String) p.getAttribute( name );
@@ -93,4 +106,49 @@ public class AttributeEvaluator
         // will never get here
         return false;
     }
+    
+    @Override
+    public void toElement(Element parent) {
+
+        // Assertions.
+        if (parent == null) {
+            String msg = "Argument 'parent' cannot be null.";
+            throw new IllegalArgumentException(msg);
+        }
+        
+        String mde = null;
+        switch (this.mode) {
+            case AttributeEvaluator.CONTAINS:
+                mde = "contains";
+                break;
+            case AttributeEvaluator.EQUALS:
+                mde = "equals";
+                break;
+            case AttributeEvaluator.STARTS_WITH:
+                mde = "startsWith";
+                break;
+            case AttributeEvaluator.ENDS_WITH:
+                mde = "endsWith";
+                break;
+            case AttributeEvaluator.EXISTS:
+                mde = "exists";
+                break;
+            default:
+                throw new IllegalStateException("Unrecognized mode constant:  " + this.mode);
+        }
+        
+        Element rslt = DocumentHelper.createElement("attribute");
+        rslt.addAttribute("name", this.name);
+        rslt.addAttribute("mode", mde);
+        rslt.addAttribute("value", this.value);
+        parent.add(rslt);
+        
+    }
+    
+    @Override
+    public Class<? extends EvaluatorFactory> getFactoryClass() {
+        return PersonEvaluatorFactory.class;
+    }
+
+
 }

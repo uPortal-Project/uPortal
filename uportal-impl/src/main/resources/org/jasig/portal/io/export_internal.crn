@@ -352,6 +352,37 @@
                 </thread-pool>
             </when>
     
+            <!-- fragment-definition -->
+            <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('fragment-definition'))}">
+                <with-attribute key="NAME" value="${$3}">
+                    <crn location="export-fragment-definition.crn"/>
+                </with-attribute>
+            </when>
+
+            <!-- all-fragment-definitions -->
+            <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-fragment-definitions'))}">
+                <thread-pool threads="${THREAD_COUNT}">
+                    <sql-query>
+                        <sql>SELECT name FROM up_dlm_evaluator WHERE dtype = 'FragmentDefinition'</sql>
+                        <subtasks>
+                            <concurrent>
+                                <handle-error>
+                                    <try>
+                                        <with-attribute key="NAME" value="${NAME}">
+                                            <crn location="export-fragment-definition.crn"/>
+                                        </with-attribute>
+                                    </try>
+                                    <catch>
+                                        <echo-ln>ERROR Failed to export fragment definition ${NAME} due to exception: ${Attributes.EXCEPTION}</echo-ln>
+                                        <log logger-name="org.jasig.portal.io.export_internal" level="error" exception="${Attributes.EXCEPTION}">Failed to export fragment definition ${NAME} due to exception</log>
+                                    </catch>
+                                </handle-error>
+                            </concurrent>
+                        </subtasks>
+                    </sql-query>
+                </thread-pool>
+            </when>
+
         </choose>
         <echo-ln>Export of ${ENTITY_TYPE} Complete: ${groovy(System.currentTimeMillis() - EXPORT_START_TIME)}</echo-ln>
     </subtasks>
