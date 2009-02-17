@@ -45,6 +45,9 @@
                                     <with-attribute key="ENTITY_TYPE" value="all-group_membership">
                                         <crn location="export_internal.crn"/>
                                     </with-attribute>
+                                    <with-attribute key="ENTITY_TYPE" value="all-fragment-definitions">
+                                        <crn location="export_internal.crn"/>
+                                    </with-attribute>
                                     
                                     <echo-ln>Export of ${ENTITY_TYPE} Complete: ${groovy(System.currentTimeMillis() - EXPORT_START_TIME)}</echo-ln>
                                 </when>
