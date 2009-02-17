@@ -1,7 +1,7 @@
-/* This CSS is called from the theme (xhtml-theme.xsl) and then imports other CSS files.  With this setup, you can add your own CSS files to the import list and not have to alter the markup or XSL.  If you add additional CSS files to be imported, be sure to add them to the bottom of the list, which will ensure that your added CSS will override the defaults. */
+/* This CSS is called from the theme (universality.xsl) and then imports other CSS files.  With this setup, you can add your own CSS files to the import list and not have to alter the markup or XSL.  If you add additional CSS files to be imported, be sure to add them to the bottom of the list, which will ensure that your added CSS will override the defaults. */
 
-@import url("print.min.css");
-@import url("layout.min.css");
+@import url("../common/css/print.min.css");
+@import url("../common/css/layout.min.css");
 @import url("uportal3_base.min.css");
 @import url("uportal3_ie6override.min.css");
 @import url("jsr168_portlet_spec.min.css");
