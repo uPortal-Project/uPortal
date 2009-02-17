@@ -215,13 +215,15 @@
    | Template contents can be any valid XSL or XHTML.
   -->
   <xsl:template name="page.css">
-    <link media="all" type="text/css" href="{$MEDIA_PATH}/common/reset-fonts-grids.css" rel="stylesheet"/>
-    <link media="all" type="text/css" href="{$MEDIA_PATH}/common/base-min.css" rel="stylesheet"/>
-    <link media="all" type="text/css" href="{$SKIN_PATH}/{$SKIN}.css" rel="stylesheet"/>
-     
-    <!-- Yahoo! User Interface Library (YUI) CSS to establish a common, cross-browser base rendering.  See http://developer.yahoo.com/yui/ for more details. --> 
+  	<!-- Yahoo! User Interface Library (YUI) CSS to establish a common, cross-browser base rendering.  See http://developer.yahoo.com/yui/ for more details. --> 
+    <link rel="stylesheet" type="text/css" media="screen" href="{$MEDIA_PATH}/common/css/yui/reset-fonts-grids.css"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="{$MEDIA_PATH}/common/css/yui/base-min.css"/>
+    
+    <!-- Fluid Skinning System CSS for layout and helpers. See http://wiki.fluidproject.org/x/96M7 for more details. -->
+    <link rel="stylesheet" type="text/css" media="screen" href="{$MEDIA_PATH}/common/css/fluid/fluid.fss.css"/>
     
     <!-- uPortal skin CSS -->
+    <link rel="stylesheet" type="text/css" media="screen" href="{$SKIN_PATH}/{$SKIN}.css"/>
     
   </xsl:template>
   <!-- ======================================== -->
