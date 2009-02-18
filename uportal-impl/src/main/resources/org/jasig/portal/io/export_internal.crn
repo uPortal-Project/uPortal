@@ -5,12 +5,12 @@
     <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('layout'))}">
         <sql-query>
             <sql>SELECT user_id, user_name FROM up_user WHERE user_name=?</sql>
-            <parameter value="${req($3)}"/>
+            <parameter value="${SYSID}"/>
             <subtasks>
                 <crn location="export-layout.crn"/>
             </subtasks>
             <empty-result>
-                <echo-ln>No user '${$3}' found to export ${ENTITY_TYPE} for.</echo-ln>
+                <echo-ln>No user '${SYSID}' found to export ${ENTITY_TYPE} for.</echo-ln>
             </empty-result>
         </sql-query>
     </when>
@@ -28,7 +28,13 @@
                             <concurrent>
                                 <handle-error>
                                     <try>
-                                        <crn location="export-layout.crn"/>
+                                        <with>
+                                            <attribute key="SYSID">${USER_NAME}</attribute>
+                                            <attribute key="ENTITY_TYPE">layout</attribute>
+                                            <subtasks>
+                                                <crn location="export_internal.crn"/>
+                                            </subtasks>
+                                        </with>
                                     </try>
                                     <catch>
                                         <echo-ln>ERROR Failed to export layout for user ${USER_NAME} due to exception: ${Attributes.EXCEPTION}</echo-ln>
@@ -63,7 +69,7 @@
 
     <!-- channel -->
     <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('channel'))}">
-        <with-attribute key="FNAME" value="${$3}">
+        <with-attribute key="FNAME" value="${SYSID}">
             <crn location="export-channel.crn"/>
         </with-attribute>
     </when>
@@ -76,10 +82,14 @@
                 <subtasks>
                     <concurrent>
                         <handle-error> 
-                            <try> 
-                                <with-attribute key="FNAME" value="${CHAN_FNAME}">
-                                    <crn location="export-channel.crn"/>
-                                </with-attribute>
+                            <try>
+	                            <with>
+	                                <attribute key="SYSID">${CHAN_FNAME}</attribute>
+                                    <attribute key="ENTITY_TYPE">channel</attribute>
+	                                <subtasks>
+	                                    <crn location="export_internal.crn"/>
+	                                </subtasks>
+	                            </with>
                             </try>
                             <catch>
                                 <echo-ln>ERROR Failed to export channel ${CHAN_FNAME} due to exception: ${Attributes.EXCEPTION}</echo-ln>
@@ -94,7 +104,7 @@
 
     <!-- channel-type -->
     <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('channel-type'))}">
-        <with-attribute key="NAME" value="${$3}">
+        <with-attribute key="NAME" value="${SYSID}">
             <crn location="export-channel-type.crn"/>
         </with-attribute>
     </when>
@@ -108,9 +118,13 @@
                     <concurrent>
                         <handle-error>
                             <try>
-                                <with-attribute key="NAME" value="${TYPE_NAME}">
-                                    <crn location="export-channel-type.crn"/>
-                                </with-attribute>
+                                <with>
+                                    <attribute key="SYSID">${TYPE_NAME}</attribute>
+                                    <attribute key="ENTITY_TYPE">channel-type</attribute>
+                                    <subtasks>
+                                        <crn location="export_internal.crn"/>
+                                    </subtasks>
+                                </with>
                             </try>
                             <catch>
                                 <echo-ln>ERROR Failed to export channel type ${TYPE_NAME} due to exception: ${Attributes.EXCEPTION}</echo-ln>
@@ -132,12 +146,12 @@
                     LEFT JOIN UP_ENTITY_TYPE UPET ON UPG.ENTITY_TYPE_ID = UPET.ENTITY_TYPE_ID
                 WHERE UPG.GROUP_NAME = ?
             </sql>
-            <parameter value="${$3}"/>
+            <parameter value="${SYSID}"/>
             <subtasks>
                 <crn location="export-group.crn"/>
             </subtasks>
             <empty-result>
-                <echo-ln>No group '${$3}' found to export ${ENTITY_TYPE} for.</echo-ln>
+                <echo-ln>No group '${SYSID}' found to export ${ENTITY_TYPE} for.</echo-ln>
             </empty-result>
         </sql-query>
     </when>
@@ -155,7 +169,13 @@
                     <concurrent>
                         <handle-error>
                             <try>
-                                <crn location="export-group.crn"/>
+                                <with>
+                                    <attribute key="SYSID">${GROUP_NAME}</attribute>
+                                    <attribute key="ENTITY_TYPE">group</attribute>
+                                    <subtasks>
+                                        <crn location="export_internal.crn"/>
+                                    </subtasks>
+                                </with>
                             </try>
                             <catch>
                                 <echo-ln>ERROR Failed to export group ${GROUP_NAME} due to exception: ${Attributes.EXCEPTION}</echo-ln>
@@ -177,12 +197,12 @@
                     LEFT JOIN UP_ENTITY_TYPE UPET ON UPG.ENTITY_TYPE_ID = UPET.ENTITY_TYPE_ID
                 WHERE UPG.GROUP_NAME = ?
             </sql>
-            <parameter value="${$3}"/>
+            <parameter value="${SYSID}"/>
             <subtasks>
                 <crn location="export-group_membership.crn"/>
             </subtasks>
             <empty-result>
-                <echo-ln>No group '${$3}' found to export ${ENTITY_TYPE} for.</echo-ln>
+                <echo-ln>No group '${SYSID}' found to export ${ENTITY_TYPE} for.</echo-ln>
             </empty-result>
         </sql-query>
     </when>
@@ -200,7 +220,13 @@
                     <concurrent>
                         <handle-error>
                             <try>
-                                <crn location="export-group_membership.crn"/>
+                                <with>
+                                    <attribute key="SYSID">${GROUP_NAME}</attribute>
+                                    <attribute key="ENTITY_TYPE">group_membership</attribute>
+                                    <subtasks>
+                                        <crn location="export_internal.crn"/>
+                                    </subtasks>
+                                </with>
                             </try>
                             <catch>
                                 <echo-ln>ERROR Failed to export group and membership for ${GROUP_NAME} due to exception: ${Attributes.EXCEPTION}</echo-ln>
@@ -217,12 +243,12 @@
     <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('user'))}">
         <sql-query>
             <sql>SELECT user_id, user_name, user_dflt_usr_id FROM up_user WHERE user_name=?</sql>
-            <parameter value="${req($3)}"/>
+            <parameter value="${SYSID}"/>
             <subtasks>
                 <crn location="export-user.crn"/>
             </subtasks>
             <empty-result>
-                <echo-ln>No user '${$3}' found to export ${ENTITY_TYPE} for.</echo-ln>
+                <echo-ln>No user '${SYSID}' found to export ${ENTITY_TYPE} for.</echo-ln>
             </empty-result>
         </sql-query>
     </when>
@@ -238,7 +264,13 @@
                             <concurrent>
                                 <handle-error>
                                     <try>
-                                        <crn location="export-user.crn"/>
+		                                <with>
+		                                    <attribute key="SYSID">${USER_NAME}</attribute>
+		                                    <attribute key="ENTITY_TYPE">user</attribute>
+		                                    <subtasks>
+		                                        <crn location="export_internal.crn"/>
+		                                    </subtasks>
+		                                </with>
                                     </try>
                                     <catch>
                                         <echo-ln>ERROR Failed to export user ${USER_NAME} due to exception: ${Attributes.EXCEPTION}</echo-ln>
@@ -258,7 +290,7 @@
 
     <!-- theme -->
     <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('theme'))}">
-        <with-attribute key="NAME" value="${$3}">
+        <with-attribute key="NAME" value="${SYSID}">
             <crn location="export-theme.crn"/>
         </with-attribute>
     </when>
@@ -272,9 +304,13 @@
                     <concurrent>
                         <handle-error>
                             <try>
-                                <with-attribute key="NAME" value="${SS_NAME}">
-                                    <crn location="export-theme.crn"/>
-                                </with-attribute>
+                                <with>
+                                    <attribute key="SYSID">${SS_NAME}</attribute>
+                                    <attribute key="ENTITY_TYPE">theme</attribute>
+                                    <subtasks>
+                                        <crn location="export_internal.crn"/>
+                                    </subtasks>
+                                </with>
                             </try>
                             <catch>
                                 <echo-ln>ERROR Failed to export theme ${SS_NAME} due to exception: ${Attributes.EXCEPTION}</echo-ln>
@@ -289,7 +325,7 @@
 
     <!-- structure -->
     <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('structure'))}">
-        <with-attribute key="NAME" value="${$3}">
+        <with-attribute key="NAME" value="${SYSID}">
             <crn location="export-structure.crn"/>
         </with-attribute>
     </when>
@@ -303,9 +339,13 @@
                     <concurrent>
                         <handle-error>
                             <try>
-                                <with-attribute key="NAME" value="${SS_NAME}">
-                                    <crn location="export-structure.crn"/>
-                                </with-attribute>
+                                <with>
+                                    <attribute key="SYSID">${SS_NAME}</attribute>
+                                    <attribute key="ENTITY_TYPE">structure</attribute>
+                                    <subtasks>
+                                        <crn location="export_internal.crn"/>
+                                    </subtasks>
+                                </with>
                             </try>
                             <catch>
                                 <echo-ln>ERROR Failed to export structure ${SS_NAME} due to exception: ${Attributes.EXCEPTION}</echo-ln>
@@ -320,7 +360,7 @@
 
     <!-- entity-type -->
     <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('entity-type'))}">
-        <with-attribute key="NAME" value="${$3}">
+        <with-attribute key="NAME" value="${SYSID}">
             <crn location="export-entity-type.crn"/>
         </with-attribute>
     </when>
@@ -334,9 +374,13 @@
                     <concurrent>
                         <handle-error>
                             <try>
-                                <with-attribute key="NAME" value="${ENTITY_TYPE_NAME}">
-                                    <crn location="export-entity-type.crn"/>
-                                </with-attribute>
+                                <with>
+                                    <attribute key="SYSID">${ENTITY_TYPE_NAME}</attribute>
+                                    <attribute key="ENTITY_TYPE">entity-type</attribute>
+                                    <subtasks>
+                                        <crn location="export_internal.crn"/>
+                                    </subtasks>
+                                </with>
                             </try>
                             <catch>
                                 <echo-ln>ERROR Failed to export entity type ${ENTITY_TYPE_NAME} due to exception: ${Attributes.EXCEPTION}</echo-ln>
@@ -351,7 +395,7 @@
 
     <!-- fragment-definition -->
     <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('fragment-definition'))}">
-        <with-attribute key="NAME" value="${$3}">
+        <with-attribute key="NAME" value="${SYSID}">
             <crn location="export-fragment-definition.crn"/>
         </with-attribute>
     </when>
@@ -365,9 +409,13 @@
                     <concurrent>
                         <handle-error>
                             <try>
-                                <with-attribute key="NAME" value="${NAME}">
-                                    <crn location="export-fragment-definition.crn"/>
-                                </with-attribute>
+                                <with>
+                                    <attribute key="SYSID">${NAME}</attribute>
+                                    <attribute key="ENTITY_TYPE">fragment-definition</attribute>
+                                    <subtasks>
+                                        <crn location="export_internal.crn"/>
+                                    </subtasks>
+                                </with>
                             </try>
                             <catch>
                                 <echo-ln>ERROR Failed to export fragment definition ${NAME} due to exception: ${Attributes.EXCEPTION}</echo-ln>

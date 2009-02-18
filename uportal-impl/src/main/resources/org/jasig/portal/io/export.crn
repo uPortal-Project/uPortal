@@ -4,6 +4,8 @@
         <attribute key="EXPORT_DIR">${$1}</attribute>
         <!-- The 2nd argument passed to Cernunnos main():  the type of entity to export -->
         <attribute key="ENTITY_TYPE">${$2}</attribute>
+        <!-- The 3rd argument (optionally) passed to Cernunnos main():  Id of the specific entity to export;  not required for entity types that begin with 'all-' -->
+        <attribute key="SYSID">${groovy(ScriptAttributes.REQUEST.hasAttribute('$3') ? ScriptAttributes.REQUEST.getAttribute('$3') : null)}</attribute>
         <attribute key="EXPORT_START_TIME">${groovy(System.currentTimeMillis())}</attribute>
         <!-- Used by Cernunnos to boost performance -->
         <attribute key="Attributes.CACHE">${groovy(java.util.Collections.synchronizedMap(new org.jasig.portal.io.LoggingLRUMap(${CACHE_SIZE})))}</attribute>
@@ -35,7 +37,7 @@
                                                    'all-fragment-definitions'
 					                           ])}">
                                 <with-attribute key="SUBTYPE_START_TIME" value="${groovy(System.currentTimeMillis())}">
-                                    <echo-ln>Begin Export of ${ENTITY_TYPE}: ${SUBTYPE_START_TIME}</echo-ln>
+                                    <echo-ln>Begin Export of '${ENTITY_TYPE}': ${SUBTYPE_START_TIME}</echo-ln>
                                     <crn location="export_internal.crn"/>
                                     <echo-ln>Export of ${ENTITY_TYPE} Complete: ${groovy(System.currentTimeMillis() - SUBTYPE_START_TIME)}</echo-ln>
                                 </with-attribute>
