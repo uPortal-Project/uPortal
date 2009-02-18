@@ -35,46 +35,35 @@
       }
       }
     </SCRIPT>
+    
+    <h3>
+    <!--<xsl:if test="$mode='select'">-->
+      <xsl:choose>
+        <xsl:when test="$customMessage">
+          <xsl:value-of select="$customMessage"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:text>
+            Select Groups
+          </xsl:text>
+        </xsl:otherwise>
+      </xsl:choose>
+    <!--</xsl:if>-->
+    </h3>
+    
+    <!-- Feedback Message -->
+    <xsl:if test="$feedback">
+    	<p class="uportal-channel-warning"><xsl:value-of select="$feedback" /></p>
+    </xsl:if>
+    
+    <!-- Layout Table -->
     <table cellspacing="0" cellpadding="0">
-      <xsl:if test="$feedback">
-        <tr>
-          <td colspan="3" class="uportal-channel-warning">
-            <xsl:value-of select="$feedback" />
-          </td>
-        </tr>
-      </xsl:if>
-      <xsl:if test="$mode='select'">
-        <tr>
-          <td colspan="5">
-            <span class="uportal-channel-table-header">
-              <xsl:choose>
-                <xsl:when test="$customMessage">
-                  <xsl:value-of select="$customMessage"/>
-                </xsl:when>
-                <xsl:otherwise>
-                  <xsl:text>
-                    Select Groups and Entities:
-                  </xsl:text>
-                </xsl:otherwise>
-              </xsl:choose>
-            </span>
-          </td>
-        </tr>
-      </xsl:if>
-      
+      <!-- Left Pane with Tree Navigation -->
       <tr>
-        <td rowspan="3" valign="top">
+        <td valign="top">
           <xsl:call-template name="tree"/>
         </td>
-        <xsl:if test="$highlightedGroup">
-          <td class="uportal-background-highlight" rowspan="3" width="2"><img src="{$spacerIMG}" width="2" height="2"/></td>
-          <td class="uportal-background-highlight" height="2"><img src="{$spacerIMG}" width="2" height="2"/></td>
-          <td class="uportal-background-highlight" rowspan="3" width="2">
-            <img src="{$spacerIMG}" width="2" height="2"/>
-          </td>
-        </xsl:if>
-      </tr>
-      <tr>
+      	<!-- Right Pane with Selected Content -->
         <td valign="top">
           <xsl:if test="key('groupByID',$highlightedGroupID)">
             <xsl:call-template name="rightPane">
@@ -83,27 +72,29 @@
           </xsl:if>
         </td>
       </tr>
+    
+    <!-- Layout Table -->
+    <table cellspacing="0" cellpadding="0">      
+      <!-- Left Pane with Tree Navigation -->
       <tr>
-        <td height="2">
+        <td valign="top">
+          <xsl:call-template name="tree"/>
+        </td>
+      	<!-- Right Pane with Selected Content -->
+        <td valign="top">
           <xsl:if test="key('groupByID',$highlightedGroupID)">
-            <xsl:attribute name="class">uportal-background-highlight</xsl:attribute>
-            <img src="{$spacerIMG}" width="2" height="2"/>
+            <xsl:call-template name="rightPane">
+              <xsl:with-param name="group" select="$highlightedGroup"/>
+            </xsl:call-template>
           </xsl:if>
         </td>
       </tr>
-      <tr><td height="10"><img src="{$spacerIMG}" width="2" height="10"/></td></tr>
       
       
       <xsl:if test="not($mode='edit') and not($mode='members')">
-        <xsl:call-template name="hrow">
-          <xsl:with-param name="width" select="5"/>
-        </xsl:call-template>
-        <tr><td height="5"><img src="{$spacerIMG}" width="2" height="5"/></td></tr>
         <form action="{$baseActionURL}" method="POST">
           <input type="hidden" name="grpCommand" value="Search"/>
           <input type="hidden" name="uP_root" value="me"/>
-          <tr>
-            <td colspan="5" nowrap="nowrap" class="uportal-channel-text">
               Search for a 
               <select class="uportal-button" name="grpType">
                 <xsl:variable name="stype" select="$rootGroup/@entityType"/>
@@ -118,10 +109,6 @@
                   </xsl:if>
                 </xsl:for-each>
               </select>
-            </td>
-          </tr>
-          <tr>
-            <td colspan="5" nowrap="nowrap" class="uportal-channel-text">
               whose name  
               <select class="uportal-button" name="grpMethod">
                 <option value="1">is</option>
@@ -131,34 +118,18 @@
               </select>
               <input type="text" size="25" name="grpQuery" class="uportal-input-text"/>
               <input type="submit" class="uportal-button" value="Go"/>
-            </td>
-          </tr>
           <xsl:if test="$highlightedGroup[not(@id=0) and not(@searchResults='true')]"> 
-            <tr>
-              <td colspan="5" class="uportal-channel-text">
                 <input type="checkbox" name="grpCommandArg" value="{//group[@id=$highlightedGroupID]/@key}"/>
                 <em>search only descendants of the selected group</em>
-              </td>
-            </tr>
           </xsl:if>
         </form>
-        <tr><td height="5"><img src="{$spacerIMG}" width="2" height="5"/></td></tr>
-        <xsl:call-template name="hrow">
-          <xsl:with-param name="width" select="5"/>
-        </xsl:call-template>
-        <tr><td height="10"><img src="{$spacerIMG}" width="2" height="10"/></td></tr>
       </xsl:if>
       <form action="{$baseActionURL}" method="POST">
         <xsl:if test="$mode='select'">
           <xsl:if test="count(descendant::*[@selected='true'])">
             
             <xsl:if test="count(descendant::group[@selected='true'])">
-              <tr>
-                <td colspan="5" class="uportal-channel-table-header">
                   Selected Groups:
-                </td>
-              </tr>
-              <tr><td colspan="5">
                   <table>
                     <xsl:for-each select="descendant::group[@selected='true']">
                       <xsl:variable name="id">
@@ -175,15 +146,10 @@
                         </tr>
                       </xsl:if>
                     </xsl:for-each>
-              </table></td></tr>
+              		</table>
             </xsl:if>
             <xsl:if test="count(descendant::entity[@selected='true'])">
-              <tr>
-                <td colspan="5" class="uportal-channel-table-header">
                   Selected Entities:
-                </td>
-              </tr>
-              <tr><td colspan="5">
                   <table>
                     <xsl:for-each select="descendant::entity[@selected='true']">
                       <xsl:variable name="id">
@@ -200,12 +166,10 @@
                         </tr>
                       </xsl:if>
                     </xsl:for-each>
-              </table></td></tr>
+              		</table>
             </xsl:if>
             
           </xsl:if>
-          <tr>
-            <td colspan="5">
               <xsl:if test="count(descendant::*[@selected='true'])">
                 <input type="submit"  onClick="javascript:this.form.action='{$baseActionURL}?grpCommand=Deselect';" value="Deselect" class="uportal-button" />
               </xsl:if>
@@ -219,8 +183,6 @@
                 </xsl:text>
                 <input type="submit" class="uportal-button"  onClick="javascript:this.form.action='{$baseActionURL}?grpCommand=Cancel';" value="Cancel Selection" />
               </xsl:if>
-            </td>
-          </tr>
         </xsl:if>
       </form>
     </table>
@@ -407,9 +369,6 @@
           </xsl:otherwise>
         </xsl:choose>
         
-        <tr><td><img src="{$spacerIMG}" height="10" width="1"/>
-        </td></tr>
-        <xsl:call-template name="hrow"/>
         <xsl:variable name="siblingCount" select="count(key('members',$group/@id))"/>
         <tr>
           <td colspan="3">
@@ -478,8 +437,6 @@
             
           </td>
         </tr>
-        
-        <xsl:call-template name="hrow"/>
         
         <xsl:for-each select="key('members',$group/@id)">
           <xsl:sort data-type="text" order="descending" select="name()"/>
@@ -550,7 +507,6 @@
                     <xsl:with-param name="properties" select="properties"/>
                   </xsl:call-template> 
                 </xsl:if>
-                <xsl:call-template name="hrow"/>
               </xsl:if>
             </xsl:if>
             <xsl:if test="name()='entity'">
@@ -604,7 +560,6 @@
                   <xsl:with-param name="properties" select="properties"/>
                 </xsl:call-template>  
               </xsl:if>
-              <xsl:call-template name="hrow"/>
             </xsl:if>
           </xsl:if>
         </xsl:for-each>
@@ -615,7 +570,6 @@
               
             </td>
           </tr>
-          <xsl:call-template name="hrow"/>
         </xsl:if>
       </form>
       
@@ -661,16 +615,6 @@
             <em>No additional information available</em>
           </xsl:otherwise>
         </xsl:choose>
-      </td>
-    </tr>
-  </xsl:template>
-  
-  <xsl:template name="hrow">
-    <xsl:param name="width">3</xsl:param>
-    <tr><td colspan="3" align="center" height="1">
-        <table cellpadding="0" cellspacing="0" border="0" class="uportal-background-shadow" width="100%">
-          <tr><td height="1"><img src="{$spacerIMG}" height="1" width="1"/></td></tr>
-        </table>	
       </td>
     </tr>
   </xsl:template>

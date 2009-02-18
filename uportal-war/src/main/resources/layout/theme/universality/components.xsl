@@ -427,16 +427,18 @@
    | This template renders the page title.
   -->
   <xsl:template name="page.title">
-		<h1 id="portalPageBodyTitle">
-      <xsl:choose>
-        <xsl:when test="//focused"> <!-- When focused, include the focused portlet title -->
-          UP:CHANNEL_TITLE-{<xsl:value-of select="//focused/channel/@ID" />}
-        </xsl:when>
-        <xsl:otherwise> <!-- Otherwise, just the current tab name -->
-          <xsl:value-of select="/layout/navigation/tab[@activeTab='true']/@name"/>
-        </xsl:otherwise>
-      </xsl:choose>
-    </h1>
+  	<a name="startContent" title="Reference anchor: the starting point of the page content"> <!-- Skip navigation target. -->
+      <h1 id="portalPageBodyTitle">
+        <xsl:choose>
+          <xsl:when test="//focused"> <!-- When focused, include the focused portlet title -->
+            UP:CHANNEL_TITLE-{<xsl:value-of select="//focused/channel/@ID" />}
+          </xsl:when>
+          <xsl:otherwise> <!-- Otherwise, just the current tab name -->
+            <xsl:value-of select="/layout/navigation/tab[@activeTab='true']/@name"/>
+          </xsl:otherwise>
+        </xsl:choose>
+      </h1>
+    </a>
   </xsl:template>
   <!-- ========================================== -->
   
@@ -469,7 +471,7 @@
   <xsl:template name="customize.links">
       <xsl:if test="$AUTHENTICATED='true' and $USE_AJAX='true' and $AUTHENTICATED"> <!-- Currently, AJAX must be enabled for these links to function. -->
         <div id="portalCustomizationLinks">
-        	<h3><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINKS_TITLE']"/></h3>
+        	<h2><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINKS_TITLE']"/></h2>
           <ul>
             <li id="portalCustomizationLinksAddContent">
               <a id="contentDialogLink" href="javascript:;" title="{$TOKEN[@name='PREFERENCES_LINK_ADD_CONTENT_LONG_LABEL']}">

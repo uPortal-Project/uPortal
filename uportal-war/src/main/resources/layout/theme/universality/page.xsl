@@ -25,17 +25,17 @@
   -->
   <xsl:template match="layout | layout_fragment">
   	<xsl:variable name="COUNT_PORTLET_COLUMNS" select="count(content/column)"/>
-    <xsl:variable name="PAGE_COLUMN_CLASS"><xsl:value-of select="$COUNT_PORTLET_COLUMNS"/>-column</xsl:variable>
-    <xsl:variable name="LEFT_COLUMN_CLASS">
+    <xsl:variable name="PAGE_COLUMN_CLASS">layout-<xsl:value-of select="$COUNT_PORTLET_COLUMNS"/>-columns</xsl:variable>
+    <xsl:variable name="SIDEBAR_CLASS">
       <xsl:choose>
-        <xsl:when test="$USE_LEFT_COLUMN='true' and $AUTHENTICATED='true' and not(//focused)">left-column</xsl:when>
-        <xsl:when test="$USE_LEFT_COLUMN_GUEST='true' and not($AUTHENTICATED='true')">left-column</xsl:when>
-        <xsl:when test="$USE_LEFT_COLUMN_FOCUSED='true' and //focused">left-column</xsl:when>
+        <xsl:when test="$USE_SIDEBAR='true' and $AUTHENTICATED='true' and not(//focused)">sidebar</xsl:when>
+        <xsl:when test="$USE_SIDEBAR_GUEST='true' and not($AUTHENTICATED='true')">sidebar</xsl:when>
+        <xsl:when test="$USE_SIDEBAR_FOCUSED='true' and //focused">sidebar</xsl:when>
         <xsl:otherwise></xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
     
-    <html xml:lang="en" lang="en">
+    <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
       <head>
         <title>
           <xsl:choose>
@@ -67,8 +67,8 @@
         <!-- ****** JAVASCRIPT ****** -->
       </head>
       
-      <body id="portal" class="{$LOGIN_STATE} {$PORTAL_VIEW} {$LEFT_COLUMN_CLASS}">
-        <div id="portalPage" class="{$PAGE_COLUMN_CLASS}">  <!-- Main div for presentation/formatting options. -->
+      <body id="portal" class="{$LOGIN_STATE} {$PORTAL_VIEW} {$SIDEBAR_CLASS} {$FLUID_THEME_CLASS}">
+        <div id="portalPage" class="{$PAGE_COLUMN_CLASS} fl-container-flex">  <!-- Main div for presentation/formatting options. -->
         	<div id="portalPageInner">  <!-- Inner div for additional presentation/formatting options. -->
             <xsl:choose>
               <xsl:when test="/layout_fragment"> <!-- When detached. -->
@@ -108,7 +108,7 @@
    | This template renders the page header for the default view.
   -->
   <xsl:template match="header">
-    <div id="portalPageHeader">  <!-- Div for presentation/formatting options. -->
+    <div id="portalPageHeader" class="fl-container-flex">  <!-- Div for presentation/formatting options. -->
     	<div id="portalPageHeaderInner">  <!-- Inner div for additional presentation/formatting options. -->
     
         <xsl:choose>
@@ -135,118 +135,184 @@
   <!-- ========================================= -->
   <!--
    | This template renders the content section of the page in the form of columns of portlets.
-   | A left navigation column may be enabled by setting the "USE_LEFT_COLUMN" paramater (see VARIABLES & PARAMETERS above) to "true".
-   | This left navigation column currently cannot contain portlets or channels, but only a limited set of user interface components.
+   | A sidebar column may be enabled by setting the "USE_SIDEBAR" paramater (see VARIABLES & PARAMETERS in universality.xsl) to "true".
+   | This sidebar currently cannot contain portlets or channels, but only a separate set of user interface components.
   -->
   <xsl:template match="content">
     <xsl:variable name="COLUMNS">
     	<xsl:choose>
-      	<xsl:when test="//focused">1</xsl:when>
+      	<xsl:when test="$PORTAL_VIEW='focused'">1</xsl:when>
         <xsl:otherwise><xsl:value-of select="count(column)"/></xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
     
-    <div id="portalPageBody">  <!-- Div for presentation/formatting options. -->
+    <div id="portalPageBody" class="fl-container-flex">  <!-- Div for presentation/formatting options. -->
     	<div id="portalPageBodyInner">  <!-- Inner div for additional presentation/formatting options. -->
       
         <!-- ****** BODY LAYOUT ****** -->
-        <!-- Use of a table for layout is technically incorrect, however, the portal is a representation of lists of data within columns, and is therefore perhaps technically a table.  Regardless of the proper use of the table element here, the table element is the only consistent means of producing cross-browser columns given the complexity of the portal, and is the lesser of two evils; either a (perhaps) incorrect use of a table for layout or significant hacks and headaches in the CSS/browser testing to achieve the same thing with divs and floats (which are also incorrectly used for layout) and browser-specific css (also a frowned-upon practice). -->
-        
-        <a name="startContent" title="Reference anchor: the starting point of the page content"><xsl:comment>Comment to keep from collapsing</xsl:comment></a>  <!-- Skip navigation target. -->
         
         <!-- ****** CONTENT TOP BLOCK ****** -->
         <xsl:call-template name="content.top.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
         <!-- ****** CONTENT TOP BLOCK ****** -->
         
-        <table id="portalPageBodyLayout" width="100%">
-          <tr>
-          
-            <!-- ****** LEFT COLUMN ****** -->
-            <!-- Useage of the left column and subsequent UI components are set by parameters in universality.xsl. -->
-            <xsl:choose>
-            	<xsl:when test="$AUTHENTICATED='true'">
+        <div id="portalPageBodyLayout">
+        	<xsl:attribute name="class"> <!-- Write appropriate FSS class based on use of sidebar and number of columns to produce column layout. -->
+          	<xsl:choose>
+            	<xsl:when test="$AUTHENTICATED='true'"> <!-- Logged in -->
+              	<xsl:choose>
+                  <xsl:when test="$PORTAL_VIEW='focused'"> <!-- Focused View -->
+                    <xsl:choose>
+                      <xsl:when test="$USE_SIDEBAR_FOCUSED='true'">
+                        fl-col-mixed-<xsl:value-of select="$SIDEBAR_WIDTH_FOCUSED" />
+                      </xsl:when>
+                      <xsl:otherwise>
+                        fl-col-flex
+                      </xsl:otherwise>
+                    </xsl:choose>
+                  </xsl:when>
+                  <xsl:otherwise> <!-- Dashboard View -->
+                    <xsl:choose>
+                      <xsl:when test="$USE_SIDEBAR='true'">
+                        fl-col-mixed-<xsl:value-of select="$SIDEBAR_WIDTH" />
+                      </xsl:when>
+                      <xsl:otherwise>
+                        fl-col-flex<xsl:value-of select="$COLUMNS" />
+                      </xsl:otherwise>
+                    </xsl:choose>
+                  </xsl:otherwise>
+                </xsl:choose>
+
+              </xsl:when>
+              <xsl:otherwise> <!-- Guest View -->
               
                 <xsl:choose>
-                  <xsl:when test="$PORTAL_VIEW='focused'">
-                  
-                  	<!-- Left column when a portlet is focused. -->
-                    <xsl:if test="$USE_LEFT_COLUMN_FOCUSED='true'">
-                      <xsl:call-template name="left.column"/> <!-- Template located in columns.xsl. -->
-                    </xsl:if>
-                    
+                  <xsl:when test="$USE_SIDEBAR_GUEST='true'">
+                    fl-col-mixed-<xsl:value-of select="$SIDEBAR_WIDTH_GUEST" />
                   </xsl:when>
                   <xsl:otherwise>
-                  	
-                    <!-- Left column when in dashboard. -->
-    								<xsl:if test="$USE_LEFT_COLUMN='true'">
-                      <xsl:call-template name="left.column"/> <!-- Template located in columns.xsl. -->
-                    </xsl:if>
-                    
+                    fl-col-flex<xsl:value-of select="$COLUMNS" />
                   </xsl:otherwise>
                 </xsl:choose>
                 
-              </xsl:when>
-              <xsl:otherwise>
-              	
-                <!-- Left column when logged out. -->
-              	<xsl:if test="$USE_LEFT_COLUMN_GUEST='true'">
-                  <xsl:call-template name="left.column"/> <!-- Template located in columns.xsl. -->
-                </xsl:if>
-                
               </xsl:otherwise>
             </xsl:choose>
-            
-            
-            
-            <!-- ****** LEFT COLUMN ****** -->
-            
-            <!-- ****** TITLE ROW ****** -->
-            <!-- 
-            Title row renders in a separate table row in the dashboard view to be able to span multiple columns.
-            In focused view, the title row renders in the same row as the focused content (see COLUMNS below)
-            -->
-            <xsl:if test="$PORTAL_VIEW != 'focused'">
-              <td valign="top" colspan="{$COLUMNS}" id="portalPageBodyTitleRow"> <!-- This row contains the page title (label of the currently selected main navigation item), and optionally user layout customization hooks, custom institution content (blocks), or return to dashboard link (if in the focused view). -->
-                <div id="portalPageBodyTitleRowContents"> <!-- Inner div for additional presentation/formatting options. -->
-                  <!-- ****** CONTENT TITLE BLOCK ****** -->
-                  <xsl:call-template name="content.title.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
-                  <!-- ****** CONTENT TITLE BLOCK ****** -->
-                </div>
-              </td>
-            </xsl:if>
-            
-          </tr>
+          </xsl:attribute>
           
+          <!-- ****** SIDEBAR, PAGE TITLE, & COLUMNS ****** -->
+          <!-- Useage of the sidebar and subsequent UI components are set by parameters in universality.xsl. -->
+          <xsl:variable name="FSS_SIDEBAR_LOCATION_CLASS">
+            <xsl:call-template name="sidebar.location" /> <!-- Template located below. -->
+          </xsl:variable>
           
-          <!-- ****** COLUMNS ****** -->
-          <tr id="portalPageBodyColumns">
-            <xsl:choose>
-              <xsl:when test="//focused"> <!-- If the page is focused, there is only one column and an alternate rendering of the contents. -->
-                <td valign="top" height="100%" class="portal-page-column-focused">
-                  <div class="portal-page-column-inner"> <!-- Column inner div for additional presentation/formatting options.  -->
-                  	<div id="portalPageBodyTitleRowContents"> <!-- Inner div for additional presentation/formatting options. -->
-                    	<xsl:call-template name="content.title.focused.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
-                    </div>
-                  	<xsl:apply-templates select="//focused"/> <!-- Templates located in content.xsl. -->
+          <xsl:choose>
+            <xsl:when test="$PORTAL_VIEW='focused'">
+            
+              <!-- === FOCUSED VIEW === -->
+              <xsl:choose>
+                <xsl:when test="$USE_SIDEBAR_FOCUSED='true'"> <!-- Sidebar. -->
+                  <xsl:call-template name="sidebar"/> <!-- Template located in columns.xsl. -->
+                  <div class="fl-col-flex-{$FSS_SIDEBAR_LOCATION_CLASS}">
+                    <xsl:call-template name="page.title.focused"/> <!-- Template located below. -->
+                    <xsl:apply-templates select="//focused"/> <!-- Templates located in content.xsl. -->
                   </div>
-                </td>
-              </xsl:when>
-              <xsl:otherwise> <!-- Otherwise, the page is not focused and the dashboard view of columns of portlets applies. -->
-                <xsl:call-template name="content.row"/> <!-- Template located in columns.xsl. -->
-              </xsl:otherwise>
-            </xsl:choose>
-          </tr>
-        </table>
+                </xsl:when>
+                <xsl:otherwise>
+                  <xsl:call-template name="page.title.focused"/> <!-- No Sidebar. Template located below. -->
+                  <xsl:apply-templates select="//focused"/> <!-- Templates located in content.xsl. -->
+                </xsl:otherwise>
+              </xsl:choose>
+              
+            </xsl:when>
+            <xsl:otherwise>
+            
+              <!-- === DASHBOARD VIEW === -->
+              <xsl:choose>
+                <xsl:when test="$AUTHENTICATED='true'">
+                  
+                  <!-- Signed In -->
+                  <xsl:choose>
+                    <xsl:when test="$USE_SIDEBAR='true'"> <!-- Sidebar. -->
+                      <xsl:call-template name="sidebar"/> <!-- Template located in columns.xsl. -->
+                      <div class="fl-col-flex-{$FSS_SIDEBAR_LOCATION_CLASS}">
+                        <xsl:call-template name="page.title"/>
+                        <xsl:call-template name="columns"/> <!-- Template located in columns.xsl. -->
+                      </div>
+                    </xsl:when>
+                    <xsl:otherwise>
+                      <xsl:call-template name="page.title"/> <!-- No Sidebar. Template located below. -->
+                      <xsl:call-template name="columns"/> <!-- Template located in columns.xsl. -->
+                    </xsl:otherwise>
+                  </xsl:choose>
+                  
+                </xsl:when>
+                <xsl:otherwise>
+                  
+                  <!-- Signed Out -->
+                  <xsl:choose>
+                    <xsl:when test="$USE_SIDEBAR_GUEST='true'"> <!-- Sidebar. -->
+                      <xsl:call-template name="sidebar"/> <!-- Template located in columns.xsl. -->
+                      <div class="fl-col-flex-{$FSS_SIDEBAR_LOCATION_CLASS}">
+                        <xsl:call-template name="page.title"/>
+                        <xsl:call-template name="columns"/> <!-- Template located in columns.xsl. -->
+                      </div>
+                    </xsl:when>
+                    <xsl:otherwise>
+                      <xsl:call-template name="page.title"/> <!-- No Sidebar. Template located below. -->
+                      <xsl:call-template name="columns"/> <!-- Template located in columns.xsl. -->
+                    </xsl:otherwise>
+                  </xsl:choose>
+                  
+                </xsl:otherwise>
+              </xsl:choose>
+              
+            </xsl:otherwise>
+          </xsl:choose>
         
-        <!-- ****** CONTENT BOTTOM BLOCK ****** -->
-        <xsl:call-template name="content.bottom.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
-        <!-- ****** CONTENT BOTTOM BLOCK ****** -->
-      
-    	</div>
-    </div>
+          <!-- ****** CONTENT BOTTOM BLOCK ****** -->
+          <xsl:call-template name="content.bottom.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
+          <!-- ****** CONTENT BOTTOM BLOCK ****** -->
+          
+      	</div> <!-- End portalPageBodyLayout -->
+        
+    	</div> <!-- End portalPageBodyInner -->
+    </div> <!-- End portalPageBody -->
   
   </xsl:template>
   <!-- ========================================= -->
+
+
+  <!-- ========== TEMPLATE: PAGE TITLE ========== -->
+  <!-- =========================================== -->
+  <!-- 
+   | This template renders the page title.
+  -->
+  <xsl:template name="page.title">
+		<div id="portalPageBodyTitleRow"> <!-- This row contains the page title (label of the currently selected main navigation item), and optionally user layout customization hooks, custom institution content (blocks), or return to dashboard link (if in the focused view). -->
+      <div id="portalPageBodyTitleRowContents"> <!-- Inner div for additional presentation/formatting options. -->
+        <!-- ****** CONTENT TITLE BLOCK ****** -->
+        <xsl:call-template name="content.title.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
+        <!-- ****** CONTENT TITLE BLOCK ****** -->
+      </div>
+    </div>
+  </xsl:template>
+  <!-- =========================================== -->
+  
+  
+  <!-- ========== TEMPLATE: PAGE TITLE FOCUSED ========== -->
+  <!-- =========================================== -->
+  <!-- 
+   | This template renders the page title when focused.
+  -->
+  <xsl:template name="page.title.focused">
+		<div id="portalPageBodyTitleRow"> <!-- This row contains the page title (label of the currently selected main navigation item), and optionally user layout customization hooks, custom institution content (blocks), or return to dashboard link (if in the focused view). -->
+      <div id="portalPageBodyTitleRowContents"> <!-- Inner div for additional presentation/formatting options. -->
+        <!-- ****** CONTENT TITLE FOCUSED BLOCK ****** -->
+        <xsl:call-template name="content.title.focused.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
+        <!-- ****** CONTENT TITLE FOCUSED BLOCK ****** -->
+      </div>
+    </div>
+  </xsl:template>
+  <!-- =========================================== -->
   
   
   <!-- ========== TEMPLATE: PAGE FOOTER ========== -->
@@ -256,7 +322,7 @@
    | The footer channel is located at: webpages\stylesheets\org\jasig\portal\channels\CGenericXSLT\footer\footer_webbrowser.xsl.
   -->
   <xsl:template match="footer">
-    <div id="portalPageFooter">
+    <div id="portalPageFooter" class="fl-container-flex">
     	<!-- ????? THIS CHANNEL IS OBSOLETE WITH THE FOOTER BLOCK IMPLEMENTATION ?????
       <xsl:copy-of select="channel[@name='Footer']"/>
       -->
@@ -268,6 +334,30 @@
     </div>
   </xsl:template>
   <!-- =========================================== -->
-  
+
+
+  <!-- ========== TEMPLATE: SIDEBAR LOCATION ========== -->
+  <!-- =========================================== -->
+  <!--
+   | This template renders the FSS class appropraite to the sidebar location.
+  -->
+  <xsl:template name="sidebar.location">
+    <xsl:choose>
+      <xsl:when test="$AUTHENTICATED='true'">
+        <xsl:choose>
+          <xsl:when test="$PORTAL_VIEW='focused'">
+            <xsl:value-of select="$SIDEBAR_LOCATION_FOCUSED"/> <!-- location when focused -->
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:value-of select="$SIDEBAR_LOCATION"/> <!-- location when dashboard -->
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="$SIDEBAR_LOCATION_GUEST"/> <!-- location when logged out -->
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+  <!-- ============================================ -->  
 		
 </xsl:stylesheet>

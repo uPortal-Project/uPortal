@@ -1,0 +1,78 @@
+/*
+              High Contrast
+=============================================
+ * Color Schema:
+ *     DEFINITIONS:
+ *         white     : #ffffff
+ *         black     : #000000
+
+ */
+.fl-theme-hc :focus,
+.fl-theme-hc .selectable  {
+   /* themed focus indicator */
+   outline: 0.2em solid #F00;
+}
+
+.fl-theme-hc {color:#000000 !important; background-color:#ffffff !important; background-image:none !important;}
+.fl-theme-hc * {color:#000000 !important; background-color:#ffffff; background-image:none !important; border-color:#000;}
+.fl-theme-hc .fl-knockout {background:transparent !important; color:#000;} /* a granular method for basic reset of appearance */
+
+/* Links */
+.fl-theme-hc a  {color: #000 !important; font-weight:bold; background-color:#fff !important;}
+.fl-theme-hc a:hover {color: #fff !important; background-color:#000 !important;}
+.fl-theme-hc a:hover * {color: #fff !important; background-color:#000 !important;}
+
+/* Headers */
+.fl-theme-hc h1, .fl-theme-hc h1 * {color:#fff !important; background-color:#000 !important;} 
+.fl-theme-hc h2, .fl-theme-hc h2 * {color:#fff !important; background-color:#000 !important;} 
+.fl-theme-hc h3, .fl-theme-hc h3 * {color:#fff !important; background-color:#000 !important;} 
+.fl-theme-hc h4, .fl-theme-hc h4 * {color:#fff !important; background-color:#000 !important;} 
+.fl-theme-hc h5, .fl-theme-hc h5 * {color:#fff !important; background-color:#000 !important;} 
+.fl-theme-hc h6, .fl-theme-hc h6 * {color:#fff !important; background-color:#000 !important;} 
+
+/* Tables */
+.fl-theme-hc th {border:0.1em solid #000; background-color:#000 !important; color:#fff !important;}
+.fl-theme-hc td {border:0.1em solid #000;}
+.fl-theme-hc .fl-textfield {}
+.fl-theme-hc .fl-textarea {}
+
+/* temp selector to access inline edit input fields (should use a classname but now there is none applied) */
+.fl-theme-hc span input {background-color:#000 !important; color:#fff !important; border: 0.1em solid #fff; padding:0.1em; margin:-0.1em;}
+
+/* Helper: Tabs */
+.fl-theme-hc .fl-tabs {border-bottom-color:#000;}
+.fl-theme-hc .fl-tabs li,
+.fl-theme-hc .fl-tabs li *  {border-color:#000; border-bottom-color:#000; }
+.fl-theme-hc .fl-tabs li    {background-color:#000;}
+.fl-theme-hc .fl-tabs li *  {color:#fff !important; font-weight:bold; background-color:#000 !important;text-decoration:none;}
+
+.fl-theme-hc .fl-tabs li:hover,
+.fl-theme-hc .fl-tabs li:hover *,
+.fl-theme-hc .fl-tabs li a:hover {color:#000 !important; background-color:#fff !important;}
+.fl-theme-hc .fl-tabs li.fl-activeTab,
+.fl-theme-hc .fl-tabs li.fl-activeTab:hover,
+.fl-theme-hc .fl-tabs li.fl-activeTab a,
+.fl-theme-hc .fl-tabs li.fl-activeTab a:hover {background-color: #fff !important; border-bottom-color:#fff; color:#000 !important;}
+.fl-theme-hc .fl-tab-content {background-color:#ffffff; color:#000;}
+
+/* Helper: Menu */
+.fl-theme-hc .fl-listmenu {border:1px solid #000; background-color:#fff;}
+.fl-theme-hc .fl-listmenu li,
+.fl-theme-hc .fl-listmenu li a  {font-weight:bold; color:#4070a1; background-color:#dfefff; border-color:#4070a1; text-decoration:none;}
+.fl-theme-hc .fl-listmenu a:hover {background-color:#5a95cf; color:#fff;}
+.fl-theme-hc .fl-listmenu .fl-activemenu,
+.fl-theme-hc .fl-listmenu .fl-activemenu:hover { background-color: #fff; border-bottom-color:#fff; color:#508cc9;}
+
+/* Helper: Thumbnail Grid */
+.fl-theme-hc .fl-grid {}
+.fl-theme-hc .fl-grid li {}
+.fl-theme-hc .fl-grid .caption {}
+
+/* Component: Progressor */
+.fl-theme-hc .fl-progress-bounds {border-color:#000; background-color:#fff;}
+.fl-theme-hc .fl-progress-fill {color:#fff; background-color:#000;}
+
+/* Component: Uploader */
+
+/* States */
+.fl-theme-hc .orderable-drop-marker {background-color:#f00 !important;}

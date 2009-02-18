@@ -21,60 +21,74 @@
   <!--
    | This template renders the columns of the page body.
   -->
-  <xsl:template name="content.row">
-    <xsl:for-each select="column">
-    	<xsl:variable name="POSITION"> <!-- Determine column place in the layout and add appropriate class. -->
+  <xsl:template name="columns">
+  	<div id="portalPageBodyColumns">
+    	<xsl:attribute name="class"> <!-- Write appropriate FSS class based on number of columns to produce column layout. -->
         <xsl:choose>
-          <xsl:when test="position()=1 and position()=last()">single</xsl:when>
-          <xsl:when test="position()=1">left</xsl:when>
-          <xsl:when test="position()=last()">right</xsl:when>
-          <xsl:otherwise></xsl:otherwise>
+          <xsl:when test="$COLUMNS=1">
+          	fl-col-flex
+          </xsl:when>
+          <xsl:otherwise>
+            fl-col-flex<xsl:value-of select="$COLUMNS" />
+          </xsl:otherwise>
         </xsl:choose>
-      </xsl:variable>
-      <td id="column_{@ID}" valign="top" height="100%" class="portal-page-column {$POSITION}"> <!-- Unique ID needed for drag and drop. -->
-        <xsl:attribute name="width"> <!-- Determine column width. -->
+      </xsl:attribute>
+      <xsl:for-each select="column">
+        <xsl:variable name="POSITION"> <!-- Determine column place in the layout and add appropriate class. -->
           <xsl:choose>
-            <xsl:when test="position()=1 and position()=last()">100%</xsl:when>
-            <xsl:otherwise>
-            	<xsl:value-of select="@width" />
-            </xsl:otherwise>
+            <xsl:when test="position()=1 and position()=last()">single</xsl:when>
+            <xsl:when test="position()=1">left</xsl:when>
+            <xsl:when test="position()=last()">right</xsl:when>
+            <xsl:when test="$COLUMNS=3 and position()=2">middle</xsl:when>
+            <xsl:otherwise>column<xsl:value-of select="$COLUMNS" /></xsl:otherwise>
           </xsl:choose>
-        </xsl:attribute>
-        <div id="inner-column_{@ID}" class="portal-page-column-inner"> <!-- Column inner div for additional presentation/formatting options.  -->
-        	<xsl:apply-templates select="channel"/> <!-- Render the column's portlets.  -->
+        </xsl:variable>
+        <xsl:variable name="COLUMN_WIDTH">
+        	<xsl:choose>
+            <xsl:when test="@width = '100%'"></xsl:when>
+            <xsl:otherwise><xsl:value-of select="substring-before(@width,'%')" /></xsl:otherwise>
+          </xsl:choose>
+        </xsl:variable>
+        <div id="column_{@ID}" class="portal-page-column {$POSITION} fl-col-flex{$COLUMN_WIDTH}"> <!-- Unique column_ID needed for drag and drop. -->
+          <div id="inner-column_{@ID}" class="portal-page-column-inner"> <!-- Column inner div for additional presentation/formatting options.  -->
+            <xsl:apply-templates select="channel"/> <!-- Render the column's portlets.  -->
+          </div>
         </div>
-      </td>
-    </xsl:for-each>
+      </xsl:for-each>
+    </div>
   </xsl:template>
   <!-- ============================================ -->
   
   
-  <!-- ========== TEMPLATE: LEFT COLUMN ========== -->
+  <!-- ========== TEMPLATE: SIDEBAR ========== -->
   <!-- =========================================== -->
   <!--
    | This template renders the left navigation column of the page body.
   -->
-  <xsl:template name="left.column">
-  	<td rowspan="2" id="portalPageLeftColumn" valign="top">
-    	<xsl:attribute name="width">
+  <xsl:template name="sidebar">
+  	<div id="portalSidebar">
+    	<xsl:variable name="FSS_SIDEBAR_LOCATION_CLASS">
+      	<xsl:call-template name="sidebar.location" /> <!-- Template located in page.xsl. -->
+      </xsl:variable>
+    	<xsl:attribute name="class">
       	<xsl:choose>
           <xsl:when test="$AUTHENTICATED='true'">
             <xsl:choose>
               <xsl:when test="$PORTAL_VIEW='focused'">
-              	<xsl:value-of select="$LEFT_COLUMN_FOCUSED_WIDTH"/>px <!-- width when focused -->
+              	fl-col-fixed fl-force-<xsl:value-of select="$FSS_SIDEBAR_LOCATION_CLASS"/> <!-- when focused -->
               </xsl:when>
               <xsl:otherwise>
-              	<xsl:value-of select="$LEFT_COLUMN_WIDTH"/>px <!-- width when dashboard -->
+              	fl-col-fixed fl-force-<xsl:value-of select="$FSS_SIDEBAR_LOCATION_CLASS"/> <!-- when dashboard -->
               </xsl:otherwise>
             </xsl:choose>
           </xsl:when>
           <xsl:otherwise>
-            <xsl:value-of select="$LEFT_COLUMN_GUEST_WIDTH"/>px <!-- width when logged out -->
+            fl-col-fixed fl-force-<xsl:value-of select="$FSS_SIDEBAR_LOCATION_CLASS"/> <!-- when logged out -->
           </xsl:otherwise>
         </xsl:choose>
       </xsl:attribute>
       
-      <div id="portalPageLeftColumnInner"> <!-- Inner div for additional presentation/formatting options. -->
+      <div id="portalSidebarInner"> <!-- Inner div for additional presentation/formatting options. -->
       	
         <xsl:choose>
           <xsl:when test="$AUTHENTICATED='true'">
@@ -82,21 +96,21 @@
             <xsl:choose>
               <xsl:when test="$PORTAL_VIEW='focused'">
               
-                <!-- Left column when a portlet is focused. -->
-                <xsl:if test="$USE_LEFT_COLUMN_FOCUSED='true'">
-                  <!-- ****** CONTENT LEFT FOCUSED BLOCK ****** -->
-                  <xsl:call-template name="content.left.focused.block"/> <!-- Calls a template of customizable content from universality.xsl. -->
-                  <!-- ****** CONTENT LEFT FOCUSED BLOCK ****** -->
+                <!-- Sidebar when a portlet is focused. -->
+                <xsl:if test="$USE_SIDEBAR_FOCUSED='true'">
+                  <!-- ****** CONTENT SIDEBAR BLOCK ****** -->
+                  <xsl:call-template name="content.sidebar.focused.block"/> <!-- Calls a template of customizable content from universality.xsl. -->
+                  <!-- ****** CONTENT SIDEBAR FOCUSED BLOCK ****** -->
                 </xsl:if>
                 
               </xsl:when>
               <xsl:otherwise>
                 
-                <!-- Left column when in dashboard. -->
-                <xsl:if test="$USE_LEFT_COLUMN='true'">
-                  <!-- ****** CONTENT LEFT BLOCK ****** -->
-                  <xsl:call-template name="content.left.block"/> <!-- Calls a template of customizable content from universality.xsl. -->
-                  <!-- ****** CONTENT LEFT BLOCK ****** -->
+                <!-- Sidebar when in dashboard. -->
+                <xsl:if test="$USE_SIDEBAR='true'">
+                  <!-- ****** SIDEBAR BLOCK ****** -->
+                  <xsl:call-template name="content.sidebar.block"/> <!-- Calls a template of customizable content from universality.xsl. -->
+                  <!-- ****** SIDEBAR BLOCK ****** -->
                 </xsl:if>
                 
               </xsl:otherwise>
@@ -105,18 +119,18 @@
           </xsl:when>
           <xsl:otherwise>
             
-            <!-- Left column when logged out. -->
-            <xsl:if test="$USE_LEFT_COLUMN_GUEST='true'">
-              <!-- ****** CONTENT LEFT GUEST BLOCK ****** -->
-              <xsl:call-template name="content.left.guest.block"/> <!-- Calls a template of customizable content from universality.xsl. -->
-              <!-- ****** CONTENT LEFT GUEST BLOCK ****** -->
+            <!-- Sidebar when logged out. -->
+            <xsl:if test="$USE_SIDEBAR_GUEST='true'">
+              <!-- ****** CONTENT SIDEBAR GUEST BLOCK ****** -->
+              <xsl:call-template name="content.sidebar.guest.block"/> <!-- Calls a template of customizable content from universality.xsl. -->
+              <!-- ****** CONTENT SIDEBAR GUEST BLOCK ****** -->
             </xsl:if>
             
           </xsl:otherwise>
         </xsl:choose>
       
       </div>
-    </td>
+    </div>
   </xsl:template>
   <!-- ============================================ -->
   

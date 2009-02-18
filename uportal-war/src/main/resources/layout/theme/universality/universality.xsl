@@ -52,19 +52,12 @@
    | Import statments and the XSL files they refer to should not be modified.
    | For customization of the theme, use the Varaiables and Parameters and Templates sections below.
   -->
-  <!-- <xsl:import href="page.xsl" /> Templates for page structure -->
-  <!-- <xsl:import href="navigation.xsl" /> Templates for navigation structure -->
-  <!-- <xsl:import href="components.xsl" /> Templates for UI components (login, web search, etc.) -->
-  <!-- <xsl:import href="columns.xsl" /> Templates for column structure -->
-  <!-- <xsl:import href="content.xsl" /> Templates for content structure (i.e. portlets) -->
-  <!-- <xsl:import href="preferences.xsl" /> Templates for preferences-specific structures -->
-  <!-- -->
-  <xsl:import href="page.xsl" />
-  <xsl:import href="navigation.xsl" />
-  <xsl:import href="components.xsl" />
-  <xsl:import href="columns.xsl" />
-  <xsl:import href="content.xsl" />
-  <xsl:import href="preferences.xsl" />
+  <xsl:import href="page.xsl" />        <!-- Templates for page structure -->
+  <xsl:import href="navigation.xsl" />  <!-- Templates for navigation structure -->
+  <xsl:import href="components.xsl" />  <!-- Templates for UI components (login, web search, etc.) -->
+  <xsl:import href="columns.xsl" />     <!-- Templates for column structure -->
+  <xsl:import href="content.xsl" />     <!-- Templates for content structure (i.e. portlets) -->
+  <xsl:import href="preferences.xsl" /> <!-- Templates for preferences-specific structures -->
   <!-- ============================= -->
   
   
@@ -97,6 +90,7 @@
   -->
   <xsl:param name="skin">uportal3</xsl:param>
   <xsl:variable name="SKIN" select="$skin"/>
+  <xsl:param name="FLUID_THEME_CLASS">fl-theme-<xsl:value-of select="$SKIN" /></xsl:param>
   <xsl:variable name="MEDIA_PATH">media/skins/universality</xsl:variable>
   <xsl:variable name="SKIN_PATH" select="concat($MEDIA_PATH,'/',$SKIN)"/>
   <xsl:variable name="SCRIPT_PATH">media/skins/universality/common/javascript</xsl:variable>
@@ -145,6 +139,7 @@
       <xsl:otherwise>not-logged-in</xsl:otherwise>
     </xsl:choose>
   </xsl:param>
+  <xsl:param name="COLUMNS" select="count(//content/column)"/>
   <xsl:variable name="TOKEN" select="document($MESSAGE_DOC_URL)/theme-messages/tokens[lang($USER_LANG)]/token"/> <!-- Tells the theme how to find appropriate localized token. --> 
   
   
@@ -173,12 +168,18 @@
    | GREEN
    | Layout Settings can be used to change the main layout.
   -->
-  <xsl:param name="USE_LEFT_COLUMN" select="'true'"/> <!-- Sets the use of a left sidebar.  This sidebar can contain UI components (navigation, quicklinks, etc.) and custom institution content (blocks), but not portlets.  Values are 'true' or 'false'. -->
-  <xsl:param name="USE_LEFT_COLUMN_FOCUSED" select="'true'"/> <!-- Sets the use of a left sidebar when a portlet is focused.  Values are 'true' or 'false'. -->
-  <xsl:param name="USE_LEFT_COLUMN_GUEST" select="'true'"/> <!-- Sets the use of a left sidebar when logged out.  Values are 'true' or 'false'. -->
-  <xsl:param name="LEFT_COLUMN_WIDTH" select="195"/> <!-- Sets the pixel width of the left sidebar column, if used.  Value must be numeric. -->
-  <xsl:param name="LEFT_COLUMN_FOCUSED_WIDTH" select="195"/> <!-- Sets the pixel width of the left sidebar column when a portlet is focused, if used.  Value must be numeric. -->
-  <xsl:param name="LEFT_COLUMN_GUEST_WIDTH" select="195"/> <!-- Sets the pixel width of the left sidebar column when logged out, if used.  Value must be numeric. -->
+  
+  <!-- SIDEBAR -->
+  <!-- The sidebar is a persistent (across all tabs) fixed column (cannot be moved or deleted in the portal UI) on either the left or right side of the content area of the page layout that can contain UI components (navigation, quicklinks, etc.) and custom institution content (blocks), but not portlets. -->
+  <xsl:param name="USE_SIDEBAR" select="'true'"/> <!-- Sets the use of a sidebar in the logged in, dashboard view.  This sidebar can contain UI components (navigation, quicklinks, etc.) and custom institution content (blocks), but not portlets.  Values are 'true' or 'false'. -->
+  <xsl:param name="USE_SIDEBAR_FOCUSED" select="'true'"/> <!-- Sets the use of a sidebar when a portlet is focused.  Values are 'true' or 'false'. -->
+  <xsl:param name="USE_SIDEBAR_GUEST" select="'true'"/> <!-- Sets the use of a sidebar when logged out.  Values are 'true' or 'false'. -->
+  <xsl:param name="SIDEBAR_LOCATION" select="'left'"/> <!-- Sets the location of the sidebar - if used - in the logged in, dashboard view.  Values are 'left' or 'right'. -->
+  <xsl:param name="SIDEBAR_LOCATION_FOCUSED" select="'left'"/> <!-- Sets the location of the sidebar - if used - in the focused view.  Values are 'left' or 'right'. -->
+  <xsl:param name="SIDEBAR_LOCATION_GUEST" select="'left'"/> <!-- Sets the location of the sidebar - if used - when logged out.  Values are 'left' or 'right'. -->
+  <xsl:param name="SIDEBAR_WIDTH" select="100"/> <!-- Sets the pixel width of the sidebar, if used.  Values are '100', '150', '200', '250', or '300' and represent pixel widths. -->
+  <xsl:param name="SIDEBAR_WIDTH_FOCUSED" select="250"/> <!-- Sets the pixel width of the sidebar when a portlet is focused, if used.  Values are '100', '150', '200', '250', or '300' and represent pixel widths -->
+  <xsl:param name="SIDEBAR_WIDTH_GUEST" select="250"/> <!-- Sets the pixel width of the sidebar when logged out, if used.  Values are '100', '150', '200', '250', or '300' and represent pixel widths -->
   
   <!-- ============================================ -->
   
@@ -213,17 +214,20 @@
    | Refer to [http://www.w3.org/Style/CSS/] for CSS definition and syntax.
    | CSS files are located in the uPortal skins directory: webpages/media/skins.
    | Template contents can be any valid XSL or XHTML.
+   |
+   | NOTE: CSS files are minimized (linearized) for performance during the build process and thus these links reference a .min version of the file in the deployed webapp.
   -->
   <xsl:template name="page.css">
-  	<!-- Yahoo! User Interface Library (YUI) CSS to establish a common, cross-browser base rendering.  See http://developer.yahoo.com/yui/ for more details. --> 
+    
+  	<!-- Yahoo! User Interface Library (YUI) CSS to establish a common, cross-browser base rendering.  See http://developer.yahoo.com/yui/ for more details.
     <link rel="stylesheet" type="text/css" media="screen" href="{$MEDIA_PATH}/common/css/yui/reset-fonts-grids.css"/>
-    <link rel="stylesheet" type="text/css" media="screen" href="{$MEDIA_PATH}/common/css/yui/base-min.css"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="{$MEDIA_PATH}/common/css/yui/base-min.css"/> --> 
     
     <!-- Fluid Skinning System CSS for layout and helpers. See http://wiki.fluidproject.org/x/96M7 for more details. -->
-    <link rel="stylesheet" type="text/css" media="screen" href="{$MEDIA_PATH}/common/css/fluid/fluid.fss.css"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="{$MEDIA_PATH}/common/css/fluid/fluid.fss.min.css"/>
     
     <!-- uPortal skin CSS -->
-    <link rel="stylesheet" type="text/css" media="screen" href="{$SKIN_PATH}/{$SKIN}.css"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="{$SKIN_PATH}/{$SKIN}.min.css"/>
     
   </xsl:template>
   <!-- ======================================== -->
@@ -238,6 +242,8 @@
    | Javascript files are located in the uPortal skins directory:
    | /media/skins/[theme_name]/common/javascript/
    | Template contents can be any valid XSL or XHTML.
+   |
+   | NOTE: JavaScript files are minimized (linearized) for performance during the build process and thus these links reference a .min version of the file in the deployed webapp.
   -->
   <xsl:template name="page.js">
     <xsl:if test="$USE_AJAX='true' or $USE_FLYOUT_MENUS='true'">
@@ -298,7 +304,7 @@
     <!-- ****** LOGIN ****** -->
     <!--
      | Use one of the login options: the login template (uP3 preferred), the login channel (from uP2.6), or CAS login.
-     | By default, the login is rendered into the left column below.
+     | By default, the login is rendered into the sidebar below.
     -->
     <!-- Login
     <xsl:call-template name="login"/> -->
@@ -576,13 +582,13 @@
   <!-- =========================================================== -->
   
   
-  <!-- ========== TEMPLATE: CONTENT LEFT BLOCK ========== -->
+  <!-- ========== TEMPLATE: CONTENT SIDEBAR BLOCK ========== -->
   <!-- ================================================== -->
   <!-- 
    | GREEN
-   | This template renders content into the page body in the left column of the content layout table.
-   | The left navigation column must be enabled for this content to render.
-   | Enable the left navigation column by setting USE_LEFT_COLUMN to 'true' in the Variables and Parameters section above.
+   | This template renders content into the page body in the sidebar of the content layout.
+   | The sidebar must be enabled for this content to render.
+   | Enable the sidebar by setting USE_SIDEBAR to 'true' in the Variables and Parameters section above.
    | Reordering the template calls will change the order in the page markup.
    | Commenting out a template call will prevent that component's markup fom being written into the page markup.
    | Thus, to not use the quicklinks, simply comment out the quicklinks template call.
@@ -591,7 +597,7 @@
    | Custom content can be inserted as desired.
    | Template contents can be any valid XSL or XHTML.
   -->
-  <xsl:template name="content.left.block">
+  <xsl:template name="content.sidebar.block">
     <!-- Web Search -->
     <xsl:call-template name="web.search"/>
     <!-- Web Search -->
@@ -607,12 +613,12 @@
     
     <!-- Main Navigation
     <xsl:apply-templates select="//navigation">
-      <xsl:with-param name="CONTEXT" select="'left'"/>
+      <xsl:with-param name="CONTEXT" select="'sidebar'"/>
     </xsl:apply-templates> -->
     <!-- Main Navigation -->
     
     <!-- SAMPLE:
-    <div id="portalContentLeftBlock">
+    <div id="portalContentSidebarsBlock">
     	<p>CUSTOM CONTENTS.</p>
     </div>
     -->
@@ -620,18 +626,18 @@
   <!-- ================================================== -->
   
   
-  <!-- ========== TEMPLATE: CONTENT LEFT FOCUSED BLOCK ========== -->
+  <!-- ========== TEMPLATE: CONTENT SIDEBAR FOCUSED BLOCK ========== -->
   <!-- ========================================================== -->
   <!-- 
    | GREEN
-   | This template renders content into the page body in the left column of the content layout table when a portlet is focused.
-   | The left navigation column must be enabled for this content to render.
-   | Enable the left navigation column by setting USE_LEFT_COLUMN_FOCUSED to 'true' in the Variables and Parameters section above.
+   | This template renders content into the page body in the sidebar of the content layout when a portlet is focused.
+   | The sidebar must be enabled for this content to render.
+   | Enable the sidebar by setting USE_SIDEBAR_FOCUSED to 'true' in the Variables and Parameters section above.
    | Reordering the template calls will change the order in the page markup.
    | Commenting out a template call will prevent that component's markup fom being written into the page markup.
    | Template contents can be any valid XSL or XHTML.
   -->
-  <xsl:template name="content.left.focused.block">
+  <xsl:template name="content.sidebar.focused.block">
     <!-- Main Navigation
     <xsl:apply-templates select="//navigation">
       <xsl:with-param name="CONTEXT" select="'focused'"/>
@@ -643,7 +649,7 @@
     <!-- Portlet Navigation -->
     
     <!-- SAMPLE:
-    <div id="portalContentLeftFocusedBlock">
+    <div id="portalContentSidebarFocusedBlock">
     	<p>CUSTOM CONTENTS.</p>
     </div>
     -->
@@ -651,13 +657,13 @@
   <!-- ========================================================== -->
   
   
-  <!-- ========== TEMPLATE: CONTENT LEFT GUEST BLOCK ========== -->
+  <!-- ========== TEMPLATE: CONTENT SIDEBAR GUEST BLOCK ========== -->
   <!-- ======================================================== -->
   <!-- 
    | GREEN
-   | This template renders content into the page body in the left column of the content layout table when not logged in.
-   | The left navigation column must be enabled for this content to render.
-   | Enable the left navigation column by setting USE_LEFT_COLUMN_GUEST to 'true' in the Variables and Parameters section above.
+   | This template renders content into the page body in the sidebar of the content layout when not logged in.
+   | The sidebar must be enabled for this content to render.
+   | Enable the sidebar by setting USE_SIDEBAR_GUEST to 'true' in the Variables and Parameters section above.
    | Reordering the template calls will change the order in the page markup.
    | Commenting out a template call will prevent that component's markup fom being written into the page markup.
    | Thus, to not use the quicklinks, simply comment out the quicklinks template call.
@@ -666,7 +672,7 @@
    | Custom content can be inserted as desired.
    | Template contents can be any valid XSL or XHTML.
   -->
-  <xsl:template name="content.left.guest.block">
+  <xsl:template name="content.sidebar.guest.block">
 		<!-- ****** LOGIN ****** -->
     <!--
      | Use one of the login options: the login template (uP3 preferred), the login channel (from uP2.6), or CAS login.
@@ -694,12 +700,12 @@
     
     <!-- Main Navigation
     <xsl:apply-templates select="//navigation">
-      <xsl:with-param name="CONTEXT" select="'left'"/>
+      <xsl:with-param name="CONTEXT" select="'sidebar'"/>
     </xsl:apply-templates> -->
     <!-- Main Navigation -->
     
     <!-- SAMPLE:
-    <div id="portalContentLeftGuestBlock">
+    <div id="portalContentSidebarGuestBlock">
     	<p>CUSTOM CONTENTS.</p>
     </div>
     -->

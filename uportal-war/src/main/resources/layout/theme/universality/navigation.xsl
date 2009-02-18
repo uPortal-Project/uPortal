@@ -20,7 +20,7 @@
   <!-- ========================================== -->
   <!--
    | This template renders the main navigation.
-   | This template can be rendered into the header or the left navigation column, determined by the parameters set in universality.xsl.
+   | This template can be rendered into the header or the sidebar, determined by the parameters set in universality.xsl.
   -->
   <xsl:template match="navigation">
   	<xsl:param name="CONTEXT"/>  <!-- Catches the context parameter to know how to render the navigation. -->
@@ -62,7 +62,7 @@
               <a id="tabLink_{@ID}" href="{$BASE_ACTION_URL}?uP_root=root&amp;uP_sparam=activeTab&amp;activeTab={position()}" title="{@name}" class="portal-navigation-link">  <!-- Navigation item link. -->
                 <span class="portal-navigation-label"><xsl:value-of select="@name"/></span>
               </a>
-              <xsl:if test="@activeTab='true' and $CONTEXT='left'"> <!-- If navigation is being rendered in the left column rather than as tabs, call template for rendering active menu item's submenu. -->
+              <xsl:if test="@activeTab='true' and $CONTEXT='sidebar'"> <!-- If navigation is being rendered in the sidebar rather than as tabs, call template for rendering active menu item's submenu. -->
                 <xsl:call-template name="subnavigation">
                   <xsl:with-param name="CONTEXT" select="'subnav'"/>
                   <xsl:with-param name="TAB_POSITION" select="position()"/>
@@ -112,7 +112,7 @@
   <!-- ============================================= -->
   <!--
    | This template renders subnavigation which may appear in different contexts.
-   | The context parameter is used to know whether the subnavigation is a flyout menu, the expanded display of the selected left navigation menu item, or as a separate navigation list of the page contents when using tabs.
+   | The context parameter is used to know whether the subnavigation is a flyout menu, the expanded display of the selected sidebar navigation menu item, or as a separate navigation list of the page contents when using tabs.
    | These options are determined by the parameters set in universality.xsl.
   -->
   <xsl:template name="subnavigation">
@@ -231,7 +231,7 @@
             <xsl:with-param name="TAB_POSITION" select="position()"/>
           </xsl:call-template>
         </xsl:if>
-        <xsl:if test="$USE_AJAX='true' and $AUTHENTICATED='true' and @activeTab='true' and not($PORTAL_VIEW='focused')"> <!-- If navigation is being rendered in the left column rather than as tabs, call template for rendering active menu item's submenu. -->
+        <xsl:if test="$USE_AJAX='true' and $AUTHENTICATED='true' and @activeTab='true' and not($PORTAL_VIEW='focused')"> <!-- If navigation is being rendered in the sidebar rather than as tabs, call template for rendering active menu item's submenu. -->
           <xsl:call-template name="preferences.editpage"/>
         </xsl:if>
       </xsl:for-each>
