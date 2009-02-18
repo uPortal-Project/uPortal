@@ -212,12 +212,12 @@
                 <xsl:when test="$USE_SIDEBAR_FOCUSED='true'"> <!-- Sidebar. -->
                   <xsl:call-template name="sidebar"/> <!-- Template located in columns.xsl. -->
                   <div class="fl-col-flex-{$FSS_SIDEBAR_LOCATION_CLASS}">
-                    <xsl:call-template name="page.title.focused"/> <!-- Template located below. -->
+                    <xsl:call-template name="page.title.row.focused"/> <!-- Template located below. -->
                     <xsl:apply-templates select="//focused"/> <!-- Templates located in content.xsl. -->
                   </div>
                 </xsl:when>
                 <xsl:otherwise>
-                  <xsl:call-template name="page.title.focused"/> <!-- No Sidebar. Template located below. -->
+                  <xsl:call-template name="page.title.row.focused"/> <!-- No Sidebar. Template located below. -->
                   <xsl:apply-templates select="//focused"/> <!-- Templates located in content.xsl. -->
                 </xsl:otherwise>
               </xsl:choose>
@@ -234,12 +234,12 @@
                     <xsl:when test="$USE_SIDEBAR='true'"> <!-- Sidebar. -->
                       <xsl:call-template name="sidebar"/> <!-- Template located in columns.xsl. -->
                       <div class="fl-col-flex-{$FSS_SIDEBAR_LOCATION_CLASS}">
-                        <xsl:call-template name="page.title"/>
+                        <xsl:call-template name="page.title.row"/>
                         <xsl:call-template name="columns"/> <!-- Template located in columns.xsl. -->
                       </div>
                     </xsl:when>
                     <xsl:otherwise>
-                      <xsl:call-template name="page.title"/> <!-- No Sidebar. Template located below. -->
+                      <xsl:call-template name="page.title.row"/> <!-- No Sidebar. Template located below. -->
                       <xsl:call-template name="columns"/> <!-- Template located in columns.xsl. -->
                     </xsl:otherwise>
                   </xsl:choose>
@@ -252,12 +252,12 @@
                     <xsl:when test="$USE_SIDEBAR_GUEST='true'"> <!-- Sidebar. -->
                       <xsl:call-template name="sidebar"/> <!-- Template located in columns.xsl. -->
                       <div class="fl-col-flex-{$FSS_SIDEBAR_LOCATION_CLASS}">
-                        <xsl:call-template name="page.title"/>
+                        <xsl:call-template name="page.title.row"/>
                         <xsl:call-template name="columns"/> <!-- Template located in columns.xsl. -->
                       </div>
                     </xsl:when>
                     <xsl:otherwise>
-                      <xsl:call-template name="page.title"/> <!-- No Sidebar. Template located below. -->
+                      <xsl:call-template name="page.title.row"/> <!-- No Sidebar. Template located below. -->
                       <xsl:call-template name="columns"/> <!-- Template located in columns.xsl. -->
                     </xsl:otherwise>
                   </xsl:choose>
@@ -286,7 +286,7 @@
   <!-- 
    | This template renders the page title.
   -->
-  <xsl:template name="page.title">
+  <xsl:template name="page.title.row">
 		<div id="portalPageBodyTitleRow"> <!-- This row contains the page title (label of the currently selected main navigation item), and optionally user layout customization hooks, custom institution content (blocks), or return to dashboard link (if in the focused view). -->
       <div id="portalPageBodyTitleRowContents"> <!-- Inner div for additional presentation/formatting options. -->
         <!-- ****** CONTENT TITLE BLOCK ****** -->
@@ -303,7 +303,7 @@
   <!-- 
    | This template renders the page title when focused.
   -->
-  <xsl:template name="page.title.focused">
+  <xsl:template name="page.title.row.focused">
 		<div id="portalPageBodyTitleRow"> <!-- This row contains the page title (label of the currently selected main navigation item), and optionally user layout customization hooks, custom institution content (blocks), or return to dashboard link (if in the focused view). -->
       <div id="portalPageBodyTitleRowContents"> <!-- Inner div for additional presentation/formatting options. -->
         <!-- ****** CONTENT TITLE FOCUSED BLOCK ****** -->
