@@ -72,6 +72,8 @@
 		
 		var initializeContentAddingMenu = function() {
 			$("#contentAddingDialog").dialog({height:450, width:500, modal:true});
+			console.log($("#contentAddingDialog").outerHeight());
+			console.log($("#contentAddingDialog").dialog('option', 'height'));
 			$("#contentDialogLink")
 				.unbind('click', initializeContentAddingMenu)
 				.click(function(){$("#contentAddingDialog").dialog('open');});
@@ -220,8 +222,7 @@
 		        options['position'] = 'insertBefore';
 		    }
 			$.post(settings.preferencesUrl, options,
-			   function(xml) { window.location = settings.portalUrl; }, 
-			   "text"
+			   function(xml) { window.location = settings.portalUrl; }, "text"
 			);
 		};
 		var deletePortlet = function(id) {
