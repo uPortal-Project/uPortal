@@ -520,7 +520,7 @@ public final class CError extends BaseChannel implements IPrivilegedChannel, ICa
         // assume that errors can be cached system-wide
         k.setKeyScope(ChannelCacheKey.SYSTEM_KEY_SCOPE);
 
-        sbKey.append("org.jasig.portal.channels.CError: errorDocument=").append(this.errorDocument);
+        sbKey.append(this.getClass().getName()).append(": errorDocument=").append(this.errorDocument);
         sbKey.append(" strace=").append(Boolean.toString(this.showStackTrace));
         sbKey.append(", mode=").append(this.ssTitle);
         sbKey.append(", locales=").append(LocaleManager.stringValueOf(this.runtimeData.getLocales()));
