@@ -274,7 +274,7 @@
       </xsl:for-each>
     </div>
     <script type="text/javascript">
-      up(document).ready(function(){
+      up.jQuery(document).ready(function(){
         // initialize the flyout menus and add onmouseover and onmouseout events to 
         // all the navigation elements with subnavigation flyouts
         startFlyouts();

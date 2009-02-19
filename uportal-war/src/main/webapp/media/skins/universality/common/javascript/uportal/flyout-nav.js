@@ -13,21 +13,19 @@
 		var defaults = {
 			iframeId: '',
 			divId: '',
-			orientation: 'horizontal',
-			xoffset: 0,
-			yoffset: 0
+			orientation: 'horizontal'
 		};
 		
 		var options = $.extend(defaults, options);
 		
 		$(container).mouseover(function(){
-			var tab = $(this).get(0);
-			var x = options.xoffset + tab.offsetLeft;
-			var y = options.yoffset + tab.offsetTop;
+			var tab = $(this);
+			var x = Math.round(tab.offset().left);
+			var y = Math.round(tab.offset().top);
 			if (options.orientation == 'horizontal')
-				y += tab.offsetHeight;
+				y += tab.get(0).offsetHeight;
 			else
-				x += tab.offsetWidth;
+				x += tab.get(0).offsetWidth;
 
 			// show the subnavigation div
 			var div = $("#" + options.divId)
@@ -73,18 +71,14 @@
 function startFlyouts() {
 
 	// get the x and y offset of the navigation container
-	var navcontainer = up("#portalNavigationList").get(0);
-	var xoffset = navcontainer.offsetLeft; 
-	var yoffset = navcontainer.offsetTop; 
+	var navcontainer = up.jQuery("#portalNavigationList").get(0);
 	
 	// create flyout menus for any tabs that have them
-	up("#portalFlyoutNavigation").children("[id*=navFrame_]").each(function(){
-		up.uportal.initFlyouts(up("#portalNavigation_" + up(this).attr("id").split("_")[1]),
+	up.jQuery("#portalFlyoutNavigation").children("[id*=navFrame_]").each(function(){
+		up.jQuery.uportal.initFlyouts(up.jQuery("#portalNavigation_" + up.jQuery(this).attr("id").split("_")[1]),
 			{
-				iframeId: up(this).attr("id"), 
-				divId: "portalFlyoutNavigation_" + up(this).attr("id").split("_")[1],
-				xoffset: xoffset,
-				yoffset: yoffset
+				iframeId: up.jQuery(this).attr("id"), 
+				divId: "portalFlyoutNavigation_" + up.jQuery(this).attr("id").split("_")[1]
 			}
 		);
 	});

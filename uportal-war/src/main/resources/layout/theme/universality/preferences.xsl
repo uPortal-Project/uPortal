@@ -39,8 +39,8 @@
     </div>
     <script type="text/javascript">
      
-     up(document).ready(function(){
-       up.uportal.UportalLayoutManager(
+     up.jQuery(document).ready(function(){
+       up.jQuery.uportal.UportalLayoutManager(
        {
           portalUrl: '<xsl:value-of select="$BASE_ACTION_URL"/>',
           mediaPath: '<xsl:value-of select="$MEDIA_PATH"/>',
@@ -174,8 +174,8 @@
      
     </div>
     <script type="text/javascript">
-       up(document).ready(function(){
-          up.uportal.UportalLayoutManager(
+       up.jQuery(document).ready(function(){
+          up.jQuery.uportal.UportalLayoutManager(
             {
               portalUrl: '<xsl:value-of select="$BASE_ACTION_URL"/>',
               mediaPath: '<xsl:value-of select="$MEDIA_PATH"/>',

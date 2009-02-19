@@ -260,7 +260,9 @@
     </xsl:if>
     <xsl:if test="$USE_FLYOUT_MENUS or $USE_AJAX">
       <script type="text/javascript">
-        var up = jQuery.noConflict(true);
+        var up = up || {};
+        up.fluid = fluid;
+        up.jQuery = jQuery.noConflict(true);
       </script>
     </xsl:if>
   </xsl:template>
