@@ -75,4 +75,10 @@
             </bean>
         </property>
     </bean>
+    
+    <bean id="pageCachingFilter" class="org.jasig.portal.utils.cache.ConfigurablePageCachingFilter">
+        <constructor-arg ref="cacheManager"/>
+        <constructor-arg value="org.jasig.portal.utils.cache.ConfigurablePageCachingFilter.PAGE_CACHE"/>
+    </bean>
+    
 </beans>

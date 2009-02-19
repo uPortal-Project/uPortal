@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <web-app xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd" version="2.4"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_5.xsd" version="2.5"
 >
 
     <!--
@@ -123,6 +123,16 @@
         <filter-name>OpenEntityManagerInViewFilter</filter-name>
         <filter-class>org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter</filter-class>
     </filter>
+
+    <filter>
+        <filter-name>pageCachingFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+   </filter>
+    
+    <filter>
+        <filter-name>GzipFilter</filter-name>
+        <filter-class>net.sf.ehcache.constructs.web.filter.GzipFilter</filter-class>
+    </filter>
         
     <filter-mapping>
         <filter-name>CAS Validate Filter</filter-name>
@@ -144,6 +154,17 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
+    <filter-mapping>
+        <filter-name>pageCachingFilter</filter-name>
+        <url-pattern>*.js</url-pattern>
+        <url-pattern>*.css</url-pattern>
+    </filter-mapping>
+    
+    <filter-mapping>
+        <filter-name>GzipFilter</filter-name>
+        <url-pattern>*.uP</url-pattern>
+    </filter-mapping>
+    
     <servlet>
         <servlet-name>uPortal</servlet-name>
         <servlet-class>org.jasig.portal.PortalSessionManager</servlet-class>
