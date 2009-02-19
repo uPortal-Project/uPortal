@@ -175,7 +175,7 @@
   <xsl:param name="USE_SIDEBAR_FOCUSED" select="'true'"/> <!-- Sets the use of a sidebar when a portlet is focused.  Values are 'true' or 'false'. -->
   <xsl:param name="USE_SIDEBAR_GUEST" select="'true'"/> <!-- Sets the use of a sidebar when logged out.  Values are 'true' or 'false'. -->
   <xsl:param name="SIDEBAR_LOCATION" select="'left'"/> <!-- Sets the location of the sidebar - if used - in the logged in, dashboard view.  Values are 'left' or 'right'. -->
-  <xsl:param name="SIDEBAR_LOCATION_FOCUSED" select="'left'"/> <!-- Sets the location of the sidebar - if used - in the focused view.  Values are 'left' or 'right'. -->
+  <xsl:param name="SIDEBAR_LOCATION_FOCUSED" select="'right'"/> <!-- Sets the location of the sidebar - if used - in the focused view.  Values are 'left' or 'right'. -->
   <xsl:param name="SIDEBAR_LOCATION_GUEST" select="'left'"/> <!-- Sets the location of the sidebar - if used - when logged out.  Values are 'left' or 'right'. -->
   <xsl:param name="SIDEBAR_WIDTH" select="100"/> <!-- Sets the pixel width of the sidebar, if used.  Values are '100', '150', '200', '250', or '300' and represent pixel widths. -->
   <xsl:param name="SIDEBAR_WIDTH_FOCUSED" select="250"/> <!-- Sets the pixel width of the sidebar when a portlet is focused, if used.  Values are '100', '150', '200', '250', or '300' and represent pixel widths -->
@@ -325,19 +325,13 @@
     <xsl:call-template name="welcome"/> -->
     <!-- Welcome -->
     
-    <!-- Web Search
-    <xsl:call-template name="web.search"/> -->
+    <!-- Web Search -->
+    <xsl:call-template name="web.search"/>
     <!-- Web Search -->
     
     <!-- Quicklinks
     <xsl:call-template name="quicklinks"/> -->
     <!-- Quicklinks -->
-    
-    <!-- Main Navigation -->
-    <xsl:apply-templates select="//navigation">
-      <xsl:with-param name="CONTEXT" select="'header'"/>
-    </xsl:apply-templates>
-    <!-- Main Navigation -->
     
     <!-- SAMPLE:
     <div id="portalHeaderBlock">
@@ -434,12 +428,6 @@
     <xsl:call-template name="logo"/>
     <!-- Logo -->
     
-    <!-- Main Navigation -->
-    <xsl:apply-templates select="//navigation">
-      <xsl:with-param name="CONTEXT" select="'header'"/>
-    </xsl:apply-templates>
-    <!-- Main Navigation -->
-    
     <!-- SAMPLE:
     <div id="portalHeaderFocusedBlock">
     	<p>CUSTOM CONTENTS.</p>
@@ -510,11 +498,28 @@
   <!-- ================================================== -->
   
   
+  <!-- ========== TEMPLATE: MAIN NAVIGATION BLOCK ========== -->
+  <!-- ================================================= -->
+  <!-- 
+   | GREEN
+   | This template renders the navigation as tabs in below the header and above the body.
+   | Template contents can be any valid XSL or XHTML.
+  -->
+  <xsl:template name="main.navigation.block">
+  	<!-- Main Navigation -->
+    <xsl:apply-templates select="//navigation">
+      <xsl:with-param name="CONTEXT" select="'header'"/>
+    </xsl:apply-templates>
+    <!-- Main Navigation -->
+  </xsl:template>
+  <!-- ================================================= -->
+  
+  
   <!-- ========== TEMPLATE: CONTENT TOP BLOCK ========== -->
   <!-- ================================================= -->
   <!-- 
    | GREEN
-   | This template renders custom content into the page body above the content layout table.
+   | This template renders custom content into the page above the body.
    | Template contents can be any valid XSL or XHTML.
   -->
   <xsl:template name="content.top.block">
@@ -531,7 +536,7 @@
   <!-- ==================================================== -->
   <!-- 
    | GREEN
-   | This template renders custom content into the page body below the content layout table.
+   | This template renders custom content into the page below the body.
    | Template contents can be any valid XSL or XHTML.
   -->
   <xsl:template name="content.bottom.block">
@@ -598,8 +603,8 @@
    | Template contents can be any valid XSL or XHTML.
   -->
   <xsl:template name="content.sidebar.block">
-    <!-- Web Search -->
-    <xsl:call-template name="web.search"/>
+    <!-- Web Search
+    <xsl:call-template name="web.search"/> -->
     <!-- Web Search -->
     
     <!-- Fragment Administration -->

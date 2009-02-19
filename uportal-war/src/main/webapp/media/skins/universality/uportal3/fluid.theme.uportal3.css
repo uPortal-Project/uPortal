@@ -1,0 +1,237 @@
+/*
+                Mist
+=============================================
+ * Color Schema:
+ *     DEFINITIONS:
+ *         white     : #ffffff
+ *         light blue: #dfefff
+ *         med blue  : #5a95cf
+ *         dark blue : #4070a1
+ *         grey      : #999999
+ *         charcoal  : #333333
+ *         black     : #000000
+ *     :focus & .selectable
+ *         text       : white   
+ *         bg         : dark blue
+ *         outline    : light blue
+ *     text           : black
+ *     links
+ *         :link      : med blue
+ *         :active    : med blue
+ *         :visited   : med blue
+ *         :hover     : light blue
+ *     headings
+ *         h1
+ *             text   : dark blue
+ *             border : dark blue
+ *             bg     : light blue
+ *         h2
+ *             text   : med blue
+ *         h3-6
+ *             text   : grey
+ *     tables
+ *         headers
+ *             text    : black
+ *             border  : med blue
+ *             bg      : light blue
+ *          cells
+ *              text   : black
+ *              border : grey
+ *     forms    
+ *         input[text]
+ *             bg       : light blue
+ *             border   : dark blue
+ *         textarea
+ *             bg       : light blue
+ *             border   : dark blue
+ *     tab helper    
+ *         text         : dark blue
+ *         bg           : light blue
+ *         hover        : med blue
+ *         active text  : med blue
+ *         active bg    : white
+ *         active hover : white
+ *         border       : dark blue
+ *     menu helper
+ *         text         : dark blue
+ *         bg           : white
+ *         hover        : light blue
+ *         active text  : white
+ *         active bg    : dark blue
+ *         active hover : dark blue
+
+ */
+.fl-theme-uportal3 :focus,
+.fl-theme-uportal3 .selectable  {
+   /* themed focus indicator */
+   outline: 0.1em solid #f68922;
+}
+
+.fl-theme-uportal3 {color:#000000 !important; background-color:#ffffff !important; border-color:#4070a1;}
+.fl-theme-uportal3 a {color: #5a95cf; font-weight:bold;}
+.fl-theme-uportal3 a:hover {color: #6DB5FB;}
+.fl-theme-uportal3 h1 {color:#4070a1; border-bottom-width:0.2em; border-bottom-style:solid;} 
+.fl-theme-uportal3 h2 {color: #5a95cf;}
+
+.fl-theme-uportal3 th {background-color:#dfefff;}
+.fl-theme-uportal3 td {}
+.fl-theme-uportal3 .fl-textfield {}
+.fl-theme-uportal3 .fl-textarea {}
+
+/* temp selector to access inline edit input fields (should use a classname but now there is none applied) */
+.fl-theme-uportal3 span input {background-color:#dfefff !important; border:0.1em solid #5a95cf; margin:-0.1em;}
+
+/* Helper: Tabs */
+.fl-theme-uportal3 .fl-tabs {margin:0; padding:0.3em 0; text-align:center; border:none;}
+.fl-theme-uportal3 .fl-tabs li  {padding:0.3em 0;}
+.fl-theme-uportal3 .fl-tabs li a  {margin:0; padding:0.3em 2em; background:transparent; font-size:120%; font-weight:bold; color:#fff !important; border:none; text-decoration:none;}
+.fl-theme-uportal3 .fl-tabs li:hover,
+.fl-theme-uportal3 .fl-tabs li:hover a,
+.fl-theme-uportal3 .fl-tabs li a:hover {color:#fff !important;}
+.fl-theme-uportal3 .fl-tabs li.fl-activeTab a,
+.fl-theme-uportal3 .fl-tabs li.fl-activeTab a:hover {background:#2e5579 url(images/nav_tab_bkd.gif) top left repeat-x; border:1px solid #1e3851; color:#fff !important;}
+.fl-theme-uportal3 .fl-tab-content {background-color:#fff; color:#000;}
+
+/* Helper: Menu */
+.fl-theme-uportal3 .fl-listmenu {border:1px solid #4070a1; background-color:#fff;}
+.fl-theme-uportal3 .fl-listmenu li,
+.fl-theme-uportal3 .fl-listmenu li a  {font-weight:bold; color:#4070a1; background-color:#dfefff; border-color:#4070a1; text-decoration:none;}
+.fl-theme-uportal3 .fl-listmenu a:hover {background-color:#5a95cf; color:#fff;}
+.fl-theme-uportal3 .fl-listmenu .fl-activemenu,
+.fl-theme-uportal3 .fl-listmenu .fl-activemenu:hover { background-color: #fff; border-bottom-color:#fff; color:#508cc9;}
+
+/* Helper: Thumbnail Grid */
+.fl-theme-uportal3 .fl-grid {border:2px solid #4070a1; background-color:#fff;}
+.fl-theme-uportal3 .fl-grid li {background-color:#dfefff; border:1px solid #4070a1}
+.fl-theme-uportal3 .fl-grid .caption {background-color:#dfefff; color:#5a95cf; }
+
+/* Component: Progressor */
+.fl-theme-uportal3 .fl-progress-bounds {border-color:#999999; background-color:#fff;}
+.fl-theme-uportal3 .fl-progress-fill {color:#4070a1; background-color:#000;}
+
+/* Component: Uploader */
+
+
+/* States */
+.fl-theme-uportal3 .orderable-drop-marker {background-color:#f00 !important;}
+
+
+/*====================================*/
+/*===== uPortal Extensions =====*/
+
+/* FSS Layout Overrides */
+/*
+	Removes padding and margin compensations for padding.
+*/
+.fl-theme-uportal3 .fl-col-mixed .fl-col-fixed {width:200px;}
+.fl-theme-uportal3 .fl-col-mixed .fl-col-flex-left {margin-left:200px;}
+.fl-theme-uportal3 .fl-col-mixed .fl-col-flex-right {margin-right:200px;}
+
+.fl-theme-uportal3 .fl-col-mixed-100 .fl-col-fixed {width:100px;}
+.fl-theme-uportal3 .fl-col-mixed-100 .fl-col-flex-left {margin-left:100px;}
+.fl-theme-uportal3 .fl-col-mixed-100 .fl-col-flex-right {margin-right:100px;}
+
+.fl-theme-uportal3 .fl-col-mixed-150 .fl-col-fixed {width:150px;}
+.fl-theme-uportal3 .fl-col-mixed-150 .fl-col-flex-left {margin-left:150px;}
+.fl-theme-uportal3 .fl-col-mixed-150 .fl-col-flex-right {margin-right:150px;}
+
+.fl-theme-uportal3 .fl-col-mixed-200 .fl-col-fixed {width:200px;}
+.fl-theme-uportal3 .fl-col-mixed-200 .fl-col-flex-left {margin-left:200px;}
+.fl-theme-uportal3 .fl-col-mixed-200 .fl-col-flex-right {margin-right:200px;}
+
+.fl-theme-uportal3 .fl-col-mixed-250 .fl-col-fixed {width:250px;}
+.fl-theme-uportal3 .fl-col-mixed-250 .fl-col-flex-left {margin-left:250px;}
+.fl-theme-uportal3 .fl-col-mixed-250 .fl-col-flex-right {margin-right:250px;}
+
+.fl-theme-uportal3 .fl-col-mixed-300 .fl-col-fixed {width:300px;}
+.fl-theme-uportal3 .fl-col-mixed-300 .fl-col-flex-left {margin-left:300px;}
+.fl-theme-uportal3 .fl-col-mixed-300 .fl-col-flex-right {margin-right:300px;}
+
+/* Common */
+.fl-theme-uportal3 table, 
+.fl-theme-uportal3 table tr, 
+.fl-theme-uportal3 table td {border:none;}
+
+/* Page */
+.fl-theme-uportal3 #portalPage {background-color:#fff;}
+
+/* Portal Page Bar */
+.fl-theme-uportal3 #portalPageBarLinks {float:right; margin-left:250px; padding-right:15px;}
+
+/* Header */
+.fl-theme-uportal3 #portalPageHeader {background:transparent url(images/header_bkd.jpg) bottom left repeat-x;}
+.fl-theme-uportal3 #portalLogo {padding:20px 50px;}
+.fl-theme-uportal3 .focused #portalLogo {padding:10px 30px;}
+
+/* portalWelcome
+ Keep the top value relative to the text size so that the top position remains good when the browser text size is increased. 
+ Set the left width to the width of your logo (plus logo margins).
+ This margin prevents it from colliding with the logo if the browser window is shrunk down. 
+*/
+#portalWelcome {top:3.5em; left:250px;}
+
+/* Web Search */
+.fl-theme-uportal3 #webSearchContainer {position:absolute; top:3em; right:0;}
+.fl-theme-uportal3 #webSearchContainer h2 {display:none;}
+
+/* Navigation */
+.fl-theme-uportal3 #portalNavigation {background:#98b6c1 url(images/nav_bkd_btm.gif) bottom right repeat-x; border-top:1px solid #44626a;}
+.fl-theme-uportal3 #portalNavigationInner {background:transparent url(images/nav_bkd_top.gif) top right repeat-x; border-top:1px solid #44626a; border-bottom:1px solid #4b6f7d;}
+.fl-theme-uportal3 #portalNavigationSubrow {padding:0.5em 0; text-align:center; background:#336699 url(images/nav_subrow_bkd.gif) top right repeat-x;}
+.fl-theme-uportal3 #portalNavigationSubrow a {padding:0em 1em; text-decoration:none; color:#acc9e6;}
+
+/* Body */
+.fl-theme-uportal3 #portalPageBody {}
+.fl-theme-uportal3 #portalPageBodyTitleRow {padding-top:1em;}
+.fl-theme-uportal3 .sidebar-left-100 #portalPageBodyTitleRow,
+.fl-theme-uportal3 .sidebar-left-150 #portalPageBodyTitleRow,
+.fl-theme-uportal3 .sidebar-left-200 #portalPageBodyTitleRow,
+.fl-theme-uportal3 .sidebar-left-250 #portalPageBodyTitleRow,
+.fl-theme-uportal3 .sidebar-left-300 #portalPageBodyTitleRow {background:transparent url(images/page_corner_topleft.png) top left no-repeat;}
+.fl-theme-uportal3 .sidebar-right-100 #portalPageBodyTitleRow,
+.fl-theme-uportal3 .sidebar-right-150 #portalPageBodyTitleRow,
+.fl-theme-uportal3 .sidebar-right-200 #portalPageBodyTitleRow,
+.fl-theme-uportal3 .sidebar-right-250 #portalPageBodyTitleRow,
+.fl-theme-uportal3 .sidebar-right-300 #portalPageBodyTitleRow {background:transparent url(images/page_corner_topright.png) top right no-repeat;}
+.fl-theme-uportal3 #portalPageBodyTitleRow h1 {color:#333; font-size:200%; border:none;}
+
+/* Sidebar */
+.fl-theme-uportal3 #portalSidebar {padding:0; background:#336699 url(images/portlet_corner_bottomleft.png) bottom left no-repeat;}
+.fl-theme-uportal3 #portalSidebarInner {padding:0 1em 2em 1em; background:transparent url(images/portlet_corner_bottomright.png) bottom right no-repeat;}
+
+/* Login */
+.fl-theme-uportal3 #portalLogin {padding:1em; background-color:#e2e8e7;}
+.fl-theme-uportal3 a#portalCASLoginLink {display:block; padding:0.3em 1em; text-decoration:none; text-align:center; font-weight:bold; color:#fff; background-color:#FF6600; border-top:1px solid #FFCA95; border-left:1px solid #FFCA95; border-bottom:1px solid #884400; border-right:1px solid #884400;}
+.fl-theme-uportal3 .via-cas {color:#FFCC66;}
+.fl-theme-uportal3 #portalCASLogin p {margin-top:1em;}
+
+/* Portlet Navigation */
+.fl-theme-uportal3 #portletNavigation {padding:1em;}
+.fl-theme-uportal3 #portletNavigation h3 {margin:0; padding:0.2em 0.5em; color:#fff; font-size:90%;}
+.fl-theme-uportal3 #portletNavigation ul, #portletNavigation li {list-style-type:none;}
+.fl-theme-uportal3 #portletNavigation a {color:#6633CC; font-weight:normal; background:#e2e8e7 url("../../icons/application.png") 0.5em 0.5em no-repeat; text-decoration:none;}
+.fl-theme-uportal3 #portletNavigation a:hover {color:#000; background-color:#fff;}
+
+/* Portlets */
+.fl-theme-uportal3 .portlet-container {}
+.fl-theme-uportal3 .portlet-container-inner {}
+.fl-theme-uportal3 .portlet-top {background:#e5e5e5 url(images/portlet_corner_topleft.png) top left no-repeat;}
+.fl-theme-uportal3 .portlet-top-inner {height:3px; background:transparent url(images/portlet_corner_topright.png) top right no-repeat;}
+.fl-theme-uportal3 .portlet-toolbar  {white-space:nowrap; background:#e5e5e5 url(images/portlet_title_bkd.gif) top right repeat-x;}
+.fl-theme-uportal3 .portlet-toolbar a {text-decoration:none; color:#666;}
+.fl-theme-uportal3 .portlet-toolbar h2 {margin-left:0.5em; padding-left:20px; background:transparent url(../../icons/application.png) 0 3px no-repeat;}
+.fl-theme-uportal3 .dashboard .portlet-content {background-color:#fff; border-left:1px solid #e5e5e5; border-right:1px solid #e5e5e5;}
+.fl-theme-uportal3 .portlet-bottom {background:#e5e5e5 url(images/portlet_corner_bottomleft.png) bottom left no-repeat;}
+.fl-theme-uportal3 .portlet-bottom-inner {height:3px; background:transparent url(images/portlet_corner_bottomright.png) bottom right no-repeat;}
+/* Locked Portlet */
+.fl-theme-uportal3 .portal-page-column-inner .locked .portlet-top {display:none;}
+.fl-theme-uportal3 .portal-page-column-inner .locked .portlet-bottom {display:none;}
+.fl-theme-uportal3 .portal-page-column-inner .locked .portlet-toolbar {background-color:#ddd;border:1px solid #999;}
+.fl-theme-uportal3 .portal-page-column-inner .locked .portlet-toolbar a {color:#333;}
+.fl-theme-uportal3 .portal-page-column-inner .locked .portlet-toolbar h2 {background:transparent url("../../icons/lock.png") 0 3px no-repeat;}
+.fl-theme-uportal3 .portal-page-column-inner .locked .portlet-controls {background-color:transparent;}
+.fl-theme-uportal3 .dashboard .portal-page-column-inner .locked .portlet-content {border:1px solid #999;}
+
+/* Footer */
+.fl-theme-uportal3 #portalPageFooter {padding-top:2em; text-align:center;}
+.fl-theme-uportal3 #portalPageFooterInner {padding:1em; border:1px solid #e5e5e5;}

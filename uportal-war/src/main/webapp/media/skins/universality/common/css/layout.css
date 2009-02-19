@@ -19,324 +19,117 @@
 
 
 /** common **/
-	table, table tr, table td 
-	{
-		margin: 0;
-		padding: 0;
-	}
-	
-	.portal-pipe 
-	{
-		padding: 0 0.5em;
-	}
-	
-	ul.horizontal-list-floated li
-	{
-		list-style: none;
-		float: left;
-		padding-left: 1em;
-	}
-	
-	ul.horizontal-list-inline li
-	{
-		list-style: none;
-		display: inline;
-		padding-left: 1em;
-	}
-	
-	
+table, 
+table tr, 
+table td {margin:0; padding:0;}
+
+.portal-pipe {padding:0 0.5em;}
+
+ul.horizontal-list-floated li {list-style:none; float:left; padding-left:1em;}
+ul.horizontal-list-inline li {list-style:none; display:inline; padding-left:1em;}
+
+
 /** page **/
-	#portalPage 
-	{
-		min-width: 700px;
-		clear: both;
-	}
+#portalPage {min-width:700px; clear:both;}
 
 
 /** header **/
-	#portalPageBar h2
-	{
-		margin: 0;
-		padding: 0.5em 0 0 1em;
-		position: absolute;
-		top: 0;
-		left: 0;
-	}
-
-	#portalPageBarLinks 
-	{
-		padding: 0.5em 1em 0.5em 0;
-	}
-
-	#portalPageBarLinks a 
-	{
-		padding: 0 0.5em;
-	}
-	
-	/* This sets the skip-to links to be completely hidden until a user tabs
-     to the link. */
-  #portalSkipNav a, #portalSkipNav a:hover, #portalSkipNav a:visited
-  {
-    position: absolute;
-    left: 0;
-    top: -500px;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-  }
-
-  #portalSkipNav a:active, #portalSkipNav a:focus
-  {
-    position: static;
-    width: auto;
-    height: auto;
-  }
-	
-	#portalLogo
-  {
-    margin: 10px 20px;
-  }
-	
-	#portalWelcome 
-	{
-		position: absolute;
-		top: 3em; /* Keep this value relative to the text size so that the top position remains good when the browser text size is increased. */
-		left: 195px; /* Set to the width of your logo (plus logo margins). This margin prevents it from colliding with the logo if the browser window is shrunk down. */
-	}
-	
-	#portalWelcome .logout-label
-	{
-		padding-left: 0.5em; /* Gives a bit of space between the welcome statement and the logout link. */
-	}
-	
-	.focused #portalPageBar img
-	{
-		float: left;
-		margin: 3px 0 0 10px
-	}
+#portalPageBar h2 {margin:0; padding:0.5em 0 0 1em; position:absolute; top:0; left:0;}
+#portalPageBarLinks {padding:0.5em 1em 0.5em 0;}
+#portalPageBarLinks a {padding:0 0.5em;}
+#portalSkipNav a, 
+#portalSkipNav a:hover, 
+#portalSkipNav a:visited {position:absolute; left:0; top:-500px; width:1px; height:1px; overflow:hidden;} /* This sets the skip-to links to be completely hidden until a user tabs to the link. */
+#portalSkipNav a:active, 
+#portalSkipNav a:focus {position:static; width:auto; height:auto;} /* This sets the skip-to links to be completely hidden until a user tabs to the link. */
+#portalLogo {}
+#portalWelcome {position:absolute; top:3em; left:195px;} /* Keep the top value relative to the text size so that the top position remains good when the browser text size is increased. Set the left width to the width of your logo (plus logo margins). This margin prevents it from colliding with the logo if the browser window is shrunk down. */
+#portalWelcome .logout-label {padding-left: 0.5em;} /* Gives a bit of space between the welcome statement and the logout link. */
+.focused #portalPageBar img {float:left; margin:3px 0 0 10px}
 
 
 /** content **/
-	
-	#portalPageBodyTitleRowContents
-	{
-		position: relative; /* Sets this container as positioned to have other elements poisitioned relative to it. */
-		padding: 1em;
-	}
-		
-	.breadcrumb-separator 
-	{
-		padding: 0 0.5em;
-	}
-		
-	#portalPageBody h1 
-	{
-		margin: 0;
-	}
-		
-	#portalCustomizationLinks 
-	{
-		position: absolute;
-		top: 0;
-		right: 0;
-		text-align: right;
-		margin: 0 0 0 250px;
-	}
-	
-	#portalCustomizationLinks h2, #portalCustomizationLinks ul, #portalCustomizationLinks li 
-	{
-		display: inline;
-	}
+#portalPageBodyTitleRowContents {position:relative; padding:1em;} /* Sets this container as positioned to have other elements poisitioned relative to it. */
+.breadcrumb-separator {padding:0 0.5em;}
+#portalPageBody h1 {margin:0;}
+#portalPageBodyColumns .single .portal-page-column-inner, 
+#portalPageBodyColumns .right .portal-page-column-inner {padding-right:1em;}
+.portal-page-column-inner {padding-left:1em; padding-bottom:2em; min-height:100px;}
+.portal-page-column-focused .portal-page-column-inner {padding-right:1em;}
 
-	#portalCustomizationLinks h2
-	{
-		padding-right: 1em;
-	}
-		
-	#portalCustomizationLinks ul 
-	{
-		margin: 0;
-	}
-	
-	#portalCustomizationLinks li 
-	{
-		padding-right: 5px;
-	}
-	
-	#portalCustomizationLinks a 
-	{
-		padding: 2px 5px 2px 20px;
-	}
-	
-	#portalPageLeftColumnInner 
-	{
-		 width: 195px;
-	}
-	
-	#portalPageBodyColumns td.single .portal-page-column-inner, #portalPageBodyColumns td.right .portal-page-column-inner 
-	{
-		padding-right: 1em;
-	}
-	
-	.portal-page-column-inner 
-	{
-		padding-left: 1em;
-		padding-bottom: 2em;
-		min-height: 100px;
-	}
-	
-	.portal-page-column-focused .portal-page-column-inner 
-	{
-		padding-right: 1em;
-	}
-	
-	.portlet-container {
-		margin-bottom: 1em;
-	}
-	
-	.portlet-toolbar 
-	{
-		position: relative;
-	}
-	
-	.portlet-toolbar h2 
-	{
-		margin: 0;
-		padding: 2px 20px 3px 20px;
-	}
-	
-	.portlet-controls
-	{
-		position: absolute;
-		top: 4px;
-		right: 0;
-	}
-	
-	.portlet-content 
-	{
-		padding:1em;
-	}
+
+/** portlets **/
+.portlet-container {margin-bottom:1em;}
+.portlet-toolbar {position:relative;}
+.portlet-toolbar h2 {margin:0; padding:2px 20px 3px 20px;}
+.portlet-controls {position:absolute; top:4px; right:0;}
+.portlet-content {padding:1em;}
+
 
 /** footer **/
-	#portalPageFooter
-	{
-		padding-top: 5em;
-	}
-	
-	.left-column #portalPageFooter
-	{
-		margin-left: 196px;
-	}
-	
-	#portalProductAndVersion
-	{
-		margin-top: 1em;
-	}
+#portalPageFooter {padding-top:5em;}
+#portalProductAndVersion {margin-top:1em;}
+
 
 /** login **/
-	#portalLogin
-	{
-	 padding: 1em;
-	 margin-bottom: 1em;
-	}
-	
-	#portalLogin h2
-	{
-	 margin: 0 0 0.5em 0;
-	}
-	
-	#portalLogin label
-	{
-		display: block;
-		margin-bottom: 0.3em;
-	}
-	
-	#portalLogin input
-	{
-		margin-bottom: 1em;
-	}
-	
-	#portalLoginMessage
-	{
-	 padding: 1em;
-	 margin-bottom: 1em;
-	}
-	
-	#portalLoginMessage h2
-	{
-		padding-left: 20px;
-	}
+#portalLogin {padding:1em;}
+#portalLogin h2 {margin:0 0 0.5em 0;}
+#portalLogin label {display:block; margin-bottom:0.3em;}
+#portalLogin input {margin-bottom:1em;}
+#portalLoginMessage {padding:1em; margin-bottom:1em;}
+#portalLoginMessage h2 {padding-left:20px;}
+
 
 /** navigation **/
-	.header #portalNavigationList
-	{
-		position: absolute;
-		top: 66px;
-		left: 192px;
-	}
-	
-	.focused .header #portalNavigationList
-	{
-		top: 47px;
-	}
-	
-	#portalNavigation ul, #portalNavigation li 
-	{
-		margin: 0;
-		padding: 0;
-	}
-	
-	#portalNavigation #portalNavigationList a 
-	{
-		display: block;
-		padding: 0.5em 1em;
-	}
-	
-	#portalNavigation .header #portalNavigationList a 
-	{
-		padding: 0.5em 2em;
-	}
-	
-	#portalNavigation #portalNavigationList .portal-subnav-container a
-	{
-		padding: 0.5em 1em 0.5em 2.1em;
-	}
-	
-	#portletNavigation ul, #portletNavigation li 
-	{
-		margin: 0;
-		padding: 0;
-	}
-	
-	#portletNavigation li 
-	{
-		margin-bottom: 1px;
-	}
-	
-	#portletNavigation a 
-	{
-		display: block;
-		padding: 0.5em 1em 0.5em 2.1em;
-	}
-	
+
+/*.header #portalNavigationList {position:absolute; top:66px; left:192px;}
+.focused .header #portalNavigationList {top:47px;}
+
+#portalNavigation ul, 
+#portalNavigation li {margin:0; padding:0;}
+
+#portalNavigation #portalNavigationList a {display:block; padding:0.5em 1em;}
+#portalNavigation .header #portalNavigationList a {padding:0.5em 2em;}
+#portalNavigation #portalNavigationList .portal-subnav-container a {padding:0.5em 1em 0.5em 2.1em;}*/
+
+#portletNavigation ul,
+#portletNavigation li {margin:0; padding:0;}
+#portletNavigation li {margin-bottom:1px;}
+#portletNavigation a {display:block; padding:0.5em 1em 0.5em 2.1em;}
+
+#portalNavigationSubrow ul,
+#portalNavigationSubrow li {margin:0; padding:0;}
+.sidebar-left-100 #portalNavigationSubrow ul {margin-left:120px;}
+.sidebar-left-150 #portalNavigationSubrow ul {margin-left:170px;}
+.sidebar-left-200 #portalNavigationSubrow ul {margin-left:220px;}
+.sidebar-left-250 #portalNavigationSubrow ul {margin-left:270px;}
+.sidebar-left-300 #portalNavigationSubrow ul {margin-left:320px;}
+.sidebar-right-100 #portalNavigationSubrow ul {margin-right:120px;}
+.sidebar-right-150 #portalNavigationSubrow ul {margin-right:170px;}
+.sidebar-right-200 #portalNavigationSubrow ul {margin-right:220px;}
+.sidebar-right-250 #portalNavigationSubrow ul {margin-right:270px;}
+.sidebar-right-300 #portalNavigationSubrow ul {margin-right:320px;}
+#portalNavigationSubrow li {list-style-type:none; display:inline;}
+
+
+/** Customization Links **/
+#portalCustomizationLinks {position:absolute; top:0; right:0; text-align:right; margin:0 0 0 250px;}
+#portalCustomizationLinks h2, 
+#portalCustomizationLinks ul, 
+#portalCustomizationLinks li {display:inline;}
+#portalCustomizationLinks h2 {padding-right:1em;}
+#portalCustomizationLinks ul {margin:0;}
+#portalCustomizationLinks li {padding-right:5px;}
+#portalCustomizationLinks a {padding:2px 5px 2px 20px;}
+
+
 /** quicklinks **/	
-	#portalQuicklinks 
-	{
-	}
-	
-	#portalQuicklinks ul, #portalQuicklinks li 
-	{
-		margin: 0;
-		padding: 0;
-	}
-	
+#portalQuicklinks {}
+#portalQuicklinks ul, 
+#portalQuicklinks li {margin:0; padding:0;}
+
+
 /** web search **/
-	#webSearchContainer form 
-	{
-		padding: 1em;
-	}
-	
-	#webSearchContainer input, #webSearchContainer select 
-	{
-		margin-bottom: 0.5em;
-	}
+#webSearchContainer form {padding:1em;}
+#webSearchContainer input, 
+#webSearchContainer select {margin-bottom:0.5em;}

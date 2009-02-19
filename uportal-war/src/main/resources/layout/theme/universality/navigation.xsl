@@ -48,7 +48,7 @@
             </xsl:variable>
             <xsl:variable name="NAV_ACTIVE"> <!-- Determine which navigation option is the active (current selection) and add a css hook. -->
               <xsl:choose>
-                <xsl:when test="@activeTab='true'">active</xsl:when>
+                <xsl:when test="@activeTab='true'">active fl-activeTab</xsl:when>
                 <xsl:otherwise></xsl:otherwise>
               </xsl:choose>
             </xsl:variable>
@@ -71,10 +71,16 @@
             </li>
           </xsl:for-each>
         </ul>
-      
     	</div>  
     </div>
-    
+    <xsl:if test="$CONTEXT='header'">
+      <div id="portalNavigationSubrow" class="fl-tab-content">
+        <xsl:call-template name="subnavigation">
+          <xsl:with-param name="CONTEXT" select="'subnav'"/>
+          <xsl:with-param name="TAB_POSITION" select="position()"/>
+        </xsl:call-template>
+      </div>
+    </xsl:if>
   </xsl:template>
   <!-- ========================================== -->
   
@@ -147,32 +153,63 @@
           </xsl:choose>
         </xsl:attribute>
         <ul class="portal-subnav-list"> <!-- List of the subnavigation menu items. -->
-          <xsl:for-each select="tabChannel">
-            <xsl:variable name="SUBNAV_POSITION"> <!-- Determine the position of the navigation option within the whole navigation list and add css hooks for the first and last positions. -->
-              <xsl:choose>
-                <xsl:when test="position()=1 and position()=last()">single</xsl:when>
-                <xsl:when test="position()=1">first</xsl:when>
-                <xsl:when test="position()=last()">last</xsl:when>
-                <xsl:otherwise></xsl:otherwise>
-              </xsl:choose>
-            </xsl:variable>
-            <li id="uPfname_{@fname}" class="portal-subnav {$SUBNAV_POSITION}"> <!-- Each subnavigation menu item.  The unique ID can be used in the CSS to give each menu item a unique icon, color, or presentation. -->
-              <a href="{$BASE_ACTION_URL}?uP_sparam=activeTab&amp;activeTab={$TAB_POSITION}&amp;uP_root={@ID}" title="{@name}" class="portal-subnav-link">  <!-- Navigation item link. -->
-                <span class="portal-subnav-label"><xsl:value-of select="@name"/></span>
-              </a>
-            </li>
-          </xsl:for-each>
+        	<xsl:choose>
+          	<xsl:when test="$CONTEXT='flyout'">
+            
+              <xsl:for-each select="tabChannel">
+                <xsl:variable name="SUBNAV_POSITION"> <!-- Determine the position of the navigation option within the whole navigation list and add css hooks for the first and last positions. -->
+                  <xsl:choose>
+                    <xsl:when test="position()=1 and position()=last()">single</xsl:when>
+                    <xsl:when test="position()=1">first</xsl:when>
+                    <xsl:when test="position()=last()">last</xsl:when>
+                    <xsl:otherwise></xsl:otherwise>
+                  </xsl:choose>
+                </xsl:variable>
+                <li id="uPfname_{@fname}" class="portal-subnav {$SUBNAV_POSITION}"> <!-- Each subnavigation menu item.  The unique ID can be used in the CSS to give each menu item a unique icon, color, or presentation. -->
+                  <a href="{$BASE_ACTION_URL}?uP_sparam=activeTab&amp;activeTab={$TAB_POSITION}&amp;uP_root={@ID}" title="{@name}" class="portal-subnav-link">  <!-- Navigation item link. -->
+                    <span class="portal-subnav-label"><xsl:value-of select="@name"/></span>
+                  </a>
+                </li>
+              </xsl:for-each>
+              
+            </xsl:when>
+            <xsl:otherwise>
+            	
+              <xsl:for-each select="//navigation/tab[@activeTab='true']/tabChannel">
+                <xsl:variable name="SUBNAV_POSITION"> <!-- Determine the position of the navigation option within the whole navigation list and add css hooks for the first and last positions. -->
+                  <xsl:choose>
+                    <xsl:when test="position()=1 and position()=last()">single</xsl:when>
+                    <xsl:when test="position()=1">first</xsl:when>
+                    <xsl:when test="position()=last()">last</xsl:when>
+                    <xsl:otherwise></xsl:otherwise>
+                  </xsl:choose>
+                </xsl:variable>
+                <li id="uPfname_{@fname}" class="portal-subnav {$SUBNAV_POSITION}"> <!-- Each subnavigation menu item.  The unique ID can be used in the CSS to give each menu item a unique icon, color, or presentation. -->
+                  <a href="{$BASE_ACTION_URL}?uP_sparam=activeTab&amp;activeTab={$TAB_POSITION}&amp;uP_root={@ID}" title="{@name}" class="portal-subnav-link">  <!-- Navigation item link. -->
+                    <span class="portal-subnav-label"><xsl:value-of select="@name"/></span>
+                  </a>
+                </li>
+              </xsl:for-each>
+              
+            </xsl:otherwise>
+          </xsl:choose>
         </ul>
     	</div> 
     </div>
     
     <!-- ????? NEED TO PROVIDE A TARGET FOR THE IFRAME TO BE VALID WITH SSL ????? -->
-    <xsl:if test="$USE_FLYOUT_MENUS='true'">  <!-- IE fix. If using flyout menus, render an iframe behind the submenu to ensure the submenu renders on top of all other elements. -->
+    <xsl:if test="$USE_FLYOUT_MENUS='true' and $CONTEXT='flyout'">  <!-- IE fix. If using flyout menus, render an iframe behind the submenu to ensure the submenu renders on top of all other elements. -->
     	<iframe id="navFrame_{@ID}" src="javascript:false;" style="display: none;" class="portal-flyout-iframe" frameborder="0"></iframe>
     </xsl:if>
     
   </xsl:template>
   
+  
+  <!-- ========== TEMPLATE: PREFERENCES EDIT PAGE ========== -->
+  <!-- =================================================== -->
+  <!--
+   | This template renders the tab preferences menu for the active tab when flyout menus are used.
+  -->
   <xsl:template name="preferences.editpage">
       <div id="portalFlyoutNavigation_{@ID}" class="portal-flyout-container" style="display: none;"> <!-- Unique ID is needed for the flyout menus javascript. -->
         

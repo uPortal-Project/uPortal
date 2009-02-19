@@ -28,9 +28,9 @@
     <xsl:variable name="PAGE_COLUMN_CLASS">layout-<xsl:value-of select="$COUNT_PORTLET_COLUMNS"/>-columns</xsl:variable>
     <xsl:variable name="SIDEBAR_CLASS">
       <xsl:choose>
-        <xsl:when test="$USE_SIDEBAR='true' and $AUTHENTICATED='true' and not(//focused)">sidebar</xsl:when>
-        <xsl:when test="$USE_SIDEBAR_GUEST='true' and not($AUTHENTICATED='true')">sidebar</xsl:when>
-        <xsl:when test="$USE_SIDEBAR_FOCUSED='true' and //focused">sidebar</xsl:when>
+        <xsl:when test="$USE_SIDEBAR='true' and $AUTHENTICATED='true' and not(//focused)">sidebar sidebar-<xsl:value-of select="$SIDEBAR_LOCATION" />-<xsl:value-of select="$SIDEBAR_WIDTH" /></xsl:when>
+        <xsl:when test="$USE_SIDEBAR_GUEST='true' and not($AUTHENTICATED='true')">sidebar sidebar-<xsl:value-of select="$SIDEBAR_LOCATION_GUEST" />-<xsl:value-of select="$SIDEBAR_WIDTH_GUEST" /></xsl:when>
+        <xsl:when test="$USE_SIDEBAR_FOCUSED='true' and //focused">sidebar sidebar-<xsl:value-of select="$SIDEBAR_LOCATION_FOCUSED" />-<xsl:value-of select="$SIDEBAR_WIDTH_FOCUSED" /></xsl:when>
         <xsl:otherwise></xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
@@ -67,9 +67,9 @@
         <!-- ****** JAVASCRIPT ****** -->
       </head>
       
-      <body id="portal" class="{$LOGIN_STATE} {$PORTAL_VIEW} {$SIDEBAR_CLASS} {$FLUID_THEME_CLASS}">
-        <div id="portalPage" class="{$PAGE_COLUMN_CLASS} fl-container-flex">  <!-- Main div for presentation/formatting options. -->
-        	<div id="portalPageInner">  <!-- Inner div for additional presentation/formatting options. -->
+      <body id="portal" class="{$FLUID_THEME_CLASS}">
+        <div id="portalPage" class="{$LOGIN_STATE} {$PORTAL_VIEW} fl-container-flex">  <!-- Main div for presentation/formatting options. -->
+        	<div id="portalPageInner" class="{$PAGE_COLUMN_CLASS} {$SIDEBAR_CLASS}">  <!-- Inner div for additional presentation/formatting options. -->
             <xsl:choose>
               <xsl:when test="/layout_fragment"> <!-- When detached. -->
               
@@ -83,6 +83,7 @@
               <xsl:otherwise> <!-- Otherwise, default. -->
 								
                 <xsl:apply-templates select="header"/>
+                <xsl:call-template name="main.navigation"/>
                 <xsl:apply-templates select="content"/>
                 <xsl:apply-templates select="footer"/>
                 <xsl:if test="$USE_FLYOUT_MENUS='true'">
@@ -105,7 +106,7 @@
   <!-- ========== TEMPLATE: PAGE HEADER ========== -->
   <!-- =========================================== -->
   <!-- 
-   | This template renders the page header for the default view.
+   | This template renders the page header.
   -->
   <xsl:template match="header">
     <div id="portalPageHeader" class="fl-container-flex">  <!-- Div for presentation/formatting options. -->
@@ -129,6 +130,18 @@
   </xsl:template>
   <!-- =========================================== -->
   
+	
+  <!-- ========== TEMPLATE: NAVIGATION ========== -->
+  <!-- =========================================== -->
+  <!-- 
+   | This template renders the page navigation.
+  -->
+  <xsl:template name="main.navigation">
+    <!-- ****** MAIN NAVIGATION BLOCK ****** -->
+    <xsl:call-template name="main.navigation.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
+    <!-- ****** MAIN NAVIGATION BLOCK ****** -->
+  </xsl:template>
+  <!-- =========================================== -->
 	
   
   <!-- ========== TEMPLATE: PAGE BODY ========== -->
@@ -323,14 +336,13 @@
   -->
   <xsl:template match="footer">
     <div id="portalPageFooter" class="fl-container-flex">
-    	<!-- ????? THIS CHANNEL IS OBSOLETE WITH THE FOOTER BLOCK IMPLEMENTATION ?????
-      <xsl:copy-of select="channel[@name='Footer']"/>
-      -->
+    	<div id="portalPageFooterInner">
       
-      <!-- ****** FOOTER BLOCK ****** -->
-      <xsl:call-template name="footer.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
-      <!-- ****** FOOTER BLOCK ****** -->
+        <!-- ****** FOOTER BLOCK ****** -->
+        <xsl:call-template name="footer.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
+        <!-- ****** FOOTER BLOCK ****** -->
       
+      </div>
     </div>
   </xsl:template>
   <!-- =========================================== -->
