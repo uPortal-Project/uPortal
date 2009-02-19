@@ -2,31 +2,17 @@
     <echo-ln>Export User: USER_ID=${USER_ID} USER_NAME=${USER_NAME}</echo-ln>
     <append-node node="${attributeNode(script=classpath://org/jasig/portal/io/import-user_v3-0.crn)}"/>
     <append-node node="${attributeNode(username=${req(USER_NAME)})}"/>
-        <!-- default user -->
-        <with-attribute key="USER_ID" value="${USER_DFLT_USR_ID}">
-            <with-attribute key="DEFAULT_USER_NAME" value="${crn(lookup-user_name.crn)}">
-                <if test="${jexl(DEFAULT_USER_NAME != null)}">
-                    <append-node>
-                        <default-user>${DEFAULT_USER_NAME}</default-user>
-                    </append-node>
-                </if>
-            </with-attribute>
+
+    <!-- default user -->
+    <with-attribute key="USER_ID" value="${USER_DFLT_USR_ID}">
+        <with-attribute key="DEFAULT_USER_NAME" value="${crn(lookup-user_name.crn)}">
+            <if test="${jexl(DEFAULT_USER_NAME != null)}">
+                <append-node>
+                    <default-user>${DEFAULT_USER_NAME}</default-user>
+                </append-node>
+            </if>
         </with-attribute>
-        
-        <with-attribute key="SAFE_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${req(USER_NAME)})}">
-            <sql-query>
-                <sql>SELECT COUNT(USER_ID) AS DEFAULT_USER_COUNT FROM UP_USER WHERE USER_DFLT_USR_ID = ?</sql>
-                <parameter value="${USER_ID}"/>
-                <subtasks>
-                    <choose>
-                        <when test="${groovy(DEFAULT_USER_COUNT > 0)}">
-                            <write-document file="${req(EXPORT_DIR)}/user/${req(SAFE_NAME)}.template-user"/>
-                        </when>
-                        <otherwise>
-                            <write-document file="${req(EXPORT_DIR)}/user/${req(SAFE_NAME)}.user"/>
-                        </otherwise>
-                    </choose>
-                </subtasks>
-            </sql-query>
-        </with-attribute>
+    </with-attribute>
+
+    <return value="${Attributes.NODE}"/>        
 </with-attribute>

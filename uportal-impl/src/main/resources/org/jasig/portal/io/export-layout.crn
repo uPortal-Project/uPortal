@@ -145,7 +145,7 @@
             </otherwise>
         </choose>
         <xslt context="${Attributes.ORIGIN}" stylesheet="export-layout.xsl">
-            <if test="${jexl(STRUCTURE_NODE_COUNT gt 0)}">
+            <if test="${jexl(STRUCTURE_NODE_COUNT gt 0 or USER_NAME.equals('system'))}">
                 <!-- if there is a layout load the user pofile(s) -->
                 <sql-query>
                     <sql>
@@ -214,20 +214,9 @@
                     <append-node node="${PREFERENCES}"/>
                 </if>
                 <choose>
-                    <when test="${jexl(STRUCTURE_NODE_COUNT gt 0 or PREFERENCES ne null)}">
+                    <when test="${jexl(STRUCTURE_NODE_COUNT gt 0 or PREFERENCES ne null or Attributes.NODE.selectSingleNode('profile') ne null)}">
                         <echo-ln>Export Layout: USER_ID=${USER_ID} USER_NAME=${USER_NAME}</echo-ln>
-                        <with-attribute key="SAFE_USER_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${req(USER_NAME)})}">
-                            <choose>
-                                <when test="${crn(is-fragment-owner.crn)}">
-                                    <!-- This is a DLM fragment owner layout... -->
-                                    <write-document file="${EXPORT_DIR}/fragment-layout/${SAFE_USER_NAME}.fragment-layout"/>
-                                </when>
-                                <otherwise>
-                                    <!-- This is a normal layout... -->
-                                    <write-document file="${EXPORT_DIR}/layout/${SAFE_USER_NAME}.layout"/>
-                                </otherwise>
-                            </choose>
-                        </with-attribute>
+                        <return value="${Attributes.NODE}"/>
                     </when>
                     <otherwise>
                         <echo-ln>Export Layout: Nothing to export for USER_ID=${USER_ID} USER_NAME=${USER_NAME}: STRUCTURE_NODE_COUNT=${STRUCTURE_NODE_COUNT}, PREFERENCES=${PREFERENCES}</echo-ln>

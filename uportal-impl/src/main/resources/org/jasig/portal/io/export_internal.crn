@@ -7,7 +7,18 @@
             <sql>SELECT user_id, user_name FROM up_user WHERE user_name=?</sql>
             <parameter value="${SYSID}"/>
             <subtasks>
-                <crn location="export-layout.crn"/>
+	            <with-attribute key="SAFE_USER_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${USER_NAME})}">
+	                <choose>
+	                    <when test="${crn(is-fragment-owner.crn)}">
+	                        <!-- This is a DLM fragment owner layout... -->
+	                        <write-document node="${crn(export-layout.crn)}" file="${EXPORT_DIR}/fragment-layout/${SAFE_USER_NAME}.fragment-layout"/>
+	                    </when>
+	                    <otherwise>
+	                        <!-- This is a normal layout... -->
+	                        <write-document node="${crn(export-layout.crn)}" file="${EXPORT_DIR}/layout/${SAFE_USER_NAME}.layout"/>
+	                    </otherwise>
+	                </choose>
+	            </with-attribute>
             </subtasks>
             <empty-result>
                 <echo-ln>No user '${SYSID}' found to export ${ENTITY_TYPE} for.</echo-ln>
@@ -70,7 +81,9 @@
     <!-- channel -->
     <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('channel'))}">
         <with-attribute key="FNAME" value="${SYSID}">
-            <crn location="export-channel.crn"/>
+            <with-attribute key="SAFE_FNAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${FNAME})}">
+                <write-document node="${crn(export-channel.crn)}" file="${EXPORT_DIR}/channel/${SAFE_FNAME}.channel"/>
+            </with-attribute>
         </with-attribute>
     </when>
 
@@ -105,7 +118,9 @@
     <!-- channel-type -->
     <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('channel-type'))}">
         <with-attribute key="NAME" value="${SYSID}">
-            <crn location="export-channel-type.crn"/>
+            <with-attribute key="SAFE_TYPE_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${NAME})}">
+                <write-document node="${crn(export-channel-type.crn)}" file="${req(EXPORT_DIR)}/channel-type/${req(SAFE_TYPE_NAME)}.channel-type"/>
+            </with-attribute>
         </with-attribute>
     </when>
     
@@ -148,7 +163,9 @@
             </sql>
             <parameter value="${SYSID}"/>
             <subtasks>
-                <crn location="export-group.crn"/>
+			    <with-attribute key="SAFE_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${req(GROUP_NAME)}-${req(GROUP_ID)})}">
+			        <write-document node="${crn(export-group.crn)}" file="${req(EXPORT_DIR)}/group/${req(SAFE_NAME)}.group"/>
+			    </with-attribute>
             </subtasks>
             <empty-result>
                 <echo-ln>No group '${SYSID}' found to export ${ENTITY_TYPE} for.</echo-ln>
@@ -199,7 +216,9 @@
             </sql>
             <parameter value="${SYSID}"/>
             <subtasks>
-                <crn location="export-group_membership.crn"/>
+				<with-attribute key="SAFE_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${GROUP_NAME})}">
+					<write-document node="${crn(export-group_membership.crn)}" file="${EXPORT_DIR}/group_membership/${SAFE_NAME}.group_membership" />
+				</with-attribute>
             </subtasks>
             <empty-result>
                 <echo-ln>No group '${SYSID}' found to export ${ENTITY_TYPE} for.</echo-ln>
@@ -245,7 +264,22 @@
             <sql>SELECT user_id, user_name, user_dflt_usr_id FROM up_user WHERE user_name=?</sql>
             <parameter value="${SYSID}"/>
             <subtasks>
-                <crn location="export-user.crn"/>
+				<with-attribute key="SAFE_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${USER_NAME})}">
+				    <sql-query>
+				        <sql>SELECT COUNT(USER_ID) AS DEFAULT_USER_COUNT FROM UP_USER WHERE USER_DFLT_USR_ID = ?</sql>
+				        <parameter value="${USER_ID}"/>
+				        <subtasks>
+				            <choose>
+				                <when test="${groovy(DEFAULT_USER_COUNT > 0)}">
+				                    <write-document node="${crn(export-user.crn)}" file="${EXPORT_DIR}/user/${SAFE_NAME}.template-user"/>
+				                </when>
+				                <otherwise>
+				                    <write-document node="${crn(export-user.crn)}" file="${EXPORT_DIR}/user/${SAFE_NAME}.user"/>
+				                </otherwise>
+				            </choose>
+				        </subtasks>
+				    </sql-query>
+				</with-attribute>
             </subtasks>
             <empty-result>
                 <echo-ln>No user '${SYSID}' found to export ${ENTITY_TYPE} for.</echo-ln>
@@ -291,7 +325,9 @@
     <!-- theme -->
     <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('theme'))}">
         <with-attribute key="NAME" value="${SYSID}">
-            <crn location="export-theme.crn"/>
+            <with-attribute key="SAFE_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${NAME})}">
+                <write-document node="${crn(export-theme.crn)}" file="${EXPORT_DIR}/theme/${SAFE_NAME}.theme"/>
+            </with-attribute>
         </with-attribute>
     </when>
     
@@ -326,7 +362,9 @@
     <!-- structure -->
     <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('structure'))}">
         <with-attribute key="NAME" value="${SYSID}">
-            <crn location="export-structure.crn"/>
+            <with-attribute key="SAFE_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${NAME})}">
+                <write-document node="${crn(export-structure.crn)}" file="${req(EXPORT_DIR)}/structure/${req(SAFE_NAME)}.structure"/>
+            </with-attribute>
         </with-attribute>
     </when>
     
@@ -361,7 +399,9 @@
     <!-- entity-type -->
     <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('entity-type'))}">
         <with-attribute key="NAME" value="${SYSID}">
-            <crn location="export-entity-type.crn"/>
+            <with-attribute key="SAFE_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${NAME})}">
+                <write-document node="${crn(export-entity-type.crn)}" file="${EXPORT_DIR}/entity-type/${SAFE_NAME}.entity-type"/>
+            </with-attribute>
         </with-attribute>
     </when>
     
@@ -396,7 +436,9 @@
     <!-- fragment-definition -->
     <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('fragment-definition'))}">
         <with-attribute key="NAME" value="${SYSID}">
-            <crn location="export-fragment-definition.crn"/>
+            <with-attribute key="SAFE_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${NAME})}">
+                <write-document node="${crn(export-fragment-definition.crn)}" file="${EXPORT_DIR}/fragment-definition/${SAFE_NAME}.fragment-definition"/>
+            </with-attribute>
         </with-attribute>
     </when>
 

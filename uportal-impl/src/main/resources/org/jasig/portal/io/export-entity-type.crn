@@ -23,9 +23,7 @@
                 <with-attribute key="TYPE_ID" value="${valueOf(type-id)}">
                     <delete-node node="${singleNode(type-id)}"/>
                     
-                    <with-attribute key="SAFE_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${req(NAME)})}">
-                        <write-document file="${req(EXPORT_DIR)}/entity-type/${req(SAFE_NAME)}.entity-type"/>
-                    </with-attribute>
+                    <return value="${Attributes.NODE}"/>
                 </with-attribute>
             </otherwise>
         </choose>

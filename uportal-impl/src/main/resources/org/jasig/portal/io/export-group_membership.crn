@@ -47,7 +47,5 @@
         </subtasks>
     </sql-query>
     
-    <with-attribute key="SAFE_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${GROUP_NAME}-${GROUP_ID})}">
-        <write-document file="${EXPORT_DIR}/group_membership/${SAFE_NAME}.group_membership"/>
-    </with-attribute>
+    <return value="${Attributes.NODE}"/>
 </with-attribute>

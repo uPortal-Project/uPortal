@@ -38,10 +38,8 @@
                         </append-node>
                     </subtasks>
                 </sql-query>
-                <with-attribute key="SAFE_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${req(NAME)}-${req(SS_ID)})}">
-                    <delete-node node="${singleNode(struct-id)}"/>
-                    <write-document file="${req(EXPORT_DIR)}/structure/${req(SAFE_NAME)}.structure"/>
-                </with-attribute>
+                <delete-node node="${singleNode(struct-id)}"/>
+                <return value="${Attributes.NODE}"/>
             </otherwise>
         </choose>
     </with-attribute>

@@ -141,10 +141,8 @@
                         </for-each>
                     </if>
                 </with-attribute>
-                <with-attribute key="SAFE_FNAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${req(FNAME)})}">
-                    <delete-node node="${singleNode(chan-id)}"/>
-                    <write-document file="${req(EXPORT_DIR)}/channel/${req(SAFE_FNAME)}.channel"/>
-                </with-attribute>
+                <delete-node node="${singleNode(chan-id)}"/>
+                <return value="${Attributes.NODE}"/>
             </otherwise>
         </choose>
     </with-attribute>
