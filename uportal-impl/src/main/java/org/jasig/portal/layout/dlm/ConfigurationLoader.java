@@ -43,7 +43,7 @@ public abstract class ConfigurationLoader
     /**
      * Load the distributed layout configuration.
      */
-    public static ConfigurationLoader load(RDBMDistributedLayoutStore dlManager) {
+    public static ConfigurationLoader load() {
         
         ConfigurationLoader rslt = null;
         

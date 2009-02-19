@@ -162,7 +162,7 @@ public class RDBMDistributedLayoutStore
         tsdCache = new SmartCache();
         ssdCache = new SmartCache();
 
-        configLoader = ConfigurationLoader.load( this );
+        configLoader = ConfigurationLoader.load();
 
         try
         {
