@@ -19,6 +19,7 @@ package org.jasig.portal.serialize;
 
 
 import java.util.Hashtable;
+import java.util.Map;
 
 
 /**
@@ -99,7 +100,7 @@ public class ElementState
     /**
      * Association between namespace URIs (keys) and prefixes (values).
      */
-    public Hashtable prefixes;
+    public Map<String, String> prefixes;
 
     public boolean inScript;
 

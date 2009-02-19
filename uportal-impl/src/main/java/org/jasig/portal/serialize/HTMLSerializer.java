@@ -32,14 +32,13 @@
 
 package org.jasig.portal.serialize;
 
-import org.apache.xerces.dom.DOMMessageFormatter;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
-import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.Locale;
 
+import org.apache.xerces.dom.DOMMessageFormatter;
 import org.jasig.portal.IAnchoringSerializer;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
@@ -332,13 +331,13 @@ public class HTMLSerializer
                 preserveSpace = true;
 
             if ( addNSAttr ) {
-                Enumeration keys;
+                Iterator<String> keys;
 
-                keys = _prefixes.keys();
-                while ( keys.hasMoreElements() ) {
+                keys = _prefixes.keySet().iterator();
+                while ( keys.hasNext() ) {
                     _printer.printSpace();
-                    value = (String) keys.nextElement();
-                    name = (String) _prefixes.get( value );
+                    value = keys.next();
+                    name = _prefixes.get( value );
                     if ( name.length() == 0 ) {
                         _printer.printText( "xmlns=\"" );
                         printEscaped( value );

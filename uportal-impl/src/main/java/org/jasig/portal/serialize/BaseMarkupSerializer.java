@@ -46,7 +46,8 @@ package org.jasig.portal.serialize;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.xml.transform.Result;
@@ -55,15 +56,13 @@ import org.apache.xerces.dom.DOMErrorImpl;
 import org.apache.xerces.dom.DOMLocatorImpl;
 import org.apache.xerces.dom.DOMMessageFormatter;
 import org.apache.xerces.util.XMLChar;
-import org.apache.xml.serialize.DOMSerializerImpl;
-import org.jasig.portal.IAnchoringSerializer;
 import org.jasig.portal.properties.PropertiesManager;
+import org.w3c.dom.DOMError;
+import org.w3c.dom.DOMErrorHandler;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.DocumentType;
-import org.w3c.dom.DOMError;
-import org.w3c.dom.DOMErrorHandler;
 import org.w3c.dom.Element;
 import org.w3c.dom.Entity;
 import org.w3c.dom.NamedNodeMap;
@@ -73,12 +72,9 @@ import org.w3c.dom.ls.LSException;
 import org.w3c.dom.ls.LSSerializerFilter;
 import org.w3c.dom.traversal.NodeFilter;
 import org.xml.sax.ContentHandler;
-import org.xml.sax.DTDHandler;
 import org.xml.sax.DocumentHandler;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
-import org.xml.sax.ext.DeclHandler;
-import org.xml.sax.ext.LexicalHandler;
 
 /**
  * Base class for a serializer supporting both DOM and SAX pretty
@@ -185,7 +181,7 @@ public abstract class BaseMarkupSerializer
      * Accumulated here prior to starting an element and placing this
      * list in the element state.
      */
-    protected Hashtable     _prefixes;
+    protected Map<String, String>     _prefixes;
 
 
     /**
@@ -821,7 +817,7 @@ public abstract class BaseMarkupSerializer
         throws SAXException
     {
         if ( _prefixes == null )
-            _prefixes = new Hashtable();
+            _prefixes = new HashMap<String, String>();
         _prefixes.put( uri, prefix == null ? "" : prefix );
     }
 
