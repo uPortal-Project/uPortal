@@ -33,7 +33,7 @@
         <ul id="portalNavigationList">
         	<xsl:attribute name="class"> <!-- If rendered in the header, write in the class to format as a floated list to create tabs. -->
           	<xsl:choose>
-            	<xsl:when test="$CONTEXT='header'">horizontal-list-floated</xsl:when>
+            	<xsl:when test="$CONTEXT='header'">fl-tabs</xsl:when>
               <xsl:otherwise></xsl:otherwise>
             </xsl:choose>
           </xsl:attribute>
