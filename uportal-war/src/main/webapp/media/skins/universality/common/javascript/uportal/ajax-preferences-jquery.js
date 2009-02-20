@@ -72,8 +72,6 @@
 		
 		var initializeContentAddingMenu = function() {
 			$("#contentAddingDialog").dialog({height:450, width:500, modal:true});
-			console.log($("#contentAddingDialog").outerHeight());
-			console.log($("#contentAddingDialog").dialog('option', 'height'));
 			$("#contentDialogLink")
 				.unbind('click', initializeContentAddingMenu)
 				.click(function(){$("#contentAddingDialog").dialog('open');});
@@ -136,10 +134,14 @@
 		var getCurrentLayoutString = function() {
 			var str = "";
 			$('#portalPageBodyColumns > [id^=column_]').each(function(){
-				if (str != '')
-					str += '-';
-				str += $(this).get(0).className.match("fl-col-flex[0-9]+")[0].match("[0-9]+")[0];
+				var flClass = $(this).get(0).className.match("fl-col-flex[0-9]+");
+				if (flClass != null) {
+					if (str != '')
+						str += '-';
+					str += flClass[0].match("[0-9]+")[0];
+				}
 			});
+			if (str == '') str = '100';
 			return str;
 		};
 		var updatePage = function(form) {
