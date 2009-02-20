@@ -20,6 +20,7 @@
     <modules>
         <module>BookmarksPortlet</module>
         <module>googleportlet</module>
+        <module>ResourceServingWebapp</module>
         <module>RssPortlet</module>
         <module>pluto-testsuite</module>
         <module>FunctionalTestsPortlet</module>

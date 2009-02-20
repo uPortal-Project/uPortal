@@ -47,6 +47,13 @@
 
         <dependency>
             <groupId>org.jasig.portal.portlets-overlay</groupId>
+            <artifactId>ResourceServingWebapp</artifactId>
+            <version>${pom.parent.version}</version>
+            <type>war</type>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.jasig.portal.portlets-overlay</groupId>
             <artifactId>RssPortlet</artifactId>
             <version>${pom.parent.version}</version>
             <type>war</type>
@@ -147,6 +154,12 @@
                             <artifactId>googleportlet</artifactId>
                             <bundleFileName>googleportlet.war</bundleFileName>
                             <contextRoot>/googleportlet</contextRoot>
+                        </webModule>
+                        <webModule>
+                            <groupId>org.jasig.portal.portlets-overlay</groupId>
+                            <artifactId>ResourceServingWebapp</artifactId>
+                            <bundleFileName>ResourceServingWebapp.war</bundleFileName>
+                            <contextRoot>/ResourceServingWebapp</contextRoot>
                         </webModule>
                         <webModule>
                             <groupId>org.jasig.portal.portlets-overlay</groupId>

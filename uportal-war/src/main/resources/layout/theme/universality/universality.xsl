@@ -94,6 +94,7 @@
   <xsl:variable name="MEDIA_PATH">media/skins/universality</xsl:variable>
   <xsl:variable name="SKIN_PATH" select="concat($MEDIA_PATH,'/',$SKIN)"/>
   <xsl:variable name="SCRIPT_PATH">media/skins/universality/common/javascript</xsl:variable>
+  <xsl:variable name="RESOURCE_PATH">/ResourceServingWebapp/rs</xsl:variable>
   <xsl:variable name="PORTAL_SHORTCUT_ICON">/favicon.ico</xsl:variable>
   
   
@@ -230,10 +231,6 @@
   -->
   <xsl:template name="page.css">
     
-  	<!-- Yahoo! User Interface Library (YUI) CSS to establish a common, cross-browser base rendering.  See http://developer.yahoo.com/yui/ for more details.
-    <link rel="stylesheet" type="text/css" media="screen" href="{$MEDIA_PATH}/common/css/yui/reset-fonts-grids.css"/>
-    <link rel="stylesheet" type="text/css" media="screen" href="{$MEDIA_PATH}/common/css/yui/base-min.css"/> --> 
-    
     <!-- Fluid Skinning System CSS for layout and helpers. See http://wiki.fluidproject.org/x/96M7 for more details. -->
     <link rel="stylesheet" type="text/css" media="screen" href="{$MEDIA_PATH}/common/css/fluid/fluid.fss.min.css"/>
     
@@ -257,12 +254,10 @@
    | NOTE: JavaScript files are minimized (linearized) for performance during the build process and thus these links reference a .min version of the file in the deployed webapp.
   -->
   <xsl:template name="page.js">
-    <xsl:if test="$USE_AJAX='true' or $USE_FLYOUT_MENUS='true'">
-      <script type="text/javascript" src="{$SCRIPT_PATH}/jquery/jquery-1.3.1.min.js"></script>
-    </xsl:if>
+    <script type="text/javascript" src="{$RESOURCE_PATH}/jquery/1.3.1/jquery-1.3.1.min.js"></script>
+    <script type="text/javascript" src="{$RESOURCE_PATH}/jqueryui/1.6rc6/jquery-ui-1.6rc6.min.js"></script>
+    <script type="text/javascript" src="{$SCRIPT_PATH}/fluid/Fluid-reorderer-0.8-r6525-v1.js"></script>
     <xsl:if test="$USE_AJAX='true' and $AUTHENTICATED='true'">
-      <script type="text/javascript" src="{$SCRIPT_PATH}/fluid/Fluid-reorderer-0.8-r6525-v1.js"></script>
-      <script type="text/javascript" src="{$SCRIPT_PATH}/jquery/jquery-ui-portal-1.6rc6-v1.min.js"></script>
       <script type="text/javascript" src="{$SCRIPT_PATH}/uportal/ajax-preferences-jquery.min.js"></script>
       <script type="text/javascript" src="{$SCRIPT_PATH}/uportal/up-channel-browser.min.js"></script>
     </xsl:if>
