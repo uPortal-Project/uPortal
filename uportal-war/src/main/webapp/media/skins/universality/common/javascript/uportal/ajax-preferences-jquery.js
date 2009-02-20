@@ -26,7 +26,7 @@
 		// Initialization tasks for non-focused mode
 		var initportal = function() {
 		
-		    settings.columnCount = $("#portalPageBodyColumns td[id*=column_]").size(); 
+		    settings.columnCount = $("#portalPageBodyColumns [id^=column_]").size(); 
 		    settings.tabId = $("#portalNavigationList li.active").attr("id").split("_")[1];
 		
 			// initialize dialog menus
@@ -135,10 +135,10 @@
 		};
 		var getCurrentLayoutString = function() {
 			var str = "";
-			$('#portalPageBodyColumns > td[id*=column_]').each(function(){
+			$('#portalPageBodyColumns > [id^=column_]').each(function(){
 				if (str != '')
 					str += '-';
-				str += parseInt($(this).attr("width"));
+				str += $(this).get(0).className.match("fl-col-flex[0-9]+")[0].match("[0-9]+")[0];
 			});
 			return str;
 		};
@@ -164,12 +164,12 @@
 		    settings.columnCount = newcolumns.length;
 			$.post(settings.preferencesUrl, {action: 'changeColumns', tabId: settings.tabId, columns: newcolumns}, 
 				function(xml) { 
-				    var columns = $('#portalPageBodyColumns > td[id*=column_]');
+				    var columns = $('#portalPageBodyColumns > [id^=column_]');
 				    if (columns.length < newcolumns.length) {
 				    	$("newColumns > id", xml).each(function(){
 				    		$("#portalPageBodyColumns")
 				    			.append(
-				    				$(document.createElement('td')).attr("id", 'column_' + $(this).text())
+				    				$(document.createElement('div')).attr("id", 'column_' + $(this).text())
 				    					.addClass("portal-page-column")
 				    					.append(
 				    						$(document.createElement('div'))
@@ -192,9 +192,8 @@
 				    }
 				    
 				    $("#portalPageBodyTitleRow").attr("colspan", newcolumns.length);
-				    $('#portalPageBodyColumns > td[id*=column_]').each(function(i){
-				    	$(this).attr("width", newcolumns[i] + "%")
-				    	.removeClass("right").removeClass("left").removeClass("single");
+				    $('#portalPageBodyColumns > [id^=column_]').each(function(i){
+				    	$(this).removeClass().addClass("portal-page-column fl-col-flex"+newcolumns[i]);
 				    	if (newcolumns.length == 1) $(this).addClass("single");
 				    	else if (i == 0) $(this).addClass("left");
 				    	else if (i == newcolumns.length - 1) $(this).addClass("right");
@@ -326,10 +325,7 @@
 		   } else {
 		       target = $(movedNode).parent();
 		   }
-		   var columns = $('#portalPageBodyColumns > td[id*=column_]');
-		   for (var i = 0; i < columns.length; i++) {
-		       $(columns[i]).attr("width", $(columns[i]).attr("width"));
-		   }
+		   var columns = $('#portalPageBodyColumns > [id^=column_]');
 		   $.post(settings.preferencesUrl, {action: 'movePortletHere', method: method, elementID: $(target).attr('id').split('_')[1], sourceID: $(movedNode).attr('id').split('_')[1]}, function(xml) { });
 		};
 		
