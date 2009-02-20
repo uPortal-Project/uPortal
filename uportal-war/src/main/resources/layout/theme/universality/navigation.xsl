@@ -94,6 +94,15 @@
     	<div class="block-inner">
       	<h2 class="block-title"><xsl:value-of select="$TOKEN[@name='PORTLET_NAVIGATION_TITLE']"/></h2>
         <div class="block-content">
+        	<ul>
+          	<li id="portletNavigationLinkHome">
+            	<a href="{$HOME_ACTION_URL}" title="{$TOKEN[@name='HOME_LONG_LABEL']}">
+              	<span>
+                	<xsl:value-of select="$TOKEN[@name='HOME_LABEL']"/>
+                </span>
+              </a>
+            </li>
+          </ul>
           <xsl:for-each select="//navigation/tab">
             <xsl:variable name="TAB_POSITION" select="position()"/>
             <h3><xsl:value-of select="@name"/></h3>

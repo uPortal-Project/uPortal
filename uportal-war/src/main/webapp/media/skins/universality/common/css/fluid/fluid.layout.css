@@ -105,6 +105,7 @@ Layout Helpers
 .fl-col-flex25,
 .fl-col-flex30,
 .fl-col-flex33,
+.fl-col-flex34,
 .fl-col-flex40,
 .fl-col-flex50,
 .fl-col-flex60,
@@ -121,6 +122,7 @@ Layout Helpers
 .fl-col-flex25 {width: 25%;}
 .fl-col-flex30 {width: 30%;}
 .fl-col-flex33 {width: 33%;}
+.fl-col-flex34 {width: 34%;}
 .fl-col-flex40 {width: 40%;}
 .fl-col-flex50 {width: 50%;}
 .fl-col-flex60 {width: 60%;}

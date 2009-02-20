@@ -113,14 +113,14 @@ ul.horizontal-list-inline li {list-style:none; display:inline; padding-left:1em;
 
 
 /** Customization Links **/
-#portalCustomizationLinks {position:absolute; top:0; right:0; text-align:right; margin:0 0 0 250px;}
+/*#portalCustomizationLinks {position:absolute; top:0; right:0; text-align:right; margin:0 0 0 250px;}
 #portalCustomizationLinks h2, 
 #portalCustomizationLinks ul, 
 #portalCustomizationLinks li {display:inline;}
 #portalCustomizationLinks h2 {padding-right:1em;}
 #portalCustomizationLinks ul {margin:0;}
 #portalCustomizationLinks li {padding-right:5px;}
-#portalCustomizationLinks a {padding:2px 5px 2px 20px;}
+#portalCustomizationLinks a {padding:2px 5px 2px 20px;}*/
 
 
 /** quicklinks **/	

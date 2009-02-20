@@ -217,7 +217,14 @@
 .fl-theme-uportal3 .focused #portalPageBodyTitleRow {padding:1em 1em 0 1em;}
 .fl-theme-uportal3 .focused #portalPageBodyTitleRow h1 {font-size:300%;}
 .fl-theme-uportal3 #portalPageBodyBreadcrumb {margin-bottom:0.5em; font-size:90%; color:#ddd;}
-.fl-theme-uportal3 #portalPageBodyBreadcrumb a {color:#ccc;}
+.fl-theme-uportal3 #portalPageBodyBreadcrumb a {color:#999; font-weight:normal;}
+.fl-theme-uportal3 .focused .portal-page-column-inner {padding:0em 2em 2em 2em;}
+/* Columns */
+.fl-theme-uportal3 .portal-page-column-inner {padding-left:1em; padding-bottom:2em; min-height:100px;}
+.fl-theme-uportal3 #portalPageBodyColumns .single .portal-page-column-inner, 
+.fl-theme-uportal3 #portalPageBodyColumns .right .portal-page-column-inner {padding-right:2em;}
+.fl-theme-uportal3 #portalPageBodyColumns .single .portal-page-column-inner, 
+.fl-theme-uportal3 #portalPageBodyColumns .left .portal-page-column-inner {padding-left:2em;}
 
 /* Sidebar */
 .fl-theme-uportal3 #portalSidebar {padding:0; background:#336699 url(images/portlet_corner_bottomleft.png) bottom left no-repeat;}
@@ -230,6 +237,8 @@
 .fl-theme-uportal3 #portalSidebar .block-content {padding-bottom:1em;}
 .fl-theme-uportal3 #portalSidebar .block-content ul,
 .fl-theme-uportal3 #portalSidebar .block-content li {margin:0; list-style-type:none;}
+.fl-theme-uportal3 #portalSidebar .block-content a {display:block; padding:0.5em 1em 0.5em 2.1em; font-weight:normal; background:#e2e8e7 url("../../icons/application.png") 0.5em 0.5em no-repeat; text-decoration:none;}
+.fl-theme-uportal3 #portalSidebar .block-content a:hover {color:#000; background-color:#fff;}
 
 /* Login */
 .fl-theme-uportal3 #portalLogin {padding:1em; background-color:#e2e8e7;}
@@ -238,21 +247,19 @@
 .fl-theme-uportal3 #portalCASLogin p {margin-top:1em;}
 
 /** Customization Links **/
-.fl-theme-uportal3 #portalCustomizationLinks {position:relative; text-align:left; margin:0;}
-.fl-theme-uportal3 #portalCustomizationLinks h2, 
-.fl-theme-uportal3 #portalCustomizationLinks ul, 
-.fl-theme-uportal3 #portalCustomizationLinks li {display:block; margin:0; list-style-type:none;}
-.fl-theme-uportal3 #portalCustomizationLinks h2 {}
-.fl-theme-uportal3 #portalCustomizationLinks ul {}
-.fl-theme-uportal3 #portalCustomizationLinks a {padding:2px 5px 2px 20px;}
 .fl-theme-uportal3 #portalCustomizationLinks .portal-pipe {display:none;}
+.fl-theme-uportal3 #portalCustomizationLinks #portalCustomizationLinksAddContent a {background-image:url(../../icons/application_add.png);}
+.fl-theme-uportal3 #portalCustomizationLinks #portalCustomizationLinksChangeLayout a {background-image:url(../../icons/layout_content.png);}
+.fl-theme-uportal3 #portalCustomizationLinks #portalCustomizationLinksChooseSkin a {background-image:url(../../icons/color_swatch.png);}
+.fl-theme-uportal3 #portalCustomizationLinks #portalCustomizationLinksAddTab a {background-image:url(../../icons/tab_add.png);}
+
+/* Administration Links */
+.fl-theme-uportal3 #portalAdminLinks #portalAdminLinksPortletAdmin a {background-image:url(../../icons/application_cascade.png);}
+.fl-theme-uportal3 #portalAdminLinks #portalAdminLinksCustomize a {background-image:url(../../icons/overlays.png);}
 
 /* Portlet Navigation */
 .fl-theme-uportal3 #portletNavigation {}
 .fl-theme-uportal3 #portletNavigation h3 {margin:0.5em 0 0 0; padding:0.2em 0.5em; color:#666; font-size:90%;}
-.fl-theme-uportal3 #portletNavigation ul, #portletNavigation li {list-style-type:none;}
-.fl-theme-uportal3 #portletNavigation a {font-weight:normal; background:#e2e8e7 url("../../icons/application.png") 0.5em 0.5em no-repeat; text-decoration:none;}
-.fl-theme-uportal3 #portletNavigation a:hover {color:#000; background-color:#fff;}
 
 /* Portlets */
 .fl-theme-uportal3 .dashboard .portlet-container {}
@@ -261,12 +268,13 @@
 .fl-theme-uportal3 .dashboard .portlet-top-inner {height:3px; background:transparent url(images/portlet_corner_topright.png) top right no-repeat;}
 .fl-theme-uportal3 .dashboard .portlet-toolbar  {white-space:nowrap; background:#e5e5e5 url(images/portlet_title_bkd.gif) top right repeat-x;}
 .fl-theme-uportal3 .dashboard .portlet-toolbar a {text-decoration:none; color:#666;}
+.fl-theme-uportal3 .dashboard .portlet-toolbar a:hover {text-decoration:none; color:#000;}
+.fl-theme-uportal3 .dashboard .portlet-toolbar a:hover span {background-color:#dfefff;}
 .fl-theme-uportal3 .dashboard .portlet-toolbar h2 {margin-left:0.5em; padding-left:20px; background:transparent url(../../icons/application.png) 0 3px no-repeat;}
 .fl-theme-uportal3 .dashboard .portlet-content {background-color:#fff; border-left:1px solid #e5e5e5; border-right:1px solid #e5e5e5;}
 .fl-theme-uportal3 .dashboard .portlet-bottom {background:#e5e5e5 url(images/portlet_corner_bottomleft.png) bottom left no-repeat;}
 .fl-theme-uportal3 .dashboard .portlet-bottom-inner {height:3px; background:transparent url(images/portlet_corner_bottomright.png) bottom right no-repeat;}
-/* Focused Portlet */
-.fl-theme-uportal3 .focused .portlet-container {padding:0 2em;}
+.fl-theme-uportal3 .dashboard .portlet-controls .portlet-control {font-size:80%; padding-right:1em;}
 /* Locked Portlet */
 .fl-theme-uportal3 .portal-page-column-inner .locked .portlet-top {display:none;}
 .fl-theme-uportal3 .portal-page-column-inner .locked .portlet-bottom {display:none;}
@@ -277,5 +285,14 @@
 .fl-theme-uportal3 .dashboard .portal-page-column-inner .locked .portlet-content {border:1px solid #999;}
 
 /* Footer */
-.fl-theme-uportal3 #portalPageFooter {padding-top:2em; text-align:center;}
-.fl-theme-uportal3 #portalPageFooterInner {padding:1em; border:1px solid #e5e5e5;}
+.fl-theme-uportal3 #portalPageFooter {padding-top:2em; text-align:center; color:#999;}
+.fl-theme-uportal3 #portalPageFooterInner {padding:1em; border-top:1px solid #e5e5e5; border-bottom:1px solid #e5e5e5;}
+.fl-theme-uportal3 #portalPageFooter #portalProductAndVersion,
+.fl-theme-uportal3 #portalPageFooter #portalCopyright,
+.fl-theme-uportal3 #portalPageFooter #silkIconsAttribution {font-size:80%;}
+.fl-theme-uportal3 #portalPageFooter #portalProductAndVersion a,
+.fl-theme-uportal3 #portalPageFooter #portalCopyright a,
+.fl-theme-uportal3 #portalPageFooter #silkIconsAttribution a {color:#999;}
+.fl-theme-uportal3 #portalPageFooter #portalProductAndVersion a:hover,
+.fl-theme-uportal3 #portalPageFooter #portalCopyright a:hover,
+.fl-theme-uportal3 #portalPageFooter #silkIconsAttribution a:hover {color:#999;}

@@ -189,8 +189,8 @@
   <xsl:param name="SIDEBAR_LOCATION" select="'right'"/> <!-- Sets the location of the sidebar - if used - in the logged in, dashboard view.  Values are 'left' or 'right'. -->
   <xsl:param name="SIDEBAR_LOCATION_FOCUSED" select="'right'"/> <!-- Sets the location of the sidebar - if used - in the focused view.  Values are 'left' or 'right'. -->
   <xsl:param name="SIDEBAR_LOCATION_GUEST" select="'left'"/> <!-- Sets the location of the sidebar - if used - when logged out.  Values are 'left' or 'right'. -->
-  <xsl:param name="SIDEBAR_WIDTH" select="150"/> <!-- Sets the pixel width of the sidebar, if used.  Values are '100', '150', '200', '250', or '300' and represent pixel widths. -->
-  <xsl:param name="SIDEBAR_WIDTH_FOCUSED" select="250"/> <!-- Sets the pixel width of the sidebar when a portlet is focused, if used.  Values are '100', '150', '200', '250', or '300' and represent pixel widths -->
+  <xsl:param name="SIDEBAR_WIDTH" select="200"/> <!-- Sets the pixel width of the sidebar, if used.  Values are '100', '150', '200', '250', or '300' and represent pixel widths. -->
+  <xsl:param name="SIDEBAR_WIDTH_FOCUSED" select="200"/> <!-- Sets the pixel width of the sidebar when a portlet is focused, if used.  Values are '100', '150', '200', '250', or '300' and represent pixel widths -->
   <xsl:param name="SIDEBAR_WIDTH_GUEST" select="250"/> <!-- Sets the pixel width of the sidebar when logged out, if used.  Values are '100', '150', '200', '250', or '300' and represent pixel widths -->
   
   <!-- ============================================ -->
@@ -495,11 +495,12 @@
     <!-- Sitemap Link -->
     
     <!-- Help Link -->
-    <!-- Use the with-param on the last template call in this list to supress output of a portal pipe. -->
-  	<xsl:call-template name="portal.page.bar.link.help">
-    	<xsl:with-param name="POSITION" select="'last'" />
-    </xsl:call-template>
+  	<xsl:call-template name="portal.page.bar.link.help" />
     <!-- Help Link -->
+    
+    <!-- Logout Link -->
+  	<xsl:call-template name="portal.page.bar.link.logout" />
+    <!-- Logout Link -->
   </xsl:template>
   <!-- =================================================================== -->
   
@@ -643,6 +644,10 @@
     <!-- Administration Links -->
     <xsl:call-template name="administration.links"/>
     <!-- Administration Links -->
+    
+    <!-- Fragment Administration -->
+    <xsl:copy-of select="//channel[@fname = 'fragment-admin']"/>
+    <!--<xsl:copy-of select="//channel[@fname = 'fragment-admin-exit']"/>-->
 
     <!-- Quicklinks -->
     <xsl:call-template name="quicklinks"/>

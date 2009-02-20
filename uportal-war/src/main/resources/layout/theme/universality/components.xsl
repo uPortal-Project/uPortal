@@ -340,7 +340,7 @@
    | This template renders the administration links navigation component, a prominent, short list of links to administrative functions.
   -->
   <xsl:template name="administration.links">
-  	<xsl:if test="upAuth:canRender($USER_ID, 'admin.navigation.links') or //channel[@fname = 'fragment-admin']">
+  	<xsl:if test="upAuth:canRender($USER_ID, 'admin.navigation.links')">
       <div id="portalAdminLinks" class="block">
         <div class="block-inner">
           <h2 class="block-title"><xsl:value-of select="$TOKEN[@name='ADMIN_LINKS_LABEL']"/></h2>
@@ -359,8 +359,6 @@
                 </a>
               </li>
             </ul>
-            <xsl:copy-of select="//channel[@fname = 'fragment-admin']"/>
-            <!--<xsl:copy-of select="//channel[@fname = 'fragment-admin-exit']"/>-->
           </div>
         </div>
       </div>
