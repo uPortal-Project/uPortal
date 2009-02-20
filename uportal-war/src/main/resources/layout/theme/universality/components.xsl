@@ -95,32 +95,31 @@
    | This template renders the home link into the portal page bar title.
   -->
   <xsl:template name="portal.page.bar.link.home">
-  	<xsl:param name="POSITION" />
-    <a href="{$HOME_ACTION_URL}" id="portalPageBarHome">
-      <xsl:attribute name="title">
-        <xsl:choose>
-          <xsl:when test="//focused">
-            <xsl:value-of select="$TOKEN[@name='BACK_HOME_LONG_LABEL']"/> <!-- Use the Back to Home label for focused view -->
-          </xsl:when>
-          <xsl:otherwise>
-            <xsl:value-of select="$TOKEN[@name='HOME_LONG_LABEL']"/> <!-- Otherwise, just Home label -->
-          </xsl:otherwise>
-        </xsl:choose>
-      </xsl:attribute>
-      <span>
-        <xsl:choose>
-          <xsl:when test="//focused">
-            <xsl:value-of select="$TOKEN[@name='BACK_HOME_LABEL']"/> <!-- Use the Back to Home label for focused view -->
-          </xsl:when>
-          <xsl:otherwise>
-            <xsl:value-of select="$TOKEN[@name='HOME_LABEL']"/> <!-- Otherwise, just Home label -->
-          </xsl:otherwise>
-        </xsl:choose>
-      </span>
-    </a>
-    <xsl:if test="$POSITION != 'last'">
+  	<span id="portalPageBarHome">
+      <a href="{$HOME_ACTION_URL}">
+        <xsl:attribute name="title">
+          <xsl:choose>
+            <xsl:when test="//focused">
+              <xsl:value-of select="$TOKEN[@name='BACK_HOME_LONG_LABEL']"/> <!-- Use the Back to Home label for focused view -->
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:value-of select="$TOKEN[@name='HOME_LONG_LABEL']"/> <!-- Otherwise, just Home label -->
+            </xsl:otherwise>
+          </xsl:choose>
+        </xsl:attribute>
+        <span>
+          <xsl:choose>
+            <xsl:when test="//focused">
+              <xsl:value-of select="$TOKEN[@name='BACK_HOME_LABEL']"/> <!-- Use the Back to Home label for focused view -->
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:value-of select="$TOKEN[@name='HOME_LABEL']"/> <!-- Otherwise, just Home label -->
+            </xsl:otherwise>
+          </xsl:choose>
+        </span>
+      </a>
       <xsl:call-template name="portal.pipe" />
-    </xsl:if>
+    </span>
   </xsl:template>
   <!-- ========================================================== -->
   
@@ -131,14 +130,13 @@
    | This template renders the admin menu into the portal page bar.
   -->
   <xsl:template name="portal.page.bar.link.admin">
-  	<xsl:param name="POSITION" />
   	<xsl:if test="upAuth:canRender($USER_ID, 'admin.navigation.links')">
-      <a href="{$BASE_ACTION_URL}?uP_fname=admin.navigation.links" id="portalPageBarAdmin" title="{$TOKEN[@name='CHANNEL_MANAGER_LONG_LABEL']}">
-        <span><xsl:value-of select="$TOKEN[@name='CHANNEL_MANAGER_LABEL']"/></span>
-      </a>
-      <xsl:if test="$POSITION != 'last'">
+    	<span id="portalPageBarAdmin">
+        <a href="{$BASE_ACTION_URL}?uP_fname=admin.navigation.links" title="{$TOKEN[@name='CHANNEL_MANAGER_LONG_LABEL']}">
+          <span><xsl:value-of select="$TOKEN[@name='CHANNEL_MANAGER_LABEL']"/></span>
+        </a>
         <xsl:call-template name="portal.pipe" />
-      </xsl:if>
+      </span>
     </xsl:if>
   </xsl:template>
   <!-- ========================================================== -->
@@ -150,14 +148,13 @@
    | This template renders the customize link into the portal page bar.
   -->
   <xsl:template name="portal.page.bar.link.customize">
-  	<xsl:param name="POSITION" />
     <xsl:if test="$AUTHENTICATED='true'">
-    	<a href="{$BASE_ACTION_URL}?uP_fname=portal/userpreferences/dlm" id="portalPageBarCustom" title="{$TOKEN[@name='TURN_ON_PREFERENCES_LONG_LABEL']}">
-      	<span><xsl:value-of select="$TOKEN[@name='TURN_ON_PREFERENCES_LABEL']"/></span>
-      </a>
-      <xsl:if test="$POSITION != 'last'">
+    	<span id="portalPageBarCustom">
+        <a href="{$BASE_ACTION_URL}?uP_fname=portal/userpreferences/dlm" title="{$TOKEN[@name='TURN_ON_PREFERENCES_LONG_LABEL']}">
+          <span><xsl:value-of select="$TOKEN[@name='TURN_ON_PREFERENCES_LABEL']"/></span>
+        </a>
         <xsl:call-template name="portal.pipe" />
-      </xsl:if>
+      </span>
     </xsl:if>
   </xsl:template>
   <!-- ============================================================== -->
@@ -169,14 +166,13 @@
    | This template renders the sitemap link into the portal page bar.
   -->
   <xsl:template name="portal.page.bar.link.sitemap">
-  	<xsl:param name="POSITION" />
     <xsl:if test="$AUTHENTICATED='true'">
-    	<a href="{$BASE_ACTION_URL}?uP_fname=layout-sitemap" id="portalPageBarSitemap" title="{$TOKEN[@name='SITEMAP_LONG_LABEL']}">
-      	<span><xsl:value-of select="$TOKEN[@name='SITEMAP_LABEL']"/></span>
-      </a>
-      <xsl:if test="$POSITION != 'last'">
+    	<span id="portalPageBarSitemap">
+        <a href="{$BASE_ACTION_URL}?uP_fname=layout-sitemap" title="{$TOKEN[@name='SITEMAP_LONG_LABEL']}">
+          <span><xsl:value-of select="$TOKEN[@name='SITEMAP_LABEL']"/></span>
+        </a>
         <xsl:call-template name="portal.pipe" />
-      </xsl:if>
+      </span>
     </xsl:if>
   </xsl:template>
   <!-- ============================================================ -->
@@ -188,13 +184,12 @@
    | This template renders the help link into the portal page bar.
   -->
   <xsl:template name="portal.page.bar.link.help">
-  	<xsl:param name="POSITION" />
-    <a href="{$HELP_URL}" id="portalPageBarHelp" title="{$TOKEN[@name='HELP_LONG_LABEL']}" target="_blank">
-    	<span><xsl:value-of select="$TOKEN[@name='HELP_LABEL']"/></span>
-    </a>
-    <xsl:if test="$POSITION != 'last'">
+  	<span id="portalPageBarHelp">
+      <a href="{$HELP_URL}" title="{$TOKEN[@name='HELP_LONG_LABEL']}" target="_blank">
+        <span><xsl:value-of select="$TOKEN[@name='HELP_LABEL']"/></span>
+      </a>
       <xsl:call-template name="portal.pipe" />
-    </xsl:if>
+    </span>
   </xsl:template>
   <!-- ========================================================= -->
   
@@ -205,14 +200,13 @@
    | This template renders the logout link into the portal page bar.
   -->
   <xsl:template name="portal.page.bar.link.logout">
-  	<xsl:param name="POSITION" />
-    <xsl:if test="$AUTHENTICATED != 'true'">
-      <a href="Logout" id="portalPageBarLogout" title="{$TOKEN[@name='LOGOFF_LONG_LABEL']}" target="_blank">
-        <span><xsl:value-of select="$TOKEN[@name='LOGOFF_LABEL']"/></span>
-      </a>
-      <xsl:if test="$POSITION != 'last'">
+    <xsl:if test="$AUTHENTICATED='true'">
+    	<span id="portalPageBarLogout">
+        <a href="Logout" title="{$TOKEN[@name='LOGOFF_LONG_LABEL']}" target="_blank">
+          <span><xsl:value-of select="$TOKEN[@name='LOGOFF_LABEL']"/></span>
+        </a>
         <xsl:call-template name="portal.pipe" />
-      </xsl:if>
+      </span>
     </xsl:if>
   </xsl:template>
   <!-- ========================================================= -->
@@ -366,7 +360,7 @@
               </li>
             </ul>
             <xsl:copy-of select="//channel[@fname = 'fragment-admin']"/>
-            <xsl:copy-of select="//channel[@fname = 'fragment-admin-exit']"/>
+            <!--<xsl:copy-of select="//channel[@fname = 'fragment-admin-exit']"/>-->
           </div>
         </div>
       </div>
@@ -531,33 +525,37 @@
   -->
   <xsl:template name="customize.links">
       <xsl:if test="$AUTHENTICATED='true' and $USE_AJAX='true' and $AUTHENTICATED"> <!-- Currently, AJAX must be enabled for these links to function. -->
-        <div id="portalCustomizationLinks">
-        	<h2><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINKS_TITLE']"/></h2>
-          <ul>
-            <li id="portalCustomizationLinksAddContent">
-              <a id="contentDialogLink" href="javascript:;" title="{$TOKEN[@name='PREFERENCES_LINK_ADD_CONTENT_LONG_LABEL']}">
-              	<span><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINK_ADD_CONTENT_LABEL']"/></span>
-              </a>
-              <xsl:call-template name="portal.pipe"/>
-            </li>
-            <li id="portalCustomizationLinksChangeLayout">
-              <a id="layoutDialogLink" href="javascript:;" title="{$TOKEN[@name='PREFERENCES_LINK_LAYOUT_LONG_LABEL']}">
-              	<span><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINK_LAYOUT_LABEL']"/></span>
-              </a>
-              <xsl:call-template name="portal.pipe"/>
-            </li>
-            <li id="portalCustomizationLinksChooseSkin">
-              <a id="skinDialogLink" href="javascript:;" title="{$TOKEN[@name='PREFERENCES_LINK_SKINS_LONG_LABEL']}">
-              	<span><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINK_SKINS_LABEL']"/></span>
-              </a>
-              <xsl:call-template name="portal.pipe"/>
-            </li>
-            <li id="portalCustomizationLinksAddTab">
-              <a id="addTabLink" href="javascript:;" title="{$TOKEN[@name='PREFERENCES_LINK_ADD_TAB_LONG_LABEL']}">
-                <span><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINK_ADD_TAB_LABEL']"/></span>
-              </a>
-            </li>
-          </ul>
+        <div id="portalCustomizationLinks" class="block">
+        	<div class="block-inner">
+            <h2 class="block-title"><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINKS_TITLE']"/></h2>
+            <div class="block-content">
+              <ul>
+                <li id="portalCustomizationLinksAddContent">
+                  <a id="contentDialogLink" href="javascript:;" title="{$TOKEN[@name='PREFERENCES_LINK_ADD_CONTENT_LONG_LABEL']}">
+                    <span><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINK_ADD_CONTENT_LABEL']"/></span>
+                  </a>
+                  <xsl:call-template name="portal.pipe"/>
+                </li>
+                <li id="portalCustomizationLinksChangeLayout">
+                  <a id="layoutDialogLink" href="javascript:;" title="{$TOKEN[@name='PREFERENCES_LINK_LAYOUT_LONG_LABEL']}">
+                    <span><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINK_LAYOUT_LABEL']"/></span>
+                  </a>
+                  <xsl:call-template name="portal.pipe"/>
+                </li>
+                <li id="portalCustomizationLinksChooseSkin">
+                  <a id="skinDialogLink" href="javascript:;" title="{$TOKEN[@name='PREFERENCES_LINK_SKINS_LONG_LABEL']}">
+                    <span><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINK_SKINS_LABEL']"/></span>
+                  </a>
+                  <xsl:call-template name="portal.pipe"/>
+                </li>
+                <li id="portalCustomizationLinksAddTab">
+                  <a id="addTabLink" href="javascript:;" title="{$TOKEN[@name='PREFERENCES_LINK_ADD_TAB_LONG_LABEL']}">
+                    <span><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINK_ADD_TAB_LABEL']"/></span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
       </xsl:if>
   </xsl:template>

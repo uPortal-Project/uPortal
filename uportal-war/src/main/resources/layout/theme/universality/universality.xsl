@@ -150,10 +150,10 @@
    | Institution Settings can be used to change intitution-specific parts of the theme.
    | Refer to localization notes above for changing text and labels used in the theme.
   -->
-  <xsl:variable name="HELP_URL">http://www.uportal.org/</xsl:variable>
-  <xsl:variable name="LOGIN_HELP_URL">http://www.uportal.org/</xsl:variable>
+  <xsl:variable name="HELP_URL">http://www.jasig.org/uportal</xsl:variable>
+  <xsl:variable name="LOGIN_HELP_URL">http://www.jasig.org/uportal</xsl:variable>
   <xsl:variable name="CAS_LOGIN_URL">https://login.institution.edu/cas/login?service=https://portal.domain.edu/uPortal/Login</xsl:variable>
-  <xsl:variable name="CAS_NEW_USER_URL">http://www.uportal.org/</xsl:variable>
+  <xsl:variable name="CAS_NEW_USER_URL">http://www.jasig.org/cas</xsl:variable>
   
   <!-- 
    | The INSTITUTION variable can be used to make logical tests and configure the theme on a per skin basis.
@@ -186,7 +186,7 @@
   <xsl:param name="USE_SIDEBAR" select="'true'"/> <!-- Sets the use of a sidebar in the logged in, dashboard view.  This sidebar can contain UI components (navigation, quicklinks, etc.) and custom institution content (blocks), but not portlets.  Values are 'true' or 'false'. -->
   <xsl:param name="USE_SIDEBAR_FOCUSED" select="'true'"/> <!-- Sets the use of a sidebar when a portlet is focused.  Values are 'true' or 'false'. -->
   <xsl:param name="USE_SIDEBAR_GUEST" select="'true'"/> <!-- Sets the use of a sidebar when logged out.  Values are 'true' or 'false'. -->
-  <xsl:param name="SIDEBAR_LOCATION" select="'left'"/> <!-- Sets the location of the sidebar - if used - in the logged in, dashboard view.  Values are 'left' or 'right'. -->
+  <xsl:param name="SIDEBAR_LOCATION" select="'right'"/> <!-- Sets the location of the sidebar - if used - in the logged in, dashboard view.  Values are 'left' or 'right'. -->
   <xsl:param name="SIDEBAR_LOCATION_FOCUSED" select="'right'"/> <!-- Sets the location of the sidebar - if used - in the focused view.  Values are 'left' or 'right'. -->
   <xsl:param name="SIDEBAR_LOCATION_GUEST" select="'left'"/> <!-- Sets the location of the sidebar - if used - when logged out.  Values are 'left' or 'right'. -->
   <xsl:param name="SIDEBAR_WIDTH" select="150"/> <!-- Sets the pixel width of the sidebar, if used.  Values are '100', '150', '200', '250', or '300' and represent pixel widths. -->
@@ -398,10 +398,7 @@
     <!-- Help Link -->
     
     <!-- Logout Link -->
-    <!-- Use the with-param on the last template call in this list to supress output of a portal pipe. -->
-  	<xsl:call-template name="portal.page.bar.link.logout">
-    	<xsl:with-param name="POSITION" select="'last'" />
-    </xsl:call-template>
+  	<xsl:call-template name="portal.page.bar.link.logout" />
     <!-- Logout Link -->
     
   </xsl:template>
@@ -548,6 +545,9 @@
    | Template contents can be any valid XSL or XHTML.
   -->
   <xsl:template name="content.top.block">
+  	<!-- Fragment Administration mode banner and exit link. -->
+    <xsl:copy-of select="//channel[@fname = 'fragment-admin-exit']"/>
+  
   	<!-- SAMPLE:
     <div id="portalContentTopBlock">
     	<p>CUSTOM CONTENTS.</p>
@@ -762,32 +762,32 @@
     <xsl:if test="$INSTITUTION='uportal'">
       <!-- Footer Links -->
       <div id="portalPageFooterLinks">
-        <a href="http://www.ja-sig.org/" target="_blank" title="{$TOKEN[@name='JASIG_LONG_LABEL']}">
+        <a href="http://www.jasig.org/" target="_blank" title="{$TOKEN[@name='JASIG_LONG_LABEL']}">
           <xsl:value-of select="$TOKEN[@name='JASIG_LABEL']"/>
         </a>
         <xsl:call-template name="portal.pipe"/>
-        <a href="http://www.uportal.org/" target="_blank" title="{$TOKEN[@name='UPORTAL_LONG_LABEL']}">
+        <a href="http://www.jasig.org/uportal" target="_blank" title="{$TOKEN[@name='UPORTAL_LONG_LABEL']}">
           <xsl:value-of select="$TOKEN[@name='UPORTAL_LABEL']"/>
         </a>
         <xsl:call-template name="portal.pipe"/>
-        <a href="http://www.uportal.org/download.html" target="_blank" title="{$TOKEN[@name='UPORTAL_DOWNLOAD_LONG_LABEL']}">
+        <a href="http://www.jasig.org/uportal/download" target="_blank" title="{$TOKEN[@name='UPORTAL_DOWNLOAD_LONG_LABEL']}">
           <xsl:value-of select="$TOKEN[@name='UPORTAL_DOWNLOAD_LABEL']"/>
         </a>
         <xsl:call-template name="portal.pipe"/>
-        <a href="http://www.uportal.org/community/index.html" target="_blank" title="{$TOKEN[@name='UPORTAL_COMMUNITY_LONG_LABEL']}">
+        <a href="http://www.jasig.org/uportal/community" target="_blank" title="{$TOKEN[@name='UPORTAL_COMMUNITY_LONG_LABEL']}">
           <xsl:value-of select="$TOKEN[@name='UPORTAL_COMMUNITY_LABEL']"/>
         </a>
       </div>
       
       <!-- uPortal Product Version -->
       <div id="portalProductAndVersion">
-        <p><a href="http://www.uportal.org" title="Powered by ${UP_VERSION}" target="_blank">Powered by <xsl:value-of select="$UP_VERSION"/></a></p>
+        <p><a href="http://www.jasig.org/uportal" title="Powered by ${UP_VERSION}" target="_blank">Powered by <xsl:value-of select="$UP_VERSION"/></a></p>
         <!-- It's a good idea to leave this in the markup, that way anyone who may be supporting your portal can get to this information quickly by simply using a browser.  If you don't want the statement to visibly render in the page, use CSS to make it invisible. -->
       </div>
       
       <!-- Copyright -->
       <div id="portalCopyright">
-        <p><a href="http://www.uportal.org" title="uPortal" target="_blank">uPortal</a> is licensed under the <a href="http://www.opensource.org/licenses/bsd-license.php" title="New BSD License" target="_blank">New BSD License</a> as approved by the Open Source Initiative (OSI), an <a href="http://www.opensource.org/docs/osd" title="OSI-certified" target="_blank">OSI-certified</a> ("open") and <a href="http://www.gnu.org/licenses/license-list.html" title="Gnu/FSF-recognized" target="_blank">Gnu/FSF-recognized</a> ("free") license.</p>
+        <p><a href="http://www.jasig.org/uportal/about/license" title="uPortal" target="_blank">uPortal</a> is licensed under the <a href="http://www.opensource.org/licenses/bsd-license.php" title="New BSD License" target="_blank">New BSD License</a> as approved by the Open Source Initiative (OSI), an <a href="http://www.opensource.org/docs/osd" title="OSI-certified" target="_blank">OSI-certified</a> ("open") and <a href="http://www.gnu.org/licenses/license-list.html" title="Gnu/FSF-recognized" target="_blank">Gnu/FSF-recognized</a> ("free") license.</p>
       </div>
       
       <!-- Icon Set Attribution -->
