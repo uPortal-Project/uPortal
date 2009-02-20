@@ -1,13 +1,25 @@
-<with-attribute key="SS_ID" value="${sql(SELECT ss_id FROM up_ss_theme WHERE ss_name = '${req(NAME)}')}"><!-- WARNING:  might be wrong type (int not string)... -->
+<!--
+ | NOTICE:  This file represents a contractual API that is leveraged by more 
+ | than one caller.  Please do not refactor this file in a way that changes 
+ | the number or nature of arguments expected.
+ |
+ | These are:
+ |   - ${NAME}=the identifier of the entity to delete
+ |   - ${PORTAL_CONTEXT}=uPortal's Spring ApplicationContext
+ |   - ${SqlAttributes.DATA_SOURCE}=the DataSource for the PortalDb
+ |   - ${SqlAttributes.TRANSACTION_MANAGER}=PlatformTransactionManager in use
+ |
+ +-->
+<with-attribute key="SS_ID" value="${sql(SELECT ss_id FROM up_ss_theme WHERE ss_name = '${NAME}')}"><!-- WARNING:  might be wrong type (int not string)... -->
     
     <!-- Purge structure parameters... -->
     <sql-statement sql="DELETE FROM up_ss_theme_parm WHERE ss_id = ?">
-        <parameter value="${req(SS_ID)}"/>
+        <parameter value="${SS_ID}"/>
     </sql-statement>
     
     <!-- Purge from the UP_SS_STRUCT table... -->
     <sql-statement sql="DELETE FROM up_ss_theme WHERE ss_id = ?">
-        <parameter value="${req(SS_ID)}"/>
+        <parameter value="${SS_ID}"/>
     </sql-statement>
     
 </with-attribute>

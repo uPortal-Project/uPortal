@@ -1,23 +1,36 @@
+<!--
+ | NOTICE:  This file represents a contractual API that is leveraged by more 
+ | than one caller.  Please do not refactor this file in a way that changes 
+ | the number or nature of arguments expected.
+ |
+ | These are:
+ |   - ${NAME}=the identifier of the entity to export
+ |   - ${PORTAL_CONTEXT}=uPortal's Spring ApplicationContext
+ |   - ${SqlAttributes.DATA_SOURCE}=the DataSource for the PortalDb
+ |   - ${SqlAttributes.TRANSACTION_MANAGER}=PlatformTransactionManager in use
+ |   - Settings defined in classpath://properties/db/entities/export.properties
+ |
+ +-->
 <with>
     <attribute key="Attributes.NODE">${newDoc(fragment-definition)}</attribute>
     <attribute key="fragmentDefinitionDao">${groovy(PORTAL_CONTEXT.getBean('fragmentDefinitionDao'))}</attribute>
     <subtasks>
-	    <echo-ln>Export Fragment Definition:  NAME=${NAME}</echo-ln>	    
-	    <with-attribute key="fragment" value="${groovy(fragmentDefinitionDao.getFragmentDefinition(NAME))}">
-	        <choose>
-	            <when test="${jexl(fragment == null)}">
-	                <echo-ln>WARNING:  Fragment Definition '${NAME}' does not exist;  no file will be generated.</echo-ln>
-	                <log logger-name="org.jasig.portal.io.export-fragment-definition" level="warn">Fragment Definition '${NAME}' does not exist;  no file will be generated.</log>
-	            </when>
-	            <otherwise>
-			        <append-node node="${attributeNode(script=classpath://org/jasig/portal/io/import-fragment-definition_v3-1.crn)}"/>
-			        <append-node node="${groovy(org.jasig.portal.layout.dlm.FragmentDefinition.NAMESPACE)}"/>
-			        <groovy>
-			            <script>fragment.toElement(Attributes.NODE)</script>
-			        </groovy>
+        <echo-ln>Export Fragment Definition:  NAME=${NAME}</echo-ln>        
+        <with-attribute key="fragment" value="${groovy(fragmentDefinitionDao.getFragmentDefinition(NAME))}">
+            <choose>
+                <when test="${jexl(fragment == null)}">
+                    <echo-ln>WARNING:  Fragment Definition '${NAME}' does not exist;  no file will be generated.</echo-ln>
+                    <log logger-name="org.jasig.portal.io.export-fragment-definition" level="warn">Fragment Definition '${NAME}' does not exist;  no file will be generated.</log>
+                </when>
+                <otherwise>
+                    <append-node node="${attributeNode(script=classpath://org/jasig/portal/io/import-fragment-definition_v3-1.crn)}"/>
+                    <append-node node="${groovy(org.jasig.portal.layout.dlm.FragmentDefinition.NAMESPACE)}"/>
+                    <groovy>
+                        <script>fragment.toElement(Attributes.NODE)</script>
+                    </groovy>
                     <return value="${Attributes.NODE}"/>
-	            </otherwise>
-	        </choose>
-	    </with-attribute>
+                </otherwise>
+            </choose>
+        </with-attribute>
     </subtasks>
 </with>

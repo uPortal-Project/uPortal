@@ -4,7 +4,7 @@
     <!-- layout -->
     <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('layout'))}">
         <sql-query>
-            <sql>SELECT user_id, user_name FROM up_user WHERE user_name=?</sql>
+            <sql>SELECT user_id FROM up_user WHERE user_name = ?</sql>
             <parameter value="${SYSID}"/>
             <subtasks>
 	            <with-attribute key="SAFE_USER_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${USER_NAME})}">
@@ -156,15 +156,12 @@
     <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('group'))}">
         <sql-query>
             <sql>
-                SELECT UPG.*, UPET.ENTITY_TYPE_NAME
-                FROM UP_GROUP UPG
-                    LEFT JOIN UP_ENTITY_TYPE UPET ON UPG.ENTITY_TYPE_ID = UPET.ENTITY_TYPE_ID
-                WHERE UPG.GROUP_NAME = ?
+                SELECT GROUP_ID FROM UP_GROUP WHERE GROUP_NAME = ?
             </sql>
             <parameter value="${SYSID}"/>
             <subtasks>
-			    <with-attribute key="SAFE_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${req(GROUP_NAME)}-${req(GROUP_ID)})}">
-			        <write-document node="${crn(export-group.crn)}" file="${req(EXPORT_DIR)}/group/${req(SAFE_NAME)}.group"/>
+			    <with-attribute key="SAFE_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${GROUP_NAME}-${GROUP_ID})}">
+			        <write-document node="${crn(export-group.crn)}" file="${EXPORT_DIR}/group/${SAFE_NAME}.group"/>
 			    </with-attribute>
             </subtasks>
             <empty-result>

@@ -1,8 +1,20 @@
+<!--
+ | NOTICE:  This file represents a contractual API that is leveraged by more 
+ | than one caller.  Please do not refactor this file in a way that changes 
+ | the number or nature of arguments expected.
+ |
+ | These are:
+ |   - ${NAME}=the identifier of the entity to delete
+ |   - ${PORTAL_CONTEXT}=uPortal's Spring ApplicationContext
+ |   - ${SqlAttributes.DATA_SOURCE}=the DataSource for the PortalDb
+ |   - ${SqlAttributes.TRANSACTION_MANAGER}=PlatformTransactionManager in use
+ |
+ +-->
 <with>
     <attribute key="fragmentDefinitionDao">${groovy(PORTAL_CONTEXT.getBean('fragmentDefinitionDao'))}</attribute>
     <subtasks>
-		<groovy>
-		    <script>
+        <groovy>
+            <script>
                 import org.jasig.portal.layout.dlm.FragmentDefinition; 
                 
                 FragmentDefinition fd = fragmentDefinitionDao.getFragmentDefinition(NAME);
@@ -13,7 +25,7 @@
                 // NB:  Perhaps we should indicate if the specified entity don't 
                 // exist;  I'll leave it this way (for now) b/c the other delete 
                 // operations doen't appear to say anything.
-		    </script>
-		</groovy>
+            </script>
+        </groovy>
     </subtasks>
 </with>

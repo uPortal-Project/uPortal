@@ -1,18 +1,30 @@
-<with-attribute key="USER_ID" value="${sql(SELECT user_id FROM up_user WHERE user_name = '${req(USER_NAME)}')}">
+<!--
+ | NOTICE:  This file represents a contractual API that is leveraged by more 
+ | than one caller.  Please do not refactor this file in a way that changes 
+ | the number or nature of arguments expected.
+ |
+ | These are:
+ |   - ${USER_NAME}=the identifier of the entity to delete
+ |   - ${PORTAL_CONTEXT}=uPortal's Spring ApplicationContext
+ |   - ${SqlAttributes.DATA_SOURCE}=the DataSource for the PortalDb
+ |   - ${SqlAttributes.TRANSACTION_MANAGER}=PlatformTransactionManager in use
+ |
+ +-->
+<with-attribute key="USER_ID" value="${sql(SELECT user_id FROM up_user WHERE user_name = '${USER_NAME}')}">
 
-	<!-- Purge user parameters... -->
-	<sql-statement sql="DELETE FROM up_ss_user_parm WHERE user_id = ?">
-		<parameter value="${req(USER_ID)}"/>
-	</sql-statement>
+    <!-- Purge user parameters... -->
+    <sql-statement sql="DELETE FROM up_ss_user_parm WHERE user_id = ?">
+        <parameter value="${USER_ID}"/>
+    </sql-statement>
 
-	<!-- Purge user profile(s)... -->
-	<sql-statement sql="DELETE FROM up_user_profile WHERE user_id = ?">
-		<parameter value="${req(USER_ID)}"/>
-	</sql-statement>
+    <!-- Purge user profile(s)... -->
+    <sql-statement sql="DELETE FROM up_user_profile WHERE user_id = ?">
+        <parameter value="${USER_ID}"/>
+    </sql-statement>
 
-	<!-- Purge the user... -->
-	<sql-statement sql="DELETE FROM up_user WHERE user_id = ?">
-		<parameter value="${req(USER_ID)}"/>
-	</sql-statement>
+    <!-- Purge the user... -->
+    <sql-statement sql="DELETE FROM up_user WHERE user_id = ?">
+        <parameter value="${USER_ID}"/>
+    </sql-statement>
 
 </with-attribute>

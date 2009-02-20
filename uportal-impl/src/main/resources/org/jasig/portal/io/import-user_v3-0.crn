@@ -1,3 +1,16 @@
+<!--
+ | NOTICE:  This file represents a contractual API that is leveraged by more 
+ | than one caller.  Please do not refactor this file in a way that changes 
+ | the number or nature of arguments expected.
+ |
+ | These are:
+ |   - ${Attributes.NODE}=XML Element that defines the entity to import
+ |   - ${PORTAL_CONTEXT}=uPortal's Spring ApplicationContext
+ |   - ${SqlAttributes.DATA_SOURCE}=the DataSource for the PortalDb
+ |   - ${SqlAttributes.TRANSACTION_MANAGER}=PlatformTransactionManager in use
+ |   - Settings defined in classpath://properties/db/entities/import.properties
+ |
+ +-->
 <with>
     <attribute key="USER_NAME">${valueOf(@username)}</attribute>
     <attribute key="DEFAULT_USER_NAME">${org.jasig.portal.io.DefaultUsernamePhrase(${singleNode(default-user)})}</attribute>

@@ -1,18 +1,38 @@
-<with-attribute key="Attributes.NODE" value="${newDoc(user)}">
-    <echo-ln>Export User: USER_ID=${USER_ID} USER_NAME=${USER_NAME}</echo-ln>
-    <append-node node="${attributeNode(script=classpath://org/jasig/portal/io/import-user_v3-0.crn)}"/>
-    <append-node node="${attributeNode(username=${req(USER_NAME)})}"/>
-
-    <!-- default user -->
-    <with-attribute key="USER_ID" value="${USER_DFLT_USR_ID}">
-        <with-attribute key="DEFAULT_USER_NAME" value="${crn(lookup-user_name.crn)}">
-            <if test="${jexl(DEFAULT_USER_NAME != null)}">
-                <append-node>
-                    <default-user>${DEFAULT_USER_NAME}</default-user>
-                </append-node>
-            </if>
-        </with-attribute>
-    </with-attribute>
-
-    <return value="${Attributes.NODE}"/>        
-</with-attribute>
+<!--
+ | NOTICE:  This file represents a contractual API that is leveraged by more 
+ | than one caller.  Please do not refactor this file in a way that changes 
+ | the number or nature of arguments expected.
+ |
+ | These are:
+ |   - ${USER_NAME}=the identifier of the entity to export
+ |   - ${PORTAL_CONTEXT}=uPortal's Spring ApplicationContext
+ |   - ${SqlAttributes.DATA_SOURCE}=the DataSource for the PortalDb
+ |   - ${SqlAttributes.TRANSACTION_MANAGER}=PlatformTransactionManager in use
+ |   - Settings defined in classpath://properties/db/entities/export.properties
+ |
+ +-->
+<with>
+    <attribute key="Attributes.NODE">${newDoc(user)}</attribute>
+    <subtasks>
+        <append-node node="${attributeNode(script=classpath://org/jasig/portal/io/import-user_v3-0.crn)}"/>
+        <append-node node="${attributeNode(username=${USER_NAME})}"/>
+        <sql-query>
+            <sql>SELECT user_id, user_dflt_usr_id FROM up_user WHERE user_name = ?</sql>
+            <parameter value="${USER_NAME}"/>
+            <subtasks>
+                <echo-ln>Export User: USER_ID=${USER_ID} USER_NAME=${USER_NAME}</echo-ln>
+                <!-- default user -->
+                <with-attribute key="USER_ID" value="${USER_DFLT_USR_ID}">
+                    <with-attribute key="DEFAULT_USER_NAME" value="${crn(lookup-user_name.crn)}">
+                        <if test="${jexl(DEFAULT_USER_NAME != null)}">
+                            <append-node>
+                                <default-user>${DEFAULT_USER_NAME}</default-user>
+                            </append-node>
+                        </if>
+                    </with-attribute>
+                </with-attribute>
+            </subtasks>
+        </sql-query>
+        <return value="${Attributes.NODE}"/>        
+    </subtasks>
+</with>

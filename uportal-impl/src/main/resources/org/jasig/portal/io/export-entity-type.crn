@@ -1,22 +1,35 @@
+<!--
+ | NOTICE:  This file represents a contractual API that is leveraged by more 
+ | than one caller.  Please do not refactor this file in a way that changes 
+ | the number or nature of arguments expected.
+ |
+ | These are:
+ |   - ${NAME}=the identifier of the entity to export
+ |   - ${PORTAL_CONTEXT}=uPortal's Spring ApplicationContext
+ |   - ${SqlAttributes.DATA_SOURCE}=the DataSource for the PortalDb
+ |   - ${SqlAttributes.TRANSACTION_MANAGER}=PlatformTransactionManager in use
+ |   - Settings defined in classpath://properties/db/entities/export.properties
+ |
+ +-->
 <with-attribute key="Attributes.NODE" value="${newDoc(entity-type)}">
-    <echo-ln>Export Entity Type:  NAME=${req(NAME)}</echo-ln>
+    <echo-ln>Export Entity Type:  NAME=${NAME}</echo-ln>
     <append-node node="${attributeNode(script=classpath://org/jasig/portal/io/import-entity-type_v2-6.crn)}"/>
-    <with-attribute key="TYPE_ID" value="${sql(SELECT MAX(entity_type_id) FROM up_entity_type WHERE entity_type_name = '${req(NAME)}')}">
+    <with-attribute key="TYPE_ID" value="${sql(SELECT MAX(entity_type_id) FROM up_entity_type WHERE entity_type_name = '${NAME}')}">
         <choose>
             <when test="${jexl(TYPE_ID == null)}">
-                <echo-ln>WARNING:  Entity type '${req(NAME)}' does not exist;  no entity type file will be generated.</echo-ln>
-                <log logger-name="org.jasig.portal.io.export-entity-type" level="warn">Entity type '${req(NAME)}' does not exist;  no entity type file will be generated.</log>
+                <echo-ln>WARNING:  Entity type '${NAME}' does not exist;  no entity type file will be generated.</echo-ln>
+                <log logger-name="org.jasig.portal.io.export-entity-type" level="warn">Entity type '${NAME}' does not exist;  no entity type file will be generated.</log>
             </when>
             <otherwise>
                 <sql-query>
                     <sql>SELECT * FROM up_entity_type WHERE entity_type_id = ?</sql>
-                    <parameter value="${req(TYPE_ID)}"/>
+                    <parameter value="${TYPE_ID}"/>
                     <subtasks>
                         <!-- Establish basic structure of the document... -->
                         <append-node>
-                            <type-id>${req(ENTITY_TYPE_ID)}</type-id>
-                            <name>${req(ENTITY_TYPE_NAME)}</name>
-                            <desc-name>${req(DESCRIPTIVE_NAME)}</desc-name>
+                            <type-id>${ENTITY_TYPE_ID}</type-id>
+                            <name>${ENTITY_TYPE_NAME}</name>
+                            <desc-name>${DESCRIPTIVE_NAME}</desc-name>
                         </append-node>
                     </subtasks>
                 </sql-query>

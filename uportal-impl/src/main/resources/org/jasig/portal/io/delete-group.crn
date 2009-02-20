@@ -1,24 +1,36 @@
-<with-attribute key="GROUP_ID" value="${sql(SELECT group_id FROM up_group WHERE group_name = '${req(GROUP_NAME)}')}">
+<!--
+ | NOTICE:  This file represents a contractual API that is leveraged by more 
+ | than one caller.  Please do not refactor this file in a way that changes 
+ | the number or nature of arguments expected.
+ |
+ | These are:
+ |   - ${GROUP_NAME}=the identifier of the entity to delete
+ |   - ${PORTAL_CONTEXT}=uPortal's Spring ApplicationContext
+ |   - ${SqlAttributes.DATA_SOURCE}=the DataSource for the PortalDb
+ |   - ${SqlAttributes.TRANSACTION_MANAGER}=PlatformTransactionManager in use
+ |
+ +-->
+<with-attribute key="GROUP_ID" value="${sql(SELECT group_id FROM up_group WHERE group_name = '${GROUP_NAME}')}">
 
-	<!-- Purge memberships... -->
-	<sql-statement sql="DELETE FROM up_group_membership WHERE group_id = ?">
-		<parameter value="${req(GROUP_ID)}"/>
-	</sql-statement>
+    <!-- Purge memberships... -->
+    <sql-statement sql="DELETE FROM up_group_membership WHERE group_id = ?">
+        <parameter value="${GROUP_ID}"/>
+    </sql-statement>
 
-	<!-- Purge permissions where this group is the principal... -->
-	<sql-statement sql="DELETE FROM up_permission WHERE principal_type = ? AND principal_key = ?">
-		<parameter value="${sql(SELECT entity_type_id FROM up_entity_type WHERE entity_type_name = 'org.jasig.portal.groups.IEntityGroup')}"/>
-		<parameter value="local.${req(GROUP_ID)}"/>
-	</sql-statement>
+    <!-- Purge permissions where this group is the principal... -->
+    <sql-statement sql="DELETE FROM up_permission WHERE principal_type = ? AND principal_key = ?">
+        <parameter value="${sql(SELECT entity_type_id FROM up_entity_type WHERE entity_type_name = 'org.jasig.portal.groups.IEntityGroup')}"/>
+        <parameter value="local.${GROUP_ID}"/>
+    </sql-statement>
 
-	<!-- Purge permissions where this group is the target... -->
-	<sql-statement sql="DELETE FROM up_permission WHERE target = ?">
-		<parameter value="local.${req(GROUP_ID)}"/>
-	</sql-statement>
+    <!-- Purge permissions where this group is the target... -->
+    <sql-statement sql="DELETE FROM up_permission WHERE target = ?">
+        <parameter value="local.${GROUP_ID}"/>
+    </sql-statement>
 
-	<!-- Purge the group... -->
-	<sql-statement sql="DELETE FROM up_group WHERE group_id = ?">
-		<parameter value="${req(GROUP_ID)}"/>
-	</sql-statement>
+    <!-- Purge the group... -->
+    <sql-statement sql="DELETE FROM up_group WHERE group_id = ?">
+        <parameter value="${GROUP_ID}"/>
+    </sql-statement>
 
 </with-attribute>

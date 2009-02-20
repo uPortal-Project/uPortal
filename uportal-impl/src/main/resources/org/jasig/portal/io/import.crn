@@ -151,14 +151,13 @@
                         </thread-pool>
         
                         <!-- group_memberships -->
-                        <!-- this is a two pass import -->
                         <thread-pool threads="${req(THREAD_COUNT)}">
                             <file-iterator dir="${$1}" includes="**/*.group_membership">
                                 <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
                                     <concurrent>
                                         <handle-error>
                                             <try>
-                                                <echo-ln>Import Group:  ${Attributes.LOCATION}</echo-ln>
+                                                <echo-ln>Import Group_Membership:  ${Attributes.LOCATION}</echo-ln>
                                                 <with>
                                                     <attribute key="Attributes.NODE">${parseXml(${Attributes.LOCATION})}</attribute>
                                                     <attribute key="IMPORT_ACTION">GROUP</attribute>
@@ -168,8 +167,8 @@
                                                 </with>
                                             </try>
                                             <catch>
-                                                <echo-ln>ERROR Failed to import Group from:  ${Attributes.LOCATION} due to exception: ${Attributes.EXCEPTION}</echo-ln>
-                                                <log logger-name="org.jasig.portal.io.import" level="error" exception="${Attributes.EXCEPTION}">Failed to import Group from:  ${Attributes.LOCATION} due to exception</log>
+                                                <echo-ln>ERROR Failed to import Group_Membership from:  ${Attributes.LOCATION} due to exception: ${Attributes.EXCEPTION}</echo-ln>
+                                                <log logger-name="org.jasig.portal.io.import" level="error" exception="${Attributes.EXCEPTION}">Failed to import Group_Membership from:  ${Attributes.LOCATION} due to exception</log>
                                             </catch>
                                         </handle-error>
                                     </concurrent>
@@ -200,7 +199,7 @@
                                 </if>
                             </file-iterator>
                         </thread-pool>
-        
+
                         <!-- channel-types -->
                         <thread-pool threads="${req(THREAD_COUNT)}">
                             <file-iterator dir="${$1}" includes="**/*.channel-type">

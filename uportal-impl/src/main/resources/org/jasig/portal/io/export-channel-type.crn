@@ -1,24 +1,37 @@
+<!--
+ | NOTICE:  This file represents a contractual API that is leveraged by more 
+ | than one caller.  Please do not refactor this file in a way that changes 
+ | the number or nature of arguments expected.
+ |
+ | These are:
+ |   - ${NAME}=the identifier of the entity to export
+ |   - ${PORTAL_CONTEXT}=uPortal's Spring ApplicationContext
+ |   - ${SqlAttributes.DATA_SOURCE}=the DataSource for the PortalDb
+ |   - ${SqlAttributes.TRANSACTION_MANAGER}=PlatformTransactionManager in use
+ |   - Settings defined in classpath://properties/db/entities/export.properties
+ |
+ +-->
 <with-attribute key="Attributes.NODE" value="${newDoc(channel-type)}">
-    <echo-ln>Export Channel Type:  NAME=${req(NAME)}</echo-ln>
+    <echo-ln>Export Channel Type:  NAME=${NAME}</echo-ln>
     <append-node node="${attributeNode(script=classpath://org/jasig/portal/io/import-channel-type_v2-6.crn)}"/>
-    <with-attribute key="TYPE_ID" value="${sql(SELECT MAX(type_id) FROM up_chan_type WHERE type_name = '${req(NAME)}')}">
+    <with-attribute key="TYPE_ID" value="${sql(SELECT MAX(type_id) FROM up_chan_type WHERE type_name = '${NAME}')}">
         <choose>
             <when test="${jexl(TYPE_ID == null)}">
-                <echo-ln>WARNING:  Channel type '${req(NAME)}' does not exist;  no channel type file will be generated.</echo-ln>
-                <log logger-name="org.jasig.portal.io.export-channel-type" level="warn">Channel type '${req(NAME)}' does not exist;  no channel type file will be generated.</log>
+                <echo-ln>WARNING:  Channel type '${NAME}' does not exist;  no channel type file will be generated.</echo-ln>
+                <log logger-name="org.jasig.portal.io.export-channel-type" level="warn">Channel type '${NAME}' does not exist;  no channel type file will be generated.</log>
             </when>
             <otherwise>
                 <sql-query>
                     <sql>SELECT * FROM up_chan_type WHERE type_id = ?</sql>
-                    <parameter value="${req(TYPE_ID)}"/>
+                    <parameter value="${TYPE_ID}"/>
                     <subtasks>
                         <!-- Establish basic structure of the document... -->
                         <append-node>
-                            <type-id>${req(TYPE_ID)}</type-id>
-                            <name>${req(TYPE_NAME)}</name>
-                            <type>${req(TYPE)}</type>
-                            <desc>${req(TYPE_DESCR)}</desc>
-                            <uri>${req(TYPE_DEF_URI)}</uri>
+                            <type-id>${TYPE_ID}</type-id>
+                            <name>${TYPE_NAME}</name>
+                            <type>${TYPE}</type>
+                            <desc>${TYPE_DESCR}</desc>
+                            <uri>${TYPE_DEF_URI}</uri>
                         </append-node>
                     </subtasks>
                 </sql-query>

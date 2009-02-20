@@ -1,34 +1,46 @@
-<with-attribute key="CHAN_ID" value="${sql(SELECT chan_id FROM up_channel WHERE chan_fname = '${req(FNAME)}')}"><!-- WARNING:  might be wrong type (int not string)... -->
+<!--
+ | NOTICE:  This file represents a contractual API that is leveraged by more 
+ | than one caller.  Please do not refactor this file in a way that changes 
+ | the number or nature of arguments expected.
+ |
+ | These are:
+ |   - ${FNAME}=the identifier of the entity to delete
+ |   - ${PORTAL_CONTEXT}=uPortal's Spring ApplicationContext
+ |   - ${SqlAttributes.DATA_SOURCE}=the DataSource for the PortalDb
+ |   - ${SqlAttributes.TRANSACTION_MANAGER}=PlatformTransactionManager in use
+ |
+ +-->
+<with-attribute key="CHAN_ID" value="${sql(SELECT chan_id FROM up_channel WHERE chan_fname = '${FNAME}')}"><!-- WARNING:  might be wrong type (int not string)... -->
     <choose>
         <when test="${isNull(${CHAN_ID})}">
             <echo-ln>WARNING:  Channel '${FNAME}' does not exist.</echo-ln>
             <log logger-name="org.jasig.portal.io.delete-channel" level="warn">Channel '${FNAME}' does not exist.</log>
         </when>
         <otherwise>
-        	<!-- Purge memberships... -->
-        	<sql-query>
-        		<sql>SELECT upgm.group_id FROM up_group upg, up_group_membership upgm WHERE upg.group_id = upgm.group_id AND upg.entity_type_id = ? AND upgm.member_key = ? AND upgm.member_is_group = 'F' AND upgm.member_service = 'local'</sql>
-        		<parameter value="${sql(SELECT entity_type_id FROM up_entity_type WHERE entity_type_name = 'org.jasig.portal.ChannelDefinition')}"/>
-        		<parameter value="${jexl(CHAN_ID.toString())}"/>
-        		<subtasks>
-        			<sql-statement sql="DELETE FROM up_group_membership WHERE group_id = ? AND member_key = ? AND member_is_group = 'F' AND member_service = 'local'">
-        				<parameter value="${req(GROUP_ID)}"/>
-        				<parameter value="${jexl(CHAN_ID.toString())}"/>
-        			</sql-statement>
-        		</subtasks>
-        	</sql-query>
+            <!-- Purge memberships... -->
+            <sql-query>
+                <sql>SELECT upgm.group_id FROM up_group upg, up_group_membership upgm WHERE upg.group_id = upgm.group_id AND upg.entity_type_id = ? AND upgm.member_key = ? AND upgm.member_is_group = 'F' AND upgm.member_service = 'local'</sql>
+                <parameter value="${sql(SELECT entity_type_id FROM up_entity_type WHERE entity_type_name = 'org.jasig.portal.ChannelDefinition')}"/>
+                <parameter value="${jexl(CHAN_ID.toString())}"/>
+                <subtasks>
+                    <sql-statement sql="DELETE FROM up_group_membership WHERE group_id = ? AND member_key = ? AND member_is_group = 'F' AND member_service = 'local'">
+                        <parameter value="${GROUP_ID}"/>
+                        <parameter value="${jexl(CHAN_ID.toString())}"/>
+                    </sql-statement>
+                </subtasks>
+            </sql-query>
         
-        	<!-- Purge permissions... -->
-        	<sql-statement sql="DELETE FROM up_permission WHERE activity = 'SUBSCRIBE' AND permission_type = 'GRANT' AND target = ?">
-        		<parameter value="CHAN_ID.${req(CHAN_ID)}"/>
-        	</sql-statement>
+            <!-- Purge permissions... -->
+            <sql-statement sql="DELETE FROM up_permission WHERE activity = 'SUBSCRIBE' AND permission_type = 'GRANT' AND target = ?">
+                <parameter value="CHAN_ID.${CHAN_ID}"/>
+            </sql-statement>
         
-        	<!-- Purge channel parameters... -->
-        	<sql-statement sql="DELETE FROM up_channel_param WHERE chan_id = ?">
-        		<parameter value="${req(CHAN_ID)}"/>
-        	</sql-statement>
+            <!-- Purge channel parameters... -->
+            <sql-statement sql="DELETE FROM up_channel_param WHERE chan_id = ?">
+                <parameter value="${CHAN_ID}"/>
+            </sql-statement>
         
-        	<!-- Purge portlet objects... -->
+            <!-- Purge portlet objects... -->
             <invoke-method object="${PORTAL_CONTEXT}" method="getBean" attribute-name="portletDefinitionRegistry">
                 <parameter value="portletDefinitionRegistry" />
                 <subtasks>
@@ -40,10 +52,10 @@
                 </subtasks>
             </invoke-method>
         
-        	<!-- Purge from the UP_CHANNEL table... -->
-        	<sql-statement sql="DELETE FROM up_channel WHERE chan_id = ?">
-        		<parameter value="${req(CHAN_ID)}"/>
-        	</sql-statement>
+            <!-- Purge from the UP_CHANNEL table... -->
+            <sql-statement sql="DELETE FROM up_channel WHERE chan_id = ?">
+                <parameter value="${CHAN_ID}"/>
+            </sql-statement>
         </otherwise>
     </choose>
 </with-attribute>

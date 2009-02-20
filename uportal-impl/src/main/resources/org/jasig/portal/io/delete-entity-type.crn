@@ -1,20 +1,32 @@
+<!--
+ | NOTICE:  This file represents a contractual API that is leveraged by more 
+ | than one caller.  Please do not refactor this file in a way that changes 
+ | the number or nature of arguments expected.
+ |
+ | These are:
+ |   - ${NAME}=the identifier of the entity to delete
+ |   - ${PORTAL_CONTEXT}=uPortal's Spring ApplicationContext
+ |   - ${SqlAttributes.DATA_SOURCE}=the DataSource for the PortalDb
+ |   - ${SqlAttributes.TRANSACTION_MANAGER}=PlatformTransactionManager in use
+ |
+ +-->
 <with-attribute key="TYPE_ID"
-    value="${sql(SELECT entity_type_id FROM up_entity_type WHERE entity_type_name = '${req(NAME)}')}">
+    value="${sql(SELECT entity_type_id FROM up_entity_type WHERE entity_type_name = '${NAME}')}">
     <!-- WARNING:  might be wrong type (int not string)... -->
     
     <sql-query>
         <sql>SELECT count(group_id) FROM up_group WHERE entity_type_id = ?</sql>
-        <parameter value="${req(TYPE_ID)}"/>
+        <parameter value="${TYPE_ID}"/>
         <subtasks>
             <choose>
                 <when test="${jexl(COUNT > 0)}">
                     <echo-ln>ERROR: The following groups reference this entity type:</echo-ln>
-                    <log logger-name="org.jasig.portal.io.delete-entity-type" level="error">Entity type '${req(NAME)}' has dependent groups;  the entity type will not be deleted.</log>
+                    <log logger-name="org.jasig.portal.io.delete-entity-type" level="error">Entity type '${NAME}' has dependent groups;  the entity type will not be deleted.</log>
                     <sql-query>
                         <sql>SELECT group_name FROM up_group WHERE entity_type_id = ?</sql>
-                        <parameter value="${req(TYPE_ID)}"/>
+                        <parameter value="${TYPE_ID}"/>
                         <subtasks>
-                            <echo-ln>${req(GROUP_NAME)}</echo-ln>
+                            <echo-ln>${GROUP_NAME}</echo-ln>
                         </subtasks>
                     </sql-query>
                     <echo-ln>To delete this entity type, you will need to first delete the groups with the above names.</echo-ln>
@@ -22,17 +34,17 @@
                 <otherwise>
                     <sql-query>
                         <sql>SELECT count(owner) FROM up_permission WHERE principal_type = ?</sql>
-                            <parameter value="${req(TYPE_ID)}"/>
+                            <parameter value="${TYPE_ID}"/>
                             <subtasks>
                                 <choose>
                             <when test="${jexl(COUNT > 0)}">
                                 <echo-ln>ERROR: Permissions reference this entity type</echo-ln>
-                                <log logger-name="org.jasig.portal.io.delete-entity-type" level="error">Entity type '${req(NAME)}' has dependent permissions;  the entity type will not be deleted.</log>
+                                <log logger-name="org.jasig.portal.io.delete-entity-type" level="error">Entity type '${NAME}' has dependent permissions;  the entity type will not be deleted.</log>
                             </when>
                             <otherwise>
                                 <!-- Purge from the UP_ENTITY_TYPE table... -->
                                 <sql-statement sql="DELETE FROM up_entity_type WHERE entity_type_id = ?">
-                                    <parameter value="${req(TYPE_ID)}"/>
+                                    <parameter value="${TYPE_ID}"/>
                                 </sql-statement>
                             </otherwise>
                             </choose>
