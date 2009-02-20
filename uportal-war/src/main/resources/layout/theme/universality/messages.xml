@@ -58,6 +58,8 @@
 		<token name="FOCUSED_PORTLET_HELP_LABEL">Help</token>
 		<token name="FOCUSED_PORTLET_HELP_LONG_LABEL">To view the help for this portlet</token>
 		<token name="FOCUS_TAB_LABEL">To view the contents of this tab</token>
+		<!-- Admin Links -->
+		<token name="ADMIN_LINKS_LABEL">Administration</token>
 		<!-- Quick Links -->
 		<token name="QUICKLINKS_LABEL">Quicklinks</token>
 		<!-- Web Search -->
