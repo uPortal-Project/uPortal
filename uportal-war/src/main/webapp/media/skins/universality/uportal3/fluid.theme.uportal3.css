@@ -63,8 +63,8 @@
  */
 .fl-theme-uportal3 :focus,
 .fl-theme-uportal3 .selectable  {
-   /* themed focus indicator */
-   outline: 0.1em solid #f68922;
+   /* themed focus indicator 
+   outline: 0.1em solid #f68922;*/
 }
 
 .fl-theme-uportal3 {color:#000000 !important; background-color:#ffffff !important; border-color:#4070a1;}
@@ -180,6 +180,20 @@
 .fl-theme-uportal3 #portalNavigationSubrow {padding:0.5em 0; text-align:center; background:#336699 url(images/nav_subrow_bkd.gif) top right repeat-x;}
 .fl-theme-uportal3 #portalNavigationSubrow a {padding:0em 1em; text-decoration:none; color:#acc9e6;}
 
+/* Flyout Navigation */
+.fl-theme-uportal3 #portalFlyoutNavigation .portal-flyout-container { background-color: #fff; width: 200px; border-left: 1px solid #336699; border-right: 1px solid #336699; border-bottom: 2px solid #336699; position: absolute; z-index: 10; }
+.fl-theme-uportal3 #portalFlyoutNavigation .portal-flyout-container ul.portal-subnav-list { padding: 0; margin: 0; }
+.fl-theme-uportal3 #portalFlyoutNavigation .portal-flyout-container li { list-style: none; border-bottom: 1px solid #336699; }
+.fl-theme-uportal3 #portalFlyoutNavigation a { display: block; padding: 4px 10px 4px 25px; color: #336699; font-weight: normal; background-color: #e2e8e7; background-position: 5px 3px; background-repeat: no-repeat; background-image: url("../../icons/application.png"); text-decoration: none; }
+.fl-theme-uportal3 #portalFlyoutNavigation a:hover { color: #fff; background-color: #5a95cf; }
+.fl-theme-uportal3 #portalFlyoutNavigation #editPageLink a, .fl-theme-uportal3 #portalFlyoutNavigation #deletePageLink a, .fl-theme-uportal3 #portalFlyoutNavigation #movePageLeftLink a, .fl-theme-uportal3 #portalFlyoutNavigation #movePageRightLink a { background-color: #FFFFCC; }
+.fl-theme-uportal3 #portalFlyoutNavigation #editPageLink a:hover, .fl-theme-uportal3 #portalFlyoutNavigation #deletePageLink a:hover, .fl-theme-uportal3 #portalFlyoutNavigation #movePageLeftLink a:hover, .fl-theme-uportal3 #portalFlyoutNavigation #movePageRightLink a:hover { color: #000; background-color: #FFFF99; }
+.fl-theme-uportal3 #portalFlyoutNavigation #editPageLink a { background-image: url("../../icons/layout_content.png"); }
+.fl-theme-uportal3 #portalFlyoutNavigation #deletePageLink a { background-image: url("../../icons/cross.png"); }
+.fl-theme-uportal3 #portalFlyoutNavigation #movePageLeftLink a { background-image: url("../../icons/arrow_left.png"); }
+.fl-theme-uportal3 #portalFlyoutNavigation #movePageRightLink a { background-image: url("../../icons/arrow_right.png"); }
+.fl-theme-uportal3 #portalFlyoutNavigation .portal-flyout-iframe { position: absolute; z-index: 9; }
+
 /* Body */
 .fl-theme-uportal3 #portalPageBody {}
 .fl-theme-uportal3 #portalPageBodyTitleRow {padding-top:1em;}
@@ -204,6 +218,16 @@
 .fl-theme-uportal3 a#portalCASLoginLink {display:block; padding:0.3em 1em; text-decoration:none; text-align:center; font-weight:bold; color:#fff; background-color:#FF6600; border-top:1px solid #FFCA95; border-left:1px solid #FFCA95; border-bottom:1px solid #884400; border-right:1px solid #884400;}
 .fl-theme-uportal3 .via-cas {color:#FFCC66;}
 .fl-theme-uportal3 #portalCASLogin p {margin-top:1em;}
+
+/** Customization Links **/
+.fl-theme-uportal3 #portalCustomizationLinks {position:relative; text-align:left; margin:0;}
+.fl-theme-uportal3 #portalCustomizationLinks h2, 
+.fl-theme-uportal3 #portalCustomizationLinks ul, 
+.fl-theme-uportal3 #portalCustomizationLinks li {display:block; margin:0; list-style-type:none;}
+.fl-theme-uportal3 #portalCustomizationLinks h2 {}
+.fl-theme-uportal3 #portalCustomizationLinks ul {}
+.fl-theme-uportal3 #portalCustomizationLinks a {padding:2px 5px 2px 20px;}
+.fl-theme-uportal3 #portalCustomizationLinks .portal-pipe {display:none;}
 
 /* Portlet Navigation */
 .fl-theme-uportal3 #portletNavigation {padding:1em;}

@@ -89,12 +89,32 @@
   <!-- ===================================================== -->
   
   
+  <!-- ========== TEMPLATE: PORTAL PAGE BAR LINK PIPE TEST ========== -->
+  <!-- ========================================================== -->
+  <!--
+   | This template is a logical test for determining output of a pipe separator.
+  -->
+  <xsl:template name="portal.page.bar.link.pipe.test">
+			<xsl:param name="POSITION" />
+      <xsl:choose>
+      	<xsl:when test="$POSITION='last'">
+        	<!-- No pipe call. -->
+        </xsl:when>
+        <xsl:otherwise>
+        	<xsl:call-template name="portal.pipe" />
+        </xsl:otherwise>
+      </xsl:choose>
+  </xsl:template>
+  <!-- ========================================================== -->
+  
+  
   <!-- ========== TEMPLATE: PORTAL PAGE BAR LINK HOME ========== -->
   <!-- ========================================================== -->
   <!--
    | This template renders the home link into the portal page bar title.
   -->
   <xsl:template name="portal.page.bar.link.home">
+  	<xsl:param name="POSITION" />
     	<a href="{$HOME_ACTION_URL}" id="portalPageBarHome">
       	<xsl:attribute name="title">
         	<xsl:choose>
@@ -117,7 +137,9 @@
           </xsl:choose>
         </span>
       </a>
-      <xsl:call-template name="portal.pipe"/>
+      <xsl:call-template name="portal.page.bar.link.pipe.test">
+      	<xsl:with-param name="POSITION" />
+      </xsl:call-template>
   </xsl:template>
   <!-- ========================================================== -->
   
@@ -128,12 +150,14 @@
    | This template renders the admin menu into the portal page bar title.
   -->
   <xsl:template name="portal.page.bar.link.admin">
-  	<!-- !!!!! TEST ONLY, THIS NEEDS PROPER ACCESS !!!!! -->
+  	<xsl:param name="POSITION" />
   	<xsl:if test="upAuth:canRender($USER_ID, 'admin.navigation.links')">
       <a href="{$BASE_ACTION_URL}?uP_fname=admin.navigation.links" id="portalPageBarAdmin" title="{$TOKEN[@name='CHANNEL_MANAGER_LONG_LABEL']}">
         <span><xsl:value-of select="$TOKEN[@name='CHANNEL_MANAGER_LABEL']"/></span>
       </a>
-      <xsl:call-template name="portal.pipe"/>
+      <xsl:call-template name="portal.page.bar.link.pipe.test">
+      	<xsl:with-param name="POSITION" />
+      </xsl:call-template>
     </xsl:if>
   </xsl:template>
   <!-- ========================================================== -->
@@ -145,11 +169,14 @@
    | This template renders the customize link into the portal page bar title.
   -->
   <xsl:template name="portal.page.bar.link.customize">
+    <xsl:param name="POSITION" />
     <xsl:if test="$AUTHENTICATED='true'">
     	<a href="{$BASE_ACTION_URL}?uP_fname=portal/userpreferences/dlm" id="portalPageBarCustom" title="{$TOKEN[@name='TURN_ON_PREFERENCES_LONG_LABEL']}">
       	<span><xsl:value-of select="$TOKEN[@name='TURN_ON_PREFERENCES_LABEL']"/></span>
       </a>
-      <xsl:call-template name="portal.pipe"/>
+      <xsl:call-template name="portal.page.bar.link.pipe.test">
+      	<xsl:with-param name="POSITION" />
+      </xsl:call-template>
     </xsl:if>
     <!--<xsl:if test="$AUTHENTICATED='true'">
     	<a href="{$BASE_ACTION_URL}?uP_fname={preferences-chanid}" id="portalPageBarCustom" title="{$TOKEN[@name='TURN_ON_PREFERENCES_LONG_LABEL']}">
@@ -167,11 +194,14 @@
    | This template renders the sitemap link into the portal page bar title.
   -->
   <xsl:template name="portal.page.bar.link.sitemap">
+    <xsl:param name="POSITION" />
     <xsl:if test="$AUTHENTICATED='true'">
     	<a href="{$BASE_ACTION_URL}?uP_fname=layout-sitemap" id="portalPageBarSitemap" title="{$TOKEN[@name='SITEMAP_LONG_LABEL']}">
       	<span><xsl:value-of select="$TOKEN[@name='SITEMAP_LABEL']"/></span>
       </a>
-      <xsl:call-template name="portal.pipe"/>
+      <xsl:call-template name="portal.page.bar.link.pipe.test">
+      	<xsl:with-param name="POSITION" />
+      </xsl:call-template>
     </xsl:if>
   </xsl:template>
   <!-- ============================================================ -->
@@ -183,10 +213,13 @@
    | This template renders the help link into the portal page bar title.
   -->
   <xsl:template name="portal.page.bar.link.help">
+    <xsl:param name="POSITION" />
     <a href="{$HELP_URL}" id="portalPageBarHelp" title="{$TOKEN[@name='HELP_LONG_LABEL']}" target="_blank">
     	<span><xsl:value-of select="$TOKEN[@name='HELP_LABEL']"/></span>
     </a>
-    <xsl:call-template name="portal.pipe"/>
+    <xsl:call-template name="portal.page.bar.link.pipe.test">
+      	<xsl:with-param name="POSITION" />
+      </xsl:call-template>
   </xsl:template>
   <!-- ========================================================= -->
   
