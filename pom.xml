@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.jasig</groupId>
         <artifactId>jasig-parent</artifactId>
-        <version>7</version>
+        <version>10</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -17,28 +17,31 @@
     <name>uPortal</name>
     <description>The root project definition for the uPortal project.</description>
     <version>3.1.0-SNAPSHOT</version>
-
-    <licenses>
-        <license>
-            <name>JA-SIG Collaborative Licence</name>
-            <url>http://www.uportal.org/license.html</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
     
     <distributionManagement>
         <site>
             <id>developer.jasig</id>
-            <url>scp://developer.ja-sig.org/jasig/htdocs/developer/projects/uportal/3.1.0-SNAPSHOT/</url>
+            <url>${jasig-site-dist-base}/uportal/${project.version}</url>
         </site>
     </distributionManagement>
+    
+    <issueManagement>
+        <url>${jasig-issues-base}/UP</url>
+        <system>${jasig-issues-system}</system>
+    </issueManagement>
 
     <repositories>
         <repository>
-            <id>jasig-repository</id>
-            <name>JA-SIG Maven2 Repository</name>
-            <url>http://developer.ja-sig.org/maven2</url>
+            <id>jasig-m2</id>
+            <name>Jasig Maven2 Repository</name>
+            <url>http://developer.jasig.org/repo/content/repositories/m2</url>
         </repository>
+        <repository>
+            <id>jasig-3rd-party</id>
+            <name>Jasig 3rd Party Repository</name>
+            <url>http://developer.jasig.org/repo/content/repositories/3rd-party</url>
+        </repository>
+
         <repository>
             <id>Codehaus Snapshots</id>
             <url>http://snapshots.repository.codehaus.org/</url>
@@ -95,10 +98,6 @@
         <jdbc.version>${hsqldb.version}</jdbc.version>
     
     
-        <!-- POM Configuration Properties -->
-        <issues.projectKey>UP</issues.projectKey>
-        <scm.path>/uPortal/trunk</scm.path>
-        
         <!-- Portlet WAR Dependency Version Properties -->
         <BookmarksPortlet.version>1.0.8</BookmarksPortlet.version>
         <FunctionalTestsPortlet.version>1.0.1</FunctionalTestsPortlet.version>
@@ -113,7 +112,7 @@
         <aspectjweaver.version>1.6.1</aspectjweaver.version>
         <casclient.version>2.2.0-M3</casclient.version>
         <cas-server.version>3.3.1</cas-server.version>
-        <cernunnos.version>1.1.0-M3</cernunnos.version>
+        <cernunnos.version>1.1.0-SNAPSHOT</cernunnos.version>
         <commons-cli.version>1.1</commons-cli.version>
         <commons-codec.version>1.3</commons-codec.version>
         <commons-collections.version>3.2.1</commons-collections.version>
@@ -904,69 +903,4 @@
             </plugin>
         </plugins>
     </reporting>
-    
-    <profiles>
-        <profile>
-            <id>javadoc-uml</id>
-            <reporting>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <configuration>
-                            <source>1.5</source>
-                            <links>
-                                <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
-                                <link>http://java.sun.com/javaee/5/docs/api/</link>
-                                <link>http://portals.apache.org/pluto/multiproject/portlet-api/apidocs/</link>
-                                <link>http://portals.apache.org/pluto/pluto-container/apidocs/</link>
-                                <link>http://portals.apache.org/pluto/pluto-descriptor-api/apidocs/</link>
-                                <link>http://static.springframework.org/spring/docs/2.5.x/api/</link>
-                                <link>http://static.springframework.org/spring-ldap/docs/1.2.0/api/spring-ldap/</link>
-                                <link>http://developer.ja-sig.org/projects/person-directory/apidocs/</link>
-                            </links>
-                            <doclet>gr.spinellis.umlgraph.doclet.UmlGraphDoc</doclet>
-                            <docletArtifact>
-                                <groupId>gr.spinellis</groupId>
-                                <artifactId>UmlGraph</artifactId>
-                                <version>4.6</version>
-                            </docletArtifact>
-                            <additionalparam>
-                                -inferrel -inferdep -quiet -hide java.* -collpackages java.util.* -qualify -postfixpackage -nodefontsize 9 -nodefontpackagesize 7
-                            </additionalparam>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </reporting>
-        </profile>
-        <profile>
-            <id>apache-staging</id>
-            <repositories>
-                <repository>
-                    <releases>
-                        <enabled>true</enabled>
-                    </releases>
-                    <snapshots>
-                        <enabled>false</enabled>
-                    </snapshots>
-                    <id>pluto-staging</id>
-                    <name>Apache Pluto Staging Repository</name>
-                    <url>http://people.apache.org/builds/portals-pluto/m2-staging-repository</url>
-                </repository>
-            </repositories>
-            <pluginRepositories>
-                <pluginRepository>
-                    <releases>
-                        <enabled>true</enabled>
-                    </releases>
-                    <snapshots>
-                        <enabled>false</enabled>
-                    </snapshots>
-                    <id>pluto-staging</id>
-                    <name>Apache Pluto Staging Repository</name>
-                    <url>http://people.apache.org/builds/portals-pluto/m2-staging-repository</url>
-                </pluginRepository>
-            </pluginRepositories>
-        </profile>
-    </profiles>
 </project>
