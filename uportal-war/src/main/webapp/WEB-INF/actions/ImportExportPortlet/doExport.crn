@@ -1,0 +1,134 @@
+<with-attribute key="PORTAL_CONTEXT" value="${groovy(org.jasig.portal.spring.PortalApplicationContextLocator.getApplicationContext())}">
+    <properties location="constants.properties">
+        <with>
+            <attribute key="entityType">${groovy(WebAttributes.REQUEST.getParameter('entityType'))}</attribute>
+            <attribute key="sysid">${groovy(WebAttributes.REQUEST.getParameter('sysid'))}</attribute>
+            <attribute key="SqlAttributes.DATA_SOURCE">${groovy(PORTAL_CONTEXT.getBean('PortalDb'))}</attribute>
+            <attribute key="SqlAttributes.TRANSACTION_MANAGER">${groovy(PORTAL_CONTEXT.getBean('transactionManager'))}</attribute>
+            <subtasks>
+                <groovy>
+                    <script>
+                        WebAttributes.RESPONSE.setRenderParameter('operation', 'export');
+                        WebAttributes.RESPONSE.setRenderParameter('result', 'SUCCESS');
+                        WebAttributes.RESPONSE.setRenderParameter('downloadUrl', WebAttributes.REQUEST.getContextPath() + '/' + 'ImportExportServlet/export');
+                    </script>
+                </groovy>
+                <choose>
+
+                    <!-- layout -->
+                    <when test="${jexl(entityType.equalsIgnoreCase('layout'))}">
+                        <with-attribute key="USER_NAME" value="${sysid}">
+                            <with-attribute key="Attributes.NODE" value="${crn(${groovy(org.jasig.portal.RDBMServices.class.getClassLoader().getResource('/org/jasig/portal/io/export-layout.crn').toExternalForm())})}">
+                                <crn location="setDownloadDocument.crn"/>
+                            </with-attribute>
+                            <groovy>
+                                <script>
+                                    WebAttributes.REQUEST.getPortletSession(true).setAttribute(FILENAME_ATTRIBUTE, USER_NAME + '.layout', javax.portlet.PortletSession.APPLICATION_SCOPE);
+                                </script>
+                            </groovy>
+                        </with-attribute>
+                    </when>
+
+                    <!-- channel -->
+                    <when test="${jexl(entityType.equalsIgnoreCase('channel'))}">
+                        <with-attribute key="FNAME" value="${sysid}">
+                            <with-attribute key="Attributes.NODE" value="${crn(${groovy(org.jasig.portal.RDBMServices.class.getClassLoader().getResource('/org/jasig/portal/io/export-channel.crn').toExternalForm())})}">
+                                <crn location="setDownloadDocument.crn"/>
+                                <groovy>
+                                    <script>
+                                        WebAttributes.REQUEST.getPortletSession(true).setAttribute(FILENAME_ATTRIBUTE, FNAME.replaceAll('[^a-zA-Z0-9]', '_') + '.channel', javax.portlet.PortletSession.APPLICATION_SCOPE);
+                                    </script>
+                                </groovy>
+                            </with-attribute>
+                        </with-attribute>
+                    </when>
+
+                    <!-- channel-type -->
+                    <when test="${jexl(entityType.equalsIgnoreCase('channel-type'))}">
+                        <with-attribute key="NAME" value="${sysid}">
+                            <with-attribute key="Attributes.NODE" value="${crn(${groovy(org.jasig.portal.RDBMServices.class.getClassLoader().getResource('/org/jasig/portal/io/export-channel-type.crn').toExternalForm())})}">
+                                <crn location="setDownloadDocument.crn"/>
+                                <groovy>
+                                    <script>
+                                        WebAttributes.REQUEST.getPortletSession(true).setAttribute(FILENAME_ATTRIBUTE, NAME.replaceAll('[^a-zA-Z0-9]', '_') + '.channel-type', javax.portlet.PortletSession.APPLICATION_SCOPE);
+                                    </script>
+                                </groovy>
+                            </with-attribute>
+                        </with-attribute>
+                    </when>
+
+                    <!-- group -->
+                    <when test="${jexl(entityType.equalsIgnoreCase('group'))}">
+                        <with-attribute key="GROUP_NAME" value="${sysid}">
+                            <with-attribute key="Attributes.NODE" value="${crn(${groovy(org.jasig.portal.RDBMServices.class.getClassLoader().getResource('/org/jasig/portal/io/export-group.crn').toExternalForm())})}">
+                                <crn location="setDownloadDocument.crn"/>
+                                <groovy>
+                                    <script>
+                                        WebAttributes.REQUEST.getPortletSession(true).setAttribute(FILENAME_ATTRIBUTE, GROUP_NAME.replaceAll('[^a-zA-Z0-9]', '_') + '.group', javax.portlet.PortletSession.APPLICATION_SCOPE);
+                                    </script>
+                                </groovy>
+                            </with-attribute>
+                        </with-attribute>
+                    </when>
+
+                    <!-- user -->
+                    <when test="${jexl(entityType.equalsIgnoreCase('user'))}">
+                        <with-attribute key="USER_NAME" value="${sysid}">
+                            <with-attribute key="Attributes.NODE" value="${crn(${groovy(org.jasig.portal.RDBMServices.class.getClassLoader().getResource('/org/jasig/portal/io/export-user.crn').toExternalForm())})}">
+                                <crn location="setDownloadDocument.crn"/>
+                                <groovy>
+                                    <script>
+                                        WebAttributes.REQUEST.getPortletSession(true).setAttribute(FILENAME_ATTRIBUTE, USER_NAME + '.user', javax.portlet.PortletSession.APPLICATION_SCOPE);
+                                    </script>
+                                </groovy>
+                            </with-attribute>
+                        </with-attribute>
+                    </when>
+
+                    <!-- theme -->
+                    <when test="${jexl(entityType.equalsIgnoreCase('theme'))}">
+                        <with-attribute key="NAME" value="${sysid}">
+                            <with-attribute key="Attributes.NODE" value="${crn(${groovy(org.jasig.portal.RDBMServices.class.getClassLoader().getResource('/org/jasig/portal/io/export-theme.crn').toExternalForm())})}">
+                                <crn location="setDownloadDocument.crn"/>
+                                <groovy>
+                                    <script>
+                                        WebAttributes.REQUEST.getPortletSession(true).setAttribute(FILENAME_ATTRIBUTE, NAME.replaceAll('[^a-zA-Z0-9]', '_') + '.theme', javax.portlet.PortletSession.APPLICATION_SCOPE);
+                                    </script>
+                                </groovy>
+                            </with-attribute>
+                        </with-attribute>
+                    </when>
+
+                    <!-- structure -->
+                    <when test="${jexl(entityType.equalsIgnoreCase('structure'))}">
+                        <with-attribute key="NAME" value="${sysid}">
+                            <with-attribute key="Attributes.NODE" value="${crn(${groovy(org.jasig.portal.RDBMServices.class.getClassLoader().getResource('/org/jasig/portal/io/export-structure.crn').toExternalForm())})}">
+                                <crn location="setDownloadDocument.crn"/>
+                                <groovy>
+                                    <script>
+                                        WebAttributes.REQUEST.getPortletSession(true).setAttribute(FILENAME_ATTRIBUTE, NAME.replaceAll('[^a-zA-Z0-9]', '_') + '.structure', javax.portlet.PortletSession.APPLICATION_SCOPE);
+                                    </script>
+                                </groovy>
+                            </with-attribute>
+                        </with-attribute>
+                    </when>
+
+                    <!-- entity-type -->
+                    <when test="${jexl(entityType.equalsIgnoreCase('entity-type'))}">
+                        <with-attribute key="NAME" value="${sysid}">
+                            <with-attribute key="Attributes.NODE" value="${crn(${groovy(org.jasig.portal.RDBMServices.class.getClassLoader().getResource('/org/jasig/portal/io/export-entity-type.crn').toExternalForm())})}">
+                                <crn location="setDownloadDocument.crn"/>
+                                <groovy>
+                                    <script>
+                                        WebAttributes.REQUEST.getPortletSession(true).setAttribute(FILENAME_ATTRIBUTE, NAME.replaceAll('[^a-zA-Z0-9]', '_') + '.entity-type', javax.portlet.PortletSession.APPLICATION_SCOPE);
+                                    </script>
+                                </groovy>
+                            </with-attribute>
+                        </with-attribute>
+                    </when>
+
+                </choose>
+            </subtasks>
+        </with>
+    </properties>
+</with-attribute>

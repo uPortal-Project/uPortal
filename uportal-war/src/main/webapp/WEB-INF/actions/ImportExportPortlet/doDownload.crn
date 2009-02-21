@@ -1,0 +1,14 @@
+<properties location="constants.properties">
+    
+    <download source="${groovy(WebAttributes.REQUEST.getSession(true).getAttribute(DOCUMENT_ATTRIBUTE))}" 
+              to-file="${groovy(WebAttributes.REQUEST.getSession(true).getAttribute(FILENAME_ATTRIBUTE))}"/>
+
+    <groovy>
+        <script>
+            javax.servlet.http.HttpSession session = WebAttributes.REQUEST.getSession(true);
+            session.removeAttribute(DOCUMENT_ATTRIBUTE);
+            session.removeAttribute(FILENAME_ATTRIBUTE);
+        </script>
+    </groovy>
+        
+</properties>

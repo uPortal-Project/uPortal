@@ -1,0 +1,6 @@
+<with>
+    <attribute key="supportedTypes">${groovy(WebAttributes.REQUEST.getPreferences().getValue('allowableExportTypes', null).split(','))}</attribute>
+    <subtasks>
+        <request-dispatcher resource="/WEB-INF/jsp/ImportExportPortlet/export.jsp"/>
+    </subtasks>
+</with>

@@ -24,6 +24,7 @@
         <channel unremovable="" immutable="" hidden="" fname="IdentitySwapper"/>
         <channel unremovable="" immutable="" hidden="" fname="permissionsmanager"/>
         <channel unremovable="" immutable="" hidden="" fname="passwordmgr"/>
+        <channel unremovable="" immutable="" hidden="" fname="ImportExportPortlet"/>
       </column>
     </tab>
     <tab unremovable="N" immutable="N" hidden="N" name="Development">

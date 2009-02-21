@@ -1,0 +1,9 @@
+<with>
+    <attribute key="operation">${groovy(WebAttributes.REQUEST.getParameter('operation'))}</attribute>
+    <attribute key="result">${groovy(WebAttributes.REQUEST.getParameter('result'))}</attribute>
+    <attribute key="message">${groovy(WebAttributes.REQUEST.getParameter('message'))}</attribute>
+    <attribute key="downloadUrl">${groovy(WebAttributes.REQUEST.getParameter('downloadUrl'))}</attribute>
+    <subtasks>
+        <request-dispatcher resource="/WEB-INF/jsp/ImportExportPortlet/status.jsp"/>
+    </subtasks>
+</with>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<!--
+ | Contains the bean definitions and relationships that are avalable
+ | to the spring WebApplicationContext
+ +-->
+<beans>
+
+    <bean id="settings" class="java.util.HashMap">
+        <constructor-arg>
+            <map>
+                <entry key="CernunnosPortlet.ACTION_PREFIX"><value>/WEB-INF/actions/ImportExportPortlet/</value></entry>
+                <entry key="CernunnosPortlet.VIEW_PREFIX"><value>/WEB-INF/views/ImportExportPortlet/</value></entry>
+                <entry key="CernunnosPortlet.DEFAULT_VIEW"><value>import</value></entry>
+            </map>
+        </constructor-arg>
+    </bean>
+
+    <!--
+     | Use a bean with id of 'settings' to configure CernunnosPortlet properties.
+     +-->
+    <!-- Example 'settings' bean shown below (no need to specify)...
+    <bean id="settings" class="java.util.HashMap">
+        <constructor-arg>
+            <map>
+                <entry key="CernunnosPortlet.ACTION_PARAMETER"><value>action</value></entry>
+                <entry key="CernunnosPortlet.ACTION_PREFIX"><value>/WEB-INF/actions/</value></entry>
+                <entry key="CernunnosPortlet.ACTION_SUFFIX"><value>.crn</value></entry>
+                <entry key="CernunnosPortlet.VIEW_PARAMETER"><value>view</value></entry>
+                <entry key="CernunnosPortlet.VIEW_PREFIX"><value>/WEB-INF/views/</value></entry>
+                <entry key="CernunnosPortlet.VIEW_SUFFIX"><value>.crn</value></entry>
+                <entry key="CernunnosPortlet.DEFAULT_VIEW"><value>index</value></entry>
+            </map>
+        </constructor-arg>
+    </bean>
+    -->
+
+    <!--
+     | Use a bean with id of 'requestAttributes' to pre-load the Cernunnos context for every Task invocation.
+     +-->
+    <!-- This example illustrates how you can provide a javax.sql.DataSource to your scripts...
+    <bean id="requestAttributes" class="java.util.HashMap">
+        <constructor-arg>
+            <map>
+                <entry key="SqlAttributes.DATA_SOURCE"><ref bean="dataSource"/></entry>
+            </map>
+        </constructor-arg>
+    </bean>
+
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName"><value>@jdbc.portal.driver@</value></property>
+        <property name="url"><value>@jdbc.portal.url@</value></property>
+        <property name="username"><value>@jdbc.portal.username@</value></property>
+        <property name="password"><value>@jdbc.portal.password@</value></property>
+    </bean>
+    -->
+
+</beans>

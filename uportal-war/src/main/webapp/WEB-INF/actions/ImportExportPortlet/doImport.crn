@@ -1,0 +1,59 @@
+<properties location="classpath://properties/db/entities/import.properties">
+	<with>
+	    <attribute key="supportedTypes">${groovy(Arrays.asList(WebAttributes.REQUEST.getPreferences().getValue('allowableImportTypes', null).split(',')))}</attribute>
+        <attribute key="PORTAL_CONTEXT">${groovy(org.jasig.portal.spring.PortalApplicationContextLocator.getApplicationContext())}</attribute>
+	    <subtasks>
+            <with>
+                <attribute key="SqlAttributes.DATA_SOURCE">${groovy(PORTAL_CONTEXT.getBean('PortalDb'))}</attribute>
+                <attribute key="SqlAttributes.TRANSACTION_MANAGER">${groovy(PORTAL_CONTEXT.getBean('transactionManager'))}</attribute>
+                <subtasks>
+			        <groovy>
+			            <script>
+			                InputStream inpt = (InputStream) entityFile;
+			                org.dom4j.Document doc = new org.dom4j.io.SAXReader().read(inpt);
+			                ScriptAttributes.RESPONSE.setAttribute('Attributes.NODE', doc.getRootElement());
+			
+			                WebAttributes.RESPONSE.setRenderParameter('operation', 'import');
+			                WebAttributes.RESPONSE.setRenderParameter('result', 'SUCCESS'); // Assume until we know otherwise
+			            </script>
+			            <subtasks>
+			                <choose>
+			                    <when test="${groovy(supportedTypes.contains(Attributes.NODE.getName()))}">
+			                        <with-attribute key="crnLocation" value="${valueOf(@script)}">
+			                            <choose>
+			                                <when test="${groovy(crnLocation.startsWith('classpath:'))}">
+			                                    <!-- 
+			                                     | We currently have no way to support the classpath: 
+			                                     | protocol in a webapp.  We need to make some 
+			                                     | evasive maneuvers.  Change the string so it 
+			                                     | starts with a single slash, then feed through 
+			                                     | ClassLoader.getResource().
+			                                     |
+			                                     | Normal form of the script attribute:
+			                                     |   classpath://org/jasig/portal/io/import-channel_v2-6.crn
+			                                     +-->
+			                                     <crn location="${groovy(org.jasig.portal.RDBMServices.class.getClassLoader().getResource(crnLocation.substring('classpath:/'.length())).toExternalForm())}"/>
+			                                </when>
+			                                <otherwise>
+			                                    <!-- There's no issue... -->
+			                                    <crn location="${crnLocation}"/>
+			                                </otherwise>
+			                            </choose>
+			                        </with-attribute>
+			                    </when>
+			                    <otherwise>
+			                        <groovy>
+			                            <script>
+			                                WebAttributes.RESPONSE.setRenderParameter('result', 'FAILURE');
+			                                WebAttributes.RESPONSE.setRenderParameter('message', 'The specified type is not supported:  ' + Attributes.NODE.getName());
+			                            </script>
+			                        </groovy>
+			                    </otherwise>
+			                </choose>
+			            </subtasks>
+			        </groovy>
+    	        </subtasks>
+	        </with>
+	    </subtasks>
+	</with>
+</properties>

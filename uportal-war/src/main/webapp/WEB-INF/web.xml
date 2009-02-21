@@ -227,6 +227,15 @@
         <load-on-startup>0</load-on-startup>
     </servlet>
 
+    <servlet>
+        <servlet-name>ImportExportServlet</servlet-name>
+        <servlet-class>org.danann.cernunnos.runtime.web.CernunnosServlet</servlet-class>
+        <init-param>
+            <param-name>scriptLocation</param-name>
+            <param-value>ImportExportPortlet/doDownload</param-value>
+        </init-param>
+    </servlet>
+
     <!-- [INSERT JSPC FRAGMENT HERE] -->
 
     <servlet-mapping>
@@ -288,6 +297,11 @@
     <servlet-mapping>
         <servlet-name>UpdatePreferencesServlet</servlet-name>
         <url-pattern>/ajax/preferences</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ImportExportServlet</servlet-name>
+        <url-pattern>/ImportExportServlet/*</url-pattern>
     </servlet-mapping>
 
     <mime-mapping>

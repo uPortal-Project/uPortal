@@ -90,4 +90,71 @@
         </portlet-preferences> 
     </portlet>
 
+    <portlet> 
+        <portlet-name>ImportExportPortlet</portlet-name>  
+        <portlet-class>org.danann.cernunnos.runtime.web.CernunnosPortlet</portlet-class>  
+        <init-param>
+            <name>contextConfigLocation</name>
+            <value>/WEB-INF/classes/properties/contexts/portlet/ImportExportPortlet-portlet.xml</value>
+        </init-param>
+        <expiration-cache>-1</expiration-cache>
+        <supports> 
+            <mime-type>text/html</mime-type>  
+            <portlet-mode>view</portlet-mode> 
+        </supports>  
+        <portlet-info> 
+            <title>ImportExportPortlet</title> 
+        </portlet-info> 
+        <portlet-preferences> 
+            <preference> 
+                <name>allowableImportTypes</name>  
+                <!-- 
+                 | NOTES:  
+                 |   - 'batch' is not currently supported for import
+                 |   - 'group_membership' is not currently supported for import (2-phase import is not compatible)
+                 |   - specify 'channel-definition' instead of 'channel' because the element name is what counts on import
+                 +-->
+                <value>entity-type,structure,theme,user,group,channel-type,channel-definition,membership,permission,permission-set,layout,fragment-definition</value>
+            </preference> 
+            <preference> 
+                <name>allowableExportTypes</name>  
+                <!-- 
+                 | NB:  the following types are not currently supported for export: 
+                 |   - all
+                 |   - all-layouts
+                 |   - all-permissions
+                 |   - all-memberships
+                 |   - all-channels
+                 |   - all-channel-types
+                 |   - all-groups
+                 |   - all-users
+                 |   - all-themes
+                 |   - all-structures
+                 |   - all-entity-types
+                 |   - group_membership
+                 +-->
+                <value>layout,channel,channel-type,group,user,theme,structure,entity-type,fragment-definition</value>
+            </preference> 
+            <preference> 
+                <name>allowableDeleteTypes</name>  
+                <!-- 
+                 | NB:  although all current types are supported for delete, it 
+                 | seems more prudent to disable all of them by default.
+                 |
+                 | Supported Types (use caution):
+                 |   - entity-type
+                 |   - channel
+                 |   - channel-type
+                 |   - group
+                 |   - layout
+                 |   - structure
+                 |   - theme
+                 |   - user
+                 |   - fragment-definition
+                 +-->
+                <value></value>
+            </preference> 
+        </portlet-preferences> 
+    </portlet> 
+
 </portlet-app>

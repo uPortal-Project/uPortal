@@ -1,0 +1,96 @@
+<with>
+    <attribute key="entityType">${groovy(WebAttributes.REQUEST.getParameter('entityType'))}</attribute>
+    <attribute key="sysid">${groovy(WebAttributes.REQUEST.getParameter('sysid'))}</attribute>
+    <attribute key="SqlAttributes.DATA_SOURCE">${groovy(org.jasig.portal.RDBMServices.getDataSource())}</attribute>
+    <subtasks>
+    
+        <groovy>
+            <script>
+                WebAttributes.RESPONSE.setRenderParameter('operation', 'delete');
+                WebAttributes.RESPONSE.setRenderParameter('result', 'SUCCESS');
+            </script>
+        </groovy>
+    
+        <sql-transaction>
+
+            <choose>
+
+                <!-- layouts -->
+                <when test="${jexl(entityType.equalsIgnoreCase('layout'))}">
+                    <with-attribute key="USER_NAME" value="${sysid}">
+                        <log>ImportExportPortlet deleting layout for user:  ${USER_NAME}</log>
+                        <crn location="${groovy(org.jasig.portal.RDBMServices.class.getClassLoader().getResource('/org/jasig/portal/io/delete-layout.crn').toExternalForm())}"/>
+                    </with-attribute>
+                </when>
+
+                <!--
+                 | NB:  permissions and memberships records cannot be deleted directly.
+                 | They will be removed, where appropriate, whenever an entity that they
+                 | reference is deleted.
+                 +-->
+
+                <!-- channels -->
+                <when test="${jexl(entityType.equalsIgnoreCase('channel'))}">
+                    <with-attribute key="FNAME" value="${sysid}">
+                        <log>ImportExportPortlet deleting channel:  ${FNAME}</log>
+                        <crn location="${groovy(org.jasig.portal.RDBMServices.class.getClassLoader().getResource('/org/jasig/portal/io/delete-channel.crn').toExternalForm())}"/>
+                    </with-attribute>
+                </when>
+
+                <!-- channel-types -->
+                <when test="${jexl(entityType.equalsIgnoreCase('channel-type'))}">
+                    <with-attribute key="NAME" value="${sysid}">
+                        <log>ImportExportPortlet deleting channel type:  ${req(NAME)}</log>
+                        <crn location="${groovy(org.jasig.portal.RDBMServices.class.getClassLoader().getResource('/org/jasig/portal/io/delete-channel-type.crn').toExternalForm())}"/>
+                    </with-attribute>
+                </when>
+                                        
+                <!-- groups -->
+                <when test="${jexl(entityType.equalsIgnoreCase('group'))}">
+                    <with-attribute key="GROUP_NAME" value="${sysid}">
+                        <log>ImportExportPortlet deleting group:  ${GROUP_NAME}</log>
+                        <crn location="${groovy(org.jasig.portal.RDBMServices.class.getClassLoader().getResource('/org/jasig/portal/io/delete-group.crn').toExternalForm())}"/>
+                    </with-attribute>
+                </when>
+                                        
+                <!-- users -->
+                <when test="${jexl(entityType.equalsIgnoreCase('user'))}">
+                    <with-attribute key="USER_NAME" value="${sysid}">
+                        <log>ImportExportPortlet deleting user:  ${USER_NAME}</log>
+                        <crn location="${groovy(org.jasig.portal.RDBMServices.class.getClassLoader().getResource('/org/jasig/portal/io/delete-user.crn').toExternalForm())}"/>
+                    </with-attribute>
+                </when>
+
+                <!-- themes -->
+                <when test="${jexl(entityType.equalsIgnoreCase('theme'))}">
+                    <with-attribute key="NAME" value="${sysid}">
+                        <log>ImportExportPortlet deleting theme:  ${req(NAME)}</log>
+                        <crn location="${groovy(org.jasig.portal.RDBMServices.class.getClassLoader().getResource('/org/jasig/portal/io/delete-theme.crn').toExternalForm())}"/>
+                    </with-attribute>
+                </when>
+
+                <!-- structures -->
+                <when test="${jexl(entityType.equalsIgnoreCase('structure'))}">
+                    <with-attribute key="NAME" value="${sysid}">
+                        <log>ImportExportPortlet deleting structure:  ${req(NAME)}</log>
+                        <crn location="${groovy(org.jasig.portal.RDBMServices.class.getClassLoader().getResource('/org/jasig/portal/io/delete-structure.crn').toExternalForm())}"/>
+                    </with-attribute>
+                </when>
+
+                <!-- entity-types -->
+                <when test="${jexl(entityType.equalsIgnoreCase('entity-type'))}">
+                    <with-attribute key="NAME" value="${sysid}">
+                        <log>ImportExportPortlet deleting entity type:  ${req(NAME)}</log>
+                        <crn location="${groovy(org.jasig.portal.RDBMServices.class.getClassLoader().getResource('/org/jasig/portal/io/delete-entity-type.crn').toExternalForm())}"/>
+                    </with-attribute>
+                </when>
+
+                <otherwise>
+                    <log level="WARN">ImportExportPortlet encountered unknown/unsupported entity type:  '${entityType}'</log>
+                </otherwise>
+
+            </choose>
+
+        </sql-transaction>
+    </subtasks>
+</with>

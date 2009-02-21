@@ -1,0 +1,6 @@
+<with>
+    <attribute key="supportedTypes">${groovy(WebAttributes.REQUEST.getPreferences().getValue('allowableDeleteTypes', null).split(','))}</attribute>
+    <subtasks>
+        <request-dispatcher resource="/WEB-INF/jsp/ImportExportPortlet/delete.jsp"/>
+    </subtasks>
+</with>

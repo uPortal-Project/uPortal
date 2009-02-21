@@ -1,0 +1,10 @@
+<properties location="constants.properties">
+    <groovy>
+        <script>
+            CharArrayWriter writer = new CharArrayWriter();
+            org.dom4j.io.OutputFormat fmt = new org.dom4j.io.OutputFormat('    ', true);
+            new org.dom4j.io.XMLWriter(writer, fmt).write(Attributes.NODE);
+            WebAttributes.REQUEST.getPortletSession(true).setAttribute(DOCUMENT_ATTRIBUTE, writer.toString(), javax.portlet.PortletSession.APPLICATION_SCOPE);
+        </script>
+    </groovy>
+</properties>
