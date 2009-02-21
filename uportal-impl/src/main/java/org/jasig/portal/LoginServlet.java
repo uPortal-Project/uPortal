@@ -112,9 +112,9 @@ public class LoginServlet extends HttpServlet {
   	String targetArgs = request.getParameter("uP_args");
 
     // Clear out the existing session for the user if they have one
-    final HttpSession s = request.getSession(false);
-    if (s != null) {
+    if (request.isRequestedSessionIdValid()) {
     	try {
+            HttpSession s = request.getSession(false);
             s.invalidate();
     	} catch (IllegalStateException ise) {
     		// ISE indicates session was already invalidated.
@@ -127,7 +127,7 @@ public class LoginServlet extends HttpServlet {
     }
 
   	//  Create the user's session
-    request.getSession(true);
+    HttpSession s = request.getSession(true);
   	IPerson person = null;
     try {
       // Get the person object associated with the request
