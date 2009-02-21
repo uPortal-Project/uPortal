@@ -30,17 +30,18 @@ import org.jasig.portal.security.IPerson;
  */
 @Entity
 public class Paren extends Evaluator {
+    public enum Type {
+        OR,
+        AND,
+        NOT;
+    }
     
     // Static Members.
     public static final String RCS_ID = "@(#) $Header$";
     private static Log LOG = LogFactory.getLog(Paren.class);
 
-    public static final ParenType OR  = new ParenType( "OR" );
-    public static final ParenType AND = new ParenType( "AND" );
-    public static final ParenType NOT = new ParenType( "NOT" );
-
     // Instance Members.
-    private String type = null;
+    private Type type = null;
 
     @OneToMany(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN, org.hibernate.annotations.CascadeType.ALL })
@@ -48,8 +49,8 @@ public class Paren extends Evaluator {
 
     public Paren() {}
 
-    public Paren(ParenType t) {
-        type = t.toString();
+    public Paren(Type t) {
+        type = t;
     }
 
     public void addEvaluator(Evaluator e) {
@@ -63,36 +64,40 @@ public class Paren extends Evaluator {
             LOG.debug(" >>>> calling paren[" + this + ", op=" + type + 
                     "].isApplicable()");
         
-        if ( type.equals(OR) )
-        {
-            rslt = false;   // presume false in this case...
-            for(Evaluator v : this.evaluators)
-                if ( v.isApplicable( toPerson ) )
-                {
-                    rslt = true;
-                    break;
+        switch (this.type) {
+            case OR: {
+                rslt = false;   // presume false in this case...
+                for(Evaluator v : this.evaluators) {
+                    if ( v.isApplicable( toPerson ) )
+                    {
+                        rslt = true;
+                        break;
+                    }
                 }
-        }
-        else if ( type.equals(AND) )
-        {
-            rslt = true;   // presume true in this case...
-            for(Evaluator v : this.evaluators)
-                if ( v.isApplicable( toPerson ) == false )
-                {
-                    rslt = false;
-                    break;
+            } break;
+
+            case AND: {
+                rslt = true;   // presume true in this case...
+                for(Evaluator v : this.evaluators) {
+                    if ( v.isApplicable( toPerson ) == false )
+                    {
+                        rslt = false;
+                        break;
+                    }
                 }
-        }
-        else if ( type.equals(NOT) )
-        {
-            rslt = false;   // presume false in this case... until later...
-            for(Evaluator v : this.evaluators)
-                if ( v.isApplicable( toPerson ) )
-                {
-                    rslt = true;
-                    break;
+            } break;
+            
+            case NOT: {
+                rslt = false;   // presume false in this case... until later...
+                for(Evaluator v : this.evaluators) {
+                    if ( v.isApplicable( toPerson ) )
+                    {
+                        rslt = true;
+                        break;
+                    }
                 }
-            rslt = !rslt;
+                rslt = !rslt;
+            } break;
         }
         
         if (LOG.isDebugEnabled())
@@ -146,18 +151,4 @@ public class Paren extends Evaluator {
     }
 
 
-}
-
-class ParenType
-{
-    String type = null;
-    
-    public ParenType( String type )
-    {
-        this.type = type;
-    }
-    public String toString()
-    {
-        return type;
-    }
 }

@@ -61,11 +61,11 @@ public class PersonEvaluatorFactory
         Paren container = null;
 
         if ( type == NOT )
-            container = new Paren( Paren.NOT );
+            container = new Paren( Paren.Type.NOT );
         else if ( type == OR )
-            container = new Paren( Paren.OR );
+            container = new Paren( Paren.Type.OR );
         else if ( type == AND )
-            container = new Paren( Paren.AND );
+            container = new Paren( Paren.Type.AND );
 
         boolean validContentAdded = false;
   
