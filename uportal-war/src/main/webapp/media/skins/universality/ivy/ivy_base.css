@@ -197,22 +197,22 @@
 	{
 	}
 
-	#portalPageLeftColumn
+	#portalSidebar
 	{
 	    background-color: #B1C6F2;
 	    margin-right: 2px;
 	}
 	
-	#portalPageLeftColumnInner
+	#portalSidebar
 	{
 	}
 	
-	#portalPageLeftColumn .block
+	#portalSidebar .block
 	{
 		margin-bottom: 10px;
 	}
 	
-	#portalPageLeftColumn .block h2.block-title
+	#portalSidebar .block h2.block-title
 	{
 		margin: 0;
 		padding: 0.5em 0.5em;
@@ -221,7 +221,7 @@
 		font-size: 100%;
 	}
 	
-	#portalPageLeftColumn .block-content
+	#portalSidebar .block-content
 	{
 		background: url("images/top_light_fade.png") repeat-x;
 	}
@@ -308,7 +308,7 @@
 	.portlet-toolbar 
 	{
 		white-space: nowrap;
-        background: #D7E7F9 url(images/portlet_toolbar_bg.gif) repeat-x scroll left top;
+        background: #000 url(images/portlet_toolbar_bg.gif) repeat-x scroll left top;
         border: 1px solid #B1C6F2;
         border-bottom: 2px solid #B1C6F2;
 	}
@@ -780,3 +780,49 @@ div .orderable-drop-marker{height:10px !important; background-color:#fa7019;}
 .orderable-drop-marker-box {height:200px !important; width:100%; border:2px dashed red; margin-bottom:1em; background-color:#ffd7d7;}
 .orderable-mouse-drag {display: none;} */
 
+/* Header */
+/*.fl-theme-ivy #portalLogo {background-color:#797896}*/
+
+/* portalWelcome
+ Keep the top value relative to the text size so that the top position remains good when the browser text size is increased. 
+ Set the left width to the width of your logo (plus logo margins).
+ This margin prevents it from colliding with the logo if the browser window is shrunk down. 
+*/
+#portalWelcome {top:3.5em; left:250px;}
+
+.fl-theme-ivy #webSearchContainer form {padding:0}
+
+.fl-theme-ivy #portalPageHeader {background-color:#4c5d82}
+.fl-theme-ivy #portalNavigationList {text-align:left; background:#4c5d82;padding-left:150px;}
+.fl-theme-ivy #portalNavigationList.fl-tabs {margin:0;border-width:0}
+
+.fl-theme-ivy #portalPageInner {background-color:#4c5d82}
+.fl-theme-ivy #portalPageBody,
+.fl-theme-ivy #portalPageFooter {background-color:#E6EEFB}
+
+.fl-theme-ivy #portalNavigationList .portal-navigation a {background-color:transparent;border-width:0;padding: 0.5em 2em;display:block}
+.fl-theme-ivy #portalNavigationList .portal-navigation {float:left;}
+.fl-theme-ivy #portalNavigationSubrow {clear:both;}
+
+/* Web Search */
+.fl-theme-ivy #webSearchContainer {position:absolute; top:3em; right:0;}
+.fl-theme-ivy #webSearchContainer h2 {display:none;}
+.fl-theme-ivy #webSearchContainer input,
+.fl-theme-ivy #webSearchContainer select {margin-left:0.3em;}
+.fl-theme-ivy #webSearchContainer #webSearchSubmit {background:#000 url(images/btn_bkd.gif) top left repeat-x; border:1px solid #000; color:#333; font-weight:bold; padding:0 0.5em;}
+
+.fl-theme-ivy #portalNavigationSubrow {padding:0.5em 0;background-color:#e6ecfb;border-bottom:1px solid #999}
+.fl-theme-ivy #portalNavigationSubrow .portal-subnav-list {background-color:#e6ecfb;margin-right:0}
+.fl-theme-ivy #portalNavigationSubrow a {padding:0em 1em;}
+
+.fl-theme-ivy #portalSidebar #portalCustomizationLinks .portal-pipe {display:none;}
+.fl-theme-ivy #portalSidebar {padding:0}
+.fl-theme-ivy #portalSidebar ul {list-style:none; margin:0}
+.fl-theme-ivy #portalSidebar li {list-style:none; margin-bottom:1px}
+.fl-theme-ivy #portalSidebar li a { padding: 0.5em 1em 0.5em 2.1em; display:block}
+.fl-theme-ivy #portletNavigation a {color:#2758B3;font-weight:normal;background:#D7E7F9 url("../../icons/application.png") 0.5em 0.5em no-repeat;text-decoration:none;}
+.fl-theme ivy #portletNavigation a:hover {color:#fff; background-color: #8197C6}
+
+.fl-theme-ivy .portlet-controls {margin: 4px 5px 0px 0px; padding: 0; float: right;}
+   
+.fl-theme-ivy .portlet-controls .portlet-control{display: block; float: left; margin: 0; padding: 0;}
