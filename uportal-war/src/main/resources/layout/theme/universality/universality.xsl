@@ -256,7 +256,7 @@
   <xsl:template name="page.js">
     <script type="text/javascript" src="{$RESOURCE_PATH}/jquery/1.3.1/jquery-1.3.1.min.js"></script>
     <script type="text/javascript" src="{$RESOURCE_PATH}/jqueryui/1.6rc6/jquery-ui-1.6rc6.min.js"></script>
-    <script type="text/javascript" src="{$SCRIPT_PATH}/fluid/Fluid-reorderer-0.8-r6525-v1.js"></script>
+    <script type="text/javascript" src="{$RESOURCE_PATH}/fluid/0.8/js/fluid-all-0.8.min.js"></script>
     <xsl:if test="$USE_AJAX='true' and $AUTHENTICATED='true'">
       <script type="text/javascript" src="{$SCRIPT_PATH}/uportal/ajax-preferences-jquery.min.js"></script>
       <script type="text/javascript" src="{$SCRIPT_PATH}/uportal/up-channel-browser.min.js"></script>
