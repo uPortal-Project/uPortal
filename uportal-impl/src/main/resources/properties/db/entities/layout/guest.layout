@@ -14,6 +14,7 @@
           <value>40%</value>
         </structure-attribute>
         <channel unremovable="" immutable="" hidden="" fname="uportal-news"/>
+        <channel unremovable="" immutable="" hidden="" fname="uportal-powered-sites"/>
       </column>
       <column unremovable="N" immutable="N" hidden="N" name="Column 2">
         <structure-attribute type="folder">

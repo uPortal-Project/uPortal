@@ -4,8 +4,8 @@
   <name>uPortal-Powered Sites</name>
   <fname>uportal-powered-sites</fname>
   <desc>uPortal Demos channel</desc>
-  <type>RSS</type>
-  <class>org.jasig.portal.channels.CSyndFeed</class>
+  <type>XML SSL</type>
+  <class>org.jasig.portal.channels.CGenericXSLT</class>
   <timeout>10000</timeout>
   <hasedit>N</hasedit>
   <hashelp>N</hashelp>
@@ -19,6 +19,12 @@
     <group>Everyone</group>
   </groups>
   <parameters>
+    <parameter> 
+      <name>xslUri</name>  
+      <value>CGenericXSLT/uPortalDeployments/uPortalDeployments.xsl</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
     <parameter> 
       <name>xmlUri</name>  
       <value>http://www.unicon.net/publish/jasigPortalDemos.rss</value>  
