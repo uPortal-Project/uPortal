@@ -113,12 +113,12 @@ public class LoginServlet extends HttpServlet {
     final IPersonManager personManager = PersonManagerFactory.getPersonManagerInstance();
     
     // Clear out the existing session for the user if they have one
-    HttpSession s = request.getSession(false);
     String targetUid = null;
     String originalUid = null;
     boolean swap = false;
-    if (s != null) {
+    if (request.isRequestedSessionIdValid()) {
     	try {
+            HttpSession s = request.getSession(false);
     	    //Check if this is a swapped user hitting the Login servlet
     	    originalUid = (String)s.getAttribute(SWAP_ORIGINAL_UID);
 
@@ -148,7 +148,7 @@ public class LoginServlet extends HttpServlet {
     }
 
   	//  Create the user's session
-    s = request.getSession(true);
+    HttpSession s = request.getSession(true);
     
   	IPerson person = null;
     try {
