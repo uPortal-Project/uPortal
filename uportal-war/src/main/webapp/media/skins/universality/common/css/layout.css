@@ -73,11 +73,8 @@ ul.horizontal-list-inline li {list-style:none; display:inline; padding-left:1em;
 
 /** login **/
 #portalLogin {padding:1em;}
-#portalLogin h2 {margin:0 0 0.5em 0;}
 #portalLogin label {display:block; margin-bottom:0.3em;}
 #portalLogin input {margin-bottom:1em;}
-#portalLoginMessage {padding:1em; margin-bottom:1em;}
-#portalLoginMessage h2 {padding-left:20px;}
 
 
 /** navigation **/
