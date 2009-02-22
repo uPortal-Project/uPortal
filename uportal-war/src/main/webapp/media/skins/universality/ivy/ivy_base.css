@@ -37,13 +37,7 @@
 	
 	body#portal /* This formats only the <body> of the portal and not imported html pages */
 	{
-		background: #E6EEFB;
-		background-image: none;
-	}
-	
-	body#portal.left-column /* This formats only the <body> of the portal and not imported html pages */
-	{
-		background: #E6EEFB url("images/page_column_back.png") repeat-y; /* Simulates the left column.  Done on the body to ensure the column fills the whole browser window. */
+		background: #E6EEFB url("images/header-background.gif") 0 0 repeat-x;
 	}
 	
 	h1,h2,h3,h4,h5,h6
@@ -144,27 +138,27 @@
 	
 	#portalPageBarHome
 	{
-		background: url("../../icons/house.png") no-repeat;
+		background: url("/ResourceServingWebapp/rs/famfamfam/silk/1.3/house.png") no-repeat;
 	}
 	
 	#portalPageBarAdmin
 	{
-		background: url("../../icons/application_cascade.png") no-repeat;
+		background: url("/ResourceServingWebapp/rs/famfamfam/silk/1.3/application_cascade.png") no-repeat;
 	}
 	
 	#portalPageBarCustom
 	{
-		background: url("../../icons/user.png") no-repeat;
+		background: url("/ResourceServingWebapp/rs/famfamfam/silk/1.3/user.png") no-repeat;
 	}
 	
 	#portalPageBarSitemap
 	{
-		background: url("../../icons/map.png") no-repeat;
+		background: url("/ResourceServingWebapp/rs/famfamfam/silk/1.3/map.png") no-repeat;
 	}
 	
 	#portalPageBarHelp
 	{
-		background: url("../../icons/help.png") no-repeat;
+		background: url("/ResourceServingWebapp/rs/famfamfam/silk/1.3/help.png") no-repeat;
 	}
 	
 	#portalPageBarLinks a:hover 
@@ -203,15 +197,6 @@
 	    margin-right: 2px;
 	}
 	
-	#portalSidebar
-	{
-	}
-	
-	#portalSidebar .block
-	{
-		margin-bottom: 10px;
-	}
-	
 	#portalSidebar .block h2.block-title
 	{
 		margin: 0;
@@ -234,7 +219,7 @@
 		font-weight: normal;
 	}
 
-	#portalCustomizationLinks
+	#portalPageBodyTitleRow #portalCustomizationLinks
 	{
 		padding: 0.5em 0 0.5em 1em;
 		font-size: 80%;
@@ -243,35 +228,35 @@
 		border-bottom: 2px solid #ccccff;
 	}
 	
-	#portalCustomizationLinks a
+	#portalPageBodyTitleRow #portalCustomizationLinks a
 	{
 	    text-decoration:none;
         color: #293B5A;
 	}
 	
-	#portalCustomizationLinks li 
+	#portalPageBodyTitleRow #portalCustomizationLinks li 
 	{
 		list-style: none;
 	}
 	
 	#portalCustomizationLinksAddContent a
 	{
-		background: url("../../icons/application_add.png") no-repeat;
+		background: url("/ResourceServingWebapp/rs/famfamfam/silk/1.3/application_add.png") no-repeat;
 	}
 	
 	#portalCustomizationLinksChangeLayout a
 	{
-		background: url("../../icons/layout_content.png") no-repeat;
+		background: url("/ResourceServingWebapp/rs/famfamfam/silk/1.3/layout_content.png") no-repeat;
 	}
 	
 	#portalCustomizationLinksChooseSkin a
 	{
-		background: url("../../icons/color_swatch.png") no-repeat;
+		background: url("/ResourceServingWebapp/rs/famfamfam/silk/1.3/color_swatch.png") no-repeat;
 	}
 	
 	#portalCustomizationLinksAddTab a
 	{
-		background: url("../../icons/tab_add.png") no-repeat;
+		background: url("/ResourceServingWebapp/rs/famfamfam/silk/1.3/tab_add.png") no-repeat;
 	}
 	
 	#changeColumns tr td
@@ -377,7 +362,7 @@
 	
 	.portlet-controls .add 
 	{
-		background: url("../../icons/application_add.png") no-repeat;
+		background: url("/ResourceServingWebapp/rs/famfamfam/silk/1.3/application_add.png") no-repeat;
 	}
 
 	.portlet-controls span
@@ -469,7 +454,7 @@
 	
 	#portalLoginMessage h2
 	{
-		background: url("../../icons/error.png") no-repeat;
+		background: url("/ResourceServingWebapp/rs/famfamfam/silk/1.3/error.png") no-repeat;
 	}
 	
 	#portalCASLogin a
@@ -611,23 +596,23 @@
 
 	#portalFlyoutNavigation #editPageLink a
 	{
-		background-image: url("../../icons/layout_content.png");
+		background-image: url("/ResourceServingWebapp/rs/famfamfam/silk/1.3/layout_content.png");
 		
 	}
 	
 	#portalFlyoutNavigation #deletePageLink a
 	{
-		background-image: url("../../icons/cross.png");
+		background-image: url("/ResourceServingWebapp/rs/famfamfam/silk/1.3/cross.png");
 	}
 	
 	#portalFlyoutNavigation #movePageLeftLink a
 	{
-		background-image: url("../../icons/arrow_left.png");
+		background-image: url("/ResourceServingWebapp/rs/famfamfam/silk/1.3/arrow_left.png");
 	}
 	
 	#portalFlyoutNavigation #movePageRightLink a
 	{
-		background-image: url("../../icons/arrow_right.png"); 
+		background-image: url("/ResourceServingWebapp/rs/famfamfam/silk/1.3/arrow_right.png"); 
 	}
 	
 	#portalFlyoutNavigation .portal-flyout-iframe
@@ -641,7 +626,7 @@
 		color: #6633CC;
 		font-weight: normal;
 		border-left: 4px solid #ccccff;
-		background: url("../../icons/application.png") 0.5em 0.5em no-repeat;
+		background: url("/ResourceServingWebapp/rs/famfamfam/silk/1.3/application.png") 0.5em 0.5em no-repeat;
 	}
 	
 	#portalNavigation .portal-navigation .portal-subnav-container a:hover
@@ -677,12 +662,12 @@
 	
 	#portalNavigation .left a.portal-navigation-link 
 	{
-		background: url("../../icons/bullet_purple.png") no-repeat right;
+		background: url("/ResourceServingWebapp/rs/famfamfam/silk/1.3/bullet_purple.png") no-repeat right;
 	}
 	
 	#portalNavigation .left .active a.portal-navigation-link 
 	{
-		background: url("../../icons/bullet_orange.png") no-repeat right;
+		background: url("/ResourceServingWebapp/rs/famfamfam/silk/1.3/bullet_orange.png") no-repeat right;
 	}
 	
 	/* portlet navigation */
@@ -708,7 +693,7 @@
 	{
 		color: #2758B3;
 		font-weight: normal;
-		background: #D7E7F9 url("../../icons/application.png") 0.5em 0.5em no-repeat;
+		background: #D7E7F9 url("/ResourceServingWebapp/rs/famfamfam/silk/1.3/application.png") 0.5em 0.5em no-repeat;
 		text-decoration: none;
 	}
 	
@@ -720,10 +705,6 @@
 	
 /** quicklinks **/
 	
-	#portalQuicklinks 
-	{
-	}
-	
 	#portalQuicklinks li 
 	{
 		list-style: none;
@@ -732,6 +713,8 @@
 	#portalQuicklinks a 
 	{
 		text-decoration: none;
+		background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/application.png);
+		background-repeat: no-repeat;
 	}
 
 	#portalQuicklinks a:hover 
@@ -749,7 +732,7 @@
 .portal-page-column-inner .locked .portlet-bottom {display:none;}
 .portal-page-column-inner .locked .portlet-toolbar {background-color:#ddd;background-image:none;border:1px solid #999;}
 .portal-page-column-inner .locked .portlet-toolbar a {color:#333;}
-.portal-page-column-inner .locked .portlet-toolbar h2 {background:transparent url("../../icons/lock.png") 0 3px no-repeat;padding-left:20px;}
+.portal-page-column-inner .locked .portlet-toolbar h2 {background:transparent url("/ResourceServingWebapp/rs/famfamfam/silk/1.3/lock.png") 0 3px no-repeat;padding-left:20px;}
 .portal-page-column-inner .locked .portlet-controls {background-color:transparent;}
 .dashboard .portal-page-column-inner .locked .portlet-content {border:1px solid #999;}
 
@@ -788,18 +771,26 @@ div .orderable-drop-marker{height:10px !important; background-color:#fa7019;}
  Set the left width to the width of your logo (plus logo margins).
  This margin prevents it from colliding with the logo if the browser window is shrunk down. 
 */
-#portalWelcome {top:3.5em; left:250px;}
+.fl-theme-ivy #portalWelcome {top:3.5em; left:250px;}
 
-.fl-theme-ivy #webSearchContainer form {padding:0}
+.fl-theme-ivy #portalLogo img {margin: 15px 0 0 15px }
 
-.fl-theme-ivy #portalPageHeader {background-color:#4c5d82}
-.fl-theme-ivy #portalNavigationList {text-align:left; background:#4c5d82;padding-left:150px;}
+.fl-theme-ivy #webSearchContainer form {padding:0 10px 0 0}
+
+.fl-theme-ivy #portalNavigationList {text-align:left; background:#4c5d82; padding-left:165px;}
 .fl-theme-ivy #portalNavigationList.fl-tabs {margin:0;border-width:0}
 
-.fl-theme-ivy #portalPageInner {background-color:#4c5d82}
-.fl-theme-ivy #portalPageBody,
-.fl-theme-ivy #portalPageFooter {background-color:#E6EEFB}
+/* Administration Links */
+.fl-theme-ivy #portalAdminLinks #portalAdminLinksPortletAdmin a {background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/application_cascade.png); background-repeat: no-repeat}
+.fl-theme-ivy #portalAdminLinks #portalAdminLinksCustomize a {background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/overlays.png);}
 
+.fl-theme-ivy #portalPageHeader {background-color:transparent}
+.fl-theme-ivy #portalPageBody {background-color:#E6EEFB}
+
+/* Portlet Navigation */
+.fl-theme-ivy #portletNavigation #portletNavigationLinkHome a {background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/tab_go.png);}
+
+.fl-theme-ivy #portalNavigation {margin-top: -20px;}
 .fl-theme-ivy #portalNavigationList .portal-navigation a {background-color:transparent;border-width:0;padding: 0.5em 2em;display:block}
 .fl-theme-ivy #portalNavigationList .portal-navigation {float:left;}
 .fl-theme-ivy #portalNavigationSubrow {clear:both;}
@@ -809,18 +800,17 @@ div .orderable-drop-marker{height:10px !important; background-color:#fa7019;}
 .fl-theme-ivy #webSearchContainer h2 {display:none;}
 .fl-theme-ivy #webSearchContainer input,
 .fl-theme-ivy #webSearchContainer select {margin-left:0.3em;}
-.fl-theme-ivy #webSearchContainer #webSearchSubmit {background:#000 url(images/btn_bkd.gif) top left repeat-x; border:1px solid #000; color:#333; font-weight:bold; padding:0 0.5em;}
+.fl-theme-ivy #webSearchContainer #webSearchSubmit {border:1px solid #000; color:#333; font-weight:bold; padding:0 0.5em;}
 
-.fl-theme-ivy #portalNavigationSubrow {padding:0.5em 0;background-color:#e6ecfb;border-bottom:1px solid #999}
-.fl-theme-ivy #portalNavigationSubrow .portal-subnav-list {background-color:#e6ecfb;margin-right:0}
-.fl-theme-ivy #portalNavigationSubrow a {padding:0em 1em;}
+.fl-theme-ivy #portalNavigationSubrow {display:none;}
 
+.fl-theme-ivy #portalSidebarInner {margin-bottom:10px}
 .fl-theme-ivy #portalSidebar #portalCustomizationLinks .portal-pipe {display:none;}
 .fl-theme-ivy #portalSidebar {padding:0}
 .fl-theme-ivy #portalSidebar ul {list-style:none; margin:0}
 .fl-theme-ivy #portalSidebar li {list-style:none; margin-bottom:1px}
-.fl-theme-ivy #portalSidebar li a { padding: 0.5em 1em 0.5em 2.1em; display:block}
-.fl-theme-ivy #portletNavigation a {color:#2758B3;font-weight:normal;background:#D7E7F9 url("../../icons/application.png") 0.5em 0.5em no-repeat;text-decoration:none;}
+.fl-theme-ivy #portalSidebar li a { padding: 0.5em 1em 0.5em 2.1em; display:block; background-color:#D7E7F9; background-position: 0.5em 0.5em}
+.fl-theme-ivy #portletNavigation a {color:#2758B3;font-weight:normal;background:#D7E7F9 url("/ResourceServingWebapp/rs/famfamfam/silk/1.3/application.png") 0.5em 0.5em no-repeat;text-decoration:none;}
 .fl-theme ivy #portletNavigation a:hover {color:#fff; background-color: #8197C6}
 
 .fl-theme-ivy .portlet-controls {margin: 4px 5px 0px 0px; padding: 0; float: right;}
