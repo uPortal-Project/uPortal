@@ -151,6 +151,9 @@ IFolderLocalNameResolver
                             + "non-null profile must to be specified.");
         }
         
+        // Ensure a new layout gets loaded whenever a user logs in...
+        layoutCache.remove(owner.getUserName());
+
         // cache the relatively lightwieght userprofile for use in 
         // in layout PLF loading
         owner.setAttribute(UserProfile.USER_PROFILE, profile);
