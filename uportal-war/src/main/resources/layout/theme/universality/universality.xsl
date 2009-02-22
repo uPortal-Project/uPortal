@@ -193,6 +193,8 @@
   <xsl:param name="SIDEBAR_WIDTH_FOCUSED" select="200"/> <!-- Sets the pixel width of the sidebar when a portlet is focused, if used.  Values are '100', '150', '200', '250', or '300' and represent pixel widths -->
   <xsl:param name="SIDEBAR_WIDTH_GUEST" select="250"/> <!-- Sets the pixel width of the sidebar when logged out, if used.  Values are '100', '150', '200', '250', or '300' and represent pixel widths -->
   
+  <xsl:param name="USE_SUBNAVIGATION_ROW" select="'true'"/>
+  
   <!-- ============================================ -->
   
   <!-- Debug Template
@@ -588,7 +590,7 @@
     <!-- PAGE TITLE -->
     
     <!-- CUSTOMIZE LINKS: For these links to function, AJAX must be enabled by setting the USE_AJAX parameter above to 'true'. -->
-    <xsl:if test="$INSTITUTION != 'uportal'">
+    <xsl:if test="$USE_SIDEBAR != 'true' and $USE_AJAX='true'">
     	<xsl:call-template name="customize.links"/>
     </xsl:if>
     <!-- CUSTOMIZE LINKS -->
@@ -636,7 +638,7 @@
     <!-- Web Search -->
     
     <!-- CUSTOMIZE LINKS: For these links to function, AJAX must be enabled by setting the USE_AJAX parameter above to 'true'. -->
-    <xsl:if test="$INSTITUTION='uportal'">
+    <xsl:if test="$USE_SIDEBAR = 'true' and $USE_AJAX='true'">
     	<xsl:call-template name="customize.links"/>
     </xsl:if>
     <!-- CUSTOMIZE LINKS -->

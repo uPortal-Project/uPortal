@@ -73,7 +73,7 @@
         </ul>
     	</div>  
     </div>
-    <xsl:if test="$CONTEXT='header'">
+    <xsl:if test="$CONTEXT='header' and $USE_SUBNAVIGATION_ROW='true'">
       <div id="portalNavigationSubrow" class="fl-tab-content">
         <xsl:call-template name="subnavigation">
           <xsl:with-param name="CONTEXT" select="'subnav'"/>
