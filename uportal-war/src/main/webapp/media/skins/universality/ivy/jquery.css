@@ -354,4 +354,4 @@
 .ui-resizable-ne { cursor: ne-resize; width: 9px; height: 9px; right: -5px; top: -5px;}
 
 /* jQuery tooltip */
-.fl-theme-uportal3 #tooltip {background-color: #fffbbf; color: #344461; border: thin solid #b1c6f2;}
+#tooltip {background-color: #fffbbf; color: #344461; border: thin solid #b1c6f2;}
