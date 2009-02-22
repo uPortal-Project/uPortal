@@ -826,3 +826,15 @@ div .orderable-drop-marker{height:10px !important; background-color:#fa7019;}
 .fl-theme-ivy .portlet-controls {margin: 4px 5px 0px 0px; padding: 0; float: right;}
    
 .fl-theme-ivy .portlet-controls .portlet-control{display: block; float: left; margin: 0; padding: 0;}
+
+/* Fluid pager component styles */
+.fl-theme-ivy .pager-top .disabled,
+.fl-theme-ivy .pager-bottom .disabled {color: #777777; border: 0; text-decoration: none; cursor: default;}
+.fl-theme-ivy .pager-top .current-page a,
+.fl-theme-ivy .pager-bottom .current-page a { color: #000000; border: 0; text-decoration: none; cursor: default;}
+.fl-theme-ivy ul.pager-top,
+.fl-theme-ivy ul.pager-bottom {text-align:right}
+.fl-theme-ivy ul.pager-top li,
+.fl-theme-ivy ul.pager-bottom li {list-style-type:none; display:inline; padding:5px}
+
+:focus{outline-width:0px;}
