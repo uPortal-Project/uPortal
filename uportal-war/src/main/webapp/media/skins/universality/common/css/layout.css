@@ -130,3 +130,6 @@ ul.horizontal-list-inline li {list-style:none; display:inline; padding-left:1em;
 #webSearchContainer form {padding:1em;}
 #webSearchContainer input, 
 #webSearchContainer select {margin-bottom:0.5em;}
+
+#tooltip h3, #tooltip div { margin: 0; }
+#tooltip {position: absolute; z-index: 3000; opacity: 0.85; max-width: 400px; padding: 4px;}

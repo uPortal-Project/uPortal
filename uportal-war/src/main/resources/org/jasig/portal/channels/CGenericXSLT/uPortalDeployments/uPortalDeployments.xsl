@@ -44,6 +44,7 @@
                         }
                     }
                 });
+                up.jQuery("#portal-deployment-list .pager-items a").tooltip();
             });
         </script>
         
@@ -53,7 +54,13 @@
         <li>
             <xsl:choose>
                 <xsl:when test="link">
-                    <a href="{link}" title="{title}" target="_blank"><xsl:value-of select="title"/></a>
+                    <xsl:variable name="description">
+                        <xsl:choose>
+                            <xsl:when test="description"><xsl:value-of select="description"/></xsl:when>
+                            <xsl:otherwise><xsl:value-of select="title"/></xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:variable>
+                    <a href="{link}" title="{$description}" target="_blank"><xsl:value-of select="title"/></a>
                 </xsl:when>
                 <xsl:otherwise><xsl:value-of select="title"/></xsl:otherwise>
             </xsl:choose>
