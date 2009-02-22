@@ -1,6 +1,8 @@
-@import url("fluid.reset.css");
-@import url("fluid.layout.css");
-@import url("fluid.text.css");
+@import url("fluid.reset.min.css");
+@import url("fluid.layout.min.css");
+@import url("fluid.text.min.css");
+/*
 @import url("fluid.theme.mist.css");
 @import url("fluid.theme.hc.css");
 @import url("fluid.theme.rust.css");
+*/
