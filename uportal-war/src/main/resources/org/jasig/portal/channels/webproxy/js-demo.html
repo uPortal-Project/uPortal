@@ -1,0 +1,206 @@
+<html>
+  <head>
+    <script language="Javascript" type="text/javascript">
+      up.jQuery(function() {
+        var $ = up.jQuery;
+    
+		$(document).ready(function(){
+		  // set up jQuery UI effects demo
+		  $(".effects-demo-outerbox").click(function(){ $(".effects-demo-innerbox").effect("bounce"); });
+		  $(".effects a").click(function(){ 
+		    var effect = $(this).text();
+		    $(".effects-demo-innerbox h3").text(effect);
+		    $(".effects-demo-outerbox").unbind();
+		    if ($(this).parent().parent().hasClass("showhide-effects")) {
+		      $(".effects-demo-outerbox").click(function(){ $(".effects-demo-innerbox").toggle(effect.toLowerCase()); });
+		    } else if (effect == 'Scale') {
+		      $(".effects-demo-outerbox").toggle(
+		      	function() { $(".effects-demo-innerbox").effect("scale", { percent: 50 }); }, 
+		      	function() { $(".effects-demo-innerbox").effect("scale", { percent: 200 });
+		      });
+		    } else {
+		      $(".effects-demo-outerbox").click(function(){ $(".effects-demo-innerbox").effect(effect.toLowerCase()); });
+		    }
+		  });
+		  
+		  // set up jQuery UI widget demos
+		  $(".accordion-demo").accordion({ header:"h3", alwaysOpen:false});
+		  $(".datepicker-demo").datepicker();
+		  $(".tabs-demo").tabs();
+		  
+		  // set up demo switching functionality
+		  $(".demo-list li").click(function(){
+		    $(".demo-list").css("display", "none");
+		    $("." + $(this).text().toLowerCase()).css("display", "block");
+		    $(".demo-back-link").css("display", "block");
+		    return false;
+		  });
+		  $(".demo-back-link").click(function(){
+		    $(".demo-back-link").css("display", "none");
+		    $(".demo-container").css("display", "none");
+		    $(".demo-list").css("display", "block");
+		  });
+		
+		});
+	  });
+    </script>
+
+
+  </head>
+
+  <body>
+
+    <style type="text/css">
+      .demo-container {display:none; max-width:600px}
+      .demo-back-link {display:none}
+      .effects ul, .effects li {list-style-type: none; margin: 0}
+    </style>
+    
+    <div class="demo-list">
+      <h3>Available jQuery UI Demos</h3>
+      <ul>
+        <li><a href="javascript:;">Datepicker</a></li>
+        <li><a href="javascript:;">Accordion</a></li>
+        <li><a href="javascript:;">Tabs</a></li>
+        <li><a href="javascript:;">Effects</a></li>
+      </ul>
+      
+      <p>For more jQuery UI demos and sample source code, please visit 
+      	<a href="http://jqueryui.com/demos/" target="_blank">http://jqueryui.com/demos</a>
+      </p>
+    </div>
+    
+    <div class="demo-container accordion">
+      <h2>Accordion Demo</h2>
+      <div class="accordion-demo">
+        <div>
+          <h3>
+            <a href="#">Section 1</a>
+          </h3>
+          <div><p>Section 1 content</p></div>
+        </div>
+        <div>
+          <h3>
+            <a href="#">Section 2</a>
+          </h3>
+          <div><p>Section 2 content</p></div>
+        </div>
+        <div>
+          <h3>
+            <a href="#">Section 3</a>
+          </h3>
+          <div><p>Section 3 content</p></div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="demo-container datepicker"> 
+      <h2>Datepicker demo</h2>
+      <p>Date: <input class="datepicker-demo" type="text"/></p> 
+    </div>
+    
+    <div class="demo-container tabs">
+      <h2>Tabs Demo</h2>
+      <div class="tabs-demo">
+        <ul>
+          <li><a href="#tabs-1">Nunc tincidunt</a></li>
+          <li><a href="#tabs-2">Proin dolor</a></li>
+          <li><a href="#tabs-3">Aenean lacinia</a></li>
+        </ul>
+        <div id="tabs-1">
+          <p>Proin elit arcu, rutrum commodo, vehicula tempus, commodo a, risus. Curabitur nec arcu. Donec sollicitudin mi sit amet mauris. Nam elementum quam ullamcorper ante. Etiam aliquet massa et lorem. Mauris dapibus lacus auctor risus. Aenean tempor ullamcorper leo. Vivamus sed magna quis ligula eleifend adipiscing. Duis orci. Aliquam sodales tortor vitae ipsum. Aliquam nulla. Duis aliquam molestie erat. Ut et mauris vel pede varius sollicitudin. Sed ut dolor nec orci tincidunt interdum. Phasellus ipsum. Nunc tristique tempus lectus.</p>
+        </div>
+        <div id="tabs-2">
+          <p>Morbi tincidunt, dui sit amet facilisis feugiat, odio metus gravida ante, ut pharetra massa metus id nunc. Duis scelerisque molestie turpis. Sed fringilla, massa eget luctus malesuada, metus eros molestie lectus, ut tempus eros massa ut dolor. Aenean aliquet fringilla sem. Suspendisse sed ligula in ligula suscipit aliquam. Praesent in eros vestibulum mi adipiscing adipiscing. Morbi facilisis. Curabitur ornare consequat nunc. Aenean vel metus. Ut posuere viverra nulla. Aliquam erat volutpat. Pellentesque convallis. Maecenas feugiat, tellus pellentesque pretium posuere, felis lorem euismod felis, eu ornare leo nisi vel felis. Mauris consectetur tortor et purus.</p>
+        </div>
+        <div id="tabs-3">
+          <p>Mauris eleifend est et turpis. Duis id erat. Suspendisse potenti. Aliquam vulputate, pede vel vehicula accumsan, mi neque rutrum erat, eu congue orci lorem eget lorem. Vestibulum non ante. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Fusce sodales. Quisque eu urna vel enim commodo pellentesque. Praesent eu risus hendrerit ligula tempus pretium. Curabitur lorem enim, pretium nec, feugiat nec, luctus a, lacus.</p>
+          <p>Duis cursus. Maecenas ligula eros, blandit nec, pharetra at, semper at, magna. Nullam ac lacus. Nulla facilisi. Praesent viverra justo vitae neque. Praesent blandit adipiscing velit. Suspendisse potenti. Donec mattis, pede vel pharetra blandit, magna ligula faucibus eros, id euismod lacus dolor eget odio. Nam scelerisque. Donec non libero sed nulla mattis commodo. Ut sagittis. Donec nisi lectus, feugiat porttitor, tempor ac, tempor vitae, pede. Aenean vehicula velit eu tellus interdum rutrum. Maecenas commodo. Pellentesque nec elit. Fusce in lacus. Vivamus a libero vitae lectus hendrerit hendrerit.</p>
+        </div>
+      </div>
+      
+    </div>
+    
+    <div class="demo-container effects">
+      <h2>jQuery Effects Demo</h2>
+      <div class="fl-col-flex">
+        <div class="fl-col-flex60">
+          <div class="effects-demo-outerbox ui-widget-content ui-corner-all" style="height:240px;width:90%; text-align:center">
+            <div class="effects-demo-innerbox ui-widget-content ui-corner-all" style="min-width:100px; max-width: 200px; margin: 10px">
+              <h3 class="ui-widget-header ui-corner-all">Bounce</h3>
+              Contents!
+            </div>
+          </div>
+          <p>Click in box above to view effect</p>
+          
+        </div>
+
+        <div class="fl-col-flex40">
+          <h3>Choose an effect</h3>
+          <div class="fl-col-flex">
+            <div class="fl-col-flex50">
+              <h4>General</h4>
+              <ul class="general-effects">
+                <li>
+                  <a href="javascript:;">Bounce</a>
+                </li>
+                <li>
+                  <a href="javascript:;">Highlight</a>
+                </li>
+                <li>
+                  <a href="javascript:;">Pulsate</a>
+                </li>
+                <li>
+                  <a href="javascript:;">Scale</a>
+                </li>
+                <li>
+                  <a href="javascript:;">Shake</a>
+                </li>
+                <!-- <li>
+                  <a href="javascript:;">Size</a>
+                </li> -->
+                <!-- <li>
+                  <a href="javascript:;">Transfer</a>
+                </li> -->
+              </ul>
+            </div>
+            <div class="fl-col-flex50">
+              <h4>Show/Hide</h4>
+              <ul class="showhide-effects">
+                <li>
+                  <a href="javascript:;">Blind</a>
+                </li>
+                <li>
+                  <a href="javascript:;">Clip</a>
+                </li>
+                <li>
+                  <a href="javascript:;">Drop</a>
+                </li>
+                <li>
+                  <a href="javascript:;">Explode</a>
+                </li>
+                <li>
+                  <a href="javascript:;">Fold</a>
+                </li>
+                <li>
+                  <a href="javascript:;">Puff</a>
+                </li>
+                <li>
+                  <a href="javascript:;">Scale</a>
+                </li>
+                <li>
+                  <a href="javascript:;">Slide</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="demo-back-link" style="clear:both; padding:10px;">
+      <p><a href="javascript:;">&lt; Back to available demos list</a></p>
+    </div>
+    
+  </body>
+</html>
