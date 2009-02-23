@@ -52,6 +52,14 @@ public class RestrictedPerson implements IPerson {
     public int getID() {
         return this.person.getID();
     }
+    
+    public String getUserName() {
+        return person.getUserName();
+    }
+
+    public void setUserName(String userName) {
+        person.setUserName(userName);
+    }
 
     public boolean isGuest() {
         return this.person.isGuest();

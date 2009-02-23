@@ -51,6 +51,16 @@ public interface IPerson extends Principal, IAdditionalDescriptor, IBasicEntity,
    * @return ID of the user
    */
   public int getID ();
+  
+   /**
+    * @return The userName for the user.
+    */
+    public String getUserName();
+
+    /**
+     * @param userName The userName to set for the user.
+     */
+    public void setUserName(String userName);
 
   /**
    * Sets the full name of the user
