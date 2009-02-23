@@ -7,7 +7,6 @@ package org.jasig.portal.spring.web.context.support;
 
 import java.io.Serializable;
 
-import javax.portlet.PortletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionBindingEvent;
@@ -19,10 +18,7 @@ import org.jasig.portal.url.IPortalRequestUtils;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.beans.factory.config.Scope;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-import org.springframework.web.portlet.context.PortletRequestAttributes;
+import org.springframework.web.context.request.SessionScope;
 import org.springframework.web.util.WebUtils;
 
 /**
@@ -108,26 +104,7 @@ public class PortalSessionScope implements Scope {
     }
 
     protected HttpSession getPortalSesion(boolean create) {
-        final RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
-        
-        HttpServletRequest portalRequest;
-        if (requestAttributes instanceof ServletRequestAttributes) {
-            final HttpServletRequest request = ((ServletRequestAttributes)requestAttributes).getRequest();
-            try {
-                portalRequest = this.portalRequestUtils.getOriginalPortalRequest(request);
-            }
-            catch (IllegalArgumentException iae) {
-                portalRequest = request;
-            }
-        }
-        else if (requestAttributes instanceof PortletRequestAttributes) {
-            final PortletRequest request = ((PortletRequestAttributes)requestAttributes).getRequest();
-            portalRequest = this.portalRequestUtils.getOriginalPortalRequest(request);
-        }
-        else {
-            throw new IllegalStateException("portalSession scope only works with ServletRequestAttributes or PortletRequestAttributes in the RequestContextHolder");
-        }
-
+        final HttpServletRequest portalRequest = this.portalRequestUtils.getCurrentPortalRequest();
         return portalRequest.getSession(create);
     }
 

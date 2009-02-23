@@ -40,4 +40,10 @@ public interface IPortalRequestUtils {
      * @see #getOriginalPortalRequest(PortletRequest)
      */
     public HttpServletRequest getOriginalPortalRequest(HttpServletRequest portletRequest);
+    
+    /**
+     * Uses {@link org.springframework.web.context.request.RequestContextHolder} to retrieve the current
+     * portal HttpServletRequest 
+     */
+    public HttpServletRequest getCurrentPortalRequest();
 }
