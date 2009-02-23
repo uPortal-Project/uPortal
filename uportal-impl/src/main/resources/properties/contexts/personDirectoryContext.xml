@@ -73,4 +73,6 @@
 			</map>
 		</property>
 	</bean>
+    
+    <bean class="org.jasig.portal.user.UserAttributesCacheCleaner" />
 </beans>
