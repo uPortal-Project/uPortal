@@ -328,6 +328,10 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
            }
 
        } catch (Exception e) {
+           if (e instanceof AuthorizationException) {
+               throw (AuthorizationException)e;
+           }
+
            log.error(e.getMessage(), e);
            throw new AuthorizationException(e);
        }
