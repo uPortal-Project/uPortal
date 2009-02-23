@@ -29,6 +29,7 @@ import org.jasig.portal.utils.SAX2BufferImpl;
 import org.jasig.portal.utils.SetCheckInSemaphore;
 import org.jasig.portal.utils.threading.BaseTask;
 import org.jasig.portal.utils.threading.Task;
+import org.jasig.portal.utils.threading.TrackingThreadLocal;
 import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -418,36 +419,37 @@ public class ChannelRenderer
         return sb.toString();
     }
 
-	public String getChannelTitle() {
+    public String getChannelTitle() {
 
 
-		if (log.isTraceEnabled()) {
-			log.trace("Getting channel title for ChannelRenderer " + this);
-		}
+        if (log.isTraceEnabled()) {
+            log.trace("Getting channel title for ChannelRenderer " + this);
+        }
 
-		// default to null, which indicates the ChannelRenderer doesn't have
-		// a dynamic channel title available.
-		String channelTitle = null;
-	    try {
-	        // block on channel rendering to allow channel opportunity to
-	        // provide dynamic title.
-	        int renderingStatus = completeRendering();
-	        if (renderingStatus == RENDERING_SUCCESSFUL) {
-	            channelTitle = this.worker.getChannelTitle();
-	        }
-	    } catch (Throwable t) {
-	        log.error("Channel rendering failed while getting title for channel renderer " + this, t);
-	    }
+        // default to null, which indicates the ChannelRenderer doesn't have
+        // a dynamic channel title available.
+        String channelTitle = null;
+        try {
+            // block on channel rendering to allow channel opportunity to
+            // provide dynamic title.
+            int renderingStatus = completeRendering();
+            if (renderingStatus == RENDERING_SUCCESSFUL) {
+                channelTitle = this.worker.getChannelTitle();
+            }
+        } catch (Throwable t) {
+            log.error("Channel rendering failed while getting title for channel renderer " + this, t);
+        }
 
-	    // will be null indicating no dynamic title unless successfully obtained title.
-	    return channelTitle;
+        // will be null indicating no dynamic title unless successfully obtained title.
+        return channelTitle;
 
-	}
+    }
 
 
     protected class Worker extends BaseTask implements IWorker {
         private final IChannel channel;
         private final ChannelRuntimeData rd;
+        private final Map<TrackingThreadLocal<Object>, Object> currentData;
         private final RequestAttributes requestAttributes;
         private final Locale locale;
         
@@ -476,6 +478,7 @@ public class ChannelRenderer
             setRuntimeDataComplete = false;
             buffer = null;
             cbuffer = null;
+            currentData = TrackingThreadLocal.getCurrentData();
         }
 
         public boolean isSetRuntimeDataComplete() {
@@ -486,6 +489,7 @@ public class ChannelRenderer
         public void execute () throws Exception {
             final long startTime = System.currentTimeMillis();
             try {
+                TrackingThreadLocal.setCurrentData(this.currentData);
                 RequestContextHolder.setRequestAttributes(this.requestAttributes);
                 LocaleContextHolder.setLocale(this.locale);
                 if (log.isDebugEnabled()) {
@@ -506,7 +510,7 @@ public class ChannelRenderer
                             }
                         }
                         else {
-                            this.setException(new ClassCastException("Action request for channel that does not implement '" + IPortletAdaptor.class + "'"));
+                            this.setException(new ClassCastException("Action request for channel '" + channel + "' that does not implement '" + IPortletAdaptor.class + "'"));
                         }
 
                         done = true;
@@ -581,7 +585,7 @@ public class ChannelRenderer
                                         // remove it
                                         getChannelCache().remove(key.getKey());
                                         if (log.isDebugEnabled()) {
-                                        	log.debug("ChannelRenderer.Worker::run() : removed unvalidated instance-cache based on a key \""+key.getKey()+"\"");
+                                            log.debug("ChannelRenderer.Worker::run() : removed unvalidated instance-cache based on a key \""+key.getKey()+"\"");
                                         }
                                     }
                                 }
@@ -671,6 +675,7 @@ public class ChannelRenderer
                 this.setException(e);
             }
             finally {
+                TrackingThreadLocal.clearCurrentData(this.currentData.keySet());
                 RequestContextHolder.resetRequestAttributes();
                 LocaleContextHolder.resetLocaleContext();
                 
@@ -681,32 +686,32 @@ public class ChannelRenderer
         }
 
         /**
-		 * Query the channel for ChannelRuntimePRoperties and process those
-		 * properties.
-		 *
-		 * Currently, only handles the optional {@link IChannelTitle} interface.
-		 */
-		private void processChannelRuntimeProperties() {
-			ChannelRuntimeProperties channelProps = this.channel.getRuntimeProperties();
+         * Query the channel for ChannelRuntimePRoperties and process those
+         * properties.
+         *
+         * Currently, only handles the optional {@link IChannelTitle} interface.
+         */
+        private void processChannelRuntimeProperties() {
+            ChannelRuntimeProperties channelProps = this.channel.getRuntimeProperties();
 
             if (channelProps != null) {
-            	if (channelProps instanceof IChannelTitle) {
+                if (channelProps instanceof IChannelTitle) {
 
-                	this.channelTitle = ((IChannelTitle) channelProps).getChannelTitle();
-                	if (log.isTraceEnabled()) {
-                		log.trace("Read title " + this.channelTitle + ".");
-                	}
+                    this.channelTitle = ((IChannelTitle) channelProps).getChannelTitle();
+                    if (log.isTraceEnabled()) {
+                        log.trace("Read title " + this.channelTitle + ".");
+                    }
                 } else {
-                	if (log.isTraceEnabled()) {
-                		log.trace("ChannelRuntimeProperties were non-null but did not implement ITitleable.");
-                	}
+                    if (log.isTraceEnabled()) {
+                        log.trace("ChannelRuntimeProperties were non-null but did not implement ITitleable.");
+                    }
                 }
             } else {
-            	if (log.isTraceEnabled()) {
-            		log.trace("ChannelRuntimeProperties were null from channel " + channel);
-            	}
+                if (log.isTraceEnabled()) {
+                    log.trace("ChannelRuntimeProperties were null from channel " + channel);
+                }
             }
-		}
+        }
 
         public boolean successful () {
             return this.successful;
@@ -771,7 +776,7 @@ public class ChannelRenderer
                         }
                     } else {
                         if (log.isDebugEnabled()) {
-                        	log.debug("ChannelRenderer::setCharacterCache() : channel cache key is null.");
+                            log.debug("ChannelRenderer::setCharacterCache() : channel cache key is null.");
                         }
                     }
                 }
@@ -791,16 +796,16 @@ public class ChannelRenderer
          */
         public String getChannelTitle() {
 
-        	if (log.isTraceEnabled()) {
-        		log.trace("Getting channel title (" + this.channelTitle + "] for " + this);
-        	}
+            if (log.isTraceEnabled()) {
+                log.trace("Getting channel title (" + this.channelTitle + "] for " + this);
+            }
 
-        	// currently, just provides no dynamic title if not done rendering
-        	if (this.done) {
-        	    return this.channelTitle;
-        	} else {
-        	    return null;
-        	}
+            // currently, just provides no dynamic title if not done rendering
+            if (this.done) {
+                return this.channelTitle;
+            } else {
+                return null;
+            }
         }
 
         /**

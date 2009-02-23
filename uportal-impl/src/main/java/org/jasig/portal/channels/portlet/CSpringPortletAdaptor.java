@@ -21,6 +21,7 @@ import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalEvent;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.channels.support.TitledChannelRuntimeProperties;
+import org.jasig.portal.utils.threading.TrackingThreadLocal;
 import org.springframework.web.context.WebApplicationContext;
 import org.xml.sax.ContentHandler;
 
@@ -47,8 +48,8 @@ public class CSpringPortletAdaptor implements IPortletAdaptor {
     private ISpringPortletChannel springPortletChannel;
     
     //Lifecycle data only availabe during a request
-    private ChannelRuntimeData channelRuntimeData;
-    private PortalControlStructures portalControlStructures;
+    private final static TrackingThreadLocal<ChannelRuntimeData> channelRuntimeDataLocal = new TrackingThreadLocal<ChannelRuntimeData>();
+    private final static TrackingThreadLocal<PortalControlStructures> portalControlStructuresLocal = new TrackingThreadLocal<PortalControlStructures>();
     
 
     /* (non-Javadoc)
@@ -56,7 +57,8 @@ public class CSpringPortletAdaptor implements IPortletAdaptor {
      */
     public void setStaticData(ChannelStaticData sd) throws PortalException {
         try {
-            if (this.portalControlStructures == null) {
+            final PortalControlStructures portalControlStructures = this.portalControlStructuresLocal.get();
+            if (portalControlStructures == null) {
                 throw new IllegalStateException("No PortalControlStructures is associated with this IChannel, either no valid request has started or the request is complete.");
             }
 
@@ -78,14 +80,14 @@ public class CSpringPortletAdaptor implements IPortletAdaptor {
             final ISpringPortletChannel springPortletChannel = (ISpringPortletChannel)applicationContext.getBean(beanName, ISpringPortletChannel.class);
             
             //Initialize the static channel immediately with the instance data
-            springPortletChannel.initSession(sd, this.portalControlStructures);
+            springPortletChannel.initSession(sd, portalControlStructures);
             
             //Only set the local variables if the initSession call completes
             this.channelStaticData = sd;
             this.springPortletChannel = springPortletChannel;
         }
         finally {
-            this.portalControlStructures = null;
+            this.portalControlStructuresLocal.remove();
         }
     }
     
@@ -94,22 +96,23 @@ public class CSpringPortletAdaptor implements IPortletAdaptor {
      * @see org.jasig.portal.IPrivileged#setPortalControlStructures(org.jasig.portal.PortalControlStructures)
      */
     public void setPortalControlStructures(PortalControlStructures pcs) throws PortalException {
-        this.portalControlStructures = pcs;
+        this.portalControlStructuresLocal.set(pcs);
     }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.IChannel#setRuntimeData(org.jasig.portal.ChannelRuntimeData)
      */
     public void setRuntimeData(ChannelRuntimeData rd) throws PortalException {
-        if (this.portalControlStructures == null) {
+        final PortalControlStructures portalControlStructures = this.portalControlStructuresLocal.get();
+        if (portalControlStructures == null) {
             throw new IllegalStateException("setPortalControlStructures must be set before setRuntimeData is called");
         }
         
-        this.channelRuntimeData = rd;
+        this.channelRuntimeDataLocal.set(rd);
 
         //Attach the runtime data as an attribute on the request so it is accessible to other portlet rendering related classes  
-        final HttpServletRequest httpServletRequest = this.portalControlStructures.getHttpServletRequest();
-        httpServletRequest.setAttribute(ATTRIBUTE__RUNTIME_DATA, this.channelRuntimeData);
+        final HttpServletRequest httpServletRequest = portalControlStructures.getHttpServletRequest();
+        httpServletRequest.setAttribute(ATTRIBUTE__RUNTIME_DATA, rd);
     }
     
     /* (non-Javadoc)
@@ -120,18 +123,20 @@ public class CSpringPortletAdaptor implements IPortletAdaptor {
             if (this.channelStaticData == null) {
                 throw new IllegalStateException("No ChannelStaticData is associated with this IChannel, either the channel has not yet been initialized or should be destroyed.");
             }
-            if (this.portalControlStructures == null) {
+            final PortalControlStructures portalControlStructures = this.portalControlStructuresLocal.get();
+            if (portalControlStructures == null) {
                 throw new IllegalStateException("No PortalControlStructures is associated with this IChannel, either no valid request has started or the request is complete.");
             }
-            if (this.channelRuntimeData == null) {
+            final ChannelRuntimeData channelRuntimeData = this.channelRuntimeDataLocal.get();
+            if (channelRuntimeData == null) {
                 throw new IllegalStateException("No ChannelRuntimeData is associated with this IChannel, either no valid request has started or the request is complete.");
             }
             
-            this.springPortletChannel.action(this.channelStaticData, this.portalControlStructures, this.channelRuntimeData);
+            this.springPortletChannel.action(this.channelStaticData, portalControlStructures, channelRuntimeData);
         }
         finally {
-            this.portalControlStructures = null;
-            this.channelRuntimeData = null;
+            this.portalControlStructuresLocal.remove();
+            this.channelRuntimeDataLocal.remove();
         }
     }
 
@@ -142,14 +147,16 @@ public class CSpringPortletAdaptor implements IPortletAdaptor {
         if (this.channelStaticData == null) {
             throw new IllegalStateException("No ChannelStaticData is associated with this IChannel, either the channel has not yet been initialized or should be destroyed.");
         }
-        if (this.portalControlStructures == null) {
+        final PortalControlStructures portalControlStructures = this.portalControlStructuresLocal.get();
+        if (portalControlStructures == null) {
             throw new IllegalStateException("No PortalControlStructures is associated with this IChannel, either no valid request has started or the request is complete.");
         }
-        if (this.channelRuntimeData == null) {
+        final ChannelRuntimeData channelRuntimeData = this.channelRuntimeDataLocal.get();
+        if (channelRuntimeData == null) {
             throw new IllegalStateException("No ChannelRuntimeData is associated with this IChannel, either no valid request has started or the request is complete.");
         }
         
-        return this.springPortletChannel.generateKey(this.channelStaticData, this.portalControlStructures, this.channelRuntimeData);
+        return this.springPortletChannel.generateKey(this.channelStaticData, portalControlStructures, channelRuntimeData);
     }
 
     /* (non-Javadoc)
@@ -159,14 +166,16 @@ public class CSpringPortletAdaptor implements IPortletAdaptor {
         if (this.channelStaticData == null) {
             throw new IllegalStateException("No ChannelStaticData is associated with this IChannel, either the channel has not yet been initialized or should be destroyed.");
         }
-        if (this.portalControlStructures == null) {
+        final PortalControlStructures portalControlStructures = this.portalControlStructuresLocal.get();
+        if (portalControlStructures == null) {
             throw new IllegalStateException("No PortalControlStructures is associated with this IChannel, either no valid request has started or the request is complete.");
         }
-        if (this.channelRuntimeData == null) {
+        final ChannelRuntimeData channelRuntimeData = this.channelRuntimeDataLocal.get();
+        if (channelRuntimeData == null) {
             throw new IllegalStateException("No ChannelRuntimeData is associated with this IChannel, either no valid request has started or the request is complete.");
         }
         
-        return this.springPortletChannel.isCacheValid(this.channelStaticData, this.portalControlStructures, this.channelRuntimeData, validity);
+        return this.springPortletChannel.isCacheValid(this.channelStaticData, portalControlStructures, channelRuntimeData, validity);
     }
 
     /* (non-Javadoc)
@@ -176,14 +185,16 @@ public class CSpringPortletAdaptor implements IPortletAdaptor {
         if (this.channelStaticData == null) {
             throw new IllegalStateException("No ChannelStaticData is associated with this IChannel, either the channel has not yet been initialized or should be destroyed.");
         }
-        if (this.portalControlStructures == null) {
+        final PortalControlStructures portalControlStructures = this.portalControlStructuresLocal.get();
+        if (portalControlStructures == null) {
             throw new IllegalStateException("No PortalControlStructures is associated with this IChannel, either no valid request has started or the request is complete.");
         }
-        if (this.channelRuntimeData == null) {
+        final ChannelRuntimeData channelRuntimeData = this.channelRuntimeDataLocal.get();
+        if (channelRuntimeData == null) {
             throw new IllegalStateException("No ChannelRuntimeData is associated with this IChannel, either no valid request has started or the request is complete.");
         }
         
-        this.springPortletChannel.render(this.channelStaticData, this.portalControlStructures, this.channelRuntimeData, pw);
+        this.springPortletChannel.render(this.channelStaticData, portalControlStructures, channelRuntimeData, pw);
     }
 
     /* (non-Javadoc)
@@ -194,19 +205,21 @@ public class CSpringPortletAdaptor implements IPortletAdaptor {
             if (this.channelStaticData == null) {
                 throw new IllegalStateException("No ChannelStaticData is associated with this IChannel, either the channel has not yet been initialized or should be destroyed.");
             }
-            if (this.portalControlStructures == null) {
+            final PortalControlStructures portalControlStructures = this.portalControlStructuresLocal.get();
+            if (portalControlStructures == null) {
                 throw new IllegalStateException("No PortalControlStructures is associated with this IChannel, either no valid request has started or the request is complete.");
             }
-            if (this.channelRuntimeData == null) {
+            final ChannelRuntimeData channelRuntimeData = this.channelRuntimeDataLocal.get();
+            if (channelRuntimeData == null) {
                 throw new IllegalStateException("No ChannelRuntimeData is associated with this IChannel, either no valid request has started or the request is complete.");
             }
             
-            final String title = this.springPortletChannel.getTitle(this.channelStaticData, this.portalControlStructures, this.channelRuntimeData);
+            final String title = this.springPortletChannel.getTitle(this.channelStaticData, portalControlStructures, channelRuntimeData);
             return new TitledChannelRuntimeProperties(title);
         }
         finally {
-            this.channelRuntimeData = null;
-            this.portalControlStructures = null;
+            this.channelRuntimeDataLocal.remove();
+            this.portalControlStructuresLocal.remove();
         }
     }
 
@@ -218,14 +231,15 @@ public class CSpringPortletAdaptor implements IPortletAdaptor {
             if (this.channelStaticData == null) {
                 throw new IllegalStateException("No ChannelStaticData is associated with this IChannel, either the channel has not yet been initialized or should be destroyed.");
             }
-            if (this.portalControlStructures == null) {
+            final PortalControlStructures portalControlStructures = this.portalControlStructuresLocal.get();
+            if (portalControlStructures == null) {
                 throw new IllegalStateException("No PortalControlStructures is associated with this IChannel, either no valid request has started or the request is complete.");
             }
 
-            this.springPortletChannel.portalEvent(this.channelStaticData, this.portalControlStructures, ev);
+            this.springPortletChannel.portalEvent(this.channelStaticData, portalControlStructures, ev);
         }
         finally {
-            this.portalControlStructures = null;
+            this.portalControlStructuresLocal.remove();
             
             //If the session is done this channel object should never be used again, clean up references
             if (PortalEvent.SESSION_DONE == ev.getEventNumber()) {
@@ -243,18 +257,20 @@ public class CSpringPortletAdaptor implements IPortletAdaptor {
             if (this.channelStaticData == null) {
                 throw new IllegalStateException("No ChannelStaticData is associated with this IChannel, either the channel has not yet been initialized or should be destroyed.");
             }
-            if (this.portalControlStructures == null) {
+            final PortalControlStructures portalControlStructures = this.portalControlStructuresLocal.get();
+            if (portalControlStructures == null) {
                 throw new IllegalStateException("No PortalControlStructures is associated with this IChannel, either no valid request has started or the request is complete.");
             }
-            if (this.channelRuntimeData == null) {
+            final ChannelRuntimeData channelRuntimeData = this.channelRuntimeDataLocal.get();
+            if (channelRuntimeData == null) {
                 throw new IllegalStateException("No ChannelRuntimeData is associated with this IChannel, either no valid request has started or the request is complete.");
             }
          
-            this.springPortletChannel.prepareForRefresh(this.channelStaticData, this.portalControlStructures, this.channelRuntimeData);
+            this.springPortletChannel.prepareForRefresh(this.channelStaticData, portalControlStructures, channelRuntimeData);
         }
         finally {
-            this.portalControlStructures = null;
-            this.channelRuntimeData = null;
+            this.portalControlStructuresLocal.remove();
+            this.channelRuntimeDataLocal.remove();
         }
     }
 
@@ -267,18 +283,20 @@ public class CSpringPortletAdaptor implements IPortletAdaptor {
             if (this.channelStaticData == null) {
                 throw new IllegalStateException("No ChannelStaticData is associated with this IChannel, either the channel has not yet been initialized or should be destroyed.");
             }
-            if (this.portalControlStructures == null) {
+            final PortalControlStructures portalControlStructures = this.portalControlStructuresLocal.get();
+            if (portalControlStructures == null) {
                 throw new IllegalStateException("No PortalControlStructures is associated with this IChannel, either no valid request has started or the request is complete.");
             }
-            if (this.channelRuntimeData == null) {
+            final ChannelRuntimeData channelRuntimeData = this.channelRuntimeDataLocal.get();
+            if (channelRuntimeData == null) {
                 throw new IllegalStateException("No ChannelRuntimeData is associated with this IChannel, either no valid request has started or the request is complete.");
             }
          
-            this.springPortletChannel.prepareForReset(this.channelStaticData, this.portalControlStructures, this.channelRuntimeData);
+            this.springPortletChannel.prepareForReset(this.channelStaticData, portalControlStructures, channelRuntimeData);
         }
         finally {
-            this.portalControlStructures = null;
-            this.channelRuntimeData = null;
+            this.portalControlStructuresLocal.remove();
+            this.channelRuntimeDataLocal.remove();
         }        
     }
     
