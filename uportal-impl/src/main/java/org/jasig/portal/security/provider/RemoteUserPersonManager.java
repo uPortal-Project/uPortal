@@ -8,6 +8,7 @@ package org.jasig.portal.security.provider;
 import java.util.Enumeration;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -44,9 +45,16 @@ public class RemoteUserPersonManager implements IPersonManager {
 	public IPerson getPerson(HttpServletRequest request)
 		throws PortalSecurityException {
 		// Return the person object if it exists in the user's session
-		IPerson person = (IPerson) request.getSession(false).getAttribute(PERSON_SESSION_KEY);
-		if (person != null)
-			return person;
+	    final HttpSession session = request.getSession(false);
+        IPerson person = null;
+        if (session != null) {
+            
+            person = (IPerson) session.getAttribute(PERSON_SESSION_KEY);
+            if (person != null) {
+                return person;
+            }
+        }
+
 		try {
 			// Create a new instance of a person
 			person = PersonFactory.createGuestPerson();
@@ -93,8 +101,10 @@ public class RemoteUserPersonManager implements IPersonManager {
 			// Log the exception
 			log.error("Exception creating person for request " + request, e);
 		}
-		// Add this person object to the user's session
-		request.getSession(false).setAttribute(PERSON_SESSION_KEY, person);
+        if (session != null) {
+            // Add this person object to the user's session
+            session.setAttribute(PERSON_SESSION_KEY, person);
+        }
 		// Return the new person object
 		return (person);
 	}
