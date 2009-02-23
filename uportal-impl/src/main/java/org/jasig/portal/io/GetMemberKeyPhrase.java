@@ -83,11 +83,6 @@ public class GetMemberKeyPhrase implements Phrase {
             throw new RuntimeException(msg, t);
         }
 
-        if (rslt == null) {
-            String msg = "The specified member was not found:  " + e.getText();
-            throw new RuntimeException(msg);
-        }
-
         return rslt;
 
     }
