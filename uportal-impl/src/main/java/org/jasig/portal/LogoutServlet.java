@@ -161,40 +161,42 @@ public class LogoutServlet extends HttpServlet {
       try {
          // Get the person object associated with the request
          person = PersonManagerFactory.getPersonManagerInstance().getPerson(request);
-         // Retrieve the security context for the user
-         ISecurityContext securityContext = person.getSecurityContext();
-         if (securityContext.isAuthenticated()) {
-             if (log.isDebugEnabled())
-                 log.debug("LogoutServlet::getRedirectionUrl()" +
-                     " Looking for redirect string for the root context");
-            redirect = (String)REDIRECT_MAP.get("root");
-            if (redirect != null && !redirect.equals("")) {
-               return redirect;
-            }
-         }
-         Enumeration subCtxNames = securityContext.getSubContextNames();
-         while (subCtxNames.hasMoreElements()) {
-            String subCtxName = (String)subCtxNames.nextElement();
-            if (log.isDebugEnabled())
-                log.debug("LogoutServlet::getRedirectionUrl() " +
-                        " subCtxName = " + subCtxName);
-            // strip off "root." part of name
-            ISecurityContext sc = securityContext.getSubContext(subCtxName);
-            if (log.isDebugEnabled())
-                log.debug("LogoutServlet::getRedirectionUrl()" +
-                        " subCtxName isAuth = " + sc.isAuthenticated());
-            if (sc.isAuthenticated()) {
+         if (person != null) {
+             // Retrieve the security context for the user
+             ISecurityContext securityContext = person.getSecurityContext();
+             if (securityContext.isAuthenticated()) {
+                 if (log.isDebugEnabled())
+                     log.debug("LogoutServlet::getRedirectionUrl()" +
+                         " Looking for redirect string for the root context");
+                redirect = (String)REDIRECT_MAP.get("root");
+                if (redirect != null && !redirect.equals("")) {
+                   return redirect;
+                }
+             }
+             Enumeration subCtxNames = securityContext.getSubContextNames();
+             while (subCtxNames.hasMoreElements()) {
+                String subCtxName = (String)subCtxNames.nextElement();
+                if (log.isDebugEnabled())
+                    log.debug("LogoutServlet::getRedirectionUrl() " +
+                            " subCtxName = " + subCtxName);
+                // strip off "root." part of name
+                ISecurityContext sc = securityContext.getSubContext(subCtxName);
                 if (log.isDebugEnabled())
                     log.debug("LogoutServlet::getRedirectionUrl()" +
-                            " Looking for redirect string for subCtxName = " + subCtxName);
-               redirect = (String)REDIRECT_MAP.get(subCtxName);
-               if (redirect != null && !redirect.equals("")) {
-                   if (log.isDebugEnabled())
-                       log.debug("LogoutServlet::getRedirectionUrl()" +
-                               " subCtxName redirect = " + redirect);
-                  break;
-               }
-            }
+                            " subCtxName isAuth = " + sc.isAuthenticated());
+                if (sc.isAuthenticated()) {
+                    if (log.isDebugEnabled())
+                        log.debug("LogoutServlet::getRedirectionUrl()" +
+                                " Looking for redirect string for subCtxName = " + subCtxName);
+                   redirect = (String)REDIRECT_MAP.get(subCtxName);
+                   if (redirect != null && !redirect.equals("")) {
+                       if (log.isDebugEnabled())
+                           log.debug("LogoutServlet::getRedirectionUrl()" +
+                                   " subCtxName redirect = " + redirect);
+                      break;
+                   }
+                }
+             }
          }
       } catch (Exception e) {
          // Log the exception
