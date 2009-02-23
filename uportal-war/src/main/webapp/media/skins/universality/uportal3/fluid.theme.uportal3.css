@@ -82,18 +82,18 @@
 .fl-theme-uportal3 span input {background-color:#dfefff !important; border:0.1em solid #5a95cf; margin:-0.1em;}
 
 /* Helper: Tabs */
-.fl-theme-mist .fl-tabs {border-bottom-color:#4070a1;}
-.fl-theme-mist .fl-tabs li  {background-color:#dfefff;}
-.fl-theme-mist .fl-tabs li,
-.fl-theme-mist .fl-tabs li a  {font-weight:bold; color:#4070a1; border-color:#4070a1; border-bottom-color:#4070a1; text-decoration:none;}
-.fl-theme-mist .fl-tabs li:hover,
-.fl-theme-mist .fl-tabs li:hover a,
-.fl-theme-mist .fl-tabs li a:hover {background-color:#5a95cf; color:#fff !important;}
-.fl-theme-mist .fl-tabs li.fl-activeTab,
-.fl-theme-mist .fl-tabs li.fl-activeTab:hover,
-.fl-theme-mist .fl-tabs li.fl-activeTab a,
-.fl-theme-mist .fl-tabs li.fl-activeTab a:hover {background-color: #fff; border-bottom-color:#fff; color:#508cc9 !important;}
-.fl-theme-mist .fl-tab-content {background-color:#ffffff; color:#000;}
+.fl-theme-uportal3 .fl-tabs {border-bottom-color:#4070a1;}
+.fl-theme-uportal3 .fl-tabs li  {background-color:#dfefff;}
+.fl-theme-uportal3 .fl-tabs li,
+.fl-theme-uportal3 .fl-tabs li a  {font-weight:bold; color:#4070a1; border-color:#4070a1; border-bottom-color:#4070a1; text-decoration:none;}
+.fl-theme-uportal3 .fl-tabs li:hover,
+.fl-theme-uportal3 .fl-tabs li:hover a,
+.fl-theme-uportal3 .fl-tabs li a:hover {background-color:#5a95cf; color:#fff !important;}
+.fl-theme-uportal3 .fl-tabs li.fl-activeTab,
+.fl-theme-uportal3 .fl-tabs li.fl-activeTab:hover,
+.fl-theme-uportal3 .fl-tabs li.fl-activeTab a,
+.fl-theme-uportal3 .fl-tabs li.fl-activeTab a:hover {background-color: #fff; border-bottom-color:#fff; color:#508cc9 !important;}
+.fl-theme-uportal3 .fl-tab-content {background-color:#ffffff; color:#000;}
 
 /* Helper: Menu */
 .fl-theme-uportal3 .fl-listmenu {border:1px solid #4070a1; background-color:#fff;}
@@ -186,14 +186,11 @@
 .fl-theme-uportal3 #portalNavigation {background:#98b6c1 url(images/nav_bkd_btm.gif) bottom right repeat-x; border-top:1px solid #44626a;}
 .fl-theme-uportal3 #portalNavigationInner {background:transparent url(images/nav_bkd_top.gif) top right repeat-x; border-top:1px solid #44626a; border-bottom:1px solid #4b6f7d;}
 .fl-theme-uportal3 #portalNavigation .fl-tabs {margin:0; padding:0.3em 0; text-align:center; border:none;}
-<!--[if IE 7]>
-.fl-theme-uportal3 #portalNavigation .fl-tabs {padding:0;}
-<![endif]-->
-.fl-theme-uportal3 #portalNavigation .fl-tabs li  {padding:0.3em 0;}
+.fl-theme-uportal3 #portalNavigation .fl-tabs li  {padding:0.3em 0; background:transparent;}
 .fl-theme-uportal3 #portalNavigation .fl-tabs li a  {margin:0; padding:0.3em 2em; background:transparent; font-size:120%; font-weight:bold; color:#fff !important; border:none; text-decoration:none;}
 .fl-theme-uportal3 #portalNavigation .fl-tabs li:hover,
 .fl-theme-uportal3 #portalNavigation .fl-tabs li:hover a,
-.fl-theme-uportal3 #portalNavigation .fl-tabs li a:hover {color:#fff !important;}
+.fl-theme-uportal3 #portalNavigation .fl-tabs li a:hover {background:#608695 url(images/nav_tab_bkd.gif) 0px -300px repeat-x}
 .fl-theme-uportal3 #portalNavigation .fl-tabs li.fl-activeTab a,
 .fl-theme-uportal3 #portalNavigation .fl-tabs li.fl-activeTab a:hover {background:#2e5579 url(images/nav_tab_bkd.gif) top left repeat-x; border:1px solid #1e3851; color:#fff !important;}
 .fl-theme-uportal3 #portalNavigation .fl-tab-content {background-color:#fff; color:#000;}
@@ -312,6 +309,25 @@
 .fl-theme-uportal3 .dashboard .portlet-bottom {background:#e5e5e5 url(images/portlet_corner_bottomleft.png) bottom left no-repeat;}
 .fl-theme-uportal3 .dashboard .portlet-bottom-inner {height:3px; background:transparent url(images/portlet_corner_bottomright.png) bottom right no-repeat;}
 .fl-theme-uportal3 .dashboard .portlet-controls .portlet-control {font-size:80%; padding-right:1em;}
+/* No Chrome */
+.fl-theme-uportal3 .dashboard .no-chrome .portlet-content {border:none;}
+/* Alternate */
+.fl-theme-uportal3 .dashboard .alternate .portlet-top,
+.fl-theme-uportal3 .dashboard .alternate .portlet-bottom,
+.fl-theme-uportal3 .dashboard .alternate .portlet-content {border-color:#98b6c1;}
+.fl-theme-uportal3 .dashboard .alternate .portlet-top,
+.fl-theme-uportal3 .dashboard .alternate .portlet-bottom {background-color:#98b6c1;}
+.fl-theme-uportal3 .dashboard .alternate .portlet-toolbar {background:#98b6c1 url(images/nav_bkd_top.gif) top right repeat-x;}
+/* Highlight */
+.fl-theme-uportal3 .dashboard .highlight .portlet-top,
+.fl-theme-uportal3 .dashboard .highlight .portlet-bottom,
+.fl-theme-uportal3 .dashboard .highlight .portlet-content {border-color:#FF6600;}
+.fl-theme-uportal3 .dashboard .highlight .portlet-top,
+.fl-theme-uportal3 .dashboard .highlight .portlet-bottom {background-color:#FF6600;}
+.fl-theme-uportal3 .dashboard .highlight .portlet-toolbar {background:#FF6600;}
+.fl-theme-uportal3 .dashboard .highlight .portlet-toolbar a {color:#fff;}
+.fl-theme-uportal3 .dashboard .highlight .portlet-toolbar h2 {background-image:url(../../icons/asterisk_yellow.png);}
+
 /* Locked Portlet */
 .fl-theme-uportal3 .portal-page-column-inner .locked .portlet-top {display:none;}
 .fl-theme-uportal3 .portal-page-column-inner .locked .portlet-bottom {display:none;}
