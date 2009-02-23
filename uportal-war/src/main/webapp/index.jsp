@@ -5,7 +5,7 @@
  *
 --%>
 
-<%@ page errorPage="error.jsp" %>
+<%@ page errorPage="error.jsp" session="false" %>
 <%
   response.sendRedirect(request.getContextPath() + "/render.userLayoutRootNode.uP");
 %>
