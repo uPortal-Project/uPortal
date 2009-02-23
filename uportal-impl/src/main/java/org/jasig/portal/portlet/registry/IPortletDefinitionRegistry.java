@@ -8,6 +8,7 @@ package org.jasig.portal.portlet.registry;
 import org.apache.pluto.PortletContainerException;
 import org.apache.pluto.descriptors.portlet.PortletAppDD;
 import org.apache.pluto.descriptors.portlet.PortletDD;
+import org.jasig.portal.ChannelDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.utils.Tuple;
@@ -102,4 +103,14 @@ public interface IPortletDefinitionRegistry {
      * @param channelPublishId The id of the ChannelDefinition to delete the IPortletDefinition for.
      */
     public void deletePortletDefinition(int channelPublishId);
+
+    /**
+     * Gets the {@link ChannelDefinition} that the {@link IPortletDefinition} specified by the 
+     * {@link IPortletDefinitionId} represents
+     * 
+     * @param portletDefinitionId The definition ID to get the channel definition for.
+     * @return The channel definition the specified portlet represents
+     * @throws IllegalArgumentException if portletDefinitionId is null
+     */
+    public ChannelDefinition getChannelDefinition(IPortletDefinitionId portletDefinitionId);
 }

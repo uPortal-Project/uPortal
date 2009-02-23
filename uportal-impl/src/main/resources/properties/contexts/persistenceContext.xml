@@ -7,8 +7,6 @@
     http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
     http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
     http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
-    
-    <!-- ********** Portlet DAOs ********** -->
 
     <!--
      | This bean is used by the 'RDBMConfigurationLoader' implementation in dlm.xml.  
@@ -18,10 +16,19 @@
     </bean>
     -->
     
+    <!-- ********** Portlet DAOs ********** -->
+    
     <bean id="portletDefinitionDao" class="org.jasig.portal.portlet.dao.jpa.JpaPortletDefinitionDao">
     </bean>
     
-    <bean id="portletEntityDao" class="org.jasig.portal.portlet.dao.jpa.JpaPortletEntityDao">
+    <bean id="portletEntityDao" class="org.jasig.portal.portlet.dao.trans.TransientPortletEntityDao">
+        <property name="delegatePortletEntityDao" ref="jpaPortletEntityDao" />
+        <property name="portalRequestUtils" ref="portalRequestUtils" />
+        <property name="portletDefinitionRegistry" ref="portletDefinitionRegistry" />
+        <property name="userInstanceManager" ref="userInstanceManager" />
+    </bean>
+    
+    <bean id="jpaPortletEntityDao" class="org.jasig.portal.portlet.dao.jpa.JpaPortletEntityDao">
         <property name="portletDefinitionDao" ref="portletDefinitionDao" />
     </bean>
     

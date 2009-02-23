@@ -212,6 +212,16 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
             this.portletDefinitionDao.deletePortletDefinition(portletDefinition);
         }
     }
+    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.portlet.registry.IPortletDefinitionRegistry#getChannelDefinition(org.jasig.portal.portlet.om.IPortletDefinitionId)
+     */
+    public ChannelDefinition getChannelDefinition(IPortletDefinitionId portletDefinitionId) {
+        final IPortletDefinition portletDefinition = this.getPortletDefinition(portletDefinitionId);
+        final int channelDefinitionId = portletDefinition.getChannelDefinitionId();
+        return this.getChannelDefinition(channelDefinitionId);
+    }
+    
     /**
      * Get the ChannelDefinition for the specified channelPublishId
      */
