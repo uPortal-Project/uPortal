@@ -15,6 +15,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.channels.error.CError;
 import org.jasig.portal.channels.portlet.IPortletAdaptor;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -326,7 +327,7 @@ public class ChannelDefinition implements IBasicEntity {
    * Display a message where this channel should be
    */
   public Element getDocument(Document doc, String idTag, String statusMsg, int errorId) {
-    Element channel = getBase(doc, idTag, "org.jasig.portal.channels.CError", false, false, false);
+    Element channel = getBase(doc, idTag, CError.class.getName(), false, false, false);
     addParameters(doc, channel);
     channel.appendChild(nodeParameter(doc, "CErrorMessage", statusMsg));
     channel.appendChild(nodeParameter(doc, "CErrorChanId", idTag));
