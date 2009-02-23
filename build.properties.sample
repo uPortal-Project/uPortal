@@ -39,3 +39,6 @@ removeExisting=false
 # NOTE: Tomcat 5.5 and 6.0 do not include any libraries in shared/lib by default so as long as
 #       all required libraries are declared in the uportal-ear it is ok to set this to true.
 cleanShared=false
+
+# Prompt the user before running ant tasks that could modify the database
+prodPrompt=false

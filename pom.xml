@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.jasig</groupId>
         <artifactId>jasig-parent</artifactId>
-        <version>6</version>
+        <version>10</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -17,28 +17,37 @@
     <name>uPortal</name>
     <description>The root project definition for the uPortal project.</description>
     <version>3.0.3-SNAPSHOT</version>
-
-    <licenses>
-        <license>
-            <name>JA-SIG Collaborative Licence</name>
-            <url>http://www.uportal.org/license.html</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
+    
+    <scm>
+        <connection>scm:svn:https://www.ja-sig.org/svn/uPortal/branches/rel-3-0-patches</connection>
+        <developerConnection>scm:svn:https://www.ja-sig.org/svn/uPortal/branches/rel-3-0-patches</developerConnection>
+        <url>http://developer.jasig.org/source/browse/jasigsvn/uPortal/branches/rel-3-0-patches</url>
+    </scm>
     
     <distributionManagement>
         <site>
             <id>developer.jasig</id>
-            <url>scp://developer.ja-sig.org/jasig/htdocs/developer/projects/uportal/3.0.3-SNAPSHOT/</url>
+            <url>${jasig-site-dist-base}/uportal/${project.version}</url>
         </site>
     </distributionManagement>
+    
+    <issueManagement>
+        <url>${jasig-issues-base}/UP</url>
+        <system>${jasig-issues-system}</system>
+    </issueManagement>
 
     <repositories>
         <repository>
-            <id>jasig-repository</id>
-            <name>JA-SIG Maven2 Repository</name>
-            <url>http://developer.ja-sig.org/maven2</url>
+            <id>jasig-m2</id>
+            <name>Jasig Maven2 Repository</name>
+            <url>http://developer.jasig.org/repo/content/repositories/m2</url>
         </repository>
+        <repository>
+            <id>jasig-3rd-party</id>
+            <name>Jasig 3rd Party Repository</name>
+            <url>http://developer.jasig.org/repo/content/repositories/3rd-party</url>
+        </repository>
+
         <repository>
             <id>Codehaus Snapshots</id>
             <url>http://snapshots.repository.codehaus.org/</url>
@@ -95,9 +104,6 @@
         <jdbc.version>${hsqldb.version}</jdbc.version>
     
     
-        <!-- POM Configuration Properties -->
-        <issues.projectKey>UP</issues.projectKey>
-        <scm.path>/uPortal/branches/rel-3-0-patches</scm.path>
         
         <!-- Portlet WAR Dependency Version Properties -->
         <BookmarksPortlet.version>1.0.8</BookmarksPortlet.version>
