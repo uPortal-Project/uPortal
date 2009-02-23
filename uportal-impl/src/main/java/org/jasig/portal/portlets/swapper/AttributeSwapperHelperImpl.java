@@ -22,6 +22,8 @@ import javax.portlet.PortletRequest;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.portlets.Attribute;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
@@ -38,6 +40,8 @@ import org.springframework.webflow.context.ExternalContext;
  */
 public class AttributeSwapperHelperImpl implements IAttributeSwapperHelper {
     private static final String OVERRIDDEN_ATTRIBUTES = AttributeSwapperHelperImpl.class.getName() + ".OVERRIDDEN_ATTRIBUTES";
+    
+    protected final Log logger = LogFactory.getLog(this.getClass());
 
     private OverwritingPersonAttributeDao overwritingPersonAttributeDao;
     private IPersonManager personManager;
@@ -137,7 +141,9 @@ public class AttributeSwapperHelperImpl implements IAttributeSwapperHelper {
         final Set<String> swappableAttributes = this.getSwappableAttributes(externalContext);
         for (final String attribute : swappableAttributes) {
             final Object value = person.getAttributeValue(attribute);
-            currentAttributes.put(attribute, new Attribute(String.valueOf(value)));
+            if (value != null) {
+                currentAttributes.put(attribute, new Attribute(String.valueOf(value)));
+            }
         }
     }
     
@@ -170,6 +176,7 @@ public class AttributeSwapperHelperImpl implements IAttributeSwapperHelper {
             }
         }
         
+        this.logger.warn("User '" + uid + "' setting attribute overrides: " + attributes);
         
         //Override attributes retrieved the person directory
         this.overwritingPersonAttributeDao.setUserAttributeOverride(uid, attributes);
@@ -190,6 +197,8 @@ public class AttributeSwapperHelperImpl implements IAttributeSwapperHelper {
     public void resetAttributes(ExternalContext externalContext) {
         final Principal currentUser = externalContext.getCurrentUser();
         final String uid = currentUser.getName();
+        
+        this.logger.warn("User '" + uid + "' reseting to default attributes");
         
         //Remove the person directory override
         this.overwritingPersonAttributeDao.removeUserAttributeOverride(uid);

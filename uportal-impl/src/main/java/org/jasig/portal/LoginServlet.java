@@ -45,6 +45,7 @@ public class LoginServlet extends HttpServlet {
     public static final String SWAP_ORIGINAL_UID = LoginServlet.class.getName() + ".SWAP_ORIGINAL_UID";
     
     private static final Log log = LogFactory.getLog(LoginServlet.class);
+    private static final Log swapperLog = LogFactory.getLog("org.jasig.portal.portlets.swapper");
   private static final String redirectString;
   private static HashMap credentialTokens;
   private static HashMap principalTokens;
@@ -161,7 +162,7 @@ public class LoginServlet extends HttpServlet {
         //If doing an identity swap
         if (targetUid != null && originalUid != null) {
             if (swap) {
-                log.warn("Swapping identity for '" + originalUid + "' to '" + targetUid + "'");
+                swapperLog.warn("Swapping identity for '" + originalUid + "' to '" + targetUid + "'");
 
                 //Track the originating user
                 s.setAttribute(SWAP_ORIGINAL_UID, originalUid);
@@ -170,7 +171,7 @@ public class LoginServlet extends HttpServlet {
                 person.setUserName(targetUid);
             }
             else {
-                log.warn("Reverting swapped identity from '" + targetUid + "' to '" + originalUid + "'");
+                swapperLog.warn("Reverting swapped identity from '" + targetUid + "' to '" + originalUid + "'");
                 
                 person.setUserName(originalUid);
             }
