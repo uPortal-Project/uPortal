@@ -10,6 +10,7 @@ import javax.naming.directory.DirContext;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.ldap.core.ContextSource;
 import org.springframework.ldap.core.support.LdapContextSource;
 
 /**
@@ -23,21 +24,21 @@ import org.springframework.ldap.core.support.LdapContextSource;
 public class ContextSourceLdapServerImpl implements ILdapServer {
     protected final Log logger = LogFactory.getLog(this.getClass());
     
-    private LdapContextSource ldapContextSource;
+    private ContextSource contextSource;
     private String uidAttribute;
     private String baseDN;
     
     /**
      * @return the contextSource
      */
-    public LdapContextSource getLdapContextSource() {
-        return this.ldapContextSource;
+    public ContextSource getContextSource() {
+        return this.contextSource;
     }
     /**
      * @param ldapContextSource the ldapContextSource to set
      */
-    public void setLdapContextSource(LdapContextSource ldapContextSource) {
-        this.ldapContextSource = ldapContextSource;
+    public void setContextSource(ContextSource ldapContextSource) {
+        this.contextSource = ldapContextSource;
     }
     /**
      * @param uidAttribute the uidAttribute to set
@@ -65,7 +66,7 @@ public class ContextSourceLdapServerImpl implements ILdapServer {
      * @see org.jasig.portal.ldap.ILdapServer#getConnection()
      */
     public DirContext getConnection() throws NamingException {
-        return this.ldapContextSource.getReadOnlyContext();
+        return this.contextSource.getReadOnlyContext();
     }
 
     /**
