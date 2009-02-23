@@ -58,7 +58,7 @@
      <!-- Add Channel Menu -->
      <div id="contentAddingDialog" title="Add Content">
         <div id="channelAddingTabs">
-         <ul style="height: 30px;">
+         <ul>
           <li><a href="#channel-tab-1"><span>Browse Channels</span></a></li>
           <li><a href="#channel-tab-2"><span>Search</span></a></li>
          </ul>

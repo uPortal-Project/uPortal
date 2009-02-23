@@ -71,11 +71,11 @@
 		};
 		
 		var initializeContentAddingMenu = function() {
-			$("#contentAddingDialog").dialog({height:450, width:500, modal:true});
+			$("#contentAddingDialog").dialog({height:500, width:550, modal:true});
 			$("#contentDialogLink")
 				.unbind('click', initializeContentAddingMenu)
 				.click(function(){$("#contentAddingDialog").dialog('open');});
-			$("#channelAddingTabs > ul").tabs();
+			$("#channelAddingTabs").tabs();
 			$("#channelAddingTabs").channelbrowser({
 				onDataLoad: function() {
 			   		$("#channelLoading").css("display", "none");
