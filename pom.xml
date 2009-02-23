@@ -146,7 +146,7 @@
         <person-directory.version>1.5.0-RC1</person-directory.version>
         <pluto.version>1.1.7</pluto.version>
         <portlet-api.version>1.0</portlet-api.version>
-        <resource-server.version>0.0.1-SNAPSHOT</resource-server.version>
+        <resource-server.version>1.0.0-RC1</resource-server.version>
         <rome.version>0.9</rome.version>
         <servlet-api.version>2.5</servlet-api.version>
         <spring-framework.version>2.5.6</spring-framework.version>
