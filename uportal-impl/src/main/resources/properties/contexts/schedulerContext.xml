@@ -23,7 +23,7 @@
         <property name="period" value="300000" />
     </bean>
     
-    <!-- Flush the stats queue to the database every minute -->
+    <!-- Flush the stats queue to the database every second -->
     <!-- Be sure to un-comment the reference in the 'timerFactory' above as well
     <bean id="statsQueueFlushingTask" class="org.springframework.scheduling.timer.ScheduledTimerTask">
         <property name="timerTask">
@@ -32,8 +32,9 @@
                 <property name="targetMethod" value="flush" />
             </bean>
         </property>
-        <property name="delay" value="60000" />
-        <property name="period" value="60000" />
+        <property name="fixedRate" value="true"/>
+        <property name="delay" value="1000" />
+        <property name="period" value="1000" />
     </bean>
      -->
 </beans>

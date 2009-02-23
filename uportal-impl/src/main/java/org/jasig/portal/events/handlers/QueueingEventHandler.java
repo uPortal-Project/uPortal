@@ -5,8 +5,6 @@
  */
 package org.jasig.portal.events.handlers;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicLong;
@@ -23,7 +21,8 @@ import org.springframework.util.Assert;
 
 /**
  * Queues PortalEvents in a local {@link ConcurrentLinkedQueue} and flushes the events to the configured
- * {@link BatchingEventHandler} when the <code>flushCount</code> is reached or when {@link #flush()} is called.
+ * {@link BatchingEventHandler} when {@link #flush()} is called. This class must be used with some external
+ * timer that will call {@link #flush()} at regular intervals
  * 
  * @author Eric Dalquist
  * @version $Revision$
@@ -35,22 +34,10 @@ public class QueueingEventHandler extends AbstractLimitedSupportEventHandler imp
     private final AtomicLong eventCount = new AtomicLong(0);
     private final Lock flushLock = new ReentrantLock();
     
-    private int flushCount = 50;
+    private int batchSize = 25;
     private BatchingEventHandler batchingEventHandler;
     
-    /**
-     * @return the flushCount
-     */
-    public int getFlushCount() {
-        return this.flushCount;
-    }
-    /**
-     * @param flushCount the flushCount to set
-     */
-    public void setFlushCount(int flushCount) {
-        this.flushCount = flushCount;
-    }
-
+    
     /**
      * @return the batchingEventHandler
      */
@@ -66,11 +53,24 @@ public class QueueingEventHandler extends AbstractLimitedSupportEventHandler imp
         this.batchingEventHandler = batchingEventHandler;
     }
     
+    /**
+     * @return the batchSize
+     */
+    public int getBatchSize() {
+        return batchSize;
+    }
+    /**
+     * The maximum number of events to be flushed to the {@link BatchingEventHandler} per call.
+     */
+    public void setBatchSize(int batchSize) {
+        this.batchSize = batchSize;
+    }
+    
     /* (non-Javadoc)
      * @see org.springframework.beans.factory.DisposableBean#destroy()
      */
     public void destroy() throws Exception {
-        this.flush(true);
+        this.flush();
     }
     
     /* (non-Javadoc)
@@ -79,15 +79,6 @@ public class QueueingEventHandler extends AbstractLimitedSupportEventHandler imp
     public void handleEvent(PortalEvent event) {
         this.eventQueue.offer(event);
         this.eventCount.incrementAndGet();
-        this.flush(false);
-    }
-    
-    /**
-     * Calls {@link #flush(boolean)} passing <code>true</code> to force a flush.
-     * @see #flush(boolean)
-     */
-    public void flush() {
-        this.flush(true);
     }
     
     /**
@@ -98,42 +89,74 @@ public class QueueingEventHandler extends AbstractLimitedSupportEventHandler imp
      * 
      * @param force Forces flushing events to the {@link BatchingEventHandler} even if there are fewer than <code>flushCount</code> PortalEvents in the queue.
      */
-    public void flush(boolean force) {
-        final int eventCount = this.eventCount.intValue();
-        
-        //If the force parameter is set get (waiting if nessesary) the lock
-        if (force) {
-            this.flushLock.lock();
-        }
-        //If not a forced flush and there are enough events in the que try to get the lock, if this fails just return.
-        else if (eventCount < this.flushCount || !this.flushLock.tryLock()) {
-            return;
-        }
-
-        //Get an array of the events
-        final List<PortalEvent> flushedEventList = new ArrayList<PortalEvent>(eventCount);
-        try {
-            for (int index = 0; index < eventCount; index++) {
-                final PortalEvent event = this.eventQueue.poll();
-                if (event == null) {
-                    break;
-                }
-                flushedEventList.add(event);
+    public void flush() {
+        boolean hasMoreEvents = true;
+        while (hasMoreEvents) {
+            //Use a Lock instead of synchronized to avoid threads potentially waiting to flush
+            if (!this.flushLock.tryLock()) {
+                return;
             }
             
-            //Decrement the event count
-            this.eventCount.addAndGet(-flushedEventList.size());
-        }
-        finally {
-            this.flushLock.unlock();
-        }
+            try {
+                final int pendingEventCount = this.eventCount.intValue();
+                if (pendingEventCount == 0) {
+                    return;
+                }
+                
+                //Only flush up to the batch size with each iteration
+                final int flushSize;
+                if (pendingEventCount < this.batchSize) {
+                    hasMoreEvents = false;
+                    flushSize = pendingEventCount;
+                }
+                else {
+                    hasMoreEvents = true;
+                    flushSize = this.batchSize;
+                }
+                
+                //Get an array of the events
+                final PortalEvent[] flushedEvents = new PortalEvent[flushSize];
+                for (int index = 0; index < flushedEvents.length; index++) {
+                    final PortalEvent event = this.eventQueue.poll();
+                    flushedEvents[index] = event;
+                }
+                
+                //Decrement the event count
+                this.eventCount.addAndGet(-flushedEvents.length);
+                
+                if (this.logger.isDebugEnabled()) {
+                    this.logger.debug("Flushing " + flushedEvents.length + " PortalEvents to " + this.batchingEventHandler);
+                }
         
-        if (flushedEventList.size() > 0) {
-            if (this.logger.isDebugEnabled()) {
-                this.logger.debug("Flushing " + flushedEventList.size() + " PortalEvents to " + this.batchingEventHandler);
+                try {
+                    this.batchingEventHandler.handleEvents(flushedEvents);
+                }
+                catch (Throwable t) {
+                    this.logger.error("An exception was thrown while trying to flush " + flushedEvents.length + " PortalEvents to " + this.batchingEventHandler, t);
+                    
+                    final StringBuilder failedEvents = new StringBuilder();
+                    failedEvents.append("The following is the list of events that was being flushed, some may have been persisted correctly");
+                    
+                    for (final PortalEvent portalEvent : flushedEvents) {
+                        failedEvents.append("\n\t");
+                        try {
+                            failedEvents.append(portalEvent.toString());
+                        }
+                        catch (Exception e) {
+                            failedEvents.append("toString failed on a PortalEvent of type '" + portalEvent.getClass() + "': " + e);
+                        }
+                    }
+                    
+                    this.logger.error(failedEvents, t);
+                }
             }
-
-            this.batchingEventHandler.handleEvents(flushedEventList.toArray(new PortalEvent[eventCount]));
+            finally {
+                this.flushLock.unlock();
+            }
+            
+            if (hasMoreEvents && this.logger.isDebugEnabled()) {
+                this.logger.debug("Has more events, looping until all pending events are flushed");
+            }
         }
     }
 }
