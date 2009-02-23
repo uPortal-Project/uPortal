@@ -207,9 +207,6 @@ class PortletWindowImpl implements IPortletWindow {
         if (this.portletName == null) {
             throw new InvalidObjectException("portletName can not be null");
         }
-        if (this.requestParameters == null) {
-            throw new InvalidObjectException("requestParameters can not be null");
-        }
         
         //Read & validate transient fields
         final String portletModeStr = (String)ois.readObject();
