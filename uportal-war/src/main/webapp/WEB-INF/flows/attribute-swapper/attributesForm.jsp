@@ -10,7 +10,7 @@
     <portlet:param name="execution" value="${flowExecutionKey}" />
 </portlet:actionURL>
 <form:form modelAttribute="attributeSwapRequest" action="${attributeSwapUrl}">
-    <table>
+    <table border="1">
         <thead>
             <tr>
                 <th><spring:message code="attributesForm.attributeHeader" /></th>
@@ -25,7 +25,7 @@
         <tbody>
             <c:forEach var="swappableAttribute" items="${swappableAttributes}">
                 <tr>
-                    <td><spring:message code="${swappableAttribute}" text="${swappableAttribute}" /></td>
+                    <td><spring:message code="${swappableAttribute}" text="${swappableAttribute}" arguments="${swappableAttribute}"/></td>
                     <td>${fn:escapeXml(baseUserDetails.attributes[swappableAttribute][0])}</td>
                     <td><form:input path="currentAttributes['${swappableAttribute}'].value" /></td>
                     <c:if test="${targetUserDetails != null}">
@@ -37,7 +37,11 @@
                                 <c:set var="attributeToCopy" scope="page" value="${targetUserDetails.attributes[swappableAttribute][0]}" />
                             </c:otherwise>
                         </c:choose>
-                        <td><form:checkbox path="attributesToCopy['${swappableAttribute}'].value" value="${attributeToCopy}" /></td>
+                        <td>
+                            <c:if test="${not empty attributeToCopy}">
+                                <form:checkbox path="attributesToCopy['${swappableAttribute}'].value" value="${attributeToCopy}" />
+                            </c:if>
+                        </td>
                         <td>
                             <label for="attributesToCopy['${fn:escapeXml(swappableAttribute)}'].value1">${fn:escapeXml(targetUserDetails.attributes[swappableAttribute][0])}</label>
                         </td>

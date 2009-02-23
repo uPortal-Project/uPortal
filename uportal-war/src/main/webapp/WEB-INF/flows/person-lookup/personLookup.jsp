@@ -10,12 +10,12 @@
     <portlet:param name="execution" value="${flowExecutionKey}" />
 </portlet:renderURL>
 <form:form modelAttribute="personQuery" action="${queryUrl}">
-    <table>
+    <table border="1">
         <tbody>
             <c:forEach var="queryAttribute" items="${queryAttributes}">
                 <tr>
                     <td>
-                        <form:label path="attributes['${queryAttribute}'].value"><spring:message code="${queryAttribute}" text="${queryAttribute}" /></form:label>
+                        <form:label path="attributes['${queryAttribute}'].value"><spring:message code="${queryAttribute}" text="${queryAttribute}" arguments="${queryAttribute}"/></form:label>
                     </td>
                     <td>
                         <form:input path="attributes['${queryAttribute}'].value"/>

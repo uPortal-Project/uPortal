@@ -2,7 +2,7 @@
 
 <div><spring:message code="personDetails.detailsTitle" arguments="${person.name}" /></div>
 
-<table>
+<table border="1">
     <thead>
         <tr>
             <th>Attribute</th>
@@ -12,13 +12,13 @@
     <tbody>
         <c:forEach var="attrName" items="${displayAttributes}">
             <tr>
-                <td><spring:message code="${attrName}" text="${attrName}" /></td>
+                <td><spring:message code="${attrName}" text="${attrName}" arguments="${attrName}"/></td>
                 <c:set var="attrValues" value="${person.attributes[attrName]}" />
                 <c:choose>
                     <c:when test="${fn:length(attrValues) >= 1}">
                         <c:forEach var="attrValue" items="${attrValues}" varStatus="attrValueStatus">
                             <td>${fn:escapeXml(attrValue)}</td>
-                            <c:if test="not attrValueStatus.last">
+                            <c:if test="${not attrValueStatus.last}">
                                 </tr>
                                 <tr>
                                     <td/>
@@ -39,7 +39,7 @@
     <portlet:param name="_eventId" value="selectAndGo" />
 </portlet:actionURL>
 <spring:message var="selectAndGoButtonText" code="${personDetails_selectAndGoButtonTextKey}" />
-<a href="${selectUserUrl}">${selectAndGoButtonText}</a>
+<a href="${selectUserUrl}">${selectAndGoButtonText}</a><br/>
 
 <c:if test="${fn:length(personQueryResults) > 1}">
     <portlet:renderURL var="backToResultsUrl">
@@ -47,7 +47,7 @@
         <portlet:param name="_eventId" value="searchResults" />
     </portlet:renderURL>
     <spring:message var="backToResultsLinkText" code="personDetails.backToResultsLink" />
-    <a href="${backToResultsUrl}">${backToResultsLinkText}</a>
+    <a href="${backToResultsUrl}">${backToResultsLinkText}</a><br/>
 </c:if>
 
 <portlet:renderURL var="newSearchUrl">
