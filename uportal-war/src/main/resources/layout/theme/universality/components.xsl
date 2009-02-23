@@ -202,7 +202,7 @@
   <xsl:template name="portal.page.bar.link.logout">
     <xsl:if test="$AUTHENTICATED='true'">
     	<span id="portalPageBarLogout">
-        <a href="Logout" title="{$TOKEN[@name='LOGOFF_LONG_LABEL']}" target="_blank">
+        <a href="Logout" title="{$TOKEN[@name='LOGOFF_LONG_LABEL']}">
           <span><xsl:value-of select="$TOKEN[@name='LOGOFF_LABEL']"/></span>
         </a>
         <xsl:call-template name="portal.pipe" />
