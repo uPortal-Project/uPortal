@@ -47,17 +47,12 @@
     <!--
      | Service used by DLM to cache Layouts.
      +-->
-    <bean id="layoutCachingService" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-        <property name="targetClass" value="org.jasig.portal.layout.dlm.LayoutCachingService" />
-        <property name="targetMethod" value="getInstance" />
-    </bean>
-    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-        <property name="targetObject" ref="layoutCachingService" />
-        <property name="targetMethod" value="setCacheFactory" />
-        <property name="arguments">
-            <list>
-                <ref bean="cacheFactory"/>
-            </list>
+    <bean id="layoutCachingService" class="org.jasig.portal.layout.dlm.LayoutCachingService">
+        <property name="layoutCache">
+            <bean class="org.jasig.portal.utils.cache.MapCacheFactoryBean">
+                <property name="cacheFactory" ref="cacheFactory" />
+                <property name="cacheName" value="org.jasig.portal.layout.dlm.LAYOUT_CACHE" />
+            </bean>
         </property>
     </bean>
 

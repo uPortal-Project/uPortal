@@ -6,115 +6,92 @@
 
 package org.jasig.portal.layout.dlm;
 
+import java.io.Serializable;
+import java.util.Hashtable;
 import java.util.Map;
-import org.w3c.dom.Document;
-
-import org.springframework.beans.factory.annotation.Required;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.utils.cache.CacheFactory;
+import org.jasig.portal.UserProfile;
+import org.jasig.portal.events.PortalEvent;
+import org.jasig.portal.events.support.UserLoggedOutPortalEvent;
+import org.jasig.portal.events.support.UserSessionDestroyedPortalEvent;
+import org.jasig.portal.layout.IUserLayoutStore;
+import org.jasig.portal.layout.UserLayoutStoreFactory;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.utils.Tuple;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationListener;
+import org.w3c.dom.Document;
 
 /**
- * Provides caching services for layouts contained in 
- * <code>DistributedLayoutManager</code> instances.  This class is an old-school 
- * singleton whose backing-map is "injected" by a spring context at startup. 
+ * Provides API for layout caching service
  */
-public final class LayoutCachingService {
-
-	/**
-	 * The name of the cache used by <code>LayoutCachingService</code>.  A cache 
-	 * of this name must be defined within uPortal's <code>'cacheFactory'</code> 
-	 * bean.
-	 */
-	private static final String CACHE_NAME = "org.jasig.portal.layout.dlm.LAYOUT_CACHE";
-	
-	/**
-	 * Single(ton) instance of this class.
-	 */
-	private static LayoutCachingService instance = null;
-	
-	/**
-	 * "Injected" at startup by the bean container.  This object is typically 
-	 * defined as the bean with id='cacheFactory' in cacheContext.xml.
-	 */
-	private CacheFactory cacheFactory = null;
-	
-    private final Log log = LogFactory.getLog(LayoutCachingService.class);
-	
-	/*
-	 * Public API.
-	 */
-	    
+public class LayoutCachingService implements ApplicationListener, ILayoutCachingService {
+    protected final Log logger = LogFactory.getLog(this.getClass());
+    
+    private Map<Serializable, Document> layoutCache;
+    
     /**
-     * Accessor method or the single(ton) instance of this class.
+     * @return the layoutCache
      */
-    public static LayoutCachingService getInstance() {
-		
-		if (instance == null) {
-			init();
-		}
-
-		return instance;
-		
-	}
-	
+    public Map<Serializable, Document> getLayoutCache() {
+        return layoutCache;
+    }
     /**
-     * Called by the spring IoC container at startup.
-     * 
-     * @param cf Ordinarily 'cacheFactory' bean defined in cacheContext.xml 
+     * @param layoutCache the layoutCache to set
      */
-	@Required
-	public void setCacheFactory(CacheFactory cf) {
-		
-		// Assertions.
-		if (cf == null) {
-			String msg = "Argument 'cpf [CacheFactory]' cannot be null.";
-			throw new IllegalArgumentException(msg);
-		}
-		
-		log.debug("INITIALIZING:  Setting cacheFactory.");
+    public void setLayoutCache(Map<Serializable, Document> layoutCache) {
+        this.layoutCache = layoutCache;
+    }
 
-		this.cacheFactory = cf;
-		
-	}
-	
-	/**
-	 * Provides clients of <code>LayoutCachingService</code> with access to the 
-	 * layout cache.
-	 * 
-	 * @return A <code>Map</code> of cached layouts.
-	 */
-	public Map<String,Document> getLayoutCache() {
-		return cacheFactory.getCache(CACHE_NAME);
-	}
-	
-	/*
-	 * Implementation.
-	 */
+    /* (non-Javadoc)
+     * @see org.springframework.context.ApplicationListener#onApplicationEvent(org.springframework.context.ApplicationEvent)
+     */
+    public void onApplicationEvent(ApplicationEvent event) {
+        if (event instanceof UserLoggedOutPortalEvent || event instanceof UserSessionDestroyedPortalEvent) {
+            final PortalEvent portalEvent = (PortalEvent)event;
+            final IPerson person = portalEvent.getPerson();
+            
+            //Try invalidating just the layout associated with the current user and profile
+            final UserProfile currentUserProfile = (UserProfile)person.getAttribute(UserProfile.USER_PROFILE);
+            if (currentUserProfile != null) {
+                this.removeCachedLayout(person, currentUserProfile);
+                return;
+            }
+            
+            //No provided profile, invalidate all layouts for the user
+            final IUserLayoutStore userLayoutStore = UserLayoutStoreFactory.getUserLayoutStoreImpl();
+            final Hashtable<Integer, UserProfile> userProfiles;
+            try {
+                userProfiles = userLayoutStore.getUserProfileList(person);
+            }
+            catch (Exception e) {
+                this.logger.warn("Failed to load all UserProfiles for '" + person.getUserName() + "'. The user's layouts will not be explicitly removed from the layout cache.", e);
+                return;
+            }
+            
+            for (final UserProfile userProfile : userProfiles.values()) {
+                this.removeCachedLayout(person, userProfile);
+            }
+        }
+    }
 
-	/**
-	 * Private as per classic Singleton pattern. 
-	 */
-	private LayoutCachingService() {
-		log.debug("INITIALIZING:  Constructing.");
-	}
-	
-	/**
-	 * Method that creates the single(ton) instance of 
-	 * <code>LayoutCachingService</code>, synchronized to be sure it only 
-	 * happens once.
-	 */
-	private static synchronized void init() {
-
-		// Make sure we only create one instance...
-		if (instance != null) {
-			// Must have invoked getInstance() w/ 2 threads.
-			return;
-		}
-
-		instance = new LayoutCachingService();
-		
-	}
-	
+    public void cacheLayout(IPerson owner, UserProfile profile, Document layout) {
+        final Serializable cacheKey = this.getCacheKey(owner, profile);
+        this.layoutCache.put(cacheKey, layout);
+    }
+    
+    public Document getCachedLayout(IPerson owner, UserProfile profile) {
+        final Serializable cacheKey = this.getCacheKey(owner, profile);
+        return this.layoutCache.get(cacheKey);
+    }
+    
+    public void removeCachedLayout(IPerson owner, UserProfile profile) {
+        final Serializable cacheKey = this.getCacheKey(owner, profile);
+        this.layoutCache.remove(cacheKey);
+    }
+    protected Serializable getCacheKey(IPerson owner, UserProfile profile) {
+        return new Tuple<String, Integer>(owner.getUserName(), profile.getLayoutId());
+    }
 }

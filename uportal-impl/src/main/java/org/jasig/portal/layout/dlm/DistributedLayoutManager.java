@@ -84,6 +84,7 @@ IFolderLocalNameResolver
 
     protected final IPerson owner;
     protected final UserProfile profile;
+    protected final ILayoutCachingService layoutCachingService;
     protected RDBMDistributedLayoutStore store=null;
     protected Set<LayoutEventListener> listeners=new HashSet<LayoutEventListener>();
 
@@ -92,8 +93,6 @@ IFolderLocalNameResolver
      * defined in the dlm context configuration.  
      */
     static final String FOLDER_LABEL_POLICY = "FolderLabelPolicy";
-    
-    private final Map<String,Document> layoutCache = LayoutCachingService.getInstance().getLayoutCache();
     
     protected static Random rnd=new Random();
     protected String cacheKey="initialKey";
@@ -151,8 +150,11 @@ IFolderLocalNameResolver
                             + "non-null profile must to be specified.");
         }
         
+        final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
+        this.layoutCachingService = (ILayoutCachingService)applicationContext.getBean("layoutCachingService", ILayoutCachingService.class);
+        
         // Ensure a new layout gets loaded whenever a user logs in...
-        layoutCache.remove(owner.getUserName());
+        this.layoutCachingService.removeCachedLayout(owner, profile);
 
         // cache the relatively lightwieght userprofile for use in 
         // in layout PLF loading
@@ -233,7 +235,7 @@ IFolderLocalNameResolver
 
     private void setUserLayoutDOM(Document doc) {
 
-    	layoutCache.put(getLayoutCacheKey(), doc);
+        this.layoutCachingService.cacheLayout(owner, profile, doc);
         this.updateCacheKey();
 
         // determine if this is a layout fragment by looking at the root node
@@ -269,7 +271,7 @@ IFolderLocalNameResolver
             {
                 LOG.debug("domRequest: " + (domRequests++));
             }
-            Document userLayoutDocument = layoutCache.get(getLayoutCacheKey());
+            Document userLayoutDocument = this.layoutCachingService.getCachedLayout(owner, profile);
             if ( null == userLayoutDocument )
             {
                 IUserLayoutStore layoutStore = getLayoutStore();
@@ -456,7 +458,7 @@ IFolderLocalNameResolver
         try {
             //Clear the loaded document first if this is a forced reload
             if (reload) {
-            	layoutCache.remove(getLayoutCacheKey());
+                this.layoutCachingService.removeCachedLayout(owner, profile);
             }
             
             uli=getUserLayoutDOM();
@@ -1556,7 +1558,7 @@ IFolderLocalNameResolver
         }
         //this.markedUserLayout=null;
         this.updateCacheKey();
-        layoutCache.put(getLayoutCacheKey(), doc);
+        this.layoutCachingService.cacheLayout(owner, profile, doc);
     }
 
     /* Returns the ID attribute of the root folder of the layout. This folder 
@@ -1738,7 +1740,7 @@ IFolderLocalNameResolver
             // so we need to refresh our local copy of their layout
             if (person == owner)
             {
-            	layoutCache.remove(getLayoutCacheKey());
+                this.layoutCachingService.removeCachedLayout(person, profile);
                 updateCacheKey();
                 getUserLayoutDOM();
             }
@@ -1868,9 +1870,5 @@ IFolderLocalNameResolver
                     label);
         }
         return label;
-    }
-    
-    private String getLayoutCacheKey() {
-    	return owner.getUserName() + "-" + profile.getLayoutId();
     }
 }

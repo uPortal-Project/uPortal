@@ -91,7 +91,7 @@ public interface IUserLayoutStore {
      * @param person User
      * @return a <code>Hashtable</code> mapping user profile ids (<code>Integer</code> objects) to the {@link UserProfile} objects
      */
-    public Hashtable getUserProfileList (IPerson person) throws Exception;
+    public Hashtable<Integer, UserProfile> getUserProfileList (IPerson person) throws Exception;
 
     // syste profiles
     /** retreive a system profile associated with a given browser
