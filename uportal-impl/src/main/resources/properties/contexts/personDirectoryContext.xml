@@ -143,9 +143,24 @@
                 <property name="resultAttributeMapping">
                     <map>
                         <entry key="FIRST_LAST" value="displayName" />
-                        <entry key="FIRST_NAME" value="givenName" />
-                        <entry key="LAST_NAME"  value="sn" />
-                        <entry key="EMAIL"      value="mail" />
+                        <entry key="FIRST_NAME">
+                            <set>
+                                <value>givenName</value>
+                                <value>user.name.given</value>
+                            </set>
+						</entry>
+                        <entry key="LAST_NAME">
+                            <set>
+                                <value>sn</value>
+                                <value>user.name.family</value>
+                            </set>
+						</entry>
+                        <entry key="EMAIL">
+                            <set>
+                                <value>mail</value>
+                                <value>user.home-info.online.email</value>
+                            </set>
+						</entry>
                         <entry key="USER_NAME">
                             <set>
                                 <value>uid</value>
