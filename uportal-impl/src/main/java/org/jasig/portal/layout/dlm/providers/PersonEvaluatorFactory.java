@@ -152,7 +152,7 @@ public class PersonEvaluatorFactory
         }
         catch( Exception e )
         {
-            throw new RuntimeException( e.getMessage() + " in '" + XML.serializeNode(n));
+            throw new RuntimeException( e.getMessage() + " in '" + XML.serializeNode(n), e);
         }
         return eval;
     }
