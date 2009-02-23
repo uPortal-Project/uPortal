@@ -3,6 +3,7 @@ package org.jasig.portal.events.support;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.events.EventType;
 import org.jasig.portal.events.PortalEvent;
+import org.jasig.portal.layout.TransientUserLayoutManagerWrapper;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.security.IPerson;
@@ -39,7 +40,7 @@ public abstract class ChannelLayoutPortalEvent extends PortalEvent {
 	}
     
     public final String getTargetFolderId() {
-        return this.parentNode.getId();
+        return this.parentNode != null ? this.parentNode.getId() : TransientUserLayoutManagerWrapper.TRANSIENT_FOLDER_ID;
     }
     public void setTargetFolderId(String id) {
         //ignore, method required for hibernate
@@ -66,16 +67,37 @@ public abstract class ChannelLayoutPortalEvent extends PortalEvent {
         //ignore, method required for hibernate
     }
     
+    protected String getChannelDescriptionString() {
+        final IUserLayoutChannelDescription channelDescription = getChannelDescription();
+        
+        if (channelDescription == null) {
+            return "[transient channel]";
+        }
+        
+        return "[" + channelDescription.getName() + ", "
+                + channelDescription.getChannelPublishId() + ", "
+                + channelDescription.getChannelSubscribeId()
+                + "]";
+    }
+    
+    protected String getParentDescriptionString() {
+        final IUserLayoutNodeDescription parentDescription = getParentDescription();
+        
+        if (parentDescription == null) {
+            return "[transient parent]";
+        }
+        
+        return "[" + parentDescription.getId() + "," + parentDescription.getName() + "]";
+    }
+    
     /* (non-Javadoc)
      * @see java.util.EventObject#toString()
      */
     @Override
     public String toString() {
-        return this.getClass().getName() + " for Channel [" + getChannelDescription().getName() + ", "
-                + getChannelDescription().getChannelPublishId() + ", "
-                + getChannelDescription().getChannelSubscribeId()
-                + "] in layout " + getProfile().getLayoutId()
-                + " under node [" + getParentDescription().getId() + "," + getParentDescription().getName()
-                + "] for " + getDisplayName() + " at " + getTimestampAsDate();
+        return this.getClass().getName() + " for Channel " + getChannelDescriptionString()
+                + " in layout " + getProfile().getLayoutId()
+                + " under node " + getParentDescriptionString()
+                + " for " + getDisplayName() + " at " + getTimestampAsDate();
     }
 }

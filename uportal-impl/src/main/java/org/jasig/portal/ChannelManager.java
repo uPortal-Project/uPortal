@@ -1076,7 +1076,9 @@ public class ChannelManager implements LayoutEventListener {
             channelDesc = (IUserLayoutChannelDescription) userLayoutManager.getNode(channelSubscribeId);
             
             final String parentNodeId = userLayoutManager.getParentId(channelDesc.getId());
-            parentNode = userLayoutManager.getNode(parentNodeId);
+            if (parentNodeId != null) {
+                parentNode = userLayoutManager.getNode(parentNodeId);
+            }
         }
         catch (PortalException pe) {
             log.warn("Failed to load IUserLayoutChannelDescription and parent IUserLayoutNodeDescription for channel with subscribe id: " + channelSubscribeId, pe);
@@ -1197,7 +1199,7 @@ public class ChannelManager implements LayoutEventListener {
     private ChannelRuntimeData getChannelRuntimeData(HttpServletRequest request, String channelSubscribeId, RequestType requestType) {
         final ChannelRuntimeData runtimeData = new ChannelRuntimeData();
         
-        if (channelSubscribeId.equals(this.channelTarget)) {
+        if (channelSubscribeId.equals(this.channelTarget) || RequestType.ACTION.equals(requestType)) {
             if (this.targetParams != null) {
                 runtimeData.setParameters(this.targetParams);
             }

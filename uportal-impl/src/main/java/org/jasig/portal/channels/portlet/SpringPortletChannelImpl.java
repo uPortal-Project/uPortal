@@ -497,7 +497,13 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel, Applicat
             
             //Get the parent node
             final String parentNodeId = userLayoutManager.getParentId(channelSubscribeId);
-            final IUserLayoutNodeDescription parentNode = userLayoutManager.getNode(parentNodeId);
+            final IUserLayoutNodeDescription parentNode;
+            if (parentNodeId != null) {
+                parentNode = userLayoutManager.getNode(parentNodeId);
+            }
+            else {
+                parentNode = null;
+            }
             
             this.applicationEventPublisher.publishEvent(new ChannelTargetedInLayoutPortalEvent(this, person, userProfile, channelDesc, parentNode));
         }

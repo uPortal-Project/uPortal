@@ -18,8 +18,8 @@ public final class UserUpdatedFolderInLayoutPortalEvent extends LayoutPortalEven
      */
     @Override
 	public String toString() {
-		return "Folder [" + getFolder().getName() + ", " + getFolder().getId()
-				+ "]  was updated in layout " + getProfile().getLayoutId()
+		return "Folder " + getFolderString()
+                + "  was updated in layout " + getProfile().getLayoutId()
 				+ " by " + getDisplayName() + " at " + getTimestampAsDate();
 	}
 

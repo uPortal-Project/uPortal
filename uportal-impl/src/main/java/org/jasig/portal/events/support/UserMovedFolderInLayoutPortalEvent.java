@@ -18,8 +18,8 @@ public final class UserMovedFolderInLayoutPortalEvent extends LayoutPortalEvent 
      */
     @Override
 	public String toString() {
-		return "Folder [" + getFolder().getName() + ", " + getFolder().getId()
-				+ "] was moved in layout " + getProfile().getLayoutId()
+		return "Folder " + getFolderString()
+                + " was moved in layout " + getProfile().getLayoutId()
 				+ " by " + getDisplayName() + "  at " + getTimestampAsDate();
 	}
 }

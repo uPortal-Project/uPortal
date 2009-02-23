@@ -24,12 +24,10 @@ public final class ChannelRenderedInLayoutPortalEvent extends TimedChannelLayout
      */
     @Override
 	public String toString() {
-		return "Channel [" + getChannelDescription().getName() + ", "
-				+ getChannelDescription().getChannelPublishId() + ", "
-				+ getChannelDescription().getChannelSubscribeId()
-				+ "] was rendered in layout " + getProfile().getLayoutId()
-				+ " under node [" + getParentDescription().getId() + "," + getParentDescription().getName()
-                + "] by " + getDisplayName() + " at " + getTimestampAsDate() + " in " + this.getRenderTime() + "ms "
+		return "Channel " + getChannelDescriptionString()
+                + " was rendered in layout " + getProfile().getLayoutId()
+				+ " under node " + getParentDescriptionString()
+                + " by " + getDisplayName() + " at " + getTimestampAsDate() + " in " + this.getRenderTime() + "ms "
                 + (this.renderedFromCache ? "" : "not ") + "using cache";
 	}
     

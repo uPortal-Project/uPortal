@@ -43,8 +43,8 @@ public class PageRenderTimePortalEvent extends LayoutPortalEvent {
      */
     @Override
     public String toString() {
-        return "Folder [" + getFolder().getName() + ", " + getFolder().getId()
-                + "] was rendered for layout " + getProfile().getLayoutId()
+        return "Folder " + getFolderString()
+                + " was rendered for layout " + getProfile().getLayoutId()
                 + " by " + getDisplayName() + " at " + getTimestampAsDate() + " in " + this.renderTime + "ms";
     }
 }

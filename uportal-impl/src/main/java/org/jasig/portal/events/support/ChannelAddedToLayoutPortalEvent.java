@@ -19,11 +19,9 @@ public final class ChannelAddedToLayoutPortalEvent extends ChannelLayoutPortalEv
 	 */
 	@Override
     public String toString() {
-		return "Channel [" + getChannelDescription().getName() + ", "
-				+ getChannelDescription().getChannelPublishId() + ", "
-				+ getChannelDescription().getChannelSubscribeId()
-				+ "] was added to layout " + getProfile().getLayoutId()
-				+ " under node [" + getParentDescription().getId() + "," + getParentDescription().getName()
-                + "] by " + getDisplayName() + " at " + getTimestampAsDate();
+		return "Channel " + getChannelDescriptionString()
+                + " was added to layout " + getProfile().getLayoutId()
+				+ " under node " + getParentDescriptionString()
+                + " by " + getDisplayName() + " at " + getTimestampAsDate();
 	}
 }

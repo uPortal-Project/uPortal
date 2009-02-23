@@ -20,10 +20,8 @@ public final class PortletActionInLayoutPortalEvent extends TimedChannelLayoutPo
      */
     @Override
 	public String toString() {
-		return "Portlet [" + getChannelDescription().getName() + ", "
-				+ getChannelDescription().getChannelPublishId() + ", "
-				+ getChannelDescription().getChannelSubscribeId()
-				+ "] was targeted by an action in layout " + getProfile().getLayoutId()
+		return "Portlet " + getChannelDescriptionString()
+                + " was targeted by an action in layout " + getProfile().getLayoutId()
 				+ " by " + getDisplayName() + " at " + getTimestampAsDate();
 	}
 }

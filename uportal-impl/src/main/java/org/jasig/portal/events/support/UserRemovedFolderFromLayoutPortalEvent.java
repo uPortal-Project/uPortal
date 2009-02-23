@@ -18,8 +18,8 @@ public final class UserRemovedFolderFromLayoutPortalEvent extends LayoutPortalEv
      */
     @Override
 	public String toString() {
-		return "Folder [" + getFolder().getName() + ", " + getFolder().getId()
-				+ "] was removed from layout " + getProfile().getLayoutId()
+		return "Folder " + getFolderString()
+                + " was removed from layout " + getProfile().getLayoutId()
 				+ " by " + getDisplayName() + " at " + getTimestampAsDate();
 	}
 }

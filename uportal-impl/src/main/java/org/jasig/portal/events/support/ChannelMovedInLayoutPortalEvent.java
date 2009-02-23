@@ -24,13 +24,11 @@ public final class ChannelMovedInLayoutPortalEvent extends ChannelLayoutPortalEv
 	 */
 	@Override
 	public String toString() {
-		return "Channel [" + getChannelDescription().getName() + ", "
-				+ getChannelDescription().getChannelPublishId() + ", "
-				+ getChannelDescription().getChannelSubscribeId()
-				+ "] was moved in layout " + getProfile().getLayoutId()
+		return "Channel " + getChannelDescriptionString()
+                + " was moved in layout " + getProfile().getLayoutId()
 				+ " under node [" + this.newParentNode.getId() + "," + this.newParentNode.getName()
-                + "] from node [" + getParentDescription().getId() + "," + getParentDescription().getName()
-                + "] by " + getDisplayName() + " at " + getTimestampAsDate();
+                + "] from node " + getParentDescriptionString()
+                + " by " + getDisplayName() + " at " + getTimestampAsDate();
 	}
     
     public final String getDestinationFolderId() {

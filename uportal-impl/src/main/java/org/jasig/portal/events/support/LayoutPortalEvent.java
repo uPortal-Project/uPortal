@@ -3,6 +3,7 @@ package org.jasig.portal.events.support;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.events.EventType;
 import org.jasig.portal.events.PortalEvent;
+import org.jasig.portal.layout.TransientUserLayoutManagerWrapper;
 import org.jasig.portal.layout.node.IUserLayoutFolderDescription;
 import org.jasig.portal.security.IPerson;
 
@@ -35,7 +36,7 @@ public abstract class LayoutPortalEvent extends PortalEvent {
 	}
     
     public final String getFolderId() {
-        return this.folder.getId();
+        return this.folder != null ? this.folder.getId() : TransientUserLayoutManagerWrapper.TRANSIENT_FOLDER_ID;
     }
     public void setFolderId(String id) {
         //ignore, method required for hibernate
@@ -47,14 +48,23 @@ public abstract class LayoutPortalEvent extends PortalEvent {
     public void setProfileId(int id) {
         //ignore, method required for hibernate
     }
+    
+    protected String getFolderString() {
+        final IUserLayoutFolderDescription folder = getFolder();
+        if (folder == null) {
+            return "[transient folder]";
+        }
+        
+        return "[" + folder.getName() + ", " + folder.getId() + "]";
+    }
 
     /* (non-Javadoc)
      * @see java.util.EventObject#toString()
      */
     @Override
     public String toString() {
-        return this.getClass().getName() + " for Folder [" + getFolder().getName() + ", " + getFolder().getId()
-                + "] in layout " + getProfile().getLayoutId()
+        return this.getClass().getName() + " for Folder " + getFolderString()
+                + " in layout " + getProfile().getLayoutId()
                 + " by " + getDisplayName() + " at " + getTimestampAsDate();
     }
 }

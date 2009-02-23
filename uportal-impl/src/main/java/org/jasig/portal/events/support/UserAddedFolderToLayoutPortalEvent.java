@@ -18,8 +18,8 @@ public final class UserAddedFolderToLayoutPortalEvent extends LayoutPortalEvent 
 	 */
 	@Override
 	public String toString() {
-		return "Folder [" + getFolder().getName() + ", " + getFolder().getId()
-				+ "] was added to layout " + getProfile().getLayoutId()
+		return "Folder " + getFolderString()
+                + " was added to layout " + getProfile().getLayoutId()
 				+ " by " + getDisplayName() + " at " + getTimestampAsDate();
 	}
 }

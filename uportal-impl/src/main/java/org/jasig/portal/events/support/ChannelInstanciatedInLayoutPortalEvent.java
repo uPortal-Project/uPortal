@@ -19,11 +19,9 @@ public final class ChannelInstanciatedInLayoutPortalEvent extends ChannelLayoutP
      */
     @Override
 	public String toString() {
-		return "Channel [" + getChannelDescription().getName() + ", "
-				+ getChannelDescription().getChannelPublishId() + ", "
-				+ getChannelDescription().getChannelSubscribeId()
-				+ "] was instantiated in layout " + getProfile().getLayoutId()
-				+ " under node [" + getParentDescription().getId() + "," + getParentDescription().getName()
-                + "] by " + getDisplayName() + " at " + getTimestampAsDate();
+		return "Channel " + getChannelDescriptionString()
+                + " was instantiated in layout " + getProfile().getLayoutId()
+				+ " under node " + getParentDescriptionString()
+                + " by " + getDisplayName() + " at " + getTimestampAsDate();
 	}
 }

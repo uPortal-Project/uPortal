@@ -38,12 +38,10 @@ public abstract class TimedChannelLayoutPortalEvent extends ChannelLayoutPortalE
      */
     @Override
     public String toString() {
-        return this.getClass().getName() +  " for Channel [" + getChannelDescription().getName() + ", "
-                + getChannelDescription().getChannelPublishId() + ", "
-                + getChannelDescription().getChannelSubscribeId()
-                + "] in layout " + getProfile().getLayoutId()
-                + " under node [" + getParentDescription().getId() + "," + getParentDescription().getName()
-                + "] by " + getDisplayName() + " at " + getTimestampAsDate() + " in " + this.getRenderTime() + "ms";
+        return this.getClass().getName() +  " for Channel " + getChannelDescriptionString()
+                + " in layout " + getProfile().getLayoutId()
+                + " under node " + getParentDescriptionString()
+                + " by " + getDisplayName() + " at " + getTimestampAsDate() + " in " + this.getRenderTime() + "ms";
     }
 
 }
