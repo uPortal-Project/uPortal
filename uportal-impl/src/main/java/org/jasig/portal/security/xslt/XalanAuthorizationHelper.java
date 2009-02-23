@@ -30,4 +30,11 @@ public class XalanAuthorizationHelper implements IXalanAuthorizationHelper {
     public boolean canRender(final String userName, final String channelFName) {
         return this.authorizationHelper.canRender(userName, channelFName);
     }
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.security.xslt.IXalanAuthorizationHelper#isMemberOf(java.lang.String, java.lang.String)
+     */
+    public boolean isMemberOf(String userName, String groupKey) {
+        return this.authorizationHelper.isMemberOf(userName, groupKey);
+    }
 }

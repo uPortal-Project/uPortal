@@ -11,6 +11,7 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.ChannelDefinition;
 import org.jasig.portal.IChannelRegistryStore;
 import org.jasig.portal.groups.IEntity;
+import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.AuthorizationService;
@@ -74,12 +75,31 @@ public class XalanAuthorizationHelperBean implements IXalanAuthorizationHelper {
         
         return userPrincipal.canRender(channelId);
     }
-
+    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.security.xslt.IXalanAuthorizationHelper#isMemberOf(java.lang.String, java.lang.String)
+     */
+    public boolean isMemberOf(String userName, String groupKey) {
+        final IEntityGroup distinguishedGroup = GroupService.findGroup(groupKey);
+        if (distinguishedGroup == null) {
+            return false;
+        }
+        
+        final IEntity userEntity = GroupService.getEntity(userName, IPerson.class);
+        if (userEntity == null) {
+            return false;
+        }
+        
+        return distinguishedGroup.deepContains(userEntity);
+    }
+    
     protected IAuthorizationPrincipal getUserPrincipal(final String userName) {
         final IEntity user = GroupService.getEntity(userName, IPerson.class);
+        if (user == null) {
+            return null;
+        }
         
         final AuthorizationService authService = AuthorizationService.instance();
-        final IAuthorizationPrincipal userPrincipal = authService.newPrincipal(user);
-        return userPrincipal;
+        return authService.newPrincipal(user);
     }
 }

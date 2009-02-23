@@ -20,4 +20,13 @@ public interface IXalanAuthorizationHelper {
      * @return true if the user has permission to render the channel, false for any other case.
      */
     public boolean canRender(final String userName, final String channelFName);
+    
+    /**
+     * Checks if the user is a member of the specified group
+     * 
+     * @param userName Name of the user to check
+     * @param groupKey interal group key (ex: local.0)
+     * @return true if the user is a member, false otherwise
+     */
+    public boolean isMemberOf(String userName, String groupKey);
 }
