@@ -24,21 +24,6 @@
         
     <tempfile property="parentPomInstallMarker.file" destdir="${jasig.tmpdir}" prefix="uportal-parent.pom-" suffix="-marker" />
     
-    <fail message="server.base build property must be set.">
-        <condition>
-            <not>
-                <isset property="server.base" />
-            </not>
-        </condition>
-    </fail>
-    <fail message="The server.base build property refers to a non-existant location '${server.base}'">
-        <condition>
-            <not>
-                <available file="${server.base}" type="dir" />
-            </not>
-        </condition>
-    </fail>
-
     <!--
      | Properties that describe the maven project
      +-->
@@ -61,7 +46,7 @@
         <echo message="${helpMessage}" />
     </target>
 
-    <target name="initportal" description="Runs all the targets necessary to deploy the portal and prepare the portal database">
+    <target name="initportal" depends="prodPrompt" description="Runs all the targets necessary to deploy the portal and prepare the portal database">
         <echo message="Initializing uPortal" />
         <antcall target="deploy-ear">
             <param name="removeExisting" value="true" />
@@ -70,7 +55,7 @@
         <echo message="Finished initializing uPortal" />
     </target>
     
-    <target name="initdb" description="Drops all tables, then runs all the targets necessary prepare the portal database">
+    <target name="initdb" depends="prodPrompt" description="Drops all tables, then runs all the targets necessary prepare the portal database">
         <echo message="Initializing database" />
         <antcall target="db" />
         <antcall target="db-hibernate" />
@@ -79,12 +64,12 @@
         <echo message="Finished initializing database" />
     </target>
     
-    <target name="db-hibernate" description="Drops then creates Hibernate managed tables">
+    <target name="db-hibernate" depends="prodPrompt" description="Drops then creates Hibernate managed tables">
         <antcall target="db-hibernate-portal" />
         <antcall target="db-hibernate-stats" />
     </target>
     
-    <target name="db-hibernate-portal" description="Drops then creates Hibernate managed tables for the portal">
+    <target name="db-hibernate-portal" depends="prodPrompt" description="Drops then creates Hibernate managed tables for the portal">
         <uportal-impl-macro>
             <java fork="true" failonerror="true" dir="${uportal-impl.dir}" classname="org.jasig.portal.tools.dbloader.DataSourceSchemaExportRunner">
                 <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
@@ -100,7 +85,7 @@
         </uportal-impl-macro>
     </target>
     
-    <target name="db-hibernate-stats" description="Drops then creates Hibernate managed tables used for the database backed portal statistics">
+    <target name="db-hibernate-stats" depends="prodPrompt" description="Drops then creates Hibernate managed tables used for the database backed portal statistics">
         <uportal-impl-macro>
             <java fork="true" failonerror="true" dir="${uportal-impl.dir}" classname="org.jasig.portal.tools.dbloader.DataSourceSchemaExportRunner">
                 <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
@@ -117,7 +102,7 @@
         </uportal-impl-macro>
     </target>
 
-    <target name="db" description="Loads database tables and data">
+    <target name="db" depends="prodPrompt" description="Loads database tables and data">
         <uportal-impl-macro>
             <property name="usetable" value="-t" />
             <property name="tablefile" value="/properties/db/tables.xml" />
@@ -146,7 +131,7 @@
         </uportal-impl-macro>
     </target>
 
-    <target name="i18n-db" description="Loads internationalization tables and data">
+    <target name="i18n-db" depends="prodPrompt" description="Loads internationalization tables and data">
         <echo message="Invoking DbLoader for localizationed database setting" />
         <antcall target="db">
             <param name="usetable" value="-t" />
@@ -159,28 +144,11 @@
         </antcall>
     </target>
 
-    <target name="db-import" description="Imports the default XML files to the database">
+    <target name="db-import" depends="prodPrompt" description="Imports the default XML files to the database">
         <echo message="Importing data" />
         <antcall target="crn-import">
             <param name="dir" value="${basedir}/uportal-impl/src/main/resources/properties/db/entities" />
         </antcall>
-    </target>
-    
-    <target name="dbunload" description="Dumps a database table to a flat file in XML format">
-        <uportal-impl-macro>
-            <property name="tablename" value=" " />
-            <property name="xmlfile" value=" " />
-
-            <echo message="Invoking DbUnload" />
-            <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.tools.dbloader.DbUnload">
-                <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
-                                
-                <classpath refid="uportal-impl-full.classpath" />
-
-                <arg value="${tablename}" />
-                <arg value="${xmlfile}" />
-            </java>
-        </uportal-impl-macro>
     </target>
 
     <target name="dbtest" description="Displays information about the database defined in rdbm.properties">
@@ -194,7 +162,7 @@
         </uportal-impl-macro>
     </target>
 
-    <target name="regchantype" description="Registers a new channel type">
+    <target name="regchantype" depends="prodPrompt" description="Registers a new channel type">
         <uportal-impl-macro>
             <property name="class" value=" " />
             <property name="name" value=" " />
@@ -237,7 +205,7 @@
         </uportal-impl-macro>
     </target>
 
-    <target name="crn-import" description="Imports the specified XML file or files">
+    <target name="crn-import" depends="prodPrompt" description="Imports the specified XML file or files">
         <uportal-impl-macro>
             <!-- Two properties control the import:  dir and pattern -->
             <property name="dir" value="." />
@@ -254,7 +222,7 @@
         </uportal-impl-macro>
     </target>
 
-    <target name="crn-delete" description="Deletes the specified entity">
+    <target name="crn-delete" depends="prodPrompt" description="Deletes the specified entity">
         <uportal-impl-macro>
             <fail unless="type">
                 You must specify a &quot;type&quot; parameter (-Dtype={something}) from the following:  layout, channel,
@@ -276,7 +244,6 @@
         </uportal-impl-macro>
     </target>
 
-    <!-- TODO is this task needed? -->
     <target name="crn-make-data-xml" description="Runs the DbUnload tool against all tables listed in data.xml">
         <uportal-impl-macro>
 
@@ -288,7 +255,7 @@
         </uportal-impl-macro>
     </target>
     
-    <target name="clean-shared" description="Removes the ALL shared libraries from the container.">
+    <target name="clean-shared" depends="checkForTomcat" description="Removes the ALL shared libraries from the container.">
         <delete>
             <fileset dir="${server.base}/shared/lib">
                 <include name="*"/>
@@ -296,7 +263,7 @@
         </delete>
     </target>
     
-    <target name="clean-tomcat" description="Removes the deployed uPortal from the container">
+    <target name="clean-tomcat" depends="checkForTomcat" description="Removes the deployed uPortal from the container">
         <uportal-parent-macro>
             <!-- Clean out uPortal from Tomcat -->
             <artifact:pom file="${uportal-war.dir}/pom.xml" id="uportal-war.pom" />
@@ -314,7 +281,7 @@
         </antcall>
     </target>
 
-    <target name="deploy-ear" description="Deploy uPortal and dependent libraries and portlets to the servlet container">
+    <target name="deploy-ear" depends="checkForTomcat" description="Deploy uPortal and dependent libraries and portlets to the servlet container">
         <uportal-ant-tasks-macro>
             <typedef resource="org/jasig/portal/ant/antlib.xml" uri="urn:up-util-ant">
                 <classpath refid="uportal-ant-tasks-full.classpath" />
@@ -337,7 +304,7 @@
         </uportal-ant-tasks-macro>
     </target>
 
-    <target name="deploy-war" description="Deploy the uPortal web application to the servlet container">
+    <target name="deploy-war" depends="checkForTomcat" description="Deploy the uPortal web application to the servlet container">
         <uportal-war-macro>
             <antcall target="fastWarDeploy">
                 <param name="warPath" value="${uportal-war.artifact}"/>
@@ -345,7 +312,7 @@
         </uportal-war-macro>
     </target>
 
-    <target name="deployPortletApp" description="Deploys a portlet application">
+    <target name="deployPortletApp" depends="checkForTomcat" description="Deploys a portlet application">
         <!-- Check arguments -->
         <fail message="'-DportletApp=[WAR File]' must be specified">
             <condition>
@@ -397,7 +364,7 @@
     </target>
 
 
-    <target name="md5passwd" description="Creates a user in the UP_PERSON_DIR table">
+    <target name="md5passwd" depends="prodPrompt" description="Creates a user in the UP_PERSON_DIR table">
         <uportal-impl-macro>
             <property name="username" value=" " />
 
@@ -411,7 +378,7 @@
         </uportal-impl-macro>
     </target>
 
-    <target name="deluser" description="Delete traces of a user from the portal database">
+    <target name="deluser" depends="prodPrompt" description="Delete traces of a user from the portal database">
         <uportal-impl-macro>
             <property name="user" value=" " />
 
@@ -424,7 +391,7 @@
         </uportal-impl-macro>
     </target>
 
-    <target name="addstylesheet" description="Registers a new theme or structure">
+    <target name="addstylesheet" depends="prodPrompt" description="Registers a new theme or structure">
         <uportal-impl-macro>
             <property name="stylesheetType" value=" " />
             <property name="stylesheetUri" value=" " />
@@ -441,7 +408,7 @@
         </uportal-impl-macro>
     </target>
 
-    <target name="modstylesheet" description="Modifies an existing theme or structure">
+    <target name="modstylesheet" depends="prodPrompt" description="Modifies an existing theme or structure">
         <uportal-impl-macro>
             <property name="stylesheetType" value=" " />
             <property name="stylesheetUri" value=" " />
@@ -461,7 +428,7 @@
         </uportal-impl-macro>
     </target>
 
-    <target name="delstylesheet" description="Deletes an existing theme or structure">
+    <target name="delstylesheet" depends="prodPrompt" description="Deletes an existing theme or structure">
         <uportal-impl-macro>
             <property name="stylesheetType" value=" " />
             <property name="stylesheetId" value=" " />
@@ -593,6 +560,42 @@
                 <copy file="${warPath}" todir="${server.webapps}" />
             </else>
         </if>
+    </target>
+    
+    <target name="prodPrompt">
+        <if>
+            <and>
+                <istrue value="${prodPrompt}" />
+                <not>
+                    <isset property="continueWithProdTarget" />
+                </not>
+            </and>
+            <then>
+                <echo>WARNING: This task may change or destroy data and should be run with care in production environments.</echo>
+                <input message="Do you want to continue: " validargs="y,n" addproperty="continueWithProdTarget"/>
+                <condition property="do.abort">
+                    <equals arg1="n" arg2="${continueWithProdTarget}"/>
+                </condition>
+                <fail if="do.abort">Task aborted by user.</fail>
+            </then>
+        </if>
+    </target>
+    
+    <target name="checkForTomcat">
+        <fail message="server.base build property must be set.">
+            <condition>
+                <not>
+                    <isset property="server.base" />
+                </not>
+            </condition>
+        </fail>
+        <fail message="The server.base build property refers to a non-existant location '${server.base}'">
+            <condition>
+                <not>
+                    <available file="${server.base}" type="dir" />
+                </not>
+            </condition>
+        </fail>
     </target>
 
     <!-- ============================== Deprecated Targets ============================== -->
