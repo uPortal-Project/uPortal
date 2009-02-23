@@ -43,8 +43,7 @@
 
         <!-- tar.gz source distribution -->
         <tar destfile="${source.file.tar.gz}" longfile="gnu" compression="gzip">
-            <!-- TODO switch to <fileset refid="sourceFiles" /> once ant 1.7.1 is out -->
-            <tarfileset dir="${uportal.source.dir}" defaultexcludes="true">
+            <tarfileset prefix="${uportal.finalName}" dir="${uportal.source.dir}" defaultexcludes="true">
                 <exclude name="build.properties" />
                 <exclude name="data/**" />
                 <exclude name="**/target/**" />
@@ -99,7 +98,6 @@
         
         <!-- tar.gz distribution -->
         <tar destfile="${quickstart.file.tar.gz}" longfile="gnu" compression="gzip">
-            <!-- TODO switch to <fileset refid="sourceFiles" /> once ant 1.7.1 is out -->
             <tarfileset prefix="${quickstart.name}" dir="${quickstart.dir}" defaultexcludes="${exclude-svn}">
                 <exclude name="**/*.sh" />
                 <exclude name="${dl.ant.finalName}/bin/*" />
