@@ -70,7 +70,7 @@ public class DataSourceSchemaExport implements ISchemaExport {
      * @param drop If existing database objects should be dropped before creating new objects
      * @param outputFile Optional file to write out the SQL to.
      */
-    public void hbm2ddl(boolean export, boolean drop, String outputFile) {
+    public void hbm2ddl(boolean export, boolean create, boolean drop, String outputFile) {
         final AnnotationConfiguration configuration = new AnnotationConfiguration();
         try {
             configuration.configure(this.configuration.getURL());
@@ -90,7 +90,7 @@ public class DataSourceSchemaExport implements ISchemaExport {
                 exporter.setOutputFile(outputFile);
             }
             
-            exporter.execute(true, export, !export, !export && !drop);
+            exporter.execute(true, export, !create, !drop);
         }
         finally {
             DataSourceUtils.releaseConnection(connection, this.dataSource);

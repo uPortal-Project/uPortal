@@ -38,6 +38,9 @@ public class DataSourceSchemaExportRunner {
         final Option dropOpt = new Option("d", "drop", false, "If the database objects should be dropped before creation");
         options.addOption(dropOpt);
         
+        final Option createOpt = new Option("c", "create", false, "If the creation of the database objects should be done");
+        options.addOption(createOpt);
+
         final Option outputFileOpt = new Option("o", "outputFile", true, "The file to write out the SQL to; optional.");
         options.addOption(outputFileOpt);
         
@@ -61,6 +64,7 @@ public class DataSourceSchemaExportRunner {
         
         final String beanName = commandLine.getOptionValue(beanNameOpt.getOpt());
         final boolean export = commandLine.hasOption(exportOpt.getOpt());
+        final boolean create = commandLine.hasOption(createOpt.getOpt());
         final boolean drop = commandLine.hasOption(dropOpt.getOpt());
         final String outputFile = commandLine.getOptionValue(outputFileOpt.getOpt());
         final boolean ignoreNotFound = commandLine.hasOption(ignoreNotFoundOpt.getOpt());
@@ -79,7 +83,7 @@ public class DataSourceSchemaExportRunner {
             throw new IllegalArgumentException("Could not find ISchemaExport bean named '" + beanName + "'", e);
         }
         
-        schemaExport.hbm2ddl(export, drop, outputFile);
+        schemaExport.hbm2ddl(export, create, drop, outputFile);
     }
 
     protected static void printHelp(final Options options) {

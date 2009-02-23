@@ -16,6 +16,6 @@ public interface ISchemaExport {
      * @param drop If existing database objects should be dropped before creating new objects
      * @param outputFile Optional file to write out the SQL to.
      */
-    public void hbm2ddl(boolean export, boolean drop, String outputFile);
+    public void hbm2ddl(boolean export, boolean create, boolean drop, String outputFile);
 
 }
