@@ -163,4 +163,6 @@
         <property name="useAllAttributes" value="true" />
         <property name="ignoreEmptyAttributes" value="true" />
     </bean>
+    
+    <bean class="org.jasig.portal.user.UserAttributesCacheCleaner" />
 </beans>
