@@ -18,6 +18,12 @@
     <description>The root project definition for the uPortal project.</description>
     <version>3.1.0-SNAPSHOT</version>
     
+    <scm>
+        <connection>scm:svn:https://www.ja-sig.org/svn/uPortal/trunk</connection>
+        <developerConnection>scm:svn:https://www.ja-sig.org/svn/uPortal/trunk</developerConnection>
+        <url>http://developer.jasig.org/source/browse/jasigsvn/uPortal/trunk</url>
+    </scm>
+    
     <distributionManagement>
         <site>
             <id>developer.jasig</id>
