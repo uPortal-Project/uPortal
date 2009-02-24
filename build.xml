@@ -529,35 +529,60 @@
         <echo message="removeExisting=${removeExisting}" />
 
         <if>
-            <istrue value="${extractWars}" />
+            <os family="windows" />
             <then>
-                <property name="tempWarDir" value="${jasig.tmpdir}/${war.contextname}" />
-                
-                <delete dir="${tempWarDir}" />
-                <mkdir dir="${tempWarDir}" />
-                <unwar dest="${tempWarDir}" src="${warPath}" overwrite="true" />
-                
                 <if>
                     <istrue value="${removeExisting}" />
                     <then>
-                        <delete dir="${war.dest}" />
-                        <delete file="${war.dest}.war" />
+                        <delete dir="${war.dest}" failonerror="false" />
+                        <delete file="${war.dest}.war" failonerror="false" />
                     </then>
                 </if>
-        
-                <echo message="Moving ${tempWarDir} to ${server.webapps}" />
-                <move todir="${server.webapps}" file="${tempWarDir}" />
+                
+                <if>
+                    <istrue value="${extractWars}" />
+                    <then>
+                        <mkdir dir="${war.dest}" />
+                        <unwar dest="${war.dest}" src="${warPath}" overwrite="true" />
+                    </then>
+                    <else>
+                        <copy file="${warPath}" todir="${server.webapps}" />
+                    </else>
+                </if>
             </then>
             <else>
                 <if>
-                    <istrue value="${removeExisting}" />
+                    <istrue value="${extractWars}" />
                     <then>
-                        <delete dir="${war.dest}" />
-                        <delete file="${war.dest}.war" />
+                        <property name="tempWarDir" value="${jasig.tmpdir}/${war.contextname}" />
+                        
+                        <delete dir="${tempWarDir}" />
+                        <mkdir dir="${tempWarDir}" />
+                        <unwar dest="${tempWarDir}" src="${warPath}" overwrite="true" />
+                        
+                        <if>
+                            <istrue value="${removeExisting}" />
+                            <then>
+                                <delete dir="${war.dest}" />
+                                <delete file="${war.dest}.war" />
+                            </then>
+                        </if>
+                
+                        <echo message="Moving ${tempWarDir} to ${server.webapps}" />
+                        <move todir="${server.webapps}" file="${tempWarDir}" />
                     </then>
+                    <else>
+                        <if>
+                            <istrue value="${removeExisting}" />
+                            <then>
+                                <delete dir="${war.dest}" />
+                                <delete file="${war.dest}.war" />
+                            </then>
+                        </if>
+                    
+                        <copy file="${warPath}" todir="${server.webapps}" />
+                    </else>
                 </if>
-            
-                <copy file="${warPath}" todir="${server.webapps}" />
             </else>
         </if>
     </target>
