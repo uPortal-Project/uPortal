@@ -45,8 +45,25 @@
             <artifactId>servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
+        
+        <dependency>
+            <groupId>javax.portlet</groupId>
+            <artifactId>portlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        
+        <!-- Needed for taglib reference for JSPC -->
+        <dependency>
+            <groupId>org.apache.pluto</groupId>
+            <artifactId>pluto-taglib</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
     </dependencies>
+    
+    <properties>
+        <war-plugin-webxml-source>${project.build.directory}/pluto-resources/web.xml</war-plugin-webxml-source>
+    </properties>
 
     <build>
         <finalName>${uportal.docbase}</finalName>
@@ -73,7 +90,7 @@
                 <artifactId>maven-war-plugin</artifactId>
                 <version>2.0.1</version>
                 <configuration>
-                    <webXml>${project.build.directory}/pluto-resources/web.xml</webXml>
+                    <webXml>${war-plugin-webxml-source}</webXml>
                     <warSourceExcludes>WEB-INF/lib/uportal-impl-${project.version}.jar</warSourceExcludes>
                     <webResources>
                         <resource>
@@ -123,4 +140,46 @@
             </plugin>
         </plugins>
     </build>
+    
+    <profiles>
+        <profile>
+            <id>jspc-tomcat6</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            
+            <properties>
+                <war-plugin-webxml-source>${pom.basedir}/target/jspweb.xml</war-plugin-webxml-source>
+            </properties>
+            
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo.jspc</groupId>
+                        <artifactId>jspc-maven-plugin</artifactId>
+                        <version>2.0-alpha-3</version>
+                        <configuration>
+                            <inputWebXml>${project.build.directory}/pluto-resources/web.xml</inputWebXml>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>compile</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+        
+                        <!-- Use the Tomcat 6 JSP compiler -->
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.codehaus.mojo.jspc</groupId>
+                                <artifactId>jspc-compiler-tomcat6</artifactId>
+                                <version>2.0-alpha-3</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
