@@ -34,6 +34,12 @@
         <xsl:otherwise></xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
+    <xsl:variable name="FRAGMENT_ADMIN_CLASS">
+    	<xsl:choose>
+        <xsl:when test="//channel[@fname = 'fragment-admin-exit']">fragment-admin-mode</xsl:when>
+        <xsl:otherwise></xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
     
     <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
       <head>
@@ -69,7 +75,7 @@
       
       <body id="portal" class="{$FLUID_THEME_CLASS}">
         <div id="portalPage" class="{$LOGIN_STATE} {$PORTAL_VIEW} fl-container-flex">  <!-- Main div for presentation/formatting options. -->
-        	<div id="portalPageInner" class="{$PAGE_COLUMN_CLASS} {$SIDEBAR_CLASS}">  <!-- Inner div for additional presentation/formatting options. -->
+        	<div id="portalPageInner" class="{$PAGE_COLUMN_CLASS} {$SIDEBAR_CLASS} {$FRAGMENT_ADMIN_CLASS}">  <!-- Inner div for additional presentation/formatting options. -->
             <xsl:choose>
               <xsl:when test="/layout_fragment"> <!-- When detached. -->
               
@@ -163,11 +169,6 @@
     	<div id="portalPageBodyInner">  <!-- Inner div for additional presentation/formatting options. -->
       
         <!-- ****** BODY LAYOUT ****** -->
-        
-        <!-- ****** CONTENT TOP BLOCK ****** -->
-        <xsl:call-template name="content.top.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
-        <!-- ****** CONTENT TOP BLOCK ****** -->
-        
         <div id="portalPageBodyLayout">
         	<xsl:attribute name="class"> <!-- Write appropriate FSS class based on use of sidebar and number of columns to produce column layout. -->
           	<xsl:choose>
@@ -225,13 +226,25 @@
                 <xsl:when test="$USE_SIDEBAR_FOCUSED='true'"> <!-- Sidebar. -->
                   <xsl:call-template name="sidebar"/> <!-- Template located in columns.xsl. -->
                   <div class="fl-col-flex-{$FSS_SIDEBAR_LOCATION_CLASS}">
+                  	<!-- ****** CONTENT TOP BLOCK ****** -->
+                    <xsl:call-template name="content.top.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
+                    <!-- ****** CONTENT TOP BLOCK ****** -->
                     <xsl:call-template name="page.title.row.focused"/> <!-- Template located below. -->
                     <xsl:apply-templates select="//focused"/> <!-- Templates located in content.xsl. -->
+                    <!-- ****** CONTENT BOTTOM BLOCK ****** -->
+                    <xsl:call-template name="content.bottom.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
+                    <!-- ****** CONTENT BOTTOM BLOCK ****** -->
                   </div>
                 </xsl:when>
                 <xsl:otherwise>
+                	<!-- ****** CONTENT TOP BLOCK ****** -->
+                  <xsl:call-template name="content.top.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
+                  <!-- ****** CONTENT TOP BLOCK ****** -->
                   <xsl:call-template name="page.title.row.focused"/> <!-- No Sidebar. Template located below. -->
                   <xsl:apply-templates select="//focused"/> <!-- Templates located in content.xsl. -->
+                  <!-- ****** CONTENT BOTTOM BLOCK ****** -->
+                  <xsl:call-template name="content.bottom.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
+                  <!-- ****** CONTENT BOTTOM BLOCK ****** -->
                 </xsl:otherwise>
               </xsl:choose>
               
@@ -247,13 +260,25 @@
                     <xsl:when test="$USE_SIDEBAR='true'"> <!-- Sidebar. -->
                       <xsl:call-template name="sidebar"/> <!-- Template located in columns.xsl. -->
                       <div class="fl-col-flex-{$FSS_SIDEBAR_LOCATION_CLASS}">
+                      	<!-- ****** CONTENT TOP BLOCK ****** -->
+                        <xsl:call-template name="content.top.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
+                        <!-- ****** CONTENT TOP BLOCK ****** -->
                         <xsl:call-template name="page.title.row"/>
                         <xsl:call-template name="columns"/> <!-- Template located in columns.xsl. -->
+                        <!-- ****** CONTENT BOTTOM BLOCK ****** -->
+                        <xsl:call-template name="content.bottom.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
+                        <!-- ****** CONTENT BOTTOM BLOCK ****** -->
                       </div>
                     </xsl:when>
                     <xsl:otherwise>
+                    	<!-- ****** CONTENT TOP BLOCK ****** -->
+                      <xsl:call-template name="content.top.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
+                      <!-- ****** CONTENT TOP BLOCK ****** -->
                       <xsl:call-template name="page.title.row"/> <!-- No Sidebar. Template located below. -->
                       <xsl:call-template name="columns"/> <!-- Template located in columns.xsl. -->
+                      <!-- ****** CONTENT BOTTOM BLOCK ****** -->
+                      <xsl:call-template name="content.bottom.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
+                      <!-- ****** CONTENT BOTTOM BLOCK ****** -->
                     </xsl:otherwise>
                   </xsl:choose>
                   
@@ -265,13 +290,25 @@
                     <xsl:when test="$USE_SIDEBAR_GUEST='true'"> <!-- Sidebar. -->
                       <xsl:call-template name="sidebar"/> <!-- Template located in columns.xsl. -->
                       <div class="fl-col-flex-{$FSS_SIDEBAR_LOCATION_CLASS}">
+                      	<!-- ****** CONTENT TOP BLOCK ****** -->
+                        <xsl:call-template name="content.top.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
+                        <!-- ****** CONTENT TOP BLOCK ****** -->
                         <xsl:call-template name="page.title.row"/>
                         <xsl:call-template name="columns"/> <!-- Template located in columns.xsl. -->
+                        <!-- ****** CONTENT BOTTOM BLOCK ****** -->
+                        <xsl:call-template name="content.bottom.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
+                        <!-- ****** CONTENT BOTTOM BLOCK ****** -->
                       </div>
                     </xsl:when>
                     <xsl:otherwise>
+                    	<!-- ****** CONTENT TOP BLOCK ****** -->
+                      <xsl:call-template name="content.top.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
+                      <!-- ****** CONTENT TOP BLOCK ****** -->
                       <xsl:call-template name="page.title.row"/> <!-- No Sidebar. Template located below. -->
                       <xsl:call-template name="columns"/> <!-- Template located in columns.xsl. -->
+                      <!-- ****** CONTENT BOTTOM BLOCK ****** -->
+                      <xsl:call-template name="content.bottom.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
+                      <!-- ****** CONTENT BOTTOM BLOCK ****** -->
                     </xsl:otherwise>
                   </xsl:choose>
                   
@@ -280,11 +317,7 @@
               
             </xsl:otherwise>
           </xsl:choose>
-        
-          <!-- ****** CONTENT BOTTOM BLOCK ****** -->
-          <xsl:call-template name="content.bottom.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
-          <!-- ****** CONTENT BOTTOM BLOCK ****** -->
-          
+
       	</div> <!-- End portalPageBodyLayout -->
         
     	</div> <!-- End portalPageBodyInner -->

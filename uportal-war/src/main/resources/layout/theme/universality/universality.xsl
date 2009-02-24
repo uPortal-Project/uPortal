@@ -156,12 +156,16 @@
   <xsl:variable name="CAS_NEW_USER_URL">http://www.jasig.org/cas</xsl:variable>
   
   <!-- 
+   | The unofficial "theme-switcher".
    | The INSTITUTION variable can be used to make logical tests and configure the theme on a per skin basis.
+   | Allows the the theme to configure differently for a skin or group of skins, yet not break for other skins that might require a different configuration.
    | The implementation is hard-coded, but it works.
+   | May require the addition of an xsl:choose statement around parameters, vairables, and template calls.
   -->
   <xsl:variable name="INSTITUTION">
   	<xsl:choose>
     	<xsl:when test="$SKIN='university' or $SKIN='university-div1' or $SKIN='university-div2'">university</xsl:when> <!-- Set all institution skins to a specific theme configuration  -->
+      <xsl:when test="$SKIN='ivy'">ivy</xsl:when>
       <xsl:otherwise>uportal</xsl:otherwise>
     </xsl:choose>
   </xsl:variable>
@@ -172,8 +176,19 @@
    | GREEN
    | Navigation Settings can be used to change the navigation.
   -->
-  <xsl:param name="USE_FLYOUT_MENUS" select="'true'"/> <!-- Sets the use of flyout menus.  Values are 'true' or 'false'. -->
+  <xsl:param name="USE_FLYOUT_MENUS" select="'true'" /> <!-- Sets the use of flyout menus.  Values are 'true' or 'false'. -->
   
+  <!-- USE_SUBNAVIGATION_ROW
+   | Sets the use of the sub navigation row, which lists out links to the portlets on the active tab.
+   | Values are 'true' or 'false'
+  -->
+  <!-- Use the INSTITUTION parameter to configure the subnavigation row on a per skin/institution basis. -->
+  <xsl:param name="USE_SUBNAVIGATION_ROW">
+    <xsl:choose>
+      <xsl:when test="$INSTITUTION='uportal'">true</xsl:when>
+      <xsl:otherwise>false</xsl:otherwise>
+    </xsl:choose>
+  </xsl:param>
   
   <!-- ****** LAYOUT SETTINGS ****** -->
   <!-- 
@@ -182,19 +197,80 @@
   -->
   
   <!-- SIDEBAR -->
-  <!-- The sidebar is a persistent (across all tabs) fixed column (cannot be moved or deleted in the portal UI) on either the left or right side of the content area of the page layout that can contain UI components (navigation, quicklinks, etc.) and custom institution content (blocks), but not portlets. -->
-  <xsl:param name="USE_SIDEBAR" select="'true'"/> <!-- Sets the use of a sidebar in the logged in, dashboard view.  This sidebar can contain UI components (navigation, quicklinks, etc.) and custom institution content (blocks), but not portlets.  Values are 'true' or 'false'. -->
-  <xsl:param name="USE_SIDEBAR_FOCUSED" select="'true'"/> <!-- Sets the use of a sidebar when a portlet is focused.  Values are 'true' or 'false'. -->
-  <xsl:param name="USE_SIDEBAR_GUEST" select="'true'"/> <!-- Sets the use of a sidebar when logged out.  Values are 'true' or 'false'. -->
-  <xsl:param name="SIDEBAR_LOCATION" select="'right'"/> <!-- Sets the location of the sidebar - if used - in the logged in, dashboard view.  Values are 'left' or 'right'. -->
-  <xsl:param name="SIDEBAR_LOCATION_FOCUSED" select="'right'"/> <!-- Sets the location of the sidebar - if used - in the focused view.  Values are 'left' or 'right'. -->
-  <xsl:param name="SIDEBAR_LOCATION_GUEST" select="'left'"/> <!-- Sets the location of the sidebar - if used - when logged out.  Values are 'left' or 'right'. -->
-  <xsl:param name="SIDEBAR_WIDTH" select="200"/> <!-- Sets the pixel width of the sidebar, if used.  Values are '100', '150', '200', '250', or '300' and represent pixel widths. -->
-  <xsl:param name="SIDEBAR_WIDTH_FOCUSED" select="200"/> <!-- Sets the pixel width of the sidebar when a portlet is focused, if used.  Values are '100', '150', '200', '250', or '300' and represent pixel widths -->
-  <xsl:param name="SIDEBAR_WIDTH_GUEST" select="250"/> <!-- Sets the pixel width of the sidebar when logged out, if used.  Values are '100', '150', '200', '250', or '300' and represent pixel widths -->
+  <!-- The sidebar is a persistent (across all tabs) fixed column (cannot be moved or deleted in the portal UI) on either the left or right side of the content area of the page layout that can contain UI components (navigation, quicklinks, etc.) and custom institution content (blocks), but not portlets.
+  | USE_SIDEBAR - Sets the use of a sidebar in the logged in, dashboard view.  This sidebar can contain UI components (navigation, quicklinks, etc.) and custom institution content (blocks), but not portlets.  Values are 'true' or 'false'.
+  | USE_SIDEBAR_FOCUSED - Sets the use of a sidebar when a portlet is focused.  Values are 'true' or 'false'.
+  | USE_SIDEBAR_GUEST - Sets the use of a sidebar when logged out.  Values are 'true' or 'false'.
+  | SIDEBAR_LOCATION - Sets the location of the sidebar - if used - in the logged in, dashboard view.  Values are 'left' or 'right'.
+  | SIDEBAR_LOCATION_FOCUSED - Sets the location of the sidebar - if used - in the focused view.  Values are 'left' or 'right'.
+  | SIDEBAR_LOCATION_GUEST - Sets the location of the sidebar - if used - when logged out.  Values are 'left' or 'right'.
+  | SIDEBAR_WIDTH - Sets the pixel width of the sidebar, if used.  Values are '100', '150', '200', '250', or '300' and represent pixel widths.
+  | SIDEBAR_WIDTH_FOCUSED - Sets the pixel width of the sidebar when a portlet is focused, if used.  Values are '100', '150', '200', '250', or '300' and represent pixel widths.
+  | SIDEBAR_WIDTH_GUEST - Sets the pixel width of the sidebar when logged out, if used.  Values are '100', '150', '200', '250', or '300' and represent pixel widths.
+  -->
+  <!-- Use the INSTITUTION parameter to configure the sidebar on a per skin/institution basis. -->
+  <xsl:param name="USE_SIDEBAR">
+    <xsl:choose>
+      <xsl:when test="$INSTITUTION='ivy'">false</xsl:when>
+      <xsl:otherwise>true</xsl:otherwise>
+    </xsl:choose>
+  </xsl:param>
   
-  <xsl:param name="USE_SUBNAVIGATION_ROW" select="'true'"/>
+  <xsl:param name="USE_SIDEBAR_FOCUSED">
+    <xsl:choose>
+      <xsl:when test="$INSTITUTION='ivy'">false</xsl:when>
+      <xsl:otherwise>true</xsl:otherwise>
+    </xsl:choose>
+  </xsl:param>
   
+  <xsl:param name="USE_SIDEBAR_GUEST">
+    <xsl:choose>
+      <xsl:when test="$INSTITUTION='ivy'">true</xsl:when>
+      <xsl:otherwise>true</xsl:otherwise>
+    </xsl:choose>
+  </xsl:param>
+  
+  <xsl:param name="SIDEBAR_LOCATION">
+    <xsl:choose>
+      <xsl:when test="$INSTITUTION='uportal'">right</xsl:when>
+      <xsl:otherwise>left</xsl:otherwise>
+    </xsl:choose>
+  </xsl:param>
+  
+  <xsl:param name="SIDEBAR_LOCATION_FOCUSED">
+    <xsl:choose>
+      <xsl:when test="$INSTITUTION='uportal'">right</xsl:when>
+      <xsl:otherwise>left</xsl:otherwise>
+    </xsl:choose>
+  </xsl:param>
+  
+  <xsl:param name="SIDEBAR_LOCATION_GUEST">
+    <xsl:choose>
+      <xsl:when test="$INSTITUTION='uportal'">left</xsl:when>
+      <xsl:otherwise>left</xsl:otherwise>
+    </xsl:choose>
+  </xsl:param>
+  
+  <xsl:param name="SIDEBAR_WIDTH">
+    <xsl:choose>
+      <xsl:when test="$INSTITUTION='uportal'">200</xsl:when>
+      <xsl:otherwise>200</xsl:otherwise>
+    </xsl:choose>
+  </xsl:param>
+  
+  <xsl:param name="SIDEBAR_WIDTH_FOCUSED">
+    <xsl:choose>
+      <xsl:when test="$INSTITUTION='uportal'">200</xsl:when>
+      <xsl:otherwise>200</xsl:otherwise>
+    </xsl:choose>
+  </xsl:param>
+  
+  <xsl:param name="SIDEBAR_WIDTH_GUEST">
+    <xsl:choose>
+      <xsl:when test="$INSTITUTION='uportal'">250</xsl:when>
+      <xsl:otherwise>250</xsl:otherwise>
+    </xsl:choose>
+  </xsl:param>
   <!-- ============================================ -->
   
   <!-- Debug Template

@@ -78,17 +78,6 @@ ul.horizontal-list-inline li {list-style:none; display:inline; padding-left:1em;
 
 
 /** navigation **/
-
-/*.header #portalNavigationList {position:absolute; top:66px; left:192px;}
-.focused .header #portalNavigationList {top:47px;}
-
-#portalNavigation ul, 
-#portalNavigation li {margin:0; padding:0;}
-
-#portalNavigation #portalNavigationList a {display:block; padding:0.5em 1em;}
-#portalNavigation .header #portalNavigationList a {padding:0.5em 2em;}
-#portalNavigation #portalNavigationList .portal-subnav-container a {padding:0.5em 1em 0.5em 2.1em;}*/
-
 #portletNavigation ul,
 #portletNavigation li {margin:0; padding:0;}
 #portletNavigation li {margin-bottom:1px;}
@@ -108,16 +97,32 @@ ul.horizontal-list-inline li {list-style:none; display:inline; padding-left:1em;
 .sidebar-right-300 #portalNavigationSubrow ul {margin-right:320px;}
 #portalNavigationSubrow li {list-style-type:none; display:inline;}
 
+/*
+ | The obsolete 3.0 - 3.0.2 rendering of the navigation as an absolutely positioned element.
+ | 3.1 puts the navigation in its own container just below the header and renders the tabs inline with the Fluid Skinning System.
+.header #portalNavigationList {position:absolute; top:66px; left:192px;}
+.focused .header #portalNavigationList {top:47px;}
+#portalNavigation ul, 
+#portalNavigation li {margin:0; padding:0;}
+#portalNavigation #portalNavigationList a {display:block; padding:0.5em 1em;}
+#portalNavigation .header #portalNavigationList a {padding:0.5em 2em;}
+#portalNavigation #portalNavigationList .portal-subnav-container a {padding:0.5em 1em 0.5em 2.1em;}*/
+
 
 /** Customization Links **/
-/*#portalCustomizationLinks {position:absolute; top:0; right:0; text-align:right; margin:0 0 0 250px;}
-#portalCustomizationLinks h2, 
-#portalCustomizationLinks ul, 
-#portalCustomizationLinks li {display:inline;}
-#portalCustomizationLinks h2 {padding-right:1em;}
-#portalCustomizationLinks ul {margin:0;}
-#portalCustomizationLinks li {padding-right:5px;}
-#portalCustomizationLinks a {padding:2px 5px 2px 20px;}*/
+/* 
+ | When rendered in the Title Row (with the Page Title).
+ | Turns the list into a row and positions it to the top right corner. 
+*/
+#portalPageBodyTitleRow #portalCustomizationLinks {position:absolute; top:0; right:0; text-align:right; margin:0 0 0 250px;}
+#portalPageBodyTitleRow #portalCustomizationLinks h2,
+#portalPageBodyTitleRow #portalCustomizationLinks .block-content, 
+#portalPageBodyTitleRow #portalCustomizationLinks ul, 
+#portalPageBodyTitleRow #portalCustomizationLinks li {display:inline;}
+#portalPageBodyTitleRow #portalCustomizationLinks h2 {margin:0; padding-right:1em;}
+#portalPageBodyTitleRow #portalCustomizationLinks ul {margin:0;}
+#portalPageBodyTitleRow #portalCustomizationLinks li {padding-right:5px;}
+#portalPageBodyTitleRow #portalCustomizationLinks a {padding:2px 5px 2px 20px;}
 
 
 /** quicklinks **/	

@@ -22,7 +22,7 @@
                     <option value="${item.key}">${item.value}</option>
                 </c:forEach>
             </select>
-            <input type="Button" value="GO" onclick="if (document.fragmentAdminForm.fragmentOwner.options[document.fragmentAdminForm.fragmentOwner.selectedIndex].value != 'NONE') document.fragmentAdminForm.submit()"/>
+            <input type="Button" value="Go" onclick="if (document.fragmentAdminForm.fragmentOwner.options[document.fragmentAdminForm.fragmentOwner.selectedIndex].value != 'NONE') document.fragmentAdminForm.submit()"/>
         </form>
         
         

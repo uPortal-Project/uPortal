@@ -3,15 +3,14 @@
 
 <portlet:defineObjects/>
 
-<div class="block" id="fragAdminContainer">
-    <div class="block-inner">
-        <div class="block-content">
-
-        <form name="fragmentAdminExitForm" action="${loginUrl}">
-            <label for="exitFragment">You are currently logged in as <strong><c:out value="${USERNAME}"/></strong> for DLM fragment administration</label>
-            <input id="exitFragment" type="Submit" value="Exit Fragment"/>
-        </form>
-                    
-        </div>
+<div id="portalFragAdminExit" class="block">
+  <div class="block-inner">
+    <h2 class="block-title">Fragment Administration</h2>
+    <div class="block-content">
+      <form name="fragmentAdminExitForm" action="${loginUrl}">
+      	<label for="exitFragment">You are currently logged in as <strong><c:out value="${USERNAME}"/></strong> for DLM fragment administration</label>
+      	<input id="exitFragment" type="Submit" value="Exit Fragment"/>
+      </form>
     </div>
+  </div>
 </div>
