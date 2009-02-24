@@ -41,6 +41,7 @@
                             <locale>en_US</locale>
                             <categories/>
                             <groups/>
+                            <users/>
                             <parameters/>
                             <portletPreferences/>
                         </append-node>
@@ -81,30 +82,33 @@
                         </append-node>
                     </subtasks>
                 </sql-query>
-                <sql-query>
-                    <sql>
-                        SELECT principal_key 
-                        FROM up_permission 
-                        WHERE activity = 'SUBSCRIBE' AND permission_type = 'GRANT' AND target = ?
-                    </sql>
-                    <parameter value="CHAN_ID.${CHAN_ID}"/>
-                    <subtasks>
-                        <with-attribute key="GROUP" value="${groovy(org.jasig.portal.services.GroupService.findGroup(PRINCIPAL_KEY))}">
-                            <!-- Check for group name == null (indicates an orphaned record) -->
+                <!--  Groups and Users  -->
+                <with-attribute key="MEMBERSHIPS" value="${crn(find-membership.crn)}">
+                    <if test="${groovy(MEMBERSHIPS.size() > 0)}">
+                        <for-each items="${MEMBERSHIPS}" attribute-name="CURRENT_MEMBER">
                             <choose>
-                                <when test="${jexl(GROUP.getName() == null)}">
-                                    <log logger-name="org.jasig.portal.io.export-channel" level="warn">Channel '${FNAME}' is a member of a deleted group;  removing orphaned reference.</log>
+                                <when test="${groovy(CURRENT_MEMBER.isGroup())}">
+                                    <with-attribute key="GROUP_NAME" value="${groovy(org.jasig.portal.services.EntityNameFinderService.instance().getNameFinder(CURRENT_MEMBER.getType()).getName(CURRENT_MEMBER.getKey()))}">
+                                        <append-node parent="${singleNode(groups)}">
+                                            <group>${GROUP_NAME}</group>
+                                        </append-node>
+                                    </with-attribute>
+                                </when>
+                                <when test="${groovy(CURRENT_MEMBER.isEntity())}">
+                                    <with-attribute key="USER_NAME" value="${groovy(CURRENT_MEMBER.getKey())}">
+                                        <append-node parent="${singleNode(users)}">
+                                            <user>${USER_NAME}</user>
+                                        </append-node>
+                                    </with-attribute>
                                 </when>
                                 <otherwise>
-                                    <!-- All is well... -->
-                                    <append-node parent="${singleNode(groups)}">
-                                        <group>${jexl(GROUP.getName())}</group>
-                                    </append-node>
+                                    <echo-ln>WARNING:  Subscribed IGroupMember ${CURRENT_MEMBER} is not a group or an entity and will be ignored.</echo-ln>
+                                    <log logger-name="org.jasig.portal.io.export-channel" level="warn">Subscribed IGroupMember ${CURRENT_MEMBER} is not a group or an entity and will be ignored.</log>
                                 </otherwise>
                             </choose>
-                        </with-attribute>
-                    </subtasks>
-                </sql-query>
+                        </for-each>
+                    </if>
+                </with-attribute>
                 <!--  Standard Channel Parameters  -->
                 <sql-query>
                     <sql>
