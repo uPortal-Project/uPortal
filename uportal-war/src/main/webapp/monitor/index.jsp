@@ -179,7 +179,7 @@
           <td align="right"><%= numFormatter.format(auth.highMax) %></td>
         </tr>
         <tr><td>Database connection</td><td>&nbsp;</td>
-           <% MovingAverageSample db = RDBMServices.lastDatabase; %>
+           <% MovingAverageSample db = RDBMServices.getLastDatabase(); %>
           <td align="right"><%= numFormatter.format(db.totalSamples) %></td>
           <td align="right"><%= numFormatter.format(db.min) %></td>
           <td align="right"><%= numFormatter.format(db.average)%></td>
@@ -223,11 +223,11 @@
       </tr>
       <tr class="uportal-text">
         <td>ChannelRenderer: Active Worker threads</td>
-        <td align="right"> <%= numFormatter.format(ChannelManager.activeRenderers.get()) %></td>
+        <td align="right"> <%= numFormatter.format(ChannelManager.getActiveRenderers()) %></td>
       </tr>
       <tr class="uportal-text">
         <td>ChannelRenderer: Max active</td>
-        <td align="right"> <%= numFormatter.format(ChannelManager.maxRenderThreads.get()) %></td>
+        <td align="right"> <%= numFormatter.format(ChannelManager.getMaxRenderThreads()) %></td>
       </tr>
 
       <tr class="uportal-text">
