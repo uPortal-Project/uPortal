@@ -35,7 +35,7 @@
                         onModelChange: function(link) {
                             up.jQuery("#portal-deployment-list .portal-deployment-items li").css("display", "none");
                             var i = link.pageIndex*<xsl:value-of select="$perScreen"/>;
-                            up.jQuery("#portal-deployment-list .portal-deployment-items li:gt(" + link.pageIndex*<xsl:value-of select="$perScreen"/> +"):lt(" + <xsl:value-of select="$perScreen"/> + ")").css("display", "block");
+                            up.jQuery("#portal-deployment-list .portal-deployment-items li:not(:lt(" + link.pageIndex*<xsl:value-of select="$perScreen"/> +")):lt(" + <xsl:value-of select="$perScreen"/> + ")").css("display", "block");
                             return false;
                         }
                     }

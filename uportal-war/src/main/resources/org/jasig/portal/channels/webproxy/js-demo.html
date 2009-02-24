@@ -28,10 +28,24 @@
 		  $(".datepicker-demo").datepicker();
 		  $(".tabs-demo").tabs();
 		  
+		  // set up fluid component demos
+		  up.fluid.reorderList(".list-reorderer ol", { selectors: { movables: "> li"} });
+		  up.fluid.pager(".pager-demo");
+		  up.fluid.pager(".pager-demo", {
+          	listeners: {
+            	onModelChange: function(link) {
+                	$(".fluid-pager-demo-items li").css("display", "none");
+                    $(".fluid-pager-demo-items li:not(:lt(" + link.pageIndex*5 +")):lt(5)").css("display", "block");
+                    return false;
+                }
+            }
+          });
+		  
+		  
 		  // set up demo switching functionality
 		  $(".demo-list li").click(function(){
 		    $(".demo-list").css("display", "none");
-		    $("." + $(this).text().toLowerCase()).css("display", "block");
+		    $("." + $(this).text().toLowerCase().replace(" ", "-")).css("display", "block");
 		    $(".demo-back-link").css("display", "block");
 		    return false;
 		  });
@@ -53,11 +67,18 @@
     <style type="text/css">
       .demo-container {display:none; max-width:600px}
       .demo-back-link {display:none}
-      .effects ul, .effects li {list-style-type: none; margin: 0}
+      .effects ul, .effects li {list-style-type:none; margin: 0}
+      .list-reorderer ol li {padding:5px; margin:5px;}
+	  .list-reorderer ul li {margin:0px; padding:0px;}
+	  .list-reorderer .orderable-default{background-color:#eee;}
+	  .list-reorderer .orderable-hover{background-color:lightyellow; cursor:move;}
+	  .orderable-selected{background-color: #ddd;}
+	  .orderable-dragging {background-color: lightyellow;}
+	  .list-reorderer ol .orderable-drop-marker {background-color: red; height:4px !important; padding:0 0 0 0; border-width: 0px !important; list-style-type:none; font-size:0px; line-height:0px; overflow:hidden;}
     </style>
     
     <div class="demo-list">
-      <h3>Available jQuery UI Demos</h3>
+      <h2>jQuery UI Demos</h2>
       <ul>
         <li><a href="javascript:;">Datepicker</a></li>
         <li><a href="javascript:;">Accordion</a></li>
@@ -65,31 +86,42 @@
         <li><a href="javascript:;">Effects</a></li>
       </ul>
       
-      <p>For more jQuery UI demos and sample source code, please visit 
+      <p>
+      	This uPortal release contains jQuery UI 1.6, release candidate 6.  
+      	For more jQuery UI demos and sample source code, please visit 
       	<a href="http://jqueryui.com/demos/" target="_blank">http://jqueryui.com/demos</a>.
       </p>
+      
+      <h2>Fluid Component Demos</h2>
+      <ul>
+        <li><a href="javascript:;">Pager</a></li>
+        <li><a href="javascript:;">List Reorderer</a></li>
+      </ul>
+      
+      <p>
+      	This uPortal release contains the Fluid 0.8 final release.  For more 
+      	Fluid demos and sample source code, please visit 
+      	<a href="http://wiki.fluidproject.org/display/fluid/Components" 
+      		target="_blank">http://wiki.fluidproject.org/display/fluid/Components</a>.
+      </p>
+      
     </div>
     
     <div class="demo-container accordion">
       <h2>Accordion Demo</h2>
       <div class="accordion-demo">
         <div>
-          <h3>
-            <a href="#">Section 1</a>
-          </h3>
-          <div><p>Section 1 content</p></div>
+          <h3><a href="#">Section 1</a></h3>
+          <div><p>Proin euismod nibh ac enim. Nam augue est, tempus ut, semper id, ornare vel, lorem. Cras id ligula. Etiam porttitor ullamcorper felis. Proin egestas. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Mauris in nibh. Fusce eget odio. Duis bibendum elit eget ante. Ut sollicitudin tortor. Ut posuere lorem vitae mauris. Mauris lobortis felis nec nulla. Fusce accumsan sagittis ante. </p></div>
         </div>
         <div>
-          <h3>
-            <a href="#">Section 2</a>
-          </h3>
-          <div><p>Section 2 content</p></div>
+          <h3><a href="#">Section 2</a></h3>
+          <div><p>Ut et nunc. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. In dapibus sagittis felis. Nullam tempus velit at nisi. Phasellus nulla tortor, commodo eu, lobortis ac, convallis nec, mi. Donec cursus eros ac velit. Sed mattis, tortor sed laoreet tempor, risus ipsum posuere nisi, non vehicula dui libero sed mauris. Sed nisl nulla, vulputate nec, ornare vel, ultricies at, nulla. Proin purus nisi, scelerisque eget, consequat quis, aliquet nec, pede. Pellentesque erat augue, rhoncus in, convallis sit amet, pellentesque a, leo. Duis tortor nunc, ornare ac, volutpat quis, molestie et, mauris. Cras rhoncus massa eget enim. Aliquam erat volutpat.</p></div>
         </div>
         <div>
-          <h3>
-            <a href="#">Section 3</a>
-          </h3>
-          <div><p>Section 3 content</p></div>
+          <h3><a href="#">Section 3</a></h3>
+          <div><p>Aliquam a leo. Phasellus congue tempor massa. In hac habitasse platea dictumst. Ut eu arcu eu velit pulvinar tempus. Nullam sit amet lorem ut dolor sagittis viverra. Curabitur in lacus dictum risus ultrices bibendum. Ut eu nibh et mauris ornare condimentum. Duis iaculis rutrum nisi. Sed facilisis augue ut neque. Pellentesque cursus libero vel neque. Nunc ornare eleifend lorem. Praesent ultrices hendrerit purus. Sed vitae tortor. Nunc velit. Suspendisse potenti.</p>
+			<p>In hac habitasse platea dictumst. Nullam eget nisi id risus mollis porta. Morbi mollis gravida est. Cras vehicula tellus a lorem. Nunc risus metus, ultricies vel, cursus sit amet, rhoncus non, felis. Nunc porttitor diam id enim. Duis quam neque, eleifend id, faucibus quis, iaculis vitae, diam. Praesent ante. Fusce malesuada hendrerit sapien. Nulla tincidunt dui in diam. Integer pharetra. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. In fermentum quam non magna. Sed a felis. Cras quis ipsum. Duis elit odio, facilisis scelerisque, vehicula et, posuere quis, elit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Mauris nibh quam, porttitor quis, commodo at, cursus ac, quam. Donec lacinia. Fusce eget justo quis libero egestas porttitor. </p></div>
         </div>
       </div>
     </div>
@@ -141,62 +173,101 @@
             <div class="fl-col-flex50">
               <h4>General</h4>
               <ul class="general-effects">
-                <li>
-                  <a href="javascript:;">Bounce</a>
-                </li>
-                <li>
-                  <a href="javascript:;">Highlight</a>
-                </li>
-                <li>
-                  <a href="javascript:;">Pulsate</a>
-                </li>
-                <li>
-                  <a href="javascript:;">Scale</a>
-                </li>
-                <li>
-                  <a href="javascript:;">Shake</a>
-                </li>
-                <!-- <li>
-                  <a href="javascript:;">Size</a>
-                </li> -->
-                <!-- <li>
-                  <a href="javascript:;">Transfer</a>
-                </li> -->
+                <li><a href="javascript:;">Bounce</a></li>
+                <li><a href="javascript:;">Highlight</a></li>
+                <li><a href="javascript:;">Pulsate</a></li>
+                <li><a href="javascript:;">Scale</a></li>
+                <li><a href="javascript:;">Shake</a></li>
+                <!-- <li><a href="javascript:;">Size</a></li> -->
+                <!-- <li><a href="javascript:;">Transfer</a></li> -->
               </ul>
             </div>
             <div class="fl-col-flex50">
               <h4>Show/Hide</h4>
               <ul class="showhide-effects">
-                <li>
-                  <a href="javascript:;">Blind</a>
-                </li>
-                <li>
-                  <a href="javascript:;">Clip</a>
-                </li>
-                <li>
-                  <a href="javascript:;">Drop</a>
-                </li>
-                <li>
-                  <a href="javascript:;">Explode</a>
-                </li>
-                <li>
-                  <a href="javascript:;">Fold</a>
-                </li>
-                <li>
-                  <a href="javascript:;">Puff</a>
-                </li>
-                <li>
-                  <a href="javascript:;">Scale</a>
-                </li>
-                <li>
-                  <a href="javascript:;">Slide</a>
-                </li>
+                <li><a href="javascript:;">Blind</a></li>
+                <li><a href="javascript:;">Clip</a></li>
+                <li><a href="javascript:;">Drop</a></li>
+                <li><a href="javascript:;">Explode</a></li>
+                <li><a href="javascript:;">Fold</a></li>
+                <li><a href="javascript:;">Puff</a></li>
+                <li><a href="javascript:;">Scale</a></li>
+                <li><a href="javascript:;">Slide</a></li>
               </ul>
             </div>
           </div>
         </div>
       </div>
     </div>
+
+      <div class="demo-container list-reorderer">
+      	<h2>Fluid Reorderer: Sortable List</h2>
+		<h3>Conference Planning To-do List</h3>
+    	<ol>
+	      <li>Select the date</li>
+	      <li>Create promotional plan
+	        <ul>
+	          <li>email campaign</li>
+	          <li>web site</li>
+	          <li>print materials</li>
+	        </ul>
+	      </li>
+	      <li id="myUniquePrefix.orderable3">Book facilities
+	        <ul>
+	          <li>Select building</li>
+	          <li>Book rooms</li>
+	        </ul>
+	      </li>
+	      <li>Book caterer</li>
+	      <li id="myUniquePrefix.orderable5">Book block of hotel rooms</li>
+	      <li id="myUniquePrefix.orderable6">
+	        Develop a conference daily schedule of events
+	      </li>
+	      <li>Book speakers
+	        <ul>
+	          <li>Keynote</li>
+	          <li>Internal/employee</li>
+	        </ul>
+	      </li>
+	      <li>Plan the registration process
+	        <ul>
+	          <li>Deadline for early bird and final registrations</li>
+	          <li>Create/enter data into database</li>
+	          <li>Create/upload information for web registration</li>
+	        </ul>
+	      </li>
+	      <li id="myUniquePrefix.orderable9">
+	        Book audio visual equipment and technicians
+	      </li>
+	      <li>Create name tags and welcome packages
+	        <ul>
+	          <li>schedule of events</li>
+	          <li>maps, tickets</li>
+	          <li>paper, pen, trinkets</li>
+	          <li>instructions</li>
+	        </ul>
+	      </li>
+	    </ol>
+	</div>
+	
+	<div class="demo-container pager">
+		<h2>Fluid Pager</h2>
+		
+		<div class="pager-demo">
+			<ul class="pager-top">
+                 <li class="previous"><a href="#">&lt; prev</a></li>
+                 <li value="1" class="page-link"><a href="#">1</a></li>
+                 <li value="2" class="page-link"><a href="#">2</a></li>
+                 <li value="3" class="page-link"><a href="#">3</a></li>
+                 <li class="next"><a href="#">next &gt;</a></li>
+			</ul>
+			<ul class="fluid-pager-demo-items">
+				<li>Item 1</li><li>Item 2</li><li>Item 3</li><li>Item 4</li><li>Item 5</li>
+				<li>Item 6</li><li>Item 7</li><li>Item 8</li><li>Item 9</li><li>Item 10</li>
+				<li>Item 11</li><li>Item 12</li><li>Item 13</li><li>Item 14</li><li>Item 15</li>
+			</ul>
+		</div>
+	</div>
     
     <div class="demo-back-link" style="clear:both; padding:10px;">
       <p><a href="javascript:;">&lt; Back to available demos list</a></p>
