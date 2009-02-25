@@ -1,3 +1,10 @@
+<!--
+
+    Copyright (c) 2000-2009, Jasig, Inc.
+    See license distributed with this file and available online at
+    https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
+
+-->
 <registry>
   <category id="catlocal.52" description="Development" name="Development" view="expanded">
     <category id="catlocal.53" description="uPortal-related" name="uPortal" view="expanded">

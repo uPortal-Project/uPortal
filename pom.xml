@@ -730,6 +730,33 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>com.google.code.maven-license-plugin</groupId>
+                <artifactId>maven-license-plugin</artifactId>
+                <version>1.4.0</version>
+                <configuration>
+                    <basedir>${basedir}</basedir>  
+                    <header>${jasig-short-license-url}</header>
+                    <aggregate>true</aggregate>
+                    <excludes>
+                        <exclude>LICENSE</exclude>
+                        <exclude>license.txt</exclude>
+                        <exclude>docs/licenses/**</exclude>
+                        <exclude>jquery.css</exclude>
+                        <exclude>**/fluid/fluid.*.css</exclude>
+                    </excludes>
+                    <mapping>
+                        <crn>XML_STYLE</crn>
+                        <cpd>XML_STYLE</cpd>
+                        <ssl>XML_STYLE</ssl>
+                        <sdf>XML_STYLE</sdf>
+                    </mapping>
+                    <properties>
+                        <jasig-license-url>${jasig-license-url}</jasig-license-url>
+                        <jasig-license-year>${jasig-license-year}</jasig-license-year>
+                    </properties>
+                </configuration>
+            </plugin>
         </plugins>
         <pluginManagement>
             <plugins>

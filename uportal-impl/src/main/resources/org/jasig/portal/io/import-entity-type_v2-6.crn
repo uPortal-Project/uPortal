@@ -1,4 +1,11 @@
 <!--
+
+    Copyright (c) 2000-2009, Jasig, Inc.
+    See license distributed with this file and available online at
+    https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
+
+-->
+<!--
  | NOTICE:  This file represents a contractual API that is leveraged by more 
  | than one caller.  Please do not refactor this file in a way that changes 
  | the number or nature of arguments expected.

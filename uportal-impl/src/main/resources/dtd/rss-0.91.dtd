@@ -1,24 +1,10 @@
 <!--
 
-  Rich Site Summary (RSS) 0.91 official DTD, proposed.
-  
-  RSS is an XML vocabulary for describing
-  metadata about websites, and enabling the display of
-  "channels" on the "My Netscape" website.
-  
-  RSS Info can be found at http://my.netscape.com/publish/
-  XML Info can be found at http://www.w3.org/XML/ 
-  
-  copyright Netscape Communications, 1999
+    Copyright (c) 2000-2009, Jasig, Inc.
+    See license distributed with this file and available online at
+    https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
 
-  Dan Libby - danda@netscape.com
-  
-  Based on RSS DTD originally created by
-  Lars Marius Garshol - larsga@ifi.uio.no.
-  $Id$
-  
 -->
-
 <!ELEMENT rss (channel)>
 <!ATTLIST rss
           version     CDATA #REQUIRED> <!-- must be "0.91"> -->

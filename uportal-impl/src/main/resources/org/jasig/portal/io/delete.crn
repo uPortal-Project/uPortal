@@ -1,3 +1,10 @@
+<!--
+
+    Copyright (c) 2000-2009, Jasig, Inc.
+    See license distributed with this file and available online at
+    https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
+
+-->
 <invoke-method class="org.jasig.portal.spring.PortalApplicationContextLocator" method="getApplicationContext" attribute-name="PORTAL_CONTEXT">
     <subtasks>
         <invoke-method object="${PORTAL_CONTEXT}" method="getBean" attribute-name="SqlAttributes.DATA_SOURCE">

@@ -1,26 +1,10 @@
 <!--
-   Extensible HTML version 1.0 Transitional DTD
 
-   This is the same as HTML 4 Transitional except for
-   changes due to the differences between XML and SGML.
-
-   Namespace = http://www.w3.org/1999/xhtml
-
-   For further information, see: http://www.w3.org/TR/xhtml1
-
-   Copyright (c) 1998-2002 W3C (MIT, INRIA, Keio),
-   All Rights Reserved. 
-
-   This DTD module is identified by the PUBLIC and SYSTEM identifiers:
-
-   PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-   SYSTEM "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"
-
-   $Revision: 1.1 $
-   $Date: 2007/05/14 15:49:26 $
+    Copyright (c) 2000-2009, Jasig, Inc.
+    See license distributed with this file and available online at
+    https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
 
 -->
-
 <!--================ Character mnemonic entities =========================-->
 
 <!ENTITY % HTMLlat1 PUBLIC

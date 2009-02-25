@@ -1,3 +1,10 @@
+<!--
+
+    Copyright (c) 2000-2009, Jasig, Inc.
+    See license distributed with this file and available online at
+    https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
+
+-->
 <with-attribute key="Attributes.NODE" value="${newDoc(group)}">
     <append-node node="${attributeNode(script=classpath://org/jasig/portal/io/import-group_membership_v3-0.crn)}"/>
     <echo-ln>Export Group and Members:  GROUP_NAME=${GROUP_NAME}</echo-ln>

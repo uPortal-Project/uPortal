@@ -1,10 +1,10 @@
 <%--
- * Copyright 2001 The JA-SIG Collaborative.  All rights reserved.
- *  See license distributed with this file and
- *  available online at http://www.uportal.org/license.html
- *
---%>
 
+    Copyright (c) 2000-2009, Jasig, Inc.
+    See license distributed with this file and available online at
+    https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
+
+--%>
 <%@ page errorPage="error.jsp" session="false" %>
 <%
   response.sendRedirect(request.getContextPath() + "/render.userLayoutRootNode.uP");

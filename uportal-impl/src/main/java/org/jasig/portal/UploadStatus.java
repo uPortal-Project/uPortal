@@ -1,17 +1,12 @@
-/* Copyright 2004 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
- * */
+/**
+ * Copyright (c) 2000-2009, Jasig, Inc.
+ * See license distributed with this file and available online at
+ * https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
+ */
 package org.jasig.portal;
 
 import java.text.DecimalFormat;
-
-/**
- * UploadStatus provides status for mulit-part form data requests to channels.
- * This allows for channels to handle errors that occur when parameters
- * are not passed along in the request when the 
- * max upload file size is exceeded.
- */
+ 
 public class UploadStatus {
 
     private int status;

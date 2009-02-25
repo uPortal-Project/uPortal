@@ -1,4 +1,11 @@
 <?xml version="1.0"?>
+<!--
+
+    Copyright (c) 2000-2009, Jasig, Inc.
+    See license distributed with this file and available online at
+    https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
+
+-->
 
 <?xml-stylesheet title="main" href="CApplet/avantgo.xsl" type="text/xsl" media="avantgo"?>
 <?xml-stylesheet title="main" href="CApplet/webbrowsers.xsl" type="text/xsl" media="netscape"?>
