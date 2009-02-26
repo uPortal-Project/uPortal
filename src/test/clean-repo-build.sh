@@ -16,7 +16,7 @@ if [ -d $LOCAL_REPO ]; then
     # Remove existing local maven repository, if present
     echo "Removing local repository $LOCAL_REPO"
     rm -rf $LOCAL_REPO/*
-elif
+else
     # Create local repository directory since it doesn't exist
     echo "Creating local repository $LOCAL_REPO"
     mkdir -p $LOCAL_REPO
