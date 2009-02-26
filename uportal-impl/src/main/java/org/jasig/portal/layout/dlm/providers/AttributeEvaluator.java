@@ -5,6 +5,7 @@
  */
 package org.jasig.portal.layout.dlm.providers;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 
 import org.dom4j.DocumentHelper;
@@ -30,8 +31,13 @@ public class AttributeEvaluator
     public static final int ENDS_WITH = 3;
     public static final int EXISTS = 4;
 
+    @Column(name = "ATTRIBUTE_MODE")
     protected int mode = -1;
+
+    @Column(name = "ATTRIBUTE_NAME")
     protected String name = null;
+
+    @Column(name = "ATTRIBUTE_VALUE")
     protected String value = null;
 
     /**

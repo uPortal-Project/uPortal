@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
@@ -41,6 +42,7 @@ public class Paren extends Evaluator {
     private static Log LOG = LogFactory.getLog(Paren.class);
 
     // Instance Members.
+    @Column(name = "PAREN_TYPE")
     private Type type = null;
 
     @OneToMany(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
