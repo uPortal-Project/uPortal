@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
@@ -47,13 +48,13 @@ public class FragmentDefinition extends Evaluator
 
     private static final Log LOG = LogFactory.getLog(FragmentDefinition.class);
 
-//    @Column(name = "NAME")
+    @Column(name = "FRAGMENT_NAME")
     private String name = null;
 
-//    @Column(name = "OWNER_ID")
+    @Column(name = "OWNER_ID")
     private String ownerID = null;
     
-//    @Column(name = "PRECEDENCE")
+    @Column(name = "PRECEDENCE")
     private double precedence = 0.0; // precedence of fragment
     
     @OneToMany(cascade=CascadeType.ALL, fetch=FetchType.EAGER)

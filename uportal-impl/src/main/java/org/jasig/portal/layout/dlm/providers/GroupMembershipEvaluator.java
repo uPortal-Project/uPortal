@@ -5,6 +5,7 @@
  */
 package org.jasig.portal.layout.dlm.providers;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 
 import org.dom4j.DocumentHelper;
@@ -41,10 +42,13 @@ public class GroupMembershipEvaluator extends Evaluator
     
     private static final int DEEP_MEMBER_OF_MODE = 1;
 
+    @Column(name = "GROUP_NAME")
     private String groupName = null;
 
+    @Column(name = "GROUP_KEY")
     private String groupKey = null;
 
+    @Column(name = "EVALUATOR_MODE")
     private int evaluatorMode;
 
     /**
