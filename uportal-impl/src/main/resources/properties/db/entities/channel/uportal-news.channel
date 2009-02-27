@@ -27,7 +27,7 @@
     </parameter>
     <parameter> 
       <name>xmlUri</name>  
-      <value>http://uportal.org/rss/news/index.xml</value>  
+      <value>http://jasig.org/uportal-news/feed</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>

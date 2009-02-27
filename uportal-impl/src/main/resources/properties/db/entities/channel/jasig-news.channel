@@ -1,9 +1,9 @@
 
 <channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-0.crn">
-  <title>JA-SIG News</title>
-  <name>JA-SIG News</name>
+  <title>Jasig News</title>
+  <name>Jasig News</name>
   <fname>jasig-news</fname>
-  <desc>JA-SIG News channel</desc>
+  <desc>Jasig News channel</desc>
   <type>RSS</type>
   <class>org.jasig.portal.channels.CSyndFeed</class>
   <timeout>10000</timeout>
@@ -28,7 +28,7 @@
     </parameter>
     <parameter> 
       <name>xmlUri</name>  
-      <value>http://www.ja-sig.org/rss/news/index.xml</value>  
+      <value>http://jasig.org/jasig-news/feed</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>
