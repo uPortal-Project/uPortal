@@ -11,7 +11,7 @@
 
 #==================== File and Directory Names ========================
 
-##### Replace server.home with the location of Tomcat 5.5 on your machine #####
+##### Replace server.home with the location of Tomcat 6 on your machine #####
 # path to tomcat binaries
 server.home=@server.home@
 
@@ -36,7 +36,7 @@ removeExisting=true
 
 # The following applies to the clean and deploy-ear targets.
 # Should the shared library location have all existing files removed when clean is run.
-# NOTE: Tomcat 5.5 and 6.0 do not include any libraries in shared/lib by default so as long as
+# NOTE: Tomcat 6.0 does not include any libraries in shared/lib by default so as long as
 #       all required libraries are declared in the uportal-ear it is ok to set this to true.
 cleanShared=false
 
