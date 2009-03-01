@@ -213,7 +213,7 @@ public class CGenericXSLT
             if (trimmedCacheScopeText.length() > 0) {
                 if (trimmedCacheScopeText.equals(ICacheable.CHANNEL_CACHE_KEY_SYSTEM_SCOPE)) {
                     this.channelCacheScope = ChannelCacheKey.SYSTEM_KEY_SCOPE;
-                } else if (trimmedCacheScopeText.equals(ICacheable.CHANNEL_CACHE_KEY_SYSTEM_SCOPE)) {
+                } else if (trimmedCacheScopeText.equals(ICacheable.CHANNEL_CACHE_KEY_INSTANCE_SCOPE)) {
                     this.channelCacheScope = ChannelCacheKey.INSTANCE_KEY_SCOPE;
                 } else {
                     log.warn("CGnericXSLT ChannelStaticData parameter [" + ICacheable.CHANNEL_CACHE_KEY_SYSTEM_SCOPE + "] had unrecognized value [" + trimmedCacheScopeText + "]; 'failing shut' with instance scoped caching.");
