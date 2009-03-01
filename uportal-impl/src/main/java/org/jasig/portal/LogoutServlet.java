@@ -133,7 +133,8 @@ public class LogoutServlet extends HttpServlet {
     }
 
     // Send the user back to the guest page
-    response.sendRedirect(redirect);
+    final String encodedRedirectURL = response.encodeRedirectURL(redirect);
+    response.sendRedirect(encodedRedirectURL);
   }
 
   /**
