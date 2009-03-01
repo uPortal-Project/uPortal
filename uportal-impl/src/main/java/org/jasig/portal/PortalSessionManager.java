@@ -188,7 +188,8 @@ public void init() throws ServletException {
         //Check if the servlet failed to initialize
         if (fatalError) {
             try {
-                res.sendRedirect("error/fatal.htm");
+                final String encodedRedirectURL = res.encodeRedirectURL("error/fatal.htm");
+                res.sendRedirect(encodedRedirectURL);
             } catch (IOException e) {
                 ExceptionHelper.genericTopHandler(Errors.bug,e);
             }
@@ -207,7 +208,8 @@ public void init() throws ServletException {
         if (session == null) {
             try {
                 //Session is null, redirect to Login servlet
-                res.sendRedirect(writableRequest.getContextPath() + "/Login");
+                final String encodedRedirectURL = res.encodeRedirectURL(writableRequest.getContextPath() + "/Login");
+                res.sendRedirect(encodedRedirectURL);
             }
             catch (Exception e) {
                 ExceptionHelper.genericTopHandler(Errors.bug, e);

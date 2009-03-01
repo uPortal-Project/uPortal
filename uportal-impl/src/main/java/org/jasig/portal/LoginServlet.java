@@ -170,7 +170,8 @@ public class LoginServlet extends HttpServlet {
      	request.getSession(false).setAttribute("up_attemptedUserName", request.getParameter("userName"));		
 	}
 
-    response.sendRedirect(redirectTarget);
+	final String encodedRedirectURL = response.encodeRedirectURL(redirectTarget);
+    response.sendRedirect(encodedRedirectURL);
 
   }
 
