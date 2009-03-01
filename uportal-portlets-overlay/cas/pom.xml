@@ -198,6 +198,9 @@
                 <artifactId>maven-war-plugin</artifactId>
                 <version>${maven-war-plugin.version}</version>
                 <configuration>
+                    <filters>
+                        <filter>${basedir}/../../uportal-impl/src/main/resources/properties/rdbm.properties</filter>
+                    </filters>
                     <webResources>
                         <resource>
                             <directory>src/main/webapp/WEB-INF</directory>
