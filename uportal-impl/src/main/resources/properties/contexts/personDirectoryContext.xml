@@ -21,7 +21,7 @@
     </bean>
      
     <!-- 
-     | Overrides DAO acts as the root, it handles incorperating attributes from the attribute swapper utility, wra[s
+     | Overrides DAO acts as the root, it handles incorporating attributes from the attribute swapper utility, wraps
      | the caching DAO
      +-->
     <bean id="personAttributeDao" class="org.jasig.portal.portlets.swapper.OverwritingPersonAttributeDao">
