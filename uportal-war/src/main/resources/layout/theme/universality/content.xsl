@@ -14,8 +14,11 @@
  | For more information on XSL, refer to [http://www.w3.org/Style/XSL/].
 -->
 
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:dlm="http://www.uportal.org/layout/dlm">
-  
+<xsl:stylesheet version="1.0"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:dlm="http://www.uportal.org/layout/dlm"
+    xmlns:upGroup="xalan://org.jasig.portal.security.xslt.XalanGroupMembershipHelper"
+    exclude-result-prefixes="upGroup">  
   
   <!-- ========== TEMPLATE: PORTLET ========== -->
   <!-- ======================================= -->
@@ -124,7 +127,7 @@
       	  <span><xsl:value-of select="$TOKEN[@name='PORTLET_REMOVE_LABEL']"/></span>
         </a>
       </xsl:if>
-      <xsl:if test="//focused[@in-user-layout='no']"> <!-- Add to layout. -->
+      <xsl:if test="//focused[@in-user-layout='no'] and upGroup:isChannelDeepMemberOf(//focused/channel/@fname, 'local.1')"> <!-- Add to layout. -->
         <a id="focusedContentDialogLink" href="javascript:;" title="{$TOKEN[@name='PORTLET_ADD_LONG_LABEL']}" class="portlet-control add">
           <span><xsl:value-of select="$TOKEN[@name='PORTLET_ADD_LABEL']"/></span>
         </a>

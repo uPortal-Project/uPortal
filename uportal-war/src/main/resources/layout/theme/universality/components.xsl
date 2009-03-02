@@ -13,7 +13,10 @@
  | For more information on XSL, refer to [http://www.w3.org/Style/XSL/].
 -->
 
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:upAuth="xalan://org.jasig.portal.security.xslt.XalanAuthorizationHelper" >
+<xsl:stylesheet version="1.0"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:upAuth="xalan://org.jasig.portal.security.xslt.XalanAuthorizationHelper"
+    exclude-result-prefixes="upAuth">
 	
   
   <!-- ========== TEMPLATE: PORTAL PIPE ========== -->
