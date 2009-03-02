@@ -521,13 +521,13 @@
         <desc>Foreign key of table UP_USER_PROFILE and compound key</desc>
       </column>
       <column> <name>SS_ID</name>      <type>INTEGER</type>
-        <desc>Foreign key of table UP_SS_STRUCT_PARM and compound key</desc>
+        <desc>Foreign key of table UP_SS_STRUCT_PAR and compound key</desc>
       </column>
       <column> <name>SS_TYPE</name> <type>INTEGER</type>
-        <desc>Foreign key TYPE of table UP_SS_STRUCT_PARM</desc>
+        <desc>Foreign key TYPE of table UP_SS_STRUCT_PAR</desc>
       </column>
       <column> <name>PARAM_NAME</name>             <type>VARCHAR</type>     <param>100</param>
-        <desc>Short description of parameter foreign key PARAM_NAME of table UP_SS_STRUCT_PARM</desc>
+        <desc>Short description of parameter foreign key PARAM_NAME of table UP_SS_STRUCT_PAR</desc>
       </column>
       <column> <name>PARAM_VAL</name>              <type>VARCHAR</type>     <param>255</param>
         <desc>Parameter value (ex. 1 for active tab)</desc>
@@ -551,19 +551,19 @@
         <desc>Foreign key of table UP_USER_PROFILE and compound key</desc>
       </column>
       <column> <name>SS_ID</name>      <type>INTEGER</type>
-        <desc>Foreign key of table UP_SS_STRUCT_PARM and compound key</desc>
+        <desc>Foreign key of table UP_SS_STRUCT_PAR and compound key</desc>
       </column>
       <column> <name>SS_TYPE</name> <type>INTEGER</type>
-        <desc>Foreign key TYPE of table UP_SS_STRUCT_PARM</desc>
+        <desc>Foreign key TYPE of table UP_SS_STRUCT_PAR</desc>
       </column>
       <column> <name>STRUCT_ID</name>      <type>INTEGER</type>
         <desc>Foreign key ss_id of table UP_SS_STRUCT</desc>
       </column>
       <column> <name>PARAM_NAME</name>             <type>VARCHAR</type>     <param>100</param>
-        <desc>Short description of parameter foreign key PARAM_NAME of table UP_SS_STRUCT_PARM</desc>
+        <desc>Short description of parameter foreign key PARAM_NAME of table UP_SS_STRUCT_PAR</desc>
       </column>
       <column> <name>PARAM_TYPE</name>             <type>INTEGER</type>
-        <desc>Foreign key TYPE of table UP_SS_STRUCT_PARM</desc>
+        <desc>Foreign key TYPE of table UP_SS_STRUCT_PAR</desc>
       </column>
       <column> <name>PARAM_VAL</name>              <type>VARCHAR</type>     <param>255</param>
         <desc>Parameter value (ex. 100% for column width)</desc>
