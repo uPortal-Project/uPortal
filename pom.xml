@@ -16,7 +16,7 @@
 
     <name>uPortal</name>
     <description>The root project definition for the uPortal project.</description>
-    <version>3.0.3-SNAPSHOT</version>
+    <version>3.0.3</version>
     
     <scm>
         <connection>scm:svn:https://www.ja-sig.org/svn/uPortal/branches/rel-3-0-patches</connection>
