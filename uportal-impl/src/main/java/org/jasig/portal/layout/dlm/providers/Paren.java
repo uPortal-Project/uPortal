@@ -12,14 +12,17 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.annotations.Cascade;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.QName;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.IndexColumn;
 import org.jasig.portal.layout.dlm.Evaluator;
 import org.jasig.portal.layout.dlm.EvaluatorFactory;
 import org.jasig.portal.layout.dlm.FragmentDefinition;
@@ -46,6 +49,8 @@ public class Paren extends Evaluator {
     private Type type = null;
 
     @OneToMany(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
+    @IndexColumn(name = "EVAL_INDEX")
+    @JoinTable(name = "UP_DLM_EVALUATOR_PAREN", joinColumns = @JoinColumn(name = "PAREN_EVAL_ID"), inverseJoinColumns = @JoinColumn(name = "CHILD_EVAL_ID"))
     @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN, org.hibernate.annotations.CascadeType.ALL })
     private List<Evaluator> evaluators = new LinkedList<Evaluator>();
 
