@@ -12,6 +12,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
@@ -21,6 +23,7 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Namespace;
 import org.dom4j.QName;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.IndexColumn;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.utils.XML;
 import org.w3c.dom.Element;
@@ -58,6 +61,8 @@ public class FragmentDefinition extends Evaluator
     private double precedence = 0.0; // precedence of fragment
     
     @OneToMany(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
+    @IndexColumn(name = "EVAL_INDEX")
+    @JoinTable(name = "UP_DLM_EVALUATOR_PAREN", joinColumns = @JoinColumn(name = "PAREN_EVAL_ID"), inverseJoinColumns = @JoinColumn(name = "CHILD_EVAL_ID"))
     @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN, org.hibernate.annotations.CascadeType.ALL })
     private List<Evaluator> evaluators = null;
 
