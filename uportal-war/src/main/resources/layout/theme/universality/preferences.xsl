@@ -13,13 +13,17 @@
  | For more information on XSL, refer to [http://www.w3.org/Style/XSL/].
 -->
 
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:dlm="http://www.uportal.org/layout/dlm" >
+<xsl:stylesheet version="1.0" 
+ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
+ xmlns:dlm="http://www.uportal.org/layout/dlm"     
+ xmlns:upGroup="xalan://org.jasig.portal.security.xslt.XalanGroupMembershipHelper"
+ exclude-result-prefixes="upGroup">  
   
  <xsl:template name="preferences">
   
   <xsl:choose>
    
-   <xsl:when test="//focused">
+   <xsl:when test="//focused[@in-user-layout='no'] and upGroup:isChannelDeepMemberOf(//focused/channel/@fname, 'local.1')">
     <div id="dojoMenus" style="display:none;">
      <!-- Add Channel Menu -->
      <div id="focusedContentAddingDialog" title="Add Content">
@@ -52,7 +56,7 @@
     </script>
    </xsl:when>
    
-   <xsl:otherwise>
+   <xsl:when test="not(//focused)">
   
     <div id="dojoMenus" style="display:none;">
      <!-- Add Channel Menu -->
@@ -185,7 +189,7 @@
        });
     </script>
       
-   </xsl:otherwise>
+   </xsl:when>
   </xsl:choose>
  </xsl:template>
  
