@@ -55,7 +55,7 @@
 		         	mouseDrag: "orderable-dragging-mouse"
 		         }
 		    };
-		    settings.myReorderer = fluid.reorderLayout ("#portalPageBodyColumns",options);
+		    settings.myReorderer = up.fluid.reorderLayout ("#portalPageBodyColumns",options);
 		
 		    // add onclick events for portlet delete buttons
 			$('a[id*=removePortlet_]').each(function(i){$(this).click(function(){deletePortlet(this.id.split("_")[1]);return false;});});	
