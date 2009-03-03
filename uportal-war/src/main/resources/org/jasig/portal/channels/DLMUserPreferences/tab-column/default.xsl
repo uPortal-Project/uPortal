@@ -5,7 +5,61 @@
     See license distributed with this file and available online at
     https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
 
--->
+--><xsl:stylesheet version="1.0" xmlns:dlm="http://www.uportal.org/layout/dlm" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+  <xsl:output indent="no" method="html"/>
+  <xsl:param name="baseActionURL">render.userLayoutRootNode.uP</xsl:param>
+  <xsl:param name="activeTab">1</xsl:param>
+  <xsl:param name="action">no parameter passed</xsl:param>
+  <xsl:param name="position">no parameter passed</xsl:param>
+  <xsl:param name="elementID">no parameter passed</xsl:param>
+  <xsl:param name="errorMessage">no parameter passed</xsl:param>
+  <xsl:param name="showLockUnlock">false</xsl:param>
+  <xsl:param name="locale">en_US</xsl:param>
+  <xsl:param name="cpSetTimeout"/>
+  <xsl:param name="cpSetPassword"/>
+  <xsl:param name="protocolHostPrefixSecure"/>
+
+  <xsl:variable name="activeTabIdx">
+    <!-- if the activeTab is a number then it is the active tab index -->
+    <!-- otherwise it is the ID of the active tab. If it is the ID -->
+    <!-- then check to see if that tab is still in the layout and -->
+    <!-- if so use its index. if not then default to an index of 1. -->
+
+   <xsl:choose>
+    <xsl:when test="string( number( $activeTab ) )='NaN'">
+
+     <xsl:choose>
+      
+      <!-- this is the when before UP 2.3.2.  Changed because of the change of activeTabID path
+           and the fact that this when is not in the orig UP code
+      <xsl:when test="/layout/folder[@ID=$activeTab and
+                                     @type='regular'and
+                                     @hidden='false']">
+      end orig when -->
+      
+      <xsl:when test="/layout/folder/folder[@ID=$activeTab and @type='regular'and @hidden='false']">
+       <xsl:value-of select="count(/layout/folder/folder[@ID=$activeTab]/preceding-sibling::folder[@type='regular' and @hidden='false'])+1"/>
+      </xsl:when>
+      <xsl:otherwise>1</xsl:otherwise> <!-- if not found, use first tab -->
+     </xsl:choose>
+
+    </xsl:when>
+    
+    <xsl:otherwise> <!-- it is a number and hence an index, so use it -->
+     <xsl:value-of select="$activeTab"/>
+    </xsl:otherwise>
+   </xsl:choose>
+  </xsl:variable>
+  
+  <xsl:variable name="activeTabID" select="/layout/folder/folder[@type='regular' and @hidden='false'][position() = $activeTabIdx]/@ID"/>
+
+  <xsl:variable name='IMAGE_test'><xsl:value-of select="$mediaPath"/>/newchan/newchannel.gif</xsl:variable>
+  <xsl:variable name="mediaPath">media/org/jasig/portal/channels/DLMUserPreferences/tab-column</xsl:variable>
+
+<xsl:template match="layout">
+
+  <xsl:for-each select="folder[@type='root']"> <!-- ADDED FROM UP 232 -->
+  
     <xsl:call-template name="optionMenu"/>
     <br mediaPath='mboyd the imageTest is {$IMAGE_test} this value.'/>
     
