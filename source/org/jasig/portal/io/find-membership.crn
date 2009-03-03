@@ -1,0 +1,30 @@
+<!--
+
+    Copyright (c) 2000-2009, Jasig, Inc.
+    See license distributed with this file and available online at
+    https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
+
+-->
+<with-attribute key="CHANDEFID" value="CHAN_ID.${req(CHAN_ID)}">
+    <groovy>
+        <script>
+            def getAuthdMembers(chanDefId) {
+                org.jasig.portal.services.AuthorizationService authService = org.jasig.portal.services.AuthorizationService.instance();
+                org.jasig.portal.security.IPermissionManager pm = authService.newPermissionManager("UP_FRAMEWORK");
+                org.jasig.portal.security.IAuthorizationPrincipal[] principals = pm.getAuthorizedPrincipals("SUBSCRIBE", chanDefId);
+                
+                org.jasig.portal.groups.IGroupMember[] authdMembers = new org.jasig.portal.groups.IGroupMember[principals.length];
+                
+                for (int index = 0; index &lt; principals.length; index++) {
+                    org.jasig.portal.security.IAuthorizationPrincipal principal = principals[index]
+                    authdMembers[index] = authService.getGroupMember(principal);
+                }
+                
+                return authdMembers;
+            }
+        </script>
+        <subtasks>
+            <return value="${groovy(getAuthdMembers(CHANDEFID))}"/>
+        </subtasks>
+    </groovy>
+</with-attribute>

@@ -16,6 +16,7 @@
 
         <!-- Invoke Cernunnos specifying script and parameters -->
         <java fork="true" failonerror="true" dir="${basedir}" classname="org.danann.cernunnos.runtime.Main">
+            <sysproperty key="log4j.configuration" value="properties/command-line.log4j.properties" />
             <classpath>
                 <pathelement path="build/WEB-INF/classes"/>
                 <fileset dir="lib">
