@@ -31,6 +31,7 @@ import org.hibernate.mapping.Table;
 import org.hibernate.mapping.UniqueKey;
 import org.springframework.core.io.Resource;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.NonTransientDataAccessResourceException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -111,6 +112,9 @@ public class HibernateDbLoader implements IDbLoader {
                     try {
                         jdbcTemplate.update(sql);
                     }
+                    catch (NonTransientDataAccessResourceException dae) {
+                        throw dae;
+                    }
                     catch (DataAccessException dae) {
                         failedSql.put(sql, dae);
                     }
@@ -126,12 +130,7 @@ public class HibernateDbLoader implements IDbLoader {
 
                 for (final String sql : createScript) {
                     this.logger.info(sql);
-                    try {
-                        jdbcTemplate.update(sql);
-                    }
-                    catch (DataAccessException dae) {
-                        failedSql.put(sql, dae);
-                    }
+                    jdbcTemplate.update(sql);
                 }
                 
                 script.addAll(createScript);
