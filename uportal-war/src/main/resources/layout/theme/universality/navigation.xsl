@@ -77,13 +77,13 @@
       <div id="portalNavigationSubrow" class="fl-tab-content">
         <xsl:call-template name="subnavigation">
           <xsl:with-param name="CONTEXT" select="'subnav'"/>
-          <xsl:with-param name="TAB_POSITION" select="position()"/>
+          <xsl:with-param name="TAB_POSITION" select="count(tab[@activeTab='true']/preceding-sibling::tab) + 1"/>
         </xsl:call-template>
       </div>
     </xsl:if>
   </xsl:template>
   <!-- ========================================== -->
-  
+    
   <!-- ========== TEMPLATE: PORTLET NAVIGATION ========== -->
   <!-- ================================================== -->
   <!--
@@ -176,7 +176,7 @@
                 </xsl:variable>
                 <li id="uPfname_{@fname}" class="portal-subnav {$SUBNAV_POSITION}"> <!-- Each subnavigation menu item.  The unique ID can be used in the CSS to give each menu item a unique icon, color, or presentation. -->
                   <a href="{$BASE_ACTION_URL}?uP_sparam=activeTab&amp;activeTab={$TAB_POSITION}&amp;uP_root={@ID}" title="{@name}" class="portal-subnav-link">  <!-- Navigation item link. -->
-                    <span class="portal-subnav-label"><xsl:value-of select="@name"/></span>
+                      <span class="portal-subnav-label"><xsl:value-of select="@name"/></span>
                   </a>
                 </li>
               </xsl:for-each>
