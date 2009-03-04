@@ -45,7 +45,7 @@
 			        columns: ".portal-page-column-inner",
 			        modules: ".portlet-container",
 			        lockedModules: ".locked",
-			        dropWarning: "#portalDropWarning",
+			        dropWarning: $("#portalDropWarning"),
 			        grabHandle: "[id*=toolbar_]"
 		         },
 		         listeners: {
