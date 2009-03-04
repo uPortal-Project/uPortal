@@ -5,7 +5,7 @@
     https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
 
 -->
-<properties location="classpath://properties/db/entities/import.properties"> 
+<properties location="classpath://properties/import.properties"> 
     <with>
         <attribute key="IMPORT_START_TIME">${groovy(System.currentTimeMillis())}</attribute>
         <attribute key="Attributes.CACHE">${groovy(new org.jasig.portal.io.LoggingLRUMap(${CACHE_SIZE}))}</attribute>
