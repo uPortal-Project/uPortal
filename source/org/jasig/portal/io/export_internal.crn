@@ -14,18 +14,22 @@
             <sql>SELECT user_id FROM up_user WHERE user_name = ?</sql>
             <parameter value="${SYSID}"/>
             <subtasks>
-	            <with-attribute key="SAFE_USER_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${USER_NAME})}">
-	                <choose>
-	                    <when test="${crn(is-fragment-owner.crn)}">
-	                        <!-- This is a DLM fragment owner layout... -->
-	                        <write-document node="${crn(export-layout.crn)}" file="${EXPORT_DIR}/fragment-layout/${SAFE_USER_NAME}.fragment-layout"/>
-	                    </when>
-	                    <otherwise>
-	                        <!-- This is a normal layout... -->
-	                        <write-document node="${crn(export-layout.crn)}" file="${EXPORT_DIR}/layout/${SAFE_USER_NAME}.layout"/>
-	                    </otherwise>
-	                </choose>
-	            </with-attribute>
+                <with-attribute key="LAYOUT_DOC" value="${crn(export-layout.crn)}">
+                    <if test="${jexl(LAYOUT_DOC != null)}">
+        	            <with-attribute key="SAFE_USER_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${USER_NAME})}">
+        	                <choose>
+        	                    <when test="${crn(is-fragment-owner.crn)}">
+        	                        <!-- This is a DLM fragment owner layout... -->
+        	                        <write-document node="${LAYOUT_DOC}" file="${EXPORT_DIR}/fragment-layout/${SAFE_USER_NAME}.fragment-layout"/>
+        	                    </when>
+        	                    <otherwise>
+        	                        <!-- This is a normal layout... -->
+        	                        <write-document node="${LAYOUT_DOC}" file="${EXPORT_DIR}/layout/${SAFE_USER_NAME}.layout"/>
+        	                    </otherwise>
+        	                </choose>
+        	            </with-attribute>
+                    </if>
+                </with-attribute>
             </subtasks>
             <empty-result>
                 <echo-ln>No user '${SYSID}' found to export ${ENTITY_TYPE} for.</echo-ln>
