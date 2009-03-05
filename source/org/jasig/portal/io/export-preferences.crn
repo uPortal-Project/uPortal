@@ -15,24 +15,33 @@
         <parameter value="${USER_ID}"/>
         <subtasks>
             <with-attribute key="PORTLET_DATA" value="${crn(lookup-dlm-noderef.crn)}">
-                <if test="${groovy(PORTLET_DATA != null)}">
-                    <append-node>
-                        <entry entity="${groovy(PORTLET_DATA[0])}:${groovy(PORTLET_DATA[1])}" channel="${groovy(PORTLET_DATA[2])}" name="${PORTLET_PREF_NAME}"/>
-                    </append-node>
-                     <sql-query>
-                        <sql>
-                            SELECT portlet_pref_value 
-                            FROM up_portlet_pref_values 
-                            WHERE pref_id = ?
-                        </sql>
-                        <parameter value="${PREF_ID}"/>
-                        <subtasks>
-                            <append-node parent="${singleNode(entry[position() = last()])}">
-                                <value>${groovy(PORTLET_PREF_VALUE.substring('UP_PORTLET_PREF_PREFIX__'.length()).trim())}</value>
+            <choose>
+                <when test="${groovy(PORTLET_DATA != null)}">
+                    <with-attribute key="CHAN_FNAME" value="${groovy(PORTLET_DATA[2])}">
+                        <if test="${groovy(org.apache.commons.lang.StringUtils.trimToNull(CHAN_FNAME) != null)}">
+                            <append-node>
+                                <entry entity="${groovy(PORTLET_DATA[0])}:${groovy(PORTLET_DATA[1])}" channel="${groovy(CHAN_FNAME)}" name="${PORTLET_PREF_NAME}"/>
                             </append-node>
-                        </subtasks>
-                     </sql-query>
-                 </if>
+                            <sql-query>
+                                <sql>
+                                    SELECT portlet_pref_value 
+                                    FROM up_portlet_pref_values 
+                                    WHERE pref_id = ?
+                                </sql>
+                                <parameter value="${PREF_ID}"/>
+                                <subtasks>
+                                    <append-node parent="${singleNode(entry[position() = last()])}">
+                                        <value>${groovy(PORTLET_PREF_VALUE.substring('UP_PORTLET_PREF_PREFIX__'.length()).trim())}</value>
+                                    </append-node>
+                                </subtasks>
+                            </sql-query>
+                        </if>
+                    </with-attribute>
+                </when>
+                <otherwise>
+                    <log logger-name="org.jasig.portal.io.export_preferences" level="warn">Preference references a deleted channel;  removing orphaned reference.</log>
+                </otherwise>
+            </choose>
             </with-attribute>
         </subtasks>
     </sql-query>
