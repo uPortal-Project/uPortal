@@ -103,9 +103,11 @@
                                 </when>
                                 <when test="${groovy(CURRENT_MEMBER.isEntity())}">
                                     <with-attribute key="USER_NAME" value="${groovy(CURRENT_MEMBER.getKey())}">
-                                        <append-node parent="${singleNode(users)}">
-                                            <user>${USER_NAME}</user>
-                                        </append-node>
+                                        <if test="${crn(is-user-included.crn)}">
+                                            <append-node parent="${singleNode(users)}">
+                                                <user>${USER_NAME}</user>
+                                            </append-node>
+                                        </if>
                                     </with-attribute>
                                 </when>
                                 <otherwise>

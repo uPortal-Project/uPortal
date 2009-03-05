@@ -8,7 +8,7 @@
 <thread-pool threads="${req(THREAD_COUNT)}">
     <sql-query>
         <sql>
-            SELECT DISTINCT UPP.OWNER, UPET.ENTITY_TYPE_NAME, UPP.PRINCIPAL_TYPE, UPP.PRINCIPAL_KEY, UPP.ACTIVITY
+            SELECT DISTINCT UPP.TARGET, UPP.OWNER, UPET.ENTITY_TYPE_NAME, UPP.PRINCIPAL_TYPE, UPP.PRINCIPAL_KEY, UPP.ACTIVITY
             FROM UP_PERMISSION UPP
                 LEFT JOIN UP_ENTITY_TYPE UPET ON UPP.PRINCIPAL_TYPE = UPET.ENTITY_TYPE_ID 
             WHERE UPP.ACTIVITY != 'SUBSCRIBE'
@@ -45,6 +45,23 @@
                                                         <group>${jexl(GROUP.getName())}</group>
                                                     </principal>
                                                 </append-node>
+                                            </otherwise>
+                                        </choose>
+                                    </with-attribute>
+                                </when>
+                                <when test="${jexl(ENTITY_TYPE_NAME.equals('org.jasig.portal.security.IPerson'))}">
+                                    <with-attribute key="USER_NAME" value="${PRINCIPAL_KEY}">
+                                        <choose>
+                                            <when test="${crn(is-user-included.crn)}">
+                                                <append-node>
+                                                    <child>
+                                                        <literal>${USER_NAME}</literal>
+                                                    </child>
+                                                </append-node>
+                                            </when>
+                                            <otherwise>
+                                                <log logger-name="org.jasig.portal.io.export-permission_sets" level="warn">user, ${USER_NAME}: Not on included user list, skipping permission export</log>
+                                                <append-node node="${attributeNode(cancel=true)}"/>
                                             </otherwise>
                                         </choose>
                                     </with-attribute>
