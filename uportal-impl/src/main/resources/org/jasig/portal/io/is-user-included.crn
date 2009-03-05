@@ -36,12 +36,15 @@
     </factory>
     <subtasks>
         <choose>
+            <!-- If no includes list loaded all users are included -->
+            <when test="${groovy(VALID_USERS.size() == 0 || USER_NAME == 'system')}">
+                <return value="${groovy(true)}"/>
+            </when>
             <when test="${crn(is-fragment-owner.crn)}">
                 <return value="${groovy(true)}"/>
             </when>
             <otherwise>
-                <!-- If no incudeds list loaded all users are included -->
-                <return value="${groovy(VALID_USERS.size() == 0 || VALID_USERS.contains(USER_NAME))}" />
+                <return value="${groovy(VALID_USERS.contains(USER_NAME))}" />
             </otherwise>
         </choose>
     </subtasks>

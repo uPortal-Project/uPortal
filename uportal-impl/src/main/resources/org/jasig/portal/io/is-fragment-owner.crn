@@ -4,7 +4,7 @@
  |
  | Returns true or false based on if the USER_NAME is a layout owner 
  +-->
-<cache key="IS_FRAG_OWNER" cache-key="${groovy('IS_FRAG_OWNER.' + USER_ID)}">
+<cache key="IS_FRAG_OWNER" cache-key="${groovy('IS_FRAG_OWNER.' + USER_NAME)}">
     <factory>
         <with-attribute key="Attributes.NODE" value="${parseXml(classpath://properties/dlm.xml)}">
             <with-attribute key="OWNER_NODE" value="${singleNode(dlm:fragment[@ownerID = $USER_NAME])}">
