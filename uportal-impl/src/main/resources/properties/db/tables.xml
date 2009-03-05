@@ -404,13 +404,13 @@
       <column> <name>CHAN_ID</name>        <type>INTEGER</type>
         <desc>Foreign key from up_channel</desc>
       </column>
-      <column> <name>CHAN_PARM_NM</name>   <type>VARCHAR</type> <param>35</param>
+      <column> <name>CHAN_PARM_NM</name>   <type>VARCHAR</type> <param>255</param>
         <desc>Channel parameter name - a short name for a particular channel ID</desc>
       </column>
       <column> <name>CHAN_PARM_DESC</name> <type>VARCHAR</type> <param>255</param>
         <desc>Channel parameter description - text string that describes parameter</desc>
       </column>
-      <column> <name>CHAN_PARM_VAL</name>  <type>VARCHAR</type> <param>255</param>
+      <column> <name>CHAN_PARM_VAL</name>  <type>VARCHAR</type> <param>2000</param>
         <desc>Channel parameter value - contains a parameter's value</desc>
       </column>
       <column> <name>CHAN_PARM_OVRD</name> <type>VARCHAR</type> <param>1</param>
