@@ -42,6 +42,22 @@
                         </choose>
                     </with-attribute>
                 </when>
+                <when test="${jexl(ENTITY_TYPE_NAME.equals('org.jasig.portal.security.IPerson'))}">
+				    <with-attribute key="USER_NAME" value="${MEMBER_KEY}">
+				        <choose>
+				            <when test="${crn(is-user-included.crn)}">
+				                <append-node>
+				                    <child>
+				                        <literal>${req(USER_NAME)}</literal>
+				                    </child>
+				                </append-node>
+				            </when>
+				            <otherwise>
+				                <log logger-name="org.jasig.portal.io.export-group_membership">user, ${USER_NAME}: Not on included user list, skipping membership export</log>
+				            </otherwise>
+				        </choose>
+				    </with-attribute>
+				</when>
                 <when test="${jexl(ENTITY_TYPE_NAME.equals('org.jasig.portal.ChannelDefinition'))}">
                     <!-- Ignore channels, their group membership information is handled by the chanpub files -->
                 </when>
