@@ -102,9 +102,11 @@
                                 </when>
                                 <when test="${groovy(CURRENT_MEMBER.isEntity())}">
                                     <with-attribute key="USER_NAME" value="${groovy(CURRENT_MEMBER.getKey())}">
-                                        <append-node parent="${singleNode(users)}">
-                                            <user>${USER_NAME}</user>
-                                        </append-node>
+                                        <if test="${crn(is-user-included.crn)}">
+                                            <append-node parent="${singleNode(users)}">
+                                                <user>${USER_NAME}</user>
+                                            </append-node>
+                                        </if>
                                     </with-attribute>
                                 </when>
                                 <otherwise>
@@ -161,31 +163,6 @@
                     </subtasks>
                 </sql-query>
                 
-                <!-- 
-                <with-attribute key="PORTLET_DEF" value="${groovy(PORTAL_CONTEXT.getBean('portletDefinitionRegistry').getPortletDefinition(CHAN_ID.intValue()))}">
-                    <if test="${groovy(PORTLET_DEF != null)}">
-                        <for-each items="${groovy(PORTLET_DEF.getPortletPreferences().getPortletPreferences())}" attribute-name="portletPreference">
-                            <with-attribute key="PORTLET_PREF_NAME" value="${groovy(portletPreference.getName())}">
-                                <append-node parent="${singleNode(portletPreferences)}">
-                                    <portletPreference>
-                                        <name>${PORTLET_PREF_NAME}</name>
-                                        <read-only>${groovy(portletPreference.isReadOnly())}</read-only>
-                                        <values/>
-                                    </portletPreference>
-                                </append-node>
-                                
-                                <with-attribute key="Attributes.NODE" value="${singleNode(portletPreferences/portletPreference[name=$PORTLET_PREF_NAME]/values)}">
-                                    <for-each items="${groovy(portletPreference.getValues())}" attribute-name="preferenceValue">
-                                        <append-node>
-                                            <value>${preferenceValue}</value>
-                                        </append-node>
-                                    </for-each>
-                                </with-attribute>
-                            </with-attribute>
-                        </for-each>
-                    </if>
-                </with-attribute>
-                 -->
                 <delete-node node="${singleNode(chan-id)}"/>
                 <return value="${Attributes.NODE}"/>
             </otherwise>
