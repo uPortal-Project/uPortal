@@ -46,14 +46,12 @@
 				    <with-attribute key="USER_NAME" value="${MEMBER_KEY}">
 				        <choose>
 				            <when test="${crn(is-user-included.crn)}">
-				                <append-node>
-				                    <child>
-				                        <literal>${req(USER_NAME)}</literal>
-				                    </child>
-				                </append-node>
+                                <append-node parent="${singleNode(children)}">
+                                    <literal>${USER_NAME}</literal>
+                                </append-node>
 				            </when>
 				            <otherwise>
-				                <log logger-name="org.jasig.portal.io.export-group_membership">user, ${USER_NAME}: Not on included user list, skipping membership export</log>
+				                <log logger-name="org.jasig.portal.io.export-group_membership">user, ${USER_NAME}: Not on included user list, skipping group membership export</log>
 				            </otherwise>
 				        </choose>
 				    </with-attribute>
