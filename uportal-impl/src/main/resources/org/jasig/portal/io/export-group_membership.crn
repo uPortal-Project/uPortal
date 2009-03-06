@@ -31,7 +31,6 @@
                         <choose>
                             <when test="${jexl(GROUP.getName() == null)}">
                                 <log logger-name="org.jasig.portal.io.export-group_membership" level="warn">Membership child references a deleted group;  removing orphaned reference.</log>
-                                <append-node node="${attributeNode(cancel=true)}"/>
                             </when>
                             <otherwise>
                                 <!-- All is well... -->
