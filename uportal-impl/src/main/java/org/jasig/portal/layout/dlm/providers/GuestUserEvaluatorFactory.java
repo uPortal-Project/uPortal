@@ -6,7 +6,10 @@
 package org.jasig.portal.layout.dlm.providers;
 
 import javax.persistence.Entity;
+import javax.persistence.Transient;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.QName;
@@ -29,12 +32,19 @@ public class GuestUserEvaluatorFactory extends Evaluator implements EvaluatorFac
     
     public static final String RCS_ID = "@(#) $Header$";
 
+    @Transient
+    private final Log log = LogFactory.getLog(getClass());
+
     public Evaluator getEvaluator( Node audience )
     {
         return this;
     }
     public boolean isApplicable( IPerson p )
     {
+        if (log.isDebugEnabled()) {
+            log.debug("Calling isApplicable():  username=" + p.getUserName() 
+                                            + ",isGuest=" + p.isGuest());
+        }
         return p.isGuest();
     }
 

@@ -16,8 +16,6 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Properties;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -123,8 +121,8 @@ public class RDBMDistributedLayoutStore
         for(int i=0; definitions != null && i<definitions.length; i++)
         {
             Document layout = DocumentFactory.getNewDocument();
-            Node copy = layout.importNode(definitions[i].view.layout
-                    .getDocumentElement(), true);
+            Node copy = layout.importNode(activator.getUserView(definitions[i].getOwnerId())
+                        .layout.getDocumentElement(), true);
             layout.appendChild(copy);
             layouts.put(definitions[i].getOwnerId(), layout);
         }
@@ -415,7 +413,7 @@ public class RDBMDistributedLayoutStore
                                     for( int i=0; i<definitions.length; i++ )
                                     {
                                         String ownerId = definitions[i].getOwnerId();
-                                        int userId  = definitions[i].getUserId();
+                                        int userId  = activator.getUserView(definitions[i].getOwnerId()).getUserId();
 
                                         if ( null != ownerId )
                                         {
@@ -473,7 +471,7 @@ public class RDBMDistributedLayoutStore
         // index since the array was sorted by precedence and then index
         // within precedence.
         for ( int i=0; i<definitions.length; i++ )
-            if ( definitions[i].index == index )
+            if ( definitions[i].getIndex() == index )
                 return definitions[i].getPrecedence();
         return 0; // should never get here.
     }
@@ -649,16 +647,16 @@ public class RDBMDistributedLayoutStore
         Element root = layout.getDocumentElement();
         root.setAttribute( Constants.ATT_ID,
                            Constants.FRAGMENT_ID_USER_PREFIX +
-                           fragment.getUserId() +
+                           activator.getUserView(fragment.getOwnerId()).getUserId() +
                            Constants.FRAGMENT_ID_LAYOUT_PREFIX + "1" );
         UserView view = new UserView( profile,
                                       layout,
-                                      fragment.view.structUserPrefs,
-                                      fragment.view.themeUserPrefs );
+                                      activator.getUserView(fragment.getOwnerId()).structUserPrefs,
+                                      activator.getUserView(fragment.getOwnerId()).themeUserPrefs );
         try
         {
             activator.fragmentizeLayout( view, fragment );
-            fragment.view = view;
+            this.activator.setUserView(fragment.getOwnerId(), view);
             this.fragmentInfoCache = new HashMap();
         }
         catch( Exception e )
@@ -728,9 +726,16 @@ public class RDBMDistributedLayoutStore
         FragmentDefinition[] definitions = configLoader.getFragments();
         if ( definitions != null )
         {
-            for( int i=0; i<definitions.length; i++ )
-                if ( definitions[i].getUserId() == userId )
+            for( int i=0; i<definitions.length; i++ ) {
+                String ownerId = definitions[i].getOwnerId();
+                int fdId = -1;
+                if (activator.hasUserView(ownerId)) {
+                    fdId = activator.getUserView(ownerId).getUserId();
+                }
+                if ( fdId == userId ) {
                     return definitions[i];
+                }
+            }
         }
         return null;
     }
@@ -754,7 +759,7 @@ public class RDBMDistributedLayoutStore
             for( int i=0; i<definitions.length; i++ )
                 if ( definitions[i].isApplicable(person) )
                 {
-                    applicables.add( definitions[i].view.layout );
+                    applicables.add( activator.getUserView(definitions[i].getOwnerId()).layout );
                 }
         }
 
@@ -841,51 +846,12 @@ public class RDBMDistributedLayoutStore
     }
 
     /**
-       Returns an enumerator of the property names loaded from dlm.xml.
-     */
-//    public Enumeration getPropertyNames()
-//    {
-//        if ( properties == null )
-//        {
-//            return new Enumeration()
-//                {
-//                    public boolean hasMoreElements()
-//                    {
-//                        return false;
-//                    }
-//                    public Object nextElement()
-//                    {
-//                        throw new NoSuchElementException();
-//                    }
-//                };
-//        }
-//        return properties.propertyNames();
-//    }
-
-    /**
        Returns the specified property loaded from dlm.xml or null if not found.
      */
     public String getProperty( String name )
     {
         return configLoader.getProperty( name );
     }
-
-//    /**
-//       Sets the dlm propertys. Called by ConfigurationLoaded.
-//     */
-//    void setProperties( Properties props )
-//    {
-//        this.properties = props;
-//    }
-//
-//    /**
-//       Sets the dlm fragment definitions. Called by ConfigurationLoader.
-//     */
-//    void setDefinitions( FragmentDefinition[] frags )
-//    {
-//        this.definitions = frags;
-//        this.fragmentInfoCache = new HashMap();
-//    }
 
     /**
      * Returns an object suitable for identifying channel attribute and
@@ -925,7 +891,7 @@ public class RDBMDistributedLayoutStore
         {
             for(int i=0; i<defs.length; i++)
             {
-                Element node = defs[i].view.layout.getElementById(sId);
+                Element node = activator.getUserView(defs[i].getOwnerId()).layout.getElementById(sId);
                 if (node != null) // found it
                 {
                     if (node.getTagName().equals(Constants.ELM_CHANNEL))
@@ -940,15 +906,6 @@ public class RDBMDistributedLayoutStore
         }
         return info;
     }
-
-    /**
-     * Gets the configured dlm fragment definitions.
-     */
-//    FragmentDefinition[] getDefinitions()
-//    {
-//        return this.definitions;
-//    }
-
 
     //////// User Preferences handling methods. //////////
 
@@ -1447,7 +1404,7 @@ public class RDBMDistributedLayoutStore
                 if ( definitions[i].isApplicable(person) )
                     loadIncorporatedPreferences
                     ( person, STRUCT, ssup,
-                      definitions[i].view.structUserPrefs );
+                            activator.getUserView(definitions[i].getOwnerId()).structUserPrefs );
         }
 
         if (LOG.isDebugEnabled())
@@ -1492,7 +1449,7 @@ public class RDBMDistributedLayoutStore
             for( int i=0; i<definitions.length; i++ )
                 if ( definitions[i].isApplicable(person) )
                     loadIncorporatedPreferences( person, THEME, tsup,
-                                                 definitions[i].view.themeUserPrefs);
+                            activator.getUserView(definitions[i].getOwnerId()).themeUserPrefs);
         }
 
         if (LOG.isDebugEnabled())
@@ -1641,10 +1598,10 @@ public class RDBMDistributedLayoutStore
             UserProfile profile = getUserProfileById(person, 1);
             ssup = new DistributedUserPreferences(
                     (StructureStylesheetUserPreferences) ssup);
-            UserView view = new UserView(profile, ownedFragment.view.layout,
-                    ssup, ownedFragment.view.themeUserPrefs);
+            UserView view = new UserView(profile, activator.getUserView(ownedFragment.getOwnerId()).layout,
+                    ssup, activator.getUserView(ownedFragment.getOwnerId()).themeUserPrefs);
             activator.fragmentizeSSUP(view, ownedFragment);
-            ownedFragment.view = view;
+            this.activator.setUserView(ownedFragment.getOwnerId(), view);
         }
         catch( Exception e)
         {

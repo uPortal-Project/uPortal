@@ -17,10 +17,10 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public class FragmentDefinitionDao {
+public class FragmentDefinitionDao implements IFragmentDefinitionDao {
 
     // Static Members
-    private static final String GET_ALL_FRAGMENTS = "SELECT x FROM FragmentDefinition x";
+    private static final String GET_ALL_FRAGMENTS = "SELECT x FROM FragmentDefinition x ORDER BY x.precedence DESC";
     private static final String FIND_FRAGMENT_BY_NAME = "SELECT x FROM Evaluator x WHERE x.name = :name";
 
     // Instance Members.
@@ -44,12 +44,6 @@ public class FragmentDefinitionDao {
         
     }
 
-    /**
-     * Obtains the {@link FragmentDefinition} object with the specified name.
-     * 
-     * @param name The unique name of a fragment
-     * @return The fragment with the corresponding name, or <code>null</code>
-     */
     @SuppressWarnings("unchecked")
     public FragmentDefinition getFragmentDefinition(String name) {
         

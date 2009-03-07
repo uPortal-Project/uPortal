@@ -5,7 +5,6 @@
  */
 package org.jasig.portal.layout.dlm;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -68,19 +67,9 @@ public class FragmentDefinition extends Evaluator
 
     /* These variables are bound to a uP userId later in the life cycle, not managed by hibernate */
     @Transient
-    private int userID = -1;
+    private int index = 0; // index of definition within config file
     @Transient
     String defaultLayoutOwnerID = null;
-    @Transient
-    Element configDOM = null;
-    @Transient
-    int index = 0; // index of definition within config file
-    @Transient
-    boolean noAudienceIncluded = false;
-    @Transient
-    UserView view = null;    
-    @Transient
-    List roles = null;  /* Not sure if this feature is working or not;  leaving it out of hibernate for now, but keeping an eye on it... */
 
     /**
      * No-arg constructor required by JPA/Hibernate.
@@ -102,15 +91,14 @@ public class FragmentDefinition extends Evaluator
         final boolean REQUIRED = true;
         final boolean NOT_REQUIRED = false;
 
-        this.configDOM = e;
         NamedNodeMap atts = e.getAttributes();
         
-        this.name = loadAttribute( "name", atts, REQUIRED );
-        this.ownerID = loadAttribute( "ownerID", atts, REQUIRED );
+        this.name = loadAttribute( "name", atts, REQUIRED, e );
+        this.ownerID = loadAttribute( "ownerID", atts, REQUIRED, e );
         this.defaultLayoutOwnerID = loadAttribute( "defaultLayoutOwnerID", 
-                                                   atts, NOT_REQUIRED );
+                                                   atts, NOT_REQUIRED, e );
 
-        String precedence = loadAttribute( "precedence", atts, REQUIRED );
+        String precedence = loadAttribute( "precedence", atts, REQUIRED, e );
         try 
         {
             this.precedence = Double.valueOf( precedence ).doubleValue();
@@ -120,7 +108,6 @@ public class FragmentDefinition extends Evaluator
             throw new RuntimeException( "Invalid format for precedence attribute " +
                                  "of <fragment> in\n'" + XML.serializeNode(e), nfe );
         }
-        loadOwnerRoles( e.getElementsByTagName( "dlm:role" ));
         
         // Audience Evaluators.
         // NB:  We're about to re-parse the complete set of evaluators, 
@@ -143,17 +130,7 @@ public class FragmentDefinition extends Evaluator
     public double getPrecedence() {
         return this.precedence;
     }
-
-    public int getUserId()
-    {
-        return this.userID;
-    }
-
-    public void setUserId(int id)
-    {
-        this.userID = id;
-    }
-
+    
     public static String getDefaultLayoutOwnerId()
     {
         return cDefaultLayoutOwnerId;
@@ -162,56 +139,22 @@ public class FragmentDefinition extends Evaluator
     public int getEvaluatorCount() {
         return this.evaluators == null ? 0 : this.evaluators.size();
     }
-
-    /**
-     * Captures the values of any included dlm:role elements so that the owner 
-     * can later be granted those roles during fragment activation.
-     * 
-     * @param nodes
-     */
-    private void loadOwnerRoles(NodeList nodes)
-    {
-        roles = new ArrayList();
-        
-        if ( nodes != null && nodes.getLength() != 0 )
-        {
-            /*
-             * This looks really screwy but is actually necessary. For element
-             * nodes you can't simply call the getNodeValue() method on its
-             * superclass Node. That simply returns a null value. The role
-             * element has textual content only consisting of a single 
-             * access group ID. So these element nodes will have a single 
-             * text node child node and its getNodeValue() must be called to
-             * acquire the group ID. To play it safe I'll grab all child nodes 
-             * and for concatenate the value of all child text nodes.
-             */
-            for( int i = 0; i<nodes.getLength(); i++)
-            {
-                Element roleElement = (Element) nodes.item(i);
-                NodeList childNodes = roleElement.getChildNodes();
-                StringBuffer groupId = new StringBuffer();
-                
-                for( int j=0; j<childNodes.getLength(); j++)
-                {
-                    Node node = childNodes.item(j);
-                    if ( node.getNodeType() == Node.TEXT_NODE )
-                        groupId.append(node.getNodeValue());
-                }
-                 
-                roles.add(groupId.toString());
-            }
-        }
+    
+    public int getIndex() {
+        return index;
+    }
+    
+    public void setIndex(int index) {
+        this.index = index;
+    }
+    
+    public boolean isNoAudienceIncluded() {
+        return evaluators.size() == 0;
     }
 
     private void loadAudienceEvaluators( NodeList nodes )
     {
         final String evaluatorFactoryAtt = "evaluatorFactory";
-
-        if ( nodes == null || nodes.getLength() == 0 )
-        {
-            noAudienceIncluded = true;
-            return;
-        }
         
         for ( int i=0; i<nodes.getLength(); i++ )
         {
@@ -342,11 +285,14 @@ public class FragmentDefinition extends Evaluator
         if (LOG.isInfoEnabled())
             LOG.info(">>>> calling " + name + ".isApplicable( "
                     + p.getAttribute("username") + " )");
-        if ( userID == -1 ||
-             view == null ||
+        if ( /*view == null ||
+             view.getUserId() == -1 || */
              evaluators == null )
         {
             isApplicable = false;
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("isApplicable()=false due to evaluators collection being null");
+            }
         }
         else
         {
@@ -367,7 +313,8 @@ public class FragmentDefinition extends Evaluator
     
     private String loadAttribute( String name, 
                                   NamedNodeMap atts, 
-                                  boolean required ) 
+                                  boolean required,
+                                  Element e) 
     { 
         Node att = atts.getNamedItem( name );
         if ( required && 
@@ -375,7 +322,7 @@ public class FragmentDefinition extends Evaluator
                att.getNodeValue().equals( "" ) ) )
             throw new RuntimeException( "Missing or empty attribute '" + name +
                                  "' required by <fragment> in\n'" + 
-                                 XML.serializeNode(this.configDOM) + "'" );
+                                 XML.serializeNode(e) + "'" );
         if ( att == null )
             return null;
         return att.getNodeValue();

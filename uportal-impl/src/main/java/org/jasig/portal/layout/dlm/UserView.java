@@ -17,6 +17,7 @@ class UserView
 {
     public static final String RCS_ID = "@(#) $Header$";
 
+    private int userId = -1;
     DistributedUserPreferences structUserPrefs = null;
     DistributedUserPreferences themeUserPrefs = null;
     Document layout = null;
@@ -25,8 +26,9 @@ class UserView
     int structureStylesheetId = 0;
     int themeStylesheetId = 0;
 
-    UserView ()
+    UserView (int userId)
     {
+        this.userId = userId;
     }
     
     UserView(UserProfile profile, Document layout,
@@ -40,4 +42,9 @@ class UserView
         structUserPrefs = ssup;
         themeUserPrefs = tsup;
     }
+    
+    public int getUserId() {
+        return this.userId;
+    }
+    
 }

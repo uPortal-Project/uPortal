@@ -73,11 +73,11 @@ public final class LegacyConfigurationLoader extends ConfigurationLoader{
                     LOG.info("\n\nDLM loaded fragment definition '" + f.getName() +
                             "' owned by '" + f.getOwnerId() +
                             "' with precedence " + f.getPrecedence() + 
-                            ( f.noAudienceIncluded ? " and no specified audience" +
+                            ( f.isNoAudienceIncluded() ? " and no specified audience" +
                               ". It will be editable by '" +
                                 f.getOwnerId() + "' but " +
                                 "not included in any user's layout." :
-                              ( f.noAudienceIncluded ?
+                              ( f.isNoAudienceIncluded() ?
                                 " with no audience. It will be editable by '" +
                                 f.getOwnerId() + "' but " +
                                 "not included in any user's layout." :
@@ -102,10 +102,10 @@ public final class LegacyConfigurationLoader extends ConfigurationLoader{
     {
         if ( frags == null )
         {
-            f.index = 0;
+            f.setIndex(0);
             return new FragmentDefinition[] { f };
         }
-        f.index = frags.length;
+        f.setIndex(frags.length);
         FragmentDefinition[] newArr = new FragmentDefinition[frags.length + 1];
         System.arraycopy( frags, 0, newArr, 0, frags.length );
         newArr[frags.length] = f;

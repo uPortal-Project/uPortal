@@ -7,7 +7,10 @@ package org.jasig.portal.layout.dlm.providers;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Transient;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
@@ -39,6 +42,9 @@ public class AttributeEvaluator
 
     @Column(name = "ATTRIBUTE_VALUE")
     protected String value = null;
+
+    @Transient
+    private final Log log = LogFactory.getLog(getClass());
 
     /**
      * Zero-arg constructor required by JPA.  Other Java code should not use it.
@@ -94,6 +100,10 @@ public class AttributeEvaluator
     public boolean isApplicable( IPerson p )
     {
         String attrib = (String) p.getAttribute( name );
+        
+        if (log.isDebugEnabled()) {
+            log.debug("mode=" + mode + ",attrib=" + attrib);
+        }
 
         // for tests other than 'exists' the attribute must be defined
         if ( attrib == null && mode != EXISTS )

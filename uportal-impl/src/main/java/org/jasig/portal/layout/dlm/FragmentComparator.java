@@ -30,7 +30,7 @@ public class FragmentComparator
         
         if( frag1.getPrecedence() == frag2.getPrecedence() )
         {
-            return frag1.index - frag2.index;
+            return frag1.getIndex() - frag2.getIndex();
         }
         else
         {
