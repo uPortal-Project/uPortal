@@ -32,6 +32,7 @@ public abstract class ConfigurationLoader
     private static final String CONFIG_FILE_NAME = "/properties/dlm.xml";
     private static URL configFileURL = null;
     private static final Log LOG = LogFactory.getLog(ConfigurationLoader.class);
+    private static ConfigurationLoader INSTANCE = null;
     
     // Instance Members.
     private Properties props;
@@ -44,40 +45,10 @@ public abstract class ConfigurationLoader
      * Load the distributed layout configuration.
      */
     public static ConfigurationLoader load() {
-        
-        ConfigurationLoader rslt = null;
-        
-        try {
-            configFileURL = ConfigurationLoader.class.getResource(CONFIG_FILE_NAME);
-            logConfigFileInfo();
-
-            InputStream inputStream = configFileURL.openStream();
-            Document doc = DocumentFactory.getDocumentFromStream(inputStream,
-                    configFileURL.toExternalForm());
-
-            NodeList properties = doc.getElementsByTagName( "dlm:property" );
-            Properties props = getProperties(properties);
-            
-            String impl = props.getProperty("ConfigurationLoader.impl");
-            Class<? extends ConfigurationLoader> c = null;
-            if (impl == null) {
-                c = LegacyConfigurationLoader.class; 
-            } else {
-                c = (Class<? extends ConfigurationLoader>) Class.forName(impl);
-            }
-
-            rslt = c.newInstance();
-            rslt.init(doc);
-            rslt.setProperties(props);
-            
-        } catch( Exception e ) {
-            throw new RuntimeException(ConfigurationLoader.class.getName() +
-                           " could not load distributed layout " +
-                           "configuration.", e);
+        if (INSTANCE == null) {
+            loadInstance();
         }
-        
-        return rslt;
-        
+        return INSTANCE;
     }
     
     public abstract void init(Document doc);
@@ -95,6 +66,47 @@ public abstract class ConfigurationLoader
     /*
      * Implementation.
      */
+    
+    private static synchronized void loadInstance() {
+        
+        // Be sure we only do this once...
+        if (INSTANCE == null) {
+            try {
+                configFileURL = ConfigurationLoader.class.getResource(CONFIG_FILE_NAME);
+                logConfigFileInfo();
+
+                InputStream inputStream = configFileURL.openStream();
+                Document doc = DocumentFactory.getDocumentFromStream(inputStream,
+                        configFileURL.toExternalForm());
+
+                NodeList properties = doc.getElementsByTagName( "dlm:property" );
+                Properties props = getProperties(properties);
+                
+                String impl = props.getProperty("ConfigurationLoader.impl");
+                if (LOG.isInfoEnabled()) {
+                    LOG.info("The 'ConfigurationLoader.impl' setting is:  " + impl);
+                }
+                Class<? extends ConfigurationLoader> c = null;
+                if (impl == null) {
+                    c = LegacyConfigurationLoader.class; 
+                } else {
+                    c = (Class<? extends ConfigurationLoader>) Class.forName(impl);
+                }
+                if (LOG.isInfoEnabled()) {
+                    LOG.info("The ConfigurationLoader implementation class is:  " + c.getName());
+                }
+
+                INSTANCE = c.newInstance();
+                INSTANCE.init(doc);
+                INSTANCE.setProperties(props);
+                
+            } catch( Exception e ) {
+                throw new RuntimeException(ConfigurationLoader.class.getName() +
+                               " could not load distributed layout " +
+                               "configuration.", e);
+            }
+        }
+    }
     
     private static void logConfigFileInfo()
     {

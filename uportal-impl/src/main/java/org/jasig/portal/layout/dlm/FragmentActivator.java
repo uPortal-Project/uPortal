@@ -7,10 +7,11 @@ package org.jasig.portal.layout.dlm;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.Map;
 import java.util.Vector;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -38,7 +39,7 @@ public class FragmentActivator
     private FragmentDefinition[] fragments = null;
     private IUserIdentityStore identityStore = null;
     private RDBMDistributedLayoutStore dls = null;
-    private IRoleUpdater mRoleUpdater = null;
+    private Map<String,UserView> userViews;
 
     private static final int CHANNELS = 0;
     private static final int FOLDERS = 1;
@@ -48,6 +49,7 @@ public class FragmentActivator
     {
         identityStore = UserIdentityStoreFactory.getUserIdentityStoreImpl();
         this.dls = dls;
+        this.userViews = new ConcurrentHashMap<String,UserView>();
         this.fragments = fragments;
         // TODO add a role updater after we get DLM working in uP proper.
         /*
@@ -87,7 +89,7 @@ public class FragmentActivator
         else
         {
             for ( int i=0; i<fragments.length; i++ )
-                if ( fragments[i].noAudienceIncluded)
+                if ( fragments[i].isNoAudienceIncluded())
                 {
                     if (LOG.isDebugEnabled())
                         LOG.debug("\n\n------ skipping " + i + " - " +
@@ -102,8 +104,8 @@ public class FragmentActivator
                     try
                     {
                         IPerson owner = bindToOwner( fragments[i] );
-                        updateOwnerRoles( fragments[i] );
-                        UserView view = new UserView();
+//                        updateOwnerRoles( fragments[i] );
+                        UserView view = new UserView(owner.getID());
                         loadLayout( view, fragments[i], owner );
                         
                         // if owner just created we need to push the layout into
@@ -119,7 +121,7 @@ public class FragmentActivator
                         fragmentizeLayout( view, fragments[i] );
                         fragmentizeTSUP( view, fragments[i] );
                         fragmentizeSSUP( view, fragments[i] );
-                        fragments[i].view = view;
+                        this.setUserView(fragments[i].getOwnerId(), view);
                         if (LOG.isDebugEnabled())
                             LOG.debug("\n\n------ done activating " +
                                 fragments[i].getName() );
@@ -127,7 +129,6 @@ public class FragmentActivator
                     catch( Exception e )
                     {
                         // problem loading so none of it should be used
-                        fragments[i].view = null;
                         StringWriter sw = new StringWriter();
                         PrintWriter pw = new PrintWriter( sw );
                         e.printStackTrace( pw );
@@ -169,6 +170,48 @@ public class FragmentActivator
             LOG.debug("\n\n------ done with Activation ------\n" );
     }
     
+    public UserView getUserView(String ownerId) {
+        UserView rslt = userViews.get(ownerId);
+        if (rslt == null) {
+            // This is worrysome...
+            LOG.warn("No UserView object is present for owner '" + ownerId 
+                                        + "' -- null will be returned");
+        }
+        return rslt;
+    }
+    
+    public void setUserView(String ownerId, UserView v) {
+        
+        // Assertions.
+        if (ownerId == null) {
+            String msg = "Argument 'ownerId' cannot be null.";
+            throw new IllegalArgumentException(msg);
+        }
+        if (v == null) {
+            String msg = "Argument 'v' [UserView] cannot be null.";
+            throw new IllegalArgumentException(msg);
+        }
+        
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Setting UserView instance for user:  " + ownerId);
+        }
+        
+        userViews.put(ownerId, v);
+        
+    }
+    
+    public boolean hasUserView(String ownerId) {
+
+        // Assertions.
+        if (ownerId == null) {
+            String msg = "Argument 'ownerId' cannot be null.";
+            throw new IllegalArgumentException(msg);
+        }
+
+        return userViews.containsKey(ownerId);
+
+    }
+    
     /**
      * Saves the loaded layout in the database for the user and profile.
      * @param view
@@ -180,22 +223,6 @@ public class FragmentActivator
         UserProfile profile = new UserProfile();
         profile.setProfileId(view.profileId);
         dls.setUserLayout(owner, profile, view.layout, true, false);
-    }
-
-    /**
-     * Makes sure that the fragment owner has the roles specified and no 
-     * others.
-     * 
-     * @param definition The frament definition
-     */
-    private void updateOwnerRoles(FragmentDefinition definition)
-    {
-        if (mRoleUpdater != null)
-        {
-            mRoleUpdater.setFragmentOwnerRoles(
-                definition.getOwnerId(),
-                new ArrayList(definition.roles));
-        }
     }
 
     private IPerson bindToOwner( FragmentDefinition fragment )
@@ -222,7 +249,7 @@ public class FragmentActivator
             userID = createOwner( owner, fragment );
             owner.setAttribute("newlyCreated", "" + (userID != -1));
         }
-        fragment.setUserId(userID);
+
         owner.setID(userID);
         return owner;
     }
@@ -281,7 +308,7 @@ public class FragmentActivator
                              IPerson owner )
     {
         // if fragment not bound to user can't return any layouts.
-        if ( fragment.getUserId() == -1 )
+        if ( view.getUserId() == -1 )
             return;
 
         // this area is hacked right now. Time won't permit how to handle
@@ -314,7 +341,7 @@ public class FragmentActivator
             layout = dls.getFragmentLayout( owner, profile ); 
             Element root = layout.getDocumentElement();
             root.setAttribute( Constants.ATT_ID, 
-                    Constants.FRAGMENT_ID_USER_PREFIX + fragment.getUserId() +
+                    Constants.FRAGMENT_ID_USER_PREFIX + view.getUserId() +
                     Constants.FRAGMENT_ID_LAYOUT_PREFIX + view.layoutId );
             view.layout = layout;
         }
@@ -332,11 +359,11 @@ public class FragmentActivator
                                   FragmentDefinition fragment )
     {
         // if fragment not bound to user can't return any preferences.
-        if ( fragment.getUserId() == -1 )
+        if ( view.getUserId() == -1 )
             return;
 
         IPerson p = new PersonImpl();
-        p.setID( fragment.getUserId() );
+        p.setID( view.getUserId() );
         p.setAttribute( "username", fragment.getOwnerId() );
 
         try
@@ -433,7 +460,7 @@ public class FragmentActivator
                             FragmentDefinition fragment )
     {
         // if fragment not bound to user or layout empty due to error, return
-        if ( fragment.getUserId() == -1 ||
+        if ( view.getUserId() == -1 ||
              view.layout == null )
             return;
 
@@ -476,7 +503,7 @@ public class FragmentActivator
         // wide id.
 
         setIdsAndAttribs( layout, layout.getAttribute( Constants.ATT_ID ),
-                          "" + fragment.index,
+                          "" + fragment.getIndex(),
                           "" + fragment.getPrecedence() );
     }
 

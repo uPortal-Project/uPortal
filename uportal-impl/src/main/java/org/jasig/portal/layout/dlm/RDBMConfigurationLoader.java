@@ -22,14 +22,16 @@ import org.w3c.dom.Document;
 public class RDBMConfigurationLoader extends ConfigurationLoader {
     
     // Instance Members.
-    private FragmentDefinitionDao fragmentDao = null;
+    private IFragmentDefinitionDao fragmentDao = null;
 
     @Override
     public FragmentDefinition[] getFragments() {
         List<FragmentDefinition> frags = fragmentDao.getAllFragments();
         FragmentDefinition[] rslt = new FragmentDefinition[frags.size()];
         for (int i=0; i < frags.size(); i++) {
-            rslt[i] = frags.get(i);
+            FragmentDefinition fd = frags.get(i);
+            fd.setIndex(i);
+            rslt[i] = fd;
         }
         return rslt;
     }
@@ -37,13 +39,14 @@ public class RDBMConfigurationLoader extends ConfigurationLoader {
     @Override
     public synchronized void init(Document doc) {
 
-        // There's nothing in the dlm.xml file we care about in this Java 
-        // class, but we can use this opportunity to get a reference to 
-        // the ApplicationContext...
-        
+        // Do this stuff only once...
         if (this.fragmentDao == null) {
+            // There's nothing in the dlm.xml file we care about in this Java 
+            // class, but we can use this opportunity to get a reference to 
+            // the ApplicationContext...
             ApplicationContext ctx = PortalApplicationContextLocator.getApplicationContext();
-            fragmentDao = (FragmentDefinitionDao) ctx.getBean("fragmentDefinitionDao");
+            // Also resolve the 'fragmentDefinitionDao' bean...
+            fragmentDao = (IFragmentDefinitionDao) ctx.getBean("fragmentDefinitionDao");
         }
         
     }
