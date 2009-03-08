@@ -250,8 +250,8 @@
         </sql-query>
     </when>
 
-    <!-- all-group_membership -->
-    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-group_membership'))}">
+    <!-- all-group_memberships -->
+    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-group_memberships'))}">
         <thread-pool threads="${THREAD_COUNT}">
             <sql-query>
                 <sql>

@@ -37,7 +37,7 @@
                                                        'all-themes',
                                                        'all-structures',
                                                        'all-entity-types',
-                                                       'all-group_membership'
+                                                       'all-group_memberships'
     					                           ])}">
                                     <with-attribute key="SUBTYPE_START_TIME" value="${groovy(System.currentTimeMillis())}">
                                         <echo-ln>Begin Export of '${ENTITY_TYPE}': ${SUBTYPE_START_TIME}</echo-ln>
