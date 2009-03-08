@@ -49,7 +49,7 @@
         <property name="handlers">
             <list>
                 <ref bean="loggingEventHandler"/>
-                <!-- <ref bean="queueingEventHandler"/> -->
+                <ref bean="queueingEventHandler"/>
             </list>
         </property>
     </bean>
@@ -78,16 +78,24 @@
      | If you want to monitor the corresponding Hibernate SessionFactory via JMX uncomment the 'portalStatsHibernateStatisticsMBean'
      | bean in jmxContext.xml
      +-->
-    <!-- 
-    <!- - Queueing handler used to reduce database IO - ->
+    <!-- Queueing handler used to reduce database IO -->
     <bean id="queueingEventHandler" class="org.jasig.portal.events.handlers.QueueingEventHandler">
         <property name="supportGuest" value="false" />
         <property name="batchingEventHandler" ref="portalEventStore" />
+        
+        <property name="explicitMatching" value="true" />
+        <property name="supportedEvents">
+            <set value-type="java.lang.Class">
+                <value>org.jasig.portal.events.support.UserLoggedInPortalEvent</value>
+                <value>org.jasig.portal.events.support.UserLoggedOutPortalEvent</value>
+                <value>org.jasig.portal.events.support.PageRenderTimePortalEvent</value>
+            </set>
+        </property>
     </bean>
     
     <bean id="portalEventStore" class="org.jasig.portal.events.handlers.db.JpaPortalEventStore" />
 
-    <!- - Stats specific JPA peristence configurtion below - -> 
+    <!-- Stats specific JPA peristence configurtion below --> 
     <aop:config>
         <aop:pointcut id="statsJpaDaoExecution" 
             expression="execution(* org.jasig.portal.events.handlers.db.*Jpa*.*(..))"/>
@@ -112,7 +120,7 @@
         <property name="persistenceUnitName" value="uPortalStatsPersistence" />
     </bean>
 
-    <!- - Adapater that can inject a cacheProvider into the hibernate entity manager - ->
+    <!-- Adapater that can inject a cacheProvider into the hibernate entity manager -->
     <bean id="statsJpaVendorAdapter" class="org.jasig.portal.spring.orm.jpa.HibernateJpaVendorAdapter">
         <property name="databasePlatform" value="${hibernate.dialect}" />
         <property name="cacheProvider" ref="cacheProvider" />
@@ -127,7 +135,6 @@
             <tx:method name="*"/>
         </tx:attributes>
     </tx:advice>
-    -->
     
     <!-- ********** Database Utilities ********** -->
     

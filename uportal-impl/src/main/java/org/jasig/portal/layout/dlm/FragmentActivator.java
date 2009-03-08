@@ -7,8 +7,10 @@ package org.jasig.portal.layout.dlm;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
@@ -22,6 +24,7 @@ import org.jasig.portal.UserProfile;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.provider.PersonImpl;
+import org.jasig.portal.utils.threading.SingletonDoubleCheckedCreator;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -31,82 +34,77 @@ import org.w3c.dom.NodeList;
  * @version $Revision$ $Date$
  * @since uPortal 2.5
  */
-public class FragmentActivator
+public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
 {
     public static final String RCS_ID = "@(#) $Header$";
     private static Log LOG = LogFactory.getLog(FragmentActivator.class);
 
-    private FragmentDefinition[] fragments = null;
-    private IUserIdentityStore identityStore = null;
-    private RDBMDistributedLayoutStore dls = null;
-    private Map<String,UserView> userViews;
+    private final List<FragmentDefinition> fragments;
+    private final IUserIdentityStore identityStore;
+    private final RDBMDistributedLayoutStore dls;
+    private final Map<String,UserView> userViews;
 
     private static final int CHANNELS = 0;
     private static final int FOLDERS = 1;
     
     public FragmentActivator( RDBMDistributedLayoutStore dls,
-                              FragmentDefinition[] fragments )
+                              List<FragmentDefinition> fragments )
     {
         identityStore = UserIdentityStoreFactory.getUserIdentityStoreImpl();
         this.dls = dls;
         this.userViews = new ConcurrentHashMap<String,UserView>();
         this.fragments = fragments;
-        // TODO add a role updater after we get DLM working in uP proper.
-        /*
-        try
-        {
-            Class cls = Class.forName("com.pipeline.uportal.DLMRoleUpdater");
-            mRoleUpdater = (IRoleUpdater) cls.newInstance();
-        }
-        catch(Exception e)
-        {
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter( sw );
-            e.printStackTrace( pw );
-            pw.flush();
-            ls.log( ls.ERROR, 
-                  "\n\n------ Fragment Role Adjustment Problem ------\n" +
-                  "Fragment Owner Roles will not be adjusted. \nMessage: " +
-                  e.getMessage() + "\nDetails:\n" +
-                  sw.toString());
-        }
-        */
     }
 
-    void activateFragments()
-    {
-        if (LOG.isDebugEnabled())
+    /**
+     * Activation will only be run once and will return immediately for every call once activation
+     * is complete.
+     */
+    void activateFragments() {
+        this.get();
+    }
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.utils.threading.SingletonDoubleCheckedCreator#createSingleton(java.lang.Object[])
+     */
+    @Override
+    protected Boolean createSingleton(Object... args) {
+        if (LOG.isDebugEnabled()) {
             LOG.debug("\n\n------ Distributed Layout ------\n" +
               "properties loaded = " + dls.getPropertyCount() +
               "\nfragment definitions loaded = " +
-              ( fragments == null ? 0 : fragments.length ) +
+              ( fragments == null ? 0 : fragments.size() ) +
               "\n\n------ Beginning Activation ------\n" );
+        }
+        
         if ( fragments == null )
         {
-            if (LOG.isDebugEnabled())
+            if (LOG.isDebugEnabled()) {
                 LOG.debug("\n\nNo Fragments to Activate." );
+            }
         }
         else
         {
-            for ( int i=0; i<fragments.length; i++ )
-                if ( fragments[i].isNoAudienceIncluded())
+            for (final FragmentDefinition fragmentDefinition : this.fragments) {
+                if ( fragmentDefinition.isNoAudienceIncluded())
                 {
-                    if (LOG.isDebugEnabled())
-                        LOG.debug("\n\n------ skipping " + i + " - " +
-                        fragments[i].getName() + ", no evaluators found" );
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("\n\n------ skipping " + fragmentDefinition + " - " +
+                        fragmentDefinition.getName() + ", no evaluators found" );
+                    }
                 }
                 else
                 {
-                    if (LOG.isDebugEnabled())
-                        LOG.debug("\n\n------ activating " + i + " - " +
-                        fragments[i].getName() );
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("\n\n------ activating " + fragmentDefinition + " - " +
+                        fragmentDefinition.getName() );
+                    }
 
                     try
                     {
-                        IPerson owner = bindToOwner( fragments[i] );
-//                        updateOwnerRoles( fragments[i] );
+                        IPerson owner = bindToOwner( fragmentDefinition );
                         UserView view = new UserView(owner.getID());
-                        loadLayout( view, fragments[i], owner );
+                        loadLayout( view, fragmentDefinition, owner );
                         
                         // if owner just created we need to push the layout into
                         // the db so that our fragment template user is used and
@@ -117,14 +115,15 @@ public class FragmentActivator
                             owner.setAttribute( Constants.PLF, view.layout );
                             saveLayout( view, owner );
                         }
-                        loadPreferences( view, fragments[i] );
-                        fragmentizeLayout( view, fragments[i] );
-                        fragmentizeTSUP( view, fragments[i] );
-                        fragmentizeSSUP( view, fragments[i] );
-                        this.setUserView(fragments[i].getOwnerId(), view);
-                        if (LOG.isDebugEnabled())
+                        loadPreferences( view, fragmentDefinition );
+                        fragmentizeLayout( view, fragmentDefinition );
+                        fragmentizeTSUP( view, fragmentDefinition );
+                        fragmentizeSSUP( view, fragmentDefinition );
+                        this.setUserView(fragmentDefinition.getOwnerId(), view);
+                        if (LOG.isDebugEnabled()) {
                             LOG.debug("\n\n------ done activating " +
-                                fragments[i].getName() );
+                                fragmentDefinition.getName() );
+                        }
                     }
                     catch( Exception e )
                     {
@@ -134,40 +133,46 @@ public class FragmentActivator
                         e.printStackTrace( pw );
                         pw.flush();
                         LOG.error("\n\n------ Problem occurred activating " +
-                                fragments[i].getName() + "------\n" +
+                                fragmentDefinition.getName() + "------\n" +
                                 (e.getMessage() != null ?
                                  e.getMessage() + "\n\n" : "" ) +
                                 sw.toString() );
                     }
                 }
+            }
 
+            
+            final List<FragmentDefinition> sortedFragments = new ArrayList<FragmentDefinition>(this.fragments);
             // lastly sort according to precedence followed by index
-            Arrays.sort( fragments, new FragmentComparator() );
-
+            Collections.sort(sortedFragments, new FragmentComparator() );
+            
             // show sort order in log file if debug is on. (Could check and
             // only build of on but do later.)
             StringBuffer bfr = new StringBuffer();
-            bfr.append( fragments[0].getName() );
+            bfr.append( fragments.get(0).getName() );
             bfr.append( "[" );
-            bfr.append( fragments[0].getPrecedence() );
+            bfr.append( fragments.get(0).getPrecedence() );
             bfr.append( "]" );
         
-            for (int i=1; i<fragments.length; i++ )
-            {
+            for (final FragmentDefinition fragmentDefinition : sortedFragments) {
                 bfr.append( ",\n" );
-                bfr.append( fragments[i].getName() );
+                bfr.append( fragmentDefinition.getName() );
                 bfr.append( "[" );
-                bfr.append( fragments[i].getPrecedence() );
+                bfr.append( fragmentDefinition.getPrecedence() );
                 bfr.append( "]" );
             }
-            if (LOG.isDebugEnabled())
+            if (LOG.isDebugEnabled()) {
                 LOG.debug("\n\nFragments Sorted by Precedence and then index {\n" +
                     bfr.toString() + " }\n" );
+            }
         }
+        
         // now let other threads in to get their layouts.
-        dls.activationFinished();
-        if (LOG.isDebugEnabled())
+        if (LOG.isDebugEnabled()) {
             LOG.debug("\n\n------ done with Activation ------\n" );
+        }
+        
+        return true;
     }
     
     public UserView getUserView(String ownerId) {

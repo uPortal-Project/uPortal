@@ -5,6 +5,7 @@
  */
 package org.jasig.portal.groups;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -32,8 +33,6 @@ implements IGroupConstants
     // static vars:
     protected static String separator;
     
-    private static Map<String, Name> nameCache = CacheFactoryLocator.getCacheFactory().getCache(CacheFactory.NAME_CACHE);
-
     static {
         try 
             { separator = GroupServiceConfiguration.getConfiguration().getNodeSeparator(); }
@@ -180,6 +179,8 @@ public String toString() {
  */
 public Name parseCompoundKey(String key) throws NamingException
 {
+    final CacheFactory cacheFactory = CacheFactoryLocator.getCacheFactory();
+    final Map<Serializable, Name> nameCache = cacheFactory.getCache(CacheFactory.NAME_CACHE);
     Name n = nameCache.get(key);
     if ( n == null )
     { 

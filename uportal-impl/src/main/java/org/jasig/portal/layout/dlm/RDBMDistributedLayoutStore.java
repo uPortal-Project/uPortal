@@ -13,8 +13,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
@@ -40,9 +40,11 @@ import org.jasig.portal.layout.simple.RDBMUserLayoutStore;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.provider.PersonImpl;
+import org.jasig.portal.spring.PortalApplicationContextLocator;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.SmartCache;
 import org.jasig.portal.utils.XML;
+import org.springframework.context.ApplicationContext;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -70,14 +72,10 @@ public class RDBMDistributedLayoutStore
 
     private String systemDefaultUser = null;
     private boolean systemDefaultUserLoaded = false;
-    private final ConfigurationLoader configLoader;
-//    private Properties properties = null;
-//    private FragmentDefinition[] definitions = null;
-    private Map fragmentInfoCache = new HashMap();
+    private ConfigurationLoader configurationLoader;
+    private Map<String, FragmentNodeInfo> fragmentInfoCache = new ConcurrentHashMap<String, FragmentNodeInfo>();
     private LayoutDecorator decorator = null;
-    private FragmentActivator activator = null;
-    private Object initializationLock = new Object();
-    private boolean initialized = false;
+    private final FragmentActivator activator;
     static final String TEMPLATE_USER_NAME
         = "org.jasig.portal.services.Authentication.defaultTemplateUserName";
     static final String DECORATOR_PROPERTY = "layoutDecorator";
@@ -94,7 +92,7 @@ public class RDBMDistributedLayoutStore
     private static SmartCache ssdCache;
 
     /** Map of read/writer lock objects; one per unique person. */
-    private Map mLocks = new ConcurrentHashMap();
+    private final Map<Object, ReadWriteLock> mLocks = new ConcurrentHashMap<Object, ReadWriteLock>();
 
     /**
      * Method for acquiring copies of fragment layouts to assist in debugging.
@@ -102,29 +100,20 @@ public class RDBMDistributedLayoutStore
      * structure of the cached fragments use this to obtain copies.
      * @return Map
      */
-    public Map getFragmentLayoutCopies()
+    public Map<String, Document> getFragmentLayoutCopies()
     throws Exception
     {
-        if ( ! initialized )
-        {
-            synchronized( initializationLock )
-            {
-                if ( ! initialized )
-                {
-                    initializationLock.wait();
-                }
-            }
-        }
-        Map layouts = new HashMap();
+        this.waitForActivation();
+        
+        Map<String, Document> layouts = new HashMap<String, Document>();
 
-        FragmentDefinition[] definitions = configLoader.getFragments();
-        for(int i=0; definitions != null && i<definitions.length; i++)
-        {
+        final List<FragmentDefinition> definitions = configurationLoader.getFragments();
+        for (final FragmentDefinition fragmentDefinition : definitions) {
             Document layout = DocumentFactory.getNewDocument();
-            Node copy = layout.importNode(activator.getUserView(definitions[i].getOwnerId())
+            Node copy = layout.importNode(activator.getUserView(fragmentDefinition.getOwnerId())
                         .layout.getDocumentElement(), true);
             layout.appendChild(copy);
-            layouts.put(definitions[i].getOwnerId(), layout);
+            layouts.put(fragmentDefinition.getOwnerId(), layout);
         }
         return layouts;
     }
@@ -132,7 +121,7 @@ public class RDBMDistributedLayoutStore
     {
         Object key = new Integer(person.getID());
 
-        ReadWriteLock lock = (ReadWriteLock) mLocks.get(key);
+        ReadWriteLock lock = mLocks.get(key);
 
         if (null == lock)
         {
@@ -158,15 +147,17 @@ public class RDBMDistributedLayoutStore
         throws Exception
     {
         super();
+        
         tsdCache = new SmartCache();
         ssdCache = new SmartCache();
-
-        configLoader = ConfigurationLoader.load();
+        
+        final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
+        this.configurationLoader = (ConfigurationLoader)applicationContext.getBean("dlmConfigurationLoader", ConfigurationLoader.class);
 
         try
         {
 
-            String decoratorClass = configLoader.getProperty( DECORATOR_PROPERTY );
+            String decoratorClass = configurationLoader.getProperty( DECORATOR_PROPERTY );
 
             if ( decoratorClass != null )
                 decorator = DecoratorLoader.load( decoratorClass );
@@ -175,7 +166,7 @@ public class RDBMDistributedLayoutStore
         {
             LOG.error("\n\n---------- Warning ---------\nUnable to load "
                         + "layout decorator '"
-                        + configLoader.getProperty(DECORATOR_PROPERTY)
+                        + configurationLoader.getProperty(DECORATOR_PROPERTY)
                         + "' specified in dlm.xml. It will not be used.", e);
         }
 
@@ -188,9 +179,10 @@ public class RDBMDistributedLayoutStore
         // class and hence reentrance into an instance still being activated is
         // ok.
 
-        activator = new FragmentActivator(this, configLoader.getFragments());
+        activator = new FragmentActivator(this, configurationLoader.getFragments());
         Thread t = new Thread(PortalSessionManager.getThreadGroup(), "dlm activator")
             {
+                @Override
                 public void run()
                 {
                     try
@@ -205,9 +197,6 @@ public class RDBMDistributedLayoutStore
             };
         t.setName("DLM Fragment Activator");
         t.start();
-
-        // start fragment cleaning thread
-        initializeFragmentCleaner();
     }
 
     /**
@@ -216,6 +205,7 @@ public class RDBMDistributedLayoutStore
      * @param ssd Stylesheet description object
      * @return Integer
      */
+    @Override
     public Integer addStructureStylesheetDescription(StructureStylesheetDescription ssd)
         throws Exception
     {
@@ -229,6 +219,7 @@ public class RDBMDistributedLayoutStore
      * the version in the parent to add caching of stylesheets.
      * @param tsd Stylesheet description object
      */
+    @Override
     public Integer addThemeStylesheetDescription(ThemeStylesheetDescription tsd)
         throws Exception
     {
@@ -244,6 +235,7 @@ public class RDBMDistributedLayoutStore
      * @param stylesheetId id of the structure stylesheet
      * @return structure stylesheet description
      */
+    @Override
     public StructureStylesheetDescription getStructureStylesheetDescription(
             int stylesheetId) throws Exception
     {
@@ -267,6 +259,7 @@ public class RDBMDistributedLayoutStore
      * @param stylesheetId id of the theme stylesheet
      * @return theme stylesheet description
      */
+    @Override
     public ThemeStylesheetDescription getThemeStylesheetDescription(int stylesheetId)
         throws Exception
     {
@@ -292,6 +285,7 @@ public class RDBMDistributedLayoutStore
      * stylesheet id. Overloads a parent version for cache handling.
      * @param stylesheetId id of the structure stylesheet
      */
+    @Override
     public void removeStructureStylesheetDescription(int stylesheetId)
             throws Exception
     {
@@ -306,6 +300,7 @@ public class RDBMDistributedLayoutStore
      * stylesheet id. Overloads a parent version for cache handling.
      * @param stylesheetId id of the theme stylesheet
      */
+    @Override
     public void removeThemeStylesheetDescription(int stylesheetId)
             throws Exception
     {
@@ -322,6 +317,7 @@ public class RDBMDistributedLayoutStore
      * @param ssd
      *            new stylesheet description
      */
+    @Override
     public void updateStructureStylesheetDescription(StructureStylesheetDescription ssd)
         throws Exception
     {
@@ -338,6 +334,7 @@ public class RDBMDistributedLayoutStore
      *
      * @param tsd new stylesheet description
      */
+    @Override
     public void updateThemeStylesheetDescription(ThemeStylesheetDescription tsd)
         throws Exception
     {
@@ -348,108 +345,65 @@ public class RDBMDistributedLayoutStore
     }
 
     /**
-     * Starts a Thread that is responsible for cleaning out the layout fragments
-     * periodically. This is done so that changes made to the channels within a
-     * layout are visible to the users who have that layout incorporated into
-     * their own.
+     * Cleans out the layout fragments. This is done so that changes made to
+     * the channels within a layout are visible to the users who have that layout
+     * incorporated into their own.
      *
      * The interval at which this thread runs is set in the dlm.xml file as
      * 'org.jasig.portal.layout.dlm.RDBMDistributedLayoutStore.fragment_cache_refresh',
      * specified in minutes.
      */
-    private void initializeFragmentCleaner()
-    {
-        Thread t2 = new Thread(PortalSessionManager.getThreadGroup(), "dlm cleaner")
-            {
-                public void run()
+    public void cleanFragments() {
+        this.waitForActivation();
+        
+        //get each layout owner
+        final List<FragmentDefinition> definitions = configurationLoader.getFragments();
+        if ( null != definitions ) {
+            
+            final Map<IPerson, FragmentDefinition> owners = new HashMap<IPerson, FragmentDefinition>();
+            for (final FragmentDefinition fragmentDefinition : definitions) {
+                String ownerId = fragmentDefinition.getOwnerId();
+                int userId  = activator.getUserView(fragmentDefinition.getOwnerId()).getUserId();
+
+                if ( null != ownerId )
                 {
-                    Hashtable owners = new Hashtable();
-                    long wait_time;
-
-                    String temp = null;
-                    try
-                    {
-                    	temp = getProperty(
-                        	"org.jasig.portal.layout.dlm.RDBMDistributedLayoutStore.fragment_cache_refresh" );
-                        wait_time = (Integer.parseInt(temp)*60) * 1000;
-                    }
-                    catch( NumberFormatException e )
-                    {
-                    	// specific recovery: if the deployer mangled the property value
-                    	log.warn("unable to parse dlm.xml property org.jasig.portal.layout.dlm.RDBMDistributedLayoutStore.fragment_cache_refresh: "+temp+", set timeout to 1 hour",e);
-                        wait_time = 60 * (1000 * 60); // default to one hour
-                    }
-                    catch( Exception e)
-                    {
-                    	// general recovery: no matter what went wrong, fall back on default.
-                    	log.error("unable to parse dlm.xml property org.jasig.portal.layout.dlm.RDBMDistributedLayoutStore.fragment_cache_refresh: "+temp+", set timeout to 1 hour",e);
-                        wait_time = 60 * (1000 * 60); // default to one hour
-                    }
-
-                    while( true )
-                    {
-                        try
-                        {
-                            if ( ! initialized )
-                            {
-                                synchronized( initializationLock )
-                                {
-                                    if ( ! initialized )
-                                    {
-                                        initializationLock.wait();
-                                    }
-                                }
-                            }
-
-                            // sleep for specified period of time
-                            sleep( wait_time );
-
-                            //get each layout owner
-                            FragmentDefinition[] definitions = configLoader.getFragments();
-                            if ( null != definitions )
-                            {
-                                if ( null != owners && owners.size() == 0 )
-                                {
-                                    for( int i=0; i<definitions.length; i++ )
-                                    {
-                                        String ownerId = definitions[i].getOwnerId();
-                                        int userId  = activator.getUserView(definitions[i].getOwnerId()).getUserId();
-
-                                        if ( null != ownerId )
-                                        {
-                                            IPerson p = new PersonImpl();
-                                            p.setID( userId );
-                                            p.setAttribute( "username", ownerId );
-                                            owners.put(p, definitions[i]);
-                                        }
-                                    }
-                                }
-
-                                // cycle through each layout owner and clear out their
-                                // respective layouts so users fragments will be cleared
-                                for ( Enumeration e = owners.keys(); e.hasMoreElements(); )
-                                {
-                                    IPerson p = (IPerson) e.nextElement();
-                                    UserProfile profile = getUserProfileById(p, 1);
-                                    // fix hard coded 1 later for profiling
-                                    profile.setProfileId(1);
-                                    Document layout = getFragmentLayout(p,profile);
-                                    FragmentDefinition fragment = (FragmentDefinition) owners.get(p);
-                                    updateCachedLayout( layout, profile, fragment );
-                                }
-                            }
-                            fragmentInfoCache = new HashMap();
-                        }
-                        catch( Exception e )
-                        {
-                            LOG.error(" *** Error - DLM Fragment cleaner problem:  \n\n", e );
-                        }
-                    }
+                    IPerson p = new PersonImpl();
+                    p.setID( userId );
+                    p.setAttribute( "username", ownerId );
+                    owners.put(p, fragmentDefinition);
                 }
-            };
-        t2.setName("DLM Fragment Updater");
-        t2.setDaemon(true);
-        t2.start();
+            }
+
+            // cycle through each layout owner and clear out their
+            // respective layouts so users fragments will be cleared
+            for (final Map.Entry<IPerson, FragmentDefinition> ownerEntry : owners.entrySet()) {
+                final IPerson person = ownerEntry.getKey();
+                final UserProfile profile;
+                try {
+                    profile = getUserProfileById(person, 1);
+                }
+                catch (Exception e) {
+                    this.log.error("Failed to retrieve UserProfile for person " + person + " while cleaning fragment cache, person will be skipped", e);
+                    continue;
+                }
+                
+                // TODO fix hard coded 1 later for profiling
+                profile.setProfileId(1);
+                
+                final Document layout;
+                try {
+                    layout = getFragmentLayout(person, profile);
+                }
+                catch (Exception e) {
+                    this.log.error("Failed to retrieve layout for person " + person + " and profile " + profile + " while cleaning fragment cache, person will be skipped", e);
+                    continue;
+                }
+                
+                FragmentDefinition fragment = ownerEntry.getValue();
+                updateCachedLayout( layout, profile, fragment );
+            }
+        }
+        fragmentInfoCache = new ConcurrentHashMap<String, FragmentNodeInfo>();
     }
 
     /**
@@ -462,17 +416,19 @@ public class RDBMDistributedLayoutStore
      */
     public double getFragmentPrecedence( int index )
     {
-        FragmentDefinition[] definitions = configLoader.getFragments();
+        final List<FragmentDefinition> definitions = configurationLoader.getFragments();
         if ( index < 0 ||
-             index > definitions.length-1 )
+             index > definitions.size()-1 )
             return 0;
 
         // must pass through the array looking for the fragment with this
         // index since the array was sorted by precedence and then index
         // within precedence.
-        for ( int i=0; i<definitions.length; i++ )
-            if ( definitions[i].getIndex() == index )
-                return definitions[i].getPrecedence();
+        for (final FragmentDefinition fragmentDefinition : definitions) {
+            if ( fragmentDefinition.getIndex() == index ) {
+                return fragmentDefinition.getPrecedence();
+            }
+        }
         return 0; // should never get here.
     }
 
@@ -486,20 +442,12 @@ public class RDBMDistributedLayoutStore
        UI elements that they own or incorporated elements that they have been
        allowed to changed.
      */
+    @Override
     public Document getUserLayout (IPerson person,
                                    UserProfile profile)
         throws Exception
     {
-        if ( ! initialized )
-        {
-            synchronized( initializationLock )
-            {
-                if ( ! initialized )
-                {
-                    initializationLock.wait();
-                }
-            }
-        }
+        this.waitForActivation();
 
         Document layout = _getUserLayout( person, profile );
 
@@ -607,19 +555,9 @@ public class RDBMDistributedLayoutStore
     {
         return _safeGetUserLayout( person, profile );
     }
-
-    /**
-     * Called by fragment activation after loading of all fragment layouts is
-     * complete to allow other threads requesting layouts via getUserLayout
-     * to continue.
-     */
-    void activationFinished()
-    {
-        synchronized( initializationLock )
-        {
-            initialized = true;
-            initializationLock.notifyAll();
-        }
+    
+    void waitForActivation() {
+        this.activator.activateFragments();
     }
 
     /**
@@ -645,19 +583,20 @@ public class RDBMDistributedLayoutStore
 
         // Fix later to handle multiple profiles
         Element root = layout.getDocumentElement();
+        final UserView userView = activator.getUserView(fragment.getOwnerId());
         root.setAttribute( Constants.ATT_ID,
                            Constants.FRAGMENT_ID_USER_PREFIX +
-                           activator.getUserView(fragment.getOwnerId()).getUserId() +
+                           userView.getUserId() +
                            Constants.FRAGMENT_ID_LAYOUT_PREFIX + "1" );
         UserView view = new UserView( profile,
                                       layout,
-                                      activator.getUserView(fragment.getOwnerId()).structUserPrefs,
-                                      activator.getUserView(fragment.getOwnerId()).themeUserPrefs );
+                                      userView.structUserPrefs,
+                                      userView.themeUserPrefs );
         try
         {
             activator.fragmentizeLayout( view, fragment );
             this.activator.setUserView(fragment.getOwnerId(), view);
-            this.fragmentInfoCache = new HashMap();
+            this.fragmentInfoCache = new HashMap<String, FragmentNodeInfo>();
         }
         catch( Exception e )
         {
@@ -673,13 +612,15 @@ public class RDBMDistributedLayoutStore
     {
         String userName = (String) person.getAttribute( "username" );
 
-        FragmentDefinition[] definitions = configLoader.getFragments();
+        final List<FragmentDefinition> definitions = configurationLoader.getFragments();
         if ( userName != null && definitions != null )
         {
-            for( int i=0; i<definitions.length; i++ )
-                if ( definitions[i].defaultLayoutOwnerID != null &&
-                     definitions[i].defaultLayoutOwnerID.equals( userName ) )
+            for (final FragmentDefinition fragmentDefinition : definitions) {
+                if ( fragmentDefinition.defaultLayoutOwnerID != null &&
+                        fragmentDefinition.defaultLayoutOwnerID.equals( userName ) ) {
                     return true;
+                }
+            }
         }
         String globalDefault =  getProperty( "defaultLayoutOwner" );
         if ( globalDefault != null &&
@@ -723,17 +664,17 @@ public class RDBMDistributedLayoutStore
     {
         int userId = person.getID();
 
-        FragmentDefinition[] definitions = configLoader.getFragments();
+        final List<FragmentDefinition> definitions = configurationLoader.getFragments();
         if ( definitions != null )
         {
-            for( int i=0; i<definitions.length; i++ ) {
-                String ownerId = definitions[i].getOwnerId();
+            for (final FragmentDefinition fragmentDefinition : definitions) {
+                String ownerId = fragmentDefinition.getOwnerId();
                 int fdId = -1;
                 if (activator.hasUserView(ownerId)) {
                     fdId = activator.getUserView(ownerId).getUserId();
                 }
                 if ( fdId == userId ) {
-                    return definitions[i];
+                    return fragmentDefinition;
                 }
             }
         }
@@ -751,16 +692,17 @@ public class RDBMDistributedLayoutStore
                                          UserProfile profile )
         throws Exception
     {
-        Vector applicables = new Vector();
+        Vector<Document> applicables = new Vector<Document>();
 
-        FragmentDefinition[] definitions = configLoader.getFragments();
+        final List<FragmentDefinition> definitions = configurationLoader.getFragments();
         if ( definitions != null )
         {
-            for( int i=0; i<definitions.length; i++ )
-                if ( definitions[i].isApplicable(person) )
+            for (final FragmentDefinition fragmentDefinition : definitions) {
+                if ( fragmentDefinition.isApplicable(person) )
                 {
-                    applicables.add( activator.getUserView(definitions[i].getOwnerId()).layout );
+                    applicables.add( activator.getUserView(fragmentDefinition.getOwnerId()).layout );
                 }
+            }
         }
 
         Document PLF = (Document) person.getAttribute( Constants.PLF );
@@ -842,7 +784,7 @@ public class RDBMDistributedLayoutStore
      */
     public int getPropertyCount()
     {
-        return configLoader.getPropertyCount();
+        return configurationLoader.getPropertyCount();
     }
 
     /**
@@ -850,7 +792,7 @@ public class RDBMDistributedLayoutStore
      */
     public String getProperty( String name )
     {
-        return configLoader.getProperty( name );
+        return configurationLoader.getProperty( name );
     }
 
     /**
@@ -882,16 +824,15 @@ public class RDBMDistributedLayoutStore
     FragmentNodeInfo getFragmentNodeInfo(String sId)
     {
         // grab local pointers to variables subject to change at any time
-        Map infoCache = fragmentInfoCache;
-        FragmentDefinition[] defs = configLoader.getFragments();
+        Map<String, FragmentNodeInfo> infoCache = fragmentInfoCache;
+        final List<FragmentDefinition> fragments = configurationLoader.getFragments();
 
-        FragmentNodeInfo info = (FragmentNodeInfo) infoCache.get(sId);
+        FragmentNodeInfo info = infoCache.get(sId);
 
         if (info == null)
         {
-            for(int i=0; i<defs.length; i++)
-            {
-                Element node = activator.getUserView(defs[i].getOwnerId()).layout.getElementById(sId);
+            for (final FragmentDefinition fragmentDefinition : fragments) {
+                Element node = activator.getUserView(fragmentDefinition.getOwnerId()).layout.getElementById(sId);
                 if (node != null) // found it
                 {
                     if (node.getTagName().equals(Constants.ELM_CHANNEL))
@@ -1089,11 +1030,11 @@ public class RDBMDistributedLayoutStore
                 pstmt.setInt(5,profileId);
                 pstmt.setInt(6,stylesheetId);
                 rs = pstmt.executeQuery();
-                Map originIds = null;
+                Map<Integer, String> originIds = null;
                 try {
                     while (rs.next()) {
                         if (originIds == null)
-                                originIds = new HashMap();
+                                originIds = new HashMap<Integer, String>();
                         // get the LONG column first so Oracle doesn't toss a
                         // java.sql.SQLException: Stream has already been closed
                         String originId = rs.getString(2);
@@ -1138,7 +1079,7 @@ public class RDBMDistributedLayoutStore
                         int structId = rs.getInt(4);
                         String originId = null;
                         if (originIds != null)
-                                originId = (String) originIds.get(new Integer(structId));
+                                originId = originIds.get(new Integer(structId));
 
                         int param_type = rs.getInt(3);
                         if (rs.wasNull()) {
@@ -1370,19 +1311,11 @@ public class RDBMDistributedLayoutStore
 
 
 
+    @Override
     public StructureStylesheetUserPreferences getStructureStylesheetUserPreferences( IPerson person, int profileId, int stylesheetId)
         throws Exception
     {
-        if ( ! initialized )
-        {
-            synchronized( initializationLock )
-            {
-                if ( ! initialized )
-                {
-                    initializationLock.wait();
-                }
-            }
-        }
+        this.waitForActivation();
 
         DistributedUserPreferences ssup = getDistributedSSUP( person,
                                                               profileId,
@@ -1397,14 +1330,15 @@ public class RDBMDistributedLayoutStore
             return ssup;
 
         // regular user, find which layouts apply and include their set prefs
-        FragmentDefinition[] definitions = configLoader.getFragments();
-        if ( definitions != null )
+        final List<FragmentDefinition> fragments = configurationLoader.getFragments();
+        if ( fragments != null )
         {
-            for( int i=0; i<definitions.length; i++ )
-                if ( definitions[i].isApplicable(person) )
-                    loadIncorporatedPreferences
-                    ( person, STRUCT, ssup,
-                            activator.getUserView(definitions[i].getOwnerId()).structUserPrefs );
+            for (final FragmentDefinition fragmentDefinition : fragments) {
+                if ( fragmentDefinition.isApplicable(person) ) {
+                    loadIncorporatedPreferences( person, STRUCT, ssup,
+                            activator.getUserView(fragmentDefinition.getOwnerId()).structUserPrefs );
+                }
+            }
         }
 
         if (LOG.isDebugEnabled())
@@ -1416,19 +1350,11 @@ public class RDBMDistributedLayoutStore
         return ssup;
     }
 
+    @Override
     public ThemeStylesheetUserPreferences getThemeStylesheetUserPreferences( IPerson person, int profileId, int stylesheetId)
         throws Exception
     {
-        if ( initialized )
-        {
-            synchronized( initializationLock )
-            {
-                if ( ! initialized )
-                {
-                    initializationLock.wait();
-                }
-            }
-        }
+        this.waitForActivation();
 
         DistributedUserPreferences tsup = getDistributedTSUP( person,
                                                               profileId,
@@ -1443,13 +1369,15 @@ public class RDBMDistributedLayoutStore
             return tsup;
 
         // regular user, find which layouts apply and include their set prefs
-        FragmentDefinition[] definitions = configLoader.getFragments();
-        if ( definitions != null )
+        final List<FragmentDefinition> fragments = configurationLoader.getFragments();
+        if ( fragments != null )
         {
-            for( int i=0; i<definitions.length; i++ )
-                if ( definitions[i].isApplicable(person) )
+            for (final FragmentDefinition fragmentDefinition : fragments) {
+                if ( fragmentDefinition.isApplicable(person) ) {
                     loadIncorporatedPreferences( person, THEME, tsup,
-                            activator.getUserView(definitions[i].getOwnerId()).themeUserPrefs);
+                            activator.getUserView(fragmentDefinition.getOwnerId()).themeUserPrefs);
+                }
+            }
         }
 
         if (LOG.isDebugEnabled())
@@ -1598,8 +1526,9 @@ public class RDBMDistributedLayoutStore
             UserProfile profile = getUserProfileById(person, 1);
             ssup = new DistributedUserPreferences(
                     (StructureStylesheetUserPreferences) ssup);
-            UserView view = new UserView(profile, activator.getUserView(ownedFragment.getOwnerId()).layout,
-                    ssup, activator.getUserView(ownedFragment.getOwnerId()).themeUserPrefs);
+            final UserView userView = activator.getUserView(ownedFragment.getOwnerId());
+            UserView view = new UserView(profile, userView.layout,
+                    ssup, userView.themeUserPrefs);
             activator.fragmentizeSSUP(view, ownedFragment);
             this.activator.setUserView(ownedFragment.getOwnerId(), view);
         }
@@ -1639,7 +1568,7 @@ public class RDBMDistributedLayoutStore
             type = Constants.NS + type.substring(Constants.LEGACY_NS.length());
 
   if (ls.isChannel()) {
-    ChannelDefinition channelDef = crs.getChannelDefinition(ls.getChanId());
+    ChannelDefinition channelDef = channelRegistryStore.getChannelDefinition(ls.getChanId());
     if (channelDef != null && channelApproved(channelDef.getApprovalDate())) {
         if (localeAware) {
             channelDef.setLocale(ls.getLocale()); // for i18n by Shoji
@@ -1916,7 +1845,7 @@ public class RDBMDistributedLayoutStore
             NodeList parameters = node.getChildNodes();
             if (parameters != null && isChannel)
             {
-                ChannelDefinition channelDef = crs.getChannelDefinition(chanId);
+                ChannelDefinition channelDef = channelRegistryStore.getChannelDefinition(chanId);
                 for (int i = 0; i < parameters.getLength(); i++)
                 {
                     if (parameters.item(i).getNodeName().equals("parameter"))

@@ -5,6 +5,6 @@
     https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
 
 -->
-<Context crossContext="true" reloadable="false">
+<Context crossContext="true">
     <Manager pathname="" className="org.apache.catalina.session.StandardManager"/>
 </Context>

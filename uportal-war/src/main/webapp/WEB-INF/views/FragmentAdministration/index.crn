@@ -5,34 +5,36 @@
     https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
 
 -->
-<with>
-    <attribute key="dlmConfigLoader">${groovy(org.jasig.portal.layout.dlm.ConfigurationLoader.load())}</attribute>
-    <attribute key="USERNAME">${jexl(WebAttributes.REQUEST.getRemoteUser())}</attribute>
-    <attribute key="PERMISSIONS">${groovy([])}</attribute>
-    <subtasks>
-        <groovy>
-            <script>
-                def authServ = org.jasig.portal.security.provider.AuthorizationImpl.singleton();
-                def principal = authServ.newPrincipal('${USERNAME}', org.jasig.portal.security.IPerson.class);
-                def grants = authServ.getAllPermissionsForPrincipal(principal, null, 'IMPERSONATE', null);
-                for (g in grants) {
-                    PERMISSIONS.add(g);
-                }
-            </script>
-        </groovy>
-        <with-attribute key="FRAGMENTS" value="${groovy(new TreeMap())}">
-            <for-each attribute-name="frag" items="${groovy(dlmConfigLoader.getFragments())}">
-                <groovy>
-                    <script>
-                        for (p in PERMISSIONS) {
-                            if (p.getType().equals(org.jasig.portal.security.IPermission.PERMISSION_TYPE_GRANT) &amp;&amp; frag.getOwnerId().matches(p.getTarget())) {
-                                FRAGMENTS.put(frag.getOwnerId(), frag.getName());
+<with-attribute key="PORTAL_CONTEXT" value="${groovy(org.jasig.portal.spring.PortalApplicationContextLocator.getApplicationContext())}">
+    <with>
+        <attribute key="dlmConfigLoader">${groovy(PORTAL_CONTEXT.getBean("dlmConfigurationLoader"))}</attribute>
+        <attribute key="USERNAME">${jexl(WebAttributes.REQUEST.getRemoteUser())}</attribute>
+        <attribute key="PERMISSIONS">${groovy([])}</attribute>
+        <subtasks>
+            <groovy>
+                <script>
+                    def authServ = org.jasig.portal.security.provider.AuthorizationImpl.singleton();
+                    def principal = authServ.newPrincipal('${USERNAME}', org.jasig.portal.security.IPerson.class);
+                    def grants = authServ.getAllPermissionsForPrincipal(principal, null, 'IMPERSONATE', null);
+                    for (g in grants) {
+                        PERMISSIONS.add(g);
+                    }
+                </script>
+            </groovy>
+            <with-attribute key="FRAGMENTS" value="${groovy(new TreeMap())}">
+                <for-each attribute-name="frag" items="${groovy(dlmConfigLoader.getFragments())}">
+                    <groovy>
+                        <script>
+                            for (p in PERMISSIONS) {
+                                if (p.getType().equals(org.jasig.portal.security.IPermission.PERMISSION_TYPE_GRANT) &amp;&amp; frag.getOwnerId().matches(p.getTarget())) {
+                                    FRAGMENTS.put(frag.getOwnerId(), frag.getName());
+                                }
                             }
-                        }
-                    </script>
-                </groovy>
-            </for-each>
-            <request-dispatcher resource="/WEB-INF/jsp/FragmentAdministration/index.jsp"/>
-        </with-attribute>
-    </subtasks>
-</with>
+                        </script>
+                    </groovy>
+                </for-each>
+                <request-dispatcher resource="/WEB-INF/jsp/FragmentAdministration/index.jsp"/>
+            </with-attribute>
+        </subtasks>
+    </with>
+</with-attribute>
