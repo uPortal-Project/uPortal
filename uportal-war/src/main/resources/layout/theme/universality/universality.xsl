@@ -95,7 +95,7 @@
   <xsl:variable name="SKIN_PATH" select="concat($MEDIA_PATH,'/',$SKIN)"/>
   <xsl:variable name="SCRIPT_PATH">media/skins/universality/common/javascript</xsl:variable>
   <xsl:variable name="RESOURCE_PATH">/ResourceServingWebapp/rs</xsl:variable>
-  <xsl:variable name="PORTAL_SHORTCUT_ICON">/favicon.ico</xsl:variable>
+  <xsl:variable name="PORTAL_SHORTCUT_ICON">favicon.ico</xsl:variable>
   
   
   <!-- ****** LOCALIZATION SETTINGS ****** -->
