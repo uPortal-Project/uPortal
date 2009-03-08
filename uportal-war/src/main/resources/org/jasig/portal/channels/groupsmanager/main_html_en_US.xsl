@@ -22,6 +22,7 @@
   <xsl:param name="page"/>
   <xsl:param name="mediaBase">media</xsl:param>
   <xsl:param name="iconBase"><xsl:value-of select="$mediaBase" />/skins/icons</xsl:param>
+  <xsl:param name="famfamfamBase">/ResourceServingWebapp/rs/famfamfam/silk/1.3</xsl:param>
   <xsl:key name="selectedGroup" match="group[@selected='true']" use="@key"/>
   <xsl:key name="selectedEntity" match="entity[@selected='true']" use="@key"/>
   <xsl:key name="groupByID" match="group" use="@id"/>
@@ -192,19 +193,19 @@
       <xsl:choose>
         <xsl:when test="$mode='select'"/>
         <xsl:when test="$group/@searchResults='true'">
-          <a class="groupmgr-delete-group" href="javascript:this.location.href='{$baseActionURL}?grpCommand=Delete&amp;grpCommandArg={$group/@id}';"><img border="0" src="{$iconBase}/cross.png" alt="Delete Group" title="Delete Group"/>Delete Group</a>
+          <a class="groupmgr-delete-group" href="javascript:this.location.href='{$baseActionURL}?grpCommand=Delete&amp;grpCommandArg={$group/@id}';"><img border="0" src="{$famfamfamBase}/cross.png" alt="Delete Group" title="Delete Group"/>Delete Group</a>
         </xsl:when>
         <xsl:when test="$mode='edit'">
-          <a class="groupmgr-done-editing" href="{$baseActionURL}?grpCommand=Unlock&amp;grpCommandArg={$group/@id}"><img border="0" src="{$iconBase}/tick.png" alt="Done Editing" title="Done Editing"/>Done Editing</a>
+          <a class="groupmgr-done-editing" href="{$baseActionURL}?grpCommand=Unlock&amp;grpCommandArg={$group/@id}"><img border="0" src="{$famfamfamBase}/tick.png" alt="Done Editing" title="Done Editing"/>Done Editing</a>
           <xsl:if test="$group/@canDelete='true'">
-            <a class="groupmgr-delete-group" href="javascript:grpDeleteGroup('{$baseActionURL}?grpCommand=Delete&amp;grpCommandArg={$group/@id}');"><img border="0" src="{$iconBase}/cross.png" alt="Delete Group" title="Delete Group"/>Delete Group</a>
+            <a class="groupmgr-delete-group" href="javascript:grpDeleteGroup('{$baseActionURL}?grpCommand=Delete&amp;grpCommandArg={$group/@id}');"><img border="0" src="{$famfamfamBase}/cross.png" alt="Delete Group" title="Delete Group"/>Delete Group</a>
           </xsl:if>
         </xsl:when>
         <xsl:when test="($group/@editable='true') and ($group/@canUpdate='true' or $group/@canAssignPermissions='true' or $group/@canManageMembers='true' or $group/@canCreateGroup='true')">
-          <a class="groupmgr-edit-group" href="{$baseActionURL}?grpCommand=Lock&amp;grpCommandArg={$group/@id}"><img border="0" src="{$iconBase}/pencil.png" alt="Edit Group" title="Edit Group"/>Edit Group</a>
+          <a class="groupmgr-edit-group" href="{$baseActionURL}?grpCommand=Lock&amp;grpCommandArg={$group/@id}"><img border="0" src="{$famfamfamBase}/pencil.png" alt="Edit Group" title="Edit Group"/>Edit Group</a>
         </xsl:when>
       </xsl:choose>
-      <a class="groupmgr-close-group" href="{$baseActionURL}?grpCommand=Highlight&amp;grpCommandArg="><img border="0" src="{$iconBase}/cancel.png" alt="Close Group" title="Close Group"/>Close Group</a>
+      <a class="groupmgr-close-group" href="{$baseActionURL}?grpCommand=Highlight&amp;grpCommandArg="><img border="0" src="{$famfamfamBase}/cancel.png" alt="Close Group" title="Close Group"/>Close Group</a>
     </xsl:if>
   </xsl:template>
   
@@ -243,7 +244,7 @@
           <xsl:if test="not($group/@id=0) and ($group/@canSelect='true')">
             <xsl:choose>
               <xsl:when test="($group/@selected='true') or (key('selectedGroup',$group/@key))">
-                <img border="0" src="{$iconBase}/tick.png" alt="Selected" title="Selected"/>
+                <img border="0" src="{$famfamfamBase}/tick.png" alt="Selected" title="Selected"/>
               </xsl:when>
               <xsl:otherwise>
                 <input type="checkbox" name="grpSelect//{$group/@id}|group" value="true" />
@@ -320,12 +321,12 @@
         <!-- Pagination controls -->
         <xsl:if test="$page &gt; 1">
           <div id="groupsmgrPagination">
-            <a class="groupmgr-paginate-first" href="{$baseActionURL}?grpPageBack={$page - 1}"><img src="{$iconBase}/resultset_first.png" border="0" title="First Page" alt="First Page"/></a>
-            <a class="groupmgr-paginate-previous" href="{$baseActionURL}?grpPageBack=1"><img src="{$iconBase}/resultset_previous.png" border="0" hspace="1" vspace="0" title="Previous Page" alt="Previous Page"/></a>
+            <a class="groupmgr-paginate-first" href="{$baseActionURL}?grpPageBack={$page - 1}"><img src="{$famfamfamBase}/resultset_first.png" border="0" title="First Page" alt="First Page"/></a>
+            <a class="groupmgr-paginate-previous" href="{$baseActionURL}?grpPageBack=1"><img src="{$famfamfamBase}/resultset_previous.png" border="0" hspace="1" vspace="0" title="Previous Page" alt="Previous Page"/></a>
             <xsl:value-of select="concat($page,' / ',ceiling($siblingCount div $pageSize))"/>
             <xsl:if test="($pageSize*$page) &lt; $siblingCount">
-              <a class="groupmgr-paginate-next" href="{$baseActionURL}?grpPageForward=1"><img src="{$iconBase}/resultset_next.png" border="0" title="Next Page" alt="Next Page"/></a>
-              <a class="groupmgr-paginate-last" href="{$baseActionURL}?grpPageForward={ceiling($siblingCount div $pageSize) - $page}"><img src="{$iconBase}/resultset_last.png" border="0" title="Last Page" alt="Last Page"/></a>
+              <a class="groupmgr-paginate-next" href="{$baseActionURL}?grpPageForward=1"><img src="{$famfamfamBase}/resultset_next.png" border="0" title="Next Page" alt="Next Page"/></a>
+              <a class="groupmgr-paginate-last" href="{$baseActionURL}?grpPageForward={ceiling($siblingCount div $pageSize) - $page}"><img src="{$famfamfamBase}/resultset_last.png" border="0" title="Last Page" alt="Last Page"/></a>
             </xsl:if>
           </div>
         </xsl:if>
@@ -346,7 +347,7 @@
                   <xsl:if test="not(@id=0) and @canSelect='true'">
                     <xsl:choose>
                       <xsl:when test="(@selected='true') or (key('selectedGroup',@key))">
-                        <img border="0" src="{$iconBase}/tick.png" alt="Selected" title="Selected"/>
+                        <img border="0" src="{$famfamfamBase}/tick.png" alt="Selected" title="Selected"/>
                       </xsl:when>
                       <xsl:otherwise>
                       	<input type="checkbox" name="grpSelect//{@id}|group" value="true" />
@@ -370,17 +371,17 @@
                 
                 <xsl:if test="(($mode='edit') or ($mode='members')) and (../@canManageMembers='true' or ($grpServantMode='true'))">
                   <a class="groupmgr-remove-member" href="javascript:grpRemoveMember('{$baseActionURL}?grpCommand=Remove&amp;grpCommandArg=parent.{parent::group/@id}|child.{@id}','{RDF/Description/title}','{parent::group/RDF/Description/title}');">
-                  	<img src="{$iconBase}/cross.png" border="0" alt="Remove Member" title="Remove Member"/>Remove Member
+                  	<img src="{$famfamfamBase}/cross.png" border="0" alt="Remove Member" title="Remove Member"/>Remove Member
                   </a>
                 </xsl:if>
                 
                 <xsl:choose>
                   <xsl:when test="not($group/@canViewProperties='true')"/>
                   <xsl:when test="properties">
-                  	<a class="groupmgr-hide-info" href="{$baseActionURL}?grpCommand=HideProperties&amp;grpCommandArg={@id}"><img src="{$iconBase}/cancel.png" border="0" alt="Hide Info" title="Hide Info"/>Hide Info</a>
+                  	<a class="groupmgr-hide-info" href="{$baseActionURL}?grpCommand=HideProperties&amp;grpCommandArg={@id}"><img src="{$famfamfamBase}/cancel.png" border="0" alt="Hide Info" title="Hide Info"/>Hide Info</a>
                   </xsl:when>
                   <xsl:otherwise>
-                  	<a class="groupmgr-show-info" href="{$baseActionURL}?grpCommand=ShowProperties&amp;grpCommandArg={@id}"><img src="{$iconBase}/information.png" border="0" alt="Show Info" title="Show Info"/>Show Info</a>
+                  	<a class="groupmgr-show-info" href="{$baseActionURL}?grpCommand=ShowProperties&amp;grpCommandArg={@id}"><img src="{$famfamfamBase}/information.png" border="0" alt="Show Info" title="Show Info"/>Show Info</a>
                   </xsl:otherwise>
                 </xsl:choose>
                 
@@ -400,7 +401,7 @@
                 <xsl:if test="(($group/@searchResults='true') or @canSelect='true')">
                   <xsl:choose>
                     <xsl:when test="(@selected='true') or key('selectedEntity',@key)">
-                      <img border="0" src="{$iconBase}/tick.png" alt="Selected" title="Selected"/>
+                      <img border="0" src="{$famfamfamBase}/tick.png" alt="Selected" title="Selected"/>
                     </xsl:when>
                     <xsl:otherwise>
                       <input type="checkbox" name="grpSelect//{@id}|entity" value="true" />
@@ -415,16 +416,16 @@
               
               <xsl:if test="(($mode='edit') or ($mode='members')) and ((../@canManageMembers='true') or ($grpServantMode='true'))">
               	<a class="groupmgr-remove-member" href="javascript:grpRemoveMember('{$baseActionURL}?grpCommand=Remove&amp;grpCommandArg=parent.{parent::group/@id}|child.{@id}','{@displayName}','{parent::group/RDF/Description/title}');">
-              		<img src="{$iconBase}/cross.gif" border="0" alt="Remove Member" title="Remove Member"/>Remove Member
+              		<img src="{$famfamfamBase}/cross.gif" border="0" alt="Remove Member" title="Remove Member"/>Remove Member
               	</a>
               </xsl:if>
               
               <xsl:choose>
                 <xsl:when test="properties">
-                	<a class="groupmgr-hide-info" href="{$baseActionURL}?grpCommand=HideProperties&amp;grpCommandArg={@id}"><img src="{$iconBase}/cancel.png" border="0" alt="Hide Info" title="Hide Info"/>Hide Info</a>
+                	<a class="groupmgr-hide-info" href="{$baseActionURL}?grpCommand=HideProperties&amp;grpCommandArg={@id}"><img src="{$famfamfamBase}/cancel.png" border="0" alt="Hide Info" title="Hide Info"/>Hide Info</a>
                 </xsl:when>
                 <xsl:otherwise>
-                	<a class="groupmgr-show-info" href="{$baseActionURL}?grpCommand=ShowProperties&amp;grpCommandArg={@id}"><img src="{$iconBase}/information.png" border="0" alt="Show Info" title="Show Info"/>Show Info</a>
+                	<a class="groupmgr-show-info" href="{$baseActionURL}?grpCommand=ShowProperties&amp;grpCommandArg={@id}"><img src="{$famfamfamBase}/information.png" border="0" alt="Show Info" title="Show Info"/>Show Info</a>
                 </xsl:otherwise>
               </xsl:choose>
               
@@ -519,7 +520,7 @@
                     </a>
                   </xsl:when>
               		<xsl:otherwise>
-              			<img class="groupmgr-tree-leaf" border="0" src="{$iconBase}/bullet_black.png" alt="Group" title="Group" />
+              			<img class="groupmgr-tree-leaf" border="0" src="{$famfamfamBase}/bullet_black.png" alt="Group" title="Group" />
               		</xsl:otherwise>
               	</xsl:choose>                
               </td>
