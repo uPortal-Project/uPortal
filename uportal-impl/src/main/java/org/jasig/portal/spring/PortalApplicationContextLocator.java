@@ -39,6 +39,7 @@ public class PortalApplicationContextLocator implements ServletContextListener {
     private static Log LOGGER = LogFactory.getLog(PortalApplicationContextLocator.class);
     
     private static final SingletonDoubleCheckedCreator<ApplicationContext> applicationContextCreator = new PortalApplicationContextCreator();
+    private static Throwable directCreatorThrowable;
     private static ServletContext servletContext;
 
     /* (non-Javadoc)
@@ -108,16 +109,25 @@ public class PortalApplicationContextLocator implements ServletContextListener {
             LOGGER.debug("Using WebApplicationContext");
             
             if (applicationContextCreator.isCreated()) {
-                LOGGER.error("A portal managed ApplicationContext has already been created but now a ServletContext is available and a WebApplicationContext will be returned. This situation should be resolved by delaying calls to this class until after the web-application has completely initialized.");
+                final IllegalStateException createException = new IllegalStateException("A portal managed ApplicationContext has already been created but now a ServletContext is available and a WebApplicationContext will be returned. " +
+                        "This situation should be resolved by delaying calls to this class until after the web-application has completely initialized.");
+                LOGGER.error(createException, createException);
+                LOGGER.error("Stack trace of original ApplicationContext creator", directCreatorThrowable);
+                throw createException;
             }
-            return WebApplicationContextUtils.getWebApplicationContext(context);
+
+            final WebApplicationContext webApplicationContext = WebApplicationContextUtils.getWebApplicationContext(context);
+            if (webApplicationContext == null) {
+                throw new IllegalStateException("ServletContext is available but WebApplicationContextUtils.getWebApplicationContext(ServletContext) returned null. Either the application context failed to load or is not yet done loading.");
+            }
+            return webApplicationContext;
         }
         
         return applicationContextCreator.get();
     }
     
     /**
-     * Creator class that knows how to instatiate the lazily initialized portal application context if needed
+     * Creator class that knows how to instantiate the lazily initialized portal application context if needed
      */
     private static class PortalApplicationContextCreator extends SingletonDoubleCheckedCreator<ApplicationContext> {
         
@@ -134,6 +144,8 @@ public class PortalApplicationContextLocator implements ServletContextListener {
 
             genericApplicationContext.refresh();
 
+            directCreatorThrowable = new Throwable();
+            directCreatorThrowable.fillInStackTrace();
             LOGGER.info("Created new lazily initialized GenericApplicationContext for the portal in " + (System.currentTimeMillis() - startTime) + "ms");
 
             return genericApplicationContext;

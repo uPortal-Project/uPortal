@@ -47,12 +47,13 @@ import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.layout.LayoutStructure;
 import org.jasig.portal.layout.StructureParameter;
 import org.jasig.portal.rdbm.DatabaseMetaDataImpl;
+import org.jasig.portal.rdbm.IDatabaseMetadata;
+import org.jasig.portal.rdbm.IJoinQueryString;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.utils.CounterStoreFactory;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.ICounterStore;
-
 import org.jasig.portal.utils.ResourceLoader;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 import org.w3c.dom.Document;
@@ -80,42 +81,62 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
   protected static int DEBUG = 0;
   protected static final String channelPrefix = "n";
   protected static final String folderPrefix = "s";
-  protected IChannelRegistryStore crs;
-  protected ICounterStore csdb;
+  
+  private final IPerson systemUser;
+  
+  private final DataSource dataSource;
+  private final IDatabaseMetadata databaseMetadata;
+  protected final IChannelRegistryStore channelRegistryStore;
+  protected final ICounterStore counterStore;
+  
   // I18n property
   protected static final boolean localeAware = LocaleManager.isLocaleAware();
 
-  public RDBMUserLayoutStore () throws Exception {
-    crs = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl();
-    csdb = CounterStoreFactory.getCounterStoreImpl();
-    if (RDBMServices.getDbMetaData().supportsOuterJoins()) {
-      if (RDBMServices.getDbMetaData().getJoinQuery() instanceof DatabaseMetaDataImpl.JdbcDb) {
-        RDBMServices.getDbMetaData().getJoinQuery().addQuery("layout",
-          "{oj UP_LAYOUT_STRUCT ULS LEFT OUTER JOIN UP_LAYOUT_PARAM USP ON ULS.USER_ID = USP.USER_ID AND ULS.STRUCT_ID = USP.STRUCT_ID} WHERE");
-        RDBMServices.getDbMetaData().getJoinQuery().addQuery("ss_struct", "{oj UP_SS_STRUCT USS LEFT OUTER JOIN UP_SS_STRUCT_PAR USP ON USS.SS_ID=USP.SS_ID} WHERE");
-        RDBMServices.getDbMetaData().getJoinQuery().addQuery("ss_theme", "{oj UP_SS_THEME UTS LEFT OUTER JOIN UP_SS_THEME_PARM UTP ON UTS.SS_ID=UTP.SS_ID} WHERE");
-      } else if (RDBMServices.getDbMetaData().getJoinQuery() instanceof DatabaseMetaDataImpl.PostgreSQLDb) {
-         RDBMServices.getDbMetaData().getJoinQuery().addQuery("layout",
-          "UP_LAYOUT_STRUCT ULS LEFT OUTER JOIN UP_LAYOUT_PARAM USP ON ULS.USER_ID = USP.USER_ID AND ULS.STRUCT_ID = USP.STRUCT_ID WHERE");
-        RDBMServices.getDbMetaData().getJoinQuery().addQuery("ss_struct", "UP_SS_STRUCT USS LEFT OUTER JOIN UP_SS_STRUCT_PAR USP ON USS.SS_ID=USP.SS_ID WHERE");
-        RDBMServices.getDbMetaData().getJoinQuery().addQuery("ss_theme", "UP_SS_THEME UTS LEFT OUTER JOIN UP_SS_THEME_PARM UTP ON UTS.SS_ID=UTP.SS_ID WHERE");
-     } else if (RDBMServices.getDbMetaData().getJoinQuery() instanceof DatabaseMetaDataImpl.OracleDb) {
-        RDBMServices.getDbMetaData().getJoinQuery().addQuery("layout",
-          "UP_LAYOUT_STRUCT ULS, UP_LAYOUT_PARAM USP WHERE ULS.STRUCT_ID = USP.STRUCT_ID(+) AND ULS.USER_ID = USP.USER_ID(+) AND");
-        RDBMServices.getDbMetaData().getJoinQuery().addQuery("ss_struct", "UP_SS_STRUCT USS, UP_SS_STRUCT_PAR USP WHERE USS.SS_ID=USP.SS_ID(+) AND");
-        RDBMServices.getDbMetaData().getJoinQuery().addQuery("ss_theme", "UP_SS_THEME UTS, UP_SS_THEME_PARM UTP WHERE UTS.SS_ID=UTP.SS_ID(+) AND");
-      } else {
-        throw new Exception("Unknown database driver");
-      }
+    public RDBMUserLayoutStore () throws Exception {
+        this.dataSource = RDBMServices.getDataSource();
+        this.databaseMetadata = RDBMServices.getDbMetaData();
+        this.channelRegistryStore = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl();
+        this.counterStore = CounterStoreFactory.getCounterStoreImpl();
+        
+        if (this.databaseMetadata.supportsOuterJoins()) {
+            final IJoinQueryString joinQuery = this.databaseMetadata.getJoinQuery();
+
+            if (joinQuery instanceof DatabaseMetaDataImpl.JdbcDb) {
+                joinQuery.addQuery("layout",
+                        "{oj UP_LAYOUT_STRUCT ULS LEFT OUTER JOIN UP_LAYOUT_PARAM USP ON ULS.USER_ID = USP.USER_ID AND ULS.STRUCT_ID = USP.STRUCT_ID} WHERE");
+                joinQuery.addQuery("ss_struct",
+                        "{oj UP_SS_STRUCT USS LEFT OUTER JOIN UP_SS_STRUCT_PAR USP ON USS.SS_ID=USP.SS_ID} WHERE");
+                joinQuery.addQuery("ss_theme",
+                        "{oj UP_SS_THEME UTS LEFT OUTER JOIN UP_SS_THEME_PARM UTP ON UTS.SS_ID=UTP.SS_ID} WHERE");
+            }
+            else if (joinQuery instanceof DatabaseMetaDataImpl.PostgreSQLDb) {
+                joinQuery.addQuery("layout",
+                        "UP_LAYOUT_STRUCT ULS LEFT OUTER JOIN UP_LAYOUT_PARAM USP ON ULS.USER_ID = USP.USER_ID AND ULS.STRUCT_ID = USP.STRUCT_ID WHERE");
+                joinQuery.addQuery("ss_struct",
+                        "UP_SS_STRUCT USS LEFT OUTER JOIN UP_SS_STRUCT_PAR USP ON USS.SS_ID=USP.SS_ID WHERE");
+                joinQuery.addQuery("ss_theme",
+                        "UP_SS_THEME UTS LEFT OUTER JOIN UP_SS_THEME_PARM UTP ON UTS.SS_ID=UTP.SS_ID WHERE");
+            }
+            else if (joinQuery instanceof DatabaseMetaDataImpl.OracleDb) {
+                joinQuery.addQuery("layout",
+                        "UP_LAYOUT_STRUCT ULS, UP_LAYOUT_PARAM USP WHERE ULS.STRUCT_ID = USP.STRUCT_ID(+) AND ULS.USER_ID = USP.USER_ID(+) AND");
+                joinQuery.addQuery("ss_struct",
+                        "UP_SS_STRUCT USS, UP_SS_STRUCT_PAR USP WHERE USS.SS_ID=USP.SS_ID(+) AND");
+                joinQuery.addQuery("ss_theme", "UP_SS_THEME UTS, UP_SS_THEME_PARM UTP WHERE UTS.SS_ID=UTP.SS_ID(+) AND");
+            }
+            else {
+                throw new Exception("Unknown database driver");
+            }
+        }
+
+        // Load the "system" user id from the database
+        final SimpleJdbcTemplate jdbcTemplate = new SimpleJdbcTemplate(this.dataSource);
+        final int systemUserId = jdbcTemplate.queryForInt("SELECT USER_ID FROM UP_USER WHERE USER_NAME = 'system'");
+        log.info("Found user id " + systemUserId + " for the 'system' user.");
+        this.systemUser = new SystemUser(systemUserId);
     }
-    
-    // Load the "system" user id from the database
-    final DataSource dataSource = RDBMServices.getDataSource();
-    final SimpleJdbcTemplate jdbcTemplate = new SimpleJdbcTemplate(dataSource);
-    final int systemUserId = jdbcTemplate.queryForInt("SELECT USER_ID FROM UP_USER WHERE USER_NAME = 'system'");
-    log.info("Found user id " + systemUserId + " for the 'system' user.");
-    this.systemUser = new SystemUser(systemUserId);
-  }
+  
+
 
   /**
    * Registers a NEW structure stylesheet with the database.
@@ -130,7 +151,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       Statement stmt = con.createStatement();
       try {
         // we assume that this is a new stylesheet.
-        int id = csdb.getIncrementIntegerId("UP_SS_STRUCT");
+        int id = counterStore.getIncrementIntegerId("UP_SS_STRUCT");
         ssd.setId(id);
         String sQuery = "INSERT INTO UP_SS_STRUCT (SS_ID,SS_NAME,SS_URI,SS_DESCRIPTION_URI,SS_DESCRIPTION_TEXT) VALUES ("
             + id + ",'" + ssd.getStylesheetName() + "','" + ssd.getStylesheetURI() + "','" + ssd.getStylesheetDescriptionURI()
@@ -197,7 +218,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       Statement stmt = con.createStatement();
       try {
         // we assume that this is a new stylesheet.
-        int id = csdb.getIncrementIntegerId("UP_SS_THEME");
+        int id = counterStore.getIncrementIntegerId("UP_SS_THEME");
         tsd.setId(id);
         String sQuery = "INSERT INTO UP_SS_THEME (SS_ID,SS_NAME,SS_URI,SS_DESCRIPTION_URI,SS_DESCRIPTION_TEXT,STRUCT_SS_ID,SAMPLE_URI,SAMPLE_ICON_URI,MIME_TYPE,DEVICE_TYPE,SERIALIZER_NAME,UP_MODULE_CLASS) VALUES ("
             + id + ",'" + tsd.getStylesheetName() + "','" + tsd.getStylesheetURI() + "','" + tsd.getStylesheetDescriptionURI()
@@ -444,7 +465,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
     // generate an id for this profile
     Connection con = RDBMServices.getConnection();
     try {
-      int id = csdb.getIncrementIntegerId("UP_USER_PROFILE");
+      int id = counterStore.getIncrementIntegerId("UP_USER_PROFILE");
       profile.setProfileId(id);
       Statement stmt = con.createStatement();
       try {
@@ -736,8 +757,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       Statement stmt = con.createStatement();
       int dbOffset = 0;
       String sQuery = "SELECT SS_NAME,SS_URI,SS_DESCRIPTION_URI,SS_DESCRIPTION_TEXT";
-      if (RDBMServices.getDbMetaData().supportsOuterJoins()) {
-        sQuery += ",TYPE,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT FROM " + RDBMServices.getDbMetaData().getJoinQuery().getQuery("ss_struct");
+      if (this.databaseMetadata.supportsOuterJoins()) {
+        sQuery += ",TYPE,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT FROM " + this.databaseMetadata.getJoinQuery().getQuery("ss_struct");
         dbOffset = 4;
       } else {
         sQuery += " FROM UP_SS_STRUCT USS WHERE";
@@ -757,7 +778,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           ssd.setStylesheetWordDescription(rs.getString(4));
         }
 
-        if (!RDBMServices.getDbMetaData().supportsOuterJoins()) {
+        if (!this.databaseMetadata.supportsOuterJoins()) {
           rs.close();
           // retrieve stylesheet params and attributes
           sQuery = "SELECT TYPE,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT FROM UP_SS_STRUCT_PAR WHERE SS_ID=" + stylesheetId;
@@ -767,7 +788,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
         }
 
         while (true) {
-          if (!RDBMServices.getDbMetaData().supportsOuterJoins() && !rs.next()) {
+          if (!this.databaseMetadata.supportsOuterJoins() && !rs.next()) {
             break;
           }
 
@@ -792,7 +813,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
                   log.debug("RDBMUserLayoutStore::getStructureStylesheetDescription() : encountered param of unknown type! (stylesheetId="
                           + stylesheetId + " param_name=\"" + rs.getString(dbOffset + 2) + "\" type=" + type + ").");
           }
-          if (RDBMServices.getDbMetaData().supportsOuterJoins() && !rs.next()) {
+          if (this.databaseMetadata.supportsOuterJoins() && !rs.next()) {
             break;
           }
         }
@@ -1027,8 +1048,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
       Statement stmt = con.createStatement();
       int dbOffset = 0;
       String sQuery = "SELECT SS_NAME,SS_URI,SS_DESCRIPTION_URI,SS_DESCRIPTION_TEXT,STRUCT_SS_ID,SAMPLE_ICON_URI,SAMPLE_URI,MIME_TYPE,DEVICE_TYPE,SERIALIZER_NAME,UP_MODULE_CLASS";
-      if (RDBMServices.getDbMetaData().supportsOuterJoins()) {
-        sQuery += ",TYPE,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT FROM " + RDBMServices.getDbMetaData().getJoinQuery().getQuery("ss_theme");
+      if (this.databaseMetadata.supportsOuterJoins()) {
+        sQuery += ",TYPE,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT FROM " + this.databaseMetadata.getJoinQuery().getQuery("ss_theme");
         dbOffset = 11;
       } else {
         sQuery += " FROM UP_SS_THEME UTS WHERE";
@@ -1058,7 +1079,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           tsd.setCustomUserPreferencesManagerClass(rs.getString(11));
         }
 
-        if (!RDBMServices.getDbMetaData().supportsOuterJoins()) {
+        if (!this.databaseMetadata.supportsOuterJoins()) {
           rs.close();
           // retrieve stylesheet params and attributes
           sQuery = "SELECT TYPE,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT FROM UP_SS_THEME_PARM WHERE SS_ID=" + stylesheetId;
@@ -1067,7 +1088,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           rs = stmt.executeQuery(sQuery);
         }
         while (true) {
-          if (!RDBMServices.getDbMetaData().supportsOuterJoins() && !rs.next()) {
+          if (!this.databaseMetadata.supportsOuterJoins() && !rs.next()) {
             break;
           }
           int type = rs.getInt(dbOffset + 1);
@@ -1091,7 +1112,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
             log.error( "RDBMUserLayoutStore::getThemeStylesheetDescription() : encountered param of unknown type! (stylesheetId="
                 + stylesheetId + " param_name=\"" + rs.getString(dbOffset + 2) + "\" type=" + type + ").");
           }
-          if (RDBMServices.getDbMetaData().supportsOuterJoins() && !rs.next()) {
+          if (this.databaseMetadata.supportsOuterJoins() && !rs.next()) {
             break;
           }
         }
@@ -1673,8 +1694,8 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
                 sql = "SELECT ULS.STRUCT_ID,ULS.NEXT_STRUCT_ID,ULS.CHLD_STRUCT_ID,ULS.CHAN_ID,ULS.NAME,ULS.TYPE,ULS.HIDDEN,"+
               "ULS.UNREMOVABLE,ULS.IMMUTABLE";
             }
-            if (RDBMServices.getDbMetaData().supportsOuterJoins()) {
-              sql += ",USP.STRUCT_PARM_NM,USP.STRUCT_PARM_VAL FROM " + RDBMServices.getDbMetaData().getJoinQuery().getQuery("layout");
+            if (this.databaseMetadata.supportsOuterJoins()) {
+              sql += ",USP.STRUCT_PARM_NM,USP.STRUCT_PARM_VAL FROM " + this.databaseMetadata.getJoinQuery().getQuery("layout");
             } else {
               sql += " FROM UP_LAYOUT_STRUCT ULS WHERE ";
             }
@@ -1758,7 +1779,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
               if (!ls.isChannel()) {
                 ls.addFolderData(temp5, temp6); // Plug in saved column values
               }
-              if (RDBMServices.getDbMetaData().supportsOuterJoins()) {
+              if (this.databaseMetadata.supportsOuterJoins()) {
                 do {
                   String name = rs.getString(name_index);
                   String value = rs.getString(value_index); // Oracle JDBC requires us to do this for longs
@@ -1793,7 +1814,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
           rs.close();
         }
 
-        if (!RDBMServices.getDbMetaData().supportsOuterJoins()) { // Pick up structure parameters
+        if (!this.databaseMetadata.supportsOuterJoins()) { // Pick up structure parameters
           // first, get the struct ids for the channels
           String sql = "SELECT STRUCT_ID FROM UP_LAYOUT_STRUCT WHERE USER_ID=" + userId +
             " AND LAYOUT_ID=" + layoutId +
@@ -2176,7 +2197,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
   protected Element getStructure(Document doc, LayoutStructure ls) throws Exception {
       Element structure = null;
       if (ls.isChannel()) {
-        ChannelDefinition channelDef = crs.getChannelDefinition(ls.getChanId());
+        ChannelDefinition channelDef = channelRegistryStore.getChannelDefinition(ls.getChanId());
         if (channelDef != null && channelApproved(channelDef.getApprovalDate())) {
             if (localeAware) {
                 channelDef.setLocale(ls.getLocale()); // for i18n by Shoji
@@ -3341,8 +3362,6 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
             return null;
         }
     }
-
-    private final IPerson systemUser;
 
   public UserPreferences getUserPreferences (IPerson person, int profileId) throws Exception {
     UserPreferences up = null;

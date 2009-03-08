@@ -9,13 +9,10 @@
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-    <!--
-        This file sets up contextual information for Distributed Layout 
-        Management. It is intentionally not included in beanRefFactory.xml so 
-        that it only gets loaded if DLM is being used for layout management and 
-        also to ensure that exceptions caused during loading of beanRefFactory
-        don't stop this file from being loaded.
-    -->
+
+    <bean id="dlmConfigurationLoader" class="org.jasig.portal.layout.dlm.LegacyConfigurationLoader">
+        <property name="configurationFile" value="classpath:/properties/dlm.xml" />
+    </bean>
 
     <!--
         Configure the processing pipe for DLM including optional processors that 

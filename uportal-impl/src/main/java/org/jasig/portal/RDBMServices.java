@@ -381,6 +381,7 @@ public class RDBMServices {
     /**
      * Get metadata about the default DataSource.
      * @return metadata about the default DataSource.
+     * @deprecated Use the bean named PortalDB.metadata instead
      */
     @Deprecated
     public static IDatabaseMetadata getDbMetaData() {

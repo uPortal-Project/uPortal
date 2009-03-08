@@ -135,6 +135,18 @@
             <artifactId>ehcache</artifactId>
             <scope>compile</scope>
         </dependency>
+        
+        <dependency>
+            <groupId>ognl</groupId>
+            <artifactId>ognl</artifactId>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>opensymphony</groupId>
+            <artifactId>quartz-all</artifactId>
+            <scope>compile</scope>
+        </dependency> 
 
         <dependency>
             <groupId>org.aspectj</groupId>
@@ -147,12 +159,6 @@
             <artifactId>aspectjweaver</artifactId>
             <scope>compile</scope>
         </dependency>
-        
-        <dependency>
-            <groupId>ognl</groupId>
-            <artifactId>ognl</artifactId>
-            <scope>compile</scope>
-        </dependency>  
         
         <dependency>
             <groupId>org.ccil.cowan.tagsoup</groupId>

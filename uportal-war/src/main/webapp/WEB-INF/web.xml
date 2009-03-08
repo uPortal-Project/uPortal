@@ -59,19 +59,19 @@
     <listener>
         <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
     </listener>
-
-    <!-- 
-     | Loads/Unloads the Spring WebApplicationContext
-     +-->
-    <listener>
-        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-    </listener>
     
     <!-- 
      | uPortal utility for accessing the WebApplicationContext from code that doesn't have a reference to the ServletContext
      +-->
     <listener>
         <listener-class>org.jasig.portal.spring.PortalApplicationContextLocator</listener-class>
+    </listener>
+
+    <!-- 
+     | Loads/Unloads the Spring WebApplicationContext
+     +-->
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
     
     <!-- 
@@ -139,11 +139,6 @@
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
    </filter>
     
-    <filter>
-        <filter-name>GzipFilter</filter-name>
-        <filter-class>net.sf.ehcache.constructs.web.filter.GzipFilter</filter-class>
-    </filter>
-        
     <filter-mapping>
         <filter-name>CAS Validate Filter</filter-name>
         <url-pattern>/Login</url-pattern>
@@ -168,11 +163,6 @@
         <filter-name>pageCachingFilter</filter-name>
         <url-pattern>*.js</url-pattern>
         <url-pattern>*.css</url-pattern>
-    </filter-mapping>
-    
-    <filter-mapping>
-        <filter-name>GzipFilter</filter-name>
-        <url-pattern>*.uP</url-pattern>
     </filter-mapping>
     
     <servlet>

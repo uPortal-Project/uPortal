@@ -5,11 +5,10 @@
  */
 package org.jasig.portal.layout.dlm;
 
+import java.util.Collections;
 import java.util.List;
 
-import org.jasig.portal.spring.PortalApplicationContextLocator;
-import org.springframework.context.ApplicationContext;
-import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
 
 /**
  * Implementation of {@link ConfigurationLoader} that loads 
@@ -19,36 +18,32 @@ import org.w3c.dom.Document;
  * 
  * @author awills
  */
-public class RDBMConfigurationLoader extends ConfigurationLoader {
-    
+public class RDBMConfigurationLoader extends LegacyConfigurationLoader {
     // Instance Members.
     private IFragmentDefinitionDao fragmentDao = null;
 
-    @Override
-    public FragmentDefinition[] getFragments() {
-        List<FragmentDefinition> frags = fragmentDao.getAllFragments();
-        FragmentDefinition[] rslt = new FragmentDefinition[frags.size()];
-        for (int i=0; i < frags.size(); i++) {
-            FragmentDefinition fd = frags.get(i);
-            fd.setIndex(i);
-            rslt[i] = fd;
-        }
-        return rslt;
+    /**
+     * @param fragmentDao the fragmentDao to set
+     */
+    public void setFragmentDao(IFragmentDefinitionDao fragmentDao) {
+        this.fragmentDao = fragmentDao;
     }
 
+    /* (non-Javadoc)
+     * @see org.jasig.portal.layout.dlm.LegacyConfigurationLoader#getFragments()
+     */
     @Override
-    public synchronized void init(Document doc) {
-
-        // Do this stuff only once...
-        if (this.fragmentDao == null) {
-            // There's nothing in the dlm.xml file we care about in this Java 
-            // class, but we can use this opportunity to get a reference to 
-            // the ApplicationContext...
-            ApplicationContext ctx = PortalApplicationContextLocator.getApplicationContext();
-            // Also resolve the 'fragmentDefinitionDao' bean...
-            fragmentDao = (IFragmentDefinitionDao) ctx.getBean("fragmentDefinitionDao");
-        }
-        
+    public List<FragmentDefinition> getFragments() {
+        final List<FragmentDefinition> allFragments = this.fragmentDao.getAllFragments();
+        return Collections.unmodifiableList(allFragments);
     }
 
+    /* (non-Javadoc)
+     * @see org.jasig.portal.layout.dlm.LegacyConfigurationLoader#getFragments(org.w3c.dom.NodeList)
+     */
+    @Override
+    protected List<FragmentDefinition> getFragments(NodeList frags) {
+        //Return null to just ignore the data from the dlm XML file
+        return null;
+    }
 }

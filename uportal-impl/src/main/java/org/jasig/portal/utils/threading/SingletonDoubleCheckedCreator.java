@@ -17,11 +17,12 @@ import org.apache.commons.lang.builder.ToStringStyle;
  * @version $Revision$
  */
 public abstract class SingletonDoubleCheckedCreator<T> extends DoubleCheckedCreator<T> {
+    private final AtomicBoolean creating = new AtomicBoolean(false);
     private final AtomicBoolean created = new AtomicBoolean(false);
     private T instance;
     
     /**
-     * Called only once
+     * Called only once as long as it returns successfully
      * 
      * @see DoubleCheckedCreator#create(Object...)
      */
@@ -32,10 +33,20 @@ public abstract class SingletonDoubleCheckedCreator<T> extends DoubleCheckedCrea
      */
     @Override
     protected final T create(Object... args) {
-        final T instance = this.createSingleton(args);
-        this.created.set(true);
-        this.instance = instance;
-        return instance;
+        if (this.creating.get()) {
+            throw new IllegalStateException("Singleton creator has been called again while creation is in progress, this is indicative of a creation loop in a single thread");
+        }
+        
+        this.creating.set(true);
+        try {
+            final T instance = this.createSingleton(args);
+            this.instance = instance;
+            this.created.set(true);
+            return instance;
+        }
+        finally {
+            this.creating.set(false);
+        }
     }
 
     /* (non-Javadoc)

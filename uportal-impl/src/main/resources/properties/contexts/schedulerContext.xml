@@ -8,40 +8,60 @@
 -->
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
-
-    <!-- Cache Maintenance -->
-    <bean id="timerFactory" class="org.springframework.scheduling.timer.TimerFactoryBean">
-        <property name="scheduledTimerTasks">
+    
+    <bean id="uPortalTaskScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="startupDelay" value="30" />
+        <property name="triggers">
             <list>
-                <ref bean="cacheMaintenanceTask" />
-                <!-- <ref bean="statsQueueFlushingTask"/> -->
+                <ref bean="cacheMaintenanceTrigger" />
+                <ref bean="dlmFragmentCleanerTrigger" />
+                <ref bean="statsQueueFlushingTrigger" />
             </list>
         </property>
     </bean>
+    
+    <!-- TODO find better way to handle Runnable tasks -->
 
-    <bean id="cacheMaintenanceTask" class="org.springframework.scheduling.timer.ScheduledTimerTask">
-        <property name="runnable">
-            <bean class="org.jasig.portal.utils.cache.EhCacheExpirationManager">
-                <property name="cacheManager" ref="cacheManager" />
+    <bean id="cacheMaintenanceTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+        <property name="jobDetail">
+            <bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+                <property name="targetMethod" value="run" />
+                <property name="targetObject">
+                    <bean class="org.jasig.portal.utils.cache.EhCacheExpirationManager">
+                        <property name="cacheManager" ref="cacheManager" />
+                    </bean>
+                </property>
             </bean>
         </property>
         <!-- Run every 5 minutes -->
-        <property name="delay" value="300000" />
-        <property name="period" value="300000" />
+        <property name="startDelay" value="300000" />
+        <property name="repeatInterval" value="300000" />
+    </bean>
+    
+    <bean id="dlmFragmentCleanerTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+        <property name="jobDetail">
+            <bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+                <property name="targetMethod" value="run" />
+                <property name="targetObject">
+                    <bean class="org.jasig.portal.layout.dlm.FragmentCleanerRunner" />
+                </property>
+            </bean>
+        </property>
+        <property name="startDelay" value="${org.jasig.portal.layout.dlm.RDBMDistributedLayoutStore.fragment_cache_refresh}" />
+        <property name="repeatInterval" value="${org.jasig.portal.layout.dlm.RDBMDistributedLayoutStore.fragment_cache_refresh}" />
     </bean>
     
     <!-- Flush the stats queue to the database every second -->
-    <!-- Be sure to un-comment the reference in the 'timerFactory' above as well
-    <bean id="statsQueueFlushingTask" class="org.springframework.scheduling.timer.ScheduledTimerTask">
-        <property name="timerTask">
-            <bean class="org.springframework.scheduling.timer.MethodInvokingTimerTaskFactoryBean">
-                <property name="targetObject" ref="queueingEventHandler" />
+    <!-- Be sure to un-comment the reference in the 'timerFactory' above as well -->
+    <bean id="statsQueueFlushingTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+        <property name="jobDetail">
+            <bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
                 <property name="targetMethod" value="flush" />
+                <property name="targetObject" ref="queueingEventHandler" />
             </bean>
         </property>
-        <property name="fixedRate" value="true"/>
-        <property name="delay" value="1000" />
-        <property name="period" value="1000" />
+        <!-- Run every second -->
+        <property name="startDelay" value="1000" />
+        <property name="repeatInterval" value="1000" />
     </bean>
-     -->
 </beans>
