@@ -129,6 +129,42 @@
 		<token name="PREFERENCES_SKINS_LONG_LABEL">To choose a different skin</token>
 		<token name="PREFERENCES_LANGUAGES_LABEL">Change Language</token>
 		<token name="PREFERENCES_LANGUAGES_LONG_LABEL">To choose language preferences</token>
+		<!-- AJAX preferences menus -->
+		<token name="AJAX_ADD_FOCUSED_PORTLET_DIALOG_TITLE">Add Content</token>
+		<token name="AJAX_ADD_PORTLET_TO_LAYOUT">Add to page:</token>
+		<token name="AJAX_ADD_FOCUSED_PORTLET_SUBMIT_BUTTON">Add</token>
+		<token name="AJAX_ADD_PORTLET_BROWSE">Browse portlets</token>
+		<token name="AJAX_ADD_PORTLET_SEARCH">Search</token>
+		<token name="AJAX_LOADING_PORTLET_LIST">Loading portlet list . . . </token>
+		<token name="AJAX_ADD_PORTLET_DIALOG_TITLE">Add Content</token>
+		<token name="AJAX_ADD_PORTLET_CATEGORY_COLUMN">Column</token>
+		<token name="AJAX_ADD_PORTLET_PORTLET_COLUMN">Portlet</token>
+		<token name="AJAX_ADD_PORTLET_SEARCH_LABEL">Search for: </token>
+		<token name="AJAX_ADD_PORTLET_SEARCH_RESULTS_TITLE">Matching portlets</token>
+		<token name="AJAX_ADD_PORTLET_DETAILS_TITLE">Portlet details</token>
+		<token name="AJAX_ADD_PORTLET_ADD_BUTTON">Add to my page</token>
+		<token name="AJAX_ADD_PORTLET_USE_BUTTON">Use it now</token>
+		<token name="AJAX_EDIT_PAGE_DIALOG_TITLE">Change Layout</token>
+		<token name="AJAX_EDIT_PAGE_PAGE_NAME">Page name:</token>
+		<token name="AJAX_EDIT_PAGE_PAGE_LAYOUT">Page layout:</token>
+		<token name="AJAX_EDIT_PAGE_COLUMN_TITLE_1">1 Column</token>
+		<token name="AJAX_EDIT_PAGE_COLUMN_TITLE_2">2 Columns</token>
+		<token name="AJAX_EDIT_PAGE_COLUMN_TITLE_3">3 Columns</token>
+		<token name="AJAX_EDIT_PAGE_COLUMN_TITLE_4">4 Columns</token>
+		<token name="AJAX_EDIT_PAGE_LAYOUT_OPTION_100">One single column</token>
+		<token name="AJAX_EDIT_PAGE_LAYOUT_OPTION_50_50">Two equal columns</token>
+		<token name="AJAX_EDIT_PAGE_LAYOUT_OPTION_33_34_33">Three equal columns</token>
+		<token name="AJAX_EDIT_PAGE_LAYOUT_OPTION_25_25_25_25">Four equal columns</token>
+		<token name="AJAX_EDIT_PAGE_LAYOUT_OPTION_40_60">One narrow and one wide column</token>
+		<token name="AJAX_EDIT_PAGE_LAYOUT_OPTION_60_40">One wide and one narrow column</token>
+		<token name="AJAX_EDIT_PAGE_LAYOUT_OPTION_25_50_25">Narrow, wide, narrow</token>
+		<token name="AJAX_EDIT_PAGE_SUBMIT_BUTTON">Update</token>
+		<token name="AJAX_SELECT_SKIN_DIALOG_TITLE">Add Content</token>
+		<token name="AJAX_SELECT_SKIN_LOADING_MESSAGE">Loading skin list . . .</token>
+		<token name="AJAX_SELECT_SKIN_TITLE">Choose a skin for your portal view:</token>
+		<token name="AJAX_SELECT_SKIN_SUBMIT_BUTTON">Choose</token>
+		<token name="AJAX_PORTAL_DROP_WARNING_MESSAGE">This portlet cannot be moved here. The portlet underneath is locked.</token>
+		
 		<!-- Column Width Adjustments -->
 		<token name="WIDTH_INCREMENT_TITLE">Expand this column by 5%</token>
 		<token name="WIDTH_DECREMENT_TITLE">Shrink this column by 5%</token>
