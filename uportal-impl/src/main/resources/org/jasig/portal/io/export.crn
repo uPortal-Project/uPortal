@@ -40,7 +40,7 @@
                                                    'all-themes',
                                                    'all-structures',
                                                    'all-entity-types',
-                                                   'all-group_membership',
+                                                   'all-group_memberships',
                                                    'all-fragment-definitions'
 					                           ])}">
                                 <with-attribute key="SUBTYPE_START_TIME" value="${groovy(System.currentTimeMillis())}">
