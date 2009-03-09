@@ -209,18 +209,29 @@ public class LoginServlet extends HttpServlet {
      * We will pass them  along after authentication.
      */
     String targetFname = request.getParameter("uP_fname");
-    String targetArgs = request.getParameter("uP_args");
     
     // create the redirect URL, adding fname and args parameters if necessary
     String redirectTarget = null;
 	if (targetFname == null){
 		redirectTarget = request.getContextPath() + "/" + redirectString;
 	} else {
-		redirectTarget = request.getContextPath() + "/" +
-		"tag.idempotent." +  redirectString + "?uP_fname=" + URLEncoder.encode(targetFname, "UTF-8");
-		if (targetArgs != null) {
-			redirectTarget = redirectTarget + "&uP_args=" + URLEncoder.encode(targetArgs, "UTF-8");
-		}
+		StringBuilder sb = new StringBuilder();
+		sb.append(request.getContextPath());
+		sb.append("/tag.idempotent.");
+		sb.append(redirectString);
+		sb.append("?uP_fname=");
+		sb.append(URLEncoder.encode(targetFname, "UTF-8"));
+		Enumeration<String> e = request.getParameterNames();
+		while(e.hasMoreElements()){
+			String paramName = e.nextElement();
+			if(!paramName.equals("uP_fname")){
+				sb.append('&');
+				sb.append(paramName);
+				sb.append('=');
+				sb.append(URLEncoder.encode(request.getParameter(paramName),"UTF-8"));
+			}
+		}		
+		redirectTarget = sb.toString();
 	}
 
 	if (person == null || !person.getSecurityContext().isAuthenticated()) {
