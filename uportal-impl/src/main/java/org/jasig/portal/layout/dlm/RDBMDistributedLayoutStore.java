@@ -38,11 +38,10 @@ import org.jasig.portal.layout.simple.RDBMUserLayoutStore;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.provider.PersonImpl;
-import org.jasig.portal.spring.PortalApplicationContextLocator;
+import org.jasig.portal.spring.locator.ConfigurationLoaderLocator;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.SmartCache;
 import org.jasig.portal.utils.XML;
-import org.springframework.context.ApplicationContext;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -121,8 +120,7 @@ public class RDBMDistributedLayoutStore
         tsdCache = new SmartCache();
         ssdCache = new SmartCache();
         
-        final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
-        this.configurationLoader = (ConfigurationLoader)applicationContext.getBean("dlmConfigurationLoader", ConfigurationLoader.class);
+        this.configurationLoader = ConfigurationLoaderLocator.getConfigurationLoader();
 
         try
         {

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright (c) 2000-2009, Jasig, Inc.
+    See license distributed with this file and available online at
+    https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+    
+    <bean id="org.jasig.portal.spring.locator.XalanAuthorizationHelperLocator" 
+            class="org.jasig.portal.spring.locator.XalanAuthorizationHelperLocator">
+        <constructor-arg index="0" ref="xalanAuthorizationHelper" />
+    </bean>
+    
+    <bean id="org.jasig.portal.spring.locator.XalanGroupMembershipHelperLocator" 
+            class="org.jasig.portal.spring.locator.XalanGroupMembershipHelperLocator">
+        <constructor-arg index="0" ref="xalanGroupMembershipHelper" />
+    </bean>
+    
+    
+    <!-- 
+     | The beans below are deprecated and should NEVER be referenced by other beans.
+     | They exist to support legacy code that is not managed by spring
+     +-->
+    
+    <bean id="org.jasig.portal.spring.locator.JndiManagerLocator"
+            class="org.jasig.portal.spring.locator.JndiManagerLocator">
+        <constructor-arg index="0" ref="jndiManager" />
+    </bean>
+    
+    <bean id="org.jasig.portal.spring.locator.ChannelRequestParameterManagerLocator"
+            class="org.jasig.portal.spring.locator.ChannelRequestParameterManagerLocator">
+        <constructor-arg index="0" ref="channelRequestParameterManager" />
+    </bean>
+    
+    <bean id="org.jasig.portal.spring.locator.ChannelRegistryStoreLocator"
+            class="org.jasig.portal.spring.locator.ChannelRegistryStoreLocator">
+        <constructor-arg index="0" ref="channelRegistryStore" />
+    </bean>
+    
+    <bean id="org.jasig.portal.spring.locator.JpaInterceptorLocator"
+            class="org.jasig.portal.spring.locator.JpaInterceptorLocator">
+        <constructor-arg index="0" ref="jpaInterceptor" />
+    </bean>
+    
+    <bean id="org.jasig.portal.spring.locator.UserInstanceManagerLocator"
+            class="org.jasig.portal.spring.locator.UserInstanceManagerLocator">
+        <constructor-arg index="0" ref="userInstanceManager" />
+    </bean>
+    
+    <bean id="org.jasig.portal.spring.locator.RequestParameterProcessorControllerLocator"  
+            class="org.jasig.portal.spring.locator.RequestParameterProcessorControllerLocator">
+        <constructor-arg index="0" ref="requestParameterProcessorController" />
+    </bean>
+    
+    <bean id="org.jasig.portal.spring.locator.PersonManagerLocator" 
+            class="org.jasig.portal.spring.locator.PersonManagerLocator">
+        <constructor-arg index="0" ref="personManager" />
+    </bean>
+    
+    <bean id="org.jasig.portal.spring.locator.PortalRenderingPipelineLocator" 
+            class="org.jasig.portal.spring.locator.PortalRenderingPipelineLocator">
+        <constructor-arg index="0" ref="portalRenderingPipeline" />
+    </bean>
+    
+    <bean id="org.jasig.portal.spring.locator.PortalDbLocator" 
+            class="org.jasig.portal.spring.locator.PortalDbLocator">
+        <constructor-arg index="0" ref="PortalDb" />
+    </bean>
+    
+    <bean id="org.jasig.portal.spring.locator.PortalDbMetadataLocator" 
+            class="org.jasig.portal.spring.locator.PortalDbMetadataLocator">
+        <constructor-arg index="0" ref="PortalDB.metadata" />
+    </bean>
+    
+    <bean id="org.jasig.portal.spring.locator.CarResourcesLocator" 
+            class="org.jasig.portal.spring.locator.CarResourcesLocator">
+        <constructor-arg index="0" ref="carResources" />
+    </bean>
+    
+    <bean id="org.jasig.portal.spring.locator.DbLoaderLocator" 
+            class="org.jasig.portal.spring.locator.DbLoaderLocator">
+        <constructor-arg index="0" ref="dbLoader" />
+    </bean>
+    
+    <bean id="org.jasig.portal.spring.locator.OptionalContainerServicesLocator" 
+            class="org.jasig.portal.spring.locator.OptionalContainerServicesLocator">
+        <constructor-arg index="0" ref="optionalContainerServices" />
+    </bean>
+    
+    <bean id="org.jasig.portal.spring.locator.PortletDefinitionRegistryLocator" 
+            class="org.jasig.portal.spring.locator.PortletDefinitionRegistryLocator">
+        <constructor-arg index="0" ref="portletDefinitionRegistry" />
+    </bean>
+    
+    <bean id="org.jasig.portal.spring.locator.ThrowableToElementLocator" 
+            class="org.jasig.portal.spring.locator.ThrowableToElementLocator">
+        <constructor-arg index="0" ref="throwableToElement" />
+    </bean>
+    
+    <bean id="org.jasig.portal.spring.locator.ProcessingPipeLocator" 
+            class="org.jasig.portal.spring.locator.ProcessingPipeLocator">
+        <constructor-arg index="0" ref="dlmProcessingPipe" />
+    </bean>
+    
+    <bean id="org.jasig.portal.spring.locator.ConfigurationLoaderLocator" 
+            class="org.jasig.portal.spring.locator.ConfigurationLoaderLocator">
+        <constructor-arg index="0" ref="dlmConfigurationLoader" />
+    </bean>
+    
+    <bean id="org.jasig.portal.spring.locator.EntityCachingServiceLocator" 
+            class="org.jasig.portal.spring.locator.EntityCachingServiceLocator">
+        <constructor-arg index="0" ref="entityCachingService" />
+    </bean>
+    
+    <bean id="org.jasig.portal.spring.locator.PersonAttributeDaoLocator" 
+            class="org.jasig.portal.spring.locator.PersonAttributeDaoLocator">
+        <constructor-arg index="0" ref="personAttributeDao" />
+    </bean>
+    
+    <bean id="org.jasig.portal.spring.locator.CounterStoreLocator" 
+            class="org.jasig.portal.spring.locator.CounterStoreLocator">
+        <constructor-arg index="0" ref="counterStore" />
+    </bean>
+    
+    <bean id="org.jasig.portal.spring.locator.CacheFactoryLocator" 
+            class="org.jasig.portal.spring.locator.CacheFactoryLocator">
+        <constructor-arg index="0" ref="cacheFactory" />
+    </bean>
+</beans>

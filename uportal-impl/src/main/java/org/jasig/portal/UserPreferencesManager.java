@@ -24,9 +24,8 @@ import org.jasig.portal.layout.UserLayoutStoreFactory;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.spring.PortalApplicationContextLocator;
+import org.jasig.portal.spring.locator.JndiManagerLocator;
 import org.jasig.portal.utils.PropsMatcher;
-import org.springframework.context.ApplicationContext;
 import org.w3c.dom.Document;
 
 
@@ -180,8 +179,7 @@ public class UserPreferencesManager implements IUserPreferencesManager {
                 }
 
                 try {
-                    final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
-                    final IJndiManager jndiManager = (IJndiManager) applicationContext.getBean("jndiManager", IJndiManager.class);
+                    final IJndiManager jndiManager = JndiManagerLocator.getJndiManager();
                     
                     // Initialize the JNDI context for this user
                     final String userId = Integer.toString(this.person.getID());

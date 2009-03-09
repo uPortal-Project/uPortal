@@ -9,9 +9,8 @@ import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.IBasicEntity;
 import org.jasig.portal.concurrency.CachingException;
 import org.jasig.portal.concurrency.IEntityCachingService;
-import org.jasig.portal.spring.PortalApplicationContextLocator;
+import org.jasig.portal.spring.locator.EntityCachingServiceLocator;
 import org.jasig.portal.utils.threading.SingletonDoubleCheckedCreator;
-import org.springframework.context.ApplicationContext;
 
 /**
   * This class presents a facade for the IEntityCachingService implementation
@@ -70,15 +69,10 @@ public class EntityCachingService implements IEntityCachingService {
         return instanceHolder.get();
     }
 
-    // The caching service:
-    private final IEntityCachingService cache;
 
     /** Creates new EntityLockService */
     private EntityCachingService() throws CachingException {
         super();
-
-        final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
-        this.cache = (IEntityCachingService) applicationContext.getBean("entityCachingService", IEntityCachingService.class);
     }
 
     /**
@@ -87,7 +81,7 @@ public class EntityCachingService implements IEntityCachingService {
      * @exception org.jasig.portal.concurrency.CachingException
      */
     public void add(IBasicEntity ent) throws CachingException {
-        this.cache.add(ent);
+        EntityCachingServiceLocator.getEntityCachingService().add(ent);
     }
 
     /**
@@ -98,7 +92,7 @@ public class EntityCachingService implements IEntityCachingService {
      * @exception org.jasig.portal.concurrency.CachingException
      */
     public IBasicEntity get(Class<? extends IBasicEntity> type, String key) throws CachingException {
-        return this.cache.get(type, key);
+        return EntityCachingServiceLocator.getEntityCachingService().get(type, key);
     }
 
     /**
@@ -108,7 +102,7 @@ public class EntityCachingService implements IEntityCachingService {
      * @exception org.jasig.portal.concurrency.CachingException
      */
     public IBasicEntity get(EntityIdentifier entityID) throws CachingException {
-        return this.cache.get(entityID.getType(), entityID.getKey());
+        return EntityCachingServiceLocator.getEntityCachingService().get(entityID.getType(), entityID.getKey());
     }
 
     /**
@@ -119,7 +113,7 @@ public class EntityCachingService implements IEntityCachingService {
      * @exception org.jasig.portal.concurrency.CachingException
      */
     public void remove(Class<? extends IBasicEntity> type, String key) throws CachingException {
-        this.cache.remove(type, key);
+        EntityCachingServiceLocator.getEntityCachingService().remove(type, key);
     }
 
     /**
@@ -148,6 +142,6 @@ public class EntityCachingService implements IEntityCachingService {
      * @exception org.jasig.portal.concurrency.CachingException
      */
     public void update(IBasicEntity ent) throws CachingException {
-        this.cache.update(ent);
+        EntityCachingServiceLocator.getEntityCachingService().update(ent);
     }
 }

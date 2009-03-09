@@ -28,7 +28,10 @@ import org.jasig.portal.rendering.IPortalRenderingPipeline;
 import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
-import org.jasig.portal.spring.PortalApplicationContextLocator;
+import org.jasig.portal.spring.locator.PersonManagerLocator;
+import org.jasig.portal.spring.locator.PortalRenderingPipelineLocator;
+import org.jasig.portal.spring.locator.RequestParameterProcessorControllerLocator;
+import org.jasig.portal.spring.locator.UserInstanceManagerLocator;
 import org.jasig.portal.tools.versioning.Version;
 import org.jasig.portal.tools.versioning.VersionsManager;
 import org.jasig.portal.url.IWritableHttpServletRequest;
@@ -37,7 +40,6 @@ import org.jasig.portal.url.processing.IRequestParameterProcessorController;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
 import org.jasig.portal.utils.ResourceLoader;
-import org.springframework.context.ApplicationContext;
 
 /**
  * This is an entry point into the uPortal.
@@ -169,8 +171,7 @@ public void init() throws ServletException {
      */
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse res) {
-        final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
-        final IUserInstanceManager userInstanceManager = (IUserInstanceManager) applicationContext.getBean("userInstanceManager", IUserInstanceManager.class);
+        final IUserInstanceManager userInstanceManager = UserInstanceManagerLocator.getUserInstanceManager();
         
         final IWritableHttpServletRequest writableRequest = new PortalHttpServletRequest(request, userInstanceManager);
         this.doGetInternal(writableRequest, res);
@@ -219,8 +220,7 @@ public void init() throws ServletException {
             return;
         }
         
-        final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
-        final IPersonManager personManager = (IPersonManager)applicationContext.getBean("personManager", IPersonManager.class);
+        final IPersonManager personManager = PersonManagerLocator.getPersonManager();
 
         // Update the session timeout for an unauthenticated user.
         final IPerson person = personManager.getPerson(writableRequest);
@@ -236,15 +236,15 @@ public void init() throws ServletException {
         }
         
         try {
-            final IRequestParameterProcessorController requestProcessorController = (IRequestParameterProcessorController)applicationContext.getBean("requestParameterProcessorController", IRequestParameterProcessorController.class);
+            final IRequestParameterProcessorController requestProcessorController = RequestParameterProcessorControllerLocator.getRequestParameterProcessorController();
             requestProcessorController.processParameters(writableRequest, res);
 
             // Retrieve the user's UserInstance object
-            final IUserInstanceManager userInstanceManager = (IUserInstanceManager) applicationContext.getBean("userInstanceManager", IUserInstanceManager.class);
+            final IUserInstanceManager userInstanceManager = UserInstanceManagerLocator.getUserInstanceManager();
             final IUserInstance userInstance = userInstanceManager.getUserInstance(writableRequest);
             
             // fire away
-            final IPortalRenderingPipeline portalRenderingPipeline = (IPortalRenderingPipeline)applicationContext.getBean("portalRenderingPipeline", IPortalRenderingPipeline.class);
+            final IPortalRenderingPipeline portalRenderingPipeline = PortalRenderingPipelineLocator.getPortalRenderingPipeline();
             portalRenderingPipeline.renderState(writableRequest, res, userInstance);
         }
         catch (Exception e) {

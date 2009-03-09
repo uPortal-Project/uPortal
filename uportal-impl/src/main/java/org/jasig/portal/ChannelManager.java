@@ -52,6 +52,8 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.serialize.CachingSerializer;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.spring.PortalApplicationContextLocator;
+import org.jasig.portal.spring.locator.ChannelRequestParameterManagerLocator;
+import org.jasig.portal.spring.locator.JndiManagerLocator;
 import org.jasig.portal.url.support.IChannelRequestParameterManager;
 import org.jasig.portal.utils.SAX2BufferImpl;
 import org.jasig.portal.utils.SetCheckInSemaphore;
@@ -180,8 +182,7 @@ public class ChannelManager implements LayoutEventListener {
      * @return a channel <code>InitialContext</code> value
      */
     private Context getChannelJndiContext(String sessionId, String userId, String layoutId) {
-        final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
-        final IJndiManager jndiManager = (IJndiManager)applicationContext.getBean("jndiManager", IJndiManager.class);
+        final IJndiManager jndiManager = JndiManagerLocator.getJndiManager();
         final JndiTemplate jndiTemplate = jndiManager.getJndiTemplate();
         
         try {
@@ -818,8 +819,7 @@ public class ChannelManager implements LayoutEventListener {
      * @param request the <code>HttpServletRequest</code>
      */
     private void processRequestChannelParameters(HttpServletRequest request, HttpServletResponse response) {
-        final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
-        final IChannelRequestParameterManager channelParameterManager = (IChannelRequestParameterManager)applicationContext.getBean("channelRequestParameterManager", IChannelRequestParameterManager.class);
+        final IChannelRequestParameterManager channelParameterManager = ChannelRequestParameterManagerLocator.getChannelRequestParameterManager();
         
         final Set<String> targetedChannelIds = channelParameterManager.getTargetedChannelIds(request);
         if (targetedChannelIds.size() > 0) {

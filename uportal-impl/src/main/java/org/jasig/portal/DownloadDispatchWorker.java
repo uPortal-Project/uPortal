@@ -19,9 +19,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.spring.PortalApplicationContextLocator;
+import org.jasig.portal.spring.locator.ChannelRequestParameterManagerLocator;
 import org.jasig.portal.url.support.IChannelRequestParameterManager;
-import org.springframework.context.ApplicationContext;
 
 /**
  * Provides file download capability for the portal.
@@ -52,8 +51,7 @@ public class DownloadDispatchWorker implements IWorkerRequestProcessor {
 
         // gather parameters
         if(channelTarget!=null) {
-            final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
-            final IChannelRequestParameterManager channelParameterManager = (IChannelRequestParameterManager)applicationContext.getBean("channelRequestParameterManager", IChannelRequestParameterManager.class);
+            final IChannelRequestParameterManager channelParameterManager = ChannelRequestParameterManagerLocator.getChannelRequestParameterManager();
             
             final Map<String, Object[]> channelParameters = channelParameterManager.getChannelParameters(req, channelTarget);
             

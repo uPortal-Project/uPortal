@@ -5,8 +5,6 @@
  */
 package org.jasig.portal.utils.cache;
 
-import org.jasig.portal.spring.PortalApplicationContextLocator;
-import org.springframework.context.ApplicationContext;
 
 /**
  *
@@ -22,16 +20,11 @@ import org.springframework.context.ApplicationContext;
  */
 public class CacheFactoryLocator {
 
-    /** String name of the CacheFactory we wish to retrieve. */
-    private static final String CACHE_FACTORY_BEAN = "cacheFactory";
-
     /**
      * Method to retrieve the cache factory
      * @return the cache factory.
      */
     public static final CacheFactory getCacheFactory() {
-        final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
-        final CacheFactory cacheFactory = (CacheFactory) applicationContext.getBean(CACHE_FACTORY_BEAN, CacheFactory.class);
-        return cacheFactory;
+        return org.jasig.portal.spring.locator.CacheFactoryLocator.getCacheFactory();
     }
 }

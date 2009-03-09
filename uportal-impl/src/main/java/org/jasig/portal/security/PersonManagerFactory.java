@@ -5,8 +5,7 @@
  */
 package org.jasig.portal.security;
 
-import org.jasig.portal.spring.PortalApplicationContextLocator;
-import org.springframework.context.ApplicationContext;
+import org.jasig.portal.spring.locator.PersonManagerLocator;
 
 /**
  * @author Bernie Durfee (bdurfee@interactivebusiness.com)
@@ -20,8 +19,6 @@ public class PersonManagerFactory {
      * @return instance of the IPersonManager
      */
     public static IPersonManager getPersonManagerInstance() {
-        final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
-        final IPersonManager personManager = (IPersonManager) applicationContext.getBean("personManager", IPersonManager.class);
-        return personManager;
+        return PersonManagerLocator.getPersonManager();
     }
 }

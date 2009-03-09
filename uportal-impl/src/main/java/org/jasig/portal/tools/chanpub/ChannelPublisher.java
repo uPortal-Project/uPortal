@@ -54,10 +54,9 @@ import org.jasig.portal.security.IUpdatingPermissionManager;
 import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.GroupService;
-import org.jasig.portal.spring.PortalApplicationContextLocator;
+import org.jasig.portal.spring.locator.JpaInterceptorLocator;
 import org.jasig.portal.utils.XML;
 import org.springframework.aop.framework.ProxyFactoryBean;
-import org.springframework.context.ApplicationContext;
 import org.springframework.orm.jpa.JpaInterceptor;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -862,8 +861,7 @@ public class ChannelPublisher implements ErrorHandler, IChannelPublisher
     }
     
     private static IChannelPublisher wrapChannelPublisher(IChannelPublisher channelPublisher) {
-        final ApplicationContext ac = PortalApplicationContextLocator.getApplicationContext();
-        final JpaInterceptor jpaInterceptor = (JpaInterceptor)ac.getBean("jpaInterceptor", JpaInterceptor.class);
+        final JpaInterceptor jpaInterceptor = JpaInterceptorLocator.getJpaInterceptor();
 
         // Proxy IChannelPublisher so that Jpa EntityManager will be properly handled
         final ProxyFactoryBean pfb = new ProxyFactoryBean();

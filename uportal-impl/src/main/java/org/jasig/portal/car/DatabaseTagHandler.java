@@ -9,11 +9,9 @@ import java.net.URL;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.spring.PortalApplicationContextLocator;
+import org.jasig.portal.spring.locator.DbLoaderLocator;
 import org.jasig.portal.tools.dbloader.DbLoaderConfiguration;
-import org.jasig.portal.tools.dbloader.HibernateDbLoader;
 import org.jasig.portal.tools.dbloader.IDbLoader;
-import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.UrlResource;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -207,8 +205,7 @@ public class DatabaseTagHandler
                 dataString = dataURL.toString();
             }
             
-            final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
-            final IDbLoader dbLoader = (IDbLoader) applicationContext.getBean("dbLoader", HibernateDbLoader.class);
+            final IDbLoader dbLoader = DbLoaderLocator.getDbLoader();
 
             try
             {

@@ -5,10 +5,9 @@
  */
 package org.jasig.portal.services;
 
-import org.jasig.portal.spring.PortalApplicationContextLocator;
+import org.jasig.portal.spring.locator.CounterStoreLocator;
 import org.jasig.portal.utils.ICounterStore;
 import org.jasig.portal.utils.threading.SingletonDoubleCheckedCreator;
-import org.springframework.context.ApplicationContext;
 
 /**
  * @author Dan Ellentuck 
@@ -33,9 +32,7 @@ public class SequenceGenerator {
     }
     
     private ICounterStore getCounterStore() {
-        final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
-        final ICounterStore counterStore = (ICounterStore)applicationContext.getBean("counterStore", ICounterStore.class);
-        return counterStore;
+        return CounterStoreLocator.getCounterStore();
     }
 
     /**
