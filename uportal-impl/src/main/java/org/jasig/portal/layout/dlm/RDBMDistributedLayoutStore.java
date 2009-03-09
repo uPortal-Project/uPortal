@@ -1559,6 +1559,7 @@ public class RDBMDistributedLayoutStore
         return attr.getValue();
     }
 
+    @Override
     protected Element getStructure(Document doc, LayoutStructure ls) throws Exception {
         Element structure = null;
 
@@ -1735,6 +1736,7 @@ public class RDBMDistributedLayoutStore
         return structure;
     }
 
+    @Override
     protected int saveStructure(
             Node node,
             PreparedStatement structStmt,
@@ -1895,6 +1897,7 @@ public class RDBMDistributedLayoutStore
         }
     }
 
+    @Override
     public void setStructureStylesheetUserPreferences( IPerson person,
                                                        int profileId,
                                                        StructureStylesheetUserPreferences ssup )
@@ -2035,6 +2038,7 @@ public class RDBMDistributedLayoutStore
         }
     }
 
+    @Override
     public void setThemeStylesheetUserPreferences (IPerson person,
             int profileId, ThemeStylesheetUserPreferences tsup)
     throws Exception {
