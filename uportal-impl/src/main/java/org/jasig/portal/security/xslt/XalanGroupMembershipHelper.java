@@ -5,8 +5,7 @@
  */
 package org.jasig.portal.security.xslt;
 
-import org.jasig.portal.spring.PortalApplicationContextLocator;
-import org.springframework.context.ApplicationContext;
+import org.jasig.portal.spring.locator.XalanGroupMembershipHelperLocator;
 
 /**
  * Provides a Spring locating facade in front of an actual {@link IXalanGroupMembershipHelper} since the Xalan
@@ -19,8 +18,7 @@ public class XalanGroupMembershipHelper implements IXalanGroupMembershipHelper {
     private final IXalanGroupMembershipHelper groupMembershipHelper;
     
     public XalanGroupMembershipHelper() {
-        final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
-        this.groupMembershipHelper = (IXalanGroupMembershipHelper)applicationContext.getBean("xalanGroupMembershipHelper", IXalanGroupMembershipHelper.class);
+        this.groupMembershipHelper = XalanGroupMembershipHelperLocator.getXalanGroupMembershipHelper();
     }
     
     /* (non-Javadoc)

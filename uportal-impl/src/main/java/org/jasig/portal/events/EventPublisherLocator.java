@@ -6,7 +6,6 @@
 package org.jasig.portal.events;
 
 import org.jasig.portal.spring.PortalApplicationContextLocator;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEventPublisher;
 
 /**
@@ -23,7 +22,6 @@ public final class EventPublisherLocator {
 	 * @return The ApplicationEventPublisher to use for publishing events.
 	 */
 	public static final ApplicationEventPublisher getApplicationEventPublisher() {
-	    final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
-		return applicationContext;
+	    return PortalApplicationContextLocator.getApplicationContext();
 	}
 }

@@ -17,6 +17,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.rdbm.IDatabaseMetadata;
 import org.jasig.portal.spring.PortalApplicationContextLocator;
+import org.jasig.portal.spring.locator.PortalDbLocator;
+import org.jasig.portal.spring.locator.PortalDbMetadataLocator;
 import org.jasig.portal.utils.MovingAverage;
 import org.jasig.portal.utils.MovingAverageSample;
 import org.springframework.context.ApplicationContext;
@@ -118,6 +120,10 @@ public class RDBMServices {
      */
     @Deprecated
     public static DataSource getDataSource(String name) {
+        if (PORTAL_DB.equals(name)) {
+            return PortalDbLocator.getPortalDb();
+        }
+        
         final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
         final DataSource dataSource = (DataSource)applicationContext.getBean(name, DataSource.class);
         return dataSource;
@@ -385,8 +391,6 @@ public class RDBMServices {
      */
     @Deprecated
     public static IDatabaseMetadata getDbMetaData() {
-        final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
-        final IDatabaseMetadata databaseMetadata = (IDatabaseMetadata)applicationContext.getBean(PORTAL_DB_METADATA, IDatabaseMetadata.class);
-        return databaseMetadata;
+        return PortalDbMetadataLocator.getPortalDbMetadata();
     }
 }

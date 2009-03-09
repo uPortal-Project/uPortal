@@ -24,14 +24,13 @@ import org.jasig.portal.channels.support.IChannelTitle;
 import org.jasig.portal.channels.support.IDynamicChannelTitleRenderer;
 import org.jasig.portal.portlet.url.RequestType;
 import org.jasig.portal.properties.PropertiesManager;
-import org.jasig.portal.spring.PortalApplicationContextLocator;
+import org.jasig.portal.spring.locator.JpaInterceptorLocator;
 import org.jasig.portal.utils.SAX2BufferImpl;
 import org.jasig.portal.utils.SetCheckInSemaphore;
 import org.jasig.portal.utils.threading.BaseTask;
 import org.jasig.portal.utils.threading.Task;
 import org.jasig.portal.utils.threading.TrackingThreadLocal;
 import org.springframework.aop.framework.ProxyFactoryBean;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.orm.jpa.JpaInterceptor;
 import org.springframework.web.context.request.RequestAttributes;
@@ -176,8 +175,7 @@ public class ChannelRenderer
     final IWorker targetWorker = new Worker(this.channel, this.rd);
     
     // Obtain JcrInterceptor bean
-    final ApplicationContext ac = PortalApplicationContextLocator.getApplicationContext();
-    final JpaInterceptor jpaInterceptor = (JpaInterceptor)ac.getBean("jpaInterceptor", JpaInterceptor.class);
+    final JpaInterceptor jpaInterceptor = JpaInterceptorLocator.getJpaInterceptor();
 
     // Proxy worker so that Jpa EntityManager will be properly handled
     final ProxyFactoryBean pfb = new ProxyFactoryBean();

@@ -59,6 +59,7 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.security.provider.AuthorizationImpl;
 import org.jasig.portal.spring.PortalApplicationContextLocator;
+import org.jasig.portal.spring.locator.ProcessingPipeLocator;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.XML;
 import org.springframework.context.ApplicationContext;
@@ -108,17 +109,13 @@ IFolderLocalNameResolver
     static class ContextHolder
     {
         public static IFolderLabelPolicy getLabelPolicy() {
-            final ApplicationContext applicationContext = getApplicationContext();
+            final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
             if (applicationContext.containsBean(FOLDER_LABEL_POLICY)) {
                 final IFolderLabelPolicy folderLabelPolicy = (IFolderLabelPolicy)applicationContext.getBean(FOLDER_LABEL_POLICY, IFolderLabelPolicy.class);
                 return folderLabelPolicy;
             }
 
             return null;
-        }
-        
-        public static ApplicationContext getApplicationContext() {
-            return PortalApplicationContextLocator.getApplicationContext();
         }
     }
 
@@ -342,8 +339,7 @@ IFolderLocalNameResolver
      */
     private void loadProcessingPipe()
     {
-        final ApplicationContext applicationContext = ContextHolder.getApplicationContext();
-        processingPipe = (ProcessingPipe)applicationContext.getBean(ProcessingPipe.PROCESSING_PIPE_BEAN_ID, ProcessingPipe.class);
+        processingPipe = ProcessingPipeLocator.getProcessingPipe();
         processingPipe.setResources(owner, this);
     }
     

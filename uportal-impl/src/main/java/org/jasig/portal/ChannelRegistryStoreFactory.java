@@ -5,8 +5,7 @@
  */
 package org.jasig.portal;
 
-import org.jasig.portal.spring.PortalApplicationContextLocator;
-import org.springframework.context.ApplicationContext;
+import org.jasig.portal.spring.locator.ChannelRegistryStoreLocator;
 
 /**
  * Produces an implementation of IChannelRegistryStore
@@ -14,6 +13,7 @@ import org.springframework.context.ApplicationContext;
  * @version $Revision$
  * @deprecated Use the bean named 'channelRegistryStore' from the Spring application context 
  */
+@Deprecated
 public class ChannelRegistryStoreFactory {
 
     /**
@@ -21,7 +21,6 @@ public class ChannelRegistryStoreFactory {
      * @return an IChannelRegistryStore implementation
      */
     public static IChannelRegistryStore getChannelRegistryStoreImpl() {
-        final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
-        return (IChannelRegistryStore) applicationContext.getBean("channelRegistryStore", IChannelRegistryStore.class);
+        return ChannelRegistryStoreLocator.getChannelRegistryStore();
     }
 }

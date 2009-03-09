@@ -28,10 +28,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.properties.PropertiesManager;
-import org.jasig.portal.spring.PortalApplicationContextLocator;
+import org.jasig.portal.spring.locator.CarResourcesLocator;
 import org.jasig.portal.utils.SAX2BufferImpl;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.ServletContextAware;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
@@ -46,7 +45,6 @@ public class CarResources implements ServletContextAware, InitializingBean {
 
     // static, class variables
     private static final Log log = LogFactory.getLog(CarResources.class);
-    private static CarResources instance = null;
     private static CarClassLoader loader = null;
 
     public final static String RCS_ID = "@(#) $Header$";
@@ -109,7 +107,6 @@ public class CarResources implements ServletContextAware, InitializingBean {
         }
         
         synchronized (CarResources.class) {
-            instance = this;
             CarResources.class.notifyAll();
         }
     }
@@ -146,12 +143,7 @@ public class CarResources implements ServletContextAware, InitializingBean {
      */
     @Deprecated
     public static CarResources getInstance() {
-        if (instance == null) {
-            final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
-            instance = (CarResources)applicationContext.getBean("carResources", CarResources.class);
-        }
-        
-        return instance;
+        return CarResourcesLocator.getCarResources();
     }
 
     /**

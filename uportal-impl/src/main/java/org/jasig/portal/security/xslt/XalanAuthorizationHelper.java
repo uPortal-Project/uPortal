@@ -5,8 +5,7 @@
  */
 package org.jasig.portal.security.xslt;
 
-import org.jasig.portal.spring.PortalApplicationContextLocator;
-import org.springframework.context.ApplicationContext;
+import org.jasig.portal.spring.locator.XalanAuthorizationHelperLocator;
 
 /**
  * Provides a Spring locating facade in front of an actual {@link IXalanAuthorizationHelper} since the Xalan
@@ -19,8 +18,7 @@ public class XalanAuthorizationHelper implements IXalanAuthorizationHelper {
     private final IXalanAuthorizationHelper authorizationHelper;
     
     public XalanAuthorizationHelper() {
-        final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
-        this.authorizationHelper = (IXalanAuthorizationHelper)applicationContext.getBean("xalanAuthorizationHelper", IXalanAuthorizationHelper.class);
+        this.authorizationHelper = XalanAuthorizationHelperLocator.getXalanAuthorizationHelper();
     }
 
     /**

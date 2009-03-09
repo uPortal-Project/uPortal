@@ -8,8 +8,7 @@ package org.jasig.portal.jndi;
 import javax.servlet.http.HttpSession;
 
 import org.jasig.portal.PortalException;
-import org.jasig.portal.spring.PortalApplicationContextLocator;
-import org.springframework.context.ApplicationContext;
+import org.jasig.portal.spring.locator.JndiManagerLocator;
 import org.w3c.dom.Document;
 
 /**
@@ -35,8 +34,7 @@ public class JNDIManager {
      * @see IJndiManager#initializeSessionContext(HttpSession, String, String, Document)
      */
     public static void initializeSessionContext(HttpSession session, String userId, String layoutId, Document userLayout) throws PortalException {
-        final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
-        final IJndiManager jndiManager = (IJndiManager) applicationContext.getBean("jndiManager", IJndiManager.class);
+        final IJndiManager jndiManager = JndiManagerLocator.getJndiManager();
         jndiManager.initializeSessionContext(session, userId, layoutId, userLayout);
     }
 }

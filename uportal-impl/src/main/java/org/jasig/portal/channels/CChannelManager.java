@@ -43,9 +43,10 @@ import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.EntityNameFinderService;
 import org.jasig.portal.services.GroupService;
 import org.jasig.portal.spring.PortalApplicationContextLocator;
+import org.jasig.portal.spring.locator.OptionalContainerServicesLocator;
+import org.jasig.portal.spring.locator.PortletDefinitionRegistryLocator;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.XSLT;
-import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -1267,8 +1268,7 @@ public class CChannelManager extends BaseChannel {
             
             
             
-            final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
-            final IPortletDefinitionRegistry portletDefinitionRegistry = (IPortletDefinitionRegistry) applicationContext.getBean("portletDefinitionRegistry", IPortletDefinitionRegistry.class);
+            final IPortletDefinitionRegistry portletDefinitionRegistry = PortletDefinitionRegistryLocator.getPortletDefinitionRegistry();
             final Integer chanDefId = Integer.valueOf(ID.startsWith("chan") ? ID.substring(4) : ID);
             final IPortletDefinition portletDefinition = portletDefinitionRegistry.getPortletDefinition(chanDefId);
             
@@ -1356,7 +1356,7 @@ public class CChannelManager extends BaseChannel {
             final String portletName = portletNameParam.getValue();
             
             if (portletApplicationId != null && portletName != null) {
-                final OptionalContainerServices optionalContainerServices = (OptionalContainerServices) applicationContext.getBean("optionalContainerServices", OptionalContainerServices.class);
+                final OptionalContainerServices optionalContainerServices = OptionalContainerServicesLocator.getOptionalContainerServices();
                 final PortletRegistryService portletRegistryService = optionalContainerServices.getPortletRegistryService();
                 try {
                     final PortletDD portletDescriptor = portletRegistryService.getPortletDescriptor(portletApplicationId, portletName);
