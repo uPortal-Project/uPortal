@@ -32,7 +32,9 @@
 		var initportal = function() {
 		
 		    settings.columnCount = $("#portalPageBodyColumns [id^=column_]").size(); 
-		    settings.tabId = $("#portalNavigationList li.active").attr("id").split("_")[1];
+		    if ($("#portalNavigationList li.active").size() > 0) {
+			    settings.tabId = $("#portalNavigationList li.active").attr("id").split("_")[1];
+		    }
 		
 			// initialize dialog menus
 			$("#contentDialogLink").click(initializeContentAddingMenu);
