@@ -18,8 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -91,9 +89,6 @@ public class RDBMDistributedLayoutStore
     // Cache for structure stylesheet descriptors
     private static SmartCache ssdCache;
 
-    /** Map of read/writer lock objects; one per unique person. */
-    private final Map<Object, ReadWriteLock> mLocks = new ConcurrentHashMap<Object, ReadWriteLock>();
-
     /**
      * Method for acquiring copies of fragment layouts to assist in debugging.
      * No infrastructure code calls this but channels designed to expose the
@@ -116,31 +111,6 @@ public class RDBMDistributedLayoutStore
             layouts.put(fragmentDefinition.getOwnerId(), layout);
         }
         return layouts;
-    }
-    private final ReadWriteLock getReadWriteLock(IPerson person)
-    {
-        Object key = new Integer(person.getID());
-
-        ReadWriteLock lock = mLocks.get(key);
-
-        if (null == lock)
-        {
-            lock = new ReentrantReadWriteLock();
-
-            mLocks.put(key, lock);
-        }
-
-        return lock;
-    }
-
-    private void acquireReadLock(IPerson person) throws InterruptedException
-    {
-        getReadWriteLock(person).readLock().lock();
-    }
-
-    private void releaseReadLock(IPerson person)
-    {
-        getReadWriteLock(person).readLock().unlock();
     }
 
     public RDBMDistributedLayoutStore ( )
@@ -469,18 +439,7 @@ public class RDBMDistributedLayoutStore
     private Document _safeGetUserLayout(IPerson person, UserProfile profile)
             throws Exception
     {
-        Document layoutDoc = null;
-        // acquireWriteLock a reader lock for loading raw layout from db.
-        acquireReadLock(person);
-
-        try
-        {
-            layoutDoc = super.getUserLayout(person, profile);
-        } finally
-        {
-            // release the read lock
-            releaseReadLock(person);
-        }
+        Document layoutDoc = super.getUserLayout(person, profile);
         Element layout = layoutDoc.getDocumentElement();
         layout.setAttribute(Constants.NS_DECL, Constants.NS_URI);
         return layoutDoc;
