@@ -21,7 +21,7 @@ public class FragmentDefinitionDao implements IFragmentDefinitionDao {
 
     // Static Members
     private static final String GET_ALL_FRAGMENTS = "SELECT x FROM FragmentDefinition x ORDER BY x.precedence DESC";
-    private static final String FIND_FRAGMENT_BY_NAME = "SELECT x FROM Evaluator x WHERE x.name = :name";
+    private static final String FIND_FRAGMENT_BY_NAME = "SELECT x FROM FragmentDefinition x WHERE x.name = :name";
 
     // Instance Members.
     private EntityManager entityManager;
