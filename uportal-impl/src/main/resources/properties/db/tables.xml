@@ -79,14 +79,6 @@
     </columns>
     <not-null>USER_ID</not-null>
     <primary-key>USER_ID</primary-key>
-    <unique>
-        <name>UPU_NAME_UNQ</name>
-        <column-ref>USER_NAME</column-ref>
-    </unique>
-    <index>
-        <name>UPU_NAME_IDX</name>
-        <column-ref>USER_NAME</column-ref>
-    </index>
     <index>
         <name>UPU_DFLT_ID_IDX</name>
         <column-ref>USER_DFLT_USR_ID</column-ref>
@@ -813,14 +805,6 @@
       </column>
     </columns>
     <primary-key>ENTITY_TYPE_ID</primary-key>
-    <index>
-        <name>UPET_NAME_IDX</name>
-        <column-ref>ENTITY_TYPE_NAME</column-ref>
-    </index>
-    <unique>
-        <name>UPET_NAME_UNQ</name>
-        <column-ref>ENTITY_TYPE_NAME</column-ref>
-    </unique>
     <not-null>ENTITY_TYPE_ID</not-null>
   </table>
 
