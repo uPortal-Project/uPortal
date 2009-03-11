@@ -7,6 +7,7 @@
 
 -->
 <!-- $Revision$ -->
+<!DOCTYPE tables PUBLIC "-//uPortal//Tables/EN" "tables.dtd">
 
 <tables>
 
@@ -33,7 +34,13 @@
         <desc>Person's e-mail address</desc>
       </column>
     </columns>
+    <not-null>USER_NAME</not-null>
     <primary-key>USER_NAME</primary-key>
+    <index>
+        <name>UPPD_NAME_PSWD_IDX</name>
+        <column-ref>USER_NAME</column-ref>
+        <column-ref>ENCRPTD_PSWD</column-ref>
+    </index>
   </table>
 
   <table>
@@ -60,6 +67,11 @@
     <not-null>CREATOR_ID</not-null>
     <not-null>ENTITY_TYPE_ID</not-null>
     <not-null>GROUP_NAME</not-null>
+    <not-null>GROUP_ID</not-null>
+    <index>
+        <name>UPG_GROUP_NAME_IDX</name>
+        <column-ref>GROUP_NAME</column-ref>
+    </index>
   </table>
 
 </tables>

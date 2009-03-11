@@ -6,6 +6,8 @@
     https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
 
 -->
+<!DOCTYPE tables PUBLIC "-//uPortal//Tables/EN" "tables.dtd">
+
 <tables>
   <table>
     <name>UP_CHAN_TYPE_MDATA</name>
@@ -26,6 +28,8 @@
     </columns>
     <primary-key>TYPE_ID</primary-key>
     <primary-key>LOCALE</primary-key>
+    <not-null>TYPE_ID</not-null>
+    <not-null>LOCALE</not-null>
   </table>
 
   <table>
@@ -50,6 +54,8 @@
     </columns>
     <primary-key>CHAN_ID</primary-key>
     <primary-key>LOCALE</primary-key>
+    <not-null>CHAN_ID</not-null>
+    <not-null>LOCALE</not-null>
   </table>
 
   <table>
@@ -76,6 +82,10 @@
     <primary-key>LAYOUT_ID</primary-key>
     <primary-key>STRUCT_ID</primary-key>
     <primary-key>LOCALE</primary-key>
+    <not-null>USER_ID</not-null>
+    <not-null>LAYOUT_ID</not-null>
+    <not-null>STRUCT_ID</not-null>
+    <not-null>LOCALE</not-null>
   </table>
 
   <table>
@@ -100,6 +110,9 @@
     <primary-key>USER_ID</primary-key>
     <primary-key>PROFILE_ID</primary-key>
     <primary-key>LOCALE</primary-key>
+    <not-null>USER_ID</not-null>
+    <not-null>PROFILE_ID</not-null>
+    <not-null>LOCALE</not-null>
   </table>
 
   <table>
@@ -122,6 +135,9 @@
     <primary-key>LAYOUT_ID</primary-key>
     <primary-key>USER_ID</primary-key>
     <primary-key>LOCALE</primary-key>
+    <not-null>LAYOUT_ID</not-null>
+    <not-null>USER_ID</not-null>
+    <not-null>LOCALE</not-null>
   </table>
 
   <table>
@@ -136,6 +152,13 @@
       </column>
     </columns>
     <primary-key>USER_ID</primary-key>
+    <not-null>USER_ID</not-null>
+    <not-null>LOCALE</not-null>
+    <unique>
+        <name>UPUM_ID_LOCALE_UNQ</name>
+        <column-ref>USER_ID</column-ref>
+        <column-ref>LOCALE</column-ref>
+    </unique>
   </table>
 
 </tables>
