@@ -805,6 +805,10 @@
       </column>
     </columns>
     <primary-key>ENTITY_TYPE_ID</primary-key>
+    <unique>
+      <name>UPET_NAME_UNQ</name>
+      <column-ref>ENTITY_TYPE_NAME</column-ref>
+    </unique>
     <not-null>ENTITY_TYPE_ID</not-null>
   </table>
 
