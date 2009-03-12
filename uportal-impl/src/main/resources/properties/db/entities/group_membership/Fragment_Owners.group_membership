@@ -1,0 +1,14 @@
+
+<group script="classpath://org/jasig/portal/io/import-group_membership_v3-0.crn">
+  <name>Fragment Owners</name>
+  <entity-type>org.jasig.portal.security.IPerson</entity-type>
+  <creator>system</creator>
+  <description>These are fragment layout owner accounts</description>
+  <children>
+    <literal>ent-lo</literal>
+    <literal>guest-lo</literal>
+    <literal>news-lo</literal>
+    <literal>welcome-lo</literal>
+    <literal>fragmentTemplate</literal>
+  </children>
+</group>
