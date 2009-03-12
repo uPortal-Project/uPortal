@@ -10,5 +10,6 @@
     <group>Staff</group>
     <group>Students</group>
     <group>PAGS Root</group>
+    <group>Fragment Owners</group>
   </children>
 </group>
