@@ -303,15 +303,18 @@
                 <version>${maven-javadoc-plugin.version}</version>
                 <configuration>
                     <source>1.5</source>
+                    <maxmemory>512m</maxmemory>
                     <links>
                         <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
                         <link>http://java.sun.com/javaee/5/docs/api/</link>
-                        <link>http://portals.apache.org/pluto/multiproject/portlet-api/apidocs/</link>
+                        <link>http://portals.apache.org/pluto/portlet-1.0-apidocs/</link>
+                        <!-- Pluto apidocs are for 2.0 now
                         <link>http://portals.apache.org/pluto/pluto-container/apidocs/</link>
                         <link>http://portals.apache.org/pluto/pluto-descriptor-api/apidocs/</link>
+                        -->
                         <link>http://static.springframework.org/spring/docs/2.5.x/api/</link>
                         <link>http://static.springframework.org/spring-ldap/docs/1.2.0/api/spring-ldap/</link>
-                        <link>http://developer.ja-sig.org/projects/person-directory/apidocs/</link>
+                        <link>http://developer.jasig.org/projects/person-directory/1.1.2/apidocs/</link>
                     </links>
                 </configuration>
             </plugin>
@@ -334,6 +337,7 @@
                         <version>${maven-javadoc-plugin.version}</version>
                         <configuration>
                             <source>1.5</source>
+                            <maxmemory>512m</maxmemory>
                             <links>
                                 <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
                                 <link>http://java.sun.com/javaee/5/docs/api/</link>
