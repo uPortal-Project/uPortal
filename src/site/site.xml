@@ -6,19 +6,24 @@
     https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
 
 -->
-<project name="uPortal 3.2.0-SNAPSHOT">
+<project name="uPortal ${project.version}">
     <bannerLeft>
         <name>uPortal</name>
-        <src>http://uportal.org/images/uportal-head.gif</src>
-        <href>http://uportal.org</href>
+        <src>http://www.jasig.org/sites/jasig.webchuckhosting.com/files/uportalLogo.jpg</src>
+        <href>http://www.jasig.org/uportal</href>
     </bannerLeft>
     <bannerRight>
         <name>JA-SIG</name>
-        <src>http://www.ja-sig.org/images/jasig-head.gif</src>
-        <href>http://www.ja-sig.org</href>
+        <src>http://www.jasig.org/sites/all/themes/jasig2/logo.png</src>
+        <href>http://www.jasig.org</href>
     </bannerRight>
+    <publishDate position="left" format="MM-dd-yy hh:mm zz"/>
 
     <body>
+        <breadcrumbs>
+          <item name="Home" href="${project.url}"/>
+        </breadcrumbs>
+    
         <menu ref="modules" />
         <menu ref="reports" />
     </body>

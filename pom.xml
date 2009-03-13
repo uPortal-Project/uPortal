@@ -17,6 +17,7 @@
     <name>uPortal</name>
     <description>The root project definition for the uPortal project.</description>
     <version>3.2.0-SNAPSHOT</version>
+    <url>${jasig-site-base}/uportal/${project.version}</url>
     
     <scm>
         <connection>scm:svn:https://www.ja-sig.org/svn/uPortal/trunk</connection>
@@ -35,6 +36,21 @@
         <url>${jasig-issues-base}/UP</url>
         <system>${jasig-issues-system}</system>
     </issueManagement>
+    
+    <ciManagement>
+        <system>bamboo</system>
+        <url>http://developer.jasig.org/bamboo/browse/UP</url>
+        <notifiers>
+            <notifier>
+                <type>mail</type>
+                <sendOnError>true</sendOnError>
+                <sendOnFailure>true</sendOnFailure>
+                <sendOnSuccess>false</sendOnSuccess>
+                <sendOnWarning>false</sendOnWarning>
+                <configuration><address>uportal-dev@lists.ja-sig.org</address></configuration>
+            </notifier>
+        </notifiers>
+    </ciManagement>
 
     <repositories>
         <repository>
@@ -929,15 +945,18 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <configuration>
                     <source>1.5</source>
+                    <maxmemory>512m</maxmemory>
                     <links>
                         <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
                         <link>http://java.sun.com/javaee/5/docs/api/</link>
-                        <link>http://portals.apache.org/pluto/multiproject/portlet-api/apidocs/</link>
+                        <link>http://portals.apache.org/pluto/portlet-1.0-apidocs/</link>
+                        <!-- Pluto apidocs are for 2.0 now
                         <link>http://portals.apache.org/pluto/pluto-container/apidocs/</link>
                         <link>http://portals.apache.org/pluto/pluto-descriptor-api/apidocs/</link>
+                        -->
                         <link>http://static.springframework.org/spring/docs/2.5.x/api/</link>
                         <link>http://static.springframework.org/spring-ldap/docs/1.2.0/api/spring-ldap/</link>
-                        <link>http://developer.ja-sig.org/projects/person-directory/apidocs/</link>
+                        <link>http://developer.jasig.org/projects/person-directory/1.5.0-RC2/apidocs/</link>
                     </links>
                 </configuration>
             </plugin>
@@ -947,4 +966,16 @@
             </plugin>
         </plugins>
     </reporting>
+    
+    <profiles>
+        <profile>
+            <id>ci-local-site</id>
+            <distributionManagement>
+                <site>
+                    <id>ci-local-site</id>
+                    <url>file:/jasig/htdocs/developer.ja-sig.org/projects/uportal/${project.version}</url>
+                </site>
+            </distributionManagement>
+        </profile>
+    </profiles>
 </project>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright (c) 2000-2009, Jasig, Inc.
+    See license distributed with this file and available online at
+    https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
+
+-->
+<document>
+    <properties>
+        <title>Welcome to the uPortal Developers Site</title>
+    </properties>
+
+    <body>
+
+        <section name="Welcome to the uPortal Developers Site">
+            <p>
+                This is the Maven generated project site for uPortal. Included in the site are Javadocs,
+                unit test results, and other reports. Click on the Module you are interested in on the
+                left and then expand the Project Reports section.
+            </p>
+        </section>
+    </body>
+</document>
+
