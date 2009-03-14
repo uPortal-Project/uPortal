@@ -409,7 +409,7 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
                                         try {
                                             channelManager.startChannelRendering(req, res, channelSubscribeId);
                                         } catch (PortalException e) {
-                                            log.error("UserInstance::renderState() : unable to start rendering channel (subscribeId=\""+channelSubscribeId+"\", user="+person.getID()+" layoutId="+uPreferencesManager.getCurrentProfile().getLayoutId()+e.getCause().toString());
+                                            log.error("UserInstance::renderState() : unable to start rendering channel (subscribeId=\""+channelSubscribeId+"\", user="+person.getID()+" layoutId="+uPreferencesManager.getCurrentProfile().getLayoutId(),e);
                                         }
                                     } else {
                                         log.error("channel entry " + Integer.toString(i)
