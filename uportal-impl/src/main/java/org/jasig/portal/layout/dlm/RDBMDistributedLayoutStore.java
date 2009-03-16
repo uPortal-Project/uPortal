@@ -545,7 +545,8 @@ public class RDBMDistributedLayoutStore
                            Constants.FRAGMENT_ID_USER_PREFIX +
                            userView.getUserId() +
                            Constants.FRAGMENT_ID_LAYOUT_PREFIX + "1" );
-        UserView view = new UserView( profile,
+        UserView view = new UserView( userView.getUserId(),
+                                      profile,
                                       layout,
                                       userView.structUserPrefs,
                                       userView.themeUserPrefs );
@@ -1484,8 +1485,8 @@ public class RDBMDistributedLayoutStore
             ssup = new DistributedUserPreferences(
                     (StructureStylesheetUserPreferences) ssup);
             final UserView userView = activator.getUserView(ownedFragment.getOwnerId());
-            UserView view = new UserView(profile, userView.layout,
-                    ssup, userView.themeUserPrefs);
+            UserView view = new UserView(userView.getUserId(), profile, 
+                        userView.layout, ssup, userView.themeUserPrefs);
             activator.fragmentizeSSUP(view, ownedFragment);
             this.activator.setUserView(ownedFragment.getOwnerId(), view);
         }
