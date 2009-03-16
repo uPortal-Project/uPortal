@@ -8,6 +8,7 @@ package org.jasig.portal.portlet.url;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -29,7 +30,7 @@ import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
-import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
+import org.jasig.portal.portlet.registry.ITransientPortletWindowRegistry;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.utils.Tuple;
 import org.springframework.beans.factory.annotation.Required;
@@ -56,9 +57,10 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
     
     private String defaultEncoding = "UTF-8";
     private int bufferLength = 512;
-    private IPortletWindowRegistry portletWindowRegistry;
+    private ITransientPortletWindowRegistry portletWindowRegistry;
     private IPortalRequestUtils portalRequestUtils;
     private boolean useAnchors = true;
+    private Set<WindowState> transientWindowStates = new HashSet<WindowState>(Arrays.asList(IPortletAdaptor.EXCLUSIVE));
     
     
     /**
@@ -122,14 +124,14 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
     /**
      * @return the portletWindowRegistry
      */
-    public IPortletWindowRegistry getPortletWindowRegistry() {
+    public ITransientPortletWindowRegistry getPortletWindowRegistry() {
         return portletWindowRegistry;
     }
     /**
      * @param portletWindowRegistry the portletWindowRegistry to set
      */
     @Required
-    public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
+    public void setPortletWindowRegistry(ITransientPortletWindowRegistry portletWindowRegistry) {
         Validate.notNull(portletWindowRegistry, "portletWindowRegistry can not be null");
         this.portletWindowRegistry = portletWindowRegistry;
     }
@@ -261,36 +263,46 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
         //Get the encoding to use for the URL
         final String encoding = this.getEncoding(request);
         
-        //Get the string version of the portlet ID (local variable to avoid needless getStringId() calls)
-        final String portletWindowIdString = portletWindowId.getStringId();
         
         // TODO Need to decide how to deal with 'secure' URL requests
-        // Determine the base path for the URL
-        // If the next state is EXCLUSIVE or there is no state change and the current state is EXCLUSIVE use the worker URL base
-        final String urlBase;
+
+
+        //Build the base of the URL with the context path
+        final StringBuilder url = new StringBuilder(this.bufferLength);
+        final String contextPath = request.getContextPath();
+        url.append(contextPath).append("/");
+        
         final WindowState windowState = portletUrl.getWindowState();
         final WindowState previousWindowState = portletWindow.getWindowState();
+        
+        // Determine the base path for the URL
+        // If the next state is EXCLUSIVE or there is no state change and the current state is EXCLUSIVE use the worker URL base
         if (IPortletAdaptor.EXCLUSIVE.equals(windowState) || (windowState == null && IPortletAdaptor.EXCLUSIVE.equals(previousWindowState))) {
-            urlBase = channelRuntimeData.getBaseWorkerURL(UPFileSpec.FILE_DOWNLOAD_WORKER);
+            final String urlBase = channelRuntimeData.getBaseWorkerURL(UPFileSpec.FILE_DOWNLOAD_WORKER);
+            url.append(urlBase);
 
             if (this.logger.isTraceEnabled()) {
                 this.logger.trace("Using worker url base '" + urlBase + "'");
             }
         }
         else {
-            urlBase = channelRuntimeData.getBaseActionURL();
+            final String urlBase = channelRuntimeData.getBaseActionURL();
+            url.append(urlBase);
             
             if (this.logger.isTraceEnabled()) {
                 this.logger.trace("Using default url base '" + urlBase + "'");
             }
         }
 
-        final StringBuilder url = new StringBuilder(this.bufferLength);
-        final String contextPath = request.getContextPath();
-        url.append(contextPath).append("/");
-        url.append(urlBase);
-        
-        //Set the request target
+        //Set the request target, creating a transient window ID if needed
+        final String portletWindowIdString;
+        if (this.transientWindowStates.contains(windowState) && !this.transientWindowStates.contains(previousWindowState)) {
+            final IPortletWindowId transientPortletWindowId = this.portletWindowRegistry.createTransientPortletWindowId(request, portletWindowId);
+            portletWindowIdString = transientPortletWindowId.toString();
+        }
+        else {
+            portletWindowIdString = portletWindowId.getStringId();
+        }
         this.encodeAndAppend(url.append("?"), encoding, PARAM_REQUEST_TARGET, portletWindowIdString);
         
         //Set the request type
@@ -302,6 +314,7 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
         if (windowState != null && !previousWindowState.equals(windowState)) {
             this.encodeAndAppend(url.append("&"), encoding, PARAM_WINDOW_STATE, windowState.toString());
             
+            //Add the parameters needed by the portal structure & theme to render the correct window state 
             if (WindowState.MAXIMIZED.equals(windowState)) {
                 this.encodeAndAppend(url.append("&"), encoding, "uP_root", channelSubscribeId);
             }
@@ -318,11 +331,19 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
                 this.encodeAndAppend(url.append("&"), encoding, "minimized_" + channelSubscribeId + "_value", "true");
             }
         }
+        //Or for any transient state always add the window state
+        else if (this.transientWindowStates.contains(windowState) || this.transientWindowStates.contains(previousWindowState)) {
+            this.encodeAndAppend(url.append("&"), encoding, PARAM_WINDOW_STATE, previousWindowState.toString());
+        }
         
         //If set add the portlet mode
         final PortletMode portletMode = portletUrl.getPortletMode();
         if (portletMode != null) {
             this.encodeAndAppend(url.append("&"), encoding, PARAM_PORTLET_MODE, portletMode.toString());
+        }
+        //Or for any transient state always add the portlet mode
+        else if (this.transientWindowStates.contains(windowState) || this.transientWindowStates.contains(previousWindowState)) {
+            this.encodeAndAppend(url.append("&"), encoding, PARAM_PORTLET_MODE, portletWindow.getPortletMode().toString());
         }
         
         //Add the parameters to the URL
@@ -336,6 +357,8 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
             }
         }
        
+        //Add the anchor if anchoring is enabled
+        //TODO disable for detached window states (maximized too?)
         if (this.useAnchors && !RequestType.ACTION.equals(requestType)) {
         	url.append("#").append(channelSubscribeId);
         }

@@ -262,7 +262,7 @@ public class MockPortletWindow implements IPortletWindow {
             .append(this.windowState, rhs.getWindowState())
             .append(this.portletMode, rhs.getPortletMode())
             .append(this.expirationCache, rhs.getExpirationCache())
-            .append(this.requestParameters, rhs.getRequestParameers())
+            .append(this.requestParameters, rhs.getRequestParameters())
             .isEquals();
     }
 

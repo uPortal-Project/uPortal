@@ -5,7 +5,6 @@
  */
 package org.jasig.portal.portlet.registry;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -25,18 +24,17 @@ import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.utils.Tuple;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.web.util.WebUtils;
 
 /**
  * Provides the default implementation of the window registry, the backing for the storage
  * of IPortletWindow objects is a Map stored in the HttpSession for the user.
  * 
- * TODO may have to do more synchronization work in here
- * 
  * @author Eric Dalquist
  * @version $Revision$
  */
 public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
-    private static final String PORTLET_WINDOW_MAP_ATTRIBUTE = PortletWindowRegistryImpl.class.getName() + ".PORTLET_WINDOW_MAP";
+    public static final String PORTLET_WINDOW_MAP_ATTRIBUTE = PortletWindowRegistryImpl.class.getName() + ".PORTLET_WINDOW_MAP";
     
     protected final Log logger = LogFactory.getLog(this.getClass());
     
@@ -124,14 +122,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
 
         //Create the window
         final IPortletWindowId portletWindowId = this.createPortletWindowId(windowInstanceId, portletEntityId);
-        
-        //Get the parent definition to determine the descriptor data
-        final IPortletDefinition portletDefinition = this.portletEntityRegistry.getParentPortletDefinition(portletEntityId);
-        final Tuple<String, String> portletDescriptorKeys = this.portletDefinitionRegistry.getPortletDescriptorKeys(portletDefinition);
-
-        final String portletApplicationId = portletDescriptorKeys.first;
-        final String portletName = portletDescriptorKeys.second;
-        final IPortletWindow portletWindow = new PortletWindowImpl(portletWindowId, portletEntityId, portletApplicationId, portletName);
+        final IPortletWindow portletWindow = this.createPortletWindow(portletWindowId, portletEntityId);
         
         //Store it in the request
         this.storePortletWindow(request, portletWindow);
@@ -182,8 +173,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
         Validate.notNull(portletEntityId, "portletEntityId can not be null");
         
         final IPortletWindowId portletWindowId = this.createPortletWindowId(windowInstanceId, portletEntityId);
-        final IPortletWindow portletWindow = this.getPortletWindow(request, portletWindowId);
-        return portletWindow;
+        return this.getPortletWindow(request, portletWindowId);
     }
 
     /* (non-Javadoc)
@@ -209,6 +199,23 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
     }
     
     /**
+     * Creates a new {@link IPortletWindow} for the specified window ID and entity ID.
+     * 
+     * @param windowInstanceId The window instance id.
+     * @param portletEntityId The parent entity id.
+     * @return A new portlet window
+     */
+    protected IPortletWindow createPortletWindow(IPortletWindowId portletWindowId, IPortletEntityId portletEntityId) {
+        //Get the parent definition to determine the descriptor data
+        final IPortletDefinition portletDefinition = this.portletEntityRegistry.getParentPortletDefinition(portletEntityId);
+        final Tuple<String, String> portletDescriptorKeys = this.portletDefinitionRegistry.getPortletDescriptorKeys(portletDefinition);
+
+        final String portletApplicationId = portletDescriptorKeys.first;
+        final String portletName = portletDescriptorKeys.second;
+        return new PortletWindowImpl(portletWindowId, portletEntityId, portletApplicationId, portletName);
+    }
+    
+    /**
      * Generates a new, unique, portlet window ID for the window instance ID & entity id.
      * 
      * @param windowInstanceId The window instance id.
@@ -231,7 +238,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
         
         final Map<IPortletWindowId, IPortletWindow> portletWindows;
         //Sync on the session to ensure the Map isn't in the process of being created
-        synchronized (session) {
+        synchronized (WebUtils.getSessionMutex(session)) {
             portletWindows = (Map<IPortletWindowId, IPortletWindow>)session.getAttribute(PORTLET_WINDOW_MAP_ATTRIBUTE);
         }
         return portletWindows;
@@ -247,7 +254,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
         
         Map<IPortletWindowId, IPortletWindow> portletWindows;
         //Sync on the session to ensure other threads aren't creating the Map at the same time
-        synchronized (session) {
+        synchronized (WebUtils.getSessionMutex(session)) {
             portletWindows = (Map<IPortletWindowId, IPortletWindow>)session.getAttribute(PORTLET_WINDOW_MAP_ATTRIBUTE);
             if (portletWindows == null) {
                 portletWindows = new ConcurrentHashMap<IPortletWindowId, IPortletWindow>();

@@ -871,7 +871,7 @@ public class SpringPortletChannelImplTest extends TestCase {
 
         
         final IPortletWindow portletWindow = EasyMock.createMock(IPortletWindow.class);
-        EasyMock.expect(portletWindow.getRequestParameers()).andReturn(null);
+        EasyMock.expect(portletWindow.getRequestParameters()).andReturn(null);
         EasyMock.expect(portletWindow.getContextPath()).andReturn("portApp1");
         EasyMock.expect(portletWindow.getPortletName()).andReturn("port1");
         
