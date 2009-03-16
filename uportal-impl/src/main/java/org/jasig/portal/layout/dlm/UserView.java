@@ -26,14 +26,15 @@ class UserView
     int structureStylesheetId = 0;
     int themeStylesheetId = 0;
 
-    UserView (int userId)
+    UserView (int fragmentOwnerUserId)
     {
-        this.userId = userId;
+        this.userId = fragmentOwnerUserId;
     }
     
-    UserView(UserProfile profile, Document layout,
+    UserView(int fragmentOwnerUserId, UserProfile profile, Document layout,
             DistributedUserPreferences ssup, DistributedUserPreferences tsup)
     {
+        this.userId = fragmentOwnerUserId;
         layoutId = profile.getLayoutId();
         profileId = profile.getProfileId();
         structureStylesheetId = profile.getStructureStylesheetId();
