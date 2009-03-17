@@ -86,61 +86,8 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
         else
         {
             for (final FragmentDefinition fragmentDefinition : this.fragments) {
-                if ( fragmentDefinition.isNoAudienceIncluded())
-                {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("\n\n------ skipping " + fragmentDefinition + " - " +
-                        fragmentDefinition.getName() + ", no evaluators found" );
-                    }
-                }
-                else
-                {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("\n\n------ activating " + fragmentDefinition + " - " +
-                        fragmentDefinition.getName() );
-                    }
-
-                    try
-                    {
-                        IPerson owner = bindToOwner( fragmentDefinition );
-                        UserView view = new UserView(owner.getID());
-                        loadLayout( view, fragmentDefinition, owner );
-                        
-                        // if owner just created we need to push the layout into
-                        // the db so that our fragment template user is used and
-                        // not the default template user as determined by
-                        // the user identity store.
-                        if (owner.getAttribute("newlyCreated") != null)
-                        {
-                            owner.setAttribute( Constants.PLF, view.layout );
-                            saveLayout( view, owner );
-                        }
-                        loadPreferences( view, fragmentDefinition );
-                        fragmentizeLayout( view, fragmentDefinition );
-                        fragmentizeTSUP( view, fragmentDefinition );
-                        fragmentizeSSUP( view, fragmentDefinition );
-                        this.setUserView(fragmentDefinition.getOwnerId(), view);
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("\n\n------ done activating " +
-                                fragmentDefinition.getName() );
-                        }
-                    }
-                    catch( Exception e )
-                    {
-                        // problem loading so none of it should be used
-                        StringWriter sw = new StringWriter();
-                        PrintWriter pw = new PrintWriter( sw );
-                        e.printStackTrace( pw );
-                        pw.flush();
-                        LOG.error("\n\n------ Problem occurred activating " +
-                                fragmentDefinition.getName() + "------\n" +
-                                (e.getMessage() != null ?
-                                 e.getMessage() + "\n\n" : "" ) +
-                                sw.toString() );
-                    }
-                }
+                activateFragment(fragmentDefinition);
             }
-
             
             final List<FragmentDefinition> sortedFragments = new ArrayList<FragmentDefinition>(this.fragments);
             // lastly sort according to precedence followed by index
@@ -149,21 +96,15 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
             // show sort order in log file if debug is on. (Could check and
             // only build of on but do later.)
             StringBuffer bfr = new StringBuffer();
-            bfr.append( fragments.get(0).getName() );
-            bfr.append( "[" );
-            bfr.append( fragments.get(0).getPrecedence() );
-            bfr.append( "]" );
-        
             for (final FragmentDefinition fragmentDefinition : sortedFragments) {
-                bfr.append( ",\n" );
                 bfr.append( fragmentDefinition.getName() );
                 bfr.append( "[" );
                 bfr.append( fragmentDefinition.getPrecedence() );
-                bfr.append( "]" );
+                bfr.append( "],\n" );
             }
             if (LOG.isDebugEnabled()) {
                 LOG.debug("\n\nFragments Sorted by Precedence and then index {\n" +
-                    bfr.toString() + " }\n" );
+                    bfr.toString() + " }" );
             }
         }
         
@@ -175,14 +116,90 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
         return true;
     }
     
-    public UserView getUserView(String ownerId) {
-        UserView rslt = userViews.get(ownerId);
+    private void activateFragment(FragmentDefinition fd) {
+        
+        // Assertions.
+        if (fd == null) {
+            String msg = "Argument 'fd' [FragmentDefinition] cannot be null.";
+            throw new IllegalArgumentException(msg);
+        }
+
+        if (fd.isNoAudienceIncluded())
+        {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("\n\n------ skipping " + fd + " - " +
+                        fd.getName() + ", no evaluators found" );
+            }
+        }
+        else
+        {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("\n\n------ activating " + fd + " - " +
+                        fd.getName() );
+            }
+
+            try
+            {
+                IPerson owner = bindToOwner(fd);
+                UserView view = new UserView(owner.getID());
+                loadLayout( view, fd, owner );
+                
+                // if owner just created we need to push the layout into
+                // the db so that our fragment template user is used and
+                // not the default template user as determined by
+                // the user identity store.
+                if (owner.getAttribute("newlyCreated") != null)
+                {
+                    owner.setAttribute( Constants.PLF, view.layout );
+                    saveLayout( view, owner );
+                }
+                loadPreferences( view, fd);
+                fragmentizeLayout( view, fd);
+                fragmentizeTSUP( view, fd);
+                fragmentizeSSUP( view, fd);
+                this.setUserView(fd.getOwnerId(), view);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("\n\n------ done activating " + fd.getName() );
+                }
+            }
+            catch( Exception e )
+            {
+                // problem loading so none of it should be used
+                StringWriter sw = new StringWriter();
+                PrintWriter pw = new PrintWriter( sw );
+                e.printStackTrace( pw );
+                pw.flush();
+                LOG.error("\n\n------ Problem occurred activating " +
+                        fd.getName() + "------\n" +
+                        (e.getMessage() != null ?
+                         e.getMessage() + "\n\n" : "" ) +
+                        sw.toString() );
+            }
+        }
+
+    }
+    
+    public UserView getUserView(FragmentDefinition fd) {
+        
+        // Assertions...
+        if (fd == null) {
+            String msg  = "Argument 'fd' [FragmentDefinition] cannot be null.";
+            throw new IllegalArgumentException(msg);
+        }
+        
+        // Activate the fragment just-in-time if it's new...
+        if (!hasUserView(fd)) {
+            activateFragment(fd);
+        }
+        
+        UserView rslt = userViews.get(fd.getOwnerId());
         if (rslt == null) {
             // This is worrysome...
-            LOG.warn("No UserView object is present for owner '" + ownerId 
+            LOG.warn("No UserView object is present for owner '" + fd.getOwnerId() 
                                         + "' -- null will be returned");
         }
         return rslt;
+        
     }
     
     public void setUserView(String ownerId, UserView v) {
@@ -205,15 +222,15 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
         
     }
     
-    public boolean hasUserView(String ownerId) {
+    public boolean hasUserView(FragmentDefinition fd) {
 
-        // Assertions.
-        if (ownerId == null) {
-            String msg = "Argument 'ownerId' cannot be null.";
+        // Assertions...
+        if (fd == null) {
+            String msg  = "Argument 'fd' [FragmentDefinition] cannot be null.";
             throw new IllegalArgumentException(msg);
         }
 
-        return userViews.containsKey(ownerId);
+        return userViews.containsKey(fd.getOwnerId());
 
     }
     
