@@ -27,4 +27,6 @@ public interface ITransientPortletWindowRegistry extends IPortletWindowRegistry 
      * @throws IllegalArgumentException If portletWindowId is null
      */
     public IPortletWindowId createTransientPortletWindowId(HttpServletRequest request, IPortletWindowId sourcePortletWindowId);
+    
+    public boolean isTransient(HttpServletRequest request, IPortletWindowId portletWindowId);
 }

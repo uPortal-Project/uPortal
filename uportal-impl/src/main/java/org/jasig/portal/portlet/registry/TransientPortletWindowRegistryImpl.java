@@ -43,6 +43,14 @@ public class TransientPortletWindowRegistryImpl extends PortletWindowRegistryImp
         //Build the transient ID from the prefix and the entity ID
         return new PortletWindowIdImpl(TRANSIENT_WINDOW_ID_PREFIX + portletEntityId.getStringId());
     }
+    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.portlet.registry.ITransientPortletWindowRegistry#isTransient(javax.servlet.http.HttpServletRequest, org.jasig.portal.portlet.om.IPortletWindowId)
+     */
+    public boolean isTransient(HttpServletRequest request, IPortletWindowId portletWindowId) {
+        final String windowInstanceId = portletWindowId.getStringId();
+        return windowInstanceId.startsWith(TRANSIENT_WINDOW_ID_PREFIX);
+    }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.registry.IPortletWindowRegistry#getPortletWindow(javax.servlet.http.HttpServletRequest, org.jasig.portal.portlet.om.IPortletWindowId)
@@ -52,14 +60,14 @@ public class TransientPortletWindowRegistryImpl extends PortletWindowRegistryImp
         Validate.notNull(request, "request can not be null");
         Validate.notNull(portletWindowId, "portletWindowId can not be null");
         
-        final String windowInstanceId = portletWindowId.getStringId();
-        if (windowInstanceId.startsWith(TRANSIENT_WINDOW_ID_PREFIX)) {
-            final String portletEntityIdString = windowInstanceId.substring(TRANSIENT_WINDOW_ID_PREFIX.length());
+        if (this.isTransient(request, portletWindowId)) {
+            final String portletWindowIdString = portletWindowId.getStringId();
+            final String portletEntityIdString = portletWindowIdString.substring(TRANSIENT_WINDOW_ID_PREFIX.length());
             
             final IPortletEntityRegistry portletEntityRegistry = this.getPortletEntityRegistry();
             final IPortletEntity portletEntity = portletEntityRegistry.getPortletEntity(portletEntityIdString);
             
-            return this.getTransientPortletWindow(request, windowInstanceId, portletEntity.getPortletEntityId());
+            return this.getTransientPortletWindow(request, portletWindowIdString, portletEntity.getPortletEntityId());
         }
         
         return super.getPortletWindow(request, portletWindowId);

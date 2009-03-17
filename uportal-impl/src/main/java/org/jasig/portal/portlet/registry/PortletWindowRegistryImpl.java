@@ -186,6 +186,15 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
     }
     
     /* (non-Javadoc)
+     * @see org.jasig.portal.portlet.registry.IPortletWindowRegistry#getDefaultPortletWindowId(org.jasig.portal.portlet.om.IPortletEntityId)
+     */
+    public IPortletWindowId getDefaultPortletWindowId(IPortletEntityId portletEntityId) {
+        final IPortletEntity portletEntity = this.portletEntityRegistry.getPortletEntity(portletEntityId);
+        final String channelSubscribeId = portletEntity.getChannelSubscribeId();
+        return this.createPortletWindowId(channelSubscribeId, portletEntityId);
+    }
+    
+    /* (non-Javadoc)
      * @see org.jasig.portal.portlet.registry.IPortletWindowRegistry#getParentPortletEntity(javax.servlet.http.HttpServletRequest, org.jasig.portal.portlet.om.IPortletWindowId)
      */
     public IPortletEntity getParentPortletEntity(HttpServletRequest request, IPortletWindowId portletWindowId) {
@@ -197,6 +206,38 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
         final IPortletEntity portletEntity = this.portletEntityRegistry.getPortletEntity(parentPortletEntityId);
         return portletEntity;
     }
+    
+    public IPortletWindow createDefaultPortletWindow(HttpServletRequest request, IPortletEntityId portletEntityId) {
+        Validate.notNull(request, "request can not be null");
+        Validate.notNull(portletEntityId, "portletEntityId can not be null");
+
+        //Create the window
+        final IPortletWindowId portletWindowId = this.getDefaultPortletWindowId(portletEntityId);
+        final IPortletWindow portletWindow = this.createPortletWindow(portletWindowId, portletEntityId);
+        
+        //Store it in the request
+        this.storePortletWindow(request, portletWindow);
+        
+        return portletWindow;
+    }
+    
+    public IPortletWindow getOrCreateDefaultPortletWindow(HttpServletRequest request, IPortletEntityId portletEntityId) {
+        Validate.notNull(request, "request can not be null");
+        Validate.notNull(portletEntityId, "portletEntityId can not be null");
+        
+        final IPortletWindowId portletWindowId = this.getDefaultPortletWindowId(portletEntityId);
+        
+        //Try the get
+        IPortletWindow portletWindow = this.getPortletWindow(request, portletWindowId);
+        
+        //If nothing returned by the get create a new one.
+        if (portletWindow == null) {
+            portletWindow = this.createDefaultPortletWindow(request, portletEntityId);
+        }
+        
+        return portletWindow;
+    }
+    
     
     /**
      * Creates a new {@link IPortletWindow} for the specified window ID and entity ID.

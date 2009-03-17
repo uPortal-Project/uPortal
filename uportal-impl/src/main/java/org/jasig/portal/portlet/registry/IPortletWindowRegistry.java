@@ -73,6 +73,11 @@ public interface IPortletWindowRegistry {
      */
     public IPortletWindow getOrCreatePortletWindow(HttpServletRequest request, String windowInstanceId, IPortletEntityId portletEntityId);
     
+    
+    public IPortletWindow createDefaultPortletWindow(HttpServletRequest request, IPortletEntityId portletEntityId);
+    
+    public IPortletWindow getOrCreateDefaultPortletWindow(HttpServletRequest request, IPortletEntityId portletEntityId);
+    
     /**
      * Converts a Pluto {@link PortletWindow} object to a uPortal {@link IPortletWindow}.
      * 
@@ -91,6 +96,15 @@ public interface IPortletWindowRegistry {
      * @throws IllegalArgumentException If portletWindowId is null
      */
     public IPortletWindowId getPortletWindowId(String portletWindowId);
+    
+    /**
+     * Creates the default portlet window ID given the ID of the entity the window is based on. 
+     * 
+     * @param portletEntityId The id of the entity to base the window ID on
+     * @return The default window id for the entity
+     * @throws IllegalArgumentException If portletEntityId is null
+     */
+    public IPortletWindowId getDefaultPortletWindowId(IPortletEntityId portletEntityId);
     
     /**
      * Gets the parent portlet entity for the window specified by the window id.

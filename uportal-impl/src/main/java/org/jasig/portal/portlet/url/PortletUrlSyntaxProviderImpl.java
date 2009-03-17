@@ -28,6 +28,7 @@ import org.jasig.portal.UPFileSpec;
 import org.jasig.portal.channels.portlet.IPortletAdaptor;
 import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.portlet.om.IPortletEntity;
+import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.ITransientPortletWindowRegistry;
@@ -299,6 +300,13 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
         if (this.transientWindowStates.contains(windowState) && !this.transientWindowStates.contains(previousWindowState)) {
             final IPortletWindowId transientPortletWindowId = this.portletWindowRegistry.createTransientPortletWindowId(request, portletWindowId);
             portletWindowIdString = transientPortletWindowId.toString();
+        }
+        else if (this.portletWindowRegistry.isTransient(request, portletWindowId) && !this.transientWindowStates.contains(windowState) &&
+                      (windowState != null || !this.transientWindowStates.contains(previousWindowState))) {
+            //Get non-transient version of id
+            final IPortletEntityId portletEntityId = portletWindow.getPortletEntityId();
+            final IPortletWindowId defaultPortletWindowId = this.portletWindowRegistry.getDefaultPortletWindowId(portletEntityId);
+            portletWindowIdString = defaultPortletWindowId.getStringId();
         }
         else {
             portletWindowIdString = portletWindowId.getStringId();

@@ -119,8 +119,17 @@ public class PortletUrlSyntaxProviderImplTest extends TestCase {
             .andReturn(portletEntity)
             .anyTimes();
         
+        final MockPortletWindowId transientPortletWindowId = new MockPortletWindowId("tp.windowId1");
         EasyMock.expect(portletWindowRegistry.createTransientPortletWindowId(request, portletWindowId))
-            .andReturn(new MockPortletWindowId("tp.windowId1"))
+            .andReturn(transientPortletWindowId)
+            .anyTimes();
+        
+        EasyMock.expect(portletWindowRegistry.isTransient(request, portletWindowId))
+            .andReturn(true)
+            .anyTimes();
+        
+        EasyMock.expect(portletWindowRegistry.getDefaultPortletWindowId(portletEntityId))
+            .andReturn(portletWindowId)
             .anyTimes();
         
         EasyMock.replay(portletWindowRegistry);

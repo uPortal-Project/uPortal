@@ -289,14 +289,15 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel, Applicat
         final HttpServletRequest httpServletRequest = portalControlStructures.getHttpServletRequest();
         final IPortletEntityId portletEntityId = portletEntity.getPortletEntityId();
         final IPortletWindowId portletWindowId = this.getPortletWindowId(channelStaticData);
-//        final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreatePortletWindow(httpServletRequest, portletWindowId.getStringId(), portletEntityId);
         final IPortletWindow portletWindow;
         if (portletWindowId != null) {
-            portletWindow = this.portletWindowRegistry.getOrCreatePortletWindow(httpServletRequest, portletWindowId.getStringId(), portletEntityId);
+            portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
+            if (portletWindow == null) {
+                throw new IllegalArgumentException("Portlet window is null but a portlet window ID has been configured for it: " + portletWindowId);
+            }
         }
         else {
-            final String windowInstanceId = this.getWindowInstanceId(channelStaticData, portalControlStructures);
-            portletWindow = this.portletWindowRegistry.getOrCreatePortletWindow(httpServletRequest, windowInstanceId, portletEntityId);
+            portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindow(httpServletRequest, portletEntityId);
         }
         
         this.setPortletWidnowId(channelStaticData, portletWindow.getPortletWindowId());
