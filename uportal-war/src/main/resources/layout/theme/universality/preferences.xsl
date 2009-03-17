@@ -116,39 +116,39 @@
         </tr>
         <tr>
          <td>
-          <input type="radio" name="layoutChoice" value="100" title="$TOKEN[@name='AJAX_EDIT_PAGE_LAYOUT_OPTION_100']"/>
-          <img src="{$SKIN_PATH}/images/layout_100.gif" alt="$TOKEN[@name='AJAX_EDIT_PAGE_LAYOUT_OPTION_100']" title="$TOKEN[@name='AJAX_EDIT_PAGE_LAYOUT_OPTION_100']"/>
+          <input type="radio" name="layoutChoice" value="100" title="{$TOKEN[@name='AJAX_EDIT_PAGE_LAYOUT_OPTION_100']}"/>
+          <img src="{$SKIN_PATH}/images/layout_100.gif" alt="{$TOKEN[@name='AJAX_EDIT_PAGE_LAYOUT_OPTION_100']}" title="{$TOKEN[@name='AJAX_EDIT_PAGE_LAYOUT_OPTION_100']}"/>
          </td>
          <td>
-          <input type="radio" name="layoutChoice" value="50-50" title="$TOKEN[@name='AJAX_EDIT_PAGE_LAYOUT_OPTION_50_50']"/>
-          <img src="{$SKIN_PATH}/images/layout_50-50.gif" alt="$TOKEN[@name='AJAX_EDIT_PAGE_LAYOUT_OPTION_50_50']" title="$TOKEN[@name='AJAX_EDIT_PAGE_LAYOUT_OPTION_50_50']"/>
+          <input type="radio" name="layoutChoice" value="50-50" title="{$TOKEN[@name='AJAX_EDIT_PAGE_LAYOUT_OPTION_50_50']}"/>
+          <img src="{$SKIN_PATH}/images/layout_50-50.gif" alt="{$TOKEN[@name='AJAX_EDIT_PAGE_LAYOUT_OPTION_50_50']}" title="{$TOKEN[@name='AJAX_EDIT_PAGE_LAYOUT_OPTION_50_50']}"/>
          </td>
          <td>
-          <input type="radio" name="layoutChoice" value="33-34-33" title="$TOKEN[@name='AJAX_EDIT_PAGE_LAYOUT_OPTION_33_34_33']"/>
-          <img src="{$SKIN_PATH}/images/layout_33-34-33.gif" alt="$TOKEN[@name='AJAX_EDIT_PAGE_LAYOUT_OPTION_33_34_33']" title="$TOKEN[@name='AJAX_EDIT_PAGE_LAYOUT_OPTION_33_34_33']"/>
+          <input type="radio" name="layoutChoice" value="33-34-33" title="{$TOKEN[@name='AJAX_EDIT_PAGE_LAYOUT_OPTION_33_34_33']}"/>
+          <img src="{$SKIN_PATH}/images/layout_33-34-33.gif" alt="{$TOKEN[@name='AJAX_EDIT_PAGE_LAYOUT_OPTION_33_34_33']}" title="{$TOKEN[@name='AJAX_EDIT_PAGE_LAYOUT_OPTION_33_34_33']}"/>
          </td>
          <td>
-          <input type="radio" name="layoutChoice" value="25-25-25-25" title="$TOKEN[@name='AJAX_EDIT_PAGE_LAYOUT_OPTION_25_25_25_25']"/>
-          <img src="{$SKIN_PATH}/images/layout_25-25-25-25.gif" alt="$TOKEN[@name='AJAX_EDIT_PAGE_LAYOUT_OPTION_25_25_25_25']" title="$TOKEN[@name='AJAX_EDIT_PAGE_LAYOUT_OPTION_25_25_25_25']"/>
+          <input type="radio" name="layoutChoice" value="25-25-25-25" title="{$TOKEN[@name='AJAX_EDIT_PAGE_LAYOUT_OPTION_25_25_25_25']}"/>
+          <img src="{$SKIN_PATH}/images/layout_25-25-25-25.gif" alt="{$TOKEN[@name='AJAX_EDIT_PAGE_LAYOUT_OPTION_25_25_25_25']}" title="{$TOKEN[@name='AJAX_EDIT_PAGE_LAYOUT_OPTION_25_25_25_25']}"/>
          </td>
         </tr>
         <tr>
          <td></td>
          <td>
-          <input type="radio" name="layoutChoice" value="40-60" title="$TOKEN[@name='AJAX_EDIT_PAGE_LAYOUT_OPTION_40_60']"/>
-          <img src="{$SKIN_PATH}/images/layout_40-60.gif" alt="$TOKEN[@name='AJAX_EDIT_PAGE_LAYOUT_OPTION_40_60']" title="$TOKEN[@name='AJAX_EDIT_PAGE_LAYOUT_OPTION_40_60']"/>
+          <input type="radio" name="layoutChoice" value="40-60" title="{$TOKEN[@name='AJAX_EDIT_PAGE_LAYOUT_OPTION_40_60']}"/>
+          <img src="{$SKIN_PATH}/images/layout_40-60.gif" alt="{$TOKEN[@name='AJAX_EDIT_PAGE_LAYOUT_OPTION_40_60']}" title="{$TOKEN[@name='AJAX_EDIT_PAGE_LAYOUT_OPTION_40_60']}"/>
          </td>
          <td>
-          <input type="radio" name="layoutChoice" value="25-50-25" title="$TOKEN[@name='AJAX_EDIT_PAGE_LAYOUT_OPTION_25_50_25']"/>
-          <img src="{$SKIN_PATH}/images/layout_25-50-25.gif" alt="$TOKEN[@name='AJAX_EDIT_PAGE_LAYOUT_OPTION_25_50_25']" title="$TOKEN[@name='AJAX_EDIT_PAGE_LAYOUT_OPTION_25_50_25']"/>
+          <input type="radio" name="layoutChoice" value="25-50-25" title="{$TOKEN[@name='AJAX_EDIT_PAGE_LAYOUT_OPTION_25_50_25']}"/>
+          <img src="{$SKIN_PATH}/images/layout_25-50-25.gif" alt="{$TOKEN[@name='AJAX_EDIT_PAGE_LAYOUT_OPTION_25_50_25']}" title="{$TOKEN[@name='AJAX_EDIT_PAGE_LAYOUT_OPTION_25_50_25']}"/>
          </td>
          <td></td>
         </tr>
         <tr>
          <td></td>
          <td>
-          <input type="radio" name="layoutChoice" value="60-40" title="$TOKEN[@name='AJAX_EDIT_PAGE_LAYOUT_OPTION_60_40']"/>
-          <img src="{$SKIN_PATH}/images/layout_60-40.gif" alt="$TOKEN[@name='AJAX_EDIT_PAGE_LAYOUT_OPTION_60_40']" title="$TOKEN[@name='AJAX_EDIT_PAGE_LAYOUT_OPTION_60_40']"/>
+          <input type="radio" name="layoutChoice" value="60-40" title="{$TOKEN[@name='AJAX_EDIT_PAGE_LAYOUT_OPTION_60_40']}"/>
+          <img src="{$SKIN_PATH}/images/layout_60-40.gif" alt="{$TOKEN[@name='AJAX_EDIT_PAGE_LAYOUT_OPTION_60_40']}" title="{$TOKEN[@name='AJAX_EDIT_PAGE_LAYOUT_OPTION_60_40']}"/>
          </td>
          <td></td>
          <td></td>
