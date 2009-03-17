@@ -104,7 +104,7 @@ public class RDBMDistributedLayoutStore
         final List<FragmentDefinition> definitions = configurationLoader.getFragments();
         for (final FragmentDefinition fragmentDefinition : definitions) {
             Document layout = DocumentFactory.getNewDocument();
-            Node copy = layout.importNode(activator.getUserView(fragmentDefinition.getOwnerId())
+            Node copy = layout.importNode(activator.getUserView(fragmentDefinition)
                         .layout.getDocumentElement(), true);
             layout.appendChild(copy);
             layouts.put(fragmentDefinition.getOwnerId(), layout);
@@ -331,7 +331,7 @@ public class RDBMDistributedLayoutStore
             final Map<IPerson, FragmentDefinition> owners = new HashMap<IPerson, FragmentDefinition>();
             for (final FragmentDefinition fragmentDefinition : definitions) {
                 String ownerId = fragmentDefinition.getOwnerId();
-                int userId  = activator.getUserView(fragmentDefinition.getOwnerId()).getUserId();
+                int userId  = activator.getUserView(fragmentDefinition).getUserId();
 
                 if ( null != ownerId )
                 {
@@ -540,7 +540,7 @@ public class RDBMDistributedLayoutStore
 
         // Fix later to handle multiple profiles
         Element root = layout.getDocumentElement();
-        final UserView userView = activator.getUserView(fragment.getOwnerId());
+        final UserView userView = activator.getUserView(fragment);
         root.setAttribute( Constants.ATT_ID,
                            Constants.FRAGMENT_ID_USER_PREFIX +
                            userView.getUserId() +
@@ -626,11 +626,7 @@ public class RDBMDistributedLayoutStore
         if ( definitions != null )
         {
             for (final FragmentDefinition fragmentDefinition : definitions) {
-                String ownerId = fragmentDefinition.getOwnerId();
-                int fdId = -1;
-                if (activator.hasUserView(ownerId)) {
-                    fdId = activator.getUserView(ownerId).getUserId();
-                }
+                int fdId = activator.getUserView(fragmentDefinition).getUserId();
                 if ( fdId == userId ) {
                     return fragmentDefinition;
                 }
@@ -653,12 +649,22 @@ public class RDBMDistributedLayoutStore
         Vector<Document> applicables = new Vector<Document>();
 
         final List<FragmentDefinition> definitions = configurationLoader.getFragments();
+        
+        if (log.isDebugEnabled()) {
+            log.debug("About to check applicability of " + definitions.size() + " fragments");
+        }
+        
         if ( definitions != null )
         {
             for (final FragmentDefinition fragmentDefinition : definitions) {
+
+                if (log.isDebugEnabled()) {
+                    log.debug("Checking applicability of the following fragment:  " + fragmentDefinition.getName());
+                }
+
                 if ( fragmentDefinition.isApplicable(person) )
                 {
-                    applicables.add( activator.getUserView(fragmentDefinition.getOwnerId()).layout );
+                    applicables.add( activator.getUserView(fragmentDefinition).layout );
                 }
             }
         }
@@ -790,7 +796,7 @@ public class RDBMDistributedLayoutStore
         if (info == null)
         {
             for (final FragmentDefinition fragmentDefinition : fragments) {
-                Element node = activator.getUserView(fragmentDefinition.getOwnerId()).layout.getElementById(sId);
+                Element node = activator.getUserView(fragmentDefinition).layout.getElementById(sId);
                 if (node != null) // found it
                 {
                     if (node.getTagName().equals(Constants.ELM_CHANNEL))
@@ -1294,7 +1300,7 @@ public class RDBMDistributedLayoutStore
             for (final FragmentDefinition fragmentDefinition : fragments) {
                 if ( fragmentDefinition.isApplicable(person) ) {
                     loadIncorporatedPreferences( person, STRUCT, ssup,
-                            activator.getUserView(fragmentDefinition.getOwnerId()).structUserPrefs );
+                            activator.getUserView(fragmentDefinition).structUserPrefs );
                 }
             }
         }
@@ -1333,7 +1339,7 @@ public class RDBMDistributedLayoutStore
             for (final FragmentDefinition fragmentDefinition : fragments) {
                 if ( fragmentDefinition.isApplicable(person) ) {
                     loadIncorporatedPreferences( person, THEME, tsup,
-                            activator.getUserView(fragmentDefinition.getOwnerId()).themeUserPrefs);
+                            activator.getUserView(fragmentDefinition).themeUserPrefs);
                 }
             }
         }
@@ -1484,7 +1490,7 @@ public class RDBMDistributedLayoutStore
             UserProfile profile = getUserProfileById(person, 1);
             ssup = new DistributedUserPreferences(
                     (StructureStylesheetUserPreferences) ssup);
-            final UserView userView = activator.getUserView(ownedFragment.getOwnerId());
+            final UserView userView = activator.getUserView(ownedFragment);
             UserView view = new UserView(userView.getUserId(), profile, 
                         userView.layout, ssup, userView.themeUserPrefs);
             activator.fragmentizeSSUP(view, ownedFragment);
