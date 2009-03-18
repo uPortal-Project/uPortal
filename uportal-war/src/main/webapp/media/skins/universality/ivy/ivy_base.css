@@ -746,7 +746,7 @@
 .orderable-hover{cursor:move;}
 .orderable-dragging{filter:alpha(opacity=50); opacity:.5;}
 .orderable-dragging-mouse{display:none;}
-.orderable-selected{}
+.orderable-selected {border:1px dotted #999}
 .orderable-avatar {width:auto; filter:alpha(opacity=50); opacity:.5;}
 div .orderable-drop-marker{height:200px !important; background-color: #99FF99; border:1px dashed #00CC00; margin:1em 0em;}
 .orderable-avatar-clone {height:200px; width:400px; filter:alpha(opacity=60); opacity:.6;}

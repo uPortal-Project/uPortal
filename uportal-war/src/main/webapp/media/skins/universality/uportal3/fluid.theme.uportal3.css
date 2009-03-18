@@ -384,7 +384,7 @@
 .fl-theme-uportal3 .orderable-hover {cursor:move;}
 .fl-theme-uportal3 .orderable-dragging {filter:alpha(opacity=50); opacity:.5;}
 .fl-theme-uportal3 .orderable-dragging-mouse {display:none;}
-.fl-theme-uportal3 .orderable-selected {}
+.fl-theme-uportal3 .orderable-selected {border:1px dotted #999}
 .fl-theme-uportal3 .orderable-avatar {width:auto; filter:alpha(opacity=50); opacity:.5;}
 .fl-theme-uportal3 div .orderable-drop-marker {height:200px !important; background-color:#D1F0E0; border:1px dashed #009900; margin-bottom:1em;}
 .fl-theme-uportal3 .orderable-avatar-clone {height:200px; width:400px; filter:alpha(opacity=60); opacity:.6;}
