@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright (c) 2000-2009, Jasig, Inc.
+    See license distributed with this file and available online at
+    https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
+
+-->
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow
+                          http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+            
+    <view-state id="deploymentRegistration" model="registrationRequest">
+        <on-entry>
+            <evaluate result="flowScope.registrationRequest" expression="portalRegistrationHelper.createRegistrationRequest()" />
+        </on-entry>
+
+        <transition on="previewRegistration" to="deploymentRegistrationSuccess" />
+    </view-state>
+    
+    <!-- Execute the lookup query and transition to the appropriate state based on the number of results -->
+    <view-state id="deploymentRegistrationSuccess">
+        <on-entry>
+            <evaluate result="flowScope.registrationData" expression="portalRegistrationHelper.getRegistrationData(registrationRequest)" />
+        </on-entry>
+        
+        <transition on="editRegistration" to="deploymentRegistration" />
+        <transition on="submitRegistration" to="submitRegistration" /> 
+    </view-state>
+
+    <action-state id="submitRegistration">
+        <on-entry>
+            <evaluate expression="personLookupHelper.getQueryDisplayResults(externalContext, personQueryResults)" />
+        </on-entry>
+        
+        <transition to="deploymentRegistration" />
+    </action-state>
+</flow>

@@ -40,6 +40,20 @@
     <bean id="identitySwapperHelper" class="org.jasig.portal.portlets.swapper.IdentitySwapperHelperImpl" />
     
     
+    <!-- Beans for the register-portal flow -->
+    <bean id="portalRegistrationHelper" class="org.jasig.portal.portlets.registerportal.PortalRegistrationHelper">
+        <property name="portalDataCollator" ref="portalDataCollator" />
+    </bean>
+    
+    <bean id="portalDataCollator" class="org.jasig.portal.portlets.registerportal.PortalDataCollatorImpl">
+        <property name="collectors">
+            <list>
+                <bean class="org.jasig.portal.portlets.registerportal.data.JvmDataCollector" />
+            </list>
+        </property>
+    </bean>
+    
+    
     <!-- Executes flows: the central entry point into the Spring Web Flow system -->
     <webflow:flow-executor id="flowExecutor">
         <webflow:flow-execution-attributes>
