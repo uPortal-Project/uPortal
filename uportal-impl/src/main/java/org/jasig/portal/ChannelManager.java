@@ -58,7 +58,6 @@ import org.jasig.portal.url.support.IChannelRequestParameterManager;
 import org.jasig.portal.utils.SAX2BufferImpl;
 import org.jasig.portal.utils.SetCheckInSemaphore;
 import org.jasig.portal.utils.web.PortalWebUtils;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.jndi.JndiTemplate;
 import org.springframework.web.context.request.RequestAttributes;
@@ -793,22 +792,18 @@ public class ChannelManager implements LayoutEventListener {
      * @param le the portal event
      */
     public void passPortalEvent(HttpServletRequest request, HttpServletResponse response, String channelSubscribeId, PortalEvent le) {
-        IChannel ch = channelTable.get(channelSubscribeId);
-        if (ch != null) {
-            try {
-                if (ch instanceof IPrivileged) {
-                    final PortalControlStructures pcs = this.getPortalControlStructuresForChannel(request, response, channelSubscribeId);
-                    ((IPrivileged)ch).setPortalControlStructures(pcs);
-                }
-                
-                ch.receiveEvent(le);
+        IChannel ch = this.getChannelInstance(request, response, channelSubscribeId);
+
+        try {
+            if (ch instanceof IPrivileged) {
+                final PortalControlStructures pcs = this.getPortalControlStructuresForChannel(request, response, channelSubscribeId);
+                ((IPrivileged)ch).setPortalControlStructures(pcs);
             }
-            catch (Exception e) {
-                log.error("Error sending layout event " + le + " to channel " + ch, e);
-            }
+            
+            ch.receiveEvent(le);
         }
-        else {
-            log.info("Trying to pass event " + le + " to channel with subscribeId='" + channelSubscribeId + "' that is not (yet) in the channel rendering table.");
+        catch (Exception e) {
+            log.error("Error sending layout event " + le + " to channel " + ch, e);
         }
     }
 
