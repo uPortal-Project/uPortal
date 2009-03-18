@@ -19,7 +19,7 @@
     <dependencies>
         <!-- ===== Compile Time Dependencies ============================== -->
         <dependency>
-            <groupId>com.google.code</groupId>
+            <groupId>com.google.code.googleportlet</groupId>
             <artifactId>googleportlet</artifactId>
             <version>${googleportlet.version}</version>
             <type>war</type>
