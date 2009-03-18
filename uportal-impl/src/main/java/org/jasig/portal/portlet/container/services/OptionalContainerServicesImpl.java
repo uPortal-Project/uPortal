@@ -9,6 +9,7 @@ import org.apache.commons.lang.Validate;
 import org.apache.pluto.core.DefaultOptionalContainerServices;
 import org.apache.pluto.core.DefaultPortalAdministrationService;
 import org.apache.pluto.spi.optional.PortalAdministrationService;
+import org.apache.pluto.spi.optional.PortletEnvironmentService;
 import org.apache.pluto.spi.optional.PortletPreferencesService;
 import org.apache.pluto.spi.optional.UserInfoService;
 import org.springframework.beans.factory.annotation.Required;
@@ -21,6 +22,7 @@ public class OptionalContainerServicesImpl extends DefaultOptionalContainerServi
     private UserInfoService userInfoService;
     private PortalAdministrationService portalAdministrationService = new DefaultPortalAdministrationService();
     private PortletPreferencesService portletPreferencesService;
+    private PortletEnvironmentService portletEnvironmentService;
     
     /**
      * @param userInfoService the userInfoService to set
@@ -48,6 +50,14 @@ public class OptionalContainerServicesImpl extends DefaultOptionalContainerServi
         this.portletPreferencesService = portletPreferencesService;
     }
 
+    /**
+     * @param portletEnvironmentService the portletEnvironmentService to set
+     */
+    @Required
+    public void setPortletEnvironmentService(PortletEnvironmentService portletEnvironmentService) {
+        Validate.notNull(portletEnvironmentService);
+        this.portletEnvironmentService = portletEnvironmentService;
+    }
 
     /* (non-Javadoc)
      * @see org.apache.pluto.core.DefaultOptionalContainerServices#getPortalAdministrationService()
@@ -71,6 +81,14 @@ public class OptionalContainerServicesImpl extends DefaultOptionalContainerServi
     @Override
     public UserInfoService getUserInfoService() {
         return this.userInfoService;
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.pluto.core.DefaultOptionalContainerServices#getPortletEnvironmentService()
+     */
+    @Override
+    public PortletEnvironmentService getPortletEnvironmentService() {
+        return this.portletEnvironmentService;
     }
 
 }

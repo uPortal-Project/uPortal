@@ -108,6 +108,7 @@ public class ChannelRequestParameterProcessor extends CommonsFileUploadSupport i
      * @see org.jasig.portal.url.processing.IRequestParameterProcessor#processParameters(org.jasig.portal.url.IWritableHttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     public boolean processParameters(IWritableHttpServletRequest request, HttpServletResponse response) {
+        boolean isPortletRequest = false;
         try {
             //If this is a portlet request don't do any channel parameter processing
             if (this.portletRequestParameterManager.getTargetedPortletWindowId(request) != null) {
@@ -115,11 +116,7 @@ public class ChannelRequestParameterProcessor extends CommonsFileUploadSupport i
                     this.logger.debug("Request is targeting a portlet, channel parameter processing will not take place.");
                 }
                 
-                //Mark the request as not having any channel specific parameters
-                this.channelRequestParameterManager.setNoChannelParameters(request);
-
-                //Processing is complete
-                return true;
+                isPortletRequest = true;
             }
         }
         catch (RequestParameterProcessingIncompleteException rppie) {
@@ -138,6 +135,12 @@ public class ChannelRequestParameterProcessor extends CommonsFileUploadSupport i
 
         //Map to track channel parameters in
         final Map<String, Object[]> channelParameters = new HashMap<String, Object[]>();
+        
+        //If it is a portlet request just set the targeted channel id with an empty parameters map 
+        if (isPortletRequest) {
+            this.channelRequestParameterManager.setChannelParameters(request, targetChannelId, channelParameters);
+            return true;
+        }
 
         //Do multipart file upload request processing
         if (ServletFileUpload.isMultipartContent(new ServletRequestContext(request))) {

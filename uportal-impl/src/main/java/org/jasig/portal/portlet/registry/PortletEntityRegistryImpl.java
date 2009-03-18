@@ -11,6 +11,7 @@ import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.portlet.dao.IPortletEntityDao;
+import org.jasig.portal.portlet.om.AbstractObjectId;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletEntity;
@@ -82,6 +83,24 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
     }
     
     /* (non-Javadoc)
+     * @see org.jasig.portal.portlet.registry.IPortletEntityRegistry#getPortletEntity(java.lang.String)
+     */
+    public IPortletEntity getPortletEntity(String portletEntityIdString) {
+        Validate.notNull(portletEntityIdString, "portletEntityId can not be null");
+        
+        final long portletEntityIdLong;
+        try {
+            portletEntityIdLong = Long.parseLong(portletEntityIdString);
+        }
+        catch (NumberFormatException nfe) {
+            throw new IllegalArgumentException("PortletEntityId must parsable as a long", nfe);
+        }
+        
+        final PortletEntityIdImpl portletEntityId = new PortletEntityIdImpl(portletEntityIdLong);
+        return this.portletEntityDao.getPortletEntity(portletEntityId);
+    }
+    
+    /* (non-Javadoc)
      * @see org.jasig.portal.portlet.registry.IPortletEntityRegistry#getPortletEntity(java.lang.String, int)
      */
     public IPortletEntity getPortletEntity(String channelSubscribeId, int userId) {
@@ -138,3 +157,12 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
         return this.portletDefinitionRegistry.getPortletDefinition(portletDefinitionId);
     }
 }
+
+class PortletEntityIdImpl extends AbstractObjectId implements IPortletEntityId {
+    private static final long serialVersionUID = 1L;
+
+    public PortletEntityIdImpl(long portletEntityId) {
+        super(Long.toString(portletEntityId));
+    }
+}
+
