@@ -28,5 +28,10 @@ public interface ITransientPortletWindowRegistry extends IPortletWindowRegistry 
      */
     public IPortletWindowId createTransientPortletWindowId(HttpServletRequest request, IPortletWindowId sourcePortletWindowId);
     
+    /**
+     * @param request The current portal request
+     * @param portletWindowId The window ID to check
+     * @return true if the window id is for a transient window.
+     */
     public boolean isTransient(HttpServletRequest request, IPortletWindowId portletWindowId);
 }
