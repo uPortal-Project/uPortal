@@ -30,25 +30,6 @@ public class ScopingPortletSessionImpl extends PortletSessionImpl {
         super(portletContext, internalPortletWindow, httpSession);
         this.portletEntityId = portletEntityId;
     }
-    
-    /* (non-Javadoc)
-     * @see org.apache.pluto.internal.impl.PortletSessionImpl#getAttribute(java.lang.String)
-     */
-    @Override
-    public Object getAttribute(String name) {
-        Object attribute = super.getAttribute(name);
-        if (attribute != null) {
-            return attribute;
-        }
-        
-        attribute = super.getAttribute(name, PortletSession.APPLICATION_SCOPE);
-        if (attribute != null) {
-            final PortletContext portletContext = this.getPortletContext();
-            this.logger.warn("Retrieved portlet session attribute '" + name + "' from APPLICATION_SCOPE after failing to find it in PORTLET_SCOPE for PortletContext: " + (portletContext != null ? portletContext.getPortletContextName() : null));
-        }
-        
-        return attribute;
-    }
 
     @Override
     protected String createPortletScopedId(String name) {
