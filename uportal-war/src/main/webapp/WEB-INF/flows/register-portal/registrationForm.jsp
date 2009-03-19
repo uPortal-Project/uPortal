@@ -53,8 +53,9 @@
     <ul>
         <c:forEach var="dataEntry" items="${registrationRequest.dataToSubmit}">
             <li>
+                <spring:message var="dataDisplayName" text="${dataEntry.key}" code="data.${dataEntry.key}" />
                 <form:checkbox path="dataToSubmit['${dataEntry.key}']" value="true"/> 
-                <form:label path="dataToSubmit['${dataEntry.key}']" cssClass="fl-label">${dataEntry.key}</form:label>
+                <form:label path="dataToSubmit['${dataEntry.key}']" cssClass="fl-label">${dataDisplayName}</form:label>
             </li>
         </c:forEach>
     </ul>

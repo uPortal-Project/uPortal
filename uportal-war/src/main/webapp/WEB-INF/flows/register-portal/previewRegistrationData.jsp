@@ -36,7 +36,7 @@
                 <c:forEach var="valueEntry" items="${dataEntry.value}">
                     <tr>
                         <th>${fn:escapeXml(valueEntry.key)}</th>
-                        <th>${fn:escapeXml(valueEntry.value)}</th>
+                        <td>${fn:escapeXml(valueEntry.value)}</td>
                     </tr>
                 </c:forEach>
             </table>
