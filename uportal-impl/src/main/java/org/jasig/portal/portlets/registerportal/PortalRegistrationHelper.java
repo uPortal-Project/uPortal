@@ -30,6 +30,9 @@ public class PortalRegistrationHelper {
         this.portalDataCollator = portalDataCollator;
     }
 
+    /**
+     * @return A new backing object for the registration request form
+     */
     public PortalRegistrationRequest createRegistrationRequest() {
         final Map<String, String> dataToSubmit = new LinkedHashMap<String, String>();
         
@@ -44,6 +47,12 @@ public class PortalRegistrationHelper {
         return registrationRequest;
     }
     
+    /**
+     * Gathers portal data for the registration request
+     * 
+     * @param registrationRequest Registration request containing the user's preferences
+     * @return Registration data collected based on the registration request 
+     */
     public PortalRegistrationData getRegistrationData(PortalRegistrationRequest registrationRequest) {
         this.logger.debug(registrationRequest);
         
@@ -69,7 +78,11 @@ public class PortalRegistrationHelper {
         return registrationData;
     }
     
+    /**
+     * @param portalRegistrationData Registration data to submit to backend service
+     */
     public void submitRegistration(PortalRegistrationData portalRegistrationData) {
+        this.logger.debug(portalRegistrationData);
         //TODO figure out how to submit data?
     }
 }
