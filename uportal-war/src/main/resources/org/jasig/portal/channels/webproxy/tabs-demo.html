@@ -22,15 +22,21 @@
 </style>
 
 <!--BEGIN SOURCE CODE FOR EXAMPLE =============================== -->
-<div id="tabs-demo">
-    <ul>
-        <li><a href="#tab1"><span>Lorem Ipsum 1</span></a></li>
-        <li><a href="#tab2"><span>Lorem Ipsum 2</span></a></li>
-        <li><a href="#tab3"><span>Lorem Ipsum 3</span></a></li>
+<div id="tabs-demo" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+    <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+        <li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active">
+            <a href="#tab1" shape="rect"><span>Lorem Ipsum 1</span></a>
+        </li>
+        <li class="ui-state-default ui-corner-top">
+            <a href="#tab2" shape="rect"><span>Lorem Ipsum 2</span></a>
+        </li>
+        <li class="ui-state-default ui-corner-top">
+            <a href="#tab3" shape="rect"><span>Lorem Ipsum 3</span></a>
+        </li>
     </ul>
     
     <!--TAB 1-->
-    <div id="tab1">
+    <div id="tab1" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
         <img class="tab-image" src="media/org/jasig/portal/channels/webproxy/tab1.jpg" alt="Basketball Photo" align="left" />
         <h1>Lorem Ipsum 1</h1>
         <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Sed eget neque consequat sapien commodo ultricies. Mauris commodo lobortis elit. Mauris euismod. Fusce ac dui. Nullam in arcu. Morbi pulvinar. Vivamus lacinia ligula et dolor. Phasellus hendrerit nulla. Aliquam feugiat eleifend tellus. Nullam tristique nisi et est. Sed luctus magna ut dui. Nam aliquet metus laoreet tortor.</p>
@@ -39,7 +45,7 @@
     </div>
     
     <!--TAB 2-->
-    <div id="tab2">
+    <div id="tab2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide">
         <img class="tab-image" src="media/org/jasig/portal/channels/webproxy/tab2.jpg" alt="Basketball Photo" align="left" />
         <h1>Lorem Ipsum 2</h1>
         <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Sed eget neque consequat sapien commodo ultricies. Mauris commodo lobortis elit. Mauris euismod. Fusce ac dui. Nullam in arcu. Morbi pulvinar. Vivamus lacinia ligula et dolor. Phasellus hendrerit nulla. Aliquam feugiat eleifend tellus. Nullam tristique nisi et est. Sed luctus magna ut dui. Nam aliquet metus laoreet tortor.</p>
@@ -49,7 +55,7 @@
    </div>
     
     <!--TAB 3-->
-    <div id="tab3">
+    <div id="tab3" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide">
         <img class="tab-image" src="media/org/jasig/portal/channels/webproxy/tab3.jpg" alt="Basketball Photo" align="left" />
         <h1>Lorem Ipsum 3</h1>
         <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Sed eget neque consequat sapien commodo ultricies. Mauris commodo lobortis elit. Mauris euismod. Fusce ac dui. Nullam in arcu. Morbi pulvinar. Vivamus lacinia ligula et dolor. Phasellus hendrerit nulla. Aliquam feugiat eleifend tellus. Nullam tristique nisi et est. Sed luctus magna ut dui. Nam aliquet metus laoreet tortor.</p>
